@@ -238,11 +238,15 @@ Imported.Hendrix_Localization = true;
     const excludeNameText = parameters['Exclude Name Text'] === 'true';
     const extractVariableText = parameters['Extract Variable Text'] === 'true';
     const extractPluginCommandText = parameters['Extract Plugin Command Text'] === 'true';
-    // The game ships locked to English for now: the language selector is off the
-    // title screen and the Language row is out of the options menu, so nothing
-    // may switch away from LOCKED_LANGUAGE while this is set.
-    const LOCKED_LANGUAGE = 'en';
-    const defaultLanguage = LOCKED_LANGUAGE || parameters['Default Language'];
+    // The languages the game offers, in selector order. Every other i18n folder
+    // (fr, ko, ru, nk...) stays on disk but out of the title flags and the
+    // options row until it is carried far enough to be listed here. A single
+    // entry locks the game to that language: no selector, no row, no switching.
+    const OFFERED_LANGUAGES = ['en', 'it'];
+    const LOCKED_LANGUAGE = OFFERED_LANGUAGES.length === 1 ? OFFERED_LANGUAGES[0] : '';
+    const isOffered = symbol => OFFERED_LANGUAGES.includes(symbol);
+    const defaultLanguage = isOffered(parameters['Default Language'])
+        ? parameters['Default Language'] : OFFERED_LANGUAGES[0];
     const partialMatching = parameters['Partial Matching'] === 'true';
     const useTranslationCache = parameters['Use Translation Cache'] === 'true';
     let languagesParam = [];
@@ -1787,8 +1791,8 @@ Imported.Hendrix_Localization = true;
             }
         }
 
-        // When the target language IS the default one - which is every run, as
-        // long as LOCKED_LANGUAGE stands - the two reads below asked for the
+        // When the target language IS the default one - every English run -
+        // the two reads below asked for the
         // same file twice and parsed it twice. That was every one of the 41
         // top-level js/i18n/en files read and JSON.parsed a second time for
         // nothing, synchronously, out of Scene_Boot.start.
@@ -1839,8 +1843,8 @@ Imported.Hendrix_Localization = true;
 
         // The selector cycles this list in order, so English leads and Italian
         // is the first alternative offered.
-        availableLanguages = sortLanguagesForMenu(availableLanguages);
-        if (LOCKED_LANGUAGE) availableLanguages = [LOCKED_LANGUAGE];
+        availableLanguages = sortLanguagesForMenu(availableLanguages.filter(isOffered));
+        if (availableLanguages.length === 0) availableLanguages = OFFERED_LANGUAGES.slice();
 
         if (!availableLanguages.includes(currentLanguage)) {
             currentLanguage = availableLanguages[0] || defaultLanguage;
@@ -2218,7 +2222,7 @@ Imported.Hendrix_Localization = true;
     const _ConfigManager_applyData = ConfigManager.applyData;
     ConfigManager.applyData = function (config) {
         _ConfigManager_applyData.call(this, config);
-        this.language = LOCKED_LANGUAGE || config.language || defaultLanguage;
+        this.language = isOffered(config.language) ? config.language : defaultLanguage;
         currentLanguage = this.language;
         loadTranslations(currentLanguage);
         applyLanguageSettings();
@@ -2860,10 +2864,10 @@ Imported.Hendrix_Localization = true;
     // step) to list, label and switch languages without duplicating logic.
     window.HendrixLocalization = {
         getAvailableLanguages() {
-            if (LOCKED_LANGUAGE) return [LOCKED_LANGUAGE];
-            return sortLanguagesForMenu((availableLanguages && availableLanguages.length)
+            const list = (availableLanguages && availableLanguages.length)
                 ? availableLanguages
-                : languageSymbols);
+                : languageSymbols.filter(isOffered);
+            return sortLanguagesForMenu(list.length ? list : OFFERED_LANGUAGES.slice());
         },
         getLanguageName,
         getLanguageMenuLabel,
@@ -2874,6 +2878,7 @@ Imported.Hendrix_Localization = true;
 
     window.changeToLanguage = function (languageSymbol) {
         if (LOCKED_LANGUAGE) return false;
+        if (languageSymbol !== 'next' && !isOffered(languageSymbol)) return false;
         if (languageSymbol === 'next') {
             const currentIndex = availableLanguages.indexOf(ConfigManager.language);
             const nextIndex = (currentIndex + 1) % availableLanguages.length;

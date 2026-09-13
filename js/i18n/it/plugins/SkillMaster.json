@@ -77,7 +77,7 @@
   "category": {
     "All": "Tutte"
   },
-  "forgeBlurb": "Fondi un incantesimo dominante con un incantesimo o un'abilità di {actor}; se il recessivo è un'abilità, esce un'abilità. Costa la somma di MP e AP dei componenti più Conoscenza, ed entrambi si dimenticano. Hai {knowledge} KP.",
+  "forgeBlurb": "Fondi un incantesimo dominante con un incantesimo o un'abilita recessiva di {actor}. Un'abilita recessiva produce un'abilita. Costa gli MP e AP di entrambi i componenti piu Conoscenza, ed entrambi i componenti vengono dimenticati. Possiedi {knowledge} KP.",
   "kpMultiplier3x": "3.0X KC",
   "kpMultiplier15x": "1.5X KC",
   "foreignSchool": "Da autodidatta",
@@ -259,7 +259,7 @@
     "anywhere": "Ovunque",
     "battleOnly": "Solo in battaglia",
     "riderCount": "Innesti",
-    "benchBlurb": "Ogni pezzo si paga una volta sola. La complessita si paga per sempre: decide il costo di ogni lancio e la {stat} che chi scrive deve gia possedere.",
+    "benchBlurb": "Ogni parte si compra una volta. La complessita determina il costo di ogni lancio e la {stat} che lo scrittore deve avere.",
     "writtenResult": "\\C[3]{name}\\C[0] e scritto. {cost} PC spesi, {left} PC rimasti.",
     "rewrittenResult": "\\C[3]{name}\\C[0] e riscritto. {cost} PC spesi, {left} PC rimasti.",
     "row": {

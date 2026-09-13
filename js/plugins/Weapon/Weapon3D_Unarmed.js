@@ -34,6 +34,10 @@
  * (see archetypeOf in the core). An archetype with no model falls back to
  * Humanoid.
  *
+ * These hands are CREATURES' hands. A character who is not a creature shows
+ * the authored first-person rig instead, whatever archetype has been crossed
+ * into their body, so a humanoid never punches with somebody else's claw.
+ *
  * The core builds a stand-in weapon for the empty hand
  * (WeaponSystemProcedural.unarmedWeaponFor) typed as a Glove, so the whole
  * rest of the pipeline - model cache, mesh merge, first-person pose and the

@@ -89,10 +89,10 @@
     "cmdMap": "Map: window, corner, full screen, off",
     "cmdDive": "Dive / surface (needs the Dive module)",
     "cmdThrust": "Throttle up / back",
-    "noteGasGiant": "Nothing here to land on, and the pressure below crushes a hull. Keep the altitude up.",
-    "noteUnderwater": "Under the surface. The trim takes the hull down and brings it back up.",
-    "noteSwimming": "In the water. Kick up for the surface, or hold the crouch to go under.",
-    "noteFlying": "At the helm. The nose does the climbing, the trim holds the altitude."
+    "noteGasGiant": "No surface to land on. Descending too far destroys the hull, so keep your altitude.",
+    "noteUnderwater": "Underwater. Trim down to dive, trim up to surface.",
+    "noteSwimming": "Swimming. Jump to surface, hold crouch to dive.",
+    "noteFlying": "Flying. Pitch the nose to climb or descend, trim to hold altitude."
   },
   "viewMode": {
     "fpdrive": "FP DRIVING",

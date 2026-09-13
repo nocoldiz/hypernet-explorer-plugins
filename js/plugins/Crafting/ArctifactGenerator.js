@@ -1227,4 +1227,26 @@ const weaponSuffixes = () => T.pool("Artifacts.weapon.suffix");
 const armorNouns = (typeId) => T.pool("Artifacts.armor.noun." + typeId);
 
 const armorSuffixes = () => T.pool("Artifacts.armor.suffix");
+
+// ── Shared artifact service ─────────────────────────────────────────────────
+// What makes a thing a relic rather than a piece of stock: the banks its name
+// is rolled off, the natures it can be given and the write-up that reads them
+// back. The workshop asks for these when it awakens a weapon the party already
+// owns (Quest/ThinkerMenu.js), so a made artifact and a found one are named and
+// written up by exactly the same hand.
+//
+// Nothing here touches a database slot: these roll values and hand them over.
+// Generating an artifact into the 1501-1600 band is still this plugin's alone.
+window.ArtifactGenerator = {
+    weaponName: generateWeaponName,
+    armorName: generateArmorName,
+    weaponTraits: generateWeaponTraits,
+    armorTraits: generateArmorTraits,
+    // Deterministic, given the same level, type, traits and parameters, so a
+    // piece that keeps them on a record reads the same way every time it is
+    // rebuilt.
+    weaponDescription: generateWeaponDescription,
+    armorDescription: generateArmorDescription,
+    partyLevel: getPlayerLevel
+};
 })();

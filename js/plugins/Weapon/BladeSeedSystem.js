@@ -53,20 +53,33 @@
     // so nothing here is displayed as written.
     // i18n-ignore-start  database ids and the $dataSystem.weaponTypes vocabulary
     const weaponTypes = [
-        {"id": 1,  "name": "Light",      "weaponId": "12",  "startingSkill": 34}, // Seed Dagger
-        {"id": 2,  "name": "Sword",      "weaponId": "54",  "startingSkill": 35}, // Seed Sword
-        {"id": 3,  "name": "Heavy",      "weaponId": "55",  "startingSkill": 36}, // Seed Mace
-        {"id": 4,  "name": "Axe",        "weaponId": "206", "startingSkill": 37}, // Seed Axe
-        {"id": 5,  "name": "Whip",       "weaponId": "243", "startingSkill": 38}, // Seed Whip
-        {"id": 6,  "name": "Staff",      "weaponId": "284", "startingSkill": 7},  // Seed Staff
-        {"id": 7,  "name": "Bow",        "weaponId": "344", "startingSkill": 39}, // Seed Bow
-        {"id": 8,  "name": "Projectile", "weaponId": "392", "startingSkill": 8},  // Seed Grimoire
-        {"id": 9,  "name": "Gun",        "weaponId": "438", "startingSkill": 40}, // Seed Gun
-        {"id": 10, "name": "Claw",       "weaponId": "545", "startingSkill": 41}, // Seed Claw
-        {"id": 11, "name": "Glove",      "weaponId": "580", "startingSkill": 42}, // Seed Glove
-        {"id": 12, "name": "Spear",      "weaponId": "628", "startingSkill": 43}  // Seed Spear
+        {"id": 1,  "name": "Light",      "weaponId": "12"}, // Seed Dagger
+        {"id": 2,  "name": "Sword",      "weaponId": "54"}, // Seed Sword
+        {"id": 3,  "name": "Heavy",      "weaponId": "55"}, // Seed Mace
+        {"id": 4,  "name": "Axe",        "weaponId": "206"}, // Seed Axe
+        {"id": 5,  "name": "Whip",       "weaponId": "243"}, // Seed Whip
+        {"id": 6,  "name": "Staff",      "weaponId": "284"},  // Seed Staff
+        {"id": 7,  "name": "Bow",        "weaponId": "344"}, // Seed Bow
+        {"id": 8,  "name": "Projectile", "weaponId": "392"},  // Seed Grimoire
+        {"id": 9,  "name": "Gun",        "weaponId": "438"}, // Seed Gun
+        {"id": 10, "name": "Claw",       "weaponId": "545"}, // Seed Claw
+        {"id": 11, "name": "Glove",      "weaponId": "580"}, // Seed Glove
+        {"id": 12, "name": "Spear",      "weaponId": "628"}  // Seed Spear
     ];
     // i18n-ignore-end
+
+    // The skill a seed weapon is grown holding is resolved out of the database
+    // on read rather than written down, for the reason given at isRealSkill:
+    // a fixed id drifts onto another row every time the balance generators
+    // run. The weapon row itself says which type it is, so the number is never
+    // taken from the entry's own position in this list.
+    weaponTypes.forEach(wt => Object.defineProperty(wt, 'startingSkill', {
+        get: () => {
+            const weapon = $dataWeapons[parseInt(wt.weaponId)];
+            return seedStartingSkill(weapon ? weapon.wtypeId : wt.id);
+        },
+        enumerable: true
+    }));
     
     // Hardcoded spirit evolution sets
     // i18n-ignore-start  image1..3 are img/enemies/BladeSeeds filenames
@@ -97,80 +110,105 @@
         });
     }
     
-    // Spirit skill sets - hardcoded skill IDs by element
-    // i18n-ignore-start  skillId is the real skill; these names are only a
-    // fallback label, and $dataSkills[skillId].name (already localised) wins
-    const spiritSkills = {
-        1: [ // Physical
-            {skillId: 1, name: "Attack", cost: 0, learned: true}, // Basic attack, always known
-            {skillId: 2, name: "Guard", cost: 0, learned: true}, // Basic guard, always known
-            {skillId: 7, name: "Heal", cost: 15},
-            {skillId: 8, name: "Fire", cost: 20},
-            {skillId: 44, name: "Escape", cost: 25}
-        ],
-        2: [ // Fire
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 8, name: "Fire", cost: 10},
-            {skillId: 9, name: "Fire II", cost: 30},
-            {skillId: 10, name: "Fire III", cost: 60},
-            {skillId: 17, name: "Burn", cost: 25}
-        ],
-        3: [ // Ice
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 11, name: "Ice", cost: 10},
-            {skillId: 12, name: "Ice II", cost: 30},
-            {skillId: 13, name: "Ice III", cost: 60},
-            {skillId: 18, name: "Freeze", cost: 25}
-        ],
-        4: [ // Thunder
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 14, name: "Thunder", cost: 10},
-            {skillId: 15, name: "Thunder II", cost: 30},
-            {skillId: 16, name: "Thunder III", cost: 60},
-            {skillId: 19, name: "Shock", cost: 25}
-        ],
-        5: [ // Water
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 7, name: "Heal", cost: 12},
-            {skillId: 22, name: "Heal II", cost: 35},
-            {skillId: 23, name: "Heal III", cost: 65},
-            {skillId: 20, name: "Water Bolt", cost: 18}
-        ],
-        6: [ // Metal
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 24, name: "Barrier", cost: 20},
-            {skillId: 25, name: "Iron Skin", cost: 35},
-            {skillId: 26, name: "Metal Strike", cost: 25}
-        ],
-        7: [ // Wind
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 27, name: "Wind Slash", cost: 15},
-            {skillId: 28, name: "Tornado", cost: 40},
-            {skillId: 29, name: "Haste", cost: 30}
-        ],
-        8: [ // Sacred
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 7, name: "Heal", cost: 8},
-            {skillId: 22, name: "Heal II", cost: 25},
-            {skillId: 23, name: "Heal III", cost: 50},
-            {skillId: 30, name: "Holy Light", cost: 45}
-        ],
-        9: [ // Cursed
-            {skillId: 1, name: "Attack", cost: 0, learned: true},
-            {skillId: 2, name: "Guard", cost: 0, learned: true},
-            {skillId: 31, name: "Dark Strike", cost: 18},
-            {skillId: 32, name: "Curse", cost: 30},
-            {skillId: 33, name: "Drain", cost: 35}
-        ]
+    // ── Skill resolution ─────────────────────────────────────────────────
+    // Skill ids are not stable: data/Skills.json is regenerated by the balance
+    // generators under tools/, so a number written down here drifts onto some
+    // other row (or onto a blank one) the next time they run. Nothing below
+    // names a skill by id; every list is read out of the database the spirit
+    // is actually living in.
+    const isRealSkill = (s) =>
+        !!s && !!s.name && !s.name.startsWith('<') && !s.name.startsWith('ESK');
+
+    // The <category:> tag every skill carries, lowercased. Same reader the
+    // battle system's school gate uses.
+    const skillSchoolOf = (s) =>
+        (/<category:\s*([A-Za-z]+)\s*>/i.exec((s && s.note) || '') || [])[1] || '';
+
+    // Cheapest first, by the same price the player is actually quoted
+    // (calculateSkillLearningCost below), so a ladder reads as one.
+    const bySkillCost = (a, b) =>
+        calculateSkillLearningCost(a.id) - calculateSkillLearningCost(b.id) || a.id - b.id;
+
+    // The two the engine itself leans on, known from the moment of binding.
+    const BASE_SPIRIT_SKILL_IDS = [1, 2];
+    // How many skills a spirit offers in all, the two base ones included.
+    const SPIRIT_SKILL_COUNT = 6;
+
+    // A spirit of an element teaches that element, and the database is the
+    // only list of what that means: $dataSkills carries the element on the
+    // skill's own damage row, so the pool follows the data wherever it moves.
+    const buildSpiritSkills = (elementId) => {
+        const base = BASE_SPIRIT_SKILL_IDS
+            .filter(id => isRealSkill($dataSkills[id]))
+            .map(id => ({ skillId: id, cost: 0, learned: true }));
+        const taken = new Set(base.map(s => s.skillId));
+        const pool = $dataSkills
+            .filter(s => isRealSkill(s) && s.damage &&
+                         s.damage.elementId === elementId && !taken.has(s.id))
+            .sort(bySkillCost)
+            .slice(0, Math.max(0, SPIRIT_SKILL_COUNT - base.length))
+            .map(s => ({ skillId: s.id, cost: calculateSkillLearningCost(s.id) }));
+        return base.concat(pool);
     };
-    // i18n-ignore-end
+
+    // Resolved on read and once only: $dataSkills is in place long before a
+    // seed is ever bound, and it is rebuilt from file on every boot.
+    const spiritSkillCache = new Map();
+    const spiritSkills = {};
+    for (let _s = 1; _s <= 9; _s++) {
+        Object.defineProperty(spiritSkills, _s, {
+            get: ((id) => () => {
+                if (!spiritSkillCache.has(id)) spiritSkillCache.set(id, buildSpiritSkills(id));
+                return spiritSkillCache.get(id);
+            })(_s),
+            enumerable: true
+        });
+    }
+
+    // The school a seed weapon opens with. Which weapon types are ranged is
+    // BattleSystemEnhanced's answer (window.SkillWeaponReq) and never a literal
+    // repeated here, and the two schools that ARE a weapon rather than a
+    // technique are exactly the two that gate on it.
+    const seedSchoolFor = (wtypeId) => {
+        const req = window.SkillWeaponReq;
+        if (!req || !req.RANGED_WTYPES) return null;  // the authority is not up yet
+        // i18n-ignore  <category:> tag values, not display strings
+        return req.RANGED_WTYPES.includes(wtypeId) ? 'Firearms' : 'Swordsmanship';
+    };
+
+    // The weapon types that open with the same school, in database order.
+    // A school is dealt out across them rather than handed whole to each, so
+    // a Seed Sword and a Seed Spear do not grow the same opening skill.
+    const schoolPeers = (school) => {
+        const ids = [];
+        const types = ($dataSystem && $dataSystem.weaponTypes) || [];
+        for (let w = 1; w < types.length; w++) {
+            if (seedSchoolFor(w) === school) ids.push(w);
+        }
+        return ids;
+    };
+
+    // The one skill a seed weapon is grown holding: its seat in its school's
+    // ladder. 0 when the database carries no skill of that school, and the
+    // weapon then starts bare rather than teaching a blank row.
+    const seedStartingSkillCache = new Map();
+    const seedStartingSkill = (wtypeId) => {
+        if (seedStartingSkillCache.has(wtypeId)) return seedStartingSkillCache.get(wtypeId);
+        const named = seedSchoolFor(wtypeId);
+        // Asked before the battle system is up, melee is the answer for nine
+        // of the twelve types, but it is a guess and is never remembered: the
+        // next call, once the authority is there, settles it for good.
+        const school = (named || 'Swordsmanship').toLowerCase();
+        const pool = $dataSkills
+            .filter(s => isRealSkill(s) && skillSchoolOf(s).toLowerCase() === school)
+            .sort(bySkillCost);
+        if (!pool.length) return 0;
+        const peers = named ? schoolPeers(named) : [];
+        const seat = Math.max(0, peers.indexOf(wtypeId));
+        const id = pool[seat % pool.length].id;
+        if (named) seedStartingSkillCache.set(wtypeId, id);
+        return id;
+    };
     
     // Name generation components
     // i18n-ignore-start  invented proper-name syllables, concatenated into a
@@ -342,42 +380,42 @@
             // missing or blank would sit in the learn list as an empty line and
             // cost the player points for nothing.
             return elementSkills
-                .filter(skill => {
-                    const data = $dataSkills[skill.skillId];
-                    return !!(data && (data.name || '').trim());
-                })
+                .filter(skill => isRealSkill($dataSkills[skill.skillId]))
                 .map(skill => ({
                     skillId: skill.skillId,
                     name: $dataSkills[skill.skillId].name,
-                    cost: skill.cost > 0 ? skill.cost : calculateSkillLearningCost(skill.skillId),
+                    // A skill the spirit already knows is not on sale, so it
+                    // carries no price into the learned list.
+                    cost: skill.learned ? 0
+                        : (skill.cost > 0 ? skill.cost : calculateSkillLearningCost(skill.skillId)),
                     learned: skill.learned || false,
                     source: skill.learned ? 'spirit' : 'unlearned' // Track source
                 }));
         }
         
         addWeaponSkill(weaponType) {
-            if (weaponType.startingSkill) {
-                // Check if skill already exists in spirit skills
-                const existingSkillIndex = this.skills.findIndex(skill => skill.skillId === weaponType.startingSkill);
-                
-                if (existingSkillIndex >= 0) {
-                    // If skill exists, mark it as learned and update source
-                    this.skills[existingSkillIndex].learned = true;
-                    this.skills[existingSkillIndex].source = 'weapon';
-                } else {
-                    // Add new weapon skill
-                    const skillData = $dataSkills[weaponType.startingSkill];
-                    const skillName = skillData ? skillData.name
-                        : T('BladeSeed.weaponSkillNumbered', { id: weaponType.startingSkill });
-                    
-                    this.skills.push({
-                        skillId: weaponType.startingSkill,
-                        name: skillName,
-                        cost: 0,
-                        learned: true,
-                        source: 'weapon'
-                    });
-                }
+            const startingSkill = weaponType.startingSkill;
+            // No school skill in the database means the weapon starts bare.
+            // An empty row would sit in the list as a nameless line the player
+            // is asked to pay for.
+            if (!startingSkill || !isRealSkill($dataSkills[startingSkill])) return;
+
+            // Check if skill already exists in spirit skills
+            const existingSkillIndex = this.skills.findIndex(skill => skill.skillId === startingSkill);
+
+            if (existingSkillIndex >= 0) {
+                // If skill exists, mark it as learned and update source
+                this.skills[existingSkillIndex].learned = true;
+                this.skills[existingSkillIndex].source = 'weapon';
+            } else {
+                // Add new weapon skill
+                this.skills.push({
+                    skillId: startingSkill,
+                    name: $dataSkills[startingSkill].name,
+                    cost: 0,
+                    learned: true,
+                    source: 'weapon'
+                });
             }
         }
         
@@ -540,6 +578,9 @@
         getCompatibleWeaponTypes,
         calculateSkillLearningCost,
         initializeBladeSeedData,
+        isRealSkill,
+        seedStartingSkill,
+        buildSpiritSkills,
         randomAppearanceSeed,
         previewWithAppearance,
         applyAppearance,
@@ -670,9 +711,16 @@
         
         // Replace weapon names in text if Blade Seed is bound
         if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
-            const originalName = $dataWeapons[$gameSystem._bladeSeed.weaponId].name;
+            const base = $dataWeapons[$gameSystem._bladeSeed.weaponId];
+            const originalName = base && base.name;
             const customName = $gameSystem._bladeSeed.weaponName;
-            text = text.replace(new RegExp(originalName, 'g'), customName);
+            // The weapon's name is a name, not a pattern: a bracket or a plus
+            // in it would otherwise throw here and take every message box in
+            // the game down with it.
+            if (originalName && customName) {
+                const pattern = originalName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                text = text.replace(new RegExp(pattern, 'g'), customName);
+            }
         }
         
         return text;
@@ -715,6 +763,10 @@
         
         if (this.actorId() === 1 && $gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
             const spirit = $gameSystem._bladeSeed.spirit;
+            // A save written before the spirit was revived, or one whose seed
+            // was cleared behind the flag, leaves a bare object here. Growing
+            // nothing is right; throwing on every kill is not.
+            if (!spirit || typeof spirit.gainExperience !== 'function') return;
             const spiritExp = Math.floor(exp * 0.5); // Spirit gains 50% of actor exp
             
             const result = spirit.gainExperience(spiritExp);
@@ -763,10 +815,15 @@
     Game_Action.prototype.apply = function(target) {
         _Game_Action_apply.call(this, target);
         
-        // Check if this is a normal attack by actor 1 with blade seed bound
-        if (this.subject().isActor() && this.subject().actorId() === 1) {
+        // Check if this is a normal attack by actor 1 with blade seed bound.
+        // A plain attack IS a skill in MZ, the row at attackSkillId(), so
+        // isAttack() is the whole question: asking for a swing that is not a
+        // skill asks for something that never happens, and the points a spirit
+        // learns from would never have been paid.
+        const subject = this.subject();
+        if (subject && subject.isActor() && subject.actorId() === 1) {
             if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
-                if (this.isAttack() && !this.isSkill()) {
+                if (this.isAttack()) {
                     // Add 1 learning point for normal attacks
                     $gameSystem._bladeSeed.learningPoints = ($gameSystem._bladeSeed.learningPoints || 0) + 1;
                 }

@@ -34,17 +34,17 @@
     "other": "{count} charges settled for {total}."
   },
   "voluntaryDeclaration": "Voluntary Declaration",
-  "declarationBlurb": "Confess to something the Bureau has not caught yet: the charge is filed at <b>half</b> the usual fine. It still sits on your record and raises your bounty until settled or served.",
+  "declarationBlurb": "Confess a crime the Bureau has not recorded yet. The fine is filed at <b>half</b> the usual amount. It stays on your record and raises your bounty until it is paid or served.",
   "searchOffences": "Search offences...",
   "noOffenceMatch": "No offence matches that search.",
   "confess": "Confess",
   "declared": "Declared: {crime}. Charge filed at {amount}.",
   "custodyHearings": "Custody &amp; Hearings",
-  "custodyBlurb": "Outstanding bounty: <b>{bounty}</b>. Both options below sign you out of this terminal: the holding cells and the courtroom are not on the network.",
+  "custodyBlurb": "Outstanding bounty: <b>{bounty}</b>. Either option below closes this terminal.",
   "turnYourselfIn": "Turn yourself in",
-  "surrenderBlurb": "A van collects you and you are booked into the cells. Time served grinds the bounty down on its own, and you walk out the moment it reaches zero. No hearing, no judge.",
+  "surrenderBlurb": "Surrender and go to the cells. Time served lowers the bounty until it reaches zero. No hearing, no judge.",
   "requestHearing": "Request a hearing",
-  "hearingBlurb": "Your file goes before Eris, Goddess of Justice. An acquittal wipes the record clean. A conviction does not.",
+  "hearingBlurb": "Stand trial before Eris, Goddess of Justice. An acquittal clears your record. A conviction does not.",
   "alreadyInCustody": "You are already in custody. The Bureau appreciates the enthusiasm.",
   "surrenderBtn": "Surrender to custody",
   "surrenderConfirmTitle": "Surrender to custody?",
@@ -59,6 +59,6 @@
   "cancel": "Cancel",
   "record": {
     "heading": "Case File &mdash; {name}",
-    "blurb": "Every charge the Bureau has on you, with its fine. Settling one strikes it from the record and takes the money at once."
+    "blurb": "Every charge on your record, with its fine. Paying a fine removes the charge immediately."
   }
 }

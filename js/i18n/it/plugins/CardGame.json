@@ -54,7 +54,7 @@
       "effects": "Effetti"
     },
     "tabDeck": "Mazzo ({n})",
-    "empty": "Ancora niente sullo scaffale. Apri un pacchetto.",
+    "empty": "Nessuna carta ancora. Apri una bustina.",
     "pickACard": "Scegli una carta per leggerla.",
     "saveDeck": "Salva mazzo",
     "newDeck": "Nuovo mazzo",
@@ -124,8 +124,8 @@
     "left": "ne restano {n}",
     "soldOut": "Esaurito",
     "owned": "ne hai {n}",
-    "hint": "Ogni giorno viene messa in lista una nuova serie di lotti. Un lotto finito è finito.",
-    "hintSell": "Il sito paga meno di quanto chiede. Quella differenza è il suo guadagno.",
+    "hint": "Nuovi lotti sono elencati ogni giorno. I lotti esauriti non tornano.",
+    "hintSell": "Il sito compra a un prezzo inferiore a quello di vendita.",
     "emptyStock": "Oggi non c'è nulla in lista.",
     "emptyShelf": "Non hai carte da vendere.",
     "bought": "Comprata {name} per {price}.",
@@ -142,7 +142,7 @@
     "deckRandom": "Un mazzo estratto",
     "deckOwnNote": "Il tuo mazzo: {n} carte.",
     "deckOwnShort": "Non hai un mazzo valido (almeno {min} carte), quindi te ne verrà prestato uno.",
-    "deckRandomNote": "Un mazzo estratto da tutto il catalogo, come quello della macchina.",
+    "deckRandomNote": "Un mazzo casuale pescato dall'intero catalogo, come quello della CPU.",
     "levelHeading": "Avversario",
     "levelFallback": "Livello {n}",
     "levels": [

@@ -9400,5 +9400,329 @@
     "description": "Throws the last move an enemy used straight back\nat the enemy that used it.",
     "message1": "%1 answers in kind!",
     "message2": ""
+  },
+  "1934": {
+    "name": "Second Dawn",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 asks for one more morning!",
+    "message2": ""
+  },
+  "1935": {
+    "name": "Quickening",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 calls the heart back to work!",
+    "message2": ""
+  },
+  "1936": {
+    "name": "Borrowed Breath",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 lends a breath that will be wanted back!",
+    "message2": ""
+  },
+  "1937": {
+    "name": "Ferry Refused",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 turns the ferryman away!",
+    "message2": ""
+  },
+  "1938": {
+    "name": "Call the Name Back",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 calls the name back through!",
+    "message2": ""
+  },
+  "1939": {
+    "name": "Unwrite the Ending",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 unwrites the ending!",
+    "message2": ""
+  },
+  "1940": {
+    "name": "Pattern Restored",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 restores the broken pattern!",
+    "message2": ""
+  },
+  "1941": {
+    "name": "The Void Declines",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 is handed back by the void!",
+    "message2": ""
+  },
+  "1942": {
+    "name": "Rewound Orbit",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 rewinds one small orbit!",
+    "message2": ""
+  },
+  "1943": {
+    "name": "Wrong Side Up",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 flips the coin until it lands alive!",
+    "message2": ""
+  },
+  "1944": {
+    "name": "One Minute Earlier",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 steps back one minute!",
+    "message2": ""
+  },
+  "1945": {
+    "name": "Misread Omen",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 reads the omen the other way!",
+    "message2": ""
+  },
+  "1946": {
+    "name": "Wake Them From It",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 insists it was only a dream!",
+    "message2": ""
+  },
+  "1947": {
+    "name": "Insist They Live",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 insists, and the world gives in!",
+    "message2": ""
+  },
+  "1948": {
+    "name": "Restart the Mind",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 restarts a stopped mind!",
+    "message2": ""
+  },
+  "1949": {
+    "name": "Knit Anew",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 knits the body into working order!",
+    "message2": ""
+  },
+  "1950": {
+    "name": "Cancel the Condition",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 cancels the condition!",
+    "message2": ""
+  },
+  "1951": {
+    "name": "Relight the Wick",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 relights the wick!",
+    "message2": ""
+  },
+  "1952": {
+    "name": "Thaw the Sleeper",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 thaws the sleeper!",
+    "message2": ""
+  },
+  "1953": {
+    "name": "Restart the Rhythm",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 puts the rhythm back!",
+    "message2": ""
+  },
+  "1954": {
+    "name": "Pull Them Ashore",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 pulls them back ashore!",
+    "message2": ""
+  },
+  "1955": {
+    "name": "Give Back the Breath",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 gives the breath back!",
+    "message2": ""
+  },
+  "1956": {
+    "name": "Unbury",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 digs a friend out of the dark!",
+    "message2": ""
+  },
+  "1957": {
+    "name": "Cold Boot",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 runs a cold boot!",
+    "message2": ""
+  },
+  "1958": {
+    "name": "Adrenal Ampoule",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 empties an ampoule into the heart!",
+    "message2": ""
+  },
+  "1959": {
+    "name": "Kiai of Return",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 shouts a friend back!",
+    "message2": ""
+  },
+  "1960": {
+    "name": "Kindred Howl",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 howls until the pack answers!",
+    "message2": ""
+  },
+  "1961": {
+    "name": "Oath Unbroken",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 will not let the oath end here!",
+    "message2": ""
+  },
+  "1962": {
+    "name": "Defibrillation Protocol",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 calls clear and shocks!",
+    "message2": ""
+  },
+  "1963": {
+    "name": "Adrenaline Round",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 fires the round nobody aims at an enemy!",
+    "message2": ""
+  },
+  "1964": {
+    "name": "Second Chance",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 argues that this one does not count!",
+    "message2": ""
+  },
+  "1965": {
+    "name": "On Your Feet",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 gives an order death has not cancelled!",
+    "message2": ""
+  },
+  "1966": {
+    "name": "Countermand Death",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 files an objection with the world!",
+    "message2": ""
+  },
+  "1967": {
+    "name": "Buy the Debt",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 settles the account in full!",
+    "message2": ""
+  },
+  "1968": {
+    "name": "Curtain Call",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 will not let the house stop clapping!",
+    "message2": ""
+  },
+  "1969": {
+    "name": "Broth of Return",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 gets something hot into them!",
+    "message2": ""
+  },
+  "1970": {
+    "name": "Root and Rise",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 plants them and waits!",
+    "message2": ""
+  },
+  "1971": {
+    "name": "The Pack Waits",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 refuses to leave anyone on the hill!",
+    "message2": ""
+  },
+  "1972": {
+    "name": "Back to Work",
+    "description": "Cures Dead on one fallen ally. Restores HP.\nUsable on the map.",
+    "message1": "%1 says the shift is not over!",
+    "message2": ""
+  },
+  "1973": {
+    "name": "Clean Hands",
+    "description": "Cures Blind, Silence and Poison on one ally.",
+    "message1": "%1 washes it off them!",
+    "message2": ""
+  },
+  "1974": {
+    "name": "Field Suture",
+    "description": "Cures Bleeding and Infected on one ally.\nRestores HP.",
+    "message1": "%1 closes the wound!",
+    "message2": ""
+  },
+  "1975": {
+    "name": "Chelation Draught",
+    "description": "Cures Poison, Nausea, Drunk and Infected on one\nally.",
+    "message1": "%1 draws the poison out!",
+    "message2": ""
+  },
+  "1976": {
+    "name": "Morning Broth",
+    "description": "Cures Nausea and Drunk on all allies. Restores\nHP.",
+    "message1": "%1 ladles it out!",
+    "message2": ""
+  },
+  "1977": {
+    "name": "Nine Herb Poultice",
+    "description": "Cures Poison, Burned and Bleeding on one ally.",
+    "message1": "%1 binds nine herbs to it!",
+    "message2": ""
+  },
+  "1978": {
+    "name": "Quiet the Noise",
+    "description": "Cures Confusion, Charm, Rage and Sleep on one\nally.",
+    "message1": "%1 turns the noise down!",
+    "message2": ""
+  },
+  "1979": {
+    "name": "Stall the Reaper",
+    "description": "Cures Death Mark and Bleeding on one ally.\nRestores HP.",
+    "message1": "%1 keeps the reaper talking!",
+    "message2": ""
+  },
+  "1980": {
+    "name": "Breath Reset",
+    "description": "Cures Winded, Unbalanced, Concussed and Stun on\none ally.",
+    "message1": "%1 puts their breath back in order!",
+    "message2": ""
+  },
+  "1981": {
+    "name": "Trauma Protocol",
+    "description": "Cures Burned, Bleeding and Stun on all allies.",
+    "message1": "%1 works the protocol!",
+    "message2": ""
+  },
+  "1982": {
+    "name": "Rinse",
+    "description": "Cures Burned, Hot and Oily on all allies.",
+    "message1": "%1 rinses it all away!",
+    "message2": ""
+  },
+  "1983": {
+    "name": "Regrow",
+    "description": "Cures Bleeding, Infected and Poison on one ally.\nRestores HP.",
+    "message1": "%1 grows it back!",
+    "message2": ""
+  },
+  "1984": {
+    "name": "Unwrite the Hex",
+    "description": "Removes every stat penalty from one ally.",
+    "message1": "%1 unwrites the hex!",
+    "message2": ""
+  },
+  "1985": {
+    "name": "Encore of Waking",
+    "description": "Cures Sleep, Silence and Confusion on all\nallies.",
+    "message1": "%1 plays them awake!",
+    "message2": ""
+  },
+  "1986": {
+    "name": "Attendant Spirit",
+    "description": "Restores HP to all allies.",
+    "message1": "%1 calls something that tends wounds!",
+    "message2": ""
+  },
+  "1987": {
+    "name": "Wind Back the Wound",
+    "description": "Cures Bleeding on one ally. Restores HP.",
+    "message1": "%1 winds the wound back!",
+    "message2": ""
   }
 }

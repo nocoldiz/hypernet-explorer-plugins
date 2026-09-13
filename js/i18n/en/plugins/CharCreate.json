@@ -18,9 +18,9 @@
   "confirmDeleteMember": "Are you sure you want to remove this character from the party?",
   "pastLife": "Past life",
   "warrior": "Warrior",
-  "disciplinedFrontLineFighters": "Disciplined front-line fighters.",
+  "disciplinedFrontLineFighters": "Melee combat classes.",
   "brawler": "Brawler",
-  "unarmedAndMartialSpecialists": "Unarmed and martial specialists.",
+  "unarmedAndMartialSpecialists": "Unarmed and martial arts classes.",
   "mage": "Mage",
   "wieldersOfArcanePower": "Wielders of arcane power.",
   "occultist": "Occultist",
@@ -30,9 +30,9 @@
   "scholar": "Scholar",
   "mindsOfScienceAndStudy": "Minds of science and study.",
   "survivor": "Survivor",
-  "huntersRangersAndLaborers": "Hunters, rangers and laborers.",
+  "huntersRangersAndLaborers": "Ranged, survival and labour classes.",
   "outsider": "Outsider",
-  "misfitsAndTheUnclassifiable": "Misfits and the unclassifiable.",
+  "misfitsAndTheUnclassifiable": "Classes that fit no other category.",
   "initialSettings": "INITIAL SETTINGS",
   "confirm": "Confirm",
   "difficulty": "Difficulty",
@@ -61,7 +61,7 @@
   "confirmParty": "Confirm party",
   "noCompanion": "No familiar",
   "petKindNone": "Alone",
-  "noCompanionDesc": "Set out with nobody at your heel. The seat stays open for whoever you meet.",
+  "noCompanionDesc": "Start without a companion. The slot stays free for anyone you recruit later.",
   "noDefiningTraits": "No defining traits",
   "noSkillsLearned": "No skills learned",
   "noSpecializations": "No specializations",
@@ -184,7 +184,7 @@
   "primaryMastery": "Primary Mastery",
   "secondaryMastery": "Secondary Mastery",
   "details": "DETAILS",
-  "onlyWhatYourArchetypesSupport": "Only what your archetypes support.",
+  "onlyWhatYourArchetypesSupport": "Only parts supported by your archetypes.",
   "classes": "CLASSES",
   "startingWeaponProficiencies": "Starting Weapon Proficiencies",
   "startingSpecialSkills": "Starting Special Skills",
@@ -207,7 +207,7 @@
   "noAnatomicalOrgansDefined": "No anatomical organs defined",
   "confirmBlueprint": "Confirm Blueprint",
   "custom3dModel": "3D Model",
-  "sculptAUniqueCreatureFromMixedPartsSeededFro": "Sculpt a unique creature from mixed parts, seeded from your chosen archetypes.",
+  "sculptAUniqueCreatureFromMixedPartsSeededFro": "Build a creature from mixed parts, based on your chosen archetypes.",
   "dragToRotateWheelToZoomMiddleDragToPan": "Drag to rotate · wheel to zoom · middle-drag to pan",
   "loadingBattlerAsset": "Loading battler asset...",
   "profileImage": "PROFILE IMAGE",
@@ -228,51 +228,51 @@
   "choice": {
     "vehicleBroom": {
       "name": "Flying broom",
-      "desc": "A broom that answers to nobody's road. It ignores walls, water and cliffs alike, and lands wherever it likes."
+      "desc": "A flying broom. Ignores walls, water and cliffs, and needs no fuel."
     },
     "vehicleCar": {
       "name": "Car",
-      "desc": "A utilitarian car, parked at the edge of the village. Fast over open ground, and it drinks fuel."
+      "desc": "A car. Fast on open ground, but it consumes fuel."
     },
     "vehicleCamper": {
       "name": "Camper",
-      "desc": "A van you can live in: a bed, a stove and everything you own, wherever you decide to stop."
+      "desc": "A camper. Consumes fuel, and the party can sleep and store items inside."
     },
     "vehicleBoat": {
       "name": "Boat",
-      "desc": "An inflatable dinghy, moored down at the water. Costs nothing to run, and it goes only where there is water."
+      "desc": "An inflatable boat. Costs nothing to run, but moves only on water."
     },
     "vehicleBike": {
       "name": "Bike",
-      "desc": "A bicycle, leaning where you left it. No fuel, no upkeep, and it follows every road there is."
+      "desc": "A bicycle. No fuel or upkeep, but it only travels on roads."
     },
     "vehicleStarship": {
       "name": "Starship",
-      "desc": "A ship that leaves the ground altogether. No roadside pump will ever fill it."
+      "desc": "A starship. Travels between planets and cannot be refuelled at road pumps."
     },
     "originDeserter": {
       "name": "Deserter",
-      "desc": "Choose a faction you deserted from: begin with 40 of its troops, but hated by it (and its parent faction)."
+      "desc": "Choose a faction you deserted. Start with 40 of its troops, hated by it and its parent faction."
     },
     "originAugmented": {
       "name": "Augmented",
-      "desc": "You all walked out of the same clinic with the hardware still settling: everyone starts with two or three augments, fitted to whatever anatomy they have."
+      "desc": "Every party member starts with two or three augments already fitted."
     },
     "originFactionLeader": {
       "name": "Faction Leader",
-      "desc": "Choose a faction and begin in command of 40 of its troops, in good standing with it (and its parent faction), with two weeks of upkeep money."
+      "desc": "Choose a faction. Start commanding 40 of its troops, in good standing with it and its parent faction, with two weeks of upkeep money."
     },
     "originWarlord": {
       "name": "Independent Warlord",
-      "desc": "Begin in command of 40 troops drawn from random factions, loyal to no one, with enough gold to cover two weeks of their upkeep."
+      "desc": "Start commanding 40 troops from random factions, with two weeks of upkeep money."
     },
     "originCrash": {
       "name": "Crash Landed",
-      "desc": "Begin stranded on a random planet in an uncharted galaxy, ship damaged, nearly out of fuel and with no jump charges left."
+      "desc": "Start on a random planet in an uncharted galaxy with a damaged ship, almost no fuel and no jump charges."
     },
     "originArtifact": {
       "name": "Artifact Heir",
-      "desc": "Inherit one of the world's ancient artifacts, chosen at random, along with its history."
+      "desc": "Start with one random ancient artifact."
     },
     "originCeo": {
       "name": "CEO",
@@ -280,15 +280,15 @@
     },
     "originBunker": {
       "name": "Bunker",
-      "desc": "Wake up in a stocked loot cellar under a random overland biome. Its gold is yours, and the hatch you climb out of stays open forever."
+      "desc": "Start in a stocked loot cellar under a random biome. Its gold is yours, and the hatch stays open permanently."
     },
     "originStranded": {
       "name": "Stranded",
-      "desc": "Begin on foot at a random remote spot, far from anywhere anyone would look."
+      "desc": "Start on foot at a random remote location."
     },
     "originCriminal": {
       "name": "Criminal",
-      "desc": "Same camper start as the camper origin, but your party begins already wanted with a 10,000€ bounty."
+      "desc": "Same start as the camper origin, but the party begins wanted with a 10,000€ bounty."
     },
     "originMayor": {
       "name": "Mayor",
@@ -296,31 +296,31 @@
     },
     "originDungeon": {
       "name": "Dungeon entrance",
-      "desc": "Start at the tower gate with a delve kit: extra potions, the tower routes map, a flashlight and a climbing rope."
+      "desc": "Start at the tower gate with extra potions, the tower routes map, a flashlight and a climbing rope."
     },
     "originLot": {
       "name": "Full automation",
-      "desc": "Build your utopia: every party member starts with advanced crafting specializations, and the workshop is already fully stocked. The machines will do the rest - all you need is the vision."
+      "desc": "Every party member starts with advanced crafting specializations, and the workshop starts fully stocked."
     },
     "originBike": {
       "name": "Start on bike",
-      "desc": "Begin out in the country with a bike parked beside you."
+      "desc": "Start in the countryside next to your bike."
     },
     "originCar": {
       "name": "Start in car",
-      "desc": "Wake up out in the country beside your car, keys in hand. Where you drive it is up to you."
+      "desc": "Start in the countryside next to your car."
     },
     "originCamper": {
       "name": "Start in camper",
-      "desc": "Wake up out in the country beside your camper, keys in hand. Where you drive it is up to you."
+      "desc": "Start in the countryside next to your camper."
     },
     "originSpace": {
       "name": "Start in space",
-      "desc": "Skip the map selection and begin your journey out in space."
+      "desc": "Start in space, skipping the map selection."
     },
     "originTrain": {
       "name": "Start in train",
-      "desc": "Board the train and pick your destination on the map (default)."
+      "desc": "Start on the train and pick your destination on the map (default)."
     },
     "rerollCharacter": {
       "name": "Reroll character",
@@ -340,7 +340,7 @@
     },
     "ageElder": {
       "name": "Elder (60+)",
-      "desc": "Old, have lived through the Psichic Wars."
+      "desc": "Old. Lived through the Psychic Wars."
     },
     "ageMiddle": {
       "name": "Middle-aged (41-60)",
@@ -356,11 +356,11 @@
     },
     "randomTraits": {
       "name": "Randomize traits",
-      "desc": "Have traits randomly assigned to your character."
+      "desc": "Assign random traits to your character."
     },
     "randomPersonality": {
       "name": "Random",
-      "desc": "Let a disposition be dealt to your character."
+      "desc": "Assign a random personality to your character."
     },
     "pickTraits": {
       "name": "Pick traits",
@@ -368,7 +368,7 @@
     },
     "randomClass": {
       "name": "Random class",
-      "desc": "Be assigned a random starting class."
+      "desc": "Assign a random starting class."
     },
     "selectClass": {
       "name": "Select a class",
@@ -376,7 +376,7 @@
     },
     "randomizeAllParty": {
       "name": "Randomize all party",
-      "desc": "Fill every party slot with a random character instantly, then choose your origin."
+      "desc": "Fill every party slot with a random character, then choose your origin."
     },
     "totalRandom": {
       "name": "Total Random",
@@ -408,63 +408,63 @@
     },
     "combatMonsters": {
       "name": "Monsters",
-      "desc": "Capture and battle with monsters. \\C[1]This cannot be changed later.\\C[0]"
+      "desc": "Capture monsters and fight with them. This cannot be changed later."
     },
     "combatMap": {
       "name": "Map Battle",
-      "desc": "Tactical fights on the live map instead of a separate battle screen. Move on the tile grid, weapons and skills have a reach, and line of sight matters. Can be changed later in Options."
+      "desc": "Fights take place on the map instead of a separate battle screen. Movement is on the tile grid, weapons and skills have a range, and line of sight matters. Can be changed later in Options."
     },
     "combatRpg": {
       "name": "Classic RPG",
-      "desc": "Standard turn-based combat. Skills cost MP/AP and are picked from your command menu."
+      "desc": "Standard turn-based combat. Skills cost MP or AP and are chosen from the command menu."
     },
     "peaceful": {
       "name": "Peaceful",
-      "desc": "Enemies never attack or chase you unless provoked, and you can \\C[1]Talk\\C[0] to them in battle. Defeat just returns you to your last respawn point."
+      "desc": "Enemies never attack or chase you unless provoked, and you can Talk to them in battle. Defeat returns you to your last respawn point."
     },
     "bloodAndOil": {
       "name": "Blood and Oil",
-      "desc": "A slashing blow can take a body part off for good, with permanent stat debuffs; a part it only breaks still heals. Losing a vital organ kills the character instantly. Allies not resurrected by the end of the battle die permanently."
+      "desc": "Slashing hits can permanently remove body parts, with permanent stat penalties. Broken parts heal. Losing a vital organ kills the character instantly. Allies not revived by the end of battle die permanently."
     },
     "permadeath": {
       "name": "Permadeath",
-      "desc": "If your character perishes in battle you must create a new one. Allies not resurrected by the end of the battle die permanently."
+      "desc": "If your character dies in battle you must create a new one. Allies not revived by the end of battle die permanently."
     },
     "roguelite": {
       "name": "Roguelite",
-      "desc": "If defeated you rewake at the base floor of the dungeon. Fallen allies stay in the party and can be resurrected after battle."
+      "desc": "If defeated you respawn at the base floor of the dungeon. Fallen allies stay in the party and can be revived after battle."
     },
     "originCardCollector": {
       "name": "Card Collector",
-      "desc": "You came off the circuit with a shelf of monster cards and a deck already sleeved. Everyone you meet is somebody who might sit down for a game."
+      "desc": "Start with a collection of monster cards and a ready-built deck."
     },
     "originArcanist": {
       "name": "Arcanist",
-      "desc": "You left the college with four esoteric spells apiece, a shelf of school primers, a beginner's grimoire and robes that still smell of chalk. Pick where the coach sets you down."
+      "desc": "Every party member starts with four esoteric spells, school primers, a beginner's grimoire and robes. Choose your starting location."
     },
     "originMercenary": {
       "name": "Mercenary",
-      "desc": "The last contract paid in kit rather than coin: a ranged weapon each, a field vest, a medic's bag and whatever survival gear was left in the truck. Pick where the work takes you."
+      "desc": "Every party member starts with a ranged weapon, plus a field vest, a medic's bag and survival gear for the party. Choose your starting location."
     },
     "originLostConvoker": {
       "name": "Lost Convoker",
-      "desc": "The rite worked. It just did not say where. You come to in a field, a forest or a mountainside nobody chose, with eight summoning rites apiece, a staff, a robe and no idea which country this is."
+      "desc": "Start at a random wilderness location. Every party member has eight summoning rites, a staff and a robe."
     },
     "originSkeletonKey": {
       "name": "Skeleton Key Holder",
-      "desc": "You own one thing, and it opens any mundane lock ever cut. No rations, no bedroll, no lamp: whatever you need is already behind somebody's door. Pick the place on the map where you start trying them."
+      "desc": "Start with only a skeleton key that opens any mundane lock. No other supplies. Choose your starting location."
     },
     "originPlague": {
       "name": "Plague Spreader",
-      "desc": "You escaped a biolab with a case full of sealed vials holding the worst pathogens that ever existed."
+      "desc": "Start with a case of sealed vials containing the deadliest pathogens in the world."
     },
     "originDiplomat": {
       "name": "Diplomat",
-      "desc": "Begin in Brussels with an ONU Terminal, remote access into the assembly. No rations, no rope: a seat at the table is the only thing you brought."
+      "desc": "Start in Brussels with an ONU Terminal that gives remote access to the assembly. No other supplies."
     },
     "originHypernetExplorer": {
       "name": "Hypernet Explorer",
-      "desc": "You come round at a terminal in the Hypernet Point with a bag of components, an energy drink and no memory of paying for the hour. The deck is half built. The rest of it is out there somewhere, in shops, in skips, and in other people's houses."
+      "desc": "Start at the Hypernet Point with a bag of components and a half-built hyperdeck. The missing parts can be found in shops and houses."
     }
   },
   "hairStyle": {
@@ -542,10 +542,10 @@
   "start": "Start",
   "trainPickADestination": "Train, pick a destination",
   "deepSpace": "Deep space",
-  "yourCamperParkedInACity": "Your camper, parked beside you out in the country",
-  "yourCarParkedInACity": "Your car, parked beside you out in the country",
+  "yourCamperParkedInACity": "Your camper, parked next to you in the countryside",
+  "yourCarParkedInACity": "Your car, parked next to you in the countryside",
   "aRandomOverlandBiome": "A random overland biome",
-  "aRandomWorldMapTile": "A random patch of open country",
+  "aRandomWorldMapTile": "A random countryside tile",
   "theTowerGate": "The tower gate",
   "theOnuAssemblyInBrussels": "The ONU assembly, Brussels",
   "aCityOfYourChoice": "A city of your choice",
@@ -553,7 +553,7 @@
   "10000OnYourHead": "10,000€ on your head",
   "stock": "Stock",
   "sealedVials": "{count} sealed culture vials, one illness each",
-  "aRandomRemoteWorldMapSpot": "A random remote spot, far from anywhere",
+  "aRandomRemoteWorldMapSpot": "A random remote location",
   "aLootCellarUnderARandomBiome": "A loot cellar under a random biome",
   "hoards": "Hoards",
   "wayBack": "Way back",
@@ -575,9 +575,9 @@
   "language": "Language",
   "gameLanguageAnyMissingTranslationFallsBackTo": "Game language. Any missing translation falls back to English.",
   "fogOfWar": "Fog of War (WIP)",
-  "revealsTheMapGraduallyAsYouExploreUnvisitedA": "Reveals the map gradually as you explore. Unvisited areas remain hidden in darkness.",
+  "revealsTheMapGraduallyAsYouExploreUnvisitedA": "Reveals the map as you explore. Unvisited areas stay hidden.",
   "theEntireMapIsFullyRevealedNoHiddenAreas": "The entire map is fully revealed, no hidden areas.",
-  "exploreTileByTileDarknessVeilsTheUnknown": "Explore tile by tile, darkness veils the unknown.",
+  "exploreTileByTileDarknessVeilsTheUnknown": "Unexplored tiles stay hidden until visited.",
   "cpuPartyMembers": "CPU Party Members",
   "everyPartyMemberExceptTheLeaderActsAutomatic": "Every party member except the leader acts automatically in battle, choosing their own actions.",
   "youManuallyControlEveryPartyMemberSActions": "You manually control every party member's actions.",
@@ -612,18 +612,18 @@
     "level": "Lv"
   },
   "statInfo": {
-    "HP": "Health Points. Falls to 0 and the character is knocked out of the fight.",
-    "MP": "Mana Points. Spent to cast skills and spells; empty and only free actions are left.",
-    "STR": "Strength. Drives physical attack power, melee and thrown weapons alike.",
-    "CON": "Constitution. Physical defense: how much a hit's damage is shaved down before it lands.",
-    "DEX": "Dexterity. Turn order and the odds of dodging an attack outright.",
-    "INT": "Intelligence. Drives magic attack power, the damage a spell actually lands for.",
-    "WIS": "Wisdom. Magic defense: resistance to spells and other magical harm.",
-    "PSI": "Psyche. Luck: critical hits, rare drops and other odds tipped in the character's favor.",
-    "ARCANE": "Arcane. How magical the character looks and feels to anyone reading them.",
-    "SUBSTANCE": "Substance. How stylish the character is, the impression their look leaves.",
+    "HP": "Health Points. At 0 the character is knocked out.",
+    "MP": "Mana Points. Spent to cast skills and spells.",
+    "STR": "Strength. Physical attack power for melee and thrown weapons.",
+    "CON": "Constitution. Physical defense, reduces damage taken from hits.",
+    "DEX": "Dexterity. Turn order and dodge chance.",
+    "INT": "Intelligence. Magic attack power.",
+    "WIS": "Wisdom. Magic defense, resistance to spells.",
+    "PSI": "Psyche. Luck: critical hits, rare drops and other chance rolls.",
+    "ARCANE": "Arcane. How magical the character appears to others.",
+    "SUBSTANCE": "Substance. How stylish the character appears to others.",
     "STEALTH": "Stealth. How well the character blends into the surroundings.",
-    "INTIMIDATION": "Intimidation. How threatening the character's clothes and gear appear."
+    "INTIMIDATION": "Intimidation. How threatening the character's gear appears."
   },
   "characterType": "Character Type",
   "traitTypeLabel": "TRAIT",
@@ -639,7 +639,7 @@
   "detailed": {
     "tab": "Create",
     "title": "Character sheet",
-    "hint": "Every line is a field. Click one to change it, or click the portrait to redraw the character.",
+    "hint": "Click any field to edit it, or click the portrait to redraw the character.",
     "portraitHint": "Change sprite, bust or 3D model",
     "unavailable": "There is no character to edit here.",
     "unset": "Not set",
@@ -701,14 +701,14 @@
     "specCost": "costs {n}",
     "specRefund": "click to give the points back",
     "specGranted": "(free to {level})",
-    "specsRandomHint": "Spend the whole budget at random, on top of what the class and traits already grant.",
+    "specsRandomHint": "Spend the remaining budget at random, on top of what the class and traits already grant.",
     "search": "Search…",
     "noMatches": "Nothing here matches that.",
     "specLower": "give back {n}",
     "specPointsShort": "{left} / {total} pts",
-    "partyNote": "A made character joins no party unless you pick one here. Only parties standing in their home nation are listed.",
+    "partyNote": "A new character joins a party only if you pick one here. Only parties in their home nation are listed.",
     "partyMatch": "Same creed",
-    "wealthNote": "What this character brings to the party purse.",
+    "wealthNote": "Money this character adds to the party funds.",
     "moreMatches": "{n} more , narrow the search to see them.",
     "specNotImplemented": "Not implemented"
   },
@@ -725,10 +725,10 @@
   "oneRangedWeaponEach": "One ranged weapon each, already carried",
   "aRandomSquareOfTheWorld": "A random square of the world",
   "summoningRites": "Summoning rites",
-  "summoningRitesPerMember": "{count} each, and no map to go with them",
+  "summoningRitesPerMember": "{count} each",
   "craftingSpecsAllMembers": "{count} crafting specializations each, Advanced to Master (randomized per member)",
   "supplies": "Supplies",
-  "nothingButTheKey": "None. The key is everything you carry.",
+  "nothingButTheKey": "None. Only the key.",
   "primaryLocked": "Primary (fixed)",
   "theHypernetPoint": "The Hypernet Point, the terminal room of the Omega Tower",
   "components": "Components",
@@ -792,7 +792,7 @@
   "classCurrent": "Current class",
   "growthToLevel": "Lv 1 to Lv {n}",
   "dossierName": "Name",
-  "presetNoLore": "A distinguished operative prepared for network field operations.",
+  "presetNoLore": "A premade character ready to play.",
   "removeMemberTitle": "Remove from party",
   "removeMemberBody": "{name} will be removed from the party and their dossier discarded.",
   "scenarioRoster": "Party dossiers",
@@ -806,8 +806,8 @@
   "simpleMode": "Simple mode",
   "detailedMode": "Detailed mode",
   "toggleModeTooltip": "Toggle between Simple and Detailed creation mode",
-  "petDesc": "A companion attuned to the surrounding ecosystem. Resilient, vigilant, and devoted to trailing and safeguarding the party.",
-  "petDescKind": "A wilderness {kind} companion attuned to the surrounding ecosystem.",
+  "petDesc": "A creature companion that follows the party and helps defend it.",
+  "petDescKind": "A wild {kind} companion that follows and defends the party.",
   "returnToParty": "Return to Party Configuration",
   "startingFunds": "Starting Funds",
   "skillCount": "{n} skills",
@@ -822,7 +822,7 @@
   "vital": "Vital",
   "archetypeBoardHint": "Pick one archetype for a baseline body, or add a second to splice a hybrid.",
   "cc3d": {
-    "hint": "Open a group of parts, then pick one to fit it. Grab a fitted part to move, turn or resize it; parts always stay attached to the limb they hang from. Right-drag turns the view, the wheel zooms.",
+    "hint": "Open a part group, then pick a part to fit it. Drag a fitted part to move, rotate or resize it. Parts stay attached to their limb. Right-drag rotates the view, wheel zooms.",
     "symmetry": "Symmetry",
     "symMirror": "Mirror",
     "symOff": "Off",
@@ -970,7 +970,7 @@
     "noJobGear": "No initial professional equipment or work tools provided.",
     "noBackstory": "No backstory recorded yet."
   },
-  "specGenericDesc": "Proficiency acquired through rigorous study and fieldwork.",
+  "specGenericDesc": "A trained specialization.",
   "name": "Name",
   "gender": "Gender",
   "coreAttributes": "Core Attributes",
@@ -988,8 +988,8 @@
     "style": "Preferred Relationship Style",
     "bonds": "Standing With The Rest Of The Party",
     "bondsTitle": "Ties Already Held",
-    "noBonds": "This one starts out tied to nobody in the party.",
-    "noOthers": "Nobody else has been created yet. Add a second member and their standing with this one can be set here.",
+    "noBonds": "This character starts with no bonds in the party.",
+    "noOthers": "No other member exists yet. Add a second member to set their bond with this one here.",
     "ofPopulation": "of the population",
     "esoteric": "esoteric",
     "summaryTitle": "Attachment Record",
@@ -1001,7 +1001,7 @@
   "vehicleOwned": "In the garage",
   "vehicleFree": "Not taken",
   "vehicleKeys": "Keys in the pack",
-  "vehicleNoneTaken": "Nothing in the garage. You set out on foot.",
+  "vehicleNoneTaken": "No vehicle. You start on foot.",
   "vehicleGarage": "Your garage",
   "vehicleRequired": "Story mode needs one vehicle before you can set out.",
   "vehicleTake": "Take this vehicle",

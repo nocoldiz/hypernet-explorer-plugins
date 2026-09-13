@@ -660,9 +660,19 @@
         // Nothing the book deals her is a spell she could never pay for: a page
         // she cannot cast is a dead slot in a nine-slot row.
         const ceiling = actor.mmp || 0;
-        const pool = ($dataSkills || []).filter(skill => {
+        // Which shelves the pact is dealt from. The Grimoire of Solomon is
+        // calibrated on the vector gun's own screen (Weapon/VectorGunSystem.js);
+        // an empty set is the whole shelf, which is what everyone who has never
+        // touched that page gets.
+        const VG = window.VectorGun;
+        const schools = (VG && VG.grimoireSchools) ? VG.grimoireSchools() : [];
+        let narrowed = Array.isArray(schools) && schools.length ? schools : null;
+        const deal = () => ($dataSkills || []).filter(skill => {
             if (!skill || !skill.name || skill.stypeId <= 0) return false;
             if (!isMagicalSkill(skill)) return false;
+            if (narrowed && narrowed.indexOf(String(skill.meta && skill.meta.category)) < 0) {
+                return false;
+            }
             if (skill.occasion !== 0 && skill.occasion !== 1) return false;
             if (!skill.damage || skill.damage.type <= 0) return false;
             if ((skill.mpCost || 0) > ceiling) return false;
@@ -673,6 +683,14 @@
             if (skill.id >= ESOTERIC_FROM) return esoteric;
             return true;
         });
+        let pool = deal();
+        // Narrowed too far there may be nothing left to deal, and a book that
+        // opens on a blank page is worse than one that opens anywhere: it
+        // falls back on the whole shelf rather than dealing nothing.
+        if (!pool.length && narrowed) {
+            narrowed = null;
+            pool = deal();
+        }
         if (!pool.length) return [];
         const power = (skill) => (skill.mpCost || 0) + (skill.tpCost || 0) * 2;
         const ranked = pool.slice().sort((a, b) => power(b) - power(a));

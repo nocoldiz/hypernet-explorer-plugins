@@ -6,7 +6,7 @@
     "outbreaks": "Outbreaks",
     "archive": "Archive"
   },
-  "curveHint": "The curve is drawn once the outbreak has run a second day.",
+  "curveHint": "The curve appears after the outbreak's second day.",
   "dayNumbered": "day {day}",
   "currentlyIll": "Currently ill",
   "deadSoFar": "Dead so far",
@@ -52,7 +52,7 @@
   "spreadRate": "Spread rate R",
   "bureauLog": "Bureau log",
   "archiveTitle": "Archive",
-  "archiveBlurb": "Outbreaks this world has closed, and the epidemics and mass hysterias recorded over the last century. Select a closed outbreak to see its curve.",
+  "archiveBlurb": "Closed outbreaks of this world, plus the epidemics recorded over the last century. Select one to view its curve.",
   "closedThisWorld": "Closed this world",
   "nothingClosed": "Nothing has run its course yet.",
   "lastCentury": "The last century",

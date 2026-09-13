@@ -1,3 +1,31 @@
+0.6.19a
+
+Added:
+ - materials bulk trader app on the hypernet os desktop
+ - thinker menu turns a weapon you own into an artifact
+ - trait archetype presets instead of individual traits in minimal mode
+ - a field revive and cures for every school of magic
+
+Changed:
+ - flavoured UI descriptions and blurbs rewritten to plain mechanics
+ - reenable italian language in language selector
+ - reworked vector gun menu with calibrate tab and ten new forms
+ - ascii headers now golden, restyled remaining off-theme UI screens
+ - archetype fist models now used only by creature characters
+ - sandbox Eris starts with every skill and the vector gun
+ - skill invocation speed now moves the battle turn order
+ - reworked vector gun forms as black and gold folding pieces
+ - reworked ship repair and upgrades screen, costlier upgrades
+ - reworked balance, skill effects and armours
+
+Fixed:
+ - blade seed spirits now learn real skills again
+ - lowercase "em" no longer golden in dialogue
+ - bosses never spawn in map, and petrodemons can be escaped
+ - empathize dice no longer keep rolling after the dialogue closes
+
+
+
 0.6.18a
 
 Added:
@@ -10,6 +38,7 @@ Added:
  - gas giant upper atmosphere
  - new procedural "Rarities" enemies with golden level number, they are unique for savegame and never respawn
 Changed:
+ - H controls popup shows only the first visit, Info over a zone
  - voxelmode performance
  - junk weapons now give nausea, oily or poison
  - all Em sprites reference the Em bust
@@ -25,7 +54,6 @@ Changed:
  - reworked spell incantations recital
  - added spell damage/heal bonus for Em when she recites the full incantation   
  - reworked enemy bars: no AP orb, no MP bar at 1 MP
- - reworked game balance and gave every skill its own effect
  - removed five tree sprites from spawning and furniture
  - reworked enemy spawning with nation level brackets
  - reworked battlelog move option and the battle Actions menu

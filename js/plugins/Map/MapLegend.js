@@ -98,6 +98,25 @@
  * entirely and the same key brings it up. While the sheet answers to H the
  * help menu does not: it is reached through the pause menu instead.
  *
+ * The strip is a first visit and nothing more. It teaches, so it teaches once:
+ * the first time the party stands on one of those places the folded sheet is
+ * in the corner, and every visit after that it is off the screen the way any
+ * other map's is. Which places are spent is remembered on $gameSystem, and the
+ * place underfoot is not spent by being stood on: it keeps the strip for the
+ * whole visit and is only spent once the party walks out.
+ *
+ * ---------------------------------------------------------------------------
+ * The key on a zone
+ * ---------------------------------------------------------------------------
+ * While the party stands on a zone, H and R3 are the notice's rather than the
+ * list's, wherever that zone is and whether or not it was ever read: the
+ * folded strip reads "Info" in place of "Controls" and pressing the key reads
+ * the place out. The controls list is not drawn beside it, so the key opens
+ * one thing and one thing only. Walking off the zone hands the key back to
+ * the list. The three states of the notices setting decide whether a notice
+ * speaks up unasked, not whether it can be asked for; "off" is the one state
+ * that takes the zone away entirely and leaves the key to the list.
+ *
  * ---------------------------------------------------------------------------
  * Where a notice comes from
  * ---------------------------------------------------------------------------
@@ -469,6 +488,16 @@
     return notice;
   }
 
+  // What the ground has to say, whether or not it has already been said. The
+  // setting above decides when a notice speaks up on its own; it does not take
+  // the zone away, so the fold key can still be pointed at it. "off" is the
+  // one state that does: with the notices switched off there is no zone to
+  // stand in and the key is the controls list's the way it always was.
+  function zoneNotice() {
+    if (!legendEnabled()) return null;
+    return resolveNotice();
+  }
+
   function proceduralMapId() {
     const wmt = window.WorldMapTransfer;
     return (wmt && wmt.procMapId) || PROCEDURAL_MAP_ID;
@@ -727,11 +756,59 @@
     return false;
   }
 
-  // Where the sheet stays on the screen even folded.
-  function pinnedContext() {
+  // The ground the sheet would stay pinned to even folded: the story mode, the
+  // tutorial tree and the square the game opened on.
+  function pinnedGround() {
     if (storyMode()) return true;
     if (!$gameMap) return false;
     return tutorialMap($gameMap.mapId()) || onStartPlace();
+  }
+
+  // The strip teaches, so it teaches once: the first time the party walks onto
+  // one of those places the folded sheet stands in the corner, and every visit
+  // after that it is off the screen the way any other map's is. Which places
+  // are spent is remembered on $gameSystem, and the one underfoot is not spent
+  // by being stood on: it keeps the strip for the whole visit and is only
+  // spent once the party walks out.
+  const pinWatch = { place: null };
+
+  function placeKey(place) {
+    if (!place) return "";
+    return place.world
+      ? place.mapId + "@" + place.world.x + "," + place.world.y
+      : String(place.mapId);
+  }
+
+  function pinnedSeen() {
+    return ($gameSystem && $gameSystem._mapLegendPinnedSeen) || {};
+  }
+
+  function markPinnedSeen(key) {
+    if (!$gameSystem || !key) return false;
+    const seen = pinnedSeen();
+    if (seen[key]) return false;
+    seen[key] = true;
+    $gameSystem._mapLegendPinnedSeen = seen;
+    return true;
+  }
+
+  function resetPinnedSeen() {
+    if ($gameSystem) $gameSystem._mapLegendPinnedSeen = {};
+    pinWatch.place = null;
+  }
+
+  // Where the sheet stays on the screen even folded.
+  function pinnedContext() {
+    if (!pinnedGround()) { pinWatch.place = null; return false; }
+    const key = placeKey(currentPlace());
+    if (!key) return false;
+    if (pinnedSeen()[key] && pinWatch.place !== key) {
+      pinWatch.place = null;
+      return false;
+    }
+    pinWatch.place = key;
+    markPinnedSeen(key);
+    return true;
   }
 
   // Folded is remembered on $gameSystem, so a save reopens the way it was
@@ -929,7 +1006,7 @@
       let ctlSig = "";
       for (const entry of rows) ctlSig += entry.id + "";
       ctlSig += "" + (folded ? 1 : 0) + (state.foldable ? 1 : 0) +
-        (state.hasPad ? 1 : 0) + (notice ? 1 : 0) + "" + (state.foldChip || "");
+        (state.hasPad ? 1 : 0) + (notice ? 1 : 0) + (state.zone ? 1 : 0) + "" + (state.foldChip || "");
       const wantControls = rows.length || (state.foldable && !notice);
       if (wantControls) {
         const ctl = this.controlsElement();
@@ -1001,8 +1078,10 @@
         }
       }
       if (state.foldable && !hasNotice) {
+        // On a zone the strip is the place's, not the list's: it names the
+        // info waiting behind the key, and pressing it reads the place out.
         const hint = bareFold
-          ? T("MapLegend.controlsHeading")
+          ? T(state.zone ? "MapLegend.infoHint" : "MapLegend.controlsHeading")
           : T("MapLegend.foldHint");
         parts.push(this._foldHtml(hint, state));
       }
@@ -1121,13 +1200,20 @@
     }
     updateTooltipWatch();
     readFoldKey();
-    const notice = legendEnabled() ? allowedNotice(resolveNotice()) : null;
+    // Standing on a zone, the key belongs to what the place has to say rather
+    // than to the controls list: the strip reads [H] Info instead of [H]
+    // Controls and unfolding reads the place out, even where it was read
+    // before. The setting still decides whether it speaks up unasked.
+    const zone = zoneNotice();
+    const spoken = allowedNotice(zone);
     const folded = isFolded();
-    const rows = folded ? [] : visibleRows();
-    // Folded, the sheet stays up as a strip only where it is pinned: the
-    // story mode and the tutorial maps. Anywhere else folded is off the
-    // screen, and the same key brings it back.
-    if (folded && !pinnedContext()) {
+    const notice = folded ? spoken : (zone || spoken);
+    const rows = (folded || zone) ? [] : visibleRows();
+    // Folded, the sheet stays up as a strip only where it is pinned - the
+    // story mode and the tutorial maps, and only the first time the party
+    // stands there - or where a zone has something to be asked for. Anywhere
+    // else folded is off the screen, and the same key brings it back.
+    if (folded && !zone && !pinnedContext()) {
       sheet.hide();
       return;
     }
@@ -1137,7 +1223,7 @@
     }
     sheet.draw(notice, rows, {
       folded, foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
-      foldPad: foldPadChip(),
+      foldPad: foldPadChip(), zone: !!zone,
     });
     sheet.setBehindBusts(bustOnScreen());
   }
@@ -1174,12 +1260,17 @@
   Game_Map.prototype.setup = function (mapId) {
     _Game_Map_setup.call(this, mapId);
     resetTooltipWatch();
+    // The place underfoot is about to change, so whichever one was holding the
+    // strip up lets it go: a map already taught does not get a second lesson
+    // because the party walked back onto it.
+    pinWatch.place = null;
   };
 
   const _DataManager_extractSaveContents = DataManager.extractSaveContents;
   DataManager.extractSaveContents = function (contents) {
     _DataManager_extractSaveContents.call(this, contents);
     resetTooltipWatch();
+    pinWatch.place = null;
   };
 
   //===========================================================================
@@ -1224,6 +1315,7 @@
     markNoticeSeen,
     resetNoticesSeen,
     allowedNotice,
+    zoneNotice,
     visibleRows,
     rowKeys,
     rowFace,
@@ -1267,6 +1359,12 @@
     legendEnabled,
     tutorialMap,
     pinnedContext,
+    pinnedGround,
+    pinnedSeen,
+    markPinnedSeen,
+    resetPinnedSeen,
+    placeKey,
+    pinWatch,
     isFolded,
     toggleFold,
     foldable,

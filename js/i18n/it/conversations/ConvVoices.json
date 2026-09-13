@@ -20,7 +20,10 @@
       "spero",
       "insicuro",
       "tremo",
-      "guai"
+      "guai",
+      "magari",
+      "timore",
+      "ansia"
     ],
     "avoids": [
       "ovvio",
@@ -28,7 +31,9 @@
       "facile",
       "tranquillo",
       "sicuro",
-      "audace"
+      "audace",
+      "semplice",
+      "calmo"
     ]
   },
   "Calm": {
@@ -50,7 +55,10 @@
       "pazienza",
       "tranquillo",
       "respiro",
-      "equilibrio"
+      "equilibrio",
+      "lentamente",
+      "posato",
+      "fermo"
     ],
     "avoids": [
       "panico",
@@ -58,7 +66,9 @@
       "disastro",
       "urlare",
       "fretta",
-      "caos"
+      "caos",
+      "frenetico",
+      "disperato"
     ]
   },
   "Aggressive": {
@@ -81,14 +91,20 @@
       "spacco",
       "denti",
       "rabbia",
-      "forza"
+      "forza",
+      "botte",
+      "colpo",
+      "maledizione"
     ],
     "avoids": [
       "gentile",
       "dolce",
       "cortese",
       "delicato",
-      "piano"
+      "piano",
+      "tenero",
+      "prego",
+      "garbato"
     ]
   },
   "Melancholic": {
@@ -114,14 +130,18 @@
       "stanco",
       "peso",
       "cupo",
-      "desolato"
+      "desolato",
+      "dimenticato",
+      "tetro"
     ],
     "avoids": [
       "splendido",
       "felice",
       "allegro",
       "luminoso",
-      "fortuna"
+      "fortuna",
+      "gioia",
+      "raggiante"
     ]
   },
   "Sanguine": {
@@ -144,14 +164,18 @@
       "sole",
       "buono",
       "festa",
-      "meraviglia"
+      "meraviglia",
+      "divertente",
+      "delizioso"
     ],
     "avoids": [
       "cupo",
       "marcio",
       "disperato",
       "condannato",
-      "miseria"
+      "miseria",
+      "tetro",
+      "angoscia"
     ]
   },
   "Cautious": {
@@ -173,14 +197,19 @@
       "sicuro",
       "forse",
       "rischio",
-      "misurare"
+      "misurare",
+      "preparato",
+      "verificare",
+      "prudente"
     ],
     "avoids": [
       "avventato",
       "azzardo",
       "subito",
       "cieca",
-      "fretta"
+      "fretta",
+      "tuffarsi",
+      "qualunque"
     ]
   },
   "Impulsive": {
@@ -202,14 +231,17 @@
       "salto",
       "già",
       "oggi",
-      "corsa"
+      "corsa",
+      "improvvisamente"
     ],
     "avoids": [
       "pazienza",
       "gradualmente",
       "aspettare",
       "lentamente",
-      "calma"
+      "calma",
+      "attentamente",
+      "misurato"
     ]
   },
   "Stoic": {
@@ -230,14 +262,19 @@
       "semplicemente",
       "sopportare",
       "fatto",
-      "resistere"
+      "resistere",
+      "tenere",
+      "bisogna",
+      "tempo"
     ],
     "avoids": [
       "lamento",
       "piagnucolare",
       "dramma",
       "entusiasta",
-      "chiasso"
+      "chiasso",
+      "piangere",
+      "delizioso"
     ]
   },
   "Paranoid": {
@@ -259,7 +296,10 @@
       "dietro",
       "trappola",
       "occhi",
-      "complotto"
+      "complotto",
+      "loro",
+      "attento",
+      "segnato"
     ],
     "avoids": [
       "innocuo",
@@ -267,7 +307,8 @@
       "fiducia",
       "innocente",
       "sicuro",
-      "aperto"
+      "aperto",
+      "amichevole"
     ]
   },
   "Empathetic": {
@@ -290,14 +331,18 @@
       "caldo",
       "capire",
       "lacrime",
-      "caro"
+      "caro",
+      "abbraccio",
+      "ferita"
     ],
     "avoids": [
       "meritato",
       "patetico",
       "stupido",
       "freddo",
-      "spietato"
+      "spietato",
+      "debole",
+      "solo"
     ]
   },
   "Authoritative": {
@@ -318,14 +363,19 @@
       "disciplina",
       "legge",
       "chiaro",
-      "autorità"
+      "autorità",
+      "bisogna",
+      "corretto",
+      "fermo"
     ],
     "avoids": [
       "forse",
       "boh",
       "magari",
       "caos",
-      "sciatto"
+      "sciatto",
+      "spallucce",
+      "credo"
     ]
   },
   "Scholarly": {
@@ -348,13 +398,17 @@
       "grimorio",
       "lettura",
       "storia",
-      "schema"
+      "schema",
+      "interessante",
+      "misurato"
     ],
     "avoids": [
       "sciocchezze",
       "boh",
       "superstizione",
-      "fesserie"
+      "fesserie",
+      "vabbè",
+      "indovinare"
     ]
   },
   "Artistic": {
@@ -378,7 +432,8 @@
       "sogno",
       "ritmo",
       "ombra",
-      "oro"
+      "oro",
+      "dipingere"
     ],
     "avoids": [
       "noioso",
@@ -386,7 +441,8 @@
       "numeri",
       "grimorio",
       "efficiente",
-      "grigio"
+      "grigio",
+      "spento"
     ]
   },
   "Adventurous": {
@@ -409,7 +465,9 @@
       "selvaggio",
       "viaggio",
       "fuori",
-      "vedere"
+      "vedere",
+      "nord",
+      "pericolo"
     ],
     "avoids": [
       "casa",
@@ -417,7 +475,8 @@
       "routine",
       "restare",
       "comodo",
-      "noioso"
+      "noioso",
+      "dentro"
     ]
   },
   "Nurturing": {
@@ -448,7 +507,9 @@
       "abbandonare",
       "freddo",
       "duro",
-      "trascurare"
+      "trascurare",
+      "solo",
+      "arrangiarsi"
     ]
   },
   "Mischievous": {
@@ -470,14 +531,18 @@
       "occhiolino",
       "burla",
       "sorriso",
-      "birbante"
+      "birbante",
+      "trucco",
+      "furtivo"
     ],
     "avoids": [
       "serio",
       "obbediente",
       "solenne",
       "regole",
-      "dovere"
+      "dovere",
+      "onesto",
+      "corretto"
     ]
   },
   "Cynical": {
@@ -509,7 +574,8 @@
       "nobile",
       "puro",
       "sincero",
-      "fiducia"
+      "fiducia",
+      "genuino"
     ]
   },
   "Disciplined": {
@@ -532,14 +598,17 @@
       "fatto",
       "ordine",
       "abitudine",
-      "preciso"
+      "preciso",
+      "esercizio"
     ],
     "avoids": [
       "pigro",
       "sciatto",
       "ozio",
       "scusa",
-      "tardi"
+      "tardi",
+      "deriva",
+      "capita"
     ]
   },
   "Fatalistic": {
@@ -560,7 +629,10 @@
       "fine",
       "inevitabile",
       "polvere",
-      "già"
+      "già",
+      "presto",
+      "segnato",
+      "arriva"
     ],
     "avoids": [
       "cambiare",
@@ -568,7 +640,8 @@
       "evitare",
       "impedire",
       "speranza",
-      "controllo"
+      "controllo",
+      "fuga"
     ]
   },
   "Grumpy": {
@@ -593,14 +666,17 @@
       "uffa",
       "sciocchezze",
       "cupo",
-      "miseria"
+      "miseria",
+      "giovani",
+      "costava"
     ],
     "avoids": [
       "delizioso",
       "incantevole",
       "grato",
       "meraviglioso",
-      "dolce"
+      "dolce",
+      "adorabile"
     ]
   },
   "Loyal": {
@@ -622,13 +698,16 @@
       "insieme",
       "parola",
       "debito",
-      "fiducia"
+      "fiducia",
+      "restare"
     ],
     "avoids": [
       "tradire",
       "abbandonare",
       "dubbio",
-      "voltare"
+      "voltare",
+      "solo",
+      "disertare"
     ]
   },
   "Brave": {
@@ -650,7 +729,8 @@
       "forte",
       "primo",
       "rischio",
-      "petto"
+      "petto",
+      "coraggio"
     ],
     "avoids": [
       "nascondersi",
@@ -658,7 +738,8 @@
       "spaventato",
       "dietro",
       "tremare",
-      "ritirarsi"
+      "ritirarsi",
+      "codardo"
     ]
   },
   "Timid": {
@@ -679,7 +760,9 @@
       "piccolo",
       "permesso",
       "spero",
-      "appena"
+      "appena",
+      "nascondermi",
+      "prego"
     ],
     "avoids": [
       "pretendere",
@@ -687,7 +770,8 @@
       "urlare",
       "sicuro",
       "audace",
-      "insistere"
+      "insistere",
+      "mai"
     ]
   },
   "Hedonistic": {
@@ -710,7 +794,8 @@
       "godere",
       "dolce",
       "morbido",
-      "ancora"
+      "ancora",
+      "assaggio"
     ],
     "avoids": [
       "dovere",
@@ -718,7 +803,8 @@
       "rinuncia",
       "lavoro",
       "digiuno",
-      "virtù"
+      "virtù",
+      "astenersi"
     ]
   },
   "Apathetic": {
@@ -739,14 +825,18 @@
       "importa",
       "uguale",
       "boh",
-      "tanto"
+      "tanto",
+      "mah",
+      "chissene"
     ],
     "avoids": [
       "urgente",
       "passione",
       "entusiasmante",
       "disperato",
-      "glorioso"
+      "glorioso",
+      "bisogna",
+      "lotta"
     ]
   }
 }

@@ -115,7 +115,301 @@
       ];
     }
 
+    // ── Archetypes: what the simple board offers instead of the trait book ──
+    //
+    // Simple mode does not shop 199 cards one at a time. It offers ready-made
+    // builds out of TraitSelector's catalogue, each one spending the whole
+    // purse on a set of traits that read as one character, and taking one
+    // writes that whole build onto the member. Detailed mode is where a build
+    // is then edited trait by trait, which is what the hint under the board
+    // says. Illnesses are not part of any archetype and are not offered here.
+    _ccArchetypes() {
+      const TP = window.TraitPoints;
+      if (!TP || typeof TP.archetypes !== "function") return [];
+      // Not memoised while it comes back empty: window.Health may still be
+      // loading, the same reason the trait tabs do not cache an empty tab.
+      if (!this._ccArchetypeCache || !this._ccArchetypeCache.length) {
+        this._ccArchetypeCache = TP.archetypes();
+      }
+      return this._ccArchetypeCache;
+    }
+
+    _ccUsesArchetypeBoard() {
+      return Scene_CharacterCreation.isSimpleMode() && this._ccArchetypes().length > 0;
+    }
+
+    _archetypeName(arch) {
+      const TP = window.TraitPoints;
+      return (TP && TP.archetypeName) ? TP.archetypeName(arch) : (arch && arch.id) || "";
+    }
+
+    _archetypeDesc(arch) {
+      const TP = window.TraitPoints;
+      return (TP && TP.archetypeDesc) ? TP.archetypeDesc(arch) : "";
+    }
+
+    // The rail over the board. A family is drawn with the icon of the first
+    // trait of its first build rather than one picked by hand, so every tab
+    // carries a real icon out of the same book the cards under it come from.
+    _archetypeFamilies() {
+      const TP = window.TraitPoints;
+      const rows = this._ccArchetypes();
+      const list = [{ id: "all", label: ccT('Traits.archetypeAll', 'All'), icon: 87 }];
+      ((TP && TP.ARCHETYPE_FAMILIES) || []).forEach((family) => {
+        const first = rows.find((arch) => arch.family === family);
+        if (!first) return;
+        list.push({
+          id: family,
+          label: ccT('Traits.archetypeFamilies.' + family, family),
+          icon: (first.traits[0] && first.traits[0].icon) || 87
+        });
+      });
+      return list;
+    }
+
+    // The archetype the member is currently built as, or null when their
+    // traits are not exactly one of them (a rolled build, or one edited in
+    // detailed mode). Compared as a set: the order traits were written in
+    // never made a build a different build.
+    _ccActiveArchetype(actor) {
+      const picked = selectedTraitIds(actor).map(String).sort().join(",");
+      if (!picked) return null;
+      return this._ccArchetypes().find(
+        (arch) => arch.ids.map(String).sort().join(",") === picked
+      ) || null;
+    }
+
+    // One build off the catalogue, rolled and written onto a member. Every
+    // random path that fills traits in while the simple board is the board
+    // being played goes through this, so what it deals is always something the
+    // board can show as picked; it answers false when there is no catalogue to
+    // roll from and the caller falls back to its own loose roll.
+    _ccRollArchetypeFor(actor) {
+      if (!actor) return false;
+      const rows = this._ccArchetypes();
+      if (!rows.length) return false;
+      const roll = rows[Math.floor(Math.random() * rows.length)];
+      if (!roll) return false;
+      const TP = window.TraitPoints;
+      // Whatever the member was carrying goes back with its skills and items,
+      // the same as taking a build off by hand.
+      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
+      actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
+      this._ccApplyTraitIds(actor, roll.ids.slice());
+      if (actor.refresh) actor.refresh();
+      return roll;
+    }
+
+    _archetypeBoardLeftHtml() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      const active = this._ccActiveArchetype(actor);
+      const family = Scene_CharacterCreation._activeArchetypeFamily || "all";
+      const railFocused = !!this._pageRailFocused;
+
+      const tabsHtml = this._archetypeFamilies().map((fam) => {
+        const isActive = family === fam.id;
+        return `
+          <div class="ts-tab ${isActive ? 'active' : ''} ${isActive && railFocused ? 'selected' : ''}" onclick="SceneManager._scene.onArchetypeFamilySelect('${fam.id}')">
+            ${this._ccIconHtml(fam.icon, 16)} <span>${fam.label}</span>
+          </div>
+        `;
+      }).join("");
+
+      const rows = this._ccArchetypes()
+        .filter((arch) => family === "all" || arch.family === family)
+        .slice()
+        .sort((a, b) => this._archetypeName(a).localeCompare(this._archetypeName(b), undefined, { sensitivity: "base" }));
+
+      const cardsHtml = rows.map((arch) => {
+        const isActive = !!active && active.id === arch.id;
+        const meta = ccTp('Traits.archetypeMeta',
+          { count: arch.traits.length, points: arch.tally.spent },
+          `${arch.traits.length} traits, ${arch.tally.spent} pts`);
+        return `
+          <div class="cc-card-option cc-tarch-card ${isActive ? 'selected' : ''}"
+               onclick="SceneManager._scene.onArchetypeSelect('${arch.id}')"
+               onmouseenter="SceneManager._scene.onArchetypeHover('${arch.id}')">
+            <div class="cc-tarch-head">
+              <span class="cc-rpg-icon" style="${this._ccIconStyle((arch.traits[0] && arch.traits[0].icon) || 87, 20)}"></span>
+              <div class="cc-option-title">${this._archetypeName(arch)}</div>
+            </div>
+            <div class="cc-tarch-meta">${meta}</div>
+          </div>
+        `;
+      }).join("");
+
+      const emptyHtml = `<div class="cc-class-empty">${ccT('Traits.archetypeEmpty', 'Nothing here')}</div>`;
+
+      return `
+        <div class="cc-page cc-page-left ts-page cc-trait-board cc-page-column">
+          <div class="ts-tab-row">${tabsHtml}</div>
+          <div class="cc-select-grid cc-trait-grid cc-tarch-grid">
+            ${cardsHtml || emptyHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    _archetypeBoardRightHtml() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      const rows = this._ccArchetypes();
+      const active = this._ccActiveArchetype(actor);
+      const shownId = Scene_CharacterCreation._hoveredArchetypeId ||
+        (active && active.id) || (rows[0] && rows[0].id);
+      const shown = rows.find((arch) => arch.id === shownId) || rows[0] || null;
+
+      // The purse still reads off the member, not off the card under the
+      // cursor: what it prints is what this character has actually spent, so a
+      // build carried in from detailed mode reads honestly here.
+      const TP = window.TraitPoints;
+      const traitBank = this._ccTraitBank();
+      const carried = selectedTraitIds(actor)
+        .map((id) => traitBank.find((t) => String(t.id) === String(id)))
+        .filter(Boolean);
+      const tally = TP && TP.tally ? TP.tally(carried) : { spent: 0, refunded: 0, remaining: 10 };
+
+      const purseHtml = `
+        <div class="ts-purse ts-purse--sheet">
+          <div class="ts-purse-cell spend">
+            <span class="ts-purse-value">${tally.spent}</span>
+            <span class="ts-purse-label">${ccT('Traits.purseSpent', 'Spent')}</span>
+          </div>
+          <div class="ts-purse-cell refund">
+            <span class="ts-purse-value">+${tally.refunded}</span>
+            <span class="ts-purse-label">${ccT('Traits.purseRefunds', 'Refunds')}</span>
+          </div>
+          <div class="ts-purse-cell ${tally.remaining < 0 ? 'over' : ''}">
+            <span class="ts-purse-value">${tally.remaining}</span>
+            <span class="ts-purse-label">${ccT('Traits.purseLeft', 'Remaining')}</span>
+          </div>
+        </div>
+      `;
+
+      // What the open build is made of. The chips are read-only here: this
+      // board takes a build whole, and pulling one trait out of it is what
+      // detailed mode is for.
+      const chipFor = (trait) => {
+        const name = (trait.name && resolveTraitName(trait.name, trait.id)) || trait.id;
+        const cost = Number.isFinite(Number(trait.cost)) ? Number(trait.cost) : 1;
+        return `
+          <div class="cc-picked-chip cc-tarch-chip">
+            <span class="cc-rpg-icon" style="${this._ccIconStyle(trait.icon || 87, 18)}"></span>
+            <span>${name}</span>
+            <span class="trait-cost ${cost < 0 ? 'refund' : ''}">${cost < 0 ? `+${-cost}` : cost}</span>
+          </div>
+        `;
+      };
+
+      let detailHtml = "";
+      if (shown) {
+        const totals = { hp: 0, mp: 0, atk: 0, def: 0, mat: 0, mdf: 0, agi: 0, luk: 0 };
+        shown.traits.forEach((trait) => {
+          Object.keys(trait.positive || {}).forEach((k) => { if (totals[k] !== undefined) totals[k] += trait.positive[k]; });
+          Object.keys(trait.negative || {}).forEach((k) => { if (totals[k] !== undefined) totals[k] += trait.negative[k]; });
+        });
+        const bonusBadges = Object.entries(totals)
+          .filter(([, v]) => v !== 0)
+          .map(([k, v]) => `<span class="cc-element-badge ${v > 0 ? 'cc-badge-good' : 'cc-badge-bad'}">${window.TraitParams.text(k, v)}</span>`)
+          .join(" ") || `<span class="cc-note-faint">${ccT('CharCreate.noDefiningTraits', 'No trait modifiers')}</span>`;
+
+        detailHtml = `
+          <div class="cc-dossier-card ts-detail-card cc-gap-below">
+            <div class="ts-detail-head">
+              <span class="cc-rpg-icon" style="${this._ccIconStyle((shown.traits[0] && shown.traits[0].icon) || 87, 26)}"></span>
+              <span class="ts-detail-label">${this._archetypeName(shown)}</span>
+              <span class="trait-cost">${shown.tally.spent} ${ccT('Traits.pts', 'pts')}</span>
+            </div>
+            <div class="ts-detail-desc">${this._archetypeDesc(shown)}</div>
+            <div class="cc-grant-note"><strong>${ccT('Traits.archetypeTraitsLabel', 'What it takes')}:</strong></div>
+            <div class="cc-picked-row">${shown.traits.map(chipFor).join("")}</div>
+            <div class="ts-badge-row cc-row-start cc-gap-above-tight">${bonusBadges}</div>
+          </div>
+        `;
+      }
+
+      const carriedLabel = active
+        ? this._archetypeName(active)
+        : (carried.length
+          ? ccT('Traits.archetypeCustom', 'Custom build')
+          : ccT('Traits.archetypeNone', 'No archetype chosen'));
+
+      return `
+        <div class="cc-page cc-page-right ts-page cc-trait-detail cc-page-column">
+          <div class="ts-sheet-head">
+            ${purseHtml}
+            <div class="ts-sheet-actions">
+              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onTraitResetForCurrentActor()">${ccT('Traits.resetTraits', 'Reset')}</button>
+              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeTraitsForCurrentActor()">${ccT('CharCreate.randomize', 'Randomize')}</button>
+            </div>
+          </div>
+
+          ${detailHtml}
+
+          <div class="ts-picked-block">
+            <h3 class="cc-subheader ts-section-head">
+              <span>${ccT('Traits.selectedTraitsLabel', 'Selected Traits')}</span>
+              <span class="ts-count">${carriedLabel}</span>
+            </h3>
+            <div class="cc-picked-row">
+              ${carried.length
+                ? carried.map(chipFor).join("")
+                : `<span class="cc-picked-empty">${ccT('CharCreate.noDefiningTraits', 'None selected')}</span>`}
+            </div>
+          </div>
+
+          <div class="cc-note-faint cc-tarch-hint">${ccT('Traits.archetypeHint', 'Pick a ready-made build. Switch to Detailed mode to change it trait by trait.')}</div>
+        </div>
+      `;
+    }
+
+    onArchetypeFamilySelect(family) {
+      Scene_CharacterCreation._activeArchetypeFamily = family;
+      SoundManager.playCursor();
+      const container = this._dndContainer;
+      const leftPage = container && container.querySelector(".cc-page-left");
+      if (leftPage) { this._ccSwapPage(leftPage, this._archetypeBoardLeftHtml()); return; }
+      this.refreshUIOverlayDOM();
+    }
+
+    onArchetypeHover(archetypeId) {
+      if (String(Scene_CharacterCreation._hoveredArchetypeId) === String(archetypeId)) return;
+      Scene_CharacterCreation._hoveredArchetypeId = archetypeId;
+      const rightPage = this._dndContainer && this._dndContainer.querySelector(".cc-page-right");
+      if (rightPage) this._ccSwapPage(rightPage, this._archetypeBoardRightHtml());
+    }
+
+    // Taking a build replaces whatever the member was carrying: an archetype
+    // is the whole purse, so it cannot be added on top of another one. Taking
+    // the one already worn puts it down again, the way a picked card does.
+    onArchetypeSelect(archetypeId) {
+      if (this._refusePresetEdit()) return;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      const arch = this._ccArchetypes().find((row) => row.id === archetypeId);
+      if (!arch) return;
+
+      const active = this._ccActiveArchetype(actor);
+      const TP = window.TraitPoints;
+      // Whatever was granted by the build being taken off has to go back with
+      // it, or a member who tried three archetypes keeps all three sets of
+      // skills and items.
+      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
+      actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
+
+      if (active && active.id === arch.id) {
+        this._ccApplyTraitIds(actor, []);
+        SoundManager.playCancel();
+      } else {
+        this._ccApplyTraitIds(actor, arch.ids.slice());
+        Scene_CharacterCreation._hoveredArchetypeId = arch.id;
+        SoundManager.playOk();
+      }
+      if (actor.refresh) actor.refresh();
+      this._refreshTraitBoard();
+    }
+
     _traitPickerLeftHtml() {
+      if (this._ccUsesArchetypeBoard()) return this._archetypeBoardLeftHtml();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const traitBank = this._ccTraitBank();
       const selectedTraits = this._ccPickedCardIds(actor);
@@ -134,11 +428,22 @@
 
       // Filter traits. "All" is all TRAITS: illnesses are free and have their
       // own tab, so mixing them into the priced list would only bury it.
-      const filtered = activeCategory === "all"
+      const unsorted = activeCategory === "all"
         ? traitBank.filter((t) => !t.diseaseId)
         : activeCategory === "diseases"
           ? traitBank.filter((t) => !!t.diseaseId)
           : traitBank.filter((t) => !t.diseaseId && t.category === activeCategory);
+
+      // Alphabetical, on the name as shown. Traits.json is in the order its
+      // traits were written in, which gave a player scanning 199 cards nothing
+      // to scan by; sorting on the localized name keeps the Italian board
+      // alphabetical in Italian. TraitSelector owns the comparison so both
+      // trait boards order their cards the same way.
+      const nameOf = (t) => (t.diseaseId ? (t.name || "") : ((t.name && resolveTraitName(t.name, t.id)) || String(t.id)));
+      const TPsort = window.TraitPoints;
+      const filtered = (TPsort && TPsort.sortByName)
+        ? TPsort.sortByName(unsorted)
+        : unsorted.slice().sort((a, b) => nameOf(a).localeCompare(nameOf(b), undefined, { sensitivity: "base" }));
 
       const cardsHtml = filtered.map((trait) => {
         const isSelected = selectedTraits.some((id) => String(id) === String(trait.id));
@@ -173,6 +478,7 @@
     }
 
     _traitPickerRightHtml() {
+      if (this._ccUsesArchetypeBoard()) return this._archetypeBoardRightHtml();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const traitBank = this._ccTraitBank();
       const selectedTraits = this._ccPickedCardIds(actor);
@@ -505,6 +811,21 @@
     onRandomizeTraitsForCurrentActor() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
+      // On the simple board, Random rolls one of the ready-made builds rather
+      // than a loose handful of traits: that board never shows a build that is
+      // not an archetype, so a roll that made one would leave the cards
+      // showing nothing picked.
+      if (this._ccUsesArchetypeBoard()) {
+        const roll = this._ccRollArchetypeFor(actor);
+        if (roll) {
+          Scene_CharacterCreation._hoveredArchetypeId = roll.id;
+          SoundManager.playOk();
+        } else {
+          SoundManager.playBuzzer();
+        }
+        this._refreshTraitBoard();
+        return;
+      }
       const targetActorId = (Scene_CharacterCreation._currentPartyMemberIndex || 0) + 1;
       if (window.randomizeTraitsForActor) {
         window.randomizeTraitsForActor(targetActorId);
@@ -1955,8 +2276,12 @@
 
     _ensureSimpleModeStatsAndTraits(actor) {
       if (!actor) return;
-      // Auto-assign random traits if not yet selected
-      if (!actor._selectedTraits || actor._selectedTraits.length === 0) {
+      // Auto-assign random traits if not yet selected. Simple mode deals a
+      // whole archetype rather than a loose handful: that is what its board
+      // offers, so a member who never opened it walks out built the same way
+      // as one who did.
+      if ((!actor._selectedTraits || actor._selectedTraits.length === 0) &&
+          !this._ccRollArchetypeFor(actor)) {
         if (window.randomizeTraitsForActor) {
           const aId = typeof actor.actorId === "function" ? actor.actorId() : 1;
           window.randomizeTraitsForActor(aId);
@@ -3519,7 +3844,14 @@
       // never get a sculpted 3D model, so pin the exclusive portrait style.
       const randomActor = $gameActors.actor(targetActorId);
       if (randomActor && randomActor.setPortraitMode) randomActor.setPortraitMode("bust");
-      if (window.randomizeTraitsForActor) {
+      // The simple board deals whole builds, so a randomized member is dealt
+      // one too rather than a handful of traits that board could not show as
+      // picked. Detailed mode keeps the loose roll.
+      const rolledBuild = Scene_CharacterCreation.isSimpleMode() &&
+        !!this._ccRollArchetypeFor(randomActor);
+      if (rolledBuild) {
+        // already built
+      } else if (window.randomizeTraitsForActor) {
         window.randomizeTraitsForActor(targetActorId);
       } else {
         const traitBank = (window.Health && window.Health.Traits && window.Health.Traits.length > 0)

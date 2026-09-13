@@ -2834,6 +2834,34 @@
       this._render();
     }
 
+    // ── One die at a time ─────────────────────────────────────────────────
+    // Dice3D queues a throw asked for while another is still tumbling, so a
+    // handful of impatient clicks on Join, Bribe or a Court move used to leave
+    // a line of dice still being thrown at a panel the player had already
+    // closed. Every verb here that throws one asks first, and the panel drops
+    // whatever it queued on its way out (see terminate).
+    _dieInAir() {
+      return !!this._rollBusy || !!window.Dice3D?.isRolling?.();
+    }
+
+    // The panel's own throw. A check asked for while a die is already up is
+    // refused rather than queued, and the refusal is null, so the verb that
+    // asked for it does nothing at all rather than acting on a roll it never
+    // made. Without Dice3D the coin is flipped here and the answer is the same
+    // shape, so no caller needs a second path.
+    async _rollCheck(chance, options) {
+      if (this._dieInAir()) return null;
+      this._rollBusy = true;
+      try {
+        if (!window.Dice3D || typeof window.Dice3D.rollPercentage !== 'function') {
+          return { success: Math.random() * 100 < chance };
+        }
+        return await window.Dice3D.rollPercentage(chance, options);
+      } finally {
+        this._rollBusy = false;
+      }
+    }
+
     update() {
       Scene_MenuBase.prototype.update.call(this);
       NPCEmpathizeInputManager.update();
@@ -2845,6 +2873,9 @@
       // "running" forever, $gameMap.isEventRunning() never goes false again, and
       // NO event on the map can be triggered from then on.
       this._releaseEventLock();
+      // Nothing this panel queued goes on being thrown once the panel is gone.
+      this._rollBusy = false;
+      try { window.Dice3D?.cancelPending?.(); } catch (e) { console.error('[NPCEmpathize] cancelPending', e); }
       try { this._closeChatModal?.(); } catch (e) { console.error('[NPCEmpathize] closeChatModal', e); }
       // A panel session owns the wiki back-stack. Leaving through Join, Attack,
       // Trade or a purchase used to leave entries on it, and the NEXT panel then
@@ -3790,19 +3821,15 @@
 
       const chance = _animalJoinChance(status, actor);
       const wisMod = _wisMod(actor);
-      let success;
-      if (window.Dice3D) {
-        const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: status.owned ? `Convince: ${npcName}` : `Tame: ${npcName}`, // i18n-ignore: Dice3D check id
-          statName: 'WIS', // i18n-ignore: Dice3D stat id
-          modifier: wisMod,
-          actor,
-          force3D: true,
-        });
-        success = res.success;
-      } else {
-        success = Math.random() * 100 < chance;
-      }
+      const roll = await this._rollCheck(chance, {
+        actionName: status.owned ? `Convince: ${npcName}` : `Tame: ${npcName}`, // i18n-ignore: Dice3D check id
+        statName: 'WIS', // i18n-ignore: Dice3D stat id
+        modifier: wisMod,
+        actor,
+        force3D: true,
+      });
+      if (!roll) return; // a die is already up: this press asks nothing
+      const success = roll.success;
 
       if (!success) {
         SoundManager.playBuzzer();
@@ -4374,22 +4401,21 @@
         return;
       }
 
+      // Asked before the purse is opened: a bribe refused for having a die
+      // already in the air must not cost the money it never offered.
+      if (this._dieInAir()) return;
       $gameParty.loseGold(tier.gold);
       const actor = this._focusActor() || $gameParty.leader();
       const psiMod = actor ? (actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2)) : 0;
-      let success = false;
 
-      if (window.Dice3D) {
-        const rollRes = await window.Dice3D.rollPercentage(tier.chance, {
-          actionName: `Bribe: ${npcName}`,
-          statName: 'PSI (Charisma)',
-          modifier: psiMod,
-          force3D: true
-        });
-        success = rollRes.success;
-      } else {
-        success = Math.random() * 100 < tier.chance;
-      }
+      const rollRes = await this._rollCheck(tier.chance, {
+        actionName: `Bribe: ${npcName}`,
+        statName: 'PSI (Charisma)',
+        modifier: psiMod,
+        force3D: true
+      });
+      if (!rollRes) { $gameParty.gainGold(tier.gold); return; }
+      const success = rollRes.success;
 
       if (profile) (profile.eventLog ??= []).push({ tag: 'bribe', desc: success ? 'bribe accepted' : 'bribe failed', timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0 }); // i18n-ignore: event-log record ids
 
@@ -4906,19 +4932,15 @@
       // move in this panel is argued with.
       const actor  = this._focusActor() || $gameParty?.leader();
       const psiMod = actor ? (actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2)) : 0;
-      let joinRoll;
-      if (window.Dice3D) {
-        const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: `Join: ${npcName}`, // i18n-ignore: Dice3D check id
-          statName: 'PSI', // i18n-ignore: Dice3D stat id
-          modifier: psiMod,
-          actor,
-          force3D: true,
-        });
-        joinRoll = !res.success;
-      } else {
-        joinRoll = Math.random() * 100 >= chance;
-      }
+      const joinRes = await this._rollCheck(chance, {
+        actionName: `Join: ${npcName}`, // i18n-ignore: Dice3D check id
+        statName: 'PSI', // i18n-ignore: Dice3D stat id
+        modifier: psiMod,
+        actor,
+        force3D: true,
+      });
+      if (!joinRes) return; // a die is already up: this press asks nothing
+      const joinRoll = !joinRes.success;
 
       if (joinRoll) {
         SoundManager.playBuzzer();
@@ -5057,19 +5079,15 @@
       const chance  = _joinChance(opinion, actor);
       const psiMod  = actor ? (actor.psiMod ?? Math.floor(((actor.luk || 10) - 10) / 2)) : 0;
 
-      let success;
-      if (window.Dice3D) {
-        const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: `Follow: ${npcName}`, // i18n-ignore: Dice3D check id
-          statName: 'PSI', // i18n-ignore: Dice3D stat id
-          modifier: psiMod,
-          actor,
-          force3D: true,
-        });
-        success = res.success;
-      } else {
-        success = Math.random() * 100 < chance;
-      }
+      const followRes = await this._rollCheck(chance, {
+        actionName: `Follow: ${npcName}`, // i18n-ignore: Dice3D check id
+        statName: 'PSI', // i18n-ignore: Dice3D stat id
+        modifier: psiMod,
+        actor,
+        force3D: true,
+      });
+      if (!followRes) return; // a die is already up: this press asks nothing
+      const success = followRes.success;
 
       if (!success) {
         SoundManager.playBuzzer();

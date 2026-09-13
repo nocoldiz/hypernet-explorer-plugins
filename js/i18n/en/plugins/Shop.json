@@ -190,7 +190,7 @@
   },
   "listEmpty": "[Empty]",
   "sellCollectibles": "SELL KEEPSAKES",
-  "sellCollectiblesHint": "Hand over every collectible in the bag at once. They have one flat price and no other use.",
+  "sellCollectiblesHint": "Sell every collectible in your inventory at once. Collectibles have a flat price and no other use.",
   "noCollectibles": "Nothing in the bag but things that are actually good for something.",
   "soldCollectibles": "Handed over {count} keepsakes for {money}.",
   "year": "Year",

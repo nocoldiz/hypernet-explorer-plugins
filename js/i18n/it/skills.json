@@ -6726,10 +6726,10 @@
     "message2": ""
   },
   "1405": {
-      "name": "LetturaDiCarte",
-      "description": "Legge i tarocchi per intravedere il futuro.",
-      "message1": "%1 gira i tarocchi!",
-      "message2": ""
+    "name": "LetturaDiCarte",
+    "description": "Legge i tarocchi per intravedere il futuro.",
+    "message1": "%1 gira i tarocchi!",
+    "message2": ""
   },
   "1406": {
     "name": "CronacaDelleAnime",
@@ -9399,6 +9399,330 @@
     "name": "Risposta Uguale",
     "description": "Rilancia al mittente l'ultima mossa usata da un\nnemico.",
     "message1": "%1 risponde per le rime!",
+    "message2": ""
+  },
+  "1934": {
+    "name": "Seconda Alba",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 chiede un altro mattino!",
+    "message2": ""
+  },
+  "1935": {
+    "name": "Risveglio",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 richiama il cuore al lavoro!",
+    "message2": ""
+  },
+  "1936": {
+    "name": "Fiato in Prestito",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 presta un fiato che sara richiesto indietro!",
+    "message2": ""
+  },
+  "1937": {
+    "name": "Traghetto Negato",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 respinge il traghettatore!",
+    "message2": ""
+  },
+  "1938": {
+    "name": "Richiamo del Nome",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 richiama indietro il nome!",
+    "message2": ""
+  },
+  "1939": {
+    "name": "Cancella la Fine",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 cancella la fine!",
+    "message2": ""
+  },
+  "1940": {
+    "name": "Trama Ricomposta",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 ricompone la trama spezzata!",
+    "message2": ""
+  },
+  "1941": {
+    "name": "Il Vuoto Rifiuta",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 viene restituito dal vuoto!",
+    "message2": ""
+  },
+  "1942": {
+    "name": "Orbita Riavvolta",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 riavvolge una piccola orbita!",
+    "message2": ""
+  },
+  "1943": {
+    "name": "Lato Sbagliato",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 rilancia la moneta finche cade viva!",
+    "message2": ""
+  },
+  "1944": {
+    "name": "Un Minuto Prima",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 torna indietro di un minuto!",
+    "message2": ""
+  },
+  "1945": {
+    "name": "Presagio Riletto",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 legge il presagio al contrario!",
+    "message2": ""
+  },
+  "1946": {
+    "name": "Svegliali dal Sogno",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 insiste che era solo un sogno!",
+    "message2": ""
+  },
+  "1947": {
+    "name": "Insisti che Viva",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 insiste e il mondo cede!",
+    "message2": ""
+  },
+  "1948": {
+    "name": "Riaccendi la Mente",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 riaccende una mente spenta!",
+    "message2": ""
+  },
+  "1949": {
+    "name": "Ritessi la Carne",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 ritesse il corpo fino a farlo funzionare!",
+    "message2": ""
+  },
+  "1950": {
+    "name": "Annulla la Condizione",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 annulla la condizione!",
+    "message2": ""
+  },
+  "1951": {
+    "name": "Riaccendi lo Stoppino",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 riaccende lo stoppino!",
+    "message2": ""
+  },
+  "1952": {
+    "name": "Scongela il Dormiente",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 scongela il dormiente!",
+    "message2": ""
+  },
+  "1953": {
+    "name": "Ritmo Riavviato",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 rimette il ritmo a posto!",
+    "message2": ""
+  },
+  "1954": {
+    "name": "Riportali a Riva",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 li riporta a riva!",
+    "message2": ""
+  },
+  "1955": {
+    "name": "Rendi il Respiro",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 restituisce il respiro!",
+    "message2": ""
+  },
+  "1956": {
+    "name": "Dissotterra",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 scava un amico fuori dal buio!",
+    "message2": ""
+  },
+  "1957": {
+    "name": "Avvio a Freddo",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 esegue un avvio a freddo!",
+    "message2": ""
+  },
+  "1958": {
+    "name": "Fiala Surrenale",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 svuota una fiala nel cuore!",
+    "message2": ""
+  },
+  "1959": {
+    "name": "Kiai del Ritorno",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 richiama un amico con un grido!",
+    "message2": ""
+  },
+  "1960": {
+    "name": "Ululato Affine",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 ulula finche il branco risponde!",
+    "message2": ""
+  },
+  "1961": {
+    "name": "Giuramento Intatto",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 non lascia finire qui il giuramento!",
+    "message2": ""
+  },
+  "1962": {
+    "name": "Protocollo di Defibrillazione",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 grida libero e scarica!",
+    "message2": ""
+  },
+  "1963": {
+    "name": "Colpo di Adrenalina",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 spara il colpo che nessuno punta a un nemico!",
+    "message2": ""
+  },
+  "1964": {
+    "name": "Seconda Occasione",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 sostiene che questa non conta!",
+    "message2": ""
+  },
+  "1965": {
+    "name": "In Piedi",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 da un ordine che la morte non ha annullato!",
+    "message2": ""
+  },
+  "1966": {
+    "name": "Contrordine alla Morte",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 presenta un ricorso al mondo!",
+    "message2": ""
+  },
+  "1967": {
+    "name": "Compra il Debito",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 salda il conto per intero!",
+    "message2": ""
+  },
+  "1968": {
+    "name": "Chiamata al Sipario",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 non lascia smettere gli applausi!",
+    "message2": ""
+  },
+  "1969": {
+    "name": "Brodo del Ritorno",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 gli fa scendere qualcosa di caldo!",
+    "message2": ""
+  },
+  "1970": {
+    "name": "Radice e Risveglio",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 li pianta e aspetta!",
+    "message2": ""
+  },
+  "1971": {
+    "name": "Il Branco Aspetta",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 non lascia nessuno sulla collina!",
+    "message2": ""
+  },
+  "1972": {
+    "name": "Torna al Lavoro",
+    "description": "Cura Morte su un alleato caduto. Ripristina HP.\nUsabile sulla mappa.",
+    "message1": "%1 dice che il turno non e finito!",
+    "message2": ""
+  },
+  "1973": {
+    "name": "Mani Monde",
+    "description": "Cura Cecita, Silenzio e Veleno su un alleato.",
+    "message1": "%1 glielo lava via!",
+    "message2": ""
+  },
+  "1974": {
+    "name": "Sutura da Campo",
+    "description": "Cura Emorragia e Infezione su un alleato.\nRipristina HP.",
+    "message1": "%1 chiude la ferita!",
+    "message2": ""
+  },
+  "1975": {
+    "name": "Pozione Chelante",
+    "description": "Cura Veleno, Nausea, Ubriachezza e Infezione su\nun alleato.",
+    "message1": "%1 estrae il veleno!",
+    "message2": ""
+  },
+  "1976": {
+    "name": "Brodo del Mattino",
+    "description": "Cura Nausea e Ubriachezza su tutti gli alleati.\nRipristina HP.",
+    "message1": "%1 lo serve col mestolo!",
+    "message2": ""
+  },
+  "1977": {
+    "name": "Impiastro alle Nove Erbe",
+    "description": "Cura Veleno, Ustione ed Emorragia su un alleato.",
+    "message1": "%1 vi lega sopra nove erbe!",
+    "message2": ""
+  },
+  "1978": {
+    "name": "Silenzia il Rumore",
+    "description": "Cura Confusione, Fascino, Ira e Sonno su un\nalleato.",
+    "message1": "%1 abbassa il rumore!",
+    "message2": ""
+  },
+  "1979": {
+    "name": "Trattieni la Mietitrice",
+    "description": "Cura Marchio di Morte ed Emorragia su un\nalleato. Ripristina HP.",
+    "message1": "%1 tiene la mietitrice a parlare!",
+    "message2": ""
+  },
+  "1980": {
+    "name": "Respiro Ripristinato",
+    "description": "Cura Fiato Corto, Sbilanciato, Commozione e\nStordimento su un alleato.",
+    "message1": "%1 gli rimette in ordine il respiro!",
+    "message2": ""
+  },
+  "1981": {
+    "name": "Protocollo Trauma",
+    "description": "Cura Ustione, Emorragia e Stordimento su tutti\ngli alleati.",
+    "message1": "%1 applica il protocollo!",
+    "message2": ""
+  },
+  "1982": {
+    "name": "Risciacquo",
+    "description": "Cura Ustione, Calore e Unto su tutti gli\nalleati.",
+    "message1": "%1 lava via tutto!",
+    "message2": ""
+  },
+  "1983": {
+    "name": "Ricrescita",
+    "description": "Cura Emorragia, Infezione e Veleno su un\nalleato. Ripristina HP.",
+    "message1": "%1 lo fa ricrescere!",
+    "message2": ""
+  },
+  "1984": {
+    "name": "Cancella la Malia",
+    "description": "Rimuove ogni penalita alle statistiche da un\nalleato.",
+    "message1": "%1 cancella la malia!",
+    "message2": ""
+  },
+  "1985": {
+    "name": "Bis del Risveglio",
+    "description": "Cura Sonno, Silenzio e Confusione su tutti gli\nalleati.",
+    "message1": "%1 li risveglia suonando!",
+    "message2": ""
+  },
+  "1986": {
+    "name": "Spirito Assistente",
+    "description": "Ripristina HP a tutti gli alleati.",
+    "message1": "%1 chiama qualcosa che cura le ferite!",
+    "message2": ""
+  },
+  "1987": {
+    "name": "Riavvolgi la Ferita",
+    "description": "Cura Emorragia su un alleato. Ripristina HP.",
+    "message1": "%1 riavvolge la ferita!",
     "message2": ""
   }
 }

@@ -6,7 +6,8 @@
   "tab": {
     "modes": "Operating modes",
     "element": "Element",
-    "form": "Form and element"
+    "form": "Form and element",
+    "calibrate": "Calibration"
   },
   "slots": "{used} of {max} modes running",
   "state": {
@@ -23,7 +24,10 @@
     "elementTitle": "Element",
     "formTitle": "Weapon form",
     "range": "Range",
-    "magazine": "Shots"
+    "rangeTiles": "{n} tiles",
+    "magazine": "Shots",
+    "calibrateTitle": "Calibration",
+    "damage": "Damage"
   },
   "mode": {
     "mana": {
@@ -38,7 +42,7 @@
     },
     "solomonIncantation": {
       "name": "Solomon incantation",
-      "desc": "Spells are read out, and land 15% harder.",
+      "desc": "Spells are spoken aloud and deal 15% more damage.",
       "effect": "Runs only with the Grimoire of Solomon fitted, or while the book is open in Graceful Death. Every spell cast is read out in full first, in a box of its own, and then deals or heals 15% more."
     },
     "card": {
@@ -159,7 +163,13 @@
     "element": "Element set to {element}.",
     "swapped": "{mode} is running, {old} is idle.",
     "form": "Form set to {form}.",
-    "unracked": "Coilgun spent, folded back into the pistol."
+    "unracked": "Coilgun spent, folded back into the pistol.",
+    "calibrated": "{shape} calibrated: {choice}.",
+    "uncalibrated": "{choice} dropped.",
+    "calSwapped": "{choice} chosen, {old} dropped.",
+    "reaped": "The scythe takes {name}.",
+    "noSky": "No sky in here to turn over.",
+    "spent": "{form} spent, folded back into the pistol."
   },
   "locked": {
     "equip": "Only Em can equip the vector gun.",
@@ -172,7 +182,7 @@
   },
   "element": {
     "title": "Element",
-    "hint": "The element applies in every form and with any modes running.",
+    "hint": "The element is stored on the pistol. Weapon forms drop it and attack without an element. The coilgun has its own element, set on the Calibration page, so the frame can hold two at once.",
     "physicalDesc": "Physical damage, no element.",
     "desc": {
       "1": "Physical damage, no element.",
@@ -190,8 +200,8 @@
     "gun": "Gun",
     "blade": "Blade of Thelema",
     "fitted": "Fitted",
-    "gain": "Melee form: +{bonus}% damage, {element} element. Gun form has no bonus.",
-    "gunGain": "Base form: normal shots. SWITCH converts it into the coilgun."
+    "gain": "Weapon form: +{bonus}% damage and a gimmick of its own, set on the Calibration page. It gives up the operating modes and the element, which both belong to the gun.",
+    "gunGain": "Base form: the pistol carries the element and is the only shape the operating modes run on. SWITCH racks it out into the coilgun, which carries an element of its own."
   },
   "bay": {
     "slot": "Bay {n}",
@@ -200,64 +210,64 @@
   },
   "shape": {
     "gun": {
-      "name": "Coilgun",
-      "desc": "Default form.",
+      "name": "Vector pistol",
+      "desc": "Base form. Uses the element and the mode bays.",
       "effect": "With no other form fitted, SWITCH converts the pistol into a coilgun sniper rifle: 3 shots, 4x range on the battle map. The third shot folds it back into the pistol. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round."
     },
     "abrasax": {
       "name": "Athame of Abrasax",
       "desc": "Alternate form: dagger.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and dagger. In dagger form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and dagger. In dagger form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "thelema": {
       "name": "Blade of Thelema",
       "desc": "Alternate form: machete.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and machete. In machete form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and machete. In machete form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "choronzon": {
       "name": "Maul of Choronzon",
       "desc": "Alternate form: maul.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and maul. In maul form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and maul. In maul form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "babalon": {
       "name": "Axe of Babalon",
       "desc": "Alternate form: axe.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and axe. In axe form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and axe. In axe form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "nuit": {
       "name": "Scourge of Nuit",
       "desc": "Alternate form: whip.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and whip. In whip form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and whip. In whip form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "hadit": {
       "name": "Staff of Hadit",
       "desc": "Alternate form: staff.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and staff. In staff form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and staff. In staff form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "aiwass": {
       "name": "Bow of Aiwass",
       "desc": "Alternate form: bow.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and bow. In bow form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and bow. In bow form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "zos": {
       "name": "Darts of Zos",
       "desc": "Alternate form: throwing darts.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and darts. In dart form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and darts. In dart form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "baphomet": {
       "name": "Talons of Baphomet",
       "desc": "Alternate form: claws.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and claws. In claw form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and claws. In claw form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "kia": {
       "name": "Gauntlet of Kia",
       "desc": "Alternate form: gauntlet.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and gauntlet. In gauntlet form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and gauntlet. In gauntlet form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "longinus": {
       "name": "Lance of Longinus",
       "desc": "Alternate form: lance.",
-      "effect": "In battle the reload command becomes SWITCH, toggling between gun and lance. In lance form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Keeps the gun's element. Only one alternate form can be fitted."
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and lance. In lance form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     },
     "sniper": {
       "name": "Coilgun",
@@ -267,11 +277,394 @@
     "solomon": {
       "name": "Grimoire of Solomon",
       "desc": "Alternate form: the open book.",
-      "effect": "Fitted, the book is already open when the fight starts: Em begins every battle reading, with a row of spells out of the grimoire instead of her own. It is a pact, not a gift. Graceful Death buys no turn of invulnerability with it, and the book gives back no health: it takes health for every spell read, priced on what the spell costs to cast. Only one alternate form can be fitted. A plain attack with the book is not a blow: it drives open and fires its own pages at what she is aiming at, four squares out."
+      "effect": "Fitted, the book is already open when the fight starts: Em begins every battle reading, with a row of spells out of the grimoire instead of her own. It is a pact, not a gift. Graceful Death buys no turn of invulnerability with it, and the book gives back no health: it takes health for every spell read, priced on what the spell costs to cast. Only one alternate form can be fitted. A plain attack with the book is not a blow: it drives open and fires its own pages at what she is aiming at, four tiles out."
+    },
+    "fists": {
+      "name": "Fists of Em",
+      "desc": "Alternate form: bare hands.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and bare hands. In bare hands form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. She drops the gun outright and fights with her hands. A swing has a chance of becoming one of the martial arts forms chosen on the Calibration page, paid for in AP. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "twin": {
+      "name": "Twin vectors",
+      "desc": "Alternate form: paired pistols.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a pair of pistols. In a pair of pistols form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. The frame splits down its own seam into two. The Calibration page sets how many rounds an attack puts out, and the more it fires the less each one carries. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "crossbow": {
+      "name": "Vector crossbow",
+      "desc": "Alternate form: crossbow.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a crossbow. In a crossbow form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Cocked rather than drawn, and it holds exactly one bolt. The Calibration page sets what is on the end of it. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "eris": {
+      "name": "Nunchaku of Eris",
+      "desc": "Alternate form: nunchaku.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and nunchaku. In nunchaku form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. Two batons on a lit chain. The Calibration page sets how wild the blow is: the wider the band the better it does on average and the less any one swing can be counted on. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "maat": {
+      "name": "Mail of Maat",
+      "desc": "Alternate form: flail.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a chained flail. In a chained flail form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. A haft, a run of chain and an ankh for a head. The Calibration page sets what it weighs the target against: the further out of balance, the harder it comes down. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "bubba": {
+      "name": "Wrench of Bubba",
+      "desc": "Alternate form: wrench.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a wrench. In a wrench form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. A tool built for one job. The Calibration page names the kinds of creature it was built for: far more against those, and less against everything else. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "yaldabaoth": {
+      "name": "Chainsaw of Yaldabaoth",
+      "desc": "Alternate form: chainsaw.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a chainsaw. In a chainsaw form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. The bar reads how far gone the body already is and bites the harder for it. The Calibration page sets which reading it takes. Against something untouched it is worth less than a plain swing. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "nyarlathotep": {
+      "name": "Scythe of Nyarlathotep",
+      "desc": "Alternate form: scythe.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a scythe. In a scythe form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. On a critical hit it reaps: a coin toss takes a life outright. The Calibration page sets which side it may take from. It never takes Em, and it cannot touch a boss, a petrodemon, or anything more than ten levels above her. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "freud": {
+      "name": "Katana of Freud",
+      "desc": "Alternate form: katana.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a katana. In a katana form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. The one blade not swung with the arm: the blow is worked out from PSI. A swing has a chance of becoming the psychic skill chosen on the Calibration page, paid for in AP. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
+    },
+    "gautama": {
+      "name": "Rosary of Gautama",
+      "desc": "Alternate form: rosary.",
+      "effect": "In battle the reload command becomes SWITCH, toggling between gun and a rosary. In a rosary form the weapon uses that weapon type's damage, animation and sound, and costs no ammo. Switching is free: it costs no turn, leaves no guard up and can be done any number of times in a round. The one shape that does not strike. Its attack is turned on her own side instead, and the Calibration page sets what the beads mend. It carries no element and runs no operating mode: both stay on the gun. Only one alternate form can be fitted."
     }
   },
   "section": {
     "forms": "Weapon forms",
     "elements": "Elements"
+  },
+  "cal": {
+    "none": "Nothing to calibrate",
+    "known": "Learned",
+    "borrowed": "Read off the frame",
+    "apCost": "{ap} AP",
+    "chip": {
+      "selected": "Chosen"
+    },
+    "section": {
+      "element": "The coilgun's element",
+      "rack": "The rack",
+      "marks": "The mark it leaves",
+      "stance": "The stance she holds it in",
+      "sky": "The sky it calls",
+      "schools": "The schools it deals from",
+      "quarry": "What it was built for",
+      "lash": "What the lash tears down",
+      "venom": "What the darts carry",
+      "head": "What the head delivers",
+      "cleave": "How wide the swing carries",
+      "draw": "How far it is drawn",
+      "charge": "How it is brought to bear",
+      "pattern": "How the pair fires",
+      "bolt": "What is on the bolt",
+      "discord": "How wild the blow is",
+      "measure": "What it weighs them against",
+      "reads": "What the bar reads",
+      "bargain": "The bargain struck",
+      "mends": "What the beads mend",
+      "known": "What she knows",
+      "reach": "Within her reach"
+    },
+    "lash": {
+      "desc": "Lowers this parameter on hit for a few rounds. 45% chance, 85% damage."
+    },
+    "head": {
+      "Blunt": {
+        "name": "Blunt",
+        "desc": "Blunt damage. Effective against bones and armour."
+      },
+      "Cutting": {
+        "name": "Cutting",
+        "desc": "Cutting damage. Effective against flesh and soft targets."
+      },
+      "Piercing": {
+        "name": "Piercing",
+        "desc": "Piercing damage. Effective against joints and weak points."
+      },
+      "Explosive": {
+        "name": "Explosive",
+        "desc": "Explosive damage. Spread across every body part."
+      }
+    },
+    "cleave": {
+      "single": {
+        "name": "One heavy",
+        "desc": "Hits one target at 140% damage."
+      },
+      "double": {
+        "name": "Two",
+        "desc": "Hits two targets at 72% damage each."
+      },
+      "triple": {
+        "name": "Three",
+        "desc": "Hits three targets at 50% damage each."
+      }
+    },
+    "draw": {
+      "short": {
+        "name": "Short draw",
+        "desc": "Range 3 tiles, +15% critical chance."
+      },
+      "standard": {
+        "name": "Standard draw",
+        "desc": "Range 6 tiles, normal damage."
+      },
+      "long": {
+        "name": "Long draw",
+        "desc": "Range 12 tiles, 80% damage."
+      }
+    },
+    "charge": {
+      "brace": {
+        "name": "Braced",
+        "desc": "Ignores the target's guard. 90% damage."
+      },
+      "reach": {
+        "name": "Held out",
+        "desc": "Range 4 tiles instead of 2. Normal damage."
+      },
+      "overrun": {
+        "name": "Run through",
+        "desc": "Hits twice at 70% damage each."
+      }
+    },
+    "pattern": {
+      "two": {
+        "name": "Two rounds",
+        "desc": "Two rounds at 70% damage each."
+      },
+      "three": {
+        "name": "Three rounds",
+        "desc": "Three rounds at 55% damage each."
+      },
+      "four": {
+        "name": "Four rounds",
+        "desc": "Four rounds at 44% damage each."
+      }
+    },
+    "bolt": {
+      "piercing": {
+        "name": "Piercing head",
+        "desc": "Ignores the target's guard."
+      },
+      "barbed": {
+        "name": "Barbed head",
+        "desc": "50% chance to inflict Bleeding."
+      },
+      "splitting": {
+        "name": "Splitting head",
+        "desc": "Hits every body part at 70% damage."
+      },
+      "heavy": {
+        "name": "Heavy head",
+        "desc": "115% damage, 25% chance to Stun."
+      }
+    },
+    "discord": {
+      "tight": {
+        "name": "Tight",
+        "desc": "Damage varies by 10%. Normal average."
+      },
+      "wide": {
+        "name": "Wide",
+        "desc": "Damage varies by 45%. 112% average."
+      },
+      "chaotic": {
+        "name": "Chaotic",
+        "desc": "Damage varies by 90%. 125% average."
+      }
+    },
+    "measure": {
+      "health": {
+        "name": "Their wounds",
+        "desc": "More damage the lower the target's HP."
+      },
+      "mana": {
+        "name": "Their reservoir",
+        "desc": "More damage the lower the target's MP."
+      },
+      "states": {
+        "name": "What they carry",
+        "desc": "More damage for every state on the target."
+      },
+      "level": {
+        "name": "The gap between you",
+        "desc": "More damage the bigger the level gap, in either direction."
+      }
+    },
+    "reads": {
+      "wound": {
+        "name": "The wound",
+        "desc": "More damage the more overall damage the target's body has taken."
+      },
+      "ruin": {
+        "name": "The ruin",
+        "desc": "More damage the worse the target's most damaged part is."
+      },
+      "tally": {
+        "name": "The tally",
+        "desc": "More damage for every body part the target has lost."
+      }
+    },
+    "bargain": {
+      "patron": {
+        "name": "Patron",
+        "desc": "20% chance to reap an enemy on a critical hit. Normal damage."
+      },
+      "tithe": {
+        "name": "Tithe",
+        "desc": "50% chance to reap an ally on a critical hit. 130% damage."
+      },
+      "chaos": {
+        "name": "Chaos",
+        "desc": "50% chance to reap anyone on a critical hit. 110% damage."
+      }
+    },
+    "mends": {
+      "hp": {
+        "name": "Wounds",
+        "desc": "Restores HP to the target."
+      },
+      "mp": {
+        "name": "The reservoir",
+        "desc": "Restores MP to the target."
+      },
+      "tp": {
+        "name": "Action points",
+        "desc": "Restores AP to the target."
+      },
+      "state": {
+        "name": "An affliction",
+        "desc": "Removes one state from the target."
+      },
+      "party": {
+        "name": "All of them",
+        "desc": "Restores a smaller amount of HP to the whole party."
+      }
+    },
+    "marks": {
+      "48": {
+        "desc": "30% chance to inflict Bleeding."
+      },
+      "38": {
+        "desc": "30% chance to inflict Unbalanced."
+      },
+      "5": {
+        "desc": "30% chance to inflict Blind."
+      },
+      "6": {
+        "desc": "30% chance to inflict Silence."
+      },
+      "52": {
+        "desc": "30% chance to inflict Pinned."
+      },
+      "13": {
+        "desc": "30% chance to inflict Stun."
+      }
+    },
+    "stance": {
+      "22": {
+        "desc": "Counter Attack: strikes back when hit."
+      },
+      "34": {
+        "desc": "Perfect Focus: attacks never miss."
+      },
+      "49": {
+        "desc": "Dodge: greatly raised evasion."
+      },
+      "55": {
+        "desc": "Combo: attacks chain into extra hits."
+      }
+    },
+    "sky": {
+      "none": {
+        "name": "Clear",
+        "desc": "Clears the weather."
+      },
+      "rain": {
+        "name": "Rain",
+        "desc": "Sets rain."
+      },
+      "storm": {
+        "name": "Storm",
+        "desc": "Sets a thunderstorm."
+      },
+      "snow": {
+        "name": "Snow",
+        "desc": "Sets snow."
+      }
+    },
+    "form": {
+      "gun": {
+        "hint": "The coilgun has its own element, so the frame holds two at once. Rack depth is up to you, but a doubled rack doubles the ammo cost of every shot."
+      },
+      "abrasax": {
+        "hint": "Applies one affliction. Harsher afflictions have lower odds of landing, and PSI raises the odds."
+      },
+      "thelema": {
+        "hint": "A normal attack sometimes becomes this sword skill instead, paying its AP cost. The skill does not need to be learned."
+      },
+      "freud": {
+        "hint": "Damage is based on PSI. A normal attack sometimes becomes this skill instead, paying its AP cost."
+      },
+      "fists": {
+        "hint": "A normal attack sometimes becomes a random form from the selected set, paying its AP cost."
+      },
+      "kia": {
+        "hint": "The stance is active while the gauntlet is equipped, and lowers the damage you deal while it is up."
+      },
+      "hadit": {
+        "hint": "Switching to the staff changes the weather to this one. Weather affects enemies too, and has no effect indoors."
+      },
+      "solomon": {
+        "hint": "The pact is drawn from the selected schools. With nothing selected it draws from every school. A very narrow selection may have nothing to draw."
+      },
+      "choronzon": {
+        "hint": "The damage type dealt. It decides what the attack is strong and weak against."
+      },
+      "babalon": {
+        "hint": "How many targets the attack hits. Every extra target lowers the damage dealt to all of them."
+      },
+      "nuit": {
+        "hint": "The lash lowers one parameter instead of dealing full damage. The attack deals less damage in exchange."
+      },
+      "aiwass": {
+        "hint": "How far the bow is drawn. Longer draw trades off against arrow damage."
+      },
+      "zos": {
+        "hint": "The status effect on the darts, taken from the same loaded rounds."
+      },
+      "baphomet": {
+        "hint": "What the talons drain from the target. Draining AP costs the most, since AP powers attacks that turn into skills."
+      },
+      "longinus": {
+        "hint": "How the lance attacks. Each mode trades one property for another."
+      },
+      "twin": {
+        "hint": "How many rounds each attack fires. More rounds means less damage per round."
+      },
+      "crossbow": {
+        "hint": "The tip loaded on the bolt. Only one can be loaded at a time."
+      },
+      "eris": {
+        "hint": "Damage variance. Wider variance raises the average damage but makes single hits less predictable."
+      },
+      "maat": {
+        "hint": "The parameter the ankh weighs the target against. A balanced target takes less damage than from a normal attack."
+      },
+      "bubba": {
+        "hint": "The target type the wrench is built for. Much more damage against it, less against everything else."
+      },
+      "yaldabaoth": {
+        "hint": "The reading the bar takes from the target. Against an unaffected target it deals less than a normal attack."
+      },
+      "nyarlathotep": {
+        "hint": "Which side the reaping targets. It never takes Em, and cannot target a boss, a petrodemon, or anything more than ten levels above her."
+      },
+      "gautama": {
+        "hint": "What the rosary heals. It deals no damage at all."
+      }
+    }
   }
 }

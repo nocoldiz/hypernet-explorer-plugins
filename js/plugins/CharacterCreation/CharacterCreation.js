@@ -1405,7 +1405,13 @@
       handler: function (symbol) {
         if (symbol === "random_traits") {
           const targetActorId = Scene_CharacterCreation.getCurrentActorId();
-          if (window.randomizeTraitsForActor) {
+          // Simple mode deals a whole archetype: what that mode offers is
+          // ready-made builds, so its Random hands over one of those rather
+          // than a loose handful of traits (CharacterCreationSteps.js).
+          const rolled = Scene_CharacterCreation.isSimpleMode() &&
+            this._ccRollArchetypeFor &&
+            this._ccRollArchetypeFor(Scene_CharacterCreation.getCurrentActor());
+          if (!rolled && window.randomizeTraitsForActor) {
             window.randomizeTraitsForActor(targetActorId);
           }
         }
@@ -3093,11 +3099,19 @@
         step: STEP.CLASS
       };
 
+      // On the simple board a build has a name, so the tab carries that name
+      // rather than a count of the traits inside it.
+      const traitCount = (actor && actor._selectedTraits && actor._selectedTraits.length) || 0;
+      const worn = (traitCount && this._ccActiveArchetype) ? this._ccActiveArchetype(actor) : null;
       const traits = {
         id: "traits",
         iconIndex: 87,
         title: ccT('CharCreate.traits', 'Traits'),
-        subtitle: actor && actor._selectedTraits && actor._selectedTraits.length > 0 ? `${actor._selectedTraits.length} traits` : ccT('CharCreate.optional', "Optional"),
+        subtitle: worn
+          ? ((window.TraitPoints && window.TraitPoints.archetypeName) ? window.TraitPoints.archetypeName(worn) : worn.id)
+          : (traitCount > 0
+            ? ccTp('Traits.traitsCount', { count: traitCount }, traitCount + ' traits')
+            : ccT('CharCreate.optional', "Optional")),
         step: STEP.TRAITS
       };
 
@@ -3378,6 +3392,15 @@
         };
       }
       if (this._step === STEP.TRAITS) {
+        // The simple board is a rail of archetype families over ready-made
+        // builds, not one of trait categories over the trait book.
+        if (this._ccUsesArchetypeBoard && this._ccUsesArchetypeBoard()) {
+          return {
+            ids: this._archetypeFamilies().map((f) => f.id),
+            active: Scene_CharacterCreation._activeArchetypeFamily || "all",
+            select: (id) => this.onArchetypeFamilySelect(id),
+          };
+        }
         return {
           ids: this._traitCategories().map((c) => c.id),
           active: Scene_CharacterCreation._activeTraitCategory || "all",

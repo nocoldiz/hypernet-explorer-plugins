@@ -11,11 +11,12 @@
           "icon": 50,
           "nodes": [
             {"id":1665,"tier":0,"requires":[]},
+            {"id":1955,"tier":1,"requires":[1665]},
             {"id":1657,"tier":1,"requires":[1665]},
             {"id":1661,"tier":1,"requires":[1665]},
-            {"id":1659,"tier":1,"requires":[1665]},
-            {"id":1666,"tier":2,"requires":[1657]},
-            {"id":390,"tier":2,"requires":[1657]},
+            {"id":1659,"tier":2,"requires":[1955]},
+            {"id":1666,"tier":2,"requires":[1955]},
+            {"id":390,"tier":2,"requires":[1955]},
             {"id":432,"tier":2,"requires":[1657]},
             {"id":1667,"tier":3,"requires":[432]}
           ]
@@ -108,8 +109,9 @@
             {"id":1008,"tier":2,"requires":[1011]},
             {"id":1019,"tier":2,"requires":[1011]},
             {"id":1017,"tier":2,"requires":[1010]},
+            {"id":1958,"tier":2,"requires":[1010]},
             {"id":1015,"tier":2,"requires":[1010]},
-            {"id":1022,"tier":2,"requires":[1010]},
+            {"id":1022,"tier":2,"requires":[1014]},
             {"id":1018,"tier":2,"requires":[1014]},
             {"id":1016,"tier":3,"requires":[1018]}
           ]
@@ -132,11 +134,12 @@
           "icon": 73,
           "nodes": [
             {"id":997,"tier":0,"requires":[]},
+            {"id":1975,"tier":1,"requires":[997]},
             {"id":992,"tier":1,"requires":[997]},
             {"id":993,"tier":1,"requires":[997]},
-            {"id":1021,"tier":1,"requires":[997]},
-            {"id":1006,"tier":2,"requires":[992]},
-            {"id":1020,"tier":2,"requires":[992]},
+            {"id":1021,"tier":2,"requires":[1975]},
+            {"id":1006,"tier":2,"requires":[1975]},
+            {"id":1020,"tier":2,"requires":[1975]},
             {"id":991,"tier":2,"requires":[992]},
             {"id":1012,"tier":3,"requires":[991]},
             {"id":1007,"tier":4,"requires":[1012]}
@@ -177,13 +180,14 @@
           "icon": 70,
           "nodes": [
             {"id":769,"tier":0,"requires":[]},
+            {"id":1940,"tier":1,"requires":[769]},
             {"id":791,"tier":1,"requires":[769]},
             {"id":777,"tier":1,"requires":[769]},
-            {"id":776,"tier":1,"requires":[769]},
-            {"id":783,"tier":2,"requires":[791]},
-            {"id":795,"tier":2,"requires":[791]},
+            {"id":776,"tier":2,"requires":[1940]},
+            {"id":783,"tier":2,"requires":[1940]},
+            {"id":795,"tier":2,"requires":[1940]},
             {"id":794,"tier":2,"requires":[791]},
-            {"id":793,"tier":2,"requires":[777]}
+            {"id":793,"tier":2,"requires":[791]}
           ]
         },
         {
@@ -252,15 +256,16 @@
           "name": {"en":"Broken Hours","it":"Ore Spezzate"},
           "icon": 220,
           "nodes": [
-            {"id":744,"tier":0,"requires":[]},
-            {"id":740,"tier":1,"requires":[744]},
-            {"id":749,"tier":1,"requires":[744]},
-            {"id":738,"tier":1,"requires":[744]},
-            {"id":750,"tier":2,"requires":[740]},
-            {"id":752,"tier":2,"requires":[740]},
+            {"id":1942,"tier":0,"requires":[]},
+            {"id":744,"tier":1,"requires":[1942]},
+            {"id":740,"tier":1,"requires":[1942]},
+            {"id":749,"tier":1,"requires":[1942]},
+            {"id":738,"tier":2,"requires":[744]},
+            {"id":750,"tier":2,"requires":[744]},
+            {"id":752,"tier":2,"requires":[744]},
             {"id":1897,"tier":2,"requires":[740]},
-            {"id":1899,"tier":2,"requires":[749]},
-            {"id":1898,"tier":2,"requires":[749]}
+            {"id":1899,"tier":2,"requires":[740]},
+            {"id":1898,"tier":2,"requires":[740]}
           ]
         },
         {
@@ -303,6 +308,7 @@
           "icon": 312,
           "nodes": [
             {"id":1407,"tier":0,"requires":[]},
+            {"id":1945,"tier":1,"requires":[1407]},
             {"id":1406,"tier":1,"requires":[1407]},
             {"id":1408,"tier":1,"requires":[1407]},
             {"id":1410,"tier":2,"requires":[1408]},
@@ -374,8 +380,9 @@
             {"id":368,"tier":2,"requires":[1933]},
             {"id":351,"tier":2,"requires":[1933]},
             {"id":369,"tier":2,"requires":[363]},
+            {"id":1960,"tier":2,"requires":[363]},
             {"id":309,"tier":2,"requires":[363]},
-            {"id":307,"tier":2,"requires":[363]}
+            {"id":307,"tier":2,"requires":[1931]}
           ]
         },
         {
@@ -531,15 +538,16 @@
           "name": {"en":"Wild Boons","it":"Doni Selvaggi"},
           "icon": 205,
           "nodes": [
-            {"id":1677,"tier":0,"requires":[]},
-            {"id":1678,"tier":1,"requires":[1677]},
-            {"id":1676,"tier":2,"requires":[1678]},
-            {"id":1671,"tier":3,"requires":[1676]},
-            {"id":1672,"tier":3,"requires":[1676]},
-            {"id":1673,"tier":3,"requires":[1676]},
-            {"id":1674,"tier":4,"requires":[1671]},
-            {"id":1675,"tier":4,"requires":[1671]},
-            {"id":1679,"tier":4,"requires":[1671]}
+            {"id":1943,"tier":0,"requires":[]},
+            {"id":1677,"tier":1,"requires":[1943]},
+            {"id":1678,"tier":2,"requires":[1677]},
+            {"id":1676,"tier":3,"requires":[1678]},
+            {"id":1671,"tier":4,"requires":[1676]},
+            {"id":1672,"tier":4,"requires":[1676]},
+            {"id":1673,"tier":4,"requires":[1676]},
+            {"id":1674,"tier":5,"requires":[1671]},
+            {"id":1675,"tier":5,"requires":[1671]},
+            {"id":1679,"tier":5,"requires":[1671]}
           ]
         },
         {
@@ -576,8 +584,10 @@
           "name": {"en":"Mending Hours","it":"Ore che Guariscono"},
           "icon": 220,
           "nodes": [
-            {"id":1481,"tier":0,"requires":[]},
-            {"id":1480,"tier":1,"requires":[1481]},
+            {"id":1987,"tier":0,"requires":[]},
+            {"id":1481,"tier":1,"requires":[1987]},
+            {"id":1944,"tier":1,"requires":[1987]},
+            {"id":1480,"tier":1,"requires":[1987]},
             {"id":1479,"tier":2,"requires":[1480]}
           ]
         },
@@ -670,20 +680,21 @@
           "name": {"en":"Lesser Callings","it":"Chiamate Minori"},
           "icon": 79,
           "nodes": [
-            {"id":889,"tier":0,"requires":[]},
-            {"id":1494,"tier":1,"requires":[889]},
-            {"id":1907,"tier":1,"requires":[889]},
-            {"id":1911,"tier":1,"requires":[889]},
-            {"id":1906,"tier":2,"requires":[1494]},
-            {"id":1912,"tier":2,"requires":[1494]},
+            {"id":1986,"tier":0,"requires":[]},
+            {"id":889,"tier":1,"requires":[1986]},
+            {"id":1494,"tier":1,"requires":[1986]},
+            {"id":1907,"tier":1,"requires":[1986]},
+            {"id":1911,"tier":2,"requires":[889]},
+            {"id":1906,"tier":2,"requires":[889]},
+            {"id":1912,"tier":2,"requires":[889]},
             {"id":778,"tier":2,"requires":[1494]},
-            {"id":1909,"tier":2,"requires":[1907]},
-            {"id":1910,"tier":2,"requires":[1907]},
+            {"id":1909,"tier":2,"requires":[1494]},
+            {"id":1910,"tier":2,"requires":[1494]},
             {"id":1908,"tier":2,"requires":[1907]},
-            {"id":1500,"tier":2,"requires":[1911]},
-            {"id":1502,"tier":2,"requires":[1911]},
-            {"id":1299,"tier":2,"requires":[1911]},
-            {"id":1493,"tier":3,"requires":[1299]}
+            {"id":1500,"tier":2,"requires":[1907]},
+            {"id":1502,"tier":2,"requires":[1907]},
+            {"id":1299,"tier":3,"requires":[1911]},
+            {"id":1493,"tier":4,"requires":[1299]}
           ]
         },
         {
@@ -716,19 +727,20 @@
           "icon": 79,
           "nodes": [
             {"id":1293,"tier":0,"requires":[]},
+            {"id":1938,"tier":1,"requires":[1293]},
             {"id":1303,"tier":1,"requires":[1293]},
             {"id":1901,"tier":1,"requires":[1293]},
-            {"id":1294,"tier":1,"requires":[1293]},
-            {"id":1297,"tier":2,"requires":[1303]},
-            {"id":1914,"tier":2,"requires":[1303]},
+            {"id":1294,"tier":2,"requires":[1938]},
+            {"id":1297,"tier":2,"requires":[1938]},
+            {"id":1914,"tier":2,"requires":[1938]},
             {"id":1913,"tier":2,"requires":[1303]},
-            {"id":1924,"tier":2,"requires":[1901]},
-            {"id":1900,"tier":2,"requires":[1901]},
+            {"id":1924,"tier":2,"requires":[1303]},
+            {"id":1900,"tier":2,"requires":[1303]},
             {"id":1927,"tier":2,"requires":[1901]},
-            {"id":1307,"tier":2,"requires":[1294]},
-            {"id":1301,"tier":2,"requires":[1294]},
-            {"id":1304,"tier":2,"requires":[1294]},
-            {"id":1305,"tier":3,"requires":[1297]},
+            {"id":1307,"tier":2,"requires":[1901]},
+            {"id":1301,"tier":2,"requires":[1901]},
+            {"id":1304,"tier":3,"requires":[1294]},
+            {"id":1305,"tier":3,"requires":[1294]},
             {"id":1610,"tier":4,"requires":[1305]},
             {"id":1921,"tier":5,"requires":[1610]},
             {"id":1520,"tier":6,"requires":[1921]}
@@ -797,7 +809,9 @@
             {"id":1069,"tier":1,"requires":[1074]},
             {"id":1067,"tier":1,"requires":[1074]},
             {"id":1076,"tier":2,"requires":[1071]},
-            {"id":1077,"tier":2,"requires":[1071]},
+            {"id":1976,"tier":2,"requires":[1071]},
+            {"id":1969,"tier":2,"requires":[1071]},
+            {"id":1077,"tier":2,"requires":[1069]},
             {"id":1564,"tier":3,"requires":[1077]},
             {"id":1573,"tier":4,"requires":[1564]}
           ]
@@ -813,11 +827,12 @@
           "nodes": [
             {"id":403,"tier":0,"requires":[]},
             {"id":1663,"tier":1,"requires":[403]},
+            {"id":1952,"tier":1,"requires":[403]},
             {"id":1660,"tier":1,"requires":[403]},
-            {"id":412,"tier":1,"requires":[403]},
+            {"id":412,"tier":2,"requires":[1663]},
             {"id":381,"tier":2,"requires":[1663]},
             {"id":397,"tier":2,"requires":[1663]},
-            {"id":388,"tier":2,"requires":[1663]},
+            {"id":388,"tier":2,"requires":[1952]},
             {"id":1668,"tier":3,"requires":[388]}
           ]
         },
@@ -889,7 +904,8 @@
           "nodes": [
             {"id":1531,"tier":0,"requires":[]},
             {"id":1530,"tier":1,"requires":[1531]},
-            {"id":1534,"tier":2,"requires":[1530]}
+            {"id":1966,"tier":1,"requires":[1531]},
+            {"id":1534,"tier":2,"requires":[1966]}
           ]
         }
       ]
@@ -901,11 +917,12 @@
           "name": {"en":"Small Purses","it":"Borse Piccole"},
           "icon": 210,
           "nodes": [
-            {"id":1537,"tier":0,"requires":[]},
-            {"id":1538,"tier":1,"requires":[1537]},
-            {"id":1539,"tier":1,"requires":[1537]},
-            {"id":1541,"tier":1,"requires":[1537]},
-            {"id":1542,"tier":2,"requires":[1538]}
+            {"id":1967,"tier":0,"requires":[]},
+            {"id":1537,"tier":1,"requires":[1967]},
+            {"id":1538,"tier":2,"requires":[1537]},
+            {"id":1539,"tier":2,"requires":[1537]},
+            {"id":1541,"tier":2,"requires":[1537]},
+            {"id":1542,"tier":3,"requires":[1538]}
           ]
         },
         {
@@ -970,15 +987,16 @@
           "name": {"en":"Nerve and Charge","it":"Nervo e Carica"},
           "icon": 66,
           "nodes": [
-            {"id":478,"tier":0,"requires":[]},
-            {"id":383,"tier":1,"requires":[478]},
-            {"id":411,"tier":1,"requires":[478]},
-            {"id":414,"tier":1,"requires":[478]},
-            {"id":423,"tier":2,"requires":[383]},
-            {"id":394,"tier":2,"requires":[383]},
+            {"id":1953,"tier":0,"requires":[]},
+            {"id":478,"tier":1,"requires":[1953]},
+            {"id":383,"tier":1,"requires":[1953]},
+            {"id":411,"tier":1,"requires":[1953]},
+            {"id":414,"tier":2,"requires":[478]},
+            {"id":423,"tier":2,"requires":[478]},
+            {"id":394,"tier":2,"requires":[478]},
             {"id":424,"tier":2,"requires":[383]},
-            {"id":464,"tier":2,"requires":[411]},
-            {"id":445,"tier":2,"requires":[411]},
+            {"id":464,"tier":2,"requires":[383]},
+            {"id":445,"tier":2,"requires":[383]},
             {"id":452,"tier":2,"requires":[411]},
             {"id":503,"tier":3,"requires":[452]},
             {"id":496,"tier":4,"requires":[503]}
@@ -1010,8 +1028,9 @@
             {"id":1038,"tier":1,"requires":[1037]},
             {"id":1053,"tier":1,"requires":[1037]},
             {"id":1034,"tier":2,"requires":[1046]},
+            {"id":1963,"tier":2,"requires":[1046]},
             {"id":1797,"tier":2,"requires":[1046]},
-            {"id":1796,"tier":2,"requires":[1046]},
+            {"id":1796,"tier":2,"requires":[1038]},
             {"id":1798,"tier":3,"requires":[1796]}
           ]
         },
@@ -1069,19 +1088,20 @@
           "name": {"en":"Blood Work","it":"Opera di Sangue"},
           "icon": 84,
           "nodes": [
-            {"id":684,"tier":0,"requires":[]},
-            {"id":697,"tier":1,"requires":[684]},
-            {"id":676,"tier":1,"requires":[684]},
-            {"id":685,"tier":1,"requires":[684]},
-            {"id":702,"tier":2,"requires":[697]},
-            {"id":692,"tier":2,"requires":[697]},
+            {"id":1937,"tier":0,"requires":[]},
+            {"id":684,"tier":1,"requires":[1937]},
+            {"id":697,"tier":1,"requires":[1937]},
+            {"id":676,"tier":1,"requires":[1937]},
+            {"id":685,"tier":2,"requires":[684]},
+            {"id":702,"tier":2,"requires":[684]},
+            {"id":692,"tier":2,"requires":[684]},
             {"id":664,"tier":2,"requires":[697]},
-            {"id":693,"tier":2,"requires":[676]},
-            {"id":673,"tier":2,"requires":[676]},
+            {"id":693,"tier":2,"requires":[697]},
+            {"id":673,"tier":2,"requires":[697]},
             {"id":682,"tier":2,"requires":[676]},
-            {"id":1860,"tier":2,"requires":[685]},
-            {"id":1868,"tier":2,"requires":[685]},
-            {"id":1858,"tier":2,"requires":[685]}
+            {"id":1860,"tier":2,"requires":[676]},
+            {"id":1868,"tier":2,"requires":[676]},
+            {"id":1858,"tier":3,"requires":[685]}
           ]
         },
         {
@@ -1176,15 +1196,16 @@
           "name": {"en":"Delving","it":"Scavo Profondo"},
           "icon": 217,
           "nodes": [
-            {"id":1551,"tier":0,"requires":[]},
-            {"id":1693,"tier":1,"requires":[1551]},
-            {"id":1548,"tier":1,"requires":[1551]},
-            {"id":1549,"tier":1,"requires":[1551]},
-            {"id":1558,"tier":2,"requires":[1693]},
-            {"id":1700,"tier":2,"requires":[1693]},
+            {"id":1956,"tier":0,"requires":[]},
+            {"id":1551,"tier":1,"requires":[1956]},
+            {"id":1693,"tier":1,"requires":[1956]},
+            {"id":1548,"tier":1,"requires":[1956]},
+            {"id":1549,"tier":2,"requires":[1551]},
+            {"id":1558,"tier":2,"requires":[1551]},
+            {"id":1700,"tier":2,"requires":[1551]},
             {"id":1694,"tier":2,"requires":[1693]},
-            {"id":495,"tier":2,"requires":[1548]},
-            {"id":502,"tier":2,"requires":[1548]},
+            {"id":495,"tier":2,"requires":[1693]},
+            {"id":502,"tier":2,"requires":[1693]},
             {"id":1559,"tier":3,"requires":[502]},
             {"id":1550,"tier":4,"requires":[1559]},
             {"id":1560,"tier":5,"requires":[1550]},
@@ -1270,9 +1291,10 @@
           "name": {"en":"Life Itself","it":"La Vita Stessa"},
           "icon": 181,
           "nodes": [
-            {"id":1579,"tier":0,"requires":[]},
-            {"id":1581,"tier":1,"requires":[1579]},
-            {"id":1585,"tier":2,"requires":[1581]}
+            {"id":1935,"tier":0,"requires":[]},
+            {"id":1579,"tier":1,"requires":[1935]},
+            {"id":1581,"tier":2,"requires":[1579]},
+            {"id":1585,"tier":3,"requires":[1581]}
           ]
         },
         {
@@ -1280,9 +1302,10 @@
           "name": {"en":"Tending the Party","it":"Cura del Gruppo"},
           "icon": 72,
           "nodes": [
-            {"id":1780,"tier":0,"requires":[]},
-            {"id":1738,"tier":1,"requires":[1780]},
-            {"id":1779,"tier":1,"requires":[1780]},
+            {"id":1974,"tier":0,"requires":[]},
+            {"id":1780,"tier":1,"requires":[1974]},
+            {"id":1738,"tier":1,"requires":[1974]},
+            {"id":1779,"tier":1,"requires":[1974]},
             {"id":1578,"tier":2,"requires":[1779]},
             {"id":1576,"tier":3,"requires":[1578]},
             {"id":1584,"tier":4,"requires":[1576]}
@@ -1321,15 +1344,15 @@
           "nodes": [
             {"id":568,"tier":0,"requires":[]},
             {"id":561,"tier":1,"requires":[568]},
+            {"id":1973,"tier":1,"requires":[568]},
             {"id":576,"tier":1,"requires":[568]},
-            {"id":565,"tier":1,"requires":[568]},
+            {"id":565,"tier":2,"requires":[561]},
             {"id":570,"tier":2,"requires":[561]},
             {"id":553,"tier":2,"requires":[561]},
-            {"id":584,"tier":2,"requires":[561]},
-            {"id":557,"tier":2,"requires":[576]},
-            {"id":536,"tier":2,"requires":[576]},
-            {"id":564,"tier":2,"requires":[576]},
-            {"id":575,"tier":2,"requires":[565]}
+            {"id":584,"tier":2,"requires":[1973]},
+            {"id":557,"tier":2,"requires":[1973]},
+            {"id":536,"tier":2,"requires":[1973]},
+            {"id":564,"tier":2,"requires":[576]}
           ]
         },
         {
@@ -1337,14 +1360,15 @@
           "name": {"en":"The Mercy Seat II","it":"Il Trono di Grazia II"},
           "icon": 70,
           "nodes": [
-            {"id":535,"tier":0,"requires":[]},
-            {"id":578,"tier":1,"requires":[535]},
-            {"id":574,"tier":1,"requires":[535]},
-            {"id":524,"tier":1,"requires":[535]},
-            {"id":587,"tier":2,"requires":[578]},
-            {"id":577,"tier":2,"requires":[578]},
+            {"id":575,"tier":0,"requires":[]},
+            {"id":535,"tier":1,"requires":[575]},
+            {"id":578,"tier":1,"requires":[575]},
+            {"id":574,"tier":1,"requires":[575]},
+            {"id":524,"tier":2,"requires":[535]},
+            {"id":587,"tier":2,"requires":[535]},
+            {"id":577,"tier":2,"requires":[535]},
             {"id":555,"tier":2,"requires":[578]},
-            {"id":525,"tier":2,"requires":[574]},
+            {"id":525,"tier":2,"requires":[578]},
             {"id":538,"tier":3,"requires":[525]},
             {"id":537,"tier":4,"requires":[538]}
           ]
@@ -1424,19 +1448,20 @@
           "name": {"en":"Beyond Death","it":"Oltre la Morte"},
           "icon": 72,
           "nodes": [
-            {"id":532,"tier":0,"requires":[]},
-            {"id":516,"tier":1,"requires":[532]},
-            {"id":539,"tier":1,"requires":[532]},
-            {"id":526,"tier":1,"requires":[532]},
-            {"id":562,"tier":2,"requires":[516]},
-            {"id":588,"tier":2,"requires":[516]},
+            {"id":1934,"tier":0,"requires":[]},
+            {"id":532,"tier":1,"requires":[1934]},
+            {"id":516,"tier":1,"requires":[1934]},
+            {"id":539,"tier":1,"requires":[1934]},
+            {"id":526,"tier":2,"requires":[532]},
+            {"id":562,"tier":2,"requires":[532]},
+            {"id":588,"tier":2,"requires":[532]},
             {"id":563,"tier":2,"requires":[516]},
-            {"id":582,"tier":2,"requires":[539]},
-            {"id":554,"tier":2,"requires":[539]},
+            {"id":582,"tier":2,"requires":[516]},
+            {"id":554,"tier":2,"requires":[516]},
             {"id":572,"tier":2,"requires":[539]},
-            {"id":569,"tier":2,"requires":[526]},
-            {"id":589,"tier":2,"requires":[526]},
-            {"id":585,"tier":2,"requires":[526]}
+            {"id":569,"tier":2,"requires":[539]},
+            {"id":589,"tier":2,"requires":[539]},
+            {"id":585,"tier":3,"requires":[526]}
           ]
         }
       ]
@@ -1446,9 +1471,10 @@
         {
           "id": "hunting.quarry",
           "name": {"en":"The Quarry","it":"La Preda"},
-          "icon": 97,
+          "icon": 72,
           "nodes": [
-            {"id":1050,"tier":0,"requires":[]}
+            {"id":1971,"tier":0,"requires":[]},
+            {"id":1050,"tier":1,"requires":[1971]}
           ]
         }
       ]
@@ -1464,6 +1490,7 @@
             {"id":1808,"tier":1,"requires":[1723]},
             {"id":407,"tier":1,"requires":[1723]},
             {"id":1755,"tier":1,"requires":[1723]},
+            {"id":1982,"tier":2,"requires":[1808]},
             {"id":472,"tier":2,"requires":[1808]},
             {"id":473,"tier":2,"requires":[1808]},
             {"id":1721,"tier":3,"requires":[473]}
@@ -1474,12 +1501,13 @@
           "name": {"en":"Currents","it":"Correnti"},
           "icon": 67,
           "nodes": [
-            {"id":1658,"tier":0,"requires":[]},
-            {"id":1754,"tier":1,"requires":[1658]},
-            {"id":1753,"tier":1,"requires":[1658]},
-            {"id":413,"tier":1,"requires":[1658]},
-            {"id":436,"tier":2,"requires":[1754]},
-            {"id":443,"tier":2,"requires":[1754]},
+            {"id":1954,"tier":0,"requires":[]},
+            {"id":1658,"tier":1,"requires":[1954]},
+            {"id":1754,"tier":1,"requires":[1954]},
+            {"id":1753,"tier":1,"requires":[1954]},
+            {"id":413,"tier":2,"requires":[1658]},
+            {"id":436,"tier":2,"requires":[1658]},
+            {"id":443,"tier":2,"requires":[1658]},
             {"id":485,"tier":3,"requires":[443]},
             {"id":1821,"tier":4,"requires":[485]},
             {"id":486,"tier":5,"requires":[1821]}
@@ -1508,6 +1536,7 @@
             {"id":1587,"tier":1,"requires":[1589]},
             {"id":1590,"tier":1,"requires":[1589]},
             {"id":1591,"tier":1,"requires":[1589]},
+            {"id":1947,"tier":2,"requires":[1587]},
             {"id":1588,"tier":2,"requires":[1587]}
           ]
         },
@@ -1551,12 +1580,13 @@
             {"id":1135,"tier":2,"requires":[1167]},
             {"id":1168,"tier":2,"requires":[1167]},
             {"id":1165,"tier":2,"requires":[1167]},
+            {"id":1965,"tier":2,"requires":[1820]},
             {"id":1133,"tier":2,"requires":[1820]},
             {"id":1164,"tier":2,"requires":[1820]},
-            {"id":1166,"tier":2,"requires":[1820]},
+            {"id":1166,"tier":3,"requires":[1176]},
             {"id":1137,"tier":3,"requires":[1176]},
             {"id":1134,"tier":3,"requires":[1176]},
-            {"id":1148,"tier":3,"requires":[1176]},
+            {"id":1148,"tier":3,"requires":[1144]},
             {"id":1142,"tier":4,"requires":[1148]}
           ]
         },
@@ -1653,16 +1683,25 @@
             {"id":134,"tier":2,"requires":[58]},
             {"id":168,"tier":2,"requires":[58]},
             {"id":64,"tier":2,"requires":[49]},
-            {"id":36,"tier":2,"requires":[49]},
-            {"id":82,"tier":2,"requires":[49]},
-            {"id":86,"tier":2,"requires":[70]},
-            {"id":209,"tier":2,"requires":[70]},
-            {"id":71,"tier":2,"requires":[70]},
-            {"id":210,"tier":3,"requires":[47]},
-            {"id":158,"tier":3,"requires":[47]},
-            {"id":105,"tier":3,"requires":[47]},
-            {"id":204,"tier":3,"requires":[134]},
-            {"id":223,"tier":3,"requires":[134]}
+            {"id":1980,"tier":2,"requires":[49]},
+            {"id":36,"tier":2,"requires":[49]}
+          ]
+        },
+        {
+          "id": "martialarts.inner.2",
+          "name": {"en":"Inner Calm II","it":"Calma Interiore II"},
+          "icon": 70,
+          "nodes": [
+            {"id":82,"tier":0,"requires":[]},
+            {"id":86,"tier":1,"requires":[82]},
+            {"id":209,"tier":1,"requires":[82]},
+            {"id":1959,"tier":1,"requires":[82]},
+            {"id":71,"tier":2,"requires":[86]},
+            {"id":210,"tier":2,"requires":[86]},
+            {"id":158,"tier":2,"requires":[86]},
+            {"id":105,"tier":2,"requires":[209]},
+            {"id":204,"tier":2,"requires":[209]},
+            {"id":223,"tier":2,"requires":[209]}
           ]
         },
         {
@@ -2013,18 +2052,19 @@
           "name": {"en":"Hexcraft","it":"Arte della Malia"},
           "icon": 74,
           "nodes": [
-            {"id":808,"tier":0,"requires":[]},
-            {"id":812,"tier":1,"requires":[808]},
-            {"id":813,"tier":1,"requires":[808]},
-            {"id":831,"tier":1,"requires":[808]},
-            {"id":827,"tier":2,"requires":[812]},
-            {"id":839,"tier":2,"requires":[812]},
+            {"id":1984,"tier":0,"requires":[]},
+            {"id":808,"tier":1,"requires":[1984]},
+            {"id":812,"tier":1,"requires":[1984]},
+            {"id":813,"tier":1,"requires":[1984]},
+            {"id":831,"tier":2,"requires":[808]},
+            {"id":827,"tier":2,"requires":[808]},
+            {"id":839,"tier":2,"requires":[808]},
             {"id":821,"tier":2,"requires":[812]},
-            {"id":810,"tier":2,"requires":[813]},
-            {"id":815,"tier":2,"requires":[813]},
+            {"id":810,"tier":2,"requires":[812]},
+            {"id":815,"tier":2,"requires":[812]},
             {"id":824,"tier":2,"requires":[813]},
-            {"id":843,"tier":2,"requires":[831]},
-            {"id":826,"tier":2,"requires":[831]}
+            {"id":843,"tier":2,"requires":[813]},
+            {"id":826,"tier":2,"requires":[813]}
           ]
         },
         {
@@ -2053,13 +2093,14 @@
           "nodes": [
             {"id":845,"tier":0,"requires":[]},
             {"id":853,"tier":1,"requires":[845]},
+            {"id":1939,"tier":1,"requires":[845]},
             {"id":840,"tier":1,"requires":[845]},
-            {"id":857,"tier":1,"requires":[845]},
+            {"id":857,"tier":2,"requires":[853]},
             {"id":863,"tier":2,"requires":[853]},
             {"id":849,"tier":2,"requires":[853]},
-            {"id":867,"tier":2,"requires":[853]},
-            {"id":865,"tier":2,"requires":[840]},
-            {"id":861,"tier":2,"requires":[840]},
+            {"id":867,"tier":2,"requires":[1939]},
+            {"id":865,"tier":2,"requires":[1939]},
+            {"id":861,"tier":2,"requires":[1939]},
             {"id":871,"tier":2,"requires":[840]}
           ]
         },
@@ -2087,10 +2128,12 @@
           "name": {"en":"Reshaping Flesh","it":"Rimodellare la Carne"},
           "icon": 16,
           "nodes": [
-            {"id":1932,"tier":0,"requires":[]},
-            {"id":1598,"tier":1,"requires":[1932]},
-            {"id":1596,"tier":1,"requires":[1932]},
-            {"id":1597,"tier":1,"requires":[1932]}
+            {"id":1949,"tier":0,"requires":[]},
+            {"id":1983,"tier":1,"requires":[1949]},
+            {"id":1932,"tier":2,"requires":[1983]},
+            {"id":1598,"tier":3,"requires":[1932]},
+            {"id":1596,"tier":3,"requires":[1932]},
+            {"id":1597,"tier":3,"requires":[1932]}
           ]
         },
         {
@@ -2151,16 +2194,18 @@
         {
           "id": "necromancy.rites",
           "name": {"en":"Sacrifice and Rite","it":"Sacrificio e Rito"},
-          "icon": 177,
+          "icon": 71,
           "nodes": [
             {"id":627,"tier":0,"requires":[]},
+            {"id":1936,"tier":1,"requires":[627]},
+            {"id":1979,"tier":1,"requires":[627]},
             {"id":637,"tier":1,"requires":[627]},
-            {"id":633,"tier":1,"requires":[627]},
-            {"id":628,"tier":1,"requires":[627]},
-            {"id":642,"tier":2,"requires":[637]},
-            {"id":640,"tier":2,"requires":[637]},
-            {"id":646,"tier":2,"requires":[637]},
-            {"id":648,"tier":2,"requires":[633]},
+            {"id":633,"tier":2,"requires":[1936]},
+            {"id":628,"tier":2,"requires":[1936]},
+            {"id":642,"tier":2,"requires":[1936]},
+            {"id":640,"tier":2,"requires":[1979]},
+            {"id":646,"tier":2,"requires":[1979]},
+            {"id":648,"tier":2,"requires":[1979]},
             {"id":1609,"tier":3,"requires":[648]},
             {"id":1612,"tier":4,"requires":[1609]},
             {"id":1613,"tier":5,"requires":[1612]}
@@ -2190,7 +2235,8 @@
             {"id":1617,"tier":1,"requires":[1620]},
             {"id":1618,"tier":1,"requires":[1620]},
             {"id":1619,"tier":1,"requires":[1620]},
-            {"id":1621,"tier":2,"requires":[1619]}
+            {"id":1946,"tier":2,"requires":[1617]},
+            {"id":1621,"tier":3,"requires":[1946]}
           ]
         }
       ]
@@ -2203,18 +2249,20 @@
           "icon": 185,
           "nodes": [
             {"id":900,"tier":0,"requires":[]},
+            {"id":1977,"tier":1,"requires":[900]},
             {"id":895,"tier":1,"requires":[900]},
             {"id":887,"tier":1,"requires":[900]},
-            {"id":890,"tier":1,"requires":[900]},
-            {"id":888,"tier":2,"requires":[895]},
+            {"id":890,"tier":2,"requires":[1977]},
+            {"id":1970,"tier":2,"requires":[1977]},
+            {"id":888,"tier":2,"requires":[1977]},
             {"id":893,"tier":2,"requires":[895]},
             {"id":903,"tier":2,"requires":[895]},
-            {"id":892,"tier":2,"requires":[887]},
+            {"id":892,"tier":2,"requires":[895]},
             {"id":896,"tier":2,"requires":[887]},
             {"id":886,"tier":2,"requires":[887]},
-            {"id":920,"tier":2,"requires":[890]},
-            {"id":899,"tier":2,"requires":[890]},
-            {"id":901,"tier":3,"requires":[899]}
+            {"id":920,"tier":2,"requires":[887]},
+            {"id":899,"tier":3,"requires":[890]},
+            {"id":901,"tier":4,"requires":[899]}
           ]
         },
         {
@@ -2273,9 +2321,10 @@
             {"id":1100,"tier":2,"requires":[1106]},
             {"id":1093,"tier":2,"requires":[1106]},
             {"id":1103,"tier":2,"requires":[1106]},
+            {"id":1985,"tier":2,"requires":[1099]},
             {"id":1110,"tier":2,"requires":[1099]},
             {"id":1114,"tier":2,"requires":[1099]},
-            {"id":1102,"tier":2,"requires":[1099]},
+            {"id":1102,"tier":3,"requires":[1095]},
             {"id":1090,"tier":3,"requires":[1095]},
             {"id":1091,"tier":4,"requires":[1090]}
           ]
@@ -2305,8 +2354,9 @@
             {"id":1111,"tier":2,"requires":[1105]},
             {"id":1115,"tier":2,"requires":[1105]},
             {"id":1094,"tier":2,"requires":[1104]},
+            {"id":1968,"tier":2,"requires":[1104]},
             {"id":1089,"tier":2,"requires":[1104]},
-            {"id":1118,"tier":2,"requires":[1104]},
+            {"id":1118,"tier":2,"requires":[1109]},
             {"id":1119,"tier":3,"requires":[1118]}
           ]
         }
@@ -2355,11 +2405,13 @@
           "icon": 73,
           "nodes": [
             {"id":972,"tier":0,"requires":[]},
+            {"id":1948,"tier":1,"requires":[972]},
+            {"id":1978,"tier":1,"requires":[972]},
             {"id":973,"tier":1,"requires":[972]},
-            {"id":967,"tier":1,"requires":[972]},
-            {"id":948,"tier":1,"requires":[972]},
-            {"id":949,"tier":2,"requires":[973]},
-            {"id":947,"tier":2,"requires":[973]},
+            {"id":967,"tier":2,"requires":[1948]},
+            {"id":948,"tier":2,"requires":[1948]},
+            {"id":949,"tier":2,"requires":[1948]},
+            {"id":947,"tier":2,"requires":[1978]},
             {"id":976,"tier":3,"requires":[947]}
           ]
         },
@@ -2416,7 +2468,8 @@
             {"id":1805,"tier":0,"requires":[]},
             {"id":1813,"tier":1,"requires":[1805]},
             {"id":1714,"tier":1,"requires":[1805]},
-            {"id":427,"tier":1,"requires":[1805]},
+            {"id":1951,"tier":1,"requires":[1805]},
+            {"id":427,"tier":2,"requires":[1813]},
             {"id":404,"tier":2,"requires":[1813]},
             {"id":1852,"tier":2,"requires":[1813]}
           ]
@@ -2553,7 +2606,8 @@
             {"id":1268,"tier":1,"requires":[1265]},
             {"id":1261,"tier":2,"requires":[1266]},
             {"id":1267,"tier":2,"requires":[1266]},
-            {"id":1269,"tier":2,"requires":[1266]},
+            {"id":1964,"tier":2,"requires":[1266]},
+            {"id":1269,"tier":2,"requires":[1275]},
             {"id":1281,"tier":2,"requires":[1275]}
           ]
         }
@@ -2566,9 +2620,10 @@
           "name": {"en":"Restoring Order","it":"Ristabilire l Ordine"},
           "icon": 71,
           "nodes": [
-            {"id":379,"tier":0,"requires":[]},
-            {"id":1341,"tier":1,"requires":[379]},
-            {"id":1342,"tier":2,"requires":[1341]}
+            {"id":1950,"tier":0,"requires":[]},
+            {"id":379,"tier":1,"requires":[1950]},
+            {"id":1341,"tier":2,"requires":[379]},
+            {"id":1342,"tier":3,"requires":[1341]}
           ]
         },
         {
@@ -2631,10 +2686,11 @@
             {"id":236,"tier":1,"requires":[238]},
             {"id":280,"tier":2,"requires":[281]},
             {"id":270,"tier":2,"requires":[281]},
-            {"id":286,"tier":2,"requires":[281]},
+            {"id":1961,"tier":2,"requires":[281]},
+            {"id":286,"tier":2,"requires":[257]},
             {"id":287,"tier":2,"requires":[257]},
             {"id":239,"tier":2,"requires":[257]},
-            {"id":271,"tier":2,"requires":[257]},
+            {"id":271,"tier":2,"requires":[236]},
             {"id":275,"tier":2,"requires":[236]}
           ]
         },
@@ -2745,10 +2801,12 @@
             {"id":1218,"tier":2,"requires":[1215]},
             {"id":1207,"tier":2,"requires":[1217]},
             {"id":1206,"tier":2,"requires":[1217]},
-            {"id":1241,"tier":2,"requires":[1217]},
+            {"id":1962,"tier":2,"requires":[1217]},
+            {"id":1981,"tier":2,"requires":[1209]},
+            {"id":1241,"tier":2,"requires":[1209]},
             {"id":1234,"tier":2,"requires":[1209]},
-            {"id":1233,"tier":2,"requires":[1209]},
-            {"id":1228,"tier":2,"requires":[1209]}
+            {"id":1233,"tier":3,"requires":[1210]},
+            {"id":1228,"tier":3,"requires":[1210]}
           ]
         },
         {
@@ -2790,9 +2848,10 @@
         {
           "id": "technomagical.forge",
           "name": {"en":"Forge Work","it":"Lavoro di Fucina"},
-          "icon": 196,
+          "icon": 72,
           "nodes": [
-            {"id":1654,"tier":0,"requires":[]}
+            {"id":1957,"tier":0,"requires":[]},
+            {"id":1654,"tier":1,"requires":[1957]}
           ]
         }
       ]
@@ -2806,7 +2865,8 @@
           "nodes": [
             {"id":1686,"tier":0,"requires":[]},
             {"id":1685,"tier":1,"requires":[1686]},
-            {"id":1687,"tier":1,"requires":[1686]}
+            {"id":1687,"tier":1,"requires":[1686]},
+            {"id":1972,"tier":1,"requires":[1686]}
           ]
         }
       ]
@@ -2834,12 +2894,13 @@
           "name": {"en":"Rifts","it":"Squarci"},
           "icon": 71,
           "nodes": [
-            {"id":606,"tier":0,"requires":[]},
-            {"id":605,"tier":1,"requires":[606]},
-            {"id":612,"tier":1,"requires":[606]},
-            {"id":608,"tier":1,"requires":[606]},
-            {"id":609,"tier":2,"requires":[605]},
-            {"id":1846,"tier":2,"requires":[605]},
+            {"id":1941,"tier":0,"requires":[]},
+            {"id":606,"tier":1,"requires":[1941]},
+            {"id":605,"tier":1,"requires":[1941]},
+            {"id":612,"tier":1,"requires":[1941]},
+            {"id":608,"tier":2,"requires":[606]},
+            {"id":609,"tier":2,"requires":[606]},
+            {"id":1846,"tier":2,"requires":[606]},
             {"id":614,"tier":2,"requires":[605]},
             {"id":1842,"tier":3,"requires":[614]}
           ]

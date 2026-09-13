@@ -42,7 +42,7 @@
   "webRadioFileHeader": "# Stazioni web radio. Una per riga:  Nome | https://indirizzo.stream",
   "addStation": "AGGIUNGI",
   "addStationTitle": "Aggiungi una web radio",
-  "addStationHint": "Incolla l'indirizzo di una stazione in streaming. Viene salvato in webradio.txt accanto al gioco e prende una frequenza tutta sua.",
+  "addStationHint": "Incolla l'URL di una stazione in streaming. Viene salvato in webradio.txt accanto al gioco e ottiene una frequenza propria.",
   "addStationName": "Nome della stazione (facoltativo)",
   "addStationUrl": "https://indirizzo.stream",
   "addStationOk": "SINTONIZZA",

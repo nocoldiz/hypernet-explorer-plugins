@@ -77,7 +77,7 @@
   "category": {
     "All": "All"
   },
-  "forgeBlurb": "Fuse a dominant spell with a recessive spell or skill from {actor}; a skill recessive makes a skill. Costs the components' MP and AP combined, plus Knowledge to forge, and both are forgotten. You hold {knowledge} KP.",
+  "forgeBlurb": "Fuse a dominant spell with a recessive spell or skill from {actor}. A recessive skill produces a skill. Costs the MP and AP of both components plus Knowledge, and both components are forgotten. You hold {knowledge} KP.",
   "kpMultiplier3x": "3.0X KP",
   "kpMultiplier15x": "1.5X KP",
   "foreignSchool": "Self-taught",
@@ -259,7 +259,7 @@
     "anywhere": "Anywhere",
     "battleOnly": "Battle only",
     "riderCount": "Riders",
-    "benchBlurb": "Every part is bought once. The complexity is paid forever: it sets the cost of every cast and the {stat} the writer must already hold.",
+    "benchBlurb": "Each part is bought once. Complexity sets the cost of every cast and the {stat} the writer must have.",
     "writtenResult": "\\C[3]{name}\\C[0] is written. {cost} KP spent, {left} KP left.",
     "rewrittenResult": "\\C[3]{name}\\C[0] is rewritten. {cost} KP spent, {left} KP left.",
     "row": {

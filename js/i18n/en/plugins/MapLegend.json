@@ -3,9 +3,10 @@
   "foldHint": "fold this away",
   "unfoldHint": "read this",
   "controlsHeading": "Controls",
+  "infoHint": "Info",
   "setting": {
     "label": "Map tooltips",
-    "desc": "The sheet pinned to the corner of the map, naming the ground the party is standing on.",
+    "desc": "Shows a legend in the corner of the map naming the terrain the party is standing on.",
     "mode": {
       "first": "First time",
       "always": "Always",

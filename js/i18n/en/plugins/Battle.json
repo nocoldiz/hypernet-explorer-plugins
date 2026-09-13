@@ -573,6 +573,9 @@
   "statReq": {
     "fumble": "{actor} loses the thread of {skill}: not enough base {stat}!"
   },
+  "invocation": {
+    "windUp": "{actor} winds up {skill} and will strike last this round."
+  },
   "critSever": {
     "roll": "Killing blow on {enemy}: d20 {roll} {mod} = {total}/{dc}",
     "outcomeBehead": "It goes clean through.",

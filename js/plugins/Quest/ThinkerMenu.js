@@ -951,6 +951,22 @@
     // How much of a bill melting a piece down gives back.
     const SMELT_RATE = 0.5;
 
+    // ── Awakening ────────────────────────────────────────────────────────────
+    // A weapon the party is already carrying, made into an artifact. It is not
+    // smithing: nothing is beaten out and nothing is made better by a better
+    // pair of hands, so there is no tier to meet and no quality to roll. Any
+    // hands can do it, the bill is a handful of scrap, and what comes back is
+    // one of a kind: its own entry, its own name, its own nature rolled on the
+    // artifact generator's banks (Crafting/ArctifactGenerator.js), and a look
+    // the smith keeps the run of afterwards.
+    const AWAKEN_SPEC = 'Runecrafting';   // i18n-ignore: Specialization.json id
+    // Bone, plant matter and a little steel: the cheapest lines on the shelf,
+    // because the work is the naming and not the materials.
+    const AWAKEN_BILL = { 860: 2, 858: 2, 863: 1 };
+    const AWAKEN_POINTS = 3;
+    // What an artifact is worth over the blade it was made out of.
+    const AWAKEN_PRICE = 3;
+
     // ------------------------------------------------------------------------
     // Reading the entries
     // ------------------------------------------------------------------------
@@ -1190,7 +1206,15 @@
         entry.id = rec.id;
         entry.params = (rec.params || base.params || []).slice();
         entry.price = rec.price;
-        entry.name = forgedDisplayName(base, rec);
+        // An awakened piece wears the name it was given rather than its
+        // maker's, because the naming IS the work: it stopped being a blade off
+        // a shelf the moment it was called something.
+        entry.name = rec.awakened
+            ? ((rec.customName && rec.customName.trim()) || tr(base.name))
+            : forgedDisplayName(base, rec);
+        if (rec.awakened && Array.isArray(rec.traits) && rec.traits.length) {
+            entry.traits = (base.traits || []).concat(rec.traits);
+        }
         // <Restricted> is the database's word for a row exactly one system
         // hands out (ItemSystemUtils.isRestrictedEntry): every pool builder in
         // the game asks before it accepts a row, so a loot roll, a shop shelf,
@@ -1198,6 +1222,11 @@
         // of a piece that is supposed to be the only one of itself.
         entry.note = String(base.note || '') +
             '\n<Restricted>' +
+            // <Artifact> is what the rest of the game reads an artifact off
+            // (the object index, the daily shelves, the analyzer); <Awakened>
+            // is this workshop's own word for one that used to be a catalogue
+            // weapon, and it is what keeps the look editable afterwards.
+            (rec.awakened ? '\n<Artifact>\n<Awakened>' : '') +
             `\n<Forged: ${rec.smith}>` +
             `\n<ForgeQuality: ${rec.quality}>` +
             `\n<ForgeSeed: ${rec.seed || 0}>` +
@@ -1207,8 +1236,26 @@
             `\n<ForgeBaseId: ${rec.baseId}>` +
             (rec.texture ? `\n<ForgeTexture: ${rec.texture}>` : '') +
             (rec.parts ? `\n<ForgeParts: ${encodeDesign(rec.parts)}>` : '');
-        entry.description = String(base.description || '').trim();
-        const line = T('Blacksmith.forgedDesc', { smith: rec.smith, quality: qualityLabel(rec.quality) });
+        // An artifact reads its own sheet, written off what it was given rather
+        // than off the blade it used to be. The generator's write-up is a pure
+        // function of the level, the traits and the parameters on the record,
+        // so the same record always reads back the same way.
+        if (rec.awakened) {
+            const G = window.ArtifactGenerator;
+            let sheet = '';
+            if (G && G.weaponDescription) {
+                try {
+                    sheet = G.weaponDescription(rec.level || 1, base.wtypeId || 1,
+                        rec.traits || [], entry.params);
+                } catch (e) { sheet = ''; }
+            }
+            entry.description = String(sheet || base.description || '').trim();
+        } else {
+            entry.description = String(base.description || '').trim();
+        }
+        const line = rec.awakened
+            ? T('Blacksmith.awakenedDesc', { smith: rec.smith })
+            : T('Blacksmith.forgedDesc', { smith: rec.smith, quality: qualityLabel(rec.quality) });
         entry.description = entry.description ? entry.description + '\n' + line : line;
         DataManager.extractMetadata(entry);
 
@@ -1462,6 +1509,22 @@
         return `${prefix} ${noun}`;
     }
 
+    // What an artifact is called. A relic does not read like a smith's work, so
+    // an awakened piece rolls on the artifact generator's own banks
+    // (Crafting/ArctifactGenerator.js), which carry the word order and the
+    // articles of whichever language the game is being read in. The smith's
+    // banks stand in if that plugin is not loaded.
+    function randomArtifactName(item) {
+        const G = window.ArtifactGenerator;
+        if (G && G.weaponName) {
+            try {
+                const rolled = G.weaponName((item && item.wtypeId) || 1);
+                if (rolled) return rolled;
+            } catch (e) { /* the smith's banks below */ }
+        }
+        return randomForgedName(item);
+    }
+
     // Records outlive the database entries built from them, so a loaded save has
     // to put its forged pieces back before anything asks the party what it holds.
     const _DataManager_extractSaveContents = DataManager.extractSaveContents;
@@ -1492,6 +1555,136 @@
         rebuild: rebuildForged,
         quality: (item) => (isForged(item) ? (Number(item.meta.ForgeQuality) || 1) : 0),
         smeltYield
+    };
+
+    // ── Making an artifact ───────────────────────────────────────────────────
+    // The one thing at this workshop that is done TO a weapon rather than out
+    // of materials. An ordinary blade out of the backpack is given a name, a
+    // nature and an entry of its own, and from then on its look belongs to
+    // whoever is holding it: the finish, the fitted parts and the name stay
+    // editable for as long as the piece exists, because none of that is work
+    // and none of it costs anything.
+    //
+    // Everything it writes is a forge record, so an artifact made here is kept
+    // in the world folder, rebuilt on load and carried between saves exactly
+    // the way a forged piece is.
+
+    // Already something in its own right: a found relic, a piece off the anvil,
+    // or one of these. None of them is awakened twice.
+    function isArtifactPiece(item) {
+        if (!item) return false;
+        if (item.meta && (item.meta.Artifact || item.meta.Awakened)) return true;
+        // The artifact generator's own band (Crafting/ArctifactGenerator.js).
+        if (item.id >= 1501 && item.id <= 1600) return true;
+        return /artifact|procedural/i.test(String(item.note || ''));
+    }
+
+    // A piece whose look this workshop still has the run of.
+    function isAwakened(item) {
+        return !!(item && item.meta && item.meta.Awakened);
+    }
+
+    // A weapon in the backpack that is nobody's work yet. Armor is left out:
+    // the look of a piece is its model and its finish, and only a weapon has
+    // either (Weapon/WeaponSystemProcedural.js).
+    function canAwaken(item) {
+        return !!item && isRealEntry(item) && DataManager.isWeapon(item) &&
+            !isForged(item) && !isArtifactPiece(item) &&
+            $gameParty.numItems(item) > 0;
+    }
+
+    function awakenReady() {
+        return hasMaterials(AWAKEN_BILL);
+    }
+
+    // The record of an awakened piece, the one thing its name, its finish and
+    // its fittings are written back onto.
+    function awakenedRecord(item) {
+        return isAwakened(item) ? designRecordFor(item) : null;
+    }
+
+    // One blade, one artifact. The bill is paid, the blade is spent, the piece
+    // that comes back is registered and handed over, and the hands that did it
+    // learn a little of the trade the work belongs to.
+    function awaken(base, hands) {
+        if (!canAwaken(base) || !awakenReady()) return null;
+        const G = window.ArtifactGenerator;
+        let level = 1;
+        if (G && G.partyLevel) {
+            try { level = G.partyLevel(); } catch (e) { level = 1; }
+        }
+        level = Math.max(1, Math.min(99, Math.round(Number(level) || 1)));
+        const smith = String((hands && hands.name && hands.name()) || '')
+            .replace(/[<>\r\n]/g, '').trim();
+        const rec = {
+            id: nextForgeId('w'),
+            kind: 'w',
+            baseId: base.id,
+            smith,
+            awakened: true,
+            level,
+            // Nothing here is graded, so the quality every forged piece carries
+            // is a flat one: it is the artifact's nature that was rolled, not
+            // how well somebody hammered it.
+            quality: 1,
+            traits: (G && G.weaponTraits) ? G.weaponTraits(level) : [],
+            customName: randomArtifactName(base),
+            texture: '',
+            seed: (Math.random() * 0xFFFFFFFF) >>> 0,
+            parts: null,
+            params: (base.params || []).slice(),
+            price: Math.max(1, Math.round((base.price || 0) * AWAKEN_PRICE)),
+            mark: 1
+        };
+        forgeStore().push(rec);
+        const entry = materialize(rec);
+        if (!entry) { forgeStore().pop(); return null; }
+
+        if (!isSandbox()) {
+            for (const [id, qty] of Object.entries(AWAKEN_BILL)) {
+                $gameParty.loseItem($dataItems[parseInt(id)], qty);
+            }
+        }
+        $gameParty.loseItem(base, 1);
+        $gameParty.gainItem(entry, 1);
+
+        if (window.SpecializationXP) {
+            window.SpecializationXP.award(AWAKEN_SPEC, AWAKEN_POINTS, { actor: hands });
+        }
+        if (window.Diary && window.Diary.onCrafted) {
+            window.Diary.onCrafted('forge', entry.name, 1);   // i18n-ignore: diary channel id
+        }
+        return entry;
+    }
+
+    // Writing a look back onto an awakened piece. Like a sculpt, a finish and a
+    // name are cosmetic and free, so there is nothing to spend and nothing to
+    // check: the record takes it and the entry is rebuilt on the spot, which is
+    // how the backpack and the hand holding it see the change at once. The
+    // entry that comes back is a NEW object, so callers take the return value.
+    function reskin(item, changes) {
+        const rec = awakenedRecord(item);
+        if (!rec) return item;
+        if (changes.texture !== undefined) rec.texture = String(changes.texture || '');
+        if (changes.name !== undefined) {
+            rec.customName = String(changes.name == null ? '' : changes.name).slice(0, 60);
+        }
+        return materialize(rec) || item;
+    }
+
+    window.ArtifactAwakening = {
+        spec: AWAKEN_SPEC,
+        points: AWAKEN_POINTS,
+        price: AWAKEN_PRICE,
+        bill: () => Object.assign({}, AWAKEN_BILL),
+        ready: awakenReady,
+        shortfall: () => missingCount(AWAKEN_BILL),
+        can: canAwaken,
+        isArtifact: isArtifactPiece,
+        isAwakened,
+        record: awakenedRecord,
+        awaken,
+        reskin
     };
 
     function rarityOf(item) {
@@ -1713,8 +1906,29 @@
             }
             for (const e of forgeEntries()) out.push(e);
             for (const e of this.forgedOwned()) out.push(e);
+            // The backpack's own weapons come onto the board too, whether or
+            // not the world knows how to make them: a blade bought off a shelf
+            // or pulled off a corpse is not a recipe, but it is something this
+            // workshop can still do a thing to.
+            const already = new Set(out);
+            for (const e of this.awakenableOwned()) {
+                if (!already.has(e)) { already.add(e); out.push(e); }
+            }
             this._entriesCache = out;
             return out;
+        }
+
+        // The ordinary weapons the party is carrying, which are here for one
+        // reason: they can be made into artifacts.
+        awakenableOwned() {
+            const held = ($gameParty && $gameParty.weapons) ? $gameParty.weapons() : [];
+            return held.filter(canAwaken);
+        }
+
+        // A row that is on the board for the awakening alone: there is no bill
+        // to work it from, so nothing else the anvil does applies to it.
+        isAwakenOnly(item) {
+            return !!item && !isBenchItem(item) && !isForged(item) && !parseRecipe(item);
         }
 
         // The pieces this party is carrying that came off an anvil, newest
@@ -1740,6 +1954,9 @@
                 if (!b.knows(item) || !b.tierMet(item)) return 'locked';
                 return b.hasMaterials(item) ? 'ready' : 'short';
             }
+            // A weapon here only to be awakened answers to the awakening's own
+            // bill, and to nothing else: there is no trade to be untrained in.
+            if (this.isAwakenOnly(item)) return awakenReady() ? 'ready' : 'short';
             if (!this.canMake(item)) return 'locked';
             return hasMaterials(parseRecipe(item)) ? 'ready' : 'short';
         }
@@ -1760,6 +1977,7 @@
         // unworkable row above another: the piece you are one ingot away from
         // leads the list.
         shortfall(item) {
+            if (this.isAwakenOnly(item)) return missingCount(AWAKEN_BILL);
             return missingCount(this.recipeOf(item) || {});
         }
 
@@ -1772,7 +1990,9 @@
             // shelf but it is beaten out by a smith, and the chip has to agree
             // with the trade the dossier asks for.
             if (isBenchItem(item) && b) return b.readingSpec(item).name;
-            return craftSpecName(item);
+            // A weapon nobody knows how to make declares no trade at all, and
+            // the only thing this workshop does to one is arcane work.
+            return craftSpecName(item) || AWAKEN_SPEC;
         }
 
         tradeLabelOf(name) {
@@ -1941,6 +2161,9 @@
         activeCap() {
             const item = this._selectedItem;
             if (!item) return 0;
+            // One blade, one artifact: an awakening is never a run, because
+            // every piece that comes out of it is a different thing.
+            if (this._activeArea === 'awaken') return 1;
             if (this._activeArea === 'smelt') return this.breakCap(item);
             if (this._activeArea === 'forge') return this.batchCap(item);
             return Math.max(this.batchCap(item), this.breakCap(item));
@@ -2185,7 +2408,8 @@
 
             let mark;
             if (status === 'forged') {
-                mark = `<span class="forge-quality-mark">${escapeHtml(qualityLabel(item.meta.ForgeQuality))}</span>`;
+                mark = `<span class="forge-quality-mark">${escapeHtml(isAwakened(item)
+                    ? T('Blacksmith.awakenedMark') : qualityLabel(item.meta.ForgeQuality))}</span>`;
             } else if (status === 'locked') {
                 mark = `<span class="forge-tier-need">${escapeHtml(
                     isBenchItem(item) && b ? b.tierLevelName(item) : levelName(craftTier(item)))}</span>`;
@@ -2333,12 +2557,15 @@
             const tier = craftTier(item);
             const level = this.levelIn(item);
             const forged = isForged(item);
-            const makeable = !forged && this.canMake(item);
             const recipe = parseRecipe(item);
+            const makeable = !forged && !!recipe && this.canMake(item);
             const stocked = hasMaterials(recipe);
             const owned = $gameParty.numItems(item);
-            const smeltable = owned > 0;
-            const yields = smeltable ? (smeltYield(item) || {}) : {};
+            const yields = (owned > 0 && recipe) ? (smeltYield(item) || {}) : {};
+            // Nothing with no bill can go back into the crucible: there is
+            // nothing on record for the fire to give back.
+            const smeltable = owned > 0 && !!recipe;
+            const awakenable = canAwaken(item);
 
             let body = '';
             if (item.description && String(item.description).trim()) {
@@ -2351,12 +2578,32 @@
             body += this.nameHTML(item);
             body += this.finishHTML(item);
 
+            // What it would take to make this one into an artifact, said in the
+            // same shape as a bill: what it asks for, what it teaches, and that
+            // no hands are too green for it.
+            if (awakenable) {
+                body += this.sectionTitle(T('Blacksmith.awakenTitle'));
+                body += `<p class="ui-prose">${escapeHtml(T('Blacksmith.awakenHint'))}</p>`;
+                body += this.billHTML(AWAKEN_BILL, null);
+                body += this.specRow(
+                    T('Blacksmith.awakenTrade', { spec: this.tradeLabelOf(AWAKEN_SPEC) }),
+                    T('Blacksmith.awakenPoints', { n: AWAKEN_POINTS }));
+                body += this.specRow(T('Blacksmith.awakenAnyHands'), '');
+            }
+
             // The trade and the tier it asks for. A piece already made says
             // instead whose hands made it and how it came out.
             body += this.sectionTitle(t.trades);
-            if (forged) {
+            if (isAwakened(item)) {
+                body += this.specRow(T('Blacksmith.awakenedBy', { smith: String(item.meta.Forged).trim() }),
+                    T('Blacksmith.awakenedMark'));
+            } else if (forged) {
                 body += this.specRow(T('Blacksmith.madeBy', { smith: String(item.meta.Forged).trim() }),
                     qualityLabel(item.meta.ForgeQuality));
+            } else if (!recipe) {
+                // A weapon on the board for the awakening alone has no trade to
+                // report: nobody in the world knows how to make one.
+                body += this.specRow(this.tradeLabelOf(AWAKEN_SPEC), T('Blacksmith.awakenNoRecipe'));
             } else {
                 body += this.specRow(T('Blacksmith.needs', {
                     trade: spec ? window.Specializations.displayName(spec) : craftSpecName(item),
@@ -2375,13 +2622,19 @@
             const btnLabel = forged ? t.alreadyForged
                 : (!makeable ? t.tooComplexShort : (stocked ? t.forge : t.noMaterials));
             const smeltLabel = smeltable ? t.smelt : t.smeltNone;
+            const awakenOk = awakenable && awakenReady();
 
             return `
                 <div class="ui-detail">
                     ${this.detailHeadHTML(item, displayName(item), window.ItemSystemUtils.rarityClass(rarity))}
                     <div class="ui-detail-scroll ui-scroll">${body}</div>
                     ${this.actionsHTML([
-                        forged ? null : { id: 'forge-action', label: btnLabel, on: enabled, area: 'forge' },
+                        (forged || !recipe) ? null : { id: 'forge-action', label: btnLabel, on: enabled, area: 'forge' },
+                        awakenable ? {
+                            id: 'forge-awaken',
+                            label: awakenOk ? T('Blacksmith.awaken') : t.noMaterials,
+                            on: awakenOk, area: 'awaken'
+                        } : null,
                         { id: 'forge-smelt', label: smeltLabel, on: smeltable, area: 'smelt' }
                     ])}
                 </div>`;
@@ -2496,11 +2749,28 @@
         }
 
         chosenFinish(item) {
+            const rec = awakenedRecord(item);
+            if (rec) return rec.texture || '';
             return _draft.finishes[this.finishKey(item)] || '';
         }
 
+        // An awakened piece is not a draft: the swatch under the cursor is
+        // written straight onto it, and the entry it is rebuilt as replaces the
+        // one the board was holding.
         setFinish(item, filename) {
+            if (awakenedRecord(item)) {
+                this.adoptReskin(item, reskin(item, { texture: filename || '' }));
+                return;
+            }
             _draft.finishes[this.finishKey(item)] = filename || '';
+        }
+
+        // Taking the entry a reskin handed back: it is a new object, so the
+        // cursor, the board and the 3D stand all have to be pointed at it.
+        adoptReskin(previous, entry) {
+            if (!entry || entry === previous) return;
+            if (this._selectedItem === previous) this._selectedItem = entry;
+            this._listDirty = true;
         }
 
         // The look the piece will keep, held steady while it is on the page, so
@@ -2518,6 +2788,8 @@
         // steady while it is on the page, exactly like its finish; typing over
         // it or hitting the dice replaces only that piece's roll.
         pendingName(item) {
+            const rec = awakenedRecord(item);
+            if (rec) return rec.customName || '';
             const key = this.finishKey(item);
             if (_draft.names[key] === undefined) {
                 _draft.names[key] = randomForgedName(item);
@@ -2526,10 +2798,20 @@
         }
 
         setName(item, name) {
+            if (awakenedRecord(item)) {
+                this.adoptReskin(item, reskin(item, { name }));
+                return;
+            }
             _draft.names[this.finishKey(item)] = String(name == null ? '' : name).slice(0, 60);
         }
 
         rerollName(item) {
+            // An artifact rolls on the relic banks it was given its nature off,
+            // not on the smith's; a piece not made yet rolls on the smith's.
+            if (awakenedRecord(item)) {
+                this.adoptReskin(item, reskin(item, { name: randomArtifactName(item) }));
+                return;
+            }
             _draft.names[this.finishKey(item)] = randomForgedName(item);
         }
 
@@ -2556,7 +2838,10 @@
         // typed over freely and rerolled on demand; armor keeps the plain
         // "{smith}'s {piece}" naming, since only a weapon was asked for this.
         nameHTML(item) {
-            if (isForged(item) || !DataManager.isWeapon(item)) return '';
+            if (!DataManager.isWeapon(item)) return '';
+            // A piece off the anvil wears the name it was stamped with; an
+            // awakened one is never finished being named.
+            if (isForged(item) && !isAwakened(item)) return '';
             const name = this.pendingName(item);
             return `
                 <h4 class="inspect-section-title">${escapeHtml(T("Blacksmith.nameHeader"))}</h4>
@@ -2570,8 +2855,9 @@
 
         finishHTML(item) {
             // A piece already beaten out wears what it was given; only what is
-            // still on the bill can still be chosen for.
-            if (isForged(item)) return '';
+            // still on the bill, or an artifact whose look is its owner's to
+            // set, can still be chosen for.
+            if (isForged(item) && !isAwakened(item)) return '';
             const list = finishesFor(item);
             if (!list.length) return '';
             const chosen = this.chosenFinish(item);
@@ -2910,7 +3196,7 @@
             const row = (entry, qty) => `
                         <div class="success-item-row">
                             <span class="menu-icon menu-icon--32" style="--icon-col:${entry.iconIndex % 16};--icon-row:${Math.floor(entry.iconIndex / 16)}"></span>
-                            <span class="rarity-name ${window.ItemSystemUtils.rarityClass(rarityOf(entry))}">${escapeHtml(tr(entry.name))}${qty ? ' &times;' + qty : ''}</span>
+                            <span class="rarity-name ${window.ItemSystemUtils.rarityClass(rarityOf(entry))}">${escapeHtml(displayName(entry))}${qty ? ' &times;' + qty : ''}</span>
                         </div>`;
 
             // The bench's own three answers (a finished assembly, a teardown, a
@@ -2927,9 +3213,12 @@
                     for (const got of d.items) rows += row(got, 0);
                 }
             } else {
-                title = d.smelted ? bsText().smelted : bsText().forged;
+                title = d.awakened ? T('Blacksmith.awakenedTitle')
+                    : (d.smelted ? bsText().smelted : bsText().forged);
                 rows = row(d.item, 0);
-                if (d.smelted) {
+                if (d.awakened) {
+                    rows += `<div class="success-item-row"><span>${escapeHtml(T('Blacksmith.awakenedMark'))}</span></div>`;
+                } else if (d.smelted) {
                     for (const got of d.smelted) rows += row(got.item, got.qty);
                 } else if (d.quality) {
                     rows += `<div class="success-item-row"><span>${escapeHtml(qualityLabel(d.quality))}</span></div>`;
@@ -2944,6 +3233,30 @@
                         <h2 class="success-title">${escapeHtml(title)}</h2>
                         ${rows}
                     </div>`;
+        }
+
+        // ----------------------------------------------------------- awakening
+        // The blade in the backpack is spent and an artifact is handed back in
+        // its place, with its own name, its own nature and a look that is now
+        // the party's to set. The cursor follows the new piece, because the old
+        // one is gone and the whole point of the job is what replaced it.
+        awakenSelected() {
+            const item = this._selectedItem;
+            if (!item || !canAwaken(item) || !awakenReady()) {
+                SoundManager.playBuzzer();
+                return;
+            }
+            const made = awaken(item, this.smithFor(item));
+            if (!made) { SoundManager.playBuzzer(); return; }
+
+            this._overlayData = { item: made, awakened: true };
+            this._overlayTimer = 110;
+            this._listDirty = true;
+            this._selectedItem = made;
+            this.restoreCursor(made);
+            this._activeArea = this.hasFinishes() ? 'finish' : this.firstButtonArea();
+            SoundManager.playUseItem();
+            this.refreshForge();
         }
 
         // ------------------------------------------------------------- action
@@ -3227,6 +3540,7 @@
             if (e.target.closest('#forge-model')) { this.openSculptor(); return; }
 
             if (e.target.closest('#forge-action')) { this.makeSelected(); return; }
+            if (e.target.closest('#forge-awaken')) { this.awakenSelected(); return; }
             if (e.target.closest('#forge-smelt')) { this.breakSelected(); return; }
         }
 
@@ -3374,26 +3688,34 @@
                 return;
             }
 
-            if (this._activeArea === 'forge' || this._activeArea === 'smelt') {
-                const making = this._activeArea === 'forge';
+            if (this._activeArea === 'forge' || this._activeArea === 'awaken' ||
+                this._activeArea === 'smelt') {
+                const areas = this.buttonAreas();
+                const at = areas.indexOf(this._activeArea);
                 // Standing on a button, left and right set how many: the batch
                 // is dialled where it is spent, without leaving the button.
+                // Once the counter is at its end, they step to the next button.
+                const step = (dir) => {
+                    const next = areas[at + dir];
+                    if (!next) return;
+                    this._activeArea = next;
+                    SoundManager.playCursor();
+                    this.refreshForge();
+                };
                 if (Input.isRepeated('right')) {
                     if (this.qty() < this.activeCap()) { this.setQty(this.qty() + 1); return; }
-                    if (making && this.breakCap(this._selectedItem) > 0) {
-                        this._activeArea = 'smelt'; SoundManager.playCursor(); this.refreshForge();
-                    }
+                    step(1);
                     return;
                 }
                 if (Input.isRepeated('left')) {
                     if (this.qty() > 1) { this.setQty(this.qty() - 1); return; }
-                    if (!making && !isForged(this._selectedItem)) {
-                        this._activeArea = 'forge'; SoundManager.playCursor(); this.refreshForge();
-                    }
+                    step(-1);
                     return;
                 }
                 if (Input.isTriggered('ok')) {
-                    if (making) this.makeSelected(); else this.breakSelected();
+                    if (this._activeArea === 'forge') this.makeSelected();
+                    else if (this._activeArea === 'awaken') this.awakenSelected();
+                    else this.breakSelected();
                 } else if (Input.isTriggered('up')) {
                     const above = this.hasFinishes() ? 'finish'
                         : (this.hasModelEditor() ? 'model' : '');
@@ -3410,14 +3732,28 @@
 
         hasFinishes() {
             if (isBenchItem(this._selectedItem)) return false;
-            return !!this._selectedItem && !isForged(this._selectedItem) && finishesFor(this._selectedItem).length > 0;
+            const item = this._selectedItem;
+            if (!item || (isForged(item) && !isAwakened(item))) return false;
+            return finishesFor(item).length > 0;
         }
 
-        // A piece already made has no Forge button, so the cursor lands on the
-        // crucible instead.
+        // Which buttons the open piece actually has, in the order they are
+        // drawn. A piece already made has no Forge button and a weapon nobody
+        // knows how to make has no bill to press it with, so the cursor is
+        // walked along what is really there rather than along a fixed pair.
+        buttonAreas() {
+            const item = this._selectedItem;
+            if (!item) return ['smelt'];
+            if (this.isBenchSide()) return ['forge', 'smelt'];
+            const out = [];
+            if (!isForged(item) && parseRecipe(item)) out.push('forge');
+            if (canAwaken(item)) out.push('awaken');
+            out.push('smelt');
+            return out;
+        }
+
         firstButtonArea() {
-            if (isForged(this._selectedItem)) return 'smelt';
-            return 'forge';
+            return this.buttonAreas()[0];
         }
     }
 

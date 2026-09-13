@@ -2486,12 +2486,32 @@ Imported.DialogueSystem = true;
         return names;
     }
 
+    // A record's id is spelled like ordinary prose when it is a single word in
+    // lower case: the leader "em" is the same three letters as "get 'em", and a
+    // line that means the word would light up as if it meant the name. Such an
+    // entry is matched loosely on case instead, and only the spellings that
+    // carry a capital are taken as the name: Em and eM are Em, em is the word.
+    function _isProseSpelled(name) {
+        return /^[a-zà-ÿ]+$/.test(name);
+    }
+
+    // "em" -> "[Ee][Mm]", so the run is found whatever case it was written in
+    // and the reading is left to _isNameCased.
+    function _caseLoose(name) {
+        return name.replace(/[a-zà-ÿ]/g, ch => '[' + ch.toUpperCase() + ch + ']');
+    }
+
+    function _isNameCased(match) {
+        return !_isProseSpelled(match) || !_looseNames.has(match.toLowerCase());
+    }
+
     // The roster only changes when somebody joins the party, an NPC is minted
     // or a settlement is registered, so the pattern is rebuilt off that count
     // rather than on every line spoken.
     let _nameRegex = null;
     let _nameSig   = null;
     let _worldNames = null;
+    let _looseNames = new Set();  // the prose-spelled ones, read case by case
 
     function _nameSignature() {
         let party = '';
@@ -2507,8 +2527,12 @@ Imported.DialogueSystem = true;
         _nameSig = sig;
         _worldNames = _worldRoster();
         const names = Array.from(_nameRoster()).sort((a, b) => b.length - a.length);
-        if (!names.length) { _nameRegex = null; return null; }
-        const alts = names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+        if (!names.length) { _nameRegex = null; _looseNames = new Set(); return null; }
+        _looseNames = new Set(names.filter(_isProseSpelled).map(n => n.toLowerCase()));
+        const alts = names.map(n => {
+            const esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return _isProseSpelled(n) ? _caseLoose(esc) : esc;
+        }).join('|');
         _nameRegex = new RegExp('\\b(' + alts + ')\\b', 'g');
         return _nameRegex;
     }
@@ -2525,7 +2549,11 @@ Imported.DialogueSystem = true;
         return line.split(marked).map(part => {
             if (!part || part.charAt(0) === NAME_OPEN) return part || '';
             re.lastIndex = 0;
-            return part.replace(re, m => { rememberRumor(m); return NAME_OPEN + m + NAME_CLOSE; });
+            return part.replace(re, m => {
+                if (!_isNameCased(m)) return m;
+                rememberRumor(m);
+                return NAME_OPEN + m + NAME_CLOSE;
+            });
         }).join('');
     }
 

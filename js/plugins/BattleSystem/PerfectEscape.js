@@ -27,14 +27,33 @@
         return !!(DF && typeof DF.escapeIsContested === "function" && DF.escapeIsContested());
     }
 
-    // True while any living enemy in the troop carries the <Boss> tag. A boss
-    // fight has no odds to roll against: it ends in victory or death, so the
-    // free escape (and the dungeon's earned-odds exception) never applies here.
+    // The <Boss> tag and the petrodemon marker, both read through the battle
+    // system's own helpers where it is loaded, so neither boundary is spelled
+    // out twice. This plugin still stands on its own, hence the fallbacks.
+    function isBoss(data) {
+        const H = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        if (H && H.isBossEnemyData) return H.isBossEnemyData(data);
+        return !!(data && /<Boss>/i.test(data.note || ""));
+    }
+
+    // A petrodemon wears <Boss> because it FIGHTS like one, but it is not a
+    // written encounter: the party calls it up out of a derrick and can think
+    // better of it. It is the one boss the free escape still works on.
+    function isPetrodemon(data) {
+        const F = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Functions;
+        if (F && F.isPetrodemonEnemyData) return F.isPetrodemonEnemyData(data);
+        return !!(data && (data._bsePetrodemon || (data.meta && data.meta.PetroSeed)));
+    }
+
+    // True while any living enemy in the troop carries the <Boss> tag, the
+    // petrodemon aside. A boss fight has no odds to roll against: it ends in
+    // victory or death, so the free escape (and the dungeon's earned-odds
+    // exception) never applies here.
     function troopHasBoss() {
         try {
             return $gameTroop.aliveMembers().some(function(enemy) {
                 const data = enemy && enemy.enemy && enemy.enemy();
-                return !!(data && /<Boss>/i.test(data.note || ""));
+                return !!data && isBoss(data) && !isPetrodemon(data);
             });
         } catch (e) {
             return false;

@@ -27,7 +27,7 @@
   "filterAll": "All recipes",
   "tradeLabel": "{spec}: {level}",
   "knownBySkill": "Recognised on sight: {spec} at {level}.",
-  "revealHint": "{spec} trained to {level} would read this formula at sight.",
+  "revealHint": "Requires {spec} at level {level} to read this formula.",
   "reclaimChance": "{pct}% chance to save each material",
   "reclaimed": "Saved from the bench: {items}",
   "tierLabel": "Tier {tier} work - Fabrication: {level}",
@@ -35,7 +35,7 @@
   "botchRisk": "{pct}% chance of botching it",
   "needFabrication": "Too complex for these hands. Requires Fabrication: {level}",
   "botchTitle": "Botched",
-  "botchNote": "Half the materials are wasted, but the mistake taught you something.",
+  "botchNote": "Half the materials are lost, but you still gain experience.",
   "botched": "The {item} came apart on the bench.",
   "category": {
     "Arctic": "Arctic",

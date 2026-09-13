@@ -6,7 +6,7 @@
     "outbreaks": "Focolai",
     "archive": "Archivio"
   },
-  "curveHint": "La curva viene tracciata quando il focolaio arriva al secondo giorno.",
+  "curveHint": "La curva appare dopo il secondo giorno del focolaio.",
   "dayNumbered": "giorno {day}",
   "currentlyIll": "Malati ora",
   "deadSoFar": "Morti finora",
@@ -52,7 +52,7 @@
   "spreadRate": "Tasso di diffusione R",
   "bureauLog": "Registro dell'ufficio",
   "archiveTitle": "Archivio",
-  "archiveBlurb": "I focolai che questo mondo ha chiuso, e le epidemie e le isterie di massa registrate nell'ultimo secolo. Scegli un focolaio chiuso per vederne la curva.",
+  "archiveBlurb": "Focolai chiusi di questo mondo, piu le epidemie registrate nell'ultimo secolo. Selezionane uno per vederne la curva.",
   "closedThisWorld": "Chiusi in questo mondo",
   "nothingClosed": "Non si è ancora concluso nulla.",
   "lastCentury": "L'ultimo secolo",

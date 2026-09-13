@@ -172,7 +172,96 @@ Fomar.ITBS.passText = Fomar.ITBS.parameters["Pass Command Name"] || "Pass";
         if (all[i].isActor() && next < order.length) all[i] = order[next++];
       }
     }
+    // A wind-up is owed to the round it was started in and never to the next
+    // one, so the whole field is wiped clean here, the dead and the absent
+    // included: a battler revived or brought back in later carries no debt.
+    $gameParty.members().concat($gameTroop.members())
+      .forEach(member => { if (member) member._itbsDelayed = 0; });
     return all;
+  };
+
+  // ---------------------------------------------------------------------
+  // Invocation speed
+  // ---------------------------------------------------------------------
+  // A skill's Invocation -> Speed in the database is the wind-up written on
+  // it. The round is ranked by the DEX formula before anyone has picked
+  // anything, so the only moment a slow skill can cost what it is meant to
+  // cost is after it has been chosen: pick a skill with a negative speed and
+  // the turn passes straight on, the pick is kept, and the blow lands at the
+  // end of the round. The more negative the speed the further back it falls,
+  // so two battlers winding up in the same round still resolve slowest last.
+  //
+  // A positive speed asks for nothing here. A battler acts the instant they
+  // have chosen, which is already as early as this system lets anybody act.
+
+  // The slowest invocation among the actions a battler has just locked in.
+  // Items carry the same field as skills, so both are read the same way, and
+  // a plain attack adds whatever attack speed the battler's gear lends it.
+  BattleManager.itbsInvocationSpeed = function(battler) {
+    const actions = (battler && battler._actions) || [];
+    let slowest = 0;
+    for (const action of actions) {
+      if (!action || typeof action.item !== "function") continue;
+      const item = action.item();
+      if (!item) continue;
+      let speed = Number(item.speed) || 0;
+      if (typeof action.isAttack === "function" && action.isAttack() &&
+          typeof battler.attackSpeed === "function") {
+        speed += battler.attackSpeed();
+      }
+      if (speed < slowest) slowest = speed;
+    }
+    return slowest;
+  };
+
+  // The name the wind-up is announced under: the slowest thing chosen.
+  BattleManager.itbsSlowestItem = function(battler) {
+    const actions = (battler && battler._actions) || [];
+    let slowest = null;
+    let worst = 0;
+    for (const action of actions) {
+      if (!action || typeof action.item !== "function") continue;
+      const item = action.item();
+      if (!item) continue;
+      const speed = Number(item.speed) || 0;
+      if (speed < worst) { worst = speed; slowest = item; }
+    }
+    return slowest;
+  };
+
+  // Put a battler who has just chosen something slow back into the round
+  // instead of letting them act now. True when the turn was actually deferred.
+  // Nobody winds up twice in one round - the cost is paid once - and nobody is
+  // deferred into an empty queue, because acting when no one else is left IS
+  // acting last.
+  BattleManager.deferSlowBattler = function(battler) {
+    if (!battler || battler._itbsDelayed) return false;
+    if (!Array.isArray(this._battlers) || this._battlers.length === 0) return false;
+    const speed = this.itbsInvocationSpeed(battler);
+    if (speed >= 0) return false;
+    const windUp = -speed;
+    battler._itbsDelayed = windUp;
+    // The tail of the queue is the wind-up queue, shortest first, so a -1 still
+    // swings before a -50 chosen in the same round.
+    let at = this._battlers.findIndex(other => other && other._itbsDelayed > windUp);
+    if (at < 0) at = this._battlers.length;
+    this._battlers.splice(at, 0, battler);
+    if (typeof battler.setActionState === "function") battler.setActionState("waiting");
+    this.announceWindUp(battler);
+    return true;
+  };
+
+  // Said out loud, or the turn simply looks skipped.
+  BattleManager.announceWindUp = function(battler) {
+    const item = this.itbsSlowestItem(battler);
+    if (!item || !window.ParchmentToast || typeof window.ParchmentToast.show !== "function") return;
+    const text = (typeof window.T === "function")
+      ? window.T('Battle.invocation.windUp', {
+          actor: typeof battler.name === "function" ? battler.name() : "",
+          skill: item.name
+        })
+      : null;
+    if (text) window.ParchmentToast.show(text, { severity: 'info', duration: 120 });
   };
 
   Fomar.ITBS.BattleManager_startBattle = BattleManager.startBattle;
@@ -232,6 +321,16 @@ Fomar.ITBS.passText = Fomar.ITBS.parameters["Pass Command Name"] || "Pass";
     if (this._battlers.length === 0) {
       this._battlers = this.makeITBSRound();
     }
+    if (this._battlers[0] && this._battlers[0]._itbsDelayed) {
+      // The wind-up is over. onTurnEnd was already paid at the slot this
+      // battler gave up and the actions they chose are still on them, so
+      // neither is taken again: they simply swing.
+      const waiting = this._battlers[0];
+      waiting._itbsDelayed = 0;
+      this._battlers.shift();
+      if (waiting.canMove()) this._subject = waiting;
+      return;
+    }
     if (this._battlers[0]) {
       this._battlers[0].onTurnEnd();
       if (this._battlers[0].isActor()) {
@@ -254,6 +353,12 @@ Fomar.ITBS.passText = Fomar.ITBS.parameters["Pass Command Name"] || "Pass";
       // Dequeue by position rather than by value: a battler holds exactly one
       // slot per round, and shifting keeps the rest of the queue intact.
       this._battlers.shift();
+      // A monster, or a party member the CPU is playing, winds up on the same
+      // terms as the player does: the choice is already made here, so it is
+      // read straight away.
+      if (this._subject && this.deferSlowBattler(this._subject)) {
+        this._subject = null;
+      }
     }
   };
 
@@ -263,8 +368,11 @@ Fomar.ITBS.passText = Fomar.ITBS.parameters["Pass Command Name"] || "Pass";
 
   BattleManager.finishActorInput = function() {
     if (this._currentActor) {
-      this._subject = this._currentActor;
       this._inputting = false;
+      // Something slow was chosen: the turn passes on and this actor drops to
+      // the end of the round, still holding the action they picked.
+      if (this.deferSlowBattler(this._currentActor)) return;
+      this._subject = this._currentActor;
     }
   };
 

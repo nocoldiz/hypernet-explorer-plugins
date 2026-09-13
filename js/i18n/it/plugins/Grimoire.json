@@ -9,7 +9,7 @@
   "ui": {
     "beyondStat": "✧ Richiede {stat} {points}, ne ha {value}",
     "requires": "Richiede {stat} {points}",
-    "blurb": "Le pagine rivelano a tutti gli stessi cinque incantesimi. Scegli un lettore che possa reggerne uno, poi reclamalo.",
+    "blurb": "Gli stessi cinque incantesimi sono offerti a ogni lettore. Scegli un membro del gruppo che possa impararne uno, poi reclamalo.",
     "alreadyKnown": "✧ Già conosciuto",
     "beyondReach": "✧ Oltre i PM di questo lettore",
     "partyReader": "Lettore del gruppo",

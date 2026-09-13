@@ -620,6 +620,12 @@
                 translateFormula,
                 combatSpecsOf,
                 damageSpecsOf,
+                // What a skill would actually hit for, as one number. Exported
+                // so a menu ranking a whole category by damage measures it the
+                // same way the skill card does rather than reading formulas of
+                // its own. It builds real actions, so it is not free: rank a
+                // list once and keep the answer.
+                medianDamageFor,
                 effectsOf
             };
         })();

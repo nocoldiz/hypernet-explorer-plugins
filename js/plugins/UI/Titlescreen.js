@@ -780,6 +780,33 @@
         SceneManager.push(window.Scene_History);
     };
 
+    // Sandbox is for trying things out, so its Eris opens knowing every skill
+    // and spell in the database. The `<-- Category -->` rows are dividers the
+    // skill list is grouped by, not skills, so they are left unlearned; the
+    // same `<` test the rest of the project uses to tell the two apart.
+    function learnEverySandboxSkill(actor) {
+        if (!actor || !window.$dataSkills) return;
+        for (let i = 1; i < $dataSkills.length; i++) {
+            const skill = $dataSkills[i];
+            if (!skill || !skill.name || skill.name.startsWith('<')) continue;
+            if (!actor.isLearnedSkill(i)) actor.learnSkill(i);
+        }
+    }
+
+    // Em's gun in the story, but the sandbox has no Em: it is Eris's from the
+    // first step there, in hand rather than in the bag, so the Dynamics hub
+    // opens its screen (VectorGun.available() asks who is holding it).
+    function armSandboxVectorGun(actor) {
+        if (!actor || !window.VectorGun) return;
+        const gun = window.VectorGun.gunData();
+        if (!gun) return;
+        $gameParty.gainItem(gun, 1);
+        if (actor.canEquip(gun)) actor.changeEquip(0, gun);
+        // SandboxMode.js hands the same gun to the leader on the first map:
+        // its flag is set here so the sandbox never opens with two of them.
+        $gameSystem._sandboxVectorGunGiven = true;
+    }
+
     Scene_Title.prototype.commandSandboxGame = function () {
         DataManager.setupNewGame();
         $gameSystem._isSandboxMode = true;
@@ -791,10 +818,17 @@
         $gameSwitches.setValue(33, true);   // Creation sequence complete
 
         $gameParty._actors = [];
-        $gameParty.addActor(5);
+        // The whole roster is learned before Eris joins the party, so the diary
+        // (which only writes for party members) does not open the run with a
+        // thousand "learned a skill" lines.
         const eris = $gameActors.actor(5);
         if (eris) {
             eris.changeLevel(62, false);
+            learnEverySandboxSkill(eris);
+        }
+        $gameParty.addActor(5);
+        if (eris) {
+            armSandboxVectorGun(eris);
             eris.recoverAll();
         }
         $gameVariables.setValue(29, $gameParty.size()); // party member count
@@ -5677,7 +5711,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this.createVersionBadge();
 
         // English / Italian flags, docked under the badge
-        // The game is locked to English, so the flag selector stays off the title.
+        // Only when more than one language is offered: a lock hides the flags.
         if (!(window.HendrixLocalization && window.HendrixLocalization.isLocked && window.HendrixLocalization.isLocked())) {
             this.createLanguageSelector();
         }

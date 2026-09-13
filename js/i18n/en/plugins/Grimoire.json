@@ -9,7 +9,7 @@
   "ui": {
     "beyondStat": "✧ Needs {stat} {points}, has {value}",
     "requires": "Requires {stat} {points}",
-    "blurb": "The pages reveal the same five spells to everyone. Choose a reader who can bear one, then claim it.",
+    "blurb": "The same five spells are offered to every reader. Choose a party member who can learn one, then claim it.",
     "alreadyKnown": "✧ Already known",
     "beyondReach": "✧ Beyond this reader's MP",
     "partyReader": "Party Reader",

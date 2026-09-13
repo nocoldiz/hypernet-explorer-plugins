@@ -29,10 +29,259 @@
  "searchPlaceholder": "Search traits…",
  "incompatibleNote": "Clashes with a trait you have already taken.",
  "unaffordableNote": "Not enough trait points left for this one.",
-  "noneInCategory": "Nothing here",
-  "purseSpent": "Spent",
-  "purseRefunds": "Refunds",
-  "purseLeft": "Remaining",
-  "pts": "pts",
-  "refundWord": "refund"
+ "noneInCategory": "Nothing here",
+ "purseSpent": "Spent",
+ "purseRefunds": "Refunds",
+ "purseLeft": "Remaining",
+ "pts": "pts",
+ "refundWord": "refund",
+ "archetypeBoardTitle": "Archetypes",
+ "archetypeAll": "All",
+ "archetypeMeta": "{count} traits, {points} pts",
+ "archetypeTraitsLabel": "What it takes",
+ "archetypeHint": "Pick a ready-made build. Switch to Detailed mode to change it trait by trait.",
+ "archetypeNone": "No archetype chosen",
+ "archetypeCustom": "Custom build",
+ "archetypeEmpty": "Nothing here",
+ "traitsCount": "{count} traits",
+ "archetypeFamilies": {
+  "basics": "Basics",
+  "combat": "Combat",
+  "underworld": "Underworld",
+  "mind": "Mind",
+  "mystic": "Mystic",
+  "wilds": "Wilds",
+  "social": "Social",
+  "oddity": "Oddities"
+ },
+ "archetypes": {
+  "hardy_brawn": {
+   "name": "Hardy Brawn",
+   "description": "Plain physical stock: built thick, built warm, built to keep going."
+  },
+  "nimble_hands": {
+   "name": "Nimble Hands",
+   "description": "Quick, even-handed and awake early. Good hands for any trade."
+  },
+  "bright_mind": {
+   "name": "Bright Mind",
+   "description": "A studied head that remembers everything and boasts about none of it."
+  },
+  "natural_charmer": {
+   "name": "Natural Charmer",
+   "description": "Beautiful, outgoing and easy to like, with a romantic streak."
+  },
+  "lucky_wanderer": {
+   "name": "Lucky Wanderer",
+   "description": "An honest traveller the road keeps being kind to."
+  },
+  "steady_hand": {
+   "name": "Steady Hand",
+   "description": "Guarded, unshakeable and loyal. Nothing flashy, nothing that breaks."
+  },
+  "frontline_soldier": {
+   "name": "Frontline Soldier",
+   "description": "Drilled behind a shield and used to holding a line."
+  },
+  "blade_duelist": {
+   "name": "Blade Duelist",
+   "description": "A fast, proud, straight-talking sword in a formal fight."
+  },
+  "berserker": {
+   "name": "Berserker",
+   "description": "Huge, furious and glad of the pain. Attack is the only plan."
+  },
+  "martial_artist": {
+   "name": "Martial Artist",
+   "description": "Monastery-trained, weaponless and finished with the training."
+  },
+  "sharpshooter": {
+   "name": "Sharpshooter",
+   "description": "A gun-happy marksman with reflexes to match the aim."
+  },
+  "ranger_archer": {
+   "name": "Ranger Archer",
+   "description": "A bow, a trail and a camp struck before sunrise."
+  },
+  "knight_errant": {
+   "name": "Knight Errant",
+   "description": "Born to a name, loyal to it, and best seen from a saddle."
+  },
+  "bar_brawler": {
+   "name": "Bar Brawler",
+   "description": "Heavy, loud and blunt, and happiest with fists."
+  },
+  "war_tactician": {
+   "name": "War Tactician",
+   "description": "A veteran who reads the field and lets others do the running."
+  },
+  "master_thief": {
+   "name": "Master Thief",
+   "description": "Fast fingers that cannot stop themselves, and nerves that never settle."
+  },
+  "assassin": {
+   "name": "Assassin",
+   "description": "A nameless, feelingless professional who works at night."
+  },
+  "street_urchin": {
+   "name": "Street Urchin",
+   "description": "Raised by the gutter, schooled in picking pockets, never in letters."
+  },
+  "con_artist": {
+   "name": "Con Artist",
+   "description": "A likeable, outgoing liar with a notorious trade behind them."
+  },
+  "gunslinger": {
+   "name": "Gunslinger",
+   "description": "A wanted shot with a smoking habit and a trick style."
+  },
+  "criminal_fixer": {
+   "name": "Criminal Fixer",
+   "description": "A wanted dealer who sells anything, including the people around them."
+  },
+  "polyglot_spy": {
+   "name": "Polyglot Spy",
+   "description": "Speaks every language, keeps no name, trusts nobody, works nights."
+  },
+  "scholar": {
+   "name": "Scholar",
+   "description": "A short-sighted, modest genius who has read and kept everything."
+  },
+  "alchemist": {
+   "name": "Alchemist",
+   "description": "Herbs, apparatus and a refusal to accept an imperfect batch."
+  },
+  "tinker_smith": {
+   "name": "Tinker Smith",
+   "description": "Two good hands, a forge and a feel for machinery."
+  },
+  "field_physician": {
+   "name": "Field Physician",
+   "description": "A studied healer with herb lore and an open purse."
+  },
+  "cartographer": {
+   "name": "Cartographer",
+   "description": "Maps, languages and books, up at first light to use them."
+  },
+  "detective": {
+   "name": "Detective",
+   "description": "A doubting eye, a perfect memory and a nose for a trail."
+  },
+  "battlemage": {
+   "name": "Battlemage",
+   "description": "Gifted, sensitive and already marked by the magic they cast."
+  },
+  "devout_pilgrim": {
+   "name": "Devout Pilgrim",
+   "description": "Faith, the long road and nothing owned along it."
+  },
+  "heretic_witch": {
+   "name": "Heretic Witch",
+   "description": "Cast out, cursed, marked, and seeing further than either."
+  },
+  "oracle": {
+   "name": "Oracle",
+   "description": "Reads what has not happened yet, and fears the dark it comes out of."
+  },
+  "nightborn": {
+   "name": "Nightborn",
+   "description": "Pale, cold, beautiful and awake only after dusk."
+  },
+  "beast_whisperer": {
+   "name": "Beast Whisperer",
+   "description": "Half wild, at home with animals and with what animals answer to."
+  },
+  "hermit_survivalist": {
+   "name": "Hermit Survivalist",
+   "description": "Lives off the land, tracks anything, cannot bear a crowd."
+  },
+  "mountain_ranger": {
+   "name": "Mountain Ranger",
+   "description": "High-born lungs, hard legs and an early start."
+  },
+  "desert_nomad": {
+   "name": "Desert Nomad",
+   "description": "Heat-proof, open-handed and never lost."
+  },
+  "farmstead_settler": {
+   "name": "Farmstead Settler",
+   "description": "Land, animals and long days, worked without complaint."
+  },
+  "island_sailor": {
+   "name": "Island Sailor",
+   "description": "Raised on water, reads a sky, expects the best of it."
+  },
+  "spelunker": {
+   "name": "Spelunker",
+   "description": "Small, night-eyed and numb to pain, at home under the rock."
+  },
+  "travelling_bard": {
+   "name": "Travelling Bard",
+   "description": "A big voice, a bigger audience and no stranger in the room."
+  },
+  "noble_heir": {
+   "name": "Noble Heir",
+   "description": "Name, fortune, tutors and the languages that came with them."
+  },
+  "merchant_prince": {
+   "name": "Merchant Prince",
+   "description": "Famous, moneyed, silver-tongued and never satisfied."
+  },
+  "diplomat": {
+   "name": "Diplomat",
+   "description": "Many languages, plain dealing and a talent for the workable answer."
+  },
+  "celebrated_hero": {
+   "name": "Celebrated Hero",
+   "description": "Known everywhere for the right reasons, and aware of it."
+  },
+  "blind_seer": {
+   "name": "Blind Seer",
+   "description": "Sightless, sensitive and prophetic, afraid of the dark and of being alone."
+  },
+  "silent_monk": {
+   "name": "Silent Monk",
+   "description": "Voiceless, humble, and lethal without a weapon."
+  },
+  "mad_arsonist": {
+   "name": "Mad Arsonist",
+   "description": "A hot-headed, wanted nihilist who solves things with fire."
+  },
+  "hoarder_tinker": {
+   "name": "Hoarder Tinker",
+   "description": "Keeps everything, fixes everything, never stops working."
+  },
+  "degenerate_gambler": {
+   "name": "Degenerate Gambler",
+   "description": "Lucky, thirsty, greedy and always in for one more hand."
+  },
+  "caffeine_insomniac": {
+   "name": "Caffeine Insomniac",
+   "description": "Wired, scattered, brilliant at three in the morning."
+  },
+  "glass_cannon": {
+   "name": "Glass Cannon",
+   "description": "A brittle body carrying far more power than it can survive."
+  },
+  "gentle_giant": {
+   "name": "Gentle Giant",
+   "description": "Enormous, loud, generous and unwilling to hurt anyone."
+  },
+  "tiny_terror": {
+   "name": "Tiny Terror",
+   "description": "Small, quick, spiteful and lighter fingered than anyone expects."
+  },
+  "feral_child": {
+   "name": "Feral Child",
+   "description": "Raised by nothing, reads nothing, feels nothing, fears strangers."
+  },
+  "doomsday_prepper": {
+   "name": "Doomsday Prepper",
+   "description": "Convinced it is coming, stocked for it, and sleeping with the light on."
+  },
+  "gentle_ascetic": {
+   "name": "Gentle Ascetic",
+   "description": "Owns little, eats plainly, forgives everything, refuses to fight."
+  }
+ }
 }

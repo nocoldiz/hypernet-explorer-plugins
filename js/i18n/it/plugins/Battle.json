@@ -573,6 +573,9 @@
   "statReq": {
     "fumble": "{actor} perde il filo di {skill}: {stat} base insufficiente!"
   },
+  "invocation": {
+    "windUp": "{actor} carica {skill} e colpirà per ultimo in questo turno."
+  },
   "critSever": {
     "roll": "Colpo mortale su {enemy}: d20 {roll} {mod} = {total}/{dc}",
     "outcomeBehead": "Passa da parte a parte.",

@@ -280,8 +280,15 @@
         _index() {
             if (this._byBiome) return this._byBiome;
             const map = new Map();
+            const _bse = (typeof window !== "undefined") && window.BattleSystemEnhanced;
+            const H = _bse && _bse.Helpers;
             for (const e of $dataEnemies) {
                 if (!e || !e.note) continue;
+                // A <Boss> is a written encounter, exactly as it is on the 2D
+                // map (BattleSystemEnhancedEncounters, troopDataAllowedInPopulation):
+                // it is biome-tagged like everything else, and the roster the
+                // wildlife is dealt from is ambient fauna only.
+                if (H && H.isBossEnemyData ? H.isBossEnemyData(e) : /<Boss>/i.test(e.note)) continue;
                 const m = e.note.match(/<Biome:\s*(.+?)>/i);
                 if (!m) continue;
                 for (const raw of m[1].split(',')) {

@@ -1,6 +1,7 @@
 {
   "optionName": "Esploratore automatico",
   "badge": "AUTO P2",
+  "badgeMain": "AUTO",
   "lead": {
     "toast": "{name} passa in testa"
   },

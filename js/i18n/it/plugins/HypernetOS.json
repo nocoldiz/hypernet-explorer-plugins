@@ -1439,28 +1439,28 @@
     },
     "allprograms": {
       "appName": "Tutti i programmi",
-      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
+      "hint": "Programmi non presenti sul desktop. Trascinane uno sul desktop per fissarlo. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
       "empty": "Ogni programma e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "programs": {
       "appName": "Programmi",
-      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
+      "hint": "Programmi installati non presenti sul desktop. Trascinane uno sul desktop per fissarlo. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
       "empty": "Ogni programma e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "games": {
       "appName": "Giochi",
-      "hint": "Ogni gioco che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
+      "hint": "Giochi installati non presenti sul desktop. Trascinane uno sul desktop per fissarlo. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
       "empty": "Ogni gioco e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "utilities": {
       "appName": "Utilità",
-      "hint": "Ogni utilità che non e' sul desktop. Trascinane una sul desktop per tenerla li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporla.",
+      "hint": "Utilita installate non presenti sul desktop. Trascinane una sul desktop per fissarla. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
       "empty": "Ogni utilità e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"

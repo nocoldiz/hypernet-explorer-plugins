@@ -6,7 +6,8 @@
   "tab": {
     "modes": "Modalita operative",
     "element": "Elemento",
-    "form": "Forma ed elemento"
+    "form": "Forma ed elemento",
+    "calibrate": "Calibrazione"
   },
   "slots": "{used} di {max} modalita attive",
   "state": {
@@ -23,7 +24,10 @@
     "elementTitle": "Elemento",
     "formTitle": "Forma",
     "range": "Portata",
-    "magazine": "Colpi"
+    "rangeTiles": "{n} caselle",
+    "magazine": "Colpi",
+    "calibrateTitle": "Calibrazione",
+    "damage": "Danno"
   },
   "mode": {
     "mana": {
@@ -38,7 +42,7 @@
     },
     "solomonIncantation": {
       "name": "Incantazione di Salomone",
-      "desc": "Le magie vengono lette ad alta voce e colpiscono il 15% in più.",
+      "desc": "Gli incantesimi sono pronunciati ad alta voce e infliggono il 15% di danno in piu.",
       "effect": "Funziona solo con il Grimorio di Salomone montato, o mentre il libro è aperto durante Morte Aggraziata. Ogni magia lanciata viene prima letta per intero, in un riquadro tutto suo, e poi infligge o cura il 15% in più."
     },
     "card": {
@@ -159,7 +163,13 @@
     "element": "Elemento impostato su {element}.",
     "swapped": "{mode} attiva, {old} inattiva.",
     "form": "Forma impostata su {form}.",
-    "unracked": "Coilgun esaurito, torna pistola."
+    "unracked": "Coilgun esaurito, torna pistola.",
+    "calibrated": "{shape} calibrata: {choice}.",
+    "uncalibrated": "{choice} rimossa.",
+    "calSwapped": "{choice} scelta, {old} rimossa.",
+    "reaped": "La falce si prende {name}.",
+    "noSky": "Qui dentro non c'e cielo da cambiare.",
+    "spent": "{form} esaurita, torna pistola."
   },
   "locked": {
     "equip": "Solo Em puo equipaggiare la pistola vettoriale.",
@@ -172,7 +182,7 @@
   },
   "element": {
     "title": "Elemento",
-    "hint": "L'elemento vale in ogni forma e con qualsiasi modalita attiva.",
+    "hint": "L'elemento e memorizzato sulla pistola. Le forme arma lo perdono e attaccano senza elemento. Il coilgun ha un elemento proprio, impostato nella pagina Calibrazione, cosi il telaio puo tenerne due alla volta.",
     "physicalDesc": "Danno fisico, senza elemento.",
     "desc": {
       "1": "Danno fisico, senza elemento.",
@@ -190,8 +200,8 @@
     "gun": "Pistola",
     "blade": "Lama di Thelema",
     "fitted": "Montata",
-    "gain": "Forma da mischia: +{bonus}% di danno, elemento {element}. La forma pistola non ha bonus.",
-    "gunGain": "Forma base: colpi normali. TRASFORMA la converte nel coilgun."
+    "gain": "Forma da arma: +{bonus}% danno e un congegno tutto suo, scelto nella pagina Calibrazione. Cede le modalita operative e l'elemento, che appartengono entrambi alla pistola.",
+    "gunGain": "Forma base: la pistola porta l'elemento ed e l'unica forma su cui girano le modalita operative. TRASFORMA la apre nel coilgun, che porta un elemento suo."
   },
   "bay": {
     "slot": "Alloggiamento {n}",
@@ -200,64 +210,64 @@
   },
   "shape": {
     "gun": {
-      "name": "Coilgun",
-      "desc": "Forma predefinita.",
+      "name": "Pistola vettoriale",
+      "desc": "Forma base. Usa l'elemento e gli alloggiamenti delle modalita.",
       "effect": "Senza altre forme montate, TRASFORMA converte la pistola in un fucile di precisione coilgun: 3 colpi, portata 4x sulla mappa di battaglia. Il terzo colpo la riporta a pistola. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round."
     },
     "abrasax": {
       "name": "Athame di Abrasax",
       "desc": "Forma alternativa: pugnale.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e pugnale. Nella forma pugnale l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e pugnale. Nella forma pugnale l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "thelema": {
       "name": "Lama di Thelema",
       "desc": "Forma alternativa: machete.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e machete. Nella forma machete l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e machete. Nella forma machete l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "choronzon": {
       "name": "Maglio di Choronzon",
       "desc": "Forma alternativa: maglio.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e maglio. Nella forma maglio l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e maglio. Nella forma maglio l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "babalon": {
       "name": "Ascia di Babalon",
       "desc": "Forma alternativa: ascia.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e ascia. Nella forma ascia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e ascia. Nella forma ascia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "nuit": {
       "name": "Flagello di Nuit",
       "desc": "Forma alternativa: frusta.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e frusta. Nella forma frusta l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e frusta. Nella forma frusta l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "hadit": {
       "name": "Bastone di Hadit",
       "desc": "Forma alternativa: bastone.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e bastone. Nella forma bastone l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e bastone. Nella forma bastone l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "aiwass": {
       "name": "Arco di Aiwass",
       "desc": "Forma alternativa: arco.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e arco. Nella forma arco l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e arco. Nella forma arco l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "zos": {
       "name": "Dardi di Zos",
       "desc": "Forma alternativa: dardi da lancio.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e dardi. Nella forma dardi l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e dardi. Nella forma dardi l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "baphomet": {
       "name": "Artigli di Baphomet",
       "desc": "Forma alternativa: artigli.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e artigli. Nella forma artigli l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e artigli. Nella forma artigli l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "kia": {
       "name": "Guanto di Kia",
       "desc": "Forma alternativa: guanto d'arme.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e guanto d'arme. Nella forma guanto l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e guanto d'arme. Nella forma guanto l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "longinus": {
       "name": "Lancia di Longino",
       "desc": "Forma alternativa: lancia.",
-      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e lancia. Nella forma lancia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Mantiene l'elemento della pistola. Si puo montare una sola forma alternativa."
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e lancia. Nella forma lancia l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     },
     "sniper": {
       "name": "Coilgun",
@@ -268,10 +278,393 @@
       "name": "Grimorio di Salomone",
       "desc": "Forma alternativa: il libro aperto.",
       "effect": "Montato, il libro è già aperto quando comincia lo scontro: Em entra in ogni battaglia leggendo, con una fila di incantesimi presi dal grimorio al posto dei suoi. È un patto, non un regalo. Con questa forma Morte Aggraziata non concede alcun turno di invulnerabilità, e il libro non restituisce salute: la prende, per ogni incantesimo letto, in proporzione a quanto costa lanciarlo. Si può montare una sola forma alternativa. Un attacco normale con il libro non e un colpo: si spalanca e spara le sue stesse pagine su cio che ha di mira, fino a quattro caselle."
+    },
+    "fists": {
+      "name": "Pugni di Em",
+      "desc": "Forma alternativa: mani nude.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e mani nude. Nella forma mani nude l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Lascia cadere la pistola e combatte a mani nude. Un colpo ha una probabilita di diventare una delle forme di arti marziali scelte nella pagina Calibrazione, pagata in AP. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "twin": {
+      "name": "Vettori gemelli",
+      "desc": "Forma alternativa: pistole accoppiate.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e una coppia di pistole. Nella forma una coppia di pistole l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Il telaio si divide lungo la sua stessa giuntura. La pagina Calibrazione decide quanti colpi spara un attacco, e piu ne spara meno ne porta ciascuno. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "crossbow": {
+      "name": "Balestra vettoriale",
+      "desc": "Forma alternativa: balestra.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e una balestra. Nella forma una balestra l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Si arma invece di tendersi e tiene esattamente un dardo. La pagina Calibrazione decide cosa ha in punta. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "eris": {
+      "name": "Nunchaku di Eris",
+      "desc": "Forma alternativa: nunchaku.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e nunchaku. Nella forma nunchaku l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Due bastoni su una catena accesa. La pagina Calibrazione decide quanto e imprevedibile il colpo: piu larga e la fascia, meglio rende in media e meno si puo contare su un singolo colpo. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "maat": {
+      "name": "Maglio di Maat",
+      "desc": "Forma alternativa: flagello.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e un flagello incatenato. Nella forma un flagello incatenato l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Un manico, un tratto di catena e un ankh per testa. La pagina Calibrazione decide su quale bilancia pesa il bersaglio: piu e fuori equilibrio, piu forte cade. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "bubba": {
+      "name": "Chiave di Bubba",
+      "desc": "Forma alternativa: chiave inglese.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e una chiave inglese. Nella forma una chiave inglese l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Un attrezzo fatto per un lavoro solo. La pagina Calibrazione nomina i tipi di creatura per cui e stato fatto: molto di piu contro quelli, e meno contro tutto il resto. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "yaldabaoth": {
+      "name": "Motosega di Yaldabaoth",
+      "desc": "Forma alternativa: motosega.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e una motosega. Nella forma una motosega l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. La barra legge quanto e gia rovinato il corpo e morde piu forte per questo. La pagina Calibrazione decide quale lettura prende. Contro qualcosa di intatto vale meno di un colpo normale. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "nyarlathotep": {
+      "name": "Falce di Nyarlathotep",
+      "desc": "Forma alternativa: falce.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e una falce. Nella forma una falce l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. Su un colpo critico miete: un lancio di moneta si prende una vita. La pagina Calibrazione decide da quale parte puo prenderla. Non prende mai Em e non puo toccare un boss, un petrodemone o qualcosa oltre dieci livelli sopra di lei. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "freud": {
+      "name": "Katana di Freud",
+      "desc": "Forma alternativa: katana.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e una katana. Nella forma una katana l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. L'unica lama che non si mena con il braccio: il colpo si calcola sul PSI. Un colpo ha una probabilita di diventare l'abilita psichica scelta nella pagina Calibrazione, pagata in AP. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
+    },
+    "gautama": {
+      "name": "Rosario di Gautama",
+      "desc": "Forma alternativa: rosario.",
+      "effect": "In battaglia il comando di ricarica diventa TRASFORMA, che alterna pistola e un rosario. Nella forma un rosario l'arma usa danno, animazione e suono di quel tipo di arma e non consuma munizioni. Trasformarsi e gratuito: non costa il turno, non alza la guardia e si puo fare quante volte si vuole in un round. L'unica forma che non colpisce. Il suo attacco si rivolge ai suoi invece, e la pagina Calibrazione decide cosa curano i grani. Non porta elemento e non fa girare modalita operative: restano entrambi sulla pistola. Si puo montare una sola forma alternativa."
     }
   },
   "section": {
     "forms": "Forme dell'arma",
     "elements": "Elementi"
+  },
+  "cal": {
+    "none": "Niente da calibrare",
+    "known": "Appresa",
+    "borrowed": "Letta dal telaio",
+    "apCost": "{ap} AP",
+    "chip": {
+      "selected": "Scelta"
+    },
+    "section": {
+      "element": "L'elemento del coilgun",
+      "rack": "Il caricatore",
+      "marks": "Il segno che lascia",
+      "stance": "La guardia in cui la tiene",
+      "sky": "Il cielo che chiama",
+      "schools": "Le scuole da cui pesca",
+      "quarry": "Per cosa e stata fatta",
+      "lash": "Cosa abbatte la sferzata",
+      "venom": "Cosa portano i dardi",
+      "head": "Cosa consegna la testa",
+      "cleave": "Quanto largo arriva il colpo",
+      "draw": "Quanto viene tesa",
+      "charge": "Come viene portata",
+      "pattern": "Come spara la coppia",
+      "bolt": "Cosa c'e sul dardo",
+      "discord": "Quanto e imprevedibile il colpo",
+      "measure": "Su cosa li pesa",
+      "reads": "Cosa legge la barra",
+      "bargain": "Il patto stretto",
+      "mends": "Cosa curano i grani",
+      "known": "Quello che sa",
+      "reach": "Alla sua portata"
+    },
+    "lash": {
+      "desc": "Abbassa questo parametro al colpo per alcuni round. 45% di probabilita, 85% del danno."
+    },
+    "head": {
+      "Blunt": {
+        "name": "Contundente",
+        "desc": "Danno contundente. Efficace contro ossa e armature."
+      },
+      "Cutting": {
+        "name": "Tagliente",
+        "desc": "Danno da taglio. Efficace contro carne e bersagli morbidi."
+      },
+      "Piercing": {
+        "name": "Perforante",
+        "desc": "Danno perforante. Efficace contro giunture e punti deboli."
+      },
+      "Explosive": {
+        "name": "Esplosivo",
+        "desc": "Danno esplosivo. Distribuito su ogni parte del corpo."
+      }
+    },
+    "cleave": {
+      "single": {
+        "name": "Uno pesante",
+        "desc": "Colpisce un bersaglio al 140% del danno."
+      },
+      "double": {
+        "name": "Due",
+        "desc": "Colpisce due bersagli al 72% del danno ciascuno."
+      },
+      "triple": {
+        "name": "Tre",
+        "desc": "Colpisce tre bersagli al 50% del danno ciascuno."
+      }
+    },
+    "draw": {
+      "short": {
+        "name": "Tesa corta",
+        "desc": "Portata 3 caselle, +15% probabilita di critico."
+      },
+      "standard": {
+        "name": "Tesa normale",
+        "desc": "Portata 6 caselle, danno normale."
+      },
+      "long": {
+        "name": "Tesa lunga",
+        "desc": "Portata 12 caselle, 80% del danno."
+      }
+    },
+    "charge": {
+      "brace": {
+        "name": "Puntata",
+        "desc": "Ignora la guardia del bersaglio. 90% del danno."
+      },
+      "reach": {
+        "name": "Tenuta lunga",
+        "desc": "Portata 4 caselle invece di 2. Danno normale."
+      },
+      "overrun": {
+        "name": "Caricata",
+        "desc": "Colpisce due volte al 70% del danno ciascuna."
+      }
+    },
+    "pattern": {
+      "two": {
+        "name": "Due colpi",
+        "desc": "Due colpi al 70% del danno ciascuno."
+      },
+      "three": {
+        "name": "Tre colpi",
+        "desc": "Tre colpi al 55% del danno ciascuno."
+      },
+      "four": {
+        "name": "Quattro colpi",
+        "desc": "Quattro colpi al 44% del danno ciascuno."
+      }
+    },
+    "bolt": {
+      "piercing": {
+        "name": "Punta perforante",
+        "desc": "Ignora la guardia del bersaglio."
+      },
+      "barbed": {
+        "name": "Punta uncinata",
+        "desc": "50% di probabilita di infliggere Sanguinamento."
+      },
+      "splitting": {
+        "name": "Punta divisoria",
+        "desc": "Colpisce ogni parte del corpo al 70% del danno."
+      },
+      "heavy": {
+        "name": "Punta pesante",
+        "desc": "115% del danno, 25% di probabilita di Stordire."
+      }
+    },
+    "discord": {
+      "tight": {
+        "name": "Stretta",
+        "desc": "Il danno varia del 10%. Media normale."
+      },
+      "wide": {
+        "name": "Larga",
+        "desc": "Il danno varia del 45%. Media del 112%."
+      },
+      "chaotic": {
+        "name": "Caotica",
+        "desc": "Il danno varia del 90%. Media del 125%."
+      }
+    },
+    "measure": {
+      "health": {
+        "name": "Le loro ferite",
+        "desc": "Piu danno quanto piu bassi sono gli HP del bersaglio."
+      },
+      "mana": {
+        "name": "La loro riserva",
+        "desc": "Piu danno quanto piu bassi sono gli MP del bersaglio."
+      },
+      "states": {
+        "name": "Cosa si portano",
+        "desc": "Piu danno per ogni stato sul bersaglio."
+      },
+      "level": {
+        "name": "Il divario fra voi",
+        "desc": "Piu danno quanto maggiore e la differenza di livello, in entrambe le direzioni."
+      }
+    },
+    "reads": {
+      "wound": {
+        "name": "La ferita",
+        "desc": "Piu danno quanto piu danno complessivo ha subito il corpo del bersaglio."
+      },
+      "ruin": {
+        "name": "Lo scempio",
+        "desc": "Piu danno quanto peggio sta la parte piu danneggiata del bersaglio."
+      },
+      "tally": {
+        "name": "Il conto",
+        "desc": "Piu danno per ogni parte del corpo che il bersaglio ha perso."
+      }
+    },
+    "bargain": {
+      "patron": {
+        "name": "Patrono",
+        "desc": "20% di probabilita di mietere un nemico con un colpo critico. Danno normale."
+      },
+      "tithe": {
+        "name": "Decima",
+        "desc": "50% di probabilita di mietere un alleato con un colpo critico. 130% del danno."
+      },
+      "chaos": {
+        "name": "Caos",
+        "desc": "50% di probabilita di mietere chiunque con un colpo critico. 110% del danno."
+      }
+    },
+    "mends": {
+      "hp": {
+        "name": "Ferite",
+        "desc": "Ripristina HP al bersaglio."
+      },
+      "mp": {
+        "name": "La riserva",
+        "desc": "Ripristina MP al bersaglio."
+      },
+      "tp": {
+        "name": "Punti azione",
+        "desc": "Ripristina AP al bersaglio."
+      },
+      "state": {
+        "name": "Un'afflizione",
+        "desc": "Rimuove uno stato dal bersaglio."
+      },
+      "party": {
+        "name": "Tutti quanti",
+        "desc": "Ripristina una quantita minore di HP a tutto il gruppo."
+      }
+    },
+    "marks": {
+      "48": {
+        "desc": "30% di probabilita di infliggere Sanguinamento."
+      },
+      "38": {
+        "desc": "30% di probabilita di infliggere Sbilanciato."
+      },
+      "5": {
+        "desc": "30% di probabilita di infliggere Cecita."
+      },
+      "6": {
+        "desc": "30% di probabilita di infliggere Silenzio."
+      },
+      "52": {
+        "desc": "30% di probabilita di infliggere Immobilizzato."
+      },
+      "13": {
+        "desc": "30% di probabilita di infliggere Stordimento."
+      }
+    },
+    "stance": {
+      "22": {
+        "desc": "Contrattacco: risponde quando viene colpita."
+      },
+      "34": {
+        "desc": "Concentrazione Perfetta: gli attacchi non mancano mai."
+      },
+      "49": {
+        "desc": "Schivata: evasione molto aumentata."
+      },
+      "55": {
+        "desc": "Combo: gli attacchi si concatenano in colpi extra."
+      }
+    },
+    "sky": {
+      "none": {
+        "name": "Sereno",
+        "desc": "Rimuove il meteo."
+      },
+      "rain": {
+        "name": "Pioggia",
+        "desc": "Imposta la pioggia."
+      },
+      "storm": {
+        "name": "Tempesta",
+        "desc": "Imposta un temporale."
+      },
+      "snow": {
+        "name": "Neve",
+        "desc": "Imposta la neve."
+      }
+    },
+    "form": {
+      "gun": {
+        "hint": "Il coilgun ha un elemento proprio, cosi il telaio ne tiene due alla volta. La profondita del caricatore la decidi tu, ma un caricatore doppio raddoppia il costo in munizioni di ogni colpo."
+      },
+      "abrasax": {
+        "hint": "Applica un'afflizione. Afflizioni piu dure hanno meno probabilita di riuscire, e PSI aumenta le probabilita."
+      },
+      "thelema": {
+        "hint": "Un attacco normale a volte diventa questa abilita di spada, pagandone il costo in AP. L'abilita non deve essere appresa."
+      },
+      "freud": {
+        "hint": "Il danno si basa su PSI. Un attacco normale a volte diventa questa abilita, pagandone il costo in AP."
+      },
+      "fists": {
+        "hint": "Un attacco normale a volte diventa una forma casuale dall'insieme selezionato, pagandone il costo in AP."
+      },
+      "kia": {
+        "hint": "La posizione e attiva finche il guanto e equipaggiato, e riduce il danno che infliggi finche resta attiva."
+      },
+      "hadit": {
+        "hint": "Passare al bastone cambia il meteo in questo. Il meteo influisce anche sui nemici, e non ha effetto al chiuso."
+      },
+      "solomon": {
+        "hint": "Il patto viene estratto dalle scuole selezionate. Senza selezione estrae da ogni scuola. Una selezione molto stretta potrebbe non avere nulla da estrarre."
+      },
+      "choronzon": {
+        "hint": "Il tipo di danno inflitto. Decide contro cosa l'attacco e forte e debole."
+      },
+      "babalon": {
+        "hint": "Quanti bersagli colpisce l'attacco. Ogni bersaglio in piu riduce il danno inflitto a tutti."
+      },
+      "nuit": {
+        "hint": "La frusta abbassa un parametro invece di infliggere danno pieno. In cambio l'attacco infligge meno danno."
+      },
+      "aiwass": {
+        "hint": "Quanto viene tesa la corda. Una tensione maggiore va a scapito del danno della freccia."
+      },
+      "zos": {
+        "hint": "L'effetto di stato sui dardi, preso dagli stessi colpi caricati."
+      },
+      "baphomet": {
+        "hint": "Cosa gli artigli assorbono dal bersaglio. Assorbire AP costa di piu, perche gli AP alimentano gli attacchi che diventano abilita."
+      },
+      "longinus": {
+        "hint": "Come attacca la lancia. Ogni modalita scambia una proprieta con un'altra."
+      },
+      "twin": {
+        "hint": "Quanti colpi spara ogni attacco. Piu colpi significano meno danno per colpo."
+      },
+      "crossbow": {
+        "hint": "La punta caricata sul dardo. Se ne puo caricare una sola alla volta."
+      },
+      "eris": {
+        "hint": "Varianza del danno. Una varianza piu ampia aumenta il danno medio ma rende i singoli colpi meno prevedibili."
+      },
+      "maat": {
+        "hint": "Il parametro con cui l'ankh pesa il bersaglio. Un bersaglio in equilibrio subisce meno danno che da un attacco normale."
+      },
+      "bubba": {
+        "hint": "Il tipo di bersaglio per cui e fatta la chiave inglese. Molto piu danno contro di esso, meno contro tutto il resto."
+      },
+      "yaldabaoth": {
+        "hint": "La lettura che la barra prende dal bersaglio. Contro un bersaglio non affetto infligge meno di un attacco normale."
+      },
+      "nyarlathotep": {
+        "hint": "Quale schieramento prende di mira la mietitura. Non prende mai Em, e non puo colpire un boss, un petrodemone o qualsiasi cosa piu di dieci livelli sopra di lei."
+      },
+      "gautama": {
+        "hint": "Cosa cura il rosario. Non infligge alcun danno."
+      }
+    }
   }
 }

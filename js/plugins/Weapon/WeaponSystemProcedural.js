@@ -851,10 +851,17 @@ var WeaponSystemProcedural = {
     return model;
   },
 
-  /** The colour pass: the frame dark, the accents and the glow the element. */
+  /**
+   * The colour pass: the frame dark and everything else the one gold, which is
+   * the element's own colour. A physical gun has no element colour of its own,
+   * so it is painted in the gold the frame was made in rather than left in the
+   * wood and bare steel of its weapon type: black and gold is what the weapon
+   * is, not what one setting of it looks like.
+   */
   applyVectorFormAccent(model) {
     const VG = window.VectorGun;
-    const color = VG && VG.elementColor ? VG.elementColor() : null;
+    const color = (VG && VG.elementColor ? VG.elementColor() : null)
+      || (this.VECTOR_GOLD || 0xC9A227);
     if (!model || !color || !model.traverse) return model;
     const seen = new Set();
     model.traverse((node) => {
@@ -5942,15 +5949,51 @@ var WeaponSystemProcedural = {
   // and a Slime's pseudopod are not the same weapon. Builders are registered
   // per Archetypes.json key rather than per weapon id, since there is no
   // database weapon to key on.
+  //
+  // These are the CREATURES' hands. A person shows the authored rig below
+  // whatever archetype was crossed into them (see isCreatureHanded), so only
+  // a creature character, an NPC on a creature class and the enemies out in
+  // the world are ever built one of them.
   UNARMED_MODELS: {},
   DEFAULT_ARCHETYPE: 'Humanoid',
 
   /**
+   * Whether an empty hand is a creature's rather than a person's. Only a
+   * creature is given the fist Weapon3D_Unarmed builds for its archetype: a
+   * person keeps the authored hands whatever archetype has been crossed into
+   * their body, since a second archetype is something the body carries and
+   * not a new pair of hands. Anything that is not an actor at all (an enemy,
+   * a summon) reads as a creature, so a monster still punches with the fist
+   * of its own species.
+   */
+  isCreatureHanded(battler) {
+    if (!battler) return false;
+    try {
+      if (typeof battler.isActor === 'function' && !battler.isActor()) return true;
+      if (battler._isCreatureActor) return true;
+      const HC = window.HealthCore;
+      if (HC && typeof HC.isCreatureBody === 'function' && HC.isCreatureBody(battler)) return true;
+      const NC = window.NPCCreature;
+      if (NC && typeof NC.isNonSentientActor === 'function' && NC.isNonSentientActor(battler)) return true;
+      // Each of the three player slots records the monster form it was built
+      // in on a switch of its own (76 + slot), which is what the status screen
+      // reads to know it is drawing a beast rather than a bust.
+      const slot = typeof battler.actorId === 'function' ? battler.actorId() : 0;
+      if (slot >= 1 && slot <= 3 && typeof $gameSwitches !== 'undefined' && $gameSwitches &&
+          $gameSwitches.value(76 + slot)) return true;
+    } catch (e) { /* nothing loaded that could answer: a person, then */ }
+    return false;
+  },
+
+  /**
    * The archetype whose fist a character shows. A hybrid ("Dragon / Elven")
    * uses the FIRST of its archetypes, so a mixed character always reads as
-   * one thing rather than something in between.
+   * one thing rather than something in between. A character who is not a
+   * creature never reads as anything but the default: the archetype fists
+   * belong to creatures alone.
    */
   archetypeOf(actor) {
+    if (!this.isCreatureHanded(actor)) return this.DEFAULT_ARCHETYPE;
     try {
       if (actor && window.HealthCore && typeof window.HealthCore.getActorArchetypeKeys === 'function') {
         const keys = window.HealthCore.getActorArchetypeKeys(actor);
@@ -6041,10 +6084,11 @@ var WeaponSystemProcedural = {
   // and it is the rig's own animation that swings rather than the generated
   // punch - which is the whole point of having one.
   //
-  // Only the archetypes whose hands ARE a pair of human hands take it. A
-  // dragon's claw, a slime's pseudopod and the other seventy-odd fists
-  // Weapon3D_Unarmed builds are untouched: one entry in `archetypes` is all
-  // it takes to hand the rig to another of them.
+  // Every character who is not a creature takes it, whatever archetypes they
+  // carry, since archetypeOf answers Humanoid for all of them. A creature is
+  // the exception: a dragon's claw, a slime's pseudopod and the other
+  // seventy-odd fists Weapon3D_Unarmed builds are untouched, and one entry in
+  // `archetypes` is all it takes to hand the rig to one of them too.
   //
   // Nothing outside the sprite knows about this. The empty hand is still the
   // procedural weapon unarmedWeaponFor builds (same id, same weight, same
@@ -6063,10 +6107,15 @@ var WeaponSystemProcedural = {
     // elbows out of the bottom edge, fists up in the middle of the frame.
     rotation: { x: 52, y: 180, z: 0 },
     // The share of the frame the posed hands are fitted into, and how far
-    // past the bottom edge the elbows are allowed to run off it.
-    fillW: 0.62,
-    fillH: 0.58,
+    // past the bottom edge the elbows are allowed to run off it. Sized to sit
+    // in the quarter of the screen a scene keeps clear for what is held,
+    // rather than to fill the frame the way a true first person game would.
+    fillW: 0.55,
+    fillH: 0.52,
     sink: 0.10,
+    // How much clear screen is kept beside them when the anchor they are hung
+    // on would otherwise push an arm off the edge.
+    margin: 0.02,
     // The pose the fit is measured in: whatever the hands do when nothing is
     // happening. Measuring the bind pose instead frames a pair of arms nobody
     // ever sees.
@@ -6221,15 +6270,18 @@ var WeaponSystemProcedural = {
   },
 
   /**
-   * Where the hands sit and how big they are, measured once per rig per screen
-   * size: fitted to the frame by their posed silhouette rather than by any
-   * authored scale, so the same rig frames the same way at every resolution.
+   * How big the hands are and what silhouette they cut, measured once per rig
+   * per screen size: fitted by their posed shape rather than by any authored
+   * scale, so the same rig frames the same way at every resolution. WHERE they
+   * are then put is the sprite's business (Sprite_3DWeapon#_rigFrame): a
+   * battle and the world out of the windscreen keep different parts of the
+   * screen clear.
    */
-  rigFrameFor(entry, spec, model) {
+  rigMetricsFor(entry, spec, model) {
     const screenW = (typeof Graphics !== 'undefined' && Graphics.width) ? Graphics.width : 816;
     const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
     const key = screenW + 'x' + screenH;
-    if (entry._frame && entry._frameFor === key) return entry._frame;
+    if (entry._metrics && entry._metricsFor === key) return entry._metrics;
 
     // The silhouette is measured ONCE, while the hands are still standing in
     // the pose they were fitted for; a later measurement (the player changed
@@ -6253,16 +6305,17 @@ var WeaponSystemProcedural = {
     const width = Math.max(box.max.x - box.min.x, 1e-6);
     const height = Math.max(box.max.y - box.min.y, 1e-6);
     const scale = Math.min(screenW * spec.fillW / width, screenH * spec.fillH / height);
-    const frame = {
+    const metrics = {
       scale,
-      // Centred across the frame, and standing ON the bottom edge with the
-      // forearms running off it rather than floating above it.
-      x: -((box.min.x + box.max.x) / 2) * scale,
-      y: -screenH / 2 - screenH * spec.sink - box.min.y * scale
+      // The middle of the silhouette and its foot, in screen pixels, so a
+      // placement only has to say where it wants those two to land.
+      midX: ((box.min.x + box.max.x) / 2) * scale,
+      footY: box.min.y * scale,
+      halfW: (width / 2) * scale
     };
-    entry._frame = frame;
-    entry._frameFor = key;
-    return frame;
+    entry._metrics = metrics;
+    entry._metricsFor = key;
+    return metrics;
   },
 
   // ============================================================
@@ -6398,8 +6451,8 @@ var WeaponSystemProcedural = {
       const w = this._weapon;
       // A pair of authored hands is fitted to the frame by its posed
       // silhouette when it arrives (_rigPose), not by any authored scale.
-      if (this._rig && this._rigEntry && this._rigEntry._frame) {
-        return this._rigEntry._frame.scale;
+      if (this._rig && this._rigEntry && this._rigEntry._metrics) {
+        return this._rigEntry._metrics.scale;
       }
       if (w.model3d) return w.model3dScale || 1.0;
       const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
@@ -6666,14 +6719,53 @@ var WeaponSystemProcedural = {
     };
 
     /**
+     * Where the hands stand on screen.
+     *
+     * NOT in the middle of it. A first person pair of hands wants the bottom
+     * centre of the frame and that is the one place it cannot have: in a
+     * battle the command list, the log and the party bars are HTML at z-index
+     * 350 over a weapon canvas at z-index 10, so hands framed there are drawn
+     * and then covered up. That is the whole reason a held weapon is drawn at
+     * x=660 rather than down the centre line (Weapon3DOverlay's
+     * getScaledWeaponX), and the hands follow the same anchor: whatever part
+     * of the screen the scene keeps clear for what the character is holding is
+     * where they go, in a battle and out in the world alike.
+     *
+     * Vertically they still STAND ON the bottom edge, sunk past it, since arms
+     * cut off by the frame is what reads as first person and arms ending in
+     * mid air does not.
+     */
+    Sprite_3DWeapon.prototype._rigFrame = function() {
+      const m = WeaponSystemProcedural.rigMetricsFor(this._rigEntry, this._rig, this._model);
+      const screenW = (typeof Graphics !== 'undefined' && Graphics.width) ? Graphics.width : 816;
+      const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
+      const key = screenW + 'x' + screenH + '@' + this._screenX;
+      if (this._rigFramedFor === key) return this._rigFramed;
+
+      const spec = this._rig;
+      // The anchor, in the overlay's world units: the same x the scene would
+      // have drawn a sword at, kept far enough from either edge that the whole
+      // span of the arms is on screen.
+      const edge = m.halfW + screenW * spec.margin;
+      const anchorX = Math.min(Math.max(this._screenX - screenW / 2, -screenW / 2 + edge),
+        screenW / 2 - edge);
+      this._rigFramed = {
+        scale: m.scale,
+        x: anchorX - m.midX,
+        y: -screenH / 2 - screenH * spec.sink - m.footY
+      };
+      this._rigFramedFor = key;
+      return this._rigFramed;
+    };
+
+    /**
      * Keeps the hands framed. The rig animates itself, so the only thing left
-     * to write is where the whole of it sits: fitted to the screen, centred,
-     * standing on the bottom edge, and drifting out with the exit fade at the
-     * end of a battle like everything else in the overlay.
+     * to write is where the whole of it sits, and that it drifts out with the
+     * exit fade at the end of a battle like everything else in the overlay.
      */
     Sprite_3DWeapon.prototype._rigPose = function() {
       if (!this._model || !this._rigEntry) return;
-      const frame = WeaponSystemProcedural.rigFrameFor(this._rigEntry, this._rig, this._model);
+      const frame = this._rigFrame();
       const r = this._rig.rotation;
       this._model.rotation.set(
         THREE.MathUtils.degToRad(r.x),

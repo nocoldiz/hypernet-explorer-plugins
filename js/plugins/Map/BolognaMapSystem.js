@@ -535,9 +535,14 @@
 
   function pickFauna(habitat, rng) {
     const ids = FAUNA[habitat] || [];
+    const H = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
     const weighted = [];
     let total = 0;
     for (const enemyId of ids) {
+      // A <Boss> is a written encounter and never ambient fauna, in the city
+      // as anywhere else (BattleSystemEnhancedEncounters, isBossEnemyId): a
+      // habitat roster names one here and there, and none of them is dealt.
+      if (H && H.isBossEnemyId && H.isBossEnemyId(enemyId)) continue;
       const troopId = troopForEnemy(enemyId);
       if (!troopId) continue;
       const weight = faunaWeight(troopId);

@@ -309,6 +309,27 @@
                 }
             }
 
+            // 4. The artifacts the party made itself. A weapon awakened at the
+            // workshop (Quest/ThinkerMenu.js) is a relic like any other, but it
+            // is registered past the generator's band with an id of its own, so
+            // it is read off the record store rather than off a slot number.
+            const made = (window.ArtifactAwakening && window.ForgedPieces)
+                ? window.ForgedPieces.all().filter(rec => rec && rec.awakened) : [];
+            for (const rec of made) {
+                const src = rec.kind === 'a' ? $dataArmors : $dataWeapons;
+                const entry = src[rec.id];
+                if (!entry) continue;
+                discovered.push({
+                    type: rec.kind === 'a' ? 'armor' : 'weapon',
+                    id: entry.id,
+                    name: entry.name,
+                    iconIndex: entry.iconIndex,
+                    price: entry.price,
+                    description: entry.description,
+                    rawItem: entry
+                });
+            }
+
             // Apply category filter
             let filtered = discovered;
             if (this._activeFilter !== 'all') {

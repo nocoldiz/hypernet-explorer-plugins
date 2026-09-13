@@ -127,10 +127,12 @@
   const GAIN_DEDUPE_MS = 1200;
 
   // A find of one thing is read at a glance; a find of six is read line by
-  // line, so the popup buys extra time for every line past the first.
+  // line, so the popup buys extra time for every line past the first. A crate
+  // bought by the hundred fills the popup with rows nobody reads one by one,
+  // so the per-line grant and the ceiling are both kept short.
   const REWARD_BASE_FRAMES = 240;
-  const REWARD_LINE_FRAMES = 55;
-  const REWARD_MAX_FRAMES = 660;
+  const REWARD_LINE_FRAMES = 34;
+  const REWARD_MAX_FRAMES = 440;
   // Bulk reward items are chunked so a large container or chest find never
   // trails off the screen: each portion displays up to MAX_REWARD_ENTRIES,
   // lingers for reading, fades out, and yields to the next portion.

@@ -418,29 +418,37 @@
             };
         },
 
-        // The largest number of units of one lot the party could pay for. The
-        // ladder is not monotone (five units can cost less than four), so every
-        // tier band is asked separately rather than searched through.
+        // The largest number of units of one lot the party could pay for.
         maxAffordable: function (entry, gold, limited) {
             if (!entry) return 0;
             const unit = this.unit(entry, limited);
-            if (unit <= 0) return Stock.available(entry);
-            const bands = [{ min: 1, off: 0 }].concat(BULK_TIERS.slice().sort((a, b) => a.min - b.min));
-            let best = 0;
-            for (let i = 0; i < bands.length; i++) {
-                const band = bands[i];
-                const ceiling = i + 1 < bands.length ? bands[i + 1].min - 1 : Number.MAX_SAFE_INTEGER;
-                const perUnit = unit * (1 - band.off);
-                if (perUnit <= 0) continue;
-                let qty = Math.min(Math.floor(gold / perUnit), ceiling);
-                // perUnit is the float estimate; lineTotal is what the till
-                // actually asks for. Walk the last cent or two back off.
-                while (qty >= band.min && this.lineTotal(entry, qty, limited) > gold) qty--;
-                if (qty >= band.min && qty > best) best = qty;
-            }
-            return Math.min(best, Stock.available(entry));
+            const cap = Stock.available(entry);
+            if (unit <= 0) return cap;
+            return maxUnitsAffordable(unit, gold, cap, qty => this.lineTotal(entry, qty, limited));
         }
     };
+
+    // How many units of something priced at `unit` a purse of `gold` reaches
+    // once the volume ladder has had its say. The ladder is not monotone (five
+    // units can cost less than four), so every tier band is asked separately
+    // rather than searched through, and `lineTotal` - the figure the till
+    // actually asks for - has the last word over the float estimate. Both the
+    // site and the depot count their crates through here.
+    function maxUnitsAffordable(unit, gold, cap, lineTotal) {
+        if (!(unit > 0)) return cap;
+        const bands = [{ min: 1, off: 0 }].concat(BULK_TIERS.slice().sort((a, b) => a.min - b.min));
+        let best = 0;
+        for (let i = 0; i < bands.length; i++) {
+            const band = bands[i];
+            const ceiling = i + 1 < bands.length ? bands[i + 1].min - 1 : Number.MAX_SAFE_INTEGER;
+            const perUnit = unit * (1 - band.off);
+            if (perUnit <= 0) continue;
+            let qty = Math.min(Math.floor(gold / perUnit), ceiling);
+            while (qty >= band.min && lineTotal(qty) > gold) qty--;
+            if (qty >= band.min && qty > best) best = qty;
+        }
+        return Math.min(best, cap);
+    }
 
     //=========================================================================
     // Stock
@@ -1176,17 +1184,29 @@
             $gameSystem._deliveryOrders = remaining;
 
             const handed = [];
+            const entries = [];
             for (const order of delivered) {
                 const result = this.deliverOrder(order);
                 if (result) {
                     handed.push(result.qty > 1
                         ? T('Stockbusters.text.unitsOf', { item: itemNameOf(result.entry), count: result.qty })
                         : itemNameOf(result.entry));
+                    if (order.kind !== "skill") entries.push({ obj: result.entry, qty: result.qty });
                 }
             }
+            announceGoods(entries, T('Stockbusters.text.collectedTitle'));
             return handed;
         }
     };
+
+    // What the party just took hold of, drawn as the popup every other find in
+    // the game uses. One parcel of eight lots is one popup of eight rows, not
+    // eight popups: the courier's crate and the depot's pallet both come
+    // through here.
+    function announceGoods(entries, title) {
+        if (!window.ParchmentToast || !entries || !entries.length) return;
+        window.ParchmentToast.reward({ entries: entries, title: title });
+    }
 
     // An arrival announces itself once while the party is out walking, so the
     // player knows there is something waiting to be collected.
@@ -2800,6 +2820,579 @@
     }
 
     //=========================================================================
+    // Materials Depot
+    //=========================================================================
+    // The wholesale counter of the Hypernet, and the site's opposite number: a
+    // shelf of exactly the raw materials every recipe in the game is written in
+    // (the <Category: Crafting> rows, the ones the workbench and the still
+    // actually consume), sold by the pallet and swapped one for another.
+    //
+    // Three things separate it from Stockbusters:
+    //  - it stocks nothing but materials, so an order is never a shopping trip
+    //  - a pallet is loaded at the counter, not dispatched: it is handed over
+    //    the moment it is paid for
+    //  - it will take materials in payment for other materials, which is what a
+    //    party sitting on four hundred bones and no steel actually needs
+    //
+    // The volume ladder is the site's own (BULK_TIERS), so the two counters can
+    // never quote different discounts for the same crate.
+
+    const DEPOT_APP_ID = 'app-bulk-materials';   // i18n-ignore  app id
+    const DEPOT_WINDOW_ID = 'win-bulk-materials';
+    // Stone Ore, per js/db/Sprites/Icons.json.
+    const DEPOT_ICON = 166;
+    // The <category:> note tag every raw material carries.
+    const DEPOT_CATEGORY = 'Crafting';  // i18n-ignore  <category:> note-tag id
+    const DEPOT_CATEGORY_RE = new RegExp('<category:\\s*' + DEPOT_CATEGORY + '\\s*>', 'i');
+    // A counter that sells nothing else sells it a little under the site's
+    // listing, before the volume ladder is applied at all.
+    const DEPOT_MARGIN = 0.9;
+    // A goods-for-goods trade is valued at sticker price on both sides, and the
+    // counter keeps this share of it. The volume ladder forgives the same share
+    // of the fee that it takes off a crate, so a big swap is a better swap.
+    const DEPOT_SWAP_FEE = 0.25;
+    const DEPOT_QUICK = [10, 100, 1000];
+
+    // Several material rows carry a trailing space in the database ("Quantum
+    // Core "), which the site never notices because it prints a name on a line
+    // of its own. The depot writes names into sentences, so it trims.
+    const materialNameOf = (entry) => itemNameOf(entry).trim();
+
+    const Depot = {
+        // Every material a recipe is written in, cheapest first. Read off the
+        // database rather than listed here, so a material added to the game is
+        // on the shelf without this file being touched.
+        materials: function () {
+            if (typeof $dataItems === "undefined" || !$dataItems) return [];
+            return $dataItems
+                .filter(entry => entry && entry.name && entry.note &&
+                    DEPOT_CATEGORY_RE.test(entry.note) && isShopSellable(entry))
+                .sort((a, b) => (a.price || 0) - (b.price || 0) || a.id - b.id);
+        },
+
+        isMaterial: function (entry) {
+            return !!(entry && entry.note && DEPOT_CATEGORY_RE.test(entry.note));
+        },
+
+        held: function (entry) {
+            return entry && typeof $gameParty !== "undefined" && $gameParty
+                ? $gameParty.numItems(entry) : 0;
+        },
+
+        // What one unit costs over the counter, before the volume ladder.
+        unit: function (entry) {
+            if (!entry) return 0;
+            return Math.max(1, Math.floor(Pricing.unit(entry, false) * DEPOT_MARGIN));
+        },
+
+        // A pallet of `qty`, volume cut taken off every unit in it.
+        lineTotal: function (entry, qty) {
+            const n = Math.max(0, Math.floor(qty || 0));
+            if (!entry || n <= 0) return 0;
+            const gross = this.unit(entry) * n;
+            // The cut is subtracted, never multiplied in: see Pricing.lineTotal.
+            return Math.max(n, gross - Math.floor(gross * Pricing.bulkRate(n)));
+        },
+
+        // A whole order: what it would cost a unit at a time, what it costs by
+        // the pallet, and the two cuts named apart so the counter can show the
+        // buyer where the money went.
+        quote: function (lines) {
+            let gross = 0;
+            let afterVolume = 0;
+            let units = 0;
+            let count = 0;
+            for (const line of (lines || [])) {
+                const entry = line.entry || entryOf("item", line.id);
+                const qty = Math.max(0, Math.floor(line.qty || 0));
+                if (!entry || qty <= 0) continue;
+                gross += this.unit(entry) * qty;
+                afterVolume += this.lineTotal(entry, qty);
+                units += qty;
+                count++;
+            }
+            const bonus = Pricing.lotBonus(count);
+            const total = Math.max(0, afterVolume - Math.floor(afterVolume * bonus));
+            return {
+                gross: gross,
+                volumeSaved: Math.max(0, gross - afterVolume),
+                lotBonus: bonus,
+                lotSaved: Math.max(0, afterVolume - total),
+                saved: Math.max(0, gross - total),
+                total: total,
+                units: units,
+                lines: count
+            };
+        },
+
+        // The biggest pallet of one material the purse reaches.
+        maxAffordable: function (entry, gold) {
+            if (!entry) return 0;
+            return maxUnitsAffordable(this.unit(entry), gold, Stock.UNLIMITED,
+                qty => this.lineTotal(entry, qty));
+        },
+
+        // What a barter keeps back, as a share of one. The ladder forgives the
+        // same share of the fee that it takes off a crate: 25% at a handful,
+        // 15% at a thousand.
+        swapRate: function (qty) {
+            return 1 - DEPOT_SWAP_FEE * (1 - Pricing.bulkRate(qty));
+        },
+
+        // How many units of `want` the counter hands back for `qty` units of
+        // `give`. Both sides are valued at sticker price: a goods-for-goods
+        // trade has no money in it, so the market tax and the party's haggling
+        // have no business skewing it.
+        swapYield: function (give, qty, want) {
+            const n = Math.max(0, Math.floor(qty || 0));
+            if (!give || !want || n <= 0) return 0;
+            const worth = (give.price || 0) * n;
+            const each = want.price || 0;
+            if (worth <= 0 || each <= 0) return 0;
+            return Math.floor((worth * this.swapRate(n)) / each);
+        },
+
+        // The fewest units of `give` that are worth one unit of `want`. What
+        // the counter prints when a trade as asked for would hand back nothing.
+        swapFloor: function (give, want) {
+            if (!give || !want || !(give.price > 0) || !(want.price > 0)) return 0;
+            let qty = Math.max(1, Math.ceil(want.price / (give.price * this.swapRate(1))));
+            // The rate improves with the pile, so the first estimate can
+            // overshoot the tier it landed in. Walk it back down.
+            while (qty > 1 && this.swapYield(give, qty - 1, want) >= 1) qty--;
+            return qty;
+        },
+
+        // Pays for an order and hands it over at the counter. Returns what was
+        // handed over, or null when the purse could not cover it.
+        buy: function (lines) {
+            const resolved = (lines || []).map(line => ({
+                entry: line.entry || entryOf("item", line.id),
+                qty: Math.max(0, Math.floor(line.qty || 0))
+            })).filter(line => line.entry && line.qty > 0);
+            if (!resolved.length) return null;
+
+            const quote = this.quote(resolved);
+            if (quote.total > $gameParty.gold()) return null;
+
+            $gameParty.loseGold(quote.total);
+            const entries = [];
+            for (const line of resolved) {
+                $gameParty.gainItem(line.entry, line.qty);
+                entries.push({ obj: line.entry, qty: line.qty });
+            }
+            announceGoods(entries, T('Stockbusters.bulk.toastBought'));
+            return { quote: quote, entries: entries };
+        },
+
+        // Hands `qty` units of `give` over the counter for whatever that is
+        // worth in `want`. Returns what came back, or null when the trade was
+        // not one the counter would make.
+        swap: function (give, qty, want) {
+            const n = Math.max(0, Math.floor(qty || 0));
+            if (!give || !want || give.id === want.id || n <= 0) return null;
+            if (this.held(give) < n) return null;
+            const got = this.swapYield(give, n, want);
+            if (got <= 0) return null;
+
+            $gameParty.loseItem(give, n);
+            $gameParty.gainItem(want, got);
+            const entries = [{ obj: want, qty: got }];
+            announceGoods(entries, T('Stockbusters.bulk.toastSwapped'));
+            return { gave: n, got: got };
+        }
+    };
+
+    //=========================================================================
+    // Materials Depot: the counter itself
+    //=========================================================================
+
+    const DEPOT_CSS = `
+#bd-root { display:flex; flex-direction:column; height:100%; overflow:hidden;
+    font-family:Tahoma, sans-serif; font-size:13px; color:var(--xp-black); background:var(--xp-bg); }
+#bd-root .bd-head { background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%);
+    padding:10px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0; }
+#bd-root .bd-head h1 { margin:0; color:var(--xp-white); font-size:17px; letter-spacing:2px; font-weight:bold; }
+#bd-root .bd-head p { margin:2px 0 0 0; color:var(--xp-sky-4); font-size:12px; }
+#bd-root .bd-purse { margin-left:auto; text-align:right; color:var(--xp-white); font-size:16px; font-weight:bold; }
+#bd-root .bd-purse span { display:block; color:var(--xp-sky-4); font-size:11px; font-weight:normal; letter-spacing:1px; }
+#bd-root .bd-tabs { display:flex; gap:6px; padding:8px 14px 0 14px; flex-shrink:0; }
+#bd-root .bd-tab { padding:6px 18px; font:inherit; cursor:pointer; border:1px solid var(--xp-steel);
+    border-bottom:none; background:var(--xp-bg); color:var(--xp-ink-3); }
+#bd-root .bd-tab.on { background:linear-gradient(180deg, var(--xp-sky-2), var(--xp-navy-7)); color:var(--xp-white); font-weight:bold; }
+#bd-root .bd-page { flex:1; overflow:auto; padding:10px 14px; background:var(--xp-white);
+    border-top:1px solid var(--xp-steel); }
+#bd-root table { width:100%; border-collapse:collapse; }
+#bd-root th { text-align:left; font-size:11px; letter-spacing:1px; color:var(--xp-ink-soft);
+    border-bottom:1px solid var(--xp-ink-pale-2); padding:4px 6px; font-weight:normal; }
+#bd-root td { padding:3px 6px; border-bottom:1px solid var(--xp-off-white); vertical-align:middle; }
+#bd-root tr.bd-picked td { background:#eef4ff; }
+#bd-root .sb-icon { display:inline-block; vertical-align:middle; image-rendering:pixelated; }
+#bd-root .bd-name { display:flex; align-items:center; gap:6px; }
+#bd-root .bd-num { text-align:right; font-variant-numeric:tabular-nums; }
+#bd-root .bd-cut { color:#1d6b2f; font-weight:bold; }
+#bd-root input[type=number] { width:72px; font:inherit; text-align:right; padding:1px 3px;
+    border:1px solid var(--xp-silver-3); background:var(--xp-off-white); }
+#bd-root select { font:inherit; padding:2px; max-width:220px; }
+#bd-root button { font:inherit; cursor:pointer; }
+#bd-root .bd-q { padding:1px 6px; border:1px solid var(--xp-ink-faint-3); background:var(--xp-bg); }
+#bd-root .bd-foot { flex-shrink:0; border-top:1px solid var(--xp-ink-pale-2); background:var(--xp-bg);
+    padding:8px 14px; display:flex; align-items:center; gap:14px; }
+#bd-root .bd-foot .bd-sum { font-size:12px; color:var(--xp-ink-5); line-height:1.5; }
+#bd-root .bd-foot .bd-total { margin-left:auto; text-align:right; }
+#bd-root .bd-foot .bd-total b { font-size:20px; color:var(--xp-navy-7); }
+#bd-root .bd-go { padding:9px 22px; background:linear-gradient(135deg, var(--xp-navy-7), var(--xp-sky));
+    color:var(--xp-white); border:1px solid var(--xp-sky-3); font-weight:bold; letter-spacing:1px; }
+#bd-root .bd-go[disabled] { opacity:0.45; cursor:default; }
+#bd-root .bd-status { flex-shrink:0; border-top:1px solid var(--xp-ink-pale-2); background:var(--xp-bg);
+    padding:3px 10px; font-size:12px; color:var(--xp-text-muted); }
+#bd-root .bd-swap { display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+#bd-root .bd-swap fieldset { border:1px solid var(--xp-silver-3); padding:8px 10px; min-width:240px; flex:1; }
+#bd-root .bd-swap legend { font-size:11px; letter-spacing:1px; color:var(--xp-ink-soft); }
+#bd-root .bd-yield { font-size:15px; margin-top:8px; }
+#bd-root .bd-yield b { font-size:22px; color:#1d6b2f; }
+#bd-root .bd-ladder { margin-top:10px; font-size:11px; color:var(--xp-ink-soft); }
+`;
+
+    window.MaterialsDepotApp = {
+        // One order lives as long as the window does: { id -> units }.
+        _order: {},
+        _tab: 'buy',       // i18n-ignore  tab id
+        _give: 0,
+        _want: 0,
+        _swapQty: 10,
+
+        launch: function () {
+            if (!window.HypernetOS || !window.HypernetOS.Syscalls) return;
+            const shelf = Depot.materials();
+            if (!shelf.length) return;
+
+            this._order = {};
+            this._tab = 'buy';  // i18n-ignore  tab id
+            this._give = this._give || shelf[0].id;
+            this._want = this._want || shelf[shelf.length - 1].id;
+            this._swapQty = this._swapQty || 10;
+
+            const win = window.HypernetOS.Syscalls.createWindow({
+                id: DEPOT_WINDOW_ID,
+                title: T('Stockbusters.bulk.windowTitle'),
+                contentHTML: `<style>${DEPOT_CSS}</style>` +
+                    `<div id="bd-root">` +
+                    `<div class="bd-head"><div>` +
+                    `<h1>${escapeHtml(T('Stockbusters.bulk.siteName'))}</h1>` +
+                    `<p>${escapeHtml(T('Stockbusters.bulk.tagline'))}</p>` +
+                    `</div><div class="bd-purse" id="bd-purse"><span>${escapeHtml(T('Stockbusters.bulk.purse'))}</span>-</div></div>` +
+                    `<div class="bd-tabs">` +
+                    `<button class="bd-tab" data-tab="buy">${escapeHtml(T('Stockbusters.bulk.tabBuy'))}</button>` +
+                    `<button class="bd-tab" data-tab="swap">${escapeHtml(T('Stockbusters.bulk.tabSwap'))}</button>` +
+                    `</div>` +
+                    `<div class="bd-page" id="bd-page"></div>` +
+                    `<div class="bd-foot" id="bd-foot"></div>` +
+                    `<div class="bd-status" id="bd-status">${escapeHtml(T('Stockbusters.bulk.hint'))}</div>` +
+                    `</div>`,
+                width: 720,
+                height: 520,
+                icon: DEPOT_ICON
+            });
+            if (!win) return;
+            this.win = win;
+
+            win.addEventListener('click', (ev) => this.onClick(ev));
+            win.addEventListener('change', (ev) => this.onChange(ev));
+            win.addEventListener('input', (ev) => this.onChange(ev));
+            this.render();
+        },
+
+        el: function (id) {
+            return this.win ? this.win.querySelector('#' + id) : null;
+        },
+
+        setStatus: function (text, bad) {
+            const line = this.el('bd-status');
+            if (!line) return;
+            line.textContent = text;
+            line.style.color = bad ? '#8B1A00' : '';
+        },
+
+        // The order with its database rows resolved, dropping anything the
+        // party no longer needs a line for.
+        lines: function () {
+            return Object.keys(this._order).map(id => ({
+                entry: entryOf("item", Number(id)),
+                qty: this._order[id]
+            })).filter(line => line.entry && line.qty > 0);
+        },
+
+        render: function () {
+            if (!this.win || !this.win.isConnected) return;
+            const purse = this.el('bd-purse');
+            if (purse) {
+                purse.innerHTML = `<span>${escapeHtml(T('Stockbusters.bulk.purse'))}</span>` +
+                    escapeHtml(formatPrice($gameParty.gold()));
+            }
+            this.win.querySelectorAll('.bd-tab').forEach(tab =>
+                tab.classList.toggle('on', tab.dataset.tab === this._tab));
+
+            const page = this.el('bd-page');
+            const foot = this.el('bd-foot');
+            if (!page || !foot) return;
+            if (this._tab === 'buy') {  // i18n-ignore  tab id
+                page.innerHTML = this.buyHTML();
+                foot.innerHTML = this.buyFootHTML();
+            } else {
+                page.innerHTML = this.swapHTML();
+                foot.innerHTML = this.swapFootHTML();
+            }
+        },
+
+        //--- Buying by the pallet --------------------------------------------
+
+        // One shelf row. Drawn on its own so that changing the quantity on one
+        // material repaints that line and the bill, and leaves the other
+        // twenty-two rows (and the button the pointer is over) where they are.
+        rowHTML: function (entry) {
+            const qty = this._order[entry.id] || 0;
+            const total = Depot.lineTotal(entry, qty);
+            const cut = Pricing.bulkRate(qty);
+            const quick = DEPOT_QUICK.map(n =>
+                `<button class="bd-q" data-act="add" data-id="${entry.id}" data-n="${n}">+${n}</button>`).join(' ');
+            return `<td><span class="bd-name">${iconHTML(entry.iconIndex, 16)}${escapeHtml(materialNameOf(entry))}</span></td>` +
+                `<td class="bd-num">${escapeHtml(formatPrice(Depot.unit(entry)))}</td>` +
+                `<td class="bd-num">${Depot.held(entry)}</td>` +
+                `<td class="bd-num">` +
+                `<button class="bd-q" data-act="add" data-id="${entry.id}" data-n="-1">-</button> ` +
+                `<input type="number" min="0" step="1" value="${qty}" data-act="set" data-id="${entry.id}"> ` +
+                `<button class="bd-q" data-act="add" data-id="${entry.id}" data-n="1">+</button> ` +
+                quick +
+                ` <button class="bd-q" data-act="max" data-id="${entry.id}">${escapeHtml(T('Stockbusters.bulk.max'))}</button>` +
+                `</td>` +
+                `<td class="bd-num">${cut > 0 ? `<span class="bd-cut">-${Math.round(cut * 100)}%</span>` : ''}</td>` +
+                `<td class="bd-num">${qty > 0 ? escapeHtml(formatPrice(total)) : ''}</td>`;
+        },
+
+        // Repaints one shelf row and the bill under it. Returns false when the
+        // row is not on the page, so the caller can fall back to a full draw.
+        renderRow: function (id) {
+            const row = this.win ? this.win.querySelector('tr[data-row="' + id + '"]') : null;
+            const entry = entryOf("item", id);
+            if (!row || !entry) return false;
+            row.innerHTML = this.rowHTML(entry);
+            row.classList.toggle('bd-picked', (this._order[id] || 0) > 0);
+            const foot = this.el('bd-foot');
+            if (foot) foot.innerHTML = this.buyFootHTML();
+            return true;
+        },
+
+        buyHTML: function () {
+            const rows = Depot.materials().map(entry =>
+                `<tr data-row="${entry.id}" class="${(this._order[entry.id] || 0) > 0 ? 'bd-picked' : ''}">` +
+                this.rowHTML(entry) + `</tr>`).join('');
+
+            const ladder = BULK_TIERS.slice().reverse()
+                .map(tier => T('Stockbusters.bulk.tier', { units: tier.min, off: Math.round(tier.off * 100) }))
+                .join('  ·  ');
+
+            return `<table><thead><tr>` +
+                `<th>${escapeHtml(T('Stockbusters.text.colItem'))}</th>` +
+                `<th class="bd-num">${escapeHtml(T('Stockbusters.bulk.colUnit'))}</th>` +
+                `<th class="bd-num">${escapeHtml(T('Stockbusters.bulk.colHeld'))}</th>` +
+                `<th class="bd-num">${escapeHtml(T('Stockbusters.bulk.colOrder'))}</th>` +
+                `<th class="bd-num">${escapeHtml(T('Stockbusters.text.discount'))}</th>` +
+                `<th class="bd-num">${escapeHtml(T('Stockbusters.bulk.colLine'))}</th>` +
+                `</tr></thead><tbody>${rows}</tbody></table>` +
+                `<div class="bd-ladder">${escapeHtml(T('Stockbusters.bulk.ladder', { tiers: ladder }))}<br>` +
+                `${escapeHtml(T('Stockbusters.bulk.lotLadder', { per: Math.round(LOT_BONUS_PER_LINE * 100), cap: Math.round(MAX_LOT_BONUS * 100) }))}</div>`;
+        },
+
+        buyFootHTML: function () {
+            const quote = Depot.quote(this.lines());
+            const afford = quote.total <= $gameParty.gold();
+            const sum = [
+                T('Stockbusters.bulk.orderUnits', { units: quote.units, lines: quote.lines }),
+                quote.volumeSaved > 0
+                    ? T('Stockbusters.text.volumeDiscount') + ' -' + formatPrice(quote.volumeSaved) : '',
+                quote.lotSaved > 0
+                    ? T('Stockbusters.bulk.lotBonus', { percent: Math.round(quote.lotBonus * 100) }) + ' -' + formatPrice(quote.lotSaved) : ''
+            ].filter(Boolean).map(escapeHtml).join('<br>');
+
+            return `<div class="bd-sum">${sum}</div>` +
+                `<div class="bd-total"><span>${escapeHtml(T('Stockbusters.ui.totalCost'))}</span><br>` +
+                `<b>${escapeHtml(formatPrice(quote.total))}</b></div>` +
+                `<button class="bd-go" data-act="buy" ${quote.units > 0 && afford ? '' : 'disabled'}>` +
+                `${escapeHtml(T('Stockbusters.bulk.placeOrder'))}</button>` +
+                `<button class="bd-q" data-act="clear">${escapeHtml(T('Stockbusters.bulk.clear'))}</button>`;
+        },
+
+        //--- Swapping one material for another --------------------------------
+
+        swapHTML: function () {
+            const shelf = Depot.materials();
+            const option = (entry, picked, held) =>
+                `<option value="${entry.id}" ${entry.id === picked ? 'selected' : ''}>` +
+                `${escapeHtml(materialNameOf(entry))}${held ? ' (' + Depot.held(entry) + ')' : ''}</option>`;
+
+            const give = entryOf("item", this._give);
+            const want = entryOf("item", this._want);
+            const qty = this._swapQty;
+            const got = Depot.swapYield(give, qty, want);
+            const rate = Depot.swapRate(qty);
+            const floor = Depot.swapFloor(give, want);
+
+            const yieldLine = got > 0
+                ? T('Stockbusters.bulk.swapYield', {
+                    give: qty + ' ' + materialNameOf(give), got: got, want: materialNameOf(want)
+                })
+                : T('Stockbusters.bulk.swapTooSmall', { units: floor, give: materialNameOf(give), want: materialNameOf(want) });
+
+            const quick = DEPOT_QUICK.map(n =>
+                `<button class="bd-q" data-act="swapqty" data-n="${n}">${n}</button>`).join(' ');
+
+            return `<div class="bd-swap">` +
+                `<fieldset><legend>${escapeHtml(T('Stockbusters.bulk.youGive'))}</legend>` +
+                `<select data-act="give">${shelf.map(e => option(e, this._give, true)).join('')}</select>` +
+                `<div style="margin-top:8px">` +
+                `<button class="bd-q" data-act="swapadd" data-n="-1">-</button> ` +
+                `<input type="number" min="1" step="1" value="${qty}" data-act="swapset"> ` +
+                `<button class="bd-q" data-act="swapadd" data-n="1">+</button> ${quick} ` +
+                `<button class="bd-q" data-act="swapall">${escapeHtml(T('Stockbusters.bulk.all'))}</button>` +
+                `</div>` +
+                `<div class="bd-ladder">${escapeHtml(T('Stockbusters.bulk.holding', { count: Depot.held(give) }))}</div>` +
+                `</fieldset>` +
+                `<fieldset><legend>${escapeHtml(T('Stockbusters.bulk.youGet'))}</legend>` +
+                `<select data-act="want">${shelf.map(e => option(e, this._want, false)).join('')}</select>` +
+                `<div class="bd-yield">${got > 0 ? `<b>${got}</b> ` : ''}${escapeHtml(yieldLine)}</div>` +
+                `<div class="bd-ladder">${escapeHtml(T('Stockbusters.bulk.swapRate', { percent: Math.round((1 - rate) * 100) }))}</div>` +
+                `</fieldset></div>` +
+                `<div class="bd-ladder">${escapeHtml(T('Stockbusters.bulk.swapBlurb', { fee: Math.round(DEPOT_SWAP_FEE * 100) }))}</div>`;
+        },
+
+        swapFootHTML: function () {
+            const give = entryOf("item", this._give);
+            const want = entryOf("item", this._want);
+            const qty = this._swapQty;
+            const got = Depot.swapYield(give, qty, want);
+            const ok = !!give && !!want && give.id !== want.id && got > 0 && Depot.held(give) >= qty;
+            return `<div class="bd-sum">${escapeHtml(T('Stockbusters.bulk.swapFoot'))}</div>` +
+                `<div class="bd-total"><span>${escapeHtml(T('Stockbusters.bulk.youGet'))}</span><br>` +
+                `<b>${got}</b></div>` +
+                `<button class="bd-go" data-act="swap" ${ok ? '' : 'disabled'}>` +
+                `${escapeHtml(T('Stockbusters.bulk.trade'))}</button>`;
+        },
+
+        //--- Input ------------------------------------------------------------
+
+        setQty: function (id, qty) {
+            const n = Math.max(0, Math.floor(Number(qty) || 0));
+            if (n <= 0) delete this._order[id];
+            else this._order[id] = n;
+        },
+
+        onClick: function (ev) {
+            const tab = ev.target.closest ? ev.target.closest('.bd-tab') : null;
+            if (tab) {
+                this._tab = tab.dataset.tab;
+                SoundManager.playCursor();
+                this.render();
+                return;
+            }
+            const btn = ev.target.closest ? ev.target.closest('button[data-act]') : null;
+            if (!btn) return;
+            const act = btn.dataset.act;
+            const id = Number(btn.dataset.id || 0);
+            const n = Number(btn.dataset.n || 0);
+            const entry = id ? entryOf("item", id) : null;
+
+            if ((act === 'add' || act === 'max') && entry) {
+                if (act === 'add') {
+                    this.setQty(id, (this._order[id] || 0) + n);
+                } else {
+                    const spent = Depot.quote(this.lines().filter(l => l.entry.id !== id)).total;
+                    this.setQty(id, Depot.maxAffordable(entry, Math.max(0, $gameParty.gold() - spent)));
+                }
+                SoundManager.playCursor();
+                if (!this.renderRow(id)) this.render();
+                return;
+            }
+            if (act === 'clear') {
+                this._order = {};
+            } else if (act === 'buy') {
+                const result = Depot.buy(this.lines());
+                if (!result) {
+                    SoundManager.playBuzzer();
+                    this.setStatus(T('Stockbusters.bulk.cannotAfford'), true);
+                    return;
+                }
+                this._order = {};
+                SoundManager.playShop();
+                this.setStatus(T('Stockbusters.bulk.bought', {
+                    units: result.quote.units, total: formatPrice(result.quote.total)
+                }), false);
+            } else if (act === 'swapqty') {
+                this._swapQty = Math.max(1, n);
+            } else if (act === 'swapadd') {
+                this._swapQty = Math.max(1, this._swapQty + n);
+            } else if (act === 'swapall') {
+                this._swapQty = Math.max(1, Depot.held(entryOf("item", this._give)));
+            } else if (act === 'swap') {
+                const give = entryOf("item", this._give);
+                const want = entryOf("item", this._want);
+                const result = Depot.swap(give, this._swapQty, want);
+                if (!result) {
+                    SoundManager.playBuzzer();
+                    this.setStatus(T('Stockbusters.bulk.cannotSwap'), true);
+                    return;
+                }
+                SoundManager.playShop();
+                this.setStatus(T('Stockbusters.bulk.swapped', {
+                    gave: result.gave, give: materialNameOf(give),
+                    got: result.got, want: materialNameOf(want)
+                }), false);
+            } else {
+                return;
+            }
+            SoundManager.playCursor();
+            this.render();
+        },
+
+        onChange: function (ev) {
+            const field = ev.target;
+            if (!field || !field.dataset || !field.dataset.act) return;
+            const act = field.dataset.act;
+            if (act === 'set') {
+                this.setQty(Number(field.dataset.id), field.value);
+                // The row the cursor is in is left alone: re-rendering the table
+                // under a field being typed into takes the caret with it.
+                const foot = this.el('bd-foot');
+                if (foot) foot.innerHTML = this.buyFootHTML();
+                return;
+            }
+            if (act === 'swapset') {
+                this._swapQty = Math.max(1, Math.floor(Number(field.value) || 1));
+                const foot = this.el('bd-foot');
+                if (foot) foot.innerHTML = this.swapFootHTML();
+                return;
+            }
+            if (act === 'give') this._give = Number(field.value);
+            else if (act === 'want') this._want = Number(field.value);
+            else return;
+            this.render();
+        }
+    };
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: DEPOT_APP_ID,
+            name: T('Stockbusters.bulk.appName'),
+            icon: DEPOT_ICON,
+            category: 'economy',  // i18n-ignore  HypernetOS category id
+            desktopShortcut: true,
+            launchFn: function () {
+                window.MaterialsDepotApp.launch();
+            }
+        });
+    }
+
+    //=========================================================================
     // Plugin commands
     //=========================================================================
 
@@ -2858,8 +3451,8 @@
         const delivered = DeliveryManager.retireDeliveredItems();
 
         if (delivered.length > 0) {
-            $gameMessage.add(T('Stockbusters.text.delivered', { count: delivered.length }));
-            $gameMessage.add(delivered.join(', '));
+            // What arrived is already on screen as a popup, put there by the
+            // collection itself, so the mailbox says nothing over the top of it.
             SoundManager.playShop();
         } else {
             const pending = DeliveryManager.getOrderCount();
@@ -2884,6 +3477,7 @@
         Delivery: DeliveryManager,
         Basket: Basket,
         Listing: Listing,
+        Depot: Depot,
         BULK_TIERS: BULK_TIERS,
         Scene: Scene_SearchableShop
     };
