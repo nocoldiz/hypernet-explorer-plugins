@@ -154,27 +154,32 @@
     }
 
     // What starting later costs you. The year is not a cosmetic choice: every
-    // spawn mode's level band climbs with the calendar (see the "Squishing"
-    // block in BattleSystemEnhancedEncounters, section 4b), so a world begun in
-    // 2005 opens with monsters a fresh party cannot fight. Say so on the form
-    // rather than let the player find out on the first tile.
-    const ENEMY_YEAR_STEP     = 10;   // levels a year adds, to 2010
-    const ENEMY_OPEN_YEAR     = 2010; // the whole table comes loose
-    const ENEMY_OPEN_CEILING  = 110;
+    // nation's enemy bracket climbs with the calendar (see section 3c of
+    // BattleSystemEnhancedEncounters), so a world begun in 2005 opens with
+    // monsters a fresh party cannot fight. Say so on the form rather than let
+    // the player find out on the first tile - and say which two countries are
+    // the exception, since that is where such a party can still go.
+    const ENEMY_YEAR_STEP     = 5;    // levels a year adds to every bracket
+    const ENEMY_OPEN_YEAR     = 2010; // the era's elites start roaming off Earth
+    const ENEMY_OPEN_CEILING  = 100;
     const ENEMY_COLLAPSE_YEAR = 2012;
     const ENEMY_COLLAPSE_FLOOR = 80;
 
     // The line shown under the date, or "" for 2001 (nothing to warn about).
+    // Each of the three says the same thing first - how far the brackets have
+    // travelled - and the later two add what the era does off Earth on top.
     function enemyLevelNoticeFor(year) {
+        const shift = Math.max(0, year - START_YEAR_MIN) * ENEMY_YEAR_STEP;
+        if (shift <= 0) return "";
         if (year >= ENEMY_COLLAPSE_YEAR) {
-            return T("WorldManagerUI.enemyFloorCollapse", { level: ENEMY_COLLAPSE_FLOOR });
+            return T("WorldManagerUI.enemyFloorCollapse",
+                { level: shift, floor: ENEMY_COLLAPSE_FLOOR });
         }
         if (year >= ENEMY_OPEN_YEAR) {
-            return T("WorldManagerUI.enemyFloorOpen", { level: ENEMY_OPEN_CEILING });
+            return T("WorldManagerUI.enemyFloorOpen",
+                { level: shift, ceiling: ENEMY_OPEN_CEILING });
         }
-        const floor = Math.max(0, year - START_YEAR_MIN) * ENEMY_YEAR_STEP;
-        if (floor <= 0) return "";
-        return T("WorldManagerUI.enemyFloor", { level: floor });
+        return T("WorldManagerUI.enemyFloor", { level: shift });
     }
 
     // The other thing a 2013 start costs, and it is not a difficulty setting:

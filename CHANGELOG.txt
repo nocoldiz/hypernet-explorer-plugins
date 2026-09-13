@@ -1,5 +1,53 @@
 0.6.18a
 
+Added:
+ - authored skilltree branches for every skill category
+ - events tagged Underwater render only when diving with the diving suit
+ - 3d weapon model editor in the thinker menu
+ - new underground for alien biomes
+ - new warp animations inspired by 2001 Space odissey
+ - spaceship controls when in flyby mode
+ - gas giant upper atmosphere
+ - new procedural "Rarities" enemies with golden level number, they are unique for savegame and never respawn
+Changed:
+ - voxelmode performance
+ - junk weapons now give nausea, oily or poison
+ - all Em sprites reference the Em bust
+ - replaced unarmed animation in battle and voxel world
+ - reworked movement system sprites for Em when diving
+ - reworked vector gun forms with an origami folding animation
+ - gas giants and surfaceless planets are flyby only
+ - reworked training menu
+ - reworked starmap: live ship background and a refuel pass through the star
+ - battlelog on the left is taller, up to the last party bar
+ - reworked hunting quests: half ask for a rarity creature
+ - back button shows the B pad face after its label
+ - reworked spell incantations recital
+ - added spell damage/heal bonus for Em when she recites the full incantation   
+ - reworked enemy bars: no AP orb, no MP bar at 1 MP
+ - reworked game balance and gave every skill its own effect
+ - removed five tree sprites from spawning and furniture
+ - reworked enemy spawning with nation level brackets
+ - reworked battlelog move option and the battle Actions menu
+ - moved dynamics to the party group
+ - dashed and dotted borders are solid everywhere
+ - added rarities tab to bestiary
+ - kanban back button sits where every other screen's does
+ - ship avatar is a dingbat instead of an emoji
+ - no puddles spawn on the world map or procedural map
+Fixed:
+ - story mode starts with Em alone, no second party member
+ - gas giant flyby opens high enough to see the curve
+ - empty inventory would not close on ESC
+ - landing site grid was empty and would not open
+ - liminal walk crashed on PSXShader.isPixelArt
+ - boot screen no longer drops out of fullscreen and blacks out
+ - fix partyhud not visible in map
+ - army cards and bars had no border at all
+ - quest board and skill atlas printed key names instead of text
+ - kanban board and quest overlays fell back to Lora
+ - two characters shared one sprite name 
+ - battle command position now names both its states
 
 
 0.6.17a
@@ -26,6 +74,10 @@ Changed:
  - reworked every zoom in and out to be gradual and smooth
  - reworked appearance of hardcoded nebulae, orion ring and the rest
  - improved loading times, galaxy sim now shares its sprite textures
+ - star map quality option, galaxies thin out with distance
+ - galaxy field split into chunks so offscreen ones are culled
+ - pan along a filament to reach the next supercluster
+ - every galaxy in a supercluster is now visitable
  - reworked fuel panel, refuel moved to the left column
  - removed EB bridge button, kept return to earth
  - ship button locks the camera on the ship
@@ -42,7 +94,6 @@ Changed:
  - when empathizing to yourself it shows "introspect"
  - reworked deeds and assets into a single plugin and menu button
 Fixed:
- - boot screen no longer drops out of fullscreen and blacks out
  - onu assembly commands now do show the UI
  - bosses can no longer be escaped
  - fixed many entrances

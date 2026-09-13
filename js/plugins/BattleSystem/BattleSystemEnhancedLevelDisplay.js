@@ -47,6 +47,11 @@
     const troopLevelCache = new Map();
 
     function getEnemyLevelFromEvent(event) {
+        // A one-of-a-kind creature put down by a hunting contract
+        // (ProceduralQuestSystem) carries its own level on the event instead of
+        // a troop: it is fought through the contract's own event, so it has no
+        // fixed troop for the plate to read, and wears a stamp instead.
+        if (event._bseRarityKey) return event._bseRarityLevel || 0;
         if (!event._fixedTroopId || event._fixedTroopId === 0) return 0;
         const cached = troopLevelCache.get(event._fixedTroopId);
         if (cached !== undefined) return cached;
@@ -122,10 +127,11 @@
         const live = $gameMap && $gameMap.event ? $gameMap.event(eventId) : event;
         if (live !== event || event._erased) return this.dropEnemyLevelLabel();
 
-        // Only show for events with a fixed troop ID assigned. If the troop was
+        // Only show for events with a fixed troop ID assigned, or with the
+        // rarity stamp a hunted creature wears in its place. If the troop was
         // cleared (e.g. the enemy was defeated), remove any stale label instead
         // of leaving it floating on the map.
-        if (!event._fixedTroopId || event._fixedTroopId === 0) {
+        if ((!event._fixedTroopId || event._fixedTroopId === 0) && !event._bseRarityKey) {
             return this.dropEnemyLevelLabel();
         }
 
@@ -142,15 +148,20 @@
         // each time it is asked. The median is the cheap one to test (it is
         // frame-cached for the whole sweep), so it is what gates the rest.
         const median = partyMedianLevel();
-        const troopChanged = this._lastEnemyTroopId !== event._fixedTroopId;
+        // What the plate is drawn FOR: a troop, or the stamped creature of a
+        // contract's own event. Either one is compared the same way, so a slot
+        // re-dealt from one to the other reprints rather than keeping a plate
+        // that belonged to something else.
+        const subject = event._fixedTroopId || event._bseRarityKey;
+        const troopChanged = this._lastEnemyTroopId !== subject;
         if (troopChanged || this._lastEnemyMedian !== median) {
             this._lastEnemyMedian = median;
             const enemyLevel = getEnemyLevelFromEvent(event);
-            const band = enemyLevel > 0 ? levelGapTierFor(enemyLevel) : -1;
+            const band = enemyLevel > 0 ? plateTierFor(event, enemyLevel) : -1;
             // A new troop reprints the plate even at the same colour, because
             // the number on it is the troop's, not the band's.
             if (troopChanged || this._lastEnemyLevelBand !== band) {
-                this._lastEnemyTroopId = event._fixedTroopId;
+                this._lastEnemyTroopId = subject;
                 this._lastEnemyLevelBand = band;
 
                 // Remove old label if exists
@@ -263,9 +274,38 @@
     LEVEL_PLATE_COLORS[BSE.Data.LEVEL_GAP_HARD]     = '#FFD11A';
     LEVEL_PLATE_COLORS[BSE.Data.LEVEL_GAP_HOPELESS] = '#FF3B30';
 
+    // A rarity is the one creature the colour does NOT describe a fight for.
+    // There is one of it in the world (BattleSystemEnhancedEncounters, section
+    // 16b) and the plate says so before the party is close enough to ask:
+    // gold at any level, whatever the gap, so a creature worth crossing a map
+    // for is never mistaken for the fourth wolf of the afternoon.
+    const LEVEL_PLATE_RARITY = '#FFC531';
+
+    // The band is coloured against the party and a rarity is not, so the plate
+    // has to be reprinted when the creature changes even if the band has not:
+    // the cache above is keyed on (troop, band), and a gold plate and a white
+    // one can sit on the same band. Marked as its own tier so the two never
+    // collide in that cache.
+    const RARITY_TIER = 90;
+
+    function plateTierFor(event, level) {
+        if (!event) return levelGapTierFor(level);
+        // Stamped by the hunting contract that put it there, or read off the
+        // troop the encounter system dealt: the same creature either way, and
+        // the same gold plate.
+        if (event._bseRarityKey) return RARITY_TIER;
+        if (event._fixedTroopId && BSE.Helpers.isRarityTroop &&
+            BSE.Helpers.isRarityTroop(event._fixedTroopId)) {
+            return RARITY_TIER;
+        }
+        return levelGapTierFor(level);
+    }
+
     Sprite_Character.prototype.createEnemyLevelLabel = function(level, band) {
         const tier = band != null && band >= 0 ? band : levelGapTierFor(level);
-        const color = LEVEL_PLATE_COLORS[tier] || '#FFFFFF';
+        const color = tier === RARITY_TIER
+            ? LEVEL_PLATE_RARITY
+            : (LEVEL_PLATE_COLORS[tier] || '#FFFFFF');
 
         this._enemyLevelLabel = new Sprite();
         this._enemyLevelLabel._plateOwner = this;

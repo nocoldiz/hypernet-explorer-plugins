@@ -46,23 +46,34 @@ class Main {
     }
 
     setupNwjsWindow() {
-        // [Note] This is the ONLY place the OS window is put into its boot
-        //   state, and it runs before the first frame is painted. Nothing
-        //   later may resize or re-fullscreen it: on NW.js every programmatic
-        //   window change drops fullscreen, which is what used to make the
-        //   boot screen shrink to a black window and jump back.
-        //   UI/ResolutionSwitcher.js therefore neutralises Scene_Boot's own
-        //   window resize and only ever corrects a state that disagrees here.
+        // [Note] The window is put into its boot state here, before the first
+        //   frame is painted, so the boot screen is already the right shape.
+        //   Nothing later may RESIZE it: on NW.js a programmatic resize drops
+        //   fullscreen, which is what used to make the boot screen collapse
+        //   into a black window and jump back, so UI/ResolutionSwitcher.js
+        //   neutralises Scene_Boot's own window resize. It does re-issue the
+        //   fullscreen request below once the window has actually been mapped,
+        //   because this early one can be dropped by the window manager while
+        //   NW.js still reports the window as fullscreen.
         if (typeof nw !== "object") {
             return;
         }
         const win = nw.Window.get();
         Main.nwWindow = win;
         Main.isNwFullscreen = !!win.isFullscreen;
-        Main.wantsFullscreen = this.readFullscreenPreference();
+        const stored = this.readFullscreenPreference();
+        // No stored answer: a playtest opens in a window, a distributed build
+        // opens fullscreen. A stored answer is honoured either way.
+        Main.wantsFullscreen = stored === null ? !this.isPlaytest() : stored;
         win.on("enter-fullscreen", () => (Main.isNwFullscreen = true));
         win.on("leave-fullscreen", () => (Main.isNwFullscreen = false));
-        if (this.isPlaytest() || !Main.wantsFullscreen) {
+        if (Main.wantsFullscreen) {
+            // Unconditional: win.isFullscreen can already read true for a
+            // request the window manager has not applied, so asking first is
+            // how the window ends up framed while claiming to be fullscreen.
+            // UI/ResolutionSwitcher.js re-issues this once the window is up.
+            win.enterFullscreen();
+        } else {
             // A saved "windowed" answer is honoured from the very first paint,
             // so a player who asked for a window never sees a fullscreen flash.
             // Maximized rather than the bare package.json size, so the window
@@ -71,8 +82,6 @@ class Main {
                 win.leaveFullscreen();
             }
             win.maximize();
-        } else if (!win.isFullscreen) {
-            win.enterFullscreen();
         }
         win.focus();
     }
@@ -82,8 +91,7 @@ class Main {
         //   window has been shown, so the saved answer is read straight off
         //   disk here. save/config.rmmzsave is pako-deflated JSON written as
         //   a binary string; Node's own zlib reads the same bytes back.
-        //   Anything unreadable, absent or malformed means "no answer yet",
-        //   and fullscreen is the default a first run gets.
+        //   Returns true, false, or null for "no answer stored yet".
         try {
             const fs = require("fs");
             const path = require("path");
@@ -91,17 +99,17 @@ class Main {
             const base = path.dirname(process.mainModule.filename);
             const file = path.join(base, "save", "config.rmmzsave");
             if (!fs.existsSync(file)) {
-                return true;
+                return null;
             }
             const zip = fs.readFileSync(file, { encoding: "utf8" });
             const json = zlib.inflateSync(Buffer.from(zip, "latin1")).toString("utf8");
             const config = JSON.parse(json);
             if (!config || typeof config !== "object" || !("fullscreen" in config)) {
-                return true;
+                return null;
             }
             return !!config.fullscreen;
         } catch (e) {
-            return true;
+            return null;
         }
     }
 
@@ -282,16 +290,14 @@ class Main {
         // answer and skip the correction it had just earned.
         Graphics._isFullScreen = () =>
             typeof win.isFullscreen === "boolean" ? win.isFullscreen : Main.isNwFullscreen;
-        Graphics._requestFullScreen = () => {
-            if (!Graphics._isFullScreen()) {
-                win.enterFullscreen();
-            }
-        };
+        // Unconditional, like the stock helper: a request is always issued.
+        // The flag above is only safe to read, never to skip a request on, and
+        // re-entering fullscreen when already there costs nothing.
+        Graphics._requestFullScreen = () => win.enterFullscreen();
         Graphics._cancelFullScreen = () => {
             if (Graphics._isFullScreen()) {
                 win.leaveFullscreen();
             }
-            win.maximize();
         };
     }
 

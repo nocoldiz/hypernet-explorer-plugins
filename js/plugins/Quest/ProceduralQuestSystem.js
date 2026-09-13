@@ -22,7 +22,11 @@
  *   cache / dig    open an auto-spawned chest / dig site (dig needs Shovel)
  *   planet_cache   land on a GalaxySim planet and open the sample cache
  *   bounty         kill a specific high-level enemy force-spawned at a tile
- *                  (persists until killed even if the quest fails)
+ *                  (persists until killed even if the quest fails). Half the
+ *                  hunts written for a CREATURE name the one-of-a-kind rarity
+ *                  this world holds instead (see the Rarity hunts section):
+ *                  it is put down on that tile and stays there until it is
+ *                  killed or walks away with the party as a recruit
  *   statues/signs  scan N Statue / SignPost features at a site
  *   clearing       actually dismantle N Tree/Rock/Rubble features at a site
  *   deliver_board  open the quest board of a destination
@@ -581,6 +585,63 @@
       band = roster.slice().sort((a, b) => Math.abs(a.level - L) - Math.abs(b.level - L)).slice(0, 12);
     }
     return pick(rng, band);
+  }
+
+  // ==========================================================================
+  // Rarity hunts
+  //
+  // Half the hunts a board posts for a CREATURE are not written for a creature
+  // at all: they are written for the one of it this world holds (see
+  // BattleSystemEnhancedEncounters, section 16b). The notice names it, and for
+  // most parties the contract is the only way they will ever hear the name.
+  //
+  // A rarity stands in for the ordinary target at the same rung of the ladder,
+  // so the pay, the gear and the stars the hunt was graded on all still fit:
+  // nothing about the contract changes except who is standing on the tile. Only
+  // creatures still out there are ever posted, and only ones whose own level
+  // belongs where the notice sends the party, so a village never pins up the
+  // level 90 one.
+  //
+  // Once the contract is taken the creature is put down at those coordinates
+  // and it STAYS there. The bounty store outlives the quest (see
+  // registerBountyStep), so a hunt that expires, is abandoned or is failed
+  // leaves the rarity standing exactly where the notice said it was, and it is
+  // off that square only when it is killed or walks away with the party.
+  // ==========================================================================
+  const RARITY_HUNT_CHANCE = 0.5;  // creature hunts written for the one-of-a-kind
+  const RARITY_HUNT_REACH = 12;    // levels either side of the ordinary target
+
+  // The encounter system owns the roster, the codex and the synthetic troops;
+  // null when it is not up (a session without it fields no rarities at all,
+  // exactly as the maps do), and every caller falls back to the ordinary
+  // creature it already picked.
+  function rarityHelpers() {
+    const H = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+    return (H && H.getUnmetRarities && H.getRarityTroopId) ? H : null;
+  }
+
+  function rarityCanTalk(enemyId) {
+    const data = window.$dataEnemies?.[enemyId];
+    return !!(data && data.note && data.note.includes("<Talk>")); // i18n-ignore: note tag
+  }
+
+  // The target a hunt is actually written for: the ordinary enemy passed in, or
+  // the one-of-a-kind creature that stands in for it. The only field that tells
+  // the two apart downstream is rarityKey, which rides on the bounty step and
+  // then on the world's bounty store.
+  function maybeRarityTarget(rng, enemy) {
+    if (!enemy || !chance(rng, RARITY_HUNT_CHANCE)) return enemy;
+    const H = rarityHelpers();
+    if (!H) return enemy;
+    let roster = [];
+    try { roster = H.getUnmetRarities() || []; } catch (e) { return enemy; }
+    const near = roster.filter(r => Math.abs(r.level - enemy.level) <= RARITY_HUNT_REACH);
+    if (!near.length) return enemy;
+    const r = pick(rng, near);
+    return {
+      id: r.enemyId, name: r.name, level: r.level,
+      canTalk: rarityCanTalk(r.enemyId), rarityKey: r.key,
+    };
   }
 
   function materialItems() {
@@ -1201,8 +1262,15 @@
   function stepCache(site, loot) { return { kind: "cache", site, loot: !!loot, opened: false, done: false }; }
   function stepDig(site, loot) { return { kind: "dig", site, loot: !!loot, opened: false, done: false }; }
   function stepPlanetCache(planet, loot) { return { kind: "planet_cache", planet, loot: !!loot, opened: false, done: false }; }
+  // `rarityKey` names the one-of-a-kind creature the hunt was written for (see
+  // maybeRarityTarget); null on an ordinary bounty, and the one field every
+  // stage downstream branches on.
   function stepBounty(site, enemy, criminal) {
-    return { kind: "bounty", site, enemyId: enemy.id, enemyName: enemy.name, enemyLevel: enemy.level, criminal: !!criminal, done: false };
+    return {
+      kind: "bounty", site, enemyId: enemy.id, enemyName: enemy.name,
+      enemyLevel: enemy.level, criminal: !!criminal,
+      rarityKey: enemy.rarityKey || null, done: false,
+    };
   }
   function stepScan(kind, site, count) { return { kind, site, count, scanned: {}, done: false }; }
   function stepClearing(site, count) { return { kind: "clearing", site, count, cleared: 0, done: false }; }
@@ -1241,7 +1309,11 @@
       case "cache": return T('Quests.recoverTheCacheAt') + siteText(s.site);
       case "dig": return T('Quests.excavateTheDigSiteAt') + siteText(s.site) + T('Quests.shovelRequired');
       case "planet_cache": return T('Quests.landOn') + s.planet.planet + " (" + s.planet.system + ")" + T('Quests.andRecoverTheSampleCache');
-      case "bounty": return (s.criminal ? T('Quests.huntDownTheOutlaw') : T('Quests.slayThe')) + s.enemyName + " (Lv " + s.enemyLevel + ") " + T('Quests.at') + siteText(s.site);
+      case "bounty": {
+        const lead = s.rarityKey ? T('Quests.huntTheOneOfAKind')
+          : (s.criminal ? T('Quests.huntDownTheOutlaw') : T('Quests.slayThe'));
+        return lead + s.enemyName + " (Lv " + s.enemyLevel + ") " + T('Quests.at') + siteText(s.site);
+      }
       case "statues": return T('Quests.scan') + s.count + T('Quests.statuesAt') + siteText(s.site);
       case "signs": return T('Quests.verify') + s.count + T('Quests.signpostsAt') + siteText(s.site);
       case "clearing": return T('Quests.clear') + s.count + T('Quests.obstaclesAt') + siteText(s.site);
@@ -1392,8 +1464,9 @@
         // Pure combat, and deliberately out of the party's league.
         const lo = diff >= 5 ? 100 : 70;
         const hi = diff >= 5 ? 300 : 100;
-        const enemy = pickEliteEnemy(rng, lo, hi);
-        if (!enemy) { fallbackToSurvey(); break; }
+        const picked = pickEliteEnemy(rng, lo, hi);
+        if (!picked) { fallbackToSurvey(); break; }
+        const enemy = maybeRarityTarget(rng, picked);
         const site = pickSiteCoords(rng);
         o.steps = [stepBounty(site, enemy, false)];
         o.elite = true;
@@ -1475,9 +1548,13 @@
       case "bounty_criminal":
       case "bounty_monster": {
         const site = pickSiteCoords(rng);
-        const enemy = pickBountyEnemy(rng, L, diff, type === "bounty_criminal");
-        if (!enemy) { fallbackToSurvey(); break; }
-        o.steps = [stepBounty(site, enemy, type === "bounty_criminal")];
+        const criminal = type === "bounty_criminal";
+        const picked = pickBountyEnemy(rng, L, diff, criminal);
+        if (!picked) { fallbackToSurvey(); break; }
+        // A warrant is sworn out on a person and a creature hunt is not: only
+        // the second is ever rewritten for a one-of-a-kind.
+        const enemy = criminal ? picked : maybeRarityTarget(rng, picked);
+        o.steps = [stepBounty(site, enemy, criminal)];
         gold *= 1.5 + 0.05 * Math.max(0, enemy.level - L);
         ctx.X = site.wx; ctx.Y = site.wy; ctx.ENEMY = enemy.name; ctx.LVL = enemy.level;
         break;
@@ -1565,10 +1642,16 @@
       }
       case "purge": {
         const site = pickSiteCoords(rng);
-        const enemy = pickBountyEnemy(rng, L, diff, chance(rng, 0.35));
-        if (!enemy) { fallbackToSurvey(); break; }
+        const picked = pickBountyEnemy(rng, L, diff, chance(rng, 0.35));
+        if (!picked) { fallbackToSurvey(); break; }
+        // Same rule as the plain bounty: a purge sent after people is left
+        // alone, a purge sent after creatures may be written for the one. What
+        // the notice is - a warrant or a hunt - was settled by the creature it
+        // was written against, so the flag is read off THAT one and not off the
+        // rarity that stood in for it afterwards.
+        const enemy = picked.canTalk ? picked : maybeRarityTarget(rng, picked);
         o.stepMode = "seq";
-        o.steps = [stepBounty(site, enemy, enemy.canTalk), stepCache(site, true)];
+        o.steps = [stepBounty(site, enemy, picked.canTalk), stepCache(site, true)];
         if (chance(rng, 0.4)) o.reward.gear = pickGearReward(rng, L, chance(rng, 0.3));
         else addMaterialPack(o, rng, 1 + diff);
         gold *= 1.9;
@@ -2043,10 +2126,17 @@
 
   // Register a bounty step's target in the persistent world store. Once in,
   // it force-spawns on its tile until killed, whatever happens to the quest.
+  // A one-of-a-kind target (see maybeRarityTarget) rides in on its key, which is
+  // what makes the creature outlive the contract that named it: the store is
+  // the world's, not the quest's, so an expired, abandoned or failed hunt still
+  // leaves it standing on those coordinates until somebody deals with it.
   function registerBountyStep(q, s) {
     const key = s.site.wx + "," + s.site.wy;
     if (!bounties()[key]) {
-      bounties()[key] = { enemyId: s.enemyId, name: s.enemyName, qid: q.qid, criminal: s.criminal };
+      bounties()[key] = {
+        enemyId: s.enemyId, name: s.enemyName, qid: q.qid, criminal: s.criminal,
+        rarityKey: s.rarityKey || null, level: s.enemyLevel || 0,
+      };
     }
   }
 
@@ -3483,6 +3573,44 @@
     return stamped;
   }
 
+  // Is the creature standing on this tile still the one-of-a-kind one? A rarity
+  // exists once in the WORLD, and the contract does not reserve it: it can be
+  // met out on the open map while the hunt is still open (the map rolls its own,
+  // and only ever an unmet one). If that happened, what waits at the
+  // coordinates is an ordinary specimen of the same species - the store entry
+  // loses its key for good - rather than a second copy of a unique animal.
+  function spawnRarityHere(b) {
+    if (!b.rarityKey) return false;
+    const H = rarityHelpers();
+    if (!H) return false;
+    if (H.isRarityMet && H.isRarityMet(b.rarityKey)) { b.rarityKey = null; return false; }
+    return true;
+  }
+
+  // The species' own overworld sheet, as the encounter system reads it off the
+  // <Char:> tag; null for an enemy that has none, and the stand-in sprite lists
+  // answer for it as they always did.
+  function rarityCharSprite(enemyId) {
+    const sprites = window.BattleSystemEnhanced?.Data?._enemyCharSprites;
+    const name = sprites && sprites[enemyId];
+    return name ? "Monsters/" + name : null; // i18n-ignore: sprite sheet folder
+  }
+
+  // The two marks: the creature's own hue, and the stamp the level plate reads
+  // to draw itself in gold (BattleSystemEnhancedLevelDisplay). The event is
+  // deliberately NOT given a _fixedTroopId - the fight is started by the
+  // contract's own event, and an ordinary troop id would let the map-battle
+  // systems start it somewhere else, leaving the bounty unanswered.
+  function stampRarityEvent(ev, b) {
+    const H = rarityHelpers();
+    if (!H || !H.getProceduralCreatureHue) return;
+    const baseHue = (window.$dataEnemies?.[b.enemyId] || {}).battlerHue || 0;
+    const hue = H.getProceduralCreatureHue(b.rarityKey, baseHue);
+    if (hue !== null) ev._characterHue = hue;
+    ev._bseRarityKey = b.rarityKey;
+    ev._bseRarityLevel = b.level || 0;
+  }
+
   function spawnSitesOnProcMap() {
     if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID || !$dataMap) return;
     const here = currentSiteKey();
@@ -3507,12 +3635,23 @@
           "Creatures/!$Mushroom1", "Creatures/!$Mushroom3",
         ];
         // i18n-ignore-end
+        // The one-of-a-kind creature a hunt was written for wears its own
+        // species' sheet rather than a stand-in off the lists above, and wears
+        // it in the hue that creature alone wears (the same shift the encounter
+        // system gives one it puts down itself). With the gold level plate that
+        // the stamp below asks for, the two marks a player reads a rarity by
+        // are the same ones whether it was met in the wild or hunted to order.
+        const rar = spawnRarityHere(b);
+        const rarSprite = rar ? rarityCharSprite(b.enemyId) : null;
         const pool = b.criminal ? CRIMINAL_SPRITES : BEAST_SPRITES;
         const img = {
-          name: pool[irange(mulberry32(hashStr(here.key + "i")), 0, pool.length - 1)],
+          name: rarSprite ||
+            pool[irange(mulberry32(hashStr(here.key + "i")), 0, pool.length - 1)],
           index: 0,
         };
-        injectEvent(makeEventData(0, "PQBounty:" + here.key, spot.x, spot.y, img, 2, 1, 1));
+        const ev = injectEvent(
+          makeEventData(0, "PQBounty:" + here.key, spot.x, spot.y, img, 2, 1, 1));
+        if (rar && ev) stampRarityEvent(ev, b);
       }
     }
 
@@ -3600,11 +3739,19 @@
       const key = name.slice("PQBounty:".length);
       const b = bounties()[key];
       if (!b || b.killed) { $gameMap.eraseEvent(gameEvent.eventId()); return; }
-      const troop = $dataTroops[b.enemyId];
+      // A one-of-a-kind target is fought in its own synthetic troop, the same
+      // one the encounter system puts down in the wild, so the fight starting
+      // is what writes it into the world's codex and takes it off the board
+      // for every savegame of the world.
+      const H = b.rarityKey ? rarityHelpers() : null;
+      const troopId = H ? H.getRarityTroopId(b.rarityKey) : b.enemyId;
+      const troop = $dataTroops[troopId];
       if (!troop) { $gameMap.eraseEvent(gameEvent.eventId()); return; }
-      BattleManager.setup(b.enemyId, true, false);
+      const eventId = gameEvent.eventId();
+      BattleManager.setup(troopId, true, false);
       BattleManager.setEventCallback(result => {
-        if (result === 0) onBountyKilled(key, gameEvent.eventId());
+        if (result === 0) onBountyKilled(key, eventId);
+        else if (bountyWalkedOff()) onBountyTaken(key, eventId);
       });
       $gamePlayer.makeEncounterCount();
       SceneManager.push(Scene_Battle);
@@ -3644,6 +3791,32 @@
       + (found.length ? " (" + found.join(", ") + ")" : ""));
   }
 
+  // The step this tile's target answers to, or null: the contract that named it
+  // may be long gone, and a one-of-a-kind creature is matched on its own key
+  // rather than on the enemy whose look it borrowed.
+  function bountyStepFor(b) {
+    const q = state().active[b.qid];
+    if (!q) return null;
+    for (let i = 0; i < q.steps.length; i++) {
+      const s = q.steps[i];
+      if (s.kind !== "bounty" || s.done || !stepIsActive(q, i)) continue;
+      const matches = b.rarityKey ? s.rarityKey === b.rarityKey : s.enemyId === b.enemyId;
+      if (matches) return { q, s, i };
+    }
+    return null;
+  }
+
+  // Every creature of the troop off the field with the fight still lost or
+  // broken off: talked round and walked away with the party (EnemyTalkSystem
+  // recruits by hiding the enemy and aborting). Whatever the contract wanted,
+  // it is not standing on that tile any more.
+  function bountyWalkedOff() {
+    try {
+      const members = $gameTroop ? $gameTroop.members() : [];
+      return members.length > 0 && members.every(e => !e || !e.isAlive());
+    } catch (e) { return false; }
+  }
+
   function onBountyKilled(key, eventId) {
     const b = bounties()[key];
     if (!b) return;
@@ -3651,18 +3824,34 @@
     delete bounties()[key];
     if (eventId && $gameMap) $gameMap.eraseEvent(eventId);
 
-    const q = state().active[b.qid];
-    if (q) {
-      for (let i = 0; i < q.steps.length; i++) {
-        const s = q.steps[i];
-        if (s.kind === "bounty" && !s.done && s.enemyId === b.enemyId && stepIsActive(q, i)) {
-          completeStep(q, i, (s.criminal ? T('Quests.warrantExecutedOn') : T('Quests.beastSlain')) + b.name + ".");
-          toast(T('Quests.bountyTargetEliminated') + b.name);
-          return;
-        }
-      }
+    const hit = bountyStepFor(b);
+    if (hit) {
+      completeStep(hit.q, hit.i,
+        (hit.s.criminal ? T('Quests.warrantExecutedOn') : T('Quests.beastSlain')) + b.name + ".");
+      toast(T('Quests.bountyTargetEliminated') + b.name);
+      return;
     }
     toast(T('Quests.youKilled') + b.name + T('Quests.whateverContractWantedItDeadIsLongGone'));
+  }
+
+  // Killed is not the only way a target leaves its square. One talked round in
+  // the middle of the fight follows the party home, and a hunt is answered
+  // either way: the thing the notice was about is off those coordinates for
+  // good, so the store entry goes with it and is never put down twice.
+  function onBountyTaken(key, eventId) {
+    const b = bounties()[key];
+    if (!b) return;
+    b.killed = true;
+    delete bounties()[key];
+    if (eventId && $gameMap) $gameMap.eraseEvent(eventId);
+
+    const hit = bountyStepFor(b);
+    if (hit) {
+      completeStep(hit.q, hit.i, T('Quests.takenAlive') + b.name + ".");
+      toast(T('Quests.bountyTargetTakenAlive') + b.name);
+      return;
+    }
+    toast(T('Quests.youTookAlive') + b.name + T('Quests.whateverContractWantedItDeadIsLongGone'));
   }
 
   // ==========================================================================

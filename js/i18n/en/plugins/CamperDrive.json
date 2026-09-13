@@ -71,8 +71,6 @@
     "cmdExit": "Exit drive",
     "cmdVehicle": "Vehicle options",
     "cmdHelp": "H  Controls",
-    "controllerHint": "Controller: L2/R2 zoom out/in &middot; Y switch view",
-    "controllerHintWalk": "Controller: right stick looks &middot; A jumps &middot; B ends the walk",
     "fly": "FLY",
     "float": "FLOAT",
     "dive": "DIVE",
@@ -80,7 +78,21 @@
     "cond": "COND",
     "trip": "TRIP",
     "camperStuck": "Camper stuck",
-    "pressRToRespawn": "Press {key} to respawn"
+    "pressRToRespawn": "Press {key} to respawn",
+    "alt": "ALT",
+    "crush": "PRESSURE",
+    "cmdPitch": "Mouse / right stick: nose up and down",
+    "cmdClimb": "Climb",
+    "cmdDescend": "Descend",
+    "cmdFlight": "Take off / land",
+    "cmdLook": "Look around",
+    "cmdMap": "Map: window, corner, full screen, off",
+    "cmdDive": "Dive / surface (needs the Dive module)",
+    "cmdThrust": "Throttle up / back",
+    "noteGasGiant": "Nothing here to land on, and the pressure below crushes a hull. Keep the altitude up.",
+    "noteUnderwater": "Under the surface. The trim takes the hull down and brings it back up.",
+    "noteSwimming": "In the water. Kick up for the surface, or hold the crouch to go under.",
+    "noteFlying": "At the helm. The nose does the climbing, the trim holds the altitude."
   },
   "viewMode": {
     "fpdrive": "FP DRIVING",
@@ -102,5 +114,10 @@
     "failed": "[Driver DEX save: {roll}{mod}={total} vs DC {dc}] Reflex save failed, the vehicle hits!"
   },
   "maintenance": "Vehicle maintenance",
-  "refuel": "Refuel from the cans"
+  "refuel": "Refuel from the cans",
+  "gasGiant": {
+    "noGround": "There is nothing here to set down on.",
+    "tooDeep": "The pressure is crushing the hull. Climb, now.",
+    "crushed": "The hull gives way."
+  }
 }

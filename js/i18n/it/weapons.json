@@ -1517,243 +1517,243 @@
   },
   "380": {
     "name": "Lama grezza di rottami",
-    "description": "Una lama rozza ricavata da rottami affilati \nlegati a un tubo con del nastro isolante."
+    "description": "Una lama rozza ricavata da rottami affilati legati a un tubo con del\nnastro isolante. Può infliggere Veleno."
   },
   "381": {
     "name": "Mazza da baseball chiodata",
-    "description": "Una mazza da baseball avvolta in filo spinato e chiodi \narrugginiti per un danno maggiore."
+    "description": "Una mazza da baseball avvolta in filo spinato e chiodi arrugginiti per\nun danno maggiore. Può infliggere Veleno."
   },
   "382": {
     "name": "Mazza tubo",
-    "description": "Uno spezzone di tubo con una pesante valvola fissata a \nun'estremità, una mazza di fortuna."
+    "description": "Uno spezzone di tubo con una pesante valvola fissata a un'estremità, una\nmazza di fortuna. Può infliggere Oleoso."
   },
   "383": {
     "name": "Fionda spazzatura",
-    "description": "Una fionda artigianale fatta con un ramo biforcuto \ne gomma ritagliata da vecchi pneumatici."
+    "description": "Una fionda artigianale fatta con un ramo biforcuto e gomma ritagliata da\nvecchi pneumatici. Può infliggere Oleoso."
   },
   "384": {
     "name": "Lancia-scopa",
-    "description": "Una lancia grezza fatta con un manico di scopa e un \ncoltello da cucina fissato in punta col nastro adesivo."
+    "description": "Una lancia grezza fatta con un manico di scopa e un coltello da cucina\nfissato in punta col nastro adesivo. Può infliggere Veleno."
   },
   "385": {
     "name": "Ascia coprimozzo",
-    "description": "Un'ascia rozza ricavata da un pezzo d'auto affilato \nfissato a un manico di legno."
+    "description": "Un'ascia rozza ricavata da un pezzo d'auto affilato fissato a un manico\ndi legno. Può infliggere Oleoso."
   },
   "386": {
     "name": "Fiocco in PVC",
-    "description": "Un arco di fortuna costruito con un tubo in PVC e una \ncorda ricavata da una fune sfilacciata."
+    "description": "Un arco di fortuna costruito con un tubo in PVC e una corda ricavata da\nuna fune sfilacciata. Può infliggere Nausea."
   },
   "387": {
     "name": "Nocche di vetro",
-    "description": "Guanti irti di vetri rotti e frammenti metallici \nconficcati, per pugni devastanti."
+    "description": "Guanti irti di vetri rotti e frammenti metallici conficcati, per pugni\ndevastanti. Può infliggere Veleno."
   },
   "388": {
     "name": "Bici-flagello",
-    "description": "Una catena fatta di pezzi di bicicletta con un lucchetto \nall'estremità, usata come flagello."
+    "description": "Una catena fatta di pezzi di bicicletta con un lucchetto all'estremità,\nusata come flagello. Può infliggere Oleoso."
   },
   "389": {
     "name": "Balestra di scarto",
-    "description": "Una balestra artigianale fatta di legname di recupero, \nmolle e pezzi di metallo."
+    "description": "Una balestra artigianale fatta di legname di recupero, molle e pezzi di\nmetallo. Può infliggere Veleno."
   },
   "390": {
     "name": "Martello di cemento",
-    "description": "Una mazza da fabbro con pezzi di cemento ancora \nattaccati alla testa, per un peso maggiore."
+    "description": "Una mazza da fabbro con pezzi di cemento ancora attaccati alla testa,\nper un peso maggiore. Colpisce con Petro e può infliggere Nausea."
   },
   "391": {
     "name": "Artigli CD",
-    "description": "Lamette e schegge di CD rotti fissate a dei \nguanti senza dita, per attacchi laceranti."
+    "description": "Lamette e schegge di CD rotti fissate a dei guanti senza dita, per\nattacchi laceranti. Può infliggere Veleno."
   },
   "392": {
     "name": "Innaffiafiamme",
-    "description": "Un lanciafiamme rozzo fatto con una pompa da giardino, \nun accendino e della benzina."
+    "description": "Un lanciafiamme rozzo fatto con una pompa da giardino, un accendino e\ndella benzina. Colpisce con Fuoco e può infliggere Nausea."
   },
   "393": {
     "name": "Mocio chiodato",
-    "description": "Un corto bastone ricavato da un vecchio manico di mocio \ncon dei chiodi piantati in punta."
+    "description": "Un corto bastone ricavato da un vecchio manico di mocio con dei chiodi\npiantati in punta. Colpisce con Ghiaccio e può infliggere Veleno."
   },
   "394": {
     "name": "Pistola tubo",
-    "description": "Una pistola di fortuna assemblata con tubi, legno \ne molle, che spara piccoli rottami metallici."
+    "description": "Una pistola di fortuna assemblata con tubi, legno e molle, che spara\npiccoli rottami metallici. Può infliggere Oleoso."
   },
   "395": {
     "name": "Coltello per segnali di stop",
-    "description": "Una lama frastagliata ricavata da un segnale di stop rotto \nfissato a un manico di legno."
+    "description": "Una lama frastagliata ricavata da un segnale di stop rotto fissato a un\nmanico di legno. Può infliggere Veleno."
   },
   "396": {
     "name": "Frusta di cavi",
-    "description": "Una frusta fatta di cavi elettrici e prolunghe \nlegati insieme."
+    "description": "Una frusta fatta di cavi elettrici e prolunghe legati insieme. Può\ninfliggere Oleoso."
   },
   "397": {
     "name": "Machete a balestra",
-    "description": "Una spada rozza ricavata dalla balestra di un'auto, \naffilata su un solo lato."
+    "description": "Una spada rozza ricavata dalla balestra di un'auto, affilata su un solo\nlato. Può infliggere Oleoso."
   },
   "398": {
     "name": "Pistola a pressione",
-    "description": "Un fucile arpione artigianale fatto con un'idropulitrice, \ncon barre di metallo come munizioni."
+    "description": "Un fucile arpione artigianale fatto con un'idropulitrice, con barre di\nmetallo come munizioni. Può infliggere Oleoso."
   },
   "399": {
     "name": "Lancia macerie",
-    "description": "Un lanciatore di fortuna che scaglia pezzi di cemento\ncon tubi elastici da uso chirurgico."
+    "description": "Un lanciatore di fortuna che scaglia pezzi di cemento con tubi elastici\nda uso chirurgico. Può infliggere Nausea."
   },
   "400": {
     "name": "Tavola chiodata",
-    "description": "Un fascio di chiodi arrugginiti fissati in cima a una \ngamba di tavolo con fil di ferro e nastro adesivo."
+    "description": "Un fascio di chiodi arrugginiti fissati in cima a una gamba di tavolo\ncon fil di ferro e nastro adesivo. Può infliggere Veleno."
   },
   "401": {
     "name": "Artigli telaio",
-    "description": "Strisce di metallo dal telaio di un'auto,\naffilate e attaccate a guanti da giardinaggio."
+    "description": "Strisce di metallo dal telaio di un'auto, affilate e attaccate a guanti\nda giardinaggio. Può infliggere Oleoso."
   },
   "402": {
     "name": "Spada a lama di sega",
-    "description": "Una tavola di legno con lame di sega arrugginite\nattaccate per creare una spada rudimentale."
+    "description": "Una tavola di legno con lame di sega arrugginite attaccate per creare\nuna spada rudimentale. Può infliggere Veleno."
   },
   "403": {
     "name": "Pistola a pompa",
-    "description": "Una pistola ad aria improvvisata fatta di tubi in PVC e\nuna pompa da bicicletta per sparare piccoli proiettili."
+    "description": "Una pistola ad aria fatta con tubi in PVC e una pompa da bicicletta.\nColpisce con Vento e può infliggere Oleoso."
   },
   "404": {
     "name": "Club delle barre d'armatura",
-    "description": "Un pezzo di tondino con un pezzo di\ncemento ancora attaccato a un'estremità."
+    "description": "Un pezzo di tondino con un pezzo di cemento ancora attaccato a\nun'estremità. Può infliggere Nausea."
   },
   "405": {
     "name": "Pugno di frammento di specchio",
-    "description": "Frammenti di specchio attaccati a nastro\nadesivo avvolto intorno alle mani."
+    "description": "Frammenti di specchio attaccati a nastro adesivo avvolto intorno alle\nmani. Può infliggere Nausea."
   },
   "406": {
     "name": "Chiave modificata",
-    "description": "Una grande chiave inglese con dadi e\nbulloni saldati per danni addizionali."
+    "description": "Una grande chiave inglese con dadi e bulloni saldati per danni\naddizionali. Può infliggere Oleoso."
   },
   "407": {
     "name": "Ascia antincendio Razor",
-    "description": "Una vecchia ascia da vigile del fuoco con lame di\nrasoio attaccate al bordo d'impatto con nastro isolante."
+    "description": "Una vecchia ascia antincendio con lame di rasoio fissate al filo con\nnastro isolante. Colpisce con Fuoco e può infliggere Veleno."
   },
   "408": {
     "name": "Fionda a tubo",
-    "description": "Una fionda elastica fatta da un tubo di\nmetallo biforcuto e gomma di camera d'aria."
+    "description": "Una fionda elastica fatta da un tubo di metallo biforcuto e gomma di\ncamera d'aria. Può infliggere Oleoso."
   },
   "409": {
     "name": "Rasoio mocio",
-    "description": "Un mocio con filo spinato avvolto intorno\nalla testa per attacchi laceranti."
+    "description": "Un mocio con filo spinato avvolto intorno alla testa per attacchi\nlaceranti. Colpisce con Ghiaccio e può infliggere Veleno."
   },
   "410": {
     "name": "Stocco antenna",
-    "description": "Un'antenna d'auto rinforzata con nastro e una\npunta affilata per rapidi attacchi di stoccata."
+    "description": "Un'antenna d'auto rinforzata con nastro e una punta affilata per rapidi\nattacchi di stoccata. Può infliggere Oleoso."
   },
   "411": {
     "name": "Padella fedele",
-    "description": "Una padella con il manico rinforzato da\nnastro adesivo, semplice ma efficace."
+    "description": "Una padella con il manico rinforzato da nastro adesivo, semplice ma\nefficace. Può infliggere Oleoso."
   },
   "412": {
     "name": "Sparachiodi modificata",
-    "description": "Una sparachiodi modificata che spara scarti\nmetallici a una velocità sorprendente."
+    "description": "Una sparachiodi modificata che spara scarti metallici a una velocità\nsorprendente. Può infliggere Veleno."
   },
   "413": {
     "name": "Mazza da hockey con filo spinato",
-    "description": "Un bastone da hockey con la lama avvolta\nin filo spinato e scarti metallici."
+    "description": "Un bastone da hockey con la lama avvolta in filo spinato e scarti\nmetallici. Colpisce con Acqua e può infliggere Veleno."
   },
   "414": {
     "name": "Guanto da golf",
-    "description": "Un guanto da golf con tee da golf cuciti attraverso\ndi esso, punte verso l'esterno, per colpire di pugno."
+    "description": "Un guanto da golf con tee da golf cuciti attraverso di esso, punte verso\nl'esterno, per colpire di pugno. Può infliggere Nausea."
   },
   "415": {
     "name": "Sturalavandini mortale",
-    "description": "Uno stantuffo da bagno modificato con metallo\naffilato apposto alla ventosa di gomma."
+    "description": "Uno stantuffo da bagno modificato con metallo affilato apposto alla\nventosa di gomma. Può infliggere Nausea."
   },
   "416": {
     "name": "Torcia per lacca per capelli",
-    "description": "Una bomboletta di lacca per capelli con un accendino\nattaccato, che crea un piccolo lanciafiamme."
+    "description": "Una bomboletta di lacca per capelli con un accendino attaccato, che crea\nun piccolo lanciafiamme. Colpisce con Fuoco e può infliggere Nausea."
   },
   "417": {
     "name": "Righello sovrano",
-    "description": "Un righello di legno rinforzato con strisce\ndi metallo e affilato fino a una punta."
+    "description": "Un righello di legno rinforzato con strisce di metallo e affilato fino a\nuna punta. Può infliggere Veleno."
   },
   "418": {
     "name": "Segnaletica stradale",
-    "description": "Un palo di segnale stradale sradicato dal\nterreno, ancora con il cemento alla base."
+    "description": "Un palo di segnale stradale sradicato dal terreno, ancora con il cemento\nalla base. Può infliggere Nausea."
   },
   "419": {
     "name": "Tubo riempito di sabbia",
-    "description": "Un pezzo di tubo da giardino riempito di\nsabbia e sigillato ad entrambe le estremità."
+    "description": "Un pezzo di tubo da giardino riempito di sabbia e sigillato ad entrambe\nle estremità. Può infliggere Nausea."
   },
   "420": {
     "name": "Bottiglia rotta",
-    "description": "Una bottiglia rotta con l'estremità seghettata\navvolta in un panno come impugnatura."
+    "description": "Una bottiglia rotta con l'estremità seghettata avvolta in un panno come\nimpugnatura. Può infliggere Veleno."
   },
   "421": {
     "name": "Arco da doccia",
-    "description": "Un semplice arco fatto da una barra\nper tenda da doccia piegata e paracord."
+    "description": "Un semplice arco fatto da una barra per tenda da doccia piegata e\nparacord. Può infliggere Veleno."
   },
   "422": {
     "name": "Ascia tosaerba",
-    "description": "Una lama di tosaerba attaccata a un manico\ndi legno con bulloni e filo metallico."
+    "description": "Una lama di tosaerba attaccata a un manico di legno con bulloni e filo\nmetallico. Può infliggere Oleoso."
   },
   "423": {
     "name": "Chiavi adesive",
-    "description": "Chiavi incastrate tra le dita con nastro per fissarle in posizione."
+    "description": "Chiavi incastrate tra le dita con nastro per fissarle in posizione. Può\ninfliggere Veleno."
   },
   "424": {
     "name": "Fionda gruccia",
-    "description": "Una semplice fionda fatta da un\nappendiabiti in filo metallico e elastici."
+    "description": "Una semplice fionda fatta da un appendiabiti in filo metallico e\nelastici. Può infliggere Oleoso."
   },
   "425": {
     "name": "Mannaia da cucina",
-    "description": "Una mannaia da carne con il manico avvolto in\nnastro antiscivolo per un migliore controllo."
+    "description": "Una mannaia da carne con il manico avvolto in nastro antiscivolo per un\nmigliore controllo. Può infliggere Veleno."
   },
   "426": {
     "name": "Stampella chiodata",
-    "description": "Una stampella con chiodi conficcati nella parte\nsuperiore e rinforzata con nastro adesivo."
+    "description": "Una stampella con chiodi conficcati nella parte superiore e rinforzata\ncon nastro adesivo. Colpisce con Fuoco e può infliggere Veleno."
   },
   "427": {
     "name": "Ombrello a punta",
-    "description": "Un ombrello con estremità affilate sulle punte delle stecche."
+    "description": "Un ombrello con estremità affilate sulle punte delle stecche. Colpisce\ncon Fuoco e può infliggere Nausea."
   },
   "428": {
     "name": "Pistola a tappo modificata",
-    "description": "Una pistola giocattolo a innesco modificata\nper sparare piccoli proiettili metallici."
+    "description": "Una pistola giocattolo a innesco modificata per sparare piccoli\nproiettili metallici. Può infliggere Nausea."
   },
   "429": {
     "name": "Artigli da taglio da giardino",
-    "description": "Cesoie da giardinaggio attaccate a\nguanti per creare artigli improvvisati."
+    "description": "Cesoie da giardinaggio attaccate a guanti per creare artigli\nimprovvisati. Può infliggere Veleno."
   },
   "430": {
     "name": "Pala affilata",
-    "description": "Una vanga affilata lungo il bordo per\ncreare un rudimentale strumento di taglio."
+    "description": "Una vanga affilata lungo il bordo per creare un rudimentale strumento di\ntaglio. Può infliggere Nausea."
   },
   "431": {
     "name": "Pistola a dardi a spiedo",
-    "description": "Una pistola a dardi giocattolo rinforzata\ne modificata per sparare spiedini affilati."
+    "description": "Una pistola a dardi giocattolo rinforzata e modificata per sparare\nspiedini affilati. Può infliggere Veleno."
   },
   "432": {
     "name": "Stecca da biliardo affilata",
-    "description": "Una stecca da biliardo con un'estremità affilata\nfino a una punta per attacchi di stoccata."
+    "description": "Una stecca da biliardo con un'estremità affilata fino a una punta per\nattacchi di stoccata. Può infliggere Nausea."
   },
   "433": {
     "name": "Mattarello a catena",
-    "description": "Un mattarello di legno avvolto da\ncatene per un maggiore danno d'impatto."
+    "description": "Un mattarello di legno avvolto da catene per un maggiore danno\nd'impatto. Può infliggere Oleoso."
   },
   "434": {
     "name": "Canna da pesca da combattimento",
-    "description": "Una canna da pesca modificata per\nlanciare piccoli pesi chiodati come armi."
+    "description": "Una canna da pesca modificata per lanciare piccoli pesi chiodati come\narmi. Può infliggere Oleoso."
   },
   "435": {
     "name": "Forbici da combattimento",
-    "description": "Un paio di forbici con i manici avvolti\nin nastro per una migliore presa."
+    "description": "Un paio di forbici con i manici avvolti in nastro per una migliore\npresa. Può infliggere Veleno."
   },
   "436": {
     "name": "Flagello della cassetta degli attrezzi",
-    "description": "Una vecchia cassetta degli attrezzi riempita\ndi oggetti pesanti e attaccata a una catena."
+    "description": "Una vecchia cassetta degli attrezzi riempita di oggetti pesanti e\nattaccata a una catena. Può infliggere Oleoso."
   },
   "437": {
     "name": "Coltello da cucina",
-    "description": "Un coltello da bistecca con il manico avvolto\nin strisce di stoffa per una migliore presa."
+    "description": "Un coltello da bistecca con il manico avvolto in strisce di stoffa per\nuna migliore presa. Può infliggere Veleno."
   },
   "438": {
     "name": "Cannone di patate",
-    "description": "Una pistola a patate costruita con tubi in\nPVC, capace di sparare piccoli proiettili duri."
+    "description": "Una pistola a patate costruita con tubi in PVC, capace di sparare\npiccoli proiettili duri. Può infliggere Nausea."
   },
   "439": {
     "name": "Cintura con fibbia pesante",
-    "description": "Una cintura con la fibbia rinforzata per essere\nusata come una rapida arma da percussione."
+    "description": "Una cintura con la fibbia rinforzata per essere usata come una rapida\narma da percussione. Può infliggere Nausea."
   },
   "440": {
     "name": "Spada economica",

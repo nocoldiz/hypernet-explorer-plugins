@@ -21,30 +21,69 @@
  * ----------------------------------------------------------------------------
  * How wandering enemies are chosen
  * ----------------------------------------------------------------------------
- * There is one rule and it is the place's: the biome decides what you meet.
- * Half the spawns are pitched within five levels of the party's median,
- * whatever the year; the other half is the place's whole ladder, with nothing
- * filtered off it: every creature the place holds can be met, from its level 1
- * vermin to something many times the party's level. How often a level turns up
- * is a spread around a median the CALENDAR sets - level 20 in 2001, climbing
- * +10 a year - so the far ends of the ladder are rarer and never absent. The
- * calendar is the only limit that still bites. This is the world as it is,
- * rather than the world arranged around the party.
+ * The COUNTRY decides how hard the ground is, and the biome decides what
+ * shape the creature standing on it takes. Every nation of the Europe zone is
+ * dealt a level bracket when the world is made (section 3c): France, Belgium
+ * and the UK open at levels 1-15, every other nation is rolled somewhere
+ * between 1 and 100, and the deal is written into the world folder so every
+ * savegame of that world reads the same map of danger.
+ *
+ * The party is not consulted. A level 60 party that walks into a 1-15 nation
+ * meets that nation's rats; a level 3 party that wanders into a 70-90 one is
+ * somewhere it has no business being. That is the point - the map is worth
+ * reading before it is walked, and the atlas prints each country's median
+ * enemy level for exactly that reason.
+ *
+ * The bracket is not a wall. Creatures below it and creatures above it both
+ * keep a real chance of turning up, rarer the further out they sit and rarer
+ * above than below, so a square is a place with a character rather than a rack
+ * of identically levelled monsters.
+ *
+ * Underground goes with the country it is under: a dungeon, a sewer, a crypt
+ * or any other generated interior rolled on a nation's ground is pitched at
+ * that nation's bracket, shifted by the rung of the danger ladder its
+ * catalogue entry sits on (a cellar below it, a bunker above it).
  *
  * No enemy is exclusive to a country. Every nation holds every creature its
  * biomes hold, and the nation seed only tints how common each of them is where
  * the party is standing (rare / normal / common - never absent).
  *
  * ----------------------------------------------------------------------------
- * The calendar (the rule above the biome)
+ * The calendar (what the years do to the brackets)
  * ----------------------------------------------------------------------------
- * The year moves the band and cannot be argued with:
+ * Every nation's bracket climbs 5 levels a year, so a party that stands still
+ * while the years run watches the whole continent get away from it. Belgium
+ * and the UK are the two exceptions and never move: they are levels 1 to 15 in
+ * 2001 and levels 1 to 15 in 2013, which keeps a corner of the world walkable
+ * whatever year a world is begun in.
+ *
+ * Where no nation rules - off Earth, an alien surface, a world with no country
+ * table - the older calendar band is what is left:
  *
  *   2001         the biome's own band, untouched
- *   2002 - 2009  the whole band climbs 10 levels a year, so a level 1 party
- *                meets 1-8 in 2001, 11-18 in 2002, 21-28 in 2003 ...
- *   2010 - 2011  the band is thrown away: anything from level 1 to 110 roams
+ *   2002 - 2009  the whole band climbs 5 levels a year
+ *   2010 - 2011  the band is thrown away: anything from level 1 to 100 roams
  *   2012 onward  nothing below level 80 is left, and there is no ceiling
+ *
+ * ----------------------------------------------------------------------------
+ * Rarities (section 16b)
+ * ----------------------------------------------------------------------------
+ * A world holds a small roster of creatures that exist ONCE. They are built the
+ * way an alien species is built - a base enemy for the look and the numbers, a
+ * seeded stream, a name nothing else carries - and dealt from the world seed,
+ * so every savegame of a world is hunting the same creatures. Meeting one (the
+ * fight starting, not the sprite appearing) writes it into the Rarities page of
+ * the bestiary and takes it off the board for good, in that savegame and every
+ * other one of that world.
+ *
+ * One is marked before the party is close enough to ask: its level plate is
+ * drawn in gold at any level, and its map sprite wears a hue of its own. An
+ * alien species is re-hued the same way, for the same reason - both are wearing
+ * some ordinary monster's sheet and neither is an ordinary monster.
+ *
+ * The page each one reads is composed, not authored: a rarity, an alien and a
+ * petrodemon all have their sentence built out of the phrase banks in
+ * js/i18n/<lang>/plugins/Battle.json by window.EnemyDescription.compose.
  *
  * ----------------------------------------------------------------------------
  * Special biomes (section 4a)
@@ -60,6 +99,10 @@
  * ----------------------------------------------------------------------------
  *   Hand-made map with its own encounter list  -> exactly that list, untouched.
  *   Procedural map (636)                       -> always the algorithm above.
+ *   The Omega Tower, upper and lower floors    -> the DEPTH decides and nothing
+ *                                                 else: no nation bracket, no
+ *                                                 calendar shift, no era elite
+ *                                                 reaches a floor.
  *   Alien surface (GalaxySim landing)          -> its own rules entirely
  *                                                 (section 16), none of this:
  *                                                 the WORLD's level decides,
@@ -88,7 +131,7 @@
  * to the party does not.
  *
  * ----------------------------------------------------------------------------
- * Spawn era (in-game year, applies to both modes and to the sandbox)
+ * Spawn era (in-game year; only where no nation bracket rules)
  * ----------------------------------------------------------------------------
  *   2001-2009  levels capped at 100, nothing else changes.
  *   2010+      the cap stays at 100, but a quarter of the roaming enemies is
@@ -96,7 +139,9 @@
  *   2012+      the cap is lifted and two fifths of the roaming enemies are
  *              drawn from a level 100+ pool.
  * These high-level spawns ignore the party level and how far from home the
- * party has walked, and appear alongside the normally levelled fauna. The sandbox
+ * party has walked, and appear alongside the normally levelled fauna. On a
+ * nation's own ground they stand aside entirely: the bracket's tail of rarer
+ * over-levelled strays is already what they were there to provide. The sandbox
  * lifts the cap at any year, and scales enemy stats instead (SandboxMode.js).
  *
  * ----------------------------------------------------------------------------
@@ -491,7 +536,9 @@
     //
     // The ONE exception is a <Special> creature (section 4a): a special biome's
     // exclusive residents are placed by the guarantee whatever the year says.
-    const ERA_YEAR_STEP    = 10;  // levels the band climbs per year to 2010
+    // One number for the whole game: a nation's bracket climbs by it (see
+    // section 3c) and so does every band built where no nation rules.
+    const ERA_YEAR_STEP    = 5;   // levels the band climbs per year to 2010
     // The book stops at level 100 (the apex trio sits at 80 / 92 / 100), so the
     // open ceiling is the top of the book rather than a level nothing reaches.
     const ERA_OPEN_CEILING = 100; // 2010-2011: the whole table is loose
@@ -699,6 +746,340 @@
         // higher frequency first; hash as a stable tie-breaker
         scored.sort((a, b) => (b.weight - a.weight) || (b.r - a.r));
         return scored.slice(0, count);
+    };
+
+    // ========================================================================
+    // 3c. THE NATION LEVEL BRACKET (the country decides how hard the ground is)
+    // ========================================================================
+    // Every nation of the Europe zone is dealt a LEVEL BRACKET when the world
+    // is made: the window its roaming fauna is pitched at, rolled from the
+    // world seed and written into the world folder so every savegame of that
+    // world walks the same map of danger. The bracket is a property of the
+    // COUNTRY, not of the party: a level 60 party crossing into a 1-15 nation
+    // meets its rats, and a level 3 party that wanders into a 70-90 one is in
+    // somewhere it has no business being. That is the point - the map is worth
+    // reading before it is walked.
+    //
+    //   France, Belgium, UK   the low countries the game opens on: levels 1-15
+    //   everything else       a seeded window somewhere between 1 and 100
+    //
+    // The deal is the world SEED's, so two worlds made on one seed are the same
+    // continent down to which country holds the rats. A session with no world
+    // of its own - a playtest, the Test world - has no seed to deal from and
+    // nowhere to keep the answer, so it is dealt a random continent that lasts
+    // the session (see getNationBrackets).
+    //
+    // The calendar moves every bracket up BRACKET_YEAR_STEP levels a year, so a
+    // party that stands still while the years run watches the whole continent
+    // get away from it. Belgium and the UK are the two exceptions and never
+    // move: they are levels 1 to 15 in 2001 and levels 1 to 15 in 2013, which
+    // is what keeps a corner of the world walkable whenever a party starts.
+    //
+    // Nothing about this bracket is a wall. Creatures BELOW it and creatures
+    // ABOVE it both keep a real chance of turning up (see nationBracketWeight),
+    // rarer the further out they sit and rarer above than below, so a square is
+    // a place with a character rather than a rack of identically levelled
+    // monsters.
+    //
+    // Where it does NOT apply, and each of these keeps the rule it already had:
+    //   - the Omega Tower, upper and lower alike: a floor's DEPTH is its level
+    //     and the country the tower stands in has nothing to say about it
+    //   - anywhere off Earth (a ship, a station, an alien surface)
+    //   - a nation outside the Europe zone, and any world with no country table
+    //     loaded at all: the biome's own ladder, exactly as before
+
+    // i18n-ignore-start  Countries.json ids, never shown as they are written here
+    const BRACKET_HOME_NATIONS   = ['France', 'Belgium', 'UK'];
+    const BRACKET_FROZEN_NATIONS = ['Belgium', 'UK'];
+    const BRACKET_REGION         = 'Europe';
+    const BRACKET_TOWER_NATION   = 'OmegaTower';
+    // i18n-ignore-end
+
+    const BRACKET_HOME_MIN   = 1;   // the level the opening countries start at
+    const BRACKET_HOME_MAX   = 15;  // and the level they stop at
+    const BRACKET_CEILING    = 100; // the top of the book: no bracket is rolled above it
+    const BRACKET_MIN_WIDTH  = 10;  // narrowest window a rolled nation gets
+    const BRACKET_MAX_WIDTH  = 25;  // widest
+    const BRACKET_YEAR_STEP  = 5;   // levels every bracket climbs per year
+
+    // How much rarer a creature outside the bracket is. Below is the gentler
+    // slope with the higher floor (a country's small fry never leave it); above
+    // is the steeper one with the lower (something out of its depth is a
+    // surprise, and is meant to stay one).
+    const BRACKET_UNDER_WIDTH = 12;
+    const BRACKET_OVER_WIDTH  = 8;
+    const BRACKET_UNDER_FLOOR = 0.18;
+    const BRACKET_OVER_FLOOR  = 0.05;
+
+    // Deterministic 0..1 from the world seed, a nation's name and a salt, so a
+    // nation's bracket is the same in every session of a world and no two
+    // nations share a roll. Order-free on purpose: adding a country to
+    // Countries.json must not re-deal the ones already there.
+    function bracketHash(seed, name, salt) {
+        const s = String(seed) + '|' + String(name) + '|' + salt;
+        let h = 2166136261 >>> 0;
+        for (let i = 0; i < s.length; i++) {
+            h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
+        }
+        h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0;
+        h ^= h >>> 13;
+        return (h >>> 0) / 4294967296;
+    }
+
+    // Every Europe-zone nation the world holds, as {country: [min, max]}. The
+    // tower is left out: it is a country entry only because the world data
+    // needs a default somewhere, and its floors answer to their own depth.
+    BSE.Helpers.rollNationBrackets = function(seed) {
+        const out = {};
+        const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+        for (const c of countries) {
+            if (!c || !c.country || c.region !== BRACKET_REGION) continue;
+            if (c.country === BRACKET_TOWER_NATION) continue;
+            if (BRACKET_HOME_NATIONS.indexOf(c.country) >= 0) {
+                out[c.country] = [BRACKET_HOME_MIN, BRACKET_HOME_MAX];
+                continue;
+            }
+            const width = BRACKET_MIN_WIDTH + Math.floor(
+                bracketHash(seed, c.country, 'w') * (BRACKET_MAX_WIDTH - BRACKET_MIN_WIDTH + 1));
+            const min = 1 + Math.floor(bracketHash(seed, c.country, 'm') * (BRACKET_CEILING - width));
+            out[c.country] = [min, min + width];
+        }
+        return out;
+    };
+
+    // Nothing about a world is dealt twice. Where there IS a world the deal is
+    // its SEED's - the same string the map, the history and every other
+    // generator in the game are built from - so two worlds made on one seed are
+    // the same continent down to which country holds the rats, and the world
+    // folder keeps the answer so it can be read (and edited) without a game
+    // running. The world's name is only reached for by a world so old it has no
+    // seed written at all.
+    //
+    // Where there is NO world - a playtest, the Test world, the title screen
+    // before anything has been chosen - there is no seed to deal from and
+    // nowhere to write a deal back to. Those get a fresh RANDOM continent
+    // instead of the one the empty string would always produce, so two
+    // playtests are not the same map of danger. It is still dealt once and kept
+    // for the session: a deal that re-rolled on every read would move the
+    // ground under the party between one map and the next.
+    let _bracketCache = null;
+    let _sessionSeed = null;
+
+    function sessionBracketSeed() {
+        if (_sessionSeed === null) {
+            _sessionSeed = 'playtest:' + Math.random().toString(36).slice(2) +
+                ':' + Math.random().toString(36).slice(2);
+        }
+        return _sessionSeed;
+    }
+
+    BSE.Helpers.getNationBrackets = function() {
+        const WM = window.WorldManager;
+        const worldName = (WM && WM.activeWorldName) || '';
+        if (_bracketCache && _bracketCache.world === worldName) return _bracketCache.value;
+        let value = null;
+        if (WM && typeof WM.hasActiveWorld === 'function' && WM.hasActiveWorld()) {
+            const stored = (typeof WM.getField === 'function')
+                ? WM.getField('world', 'nationBrackets') : null;
+            if (stored && typeof stored === 'object' && Object.keys(stored).length > 0) {
+                value = stored;
+            } else {
+                const info = (typeof WM.worldInfo === 'function') ? WM.worldInfo() : null;
+                value = BSE.Helpers.rollNationBrackets((info && info.seed) || worldName);
+                if (typeof WM.setField === 'function' && Object.keys(value).length > 0) {
+                    WM.setField('world', 'nationBrackets', value);
+                }
+            }
+        } else {
+            value = BSE.Helpers.rollNationBrackets(sessionBracketSeed());
+        }
+        // Only cached once the country table has actually loaded, so an early
+        // call cannot freeze an empty deal for the session.
+        if (Object.keys(value).length > 0) _bracketCache = { world: worldName, value: value };
+        return value;
+    };
+
+    // Re-deal on the next read. The world manager calls this when it activates
+    // a world, so a second world in the same session is never handed the
+    // first one's map of danger. The unseeded session's own continent is NOT
+    // re-rolled by it: a playtest that passes through the world screen and back
+    // is still the same playtest, and only a new session re-randomizes it.
+    BSE.Helpers.resetNationBrackets = function() {
+        _bracketCache = null;
+    };
+
+    // The bracket this nation was dealt, before the calendar touches it.
+    BSE.Helpers.getNationBracket = function(countryName) {
+        if (!countryName || countryName === BRACKET_TOWER_NATION) return null;
+        const pair = BSE.Helpers.getNationBrackets()[countryName];
+        if (!Array.isArray(pair) || pair.length < 2) return null;
+        return { min: Math.max(1, pair[0] | 0), max: Math.max(1, pair[1] | 0) };
+    };
+
+    // Levels this nation's bracket has climbed since the 2001 epoch. Belgium
+    // and the UK never move; everybody else takes BRACKET_YEAR_STEP a year.
+    BSE.Helpers.getNationYearShift = function(countryName) {
+        if (BRACKET_FROZEN_NATIONS.indexOf(countryName) >= 0) return 0;
+        const year = Math.floor(BSE.Helpers.getCurrentGameYear());
+        return Math.max(0, year - SPAWN_START_YEAR) * BRACKET_YEAR_STEP;
+    };
+
+    // The window this nation's fauna is pitched at TODAY: its bracket plus
+    // whatever the calendar has added to it. `nation` on the band is what every
+    // rule downstream reads to tell a country's band from the biome's own.
+    BSE.Helpers.getNationBand = function(countryName) {
+        const bracket = BSE.Helpers.getNationBracket(countryName);
+        if (!bracket) return null;
+        const shift = BSE.Helpers.getNationYearShift(countryName);
+        const min = Math.max(1, bracket.min + shift);
+        const max = Math.max(min, bracket.max + shift);
+        return { min: min, max: max, center: (min + max) / 2, nation: countryName };
+    };
+
+    // The country the party is standing in, by name. $gameWeather is the
+    // authority (it is what set Variable 86 in the first place); the variable
+    // is the fallback for a save taken before the weather came up.
+    BSE.Helpers.getNationName = function() {
+        let cc = null;
+        try {
+            cc = (typeof $gameWeather !== 'undefined' && $gameWeather)
+                ? $gameWeather.currentCountry : null;
+        } catch (e) { cc = null; }
+        if (cc && cc.country) return cc.country;
+        // Variable 86 is only worth reading once something has written to it:
+        // a dozen Countries.json entries share the id 0 (the nations the world
+        // map never places), so an unset variable would pick one of them at
+        // random and hand a map somewhere else's bracket.
+        const id = BSE.Helpers.getNationId();
+        if (!id) return '';
+        const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+        const hit = countries.find(c => c && c.id === id);
+        return hit ? hit.country : '';
+    };
+
+    // The band in force where the party is standing, or null where the country
+    // has nothing to say: the tower (the depth decides), off Earth (the space
+    // decides) and anywhere outside the Europe zone.
+    BSE.Helpers.getActiveNationBand = function() {
+        if (BSE.Helpers.getTowerFloorLevel()) return null;
+        if (BSE.Helpers.getTowerAuthoredBand()) return null;
+        if (BSE.Helpers.isOffWorldMap && BSE.Helpers.isOffWorldMap()) return null;
+        return BSE.Helpers.getNationBand(BSE.Helpers.getNationName());
+    };
+
+    // How often a creature of this level turns up in a nation whose band is
+    // `band`. One inside the bracket, tapering outside it and then holding at a
+    // floor, so nothing the place holds is ever off the table: the country's
+    // own small fry stay a common sight and something well over the bracket
+    // stays a rare one.
+    BSE.Helpers.nationBracketWeight = function(level, band) {
+        const lvl = Math.max(1, level || 1);
+        if (!band) return 1;
+        if (lvl >= band.min && lvl <= band.max) return 1;
+        if (lvl < band.min) {
+            const d = (band.min - lvl) / BRACKET_UNDER_WIDTH;
+            return Math.max(BRACKET_UNDER_FLOOR, 1 / (1 + d * d));
+        }
+        const d = (lvl - band.max) / BRACKET_OVER_WIDTH;
+        return Math.max(BRACKET_OVER_FLOOR, 1 / (1 + d * d));
+    };
+
+    // Apply that weighting to an encounter list, leaving the entries themselves
+    // alone. Nothing is dropped, which is what keeps the strays possible and
+    // the list impossible to empty.
+    BSE.Helpers.spreadNationBracket = function(encList, band) {
+        if (!encList || !encList.length || !band) return encList;
+        return encList.map(enc => Object.assign({}, enc, {
+            weight: (enc.weight || 1) * BSE.Helpers.nationBracketWeight(
+                BSE.Helpers.getTroopMaxLevel(enc.troopId), band)
+        }));
+    };
+
+    // The danger ladder. A generated structure sits on one rung of it and that
+    // rung is a shift of the band the place would otherwise field:
+    //   safe      below it - a cellar, a smuggler's cache
+    //   ordinary  the band itself - a dungeon, a sewer, a crypt
+    //   hostile   above it - a forge, a bunker, a frozen cave
+    //   deadly    far above, and not a shift at all: the caller swaps the
+    //             filter outright (filterTroopsWellAboveLevel)
+    //
+    // Under a nation bracket the band being shifted is the COUNTRY's, so a
+    // cellar under a 40-60 nation is a 30-50 cellar and a bunker under it a
+    // 50-70 one, and an ordinary interior is simply as hard as the country it
+    // is under. That is the whole of "underground goes with the ground above
+    // it"; off a nation's ground the same rung shifts the biome's own band.
+    BSE.Helpers.applyDangerToBand = function(danger, band) {
+        if (!band || (danger !== 'safe' && danger !== 'hostile')) return band;
+        // An open-ended band (the 2012 collapse, off a nation's ground) has no
+        // width to shift by: Infinity - min is Infinity and the shift comes out
+        // NaN, which would reject every candidate on the map.
+        if (!Number.isFinite(band.min) || !Number.isFinite(band.max)) return band;
+        const span = Math.max(2, band.max - band.min);
+        const shift = danger === 'safe' ? -Math.round(span * 0.5) : Math.round(span * 0.5);
+        const min = Math.max(1, band.min + shift);
+        const max = Math.max(min + 1, band.max + shift);
+        return Object.assign({}, band, { min: min, max: max, center: (min + max) / 2 });
+    };
+
+    // The weighted median level of a whole nation's fauna: what the atlas
+    // prints when a country is clicked, and the one honest one-number answer to
+    // "how hard is it there". Built out of the same weights the spawner uses,
+    // over every biome-tagged troop the world still allows, so it moves with
+    // the calendar and with who the world is populated with.
+    //
+    // Cached per (nation, band, population): the atlas asks once per click, but
+    // the scan walks the whole troop table.
+    let _nationMedianCache = {};
+
+    BSE.Helpers.getNationMedianLevel = function(countryName) {
+        const band = BSE.Helpers.getNationBand(countryName);
+        if (!band || typeof $dataTroops === 'undefined' || !$dataTroops) return 0;
+        const key = [countryName, band.min, band.max, BSE.Helpers.getPopulationMode()].join('|');
+        if (_nationMedianCache[key] !== undefined) return _nationMedianCache[key];
+        const entries = [];
+        for (let i = 1; i < $dataTroops.length; i++) {
+            const troop = $dataTroops[i];
+            if (!BSE.Helpers.isSpawnableTroopData(troop)) continue;
+            if (!BSE.Helpers.troopDataAllowedInPopulation(troop)) continue;
+            if (BSE.Helpers.isSpecialTroop(i)) continue;
+            const lead = $dataEnemies[troop.members[0].enemyId];
+            if (!lead || !/<Biome:/i.test(lead.note || '')) continue;
+            const lvl = BSE.Helpers.getTroopMaxLevel(i);
+            if (!lvl) continue;
+            entries.push({ level: lvl, weight: BSE.Helpers.nationBracketWeight(lvl, band) });
+        }
+        let median = 0;
+        if (entries.length) {
+            entries.sort((a, b) => a.level - b.level);
+            const total = entries.reduce((sum, e) => sum + e.weight, 0);
+            let seen = 0;
+            median = entries[entries.length - 1].level;
+            for (const e of entries) {
+                seen += e.weight;
+                if (seen >= total / 2) { median = e.level; break; }
+            }
+        }
+        _nationMedianCache[key] = median;
+        return median;
+    };
+
+    // Everything the atlas and the travel card want about one country, in one
+    // object: the window its fauna is pitched at, the median that comes out of
+    // it, and whether the calendar can still move it.
+    BSE.Helpers.describeNationLevels = function(countryName) {
+        const band = BSE.Helpers.getNationBand(countryName);
+        if (!band) return null;
+        const bracket = BSE.Helpers.getNationBracket(countryName);
+        return {
+            nation: countryName,
+            min: band.min,
+            max: band.max,
+            median: BSE.Helpers.getNationMedianLevel(countryName),
+            baseMin: bracket.min,
+            baseMax: bracket.max,
+            shift: BSE.Helpers.getNationYearShift(countryName),
+            frozen: BRACKET_FROZEN_NATIONS.indexOf(countryName) >= 0
+        };
     };
 
     // ========================================================================
@@ -1120,10 +1501,15 @@
     // ========================================================================
     // 4b. SPAWN BAND (level selection on top of the nation-weighted pool)
     // ========================================================================
-    // Biome is the only rule there is: the biome's whole roster. Every creature
-    // whose <Biome:> tag names this place can be met, at any level up to 100,
-    // and neither the party nor the ground has any say in which. The calendar
-    // is the only limit that still bites (nothing under level 80 from 2012).
+    // Where a nation bracket rules (section 3c) the country owns this: its
+    // window is the band, and everything below is what is left for the tower,
+    // for off Earth and for any ground no country speaks for.
+    //
+    // There, biome is the only rule there is: the biome's whole roster. Every
+    // creature whose <Biome:> tag names this place can be met, at any level up
+    // to 100, and neither the party nor the ground has any say in which. The
+    // calendar is the only limit that still bites (nothing under level 80 from
+    // 2012).
     //
     // The nation-seeded distribution rides on top of it: the country the player
     // is in decides which enemies are rare / common there, never which are
@@ -1142,9 +1528,12 @@
         return partyLevel;
     };
 
-    // The level window to draw from, calendar already applied.
+    // The level window to draw from, calendar already applied. The country the
+    // party is standing in is the first word (section 3c): its bracket IS the
+    // band there, and the biome's own ladder is what is left where no nation
+    // has anything to say - the tower, off Earth, outside the Europe zone.
     BSE.Helpers.getSpawnBand = function() {
-        return BSE.Helpers.getBiomeLevelBand();
+        return BSE.Helpers.getActiveNationBand() || BSE.Helpers.getBiomeLevelBand();
     };
 
     // Narrow a candidate list to the band. Every branch ends in a nearest-level
@@ -1157,6 +1546,14 @@
     // biomeSpreadWeight), so the small fry and the monsters far over the
     // party's head both stay possible.
     BSE.Helpers.filterTroopsForMode = function(encList, mode, band) {
+        // Under a nation bracket the country is the whole rule: the window it
+        // was dealt, with the creatures under and over it kept as the rare
+        // strays that stop a square reading as a rack of equal monsters. The
+        // party is not consulted at all - a level 60 party in a 1-15 nation
+        // meets that nation's rats, which is what makes the map worth reading.
+        if (band && band.nation) {
+            return BSE.Helpers.spreadNationBracket(encList, band);
+        }
         if (BSE.Helpers.rollBiomeTether()) {
             return BSE.Helpers.filterTroopsInLevelBand(
                 encList, BSE.Helpers.getBiomeTetherBand());
@@ -1378,23 +1775,6 @@
             if (arch && archetypes.indexOf(arch) >= 0) return true;
         }
         return false;
-    };
-
-    // The danger ladder. A structure sits on one rung of it and that rung
-    // decides what it spawns relative to the party:
-    //   safe      below the party's own band - a cellar, a smuggler's cache
-    //   ordinary  the band the biome would give anywhere else
-    //   hostile   the band, shifted up: a forge, a bunker, a frozen cave
-    //   deadly    far above the party, the rule the temple has always used
-    // Returns the reference level to build the band from; `deadly` is handled
-    // by the caller, which swaps the filter outright.
-    BSE.Helpers.dangerRefLevel = function(danger, refLevel) {
-        const lvl = Math.max(1, Math.round(refLevel || 1));
-        switch (danger) {
-            case 'safe':    return Math.max(1, Math.round(lvl * 0.8) - 1);
-            case 'hostile': return lvl + 4 + Math.floor(lvl / 12);
-            default:        return lvl;
-        }
     };
 
     // ------------------------------------------------------------------
@@ -1760,11 +2140,15 @@
         const here = BSE.Helpers.getWorldPosition() || { x: 0, y: 0 };
         const place = BSE.Helpers.getPlaceLevel() || BSE.Helpers.getPartyReferenceLevel();
         const era = BSE.Helpers.getSpawnEra();
+        // The band the spawner would use here, the country's own included, so
+        // the card reads what would actually walk out rather than what the
+        // biome alone would field.
+        const band = BSE.Helpers.getSpawnBand();
         const key = [here.x, here.y, biomeName || '', place, Math.floor(era.year),
-            BSE.Helpers.getNationId(), BSE.Helpers.getPopulationMode()].join('|');
+            BSE.Helpers.getNationId(), BSE.Helpers.getPopulationMode(),
+            band.nation || '', band.min, band.max].join('|');
         if (_placeProfileCache && _placeProfileCache.key === key) return _placeProfileCache.value;
 
-        const band = BSE.Helpers.getBiomeLevelBand();
         const candidates = [];
         for (let i = 1; i < $dataTroops.length; i++) {
             const troop = $dataTroops[i];
@@ -1774,13 +2158,21 @@
             if (!BSE.Helpers.getTroopMaxLevel(i)) continue;
             candidates.push({ troopId: i });
         }
-        // The band and the spread, exactly as the spawner applies them.
+        // The band and the spread, exactly as the spawner applies them. Under a
+        // nation bracket nothing is filtered out at all - the strays above and
+        // below the country's window are part of what it fields, so they are
+        // part of what the median is taken over.
         const local = [];
         let localTotal = 0;
-        BSE.Helpers.filterTroopsInLevelBand(candidates, band).forEach(enc => {
+        const inBand = band.nation
+            ? candidates
+            : BSE.Helpers.filterTroopsInLevelBand(candidates, band);
+        inBand.forEach(enc => {
             const lvl = BSE.Helpers.getTroopMaxLevel(enc.troopId);
-            const weight = BSE.Helpers.biomeSpreadWeight(lvl) *
-                BSE.Helpers.populationSpawnBoost(enc.troopId);
+            const spread = band.nation
+                ? BSE.Helpers.nationBracketWeight(lvl, band)
+                : BSE.Helpers.biomeSpreadWeight(lvl);
+            const weight = spread * BSE.Helpers.populationSpawnBoost(enc.troopId);
             if (weight <= 0) return;
             local.push({ level: lvl, weight: weight });
             localTotal += weight;
@@ -1791,7 +2183,7 @@
         // a median that ignored them would tell the party a place is safe on
         // the strength of fauna that only fills three spawns in four. The two
         // pools are mixed here in the same proportion the spawner mixes them.
-        const elitePool = BSE.Helpers.getEraElitePool(biomeName, era);
+        const elitePool = band.nation ? [] : BSE.Helpers.getEraElitePool(biomeName, era);
         const eliteShare = (elitePool.length && localTotal > 0) ? era.eliteShare : 0;
         let eliteTotal = 0;
         elitePool.forEach(e => { eliteTotal += e.weight; });
@@ -1861,6 +2253,8 @@
             ceilingLevel: BSE.Helpers.getPlaceCeilingLevel(),
             placeLevel: BSE.Helpers.getPlaceLevel(),
             partyLevel: BSE.Helpers.getPartyReferenceLevel(),
+            nation: BSE.Helpers.getNationName(),
+            nationBracket: BSE.Helpers.describeNationLevels(BSE.Helpers.getNationName()),
             roster: BSE.Helpers.getPlaceEncounterProfile(BSE.Helpers.getMapBiome())
         };
     };
@@ -2564,29 +2958,35 @@
         // surface answers to none of them: its species roster is the encounter
         // list and no band, elite or special-biome rule is laid over it.
         const bandApplies = !(onAlienSurface || towerAuthoredBand);
-        // The level everything on this map is measured against: the depth in the
-        // tower, the party's median everywhere else. The `deadly` filter below
-        // reads it too.
-        const baseRefLevel = poolRefLevel;
-        // A structure sits on a rung of the danger ladder, and that is a shift
-        // of the level the band is built around: a smuggler's cache spawns
-        // below that level, a bunker or an under-forge above it. `deadly` is
-        // not a shift but a different filter, applied where the band is used.
-        // A tower floor keeps its own level whichever structure was dealt to it:
-        // the depth is the danger, and the rung the borrowed layout sits on has
-        // nothing to say about it.
-        const spawnRefLevel = towerFloorLevel || BSE.Helpers.dangerRefLevel(structDanger, baseRefLevel);
-        // Off Earth the place decides, over the top of whichever mode is set:
-        // a ship, a station or a derelict spawns from the level of the space it
-        // is sitting in (see getOffWorldLevel). An alien SURFACE needs nothing
-        // here - its encounter list is the world's own species roster, already
-        // built around that same level - and passes through with no band at all.
+        // Off Earth the place decides, over the top of everything else: a ship,
+        // a station or a derelict spawns from the level of the space it is
+        // sitting in (see getOffWorldLevel). An alien SURFACE needs nothing here
+        // - its encounter list is the world's own species roster, already built
+        // around that same level - and passes through with no band at all.
         const offWorldLevel = BSE.Helpers.getOffWorldLevel();
+        // The country's own window, where a country has one (section 3c). Not
+        // in the tower and not off Earth: a floor's depth and a station's orbit
+        // both outrank the ground the entrance happens to stand on.
+        const nationBand = (bandApplies && !towerFloorLevel && offWorldLevel <= 0)
+            ? BSE.Helpers.getActiveNationBand()
+            : null;
+        // The level everything on this map is measured against: the depth in the
+        // tower, the country's own bracket where one rules, the party's median
+        // everywhere else. The `deadly` filter below reads it too, which is what
+        // makes a temple under a level 70 nation a level 70 nation's temple.
+        const baseRefLevel = nationBand ? Math.round(nationBand.center) : poolRefLevel;
+        // A structure sits on a rung of the danger ladder, and that rung shifts
+        // the band (see applyDangerToBand): a smuggler's cache below it, a
+        // bunker or an under-forge above it. A tower floor keeps its own level
+        // whichever structure was dealt to it - the depth is the danger, and
+        // the rung the borrowed layout sits on has nothing to say about it.
         const levelBand = towerFloorLevel
             ? BSE.Helpers.getTowerFloorBand(towerFloorLevel)
             : (offWorldLevel > 0
                 ? BSE.Helpers.getOffWorldBand(offWorldLevel)
-                : (bandApplies ? BSE.Helpers.getSpawnBand() : null));
+                : (bandApplies
+                    ? BSE.Helpers.applyDangerToBand(structDanger, BSE.Helpers.getSpawnBand())
+                    : null));
 
         // The era's high-level fauna (level 80-110 from 2010, 100+ from 2012)
         // rides on top of the biome's band: a share of the roaming enemies is
@@ -2594,8 +2994,12 @@
         // calendar's elites mix in with normal spawns.
         const spawnEra = BSE.Helpers.getSpawnEra();
         // Not in the tower: the calendar's elites would break a ladder whose
-        // whole point is that the floor decides what stands on it.
-        const eraElitePool = (bandApplies && !towerFloorLevel && spawnEra.eliteShare > 0)
+        // whole point is that the floor decides what stands on it. Nor under a
+        // nation bracket, for the same reason a floor is exempt: the country
+        // said what its ground is worth, and the bracket's own tail of rarer
+        // over-levelled strays (see nationBracketWeight) is already the variety
+        // the elite pool was there to provide.
+        const eraElitePool = (bandApplies && !towerFloorLevel && !nationBand && spawnEra.eliteShare > 0)
             ? BSE.Helpers.getEraElitePool(encounterBiome, spawnEra)
             : [];
 
@@ -2615,6 +3019,16 @@
         // and never qualify.
         const specialPool = bandApplies ? BSE.Helpers.getSpecialBiomeTroops(currentBiome) : [];
         let specialPlaced = false;
+
+        // The one-of-a-kind creature this map fields, if it fields one at all
+        // (section 16b). Rolled once for the whole map rather than per event,
+        // so a square never holds two of them, and only where the ordinary
+        // rules apply: a tower floor is its depth's and an alien surface is its
+        // planet's, and neither is Earth's to put a rarity on.
+        const rarity = (bandApplies && !towerFloorLevel && !onAlienSurface)
+            ? BSE.Helpers.rollRarityForMap(levelBand)
+            : null;
+        let rarityPlaced = false;
 
         // The sea's own residents. A shore (Beach, Island, Ocean, a flooded
         // cave) is half water, and the fauna that lives in that half must
@@ -2690,10 +3104,25 @@
                 }
 
                 if (chosenTroopId === null) {
-                    // The special-biome resident, placed before anything else
-                    // can claim the event so neither the level band nor the era
-                    // elites can crowd it out.
-                    if (!specialPlaced && specialPool.length > 0) {
+                    // The one-of-a-kind creature takes the first event it can
+                    // stand on. Before the special-biome resident and before
+                    // the era elites, because there is exactly one of it in the
+                    // world and a map that rolled it must not then hand the
+                    // event to something there are four hundred of.
+                    if (!rarityPlaced && rarity) {
+                        const troopId = BSE.Helpers.getRarityTroopId(rarity.key);
+                        if (troopId &&
+                            BSE.Helpers.canTroopSpawnInRegion(troopId, currentRegion, loc.x, loc.y)) {
+                            chosenTroopId = troopId;
+                        }
+                    }
+
+                    // The special-biome resident, placed before the level band
+                    // and the era elites can crowd it out. It yields only to the
+                    // rarity above, and only for this event: `specialPlaced` is
+                    // still false, so it claims the next one instead and the
+                    // guarantee holds on any map with two events to give.
+                    if (chosenTroopId === null && !specialPlaced && specialPool.length > 0) {
                         const specialHere = specialPool.filter(enc =>
                             BSE.Helpers.canTroopSpawnInRegion(enc.troopId, currentRegion, loc.x, loc.y));
                         if (specialHere.length > 0) {
@@ -2772,6 +3201,12 @@
                 if (chosenTroopId !== null && BSE.Helpers.isSpecialTroop(chosenTroopId)) {
                     specialPlaced = true;
                 }
+                // Read outside the block for the same reason: a rarity restored
+                // from the per-tile cache is the same individual standing where
+                // it was left, and must not be joined by a second one.
+                if (chosenTroopId !== null && BSE.Helpers.isRarityTroop(chosenTroopId)) {
+                    rarityPlaced = true;
+                }
                 // Same reason: a water-dweller restored from the per-tile cache
                 // settles the guarantee just as a freshly drawn one does, so a
                 // revisited shore is not re-stocked with an extra fish every
@@ -2844,7 +3279,7 @@
     // teach. See troopDataAllowedInPopulation.
     BSE.Helpers.isSpawnableTroopData = function(troop) {
         return !!(troop && troop.members && troop.members.length &&
-            !troop._bseReinforced && !troop._bsePetrodemon &&
+            !troop._bseReinforced && !troop._bsePetrodemon && !troop._bseRarity &&
             BSE.Helpers.troopDataAllowedInPopulation(troop) &&
             BSE.Helpers.troopDataAllowedInMagic(troop));
     };
@@ -2967,7 +3402,12 @@
         });
         // Species keys ride along per member: a reinforced troop can mix two
         // procedural alien species, which one key on the troop cannot express.
+        // A rarity's key rides the same way, and for a sharper reason: a
+        // one-of-a-kind creature that was dragged into somebody else's fight
+        // still has to be met, named and written into the codex, and the scratch
+        // troop it ends up in carries no key of its own.
         const speciesKeys = members.map(() => base._alienSpeciesKey || null);
+        const rarityKeys = members.map(() => base._bseRarityKey || null);
         const joined = [];
         let slot = base.members.length; // joiner slots start after base members
 
@@ -2981,6 +3421,7 @@
                 memberIndexes.push(members.length);
                 members.push({ enemyId: m.enemyId, x: pos.x, y: pos.y, hidden: false });
                 speciesKeys.push(troop._alienSpeciesKey || null);
+                rarityKeys.push(troop._bseRarityKey || null);
             }
             if (!memberIndexes.length) continue;
             joined.push({
@@ -3000,6 +3441,7 @@
         // page addressing "enemy #2" would otherwise land on a newcomer.
         scratch.pages = base.pages;
         scratch._alienSpeciesKeys = speciesKeys.some(k => k) ? speciesKeys : null;
+        scratch._bseRarityKeys = rarityKeys.some(k => k) ? rarityKeys : null;
         return { troopId: slotId, joined: joined };
     };
 
@@ -4105,6 +4547,47 @@
     // 10. Game_Event - updateCharacterSprite
     // ========================================================================
 
+    // A procedural creature wears its base enemy's sprite, and on its own that
+    // would make the rarest thing in the world look like the commonest: an
+    // alien species and an Earth rarity are both "some existing monster's
+    // sheet" as far as the wardrobe is concerned. So both are re-hued. The
+    // shift is the creature's OWN, rolled off its key rather than picked from a
+    // list, so two aliens of one planet are not the same colour and a rarity is
+    // a colour nothing else on the map is wearing. It is also kept clear of the
+    // base sprite's own hue, because a shift that lands back on the original is
+    // a shift nobody can see.
+    const PROC_HUE_MIN_SHIFT = 40;  // degrees clear of the sprite's own hue
+
+    BSE.Helpers.getProceduralCreatureHue = function(key, baseHue) {
+        if (!key) return null;
+        // Avalanched before the modulo. The keys of one world's roster differ by
+        // a character or two, and a plain FNV of them lands them in neighbouring
+        // buckets: two dozen creatures came out wearing half a dozen colours
+        // between them, in matched pairs, which is worse than not re-hueing at
+        // all - it reads as a palette rather than as a creature.
+        let h = BSE.Helpers.getBiomeSeed('hue:' + key);
+        h = Math.imul(h ^ (h >>> 16), 2246822507) >>> 0;
+        h = Math.imul(h ^ (h >>> 13), 3266489909) >>> 0;
+        h = (h ^ (h >>> 16)) >>> 0;
+        let hue = h % 360;
+        const base = ((baseHue || 0) % 360 + 360) % 360;
+        // Half a turn away if the shift landed back on the hue the sheet already
+        // wears. A rotation rather than a re-roll into a narrow window: a
+        // re-roll bunches every pushed creature into the same arc, and half a
+        // turn is guaranteed to clear the gap (180 - gap > 140 whenever the gap
+        // was under 40) without disturbing the spread.
+        let gap = Math.abs(hue - base);
+        if (gap > 180) gap = 360 - gap;
+        if (gap < PROC_HUE_MIN_SHIFT) hue = (hue + 180) % 360;
+        return hue;
+    };
+
+    // The key a troop's look is re-hued from, or null for an ordinary creature.
+    BSE.Helpers.getProceduralTroopKey = function(troop) {
+        if (!troop) return null;
+        return troop._bseRarityKey || troop._alienSpeciesKey || null;
+    };
+
     Game_Event.prototype.updateCharacterSprite = function() {
         if (this._fixedTroopId && this._fixedTroopId > 0) {
             const troop = $dataTroops[this._fixedTroopId];
@@ -4116,7 +4599,11 @@
             if (spriteData[enemyId]) {
                 this.setImage("Monsters/" + spriteData[enemyId], this._characterIndex);
                 const hue = ($dataEnemies[enemyId] && $dataEnemies[enemyId].battlerHue) || 0;
-                this._characterHue = hue;
+                const procKey = BSE.Helpers.getProceduralTroopKey(troop);
+                const procHue = procKey
+                    ? BSE.Helpers.getProceduralCreatureHue(procKey, hue)
+                    : null;
+                this._characterHue = procHue === null ? hue : procHue;
             }
         }
     };
@@ -4744,8 +5231,22 @@
         BSE.Helpers.ensureChaosTroops();
         _BSE_Game_Troop_setup.call(this, troopId);
         const troop = $dataTroops[troopId];
+        if (!troop) return;
+        // A rarity is met once, and this is the moment: the fight starting.
+        // Seeing one across a field and walking away leaves it out there, which
+        // is why this is not done at spawn time (section 16b).
+        const rarityKeys = troop._bseRarityKeys ||
+            (troop._bseRarityKey ? this.members().map(() => troop._bseRarityKey) : null);
+        if (rarityKeys) {
+            this.members().forEach((e, i) => {
+                const r = rarityKeys[i] ? BSE.Helpers.findRarity(rarityKeys[i]) : null;
+                if (!r) return;
+                $gameSystem.recordRarity(r);
+                e._bseRarityName = r.name;
+            });
+        }
         const GS = window.GalaxySim;
-        if (!troop || !GS || !GS.findAlienSpecies) return;
+        if (!GS || !GS.findAlienSpecies) return;
         const keys = troop._alienSpeciesKeys ||
             (troop._alienSpeciesKey ? this.members().map(() => troop._alienSpeciesKey) : null);
         if (!keys) return;
@@ -4763,7 +5264,205 @@
     const _BSE_Game_Enemy_originalName = Game_Enemy.prototype.originalName;
     Game_Enemy.prototype.originalName = function () {
         if (this._alienSpeciesName) return this._alienSpeciesName;
+        if (this._bseRarityName) return this._bseRarityName;
         return _BSE_Game_Enemy_originalName.call(this);
+    };
+
+    // ========================================================================
+    // 16b. RARITIES - the creatures a world holds exactly one of
+    // ========================================================================
+    // A rarity is a creature that exists once. Not once per map, not once per
+    // savegame: once in the world. It is built the way an alien species is
+    // built - a base enemy for its look and its numbers, a seeded stream, and a
+    // name nothing else carries (window.GalaxySim.proceduralSpecies*) - and the
+    // whole difference between the two is where they stand and how long they
+    // last. An alien roams a planet's surface for as long as the planet is
+    // there. A rarity roams Earth until it is met, and then it is gone.
+    //
+    // The world is dealt its roster from its own seed, so two savegames of one
+    // world are hunting the same creatures, and the party that meets one takes
+    // it off the board for everybody who ever plays there. Which is the point:
+    // a rarity is not content, it is an event.
+    //
+    // What happens when one is met:
+    //   - it is written into the world's codex (the Rarities page of the
+    //     bestiary), with the name, the level and the page it was composed
+    //   - it never spawns again, anywhere, in any savegame of that world
+    //
+    // Meeting means the FIGHT starting, not the sprite appearing: a creature
+    // seen across a field and walked away from is still out there, and the
+    // event it was standing on keeps it (the procedural map remembers which
+    // troop each of its events was dealt), so it is the same individual waiting
+    // on the same square rather than a second copy of a unique animal.
+    //
+    // It is marked as what it is before the party is close enough to ask: its
+    // level plate is drawn in gold at any level (BattleSystemEnhancedLevelDisplay)
+    // and its map sprite wears a hue no ordinary creature of that species wears.
+    const RARITY_ROSTER = 24;        // one-of-a-kind creatures a world holds
+    const RARITY_MAP_CHANCE = 0.02;  // chance a populated map fields one
+    // How far from the local band a rarity may be and still turn up there. The
+    // roster is spread over the whole ladder and the ground is not, so without
+    // this a level 5 country would field the level 90 one as readily as its own.
+    const RARITY_BAND_REACH = 12;
+
+    // The world's roster, dealt once from the world seed and cached per world.
+    // Empty when the procedural-species algorithm is not up (GalaxySim owns it):
+    // no rarities that session rather than a second copy of the algorithm here.
+    let _rarityCache = null;
+
+    function raritySeedInt() {
+        const WM = window.WorldManager;
+        const info = (WM && typeof WM.worldInfo === 'function') ? WM.worldInfo() : null;
+        const seed = (info && info.seed) || (WM && WM.activeWorldName) || 'esoteric';
+        return BSE.Helpers.getBiomeSeed('rarity:' + seed);
+    }
+
+    BSE.Helpers.getRarityRoster = function() {
+        const WM = window.WorldManager;
+        const worldName = (WM && WM.activeWorldName) || '';
+        if (_rarityCache && _rarityCache.world === worldName) return _rarityCache.value;
+        const GS = window.GalaxySim;
+        if (!GS || !GS.proceduralSpeciesPool || !GS.proceduralSpeciesName || !GS.proceduralRng) {
+            return [];
+        }
+        const seed = raritySeedInt();
+        const rnd = GS.proceduralRng(seed);
+        const out = [];
+        const used = new Set();
+        for (let i = 0; i < RARITY_ROSTER; i++) {
+            // Each one is dealt its own rung of the ladder first, so the roster
+            // is spread over the whole world rather than bunched where the
+            // database happens to hold the most creatures. Then the look is
+            // drawn from the creatures actually built at that rung, which is
+            // the alien pool's own rule.
+            const level = 1 + Math.floor(rnd() * 100);
+            const pool = GS.proceduralSpeciesPool(level);
+            if (!pool.length) continue;
+            let eid = 0;
+            for (let tries = 0; tries < 24; tries++) {
+                eid = pool[Math.floor(rnd() * pool.length)];
+                if (!used.has(eid)) break;
+            }
+            if (!eid) continue;
+            used.add(eid);
+            out.push({
+                key: 'rar' + seed.toString(36) + '_' + i,
+                name: GS.proceduralSpeciesName(Math.imul(seed, 2654435761) + i * 7919 + 13),
+                enemyId: eid,
+                level: GS.proceduralSpeciesLevel($dataEnemies[eid]) || level
+            });
+        }
+        if (out.length) _rarityCache = { world: worldName, value: out };
+        return out;
+    };
+
+    // Deal again on the next read: another world is another roster.
+    BSE.Helpers.resetRarityRoster = function() {
+        _rarityCache = null;
+    };
+
+    BSE.Helpers.findRarity = function(key) {
+        return BSE.Helpers.getRarityRoster().find(r => r.key === key) || null;
+    };
+
+    // Already met, in this savegame or in any other one of this world.
+    BSE.Helpers.isRarityMet = function(key) {
+        const codex = ($gameSystem && $gameSystem.rarityCodex) ? $gameSystem.rarityCodex() : {};
+        return !!codex[key];
+    };
+
+    // Still out there, and still allowed to roam this world: a zombie world
+    // holds no rarity that is not dead or an animal, and an empty one holds no
+    // rarity that reads as a person, exactly as it holds no ordinary creature
+    // that does.
+    BSE.Helpers.getUnmetRarities = function() {
+        return BSE.Helpers.getRarityRoster().filter(r => {
+            if (BSE.Helpers.isRarityMet(r.key)) return false;
+            const data = $dataEnemies[r.enemyId];
+            if (!data) return false;
+            return BSE.Helpers.troopDataAllowedInPopulation({ members: [{ enemyId: r.enemyId }] }) &&
+                BSE.Helpers.troopDataAllowedInMagic({ members: [{ enemyId: r.enemyId }] });
+        });
+    };
+
+    // Session-local synthetic troops, one per rarity: the creature's base enemy
+    // alone, tagged with its key. Built exactly as the alien species troops are
+    // (see speciesTroopId), and rebuilt on demand because $dataTroops does not
+    // survive a save and load.
+    const _rarityTroopCache = {};
+    function rarityTroopId(r) {
+        const cached = _rarityTroopCache[r.key];
+        if (cached && $dataTroops[cached] && $dataTroops[cached]._bseRarityKey === r.key) return cached;
+        const troopId = $dataTroops.length;
+        $dataTroops.push({
+            id: troopId, name: r.name, pages: [],
+            members: [{ enemyId: r.enemyId, x: 400, y: 300, hidden: false }],
+            _bseRarity: true, _bseRarityKey: r.key
+        });
+        _rarityTroopCache[r.key] = troopId;
+        return troopId;
+    }
+    BSE.Helpers.getRarityTroopId = function(key) {
+        const r = BSE.Helpers.findRarity(key);
+        return r ? rarityTroopId(r) : 0;
+    };
+
+    // Is this troop one of the one-of-a-kind creatures? Read by the level plate
+    // (which draws it gold) and by the map sprite (which re-hues it).
+    BSE.Helpers.isRarityTroop = function(troopId) {
+        const troop = $dataTroops[troopId];
+        return !!(troop && troop._bseRarity);
+    };
+
+    BSE.Helpers.getRarityKeyForTroop = function(troopId) {
+        const troop = $dataTroops[troopId];
+        return (troop && troop._bseRarityKey) || null;
+    };
+
+    // The one this map fields, if it fields one at all: rolled once per map, and
+    // only from the creatures still out there whose own level is near the band
+    // the place is pitched at. Null the rest of the time, which is almost always.
+    BSE.Helpers.rollRarityForMap = function(band) {
+        if (Math.random() >= RARITY_MAP_CHANCE) return null;
+        const unmet = BSE.Helpers.getUnmetRarities();
+        if (!unmet.length) return null;
+        let pool = unmet;
+        if (band && Number.isFinite(band.min) && Number.isFinite(band.max)) {
+            const near = unmet.filter(r =>
+                r.level >= band.min - RARITY_BAND_REACH &&
+                r.level <= band.max + RARITY_BAND_REACH);
+            // Nothing of this world's remaining rarities belongs at this level:
+            // the map fields none rather than one wildly out of place.
+            if (!near.length) return null;
+            pool = near;
+        }
+        return pool[Math.floor(Math.random() * pool.length)];
+    };
+
+    // The codex, world-shared like the petrodemons' and the aliens' (see the
+    // bestiary block in WorldManager): meeting one takes it off the board for
+    // every savegame of the world, which is what makes it unique rather than
+    // merely rare.
+    Game_System.prototype.rarityCodex = function() {
+        if (!this._rarityCodex) this._rarityCodex = {};
+        return this._rarityCodex;
+    };
+
+    Game_System.prototype.recordRarity = function(r) {
+        if (!r || !r.key) return;
+        const codex = this.rarityCodex();
+        if (codex[r.key]) return;
+        const ED = window.EnemyDescription;
+        codex[r.key] = {
+            key: r.key,
+            name: r.name,
+            enemyId: r.enemyId,
+            level: r.level || 0,
+            // Composed here and kept, for the same reason a petrodemon's page
+            // is: the creature is gone from the world the moment it is met, and
+            // the sentence has to travel with the record.
+            description: (ED && ED.compose) ? ED.compose('rarity', r.key) : ''
+        };
     };
 
     // ========================================================================
@@ -4953,17 +5652,20 @@
         });
     }
 
-    // What the bestiary page reads out. Composed here rather than templated in
-    // the note, because a petrodemon is gone from the database the moment the
-    // next one is raised: the sentence has to travel with the codex entry.
-    function petroDescription() {
-        const body = BSE.Helpers.bi18nList('petrodemon.body');
-        const grafts = BSE.Helpers.bi18nList('petrodemon.grafts');
-        const origin = BSE.Helpers.bi18nList('petrodemon.origin');
-        if (!body || !grafts || !origin) return '';
-        return T('Battle.petrodemon.desc', {
-            body: petroPick(body), grafts: petroPick(grafts), origin: petroPick(origin)
-        });
+    // What the bestiary page reads out. Composed rather than templated in the
+    // note, because a petrodemon is gone from the database the moment the next
+    // one is raised: the sentence has to travel with the codex entry.
+    //
+    // The composing is window.EnemyDescription.compose's, which is the same
+    // service the rarities and the alien species use: one sentence shape, one
+    // set of phrase banks per creature kind, one voice across all three pages
+    // of the codex. It is seeded on the demon's OWN seed - the number its heap,
+    // its sheen and its grafts were rolled from - so the page and the creature
+    // are rolled together and the page never changes under it.
+    function petroDescription(seed) {
+        const ED = window.EnemyDescription;
+        if (!ED || typeof ED.compose !== 'function') return '';
+        return ED.compose('petrodemon', 'petro:' + seed);
     }
 
     // The 2D portrait is only ever the fallback (a battle without the 3D
@@ -5076,7 +5778,7 @@
 
         const seed = 1 + Math.floor(Math.random() * 0x7ffffffe);
         const name = petroName();
-        const description = petroDescription();
+        const description = petroDescription(seed);
         const enemyId = petroEnemySlot();
         const enemy = $dataEnemies[enemyId];
         enemy.name = name;

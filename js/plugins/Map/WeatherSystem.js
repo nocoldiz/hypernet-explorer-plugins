@@ -380,6 +380,20 @@
   // Cache for puddle template
   let cachedPuddleTemplate = null;
 
+  /**
+   * The world map (315) and the procedural square (636) never take puddles.
+   * The first draws a whole world square per tile, the second is rebuilt from
+   * scratch on every move, so an event dropped on either only litters it.
+   */
+  function puddlesAllowedHere() {
+    if (!$gameMap || typeof $gameMap.mapId !== "function") return false;
+    const WMR = window.WorldMapReturn;
+    const worldMapId = (WMR && WMR.worldMapId) || 315;
+    const procMapId = (WMR && WMR.procMapId) || 636;
+    const id = $gameMap.mapId();
+    return id !== worldMapId && id !== procMapId;
+  }
+
   // Cache for valid spawn tiles (invalidated on map change)
   let _cachedValidTiles = null;
   let _cachedValidTilesMapId = -1;
@@ -2045,6 +2059,7 @@
     spawnPuddles(count = 5) {
       if (this.isInterior) return;
       if (!$gameMap || !$dataMap) return;
+      if (!puddlesAllowedHere()) return;
 
       // Only spawn during rain/storm
       if (

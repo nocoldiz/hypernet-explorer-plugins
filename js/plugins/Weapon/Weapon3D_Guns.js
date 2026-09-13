@@ -7543,32 +7543,36 @@
       },
 
       /**
-       * The hilt every held shape grows out of: the pistol's grip, wrapped, with
-       * the frame's pommel under it. One place, so the hand is the same hand on
-       * all of them.
+       * Where the hand closes on a folded shape: a wrapped length of the
+       * shape's OWN haft, with the last panel of the fold turned over the butt
+       * of it.
+       *
+       * The frame used to bolt the pistol's grip onto the back of everything it
+       * turned into, so a spear, a maul and a book all carried a gun handle
+       * hanging off them behind the part that did the work. A folded weapon
+       * carries no handle that is not part of the fold: the haft IS the handle,
+       * and this only marks off the stretch of it that is held.
        */
-      _vectorHilt(group, mats, opts) {
+      _vectorWrap(group, mats, opts) {
         const o = opts || {};
         const len = o.len || 0.12;
-        // The hilt runs BEHIND the head, in line with it: a weapon whose handle
-        // stands off to one side reads as broken, not as folded.
+        // The held length runs BEHIND the head, in line with it: a weapon whose
+        // handle stands off to one side reads as broken, not as folded.
         const z = o.z === undefined ? -0.09 : o.z;
-        const grip = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.015, 0.018, len, this.seg(10, 6)), mats.polymer);
-        grip.rotation.x = Math.PI / 2;
-        grip.position.set(0, 0, z);
-        group.add(grip);
+        const r = o.r === undefined ? 0.014 : o.r;
         const wraps = this.isLowDetail() ? 2 : 4;
         for (let i = 0; i < wraps; i++) {
           const wrap = new THREE.Mesh(
-            new THREE.TorusGeometry(0.0175, 0.0026, this.seg(5, 3), this.seg(12, 7)), mats.black);
+            new THREE.TorusGeometry(r + 0.003, 0.0026, this.seg(5, 3), this.seg(12, 7)), mats.black);
           wrap.rotation.y = Math.PI / 2;
           wrap.position.set(0, 0, z - len / 2 + (i + 0.6) * (len / (wraps + 1)));
           group.add(wrap);
         }
-        const pommel = new THREE.Mesh(new THREE.OctahedronGeometry(0.019, 0), mats.accent);
-        pommel.position.set(0, 0, z - len / 2 - 0.012);
-        group.add(pommel);
+        const cap = new THREE.Mesh(
+          new THREE.CylinderGeometry(r + 0.005, r + 0.002, 0.012, this.seg(8, 5)), mats.accent);
+        cap.rotation.x = Math.PI / 2;
+        cap.position.set(0, 0, z - len / 2 - 0.006);
+        group.add(cap);
         return group;
       },
 
@@ -7578,7 +7582,14 @@
         const group = new THREE.Group();
         const mats = this._vectorGunPalette();
         const runes = this._vectorRuneMats();
-        this._vectorHilt(group, mats, { len: 0.1, z: -0.075 });
+        // The handle is the frame folded back on itself: a short faceted haft
+        // in line with the blade, and nothing hanging under it.
+        const haft = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.013, 0.016, 0.1, 6), mats.black);
+        haft.rotation.x = Math.PI / 2;
+        haft.position.set(0, 0, -0.07);
+        group.add(haft);
+        this._vectorWrap(group, mats, { len: 0.07, z: -0.07, r: 0.015 });
 
         const guard = new THREE.Mesh(
           new THREE.TorusGeometry(0.03, 0.005, this.seg(6, 4), 6), mats.accent);
@@ -7623,13 +7634,15 @@
         const group = new THREE.Group();
         const mats = this._vectorGunPalette();
         const runes = this._vectorRuneMats();
-        this._vectorHilt(group, mats, { len: 0.18, z: -0.12 });
 
+        // One haft, run all the way back through the hand: the head is on one
+        // end of it and the hand is on the other.
         const haft = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.011, 0.013, 0.34, this.seg(8, 5)), mats.black);
+          new THREE.CylinderGeometry(0.011, 0.014, 0.5, this.seg(8, 5)), mats.black);
         haft.rotation.x = Math.PI / 2;
-        haft.position.set(0, 0, 0.15);
+        haft.position.set(0, 0, 0.07);
         group.add(haft);
+        this._vectorWrap(group, mats, { len: 0.14, z: -0.1, r: 0.013 });
 
         // The head: a core the haft ends in and four slabs hung off it, each one
         // floating a little clear of the rest.
@@ -7666,13 +7679,13 @@
         const group = new THREE.Group();
         const mats = this._vectorGunPalette();
         const scarlet = this._glow(0xFF2A4A, 1.3);
-        this._vectorHilt(group, mats, { len: 0.14, z: -0.1 });
 
         const haft = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.012, 0.013, 0.26, this.seg(8, 5)), mats.black);
+          new THREE.CylinderGeometry(0.012, 0.014, 0.42, this.seg(8, 5)), mats.black);
         haft.rotation.x = Math.PI / 2;
-        haft.position.set(0, 0, 0.11);
+        haft.position.set(0, 0, 0.03);
         group.add(haft);
+        this._vectorWrap(group, mats, { len: 0.13, z: -0.105, r: 0.013 });
 
         // Two crescents back to back, both cut from the same disc.
         for (const side of [-1, 1]) {
@@ -7717,7 +7730,13 @@
         const group = new THREE.Group();
         const mats = this._vectorGunPalette();
         const runes = this._vectorRuneMats();
-        this._vectorHilt(group, mats, { len: 0.13, z: -0.095 });
+        // The haft the lashes are crowned on, held at its own back end.
+        const haft = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.013, 0.015, 0.24, this.seg(8, 5)), mats.black);
+        haft.rotation.x = Math.PI / 2;
+        haft.position.set(0, 0, -0.06);
+        group.add(haft);
+        this._vectorWrap(group, mats, { len: 0.12, z: -0.11, r: 0.014 });
 
         const crown = new THREE.Mesh(
           new THREE.CylinderGeometry(0.024, 0.018, 0.05, this.seg(10, 6)), mats.black);
@@ -7763,13 +7782,14 @@
         const group = new THREE.Group();
         const mats = this._vectorGunPalette();
         const runes = this._vectorRuneMats();
-        this._vectorHilt(group, mats, { len: 0.16, z: -0.12 });
 
         const shaft = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.01, 0.012, 0.42, this.seg(8, 5)), mats.black);
+          new THREE.CylinderGeometry(0.01, 0.013, 0.56, this.seg(8, 5)), mats.black);
         shaft.rotation.x = Math.PI / 2;
-        shaft.position.set(0, 0, 0.16);
+        shaft.position.set(0, 0, 0.09);
         group.add(shaft);
+        this._vectorWrap(group, mats, { len: 0.14, z: -0.11, r: 0.013 });
+
         const collars = this.isLowDetail() ? 2 : 4;
         for (let i = 0; i < collars; i++) {
           const collar = new THREE.Mesh(
@@ -8029,13 +8049,14 @@
         const group = new THREE.Group();
         const mats = this._vectorGunPalette();
         const blood = this._glow(0xFF2A3C, 1.25);
-        this._vectorHilt(group, mats, { len: 0.16, z: -0.12 });
 
         const shaft = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.0095, 0.012, 0.56, this.seg(8, 5)), mats.black);
+          new THREE.CylinderGeometry(0.0095, 0.013, 0.72, this.seg(8, 5)), mats.black);
         shaft.rotation.x = Math.PI / 2;
-        shaft.position.set(0, 0, 0.24);
+        shaft.position.set(0, 0, 0.16);
         group.add(shaft);
+        this._vectorWrap(group, mats, { len: 0.15, z: -0.12, r: 0.013 });
+
         const grips = this.isLowDetail() ? 2 : 3;
         for (let i = 0; i < grips; i++) {
           const collar = new THREE.Mesh(
@@ -8236,9 +8257,9 @@
           group.add(cone);
         }
 
-        // Spellblaster: a cast ring standing over the barrel, the spell held in
-        // it turning as the piece turns.
-        if (on('spellblaster')) {
+        // Solomon incantation: a reading ring standing over the barrel, the
+        // words held in it turning as the piece turns.
+        if (on('solomonIncantation')) {
           const ring = new THREE.Mesh(new THREE.TorusGeometry(0.02, 0.004, this.seg(6, 3), this.seg(16, 8)), glow);
           ring.position.set(0, up + 0.034, fwd + 0.055);
           ring.userData.pulse = { min: 0.25, max: 1.3, freq: 1.0 };
@@ -8281,8 +8302,6 @@
         return group;
       },
 
-      // Where the fittings sit on the two shapes with a model written by hand.
-      // Everything else is measured (applyVectorFrame).
       // Grimoire: the shape the frame is not supposed to have. Em's limit break
       // (window.LimitBreak, the Hyper) opens the gun into a book whatever it was
       // standing as a moment earlier: black boards, gold leaf and gold furniture,
@@ -8298,28 +8317,26 @@
         const leaf = this._glow(0xFFD87A, 1.15);
         const paper = this._mat(0xE8DCBE, { roughness: 0.92, metalness: 0.02 });
 
-        this._vectorHilt(group, mats, { len: 0.1, z: -0.1 });
-
-        // The book itself is built lying flat and then stood up, so it is read
-        // the way a book is read: covers and pages turned toward whoever is
-        // holding it rather than edge on to them. Only the boards, the pages and
-        // what burns above them are tilted; the hilt and the fittings stay in
-        // the hand's own frame.
+        // The book is built lying flat and then stood up, so it is read the way
+        // a book is read: covers and pages turned toward whoever is holding it
+        // rather than edge on to them. It is held by its own boards, with no
+        // haft and no hilt under it: a book with a gun handle screwed to its
+        // spine is not a book.
         const book = new THREE.Group();
         book.rotation.x = -Math.PI * 0.42;
         book.position.set(0, 0.0, 0.04);
         group.add(book);
 
-        // The boards: two slabs of black, hinged on a gold spine.
+        // Two boards on a gold spine, and that is the whole binding. It used to
+        // carry a trim slab under each board, nine leaves each turning on a
+        // clock of its own, five burning rings stacked over them and a clasp,
+        // which at the size the thing is actually seen at read as a bundle of
+        // clutter rather than as a book.
         for (const side of [-1, 1]) {
           const board = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.012, 0.21), mats.black);
           board.position.set(side * 0.085, 0, 0.06);
           board.rotation.z = side * 0.12;
           book.add(board);
-          const trim = new THREE.Mesh(new THREE.BoxGeometry(0.166, 0.004, 0.216), gold);
-          trim.position.set(side * 0.085, -0.008, 0.06);
-          trim.rotation.z = side * 0.12;
-          book.add(trim);
         }
         const spine = new THREE.Mesh(
           new THREE.CylinderGeometry(0.014, 0.014, 0.21, this.seg(10, 6)), gold);
@@ -8327,39 +8344,27 @@
         spine.position.set(0, 0, 0.06);
         book.add(spine);
 
-        // The pages: leaves standing along the spine, each one turning on its
-        // own clock, so the book is never still while it is open.
-        const leaves = this.isLowDetail() ? 4 : 9;
-        for (let i = 0; i < leaves; i++) {
-          const t = i / Math.max(1, leaves - 1);
-          const side = i % 2 ? 1 : -1;
+        // One leaf standing either side of the spine, turning: enough for the
+        // book to be alive in the hand and nothing beyond it.
+        for (const side of [-1, 1]) {
           const page = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.002, 0.2), paper);
-          page.position.set(side * (0.02 + t * 0.06), 0.012 + t * 0.006, 0.06);
-          page.rotation.z = side * (0.2 + t * 0.5);
-          page.userData.sway = { axis: 'z', amp: 0.35, freq: 0.7 + t * 0.6, phase: i * 0.8 };
+          page.position.set(side * 0.05, 0.012, 0.06);
+          page.rotation.z = side * 0.34;
+          page.userData.sway = { axis: 'z', amp: 0.3, freq: 0.8, phase: side > 0 ? 0 : 1.4 };
           book.add(page);
         }
 
-        // What is written on them, burning a line at a time above the open book.
-        const marks = this.isLowDetail() ? 2 : 5;
-        for (let i = 0; i < marks; i++) {
-          const mark = new THREE.Mesh(
-            new THREE.TorusGeometry(0.02 + i * 0.008, 0.0025, this.seg(5, 3), this.seg(14, 8)),
-            runes[i % runes.length]);
-          mark.position.set(0, 0.06 + i * 0.014, 0.06);
-          mark.rotation.x = Math.PI / 2;
-          mark.userData.spin = { axis: 'z', speed: (i % 2 ? -1 : 1) * (0.5 + i * 0.25) };
-          mark.userData.pulse = { min: 0.25, max: 1.4, freq: 0.8, phase: i };
-          book.add(mark);
-        }
-
-        // The clasp the book is read over the top of, and the point every spell
-        // leaves from.
-        const clasp = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.02, 0.03), gold);
-        clasp.position.set(0, 0.01, 0.17);
-        book.add(clasp);
+        // What is written on them: one ring of the name burning over the open
+        // book, and the point every spell leaves from.
+        const mark = new THREE.Mesh(
+          new THREE.TorusGeometry(0.03, 0.0028, this.seg(5, 3), this.seg(14, 8)), runes[0]);
+        mark.position.set(0, 0.05, 0.06);
+        mark.rotation.x = Math.PI / 2;
+        mark.userData.spin = { axis: 'z', speed: 0.6 };
+        mark.userData.pulse = { min: 0.25, max: 1.4, freq: 0.8 };
+        book.add(mark);
         const ember = new THREE.Mesh(new THREE.OctahedronGeometry(0.018, 0), leaf);
-        ember.position.set(0, 0.045, 0.17);
+        ember.position.set(0, 0.04, 0.17);
         ember.userData.gun = 'muzzle';
         ember.userData.bob = { axis: 'y', amp: 0.012, freq: 1.1 };
         ember.userData.pulse = { min: 0.4, max: 1.6, freq: 1.2 };
@@ -8369,6 +8374,8 @@
         return group;
       },
 
+      // Where the fittings sit on each shape with a model written by hand.
+      // Everything else is measured (applyVectorFrame).
       VECTOR_FIT_LAYOUTS: {
         gun: { fwd: 0.09, up: 0.055 },
         blade: { fwd: 0.12, up: 0.03 },

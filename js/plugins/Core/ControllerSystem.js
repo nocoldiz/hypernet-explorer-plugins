@@ -343,6 +343,27 @@
                 horn: { face: 'L3' },
                 exit: { face: 'START', key: 'wmrToggle' }
             },
+            // At the helm of something that flies: a starship over a world, or
+            // a broom. The left stick still yaws and throttles the way it
+            // steers on the ground, the RIGHT STICK IS THE NOSE, and the
+            // shoulders trim the altitude - so every flight control a keyboard
+            // has is reachable from the pad as well.
+            //
+            // `thrust` is deliberately not on 'ok': on a keyboard 'ok' is
+            // Space, and Space is the descend trim. The face/key split is
+            // exactly what lets A be thrust on the pad while Space stays trim.
+            fly: {
+                thrust: { face: 'A', key: 'up' },
+                brake: { face: 'B', key: 'down' },
+                boost: { face: 'X', key: 'shift' },
+                view: { face: 'Y' },
+                descend: { face: 'L1', key: 'ok' },
+                climb: { face: 'R1', key: 'pageup' },
+                zoomOut: { face: 'L2' },
+                zoomIn: { face: 'R2' },
+                land: { face: 'R3' },
+                exit: { face: 'START', key: 'wmrToggle' }
+            },
             walk: {
                 jump: { face: 'A', key: 'ok' },
                 back: { face: 'B', key: 'cancel' },
@@ -728,11 +749,9 @@
                 this.unstamp(el);
                 return;
             }
-            // The face reads ahead of the word on a Back button (it IS the
-            // control) and after it on a verb, which reads as the sentence the
-            // button is: "Discard (Y)".
-            const first = !!(el.classList && el.classList.contains('back-button'));
-            this.stamp(el, this.glyph(role), first);
+            // The face always reads after the word, Back included: the button
+            // is the sentence and the face is what presses it, "Back (B)".
+            this.stamp(el, this.glyph(role), false);
         },
 
         // The tab strips: L1 and R1 step them everywhere, so a strip says so at
@@ -769,6 +788,13 @@
             const existing = el.querySelector && el.querySelector('.' + this.BADGE_CLASS);
             if (existing) {
                 if (existing.textContent !== face) existing.textContent = face;
+                // A badge stamped by an older build, or by a strip that wants
+                // it at the other end, is moved rather than left where it was.
+                const wanted = first ? el.firstChild : el.lastChild;
+                if (wanted !== existing) {
+                    if (first) el.insertBefore(existing, el.firstChild);
+                    else el.appendChild(existing);
+                }
                 return;
             }
             const badge = document.createElement('span');
@@ -806,14 +832,21 @@
         // somewhere to go that way.
         RAIL_ID: 'pad-rails',
 
-        railLayer() {
+        // Raised only while there is a rail to hang on it. It used to be built
+        // on the first frame of the game and left standing for the session: an
+        // empty div the size of the window, over everything, which every
+        // overlay that asks whether a DOM page is covering the game view
+        // (window.FrameBudget, Core/ParchmentToast.js) had to read as a page.
+        // The party cards (UI/PartyHud.js) took themselves down on every map
+        // because of it.
+        railLayer(create) {
             let layer = document.getElementById(this.RAIL_ID);
-            if (!layer) {
+            if (!layer && create) {
                 layer = document.createElement('div');
                 layer.id = this.RAIL_ID;
                 if (document.body) document.body.appendChild(layer);
             }
-            return layer;
+            return layer || null;
         },
 
         scrollPanes() {
@@ -837,10 +870,10 @@
         },
 
         updateRails() {
-            const layer = this.railLayer();
-            if (!layer) return;
             const panes = this.active() ? this.scrollPanes() : [];
             const wanted = panes.length * 2;
+            const layer = this.railLayer(wanted > 0);
+            if (!layer) return;
             while (layer.children.length < wanted) {
                 const chip = document.createElement('div');
                 chip.className = 'pad-rail-chip';
@@ -851,6 +884,12 @@
                 if (!last) break;
                 layer.removeChild(last);
                 if (layer.lastChild === last) break;
+            }
+            // Nothing left on it: the layer goes out of the document rather
+            // than hanging there empty over the whole screen.
+            if (!wanted) {
+                if (layer.parentNode) layer.parentNode.removeChild(layer);
+                return;
             }
             panes.forEach((pane, i) => {
                 const box = pane.getBoundingClientRect();

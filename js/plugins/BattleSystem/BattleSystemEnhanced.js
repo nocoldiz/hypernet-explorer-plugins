@@ -37,26 +37,27 @@
  * @text Level Gap: Fair Fight
  * @desc Levels a monster may outrank the party and still be a fight they can win. Damping and warnings start past this.
  * @type number
- * @default 6
+ * @default 4
  *
  * @param levelGapHard
  * @text Level Gap: Hard Fight
  * @desc Levels a monster may outrank the party and still be beatable at a cost. Past this the fight is out of reach.
  * @type number
- * @default 8
+ * @default 10
  *
  * @param levelDampScale
  * @text Level Gap Scale
  * @desc Higher = gentler damping. Level gap is divided by this.
  * @type number
- * @default 4
+ * @decimals 2
+ * @default 9.30
  *
  * @param levelDampCurve
  * @text Level Gap Curve
  * @desc Exponent of the damping curve. Above 1 it bites harder as the gap widens.
  * @type number
  * @decimals 2
- * @default 2.2
+ * @default 1.30
  *
  * @param levelDampFloor
  * @text Level Gap Floor
@@ -78,12 +79,12 @@
  * @type number
  * @default 3.5
  *
- * @param levelPressurePerLevel
- * @text Level Pressure Per Level
- * @desc Extra damage a monster deals to the party per level it outranks them past the fair gap (0.50 = +50%).
+ * @param levelPressureBias
+ * @text Level Pressure Bias
+ * @desc Tilt of the two halves of the gap curve. 1.00 is an exact mirror: the monster gains what the party loses.
  * @type number
- * @decimals 3
- * @default 0.500
+ * @decimals 2
+ * @default 1.00
  *
  * @param levelPressureCap
  * @text Level Pressure Cap
@@ -92,12 +93,19 @@
  * @decimals 2
  * @default 15.00
  *
+ * @param levelPressureHopeless
+ * @text Level Pressure: Out of Reach
+ * @desc Extra pressure per level past the hard gap, where a fight is not meant to be a fight. 0 disables the escalation.
+ * @type number
+ * @decimals 2
+ * @default 0.15
+ *
  * @param levelPressureOutnumber
  * @text Level Pressure: Outnumbered Monster
  * @desc How much of the outnumbered ratio an over-level monster converts into extra damage, so 3v1 does not trivialise it.
  * @type number
  * @decimals 2
- * @default 0.45
+ * @default 1.60
  *
  * @param invisibleHandChipFloorPercent
  * @text Invisible Hand: Chip Floor Percent
@@ -220,9 +228,9 @@
  *
  * @param invisibleHandGearCeiling
  * @text Invisible Hand: Gear Level Ceiling
- * @desc Highest effective-level adjustment an actor's gear can apply toward the party's balancing level.
+ * @desc Highest effective-level adjustment an actor's gear can apply toward the party's balancing level. Levels are the power axis, not gear.
  * @type number
- * @default 6
+ * @default 2
  *
 *
  * @param invisibleHandWeaponDefenseEnabled
@@ -276,7 +284,7 @@
  * @desc How far a hit is pulled from its raw formula value toward the designed hit size. 0 = raw only, 1 = designed pace only.
  * @type number
  * @decimals 2
- * @default 0.70
+ * @default 0.85
  *
  * @param dndActorHits
  * @text D&D Resolution: Hits to Fell an Actor
@@ -477,16 +485,17 @@
     BSE.Params.respawnXVar          = Number(parameters['respawnXVar'] || 26);
     BSE.Params.respawnYVar          = Number(parameters['respawnYVar'] || 27);
     BSE.Params.respawnCountryIDVar  = Number(parameters['respawnCountryIDVar'] || 112);
-    BSE.Params.levelGapFair         = Number(parameters['levelGapFair'] || 6);
-    BSE.Params.levelGapHard         = Number(parameters['levelGapHard'] || 8);
-    BSE.Params.levelDampScale       = Number(parameters['levelDampScale'] || 4);
-    BSE.Params.levelDampCurve       = Number(parameters['levelDampCurve'] || 2.2);
+    BSE.Params.levelGapFair         = Number(parameters['levelGapFair'] || 4);
+    BSE.Params.levelGapHard         = Number(parameters['levelGapHard'] || 10);
+    BSE.Params.levelDampScale       = Number(parameters['levelDampScale'] || 9.30);
+    BSE.Params.levelDampCurve       = Number(parameters['levelDampCurve'] || 1.30);
     BSE.Params.levelDampFloor       = Number(parameters['levelDampFloor'] || 0.005);
     BSE.Params.levelDampLeverageCap = Number(parameters['levelDampLeverageCap'] || 0.40);
     BSE.Params.levelDampLeverageFalloff = Number(parameters['levelDampLeverageFalloff'] || 3.5);
-    BSE.Params.levelPressurePerLevel    = Number(parameters['levelPressurePerLevel'] || 0.500);
+    BSE.Params.levelPressureBias        = Number(parameters['levelPressureBias'] || 1.00);
     BSE.Params.levelPressureCap         = Number(parameters['levelPressureCap'] || 15.00);
-    BSE.Params.levelPressureOutnumber   = Number(parameters['levelPressureOutnumber'] || 0.45);
+    BSE.Params.levelPressureHopeless    = Number(parameters['levelPressureHopeless'] || 0.15);
+    BSE.Params.levelPressureOutnumber   = Number(parameters['levelPressureOutnumber'] || 1.60);
     BSE.Params.invisibleHandChipFloorPercent      = Number(parameters['invisibleHandChipFloorPercent'] || 0.0050);
     BSE.Params.invisibleHandEnabled               = (parameters['invisibleHandEnabled'] !== 'false');
     BSE.Params.invisibleHandLevelGapEnabled         = (parameters['invisibleHandLevelGapEnabled'] !== 'false');
@@ -504,7 +513,7 @@
     BSE.Params.invisibleHandStatCeiling           = Number(parameters['invisibleHandStatCeiling'] || 10.00);
     BSE.Params.invisibleHandGearSpan              = Number(parameters['invisibleHandGearSpan'] || 5);
     BSE.Params.invisibleHandGearFloor             = Number(parameters['invisibleHandGearFloor'] || -2);
-    BSE.Params.invisibleHandGearCeiling           = Number(parameters['invisibleHandGearCeiling'] || 6);
+    BSE.Params.invisibleHandGearCeiling           = Number(parameters['invisibleHandGearCeiling'] || 2);
     BSE.Params.invisibleHandWeaponDefenseEnabled   = (parameters['invisibleHandWeaponDefenseEnabled'] !== 'false');
     BSE.Params.invisibleHandWeaponDefenseScale     = Number(parameters['invisibleHandWeaponDefenseScale'] || 0.0015);
     BSE.Params.invisibleHandWeaponDefenseThreshold = Number(parameters['invisibleHandWeaponDefenseThreshold'] || 60);
@@ -513,7 +522,7 @@
     BSE.Params.invisibleHandOneShotMaxPercent     = Number(parameters['invisibleHandOneShotMaxPercent'] || 0.50);
     BSE.Params.loneMemberMaxEnemies    = Number(parameters['loneMemberMaxEnemies'] || 2);
     BSE.Params.dndResolutionEnabled   = (parameters['dndResolutionEnabled'] !== 'false');
-    BSE.Params.dndPaceWeight          = Number(parameters['dndPaceWeight'] || 0.70);
+    BSE.Params.dndPaceWeight          = Number(parameters['dndPaceWeight'] || 0.85);
     BSE.Params.dndActorHits           = Number(parameters['dndActorHits'] || 9);
     BSE.Params.dndEnemyHits           = Number(parameters['dndEnemyHits'] || 5);
     BSE.Params.dndGapPerLevel         = Number(parameters['dndGapPerLevel'] || 0.15);
@@ -947,8 +956,22 @@
 
     function gapLift(gap, widen) {
         if (gap <= 0) return 1;
+        // The exact mirror of gapDamp: the side that is ahead gains precisely
+        // what the side behind loses, which is what makes these two halves one
+        // curve rather than two. They used to disagree at the very first level
+        // past the fair gap - the damping side entered continuously at 0.955
+        // while this one stepped straight to 1.50 - and that step, multiplied
+        // by the three other layers keyed off the same gap, was the cliff a
+        // party fell off the moment a fight went one level past fair.
+        //
+        // The headcount widens the gap fed into the curve rather than
+        // multiplying on top of its result, so an even fight is never changed
+        // by it and the extra weight arrives gradually as the gap opens.
+        // levelPressureBias tilts the symmetry: 1 is an exact mirror, above 1
+        // hands the monster more than the party lost.
+        const widened = gap * (1 + (widen || 0));
         return Math.min(BSE.Params.levelPressureCap,
-            1 + gap * BSE.Params.levelPressurePerLevel * (1 + (widen || 0)));
+            Math.pow(1 / gapDamp(widened), BSE.Params.levelPressureBias));
     }
 
     /**
@@ -1003,8 +1026,8 @@
      * whether an over-level fight is dangerous or merely long.
      *
      * A monster at the same level presses at 1x. Outranking the party scales
-     * damage upward per level (levelPressurePerLevel), amplified if outnumbered
-     * (levelPressureOutnumber).
+     * damage upward along the mirror of the party's own damping curve,
+     * amplified if outnumbered (levelPressureOutnumber).
      *
      * An under-level monster is damped accordingly, so fauna the party has
      * outgrown deal chip damage.
@@ -1028,7 +1051,22 @@
         // The headcount widens the gap rather than multiplying on top of it,
         // so an even fight is never changed by it and the extra weight comes
         // in gradually as the gap opens instead of arriving as a step.
-        return gapLift(ahead - fair, BSE.Helpers.outnumberedRatio(subject) * BSE.Params.levelPressureOutnumber);
+        let lift = gapLift(ahead - fair,
+            BSE.Helpers.outnumberedRatio(subject) * BSE.Params.levelPressureOutnumber);
+        // Past the hard gap a fight is not meant to be a fight, and the mirror
+        // on its own does not say so loudly enough: it leaves a monster the
+        // party has no business meeting killing them over three or four turns,
+        // which reads as "very hard" rather than "do not walk in here". The
+        // hard gap is the edge of what the world will spawn at them
+        // (BALANCED_SPREAD in the encounters module), so everything past it is
+        // a fixed troop, a boss, or somewhere they walked on purpose, and it
+        // escalates on its own until it one-shots.
+        const beyond = ahead - BSE.Params.levelGapHard;
+        if (beyond > 0 && BSE.Params.levelPressureHopeless > 0) {
+            lift = Math.min(BSE.Params.levelPressureCap,
+                lift * (1 + beyond * BSE.Params.levelPressureHopeless));
+        }
+        return lift;
     };
 
     // ------------------------------------------------------------------
@@ -1467,9 +1505,21 @@
     /**
      * How many effective levels an actor's equipped gear is worth, above or
      * below a bare class curve at the actor's current level. Sampled against
-     * the actor's own growth rate over the last invisibleHandGearSpan
-     * levels, so a flat-growth class and a steep one convert gear power to
-     * levels fairly.
+     * the actor's own growth rate over a window of invisibleHandGearSpan
+     * levels either side, so a flat-growth class and a steep one convert gear
+     * power to levels fairly.
+     *
+     * The window is two-sided on purpose. It used to look only backwards, and
+     * the per-param growth it measured was floored at a whole point per level.
+     * A class curve moves by about a tenth of that, so the floor bound at
+     * every level and the conversion returned the same number for a level 1
+     * character and a level 90 one, carrying no information at all. Below the
+     * span the backward window was empty outright and the divisor fell back
+     * to 1.
+     *
+     * The result is clamped hard (invisibleHandGearCeiling): levels are the
+     * power axis in this game and gear is a sidegrade, so a full kit is worth
+     * a couple of levels of reading and never a tier of its own.
      */
     BSE.Helpers.ihGearLevelBonus = function(actor) {
         if (!actor || !actor.currentClass) return 0;
@@ -1477,7 +1527,9 @@
         if (!cls || !cls.params) return 0;
         const level = actor.level;
         const span = Math.max(1, BSE.Params.invisibleHandGearSpan);
-        const lowLevel = Math.max(1, level - span);
+        const lowLevel  = Math.max(1, level - span);
+        const highLevel = Math.min(99, Math.max(lowLevel + 1, level + span));
+        const window = highLevel - lowLevel;
         let gearPower = 0;
         let growth = 0;
         for (const id of IH_OFFENSE_PARAMS.concat(IH_DEFENSE_PARAMS)) {
@@ -1485,8 +1537,9 @@
             const full = bare + actor.paramPlus(id);
             gearPower += Math.max(0, full - bare);
             const table = cls.params[id];
-            const lowBare = table ? (table[lowLevel] || 0) : bare;
-            growth += Math.max(1, (bare - lowBare) / (level - lowLevel || 1));
+            const lowBare  = table ? (table[lowLevel]  || 0) : bare;
+            const highBare = table ? (table[highLevel] || 0) : bare;
+            growth += Math.max(0, (highBare - lowBare) / window);
         }
         if (growth <= 0) return 0;
         const levels = gearPower / growth;

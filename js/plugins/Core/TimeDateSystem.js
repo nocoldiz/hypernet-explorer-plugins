@@ -3726,6 +3726,12 @@
   // the difficulty curve. It is coloured against the party: what they are level
   // for reads cool, what is well over their heads reads hot, on the same scale
   // the temperature row uses.
+  //
+  // Where the party is standing in a nation that was dealt a level bracket
+  // (BattleSystemEnhancedEncounters, section 3c) the window itself is printed
+  // beside the median, because in that case the median is not a property of
+  // this square but of the whole country: the same figure the atlas prints, and
+  // the thing to read before crossing a border rather than after.
   MapInfoHUD.prototype._enemyLevel = function () {
     const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
     if (!BSEH || !BSEH.getPlaceEncounterMedianLevel) return '';
@@ -3741,9 +3747,16 @@
     else if (over <= -3) cls = 'mih-temp-cool';
     else if (over >= 15) cls = 'mih-temp-hot';
     else if (over >= 5) cls = 'mih-temp-warm';
+    let band = null;
+    if (typeof BSEH.getActiveNationBand === 'function') {
+      try { band = BSEH.getActiveNationBand(); } catch (e) { band = null; }
+    }
+    const text = band
+      ? T("TimeDate.hud.levelBand", { level: level, min: band.min, max: band.max })
+      : T("TimeDate.hud.level", { level: level });
     return `<div class="mih-region mih-danger">` +
       `<span class="mih-region-lbl">${T("TimeDate.hud.enemies")}</span>` +
-      `<span class="mih-region-val ${cls}">${T("TimeDate.hud.level", { level: level })}</span>` +
+      `<span class="mih-region-val ${cls}">${text}</span>` +
     `</div>`;
   };
 

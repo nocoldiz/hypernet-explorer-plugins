@@ -71,8 +71,6 @@
     "cmdExit": "Esci dalla guida",
     "cmdVehicle": "Opzioni del veicolo",
     "cmdHelp": "H  Comandi",
-    "controllerHint": "Controller: L2/R2 zoom indietro/avanti &middot; Y cambia vista",
-    "controllerHintWalk": "Controller: stick destro guarda &middot; A salta &middot; B termina la passeggiata",
     "fly": "VOLO",
     "float": "GALLEGGIA",
     "dive": "IMMERSIONE",
@@ -80,7 +78,21 @@
     "cond": "COND",
     "trip": "VIAGGIO",
     "camperStuck": "Camper bloccato",
-    "pressRToRespawn": "Premi {key} per riposizionarti"
+    "pressRToRespawn": "Premi {key} per riposizionarti",
+    "alt": "ALT",
+    "crush": "PRESSIONE",
+    "cmdPitch": "Mouse / levetta destra: muso su e giu",
+    "cmdClimb": "Sali",
+    "cmdDescend": "Scendi",
+    "cmdFlight": "Decolla / atterra",
+    "cmdLook": "Guardati intorno",
+    "cmdMap": "Mappa: finestra, angolo, schermo intero, spenta",
+    "cmdDive": "Immergiti / risali (serve il modulo Immersione)",
+    "cmdThrust": "Accelera / rallenta",
+    "noteGasGiant": "Qui non c'e nulla su cui posarsi, e la pressione piu in basso schiaccia lo scafo. Tieni alta la quota.",
+    "noteUnderwater": "Sotto la superficie. Il trim porta lo scafo giu e lo riporta su.",
+    "noteSwimming": "Sei in acqua. Spingi verso l'alto per la superficie, o tieni premuto per scendere.",
+    "noteFlying": "Sei ai comandi. Il muso fa salire, il trim tiene la quota."
   },
   "viewMode": {
     "fpdrive": "GUIDA IN SOGGETTIVA",
@@ -102,5 +114,10 @@
     "failed": "[Tiro su DES del guidatore: {roll}{mod}={total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"
   },
   "maintenance": "Manutenzione del veicolo",
-  "refuel": "Rifornisci dalle taniche"
+  "refuel": "Rifornisci dalle taniche",
+  "gasGiant": {
+    "noGround": "Non c'e nulla su cui posarsi qui.",
+    "tooDeep": "La pressione sta schiacciando lo scafo. Sali, subito.",
+    "crushed": "Lo scafo cede."
+  }
 }

@@ -2842,8 +2842,10 @@
                     [
                         this.generateUICommandItemHTML(T('MainMenu.cmd.sandbox'), "sandbox"),
                     ],
-                    // Character: your active member's sheet, gear and body
+                    // Character: your active member's sheet, gear and body,
+                    // with the roster that says whose sheet this is
                     [
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.backpack'), "item"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.equip'), "equip"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.skills'), "skill"),
@@ -2886,7 +2888,6 @@
                     ],
                     // Party: the people and creatures travelling with you
                     [
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),

@@ -56,9 +56,9 @@
     "Dicembre"
   ],
   "confirmDelete": "Eliminare il mondo \"{name}\" con tutta la sua storia, NPC e salvataggi? Non può essere annullato.",
-  "enemyFloor": "Lo Schiacciamento va avanti da un po': qui i nemici vaganti partono dal livello {level}, in qualsiasi modalità di generazione.",
-  "enemyFloorOpen": "La fauna è fuori controllo: nel mondo vaga qualunque cosa dal livello 1 al {level}.",
-  "enemyFloorCollapse": "Il paradosso si è compiuto: non resta nulla sotto il livello {level}, e non c'è più alcun limite superiore.",
+  "enemyFloor": "Lo Schiacciamento va avanti da un po': la fascia di livello dei nemici di ogni nazione è salita di {level} livelli. Belgio e Regno Unito sono l'eccezione e restano dal livello 1 al 15.",
+  "enemyFloorOpen": "La fauna è fuori controllo: la fascia di livello dei nemici di ogni nazione è salita di {level} livelli, e fuori dalla Terra vaga qualunque cosa fino al livello {ceiling}. Belgio e Regno Unito restano dal livello 1 al 15.",
+  "enemyFloorCollapse": "Il paradosso si è compiuto: la fascia di livello dei nemici di ogni nazione è salita di {level} livelli, e fuori dalla Terra non resta nulla sotto il livello {floor}. Belgio e Regno Unito restano dal livello 1 al 15.",
   "storyTutorialDisabled": "La modalità storia è scritta per l'anno 2001. Iniziare nel {year} disattiva il tutorial: la storia si apre direttamente sul suo punto di partenza, senza l'introduzione guidata.",
   "earthLost": "Non c'è più la Terra. Nibiru l'ha colpita il 21 dicembre 2012 e la mappa del mondo se n'è andata con lei: nella sua orbita resta la Torre Omega, e tutto ciò che ti avrebbe portato in superficie ti porta lì.",
   "startingLevel": "Livello iniziale",

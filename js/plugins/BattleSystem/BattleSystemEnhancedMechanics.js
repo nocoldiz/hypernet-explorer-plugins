@@ -635,11 +635,12 @@
     // ========================================================================
     // Em's gun is the one weapon whose behaviour is set by the player rather
     // than by its note tags, and VectorGunSystem.js holds what it is set to.
-    // Three of the five modes are answered here: the shot's damage is cut when
-    // it is fanned across body parts, the bound spell rides the shot, and what
-    // a landed shot leaves behind (the recoil throw, the printed card) is
-    // handed back to the same file. Mana bullets is answered by the scaling
-    // block above, Wide shots by Health_Core's damage-type reading.
+    // Two of the modes are answered here: the shot's damage is cut when it is
+    // fanned across body parts, and what a landed shot leaves behind (the
+    // recoil throw, the printed card) is handed back to the same file. Mana
+    // bullets is answered by the scaling block above, Wide shots by
+    // Health_Core's damage-type reading, and the Solomon incantation by the
+    // same damageRate call, which reads a spell as readily as a shot.
 
     const _Game_Action_makeDamageValue_Vector = Game_Action.prototype.makeDamageValue;
     Game_Action.prototype.makeDamageValue = function(target, critical) {
@@ -659,19 +660,6 @@
         if (!VG) return;
         const action = this._action;
         VG.onShotLanded(subject, target, action);
-        // Spellblaster: the bound spell is paid for and cast on the same
-        // target, as its own line in the log. With no mana it never comes back
-        // and the shot stays an ordinary one.
-        const extra = VG.spellblasterAction(subject, action);
-        if (!extra) return;
-        this._action = extra;
-        const item = extra.item();
-        if (item && item.animationId > 0 && this._logWindow) {
-            this._logWindow.push('showAnimation', subject, [target], item.animationId);
-        }
-        extra.apply(target);
-        if (this._logWindow) this._logWindow.displayActionResults(subject, target);
-        this._action = action;
     };
 
 })();

@@ -487,7 +487,8 @@
             this._selectedIndex = 0;
             this._activeTab = 0; // 0: Lexicon, 1: Ecology, 2: Drops
             this._activeArea = 'list'; // 'list' or 'tabs'
-            this._pageTab = 0; // Left-page pockets: 0 = Earth, 1 = Petrodemons, 2 = Aliens
+            // Left-page pockets: 0 = Earth, 1 = Petrodemons, 2 = Rarities, 3 = Aliens
+            this._pageTab = 0;
 
             this._spriteAnimFrame = 1;
             this._spriteAnimTimer = 0;
@@ -567,6 +568,12 @@
         // (and enemies without a template) keep the stored description.
         bestiaryDescription(mon, noteData) {
             const stored = noteData ? noteData.description : null;
+            // A procedural creature's page was composed for that creature and
+            // travels with its codex entry (EnemyDescription.compose). The
+            // enemy row behind it only lent it its numbers and its look, so its
+            // <En:> template describes a different animal entirely and must
+            // never be read over the top of one.
+            if (mon && mon.procedural && stored) return stored;
             if (!mon || !mon.enemy || !window.EnemyDescription) return stored;
             const lang = ConfigManager.language || 'en';
             if (lang !== 'en') return stored;
@@ -609,16 +616,17 @@
         }
 
         buildUIBestiaryData() {
-            // The three pages themselves are built by the shared service below,
+            // The four pages themselves are built by the shared service below,
             // so any other menu that wants to search the codex (the main menu's
-            // search page) reads exactly the same three lists.
+            // search page) reads exactly the same four lists.
             this._earthList = window.BestiaryData.earth();
             this._petroList = window.BestiaryData.petrodemons();
+            this._rarityList = window.BestiaryData.rarities();
             this._alienList = window.BestiaryData.aliens();
 
             if (this._pageTab == null) this._pageTab = 0;
-            const page = this._pageTab === 2 ? this._alienList
-                : (this._pageTab === 1 ? this._petroList : this._earthList);
+            const pages = [this._earthList, this._petroList, this._rarityList, this._alienList];
+            const page = pages[this._pageTab] || this._earthList;
 
             // Whatever the strip is asking for, applied to the open page.
             this._monsterList = this._bestiaryBar
@@ -631,8 +639,8 @@
                 : page;
         }
 
-        // Switch the left-page pockets between Earth, petrodemons and alien
-        // species.
+        // Switch the left-page pockets between Earth, petrodemons, the world's
+        // one-of-a-kind rarities and the alien species.
         switchBestiaryPageTab(tab) {
             if (tab === this._pageTab) return;
             this._pageTab = tab;
@@ -674,7 +682,8 @@
                             <div id="bestiary-page-tabs" class="backpack-tabs-row">
                               <div class="bestiary-page-tab backpack-tab focusable" data-page="0">${T('Bestiary.earth')}</div>
                               <div class="bestiary-page-tab backpack-tab focusable" data-page="1">${T('Bestiary.petrodemons')}</div>
-                              <div class="bestiary-page-tab backpack-tab focusable" data-page="2">${T('Bestiary.aliens')}</div>
+                              <div class="bestiary-page-tab backpack-tab focusable" data-page="2">${T('Bestiary.rarities')}</div>
+                              <div class="bestiary-page-tab backpack-tab focusable" data-page="3">${T('Bestiary.aliens')}</div>
                             </div>
                             <div class="list-viewport" id="bestiary-list-viewport"></div>
                         </div>
@@ -703,7 +712,7 @@
                     if (viewport) viewport.scrollTop += e.deltaY;
                 }, { passive: false });
 
-                // Earth / Petrodemons / Aliens page-tab clicks (wired once on the
+                // Earth / Petrodemons / Rarities / Aliens page-tab clicks (wired once on the
                 // persistent layout).
                 container.querySelectorAll(".bestiary-page-tab").forEach(tabEl => {
                     tabEl.addEventListener("click", () => {
@@ -713,7 +722,7 @@
             }
 
             // The shared search + filter strip (UI/MenuSearchBar.js), sitting
-            // under the title and over the Earth / Petrodemon / Alien tabs. Its
+            // under the title and over the Earth / Petrodemon / Rarity / Alien tabs. Its
             // vocabulary is this menu's own: creatures have archetypes and
             // levels, not prices or item categories, so those controls are never
             // offered here. Rebuilt in place, then handed its caret back.
@@ -1427,7 +1436,7 @@
     // =============================================================================
     // Shared bestiary service
     // =============================================================================
-    // The codex's three pages as plain data: Earth (encountered database
+    // The codex's four pages as plain data: Earth (encountered database
     // creatures), Petrodemons (the ones the party has felled, read out of the
     // copy of its record the codex kept) and Aliens (discovered procedural
     // species, each keyed to a base enemy for stats and look but shown under its
@@ -1481,9 +1490,42 @@
                     enemy: entry.enemy,
                     noteData: noteData,
                     isPetrodemon: true,
+                    procedural: true,
                     // Its look was rolled from its own seed, so that is what
                     // keeps its portrait its own.
                     speciesKey: 'petro:' + entry.seed
+                });
+            });
+            return byName(out);
+        },
+
+        // The one-of-a-kind creatures of this world that have been met
+        // (BattleSystemEnhancedEncounters, section 16b). Like the petrodemons
+        // these are read out of the world's own codex rather than off the
+        // database: a rarity's name and its page are its own, and the base
+        // enemy behind it only lends it its numbers and its look.
+        rarities() {
+            const out = [];
+            const codex = ($gameSystem.rarityCodex && $gameSystem.rarityCodex()) || {};
+            Object.keys(codex).forEach(key => {
+                const entry = codex[key];
+                if (!entry) return;
+                const enemy = $dataEnemies[entry.enemyId];
+                if (!enemy || isDividerEnemy(enemy)) return;
+                const noteData = parseNotes(enemy.note, entry.enemyId);
+                if (entry.description) noteData.description = entry.description;
+                out.push({
+                    id: entry.enemyId,
+                    name: entry.name,
+                    battlerName: enemy.battlerName,
+                    character: noteData.character,
+                    enemy: enemy,
+                    noteData: noteData,
+                    isRarity: true,
+                    procedural: true,
+                    // Its own key, so its portrait is rolled for the creature
+                    // rather than for the species whose sheet it borrowed.
+                    speciesKey: entry.key
                 });
             });
             return byName(out);
@@ -1497,6 +1539,7 @@
                 const enemy = $dataEnemies[sp.enemyId];
                 if (!enemy || isDividerEnemy(enemy)) return;
                 const noteData = parseNotes(enemy.note, sp.enemyId);
+                if (sp.description) noteData.description = sp.description;
                 out.push({
                     id: sp.enemyId,
                     name: sp.name,
@@ -1505,6 +1548,7 @@
                     enemy: enemy,
                     noteData: noteData,
                     isAlien: true,
+                    procedural: true,
                     speciesKey: sp.key
                 });
             });
@@ -1726,6 +1770,9 @@
 
         description: function(mon) {
             const stored = mon.noteData ? mon.noteData.description : null;
+            // Same rule as bestiaryDescription: a composed page is the
+            // creature's own and the borrowed enemy row has no say over it.
+            if (mon.procedural && stored) return stored;
             if (!mon.enemy || !window.EnemyDescription) return stored;
             if ((ConfigManager.language || 'en') !== 'en') return stored;
             const template = window.EnemyDescription.rawDescription(mon.enemy.id);
@@ -1738,6 +1785,7 @@
             return [
                 { id: 'earth', label: T('Bestiary.earth'), list: window.BestiaryData.earth() },
                 { id: 'petro', label: T('Bestiary.petrodemons'), list: window.BestiaryData.petrodemons() },
+                { id: 'rarity', label: T('Bestiary.rarities'), list: window.BestiaryData.rarities() },
                 { id: 'alien', label: T('Bestiary.aliens'), list: window.BestiaryData.aliens() }
             ];
         },

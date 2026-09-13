@@ -242,7 +242,10 @@
     // type can be stood on without flying to one first.
     function voxelPlanetBiomes() {
         const list = (window.WorldGen && window.WorldGen.Biomes) || [];
-        return list.filter(b => b && typeof b.name === "string" && /^Alien/.test(b.name))
+        // The AlienUnder* records are the ten kinds of underground a world can
+        // have, not ten more worlds: there is no walking a lava tube from orbit.
+        return list.filter(b => b && typeof b.name === "string" &&
+                                /^Alien/.test(b.name) && b.name.indexOf("AlienUnder") !== 0)
                    .sort((a, b) => a.name.localeCompare(b.name));
     }
 
@@ -284,6 +287,12 @@
             try {
                 if (GS.makeLandedDescriptor) planet = GS.makeLandedDescriptor(planet, {}) || planet;
             } catch (e) { /* the plain descriptor still names the place */ }
+        }
+        // A world with no ground cannot be walked, even from the sandbox: it
+        // opens as a flyby instead, which is the only way anybody sees one.
+        if (biome.gasGiant) {
+            if (!VW.startAlienFlyby) return false;
+            return !!VW.startAlienFlyby(biome, planet, species, { atHelm: true });
         }
         return !!VW.startAlienWalk(biome, planet, species);
     }

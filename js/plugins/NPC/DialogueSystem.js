@@ -1352,11 +1352,34 @@ Imported.DialogueSystem = true;
         } catch (err) { return ''; }
     }
 
+    // The one way past the rule below: a box with nobody drawn beside it,
+    // spoken anyway. A caller names the voice just before raising the box (the
+    // vector gun's Solomon incantation raises one over a fight, where nothing
+    // is allowed to paint a portrait), and it lasts exactly that box: the
+    // override is dropped the moment the window closes.
+    const _voiceOver = { on: false, name: '' };
+    window.DialogueVoiceOver = {
+        speak(name) { _voiceOver.on = true; _voiceOver.name = String(name || ''); },
+        stop() { _voiceOver.on = false; _voiceOver.name = ''; },
+        speaking() { return _voiceOver.on; },
+        name() { return _voiceOver.name; },
+        // One run of portraitless boxes, read aloud in the named voice: the
+        // whole of what a caller outside this file needs to be heard over a
+        // fight. The lines are paginated the way every other box is.
+        say(name, lines) {
+            this.speak(name);
+            const said = sayFaceless(lines);
+            if (!said) this.stop();
+            return said;
+        },
+    };
+
     // Is anybody actually on stage? The chatter is the voice of whoever is
     // drawn beside the box, so a line with no portrait next to it is read
     // rather than spoken: a shop counter, a system notice, a chest, a sign, any
     // box raised outside a conversation stays silent.
     function _voiceIsStaged() {
+        if (_voiceOver.on) return true;
         try {
             const bm = SceneManager._scene && SceneManager._scene._bustManager;
             if (!bm) return false;
@@ -1370,6 +1393,7 @@ Imported.DialogueSystem = true;
     // name travels with the bust, so the tag is read first and the message's
     // own speaker only where there is no bust to read.
     function _voiceSpeakerName() {
+        if (_voiceOver.on && _voiceOver.name) return _voiceOver.name;
         try {
             const bm = SceneManager._scene && SceneManager._scene._bustManager;
             const nm = bm && bm.nameWindow;
@@ -1560,6 +1584,9 @@ Imported.DialogueSystem = true;
 
     const _WM_terminateMessage = Window_Message.prototype.terminateMessage;
     Window_Message.prototype.terminateMessage = function () {
+        // A borrowed voice is handed back with the last box it was borrowed
+        // for: a run still dealing pages goes on being read in it.
+        if (!facelessIsRunning()) window.DialogueVoiceOver.stop();
         if (this._htmlMsgRoot && this._textState) {
             const full = _stripMsgEscapes(this._textState.text);
             _msgSetText(this._htmlMsgText, full);
@@ -3884,7 +3911,10 @@ Imported.DialogueSystem = true;
             const inParty = $gameParty.members().find(a => a && a.name && a.name().trim() === name);
             if (inParty) return inParty;
             if (name === STORY_ASK_BUBBA && $gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) {
-                return window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
+                // Benched, but on the road: before he has joined there is
+                // nobody to ask (PartyRoster owns that answer).
+                return window.PartyRoster?.isBubbaTravelling?.()
+                    ? window.PartyRoster.getBubbaActor?.() || null : null;
             }
             return null;
         } catch (err) { return null; }
@@ -4011,7 +4041,8 @@ Imported.DialogueSystem = true;
 
     function combatTutorialWalksWithBubba() {
         try {
-            if ($gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) return true;
+            if ($gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH) &&
+                window.PartyRoster?.isBubbaTravelling?.()) return true;
             return $gameParty.members().some(
                 a => a && a.name && a.name().trim() === STORY_ASK_BUBBA);
         } catch (err) { return false; }

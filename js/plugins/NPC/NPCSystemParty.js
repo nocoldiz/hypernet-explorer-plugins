@@ -355,6 +355,13 @@
         },
 
         dateOf: rosterDateOf,
+
+        // Bubba, and whether he is on the road at all. Every reader that draws
+        // him walking beside Em, counts him among the people who can speak or
+        // offers him as the one she talks to asks here, so the story opens on
+        // Em alone rather than on her and whoever holds Actor 2.
+        getBubbaActor,
+        isBubbaTravelling,
     };
 
     function getLastJoinedActorId() {
@@ -947,18 +954,32 @@
     // -------------------------------------------------------------------------
     // Story Follower: Bubba following Em's party even when not in active party
     // -------------------------------------------------------------------------
+    // Bubba's own dossier switch, raised the moment he takes a seat
+    // (presetJoinParty) and cleared only by his death. It is the one mark that
+    // says he is on this road at all.
+    const BUBBA_STORY_SWITCH = 49;
+
+    // The actor slot Bubba actually sits on, or nothing. It used to answer with
+    // Actor 2 when no Bubba was found, which in a story run that has not met him
+    // yet is the database's own Actor 2: a stranger walked behind Em from the
+    // first frame, was counted as a party member by the banter and was offered
+    // as the one she talks to.
     function getBubbaActor() {
-        if (typeof $gameActors !== 'undefined' && $gameActors) {
-            for (let i = 1; i <= 3; i++) {
-                const a = $gameActors.actor(i);
-                if (a && a.name && a.name() === 'Bubba') return a;
-            }
-            const any = ($gameActors._data || []).find(a => a && a.name && a.name() === 'Bubba');
-            if (any) return any;
-            const a2 = $gameActors.actor(2);
-            if (a2) return a2;
+        if (typeof $gameActors === 'undefined' || !$gameActors) return null;
+        for (let i = 1; i <= 3; i++) {
+            const a = $gameActors.actor(i);
+            if (a && a.name && a.name() === 'Bubba') return a;
         }
-        return null;
+        return ($gameActors._data || []).find(a => a && a.name && a.name() === 'Bubba') || null;
+    }
+
+    // Whether Bubba is travelling with this story at all, seated or benched.
+    // The story opens on Em alone: nobody walks with her, talks beside her or
+    // is counted as a companion until he has joined.
+    function isBubbaTravelling() {
+        if (!window.$gameSwitches || !$gameSwitches.value(100)) return false;
+        if ($gameSwitches.value(BUBBA_STORY_SWITCH)) return true;
+        return !!getBubbaActor();
     }
 
     function Game_BubbaFollower() {
@@ -983,6 +1004,9 @@
     Game_BubbaFollower.prototype.isVisible = function() {
         if (!this.isStoryMode()) return false;
         if (this.isBubbaInParty()) return false;
+        // Only once he is actually travelling: before that the story is Em's
+        // alone and there is nobody to trail her.
+        if (!isBubbaTravelling()) return false;
         return !!($gamePlayer && $gamePlayer.followers && $gamePlayer.followers().isVisible());
     };
 

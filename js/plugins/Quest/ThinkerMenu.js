@@ -253,9 +253,10 @@
         return tier;
     }
 
-    // The member the workbench's party switcher has at the bench. Everything
-    // the workbench decides - which tiers are open, how likely a botch is, how
-    // much a teardown gives back - is read off THEM, not off the party's best.
+    // The member the workbench's party switcher has at the bench, when it has
+    // one. The switcher's first setting is Auto (see benchAuto), and under Auto
+    // there is no such member: every question is answered by whoever in the
+    // party answers it best, one trade at a time.
     function benchActor() {
         const scene = SceneManager._scene;
         if (scene && typeof scene.fabActor === 'function') {
@@ -265,9 +266,57 @@
         return ($gameParty && $gameParty.leader) ? $gameParty.leader() : null;
     }
 
-    function fabLevel() {
+    // ------------------------------------------------------------------------
+    // Whose knowledge the bench reads
+    // ------------------------------------------------------------------------
+    // A party is not one pair of hands. The cook reads the food page, the smith
+    // reads the anvil's, and what the PARTY can make is the union of the two,
+    // worked by whichever of them is best at the piece in front of them. That is
+    // what the workshop's switcher calls Auto, and it is the default: a named
+    // member is a deliberate override, for handing a job to somebody who will
+    // learn something from it.
+    //
+    // Asked from outside the workshop (the main menu's search page), there is no
+    // switcher to read, so the whole party answers: the question there is what
+    // the PARTY could make, not what its leader could.
+    function partyHands() {
+        return ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    }
+
+    function benchAuto() {
+        const scene = SceneManager._scene;
+        if (scene && typeof scene.fabAuto === 'function') return !!scene.fabAuto();
+        return true;
+    }
+
+    function levelOfIn(actor, specName) {
         if (!window.SpecializationXP) return 1;
-        return window.SpecializationXP.levelOf(benchActor(), FAB_SPEC);
+        return window.SpecializationXP.levelOf(actor, specName) || 1;
+    }
+
+    // The party's best pair of hands in one trade, and how good they are. Ties
+    // go to the member who stands first in the marching order, so the answer
+    // never wanders between two equals.
+    function bestHandsIn(specName) {
+        let best = null;
+        let level = 0;
+        for (const member of partyHands()) {
+            if (!member) continue;
+            const lvl = levelOfIn(member, specName);
+            if (lvl > level) { level = lvl; best = member; }
+        }
+        if (!best) return { actor: benchActor(), level: levelOfIn(null, specName) };
+        return { actor: best, level: Math.max(1, level) };
+    }
+
+    // Whose hands actually do a job, which is the member who earns for it.
+    function handsFor(item) {
+        if (!benchAuto()) return benchActor();
+        return bestHandsIn(recipeSpec(item)).actor || benchActor();
+    }
+
+    function fabLevel() {
+        return readLevel(FAB_SPEC);
     }
 
     // Whether the party is trained enough to attempt this recipe at all. A
@@ -351,7 +400,9 @@
     function readLevel(specName) {
         if (!window.SpecializationXP) return 1;
         if (_readCache.has(specName)) return _readCache.get(specName);
-        const level = window.SpecializationXP.levelOf(benchActor(), specName) || 1;
+        // Under Auto the trade is read by whoever reads it best; with a member
+        // named at the switcher it is read by them, however little they know.
+        const level = benchAuto() ? bestHandsIn(specName).level : levelOfIn(benchActor(), specName);
         _readCache.set(specName, level);
         return level;
     }
@@ -437,6 +488,9 @@
         },
         // The trade a recipe belongs to, as the player reads it.
         tradeName: (item) => specLabel(recipeSpec(item)),
+        // Who in the party would make it. Asked from outside the workshop this
+        // is always the party's best hands in its trade.
+        handsFor,
         clearKnowledgeCache: clearRecipeKnowledgeCache
     };
 
@@ -626,8 +680,11 @@
             // The bench and the trade both learn from the job: the trade is what
             // put the recipe on the page in the first place, so working it is
             // what opens the rest of it.
-            window.SpecializationXP.award(FAB_SPEC, points, { actor: benchActor() });
-            window.SpecializationXP.award(recipeSpec(item), points, { actor: benchActor() });
+            // The member who actually did it: under Auto that is the party's
+            // best hands in this trade, and they are the ones who learn from it.
+            const doer = handsFor(item);
+            window.SpecializationXP.award(FAB_SPEC, points, { actor: doer });
+            window.SpecializationXP.award(recipeSpec(item), points, { actor: doer });
         }
         if (reclaimed.length && window.ParchmentToast) {
             const list = reclaimed.map(r => `${r.item.name} x${r.count}`).join(', ');
@@ -659,8 +716,9 @@
         }
 
         if (window.SpecializationXP) {
-            window.SpecializationXP.award(FAB_SPEC, SALVAGE_POINTS, { actor: benchActor() });
-            window.SpecializationXP.award(recipeSpec(item), SALVAGE_POINTS, { actor: benchActor() });
+            const doer = handsFor(item);
+            window.SpecializationXP.award(FAB_SPEC, SALVAGE_POINTS, { actor: doer });
+            window.SpecializationXP.award(recipeSpec(item), SALVAGE_POINTS, { actor: doer });
         }
         return { mode: 'disassemble', items: returnedList };
     }
@@ -691,6 +749,11 @@
         reclaimChance,
         readingSpec,
         revealLevel,
+        // Who would work a piece, and how far along one trade the party's best
+        // hands are. The workshop asks both to name the member at the anvil.
+        handsFor,
+        bestHandsIn,
+        isAuto: benchAuto,
         specLabel,
         levelLabel,
         readLevel,
@@ -832,6 +895,32 @@
     // player has to hop between hoping one of them is not empty. All is the
     // default and nothing is ever hidden behind a tab.
     const STATUS_TABS = ['all', 'ready', 'short', 'locked', 'owned', 'forged'];
+
+    // The first setting of the party switcher is not a member at all. Auto hands
+    // every piece on the board to whoever in the party reads its trade best, so
+    // the workshop shows what the PARTY can make rather than what one member
+    // can, and a job is worked (and learned from) by the right pair of hands
+    // without the player having to know who that is. Naming a member is still
+    // allowed and still means exactly what it meant: everything is read off
+    // them, however little they know, which is how a job is handed to somebody
+    // who needs the practice.
+    const AUTO_SMITH = -1;
+
+    // ------------------------------------------------------------------------
+    // The smith's draft
+    // ------------------------------------------------------------------------
+    // What has been decided about a piece that is not made yet: the finish it
+    // will wear, the seed it was previewed under, the name typed over its roll,
+    // and the model sculpted for it. None of it belongs to the SCENE, because
+    // RMMZ rebuilds a scene from its constructor whenever another one is popped
+    // off over it, and the model editor is another one: a sculpt drawn there
+    // would have been thrown away on the way back. It belongs to the workshop
+    // itself, and lasts as long as the session does.
+    const _draft = { finishes: {}, seeds: {}, names: {}, designs: {} };
+
+    // Which piece the workshop had open when it handed over to the editor, so
+    // the rebuilt board comes back standing where it left off.
+    let _resumePiece = null;
 
     // The workshop reads as a shelf of trades on the left and the pieces that
     // trade makes laid out on the right. A piece is picked up off that grid and
@@ -987,6 +1076,12 @@
         // anything, the same way the forge itself does.
         canMake: (actor, item) => isSandbox() || levelInFor(actor, item) >= craftTier(item),
         canMakeNow: (actor, item) => (isSandbox() || levelInFor(actor, item) >= craftTier(item)) &&
+            hasMaterials(parseRecipe(item)),
+        // The party's own answer, for a caller with no switcher to read. Naming
+        // nobody is what asks for the party's best hands
+        // (SpecializationXP.levelOf falls back to partyLevel), which is exactly
+        // what Auto means at the workshop.
+        canMakeNowForParty: (item) => (isSandbox() || levelInFor(null, item) >= craftTier(item)) &&
             hasMaterials(parseRecipe(item))
     };
 
@@ -1110,7 +1205,8 @@
             // model or a house finish keyed on the entry this piece was
             // forged from, since materializing gave it a brand new id.
             `\n<ForgeBaseId: ${rec.baseId}>` +
-            (rec.texture ? `\n<ForgeTexture: ${rec.texture}>` : '');
+            (rec.texture ? `\n<ForgeTexture: ${rec.texture}>` : '') +
+            (rec.parts ? `\n<ForgeParts: ${encodeDesign(rec.parts)}>` : '');
         entry.description = String(base.description || '').trim();
         const line = T('Blacksmith.forgedDesc', { smith: rec.smith, quality: qualityLabel(rec.quality) });
         entry.description = entry.description ? entry.description + '\n' + line : line;
@@ -1268,6 +1364,89 @@
         return `img/textures/${filename}`;
     }
 
+    // ── Fitted models ────────────────────────────────────────────────────────
+    // A smith does not only choose what a piece is MADE of; at this workshop
+    // they choose what it LOOKS like, by taking pieces off other weapons and
+    // bolting them on. The editor that does it is Scene_WeaponSculptor at the
+    // foot of this file; everything it decides comes back here as one design,
+    // and a design is written onto the piece as the single tag the model
+    // pipeline reads (Weapon/WeaponSystemProcedural.js, <ForgeParts:>).
+    //
+    // A design is COSMETIC and free. It changes no parameter, no price, no
+    // weight and no bill, so the editor asks for no materials and no money and
+    // can be opened on a piece as often as the smith likes.
+    //
+    // Where a design lives depends on whether the piece exists yet. A forged
+    // piece is one of a kind and keeps its own on its record, so re-sculpting
+    // one is a change to THAT sword and to nothing else. A catalogue entry is
+    // not a piece at all, so its design is a draft: it is what the next thing
+    // off that bill will be built as, and it is previewed exactly that way.
+    function pieceKey(item) {
+        return `${DataManager.isWeapon(item) ? 'w' : 'a'}${item ? item.id : 0}`;
+    }
+
+    function designIsEmpty(design) {
+        if (!design) return true;
+        const parts = Array.isArray(design.p) ? design.p : [];
+        const hide = Array.isArray(design.hide) ? design.hide : [];
+        return !parts.length && !hide.length;
+    }
+
+    // A design as it goes onto the entry. Rounded, capped and stripped of the
+    // three characters a note tag cannot carry, so a sculpt can never write a
+    // tag the database cannot read back.
+    function encodeDesign(design) {
+        if (designIsEmpty(design)) return '';
+        const max = (window.WeaponSystemProcedural && WeaponSystemProcedural.DESIGN_PART_MAX) || 12;
+        const round = (v) => Math.round((Number(v) || 0) * 1000) / 1000;
+        const parts = (design.p || []).slice(0, max).map((spec) => {
+            const out = { w: Number(spec.w) || 0, b: String(spec.b || 'whole'), s: round(spec.s) };
+            for (const axis of ['x', 'y', 'z', 'rx', 'ry', 'rz']) {
+                if (spec[axis]) out[axis] = round(spec[axis]);
+            }
+            if (spec.t) out.t = String(spec.t);
+            return out;
+        });
+        const out = { v: 1, p: parts };
+        if ((design.hide || []).length) out.hide = design.hide.slice();
+        return JSON.stringify(out).replace(/[<>\r\n]/g, '');
+    }
+
+    // The record of the forged piece an entry IS, when it is one.
+    function designRecordFor(item) {
+        if (!isForged(item)) return null;
+        const kind = DataManager.isWeapon(item) ? 'w' : 'a';
+        for (const rec of forgeStore()) {
+            if (rec.kind === kind && rec.id === item.id) return rec;
+        }
+        return null;
+    }
+
+    // What a piece is sculpted as right now: its own, if it has been made, and
+    // otherwise the draft drawn for the next one off its bill.
+    function designFor(item) {
+        if (!item) return null;
+        const rec = designRecordFor(item);
+        if (rec) return rec.parts || null;
+        return _draft.designs[pieceKey(item)] || null;
+    }
+
+    // Writing a sculpt back. A forged piece is re-materialized on the spot, so
+    // the backpack, the equip menu and the hand it is held in all show the new
+    // model without anything having to be told; the entry that comes back is a
+    // NEW object, which is why callers take the return value.
+    function commitDesign(item, design) {
+        if (!item) return item;
+        const clean = designIsEmpty(design) ? null : design;
+        const rec = designRecordFor(item);
+        if (rec) {
+            rec.parts = clean;
+            return materialize(rec) || item;
+        }
+        _draft.designs[pieceKey(item)] = clean;
+        return item;
+    }
+
     // ── Names ────────────────────────────────────────────────────────────────
     // A weapon coming off the anvil earns its own name, not a found relic's:
     // separate banks from the artifact generator's (Crafting/ArctifactGenerator.js),
@@ -1289,6 +1468,22 @@
     DataManager.extractSaveContents = function (contents) {
         _DataManager_extractSaveContents.call(this, contents);
         rebuildForged();
+    };
+
+    // ── Shared design service ────────────────────────────────────────────────
+    // What a weapon is sculpted as, for anything that wants to ask or to write
+    // it without going through the editor. The model pipeline reads the tag
+    // this encodes (Weapon/WeaponSystemProcedural.designOf), so the two can
+    // never disagree about what a piece looks like.
+    window.WeaponDesigns = {
+        of: designFor,
+        commit: commitDesign,
+        encode: encodeDesign,
+        isEmpty: designIsEmpty,
+        key: pieceKey,
+        // The drafts drawn for entries that are not made yet, so a save screen
+        // or a test can see them.
+        drafts: () => _draft.designs
     };
 
     window.ForgedPieces = {
@@ -1336,11 +1531,10 @@
             this._modalOpen = false;      // is a piece open in its own window
             this._itemIndex = 0;
             this._selectedItem = null;
-            this._smithIndex = 0;
+            this._smithIndex = AUTO_SMITH;
             this._overlayTimer = 0;
             this._overlayData = null;
             this._listDirty = true;
-            this._finishes = {};          // base entry -> chosen skin, this visit
             this._finishIndex = 0;
             this._qty = 1;
 
@@ -1372,9 +1566,32 @@
 
             this.createLayout();
             this.refreshForge();
+            this.resumeFromSculptor();
             if (window.CharSwitcher) {
                 window.CharSwitcher.installTabKey(this, (dir) => this.cycleSmith(dir));
             }
+        }
+
+        // Coming back from the model editor. RMMZ pops a scene by rebuilding the
+        // one under it from its constructor, so there is no board left to come
+        // back to: the piece that was open is found again on the fresh board and
+        // opened again, with the cursor back on the button it left from.
+        resumeFromSculptor() {
+            if (!_resumePiece) return;
+            const src = _resumePiece.kind === 'w' ? $dataWeapons : $dataArmors;
+            const piece = src[_resumePiece.id];
+            _resumePiece = null;
+            if (!piece) return;
+            this._status = 'all';
+            this._statusIndex = STATUS_TABS.indexOf('all');
+            this._trade = '';
+            this._tradeIndex = 0;
+            this._listDirty = true;
+            const at = this.listItems().indexOf(piece);
+            if (at < 0) return;
+            this.openPiece(at);
+            this._activeArea = 'model';
+            this.refreshForge();
         }
 
         update() {
@@ -1400,16 +1617,38 @@
             return ($gameParty && $gameParty.members) ? $gameParty.members() : [];
         }
 
-        smith() {
+        // Whether the switcher is standing on Auto rather than on a member.
+        isAuto() { return this._smithIndex === AUTO_SMITH; }
+
+        // The bench asks this before it reads a single level, so both halves of
+        // the workshop answer for the same party.
+        fabAuto() { return this.isAuto(); }
+
+        // Whose hands a given piece would be worked by. Under Auto that is the
+        // party's best in the trade the piece asks for, which is a different
+        // member for a stew than for a sword; with a member named it is them,
+        // whatever the piece is.
+        smithFor(item) {
             const members = this.smithMembers();
             if (!members.length) return null;
-            return members[Math.max(0, Math.min(members.length - 1, this._smithIndex || 0))];
+            if (!this.isAuto()) {
+                return members[Math.max(0, Math.min(members.length - 1, this._smithIndex || 0))];
+            }
+            const b = bench();
+            const trade = item ? this.tradeOf(item) : (b ? b.spec : '');
+            const best = (b && b.bestHandsIn) ? b.bestHandsIn(trade).actor : null;
+            return best || members[0];
+        }
+
+        smith() {
+            return this.smithFor(this._selectedItem);
         }
 
         selectSmith(index) {
             const members = this.smithMembers();
             if (!members.length) return;
-            const next = ((index % members.length) + members.length) % members.length;
+            const next = index < 0 ? AUTO_SMITH
+                : Math.max(0, Math.min(members.length - 1, index));
             if (next === this._smithIndex) return;
             this._smithIndex = next;
             SoundManager.playCursor();
@@ -1428,7 +1667,16 @@
             this.refreshForge();
         }
 
-        cycleSmith(dir) { this.selectSmith((this._smithIndex || 0) + dir); }
+        // Auto sits at the head of the switcher, so the shoulder buttons walk
+        // Auto, then the party, then round again.
+        cycleSmith(dir) {
+            const n = this.smithMembers().length;
+            if (!n) return;
+            let next = this._smithIndex + dir;
+            if (next < AUTO_SMITH) next = n - 1;
+            if (next > n - 1) next = AUTO_SMITH;
+            this.selectSmith(next);
+        }
 
         // The bench asks the open scene whose hands are on it
         // (Quest/ThinkerMenu.js benchActor), so the two sides of the workshop
@@ -1440,9 +1688,9 @@
         // a weapon or an armor is anvil work.
         isBenchSide() { return isBenchItem(this._selectedItem); }
 
-        // The selected member's level in the trade an entry needs.
+        // The level in the trade an entry needs of whoever would work it.
         levelIn(item) {
-            return levelInFor(this.smith(), item);
+            return levelInFor(this.smithFor(item), item);
         }
 
         canMake(item) {
@@ -1786,7 +2034,7 @@
                 // The badge reports the trade of the piece under the cursor,
                 // whichever half of the workshop makes it.
                 const spec = this._selectedItem ? this.tradeOf(this._selectedItem) : null;
-                if (spec) window.SpecBadge.show(spec, { actor: this.smith() });
+                if (spec) window.SpecBadge.show(spec, { actor: this.smithFor(this._selectedItem) });
                 else window.SpecBadge.hide();
             }
         }
@@ -1798,13 +2046,15 @@
             // drawn even for a party of one: the single name says whose hands
             // the skill badge underneath is reporting.
             const members = this.smithMembers();
-            let tabs = '';
+            // Auto heads the row: it is the default and the one setting that is
+            // about the party rather than about one of them.
+            let tabs = `<div class="companion-tab ${this.isAuto() ? 'selected' : ''}" data-smith="${AUTO_SMITH}" title="${escapeHtml(T('Blacksmith.autoSmithHint'))}">${escapeHtml(T('Blacksmith.autoSmith'))}</div>`;
             members.forEach((m, idx) => {
-                const sel = idx === (this._smithIndex || 0) ? 'selected' : '';
+                const sel = (!this.isAuto() && idx === this._smithIndex) ? 'selected' : '';
                 tabs += `<div class="companion-tab ${sel}" data-smith="${idx}">${escapeHtml(m.name())}</div>`;
             });
             row.innerHTML = window.CharSwitcher.inner(
-                `<div class="companion-tabs-row">${tabs}</div>`, members.length);
+                `<div class="companion-tabs-row">${tabs}</div>`, members.length + 1);
         }
 
         // The shelf of production methods, one row per trade: its name and how
@@ -2097,6 +2347,7 @@
                 body += `<p class="ui-prose">${escapeHtml(desc)}</p>`;
             }
             body += this.previewHTML(item);
+            body += this.modelHTML(item);
             body += this.nameHTML(item);
             body += this.finishHTML(item);
 
@@ -2111,7 +2362,8 @@
                     trade: spec ? window.Specializations.displayName(spec) : craftSpecName(item),
                     level: levelName(tier)
                 }), T('Blacksmith.have', {
-                    who: (this.smith() && this.smith().name()) || '', level: levelName(level)
+                    who: (this.smithFor(item) && this.smithFor(item).name()) || '',
+                    level: levelName(level)
                 }));
             }
 
@@ -2244,22 +2496,21 @@
         }
 
         chosenFinish(item) {
-            return this._finishes[this.finishKey(item)] || '';
+            return _draft.finishes[this.finishKey(item)] || '';
         }
 
         setFinish(item, filename) {
-            this._finishes[this.finishKey(item)] = filename || '';
+            _draft.finishes[this.finishKey(item)] = filename || '';
         }
 
         // The look the piece will keep, held steady while it is on the page, so
         // the preview is a promise rather than a suggestion.
         pendingSeed(item) {
             const key = this.finishKey(item);
-            if (!this._seeds) this._seeds = {};
-            if (this._seeds[key] === undefined) {
-                this._seeds[key] = (Math.random() * 0xFFFFFFFF) >>> 0;
+            if (_draft.seeds[key] === undefined) {
+                _draft.seeds[key] = (Math.random() * 0xFFFFFFFF) >>> 0;
             }
-            return this._seeds[key];
+            return _draft.seeds[key];
         }
 
         // ------------------------------------------------- the name picker
@@ -2268,21 +2519,18 @@
         // it or hitting the dice replaces only that piece's roll.
         pendingName(item) {
             const key = this.finishKey(item);
-            if (!this._names) this._names = {};
-            if (this._names[key] === undefined) {
-                this._names[key] = randomForgedName(item);
+            if (_draft.names[key] === undefined) {
+                _draft.names[key] = randomForgedName(item);
             }
-            return this._names[key];
+            return _draft.names[key];
         }
 
         setName(item, name) {
-            if (!this._names) this._names = {};
-            this._names[this.finishKey(item)] = String(name == null ? '' : name).slice(0, 60);
+            _draft.names[this.finishKey(item)] = String(name == null ? '' : name).slice(0, 60);
         }
 
         rerollName(item) {
-            if (!this._names) this._names = {};
-            this._names[this.finishKey(item)] = randomForgedName(item);
+            _draft.names[this.finishKey(item)] = randomForgedName(item);
         }
 
         // What the 3D card is asked to draw: the entry itself once it has been
@@ -2291,12 +2539,15 @@
             if (isForged(item)) return item;
             const finish = this.chosenFinish(item);
             const seed = this.pendingSeed(item);
+            const parts = encodeDesign(designFor(item));
             return Object.assign({}, item, {
                 note: String(item.note || '') + `\n<ForgeSeed: ${seed}>` +
-                    (finish ? `\n<ForgeTexture: ${finish}>` : ''),
+                    (finish ? `\n<ForgeTexture: ${finish}>` : '') +
+                    (parts ? `\n<ForgeParts: ${parts}>` : ''),
                 meta: Object.assign({}, item.meta, {
                     ForgeSeed: String(seed),
-                    ForgeTexture: finish || undefined
+                    ForgeTexture: finish || undefined,
+                    ForgeParts: parts || undefined
                 })
             });
         }
@@ -2436,6 +2687,61 @@
                 html += `<div class="weapon-preview-card weapon-preview-card--single"${skin}>${inner}</div>`;
             }
             return html + '</div>';
+        }
+
+        // --------------------------------------------------- the model editor
+        // The way into Scene_WeaponSculptor. It sits under the preview because
+        // it is about the picture above it, and it is offered on every weapon
+        // whatever state it is in: a sculpt is cosmetic, costs nothing and is
+        // never used up, so there is nothing to spend and nothing to gate.
+        hasModelEditor() {
+            const item = this._selectedItem;
+            return typeof THREE !== 'undefined' && !!item && DataManager.isWeapon(item);
+        }
+
+        modelHTML(item) {
+            if (typeof THREE === 'undefined' || !DataManager.isWeapon(item)) return '';
+            const design = designFor(item);
+            const fitted = (design && design.p) ? design.p.length : 0;
+            const label = fitted ? T('Blacksmith.modelEditFitted', { n: fitted })
+                : T('Blacksmith.modelEdit');
+            return `<div class="inspect-actions inspect-actions--row">
+                    <div class="inspect-btn focusable ${this._activeArea === 'model' ? 'focused' : ''}" tabindex="0" id="forge-model">${escapeHtml(label)}</div>
+                </div>`;
+        }
+
+        // The piece as the editor's stand takes it: wearing its finish and its
+        // seed, but none of its fittings. The editor hangs those itself, one
+        // object each, so dragging one never costs a rebuild of the weapon.
+        sculptBase(item) {
+            if (isForged(item)) {
+                if (!designFor(item)) return item;
+                const meta = Object.assign({}, item.meta);
+                delete meta.ForgeParts;
+                return Object.assign({}, item, {
+                    note: String(item.note || '').replace(/<ForgeParts:[^>]*>/gi, ''),
+                    meta
+                });
+            }
+            const finish = this.chosenFinish(item);
+            const seed = this.pendingSeed(item);
+            return Object.assign({}, item, {
+                note: String(item.note || '') + `\n<ForgeSeed: ${seed}>` +
+                    (finish ? `\n<ForgeTexture: ${finish}>` : ''),
+                meta: Object.assign({}, item.meta, {
+                    ForgeSeed: String(seed),
+                    ForgeTexture: finish || undefined
+                })
+            });
+        }
+
+        openSculptor() {
+            const item = this._selectedItem;
+            if (!this.hasModelEditor()) { SoundManager.playBuzzer(); return; }
+            _resumePiece = { id: item.id, kind: DataManager.isWeapon(item) ? 'w' : 'a' };
+            Scene_WeaponSculptor.setup(item, this.sculptBase(item), designFor(item));
+            SoundManager.playOk();
+            SceneManager.push(Scene_WeaponSculptor);
         }
 
         // Putting the piece on the stand means a fresh WebGL context and a
@@ -2691,7 +2997,8 @@
 
             const spec = craftSpec(item);
             if (spec && window.SpecializationXP) {
-                window.SpecializationXP.award(spec, TIER_POINTS[craftTier(item)] || 1, { actor: this.smith() });
+                window.SpecializationXP.award(spec, TIER_POINTS[craftTier(item)] || 1,
+                    { actor: this.smithFor(item) });
             }
             return made;
         }
@@ -2700,9 +3007,10 @@
         // entry is rebuilt from it every time the game is loaded.
         async registerForged(base) {
             const kind = DataManager.isWeapon(base) ? 'w' : 'a';
-            const smith = String((this.smith() && this.smith().name()) || '')
+            const hands = this.smithFor(base);
+            const smith = String((hands && hands.name()) || '')
                 .replace(/[<>\r\n]/g, '').trim();
-            const quality = await rollQuality(this.smith(), base);
+            const quality = await rollQuality(hands, base);
             const rec = {
                 id: nextForgeId(kind),
                 kind,
@@ -2711,7 +3019,10 @@
                 quality,
                 texture: this.chosenFinish(base) || '',
                 seed: this.pendingSeed(base),
-                customName: (this._names && this._names[this.finishKey(base)] || '').trim(),
+                // The sculpt drawn for this bill goes onto the piece with it,
+                // and stays on the draft so a run of ten comes out matching.
+                parts: designFor(base),
+                customName: (_draft.names[this.finishKey(base)] || '').trim(),
                 params: rollParams(base, quality),
                 price: Math.max(1, Math.round((base.price || 0) * quality * quality)),
                 mark: 0
@@ -2722,8 +3033,8 @@
             if (!entry) { forgeStore().pop(); return null; }
             // The look and the name the smith previewed went into the record
             // with the piece, so the next one off the same bill rolls its own.
-            if (this._seeds) delete this._seeds[this.finishKey(base)];
-            if (this._names) delete this._names[this.finishKey(base)];
+            delete _draft.seeds[this.finishKey(base)];
+            delete _draft.names[this.finishKey(base)];
             return entry;
         }
 
@@ -2913,6 +3224,8 @@
                 return;
             }
 
+            if (e.target.closest('#forge-model')) { this.openSculptor(); return; }
+
             if (e.target.closest('#forge-action')) { this.makeSelected(); return; }
             if (e.target.closest('#forge-smelt')) { this.breakSelected(); return; }
         }
@@ -3022,6 +3335,20 @@
                 return;
             }
 
+            // The model row: one button, so up and down are the whole of it.
+            if (this._activeArea === 'model') {
+                if (Input.isTriggered('ok')) {
+                    this.openSculptor();
+                } else if (Input.isTriggered('down')) {
+                    this._activeArea = this.hasFinishes() ? 'finish' : this.firstButtonArea();
+                    SoundManager.playCursor();
+                    this.refreshForge();
+                } else if (cancel) {
+                    this.closePiece();
+                }
+                return;
+            }
+
             // The swatch strip: left and right walk it, OK takes the one under
             // the cursor and drops down to the buttons.
             if (this._activeArea === 'finish') {
@@ -3036,6 +3363,10 @@
                 } else if (Input.isTriggered('ok') || Input.isTriggered('down')) {
                     this._activeArea = this.firstButtonArea();
                     SoundManager.playOk();
+                    this.refreshForge();
+                } else if (Input.isTriggered('up') && this.hasModelEditor()) {
+                    this._activeArea = 'model';
+                    SoundManager.playCursor();
                     this.refreshForge();
                 } else if (cancel) {
                     this.closePiece();
@@ -3064,8 +3395,10 @@
                 if (Input.isTriggered('ok')) {
                     if (making) this.makeSelected(); else this.breakSelected();
                 } else if (Input.isTriggered('up')) {
-                    if (this.hasFinishes()) {
-                        this._activeArea = 'finish';
+                    const above = this.hasFinishes() ? 'finish'
+                        : (this.hasModelEditor() ? 'model' : '');
+                    if (above) {
+                        this._activeArea = above;
                         SoundManager.playCursor();
                         this.refreshForge();
                     }
@@ -3089,6 +3422,919 @@
     }
 
     window.Scene_Blacksmithing = Scene_Blacksmithing;
+
+    // ========================================================================
+    // Scene_WeaponSculptor - the model editor
+    // ========================================================================
+    //
+    // The bench where a weapon is given the look it keeps. It is the creature
+    // sculptor (CharacterCreation/CharacterCreation3DModel.js) pointed at a
+    // weapon instead of at a body, and it is deliberately the same screen: the
+    // same three-column shape, the same shelf of small static renders, the same
+    // stage that never animates, and it is drawn with that screen's own
+    // stylesheet (the .cc3d rules) rather than with a second one saying the
+    // same thing.
+    //
+    //   THE PIECE   the first column: the weapon itself, cut into the three
+    //               bands every builder in the game lays a weapon out in, each
+    //               a switch that takes that part of it OFF; then the fittings
+    //               hung on it, one row each, which is where one is picked up
+    //               or pulled off.
+    //   PARTS       the second column: which band to take off a donor, a search
+    //               box, and a shelf of every weapon in the game drawn as a
+    //               small picture of the part it would give. Clicking one hangs
+    //               it on.
+    //   STAGE       the weapon, turned by dragging the background; the panel in
+    //               its corner drives whatever fitting is selected.
+    //
+    // NOTHING HERE COSTS ANYTHING. A fitting is cosmetic from end to end, so
+    // there is no bill, no money, no skill check and no way to waste anything:
+    // the editor may be opened on a piece as often as the smith likes, and what
+    // it writes is a design (see commitDesign above).
+    //
+    // WHAT MAKES IT FAST
+    // The weapon is built ONCE, on the way in. After that nothing rebuilds it:
+    // a slider moves the object that is already on the stand (placeFitting, the
+    // very call the finished model is assembled with, so the stand is a promise
+    // and not a suggestion), taking a band off flips visible on meshes that
+    // were sorted into bands once, and adding a fitting builds that fitting
+    // alone. The stage draws at 30fps beside the game's own loop, at one device
+    // pixel per pixel, and the shelf's pictures are taken one per frame on a
+    // 72px renderer of their own as their card scrolls into view.
+    const SCULPT_BANDS = ['head', 'shaft', 'grip', 'whole'];
+    const SCULPT_MODES = ['move', 'turn', 'size'];
+    const SCULPT_PAGE = 36;
+    const SCULPT_HISTORY_MAX = 40;
+    const SCULPT_THUMB = 72;
+    const SCULPT_THUMB_MAX = 300;
+    const SCULPT_THUMBS = new Map();
+
+    // Offsets and sizes are fractions of the piece's longest side, so every
+    // slider on this panel reads the same on a dagger and on a greatsword.
+    const SCULPT_SLIDERS = {
+        x:  { min: -1.2, max: 1.2, step: 0.01, label: () => T('Blacksmith.sculpt.axisX') },
+        y:  { min: -1.2, max: 1.2, step: 0.01, label: () => T('Blacksmith.sculpt.axisY') },
+        z:  { min: -1.2, max: 1.2, step: 0.01, label: () => T('Blacksmith.sculpt.axisZ') },
+        ry: { min: -Math.PI, max: Math.PI, step: Math.PI / 36, label: () => T('Blacksmith.sculpt.turn') },
+        rx: { min: -Math.PI, max: Math.PI, step: Math.PI / 36, label: () => T('Blacksmith.sculpt.tilt') },
+        rz: { min: -Math.PI, max: Math.PI, step: Math.PI / 36, label: () => T('Blacksmith.sculpt.roll') },
+        s:  { min: 0.05, max: 1.5, step: 0.01, label: () => T('Blacksmith.sculpt.size') }
+    };
+
+    function sculptThumbCache(key, url) {
+        if (SCULPT_THUMBS.size >= SCULPT_THUMB_MAX) {
+            SCULPT_THUMBS.delete(SCULPT_THUMBS.keys().next().value);
+        }
+        SCULPT_THUMBS.set(key, url);
+    }
+
+    function emptyDesign() { return { v: 1, hide: [], p: [] }; }
+
+    function cloneDesign(design) {
+        const out = emptyDesign();
+        if (!design) return out;
+        out.hide = Array.isArray(design.hide) ? design.hide.slice() : [];
+        out.p = (Array.isArray(design.p) ? design.p : []).map(s => Object.assign({}, s));
+        return out;
+    }
+
+    class Scene_WeaponSculptor extends Scene_MenuBase {
+        // item: the entry the design belongs to. base: the same piece wearing
+        // its finish and its seed but none of its fittings, which is what the
+        // stand is built from. design: what it is sculpted as right now.
+        static setup(item, base, design) {
+            Scene_WeaponSculptor._item = item;
+            Scene_WeaponSculptor._base = base || item;
+            Scene_WeaponSculptor._design = cloneDesign(design);
+        }
+
+        create() {
+            super.create();
+            if (this._helpWindow) { this._helpWindow.deactivate(); this._helpWindow.hide(); }
+            this._item = Scene_WeaponSculptor._item;
+            this._baseItem = Scene_WeaponSculptor._base || this._item;
+            this._design = cloneDesign(Scene_WeaponSculptor._design);
+            this._opening = cloneDesign(this._design);
+
+            this._sel = this._design.p.length ? 0 : -1;
+            this._band = 'head';
+            this._mode = 'move';
+            this._filter = '';
+            this._shown = SCULPT_PAGE;
+            this._history = [];
+            this._future = [];
+            this._thumbQueue = [];
+            this._thumbAsked = {};
+            this._thumbReady = null;
+            this._eatCancel = 0;
+
+            this.buildDom();
+            this.initStage();
+            this.renderBands();
+            this.renderShelf();
+            this.render();
+        }
+
+        terminate() {
+            this.teardownStage();
+            if (this._onPointerDown) this._root.removeEventListener('mousedown', this._onPointerDown);
+            if (this._onPointerMove) window.removeEventListener('mousemove', this._onPointerMove);
+            if (this._onPointerUp) window.removeEventListener('mouseup', this._onPointerUp);
+            if (this._thumbWatcher) { this._thumbWatcher.disconnect(); this._thumbWatcher = null; }
+            const el = document.getElementById('wsculpt-container');
+            if (el) el.remove();
+            super.terminate();
+        }
+
+        // ------------------------------------------------------------ the design
+        donorOf(spec) {
+            return spec ? $dataWeapons[Number(spec.w) || 0] : null;
+        }
+
+        specName(spec) {
+            const donor = this.donorOf(spec);
+            const name = donor ? tr(donor.name) : '?';
+            return T('Blacksmith.sculpt.partName', {
+                name, band: T('Blacksmith.sculpt.band.' + (spec.b || 'whole'))
+            });
+        }
+
+        selected() {
+            return (this._sel >= 0 && this._sel < this._design.p.length) ? this._design.p[this._sel] : null;
+        }
+
+        pushHistory() {
+            this._history.push(JSON.stringify(this._design));
+            if (this._history.length > SCULPT_HISTORY_MAX) this._history.shift();
+            this._future.length = 0;
+        }
+
+        undo() {
+            if (!this._history.length) { SoundManager.playBuzzer(); return; }
+            this._future.push(JSON.stringify(this._design));
+            this.loadDesign(JSON.parse(this._history.pop()));
+        }
+
+        redo() {
+            if (!this._future.length) { SoundManager.playBuzzer(); return; }
+            this._history.push(JSON.stringify(this._design));
+            this.loadDesign(JSON.parse(this._future.pop()));
+        }
+
+        loadDesign(design) {
+            this._design = cloneDesign(design);
+            this._sel = Math.min(this._sel, this._design.p.length - 1);
+            SoundManager.playCursor();
+            this.rebuildFittings();
+            this.applyHidden();
+            this.render();
+        }
+
+        // Nothing is a one-way door and nothing is ever thrown away behind the
+        // player's back: leaving KEEPS the sculpt, and Revert is the one way
+        // back to what the piece looked like on the way in.
+        revert() {
+            this.pushHistory();
+            this.loadDesign(this._opening);
+        }
+
+        addFitting(donorId) {
+            const max = (window.WeaponSystemProcedural && WeaponSystemProcedural.DESIGN_PART_MAX) || 12;
+            if (this._design.p.length >= max) {
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Blacksmith.sculpt.tooMany', { n: max }), { severity: 'warning' });
+                }
+                SoundManager.playBuzzer();
+                return;
+            }
+            this.pushHistory();
+            // A new fitting arrives at the head of the piece, a third of its
+            // length up, at a size that reads: somewhere it can be seen and
+            // taken hold of, rather than buried inside the blade.
+            const spec = { w: donorId, b: this._band, x: 0, y: 0.28, z: 0, rx: 0, ry: 0, rz: 0, s: 0.35, t: '' };
+            this._design.p.push(spec);
+            this._sel = this._design.p.length - 1;
+            this.mountFitting(this._sel);
+            SoundManager.playOk();
+            this.render();
+        }
+
+        removeFitting(index) {
+            if (index < 0 || index >= this._design.p.length) return;
+            this.pushHistory();
+            this._design.p.splice(index, 1);
+            if (this._sel >= this._design.p.length) this._sel = this._design.p.length - 1;
+            SoundManager.playCancel();
+            this.rebuildFittings();
+            this.render();
+        }
+
+        selectFitting(index) {
+            if (index === this._sel) return;
+            this._sel = Math.max(-1, Math.min(this._design.p.length - 1, index));
+            SoundManager.playCursor();
+            this.render();
+        }
+
+        toggleBand(band) {
+            this.pushHistory();
+            const at = this._design.hide.indexOf(band);
+            if (at >= 0) this._design.hide.splice(at, 1);
+            else this._design.hide.push(band);
+            SoundManager.playOk();
+            this.applyHidden();
+            this.render();
+        }
+
+        setBand(band) {
+            if (this._band === band) return;
+            this._band = band;
+            this._shown = SCULPT_PAGE;
+            SoundManager.playCursor();
+            this.renderBands();
+            this.renderShelf();
+        }
+
+        setFinish(file) {
+            const spec = this.selected();
+            if (!spec) return;
+            this.pushHistory();
+            spec.t = file || '';
+            SoundManager.playCursor();
+            // A finish is the one edit that cannot be made on the object that is
+            // already standing there: it is the donor's own materials underneath.
+            this.mountFitting(this._sel);
+            this.render();
+        }
+
+        // A transform is written straight onto the object on the stand. This is
+        // the whole of why the editor stays responsive while a slider is being
+        // dragged: nothing is rebuilt, nothing is re-textured, and the weapon is
+        // never touched.
+        setSpec(field, value) {
+            const spec = this.selected();
+            const def = SCULPT_SLIDERS[field];
+            if (!spec || !def) return;
+            const next = Math.max(def.min, Math.min(def.max, value));
+            if (next === spec[field]) return;
+            spec[field] = next;
+            const fit = this._fits && this._fits[this._sel];
+            if (fit && this._measure && window.WeaponSystemProcedural) {
+                WeaponSystemProcedural.placeFitting(fit.holder, spec, this._measure);
+            }
+            this.refreshPanelValues();
+        }
+
+        // ----------------------------------------------------------------- DOM
+        buildDom() {
+            let el = document.getElementById('wsculpt-container');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'wsculpt-container';
+                document.body.appendChild(el);
+            }
+            el.innerHTML = `
+                <div class="cc3d">
+                    <div class="cc3d-top">
+                        <span class="cc3d-title">${escapeHtml(T('Blacksmith.sculpt.title'))}</span>
+                        <span class="cc3d-lbl">${escapeHtml(displayName(this._item))}</span>
+                        <span class="cc3d-spacer"></span>
+                        <div class="cc3d-chip focusable" tabindex="0" data-act="undo">${escapeHtml(T('Blacksmith.sculpt.undo'))}</div>
+                        <div class="cc3d-chip focusable" tabindex="0" data-act="redo">${escapeHtml(T('Blacksmith.sculpt.redo'))}</div>
+                        <div class="cc3d-chip focusable" tabindex="0" data-act="revert">${escapeHtml(T('Blacksmith.sculpt.revert'))}</div>
+                        <div class="cc3d-chip focusable" tabindex="0" data-act="done">${escapeHtml(T('Blacksmith.sculpt.done'))}</div>
+                    </div>
+                    <div class="cc3d-mid">
+                        <div class="cc3d-side cc3d-anat">
+                            <div class="cc3d-scroll" id="ws-list"></div>
+                        </div>
+                        <div class="cc3d-side cc3d-parts">
+                            <div id="ws-bands"></div>
+                            <div class="cc3d-scroll" id="ws-parts-body">
+                                <div class="cc3d-shelf" id="ws-shelf"></div>
+                            </div>
+                        </div>
+                        <div class="cc3d-stage" id="ws-stage">
+                            <canvas id="ws-canvas"></canvas>
+                            <div class="cc3d-hint">${escapeHtml(T('Blacksmith.sculpt.hint'))}</div>
+                            <div class="cc3d-handles" id="ws-panel"></div>
+                        </div>
+                    </div>
+                </div>`;
+            this._root = el;
+            this.bindPointer();
+        }
+
+        // The two columns that change as a sculpt is worked. The band strip and
+        // the shelf are NOT in here: the search box lives in the strip, and a
+        // redraw on every click would take the caret out of it mid-word.
+        render() {
+            this.renderList();
+            this.renderPanel();
+        }
+
+        // The piece itself: what it is made of, and what has been hung on it.
+        renderList() {
+            const el = document.getElementById('ws-list');
+            if (!el) return;
+            let html = `<div class="cc3d-lbl">${escapeHtml(T('Blacksmith.sculpt.thePiece'))}</div>`;
+            for (const band of ['head', 'shaft', 'grip']) {
+                const off = this._design.hide.indexOf(band) >= 0;
+                html += `
+                    <div class="cc3d-part pick focusable ${off ? '' : 'on'}" tabindex="0" data-band-toggle="${band}">
+                        <span>${escapeHtml(T('Blacksmith.sculpt.band.' + band))}</span>
+                        <span class="cc3d-part-hp">${escapeHtml(off ? T('Blacksmith.sculpt.removed') : T('Blacksmith.sculpt.kept'))}</span>
+                    </div>`;
+            }
+            html += `<div class="cc3d-lbl">${escapeHtml(T('Blacksmith.sculpt.fitted'))}</div>`;
+            if (!this._design.p.length) {
+                html += `<div class="cc3d-part"><span>${escapeHtml(T('Blacksmith.sculpt.noneFitted'))}</span></div>`;
+            }
+            this._design.p.forEach((spec, idx) => {
+                html += `
+                    <div class="cc3d-part pick focusable ${idx === this._sel ? 'on' : ''}" tabindex="0" data-fit="${idx}">
+                        <span>${escapeHtml(this.specName(spec))}</span>
+                        <span class="cc3d-part-hp" data-drop="${idx}">&#10006;</span>
+                    </div>`;
+            });
+            el.innerHTML = html;
+        }
+
+        renderBands() {
+            const el = document.getElementById('ws-bands');
+            if (!el) return;
+            const chips = SCULPT_BANDS.map(band =>
+                `<div class="cc3d-chip focusable ${this._band === band ? 'on' : ''}" tabindex="0" data-band="${band}">${escapeHtml(T('Blacksmith.sculpt.band.' + band))}</div>`).join('');
+            el.innerHTML = `
+                <div class="cc3d-top">${chips}</div>
+                <div class="cc3d-top">
+                    <input type="text" class="cc3d-search" id="ws-search" value="${escapeHtml(this._filter)}"
+                           placeholder="${escapeHtml(T('Blacksmith.sculpt.search'))}">
+                </div>`;
+            const search = document.getElementById('ws-search');
+            if (search) {
+                search.addEventListener('input', () => {
+                    this._filter = search.value || '';
+                    this._shown = SCULPT_PAGE;
+                    this.renderShelf();
+                });
+            }
+        }
+
+        donors() {
+            const P = window.WeaponSystemProcedural;
+            const all = (P && P.partDonors) ? P.partDonors() : [];
+            const q = this._filter.trim().toLowerCase();
+            if (!q) return all;
+            return all.filter(w => tr(w.name).toLowerCase().includes(q));
+        }
+
+        renderShelf() {
+            const el = document.getElementById('ws-shelf');
+            if (!el) return;
+            const list = this.donors();
+            const shown = list.slice(0, this._shown);
+            el.innerHTML = shown.map((donor) => {
+                const key = donor.id + '|' + this._band;
+                const url = SCULPT_THUMBS.get(key);
+                return `
+                    <div class="cc3d-card focusable" tabindex="0" data-donor="${donor.id}">
+                        <div class="cc3d-shot"><img data-thumb="${key}"${url ? ` src="${url}" class="cc-visible"` : ''} alt=""></div>
+                        <span class="cc3d-card-name">${escapeHtml(tr(donor.name))}</span>
+                    </div>`;
+            }).join('') || `<div class="cc3d-lbl">${escapeHtml(T('Blacksmith.sculpt.noDonors'))}</div>`;
+            this.watchThumbs();
+        }
+
+        // The panel over the stage: what a fitting is doing, and the finish it
+        // is wearing. Empty until something is picked up, so a stage with
+        // nothing selected is the weapon and nothing else.
+        renderPanel() {
+            const el = document.getElementById('ws-panel');
+            if (!el) return;
+            const spec = this.selected();
+            if (!spec) {
+                el.innerHTML = `<div class="cc3d-lbl">${escapeHtml(T('Blacksmith.sculpt.pickHint'))}</div>`;
+                return;
+            }
+            const modes = SCULPT_MODES.map(m =>
+                `<div class="cc3d-chip focusable ${this._mode === m ? 'on' : ''}" tabindex="0" data-mode="${m}">${escapeHtml(T('Blacksmith.sculpt.mode.' + m))}</div>`).join('');
+            const ids = this._mode === 'turn' ? ['ry', 'rx', 'rz']
+                : (this._mode === 'size' ? ['s'] : ['x', 'y', 'z']);
+            const sliders = ids.map(id => this.sliderHtml(id)).join('');
+
+            const donor = this.donorOf(spec);
+            const finishes = donor ? finishesFor(donor) : [];
+            let swatches = '';
+            if (finishes.length) {
+                swatches = `<div class="forge-swatches">` +
+                    `<div class="forge-swatch forge-swatch--auto focusable ${spec.t ? '' : 'selected'}" tabindex="0" data-fin="">` +
+                    `<span>${escapeHtml(T('Blacksmith.finishAuto'))}</span></div>` +
+                    finishes.slice(0, 48).map(file =>
+                        `<div class="forge-swatch focusable ${spec.t === file ? 'selected' : ''}" tabindex="0" data-fin="${escapeHtml(file)}">` +
+                        `<img src="${escapeHtml(finishSrc(file))}" alt="" loading="lazy" decoding="async"></div>`).join('') +
+                    `</div>`;
+            }
+
+            el.innerHTML = `
+                <div class="cc3d-handles-name">${escapeHtml(this.specName(spec))}</div>
+                <div class="cc3d-top">${modes}</div>
+                <div class="cc3d-knobs">${sliders}</div>
+                ${swatches}
+                <div class="cc3d-add focusable" tabindex="0" data-drop="${this._sel}">${escapeHtml(T('Blacksmith.sculpt.remove'))}</div>`;
+        }
+
+        sliderHtml(id) {
+            const def = SCULPT_SLIDERS[id];
+            const spec = this.selected();
+            const value = spec ? (Number(spec[id]) || 0) : 0;
+            const pct = Math.round(((value - def.min) / (def.max - def.min)) * 100);
+            const shown = (id === 'rx' || id === 'ry' || id === 'rz')
+                ? Math.round(value * 180 / Math.PI) + '°'
+                : value.toFixed(2);
+            return `
+                <div class="cc3d-sl focusable" tabindex="0" data-slider="${id}">
+                    <div class="cc3d-sl-head"><span>${escapeHtml(def.label())}</span><span class="cc3d-sl-val" data-slval="${id}">${escapeHtml(shown)}</span></div>
+                    <div class="cc3d-sl-bar" data-slbar="${id}"><div class="cc3d-sl-fill" style="--cc-bar-w:${pct}%"></div></div>
+                </div>`;
+        }
+
+        // A dragged slider repaints its own two nodes and nothing else: redrawing
+        // the panel mid-drag would take the bar out from under the pointer.
+        refreshPanelValues() {
+            const spec = this.selected();
+            if (!spec || !this._root) return;
+            for (const id of Object.keys(SCULPT_SLIDERS)) {
+                const def = SCULPT_SLIDERS[id];
+                const value = Number(spec[id]) || 0;
+                const val = this._root.querySelector(`[data-slval="${id}"]`);
+                if (val) {
+                    val.textContent = (id === 'rx' || id === 'ry' || id === 'rz')
+                        ? Math.round(value * 180 / Math.PI) + '°'
+                        : value.toFixed(2);
+                }
+                const bar = this._root.querySelector(`[data-slbar="${id}"] .cc3d-sl-fill`);
+                if (bar) {
+                    bar.style.setProperty('--cc-bar-w',
+                        Math.round(((value - def.min) / (def.max - def.min)) * 100) + '%');
+                }
+            }
+        }
+
+        // --------------------------------------------------------- the pointer
+        bindPointer() {
+            this._onPointerDown = (e) => this.onDown(e);
+            this._onPointerMove = (e) => this.onMove(e);
+            this._onPointerUp = () => this.onUp();
+            this._root.addEventListener('mousedown', this._onPointerDown);
+            window.addEventListener('mousemove', this._onPointerMove);
+            window.addEventListener('mouseup', this._onPointerUp);
+            const body = document.getElementById('ws-parts-body');
+            if (body) {
+                body.addEventListener('scroll', () => {
+                    if (body.scrollTop + body.clientHeight < body.scrollHeight - 120) return;
+                    if (this._shown >= this.donors().length) return;
+                    this._shown += SCULPT_PAGE;
+                    this.renderShelf();
+                });
+            }
+        }
+
+        onDown(e) {
+            const hit = (sel) => (e.target.closest ? e.target.closest(sel) : null);
+
+            const drop = hit('[data-drop]');
+            if (drop) { this.removeFitting(parseInt(drop.dataset.drop, 10)); return; }
+
+            const act = hit('[data-act]');
+            if (act) {
+                const name = act.dataset.act;
+                if (name === 'undo') this.undo();
+                else if (name === 'redo') this.redo();
+                else if (name === 'revert') this.revert();
+                else this.leave();
+                return;
+            }
+
+            const bandOff = hit('[data-band-toggle]');
+            if (bandOff) { this.toggleBand(bandOff.dataset.bandToggle); return; }
+
+            const fit = hit('[data-fit]');
+            if (fit) { this.selectFitting(parseInt(fit.dataset.fit, 10)); return; }
+
+            const band = hit('[data-band]');
+            if (band) { this.setBand(band.dataset.band); return; }
+
+            const donor = hit('[data-donor]');
+            if (donor) { this.addFitting(parseInt(donor.dataset.donor, 10)); return; }
+
+            const mode = hit('[data-mode]');
+            if (mode) { this._mode = mode.dataset.mode; SoundManager.playCursor(); this.renderPanel(); return; }
+
+            const fin = hit('[data-fin]');
+            if (fin) { this.setFinish(fin.dataset.fin); return; }
+
+            const bar = hit('[data-slbar]');
+            if (bar) {
+                this._drag = { kind: 'slider', id: bar.dataset.slbar, el: bar };
+                this.pushHistory();
+                this.dragSlider(e);
+                e.preventDefault();
+                return;
+            }
+
+            if (hit('#ws-canvas')) {
+                this._drag = { kind: 'stage', x: e.clientX, y: e.clientY };
+                if (this.selected()) this.pushHistory();
+                e.preventDefault();
+            }
+        }
+
+        onMove(e) {
+            if (!this._drag) return;
+            if (this._drag.kind === 'slider') { this.dragSlider(e); return; }
+            const dx = e.clientX - this._drag.x;
+            const dy = e.clientY - this._drag.y;
+            this._drag.x = e.clientX;
+            this._drag.y = e.clientY;
+            const spec = this.selected();
+            // With nothing picked up, or with the right button down, the drag
+            // turns the view. With a fitting selected it does whatever the panel
+            // has armed, which is what makes the stage the main way to work.
+            if (!spec || e.buttons === 2) {
+                const state = this._view;
+                if (state) {
+                    state.pivot.rotation.y += dx * 0.012;
+                    state.pivot.rotation.x += dy * 0.012;
+                }
+                return;
+            }
+            if (this._mode === 'move') {
+                this.setSpec('x', (spec.x || 0) + dx * 0.004);
+                this.setSpec('y', (spec.y || 0) - dy * 0.004);
+            } else if (this._mode === 'turn') {
+                this.setSpec('ry', (spec.ry || 0) + dx * 0.012);
+                this.setSpec('rx', (spec.rx || 0) + dy * 0.012);
+            } else {
+                this.setSpec('s', (spec.s || 0.35) + (dx - dy) * 0.003);
+            }
+        }
+
+        onUp() {
+            // RMMZ reads the right button as cancel, and cancel leaves the
+            // editor: an orbit must not walk out of it. A stage drag swallows
+            // the cancel it caused.
+            if (this._drag && this._drag.kind === 'stage') this._eatCancel = 4;
+            this._drag = null;
+        }
+
+        dragSlider(e) {
+            const def = SCULPT_SLIDERS[this._drag.id];
+            if (!def) return;
+            const rect = this._drag.el.getBoundingClientRect();
+            const t = Math.max(0, Math.min(1, (e.clientX - rect.left) / (rect.width || 1)));
+            const raw = def.min + t * (def.max - def.min);
+            this.setSpec(this._drag.id, Math.round(raw / def.step) * def.step);
+        }
+
+        // ------------------------------------------------------------ the stage
+        initStage() {
+            const canvas = document.getElementById('ws-canvas');
+            if (!canvas || typeof THREE === 'undefined') return;
+            const rect = canvas.getBoundingClientRect();
+            const width = Math.max(1, Math.round(rect.width) || 800);
+            const height = Math.max(1, Math.round(rect.height) || 500);
+
+            let renderer;
+            try {
+                renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            } catch (e) {
+                return;
+            }
+            renderer.setSize(width, height, false);
+            // One device pixel per pixel, the call the forge's own stand and the
+            // creature sculptor both settled on: the hi-DPI multiplier is the
+            // biggest cost on this screen and buys almost nothing.
+            renderer.setPixelRatio(1);
+
+            const scene = new THREE.Scene();
+            scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+            const key = new THREE.DirectionalLight(0xfff2d0, 0.7); key.position.set(3, 5, 4); scene.add(key);
+            const fill = new THREE.DirectionalLight(0xbcd4ff, 0.35); fill.position.set(-3, -2, 2); scene.add(fill);
+            const camera = new THREE.PerspectiveCamera(40, width / height, 0.02, 100);
+            const pivot = new THREE.Group();
+            scene.add(pivot);
+
+            const state = {
+                renderer, canvas, scene, camera, pivot, holder: null,
+                raf: 0, disposed: false, acc: 0, last: performance.now(),
+                size: { w: width, h: height }
+            };
+            this._view = state;
+
+            const onWheel = (e) => {
+                e.preventDefault();
+                camera.position.z = Math.max(0.4, Math.min(20, camera.position.z + e.deltaY * 0.004 * camera.position.z));
+            };
+            const onCtx = (e) => e.preventDefault();
+            canvas.addEventListener('wheel', onWheel, { passive: false });
+            canvas.addEventListener('contextmenu', onCtx);
+            state.listeners = { onWheel, onCtx };
+
+            this.buildStand();
+            this.createThumbStage();
+
+            const FRAME_MS = 1000 / 30;
+            const tick = () => {
+                if (state.disposed) return;
+                state.raf = requestAnimationFrame(tick);
+                const now = performance.now();
+                state.acc += Math.min(now - state.last, 50);
+                state.last = now;
+                if (state.acc < FRAME_MS) return;
+                state.acc = 0;
+                this.resizeStage(state);
+                this.pumpThumbs();
+                // The weapon never animates here. A sculptor aims at a part, and
+                // a model whose gears turn drags it out from under the pointer.
+                if (window.PSXShader) window.PSXShader.render(renderer, scene, camera);
+                else renderer.render(scene, camera);
+            };
+            tick();
+        }
+
+        resizeStage(state) {
+            const w = Math.max(1, state.canvas.clientWidth);
+            const h = Math.max(1, state.canvas.clientHeight);
+            if (w === state.size.w && h === state.size.h) return;
+            state.size = { w, h };
+            state.renderer.setSize(w, h, false);
+            state.camera.aspect = w / h;
+            state.camera.updateProjectionMatrix();
+        }
+
+        // The weapon, built ONCE. Everything the editor does afterwards happens
+        // to the objects hanging off this holder.
+        buildStand() {
+            const state = this._view;
+            const P = window.WeaponSystemProcedural;
+            if (!state || !P) return;
+            // Built the way the FINISHED model is built, one step earlier:
+            // _buildModel is the weapon before mergeStaticParts welds it down to
+            // a handful of buffers. The welded model is the faster one to draw,
+            // but its meshes each span half the weapon, and a band toggle read
+            // off those would take the wrong half of the piece off. The editor
+            // therefore stands the piece exactly as applyDesign sees it, which
+            // is the whole of why what is on the stand is what comes off the
+            // anvil. It is one uncached build, on the way in, and nothing after.
+            const base = P._buildModel(this._baseItem);
+            if (!base) return;
+
+            // Measured before anything is hidden or hung, exactly as the finished
+            // model is measured (applyDesign), so what stands here is what comes
+            // off the anvil.
+            this._measure = P.measure(base);
+            this._bands = P.bandMeshes(base, this._measure);
+            if (window.PSXShader) window.PSXShader.applyToObject(base);
+
+            const holder = new THREE.Group();
+            holder.position.copy(this._measure.mid).multiplyScalar(-1);
+            holder.add(base);
+            state.pivot.add(holder);
+            state.holder = holder;
+            state.base = base;
+
+            state.camera.position.set(0, 0, this._measure.span * 2.1);
+            state.camera.lookAt(0, 0, 0);
+            state.pivot.rotation.set(0.1, -0.5, 0);
+
+            this.applyHidden();
+            this.rebuildFittings();
+        }
+
+        // Taking a band off is a visibility flip on meshes that were sorted into
+        // bands once, so it costs nothing and is instant. The finished model cuts
+        // them away for real; on the stand they only have to stop being drawn.
+        applyHidden() {
+            if (!this._bands) return;
+            for (const band of ['head', 'shaft', 'grip']) {
+                const off = this._design.hide.indexOf(band) >= 0;
+                for (const mesh of this._bands[band]) mesh.visible = !off;
+            }
+        }
+
+        mountFitting(index) {
+            const state = this._view;
+            const P = window.WeaponSystemProcedural;
+            if (!state || !state.holder || !P || !this._measure) return;
+            if (!this._fits) this._fits = [];
+            const old = this._fits[index];
+            if (old && old.holder.parent) old.holder.parent.remove(old.holder);
+            const spec = this._design.p[index];
+            if (!spec) { this._fits[index] = null; return; }
+            const object = P.harvestPart(Number(spec.w) || 0, spec.b || 'whole');
+            if (!object) { this._fits[index] = null; return; }
+            if (spec.t) P.paintPart(object, spec.t);
+            if (window.PSXShader) window.PSXShader.applyToObject(object);
+            const holder = new THREE.Group();
+            holder.add(object);
+            P.placeFitting(holder, spec, this._measure);
+            state.holder.add(holder);
+            this._fits[index] = { holder, object };
+        }
+
+        rebuildFittings() {
+            const state = this._view;
+            if (!state || !state.holder) return;
+            for (const fit of (this._fits || [])) {
+                if (fit && fit.holder.parent) fit.holder.parent.remove(fit.holder);
+            }
+            this._fits = [];
+            for (let i = 0; i < this._design.p.length; i++) this.mountFitting(i);
+        }
+
+        // ------------------------------------------------------- shelf pictures
+        // One extra WebGL context, opened once and released on the way out, and
+        // one picture per frame: a picture costs a whole donor weapon to build,
+        // so they are asked for as their card scrolls into view.
+        createThumbStage() {
+            if (typeof THREE === 'undefined') return;
+            this._thumbScene = new THREE.Scene();
+            this._thumbScene.add(new THREE.AmbientLight(0xffffff, 0.8));
+            const key = new THREE.DirectionalLight(0xfff2d0, 0.85); key.position.set(2, 3, 4);
+            this._thumbScene.add(key);
+            const rim = new THREE.DirectionalLight(0xbcd4ff, 0.45); rim.position.set(-2, 1, -3);
+            this._thumbScene.add(rim);
+            this._thumbStage = new THREE.Group();
+            this._thumbScene.add(this._thumbStage);
+            this._thumbCam = new THREE.PerspectiveCamera(40, 1, 0.01, 50);
+            const canvas = document.createElement('canvas');
+            canvas.width = SCULPT_THUMB;
+            canvas.height = SCULPT_THUMB;
+            this._thumbCanvas = canvas;
+            try {
+                this._thumbRenderer = new THREE.WebGLRenderer({
+                    canvas, alpha: true, antialias: true, preserveDrawingBuffer: true
+                });
+                this._thumbRenderer.setSize(SCULPT_THUMB, SCULPT_THUMB, false);
+                this._thumbRenderer.setPixelRatio(1);
+            } catch (e) {
+                this._thumbRenderer = null;
+            }
+        }
+
+        watchThumbs() {
+            const shelf = document.getElementById('ws-shelf');
+            if (!shelf || typeof IntersectionObserver === 'undefined') return;
+            if (this._thumbWatcher) this._thumbWatcher.disconnect();
+            else {
+                this._thumbWatcher = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (!entry.isIntersecting) continue;
+                        this._thumbWatcher.unobserve(entry.target);
+                        const id = parseInt(entry.target.dataset.donor, 10);
+                        if (id) this.requestThumb(id);
+                    }
+                }, { root: document.getElementById('ws-parts-body'), rootMargin: '200px' });
+            }
+            shelf.querySelectorAll('.cc3d-card[data-donor]').forEach((card) => {
+                const img = card.querySelector('img[data-thumb]');
+                if (img && !img.getAttribute('src')) this._thumbWatcher.observe(card);
+            });
+        }
+
+        requestThumb(donorId) {
+            const key = donorId + '|' + this._band;
+            if (SCULPT_THUMBS.has(key)) { this.paintThumb(key); return; }
+            if (this._thumbAsked[key]) return;
+            this._thumbAsked[key] = true;
+            this._thumbQueue.push({ key, donorId, band: this._band });
+        }
+
+        paintThumb(key) {
+            const url = SCULPT_THUMBS.get(key);
+            if (!url || !this._root) return;
+            this._root.querySelectorAll(`img[data-thumb="${key}"]`).forEach((img) => {
+                img.src = url;
+                img.classList.add('cc-visible');
+            });
+        }
+
+        // A harvest is a whole donor weapon built from scratch, so a picture is
+        // taken over two frames: cut on one, drawn and grabbed on the next.
+        // A single frame never carries both.
+        pumpThumbs() {
+            if (!this._thumbRenderer) return;
+            if (!this._thumbReady) {
+                if (!this._thumbQueue.length) return;
+                const next = this._thumbQueue.shift();
+                const lib = window.WeaponSystemProcedural;
+                if (!lib) return;
+                try {
+                    next.object = lib.harvestPart(next.donorId, next.band);
+                } catch (e) {
+                    next.object = null;
+                }
+                if (next.object) this._thumbReady = next;
+                return;
+            }
+            const job = this._thumbReady;
+            this._thumbReady = null;
+            const object = job.object;
+            try {
+                this._thumbStage.add(object);
+                const box = new THREE.Box3().setFromObject(object);
+                const size = box.getSize(new THREE.Vector3());
+                const centre = box.getCenter(new THREE.Vector3());
+                const max = Math.max(size.x, size.y, size.z);
+                if (!(max > 0)) throw new Error('empty part');
+                object.position.sub(centre);
+                const dist = (max / (2 * Math.tan((40 * Math.PI / 180) / 2))) * 1.5;
+                this._thumbCam.position.set(dist * 0.5, dist * 0.3, dist * 0.85);
+                this._thumbCam.lookAt(0, 0, 0);
+                this._thumbRenderer.render(this._thumbScene, this._thumbCam);
+                sculptThumbCache(job.key, this._thumbCanvas.toDataURL('image/png'));
+                this.paintThumb(job.key);
+            } catch (e) {
+                // A picture is a convenience; the shelf still reads as names.
+            }
+            this._thumbStage.remove(object);
+        }
+
+        teardownStage() {
+            const state = this._view;
+            if (this._thumbRenderer) {
+                try { this._thumbRenderer.dispose(); } catch (e) { /* already lost */ }
+                try {
+                    if (this._thumbRenderer.forceContextLoss) this._thumbRenderer.forceContextLoss();
+                } catch (e) { /* already lost */ }
+                this._thumbRenderer = null;
+            }
+            if (!state) return;
+            state.disposed = true;
+            if (state.raf) cancelAnimationFrame(state.raf);
+            const L = state.listeners || {};
+            if (state.canvas) {
+                state.canvas.removeEventListener('wheel', L.onWheel);
+                state.canvas.removeEventListener('contextmenu', L.onCtx);
+            }
+            // dispose() leaves the context alive, and the browser force-loses the
+            // OLDEST context past its cap, which would be the game's own canvas.
+            // Release it, then retire the element: a lost context never comes
+            // back on the node it was taken from.
+            try { state.renderer.dispose(); } catch (e) { /* already lost */ }
+            try { if (state.renderer.forceContextLoss) state.renderer.forceContextLoss(); } catch (e) { /* already lost */ }
+            if (state.canvas && state.canvas.parentNode) {
+                state.canvas.parentNode.replaceChild(state.canvas.cloneNode(false), state.canvas);
+            }
+            this._view = null;
+        }
+
+        // -------------------------------------------------------------- leaving
+        // A sculpt is never thrown away behind the player's back, so there is no
+        // Back that discards: leaving writes what is on the stand onto the piece.
+        leave() {
+            if (this._leaving) return;
+            this._leaving = true;
+            commitDesign(this._item, this._design);
+            SoundManager.playOk();
+            this.popScene();
+        }
+
+        // ---------------------------------------------------------------- input
+        update() {
+            const typing = document.activeElement && document.activeElement.id === 'ws-search';
+            if (!typing) this.updateSculptInput();
+            super.update();
+        }
+
+        updateSculptInput() {
+            if (this._eatCancel > 0) this._eatCancel--;
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                if (this._drag || this._eatCancel > 0) return;
+                this.leave();
+                return;
+            }
+            if (Input.isTriggered('pagedown')) { this.selectFitting(this._sel + 1); return; }
+            if (Input.isTriggered('pageup')) { this.selectFitting(this._sel - 1); return; }
+
+            const spec = this.selected();
+            if (!spec) return;
+            const ids = this._mode === 'turn' ? ['ry', 'rx']
+                : (this._mode === 'size' ? ['s', 's'] : ['x', 'y']);
+            const nudge = (id, dir) => {
+                const def = SCULPT_SLIDERS[id];
+                this.setSpec(id, (Number(spec[id]) || 0) + dir * def.step * 2);
+            };
+            if (Input.isRepeated('right')) nudge(ids[0], 1);
+            else if (Input.isRepeated('left')) nudge(ids[0], -1);
+            else if (Input.isRepeated('up')) nudge(ids[1], 1);
+            else if (Input.isRepeated('down')) nudge(ids[1], -1);
+        }
+    }
+
+    window.Scene_WeaponSculptor = Scene_WeaponSculptor;
+
 
     // ========================================================================
     // Entry points
@@ -3116,14 +4362,22 @@
     class Scene_Thinker extends (window.Scene_Blacksmithing || Scene_MenuBase) {
         create() {
             super.create();
-            // Same board, opened with the bench's own trades in front: the
-            // door a player came through still decides what they see first.
-            const b = window.ThinkerBench;
-            const first = b ? this.listItems().find(e => !DataManager.isWeapon(e) && !DataManager.isArmor(e)) : null;
-            if (first) {
-                this.setTrade(this.tradeOf(first));
-                this.refreshForge();
-            }
+            // Back from the model editor with a piece already open: the board
+            // has been put back where it was and must not be re-defaulted.
+            if (this._modalOpen) return;
+            // The board opens on WHAT THE PARTY CAN MAKE THIS MINUTE, across
+            // every trade: a recipe somebody in the party reads, trained far
+            // enough to attempt, with the whole bill in the sack. Anything else
+            // is one chip away and nothing is hidden, but the first thing on
+            // screen is never a page of work that cannot be started.
+            //
+            // It used to open on the bench's own trade, which was a filter over
+            // the answer rather than the answer: a party whose cook was the one
+            // with something to make opened on the smith's empty shelf.
+            this.setTrade('');
+            this.setStatus(this.boardCounts().ready > 0 ? 'ready' : 'all');
+            this.selectRow(0);
+            this.refreshForge();
         }
     }
 

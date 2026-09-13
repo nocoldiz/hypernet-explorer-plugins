@@ -167,5 +167,15 @@
   "LavaTube": "Tubo di Lava",
   "Barrow": "Tumulo",
   "MetroStation": "Stazione Sotterranea",
-  "SaltWorks": "Salina"
+  "SaltWorks": "Salina",
+  "AlienUnderFracture": "Gallerie di Faglia Aliene",
+  "AlienUnderGlacier": "Cripte Glaciali Aliene",
+  "AlienUnderGeode": "Camere di Geode Aliene",
+  "AlienUnderLavatube": "Tubi di Lava Alieni",
+  "AlienUnderAbyss": "Oceano Sotterraneo Alieno",
+  "AlienUnderBurrow": "Tane Aliene",
+  "AlienUnderDust": "Sale di Polvere Aliene",
+  "AlienUnderVault": "Caveau Meccanici Alieni",
+  "AlienUnderStorm": "Ponti di Nubi Alieni",
+  "AlienUnderVoid": "Nucleo Morto Alieno"
 }

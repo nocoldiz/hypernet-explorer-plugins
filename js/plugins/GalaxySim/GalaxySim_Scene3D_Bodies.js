@@ -758,6 +758,10 @@
       // The parking (and refuelling) orbit has to clear this star's own
       // visual radius, so the holder carries it (see updateShip).
       holder.userData.visR = cR;
+      // A refuel pass threads this star's own prominence loops, so the holder
+      // also carries them and the rate its body spins them at (see the arc
+      // avoidance in updateShip / skimDirection below).
+      holder.userData.spinRate = 0.07;
       if (c.name) starHolders[c.name] = holder;
 
       let cObj = null;
@@ -774,6 +778,7 @@
       }
       if (!cGroup) return;
       cGroup.scale.setScalar(cR);
+      holder.userData.arcs = cGroup._arcs || null;
       holder.add(cGroup);
       const pick = { object: holder, radius: cR, kind: "star", data: c, system: systemData };
       pickables.push(pick);
@@ -1087,6 +1092,50 @@
       }
     }
 
+    // --- The refuel pass: threading the coronal loops -----------------------
+    // Drawing fuel is no longer a wide lap held at arm's length. The hull
+    // drops INSIDE the shell the prominence loops arch over (they spring off
+    // the photosphere and top out at ~1.03-1.25 star radii, see
+    // Renderer3D.buildProminenceArcs) and slaloms through it. The loops ride
+    // the star's body mesh, which spins about Y, so their live bearing is the
+    // one they were built with plus that spin; the pass is bent off whichever
+    // loop it comes nearest, which is what reads as flying BETWEEN the arcs
+    // rather than straight through one.
+    const SKIM_RADIUS = 1.09;   // star radii the pass settles at, inside the loops
+    const SKIM_CLEAR = 0.30;    // radians of clearance it keeps from a loop
+    const SKIM_WEAVE = 0.42;    // how far off the equator the slalom carries it
+    const _skimDir = new THREE.Vector3();
+    const _skimApex = new THREE.Vector3();
+    const _skimPush = new THREE.Vector3();
+
+    // Unit direction of the pass at `phase`, in the star's own frame. `weave`
+    // is 0 while parked, so the idle orbit stays the flat circle it always was.
+    function skimDirection(out, phase, weave, arcs, bodyRot) {
+      out.set(Math.cos(phase), weave * Math.sin(phase * 3), Math.sin(phase)).normalize();
+      if (!arcs || !arcs.length || weave <= 0) return out;
+      const cs = Math.cos(bodyRot), sn = Math.sin(bodyRot);
+      for (let i = 0; i < arcs.length; i++) {
+        const ap = arcs[i].apexDir;
+        // The loop's apex where the body's own spin currently holds it.
+        _skimApex.set(ap.x * cs + ap.z * sn, ap.y, -ap.x * sn + ap.z * cs);
+        const d = clamp(_skimApex.dot(out), -1, 1);
+        const ang = Math.acos(d);
+        if (ang >= SKIM_CLEAR) continue;
+        // Slide along the great circle AWAY from that apex. Dead on top of it
+        // there is no such direction, so the loop's own sway axis stands in.
+        _skimPush.copy(_skimApex).addScaledVector(out, -d);
+        if (_skimPush.lengthSq() < 1e-6) {
+          const sa = arcs[i].swayAxis;
+          _skimPush.set(sa.x * cs + sa.z * sn, sa.y, -sa.x * sn + sa.z * cs);
+          _skimPush.addScaledVector(out, -_skimPush.dot(out));
+          if (_skimPush.lengthSq() < 1e-6) continue;
+        }
+        _skimPush.normalize();
+        out.addScaledVector(_skimPush, -(SKIM_CLEAR - ang) * weave).normalize();
+      }
+      return out;
+    }
+
     // Position the ship in this view's local frame. Called by Scene3D each
     // frame AFTER animate() (so planet holders are at their current spot).
     //   state = { mode:'parkedStar'|'parkedPlanet'|'traveling',
@@ -1137,29 +1186,42 @@
         // Parked at the primary by default; state.starName redirects the park
         // orbit onto a named companion/donor star of an N-ary system.
         let cx = 0, cz = 0, bodyR = starR, r = starR + 1.1;
+        let arcs = (starGroup && starGroup._arcs) || null;
+        let spinRate = 0.05; // the primary's own body spin (see animate)
         const h = state.starName && starHolders[state.starName];
         if (h) {
           cx = h.position.x;
           cz = h.position.z;
           bodyR = h.userData && h.userData.visR ? h.userData.visR : 0.5;
           r = bodyR + 1.1;
+          arcs = (h.userData && h.userData.arcs) || null;
+          spinRate = (h.userData && h.userData.spinRate) || 0.07;
         }
-        // Refuelling flies the hull in: the gap to the surface closes to a
-        // quarter of the parking distance while the pumps run, and opens back
-        // out when they stop. It never crosses the body's own radius.
-        const approach = Math.max(0, Math.min(1, state.approach || 0));
-        const gap = (r - bodyR) * (1 - 0.78 * approach);
-        r = bodyR + Math.max(0.12, gap);
-        // Very slow drift around the star when parked at the system centre; a
-        // harvest flyby whips around several times faster.
-        const spin = 0.02 * (1 + 5 * approach * (state.approachSpin ? 1 : 0.35));
+        // Refuelling flies the hull all the way in: from the parking orbit to
+        // a pass just inside the loops themselves (SKIM_RADIUS), and back out
+        // again when the pumps stop. Star-radius relative, so a red giant and
+        // a dwarf are skimmed at the same height above their own surface.
+        const approach = clamp(state.approach || 0, 0, 1);
+        r += (bodyR * SKIM_RADIUS - r) * approach;
+        // Very slow drift around the star when parked at the system centre;
+        // drawing fuel turns that into a real pass, and a harvest flyby whips
+        // around faster still.
+        const spin = 0.02 * (1 + 10 * approach * (state.approachSpin ? 1 : 0.7));
         const stepT = parkPhaseT === null ? 0 : Math.max(0, Math.min(0.5, t - parkPhaseT));
         parkPhaseT = t;
         parkPhase += stepT * spin;
         const a = parkPhase;
-        const y = 0.4 * (1 - 0.6 * approach);
-        g.position.set(cx + Math.cos(a) * r, y, cz + Math.sin(a) * r);
-        g.lookAt(cx + Math.cos(a + 0.1) * r, y, cz + Math.sin(a + 0.1) * r);
+        const weave = SKIM_WEAVE * approach;
+        const bodyRot = t * spinRate;
+        // The idle parking orbit rides a little above the plane; once the pass
+        // is flown the slalom's own height IS the path, so that offset fades.
+        const y = 0.4 * (1 - approach);
+        skimDirection(_skimDir, a, weave, arcs, bodyRot);
+        g.position.set(cx + _skimDir.x * r, y + _skimDir.y * r, cz + _skimDir.z * r);
+        // Nose down the path itself, so the hull banks through the slalom
+        // instead of holding a flat circle's heading.
+        skimDirection(_skimDir, a + 0.1, weave, arcs, bodyRot);
+        g.lookAt(cx + _skimDir.x * r, y + _skimDir.y * r, cz + _skimDir.z * r);
       }
       ship.update(t, state.mode === "traveling");
     }

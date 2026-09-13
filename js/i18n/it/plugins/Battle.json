@@ -93,6 +93,7 @@
     "skill": "Abilità",
     "skills": "Abilità",
     "basic": "Base",
+    "actions": "Azioni",
     "aim": "Mira",
     "aimAt": "Mira: {part}",
     "wrestle": "Lotta",
@@ -492,6 +493,72 @@
       "che risale dal fondo"
     ]
   },
+  "rarity": {
+    "desc": "{build} {habit} {rumour}",
+    "build": [
+      "Qualcosa che il mondo ha fatto una volta sola e non ha più rifatto.",
+      "Un corpo montato con pezzi che nessuna specie possiede tutti insieme.",
+      "Ha la taglia sbagliata per tutto ciò che ha intorno, e l'ha sempre avuta.",
+      "Nessun manuale lo prevede, e i manuali sono stati controllati.",
+      "Sembra un animale qualunque finché non lo si guarda abbastanza a lungo.",
+      "Una forma che pare disegnata da una descrizione e non dal vero.",
+      "Ha le proporzioni di tre creature e le maniere di nessuna.",
+      "Qualunque cosa sia, ne esiste esattamente una."
+    ],
+    "habit": [
+      "Sta su terreni che nessuno attraversa due volte.",
+      "Si muove nell'ora in cui le mappe non vengono disegnate.",
+      "Segue la stessa linea attraverso il continente da anni.",
+      "Va dove sta andando e non si ferma a farsi guardare.",
+      "Non lo si trova mai dove è stato segnalato l'ultima volta.",
+      "Cammina allo scoperto e in qualche modo non è mai fra i piedi di nessuno.",
+      "Pascola, caccia o aspetta, e due testimoni non concordano mai su quale.",
+      "Tiene una distanza che non cambia mai, qualunque fosse la distanza."
+    ],
+    "rumour": [
+      "Tre persone lo hanno messo per iscritto e nessun resoconto coincide.",
+      "Ogni avvistamento è l'unico avvistamento di qualcuno.",
+      "L'ultima persona che ne ha visto uno ha smesso di viaggiare.",
+      "Sta su una sola guida da campo, a margine, a matita.",
+      "C'è una ricompensa per una fotografia e nessuno l'ha mai riscossa.",
+      "Il paese che gli ha dato il nome nel frattempo gliene ha dato un altro.",
+      "Ha un nome locale in quattro lingue e uno proprio in nessuna.",
+      "Chi lo incontra è l'ultima persona che lo incontrerà."
+    ]
+  },
+  "alien": {
+    "desc": "{biology} {behaviour} {world}",
+    "biology": [
+      "La sua chimica non è quella della Terra e non finge di esserlo.",
+      "È simmetrica lungo un asse lungo cui qui non è simmetrico niente.",
+      "Ciò che usa come sangue scorre a una temperatura a cui qui non sopravvive nulla.",
+      "Respira qualcosa, e quel qualcosa non è aria.",
+      "Il suo corpo ripete un solo organo finché la ripetizione è l'animale.",
+      "Ha organi di senso rivolti in direzioni che non dovrebbero contare.",
+      "Niente in essa è caldo, e niente in essa è lento.",
+      "È cresciuta nella forma che la sua gravità le ha concesso."
+    ],
+    "behaviour": [
+      "Risponde al movimento, non al suono.",
+      "Caccia su un orario legato a un giorno che qui non vive nessuno.",
+      "Non reagisce a essere guardata, il che è già una risposta.",
+      "Tratta una squadra di sbarco come fosse il tempo atmosferico.",
+      "È territoriale su un terreno identico a tutto il resto del terreno.",
+      "Sciama, poi smette, e il cambio non ha causa visibile.",
+      "Viaggia in una formazione precisa al centimetro.",
+      "Sta aspettando qualcosa che non è ancora successo."
+    ],
+    "world": [
+      "È stata catalogata al primo sbarco che ne è sopravvissuto.",
+      "Il suo mondo risulta abitabile, il che è un'opinione d'ufficio.",
+      "È l'unica cosa che si muove per cento chilometri.",
+      "La biofirma prometteva qualcosa del genere e l'aveva detta in piccolo.",
+      "Appartiene a un mondo che non ha mai avuto due volte un visitatore.",
+      "Niente altro sul suo pianeta condivide con essa un solo tratto.",
+      "La ricognizione che le ha dato il nome è stata interrotta.",
+      "È, per quanto chiunque possa dimostrare, indigena."
+    ]
+  },
   "weapons": {
     "pair": "{actor} impugna {first} e {second}."
   },
@@ -637,6 +704,7 @@
       ],
       "page": "{actor} strappa la pagina e legge oltre senza alzare gli occhi.",
       "incant": "{actor} la legge ad alta voce, piatta e precisa: \"{lore}\"",
+      "incantBox": "{actor}, che legge: \"{lore}\"",
       "incantPlain": "{actor} legge {skill} dal libro, parola per parola."
     },
     "kindDesc": {

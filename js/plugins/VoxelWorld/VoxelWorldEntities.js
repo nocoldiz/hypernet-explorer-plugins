@@ -244,13 +244,29 @@
                 typeof $dataEnemies !== 'undefined' && $dataEnemies);
         }
 
-        // A roster set from outside: the species a PLANET has, rather than the
-        // creatures Earth's biomes list. Every square of an alien world draws
-        // from the same handful of things that live there (GalaxySim's
-        // alienSpeciesRoster), which is what a planet with life actually looks
-        // like. Null puts Earth's own <Biome:> tags back.
-        setRoster(enemyIds) {
-            this._roster = (enemyIds && enemyIds.length) ? enemyIds.slice() : null;
+        // What lives on this world.
+        //
+        // On EARTH this is never called and the creatures come off the database's
+        // own <Biome:> tags, which is what those tags are for.
+        //
+        // On a PLANET the roster is the WHOLE answer, and the empty roster is a
+        // real answer: a world with no life has nothing walking on it. This used
+        // to hand back null for a dead world, and null meant "use Earth's tags"
+        // - so Mercury was quietly furnished with Earth's fauna, and the party
+        // met a Basaltstone Golem (<Biome: Cave, ...>) in a Mercurian cave,
+        // because the cave roster is looked up by a hardcoded list of Earth tags
+        // that has nothing to do with which planet anybody is standing on.
+        //
+        // The two rosters are kept apart because GalaxySim generates them apart:
+        // a living world has one set of creatures on its surface and a different
+        // set under it, off streams that share no salt, so the same six do not
+        // wander up and down a shaft.
+        setAlienRoster(surface, under) {
+            this._alienWorld  = true;
+            this._roster      = (surface && surface.length) ? surface.slice() : null;
+            this._underRoster = (under && under.length) ? under.slice() : null;
+            this._cavePool    = undefined;
+            this._sewerPool   = undefined;
         }
 
         // Where the party is standing, in the one respect that changes what
@@ -307,8 +323,11 @@
                 // rest at whatever the place holds; the roll is the battle
                 // system's own, so the share is the same in both worlds.
                 let band = H.getSpawnBand(mode, ref);
-                if (mode === 'biome' && H.rollBiomeTether && H.rollBiomeTether() &&
-                    H.getBiomeTetherBand) {
+                // Under a nation bracket the country is the whole rule and the
+                // party has no say in it, so the tethered half does not exist
+                // here any more than it does in the 2D world.
+                if (band && !band.nation && mode === 'biome' &&
+                    H.rollBiomeTether && H.rollBiomeTether() && H.getBiomeTetherBand) {
                     band = H.getBiomeTetherBand();
                 }
                 if (!band) return null;
@@ -367,7 +386,10 @@
         // Enemy ids for a tile biome: exact tag match first, then the longest
         // partial match (so "MountainIce" still finds "Mountain" dwellers).
         _candidatesFor(biomeName) {
-            if (this._roster) return this._roster;
+            // On another world the answer is that world's own roster whatever
+            // square is being asked about, and where it has none the answer is
+            // NOTHING - never Earth's tags, which describe Earth.
+            if (this._alienWorld) return this._roster;
             const idx = this._index();
             const n = biomeName.toLowerCase();
             const exact = idx.get(n);
@@ -776,7 +798,10 @@
         // of how specific they are. An alien planet's own roster still wins:
         // its caves have its animals in them.
         _caveCandidates() {
-            if (this._roster) return this._roster;
+            // Under another world: what lives DOWN THERE, which on a living
+            // world is not what walks its surface, and on a dead one is nothing
+            // at all. The tag list below is a list of EARTH's caves.
+            if (this._alienWorld) return this._underRoster;
             if (this._cavePool !== undefined) return this._cavePool;
             let pool = null;
             for (const name of CAVE_BIOME_TAGS) {
@@ -791,7 +816,9 @@
         // the roster of a limestone passage under a wood. Falls back to the
         // caves where the database names nothing.
         _sewerCandidates() {
-            if (this._roster) return this._roster;
+            // Nobody has laid brick galleries on another planet, but a caller
+            // that asks anyway gets that world's underground, not a town's.
+            if (this._alienWorld) return this._underRoster;
             if (this._sewerPool !== undefined) return this._sewerPool;
             let pool = null;
             for (const name of SEWER_BIOME_TAGS) {
@@ -1159,7 +1186,12 @@
 
         _populate(wx, wy, big) {
             const ts   = WORLD_TILE_SIZE;
-            const plan = planSettlement(wx, wy, big, ts);
+            // The square's plan through the memo, not a second one laid out
+            // from scratch. planForTile is already holding this town - the
+            // decorator dressed the same square moments ago - and re-planning
+            // it ran the whole of planTown and buildSolids again on the frame
+            // the party walked into the place.
+            const plan = planForTile(wx, wy) || planSettlement(wx, wy, big, ts);
             const originX = wx * ts + ts * 0.5;
             const originZ = wy * ts + ts * 0.5;
             const baseY   = this._terrain.getTerrainHeight(wx + 0.5, wy + 0.5) + plan.paveH;
@@ -1282,11 +1314,29 @@
     // when the party comes within reach of its door and taken down again when
     // they leave, so a city street costs nothing until somebody walks into one
     // of its houses.
+    //
+    // A standing interior is named by a number: the square it is on, and which
+    // lot of that square it is. The world is 256 squares a side and a square
+    // holds well under a thousand lots, so the two pack with room to spare.
+    //
+    // They were strings - "tx,tz#lot" - and the update below builds one for
+    // EVERY lot of the nine squares around the party, on every frame: a city
+    // square carries a couple of dozen, so it was several hundred strings a
+    // second to look up records that had not changed.
+    const intTile = (tx, tz) => tx * 256 + tz;
+    const intKey  = (tx, tz, lot) => intTile(tx, tz) * 1024 + lot;
+
     class BuildingInteriors {
         constructor(scene, terrain) {
             this._scene   = terrain && terrain._scene ? terrain._scene : scene;
             this._terrain = terrain;
-            this._live    = new Map();     // 'tx,tz#lot' -> record
+            this._live    = new Map();     // intKey -> record
+            this._want    = new Set();     // reused by update(), never rebuilt
+            // Bumped whenever a building's inside goes up or comes down. What
+            // a square is SOLID as depends on which of its buildings are
+            // standing open, and the collision code caches that answer off
+            // this rather than working it out twice a frame.
+            this.version  = 0;
             this._budget  = 2;             // interiors built per frame
         }
 
@@ -1295,7 +1345,8 @@
         update(px, pz) {
             const ts = WORLD_TILE_SIZE;
             const ptx = Math.floor(px / ts), ptz = Math.floor(pz / ts);
-            const want = new Set();
+            const want = this._want;
+            want.clear();
             let built = 0;
 
             for (let dx = -1; dx <= 1; dx++) {
@@ -1309,12 +1360,13 @@
                         const lot = plan.lots[i];
                         const wx = ox + lot.x, wz = oz + lot.z;
                         const d = Math.hypot(wx - px, wz - pz);
-                        const key = tx + ',' + tz + '#' + i;
+                        const key = intKey(tx, tz, i);
                         const live = this._live.get(key);
                         if (d <= INTERIOR_NEAR) {
                             want.add(key);
                             if (!live && built < this._budget) {
                                 this._live.set(key, this._build(tx, tz, plan, i, ox, oz));
+                                this.version++;
                                 built++;
                             }
                         } else if (live && d > INTERIOR_FAR) {
@@ -1323,8 +1375,10 @@
                     }
                 }
             }
-            // Anything left standing on a square nobody is near any more.
-            for (const key of [...this._live.keys()]) {
+            // Anything left standing on a square nobody is near any more. The
+            // map is walked directly: _free deletes the entry it is handed, and
+            // an entry deleted as it is visited does not disturb the walk.
+            for (const key of this._live.keys()) {
                 if (!want.has(key) && !this._nearEnough(key, px, pz)) this._free(key);
             }
         }
@@ -1378,6 +1432,7 @@
             // interior's own instance buffers are freed with it.
             rec.group.traverse(o => { if (o.isInstancedMesh && o.dispose) o.dispose(); });
             this._live.delete(key);
+            this.version++;
         }
 
         // Put up one building's inside: the floors, the walls between the rooms,
@@ -1435,7 +1490,7 @@
             return {
                 group, inner, lot, base, index, keepers,
                 wx: ox + lot.x, wz: oz + lot.z,
-                tile: tx + ',' + tz
+                tile: intTile(tx, tz)
             };
         }
 
@@ -1672,6 +1727,9 @@
         dispose() {
             for (const key of [...this._live.keys()]) this._free(key);
         }
+
+        // The square a caller means, in the form liveLots and wallRects read.
+        static tileKeyOf(tx, tz) { return intTile(tx, tz); }
     }
 
     // =========================================================================
@@ -1856,6 +1914,15 @@
     // wildlife is: only what is near enough to see is ever in the scene.
     // =========================================================================
     const PARKED_RANGE   = 1400;   // world units: built inside this, dropped outside it
+    // Which sheet a parked vehicle is drawn off, and how long it really is.
+    // Out here rather than inside the sweep, which built the table again on
+    // every pass.
+    const VEHICLE_2D_PARKED = {
+        car:   { sheet: 'Vehicles/!$Car_large', length: 18 },
+        bike:  { sheet: 'Vehicles/!$Bike', length: 7 },
+        boat:  { sheet: 'Vehicles/!$Boat_large', length: 14 },
+        broom: { sheet: 'Vehicles/!$BroomStick', length: 6 }
+    };
     const PARKED_INT     = 1.1;    // seconds between sweeps of the park records
 
     class ParkedVehicles {
@@ -1926,12 +1993,6 @@
                     this._live.delete(key);
                 }
             }
-            const VEHICLE_2D_PARKED = {
-                car:   { sheet: 'Vehicles/!$Car_large', length: 18 },
-                bike:  { sheet: 'Vehicles/!$Bike', length: 7 },
-                boat:  { sheet: 'Vehicles/!$Boat_large', length: 14 },
-                broom: { sheet: 'Vehicles/!$BroomStick', length: 6 }
-            };
             for (const [key, w] of want) {
                 if (this._live.has(key)) continue;
                 const gy = this._terrain.getTerrainHeight(w.x / WORLD_TILE_SIZE, w.z / WORLD_TILE_SIZE);

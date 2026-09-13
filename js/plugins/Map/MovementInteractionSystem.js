@@ -60,6 +60,10 @@
  *   the tile in front of it (the tile in the mirror event's facing direction)
  * - Layered bridges on region ID 12 (walk on top from region 11/5 in any
  *   direction, pass under from anywhere else, on foot, swimming or by boat)
+ * - An event noted <Underwater> only exists for a diver wearing the diving
+ *   suit (item 141): on the surface it does not draw, does not trigger and
+ *   does not block its tile, and the dive that hides the other events leaves
+ *   it on show
  *
  * Instructions:
  * 1. Configure the fishing rod item ID in plugin parameters
@@ -73,6 +77,8 @@
  * 9. Use region ID 10 on tiles where you don't want swim/fish/climb options
  * 10. Paint bridge deck tiles (upper/priority layer) with region ID 12, and
  *     mark their walk-on approaches with region ID 11 or 5
+ * 11. Note an event <Underwater> to make it a seabed event, shown only while
+ *     the party is diving with the diving suit
  *
  * @param fishingItems
  * @text Fishing Items
@@ -563,11 +569,40 @@
   // between two tiles stops for a frame or two on every step, so the swap back
   // to the still sheet waits out a short grace period instead of flickering on
   // each of those gaps.
+  //
+  // A diver who owns a suit of their own is drawn in it instead of the shared
+  // one: the wardrobe answers for the pair (CharacterPresets.emDiveSheets for
+  // Em), and nothing here names one of those files.
   window.DivingSprite = {
     STILL: 'Skab/!$DivingSuiteStill',   // i18n-ignore  sprite sheet name
     MOVING: 'Skab/!$DivingSuiteMoving', // i18n-ignore  sprite sheet name
     IDLE_FRAMES: 24,   // 0.4s at 60fps before the diver counts as still
     MOVING_WAIT: 16,   // frames per animation cell while swimming (slow loop)
+
+    /**
+     * Who is wearing the suit. Followers answer for themselves; the player is
+     * whoever leads the party this minute.
+     * @param {object} character - The diving character
+     * @returns {?object} The actor in the suit, or null
+     */
+    diver(character) {
+      if (!character) return null;
+      if (typeof character.actor === 'function') return character.actor();
+      return (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty.leader() : null;
+    },
+
+    /**
+     * The still / moving pair this character dives in: their own suit where
+     * they have one, the shared one otherwise.
+     * @param {object} character - The diving character
+     * @returns {{still: string, moving: string}} Sheet names
+     */
+    sheets(character) {
+      const CP = window.CharacterPresets;
+      const own = (CP && typeof CP.emDiveSheets === 'function')
+        ? CP.emDiveSheets(this.diver(character)) : null;
+      return own || { still: this.STILL, moving: this.MOVING };
+    },
 
     apply(character) {
       if (!character) return;
@@ -581,7 +616,8 @@
       else character._diveIdleCount = Math.min(character._diveIdleCount + 1, this.IDLE_FRAMES);
 
       const swimming = character._diveIdleCount < this.IDLE_FRAMES;
-      const wanted = swimming ? this.MOVING : this.STILL;
+      const suit = this.sheets(character);
+      const wanted = swimming ? suit.moving : suit.still;
       character._diveSlowAnim = swimming;
       if (character.characterName() !== wanted) character.setImage(wanted, 0);
       character.setStepAnime(true);
@@ -2605,7 +2641,8 @@
           $gameMap.events().forEach(event => {
             if (event && event.event()) {
               const isMonster = event.event().name === "Enemy";  // i18n-ignore  event name
-              if (!isMonster) {
+              // A seabed event is what the descent is for: it stays on show.
+              if (!isMonster && !isUnderwaterEvent(event)) {
                 event._originalTransparent = event.isTransparent();
                 event.setTransparent(true);
               }
@@ -2647,9 +2684,9 @@
         // Hide parallax
         $gameMap.changeParallax("", false, false, 0, 0);
         
-        // Hide all map events
+        // Hide all map events, bar the seabed ones the dive is for
         $gameMap.events().forEach(event => {
-          if (event) {
+          if (event && !isUnderwaterEvent(event)) {
             event._originalTransparent = event.isTransparent();
             event.setTransparent(true);
           }
@@ -2866,9 +2903,9 @@
             // Hide parallax
             $gameMap.changeParallax("", false, false, 0, 0);
             
-            // Hide all map events
+            // Hide all map events, bar the seabed ones the dive is for
             $gameMap.events().forEach(event => {
-              if (event) {
+              if (event && !isUnderwaterEvent(event)) {
                 event._originalTransparent = event.isTransparent();
                 event.setTransparent(true);
               }
@@ -3449,14 +3486,92 @@
 
       if (this.visible && this._character instanceof Game_Event) {
           const isGlobalDiving = $gamePlayer._isDiving || _isProcDivingGlobal();
-          
-          if (isGlobalDiving) {
+
+          // A seabed event is the one thing a diver is down there to find, so
+          // the "only water tiles show while under" rule does not apply to it:
+          // its own note already decides when it is there.
+          if (isGlobalDiving && !isUnderwaterEvent(this._character)) {
               if (!Utils.isWaterTile(this._character.x, this._character.y)) {
                   this.visible = false;
               }
           }
       }
   };
+
+  //=========================================================================
+  // Underwater events
+  //=========================================================================
+  // An event noted <Underwater> belongs to the seabed, not to the surface map.
+  // Out of the water it does not draw, does not trigger and does not block the
+  // tile it stands on, so a wreck, a chest or a diver-only door can sit on a
+  // square the party walks over dry-shod and simply is not there.
+  //
+  // What reveals it is the dive itself, not the tile: the local dive (the one
+  // that swaps in tileset 201) and the procedural Ocean descent both count, and
+  // both are gated on the diving suit (item 141) before they start. The suit is
+  // asked for again here so that losing it mid-dive puts the seabed back out of
+  // reach rather than leaving it on show.
+  const UNDERWATER_EVENT_NOTE = /<Underwater>/i;  // i18n-ignore  note tag
+
+  // Keyed on the $dataMap event, not on the Game_Event: the note is map data
+  // and never changes with the page, and nothing of this is carried into a save.
+  const _underwaterNoteCache = new WeakMap();
+
+  const isUnderwaterEvent = (character) => {
+    if (!character || !(character instanceof Game_Event)) return false;
+    const data = character.event ? character.event() : null;
+    if (!data) return false;
+    let tagged = _underwaterNoteCache.get(data);
+    if (tagged === undefined) {
+      tagged = UNDERWATER_EVENT_NOTE.test(data.note || "");
+      _underwaterNoteCache.set(data, tagged);
+    }
+    return tagged;
+  };
+
+  // Recomputed at most once a frame: isTransparent runs for every event sprite
+  // every frame, and the answer is the same for all of them.
+  let _divingWithSuitFrame = -1;
+  let _divingWithSuitCached = false;
+  const isDivingWithSuit = () => {
+    if (_divingWithSuitFrame !== Graphics.frameCount) {
+      _divingWithSuitFrame = Graphics.frameCount;
+      _divingWithSuitCached = !!(
+        $gamePlayer && ($gamePlayer._isDiving || _isProcDivingGlobal()) &&
+        $gameParty && typeof $dataItems !== "undefined" && $dataItems &&
+        $gameParty.hasItem($dataItems[DIVING_SUIT_ITEM_ID])
+      );
+    }
+    return _divingWithSuitCached;
+  };
+
+  const isHiddenUnderwaterEvent = (character) =>
+    isUnderwaterEvent(character) && !isDivingWithSuit();
+
+  // isTransparent is the single answer the whole game asks: the sprite, the
+  // mouse hover label (Core/MousePan.js) and the idle explorer all read it, so
+  // hiding here hides everywhere without a hook per reader.
+  const _MIS_Game_Event_isTransparent = Game_Event.prototype.isTransparent;
+  Game_Event.prototype.isTransparent = function() {
+    if (isHiddenUnderwaterEvent(this)) return true;
+    return _MIS_Game_Event_isTransparent.call(this);
+  };
+
+  const _MIS_Game_Event_start = Game_Event.prototype.start;
+  Game_Event.prototype.start = function() {
+    if (isHiddenUnderwaterEvent(this)) return;
+    _MIS_Game_Event_start.call(this);
+  };
+
+  const _MIS_Game_Event_isNormalPriority = Game_Event.prototype.isNormalPriority;
+  Game_Event.prototype.isNormalPriority = function() {
+    if (isHiddenUnderwaterEvent(this)) return false;
+    return _MIS_Game_Event_isNormalPriority.call(this);
+  };
+
+  MovementSystem.isUnderwaterEvent = isUnderwaterEvent;
+  MovementSystem.isDivingWithSuit = isDivingWithSuit;
+  MovementSystem.isHiddenUnderwaterEvent = isHiddenUnderwaterEvent;
 
   //=========================================================================
   // Sprint stamina

@@ -59,13 +59,6 @@
   // is a few pixels out, and a field can fail to settle for reasons none of this
   // can see: a model that never loaded, a scene torn down mid-build.
   const ENEMY_BAR_SETTLE_PATIENCE = 90;
-  // The AP/TP orb's own footprint (22px plus its 2px border on both sides),
-  // matching UI/PartyHud.js's .phud-orb exactly.
-  const ORB_SIZE = 22;
-  const ORB_GUTTER = 26;
-  // How far the orb rides back over the end of the gauges (UI/PartyHud.js
-  // stands its own orb over the start of theirs by the same few pixels).
-  const ORB_OVERLAP = 8;
   const MINI = {
     padX: 8,
     thickness: 13, // same bar height as PartyHud's .phud-bars-container .phud-bar
@@ -80,7 +73,7 @@
   MINI.mpY = MINI.hpY + MINI.thickness + 3;
   MINI.chipY = MINI.mpY + MINI.thickness + 5;
   const miniBarWidth = Math.round(
-    ON_MODEL_GAUGE_W + ORB_GUTTER + MINI.padX * 2 + MINI.ang
+    ON_MODEL_GAUGE_W + MINI.padX * 2 + MINI.ang
   );
 
   // The same HP thresholds the party cards switch colour at
@@ -95,17 +88,17 @@
   // here so the cost of it is in one place.
   const CRIT_PULSE_FRAMES = 10;
 
+  // Whether a monster carries a magic gauge at all. A pool of a single point
+  // is a gauge that can only read full or empty and says nothing the battle
+  // log does not, so it is left off the bar. A severed-magic world
+  // (hideMpBar) has no magic to spend in the first place.
+  function enemyShowsMp(battler) {
+    return !hideMpBar() && battler.mmp > 1;
+  }
+
   function miniBarGeometry(width) {
     const x = MINI.padX + MINI.ang;
     return { x, w: Math.max(20, width - x - MINI.padX) };
-  }
-
-  // The HP/MP gauges themselves stop short of the full column width, leaving
-  // room for the AP orb at the right (UI/PartyHud.js carves the same gutter
-  // out of its own bars, on the left, via .phud-bars-container padding-left).
-  function miniBarGaugeGeometry(width) {
-    const full = miniBarGeometry(width);
-    return { x: full.x, w: Math.max(20, full.w - ORB_GUTTER) };
   }
 
   // Compact bars belong to the ordinary battle scene: a tactical map battle
@@ -1288,32 +1281,10 @@
     this._lastMaxHp = battler.mhp;
     this._lastMp = battler.mp;
     this._lastMaxMp = battler.mmp;
-    this._lastTp = battler.tp;
     this._displayHp = battler.hp;
     this._damageChunkHp = battler.hp;
-    this._createOrb();
     this.refresh();
     this.createDamageOverlay();
-  };
-
-  // The same AP/TP orb the party cards wear (UI/PartyHud.js _makeOrb), built
-  // once and written into in place. It uses the same phud-orb* classes, kept
-  // outside #party-hud (see css/game.css's unscoped copy of those rules), so
-  // it renders identically without living inside the party's own DOM tree.
-  Sprite_BattleBar.prototype._createOrb = function () {
-    const orb = document.createElement("div");
-    orb.className = "phud-orb ebar-orb";
-    const ghost = document.createElement("div");
-    ghost.className = "phud-orb-ghost";
-    const fill = document.createElement("div");
-    fill.className = "phud-orb-fill";
-    const val = document.createElement("span");
-    val.className = "phud-orb-val";
-    orb.appendChild(ghost);
-    orb.appendChild(fill);
-    orb.appendChild(val);
-    this._htmlOverlay.root.appendChild(orb);
-    this._orb = { orb, ghost, fill, val };
   };
 
   const _Sprite_BattleBar_destroy = Sprite_BattleBar.prototype.destroy || Sprite.prototype.destroy;
@@ -1361,18 +1332,16 @@
       b.hp !== this._lastHp ||
       b.mhp !== this._lastMaxHp ||
       b.mp !== this._lastMp ||
-      b.mmp !== this._lastMaxMp ||
-      b.tp !== this._lastTp
+      b.mmp !== this._lastMaxMp
     ) {
       this.refresh();
       this._lastHp = b.hp;
       this._lastMaxHp = b.mhp;
       this._lastMp = b.mp;
       this._lastMaxMp = b.mmp;
-      this._lastTp = b.tp;
     }
   };
-  // Everything the bar draws that its own HP/MP/TP watch does not already
+  // Everything the bar draws that its own HP/MP watch does not already
   // catch, boiled down to one integer: the ailments it carries, whether the
   // target cursor is on it, and which of the two bar styles is in force.
   // Cheap enough to ask every frame, and it reads the raw state id list rather
@@ -1423,7 +1392,7 @@
   Sprite_BattleBar.prototype.updateDamageOverlay = function () {
     if (!this._damageOverlay) return;
     const b = this._battler;
-    const geo = miniBarGaugeGeometry(this.bitmap.width);
+    const geo = miniBarGeometry(this.bitmap.width);
     const hpWidth = Math.round(geo.w * (this._displayHp / Math.max(1, b.mhp)));
     const dmgWidth = Math.round(geo.w * (this._damageChunkHp / Math.max(1, b.mhp)));
     if (dmgWidth <= hpWidth) {
@@ -1467,7 +1436,7 @@
   };
 
   // Every monster on the field wears the same compact bar: the angled HP/MP
-  // pair, the AP/TP orb, the name, the level and its status chips - the same
+  // pair, the name, the level and its status chips - the same
   // elements the party's own cards carry (UI/PartyHud.js), mirrored to the
   // right since the column stands in the opposite corner, plus the elements it
   // is soft to. A lone monster used to get a large bar carrying the full
@@ -1476,7 +1445,7 @@
   // battle log as it happens, so neither had anything left to say that the
   // field was not already saying.
   // `canvasOnly` repaints the gauges and leaves the DOM half of the bar - the
-  // name, the two labels, the orb and the chip row - exactly as it stands.
+  // name, the two labels and the chip row - exactly as it stands.
   // Rewriting those costs an innerHTML parse and ten custom properties per
   // element, which is most of what a redraw is worth, and none of it changes
   // while only the critical pulse is moving.
@@ -1485,12 +1454,10 @@
     this.bitmap.clear();
     if (window.AsciiMode && window.AsciiMode.active) {
       if (this._htmlOverlay) this._htmlOverlay.clear();
-      if (this._orb) window.UIPanel.close(this._orb.orb);
       this.refreshAsciiEnemyBar();
       return;
     }
     if (!canvasOnly && this._htmlOverlay) this._htmlOverlay.clear();
-    if (this._orb) window.UIPanel.open(this._orb.orb);
     this.refreshMinimalEnemyBar(canvasOnly);
   };
 
@@ -1523,14 +1490,17 @@
     overlay.addText(`HP ${hpBar} ${hp}/${b.mhp}`, 0, y, w, "left", 12, "#ff4444", false, null, 0, "monospace", lineHeight);
     y += lineHeight;
 
-    // A severed-magic world has no magic to spend, so the row closes up.
-    if (!hideMpBar() && b.mmp > 0) {
+    // No magic to spend, or a single point of it, and the row closes up.
+    if (enemyShowsMp(b)) {
       const mpBar = gauge(b.mp / Math.max(1, b.mmp), "*");
       overlay.addText(`MP ${mpBar} ${Math.floor(b.mp)}/${b.mmp}`, 0, y, w, "left", 12, "#00ffff", false, null, 0, "monospace", lineHeight);
     }
   };
-  // The monster bar: an angled HP gauge with the magic one under it, the AP/TP
-  // orb, the name, the level, the elements it is soft to and the status chips.
+  // The monster bar: an angled HP gauge with the magic one under it where the
+  // creature has a pool worth reading (enemyShowsMp), the name, the level, the
+  // elements it is soft to and the status chips. No AP orb: a monster never
+  // spends AP the player can act on, so the orb was a number with nothing to
+  // say and a gutter carved out of the gauges to say it in.
   // No severed limbs: a severed limb is now missing from the model itself, and
   // a stat change is called out in the battle log as it happens, so neither had
   // anything left to say that the field was not already saying.
@@ -1540,7 +1510,6 @@
     const ctx = bitmap.context;
     const W = bitmap.width;
     const geo = miniBarGeometry(W);
-    const barGeo = miniBarGaugeGeometry(W);
 
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
     const hpRate = clamp01(this._displayHp / Math.max(1, b.mhp));
@@ -1560,25 +1529,25 @@
     const drawGauge = (y, rate, dark, bright) => {
       const ang = MINI.ang;
       const h = MINI.thickness;
-      const fillW = Math.round(barGeo.w * clamp01(rate));
+      const fillW = Math.round(geo.w * clamp01(rate));
       ctx.fillStyle = BAR_TRACK;
       ctx.beginPath();
-      ctx.moveTo(barGeo.x, y);
-      ctx.lineTo(barGeo.x + barGeo.w, y);
-      ctx.lineTo(barGeo.x + barGeo.w - ang, y + h);
-      ctx.lineTo(barGeo.x - ang, y + h);
+      ctx.moveTo(geo.x, y);
+      ctx.lineTo(geo.x + geo.w, y);
+      ctx.lineTo(geo.x + geo.w - ang, y + h);
+      ctx.lineTo(geo.x - ang, y + h);
       ctx.closePath();
       ctx.fill();
       if (fillW > 0) {
-        const grad = ctx.createLinearGradient(barGeo.x, 0, barGeo.x + barGeo.w, 0);
+        const grad = ctx.createLinearGradient(geo.x, 0, geo.x + geo.w, 0);
         grad.addColorStop(0, dark);
         grad.addColorStop(1, bright);
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.moveTo(barGeo.x, y);
-        ctx.lineTo(barGeo.x + fillW, y);
-        ctx.lineTo(barGeo.x + fillW - ang, y + h);
-        ctx.lineTo(barGeo.x - ang, y + h);
+        ctx.moveTo(geo.x, y);
+        ctx.lineTo(geo.x + fillW, y);
+        ctx.lineTo(geo.x + fillW - ang, y + h);
+        ctx.lineTo(geo.x - ang, y + h);
         ctx.closePath();
         ctx.fill();
         const hiH = Math.max(1, Math.floor(h / 2));
@@ -1589,10 +1558,10 @@
         ctx.beginPath();
         // Highlight over the TOP half, same as the party cards' bars
         // (linear-gradient(to bottom, rgba(255,255,255,.28) 50%, transparent 50%)).
-        ctx.moveTo(barGeo.x, y);
-        ctx.lineTo(barGeo.x + fillW, y);
-        ctx.lineTo(barGeo.x + fillW - hiAng, y + hiH);
-        ctx.lineTo(barGeo.x - hiAng, y + hiH);
+        ctx.moveTo(geo.x, y);
+        ctx.lineTo(geo.x + fillW, y);
+        ctx.lineTo(geo.x + fillW - hiAng, y + hiH);
+        ctx.lineTo(geo.x - hiAng, y + hiH);
         ctx.closePath();
         ctx.fill();
         ctx.restore();
@@ -1600,10 +1569,10 @@
       ctx.strokeStyle = BAR_BORDER;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(barGeo.x, y);
-      ctx.lineTo(barGeo.x + barGeo.w, y);
-      ctx.lineTo(barGeo.x + barGeo.w - ang, y + h);
-      ctx.lineTo(barGeo.x - ang, y + h);
+      ctx.moveTo(geo.x, y);
+      ctx.lineTo(geo.x + geo.w, y);
+      ctx.lineTo(geo.x + geo.w - ang, y + h);
+      ctx.lineTo(geo.x - ang, y + h);
       ctx.closePath();
       ctx.stroke();
     };
@@ -1626,7 +1595,7 @@
     drawGauge(MINI.hpY, hpRate, hpDark, hpBright);
     if (hpCritical) ctx.filter = "none";
 
-    const hasMp = b.mmp > 0;
+    const hasMp = enemyShowsMp(b);
     if (hasMp) {
       drawGauge(MINI.mpY, b.mp / Math.max(1, b.mmp), "#16386e", "#4a86d9");
     }
@@ -1690,7 +1659,7 @@
       // of the screen rather than the left.
       const addBarLabel = (text, y) => {
         const el = this._htmlOverlay.addText(
-          text, barGeo.x - MINI.ang, y, barGeo.w + MINI.ang, "right",
+          text, geo.x - MINI.ang, y, geo.w + MINI.ang, "right",
           12, "#f4ecd8", true, null, 0, "Bitter, serif", MINI.thickness
         );
         if (el) {
@@ -1700,27 +1669,6 @@
       addBarLabel(Math.floor(b.hp) + "/" + Math.floor(b.mhp), MINI.hpY);
       if (hasMp) {
         addBarLabel(Math.floor(b.mp) + "/" + Math.floor(b.mmp), MINI.mpY);
-      }
-
-      // The AP/TP orb, exactly like the party cards' own (UI/PartyHud.js
-      // _writeOrb), sitting in the gutter to the RIGHT of the gauges instead
-      // of the left, since this whole card mirrors the party's rather than
-      // repeating it verbatim.
-      if (this._orb) {
-        const maxTp = Math.max(1, b.maxTp ? b.maxTp() : 100);
-        const tp = Math.max(0, Math.floor(b.tp));
-        const rate = Math.max(0, Math.min(1, tp / maxTp));
-        const orbTop = hasMp
-          ? (MINI.hpY + MINI.mpY + MINI.thickness) / 2 - ORB_SIZE / 2
-          : MINI.hpY + MINI.thickness / 2 - ORB_SIZE / 2;
-        // Pulled a few pixels further in than the gutter it was carved out
-        // of, so the orb sits over the tail of the gauges rather than beside
-        // them, the way the party's own orb overlaps the head of theirs.
-        window.UIPanel.placeAt(this._orb.orb, geo.x + geo.w - ORB_SIZE - ORB_OVERLAP, orbTop);
-        window.UIPanel.setBar(this._orb.fill, (rate * 100).toFixed(1), 'h');
-        window.UIPanel.setBar(this._orb.ghost, (rate * 100).toFixed(1), 'h');
-        this._orb.val.textContent = String(tp);
-        this._orb.orb.classList.toggle("phud-orb-empty", tp <= 0);
       }
 
       // The chip row: what the monster is soft to, then what is currently
@@ -2390,7 +2338,7 @@
   const _Scene_Battle_update = Scene_Battle.prototype.update;
   Scene_Battle.prototype.update = function () {
     // The bars are placed BEFORE the children update, not after. Half of a bar
-    // is DOM (the name, the two labels, the orb, the chip row) and that half
+    // is DOM (the name, the two labels, the chip row) and that half
     // syncs itself to wherever its sprite stands during that very child update,
     // so a bar placed afterwards would have its text trailing its own gauges by
     // a frame every time the creature wearing it lunged.
@@ -2647,6 +2595,42 @@
   // Right press that updateBattleHotbar (later in the very same frame) would
   // otherwise also read as a repeat and step again; this eats that one frame.
   let _hotbarJustActivated = false;
+  // Focus taken off the command list is only borrowed. A player who steps onto
+  // the bar and then leaves it alone was reaching for a spell and thought
+  // better of it, and a bar left holding the keyboard means the next Up press
+  // does nothing anybody asked for. So the borrow runs on a fuse: this many
+  // frames without a Left / Right / OK on the bar and the list has its focus
+  // back, standing on the very row it was standing on when the bar took it.
+  const HOTBAR_FOCUS_FRAMES = 150;
+  let _hotbarFocusFrames = 0;
+  let _hotbarReturnIndex = null;
+
+  // The list the bar borrows its focus from. On the map the fight is
+  // MapBattleMode's and so is the command window; everywhere else it is the
+  // battle scene's own.
+  function _hotbarCommandWindow() {
+    if (_hotbarOnMap()) {
+      const MBM = window.MapBattleMode;
+      return (MBM && MBM._cmdWindow) || null;
+    }
+    const scene = SceneManager._scene;
+    return (scene instanceof Scene_Battle) ? scene._actorCommandWindow : null;
+  }
+
+  // Give the focus back, on the row the list was standing on. The row is put
+  // back rather than left alone because the list goes on being rebuilt while
+  // the bar holds the keyboard, and a rebuild under a pointer can move its
+  // selection out from under the player.
+  function _hotbarReleaseFocus() {
+    _hotbarActive = false;
+    _hotbarFocusFrames = 0;
+    const win = _hotbarCommandWindow();
+    const index = _hotbarReturnIndex;
+    _hotbarReturnIndex = null;
+    if (win && index !== null && index >= 0 && index < win.maxItems()) {
+      win.select(index);
+    }
+  }
 
   // The slot row itself, its markup, tooltip and canvas-synced placement, is
   // the shared widget (Core/HotbarUI.js); the item favourites bar on the map
@@ -2717,6 +2701,14 @@
     const pages = _hotbarPageCount(skills);
     if (_hotbarPage >= pages) _hotbarPage = 0;
     return skills.slice(_hotbarPage * HOTBAR_SLOTS, (_hotbarPage + 1) * HOTBAR_SLOTS);
+  }
+
+  // Whether the player did anything at the bar this frame. Anything that moves
+  // the cursor along it or fires a slot counts; nothing else does.
+  function _hotbarWokeThisFrame() {
+    return Input.isRepeated('left') || Input.isRepeated('right') ||
+      Input.isRepeated('pageup') || Input.isRepeated('pagedown') ||
+      Input.isTriggered('ok');
   }
 
   // Turn to the next / previous page, wrapping at either end, and land the
@@ -2837,6 +2829,8 @@
     const cmdWindow = onMap ? MBM._cmdWindow : scene._actorCommandWindow;
     if (window.BattleSkillMenu) window.BattleSkillMenu.close(cmdWindow);
     _hotbarActive = false;
+    _hotbarReturnIndex = null;
+    _hotbarFocusFrames = 0;
     action.setSkill(skill.id);
     actor.setLastBattleSkill(skill);
     SoundManager.playOk();
@@ -2950,6 +2944,8 @@
       _hotbarSkillsClear();
       _clearHotbarKeys();
       _hotbarActive = false;
+      _hotbarReturnIndex = null;
+      _hotbarFocusFrames = 0;
       _hotbarIndex = 0;
       _hotbarPage = 0;
     }
@@ -2979,7 +2975,7 @@
         // Window_ActorCommand.processCursorMove this same frame.
         _hotbarJustActivated = false;
       } else if (Input.isTriggered('cancel') || Input.isTriggered('up')) {
-        _hotbarActive = false;
+        _hotbarReleaseFocus();
         SoundManager.playCancel();
       } else if (Input.isRepeated('left') || Input.isRepeated('pageup')) {
         // pageup/pagedown are the shoulder buttons L1/R1 (CustomCommandMapper.js).
@@ -3005,6 +3001,12 @@
         const shown = _hotbarPageSkills(skills);
         if (shown[_hotbarIndex]) _hotbarUseSkill(actor, shown[_hotbarIndex]);
       }
+      // Every step along the row winds the fuse back up; a frame with nothing
+      // on it burns some of it down.
+      if (_hotbarActive) {
+        if (_hotbarWokeThisFrame()) _hotbarFocusFrames = HOTBAR_FOCUS_FRAMES;
+        else if (--_hotbarFocusFrames <= 0) _hotbarReleaseFocus();
+      }
     }
 
     _updateHotbarPosition(actor, skills);
@@ -3018,6 +3020,8 @@
   window.BattleHotbar.update = _updateBattleHotbar;
   window.BattleHotbar.hide = function () {
     _hotbarActive = false;
+    _hotbarReturnIndex = null;
+    _hotbarFocusFrames = 0;
     _clearHotbarKeys();
     _hotbarActor = null;
     _hideHotbar();
@@ -3026,6 +3030,8 @@
   const _Scene_Battle_terminate_hotbar = Scene_Battle.prototype.terminate;
   Scene_Battle.prototype.terminate = function () {
     _hotbarActive = false;
+    _hotbarReturnIndex = null;
+    _hotbarFocusFrames = 0;
     _hotbarSkillsClear();
     _clearHotbarKeys();
     _hotbarActor = null;
@@ -3034,10 +3040,11 @@
   };
 
   // Left/Right (and L1/R1, i.e. pageup/pagedown) hand focus to the bar from
-  // the actor command list, entering on its last carried skill or its first
-  // respectively; every other key (up/down/ok/cancel) is untouched. While the
-  // bar holds focus the list's own cursor movement and OK/Cancel are suspended
-  // so the two never fight over the same key press.
+  // the actor command list: Right walks on at the first slot, Left at the last
+  // one standing on the row. Every other key (up/down/ok/cancel) is untouched.
+  // While the bar holds focus the list's own cursor movement and OK/Cancel are
+  // suspended so the two never fight over the same key press, and the focus is
+  // given back on its own if nothing is picked (see HOTBAR_FOCUS_FRAMES).
   const _Window_ActorCommand_processCursorMove_hotbar = Window_ActorCommand.prototype.processCursorMove;
   Window_ActorCommand.prototype.processCursorMove = function () {
     if (_hotbarActive) return;
@@ -3046,9 +3053,16 @@
     if (this.isCursorMovable() && (back || fwd)) {
       const skills = _hotbarSkills(this._actor);
       if (skills.length > 0) {
+        // Right walks onto the FIRST slot of the row and Left onto its LAST -
+        // the last of the page standing there, not of everything the member
+        // carries, since the slots off the page are not on screen to walk to.
+        const shown = _hotbarPageSkills(skills);
         _hotbarActive = true;
         _hotbarJustActivated = true;
-        _hotbarIndex = back ? skills.length - 1 : 0;
+        _hotbarIndex = back ? Math.max(0, shown.length - 1) : 0;
+        // Where to put the cursor back if the borrow runs out.
+        _hotbarReturnIndex = this.index();
+        _hotbarFocusFrames = HOTBAR_FOCUS_FRAMES;
         SoundManager.playCursor();
         return;
       }

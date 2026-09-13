@@ -66,7 +66,8 @@
     "dialogueVoicesVolume": "Volume Voci dei Dialoghi",
     "asciiMode": "Modalita ASCII",
     "asciiHud": "HUD ASCII",
-    "themeAscii": "ASCII"
+    "themeAscii": "ASCII",
+    "galaxyQuality": "Qualita mappa stellare"
   },
   "warn": {
     "language": "⚠ In lavorazione: solo l'inglese è tradotto per intero. Le altre lingue hanno ancora parti del gioco non tradotte.",
@@ -114,6 +115,7 @@
     "mapTooltips": "Messaggi dei tutorial in tempo reale, segnaposto della bussola per le missioni e suggerimenti scritti mentre esplori la mappa.",
     "dialogueVoices": "Ogni lettera di una battuta digitata viene cinguettata con un breve suono di vocale o consonante. Il tono è quello di chi parla; una parola chiave dorata suona più acuta.",
     "dialogueVoicesVolume": "Quanto sono forti i suoni delle lettere sotto una battuta di dialogo, separati dagli altri effetti sonori.",
+    "battleLogPosition": "In quale angolo dello schermo sta il resoconto della battaglia.",
     "battleCommandPosition": "Su quale lato dello schermo stanno i comandi di battaglia, la pagina delle abilità e lo zaino.",
     "lowModelDetail": "Costruisce armi e oggetti procedurali con meno segmenti. Aiuta sulle macchine lente; i modelli appaiono piu spigolosi."
   },
@@ -128,6 +130,10 @@
       "Off: three.js puro. I modelli sono disegnati puliti, senza tremolio, bande o riduzione di risoluzione.",
       "SnapVertex: l'estetica PlayStation-1. I vertici scattano su una griglia grossolana, i colori si dividono in bande e l'immagine e' resa sotto la risoluzione piena.",
       "Pixel Art: l'estetica a sprite. Bande cel piatte, pixel grossi e una tavolozza limitata opzionale."
+    ],
+    "battleLogPosition": [
+      "In basso a sinistra: il registro poggia sul fondo a sinistra e cresce verso l'alto.",
+      "In alto a destra: il registro pende dall'alto a destra e cresce verso il basso."
     ],
     "battleCommandPosition": [
       "Sinistra: comandi, abilita e zaino stanno sulla sinistra dello schermo.",
@@ -171,5 +177,10 @@
     "pixelArt": "Pixel Art",
     "ascii": "ASCII",
     "other": "Altro"
+  },
+  "galaxyQuality": {
+    "low": "Bassa",
+    "medium": "Media",
+    "high": "Alta"
   }
 }

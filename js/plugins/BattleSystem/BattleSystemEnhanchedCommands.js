@@ -197,6 +197,78 @@
   }
 
   //=============================================================================
+  // The Actions rail
+  //=============================================================================
+  // Aim, Throw, Wrestle and Talk are commands, not skills: naming a limb,
+  // hurling something out of the bag, grappling and talking are things a body
+  // does, so they are offered rather than hidden in a skill list. They stand
+  // under Actions, beside the engine's fallback kit, one page down from the
+  // command list: pressed once a fight between them, they were four rows of a
+  // list whose other rows are pressed every round. A fight played out on the
+  // map is the exception - there they are rows of the list itself, since the
+  // Actions page there is MapBattleMode's own skill window.
+  //
+  // Aim sits with them rather than replacing Attack: Attack alone throws the
+  // swing wherever it falls, and Aim names the place it has to reach. Naming
+  // costs no turn, so the row is stepped through and the swing thrown in the
+  // same round.
+  //
+  // Each row is only offered when the plugin that owns it is loaded, and greyed
+  // out when that plugin says this body cannot do it (no monster standing with
+  // an anatomy to name a part of; no limb free to take hold with; nothing in
+  // the bag worth throwing; a class from 63 on, which has no language).
+  // CategorizedBattleSkills.js draws them into the Actions page and calls the
+  // command back through run().
+  // A row's own words. Aim wears the part this actor has already named, the
+  // way it does when it stands in the command list itself.
+  function actionRowName(key, actor) {
+    if (key === "aim") {
+      const part = window.Aiming ? window.Aiming.partName(actor) : null;
+      return part ? T('Battle.cmd.aimAt', { part: part }) : T('Battle.cmd.aim');
+    }
+    return T('Battle.cmd.' + key);
+  }
+
+  const BattleActionRows = {
+    rows(actor) {
+      if (!actor) return [];
+      const out = [];
+      const push = (key, command, enabled, icon) => out.push({
+        key, command, enabled: !!enabled, icon,
+        name: actionRowName(key, actor),
+        colors: getCommandColors(key),
+      });
+      if (window.Aiming && window.Aiming.canCommand) {
+        push("aim", "commandAim", window.Aiming.canCommand(actor), 151);
+      }
+      if (window.ThrowItem) {
+        push("throw", "commandThrow", window.ThrowItem.throwableItems().length > 0, 176);
+      }
+      if (window.Wrestling && window.Wrestling.canCommand) {
+        push("wrestle", "commandWrestle", window.Wrestling.canCommand(actor), 106);
+      }
+      if (typeof Scene_Battle.prototype.openTalkMenu === "function") {
+        push("talk", "commandTalk", canActorTalk(actor), 246);
+      }
+      return out;
+    },
+
+    // Hand the row back to the command it stands for. The Actions page is
+    // already closed by the time this runs, so the scene's own handler finds
+    // the command list exactly as it would have from the top level.
+    run(scene, command) {
+      const fn = scene && scene[command];
+      if (typeof fn !== "function") {
+        SoundManager.playBuzzer();
+        return false;
+      }
+      fn.call(scene);
+      return true;
+    },
+  };
+  window.BattleActionRows = BattleActionRows;
+
+  //=============================================================================
   // Window_ActorCommand - Command List
   //=============================================================================
 
@@ -353,46 +425,36 @@
     this.addCommandWithIcon("", "skill", listed.length > 0, 0, 76,
       !this.hasCastableSkill(listed));
 
-    // The Basic kit is its own top-level command: those are the engine's
-    // fallback moves and are always carried, so they never crowd a loadout.
+    // Actions: the engine's fallback kit and the four things a body does that
+    // are not skills at all. Those are always carried and never crowd a
+    // loadout, and Aim, Throw, Wrestle and Talk used to stand as four rows of
+    // their own between the Skills row and the backpack, which was most of the
+    // list for commands that are pressed once a fight. They are one row now
+    // (window.BattleActionRows fills it, CategorizedBattleSkills.js draws it),
+    // and it opens as long as either half of it holds something.
     const basicKit = this._actor.skills()
       .filter(skill => isUsableSkill(skill) && getSkillCategory(skill) === "Basic"); // i18n-ignore: <category:Basic> note tag
-    this.addCommandWithIcon("", "basic", basicKit.length > 0, null, 248,
-      !this.hasCastableSkill(basicKit));
+    // On the map the Actions row is not this menu's to fill: the fight there
+    // opens the Basic kit in a skill window of MapBattleMode's own
+    // (MapBattleMode.js), which holds skills and nothing else, so the four rows
+    // stay standing in the list itself the way they always did.
+    const actionRows = BattleActionRows.rows(this._actor);
+    const railInPage = !mbmActive;
+    const anyAction = railInPage && actionRows.some(row => row.enabled);
+    this.addCommandWithIcon("", "basic",
+      basicKit.length > 0 || (railInPage && actionRows.length > 0), null, 248,
+      !this.hasCastableSkill(basicKit) && !anyAction);
 
-    // Aim, Wrestle and Talk are commands, not skills: naming a limb, grappling
-    // and talking are things a body does, so they are offered here rather than
-    // hidden in a skill list. All three sit directly above the backpack, Aim
-    // first, then Wrestle. Each is only shown when the plugin that owns it is
-    // loaded, and greyed out when that plugin says this body cannot do it (no
-    // monster standing with an anatomy to name a part of; no limb free to take
-    // hold with; a class from 63 on, which has no language).
-    //
-    // Aim sits beside Attack rather than replacing it: Attack alone throws the
-    // swing wherever it falls, and Aim names the place it has to reach. Naming
-    // costs no turn, so the row is stepped through and the swing thrown in the
-    // same round.
-    if (window.Aiming && window.Aiming.canCommand) {
-      this.addCommandWithIcon("", "aim", window.Aiming.canCommand(this._actor), null, 151);
-    }
-    if (window.Wrestling && window.Wrestling.canCommand) {
-      this.addCommandWithIcon("", "wrestle", window.Wrestling.canCommand(this._actor), null, 106);
-    }
-    if (typeof Scene_Battle.prototype.openTalkMenu === "function") {
-      this.addCommandWithIcon("", "talk", canActorTalk(this._actor), null, 246);
+    if (!railInPage) {
+      for (const row of actionRows) {
+        this.addCommandWithIcon("", row.key, row.enabled, null, row.icon);
+      }
     }
 
     // Backpack/Item: disabled (greyed + buzzer) when the party holds no
     // battle-usable item. Mirrors Window_BattleItem.includes ($gameParty.canUse).
     const hasUsableItem = $gameParty.allItems().some(item => $gameParty.canUse(item));
     this.addCommandWithIcon("", "item",  hasUsableItem,          null, 209);
-
-    // Throw sits under the backpack: the same bag, but the object is hurled
-    // rather than used, and it hurts for its weight (window.ThrowItem). Key
-    // items and materials are not offered, so the row greys out when the party
-    // is carrying nothing worth throwing.
-    const hasThrowable = !!window.ThrowItem && window.ThrowItem.throwableItems().length > 0;
-    this.addCommandWithIcon("", "throw", hasThrowable,           null, 176);
     // Note: the standalone Guard command is intentionally omitted, it duplicates
     // the Defense command (both cast skill 2). The sole escape option is "Run" below.
 
@@ -461,7 +523,7 @@
       case "hyper":
         return (window.LimitBreak && window.LimitBreak.commandName(this._actor)) || "";
       case "skill":   return ext ? ($dataSystem.skillTypes[ext] || T('Battle.cmd.skill')) : T('Battle.cmd.skills');
-      case "basic":   return T('Battle.cmd.basic');
+      case "basic":   return T('Battle.cmd.actions');
       case "guard":   return TextManager.guard;
       case "item":    return TextManager.item;
       case "throw":   return T('Battle.cmd.throw');
@@ -1244,11 +1306,12 @@
   };
 
   // The vector gun folds into whatever shape is fitted and back, and it does
-  // it as a machine: the weapon in the hand comes apart, the model is rebuilt
-  // at the pivot, and the new shape slams together (VectorGun.playSwitchFx,
-  // WeaponSystemProcedural.startVectorSwitch). The turn is passed only once the
-  // whole reconstruction has been seen - handing it over any earlier swaps the
-  // model to whoever is next in the same frame, and nothing is watched at all.
+  // it as a machine: the weapon in the hand folds shut panel by panel, the
+  // model is rebuilt at the pivot, and the new shape unfolds out of the hand
+  // (VectorGun.playSwitchFx, WeaponSystemProcedural.startVectorSwitch). The
+  // turn is passed only once the whole fold has been seen - handing it over any
+  // earlier swaps the model to whoever is next in the same frame, and nothing
+  // is watched at all.
   const MS_PER_FRAME = 1000 / 60;
   const framesFor = (ms) => Math.max(1, Math.ceil(ms / MS_PER_FRAME));
 
@@ -1260,19 +1323,19 @@
     if (!actor || !window.VectorGun) return;
     if (this._actorCommandWindow) this._actorCommandWindow.deactivate();
     this._vectorSwitchActorId = actor.actorId();
-    // Half one: the weapon it is holding now flies apart. The gun is still the
+    // Half one: the weapon it is holding now folds shut. The gun is still the
     // old shape, which is the whole point of playing this before the swap.
     const fold = window.VectorGun.playSwitchFx('fold');
     this._vectorSwitchStage = 'fold';
     this._vectorSwitchWait = framesFor(fold || 200);
   };
 
-  /** Half two: the frame is rebuilt as the fitted shape and slams together. */
+  /** Half two: the frame is rebuilt as the fitted shape and unfolds into it. */
   Scene_Battle.prototype.riseVectorSwitch = function () {
     const actor = BattleManager.actor();
     window.VectorGun.switchForm(actor);
     // The model in the hand is rebuilt at the pivot of the animation, so the
-    // cloud of hardware that comes back together is the NEW weapon.
+    // packet of folded hardware that opens out is the NEW weapon.
     const spriteset = this._spriteset;
     if (spriteset && spriteset.updateWeaponSprite) spriteset.updateWeaponSprite();
     const rise = window.VectorGun.playSwitchFx('rise');

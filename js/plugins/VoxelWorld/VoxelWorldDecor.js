@@ -156,6 +156,17 @@
         return 'img/furniture/' + real + '/' + id + '.png'; // i18n-ignore: asset path
     }
 
+    // A geometry the decorator OWNS, shared by every tile that draws it. The
+    // flag is read by VoxelWorldTerrain's disposeTree, which frees a chunk's
+    // subtree when the tile streams out and must leave these alone.
+    function markShared(geos) {
+        for (const k in geos) {
+            const g = geos[k];
+            if (g) g.userData.vwShared = true;
+        }
+        return geos;
+    }
+
     class ProceduralDecorator {
         constructor(matCache) {
             this.matCache = matCache;
@@ -248,6 +259,17 @@
                 rock:  mkQuad(1.20, 0.85),
                 plant: mkQuad(0.95, 0.95)
             };
+            // Every geometry above is built ONCE and handed to the instanced
+            // mesh of every tile that wants one, so it belongs to the decorator
+            // and not to any chunk. Marked as such: a tile streaming out
+            // disposes its own subtree (VoxelWorldTerrain's disposeTree), and
+            // without this it took the whole shared set with it - freeing the
+            // GL buffers that the hundred and twenty OTHER live tiles were
+            // still drawing with, and paying to upload them all again on the
+            // next frame. A world streams a tile out every few seconds.
+            markShared(this.geos);
+            markShared(this.spriteQuads);
+
             this._spriteTex = new Map();   // 'Folder/name.png' -> THREE.Texture
 
             // Windowed facades, off the block palette: a concrete-and-glass

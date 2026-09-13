@@ -5,7 +5,6 @@
   "subtitle": "Operating modes",
   "tab": {
     "modes": "Operating modes",
-    "spell": "Bound spell",
     "element": "Element",
     "form": "Form and element"
   },
@@ -20,9 +19,6 @@
     "status": "Status",
     "effect": "Effect",
     "modesTitle": "Active modes",
-    "spellTitle": "Bound spell",
-    "cost": "Mana at half",
-    "unbound": "Nothing bound",
     "fitted": "Fitted",
     "elementTitle": "Element",
     "formTitle": "Weapon form",
@@ -40,10 +36,10 @@
       "desc": "Knockback on hit.",
       "effect": "Targets hit are knocked back and floated."
     },
-    "spellblaster": {
-      "name": "Spellblaster",
-      "desc": "Fires the bound spell with every shot.",
-      "effect": "The bound spell fires with every attack. Without this mode a bound spell costs 150% of its MP cost; with it, 75%. Out of MP, the shot is a normal attack."
+    "solomonIncantation": {
+      "name": "Solomon incantation",
+      "desc": "Spells are read out, and land 15% harder.",
+      "effect": "Runs only with the Grimoire of Solomon fitted, or while the book is open in Graceful Death. Every spell cast is read out in full first, in a box of its own, and then deals or heals 15% more."
     },
     "card": {
       "name": "Card",
@@ -156,19 +152,9 @@
       "effect": "The coilgun holds 4 more shots before it folds back. Damage unchanged."
     }
   },
-  "spell": {
-    "none": "No spell",
-    "noneDesc": "No spell fires with the shot.",
-    "empty": "No single-target spell is known.",
-    "hint": "Only offensive single-target magic can be bound. Skills cannot be bound.",
-    "mp": "{cost} MP",
-    "fired": "{cost} MP a shot"
-  },
   "toast": {
     "fitted": "{mode} is running.",
     "removed": "{mode} is idle.",
-    "bound": "{spell} bound to the shot.",
-    "cleared": "Spell unbound.",
     "card": "{name} card obtained.",
     "element": "Element set to {element}.",
     "swapped": "{mode} is running, {old} is idle.",

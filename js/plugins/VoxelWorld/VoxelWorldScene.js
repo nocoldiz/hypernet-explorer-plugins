@@ -63,7 +63,11 @@
         dayFactorForHour, getRenderType, getRoadDirectionAt, initPerlinWithSeed, VOXEL_WORLD_SEED,
         isSandboxOrTest, pickRandomRoadTile, placeNameAt, planForTile, roadLabelAt,
         sampleBiomeAt, sampleSkyColor, setTextureAnisotropy, settlementKindAt,
-        isAirlessWorld, sampleAlienSkyColor,
+        isAirlessWorld, sampleAlienSkyColor, ALIEN_BIOME_SKY_PALETTES,
+        PAD_LOOK_X, PAD_LOOK_Y,
+        isGasGiantWorld, GAS_DECKS, GAS_FLOOR_Y, GAS_WARN_BAND, GAS_WARN_EVERY, GAS_TOP_Y, gasDepth01,
+        GAS_ENTRY_Y, GAS_FOG_TOP, GAS_FOG_DEEP,
+        flightModel, FLY_ABS_MAX,
         troopForBioEnemy
     } = VW;
 
@@ -404,7 +408,29 @@
         return Math.abs(wx - cx) <= half && Math.abs(wy - cz) <= half;
     }
 
+    // Whether a world square is somebody's hand-made front room, and which.
+    //
+    // Memoised per square. The answer belongs to the square and never changes
+    // while the game is running, but finding it walks every destination in the
+    // game comparing a "x,y" string against each one's reserved list - and the
+    // drive asks it on EVERY FRAME for the square the party is standing on
+    // (see _guardReservedSquares), which for a party standing still is the same
+    // square and the same walk, sixty times a second.
+    const _reservedCache = new Map();
+    const RESERVED_CACHE_MAX = 512;
     function reservedPlaceAt(wx, wy) {
+        const key = wx * 65536 + wy;
+        const hit = _reservedCache.get(key);
+        if (hit !== undefined) return hit;
+        const out = _reservedPlaceOf(wx, wy);
+        if (_reservedCache.size >= RESERVED_CACHE_MAX) {
+            _reservedCache.delete(_reservedCache.keys().next().value);
+        }
+        _reservedCache.set(key, out);
+        return out;
+    }
+
+    function _reservedPlaceOf(wx, wy) {
         if (isOmegaTowerTile(wx, wy)) {
             return { name: 'Omega Tower', hand: true };
         }
@@ -580,7 +606,17 @@
             // and put back to Earth's by stop() below.
             setGravityScale(this._sky ? this._sky.gravity : 1);
             setAlienTerrain(this._alien ? this._buildAlienTerrain() : null);
+            // A world with nothing solid in it anywhere: a gas giant, flown
+            // through rather than driven over. Asked often enough, and by
+            // enough different parts of the frame, to be worth settling once.
+            this._groundless = isGasGiantWorld(this._alien);
+            this._crushed    = false;      // the killing depth fires exactly once
+            this._crushWarn  = 0;          // seconds until the next warning
+            this._wantPointer = false;     // the mouse is owed back after a fight
             this._drive      = VEHICLE_DRIVE[this._vehicleId] || VEHICLE_DRIVE.camper;
+            // How this thing flies, as against how it drives (VoxelWorldCore's
+            // FLIGHT): the nose rate, the bank, the trim and the lift.
+            this._fly        = flightModel(this._vehicleId);
             this._duration   = duration;
             // Fuel is burned per distance travelled in _updateFuel (not from a
             // pre-planned per-trip cost), so fuelCost is kept only for reference.
@@ -708,6 +744,9 @@
             this._initThree();
 
             this._terrain = new VoxelTerrain(this._scene);
+            // A gas giant has no ground to stream, so the streamer is told so
+            // before it is ever asked to fill its first ring.
+            if (this._groundless) this._terrain.setGroundless(true);
             // A drive entered from the game builds its whole neighbourhood up
             // front (it is behind a transition anyway); the title background
             // spreads that build over the first frames instead, so opening the
@@ -911,8 +950,15 @@
             // On a planet, what roams is what lives there: the roster the
             // galaxy simulation generated for this world, not Earth's fauna.
             // A dead world has none, and nothing roams it.
+            //
+            // `species` is the world's SURFACE roster, and it is null exactly
+            // when the world has no life (GalaxySim only builds one for a planet
+            // planetHasLife says is inhabited). Under the ground a living world
+            // holds a different set, so that one is asked for by name rather
+            // than reusing the surface list.
             if (this._alien && this._bioEnemies) {
-                this._bioEnemies.setRoster(this._alien.species || null);
+                this._bioEnemies.setAlienRoster(this._alien.species || null,
+                    this._alienUnderSpecies());
             }
             // A second player, where there is a split-screen session running.
             // Built before the landmarks so the first frame already has both.
@@ -932,13 +978,28 @@
             // which case that world's own moons go up instead of ours.
             this._skyFx.setWorld(this._sky);
             if (isAirlessWorld && isAirlessWorld(this._alien)) this._skyFx.setAirless(true);
+            // A world with no ground is drawn as its own atmosphere: banded
+            // decks of cloud, in the colours the biome's own sky already
+            // carries, rather than a landscape under a sky.
+            if (this._groundless && this._skyFx.setGasGiant) {
+                // The planet itself, not this._sky, which is null on a world
+                // whose day length the catalogue never gave.
+                const pl = this._alien && this._alien.planet;
+                const t = pl && pl.terrain;
+                this._skyFx.setGasGiant(true, this._alienSkyPalette(), (t && t.seed) || 0);
+            }
             this._wheelFx      = new WheelFx(this._scene);
-            this._bioEnemies   = this._titleMode ? null : new BiomeEnemyManager(this._scene, this._terrain);
+            // Nothing that stands on the ground is built for a world that has
+            // none. Wildlife, crowds, interiors and the party trail are all
+            // measured off a terrain height, and out over a gas giant there is
+            // no terrain to measure from and nowhere for any of them to be.
+            const noGround     = this._titleMode || this._noGround;
+            this._bioEnemies   = noGround ? null : new BiomeEnemyManager(this._scene, this._terrain);
             // The people: a town's own citizens on its pavements, and the party
             // (and the pet) walking behind the leader whenever they are on foot.
-            this._crowd        = this._titleMode ? null : new CityCrowd(this._scene, this._terrain);
-            this._interiors    = this._titleMode ? null : new BuildingInteriors(this._scene, this._terrain);
-            this._followers    = this._titleMode ? null : new FollowerCrowd(this._scene);
+            this._crowd        = noGround ? null : new CityCrowd(this._scene, this._terrain);
+            this._interiors    = noGround ? null : new BuildingInteriors(this._scene, this._terrain);
+            this._followers    = noGround ? null : new FollowerCrowd(this._scene);
             this._engine       = (this._titleMode || this._footOnly) ? null : new EngineAudio();
             this._liminal      = new LiminalFx(this._scene, this._overlay);
             this._liminalI     = 0;   // smoothed cosmic-horror intensity 0..1
@@ -1192,13 +1253,24 @@
         }
 
         _onFreeCamMouseMove(e) {
-            if (this._freeCamDrag && (this._freeCamActive || this._viewMode === 'car')) {
-                const mx = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
-                const my = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
-                this._freeCamYaw -= mx * 0.005;
-                this._freeCamPitch += my * 0.005;
-                this._freeCamPitch = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, this._freeCamPitch));
-            }
+            const chase = this._freeCamActive || this._viewMode === 'car';
+            if (!chase) return;
+            // LOOKING ROUND A VEHICLE IS JUST LOOKING. The chase camera used to
+            // orbit only while the MIDDLE mouse button was held, which is a
+            // binding nobody finds and which left the view over a moving camper
+            // pinned dead astern. It turns with the mouse now, exactly the way
+            // the view does in first person, for as long as the world has the
+            // pointer. The middle-button drag is kept for when it has not - a
+            // windowed session with the cursor still on screen - so nothing
+            // that worked before stops working.
+            const looking = this._freeCamDrag ||
+                (this._fpc && this._fpc.isLocked && !VoxelWorldSystem.isPaused());
+            if (!looking) return;
+            const mx = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+            const my = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+            this._freeCamYaw -= mx * 0.005;
+            this._freeCamPitch += my * 0.005;
+            this._freeCamPitch = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, this._freeCamPitch));
         }
         
         _isFastTravelActive() {
@@ -1392,6 +1464,23 @@
         // the fog, the lantern, the bubbles and the HUD's element chip all read,
         // so a dive really does go dark and green and a flight really does read
         // as one.
+        // What lives under this world, where anything does. Asked only of a
+        // world that has life at all: `alien.species` is GalaxySim's own answer
+        // to that question, and a dead planet must stay dead underground too.
+        _alienUnderSpecies() {
+            if (!this._alien || !this._alien.species) return null;
+            const GS = window.GalaxySim;
+            if (!GS || !GS.alienSpeciesRoster) return null;
+            try {
+                const list = GS.alienSpeciesRoster(this._alien.planet || null,
+                    { realm: 'under' }) || [];
+                const ids = list.map(sp => sp && sp.enemyId).filter(id => id > 0);
+                return ids.length ? ids : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
         _footEnv() {
             const f = this._fpc;
             if (!f) return 'road';
@@ -1592,6 +1681,9 @@
 
         // Toggle diving. Only meaningful while over a water basin; needs 'dive'.
         _toggleDive() {
+            // In the air this key is the climb trim and is doing its job, so it
+            // must not also complain: it used to buzz on every press of a climb.
+            if (this._flying && this._canFly()) return;
             if (this._viewMode === 'foot') return;   // on foot C crouches instead
             if (!camperCan('dive')) { if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer(); return; }
             if (!this._overWater()) { if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer(); return; }
@@ -1710,6 +1802,13 @@
             this._footOnly = false;
             this._vehicleId = key;
             this._drive = VEHICLE_DRIVE[key] || VEHICLE_DRIVE.camper;
+            // How it FLIES goes with how it drives: walk up to a parked broom,
+            // get on it, and it has to be flown as a broom rather than as
+            // whatever was being driven a moment ago.
+            this._fly = flightModel(key);
+            this._flyPitch = 0;
+            this._flyBank = 0;
+            this._flyY = null;
 
             // The old body goes; _buildDrivenModel puts the new one up.
             if (this._drivenModel) { this._drivenModel.dispose(); this._drivenModel = null; }
@@ -2248,10 +2347,22 @@
             // The clearance the pilot is holding. A ship is flown down to the
             // ground and landed on it; everything else keeps the old cruise,
             // which is the height this starts at.
-            if (this._flyAlt == null) this._flyAlt = 120 * WORLD_SCALE;
-            const flyY = this._vehicleId === 'starship'
-                ? terrainH + this._flyAlt
-                : Math.max(170 * WORLD_SCALE, terrainH + 120 * WORLD_SCALE);
+            // The clearance is DERIVED now: the pilot holds an absolute altitude
+            // (_flyY, see _updateFlight) and how far that is over the ground is
+            // simply the difference. The HUD and the landing test read it here.
+            this._flyAlt = this._vanY - terrainH;
+            const free = this._canFly() && this._fly && this._fly.free !== false;
+            // The cruise a craft holds before the pilot has touched anything,
+            // which on a world with no ground is the top of its envelope rather
+            // than a clearance over a surface that is not there.
+            const cruise = this._groundless ? GAS_ENTRY_Y : terrainH + 120 * WORLD_SCALE;
+            // The hull is lifted over what it cannot fly through, and the lift
+            // is worked out HERE, fresh, rather than being written back into the
+            // pilot's held altitude: that is what lets a ship come back down to
+            // its own cruise once the ridge has gone by (see _updateFlight).
+            const flyY = free
+                ? Math.max(this._flyFloor(), this._flyY != null ? this._flyY : cruise)
+                : Math.max(170 * WORLD_SCALE, cruise);
 
             // Auto travel (fast travel from the map window) always flies.
             if (this._isFastTravelActive()) {
@@ -2429,9 +2540,11 @@
             // filter, which throws every antialiased edge away again - and this
             // is the largest canvas in the game, so paying full-screen MSAA
             // bandwidth for a discarded result is the most expensive way to do
-            // nothing. Same test UI/Titlescreen.js already makes for its own
-            // renderer. The other retro mode and the plain one keep their edges.
-            const wantsAA = !(window.PSXShader && window.PSXShader.isPixelArt());
+            // nothing. The look is asked for by name: window.RetroShader owns
+            // which of the two is in force, while window.PSXShader is only the
+            // facade that forwards the drawing calls to it. The other retro
+            // mode and the plain one keep their edges.
+            const wantsAA = !(window.RetroShader && window.RetroShader.isPixelArt());
             this._renderer = new THREE.WebGLRenderer({ antialias: wantsAA, powerPreference: 'high-performance' });
             this._renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
             this._renderer.setSize(w, h);
@@ -2856,7 +2969,7 @@
 
             // Whatever just moved the party - the walk, the swim, the flight or
             // the camper - a hand-made town's squares are not theirs to cross.
-            this._guardReservedSquares();
+            this._guardReservedSquares(delta);
             this._updateUnderground();
             this._updateOmegaTower();
             this._checkLeavingAtmosphere();
@@ -2877,6 +2990,7 @@
             this._hud.updateEnvLabel(this._env);
             this._updateActionPrompt();
             this._hud.updateControllerHint(!this._titleMode && GamepadRaw.connected());
+            if (this._hud.setCommandContext) this._hud.setCommandContext(this._legendContext());
             // A toast, the quick bar and its target card belong over the world,
             // not under it.
             this._surfaceDom();
@@ -2927,14 +3041,20 @@
             // Underground it is taken down outright: the sheet runs at one level
             // across the whole world, and every passage down there is below it.
             this._water.setVisible(this._terrain.seaNear && !this._underground);
+            // Which way the eye is looking, asked once. Every card in the world
+            // turns to it, and each of the four things below used to ask again:
+            // the answer comes off an ancestor walk and a quaternion decompose,
+            // and the camera has not moved since it was set at the top of the
+            // frame.
+            const frameYaw = this._cameraYaw();
             this._traffic.update(this._vanX, this._vanZ, delta,
-                this._dayFactor == null ? 1 : this._dayFactor, this._cameraYaw());
+                this._dayFactor == null ? 1 : this._dayFactor, frameYaw);
             if (this._parked) {
                 // The vehicle being driven is under the party, and
                 // parked wherever they left it the moment they are not.
                 this._parked.setDriving(this._footOnly ? null : (this._vehicleId || 'camper'));
                 const p = this._contactPoint();
-                this._parked.update(delta, p.x, p.z, this._cameraYaw());
+                this._parked.update(delta, p.x, p.z, frameYaw);
             }
             // On foot the wildlife lives around the WALKER, not around the
             // parked camper: what spawns, what despawns and how big a name plate
@@ -2953,7 +3073,7 @@
             // cards that turn to the camera (see CharacterBillboard). The crowd
             // only lives in towns; the followers only show on foot.
             if (this._crowd || this._followers) {
-                const camYaw = this._cameraYaw();
+                const camYaw = frameYaw;
                 const df = this._dayFactor == null ? 1 : this._dayFactor;
                 if (this._crowd) this._crowd.update(delta, this._vanX, this._vanZ, camYaw, df);
                 // Insides are only worth building for somebody who could walk
@@ -3003,11 +3123,15 @@
             // with 0 so any lingering warp / fog / overlay is cleanly reset.
             this._liminalI = 0;
             if (this._engine) this._engine.setLiminal(0);
-            this._liminal.update({
-                camera: this._camera, van: this._van, terrain: this._terrain,
-                renderer: this._renderer, scene: this._scene, viewMode: this._viewMode,
-                intensity: 0, time: tsec, delta, baseExposure: this._baseExposure
-            });
+            // The same object every frame rather than a fresh one. The effect
+            // is off and LiminalFx stops at its first line, so this literal was
+            // the whole of what it cost.
+            const lim = this._limArgs || (this._limArgs = {});
+            lim.camera = this._camera; lim.van = this._van; lim.terrain = this._terrain;
+            lim.renderer = this._renderer; lim.scene = this._scene;
+            lim.viewMode = this._viewMode; lim.intensity = 0;
+            lim.time = tsec; lim.delta = delta; lim.baseExposure = this._baseExposure;
+            this._liminal.update(lim);
 
             // Solomon Ritual FX
             if (this._solomon) {
@@ -3078,6 +3202,12 @@
             // player's view over both. A drive fast enough to bend space is a
             // drive, and a drive merges the screen anyway.
             if (this._splitNow && this._coop) { this._renderSplit(); return; }
+            // Which squares are worth drawing at all, decided against the eye
+            // that is about to draw them (see VoxelTerrain#cullTo). Here rather
+            // than in the streaming update because that only re-reads the ring
+            // when the party MOVES, and a head turning on the spot changes the
+            // answer for most of the ring.
+            this._terrain.cullTo(this._camera);
             // Effekseer draws straight onto the canvas, over whatever three.js
             // has just put there, so every path out of this method goes through
             // one line: the world, then the spells going off in it.
@@ -3156,6 +3286,10 @@
                 // in the OTHER player's pass.
                 this._showBodies(i === 1, i === 0);
                 faceBillboards(eye.x, eye.z, yaws[i]);
+                // Two players looking two ways see two different halves of the
+                // ring, so the squares are chosen again for each of them, in
+                // the same place the cards are turned again.
+                this._terrain.cullTo(v.cam);
                 r.render(this._scene, v.cam);
             }
             r.setScissorTest(false);
@@ -3191,6 +3325,22 @@
             const planet = (this._alien && this._alien.planet) || null;
             const t = (planet && planet.terrain) || null;
             const R3D = window.GalaxySim && window.GalaxySim.Renderer3D;
+            // A gas giant has no relief to raise, so there is nothing to read
+            // an elevation field for: what it needs is a field that says so.
+            // It is built BEFORE the early return below, because a world with
+            // no ground must never fall through to Earth's own terrain.
+            if (isGasGiantWorld(this._alien)) {
+                const none = () => null;
+                none.meta = {
+                    type: (planet && planet.type) || '',
+                    surface: 'gas',                          // i18n-ignore: style id
+                    seed: (t && t.seed) || 0,
+                    isOcean: false,
+                    gravity: (planet && planet.gravity) || 1,
+                    gasGiant: true,
+                };
+                return none;
+            }
             if (!t || !R3D || !R3D.planetElevation) return null;
             const w = Math.max(1, (t.grid && t.grid.w) || 12);
             const h = Math.max(1, (t.grid && t.grid.h) || 6);
@@ -3258,6 +3408,16 @@
                 gravity: (planet && planet.gravity) || 1,
             };
             return field;
+        }
+
+        // This world's own sky colours, straight out of the one table that
+        // holds them (VoxelWorldCore's ALIEN_BIOME_SKY_PALETTES). The banded
+        // decks of a gas giant are cut from these rather than from a palette of
+        // their own, so a hot Jupiter bands orange because its sky is orange.
+        _alienSkyPalette() {
+            const biome = this._alien && this._alien.biome;
+            const name = (typeof biome === 'string') ? biome : (biome && biome.name) || '';
+            return (ALIEN_BIOME_SKY_PALETTES && ALIEN_BIOME_SKY_PALETTES[name]) || null;
         }
 
         // What o'clock it is in the sky over this world, or null to use Earth's
@@ -3408,6 +3568,16 @@
                 : airless ? this._tmpSky.setHex(0x000000)
                 : (this._alien && sampleAlienSkyColor) ? this._starTintSky(sampleAlienSkyColor(this._alien, hour, this._tmpSky))
                 : this._starTintSky(sampleSkyColor(hour, this._tmpSky));
+            // Down the ladder of a gas giant the light goes with the altitude:
+            // the top of the envelope is its own daylight and the bottom is
+            // nearly black, which is both what a pressure descent looks like and
+            // the warning the player reads before the readout gives them one.
+            // Multiplied INTO the colour rather than swapped for a texture,
+            // because the background below is a THREE.Color and is lerped as one.
+            if (this._groundless) {
+                const lit = 0.12 + gasDepth01(this._vanY) * 0.88;
+                targetSky.setRGB(targetSky.r * lit, targetSky.g * lit, targetSky.b * lit);
+            }
             // The haze at the horizon is NOT the sky over it: the sky is deep
             // and the distance pales toward white, which is what makes a
             // horizon read as a horizon rather than as the line where the
@@ -3429,6 +3599,18 @@
             if (cave) this._scene.fog.density = FOG_CAVE;
             else if (underwater) this._scene.fog.density = FOG_UNDERWATER;
             else if (airless) this._scene.fog.density = 0.0001;
+            // Thicker the deeper it goes: the envelope closes in, and the view
+            // out of it shortens until there is nothing to see but the deck.
+            // On its own scale, though, not the ground's: the limb is thirteen
+            // thousand units out and the driving haze had eaten everything by
+            // four, so the world's own curve came out as a wall of fog. The
+            // haze is thin at the top of the ladder - just enough to pale the
+            // limb into the sky, which is what makes it read as a limb - and
+            // twelve times thicker at the bottom.
+            else if (this._groundless) {
+                const up = 1 - gasDepth01(this._vanY);
+                this._scene.fog.density = GAS_FOG_TOP * (1 + up * up * up * GAS_FOG_DEEP);
+            }
             else if (this._viewMode !== 'free') this._scene.fog.density = (this._solomon && this._solomon.isActive()) ? 0.0022 : FOG_DAY;
 
             // Stars / moon / drifting clouds follow the camper.
@@ -3438,7 +3620,7 @@
             if (this._skyFx) {
                 if (this._skyFx.setAirless) this._skyFx.setAirless(airless);
                 this._skyFx.update(this._vanX, this._vanZ, hour, df, delta,
-                    underwater || cave, (totalMins + 600) / 60);
+                    underwater || cave, (totalMins + 600) / 60, this._camera.position.y);
             }
         }
 
@@ -3447,10 +3629,16 @@
             // behind the wheel they are a drive. The controller layer keeps the
             // table, so the tip strip and every reader agree (window.Controller).
             if (window.Controller) {
-                window.Controller.setMode(this._viewMode === 'foot' ? 'walk' : 'drive');
+                window.Controller.setMode(
+                    this._viewMode === 'foot' ? 'walk'
+                    : (this._flying && this._canFly()) ? 'fly'
+                    : 'drive');
             }
             if (this._titleMode) return;   // the title screen owns the controls
             if (this._locked) return;      // a fight has the party
+            // The mouse, if the world let it go for a fight and has not got it
+            // back yet (see _unlockControls).
+            this._regrabPointer();
             if (typeof Input === 'undefined') return;
 
             if (Input.isTriggered('debug_f7') && this._isDeveloperMode()) {
@@ -3461,11 +3649,12 @@
             // OK / Space is context-sensitive: on foot it jumps; while rolling in
             // a driving view it is the HANDBRAKE (hold to lock the rears and
             // drift); once nearly stopped it opens the vehicle options menu.
-            // In the air the same key is the descend control (_updateFlyAlt),
+            // In the air the same key is the descend control (_updateFlight),
             // and a handbrake on a flying ship is nothing at all.
             const drivingMode = (this._viewMode === 'car' || this._viewMode === 'fpdrive') &&
                 !this._flying && this._env !== 'air';
             const rolling = this._speedKmh > 6;
+            const airborneNow = this._flying && this._canFly();
             this._handbrake = drivingMode && rolling &&
                 (this._freeMoveKeys.has('Space') || Input.isPressed('ok'));
 
@@ -3489,7 +3678,11 @@
             if (Input.isTriggered('ok')) {
                 if (this._viewMode === 'foot') {
                     this._fpc.requestJump();
-                } else if (!(drivingMode && rolling)) {
+                } else if (!(drivingMode && rolling) && !airborneNow) {
+                    // ...but NOT while flying. In the air this key is the
+                    // descend trim (_updateFlight), and it used to open the
+                    // vehicle menu on every single press of it, because
+                    // drivingMode is deliberately false in the air.
                     this._openDriveMenu();
                 }
             }
@@ -3509,12 +3702,36 @@
             // session came from - is _endDriveToWorldMap's own answer.
             if (!this._titleMode && Input.isTriggered('wmrToggle')) this._requestExit();
 
-            // Controller right stick zooms the camera while driving / in free cam.
-            if (window.AnalogStickInput && (this._viewMode === 'car' || this._viewMode === 'free')) {
+            // FLYING CLAIMS THE RIGHT STICK FIRST. AnalogStickInput.rightY()
+            // claims the stick for the frame, so exactly one reader may ask:
+            // while airborne that reader is the nose, and the two blocks below
+            // stand down. Ground driving is untouched, because this is false
+            // whenever the craft is not flying, which is every ground drive.
+            const flightPad = airborneNow &&
+                this._viewMode !== 'foot' && this._viewMode !== 'free';
+            this._padPitch = 0;
+            if (window.AnalogStickInput && flightPad) {
                 const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
+                const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
+                this._padPitch = ry;
+                // The stick's X still looks around the chase camera, so a pilot
+                // can see what is off the beam without changing course.
+                if (rx) this._freeCamYaw -= rx * PAD_LOOK_X * 0.03;
+            }
+
+            // Controller right stick ORBITS the chase camera while driving / in
+            // free cam, the way it looks around in first person. It used to
+            // zoom, which left a pad with no way at all to turn the view over a
+            // vehicle; the zoom is still on L2/R2 below, where the tip strip
+            // has always said it was.
+            if (window.AnalogStickInput && !flightPad &&
+                (this._viewMode === 'car' || this._viewMode === 'free')) {
+                const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
+                const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
+                if (rx) this._freeCamYaw -= rx * PAD_LOOK_X * 0.03;
                 if (ry) {
-                    const step = Math.max(150, this._zoomDist * 0.15 + 150);
-                    this._zoomDist = Math.max(0, Math.min(ZOOM_MAX, this._zoomDist + ry * step * 0.5));
+                    this._freeCamPitch = Math.max(0.1, Math.min(Math.PI / 2 - 0.1,
+                        this._freeCamPitch + ry * PAD_LOOK_Y * 0.03));
                 }
             }
 
@@ -3535,7 +3752,7 @@
             }
 
             // In first person / on foot, the right stick looks around (mouse parity).
-            if (window.AnalogStickInput &&
+            if (window.AnalogStickInput && !flightPad &&
                 (this._viewMode === 'fp' || this._viewMode === 'foot' || this._viewMode === 'fpdrive')) {
                 const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
                 const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
@@ -4115,7 +4332,12 @@
             // destroyed by a vehicle, boosting or not.
             const boost = !auto && readInput && canDrive && this._isAcceleratePressed();
             this._boostActive = boost;
-            const airborne = this._airborne;   // set by _updateRideHeight last frame
+            // Airborne for the purposes of DRAG and GRIP. It used to read only
+            // the ramp flag, so a ship four thousand feet up was still paying
+            // the rolling resistance of whatever ground happened to be beneath
+            // it - flying over mud was slower than flying over tarmac - and
+            // turned on tyre grip it did not have.
+            const airborne = this._airborne || (this._flying && this._canFly());
             // The wheel: what the driver is doing with it, and then what the
             // road would do with it if they are not (the lane assist, which
             // hands back null the moment it has no business steering).
@@ -4257,7 +4479,20 @@
                 // wheels will lend more than LAT_ACCEL_MAX of it - so steering
                 // stays sharp where it is slow and opens into a long sweep
                 // where it is fast, which is what a wheel does.
-                if (Math.abs(fwd) > 0.4) {
+                if (this._flying && this._canFly() && this._fly && this._fly.free) {
+                    // FLYING IS NOT STEERING. There are no tyres to lend grip
+                    // and no wheelbase to turn about: a craft yaws at a rate of
+                    // its own, and needs airspeed rather than traction to do it.
+                    // This is also the one place the turn is known, so it is the
+                    // one place the BANK is taken from it.
+                    const F = this._fly;
+                    const turn = this._steerSmooth;
+                    const bite = 0.35 + 0.65 * Math.min(1, Math.abs(fwd) / 120);
+                    this._driveAngle += turn * F.yaw * bite * dt;
+                    const wantBank = -turn * F.bank;
+                    this._flyBank = (this._flyBank || 0) +
+                        (wantBank - (this._flyBank || 0)) * Math.min(1, dt * 3.2);
+                } else if (Math.abs(fwd) > 0.4) {
                     const lock = MAX_STEER_LOCK / (1 + Math.abs(fwd) * STEER_FALLOFF);
                     let yawRate = (fwd / WHEELBASE) * Math.tan(this._steerSmooth * lock);
                     // The SURFACE's own grip, not the handbrake's: a rear axle
@@ -4296,6 +4531,26 @@
         // a camber). Applied to the group in YXZ order under the heading yaw.
         _alignToTerrain(delta, grounded) {
             let tp = 0, tr = 0;
+            // IN THE AIR THE ATTITUDE IS THE PILOT'S, not the ground's. This is
+            // called with `grounded` false while flying, which used to mean the
+            // craft was levelled out every frame: a ship could be banked into a
+            // turn and the roll would be wiped before it was ever drawn. The
+            // nose and the bank worked out by the flight model are what the
+            // hull wears instead. (It has to be here rather than on _bodyRoll,
+            // which is deliberately zeroed in the first-person views - and the
+            // cockpit is the view a pilot flies from.)
+            if (this._flying && this._canFly() && this._fly && this._fly.free) {
+                const k = Math.min(1, delta * 5);
+                // Nose-up is a NEGATIVE rotation.x, the same sign the terrain
+                // branch below works in.
+                const wantPitch = -(this._flyPitch || 0);
+                const wantRoll  = this._flyBank || 0;
+                this._groundPitch += (wantPitch - this._groundPitch) * k;
+                this._groundRoll  += (wantRoll  - this._groundRoll)  * k;
+                this._van.group.rotation.x = this._groundPitch;
+                this._van.group.rotation.z = this._groundRoll;
+                return;
+            }
             if (grounded) {
                 const ts = WORLD_TILE_SIZE;
                 const sin = Math.sin(this._driveAngle), cos = Math.cos(this._driveAngle);
@@ -4420,32 +4675,144 @@
         // brings a ship down instead - holds it lower and lower, slows, and at
         // walking pace a few metres up the ground simply takes it.
         //
-        //   the climb/descend keys move the held clearance (see _updateFlyAlt)
+        //   the climb/descend keys trim the held altitude (see _updateFlight)
         //   slow and low, and it lands (_checkShipTouchdown)
         //   flying again is the flight key, the way it always was
-        _updateFlyAlt(delta) {
-            if (this._flyAlt == null) this._flyAlt = 120 * WORLD_SCALE;
-            if (!this._flying) return;
+        // ---------------------------------------------------------------------
+        // Flying, as against driving with the ground held at arm's length
+        // ---------------------------------------------------------------------
+        // What this used to be: a CLEARANCE over the terrain. The ship could
+        // raise and lower its clearance; the broom could not move vertically at
+        // all, and was pinned at a fixed cruise no key could touch. Over a world
+        // with no terrain in it there is nothing for a clearance to be measured
+        // from, and over one that has terrain it was never flying anyway.
+        //
+        // What it is now, for the ship and the broom alike:
+        //
+        //   THE NOSE DOES THE WORK. Push it up or down (mouse, right stick) and
+        //   the craft climbs or dives at its forward speed through the sine of
+        //   the pitch. Fly faster, climb faster; a thing with no airspeed cannot
+        //   point its way upward, which is why the trim below exists as well.
+        //   TRIM. The climb and descend keys add a flat rate of their own, so a
+        //   craft at a standstill can still be walked up and down, and so a
+        //   pilot can hold an altitude without holding an attitude.
+        //   BANK. It rolls into its turns (see the flight branch of the yaw in
+        //   _stepVehiclePhysics), which is the visible half of a turn that the
+        //   old model was already making invisibly.
+        //
+        // The altitude is ABSOLUTE now. _flyAlt survives as the CLEARANCE, still
+        // worked out every frame in _resolveEnv, because that is what the HUD
+        // shows and what the landing test measures.
+        _updateFlight(delta) {
+            if (this._flyY == null) {
+                // Over a world with no ground the clearance has nothing to be a
+                // clearance OVER: measured off zero it put a flyby down at 240
+                // units, inside the pressure warning and seconds from the
+                // killing depth. A gas giant opens high in its own envelope
+                // instead (GAS_ENTRY_Y), with the banding and the curve of the
+                // cloud tops below the hull.
+                const th = this._terrain
+                    ? this._terrain.getTerrainHeight(this._vanX / WORLD_TILE_SIZE, this._vanZ / WORLD_TILE_SIZE)
+                    : 0;
+                this._flyY = this._groundless ? GAS_ENTRY_Y : th + 120 * WORLD_SCALE;
+            }
+            if (this._flyPitch == null) this._flyPitch = 0;
+            if (!this._flying || !this._canFly()) return;
+            const F = this._fly || flightModel(this._vehicleId);
+
+            // --- the nose ----------------------------------------------------
+            // The mouse is an ATTITUDE, not a rate: where the pilot is looking
+            // is where the nose points, which is how every flight view works and
+            // costs nothing to learn. The stick is a rate on top of it.
+            let aimed = null;
+            if (this._fpc && this._fpc.isLocked &&
+                (this._viewMode === 'fpdrive' || this._viewMode === 'car')) {
+                aimed = -this._fpc.pitch.rotation.x / (Math.PI / 2);
+            }
+            const pad = this._padPitch || 0;
+            if (pad) {
+                this._flyPitch -= pad * F.pitchRate * delta;
+            } else if (aimed !== null) {
+                const want = Math.max(-1, Math.min(1, aimed)) * F.pitchMax;
+                this._flyPitch += (want - this._flyPitch) * Math.min(1, delta * F.level * 2);
+            } else {
+                // Nothing asking: the nose comes back to level on its own.
+                this._flyPitch -= this._flyPitch * Math.min(1, delta * F.level);
+            }
+            this._flyPitch = Math.max(-F.pitchMax, Math.min(F.pitchMax, this._flyPitch));
+
+            // --- the trim ----------------------------------------------------
             let dir = 0;
             if (typeof Input !== 'undefined') {
                 if (this._freeMoveKeys.has('Space') || Input.isPressed('ok')) dir -= 1;
                 if (this._freeMoveKeys.has('KeyC') || Input.isPressed('pageup')) dir += 1;
             }
-            if (dir) {
-                this._flyAlt = Math.max(SHIP_FLY_MIN, Math.min(SHIP_FLY_MAX,
-                    this._flyAlt + dir * SHIP_CLIMB_RATE * delta));
+            // The pad's shoulder buttons do the same, so a controller can hold
+            // an altitude without holding an attitude (see Controller's 'fly').
+            if (typeof GamepadRaw !== 'undefined' && GamepadRaw.value) {
+                if (GamepadRaw.value(GamepadRaw.L1) > 0.5) dir -= 1;
+                if (GamepadRaw.value(GamepadRaw.R1) > 0.5) dir += 1;
             }
+            const trim = dir ? dir * F.climb * delta : 0;
+
+            // --- and the flying ----------------------------------------------
+            const fwd = Math.abs(this._speedKmh || 0) * KMH_TO_UNITS;
+            const lift = Math.sin(this._flyPitch) * fwd * F.liftFrom * delta;
+            const dy = trim + lift;
+            this._flyY += dy;
+
+            // THE GROUND STOPS A DESCENT; IT DOES NOT LIFT A CRUISE.
+            //
+            // The floor used to be clamped in every frame, and the floor is the
+            // terrain under the hull: a hill passing beneath a ship therefore
+            // RAISED the altitude the pilot was holding, and nothing ever put it
+            // back. Cross a range and the ship came out of it a mountain higher
+            // than it went in; cross rolling country and it ratcheted up crest
+            // by crest. That is a van riding the landscape, which is exactly
+            // what a starship and a broom are not.
+            //
+            // _flyY is the pilot's own number now, and the only things allowed
+            // to move it are the pilot: it is held against the top of the sky
+            // always, and against the ground ONLY on the frames a descent is
+            // actually being commanded (a pilot may not fly down through rock,
+            // but neither may rock push them up). Keeping the HULL clear of the
+            // ground is _resolveEnv's job, and it reads the terrain fresh every
+            // frame, so the ship lifts over the ridge and settles back to the
+            // altitude it was holding on the far side of it.
+            this._flyY = Math.min(FLY_ABS_MAX, this._flyY);
+            if (dy < 0) this._flyY = Math.max(this._flyFloor(), this._flyY);
+        }
+
+        // The lowest the hull may be held: the ground plus the least clearance a
+        // pilot may keep - EXCEPT on a world with no ground, where the descent
+        // has to be able to reach the killing depth or nothing down there could
+        // ever kill anybody. Asked for by both the pilot's own clamp above and
+        // by the ride height in _resolveEnv, so the two cannot disagree.
+        _flyFloor() {
+            if (this._groundless) return GAS_FLOOR_Y - 60;
+            const th = this._terrain
+                ? this._terrain.getTerrainHeight(this._vanX / WORLD_TILE_SIZE, this._vanZ / WORLD_TILE_SIZE)
+                : 0;
+            return th + SHIP_FLY_MIN;
         }
 
         // Low enough and slow enough: the ship is down. Only the ship lands this
         // way - a camper with the Flight module is a van that hovers, and
         // dropping it out of the air is what its own flight key is for.
         _checkShipTouchdown() {
-            if (!this._flying || this._vehicleId !== 'starship') return false;
-            if (Math.abs(this._speedKmh || 0) > SHIP_LAND_KMH) return false;
-            if ((this._flyAlt || 0) > SHIP_LAND_CLEAR) return false;
+            // Anything that flies lands the same way: slow and low. It used to
+            // be the starship's alone, which is why a broom could be put in the
+            // air and never brought down out of it again.
+            if (!this._flying || !this._canFly()) return false;
+            // And nothing lands on a world with no ground to land on.
+            if (this._groundless) return false;
+            const F = this._fly || flightModel(this._vehicleId);
+            if (Math.abs(this._speedKmh || 0) > (F.landKmh || SHIP_LAND_KMH)) return false;
+            if ((this._flyAlt || 0) > (F.landClear || SHIP_LAND_CLEAR)) return false;
             this._flying = false;
             this._dived = false;
+            this._flyPitch = 0;
+            this._flyY = null;
             this._flyAlt = SHIP_FLY_MIN;
             this._landJolt = 0.5;
             if (typeof SoundManager !== 'undefined') SoundManager.playOk();
@@ -4524,6 +4891,83 @@
                 window.ParchmentToast.show(T('CamperDrive.shipRammedTerrain'),
                     { severity: 'danger', duration: 180 });
             }
+        }
+
+        // ---------------------------------------------------------------------
+        // The bottom of an envelope
+        // ---------------------------------------------------------------------
+        // The top of a world's sky already has an answer: fly high enough and
+        // the world is closed and the ship is left in orbit
+        // (_checkLeavingAtmosphere). A gas giant is the only world with a
+        // BOTTOM that answers as well, because it is the only one with no
+        // ground to stop a descent. What stops it is the pressure.
+        //
+        // Three bands, and a latch so the last of them fires exactly once:
+        //   above the warning height   nothing, and the timer is reset
+        //   in the warning band        the party are told, loudly, to climb
+        //   below the killing depth    the hull goes, and the party with it
+        //
+        // NOTHING HERE DECIDES WHAT DYING MEANS. That belongs to the game's own
+        // death, which already knows whether this playthrough is a hardcore one
+        // (Game_Actor.processMapDeath -> isTerminalDeath): a game over on one
+        // save is a respawn on another, and this must never second-guess it.
+        _checkCrushDepth(delta) {
+            if (!this._groundless || this._titleMode || this._crushed) return;
+            const y = this._vanY;
+            if (y > GAS_FLOOR_Y + GAS_WARN_BAND) { this._crushWarn = 0; return; }
+            if (y > GAS_FLOOR_Y) {
+                this._crushWarn -= delta;
+                if (this._crushWarn > 0) return;
+                this._crushWarn = GAS_WARN_EVERY;
+                // The hull complaining, in the shake the ram already uses.
+                this._crashTimer = Math.max(this._crashTimer || 0, 0.4);
+                if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+                if (window.ParchmentToast && window.ParchmentToast.show) {
+                    window.ParchmentToast.show(T('CamperDrive.gasGiant.tooDeep'),
+                        { severity: 'danger', duration: 200 });
+                }
+                return;
+            }
+            this._crushed = true;
+            this._onCrushed();
+        }
+
+        // Too deep, and it is over. The wreck is the ram's own wreck at full
+        // strength; then the world is put away and the party handed to the
+        // game's death, which decides between a respawn and the game over
+        // screen by the rules this save already plays under.
+        _onCrushed() {
+            if (typeof AudioManager !== 'undefined') {
+                try { AudioManager.playSe({ name: 'Crash', volume: 100, pitch: 50, pan: 0 }); }
+                catch (e) { /* the sound is not worth a crash of its own */ }
+            }
+            this._terrainSmashFx(this._vanX, this._vanY, this._vanZ, 300, 0.9, 0.9, 1.0);
+            const R = window.VehicleSystemRepair;
+            if (R && typeof R.applyDamage === 'function') R.applyDamage('airship', 100);
+            if (window.ParchmentToast && window.ParchmentToast.show) {
+                window.ParchmentToast.show(T('CamperDrive.gasGiant.crushed'),
+                    { severity: 'danger', duration: 240 });
+            }
+            // Hold everything while the screen goes black: the same guard the
+            // water rescue and the stuck-camper respawn already run behind.
+            this._waterRescue = true;
+            this._fade(1, () => {
+                if (typeof $gameParty !== 'undefined' && $gameParty) {
+                    for (const a of $gameParty.members()) {
+                        if (a && a.setHp) a.setHp(0);
+                    }
+                }
+                // The 3D world has to be down BEFORE the death runs: a respawn
+                // reserves a map transfer, and the map it transfers from is the
+                // one still on screen until this returns.
+                VoxelWorldSystem.stop();
+                const lead = (typeof $gameParty !== 'undefined' && $gameParty)
+                    ? $gameParty.members()[0] : null;
+                if (lead && lead.processMapDeath) lead.processMapDeath();
+                else if (window.SaveSystem && window.SaveSystem.triggerGameOver) {
+                    window.SaveSystem.triggerGameOver();
+                }
+            });
         }
 
         // Rock and dust thrown out of a hole punched in the ground.
@@ -4807,21 +5251,36 @@
 
             // A building whose inside is standing is not a block any more: it is
             // its own walls, with a doorway through them.
-            const live = this._interiors ? this._interiors.liveLots(tx + ',' + tz) : null;
-            let blocks = plan.solids;
-            if (live && live.size) {
-                blocks = [];
-                for (let i = 0; i < plan.lots.length; i++) {
-                    if (live.has(i)) continue;
-                    const l = plan.lots[i];
-                    blocks.push({ x: l.x, z: l.z, w: l.w, d: l.d });
-                }
-                const walls = this._interiors.wallRects(tx + ',' + tz, []);
-                for (const w of walls) {
-                    if (w.over) continue;                 // that one is the lintel
-                    blocks.push({ x: w.x - ox, z: w.z - oz, w: w.w, d: w.d });
+            //
+            // Worked out once per square and kept. This is called up to twice
+            // on every frame the party is on their feet, and it was building a
+            // fresh list - one object per lot of the square, and another per
+            // wall of every building standing open on it - both times. The
+            // answer only changes when an inside goes up or comes down, which
+            // BuildingInteriors counts on `version`.
+            const IN = this._interiors;
+            const ver = IN ? IN.version : -1;
+            let cache = this._solidCache;
+            if (!cache || cache.tx !== tx || cache.tz !== tz ||
+                cache.ver !== ver || cache.plan !== plan) {
+                cache = this._solidCache = { tx, tz, ver, plan, blocks: null };
+                const live = IN ? IN.liveLots(BuildingInteriors.tileKeyOf(tx, tz)) : null;
+                if (live && live.size) {
+                    const arr = [];
+                    for (let i = 0; i < plan.lots.length; i++) {
+                        if (live.has(i)) continue;
+                        const l = plan.lots[i];
+                        arr.push({ x: l.x, z: l.z, w: l.w, d: l.d });
+                    }
+                    const walls = IN.wallRects(BuildingInteriors.tileKeyOf(tx, tz), []);
+                    for (const w of walls) {
+                        if (w.over) continue;             // that one is the lintel
+                        arr.push({ x: w.x - ox, z: w.z - oz, w: w.w, d: w.d });
+                    }
+                    cache.blocks = arr;
                 }
             }
+            const blocks = cache.blocks || plan.solids;
 
             // Buildings: rectangles, pushed out of along whichever side is
             // nearest. Several passes, always resolving the deepest one first:
@@ -5474,6 +5933,30 @@
                     this._fpc.deactivated = false;
                 }
             }
+            // AND THE MOUSE BACK WITH THEM. _lockControls let the pointer go so
+            // the fight could be clicked on; nothing ever took it again, so a
+            // walker came out of their first encounter unable to turn their
+            // head - the view was dead until they clicked, and on foot a click
+            // is the dig button. Walking into something was therefore the one
+            // thing that quietly cost you the camera for the rest of the walk.
+            // Asked for rather than done here and now: a fight is often still
+            // tearing itself down on the frame it ends, and a request made over
+            // the last of it is refused. _regrabPointer keeps trying while the
+            // want stands, and drops it the moment the mouse is back.
+            this._wantPointer = true;
+        }
+
+        // Take the mouse back after the world itself let it go. Only into a
+        // first-person view, only while this world is really up, and never over
+        // a menu or a message that is still holding the cursor.
+        _regrabPointer() {
+            if (!this._wantPointer) return;
+            if (document.pointerLockElement === document.body) { this._wantPointer = false; return; }
+            if (!this._fpc || !this._fpc.allowPointerLock) { this._wantPointer = false; return; }
+            if (this._viewMode !== 'foot' && this._viewMode !== 'fp' &&
+                this._viewMode !== 'fpdrive') { this._wantPointer = false; return; }
+            if (!VoxelWorldSystem.isActive() || this.isPaused() || this._locked) return;
+            try { document.body.requestPointerLock(); } catch (e) { /* the click will do it */ }
         }
 
         // Where the party actually stands in the 3D world.
@@ -5758,6 +6241,7 @@
         // Spriteset_Battle samples is alive.
         _drawBattleFrame() {
             this._scene.overrideMaterial = null;
+            this._terrain.cullTo(this._camera);
             this._renderer.render(this._scene, this._camera);
         }
 
@@ -6020,14 +6504,14 @@
         // position, and this puts that position back the moment it lands on a
         // square that town owns. Being stopped by it IS approaching it, so the
         // same press that walked them into it asks whether they are going in.
-        _guardReservedSquares() {
+        _guardReservedSquares(delta) {
             // Earth's hand-made towns are Earth's. Nothing on another world is
             // spoken for.
             if (this._titleMode || this._standalone || this._alien) return;
             const ts = WORLD_TILE_SIZE;
             const at = this._contactPoint();
             const wx = Math.floor(at.x / ts), wy = Math.floor(at.z / ts);
-            this._placeAskT = Math.max(0, (this._placeAskT || 0) - 0.016);
+            this._placeAskT = Math.max(0, (this._placeAskT || 0) - (delta || 0.016));
             const place = reservedPlaceAt(wx, wy);
             if (!place) { this._lastFreeX = at.x; this._lastFreeZ = at.z; return; }
 
@@ -6113,6 +6597,12 @@
         // deep road is not the same act as sinking a shaft through its floor.
         _updateUnderground() {
             if (this._standalone || this._titleMode || this._transitioningUnderground) return;
+            // There is no under on a world with no ground. Without this a ship
+            // flown far enough down a gas giant would pass the level at which a
+            // dug shaft hands over to the 2D underground and be teleported into
+            // a cave. What waits at the bottom of an envelope is the pressure
+            // (see _checkCrushDepth), and nothing else.
+            if (this._groundless) return;
             const eye = (this._viewMode === 'foot' && this._fpc)
                 ? this._fpc.getRig().position
                 : { x: this._vanX, y: this._vanY + 6, z: this._vanZ };
@@ -6402,9 +6892,10 @@
             // on the autopilot, which is not steering round anything.
             // The pilot's hand on the altitude, and the ground taking the ship
             // once it is low enough and slow enough to be landing rather than
-            // flying (see _updateFlyAlt / _checkShipTouchdown).
-            this._updateFlyAlt(delta);
+            // flying (see _updateFlight / _checkShipTouchdown).
+            this._updateFlight(delta);
             this._checkShipTouchdown();
+            this._checkCrushDepth(delta);
 
             if (!ftActive && this._env !== 'air') this._checkPropCollision(delta);
 
@@ -6445,6 +6936,16 @@
         // gravity pulls it back, and it lands (with a thud) when it meets the
         // ground again. The liminal boost throws it dramatically farther / higher.
         _updateRideHeight(delta, targetY, grounded) {
+            // A flown craft answers its own controls directly. The suspension
+            // spring below is a ride height for something with wheels on the
+            // ground; used as an altitude it is a laggy lift, and the nose would
+            // be pointing somewhere the hull had not gone yet.
+            if (this._flying && this._canFly() && this._fly && this._fly.free) {
+                this._vanY += (targetY - this._vanY) * Math.min(1, delta * 6);
+                this._suspVel = 0;
+                this._airborne = false;
+                return;
+            }
             if (grounded && !this._airborne &&
                 this._speedKmh > LAUNCH_KMH && this._grade > LAUNCH_GRADE) {
                 this._airborne = true;
@@ -6699,6 +7200,29 @@
         // notices alone now, so there is nothing to tell. The calls are left
         // standing rather than picked out of every control in the world.
         _teachControl(id) {
+        }
+
+        // What H is answering. The legend is built out of this and nothing else
+        // (VoxelWorldHUD's legendRowsFor), so every question it asks is asked
+        // HERE, once, off the fields the frame has already settled: a walker is
+        // not offered a nose, a swimmer is not offered a crouch, a pilot over a
+        // gas giant is not offered a landing, and a party holding a pad is read
+        // faces rather than keys.
+        _legendContext() {
+            const onFoot = this._viewMode === 'foot';
+            const C = window.Controller;
+            return {
+                mode: onFoot ? 'foot'
+                    : (this._flying && this._canFly()) ? 'fly'
+                    : 'drive',
+                env: this._env,
+                pad: !!(C && C.usingPad && C.usingPad()),
+                groundless: !!this._groundless,
+                swimming: !!(this._fpc && this._fpc.swimming),
+                canFly: onFoot ? leaderCanFly() : this._canFly(),
+                canDive: !onFoot && camperCan('dive'),
+                canDig: !!this._tool,
+            };
         }
 
         // Tab / L2. The bar the party is holding changes, and the world is told

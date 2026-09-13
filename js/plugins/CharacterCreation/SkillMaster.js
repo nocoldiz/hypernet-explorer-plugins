@@ -549,7 +549,7 @@
         const byName = (a, b) => getCategoryDisplayName(a).localeCompare(getCategoryDisplayName(b));
         skills.sort(byName);
         magic.sort(byName);
-        skills.unshift('All');
+        skills.push('All');
         return { Skill: skills, Magic: magic };
     }
 
@@ -1731,6 +1731,51 @@
     window.SkillShapes = SkillShapes;
     SkillMaster.SkillShapes = SkillShapes;
 
+    //=========================================================================
+    // The authored trees, js/db/Skills/SkillTrees.json.
+    //
+    // A school's shape is data, not an accident of the runtime: every category
+    // there lists its branches, every branch its nodes in climbing order with
+    // the node each one hangs from. Skills the file does not mention - a new
+    // one, a player's own spell - still fall through to the self-organising
+    // path below, so nothing ever disappears from a tree.
+    //=========================================================================
+    const SkillTreeData = {
+        _doc: undefined,
+
+        doc: function () {
+            if (this._doc === undefined) {
+                const bank = window.Skills && window.Skills.SkillTrees;
+                this._doc = (bank && bank.trees) ? bank : null;
+            }
+            return this._doc;
+        },
+
+        branches: function (category) {
+            const doc = this.doc();
+            const tree = doc && doc.trees[category];
+            return (tree && Array.isArray(tree.branches)) ? tree.branches : null;
+        },
+
+        // The branch name in the player's language, resolved the way a category
+        // name is: an i18n key first, so a translator can overrule the file,
+        // then the pair the file itself carries.
+        title: function (branch) {
+            if (!branch) return '';
+            const key = 'SkillMaster.branch.' + branch.id;
+            if (typeof T === 'function' && T.has(key)) return T(key);
+            const name = branch.name;
+            if (!name) return '';
+            const lang = typeof T === 'function' ? T.language() : (ConfigManager.language || 'en');
+            return (lang === 'it' ? name.it : name.en) || name.en || '';
+        },
+
+        invalidate: function () { this._doc = undefined; }
+    };
+
+    window.SkillTreeData = SkillTreeData;
+    SkillMaster.SkillTreeData = SkillTreeData;
+
     const SkillGraph = {
         _trees: null,
         _index: null,
@@ -1769,12 +1814,6 @@
             this._trees[key] = tree;
             if (!skills.length) return tree;
 
-            const forbidden = [];
-            const climb = [];
-            for (const skill of skills) {
-                (this.isForbidden(skill.id) ? forbidden : climb).push(skill);
-            }
-
             const power = {};
             const scoreFn = SkillMaster.skillPower || window.skillPower || (() => 1);
             for (const skill of skills) power[skill.id] = scoreFn(skill);
@@ -1785,6 +1824,14 @@
             laneNames.forEach((name, i) => { laneOf[name] = i; });
             tree.lanes = laneNames;
 
+            const left = this._plantAuthored(tree, category, skills, laneOf);
+
+            const forbidden = [];
+            const climb = [];
+            for (const skill of left) {
+                (this.isForbidden(skill.id) ? forbidden : climb).push(skill);
+            }
+
             for (const members of this._groves(climb, rank)) {
                 this._grow(tree, category, members, laneOf, false);
             }
@@ -1794,6 +1841,77 @@
 
             this._rank(tree);
             return tree;
+        },
+
+        // Lay the authored branches of a school down as groves, in file order,
+        // and hand back the skills the file said nothing about. A node whose
+        // parent is filtered out of this view (the Magic Nature filter hides
+        // it) climbs to the nearest ancestor that survived, so a branch never
+        // breaks into loose nodes.
+        _plantAuthored: function (tree, category, skills, laneOf) {
+            if (CUSTOM_CATEGORIES.includes(category)) return skills;
+            const branches = SkillTreeData.branches(category);
+            if (!branches || !branches.length) return skills;
+
+            const shown = {};
+            for (const skill of skills) shown[skill.id] = skill;
+            const taken = {};
+
+            for (const branch of branches) {
+                const nodes = branch.nodes || [];
+                const authored = {};
+                for (const node of nodes) authored[node.id] = node;
+
+                const members = nodes.filter(node => shown[node.id]);
+                if (!members.length) continue;
+
+                const grove = {
+                    index: tree.groves.length, nodes: [], forbidden: false,
+                    id: branch.id, title: SkillTreeData.title(branch), icon: branch.icon || 0
+                };
+                members.forEach((node, seat) => {
+                    const skill = shown[node.id];
+                    const placed = {
+                        id: skill.id, skill: skill, category: category,
+                        tier: node.tier || 0, grove: grove.index, seat: seat,
+                        lane: laneOf[this._lane(skill)] || 0,
+                        forbidden: this.isForbidden(skill.id), authored: true,
+                        parents: this._authoredParents(node, authored, shown),
+                        children: [], need: 0
+                    };
+                    placed.need = placed.parents.length ? 1 : 0;
+                    grove.nodes.push(placed);
+                    tree.nodes[skill.id] = placed;
+                    tree.order.push(placed);
+                    this._index[skill.id] = placed;
+                    taken[skill.id] = true;
+                });
+                for (const node of grove.nodes) {
+                    for (const parent of node.parents) {
+                        if (tree.nodes[parent]) tree.nodes[parent].children.push(node.id);
+                    }
+                }
+                grove.depth = grove.nodes.reduce((d, n) => Math.max(d, n.tier), 0);
+                tree.groves.push(grove);
+            }
+
+            return skills.filter(skill => !taken[skill.id]);
+        },
+
+        _authoredParents: function (node, authored, shown) {
+            const out = [];
+            const seen = {};
+            const walk = (ids) => {
+                for (const id of ids || []) {
+                    if (seen[id]) continue;
+                    seen[id] = true;
+                    if (shown[id]) { if (!out.includes(id)) out.push(id); continue; }
+                    const up = authored[id];
+                    if (up) walk(up.requires);
+                }
+            };
+            walk(node.requires);
+            return out;
         },
 
         _groves: function (climb, rank) {
@@ -1855,7 +1973,11 @@
         _rank: function (tree) {
             let deepest = 0;
             for (const node of tree.order) if (!node.forbidden) deepest = Math.max(deepest, node.tier);
-            for (const node of tree.order) if (node.forbidden) node.tier = deepest + 1;
+            // A forbidden skill the authored file placed already closes its own
+            // branch; only the loose ones are pushed under everything else.
+            for (const node of tree.order) {
+                if (node.forbidden && !node.authored) node.tier = deepest + 1;
+            }
             const tiers = [];
             for (const node of tree.order) {
                 (tiers[node.tier] = tiers[node.tier] || []).push(node);
@@ -1975,6 +2097,7 @@
             this._trees = null;
             this._index = null;
             this._core = {};
+            SkillTreeData.invalidate();
         },
 
         graph: function (category) {
@@ -1998,7 +2121,8 @@
 
             tree.graph = {
                 nodes: nodes, edges: edges,
-                tiers: tree.tiers.length, groves: tree.groves.length
+                tiers: tree.tiers.length, groves: tree.groves.length,
+                groveTitles: tree.groves.map(g => g.title || '')
             };
             return tree.graph;
         }
@@ -2067,10 +2191,11 @@
             const cfg = SkillShapes.school(category);
             const seed = SkillShapes.hash(category);
 
+            const titles = graph.groveTitles || [];
             const byId = {};
             const groves = [];
             for (const n of graph.nodes) {
-                const g = (groves[n.grove] = groves[n.grove] || { index: n.grove, nodes: [] });
+                const g = (groves[n.grove] = groves[n.grove] || { index: n.grove, nodes: [], title: titles[n.grove] || '' });
                 const node = {
                     id: n.id, skill: n.skill, category: category,
                     tier: n.tier, grove: n.grove, seat: n.seat,
@@ -2103,6 +2228,19 @@
             const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
             for (const n of nodes) { n.x -= cx; n.y -= cy; }
 
+            // One heading per branch, sitting a row above its first tier, so a
+            // school reads as named crafts instead of anonymous clusters.
+            const groveLabels = [];
+            for (const grove of groves) {
+                if (!grove || !grove.title || !grove.nodes.length) continue;
+                let gx = Infinity, gy = Infinity;
+                for (const n of grove.nodes) {
+                    if (n.x < gx) gx = n.x;
+                    if (n.y < gy) gy = n.y;
+                }
+                groveLabels.push({ title: grove.title, x: gx, y: gy - SKY_ROW * 0.75 });
+            }
+
             const edges = [];
             for (const [a, b] of graph.edges) {
                 if (byId[a.id] && byId[b.id]) edges.push([byId[a.id], byId[b.id]]);
@@ -2112,7 +2250,7 @@
             const height = (maxY - minY) + SKY_PAD * 2;
             return {
                 category: category, hue: cfg.hue,
-                nodes: nodes, edges: edges,
+                nodes: nodes, edges: edges, groveLabels: groveLabels,
                 groves: boxes.length, seed: seed,
                 width: width, height: height,
                 radius: Math.hypot(width, height) / 2
@@ -2448,6 +2586,7 @@
                         } else {
                             cost.textContent = '⊘';
                         }
+                        el._smNatW = 0;
                     }
                 }
             });
@@ -2568,7 +2707,8 @@
             // 3. Draw Edge Connection Lines & Flow Energy Particles
             this._drawEdges(st, ctx, dt);
 
-            // 4. Draw Skill Nodes
+            // 4. Draw Branch Headings & Skill Nodes
+            this._drawBranchTitles(st, ctx);
             this._drawNodes(st, ctx);
 
             ctx.restore();
@@ -2678,6 +2818,25 @@
                 }
             }
 
+            ctx.restore();
+        },
+
+        _drawBranchTitles: function (st, ctx) {
+            const labels = st.figure && st.figure.groveLabels;
+            if (!labels || !labels.length) return;
+            const scale = st.scaleFactor;
+            const hue = (st.atlas && st.atlas.hue != null) ? st.atlas.hue : 210;
+
+            ctx.save();
+            ctx.font = '600 15px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = `hsla(${hue}, 60%, 82%, 0.92)`;
+            for (const label of labels) {
+                ctx.fillText(label.title, label.x * scale - 22, label.y * scale);
+            }
             ctx.restore();
         },
 
@@ -2791,11 +2950,18 @@
             }
         },
 
+        // Two names written over each other are two names nobody can read, so
+        // the layer is laid out rather than merely projected: every name that
+        // fits is written where it belongs, one that would land on a name
+        // already written drops a line, and one with nowhere left to go is not
+        // written at all. The reader keeps the names that matter, in order:
+        // the focused skill, then the learned and the open ones, then the rest.
         _updateLabels: function (st, w2, h2) {
             if (!st.labelEls.length) return;
             const scale = st.scaleFactor;
             const maxVisibleLabels = 40;
-            let visibleCount = 0;
+            const labelScale = Math.max(0.25, Math.min(1.15, st.zoom));
+            const cands = [];
 
             for (let i = 0; i < st.nodes.length; i++) {
                 const node = st.nodes[i];
@@ -2810,18 +2976,62 @@
                 node.sy = sy;
                 node.vis = (sx >= -100 && sx <= st.sized.w + 100 && sy >= -100 && sy <= st.sized.h + 100);
 
-                if (!node.vis || visibleCount >= maxVisibleLabels) {
-                    el.classList.add('ui-closed');
-                    continue;
+                if (!node.vis) { el.classList.add('ui-closed'); continue; }
+                cands.push({ node: node, el: el, sx: sx, sy: sy, i: i });
+            }
+
+            // A name is measured once and the size kept: repaint() throws the
+            // measurement away when it rewrites a cost, and nothing else can
+            // change how wide a name is.
+            const unmeasured = cands.filter(c => !c.el._smNatW);
+            if (unmeasured.length) {
+                for (const c of unmeasured) c.el.classList.remove('ui-closed');
+                for (const c of unmeasured) {
+                    c.el._smNatW = c.el.offsetWidth || 80;
+                    c.el._smNatH = c.el.offsetHeight || 16;
                 }
+            }
+
+            cands.sort((a, b) => {
+                const fa = a.node.id === st.focusId ? 1 : 0;
+                const fb = b.node.id === st.focusId ? 1 : 0;
+                if (fa !== fb) return fb - fa;
+                const sa = a.node.state || 0, sb = b.node.state || 0;
+                if (sa !== sb) return sb - sa;
+                return a.i - b.i;
+            });
+
+            const placed = [];
+            const overlaps = (r) => {
+                for (let k = 0; k < placed.length; k++) {
+                    const q = placed[k];
+                    if (r.x0 < q.x1 && r.x1 > q.x0 && r.y0 < q.y1 && r.y1 > q.y0) return true;
+                }
+                return false;
+            };
+
+            let visibleCount = 0;
+            for (const c of cands) {
+                const el = c.el;
+                if (visibleCount >= maxVisibleLabels) { el.classList.add('ui-closed'); continue; }
+
+                const w = (el._smNatW || 80) * labelScale;
+                const h = (el._smNatH || 16) * labelScale;
+                const baseY = c.sy + 26 * st.zoom;
+                let y = -1;
+                for (let line = 0; line < 3; line++) {
+                    const ty = baseY + line * (h + 2);
+                    const box = { x0: c.sx - w / 2 - 2, x1: c.sx + w / 2 + 2, y0: ty - 1, y1: ty + h + 1 };
+                    if (!overlaps(box)) { placed.push(box); y = ty; break; }
+                }
+                if (y < 0) { el.classList.add('ui-closed'); continue; }
 
                 visibleCount++;
                 el.classList.remove('ui-closed');
-                el.style.setProperty('--ms-x', `${sx.toFixed(1)}px`);
-                el.style.setProperty('--ms-y', `${(sy + 26 * st.zoom).toFixed(1)}px`);
+                el.style.setProperty('--ms-x', `${c.sx.toFixed(1)}px`);
+                el.style.setProperty('--ms-y', `${y.toFixed(1)}px`);
 
                 // Scale label with zoom, allowing smaller text at lower zoom out to prevent overlap
-                const labelScale = Math.max(0.25, Math.min(1.15, st.zoom));
                 el.style.setProperty('--ms-label-scale', labelScale.toFixed(2));
             }
         },
@@ -3362,21 +3572,9 @@
         this._editorAnimPickIndex = k;
         this._editorAnimId = list[k].id;
 
-        const box = document.getElementById('anim-list-box');
-        if (box) {
-            box.querySelectorAll('.anim-row').forEach(row => {
-                const ri = parseInt(row.dataset.idx, 10);
-                const on = ri === k;
-                // The hairline is the whole of the mark, and the stylesheet
-                // draws it: nothing is painted from here.
-                row.classList.toggle('focused', on);
-            });
-        }
-        const label = document.getElementById('anim-preview-label');
-        if (label) label.textContent = `#${list[k].id} · ${list[k].name}`;
-        if (window.SkillAnimPreview) window.SkillAnimPreview.setAnimation(this._editorAnimId);
-        SoundManager.playCursor();
-        this.scrollToActiveItem('anim-list-box', '#anim-list-box .anim-row.focused');
+        // The hairline is the whole of the mark, and the stylesheet draws it:
+        // nothing is painted from here.
+        this.highlightAnimRow('anim-list-box', k, this._editorAnimId, list);
     };
 
     Proto.editorConfirmAnim = function () {
@@ -3513,18 +3711,55 @@
         this.refreshUISkillDOM();
     };
 
-    Proto.setupAnimPreview = function () {
+    // The lit stage an animation is tried out on: the caster's face with the
+    // effect played over it. The fusion forge and the bench both pick an
+    // animation, so both raise the SAME stage rather than each drawing its own.
+    Proto.animStageHTML = function (actor, cur, canvasId, labelId) {
+        const faceX = (actor.faceIndex() % 4) * 144;
+        const faceY = Math.floor(actor.faceIndex() / 4) * 144;
+        return `
+            <div class="sm-anim-stage">
+                <div class="sm-anim-face" style="--sm-face: ${window.CCArt.url('img/faces/' + actor.faceName() + '.png')}; --sm-face-x: -${faceX}px; --sm-face-y: -${faceY}px"></div>
+                <canvas id="${canvasId}" class="sm-stage-canvas"></canvas>
+            </div>
+            <div id="${labelId}" class="sm-preview-anim">${cur ? `#${cur.id} · ${cur.name}` : ''}</div>`;
+    };
+
+    // The canvas is only sized once the page is laid out, so the stage is lit
+    // on the frame after the page is written, and only if the picker is still open.
+    Proto.lightAnimStage = function (canvasId, animId, stillOpen) {
         requestAnimationFrame(() => {
-            if (this._viewMode !== 'spellEditor' || !this._editorAnimPicking) return;
-            const canvas = document.getElementById('anim-preview-canvas');
+            if (!stillOpen()) return;
+            const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const rect = canvas.getBoundingClientRect();
             canvas.width = Math.max(64, Math.floor(rect.width));
             canvas.height = Math.max(64, Math.floor(rect.height));
             if (window.SkillAnimPreview && window.SkillAnimPreview.isSupported() && window.SkillAnimPreview.init(canvas)) {
-                window.SkillAnimPreview.setAnimation(this._editorAnimId);
+                window.SkillAnimPreview.setAnimation(animId);
             }
         });
+    };
+
+    // Moving down the list re-plays the effect without rewriting the page, so
+    // the stage is never torn down between two neighbouring animations.
+    Proto.highlightAnimRow = function (boxId, k, animId, list) {
+        const box = document.getElementById(boxId);
+        if (box) {
+            box.querySelectorAll('.anim-row').forEach(row => {
+                row.classList.toggle('focused', parseInt(row.dataset.idx, 10) === k);
+            });
+        }
+        const label = document.getElementById(boxId + '-label');
+        if (label && list[k]) label.textContent = `#${list[k].id} · ${list[k].name}`;
+        if (window.SkillAnimPreview) window.SkillAnimPreview.setAnimation(animId);
+        SoundManager.playCursor();
+        this.scrollToActiveItem(boxId, '#' + boxId + ' .anim-row.focused');
+    };
+
+    Proto.setupAnimPreview = function () {
+        this.lightAnimStage('anim-preview-canvas', this._editorAnimId,
+            () => this._viewMode === 'spellEditor' && !!this._editorAnimPicking);
     };
 
     Proto.renderSpellEditor = function (useItalian, knowledge) {
@@ -3651,8 +3886,6 @@
         } else if (animPicking) {
             const list = this.getAvailableAnimations();
             const cur = list[this._editorAnimPickIndex] || list[0];
-            const faceX = (actor.faceIndex() % 4) * 144;
-            const faceY = Math.floor(actor.faceIndex() / 4) * 144;
             let rowsHTML = '';
             list.forEach((a, k) => {
                 const on = this._editorAnimPickIndex === k;
@@ -3670,11 +3903,7 @@
                     <div class="ui-detail-head">
                         <div class="ui-detail-titles"><h3 class="sm-detail-name">${pickTitle}</h3></div>
                     </div>
-                    <div class="sm-anim-stage">
-                        <div class="sm-anim-face" style="--sm-face: ${window.CCArt.url('img/faces/' + actor.faceName() + '.png')}; --sm-face-x: -${faceX}px; --sm-face-y: -${faceY}px"></div>
-                        <canvas id="anim-preview-canvas" class="sm-stage-canvas"></canvas>
-                    </div>
-                    <div id="anim-preview-label" class="sm-preview-anim">${cur ? `#${cur.id} · ${cur.name}` : ''}</div>
+                    ${this.animStageHTML(actor, cur, 'anim-preview-canvas', 'anim-list-box-label')}
                     <div id="anim-list-box" class="ui-list ui-scroll sm-anim-list">
                         ${rowsHTML}
                     </div>
@@ -6160,6 +6389,9 @@
 
     Proto.closeCraftBench = function () {
         this.closeCraftTextSheet();
+        // Leaving the bench with the stage still lit would leave the effect
+        // running behind a page that no longer has a canvas for it.
+        if (this._craftPicker === 'animation' && window.SkillAnimPreview) window.SkillAnimPreview.dispose();
         this._viewMode = 'category';
         this._craftPicker = null;
         this._lastLeftMode = null;
@@ -6278,6 +6510,7 @@
             build.iconIndex = row.iconIndex;
         } else if (group === 'animation') {
             build.animationId = row.id;
+            if (window.SkillAnimPreview) window.SkillAnimPreview.dispose();
         }
 
         this._craftPicker = null;
@@ -6294,6 +6527,7 @@
     };
 
     Proto.closeCraftPicker = function () {
+        if (this._craftPicker === 'animation' && window.SkillAnimPreview) window.SkillAnimPreview.dispose();
         this._craftPicker = null;
         SoundManager.playCancel();
         this.refreshUISkillDOM();
@@ -6311,11 +6545,15 @@
         const current = targetSkillId
             ? this.craftOverrideText(targetSkillId, field)
             : String((this._craft && this._craft[field]) || '');
+        // On the bench a spell's flavour is the words said over it, so the
+        // sheet asks for an incantation there and for lore everywhere else.
+        const writeField = (field === 'lore' && !targetSkillId && this._craft && this._craft.kind !== 'skill')
+            ? 'incantation' : field;
         const sheet = document.createElement('div');
         sheet.className = 'sm-craft-write-backdrop';
         sheet.innerHTML = `
             <div class="sm-craft-write">
-                <div class="sm-craft-write-title">${tr('write.' + field)}</div>
+                <div class="sm-craft-write-title">${tr('write.' + writeField)}</div>
                 ${single
                 ? `<input id="sm-craft-write-input" class="sm-craft-write-input" type="text" maxlength="40" autocomplete="off" spellcheck="false">`
                 : `<textarea id="sm-craft-write-input" class="sm-craft-write-input" rows="5" maxlength="400" autocomplete="off" spellcheck="false"></textarea>`}
@@ -6541,7 +6779,8 @@
                     : plain(tr('none'), true);
                 hint = `${build[row].length}/${row === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES}`;
             }
-            rowsHTML += rowHTML(idx, tr('row.' + row), value, hint);
+            const rowLabel = (row === 'lore' && spell) ? tr('row.incantation') : tr('row.' + row);
+            rowsHTML += rowHTML(idx, rowLabel, value, hint);
         });
 
         const createIdx = CRAFT_ROWS.indexOf('create');
@@ -6594,6 +6833,7 @@
         rightBox.innerHTML = picking
             ? this.renderCraftPickerHTML(picking)
             : this.renderCraftPreviewHTML(quote, verdict);
+        if (picking === 'animation') this.setupCraftAnimPreview();
     };
 
     Proto.renderCraftPickerHTML = function (group) {
@@ -6611,7 +6851,7 @@
             }
             if (group === 'animation') {
                 html += `
-                    <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.craftChoose('animation', ${k})">
+                    <div class="sm-skill-row anim-row focusable ${focused ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.craftAnimHighlight(${k})">
                         <span class="sm-skill-name">${esc(row.name)}</span>
                         <span class="sm-skill-cost">#${row.id}</span>
                     </div>`;
@@ -6632,6 +6872,26 @@
         const focusedRow = rows[this._craftPickIndex];
         const blurb = (focusedRow && focusedRow.key && group !== 'icon' && group !== 'animation')
             ? `<div class="ui-prose">${esc(componentDesc(group, focusedRow.key))}</div>` : '';
+
+        // An animation is chosen by eye: the bench plays it over the writer's
+        // face on the forge's own stage, and the pick is only taken on Use.
+        if (group === 'animation') {
+            const actor = this.getTeachActor();
+            const cur = rows[this._craftPickIndex] || rows[0];
+            return `
+                <div class="ui-detail">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(tr('pick.animation'))}</h3></div>
+                    </div>
+                    ${actor ? this.animStageHTML(actor, cur, 'craft-anim-canvas', 'craft-pick-box-label') : ''}
+                    <div id="craft-pick-box" class="ui-list ui-scroll sm-anim-list">${html}</div>
+                    <div class="inspect-actions ui-panel-actions sm-anim-actions">
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.craftConfirmAnim()">${esc(tr('use'))}</div>
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.closeCraftPicker()">${esc(tr('cancel'))}</div>
+                    </div>
+                </div>`;
+        }
+
         return `
             <div class="ui-detail">
                 <div class="ui-detail-head">
@@ -6640,6 +6900,27 @@
                 ${blurb}
                 <div id="craft-pick-box" class="ui-detail-scroll ui-scroll sm-candidate-list">${html}</div>
             </div>`;
+    };
+
+    Proto.craftAnimHighlight = function (k) {
+        const rows = this.craftPickerRows('animation');
+        if (!rows.length) return;
+        k = ((k % rows.length) + rows.length) % rows.length;
+        this._craftPickIndex = k;
+        this.highlightAnimRow('craft-pick-box', k, rows[k].id, rows);
+    };
+
+    Proto.craftConfirmAnim = function () {
+        if (window.SkillAnimPreview) window.SkillAnimPreview.dispose();
+        this.craftChoose('animation', this._craftPickIndex);
+    };
+
+    Proto.setupCraftAnimPreview = function () {
+        const rows = this.craftPickerRows('animation');
+        const cur = rows[this._craftPickIndex] || rows[0];
+        if (!cur) return;
+        this.lightAnimStage('craft-anim-canvas', cur.id,
+            () => this._viewMode === 'craft' && this._craftPicker === 'animation');
     };
 
     Proto.renderCraftPreviewHTML = function (quote, verdict) {
@@ -6711,6 +6992,12 @@
                 return;
             }
             if (!max) return;
+            if (this._craftPicker === 'animation') {
+                if (Input.isTriggered('ok')) { this.craftConfirmAnim(); return; }
+                if (Input.isTriggered('down') || Input.isRepeated('down')) this.craftAnimHighlight(this._craftPickIndex + 1);
+                else if (Input.isTriggered('up') || Input.isRepeated('up')) this.craftAnimHighlight(this._craftPickIndex - 1);
+                return;
+            }
             if (Input.isTriggered('ok')) { this.craftChoose(this._craftPicker, this._craftPickIndex); return; }
             const prev = this._craftPickIndex;
             if (Input.isTriggered('down') || Input.isRepeated('down')) this._craftPickIndex = (this._craftPickIndex + 1) % max;

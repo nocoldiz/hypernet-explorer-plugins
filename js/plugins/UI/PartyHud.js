@@ -422,6 +422,9 @@
         this._projectedAp = new Map(); // actorId -> AP left after the armed skill
         this._visible = false;
         this._refreshKeys = null;   // actorId | 'vehicle' -> what the card last said
+        this._bottomY = null;       // where the last card ends, in game units
+        this._bottomKey = '';       // the layout that reading was taken of
+        this._bottomFrame = 0;      // and the frame it was taken on
         this._create();
     }
 
@@ -1101,6 +1104,35 @@
         );
     };
 
+    // How far down the screen the cards reach, in the game's own coordinates:
+    // the bottom edge of the last row, chips excluded (they stand outside the
+    // rows' own layout, off to the right). The battle log opens on the floor of
+    // the same corner and grows up towards them
+    // (Core/MPP_SmoothBattleLog2.js), so it is the one thing that has to know
+    // where they end. Reading it out of the DOM forces a layout of the whole
+    // document, so the reading is taken again only when the cards were rebuilt
+    // or after a slow cadence - a bar shown or hidden changes a card's height -
+    // and every ask in between is answered out of the cache. Null while no
+    // cards are up.
+    const BOTTOM_REFRESH_FRAMES = 30;
+    PartyHudOverlay.prototype.canvasBottomY = function () {
+        if (!this._el || !this._visible) return null;
+        const frame = Graphics.frameCount || 0;
+        if (this._bottomY !== null && this._bottomKey === this._layoutKey &&
+            frame - this._bottomFrame < BOTTOM_REFRESH_FRAMES) {
+            return this._bottomY;
+        }
+        const view = viewRect();
+        if (!view) return this._bottomY;
+        const box = this._el.getBoundingClientRect();
+        if (!(box.height > 0)) return this._bottomY;
+        const sy = view.height / Graphics.height;
+        this._bottomKey = this._layoutKey;
+        this._bottomFrame = frame;
+        this._bottomY = (box.bottom - view.top) / sy;
+        return this._bottomY;
+    };
+
     // The AP a skill the player is looking at would leave the caster with, so
     // the orb can show the cost before it is paid. Called with null to clear.
     PartyHudOverlay.prototype.setProjectedAp = function (actor, value) {
@@ -1125,6 +1157,7 @@
     window.PartyHud = {
         overlay: () => _overlay,
         canvasPointFor: (actor) => (_overlay ? _overlay.canvasPointFor(actor) : null),
+        cardsBottomY: () => (_overlay ? _overlay.canvasBottomY() : null),
         setProjectedAp: (actor, value) => { if (_overlay) _overlay.setProjectedAp(actor, value); }
     };
 

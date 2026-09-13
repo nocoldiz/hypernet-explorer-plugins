@@ -192,6 +192,24 @@
         }
     }
 
+    // How dangerous a nation's ground is, in the one unit that means anything:
+    // the median level of the creature its squares field. Every Europe-zone
+    // nation was dealt a level bracket when the world was made and the calendar
+    // has been moving it ever since (BattleSystemEnhancedEncounters, section
+    // 3c); this is the median that falls out of it, plus the window itself so
+    // the reader can see how wide the spread around it is. A nation with no
+    // bracket - outside the zone, or a session with no fauna table loaded -
+    // contributes no row at all rather than a "Lv. 0".
+    function enemyLevelRow(country) {
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        if (!BSEH || typeof BSEH.describeNationLevels !== "function") return [];
+        let info = null;
+        try { info = BSEH.describeNationLevels(country); } catch (e) { info = null; }
+        if (!info || !info.median) return [];
+        return [[T("Atlas.field.enemyLevel"),
+                 T("Atlas.enemyLevelValue", { median: info.median, min: info.min, max: info.max })]];
+    }
+
     // Where the party stands, in atlas degrees, when that can be answered
     // exactly: the world map's own squares run through the affine fit baked
     // into Atlas.json. Anywhere else the party is placed by their country.
@@ -559,7 +577,7 @@
                 [T("Atlas.field.region"), regionLabel(c.region)],
                 [T("Atlas.field.heldIn", { year: this._year }), holderName],
                 [T("Atlas.field.faction"), c.faction === NEUTRAL ? T("Atlas.unaligned") : powerLabel(c.faction)],
-            ].map(([k, v]) =>
+            ].concat(enemyLevelRow(name)).map(([k, v]) =>
                 `<div class="inspect-spec-row"><span class="inspect-spec-label">${escHtml(k)}</span>` +
                 `<span class="inspect-spec-value">${escHtml(v)}</span></div>`).join("");
 

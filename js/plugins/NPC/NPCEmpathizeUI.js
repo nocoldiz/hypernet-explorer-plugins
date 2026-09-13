@@ -6177,7 +6177,7 @@
   // morale and coherence read as the gauges they are rather than as numbers.
   function _armyBar(pct, cls) {
     const v = Math.max(0, Math.min(100, Math.round(Number(pct) || 0)));
-    return `<span class="npc-army-bar"><span class="npc-army-bar-fill ${cls || ''}" style="width:${v}%"></span></span>`;
+    return `<span class="npc-army-bar"><span class="npc-army-bar-fill ${cls || ''}" style="--npc-w:${v}%"></span></span>`;
   }
 
   function _armyFormationHTML(army, T) {

@@ -31,11 +31,13 @@
   "field": {
     "region": "Region",
     "faction": "Allegiance",
+    "enemyLevel": "Enemy level",
     "controller": "Held by",
     "climate": "Climate through the year",
     "heldIn": "Held in {year}",
     "changedHands": "Changed hands"
   },
+  "enemyLevelValue": "Lv. {median} (band {min}-{max})",
   "climate": {
     "dayTemp": "Day",
     "nightTemp": "Night",

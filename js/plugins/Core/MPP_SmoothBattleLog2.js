@@ -110,6 +110,9 @@
     // The clear air kept between the lowest line of the log and the top of the
     // command list standing against the same edge under it.
     const LOG_COMMAND_GAP = 20;
+    // The same air, kept over the log's own ceiling: the party's cards, when it
+    // is standing on the floor of the corner they hold.
+    const LOG_PARTY_GAP = 10;
 
     const CONFIG = {
         logType: params['Log Type'] || '1-line',
@@ -386,9 +389,9 @@
     //--- entry retention: begin ---
     // How many actions the board reads back. It used to give one box up for
     // every battler card standing under it, which left a full party of three
-    // and a summon reading a single line; the log has gone to the top-right
-    // corner, the opposite one from the cards (UI/PartyHud.js), so nothing
-    // stands in its way any more and every party reads the same five.
+    // and a summon reading a single line; the log keeps a corner of its own
+    // now, never the one the cards are in (UI/PartyHud.js), so nothing stands
+    // in its way any more and every party reads the same five.
     const MAX_VISIBLE_ENTRIES = 5;
     const ENTRY_EXIT_MS = 320;
 
@@ -712,16 +715,44 @@
         configurable: true
     });
 
-    // The log has no side of its own any more: it stands in the middle of the
-    // screen, on the floor above the quick bar, and grows upward, so the newest
-    // line is the one nearest the bar. Which side the COMMAND list takes is the
-    // player's choice, and it lives in BattleSystemEnhanchedCommands.js.
+    // Which corner the log hangs in. 0 = the floor on the left, where it opens,
+    // and 1 = the ceiling on the right. Two corners and no more: those are the
+    // two the fight leaves empty, and a running commentary is glanced at rather
+    // than read, so it is never given a place the eye has to hunt for. Which
+    // side the COMMAND list takes is a separate choice, and it lives in
+    // BattleSystemEnhanchedCommands.js.
+    const LOG_POS_BOTTOM_LEFT = 0;
+    const LOG_POS_TOP_RIGHT = 1;
+
+    Object.defineProperty(ConfigManager, 'battleLogPosition', {
+        get: function() {
+            return this._battleLogPosition !== undefined
+                ? this._battleLogPosition : LOG_POS_BOTTOM_LEFT;
+        },
+        set: function(value) {
+            this._battleLogPosition = value;
+        },
+        configurable: true
+    });
+
+    function logOnTopRight() {
+        return ConfigManager.battleLogPosition === LOG_POS_TOP_RIGHT;
+    }
+
+    // Whether the log and the command list are standing against the same edge
+    // of the screen, and so have to share the height of it.
+    function logSharesCommandEdge() {
+        const onRight = !!(window.BattleCommandSide && window.BattleCommandSide.onRight
+            && window.BattleCommandSide.onRight());
+        return onRight === logOnTopRight();
+    }
 
     const _ConfigManager_makeData = ConfigManager.makeData;
     ConfigManager.makeData = function() {
         const config = _ConfigManager_makeData.call(this);
         config.battleLogBgOpacity = this.battleLogBgOpacity;
         config.battleLogSkillNames = this.battleLogSkillNames;
+        config.battleLogPosition = this.battleLogPosition;
         return config;
     };
 
@@ -730,6 +761,8 @@
         _ConfigManager_applyData.call(this, config);
         this.battleLogBgOpacity = config.battleLogBgOpacity !== undefined ? config.battleLogBgOpacity : CONFIG.battleLogBgOpacity;
         this.battleLogSkillNames = config.battleLogSkillNames !== undefined ? config.battleLogSkillNames : 0;
+        this.battleLogPosition = config.battleLogPosition !== undefined
+            ? config.battleLogPosition : LOG_POS_BOTTOM_LEFT;
     };
 
     //-------------------------------------------------------------------------
@@ -756,6 +789,24 @@
             }
         );
 
+        // The corner the log hangs in. One row, two corners, so the same key
+        // steps both ways through it.
+        const togglePosition = function() {
+            ConfigManager.battleLogPosition =
+                logOnTopRight() ? LOG_POS_BOTTOM_LEFT : LOG_POS_TOP_RIGHT;
+            ConfigManager.save();
+        };
+        window.GameOptions.registerOption('battleLogPosition', T('BattleLog.positionOption'),
+            () => ConfigManager.battleLogPosition,
+            (value) => ConfigManager.battleLogPosition = value,
+            'gameplay', 'custom',
+            function(value) {
+                return value === LOG_POS_TOP_RIGHT
+                    ? T('BattleLog.positionTopRight') : T('BattleLog.positionBottomLeft');
+            },
+            togglePosition, togglePosition
+        );
+
         window.GameOptions.registerOption('battleLogSkillNames', T('BattleLog.skillNamesOption') || 'Skill Names',
             () => ConfigManager.battleLogSkillNames,
             (value) => ConfigManager.battleLogSkillNames = value,
@@ -778,6 +829,7 @@
         Window_Options.prototype.addGeneralOptions = function() {
             _Window_Options_addGeneralOptions.call(this);
             this.addCommand(T('BattleLog.bgOpacity'), "battleLogBgOpacity");
+            this.addCommand(T('BattleLog.positionOption'), "battleLogPosition");
             this.addCommand(T('BattleLog.skillNamesOption') || "Skill Names", "battleLogSkillNames");
         };
 
@@ -790,6 +842,10 @@
             if (symbol === "battleLogSkillNames") {
                 const val = this.getConfigValue(symbol);
                 return val === 1 ? (T('BattleLog.skillAction') || 'Skill Action') : (T('BattleLog.skillName') || 'Skill Name');
+            }
+            if (symbol === "battleLogPosition") {
+                return this.getConfigValue(symbol) === LOG_POS_TOP_RIGHT
+                    ? T('BattleLog.positionTopRight') : T('BattleLog.positionBottomLeft');
             }
             return _Window_Options_statusText.call(this, index);
         };
@@ -806,6 +862,12 @@
             if (symbol === "battleLogSkillNames") {
                 const value = this.getConfigValue(symbol);
                 this.changeValue(symbol, value === 1 ? 0 : 1);
+                return;
+            }
+            if (symbol === "battleLogPosition") {
+                const value = this.getConfigValue(symbol);
+                this.changeValue(symbol,
+                    value === LOG_POS_TOP_RIGHT ? LOG_POS_BOTTOM_LEFT : LOG_POS_TOP_RIGHT);
                 return;
             }
             _Window_Options_processOk.call(this);
@@ -825,6 +887,12 @@
                 this.changeValue(symbol, value === 1 ? 0 : 1);
                 return;
             }
+            if (symbol === "battleLogPosition") {
+                const value = this.getConfigValue(symbol);
+                this.changeValue(symbol,
+                    value === LOG_POS_TOP_RIGHT ? LOG_POS_BOTTOM_LEFT : LOG_POS_TOP_RIGHT);
+                return;
+            }
             _Window_Options_cursorRight.call(this);
         };
 
@@ -840,6 +908,12 @@
             if (symbol === "battleLogSkillNames") {
                 const value = this.getConfigValue(symbol);
                 this.changeValue(symbol, value === 1 ? 0 : 1);
+                return;
+            }
+            if (symbol === "battleLogPosition") {
+                const value = this.getConfigValue(symbol);
+                this.changeValue(symbol,
+                    value === LOG_POS_TOP_RIGHT ? LOG_POS_BOTTOM_LEFT : LOG_POS_TOP_RIGHT);
                 return;
             }
             _Window_Options_cursorLeft.call(this);
@@ -1515,10 +1589,10 @@
     // overlay below. Where it hangs used to be a MEASUREMENT of the party cards
     // - a getBoundingClientRect, and so a layout of the whole document, taken a
     // few times a second in the one scene whose HUD writes to those very cards
-    // every frame - so that the log could sit under them. It no longer sits
-    // under anything: the log has the top-right corner to itself now, clear of
-    // the party's cards in the opposite one, so the invisible window is simply
-    // parked and nothing measures anything.
+    // every frame - so that the log could sit under them. The invisible window
+    // is simply parked now, and the overlay below asks the cards themselves
+    // where they end (UI/PartyHud.js answers out of a cache), so the box can
+    // grow up to them without anything being measured per frame.
 
     // Update methods
     const _Window_BattleLog_update = Window_BattleLog.prototype.update;
@@ -1549,52 +1623,93 @@
         if (this._htmlBattleLogRoot) {
             const sc = _msgGetScale();
             const root = this._htmlBattleLogRoot;
-            // The log hangs in the TOP-RIGHT corner and grows downward from
-            // it, the corner the monster bars used to fill before every monster
-            // started wearing its own over its head
-            // (BattleSystem/BattleSystemEnhancedHUD.js). The party's cards hold
-            // the opposite corner (UI/PartyHud.js), the foot of the screen is
-            // the quick bar's and the description box's, and the command list
-            // only reaches the right edge from halfway down, so the top right is
-            // the one place a running commentary can sit without covering
-            // something the player is reading. It takes that corner whichever side the commands are
-            // on: the log is read in passing, and a box that swaps corners with
-            // an option is a box the eye has to look for. What is IN the box
-            // still reads from the left, as it always did.
+            // Which corner the log hangs in is the player's (ConfigManager.
+            // battleLogPosition). It opens on the FLOOR OF THE LEFT and grows
+            // upward, so the newest line is the one lowest down and nearest the
+            // eye; moved, it hangs from the CEILING OF THE RIGHT and grows down
+            // from there. Those are the two corners a fight leaves empty: the
+            // party's cards hold the top left (UI/PartyHud.js), every monster
+            // wears its own bar over its head (BattleSystemEnhancedHUD.js), and
+            // the middle of the foot is the quick bar's and the description
+            // box's. What is IN the box reads from the left in either corner,
+            // the way a line of prose does.
+            const onTopRight = logOnTopRight();
             const maxW = Math.round(Graphics.width * LOG_MAX_W_RATIO);
             const logW = Math.min(this.width, maxW);
             const margin = 8;
-            const leftPx = sc.ox + (Graphics.width - logW - margin) * sc.sx;
-            const topPx = sc.oy + margin * sc.sy;
+            const leftPx = onTopRight
+                ? sc.ox + (Graphics.width - logW - margin) * sc.sx
+                : sc.ox + margin * sc.sx;
             _setStyleIfChanged(root, 'left', leftPx + 'px');
             _setStyleIfChanged(root, 'right', 'auto');
 
-            // How far down the corner it may reach before the oldest lines are
-            // pushed out of the top of it. Not the number of lines the board
-            // happens to be holding, and not the size of the party either: the
-            // room there actually IS between the top margin and the command list
-            // standing against the same edge lower down, less a clear gap, so a
-            // line can never be written over the Attack row. Its own share of
-            // the screen is the other half of the answer, and the smaller of the
-            // two wins - the log is a running commentary glanced at in passing,
-            // and a tall command list is no reason to give it half the screen.
+            // How far the log may reach before the oldest lines are pushed out
+            // of it. Not the number of lines the board happens to be holding,
+            // and not the number of members either: the room there actually IS
+            // between the two things standing against the same edge as the box,
+            // less a clear gap. Hung from the ceiling of the right that is the
+            // command list under it, capped at its own share of the screen,
+            // since a tall list is no reason to give a running commentary half
+            // the height. Standing on the floor of the left it is the party's
+            // cards over it instead, and the share is only the fallback for a
+            // screen with no cards on it. Every edge is read live: the list
+            // grows a row for every command the acting member carries.
             const ratioRoom = Graphics.height * LOG_MAX_H_RATIO;
             const cmdTop = (window.BattleCommandSide && window.BattleCommandSide.topY)
                 ? window.BattleCommandSide.topY() : null;
-            const clearRoom = (cmdTop === null || cmdTop === undefined)
-                ? ratioRoom
-                : cmdTop - margin - LOG_COMMAND_GAP;
-            const room = Math.max(60, Math.min(ratioRoom, clearRoom) * sc.sy);
+            const shared = (cmdTop === null || cmdTop === undefined)
+                ? null : (logSharesCommandEdge() ? cmdTop : null);
+
+            let room;
+            let topPx;
+            if (onTopRight) {
+                // Hung from the ceiling: the room is everything above the list.
+                const clearRoom = shared === null
+                    ? ratioRoom
+                    : shared - margin - LOG_COMMAND_GAP;
+                room = Math.max(60, Math.min(ratioRoom, clearRoom) * sc.sy);
+                topPx = sc.oy + margin * sc.sy;
+                // The box hugs its lines and hangs from its top edge.
+                _setStyleIfChanged(root, 'height', 'auto');
+            } else {
+                // Standing on the floor: the list against the same edge lifts
+                // that floor, and the box is given the whole of its room as a
+                // fixed height with the lines packed at the bottom of it. A box
+                // that hugged its lines would have to be hung from a bottom
+                // edge, and the overlay is placed off the canvas rectangle,
+                // which only ever answers where its TOP is.
+                const floorY = shared === null
+                    ? Graphics.height - margin
+                    : shared - LOG_COMMAND_GAP;
+                // In this corner the ceiling is the party's own cards, which
+                // hold the top of the same edge: the box reaches all the way up
+                // to the last member's bar and stops a gap short of it, so a
+                // long action is read in full instead of being cut off by a
+                // share of the screen that has nothing standing in it. The
+                // cards say where they end (UI/PartyHud.js) and answer out of a
+                // cache, so nothing is measured per frame; with no cards up (the
+                // HUD switched off, a battle test) the log keeps its own share.
+                const cardsBottom = (window.PartyHud && window.PartyHud.cardsBottomY)
+                    ? window.PartyHud.cardsBottomY() : null;
+                const ceiling = Math.max(margin,
+                    (cardsBottom === null || cardsBottom === undefined)
+                        ? floorY - ratioRoom
+                        : cardsBottom + LOG_PARTY_GAP);
+                const headroom = floorY - ceiling;
+                const roomCanvas = Math.max(60, headroom);
+                room = roomCanvas * sc.sy;
+                topPx = sc.oy + (floorY - roomCanvas) * sc.sy;
+                _setStyleIfChanged(root, 'height', room + 'px');
+            }
 
             _setStyleIfChanged(root, 'bottom', 'auto');
             _setStyleIfChanged(root, 'top', topPx + 'px');
             _setStyleIfChanged(root, 'width', (logW * sc.sx) + 'px');
             _setStyleIfChanged(root, 'maxWidth', Math.round(maxW * sc.sx) + 'px');
-            // The box takes the right-hand corner; its LINES read from the
-            // left, the way a line of prose does.
+            // Whichever corner the box took, its LINES read from the left,
+            // the way a line of prose does.
             _setStyleIfChanged(root, 'textAlign', 'left');
             _setStyleIfChanged(root, 'maxHeight', room + 'px');
-            _setStyleIfChanged(root, 'height', 'auto');
             _setStyleIfChanged(root, 'padding', Math.round(pad * sc.sy) + 'px ' + Math.round(pad * sc.sx) + 'px');
             _setStyleIfChanged(root, 'display',
                 (this.visible && this._lines && this._lines.length > 0) ? 'flex' : 'none');

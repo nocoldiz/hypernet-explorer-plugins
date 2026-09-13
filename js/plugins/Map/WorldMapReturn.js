@@ -790,47 +790,30 @@
         return {};
     }
 
-    // Biomes that are open water from edge to edge: the party crosses them
-    // swimming, diving or aboard a vehicle, never on foot. Any land they contain
-    // comes from a prefab (an island, a wreck, a rig) and is incidental.
-    function isOpenWaterBiome(biomeName) {
-        return /^(ocean|seabed)$/i.test(String(biomeName || ''));
-    }
-
-    // A beach square is a shoreline: sand on one side, sea on the other. There is
-    // always dry land to arrive on, so the party is never dropped into the surf
-    // there - they would start swimming the instant they set foot on the square.
-    // Everywhere else water is a legitimate landing tile and the swim-on-arrival
-    // rearm in MovementInteractionSystem takes over.
-    function isBeachSquare() {
-        const procGenData = $gameSystem._procGenData;
-        if (!procGenData) return false;
-        return /^beach$/i.test(String(procGenData.currentBiome || '')) ||
-               !!procGenData.displayAsBeach;
-    }
-
     // Water on the procedural map: region 99, or terrain tag 3 (how the biome
     // generator paints every water tile on map 636).
     function isWaterTileAt(x, y) {
         return $gameMap.regionId(x, y) === 99 || $gameMap.terrainTag(x, y) === 3;
     }
 
-    // Can the player stand on (x, y)? Valid tile, not a wall (terrain tag 4),
-    // and passable from at least one direction (so we never strand the player
-    // on water/obstacle tiles when entering a procedurally generated map).
+    // Can the party OCCUPY (x, y)? Valid tile, not a wall (terrain tag 4), and
+    // passable from at least one direction, so nobody is stranded inside a rock
+    // on arrival at a procedurally generated square.
     //
-    // In an open-water biome the rule inverts: water IS the surface the party
-    // occupies. Game_Map.isPassable answers for a walking character (no
-    // swim/vehicle state on the checking character), so every ocean tile reads
-    // as blocked - which used to drag the party off the border they sailed in
-    // from and onto whatever prefab island the destination map happened to hold.
+    // Water counts, everywhere, and that is the whole of the rule: the party
+    // swims it. Game_Map.isPassable answers for a walking character (the tile
+    // being tested carries no swim or vehicle state), so every water tile reads
+    // as blocked, and this pass used to answer that by hunting outward for dry
+    // land - a spawned patch of safety that dragged a party off the sea they
+    // sailed in on, out of the surf of a beach square, and off an ocean world's
+    // landing site onto whatever scrap of rock was nearest. It is a surface to
+    // be on: MovementInteractionSystem rearms the swim on arrival and the party
+    // simply starts swimming. Region 10 is the one exception, being the marker
+    // that says water here may not be entered at all.
     function isStandableTile(x, y) {
         if (!$gameMap.isValid(x, y)) return false;
         if ($gameMap.terrainTag(x, y) === 4) return false;
-        if (isBeachSquare() && isWaterTileAt(x, y)) return false;
-        const procGenData = $gameSystem._procGenData;
-        if (procGenData && isOpenWaterBiome(procGenData.currentBiome) &&
-            isWaterTileAt(x, y) && $gameMap.regionId(x, y) !== 10) return true;
+        if (isWaterTileAt(x, y)) return $gameMap.regionId(x, y) !== 10;
         if (!$gameMap.isPassable(x, y, 2) && !$gameMap.isPassable(x, y, 4) &&
             !$gameMap.isPassable(x, y, 6) && !$gameMap.isPassable(x, y, 8)) return false;
         return true;
@@ -5494,10 +5477,17 @@
         let lowerBiomeName = currentBiome.lowerLayer;
         if (procGenData.displayAsBeach) lowerBiomeName = 'CaveFlooded';
 
-        const lowerBiome = getBiomeByName(lowerBiomeName);
+        let lowerBiome = getBiomeByName(lowerBiomeName);
         if (!lowerBiome) {
             logWarn(`GoDown: Lower biome "${lowerBiomeName}" not found`);
             procGenData.biomeLayerStack.pop(); return;
+        }
+        // On an alien world the ten underground archetypes are cut out of the
+        // SURFACE square's own tileset, so the record that gets built is a copy
+        // wearing that sheet. A no-op on Earth and for every Earth lower layer.
+        {
+            const AT = window.ProcGenAlienTerrain;
+            if (AT && AT.undergroundBiomeFor) lowerBiome = AT.undergroundBiomeFor(currentBiome, lowerBiome);
         }
 
         procGenData.currentBiome           = lowerBiomeName;

@@ -6247,7 +6247,9 @@
       const other = side === 'em' ? EM_NAME : BUBBA_NAME;
       const walking = ($gameParty?.members?.() ?? [])
         .some(m => m && String(m.name() || '').trim().toLowerCase() === other.toLowerCase())
-        || (other.toLowerCase() === BUBBA_NAME.toLowerCase() && !!(window.$gameSwitches?.value(100)));
+        || (other.toLowerCase() === BUBBA_NAME.toLowerCase()
+            && !!(window.$gameSwitches?.value(100))
+            && !!window.PartyRoster?.isBubbaTravelling?.());
       if (!walking) return null;
       const line = _pairSituationLine(_pairData(side));
       return line ? vary(String(line)) : null;

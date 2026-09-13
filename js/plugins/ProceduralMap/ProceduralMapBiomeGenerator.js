@@ -3034,28 +3034,44 @@
 
   // Which of Renderer3D's texture-painter families this alien square belongs
   // to, and (for the terrestrial family) whether THIS square's coarse
-  // elevation crests into the mountain band. Returns null off an alien
-  // surface, or when the family isn't reworked yet (icy/volcanic/gas-giant)
-  // -- generateBiomeBody falls back to the plain terrain fill in that case.
+  // elevation crests into the mountain band.
+  //
+  // Every family now answers: terrestrial keeps its elevation bands, rocky its
+  // crater fields, and icy / volcanic / gas-giant - which used to return null
+  // and drop the square on the generic per-tile fill - take the banded ground
+  // cut from their OWN painter's field (generateAlienBandedTerrain). Null is
+  // left for one case only: not being on an alien world at all.
   function resolveAlienRoute(biome, worldCoords) {
     const GS = window.GalaxySim;
     if (!GS) return null;
+    const planet = GS.getGroundPlanet ? GS.getGroundPlanet() : null;
+    if (!planet) return null;
     const family = GS.getLandedTerrainFamily ? GS.getLandedTerrainFamily() : null;
     if (family === "rocky") return "crater";
-    if (family !== "terrestrial") return null;
+    if (family !== "terrestrial") return "banded";
     const R3D = GS.Renderer3D;
     if (!R3D || !R3D.terrestrialElevation) return "terrestrial";
     const pg = $gameSystem && $gameSystem._procGenData;
     const grid = (pg && pg.alienGrid) || {};
     const gridW = grid.w || 1;
     const gridH = grid.h || 1;
-    const planet = GS.getSurfacePlanet ? GS.getSurfacePlanet() : null;
     const isOcean = !!(planet && planet.type === "ocean");
     const seed = GS.getLandedPlanetSeed ? GS.getLandedPlanetSeed() : 0;
     const u = (worldCoords.x + 0.5) / gridW;
     const v = (worldCoords.y + 0.5) / gridH;
     const info = R3D.terrestrialElevation(seed, u, v, isOcean);
     return info.band === "rock" ? "mountain" : "terrestrial";
+  }
+
+  // The painter family the ground of the landed world is cut from, for the
+  // banded route. "rocky" is the bucket everything unnamed falls into, exactly
+  // as Renderer3D.surfaceFamilyOf says.
+  function alienSurfaceFamily() {
+    const GS = window.GalaxySim;
+    const R3D = GS && GS.Renderer3D;
+    const planet = (GS && GS.getGroundPlanet) ? GS.getGroundPlanet() : null;
+    if (!planet || !R3D || !R3D.surfaceFamilyOf) return "rocky";
+    return R3D.surfaceFamilyOf(planet.type);
   }
 
   // Continuous elevation-banded terrain for the terrestrial/breathable alien
@@ -3084,7 +3100,7 @@
     const grid = (pg && pg.alienGrid) || {};
     const gridW = grid.w || 1;
     const gridH = grid.h || 1;
-    const planet = GS.getSurfacePlanet ? GS.getSurfacePlanet() : null;
+    const planet = GS.getGroundPlanet ? GS.getGroundPlanet() : null;
     const isOcean = !!(planet && planet.type === "ocean");
     const planetSeed = GS.getLandedPlanetSeed ? GS.getLandedPlanetSeed() : 0;
 
@@ -3169,8 +3185,11 @@
     const width = PROC_MAP_WIDTH;
     const height = PROC_MAP_HEIGHT;
     const rng = createSeededRandom(seed);
-    const mapData = new Array(width * height * 4).fill(0);
-    fillTerrainLayer(mapData, biome, allFeatures, width, height, rng, null);
+    // The ground the craters are punched into is the world's own banded relief,
+    // not the per-tile weighted fill this used to start from: an airless world
+    // has dust in its lowlands and bare rock over it, in sheets, and the
+    // craters are what happened to it afterwards.
+    const mapData = generateAlienBandedTerrain(biome, seed, allFeatures, worldCoords, "rocky");
 
     const GS = window.GalaxySim;
     const craters = GS && GS.getLandedCraterList ? GS.getLandedCraterList() : [];
@@ -3242,19 +3261,791 @@
     return mapData;
   }
 
-  // Nearest passable tile to (preferX, preferY) in a freshly generated alien
-  // square. Earth's generators each guarantee their own open borders/center
-  // (mountain ranges keep a clearing, coastlines never draw over a road...),
-  // but the elevation-banded terrestrial fill and the crater fields are new
-  // and continuous -- the map's exact center can legitimately land in open
-  // water or inside a crater's rim -- so entering/re-entering an alien planet
-  // always has to search for solid ground instead of assuming the center is
-  // it. Checks every layer (a scattered tree/rock also blocks passage), then
-  // spirals outward ring by ring from the preferred point.
+  // ==========================================================================
+  // Alien surface: banded ground for the families the picker paints and the
+  // ground never answered for
+  // --------------------------------------------------------------------------
+  // Only two of the five texture-painter families ever had ground of their own:
+  // a terrestrial world got its elevation bands and a rocky one got its crater
+  // fields. An icy, volcanic or gas world got neither, and fell through to the
+  // generic per-tile weighted fill - which picks one terrain feature per TILE,
+  // independently of its neighbours, and paints a world as a one-tile
+  // chequerboard of every material it owns at once. That is the "grid of single
+  // wide tiles" a landing showed, and it is what this replaces: the SAME
+  // relief the picker's texture is painted from (Renderer3D.planetElevation,
+  // which samples each family's own field at its own scale), cut into bands and
+  // handed the biome's own palette, so a world's materials lie in continuous
+  // sheets that run on across every square border.
+  // ==========================================================================
+
+  function generateAlienBandedTerrain(biome, seed, allFeatures, worldCoords, family) {
+    const width = PROC_MAP_WIDTH;
+    const height = PROC_MAP_HEIGHT;
+    const mapData = new Array(width * height * 4).fill(0);
+    const rng = createSeededRandom(seed);
+    const ctx = alienFieldContext(worldCoords);
+    const GS = window.GalaxySim;
+    const R3D = GS && GS.Renderer3D;
+    const planet = (GS && GS.getGroundPlanet) ? GS.getGroundPlanet() : null;
+    const isOcean = !!(planet && planet.type === "ocean"); // i18n-ignore: planet type id
+
+    const singles = (name) =>
+      (allFeatures[name] || []).filter((v) => v.type === "single").map((v) => v.tileId);
+
+    // The biome's own terrain palette, in the order it declares it: the first
+    // material is the low ground and the last one the high, which is how every
+    // alien biome's feature list already reads (grass, then plants, then the
+    // rock on the ridges).
+    const palette = getTerrainFeatures(biome)
+      .map((f) => ({ density: f.density || 1, tiles: singles(f.name) }))
+      .filter((p) => p.tiles.length);
+    if (!palette.length) {
+      // Nothing of this biome's terrain is in its tileset: there is no banding
+      // to do and the generic fill is the honest answer.
+      fillTerrainLayer(mapData, biome, allFeatures, width, height, rng, null);
+      return mapData;
+    }
+    const total = palette.reduce((sum, p) => sum + p.density, 0);
+    let running = 0;
+    const bands = palette.map((p) => {
+      running += p.density / total;
+      return { tiles: p.tiles, upto: running };
+    });
+    bands[bands.length - 1].upto = 1.01;
+
+    // The two readings a family adds to its relief: the fissures a volcanic
+    // world's melt shows through, and the fracture lines an icy one cracks
+    // along. Both are the picker's own fields, not a second noise laid over.
+    const lavaTiles = singles("Lava").concat(singles("Magma"));
+    const crackTiles = singles("IcePool").concat(singles("Water"));
+
+    // The field is read on a lattice of every FOURTH tile and interpolated
+    // between the nodes, not once per tile.
+    //
+    // Not an optimisation, though it is one: the planet's texture is 256 px
+    // wide for the whole world, so one landing-grid cell of it is about twenty
+    // pixels across and one texture pixel covers roughly three tiles. Sampling
+    // it per tile reads the noise UNDER the picture rather than the picture,
+    // and a volcanic world came out as lava speckle instead of lava seas. The
+    // lattice spans the square's own edges exactly (node 0 at x=0, the last at
+    // x=64, which IS the neighbour's x=0), so the interpolated field still runs
+    // straight across a seam.
+    const STEP = 4;
+    const nodesX = Math.floor(width / STEP) + 1;
+    const nodesY = Math.floor(height / STEP) + 1;
+    const nodeE = new Float64Array(nodesX * nodesY);
+    const nodeC = new Float64Array(nodesX * nodesY);
+    const nodeF = new Float64Array(nodesX * nodesY);
+    for (let ny = 0; ny < nodesY; ny++) {
+      const gy = ctx.oy + (ny * STEP) / height;
+      const v = gy / ctx.gridH;
+      for (let nx = 0; nx < nodesX; nx++) {
+        const gx = ctx.ox + (nx * STEP) / width;
+        const u = gx / ctx.gridW;
+        const at = ny * nodesX + nx;
+        if (R3D && R3D.planetElevation) {
+          const info = R3D.planetElevation(ctx.planetSeed, u, v, { family, isOcean });
+          // The metre scale the picture is painted far too coarsely to carry,
+          // mixed in lightly so a band edge reads as a ragged margin rather
+          // than a contour line drawn with a ruler.
+          const detail = info.detail != null ? info.detail : 0.5;
+          nodeE[at] = info.elevation * 0.92 + detail * 0.08;
+          nodeC[at] = info.crack || 0;
+          nodeF[at] = info.fracture || 0;
+        } else {
+          // No GalaxySim bridge (a Node harness, a stripped load): the same
+          // shape out of this file's own planet-wide field, continuous across
+          // squares for exactly the same reason.
+          nodeE[at] = alienField(gx, gy, ctx, 4, 2311, 4);
+        }
+      }
+    }
+    const lerpNode = (table, x, y) => {
+      const fx = x / STEP, fy = y / STEP;
+      const x0 = Math.min(nodesX - 2, Math.floor(fx)), y0 = Math.min(nodesY - 2, Math.floor(fy));
+      const tx = fx - x0, ty = fy - y0;
+      const a = table[y0 * nodesX + x0], b = table[y0 * nodesX + x0 + 1];
+      const c = table[(y0 + 1) * nodesX + x0], d = table[(y0 + 1) * nodesX + x0 + 1];
+      return (a * (1 - tx) + b * tx) * (1 - ty) + (c * (1 - tx) + d * tx) * ty;
+    };
+
+    for (let y = 0; y < height; y++) {
+      const ny = ctx.oy + y / height;
+      for (let x = 0; x < width; x++) {
+        const nx = ctx.ox + x / width;
+        const elevation = lerpNode(nodeE, x, y);
+        const crack = lerpNode(nodeC, x, y);
+        const fracture = lerpNode(nodeF, x, y);
+
+        let tiles = bands[bands.length - 1].tiles;
+        for (const band of bands) {
+          if (elevation <= band.upto) { tiles = band.tiles; break; }
+        }
+        // Which VARIANT of that material, off a field of its own rather than
+        // off the RNG: a band of four rock tiles picked per tile is the same
+        // one-tile chequerboard as before, one material further down. Read at
+        // two lattice steps per landing-grid cell, i.e. one reading per ~32
+        // tiles, so a variant covers a stretch of ground instead of alternating
+        // with the one beside it.
+        const variant = alienField(nx, ny, ctx, 2, 2417, 1);
+        let tileId = tiles[Math.min(tiles.length - 1, Math.floor(variant * tiles.length))];
+        // The fissures a volcanic world's melt shows through and the fracture
+        // lines an icy one cracks along, taking their variant off the same
+        // coarse field as everything else: keyed off the crack reading itself
+        // they flipped between two near-identical lava tiles on every step of
+        // it, which is a chequerboard drawn inside a lava sea.
+        if (family === "volcanic" && crack > 0.86 && lavaTiles.length) {
+          tileId = lavaTiles[Math.min(lavaTiles.length - 1, Math.floor(variant * lavaTiles.length))];
+        } else if (family === "icy" && fracture > 0.74 && crackTiles.length) {
+          tileId = crackTiles[Math.min(crackTiles.length - 1, Math.floor(variant * crackTiles.length))];
+        }
+        mapData[calculateIndex(x, y, 0, width, height)] = tileId;
+      }
+    }
+    return mapData;
+  }
+
+  /**
+   * The biome's own scenery, on top of whichever alien ground was just built.
+   *
+   * Every alien route returns its terrain straight out of generateBiomeBody and
+   * so skips the feature passes the generic path runs at the end of it - which
+   * is why a landing showed bare ground with not one rock, plant or tentacle on
+   * it whatever the biome declared. Run by all four routes, once, here.
+   */
+  function markAlienWaterRegions(mapData, allFeatures) {
+    if (!mapData) return;
+    const width = PROC_MAP_WIDTH;
+    const height = PROC_MAP_HEIGHT;
+    const waterTiles = new Set();
+    for (const name of ["Water", "Ocean", "Beach"]) {
+      for (const variant of allFeatures[name] || []) {
+        if (variant.type === "single") waterTiles.add(variant.tileId);
+      }
+    }
+    const regiondata = mapData.regiondata || new Array(width * height).fill(0);
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (waterTiles.has(mapData[calculateIndex(x, y, 0, width, height)])) {
+          regiondata[y * width + x] = 99;
+        }
+      }
+    }
+    mapData.regiondata = regiondata;
+  }
+
+  function scatterAlienSurfaceFeatures(mapData, biome, allFeatures, seed) {
+    if (!mapData || !biome || !Array.isArray(biome.features)) return;
+    const width = PROC_MAP_WIDTH;
+    const height = PROC_MAP_HEIGHT;
+    const rng = createSeededRandom((seed ^ 0x5caa9e) >>> 0);
+
+    // Nothing is dropped in the water or in the melt.
+    const blocked = [];
+    for (const name of ["Water", "Ocean", "Beach", "Lava", "Magma"]) {
+      for (const variant of allFeatures[name] || []) {
+        if (variant.type === "single") blocked.push(variant.tileId);
+      }
+    }
+
+    for (const feature of getFeaturesByLayer(biome, allFeatures, 1, FEATURE_LAYERS)) {
+      generateFeatureNoise(
+        mapData, allFeatures[feature.name], 1, width, height, seed,
+        0.15 * feature.density, rng, blocked, []
+      );
+    }
+    for (const feature of getFeaturesByLayer(biome, allFeatures, 2, FEATURE_LAYERS)) {
+      generateFeatureScattered(
+        mapData, allFeatures[feature.name], 2, width, height, seed,
+        0.05 * feature.density, rng, blocked, []
+      );
+    }
+  }
+
+  // ==========================================================================
+  // Alien underground: ten different worlds under forty
+  // --------------------------------------------------------------------------
+  // What lies under an alien world is not one cave with four re-tints of it.
+  // Ten archetypes (js/db/WorldGen/AlienBiomes.json, the AlienUnder* biomes,
+  // each named as the `lowerLayer` of the surface types whose crust is made of
+  // that) cut the rock in ten different shapes: fault galleries, glacial
+  // vaults, geode chambers, lava tubes, a drowned abyss, worm burrows, dust
+  // halls, machine vaults, cloud-deck shelves, and the dead lattice of a world
+  // with no star. Walking down a shaft on an ice giant and down one on a
+  // quark planet must not land the party in the same corridor.
+  //
+  // Two rules hold all ten together, and both are what make a layer SEAMLESS
+  // the way Earth's caves are:
+  //
+  //  - every carve is a function of ONE planet-wide field sampled in landing-
+  //    grid CELL units (gx + localX/64), so two squares that share a border are
+  //    reading adjacent points of the same function: a chamber, a tube or a
+  //    fault runs straight across the seam without either square knowing the
+  //    other exists. The lattice wraps in x on the grid's own width - the same
+  //    toroidal wrap a crossing applies to gx - so the field closes up where
+  //    the planet's longitude does;
+  //  - on top of that the shared border passages every underground square in
+  //    the game already agrees on (ProcGenUtils.undergroundBorderOpenings, a
+  //    mouth derived from the BORDER so both neighbours cut it in the same
+  //    place) are carved through the sealed band and joined to the middle, so
+  //    the layer is walkable end to end even where the field happens to come
+  //    out solid at a seam.
+  //
+  // The tiles are the SURFACE world's own: resolveSquareUncached hands an alien
+  // underground the parent square's tilesetId, so the vaults under an ice giant
+  // are cut out of the ice giant's palette and not out of Earth's cave sheet.
+  // ==========================================================================
+
+  // True for one of the ten underground biomes above. They are the only biome
+  // names in the game that begin "AlienUnder", which is the whole test.
+  function isAlienUndergroundBiome(biomeName) {
+    return typeof biomeName === "string" && biomeName.indexOf("AlienUnder") === 0;
+  }
+
+  // ---- the planet-wide field ------------------------------------------------
+  //
+  // A hash lattice rather than ProcGenUtils' noise, which is cached per integer
+  // cell at MAP scale and would read as one flat value across a whole square
+  // here: these fields are sampled at a fraction of a landing-grid cell, and
+  // 64 tiles have to vary within one lattice step of it.
+
+  function alienHash2(ix, iy, seed) {
+    let h = Math.imul(ix | 0, 0x27d4eb2d) ^ Math.imul(iy | 0, 0x165667b1) ^
+      Math.imul(seed | 0, 0x9e3779b1);
+    h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+    h ^= h >>> 13;
+    h = Math.imul(h, 0xc2b2ae35);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  }
+
+  // Value noise, smoothstep-interpolated, PERIODIC in x over `periodX` lattice
+  // steps. The period is what closes the field up at the planet's date line:
+  // the landing grid wraps east-west, so the ground has to as well.
+  function alienNoise(x, y, seed, periodX) {
+    const x0 = Math.floor(x), y0 = Math.floor(y);
+    const tx = x - x0, ty = y - y0;
+    const fx = tx * tx * (3 - 2 * tx), fy = ty * ty * (3 - 2 * ty);
+    const p = periodX > 0 ? Math.round(periodX) : 0;
+    const wrap = (v) => (p > 0 ? ((v % p) + p) % p : v);
+    const xa = wrap(x0), xb = wrap(x0 + 1);
+    const n00 = alienHash2(xa, y0, seed), n10 = alienHash2(xb, y0, seed);
+    const n01 = alienHash2(xa, y0 + 1, seed), n11 = alienHash2(xb, y0 + 1, seed);
+    return (n00 * (1 - fx) + n10 * fx) * (1 - fy) + (n01 * (1 - fx) + n11 * fx) * fy;
+  }
+
+  function alienFbm(x, y, seed, octaves, periodX) {
+    let amp = 1, sum = 0, norm = 0, f = 1;
+    const oct = octaves || 3;
+    for (let i = 0; i < oct; i++) {
+      sum += alienNoise(x * f, y * f, (seed + i * 7919) | 0, periodX * f) * amp;
+      norm += amp;
+      amp *= 0.5;
+      f *= 2;
+    }
+    return sum / norm;
+  }
+
+  // One reading of the planet's field at (nx, ny), in landing-grid cell units.
+  // `scale` is lattice steps per cell and must be a whole number, or the x wrap
+  // stops landing on a lattice point and the date line shows as a seam.
+  function alienField(nx, ny, ctx, scale, salt, octaves) {
+    return alienFbm(nx * scale, ny * scale, (ctx.planetSeed + salt) | 0,
+      octaves || 3, ctx.gridW * scale);
+  }
+
+  // The rectilinear half of the same idea: which cell of a `g`-per-grid-cell
+  // lattice a point is in, where in that cell it sits, and two hashes of the
+  // cell itself. Machine vaults and dead mazes are built from this; the wrap is
+  // applied to the cell index so a corridor crosses the date line intact.
+  function alienLattice(nx, ny, ctx, g, salt) {
+    const gx = nx * g, gy = ny * g;
+    const cx = Math.floor(gx), cy = Math.floor(gy);
+    const p = Math.round(ctx.gridW * g);
+    const wx = p > 0 ? ((cx % p) + p) % p : cx;
+    return {
+      fx: gx - cx, fy: gy - cy,
+      a: alienHash2(wx, cy, (ctx.planetSeed + salt) | 0),
+      b: alienHash2(wx, cy, (ctx.planetSeed + salt + 977) | 0),
+    };
+  }
+
+  // Where the square sits on the planet, and which planet it is. Everything
+  // below samples through this, so a square knows only its own corner and the
+  // size of the grid - never anything about its neighbours.
+  function alienFieldContext(worldCoords) {
+    const GS = window.GalaxySim;
+    const pg = $gameSystem && $gameSystem._procGenData;
+    const grid = (pg && pg.alienGrid) || {};
+    return {
+      gridW: Math.max(1, grid.w || 1),
+      gridH: Math.max(1, grid.h || 1),
+      planetSeed: (GS && GS.getLandedPlanetSeed) ? (GS.getLandedPlanetSeed() | 0) : 0,
+      ox: worldCoords ? (worldCoords.x || 0) : 0,
+      oy: worldCoords ? (worldCoords.y || 0) : 0,
+    };
+  }
+
+  // Four numbers a world keeps for the whole of its underground: how wide its
+  // tubes run, how open its halls stand, and so on. Two glacier worlds share an
+  // archetype and nothing else.
+  function alienUnderJitter(planetSeed) {
+    return [
+      alienHash2(1, 7, planetSeed | 0),
+      alienHash2(2, 7, planetSeed | 0),
+      alienHash2(3, 7, planetSeed | 0),
+      alienHash2(4, 7, planetSeed | 0),
+    ];
+  }
+
+  // ---- the ten carves -------------------------------------------------------
+  //
+  // carve(nx, ny, ctx, j) -> true where the rock is OPEN. `nx`/`ny` are in
+  // landing-grid cell units and continuous across every square border, which is
+  // the entire seam story: neither square does anything about the other.
+  //
+  // `pool` is the liquid that stands in the low ground of that archetype, and
+  // `poolLevel` how high it stands (as a threshold on the same depth field the
+  // water table uses). `swimPool` says the liquid can be crossed by swimming,
+  // which is what decides whether the border passages are cut dry or wet.
+  const ALIEN_UNDER_STYLES = {
+    // Fault galleries. Two fissure networks crossing in dead rock: long,
+    // near-straight corridors meeting at sharp angles, nothing rounded.
+    AlienUnderFracture: {
+      floor: ["CaveFloor", "Badland", "Dirt"],
+      pool: null, poolLevel: null,
+      carve(nx, ny, ctx, j) {
+        const w = 0.026 + j[0] * 0.018;
+        const a = alienField(nx, ny, ctx, 6, 101, 3);
+        const b = alienField(nx, ny, ctx, 6, 211, 3);
+        return Math.abs(a - 0.5) < w || Math.abs(b - 0.5) < w * 0.8;
+      },
+    },
+
+    // Glacial vaults. One enormous hall after another, held up by ice pillars:
+    // the most open ground under any world, and the easiest to get lost in.
+    AlienUnderGlacier: {
+      floor: ["Snow", "PebbleIce", "CaveFloor"],
+      pool: "Water", poolLevel: 0.30, swimPool: true,
+      carve(nx, ny, ctx, j) {
+        const hall = alienField(nx, ny, ctx, 4, 503, 4);
+        if (hall < 0.40 + j[1] * 0.07) return false;
+        const pillar = alienField(nx, ny, ctx, 24, 607, 2);
+        return pillar < 0.70 + j[2] * 0.08;
+      },
+    },
+
+    // Geode chambers. Rounded voids on a jittered lattice, each one lined with
+    // crystal, threaded together by a single thin vein.
+    AlienUnderGeode: {
+      floor: ["CaveFloor", "Glass", "Metal"],
+      pool: null, poolLevel: null,
+      carve(nx, ny, ctx, j) {
+        const sp = 3; // chambers per grid cell
+        const gx = nx * sp, gy = ny * sp;
+        const cx = Math.floor(gx), cy = Math.floor(gy);
+        const p = Math.round(ctx.gridW * sp);
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const kx = cx + dx, ky = cy + dy;
+            const wx = ((kx % p) + p) % p;
+            const jx = alienHash2(wx, ky, (ctx.planetSeed + 701) | 0);
+            const jy = alienHash2(wx, ky, (ctx.planetSeed + 809) | 0);
+            const rr = alienHash2(wx, ky, (ctx.planetSeed + 907) | 0);
+            const ex = kx + 0.2 + jx * 0.6, ey = ky + 0.2 + jy * 0.6;
+            const r = 0.16 + rr * (0.24 + j[0] * 0.14);
+            const d = Math.hypot(gx - ex, gy - ey);
+            if (d < r) return true;
+          }
+        }
+        // The vein between them: one thin ridged thread, so a geode is never a
+        // sealed bubble the party drops into and cannot leave.
+        const v = alienField(nx, ny, ctx, 8, 1013, 2);
+        return Math.abs(v - 0.5) < 0.012;
+      },
+    },
+
+    // Lava tubes. Few, long, smooth-walled, and running for square after
+    // square; the melt still standing in the floor of the lowest ones.
+    AlienUnderLavatube: {
+      floor: ["CaveFloor", "Badland", "Metal"],
+      pool: "Lava", poolLevel: 0.34,
+      carve(nx, ny, ctx, j) {
+        const w = 0.024 + j[0] * 0.014;
+        const a = alienField(nx, ny, ctx, 3, 307, 4);
+        if (Math.abs(a - 0.5) < w) return true;
+        const b = alienField(nx, ny, ctx, 5, 401, 3);
+        if (Math.abs(b - 0.5) < w * 0.6) return true;
+        // The blisters the flow left where it pooled and drained.
+        return alienField(nx, ny, ctx, 12, 499, 2) > 0.80 + j[1] * 0.06;
+      },
+    },
+
+    // A drowned world. The crust under an ocean planet is flooded to the roof:
+    // open water with rock shelves standing out of it, crossed by swimming.
+    AlienUnderAbyss: {
+      floor: ["CaveFloor", "Dirt", "Badland"],
+      pool: "Water", poolLevel: 0.78, swimPool: true, alwaysFlooded: true,
+      carve(nx, ny, ctx, j) {
+        const shelf = alienField(nx, ny, ctx, 5, 1103, 4);
+        return shelf < 0.55 + j[0] * 0.07;
+      },
+    },
+
+    // Worm burrows. A dense organic net of narrow tunnels swelling into round
+    // nodes: the only archetype that reads as having been DUG by something.
+    AlienUnderBurrow: {
+      floor: ["CaveFloor", "Dirt", "Moor"],
+      pool: "Water", poolLevel: 0.24, swimPool: true,
+      carve(nx, ny, ctx, j) {
+        const w = 0.020 + j[0] * 0.012;
+        const a = alienField(nx, ny, ctx, 7, 1201, 3);
+        if (Math.abs(a - 0.5) < w) return true;
+        const b = alienField(nx, ny, ctx, 14, 1301, 3);
+        if (Math.abs(b - 0.5) < w * 0.75) return true;
+        return alienField(nx, ny, ctx, 10, 1409, 2) > 0.82 + j[2] * 0.05;
+      },
+    },
+
+    // Dust halls. Vast flat floors under a low roof, with the occasional
+    // collapsed pillar field: open ground you can see a long way across.
+    AlienUnderDust: {
+      floor: ["Sand", "SandRock", "Salt"],
+      pool: null, poolLevel: null,
+      carve(nx, ny, ctx, j) {
+        const wall = alienField(nx, ny, ctx, 5, 1511, 3);
+        if (wall > 0.585 + j[0] * 0.05) return false;
+        const heap = alienField(nx, ny, ctx, 20, 1601, 2);
+        return heap < 0.66 + j[1] * 0.04;
+      },
+    },
+
+    // Machine vaults. Not caves at all: rooms and service corridors cut on a
+    // lattice, square corners everywhere, a world built rather than eroded.
+    AlienUnderVault: {
+      floor: ["TechnoFloor", "Metal", "Grate", "CaveFloor"],
+      pool: null, poolLevel: null,
+      carve(nx, ny, ctx, j) {
+        const L = alienLattice(nx, ny, ctx, 5, 1709);
+        const pad = 0.10 + j[0] * 0.10;
+        if (L.a > 0.34 && L.fx > pad && L.fx < 1 - pad && L.fy > pad && L.fy < 1 - pad) {
+          return true;
+        }
+        const halfWidth = 0.07 + j[1] * 0.04;
+        if (Math.abs(L.fy - 0.5) < halfWidth && L.b > 0.28) return true;
+        if (Math.abs(L.fx - 0.5) < halfWidth && L.a > 0.28) return true;
+        return false;
+      },
+    },
+
+    // Cloud-deck shelves. A gas giant has no floor: what there is under the
+    // cloud tops are frozen plates hanging in it, walkable and separate.
+    AlienUnderStorm: {
+      floor: ["Glass", "Snow", "Metal", "CaveFloor"],
+      pool: null, poolLevel: null,
+      carve(nx, ny, ctx, j) {
+        const deck = alienField(nx, ny, ctx, 6, 1801, 4);
+        return deck > 0.55 + j[0] * 0.08;
+      },
+    },
+
+    // The dead core of a world with no star: a cold rectilinear lattice of
+    // narrow passages, all alike, going on for as far as anyone walks.
+    AlienUnderVoid: {
+      floor: ["CaveFloor", "Pavement", "Metal"],
+      pool: null, poolLevel: null,
+      carve(nx, ny, ctx, j) {
+        const L = alienLattice(nx, ny, ctx, 9, 1901);
+        const halfWidth = 0.09 + j[0] * 0.05;
+        if (Math.abs(L.fy - 0.5) < halfWidth && L.a > 0.40) return true;
+        if (Math.abs(L.fx - 0.5) < halfWidth && L.b > 0.40) return true;
+        return false;
+      },
+    },
+  };
+
+  // The lower-layer biome record a descent should actually BUILD.
+  //
+  // Ten archetype records stand in for forty worlds' undergrounds, so the one a
+  // surface biome names carries a placeholder tileset. On an alien world it is
+  // re-stamped with the surface square's own sheet here, which is the single
+  // place that rule lives: resolveSquareUncached applies it when a square is
+  // resolved, and the descent commands in WorldMapReturn.js ask for it when
+  // they look a lower layer up for themselves.
+  function alienUndergroundBiomeFor(surfaceBiome, lowerBiome) {
+    const pg = $gameSystem && $gameSystem._procGenData;
+    if (!pg || !pg.alienGrid) return lowerBiome;
+    if (!lowerBiome || !isAlienUndergroundBiome(lowerBiome.name)) return lowerBiome;
+    const tilesetId = (surfaceBiome && surfaceBiome.tilesetId) || pg.currentBiomeTileset;
+    if (!tilesetId) return lowerBiome;
+    return Object.assign({}, lowerBiome, { tilesetId, tilesetIds: null });
+  }
+
+  // A world's water table, as a threshold on the depth field, or -1 for a dry
+  // crust. Rolled ONCE per planet out of its own seed, so an underground ocean
+  // is a fact about the world and not about the square being stood in: cross a
+  // border and the same sea is still there, at the same level. An abyss world
+  // is flooded by definition and takes its archetype's own level.
+  const ALIEN_AQUIFER_CHANCE = 0.34;
+  function alienAquiferLevel(ctx, style) {
+    if (style && style.alwaysFlooded) return -1; // the pool IS the sea
+    const roll = alienHash2(11, 13, (ctx.planetSeed ^ 0x5eab7) | 0);
+    if (roll >= ALIEN_AQUIFER_CHANCE) return -1;
+    return 0.26 + (roll / ALIEN_AQUIFER_CHANCE) * 0.22;
+  }
+
+  /**
+   * One 64x64 square of an alien world's underground.
+   */
+  function generateAlienUndergroundTerrain(
+    biome, seed, allFeatures, worldCoords, adjacentBiomes, cache
+  ) {
+    const width = PROC_MAP_WIDTH;
+    const height = PROC_MAP_HEIGHT;
+    const mapData = new Array(width * height * 4).fill(0);
+    const rng = createSeededRandom(seed);
+    const style = ALIEN_UNDER_STYLES[biome.name] || ALIEN_UNDER_STYLES.AlienUnderFracture;
+    const ctx = alienFieldContext(worldCoords);
+    const jit = alienUnderJitter(ctx.planetSeed);
+
+    const firstTile = (names, fallback) => {
+      for (const name of names) {
+        const list = allFeatures[name];
+        if (!list || !list.length) continue;
+        const variant = list[0];
+        const id = variant.type === "single"
+          ? variant.tileId
+          : ((variant.tiles && variant.tiles[0] && variant.tiles[0][0]) || 0);
+        if (id) return id;
+      }
+      return fallback || 0;
+    };
+
+    const floorTile = firstTile(style.floor.concat(["CaveFloor", "DungeonFloor", "Dirt"]), 1536);
+    const ceilingTile = firstTile(["Ceiling", "CaveCeiling", "MountainCeiling", "CaveWall"], 0);
+    const wallTile = firstTile(["CaveWall", "MountainWall", "DungeonWall"], ceilingTile);
+    const waterTile = firstTile(["Water"], 0);
+    const poolTile = style.pool ? firstTile([style.pool, "Water"], 0) : 0;
+
+    // ---- the carve ----------------------------------------------------------
+    for (let y = 0; y < height; y++) {
+      const ny = ctx.oy + y / height;
+      for (let x = 0; x < width; x++) {
+        const nx = ctx.ox + x / width;
+        mapData[calculateIndex(x, y, 0, width, height)] =
+          style.carve(nx, ny, ctx, jit) ? floorTile : ceilingTile;
+      }
+    }
+
+    // ---- seal the rim, then smooth the roof ---------------------------------
+    const borderThickness = UNDERGROUND_BORDER_THICKNESS;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (y < borderThickness || y >= height - borderThickness ||
+            x < borderThickness || x >= width - borderThickness) {
+          mapData[calculateIndex(x, y, 0, width, height)] = ceilingTile;
+        }
+      }
+    }
+    smoothCaveCeilingMask(mapData, width, height, ceilingTile, floorTile, borderThickness);
+
+    // ---- the liquid ---------------------------------------------------------
+    //
+    // One depth field, read the same way by both: the archetype's own liquid
+    // stands in the deepest ground, and above it (where the world has one) the
+    // water table. Sampled globally like everything else, so a lake runs on
+    // into the next square rather than stopping at the border. Poured after
+    // the roof is settled, so only ground that is finished floor is flooded.
+    const aquifer = alienAquiferLevel(ctx, style);
+    const hasPool = poolTile && style.poolLevel != null;
+    const hasAquifer = waterTile && aquifer >= 0;
+    const swimTiles = new Set();
+    if (style.swimPool && poolTile) swimTiles.add(poolTile);
+    if (hasAquifer) swimTiles.add(waterTile);
+    if (hasPool || hasAquifer) {
+      for (let y = 0; y < height; y++) {
+        const ny = ctx.oy + y / height;
+        for (let x = 0; x < width; x++) {
+          if (mapData[calculateIndex(x, y, 0, width, height)] !== floorTile) continue;
+          const nx = ctx.ox + x / width;
+          const depth = alienField(nx, ny, ctx, 3, 2003, 3);
+          let tile = 0;
+          if (hasPool && depth < style.poolLevel) tile = poolTile;
+          else if (hasAquifer && depth < aquifer) tile = waterTile;
+          if (tile) mapData[calculateIndex(x, y, 0, width, height)] = tile;
+        }
+      }
+    }
+
+    // ---- the shape of the rock ----------------------------------------------
+    //
+    // Wall faces first, then what stands on the floor, and the ways through cut
+    // LAST of all: both of those passes paint over whatever they find under a
+    // ceiling tile, and a passage painted over is a layer sealed shut again.
+    // The same order, and for the same reason, as the cave generator above.
+    const centerX = Math.floor(width / 2);
+    const centerY = Math.floor(height / 2);
+    const passageTile = (style.swimPool && style.alwaysFlooded && poolTile) ? poolTile : floorTile;
+
+    const carveOne = (x, y) => {
+      if (x < 0 || x >= width || y < 0 || y >= height) return;
+      mapData[calculateIndex(x, y, 0, width, height)] = passageTile;
+      // Nothing may decorate a passage: one impassable prop dropped on a
+      // three-tile corridor is the same as never having cut it.
+      for (let z = 1; z <= 3; z++) mapData[calculateIndex(x, y, z, width, height)] = 0;
+    };
+    const carveRect = (x0, y0, x1, y1) => {
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) carveOne(x, y);
+    };
+    const carveCorridor = (fromX, fromY, toX, toY, radius) => {
+      let x = fromX, y = fromY;
+      const dx = Math.abs(toX - x), dy = Math.abs(toY - y);
+      const sx = x < toX ? 1 : -1, sy = y < toY ? 1 : -1;
+      let err = dx - dy;
+      for (;;) {
+        carveRect(x - radius, y - radius, x + radius, y + radius);
+        if (x === toX && y === toY) break;
+        const e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x += sx; }
+        if (e2 < dx) { err += dx; y += sy; }
+      }
+    };
+
+    // The landing clearing: wherever a descent or a re-entry puts the party
+    // down in the middle of the square, there is ground under them.
+    carveRect(centerX - 3, centerY - 3, centerX + 3, centerY + 3);
+
+    reconcileCaveWallsAndCeilings(
+      mapData, width, height, ceilingTile, wallTile, floorTile, 2, allFeatures
+    );
+
+    // ---- what grows down there ---------------------------------------------
+    //
+    // The archetype's own features, off the SURFACE world's tileset, and only
+    // ever on its own dry floor: nothing is hung on a wall or out in the water.
+    const selected = selectCaveFeatureVariants(biome, allFeatures, seed);
+    const variants = [];
+    for (const list of Object.values(selected)) variants.push(...list);
+    if (variants.length) {
+      const spots = [];
+      for (let y = borderThickness; y < height - borderThickness; y++) {
+        for (let x = borderThickness; x < width - borderThickness; x++) {
+          if (mapData[calculateIndex(x, y, 0, width, height)] === floorTile) {
+            spots.push({ x, y });
+          }
+        }
+      }
+      for (let i = spots.length - 1; i > 0; i--) {
+        const k = Math.floor(rng() * (i + 1));
+        [spots[i], spots[k]] = [spots[k], spots[i]];
+      }
+      const count = Math.max(1, Math.floor(spots.length * 0.03));
+      for (const pos of spots.slice(0, count)) {
+        const variant = variants[Math.floor(rng() * variants.length)];
+        if (!variant) continue;
+        if (variant.type === "single") {
+          const idx1 = calculateIndex(pos.x, pos.y, 1, width, height);
+          const idx2 = calculateIndex(pos.x, pos.y, 2, width, height);
+          if (mapData[idx1] === 0 && mapData[idx2] === 0) {
+            const layer = rng() < 0.7 ? 1 : 2;
+            mapData[calculateIndex(pos.x, pos.y, layer, width, height)] = variant.tileId;
+          }
+        } else if (variant.type === "grid") {
+          if (!doesMultiTileFeatureOverlapForbidden(variant.grid, pos.x, pos.y, width, height)) {
+            placeMultiTileFeature(
+              mapData, variant.grid, pos.x, pos.y, 1, width, height,
+              new Set([ceilingTile, wallTile])
+            );
+          }
+        }
+      }
+    }
+
+    // ---- the ways through ---------------------------------------------------
+    //
+    // The mouths both neighbours of a border agreed on, cut through the whole
+    // sealed band and out to the outermost ring (the tile the crossing rule
+    // watches for), and each joined to the middle by a corridor of its own: the
+    // carve owes the border nothing, so without that a mouth can open onto
+    // solid rock. A passage is cut wet where the liquid can be swum - an abyss
+    // world's whole underground is water, and a dry corridor through it would
+    // be a wall of air - and dry everywhere else.
+    const openings = undergroundBorderOpenings(
+      worldCoords,
+      undergroundNeighbourNames(worldCoords, adjacentBiomes, cache),
+      ((($gameSystem && $gameSystem._procGenData &&
+        $gameSystem._procGenData.biomeLayerStack) || []).length) || 1,
+      width,
+      height
+    );
+    const mouthDepth = borderThickness + 2;
+    for (const direction of ["north", "south", "east", "west"]) {
+      const opening = openings[direction];
+      if (!opening) continue;
+      const mid = Math.floor((opening.start + opening.end) / 2);
+      if (direction === "north") {
+        carveRect(opening.start, 0, opening.end, mouthDepth);
+        carveCorridor(mid, mouthDepth, centerX, centerY, 2);
+      } else if (direction === "south") {
+        carveRect(opening.start, height - 1 - mouthDepth, opening.end, height - 1);
+        carveCorridor(mid, height - 1 - mouthDepth, centerX, centerY, 2);
+      } else if (direction === "west") {
+        carveRect(0, opening.start, mouthDepth, opening.end);
+        carveCorridor(mouthDepth, mid, centerX, centerY, 2);
+      } else {
+        carveRect(width - 1 - mouthDepth, opening.start, width - 1, opening.end);
+        carveCorridor(width - 1 - mouthDepth, mid, centerX, centerY, 2);
+      }
+    }
+
+    cleanupOrphanedWallsAndCeilings(
+      mapData, width, height, ceilingTile, wallTile, floorTile, 2, allFeatures
+    );
+    clearForbiddenZoneFeatures(mapData, width, height);
+
+    // Region 99 is how MovementInteractionSystem knows to put the party in the
+    // water, so every swimmable tile of the layer carries it - the archetype's
+    // own sea as much as the water table over it.
+    const regiondata = new Array(width * height).fill(0);
+    if (swimTiles.size) {
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const tileId = mapData[calculateIndex(x, y, 0, width, height)];
+          if (swimTiles.has(tileId)) regiondata[y * width + x] = 99;
+        }
+      }
+    }
+    mapData.regiondata = regiondata;
+    mapData.caveFloorTile = floorTile;
+    mapData.caveCeilingTile = ceilingTile;
+    mapData.caveWallTile = wallTile;
+    mapData.cavePassageTile = passageTile;
+    return mapData;
+  }
+
+  // Nearest tile the party can OCCUPY in a freshly generated alien square.
+  // Earth's generators each guarantee their own open borders/center (mountain
+  // ranges keep a clearing, coastlines never draw over a road...), but the
+  // elevation-banded fills, the crater fields and the underground carves are
+  // continuous -- the map's exact center can legitimately land inside a crater
+  // rim or in solid rock -- so entering/re-entering an alien planet has to
+  // search instead of assuming the center is clear.
+  //
+  // Water is NOT something to be searched away from: a party set down on a sea
+  // swims it (MovementInteractionSystem rearms the swim on arrival), and
+  // hunting for dry land instead used to drag every landing on an ocean world,
+  // and every arrival in a flooded cave, onto whatever scrap of rock was
+  // nearest. The surface of the water is a place to be. Every other layer is
+  // still checked, because a rock or a plant standing in it is not.
   function findPassableLandingTile(mapData, tilesetId, width, height, preferX, preferY) {
+    const regions = mapData && mapData.regiondata;
+    const flags = ($dataTilesets && $dataTilesets[tilesetId] && $dataTilesets[tilesetId].flags) || null;
+    const isWater = (tileId) => !!flags && tileId > 0 && ((flags[tileId] >> 12) & 0x07) === 3;
     const passable = (x, y) => {
       if (x < 0 || x >= width || y < 0 || y >= height) return false;
-      for (let z = 0; z <= 3; z++) {
+      const swimmable = (!!regions && regions[y * width + x] === 99) ||
+        isWater(mapData[calculateIndex(x, y, 0, width, height)]);
+      for (let z = swimmable ? 1 : 0; z <= 3; z++) {
         const tileId = mapData[calculateIndex(x, y, z, width, height)];
         if (tileId && !isTilePassableInTileset(tilesetId, tileId)) return false;
       }
@@ -3536,21 +4327,47 @@
       }
     }
 
+    // A layer below an alien world: its own archetype of underground, cut from
+    // the planet-wide field and dressed in the SURFACE world's tileset. Asked
+    // before the surface routes below, which would otherwise hand a cave square
+    // an elevation-banded hillside.
+    if (isAlienUndergroundBiome(biome.name)) {
+      const undergroundData = generateAlienUndergroundTerrain(
+        biome, seed, allFeatures, worldCoords, adjacentBiomes, cache
+      );
+      yield;
+      return undergroundData;
+    }
+
     // Alien-surface terrain: route by the planet's texture-painter family so
     // the ground matches what the landing-grid picker shows. Only fires with
     // $gameSystem._procGenData.alienGrid set, i.e. never for Earth biomes
     // (map 636 is reused for both).
     if ($gameSystem && $gameSystem._procGenData && $gameSystem._procGenData.alienGrid) {
       const alienRoute = resolveAlienRoute(biome, worldCoords);
+      let alienData = null;
       if (alienRoute === "terrestrial") {
-        return generateAlienTerrestrialTerrain(biome, seed, allFeatures, worldCoords);
+        alienData = generateAlienTerrestrialTerrain(biome, seed, allFeatures, worldCoords);
       } else if (alienRoute === "crater") {
-        return generateAlienCraterFieldTerrain(biome, seed, allFeatures, worldCoords);
+        alienData = generateAlienCraterFieldTerrain(biome, seed, allFeatures, worldCoords);
+      } else if (alienRoute === "banded") {
+        alienData = generateAlienBandedTerrain(
+          biome, seed, allFeatures, worldCoords, alienSurfaceFamily()
+        );
       } else if (alienRoute === "mountain") {
         // Fall through to the existing, unmodified mountain generator below,
         // via a clone renamed just for this call so isMountainBiome() fires --
         // currentBiome (BGM/tileset/audio lookups) is left untouched.
         biome = Object.assign({}, biome, { name: biome.name + "Mountain" });
+      }
+      if (alienData) {
+        // The biome's own scenery goes on here rather than at the end of the
+        // generic path, which these routes return before ever reaching -- and
+        // so does the water marking the swim rules read.
+        scatterAlienSurfaceFeatures(alienData, biome, allFeatures, seed);
+        markAlienWaterRegions(alienData, allFeatures);
+        yield;
+        return alienData;
       }
     }
 
@@ -5380,7 +6197,11 @@
     const rng = Utils2.createSeededRandom(baseSeed);
 
     // How many chests, and how rare their loot is.
-    const isAlien = /^alien/.test(biome);
+    // The alien rule is about a SURFACE nobody could ever have stood on. A layer
+    // under one is a different proposition: the descent is the work, and what is
+    // down there was never left by anybody in the first place - so an alien
+    // underground is stocked like any other dug layer, below.
+    const isAlien = /^alien/.test(biome) && !isUndergroundSquare(procGenData, biome);
     let numChests = 0;
     let rarityBonus = 0;
     if (isAlien && !isHabitableAlienSurface(procGenData)) {
@@ -5603,7 +6424,7 @@
   function isInteriorBiome(biomeName) {
     const name = biomeName || "";
     if (!name) return false;
-    return isCaveBiome(name) || isDungeonBiome(name);
+    return isCaveBiome(name) || isDungeonBiome(name) || isAlienUndergroundBiome(name);
   }
 
   /**
@@ -6188,7 +7009,17 @@
       let lowerName = biome.lowerLayer;
       if (displayAsBeach && lowerName === 'Cave') lowerName = 'CaveFlooded';
       const lower = getBiomeByName(lowerName);
-      if (lower) { biomeName = lowerName; biome = lower; }
+      if (lower) {
+        biomeName = lowerName;
+        // An alien underground is cut out of the world it is under: ten
+        // archetypes share one biome record each (js/db/WorldGen/AlienBiomes.json)
+        // and every one of them wears the SURFACE square's tileset, so the
+        // vaults below an ice giant are drawn in the ice giant's own palette
+        // and not in whichever sheet the archetype happens to be filed under.
+        biome = (alienGrid && isAlienUndergroundBiome(lowerName) && biome.tilesetId)
+          ? Object.assign({}, lower, { tilesetId: biome.tilesetId, tilesetIds: null })
+          : lower;
+      }
     }
 
     return {
@@ -6541,6 +7372,13 @@
     resolveAlienRoute,
     generateAlienTerrestrialTerrain,
     generateAlienCraterFieldTerrain,
+    generateAlienBandedTerrain,
+    generateAlienUndergroundTerrain,
+    isUndergroundBiome: isAlienUndergroundBiome,
+    undergroundBiomeFor: alienUndergroundBiomeFor,
+    aquiferLevel: alienAquiferLevel,
+    fieldContext: alienFieldContext,
+    STYLES: ALIEN_UNDER_STYLES,
     findPassableLandingTile,
   };
 })();

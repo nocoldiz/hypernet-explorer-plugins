@@ -72,6 +72,135 @@
     const speedoScale = (top) => SPEEDO_SCALES.find(v => v >= top) ||
         SPEEDO_SCALES[SPEEDO_SCALES.length - 1];
 
+
+    // =========================================================================
+    // The control legend, and why it is not a list
+    // =========================================================================
+    // H used to raise one of two fixed tables: the walking one or the driving
+    // one, printed at the moment the HUD was built and never touched again. So
+    // a pilot at the helm of a starship was told to press E for the door and
+    // shown nothing about the nose; a swimmer was offered a crouch; a party on
+    // a gamepad was read a list of keys none of which existed on the thing in
+    // their hands.
+    //
+    // It is assembled per press now, out of two questions:
+    //   WHERE ARE THEY   on foot, at the wheel, or flying; in water, in the air
+    //                    or over a world with no ground at all
+    //   WITH WHAT        a keyboard, or a pad
+    //
+    // THE PAD HALF IS NOT A SECOND TABLE. window.Controller already keeps the
+    // one table that says which face works which action in which mode
+    // (Controller.BINDINGS, and faceOf reads it); a row names the action and
+    // the mode and is answered for the device in the party's hands. A second
+    // copy of that mapping here is a second copy to fall out of step.
+    //
+    // Each row is [keyboard badge, pad badge, label]. A pad badge given as
+    // 'mode:action' is looked up; anything else is printed as it stands, which
+    // is how the sticks (which are not buttons and so are in no binding table)
+    // get a badge of their own. An empty pad badge means the control is not on
+    // the pad at all, and the row keeps its key so the legend says so plainly
+    // rather than quietly dropping it.
+    // i18n-ignore-start  key caps and pad faces are physical, not language
+    const LEGEND_ROWS = {
+        walk:     ['WASD',          'L-STICK',      'CamperDrive.hud.cmdWalk'],
+        look:     ['MOUSE',         'R-STICK',      'CamperDrive.hud.cmdLook'],
+        run:      ['SHIFT',         'walk:run',     'CamperDrive.hud.cmdRun'],
+        jump:     ['SPACE',         'walk:jump',    'CamperDrive.hud.cmdJump'],
+        footFly:  ['SPACE&times;2', 'walk:jump',    'CamperDrive.hud.cmdFly'],
+        crouch:   ['CTRL',          '',             'CamperDrive.hud.cmdCrouch'],
+        swim:     ['SPACE / CTRL',  'walk:jump',    'CamperDrive.hud.cmdSwim'],
+        talk:     ['E',             '',             'CamperDrive.hud.cmdTalk'],
+        dig:      ['LMB',           'walk:dig',     'VoxelWorld.hud.cmdDig'],
+        place:    ['G',             '',             'VoxelWorld.hud.cmdPlace'],
+        block:    ['Q',             '',             'VoxelWorld.hud.cmdBlock'],
+        bar:      ['TAB',           'walk:bar',     'VoxelWorld.hud.cmdBar'],
+        exitWalk: ['T',             'walk:exit',    'CamperDrive.hud.cmdExitWalk'],
+
+        drive:    ['WASD',          'L-STICK',      'CamperDrive.hud.cmdDrive'],
+        turbo:    ['SHIFT',         'drive:handbrake', 'CamperDrive.hud.cmdTurbo'],
+        door:     ['E',             '',             'CamperDrive.hud.cmdDoor'],
+        dive:     ['C',             '',             'CamperDrive.hud.cmdDive'],
+        view:     ['TAB',           'drive:view',   'CamperDrive.hud.cmdView'],
+        vehicle:  ['Z',             '',             'CamperDrive.hud.cmdVehicle'],
+        exit:     ['T',             'drive:exit',   'CamperDrive.hud.cmdExit'],
+
+        flight:   ['F',             'fly:land',     'CamperDrive.hud.cmdFlight'],
+        pitch:    ['MOUSE',         'R-STICK',      'CamperDrive.hud.cmdPitch'],
+        thrust:   ['W / S',         'fly:thrust',   'CamperDrive.hud.cmdThrust'],
+        climb:    ['C',             'fly:climb',    'CamperDrive.hud.cmdClimb'],
+        descend:  ['SPACE',         'fly:descend',  'CamperDrive.hud.cmdDescend'],
+        flyView:  ['TAB',           'fly:view',     'CamperDrive.hud.cmdView'],
+
+        map:      ['M',             '',             'CamperDrive.hud.cmdMap'],
+        menu:     ['ESC',           'walk:exit',    'CamperDrive.hud.cmdMenu'],
+    };
+    // i18n-ignore-end
+
+    // The one line under the legend: not a control, but the thing about this
+    // particular place that a list of keys cannot say.
+    const LEGEND_NOTES = {
+        gasGiant:   'CamperDrive.hud.noteGasGiant',
+        underwater: 'CamperDrive.hud.noteUnderwater',
+        swimming:   'CamperDrive.hud.noteSwimming',
+        flying:     'CamperDrive.hud.noteFlying',
+    };
+
+    // Which rows this situation gets, in the order they are read. `ctx` is what
+    // the scene knows about itself (see VoxelWorldScene._legendContext).
+    function legendRowsFor(ctx) {
+        const c = ctx || {};
+        const wet = c.env === 'water' || c.env === 'underwater' || c.swimming;
+        if (c.mode === 'foot') {
+            const ids = ['walk', 'look', 'run', 'jump'];
+            ids.push(wet ? 'swim' : 'crouch');
+            if (c.canFly) ids.push('footFly');
+            if (c.canDig) ids.push('dig', 'place', 'block', 'bar');
+            ids.push('talk', 'map', 'menu', 'exitWalk');
+            return ids;
+        }
+        if (c.mode === 'fly') {
+            const ids = ['pitch', 'thrust', 'climb', 'descend'];
+            // Nothing lands on a world with no ground, so the key that would
+            // put it down is not offered out there.
+            if (!c.groundless) ids.push('flight');
+            ids.push('flyView', 'vehicle', 'map', 'menu', 'exit');
+            return ids;
+        }
+        const ids = ['drive', 'turbo'];
+        if (c.canFly) ids.push('flight');
+        if (c.canDive) ids.push('dive');
+        ids.push('door', 'view', 'vehicle', 'map', 'menu', 'exit');
+        return ids;
+    }
+
+    // Which single note, if any, belongs under it.
+    function legendNoteFor(ctx) {
+        const c = ctx || {};
+        if (c.groundless) return LEGEND_NOTES.gasGiant;
+        if (c.env === 'underwater') return LEGEND_NOTES.underwater;
+        if (c.mode === 'foot' && c.swimming) return LEGEND_NOTES.swimming;
+        if (c.mode === 'fly') return LEGEND_NOTES.flying;
+        return '';
+    }
+
+    // The badge a row wears on the device in the party's hands. A pad badge of
+    // 'mode:action' is asked of the controller layer, which is the only place
+    // that knows; anything else stands as written, and an empty one falls back
+    // to the key so a keyboard-only control is still named.
+    function legendBadge(row, pad) {
+        if (!pad || !row[1]) return row[0];
+        const spec = row[1];
+        const i = spec.indexOf(':');
+        if (i < 0) return spec;
+        const C = window.Controller;
+        const face = (C && C.faceOf) ? C.faceOf(spec.slice(i + 1), spec.slice(0, i)) : '';
+        return face || row[0];
+    }
+
+    // The six elements the stylesheet inks, out here rather than built again
+    // on every call of updateEnvLabel.
+    const ENV_CLASSES = ['road', 'land', 'air', 'water', 'underwater', 'cave'];
+
     class CamperHUD {
         // `silent` builds no HUD at all (title-screen background drive): every
         // panel is skipped and the per-frame updates become no-ops. `walk` is the
@@ -186,54 +315,26 @@
             this._modePanel = document.createElement('div');
             this._modePanel.className = 'cds-panel cds-mode-panel';
 
-            // A short, stacked list of only the commands a player needs at a
-            // glance (not every key the scene answers to): each row is a key
-            // badge plus a short label, one per line, easier to scan than the
-            // old run-on paragraph.
-            const CMD_ROWS = this._walk ? [
-                ['WASD', T('CamperDrive.hud.cmdWalk')],
-                ['SHIFT', T('CamperDrive.hud.cmdRun')],
-                ['SPACE', T('CamperDrive.hud.cmdJump')],
-                ['SPACE&times;2', T('CamperDrive.hud.cmdFly')],
-                ['CTRL', T('CamperDrive.hud.cmdCrouch')],
-                ['SPACE / CTRL', T('CamperDrive.hud.cmdSwim')],
-                ['E', T('CamperDrive.hud.cmdTalk')],
-                ['LMB', T('VoxelWorld.hud.cmdDig')],
-                ['G', T('VoxelWorld.hud.cmdPlace')],
-                ['Q', T('VoxelWorld.hud.cmdBlock')],
-                ['TAB', T('VoxelWorld.hud.cmdBar')],
-                ['ESC', T('CamperDrive.hud.cmdMenu')],
-                ['T', T('CamperDrive.hud.cmdExitWalk')]
-            ] : [
-                ['WASD', T('CamperDrive.hud.cmdDrive')],
-                ['SHIFT', T('CamperDrive.hud.cmdTurbo')],
-                ['E', T('CamperDrive.hud.cmdDoor')],
-                ['TAB', T('CamperDrive.hud.cmdView')],
-                ['Z', T('CamperDrive.hud.cmdVehicle')],
-                ['ESC', T('CamperDrive.hud.cmdMenu')],
-                ['T', T('CamperDrive.hud.cmdExit')]
-            ];
-            const cmdRowHTML = ([key, label]) => `
-                <div class="cds-cmd-row">
-                    <span class="cds-key">${key}</span>
-                    <span class="cds-label">${label}</span>
-                </div>`;
+            // The legend is BUILT WHEN IT IS ASKED FOR, not baked in here: what
+            // it says depends on where the party actually is and on what they
+            // are holding the world with (see _legendRows / setCommandContext).
+            // The panel below is only the frame it is drawn into.
             const headerHTML = this._walk
                 ? `<div class="cds-title cds-view-title">${T('CamperDrive.viewMode.foot')}</div>
                    <div class="cds-env-row">${T('CamperDrive.hud.mode')} <span id="cds-env-label" class="cds-env-val">${T('CamperDrive.envMode.land')}</span></div>`
                 : `<div id="cds-mode-btn" class="cds-title cds-view-title">${T('CamperDrive.hud.view')} <span id="cds-mode-label" class="cds-mode-val">${T('CamperDrive.viewMode.fpdrive')}</span> [TAB]</div>
                    <div class="cds-env-row">${T('CamperDrive.hud.mode')} <span id="cds-env-label" class="cds-env-val">${T('CamperDrive.envMode.road')}</span></div>`;
+            // The span updateEnvLabel writes into is made fresh here, so the
+            // word it last wrote is no longer on screen and the guard there
+            // must not skip re-writing it.
+            this._envLabelWas = null;
             this._modePanel.innerHTML = `
                 ${headerHTML}
-                <div id="cds-cmd-list" class="cds-cmd-list ui-closed">
-                    ${CMD_ROWS.map(cmdRowHTML).join('')}
-                </div>
+                <div id="cds-cmd-list" class="cds-cmd-list ui-closed"></div>
                 <div id="cds-cmd-hint" class="cds-cmd-hint">
                     ${T('CamperDrive.hud.cmdHelp')}
                 </div>
-                <div id="cds-controller-hint" class="cds-controller-hint ui-closed">
-                    ${T(this._walk ? 'CamperDrive.hud.controllerHintWalk' : 'CamperDrive.hud.controllerHint')}
-                </div>`;
+                <div id="cds-controller-hint" class="cds-controller-hint ui-closed"></div>`;
             // Nothing to switch to on a free walk, so the panel is a plain legend
             // there rather than the view-mode button.
             if (!this._walk) {
@@ -377,9 +478,12 @@
                 condEl:   document.getElementById('cds-cond'),
                 tripEl:   document.getElementById('cds-trip'),
             };
-            // The legend is folded away until H asks for it.
+            // The legend is folded away until H asks for it, and it is built out
+            // of the situation when it is (setCommandContext). Until the scene's
+            // first frame has said what that situation is, this is it.
             this._cmdList = this._els.cmdList;
             this._cmdHint = this._els.cmdHint;
+            this._cmdCtx  = { mode: this._walk ? 'foot' : 'drive', env: 'land' };
             this.setCommandsVisible(false);
             // Last-written values for dirty-checking (avoid redundant DOM writes).
             this._last = {};
@@ -421,28 +525,40 @@
         }
 
         updateEnvLabel(env) {
-            const el = document.getElementById('cds-env-label');
-            if (!el) return;
             // A walker is never "on the road": dry ground under their own two
             // feet is simply land.
             if (this._walk && env === 'road') env = 'land';
+            // The party changes element a few times a minute. This was the one
+            // un-guarded write in the file: an element lookup, a textContent
+            // write, two localisation lookups that each cut a key into pieces,
+            // a fresh array and six class toggles, sixty times a second, to
+            // print a word that had not changed.
+            if (env === this._envLabelWas) return;
+            const el = document.getElementById('cds-env-label');
+            if (!el) return;
+            this._envLabelWas = env;
             const key = 'CamperDrive.envMode.' + env;
             el.textContent = T.has(key) ? T(key) : env.toUpperCase();
             // The element the party is in is a NAME, and the stylesheet inks
             // it: .cds-env--water and its five siblings.
-            const ENVS = ['road', 'land', 'air', 'water', 'underwater', 'cave'];
-            for (const e of ENVS) el.classList.toggle('cds-env--' + e, e === env);
-            if (ENVS.indexOf(env) < 0) el.classList.add('cds-env--land');
+            for (const e of ENV_CLASSES) el.classList.toggle('cds-env--' + e, e === env);
+            if (ENV_CLASSES.indexOf(env) < 0) el.classList.add('cds-env--land');
         }
 
         // Only show the L2/R2 zoom + Y switch-view hint while a gamepad is
         // actually connected; dirty-checked so this is a no-op most frames.
+        // The line that used to read out a fixed controller layout belongs to
+        // the legend now (_buildCommands writes the situation's own note into
+        // it), and the legend's badges say which device is being answered. A
+        // pad being plugged in is no longer news, so this only keeps the note
+        // off the screen while the legend is folded away.
         updateControllerHint(connected) {
             const el = (this._els || {}).controllerHint;
             if (!el) return;
-            if (this._last.controllerHint === connected) return;
-            this._last.controllerHint = connected;
-            window.UIPanel.toggle(el, !!connected);
+            const show = !!(this._cmdsShown && el.textContent);
+            if (this._last.controllerHint === show) return;
+            this._last.controllerHint = show;
+            window.UIPanel.toggle(el, show);
         }
 
         // Ability chips. `abilities` = { fly:{unlocked,active}, float:{...}, dive:{...} }.
@@ -538,8 +654,14 @@
             const cv = (this._els || {}).speedoEl;
             if (!cv || !this._speedTop) return;
             const rpm = Math.max(0, Math.min(1, typeof rpm01 === 'number' ? rpm01 : 0));
+            // The rpm bucketed to a twentieth rather than a hundredth. It is a
+            // needle a centimetre long on a dial the size of a coin, so a
+            // hundredth is finer than the dial can draw - and rpm moves
+            // continuously under power, so keying on it meant the whole face
+            // (two arcs, nine ticks, eight pieces of text, the needle) was
+            // redrawn on every frame of every drive.
             const key = Math.round(kmh) + '|' + (gearLabel == null ? '' : gearLabel) +
-                '|' + Math.round(rpm * 100);
+                '|' + Math.round(rpm * 20);
             const last = this._last || (this._last = {});
             if (key === last.speedoKey) return;
             last.speedoKey = key;
@@ -1099,8 +1221,47 @@
 
         setCommandsVisible(on) {
             this._cmdsShown = !!on;
+            if (this._cmdsShown) this._buildCommands();
             window.UIPanel.toggle(this._cmdList, on);
             window.UIPanel.toggle(this._cmdHint, !on);
+            const note = (this._els || {}).controllerHint;
+            if (note) window.UIPanel.toggle(note, on && !!note.textContent);
+        }
+
+        // What the party is doing, told by the scene every frame. Kept rather
+        // than acted on: rebuilding a dozen rows of DOM sixty times a second to
+        // print the same dozen rows would be a waste, so the situation is boiled
+        // down to one string and the list is redrawn only when that changes -
+        // which is the moment a walk becomes a swim, or a drive becomes a
+        // flight, or a hand leaves the keyboard for a pad.
+        setCommandContext(ctx) {
+            this._cmdCtx = ctx || {};
+            if (this._cmdsShown) this._buildCommands();
+        }
+
+        _buildCommands() {
+            if (!this._cmdList) return;
+            const c = this._cmdCtx || {};
+            const pad = !!c.pad;
+            const ids = legendRowsFor(c);
+            const note = legendNoteFor(c);
+            const sig = (pad ? 'p|' : 'k|') + ids.join(',') + '|' + note;
+            if (this._cmdSig === sig) return;
+            this._cmdSig = sig;
+            this._cmdList.innerHTML = ids.map((id) => {
+                const row = LEGEND_ROWS[id];
+                if (!row) return '';
+                return `
+                <div class="cds-cmd-row">
+                    <span class="cds-key">${legendBadge(row, pad)}</span>
+                    <span class="cds-label">${T(row[2])}</span>
+                </div>`;
+            }).join('');
+            const el = (this._els || {}).controllerHint;
+            if (el) {
+                el.textContent = note ? T(note) : '';
+                window.UIPanel.toggle(el, this._cmdsShown && !!note);
+            }
         }
 
         // Take the whole readout off the screen without tearing it down: a

@@ -388,7 +388,7 @@ const GameOptions = {
             categories: ['gameplay'],
             groups: [
                 { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers', 'autoIdle'] },
-                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
+                { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
                 { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming', 'mapTooltips'] },
                 { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
                 // Language is left out while the game is locked to English; if it
@@ -403,7 +403,7 @@ const GameOptions = {
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
                 { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
-                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail'] }
+                { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail', 'galaxyQuality'] }
             ]
         },
         {
@@ -807,6 +807,13 @@ window.GameOptions = GameOptions;
         this.lowModelDetail = config.lowModelDetail !== undefined
             ? !!config.lowModelDetail
             : false;
+        // How much the star map is allowed to draw: a supercluster can hold a
+        // hundred thousand galaxies and a sky of layered nebulae, which is the
+        // difference between a star map and a slideshow on a weak GPU. Read by
+        // GalaxySim_Scene3D_Cosmos.quality().
+        this.galaxyQuality = GALAXY_QUALITY_MODES.includes(config.galaxyQuality)
+            ? config.galaxyQuality
+            : (config.lowModelDetail ? 'low' : 'high');
         this.runInBackground = config.runInBackground !== undefined
             ? !!config.runInBackground
             : false;
@@ -909,6 +916,7 @@ window.GameOptions = GameOptions;
         config.themeBeforeAscii = this.themeBeforeAscii;
         config.showFps = this.showFps;
         config.lowModelDetail = this.lowModelDetail;
+        config.galaxyQuality = this.galaxyQuality;
         config.runInBackground = this.runInBackground;
         config.titleBackground = this.titleBackground;
         config.cpuPartyMembers = this.cpuPartyMembers;
@@ -2032,6 +2040,34 @@ window.GameOptions = GameOptions;
     // database. So it always answered "full detail" and the player had no say.
     // Takes effect within a second (isLowDetail holds its answer that long) and
     // the model caches key on it, so both resolutions can be held at once.
+    //=========================================================================
+    // Star map quality (GalaxySim)
+    //=========================================================================
+    const GALAXY_QUALITY_MODES = ['low', 'medium', 'high'];   // i18n-ignore: setting values
+
+    const stepGalaxyQuality = (dir) => function () {
+        const cur = GALAXY_QUALITY_MODES.indexOf(ConfigManager.galaxyQuality);
+        const i = Math.max(0, cur);
+        ConfigManager.galaxyQuality = GALAXY_QUALITY_MODES[
+            (i + dir + GALAXY_QUALITY_MODES.length) % GALAXY_QUALITY_MODES.length];
+    };
+
+    // The galaxy map is deliberately outside the retro shader system
+    // (GalaxySim_Renderer3D applies RetroShader.NONE), so it carries its own
+    // quality dial. One step scales every budget it has: galaxies per
+    // supercluster, nebula layers, how far the cosmic web streams, and how much
+    // of a point cloud survives at a distance.
+    GameOptions.registerOption('galaxyQuality', T('GameOptions.label.galaxyQuality'),
+        () => ConfigManager.galaxyQuality,
+        (value) => {
+            ConfigManager.galaxyQuality =
+                GALAXY_QUALITY_MODES.includes(value) ? value : 'high';
+        },
+        'video', 'boolean',
+        (value) => T('GameOptions.galaxyQuality.' +
+            (GALAXY_QUALITY_MODES.includes(value) ? value : 'high')),
+        stepGalaxyQuality(1), stepGalaxyQuality(-1));
+
     GameOptions.registerOption('lowModelDetail', T('GameOptions.label.lowModelDetail'),
         () => !!ConfigManager.lowModelDetail,
         (value) => { ConfigManager.lowModelDetail = !!value; },

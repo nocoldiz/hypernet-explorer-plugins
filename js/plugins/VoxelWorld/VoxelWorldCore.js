@@ -470,7 +470,9 @@
     // which port the player is on and what a trigger is worth.
     // -------------------------------------------------------------------------
     const GamepadRaw = {
-        L2: 6, R2: 7, Y: 3,
+        // The shoulders trim a flying craft's altitude (VoxelWorldScene's
+        // _updateFlight), which is why L1 and R1 are named here as well.
+        L1: 4, R1: 5, L2: 6, R2: 7, Y: 3,
         _heldY: false,
         pads() { return navigator.getGamepads ? (navigator.getGamepads() || []) : []; },
         connected() { return !!(window.Controller && window.Controller.connected()); },
@@ -944,6 +946,60 @@
         boat:     { top: 90,   boost: false, ceiling: 90,   warp: false, fly: false }
     };
     // =========================================================================
+    // How a thing that flies actually flies
+    // =========================================================================
+    // Flying used to be driving with the ground held at arm's length: the
+    // vehicle kept a CLEARANCE over the terrain, the ship could raise and lower
+    // that clearance and the broom could not move vertically at all. Over a
+    // world with no terrain under it there is nothing for a clearance to be
+    // measured from, and even over one that has terrain it is not flying.
+    //
+    // So altitude is ABSOLUTE now, and the nose does the work:
+    //
+    //   PITCH   the nose is pushed up and down (mouse, right stick, or the
+    //           climb / descend keys), and the climb rate is the forward speed
+    //           through the sine of it. Fly faster, climb faster: a thing with
+    //           no airspeed cannot point its way upward.
+    //   TRIM    the climb / descend keys also add a flat rate of their own, so
+    //           a craft at a standstill can still be walked up and down.
+    //   BANK    it rolls into its turns, and the roll is the visible half of a
+    //           turn that was always there.
+    //
+    //   pitchRate  radians per second the nose moves under a held input
+    //   pitchMax   how far from level it will ever point
+    //   bank       radians of roll at a full-lock turn
+    //   climb      world units per second of flat trim
+    //   level      how fast the nose returns to level when let go
+    //   liftFrom   how much of the forward speed becomes climb at full pitch
+    //
+    // A SHIP IS NOT A BROOM. The ship is heavy: it answers slowly, leans hard
+    // into a turn and takes a while to level out. A broom is a stick with a
+    // person on it - it points where it is pointed, almost at once, and barely
+    // leans at all. Same model, different numbers.
+    //   free       it is FLOWN, nose and all. A camper with the Flight module
+    //              bolted to it is not: that is a van that hovers, and it keeps
+    //              the old terrain-following cruise it always had.
+    //   landKmh    no faster than this to set down
+    //   landClear  and no higher than this over the ground
+    const FLIGHT = {
+        starship: { free: true,  pitchRate: 0.9, pitchMax: 0.62, bank: 0.55, yaw: 0.55,
+                    climb: 260, level: 1.6, liftFrom: 0.75, landKmh: 55, landClear: 26 },
+        broom:    { free: true,  pitchRate: 2.2, pitchMax: 0.95, bank: 0.22, yaw: 1.30,
+                    climb: 190, level: 4.0, liftFrom: 1.00, landKmh: 25, landClear: 14 },
+        camper:   { free: false, pitchRate: 0.7, pitchMax: 0.40, bank: 0.30, yaw: 0.40,
+                    climb: 150, level: 2.0, liftFrom: 0.50, landKmh: 55, landClear: 26 }
+    };
+    // What anything else that somehow leaves the ground is flown as.
+    const FLIGHT_DEFAULT = FLIGHT.camper;
+    function flightModel(vehicleId) {
+        return FLIGHT[vehicleId] || FLIGHT_DEFAULT;
+    }
+    // The ceiling and floor an absolute altitude is held between on a world
+    // that HAS ground: the floor is the terrain under it plus its own minimum
+    // clearance, and the ceiling is the top of the sky.
+    const FLY_ABS_MAX = 2400;   // matches SHIP_ATMOSPHERE_Y: past it the world ends
+
+    // =========================================================================
     // What a vehicle is allowed to do to the world
     // =========================================================================
     // The ground under this world is destructible, and for a long time anything
@@ -1329,6 +1385,118 @@
         return false;
     }
 
+    // =========================================================================
+    // A world with no ground in it
+    // =========================================================================
+    // A gas giant is an envelope, not a place. There is no crust under it, no
+    // sea on it and nothing that could be stood on, so out here it is drawn as
+    // what it actually is: banded decks of cloud, one over another, with open
+    // air between them and the party flying through it.
+    //
+    // THE FLAG IS THE BIOME'S. Every such world carries an Alien<Type> record in
+    // js/db/WorldGen/AlienBiomes.json saying `gasGiant: true`, and that one flag
+    // is the whole boundary - the landing pickers read it through
+    // GalaxySim.isSurfacelessWorld, and this side reads it off the biome record
+    // it was handed. Nothing anywhere works it out again from a list of names.
+    function isGasGiantWorld(alien) {
+        const biome = alien && alien.biome;
+        return !!(biome && typeof biome === 'object' && biome.gasGiant);
+    }
+
+    // The decks, bottom to top, as fractions of the climb from the killing
+    // depth to the top of the sky. Each is how thick it is and how much of the
+    // view it shuts out; the COLOUR is not here, because every one of these
+    // worlds already carries its own in ALIEN_BIOME_SKY_PALETTES below, and a
+    // second palette to keep in step with the first is a second palette to get
+    // wrong. A hot Jupiter's decks come out orange and a cold one's blue
+    // because their skies already are.
+    const GAS_DECKS = [
+        { at: 0.20, thick: 0.10, opacity: 0.82, shade: 0.34 },   // the storm deck, just off the cloud tops
+        { at: 0.36, thick: 0.09, opacity: 0.66, shade: 0.52 },   // the banding proper
+        { at: 0.54, thick: 0.08, opacity: 0.50, shade: 0.72 },   // upper haze
+        { at: 0.70, thick: 0.07, opacity: 0.36, shade: 0.88 },   // thin air
+        { at: 0.86, thick: 0.06, opacity: 0.24, shade: 1.00 }    // near space, where a flyby opens
+    ];
+    // How far apart the decks are laid out. The top of the sky is where a ship
+    // leaves the world (SHIP_ATMOSPHERE_Y); the bottom is where the envelope
+    // stops being survivable.
+    // The envelope is hung inside the world's own box, and CLEAR OF BOTH ENDS
+    // of it. The top is where a ship leaves any world (SHIP_ATMOSPHERE_Y). The
+    // killing depth is held at zero rather than down by the phantom bedrock,
+    // because four voxels above that bedrock is the level at which digging
+    // hands the party over to the 2D underground (UNDERGROUND_2D_Y, -200): a
+    // descent that reached it would teleport a starship into a cave. Nothing
+    // on a gas giant ever goes below zero and lives, so nothing ever gets near.
+    const GAS_FLOOR_Y   = 0;       // at or below this the pressure has the ship
+    const GAS_WARN_BAND = 300;     // and this much above it, the warning runs
+    const GAS_TOP_Y     = 2400;    // the top of the envelope (= SHIP_ATMOSPHERE_Y)
+    const GAS_WARN_EVERY = 2.4;    // seconds between two warnings, so it nags rather than spams
+    // The cloud tops: the opaque body of the world, hung just above the killing
+    // depth, and the thing whose curve is the whole view from up here.
+    const GAS_BODY_AT   = 0.06;
+    // WHERE A FLYBY OPENS. It used to open at a clearance over the terrain -
+    // and a gas giant has no terrain, so the clearance was measured off zero
+    // and the ship arrived at 240 units: inside the warning band, seconds from
+    // the killing depth, crushed before the party had read the first toast.
+    // It opens high in the envelope instead, above the banding, where the limb
+    // curves away underneath and there is the whole ladder to come down. Not at
+    // the very top, because the top is where a ship leaves the world: this
+    // leaves a fifth of the climb in hand before a careless nose ends the pass.
+    const GAS_ENTRY_AT  = 0.78;
+    const GAS_ENTRY_Y   = GAS_FLOOR_Y + (GAS_TOP_Y - GAS_FLOOR_Y) * GAS_ENTRY_AT;
+    // What a deck is drawn as: a spherical CAP, not a flat sheet. Both are two
+    // triangles' worth of idea, but only one of them has a horizon in it, and
+    // the horizon is the whole picture out here - a flat sheet stops at its own
+    // edge and reads as a table top, a cap falls away and reads as a world.
+    // The radius is not the real one (a real Jupiter's limb is a straight line
+    // from anywhere a ship could survive); it is the radius at which the curve
+    // is plainly visible from the top of the envelope and still comfortably
+    // inside the far plane at the bottom of it.
+    const GAS_LIMB_R    = 32000;
+    // How much of that sphere is actually built. The horizon from the top of
+    // the envelope sits at acos(R / (R + h)) radians from the nadir, near 0.34
+    // here; the cap is cut wider so the world does not end at the horizon.
+    const GAS_LIMB_ARC  = 0.48;
+    // How wide one tile of the banding is laid across the cap, in world units.
+    // The camera's own position is fed into the texture offset, so flying
+    // actually carries the hull over the bands rather than dragging them along.
+    const GAS_BAND_SPAN = 26000;
+    // The old flat-sheet span, kept because the lightning and the scatter still
+    // measure themselves against the width of a deck.
+    const GAS_DECK_SPAN = 12000;
+    // How close the eye has to come to a deck before it is faded out of the
+    // way. The deck being flown through is cloud all around the hull, not a
+    // layer seen from outside, and a cap seen from inside its own skin is a
+    // hard line across the screen.
+    const GAS_DECK_FADE = 90;
+    // The haze, which is what actually paints the curve: the limb is ten
+    // thousand units away and has to PALE into the sky at that distance, so the
+    // caps are IN the fog rather than out of it like the stars. The driving
+    // haze had eaten everything by four thousand units and would have hidden
+    // the world's own horizon behind a wall of nothing.
+    //
+    // CUBED, not linear. The top of the ladder has to be clear enough to see a
+    // limb at ten thousand units and the bottom has to be blind at five
+    // hundred, which is a twenty-fold range: spread evenly it is either too
+    // thick at the top or too thin at the bottom. Cubed it holds the view open
+    // for the top fifth of the climb and then shuts it fast, so a descent is
+    // felt as the envelope closing in rather than as a dimmer being turned.
+    const GAS_FOG_TOP   = 0.000065;
+    const GAS_FOG_DEEP  = 60;
+    // Lightning in the deep decks: how often, and how long a flash lasts.
+    const GAS_BOLT_EVERY = 2.6;
+    const GAS_BOLT_LIFE  = 0.42;
+
+    // How far up the envelope a given altitude is: 1 at the top of the sky,
+    // 0 at the killing depth, clamped outside. THE ONE PLACE THE LADDER IS
+    // READ. The decks are laid out by it, the sky and the fog are darkened by
+    // it, the warning band is measured by it and the HUD prints it, so none of
+    // those five works the depth out again for itself.
+    function gasDepth01(y) {
+        const t = (y - GAS_FLOOR_Y) / (GAS_TOP_Y - GAS_FLOOR_Y);
+        return t < 0 ? 0 : (t > 1 ? 1 : t);
+    }
+
     // Alien biomes with atmosphere: sky colors that reflect the atmospheric
     // composition and surface chemistry of each world.
     const ALIEN_BIOME_SKY_PALETTES = {
@@ -1519,11 +1687,18 @@
     // world. VoxelWorldField's sampleColumn hands the whole column over to it
     // whenever one is installed.
     let _alienTerrain = null;
+    // Whether the world currently installed has NOTHING solid in it anywhere -
+    // a gas giant, where even the bedrock plane at the bottom of the box is not
+    // there. Worked out once, when the world is installed, because the question
+    // is asked per CUBE (VoxelField.isSolid) and must cost a boolean read.
+    let _alienNoGround = false;
     function setAlienTerrain(fn) {
         _alienTerrain = (typeof fn === 'function') ? fn : null;
+        _alienNoGround = !!(_alienTerrain && _alienTerrain.meta && _alienTerrain.meta.gasGiant);
         _clearBiomeCaches();
     }
     function getAlienTerrain() { return _alienTerrain; }
+    function alienHasNoGround() { return _alienNoGround; }
 
     // =========================================================================
     // The Far Lands: infinite strange expanse beyond the world map borders
@@ -1860,18 +2035,18 @@
     // scatters them as camera-facing billboards instead of low-poly 3D props.
     // =========================================================================
     const TREE_POOLS = {
-        broadleaf: ['dark_canopy_tree.png', 'bushy_dark_tree.png', 'bright_green_pine.png',
-                    'tall_pine_tree.png', 'golden_autumn_tree.png', 'dark_green_round_tree.png',
+        broadleaf: ['bushy_dark_tree.png', 'bright_green_pine.png',
+                    'golden_autumn_tree.png', 'dark_green_round_tree.png',
                     'bright_green_leafy_tree.png', 'red_rooted_tall_tree.png', 'forest_canopy_tree.png'],
         conifer:   ['orange_autumn_tree.png', 'towering_pine_tree.png', 'big_fir_tree.png',
                     'dark_bushy_tree.png', 'small_round_tree.png'],
         snow:      ['small_round_tree.png', 'broad_leafy_tree.png', 'tall_autumn_tree.png'],
-        jungle:    ['large_jungle_tree.png', 'slim_jungle_trunk.png', 'tall_jungle_trunk.png'],
+        jungle:    ['large_jungle_tree.png', 'tall_jungle_trunk.png'],
         sakura:    ['bare_snowy_cherry_tree.png', 'snowy_cherry_trunk_tree.png', 'bare_winter_tree.png', 'slim_winter_tree.png'],
-        fruit:     ['green_fruit_tree.png', 'orange_trunk_fruit_tree.png',
-                    'tall_leafy_tree.png', 'small_fruit_tree_with_crate.png'],
+        fruit:     ['orange_trunk_fruit_tree.png',
+                    'tall_leafy_tree.png'],
         dead:      ['gnarled_dead_tree.png', 'haunted_tree_with_pumpkins.png', 'dead_red_tree.png'],
-        generic:   ['dark_canopy_tree.png', 'tall_pine_tree.png', 'yellow_autumn_tree.png']
+        generic:   ['yellow_autumn_tree.png']
     };
     const ROCK_POOL = ['speckled_stone_arch.png', 'stone_stalagmite.png', 'pink_rock_shards.png',
                        'curved_rock_spire.png', 'rocky_water_mound.png', 'grassy_flat_rock.png',
@@ -1897,6 +2072,7 @@
     // actually walk around them.
 
     const _charSheetTex = new Map();
+    const _charSheetMat = new Map();
 
     // One character sheet, loaded once and shared. Every figure drawn off it
     // clones the texture (a clone owns its own offset, which is what lets two
@@ -1917,6 +2093,34 @@
         }
         _charSheetTex.set(sheet, t);
         return t;
+    }
+
+    // ONE material per sheet, shared by every figure drawn off it.
+    //
+    // A card used to own a CLONE of the sheet, because a clone owns its own
+    // offset and that is what let two people off one sheet face different ways.
+    // The price was hidden and large: a clone is a texture of its own as far as
+    // the renderer is concerned, so the same pixels were uploaded again for
+    // every figure in the world - a city square deals out well over a hundred -
+    // and a texture of its own meant a material of its own, so no two figures
+    // could ever share a thing.
+    //
+    // The frame is chosen in the GEOMETRY instead (see _reskin): every card
+    // already owns its own plane, cut to the shape of the art, and moving four
+    // pairs of UVs costs nothing. So the sheet is used as it was loaded, the
+    // material is common, and the hour is carried per figure on a vertex colour
+    // rather than on a material colour.
+    function characterSheetMaterial(sheet) {
+        let m = _charSheetMat.get(sheet);
+        if (m !== undefined) return m;
+        const tex = characterSheetTexture(sheet);
+        m = new THREE.MeshBasicMaterial({
+            map: tex, transparent: true, alphaTest: 0.4,
+            side: THREE.DoubleSide, depthWrite: true, fog: true,
+            vertexColors: true
+        });
+        _charSheetMat.set(sheet, m);
+        return m;
     }
 
     // Where one character's block of frames sits on its sheet. A `$` sheet holds
@@ -2036,6 +2240,15 @@
     // built this array again on every one of them.
     const WALK_CYCLE = [1, 0, 1, 2];
 
+    // What a card is drawn with where there is no sheet to draw it with at all
+    // (no TextureLoader, which is the test harness rather than the game). One
+    // of them, shared, so a card with nothing on it is not also a material.
+    let _blankMat = null;
+    function _blankCardMat() {
+        if (!_blankMat) _blankMat = new THREE.MeshBasicMaterial({ visible: false });
+        return _blankMat;
+    }
+
     class CharacterBillboard {
         constructor(sheet, index, height) {
             this.sheet  = sheet;
@@ -2050,21 +2263,14 @@
             this.cols = lay.cols; this.rows = lay.rows;
             this.colBase = lay.colBase; this.rowBase = lay.rowBase;
 
+            // Both shared, and neither is this card's to change or to free.
             this.base = characterSheetTexture(sheet);
-            this.tex  = this.base ? this.base.clone() : null;
-            if (this.tex) {
-                this.tex.repeat.set(1 / this.cols, 1 / this.rows);
-                this.tex.offset.set(this.colBase / this.cols, 1 - (this.rowBase + 1) / this.rows);
-                if (this.base.image && this.base.image.width) this.tex.needsUpdate = true;
-            }
+            this.mat  = this.base ? characterSheetMaterial(sheet) : null;
+            this.tex  = this.base;
             _billboards.add(this);
-            // Unlit, and dimmed by hand with the hour (see setDaylight): a card
-            // that always turns to the camera has no honest normal to light.
-            this.mat = new THREE.MeshBasicMaterial({
-                map: this.tex, transparent: true, alphaTest: 0.4,
-                side: THREE.DoubleSide, depthWrite: true, fog: true
-            });
-            this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(this.h * 0.66, this.h), this.mat);
+            this.mesh = new THREE.Mesh(
+                this._plane(this.h * 0.66, this.h),
+                this.mat || _blankCardMat());
             // Every figure in the world is a card of its own, and a town square
             // deals out a dozen and a half of them: left uncullable they were
             // all drawn, the ones behind the camera included. The plane is
@@ -2078,6 +2284,47 @@
             // card IS the figure, which is what it always used to be.
             this.cardH = this.h;
             this.foot  = 1;
+        }
+
+        // The card itself. A plane of four vertices carrying two things the
+        // shared material cannot: which cell of the sheet this figure is
+        // showing (the UVs), and how dark the hour has made it (the colour).
+        // Both used to live on a texture and a material of this card's own,
+        // which is what stopped a hundred and fifty figures ever sharing one.
+        _plane(w, h) {
+            const geo = new THREE.PlaneGeometry(w, h);
+            geo.setAttribute('color',
+                new THREE.BufferAttribute(new Float32Array(12).fill(1), 3));
+            this._uvAttr  = geo.attributes.uv;
+            this._colAttr = geo.attributes.color;
+            this._uvKey   = -1;       // force the first write through
+            this._writeUv(this.colBase, this.rowBase);
+            if (this._df !== undefined) this._writeTint(this._df);
+            return geo;
+        }
+
+        // The cell at (col, row) of the sheet, written into the four corners.
+        // PlaneGeometry lays its vertices out top-left, top-right, bottom-left,
+        // bottom-right, so the V of the top pair is the HIGHER one.
+        _writeUv(col, row) {
+            const key = row * 64 + col;
+            if (key === this._uvKey) return;
+            this._uvKey = key;
+            const du = 1 / this.cols, dv = 1 / this.rows;
+            const u0 = col * du;
+            const v0 = 1 - (row + 1) * dv;
+            const a = this._uvAttr.array;
+            a[0] = u0;      a[1] = v0 + dv;
+            a[2] = u0 + du; a[3] = v0 + dv;
+            a[4] = u0;      a[5] = v0;
+            a[6] = u0 + du; a[7] = v0;
+            this._uvAttr.needsUpdate = true;
+        }
+
+        _writeTint(v) {
+            const a = this._colAttr.array;
+            for (let i = 0; i < 12; i++) a[i] = v;
+            this._colAttr.needsUpdate = true;
         }
 
         // `y` is the GROUND under the figure, not the middle of the card. It is
@@ -2105,7 +2352,10 @@
             const v = 0.42 + 0.58 * Math.max(0, Math.min(1, df));
             if (this._df === v) return;
             this._df = v;
-            this.mat.color.setRGB(v, v, v);
+            // Onto this card's own four vertices. The material is shared with
+            // every other figure off the same sheet now, so tinting IT would
+            // put the whole town in whatever light the last one asked for.
+            this._writeTint(v);
         }
 
         // Re-cut the card to the real shape of the art the moment it lands, turn
@@ -2114,8 +2364,6 @@
             if (!this.tex) return;
             if (!this._sized && this.base.image && this.base.image.width) {
                 this._sized = true;
-                this.tex.image = this.base.image;
-                this.tex.needsUpdate = true;
                 const fw = this.base.image.width / this.cols;
                 const fh = this.base.image.height / this.rows;
                 if (fh > 0) {
@@ -2123,8 +2371,13 @@
                     this.foot = fig ? fig.foot : 1;
                     const cut = this._cut(fw, fh, fig);
                     this.cardH = cut.h;
+                    // The card this figure is carrying is its own, so it is
+                    // given back; the frame it was showing and the light it was
+                    // in are written onto the new one by _plane.
                     this.mesh.geometry.dispose();
-                    this.mesh.geometry = new THREE.PlaneGeometry(cut.w, cut.h);
+                    const keep = this._uvKey;
+                    this.mesh.geometry = this._plane(cut.w, cut.h);
+                    if (keep >= 0) this._writeUv(keep % 64, Math.floor(keep / 64));
                     // Whoever placed it did so against the old card, so it is
                     // put back on the same ground rather than nudged from where
                     // the old one happened to sit.
@@ -2154,16 +2407,17 @@
             const row = characterFacingRow(this.yaw,
                 camX - this.mesh.position.x, camZ - this.mesh.position.z);
             const col = this.moving ? WALK_CYCLE[Math.floor(this.step / 7) % 4] : 1;
-            this.tex.offset.set((this.colBase + col) / this.cols,
-                1 - (this.rowBase + row + 1) / this.rows);
+            this._writeUv(this.colBase + col, this.rowBase + row);
         }
 
+        // The card goes; the SHEET and the material it is drawn with stay. They
+        // belong to every other figure off the same sheet, and freeing them
+        // here would take the art out from under a townful of people the moment
+        // one of them walked off the edge of the world.
         dispose() {
             _billboards.delete(this);
             if (this.mesh.parent) this.mesh.parent.remove(this.mesh);
             this.mesh.geometry.dispose();
-            this.mat.dispose();
-            if (this.tex) this.tex.dispose();
         }
     }
 
@@ -2248,10 +2502,17 @@
         characterFacingRow, characterSheetLayout, characterSheetTexture, faceBillboards,
         dayFactorForHour, getBiomeOverride, getRenderType, getRoadDirectionAt,
         initPerlinWithSeed, VOXEL_WORLD_SEED, setBiomeOverride, setAlienTerrain, getAlienTerrain,
+        alienHasNoGround,
         isFarlandsTile, farlandsBiomeAt,
         isRoadTile, loadTex, noiseHeight, parseRoadDirection, pickRandomRoadTile,
         placeNameAt, roadDataReady, roadExitsFrom, roadLabelAt, roadLinksAt,
         roadTileTable, sampleBiomeAt, sampleSkyColor, setTextureAnisotropy,
-        isAirlessWorld, sampleAlienSkyColor, ALIEN_BIOME_SKY_PALETTES
+        isAirlessWorld, sampleAlienSkyColor, ALIEN_BIOME_SKY_PALETTES,
+        isGasGiantWorld, GAS_DECKS, GAS_FLOOR_Y, GAS_WARN_BAND, GAS_WARN_EVERY, GAS_TOP_Y, GAS_DECK_SPAN,
+        GAS_DECK_FADE, GAS_BODY_AT, GAS_ENTRY_AT, GAS_ENTRY_Y,
+        GAS_LIMB_R, GAS_LIMB_ARC, GAS_BAND_SPAN,
+        GAS_FOG_TOP, GAS_FOG_DEEP, GAS_BOLT_EVERY, GAS_BOLT_LIFE,
+        gasDepth01,
+        FLIGHT, flightModel, FLY_ABS_MAX
     });
 })();

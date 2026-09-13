@@ -5,7 +5,6 @@
   "subtitle": "Modalita operative",
   "tab": {
     "modes": "Modalita operative",
-    "spell": "Incantesimo caricato",
     "element": "Elemento",
     "form": "Forma ed elemento"
   },
@@ -20,9 +19,6 @@
     "status": "Stato",
     "effect": "Effetto",
     "modesTitle": "Modalita attive",
-    "spellTitle": "Incantesimo caricato",
-    "cost": "Mana dimezzato",
-    "unbound": "Niente caricato",
     "fitted": "Montato",
     "elementTitle": "Elemento",
     "formTitle": "Forma",
@@ -40,10 +36,10 @@
       "desc": "Contraccolpo sul bersaglio.",
       "effect": "I bersagli colpiti vengono respinti e resi fluttuanti."
     },
-    "spellblaster": {
-      "name": "Spellblaster",
-      "desc": "Spara l'incantesimo caricato a ogni colpo.",
-      "effect": "L'incantesimo caricato parte a ogni attacco. Senza questa modalita costa il 150% del suo costo in MP; con essa il 75%. Senza MP, il colpo e' un attacco normale."
+    "solomonIncantation": {
+      "name": "Incantazione di Salomone",
+      "desc": "Le magie vengono lette ad alta voce e colpiscono il 15% in più.",
+      "effect": "Funziona solo con il Grimorio di Salomone montato, o mentre il libro è aperto durante Morte Aggraziata. Ogni magia lanciata viene prima letta per intero, in un riquadro tutto suo, e poi infligge o cura il 15% in più."
     },
     "card": {
       "name": "Carta",
@@ -156,19 +152,9 @@
       "effect": "Il coilgun tiene 4 colpi in piu prima di richiudersi. Danno invariato."
     }
   },
-  "spell": {
-    "none": "Nessun incantesimo",
-    "noneDesc": "Nessun incantesimo parte col colpo.",
-    "empty": "Nessun incantesimo a bersaglio singolo conosciuto.",
-    "hint": "Si puo caricare solo magia offensiva a bersaglio singolo. Le abilita non si possono caricare.",
-    "mp": "{cost} MP",
-    "fired": "{cost} MP a colpo"
-  },
   "toast": {
     "fitted": "{mode} attiva.",
     "removed": "{mode} inattiva.",
-    "bound": "{spell} caricato nel colpo.",
-    "cleared": "Incantesimo scaricato.",
     "card": "Carta di {name} ottenuta.",
     "element": "Elemento impostato su {element}.",
     "swapped": "{mode} attiva, {old} inattiva.",

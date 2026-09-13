@@ -66,7 +66,8 @@
     "dialogueVoicesVolume": "Dialogue Voices Volume",
     "asciiMode": "ASCII Mode",
     "asciiHud": "ASCII HUD",
-    "themeAscii": "ASCII"
+    "themeAscii": "ASCII",
+    "galaxyQuality": "Star Map Quality"
   },
   "warn": {
     "language": "⚠ Work in progress: only English is fully translated. Any other language leaves large parts of the game untranslated.",
@@ -114,6 +115,7 @@
     "mapTooltips": "Real-time tutorial messages, compass quest targets and written context tips while you walk the map.",
     "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
     "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
+    "battleLogPosition": "Which corner of the screen the running battle commentary hangs in.",
     "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
     "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier."
   },
@@ -128,6 +130,10 @@
       "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
       "SnapVertex: the PlayStation-1 look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
       "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
+    ],
+    "battleLogPosition": [
+      "Bottom Left: the log stands on the floor of the left and grows upward.",
+      "Top Right: the log hangs from the top of the right and grows downward."
     ],
     "battleCommandPosition": [
       "Left: the command list, skills and backpack stand on the left of the screen.",
@@ -171,5 +177,10 @@
     "pixelArt": "Pixel Art",
     "ascii": "ASCII",
     "other": "Other"
+  },
+  "galaxyQuality": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
   }
 }

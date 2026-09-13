@@ -167,5 +167,15 @@
   "LavaTube": "Lava Tube",
   "Barrow": "Barrow",
   "MetroStation": "Underground Station",
-  "SaltWorks": "Salt Works"
+  "SaltWorks": "Salt Works",
+  "AlienUnderFracture": "Alien Fault Galleries",
+  "AlienUnderGlacier": "Alien Glacial Vaults",
+  "AlienUnderGeode": "Alien Geode Chambers",
+  "AlienUnderLavatube": "Alien Lava Tubes",
+  "AlienUnderAbyss": "Alien Underground Ocean",
+  "AlienUnderBurrow": "Alien Burrows",
+  "AlienUnderDust": "Alien Dust Halls",
+  "AlienUnderVault": "Alien Machine Vaults",
+  "AlienUnderStorm": "Alien Cloud Decks",
+  "AlienUnderVoid": "Alien Dead Core"
 }

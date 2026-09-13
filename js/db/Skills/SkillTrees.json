@@ -1,0 +1,2867 @@
+{
+  "_comment": "The hand authored skill tree of every category. Loaded as window.Skills.SkillTrees by DataService and read by SkillGraph in js/plugins/CharacterCreation/SkillMaster.js. A branch is one subtree of a school: its nodes are ordered weakest to strongest, esoteric skills sit in the middle of that climb and forbidden ones close it, and a node requires the node one rung above it. Written by tools/skills/gen_skill_trees.js: edit the tables there, not this file.",
+  "version": 1,
+  "generatedBy": "tools/skills/gen_skill_trees.js",
+  "trees": {
+    "Aeromancy": {
+      "branches": [
+        {
+          "id": "aeromancy.weather",
+          "name": {"en":"Weather Working","it":"Governo del Tempo"},
+          "icon": 50,
+          "nodes": [
+            {"id":1665,"tier":0,"requires":[]},
+            {"id":1657,"tier":1,"requires":[1665]},
+            {"id":1661,"tier":1,"requires":[1665]},
+            {"id":1659,"tier":1,"requires":[1665]},
+            {"id":1666,"tier":2,"requires":[1657]},
+            {"id":390,"tier":2,"requires":[1657]},
+            {"id":432,"tier":2,"requires":[1657]},
+            {"id":1667,"tier":3,"requires":[432]}
+          ]
+        },
+        {
+          "id": "aeromancy.gale",
+          "name": {"en":"Rising Gale","it":"Raffica Nascente"},
+          "icon": 69,
+          "nodes": [
+            {"id":1809,"tier":0,"requires":[]},
+            {"id":1726,"tier":1,"requires":[1809]},
+            {"id":1760,"tier":1,"requires":[1809]},
+            {"id":1724,"tier":1,"requires":[1809]},
+            {"id":1761,"tier":2,"requires":[1726]},
+            {"id":1837,"tier":2,"requires":[1726]},
+            {"id":409,"tier":2,"requires":[1726]},
+            {"id":476,"tier":2,"requires":[1760]},
+            {"id":1759,"tier":2,"requires":[1760]},
+            {"id":489,"tier":3,"requires":[1759]},
+            {"id":447,"tier":4,"requires":[489]}
+          ]
+        },
+        {
+          "id": "aeromancy.edge",
+          "name": {"en":"Cutting Wind","it":"Vento Tagliente"},
+          "icon": 69,
+          "nodes": [
+            {"id":1845,"tier":0,"requires":[]},
+            {"id":1855,"tier":1,"requires":[1845]},
+            {"id":442,"tier":1,"requires":[1845]}
+          ]
+        },
+        {
+          "id": "aeromancy.cyclone",
+          "name": {"en":"Cyclone Heart","it":"Cuore del Ciclone"},
+          "icon": 69,
+          "nodes": [
+            {"id":1725,"tier":0,"requires":[]},
+            {"id":477,"tier":1,"requires":[1725]},
+            {"id":1839,"tier":1,"requires":[1725]},
+            {"id":497,"tier":1,"requires":[1725]},
+            {"id":504,"tier":2,"requires":[477]},
+            {"id":490,"tier":2,"requires":[477]},
+            {"id":451,"tier":2,"requires":[477]},
+            {"id":449,"tier":3,"requires":[451]}
+          ]
+        },
+        {
+          "id": "aeromancy.storm",
+          "name": {"en":"Great Storms","it":"Grandi Tempeste"},
+          "icon": 69,
+          "nodes": [
+            {"id":465,"tier":0,"requires":[]},
+            {"id":1823,"tier":1,"requires":[465]},
+            {"id":402,"tier":1,"requires":[465]},
+            {"id":1830,"tier":1,"requires":[465]},
+            {"id":491,"tier":2,"requires":[1823]}
+          ]
+        }
+      ]
+    },
+    "Alchemistry": {
+      "branches": [
+        {
+          "id": "alchemistry.toxins",
+          "name": {"en":"Poisons and Toxins","it":"Veleni e Tossine"},
+          "icon": 177,
+          "nodes": [
+            {"id":998,"tier":0,"requires":[]},
+            {"id":995,"tier":1,"requires":[998]},
+            {"id":994,"tier":1,"requires":[998]},
+            {"id":990,"tier":1,"requires":[998]},
+            {"id":1000,"tier":2,"requires":[995]},
+            {"id":1004,"tier":2,"requires":[995]},
+            {"id":1001,"tier":2,"requires":[995]},
+            {"id":988,"tier":2,"requires":[994]},
+            {"id":996,"tier":2,"requires":[994]}
+          ]
+        },
+        {
+          "id": "alchemistry.triage",
+          "name": {"en":"Field Medicine","it":"Medicina da Campo"},
+          "icon": 70,
+          "nodes": [
+            {"id":1009,"tier":0,"requires":[]},
+            {"id":1011,"tier":1,"requires":[1009]},
+            {"id":1010,"tier":1,"requires":[1009]},
+            {"id":1014,"tier":1,"requires":[1009]},
+            {"id":1013,"tier":2,"requires":[1011]},
+            {"id":1008,"tier":2,"requires":[1011]},
+            {"id":1019,"tier":2,"requires":[1011]},
+            {"id":1017,"tier":2,"requires":[1010]},
+            {"id":1015,"tier":2,"requires":[1010]},
+            {"id":1022,"tier":2,"requires":[1010]},
+            {"id":1018,"tier":2,"requires":[1014]},
+            {"id":1016,"tier":3,"requires":[1018]}
+          ]
+        },
+        {
+          "id": "alchemistry.reactions",
+          "name": {"en":"Violent Reactions","it":"Reazioni Violente"},
+          "icon": 180,
+          "nodes": [
+            {"id":989,"tier":0,"requires":[]},
+            {"id":999,"tier":1,"requires":[989]},
+            {"id":1003,"tier":1,"requires":[989]},
+            {"id":1002,"tier":1,"requires":[989]},
+            {"id":1005,"tier":2,"requires":[1002]}
+          ]
+        },
+        {
+          "id": "alchemistry.distillation",
+          "name": {"en":"Distillation","it":"Distillazione"},
+          "icon": 73,
+          "nodes": [
+            {"id":997,"tier":0,"requires":[]},
+            {"id":992,"tier":1,"requires":[997]},
+            {"id":993,"tier":1,"requires":[997]},
+            {"id":1021,"tier":1,"requires":[997]},
+            {"id":1006,"tier":2,"requires":[992]},
+            {"id":1020,"tier":2,"requires":[992]},
+            {"id":991,"tier":2,"requires":[992]},
+            {"id":1012,"tier":3,"requires":[991]},
+            {"id":1007,"tier":4,"requires":[1012]}
+          ]
+        }
+      ]
+    },
+    "Arcanism": {
+      "branches": [
+        {
+          "id": "arcanism.wards",
+          "name": {"en":"Wards and Mirrors","it":"Scudi e Specchi"},
+          "icon": 222,
+          "nodes": [
+            {"id":774,"tier":0,"requires":[]},
+            {"id":773,"tier":1,"requires":[774]},
+            {"id":771,"tier":1,"requires":[774]},
+            {"id":775,"tier":1,"requires":[774]},
+            {"id":772,"tier":2,"requires":[773]}
+          ]
+        },
+        {
+          "id": "arcanism.bolts",
+          "name": {"en":"Arcane Bolts","it":"Dardi Arcani"},
+          "icon": 76,
+          "nodes": [
+            {"id":1739,"tier":0,"requires":[]},
+            {"id":1741,"tier":1,"requires":[1739]},
+            {"id":1775,"tier":1,"requires":[1739]},
+            {"id":770,"tier":1,"requires":[1739]},
+            {"id":784,"tier":2,"requires":[1741]},
+            {"id":787,"tier":2,"requires":[1741]}
+          ]
+        },
+        {
+          "id": "arcanism.lore",
+          "name": {"en":"Deep Lore","it":"Sapere Profondo"},
+          "icon": 70,
+          "nodes": [
+            {"id":769,"tier":0,"requires":[]},
+            {"id":791,"tier":1,"requires":[769]},
+            {"id":777,"tier":1,"requires":[769]},
+            {"id":776,"tier":1,"requires":[769]},
+            {"id":783,"tier":2,"requires":[791]},
+            {"id":795,"tier":2,"requires":[791]},
+            {"id":794,"tier":2,"requires":[791]},
+            {"id":793,"tier":2,"requires":[777]}
+          ]
+        },
+        {
+          "id": "arcanism.cosmic",
+          "name": {"en":"Cosmic Forces","it":"Forze Cosmiche"},
+          "icon": 133,
+          "nodes": [
+            {"id":1743,"tier":0,"requires":[]},
+            {"id":1772,"tier":1,"requires":[1743]},
+            {"id":782,"tier":1,"requires":[1743]},
+            {"id":780,"tier":1,"requires":[1743]},
+            {"id":1777,"tier":2,"requires":[1772]},
+            {"id":1776,"tier":2,"requires":[1772]},
+            {"id":1774,"tier":2,"requires":[1772]},
+            {"id":792,"tier":2,"requires":[782]},
+            {"id":781,"tier":2,"requires":[782]},
+            {"id":1778,"tier":2,"requires":[782]},
+            {"id":785,"tier":2,"requires":[780]},
+            {"id":788,"tier":2,"requires":[780]},
+            {"id":790,"tier":3,"requires":[788]},
+            {"id":786,"tier":4,"requires":[790]},
+            {"id":779,"tier":4,"requires":[790]},
+            {"id":789,"tier":5,"requires":[779]}
+          ]
+        }
+      ]
+    },
+    "AstralMagic": {
+      "branches": [
+        {
+          "id": "astralmagic.meteors",
+          "name": {"en":"Falling Stars","it":"Stelle Cadenti"},
+          "icon": 68,
+          "nodes": [
+            {"id":1740,"tier":0,"requires":[]},
+            {"id":746,"tier":1,"requires":[1740]},
+            {"id":747,"tier":1,"requires":[1740]},
+            {"id":1850,"tier":1,"requires":[1740]},
+            {"id":1893,"tier":2,"requires":[746]},
+            {"id":455,"tier":2,"requires":[746]},
+            {"id":754,"tier":2,"requires":[746]},
+            {"id":492,"tier":2,"requires":[747]},
+            {"id":499,"tier":2,"requires":[747]},
+            {"id":1872,"tier":2,"requires":[747]},
+            {"id":755,"tier":2,"requires":[1850]},
+            {"id":757,"tier":3,"requires":[755]}
+          ]
+        },
+        {
+          "id": "astralmagic.gravity",
+          "name": {"en":"Gravity and Rift","it":"Gravita e Squarcio"},
+          "icon": 79,
+          "nodes": [
+            {"id":743,"tier":0,"requires":[]},
+            {"id":748,"tier":1,"requires":[743]},
+            {"id":1890,"tier":1,"requires":[743]},
+            {"id":1894,"tier":1,"requires":[743]},
+            {"id":1895,"tier":2,"requires":[748]},
+            {"id":1896,"tier":2,"requires":[748]},
+            {"id":1888,"tier":2,"requires":[748]},
+            {"id":1889,"tier":3,"requires":[1888]}
+          ]
+        },
+        {
+          "id": "astralmagic.time",
+          "name": {"en":"Broken Hours","it":"Ore Spezzate"},
+          "icon": 220,
+          "nodes": [
+            {"id":744,"tier":0,"requires":[]},
+            {"id":740,"tier":1,"requires":[744]},
+            {"id":749,"tier":1,"requires":[744]},
+            {"id":738,"tier":1,"requires":[744]},
+            {"id":750,"tier":2,"requires":[740]},
+            {"id":752,"tier":2,"requires":[740]},
+            {"id":1897,"tier":2,"requires":[740]},
+            {"id":1899,"tier":2,"requires":[749]},
+            {"id":1898,"tier":2,"requires":[749]}
+          ]
+        },
+        {
+          "id": "astralmagic.resonance",
+          "name": {"en":"Resonance","it":"Risonanza"},
+          "icon": 220,
+          "nodes": [
+            {"id":739,"tier":0,"requires":[]},
+            {"id":737,"tier":1,"requires":[739]},
+            {"id":753,"tier":1,"requires":[739]},
+            {"id":741,"tier":1,"requires":[739]},
+            {"id":703,"tier":2,"requires":[737]},
+            {"id":745,"tier":2,"requires":[737]},
+            {"id":742,"tier":2,"requires":[737]},
+            {"id":1891,"tier":2,"requires":[753]},
+            {"id":1892,"tier":2,"requires":[753]},
+            {"id":756,"tier":3,"requires":[1892]},
+            {"id":751,"tier":4,"requires":[756]}
+          ]
+        }
+      ]
+    },
+    "Augury": {
+      "branches": [
+        {
+          "id": "augury.omens",
+          "name": {"en":"Reading Omens","it":"Lettura dei Presagi"},
+          "icon": 312,
+          "nodes": [
+            {"id":1404,"tier":0,"requires":[]},
+            {"id":1402,"tier":1,"requires":[1404]},
+            {"id":1405,"tier":1,"requires":[1404]},
+            {"id":1401,"tier":1,"requires":[1404]},
+            {"id":1403,"tier":2,"requires":[1402]}
+          ]
+        },
+        {
+          "id": "augury.threads",
+          "name": {"en":"Threads of Fate","it":"Fili del Destino"},
+          "icon": 312,
+          "nodes": [
+            {"id":1407,"tier":0,"requires":[]},
+            {"id":1406,"tier":1,"requires":[1407]},
+            {"id":1408,"tier":1,"requires":[1407]},
+            {"id":1410,"tier":2,"requires":[1408]},
+            {"id":1409,"tier":3,"requires":[1410]}
+          ]
+        },
+        {
+          "id": "augury.sight",
+          "name": {"en":"Total Sight","it":"Vista Totale"},
+          "icon": 312,
+          "nodes": [
+            {"id":1411,"tier":0,"requires":[]},
+            {"id":1412,"tier":1,"requires":[1411]}
+          ]
+        }
+      ]
+    },
+    "Basic": {
+      "branches": [
+        {
+          "id": "basic.survival",
+          "name": {"en":"Keeping Alive","it":"Restare Vivi"},
+          "icon": 129,
+          "nodes": [
+            {"id":8,"tier":0,"requires":[]},
+            {"id":2,"tier":1,"requires":[8]},
+            {"id":6,"tier":1,"requires":[8]},
+            {"id":5,"tier":1,"requires":[8]}
+          ]
+        },
+        {
+          "id": "basic.blows",
+          "name": {"en":"Plain Blows","it":"Colpi Semplici"},
+          "icon": 106,
+          "nodes": [
+            {"id":21,"tier":0,"requires":[]},
+            {"id":1,"tier":1,"requires":[21]},
+            {"id":10,"tier":1,"requires":[21]},
+            {"id":11,"tier":1,"requires":[21]}
+          ]
+        },
+        {
+          "id": "basic.wits",
+          "name": {"en":"Getting By","it":"Cavarsela"},
+          "icon": 82,
+          "nodes": [
+            {"id":3,"tier":0,"requires":[]},
+            {"id":4,"tier":1,"requires":[3]},
+            {"id":9,"tier":1,"requires":[3]},
+            {"id":12,"tier":1,"requires":[3]},
+            {"id":13,"tier":2,"requires":[4]},
+            {"id":30,"tier":2,"requires":[4]}
+          ]
+        }
+      ]
+    },
+    "Bestial": {
+      "branches": [
+        {
+          "id": "bestial.instinct",
+          "name": {"en":"Hide and Instinct","it":"Pelle e Istinto"},
+          "icon": 79,
+          "nodes": [
+            {"id":344,"tier":0,"requires":[]},
+            {"id":1933,"tier":1,"requires":[344]},
+            {"id":363,"tier":1,"requires":[344]},
+            {"id":1931,"tier":1,"requires":[344]},
+            {"id":308,"tier":2,"requires":[1933]},
+            {"id":368,"tier":2,"requires":[1933]},
+            {"id":351,"tier":2,"requires":[1933]},
+            {"id":369,"tier":2,"requires":[363]},
+            {"id":309,"tier":2,"requires":[363]},
+            {"id":307,"tier":2,"requires":[363]}
+          ]
+        },
+        {
+          "id": "bestial.hunt",
+          "name": {"en":"The Hunt","it":"La Caccia"},
+          "icon": 82,
+          "nodes": [
+            {"id":315,"tier":0,"requires":[]},
+            {"id":343,"tier":1,"requires":[315]},
+            {"id":305,"tier":1,"requires":[315]},
+            {"id":331,"tier":1,"requires":[315]},
+            {"id":365,"tier":2,"requires":[343]},
+            {"id":339,"tier":2,"requires":[343]},
+            {"id":324,"tier":2,"requires":[343]},
+            {"id":364,"tier":2,"requires":[305]},
+            {"id":366,"tier":2,"requires":[305]}
+          ]
+        },
+        {
+          "id": "bestial.fangs",
+          "name": {"en":"Tooth and Venom","it":"Zanna e Veleno"},
+          "icon": 177,
+          "nodes": [
+            {"id":299,"tier":0,"requires":[]},
+            {"id":300,"tier":1,"requires":[299]},
+            {"id":303,"tier":1,"requires":[299]},
+            {"id":327,"tier":1,"requires":[299]},
+            {"id":317,"tier":2,"requires":[300]},
+            {"id":325,"tier":2,"requires":[300]},
+            {"id":311,"tier":2,"requires":[300]},
+            {"id":352,"tier":2,"requires":[303]},
+            {"id":320,"tier":2,"requires":[303]},
+            {"id":338,"tier":2,"requires":[303]}
+          ]
+        },
+        {
+          "id": "bestial.fangs.2",
+          "name": {"en":"Tooth and Venom II","it":"Zanna e Veleno II"},
+          "icon": 294,
+          "nodes": [
+            {"id":354,"tier":0,"requires":[]},
+            {"id":1803,"tier":1,"requires":[354]},
+            {"id":1799,"tier":1,"requires":[354]},
+            {"id":353,"tier":1,"requires":[354]},
+            {"id":1802,"tier":2,"requires":[1803]},
+            {"id":359,"tier":2,"requires":[1803]},
+            {"id":1804,"tier":2,"requires":[1803]},
+            {"id":322,"tier":2,"requires":[1799]},
+            {"id":361,"tier":3,"requires":[322]},
+            {"id":357,"tier":4,"requires":[361]}
+          ]
+        },
+        {
+          "id": "bestial.limbs",
+          "name": {"en":"Claw and Limb","it":"Artiglio e Zampa"},
+          "icon": 105,
+          "nodes": [
+            {"id":319,"tier":0,"requires":[]},
+            {"id":326,"tier":1,"requires":[319]},
+            {"id":362,"tier":1,"requires":[319]},
+            {"id":1800,"tier":1,"requires":[319]},
+            {"id":340,"tier":2,"requires":[326]},
+            {"id":337,"tier":2,"requires":[326]},
+            {"id":336,"tier":2,"requires":[326]},
+            {"id":341,"tier":2,"requires":[362]},
+            {"id":1801,"tier":2,"requires":[362]},
+            {"id":335,"tier":2,"requires":[362]},
+            {"id":323,"tier":2,"requires":[1800]},
+            {"id":330,"tier":2,"requires":[1800]},
+            {"id":312,"tier":2,"requires":[1800]},
+            {"id":321,"tier":3,"requires":[340]}
+          ]
+        },
+        {
+          "id": "bestial.breath",
+          "name": {"en":"Beast Breath","it":"Fiato della Bestia"},
+          "icon": 83,
+          "nodes": [
+            {"id":310,"tier":0,"requires":[]},
+            {"id":301,"tier":1,"requires":[310]},
+            {"id":328,"tier":1,"requires":[310]},
+            {"id":329,"tier":1,"requires":[310]},
+            {"id":306,"tier":2,"requires":[301]},
+            {"id":332,"tier":2,"requires":[301]},
+            {"id":304,"tier":2,"requires":[301]},
+            {"id":346,"tier":2,"requires":[328]},
+            {"id":347,"tier":2,"requires":[328]},
+            {"id":334,"tier":2,"requires":[328]},
+            {"id":350,"tier":2,"requires":[329]},
+            {"id":342,"tier":2,"requires":[329]},
+            {"id":345,"tier":2,"requires":[329]},
+            {"id":348,"tier":3,"requires":[306]},
+            {"id":333,"tier":3,"requires":[306]}
+          ]
+        },
+        {
+          "id": "bestial.frenzy",
+          "name": {"en":"Feral Frenzy","it":"Frenesia Ferina"},
+          "icon": 5,
+          "nodes": [
+            {"id":313,"tier":0,"requires":[]},
+            {"id":314,"tier":1,"requires":[313]},
+            {"id":316,"tier":1,"requires":[313]},
+            {"id":318,"tier":1,"requires":[313]},
+            {"id":302,"tier":2,"requires":[314]},
+            {"id":349,"tier":2,"requires":[314]},
+            {"id":358,"tier":2,"requires":[314]},
+            {"id":355,"tier":2,"requires":[316]},
+            {"id":367,"tier":2,"requires":[316]},
+            {"id":360,"tier":3,"requires":[367]},
+            {"id":356,"tier":4,"requires":[360]}
+          ]
+        }
+      ]
+    },
+    "ChaosMagic": {
+      "branches": [
+        {
+          "id": "chaosmagic.pranks",
+          "name": {"en":"Fickle Pranks","it":"Scherzi Volubili"},
+          "icon": 211,
+          "nodes": [
+            {"id":1466,"tier":0,"requires":[]},
+            {"id":1470,"tier":1,"requires":[1466]},
+            {"id":1471,"tier":1,"requires":[1466]},
+            {"id":1467,"tier":1,"requires":[1466]},
+            {"id":1462,"tier":2,"requires":[1470]},
+            {"id":1464,"tier":2,"requires":[1470]},
+            {"id":1465,"tier":2,"requires":[1470]},
+            {"id":1468,"tier":2,"requires":[1471]},
+            {"id":1469,"tier":2,"requires":[1471]},
+            {"id":1472,"tier":3,"requires":[1469]},
+            {"id":1473,"tier":4,"requires":[1472]}
+          ]
+        },
+        {
+          "id": "chaosmagic.shapes",
+          "name": {"en":"Slippery Shapes","it":"Forme Sfuggenti"},
+          "icon": 211,
+          "nodes": [
+            {"id":1459,"tier":0,"requires":[]},
+            {"id":1461,"tier":1,"requires":[1459]},
+            {"id":1456,"tier":1,"requires":[1459]},
+            {"id":1457,"tier":1,"requires":[1459]},
+            {"id":1455,"tier":2,"requires":[1461]},
+            {"id":1460,"tier":2,"requires":[1461]},
+            {"id":1458,"tier":2,"requires":[1461]},
+            {"id":1463,"tier":2,"requires":[1456]}
+          ]
+        },
+        {
+          "id": "chaosmagic.boons",
+          "name": {"en":"Wild Boons","it":"Doni Selvaggi"},
+          "icon": 205,
+          "nodes": [
+            {"id":1677,"tier":0,"requires":[]},
+            {"id":1678,"tier":1,"requires":[1677]},
+            {"id":1676,"tier":2,"requires":[1678]},
+            {"id":1671,"tier":3,"requires":[1676]},
+            {"id":1672,"tier":3,"requires":[1676]},
+            {"id":1673,"tier":3,"requires":[1676]},
+            {"id":1674,"tier":4,"requires":[1671]},
+            {"id":1675,"tier":4,"requires":[1671]},
+            {"id":1679,"tier":4,"requires":[1671]}
+          ]
+        },
+        {
+          "id": "chaosmagic.blasts",
+          "name": {"en":"Unruly Blasts","it":"Scariche Indisciplinate"},
+          "icon": 79,
+          "nodes": [
+            {"id":401,"tier":0,"requires":[]},
+            {"id":426,"tier":1,"requires":[401]},
+            {"id":459,"tier":1,"requires":[401]},
+            {"id":458,"tier":1,"requires":[401]},
+            {"id":1831,"tier":2,"requires":[426]},
+            {"id":498,"tier":2,"requires":[426]},
+            {"id":1849,"tier":2,"requires":[426]}
+          ]
+        }
+      ]
+    },
+    "Chronomancy": {
+      "branches": [
+        {
+          "id": "chronomancy.hops",
+          "name": {"en":"Short Hops","it":"Salti Brevi"},
+          "icon": 220,
+          "nodes": [
+            {"id":1476,"tier":0,"requires":[]},
+            {"id":1475,"tier":1,"requires":[1476]},
+            {"id":1477,"tier":2,"requires":[1475]},
+            {"id":1478,"tier":3,"requires":[1477]}
+          ]
+        },
+        {
+          "id": "chronomancy.mending",
+          "name": {"en":"Mending Hours","it":"Ore che Guariscono"},
+          "icon": 220,
+          "nodes": [
+            {"id":1481,"tier":0,"requires":[]},
+            {"id":1480,"tier":1,"requires":[1481]},
+            {"id":1479,"tier":2,"requires":[1480]}
+          ]
+        },
+        {
+          "id": "chronomancy.leaps",
+          "name": {"en":"Long Leaps","it":"Salti Lunghi"},
+          "icon": 220,
+          "nodes": [
+            {"id":1482,"tier":0,"requires":[]},
+            {"id":1486,"tier":1,"requires":[1482]},
+            {"id":1483,"tier":2,"requires":[1486]},
+            {"id":1484,"tier":2,"requires":[1486]},
+            {"id":1485,"tier":2,"requires":[1486]}
+          ]
+        }
+      ]
+    },
+    "Convokation": {
+      "branches": [
+        {
+          "id": "convokation.wealth",
+          "name": {"en":"Wealth Called Up","it":"Ricchezza Evocata"},
+          "icon": 79,
+          "nodes": [
+            {"id":1413,"tier":0,"requires":[]},
+            {"id":1635,"tier":1,"requires":[1413]},
+            {"id":1638,"tier":2,"requires":[1635]},
+            {"id":1641,"tier":2,"requires":[1635]},
+            {"id":1491,"tier":2,"requires":[1635]},
+            {"id":1519,"tier":3,"requires":[1491]},
+            {"id":1518,"tier":4,"requires":[1519]},
+            {"id":1642,"tier":4,"requires":[1519]},
+            {"id":1433,"tier":4,"requires":[1519]},
+            {"id":1488,"tier":5,"requires":[1518]},
+            {"id":1517,"tier":5,"requires":[1518]}
+          ]
+        },
+        {
+          "id": "convokation.goods",
+          "name": {"en":"Conjured Goods","it":"Beni Evocati"},
+          "icon": 209,
+          "nodes": [
+            {"id":1415,"tier":0,"requires":[]},
+            {"id":1582,"tier":1,"requires":[1415]},
+            {"id":1496,"tier":1,"requires":[1415]},
+            {"id":1624,"tier":1,"requires":[1415]},
+            {"id":1625,"tier":2,"requires":[1582]},
+            {"id":1628,"tier":2,"requires":[1582]},
+            {"id":1631,"tier":2,"requires":[1582]},
+            {"id":1498,"tier":2,"requires":[1496]},
+            {"id":1626,"tier":2,"requires":[1496]},
+            {"id":1627,"tier":2,"requires":[1496]},
+            {"id":1630,"tier":2,"requires":[1624]},
+            {"id":1633,"tier":2,"requires":[1624]},
+            {"id":1495,"tier":2,"requires":[1624]}
+          ]
+        },
+        {
+          "id": "convokation.goods.2",
+          "name": {"en":"Conjured Goods II","it":"Beni Evocati II"},
+          "icon": 209,
+          "nodes": [
+            {"id":1416,"tier":0,"requires":[]},
+            {"id":1501,"tier":1,"requires":[1416]},
+            {"id":1930,"tier":1,"requires":[1416]},
+            {"id":1497,"tier":1,"requires":[1416]},
+            {"id":1629,"tier":2,"requires":[1497]},
+            {"id":1632,"tier":3,"requires":[1629]},
+            {"id":1634,"tier":3,"requires":[1629]},
+            {"id":1637,"tier":3,"requires":[1629]},
+            {"id":1639,"tier":4,"requires":[1632]},
+            {"id":1636,"tier":4,"requires":[1632]},
+            {"id":1489,"tier":4,"requires":[1632]},
+            {"id":1640,"tier":4,"requires":[1634]}
+          ]
+        },
+        {
+          "id": "convokation.places",
+          "name": {"en":"Called Places","it":"Luoghi Chiamati"},
+          "icon": 79,
+          "nodes": [
+            {"id":1506,"tier":0,"requires":[]},
+            {"id":1504,"tier":1,"requires":[1506]},
+            {"id":1505,"tier":1,"requires":[1506]},
+            {"id":1507,"tier":1,"requires":[1506]}
+          ]
+        },
+        {
+          "id": "convokation.lesser",
+          "name": {"en":"Lesser Callings","it":"Chiamate Minori"},
+          "icon": 79,
+          "nodes": [
+            {"id":889,"tier":0,"requires":[]},
+            {"id":1494,"tier":1,"requires":[889]},
+            {"id":1907,"tier":1,"requires":[889]},
+            {"id":1911,"tier":1,"requires":[889]},
+            {"id":1906,"tier":2,"requires":[1494]},
+            {"id":1912,"tier":2,"requires":[1494]},
+            {"id":778,"tier":2,"requires":[1494]},
+            {"id":1909,"tier":2,"requires":[1907]},
+            {"id":1910,"tier":2,"requires":[1907]},
+            {"id":1908,"tier":2,"requires":[1907]},
+            {"id":1500,"tier":2,"requires":[1911]},
+            {"id":1502,"tier":2,"requires":[1911]},
+            {"id":1299,"tier":2,"requires":[1911]},
+            {"id":1493,"tier":3,"requires":[1299]}
+          ]
+        },
+        {
+          "id": "convokation.hosts",
+          "name": {"en":"Hosts and Guards","it":"Schiere e Guardie"},
+          "icon": 79,
+          "nodes": [
+            {"id":1928,"tier":0,"requires":[]},
+            {"id":1929,"tier":1,"requires":[1928]},
+            {"id":1919,"tier":1,"requires":[1928]},
+            {"id":1925,"tier":1,"requires":[1928]},
+            {"id":1904,"tier":2,"requires":[1929]},
+            {"id":1902,"tier":2,"requires":[1929]},
+            {"id":1920,"tier":2,"requires":[1929]},
+            {"id":1923,"tier":2,"requires":[1919]},
+            {"id":1918,"tier":2,"requires":[1919]},
+            {"id":1905,"tier":2,"requires":[1919]},
+            {"id":1903,"tier":2,"requires":[1925]},
+            {"id":1917,"tier":2,"requires":[1925]},
+            {"id":1296,"tier":2,"requires":[1925]},
+            {"id":1276,"tier":3,"requires":[1904]},
+            {"id":1490,"tier":4,"requires":[1276]},
+            {"id":1503,"tier":5,"requires":[1490]},
+            {"id":1516,"tier":6,"requires":[1503]}
+          ]
+        },
+        {
+          "id": "convokation.damned",
+          "name": {"en":"The Damned","it":"I Dannati"},
+          "icon": 79,
+          "nodes": [
+            {"id":1293,"tier":0,"requires":[]},
+            {"id":1303,"tier":1,"requires":[1293]},
+            {"id":1901,"tier":1,"requires":[1293]},
+            {"id":1294,"tier":1,"requires":[1293]},
+            {"id":1297,"tier":2,"requires":[1303]},
+            {"id":1914,"tier":2,"requires":[1303]},
+            {"id":1913,"tier":2,"requires":[1303]},
+            {"id":1924,"tier":2,"requires":[1901]},
+            {"id":1900,"tier":2,"requires":[1901]},
+            {"id":1927,"tier":2,"requires":[1901]},
+            {"id":1307,"tier":2,"requires":[1294]},
+            {"id":1301,"tier":2,"requires":[1294]},
+            {"id":1304,"tier":2,"requires":[1294]},
+            {"id":1305,"tier":3,"requires":[1297]},
+            {"id":1610,"tier":4,"requires":[1305]},
+            {"id":1921,"tier":5,"requires":[1610]},
+            {"id":1520,"tier":6,"requires":[1921]}
+          ]
+        },
+        {
+          "id": "convokation.outer",
+          "name": {"en":"Outer Things","it":"Cose di Fuori"},
+          "icon": 79,
+          "nodes": [
+            {"id":1306,"tier":0,"requires":[]},
+            {"id":1295,"tier":1,"requires":[1306]},
+            {"id":1302,"tier":1,"requires":[1306]},
+            {"id":1926,"tier":1,"requires":[1306]},
+            {"id":1300,"tier":2,"requires":[1295]},
+            {"id":1499,"tier":2,"requires":[1295]},
+            {"id":1915,"tier":2,"requires":[1295]},
+            {"id":1916,"tier":2,"requires":[1302]},
+            {"id":718,"tier":2,"requires":[1302]},
+            {"id":1308,"tier":2,"requires":[1302]},
+            {"id":1298,"tier":2,"requires":[1926]},
+            {"id":1309,"tier":2,"requires":[1926]},
+            {"id":1922,"tier":3,"requires":[1309]}
+          ]
+        }
+      ]
+    },
+    "Cooking": {
+      "branches": [
+        {
+          "id": "cooking.snacks",
+          "name": {"en":"Quick Bites","it":"Bocconi Veloci"},
+          "icon": 265,
+          "nodes": [
+            {"id":1065,"tier":0,"requires":[]},
+            {"id":1566,"tier":1,"requires":[1065]},
+            {"id":1570,"tier":1,"requires":[1065]},
+            {"id":1068,"tier":1,"requires":[1065]},
+            {"id":1569,"tier":2,"requires":[1566]},
+            {"id":1571,"tier":2,"requires":[1566]},
+            {"id":1567,"tier":2,"requires":[1566]},
+            {"id":1568,"tier":2,"requires":[1570]},
+            {"id":1572,"tier":3,"requires":[1568]},
+            {"id":1565,"tier":4,"requires":[1572]}
+          ]
+        },
+        {
+          "id": "cooking.violence",
+          "name": {"en":"Kitchen Violence","it":"Violenza da Cucina"},
+          "icon": 255,
+          "nodes": [
+            {"id":1066,"tier":0,"requires":[]},
+            {"id":1073,"tier":1,"requires":[1066]},
+            {"id":1070,"tier":1,"requires":[1066]},
+            {"id":1075,"tier":1,"requires":[1066]},
+            {"id":1072,"tier":2,"requires":[1073]}
+          ]
+        },
+        {
+          "id": "cooking.hearth",
+          "name": {"en":"Hearth Cooking","it":"Cucina del Focolare"},
+          "icon": 219,
+          "nodes": [
+            {"id":1074,"tier":0,"requires":[]},
+            {"id":1071,"tier":1,"requires":[1074]},
+            {"id":1069,"tier":1,"requires":[1074]},
+            {"id":1067,"tier":1,"requires":[1074]},
+            {"id":1076,"tier":2,"requires":[1071]},
+            {"id":1077,"tier":2,"requires":[1071]},
+            {"id":1564,"tier":3,"requires":[1077]},
+            {"id":1573,"tier":4,"requires":[1564]}
+          ]
+        }
+      ]
+    },
+    "Cryomancy": {
+      "branches": [
+        {
+          "id": "cryomancy.rime",
+          "name": {"en":"Rime Craft","it":"Arte della Brina"},
+          "icon": 65,
+          "nodes": [
+            {"id":403,"tier":0,"requires":[]},
+            {"id":1663,"tier":1,"requires":[403]},
+            {"id":1660,"tier":1,"requires":[403]},
+            {"id":412,"tier":1,"requires":[403]},
+            {"id":381,"tier":2,"requires":[1663]},
+            {"id":397,"tier":2,"requires":[1663]},
+            {"id":388,"tier":2,"requires":[1663]},
+            {"id":1668,"tier":3,"requires":[388]}
+          ]
+        },
+        {
+          "id": "cryomancy.motes",
+          "name": {"en":"First Frost","it":"Primo Gelo"},
+          "icon": 65,
+          "nodes": [
+            {"id":1806,"tier":0,"requires":[]},
+            {"id":1717,"tier":1,"requires":[1806]},
+            {"id":1814,"tier":1,"requires":[1806]},
+            {"id":405,"tier":1,"requires":[1806]},
+            {"id":428,"tier":2,"requires":[1717]},
+            {"id":417,"tier":2,"requires":[1717]},
+            {"id":1715,"tier":2,"requires":[1717]},
+            {"id":468,"tier":2,"requires":[1814]}
+          ]
+        },
+        {
+          "id": "cryomancy.lances",
+          "name": {"en":"Ice Lances","it":"Lance di Ghiaccio"},
+          "icon": 65,
+          "nodes": [
+            {"id":1749,"tier":0,"requires":[]},
+            {"id":1748,"tier":1,"requires":[1749]},
+            {"id":1844,"tier":1,"requires":[1749]},
+            {"id":493,"tier":1,"requires":[1749]},
+            {"id":453,"tier":2,"requires":[1748]},
+            {"id":422,"tier":2,"requires":[1748]},
+            {"id":482,"tier":3,"requires":[422]},
+            {"id":481,"tier":4,"requires":[482]}
+          ]
+        },
+        {
+          "id": "cryomancy.cold",
+          "name": {"en":"Killing Cold","it":"Freddo che Uccide"},
+          "icon": 65,
+          "nodes": [
+            {"id":461,"tier":0,"requires":[]},
+            {"id":1716,"tier":1,"requires":[461]},
+            {"id":1747,"tier":1,"requires":[461]},
+            {"id":418,"tier":1,"requires":[461]},
+            {"id":1826,"tier":2,"requires":[1716]},
+            {"id":433,"tier":2,"requires":[1716]},
+            {"id":469,"tier":2,"requires":[1716]},
+            {"id":448,"tier":2,"requires":[1747]},
+            {"id":500,"tier":3,"requires":[448]}
+          ]
+        }
+      ]
+    },
+    "Dominion": {
+      "branches": [
+        {
+          "id": "dominion.statecraft",
+          "name": {"en":"Statecraft","it":"Arte di Stato"},
+          "icon": 410,
+          "nodes": [
+            {"id":1526,"tier":0,"requires":[]},
+            {"id":1528,"tier":1,"requires":[1526]},
+            {"id":1529,"tier":1,"requires":[1526]},
+            {"id":1527,"tier":2,"requires":[1529]}
+          ]
+        },
+        {
+          "id": "dominion.decrees",
+          "name": {"en":"Decrees","it":"Decreti"},
+          "icon": 410,
+          "nodes": [
+            {"id":1531,"tier":0,"requires":[]},
+            {"id":1530,"tier":1,"requires":[1531]},
+            {"id":1534,"tier":2,"requires":[1530]}
+          ]
+        }
+      ]
+    },
+    "Economy": {
+      "branches": [
+        {
+          "id": "economy.purses",
+          "name": {"en":"Small Purses","it":"Borse Piccole"},
+          "icon": 210,
+          "nodes": [
+            {"id":1537,"tier":0,"requires":[]},
+            {"id":1538,"tier":1,"requires":[1537]},
+            {"id":1539,"tier":1,"requires":[1537]},
+            {"id":1541,"tier":1,"requires":[1537]},
+            {"id":1542,"tier":2,"requires":[1538]}
+          ]
+        },
+        {
+          "id": "economy.fortunes",
+          "name": {"en":"Great Fortunes","it":"Grandi Fortune"},
+          "icon": 210,
+          "nodes": [
+            {"id":1540,"tier":0,"requires":[]},
+            {"id":1543,"tier":1,"requires":[1540]},
+            {"id":1546,"tier":1,"requires":[1540]},
+            {"id":1544,"tier":1,"requires":[1540]},
+            {"id":1545,"tier":2,"requires":[1543]}
+          ]
+        }
+      ]
+    },
+    "Electromancy": {
+      "branches": [
+        {
+          "id": "electromancy.charged",
+          "name": {"en":"Charged Steel","it":"Acciaio Carico"},
+          "icon": 66,
+          "nodes": [
+            {"id":382,"tier":0,"requires":[]},
+            {"id":389,"tier":1,"requires":[382]}
+          ]
+        },
+        {
+          "id": "electromancy.sparks",
+          "name": {"en":"First Sparks","it":"Prime Scintille"},
+          "icon": 66,
+          "nodes": [
+            {"id":1815,"tier":0,"requires":[]},
+            {"id":1807,"tier":1,"requires":[1815]},
+            {"id":406,"tier":1,"requires":[1815]},
+            {"id":1720,"tier":1,"requires":[1815]},
+            {"id":419,"tier":2,"requires":[1807]},
+            {"id":1718,"tier":2,"requires":[1807]},
+            {"id":425,"tier":2,"requires":[1807]},
+            {"id":1836,"tier":2,"requires":[406]}
+          ]
+        },
+        {
+          "id": "electromancy.bolts",
+          "name": {"en":"Falling Bolts","it":"Fulmini che Cadono"},
+          "icon": 66,
+          "nodes": [
+            {"id":420,"tier":0,"requires":[]},
+            {"id":1751,"tier":1,"requires":[420]},
+            {"id":1825,"tier":1,"requires":[420]},
+            {"id":483,"tier":1,"requires":[420]},
+            {"id":1719,"tier":2,"requires":[1751]},
+            {"id":1752,"tier":2,"requires":[1751]},
+            {"id":1851,"tier":2,"requires":[1751]},
+            {"id":1750,"tier":2,"requires":[1825]},
+            {"id":470,"tier":2,"requires":[1825]},
+            {"id":484,"tier":3,"requires":[470]}
+          ]
+        },
+        {
+          "id": "electromancy.nerve",
+          "name": {"en":"Nerve and Charge","it":"Nervo e Carica"},
+          "icon": 66,
+          "nodes": [
+            {"id":478,"tier":0,"requires":[]},
+            {"id":383,"tier":1,"requires":[478]},
+            {"id":411,"tier":1,"requires":[478]},
+            {"id":414,"tier":1,"requires":[478]},
+            {"id":423,"tier":2,"requires":[383]},
+            {"id":394,"tier":2,"requires":[383]},
+            {"id":424,"tier":2,"requires":[383]},
+            {"id":464,"tier":2,"requires":[411]},
+            {"id":445,"tier":2,"requires":[411]},
+            {"id":452,"tier":2,"requires":[411]},
+            {"id":503,"tier":3,"requires":[452]},
+            {"id":496,"tier":4,"requires":[503]}
+          ]
+        },
+        {
+          "id": "electromancy.storms",
+          "name": {"en":"Thunderheads","it":"Cumuli di Tuono"},
+          "icon": 66,
+          "nodes": [
+            {"id":471,"tier":0,"requires":[]},
+            {"id":1833,"tier":1,"requires":[471]},
+            {"id":1841,"tier":1,"requires":[471]},
+            {"id":444,"tier":1,"requires":[471]},
+            {"id":454,"tier":2,"requires":[444]}
+          ]
+        }
+      ]
+    },
+    "Firearms": {
+      "branches": [
+        {
+          "id": "firearms.opening",
+          "name": {"en":"Opening Shots","it":"Primi Colpi"},
+          "icon": 104,
+          "nodes": [
+            {"id":1037,"tier":0,"requires":[]},
+            {"id":1046,"tier":1,"requires":[1037]},
+            {"id":1038,"tier":1,"requires":[1037]},
+            {"id":1053,"tier":1,"requires":[1037]},
+            {"id":1034,"tier":2,"requires":[1046]},
+            {"id":1797,"tier":2,"requires":[1046]},
+            {"id":1796,"tier":2,"requires":[1046]},
+            {"id":1798,"tier":3,"requires":[1796]}
+          ]
+        },
+        {
+          "id": "firearms.marksman",
+          "name": {"en":"Marksmanship","it":"Tiro di Precisione"},
+          "icon": 104,
+          "nodes": [
+            {"id":1049,"tier":0,"requires":[]},
+            {"id":1042,"tier":1,"requires":[1049]},
+            {"id":1040,"tier":1,"requires":[1049]},
+            {"id":1036,"tier":1,"requires":[1049]},
+            {"id":1035,"tier":2,"requires":[1042]},
+            {"id":1051,"tier":3,"requires":[1035]}
+          ]
+        },
+        {
+          "id": "firearms.volume",
+          "name": {"en":"Volume of Fire","it":"Volume di Fuoco"},
+          "icon": 104,
+          "nodes": [
+            {"id":1048,"tier":0,"requires":[]},
+            {"id":1039,"tier":1,"requires":[1048]},
+            {"id":1052,"tier":1,"requires":[1048]},
+            {"id":1047,"tier":1,"requires":[1048]},
+            {"id":1043,"tier":2,"requires":[1039]},
+            {"id":1044,"tier":2,"requires":[1039]},
+            {"id":1041,"tier":3,"requires":[1044]},
+            {"id":1045,"tier":4,"requires":[1041]}
+          ]
+        }
+      ]
+    },
+    "ForbiddenMagic": {
+      "branches": [
+        {
+          "id": "forbiddenmagic.names",
+          "name": {"en":"Names Unspoken","it":"Nomi Indicibili"},
+          "icon": 191,
+          "nodes": [
+            {"id":707,"tier":0,"requires":[]},
+            {"id":713,"tier":1,"requires":[707]},
+            {"id":724,"tier":1,"requires":[707]},
+            {"id":709,"tier":1,"requires":[707]},
+            {"id":712,"tier":2,"requires":[713]},
+            {"id":716,"tier":2,"requires":[713]},
+            {"id":719,"tier":2,"requires":[713]},
+            {"id":725,"tier":3,"requires":[719]},
+            {"id":720,"tier":4,"requires":[725]},
+            {"id":723,"tier":4,"requires":[725]}
+          ]
+        },
+        {
+          "id": "forbiddenmagic.blood",
+          "name": {"en":"Blood Work","it":"Opera di Sangue"},
+          "icon": 84,
+          "nodes": [
+            {"id":684,"tier":0,"requires":[]},
+            {"id":697,"tier":1,"requires":[684]},
+            {"id":676,"tier":1,"requires":[684]},
+            {"id":685,"tier":1,"requires":[684]},
+            {"id":702,"tier":2,"requires":[697]},
+            {"id":692,"tier":2,"requires":[697]},
+            {"id":664,"tier":2,"requires":[697]},
+            {"id":693,"tier":2,"requires":[676]},
+            {"id":673,"tier":2,"requires":[676]},
+            {"id":682,"tier":2,"requires":[676]},
+            {"id":1860,"tier":2,"requires":[685]},
+            {"id":1868,"tier":2,"requires":[685]},
+            {"id":1858,"tier":2,"requires":[685]}
+          ]
+        },
+        {
+          "id": "forbiddenmagic.hexes",
+          "name": {"en":"Hexes and Rot","it":"Malie e Marciume"},
+          "icon": 177,
+          "nodes": [
+            {"id":681,"tier":0,"requires":[]},
+            {"id":671,"tier":1,"requires":[681]},
+            {"id":672,"tier":1,"requires":[681]},
+            {"id":675,"tier":1,"requires":[681]},
+            {"id":689,"tier":2,"requires":[671]},
+            {"id":698,"tier":2,"requires":[671]},
+            {"id":677,"tier":2,"requires":[671]},
+            {"id":690,"tier":2,"requires":[672]},
+            {"id":678,"tier":2,"requires":[672]},
+            {"id":679,"tier":2,"requires":[672]},
+            {"id":686,"tier":2,"requires":[675]},
+            {"id":1861,"tier":2,"requires":[675]},
+            {"id":1865,"tier":2,"requires":[675]},
+            {"id":1866,"tier":3,"requires":[689]}
+          ]
+        },
+        {
+          "id": "forbiddenmagic.shadow",
+          "name": {"en":"Shadow and Nightmare","it":"Ombra e Incubo"},
+          "icon": 71,
+          "nodes": [
+            {"id":670,"tier":0,"requires":[]},
+            {"id":668,"tier":1,"requires":[670]},
+            {"id":667,"tier":1,"requires":[670]},
+            {"id":687,"tier":1,"requires":[670]},
+            {"id":665,"tier":2,"requires":[668]},
+            {"id":717,"tier":2,"requires":[668]},
+            {"id":688,"tier":2,"requires":[668]},
+            {"id":694,"tier":2,"requires":[667]},
+            {"id":699,"tier":2,"requires":[667]},
+            {"id":721,"tier":2,"requires":[667]},
+            {"id":1867,"tier":2,"requires":[687]},
+            {"id":1859,"tier":2,"requires":[687]},
+            {"id":1856,"tier":2,"requires":[687]}
+          ]
+        },
+        {
+          "id": "forbiddenmagic.elements",
+          "name": {"en":"Profane Elements","it":"Elementi Profani"},
+          "icon": 66,
+          "nodes": [
+            {"id":674,"tier":0,"requires":[]},
+            {"id":680,"tier":1,"requires":[674]},
+            {"id":710,"tier":1,"requires":[674]},
+            {"id":683,"tier":1,"requires":[674]},
+            {"id":691,"tier":2,"requires":[680]},
+            {"id":1857,"tier":2,"requires":[680]},
+            {"id":696,"tier":2,"requires":[680]},
+            {"id":701,"tier":2,"requires":[710]},
+            {"id":1862,"tier":2,"requires":[710]},
+            {"id":700,"tier":2,"requires":[710]},
+            {"id":1869,"tier":2,"requires":[683]},
+            {"id":1863,"tier":2,"requires":[683]},
+            {"id":1864,"tier":2,"requires":[683]}
+          ]
+        },
+        {
+          "id": "forbiddenmagic.last",
+          "name": {"en":"The Last Words","it":"Le Ultime Parole"},
+          "icon": 220,
+          "nodes": [
+            {"id":662,"tier":0,"requires":[]},
+            {"id":661,"tier":1,"requires":[662]},
+            {"id":660,"tier":1,"requires":[662]},
+            {"id":666,"tier":1,"requires":[662]},
+            {"id":663,"tier":2,"requires":[661]},
+            {"id":669,"tier":2,"requires":[661]},
+            {"id":711,"tier":2,"requires":[661]},
+            {"id":722,"tier":2,"requires":[660]},
+            {"id":695,"tier":2,"requires":[660]},
+            {"id":714,"tier":2,"requires":[660]},
+            {"id":708,"tier":2,"requires":[666]},
+            {"id":704,"tier":2,"requires":[666]},
+            {"id":706,"tier":2,"requires":[666]},
+            {"id":705,"tier":3,"requires":[663]},
+            {"id":715,"tier":4,"requires":[705]}
+          ]
+        }
+      ]
+    },
+    "Geomancy": {
+      "branches": [
+        {
+          "id": "geomancy.delving",
+          "name": {"en":"Delving","it":"Scavo Profondo"},
+          "icon": 217,
+          "nodes": [
+            {"id":1551,"tier":0,"requires":[]},
+            {"id":1693,"tier":1,"requires":[1551]},
+            {"id":1548,"tier":1,"requires":[1551]},
+            {"id":1549,"tier":1,"requires":[1551]},
+            {"id":1558,"tier":2,"requires":[1693]},
+            {"id":1700,"tier":2,"requires":[1693]},
+            {"id":1694,"tier":2,"requires":[1693]},
+            {"id":495,"tier":2,"requires":[1548]},
+            {"id":502,"tier":2,"requires":[1548]},
+            {"id":1559,"tier":3,"requires":[502]},
+            {"id":1550,"tier":4,"requires":[1559]},
+            {"id":1560,"tier":5,"requires":[1550]},
+            {"id":1561,"tier":6,"requires":[1560]},
+            {"id":1562,"tier":6,"requires":[1560]}
+          ]
+        },
+        {
+          "id": "geomancy.skin",
+          "name": {"en":"Stone Skin","it":"Pelle di Pietra"},
+          "icon": 111,
+          "nodes": [
+            {"id":395,"tier":0,"requires":[]},
+            {"id":398,"tier":1,"requires":[395]},
+            {"id":396,"tier":1,"requires":[395]}
+          ]
+        },
+        {
+          "id": "geomancy.throwing",
+          "name": {"en":"Stone Throwing","it":"Lancio di Pietre"},
+          "icon": 83,
+          "nodes": [
+            {"id":1810,"tier":0,"requires":[]},
+            {"id":408,"tier":1,"requires":[1810]},
+            {"id":1816,"tier":1,"requires":[1810]},
+            {"id":1729,"tier":1,"requires":[1810]},
+            {"id":1756,"tier":2,"requires":[408]},
+            {"id":1757,"tier":2,"requires":[408]},
+            {"id":421,"tier":2,"requires":[408]},
+            {"id":1727,"tier":2,"requires":[1816]},
+            {"id":474,"tier":2,"requires":[1816]},
+            {"id":487,"tier":3,"requires":[474]}
+          ]
+        },
+        {
+          "id": "geomancy.ruin",
+          "name": {"en":"Iron and Ruin","it":"Ferro e Rovina"},
+          "icon": 83,
+          "nodes": [
+            {"id":429,"tier":0,"requires":[]},
+            {"id":462,"tier":1,"requires":[429]},
+            {"id":430,"tier":1,"requires":[429]},
+            {"id":446,"tier":1,"requires":[429]},
+            {"id":450,"tier":2,"requires":[462]},
+            {"id":1854,"tier":2,"requires":[462]},
+            {"id":494,"tier":2,"requires":[462]},
+            {"id":501,"tier":2,"requires":[430]},
+            {"id":488,"tier":2,"requires":[430]}
+          ]
+        },
+        {
+          "id": "geomancy.quakes",
+          "name": {"en":"Quake and Fault","it":"Sisma e Faglia"},
+          "icon": 83,
+          "nodes": [
+            {"id":434,"tier":0,"requires":[]},
+            {"id":1728,"tier":1,"requires":[434]},
+            {"id":1758,"tier":1,"requires":[434]},
+            {"id":475,"tier":1,"requires":[434]},
+            {"id":431,"tier":2,"requires":[1728]},
+            {"id":441,"tier":2,"requires":[1728]}
+          ]
+        }
+      ]
+    },
+    "Healing": {
+      "branches": [
+        {
+          "id": "healing.mending",
+          "name": {"en":"Mending","it":"Rammendo"},
+          "icon": 181,
+          "nodes": [
+            {"id":1737,"tier":0,"requires":[]},
+            {"id":1736,"tier":1,"requires":[1737]},
+            {"id":1781,"tier":1,"requires":[1737]},
+            {"id":1577,"tier":2,"requires":[1781]},
+            {"id":1580,"tier":3,"requires":[1577]},
+            {"id":1575,"tier":3,"requires":[1577]}
+          ]
+        },
+        {
+          "id": "healing.life",
+          "name": {"en":"Life Itself","it":"La Vita Stessa"},
+          "icon": 181,
+          "nodes": [
+            {"id":1579,"tier":0,"requires":[]},
+            {"id":1581,"tier":1,"requires":[1579]},
+            {"id":1585,"tier":2,"requires":[1581]}
+          ]
+        },
+        {
+          "id": "healing.tending",
+          "name": {"en":"Tending the Party","it":"Cura del Gruppo"},
+          "icon": 72,
+          "nodes": [
+            {"id":1780,"tier":0,"requires":[]},
+            {"id":1738,"tier":1,"requires":[1780]},
+            {"id":1779,"tier":1,"requires":[1780]},
+            {"id":1578,"tier":2,"requires":[1779]},
+            {"id":1576,"tier":3,"requires":[1578]},
+            {"id":1584,"tier":4,"requires":[1576]}
+          ]
+        }
+      ]
+    },
+    "HolyMagic": {
+      "branches": [
+        {
+          "id": "holymagic.blessings",
+          "name": {"en":"Blessings","it":"Benedizioni"},
+          "icon": 70,
+          "nodes": [
+            {"id":517,"tier":0,"requires":[]},
+            {"id":530,"tier":1,"requires":[517]},
+            {"id":533,"tier":1,"requires":[517]},
+            {"id":529,"tier":1,"requires":[517]},
+            {"id":522,"tier":2,"requires":[530]},
+            {"id":523,"tier":2,"requires":[530]},
+            {"id":531,"tier":2,"requires":[530]},
+            {"id":579,"tier":2,"requires":[533]},
+            {"id":534,"tier":2,"requires":[533]},
+            {"id":541,"tier":2,"requires":[533]},
+            {"id":527,"tier":2,"requires":[529]},
+            {"id":586,"tier":2,"requires":[529]},
+            {"id":556,"tier":2,"requires":[529]},
+            {"id":521,"tier":3,"requires":[522]},
+            {"id":544,"tier":4,"requires":[521]}
+          ]
+        },
+        {
+          "id": "holymagic.mercy",
+          "name": {"en":"The Mercy Seat","it":"Il Trono di Grazia"},
+          "icon": 70,
+          "nodes": [
+            {"id":568,"tier":0,"requires":[]},
+            {"id":561,"tier":1,"requires":[568]},
+            {"id":576,"tier":1,"requires":[568]},
+            {"id":565,"tier":1,"requires":[568]},
+            {"id":570,"tier":2,"requires":[561]},
+            {"id":553,"tier":2,"requires":[561]},
+            {"id":584,"tier":2,"requires":[561]},
+            {"id":557,"tier":2,"requires":[576]},
+            {"id":536,"tier":2,"requires":[576]},
+            {"id":564,"tier":2,"requires":[576]},
+            {"id":575,"tier":2,"requires":[565]}
+          ]
+        },
+        {
+          "id": "holymagic.mercy.2",
+          "name": {"en":"The Mercy Seat II","it":"Il Trono di Grazia II"},
+          "icon": 70,
+          "nodes": [
+            {"id":535,"tier":0,"requires":[]},
+            {"id":578,"tier":1,"requires":[535]},
+            {"id":574,"tier":1,"requires":[535]},
+            {"id":524,"tier":1,"requires":[535]},
+            {"id":587,"tier":2,"requires":[578]},
+            {"id":577,"tier":2,"requires":[578]},
+            {"id":555,"tier":2,"requires":[578]},
+            {"id":525,"tier":2,"requires":[574]},
+            {"id":538,"tier":3,"requires":[525]},
+            {"id":537,"tier":4,"requires":[538]}
+          ]
+        },
+        {
+          "id": "holymagic.light",
+          "name": {"en":"Holy Light","it":"Luce Sacra"},
+          "icon": 70,
+          "nodes": [
+            {"id":558,"tier":0,"requires":[]},
+            {"id":410,"tier":1,"requires":[558]},
+            {"id":1811,"tier":1,"requires":[558]},
+            {"id":560,"tier":1,"requires":[558]},
+            {"id":1732,"tier":2,"requires":[410]},
+            {"id":1730,"tier":2,"requires":[410]},
+            {"id":1838,"tier":2,"requires":[410]},
+            {"id":566,"tier":2,"requires":[1811]},
+            {"id":1762,"tier":2,"requires":[1811]},
+            {"id":1764,"tier":2,"requires":[1811]},
+            {"id":1763,"tier":2,"requires":[560]}
+          ]
+        },
+        {
+          "id": "holymagic.light.2",
+          "name": {"en":"Holy Light II","it":"Luce Sacra II"},
+          "icon": 70,
+          "nodes": [
+            {"id":519,"tier":0,"requires":[]},
+            {"id":1742,"tier":1,"requires":[519]},
+            {"id":542,"tier":1,"requires":[519]},
+            {"id":1832,"tier":1,"requires":[519]},
+            {"id":545,"tier":2,"requires":[1742]},
+            {"id":1827,"tier":2,"requires":[1742]},
+            {"id":1848,"tier":2,"requires":[1742]},
+            {"id":1853,"tier":2,"requires":[542]},
+            {"id":540,"tier":2,"requires":[542]},
+            {"id":1843,"tier":3,"requires":[540]}
+          ]
+        },
+        {
+          "id": "holymagic.judgment",
+          "name": {"en":"Judgment","it":"Giudizio"},
+          "icon": 70,
+          "nodes": [
+            {"id":559,"tier":0,"requires":[]},
+            {"id":551,"tier":1,"requires":[559]},
+            {"id":573,"tier":1,"requires":[559]},
+            {"id":571,"tier":1,"requires":[559]},
+            {"id":567,"tier":2,"requires":[551]},
+            {"id":580,"tier":2,"requires":[551]},
+            {"id":581,"tier":2,"requires":[551]},
+            {"id":518,"tier":2,"requires":[573]},
+            {"id":1731,"tier":2,"requires":[573]},
+            {"id":543,"tier":2,"requires":[573]},
+            {"id":528,"tier":2,"requires":[571]}
+          ]
+        },
+        {
+          "id": "holymagic.judgment.2",
+          "name": {"en":"Judgment II","it":"Giudizio II"},
+          "icon": 70,
+          "nodes": [
+            {"id":547,"tier":0,"requires":[]},
+            {"id":520,"tier":1,"requires":[547]},
+            {"id":546,"tier":1,"requires":[547]},
+            {"id":548,"tier":1,"requires":[547]},
+            {"id":583,"tier":2,"requires":[520]},
+            {"id":550,"tier":2,"requires":[520]},
+            {"id":549,"tier":2,"requires":[520]},
+            {"id":552,"tier":2,"requires":[546]},
+            {"id":457,"tier":2,"requires":[546]},
+            {"id":590,"tier":2,"requires":[546]}
+          ]
+        },
+        {
+          "id": "holymagic.beyond",
+          "name": {"en":"Beyond Death","it":"Oltre la Morte"},
+          "icon": 72,
+          "nodes": [
+            {"id":532,"tier":0,"requires":[]},
+            {"id":516,"tier":1,"requires":[532]},
+            {"id":539,"tier":1,"requires":[532]},
+            {"id":526,"tier":1,"requires":[532]},
+            {"id":562,"tier":2,"requires":[516]},
+            {"id":588,"tier":2,"requires":[516]},
+            {"id":563,"tier":2,"requires":[516]},
+            {"id":582,"tier":2,"requires":[539]},
+            {"id":554,"tier":2,"requires":[539]},
+            {"id":572,"tier":2,"requires":[539]},
+            {"id":569,"tier":2,"requires":[526]},
+            {"id":589,"tier":2,"requires":[526]},
+            {"id":585,"tier":2,"requires":[526]}
+          ]
+        }
+      ]
+    },
+    "Hunting": {
+      "branches": [
+        {
+          "id": "hunting.quarry",
+          "name": {"en":"The Quarry","it":"La Preda"},
+          "icon": 97,
+          "nodes": [
+            {"id":1050,"tier":0,"requires":[]}
+          ]
+        }
+      ]
+    },
+    "Idromancy": {
+      "branches": [
+        {
+          "id": "idromancy.droplets",
+          "name": {"en":"First Water","it":"Prima Acqua"},
+          "icon": 67,
+          "nodes": [
+            {"id":1723,"tier":0,"requires":[]},
+            {"id":1808,"tier":1,"requires":[1723]},
+            {"id":407,"tier":1,"requires":[1723]},
+            {"id":1755,"tier":1,"requires":[1723]},
+            {"id":472,"tier":2,"requires":[1808]},
+            {"id":473,"tier":2,"requires":[1808]},
+            {"id":1721,"tier":3,"requires":[473]}
+          ]
+        },
+        {
+          "id": "idromancy.currents",
+          "name": {"en":"Currents","it":"Correnti"},
+          "icon": 67,
+          "nodes": [
+            {"id":1658,"tier":0,"requires":[]},
+            {"id":1754,"tier":1,"requires":[1658]},
+            {"id":1753,"tier":1,"requires":[1658]},
+            {"id":413,"tier":1,"requires":[1658]},
+            {"id":436,"tier":2,"requires":[1754]},
+            {"id":443,"tier":2,"requires":[1754]},
+            {"id":485,"tier":3,"requires":[443]},
+            {"id":1821,"tier":4,"requires":[485]},
+            {"id":486,"tier":5,"requires":[1821]}
+          ]
+        },
+        {
+          "id": "idromancy.tides",
+          "name": {"en":"Tides","it":"Maree"},
+          "icon": 67,
+          "nodes": [
+            {"id":435,"tier":0,"requires":[]},
+            {"id":1722,"tier":1,"requires":[435]},
+            {"id":438,"tier":1,"requires":[435]}
+          ]
+        }
+      ]
+    },
+    "Illusion": {
+      "branches": [
+        {
+          "id": "illusion.glamours",
+          "name": {"en":"Glamours","it":"Incanti"},
+          "icon": 150,
+          "nodes": [
+            {"id":1589,"tier":0,"requires":[]},
+            {"id":1587,"tier":1,"requires":[1589]},
+            {"id":1590,"tier":1,"requires":[1589]},
+            {"id":1591,"tier":1,"requires":[1589]},
+            {"id":1588,"tier":2,"requires":[1587]}
+          ]
+        },
+        {
+          "id": "illusion.mirrors",
+          "name": {"en":"Mirror Work","it":"Opera di Specchi"},
+          "icon": 150,
+          "nodes": [
+            {"id":1594,"tier":0,"requires":[]}
+          ]
+        },
+        {
+          "id": "illusion.veils",
+          "name": {"en":"Veils and Fog","it":"Veli e Nebbia"},
+          "icon": 71,
+          "nodes": [
+            {"id":1592,"tier":0,"requires":[]},
+            {"id":399,"tier":1,"requires":[1592]},
+            {"id":386,"tier":1,"requires":[1592]},
+            {"id":392,"tier":1,"requires":[1592]},
+            {"id":384,"tier":2,"requires":[399]},
+            {"id":385,"tier":2,"requires":[399]}
+          ]
+        }
+      ]
+    },
+    "Leadership": {
+      "branches": [
+        {
+          "id": "leadership.rally",
+          "name": {"en":"Rallying the Line","it":"Raduno della Linea"},
+          "icon": 73,
+          "nodes": [
+            {"id":1162,"tier":0,"requires":[]},
+            {"id":1817,"tier":1,"requires":[1162]},
+            {"id":1167,"tier":1,"requires":[1162]},
+            {"id":1820,"tier":1,"requires":[1162]},
+            {"id":1176,"tier":2,"requires":[1817]},
+            {"id":1144,"tier":2,"requires":[1817]},
+            {"id":1145,"tier":2,"requires":[1817]},
+            {"id":1135,"tier":2,"requires":[1167]},
+            {"id":1168,"tier":2,"requires":[1167]},
+            {"id":1165,"tier":2,"requires":[1167]},
+            {"id":1133,"tier":2,"requires":[1820]},
+            {"id":1164,"tier":2,"requires":[1820]},
+            {"id":1166,"tier":2,"requires":[1820]},
+            {"id":1137,"tier":3,"requires":[1176]},
+            {"id":1134,"tier":3,"requires":[1176]},
+            {"id":1148,"tier":3,"requires":[1176]},
+            {"id":1142,"tier":4,"requires":[1148]}
+          ]
+        },
+        {
+          "id": "leadership.morale",
+          "name": {"en":"Morale","it":"Morale"},
+          "icon": 73,
+          "nodes": [
+            {"id":1161,"tier":0,"requires":[]},
+            {"id":1154,"tier":1,"requires":[1161]},
+            {"id":1185,"tier":1,"requires":[1161]},
+            {"id":1139,"tier":1,"requires":[1161]},
+            {"id":1157,"tier":2,"requires":[1154]},
+            {"id":1174,"tier":2,"requires":[1154]},
+            {"id":1160,"tier":2,"requires":[1154]},
+            {"id":1183,"tier":2,"requires":[1185]},
+            {"id":1147,"tier":2,"requires":[1185]}
+          ]
+        },
+        {
+          "id": "leadership.breaking",
+          "name": {"en":"Breaking Morale","it":"Spezzare il Morale"},
+          "icon": 74,
+          "nodes": [
+            {"id":1163,"tier":0,"requires":[]},
+            {"id":1131,"tier":1,"requires":[1163]},
+            {"id":1141,"tier":1,"requires":[1163]},
+            {"id":1132,"tier":1,"requires":[1163]},
+            {"id":1172,"tier":2,"requires":[1131]},
+            {"id":1149,"tier":2,"requires":[1131]},
+            {"id":1819,"tier":2,"requires":[1131]},
+            {"id":1153,"tier":2,"requires":[1141]},
+            {"id":1156,"tier":2,"requires":[1141]},
+            {"id":1182,"tier":2,"requires":[1141]},
+            {"id":1136,"tier":2,"requires":[1132]},
+            {"id":1178,"tier":2,"requires":[1132]},
+            {"id":1151,"tier":2,"requires":[1132]},
+            {"id":1150,"tier":3,"requires":[1172]},
+            {"id":1152,"tier":3,"requires":[1172]},
+            {"id":1143,"tier":3,"requires":[1172]}
+          ]
+        },
+        {
+          "id": "leadership.capital",
+          "name": {"en":"Capital","it":"Capitale"},
+          "icon": 210,
+          "nodes": [
+            {"id":1189,"tier":0,"requires":[]},
+            {"id":1169,"tier":1,"requires":[1189]},
+            {"id":1173,"tier":1,"requires":[1189]},
+            {"id":1191,"tier":1,"requires":[1189]},
+            {"id":1179,"tier":2,"requires":[1169]},
+            {"id":1192,"tier":2,"requires":[1169]},
+            {"id":1190,"tier":2,"requires":[1169]},
+            {"id":1186,"tier":2,"requires":[1173]},
+            {"id":1181,"tier":2,"requires":[1173]},
+            {"id":1187,"tier":3,"requires":[1181]}
+          ]
+        },
+        {
+          "id": "leadership.command",
+          "name": {"en":"Command","it":"Comando"},
+          "icon": 246,
+          "nodes": [
+            {"id":1171,"tier":0,"requires":[]},
+            {"id":1170,"tier":1,"requires":[1171]},
+            {"id":1140,"tier":1,"requires":[1171]},
+            {"id":1158,"tier":1,"requires":[1171]},
+            {"id":1146,"tier":2,"requires":[1170]},
+            {"id":1155,"tier":2,"requires":[1170]},
+            {"id":1138,"tier":2,"requires":[1170]},
+            {"id":1184,"tier":2,"requires":[1140]},
+            {"id":1180,"tier":2,"requires":[1140]},
+            {"id":1159,"tier":2,"requires":[1140]},
+            {"id":1188,"tier":2,"requires":[1158]},
+            {"id":1177,"tier":3,"requires":[1188]},
+            {"id":1175,"tier":4,"requires":[1177]}
+          ]
+        }
+      ]
+    },
+    "MartialArts": {
+      "branches": [
+        {
+          "id": "martialarts.inner",
+          "name": {"en":"Inner Calm","it":"Calma Interiore"},
+          "icon": 77,
+          "nodes": [
+            {"id":43,"tier":0,"requires":[]},
+            {"id":58,"tier":1,"requires":[43]},
+            {"id":49,"tier":1,"requires":[43]},
+            {"id":70,"tier":1,"requires":[43]},
+            {"id":47,"tier":2,"requires":[58]},
+            {"id":134,"tier":2,"requires":[58]},
+            {"id":168,"tier":2,"requires":[58]},
+            {"id":64,"tier":2,"requires":[49]},
+            {"id":36,"tier":2,"requires":[49]},
+            {"id":82,"tier":2,"requires":[49]},
+            {"id":86,"tier":2,"requires":[70]},
+            {"id":209,"tier":2,"requires":[70]},
+            {"id":71,"tier":2,"requires":[70]},
+            {"id":210,"tier":3,"requires":[47]},
+            {"id":158,"tier":3,"requires":[47]},
+            {"id":105,"tier":3,"requires":[47]},
+            {"id":204,"tier":3,"requires":[134]},
+            {"id":223,"tier":3,"requires":[134]}
+          ]
+        },
+        {
+          "id": "martialarts.foundations",
+          "name": {"en":"Foundations","it":"Fondamenta"},
+          "icon": 75,
+          "nodes": [
+            {"id":32,"tier":0,"requires":[]},
+            {"id":55,"tier":1,"requires":[32]},
+            {"id":45,"tier":1,"requires":[32]},
+            {"id":56,"tier":1,"requires":[32]},
+            {"id":57,"tier":2,"requires":[55]},
+            {"id":59,"tier":2,"requires":[55]},
+            {"id":54,"tier":2,"requires":[55]},
+            {"id":63,"tier":2,"requires":[45]},
+            {"id":65,"tier":2,"requires":[45]},
+            {"id":61,"tier":2,"requires":[45]},
+            {"id":67,"tier":2,"requires":[56]},
+            {"id":68,"tier":2,"requires":[56]},
+            {"id":62,"tier":2,"requires":[56]}
+          ]
+        },
+        {
+          "id": "martialarts.foundations.2",
+          "name": {"en":"Foundations II","it":"Fondamenta II"},
+          "icon": 77,
+          "nodes": [
+            {"id":60,"tier":0,"requires":[]},
+            {"id":34,"tier":1,"requires":[60]},
+            {"id":37,"tier":1,"requires":[60]},
+            {"id":39,"tier":1,"requires":[60]},
+            {"id":46,"tier":2,"requires":[34]},
+            {"id":72,"tier":2,"requires":[34]},
+            {"id":40,"tier":2,"requires":[34]},
+            {"id":42,"tier":2,"requires":[37]},
+            {"id":66,"tier":2,"requires":[37]},
+            {"id":44,"tier":2,"requires":[37]},
+            {"id":125,"tier":2,"requires":[39]},
+            {"id":69,"tier":2,"requires":[39]},
+            {"id":52,"tier":2,"requires":[39]}
+          ]
+        },
+        {
+          "id": "martialarts.internal",
+          "name": {"en":"Internal Arts","it":"Arti Interne"},
+          "icon": 77,
+          "nodes": [
+            {"id":83,"tier":0,"requires":[]},
+            {"id":89,"tier":1,"requires":[83]},
+            {"id":48,"tier":1,"requires":[83]},
+            {"id":91,"tier":1,"requires":[83]},
+            {"id":110,"tier":2,"requires":[89]},
+            {"id":50,"tier":2,"requires":[89]},
+            {"id":147,"tier":2,"requires":[89]},
+            {"id":116,"tier":2,"requires":[48]},
+            {"id":153,"tier":2,"requires":[48]},
+            {"id":38,"tier":2,"requires":[48]},
+            {"id":166,"tier":2,"requires":[91]},
+            {"id":172,"tier":2,"requires":[91]},
+            {"id":136,"tier":2,"requires":[91]},
+            {"id":115,"tier":3,"requires":[110]},
+            {"id":215,"tier":4,"requires":[115]}
+          ]
+        },
+        {
+          "id": "martialarts.aerial",
+          "name": {"en":"Aerial Arts","it":"Arti Aeree"},
+          "icon": 77,
+          "nodes": [
+            {"id":163,"tier":0,"requires":[]},
+            {"id":80,"tier":1,"requires":[163]},
+            {"id":149,"tier":1,"requires":[163]},
+            {"id":150,"tier":1,"requires":[163]},
+            {"id":183,"tier":2,"requires":[80]},
+            {"id":126,"tier":2,"requires":[80]},
+            {"id":154,"tier":2,"requires":[80]},
+            {"id":214,"tier":2,"requires":[149]},
+            {"id":169,"tier":2,"requires":[149]},
+            {"id":219,"tier":2,"requires":[149]},
+            {"id":222,"tier":2,"requires":[150]},
+            {"id":141,"tier":2,"requires":[150]},
+            {"id":213,"tier":2,"requires":[150]}
+          ]
+        },
+        {
+          "id": "martialarts.grappling",
+          "name": {"en":"Grappling","it":"Lotta a Presa"},
+          "icon": 77,
+          "nodes": [
+            {"id":79,"tier":0,"requires":[]},
+            {"id":51,"tier":1,"requires":[79]},
+            {"id":97,"tier":1,"requires":[79]},
+            {"id":78,"tier":1,"requires":[79]},
+            {"id":95,"tier":2,"requires":[51]},
+            {"id":152,"tier":2,"requires":[51]},
+            {"id":146,"tier":2,"requires":[51]},
+            {"id":96,"tier":2,"requires":[97]},
+            {"id":93,"tier":2,"requires":[97]},
+            {"id":174,"tier":2,"requires":[97]},
+            {"id":1792,"tier":2,"requires":[78]},
+            {"id":113,"tier":2,"requires":[78]},
+            {"id":165,"tier":2,"requires":[78]},
+            {"id":121,"tier":3,"requires":[95]}
+          ]
+        },
+        {
+          "id": "martialarts.grappling.2",
+          "name": {"en":"Grappling II","it":"Lotta a Presa II"},
+          "icon": 77,
+          "nodes": [
+            {"id":74,"tier":0,"requires":[]},
+            {"id":117,"tier":1,"requires":[74]},
+            {"id":156,"tier":1,"requires":[74]},
+            {"id":151,"tier":1,"requires":[74]},
+            {"id":184,"tier":2,"requires":[117]},
+            {"id":171,"tier":2,"requires":[117]},
+            {"id":164,"tier":2,"requires":[117]},
+            {"id":155,"tier":2,"requires":[156]},
+            {"id":173,"tier":2,"requires":[156]},
+            {"id":92,"tier":2,"requires":[156]},
+            {"id":195,"tier":2,"requires":[151]},
+            {"id":190,"tier":2,"requires":[151]},
+            {"id":103,"tier":2,"requires":[151]}
+          ]
+        },
+        {
+          "id": "martialarts.kicking",
+          "name": {"en":"Kicking","it":"Calci"},
+          "icon": 77,
+          "nodes": [
+            {"id":112,"tier":0,"requires":[]},
+            {"id":98,"tier":1,"requires":[112]},
+            {"id":124,"tier":1,"requires":[112]},
+            {"id":145,"tier":1,"requires":[112]},
+            {"id":81,"tier":2,"requires":[98]},
+            {"id":1793,"tier":2,"requires":[98]},
+            {"id":131,"tier":2,"requires":[98]},
+            {"id":132,"tier":2,"requires":[124]},
+            {"id":179,"tier":2,"requires":[124]},
+            {"id":1786,"tier":2,"requires":[124]}
+          ]
+        },
+        {
+          "id": "martialarts.kicking.2",
+          "name": {"en":"Kicking II","it":"Calci II"},
+          "icon": 77,
+          "nodes": [
+            {"id":175,"tier":0,"requires":[]},
+            {"id":181,"tier":1,"requires":[175]},
+            {"id":133,"tier":1,"requires":[175]},
+            {"id":102,"tier":1,"requires":[175]},
+            {"id":148,"tier":2,"requires":[181]},
+            {"id":100,"tier":2,"requires":[181]},
+            {"id":170,"tier":2,"requires":[181]},
+            {"id":178,"tier":2,"requires":[133]},
+            {"id":75,"tier":2,"requires":[133]}
+          ]
+        },
+        {
+          "id": "martialarts.clinch",
+          "name": {"en":"Clinch and Elbow","it":"Corpo a Corpo"},
+          "icon": 77,
+          "nodes": [
+            {"id":161,"tier":0,"requires":[]},
+            {"id":1790,"tier":1,"requires":[161]},
+            {"id":1789,"tier":1,"requires":[161]},
+            {"id":101,"tier":1,"requires":[161]},
+            {"id":182,"tier":2,"requires":[1790]},
+            {"id":94,"tier":2,"requires":[1790]}
+          ]
+        },
+        {
+          "id": "martialarts.fists",
+          "name": {"en":"Fist Work","it":"Lavoro di Pugno"},
+          "icon": 77,
+          "nodes": [
+            {"id":106,"tier":0,"requires":[]},
+            {"id":1784,"tier":1,"requires":[106]},
+            {"id":35,"tier":1,"requires":[106]},
+            {"id":99,"tier":1,"requires":[106]},
+            {"id":143,"tier":2,"requires":[1784]},
+            {"id":1783,"tier":2,"requires":[1784]},
+            {"id":176,"tier":2,"requires":[1784]},
+            {"id":1782,"tier":2,"requires":[35]},
+            {"id":216,"tier":2,"requires":[35]},
+            {"id":142,"tier":2,"requires":[35]},
+            {"id":177,"tier":2,"requires":[99]},
+            {"id":1785,"tier":2,"requires":[99]},
+            {"id":127,"tier":2,"requires":[99]}
+          ]
+        },
+        {
+          "id": "martialarts.fists.2",
+          "name": {"en":"Fist Work II","it":"Lavoro di Pugno II"},
+          "icon": 77,
+          "nodes": [
+            {"id":1787,"tier":0,"requires":[]},
+            {"id":220,"tier":1,"requires":[1787]},
+            {"id":129,"tier":1,"requires":[1787]},
+            {"id":211,"tier":1,"requires":[1787]},
+            {"id":122,"tier":2,"requires":[220]},
+            {"id":180,"tier":2,"requires":[220]},
+            {"id":191,"tier":2,"requires":[220]},
+            {"id":221,"tier":2,"requires":[129]},
+            {"id":77,"tier":2,"requires":[129]},
+            {"id":87,"tier":2,"requires":[129]},
+            {"id":108,"tier":2,"requires":[211]},
+            {"id":196,"tier":2,"requires":[211]},
+            {"id":224,"tier":3,"requires":[196]}
+          ]
+        },
+        {
+          "id": "martialarts.street",
+          "name": {"en":"Arena and Street","it":"Arena e Strada"},
+          "icon": 77,
+          "nodes": [
+            {"id":85,"tier":0,"requires":[]},
+            {"id":73,"tier":1,"requires":[85]},
+            {"id":76,"tier":1,"requires":[85]},
+            {"id":84,"tier":1,"requires":[85]},
+            {"id":53,"tier":2,"requires":[73]},
+            {"id":33,"tier":2,"requires":[73]},
+            {"id":144,"tier":2,"requires":[73]},
+            {"id":111,"tier":2,"requires":[76]},
+            {"id":104,"tier":2,"requires":[76]},
+            {"id":187,"tier":2,"requires":[76]},
+            {"id":138,"tier":2,"requires":[84]},
+            {"id":137,"tier":2,"requires":[84]},
+            {"id":90,"tier":2,"requires":[84]},
+            {"id":88,"tier":3,"requires":[53]},
+            {"id":201,"tier":3,"requires":[53]},
+            {"id":198,"tier":3,"requires":[53]},
+            {"id":202,"tier":3,"requires":[33]}
+          ]
+        },
+        {
+          "id": "martialarts.finishers",
+          "name": {"en":"Finishers","it":"Colpi Finali"},
+          "icon": 77,
+          "nodes": [
+            {"id":140,"tier":0,"requires":[]},
+            {"id":160,"tier":1,"requires":[140]},
+            {"id":185,"tier":1,"requires":[140]},
+            {"id":157,"tier":1,"requires":[140]},
+            {"id":188,"tier":2,"requires":[160]},
+            {"id":189,"tier":2,"requires":[160]},
+            {"id":208,"tier":2,"requires":[160]},
+            {"id":203,"tier":2,"requires":[185]},
+            {"id":217,"tier":2,"requires":[185]},
+            {"id":199,"tier":2,"requires":[185]}
+          ]
+        },
+        {
+          "id": "martialarts.finishers.2",
+          "name": {"en":"Finishers II","it":"Colpi Finali II"},
+          "icon": 77,
+          "nodes": [
+            {"id":186,"tier":0,"requires":[]},
+            {"id":200,"tier":1,"requires":[186]},
+            {"id":197,"tier":1,"requires":[186]},
+            {"id":205,"tier":1,"requires":[186]},
+            {"id":206,"tier":2,"requires":[200]},
+            {"id":193,"tier":2,"requires":[200]},
+            {"id":218,"tier":2,"requires":[200]},
+            {"id":194,"tier":3,"requires":[218]},
+            {"id":212,"tier":4,"requires":[194]}
+          ]
+        },
+        {
+          "id": "martialarts.techniques",
+          "name": {"en":"Plain Technique","it":"Tecnica Pura"},
+          "icon": 77,
+          "nodes": [
+            {"id":41,"tier":0,"requires":[]},
+            {"id":130,"tier":1,"requires":[41]},
+            {"id":207,"tier":1,"requires":[41]},
+            {"id":167,"tier":1,"requires":[41]},
+            {"id":114,"tier":2,"requires":[130]},
+            {"id":139,"tier":2,"requires":[130]},
+            {"id":109,"tier":2,"requires":[130]},
+            {"id":107,"tier":2,"requires":[207]},
+            {"id":135,"tier":2,"requires":[207]},
+            {"id":159,"tier":2,"requires":[207]},
+            {"id":118,"tier":2,"requires":[167]},
+            {"id":128,"tier":2,"requires":[167]},
+            {"id":120,"tier":2,"requires":[167]},
+            {"id":162,"tier":3,"requires":[114]},
+            {"id":123,"tier":3,"requires":[114]},
+            {"id":119,"tier":3,"requires":[114]},
+            {"id":192,"tier":3,"requires":[139]}
+          ]
+        }
+      ]
+    },
+    "MetaMagic": {
+      "branches": [
+        {
+          "id": "metamagic.academia",
+          "name": {"en":"Academia","it":"Accademia"},
+          "icon": 84,
+          "nodes": [
+            {"id":400,"tier":0,"requires":[]},
+            {"id":850,"tier":1,"requires":[400]},
+            {"id":858,"tier":1,"requires":[400]},
+            {"id":866,"tier":1,"requires":[400]},
+            {"id":872,"tier":2,"requires":[850]}
+          ]
+        },
+        {
+          "id": "metamagic.enchanting",
+          "name": {"en":"Enchanting","it":"Incantamento"},
+          "icon": 73,
+          "nodes": [
+            {"id":807,"tier":0,"requires":[]},
+            {"id":809,"tier":1,"requires":[807]},
+            {"id":811,"tier":1,"requires":[807]},
+            {"id":848,"tier":1,"requires":[807]},
+            {"id":854,"tier":2,"requires":[809]},
+            {"id":393,"tier":2,"requires":[809]},
+            {"id":862,"tier":2,"requires":[809]},
+            {"id":846,"tier":2,"requires":[811]},
+            {"id":825,"tier":2,"requires":[811]}
+          ]
+        },
+        {
+          "id": "metamagic.auras",
+          "name": {"en":"Auras","it":"Aure"},
+          "icon": 73,
+          "nodes": [
+            {"id":860,"tier":0,"requires":[]},
+            {"id":832,"tier":1,"requires":[860]},
+            {"id":823,"tier":1,"requires":[860]},
+            {"id":814,"tier":1,"requires":[860]},
+            {"id":835,"tier":2,"requires":[832]},
+            {"id":828,"tier":2,"requires":[832]},
+            {"id":829,"tier":2,"requires":[832]},
+            {"id":830,"tier":2,"requires":[823]},
+            {"id":837,"tier":2,"requires":[823]},
+            {"id":874,"tier":2,"requires":[823]},
+            {"id":859,"tier":2,"requires":[814]},
+            {"id":819,"tier":2,"requires":[814]},
+            {"id":833,"tier":2,"requires":[814]},
+            {"id":817,"tier":3,"requires":[835]}
+          ]
+        },
+        {
+          "id": "metamagic.hexcraft",
+          "name": {"en":"Hexcraft","it":"Arte della Malia"},
+          "icon": 74,
+          "nodes": [
+            {"id":808,"tier":0,"requires":[]},
+            {"id":812,"tier":1,"requires":[808]},
+            {"id":813,"tier":1,"requires":[808]},
+            {"id":831,"tier":1,"requires":[808]},
+            {"id":827,"tier":2,"requires":[812]},
+            {"id":839,"tier":2,"requires":[812]},
+            {"id":821,"tier":2,"requires":[812]},
+            {"id":810,"tier":2,"requires":[813]},
+            {"id":815,"tier":2,"requires":[813]},
+            {"id":824,"tier":2,"requires":[813]},
+            {"id":843,"tier":2,"requires":[831]},
+            {"id":826,"tier":2,"requires":[831]}
+          ]
+        },
+        {
+          "id": "metamagic.hexcraft.2",
+          "name": {"en":"Hexcraft II","it":"Arte della Malia II"},
+          "icon": 74,
+          "nodes": [
+            {"id":836,"tier":0,"requires":[]},
+            {"id":841,"tier":1,"requires":[836]},
+            {"id":820,"tier":1,"requires":[836]},
+            {"id":834,"tier":1,"requires":[836]},
+            {"id":818,"tier":2,"requires":[841]},
+            {"id":816,"tier":2,"requires":[841]},
+            {"id":844,"tier":2,"requires":[841]},
+            {"id":852,"tier":2,"requires":[820]},
+            {"id":869,"tier":2,"requires":[820]},
+            {"id":838,"tier":2,"requires":[820]},
+            {"id":822,"tier":3,"requires":[838]},
+            {"id":851,"tier":4,"requires":[822]}
+          ]
+        },
+        {
+          "id": "metamagic.borrowed",
+          "name": {"en":"Borrowed Life","it":"Vita in Prestito"},
+          "icon": 84,
+          "nodes": [
+            {"id":845,"tier":0,"requires":[]},
+            {"id":853,"tier":1,"requires":[845]},
+            {"id":840,"tier":1,"requires":[845]},
+            {"id":857,"tier":1,"requires":[845]},
+            {"id":863,"tier":2,"requires":[853]},
+            {"id":849,"tier":2,"requires":[853]},
+            {"id":867,"tier":2,"requires":[853]},
+            {"id":865,"tier":2,"requires":[840]},
+            {"id":861,"tier":2,"requires":[840]},
+            {"id":871,"tier":2,"requires":[840]}
+          ]
+        },
+        {
+          "id": "metamagic.workings",
+          "name": {"en":"Great Workings","it":"Grandi Opere"},
+          "icon": 64,
+          "nodes": [
+            {"id":855,"tier":0,"requires":[]},
+            {"id":856,"tier":1,"requires":[855]},
+            {"id":847,"tier":1,"requires":[855]},
+            {"id":870,"tier":1,"requires":[855]},
+            {"id":868,"tier":2,"requires":[856]},
+            {"id":842,"tier":2,"requires":[856]},
+            {"id":873,"tier":3,"requires":[842]},
+            {"id":864,"tier":4,"requires":[873]}
+          ]
+        }
+      ]
+    },
+    "Mutation": {
+      "branches": [
+        {
+          "id": "mutation.flesh",
+          "name": {"en":"Reshaping Flesh","it":"Rimodellare la Carne"},
+          "icon": 16,
+          "nodes": [
+            {"id":1932,"tier":0,"requires":[]},
+            {"id":1598,"tier":1,"requires":[1932]},
+            {"id":1596,"tier":1,"requires":[1932]},
+            {"id":1597,"tier":1,"requires":[1932]}
+          ]
+        },
+        {
+          "id": "mutation.self",
+          "name": {"en":"Reshaping Self","it":"Rimodellare Se"},
+          "icon": 16,
+          "nodes": [
+            {"id":1599,"tier":0,"requires":[]},
+            {"id":1600,"tier":1,"requires":[1599]},
+            {"id":1601,"tier":1,"requires":[1599]},
+            {"id":1602,"tier":1,"requires":[1599]},
+            {"id":1603,"tier":2,"requires":[1600]}
+          ]
+        },
+        {
+          "id": "mutation.beyond",
+          "name": {"en":"Beyond the Body","it":"Oltre il Corpo"},
+          "icon": 16,
+          "nodes": [
+            {"id":1604,"tier":0,"requires":[]},
+            {"id":1605,"tier":1,"requires":[1604]},
+            {"id":1607,"tier":2,"requires":[1605]}
+          ]
+        }
+      ]
+    },
+    "Necromancy": {
+      "branches": [
+        {
+          "id": "necromancy.siphon",
+          "name": {"en":"Siphoning","it":"Sottrazione"},
+          "icon": 71,
+          "nodes": [
+            {"id":632,"tier":0,"requires":[]},
+            {"id":629,"tier":1,"requires":[632]},
+            {"id":631,"tier":1,"requires":[632]},
+            {"id":641,"tier":1,"requires":[632]},
+            {"id":638,"tier":2,"requires":[641]}
+          ]
+        },
+        {
+          "id": "necromancy.drinking",
+          "name": {"en":"Drinking Life","it":"Bere la Vita"},
+          "icon": 84,
+          "nodes": [
+            {"id":630,"tier":0,"requires":[]},
+            {"id":635,"tier":1,"requires":[630]},
+            {"id":636,"tier":1,"requires":[630]},
+            {"id":645,"tier":1,"requires":[630]},
+            {"id":626,"tier":2,"requires":[635]},
+            {"id":634,"tier":2,"requires":[635]},
+            {"id":644,"tier":2,"requires":[635]},
+            {"id":647,"tier":2,"requires":[636]},
+            {"id":639,"tier":2,"requires":[636]},
+            {"id":643,"tier":3,"requires":[639]}
+          ]
+        },
+        {
+          "id": "necromancy.rites",
+          "name": {"en":"Sacrifice and Rite","it":"Sacrificio e Rito"},
+          "icon": 177,
+          "nodes": [
+            {"id":627,"tier":0,"requires":[]},
+            {"id":637,"tier":1,"requires":[627]},
+            {"id":633,"tier":1,"requires":[627]},
+            {"id":628,"tier":1,"requires":[627]},
+            {"id":642,"tier":2,"requires":[637]},
+            {"id":640,"tier":2,"requires":[637]},
+            {"id":646,"tier":2,"requires":[637]},
+            {"id":648,"tier":2,"requires":[633]},
+            {"id":1609,"tier":3,"requires":[648]},
+            {"id":1612,"tier":4,"requires":[1609]},
+            {"id":1613,"tier":5,"requires":[1612]}
+          ]
+        }
+      ]
+    },
+    "Oneiromancy": {
+      "branches": [
+        {
+          "id": "oneiromancy.dreamwalk",
+          "name": {"en":"Dreamwalking","it":"Cammino Onirico"},
+          "icon": 11,
+          "nodes": [
+            {"id":1615,"tier":0,"requires":[]},
+            {"id":1616,"tier":1,"requires":[1615]},
+            {"id":1622,"tier":2,"requires":[1616]},
+            {"id":1623,"tier":3,"requires":[1622]}
+          ]
+        },
+        {
+          "id": "oneiromancy.shared",
+          "name": {"en":"Shared Sleep","it":"Sonno Condiviso"},
+          "icon": 11,
+          "nodes": [
+            {"id":1620,"tier":0,"requires":[]},
+            {"id":1617,"tier":1,"requires":[1620]},
+            {"id":1618,"tier":1,"requires":[1620]},
+            {"id":1619,"tier":1,"requires":[1620]},
+            {"id":1621,"tier":2,"requires":[1619]}
+          ]
+        }
+      ]
+    },
+    "Pastoral": {
+      "branches": [
+        {
+          "id": "pastoral.growth",
+          "name": {"en":"Green Growth","it":"Crescita Verde"},
+          "icon": 185,
+          "nodes": [
+            {"id":900,"tier":0,"requires":[]},
+            {"id":895,"tier":1,"requires":[900]},
+            {"id":887,"tier":1,"requires":[900]},
+            {"id":890,"tier":1,"requires":[900]},
+            {"id":888,"tier":2,"requires":[895]},
+            {"id":893,"tier":2,"requires":[895]},
+            {"id":903,"tier":2,"requires":[895]},
+            {"id":892,"tier":2,"requires":[887]},
+            {"id":896,"tier":2,"requires":[887]},
+            {"id":886,"tier":2,"requires":[887]},
+            {"id":920,"tier":2,"requires":[890]},
+            {"id":899,"tier":2,"requires":[890]},
+            {"id":901,"tier":3,"requires":[899]}
+          ]
+        },
+        {
+          "id": "pastoral.spores",
+          "name": {"en":"Spores and Rot","it":"Spore e Marciume"},
+          "icon": 185,
+          "nodes": [
+            {"id":898,"tier":0,"requires":[]},
+            {"id":894,"tier":1,"requires":[898]},
+            {"id":891,"tier":1,"requires":[898]}
+          ]
+        },
+        {
+          "id": "pastoral.land",
+          "name": {"en":"Working the Land","it":"Lavorare la Terra"},
+          "icon": 185,
+          "nodes": [
+            {"id":1437,"tier":0,"requires":[]},
+            {"id":1436,"tier":1,"requires":[1437]},
+            {"id":917,"tier":1,"requires":[1437]},
+            {"id":916,"tier":1,"requires":[1437]},
+            {"id":915,"tier":2,"requires":[1436]},
+            {"id":919,"tier":2,"requires":[1436]},
+            {"id":918,"tier":2,"requires":[1436]},
+            {"id":922,"tier":2,"requires":[917]},
+            {"id":1438,"tier":3,"requires":[922]},
+            {"id":1442,"tier":4,"requires":[1438]}
+          ]
+        },
+        {
+          "id": "pastoral.wrath",
+          "name": {"en":"Wrath of Nature","it":"Ira della Natura"},
+          "icon": 69,
+          "nodes": [
+            {"id":897,"tier":0,"requires":[]},
+            {"id":902,"tier":1,"requires":[897]},
+            {"id":921,"tier":2,"requires":[902]}
+          ]
+        }
+      ]
+    },
+    "Performance": {
+      "branches": [
+        {
+          "id": "performance.song",
+          "name": {"en":"Song","it":"Canto"},
+          "icon": 80,
+          "nodes": [
+            {"id":1098,"tier":0,"requires":[]},
+            {"id":1092,"tier":1,"requires":[1098]},
+            {"id":1106,"tier":1,"requires":[1098]},
+            {"id":1099,"tier":1,"requires":[1098]},
+            {"id":1095,"tier":2,"requires":[1092]},
+            {"id":1101,"tier":2,"requires":[1092]},
+            {"id":1096,"tier":2,"requires":[1092]},
+            {"id":1100,"tier":2,"requires":[1106]},
+            {"id":1093,"tier":2,"requires":[1106]},
+            {"id":1103,"tier":2,"requires":[1106]},
+            {"id":1110,"tier":2,"requires":[1099]},
+            {"id":1114,"tier":2,"requires":[1099]},
+            {"id":1102,"tier":2,"requires":[1099]},
+            {"id":1090,"tier":3,"requires":[1095]},
+            {"id":1091,"tier":4,"requires":[1090]}
+          ]
+        },
+        {
+          "id": "performance.ring",
+          "name": {"en":"Ring Work","it":"Lavoro sul Ring"},
+          "icon": 223,
+          "nodes": [
+            {"id":1112,"tier":0,"requires":[]},
+            {"id":1108,"tier":1,"requires":[1112]},
+            {"id":1116,"tier":1,"requires":[1112]},
+            {"id":1117,"tier":2,"requires":[1116]},
+            {"id":1113,"tier":3,"requires":[1117]}
+          ]
+        },
+        {
+          "id": "performance.stage",
+          "name": {"en":"Stagecraft","it":"Arte del Palco"},
+          "icon": 70,
+          "nodes": [
+            {"id":1107,"tier":0,"requires":[]},
+            {"id":1105,"tier":1,"requires":[1107]},
+            {"id":1104,"tier":1,"requires":[1107]},
+            {"id":1109,"tier":1,"requires":[1107]},
+            {"id":1097,"tier":2,"requires":[1105]},
+            {"id":1111,"tier":2,"requires":[1105]},
+            {"id":1115,"tier":2,"requires":[1105]},
+            {"id":1094,"tier":2,"requires":[1104]},
+            {"id":1089,"tier":2,"requires":[1104]},
+            {"id":1118,"tier":2,"requires":[1104]},
+            {"id":1119,"tier":3,"requires":[1118]}
+          ]
+        }
+      ]
+    },
+    "PsychicAbilities": {
+      "branches": [
+        {
+          "id": "psychicabilities.domination",
+          "name": {"en":"Domination","it":"Dominio"},
+          "icon": 11,
+          "nodes": [
+            {"id":1773,"tier":0,"requires":[]},
+            {"id":935,"tier":1,"requires":[1773]},
+            {"id":955,"tier":1,"requires":[1773]},
+            {"id":936,"tier":1,"requires":[1773]},
+            {"id":937,"tier":2,"requires":[935]},
+            {"id":956,"tier":2,"requires":[935]},
+            {"id":941,"tier":2,"requires":[935]},
+            {"id":975,"tier":3,"requires":[941]}
+          ]
+        },
+        {
+          "id": "psychicabilities.telekinesis",
+          "name": {"en":"Telekinesis","it":"Telecinesi"},
+          "icon": 77,
+          "nodes": [
+            {"id":963,"tier":0,"requires":[]},
+            {"id":958,"tier":1,"requires":[963]},
+            {"id":960,"tier":1,"requires":[963]},
+            {"id":970,"tier":1,"requires":[963]},
+            {"id":966,"tier":2,"requires":[958]},
+            {"id":968,"tier":2,"requires":[958]},
+            {"id":974,"tier":2,"requires":[958]},
+            {"id":943,"tier":2,"requires":[960]},
+            {"id":945,"tier":2,"requires":[960]},
+            {"id":944,"tier":2,"requires":[960]},
+            {"id":1771,"tier":2,"requires":[970]},
+            {"id":938,"tier":3,"requires":[1771]},
+            {"id":942,"tier":4,"requires":[938]}
+          ]
+        },
+        {
+          "id": "psychicabilities.body",
+          "name": {"en":"Body and Mind","it":"Corpo e Mente"},
+          "icon": 73,
+          "nodes": [
+            {"id":972,"tier":0,"requires":[]},
+            {"id":973,"tier":1,"requires":[972]},
+            {"id":967,"tier":1,"requires":[972]},
+            {"id":948,"tier":1,"requires":[972]},
+            {"id":949,"tier":2,"requires":[973]},
+            {"id":947,"tier":2,"requires":[973]},
+            {"id":976,"tier":3,"requires":[947]}
+          ]
+        },
+        {
+          "id": "psychicabilities.burning",
+          "name": {"en":"Burning Thought","it":"Pensiero che Brucia"},
+          "icon": 84,
+          "nodes": [
+            {"id":959,"tier":0,"requires":[]},
+            {"id":965,"tier":1,"requires":[959]},
+            {"id":964,"tier":1,"requires":[959]},
+            {"id":962,"tier":1,"requires":[959]},
+            {"id":961,"tier":2,"requires":[965]},
+            {"id":969,"tier":2,"requires":[965]},
+            {"id":971,"tier":2,"requires":[965]}
+          ]
+        },
+        {
+          "id": "psychicabilities.suppression",
+          "name": {"en":"Suppression","it":"Soppressione"},
+          "icon": 74,
+          "nodes": [
+            {"id":957,"tier":0,"requires":[]},
+            {"id":954,"tier":1,"requires":[957]},
+            {"id":934,"tier":1,"requires":[957]},
+            {"id":952,"tier":1,"requires":[957]},
+            {"id":951,"tier":2,"requires":[954]},
+            {"id":953,"tier":2,"requires":[954]},
+            {"id":940,"tier":2,"requires":[954]},
+            {"id":939,"tier":2,"requires":[934]},
+            {"id":946,"tier":2,"requires":[934]},
+            {"id":950,"tier":2,"requires":[934]}
+          ]
+        }
+      ]
+    },
+    "Pyromancy": {
+      "branches": [
+        {
+          "id": "pyromancy.steel",
+          "name": {"en":"Burning Steel","it":"Acciaio Ardente"},
+          "icon": 64,
+          "nodes": [
+            {"id":391,"tier":0,"requires":[]},
+            {"id":380,"tier":1,"requires":[391]},
+            {"id":387,"tier":1,"requires":[391]}
+          ]
+        },
+        {
+          "id": "pyromancy.embers",
+          "name": {"en":"Embers","it":"Braci"},
+          "icon": 64,
+          "nodes": [
+            {"id":1805,"tier":0,"requires":[]},
+            {"id":1813,"tier":1,"requires":[1805]},
+            {"id":1714,"tier":1,"requires":[1805]},
+            {"id":427,"tier":1,"requires":[1805]},
+            {"id":404,"tier":2,"requires":[1813]},
+            {"id":1852,"tier":2,"requires":[1813]}
+          ]
+        },
+        {
+          "id": "pyromancy.fireballs",
+          "name": {"en":"Fireballs","it":"Palle di Fuoco"},
+          "icon": 64,
+          "nodes": [
+            {"id":1746,"tier":0,"requires":[]},
+            {"id":415,"tier":1,"requires":[1746]},
+            {"id":1745,"tier":1,"requires":[1746]},
+            {"id":416,"tier":1,"requires":[1746]},
+            {"id":1712,"tier":2,"requires":[415]},
+            {"id":1822,"tier":2,"requires":[415]},
+            {"id":1886,"tier":2,"requires":[415]},
+            {"id":479,"tier":2,"requires":[1745]},
+            {"id":1870,"tier":2,"requires":[1745]},
+            {"id":1883,"tier":3,"requires":[1870]}
+          ]
+        },
+        {
+          "id": "pyromancy.magma",
+          "name": {"en":"Magma and Heat","it":"Magma e Calore"},
+          "icon": 64,
+          "nodes": [
+            {"id":1664,"tier":0,"requires":[]},
+            {"id":1662,"tier":1,"requires":[1664]},
+            {"id":439,"tier":1,"requires":[1664]},
+            {"id":467,"tier":1,"requires":[1664]},
+            {"id":437,"tier":2,"requires":[1662]},
+            {"id":1824,"tier":2,"requires":[1662]},
+            {"id":1744,"tier":2,"requires":[1662]},
+            {"id":456,"tier":2,"requires":[439]},
+            {"id":1874,"tier":2,"requires":[439]},
+            {"id":1669,"tier":3,"requires":[1874]}
+          ]
+        },
+        {
+          "id": "pyromancy.infernos",
+          "name": {"en":"Infernos","it":"Inferni"},
+          "icon": 64,
+          "nodes": [
+            {"id":1713,"tier":0,"requires":[]},
+            {"id":460,"tier":1,"requires":[1713]},
+            {"id":440,"tier":1,"requires":[1713]},
+            {"id":480,"tier":1,"requires":[1713]},
+            {"id":1884,"tier":2,"requires":[460]},
+            {"id":1873,"tier":2,"requires":[460]},
+            {"id":1879,"tier":2,"requires":[460]},
+            {"id":1881,"tier":2,"requires":[440]},
+            {"id":1871,"tier":2,"requires":[440]},
+            {"id":1876,"tier":2,"requires":[440]}
+          ]
+        },
+        {
+          "id": "pyromancy.infernos.2",
+          "name": {"en":"Infernos II","it":"Inferni II"},
+          "icon": 64,
+          "nodes": [
+            {"id":1885,"tier":0,"requires":[]},
+            {"id":466,"tier":1,"requires":[1885]},
+            {"id":1834,"tier":1,"requires":[1885]},
+            {"id":1880,"tier":1,"requires":[1885]},
+            {"id":1840,"tier":2,"requires":[466]},
+            {"id":1887,"tier":2,"requires":[466]},
+            {"id":1878,"tier":2,"requires":[466]},
+            {"id":1882,"tier":2,"requires":[1834]},
+            {"id":1877,"tier":3,"requires":[1882]},
+            {"id":1875,"tier":4,"requires":[1877]}
+          ]
+        }
+      ]
+    },
+    "Roguery": {
+      "branches": [
+        {
+          "id": "roguery.unseen",
+          "name": {"en":"Staying Unseen","it":"Restare Invisibili"},
+          "icon": 167,
+          "nodes": [
+            {"id":1278,"tier":0,"requires":[]},
+            {"id":1256,"tier":1,"requires":[1278]},
+            {"id":1258,"tier":1,"requires":[1278]},
+            {"id":1257,"tier":1,"requires":[1278]},
+            {"id":1264,"tier":2,"requires":[1256]},
+            {"id":1449,"tier":2,"requires":[1256]},
+            {"id":1260,"tier":2,"requires":[1256]},
+            {"id":1447,"tier":3,"requires":[1260]},
+            {"id":1450,"tier":4,"requires":[1447]},
+            {"id":1452,"tier":5,"requires":[1450]}
+          ]
+        },
+        {
+          "id": "roguery.larceny",
+          "name": {"en":"Larceny","it":"Furto"},
+          "icon": 167,
+          "nodes": [
+            {"id":1445,"tier":0,"requires":[]},
+            {"id":1262,"tier":1,"requires":[1445]},
+            {"id":1272,"tier":1,"requires":[1445]},
+            {"id":1259,"tier":1,"requires":[1445]},
+            {"id":1263,"tier":2,"requires":[1262]},
+            {"id":1271,"tier":2,"requires":[1262]},
+            {"id":1277,"tier":2,"requires":[1262]},
+            {"id":1444,"tier":3,"requires":[1277]},
+            {"id":1448,"tier":4,"requires":[1444]},
+            {"id":1451,"tier":5,"requires":[1448]},
+            {"id":1453,"tier":6,"requires":[1451]}
+          ]
+        },
+        {
+          "id": "roguery.assassination",
+          "name": {"en":"Assassination","it":"Assassinio"},
+          "icon": 77,
+          "nodes": [
+            {"id":1270,"tier":0,"requires":[]},
+            {"id":1794,"tier":1,"requires":[1270]},
+            {"id":1795,"tier":1,"requires":[1270]},
+            {"id":1274,"tier":1,"requires":[1270]},
+            {"id":1273,"tier":2,"requires":[1794]},
+            {"id":1279,"tier":2,"requires":[1794]},
+            {"id":1280,"tier":2,"requires":[1794]}
+          ]
+        },
+        {
+          "id": "roguery.tricks",
+          "name": {"en":"Dirty Tricks","it":"Colpi Bassi"},
+          "icon": 77,
+          "nodes": [
+            {"id":1265,"tier":0,"requires":[]},
+            {"id":1266,"tier":1,"requires":[1265]},
+            {"id":1275,"tier":1,"requires":[1265]},
+            {"id":1268,"tier":1,"requires":[1265]},
+            {"id":1261,"tier":2,"requires":[1266]},
+            {"id":1267,"tier":2,"requires":[1266]},
+            {"id":1269,"tier":2,"requires":[1266]},
+            {"id":1281,"tier":2,"requires":[1275]}
+          ]
+        }
+      ]
+    },
+    "StatusMagic": {
+      "branches": [
+        {
+          "id": "statusmagic.order",
+          "name": {"en":"Restoring Order","it":"Ristabilire l Ordine"},
+          "icon": 71,
+          "nodes": [
+            {"id":379,"tier":0,"requires":[]},
+            {"id":1341,"tier":1,"requires":[379]},
+            {"id":1342,"tier":2,"requires":[1341]}
+          ]
+        },
+        {
+          "id": "statusmagic.afflictions",
+          "name": {"en":"Afflictions","it":"Afflizioni"},
+          "icon": 177,
+          "nodes": [
+            {"id":1326,"tier":0,"requires":[]},
+            {"id":1769,"tier":1,"requires":[1326]},
+            {"id":1323,"tier":1,"requires":[1326]},
+            {"id":1770,"tier":1,"requires":[1326]},
+            {"id":1340,"tier":2,"requires":[1769]},
+            {"id":1768,"tier":3,"requires":[1340]}
+          ]
+        },
+        {
+          "id": "statusmagic.senses",
+          "name": {"en":"Clouded Senses","it":"Sensi Offuscati"},
+          "icon": 4,
+          "nodes": [
+            {"id":1329,"tier":0,"requires":[]},
+            {"id":1328,"tier":1,"requires":[1329]},
+            {"id":1327,"tier":1,"requires":[1329]},
+            {"id":1331,"tier":1,"requires":[1329]},
+            {"id":1324,"tier":2,"requires":[1328]},
+            {"id":1325,"tier":2,"requires":[1328]},
+            {"id":1321,"tier":2,"requires":[1328]},
+            {"id":1334,"tier":2,"requires":[1327]},
+            {"id":1335,"tier":2,"requires":[1327]},
+            {"id":1322,"tier":2,"requires":[1327]},
+            {"id":1339,"tier":2,"requires":[1331]}
+          ]
+        },
+        {
+          "id": "statusmagic.marks",
+          "name": {"en":"Marks and Maledictions","it":"Marchi e Maledizioni"},
+          "icon": 66,
+          "nodes": [
+            {"id":1338,"tier":0,"requires":[]},
+            {"id":1330,"tier":1,"requires":[1338]},
+            {"id":1336,"tier":1,"requires":[1338]},
+            {"id":1337,"tier":1,"requires":[1338]},
+            {"id":1332,"tier":2,"requires":[1330]},
+            {"id":1333,"tier":2,"requires":[1330]},
+            {"id":1343,"tier":3,"requires":[1333]}
+          ]
+        }
+      ]
+    },
+    "Swordsmanship": {
+      "branches": [
+        {
+          "id": "swordsmanship.guard",
+          "name": {"en":"The Guard","it":"La Guardia"},
+          "icon": 81,
+          "nodes": [
+            {"id":238,"tier":0,"requires":[]},
+            {"id":281,"tier":1,"requires":[238]},
+            {"id":257,"tier":1,"requires":[238]},
+            {"id":236,"tier":1,"requires":[238]},
+            {"id":280,"tier":2,"requires":[281]},
+            {"id":270,"tier":2,"requires":[281]},
+            {"id":286,"tier":2,"requires":[281]},
+            {"id":287,"tier":2,"requires":[257]},
+            {"id":239,"tier":2,"requires":[257]},
+            {"id":271,"tier":2,"requires":[257]},
+            {"id":275,"tier":2,"requires":[236]}
+          ]
+        },
+        {
+          "id": "swordsmanship.cuts",
+          "name": {"en":"Basic Cuts","it":"Tagli di Base"},
+          "icon": 96,
+          "nodes": [
+            {"id":241,"tier":0,"requires":[]},
+            {"id":251,"tier":1,"requires":[241]},
+            {"id":255,"tier":1,"requires":[241]},
+            {"id":244,"tier":1,"requires":[241]},
+            {"id":261,"tier":2,"requires":[251]},
+            {"id":248,"tier":2,"requires":[251]},
+            {"id":1791,"tier":2,"requires":[251]},
+            {"id":262,"tier":2,"requires":[255]},
+            {"id":245,"tier":2,"requires":[255]},
+            {"id":249,"tier":2,"requires":[255]},
+            {"id":252,"tier":2,"requires":[244]},
+            {"id":246,"tier":2,"requires":[244]},
+            {"id":242,"tier":2,"requires":[244]},
+            {"id":254,"tier":3,"requires":[261]},
+            {"id":237,"tier":3,"requires":[261]},
+            {"id":1788,"tier":4,"requires":[237]},
+            {"id":279,"tier":5,"requires":[1788]}
+          ]
+        },
+        {
+          "id": "swordsmanship.thrusts",
+          "name": {"en":"Thrusts","it":"Affondi"},
+          "icon": 107,
+          "nodes": [
+            {"id":247,"tier":0,"requires":[]},
+            {"id":243,"tier":1,"requires":[247]},
+            {"id":272,"tier":1,"requires":[247]},
+            {"id":253,"tier":1,"requires":[247]},
+            {"id":267,"tier":2,"requires":[243]},
+            {"id":259,"tier":2,"requires":[243]},
+            {"id":258,"tier":2,"requires":[243]},
+            {"id":269,"tier":2,"requires":[272]},
+            {"id":240,"tier":2,"requires":[272]},
+            {"id":256,"tier":2,"requires":[272]}
+          ]
+        },
+        {
+          "id": "swordsmanship.spellblades",
+          "name": {"en":"Spell Blades","it":"Lame Incantate"},
+          "icon": 96,
+          "nodes": [
+            {"id":265,"tier":0,"requires":[]},
+            {"id":264,"tier":1,"requires":[265]},
+            {"id":277,"tier":1,"requires":[265]},
+            {"id":278,"tier":1,"requires":[265]},
+            {"id":283,"tier":2,"requires":[264]},
+            {"id":284,"tier":2,"requires":[264]},
+            {"id":285,"tier":2,"requires":[264]},
+            {"id":282,"tier":2,"requires":[277]},
+            {"id":276,"tier":3,"requires":[282]}
+          ]
+        },
+        {
+          "id": "swordsmanship.heavy",
+          "name": {"en":"Heavy Blades","it":"Lame Pesanti"},
+          "icon": 223,
+          "nodes": [
+            {"id":266,"tier":0,"requires":[]},
+            {"id":263,"tier":1,"requires":[266]},
+            {"id":250,"tier":1,"requires":[266]},
+            {"id":260,"tier":1,"requires":[266]},
+            {"id":268,"tier":2,"requires":[263]},
+            {"id":274,"tier":2,"requires":[263]},
+            {"id":273,"tier":3,"requires":[274]}
+          ]
+        }
+      ]
+    },
+    "Tactical": {
+      "branches": [
+        {
+          "id": "tactical.order",
+          "name": {"en":"Keeping Order","it":"Mantenere l Ordine"},
+          "icon": 246,
+          "nodes": [
+            {"id":1211,"tier":0,"requires":[]},
+            {"id":1212,"tier":1,"requires":[1211]},
+            {"id":1216,"tier":1,"requires":[1211]},
+            {"id":1219,"tier":1,"requires":[1211]},
+            {"id":1225,"tier":2,"requires":[1212]},
+            {"id":1224,"tier":2,"requires":[1212]},
+            {"id":1214,"tier":2,"requires":[1212]},
+            {"id":1220,"tier":2,"requires":[1216]},
+            {"id":1213,"tier":2,"requires":[1216]},
+            {"id":1230,"tier":2,"requires":[1216]},
+            {"id":1231,"tier":3,"requires":[1230]}
+          ]
+        },
+        {
+          "id": "tactical.rescue",
+          "name": {"en":"Rescue Work","it":"Lavoro di Soccorso"},
+          "icon": 67,
+          "nodes": [
+            {"id":1208,"tier":0,"requires":[]},
+            {"id":1215,"tier":1,"requires":[1208]},
+            {"id":1217,"tier":1,"requires":[1208]},
+            {"id":1209,"tier":1,"requires":[1208]},
+            {"id":1210,"tier":2,"requires":[1215]},
+            {"id":1222,"tier":2,"requires":[1215]},
+            {"id":1218,"tier":2,"requires":[1215]},
+            {"id":1207,"tier":2,"requires":[1217]},
+            {"id":1206,"tier":2,"requires":[1217]},
+            {"id":1241,"tier":2,"requires":[1217]},
+            {"id":1234,"tier":2,"requires":[1209]},
+            {"id":1233,"tier":2,"requires":[1209]},
+            {"id":1228,"tier":2,"requires":[1209]}
+          ]
+        },
+        {
+          "id": "tactical.science",
+          "name": {"en":"Field Science","it":"Scienza sul Campo"},
+          "icon": 73,
+          "nodes": [
+            {"id":1237,"tier":0,"requires":[]},
+            {"id":1240,"tier":1,"requires":[1237]},
+            {"id":1243,"tier":1,"requires":[1237]},
+            {"id":1204,"tier":1,"requires":[1237]},
+            {"id":1236,"tier":2,"requires":[1204]},
+            {"id":1244,"tier":3,"requires":[1236]}
+          ]
+        },
+        {
+          "id": "tactical.hardware",
+          "name": {"en":"Hardware","it":"Attrezzatura"},
+          "icon": 83,
+          "nodes": [
+            {"id":1818,"tier":0,"requires":[]},
+            {"id":1205,"tier":1,"requires":[1818]},
+            {"id":1221,"tier":1,"requires":[1818]},
+            {"id":1229,"tier":1,"requires":[1818]},
+            {"id":1223,"tier":2,"requires":[1205]},
+            {"id":1242,"tier":2,"requires":[1205]},
+            {"id":1227,"tier":2,"requires":[1205]},
+            {"id":1226,"tier":2,"requires":[1221]},
+            {"id":1235,"tier":2,"requires":[1221]},
+            {"id":1232,"tier":2,"requires":[1221]},
+            {"id":1238,"tier":2,"requires":[1229]},
+            {"id":1239,"tier":3,"requires":[1238]}
+          ]
+        }
+      ]
+    },
+    "Technomagical": {
+      "branches": [
+        {
+          "id": "technomagical.forge",
+          "name": {"en":"Forge Work","it":"Lavoro di Fucina"},
+          "icon": 196,
+          "nodes": [
+            {"id":1654,"tier":0,"requires":[]}
+          ]
+        }
+      ]
+    },
+    "Vocation": {
+      "branches": [
+        {
+          "id": "vocation.pit",
+          "name": {"en":"The Pit","it":"La Fossa"},
+          "icon": 189,
+          "nodes": [
+            {"id":1686,"tier":0,"requires":[]},
+            {"id":1685,"tier":1,"requires":[1686]},
+            {"id":1687,"tier":1,"requires":[1686]}
+          ]
+        }
+      ]
+    },
+    "VoidMagic": {
+      "branches": [
+        {
+          "id": "voidmagic.motes",
+          "name": {"en":"Void Motes","it":"Scaglie del Vuoto"},
+          "icon": 71,
+          "nodes": [
+            {"id":1812,"tier":0,"requires":[]},
+            {"id":1765,"tier":1,"requires":[1812]},
+            {"id":1766,"tier":1,"requires":[1812]},
+            {"id":1829,"tier":1,"requires":[1812]},
+            {"id":611,"tier":2,"requires":[1765]},
+            {"id":1733,"tier":2,"requires":[1765]},
+            {"id":1767,"tier":2,"requires":[1765]},
+            {"id":1835,"tier":3,"requires":[1767]},
+            {"id":1828,"tier":4,"requires":[1835]}
+          ]
+        },
+        {
+          "id": "voidmagic.rifts",
+          "name": {"en":"Rifts","it":"Squarci"},
+          "icon": 71,
+          "nodes": [
+            {"id":606,"tier":0,"requires":[]},
+            {"id":605,"tier":1,"requires":[606]},
+            {"id":612,"tier":1,"requires":[606]},
+            {"id":608,"tier":1,"requires":[606]},
+            {"id":609,"tier":2,"requires":[605]},
+            {"id":1846,"tier":2,"requires":[605]},
+            {"id":614,"tier":2,"requires":[605]},
+            {"id":1842,"tier":3,"requires":[614]}
+          ]
+        },
+        {
+          "id": "voidmagic.consumption",
+          "name": {"en":"Consumption","it":"Consunzione"},
+          "icon": 71,
+          "nodes": [
+            {"id":1735,"tier":0,"requires":[]},
+            {"id":602,"tier":1,"requires":[1735]},
+            {"id":1734,"tier":1,"requires":[1735]},
+            {"id":603,"tier":1,"requires":[1735]},
+            {"id":463,"tier":2,"requires":[602]},
+            {"id":607,"tier":2,"requires":[602]},
+            {"id":613,"tier":2,"requires":[602]},
+            {"id":610,"tier":2,"requires":[1734]},
+            {"id":1847,"tier":2,"requires":[1734]},
+            {"id":604,"tier":3,"requires":[1847]}
+          ]
+        }
+      ]
+    }
+  }
+}

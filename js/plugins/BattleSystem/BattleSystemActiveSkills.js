@@ -722,9 +722,52 @@
         try {
             lore = (isMagicalSkill(skill) && utils && utils.loreFor) ? utils.loreFor(skill) : '';
         } catch (e) { lore = ''; }
+        // With the Solomon incantation fitted in the gun's mode bay the words
+        // leave the log and are said out loud instead, in a box of their own.
+        if (lore && incantBox(actor, lore)) return;
         announce(lore
             ? text('em.incant', { actor: actor.name(), skill: skill.name, lore })
             : text('em.incantPlain', { actor: actor.name(), skill: skill.name }));
+    }
+
+    // Whether a reading is holding the field right now. Set when the box goes
+    // up, dropped by the battle log the frame after it comes down.
+    let incantHeld = false;
+
+    /**
+     * The reading raised as a box rather than as a line in the log: typed out,
+     * chattered letter by letter, and with nobody's portrait painted over the
+     * fight, which is the one thing a battle never allows. Answers false
+     * whenever the gun's Solomon incantation is not running, which is what
+     * keeps the log line the default.
+     * @param {Game_Actor} actor - Whoever is reading
+     * @param {string} lore - The incantation, already resolved
+     * @returns {boolean} true when the box has the words
+     */
+    function incantBox(actor, lore) {
+        const VG = window.VectorGun;
+        if (!VG || !VG.incanting || !VG.incanting(actor)) return false;
+        const VO = window.DialogueVoiceOver;
+        if (!VO || !VO.say) return false;
+        const said = VO.say(actor.name(), [text('em.incantBox', { actor: actor.name(), lore })]);
+        if (!said) return false;
+        incantHeld = true;
+        return true;
+    }
+
+    // Nothing else moves while the page is being read. BattleManager is held
+    // already, by a message it cannot advance past, but the battle log runs on
+    // a clock of its own and would play the cast over the top of the box, so it
+    // waits out the reading too.
+    if (typeof Window_BattleLog !== 'undefined') {
+        const _Window_BattleLog_updateWait_incant = Window_BattleLog.prototype.updateWait;
+        Window_BattleLog.prototype.updateWait = function () {
+            if (incantHeld) {
+                if (typeof $gameMessage !== 'undefined' && $gameMessage && $gameMessage.isBusy()) return true;
+                incantHeld = false;
+            }
+            return _Window_BattleLog_updateWait_incant.call(this);
+        };
     }
 
     /**

@@ -146,15 +146,6 @@
       rec.type === "SUPERMASSIVE_BLACK_HOLE";
   }
 
-  // True for anything whose model animates in its own right (a spinning
-  // accretion disk, a pulsar's beams, a flaring magnetar). Those refresh far
-  // more often than the 2 Hz a plain star's slow drift is happy with.
-  function isLiveModel(rec) {
-    if (isBlackHoleRecord(rec)) return true;
-    const Cosmos = window.GalaxySim && window.GalaxySim.Scene3DCosmos;
-    return !!(Cosmos && Cosmos.isExoticStarType && rec && Cosmos.isExoticStarType(rec.type));
-  }
-
   // On-screen radius of the BODY itself. An ordinary star is drawn at the
   // window's usual size; anything whose model reaches far past its own
   // surface (a hole's accretion disk runs out to four horizon radii, a
@@ -188,7 +179,6 @@
     _shipBgApproach: 0,
     _shipBgStateKey: null,
     _shipBgSpinAngle: null,
-    _shipBgLiveModel: false,
   };
   Object.keys(_bgState).forEach(function (key) {
     Object.defineProperty(Spriteset_Map.prototype, key, {
@@ -259,11 +249,12 @@
     // Scroll fast while travelling, gentle drift while parked/orbiting.
     this._shipBgScroll += dt * (moving ? 0.18 * speedMul : 0.01);
 
-    // Repaint at ~20Hz: stars drift slowly, so throttling the full-screen
-    // repaint (gradient + starfield + celestial body composite) to every 3rd
-    // frame is visually near-identical while cutting the per-frame canvas work
-    // and the baseTexture GPU upload to a third. Always repaint immediately
-    // when the depicted state changes so transitions never lag.
+    // The window is repainted EVERY frame. It used to be throttled (every 2nd
+    // or 3rd frame, with the celestial body itself re-rendered at 2 Hz into a
+    // cached canvas), which is a hardcoded stutter in the one view the player
+    // looks straight out of: the starfield stepped, the body's own animation
+    // ticked in visible jumps and an approach swelled in stages. Nothing here
+    // is throttled any more.
     const speed = Math.max(1, (typeof $gameVariables !== "undefined" && $gameVariables.value(94)) || 1);
     const isPsychedelic = moving && speed > 10;
     const stateKey = (moving ? "M" : "P") + "|" +
@@ -275,13 +266,11 @@
     const stateChanged = stateKey !== this._shipBgStateKey;
     if (stateChanged) {
       this._shipBgStateKey = stateKey;
-      this._shipBgBodyRenderedFrame = -1e9; // force the body cache to re-render
       // Fresh random starting facing every time the ship settles on a new
       // body (or first boards), instead of the same pose every time.
       this._shipBgSpinAngle = Math.random() * Math.PI * 2;
     }
     this._shipBgFrame = (this._shipBgFrame || 0) + 1;
-    if (!stateChanged && this._shipBgFrame % 3 !== 0) return;
 
     this.drawShipBackground(sprite.bitmap, dm, ship, moving);
     sprite.bitmap._baseTexture.update();
@@ -353,212 +342,399 @@
     // During travel we are in transit, so only the streaking starfield shows.
     if (moving) return;
 
-    // The body is an offscreen WebGL render (planet/star) that is expensive to
-    // regenerate. Both a star and an orbited planet drift slowly frame to
-    // frame, so render it into a cached canvas only every ~30 frames and just
-    // blit that cache over the starfield on every repaint.
-    let cache = this._shipBgBodyCanvas;
-    if (!cache || cache.width !== w || cache.height !== h) {
-      cache = this._shipBgBodyCanvas = document.createElement("canvas");
-      cache.width = w;
-      cache.height = h;
-      this._shipBgBodyRenderedFrame = -1e9;
-    }
-    const frame = this._shipBgFrame || 0;
-    const last = this._shipBgBodyRenderedFrame == null ? -1e9 : this._shipBgBodyRenderedFrame;
-    // A model that animates in its own right (an accretion disk, a pulsar's
-    // beams) is re-rendered at 10 Hz; a slowly drifting star or planet keeps
-    // the cheap 2 Hz refresh. So does an approach, where the body swells.
-    if (frame - last >= this._shipBgBodyInterval()) {
-      this._shipBgBodyRenderedFrame = frame;
-      const cctx = cache.getContext("2d");
-      cctx.clearRect(0, 0, w, h);
-      this.drawShipBody(cctx, w, h, dm, ship, time);
-    }
-    ctx.drawImage(cache, 0, 0);
+    // Straight into the frame being drawn. The body used to be rendered into a
+    // cached canvas a couple of times a second and blitted over the starfield
+    // in between, which is what made a star's flares, a hole's disk and a
+    // refuel approach all move in steps rather than turn.
+    this.drawShipBody(ctx, w, h, dm, ship, time);
   };
 
-  // Abstract and psychedelic hyperspace warp background for speeds > 10X.
-  // Complexity and weirdness scale with speed (11 to 100) while animation speed
-  // remains hypnotic and constant.
-  Spriteset_Map.prototype.drawPsychedelicWarp = function (ctx, w, h, time, speed) {
-    const complexity = Math.max(0, Math.min(1, (speed - 10) / 90));
-    const cx = w * 0.5;
-    const cy = h * 0.5;
-    const maxR = Math.sqrt(cx * cx + cy * cy);
+  // ==========================================================================
+  // Hyperspace, everything above 10x on the warp slider.
+  //
+  // Three readings of one corridor, crossfaded by the slider so the window
+  // never cuts from one to the next:
+  //
+  //   11 to ~40   the stargate. A square shaft of hard edged colour slabs
+  //               rushing the viewer down a slit scan perspective, the way
+  //               2001 shoots it: two lit walls flanking the eye, roof and
+  //               floor dimmer, every band a saturated slab of its own hue.
+  //   ~40 to ~75  witchspace. The colour drains toward one cold blue, the
+  //               shaft tears out of true and lightning whips out of the
+  //               vanishing point. Something is in here with the ship.
+  //   ~75 to 100  the white. The ground floods to pure white, everything drawn
+  //               goes pure black, and four dimensional solids (a tesseract, a
+  //               16-cell, a 5-cell, a 24-cell) turn in their own planes as
+  //               they drift out of the vanishing point and pass the hull. At
+  //               100 there is no colour left anywhere: white ground, black
+  //               edges, and a black pupil in the middle of the screen.
+  //
+  // The animation clock never speeds up with the slider. Only what is drawn
+  // changes, so the whole thing stays hypnotic instead of frantic.
+  // ==========================================================================
 
-    // Animation time advances at a constant rate, independent of speed
-    const baseHue = (time * 25) % 360;
+  function smooth01(a, b, x) {
+    const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+  }
 
-    // 1. Psychedelic gradient background
-    if (ctx.createRadialGradient) {
-      const bgGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, maxR);
-      bgGrad.addColorStop(0, `hsl(${(baseHue + 180) % 360}, 90%, 15%)`);
-      bgGrad.addColorStop(0.5, `hsl(${baseHue}, 85%, 8%)`);
-      bgGrad.addColorStop(1, `hsl(${(baseHue + 90) % 360}, 80%, 4%)`);
-      ctx.fillStyle = bgGrad;
-    } else {
-      ctx.fillStyle = "#0a0518";
-    }
-    ctx.fillRect(0, 0, w, h);
+  // Where a warp slider reading sits in the three readings above. Pulled out
+  // of the draw so it can be asserted without a canvas.
+  function warpStages(speed) {
+    const t = Math.max(0, Math.min(1, ((speed || 0) - 10) / 90));
+    return {
+      t: t,
+      witch: smooth01(0.10, 0.55, t),
+      mono: smooth01(0.70, 1.00, t)
+    };
+  }
 
-    // 2. Kaleidoscopic ray vortex (more rays and color shifts as complexity increases)
-    const rayCount = Math.floor(8 + complexity * 28);
-    const rotAngle = time * 0.35;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rotAngle);
-    for (let r = 0; r < rayCount; r++) {
-      const theta = (r / rayCount) * Math.PI * 2;
-      const rayHue = (baseHue + (r / rayCount) * 360 * (1 + Math.floor(complexity * 3))) % 360;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      const arcWidth = (Math.PI / rayCount) * (0.7 + 0.3 * Math.sin(time * 1.5 + r));
-      ctx.arc(0, 0, maxR * 1.2, theta - arcWidth * 0.5, theta + arcWidth * 0.5);
-      ctx.closePath();
-      ctx.fillStyle = `hsla(${rayHue}, 90%, 50%, ${0.07 + complexity * 0.12})`;
-      ctx.fill();
-    }
-    ctx.restore();
+  // hsl to rgb, 0..255. The bands are authored in hue space because the whole
+  // palette rotates as one; the ink blend below needs the channels.
+  function hslRgb(hue, s, l) {
+    const h = (((hue % 360) + 360) % 360) / 360;
+    if (s <= 0) { const v = l * 255; return [v, v, v]; }
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const ch = (x) => {
+      if (x < 0) x += 1; else if (x > 1) x -= 1;
+      if (x < 1 / 6) return p + (q - p) * 6 * x;
+      if (x < 1 / 2) return q;
+      if (x < 2 / 3) return p + (q - p) * (2 / 3 - x) * 6;
+      return p;
+    };
+    return [ch(h + 1 / 3) * 255, ch(h) * 255, ch(h - 1 / 3) * 255];
+  }
 
-    // 3. Concentric undulating warp rings (fractal / wave harmonics grow with complexity)
-    const ringCount = Math.floor(5 + complexity * 15);
-    const harmonics = 3 + Math.floor(complexity * 8);
-    const wavePhase = time * 1.6;
-    for (let k = 1; k <= ringCount; k++) {
-      const r0 = (k / (ringCount + 1)) * maxR * 0.95;
-      const kPhase = wavePhase - k * 0.45;
-      const steps = 40 + Math.floor(complexity * 40);
-      ctx.beginPath();
-      for (let s = 0; s <= steps; s++) {
-        const a = (s / steps) * Math.PI * 2;
-        let wave = Math.sin(a * harmonics + kPhase) * (10 + complexity * 25);
-        if (complexity > 0.25) {
-          wave += Math.sin(a * (harmonics * 2 + 1) - kPhase * 1.2) * (complexity * 16);
-        }
-        if (complexity > 0.65) {
-          wave += Math.cos(a * 15 + time * 1.8) * (complexity * 10);
-        }
-        const r = Math.max(5, r0 + wave);
-        const px = cx + Math.cos(a) * r;
-        const py = cy + Math.sin(a) * r;
-        if (s === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
+  // One frame's palette. mono drags every drawn colour to the ink pole and the
+  // ground to the opposite one, so at 100 the screen holds exactly two values.
+  function makePalette(mono, negative) {
+    const inkPole = negative ? 255 : 0;
+    return {
+      mono: mono,
+      inkPole: inkPole,
+      ground: negative ? 0 : 255,
+      // A colour on its way to the ink pole, as a css rgba() string.
+      ink(hue, s, l, a) {
+        const c = hslRgb(hue, s, l);
+        const r = Math.round(c[0] + (inkPole - c[0]) * mono);
+        const g = Math.round(c[1] + (inkPole - c[1]) * mono);
+        const b = Math.round(c[2] + (inkPole - c[2]) * mono);
+        return "rgba(" + r + "," + g + "," + b + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")";
       }
-      ctx.closePath();
-      const ringHue = (baseHue + k * (24 + complexity * 32)) % 360;
-      ctx.strokeStyle = `hsla(${ringHue}, 100%, 65%, ${0.25 + complexity * 0.45})`;
-      ctx.lineWidth = 1.2 + complexity * 2.5;
+    };
+  }
+
+  // --------------------------------------------------------------------------
+  // The regular 4-polytopes. Vertices in 4-space and the edge list, built once
+  // per kind and kept: they never change.
+  // --------------------------------------------------------------------------
+  const _POLY4 = {};
+  function polytope4(kind) {
+    if (_POLY4[kind]) return _POLY4[kind];
+    const verts = [];
+    const edges = [];
+    if (kind === "cross") {
+      // 16-cell: the two points on each axis, every pair joined but the
+      // antipodal ones.
+      for (let a = 0; a < 4; a++) {
+        const p = [0, 0, 0, 0], m = [0, 0, 0, 0];
+        p[a] = 1.35; m[a] = -1.35;
+        verts.push(p, m);
+      }
+      for (let i = 0; i < 8; i++) {
+        for (let j = i + 1; j < 8; j++) if ((i >> 1) !== (j >> 1)) edges.push([i, j]);
+      }
+    } else if (kind === "simplex") {
+      // 5-cell: five mutually joined points, centred on the origin.
+      const k = 4 / Math.sqrt(5), q = -1 / Math.sqrt(5);
+      verts.push([1, 1, 1, q], [1, -1, -1, q], [-1, 1, -1, q], [-1, -1, 1, q], [0, 0, 0, k]);
+      for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) edges.push([i, j]);
+    } else if (kind === "cell24") {
+      // 24-cell: every sign pattern on every pair of axes, joined at the
+      // shortest distance.
+      for (let a = 0; a < 4; a++) {
+        for (let b = a + 1; b < 4; b++) {
+          for (let sa = -1; sa <= 1; sa += 2) {
+            for (let sb = -1; sb <= 1; sb += 2) {
+              const v = [0, 0, 0, 0];
+              v[a] = sa; v[b] = sb;
+              verts.push(v);
+            }
+          }
+        }
+      }
+      for (let i = 0; i < verts.length; i++) {
+        for (let j = i + 1; j < verts.length; j++) {
+          let d = 0;
+          for (let c = 0; c < 4; c++) { const q2 = verts[i][c] - verts[j][c]; d += q2 * q2; }
+          if (Math.abs(d - 2) < 1e-6) edges.push([i, j]);
+        }
+      }
+    } else {
+      // Tesseract: the 16 corners of the unit 4-cube, joined along one axis.
+      for (let i = 0; i < 16; i++) {
+        verts.push([(i & 1) ? 1 : -1, (i & 2) ? 1 : -1, (i & 4) ? 1 : -1, (i & 8) ? 1 : -1]);
+      }
+      for (let i = 0; i < 16; i++) {
+        for (let b = 0; b < 4; b++) { const j = i ^ (1 << b); if (j > i) edges.push([i, j]); }
+      }
+    }
+    _POLY4[kind] = { verts: verts, edges: edges };
+    return _POLY4[kind];
+  }
+
+  // Turn a 4-vector in the xw, yz and xy planes, then drop it to 3-space by the
+  // same perspective divide a 3D point takes to the screen: the near side of
+  // the solid in the fourth direction swells, the far side shrinks, which is
+  // the whole reason a tesseract looks like a box inside a box turning itself
+  // inside out. out is written in place so a whole field costs no garbage.
+  const HYPER_W_DIST = 3.1;
+  function project4(v, ax, ay, az, out) {
+    let x = v[0], y = v[1], z = v[2], w = v[3];
+    let c = Math.cos(ax), s = Math.sin(ax);
+    let t = x * c - w * s; w = x * s + w * c; x = t;
+    c = Math.cos(ay); s = Math.sin(ay);
+    t = y * c - z * s; z = y * s + z * c; y = t;
+    c = Math.cos(az); s = Math.sin(az);
+    t = x * c - y * s; y = x * s + y * c; x = t;
+    const k = HYPER_W_DIST / Math.max(0.35, HYPER_W_DIST - w);
+    out[0] = x * k; out[1] = y * k; out[2] = z * k;
+    return out;
+  }
+
+  // The field of solids the white sends past the hull. Seeded once so every
+  // trip through the white sees the same procession in the same order.
+  const HYPER_KINDS = ["tesseract", "cross", "simplex"];
+  let _hyperField = null;
+  function hyperField() {
+    if (_hyperField) return _hyperField;
+    let seed = 90210;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+    const list = [];
+    for (let i = 0; i < 8; i++) {
+      list.push({
+        // One 24-cell only: it carries 96 edges against the tesseract's 32.
+        kind: i === 3 ? "cell24" : HYPER_KINDS[i % HYPER_KINDS.length],
+        phase: rnd(),
+        rate: 0.055 + rnd() * 0.075,
+        scale: 0.42 + rnd() * 0.55,
+        ox: (rnd() - 0.5) * 2.6,
+        oy: (rnd() - 0.5) * 1.9,
+        spinA: 0.21 + rnd() * 0.34,
+        spinB: 0.17 + rnd() * 0.3,
+        spinC: 0.09 + rnd() * 0.22
+      });
+    }
+    _hyperField = list;
+    return list;
+  }
+
+  // Draw `count` of them, nearest last so the near ones overlay the far.
+  function drawHyperSolids(ctx, cx, cy, focal, time, pal, count) {
+    const field = hyperField();
+    const p = [0, 0, 0];
+    const sx = [], sy = [];
+    for (let n = 0; n < Math.min(count, field.length); n++) {
+      const e = field[n];
+      const u = 1 - ((e.phase + time * e.rate) % 1);   // 1 far, 0 on the hull
+      const z = 0.55 + u * 9.5;
+      const fade = Math.min(1, (1 - u) * 3.4) * Math.min(1, u * 7);
+      if (fade <= 0.01) continue;
+      const poly = polytope4(e.kind);
+      const ax = time * e.spinA + e.phase * 6.28;
+      const ay = time * e.spinB + e.phase * 2.1;
+      const az = time * e.spinC;
+      const k = focal / z;
+      sx.length = 0; sy.length = 0;
+      for (let i = 0; i < poly.verts.length; i++) {
+        project4(poly.verts[i], ax, ay, az, p);
+        const zz = z + p[2] * e.scale * 0.55;
+        const kk = zz > 0.2 ? focal / zz : k;
+        sx.push(cx + (e.ox + p[0] * e.scale) * kk);
+        sy.push(cy + (e.oy + p[1] * e.scale) * kk);
+      }
+      ctx.strokeStyle = pal.ink(0, 0, 0.02, 0.9 * fade * pal.mono);
+      ctx.lineWidth = Math.max(0.7, Math.min(5, 2.6 / z + 0.5));
+      ctx.beginPath();
+      for (let i = 0; i < poly.edges.length; i++) {
+        const a = poly.edges[i][0], b = poly.edges[i][1];
+        ctx.moveTo(sx[a], sy[a]);
+        ctx.lineTo(sx[b], sy[b]);
+      }
       ctx.stroke();
     }
+  }
 
-    // 4. Psychedelic warp streaks (rainbow hues, harmonic lateral wobble, chromatic dispersion)
+  Spriteset_Map.prototype.drawPsychedelicWarp = function (ctx, w, h, time, speed) {
+    const st = warpStages(speed);
+    const witch = st.witch;
+    const mono = st.mono;
+
+    // A rare, brief polarity flip once the white has taken hold: the ground
+    // goes black and the solids go white for a few frames. Driven off the
+    // clock, so it is the same flicker every trip rather than random noise.
+    const negative = mono > 0.55 && (time % 7.3) < 0.13;
+    const pal = makePalette(mono, negative);
+
+    // The vanishing point drifts off centre and never settles.
+    const cx = w * (0.5 + Math.sin(time * 0.13) * 0.035);
+    const cy = h * (0.5 + Math.sin(time * 0.097 + 1.7) * 0.03);
+    const maxR = Math.sqrt(w * w + h * h) * 0.5;
+    const focal = h * 0.62;
+    const baseHue = (time * 22) % 360;
+    const sat = 0.92 * (1 - witch * 0.72);
+    // Witchspace drags every hue the short way round to one cold blue.
+    const cold = (hue) => {
+      let d = (222 - (((hue % 360) + 360) % 360)) % 360;
+      if (d > 180) d -= 360; else if (d < -180) d += 360;
+      return hue + d * witch * 0.8;
+    };
+
+    // --- the ground -------------------------------------------------------
+    const bg = hslRgb(cold(baseHue + 200), sat * 0.8, 0.055);
+    ctx.fillStyle = "rgb(" +
+      Math.round(bg[0] + (pal.ground - bg[0]) * mono) + "," +
+      Math.round(bg[1] + (pal.ground - bg[1]) * mono) + "," +
+      Math.round(bg[2] + (pal.ground - bg[2]) * mono) + ")";
+    ctx.fillRect(0, 0, w, h);
+    if (mono < 1 && ctx.createRadialGradient) {
+      const g = ctx.createRadialGradient(cx, cy, 4, cx, cy, maxR);
+      g.addColorStop(0, pal.ink(cold(baseHue + 40), sat, 0.34, 0.55 * (1 - mono)));
+      g.addColorStop(0.55, pal.ink(cold(baseHue), sat, 0.14, 0.4 * (1 - mono)));
+      g.addColorStop(1, pal.ink(cold(baseHue + 120), sat, 0.04, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // --- the slit scan shaft ----------------------------------------------
+    // A square corridor seen down its axis. Each band is the slab between two
+    // depths, drawn as four trapezoids (the two lit walls, then roof and
+    // floor), so the walls read as continuous ribbons of light streaming past
+    // the eye. Bands are addressed by a monotonic id, not by screen slot, so a
+    // band keeps its own hue the whole way in instead of the colours crawling.
+    const BANDS = 24;
+    const NEAR = 0.34;
+    const STEP = 0.58;
+    const flow = time * 1.05;           // constant, whatever the slider says
+    const halfW = 1.3, halfH = 0.92;
+    const first = Math.ceil(flow);
+    const quad = (ax, ay, bx, by, cx2, cy2, dx, dy, style) => {
+      ctx.beginPath();
+      ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.lineTo(cx2, cy2); ctx.lineTo(dx, dy);
+      ctx.closePath();
+      ctx.fillStyle = style;
+      ctx.fill();
+    };
+    for (let j = 0; j < BANDS; j++) {
+      const id = first + j;
+      const f = id - flow;               // 0 = about to pass the hull
+      const z0 = NEAR + f * STEP;
+      const z1 = z0 + STEP * 0.72;       // the dark gap between slabs
+      const tear = witch * (0.16 + 0.14 * Math.sin(id * 1.7 + time * 1.3));
+      const rx0 = halfW * (1 + tear) * focal / z0, ry0 = halfH * focal / z0;
+      const rx1 = halfW * (1 + tear) * focal / z1, ry1 = halfH * focal / z1;
+      if (rx0 > maxR * 7) continue;      // already swallowed the whole screen
+      const off = witch * Math.sin(id * 0.9 + time * 0.7) * 0.22 * focal;
+      const x0 = cx + off / z0, x1 = cx + off / z1;
+      const near = Math.max(0, 1 - f / BANDS);
+      const hue = cold(baseHue + id * 29);
+      const a = (0.18 + 0.55 * near) * (1 - mono * 0.3);
+
+      quad(x0 - rx0, cy - ry0, x1 - rx1, cy - ry1, x1 - rx1, cy + ry1, x0 - rx0, cy + ry0,
+        pal.ink(hue, sat, 0.54, a));
+      quad(x0 + rx0, cy - ry0, x1 + rx1, cy - ry1, x1 + rx1, cy + ry1, x0 + rx0, cy + ry0,
+        pal.ink(hue + 22, sat, 0.46, a));
+      // Roof and floor stay the dim sides, and step back entirely in the white
+      // so the ground there is left as white as it can be.
+      const ab = a * 0.5 * (1 - mono);
+      if (ab > 0.01) {
+        quad(x0 - rx0, cy - ry0, x0 + rx0, cy - ry0, x1 + rx1, cy - ry1, x1 - rx1, cy - ry1,
+          pal.ink(hue + 46, sat * 0.8, 0.24, ab));
+        quad(x0 - rx0, cy + ry0, x0 + rx0, cy + ry0, x1 + rx1, cy + ry1, x1 - rx1, cy + ry1,
+          pal.ink(hue + 46, sat * 0.8, 0.2, ab));
+      }
+    }
+
+    // --- light rushing past the hull --------------------------------------
+    // The same deterministic field the parked starfield uses, read in polar:
+    // angle from x, position along the run from y, so every point accelerates
+    // out of the vanishing point and off the edge of the screen.
     const stars = getStars();
-    const pScroll = (time * 0.25) % 1;
+    const rush = time * 0.45;
     ctx.save();
     for (let i = 0; i < stars.length; i++) {
       const s = stars[i];
-      const px = s.x * w;
-      let sy = (s.y + pScroll * s.depth) % 1;
-      if (sy < 0) sy += 1;
-      const py = sy * h;
-
-      const streak = 18 + s.depth * 45 + complexity * 30;
-      const streakHue = (baseHue + i * (14 + complexity * 22) + s.twinkle * 60) % 360;
-
-      // Lateral wobble distortion: higher complexity adds higher frequency modulation
-      const wobble = Math.sin(py * 0.025 + time * 2.2 + s.twinkle) * (5 + complexity * 22)
-        + (complexity > 0.35 ? Math.sin(py * 0.075 - time * 1.5) * (complexity * 14) : 0)
-        + (complexity > 0.75 ? Math.cos(py * 0.16 + time * 2.0) * (complexity * 8) : 0);
-
-      const lineWidth = s.depth * (1.5 + complexity * 2.5) + 0.5;
-
-      if (complexity > 0.25) {
-        // Chromatic split: Red/Magenta shifted left, Cyan/Green shifted right
-        const cOffset = 1.5 + complexity * 5.5;
-        // Red / Magenta channel
-        ctx.strokeStyle = `hsla(${(streakHue + 320) % 360}, 100%, 60%, ${0.5 + complexity * 0.4})`;
-        ctx.lineWidth = lineWidth * 0.8;
-        ctx.beginPath();
-        ctx.moveTo(px + wobble - cOffset, py);
-        if (ctx.quadraticCurveTo) {
-          ctx.quadraticCurveTo(px + wobble * 1.2 - cOffset, py - streak * 0.5, px + wobble * 0.6 - cOffset, py - streak);
-        } else {
-          ctx.lineTo(px + wobble * 0.6 - cOffset, py - streak);
-        }
-        ctx.stroke();
-
-        // Cyan / Blue channel
-        ctx.strokeStyle = `hsla(${(streakHue + 180) % 360}, 100%, 60%, ${0.5 + complexity * 0.4})`;
-        ctx.lineWidth = lineWidth * 0.8;
-        ctx.beginPath();
-        ctx.moveTo(px + wobble + cOffset, py);
-        if (ctx.quadraticCurveTo) {
-          ctx.quadraticCurveTo(px + wobble * 1.2 + cOffset, py - streak * 0.5, px + wobble * 0.6 + cOffset, py - streak);
-        } else {
-          ctx.lineTo(px + wobble * 0.6 + cOffset, py - streak);
-        }
-        ctx.stroke();
-      }
-
-      // Main vibrant streak
-      ctx.strokeStyle = `hsla(${streakHue}, 100%, 75%, ${0.65 + complexity * 0.35})`;
-      ctx.lineWidth = lineWidth;
+      const ang = s.x * Math.PI * 2 + witch * Math.sin(time * 0.6 + s.twinkle) * 0.4;
+      let p = (s.y + rush * (0.4 + s.depth)) % 1;
+      if (p < 0) p += 1;
+      const r0 = Math.pow(p, 2.4) * maxR * 1.35;
+      const r1 = r0 + (10 + s.depth * 70) * (0.35 + p);
+      const ca = Math.cos(ang), sa = Math.sin(ang);
+      ctx.strokeStyle = pal.ink(cold(baseHue + s.twinkle * 57 + i * 11), sat, 0.74,
+        (0.2 + 0.6 * p) * (1 - mono * 0.55));
+      ctx.lineWidth = 0.6 + s.depth * (1.6 + witch);
       ctx.beginPath();
-      ctx.moveTo(px + wobble, py);
-      if (ctx.quadraticCurveTo) {
-        ctx.quadraticCurveTo(px + wobble * 1.2, py - streak * 0.5, px + wobble * 0.6, py - streak);
-      } else {
-        ctx.lineTo(px + wobble * 0.6, py - streak);
-      }
+      ctx.moveTo(cx + ca * r0, cy + sa * r0);
+      ctx.lineTo(cx + ca * r1, cy + sa * r1);
       ctx.stroke();
     }
     ctx.restore();
 
-    // 5. Central Singularity / Vortex Eye
-    const eyeR = 12 + complexity * 26 + Math.sin(time * 3) * (4 + complexity * 8);
-    if (ctx.createRadialGradient) {
-      const eyeGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, eyeR * 2.5);
-      eyeGrad.addColorStop(0, "#ffffff");
-      eyeGrad.addColorStop(0.3, `hsla(${(baseHue + 120) % 360}, 100%, 70%, 0.9)`);
-      eyeGrad.addColorStop(0.6, `hsla(${(baseHue + 280) % 360}, 100%, 55%, 0.6)`);
-      eyeGrad.addColorStop(1, `hsla(${baseHue}, 100%, 50%, 0)`);
-      ctx.fillStyle = eyeGrad;
+    // --- witchspace lightning ---------------------------------------------
+    const tendrils = Math.round(witch * 16);
+    for (let n = 0; n < tendrils; n++) {
+      const ang = n * 2.399963 + time * 0.08 * (n % 2 ? 1 : -1);
+      const SEG = 12;
       ctx.beginPath();
-      ctx.arc(cx, cy, eyeR * 2.5, 0, Math.PI * 2);
+      for (let s2 = 0; s2 <= SEG; s2++) {
+        const p = s2 / SEG;
+        const r = 8 + Math.pow(p, 1.7) * maxR * 1.2;
+        const jitter = Math.sin(p * 9 + time * 2.3 + n * 1.3) * (6 + p * 46) +
+          Math.sin(p * 21 - time * 1.4 + n) * (3 + p * 18);
+        const a2 = ang + jitter / (r + 40);
+        const px = cx + Math.cos(a2) * r, py = cy + Math.sin(a2) * r;
+        if (s2 === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = pal.ink(cold(baseHue + 180), sat * 0.5, 0.86,
+        (0.12 + 0.3 * witch) * (0.6 + 0.4 * Math.sin(time * 3 + n)));
+      ctx.lineWidth = 0.8 + witch * 1.8;
+      ctx.stroke();
+    }
+
+    // --- the solids out of the fourth direction ---------------------------
+    const solids = Math.round(mono * 8);
+    if (solids > 0) drawHyperSolids(ctx, cx, cy, focal, time, pal, solids);
+
+    // --- the eye at the end of the shaft ----------------------------------
+    // Below the white it is a blazing core; in the white the same draw call
+    // hands back a black pupil, because every colour rides the ink blend.
+    const eyeR = 14 + 26 * (1 - mono) + Math.sin(time * 1.9) * (3 + 4 * (1 - mono));
+    if (ctx.createRadialGradient) {
+      const g2 = ctx.createRadialGradient(cx, cy, 1, cx, cy, eyeR * 3.4);
+      g2.addColorStop(0, pal.ink(0, 0, 1, 0.95));
+      g2.addColorStop(0.3, pal.ink(cold(baseHue + 120), sat, 0.68, 0.75));
+      g2.addColorStop(0.65, pal.ink(cold(baseHue + 280), sat, 0.5, 0.42));
+      g2.addColorStop(1, pal.ink(cold(baseHue), sat, 0.5, 0));
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, eyeR * 3.4, 0, Math.PI * 2);
       ctx.fill();
     }
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = pal.ink(0, 0, 1, 1);
     ctx.beginPath();
-    ctx.arc(cx, cy, eyeR * 0.5, 0, Math.PI * 2);
+    ctx.arc(cx, cy, eyeR * (0.4 + mono * 0.45), 0, Math.PI * 2);
     ctx.fill();
+  };
 
-    // Extra abstract spikes at high complexity
-    if (complexity > 0.5) {
-      const spikeCount = Math.floor(4 + complexity * 8);
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(-time * 0.5);
-      ctx.strokeStyle = `hsla(${(baseHue + 60) % 360}, 100%, 80%, ${complexity * 0.7})`;
-      ctx.lineWidth = 2;
-      for (let sp = 0; sp < spikeCount; sp++) {
-        const sa = (sp / spikeCount) * Math.PI * 2;
-        const sLen = eyeR * (2.2 + complexity * 2.5);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(sa) * sLen, Math.sin(sa) * sLen);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
+  // Handed to the tests, and to anything that wants the same maths.
+  if (!window.GalaxySim) window.GalaxySim = {};
+  window.GalaxySim.HyperWarp = {
+    stages: warpStages, polytope4: polytope4, project4: project4,
+    field: hyperField, palette: makePalette, solids: drawHyperSolids
   };
 
   // How many frames a cached body render stays good for (see above).
-  Spriteset_Map.prototype._shipBgBodyInterval = function () {
-    if ((this._shipBgApproachRaw || 0) > 0 && (this._shipBgApproachRaw || 0) < 1) return 6;
-    return this._shipBgLiveModel ? 6 : 30;
-  };
-
   // Renders the current celestial body (planet or star) into the given context
   // via the shared 3D renderer, falling back to a flat disc. Kept separate so
   // the result can be cached (see drawShipBackground).
@@ -601,9 +777,10 @@
     // black hole, a neutron star or any other exotic object is drawn with its
     // own model, not as a generic glowing sphere.
     const rec = shipStarRecord(dm, ship) || system;
-    this._shipBgLiveModel = isLiveModel(rec);
-    // Drawing fuel pulls the ship in, so the body swells in the window.
-    const starR = bodyScreenRadius(rec, h) * (1 + 0.45 * (this._shipBgApproach || 0));
+    // Drawing fuel flies the hull down through the corona itself (see the
+    // system view's updateShip), so the body does not merely grow a little in
+    // the window: it fills it, the way a star does from inside its own loops.
+    const starR = bodyScreenRadius(rec, h) * (1 + 1.6 * (this._shipBgApproach || 0));
     if (has3D) {
       const starTime = time + (this._shipBgSpinAngle || 0) / STAR_SPIN_RATE;
       const ok = renderer.renderSystemBody
@@ -648,8 +825,11 @@
     _timerHtml = null;
   }
 
-  // Scale/position the overlay onto the game canvas, matching the fast-travel
-  // timer's placement.
+  // Scale/position the overlay onto the game canvas. It sits in the BOTTOM
+  // RIGHT corner: the top left is where the map name, the party HUD and the
+  // ship's own health bar already are, and a countdown parked on top of them
+  // buried the lot. Anchored by its own right/bottom edges so a label that
+  // changes length grows away from the corner instead of moving the window.
   function syncShipTimerPos(el) {
     const canvas = document.getElementById("gameCanvas");
     if (!canvas) return;
@@ -657,8 +837,10 @@
     const sx = r.width / Graphics.width;
     const sy = r.height / Graphics.height;
     const s = el.style;
-    s.left = (r.left + 20 * sx) + "px";
-    s.top = (r.top + 80 * sy) + "px";
+    s.left = "auto";
+    s.top = "auto";
+    s.right = Math.max(0, window.innerWidth - r.right + 20 * sx) + "px";
+    s.bottom = Math.max(0, window.innerHeight - r.bottom + 20 * sy) + "px";
     s.padding = `${Math.round(12 * sy)}px ${Math.round(20 * sx)}px`;
     s.minWidth = Math.round(200 * sx) + "px";
     s.fontSize = Math.round(16 * sy) + "px";

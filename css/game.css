@@ -551,55 +551,6 @@ body {
 #party-hud .phud-orb-empty .phud-orb-val {
     color: var(--text-blood-red);
 }
-/* The same orb, reused by the enemy bars (BattleSystem/BattleSystemEnhancedHUD.js)
-   outside the #party-hud tree: an unscoped copy of the rules above so a
-   monster's AP/TP reads exactly like a party member's, just anchored by JS
-   (.ebar-orb) instead of sitting in a flex row. */
-.phud-orb.ebar-orb {
-    position: absolute;
-    /* Anchored by JS (UIPanel.placeAt) into the gutter at the right of the
-       gauges; without these it would fall back to the overlay's top-left. */
-    left: var(--ui-at-x, 0);
-    top: var(--ui-at-y, 0);
-    width: 22px;
-    height: 22px;
-    border: none;
-    border-radius: 50%;
-    background: var(--shadow-black-translucent-55);
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow-black-translucent-55);
-}
-.ebar-orb .phud-orb-fill,
-.ebar-orb .phud-orb-ghost {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 0;
-    transition: height 0.2s ease-out;
-}
-.ebar-orb .phud-orb-fill {
-    background: linear-gradient(to top, #7a5210, #ffcc33);
-}
-.ebar-orb .phud-orb-ghost {
-    background: rgba(255, 204, 51, 0.28);
-}
-.ebar-orb .phud-orb-val {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    text-align: center;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 10px;
-    color: #fff6dd;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.9);
-}
-.phud-orb.ebar-orb.phud-orb-empty .phud-orb-val {
-    color: var(--text-blood-red);
-}
 #party-hud .phud-card {
     width: var(--phud-card-w, 224px);
     flex: 0 0 auto;

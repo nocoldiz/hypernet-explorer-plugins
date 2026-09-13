@@ -188,12 +188,12 @@
       const catToggle = document.createElement("div");
       catToggle.id = "gx-catalog-toggle";
       catToggle.innerHTML =
+        // The biosignature sweep is not on this rail: it is run from the ship's
+        // own controls (Core's ship-controls overlay), and every world it finds
+        // is listed in the catalog. The rail is for what the MAP does.
         `<span class="gx-btn gx-ship focusable" tabindex="0" data-action="ship" ` +
         `data-role="ship-btn" title="${T('Galaxy.hud.centreTheViewOnYour')}">` +
         `${T('Galaxy.hud.ship')}</span>` +
-        `<span class="gx-btn gx-bio focusable" tabindex="0" data-action="bioscan" ` +
-        `data-role="bioscan-btn" title="${T('Galaxy.hud.sweepEverySystemWithin500')}">` +
-        `${T('Galaxy.hud.scanForBiosignatures')}</span>` +
         `<span class="gx-btn gx-tour focusable" tabindex="0" data-action="grand-tour" ` +
         `data-role="tour-btn" title="${T('Galaxy.hud.grandTourTooltip')}">` +
         `${T('Galaxy.hud.grandTour')}</span>` +
@@ -229,7 +229,11 @@
       const catalog = document.createElement("div");
       catalog.id = "gx-catalog";
       catalog.className = "gx-panel";
-      catalog.style.display = "none";
+      // Starts closed through the shared panel service, the same way every other
+      // open and close of it goes (window.UIPanel, Core/MouseControls.js), rather
+      // than by writing display straight onto the element: the stylesheet owns
+      // how a closed panel looks, and .ui-closed is what it reads.
+      window.UIPanel.close(catalog);
 
       const info = document.createElement("div");
       info.id = "gx-info";
@@ -321,16 +325,27 @@
         `<div class="gx-title" data-role="lg-title">${T('Galaxy.hud.chooseLandingSite')}</div>` +
         `<canvas class="gx-lg-canvas" data-role="lg-canvas" width="640" height="360"></canvas>` +
         `<div class="gx-actions">` +
-        // Two ways down onto a world: set the ship on it, or walk it. The
-        // choice is made before a square is picked, and the square then does
-        // whichever is selected.
-        `<span class="gx-btn focusable gx-lg-mode is-on" tabindex="0" data-action="landing-mode" data-mode="land">${T('Galaxy.hud.landHere')}</span>` +
-        `<span class="gx-btn focusable gx-lg-mode" tabindex="0" data-action="landing-mode" data-mode="walk">${T('Galaxy.hud.liminalWalk')}</span>` +
+        // The three ways down are NOT here: the square is picked first, and
+        // the modal below asks what to do with THAT square. Arming a mode
+        // before picking meant the same choice sat on screen the whole time
+        // and could be made without a square at all.
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-grid-cancel">${T('Galaxy.hud.cancel')}</span>` +
+        `</div></div>` +
+        // What to do with the square just picked. A modal of its own over the
+        // picker, so the grid it refers to stays visible behind it.
+        `<div class="gx-lg-choice ui-closed" data-role="lg-choice">` +
+        `<div class="gx-lg-choice-card">` +
+        `<div class="gx-title">${T('Galaxy.hud.landingSite')}</div>` +
+        `<div class="gx-muted" data-role="lg-choice-sub"></div>` +
+        `<div class="gx-actions gx-lg-choice-actions">` +
+        // Set the ship down on the square, or walk the world at it.
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="land">${T('Galaxy.hud.landHere')}</span>` +
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="walk">${T('Galaxy.hud.liminalWalk')}</span>` +
         // The third way down, and the only one that never touches the ground:
         // the ship itself is flown over the world (see startLiminalFlyby).
-        `<span class="gx-btn focusable gx-lg-mode" tabindex="0" data-action="landing-mode" data-mode="flyby">${T('Galaxy.hud.flyby')}</span>` +
-        `<span class="gx-btn focusable" tabindex="0" data-action="landing-grid-cancel">${T('Galaxy.hud.cancel')}</span>` +
-        `</div></div>`;
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="flyby">${T('Galaxy.hud.flyby')}</span>` +
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-choice-cancel">${T('Galaxy.hud.cancel')}</span>` +
+        `</div></div></div>`;
 
       // Servicing bay (Hubble): part-by-part repair against crafting materials.
       const service = document.createElement("div");
@@ -467,6 +482,8 @@
       this.els.landingGrid = landingGrid;
       this.els.landingGridTitle = landingGrid.querySelector('[data-role="lg-title"]');
       this.els.landingGridCanvas = landingGrid.querySelector('[data-role="lg-canvas"]');
+      this.els.landingChoice = landingGrid.querySelector('[data-role="lg-choice"]');
+      this.els.landingChoiceSub = landingGrid.querySelector('[data-role="lg-choice-sub"]');
       this.els.landingGridCanvas.addEventListener("click", (e) => {
         const lg = this._landingGrid;
         if (!lg) return;
@@ -478,7 +495,8 @@
         const gy = Math.max(0, Math.min(lg.h - 1, Math.floor(py / (canvas.height / lg.h))));
         lg.cursor.gx = gx;
         lg.cursor.gy = gy;
-        this._confirmLandingGrid();
+        this._redrawLandingGrid();
+        this._openLandingChoice();
       });
       this._wire(landingGrid);
       // The warp-speed slider drives var 94 live as it is dragged.
@@ -1026,6 +1044,10 @@
           `data-target="${esc(system.name)}">${T('Galaxy.hud.travelHere')}</span>`;
       } else if (opts.isCurrent && !opts.canEnter) {
         actions += `<span class="gx-muted">${T('Galaxy.hud.currentLocation')}</span>`;
+      } else if (opts.otherGalaxy) {
+        // No course is plotted across the dark between galaxies; the bridge is
+        // the only way over (see Scene3D._canPlotCourseTo).
+        actions += `<span class="gx-muted">${T('Galaxy.hud.otherGalaxy')}</span>`;
       }
       // Park in orbit of the star/black hole itself - free while already in
       // this system (the star-scale equivalent of "Land Here").
@@ -1224,15 +1246,13 @@
         return;
       }
       const { w, h } = GS.planetGridSize(planet);
-      const seed = R3D._seedFor(planet);
-      const textureCanvas = R3D.getPlanetTextureCanvas(planet, seed);
       this._landingGrid = {
         planet, w, h,
         cursor: { gx: Math.floor(w / 2), gy: Math.floor(h / 2) },
-        textureCanvas,
-        mode: 'land',      // 'land' | 'walk'
+        textureCanvas: null,
+        textureFinal: false,
       };
-      this._syncLandingMode();
+      if (this.els.landingChoice) window.UIPanel.close(this.els.landingChoice);
       this._landingGridCallbacks = { onPick: opts.onPick, onCancel: opts.onCancel };
       this.els.landingGridTitle.textContent = `${T('Galaxy.hud.chooseLandingSite')} · ${planet.name || "Planet"}`;
       window.UIPanel.open(this.els.landingGrid);
@@ -1241,32 +1261,96 @@
       this._redrawLandingGrid();
     }
 
-    // Which of the three ways down is armed, shown on the buttons themselves.
-    setLandingMode(mode) {
+    // ---- What to do with the square just picked ---------------------------
+    // Its own modal over the picker: the square is chosen first, then the way
+    // down. Keyboard and pad walk the buttons through its own small index
+    // rather than the overlay-wide focus ring, which would wander off onto the
+    // panels still showing behind the scrim.
+    _openLandingChoice() {
       const lg = this._landingGrid;
-      if (!lg || (mode !== 'land' && mode !== 'walk' && mode !== 'flyby')) return;
-      lg.mode = mode;
-      this._syncLandingMode();
-      if (window.SoundManager) SoundManager.playCursor();
+      const el = this.els.landingChoice;
+      if (!lg || !el) return;
+      // A world with no ground under it is flown over and nothing else: Land
+      // Here and Liminal walk are taken off the modal rather than offered and
+      // then refused. GalaxySim.isSurfacelessWorld owns that question; the flag
+      // it reads lives on the planet's own biome record.
+      const GS = window.GalaxySim;
+      const surfaceless = !!(GS && GS.isSurfacelessWorld && GS.isSurfacelessWorld(lg.planet));
+      Array.prototype.slice.call(el.querySelectorAll('[data-action="landing-go"]'))
+        .forEach((b) => {
+          const ground = b.getAttribute('data-mode') !== 'flyby';
+          b.style.display = (surfaceless && ground) ? 'none' : '';
+        });
+      if (this.els.landingChoiceSub) {
+        this.els.landingChoiceSub.textContent = surfaceless
+          ? T('Galaxy.hud.noSolidSurface')
+          : T('Galaxy.hud.landingSiteCell', { x: lg.cursor.gx, y: lg.cursor.gy });
+      }
+      window.UIPanel.open(el);
+      this._landingChoiceIdx = 0;
+      this._syncLandingChoice();
+      this._invalidateFocusables();
+      if (window.SoundManager) SoundManager.playOk();
     }
 
-    _syncLandingMode() {
-      const lg = this._landingGrid;
-      if (!lg || !this.els.landingGrid) return;
-      const btns = this.els.landingGrid.querySelectorAll('[data-action="landing-mode"]');
-      btns.forEach((b) => {
-        b.classList.toggle('is-on', b.getAttribute('data-mode') === lg.mode);
+    isLandingChoiceOpen() {
+      return !!(this.els.landingChoice && window.UIPanel.isOpen(this.els.landingChoice));
+    }
+
+    hideLandingChoice() {
+      if (!this.isLandingChoiceOpen()) return;
+      window.UIPanel.close(this.els.landingChoice);
+      this._landingChoiceIdx = 0;
+      this._syncLandingChoice();
+      this._invalidateFocusables();
+      if (window.SoundManager) SoundManager.playCancel();
+    }
+
+    _landingChoiceButtons() {
+      const el = this.els.landingChoice;
+      if (!el) return [];
+      // Only the buttons actually on offer. On a world with no ground the two
+      // ground ones are taken out of the modal (see _openLandingChoice), and a
+      // button that is not shown must not be walked onto by the pad either.
+      return Array.prototype.slice.call(el.querySelectorAll('[data-action]'))
+        .filter((b) => b.style.display !== 'none');
+    }
+
+    _syncLandingChoice() {
+      const open = this.isLandingChoiceOpen();
+      const idx = this._landingChoiceIdx || 0;
+      this._landingChoiceButtons().forEach((b, i) => {
+        b.classList.toggle('focused', open && i === idx);
       });
     }
 
+    moveLandingChoice(step) {
+      const btns = this._landingChoiceButtons();
+      if (!btns.length) return;
+      const n = btns.length;
+      this._landingChoiceIdx = (((this._landingChoiceIdx || 0) + step) % n + n) % n;
+      this._syncLandingChoice();
+      if (window.SoundManager) SoundManager.playCursor();
+    }
+
+    confirmLandingChoice() {
+      const btn = this._landingChoiceButtons()[this._landingChoiceIdx || 0];
+      if (btn) this._invoke(btn);
+    }
+
     isLandingGridOpen() {
-      return !!(this.els.landingGrid && this.els.landingGrid.style.display !== "none");
+      // Panels are shown and hidden by CLASS (window.UIPanel), never by an
+      // inline display, so asking the inline style answered "open" for ever -
+      // which handed every key in the star map to a picker that was not on
+      // screen, Esc included.
+      return !!(this.els.landingGrid && window.UIPanel.isOpen(this.els.landingGrid));
     }
 
     // Dismiss without picking (Esc / Cancel button).
     hideLandingGrid() {
       if (!this.isLandingGridOpen()) return;
       const cb = this._landingGridCallbacks;
+      if (this.els.landingChoice) window.UIPanel.close(this.els.landingChoice);
       window.UIPanel.close(this.els.landingGrid);
       this._landingGrid = null;
       this._landingGridCallbacks = null;
@@ -1283,20 +1367,31 @@
     }
 
     confirmLandingGridCursor() {
-      this._confirmLandingGrid();
+      this._openLandingChoice();
     }
 
-    _confirmLandingGrid() {
+    _confirmLandingGrid(mode) {
       const lg = this._landingGrid;
       const cb = this._landingGridCallbacks;
       if (!lg || !cb) return;
       const { gx, gy } = lg.cursor;
-      const mode = lg.mode || 'land';
+      // Three ways down and no others: the mode comes off a data attribute, so
+      // it is checked rather than trusted. Anything unrecognised is the one
+      // choice that is always on offer.
+      let pick = mode;
+      if (mode !== 'land' && mode !== 'walk' && mode !== 'flyby') pick = 'land';
+      // ...and on a world with no ground the two that touch it are not on
+      // offer at all, whatever arrived here (see _openLandingChoice).
+      const GS = window.GalaxySim;
+      if (pick !== 'flyby' && GS && GS.isSurfacelessWorld && GS.isSurfacelessWorld(lg.planet)) {
+        pick = 'flyby';
+      }
+      if (this.els.landingChoice) window.UIPanel.close(this.els.landingChoice);
       window.UIPanel.close(this.els.landingGrid);
       this._landingGrid = null;
       this._landingGridCallbacks = null;
       this._invalidateFocusables();
-      if (cb.onPick) cb.onPick(gx, gy, mode);
+      if (cb.onPick) cb.onPick(gx, gy, pick);
     }
 
     _redrawLandingGrid() {
@@ -1306,6 +1401,20 @@
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const R3D = window.GalaxySim.Renderer3D;
+      // The surface is asked for again on every redraw until it is the real
+      // one: a body wearing a photograph paints a stand-in while the file
+      // decodes, and holding that first answer left the picker blank.
+      if (R3D && R3D.getPlanetTextureCanvas && !lg.textureFinal) {
+        lg.textureCanvas = R3D.getPlanetTextureCanvas(lg.planet, R3D._seedFor(lg.planet));
+        lg.textureFinal = !!(lg.textureCanvas && (!R3D.planetTextureCanvasIsFinal ||
+          R3D.planetTextureCanvasIsFinal(lg.planet)));
+        if (!lg.textureFinal) {
+          clearTimeout(this._landingTexTimer);
+          this._landingTexTimer = setTimeout(() => {
+            if (this._landingGrid === lg) this._redrawLandingGrid();
+          }, 150);
+        }
+      }
       if (lg.textureCanvas && R3D && R3D.drawPlanetGrid) {
         R3D.drawPlanetGrid(ctx, {
           textureCanvas: lg.textureCanvas,
@@ -1335,7 +1444,7 @@
     }
 
     isServiceOpen() {
-      return !!(this.els.service && this.els.service.style.display !== "none");
+      return !!(this.els.service && window.UIPanel.isOpen(this.els.service));
     }
 
     hideService() {
@@ -1403,7 +1512,7 @@
     }
 
     isMiningOpen() {
-      return !!(this.els.mining && this.els.mining.style.display !== "none");
+      return !!(this.els.mining && window.UIPanel.isOpen(this.els.mining));
     }
 
     hideMining() {
@@ -1449,7 +1558,7 @@
     }
 
     isAnomalyOpen() {
-      return !!(this.els.anomaly && this.els.anomaly.style.display !== "none");
+      return !!(this.els.anomaly && window.UIPanel.isOpen(this.els.anomaly));
     }
 
     hideAnomaly() {
@@ -1538,8 +1647,10 @@
         cb.onBridge();
       } else if (action === "land" && cb.onLand) {
         cb.onLand(this._selection);
-      } else if (action === "landing-mode") {
-        this.setLandingMode(btn.getAttribute("data-mode"));
+      } else if (action === "landing-go") {
+        this._confirmLandingGrid(btn.getAttribute("data-mode"));
+      } else if (action === "landing-choice-cancel") {
+        this.hideLandingChoice();
       } else if (action === "landing-grid-cancel") {
         this.hideLandingGrid();
       } else if (action === "strip-mine" && cb.onStripMine) {

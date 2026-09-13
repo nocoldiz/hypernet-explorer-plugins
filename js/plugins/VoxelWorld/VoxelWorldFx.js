@@ -27,7 +27,10 @@
     if (!VW) { console.error('[VoxelWorld] core not loaded before VoxelWorldFx.js'); return; }
 
     const {
-        WORLD_SCALE, WORLD_TILE_SIZE, loadTex, loadVoxelTex
+        WORLD_SCALE, WORLD_TILE_SIZE, loadTex, loadVoxelTex,
+        GAS_DECKS, GAS_DECK_SPAN, GAS_DECK_FADE, GAS_FLOOR_Y, GAS_TOP_Y, gasDepth01,
+        GAS_BODY_AT, GAS_LIMB_R, GAS_LIMB_ARC, GAS_BAND_SPAN,
+        GAS_BOLT_EVERY, GAS_BOLT_LIFE
     } = VW;
 
     // =========================================================================
@@ -108,6 +111,22 @@
     // How many of another world's moons are worth drawing. Some of the gas
     // giants in this galaxy have eighty.
     const ALIEN_MOON_MAX = 4;
+    // The banding of a gas giant, in pixels. One tile is laid across thirteen
+    // kilometres of cloud (GAS_BAND_SPAN) and read at every distance from the
+    // hull to the limb, so it is worth the megabyte; the deck wisps over it are
+    // torn cloud and never read close, so they are not.
+    const GAS_BAND_TEX = 1024;
+    const GAS_WISP_TEX = 256;
+    // Half a million pixels of banding, eight waves apiece, is four million
+    // calls to Math.sin at the moment a world opens: a visible hitch for a
+    // picture of cloud, which does not need the last six digits of a sine. One
+    // table, read instead.
+    const GAS_SIN_N = 2048;
+    const GAS_SIN = new Float32Array(GAS_SIN_N);
+    for (let i = 0; i < GAS_SIN_N; i++) GAS_SIN[i] = Math.sin(i * Math.PI * 2 / GAS_SIN_N);
+    // `t` in turns, not radians: every wave below is written as a multiple of a
+    // full turn, so the conversion is a multiply the caller never has to make.
+    const gsin = (t) => GAS_SIN[((t * GAS_SIN_N) | 0) & (GAS_SIN_N - 1)];
 
     class SkyFx {
         constructor(scene) {
@@ -307,6 +326,383 @@
             this._airless = !!airless;
         }
 
+        // =====================================================================
+        // The body of a gas giant, and the decks stacked over it
+        // =====================================================================
+        // A world with no ground is not a sky over a landscape: the sky IS the
+        // place, and the only thing in it to see is its own banding. So it is
+        // drawn as what it is - the cloud tops of an enormous world, with decks
+        // of storm hung over them at their own heights and open air between,
+        // the whole ladder flown through from the top down.
+        //
+        // CAPS RATHER THAN SHEETS. The decks used to be flat squares hung at
+        // fixed heights, and a flat square has no horizon in it: it stops at
+        // its own edge and reads as a table top laid under the hull. Every one
+        // of them is a spherical CAP now, all concentric on one centre far
+        // below the nadir, so the cloud tops FALL AWAY: the limb curves, the
+        // decks above curve with it, and the curve is the whole picture from
+        // the top of the envelope. It costs one sphere segment each.
+        //
+        // AND THEY ARE IN THE FOG. The stars, the moons and the drifting clouds
+        // beside them are not, because they are at no real distance; the limb
+        // is ten thousand units out and has to pale into the sky at that
+        // distance or the curve comes out as a cut-out. The haze IS the
+        // atmosphere seen edgeways, which is what makes a limb look like a limb.
+        //
+        // THE COLOURS ARE NOT NEW. Every one of these worlds already carries a
+        // sky in ALIEN_BIOME_SKY_PALETTES, so the banding is cut from that: the
+        // day colour at the top of the ladder, the night colour at the bottom.
+        // A hot Jupiter bands orange and a cold one blue without a second table
+        // to keep in step with the first.
+        //
+        // Built only when asked, so an Earth drive pays nothing for any of it.
+        setGasGiant(on, palette, seed) {
+            const want = !!on;
+            if (!want) {
+                if (this._decks) {
+                    for (const d of this._decks) {
+                        this._group.remove(d.mesh);
+                        d.mesh.geometry.dispose();
+                        d.mesh.material.dispose();
+                        if (d.tex) d.tex.dispose();
+                    }
+                    this._decks = null;
+                }
+                if (this._limb) {
+                    this._group.remove(this._limb.mesh);
+                    this._limb.mesh.geometry.dispose();
+                    this._limb.mesh.material.dispose();
+                    this._limb.tex.dispose();
+                    this._limb = null;
+                }
+                if (this._bolt) {
+                    this._group.remove(this._bolt.sp);
+                    this._bolt.mat.map.dispose();
+                    this._bolt.mat.dispose();
+                    this._bolt = null;
+                }
+                this._gasGiant = false;
+                this._skyLift = 0;
+                this._stars.position.y = 0;
+                return;
+            }
+            if (this._limb) return;       // already standing
+            this._gasGiant = true;
+            const pal = palette || {};
+            const day = pal.day || [0.55, 0.72, 0.85];
+            const night = pal.night || [0.03, 0.04, 0.08];
+            const span = GAS_TOP_Y - GAS_FLOOR_Y;
+
+            // --- the body ----------------------------------------------------
+            // Opaque, and the ONE thing out here that writes depth: it is the
+            // world, and a world stands in front of the stars behind it. It is
+            // also what gives the limb a silhouette at all - without a depth
+            // write the far side of the cap paints over the near side and the
+            // horizon comes apart.
+            const bodyY = GAS_FLOOR_Y + span * GAS_BODY_AT;
+            const bandCv = document.createElement('canvas');
+            bandCv.width = GAS_BAND_TEX; bandCv.height = GAS_BAND_TEX / 2;
+            SkyFx.paintGasBands(bandCv, day, night, seed);
+            const bandTex = new THREE.CanvasTexture(bandCv);
+            bandTex.wrapS = bandTex.wrapT = THREE.RepeatWrapping;
+            const bodyMat = new THREE.MeshBasicMaterial({ map: bandTex });
+            const bodyMesh = new THREE.Mesh(SkyFx.gasCap(GAS_LIMB_R, 128, 40), bodyMat);
+            bodyMesh.position.y = bodyY - GAS_LIMB_R;
+            bodyMesh.renderOrder = 0;
+            bodyMesh.frustumCulled = false;
+            this._group.add(bodyMesh);
+            this._limb = { mesh: bodyMesh, mat: bodyMat, tex: bandTex, y: bodyY, drift: 0.0016 };
+
+            // --- the decks over it -------------------------------------------
+            // Torn cloud rather than flat colour: a solid sheet at 80% opacity
+            // is a lid, and what a deck has to read as is weather with holes in
+            // it that the deck below shows through.
+            const wispCv = document.createElement('canvas');
+            wispCv.width = wispCv.height = GAS_WISP_TEX;
+            SkyFx.paintGasWisps(wispCv);
+            this._decks = [];
+            for (let i = 0; i < GAS_DECKS.length; i++) {
+                const d = GAS_DECKS[i];
+                const y = GAS_FLOOR_Y + span * d.at;
+                // `shade` runs 0 at the bottom of the ladder to 1 at the top, so
+                // the deep decks are the night colour and the high ones the day.
+                const k = d.shade;
+                // Its own texture, because each deck runs at its own speed: the
+                // banding shears past itself, which is what a zonal wind looks
+                // like from inside one. They share the one canvas.
+                const tex = new THREE.CanvasTexture(wispCv);
+                tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+                const mat = new THREE.MeshBasicMaterial({
+                    map: tex,
+                    color: new THREE.Color(
+                        night[0] + (day[0] - night[0]) * k,
+                        night[1] + (day[1] - night[1]) * k,
+                        night[2] + (day[2] - night[2]) * k
+                    ),
+                    transparent: true,
+                    opacity: d.opacity,
+                    depthWrite: false,
+                    side: THREE.DoubleSide,   // a deck is seen from above and below
+                });
+                const mesh = new THREE.Mesh(
+                    SkyFx.gasCap(GAS_LIMB_R + (y - GAS_FLOOR_Y), 72, 22), mat);
+                mesh.position.y = y - (GAS_LIMB_R + (y - GAS_FLOOR_Y));
+                // One order for all of them: three.js sorts transparents back to
+                // front by distance, and because the group is teleported to the
+                // camera every frame that distance IS the height difference. It
+                // therefore re-sorts itself for free as a deck is passed, which
+                // hand-assigned orders would break.
+                mesh.renderOrder = 2;
+                mesh.frustumCulled = false;
+                this._group.add(mesh);
+                // A thick deck is drawn in broad wisps and a thin one in fine
+                // ones, which is the only thing `thick` has ever been for.
+                const tile = GAS_BAND_SPAN * (0.22 + d.thick * 2.2);
+                this._decks.push({
+                    mesh, mat, tex, y, tile,
+                    base: d.opacity, drift: 0.006 + i * 0.004
+                });
+            }
+
+            // --- and the lightning in the deep ------------------------------
+            // One sprite, moved and lit rather than spawned: a storm deck seen
+            // from above is a sheet that flickers from underneath, and a single
+            // soft disc lighting up two thousand units down does the whole job.
+            const boltCv = document.createElement('canvas');
+            boltCv.width = boltCv.height = 128;
+            SkyFx.paintGasBolt(boltCv);
+            const boltMat = new THREE.SpriteMaterial({
+                map: new THREE.CanvasTexture(boltCv),
+                transparent: true, depthWrite: false, depthTest: false,
+                blending: THREE.AdditiveBlending, opacity: 0
+            });
+            boltMat.fog = false;
+            const sp = new THREE.Sprite(boltMat);
+            sp.scale.set(GAS_DECK_SPAN * 0.22, GAS_DECK_SPAN * 0.22, 1);
+            sp.frustumCulled = false;
+            this._group.add(sp);
+            this._bolt = { sp, mat: boltMat, wait: GAS_BOLT_EVERY, life: 0, y: bodyY };
+        }
+
+        // A spherical cap around the +Y pole, with the banding projected onto it
+        // from straight above. THE UVS ARE PLANAR ON PURPOSE: a sphere's own uv
+        // runs in rings about the pole, and rings about the nadir would paint a
+        // dartboard where a planet wants belts. Laid flat, the belts come out
+        // straight in plan and foreshorten into the limb on their own, which is
+        // exactly what banding does.
+        static gasCap(radius, seg, rings) {
+            const geo = new THREE.SphereGeometry(radius, seg, rings, 0, Math.PI * 2, 0, GAS_LIMB_ARC);
+            const pos = geo.attributes.position, uv = geo.attributes.uv;
+            for (let i = 0; i < pos.count; i++) {
+                uv.setXY(i, pos.getX(i) / GAS_BAND_SPAN, pos.getZ(i) / GAS_BAND_SPAN);
+            }
+            uv.needsUpdate = true;
+            return geo;
+        }
+
+        // The banding itself, painted once, off the world's own seed. Belts of
+        // the world's own two colours
+        // laid in latitude, each sheared along its own jet so the boundaries
+        // billow instead of ruling straight, and a handful of ovals turning in
+        // the shear between them. It has to TILE, because the cap is far wider
+        // than one copy of it: everything here is periodic in both axes, and the
+        // ovals are drawn nine times so the ones near an edge come round.
+        static paintGasBands(canvas, day, night, seed) {
+            const W = canvas.width, H = canvas.height;
+            const ctx = canvas.getContext('2d');
+            const img = ctx.createImageData(W, H);
+            const px = img.data;
+            // The shear is a function of u alone, and u is the inner loop's
+            // column: worked out once per column rather than once per pixel.
+            const shearOf = new Float32Array(W);
+            for (let x = 0; x < W; x++) {
+                const u = x / W;
+                shearOf[x] = gsin(u) * 0.022 + gsin(2 * u + 0.27) * 0.013 +
+                             gsin(5 * u + 0.65) * 0.006;
+            }
+            for (let y = 0; y < H; y++) {
+                const v = y / H;
+                for (let x = 0; x < W; x++) {
+                    const u = x / W;
+                    // The jets: the belt a point is in is read at a SHEARED
+                    // latitude, so a boundary wanders north and south along its
+                    // own length rather than running straight round the world.
+                    const vv = v + shearOf[x];
+                    // Belts: a few periods stacked so no two are the same width.
+                    let b = 0.5 +
+                        gsin(3 * vv) * 0.30 +
+                        gsin(7 * vv + 0.33) * 0.13 +
+                        gsin(13 * vv + 0.1) * 0.06;
+                    // Fine curl along the belt, so a band is not a flat ribbon.
+                    b += gsin(9 * u + gsin(4 * vv) * 0.5) * 0.035;
+                    b = b < 0 ? 0 : (b > 1 ? 1 : b);
+                    // Cut toward the ends of the range rather than sitting in
+                    // the middle of it: a gas giant is zones and belts, light
+                    // and dark, not a smooth ramp between them.
+                    b = b * b * (3 - 2 * b);
+                    const o = (y * W + x) * 4;
+                    px[o]     = ((night[0] + (day[0] - night[0]) * b) * 255) | 0;
+                    px[o + 1] = ((night[1] + (day[1] - night[1]) * b) * 255) | 0;
+                    px[o + 2] = ((night[2] + (day[2] - night[2]) * b) * 255) | 0;
+                    px[o + 3] = 255;
+                }
+            }
+            ctx.putImageData(img, 0, 0);
+
+            // The storms. Each is drawn nine times, once per wrap of the tile,
+            // so one sitting on an edge comes round rather than being cut off.
+            // Laid out off the WORLD'S OWN SEED, so two hot Jupiters are not the
+            // same hot Jupiter with the storms in the same places.
+            let s = (((seed || 0) | 0) ^ 0x9e3779b9) >>> 0;
+            const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+            const hot = (c, k) => `rgba(${(c[0] * 255 * k) | 0},${(c[1] * 255 * k) | 0},` +
+                                  `${(c[2] * 255 * k) | 0},`;
+            for (let i = 0; i < 9; i++) {
+                const cx = rnd() * W, cy = rnd() * H;
+                const rx = (0.02 + rnd() * 0.05) * W, ry = rx * (0.32 + rnd() * 0.3);
+                const rot = (rnd() - 0.5) * 0.5;
+                const pale = rnd() < 0.55;
+                for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
+                    ctx.save();
+                    ctx.translate(cx + dx * W, cy + dy * H);
+                    ctx.rotate(rot);
+                    ctx.scale(1, ry / rx);
+                    const g = ctx.createRadialGradient(0, 0, rx * 0.1, 0, 0, rx);
+                    g.addColorStop(0, hot(pale ? day : night, pale ? 1.35 : 1.1) + '0.95)');
+                    g.addColorStop(0.62, hot(pale ? day : night, pale ? 1.1 : 1.4) + '0.45)');
+                    g.addColorStop(1, hot(day, 1) + '0)');
+                    ctx.fillStyle = g;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, rx, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+        }
+
+        // A deck's own cloud: white, with holes in it. The colour comes off the
+        // material, so this is alpha and nothing else - streaks drawn out along
+        // the wind, torn where two periods cancel.
+        static paintGasWisps(canvas) {
+            const S = canvas.width;
+            const ctx = canvas.getContext('2d');
+            const img = ctx.createImageData(S, S);
+            const px = img.data;
+            for (let y = 0; y < S; y++) {
+                const v = y / S;
+                for (let x = 0; x < S; x++) {
+                    const u = x / S;
+                    // Stretched along u: cloud in a zonal wind is pulled out
+                    // into streaks, never piled into blobs.
+                    let a =
+                        gsin(3 * v + gsin(u) * 0.26) * 0.5 +
+                        gsin(6 * v + gsin(2 * u + 0.18) * 0.19) * 0.3 +
+                        gsin(2 * u + 0.11) * 0.16 +
+                        gsin(11 * v + 3 * u) * 0.09;
+                    a = a * 0.5 + 0.5;
+                    // Torn: everything under the threshold is a hole, and the
+                    // rest ramps up so the edges are soft rather than cut.
+                    a = (a - 0.34) / 0.66;
+                    a = a < 0 ? 0 : (a > 1 ? 1 : a);
+                    a = a * a * (3 - 2 * a);
+                    const o = (y * S + x) * 4;
+                    px[o] = px[o + 1] = px[o + 2] = 255;
+                    px[o + 3] = (a * 255) | 0;
+                }
+            }
+            ctx.putImageData(img, 0, 0);
+        }
+
+        // The flash: a soft disc, brightest in the middle, gone at the rim.
+        static paintGasBolt(canvas) {
+            const S = canvas.width, c = S / 2;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, S, S);
+            const g = ctx.createRadialGradient(c, c, 0, c, c, c);
+            g.addColorStop(0, 'rgba(255,255,255,1)');
+            g.addColorStop(0.18, 'rgba(224,238,255,0.7)');
+            g.addColorStop(0.5, 'rgba(150,190,255,0.22)');
+            g.addColorStop(1, 'rgba(110,160,255,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(c, c, c, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // The whole envelope, a frame at a time: where the hull has got to over
+        // the banding, which decks are between it and the world, and whether
+        // anything is going off down in the murk.
+        //
+        // THE BANDS ARE MOVED BY THE CAMERA'S OWN POSITION, not only by their
+        // drift. The caps are teleported to the camera every frame the way the
+        // rest of the sky is - they have to be, or the nadir would not be under
+        // the hull - so without this a flyby would hang perfectly still over a
+        // world it was crossing at a thousand kilometres an hour. Feeding the
+        // world position into the texture offset puts the motion back where it
+        // belongs, and the drift on top of it is the wind.
+        _updateGasGiant(camX, camZ, camY, dayFactor, delta) {
+            const k = 0.35 + dayFactor * 0.65;
+            // The stars and the moons ride UP with the hull out here. The dome
+            // they hang on is five thousand units across and its floor is the
+            // world's own zero, so from high in an envelope whose horizon dips
+            // eighteen degrees below level they would sit UNDER the limb: stars
+            // sprinkled across the cloud tops and a moon resting on them. Lifted
+            // to the eye they stay where a sky belongs, at and above level.
+            this._skyLift = camY;
+            this._stars.position.y = camY;
+            if (this._limb) {
+                const L = this._limb;
+                L.off = (L.off || 0) + delta * L.drift;
+                L.tex.offset.set(camX / GAS_BAND_SPAN + L.off, camZ / GAS_BAND_SPAN);
+                // Below the cloud tops there is nothing left to see of them, and
+                // a body drawn from underneath is a lid over a hull that is
+                // already being crushed.
+                L.mesh.visible = camY > L.y - GAS_DECK_FADE;
+                L.mat.color.setScalar(Math.min(1, 0.30 + k * 0.85));
+            }
+            for (const d of (this._decks || [])) {
+                d.tex.repeat.set(GAS_BAND_SPAN / d.tile, GAS_BAND_SPAN / d.tile);
+                d.off = (d.off || 0) + delta * d.drift;
+                d.tex.offset.set((camX / GAS_BAND_SPAN + d.off) * d.tex.repeat.x,
+                                 (camZ / GAS_BAND_SPAN) * d.tex.repeat.y);
+                // The deck level with the eye is cloud all round the hull, not a
+                // layer seen from outside: drawn, it is a hard line across the
+                // screen instead of weather being flown through.
+                const gap = Math.abs(d.y - camY);
+                const near = Math.min(1, gap / GAS_DECK_FADE);
+                d.mat.opacity = d.base * near * k;
+                d.mesh.visible = d.mat.opacity > 0.01;
+            }
+            if (this._bolt) {
+                const b = this._bolt;
+                b.life -= delta;
+                if (b.life <= 0) {
+                    b.wait -= delta;
+                    if (b.wait <= 0) {
+                        b.wait = GAS_BOLT_EVERY * (0.4 + Math.random() * 1.6);
+                        b.life = GAS_BOLT_LIFE;
+                        const a = Math.random() * Math.PI * 2;
+                        const r = GAS_DECK_SPAN * (0.08 + Math.random() * 0.42);
+                        // On the cloud tops, which curve away: a flash laid at
+                        // the nadir's own height would float over them by the
+                        // time it was a few thousand units out.
+                        b.sp.position.set(Math.cos(a) * r,
+                            b.y - GAS_LIMB_R * (1 - Math.cos(r / GAS_LIMB_R)),
+                            Math.sin(a) * r);
+                        b.scale = 0.6 + Math.random() * 1.1;
+                        b.sp.scale.set(GAS_DECK_SPAN * 0.22 * b.scale,
+                                       GAS_DECK_SPAN * 0.22 * b.scale, 1);
+                    }
+                    b.mat.opacity = 0;
+                } else {
+                    // Two strokes, not one: a cell fires, dies back and fires
+                    // again, which is what makes a flash read as a flash.
+                    const t = b.life / GAS_BOLT_LIFE;
+                    b.mat.opacity = Math.max(0, Math.sin(t * Math.PI * 2.6)) * 0.85;
+                }
+            }
+        }
+
         // A planet with no moons gets an empty sky, which is the honest answer
         // and is most of them.
         setWorld(desc) {
@@ -376,7 +772,7 @@
                 const az = Math.PI * (1 - tt);
                 m.sp.position.set(
                     Math.cos(az) * 1900 * WORLD_SCALE + Math.sin(az) * m.lane * MOON_SPACING * WORLD_SCALE,
-                    (150 + Math.sin(tt * Math.PI) * 1100 * m.rise) * WORLD_SCALE,
+                    (150 + Math.sin(tt * Math.PI) * 1100 * m.rise) * WORLD_SCALE + (this._skyLift || 0),
                     Math.sin(az) * 900 * WORLD_SCALE + Math.cos(az) * m.lane * MOON_SPACING * WORLD_SCALE
                 );
                 // A big moon close overhead is up in daylight too, the way ours
@@ -413,13 +809,26 @@
             return this._moonAns;
         }
 
-        update(camX, camZ, hour, dayFactor, delta, underwater, elapsedH) {
+        update(camX, camZ, hour, dayFactor, delta, underwater, elapsedH, camY) {
             this._group.position.set(camX, 0, camZ);
             this._group.visible = !underwater;
             if (underwater) return;
 
+            // The world itself, where this world is made of cloud.
+            if (this._gasGiant) {
+                this._updateGasGiant(camX, camZ,
+                    (typeof camY === 'number') ? camY : 0, dayFactor, delta);
+            }
+
             if (this._airless) {
                 this._starMat.opacity = 0.95;
+                this._clouds.visible = false;
+            } else if (this._gasGiant) {
+                // The stars hold through the day at the top of the envelope,
+                // where there is barely an atmosphere left to scatter them out;
+                // and Earth's own low cloud has no business inside a gas giant,
+                // which carries its own weather in the decks.
+                this._starMat.opacity = Math.max(0, 0.8 - dayFactor * 0.95);
                 this._clouds.visible = false;
             } else {
                 this._starMat.opacity = Math.max(0, 0.95 - dayFactor * 1.6);

@@ -1783,13 +1783,51 @@
       return s;
     },
 
+    // The photograph a Solar System body wears, copied into a plain 2D canvas
+    // so the landing picker can slice it like any painted surface. The file
+    // decodes asynchronously, so this answers null until the image is actually
+    // there and the caller paints instead for that frame.
+    _realPlanetTextureCanvas(planet) {
+      const tex = this._realPlanetTexture(planet);
+      const img = tex && tex.image;
+      if (!img || !img.width || !img.height || img.complete === false) return null;
+      if (!this._solTexCanvasCache) this._solTexCanvasCache = new Map();
+      const key = (planet && planet.name) || "?";
+      let canvas = this._solTexCanvasCache.get(key);
+      if (!canvas) {
+        canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        try {
+          canvas.getContext("2d").drawImage(img, 0, 0);
+        } catch (e) {
+          return null;
+        }
+        this._solTexCanvasCache.set(key, canvas);
+      }
+      return canvas;
+    },
+
+    // False while a body's real surface map is still decoding: what
+    // getPlanetTextureCanvas hands back right now is the painted stand-in, and
+    // a caller that caches the canvas must ask again rather than keep it.
+    planetTextureCanvasIsFinal(planet) {
+      if (!this._realPlanetTexture(planet)) return true;
+      return !!this._realPlanetTextureCanvas(planet);
+    },
+
     // Plain 2D equirectangular <canvas> (TEX_W x TEX_H) for a planet, using the
     // same paint* dispatch as _buildPlanet but without building any THREE.js
-    // geometry/material. Returns null for the Solar System's named bodies
-    // (they wear a real NASA texture instead of a procedural one) -- callers
-    // that need a grid/unwrap map should treat null as "no grid available".
+    // geometry/material. A Solar System body wearing a real NASA map hands back
+    // that photograph on a canvas instead (see _realPlanetTextureCanvas); this
+    // used to answer null for those, which left the landing picker with nothing
+    // to draw and made it refuse to open on Mercury, Mars and the rest.
     getPlanetTextureCanvas(planet, seed) {
-      if (this._realPlanetTexture(planet)) return null;
+      if (this._realPlanetTexture(planet)) {
+        const real = this._realPlanetTextureCanvas(planet);
+        if (real) return real;
+        // Still decoding: fall through and paint, so the grid is never blank.
+      }
       const type = planet.type;
       const texKey = (planet.name || "?") + "|" + type + "|" + seed;
       let tex;

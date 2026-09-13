@@ -222,11 +222,68 @@
         return out;
     }
 
+    //-------------------------------------------------------------------------
+    // Procedural creatures: a description with no database row behind it.
+    //-------------------------------------------------------------------------
+    // A rarity, an alien species and a petrodemon are all generated on the spot,
+    // so none of them has an <En:> tag to read. What each one has instead is a
+    // bank of phrases in js/i18n/<lang>/plugins/Battle.json and a sentence made
+    // of slots:
+    //
+    //   Battle.rarity.desc    "{build} {habit} {rumour}"
+    //   Battle.rarity.build   [ ... ]   one line picked per slot
+    //   Battle.rarity.habit   [ ... ]
+    //
+    // compose() reads the sentence, fills every {slot} in it from the list of
+    // the same name, and runs the result through resolve() so a bank line may
+    // itself carry {a | b} variants. Which line is picked is decided by the
+    // creature's own key, not by Math.random: a rarity is one creature and its
+    // page has to read the same every time the codex is opened, in this session
+    // and in the next.
+    //
+    // A kind with no bank (a language that has not translated it, a mod that
+    // asks for one that does not exist) composes to "" rather than to a
+    // half-filled sentence; every caller treats that as "no description".
+    const SLOT_RE = /\{(\w+)\}/g;
+
+    function bank(kind, slot) {
+        const key = 'Battle.' + kind + '.' + slot;
+        if (typeof T !== 'function' || !T.has(key) || typeof T.pool !== 'function') return null;
+        const list = T.pool(key).filter(v => typeof v === 'string' && v.trim());
+        return list.length ? list : null;
+    }
+
+    function compose(kind, seedKey) {
+        const tplKey = 'Battle.' + String(kind) + '.desc';
+        if (typeof T !== 'function' || !T.has(tplKey)) return '';
+        const template = T(tplKey);
+        if (typeof template !== 'string' || !template) return '';
+        const rng = makeRng((worldSeed() ^ nameHash(String(seedKey || kind))) >>> 0);
+        let filled = '';
+        let last = 0;
+        let missing = false;
+        SLOT_RE.lastIndex = 0;
+        let m;
+        while ((m = SLOT_RE.exec(template)) !== null) {
+            const list = bank(kind, m[1]);
+            if (!list) { missing = true; break; }
+            filled += template.slice(last, m.index) + list[Math.floor(rng.next() * list.length) % list.length];
+            last = m.index + m[0].length;
+        }
+        if (missing) return '';
+        filled += template.slice(last);
+        // The banks may carry {a | b} groups of their own, so the composed
+        // sentence goes through the ordinary resolver on the way out - seeded on
+        // the same key, so the whole description is one creature's.
+        return tidy(resolve(filled, 'proc:' + kind + ':' + seedKey));
+    }
+
     window.EnemyDescription = {
         resolve,
         describe,
         rawDescription,
         hasVariants,
+        compose,
         _clearCache() { for (const k in _cache) delete _cache[k]; },
     };
 })();

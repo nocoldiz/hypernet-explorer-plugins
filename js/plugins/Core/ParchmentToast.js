@@ -303,9 +303,30 @@
       if (!cs) return true;
       if (cs.display === "none" || cs.visibility === "hidden") continue;
       if (parseFloat(cs.opacity || "1") <= 0.01) continue;
+      if (paintsNothing(cs)) continue;
       return true;
     }
     return false;
+  }
+
+  // A layer that takes no clicks and paints no ground of its own is not a page
+  // standing over the game: it is scaffolding hung across the window for
+  // something else to be placed inside (Core/ControllerSystem.js hangs the
+  // pad's scroll chips off one that size). A page the player is reading takes
+  // its clicks and lays a sheet down, however translucent.
+  function paintsNothing(cs) {
+    if (cs.pointerEvents !== "none") return false;
+    if (cs.backgroundImage && cs.backgroundImage !== "none") return false;
+    if (cs.backdropFilter && cs.backdropFilter !== "none") return false;
+    return isTransparent(cs.backgroundColor);
+  }
+
+  function isTransparent(color) {
+    if (!color || color === "transparent") return true;
+    const m = /^rgba?\(([^)]+)\)$/.exec(String(color).trim());
+    if (!m) return false;
+    const parts = m[1].split(",");
+    return parts.length > 3 && parseFloat(parts[3]) <= 0.01;
   }
 
   // The engine's own render rate is deliberately NOT touched from here. Drawing

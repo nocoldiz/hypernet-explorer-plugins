@@ -451,6 +451,7 @@ var WeaponSystemProcedural = {
   clearModelCache() {
     for (const entry of this._modelCache.values()) this._freePrototype(entry);
     this._modelCache.clear();
+    this.clearPartCache();
   },
 
   /**
@@ -487,6 +488,9 @@ var WeaponSystemProcedural = {
     const key = this.worldSeed() + ':' + (weapon.id || 0) +
       ':' + (meta.ForgeSeed || '') + ':' + (meta.ForgeTexture || '') +
       ':' + (this.isLowDetail() ? 'lo' : 'hi') +
+      // A sculpt fitted at the workshop is part of what the weapon looks like,
+      // so two designs of one entry are two models and never one.
+      ':' + this.designKeyOf(weapon) +
       // The vector gun's form and element are part of what it looks like.
       ':' + ((window.VectorGun && window.VectorGun.isVectorGun(weapon)) ? window.VectorGun.modelKey() : '');
     const cached = this._modelCache.get(key);
@@ -499,6 +503,12 @@ var WeaponSystemProcedural = {
 
     const root = this._buildModel(weapon);
     if (!root) return null;
+
+    // Anything the workshop's model editor bolted on, before the merge pass
+    // below welds the whole piece down: a fitting is static, so it costs no
+    // draw call of its own once it is on.
+    const design = this.designOf(weapon);
+    if (design) this.applyDesign(root, design, weapon);
 
     // A rope weapon carries live simulation state (point masses holding mesh
     // references) in userData, which clone() would flatten into dead JSON.
@@ -1706,57 +1716,88 @@ var WeaponSystemProcedural = {
    * being drawn: a single property check.
    */
   // ============================================================
-  // The vector gun reconstructing itself
+  // The vector gun folding itself
   // ============================================================
-  // SWITCH is not a model swap, it is a machine coming apart and building
-  // itself back as something else (Weapon/VectorGunSystem.js). It is played in
-  // two halves with the swap between them, so the piece that flies apart is the
-  // one being put away and the piece that assembles is the one being drawn:
+  // SWITCH is not a model swap and it is not an explosion either: the frame is
+  // a sheet of hardware, and it FOLDS the way a paper crane is folded and
+  // pulled open again (Weapon/VectorGunSystem.js). Every part the builders
+  // placed is one panel hinged on one crease, the creases are cut square across
+  // whichever way the weapon is long, and the panels take their turn down that
+  // length instead of all moving at once, which is what makes the thing read as
+  // a mechanism rather than as a cloud of parts:
   //
-  //   fold   the weapon spins up, every part slides out along its own axis
-  //          until the whole thing is a cloud of hardware, and the cloud
-  //          collapses into the hand
-  //   rise   the new shape arrives as the same cloud, spinning the other way,
-  //          and every part slams home with a hard overshoot
+  //   fold   the panels swing shut about their creases, mountain and valley
+  //          alternating, the far end going first, each one telescoping in
+  //          along the spine until the weapon is a flat packet in the hand
+  //   rise   the new shape arrives as that packet and opens the other way, the
+  //          hand end first, every panel snapping a little past its crease and
+  //          settling back onto it
   //
-  // Both halves move the parts the builders placed, so any shape animates:
-  // nothing here knows what weapon it is taking apart.
-  VECTOR_FOLD_MS: 330,
-  VECTOR_RISE_MS: 470,
-  VECTOR_SPREAD: 0.55,     // how far a part travels, as a share of the model
-  VECTOR_SPIN: Math.PI * 5,
+  // Both halves work on whatever the builders placed, so any shape folds:
+  // nothing here knows what weapon it is folding.
+  VECTOR_FOLD_MS: 360,
+  VECTOR_RISE_MS: 480,
+  VECTOR_FOLD_ANGLE: Math.PI * 0.85,  // how far a panel swings about its crease
+  VECTOR_FOLD_STAGGER: 0.5,   // the share of the clip a panel spends waiting its turn
+  VECTOR_FOLD_TUCK: 0.7,      // how far in along the spine the packet telescopes
+  VECTOR_FOLD_FLAT: 0.55,     // how far onto the spine a shut panel is drawn down
+  VECTOR_FOLD_SNAP: 1.9,      // how hard a crease opens past itself before it settles
 
   /**
-   * Starts one half of the reconstruction on a model.
+   * Starts one half of the fold on a model.
    * @param {THREE.Object3D} model - The weapon in the hand
-   * @param {string} phase - 'fold' (coming apart) or 'rise' (going together)
+   * @param {string} phase - 'fold' (closing up) or 'rise' (opening out)
    */
   startVectorSwitch(model, phase) {
     if (!model || typeof THREE === 'undefined') return null;
     const rise = phase === 'rise';
     const box = new THREE.Box3().setFromObject(model);
     const size = box.getSize(new THREE.Vector3());
-    const reach = (Math.max(size.x, size.y, size.z) || 0.3) * this.VECTOR_SPREAD;
+    // The spine: whichever way the weapon is long is the way it folds, so a
+    // lance packs down its own shaft and a gauntlet across the back of a hand.
+    const axis = (size.z >= size.x && size.z >= size.y) ? 'z'
+      : (size.y >= size.x ? 'y' : 'x');
+    const spine = new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
+    const span = Math.max(1e-4, size[axis]);
+    // The end the hand is at: the fold packs towards it and the rise opens out
+    // of it, which is what makes the weapon look built rather than dropped in.
+    const held = box.min[axis];
+    // Two directions square to the spine, for the creases of the parts that sit
+    // exactly on it and so have no side of their own to be hinged from.
+    const off = new THREE.Vector3(spine.y, spine.z, spine.x);
+    const e1 = new THREE.Vector3().crossVectors(spine, off).normalize();
+    const e2 = new THREE.Vector3().crossVectors(spine, e1).normalize();
     const parts = [];
     let index = 0;
     model.traverse((node) => {
       if (node === model || !node.isMesh) return;
       const home = node.position.clone();
-      // Which way a part flies: away from the middle of the piece it is bolted
-      // to. A part sitting exactly on the axis is given a turn of its own, so a
-      // barrel and a slide do not travel as one.
-      let dir = home.clone();
-      if (dir.lengthSq() < 1e-6) {
+      const along = home.dot(spine);
+      // The crease this panel is hinged on: the point of the spine level with
+      // it. The panel swings about that line rather than flying off it.
+      const hinge = spine.clone().multiplyScalar(along);
+      const arm = home.clone().sub(hinge);
+      // The crease runs square to the spine AND square to the way the panel
+      // stands off it, so closing it lays the panel flat along the weapon.
+      let crease;
+      if (arm.lengthSq() < 1e-8) {
         const a = index * 2.399963;   // the golden angle: no two alike
-        dir = new THREE.Vector3(Math.cos(a), Math.sin(a) * 0.6, Math.sin(a));
+        crease = e1.clone().multiplyScalar(Math.cos(a)).addScaledVector(e2, Math.sin(a));
+      } else {
+        crease = new THREE.Vector3().crossVectors(spine, arm);
       }
-      dir.normalize();
       parts.push({
         node: node,
         home: home,
-        dir: dir,
-        spin: (index % 2 ? 1 : -1) * (1.2 + (index % 5) * 0.4),
-        rest: node.rotation.clone(),
+        hinge: hinge,
+        crease: crease.normalize(),
+        // Mountain and valley, turn and turn about: a fold, not a collapse.
+        sign: index % 2 ? 1 : -1,
+        // Where it stands between the hand and the far end: its place in the
+        // queue, and how far it has to travel when the weapon telescopes.
+        order: Math.max(0, Math.min(1, (along - held) / span)),
+        reach: Math.max(0, along - held),
+        rest: node.quaternion.clone(),
       });
       index++;
     });
@@ -1764,8 +1805,10 @@ var WeaponSystemProcedural = {
       elapsed: 0,
       duration: rise ? this.VECTOR_RISE_MS : this.VECTOR_FOLD_MS,
       rise: rise,
-      reach: reach,
+      spine: spine,
       parts: parts,
+      _q: new THREE.Quaternion(),
+      _v: new THREE.Vector3(),
     };
     return model._vectorSwitch;
   },
@@ -1776,37 +1819,49 @@ var WeaponSystemProcedural = {
     if (!vs) return;
     vs.elapsed += dtMs;
     const t = Math.max(0, Math.min(1, vs.elapsed / vs.duration));
+    const stagger = this.VECTOR_FOLD_STAGGER;
+    const window_ = 1 - stagger;
+    const q = vs._q;
+    const v = vs._v;
 
-    // Coming apart accelerates; going together arrives hard and settles, which
-    // is the difference between a thing falling open and a thing being built.
-    const easeIn = t * t;
-    const back = 1.7;
-    const u = t - 1;
-    const easeOutBack = 1 + (back + 1) * u * u * u + back * u * u;
-    const spread = vs.rise ? Math.max(0, 1 - easeOutBack) : easeIn;
-    const spin = vs.rise ? -(1 - easeOutBack) * this.VECTOR_SPIN : easeIn * this.VECTOR_SPIN;
-    // The piece is small in the hand while it is only a cloud of parts.
-    const shrink = vs.rise ? 0.25 + 0.75 * Math.min(1, easeOutBack) : 1 - 0.8 * easeIn;
-
+    // Nothing here writes the model's own position, rotation or scale: in
+    // battle the pose rewrites them every frame and on a menu's stand nothing
+    // does, so a fold that leaned on the root would drift the piece a little
+    // further out of true on every frame it played there.
     for (const part of vs.parts) {
-      part.node.position.set(
-        part.home.x + part.dir.x * vs.reach * spread,
-        part.home.y + part.dir.y * vs.reach * spread,
-        part.home.z + part.dir.z * vs.reach * spread);
-      part.node.rotation.set(
-        part.rest.x + part.spin * spread,
-        part.rest.y + part.spin * spread * 1.4,
-        part.rest.z + part.spin * spread);
+      // Its turn. Folding runs from the far end down to the hand; opening runs
+      // back out of the hand, so the weapon is always built from the grip up.
+      const delay = (vs.rise ? part.order : 1 - part.order) * stagger;
+      const local = Math.max(0, Math.min(1, (t - delay) / window_));
+      // A crease closes evenly and opens with a snap that carries past it.
+      let k;
+      if (vs.rise) {
+        const u = local - 1;
+        const back = this.VECTOR_FOLD_SNAP;
+        k = -((back + 1) * u * u * u + back * u * u);
+      } else {
+        k = local * local;
+      }
+      q.setFromAxisAngle(part.crease, part.sign * this.VECTOR_FOLD_ANGLE * k);
+      v.copy(part.home).sub(part.hinge).applyQuaternion(q);
+      // What is still standing off the spine is drawn down onto it as the
+      // crease shuts, which is what flattens the fold into a packet rather
+      // than leaving it a bundle of panels at angles.
+      v.multiplyScalar(Math.max(0, 1 - this.VECTOR_FOLD_FLAT * k));
+      v.add(part.hinge);
+      // and the whole thing telescopes in along the spine as it goes, the far
+      // panels travelling furthest, which is what shortens a long weapon.
+      v.addScaledVector(vs.spine, -part.reach * this.VECTOR_FOLD_TUCK * k);
+      part.node.position.copy(v);
+      part.node.quaternion.copy(q).multiply(part.rest);
     }
-    model.rotation.y += spin;
-    model.scale.multiplyScalar(Math.max(0.05, shrink));
 
     if (t >= 1) {
       // Everything back exactly where the builder left it: an animation that
       // ends a millimetre out leaves the weapon wrong for the rest of the fight.
       for (const part of vs.parts) {
         part.node.position.copy(part.home);
-        part.node.rotation.copy(part.rest);
+        part.node.quaternion.copy(part.rest);
       }
       model._vectorSwitch = null;
     }
@@ -5977,6 +6032,240 @@ var WeaponSystemProcedural = {
   },
 
   // ============================================================
+  // The first-person hands
+  // ============================================================
+  // Some archetypes do not punch with a model built here at all: they punch
+  // with an authored rig, a pair of hands carrying its own clips (the idle,
+  // both punches, the guard, the equip). It is the same rig in battle and out
+  // in the voxel world, since both draw what is held through Sprite_3DWeapon,
+  // and it is the rig's own animation that swings rather than the generated
+  // punch - which is the whole point of having one.
+  //
+  // Only the archetypes whose hands ARE a pair of human hands take it. A
+  // dragon's claw, a slime's pseudopod and the other seventy-odd fists
+  // Weapon3D_Unarmed builds are untouched: one entry in `archetypes` is all
+  // it takes to hand the rig to another of them.
+  //
+  // Nothing outside the sprite knows about this. The empty hand is still the
+  // procedural weapon unarmedWeaponFor builds (same id, same weight, same
+  // <Glove> type), so damage, sounds, the object index and the digging reach
+  // all read exactly what they read before; only the model in frame changed.
+  // If the file cannot be loaded the sprite quietly falls back to the built
+  // fist, so a missing model costs a look and never a crash.
+  UNARMED_RIG: {
+    file: 'fists_2025__first_person_animations.glb',
+    archetypes: ['Humanoid'],
+    // The rig was authored for a perspective camera sitting behind the hands;
+    // the overlay's is orthographic and looks straight down -Z, where arms
+    // pointing away from it would project to almost nothing. So it is turned
+    // to put that camera behind them (180 about Y) and then pitched over,
+    // which lays the length of the forearms into the vertical of the screen:
+    // elbows out of the bottom edge, fists up in the middle of the frame.
+    rotation: { x: 52, y: 180, z: 0 },
+    // The share of the frame the posed hands are fitted into, and how far
+    // past the bottom edge the elbows are allowed to run off it.
+    fillW: 0.62,
+    fillH: 0.58,
+    sink: 0.10,
+    // The pose the fit is measured in: whatever the hands do when nothing is
+    // happening. Measuring the bind pose instead frames a pair of arms nobody
+    // ever sees.
+    framePose: 'Idle',
+    // A punch is authored at a full second; a blow in this game lands in about
+    // a third of one (WeaponSystem's DEFAULT_STRIKE_DELAY), so it is played
+    // faster than authored rather than landing after the damage popup.
+    punchRate: 1.7,
+    // What the rig does when it is asked for a named movement. Anything not
+    // listed is a punch, thrown with alternate hands.
+    clips: {
+      Block: 'Block_Start',
+      Parry: 'Block_Start',
+      Riposte: 'Block_Start',
+      Guard: 'Block_Start',
+      Equip: 'Equip',
+      Unequip: 'Unequip',
+      Idle: 'Idle',
+      Inspect: 'Inspect'
+    }
+  },
+
+  /** The rig an empty hand shows, or null for one that builds its own fist. */
+  rigSpecFor(weapon) {
+    const spec = this.UNARMED_RIG;
+    if (!weapon || !weapon.unarmedArchetype || !spec || spec.unavailable) return null;
+    if (spec.archetypes.indexOf(weapon.unarmedArchetype) < 0) return null;
+    return spec;
+  },
+
+  /**
+   * A rig ready to be put in frame, from the pool if one is idle and off disk
+   * otherwise. Asynchronous either way, so the caller must survive being
+   * answered after it has been terminated.
+   */
+  acquireRig(spec, cb) {
+    if (!this._rigPool) this._rigPool = {};
+    const free = this._rigPool[spec.file];
+    if (free && free.length) { cb(free.pop()); return; }
+    if (!window.THREE || !THREE.GLTFLoader) { cb(null); return; }
+    new THREE.GLTFLoader().load(
+      'models/' + spec.file,
+      (gltf) => cb(this.prepareRig(gltf, spec)),
+      undefined,
+      (err) => {
+        // Once it has failed it has failed: every empty hand from here on
+        // builds its own fist rather than asking for the file again.
+        spec.unavailable = true;
+        console.error('[WeaponSystemProcedural] could not load the hands: ' + spec.file, err);
+        cb(null);
+      }
+    );
+  },
+
+  /** How many idle copies of one rig are worth keeping loaded. */
+  RIG_POOL_MAX: 2,
+
+  /** Hands the rig back rather than freeing it: it is far too big to re-read. */
+  releaseRig(spec, entry) {
+    if (!spec || !entry) return;
+    if (!this._rigPool) this._rigPool = {};
+    const pool = this._rigPool[spec.file] || (this._rigPool[spec.file] = []);
+    if (pool.indexOf(entry) >= 0) return;
+    if (pool.length >= this.RIG_POOL_MAX) return;
+    pool.push(entry);
+  },
+
+  /**
+   * Strips a loaded rig down to the part that is a pair of hands and marks
+   * everything it owns as shared, so disposeWeaponObject3D can never free a
+   * model the pool is still holding.
+   */
+  prepareRig(gltf, spec) {
+    const scene = gltf.scene;
+    // Sketchfab ships its viewer's backdrop in the same file; it is a quad
+    // the size of the world and would fill the frame behind the hands.
+    const backdrops = [];
+    scene.traverse((obj) => {
+      if (obj.isMesh && /background|backdrop/i.test(obj.name || '')) backdrops.push(obj);
+    });
+    for (const obj of backdrops) {
+      if (obj.parent) obj.parent.remove(obj);
+      if (obj.geometry && obj.geometry.dispose) obj.geometry.dispose();
+    }
+    scene.traverse((obj) => {
+      if (obj.geometry) obj.geometry._fxShared = true;
+      const mats = obj.material ? (Array.isArray(obj.material) ? obj.material : [obj.material]) : [];
+      for (const mat of mats) {
+        for (const key in mat) {
+          const val = mat[key];
+          if (val && val.isTexture) val._weaponSharedCache = true;
+        }
+      }
+    });
+    return { scene, animations: gltf.animations || [], spec };
+  },
+
+  /**
+   * One action per clip, keyed by the authored name AND by the short name.
+   * A Sketchfab export prefixes every clip with the rig it was made on
+   * ("rig|Punch_R"), and the short half is what everything here asks for.
+   */
+  rigActionsFor(mixer, clips) {
+    const map = {};
+    for (const clip of clips) {
+      const action = mixer.clipAction(clip);
+      map[clip.name] = action;
+      const short = String(clip.name).split('|').pop();
+      if (short && !map[short]) map[short] = action;
+    }
+    return map;
+  },
+
+  /**
+   * The clip a requested movement plays. Everything a bare hand is asked to do
+   * that is not named in the spec is a punch, and the hands take turns so a
+   * flurry does not hammer the same one four times.
+   */
+  rigClipFor(sprite, name) {
+    const spec = sprite._rig;
+    const mapped = spec.clips[String(name || '')];
+    if (mapped) return { base: mapped, rate: 1 };
+    sprite._rigFist = sprite._rigFist === 'R' ? 'L' : 'R';
+    return { base: 'Punch_' + sprite._rigFist, rate: spec.punchRate || 1 };
+  },
+
+  /**
+   * The bounding box of a model AS IT IS POSED, skinning included. Box3's own
+   * setFromObject reads the bind pose out of the geometry, which for a rig
+   * whose arms are modelled spread out is a box several times the size of the
+   * hands actually in frame.
+   */
+  posedBoundsOf(root) {
+    const box = new THREE.Box3();
+    const v = new THREE.Vector3();
+    root.updateMatrixWorld(true);
+    root.traverse((obj) => {
+      if (!obj.isMesh) return;
+      const pos = obj.geometry && obj.geometry.attributes && obj.geometry.attributes.position;
+      if (!pos) return;
+      // three names this boneTransform up to r151 and applyBoneTransform after.
+      const skin = obj.isSkinnedMesh
+        ? (obj.applyBoneTransform || obj.boneTransform) : null;
+      for (let i = 0; i < pos.count; i++) {
+        v.fromBufferAttribute(pos, i);
+        if (skin) skin.call(obj, i, v);
+        v.applyMatrix4(obj.matrixWorld);
+        box.expandByPoint(v);
+      }
+    });
+    return box;
+  },
+
+  /**
+   * Where the hands sit and how big they are, measured once per rig per screen
+   * size: fitted to the frame by their posed silhouette rather than by any
+   * authored scale, so the same rig frames the same way at every resolution.
+   */
+  rigFrameFor(entry, spec, model) {
+    const screenW = (typeof Graphics !== 'undefined' && Graphics.width) ? Graphics.width : 816;
+    const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
+    const key = screenW + 'x' + screenH;
+    if (entry._frame && entry._frameFor === key) return entry._frame;
+
+    // The silhouette is measured ONCE, while the hands are still standing in
+    // the pose they were fitted for; a later measurement (the player changed
+    // resolution) would catch them mid-punch and resize the whole rig to it.
+    if (!entry._box) {
+      const restPos = model.position.clone();
+      const restScale = model.scale.clone();
+      model.position.set(0, 0, 0);
+      model.scale.set(1, 1, 1);
+      model.rotation.set(
+        THREE.MathUtils.degToRad(spec.rotation.x),
+        THREE.MathUtils.degToRad(spec.rotation.y),
+        THREE.MathUtils.degToRad(spec.rotation.z)
+      );
+      entry._box = this.posedBoundsOf(model);
+      model.position.copy(restPos);
+      model.scale.copy(restScale);
+    }
+    const box = entry._box;
+
+    const width = Math.max(box.max.x - box.min.x, 1e-6);
+    const height = Math.max(box.max.y - box.min.y, 1e-6);
+    const scale = Math.min(screenW * spec.fillW / width, screenH * spec.fillH / height);
+    const frame = {
+      scale,
+      // Centred across the frame, and standing ON the bottom edge with the
+      // forearms running off it rather than floating above it.
+      x: -((box.min.x + box.max.x) / 2) * scale,
+      y: -screenH / 2 - screenH * spec.sink - box.min.y * scale
+    };
+    entry._frame = frame;
+    entry._frameFor = key;
+    return frame;
+  },
+
+  // ============================================================
   // The hand on the end of the punch
   // ============================================================
   // MOTIONS.punch moves the whole arm; this moves the hand it ends in. Two
@@ -6107,6 +6396,11 @@ var WeaponSystemProcedural = {
     // The result is cached and only recomputed if the game resolution changes.
     Sprite_3DWeapon.prototype._baseScale = function() {
       const w = this._weapon;
+      // A pair of authored hands is fitted to the frame by its posed
+      // silhouette when it arrives (_rigPose), not by any authored scale.
+      if (this._rig && this._rigEntry && this._rigEntry._frame) {
+        return this._rigEntry._frame.scale;
+      }
       if (w.model3d) return w.model3dScale || 1.0;
       const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
       if (this._fitScale && this._fitScaleFor === screenH) return this._fitScale;
@@ -6171,6 +6465,15 @@ var WeaponSystemProcedural = {
       this._model.visible = true;
       this._visible = true;
 
+      // The rig's rest is a clip like any other, and the frame it is held in
+      // never changes: nothing below applies to it.
+      if (this._rig) {
+        this._clipPlaying = false;
+        this._playRigClip(this._rig.framePose, { loop: true });
+        this._rigPose();
+        return;
+      }
+
       this._model.position.set(
         this._worldX(this._screenX) + this._anchorOffsetX(),
         this._worldY(this._screenY) + this._anchorOffsetY(),
@@ -6191,6 +6494,13 @@ var WeaponSystemProcedural = {
     // Override _loadModel to support both procedural and GLB models with always-visible behavior
     Sprite_3DWeapon.prototype._loadModel = function() {
       this._baseRotation = WeaponSystemProcedural.baseRotationFor(this._weapon);
+
+      // An empty hand belonging to an archetype that has an authored rig is
+      // the rig, clips and all (WeaponSystemProcedural.UNARMED_RIG). Anything
+      // else, including that same archetype once the file has been found
+      // missing, builds its fist below.
+      const rig = this._rigFailed ? null : WeaponSystemProcedural.rigSpecFor(this._weapon);
+      if (rig) { this._loadRig(rig); return; }
 
       if (!this._weapon.model3d) {
         if (!window.THREE) return;
@@ -6273,6 +6583,107 @@ var WeaponSystemProcedural = {
       );
     };
 
+    /**
+     * Puts the authored pair of hands in frame. The rig is pooled rather than
+     * read per sprite: it is a large file, and a battle builds a new sprite
+     * every time the turn passes to somebody else.
+     */
+    Sprite_3DWeapon.prototype._loadRig = function(spec) {
+      this._rig = spec;
+      // The hands are not slid in from off the edge like a weapon: they have
+      // an equip of their own to arrive with.
+      this._entryDone = true;
+      this._transitionDX = 0;
+      WeaponSystemProcedural.acquireRig(spec, (entry) => {
+        // A large file read is a long time to be away: the sprite may have
+        // been let go, and the overlay torn down, before the hands arrive.
+        const overlay = window.WeaponThreeScene;
+        if (this._terminated || !overlay || !overlay.scene) {
+          WeaponSystemProcedural.releaseRig(spec, entry);
+          return;
+        }
+        if (!entry) {
+          // No rig: this hand builds its own fist after all, and asks for the
+          // model exactly the way a dragon's claw does.
+          this._rig = null;
+          this._rigFailed = true;
+          this._loadModel();
+          return;
+        }
+        this._rigEntry = entry;
+        this._model = entry.scene;
+        const _retro = window.RetroShader ? window.RetroShader.active() : window.PSXShader;
+        if (_retro) _retro.applyToObject(this._model);
+        this._mixer = new THREE.AnimationMixer(this._model);
+        this._clips = WeaponSystemProcedural.rigActionsFor(this._mixer, entry.animations);
+        this._mixer.addEventListener('finished', () => {
+          this._clipPlaying = false;
+          this._resetToIdle();
+        });
+        overlay.scene.add(this._model);
+        this._model.visible = true;
+        this._visible = true;
+        // Posed before it is measured: the fit is of the hands as they are
+        // held, not of the spread arms the rig was modelled in.
+        this._playRigClip(spec.framePose, { loop: true });
+        this._mixer.update(0);
+        this._rigPose();
+
+        // A blow thrown while the hands were still coming is still that blow.
+        const pending = this._pendingAnimation;
+        const pendingOpts = this._pendingAnimationOpts;
+        this._pendingAnimation = null;
+        this._pendingAnimationOpts = null;
+        if (pending != null) this.playAnimation(pending, pendingOpts);
+        else this._playRigClip('Equip');
+      });
+    };
+
+    /**
+     * Plays one of the rig's authored clips. A looping one (the idle, the
+     * guard held) leaves the sprite free to be interrupted; a one-shot holds
+     * its last frame and hands back to the idle when it finishes.
+     */
+    Sprite_3DWeapon.prototype._playRigClip = function(base, opts) {
+      const action = this._clips && this._clips[base];
+      if (!action || !this._mixer) return false;
+      opts = opts || {};
+      this._mixer.stopAllAction();
+      action.reset();
+      action.timeScale = opts.rate || 1;
+      if (opts.loop) {
+        action.setLoop(THREE.LoopRepeat, Infinity);
+        action.clampWhenFinished = false;
+      } else {
+        action.setLoop(THREE.LoopOnce, 1);
+        action.clampWhenFinished = true;
+      }
+      action.play();
+      this._clipPlaying = !opts.loop;
+      this._model.visible = true;
+      this._visible = true;
+      return true;
+    };
+
+    /**
+     * Keeps the hands framed. The rig animates itself, so the only thing left
+     * to write is where the whole of it sits: fitted to the screen, centred,
+     * standing on the bottom edge, and drifting out with the exit fade at the
+     * end of a battle like everything else in the overlay.
+     */
+    Sprite_3DWeapon.prototype._rigPose = function() {
+      if (!this._model || !this._rigEntry) return;
+      const frame = WeaponSystemProcedural.rigFrameFor(this._rigEntry, this._rig, this._model);
+      const r = this._rig.rotation;
+      this._model.rotation.set(
+        THREE.MathUtils.degToRad(r.x),
+        THREE.MathUtils.degToRad(r.y),
+        THREE.MathUtils.degToRad(r.z)
+      );
+      this._model.scale.set(frame.scale, frame.scale, frame.scale);
+      this._model.position.set(frame.x + (this._transitionDX || 0), frame.y, 0);
+    };
+
     // Override _applyKeyframe to reset back to idle instead of hiding the weapon at the end of keyframes
     Sprite_3DWeapon.prototype._applyKeyframe = function(deltaMs) {
       this._animElapsed += deltaMs;
@@ -6353,6 +6764,13 @@ var WeaponSystemProcedural = {
       this._model.visible = true;
       this._visible = true;
 
+      // A pair of authored hands throws the punch it was animated throwing,
+      // left and right about, rather than the generated one.
+      if (this._rig && this._clips) {
+        const pick = WeaponSystemProcedural.rigClipFor(this, name);
+        if (this._playRigClip(pick.base, { rate: pick.rate })) return;
+      }
+
       // An authored GLB clip always wins: it was made for that model.
       if (this._clips && this._clips[name]) {
         this.playClip(name);
@@ -6420,6 +6838,15 @@ var WeaponSystemProcedural = {
       this._updateAim(deltaMs);
 
       if (this._mixer) this._mixer.update(deltaMs / 1000);
+
+      // The rig moves itself. Nothing below it applies: it has no procedural
+      // pose to write, no moving parts of its own to tick, no rope hanging off
+      // it and no blade to leave a trail (and no shimmer either: its materials
+      // are shared with every other copy of the hands in the pool).
+      if (this._rig) {
+        this._rigPose();
+        return;
+      }
 
       if (this._animData) {
         this._idleTime = 0;
@@ -6541,6 +6968,354 @@ var WeaponSystemProcedural = {
       // Scene render is batched once per frame by the Spriteset_Battle
       // iterator (WeaponSystem.js) rather than once per weapon instance.
     };
+
+    // The hands are HANDED BACK, never freed: they are shared with every other
+    // sprite that will ever hold a pair, and disposing them would take the
+    // geometry out from under the next one. Dropping the reference before the
+    // base terminate runs is what keeps disposeWeaponObject3D off them; it
+    // still does the rest (trails, timers, the mixer, the overlay refcount).
+    const _Sprite_3DWeapon_terminate = Sprite_3DWeapon.prototype.terminate;
+    Sprite_3DWeapon.prototype.terminate = function() {
+      this._terminated = true;
+      if (this._rig && this._rigEntry) {
+        if (this._model) {
+          // Handed back opaque, or the next pair of hands is born half faded.
+          this._applyFade(1);
+          if (window.WeaponThreeScene && window.WeaponThreeScene.scene) {
+            window.WeaponThreeScene.scene.remove(this._model);
+          }
+          this._model = null;
+        }
+        // Stopped before it is handed back, never after: the next sprite
+        // binds a mixer of its own to these bones the moment it takes them.
+        if (this._mixer && typeof this._mixer.stopAllAction === 'function') {
+          this._mixer.stopAllAction();
+        }
+        WeaponSystemProcedural.releaseRig(this._rig, this._rigEntry);
+        this._rigEntry = null;
+      }
+      _Sprite_3DWeapon_terminate.call(this);
+    };
+  },
+
+  // ============================================================
+  // Fitted models: the pieces a smith bolts onto a weapon
+  // ============================================================
+  // A weapon's look used to be only what its seed dealt it. The workshop's
+  // model editor (Quest/ThinkerMenu.js) lets a smith take a piece off ANY
+  // other weapon in the game and hang it on this one, turn it, size it and
+  // give it a finish of its own, and everything it decides is written as one
+  // note tag on the piece:
+  //
+  //   <ForgeParts: {"v":1,"hide":["head"],"p":[{"w":42,"b":"head","x":0,
+  //                 "y":0.3,"z":0,"rx":0,"ry":0,"rz":0,"s":0.4,
+  //                 "t":"molten_gold.jpg"}]}>
+  //
+  // The tag is the whole of it. Nothing about a fitted model lives anywhere
+  // else, so a piece carries its look into the equip menu, the battle overlay
+  // and a savegame without any of them knowing this exists, and it is read
+  // here, at the one place a weapon becomes a model.
+  //
+  // A fitting is COSMETIC, always: nothing in a design touches a piece's
+  // parameters, its price, its weight or its bill, which is why the editor
+  // asks for no materials and no money.
+  //
+  // WHERE A PART COMES FROM
+  // Every builder in the game lays its weapon out along +Y with the grip at
+  // the bottom, and that is the only thing needed to cut one into pieces. A
+  // donor is built, its meshes are sorted into three bands by where they sit
+  // along that axis, and one band is harvested. So the shelf of parts is every
+  // weapon in the database three times over, plus each of them whole, without
+  // a line of per-weapon data anywhere.
+  //
+  // A harvested band is welded into one buffer per material the moment it is
+  // cut, the same pass mergeStaticParts makes over a finished model, so a
+  // weapon wearing half a dozen fittings still costs a handful of draw calls.
+
+  /** The cuts, as a fraction of a donor's height measured from its foot. */
+  PART_BANDS: ['grip', 'shaft', 'head', 'whole'],
+  PART_BAND_CUTS: { grip: 0.28, shaft: 0.62 },
+  /** How many fittings one design may carry, so a piece can never be unaffordable. */
+  DESIGN_PART_MAX: 12,
+
+  /** Which band a point at height fraction `t` belongs to. */
+  bandAt(t) {
+    if (!(t > this.PART_BAND_CUTS.grip)) return 'grip';
+    if (t < this.PART_BAND_CUTS.shaft) return 'shaft';
+    return 'head';
+  },
+
+  /** Every catalogue weapon a part may be taken off. */
+  partDonors() {
+    if (typeof $dataWeapons === 'undefined' || !$dataWeapons) return [];
+    const out = [];
+    for (const w of $dataWeapons) {
+      if (!w || !w.name || !w.name.trim() || w.name.includes('-->')) continue;
+      // A forged piece is a copy of a catalogue entry wearing somebody's name;
+      // the shelf lists the entries themselves, once each.
+      if (w.meta && w.meta.Forged) continue;
+      out.push(w);
+    }
+    return out;
+  },
+
+  _designCache: new WeakMap(),
+
+  /** The design written on a piece, or null. Parsed once per entry. */
+  designOf(weapon) {
+    const raw = weapon && weapon.meta && weapon.meta.ForgeParts;
+    if (!raw) return null;
+    if (this._designCache.has(weapon)) return this._designCache.get(weapon);
+    let design = null;
+    try {
+      const parsed = JSON.parse(String(raw));
+      if (parsed && (Array.isArray(parsed.p) || Array.isArray(parsed.hide))) design = parsed;
+    } catch (e) {
+      design = null;
+    }
+    this._designCache.set(weapon, design);
+    return design;
+  },
+
+  /** A design's fingerprint, so the model cache tells two sculpts apart. */
+  designKeyOf(weapon) {
+    const raw = weapon && weapon.meta && weapon.meta.ForgeParts;
+    if (!raw) return '';
+    const s = String(raw);
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(36);
+  },
+
+  // Harvested bands, keyed by donor and band. A prototype is built once and
+  // handed out as an instance exactly like a whole model is (_instance shares
+  // the geometry and clones the materials, which is what lets two fittings off
+  // the same donor wear two different finishes).
+  _partCache: new Map(),
+  // Larger than the model cache: the editor's shelf asks for a picture of every
+  // donor it scrolls past, and each of those is a harvest. Evicting one costs a
+  // re-upload of a small buffer, never a wrong picture.
+  PART_CACHE_MAX: 48,
+
+  clearPartCache() {
+    for (const proto of this._partCache.values()) if (proto) this._freePrototype(proto);
+    this._partCache.clear();
+  },
+
+  harvestPart(donorId, band) {
+    if (!window.THREE) return null;
+    const key = donorId + '|' + band + '|' + (this.isLowDetail() ? 'lo' : 'hi');
+    if (this._partCache.has(key)) {
+      const cached = this._partCache.get(key);
+      // Map keeps insertion order, so re-inserting is the whole LRU touch.
+      this._partCache.delete(key);
+      this._partCache.set(key, cached);
+      return cached ? this._instance(cached) : null;
+    }
+    const proto = this._harvestPrototype(donorId, band);
+    if (proto) this._protectResources(proto);
+    this._partCache.set(key, proto);
+    while (this._partCache.size > this.PART_CACHE_MAX) {
+      const oldest = this._partCache.keys().next().value;
+      const victim = this._partCache.get(oldest);
+      this._partCache.delete(oldest);
+      if (victim) this._freePrototype(victim);
+    }
+    return proto ? this._instance(proto) : null;
+  },
+
+  /**
+   * Cuts one band out of a donor weapon and welds it into a part.
+   *
+   * The result is normalised: its longest side is exactly 1 and its centre is
+   * the origin, so a design's size and offset mean the same thing whatever it
+   * was taken off. Geometry is cloned out of the donor, which is then thrown
+   * away whole, so a part owns everything it is made of.
+   */
+  _harvestPrototype(donorId, band) {
+    const donor = (typeof $dataWeapons !== 'undefined' && $dataWeapons) ? $dataWeapons[donorId] : null;
+    if (!donor || !window.THREE) return null;
+
+    let source = null;
+    try {
+      source = this._buildModel(donor);
+    } catch (e) {
+      source = null;
+    }
+    if (!source) return null;
+
+    source.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(source);
+    const foot = box.min.y;
+    const height = Math.max(1e-4, box.max.y - box.min.y);
+
+    const buckets = new Map();
+    const centre = new THREE.Vector3();
+    const scratch = new THREE.Box3();
+    source.traverse((obj) => {
+      if (!obj.isMesh || !obj.geometry || !obj.material) return;
+      if (Array.isArray(obj.material)) return;          // multi-material, left behind
+      if (band !== 'whole') {
+        scratch.setFromObject(obj).getCenter(centre);
+        if (this.bandAt((centre.y - foot) / height) !== band) return;
+      }
+      const geo = obj.geometry.index ? obj.geometry.toNonIndexed() : obj.geometry.clone();
+      // The donor root sits at the identity, so its world matrix IS the part's
+      // own local one.
+      geo.applyMatrix4(obj.matrixWorld);
+      const key = obj.material.uuid;
+      if (!buckets.has(key)) buckets.set(key, { material: obj.material, parts: [] });
+      buckets.get(key).parts.push(geo);
+    });
+
+    const inner = new THREE.Group();
+    for (const bucket of buckets.values()) {
+      let geo = bucket.parts[0];
+      if (bucket.parts.length > 1) {
+        const merged = this._concatGeometries(bucket.parts);
+        if (merged) {
+          for (const g of bucket.parts) g.dispose();
+          geo = merged;
+        } else {
+          // Mismatched attributes: keep them as they are rather than lose them.
+          for (const g of bucket.parts) inner.add(new THREE.Mesh(g, bucket.material));
+          continue;
+        }
+      }
+      inner.add(new THREE.Mesh(geo, bucket.material));
+    }
+
+    // Every piece of the donor that was kept was cloned out, so its buffers are
+    // nobody's now. Its MATERIALS are kept by the part, and the shared textures
+    // they carry with them, so only the geometry is let go here.
+    source.traverse((obj) => {
+      if (obj.isMesh && obj.geometry && typeof obj.geometry.dispose === 'function') {
+        obj.geometry.dispose();
+      }
+    });
+
+    if (!inner.children.length) return null;
+
+    inner.updateMatrixWorld(true);
+    const pbox = new THREE.Box3().setFromObject(inner);
+    const size = pbox.getSize(new THREE.Vector3());
+    const mid = pbox.getCenter(new THREE.Vector3());
+    const span = Math.max(size.x, size.y, size.z);
+    if (!(span > 0)) return null;
+    inner.position.set(-mid.x, -mid.y, -mid.z);
+
+    const proto = new THREE.Group();
+    proto.scale.setScalar(1 / span);
+    proto.add(inner);
+    proto.userData._fitted = true;
+    return proto;
+  },
+
+  /**
+   * A piece's own measurements, in its own units: where its foot is, how tall
+   * it stands and how long its longest side is. A design's offsets and sizes
+   * are fractions of that span, so a sculpt drawn on a dagger reads the same
+   * when it is worn by a greatsword.
+   */
+  measure(root) {
+    root.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(root);
+    const size = box.getSize(new THREE.Vector3());
+    return {
+      mid: box.getCenter(new THREE.Vector3()),
+      span: Math.max(size.x, size.y, size.z) || 1,
+      foot: box.min.y,
+      height: Math.max(1e-4, size.y)
+    };
+  },
+
+  /**
+   * Sorts a model's own meshes into the three bands, for cutting away or for
+   * hiding. Call it before any fitting is on the model: a fitting has bands of
+   * its own and none of them are the piece's.
+   */
+  bandMeshes(root, measure) {
+    const out = { grip: [], shaft: [], head: [] };
+    if (!root || !window.THREE) return out;
+    const centre = new THREE.Vector3();
+    const scratch = new THREE.Box3();
+    root.updateMatrixWorld(true);
+    root.traverse((obj) => {
+      if (!obj.isMesh || !obj.geometry) return;
+      scratch.setFromObject(obj).getCenter(centre);
+      out[this.bandAt((centre.y - measure.foot) / measure.height)].push(obj);
+    });
+    return out;
+  },
+
+  /** Gives one fitting its own finish, over whatever its donor wore. */
+  paintPart(object, filename) {
+    const tex = filename ? this.getTexture(String(filename)) : null;
+    if (!object) return object;
+    object.traverse((m) => {
+      if (!m.isMesh || !m.material || Array.isArray(m.material)) return;
+      if (tex) m.material.map = tex;
+      m.material.needsUpdate = true;
+    });
+    return object;
+  },
+
+  /**
+   * Seats one fitting on a piece of the given measurements. The workshop's
+   * editor seats its own preview with this same call, which is what makes the
+   * editor a promise rather than a suggestion: there is one placement rule and
+   * both sides read it off here.
+   */
+  placeFitting(holder, spec, measure) {
+    const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+    const span = measure.span;
+    holder.scale.setScalar(Math.max(0.02, Math.min(3, Number(spec.s) || 0.35)) * span);
+    holder.rotation.set(num(spec.rx), num(spec.ry), num(spec.rz));
+    holder.position.set(
+      measure.mid.x + num(spec.x) * span,
+      measure.mid.y + num(spec.y) * span,
+      measure.mid.z + num(spec.z) * span);
+    holder.userData._fitted = true;
+    return holder;
+  },
+
+  /** Hangs a whole design on a freshly built model. */
+  applyDesign(root, design, weapon) {
+    if (!root || !design || !window.THREE) return root;
+    const measure = this.measure(root);
+
+    // What the smith took OFF, first: a hilt carrying somebody else's head is
+    // one design and not two, and the bands have to be read while the piece is
+    // still only itself.
+    const hide = Array.isArray(design.hide) ? design.hide : [];
+    if (hide.length) {
+      const bands = this.bandMeshes(root, measure);
+      for (const band of hide) {
+        for (const mesh of (bands[band] || [])) {
+          if (mesh.parent) mesh.parent.remove(mesh);
+          if (mesh.geometry && mesh.geometry.dispose) mesh.geometry.dispose();
+        }
+      }
+    }
+
+    const list = Array.isArray(design.p) ? design.p : [];
+    for (let i = 0; i < list.length && i < this.DESIGN_PART_MAX; i++) {
+      const spec = list[i] || {};
+      const object = this.harvestPart(Number(spec.w) || 0, spec.b || 'whole');
+      if (!object) continue;
+      // Every fitting may be finished on its own, which is the whole of
+      // texturing them individually: one shared bitmap, set on this instance's
+      // own cloned materials and on nobody else's.
+      if (spec.t) this.paintPart(object, spec.t);
+      const holder = new THREE.Group();
+      holder.add(object);
+      this.placeFitting(holder, spec, measure);
+      root.add(holder);
+    }
+    return root;
   }
 };
 

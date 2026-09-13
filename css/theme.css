@@ -18893,7 +18893,7 @@ padding: 2px 10px;
       overflow: hidden;
       vertical-align: middle;
     }
-    .npc-army-bar-fill { display: block; height: 100%; }
+    .npc-army-bar-fill { display: block; height: 100%; width: var(--npc-w, 0%); }
     .npc-army-bar-morale { background: var(--accent-green); }
     .npc-army-bar-coherence { background: var(--accent-blue); }
     .npc-army-formation {
@@ -23195,15 +23195,20 @@ body.ascii-ui-active .ascii-passthrough {
 /* Catalog: every hardcoded object in the sim (plus logged biosignatures), split
    into tabs and collapsible drawers. Its button and the panel it opens own the
    top-right corner; the list scrolls independently of the page. */
-/* The button rail is one button per line: a wrapped row reflowed every time a
-   label changed length, so a button was never where it had just been. */
+/* The button rail is a fixed two-column grid. One button per line ran the rail
+   halfway down the sky and left the column ragged, every button a different
+   width; two even columns of equal cells read as one block of controls, and a
+   button is always where it was last time whatever its label says. */
 #gx-catalog-toggle { pointer-events:auto; width:100%;
-  display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
-/* The rail is one column, but a button is only as wide as its own label (with
-   a floor so short ones do not shrink to a stub): stretching each one to the
-   whole column width made a rail of banners nothing else in the game has. */
+  display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:5px; align-items:start; }
+/* Every cell is the same size, so the labels centre against each other rather
+   than against their own length. */
 #gx-catalog-toggle .gx-btn { margin:0; text-align:center;
-  min-width:118px; max-width:220px; }
+  min-width:0; max-width:none;
+  display:flex; align-items:center; justify-content:center;
+  padding:5px 8px; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; }
 /* Catalog button and the panel it opens: both pinned to the top-right corner,
    clear of the zoom rail on the right edge. */
 #gx-catalog-btn { position:absolute; top:14px; right:26px; pointer-events:auto;
@@ -32584,19 +32589,63 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 
 /* ---------------------------------------------------------------------------
-   The landing-site picker's two ways down
-   "Land here" sets the ship on the world; "Liminal walk" opens the 3D world on
-   it. Whichever is armed is what clicking a square does, so the buttons have to
-   read as a choice already made rather than as two things to press.
+   The landing-site picker's three ways down
+   They are no longer a row armed BEFORE a square is picked: the square comes
+   first and this modal, over the picker it refers to, asks what to do with it.
    --------------------------------------------------------------------------- */
-#gx-landing-grid .gx-lg-mode {
-    opacity: 0.55;
+#gx-landing-grid .gx-lg-choice {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--shadow-black-translucent-55);
+    z-index: 2;
 }
 
-#gx-landing-grid .gx-lg-mode.is-on {
-    opacity: 1;
-    border-color: var(--text-primary-hover);
-    box-shadow: inset 0 0 10px var(--shadow-primary-hover-translucent-5);
+#gx-landing-grid .gx-lg-choice.ui-open {
+    display: flex;
+}
+
+#gx-landing-grid .gx-lg-choice-card {
+    pointer-events: auto;
+    min-width: 320px;
+    padding: 16px 22px 18px;
+    text-align: center;
+    border: 1px solid var(--border-gold-amber);
+    border-radius: 6px;
+    background: var(--bg-backdrop-black);
+    box-shadow: 0 6px 22px var(--shadow-black-translucent-55);
+}
+
+/* The ways down sit on one line under the question, wrapping only when the
+   card is too narrow for them. A button is as wide as its own label, here as
+   everywhere else. */
+#gx-landing-grid .gx-lg-choice-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+/* The gold button: the game's own plate, for the places that were still
+   wearing the default steel-blue chrome. */
+#gx-ui .gx-btn.gx-gold {
+    border-color: var(--border-gold-amber);
+    color: var(--accent-amber-light);
+    background: var(--bg-gold-panel-92);
+    margin: 0;
+}
+
+#gx-ui .gx-btn.gx-gold:hover,
+#gx-ui .gx-btn.gx-gold.focused {
+    border-color: var(--accent-amber-glow);
+    color: var(--accent-amber-glow);
+    background: var(--bg-gold-panel-95);
+    box-shadow: 0 0 10px var(--shadow-gold-amber-50);
 }
 
 /* ── Places of the party's own ───────────────────────────────────────────────
@@ -35512,6 +35561,16 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    The 3D model editor (CharacterCreation3DModel.js). Lifted out of the
    runtime <style> block the scene used to append to the document head.
    ========================================================================== */
+/* The workshop's weapon model editor (Quest/ThinkerMenu.js) is this same
+   screen pointed at a weapon instead of at a body, and it is drawn with these
+   same rules rather than with a second set saying the same thing. All it needs
+   of its own is a mount, and room for the two strips a weapon has that a
+   creature does not: the finishes a fitting may be given. */
+#wsculpt-container { position:absolute; top:0; left:0; width:100%; height:100%;
+  z-index:1000; background:var(--gradient-1); font-family:var(--font-ui); }
+#wsculpt-container .cc3d-handles { width:252px; max-height:calc(100% - 24px); overflow-y:auto; }
+#wsculpt-container .forge-swatches { max-height:104px; overflow-y:auto; }
+
 .cc3d { display:flex; flex-direction:column; width:100%; height:100%;
   box-sizing:border-box; overflow:hidden;
   font-family:var(--font-ui); color:var(--text-muted-hover); user-select:none; }
@@ -35855,9 +35914,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #gx-catalog.ui-open,
 #gx-anomaly.ui-open { display: flex; }
 
-/* The two Return-to-Earth buttons and the Home button are inline chips, so
-   open is their own display and not a block. */
-#gx-catalog-toggle .gx-btn.ui-open { display: inline-flex; }
+/* The two Return-to-Earth buttons and the Home button are cells of the rail's
+   grid like any other, so open restores the same centred flex box. */
+#gx-catalog-toggle .gx-btn.ui-open { display: flex; }
 
 /* The warp door. The three animations were assigned as strings from the
    plugin, restart and all; they are one class now, and the restart is the
@@ -38346,12 +38405,6 @@ select option:hover {
     pointer-events: none;
 }
 
-/* On the Back button the face comes first: the button IS that control, so the
-   letter reads as the label's opening rather than as a note after it. */
-.back-button .pad-badge {
-    margin-left: 0;
-    margin-right: 6px;
-}
 
 /* The right stick over the pane it scrolls. The layer is fixed and inert: it hangs
    over whatever menu is open without being part of any of them, which is why

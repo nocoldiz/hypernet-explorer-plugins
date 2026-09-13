@@ -269,6 +269,10 @@
         // The workbench: items and weapons.
         const bench = window.CraftRecipes;
         if (bench) {
+            // What the PARTY can make, and levels read fresh: the page is opened
+            // long after the workshop last redrew and somebody may have trained
+            // since (Quest/ThinkerMenu.js caches a level per redraw).
+            bench.clearKnowledgeCache();
             bench.entries().forEach(item => {
                 if (!item || !item.name || !named(item)) return;
                 if (!bench.canMakeNow(item)) return;
@@ -279,10 +283,11 @@
         // The anvil: weapons and armor, which the workbench cannot answer for.
         const forge = window.ForgeRecipes;
         if (forge) {
-            const smith = $gameParty.leader();
             forge.entries().forEach(item => {
                 if (!item || !item.name || !named(item)) return;
-                if (!forge.canMakeNow(smith, item)) return;
+                // The party's, not the leader's: the workshop hands each piece
+                // to whoever is best at it, and this page must agree with it.
+                if (!forge.canMakeNowForParty(item)) return;
                 push(item, forge.tradeName(item));
             });
         }
@@ -317,6 +322,7 @@
 
         add(data.earth(), 'earth', T('Bestiary.earth'));
         add(data.petrodemons(), 'petro', T('Bestiary.petrodemons'));
+        add(data.rarities(), 'rarity', T('Bestiary.rarities'));
         add(data.aliens(), 'alien', T('Bestiary.aliens'));
         return rows;
     }

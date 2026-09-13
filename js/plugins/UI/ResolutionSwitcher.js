@@ -205,21 +205,84 @@
     // here: the toggle is reached from Options or the core F11 key.
     // ========================================================================
 
+    // ------------------------------------------------------------------------
+    // Fitting the canvas to the window
+    //
+    // Graphics scales the canvas against window.innerWidth/innerHeight and only
+    // recomputes on a resize event. js/main.js puts the window into fullscreen
+    // before the first frame is painted, which is before Graphics exists and
+    // before Graphics._setupEventHandlers() has attached that listener: the
+    // transition's own resize event is delivered to nobody, so the canvas keeps
+    // the scale it was built at and the game sits letterboxed inside a window
+    // that really is fullscreen. Toggling the option off and on used to be the
+    // only way out, because that fires a resize Graphics is listening for.
+    //
+    // The canvas is therefore re-fitted by hand whenever the window changes
+    // size, and kept re-fitting until it stops: the OS animates a fullscreen
+    // transition over several frames, so one call at the start of it measures
+    // the old window. This replaces the blind 150ms/50ms timers the two old
+    // plugins used, which guessed at the same thing and often guessed early.
+    // ------------------------------------------------------------------------
+    const FIT_STABLE_FRAMES = 4;
+    const FIT_TIMEOUT_MS = 2000;
+    let fitHandle = 0;
+
+    function refitCanvas() {
+        if (typeof Graphics._updateAllElements === 'function') {
+            Graphics._updateAllElements();
+        }
+    }
+
+    function refitCanvasWhenSettled() {
+        if (typeof requestAnimationFrame !== 'function') {
+            refitCanvas();
+            return;
+        }
+        if (fitHandle) {
+            cancelAnimationFrame(fitHandle);
+        }
+        let lastW = -1;
+        let lastH = -1;
+        let stable = 0;
+        const deadline = Date.now() + FIT_TIMEOUT_MS;
+        const step = function() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            if (w === lastW && h === lastH) {
+                stable++;
+            } else {
+                stable = 0;
+                lastW = w;
+                lastH = h;
+                refitCanvas();
+            }
+            if (stable >= FIT_STABLE_FRAMES || Date.now() > deadline) {
+                fitHandle = 0;
+                refitCanvas();
+                return;
+            }
+            fitHandle = requestAnimationFrame(step);
+        };
+        fitHandle = requestAnimationFrame(step);
+    }
+
     // The single way this plugin ever changes the window. It is a no-op when
     // the window already agrees, which is the normal case on boot because
     // js/main.js has already read the same preference off disk: a player who
     // asked for a window is never sent fullscreen, and a player who asked for
     // fullscreen is never sent through a windowed frame to get there.
     function applyFullscreen(wanted) {
-        if (!!wanted === !!Graphics._isFullScreen()) {
-            return false;
-        }
         if (wanted) {
+            // Always issued, never skipped on a state check: the window can
+            // report itself fullscreen while the window manager has it framed,
+            // and a redundant request costs nothing.
             Graphics._requestFullScreen();
-        } else {
+        } else if (Graphics._isFullScreen()) {
             Graphics._cancelFullScreen();
         }
-        return true;
+        // The canvas is fitted to window.innerWidth and Graphics only
+        // recomputes on a resize event, so it is re-fitted by hand either way.
+        refitCanvasWhenSettled();
     }
 
     // Options and the map toggle both fade out, switch, and fade back in.
@@ -246,6 +309,38 @@
         ConfigManager.save();
         fadeThroughFullscreen(this, newValue);
     };
+
+    // Boot is the one place the state may not be asked about, only asserted.
+    // js/main.js requests fullscreen before the window has been mapped, which
+    // is early enough for NW.js to set its own isFullscreen flag and for the
+    // window manager to drop the request on the floor: the window then reports
+    // itself fullscreen while sitting in a frame, and every "are we there yet"
+    // check answers yes. The request is therefore simply re-issued a few times
+    // over the first second, without asking. That is what the old pair of
+    // plugins achieved with a blind 150ms timer, and it is why merging them
+    // into one polite, guarded call stopped the game going fullscreen at all.
+    //
+    // A windowed preference issues nothing: it is never sent to fullscreen.
+    const BOOT_ASSERT_DELAYS = [0, 120, 400, 900];
+
+    function assertFullscreenAtBoot(wanted) {
+        if (!wanted) {
+            refitCanvasWhenSettled();
+            return;
+        }
+        const request = function() {
+            if (typeof nw !== 'undefined') {
+                nw.Window.get().enterFullscreen();
+            } else if (typeof Graphics._requestFullScreen === 'function') {
+                Graphics._requestFullScreen();
+            }
+            refitCanvasWhenSettled();
+        };
+        for (const delay of BOOT_ASSERT_DELAYS) {
+            if (delay === 0) request();
+            else setTimeout(request, delay);
+        }
+    }
 
     // ========================================================================
     // Scene_Boot - Apply resolution and fullscreen on game start
@@ -275,24 +370,26 @@
             SceneManager.changeResolution($gameSystem.getCurrentResolution());
         }
 
-        if (Utils.isOptionValid('test')) {
-            return;
-        }
-
-        if (!hasStoredPreference) {
+        // Only the first-run default is a playtest's business: a stored answer
+        // is honoured whether the game was launched from the editor or not.
+        if (!hasStoredPreference && !Utils.isOptionValid('test')) {
             // First launch of a distributed build: fullscreen is the default.
             ConfigManager.fullscreen = defaultFullscreen;
             ConfigManager.save();
             hasStoredPreference = true;
         }
 
-        // Normally a no-op: main.js read this same answer before the window was
-        // shown. It stands as the correction for a config that changed under a
-        // running window, and it leaves a windowed preference untouched.
+        // Every later fullscreen change re-fits the canvas, which Graphics
+        // cannot do for itself: it only recomputes on a resize event, and the
+        // boot transition happened before it was listening for one.
         if (typeof nw !== 'undefined') {
-            nw.Window.get().focus();
+            const win = nw.Window.get();
+            win.on('enter-fullscreen', refitCanvasWhenSettled);
+            win.on('leave-fullscreen', refitCanvasWhenSettled);
+            win.focus();
         }
-        applyFullscreen(ConfigManager.fullscreen);
+
+        assertFullscreenAtBoot(ConfigManager.fullscreen);
     };
 
     // ========================================================================

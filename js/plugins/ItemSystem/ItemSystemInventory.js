@@ -583,7 +583,7 @@
       return this._uiCategoriesMemo.value;
     }
     const present = new Set();
-    for (const item of $gameParty.allItems()) present.add(uiCategoryOf(item));
+    for (const item of $gameParty.allItems()) { if (item) present.add(uiCategoryOf(item)); }
     const value = UI_CATEGORIES.filter((cat) =>
       cat === ALL_CATEGORY || cat === FAVORITES_CATEGORY || present.has(cat));
     this._uiCategoriesMemo = { stamp, value };
@@ -618,7 +618,13 @@
       this._dndSortDirection || '', pocketStamp()].join('|');
     if (this._uiItemsMemo && this._uiItemsMemo.key === memoKey) return this._uiItemsMemo.value;
 
-    const allItems = $gameParty.allItems();
+    // A save can name an id whose database entry is no longer there: a mod
+    // switched off, a procedural artifact that was never regenerated. MZ hands
+    // those back as holes in the roll ($dataItems[id] is undefined), and a
+    // single hole used to take the whole page down with it, leaving a backpack
+    // that drew nothing and took no key. They are dropped here, at the one
+    // place the roll is built.
+    const allItems = $gameParty.allItems().filter(Boolean);
     const category = this._activeUICategory;
 
     let items = category === ALL_CATEGORY

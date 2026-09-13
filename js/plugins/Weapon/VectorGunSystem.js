@@ -52,12 +52,10 @@
   // only a folded weapon carries an element at all. Switching is a decision,
   // not a costume.
   const FORM_DAMAGE_BONUS = 0.4;
-  // What a spell costs when it is fired down the barrel instead of cast. A
-  // bound spell is ALWAYS loaded, so the price is the mode's whole point: bare,
-  // the frame wastes half again as much mana forcing the spell into a round,
-  // and the Spellblaster fitting is what brings it back under the cast price.
-  const SPELLBLASTER_COST_RATE = 1.5;
-  const SPELLBLASTER_FITTED_RATE = 0.75;
+  // What the Solomon incantation is worth. The words of a spell said out in
+  // full before it is cast cost the fight a page of everybody's time, and buy
+  // this much: every spell read that way lands, or mends, that much harder.
+  const SOLOMON_INCANT_BONUS = 0.15;
   const DRAIN_SHARE = 0.25;       // of the damage dealt, back as health
   const SIPHON_SHARE = 0.15;      // of the damage dealt, back as mana
   const DEADEYE_CRIT = 0.4;       // added to the chance of a critical shot
@@ -99,7 +97,7 @@
   // of them changes the shape of the weapon - that is the form selector's job
   // (see below), which is a separate choice with its own bay.
   const BASE_MODE_KEYS = [
-    'mana', 'psi', 'recoil', 'spellblaster', 'card', 'wide', 'burst', 'pierce',
+    'mana', 'psi', 'recoil', 'solomonIncantation', 'card', 'wide', 'burst', 'pierce',
     'drain', 'siphon', 'deadeye', 'tracker', 'overload', 'hex', 'longshot',
     'venom', 'concussion', 'thermalOverload', 'thermalUnderload',
     'executioner', 'ambush', 'resonance', 'overpressure',
@@ -112,6 +110,7 @@
   // In battle the reload row becomes SWITCH, which folds the weapon into the
   // fitted shape and back. It costs no turn and may be done as many times in a
   // round as she likes; the gun carries no ammunition to fill.
+  const MAGIC_STYPE_ID = 1;       // the magic side of the skill list, which pays in mana
   const GUN_FORM = 'gun';         // the shape it always comes back to
   const GUN_WTYPE = 9;
   const SNIPER_SHOTS = 3;         // what the coilgun holds before it must reload
@@ -315,16 +314,6 @@
     $gameSystem._vectorGunSniperShots = 0;
   }
 
-  function boundSpellId() {
-    if (typeof $gameSystem === 'undefined' || !$gameSystem) return 0;
-    return Number($gameSystem._vectorGunSpell) || 0;
-  }
-
-  function setBoundSpell(skillId) {
-    if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
-    $gameSystem._vectorGunSpell = Number(skillId) || 0;
-  }
-
   /** Em's actor, in the party or out of it. */
   function emActor() {
     if (typeof $gameParty === 'undefined' || !$gameParty) return null;
@@ -336,25 +325,6 @@
     if (typeof $gameParty === 'undefined' || !$gameParty) return null;
     return $gameParty.allMembers()
       .find((member) => member.weapons && member.weapons().some(isVectorGun)) || null;
-  }
-
-  /**
-   * The spells the gun can be loaded with: offensive, aimed at one enemy and
-   * already known by whoever carries the gun.
-   * @returns {object[]} $dataSkills rows
-   */
-  function spellChoices() {
-    const actor = wielder() || emActor();
-    if (!actor) return [];
-    // Magic only. What the barrel can hold is a spell: a skill is a thing the
-    // body does, and there is no forcing it into a round. The magic side is
-    // stypeId 1 and pays in mana, which is the game's own line between the two
-    // (js/db/Skills/Categories.json).
-    return actor.skills()
-      .filter((skill) => skill && skill.scope === 1 && skill.stypeId === 1 &&
-        skill.mpCost > 0 &&
-        skill.damage && [1, 2, 5, 6].includes(skill.damage.type) &&
-        (skill.occasion === 0 || skill.occasion === 1));
   }
 
   /** Whether this battler is shooting the vector gun with `key` running. */
@@ -390,9 +360,18 @@
    * a gun set to do all three is trading hard for it.
    */
   function damageRate(subject, action, target) {
-    // Only the gun's own shot is rewritten; a skill fired by the same hand is
-    // the skill's own business.
-    if (!action || typeof action.isAttack !== 'function' || !action.isAttack()) return 1;
+    if (!action) return 1;
+    // A spell is the one thing the gun rewrites without firing it. Read out of
+    // the open book, word for word, it carries further than the same spell
+    // said under the breath: damage and healing alike, since the reading is
+    // done over a mending as readily as over a killing.
+    const isAttack = typeof action.isAttack === 'function' && action.isAttack();
+    if (!isAttack) {
+      const skill = (typeof action.isSkill === 'function' && action.isSkill() && action.item)
+        ? action.item() : null;
+      if (isSpell(skill) && incanting(subject)) return 1 + SOLOMON_INCANT_BONUS;
+      return 1;
+    }
     // Only the frame itself folds: another hand's weapon is its own weapon
     // whoever is standing next to it.
     const holdsGun = !!subject && !!subject.weapons && subject.weapons().some(isVectorGun);
@@ -423,45 +402,52 @@
   }
 
   /**
-   * What one shot of a bound spell costs the shooter, in mana: half again the
-   * cast price bare, and a quarter under it with the Spellblaster fitting on
-   * the frame. ONE place works it out, so the screen quotes what the fight
-   * charges.
-   * @param {Game_Battler} subject - Whoever is holding the gun
-   * @param {Object} skill - The bound skill
-   * @returns {number} The mana it takes
+   * Whether the Solomon incantation is saying anything for this battler right
+   * now. The mode is fitted in the mode bay like any other, but it only speaks
+   * over an open book: the pact shape sitting in the form bay (which opens the
+   * book by itself at the head of the fight) or the limit break that folds the
+   * frame into a grimoire for the length of one. Fitted with neither, the
+   * words are not there to read and the mode is inert.
+   * @param {Game_Battler} subject - Whoever is about to cast
+   * @returns {boolean} true while the reading is running
    */
-  function spellCost(subject, skill) {
-    if (!subject || !skill || !subject.skillMpCost) return 0;
-    const rate = hasMode('spellblaster') ? SPELLBLASTER_FITTED_RATE : SPELLBLASTER_COST_RATE;
-    return Math.floor(subject.skillMpCost(skill) * rate);
+  function incanting(subject) {
+    if (!hasMode('solomonIncantation')) return false;
+    if (!subject || !subject.weapons || !subject.weapons().some(isVectorGun)) return false;
+    if (solomonFitted()) return true;
+    const LB = window.LimitBreak;
+    return !!(LB && LB.isGrimoireOpen && LB.isGrimoireOpen(subject));
   }
 
   /**
-   * The spell that rides one shot, already paid for. Null when nothing is
-   * bound, the weapon is folded, or the mana is not there: the shot stays plain.
-   * @param {Game_Battler} subject - The shooter
-   * @param {Game_Action} action - The attack being made
-   * @returns {Game_Action|null} A prepared action, or null
+   * Whether a skill is a spell at all. The line is not drawn here:
+   * window.SkillDetails.isMagical (CategorizedBattleSkills.js) draws it once
+   * for the whole game, and the rest is only for a load order where that
+   * service is not up yet.
    */
-  function spellblasterAction(subject, action) {
-    if (!action || typeof action.isAttack !== 'function' || !action.isAttack()) return null;
-    // The spell rides the GUN's round: another hand's attack, made while a
-    // spell happens to be bound, is that weapon's own business and pays nothing.
-    if (!subject || !subject.weapons || !subject.weapons().some(isVectorGun)) return null;
-    // A bound spell is always loaded: binding it IS the arming. The
-    // Spellblaster fitting is what makes it cheap, not what makes it fire.
-    // The spell rides a ROUND. Folded there is no round to hang it on, so a
-    // machete swing never casts: the spell is the pistol's to fire.
-    if (formKey()) return null;
-    const skill = $dataSkills[boundSpellId()];
-    if (!skill) return null;
-    const cost = spellCost(subject, skill);
-    if (subject.mp < cost) return null;
-    subject.setMp(subject.mp - cost);
-    const extra = new Game_Action(subject);
-    extra.setSkill(skill.id);
-    return extra;
+  function isSpell(skill) {
+    if (!skill) return false;
+    const SD = window.SkillDetails;
+    if (SD && typeof SD.isMagical === 'function') return !!SD.isMagical(skill);
+    const MN = window.MagicNature;
+    const nature = (MN && typeof MN.natureOf === 'function') ? MN.natureOf(skill) : null;
+    if (nature) return nature === 'magical';
+    return skill.stypeId === MAGIC_STYPE_ID;
+  }
+
+  /**
+   * The words themselves: a spell's <Lore:> text, resolved for this world
+   * (ItemSystemUtils.loreFor), which is the same incantation the skill card
+   * prints. A spell whose words were never written, and anything that is not a
+   * spell, has nothing to read out and is cast the way it always was.
+   * @param {Object} skill - The $dataSkills row about to be cast
+   * @returns {string} The incantation, or ""
+   */
+  function incantation(skill) {
+    if (!isSpell(skill)) return '';
+    const utils = window.ItemSystemUtils;
+    if (!utils || !utils.loreFor) return '';
+    try { return utils.loreFor(skill) || ''; } catch (e) { return ''; }
   }
 
   /** The fallen, banked as a monster card. Nothing happens off the catalogue. */
@@ -808,12 +794,12 @@
   //--------------------------------------------------------------------------
   // The reconstruction, on screen
   //--------------------------------------------------------------------------
-  // SWITCH is a machine coming apart and building itself back as another
-  // weapon, so it is PLAYED rather than swapped: the fold runs on the shape
-  // being put away, the model is rebuilt at the pivot, and the rise runs on the
-  // shape being drawn (WeaponSystemProcedural.startVectorSwitch). The battle
-  // scene drives the two halves; this is the one place that knows which sprites
-  // are holding the gun.
+  // SWITCH is a machine folding itself into another weapon, so it is PLAYED
+  // rather than swapped: the fold runs on the shape being put away, panel by
+  // panel down its own length, the model is rebuilt at the pivot, and the rise
+  // unfolds the shape being drawn out of the hand
+  // (WeaponSystemProcedural.startVectorSwitch). The battle scene drives the two
+  // halves; this is the one place that knows which sprites are holding the gun.
 
   const FOLD_SE = { name: 'Machine', volume: 80, pitch: 130, pan: 0 };
   const RISE_SE = { name: 'Equip1', volume: 90, pitch: 90, pan: 0 };
@@ -830,8 +816,8 @@
   }
 
   /**
-   * Plays one half of the reconstruction.
-   * @param {string} phase - 'fold' (coming apart) or 'rise' (going together)
+   * Plays one half of the fold.
+   * @param {string} phase - 'fold' (closing up) or 'rise' (opening out)
    * @returns {number} How long it runs, in milliseconds
    */
   function playSwitchFx(phase, retried) {
@@ -855,7 +841,7 @@
   }
 
   /**
-   * The same reconstruction played on ONE model that is not in anybody's hand:
+   * The same fold played on ONE model that is not in anybody's hand:
    * the gun standing on the vector gun screen's bench. The screen shows a
    * single shape at a time and folds it into the other one exactly as the
    * battle does, so the fold, the rise and their sounds come from here rather
@@ -1222,10 +1208,10 @@
   window.VectorGun = {
     WEAPON_ID: VG_ID, MAX_MODES, MODE_KEYS, FLOATING_STATE,
     isVectorGun, isBound, isEm, inStoryMode, inSandboxMode, gunData,
-    modes, hasMode, toggleMode, fitMode, boundSpellId, setBoundSpell, spellChoices,
+    modes, hasMode, toggleMode, fitMode,
     emActor, wielder, firing,
-    scaleOverride, damageTypeOverride, damageRate, spellblasterAction, onShotLanded,
-    spellCost, SPELLBLASTER_COST_RATE, SPELLBLASTER_FITTED_RATE,
+    scaleOverride, damageTypeOverride, damageRate, onShotLanded,
+    incanting, incantation, isSpell, SOLOMON_INCANT_BONUS,
     // The Blade of Thelema and the element, both read by the screen and by the
     // battle command window.
     BLADE_SOUNDS, BLADE_ANIMATION, bladeReady, inBlade, switchForm,

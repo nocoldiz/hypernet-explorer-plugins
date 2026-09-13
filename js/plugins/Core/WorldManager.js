@@ -146,6 +146,23 @@
         return Math.max(DEFAULT_START_LEVEL, Math.min(MAX_START_LEVEL, n));
     }
 
+    // The level bracket every Europe-zone nation is dealt at creation. The rule
+    // belongs to the encounter system (BattleSystemEnhancedEncounters, section
+    // 3c) and is only CALLED here, so there is one place that knows which
+    // countries open low and which ones are rolled. A creation that happens
+    // before that plugin is up writes nothing and the brackets are dealt from
+    // the same seed on first read, which comes to the same deal.
+    function rollNationBrackets(seed) {
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        if (!BSEH || typeof BSEH.rollNationBrackets !== "function") return undefined;
+        try {
+            const dealt = BSEH.rollNationBrackets(seed);
+            return (dealt && Object.keys(dealt).length > 0) ? dealt : undefined;
+        } catch (e) {
+            return undefined;
+        }
+    }
+
     // Who this world is populated with. Asked once at creation and never
     // again (no setter is exposed for it, on purpose): "normal" is every
     // existing world's answer, "goblin"/"monster" narrow the sprite, bust and
@@ -576,7 +593,7 @@
         // What this world has been seen to hold. A bestiary is a record of the
         // world's fauna rather than of one party's travels, so it is shared by
         // every savegame of the world and, being merged rather than replaced,
-        // is never wiped by a new game started in it. Three catalogues, one per
+        // is never wiped by a new game started in it. Four catalogues, one per
         // page of the book (Bestiary.js):
         bestiary: {
             // Earth: the ids of the creatures met (Bestiary.js).
@@ -585,6 +602,13 @@
             // slot it was raised in belongs to the next one
             // (BattleSystemEnhancedEncounters.js).
             _petrodemonCodex: { prop: "petrodemons", merge: mergeRecordList("seed") },
+            // Rarities: the one-of-a-kind creatures of this world that have
+            // been met (BattleSystemEnhancedEncounters.js, section 16b). World
+            // shared and merged rather than replaced, which is what makes them
+            // unique instead of merely rare: there is one of each in the world,
+            // and the savegame that meets it takes it off the board for every
+            // other savegame of the same world.
+            _rarityCodex: { prop: "rarities", merge: mergeByKey },
             // Aliens: the procedural species identified out in the galaxy,
             // keyed by species key (GalaxySim_Core.js).
             _discoveredAlienSpecies: { prop: "alienSpecies", merge: mergeByKey }
@@ -820,7 +844,17 @@
                 // See clampMagicalLevel above. Its own axis, also permanent.
                 magicalLevel: clampMagicalLevel(options.magicalLevel),
                 // Beta sprites are strictly disabled and cannot be selected.
-                betaSprites: false
+                betaSprites: false,
+                // The level bracket every Europe-zone nation's roaming fauna is
+                // pitched at, dealt once from this world's seed and never
+                // re-dealt (BattleSystemEnhancedEncounters, section 3c). It
+                // lives here rather than in a savegame because two savegames of
+                // one world walk the same map of danger, and it is written at
+                // creation so it can be read (and edited) without a game
+                // running. A world made before the brackets existed simply has
+                // no entry, and the encounter system deals it on first read.
+                nationBrackets: rollNationBrackets(
+                    options.seed !== undefined ? options.seed : DEFAULT_WORLD_SEED)
             };
             Backend.writeFile(name, "world", JSON.stringify(info, null, 2));
             return info;
@@ -870,6 +904,13 @@
             this._lastWritten = {};
             // Another world's failures say nothing about this one's.
             this._initAttempts = {};
+            // Nor does another world's map of danger: the nation brackets are
+            // read out of the world folder, so the cached deal goes with it.
+            const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+            if (BSEH && typeof BSEH.resetNationBrackets === "function") BSEH.resetNationBrackets();
+            // Nor its one-of-a-kind creatures: that roster is dealt from the
+            // world seed too, and a world's rarities are its own.
+            if (BSEH && typeof BSEH.resetRarityRoster === "function") BSEH.resetRarityRoster();
             if (persist) Backend.writeActive(this.activeWorldName);
             if (this.activeWorldName && isNwjs) {
                 Backend.ensureDir(Backend.savesDir(this.activeWorldName));

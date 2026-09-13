@@ -715,8 +715,11 @@
       if (content) content.scrollTop += e.deltaY;
     }, { passive: false });
 
-    this.refreshUIbackpack();
+    // The keys are taken before the page is drawn, not after: the backpack has
+    // no canvas window of its own listening for a cancel, so a refresh that
+    // throws would otherwise leave a page nothing could close.
     UIbackpackInputManager.activate(this);
+    this.refreshUIbackpack();
 
     setTimeout(() => {
       if (this._dndContainer) this._dndContainer.style.opacity = '1';

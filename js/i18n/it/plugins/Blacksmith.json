@@ -242,5 +242,46 @@
   "pickHint": "Scegli un pezzo per vedere cosa serve a farlo.",
   "smelt": "Fondi",
   "qtyMax": "Max",
-  "batchCount": "x{n}"
+  "batchCount": "x{n}",
+  "autoSmith": "Auto",
+  "autoSmithHint": "Ogni pezzo va a chi nel gruppo è più bravo",
+  "modelEdit": "Modifica modello",
+  "modelEditFitted": "Modifica modello ({n} montate)",
+  "sculpt": {
+    "title": "Editor del modello",
+    "hint": "Trascina lo sfondo per girare il pezzo. Scegli una parte montata per spostarla, ruotarla o ridimensionarla.",
+    "thePiece": "Il pezzo",
+    "fitted": "Parti montate",
+    "noneFitted": "Nessuna parte montata",
+    "kept": "Tenuta",
+    "removed": "Rimossa",
+    "remove": "Togli questa parte",
+    "pickHint": "Scegli una parte montata, oppure prendine una da un'arma qui accanto.",
+    "search": "Cerca armi",
+    "noDonors": "Nessuna arma corrisponde",
+    "undo": "Annulla",
+    "redo": "Ripeti",
+    "revert": "Ripristina",
+    "done": "Fatto",
+    "tooMany": "Un pezzo porta al massimo {n} parti montate",
+    "partName": "{name} ({band})",
+    "band": {
+      "head": "Testa",
+      "shaft": "Asta",
+      "grip": "Impugnatura",
+      "whole": "Arma intera"
+    },
+    "mode": {
+      "move": "Sposta",
+      "turn": "Ruota",
+      "size": "Dimensione"
+    },
+    "axisX": "Laterale",
+    "axisY": "Longitudinale",
+    "axisZ": "Profondità",
+    "turn": "Rotazione",
+    "tilt": "Inclinazione",
+    "roll": "Rollio",
+    "size": "Dimensione"
+  }
 }

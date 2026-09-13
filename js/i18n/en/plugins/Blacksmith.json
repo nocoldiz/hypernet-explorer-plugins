@@ -242,5 +242,46 @@
   "pickHint": "Pick a piece to see what it takes to make.",
   "smelt": "Smelt",
   "qtyMax": "Max",
-  "batchCount": "x{n}"
+  "batchCount": "x{n}",
+  "autoSmith": "Auto",
+  "autoSmithHint": "Every piece goes to whoever in the party is best at it",
+  "modelEdit": "Edit model",
+  "modelEditFitted": "Edit model ({n} fitted)",
+  "sculpt": {
+    "title": "Model editor",
+    "hint": "Drag the background to turn the piece. Pick a fitted part to move, turn or size it.",
+    "thePiece": "The piece",
+    "fitted": "Fitted parts",
+    "noneFitted": "Nothing fitted yet",
+    "kept": "Kept",
+    "removed": "Taken off",
+    "remove": "Take this part off",
+    "pickHint": "Pick a fitted part, or take one off a weapon beside.",
+    "search": "Search weapons",
+    "noDonors": "No weapon matches",
+    "undo": "Undo",
+    "redo": "Redo",
+    "revert": "Revert",
+    "done": "Done",
+    "tooMany": "A piece carries at most {n} fitted parts",
+    "partName": "{name} ({band})",
+    "band": {
+      "head": "Head",
+      "shaft": "Shaft",
+      "grip": "Grip",
+      "whole": "Whole weapon"
+    },
+    "mode": {
+      "move": "Move",
+      "turn": "Turn",
+      "size": "Size"
+    },
+    "axisX": "Across",
+    "axisY": "Along",
+    "axisZ": "Depth",
+    "turn": "Turn",
+    "tilt": "Tilt",
+    "roll": "Roll",
+    "size": "Size"
+  }
 }

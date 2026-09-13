@@ -227,11 +227,10 @@
     }
     const locs = (planet && planet.landingLocations) || [];
     if (!locs.length) {
-      if (planet) {
-        if (!openLandingGridPicker(planet, moonOf)) {
-          $gameMessage.add(T('Galaxy.core.noSpaceports'));
-        }
-      } else {
+      // No authored spaceport: pick a square instead. With no planet resolved
+      // from the ship, the picker is asked for the world the party is already
+      // standing on before the command gives up.
+      if (!openLandingGridPicker(planet, moonOf)) {
         $gameMessage.add(T('Galaxy.core.noSpaceports'));
       }
       return;
@@ -1005,8 +1004,45 @@
     return { x: preferX, y: preferY };
   }
 
+  // ============================================================================
+  // Which worlds have no ground under them
+  // ----------------------------------------------------------------------------
+  // A gas giant is a hydrogen envelope, not a place: there is no surface to set
+  // a ship down on and none to walk about on, so the only way to see one is to
+  // fly over it. The same is true of every other world whose "surface" is an
+  // envelope rather than a crust - the ice giants, the puffy ones, a plasma
+  // world, a magnetar, a quark planet.
+  //
+  // THE FLAG IS THE BIOME'S, AND IT IS THE ONLY COPY. Every one of those worlds
+  // already carries an Alien<Type> biome record in js/db/WorldGen/AlienBiomes.json,
+  // and the record says `gasGiant: true`. Nothing anywhere re-derives the
+  // boundary from a list of type ids: ask here, or ask the biome.
+  //
+  // planetBiomeRecord is the lookup the landing routes were each keeping their
+  // own copy of; it lives here once now and they both call it.
+  // ============================================================================
+  function planetBiomeRecord(planet) {
+    if (!planet || !planet.type) return null;
+    const PT = window.GalaxySim.PlanetTypes || {};
+    const biomeName = PT[planet.type] && PT[planet.type].biome;
+    if (!biomeName) return null;
+    const list = (window.WorldGen && window.WorldGen.Biomes) || [];
+    return list.find((b) => b && b.name === biomeName) || null;
+  }
+  window.GalaxySim.planetBiomeRecord = planetBiomeRecord;
+
+  // True when nothing on this world could be stood on. A flyby is the only way
+  // down, and Land Here / Liminal walk are not offered at all.
+  function isSurfacelessWorld(planet) {
+    return !!(planetBiomeRecord(planet) || {}).gasGiant;
+  }
+  window.GalaxySim.isSurfacelessWorld = isSurfacelessWorld;
+
   function enterPlanetSurface(planet, opts) {
     if (!planet || !planet.type) return false;
+    // Nothing to set down on: a world with no surface is flown over, never
+    // landed on, however this was reached (see isSurfacelessWorld).
+    if (isSurfacelessWorld(planet)) return false;
     opts = opts || {};
     const PT = window.GalaxySim.PlanetTypes || {};
     const biomeName = (PT[planet.type] && PT[planet.type].biome) || "Ice";   // i18n-ignore: biome id
@@ -1095,6 +1131,22 @@
   window.GalaxySim.getOffEarthPlanet = getOffEarthPlanet;
   window.GalaxySim.getOffEarthGridInfo = getOffEarthGridInfo;
 
+  // The world whose GROUND is being generated.
+  //
+  // getSurfacePlanet answers for map 636 alone, and the ground is built BEFORE
+  // the transfer to it: enterPlanetSurface sets the landing grid and the landed
+  // descriptor, then calls generateProceduralMap while $gameMap is still the
+  // scene the party is leaving. Asked there, getSurfacePlanet said "no planet",
+  // every generator below returned null, and the very first square of a landing
+  // fell back to the plain per-tile terrain fill - the salt-and-pepper ground a
+  // world only ever showed on arrival and never again once a border crossing
+  // had regenerated it from map 636. The landing grid is the honest gate for
+  // terrain, and that is what getOffEarthPlanet is keyed on.
+  function groundPlanet() {
+    return getSurfacePlanet() || getOffEarthPlanet();
+  }
+  window.GalaxySim.getGroundPlanet = groundPlanet;
+
   // ============================================================================
   // Alien ground terrain bridge
   // ----------------------------------------------------------------------------
@@ -1108,7 +1160,7 @@
   // ============================================================================
   let _landedTerrainCache = null; // { key, seed, craters }
   function _landedTerrainState() {
-    const planet = getSurfacePlanet();
+    const planet = groundPlanet();
     if (!planet) return null;
     const key = planet.name || "";
     if (_landedTerrainCache && _landedTerrainCache.key === key) return _landedTerrainCache;
@@ -1145,7 +1197,7 @@
   // gets macro crater fields), or null (icy/volcanic/gas-giant: not reworked
   // yet, ProceduralMapBiomeGenerator.js keeps the plain terrain fill for those).
   function getLandedTerrainFamily() {
-    return terrainFamilyOf(getSurfacePlanet());
+    return terrainFamilyOf(groundPlanet());
   }
   window.GalaxySim.getLandedTerrainFamily = getLandedTerrainFamily;
 
@@ -1165,7 +1217,11 @@
     const seed = R3D._seedFor ? R3D._seedFor(landed) : 0;
     const canvas = R3D.getPlanetTextureCanvas(landed, seed);
     if (!canvas) return null;
-    _alienGridTextureCache = { key, canvas };
+    // A body wearing a real photograph hands back a painted stand-in while the
+    // file decodes: that one is never cached, or the stand-in would be this
+    // session's surface for a world that has a picture of itself.
+    const final = !R3D.planetTextureCanvasIsFinal || R3D.planetTextureCanvasIsFinal(landed);
+    if (final) _alienGridTextureCache = { key, canvas };
     return canvas;
   }
   window.GalaxySim.getAlienGridTextureCanvas = getAlienGridTextureCanvas;
@@ -1223,11 +1279,13 @@
     // A flyby is the same world opened the same way; the only difference is
     // what the party arrives in, so it takes the same route in.
     if (opts.flyby && !VW.startAlienFlyby) return false;
-    const PT = window.GalaxySim.PlanetTypes || {};
-    const biomeName = (PT[planet.type] && PT[planet.type].biome) || null;
-    const list = (window.WorldGen && window.WorldGen.Biomes) || [];
-    const biome = biomeName ? list.find((b) => b && b.name === biomeName) : null;
+    const biome = planetBiomeRecord(planet);
     if (!biome) return false;
+    // A world with no ground is flown over and nothing else: the walk is
+    // refused here as well as in the two pickers, because the pickers are not
+    // the only way in (the ship's bridge and the sandbox both come straight
+    // here). Every caller already reads false as a buzzer.
+    if (!opts.flyby && biome.gasGiant) return false;
 
     const grid = opts.grid || planetGridSize(planet);
     const cell = {
@@ -1334,15 +1392,91 @@
     return { w: Math.max(1, w), h: Math.max(1, h) };
   }
 
-  // The two ways down, asked once a square has been chosen. The same pair the
-  // star map's landing grid offers from orbit (GalaxySim_Overlay's mode
-  // buttons): set the ship down and walk the generated surface square, or open
-  // the 3D world on the planet itself.
+  // The three ways down, asked once a square has been chosen - and asked ONLY
+  // there. They used to double as a row of buttons along the bottom of the
+  // picker, which meant the same choice was on screen twice and could be made
+  // before any square had been picked at all.
+  //
+  // Drawn in the game's own gold rather than the default windowskin blue: the
+  // frame and the skin's cursor are both dropped and every command is a plate
+  // of its own, lit when it is the one selected.
+  const LG_GOLD = "#ffd98a";
+  const LG_GOLD_DIM = "rgba(255, 217, 138, 0.45)";
   class Window_LandingMode extends Window_Command {
+    // The planet is handed over BEFORE the command list is built, because on a
+    // world with no ground two of the three commands do not exist at all.
+    // Window_Command builds its list inside initialize(), so the planet cannot
+    // arrive as a setter afterwards: it comes in as a constructor argument.
+    constructor(rect, planet) {
+      Window_LandingMode._pending = planet || null;
+      super(rect);
+      Window_LandingMode._pending = null;
+    }
+
     makeCommandList() {
-      this.addCommand(T('Galaxy.hud.landHere'), "land");
-      this.addCommand(T('Galaxy.hud.liminalWalk'), "walk");
+      // _planet is not assigned yet on the first build (super() runs the list
+      // before the subclass body), so the pending planet answers for it.
+      const planet = this._planet || Window_LandingMode._pending;
+      this._planet = planet;
+      const surfaceless = isSurfacelessWorld(planet);
+      if (!surfaceless) {
+        this.addCommand(T('Galaxy.hud.landHere'), "land");
+        this.addCommand(T('Galaxy.hud.liminalWalk'), "walk");
+      }
       this.addCommand(T('Galaxy.hud.flyby'), "flyby");
+    }
+
+    itemHeight() {
+      return 44;
+    }
+
+    // The skin's own cursor is the blue this window is getting rid of; the lit
+    // plate in drawBackgroundRect says which command is selected instead.
+    _refreshCursor() {
+      /* intentionally nothing */
+    }
+
+    // Repaint so the lit plate follows the selection.
+    select(index) {
+      super.select(index);
+      if (this.contents) this.refresh();
+    }
+
+    drawBackgroundRect(rect) {
+      // The row backdrops live on the back layer, under the text the item
+      // itself draws (MZ keeps contents and contentsBack apart).
+      const ctx = this.contentsBack.context;
+      const on = this.index() === this._bgIndex;
+      ctx.save();
+      ctx.fillStyle = on ? "rgba(46, 34, 8, 0.92)" : "rgba(10, 12, 20, 0.82)";
+      ctx.strokeStyle = on ? LG_GOLD : LG_GOLD_DIM;
+      ctx.lineWidth = on ? 2 : 1.5;
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(rect.x + 1, rect.y + 3, rect.width - 2, rect.height - 6, 5);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.fillRect(rect.x + 1, rect.y + 3, rect.width - 2, rect.height - 6);
+        ctx.strokeRect(rect.x + 1, rect.y + 3, rect.width - 2, rect.height - 6);
+      }
+      ctx.restore();
+    }
+
+    // drawBackgroundRect only gets the rectangle, so which row it belongs to
+    // is carried across from the one call that knows it.
+    drawItemBackground(index) {
+      this._bgIndex = index;
+      super.drawItemBackground(index);
+    }
+
+    drawItem(index) {
+      const rect = this.itemLineRect(index);
+      this.resetTextColor();
+      this.changePaintOpacity(this.isCommandEnabled(index));
+      this.contents.textColor = this.index() === index ? LG_GOLD : LG_GOLD_DIM;
+      this.drawText(this.commandName(index), rect.x, rect.y, rect.width, "center");
+      this.changePaintOpacity(true);
     }
   }
   window.Window_LandingMode = Window_LandingMode;
@@ -1370,13 +1504,18 @@
 
     createModeWindow() {
       const w = 320;
-      const h = this.calcWindowHeight(3, true);
+      // One row on a world with no ground, three on one that can be landed on:
+      // the height follows the list rather than assuming it.
+      const rows = isSurfacelessWorld(this._planet) ? 1 : 3;
+      const h = this.calcWindowHeight(rows, true);
       const rect = new Rectangle(
         Math.floor((Graphics.boxWidth - w) / 2),
         Math.floor((Graphics.boxHeight - h) / 2),
         w, h
       );
-      const win = new Window_LandingMode(rect);
+      const win = new Window_LandingMode(rect, this._planet);
+      // No windowskin frame or back: the gold plates are the whole modal.
+      win.opacity = 0;
       win.setHandler("land", this.commandLand.bind(this));
       win.setHandler("walk", this.commandLiminalWalk.bind(this));
       win.setHandler("flyby", this.commandFlyby.bind(this));
@@ -1417,6 +1556,10 @@
         });
         bmp.baseTexture.update();
       }
+      // A real surface map decodes after the scene is already up: until it
+      // lands the grid shows the painted stand-in and update() asks again.
+      this._texFinal = !!(texture && R3D && (!R3D.planetTextureCanvasIsFinal ||
+        R3D.planetTextureCanvasIsFinal(this._planet)));
       this.redrawText();
     }
 
@@ -1434,55 +1577,17 @@
         : T('Galaxy.hud.chooseLandingSite');
       bmp.drawText(title, LG_PAD, LG_PAD, width, LG_TITLE_H, "left");
 
-      // Draw action buttons: Land Here, Liminal Walk, Flyby
-      const buttons = [
-        { id: "land", text: T('Galaxy.hud.landHere') },
-        { id: "walk", text: T('Galaxy.hud.liminalWalk') },
-        { id: "flyby", text: T('Galaxy.hud.flyby') },
-      ];
-      this._buttonRects = [];
-      let btnX = LG_PAD;
-      const btnH = 32;
-      const btnW = 140;
-      const btnGap = 12;
+      // The ways down are NOT drawn here any more: a square is picked first and
+      // the gold modal (Window_LandingMode) asks what to do with it.
       const helpY = Graphics.boxHeight - LG_PAD - LG_HELP_H;
-      const btnY = helpY + Math.floor((LG_HELP_H - btnH) / 2);
-      const ctx = bmp.context;
-      bmp.fontSize = 15;
-      for (const b of buttons) {
-        ctx.save();
-        ctx.fillStyle = "rgba(16, 26, 46, 0.85)";
-        ctx.strokeStyle = "#4b7ab8";
-        ctx.lineWidth = 1.5;
-        if (ctx.roundRect) {
-          ctx.beginPath();
-          ctx.roundRect(btnX, btnY, btnW, btnH, 4);
-          ctx.fill();
-          ctx.stroke();
-        } else {
-          ctx.fillRect(btnX, btnY, btnW, btnH);
-          ctx.strokeRect(btnX, btnY, btnW, btnH);
-        }
-        ctx.restore();
-        bmp.textColor = "#d8e6f8";
-        bmp.drawText(b.text, btnX, btnY, btnW, btnH, "center");
-        this._buttonRects.push({ id: b.id, x: btnX, y: btnY, w: btnW, h: btnH });
-        btnX += btnW + btnGap;
-      }
-
       bmp.fontSize = 18;
       bmp.textColor = "#cfd8e6";
-      bmp.drawText(`${this._cursor.gx}, ${this._cursor.gy}`, LG_PAD, helpY, width, LG_HELP_H, "right");
-    }
-
-    buttonAt(px, py) {
-      if (!this._buttonRects) return null;
-      for (const b of this._buttonRects) {
-        if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) {
-          return b.id;
-        }
+      // Why there is only one way down, said before the modal offers it, so a
+      // world with two commands missing never reads as a fault.
+      if (isSurfacelessWorld(this._planet)) {
+        bmp.drawText(T('Galaxy.hud.noSolidSurface'), LG_PAD, helpY, width, LG_HELP_H, "left");
       }
-      return null;
+      bmp.drawText(`${this._cursor.gx}, ${this._cursor.gy}`, LG_PAD, helpY, width, LG_HELP_H, "right");
     }
 
     moveCursor(dx, dy) {
@@ -1588,6 +1693,10 @@
       // Never read the press that opened the scene, nor one made on the way out,
       // and leave the grid alone while the way down is being chosen.
       if (this._leaving || !this.isActive()) return;
+      if (!this._texFinal) {
+        this._texWait = (this._texWait || 0) + 1;
+        if (this._texWait % 15 === 0) this.redrawAll();
+      }
       if (this._modeWindow && this._modeWindow.active) return;
       let dx = 0, dy = 0;
       if (Input.isRepeated("left")) dx = -1;
@@ -1595,22 +1704,8 @@
       if (Input.isRepeated("up")) dy = -1;
       else if (Input.isRepeated("down")) dy = 1;
       if (dx || dy) this.moveCursor(dx, dy);
-      // A click on buttons or picks the square outright
+      // A click picks the square and asks what to do with it.
       if (TouchInput.isTriggered()) {
-        const btn = this.buttonAt(TouchInput.x, TouchInput.y);
-        if (btn === "land") {
-          SoundManager.playOk();
-          this.commandLand();
-          return;
-        } else if (btn === "walk") {
-          SoundManager.playOk();
-          this.commandLiminalWalk();
-          return;
-        } else if (btn === "flyby") {
-          SoundManager.playOk();
-          this.commandFlyby();
-          return;
-        }
         const cell = this.cellAt(TouchInput.x, TouchInput.y);
         if (cell) {
           this._cursor = cell;
@@ -1839,24 +1934,50 @@
     return pool.map((p) => p.id);
   }
 
-  // A world's species roster, cached per world seed AND planet on $gameSystem.
-  // Called with no argument it answers for the world being stood on; off a
-  // surface (the sandbox, a menu) there is no planet to speak of and the old
-  // galaxy-wide roster is what comes back.
-  function alienSpeciesRoster(planet) {
+  // Which half of a world the party is in. A planet's caves hold their own
+  // creatures: nothing that grazes the surface of an ice moon lives in the
+  // vaults under it, and the thing in the vaults has never seen the sky. The
+  // layer stack is the whole test - the moment the party goes down a shaft the
+  // realm changes, and it changes back when they climb out.
+  const REALM_SURFACE = "surface";   // i18n-ignore: realm id
+  const REALM_UNDER = "under";       // i18n-ignore: realm id
+  function currentAlienRealm() {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem)
+      ? $gameSystem._procGenData : null;
+    const depth = (pg && pg.biomeLayerStack && pg.biomeLayerStack.length) || 0;
+    return depth > 0 ? REALM_UNDER : REALM_SURFACE;
+  }
+  window.GalaxySim.currentAlienRealm = currentAlienRealm;
+
+  // A world's species roster, cached per world seed, planet AND realm on
+  // $gameSystem. Called with no argument it answers for the world being stood
+  // on and the realm being stood in; off a surface (the sandbox, a menu) there
+  // is no planet to speak of and the old galaxy-wide roster is what comes back.
+  //
+  // `opts.realm` picks the surface roster or the underground one. They are
+  // drawn from the same pool and built by the same three steps, but from
+  // streams that share no salt, so a world with life has two disjoint sets of
+  // creatures in it rather than the same six wandering up and down a shaft.
+  function alienSpeciesRoster(planet, opts) {
     if (typeof $gameSystem === "undefined" || !$gameSystem) return [];
-    const world = planet || getSurfacePlanet();
+    const world = planet || groundPlanet();
     const worldName = (world && world.name) || "";
+    const realm = ((opts && opts.realm) || currentAlienRealm()) === REALM_UNDER
+      ? REALM_UNDER : REALM_SURFACE;
     const seed = worldSeedInt();
     const level = worldName ? planetLevel(world) : 0;
-    const cacheKey = seed + "|" + worldName;
+    const cacheKey = seed + "|" + worldName + "|" + realm;
     if (!$gameSystem._alienSpeciesRoster) $gameSystem._alienSpeciesRoster = {};
     if ($gameSystem._alienSpeciesRoster[cacheKey]) return $gameSystem._alienSpeciesRoster[cacheKey];
     const pool = alienSpeciesPool(level);
     // The planet's name is mixed into the stream as well as into the cache key,
     // so two worlds of one galaxy hold different creatures under different names.
     const nameHash = worldName ? fnv1a(worldName) : 0;
-    const rnd = mulberry((seed ^ 0x5bd1e995) + nameHash);
+    // The salt that separates the two realms of one world. Everything below
+    // reads the same either way, so this single number is the difference
+    // between what walks the surface and what lives under it.
+    const realmSalt = realm === REALM_UNDER ? 0x3f1d9b : 0;
+    const rnd = mulberry((seed ^ 0x5bd1e995) + nameHash + realmSalt);
     const count = pool.length ? (1 + Math.floor(rnd() * 6)) : 0; // 1..6
     const chosen = [];
     const used = new Set();
@@ -1865,11 +1986,12 @@
       do { eid = pool[Math.floor(rnd() * pool.length)]; tries++; } while (used.has(eid) && tries < 24);
       used.add(eid);
       chosen.push({
-        key: "sp" + seed + "_" + nameHash.toString(36) + "_" + i,
-        name: alienSpeciesName(Math.imul(seed, 131) + nameHash + i * 977 + 7),
+        key: "sp" + seed + "_" + nameHash.toString(36) + (realm === REALM_UNDER ? "u" : "") + "_" + i,
+        name: alienSpeciesName(Math.imul(seed, 131) + nameHash + realmSalt + i * 977 + 7),
         enemyId: eid,
         worldSeed: seed,
         planet: worldName,
+        realm,
         level: enemyNoteLevel($dataEnemies[eid]),
       });
     }
@@ -1877,8 +1999,20 @@
     return chosen;
   }
   function findAlienSpecies(key) {
-    return alienSpeciesRoster().find((s) => s.key === key) || null;
+    return alienSpeciesRoster(null, { realm: REALM_SURFACE }).find((s) => s.key === key) ||
+      alienSpeciesRoster(null, { realm: REALM_UNDER }).find((s) => s.key === key) || null;
   }
+  // The page a species is filed under. A procedural creature has no database
+  // row to read an <En:> tag off, so the sentence is composed from the phrase
+  // banks in Battle.json (window.EnemyDescription.compose) and travels with the
+  // record - the same service the rarities and the petrodemons use, so all
+  // three pages of the codex are written in one voice.
+  function alienDescription(sp) {
+    const ED = window.EnemyDescription;
+    if (!ED || typeof ED.compose !== "function") return "";
+    return ED.compose("alien", sp.key);
+  }
+
   function discoverAlienSpecies(sp) {
     if (!sp || typeof $gameSystem === "undefined" || !$gameSystem) return;
     if (!$gameSystem._discoveredAlienSpecies) $gameSystem._discoveredAlienSpecies = {};
@@ -1886,6 +2020,7 @@
       $gameSystem._discoveredAlienSpecies[sp.key] = {
         key: sp.key, name: sp.name, enemyId: sp.enemyId, worldSeed: sp.worldSeed,
         planet: sp.planet || "", level: sp.level || 0,
+        description: alienDescription(sp),
       };
     }
   }
@@ -1899,6 +2034,18 @@
     const disc = getDiscoveredAlienSpecies();
     return disc.some((s) => s.enemyId === eid);
   }
+  // ---- the procedural-creature algorithm, published -----------------------
+  // Building a species is three steps: a pool of base enemies near a level (the
+  // look and the numbers), a seeded stream, and a name nothing else carries.
+  // Earth's rarities are built by exactly these three steps
+  // (BattleSystemEnhancedEncounters, section 16b) rather than by a second copy
+  // of them, so a rarity and an alien are the same kind of creature made in the
+  // same way, and a change to how one reads changes how both do.
+  window.GalaxySim.proceduralSpeciesPool = alienSpeciesPool;
+  window.GalaxySim.proceduralSpeciesName = alienSpeciesName;
+  window.GalaxySim.proceduralRng = mulberry;
+  window.GalaxySim.proceduralSpeciesLevel = enemyNoteLevel;
+
   window.GalaxySim.alienSpeciesRoster = alienSpeciesRoster;
   window.GalaxySim.findAlienSpecies = findAlienSpecies;
   window.GalaxySim.discoverAlienSpecies = discoverAlienSpecies;
@@ -3867,6 +4014,21 @@
 
       let html = `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.starsGroup')}</div>`;
 
+      // The star the ship is parked at is also the pump it draws from, so the
+      // row it is parked on carries the control: Refuel while the star will
+      // give (a main-sequence star, or a hole for Schrodingerite), Stop Refuel
+      // while the pumps are running. Anywhere else the row is just a badge.
+      const refuelBtnHtml = () => {
+        if (ship.isRefueling) {
+          return `<button class="gx-sc-btn focusable" data-sc-refuel-stop="1" style="margin:0;">` +
+            `${T('Galaxy.hud.stopRefuel')}</button>`;
+        }
+        return (dm.canRefuel && dm.canRefuel())
+          ? `<button class="gx-sc-btn focusable" data-sc-refuel="1" style="margin:0;">` +
+            `${T('Galaxy.hud.refuel')}</button>`
+          : "";
+      };
+
       // Primary Star
       const isParkedPrimary = !ship.isMoving && ship.parkedBody && ship.parkedBody.name === currentSys.name;
       html += `
@@ -3876,7 +4038,7 @@
             <span class="gx-sc-item-sub">${T('Galaxy.shipControls.primaryStar')} · ${escHtml(String(currentSys.type || "?").replace(/_/g, " "))}</span>
           </div>
           <div class="gx-sc-item-actions">
-            ${isParkedPrimary ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+            ${isParkedPrimary ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>${refuelBtnHtml()}` : `
               <button class="gx-sc-btn focusable" data-sc-course='{"kind":"star","name":"${escHtml(currentSys.name)}","systemName":"${escHtml(currentSys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
               <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"star","name":"${escHtml(currentSys.name)}","systemName":"${escHtml(currentSys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
             `}
@@ -3894,7 +4056,7 @@
               <span class="gx-sc-item-sub">${T('Galaxy.shipControls.companionStar')} · ${escHtml(String(c.type || "?").replace(/_/g, " "))}</span>
             </div>
             <div class="gx-sc-item-actions">
-              ${isParked ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
+              ${isParked ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>${refuelBtnHtml()}` : `
                 <button class="gx-sc-btn focusable" data-sc-course='{"kind":"star","name":"${escHtml(c.name)}","systemName":"${escHtml(currentSys.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>
                 <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"star","name":"${escHtml(c.name)}","systemName":"${escHtml(currentSys.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
               `}
@@ -4375,6 +4537,25 @@
           return;
         }
 
+        // The pumps, worked from the row of the star they are drawing from.
+        const refuelBtn = e.target.closest("[data-sc-refuel]");
+        if (refuelBtn) {
+          if (dm.startRefuel && dm.startRefuel()) {
+            if (window.SoundManager && window.SoundManager.playOk) SoundManager.playOk();
+          } else if (window.SoundManager && window.SoundManager.playBuzzer) {
+            SoundManager.playBuzzer();
+          }
+          renderShipControls();
+          return;
+        }
+        const refuelStopBtn = e.target.closest("[data-sc-refuel-stop]");
+        if (refuelStopBtn) {
+          if (dm.stopRefuel) dm.stopRefuel();
+          if (window.SoundManager && window.SoundManager.playCursor) SoundManager.playCursor();
+          renderShipControls();
+          return;
+        }
+
         const courseBtn = e.target.closest("[data-sc-course]");
         if (courseBtn) {
           try {
@@ -4506,6 +4687,11 @@
         }
       }
     }
+
+    // A bridge is a departure: whatever the pumps were drawing, they stop.
+    // (Jumping star to star would otherwise leave them running at a body the
+    // ship is no longer at until the next tick noticed.)
+    if (ship && ship.isRefueling && dm.stopRefuel) dm.stopRefuel();
 
     const infinite = isInfiniteFuel();
     const pellets = dm.getSchrodingerite ? dm.getSchrodingerite() : 0;

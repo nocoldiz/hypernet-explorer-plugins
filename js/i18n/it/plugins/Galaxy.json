@@ -39,6 +39,7 @@
     "timeToArrival": "Tempo all'arrivo",
     "lyRemaining": "restano {ly} al",
     "refuelling": "Rifornimento",
+    "otherGalaxy": "Nessuna rotta attraversa lo spazio tra le galassie. Solo un ponte di Schrödinger-Bohr ci arriva.",
     "harvesting": "Raccolta di Schrödingerite"
   },
   "bodyType": {
@@ -169,6 +170,9 @@
     "refuel": "Rifornisci",
     "orbit": "Orbita",
     "chooseLandingSite": "Scegli il sito di atterraggio",
+    "landingSite": "Sito di atterraggio",
+    "otherGalaxy": "Un'altra galassia: solo ponte",
+    "landingSiteCell": "Riquadro {x}, {y}",
     "landHere": "Atterra qui",
     "liminalWalk": "Passeggiata liminale",
     "cancel": "Annulla",
@@ -214,7 +218,8 @@
     "bookmarked": "Nei segnalibri",
     "bookmark": "Segnalibro",
     "harvestRunning": "Sorvolo di raccolta in corso",
-    "flyby": "Sorvolo"
+    "flyby": "Sorvolo",
+    "noSolidSurface": "Nessuna superficie solida: questo mondo puo solo essere sorvolato."
   },
   "hubblePart": {
     "DF-224 Computer": {

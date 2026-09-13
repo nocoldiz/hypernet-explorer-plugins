@@ -1956,6 +1956,15 @@
             .sort(battleSkillSortCompare(actor));
     }
 
+    // The Actions page carries a second half: the four things a body does that
+    // are not skills at all (Aim, Throw, Wrestle, Talk). The rows belong to
+    // BattleSystemEnhanchedCommands.js (window.BattleActionRows) - which body
+    // can do which, and what each one is called; only the drawing is ours.
+    function battleActionRows(mode, actor) {
+        if (mode !== 'basic' || !window.BattleActionRows) return [];
+        return window.BattleActionRows.rows(actor);
+    }
+
     const BattleSkillMenu = {
         isMenuOpen(win) {
             return !!(win && win._skillSession);
@@ -1981,6 +1990,12 @@
                 push(skill.name, { kind: 'skill', id: skill.id }, actor.canUse(skill),
                      skill.iconIndex, skillRowColors(skill), battleRowCost(actor, skill));
             }
+            // The Actions rail stands under the kit, each row in the colour it
+            // wore when it was a command of its own.
+            for (const row of session.actions || []) {
+                push(row.name, { kind: 'action', command: row.command },
+                     row.enabled, row.icon, row.colors, '');
+            }
             push(T('SkillsMenu.battle.back'), { kind: 'back' }, true, 140, null, '');
         },
 
@@ -1990,9 +2005,13 @@
             const actor = BattleManager.actor();
             if (!win || !actor) return false;
             const list = battleMenuSkills(actor, mode, stypeId);
-            if (list.length === 0) return false;
+            const actions = battleActionRows(mode, actor);
+            // A page with nothing on it does not open. An empty Basic kit is no
+            // longer an empty page: the Actions rail under it is a page of its own.
+            if (list.length === 0 && actions.length === 0) return false;
             win._skillSession = {
-                mode: mode, stypeId: stypeId, actor: actor, list: list, offset: 0,
+                mode: mode, stypeId: stypeId, actor: actor, list: list,
+                actions: actions, offset: 0,
                 returnSymbol: returnSymbol || win.currentSymbol(),
             };
             // Only the FIRST takeover puts the menu's own handlers aside;
@@ -2101,6 +2120,19 @@
             case 'back':
                 this.onBattleSkillCancel();
                 return;
+            // Aim, Throw, Wrestle and Talk each take the whole menu over for
+            // their own rows, so the page is closed first and the command runs
+            // against the actor's own list, exactly as it did from the top of
+            // it. Backing out of one of them lands on the Actions row.
+            case 'action': {
+                BattleSkillMenu.close(win);
+                this._battleSkillReturn = null;
+                if (!window.BattleActionRows ||
+                    !window.BattleActionRows.run(this, ext.command)) {
+                    win.activate();
+                }
+                return;
+            }
             case 'skill': {
                 const skill = $dataSkills[ext.id];
                 const action = BattleManager.inputtingAction();

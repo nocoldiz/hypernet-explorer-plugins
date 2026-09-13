@@ -29,12 +29,175 @@
   const M = window.GalaxySim.Math || {};
 
   // Simple deterministic LCG so the decorative starfield is stable per seed.
+  // A plain LCG's first output is almost a linear function of its seed: two
+  // seeds one apart come back 0.0004 apart, and the web's nodes are seeded
+  // 7,919 apart, which put them 0.069 apart and walking. Everything decided by
+  // a stream's FIRST number - which name shape a cluster takes, which palette,
+  // which morphology - therefore came out in visible runs as the player flew
+  // along a filament, instead of looking picked.
+  //
+  // So the seed is avalanched (the splitmix32 finaliser) before it is used: one
+  // bit in gives about half the bits out, and neighbouring seeds are unrelated
+  // streams. The sequence stays perfectly deterministic, which is the only
+  // property any of this depends on.
+  function mixSeed(seed) {
+    let s = (seed >>> 0) || 1;
+    s ^= s >>> 16; s = Math.imul(s, 0x21f0aaad);
+    s ^= s >>> 15; s = Math.imul(s, 0x735a2d97);
+    s ^= s >>> 15;
+    return (s >>> 0) || 1;
+  }
+
   function lcg(seed) {
-    let s = seed >>> 0 || 1;
+    let s = mixSeed(seed);
     return () => {
       s = (s * 1664525 + 1013904223) >>> 0;
       return s / 4294967296;
     };
+  }
+
+  // ==========================================================================
+  // Building a scale without stopping the game.
+  //
+  // A cosmic-web build is over a hundred milliseconds and a supercluster about
+  // thirty, which at 60 fps is seven dropped frames and two, landing exactly
+  // where the zoom is meant to feel continuous. So the expensive builders exist
+  // as GENERATORS that yield at safe points, and the plain function is just
+  // "run it to the end". A caller that cares can instead drive one a few
+  // milliseconds a frame under the cross-fade; the result is identical either
+  // way, which is the property that makes this safe.
+  //
+  // Same pattern, and same reason, as ProceduralMap's resumable generation
+  // (ProceduralMapUtils.js "RESUMABLE GENERATION", SquareJob.step in
+  // ProceduralMapBiomeGenerator.js).
+  // ==========================================================================
+  function runSteps(it) {
+    let r = it.next();
+    while (!r.done) r = it.next();
+    return r.value;
+  }
+
+  const nowMs = () => (typeof performance !== "undefined" && performance.now
+    ? performance.now() : Date.now());
+
+  /**
+   * A supercluster's galaxy field, built a few milliseconds at a time.
+   *
+   * The generator above already knows where to stop; this is the caller that
+   * cares. It hands back a usable handle IMMEDIATELY - an empty group that is
+   * already in the scene graph, and a `fill(ms)` to drive - so the scale is on
+   * screen and interactive while its hundred thousand galaxies are still
+   * arriving, chunk by chunk, under the cross-fade. That is the difference
+   * between a forty millisecond stall at every zoom step and none.
+   *
+   * Everything the finished field would answer is answered here too, and is
+   * simply empty until there is something to say: picking finds nothing, the
+   * level of detail does nothing, the counts are zero. Nothing has to test
+   * whether the field is ready.
+   */
+  function deferSuperclusterField(knots, strands, rnd, R, opts) {
+    opts = opts || {};
+    const points = new THREE.Group();
+    points.name = "gx-supercluster-galaxies";
+    // Stands in until the real one is built, so a caller can read the draw
+    // count on frame one.
+    points.geometry = {
+      drawRange: { start: 0, count: 0 },
+      attributes: { position: { array: new Float32Array(0), count: 0 } },
+    };
+    const it = buildSuperclusterFieldSteps(knots, strands, rnd, R,
+      Object.assign({}, opts, { parent: points }));
+    let inner = null;
+    let lastZoom = null;
+    // How big it is GOING to be, known before a single galaxy is placed, so
+    // nothing has to wait for the fill to ask how big a supercluster is.
+    const plannedCount = opts.count || quality().galaxies;
+    const plannedGroups = opts.groups || SUPERCLUSTER_GROUPS;
+
+    const land = (value) => {
+      inner = value || null;
+      // A zoom distance that arrived while it was still building is applied now
+      // rather than lost, or the field would sit at full detail until the
+      // camera next moved.
+      if (inner && lastZoom != null) inner.setZoomDistance(lastZoom);
+      return true;
+    };
+
+    return {
+      points,
+      get done() { return !!inner; },
+      get count() { return inner ? inner.count : plannedCount; },
+      get groups() { return inner ? inner.groups : plannedGroups; },
+      get positions() { return inner ? inner.positions : null; },
+      galaxyAt(i) { return inner ? inner.galaxyAt(i) : null; },
+      pickAlongRay(o, d, maxDist, radius) {
+        return inner ? inner.pickAlongRay(o, d, maxDist, radius)
+          : { index: -1, tested: 0 };
+      },
+      setZoomDistance(d) {
+        lastZoom = d;
+        if (inner) inner.setZoomDistance(d);
+      },
+      /** Build for up to `ms`; true once there is nothing left to do. */
+      fill(ms) {
+        if (inner) return true;
+        const until = nowMs() + (ms > 0 ? ms : 4);
+        let r;
+        do {
+          r = it.next();
+          if (r.done) return land(r.value);
+          // The first step always runs, so the worst overrun is one step
+          // rather than a frame that does nothing (VoxelWorldTerrain's rule).
+        } while (nowMs() < until);
+        return false;
+      },
+      /** Run it straight through, for a teleport or a save restore. */
+      finish() {
+        if (inner) return true;
+        let r;
+        do { r = it.next(); } while (!r.done);
+        return land(r.value);
+      },
+    };
+  }
+
+  // ==========================================================================
+  // Graphics quality.
+  //
+  // The far scales can draw a hundred thousand galaxies and a sky full of
+  // layered nebulae, and on a strong machine they should. On a weak one that is
+  // the difference between a star map and a slideshow, so ONE number scales all
+  // of it: how many galaxies a supercluster holds, how many layers a nebula is
+  // stacked from, how far the web streams, and how much of a point cloud is
+  // drawn at a distance.
+  //
+  // Read through a cached accessor because it is called inside geometry loops
+  // (the same reason Weapon/WeaponSystemProcedural.js caches isLowDetail).
+  // ==========================================================================
+  const QUALITY = {
+    low:    { galaxies: 25000,  nebulaLayers: 2, webPoints: 20000, webRadius: 0.06, lod: 0.55 },
+    medium: { galaxies: 50000,  nebulaLayers: 4, webPoints: 36000, webRadius: 0.08, lod: 0.8 },
+    high:   { galaxies: 100000, nebulaLayers: 7, webPoints: 60000, webRadius: 0.10, lod: 1.0 },
+  };
+  let _qCache = null, _qStamp = 0;
+  function quality() {
+    const now = Date.now();
+    if (_qCache && now - _qStamp < 1000) return _qCache;
+    _qStamp = now;
+    let key = "high";
+    try {
+      const c = window.ConfigManager;
+      if (c && typeof c.galaxyQuality === "string" && QUALITY[c.galaxyQuality]) {
+        key = c.galaxyQuality;
+      } else if (c && c.lowModelDetail) {
+        // No galaxy setting saved yet: honour the existing low-detail toggle
+        // rather than ignoring a player who has already asked for less.
+        key = "low";
+      }
+    } catch (e) { /* options not up yet */ }
+    _qCache = QUALITY[key];
+    _qCache.name = key;
+    return _qCache;
   }
 
   // ==========================================================================
@@ -481,17 +644,30 @@
     glowPoints.name = "gx-galaxy-star-glow";
     root.add(glowPoints);
 
+    // Everything in the disk that thins out with distance, declared before the
+    // fade that drives them because it runs once during the build.
+    const nebulae = [];
     // Camera distance (world units) over which the halo ramps in. Galaxy scale
     // opens at ~70 u and reaches ~7000 u fully zoomed out.
     const GLOW_NEAR = 220, GLOW_FAR = 900;
-    function setZoomDistance(d) {
+    function setZoomDistance(d, camPos) {
       const t = Math.max(0, Math.min(1, (d - GLOW_NEAR) / (GLOW_FAR - GLOW_NEAR)));
       glowMat.opacity = t * 0.85;
       glowPoints.visible = t > 0.01;
       // The galaxy's own bloom (plane sheet + nucleus flare) fades on its own,
       // much wider curve: it only makes sense with the whole disk in frame.
       if (milkyway.userData.setZoomDistance) milkyway.userData.setZoomDistance(d);
+      // The hand-shaped nebulae collapse to a single layer once they are small
+      // on screen, which is most of the time at this scale. Held in a variable
+      // rather than read from the `const` below, because this runs once during
+      // the build, before that const exists.
+      if (famous && famous.setZoomDistance) famous.setZoomDistance(d, camPos);
+      // ...and so do the ordinary ones scattered through the disk.
+      for (let i = 0; i < nebulae.length; i++) {
+        if (nebulae[i].setZoomDistance) nebulae[i].setZoomDistance(d, camPos);
+      }
     }
+    let famous = null;
     setZoomDistance(0);
 
     // Sagittarius A* - the supermassive black hole at the galactic centre.
@@ -509,13 +685,12 @@
     root.add(sgrA.group);
 
     // A scatter of emission/reflection nebulae embedded in the disk plane.
-    const nrnd = lcg(424242);
     const nebulaPalettes = [
       [[255, 110, 150], [255, 170, 120], [180, 120, 255]], // emission (H-alpha)
       [[120, 160, 255], [150, 200, 255], [200, 220, 255]], // reflection (blue)
       [[120, 255, 200], [160, 255, 230], [120, 200, 255]], // teal
     ];
-    const nebulae = [];
+    const nrnd = lcg(424242);
     for (let i = 0; i < 7; i++) {
       const ang = nrnd() * Math.PI * 2;
       const rad = 320 + nrnd() * 2000; // within the disk
@@ -535,6 +710,7 @@
     // position, so they cluster near the Sun the way the real ones do. See
     // FAMOUS_NEBULAE / buildFamousNebulae above.
     const famousNebulae = buildFamousNebulae(systems);
+    famous = famousNebulae;   // see setZoomDistance above
     root.add(famousNebulae.group);
 
     // Steady (non-pulsing) highlight on the focus (home) system, out in the arm.
@@ -879,7 +1055,12 @@
   function pointCloud(positions, colors, size, opacity, crisp) {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    // A byte colour array is a quarter the size of a float one and says the
+    // same thing; it has to be flagged normalized or the shader reads 0..255
+    // where it wants 0..1 and every point comes out white.
+    const cAttr = new THREE.BufferAttribute(colors, 3);
+    if (colors instanceof Uint8Array) cAttr.normalized = true;
+    geo.setAttribute("color", cAttr);
     const mat = crisp
       ? makePointsMaterial(size, dotTexture(), opacity, false)
       : makePointsMaterial(size, starTexture(), opacity);
@@ -1226,16 +1407,19 @@
    * @param {Array} strands [[Vector3, Vector3]] the filaments to hang the rest on
    * @returns {{points: THREE.Points, groups: number}}
    */
-  function buildSuperclusterField(knots, strands, rnd, R, opts) {
+  function* buildSuperclusterFieldSteps(knots, strands, rnd, R, opts) {
     opts = opts || {};
-    const n = opts.count || SUPERCLUSTER_GALAXIES;
+    const n = opts.count || quality().galaxies;
     const pos = new Float32Array(n * 3);
-    const col = new Float32Array(n * 3);
+    // Colour as bytes rather than floats. A galaxy's colour needs nothing like
+    // 24 bits of precision per channel, and at a hundred thousand points the
+    // difference is 1.2 MB uploaded to the GPU against 0.3 MB.
+    const col = new Uint8Array(n * 3);
     let i = 0;
 
     const put = (x, y, z, r, g, b) => {
       pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z;
-      col[i * 3] = r; col[i * 3 + 1] = g; col[i * 3 + 2] = b;
+      col[i * 3] = r * 255; col[i * 3 + 1] = g * 255; col[i * 3 + 2] = b * 255;
       i++;
     };
     // A knot of galaxies around a centre, concentrated toward the middle.
@@ -1269,7 +1453,11 @@
     // 1. The named clusters and groups, each with the count it really has.
     let named = 0;
     for (const k of knots) named += k.rich;
-    for (const k of knots) clump(k.pos, k.rich, k.spread, true);
+    let sinceYield = 0;
+    for (const k of knots) {
+      clump(k.pos, k.rich, k.spread, true);
+      if ((sinceYield += k.rich) > 6000) { sinceYield = 0; yield; }
+    }
 
     // 2. The unnamed groups: hundreds of them, sitting ON the filaments, which
     //    is where most of a supercluster's galaxies live.
@@ -1282,7 +1470,11 @@
       if (!strand) break;
       const a = strand[0], b = strand[1];
       const t = rnd();
-      const off = R * 0.02;
+      // Tight across the strand. A filament is a THREAD - the groups on it sit
+      // within a per cent or so of the line, and it is that narrowness that
+      // makes the structure read as a filament of galaxies rather than as a
+      // smear of them in roughly the right place.
+      const off = R * 0.009;
       scratch.set(
         a.x + (b.x - a.x) * t + (rnd() + rnd() - 1) * off,
         a.y + (b.y - a.y) * t + (rnd() + rnd() - 1) * off * 0.6,
@@ -1290,6 +1482,7 @@
       // Small groups outnumber big ones, steeply.
       const size = Math.max(3, Math.round(perGroup * Math.pow(rnd(), 1.8) * 2.4));
       clump(scratch, size, R * (0.004 + rnd() * 0.012), false);
+      if ((g & 63) === 63) yield;
     }
 
     // 3. Whatever is left is the field: galaxies on the filaments themselves,
@@ -1297,12 +1490,16 @@
     //    galaxies strung along it even between the knots.
     const field = Math.floor((n - i) * 0.75);
     const endField = i + field;
+    let nextYield = i + 6000;
     for (; i < endField && i < n; ) {
+      if (i >= nextYield) { nextYield = i + 6000; yield; }
       const strand = strands[(rnd() * strands.length) | 0];
       if (!strand) break;
       const a = strand[0], b = strand[1];
       const t = rnd();
-      const off = R * 0.012;
+      // The field galaxies on the strand itself, threaded tighter still so the
+      // filament has a visible core rather than only a halo.
+      const off = R * 0.006;
       const w = 0.3 + rnd() * 0.45;
       put(a.x + (b.x - a.x) * t + (rnd() + rnd() - 1) * off,
         a.y + (b.y - a.y) * t + (rnd() + rnd() - 1) * off * 0.5,
@@ -1313,7 +1510,9 @@
     //    rather than as the edge of the drawing.
     // The sheet: a flat disc of field galaxies. Sampled the same way, in the
     // plane, so the whole fill stays free of trigonometry.
+    nextYield = i + 6000;
     for (; i < n; ) {
+      if (i >= nextYield) { nextYield = i + 6000; yield; }
       let x = 0, z = 0, q = 2;
       for (let tries = 0; tries < 8; tries++) {
         x = rnd() * 2 - 1; z = rnd() * 2 - 1;
@@ -1335,7 +1534,6 @@
     // DERIVED from its index the moment something asks: the name is stable, the
     // seed behind it is stable, and so the galaxy it opens into is always the
     // same one (see buildProceduralGalaxy / galaxySeedFromName).
-    const base = opts.name || T('Galaxy.scale.unnamedGalaxy');
     const fieldSeed = (opts.seed || 1) >>> 0;
     const tier = opts.tier || 0;
     const MORPH = [
@@ -1352,7 +1550,9 @@
       const morph = MORPH[(r() * MORPH.length) | 0];
       const dwarf = morph.indexOf("dwarf") === 0;
       return {
-        name: base + " G-" + k,
+        // A real deep-sky catalogue designation (NGC, IC, UGC, PGC, ESO...),
+        // derived from this particle's own index so it never changes.
+        name: galaxyName((fieldSeed ^ (k * 2654435761)) >>> 0),
         type: morph,
         kind: "galaxy",
         tier,
@@ -1366,12 +1566,242 @@
       };
     }
 
-    const points = pointCloud(pos, col, 2.0, 0.9);
+    // --- Order the buffer so that any PREFIX of it is the whole structure ----
+    // The fill runs clusters, then groups, then field, then sheet, so the first
+    // tenth of the buffer is all cluster and none of the web. That matters
+    // because level of detail here is simply "draw fewer of them": a shuffled
+    // buffer means setDrawRange(0, n * f) thins the galaxies uniformly and the
+    // shape survives, where an unshuffled one would delete the filaments and
+    // leave the knots. One pass, no second copy, and the same seeded stream so
+    // it stays deterministic.
+    // --- Cut the field into chunks the GPU can throw away --------------------
+    // One cloud of a hundred thousand points is ONE object, and an object is
+    // either drawn or not: standing inside a supercluster, the two thirds of it
+    // behind the camera were transformed every frame along with the third in
+    // front of it. Chunking by position gives each piece a tight bounding
+    // sphere and lets the frustum test do its job - which is exactly the case
+    // the distance LOD below cannot help with, because up close it is showing
+    // everything there is.
+    //
+    // The shuffle happens inside each chunk rather than across the whole
+    // buffer, so a chunk's own prefix is still a fair sample of that chunk and
+    // the draw-range thinning keeps working.
+    const CHUNK_N = 4;                                   // 4 x 4 x 4 cells
+    const halfSpan = R * 1.15;
+    const cellOf = (v) => {
+      const c = Math.floor(((v + halfSpan) / (halfSpan * 2)) * CHUNK_N);
+      return c < 0 ? 0 : (c >= CHUNK_N ? CHUNK_N - 1 : c);
+    };
+    const buckets = new Map();
+    for (let k = 0; k < i; k++) {
+      if ((k & 16383) === 0) yield;
+      const key = (cellOf(pos[k * 3]) * CHUNK_N + cellOf(pos[k * 3 + 1])) * CHUNK_N +
+        cellOf(pos[k * 3 + 2]);
+      let b = buckets.get(key);
+      if (!b) buckets.set(key, (b = []));
+      b.push(k);
+    }
+
+    const chunks = [];
+    // The group the chunks go into is the caller's, handed in, so the scale can
+    // be on screen and drawing while the rest of it is still being built (see
+    // deferSuperclusterField). Building into a private group and handing it over
+    // at the end would mean nothing appeared until everything had.
+    const points = opts.parent || new THREE.Group();
     points.name = "gx-supercluster-galaxies";
-    // Picking reads the live cloud, so it must never be culled out from under
-    // the raycast when the camera is inside the structure.
-    points.frustumCulled = false;
-    return { points, groups: knots.length + unnamed, galaxyAt, count: i };
+    // One material for every chunk: this is a few dozen cheap draw calls, not a
+    // few dozen materials.
+    const sharedMat = makePointsMaterial(2.0, dotTexture(), 0.9, false);
+    for (const idx of buckets.values()) {
+      yield;
+      for (let k = idx.length - 1; k > 0; k--) {
+        const j = (rnd() * (k + 1)) | 0;
+        if (j !== k) { const t = idx[k]; idx[k] = idx[j]; idx[j] = t; }
+      }
+      const n2 = idx.length;
+      const cp = new Float32Array(n2 * 3);
+      const cc = new Uint8Array(n2 * 3);
+      for (let k = 0; k < n2; k++) {
+        // Galaxies pile into clusters, so the chunks come out wildly uneven:
+        // the few covering the core hold tens of thousands apiece. Yielding
+        // only BETWEEN chunks let those run as single twenty millisecond steps,
+        // and a budget cannot interrupt a step it has already entered.
+        if ((k & 8191) === 8191) yield;
+        const src = idx[k];
+        cp[k * 3] = pos[src * 3];
+        cp[k * 3 + 1] = pos[src * 3 + 1];
+        cp[k * 3 + 2] = pos[src * 3 + 2];
+        cc[k * 3] = col[src * 3];
+        cc[k * 3 + 1] = col[src * 3 + 1];
+        cc[k * 3 + 2] = col[src * 3 + 2];
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(cp, 3));
+      const ca = new THREE.BufferAttribute(cc, 3);
+      ca.normalized = true;
+      geo.setAttribute("color", ca);
+      if (geo.setDrawRange) geo.setDrawRange(0, n2);
+      if (geo.computeBoundingSphere) geo.computeBoundingSphere();
+      const pts = new THREE.Points(geo, sharedMat);
+      pts.name = "gx-supercluster-chunk";
+      pts.frustumCulled = true;          // the whole point
+      pts.matrixAutoUpdate = false;      // nothing here ever moves
+      if (pts.updateMatrix) pts.updateMatrix();
+      chunks.push({ points: pts, count: n2 });
+      points.add(pts);          // visible as soon as it exists
+    }
+
+    // Callers that only want to know how much is being drawn still get it.
+    points.geometry = {
+      drawRange: { start: 0, count: i },
+      attributes: { position: { array: pos, count: i } },
+    };
+
+    // --- Level of detail ------------------------------------------------------
+    // Far enough out and a hundred thousand galaxies are a hundred thousand
+    // sub-pixel points fighting for the same handful of screen pixels: the
+    // cost is real and the picture is identical. The bands are coarse on
+    // purpose, and a change is only taken when it survives being asked again
+    // from a little either side (VoxelWorldTerrain's LOD_HYST idiom) - without
+    // that dead zone a camera loitering on a boundary flips the whole cloud
+    // several times a second.
+    // The fraction drawn, by how far the camera is from the middle in units of
+    // the framing radius. A change only counts once the camera is clear of the
+    // boundary by HYST, so loitering on one does not flip the whole cloud
+    // several times a second (VoxelWorldTerrain's LOD_HYST idiom). It is a
+    // proportion of the edge rather than a flat offset, because the bands get
+    // wider as they go out and a flat dead zone would swallow the narrow ones
+    // whole - which it did: the middle two bands were unreachable.
+    const LOD_HYST = 0.12;
+    const LOD_EDGES = [0.8, 1.6, 3.0];
+    const LOD_FRACS = [1.0, 0.5, 0.2, 0.08];
+    const radius = opts.radius || 1000;
+    let band = 0;
+    function setZoomDistance(d) {
+      const fd = (d || 0) / radius;
+      let b = band;
+      // Step outward while clear of the edge above, inward while clear of the
+      // edge below. One edge at a time, so a jump crosses them in order.
+      while (b < LOD_EDGES.length && fd >= LOD_EDGES[b] * (1 + LOD_HYST)) b++;
+      while (b > 0 && fd < LOD_EDGES[b - 1] * (1 - LOD_HYST)) b--;
+      if (b === band) return;
+      band = b;
+      const f = Math.min(1, LOD_FRACS[b] * quality().lod);
+      let total = 0;
+      for (let c = 0; c < chunks.length; c++) {
+        const n2 = Math.max(1, Math.round(chunks[c].count * f));
+        chunks[c].points.geometry.setDrawRange(0, n2);
+        total += n2;
+      }
+      points.geometry.drawRange.count = total;
+    }
+    // Start at the framing distance the scale opens at, not at zero.
+    band = 0;
+    setZoomDistance(radius * 1.4);
+
+    // --- Finding the galaxy under the cursor ---------------------------------
+    // Every one of these points is somewhere the player can go, so the cursor
+    // has to be able to name any of them. Raycasting the cloud would test a
+    // hundred thousand points on every mouse move, which costs more than
+    // everything this rework just saved.
+    //
+    // Instead the field is bucketed into a uniform grid once, here, and a pick
+    // MARCHES the ray through the cells it actually crosses, testing only what
+    // is in them: a few dozen points rather than all of them. Same packed
+    // integer key as the cosmic web's neighbour search, for the same reason -
+    // a string key per lookup would undo the saving.
+    // Fine on purpose. Galaxies are not spread evenly - they pile into clusters
+    // - so a coarse grid puts a whole cluster in one cell and a ray that clips
+    // that cell has to test all of it. At 24 cells across, a pick still touched
+    // 40% of the field. At 96 the dense regions are split across many cells and
+    // the ray only opens the few it actually crosses. Only occupied cells are
+    // stored, so the finer grid costs a bigger Map, not 96^3 of anything.
+    //
+    // Built on FIRST USE, not here. Bucketing a hundred thousand points costs
+    // about as much as generating them, and it is only ever needed once the
+    // player is close enough in for individual galaxies to be worth picking -
+    // which for most views never happens at all. Paying for it up front made
+    // every scale change slower to save a cost most of them never incur.
+    const GRID_N = 96;                       // cells across the structure
+    const gridCell = (R * 2.2) / GRID_N;
+    const gInv = 1 / gridCell;
+    const GK = (cx, cy, cz) => (((cx + 512) * 1024 + (cy + 512)) * 1024 + (cz + 512));
+    let grid = null;
+    function ensureGrid() {
+      if (grid) return grid;
+      grid = new Map();
+      for (let k = 0; k < i; k++) {
+        const key = GK(Math.floor(pos[k * 3] * gInv), Math.floor(pos[k * 3 + 1] * gInv),
+          Math.floor(pos[k * 3 + 2] * gInv));
+        let b = grid.get(key);
+        if (!b) grid.set(key, (b = []));
+        b.push(k);
+      }
+      return grid;
+    }
+
+    /**
+     * The galaxy nearest the ray, or -1.
+     * @param {{x,y,z}} origin  ray origin, in this structure's local frame
+     * @param {{x,y,z}} dir     unit direction
+     * @param {number} maxDist  how far along the ray to look
+     * @param {number} radius   how near the ray a point must pass to count
+     * @returns {{index:number, tested:number}}
+     */
+    function pickAlongRay(origin, dir, maxDist, radius) {
+      const grid = ensureGrid();
+      let best = -1, bestScore = Infinity, tested = 0;
+      const r2 = radius * radius;
+      // Walk the ray in steps of about one cell, gathering the neighbourhood
+      // that the pick radius actually reaches rather than a fixed 3x3x3.
+      // Overlapping samples are cheap and mean a ray clipping the corner of a
+      // cell never misses what is in it.
+      const reach = Math.max(1, Math.ceil(radius * gInv));
+      const step = gridCell * 0.9;
+      const steps = Math.min(2048, Math.ceil(maxDist / step));
+      const seen = new Set();
+      for (let sI = 0; sI <= steps; sI++) {
+        const t = sI * step;
+        const cx = Math.floor((origin.x + dir.x * t) * gInv);
+        const cy = Math.floor((origin.y + dir.y * t) * gInv);
+        const cz = Math.floor((origin.z + dir.z * t) * gInv);
+        for (let dx = -reach; dx <= reach; dx++) {
+          for (let dy = -reach; dy <= reach; dy++) {
+            for (let dz = -reach; dz <= reach; dz++) {
+              const key = GK(cx + dx, cy + dy, cz + dz);
+              if (seen.has(key)) continue;
+              seen.add(key);
+              const bucket = grid.get(key);
+              if (!bucket) continue;
+              for (let bi = 0; bi < bucket.length; bi++) {
+                const k = bucket[bi];
+                const px = pos[k * 3] - origin.x, py = pos[k * 3 + 1] - origin.y,
+                  pz = pos[k * 3 + 2] - origin.z;
+                const along = px * dir.x + py * dir.y + pz * dir.z;
+                if (along < 0 || along > maxDist) continue;
+                tested++;
+                const ox = px - dir.x * along, oy = py - dir.y * along,
+                  oz = pz - dir.z * along;
+                const off = ox * ox + oy * oy + oz * oz;
+                if (off > r2) continue;
+                // Nearest the cursor wins, with a mild bias to the closer one.
+                const score = off / (along * along + 1) + along * 1e-9;
+                if (score < bestScore) { bestScore = score; best = k; }
+              }
+            }
+          }
+        }
+      }
+      return { index: best, tested };
+    }
+
+    return { points, groups: knots.length + unnamed, galaxyAt, count: i,
+      setZoomDistance, positions: pos, pickAlongRay };
+  }
+
+  /** The whole field in one go, for callers that are not spreading the build. */
+  function buildSuperclusterField(knots, strands, rnd, R, opts) {
+    return runSteps(buildSuperclusterFieldSteps(knots, strands, rnd, R, opts));
   }
 
   // ==========================================================================
@@ -1462,6 +1892,7 @@
     const STREAMS = 64, STEPS = 26;
     const segs = [];
     const strands = [];
+    let flowMat = null;
     for (let i = 0; i < STREAMS; i++) {
       const th = rnd() * Math.PI * 2;
       const u = (rnd() * 2 - 1) * 0.34;
@@ -1484,21 +1915,44 @@
     }
     {
       const lgeo = new THREE.BufferGeometry().setFromPoints(segs);
-      const lmat = new THREE.LineBasicMaterial({
-        color: 0x5f7fbe, transparent: true, opacity: 0.18, depthWrite: false,
+      flowMat = new THREE.LineBasicMaterial({
+        color: 0x5f7fbe, transparent: true, opacity: 0.16, depthWrite: false,
         blending: THREE.AdditiveBlending,
       });
-      group.add(new THREE.LineSegments(lgeo, lmat));
+      group.add(new THREE.LineSegments(lgeo, flowMat));
     }
 
     // --- A hundred thousand galaxies ----------------------------------------
-    const field = buildSuperclusterField(knots, strands, rnd, R);
+    // Built across frames: the basin, its named members and its flow lines are
+    // up immediately, and the hundred thousand galaxies arrive under the
+    // cross-fade rather than in one forty millisecond stall.
+    const field = deferSuperclusterField(knots, strands, rnd, R, { radius: R });
     group.add(field.points);
+
+    // The infall toward the Attractor is a filament of GALAXIES, not a drawn
+    // line with galaxies near it. The line is scaffolding: it says where the
+    // flow goes while the whole basin is in frame and the individual galaxies
+    // are a micron wide, and it is gone by the time the player is close enough
+    // to see that the thread is made of them. Same near/far idiom the galaxy
+    // scale uses for its own bloom.
+    const FLOW_NEAR = R * 0.9, FLOW_FAR = R * 2.2;
+    function setZoomDistance(d) {
+      field.setZoomDistance(d);   // thin the galaxy cloud with distance
+      if (!flowMat) return;
+      const t = Math.max(0, Math.min(1, (d - FLOW_NEAR) / (FLOW_FAR - FLOW_NEAR)));
+      flowMat.opacity = 0.16 * t;
+      flowMat.visible = t > 0.02;
+    }
+    setZoomDistance(FLOW_FAR);
 
     function animate() {}
     return {
-      group, animate, pickables, strands, knots,
-      galaxies: SUPERCLUSTER_GALAXIES, groupCount: field.groups,
+      group, animate, pickables, strands, knots, setZoomDistance,
+      galaxies: field.count, groupCount: field.groups,
+      // Driven a few milliseconds a frame by Scene3D._updateFrame.
+      build: (ms) => field.fill(ms),
+      buildAll: () => field.finish(),
+      get built() { return field.done; },
       dispose: () => disposeObject3D(group), radius: R * 1.1,
     };
   }
@@ -1737,6 +2191,11 @@
     // smaller than anything left unsearched, so the resulting neighbour pairs
     // are identical to the brute-force scan (no RNG is consumed here).
     const segs = [];
+    // The web's adjacency: which superclusters each one is strung to by a
+    // filament. Kept rather than thrown away with the drawn line, because it
+    // is what lets the player leave one along a strand and arrive at the next.
+    const adj = new Array(N);
+    for (let a = 0; a < N; a++) adj[a] = [];
     {
       // Cell size is a real cost here, not a detail: at 4200 nodes the search
       // walks every cell of every ring it opens, so a grid that is too fine
@@ -1820,7 +2279,10 @@
           if (b2 >= 0 && safe * safe > d2) break;
         }
         [b1, b2].forEach((b) => {
-          if (b >= 0 && b > i) { segs.push(nodes[i], nodes[b]); }
+          if (b < 0) return;
+          if (adj[i].indexOf(b) < 0) adj[i].push(b);
+          if (adj[b].indexOf(i) < 0) adj[b].push(i);
+          if (b > i) segs.push(nodes[i], nodes[b]);
         });
       }
     }
@@ -1937,6 +2399,8 @@
     return {
       group, animate, pickables: [], nodePoints, nodeAt, nodeTier, nodePos, nodeCount: N,
       strands: strandList,
+      /** The superclusters joined to node `i` by a filament. */
+      nodeNeighbours(i) { return adj[i] || []; },
       // What the web STANDS FOR, as against what it draws: the observable
       // universe holds roughly ten million superclusters.
       superclusters: OBSERVABLE_SUPERCLUSTERS,
@@ -2337,11 +2801,6 @@
 
   function clusterSeed(index) { return (14142 + index * 7919) >>> 0; }
 
-  function clusterName(seed) {
-    const p = CLUSTER_PREFIX[seed % CLUSTER_PREFIX.length];
-    return p + " " + (1000 + (seed >>> 4) % 8000);
-  }
-
   // ==========================================================================
   // What a cosmic-web node opens into: a supercluster, built to Laniakea's
   // shape (see buildSupercluster and js/db/GalaxySim/Laniakea.json).
@@ -2510,15 +2969,30 @@
     }
 
     // --- A hundred thousand galaxies, same as Laniakea -----------------------
-    const field = buildSuperclusterField(knots, strands, rnd, R);
+    const field = deferSuperclusterField(knots, strands, rnd, R, {
+      radius: R, seed, tier,
+    });
     group.add(field.points);
 
     return {
       group, name, animate: () => {}, pickables,
+      setZoomDistance: field.setZoomDistance,
+      // Every particle in the cloud is a galaxy that can be named, selected and
+      // flown into; the scene resolves one from the index the raycast returns.
+      galaxyPoints: field.points,
+      galaxyAt: field.galaxyAt,
+      // A getter, not a value: the field fills in over the frames after this
+      // object is handed back, so reading it once here would capture the empty
+      // one it had on the first frame.
+      get galaxyPositions() { return field.positions; },
+      pickGalaxyRay: field.pickAlongRay,
       // Exposed so a test can measure that the galaxies really do lie along the
       // strands rather than merely near them.
       strands, knots,
-      galaxies: SUPERCLUSTER_GALAXIES, groupCount: field.groups,
+      galaxies: field.count, groupCount: field.groups,
+      build: (ms) => field.fill(ms),
+      buildAll: () => field.finish(),
+      get built() { return field.done; },
       dispose: () => disposeObject3D(group), radius: R * 1.25,
     };
   }
@@ -3337,7 +3811,11 @@
     group.name = "gx-nebula";
     const baseSize = opts.size || 120;
     const palette = opts.palette || [[255, 120, 160], [130, 165, 255], [200, 130, 255]];
-    const layers = opts.layers || 14;
+    // Twelve to fourteen big additive quads apiece, seven clouds to a galaxy,
+    // was most of the fill rate the galaxy view spent. The stack follows the
+    // quality setting like the famous nebulae's does.
+    const layers = Math.max(3, Math.round(
+      (opts.layers || 14) * (quality().nebulaLayers / 7)));
     for (let i = 0; i < layers; i++) {
       const c = palette[(rnd() * palette.length) | 0];
       const tex = nebulaTexture(`rgba(${c[0]},${c[1]},${c[2]},0.5)`, rnd);
@@ -3377,14 +3855,37 @@
       group.add(gl.sprite);
       protos.push({ mat: gl.mat, sprite: gl.sprite, base: s, phase: rnd() * 10, rate: 1.2 + rnd() * 2.2 });
     }
+    // The same collapse the hand-shaped nebulae get. These are the ordinary
+    // blobby clouds, seven to a galaxy at a dozen layers apiece, and at galaxy
+    // scale the camera is almost always far enough away that every layer lands
+    // inside the same pixel or two. They were the single biggest block of
+    // additive quads left in the view.
+    const stack = [];
+    group.children.forEach((c) => { if (c.material && c.material.map) stack.push(c); });
+    const VOL_NEAR = baseSize * 5, VOL_FAR = baseSize * 14;
+    function setZoomDistance(d, camPos) {
+      let dist = d;
+      if (camPos) {
+        const gx = group.position.x - camPos.x;
+        const gy = group.position.y - camPos.y;
+        const gz = group.position.z - camPos.z;
+        dist = Math.sqrt(gx * gx + gy * gy + gz * gz);
+      }
+      const t = Math.max(0, Math.min(1, (dist - VOL_NEAR) / (VOL_FAR - VOL_NEAR)));
+      const full = t < 0.96;
+      // Layer 0 always stays; the rest go once the cloud is small on screen.
+      for (let i = 1; i < stack.length; i++) stack[i].visible = full;
+    }
+
     function animate(t) {
       for (const p of protos) {
+        if (!p.sprite.visible) continue;
         const w = 1 + 0.22 * Math.sin(t * p.rate + p.phase);
         p.sprite.scale.set(p.base * w, p.base * w, 1);
         p.mat.opacity = 0.65 + 0.3 * Math.sin(t * p.rate * 1.7 + p.phase);
       }
     }
-    return { group, animate, dispose: () => disposeObject3D(group) };
+    return { group, animate, setZoomDistance, dispose: () => disposeObject3D(group) };
   }
 
   // ==========================================================================
@@ -4007,9 +4508,17 @@
     // A dark nebula is a silhouette painted OVER the stars, so its layers
     // stack multiplicatively and a deep pile turns it into a black hole in the
     // sky; it gets a shallower stack at lower opacity. The glowing ones add.
+    // A stack of big additive quads is the most expensive thing a weak GPU can
+    // be handed: every layer is drawn over every other one across the nebula's
+    // whole footprint, and the cost is fill rate, not geometry. Seven layers
+    // apiece across 21 nebulae was 154 sprites and a third of a million square
+    // units of overdraw. The stack is now as deep as the quality setting allows
+    // (and a dark nebula, which blends normally and so stacks multiplicatively,
+    // gets fewer still), with a shallower spread so the layers overlap less.
     const dark = !!spec.dark;
-    const LAYERS = dark ? 4 : 7;
-    const depth = spec.size * 0.42;   // how far the stack reaches front to back
+    const LAYERS = Math.max(2, dark ? Math.min(3, quality().nebulaLayers)
+      : quality().nebulaLayers);
+    const depth = spec.size * 0.30;   // how far the stack reaches front to back
 
     const layers = [];
     for (let i = 0; i < LAYERS; i++) {
@@ -4044,13 +4553,45 @@
     }
 
     // The front layer is the one the cursor tests against: picking a stack of
-    // seven overlapping sprites should still be picking ONE nebula.
+    // overlapping sprites should still be picking ONE nebula.
     const sprite = layers[0].sprite;
     sprite.userData.nebula = spec.name;
+
+    // Volume is only worth paying for while there is volume to SEE. Once the
+    // cloud is small on screen the layers land on each other within a pixel or
+    // two, so all the overdraw buys is a slightly brighter smudge: past that
+    // distance the stack collapses to its front layer and the other 2 to 6 stop
+    // being drawn at all.
+    const VOL_NEAR = spec.size * 6, VOL_FAR = spec.size * 16;
+    let volume = 1;
+    /**
+     * @param {number} d       fallback distance (the camera's orbit radius)
+     * @param {object} [camPos] where the camera actually is, if known
+     *
+     * The distance that decides whether this cloud keeps its depth is the one
+     * from the camera to THIS cloud, not the camera's orbit radius. Using the
+     * orbit radius meant that flying in to look at one nebula kept the full
+     * stack on all twenty-odd of them, including the ones right across the
+     * galaxy - which is the case the galaxy view spends most of its time in.
+     */
+    function setZoomDistance(d, camPos) {
+      let dist = d;
+      if (camPos) {
+        const gx = group.position.x - camPos.x;
+        const gy = group.position.y - camPos.y;
+        const gz = group.position.z - camPos.z;
+        dist = Math.sqrt(gx * gx + gy * gy + gz * gz);
+      }
+      const t = Math.max(0, Math.min(1, (dist - VOL_NEAR) / (VOL_FAR - VOL_NEAR)));
+      volume = 1 - t;
+      const full = volume > 0.04;
+      for (let i = 1; i < layers.length; i++) layers[i].sprite.visible = full;
+    }
 
     function animate(t) {
       for (let i = 0; i < layers.length; i++) {
         const L = layers[i];
+        if (i > 0 && !L.sprite.visible) continue;
         const w = Math.sin(t * L.rate + L.phase);
         L.mat.opacity = L.base * (1 + 0.18 * w);
         const k = L.baseScale * (1 + 0.03 * w);
@@ -4059,7 +4600,8 @@
       }
     }
 
-    return { group, sprite, animate, dispose: () => disposeObject3D(group) };
+    return { group, sprite, animate, setZoomDistance, layers: layers.length,
+      dispose: () => disposeObject3D(group) };
   }
 
   // Builds every famous nebula, positioned from its anchor star's real
@@ -4107,6 +4649,12 @@
         const p = positions.get(name);
         if (!p) return null;
         return (out || new THREE.Vector3()).copy(p);
+      },
+      // Collapse each stack to its front layer once it is small on screen.
+      setZoomDistance(d, camPos) {
+        for (let i = 0; i < clouds.length; i++) {
+          if (clouds[i].setZoomDistance) clouds[i].setZoomDistance(d, camPos);
+        }
       },
       animate(t) {
         // The gas itself drifts (see buildFamousNebulaSprite)...
@@ -5851,12 +6399,17 @@
     GAL,
     buildLocalGroup,
     buildSupercluster,
+    // The resumable half of the expensive builders, for a caller that wants to
+    // spread a scale build over several frames instead of stopping the game.
+    buildSuperclusterFieldSteps,
+    runSteps,
     buildCosmicWeb,
     buildProceduralGalaxy,
     galaxySeedFromName,
     buildProceduralCluster,
     clusterSeed,
     clusterName,
+    galaxyName,
     buildObservable,
     buildUniverseSphere,
     CAT,

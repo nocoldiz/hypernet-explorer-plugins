@@ -231,6 +231,26 @@
       };
     }
 
+    /** The galaxy a system name belongs to, as its seed, or null for the Milky
+     * Way - where every hardcoded and every lazily-streamed ("LZ.") system is. */
+    _galaxySeedOf(name) {
+      const f = this._galaxyFocusFromSystemName(name);
+      return f ? f.seed : null;
+    }
+
+    /**
+     * Can a course be plotted to this system at all? A hyperdrive crosses a
+     * galaxy; it does not cross the dark between galaxies. Anything outside
+     * the one the ship is actually in is reachable only by Schrodinger-Bohr
+     * bridge, so Travel Here and Set Course are neither offered for it nor
+     * honoured if something asks for them anyway.
+     */
+    _canPlotCourseTo(name) {
+      const ship = this.dataManager && this.dataManager.playerShip;
+      return this._galaxySeedOf(name) ===
+        this._galaxySeedOf(ship && ship.currentSystem);
+    }
+
     _createOverlay() {
       const el = document.createElement("div");
       el.id = "galaxysim-overlay";
@@ -422,6 +442,7 @@
       this._galaxyByIndex = null;
       this._webPickCache = null;
       this._galaxyPickCache = null;
+      this._galaxyFieldCache = null;
     }
 
     // ----------------------------------------------------------------------
@@ -438,22 +459,32 @@
     // keeps what the player was looking at the same size on screen and glides
     // from there (see _scaleEntryDistance). Nothing cuts.
     // ----------------------------------------------------------------------
-    /** Every material under a root, with the state to put back afterwards. */
+    /**
+     * Every material under a root that can be faded, with the opacity to put
+     * back afterwards.
+     *
+     * This used to force the ones that were NOT transparent to become so, with
+     * `needsUpdate = true` - and in three.js that flag throws the material's
+     * compiled program away and builds a new one. Every scale change therefore
+     * paid a shader rebuild across some forty materials on the way in and a
+     * second one on the way out, landing exactly where the zoom was supposed to
+     * feel continuous. It was the single worst thing about the transition, and
+     * it was self-inflicted: nearly everything the far scales draw is already
+     * transparent, so the flip bought almost nothing.
+     *
+     * Now nothing is flipped. An opaque material simply does not fade; it
+     * appears with the scale it belongs to, under the cross-fade of everything
+     * around it, and no program is ever recompiled.
+     */
     _collectFadeMaterials(root) {
       const out = [];
       const seen = new Set();
       root.traverse((obj) => {
         const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
         for (const m of mats) {
-          if (!m || seen.has(m)) continue;
+          if (!m || seen.has(m) || !m.transparent) continue;
           seen.add(m);
-          // An opaque material has to be told it may blend before it can fade -
-          // and told to stop again when the fade is done, or a planet that was
-          // solid would go on being depth-sorted as glass for the rest of the
-          // session.
-          const wasTransparent = !!m.transparent;
-          if (!wasTransparent) { m.transparent = true; m.needsUpdate = true; }
-          out.push({ m, wasTransparent, from: m.opacity != null ? m.opacity : 1 });
+          out.push({ m, from: m.opacity != null ? m.opacity : 1 });
         }
       });
       return out;
@@ -461,11 +492,7 @@
 
     /** Put a faded-in view's materials back exactly as they were built. */
     _restoreFadeMaterials(mats) {
-      for (let j = 0; j < mats.length; j++) {
-        const e = mats[j];
-        e.m.opacity = e.from;
-        if (!e.wasTransparent) { e.m.transparent = false; e.m.needsUpdate = true; }
-      }
+      for (let j = 0; j < mats.length; j++) mats[j].m.opacity = mats[j].from;
     }
 
     /** Dim a view out over CROSSFADE seconds, then dispose it. */
@@ -630,10 +657,30 @@
       // what makes everything inside this cluster ordinary or impossible.
       const cv = this._cosmicView;
       const tier = (cv && cv.nodeTier) ? cv.nodeTier(index) : 0;
+      // Which superclusters this one is strung to, and which way each lies,
+      // read off the web BEFORE it is torn down. A supercluster is a knot on a
+      // filament, so drifting off the edge of one should carry you along that
+      // filament to the next rather than stopping at a wall (see
+      // _panToNeighbourNode). Kept as directions, not positions: the new view
+      // is rebuilt around its own origin.
+      let links = this._webCluster ? this._webCluster.links : null;
+      if (cv && cv.nodeNeighbours && cv.nodePos) {
+        const here = cv.nodePos(index);
+        links = [];
+        if (here) {
+          for (const j of cv.nodeNeighbours(index)) {
+            const there = cv.nodePos(j);
+            if (!there) continue;
+            const dx = there.x - here.x, dy = there.y - here.y, dz = there.z - here.z;
+            const L = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+            links.push({ index: j, x: dx / L, y: dy / L, z: dz / L });
+          }
+        }
+      }
       this._fromScale = this._scale;
       this._fromDistance = this._rig.targetDistance;
       this._teardownScaleContent(true);
-      this._webCluster = { index, seed, tier };
+      this._webCluster = { index, seed, tier, links: links || [] };
       this._cosmicView = GS.Scene3DCosmos.buildProceduralCluster({ seed, tier });
       this._scene.add(this._cosmicView.group);
       this._pickTargets = this._cosmicView.pickables || [];
@@ -642,7 +689,10 @@
       const r = this._cosmicView.radius || 1100;
       this._rig.minDistance = r * 0.06;
       this._rig.maxDistance = r * 5;
-      this._rig.panLimit = r * 1.5;
+      // Room to drift right off the edge: past PAN_HANDOFF the camera is
+      // handed to whichever neighbouring supercluster lies that way.
+      this._rig.panLimit = r * 2.6;
+      this._clusterPanR = r;
       this._arriveAtScale(new THREE.Vector3(0, 0, 0), r * 1.5,
         this._fromScale, SCALE_FILAMENTS, this._fromDistance);
       this._fadeInView(this._cosmicView);
@@ -991,6 +1041,10 @@
         // Cosmic web: every node dot is selectable (and enterable), so fall
         // through to a points raycast when no named hero object was hit.
         if (!pick) pick = this._webNodePick();
+        // Inside a supercluster every particle is a galaxy that can be entered.
+        // Only once the camera is actually in among them, though: further out
+        // they are sub-pixel and the player means to pick the named cluster.
+        if (!pick) pick = this._galaxyFieldPick();
       } else if (starCloud && this._galaxyPoints) {
         // Generous threshold so every system point is easy to click. Pick the
         // static catalog and the lazy field together; the nearest hit wins.
@@ -1057,6 +1111,60 @@
         }
       }
       this._setHover(pick || null);
+    }
+
+    /**
+     * The galaxy under the cursor inside a supercluster.
+     *
+     * The field is a hundred thousand points, so this never raycasts it: the
+     * builder keeps a uniform grid and marches the cursor ray through the cells
+     * it crosses (buildSuperclusterField.pickAlongRay), which touches a tenth of
+     * the field at the distances this is switched on at and costs a quarter of
+     * a millisecond. Memoised on camera and pointer like every other pick here,
+     * so it does not run again on a frame where nothing moved.
+     */
+    _galaxyFieldPick() {
+      const cv = this._cosmicView;
+      if (!cv || !cv.pickGalaxyRay || !cv.galaxyAt) return null;
+      // Only among them, not looking at them from outside.
+      const reach = (cv.radius || 1000) * 1.1;
+      if (this._rig.distance > reach) return null;
+
+      const c = this._galaxyFieldCache || (this._galaxyFieldCache = {
+        ndcX: NaN, ndcY: NaN,
+        camPos: new THREE.Vector3(NaN, NaN, NaN),
+        camQuat: new THREE.Quaternion(NaN, NaN, NaN, NaN),
+        view: null, pick: null,
+      });
+      if (c.ndcX === this._ndc.x && c.ndcY === this._ndc.y && c.view === cv &&
+          c.camPos.equals(this._camera.position) &&
+          c.camQuat.equals(this._camera.quaternion)) {
+        return c.pick;
+      }
+
+      this._raycaster.setFromCamera(this._ndc, this._camera);
+      const ray = this._raycaster.ray;
+      // The field is built in the cosmic view's own frame, which sits at the
+      // scene origin, so the ray needs no transform - but read it through the
+      // group in case that ever stops being true.
+      const o = ray.origin, d = ray.direction;
+      // A cursor tolerance that stays about the same size on screen however
+      // close the camera is, floored so a distant galaxy is still grabbable.
+      const tol = Math.max(4, this._rig.distance * 0.035);
+      const hit = cv.pickGalaxyRay(o, d, reach * 2.2, tol);
+      let pick = null;
+      if (hit && hit.index >= 0) {
+        const data = cv.galaxyAt(hit.index);
+        if (data) pick = { kind: "galaxy", data, galaxyIndex: hit.index };
+      }
+
+      c.ndcX = this._ndc.x;
+      c.ndcY = this._ndc.y;
+      c.camPos.copy(this._camera.position);
+      c.camQuat.copy(this._camera.quaternion);
+      c.view = cv;
+      c.pick = pick;
+      return pick;
     }
 
     // Raycast the cosmic-web node cloud. Same cursor-angle scoring and
@@ -1157,6 +1265,10 @@
         data: pick.data,
         system: pick.system || null,
         nodeIndex: pick.nodeIndex != null ? pick.nodeIndex : null,
+        // One particle of a supercluster's galaxy field is addressed by index
+        // and by nothing else: it carries no object, and its name is derived
+        // rather than listed anywhere (see _galaxyFieldPick / galaxyAt).
+        galaxyIndex: pick.galaxyIndex != null ? pick.galaxyIndex : null,
         clusterIndex: this._webCluster ? this._webCluster.index : null,
       };
     }
@@ -1172,6 +1284,22 @@
         return node
           ? { kind: "cluster", data: node.data, position: node.position, nodeIndex: node.index }
           : null;
+      }
+      // A galaxy picked out of a supercluster's own field is not in
+      // _pickTargets - it is one point of a hundred thousand, and the name
+      // match below could never find it, so Zoom To (and the wheel's own
+      // zoom-into-the-selection) had nothing to resolve and simply buzzed.
+      // Read it back off the field by index instead, position and all.
+      if (t.galaxyIndex != null) {
+        const cv = this._cosmicView;
+        if (!cv || !cv.galaxyAt) return null;
+        const data = cv.galaxyAt(t.galaxyIndex);
+        if (!data) return null;
+        const buf = cv.galaxyPositions;
+        const k = t.galaxyIndex * 3;
+        const position = (buf && buf.length > k + 2)
+          ? new THREE.Vector3(buf[k], buf[k + 1], buf[k + 2]) : null;
+        return { kind: "galaxy", data, position, galaxyIndex: t.galaxyIndex };
       }
       if (this._scale === SCALE_GALAXY) {
         if (t.kind === "nebula" && t.data && this._galaxyView && this._galaxyView.nebulaWorldOf) {
@@ -1354,6 +1482,10 @@
       if (t.clusterIndex !== (this._webCluster ? this._webCluster.index : null)) return false;
       const node = pick.nodeIndex != null ? pick.nodeIndex : null;
       if (node != null || t.nodeIndex != null) return t.nodeIndex === node;
+      // Field galaxies share no stable name with anything listed, so they are
+      // the same one only when they are the same particle.
+      const gi = pick.galaxyIndex != null ? pick.galaxyIndex : null;
+      if (gi != null || t.galaxyIndex != null) return t.galaxyIndex === gi;
       const name = (pick.data && pick.data.name) || "";
       return t.kind === pick.kind && !!name && t.name === name;
     }
@@ -1668,10 +1800,14 @@
             typeof dm.materializeLazySystem === "function") {
           dm.materializeLazySystem(pick.data);
         }
+        // Another galaxy is not somewhere a course can be set for: the panel
+        // offers the bridge and nothing else (see _canPlotCourseTo).
+        const sameGalaxy = this._canPlotCourseTo(ownerName);
         const sysOpts = {
           isCurrent,
           canEnter: starBrowsable && !isMoving && !isCompanion,
-          canTravel: (starBrowsable || isCompanion) && !isCurrent && !isMoving,
+          canTravel: (starBrowsable || isCompanion) && !isCurrent && !isMoving && sameGalaxy,
+          otherGalaxy: !sameGalaxy && !isCurrent,
           // Park in orbit of the star/black hole itself: free while already in
           // this system (mirrors "Land Here" for a planet already in orbit).
           canPark: isCurrent && !isMoving && !isParkedHere,
@@ -2304,6 +2440,9 @@
     // path as Space, and Course reuses the normal travel logic.
     // ----------------------------------------------------------------------
     _buildCatalog() {
+      // A row only offers Set Course when a course could actually be flown:
+      // another galaxy is bridge-only (see _canPlotCourseTo).
+      const courseOK = (sysName) => !!sysName && this._canPlotCourseTo(sysName);
       const entries = [];
       const stars = [];
       const byKind = { galaxy: [], cluster: [], anomaly: [], nebula: [] };
@@ -2324,7 +2463,7 @@
             sub: T('Galaxy.catalog.starSub', {
               type: s.type || "?", planets: s.planets ? s.planets.length : 0,
             }),
-            course: true,
+            course: courseOK(s.name),
           });
         });
 
@@ -2357,7 +2496,7 @@
           sub: w.system.name + " · " + String(w.planet.type || "?").replace(/_/g, " ") +
             (isFinite(w.dist) ? " · " + w.dist.toFixed(1) + " ly" : "") +
             (tier ? " · " + GS.bioTierLabel(tier) : ""),
-          course: true,
+          course: courseOK(w.system && w.system.name),
         });
       };
       this._lifeWorlds().forEach(addLifeRow(life, "l"));
@@ -2383,7 +2522,7 @@
               spaceports.push({
                 id, name: loc.name,
                 sub: planet.name + " · " + (sys.label || sys.name),
-                course: !sys.farHardcoded,
+                course: !sys.farHardcoded && courseOK(sys.name),
               });
             });
             (planet.moons || []).forEach((moon) => {
@@ -2396,7 +2535,7 @@
                 spaceports.push({
                   id, name: loc.name,
                   sub: moon.name + " (" + planet.name + ") · " + (sys.label || sys.name),
-                  course: !sys.farHardcoded,
+                  course: !sys.farHardcoded && courseOK(sys.name),
                 });
               });
             });
@@ -2421,8 +2560,10 @@
             : String(resolved.data.type || "").replace(/_/g, " "),
           // A course needs a star system to aim at: the star itself, or the
           // system a bookmarked planet/moon belongs to. Far-scale bodies
-          // (galaxies, nebulae) have none, so they stay Zoom-only.
-          course: resolved.kind === "star" || !!resolved.system,
+          // (galaxies, nebulae) have none, so they stay Zoom-only - and so
+          // does anything bookmarked in another galaxy.
+          course: courseOK(resolved.kind === "star" ? resolved.name
+            : (resolved.system && resolved.system.name)),
         });
       });
 
@@ -2521,7 +2662,8 @@
           });
           // A patron's world is out in the Milky Way now, not a galaxy away,
           // so a course to it is an ordinary flight plan like any other.
-          patrons.push({ id, name: rec.name, sub: rec.sub, course: true });
+          patrons.push({ id, name: rec.name, sub: rec.sub,
+            course: courseOK(rec.system && rec.system.name) });
         });
       }
 
@@ -3256,6 +3398,8 @@
       if (!infinite && dm.setSchrodingerite) {
         dm.setSchrodingerite(dm.getSchrodingerite() - 1);
       }
+      // A bridge is a departure: the pumps stop with it.
+      this._cutPumps();
       if (this._overlayUI) this._overlayUI.deselect();
       if (window.SoundManager) SoundManager.playOk();
 
@@ -3318,6 +3462,8 @@
       if (!infinite && dm.getSchrodingerite && dm.getSchrodingerite() < 1) return buzz();
       if (!infinite && dm.setSchrodingerite) dm.setSchrodingerite(dm.getSchrodingerite() - 1);
 
+      // A bridge is a departure: the pumps stop with it.
+      this._cutPumps();
       if (this._overlayUI) this._overlayUI.deselect();
       if (window.SoundManager) SoundManager.playOk();
       this._warping = true;
@@ -3364,6 +3510,18 @@
     }
 
     /** Begin slowly topping up Hyperflux while parked at a main-sequence star. */
+    /** Whatever the ship was drawing, it stops: a bridge, a course, anything
+     * that takes the hull off the body the pumps were fed by. */
+    _cutPumps() {
+      const dm = this.dataManager;
+      const ship = dm && dm.playerShip;
+      if (ship && ship.isRefueling && dm.stopRefuel) {
+        dm.stopRefuel();
+        this._refuelPlanKey = null;
+        this._lastShipStatus = null;
+      }
+    }
+
     _startRefuel() {
       const dm = this.dataManager;
       const buzz = () => { if (window.SoundManager) SoundManager.playBuzzer(); };
@@ -3559,6 +3717,17 @@
 
     _travelToSystem(name) {
       const dm = this.dataManager;
+      // A companion/donor star is addressed by its own name, so the galaxy it
+      // is in is its OWNER's, not whatever its name parses as.
+      const owner = (dm.getSystem && dm.getSystem(name)) ? name
+        : (([this._selectedPick, this._target].find((p) =>
+            p && p.data && p.data.name === name && p.data._companionOf) || {})
+          .data || {})._companionOf || name;
+      if (!this._canPlotCourseTo(owner)) {
+        if (window.SoundManager) SoundManager.playBuzzer();
+        this._toast(T('Galaxy.travel.otherGalaxy'));
+        return;
+      }
       if (dm.getSystem && dm.getSystem(name)) {
         if (dm.startTravelToSystem) dm.startTravelToSystem(name);
       } else {
@@ -4112,6 +4281,15 @@
       }
       const pick = this._resolveTarget();
       if (!pick) return null;
+      // Inside a supercluster the members ARE the destinations, and the orbit
+      // focus sits at the middle of the node: zooming in only ever closed on
+      // the empty space between them. The first zoom-in with one selected
+      // draws the camera onto IT; a galaxy then opens its own interior on the
+      // next one, once it is what the camera is actually looking at.
+      if (this._webCluster) {
+        const frame = this._frameWebMember(pick);
+        if (frame) return frame;
+      }
       if (pick.kind === "galaxy" && !this._galaxyFocus) {
         const name = (pick.data && pick.data.name) || (t && t.name);
         if (!name) return null;
@@ -4200,6 +4378,9 @@
       // Inside a cosmic-web cluster, zooming out returns to the web instead of
       // stepping the scale ladder (the cluster IS the filament scale).
       if (this._webCluster) {
+        // Drifting off the edge follows a filament to the next supercluster
+        // rather than stopping at a wall.
+        if (this._panToNeighbourNode()) return;
         if (this._ladderCooldown > 0) { this._ladderCooldown -= dt; this._ladderHold = 0; return; }
         this._ladderHold = (this._outDist && td > this._outDist) ? this._ladderHold + dt : 0;
         if (this._ladderHold >= LADDER_DWELL) this._exitWebCluster();
@@ -4248,6 +4429,50 @@
     }
 
     /**
+     * Travelling between superclusters by simply moving.
+     *
+     * A supercluster is a knot on a filament, not an island, so panning to the
+     * edge of one used to stop at a wall the player could not see. Drifting far
+     * enough out now looks at WHICH WAY they have gone, matches that against
+     * the filaments this node is strung on (captured in `_webCluster.links`
+     * from the web's own adjacency), and hands the camera to the supercluster
+     * that lies along it.
+     *
+     * The arrival is placed on the far side of the new structure, still moving
+     * the same way, so following a strand across the universe is one continuous
+     * drift rather than a series of arrivals at the middle of things.
+     */
+    _panToNeighbourNode() {
+      const wc = this._webCluster;
+      if (!wc || !wc.links || !wc.links.length) return false;
+      if (this._ladderCooldown > 0) return false;
+      const r = this._clusterPanR || 1100;
+      const f = this._rig.targetFocus;
+      const d = Math.sqrt(f.x * f.x + f.y * f.y + f.z * f.z);
+      if (d < r * 2.1) return false;          // still inside this one
+
+      // Which filament does the drift best line up with?
+      const nx = f.x / d, ny = f.y / d, nz = f.z / d;
+      let best = null, bestDot = 0.45;        // needs to be a real match
+      for (const L of wc.links) {
+        const dot = nx * L.x + ny * L.y + nz * L.z;
+        if (dot > bestDot) { bestDot = dot; best = L; }
+      }
+      if (!best) return false;
+
+      // Arrive on the near side of the next one, coming in along the strand,
+      // and keep drifting: the focus starts out where the player was heading.
+      this._enterWebCluster(best.index);
+      const nr = this._clusterPanR || r;
+      this._rig.snapTo(
+        new THREE.Vector3(-best.x * nr * 1.6, -best.y * nr * 1.6, -best.z * nr * 1.6),
+        this._rig.distance);
+      this._rig.setTargetFocus(new THREE.Vector3(
+        -best.x * nr * 0.35, -best.y * nr * 0.35, -best.z * nr * 0.35));
+      return true;
+    }
+
+    /**
      * What zooming right in past `_inDist` should do at the current scale, as
      * a closure, or null when this level has no way down at all (then the band
      * edge is simply a wall the camera stops at).
@@ -4269,6 +4494,28 @@
       if (this._scale === SCALE_LOCAL_GROUP) return this._nearestCosmicEntry();
       const next = this._scale - 1;
       return () => this._enterScale(next, this._focusSystem);
+    }
+
+    /**
+     * Fly the camera onto a supercluster member (a named cluster or a field
+     * galaxy) as an entry closure, or null when the focus is already on it -
+     * in which case whatever the member itself opens into takes over.
+     */
+    _frameWebMember(pick) {
+      if (!pick) return null;
+      const p = this._targetWorldPosition(pick, new THREE.Vector3());
+      if (!p) return null;
+      // "Already on it" has to be generous: the rig damps its focus toward the
+      // target, so it never lands exactly, and a member is a big diffuse thing.
+      const near = Math.max(this._rig.minDistance * 2,
+        (this._clusterPanR || 1000) * 0.04);
+      if (this._rig.focus.distanceTo(p) <= near) return null;
+      const want = this._clampFramingDistance(this._targetFramingDistance(pick));
+      return () => {
+        this._rig.setTargetFocus(p);
+        this._rig.setTargetDistance(want);
+        this._boostCamera();
+      };
     }
 
     /**
@@ -4560,7 +4807,10 @@
         // Star halos fade in only as the camera pulls back, so up close each
         // system stays a single distinguishable point.
         if (this._galaxyView.setZoomDistance) {
-          this._galaxyView.setZoomDistance(this._rig.distance);
+          // The camera's own position as well as its orbit radius: a nebula
+          // keeps its depth based on how far away IT is, not on how far the
+          // camera happens to be from the galactic centre.
+          this._galaxyView.setZoomDistance(this._rig.distance, this._camera.position);
         }
       }
       if (this._lazyField) this._lazyField.update(this._rig.focus, this._rig.distance);
@@ -4568,8 +4818,16 @@
         this._cosmicView.animate(this._elapsed);
         // Procedural galaxies fade their nucleus bloom on approach, same as
         // the home galaxy's own bloom (see buildProceduralGalaxy).
+        // A supercluster's hundred thousand galaxies are built a few
+        // milliseconds a frame rather than in one stall at the zoom step. The
+        // structure is already on screen; this is the crowd arriving into it,
+        // and the cross-fade is what it arrives under. A little more budget
+        // while that fade is still running, since the old scale is covering.
+        if (this._cosmicView.build && !this._cosmicView.built) {
+          this._cosmicView.build((this._fading && this._fading.length) ? 6 : 3.5);
+        }
         if (this._cosmicView.setZoomDistance) {
-          this._cosmicView.setZoomDistance(this._rig.distance);
+          this._cosmicView.setZoomDistance(this._rig.distance, this._camera.position);
         }
         // The cosmic web streams superclusters onto whichever filaments the
         // camera is near, the same way the galaxy scale streams stars: ten
@@ -4636,7 +4894,17 @@
       // it's open (arrow keys move the cursor cell instead of the camera/focus
       // ring) and skip the rest of update() so orbit controls stay frozen.
       if (ov && ov.isLandingGridOpen && ov.isLandingGridOpen()) {
-        if (Input.isTriggered("cancel")) { ov.hideLandingGrid(); return; }
+        const cancel = Input.isTriggered("cancel") || TouchInput.isCancelled();
+        // A square has been picked and the modal is asking what to do with it:
+        // it owns the keys until it is answered or backed out of.
+        if (ov.isLandingChoiceOpen && ov.isLandingChoiceOpen()) {
+          if (cancel) { ov.hideLandingChoice(); return; }
+          if (Input.isTriggered("ok")) { ov.confirmLandingChoice(); return; }
+          if (Input.isTriggered("up") || Input.isTriggered("left")) ov.moveLandingChoice(-1);
+          else if (Input.isTriggered("down") || Input.isTriggered("right")) ov.moveLandingChoice(1);
+          return;
+        }
+        if (cancel) { ov.hideLandingGrid(); return; }
         if (Input.isTriggered("ok")) { ov.confirmLandingGridCursor(); return; }
         if (Input.isTriggered("up")) ov.moveLandingGridCursor(0, -1);
         else if (Input.isTriggered("down")) ov.moveLandingGridCursor(0, 1);
@@ -4691,22 +4959,18 @@
         this._padFocusActive));
       if (this._orbit) this._orbit.suspendKeys = navActive;
 
-      // Right-click mirrors Esc/cancel: drop whatever is selected (a body or
-      // the ship marker) first, and only close the map on a second right-click
-      // once nothing is left selected.
+      // Esc and right-click CLOSE the star map. They used to peel one layer off
+      // per press - deselect, then drop the planet focus, then finally close -
+      // so leaving the map took three presses from anywhere worth looking at.
+      // What still eats the key first is only ever something being DONE: the
+      // lasers are cut, the helm is handed back, an open modal is shut.
       if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
         this._padFocusActive = false;
         // Esc off the lasers first: the cut is the loudest thing on screen.
         if (this._mining) { this._stopStripMining(T('Galaxy.mining.lasersCut')); return; }
         if (this._mode === "fly") { this._toggleMode(); return; }
         if (ov && ov.isCatalogOpen()) { ov.setCatalogOpen(false); return; }
-        if (this._planetFocus) { this._clearPlanetFocus(); if (ov) ov.deselect(); return; }
-        if (hasSel) {
-          // Esc drops the target too, so panel/reticle/Space stay consistent.
-          this._setTarget(null);
-          this._selectedPick = null;
-          ov.deselect();
-        } else this.popScene();
+        this.popScene();
         return;
       }
       if (this._suppressOk > 0) this._suppressOk--;

@@ -384,8 +384,11 @@
         const party = ($gameParty && $gameParty.members && $gameParty.members()) || [];
         if (typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(100)) {
             const hasBubba = party.some(a => a && a.name && a.name().trim() === "Bubba");
-            if (!hasBubba) {
-                const bubbaActor = window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
+            // Only once he is travelling: PartyRoster owns that answer, and
+            // before he has joined the story is Em's alone (a fallback onto
+            // Actor 2 used to hand the banter a stranger to talk to).
+            if (!hasBubba && window.PartyRoster?.isBubbaTravelling?.()) {
+                const bubbaActor = window.PartyRoster.getBubbaActor?.();
                 if (bubbaActor) return party.concat(bubbaActor);
             }
         }

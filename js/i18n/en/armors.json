@@ -5,619 +5,619 @@
   },
   "2": {
     "name": "Splintered Door Plank",
-    "description": "A wall slat strapped to one arm."
+    "description": "A wall slat strapped to one arm. Softens physical blows."
   },
   "3": {
     "name": "Roadside Cone Vest",
-    "description": "A hi-vis vest stitched with traffic cones."
+    "description": "A hi-vis vest stitched with traffic cones. Carries more punishment."
   },
   "4": {
     "name": "Twitching Reflex Cap",
-    "description": "A cap that flinches before you do."
+    "description": "A cap that flinches before you do. Blocks Blind."
   },
   "5": {
     "name": "Concrete Lid Helm",
-    "description": "A bunker hatch worn as a helmet."
+    "description": "A bunker hatch worn as a helmet. Resists Petro."
   },
   "6": {
     "name": "Cracked Screen Diadem",
-    "description": "A circlet of dead phone displays."
+    "description": "A circlet of dead phone displays. Softens physical blows."
   },
   "7": {
     "name": "Dented Survival Pack",
-    "description": "A battered kit of bent tools."
+    "description": "A battered kit of bent tools. Resists Fire."
   },
   "8": {
     "name": "Mismatched First Aid",
-    "description": "A satchel of expired bandages."
+    "description": "A satchel of expired bandages. Turns aside critical hits."
   },
   "9": {
     "name": "Tin Foil Coronet",
-    "description": "A crown bent from kitchen foil."
+    "description": "A crown bent from kitchen foil. Turns aside critical hits."
   },
   "10": {
     "name": "Flickering Ward Charm",
-    "description": "A trinket that hums when threatened."
+    "description": "A trinket that hums when threatened. Resists Physical."
   },
   "11": {
     "name": "Loose Glyph Trinkets",
-    "description": "A pouch of half-charged runes."
+    "description": "A pouch of half-charged runes. Blocks Nausea."
   },
   "12": {
     "name": "Spliced Circuit Brace",
-    "description": "A gauntlet of wire and bone."
+    "description": "A gauntlet of wire and bone. Mends a little mana."
   },
   "13": {
     "name": "Folded Space Scarf",
-    "description": "A scarf longer on the inside."
+    "description": "A scarf longer on the inside. Stiffens the guard."
   },
   "14": {
     "name": "Gilded Refuse Wrap",
-    "description": "A garbage bag painted gold."
+    "description": "A garbage bag painted gold. Mends a little health."
   },
   "15": {
     "name": "Compactor Salvage",
-    "description": "A pressed brick of worn cloth."
+    "description": "A pressed brick of worn cloth. Turns aside critical hits."
   },
   "16": {
     "name": "Holed Wool Shirt",
-    "description": "A shirt eaten through by moths."
+    "description": "A shirt eaten through by moths. Blocks Bleeding."
   },
   "17": {
     "name": "Fraying Knit Cap",
-    "description": "A cap unraveling at the seam."
+    "description": "A cap unraveling at the seam. Harder to hit with magic."
   },
   "18": {
     "name": "Soaked Paper Shirt",
-    "description": "A pulpy shirt that drinks the rain."
+    "description": "A pulpy shirt that drinks the rain. Soaks magical damage."
   },
   "19": {
     "name": "Plastic Badge Vest",
-    "description": "A vest with a toy police badge."
+    "description": "A vest with a toy police badge. Resists Water."
   },
   "20": {
     "name": "Foam Theater Helm",
-    "description": "A stage prop helmet of foam."
+    "description": "A stage prop helmet of foam. Blocks Guard Broken."
   },
   "21": {
     "name": "Drooping Party Hat",
-    "description": "A soggy cardboard cone hat."
+    "description": "A soggy cardboard cone hat. Blocks Silence."
   },
   "22": {
     "name": "Knockoff Logo Cap",
-    "description": "A cap with a misspelled brand."
+    "description": "A cap with a misspelled brand. Blocks Blind."
   },
   "23": {
     "name": "Bin Lid Bracer",
-    "description": "A trash can lid for an arm."
+    "description": "A trash can lid for an arm. Sometimes counters."
   },
   "24": {
     "name": "Toy Prize Pauldron",
-    "description": "A plastic shoulder from a kids' set."
+    "description": "A plastic shoulder from a kids' set. Steadies the arm."
   },
   "25": {
     "name": "Sugar Pill Pendant",
-    "description": "A pendant that does nothing."
+    "description": "A pendant that does nothing. Wards off Stun."
   },
   "26": {
     "name": "Honest Rubbish",
-    "description": "A bundle of actual garbage."
+    "description": "A bundle of actual garbage. Blocks Grappled."
   },
   "27": {
     "name": "Stained Diner Shirt",
-    "description": "A shirt crusted with old grease."
+    "description": "A shirt crusted with old grease. Mends a little health."
   },
   "28": {
     "name": "Gutter Throne Crown",
-    "description": "A crown of dumpster scraps."
+    "description": "A crown of dumpster scraps. Blocks Concussed."
   },
   "29": {
     "name": "City Drifter Bundle",
-    "description": "A roll of urban survival rags."
+    "description": "A roll of urban survival rags. Sometimes counters."
   },
   "30": {
     "name": "Cardboard Skull Cap",
-    "description": "A flimsy helmet of pressed board."
+    "description": "A flimsy helmet of pressed board. Blocks Unbalanced."
   },
   "31": {
     "name": "Trailhead Basics",
-    "description": "A plain set of trekking gear."
+    "description": "A plain set of trekking gear. Steadies the arm."
   },
   "32": {
     "name": "Sagging Pack Straps",
-    "description": "A harness of worn carry straps."
+    "description": "A harness of worn carry straps. Steadies the arm."
   },
   "33": {
     "name": "Cracked Trail Boots",
-    "description": "A pair of split walking boots."
+    "description": "A pair of split walking boots. Blocks Rooted."
   },
   "34": {
     "name": "Panic Kit Belt",
-    "description": "A belt of emergency oddments."
+    "description": "A belt of emergency oddments. Blocks Sleep."
   },
   "35": {
     "name": "Frayed Climb Harness",
-    "description": "A worn rig of rope and clips."
+    "description": "A worn rig of rope and clips. Blocks Unbalanced."
   },
   "36": {
     "name": "All Flash Trinket",
-    "description": "A shiny charm with no use."
+    "description": "A shiny charm with no use. Turns aside critical hits."
   },
   "37": {
     "name": "Vanity Brim Hat",
-    "description": "A stylish hat with no padding."
+    "description": "A stylish hat with no padding. Softens physical blows."
   },
   "38": {
     "name": "Pocketed Utility Sash",
-    "description": "A sash of small, full pockets."
+    "description": "A sash of small, full pockets. Turns luck over."
   },
   "39": {
     "name": "Out of Date Coat",
-    "description": "A coat from a lost decade."
+    "description": "A coat from a lost decade. Blocks Grappled."
   },
   "40": {
     "name": "Local Pattern Shawl",
-    "description": "A shawl in regional weave."
+    "description": "A shawl in regional weave. Resists Physical."
   },
   "41": {
     "name": "Gossip Silk Wrap",
-    "description": "A flashy wrap built to impress."
+    "description": "A flashy wrap built to impress. Carries more punishment."
   },
   "42": {
     "name": "Cartoon Logo Cap",
-    "description": "A cap with a faded mascot."
+    "description": "A cap with a faded mascot. Carries more punishment."
   },
   "43": {
     "name": "Plastic Clip Set",
-    "description": "A handful of bright hair clips."
+    "description": "A handful of bright hair clips. Softens physical blows."
   },
   "44": {
     "name": "Faded Tour Shirt",
-    "description": "A worn shirt with band art."
+    "description": "A worn shirt with band art. Carries more punishment."
   },
   "45": {
     "name": "Glitched Pattern Tunic",
-    "description": "A tunic with corrupted print."
+    "description": "A tunic with corrupted print. Mends a little health."
   },
   "46": {
     "name": "Self Aware Sash",
-    "description": "A sash that seems to watch you."
+    "description": "A sash that seems to watch you. Blocks Sleep."
   },
   "47": {
     "name": "Rusted Knight Kit",
-    "description": "A bundle of corroded fittings."
+    "description": "A bundle of corroded fittings. Carries more punishment."
   },
   "48": {
     "name": "Pitted Iron Helm",
-    "description": "A plain dented old helmet."
+    "description": "A plain dented old helmet. Steadies the mind."
   },
   "49": {
     "name": "Battered Round Shield",
-    "description": "A worn wooden buckler."
+    "description": "A worn wooden buckler. Resists Petro."
   },
   "50": {
     "name": "Cracked Quiver Rig",
-    "description": "A split leather arrow rig."
+    "description": "A split leather arrow rig. Steadies the arm."
   },
   "51": {
     "name": "Faded Noble Plate",
-    "description": "A tarnished decorative breastplate."
+    "description": "A tarnished decorative breastplate. Resists Petro."
   },
   "52": {
     "name": "Replica Hero Mail",
-    "description": "A cheap copy of famous armor."
+    "description": "A cheap copy of famous armor. Turns aside critical hits."
   },
   "53": {
     "name": "Plain Homespun Tunic",
-    "description": "A simple peasant tunic."
+    "description": "A simple peasant tunic. Blocks Poison."
   },
   "54": {
     "name": "Strapped Visor Helm",
-    "description": "A helmet with a flip visor."
+    "description": "A helmet with a flip visor. Wards off Blind."
   },
   "55": {
     "name": "Riot Foam Pad",
-    "description": "A worn crowd control pad."
+    "description": "A worn crowd control pad. Resists Petro."
   },
   "56": {
     "name": "Triage Field Pouch",
-    "description": "A medic's depleted pouch."
+    "description": "A medic's depleted pouch. Mends a little mana."
   },
   "57": {
     "name": "Thin Weather Suit",
-    "description": "A flimsy all climate jumpsuit."
+    "description": "A flimsy all climate jumpsuit. Blocks Unbalanced."
   },
   "58": {
     "name": "Leaky Dive Vest",
-    "description": "A patched diving vest."
+    "description": "A patched diving vest. Carries more punishment."
   },
   "59": {
     "name": "Deflated Float Suit",
-    "description": "A limp zero gravity suit."
+    "description": "A limp zero gravity suit. Carries more punishment."
   },
   "60": {
     "name": "Chipped Pickaxe",
-    "description": "A worn miner's pickaxe."
+    "description": "A worn miner's pickaxe. Resists Petro."
   },
   "61": {
     "name": "Dusty Hardhat Kit",
-    "description": "A scuffed worksite safety set."
+    "description": "A scuffed worksite safety set. Softens physical blows."
   },
   "62": {
     "name": "Scorched Turnout Coat",
-    "description": "A burned firefighter's coat."
+    "description": "A burned firefighter's coat. Turns luck over."
   },
   "63": {
     "name": "Surplus Patrol Belt",
-    "description": "A worn officer's duty belt."
+    "description": "A worn officer's duty belt. Steadies the arm."
   },
   "64": {
     "name": "Scraped Sport Pads",
-    "description": "A set of road rash pads."
+    "description": "A set of road rash pads. Blocks Sleep."
   },
   "65": {
     "name": "Crumbling Bronze Vest",
-    "description": "A flaking ancient cuirass."
+    "description": "A flaking ancient cuirass. Carries more punishment."
   },
   "66": {
     "name": "Borrowed Gala Coat",
-    "description": "A rented formal coat."
+    "description": "A rented formal coat. Sometimes counters."
   },
   "67": {
     "name": "Pinstripe Combat Suit",
-    "description": "A suit cut for boardroom wars."
+    "description": "A suit cut for boardroom wars. Thickens the plate."
   },
   "68": {
     "name": "Dead Tech Harness",
-    "description": "A rig of inert old devices."
+    "description": "A rig of inert old devices. Slightly harder to hit."
   },
   "69": {
     "name": "Archivist's Tool Belt",
-    "description": "A belt of cataloguing tools."
+    "description": "A belt of cataloguing tools. Resists Wind."
   },
   "70": {
     "name": "Logo Stamped Vest",
-    "description": "A vest plastered with brands."
+    "description": "A vest plastered with brands. Blocks Paralysis."
   },
   "71": {
     "name": "Plain Guild Robe",
-    "description": "An undyed apprentice robe."
+    "description": "An undyed apprentice robe. Soaks physical damage."
   },
   "72": {
     "name": "Tin Idol Buckler",
-    "description": "A small shield bearing a god."
+    "description": "A small shield bearing a god. Resists Petro."
   },
   "73": {
     "name": "Oil Slick Wrap",
-    "description": "A wrap stained black and shiny."
+    "description": "A wrap stained black and shiny. Easier to dodge behind."
   },
   "74": {
     "name": "Road Worn Sash",
-    "description": "A sash bleached by the Road."
+    "description": "A sash bleached by the Road. Resists Physical."
   },
   "75": {
     "name": "Warped Seam Cloak",
-    "description": "A cloak with edges that blur."
+    "description": "A cloak with edges that blur. Resists Water."
   },
   "76": {
     "name": "Slag Crusted Glove",
-    "description": "A glove caked in dried metal."
+    "description": "A glove caked in dried metal. Quickens the step."
   },
   "77": {
     "name": "Smuggler's Sash",
-    "description": "A sash with hidden seams."
+    "description": "A sash with hidden seams. Blocks Sleep."
   },
   "78": {
     "name": "Stopped Clock Charm",
-    "description": "A trinket frozen mid tick."
+    "description": "A trinket frozen mid tick. Blocks Charm."
   },
   "79": {
     "name": "Backflow Wader",
-    "description": "A boot caked in river silt."
+    "description": "A boot caked in river silt. Slightly harder to hit."
   },
   "80": {
     "name": "Spire Rubble Brace",
-    "description": "A brace of fallen masonry."
+    "description": "A brace of fallen masonry. Blocks Nausea."
   },
   "81": {
     "name": "Wanderer's Pack",
-    "description": "A traveler's well worn bundle."
+    "description": "A traveler's well worn bundle. Steadies the arm."
   },
   "82": {
     "name": "Goblin Scrap Belt",
-    "description": "A belt of crude trophies."
+    "description": "A belt of crude trophies. Resists Wind."
   },
   "83": {
     "name": "Y2K Party Top",
-    "description": "A shiny turn of century shirt."
+    "description": "A shiny turn of century shirt. Blocks Bleeding."
   },
   "84": {
     "name": "Buckled Street Harness",
-    "description": "A harness of straps and rings."
+    "description": "A harness of straps and rings. Turns aside critical hits."
   },
   "85": {
     "name": "Mourning Lace Dress",
-    "description": "A dark dress of heavy lace."
+    "description": "A dark dress of heavy lace. Resists Fire."
   },
   "86": {
     "name": "Trucker's Worn Vest",
-    "description": "A faded long haul vest."
+    "description": "A faded long haul vest. Easier to dodge behind."
   },
   "87": {
     "name": "Pulsing Flesh Wrap",
-    "description": "A wrap that feels warm and damp."
+    "description": "A wrap that feels warm and damp. Blocks Unbalanced."
   },
   "88": {
     "name": "Souvenir Alien Cloak",
-    "description": "A gaudy faux xenotech cloak."
+    "description": "A gaudy faux xenotech cloak. Stiffens the guard."
   },
   "89": {
     "name": "Lucky Charm Kit",
-    "description": "A pouch of useless tokens."
+    "description": "A pouch of useless tokens. Wards off Stun."
   },
   "90": {
     "name": "Dead Alert Pendant",
-    "description": "A medical pendant gone silent."
+    "description": "A medical pendant gone silent. Quickens the step."
   },
   "91": {
     "name": "Runner's Light Kit",
-    "description": "A trim set of vault gear."
+    "description": "A trim set of vault gear. Blocks Nausea."
   },
   "92": {
     "name": "Wide Brim Guard",
-    "description": "A broad hat that shades the eyes."
+    "description": "A broad hat that shades the eyes. Resists Sacred."
   },
   "93": {
     "name": "Borrowed Crown Sash",
-    "description": "A cheap sash mimicking nobility."
+    "description": "A cheap sash mimicking nobility. Mends a little mana."
   },
   "94": {
     "name": "Frayed Bond Wraps",
-    "description": "Worn hand wraps coming apart."
+    "description": "Worn hand wraps coming apart. Quickens the step."
   },
   "95": {
     "name": "Stopped Pocket Watch",
-    "description": "A small watch that may or may not tick."
+    "description": "A small watch that may or may not tick. Blocks Charm."
   },
   "96": {
     "name": "Vendor's Skin Tonic",
-    "description": "A bottled green-tinting salve."
+    "description": "A bottled green-tinting salve. Blocks Rooted."
   },
   "97": {
     "name": "Crooked Eye Frames",
-    "description": "Bent spectacles with warped lenses."
+    "description": "Bent spectacles with warped lenses. Blocks Paralysis."
   },
   "98": {
     "name": "Salvaged Patchwork Coat",
-    "description": "A coat stitched from dumpster cloth."
+    "description": "A coat stitched from dumpster cloth. Resists Ice."
   },
   "99": {
     "name": "Faded Grey Shirt",
-    "description": "A plain worn cotton tee."
+    "description": "A plain worn cotton tee. Resists Cursed."
   },
   "100": {
     "name": "Dust Filter Scarf",
-    "description": "A wrap that filters road grit."
+    "description": "A wrap that filters road grit. Wards off Poison."
   },
   "101": {
     "name": "Peeling Faux Jacket",
-    "description": "A fake leather jacket, cracking."
+    "description": "A fake leather jacket, cracking. Mends a little health."
   },
   "102": {
     "name": "Logo Padded Vest",
-    "description": "A puffy branded street vest."
+    "description": "A puffy branded street vest. Blocks Bleeding."
   },
   "103": {
     "name": "Reinforced Labor Boots",
-    "description": "Sturdy steel-toe work boots."
+    "description": "Sturdy steel-toe work boots. Quickens the step."
   },
   "104": {
     "name": "Washed Denim Jacket",
-    "description": "A faded blue denim shell."
+    "description": "A faded blue denim shell. Soaks physical damage."
   },
   "105": {
     "name": "Tin Street Circlet",
-    "description": "A flimsy decorative head ring."
+    "description": "A flimsy decorative head ring. Resists Petro."
   },
   "106": {
     "name": "Flashing Sole Sneakers",
-    "description": "Cheap shoes with gimmick lights."
+    "description": "Cheap shoes with gimmick lights. Blocks Paralysis."
   },
   "107": {
     "name": "Bald Executive Cap",
-    "description": "A snug corporate scalp cap."
+    "description": "A snug corporate scalp cap. Mends a little mana."
   },
   "108": {
     "name": "Padded Comfort Cap",
-    "description": "A soft cap with thin lining."
+    "description": "A soft cap with thin lining. Blocks Concussed."
   },
   "109": {
     "name": "Cracked Road Jacket",
-    "description": "A weathered leather riding coat."
+    "description": "A weathered leather riding coat. Soaks physical damage."
   },
   "110": {
     "name": "Quick Dry Towel Wrap",
-    "description": "A fast-drying cloth garment."
+    "description": "A fast-drying cloth garment. Slightly harder to hit."
   },
   "111": {
     "name": "Painted Site Helmet",
-    "description": "A hardhat done up in bright colors."
+    "description": "A hardhat done up in bright colors. Resists Sacred."
   },
   "112": {
     "name": "Worn Hope Belt",
-    "description": "A scuffed leather utility belt."
+    "description": "A scuffed leather utility belt. Blocks Sleep."
   },
   "113": {
     "name": "Patrol Webbing Harness",
-    "description": "A strapped chest harness."
+    "description": "A strapped chest harness. Blocks Infected."
   },
   "114": {
     "name": "Wide Horizon Hat",
-    "description": "A broad-brimmed traveler's hat."
+    "description": "A broad-brimmed traveler's hat. Harder to hit with magic."
   },
   "115": {
     "name": "Field Repair Belt",
-    "description": "A belt hung with small tools."
+    "description": "A belt hung with small tools. Blocks Paralysis."
   },
   "116": {
     "name": "Brow Band Cap",
-    "description": "A cap that wicks away sweat."
+    "description": "A cap that wicks away sweat. Blocks Silence."
   },
   "117": {
     "name": "Plain Work Coveralls",
-    "description": "One-piece labor coveralls."
+    "description": "One-piece labor coveralls. Resists Water."
   },
   "118": {
     "name": "Padded Collar Guard",
-    "description": "A reinforced neck collar."
+    "description": "A reinforced neck collar. Blocks Confusion."
   },
   "119": {
     "name": "Tanned Luck Charm",
-    "description": "A dried rabbit's foot trinket."
+    "description": "A dried rabbit's foot trinket. Resists Wind."
   },
   "120": {
     "name": "Quickstep Trainers",
-    "description": "Light running shoes."
+    "description": "Light running shoes. Blocks Nausea."
   },
   "121": {
     "name": "Mesh Insect Veil",
-    "description": "A netted head veil."
+    "description": "A netted head veil. Resists Sacred."
   },
   "122": {
     "name": "Worn Training Gi",
-    "description": "A faded cotton practice robe."
+    "description": "A faded cotton practice robe. Thickens the plate."
   },
   "123": {
     "name": "Taped Practice Clubs",
-    "description": "Wire-bound sparring clubs."
+    "description": "Wire-bound sparring clubs. Resists Petro."
   },
   "124": {
     "name": "Pull-Tab Maille",
-    "description": "Mail woven from can tabs."
+    "description": "Mail woven from can tabs. Resists Ice."
   },
   "125": {
     "name": "Plain Acolyte Stole",
-    "description": "A simple ritual cloth stole."
+    "description": "A simple ritual cloth stole. Easier to dodge behind."
   },
   "126": {
     "name": "Road Rage Vest",
-    "description": "A padded driving vest."
+    "description": "A padded driving vest. Resists Water."
   },
   "127": {
     "name": "Reflex Trigger Glove",
-    "description": "A snug reaction-training glove."
+    "description": "A snug reaction-training glove. Quickens the step."
   },
   "128": {
     "name": "Worn Road Boots",
-    "description": "Heavy-tread traveling boots."
+    "description": "Heavy-tread traveling boots. Blocks Sleep."
   },
   "129": {
     "name": "Rugged Trail Trousers",
-    "description": "Tough hiking pants."
+    "description": "Tough hiking pants. Blocks Bleeding."
   },
   "130": {
     "name": "Cleated Stomp Boots",
-    "description": "Aggressive-tread mountain boots."
+    "description": "Aggressive-tread mountain boots. Focuses the will."
   },
   "131": {
     "name": "Grip Control Soles",
-    "description": "Shoes with high-friction soles."
+    "description": "Shoes with high-friction soles. Blocks Rooted."
   },
   "132": {
     "name": "Crumple Brace Pads",
-    "description": "Shock-absorbing knee pads."
+    "description": "Shock-absorbing knee pads. Focuses the will."
   },
   "133": {
     "name": "Sealed Storm Shell",
-    "description": "A waterproofed outer shell."
+    "description": "A waterproofed outer shell. Resists Thunder."
   },
   "134": {
     "name": "All-Terrain Stompers",
-    "description": "Rugged all-ground boots."
+    "description": "Rugged all-ground boots. Slightly harder to hit."
   },
   "135": {
     "name": "Knuckle Comm Band",
-    "description": "A glove with a built-in phone."
+    "description": "A glove with a built-in phone. Turns luck over."
   },
   "136": {
     "name": "Route Guard Kit",
-    "description": "A belt of road safety tools."
+    "description": "A belt of road safety tools. Turns luck over."
   },
   "137": {
     "name": "Coarse Peasant Tunic",
-    "description": "A rough homespun tunic."
+    "description": "A rough homespun tunic. Carries more punishment."
   },
   "138": {
     "name": "Surplus Combat Webbing",
-    "description": "A loadout vest of pouches."
+    "description": "A loadout vest of pouches. Blocks Charm."
   },
   "139": {
     "name": "Bolted Sign Stave",
-    "description": "A staff made from road signage."
+    "description": "A staff made from road signage. Carries more punishment."
   },
   "140": {
     "name": "Pre-Worn Denim Coat",
-    "description": "A factory-faded denim shell."
+    "description": "A factory-faded denim shell. Resists Water."
   },
   "141": {
     "name": "Sealed Flint Lighter",
-    "description": "A weatherproof firestarter."
+    "description": "A weatherproof firestarter. Resists Water."
   },
   "142": {
     "name": "Tooth Trophy Vest",
-    "description": "A vest strung with old teeth."
+    "description": "A vest strung with old teeth. Resists Water."
   },
   "143": {
     "name": "Cart Wire Wrap",
-    "description": "A vest bound in scavenged wire."
+    "description": "A vest bound in scavenged wire. Resists Ice."
   },
   "144": {
     "name": "Scout Loadout Vest",
-    "description": "A light recon utility vest."
+    "description": "A light recon utility vest. Blocks Bleeding."
   },
   "145": {
     "name": "Rope Hauler Rig",
-    "description": "A climbing and hauling harness."
+    "description": "A climbing and hauling harness. Mends a little mana."
   },
   "146": {
     "name": "Mock Ceremony Sash",
-    "description": "A gaudy ceremonial sash."
+    "description": "A gaudy ceremonial sash. Sometimes counters."
   },
   "147": {
     "name": "Stubborn Tread Boots",
-    "description": "Hard-wearing spiteful boots."
+    "description": "Hard-wearing spiteful boots. Blocks Nausea."
   },
   "148": {
     "name": "Bolted Scrap Plates",
-    "description": "Strap-on scrap metal plates."
+    "description": "Strap-on scrap metal plates. Steadies the arm."
   },
   "149": {
     "name": "Many-Pocket Overalls",
-    "description": "Coveralls covered in pockets."
+    "description": "Coveralls covered in pockets. Blocks Bleeding."
   },
   "150": {
     "name": "Foil Radiation Hood",
-    "description": "A foil-lined protective hood."
+    "description": "A foil-lined protective hood. Slightly harder to hit."
   },
   "151": {
     "name": "Backwoods Multi-Tool",
-    "description": "A folding wilderness tool."
+    "description": "A folding wilderness tool. Steadies the arm."
   },
   "152": {
     "name": "Roadside Patch Kit",
-    "description": "A grab-bag of repair parts."
+    "description": "A grab-bag of repair parts. Mends a little mana."
   },
   "153": {
     "name": "Tape-Bound Suit",
-    "description": "A suit held together by tape."
+    "description": "A suit held together by tape. Mends a little health."
   },
   "154": {
     "name": "Odds Calculator Band",
-    "description": "A wrist gambling aid."
+    "description": "A wrist gambling aid. Blocks Sleep."
   },
   "155": {
     "name": "Distress Whistle Tag",
-    "description": "A loud emergency whistle."
+    "description": "A loud emergency whistle. Blocks Paralysis."
   },
   "156": {
     "name": "Quickstep Oxfords",
@@ -625,47 +625,47 @@
   },
   "157": {
     "name": "Tight Grip Band",
-    "description": "A grip-strengthening wristband."
+    "description": "A grip-strengthening wristband. Focuses the will."
   },
   "158": {
     "name": "Solar Charge Pack",
-    "description": "A wearable sun battery."
+    "description": "A wearable sun battery. Turns luck over."
   },
   "159": {
     "name": "Liner Skull Cap",
-    "description": "A thin under-helmet cap."
+    "description": "A thin under-helmet cap. Resists Thunder."
   },
   "160": {
     "name": "Heavy Cargo Jeans",
-    "description": "Reinforced cargo denim."
+    "description": "Reinforced cargo denim. Turns luck over."
   },
   "161": {
     "name": "Clip-On Signal Beacon",
-    "description": "A hands-free locator light."
+    "description": "A hands-free locator light. Resists Wind."
   },
   "162": {
     "name": "Field Trauma Pack",
-    "description": "A backcountry medical kit."
+    "description": "A backcountry medical kit. Blocks Paralysis."
   },
   "163": {
     "name": "All-Use Filter Mask",
-    "description": "A general-purpose air filter."
+    "description": "A general-purpose air filter. Wards off Poison."
   },
   "164": {
     "name": "Focus Boost Band",
-    "description": "A wrist focus stimulator."
+    "description": "A wrist focus stimulator. Steadies the arm."
   },
   "165": {
     "name": "Loose Team Jersey",
-    "description": "An oversized casual jersey."
+    "description": "An oversized casual jersey. Blocks Poison."
   },
   "166": {
     "name": "Pocket Map Compass",
-    "description": "A small folding navigator."
+    "description": "A small folding navigator. Blocks Rooted."
   },
   "167": {
     "name": "Archer's Arm Bracer",
-    "description": "A leather forearm guard."
+    "description": "A leather forearm guard. Mends a little mana."
   },
   "168": {
     "name": "Backward Logic Vest",
@@ -673,39 +673,39 @@
   },
   "169": {
     "name": "Floral Bell Trousers",
-    "description": "Wide flared patterned pants."
+    "description": "Wide flared patterned pants. Thickens the plate."
   },
   "170": {
     "name": "Grip Sole Sandals",
-    "description": "All-surface gripping sandals."
+    "description": "All-surface gripping sandals. Carries more punishment."
   },
   "171": {
     "name": "Form Drill Ring",
-    "description": "A finger ring for muscle drills."
+    "description": "A finger ring for muscle drills. Mends a little health."
   },
   "172": {
     "name": "Watcher's Loop",
-    "description": "An awareness-training band."
+    "description": "An awareness-training band. Blocks Paralysis."
   },
   "173": {
     "name": "Studded Leather Vest",
-    "description": "A riveted leather body vest."
+    "description": "A riveted leather body vest. Blocks Poison."
   },
   "174": {
     "name": "Boiled Leather Cuirass",
-    "description": "A hardened leather chestpiece."
+    "description": "A hardened leather chestpiece. Wards off Burned."
   },
   "175": {
     "name": "Quiet Operative Suit",
-    "description": "A dark low-profile bodysuit."
+    "description": "A dark low-profile bodysuit. Wards off Silence."
   },
   "176": {
     "name": "Field Combat Rig",
-    "description": "A combat utility harness."
+    "description": "A combat utility harness. Blocks Nausea."
   },
   "177": {
     "name": "Levy Gambeson",
-    "description": "A quilted cloth war jacket."
+    "description": "A quilted cloth war jacket. Soaks magical damage."
   },
   "178": {
     "name": "Hazard Cleanup Suit",
@@ -713,27 +713,27 @@
   },
   "179": {
     "name": "Tribal Rag Vest",
-    "description": "A vest of knotted rags."
+    "description": "A vest of knotted rags. Resists Cursed."
   },
   "180": {
     "name": "Chained Cargo Pants",
-    "description": "Cargo trousers hung with chains."
+    "description": "Cargo trousers hung with chains. Mends a little health."
   },
   "181": {
     "name": "Padded Sparring Vest",
-    "description": "A light training body pad."
+    "description": "A light training body pad. Carries more punishment."
   },
   "182": {
     "name": "Dead Sensor Helm",
-    "description": "A helmet with defunct sensors."
+    "description": "A helmet with defunct sensors. Blocks Concussed."
   },
   "183": {
     "name": "Formal Service Tunic",
-    "description": "A stiff dress uniform tunic."
+    "description": "A stiff dress uniform tunic. Resists Water."
   },
   "184": {
     "name": "Spore Lining Tunic",
-    "description": "A clammy body suit grown from fungus."
+    "description": "A clammy body suit grown from fungus. Resists Cursed."
   },
   "185": {
     "name": "Bloodshot Sight Patch",
@@ -749,11 +749,11 @@
   },
   "188": {
     "name": "Trailhead Marshal Band",
-    "description": "A worn armband for crew leaders."
+    "description": "A worn armband for crew leaders. Blocks Nausea."
   },
   "189": {
     "name": "Settled Phase Mitts",
-    "description": "Gloves that keep your hands solid."
+    "description": "Gloves that keep your hands solid. Mends a little mana."
   },
   "190": {
     "name": "Squall Loader Vest",
@@ -765,7 +765,7 @@
   },
   "192": {
     "name": "Limited Run Layers",
-    "description": "A drab garment with a flashy label."
+    "description": "A drab garment with a flashy label. Blocks Paralysis."
   },
   "193": {
     "name": "City Sightline Frames",
@@ -773,11 +773,11 @@
   },
   "194": {
     "name": "Humour Dyed Shirt",
-    "description": "A shirt that shifts color with mood."
+    "description": "A shirt that shifts color with mood. Blocks Poison."
   },
   "195": {
     "name": "Long Odds Coverall",
-    "description": "A worker's suit that bends luck."
+    "description": "A worker's suit that bends luck. Carries more punishment."
   },
   "196": {
     "name": "Brittle Bead Strand",
@@ -821,7 +821,7 @@
   },
   "206": {
     "name": "Echo Cell Pack",
-    "description": "A pack that stores faint sounds."
+    "description": "A pack that stores faint sounds. Slightly harder to hit."
   },
   "207": {
     "name": "Verse Silk Shirt",
@@ -877,11 +877,11 @@
   },
   "220": {
     "name": "Wireweaver's Harness",
-    "description": "A rig of cables and signal jacks."
+    "description": "A rig of cables and signal jacks. Mends a little health."
   },
   "221": {
     "name": "Thought Driver Band",
-    "description": "A headband that pushes the mind hard."
+    "description": "A headband that pushes the mind hard. Mends a little mana."
   },
   "222": {
     "name": "Deadeye Lenses",
@@ -1221,7 +1221,7 @@
   },
   "306": {
     "name": "Glyph-Stitched Cap",
-    "description": "A cap printed with unreadable script."
+    "description": "A cap printed with unreadable script. Blocks Silence."
   },
   "307": {
     "name": "Layered Slip Tee",
@@ -1233,7 +1233,7 @@
   },
   "309": {
     "name": "Pocket Dimension Belt",
-    "description": "A belt with a small folded space."
+    "description": "A belt with a small folded space. Steadies the arm."
   },
   "310": {
     "name": "Heatwave Ensemble",
@@ -1305,7 +1305,7 @@
   },
   "327": {
     "name": "Stasis-Locked Garb",
-    "description": "Clothing that never seems to age."
+    "description": "Clothing that never seems to age. Carries more punishment."
   },
   "328": {
     "name": "Reinforced Threat Trousers",
@@ -1317,7 +1317,7 @@
   },
   "330": {
     "name": "Anonymity Cowl",
-    "description": "A deep cowl that hides the face."
+    "description": "A deep cowl that hides the face. Blocks Blind."
   },
   "331": {
     "name": "Riftpoint Compass",
@@ -1349,7 +1349,7 @@
   },
   "338": {
     "name": "Weightless Carryall",
-    "description": "A pack that holds more than it should."
+    "description": "A pack that holds more than it should. Blocks Rooted."
   },
   "339": {
     "name": "Effect-Flip Denim",
@@ -1401,7 +1401,7 @@
   },
   "351": {
     "name": "Manifold Timepiece",
-    "description": "A watch with too many hands."
+    "description": "A watch with too many hands. Blocks Sleep."
   },
   "352": {
     "name": "Knotted Bandana Halter",
@@ -1473,11 +1473,11 @@
   },
   "369": {
     "name": "Mantle of Standing",
-    "description": "A draped cape marking rank."
+    "description": "A draped cape marking rank. Blocks Paralysis."
   },
   "370": {
     "name": "Dojo Practice Gi",
-    "description": "A plain white martial uniform."
+    "description": "A plain white martial uniform. Wards off Burned."
   },
   "371": {
     "name": "Mourning Lace Gloves",
@@ -1493,11 +1493,11 @@
   },
   "374": {
     "name": "Godkiller's Reliquary",
-    "description": "A spear hung with deicide relics."
+    "description": "A spear hung with deicide relics. Softens physical blows."
   },
   "375": {
     "name": "Hollow Carry Belt",
-    "description": "A belt with pocket-sized voids."
+    "description": "A belt with pocket-sized voids. Blocks Rooted."
   },
   "376": {
     "name": "Bone Splinter Skullcap",
@@ -1509,7 +1509,7 @@
   },
   "378": {
     "name": "Envoy's Sashed Coat",
-    "description": "A formal diplomatic body coat."
+    "description": "A formal diplomatic body coat. Blocks Poison."
   },
   "379": {
     "name": "Fractured Light Bomber",
@@ -1541,7 +1541,7 @@
   },
   "386": {
     "name": "Patrician's Array",
-    "description": "Fine aristocratic attire."
+    "description": "Fine aristocratic attire. Wards off Burned."
   },
   "387": {
     "name": "Interval Charm Chain",
@@ -1569,7 +1569,7 @@
   },
   "393": {
     "name": "Greenwood Scout Kit",
-    "description": "A rugged woodland field outfit."
+    "description": "A rugged woodland field outfit. Carries more punishment."
   },
   "394": {
     "name": "Funereal Lace Gown",
@@ -1593,7 +1593,7 @@
   },
   "399": {
     "name": "Pendant of Held Gazes",
-    "description": "A pendant that draws the eye."
+    "description": "A pendant that draws the eye. Blocks Charm."
   },
   "400": {
     "name": "Decal Carnival Hat",
@@ -1625,7 +1625,7 @@
   },
   "407": {
     "name": "Beginner's Fortune Ring",
-    "description": "A small ring said to nudge luck."
+    "description": "A small ring said to nudge luck. Slightly harder to hit."
   },
   "408": {
     "name": "Executive Thronewear",
@@ -1649,7 +1649,7 @@
   },
   "413": {
     "name": "Relicward Bangle",
-    "description": "An old bangle humming faintly."
+    "description": "An old bangle humming faintly. Blocks Paralysis."
   },
   "414": {
     "name": "Fate-Tangle Chip",
@@ -1701,15 +1701,15 @@
   },
   "426": {
     "name": "Warking's Battle Regalia",
-    "description": "Grand martial state attire."
+    "description": "Grand martial state attire. Thickens the plate."
   },
   "427": {
     "name": "Sovereign Diadem",
-    "description": "An ornate ruling crown."
+    "description": "An ornate ruling crown. Blocks Concussed."
   },
   "428": {
     "name": "Hexbane Ensemble",
-    "description": "A curse-warded outfit."
+    "description": "A curse-warded outfit. Resists Water."
   },
   "429": {
     "name": "Discotheque Kicks",
@@ -1717,7 +1717,7 @@
   },
   "430": {
     "name": "Circuit Sigil Ink",
-    "description": "Conductive tattoo ink as gear."
+    "description": "Conductive tattoo ink as gear. Blocks Sleep."
   },
   "431": {
     "name": "Fieldworker's Observer Suit",
@@ -1729,7 +1729,7 @@
   },
   "433": {
     "name": "Tempflux Chronometer",
-    "description": "A watch that bends the hour."
+    "description": "A watch that bends the hour. Focuses the will."
   },
   "434": {
     "name": "Pariah's Cold Jacket",
@@ -1737,27 +1737,27 @@
   },
   "435": {
     "name": "Hive-Mind Vestment",
-    "description": "A garment of shared thought."
+    "description": "A garment of shared thought. Blocks Bleeding."
   },
   "436": {
     "name": "Oddsbender Hat",
-    "description": "A hat that toys with probability."
+    "description": "A hat that toys with probability. Steadies the mind."
   },
   "437": {
     "name": "Aegis of the Firewall",
-    "description": "Warded accessories of pure defense."
+    "description": "Warded accessories of pure defense. Resists Fire."
   },
   "438": {
     "name": "Signet of the Inferno",
-    "description": "A signet ring wreathed in heat."
+    "description": "A signet ring wreathed in heat. Blocks Charm."
   },
   "439": {
     "name": "Helm of the Spirit Tide",
-    "description": "A helm crowned with ghostlight."
+    "description": "A helm crowned with ghostlight. Resists Water."
   },
   "440": {
     "name": "Riftsight Goggles",
-    "description": "Goggles that pierce dimensions."
+    "description": "Goggles that pierce dimensions. Wards off Blind."
   },
   "441": {
     "name": "Crown of the Discord Queen",
@@ -1769,7 +1769,7 @@
   },
   "443": {
     "name": "Otherworld Shard Ring",
-    "description": "A ring set with alien crystal."
+    "description": "A ring set with alien crystal. Mends a little health."
   },
   "444": {
     "name": "Debugger's Stride Boots",
@@ -1781,67 +1781,67 @@
   },
   "456": {
     "name": "Babbling Tome",
-    "description": "A grimoire of garbled spells."
+    "description": "A grimoire of garbled spells. Sometimes counters."
   },
   "457": {
     "name": "Pocket Arcane Kit",
-    "description": "A cheap modern spell satchel."
+    "description": "A cheap modern spell satchel. Slightly harder to hit."
   },
   "458": {
     "name": "Sagging Comfort Robe",
-    "description": "A shapeless oversized robe."
+    "description": "A shapeless oversized robe. Soaks physical damage."
   },
   "459": {
     "name": "Plastic Tiara",
-    "description": "A flimsy toy crown."
+    "description": "A flimsy toy crown. Harder to hit with magic."
   },
   "460": {
     "name": "Quack Charm Bracelet",
-    "description": "A worthless charm bracelet."
+    "description": "A worthless charm bracelet. Focuses the will."
   },
   "461": {
     "name": "Cracked Slab Ward",
-    "description": "A broken-screen warding plate."
+    "description": "A broken-screen warding plate. Turns aside critical hits."
   },
   "462": {
     "name": "Bargain Crystal Charm",
-    "description": "A fake healing crystal."
+    "description": "A fake healing crystal. Focuses the will."
   },
   "463": {
     "name": "Toy Mystic Wand",
-    "description": "A plastic pretend wand."
+    "description": "A plastic pretend wand. Slightly harder to hit."
   },
   "464": {
     "name": "Crumpled Graduation Robe",
-    "description": "A wrinkled ceremonial robe."
+    "description": "A wrinkled ceremonial robe. Resists Fire."
   },
   "465": {
     "name": "Foil Theorist Cap",
-    "description": "A crude foil-lined hood."
+    "description": "A crude foil-lined hood. Blocks Confusion."
   },
   "466": {
     "name": "Smudged Overlay Visor",
-    "description": "A clouded augmented visor."
+    "description": "A clouded augmented visor. Wards off Blind."
   },
   "467": {
     "name": "Discount Wizard Robe",
-    "description": "A cheap clearance-rack robe."
+    "description": "A cheap clearance-rack robe. Carries more punishment."
   },
   "468": {
     "name": "Compiler's Cowl",
-    "description": "A soft hood with worn felt lining."
+    "description": "A soft hood with worn felt lining. Blocks Blind."
   },
   "469": {
     "name": "Apprentice Guild Robe",
-    "description": "Plain grey mage robes, lightly patched."
+    "description": "Plain grey mage robes, lightly patched. Blocks Infected."
   },
   "470": {
     "name": "Sealed Hazard Wrap",
-    "description": "A heavy rubberized containment suit."
+    "description": "A heavy rubberized containment suit. Resists Water."
   },
   "471": {
     "name": "Synapse Headband",
-    "description": "A taut band of conductive thread."
+    "description": "A taut band of conductive thread. Resists Thunder."
   },
   "472": {
     "name": "Dataflow Diadem",
@@ -2009,15 +2009,15 @@
   },
   "513": {
     "name": "Convergence Crown",
-    "description": "A heavy crown of focusing lenses."
+    "description": "A heavy crown of focusing lenses. Mends a little mana."
   },
   "514": {
     "name": "Rune Bomber Jacket",
-    "description": "A worn flight jacket, hand-inked."
+    "description": "A worn flight jacket, hand-inked. Thickens the plate."
   },
   "515": {
     "name": "Technomancer Vestment",
-    "description": "A robe wired with humming threads."
+    "description": "A robe wired with humming threads. Blocks Infected."
   },
   "516": {
     "name": "Mantle of Raw Chaos",
@@ -2025,35 +2025,35 @@
   },
   "517": {
     "name": "Stormloom Mantle",
-    "description": "A coat that smells of lightning."
+    "description": "A coat that smells of lightning. Resists Thunder."
   },
   "518": {
     "name": "Spellweaver's Regalia",
-    "description": "Ornate robes of layered silk."
+    "description": "Ornate robes of layered silk. Blocks Bleeding."
   },
   "519": {
     "name": "High Cleric's Vestments",
-    "description": "Gilded ceremonial white robes."
+    "description": "Gilded ceremonial white robes. Thickens the plate."
   },
   "520": {
     "name": "Zephyr's Embrace",
-    "description": "A robe so light it seems to drift."
+    "description": "A robe so light it seems to drift. Wards off Burned."
   },
   "521": {
     "name": "Inner Eye Beanie",
-    "description": "A soft knit cap, oddly warm."
+    "description": "A soft knit cap, oddly warm. Wards off Charm."
   },
   "522": {
     "name": "Nullstone Pendant",
-    "description": "A dark pendant that swallows light."
+    "description": "A dark pendant that swallows light. Blocks Guard Broken."
   },
   "523": {
     "name": "Sigil of Pure Clarity",
-    "description": "A pale cap marked with one rune."
+    "description": "A pale cap marked with one rune. Mends a little mana."
   },
   "524": {
     "name": "Mindrace Crown",
-    "description": "A crown that thrums against the skull."
+    "description": "A crown that thrums against the skull. Blocks Silence."
   },
   "525": {
     "name": "Wellspring Circlet",
@@ -2061,7 +2061,7 @@
   },
   "526": {
     "name": "Matrixweave Coat",
-    "description": "A coat of impossibly fine lattice."
+    "description": "A coat of impossibly fine lattice. Mends a little health."
   },
   "527": {
     "name": "Wardlight Coat",
@@ -2069,7 +2069,7 @@
   },
   "528": {
     "name": "Voidsupper Hood",
-    "description": "A black hood that drinks the dark."
+    "description": "A black hood that drinks the dark. Resists Cursed."
   },
   "529": {
     "name": "Spell Reliquary Hat",
@@ -2077,7 +2077,7 @@
   },
   "530": {
     "name": "Leysurge Hood",
-    "description": "A hood that hums on the ley lines."
+    "description": "A hood that hums on the ley lines. Blocks Blind."
   },
   "531": {
     "name": "Robes of the Great Beast",
@@ -2085,35 +2085,35 @@
   },
   "532": {
     "name": "Archmagister's Regalia",
-    "description": "Towering robes of deep violet."
+    "description": "Towering robes of deep violet. Wards off Burned."
   },
   "533": {
     "name": "Starwoven Circlet",
-    "description": "A circlet that glints like night sky."
+    "description": "A circlet that glints like night sky. Sharpens the instincts."
   },
   "534": {
     "name": "Endworld Grimoire",
-    "description": "A battered, hand-bound spellbook."
+    "description": "A battered, hand-bound spellbook. Quickens the step."
   },
   "535": {
     "name": "Equation Visor",
-    "description": "A visor that scrolls with faint glyphs."
+    "description": "A visor that scrolls with faint glyphs. Wards off Blind."
   },
   "536": {
     "name": "Stormcaller's Mantle",
-    "description": "A heavy mantle that smells of rain."
+    "description": "A heavy mantle that smells of rain. Resists Thunder."
   },
   "537": {
     "name": "Phasewalker's Coat",
-    "description": "A coat that blurs at the edges."
+    "description": "A coat that blurs at the edges. Carries more punishment."
   },
   "538": {
     "name": "Cortex Amplifier Crown",
-    "description": "A crown wired to the temples."
+    "description": "A crown wired to the temples. Harder to hit with magic."
   },
   "539": {
     "name": "Holomatrix Robes",
-    "description": "Shimmering robes of projected light."
+    "description": "Shimmering robes of projected light. Carries more punishment."
   },
   "540": {
     "name": "Cosmic Archmage Robes",
@@ -2121,7 +2121,7 @@
   },
   "541": {
     "name": "Circuitwoven Robes",
-    "description": "Robes laced with living wire."
+    "description": "Robes laced with living wire. Resists Water."
   },
   "552": {
     "name": "<-- Light Armor -->",
@@ -2129,103 +2129,103 @@
   },
   "553": {
     "name": "Sweatshop Castoff",
-    "description": "A flimsy mass-produced jerkin."
+    "description": "A flimsy mass-produced jerkin. Resists Fire."
   },
   "554": {
     "name": "Knockoff Team Jersey",
-    "description": "A faded jersey with peeling print."
+    "description": "A faded jersey with peeling print. Blocks Infected."
   },
   "555": {
     "name": "Dented Skull Cap",
-    "description": "A cheap steel cap, badly bent."
+    "description": "A cheap steel cap, badly bent. Wards off Charm."
   },
   "556": {
     "name": "Toy Soldier Helm",
-    "description": "A plastic helmet of dubious worth."
+    "description": "A plastic helmet of dubious worth. Steadies the mind."
   },
   "557": {
     "name": "Worksite Salvage Vest",
-    "description": "A grubby hi-vis vest with armor pads."
+    "description": "A grubby hi-vis vest with armor pads. Mends a little health."
   },
   "558": {
     "name": "Rebel's Hide Jacket",
-    "description": "A scuffed leather jacket."
+    "description": "A scuffed leather jacket. Resists Ice."
   },
   "559": {
     "name": "Pulp Paper Armor",
-    "description": "Layered newsprint, surprisingly stiff."
+    "description": "Layered newsprint, surprisingly stiff. Resists Cursed."
   },
   "560": {
     "name": "Flex Sport Suit",
-    "description": "A stretchy padded athletic suit."
+    "description": "A stretchy padded athletic suit. Soaks physical damage."
   },
   "561": {
     "name": "Commuter's Helm",
-    "description": "A scuffed cycling helmet."
+    "description": "A scuffed cycling helmet. Resists Sacred."
   },
   "562": {
     "name": "Stained Hand-Me-Down",
-    "description": "A vest of indeterminate origin."
+    "description": "A vest of indeterminate origin. Soaks physical damage."
   },
   "563": {
     "name": "Grifter's Blazer",
-    "description": "A worn blazer with deep pockets."
+    "description": "A worn blazer with deep pockets. Thickens the plate."
   },
   "564": {
     "name": "Scrap Tin Gauntlets",
-    "description": "Crude gauntlets of hammered cans."
+    "description": "Crude gauntlets of hammered cans. Resists Wind."
   },
   "565": {
     "name": "Tread Plate Vest",
-    "description": "A vest of cut tire rubber."
+    "description": "A vest of cut tire rubber. Thickens the plate."
   },
   "566": {
     "name": "Spiked Colander Helm",
-    "description": "A kitchen strainer turned helmet."
+    "description": "A kitchen strainer turned helmet. Sharpens the instincts."
   },
   "567": {
     "name": "Pavement Kisser Helm",
-    "description": "A blunt, heavy headguard."
+    "description": "A blunt, heavy headguard. Blocks Silence."
   },
   "568": {
     "name": "Oildrum Helm",
-    "description": "A helmet cut from a steel drum."
+    "description": "A helmet cut from a steel drum. Harder to hit with magic."
   },
   "569": {
     "name": "Tread Sole Boots",
-    "description": "Boots soled with thick tire rubber."
+    "description": "Boots soled with thick tire rubber. Mends a little mana."
   },
   "570": {
     "name": "Padded Crash Cowl",
-    "description": "A foam-lined impact helmet."
+    "description": "A foam-lined impact helmet. Harder to hit with magic."
   },
   "571": {
     "name": "Open Sallet",
-    "description": "An open-faced steel sallet."
+    "description": "An open-faced steel sallet. Mends a little mana."
   },
   "572": {
     "name": "Worn Pauldron Set",
-    "description": "A set of rusted plate shoulders."
+    "description": "A set of rusted plate shoulders. Blocks Poison."
   },
   "573": {
     "name": "Pilot Skullcap",
-    "description": "A lightweight alloy skull cap."
+    "description": "A lightweight alloy skull cap. Blocks Concussed."
   },
   "574": {
     "name": "Patrolman Helm",
-    "description": "A dented urban patrol helmet."
+    "description": "A dented urban patrol helmet. Mends a little mana."
   },
   "575": {
     "name": "Flattened Tin Bracers",
-    "description": "Bracers beaten from scrap cans."
+    "description": "Bracers beaten from scrap cans. Blocks Sleep."
   },
   "576": {
     "name": "Carbon Flight Jacket",
-    "description": "A woven carbon bomber jacket."
+    "description": "A woven carbon bomber jacket. Soaks physical damage."
   },
   "577": {
     "name": "Asphalt Captain Cap",
-    "description": "A reinforced road captain's cap."
+    "description": "A reinforced road captain's cap. Resists Sacred."
   },
   "578": {
     "name": "Climber's Harness Set",
@@ -2233,31 +2233,31 @@
   },
   "579": {
     "name": "Stimulant Vest",
-    "description": "A padded combat stimulant vest."
+    "description": "A padded combat stimulant vest. Thickens the plate."
   },
   "580": {
     "name": "Warden's Road Rig",
-    "description": "A layered tactical road vest."
+    "description": "A layered tactical road vest. Thickens the plate."
   },
   "581": {
     "name": "Roadside Breastplate",
-    "description": "A scuffed riveted breastplate."
+    "description": "A scuffed riveted breastplate. Wards off Burned."
   },
   "582": {
     "name": "Footman's Kettle Hat",
-    "description": "A wide-brimmed infantry kettle hat."
+    "description": "A wide-brimmed infantry kettle hat. Blocks Confusion."
   },
   "583": {
     "name": "Ascent Climbing Helm",
-    "description": "A vented climbing helmet."
+    "description": "A vented climbing helmet. Blocks Confusion."
   },
   "584": {
     "name": "Buoyant Work Vest",
-    "description": "A padded flotation work vest."
+    "description": "A padded flotation work vest. Resists Water."
   },
   "585": {
     "name": "Beacon Safety Helm",
-    "description": "A high-visibility safety helmet."
+    "description": "A high-visibility safety helmet. Steadies the mind."
   },
   "586": {
     "name": "Parkour Trainers",
@@ -2265,55 +2265,55 @@
   },
   "587": {
     "name": "Two-Tone Bucket Hat",
-    "description": "A reinforced cloth bucket hat."
+    "description": "A reinforced cloth bucket hat. Harder to hit with magic."
   },
   "588": {
     "name": "Rain Shedding Coat",
-    "description": "A water-repellent layered coat."
+    "description": "A water-repellent layered coat. Resists Water."
   },
   "589": {
     "name": "Hybrid Approach Shoes",
-    "description": "Stiffened trail and climbing shoes."
+    "description": "Stiffened trail and climbing shoes. Slightly harder to hit."
   },
   "590": {
     "name": "Plated Maille Shirt",
-    "description": "Chainmail backed with steel plates."
+    "description": "Chainmail backed with steel plates. Resists Ice."
   },
   "591": {
     "name": "Lamp Mining Helm",
-    "description": "A helmet with a mounted lamp."
+    "description": "A helmet with a mounted lamp. Steadies the mind."
   },
   "592": {
     "name": "Trail Sprint Shoes",
-    "description": "Cushioned lightweight trail shoes."
+    "description": "Cushioned lightweight trail shoes. Mends a little health."
   },
   "593": {
     "name": "Bronze Hoplite Cuirass",
-    "description": "A muscled bronze cuirass."
+    "description": "A muscled bronze cuirass. Resists Cursed."
   },
   "594": {
     "name": "Segmented Legion Plate",
-    "description": "Banded segmented torso armor."
+    "description": "Banded segmented torso armor. Resists Ice."
   },
   "595": {
     "name": "Polar Survey Shell",
-    "description": "An insulated expedition shell."
+    "description": "An insulated expedition shell. Resists Cursed."
   },
   "596": {
     "name": "Quick Chain Vest",
-    "description": "A light, flexible chain vest."
+    "description": "A light, flexible chain vest. Mends a little health."
   },
   "597": {
     "name": "Reactive Storm Coat",
-    "description": "A stiffened reactive coat."
+    "description": "A stiffened reactive coat. Resists Thunder."
   },
   "598": {
     "name": "Operator Polymer Vest",
-    "description": "A molded polymer combat vest."
+    "description": "A molded polymer combat vest. Soaks magical damage."
   },
   "599": {
     "name": "Stalker's Climb Kit",
-    "description": "A vertical hunting harness suit."
+    "description": "A vertical hunting harness suit. Resists Cursed."
   },
   "600": {
     "name": "Jug Terror Mask",
@@ -2325,7 +2325,7 @@
   },
   "602": {
     "name": "Spelunker Coveralls",
-    "description": "Reinforced cave coveralls."
+    "description": "Reinforced cave coveralls. Resists Cursed."
   },
   "603": {
     "name": "Responder's Rig",
@@ -2373,11 +2373,11 @@
   },
   "614": {
     "name": "Marksman's Leathers",
-    "description": "Supple archer's leather armor."
+    "description": "Supple archer's leather armor. Blocks Poison."
   },
   "615": {
     "name": "Sprint Trail Kit",
-    "description": "A lightweight running armor kit."
+    "description": "A lightweight running armor kit. Soaks magical damage."
   },
   "616": {
     "name": "Glitch Distortion Vest",
@@ -2397,7 +2397,7 @@
   },
   "620": {
     "name": "Nightfall Combat Helm",
-    "description": "A matte night-operations helmet."
+    "description": "A matte night-operations helmet. Blocks Concussed."
   },
   "621": {
     "name": "Full Combat Leathers",
@@ -2405,7 +2405,7 @@
   },
   "622": {
     "name": "Naguka War Skin",
-    "description": "A patterned tribal war armor."
+    "description": "A patterned tribal war armor. Wards off Burned."
   },
   "623": {
     "name": "Wraith Drape",
@@ -2421,7 +2421,7 @@
   },
   "626": {
     "name": "Consecrated Chainmail",
-    "description": "Blessed silvered chainmail."
+    "description": "Blessed silvered chainmail. Soaks magical damage."
   },
   "627": {
     "name": "Slope Crash Pod",
@@ -2429,7 +2429,7 @@
   },
   "628": {
     "name": "Guildshadow Leathers",
-    "description": "Dark, supple shadow leathers."
+    "description": "Dark, supple shadow leathers. Soaks magical damage."
   },
   "629": {
     "name": "Thermal Sight Visor",
@@ -2445,7 +2445,7 @@
   },
   "632": {
     "name": "Wyrmspirit Vest",
-    "description": "A scaled spirit-bound vest."
+    "description": "A scaled spirit-bound vest. Mends a little health."
   },
   "633": {
     "name": "Deepwater Bastion",
@@ -2457,7 +2457,7 @@
   },
   "635": {
     "name": "Tempest Tyrant Helm",
-    "description": "A crowned storm helmet."
+    "description": "A crowned storm helmet. Resists Sacred."
   },
   "636": {
     "name": "Glidewing War Suit",
@@ -2469,15 +2469,15 @@
   },
   "638": {
     "name": "Living Flame Plate",
-    "description": "Burning ember-forged plate."
+    "description": "Burning ember-forged plate. Resists Fire."
   },
   "639": {
     "name": "Spellcircuit Plate",
-    "description": "Rune-etched conductive plate."
+    "description": "Rune-etched conductive plate. Thickens the plate."
   },
   "640": {
     "name": "Lunaria, the Moonweave",
-    "description": "Shimmering elven moonweave armor."
+    "description": "Shimmering elven moonweave armor. Resists Fire."
   },
   "651": {
     "name": "<-- Heavy Armor -->",
@@ -2485,123 +2485,123 @@
   },
   "652": {
     "name": "Costume Authority Suit",
-    "description": "A flimsy costume breastplate."
+    "description": "A flimsy costume breastplate. Blocks Poison."
   },
   "653": {
     "name": "Pilgrim's Plate",
-    "description": "A plain devotional plate harness."
+    "description": "A plain devotional plate harness. Soaks magical damage."
   },
   "654": {
     "name": "Tape and Hope Armor",
-    "description": "Scrap plate held by duct tape."
+    "description": "Scrap plate held by duct tape. Resists Fire."
   },
   "655": {
     "name": "Cardboard Cuirass",
-    "description": "A painted cardboard breastplate."
+    "description": "A painted cardboard breastplate. Soaks physical damage."
   },
   "656": {
     "name": "Site Standard Helm",
-    "description": "A standard hard hat."
+    "description": "A standard hard hat. Resists Sacred."
   },
   "657": {
     "name": "Concussion Pot",
-    "description": "A dented old combat helm."
+    "description": "A dented old combat helm. Resists Sacred."
   },
   "658": {
     "name": "Guard's Dome Helm",
-    "description": "A rounded steel guard helmet."
+    "description": "A rounded steel guard helmet. Sharpens the instincts."
   },
   "659": {
     "name": "Crowd Control Helm",
-    "description": "A visored riot helmet."
+    "description": "A visored riot helmet. Blocks Concussed."
   },
   "660": {
     "name": "Hired Guard Plate",
-    "description": "A basic security breastplate."
+    "description": "A basic security breastplate. Soaks magical damage."
   },
   "661": {
     "name": "Crusher Riot Vest",
-    "description": "A heavy padded riot vest."
+    "description": "A heavy padded riot vest. Wards off Burned."
   },
   "662": {
     "name": "Full Riot Carapace",
-    "description": "A complete riot armor set."
+    "description": "A complete riot armor set. Blocks Bleeding."
   },
   "663": {
     "name": "Composite War Shell",
-    "description": "A layered composite cuirass."
+    "description": "A layered composite cuirass. Mends a little health."
   },
   "664": {
     "name": "Frontline Sentinel Helm",
-    "description": "A heavy frontline helmet."
+    "description": "A heavy frontline helmet. Resists Thunder."
   },
   "665": {
     "name": "Operator Command Helm",
-    "description": "A reinforced command helmet."
+    "description": "A reinforced command helmet. Harder to hit with magic."
   },
   "666": {
     "name": "Ceramic Trauma Rig",
-    "description": "A ceramic plate carrier."
+    "description": "A ceramic plate carrier. Resists Cursed."
   },
   "667": {
     "name": "Knight's Bascinet",
-    "description": "A pointed steel bascinet."
+    "description": "A pointed steel bascinet. Resists Thunder."
   },
   "668": {
     "name": "Trauma Plate Carrier",
-    "description": "A plated trauma vest."
+    "description": "A plated trauma vest. Blocks Poison."
   },
   "669": {
     "name": "Ice Climb Crampons",
-    "description": "Spiked heavy ice crampons."
+    "description": "Spiked heavy ice crampons. Resists Ice."
   },
   "670": {
     "name": "Frostwaste Boots",
-    "description": "Heavy insulated war boots."
+    "description": "Heavy insulated war boots. Resists Ice."
   },
   "671": {
     "name": "Fortress Protocol Suit",
-    "description": "A heavy bunker defense suit."
+    "description": "A heavy bunker defense suit. Soaks physical damage."
   },
   "672": {
     "name": "Cragwalker Sabatons",
-    "description": "Heavy iron boots for mountain trails."
+    "description": "Heavy iron boots for mountain trails. Mends a little health."
   },
   "673": {
     "name": "Bastion Greathelm",
-    "description": "A thick steel war helm."
+    "description": "A thick steel war helm. Wards off Charm."
   },
   "674": {
     "name": "Riveted Ring Coat",
-    "description": "A coat of interlinked steel rings."
+    "description": "A coat of interlinked steel rings. Soaks physical damage."
   },
   "675": {
     "name": "Glacier Toothed Boots",
-    "description": "Cleated boots with iron spikes."
+    "description": "Cleated boots with iron spikes. Mends a little health."
   },
   "676": {
     "name": "Hardweather Cuirass",
-    "description": "A sealed plate suit for harsh climates."
+    "description": "A sealed plate suit for harsh climates. Wards off Burned."
   },
   "677": {
     "name": "Pointed Half Plate",
-    "description": "Gothic-style steel half-plate."
+    "description": "Gothic-style steel half-plate. Resists Cursed."
   },
   "678": {
     "name": "Counterweight Helm",
-    "description": "A balanced helm with neck guard."
+    "description": "A balanced helm with neck guard. Mends a little mana."
   },
   "679": {
     "name": "Slope Rescue Harness",
-    "description": "A reinforced rescue rig with hooks."
+    "description": "A reinforced rescue rig with hooks. Blocks Nausea."
   },
   "680": {
     "name": "Scorchproof Suit",
-    "description": "A heat-sealed firefighting plate."
+    "description": "A heat-sealed firefighting plate. Blocks Bleeding."
   },
   "681": {
     "name": "Pilgrim's Full Plate",
-    "description": "A complete suit of crusader plate."
+    "description": "A complete suit of crusader plate. Soaks magical damage."
   },
   "682": {
     "name": "Backdraft Carapace",
@@ -2625,7 +2625,7 @@
   },
   "687": {
     "name": "Vital Sustain Plate",
-    "description": "An armored suit with life support."
+    "description": "An armored suit with life support. Wards off Burned."
   },
   "688": {
     "name": "Deep Pressure Shell",
@@ -2633,11 +2633,11 @@
   },
   "689": {
     "name": "Concussion Frame",
-    "description": "A shock-absorbing plate harness."
+    "description": "A shock-absorbing plate harness. Mends a little health."
   },
   "690": {
     "name": "Urban Colossus Rig",
-    "description": "A bulky street combat frame."
+    "description": "A bulky street combat frame. Soaks magical damage."
   },
   "691": {
     "name": "Avalanche Probe Rig",
@@ -2653,11 +2653,11 @@
   },
   "694": {
     "name": "Cortex Saddle Helm",
-    "description": "A neural-linked combat helm."
+    "description": "A neural-linked combat helm. Blocks Blind."
   },
   "695": {
     "name": "Goldseam Plate",
-    "description": "Steel plate trimmed with gold."
+    "description": "Steel plate trimmed with gold. Soaks physical damage."
   },
   "696": {
     "name": "Vacuum Comm Helm",
@@ -2669,7 +2669,7 @@
   },
   "698": {
     "name": "Overlay Battle Helm",
-    "description": "A helm with a glowing visor display."
+    "description": "A helm with a glowing visor display. Sharpens the instincts."
   },
   "699": {
     "name": "Landslide Shell",
@@ -2677,7 +2677,7 @@
   },
   "700": {
     "name": "Wargod's Helm",
-    "description": "A grim war-deity ceremonial helm."
+    "description": "A grim war-deity ceremonial helm. Resists Thunder."
   },
   "701": {
     "name": "Voidwalk Life Suit",
@@ -2685,11 +2685,11 @@
   },
   "702": {
     "name": "Iron Diver Suit",
-    "description": "A mechanized deep-dive armor suit."
+    "description": "A mechanized deep-dive armor suit. Resists Ice."
   },
   "703": {
     "name": "Consecrated Plate",
-    "description": "Holy blessed battle plate."
+    "description": "Holy blessed battle plate. Mends a little health."
   },
   "704": {
     "name": "Wyrmhide Aegis",
@@ -2701,103 +2701,103 @@
   },
   "716": {
     "name": "Greasy Pot Lid",
-    "description": "A dented kitchen lid held as a shield."
+    "description": "A dented kitchen lid held as a shield. Resists Petro."
   },
   "717": {
     "name": "Bone Ribbed Umbrella",
-    "description": "A skeletal umbrella, oddly sturdy."
+    "description": "A skeletal umbrella, oddly sturdy. Resists Cursed."
   },
   "718": {
     "name": "Toy Chest Lid",
-    "description": "A child's toy box lid, scuffed."
+    "description": "A child's toy box lid, scuffed. Easier to dodge behind."
   },
   "719": {
     "name": "Mystery Prize Crate",
-    "description": "A sealed box held as cover."
+    "description": "A sealed box held as cover. Turns aside critical hits."
   },
   "720": {
     "name": "Tight Quarters Plank",
-    "description": "A short barrier board for alleys."
+    "description": "A short barrier board for alleys. Blocks Grappled."
   },
   "721": {
     "name": "Backstreet Guard",
-    "description": "A scrap-metal alley shield."
+    "description": "A scrap-metal alley shield. Softens physical blows."
   },
   "722": {
     "name": "Light Plank Bulwark",
-    "description": "A lightweight wooden cover board."
+    "description": "A lightweight wooden cover board. Turns aside critical hits."
   },
   "723": {
     "name": "Even Round Shield",
-    "description": "A plain balanced round shield."
+    "description": "A plain balanced round shield. Blocks Grappled."
   },
   "724": {
     "name": "Heatproof Wrap",
-    "description": "A reflective thermal sheet."
+    "description": "A reflective thermal sheet. Resists Wind."
   },
   "725": {
     "name": "Kinetic Spreader",
-    "description": "A pad that scatters impact force."
+    "description": "A pad that scatters impact force. Blocks Unbalanced."
   },
   "726": {
     "name": "Static Ward Plate",
-    "description": "A grounded anti-shock shield."
+    "description": "A grounded anti-shock shield. Resists Thunder."
   },
   "727": {
     "name": "Studded Bin Lid",
-    "description": "A trash lid spiked with nails."
+    "description": "A trash lid spiked with nails. Blocks Unbalanced."
   },
   "728": {
     "name": "Hubcap Buckler",
-    "description": "A polished hubcap with a strap."
+    "description": "A polished hubcap with a strap. Softens physical blows."
   },
   "729": {
     "name": "Riposte Guard",
-    "description": "A shield built for counterblows."
+    "description": "A shield built for counterblows. Resists Physical."
   },
   "730": {
     "name": "Daytrip Pack",
-    "description": "A light gear pack for short runs."
+    "description": "A light gear pack for short runs. Mends a little health."
   },
   "731": {
     "name": "Bailout Cocoon",
-    "description": "An emergency wrap-up survival shell."
+    "description": "An emergency wrap-up survival shell. Mends a little health."
   },
   "732": {
     "name": "Glass Cone Bludgeon",
-    "description": "A heavy traffic-cone cudgel."
+    "description": "A heavy traffic-cone cudgel. Blocks Guard Broken."
   },
   "733": {
     "name": "Oathbreaker Club",
-    "description": "A blunt, much-used cudgel."
+    "description": "A blunt, much-used cudgel. Stiffens the guard."
   },
   "734": {
     "name": "Pizza Pan Guard",
-    "description": "A round steel pan used as cover."
+    "description": "A round steel pan used as cover. Sometimes counters."
   },
   "735": {
     "name": "Drifter's Pack",
-    "description": "A roomy urban traveling pack."
+    "description": "A roomy urban traveling pack. Mends a little mana."
   },
   "736": {
     "name": "Climb Safety Rig",
-    "description": "A reinforced fall-arrest harness."
+    "description": "A reinforced fall-arrest harness. Resists Physical."
   },
   "737": {
     "name": "Rebar Hatchets",
-    "description": "Twin axes forged from rebar."
+    "description": "Twin axes forged from rebar. Sometimes counters."
   },
   "738": {
     "name": "Fencer's Buckler",
-    "description": "A small quick-handling buckler."
+    "description": "A small quick-handling buckler. Easier to dodge behind."
   },
   "739": {
     "name": "Wardforce Bracer",
-    "description": "A bracer woven with faint wards."
+    "description": "A bracer woven with faint wards. Carries more punishment."
   },
   "740": {
     "name": "Voltguard Aegis",
-    "description": "An insulated anti-shock shield."
+    "description": "An insulated anti-shock shield. Resists Thunder."
   },
   "741": {
     "name": "Lashing Defender",
@@ -2805,11 +2805,11 @@
   },
   "742": {
     "name": "Dimensional Anchor",
-    "description": "A heavy charm that fixes its bearer."
+    "description": "A heavy charm that fixes its bearer. Softens physical blows."
   },
   "743": {
     "name": "Grounding Aegis",
-    "description": "A shield that roots the wielder."
+    "description": "A shield that roots the wielder. Wards off Stun."
   },
   "744": {
     "name": "Threshing Baton",
@@ -2817,11 +2817,11 @@
   },
   "745": {
     "name": "Misfortune Mirror",
-    "description": "A field that bends bad luck."
+    "description": "A field that bends bad luck. Resists Physical."
   },
   "746": {
     "name": "Sentinel Spirit Aegis",
-    "description": "A shield bound to a guardian spirit."
+    "description": "A shield bound to a guardian spirit. Resists Physical."
   },
   "747": {
     "name": "Pure Vein Aegis",
@@ -2829,7 +2829,7 @@
   },
   "748": {
     "name": "The Living Codex",
-    "description": "A floating grimoire that shields itself."
+    "description": "A floating grimoire that shields itself. Blocks Unbalanced."
   },
   "759": {
     "name": "<-- Shield -->",
@@ -2837,59 +2837,59 @@
   },
   "760": {
     "name": "Plastic Play Shield",
-    "description": "A toy shield of bright plastic."
+    "description": "A toy shield of bright plastic. Easier to dodge behind."
   },
   "761": {
     "name": "Costume Prop Shield",
-    "description": "A flimsy decorative prop shield."
+    "description": "A flimsy decorative prop shield. Blocks Grappled."
   },
   "762": {
     "name": "Patrol Standard Shield",
-    "description": "A basic guard-issue shield."
+    "description": "A basic guard-issue shield. Blocks Grappled."
   },
   "763": {
     "name": "Lot Guard Shield",
-    "description": "A scuffed sheet-metal shield."
+    "description": "A scuffed sheet-metal shield. Easier to dodge behind."
   },
   "764": {
     "name": "Clearview Barrier",
-    "description": "A transparent riot shield."
+    "description": "A transparent riot shield. Sometimes counters."
   },
   "765": {
     "name": "Slit Vision Shield",
-    "description": "A ballistic shield with a view slot."
+    "description": "A ballistic shield with a view slot. Blocks Unbalanced."
   },
   "766": {
     "name": "Crowd Press Barrier",
-    "description": "A wide shield for holding crowds."
+    "description": "A wide shield for holding crowds. Stiffens the guard."
   },
   "767": {
     "name": "Shifting Bastion",
-    "description": "An adjustable adaptive shield."
+    "description": "An adjustable adaptive shield. Carries more punishment."
   },
   "768": {
     "name": "Heater War Shield",
-    "description": "A classic heater-style war shield."
+    "description": "A classic heater-style war shield. Resists Physical."
   },
   "769": {
     "name": "Phantom Step Aegis",
-    "description": "A shield that flickers when struck."
+    "description": "A shield that flickers when struck. Blocks Grappled."
   },
   "770": {
     "name": "Stronghold Tower Shield",
-    "description": "A tall heavy tower shield."
+    "description": "A tall heavy tower shield. Stiffens the guard."
   },
   "771": {
     "name": "Legionary Tower Shield",
-    "description": "A wide interlocking war shield."
+    "description": "A wide interlocking war shield. Blocks Guard Broken."
   },
   "772": {
     "name": "Convoy Bulwark",
-    "description": "A rugged long-haul tower shield."
+    "description": "A rugged long-haul tower shield. Blocks Grappled."
   },
   "773": {
     "name": "Holy Sigil Shield",
-    "description": "A shield marked with a sacred sign."
+    "description": "A shield marked with a sacred sign. Resists Sacred."
   },
   "774": {
     "name": "Phasing Shield",
@@ -2901,11 +2901,11 @@
   },
   "776": {
     "name": "Cortical Ward Shield",
-    "description": "A shield linked to the wielder's mind."
+    "description": "A shield linked to the wielder's mind. Resists Physical."
   },
   "777": {
     "name": "Manaforge Barrier",
-    "description": "A shield humming with bound mana."
+    "description": "A shield humming with bound mana. Blocks Unbalanced."
   },
   "778": {
     "name": "Sound System Shield",
@@ -2917,11 +2917,11 @@
   },
   "780": {
     "name": "Elder Aegis",
-    "description": "An ancient and storied great shield."
+    "description": "An ancient and storied great shield. Stiffens the guard."
   },
   "781": {
     "name": "The Warden Codex",
-    "description": "A living grimoire that guards its keeper."
+    "description": "A living grimoire that guards its keeper. Easier to dodge behind."
   },
   "782": {
     "name": "Cinderglass Ward",
@@ -3289,7 +3289,7 @@
   },
   "873": {
     "name": "Prosthetist's Harness",
-    "description": "A harness studded with sockets."
+    "description": "A harness studded with sockets. Wards off Burned."
   },
   "874": {
     "name": "Bone Char Cuirass",

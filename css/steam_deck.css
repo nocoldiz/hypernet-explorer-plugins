@@ -4710,9 +4710,6 @@
         line-height: 1.25;
     }
 
-    .back-button .pad-badge {
-        margin-right: 4px;
-    }
 
     /* The height PadUI's placement assumes, said out loud so a bigger caption
        cannot push the chip past the foot of the pane it marks. */

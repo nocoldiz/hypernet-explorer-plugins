@@ -93,6 +93,7 @@
     "skill": "Skill",
     "skills": "Skills",
     "basic": "Basic",
+    "actions": "Actions",
     "aim": "Aim",
     "aimAt": "Aim: {part}",
     "wrestle": "Wrestle",
@@ -492,6 +493,72 @@
       "who seeps upward"
     ]
   },
+  "rarity": {
+    "desc": "{build} {habit} {rumour}",
+    "build": [
+      "Something the world made once and did not make again.",
+      "A body assembled out of parts no single species owns.",
+      "It is the wrong size for everything around it, and always has been.",
+      "Nothing in the book accounts for it, and the book has been checked.",
+      "It reads as an ordinary animal until you have watched it for a while.",
+      "A shape that looks drawn from a description rather than from life.",
+      "It carries the proportions of three creatures and the manners of none.",
+      "Whatever it is, there is exactly one of it."
+    ],
+    "habit": [
+      "It keeps to ground nobody crosses twice.",
+      "It moves at the hour the maps are not being drawn.",
+      "It has been walking the same line across the continent for years.",
+      "It goes where it is going and does not stop to be looked at.",
+      "It is never found where it was last reported.",
+      "It walks in the open and is somehow never in anybody's way.",
+      "It grazes, hunts or waits, and no two witnesses agree which.",
+      "It keeps a distance that never changes, whatever the distance was."
+    ],
+    "rumour": [
+      "Three people have written it down and no two accounts agree.",
+      "Every sighting is somebody's only sighting.",
+      "The last person to see one stopped travelling afterwards.",
+      "It is in one field guide, in the margin, in pencil.",
+      "There is a reward posted for a photograph and nobody has claimed it.",
+      "The village that named it has since named it something else.",
+      "It has a local name in four languages and a proper one in none.",
+      "Whoever meets it is the last person who will."
+    ]
+  },
+  "alien": {
+    "desc": "{biology} {behaviour} {world}",
+    "biology": [
+      "Its chemistry is not Earth's and does not pretend to be.",
+      "It is symmetrical along an axis nothing here is symmetrical along.",
+      "What it uses for blood runs at a temperature nothing here survives.",
+      "It breathes something, and the something is not air.",
+      "Its body repeats one organ until the repetition is the animal.",
+      "It has sense organs facing directions that ought not to matter.",
+      "Nothing about it is warm, and nothing about it is slow.",
+      "It grew into whatever shape its gravity would allow."
+    ],
+    "behaviour": [
+      "It answers movement rather than sound.",
+      "It hunts on a schedule keyed to a day nobody here is living.",
+      "It has no reaction to being looked at, which is its own kind of answer.",
+      "It treats a landing party as weather.",
+      "It is territorial about ground identical to all the other ground.",
+      "It swarms, then does not, and the change has no visible cause.",
+      "It travels in a formation that holds to the centimetre.",
+      "It is waiting for something that has not happened yet."
+    ],
+    "world": [
+      "It was catalogued on the first landing that survived one.",
+      "Its world is listed as habitable, which is a clerical opinion.",
+      "It is the only thing that moves for a hundred kilometres.",
+      "The biosignature promised something like this and understated it.",
+      "It belongs to a world that has never had a visitor twice.",
+      "Nothing else on its planet shares a single feature with it.",
+      "The survey that named it was cut short.",
+      "It is, as far as anybody can prove, native."
+    ]
+  },
   "weapons": {
     "pair": "{actor} takes up {first} and {second}."
   },
@@ -637,6 +704,7 @@
       ],
       "page": "{actor} tears the page loose and reads on without looking up.",
       "incant": "{actor} reads it out, flat and exact: \"{lore}\"",
+      "incantBox": "{actor}, reading: \"{lore}\"",
       "incantPlain": "{actor} reads {skill} out of the book, word for word."
     },
     "kindDesc": {

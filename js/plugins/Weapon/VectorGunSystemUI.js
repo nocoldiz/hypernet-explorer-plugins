@@ -90,7 +90,7 @@
     mana: 245,          // Blue Orb: the round that is thought
     psi: 244,           // Green Orb: the round that is aimed by the mind
     recoil: 425,        // Skill Card: Impact
-    spellblaster: 420,  // Skill Card: Magic
+    solomonIncantation: 420,  // Skill Card: Magic
     card: 129,          // Divine Shield: the ward it prints
     wide: 427,          // Skill Card: Shot
     burst: 417,         // Skill Card: Strike
@@ -329,9 +329,9 @@
     }
 
     /**
-     * Folds the piece on the bench into `form` and raises it again, exactly as
-     * it does in a battler's hand (VectorGun.playSwitchOn). Nothing is fitted
-     * by it: it is the screen looking at the other half of the same weapon.
+     * Folds the piece on the bench shut and unfolds it as `form`, exactly as it
+     * does in a battler's hand (VectorGun.playSwitchOn). Nothing is fitted by
+     * it: it is the screen looking at the other half of the same weapon.
      */
     morphStand(form) {
       if (this._switching || !this._el || this._stand === form) return;
@@ -349,8 +349,8 @@
         // The cursor may have walked off this shape while it was folding: the
         // request that was refused mid-morph is served now.
         if (this.standTarget() !== this._stand) { this._syncStand(); return; }
-        // The new shape is measured only once it has finished rising: while its
-        // parts are still flying in the bounds are the whole flight.
+        // The new shape is measured only once it has finished unfolding: while
+        // its panels are still swinging open the bounds are the whole swing.
         setTimeout(() => { if (this._el) this._fitStand(280); }, rise + 60);
       }, fold);
     }

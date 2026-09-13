@@ -31,11 +31,13 @@
   "field": {
     "region": "Regione",
     "faction": "Fedeltà",
+    "enemyLevel": "Livello nemici",
     "controller": "Controllata da",
     "climate": "Clima durante l'anno",
     "heldIn": "Controllata nel {year}",
     "changedHands": "Passaggi di mano"
   },
+  "enemyLevelValue": "Liv. {median} (fascia {min}-{max})",
   "climate": {
     "dayTemp": "Giorno",
     "nightTemp": "Notte",

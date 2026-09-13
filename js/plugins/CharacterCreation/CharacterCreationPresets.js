@@ -67,6 +67,7 @@
  * - window.CharacterPresets.isEmPlaythrough()
  * - window.CharacterPresets.emSheet(actor)
  * - window.CharacterPresets.emRidingSheet(actor, boatSubType)
+ * - window.CharacterPresets.emDiveSheets(actor)
  * - window.CharacterPresets.isBeastCrew()
  * - window.CharacterPresets.emLabel(key, fallback)
  * - window.CharacterPresets.camperName(fallback)
@@ -204,6 +205,9 @@
         { id: 1406, amount: 1 }, // Arcanism Grimoire
         { id: 1405, amount: 1 }, // Astral Magic Grimoire
         { id: 1832, amount: 1 }, // The Book of the Law
+        // The suit she dives in. She has her own sheets for it
+        // (EM_SHEETS.diveStill / diveMoving), so she starts able to go under.
+        { id: 141, amount: 1 },  // Diving suit
       ],
       weapons: [{ id: 525, amount: 1 }], // Vector gun
       // A witch who buys her robes off a market stall and a shooting glove for
@@ -1710,15 +1714,21 @@
   //   eva    a world with no atmosphere, where the suit has to be sealed
   //   bike   riding the bike
   //   broom  flying the broom
+  //   diveStill / diveMoving
+  //          under the water in the diving suit, hanging still and swimming:
+  //          her own suit rather than the party's shared one
   //
   // Nothing outside this table may name one of these files: emSheet answers
-  // for the body that walks, emRidingSheet for the one that rides.
+  // for the body that walks, emRidingSheet for the one that rides and
+  // emDiveSheets for the one that dives.
   const EM_SHEETS = {
     base: { name: "Em/!$EM", index: 0 },         // i18n-ignore  sprite asset path
     space: { name: "Em/!$EMSpace", index: 0 },   // i18n-ignore  sprite asset path
     eva: { name: "Em/!$EmEVA", index: 0 },       // i18n-ignore  sprite asset path
     bike: { name: "Em/!$EM_Bike", index: 0 },    // i18n-ignore  sprite asset path
-    broom: { name: "Em/!$EM_Scopa", index: 0 }   // i18n-ignore  sprite asset path
+    broom: { name: "Em/!$EM_Scopa", index: 0 },  // i18n-ignore  sprite asset path
+    diveStill: { name: "Em/!$EM_SwimStill", index: 0 },   // i18n-ignore  sprite asset path
+    diveMoving: { name: "Em/!$EM_SwimMoving", index: 0 }  // i18n-ignore  sprite asset path
   };
 
   /**
@@ -1769,6 +1779,19 @@
   function emRidingSheet(actor, key) {
     if (!isEmActor(actor)) return null;
     return (key === "bike" || key === "broom") ? EM_SHEETS[key] : null;
+  }
+
+  /**
+   * The pair of sheets Em dives in, or null for anybody who is not Em. The
+   * diver wears the shared suit (window.DivingSprite) unless a sheet of their
+   * own is answered for here, and Em has one for hanging still in the water
+   * and one for swimming through it, the same two states the shared suit has.
+   * @param {object} actor - The diver
+   * @returns {?{still: string, moving: string}} Sheet names, or null
+   */
+  function emDiveSheets(actor) {
+    if (!isEmActor(actor)) return null;
+    return { still: EM_SHEETS.diveStill.name, moving: EM_SHEETS.diveMoving.name };
   }
 
   // The two doors the map, the followers and the menus read a body's sheet
@@ -3267,6 +3290,7 @@
     isEmActor,
     emSheet,
     emRidingSheet,
+    emDiveSheets,
     isStoryMode,
     isStoryModeEm,
     storyModeEmLocks,

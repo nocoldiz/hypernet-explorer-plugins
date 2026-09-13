@@ -33261,49 +33261,6 @@
     "name_int": "furniture.dark_bushy_tree.name",
     "tileGroupId": "broad_green_tree_group"
   },
-  "dark_canopy_tree": {
-    "name": "Dark Canopy Tree",
-    "category": "Trees",
-    "subcategory": "Trees",
-    "width": 5,
-    "height": 4,
-    "biome": "",
-    "wall": false,
-    "collision": [
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ]
-    ],
-    "layer": "above",
-    "buyPrice": 0,
-    "description": "none",
-    "name_int": "furniture.dark_canopy_tree.name"
-  },
   "dark_canvas_travel_sack": {
     "name": "Dark Canvas Travel Sack",
     "category": "Signs",
@@ -56810,49 +56767,6 @@
     "description": "none",
     "name_int": "furniture.green_fruit_crate.name",
     "tileGroupId": "fruit_crates_and_barrels_10_split_group"
-  },
-  "green_fruit_tree": {
-    "name": "Green Fruit Tree",
-    "category": "Trees",
-    "subcategory": "Trees",
-    "width": 5,
-    "height": 4,
-    "biome": "",
-    "wall": false,
-    "collision": [
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1,
-        1
-      ]
-    ],
-    "layer": "above",
-    "buyPrice": 0,
-    "description": "none",
-    "name_int": "furniture.green_fruit_tree.name"
   },
   "green_gas_canister": {
     "name": "Green Gas Canister",
@@ -124687,33 +124601,6 @@
     "name_int": "furniture.slim_green_tree_2.name",
     "tileGroupId": "light_green_small_tree_group"
   },
-  "slim_jungle_trunk": {
-    "name": "Slim Jungle Trunk",
-    "category": "Storage",
-    "subcategory": "Trunks",
-    "width": 1,
-    "height": 4,
-    "biome": "",
-    "wall": false,
-    "collision": [
-      [
-        1
-      ],
-      [
-        1
-      ],
-      [
-        1
-      ],
-      [
-        1
-      ]
-    ],
-    "layer": "same",
-    "buyPrice": 0,
-    "description": "none",
-    "name_int": "furniture.slim_jungle_trunk.name"
-  },
   "slim_potted_fern": {
     "name": "Slim Potted Fern",
     "category": "Plants",
@@ -125941,31 +125828,6 @@
     "buyPrice": 0,
     "description": "none",
     "name_int": "furniture.small_forge_ember_icon.name"
-  },
-  "small_fruit_tree_with_crate": {
-    "name": "Small Fruit Tree With Crate",
-    "category": "Trees",
-    "subcategory": "Trees",
-    "width": 3,
-    "height": 2,
-    "biome": "",
-    "wall": false,
-    "collision": [
-      [
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1
-      ]
-    ],
-    "layer": "above",
-    "buyPrice": 0,
-    "description": "none",
-    "name_int": "furniture.small_fruit_tree_with_crate.name"
   },
   "small_garden_pinwheel": {
     "name": "Small Garden Pinwheel",
@@ -141638,45 +141500,6 @@
     "buyPrice": 0,
     "description": "none",
     "name_int": "furniture.tall_pale_trunk_tree.name"
-  },
-  "tall_pine_tree": {
-    "name": "Tall Pine Tree",
-    "category": "Trees",
-    "subcategory": "Tall Trees",
-    "width": 4,
-    "height": 4,
-    "biome": "",
-    "wall": false,
-    "collision": [
-      [
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1,
-        1
-      ]
-    ],
-    "layer": "above",
-    "buyPrice": 0,
-    "description": "none",
-    "name_int": "furniture.tall_pine_tree.name"
   },
   "tall_pink_stone_ladder": {
     "name": "Tall Pink Stone Ladder",

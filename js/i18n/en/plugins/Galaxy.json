@@ -39,6 +39,7 @@
     "timeToArrival": "Time to Arrival",
     "lyRemaining": "{ly} ly remaining",
     "refuelling": "Refuelling",
+    "otherGalaxy": "No course crosses to another galaxy. Only a Schr\u00f6dinger-Bohr bridge reaches it.",
     "harvesting": "Harvesting Schrödingerite"
   },
   "bodyType": {
@@ -168,6 +169,9 @@
     "refuel": "Refuel",
     "orbit": "Orbit",
     "chooseLandingSite": "Choose Landing Site",
+    "landingSite": "Landing Site",
+    "otherGalaxy": "Another galaxy: bridge only",
+    "landingSiteCell": "Square {x}, {y}",
     "landHere": "Land Here",
     "liminalWalk": "Liminal walk",
     "cancel": "Cancel",
@@ -213,7 +217,8 @@
     "bookmarked": "Bookmarked",
     "bookmark": "Bookmark",
     "harvestRunning": "Harvest flyby under way",
-    "flyby": "Flyby"
+    "flyby": "Flyby",
+    "noSolidSurface": "No solid surface: this world can only be flown over."
   },
   "hubblePart": {
     "DF-224 Computer": {

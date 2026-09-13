@@ -6,7 +6,7 @@
     "color": "#6b5a52",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderFracture",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -154,7 +154,7 @@
     "color": "#a85433",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderFracture",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -309,7 +309,7 @@
     "color": "#a9743f",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -638,7 +638,7 @@
       388
     ],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderBurrow",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -804,7 +804,7 @@
     "color": "#8a6fd0",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderBurrow",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -967,6 +967,7 @@
   },
   {
     "name": "AlienMiniNeptune",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 323,
     "color": "#5fb6d8",
@@ -1017,7 +1018,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderAbyss",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -1232,7 +1233,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -1414,7 +1415,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "SeaBed",
+    "lowerLayer": "AlienUnderAbyss",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -1608,7 +1609,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderLavatube",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -1788,7 +1789,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderDust",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -1952,7 +1953,7 @@
     "color": "#2fd08a",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderBurrow",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -2113,7 +2114,7 @@
     "color": "#8fb6c8",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -2300,7 +2301,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "FloodedCave",
+    "lowerLayer": "AlienUnderAbyss",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -2450,6 +2451,7 @@
   },
   {
     "name": "AlienGasGiant",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 331,
     "color": "#6fb0d8",
@@ -2500,7 +2502,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderStorm",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -2656,6 +2658,7 @@
   },
   {
     "name": "AlienHotJupiter",
+    "gasGiant": true,
     "lockTravel": true,
     "hasNPC": false,
     "tilesetId": 332,
@@ -2675,7 +2678,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderLavatube",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -2837,6 +2840,7 @@
   },
   {
     "name": "AlienWarmJupiter",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 333,
     "color": "#7fc0d0",
@@ -2887,7 +2891,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderStorm",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -3043,6 +3047,7 @@
   },
   {
     "name": "AlienColdJupiter",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 334,
     "color": "#7f9fe0",
@@ -3093,7 +3098,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderStorm",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -3254,6 +3259,7 @@
   },
   {
     "name": "AlienIceGiant",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 335,
     "color": "#8fd0ee",
@@ -3304,7 +3310,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -3465,6 +3471,7 @@
   },
   {
     "name": "AlienRingedGasGiant",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 336,
     "color": "#7fb6e0",
@@ -3515,7 +3522,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderStorm",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -3671,6 +3678,7 @@
   },
   {
     "name": "AlienPuffy",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 337,
     "color": "#a8c8e0",
@@ -3721,7 +3729,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderAbyss",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -3892,7 +3900,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderLavatube",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -4064,7 +4072,7 @@
     "color": "#9a6f52",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderVault",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -4226,7 +4234,7 @@
     "color": "#2b2b30",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderGeode",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -4376,7 +4384,7 @@
     "color": "#a8eeff",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderGeode",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -4540,7 +4548,7 @@
       ]
     ],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderLavatube",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -4707,12 +4715,13 @@
   },
   {
     "name": "AlienPlasma",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 343,
     "color": "#c06fe0",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderLavatube",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -4868,12 +4877,13 @@
   },
   {
     "name": "AlienMagnetar",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 344,
     "color": "#b04fe0",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderVault",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -5025,12 +5035,13 @@
   },
   {
     "name": "AlienQuarkPlanet",
+    "gasGiant": true,
     "hasNPC": false,
     "tilesetId": 345,
     "color": "#d05fc0",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderVault",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -5191,7 +5202,7 @@
     "color": "#3a3f6b",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "",
+    "lowerLayer": "AlienUnderVoid",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -5351,7 +5362,7 @@
     "color": "#d06fb0",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderBurrow",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -5570,7 +5581,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderFracture",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -5782,7 +5793,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -5989,7 +6000,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderFracture",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -6150,7 +6161,7 @@
     "color": "#5f5248",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderFracture",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -6299,7 +6310,7 @@
     "color": "#a85f33",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderGeode",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -6453,7 +6464,7 @@
     "color": "#8f7f6b",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderVault",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -6611,7 +6622,7 @@
     "color": "#6b5f52",
     "prefabs": [],
     "specialBiomes": [],
-    "lowerLayer": "Cave",
+    "lowerLayer": "AlienUnderFracture",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -6805,7 +6816,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -7012,7 +7023,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderGlacier",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -7219,7 +7230,7 @@
     "specialBiomes": [
       "Crystals"
     ],
-    "lowerLayer": "CaveIce",
+    "lowerLayer": "AlienUnderVoid",
     "bgm": [
       "KevinMacLeod/Atmospheric/Aftermath",
       "KevinMacLeod/Atmospheric/Dark Fog",
@@ -7375,6 +7386,1070 @@
         "name": "CrystalTentacle",
         "density": 0.09,
         "lifeSign": "weak"
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderFracture",
+    "hasNPC": false,
+    "tilesetId": 318,
+    "color": "#6b5f55",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderFracture",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cave-wind",
+      "cave"
+    ],
+    "bgsNight": [
+      "cave-deep",
+      "cave-wind"
+    ],
+    "dayTemperature": 8,
+    "nightTemperature": 6,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Badland",
+        "terrain": true,
+        "density": 0.6
+      },
+      {
+        "name": "Pebble",
+        "terrain": true,
+        "density": 0.35
+      },
+      {
+        "name": "Rock",
+        "density": 0.9
+      },
+      {
+        "name": "RockFormation",
+        "density": 0.02
+      },
+      {
+        "name": "Stalagmite",
+        "density": 0.42
+      },
+      {
+        "name": "Stalattite",
+        "density": 0.42
+      },
+      {
+        "name": "Crack",
+        "density": 0.35
+      },
+      {
+        "name": "Debris",
+        "density": 0.2
+      },
+      {
+        "name": "Skull",
+        "density": 0.05
+      },
+      {
+        "name": "Mineral",
+        "density": 0.12
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderGlacier",
+    "hasNPC": false,
+    "tilesetId": 324,
+    "color": "#bfe6f0",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderGlacier",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cold-wind-loop",
+      "cave-wind"
+    ],
+    "bgsNight": [
+      "wind-blizzard",
+      "wind-arctic"
+    ],
+    "dayTemperature": -22,
+    "nightTemperature": -28,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "Snow",
+        "terrain": true,
+        "density": 1.5
+      },
+      {
+        "name": "PebbleIce",
+        "terrain": true,
+        "density": 0.5
+      },
+      {
+        "name": "IcePool",
+        "terrain": true,
+        "density": 0.2
+      },
+      {
+        "name": "RockIce",
+        "density": 0.9
+      },
+      {
+        "name": "RockFormationIce",
+        "density": 0.02
+      },
+      {
+        "name": "Stalattite",
+        "density": 0.5
+      },
+      {
+        "name": "Stalagmite",
+        "density": 0.5
+      },
+      {
+        "name": "Crystal",
+        "density": 0.3
+      },
+      {
+        "name": "MushroomIce",
+        "density": 0.25
+      },
+      {
+        "name": "LogIce",
+        "density": 0.05
+      },
+      {
+        "name": "SpringIce",
+        "density": 0.04
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderGeode",
+    "hasNPC": false,
+    "tilesetId": 341,
+    "color": "#7fd4ff",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderGeode",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "ce-cavern-looped",
+      "cave"
+    ],
+    "bgsNight": [
+      "cave-deep",
+      "ce-cavern-looped"
+    ],
+    "dayTemperature": 16,
+    "nightTemperature": 14,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.1
+      },
+      {
+        "name": "Glass",
+        "terrain": true,
+        "density": 0.5
+      },
+      {
+        "name": "Metal",
+        "terrain": true,
+        "density": 0.25
+      },
+      {
+        "name": "Crystal",
+        "density": 1.2
+      },
+      {
+        "name": "Mineral",
+        "density": 0.8
+      },
+      {
+        "name": "Gold",
+        "density": 0.04
+      },
+      {
+        "name": "Stalagmite",
+        "density": 0.3
+      },
+      {
+        "name": "Orb",
+        "density": 0.03
+      },
+      {
+        "name": "Crack",
+        "density": 0.2
+      },
+      {
+        "name": "CrystalTentacle",
+        "density": 0.1,
+        "lifeSign": "weak"
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderLavatube",
+    "hasNPC": false,
+    "tilesetId": 342,
+    "color": "#b3441c",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderLavatube",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cave-deep",
+      "cave-wind"
+    ],
+    "bgsNight": [
+      "cave-deep",
+      "cave"
+    ],
+    "dayTemperature": 96,
+    "nightTemperature": 88,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.2
+      },
+      {
+        "name": "Badland",
+        "terrain": true,
+        "density": 0.7
+      },
+      {
+        "name": "Metal",
+        "terrain": true,
+        "density": 0.2
+      },
+      {
+        "name": "Rock",
+        "density": 0.6
+      },
+      {
+        "name": "Crack",
+        "density": 0.5
+      },
+      {
+        "name": "Debris",
+        "density": 0.3
+      },
+      {
+        "name": "Skull",
+        "density": 0.06
+      },
+      {
+        "name": "Brazier",
+        "density": 0.04
+      },
+      {
+        "name": "Mineral",
+        "density": 0.1
+      },
+      {
+        "name": "Stalagmite",
+        "density": 0.2
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderAbyss",
+    "hasNPC": false,
+    "tilesetId": 325,
+    "color": "#0d3b66",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderAbyss",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "water-dripping-in-cave",
+      "abyss-ambience"
+    ],
+    "bgsNight": [
+      "abyss-ambience2",
+      "basement-dripping"
+    ],
+    "dayTemperature": 9,
+    "nightTemperature": 8,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "Water",
+        "terrain": true,
+        "density": 12
+      },
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 0.5
+      },
+      {
+        "name": "SeaPlant",
+        "density": 0.5
+      },
+      {
+        "name": "Seashell",
+        "density": 0.3
+      },
+      {
+        "name": "Reed",
+        "density": 0.2
+      },
+      {
+        "name": "Lilypad",
+        "density": 0.15
+      },
+      {
+        "name": "Rock",
+        "density": 0.3
+      },
+      {
+        "name": "Crystal",
+        "density": 0.1
+      },
+      {
+        "name": "Mushroom",
+        "density": 0.12
+      },
+      {
+        "name": "Stalattite",
+        "density": 0.3
+      },
+      {
+        "name": "Tentacle",
+        "density": 0.12,
+        "lifeSign": "weak"
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderBurrow",
+    "hasNPC": false,
+    "tilesetId": 347,
+    "color": "#4b7f3a",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderBurrow",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cave-dripping",
+      "cave"
+    ],
+    "bgsNight": [
+      "cave-deep",
+      "cave-dripping"
+    ],
+    "dayTemperature": 19,
+    "nightTemperature": 17,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.0
+      },
+      {
+        "name": "Dirt",
+        "terrain": true,
+        "density": 0.8
+      },
+      {
+        "name": "Moor",
+        "terrain": true,
+        "density": 0.25
+      },
+      {
+        "name": "Mushroom",
+        "density": 0.8
+      },
+      {
+        "name": "Vine",
+        "density": 0.5
+      },
+      {
+        "name": "Plant",
+        "density": 0.3
+      },
+      {
+        "name": "Cobweb",
+        "density": 0.2
+      },
+      {
+        "name": "Bones",
+        "density": 0.1
+      },
+      {
+        "name": "Stalagmite",
+        "density": 0.25
+      },
+      {
+        "name": "Tentacle",
+        "density": 0.5,
+        "lifeSign": "weak"
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderDust",
+    "hasNPC": false,
+    "tilesetId": 327,
+    "color": "#c2a06a",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderDust",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "wind-in-the-desert-countryside",
+      "cave-wind"
+    ],
+    "bgsNight": [
+      "winchester-wind-ambience",
+      "cave-wind"
+    ],
+    "dayTemperature": 34,
+    "nightTemperature": 12,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "Sand",
+        "terrain": true,
+        "density": 1.4
+      },
+      {
+        "name": "SandRock",
+        "terrain": true,
+        "density": 0.4
+      },
+      {
+        "name": "Salt",
+        "terrain": true,
+        "density": 0.3
+      },
+      {
+        "name": "Pebble",
+        "density": 0.5
+      },
+      {
+        "name": "Bones",
+        "density": 0.2
+      },
+      {
+        "name": "RockFormationDesert",
+        "density": 0.02
+      },
+      {
+        "name": "Skull",
+        "density": 0.08
+      },
+      {
+        "name": "Column",
+        "density": 0.04
+      },
+      {
+        "name": "Pyramid",
+        "density": 0.01
+      },
+      {
+        "name": "Debris",
+        "density": 0.15
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderVault",
+    "hasNPC": false,
+    "tilesetId": 339,
+    "color": "#7d8894",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderVault",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cave-deep",
+      "cave"
+    ],
+    "bgsNight": [
+      "cave-deep",
+      "cave-wind"
+    ],
+    "dayTemperature": 12,
+    "nightTemperature": 11,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "TechnoFloor",
+        "terrain": true,
+        "density": 1.0
+      },
+      {
+        "name": "Metal",
+        "terrain": true,
+        "density": 0.8
+      },
+      {
+        "name": "Grate",
+        "terrain": true,
+        "density": 0.3
+      },
+      {
+        "name": "Tech",
+        "density": 0.5
+      },
+      {
+        "name": "Gear",
+        "density": 0.3
+      },
+      {
+        "name": "Generator",
+        "density": 0.03
+      },
+      {
+        "name": "ColumnTech",
+        "density": 0.06
+      },
+      {
+        "name": "MetalScrap",
+        "density": 0.3
+      },
+      {
+        "name": "Lamp",
+        "density": 0.1
+      },
+      {
+        "name": "Pole",
+        "density": 0.08
+      },
+      {
+        "name": "Capsule",
+        "density": 0.04
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderStorm",
+    "hasNPC": false,
+    "tilesetId": 331,
+    "color": "#8aa0c8",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderStorm",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cave-wind",
+      "cold-wind-loop"
+    ],
+    "bgsNight": [
+      "wind-blizzard2",
+      "cave-wind"
+    ],
+    "dayTemperature": -40,
+    "nightTemperature": -46,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "Glass",
+        "terrain": true,
+        "density": 1.0
+      },
+      {
+        "name": "Snow",
+        "terrain": true,
+        "density": 0.6
+      },
+      {
+        "name": "Metal",
+        "terrain": true,
+        "density": 0.2
+      },
+      {
+        "name": "Crystal",
+        "density": 0.3
+      },
+      {
+        "name": "PebbleIce",
+        "density": 0.3
+      },
+      {
+        "name": "Debris",
+        "density": 0.2
+      },
+      {
+        "name": "Stalattite",
+        "density": 0.2
+      },
+      {
+        "name": "RockIce",
+        "density": 0.35
+      },
+      {
+        "name": "Gear",
+        "density": 0.05
+      }
+    ]
+  },
+  {
+    "name": "AlienUnderVoid",
+    "hasNPC": false,
+    "tilesetId": 346,
+    "color": "#262a33",
+    "prefabs": [],
+    "specialBiomes": [],
+    "lowerLayer": "AlienUnderVoid",
+    "bgm": [
+      "KevinMacLeod/Atmospheric/Aftermath",
+      "KevinMacLeod/Atmospheric/Dark Fog",
+      "KevinMacLeod/Atmospheric/Deep Haze",
+      "KevinMacLeod/Atmospheric/Distant Tension",
+      "KevinMacLeod/Atmospheric/Floating Cities",
+      "KevinMacLeod/Atmospheric/Frozen Star",
+      "KevinMacLeod/Atmospheric/Gloom Horizon",
+      "KevinMacLeod/Atmospheric/Interloper",
+      "KevinMacLeod/Atmospheric/Lithium",
+      "KevinMacLeod/Atmospheric/Long Note Four",
+      "KevinMacLeod/Atmospheric/Long Note One",
+      "KevinMacLeod/Atmospheric/Long Note Three",
+      "KevinMacLeod/Atmospheric/Long Note Two",
+      "KevinMacLeod/Atmospheric/Lost Time",
+      "KevinMacLeod/Atmospheric/Night Cave",
+      "KevinMacLeod/Atmospheric/Ossuary 5 - Rest",
+      "KevinMacLeod/Atmospheric/Ossuary 6 - Air",
+      "KevinMacLeod/Atmospheric/Penumbra",
+      "KevinMacLeod/Atmospheric/Shadowlands 4 - Breath",
+      "KevinMacLeod/Atmospheric/Spacial Harvest",
+      "KevinMacLeod/Atmospheric/Wisps of Whorls",
+      "KevinMacLeod/Mysterious/Lost Frontier",
+      "KevinMacLeod/Mysterious/Tabuk"
+    ],
+    "bgmNight": [
+      "KevinMacLeod/Dark/Ancient Rite",
+      "KevinMacLeod/Dark/Bent and Broken",
+      "KevinMacLeod/Dark/Crossing the Chasm",
+      "KevinMacLeod/Dark/Dark Times",
+      "KevinMacLeod/Dark/Dark Walk",
+      "KevinMacLeod/Dark/Darkling",
+      "KevinMacLeod/Dark/Gathering Darkness",
+      "KevinMacLeod/Dark/Ice Demon",
+      "KevinMacLeod/Dark/Lightless Dawn",
+      "KevinMacLeod/Dark/Mystic Force",
+      "KevinMacLeod/Dark/The Ice Giants",
+      "KevinMacLeod/Dark/Unholy Knight",
+      "KevinMacLeod/Mysterious/Tempting Secrets"
+    ],
+    "bgs": [
+      "cave-deep",
+      "cave-wind"
+    ],
+    "bgsNight": [
+      "cave-deep",
+      "cave-wind"
+    ],
+    "dayTemperature": -180,
+    "nightTemperature": -182,
+    "biomeIds": [],
+    "features": [
+      {
+        "name": "CaveFloor",
+        "terrain": true,
+        "density": 1.0
+      },
+      {
+        "name": "Pavement",
+        "terrain": true,
+        "density": 0.4
+      },
+      {
+        "name": "Metal",
+        "terrain": true,
+        "density": 0.2
+      },
+      {
+        "name": "Rock",
+        "density": 0.4
+      },
+      {
+        "name": "Bones",
+        "density": 0.12
+      },
+      {
+        "name": "Skull",
+        "density": 0.1
+      },
+      {
+        "name": "Cobweb",
+        "density": 0.25
+      },
+      {
+        "name": "Grave",
+        "density": 0.03
+      },
+      {
+        "name": "Debris",
+        "density": 0.2
+      },
+      {
+        "name": "Crack",
+        "density": 0.3
       }
     ]
   }
