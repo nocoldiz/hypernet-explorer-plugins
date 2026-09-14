@@ -822,6 +822,25 @@
       label.textContent = this.commandLabelText(cmd);
       item.appendChild(label);
 
+      // WHAT WORKS THIS ROW, on a pad. Four of these rows answer to a button
+      // of their own as well as to the cursor (see BATTLE_SHORTCUTS), and a
+      // shortcut nobody can see is a shortcut nobody uses. Drawn only while a
+      // pad is the device in hand: on a keyboard the row is walked to, and a
+      // face nobody is holding would be an instruction to press something that
+      // is not there.
+      //
+      // The face is asked of the same table that reads the button, so the badge
+      // and the binding cannot say different things.
+      const padFace = (window.PadUI && window.PadUI.active && window.PadUI.active() &&
+        window.BattleShortcuts) ? window.BattleShortcuts.faceFor(cmd.symbol) : '';
+      if (padFace) {
+        const face = document.createElement('div');
+        face.className = 'actorcmd-pad' + (isLit ? '' : ' dim');
+        face.style.fontSize = Math.round(LABEL_PX * 0.8) + 'px';
+        face.textContent = padFace;
+        item.appendChild(face);
+      }
+
       // The tail: what the row costs, or what the ally it names is holding.
       // The label is the flexible half, so this always sits at the right edge.
       if (cmd.cost) {
@@ -1161,6 +1180,118 @@
     if (this._actorCommandWindow) {
       this._actorCommandWindow.x = this._bseCommandX(this._actorCommandWindow.width);
     }
+  };
+
+  //=============================================================================
+  // The command window's shortcuts
+  //=============================================================================
+  // The list is a column and the turn is a handful of rows, so the rows worth
+  // reaching are worth reaching WITHOUT walking to them. Each shortcut selects
+  // the row it names and confirms it, exactly as if the player had walked there
+  // and pressed A: the enabled checks, the handlers, the sounds and the refusals
+  // are the window's own, and there is no second path through any of them.
+  //
+  // ONE TABLE, and the badges the window draws on those rows are stamped from
+  // it too (see drawBattleShortcutBadge), so a shortcut cannot be bound to one
+  // button and advertised as another.
+  //
+  // i18n-ignore-start  physical faces and Input key names
+  const BATTLE_SHORTCUTS = [
+    // Skills, on the button that means "the other list" everywhere else.
+    { symbols: ["skill"], face: "X", key: "shift" },
+    // Items.
+    { symbols: ["item"], face: "Y", key: "menu" },
+    // The basic-skills row: the class's own everyday moves.
+    { symbols: ["basic"], face: "L1", key: "pageup" },
+    // ONE ROW, four names. What stands in the second slot depends on what the
+    // member is carrying and what has happened to them this fight: a limit
+    // break once they have been cut down to nothing, the vector gun's switch,
+    // a reload for anybody holding a gun, and a guard for everybody else. They
+    // are never on the window together (see makeCommandList above), so one
+    // button can mean whichever of them is actually there.
+    { symbols: ["hyper", "vectorSwitch", "reload", "defense"], trigger: "right" },
+  ];
+  // i18n-ignore-end
+
+  // A trigger is analog and has no Input action, so the pull is edged here.
+  let triggerWasDown = false;
+  function triggerTriggered(side) {
+    const pads = window.AnalogStickInput;
+    if (!pads) { triggerWasDown = false; return false; }
+    const read = side === "right" ? pads.rightTrigger : pads.leftTrigger;
+    const value = read ? read.call(pads) : 0;
+    const down = value > 0.35;
+    const fired = down && !triggerWasDown;
+    triggerWasDown = down;
+    return fired;
+  }
+
+  function shortcutFired(entry) {
+    if (entry.key && Input.isTriggered(entry.key)) return true;
+    if (entry.trigger && triggerTriggered(entry.trigger)) return true;
+    return false;
+  }
+
+  // The row a shortcut points at, or -1. The FIRST of its symbols that is
+  // actually on the window this turn.
+  Window_ActorCommand.prototype.shortcutIndex = function (entry) {
+    for (const symbol of entry.symbols) {
+      const at = this.findSymbol(symbol);
+      if (at >= 0) return at;
+    }
+    return -1;
+  };
+
+  // Which shortcut, if any, points at the row being drawn - so the badge goes
+  // on the row it works rather than on a row counted from the top.
+  Window_ActorCommand.prototype.shortcutForIndex = function (index) {
+    const symbol = this.commandSymbol(index);
+    return BATTLE_SHORTCUTS.find((s) => s.symbols.includes(symbol)) || null;
+  };
+
+  Window_ActorCommand.prototype.processBattleShortcuts = function () {
+    if (!this.isOpenAndActive()) return false;
+    // The skill quickbar beside the list owns every button while it holds the
+    // focus (BattleSystemEnhancedHUD.js), shortcuts included.
+    const hotbar = window.BattleHotbar;
+    if (hotbar && hotbar.hasFocus && hotbar.hasFocus()) return false;
+    for (const entry of BATTLE_SHORTCUTS) {
+      if (!shortcutFired(entry)) continue;
+      const at = this.shortcutIndex(entry);
+      if (at < 0) continue;
+      // A row that is on the window but greyed out refuses the shortcut the
+      // same way it refuses a press: with a buzzer, not with silence.
+      if (!this.isCommandEnabled(at)) {
+        SoundManager.playBuzzer();
+        return true;
+      }
+      this.select(at);
+      this.processOk();
+      return true;
+    }
+    return false;
+  };
+
+  const _Window_ActorCommand_processHandling_shortcuts = Window_ActorCommand.prototype.processHandling;
+  Window_ActorCommand.prototype.processHandling = function () {
+    if (this.processBattleShortcuts()) return;
+    _Window_ActorCommand_processHandling_shortcuts.call(this);
+  };
+
+  // Handed out so the window can print what works each row, and so a test can
+  // read the pairing without a pad in its hands.
+  window.BattleShortcuts = {
+    list: () => BATTLE_SHORTCUTS.map((s) => ({
+      symbols: s.symbols.slice(), face: s.face || "", key: s.key || "", trigger: s.trigger || "",
+    })),
+    // The face a row wears, or "". R2 and the shoulders have no glyph in the
+    // shared table, so they are written as they are stamped on the pad.
+    faceFor(symbol) {
+      const entry = BATTLE_SHORTCUTS.find((s) => s.symbols.includes(symbol));
+      if (!entry) return "";
+      // i18n-ignore-next-line  physical button face
+      return entry.face || (entry.trigger === "right" ? "R2" : "L2");
+    },
   };
 
   //=============================================================================
@@ -1517,16 +1648,37 @@
   }
 
   // Window_ActorCommand: smooth directional navigation with WASD, arrows, controller
+  //
+  // LEFT AND RIGHT ARE NOT THIS LIST'S. The command list is a single column
+  // (maxCols() is 1), and the horizontal presses belong to the skill quickbar
+  // standing beside it: Right walks onto its first slot, Left onto its last,
+  // and from there the slots are walked freely and cast with OK
+  // (BattleSystemEnhancedHUD.js, which this file loads after and wraps).
+  //
+  // This used to fold Left onto Up and Right onto Down and return, which ate
+  // both presses before the handoff underneath could ever see them - so the bar
+  // could not be reached from the command list at all, on a keyboard or a pad.
+  // Up and down are still this list's, and are the only thing handled here.
   const _Window_ActorCommand_processCursorMove = Window_ActorCommand.prototype.processCursorMove;
   Window_ActorCommand.prototype.processCursorMove = function () {
+    const hotbar = window.BattleHotbar;
+    const barHasFocus = !!(hotbar && hotbar.hasFocus && hotbar.hasFocus());
+    const horizontal = Input.isRepeated("left") || Input.isRepeated("right");
+    // While the bar holds the focus it owns every direction, not just the two
+    // that handed it over: without this, up and down went on walking the
+    // command list behind a bar the player was reading.
+    if (barHasFocus || horizontal) {
+      _Window_ActorCommand_processCursorMove.call(this);
+      return;
+    }
     if (this.isCursorMovable()) {
       const max = this.maxItems();
       if (max > 0) {
         const lastIndex = this.index();
-        if (Input.isRepeated("up") || Input.isRepeated("left")) {
-          this.cursorUp(Input.isTriggered("up") || Input.isTriggered("left"));
-        } else if (Input.isRepeated("down") || Input.isRepeated("right")) {
-          this.cursorDown(Input.isTriggered("down") || Input.isTriggered("right"));
+        if (Input.isRepeated("up")) {
+          this.cursorUp(Input.isTriggered("up"));
+        } else if (Input.isRepeated("down")) {
+          this.cursorDown(Input.isTriggered("down"));
         }
         if (this.index() !== lastIndex) {
           noteKeyNav();

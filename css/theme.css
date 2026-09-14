@@ -1746,7 +1746,7 @@
    are named here so each theme can ink them (see omega_tower.css). */
 .cc-role-badge {
     display: inline-block;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: var(--fs-heading);
     font-weight: bold;
     padding: 1px 5px;
@@ -2429,61 +2429,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* ── The archetype board ────────────────────────────────────────────────────
-   The ready-made builds the simple creation board offers in place of the trait
-   book. Three across rather than four: a build is named with a phrase where a
-   trait is named with a word, and under the name it says what the build is
-   made of. */
-.cc-select-grid.cc-tarch-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.cc-trait-grid.cc-tarch-grid .cc-card-option {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 2px;
-    min-height: 56px;
-    padding: 7px 8px;
-}
-
-.cc-tarch-head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-    min-width: 0;
-}
-
-/* A build's name wraps instead of being cut off: "Doomsday Prepper" has to
-   read whole in a cell a third of a page wide. */
-.cc-trait-grid .cc-tarch-card .cc-option-title {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-}
-
-.cc-tarch-meta {
-    font-size: var(--fs-label);
-    opacity: 0.7;
-    letter-spacing: 0.02em;
-}
-
-/* The open build listed trait by trait. Read-only: this board takes a build
-   whole, so a chip is not a control. */
-.cc-picked-chip.cc-tarch-chip,
-.cc-picked-chip.cc-tarch-chip:hover {
-    cursor: default;
-    background: var(--bg-tertiary-focus-translucent-45);
-}
-
-/* The line at the foot of the sheet page saying where a build is edited. */
-.cc-tarch-hint {
-    margin-top: auto;
-    padding-top: 8px;
-    line-height: 1.3;
 }
 
 /* What a trait does to the point purse. A plain number is what it takes out;
@@ -3393,7 +3338,7 @@
 }
 
 .cc-anatomy-stat {
-    font-family: var(--font-mono);
+    font-family: monospace;
     color: var(--text-disabled);
 }
 
@@ -5373,7 +5318,7 @@
 .command-item .hotkey-badge {
     margin-left: auto;
     flex-shrink: 0;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: var(--fs-caption);
     color: var(--text-primary-hover);
     background: transparent;
@@ -5698,7 +5643,7 @@
 }
 
 .vital-vals {
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: var(--fs-chip);
     color: var(--text-text-alt-7);
     width: 65px;
@@ -6950,14 +6895,10 @@
     }
 }
 
-/* The target box's heading is a heading, not a warning. It used to take
-   --text-text-alt-5-hover, the shared cannot-afford ink, which is the one red
-   that reaches a title: #ff5555 in ASCII, #e36a6a on Omega Tower. Every other
-   panel title in the game is --text-detail-heading, and so is this one. */
 .target-title {
     font-family: var(--font-ui);
     font-size: 1.333em;
-    color: var(--text-detail-heading);
+    color: var(--text-text-alt-5-hover);
     margin: 0 0 10px 0;
     letter-spacing: 1px;
 }
@@ -7403,7 +7344,7 @@
 
 .cc-party-card-stat .value {
     color: var(--text-muted-hover);
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-weight: bold;
 }
 
@@ -7465,7 +7406,7 @@
 }
 
 .cc-inv-chip .cc-inv-qty {
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-weight: bold;
     color: var(--text-muted-hover);
 }
@@ -10546,6 +10487,14 @@
     cursor: pointer;
 }
 
+/* The medallion the raise cursor is on. A mouse presses the + directly; a
+   keyboard and a pad walk the raisable stats and need to see which one a point
+   would go into. */
+.stat-medallion.raise-lit .stat-medallion-raise {
+    outline: 2px solid var(--border-primary-hover-translucent-15);
+    outline-offset: 2px;
+}
+
 .stat-medallion-spent {
     font-family: var(--font-ui);
     font-size: 0.72em;
@@ -11262,7 +11211,7 @@
     font-weight: bold;
     color: var(--text-text-alt-20);
     font-size: 0.82em;
-    font-family: var(--font-mono);
+    font-family: monospace;
 }
 
 #dial-needle {
@@ -11290,7 +11239,7 @@
     border: 1px solid var(--border-primary-hover-translucent-15);
     border-radius: 2px;
     padding: 3px 10px;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 1.2em;
     font-weight: bold;
     color: var(--text-primary-hover);
@@ -11303,7 +11252,7 @@
     border-radius: 2px;
     padding: 6px 12px;
     color: var(--text-text-alt-21);
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 0.96rem;
     overflow: hidden;
     height: 46px;
@@ -15889,7 +15838,7 @@
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 1.02rem;
     color: var(--text-disabled);
 }
@@ -20526,7 +20475,7 @@ padding: 2px 10px;
 }
 .tt-tab-count {
     flex: 0 0 auto;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 0.892em;
     padding: 1px 6px;
     border-radius: 8px;
@@ -20720,7 +20669,7 @@ padding: 2px 10px;
 .tt-mat-row { display: flex; align-items: center; gap: 8px; font-size: 0.928em; }
 .tt-mat-icon { flex-shrink: 0; display: inline-block; }
 .tt-mat-name { flex: 1; color: var(--text-success-active); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tt-mat-count { font-family: var(--font-mono); font-weight: bold; }
+.tt-mat-count { font-family: monospace; font-weight: bold; }
 .tt-reward-row { color: var(--text-text-alt-14-hover); }
 .tt-reward-row .tt-mat-name { color: var(--text-text-alt-14-hover); }
 
@@ -20769,7 +20718,7 @@ padding: 2px 10px;
     align-items: center;
     gap: 3px 9px;
     margin-top: 3px;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 0.78em;
 }
 .tt-node-mat { display: inline-flex; align-items: center; gap: 2px; }
@@ -20877,7 +20826,7 @@ padding: 2px 10px;
 .tt-mat-workforce {
     font-size: 0.87em;
     color: var(--text-text-alt-11);
-    font-family: var(--font-mono);
+    font-family: monospace;
     margin-left: 4px;
     white-space: nowrap;
 }
@@ -21271,6 +21220,32 @@ body, canvas {
 .actorcmd-cost.dim {
     opacity: 0.38;
 }
+/* The button that works a battle command row, on a pad
+   (BattleSystem/BattleSystemEnhanchedCommands.js). Sits inside the row, to the
+   left of what it costs, so a member reading down the list sees what reaches
+   each one without walking to it. Never drawn on a keyboard: the row is walked
+   to there, and a face nobody is holding is an instruction to press something
+   that is not on the desk. */
+.actorcmd-pad {
+    flex: 0 0 auto;
+    margin-right: 10px;
+    padding: 0 5px;
+    font-family: monospace;
+    font-weight: bold;
+    line-height: 1.4;
+    color: var(--actorcmd-ink-cost, var(--text-primary-hover));
+    background: var(--shadow-primary-hover-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 3;
+    position: relative;
+}
+
+.actorcmd-pad.dim {
+    opacity: 0.45;
+}
+
 .actorcmd-icon.dim {
     opacity: 0.38;
 }
@@ -23459,7 +23434,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #gx-mining .gx-mine-head { display:flex; align-items:baseline; gap:10px; }
 #gx-mining .gx-mine-head .gx-title { margin:0; font-size:var(--fs-heading); }
 #gx-mining .gx-mine-clock { margin-left:auto; font-size:var(--fs-body);
-  font-family:var(--font-mono); color:var(--gx-accent-ship); }
+  font-family:'Consolas',monospace; color:var(--gx-accent-ship); }
 #gx-mining .gx-mine-bar { height:12px; border-radius:6px; margin:8px 0 6px;
   background:var(--gx-hull-deep);
   border:1px solid var(--gx-line);
@@ -25418,7 +25393,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    ========================================================================== */
 #gsv-root { position:fixed; top:0; right:0; bottom:0; left:0; width:100vw; height:100vh;
   background:#020204; z-index:400; overflow:hidden;
-  font-family:var(--font-ui); color:var(--text-pure-white);
+  font-family:'Segoe UI',Arial,sans-serif; color:var(--text-pure-white);
   user-select:none; }
 #gsv-root .gsv-svg { position:absolute; top:0; right:0; bottom:0; left:0; width:100%; height:100%;
   display:block; cursor:grab; }
@@ -25444,7 +25419,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #gsv-root .gsv-const.gsv-hover .gsv-star-core { fill:#ffffff; }
 #gsv-root .gsv-star-labels.gsv-hidden { display:none; }
 #gsv-root .gsv-const-label text { fill:rgba(220,230,255,0.55); font-size:var(--gsv-const-label-size);
-  letter-spacing:0.12em; text-transform:uppercase; text-anchor:middle; font-family:var(--font-ui);
+  letter-spacing:0.12em; text-transform:uppercase; text-anchor:middle; font-family:Georgia,'Times New Roman',serif;
   paint-order:stroke; stroke:rgba(2,2,6,0.7); stroke-width:var(--gsv-const-label-stroke); }
 #gsv-root .gsv-const-label-zodiac text { fill:rgba(255,224,150,0.8); }
 #gsv-root .gsv-zodiac-mark { fill:#ffd257; transform:rotate(45deg); transform-origin:center; }
@@ -25515,14 +25490,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     background: var(--bg-panel);
     color: var(--text-primary-hover);
     border: 1px solid var(--border-gold-amber);
-    border-radius: 4px;
-    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
-    font-family: var(--font-ui);
+    border-radius: 13px;
+    box-shadow: 0 21px 69px rgba(0,0,0,0.66);
+    font-family: "Segoe UI", system-ui, sans-serif;
     z-index: 100; opacity: 0; transition: opacity 0.18s ease-out;
     overflow: hidden;
 }
 #cs-mini .cs-head, #hv-mini .cs-head { display:flex; align-items:center; justify-content:center;
-    padding:17px 23px; border-bottom:1px solid var(--border-primary-hover-translucent-15); }
+    padding:17px 23px; border-bottom:1px solid rgba(255,255,255,0.1); }
 #cs-mini .cs-title, #hv-mini .cs-title { font-size:29px; font-weight:700; color: var(--text-primary-hover);
     letter-spacing:0.3px; text-shadow:0 1px 2px rgba(0,0,0,0.6); }
 #cs-mini .cs-tabs { display:flex; gap:6px; padding:12px 15px 0; }
@@ -26727,71 +26702,168 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   background: transparent;
   user-select: none;
 }
-#hotbar-target-picker .htp-panel {
+/* The target card, shared by the quick bar (over the map) and the backpack
+   (over the spread): the party a row each, with their sprite, their class and
+   level, and what they have left. The quick bar's own overlay is deliberately
+   unpainted, the backpack's is the standard dialog sheet; the panel below
+   carries the frame either way, so it stands off both. */
+.item-target-card .htp-panel {
   /* Sized to be read across the room rather than squinted at: this is a modal
-     question over the map, not a corner readout. */
-  min-width: 520px;
-  max-width: 70vw;
+     question, not a corner readout. */
+  min-width: 560px;
+  max-width: 76vw;
+  max-height: 84%;
+  overflow-y: auto;
   margin: auto;
-  padding: 24px 30px;
+  padding: 22px 26px;
   background: var(--bg-panel);
   border: 2px solid var(--border-gold-amber);
   border-radius: 6px;
   box-shadow: 0 10px 30px var(--shadow-heavy);
   font-family: var(--font-ui);
+  box-sizing: border-box;
 }
-#hotbar-target-picker .htp-title {
-  font-size: 1.5rem;
+.item-target-card .htp-title {
+  font-size: 1.4rem;
   font-weight: bold;
   color: var(--text-primary-hover);
-  border-bottom: none;
+  border-bottom: 1px solid var(--border-gold-amber);
   padding-bottom: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   text-align: center;
 }
-#hotbar-target-picker .htp-row {
+.item-target-card .htp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.item-target-card .htp-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 14px;
-  font-size: 1.2rem;
-  border: 1px solid transparent;
+  padding: 8px 12px;
+  font-size: 1.1rem;
+  border: 1px solid var(--border-subtle, transparent);
   border-radius: 4px;
   cursor: pointer;
   color: var(--text-success-active);
+  background: var(--bg-subtle-translucent-15);
 }
-#hotbar-target-picker .htp-row:hover,
-#hotbar-target-picker .htp-row.selected {
+.item-target-card .htp-row:hover,
+.item-target-card .htp-row.selected {
   background: var(--bg-primary-hover-translucent-35);
   border-color: var(--text-primary-hover);
 }
-#hotbar-target-picker .htp-num {
+.item-target-card .htp-num {
   flex: 0 0 auto;
-  width: 24px;
+  width: 22px;
   text-align: center;
   font-weight: bold;
   color: var(--text-primary-hover);
   opacity: 0.8;
 }
-#hotbar-target-picker .htp-name {
+.item-target-card .htp-portrait {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-gold-amber);
+  border-radius: 4px;
+  background: var(--bg-secondary-hover);
+}
+.item-target-card .htp-portrait canvas {
+  image-rendering: pixelated;
+  width: 48px;
+  height: 48px;
+}
+.item-target-card .htp-ident {
   flex: 1 1 auto;
+  min-width: 0;
+}
+.item-target-card .htp-name {
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-primary-hover);
 }
-#hotbar-target-picker .htp-vitals {
+.item-target-card .htp-name--wide { flex: 1 1 auto; }
+.item-target-card .htp-sub {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-target-card .htp-vitals {
   flex: 0 0 auto;
   display: flex;
-  gap: 18px;
-  font-size: 1.05rem;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 190px;
+}
+.item-target-card .htp-gauge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
   font-weight: bold;
 }
-/* Gold, not the danger red the wound-coloured HP elsewhere uses: the Omega
-   Tower preset paints --text-danger-hover black (it is a colour for text sat on
-   a red plate), which on this black panel made the vitals unreadable. */
-#hotbar-target-picker .htp-hp { color: var(--text-gold-dark); }
-#hotbar-target-picker .htp-mp { color: var(--text-info); }
+.item-target-card .htp-gauge-label {
+  width: 22px;
+  /* Gold, not the danger red the wound-coloured HP elsewhere uses: the Omega
+     Tower preset paints --text-danger-hover black (a colour for text sat on a
+     red plate), which on this panel made the vitals unreadable. */
+  color: var(--text-gold-dark);
+}
+.item-target-card .htp-gauge-track {
+  flex: 1 1 auto;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-secondary-hover);
+  border: 1px solid var(--border-subtle, var(--border-gold-amber));
+  overflow: hidden;
+}
+.item-target-card .htp-gauge-fill {
+  display: block;
+  height: 100%;
+  background: var(--text-gold-dark);
+}
+.item-target-card .htp-gauge--mp .htp-gauge-label,
+.item-target-card .htp-gauge--mp .htp-gauge-fill { color: var(--text-info); background-color: var(--text-info); }
+.item-target-card .htp-gauge--mp .htp-gauge-label { background: none; }
+.item-target-card .htp-gauge--ap .htp-gauge-label,
+.item-target-card .htp-gauge--ap .htp-gauge-fill { color: var(--text-success-active); background-color: var(--text-success-active); }
+.item-target-card .htp-gauge--ap .htp-gauge-label { background: none; }
+.item-target-card .htp-gauge-value {
+  flex: 0 0 auto;
+  width: 66px;
+  text-align: right;
+  opacity: 0.9;
+}
+/* A special command is not a party member: it is stamped rather than listed,
+   so it cannot be mistaken for someone to hand the item to. */
+.item-target-card .htp-row--special {
+  border-color: var(--text-gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.item-target-card .htp-cancel {
+  margin: 14px auto 0 auto;
+  padding: 6px 20px;
+  width: fit-content;
+  border: 1px solid var(--text-primary-hover);
+  border-radius: 4px;
+  background: var(--bg-primary-hover-translucent-35);
+  color: var(--text-success-active);
+  cursor: pointer;
+}
+.item-target-card .htp-cancel:hover {
+  background: var(--chip-active-bg);
+  color: var(--chip-active-fg);
+}
 
 
 /* ==========================================================================
@@ -27056,7 +27128,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 0.95rem;
     font-weight: bold;
     border-radius: 2px;
@@ -27090,7 +27162,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .cc-loadout-qty {
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-weight: bold;
     color: var(--text-muted-hover);
 }
@@ -28524,280 +28596,135 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 /* ==========================================================================
-   The maintenance bay (js/plugins/Vehicle/VehicleSystemRepair.js)
+   Vehicle repairs (js/plugins/Vehicle/VehicleSystemRepair.js)
 
-   Every class below was named by the plugin and styled by nothing: the parts
-   list had no track to draw its bar in, the level pips had no pip, the upgrade
-   cards had no shape, and the registry ran off the foot of the page because
-   its list never learned to scroll. The left leaf, meanwhile, gave a 150px
-   portrait to a machine and the rest of the page to an empty lore plate.
-
-   The bay is on the shared kit like every other reworked screen: .ui-list and
-   .ui-detail carry the layout, .item-slot carries the rows, .gauge-band--*
-   carries the colour. What is here is only what is the bay's own.
+   The screen is the kit now (docs/task/ui_fixing.md): a .book-spread whose
+   left page carries the header bar with the one Back stamp and the portrait,
+   and whose right page is the tab strip over a .ui-list of components. What
+   is left here is only what the kit has no name for: the portrait, the
+   condition line and the parts meter.
    ========================================================================== */
 
-/* The machine itself, turning, taking the whole middle of the leaf. */
 .vrep-portrait {
-    flex: 1 1 auto;
-    min-height: 180px;
+    width: 150px;
+    height: 150px;
+    margin: 18px auto 12px;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: var(--sp-2) 0;
     overflow: hidden;
-}
-
-.vrep-portrait canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    /* The sprite fallback is pixel art and is point-sampled; the live 3D render
-       tags itself below and is not. */
-    image-rendering: pixelated;
-}
-
-.vrep-portrait canvas.vrep-canvas--live {
-    image-rendering: auto;
-}
-
-/* The plate under the portrait: registry line, blurb, standing, and the hull
-   editor where there is one. Text on the page, not text in a box. */
-.vrep-plate {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-2);
-    text-align: center;
+    flex: 1 1 auto;
+    max-height: 150px;
 }
 
 .vrep-desc {
-    font-family: var(--font-ui);
-    font-size: var(--fs-body);
-    line-height: 1.45;
-    color: var(--text-card-medium);
-    max-width: 62ch;
-    margin: 0;
+    text-align: center;
+    max-width: 68ch;
+    margin: 0 auto 12px;
 }
 
+/* Operational or broken, in the one gauge scale the rest of the game reads:
+   the ink says it, so there is no plate and no double frame. */
 .vrep-status {
+    text-align: center;
     font-family: var(--font-ui);
+    font-size: var(--fs-heading);
     font-weight: bold;
-    font-size: var(--fs-detail-heading);
-    letter-spacing: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 0;
+    flex: 0 0 auto;
 }
 
 .vrep-note {
-    justify-content: center;
     text-align: center;
-    font-family: var(--font-ui);
     font-size: var(--fs-caption);
-    color: var(--text-caption-brown);
+    color: var(--text-card-medium);
 }
 
-/* The right leaf. Both tabs are built up front and toggled by display, so each
-   panel is a full-height detail card of its own. */
+.vrep-flash {
+    text-align: center;
+    font-weight: bold;
+    font-size: var(--fs-body);
+    padding: 4px 0;
+}
+
 .vrep-panel {
-    flex: 1 1 auto;
-    /* .ui-detail asks for height:100%, which on a leaf that also holds the tab
-       rail and the flash line is a hundred percent too much. */
-    height: auto;
+    flex-direction: column;
     min-height: 0;
 }
 
-/* The one thing that scrolls on this page. Without it the sixteen parts of a
-   car pushed the repair buttons off the bottom of the spread. */
-.maint-scroll {
-    overflow-y: auto;
-    scrollbar-width: thin;
-    padding-right: var(--sp-2);
-}
-
-.maint-scroll::-webkit-scrollbar { width: 5px; }
-.maint-scroll::-webkit-scrollbar-track { background: var(--shadow-primary-hover-translucent-5); }
-.maint-scroll::-webkit-scrollbar-thumb {
-    background: var(--scroll-thumb-hover-translucent-60);
-    border-radius: 3px;
-}
-
-/* One component: its name, the chip that says it is critical, and its
-   integrity bar under both. */
-.vrep-part {
-    align-items: center;
-    cursor: default;
-    gap: var(--sp-3);
-}
-
-.vrep-critical-chip {
-    font-size: var(--fs-caption);
-    padding: 1px 6px;
-    color: var(--gauge-bad);
-    vertical-align: middle;
-}
-
+/* The condition meter under a component's name. Same trough and same band
+   fill as every other meter in the game. */
 .vrep-track {
-    height: 5px;
-    margin-top: 3px;
-    border-radius: 3px;
-    background: var(--bg-well);
-    border: 1px solid var(--border-primary-hover-translucent-15);
+    display: block;
+    height: 4px;
+    margin-top: 6px;
+    border-radius: 2px;
     overflow: hidden;
+    background: var(--bg-primary-hover-translucent-35);
 }
 
 .vrep-fill {
+    display: block;
     height: 100%;
     border-radius: 2px;
-    transition: width 0.25s ease;
 }
 
-/* The repair strip sits across the foot of the tab, not stacked down it: two
-   buttons in a column wasted the height the list wanted. */
-.vrep-panel > .inspect-actions {
-    flex: 0 0 auto;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--sp-3);
-    padding-top: var(--sp-3);
+.vrep-critical-chip {
+    margin-left: 6px;
+    color: var(--gauge-bad);
 }
 
-.vrep-btn-label { display: block; }
-
-.vrep-btn-cost {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: var(--sp-2);
+.vrep-btn-label {
+    display: block;
 }
 
+/* The registry line under a component or an upgrade: what it does now and what
+   the next level would do. */
+.vrep-effect {
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+    line-height: 1.35;
+    margin-top: 2px;
+}
+
+.vrep-btn-cost,
 .vrep-cost {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
-    font-family: var(--font-ui);
-    font-size: var(--fs-caption);
+    gap: 3px;
+    font-size: var(--fs-chip);
     font-weight: bold;
-    white-space: nowrap;
 }
 
-.vrep-cost-icon {
-    display: inline-block;
-    vertical-align: middle;
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-    background-image: url('../img/system/IconSet.png');
-    background-repeat: no-repeat;
-    background-size: 384px auto;
-    image-rendering: pixelated;
-}
-
-/* The line that answers what a repair or a purchase just did. */
-.vrep-flash {
-    flex: 0 0 auto;
-    font-family: var(--font-ui);
-    font-weight: bold;
-    font-size: var(--fs-caption);
-    text-align: center;
-    padding-bottom: var(--sp-2);
-}
-
-/* ---- Upgrades ----
-   A module is a card, read top to bottom: what it is, what it does, what it
-   costs, and the button. It used to be a row with the blurb walled into a
-   black plate in the middle and the cost stacked in a margin so narrow that
-   three level pips came out as a vertical string of dots. */
 .vrep-upgrade {
+    align-items: flex-start;
+}
+
+.vrep-upgrade-side {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    cursor: default;
-    gap: var(--sp-1);
-    padding: var(--sp-3) var(--sp-2);
-    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
-}
-
-.vrep-upgrade:last-child { border-bottom: none; }
-
-.vrep-upgrade--maxed { opacity: 0.75; }
-
-.vrep-upgrade-head {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-    min-width: 0;
-}
-
-.vrep-upgrade-head .item-slot-name {
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-.vrep-upgrade-icon {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-    background-image: url('../img/system/IconSet.png');
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-}
-
-.vrep-upgrade-rank {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-2);
+    align-items: flex-end;
+    gap: 6px;
     flex: 0 0 auto;
 }
 
-.vrep-pips {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-}
-
+/* Level pips beside an upgrade's chip: a filled one is a level bought. */
 .vrep-pip {
-    width: 9px;
-    height: 9px;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 3px;
     border-radius: 50%;
-    background: transparent;
     border: 1px solid var(--border-primary-hover-translucent-15);
 }
 
 .vrep-pip.filled {
     background: var(--text-primary-hover);
     border-color: var(--text-primary-hover);
-}
-
-.vrep-upgrade-desc {
-    font-family: var(--font-ui);
-    font-size: var(--fs-caption);
-    line-height: 1.4;
-    color: var(--text-card-medium);
-    max-width: 62ch;
-    margin: 0;
-}
-
-.vrep-effect {
-    font-family: var(--font-ui);
-    font-size: var(--fs-caption);
-    font-weight: bold;
-    color: var(--text-primary-hover);
-}
-
-.vrep-upgrade-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--sp-2);
-    margin-top: var(--sp-1);
-}
-
-.vrep-upgrade-foot .inspect-btn {
-    flex: 0 0 auto;
-    margin: 0;
 }
 
 /* ==========================================================================
@@ -30227,7 +30154,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .plant-15 {
     text-align: right;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 0.856em;
     color: var(--text-disabled);
     margin-top: 2px;
@@ -30347,7 +30274,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .plant-35 {
     font-weight: bold;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: 0.928em;
 }
 
@@ -35789,7 +35716,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc3d-top > * { min-width:0; }
 .cc3d-top .cc3d-chip { overflow:hidden; text-overflow:ellipsis; }
 .cc3d-top .cc-btn-treaty { flex:0 0 auto; }
-.cc3d-title { font-family:var(--font-ui); font-size:var(--fs-body); letter-spacing:0.06em;
+.cc3d-title { font-family:'Cinzel',var(--font-ui); font-size:var(--fs-body); letter-spacing:0.06em;
   color:var(--text-primary-hover); text-transform:uppercase; white-space:nowrap;
   overflow:hidden; text-overflow:ellipsis; }
 .cc3d-spacer { flex:1 1 auto; min-width:4px; }
@@ -38327,6 +38254,17 @@ select option:hover {
     color: var(--text-primary, #f0c674);
 }
 
+/* A mode Em has not levelled into yet. The card stays on the page and keeps
+   its place in the run, because the point of it is that it is COMING: it is
+   dimmed, and the level it opens at sits where a fitted mode writes its bay. */
+.vg-grid .item-slot.vg-locked {
+    opacity: 0.45;
+}
+
+.vg-grid .item-slot.vg-locked .item-slot-count {
+    color: var(--text-primary, #f0c674);
+}
+
 .vg-icon {
     width: 32px;
     height: 32px;
@@ -38599,7 +38537,7 @@ select option:hover {
     margin-left: 6px;
     padding: 0 4px;
     flex-shrink: 0;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: var(--fs-caption);
     line-height: 1.4;
     color: var(--text-primary-hover);
@@ -38629,7 +38567,7 @@ select option:hover {
     top: var(--ui-at-y, 0);
     transform: translateX(-100%);
     padding: 0 4px;
-    font-family: var(--font-mono);
+    font-family: monospace;
     font-size: var(--fs-caption);
     line-height: 1.3;
     color: var(--text-primary-hover);
@@ -38642,6 +38580,13 @@ select option:hover {
    so the pair does not flicker in and out at the ends of a list. */
 #pad-rails .pad-rail-chip.spent {
     opacity: 0.35;
+}
+
+/* No pane on screen scrolls. The layer stays in the document rather than being
+   taken out and put back on a six-frame tick, which made the chips flicker
+   every time a menu rebuilt itself; hidden costs nothing and keeps the nodes. */
+#pad-rails.empty {
+    display: none;
 }
 
 /* The tip strip: what the buttons do on a screen that has no controls to stamp
@@ -38839,234 +38784,69 @@ body.pad-input .kb-only {
     padding: 4px 2px 8px;
 }
 
-/* ==========================================================================
-   The auto-explorer badge
-   Two badges, one per party, built with style.cssText until now: the first
-   party's was warm and the second party's was a cold blue on a navy ground,
-   which is the only cold ink on the map. They are the same badge and read as
-   one now; the party is told apart by where it sits and by what it says,
-   not by a hue the palette does not have.
-   ========================================================================== */
-.aie-badge {
+/* ===========================================================================
+   The quick pockets list (UI/QuickMainMenuLayout.js)
+   ---------------------------------------------------------------------------
+   Held open with Tab or Y out on the map: the menu's own pockets on one
+   column, so one of them can be reached without the page in between. Every
+   colour is a token out of css/vars.css, the way the rest of the parchment
+   interface is, so it repaints with the preset instead of being one panel in
+   somebody else's palette. */
+#quick-main-menu {
     position: fixed;
-    top: 8px;
-    z-index: var(--z-map-hud, 480);
-    padding: 3px 12px;
-    font-family: var(--font-mono);
-    font-size: var(--fs-caption);
-    font-weight: bold;
-    letter-spacing: 1px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11000;
+    pointer-events: auto;
+    min-width: 260px;
+    max-width: 340px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 6px;
+    background: var(--bg-secondary-hover);
     color: var(--text-primary-hover);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-gold-amber);
-    pointer-events: none;
-    text-shadow: 0 1px 2px var(--bg-base);
-}
-
-.aie-badge--main { left: 50%; transform: translateX(-50%); }
-.aie-badge--p2   { right: 8px; }
-
-/* The service bay's "operational" reading, which was painted #60b345 inline. */
-.gx-svc-ok { color: var(--text-forest-green); font-weight: bold; }
-
-/* ==========================================================================
-   The dream wake menu
-   Built inline until now, and it asked for --font-terminal, a property no
-   sheet in css/ has ever defined, so it always fell through to Courier New.
-   It is a panel like any other: the page font, the type scale, a gold
-   hairline on the selected row and nothing behind it, and no glow.
-   ========================================================================== */
-.dream-wake {
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-bg-alt-1-translucent-70);
     font-family: var(--font-ui);
-}
-
-.dream-wake-panel {
-    min-width: 340px;
-    padding: 26px 34px;
-    text-align: center;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-gold-amber);
-    border-radius: 4px;
-    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
-}
-
-.dream-wake-title {
-    font-size: var(--fs-title);
-    margin-bottom: 20px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--text-detail-heading);
-}
-
-.dream-wake-opt {
     font-size: var(--fs-body);
-    padding: 11px 16px;
-    margin: 6px 0;
-    cursor: pointer;
-    letter-spacing: 1px;
-    color: var(--text-card-medium);
-    background: transparent;
-    border: 1px solid transparent;
-    transition: 0.2s ease;
-    transition-property: background-color, border-color, color;
+    box-shadow: 0 6px 24px var(--shadow-primary-hover-translucent-5);
 }
 
-.dream-wake-opt.selected {
-    color: var(--text-primary-hover);
-    border-color: var(--text-primary-hover);
-    background: transparent;
-}
-
-/* The atlas legend's three keys. */
-.sg-legend-dot--mastered { border: 2px solid var(--text-cost-ok); }
-.sg-legend-dot--open     { border: 2px solid var(--text-primary-hover); }
-.sg-legend-dot--locked   { border: 2px solid var(--border-subtle); }
-
-/* ==========================================================================
-   The skill atlas: the classes its markup prints that the sheet never had
-   The screen was drawn with its whole appearance in style attributes, so
-   these names existed in the HTML and nowhere else. They join the sm-*
-   vocabulary already written for this screen further up the file.
-   ========================================================================== */
-
-/* A row of actions on the right page. Like every option in the book: the
-   ground is the page, and the one being pointed at draws a gold hairline. */
-.action-button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-3);
-    padding: var(--sp-2) var(--sp-4);
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: var(--font-ui);
-    transition: border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
-}
-
-.action-button:hover,
-.action-button.focused { border-color: var(--text-primary-hover); }
-
-.action-button.disabled { opacity: 0.6; cursor: not-allowed; }
-
-.action-button .sm-btn-label { color: var(--text-success-active); }
-.action-button .sm-btn-cost { color: var(--text-detail-label); }
-.action-button:hover .sm-btn-label,
-.action-button.focused .sm-btn-label,
-.action-button.focused .sm-btn-cost { color: var(--text-primary-hover); }
-
-.action-button.carry-button { margin-top: var(--sp-2); }
-
-.action-button.preview-button {
-    flex: 0 0 auto;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--sp-1);
-    padding: var(--sp-2) var(--sp-4);
-}
-
-.sm-preview-glyph { font-size: var(--fs-detail-title); line-height: 1; }
-
-.sm-preview-label {
-    font-weight: bold;
+#quick-main-menu .qmm-head {
+    font-size: var(--fs-caption);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    font-size: var(--fs-chip);
-    color: var(--text-primary-hover);
+    opacity: 0.7;
+    margin-bottom: 6px;
 }
 
-/* Rename and Dissolve on a forged spell, side by side under the card. */
-.action-button.sm-fusion-btn {
-    justify-content: center;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: var(--text-primary-hover);
-    border-color: var(--border-primary-hover-translucent-15);
-}
-
-.action-button.sm-fusion-btn.danger {
-    color: var(--text-text-alt-10);
-    border-color: var(--border-danger-active);
-}
-
-/* The two ways out of the school picker. These are buttons rather than list
-   rows, so they wear the kit's button treatment: a standing hairline, and the
-   chip plate under the one in hand, exactly as .inspect-btn does. */
-.fuse-spells-btn,
-.magic-systems-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--sp-2);
-    margin-top: var(--sp-3);
-    padding: var(--sp-2) var(--sp-4);
-    font-family: var(--font-ui);
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-primary-hover);
-    background: transparent;
-    border: 1.5px solid var(--text-primary-hover);
-    border-radius: 4px;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.fuse-spells-btn:hover,
-.fuse-spells-btn.focused,
-.magic-systems-btn:hover,
-.magic-systems-btn.focused {
-    background: var(--chip-active-bg);
-    color: var(--chip-active-fg);
-    border-color: var(--chip-active-fg);
-}
-
-/* The card's heading line: icon, name and the way out. */
-.sm-detail-head {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
-    padding-bottom: var(--sp-2);
-}
-
-.sm-pupil-name { color: var(--text-primary-hover); }
-
-/* The atlas legend's key. The dot took its whole appearance, size included,
-   from an inline border; it is a dot in the sheet now. */
-.sg-legend-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    vertical-align: middle;
-    margin-right: var(--sp-1);
-}
-
-/* The skill card itself, the thing .sm-skill-detail--popup further up this
-   file modifies. It is the same card on the right page and in the dock; only
-   how it takes its height differs. */
-.sm-skill-detail {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-3);
-    box-sizing: border-box;
-}
-
-.sm-skill-detail--page { height: 100%; }
-
-/* The teach rows scroll; the preview button beside them does not. */
-.sm-teach-actions .sm-page-body {
-    max-height: 150px;
+#quick-main-menu .qmm-list {
+    max-height: 46vh;
     overflow-y: auto;
-    padding-right: 4px;
-    gap: var(--sp-2);
+}
+
+#quick-main-menu .qmm-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+#quick-main-menu .qmm-row.qmm-on {
+    background: var(--shadow-primary-hover-translucent-5);
+    outline: 1px solid var(--border-primary-hover-translucent-15);
+}
+
+/* A pocket that exists but cannot be opened from where the party is standing,
+   drawn the same way the pockets page draws it rather than hidden: the player
+   knows it is there and knows why it is not offered. */
+#quick-main-menu .qmm-row.qmm-off {
+    opacity: 0.4;
+    cursor: default;
+}
+
+#quick-main-menu .qmm-icon {
+    --icon-size: 20px;
 }

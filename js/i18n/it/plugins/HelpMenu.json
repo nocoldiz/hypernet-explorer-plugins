@@ -19,9 +19,9 @@
   "topics": "Argomenti",
   "searchPlaceholder": "Cerca nel manuale...",
   "topicKnownBy": "Conosciuto da {names}.",
-  "topicExplainer": "Un argomento e qualcosa che un membro del gruppo ha appreso. Una volta noto, puo essere sollevato con qualsiasi PNG. Le opzioni di dialogo che richiedono un argomento restano nascoste finche qualcuno nel gruppo non lo conosce.",
+  "topicExplainer": "Un argomento è qualcosa che è stato raccontato al gruppo. Una volta che uno di loro ne ha sentito parlare, se ne può discutere con chiunque: le opzioni di conversazione che richiedono un argomento restano nascoste finché qualcuno del gruppo non lo conosce.",
   "noTopicsLearnedYet": "Nessuno ha ancora detto al gruppo qualcosa che valga la pena annotare.",
   "rumors": "Voci",
   "openWiki": "Apri la voce",
-  "rumorExplainer": "Un nome che il gruppo ha sentito e che non ha ancora un articolo proprio. Se e una nazione, un'iperpotenza, una fazione, un partito o un leader, il suo articolo si puo aprire da qui."
+  "rumorExplainer": "Un nome che il gruppo ha sentito dire ad alta voce, senza una pagina scritta per lui. Quando si rivela essere una nazione, un'iperpotenza, una fazione, un partito o una delle persone che li guidano, la sua voce si può aprire da qui."
 }

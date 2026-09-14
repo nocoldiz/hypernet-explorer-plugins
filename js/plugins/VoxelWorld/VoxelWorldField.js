@@ -1296,21 +1296,9 @@
     // as an edit (that is the whole point of a hole), so the value stored is a
     // material id and MAT.AIR is a legitimate one.
     // =========================================================================
-    // The tile a dig belongs to, named by a number. This was the last string
-    // key left in the file, and it sat in the worst place there is: editAt is
-    // the first thing isSolid asks, isSolid is the spine of the mesher, of
-    // every footfall and of every ray into the ground, and it built TWO strings
-    // per call - one to ask whether the tile existed and another to fetch it.
-    // Nothing was paid on a world nobody had dug in (the `count` guard above
-    // it), but the first cube anybody breaks turns it on for the rest of the
-    // session, which is exactly the world the cave and detail meshing runs in.
-    const EDIT_BIAS = 32768;
-    const EDIT_SPAN = 65536;
-    const editTileKey = (wx, wy) => (wx + EDIT_BIAS) * EDIT_SPAN + (wy + EDIT_BIAS);
-
     class VoxelEdits {
         constructor() {
-            this._tiles = new Map();   // editTileKey -> { wx, wy, cells, cols }
+            this._tiles = new Map();   // "wx,wy" -> { cells: Map, cols: Map }
             this.count  = 0;
             // A dug world is cheap but not free: past this many cubes the oldest
             // tile of edits is dropped rather than letting a save grow forever.
@@ -1324,13 +1312,10 @@
         static col(lx, lz) { return lx * VOX.PER_TILE + lz; }
 
         _tile(wx, wy, make) {
-            const k = editTileKey(wx, wy);
+            const k = wx + ',' + wy;
             let t = this._tiles.get(k);
             if (!t && make) {
-                // The square is kept on the record itself: a save still writes
-                // the "wx,wy" it always wrote, and nothing has to take a number
-                // back apart to find out which square it named.
-                t = { wx, wy, cells: new Map(), cols: new Map() };
+                t = { cells: new Map(), cols: new Map() };
                 this._tiles.set(k, t);
                 this._order.push(k);
                 this._prune();
@@ -1349,18 +1334,12 @@
         }
 
         // Every read starts with the size test: a world nobody has dug in is
-        // the common case, and it must not pay to look a tile up per column.
-        has(wx, wy) { return this._tiles.size > 0 && this._tiles.has(editTileKey(wx, wy)); }
-
-        // The tile itself, so a caller that wants more than one thing out of it
-        // asks once rather than asking whether it is there and then for it.
-        tile(wx, wy) {
-            if (!this._tiles.size) return undefined;
-            return this._tiles.get(editTileKey(wx, wy));
-        }
+        // the common case, and it must not pay for a string key per column.
+        has(wx, wy) { return this._tiles.size > 0 && this._tiles.has(wx + ',' + wy); }
 
         get(wx, wy, lx, lz, vy) {
-            const t = this.tile(wx, wy);
+            if (!this._tiles.size) return undefined;
+            const t = this._tiles.get(wx + ',' + wy);
             if (!t) return undefined;
             return t.cells.get(VoxelEdits.key(lx, lz, vy));
         }
@@ -1378,14 +1357,16 @@
 
         // The vertical span of edits in one column, or null when untouched.
         range(wx, wy, lx, lz) {
-            const t = this.tile(wx, wy);
+            if (!this._tiles.size) return null;
+            const t = this._tiles.get(wx + ',' + wy);
             if (!t) return null;
             return t.cols.get(VoxelEdits.col(lx, lz)) || null;
         }
 
         // Local column indices touched in a tile, for the mesher's detail pass.
         columns(wx, wy) {
-            const t = this.tile(wx, wy);
+            if (!this._tiles.size) return null;
+            const t = this._tiles.get(wx + ',' + wy);
             return t ? t.cols : null;
         }
 
@@ -1396,12 +1377,12 @@
         // enough in a save that a few thousand dug cubes cost a few kilobytes.
         save() {
             const out = {};
-            for (const t of this._tiles.values()) {
+            for (const [k, t] of this._tiles) {
                 if (!t.cells.size) continue;
                 const arr = new Array(t.cells.size * 2);
                 let i = 0;
                 for (const [cell, mat] of t.cells) { arr[i++] = cell; arr[i++] = mat; }
-                out[t.wx + ',' + t.wy] = arr;
+                out[k] = arr;
             }
             return out;
         }
@@ -2069,44 +2050,19 @@
         // a shaft this is the generated surface; where a shaft comes up it is
         // the lip of the hole, so the mouth of a cave reads as a pit somebody
         // could fall into rather than as a lid drawn over one.
-        // Where the shaft of a world square is, and how likely the square is to
-        // have one at all. All three answers belong to the SQUARE and none of
-        // them to the column, so they are worked out once and kept until the
-        // next square is asked about.
-        //
-        // caveTopY below is the hottest question in the file - it is asked for
-        // every column of every patch the mesher builds, ten thousand to a
-        // tile - and it used to run these three hashes on every one of them.
-        // The comment there had it that a square with no shaft stops "for the
-        // cost of a hash"; it does, but the gate is per SQUARE, so on a
-        // mountain square (one in two carries a shaft) every column of the
-        // square paid all three.
-        _shaftOf(wx, wy) {
-            let sh = this._shaft;
-            if (sh && sh.wx === wx && sh.wy === wy) return sh;
-            sh = this._shaft || (this._shaft = { wx: 0, wy: 0, h: 0, sx: 0, sz: 0 });
-            sh.wx = wx; sh.wy = wy;
-            sh.h  = sqHash(wx, wy, 1);
-            sh.sx = wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE);
-            sh.sz = wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE);
-            return sh;
-        }
-
         caveTopY(vx, vz) {
-            return this.caveTopYFrom(this.column(vx, vz), vx, vz);
-        }
-
-        // The same answer, for a caller that is already holding the column. The
-        // mesher is: it has just fetched the column for its colour and its
-        // material, and asking again through caveTopY was a second lookup in
-        // the memo for every column of every patch.
-        caveTopYFrom(col, vx, vz) {
-            const gen = col.top;
+            const gen = this.genTopY(vx, vz);
+            // This is the hottest question in the whole field - the mesher asks
+            // it for every column of every chunk, and so does every ray and
+            // every footfall - so it must not pay for the caves. Only a SHAFT
+            // ever breaks the surface, and a shaft is one spot in a world square
+            // that most often has none: the square is asked first, and all but a
+            // handful of columns in the world stop here for the cost of a hash.
             const wx = Math.floor(vx / VOX.PER_TILE), wy = Math.floor(vz / VOX.PER_TILE);
             const oneIn = gen >= 26 ? SHAFT_ONE_IN_MTN : SHAFT_ONE_IN;
-            const sh = this._shaftOf(wx, wy);
-            if (sh.h >= 1 / oneIn) return gen;
-            const sx = sh.sx, sz = sh.sz;
+            if (sqHash(wx, wy, 1) >= 1 / oneIn) return gen;
+            const sx = wx * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 2) * VOX.PER_TILE);
+            const sz = wy * VOX.PER_TILE + Math.floor(sqHash(wx, wy, 3) * VOX.PER_TILE);
             const reach = SHAFT_RADIUS + SHAFT_FLARE;
             if (Math.abs(vx - sx) > reach || Math.abs(vz - sz) > reach) return gen;
 
@@ -2301,12 +2257,9 @@
         editAt(vx, vy, vz) {
             if (!this.edits.count) return undefined;
             const wx = Math.floor(vx / VOX.PER_TILE), wy = Math.floor(vz / VOX.PER_TILE);
-            // One lookup, not two: this used to ask whether the tile existed
-            // and then ask for it again, and each ask was a key of its own.
-            const t = this.edits.tile(wx, wy);
-            if (!t) return undefined;
+            if (!this.edits.has(wx, wy)) return undefined;
             const lx = vx - wx * VOX.PER_TILE, lz = vz - wy * VOX.PER_TILE;
-            return t.cells.get(VoxelEdits.key(lx, lz, vy));
+            return this.edits.get(wx, wy, lx, lz, vy);
         }
 
         isSolid(vx, vy, vz) {
@@ -2425,17 +2378,12 @@
         // Level of the first air voxel above the highest solid cube, edits and
         // all. This is what a walker stands on and what the camper drives over.
         topSolidY(vx, vz) {
-            return this.topSolidYFrom(this.column(vx, vz), vx, vz);
-        }
-
-        topSolidYFrom(col, vx, vz) {
-            const gen = this.caveTopYFrom(col, vx, vz);
+            const gen = this.caveTopY(vx, vz);
             if (!this.edits.count) return gen;
             const wx = Math.floor(vx / VOX.PER_TILE), wy = Math.floor(vz / VOX.PER_TILE);
-            const t = this.edits.tile(wx, wy);
-            if (!t) return gen;
+            if (!this.edits.has(wx, wy)) return gen;
             const lx = vx - wx * VOX.PER_TILE, lz = vz - wy * VOX.PER_TILE;
-            const r  = t.cols.get(VoxelEdits.col(lx, lz));
+            const r  = this.edits.range(wx, wy, lx, lz);
             if (!r) return gen;
             let y = Math.max(gen, r.max + 1);
             while (y > VOX.MIN_Y + 1 && !this.isSolid(vx, y - 1, vz)) y--;
@@ -2692,17 +2640,16 @@
             // altitude, a mountain lake, the pools in a swamp. NO_WATER marks a
             // dry column, which is nearly all of them.
             const wat  = new Int32Array(w * w).fill(NO_WATER);
+            const scratch = {};
 
             for (let j = 0; j < w; j++) {
                 for (let i = 0; i < w; i++) {
                     const vx = ox + (i - 1) * step + (step >> 1);
                     const vz = oz + (j - 1) * step + (step >> 1);
-                    const c  = field.genColumn(vx, vz);
+                    const c  = field.genColumn(vx, vz, scratch);
                     // topSolidY, not c.top: an apron column can belong to the
-                    // tile next door, and that tile may be the dug one. Handed
-                    // the column it already has rather than going back to the
-                    // memo for the same record a second time.
-                    const t  = field.topSolidYFrom(c, vx, vz);
+                    // tile next door, and that tile may be the dug one.
+                    const t  = field.topSolidY(vx, vz);
                     const k = j * w + i;
                     top[k] = step === 1 ? t : Math.round(t / step) * step;
                     mat[k] = c.mat;
@@ -3153,6 +3100,7 @@
             const S = VOX.SIZE;
             const at = (i, j) => (j + 1) * w + (i + 1);
             const bands = [];
+            const scratch = {};
 
             for (let j = 0; j < n; j++) {
                 for (let i = 0; i < n; i++) {
@@ -3162,7 +3110,7 @@
                     const k = at(i, j);
                     // One column read for the whole stack rather than one per
                     // cube: what a column is made of does not change with depth.
-                    const c = field.genColumn(vx, vz);
+                    const c = field.genColumn(vx, vz, scratch);
                     const cr = col[k * 3], cg = col[k * 3 + 1], cb = col[k * 3 + 2];
                     // Where the greedy pass has already skinned each side.
                     const nb = [top[at(i - 1, j)], top[at(i + 1, j)],
@@ -3322,13 +3270,14 @@
             const spanHi = (i, j) => Math.max(hi[at(i, j)], hi[at(i - 1, j)], hi[at(i + 1, j)],
                                               hi[at(i, j - 1)], hi[at(i, j + 1)]);
 
+            const scratch = {};
             for (let j = 0; j < n; j++) {
                 for (let i = 0; i < n; i++) {
                     if (!detail[at(i, j)]) continue;
                     const vx = ox + i, vz = oz + j;
                     const y0 = spanLo(i, j), y1 = spanHi(i, j);
                     for (let vy = y0; vy <= y1; vy++) {
-                        const m = field.materialAt(vx, vy, vz);
+                        const m = field.materialAt(vx, vy, vz, scratch);
                         if (m === MAT.AIR) continue;
                         const def = MATERIALS[m] || MATERIALS[MAT.ROCK];
                         const Q = VoxelMesher.bufFor(B, blocks, def);

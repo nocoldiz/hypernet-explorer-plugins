@@ -73,7 +73,7 @@
 */
 
 (() => {
-    const pluginName = "Titlescreen";
+    const pluginName = "Titlescreen"; // i18n-ignore: PluginManager lookup name
     const params = PluginManager.parameters(pluginName);
     const toPct = v => Number(v) / 100;
     const windowWidthPct = Number(params.windowWidth) || 35;
@@ -780,33 +780,6 @@
         SceneManager.push(window.Scene_History);
     };
 
-    // Sandbox is for trying things out, so its Eris opens knowing every skill
-    // and spell in the database. The `<-- Category -->` rows are dividers the
-    // skill list is grouped by, not skills, so they are left unlearned; the
-    // same `<` test the rest of the project uses to tell the two apart.
-    function learnEverySandboxSkill(actor) {
-        if (!actor || !window.$dataSkills) return;
-        for (let i = 1; i < $dataSkills.length; i++) {
-            const skill = $dataSkills[i];
-            if (!skill || !skill.name || skill.name.startsWith('<')) continue;
-            if (!actor.isLearnedSkill(i)) actor.learnSkill(i);
-        }
-    }
-
-    // Em's gun in the story, but the sandbox has no Em: it is Eris's from the
-    // first step there, in hand rather than in the bag, so the Dynamics hub
-    // opens its screen (VectorGun.available() asks who is holding it).
-    function armSandboxVectorGun(actor) {
-        if (!actor || !window.VectorGun) return;
-        const gun = window.VectorGun.gunData();
-        if (!gun) return;
-        $gameParty.gainItem(gun, 1);
-        if (actor.canEquip(gun)) actor.changeEquip(0, gun);
-        // SandboxMode.js hands the same gun to the leader on the first map:
-        // its flag is set here so the sandbox never opens with two of them.
-        $gameSystem._sandboxVectorGunGiven = true;
-    }
-
     Scene_Title.prototype.commandSandboxGame = function () {
         DataManager.setupNewGame();
         $gameSystem._isSandboxMode = true;
@@ -818,17 +791,10 @@
         $gameSwitches.setValue(33, true);   // Creation sequence complete
 
         $gameParty._actors = [];
-        // The whole roster is learned before Eris joins the party, so the diary
-        // (which only writes for party members) does not open the run with a
-        // thousand "learned a skill" lines.
+        $gameParty.addActor(5);
         const eris = $gameActors.actor(5);
         if (eris) {
             eris.changeLevel(62, false);
-            learnEverySandboxSkill(eris);
-        }
-        $gameParty.addActor(5);
-        if (eris) {
-            armSandboxVectorGun(eris);
             eris.recoverAll();
         }
         $gameVariables.setValue(29, $gameParty.size()); // party member count
@@ -1057,6 +1023,7 @@
     // and fishing build their world out of the map they are played on, and the
     // arcade has no map, so the player is asked instead of being given the
     // default (open water, whatever hour the empty world clock reads).
+    // i18n-ignore-start: the label fields are i18n keys, not display text
     const WATER_VENUES = [
         { venue: 'exterior', label: 'Titlescreen.minigameSetup.exterior' },
         { venue: 'interior', label: 'Titlescreen.minigameSetup.interior' }
@@ -1085,6 +1052,7 @@
         { key: 'boat',   label: 'Titlescreen.minigameSetup.boat',   transport: 'boat' },
         { key: 'broom',  label: 'Titlescreen.minigameSetup.broom',  transport: 'magic_carpet' }
     ];
+    // i18n-ignore-end
 
     // Where the borrowed travel map opens when there is no party to open it on:
     // the square the Omega Tower stands beside, the one fixed point of this
@@ -1891,7 +1859,7 @@
     // New story and New party start here when the world folder is empty.
     async function createDefaultWorld() {
         const WM = window.WorldManager;
-        let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story';
+        let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story'; // i18n-ignore: world folder name under save/worlds/, persistence key
         let name = base;
         let n = 2;
         while (WM.worldExists(name)) name = base + ' ' + (n++);
@@ -4150,9 +4118,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // camera drag. Match the interactive list itself, not
             // #title-menu-container: that wrapper covers the whole screen, so
             // testing against it would treat every background press as a UI press.
+            // i18n-ignore-start: CSS selector list
             const onUI = (target) => !!(target && target.closest && target.closest(
                 '.ts-menu-overlay, #title-bg-switch, #title-music-switch, #title-hyperverse-info, ' +
                 '#title-hyperverse-next, #title-hyperverse-catalog-btn, #title-hyperverse-catalog'));
+            // i18n-ignore-end
 
             this._onDown = (e) => {
                 if (e.button !== undefined && e.button !== 0 && e.button !== 2) return;
@@ -5597,7 +5567,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 `<div class="title-info-head">${ap('header')}</div>` +
                 `<div class="title-drive-road" id="ad-road">--</div>` +
                 `<div class="title-drive-place" id="ad-place">--</div>` +
-                `<div class="title-drive-stat" id="ad-speed">${ap('speed')} -- km/h</div>` +
+                `<div class="title-drive-stat" id="ad-speed">${ap('speed')} -- km/h</div>` + // i18n-ignore: km/h is a unit symbol, identical in every language
                 `<div class="title-drive-stat" id="ad-head">${ap('heading')} --</div>` +
                 `<div class="title-info-foot">${ap('lookHint')}</div>`;
             this._roadEl = box.querySelector('#ad-road');
@@ -5711,7 +5681,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this.createVersionBadge();
 
         // English / Italian flags, docked under the badge
-        // Only when more than one language is offered: a lock hides the flags.
+        // The game is locked to English, so the flag selector stays off the title.
         if (!(window.HendrixLocalization && window.HendrixLocalization.isLocked && window.HendrixLocalization.isLocked())) {
             this.createLanguageSelector();
         }

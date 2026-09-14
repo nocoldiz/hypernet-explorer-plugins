@@ -4,12 +4,12 @@
     "praise": {
       "label": "Elogia",
       "player": [
-        "L'hai gestita meglio di chiunque altro io conosca, {name}.",
-        "Sinceramente {name}, sei una delle teste più sveglie che ci siano qui.",
-        "Ne ho viste passare tante di persone, ma tu spicchi, {name}.",
-        "Quella è stata roba da applausi veri, {name}.",
-        "La gente dovrebbe guardare di più quello che fai, {name}.",
-        "Hai del talento vero, {name}. Non sprecarlo."
+        "{L'hai gestita meglio di chiunque altro io conosca, {name}.|Senti, l'hai gestita meglio di chiunque altro io conosca, {name}.|Ti dirò, l'hai gestita meglio di chiunque altro io conosca, {name}.}",
+        "{Sinceramente {name}, sei una delle teste più sveglie che ci siano qui.|Senti, sinceramente {name}, sei una delle teste più sveglie che ci siano qui.|Ti dirò, sinceramente {name}, sei una delle teste più sveglie che ci siano qui.}",
+        "{Ne ho viste passare tante di persone, ma tu spicchi, {name}.|Senti, ne ho viste passare tante di persone, ma tu spicchi, {name}.|Ti dirò, ne ho viste passare tante di persone, ma tu spicchi, {name}.}",
+        "{Quella è stata roba da applausi veri, {name}.|Senti, quella è stata roba da applausi veri, {name}.|Ti dirò, quella è stata roba da applausi veri, {name}.}",
+        "{La gente dovrebbe guardare di più quello che fai, {name}.|Senti, la gente dovrebbe guardare di più quello che fai, {name}.|Ti dirò, la gente dovrebbe guardare di più quello che fai, {name}.}",
+        "{Hai del talento vero, {name}. Non sprecarlo.|Senti, hai del talento vero, {name}. Non sprecarlo.|Ti dirò, hai del talento vero, {name}. Non sprecarlo.}"
       ],
       "responseGood": [
         "...Grazie. Avevo bisogno di sentirmelo dire.",
@@ -29,12 +29,12 @@
     "compliment": {
       "label": "Fai un complimento",
       "player": [
-        "Ti sta bene addosso, {name}.",
-        "Hai un gran gusto, {name}.",
-        "Mi piace il modo in cui ti porti, {name}.",
-        "Sembri sempre in ordine, {name}.",
-        "Hai qualcosa di rassicurante, {name}.",
-        "Rendi questo posto un po' più luminoso, {name}."
+        "{Ti sta bene addosso, {name}.|Senti, ti sta bene addosso, {name}.|Ti dirò, ti sta bene addosso, {name}.}",
+        "{Hai un gran gusto, {name}.|Senti, hai un gran gusto, {name}.|Ti dirò, hai un gran gusto, {name}.}",
+        "{Mi piace il modo in cui ti porti, {name}.|Senti, mi piace il modo in cui ti porti, {name}.|Ti dirò, mi piace il modo in cui ti porti, {name}.}",
+        "{Sembri sempre in ordine, {name}.|Senti, sembri sempre in ordine, {name}.|Ti dirò, sembri sempre in ordine, {name}.}",
+        "{Hai qualcosa di rassicurante, {name}.|Senti, hai qualcosa di rassicurante, {name}.|Ti dirò, hai qualcosa di rassicurante, {name}.}",
+        "{Rendi questo posto un po' più luminoso, {name}.|Senti, rendi questo posto un po' più luminoso, {name}.|Ti dirò, rendi questo posto un po' più luminoso, {name}.}"
       ],
       "responseGood": [
         "Ma senti che complimenti.",
@@ -54,12 +54,12 @@
     "encourage": {
       "label": "Incoraggia",
       "player": [
-        "Non mollare, {name}. Ce la fai.",
-        "Qualunque cosa tu abbia davanti, {name}, sei in grado di reggerla.",
-        "Vai avanti, {name}. Poi diventa più facile.",
+        "{Non mollare, {name}. Ce la fai.|Senti, non mollare, {name}. Ce la fai.|Ti dirò, non mollare, {name}. Ce la fai.}",
+        "{Qualunque cosa tu abbia davanti, {name}, sei in grado di reggerla.|Senti, qualunque cosa tu abbia davanti, {name}, sei in grado di reggerla.|Ti dirò, qualunque cosa tu abbia davanti, {name}, sei in grado di reggerla.}",
+        "{Vai avanti, {name}. Poi diventa più facile.|Senti, vai avanti, {name}. Poi diventa più facile.|Ti dirò, vai avanti, {name}. Poi diventa più facile.}",
         "Io credo in te, {name}. Sul serio.",
-        "Sei più forte di quanto pensi, {name}.",
-        "Un passo alla volta, {name}. Ci arrivi."
+        "{Sei più forte di quanto pensi, {name}.|Senti, sei più forte di quanto pensi, {name}.|Ti dirò, sei più forte di quanto pensi, {name}.}",
+        "{Un passo alla volta, {name}. Ci arrivi.|Senti, un passo alla volta, {name}. Ci arrivi.|Ti dirò, un passo alla volta, {name}. Ci arrivi.}"
       ],
       "responseGood": [
         "...Forse hai ragione. Grazie.",
@@ -79,12 +79,12 @@
     "flatter": {
       "label": "Adula",
       "player": [
-        "Uno intelligente come te lo saprà già, {name}.",
-        "Una persona del tuo rango si merita il meglio, {name}.",
-        "Qui dentro senza di te sarebbero perduti, {name}.",
-        "Sei chiaramente il più capace in questa stanza, {name}.",
-        "Io mi fido solo di uno saggio come te, {name}.",
-        "Parlano tutti benissimo di te, {name}."
+        "{Uno intelligente come te lo saprà già, {name}.|Senti, uno intelligente come te lo saprà già, {name}.|Ti dirò, uno intelligente come te lo saprà già, {name}.}",
+        "{Una persona del tuo rango si merita il meglio, {name}.|Senti, una persona del tuo rango si merita il meglio, {name}.|Ti dirò, una persona del tuo rango si merita il meglio, {name}.}",
+        "{Qui dentro senza di te sarebbero perduti, {name}.|Senti, qui dentro senza di te sarebbero perduti, {name}.|Ti dirò, qui dentro senza di te sarebbero perduti, {name}.}",
+        "{Sei chiaramente il più capace in questa stanza, {name}.|Senti, sei chiaramente il più capace in questa stanza, {name}.|Ti dirò, sei chiaramente il più capace in questa stanza, {name}.}",
+        "{Io mi fido solo di uno saggio come te, {name}.|Senti, io mi fido solo di uno saggio come te, {name}.|Ti dirò, io mi fido solo di uno saggio come te, {name}.}",
+        "{Parlano tutti benissimo di te, {name}.|Senti, parlano tutti benissimo di te, {name}.|Ti dirò, parlano tutti benissimo di te, {name}.}"
       ],
       "responseGood": [
         "Hai ottimo giudizio.",
@@ -104,12 +104,12 @@
     "thank": {
       "label": "Ringrazia",
       "player": [
-        "Grazie di tutto, {name}.",
+        "{Grazie di tutto, {name}.|Senti, grazie di tutto, {name}.|Ti dirò, grazie di tutto, {name}.}",
         "Te ne devo una, {name}. Davvero.",
-        "Non me la dimentico la tua gentilezza, {name}.",
-        "Mi sei stato di grande aiuto, {name}. Grazie.",
-        "Ti sono grato, {name}.",
-        "Alla salute, {name}. E lo dico sul serio."
+        "{Non me la dimentico la tua gentilezza, {name}.|Senti, non me la dimentico la tua gentilezza, {name}.|Ti dirò, non me la dimentico la tua gentilezza, {name}.}",
+        "{Mi sei stato di grande aiuto, {name}. Grazie.|Senti, mi sei stato di grande aiuto, {name}. Grazie.|Ti dirò, mi sei stato di grande aiuto, {name}. Grazie.}",
+        "{Ti sono grato, {name}.|Senti, ti sono grato, {name}.|Ti dirò, ti sono grato, {name}.}",
+        "{Alla salute, {name}. E lo dico sul serio.|Senti, alla salute, {name}. E lo dico sul serio.|Ti dirò, alla salute, {name}. E lo dico sul serio.}"
       ],
       "responseGood": [
         "Ma figurati.",
@@ -129,12 +129,12 @@
     "smalltalk": {
       "label": "Due chiacchiere",
       "player": [
-        "Giornata piena, {name}?",
-        "Come vanno le cose da queste parti, {name}?",
-        "Novità, {name}?",
-        "Tutto bene, {name}?",
-        "Settimana lunga, eh, {name}?",
-        "Allora, come ti tratta la vita, {name}?"
+        "{Giornata piena, {name}?|Senti, giornata piena, {name}?|Ti dirò, giornata piena, {name}?}",
+        "{Come vanno le cose da queste parti, {name}?|Senti, come vanno le cose da queste parti, {name}?|Ti dirò, come vanno le cose da queste parti, {name}?}",
+        "{Novità, {name}?|Senti, novità, {name}?|Ti dirò, novità, {name}?}",
+        "{Tutto bene, {name}?|Senti, tutto bene, {name}?|Ti dirò, tutto bene, {name}?}",
+        "{Settimana lunga, eh, {name}?|Senti, settimana lunga, eh, {name}?|Ti dirò, settimana lunga, eh, {name}?}",
+        "{Allora, come ti tratta la vita, {name}?|Senti, allora, come ti tratta la vita, {name}?|Ti dirò, allora, come ti tratta la vita, {name}?}"
       ],
       "responseGood": [
         "Come sempre, ma non mi lamento.",
@@ -154,12 +154,12 @@
     "gossip": {
       "label": "Pettegolezzi",
       "player": [
-        "Sentito niente di interessante ultimamente, {name}?",
-        "La gente parla, {name}. Ti è arrivato niente?",
-        "Detto fra noi, {name}, che si dice in giro?",
-        "Tu le sai sempre tutte, {name}. Sputa il rospo.",
-        "Novità succose da queste parti, {name}?",
-        "Dai, {name}, dimmi qualcosa che non so."
+        "{Sentito niente di interessante ultimamente, {name}?|Senti, sentito niente di interessante ultimamente, {name}?|Ti dirò, sentito niente di interessante ultimamente, {name}?}",
+        "{La gente parla, {name}. Ti è arrivato niente?|Senti, la gente parla, {name}. Ti è arrivato niente?|Ti dirò, la gente parla, {name}. Ti è arrivato niente?}",
+        "{Detto fra noi, {name}, che si dice in giro?|Senti, detto fra noi, {name}, che si dice in giro?|Ti dirò, detto fra noi, {name}, che si dice in giro?}",
+        "{Tu le sai sempre tutte, {name}. Sputa il rospo.|Senti, tu le sai sempre tutte, {name}. Sputa il rospo.|Ti dirò, tu le sai sempre tutte, {name}. Sputa il rospo.}",
+        "{Novità succose da queste parti, {name}?|Senti, novità succose da queste parti, {name}?|Ti dirò, novità succose da queste parti, {name}?}",
+        "{Dai, {name}, dimmi qualcosa che non so.|Senti, dai, {name}, dimmi qualcosa che non so.|Ti dirò, dai, {name}, dimmi qualcosa che non so.}"
       ],
       "responseGood": [
         "Beh, visto che me lo chiedi...",
@@ -179,12 +179,12 @@
     "weather": {
       "label": "Parla del tempo",
       "player": [
-        "Che tempo strano, {name}.",
-        "Oggi c'è un'arietta fredda, {name}.",
-        "Secondo te la pioggia regge, {name}?",
-        "Bel cielo oggi, vero {name}?",
-        "Le previsioni non ci azzeccano mai, eh {name}?",
-        "Bella giornata per stare fuori, {name}."
+        "{Che tempo strano, {name}.|Senti, che tempo strano, {name}.|Ti dirò, che tempo strano, {name}.}",
+        "{Oggi c'è un'arietta fredda, {name}.|Senti, oggi c'è un'arietta fredda, {name}.|Ti dirò, oggi c'è un'arietta fredda, {name}.}",
+        "{Secondo te la pioggia regge, {name}?|Senti, secondo te la pioggia regge, {name}?|Ti dirò, secondo te la pioggia regge, {name}?}",
+        "{Bel cielo oggi, vero {name}?|Senti, bel cielo oggi, vero {name}?|Ti dirò, bel cielo oggi, vero {name}?}",
+        "{Le previsioni non ci azzeccano mai, eh {name}?|Senti, le previsioni non ci azzeccano mai, eh {name}?|Ti dirò, le previsioni non ci azzeccano mai, eh {name}?}",
+        "{Bella giornata per stare fuori, {name}.|Senti, bella giornata per stare fuori, {name}.|Ti dirò, bella giornata per stare fuori, {name}.}"
       ],
       "responseGood": [
         "Eh, non si può dire il contrario.",
@@ -204,12 +204,12 @@
     "insult": {
       "label": "Insulta",
       "player": [
-        "Sei uno spreco di spazio, {name}.",
-        "Sinceramente {name}, fai pena.",
-        "Ho conosciuto sassi più svegli di te, {name}.",
-        "Sei un imbarazzo, {name}.",
-        "Non è che piaci a qualcuno davvero, {name}.",
-        "Sei inutile, {name}, e lo sanno tutti."
+        "{Sei uno spreco di spazio, {name}.|Senti, sei uno spreco di spazio, {name}.|Ti dirò, sei uno spreco di spazio, {name}.}",
+        "{Sinceramente {name}, fai pena.|Senti, sinceramente {name}, fai pena.|Ti dirò, sinceramente {name}, fai pena.}",
+        "{Ho conosciuto sassi più svegli di te, {name}.|Senti, ho conosciuto sassi più svegli di te, {name}.|Ti dirò, ho conosciuto sassi più svegli di te, {name}.}",
+        "{Sei un imbarazzo, {name}.|Senti, sei un imbarazzo, {name}.|Ti dirò, sei un imbarazzo, {name}.}",
+        "{Non è che piaci a qualcuno davvero, {name}.|Senti, non è che piaci a qualcuno davvero, {name}.|Ti dirò, non è che piaci a qualcuno davvero, {name}.}",
+        "{Sei inutile, {name}, e lo sanno tutti.|Senti, sei inutile, {name}, e lo sanno tutti.|Ti dirò, sei inutile, {name}, e lo sanno tutti.}"
       ],
       "responseGood": [
         "...Ma io cosa ti ho fatto?",
@@ -229,12 +229,12 @@
     "mock": {
       "label": "Prendi in giro",
       "player": [
-        "Bel lavoro, {name}. Ti sei allenato a fallire?",
-        "Ah, piano geniale, {name}. Davvero ispirato.",
-        "Wow, {name}, sarai fierissimo di te stesso.",
-        "Attento {name}, tutto quel pensare potrebbe farti male.",
-        "Carino il tentativo, {name}. Adorabile, sul serio.",
-        "Bravo, {name}. Una prestazione da tramandare ai posteri."
+        "{Bel lavoro, {name}. Ti sei allenato a fallire?|Senti, bel lavoro, {name}. Ti sei allenato a fallire?|Ti dirò, bel lavoro, {name}. Ti sei allenato a fallire?}",
+        "{Ah, piano geniale, {name}. Davvero ispirato.|Senti, ah, piano geniale, {name}. Davvero ispirato.|Ti dirò, ah, piano geniale, {name}. Davvero ispirato.}",
+        "{Wow, {name}, sarai fierissimo di te stesso.|Senti, wow, {name}, sarai fierissimo di te stesso.|Ti dirò, wow, {name}, sarai fierissimo di te stesso.}",
+        "{Attento {name}, tutto quel pensare potrebbe farti male.|Senti, attento {name}, tutto quel pensare potrebbe farti male.|Ti dirò, attento {name}, tutto quel pensare potrebbe farti male.}",
+        "{Carino il tentativo, {name}. Adorabile, sul serio.|Senti, carino il tentativo, {name}. Adorabile, sul serio.|Ti dirò, carino il tentativo, {name}. Adorabile, sul serio.}",
+        "{Bravo, {name}. Una prestazione da tramandare ai posteri.|Senti, bravo, {name}. Una prestazione da tramandare ai posteri.|Ti dirò, bravo, {name}. Una prestazione da tramandare ai posteri.}"
       ],
       "responseGood": [
         "Divertentissimo. Davvero.",
@@ -254,12 +254,12 @@
     "criticize": {
       "label": "Critica",
       "player": [
-        "Potevi farlo molto meglio, {name}.",
-        "Quello era un lavoro fatto male, {name}.",
-        "Mi aspettavo di più da te, {name}.",
-        "Stai tagliando gli angoli, {name}. E si vede.",
-        "Francamente {name}, non era abbastanza.",
-        "Continui a fare gli stessi errori, {name}."
+        "{Potevi farlo molto meglio, {name}.|Senti, potevi farlo molto meglio, {name}.|Ti dirò, potevi farlo molto meglio, {name}.}",
+        "{Quello era un lavoro fatto male, {name}.|Senti, quello era un lavoro fatto male, {name}.|Ti dirò, quello era un lavoro fatto male, {name}.}",
+        "{Mi aspettavo di più da te, {name}.|Senti, mi aspettavo di più da te, {name}.|Ti dirò, mi aspettavo di più da te, {name}.}",
+        "{Stai tagliando gli angoli, {name}. E si vede.|Senti, stai tagliando gli angoli, {name}. E si vede.|Ti dirò, stai tagliando gli angoli, {name}. E si vede.}",
+        "{Francamente {name}, non era abbastanza.|Senti, francamente {name}, non era abbastanza.|Ti dirò, francamente {name}, non era abbastanza.}",
+        "{Continui a fare gli stessi errori, {name}.|Senti, continui a fare gli stessi errori, {name}.|Ti dirò, continui a fare gli stessi errori, {name}.}"
       ],
       "responseGood": [
         "...Ne terrò conto.",
@@ -279,12 +279,12 @@
     "threaten": {
       "label": "Minaccia",
       "player": [
-        "Mettiti contro di me e te ne pentirai, {name}.",
-        "Non ti conviene avermi come nemico, {name}.",
-        "Occhio a te, {name}. Ti sto avvertendo.",
-        "Una mossa sbagliata, {name}, e per te è finita.",
-        "Potrei renderti la vita molto difficile, {name}.",
-        "Ricordati con chi stai parlando, {name}."
+        "{Mettiti contro di me e te ne pentirai, {name}.|Senti, mettiti contro di me e te ne pentirai, {name}.|Ti dirò, mettiti contro di me e te ne pentirai, {name}.}",
+        "{Non ti conviene avermi come nemico, {name}.|Senti, non ti conviene avermi come nemico, {name}.|Ti dirò, non ti conviene avermi come nemico, {name}.}",
+        "{Occhio a te, {name}. Ti sto avvertendo.|Senti, occhio a te, {name}. Ti sto avvertendo.|Ti dirò, occhio a te, {name}. Ti sto avvertendo.}",
+        "{Una mossa sbagliata, {name}, e per te è finita.|Senti, una mossa sbagliata, {name}, e per te è finita.|Ti dirò, una mossa sbagliata, {name}, e per te è finita.}",
+        "{Potrei renderti la vita molto difficile, {name}.|Senti, potrei renderti la vita molto difficile, {name}.|Ti dirò, potrei renderti la vita molto difficile, {name}.}",
+        "{Ricordati con chi stai parlando, {name}.|Senti, ricordati con chi stai parlando, {name}.|Ti dirò, ricordati con chi stai parlando, {name}.}"
       ],
       "responseGood": [
         "...Va bene. Non ce n'è bisogno.",
@@ -516,7 +516,7 @@
       "aromantic": {
         "reasonLabel": "aromantico",
         "lines": [
-          "Io non mi innamoro. Di nessuno. Non è una ferita, è solo come stanno le cose.",
+          "Io non mi innamoro. Di nessuno. Non me l'ha fatto nessuna ferita. È solo come stanno le cose.",
           "Il romanticismo è una lingua che non ho mai parlato.",
           "Mi chiedi una cosa che non ho da dare. L'amicizia quella sì.",
           "Non c'è niente lì da raggiungere. Non c'è mai stato."
@@ -572,13 +572,13 @@
         "lines": [
           "Ferma, ferma, chiano chiano. Posala prima di finirla, core mio.",
           "Em. Em, guardami. Sono ancora suo. Di Eris. Non ho smesso di esserlo un solo giorno e non ho intenzione di smettere.",
-          "Sei la migliore amica che ho in novantadue dimensioni. Qualcosa di più sarebbe solo strano, guaglio'.",
-          "No. No, core mio. Siamo compagni di viaggio. Non è la versione piccola di qualcos'altro, è la cosa intera.",
+          "Sei la migliore amica che ho in novantadue dimensioni. Qualcosa di più sarebbe solo strano, uagliona.",
+          "No. No, core mio. Siamo compagni di viaggio. È già tutto, così com'è.",
           "Lei m'ha lasciato e io ci sono ancora sposato dentro. Non è giusto verso di te e non faccio finta di niente.",
           "Amice simme e amice restammo. Amici siamo e amici restiamo. È questo il patto e il patto mi piace.",
           "Mannaggia, Em. Immaginalo. Immagina noi. Lo odieresti entro giovedì e io lo odierei entro mercoledì.",
           "Ti voglio bene. Non così. Come l'altra cosa, quella più grande che non ha bisogno di una parola.",
-          "Guagliona, nel mio cuore c'è una dea sola e ha l'atto di proprietà. Non c'è una stanza libera.",
+          "Uagliona, nel mio cuore c'è una dea sola e ha l'atto di proprietà. Non c'è una stanza libera.",
           "{name} diventa molto silenzioso, e poi ti spinge piano il caffè verso di te, che è tutta la sua risposta.",
           "Chiedimelo in una notte brutta e ti dirò no lo stesso, e la mattina dopo sarò ancora qui.",
           "No. E non cominciare a fare la strana adesso, che dobbiamo dividerci un camper."
@@ -1349,82 +1349,82 @@
     "bubba": {
       "label": "l'unica amica che ha",
       "greeting": [
-        "Uè, Em! Siediti, guaglio', la Bestia non va da nessuna parte finché quel collettore non si raffredda.",
+        "Uè, Em! Siediti, uagliona, la Bestia non va da nessuna parte finché quel collettore non si raffredda.",
         "Mannaggia, core mio, hai la faccia di ottanta chilometri di strada brutta. Il caffè sta sul fuoco, 'a tazzulella è tua.",
         "Jamme, sali. Stiamo bruciando luce del giorno e io sto bruciando olio.",
         "Statt' bbuono, strega. Non c'è niente in novantadue dimensioni che passi da quella porta finché ho la chiave inglese in mano.",
         "Beagle entro giovedì, chiano chiano. Carte da firmare, e poi vediamo che vuole la strada.",
-        "Ha tenuto. Te l'avevo detto che teneva, guaglio'.",
+        "Ha tenuto. Te l'avevo detto che teneva, uagliona.",
         "Ue, guarda chi ha sputato fuori la strada. Siediti, siediti. C'è il caffè e c'è una sedia, e una delle due è pulita.",
         "Hai mangiato oggi? Non mi dire bugie, core mio, io me n'accorgo.",
         "{name} ha la radio su qualcosa con troppa fisarmonica dentro, e nessuna intenzione di cambiare.",
-        "Novantadue per cento sparito e ti ricordi ancora dove tengo la chiave da dieci. Questa è amicizia, questa.",
-        "Siediti. Hai quella faccia come se il cielo ti avesse detto qualcosa di nuovo.",
+        "Novantadue per cento sparito e te ricuorde ancora addò tengo la chiave da dieci. Chest'è amicizia, uagliona.",
+        "Assettate, uagliona. Tieni chella faccia come se il cielo t'avesse detto qualcosa di nuovo.",
         "Mannaggia, posa la bacchetta prima di salutare. L'ultimo saluto m'è costato un parabrezza.",
-        "Eccola. L'unica donna che conosco che perde una memoria e trova una lancia.",
-        "Qualunque cosa hai rotto, non guardo ancora. Prima siediti. Poi confessi.",
-        "Uè guagliona. Ho aggiustato la cosa. Non chiedere quale cosa.",
-        "Hai letto di nuovo. Hai quello sguardo. Quale libro, e quanto m'è costato?",
+        "Eccola ccà. L'unica femmina che conosco che perde una memoria e trova una lancia.",
+        "Qualunque cosa hai rotto, nun guardo ancora. Primma t'assiette. Po' confessi.",
+        "Uè uagliona. Ho aggiustato la cosa. Non chiedere quale cosa.",
+        "Hai letto n'ata vota. Tiene chillo sguardo. Quale libro, e quanto m'è costato?",
         "{name} si asciuga le mani due volte sullo stesso straccio e alla seconda si arrende.",
-        "Bene, bene, stai in piedi. È già meglio di martedì.",
-        "Stavo giusto pensando a te ed eccoti qua. O è amicizia o è di nuovo il Motore che perde.",
+        "Bbuono, bbuono, staje in piedi. È già meglio di martedì.",
+        "Stevo giusto penzanno a te ed eccote ccà. O è amicizia o è n'ata vota il Motore che perde.",
         "Ue! Attenta al gradino. Il gradino è nuovo. Io e il gradino ci stiamo ancora conoscendo.",
-        "Vieni qua. No, senza motivo. Un uomo può volere la sua amica nella stanza, guaglio'.",
-        "Vuoi la buona notizia o quella a buon mercato? Sono la stessa notizia, la dico solo in due modi."
+        "Vieni qua. No, senza motivo. Un uomo può volere la sua amica nella stanza, uagliona.",
+        "Vuò la bona notizia o chella a buon mercato? È la stessa notizia, uagliona, la dico sulo in due modi."
       ],
       "positive": [
         "Aoh, sentila. Continua a parlare così e ti metto il nome sul motore.",
         "Grazie assaje, core mio. Ora passami la chiave da dieci prima che dica qualcosa di sentimentale.",
-        "Sì, vabbè. Neanche tu sei male, guagliona.",
-        "Ecco perché ti tengo con me. Quello, e sei l'unica anima che controlla l'olio.",
+        "Sì, vabbè. Neanche tu sei male, uagliona.",
+        "Ecco pecché te tengo cu me. Chillo, e sei l'unica anima che controlla l'olio.",
         "Aoh, smettila, sono un uomo semplice. Mi fai piangere dentro la coppa dell'olio.",
         "{name} ride così forte che gli cade la chiave inglese, e poi dà la colpa alla chiave inglese.",
-        "Scrivilo, che nessuno crederà mai che me l'hanno detto.",
-        "Hai sentito, Bestia? Le piacciamo.",
-        "Vuoi qualcosa, vero? No. Non vuoi niente. È peggio.",
+        "Scrivetillo, ca nisciuno crederà maje che me l'hanno detto.",
+        "Hê sentito, Bestia? Le piacimmo.",
+        "Vuò quaccosa, vero? No. Nun vuò niente. È peggio.",
         "Madonna. Dici una cosa così davanti a un meccanico, e quello non sa dove metterla.",
-        "Non ho fatto niente che lo meriti, guaglio', ma me la prendo e me la tengo.",
-        "Attenta. Uno si potrebbe abituare a farsi parlare così.",
+        "Non ho fatto niente che lo meriti, uagliona, ma me la prendo e me la tengo.",
+        "Vide 'e sta' attenta. Uno se ce putesse abituà, a farsi parlare accussì.",
         "Ue, è la bugia più bella che m'hanno detto tutta la settimana e non la controllo.",
         "Chiano chiano coi complimenti, core mio, la testa è l'unica parte di me che non è rinforzata.",
-        "È molto gentile e completamente sbagliato, e ti ringrazio per tutte e due le metà.",
+        "È assaje gentile e completamente sbagliato, e te ringrazio pe' tutt'e due le metà.",
         "{name} diventa rosso dal colletto in su e comincia a spiegare una guarnizione che nessuno ha chiesto."
       ],
       "neutral": [
-        "Il tempo è tempo. Sotto gli ottanta, qualunque cosa faccia, la fa.",
+        "'O tiempo è tiempo. Sotto gli ottanta, qualunque cosa fa, la fa.",
         "{name} ti rispiega il Motore Liminale, tutto quanto, con la stessa gioia della prima volta.",
-        "La Route 666 era peggio. Chiedimelo quando non stiamo guidando.",
+        "La Route 666 era peggio. Chiedimillo quanno nun stammo guidanno.",
         "Uaglio', passami quella chiave e continua a parlare. Ascolto meglio con qualcosa in mano.",
-        "Prima il caffè, poi i problemi. È tutta qua la filosofia, guaglio'.",
+        "Prima il caffè, poi i problemi. È tutta qua la filosofia, uagliona.",
         "{name} spiega, a lungo, la differenza tra un rumore che non costa niente e un rumore che costa tutto.",
         "La burocrazia a Beagle, madonna. Quattro timbri e un tale di nome Deniz che non mi vede di buon occhio.",
         "{name} litiga con la radio per un po', e poi le dà ragione.",
-        "Hanno messo un cartello nuovo alla curva. Stessa curva. Stesso fosso. Cartello nuovo.",
+        "Hanno miso un cartello nuovo â curva. Stessa curva. Stesso fosso. Cartello nuovo.",
         "{name} ti chiede com'è andata la giornata, e poi aspetta davvero la risposta, con le mani che continuano a lavorare.",
-        "Mm. Mm. Vai avanti, ti sto dietro, sto solo sotto il lavandino.",
+        "Mm. Mm. Va' avanti, te sto appriesso, sto sulo sotto al lavandino.",
         "Tutto si aggiusta, core mio. Certe cose pure due volte.",
-        "Non ho un'opinione su questo e ne vado molto fiero.",
+        "Nun tengo un'opinione ncoppa a chesto e ne vado assaje fiero.",
         "{name} annuisce e intanto sposta piano la tazza fuori dal raggio del tuo gomito.",
-        "Richiedimelo fra dieci chilometri. La strada di solito lo sa prima di me.",
+        "Chiedimillo n'ata vota fra dieci chilometri. 'A strada di solito 'o sape primma 'e me.",
         "Jamme, vai avanti. Nel peggiore dei casi impariamo qualcosa."
       ],
       "negative": [
-        "Giornataccia, eh. Siediti, metto su la caffettiera.",
+        "Giornataccia, eh. Assettate, uagliona, metto su 'a cuccumella.",
         "Puoi urlarmi contro quanto vuoi, core mio. Io non vado da nessuna parte. Chiano chiano.",
-        "Novantadue dimensioni e sei ancora la seconda donna più spaventosa che conosco.",
+        "Novantadue dimensioni e si' ancora 'a seconda femmina cchiù paurosa che conosco.",
         "Va bene, va bene, chiano chiano. Con chi ce l'abbiamo, e sono io?",
-        "Hai la lingua tagliente oggi. Siediti, bevi qualcosa.",
+        "Tiene 'a lengua affilata oggi. Assettate, bivete quaccosa.",
         "Mi hanno insultato in due lingue una donna che lancia montagne. Devi impegnarti di più, core mio.",
         "{name} continua a lavorare per tutto il tempo, e alla fine ti passa una tazza.",
-        "Quella aveva i denti. Va bene. Andiamo lo stesso a Beagle.",
-        "Vuoi litigare, litiga col collettore. Ha cominciato lui.",
+        "Chella teneva 'e diente. Va bene. Jammo 'o stesso a Beagle.",
+        "Vuò appiccecà, appiccecate cu 'o collettore. Ha cumminciato isso.",
         "Mannaggia, questa era buona. Ridimmela piano, la voglio imparare.",
         "Ue! Il linguaggio. C'è un camper presente ed è sensibile.",
         "{name} prende l'insulto, lo rigira come un cuscinetto rotto, e decide che gli piace.",
-        "Me lo dici un'altra volta e te lo faccio scrivere in oro sulla fiancata.",
+        "Me 'o dice n'ata vota e te 'o faccio scrivere in oro ncoppa â fiancata.",
         "Aoh. Aoh! Guagliona, quello è l'unico braccio buono che ho e me lo stai descrivendo.",
-        "Vai avanti. Quando finisci, ti dico quelle su di me che non ti sono venute in mente.",
-        "È la cosa più cattiva che m'hanno detto da colazione. Anche la colazione eri tu."
+        "Va' avanti. Quanno finisci, te dico chelle ncoppa a me che nun te so' venute in mente.",
+        "È 'a cosa cchiù cattiva che m'hanno ditto da colazione. Pure 'a colazione eri tu."
       ],
       "player": {
         "positive": [
@@ -1479,7 +1479,7 @@
       "bicker": [
         {
           "player": "Hai dato un nome al camper. È un veicolo. Non lo sa.",
-          "reply": "Lo sa, guaglio'. Lo sa e se lo ricorda, che è più di quanto possa dire dei presenti."
+          "reply": "Lo sa, uagliona. Lo sa e se lo ricorda, che è più di quanto possa dire dei presenti."
         },
         {
           "player": "Bubba, quel rumore è nuovo. Quel rumore non era nell'ultimo catalogo dei rumori.",
@@ -1499,7 +1499,7 @@
         },
         {
           "player": "Non sono goffa. Sono gli oggetti che si spostano.",
-          "reply": "Uè, si spostano perché ci stai vicino tu! È questo che vuol dire goffa, guagliona!"
+          "reply": "Uè, si spostano perché ci stai vicino tu! È questo che vuol dire goffa, uagliona!"
         },
         {
           "player": "Sei troppo modesto. Comincia a sembrare un disturbo della personalità.",
@@ -1514,8 +1514,8 @@
           "reply": "Sì, e in metà pezzi. Chiano chiano, core mio. Chiano chiano."
         },
         {
-          "player": "Hai usato la parola guagliona quattro volte in sei minuti. Ho contato.",
-          "reply": "Perché è da sei minuti che ti comporti come tale, guagliona."
+          "player": "Hai usato la parola uagliona quattro volte in sei minuti. Ho contato.",
+          "reply": "Perché è da sei minuti che ti comporti come tale, uagliona."
         },
         {
           "player": "Smettila di darmi da mangiare. Non sono una stufa.",
@@ -1535,7 +1535,7 @@
         },
         {
           "player": "Il tuo ottimismo è clinicamente insostenibile.",
-          "reply": "E il tuo pessimismo ha sbagliato ogni singolo giorno in cui non siamo morti. Tieni il conto, guaglio'."
+          "reply": "E il tuo pessimismo ha sbagliato ogni singolo giorno in cui non siamo morti. Tieni il conto, uagliona."
         },
         {
           "player": "Prenderò questo incantesimo, lo indirizzerò correttamente, e tu ti scuserai.",
@@ -1560,7 +1560,7 @@
       ],
       "situations": {
         "rain": [
-          "La pioggia è buona, guaglio'. La pioggia vuol dire che la polvere non mi nasconde niente.",
+          "La pioggia è buona, uagliona. La pioggia vuol dire che la polvere non mi nasconde niente.",
           "Mettiti sotto la tenda prima di prenderti qualcosa. Mannaggia, tu ci staresti sotto tutto il giorno a chiamarlo tempo atmosferico.",
           "{name} ascolta la pioggia sul tetto per un momento e sembra un uomo che ha tutto.",
           "I tergicristalli stanno alla terza vita, core mio. Non guardarli. È guardarli che li ammazza."
@@ -1572,24 +1572,24 @@
           "Statt' bbuono, Em. I temporali passano. Passano sempre. Non ce n'è stato uno che sia rimasto."
         ],
         "snow": [
-          "Il freddo è onesto, guaglio'. Ti dice esattamente cosa ti farà.",
-          "Il gasolio non ama questa roba. Io e il gasolio ci stiamo dicendo delle cose.",
-          "Mettiti qualcosa. No, mettiti qualcosa SUL SERIO, Em, ti vedo i polsi.",
+          "Il freddo è onesto, uagliona. Ti dice esattamente cosa ti farà.",
+          "'O gasolio nun ama chesta roba. Io e 'o gasolio ce stammo dicenno certe cose.",
+          "Miettete quaccosa. No, miettete quaccosa OVERO, Em, te veco 'e puze.",
           "{name} ha già pulito il parabrezza due volte e sta perdendo la discussione."
         ],
         "cold": [
-          "Una discarica ghiacciata, questa. Senza offesa per la discarica.",
+          "'Na discarica gelata, chesta. Senz'offesa pe' 'a discarica.",
           "Continua a muoverti, core mio. Stare fermi quassù è il modo in cui una persona diventa mobilia.",
           "{name} indossa tre maglioni e li chiama tutti e tre 'il maglione'."
         ],
         "desert": [
-          "Prima l'acqua, poi le opinioni. È la regola del deserto ed è l'unica che c'è qua fuori.",
+          "Primma l'acqua, po' 'e opinioni. È 'a regola d'o deserto ed è l'unica che ce sta ccà fuori.",
           "Sabbia nei filtri, sabbia nel caffè, sabbia in posti che non nomino. Jamme, muoviamoci.",
           "{name} strizza gli occhi verso l'orizzonte come se gli dovesse dei soldi."
         ],
         "forest": [
-          "Sa di verde, no? È tutta qua la recensione, guaglio'.",
-          "Attenta a dove metti i piedi sotto queste radici. Non ti porto in braccio e non ti lascio qua.",
+          "Sa di verde, no? È tutta qua la recensione, uagliona.",
+          "Vide addò miette 'e piede sotto a chesti radici. Nun te porto 'nbraccio e nun te lascio ccà.",
           "{name} ha già trovato tre cose che dice essere legna da ardere e una che è chiaramente una sedia."
         ],
         "mountain": [
@@ -1598,28 +1598,28 @@
           "{name} continua a guardare l'indicatore della temperatura come se fosse un animale che dorme."
         ],
         "beach": [
-          "Il sale mangia tutto, guaglio'. Tutto. Comprese le amicizie, se le lasci fuori.",
-          "Levati gli stivali. Dai. Quand'è l'ultima volta che avevi la sabbia addosso e nessuno sparava.",
+          "Il sale mangia tutto, uagliona. Tutto. Comprese le amicizie, se le lasci fuori.",
+          "Lievate 'e stivale. Jamme. Quann'è l'urdema vota che tenive 'a rena ncuollo e nisciuno sparava.",
           "{name} si arrotola i pantaloni esattamente di un giro e considera la questione chiusa."
         ],
         "water": [
           "Non fai il bagno. L'ultima volta è uscita una cosa da un lago e ti ha portata a trentanove anni luce, core mio.",
-          "Io e l'acqua abbiamo un accordo: lei sta là fuori, io sto qua dentro.",
+          "Io e l'acqua tenimmo n'accordo: essa sta llà fuori, io sto ccà dentro.",
           "{name} guarda la superficie un attimo di troppo, e poi smette molto deliberatamente."
         ],
         "swamp": [
           "Madonna, che puzza. Quella è decomposizione, ed è pure in anticipo.",
-          "Stai sui pezzi solidi. Se sembra solido non lo è. Sono fatte così, le paludi.",
+          "Statte ncoppa 'e piezze solide. Si pare solido nun 'o è. So' fatte accussì, 'e paludi.",
           "{name} tira fuori lo stivale dal fango e lo ispeziona come una saldatura fatta male."
         ],
         "town": [
-          "Un paese. Bene. Qualcuno qua dentro vende guarnizioni e non sa cos'ha.",
+          "'Nu paese. Bbuono. Quaccheduno ccà dentro vende guarnizioni e nun sape che tene.",
           "Chiano chiano da queste parti, Em. I paesi piccoli hanno la memoria lunga e tu hai una faccia famosa.",
           "{name} sta già salutando gli sconosciuti come se li conoscesse da anni, e due di loro rispondono al saluto."
         ],
         "underground": [
-          "Non mi piace stare quaggiù e lo dico ad alta voce così è detto.",
-          "Tieni la luce su di me e io tengo la chiave inglese su quello che viene, guaglio'.",
+          "Nun me piace sta' cca' sotto e 'o dico a voce alta accussì è ditto.",
+          "Tieni la luce su di me e io tengo la chiave inglese su quello che viene, uagliona.",
           "{name} fischietta qualcosa con troppa fisarmonica dentro e fa finta che non sia per il buio."
         ],
         "space": [
@@ -1628,33 +1628,33 @@
           "{name} bussa su una paratia, ascolta, e sembra tranquillizzato da quello che gli ha risposto."
         ],
         "alien": [
-          "Non mangiare niente qua fuori. Dico sul serio, Em. Niente. Neanche se te lo chiede gentilmente.",
+          "Nun mangià niente ccà fuori. Dico overo, Em. Niente. Manco si te 'o chiede gentilmente.",
           "Rocce nuove, cielo nuovo, stessi due idioti. Jamme.",
           "{name} ha trovato una pianta di cui non si fida e la sta guardando da un minuto intero."
         ],
         "indoors": [
-          "Un tetto sopra e nessuno che spara. Questa è una vacanza, questa.",
-          "Siediti per bene. È un'ora che stai in piedi come se dovessi andartene.",
+          "'Nu tetto ncoppa e nisciuno che spara. Chesta è 'na vacanza, chesta.",
+          "Assettate buono. È n'ora che staje in piedi comme si t'avissi 'a ji'.",
           "{name} ha già capito dov'è il quadro elettrico, senza che nessuno glielo chiedesse e senza dire perché."
         ],
         "worldmap": [
           "Tutta la mappa aperta e lo chiedi a ME. Scegli una direzione, core mio, io la faccio funzionare.",
-          "C'è un sacco di strada là fuori. Bene. Mi piace quando c'è un sacco di strada.",
+          "Ce sta 'nu sacco 'e strada llà fuori. Bbuono. Me piace quanno ce sta 'nu sacco 'e strada.",
           "{name} strizza gli occhi verso la distanza e fa i conti sul carburante ad alta voce, male, due volte."
         ],
         "night": [
-          "Dovresti dormire, guagliona. Lo dico, non lo impongo.",
-          "La notte è la parte onesta della giornata. Alle tre del mattino nessuno finge.",
+          "Dovresti dormire, uagliona. Lo dico, non lo impongo.",
+          "'A notte è 'a parte onesta d'a jurnata. Alle tre 'e notte nisciuno fa finta.",
           "{name} ha la lampadina accesa e non sta aggiustando niente, ed è così che capisci che ti stava aspettando."
         ],
         "dawn": [
-          "Il caffè è fatto. È fatto da un pezzo, a dire il vero, non ho dormito molto.",
+          "'O café è fatto. È fatto 'a nu piezzo, a dì 'a verità, nun aggio durmuto assaje.",
           "Guarda che luce. Mannaggia. Ogni mattina fa così e ogni mattina me lo dimentico.",
           "{name} è già sotto il camper e ci sta da un po'."
         ],
         "evening": [
-          "Ci fermiamo qua. Non si discute. Non si guida stanchi, e non si lanciano incantesimi stanche neanche.",
-          "Il sole se ne va. Siediti con me un minuto prima di fare qualcosa di intelligente.",
+          "Ce fermammo ccà. Nun se discute. Nun se guida stanchi, e nun se lanciano incantesimi stanche manco.",
+          "'O sole se ne va. Assettate cu me nu minuto primma 'e fa' quaccosa 'e intelligente.",
           "{name} posa gli attrezzi nell'ordine giusto, cosa che fa solo alla fine di una giornata."
         ],
         "hurt": [
@@ -1664,7 +1664,7 @@
         ],
         "broke": [
           "Siamo al verde, core mio. Non ti agitare, siamo stati al verde in posti migliori.",
-          "Ci faccio altri duecento chilometri con la simpatia e una preghiera. Soprattutto la simpatia.",
+          "Ce faccio ati duiciento chilometri cu 'a simpatia e 'na preghiera. Soprattutto 'a simpatia.",
           "{name} conta i soldi due volte, ottiene lo stesso risultato, e mette su l'acqua lo stesso."
         ]
       },
@@ -1672,10 +1672,10 @@
         "Io, venire con voi? Guaglio', qualcuno deve tenere insieme questo camper. Sto qua quando la strada torna indietro.",
         "Non faccio il passeggero nella mia vita, core mio. 'A Bestia non si guida da sola.",
         "Farebbe cadere una montagna sul primo paese dove dormiamo. Vai avanti tu, Em. Chiano chiano.",
-        "Prima le carte, prima Beagle. Poi parliamo di viaggiare insieme come persone perbene.",
-        "Qualcuno deve tenere onesto il Motore, guaglio'. Quel qualcuno ha la mia faccia.",
+        "Primma 'e carte, primma Beagle. Po' parlammo 'e viaggià nzieme comme a gente perbene.",
+        "Qualcuno deve tenere onesto il Motore, uagliona. Quel qualcuno ha la mia faccia.",
         "Là fuori non servo a molto. Qua dentro, con una chiave inglese, sono un esercito, core mio.",
-        "L'ultimo che ha viaggiato con me a tempo pieno s'è preso il maltempo addosso. Quello vero. No grazie.",
+        "L'urdemo che ha viaggiato cu me a tempo pieno s'è pigliato 'o maltiempo ncuollo. Chillo overo. No grazie.",
         "Richiedimelo dopo che ho firmato le carte. Chiano chiano. Tutto dopo le carte."
       ]
     },
@@ -1791,7 +1791,7 @@
     ],
     "player": [
       "Non è niente, core mio. Chiunque con un capanno e poco cervello ci sarebbe arrivato.",
-      "Ho solo continuato a girarlo finché non ha smesso di protestare, guaglio'. È tutto qua il trucco.",
+      "Ho solo continuato a girarlo finché non ha smesso di protestare, uagliò. È tutto qua il trucco.",
       "Il Motore non è più mio. È di chi guida.",
       "Mannaggia, non cominciare. Sono un meccanico che è stato fortunato due volte.",
       "Il premio sta in una scatola sotto la cuccetta. Bel peso per tenere aperta una porta.",
@@ -1802,12 +1802,12 @@
       "Statt' bbuono. Le parole grosse tienile per qualcuno che se le merita.",
       "L'hanno fatto le mie mani, e le mie mani oggi non accettano complimenti.",
       "Chiano chiano, adesso. Mi fai arrossire davanti a tutta la strada.",
-      "Ogni cosa buona che ho fatto, serviva prima a qualcun altro. Non è modestia, è andata così.",
+      "Ogni cosa buona che ho fatto, serviva prima a qualcun altro. È andata così.",
       "Jamme, chiedimi di qualcosa in cui sono davvero bravo. Chiedimi delle guarnizioni.",
       "C'erano cento tizi che potevano costruirlo. Io sono solo quello che non aveva altro da fare.",
       "Madonna. Senti, se è servito, ne sono contento. Finisce qua la storia e non ne ho una migliore.",
       "Sei troppo gentile e mi sto innervosendo. Di cosa hai bisogno? Sul serio, di cosa hai bisogno?",
-      "Non sono un grand'uomo, guaglio'. Sono uno testardo con una buona amica e un brutto camper.",
+      "Non sono un grand'uomo, uagliò. Sono uno testardo con una buona amica e un brutto camper.",
       "Grazie assaje. Ora fammi un favore e parla di qualunque altra cosa.",
       "Metà è stato un incidente e l'altra metà è stata Em che mi urlava contro. Scrivilo sui giornali."
     ],
@@ -1824,7 +1824,7 @@
       "decline": [
         "Core mio, fermati. Fermati prima di dire il resto. C'è una donna in mezzo e non sei tu, e non se ne va nemmeno.",
         "Uè, ascoltami. Chiunque tu ti sia costruito in testa con quei ritagli, quel tale è meglio di me. Sposa lui, non questo qua.",
-        "Mannaggia. Mi fa onore, guagliona, e la risposta è no, e no resterà.",
+        "Mannaggia. Mi fa onore, uagliona, e la risposta è no, e no resterà.",
         "Io sono impegnato con una cosa a cui non riesco nemmeno a telefonare. Non è giusto per te, non è giusto per nessuno. Quindi: no.",
         "Tu ti meriti un uomo che la sera sta a casa. Io sono un uomo che sta a ottanta chilometri all'ora da qualsiasi cosa.",
         "Chiano chiano. Butta quel cassetto, core mio, e va' a trovarti qualcuno che ti possa guardare indietro come si deve."
@@ -1874,7 +1874,7 @@
         "Stai essendo sincero verso di me prima di mezzogiorno. È moltissimo da assorbire.",
         "Grazie. Sinceramente, e non nel modo in cui le parole significano il contrario. Ho verificato in che senso lo intendevo.",
         "Non ho la minima idea di cosa farne, quindi resterò qui a tenerlo in mano goffamente, come un trofeo di uno sport che non pratico.",
-        "Sai, credo che possa essere l'intero senso di avere una persona.",
+        "Sai, credo che sia proprio a questo che serve avere una persona.",
         "{name} scrive qualcosa nel margine del grimorio, che è dove tiene le cose che non riesce a dire ad alta voce.",
         "Sei terribilmente bravo in questo e io non ti ho mai eguagliato una sola volta.",
         "Ho quattrocento libri e nessuno spiega perché quella frase sia arrivata. Il che intendo come lode.",
@@ -1920,44 +1920,44 @@
       ],
       "player": {
         "positive": [
-          "Ue, guagliona. Hai fatto bene. Non dico di più che poi ti monti la testa.",
+          "Ue, uagliona. Hai fatto bene. Non dico di più che poi ti monti la testa.",
           "Mannaggia, guardati. Qualunque cosa t'hanno tolto, il pezzo buono se lo sono perso.",
-          "Sei la cosa migliore su questa strada e su questa strada c'è un premio Nobel, quindi vuol dire qualcosa.",
+          "Si' 'a cosa meglio ncoppa a chesta strada, e ncoppa a chesta strada ce sta un premio Nobel, quindi vò dì quaccosa.",
           "Non lo dico abbastanza. Lo dico ora e poi torno sotto il furgone. Chiano chiano.",
           "Statt' bbuono, Em. Dico sul serio. Resta buona. Ci sei già, devi solo restarci.",
-          "Vuoi un complimento? Va bene. Sei testarda. È tutto qua il complimento, guaglio', è il meglio che ho.",
-          "Dodici anni e non te ne sei andata. È l'unico premio che m'importa e non sta dentro una scatola.",
-          "Avrei mollato dalle parti di Brindisi se non ci fossi stata tu sul sedile a fare l'impossibile.",
+          "Vuoi un complimento? Va bene. Sei testarda. È tutto qua il complimento, uagliona, è il meglio che ho.",
+          "Dodici anni e nun te ne si' juta. È l'unico premio che me ne importa, e nun sta dint'a 'na scatola.",
+          "Avesse mullato dalle parti 'e Brindisi si nun ce stive tu ncoppa 'o sedile a fa' l'impossibile.",
           "Aoh. Non guardarmi così, sto essendo gentile, è difficile per un uomo della mia costruzione.",
           "Non sono intelligente, core mio. Ma ho scelto te, e quella è l'unica cosa intelligente che ho mai fatto.",
           "Jamme. Vieni qua. No, vieni qua per bene. Ecco. È tutto quello che volevo.",
-          "Sei l'unica persona che ho conosciuto che è esattamente quanto dice di essere.",
-          "Si tengano la medaglia. Io mi prendo la donna che controlla l'olio.",
+          "Si' l'unica persona che aggio conosciuto ch'è esattamente quanto dice 'e essere.",
+          "Se tenessero 'a medaglia. Io me piglio 'a femmina che controlla l'olio.",
           "Grazie assaje. Per tutto quanto. Pure per il pesce, quella alla fine è venuta divertente."
         ],
         "neutral": [
           "Uè, Em. Passami quella chiave da dieci e continua a parlare, ascolto meglio con qualcosa in mano.",
-          "Come va la testa, guagliona. Non la ferita. L'altra cosa. Il ricordare.",
-          "Hai mangiato oggi? Non mi dire bugie, lo capisco da come stai in piedi.",
+          "Come va la testa, uagliona. Non la ferita. L'altra cosa. Il ricordare.",
+          "Hê mangiato oggi? Nun me dicere buscie, uagliona, 'o capisco 'a comme staje in piedi.",
           "Non ne ho idea, core mio, e ci ho fatto pace. Tutto si aggiusta, certe cose pure due volte.",
           "Chiano chiano. Ci arriviamo. Ci arriviamo sempre, solo che non ci arriviamo mai in fretta.",
-          "Il tempo è tempo. Sotto gli ottanta, qualunque cosa faccia, la fa.",
-          "Stavo pensando al collettore. Tutto qua. È tutto qua il pensiero.",
-          "Chiedimi qualcosa di facile. M'è rimasta una risposta facile e sta lì che avanza.",
-          "Qualcuno deve tenere insieme questa cosa, guaglio'. Tanto vale che sia quello con la chiave inglese.",
-          "Mm. Mm. Vai avanti. Ti sto dietro, sto solo sotto il lavandino.",
+          "'O tiempo è tiempo. Sotto gli ottanta, qualunque cosa fa, la fa.",
+          "Stevo penzanno ô collettore. Tutto ccà. È tutto ccà 'o penziero.",
+          "Chiedime quaccosa 'e facile. M'è rimasta 'na risposta facile e sta llà ch'avanza.",
+          "Qualcuno deve tenere insieme questa cosa, uagliona. Tanto vale che sia quello con la chiave inglese.",
+          "Mm. Mm. Va' avanti. Te sto appriesso, sto sulo sotto al lavandino.",
           "Jamme, raccontami tutto quanto. C'è strada e io non devo essere da nessuna parte.",
           "Madonna, la burocrazia. Quattro timbri, Em. Quattro.",
-          "Non ho capito cosa vuol dire e annuisco lo stesso perché sembri contenta.",
-          "Beagle entro giovedì, e dopo decide la strada. Quello è il piano. È sempre stato quello il piano."
+          "Nun aggio capito che vò dì e annuisco 'o stesso pecché me pare che si' contenta.",
+          "Beagle entro giovedì, e po' decide 'a strada. Chillo è 'o piano. È sempe stato chillo 'o piano."
         ],
         "negative": [
-          "Sei, senza alcun dubbio, la peggiore navigatrice mai nata su questo continente.",
+          "Si', senza nisciun dubbio, 'a peggiore navigatrice maje nata ncoppa a chisto continente.",
           "Mannaggia, Em, se punti quella cosa contro un'altra roba ti vendo ai Turisti.",
-          "Hai la mira di un piccione ubriaco e la sicurezza di un generale. È una bella combinazione.",
+          "Tiene 'a mira 'e 'nu palummo mbriaco e 'a sicurezza 'e 'nu generale. È 'na bella combinazione.",
           "Ue! Quello è un parabrezza! Quello ERA un parabrezza! Guagliona!",
-          "Parlami un'altra volta così e metto la radio a fisarmonica per tutta la Toscana.",
-          "Hai perso il novantadue per cento di te e ti sei tenuta il cento per cento dell'atteggiamento. Com'è che funziona, eh?",
+          "Parlame n'ata vota accussì e metto 'a radio a fisarmonica pe' tutta 'a Toscana.",
+          "Hê perzo 'o novantadue per cento 'e te e t'hê tenuta 'o ciento per cento dell'atteggiamento. Comm'è ca funziona, eh?",
           "Chiano chiano, altezza. Qualcuno qua deve pagare la benzina.",
           "Ho conosciuto montagne più cedevoli. E ho conosciuto una montagna vera, quindi sono qualificato.",
           "Leggimi un altro libro addosso. Dai. Vediamo che succede.",
@@ -1978,7 +1978,7 @@
           "reply": "Era la superficie più piana disponibile. Non farne una questione di personalità, Bubba."
         },
         {
-          "player": "Quella non è una scorciatoia, guagliona, quello è un campo.",
+          "player": "Quella non è una scorciatoia, uagliona, quello è un campo.",
           "reply": "È una scorciatoia attraverso un campo. Tu hai semplicemente scelto di concentrarti sul campo."
         },
         {
@@ -2019,7 +2019,7 @@
         },
         {
           "player": "Quanto hai speso per un libro?",
-          "reply": "Era rilegato in qualcosa che una volta aveva delle opinioni. Non è una spesa, è un salvataggio."
+          "reply": "Era rilegato in qualcosa che una volta aveva delle opinioni. Chiamalo un salvataggio."
         },
         {
           "player": "Dico solo che un po' di modestia non ti ucciderebbe.",

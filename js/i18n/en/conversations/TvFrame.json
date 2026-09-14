@@ -283,6 +283,14 @@
     "history_panel": [
       "Tonight's question: {did this truly happen|did any of this happen|is this true}? {hist}",
       "{On the panel tonight|With me tonight|Tonight's panel}: {two historians and somebody who was there|a historian, an archivist, and one eyewitness nobody can verify|three people who disagree}. {hist} {We will not settle it|We never settle these|We will not get to the bottom of it}."
+    ],
+    "wrestling_chaos": [
+      "{Good evening|Welcome back|We are live} from the Slamdrome, where {the ring is already broken|somebody is already bleeding|the card has already changed}.",
+      "Doors are {shut|barred|salted}. {One division|Open division|Everybody in one division}, as always, and nobody has ever asked for another."
+    ],
+    "wrestling_martial": [
+      "{Good evening|Welcome|We are on air} from the Salle. {One notary|The notary is seated|Notary at ringside}, {eleven permitted holds|the permitted holds are posted}, one open division.",
+      "The {mat|floor|Salle} is {swept|salted|measured}. {We begin|The first fall begins|Proceedings begin}."
     ]
   },
   "tail": {
@@ -409,6 +417,14 @@
     "late_night": [
       "{Stay with me|Stay with us|Keep me company}. The night is long out here on the Road.",
       "{I am on again tomorrow|Same again tomorrow|I will be here tomorrow}. {I am always here|Where else would I be|I am always on}. {Sleep if you can|Try to sleep|Get some sleep}."
+    ],
+    "wrestling_chaos": [
+      "That is the hour. {The other lot were talking|Whatever the Circle did, we did this|Ratings in the morning}.",
+      "We are {off the air|out of time|being asked to stop}. {Same hour tomorrow|Tomorrow, same hour|Back tomorrow, same hour}."
+    ],
+    "wrestling_martial": [
+      "{Full card completed|All falls recorded|The card is complete}. {The notary has signed|Signed and filed|Filed with the commission}.",
+      "That concludes the Sanctioned Hour. {Tables on teletext|The falls are on teletext|Results on the teletext page}."
     ]
   },
   "gameShowIntro": "Welcome to {show}! Our next contestant will risk it all for a new {prize}!",

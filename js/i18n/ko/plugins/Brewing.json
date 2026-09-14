@@ -62,32 +62,32 @@
     "herbal_tea": {
       "name": "허브차",
       "description": "허브 추출물을 물에 우려낸 단순한 음료. 효모도 발효도 없이 온기와 시간만 있으면 된다.",
-      "outputPreview": "2–4x 허브차"
+      "outputPreview": "2-4x 허브차"
     },
     "honey_mead": {
       "name": "벌꿀술",
       "description": "야생 꿀을 샘물에 녹여 어둠 속에서 발효시킨다. 알려진 가장 오래된 술.",
-      "outputPreview": "2–5x 벌꿀술"
+      "outputPreview": "2-5x 벌꿀술"
     },
     "nun_beer": {
       "name": "수녀원 맥주",
       "description": "꿀과 병물로 빚은 흑맥주. 수도원 저장고처럼 차갑고 느리게 발효시킨다.",
-      "outputPreview": "3–6x 수녀원 맥주"
+      "outputPreview": "3-6x 수녀원 맥주"
     },
     "varlenias_wine": {
       "name": "바를레니아의 포도주",
       "description": "황금 태양과실로 짜낸 루비빛 금색 포도주. 야생 꿀을 살짝 더해 숙성시켰다.",
-      "outputPreview": "2–4x 바를레니아의 포도주"
+      "outputPreview": "2-4x 바를레니아의 포도주"
     },
     "aged_wine": {
       "name": "숙성 포도주",
       "description": "수정 과즙 열매와 왕실 육밀을 섞어 만든, 인내를 요구하는 호화로운 빈티지.",
-      "outputPreview": "1–3x 숙성 포도주"
+      "outputPreview": "1-3x 숙성 포도주"
     },
     "ethanol": {
       "name": "에탄올",
       "description": "드래곤 브레스 열매와 공허 스타프루트로 발효한 강력한 증류주. 위험할 만큼 순수한 알코올.",
-      "outputPreview": "1–4x 에탄올"
+      "outputPreview": "1-4x 에탄올"
     }
   }
 }

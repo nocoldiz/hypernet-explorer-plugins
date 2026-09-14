@@ -266,6 +266,8 @@
                 if (bits.length) rows.push(`<div class="msb-row">${bits.join('')}</div>`);
 
                 if (ranges.length) {
+                    // i18n-ignore-start: the Min/Max here are state field-name suffixes, and the
+                    // oninput body is JavaScript; the visible labels come from T() above
                     const num = (field, placeholder) =>
                         `<input type="number" class="msb-num" step="any" min="0" placeholder="${escapeHtml(placeholder)}"
                                 value="${escapeHtml(state[field])}" ${STOP}
@@ -276,6 +278,7 @@
                          <span class="msb-sep">–</span>
                          ${num(key + 'Max', T('MenuSearch.max'))}`);
                     rows.push(`<div class="msb-row">${parts.join('')}</div>`);
+                    // i18n-ignore-end
                 }
 
                 if (!rows.length) return '';
@@ -295,11 +298,13 @@
                     if (!haystack.includes(needle)) return false;
                 }
                 if (state.category && d.category !== state.category) return false;
+                // i18n-ignore-start: Min/Max are state field-name suffixes
                 for (const key of ranges) {
                     const min = state[key + 'Min'];
                     const max = state[key + 'Max'];
                     if (min === '' && max === '') continue;
                     const value = d[key];
+                    // i18n-ignore-end
                     // A range only speaks about entries carrying that number at
                     // all: a skill has no weight, and a weight filter must not
                     // silently delete every skill from the page.

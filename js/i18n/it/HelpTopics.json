@@ -24,832 +24,832 @@
   },
   "HelpTopics": {
     "controlsMoving": {
-      "title": "",
-      "description": ""
+      "title": "Comandi: muoversi",
+      "description": "Frecce o WASD per muoverti. Z o Enter conferma e parla, X o Escape annulla. Tieni premuto Shift per correre.\n\nCorrere consuma AP: una barra piena vale circa novanta secondi. Camminare la ricarica piano, stare fermi in fretta. Le abilità in battaglia attingono alla stessa barra.\n\nZ agisce su quello che hai di fronte. Z su un compagno apre la sua scheda Empathize.\n\nC calcia, sempre con il piede. I calci sfondano casse, forzano porte e spingono oggetti. Una cosa calciabile fa rumore; il silenzio vuol dire che non lo è. Le porte chiuse a chiave chiedono da sette a quindici calci."
     },
     "controlsMenus": {
-      "title": "",
-      "description": ""
+      "title": "Controlli: scorciatoie dei menu",
+      "description": "Tab apre il menu. Ogni schermata ha anche una lettera, da premere sulla mappa:\n\n- I inventario, C personaggio, R equipaggiamento, P abilità, J incarichi\n- M minimappa, B costruzione, V veicoli, F fazioni, H proprietà\n- K cucina, L questo libro, N addestramento, Y bestiario, U biologia\n- O opzioni, G sandbox (build di collaudo)\n\nDentro il menu: 1 Thinker, 2 multigiocatore, 3 Hypernet. Sulla mappa, da 1 a 9 attivano la barra rapida.\n\nWASD, Z, X, Q, E e T sono riservati. F9 salvataggio rapido, F10 caricamento rapido, F11 schermo intero."
     },
     "controlsMouse": {
-      "title": "",
-      "description": ""
+      "title": "Controlli: mouse",
+      "description": "Il mouse non muove il tuo personaggio.\n\n- trascinare sposta la telecamera, che torna al suo posto quando cammini\n- la rotellina zooma, solo sulla mappa del mondo\n- passandoci sopra compare l'etichetta di un evento, Alt le mostra tutte\n\nIn battaglia: clic sinistro su un nemico per colpirlo con il comando selezionato, clic destro per scorrere i comandi, rotellina per scorrere, da 1 a 5 per attivare.\n\nI menu si usano col mouse dall'inizio alla fine."
     },
     "controlsGamepad": {
-      "title": "",
-      "description": ""
+      "title": "Comandi: controller",
+      "description": "Il controller funziona ovunque, menu, mappa stellare e minigiochi 3D compresi.\n\n- la levetta sinistra muove e naviga, la destra sposta la visuale\n- R3 etichetta ogni evento sullo schermo\n- L2 / R2 zoomano la mappa del mondo, la levetta destra scorre le schermate lunghe\n- L1 / R1 ciclano le schede, cambiano personaggio, spostano la barra rapida\n\nUna cosa sola chiede ancora il mouse: aprire un campo di ricerca."
     },
     "controlsRemap": {
-      "title": "",
-      "description": ""
+      "title": "Comandi: rimappatura",
+      "description": "Options, pagina Commands. Tastiera e gamepad si rimappano separatamente, e ogni comando predefinito si può riassegnare.\n\nQuelli aggiunti qui: Zoom In (Q, LB), Zoom Out (E, RB), Kick (C, RT), Run (Shift, LT).\n\nLe assegnazioni restano insieme alle tue impostazioni."
     },
     "controlsScreen": {
-      "title": "",
-      "description": ""
+      "title": "Cosa c'è sullo schermo",
+      "description": "L'HUD del gruppo sta in alto a sinistra, sulla mappa e in battaglia: nome, livello, HP, sfera AP, MP. Il membro che agisce è illuminato.\n\nAccanto a ogni scheda corrono dei chip. Fame, sonno, igiene, voglie e malattia sulla mappa; variazioni di statistiche, risorse di classe e stati in battaglia. Si colorano oltre la soglia di avviso e di nuovo oltre quella critica.\n\nQuando sei a bordo, il veicolo prende una riga sopra l'equipaggio, con il carburante dove starebbe la magia.\n\nLa barra rapida sta in basso al centro: oggetti sulla mappa, abilità in battaglia.\n\nLe notifiche sono cartigli di pergamena. Quelle di passaggio svaniscono; quelle fisse restano finché sono vere.\n\nL'HUD si spegne in Options, Video."
     },
     "controlsSearch": {
-      "title": "",
-      "description": ""
+      "title": "Cercare dentro i menu",
+      "description": "Ogni lista lunga ha la stessa striscia di ricerca, questo libro compreso. Comincia come una lente in cima alla pagina.\n\n- mentre scrivi, nessuna scorciatoia di menu si attiva\n- Escape svuota il campo, Escape di nuovo lo abbandona\n\nLa ricerca del menu principale copre più schermate insieme: oggetti portati, equipaggiamento indossato dai compagni, abilità, ricette che puoi preparare adesso, creature del bestiario."
     },
     "savingGame": {
-      "title": "",
-      "description": ""
+      "title": "Salvataggi, autosalvataggio e salvataggi rapidi",
+      "description": "Il gioco salva da solo al cambio di mappa, al massimo una volta ogni pochi minuti, in uno slot ordinario.\n\nF9 salva al volo, F10 ricarica, su tre slot a rotazione che qualunque partita può sovrascrivere.\n\nCancellare un salvataggio in permadeath lascia il suo diario."
     },
     "worldsFolders": {
-      "title": "",
-      "description": ""
+      "title": "Mondi e salvataggi",
+      "description": "Un mondo è una cartella, e più mondi possono stare uno accanto all'altro. Si creano dalla schermata Worlds. Finché non ne esiste uno, Explore, Reconnect, Story Mode e Sandbox restano grigi.\n\nUn mondo viene generato per intero prima di essere giocato: un secolo di storia, persone, case, lavori, turni dei negozi, il dungeon, politica, fazioni, epidemie.\n\nOgni partita in quel mondo entra nello stesso posto, già cambiato da quelle che l'hanno preceduta. L'orologio va solo avanti, quindi un salvataggio caricato riparte dalla data più recente raggiunta lì.\n\nLe altre partite compaiono di persona, ferme dove sono state salvate l'ultima volta."
     },
     "optionsMenu": {
-      "title": "",
-      "description": ""
+      "title": "Opzioni",
+      "description": "Le opzioni sono divise in schede, e i plugin aggiungono righe invece di menu propri.\n\n- Video: risoluzione, schermo intero, ridimensionamento pixel perfect, shader retro, scala dell'interfaccia, HUD del gruppo\n- Audio: volumi, scelta della musica di battaglia\n- Gameplay: formazione del gruppo, esploratore automatico, suggerimenti sulla mappa del mondo\n- Commands: rimappatura di tastiera e gamepad\n- Experimental: comprende il modello linguistico locale che può scrivere i dialoghi degli NPC al posto delle catene di Markov\n\nLo schermo intero si accende da solo la prima volta che parte una build distribuita, poi mantiene la tua scelta."
     },
     "modsUpdates": {
-      "title": "",
-      "description": ""
+      "title": "Mod e aggiornamenti",
+      "description": "Il gioco legge una cartella mods accanto all'eseguibile. Ogni sottocartella rispecchia le cartelle del gioco, quindi una mod può sostituire un file di dati, aggiungere un'immagine o aggiungere contenuti. Solo nella build desktop.\n\nNel Mod Manager, Enter attiva e disattiva una mod e le frecce la spostano nell'ordine di caricamento. Vince chi sta in fondo alla lista.\n\nLa schermata del titolo ha una voce Updates, che confronta i tuoi file con quelli della build e scarica solo ciò che differisce. Niente viene messo al suo posto finché tutto non è scaricato e verificato, i file sostituiti vengono salvati in copia, e il gioco va riaperto. Due canali, stable e unstable, e qualsiasi build precedente si può ripristinare."
     },
     "partyBasics": {
-      "title": "",
-      "description": ""
+      "title": "Il gruppo",
+      "description": "Tre membri. Il primo è il leader: quello che guidi, quello a cui i bisogni calano più in fretta, quello a cui gli NPC si rivolgono.\n\nUn quarto compagno cammina al seguito senza essere un membro. Non combatte mai e non può essere ferito.\n\nOgnuno ha i propri bisogni, opinioni, reputazione, specializzazioni e rapporti con gli altri due.\n\nLa formazione si imposta nelle Opzioni. Close fa camminare tutti sulle orme del leader; Loose li lascia girare e ricompattarsi fuori schermo. Un gruppo in formazione libera agisce da solo, e qualunque indicatore sotto il 35% manda quel membro a mangiare, lavarsi, divertirsi o affittare una stanza a spese della cassa comune.\n\nCorri per due secondi per richiamare tutti. Mettiti di fronte a un compagno e conferma per aprire la sua scheda Empathize."
     },
     "partyCreation": {
-      "title": "",
-      "description": ""
+      "title": "Creare i personaggi",
+      "description": "I personaggi si fanno uno alla volta, in tre modi:\n\n- Rapido: aspetto, classe, tratti, equipaggiamento\n- Dossier: personaggi già pronti, alcuni riusabili in qualsiasi mondo, gli altri consumati una volta usati. Un dossier può portarsi dietro un veicolo, una città natale e skin alternative\n- Dettagliato: la scheda intera, fino a ideologia, morale, orientamento e passato\n\nL'equipaggiamento iniziale si sceglie per prezzo, non per potenza: l'arma più economica di ogni tipo, su un budget fisso per classe. L'equipaggiamento dei tratti si aggiunge sopra."
     },
     "partyClasses": {
-      "title": "",
-      "description": ""
+      "title": "Classi",
+      "description": "Una classe fissa le statistiche iniziali, le scuole che impari più in fretta e un elemento prediletto.\n\nOgnuna indica una categoria primaria e una secondaria. La primaria dà progressione 3x a metà prezzo, la secondaria 1.5x a prezzo pieno. Tutto il resto richiede un'abilità già nota in quella scuola e costa il triplo.\n\nL'addestramento elenca solo il tuo piano di studi, anche se le abilità esterne restano imparabili.\n\nQualsiasi classe può equipaggiare qualsiasi arma; la pratica con l'arma è invece una competenza allenabile.\n\nLe classi creatura sono un insieme a parte: Feral, Mimic, Monster, Mana Cyborg, Ghost, Zombie, Mutant, Drone. Un personaggio su una di queste è un animale, non una persona."
     },
     "partyTraits": {
-      "title": "",
-      "description": ""
+      "title": "Tratti",
+      "description": "I tratti si comprano alla creazione da un fondo di punti. I tratti positivi costano, quelli negativi restituiscono punti, quindi sono i difetti a pagare le virtù.\n\nCambiano le statistiche di base e concedono abilità, oggetti ed equipaggiamento, e vengono letti durante il gioco: prime impressioni degli NPC, quanto la gente bada alla tua condizione, quali specializzazioni partono avvantaggiate, cosa fanno i compagni nel tempo libero.\n\nI tratti sono permanenti."
     },
     "partyAttributes": {
-      "title": "",
-      "description": ""
+      "title": "Attributi",
+      "description": "Sei attributi:\n\n- FRZ: capacità di carico, danno fisico\n- COS: danno assorbito, quanto a lungo reggi uno strangolamento\n- DES: velocità, precisione, evasione, liberarsi dalle prese\n- INT: apprendimento, magia matematica\n- SAG: giudizio, resistenza, magia intuitiva\n- PSI: fortuna. Reazioni dei nemici, tiri sul bottino, tiri nascosti a tuo favore\n\nL'HUD di battaglia mostra il modificatore come moltiplicatore (FRZ 1.4x)."
     },
     "partyCreatures": {
-      "title": "",
-      "description": ""
+      "title": "Giocare una creatura",
+      "description": "Un membro del gruppo può essere una creatura, costruita su un archetipo solo oppure su due incrociati.\n\nL'archetipo comanda il corpo: il sistema di arti e organi gli dà esattamente le parti di quella specie, la sua portata, le sue mani e i suoi punti deboli.\n\nUna classe da creatura non è senziente, e non ha conversazione, politica, risparmi o proprietà. Una classe civilizzata è una persona con la forma di un animale, trattata ovunque come persona.\n\nL'anatomia è meccanica, non estetica. Decide quante armi si impugnano, se puoi essere strangolato e cosa produce una gravidanza."
     },
     "partyPortraits": {
-      "title": "",
-      "description": ""
+      "title": "Ritratti e modelli 3D",
+      "description": "Ogni personaggio viene disegnato in uno di tre modi, scelto alla creazione e mai mescolato:\n\n- bust: ritratto disegnato a mano\n- model: corpo 3D procedurale. Ogni arto può prendere la parte corrispondente di qualsiasi creatura registrata, con cursori per altezza, corporatura, orecchie, naso e pelle\n- sprite: usato da mostri, nemici reclutati ed evocazioni, mostrati come il modello 3D della loro specie\n\nLa schermata di stato, i busti dei dialoghi e il pannello Empathize usano tutti quella scelta."
     },
     "partyRecruiting": {
-      "title": "",
-      "description": ""
+      "title": "Reclutare persone",
+      "description": "Tre strade per entrare nel gruppo: convincere un mostro in battaglia, chiederlo a un cittadino tramite Empathize quando pensa abbastanza bene di chi glielo chiede, oppure adottare una creatura e addestrarla.\n\nUn cittadino reclutato lascia la mappa per sempre. Profilo, personalità, tratti, abilità, ricchezza, storia e considerazione passano tutti nell'attore del gruppo.\n\nIl gruppo ne tiene tre, quindi perché qualcuno entri qualcun altro deve uscire. Chi si ritira torna alla bacheca dei dossier."
     },
     "partyPets": {
-      "title": "",
-      "description": ""
+      "title": "Animali, seguaci e figli",
+      "description": "Un quarto compagno segue il gruppo senza esserne membro. Non combatte mai, non può morire e non può essere bersagliato.\n\nUn seguace è una creatura reclutata da un mostro che parla, un animale da uno che non parla, un figlio il risultato di una gravidanza.\n\nSolo uno cammina con te alla volta; la pagina Followers li scambia e li libera.\n\nAnimali e seguaci si possono addestrare fino a diventare membri del gruppo, nelle classi che il registro della specie consente. L'addestramento si misura in minuti dell'orologio del mondo, Animal Training o Leadership lo accorciano, e avanza solo il compagno che in quel momento cammina con te. Figli ed evocazioni non si addestrano mai."
     },
     "partyReproduction": {
-      "title": "",
-      "description": ""
+      "title": "Riproduzione e gravidanza",
+      "description": "Ogni corpo ha un tipo riproduttivo, fissato alla creazione in base alla specie:\n\n- Testicles: fertilità, conta, motilità e morfologia rispondono agli ormoni e alla condizione\n- Uterus: ciclo di 28 giorni, fertile dal giorno 12 al 16\n- Oviparous: una covata da uno a quattro uova\n- Plant: i semi si sviluppano senza sosta e si accumulano finché non vengono piantati\n- Mitosis: il corpo si divide e produce una copia\n\nUna gravidanza dura il termine della specie. Biologics mostra età gestazionale e stadio fetale, i sintomi arrivano come stati, e il battito sale.\n\nI nati registrano in Followers come figli con la faccia del genitore. Mitosis fa una copia, non un figlio."
     },
     "partyDeath": {
-      "title": "",
-      "description": ""
+      "title": "Morte, lapidi e permadeath",
+      "description": "Cadere in battaglia non è morte automatica. La protezione della salute e gli avvisi di pericolo ti lasciano il tempo di sganciarti, e la fuga riesce sempre.\n\nUn personaggio morto lascia una lapide dove è caduto. Resta sulla mappa ed è lì che si compie la restaurazione.\n\nCon la permadeath il personaggio è perso per sempre e con lui i suoi quicksave. Un gruppo annientato chiude solo quel gruppo; il successivo riparte nello stesso mondo, già cambiato.\n\nGli arti perduti non sono morte e la guarigione non li rimette al loro posto."
     },
     "partyBanterPage": {
-      "title": "",
-      "description": ""
+      "title": "Cosa dicono i tuoi compagni",
+      "description": "Due o più compagni tengono discussioni da due a quattro battute, pescate da quello che sta succedendo: un acquisto recente, salute bassa, un indicatore sotto il 35%, una riga di diario delle ultime ore, il bioma, la strada, i soldi, il leader, il piano.\n\nDi solito è la personalità di un terzo membro a chiudere lo scambio, quindi lo stesso copione suona diverso a seconda di chi c'è. Lo stesso acquisto tira una battuta risentita dal membro disciplinato e un semplice perché no dall'edonista.\n\nParlano anche mentre si guida, e su treni, corriere e taxi. Un gruppo di uno parla da solo."
     },
     "partyAutoIdle": {
-      "title": "",
-      "description": ""
+      "title": "L'esploratore automatico",
+      "description": "Un interruttore nelle Options lascia che il gioco giochi da solo mentre tu stai fermo. Il gruppo esplora, attraversa la mappa e si occupa dei propri bisogni come fa un compagno sciolto, pagando gli stessi costi che pagheresti tu, e ti restituisce il controllo appena premi qualcosa."
     },
     "progressLevels": {
-      "title": "",
-      "description": ""
+      "title": "Livelli ed esperienza",
+      "description": "L'esperienza viene dagli scontri vinti, e un livello alza i sei attributi e le riserve di HP e MP.\n\nI livelli sono una piccola parte della potenza. Contano di più le abilità imparate, le specializzazioni addestrate, l'equipaggiamento addosso e le condizioni del corpo."
     },
     "progressKnowledge": {
-      "title": "",
-      "description": ""
+      "title": "Punti conoscenza",
+      "description": "I punti conoscenza comprano abilità, e i KP appartengono al gruppo, non al singolo membro. Arrivano dagli scontri, scalati sul livello mediano del gruppo, e poi da missioni, avventure, sogni e scansioni Raman.\n\nI prezzi si calcolano dal valore in combattimento: costo in MP e AP, scalatura del danno, ripetizioni, bersagli colpiti, stati inflitti. L'abilità più debole costa 50 KP, una ordinaria qualche centinaio, la più forte un paio di migliaia. Una Esoteric costa dieci volte il suo punteggio, una Forbidden cento volte.\n\nLa scuola primaria dimezza il prezzo, la secondaria lo fa pagare intero, le scuole fuori dalle tue lo triplicano."
     },
     "progressAtlas": {
-      "title": "",
-      "description": ""
+      "title": "L'atlante dei cerchi",
+      "description": "Le abilità sono disposte come una sphere grid. Ogni scuola è un cerchio alchemico: anelli che vanno dall'opera più debole verso l'esterno fino alla più forte, uniti da raggi, con diramazioni di potenziamento sul bordo che finiscono in opere esoteriche.\n\nPuoi comprare solo un'abilità adiacente a una che conosci, e basta un vicino conosciuto. L'anello più interno di ogni scuola è sempre aperto.\n\nLe opere proibite stanno da sole al centro, collegate a niente. Va conosciuta l'intera scuola prima che una si apra.\n\nUna scuola alla volta: usa il pager o esci dal bordo camminando. Rotellina e Shift zoomano, il trascinamento sposta."
     },
     "progressTraining": {
-      "title": "",
-      "description": ""
+      "title": "Addestramento e progressione",
+      "description": "Ogni membro addestra una abilità alla volta. Vincere una battaglia vale 3 punti, usare un'abilità della stessa categoria ne vale 2. Le categorie primarie moltiplicano per 3, le secondarie per 1,5."
     },
     "progressSpecializations": {
-      "title": "",
-      "description": ""
+      "title": "Specializzazioni",
+      "description": "Circa ottocento specializzazioni, dalla lotta alla contabilità all'apicoltura. Ognuna è retta da un attributo e ha cinque gradi, da Untrained a Master.\n\nIl livello è il più alto fra tre fonti: allenato giocando, concesso dalla classe, concesso da un tratto.\n\nSi allenano facendo. Cucinare alza la cucina, vendere alza la contrattazione. Il capogruppo incassa il valore pieno, chiunque altro sia presente il 35%.\n\nVengono lette dappertutto: qualità della forgiatura, scasso, danno in presa, cosa un mercante accetta, se una ricetta si riesce proprio a leggere."
     },
     "progressPassives": {
-      "title": "",
-      "description": ""
+      "title": "Passive di classe",
+      "description": "Ogni classe ha le sue passive distintive. Non occupano slot e non vanno attivate. Alcune funzionano in combattimento, altre solo fuori.\n\nSono elencate nella scheda di stato sotto Passives."
     },
     "progressLoadout": {
-      "title": "",
-      "description": ""
+      "title": "I nove slot abilità",
+      "description": "Un personaggio porta in battaglia nove abilità, scelte fra tutto quello che sa. Il menu delle abilità è diviso per ruolo, e le nove scelte riempiono la barra rapida di battaglia.\n\nTutto quello che sa resta saputo, e cambiare la selezione fra uno scontro e l'altro è gratis."
     },
     "progressFusion": {
-      "title": "",
-      "description": ""
+      "title": "Fondere incantesimi",
+      "description": "Dalla pagina Magic due abilità si possono forgiare in una sola. Lo slot dominante prende un incantesimo che conosci e decide danno, portata, tipo di colpo e icona. Lo slot recessivo prende un incantesimo o una tecnica, e una tecnica rende tecnica anche il risultato.\n\nLa fusione costa la somma delle sue parti in MP e AP, e la somma dei loro prezzi di insegnamento in KP. I componenti si dimenticano al momento della fusione, e la fusione si può riscindere nei due in qualsiasi momento."
     },
     "progressGrimoires": {
-      "title": "",
-      "description": ""
+      "title": "Grimori e manuali di abilità",
+      "description": "Un grimorio propone cinque opere casuali e lascia che un lettore ne prenda una. Le cinque vengono tirate una volta sola all'apertura del libro, contro tutto il gruppo; cambiare lettore non le ritira.\n\nUn lettore può prendere solo un'offerta il cui costo in MP sta nel suo massimo di MP e che non conosce già. La mediana di PSI del gruppo alza la probabilità che esca un'opera proibita.\n\nEsistono grimori legati a una scuola, manuali legati a una categoria, e il Forbidden Grimoire, che non offre altro."
     },
     "progressBladeSeeds": {
-      "title": "",
-      "description": ""
+      "title": "Blade Seeds",
+      "description": "Dodici semi, uno per tipo di arma. Un seme è un percorso di potenziamento permanente per un intero tipo di arma, non per una singola arma.\n\nCresce man mano che quel tipo viene usato, e ciò in cui cresce è procedurale, quindi due mondi non fanno mai crescere la stessa lama. Un seme sopravvive all'arma che lo portava."
     },
     "gearSlots": {
-      "title": "",
-      "description": ""
+      "title": "Equipaggiamento: mani e slot",
+      "description": "Non esiste alcun flag di doppia arma. Gli slot arma vengono dall'anatomia: ogni parte del corpo con cui la specie sa impugnare un'arma è uno slot. Le mani prendono un'arma o uno scudo senza distinzione, quindi due scudi sono legittimi quanto due spade.\n\n- un'arma a due mani richiede due mani libere\n- un corpo senza mani tiene l'arma in bocca, e ci sta qualsiasi cosa. I Samurai hanno uno slot bocca in aggiunta alle mani\n- otto slot al massimo, per quanti arti abbia un corpo\n- oltre due armi ogni parametro diventa la mediana di quelle portate, e due armi a caso oscillano a ogni turno\n- perdere un arto ne toglie lo slot e fa cadere quello che teneva"
     },
     "gearProficiency": {
-      "title": "",
-      "description": ""
+      "title": "Competenza nelle armi",
+      "description": "Qualsiasi classe può equipaggiare qualsiasi tipo di arma. L'abilità con un'arma è una specializzazione, una per tipo, dodici in tutto, che parte da Intermediate per i tipi a cui la tua classe era una volta limitata e da Untrained per gli altri.\n\nScala i parametri dell'arma: 33% Untrained, 67% Beginner, 100% Intermediate, 110% Advanced, 125% Master.\n\nVincere una battaglia dà un punto per ogni tipo di arma equipaggiata."
     },
     "gearScaling": {
-      "title": "",
-      "description": ""
+      "title": "Su cosa scala un'arma",
+      "description": "Un'arma non scala sempre su FRZ. È la sua abilità d'attacco a decidere quale attributo legge, e la schermata di equipaggiamento lo nomina quando selezioni lo slot. Senza abilità d'attacco legge FRZ; altrimenti DES, INT, SAG, COS, PSI, o un misto di due."
     },
     "gearArmor": {
-      "title": "",
-      "description": ""
+      "title": "Armature e statistiche derivate",
+      "description": "L'equipaggiamento alimenta quattro statistiche fuori dal combattimento oltre alla difesa. I vestiti danno Substance e Stealth, le vesti Arcane, l'armatura leggera Stealth, quella pesante Intimidation.\n\nAnche le armi le alimentano: pugnali e archi Stealth, spade, armi pesanti, asce e artigli Intimidation, bastoni Arcane, fruste, armi da lancio e da fuoco Substance.\n\nDecidono come la gente ti risponde, cosa dà per scontato una guardia, quali strade restano aperte."
     },
     "gearModifiers": {
-      "title": "",
-      "description": ""
+      "title": "Modificatori sull'equipaggiamento",
+      "description": "Un'arma o un pezzo di armatura può portare un modificatore, che ne cambia statistiche, prezzo e tratti. Sharp alza FRZ e prezzo sulle armi, Refined alza COS, SAG e prezzo su qualunque cosa, Poisoned aggiunge veleno a un'arma, Worn abbassa COS, SAG e prezzo su un'armatura.\n\nIl modificatore fa parte dell'oggetto e lo segue."
     },
     "gearWeight": {
-      "title": "",
-      "description": ""
+      "title": "Peso e ingombro",
+      "description": "Ogni oggetto ha un peso e il gruppo ha una capacità di carico. Superarla accende una notifica fissa che resta lì finché non torni sotto."
     },
     "gearBackpack": {
-      "title": "",
-      "description": ""
+      "title": "Lo zaino",
+      "description": "Lo zaino è diviso in schede per categoria, con il peso in chiaro, la scheda di dettaglio e la barra dei preferiti.\n\nNove slot preferiti tengono oggetti usabili e condividono la barra rapida con le abilità di battaglia. Sulla mappa, da 1 a 9 usano lo slot; dentro lo zaino, gli stessi tasti assegnano l'oggetto in esame. Gli oggetti si possono trascinare sugli slot, il tasto destro ne svuota uno.\n\nSolo gli oggetti usabili si mettono tra i preferiti. Armi e armature si equipaggiano e basta."
     },
     "gearArtifacts": {
-      "title": "",
-      "description": ""
+      "title": "Artefatti",
+      "description": "Gli artefatti sono oggetti, armi e armature generati proceduralmente, ognuno con un nome e unico.\n\nL'Artifact Analyzer sulla Hypernet legge cosa fa quello che non conosci."
     },
     "gearContainers": {
-      "title": "",
-      "description": ""
+      "title": "Contenitori e magazzino",
+      "description": "Forzieri, armadi, casse e sacchi tengono oggetti e si possono svuotare o riempire a piacere.\n\nIl magazzino del gruppo viaggia con lui: il contenitore extradimensionale, e le stive del camper e dell'auto."
     },
     "gearRarity": {
-      "title": "",
-      "description": ""
+      "title": "Bottino e rarità",
+      "description": "Il bottino casuale è calibrato sul livello mediano del gruppo, non su quello del capogruppo.\n\nGli oggetti appaiono nel colore della loro rarità dappertutto: nel popup della ricompensa, nello zaino, al banco del negozio.\n\nLe descrizioni degli oggetti sono combinatorie e si risolvono dal seed del mondo, quindi la stessa spada si legge sempre allo stesso modo in un mondo e diversamente nel successivo."
     },
     "needsOverview": {
-      "title": "",
-      "description": ""
+      "title": "I cinque bisogni",
+      "description": "Chiunque nel mondo, gruppo compreso, porta cinque indicatori: Hunger, Sleep, Hygiene, Company e Fun.\n\nTutti e cinque vanno da 100 a 0 e calano col tempo, e il tempo passa mentre cammini: un minuto ogni dieci passi, dieci minuti per casella della mappa del mondo, due se sei su un veicolo. Il capogruppo cala più in fretta e correre accelera tutto.\n\nCompaiono come pastiglie accanto a ogni scheda del gruppo, si colorano sotto il 20% e di nuovo a 0. Ogni variazione viene annunciata con la mediana del gruppo.\n\nA 0, la fame consuma HP, il sonno consuma MP, e gli altri ti costano sul piano sociale e mentale.\n\nGli innesti possono rallentare un bisogno, fermarlo o invertirlo: uno stomaco ruminante brucia meno, un regolatore sonnologico non si stanca mai, una derma autopulente guadagna igiene mentre cammini."
     },
     "needsHunger": {
-      "title": "",
-      "description": ""
+      "title": "Fame e nutrizione",
+      "description": "Ogni alimento porta calorie, grassi e proteine, e mangiare accredita tutti e tre. Quanto vale un pasto viene dal suo contenuto, non dal prezzo.\n\nLa fame può superare 100, fino al 150%. Sopra il 110% sei rimpinzato, che è uno stato con penalità, e sopra 100 cala tre volte più in fretta.\n\nLa temperatura costa cibo a entrambi gli estremi: il freddo brucia calorie per scaldarsi, il caldo alza il metabolismo.\n\nA 0 subisci danno continuo agli HP finché non mangi."
     },
     "needsSleep": {
-      "title": "",
-      "description": ""
+      "title": "Sonno, riposo e ore di veglia",
+      "description": "I valori tracciati sono due, e sono separati.\n\nL'indicatore di sonno è quanto ti senti stanco. Un caffè o una seduta lo ricaricano, e a 0 comincia a mangiare MP.\n\nIl tempo dall'ultima dormita è un timbro sull'orologio del mondo che solo una notte di riposo azzera: zero fino a un giorno di veglia, in salita per due, al massimo dopo una settimana. È lui a rendere ostili i sogni e a sfilacciare la mente del gruppo.\n\nLetti, falò, tende e accampamenti sulla mappa del mondo aprono il menu di riposo, e dormire riempie l'indicatore a qualunque ora ti svegli. Wait e il tasto T spostano soltanto l'orologio. Il sonno criogenico è un'altra cosa: scegli l'anno in cui svegliarti e il mondo va avanti senza di te."
     },
     "needsHygiene": {
-      "title": "",
-      "description": ""
+      "title": "L'igiene e quanto ti costa",
+      "description": "L'igiene cala un po' più in fretta del sonno. Si ricarica a un bagno, una doccia, un lavandino o una fontana; i compagni in formazione libera ne vanno a cercare una sotto il 35%.\n\nFunziona nei due sensi: la tua igiene viene letta contro quella di chi hai davanti, e la sua contro la tua. Dal 60% in su nessuno se ne accorge; sotto, ogni punto costa poco meno di mezzo punto di considerazione, con un tetto di 45.\n\nSono i tratti a dire quanto pesa. Feral la ignora, Ascetic quasi non la nota, Street Urchin, Cave Dweller, Survivalist, Farmer e Veteran ci badano poco. Proud, Wealthy, Beautiful, Perfectionist, Noble, Hypochondriac e Germaphobe ci badano molto. Più tratti del genere si moltiplicano; un solo tratto che \"non se ne accorge\" li annulla tutti.\n\nIl corteggiamento rilegge entrambi i corpi con un peso maggiore, e dice quale dei due ha bisogno di un bagno."
     },
     "needsSocial": {
-      "title": "",
-      "description": ""
+      "title": "Compagnia",
+      "description": "Company cala come ogni altro bisogno e si riempie parlando, con i cittadini o fra due dei tuoi.\n\nUn membro sciolto rimasto a secco di compagnia si avvicina a qualcuno e attacca discorso da solo. Quella conversazione sposta cosa l'altra persona pensa di lui, e l'igiene ci conta.\n\nGuadagnare considerazione con qualcuno riempie l'indicatore sociale di chi l'ha guadagnata."
     },
     "needsLeisure": {
-      "title": "",
-      "description": ""
+      "title": "Fun",
+      "description": "Fun si ricarica giocando: cabinati, pianoforti, tavoli da biliardo, giochi di carte, e battute che vanno a segno in una conversazione. Una battuta riuscita alza anche il Fun di chi ascolta per il resto della giornata.\n\nUn gruppo con Fun a terra se ne lamenta nei dialoghi tra compagni."
     },
     "needsAddiction": {
-      "title": "",
-      "description": ""
+      "title": "Voglie e astinenza",
+      "description": "Cinque tratti sono dipendenze: alcol, caffeina, nicotina, narcotici e gioco d'azzardo. Solo chi ne ha uno ha una barra della voglia.\n\nLa voglia corre al contrario. Sale finché resta insoddisfatta, 0 è sazietà, 100 è astinenza, e soddisfarla la riporta a 0. L'astinenza comincia a barra piena e si toglie solo quando la voglia è scesa ben sotto, quindi una dose sola non la risolve.\n\nLe voglie salgono più lentamente durante il sonno, e sempre sul membro che porta il tratto."
     },
     "bodyParts": {
-      "title": "",
-      "description": ""
+      "title": "Arti e organi",
+      "description": "Ogni personaggio e ogni mostro ha arti e organi separati, ciascuno con la propria salute, presa dalla sua specie.\n\nIl danno si distribuisce fra le parti. Una parte a 0 è distrutta, porta una penalità permanente finché resta così, e cambia ciò che il corpo può fare: una mano persa si porta via il suo slot arma, un corpo senza mani tiene l'arma in bocca, gambe danneggiate costano movimento ed evasione. Una parte a 0, danneggiata o recisa non può afferrare né essere afferrata.\n\nGli organi vitali sono protetti dal danno ordinario e si aprono solo mirandoli di proposito.\n\nLe parti non guariscono da sole. Si curano in clinica, si ripristinano con la magia, o si sostituiscono con una protesi. In Blood and Oil un colpo tagliente può staccare una parte dal corpo, portandosi via il suo innesto.\n\nLa scheda di stato ha una sezione Anatomia che mostra il corpo parte per parte."
     },
     "bodyBiologics": {
-      "title": "",
-      "description": ""
+      "title": "Biologia",
+      "description": "La biologia è la lettura profonda: parametri vitali, ormoni, chimica del sangue, regioni cerebrali e loro attività, gruppo sanguigno, ciclo riproduttivo e ogni condizione che agisce sul corpo.\n\nLa frequenza cardiaca risponde a quel che ti sta capitando, gli ormoni al sonno, alle ferite e alla gravidanza. Il gruppo sanguigno si fissa una volta e non cambia mai.\n\nIl sistema Ley Vein la collega ai danni agli arti: i blocchi si vedono qui quando il corpo ha subito ferite."
     },
     "healthDiseases": {
-      "title": "",
-      "description": ""
+      "title": "Malattie",
+      "description": "Le malattie sono centinaia. Ognuna ha una probabilità di contagio, uno o più vettori (aria, saliva, morso, contatto, via sessuale e altri), modificatori di statistiche mentre viene portata, e spesso uno stato che compare solo dopo che il portatore ha camminato per un certo numero di passi. Quel ritardo è il periodo finestra.\n\nIl contagio viene tirato tra i tuoi membri ogni volta che apri il menu di pausa, e tra il gruppo e un cittadino ogni volta che apri il suo pannello Empathize. Le malattie veneree non si trasmettono mai per vicinanza.\n\nOgni NPC porta una storia clinica seminata dal mondo, leggibile nella scheda Health del suo pannello.\n\nDiagnose visita tutto il gruppo e nomina ogni malattia portata, periodo finestra incluso."
     },
     "healthEpidemics": {
-      "title": "",
-      "description": ""
+      "title": "Epidemie",
+      "description": "Sopra la malattia del singolo gira un modello epidemico continentale, che tu lo stia guardando o no. Ogni città infetta ha la sua curva, risolta a mezzanotte, ed esporta casi lungo la distanza sulla mappa, con qualche salto lungo ogni tanto. La risposta pubblica cresce quanto più a lungo una città resta infetta, e alla fine spezza l'ondata.\n\nUn focolaio medico è un patogeno con un suo tasso di letalità. Un'isteria non ne ha: febbre del ballo, panico da furto dei genitali, gassatori fantasma. L'isteria si prende assistendovi e si diffonde parlandone.\n\nOgni mondo comincia con tre in corso: un'isteria, un focolaio ordinario, uno raro e mortale.\n\nChi si trova in una città infetta è esposto, tu compreso. I focolai muovono l'umore, le assunzioni, il traffico nei negozi, il consumo dei bisogni, i pettegolezzi e le notizie, e l'osservatorio Eurodemics tiene il conto di tutto."
     },
     "healthSurgery": {
-      "title": "",
-      "description": ""
+      "title": "Cliniche, protesi e chirurgia da campo",
+      "description": "Una clinica può installare una parte del corpo, rimuoverne una, sostituirne una o montare un impianto. Installare costa 1000 euro per ogni punto percentuale di salute corporea che la parte rappresenta, rimuovere 100, e le parti vitali non si possono togliere.\n\nLa chirurgia da campo è la stessa operazione in viaggio: scegli un paziente e un chirurgo, monti solo parti che hai già addosso, puoi estrarre un innesto ma mai metterne uno, e non paghi nulla.\n\nOgni operazione è un tiro, con le probabilità mostrate prima. La specializzazione Surgery del chirurgo dà 35 / 50 / 65 / 78 / 90 per cento a seconda del grado, poi un tetto sopra la testa vale +10, una grotta -5, l'aperto -10, la pioggia -15, una tempesta -25, la neve +5, e operare su se stessi -15.\n\nUn fallimento ferisce il paziente da un'altra parte. Gli organi vitali rischiano solo in Blood and Oil."
     },
     "healthAugments": {
-      "title": "",
-      "description": ""
+      "title": "Innesti",
+      "description": "Il registro Augments ha due elenchi. Fitted è ogni innesto che il gruppo porta addosso, con chi lo porta e in quale alloggiamento. Catalogue è tutto quello che esiste, consultabile prima di pagare per farselo innestare.\n\nIl dossier dà il costo, il bonus, l'abilità che insegna e ogni alloggiamento che lo accetta, compresi quelli delle creature.\n\nGli innesti sono anche il modo di piegare il sistema dei bisogni: l'hardware giusto rallenta una barra, la ferma, oppure la fa tornare indietro."
     },
     "healthWeatherBody": {
-      "title": "",
-      "description": ""
+      "title": "Meteo, temperatura e corpo",
+      "description": "La temperatura ambientale è un numero, mostrato sulla scheda di viaggio, e agisce sul corpo. Il freddo brucia calorie per scaldarti e il caldo alza il metabolismo, quindi la fame scende più in fretta a entrambi gli estremi.\n\nIl meteo pesa anche sulla chirurgia da campo: pioggia -15, temporale -25, neve +5. E decide cosa fa la gente e dove si trova."
     },
     "combatBasics": {
-      "title": "",
-      "description": ""
+      "title": "Come comincia uno scontro",
+      "description": "Non ci sono incontri casuali. Ogni mostro sta sulla mappa con il livello scritto sopra la testa, e lo affronti camminandoci addosso.\n\nI turni sono individuali: ogni combattente agisce quando arriva il suo, in ordine di agilità, e la tua azione si risolve nel momento in cui la scegli.\n\nI nemici si tengono i danni fra uno scontro e l'altro. Un mostro ferito da cui sei scappato è ancora ferito quando torni, e i cadaveri restano sulla mappa.\n\nFuggire riesce sempre."
     },
     "combatCommands": {
-      "title": "",
-      "description": ""
+      "title": "I comandi di battaglia",
+      "description": "Il menu dei comandi contiene Attack, Guard, Skills, Magic, Item, Escape, Reload quando un'arma da fuoco è scarica, e quattro comandi suoi:\n\n- Check: apre il corpo del nemico, arto per arto, con la probabilità di colpire ciascuno\n- Target: punta il tuo prossimo colpo su una parte sola\n- Wrestle: prende il nemico alla presa\n- Talk: un altro modo di chiudere uno scontro\n\nWrestle e Talk sono comandi, non abilità. Non occupano slot nel loadout, non si possono dimenticare e vengono dal corpo anziché dalla classe.\n\nMouse: clic sinistro su un nemico per eseguirci il comando selezionato, clic destro per ciclare, rotella per scorrere, da 1 a 5 per lanciare."
     },
     "combatAP": {
-      "title": "",
-      "description": ""
+      "title": "MP e AP",
+      "description": "Due risorse. Gli MP sono la magia: le magie li costano, si ricaricano lentamente, e quasi tutti i riti e le evocazioni si reggono su di essi.\n\nGli AP sono slancio, con tetto a 100, spesi dalle abilità in battaglia e dalla corsa sulla mappa, che attinge allo stesso indicatore. Correndo si svuota in una novantina di secondi, camminando si ricarica piano, da fermi in fretta.\n\nIl costo segue il tipo: la magia si scrive in CamelCase e costa MP, una skill si scrive a parole staccate e costa AP."
     },
     "combatBodyParts": {
-      "title": "",
-      "description": ""
+      "title": "Colpire dove miri",
+      "description": "I mostri hanno gli stessi arti e organi del gruppo. Check elenca ogni parte con il suo stato e la probabilità di colpirla, e Target punta il colpo successivo su una di esse. La probabilità nasce dalla dimensione della parte, dal tipo di arma letto contro le tue statistiche e da un'oscillazione casuale del dieci percento in entrambi i sensi.\n\nDistruggere un arto toglie quel che l'arto fa: una gamba rotta rallenta, un'ala rovinata impedisce il volo, senza mani non si impugna un'arma. Gli organi vitali si raggiungono solo con un attacco mirato.\n\nIl danno alle parti resta per tutto lo scontro, e il colpo di grazia può recidere la parte."
     },
     "combatDamageTypes": {
       "title": "Tipi di Danno e Meccaniche Perforanti",
       "description": "Ogni attacco, abilità e arma porta un tipo di danno: Esplosivo, Perforante, Tagliente, Contundente, Ad area, Astratto o Nessuno.\n\nEsplosivo, Perforante e Tagliente possono recidere una parte con un colpo letale; gli altri la rovinano sul posto. Ad area ed Esplosivo si distribuiscono su due o quattro parti, tutti gli altri concentrano tutto sulla parte mirata.\n\nIl Perforante ignora anche quasi ogni difesa. Attraversa la Guardia per metà danno, colpisce a pieno il sostituto di Protezione e prosegue sull'alleato dietro per metà, ignora del tutto lo Scudo Divino e passa attraverso il Riflesso Magico colpendo direttamente il bersaglio."
     },
     "combatWrestle": {
-      "title": "",
-      "description": ""
+      "title": "Lotta",
+      "description": "Wrestle è aperto a qualunque corpo con almeno un arto abbastanza integro da afferrare. Non costa nulla e non si impara mai.\n\nSostituisce il menu dei comandi con il piano di presa: quale dei tuoi arti afferra, su quale dei loro, e con quale presa. Ogni riga mostra le probabilità. Una parte a 0, danneggiata o recisa non può né afferrare né essere afferrata, da nessuna delle due parti.\n\n- Grapple, FRZ contro DES: prende la presa. Tutto il resto ne richiede prima una\n- Strike, FRZ contro DES: non serve alcuna presa, sulla testa può causare commozione\n- Joint lock, DES contro FRZ: immobilizza, spesso rompe la guardia\n- Wrench, FRZ contro COS: danno pesante, può provocare emorragia\n- Slam, COS contro DES: guardia rotta, fiato tolto, possibilità di stordire\n- Choke, COS contro COS, solo alla testa: guardia rotta, organi vitali esposti\n- Rip, FRZ contro COS: probabilità basse, danno enorme, può staccare l'arto\n\nTutto scala con la specializzazione Wrestling. Ogni arte marziale addestrata aggiunge le proprie mosse finali senza che vadano imparate come abilità."
     },
     "combatTalk": {
-      "title": "",
-      "description": ""
+      "title": "Parlare con i mostri",
+      "description": "A un mostro segnato come capace di capirti si può parlare. Talk apre un pannello con accanto la probabilità di ogni approccio.\n\nOgni nemico porta una disposizione da 1 a 100, tirata quando compare e spostata dalla specie, e ferirlo costa da 5 a 15 punti.\n\n- Chat costruisce sintonia. La probabilità è la disposizione più un quinto dello scarto fra il tuo PSI e il suo, minimo 10%, massimo 95%\n- Surrender, stesse probabilità. Lascia lo scontro\n- Join the party richiede uno slot libero, e sopra 80 di disposizione usa la probabilità di Chat\n- Seguirti, oppure farsi adottare come animale. Chi sa parlare chiede 70 di disposizione\n- Insult riesce sempre e abbassa la disposizione\n- Tirargli un sasso, oppure accarezzarlo\n\nLe creature segnate come forze anziché come persone, i petrodemoni su tutte, rifiutano ogni approccio.\n\nChi si lascia convincere a unirsi diventa un membro del gruppo. Chi viene preso come animale o come seguace può essere addestrato più tardi per diventarlo."
     },
     "combatEnemyLevels": {
-      "title": "",
-      "description": ""
+      "title": "Livelli dei nemici e dove vivono",
+      "description": "L'opzione Enemy Spawn stabilisce come vengono scelti i livelli dei nemici.\n\nBalanced pesca da una fascia sopra la mediana del gruppo: a mediana L trovi da L a L + 7 + L/10. Un incontro per ogni casella del mondo sta sopra la fascia come boss, mai oltre 100.\n\nDistance from spawn, l'impostazione predefinita, fissa il livello in base a quanto la casella del mondo dista da quella in cui sei partito: livello 1 a casa, il vertice del bestiario nell'angolo più lontano. Ogni casella schiera creature il cui habitat corrisponde al bioma.\n\nChaos distribuisce tutto il bestiario a caso e piatto, da 1 a 110, ridistribuito a ogni ingresso in mappa.\n\nNessuna creatura è esclusiva di un paese. Ogni nazione ospita tutte le creature che i suoi biomi ospitano, e cambia soltanto quanto sono comuni.\n\nIl calendario sta sopra tutte e tre. Nel 2001 la fascia è quella decisa dalla modalità; dal 2002 al 2009 sale di dieci livelli l'anno; nel 2010 e nel 2011 non c'è fascia; dal 2012 non gira più niente sotto il livello 80, e non c'è tetto."
     },
     "combatMovementAI": {
-      "title": "",
-      "description": ""
+      "title": "Come si comportano i mostri",
+      "description": "Ogni mostro vagante porta una personalità di movimento che stabilisce cosa fa da fermo, come si accorge di te (raggio visivo, cono di vista, linea di vista) e cosa fa una volta che se n'è accorto.\n\nFixed, Random, Approach, Fleeing, Skittish, Grazer, Sentry, Guard, Patrol, Territorial, Ambusher, Lurker, Mimic, Swooper, Stalker, Hunter, Charger, Pack, Erratic, Drifter, Orbiter, Scavenger, Coward.\n\nUn Grazer non si accorge mai di te. Un Sentry ha un cono e gli si gira intorno. Un Ambusher non è dove sembra. Un Pack non combatte da solo."
     },
     "combatSafety": {
-      "title": "",
-      "description": ""
+      "title": "Avvisi di pericolo e sopravvivere a un colpo",
+      "description": "Prima di uno scontro il livello mediano del gruppo viene confrontato con il nemico, e compare un avviso quando è fuori portata. I livelli dei nemici sono disegnati sopra le loro teste sulla mappa.\n\nDentro lo scontro ogni personaggio ha una carica di protezione: il primo colpo che lo ucciderebbe lo lascia a 1 HP. Torna disponibile alla battaglia successiva. Blood and Oil la toglie."
     },
     "combatModes": {
-      "title": "",
-      "description": ""
+      "title": "Difficoltà e modalità di combattimento",
+      "description": "Diverse impostazioni cambiano cosa sia il combattimento, e quasi tutte si scelgono alla creazione del personaggio.\n\n- Peaceful: i mostri agiscono solo dopo essere stati feriti, nemico per nemico. Uno non provocato salta il turno, i mostri vaganti girano invece di inseguirti, e una disfatta ti fa ricomparire senza nessun morto\n- Ordinary: la morte lascia una lapide e la partita continua\n- Hardcore e Blood and Oil: la morte è game over e il personaggio viene rimosso. Blood and Oil toglie anche la carica di protezione della salute e permette a un colpo di taglio di staccare una parte del corpo\n- Card combat: sostituisce il menu dei comandi\n- Map battle: si combatte sulla mappa viva"
     },
     "combatMapBattle": {
-      "title": "",
-      "description": ""
+      "title": "Modalità battaglia sulla mappa",
+      "description": "Un'opzione sperimentale combatte ogni scontro sulla mappa dove ti trovi invece che su una schermata di battaglia.\n\nOgnuno combatte da dove sta; viene piazzato solo chi è fuori schermo. Ogni altro mostro mantiene posizione e comportamento, e chiunque passi entro qualche tile si unisce alla rissa con la sua scheda HP e il suo turno. Un cittadino vicino alla mischia si schiera con te se il gruppo è benvoluto o se è coraggioso, e combatte col proprio livello, statistiche e abilità.\n\nMove riposiziona il combattente attivo con una portata legata all'agilità. Le armi hanno una distanza: 1 in mischia, 2 per lance, fruste, bastoni e flagelli, di più per archi, armi da fuoco e armi da lancio, con linea di vista obbligatoria. Entrare in acqua significa nuotare, e nuotare costa più movimento.\n\nOrdine del round: gruppo e nemici alternati per agilità, poi i cittadini, poi il passo del mondo, dove ogni mostro vagante, ogni cittadino e il tuo animale avanzano di un tile tutti insieme."
     },
     "combatSummons": {
-      "title": "",
-      "description": ""
+      "title": "Evocazioni",
+      "description": "Un'evocazione è un quarto membro temporaneo. In battaglia vive solo per quella battaglia: mai salvata, mai nel menu, sparisce quando lo scontro finisce o quando smetti di pagarla.\n\nChi risponde: una creatura, una persona che il gruppo ha marcato, l'animale al tuo guinzaglio, un riflesso dell'evocatore, oppure il revenant di un viaggiatore che hai perso.\n\nI numeri vengono ritagliati di nuovo sulla tua mediana e sulla truppa in campo, poi moltiplicati per la quota del rito: un famiglio vale metà viaggiatore, un titano poco più di uno. La forma resta, quindi un picchiatore resta un picchiatore. Il petrodemone è tenuto in campo dal tuo petrolio, e l'entità antica arriva con i numeri suoi e prosciuga l'evocatore in circa tre turni.\n\nMantenimento per tipo: HP per demoni, non morti, ombre, sciami e titani; MP per elementali, celesti, fatati e vuoto; AP per il riflesso; euro per costrutti, macchine da guerra, draghi e campioni; anima per gli spiriti; petrolio per il petrodemone; un numero fisso di turni per bestie, verdeggianti, famigli e persone chiamate. Quando non puoi pagare, se ne va, e un evocatore che non riesce a pagare col sangue resta a 1 HP.\n\nIl famiglio appartiene a un solo personaggio. La sua classe decide quale creatura risponde e il nome viene tirato una volta sola dal suo, quindi cambiare classe rifà il patto.\n\nFinché un'evocazione è in campo, una barra hyper si riempie col danno che il gruppo infligge. Piena, l'evocazione lancia la sua mossa suprema, che cresce con il livello mediano del gruppo a scaglioni di dieci.\n\nUn'evocazione è sempre controllata dal computer e non ha la protezione a 1 HP.\n\nFuori dal combattimento gli stessi riti funzionano e ciò che chiamano cammina in uno slot al seguito: ogni punto di MP compra un numero fisso di passi."
     },
     "combatArena": {
-      "title": "",
-      "description": ""
+      "title": "L'arena",
+      "description": "Nell'arena si combatte per il gusto di farlo, in due forme: un gauntlet, una serie di scontri in una fascia di livello che scegli tu, e una prova di bioma, una serie contro la fauna di un bioma a scelta.\n\nIl gruppo viene riscalato alla fascia, e al posto del tuo puoi schierare un roster casuale.\n\nLe vittorie costruiscono una serie, che paga denaro e oggetti sempre più consistenti."
     },
     "combatBulletHell": {
-      "title": "",
-      "description": ""
+      "title": "Sequenze bullet hell",
+      "description": "Alcuni scontri sfociano in una sequenza bullet hell: pilota un piccolo mezzo, schivi la trama di proiettili del nemico e rispondi al fuoco.\n\nIl danno subito e inflitto lì conta nello scontro."
     },
     "combatSpirits": {
-      "title": "",
-      "description": ""
+      "title": "Battler spirito",
+      "description": "I nemici sconfitti entrano in un roster di spiriti. Uno si può schierare al posto di un battler ordinario, a un costo che scala con quello che era.\n\nLa funzione dipende da un suo interruttore, e un mondo che ce l'ha spento combatte battaglie ordinarie."
     },
     "combatMimic": {
-      "title": "",
-      "description": ""
+      "title": "Mimetismo",
+      "description": "Sei abilità mimetiche copiano altri corpi:\n\n- Mimetismo parziale: faccia e sprite del nemico, numeri invariati\n- Mimetismo completo: statistiche, HP, MP, AP, abilità, corpo e aspetto\n- Specchio: riesegue contro il nemico l'ultima abilità che ha usato\n- Copia alleato: nome, classe, abilità, sprite e corpo di un compagno\n- Casuale: mimetismo completo di una creatura pescata a caso\n- Mutazione: fonde due archetipi casuali nelle tue parti del corpo\n\nTutte e sei pretendono esattamente un nemico sul campo. Copiare un corpo copia i suoi arti, e questo cambia cosa puoi impugnare e dove puoi essere ferito."
     },
     "combatThrow": {
-      "title": "",
-      "description": ""
+      "title": "Lanciare le cose",
+      "description": "Oggetti, armi e armature si possono lanciare fino a otto tile, diagonali comprese, con il volo simulato a partire dal peso dell'oggetto. Le cose pesanti fanno poca strada e atterrano forte.\n\nUn oggetto lanciato resta dove cade e chiunque può raccoglierlo."
     },
     "combatCorpses": {
-      "title": "",
-      "description": ""
+      "title": "Cadaveri, ricompense e tempi di attesa",
+      "description": "Dopo uno scontro la finestra delle ricompense nomina tutto in una volta: oggetti nei colori della loro rarità, denaro, esperienza e conoscenza, l'ultima scalata sul livello del nemico contro la mediana del gruppo.\n\nI morti lasciano cadaveri sulla mappa, e gli eventi nemici vengono rimossi o messi dietro un tempo di attesa invece di ricomparire subito.\n\nOgni creatura incontrata viene scritta nel Bestiario."
     },
     "elementsOverview": {
-      "title": "",
-      "description": ""
+      "title": "Gli elementi e come funzionano",
+      "description": "Nove tipi di danno: Physical, Fire, Ice, Thunder, Water, Petro, Wind, Sacred, Cursed.\n\nOgni creatura risponde a ciascuno con un tasso. Sopra il 100% è una debolezza, sotto è resistenza, 0% è immunità, e un tasso negativo assorbe l'elemento e ne guarisce.\n\nL'HUD di battaglia stampa quel che hai scoperto del nemico che hai davanti, e il Bestiario lo conserva.\n\nGli stati interagiscono: Wet alza il danno da fulmine, Oily alza il danno da fuoco, Static assorbe il fulmine. Una classe pende verso un elemento, e un'arma o un modificatore può portarne uno."
     },
     "elementPhysical": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: fisico",
+      "description": "Lame, punte, peso e pugni. Quasi tutte le armi lo infliggono e quasi tutte le armature sono fatte per fermarlo.\n\nIl danno fisico stacca arti, rompe le guardie e chiude le prese. L'armatura pesante lo resiste e alimenta Intimidation, quella leggera baratta la resistenza per Stealth.\n\nSpiriti, melme e gas lo resistono."
     },
     "elementFire": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: fuoco",
+      "description": "Applica Burned, che continua a fare danno dopo il colpo.\n\nAumentato contro tutto ciò che è oleoso, secco o di legno. Resistito dai bagnati e dagli animali a sangue freddo, assorbito da ciò che vive nel fuoco."
     },
     "elementIce": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: Ice",
+      "description": "Applica Cold, e Freeze quando è abbastanza forte, che impedisce al corpo di agire.\n\nCresce contro bersagli bagnati. Usato su un bersaglio che brucia, spegne l'incendio."
     },
     "elementThunder": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: Fulmine",
+      "description": "Applica Statico, e Paralisi quando è forte abbastanza.\n\nDevastante contro un bersaglio bagnato. Lo assorbe chi è già Statico, e invece di ferirlo lo cura.\n\nMacchine e costrutti di solito lo resistono."
     },
     "elementWater": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: acqua",
+      "description": "Applica Wet, che alza il danno da fulmine, abbassa quello da fuoco e viene letto da diversi stati.\n\nIl suo danno diretto è basso."
     },
     "petro": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: Petro",
+      "description": "Il petrolio e quel che esce dal suolo insieme a lui.\n\nPetro appartiene ai petrodemoni, con cui non si parla, che non si accarezzano e con cui non si ragiona, e che lasciano barili invece di monete. Il petrolio funziona come valuta: fissa il prezzo della posta fra i mondi, tiene in campo l'evocazione del petrodemone, e il mercato lo scambia.\n\nIl danno Petro lascia il bersaglio infiammabile."
     },
     "elementWind": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: Vento",
+      "description": "Aria, pressione e moto tagliente. Sbilancia e sposta.\n\nLe creature volanti lo infliggono e lo resistono. È al minimo contro i bersagli radicati o pesanti."
     },
     "elementSacred": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: Sacro",
+      "description": "I non morti e i maledetti gli rispondono male. È l'unico tipo di danno che cura il bersaglio quando quel bersaglio sta dalla parte giusta della linea.\n\nLe opere sacre portano di solito protezione e purificazione accanto al danno, e parecchie stanno in fondo a scuole costose."
     },
     "elementCursed": {
-      "title": "",
-      "description": ""
+      "title": "Elemento: Cursed",
+      "description": "Marciume, rovina e prosciugamento. Lo infliggono i non morti, gli risponde il sacro.\n\nLe opere Cursed spesso costano più degli MP, e le più potenti portano il tag Forbidden, che le mette da sole al centro del loro cerchio a cento volte il loro valore.\n\nEfficace contro i vivi. Cura chi è già morto."
     },
     "worldMapPage": {
-      "title": "",
-      "description": ""
+      "title": "La mappa del mondo",
+      "description": "La mappa del mondo è un'unica mappa dell'Europa, e ogni casella è un'intera regione. Percorrerne una costa dieci minuti di tempo di gioco, due in veicolo.\n\nM cicla la visualizzazione: nascosta, minimappa nell'angolo, schermo intero. A schermo intero, trascina per spostarti, rotella oppure Q ed E per lo zoom.\n\nMettere piede su una casella propone di proseguire oppure di visitare il quadrato, e visitarlo ne costruisce la mappa locale. T passa fra la mappa del mondo e l'ultima mappa locale.\n\nI compagni in formazione libera tengono lassù un guinzaglio di due caselle, e i quadrati segnati \"???\" sono avventure."
     },
     "worldProcedural": {
-      "title": "",
-      "description": ""
+      "title": "Mappe procedurali",
+      "description": "Quasi ogni mappa è generata. Un quadrato della mappa del mondo diventa una mappa quando ci entri, costruita dal seme del mondo e dalle sue coordinate, quindi è sempre la stessa mappa ogni volta che torni.\n\nIl bioma decide il tileset e cosa vi cresce. Le strade corrono dritte, si incrociano, girano e tornano su sé stesse a metà mappa quando non portano da nessuna parte. I fiumi sono larghi e irregolari, ai bordi si assestano su una larghezza fissa per proseguire nel quadrato seguente, e arrivano al bordo soltanto se oltre c'è acqua. Le coste vengono campionate lungo la linea di confine, così i vicini disegnano una riva continua. Sopra tutto questo vanno prefabbricati 32x32 fatti a mano e caratteristiche del terreno sparse per bioma.\n\nUscire dal bordo camminando carica direttamente il quadrato confinante."
     },
     "worldBiomes": {
-      "title": "",
-      "description": ""
+      "title": "Biomi",
+      "description": "Il bioma di una casella ne stabilisce il tileset, gli elementi del terreno, la fauna, la musica, il meteo e cosa si può raccogliere.\n\nAlcuni sono varianti speciali, estratte invece che fisse: boschi degli spiriti, campi di cristallo. Certe creature vivono solo lì, e un bioma speciale ne piazza sempre almeno una, qualunque sia la modalità di spawn o il calendario.\n\nI biomi al coperto, cantine, interni di templi, tane nelle grotte e sotterranei, si raggiungono attraverso l'ingresso di una struttura invece che entrandoci camminando."
     },
     "worldStructures": {
-      "title": "",
-      "description": ""
+      "title": "Strutture sotto la mappa",
+      "description": "Negli ingressi delle mappe procedurali si entra camminandoci dentro, non premendo. Quel che c'è dietro viene tirato dal seme del mondo, dalla casella e dalla tile, perciò una scala porta sempre allo stesso posto.\n\n- scala in discesa: qualunque struttura. Cantina, dungeon, cripta, catacombe, miniera, cisterna, tana, oubliette, biblioteca, fucina, bunker, laboratorio, sacrario, tunnel, grotta, tubo di lava, tumulo, stazione, saline, covo in caverna, tempio\n- scala in salita: cose costruite in superficie e poi sepolte\n- caverna: tane, caverne ghiacciate, caverne di cristallo, caverne fungine, tubi di lava, grotte marine\n- grata: una fogna, solo nelle città che ne dichiarano una sotto\n- botola: il caveau di un patrono, pieno di soldi e armi rare\n\nLa superficie limita le possibilità: i campi di ghiaccio danno caverne ghiacciate, un cimitero dà catacombe."
     },
     "worldHouses": {
-      "title": "",
-      "description": ""
+      "title": "Case, locande e negozi",
+      "description": "Le porte sulle mappe procedurali sono affidate al sistema degli edifici. Le riserve di case, locande, negozi e palazzi sono seminate dalle coordinate, quindi una porta è sempre la stessa attività.\n\nGli edifici possono avere più piani e sono configurati come dati. Negozi e locande portano il nome sopra la porta.\n\nLe porte si aprono con un'animazione quando ci cammini dentro, e la serratura viene controllata prima che l'animazione parta."
     },
     "worldTerrain": {
-      "title": "",
-      "description": ""
+      "title": "Lavorare il terreno",
+      "description": "Mettiti di fronte a un elemento del terreno e premi il tasto azione per lavorarlo. Gli alberi si abbattono con un'ascia nell'inventario, le rocce si scavano con un piccone da guerra, un'arma pesante qualsiasi o un piccone scheggiato, le piante si raccolgono a mani nude, e qualunque cosa si può smontare.\n\nLa resa sono materiali da artigianato. A volte l'estrazione dà un lingotto.\n\nLa raccolta paga sempre materia vegetale, e circa due raccolte su cinque danno anche qualcosa di commestibile. Cosa salta fuori dipende dal paese: ghiande e finferli in una foresta, more artiche nella tundra, datteri nel deserto, salicornia in palude, funghi ciechi nel sottosuolo. Allenare Foraging alza le probabilità. Un elemento che è una pianta precisa paga quella pianta ovunque.\n\nLe superfici aliene non danno raccolta. Lì il cibo si ricava macellando la fauna locale.\n\nGli alberi abbattuti e gli elementi lavorati restano spariti quando la mappa viene ricostruita, scenografia dentro i prefab compresa."
     },
     "worldDungeon": {
-      "title": "",
-      "description": ""
+      "title": "Il dungeon e la torre",
+      "description": "Un unico grande dungeon, la cui pianta viene tirata alla creazione del mondo.\n\nIn superficie si sviluppa su dieci livelli, da A a J, ciascuno di nove piani ordinari e un piano ascensore. L'ascensore e la lista dei piani saltano a qualunque piano già raggiunto; i piani mai visti compaiono come punti interrogativi.\n\nSotto terra c'è la torre bassa, novantadue piani generati, ognuno una delle strutture del catalogo procedurale. Laggiù le scale si leggono al contrario: più a fondo vuol dire numero più piccolo."
     },
     "worldPuzzles": {
-      "title": "",
-      "description": ""
+      "title": "Enigmi",
+      "description": "Le mappe portano enigmi:\n\n- blocchi alla sokoban, fosse che se li ingoiano, caselle obiettivo, altari di reset e di annullamento\n- piastre a pressione, piastre a tempo da tenere premute, leve, cancelli cablati con logica and / or\n- pavimenti di ghiaccio, caselle freccia, nastri trasportatori\n- interruttori di cristallo che fanno passare gruppi di blocchi da solidi ad aperti\n- torce da accendere, a volte a tempo, a volte con il fuoco che si propaga\n- caselle colorate, griglie lights out, porte colorate, lucchetti a combinazione\n- piastre di teletrasporto, muri fragili, raggi di luce da deviare, cloni che copiano le tue mosse, oggetti magnetici, contrappesi, stanze allagabili"
     },
     "worldFog": {
-      "title": "",
-      "description": ""
+      "title": "Nebbia di guerra",
+      "description": "Certe mappe sono coperte di nebbia, che si ritira camminando. La vista è un cono, non un cerchio: vedi dove guardi, e ci si guarda intorno girandosi.\n\nIl terreno scoperto resta ricordato mappa per mappa."
     },
     "worldDigging": {
-      "title": "",
-      "description": ""
+      "title": "Scavo e porte segrete",
+      "description": "Certi muri si possono sfondare in tempo reale, trasformando un vicolo cieco in un passaggio. Scavare è la versione deliberata della stessa cosa.\n\nLe porte segrete sembrano muro finché non ci interagisci, poi sbiadiscono, fanno rumore e restano aperte.\n\nUna porta chiusa a chiave dà tre possibilità. Peek ti teletrasporta per dare un'occhiata senza poterti muovere, e il menu che segue contiene le altre due: scassinare, che avvia un minigioco a blocchi in caduta e richiede i grimaldelli, oppure buttarla giù, che finisce agli atti come reato."
     },
     "worldMovement": {
-      "title": "",
-      "description": ""
+      "title": "Acqua, arrampicata e ponti",
+      "description": "Mettiti di fronte all'acqua e premi il tasto azione per aprire il menu dell'acqua: nuotare, che cambia lo sprite e disattiva la corsa, pescare, se nel gruppo c'è una canna, oppure immergerti sotto la superficie.\n\nIl terreno scalabile si arrampica lentamente, rivolti verso l'alto, con i compagni nascosti. L'altezza viene tracciata, e saltare giù da tre caselle o più costa il 5% di salute per ogni casella di caduta.\n\nI ponti sono su livelli. Entra dall'imbocco e cammini sul ponte; entra da qualunque altro punto e ci passi sotto, e il livello vale per tutta la campata.\n\nUno specchio mostra il riflesso dritto di chi gli sta davanti."
     },
     "worldWeather": {
-      "title": "",
-      "description": ""
+      "title": "Meteo, tempo e stagioni",
+      "description": "L'orologio parte alle 8 del mattino del 1 gennaio 2001 e non si ferma mai. Il tempo avanza mentre cammini e salta quando dormi, aspetti o viaggi.\n\nIl meteo è generato per paese, seminato sulla data, e cambia quando entri in una mappa all'aperto. Il paese fissa alba e tramonto, le temperature stagionali e quali fenomeni sono possibili.\n\nLa pioggia applica Wet, i temporali applicano Static, la neve applica Hot, perché il corpo brucia per restare caldo.\n\nLo schermo viene tinto dall'ora del giorno e dalla temperatura, blu per il freddo e rosso per il caldo. La pioggia e la notte portano suono ambientale su un canale proprio."
     },
     "worldDreams": {
-      "title": "",
-      "description": ""
+      "title": "Sogni",
+      "description": "Dormire può farti cadere dentro un sogno: un mondo 3D completo tirato da un seme. Distribuisce da quattro a sette regioni e le mescola: backrooms, uffici, scale di Escher, luoghi annegati, vuoti cosmici, megastrutture, parcheggi, ospedali, cattedrali, fabbriche, luna park, fogne, fosse di carne, giardini, rovine.\n\n- WASD cammina, il mouse guarda, spazio salta. Tieni premuto il salto da fermo per decollare\n- il tasto azione usa l'arma nella mano destra; la rotellina scorre una rastrelliera mescolata con ogni arma del gioco\n- toccare qualcosa di vivo ti sposta in un altro sogno, e lo stesso vale se cammini dritto contro un muro\n- i buchi non hanno fondo, e cadere abbastanza a lungo ti fa uscire dal sogno\n\nOgni sogno porta con sé da una a tre leggi: il terreno respira, la gravità è leggera o schiacciante, i colori si invertono, le figure si muovono solo quando non le guardi, il tempo salta, la tua taglia cambia, il sogno si ripete.\n\nNon ha una fine. Il terreno si ripete in ogni direzione e si impila verso l'alto finché qualcuno continua a salire.\n\nOgni minuto passato là dentro tira una probabilità di conoscenza, riportata al risveglio."
     },
     "worldAdventures": {
-      "title": "",
-      "description": ""
+      "title": "Avventure sulla mappa",
+      "description": "Alcune caselle della mappa del mondo portano un segnalino \"???\", ridisegnato una volta al giorno. Fermati sopra e Investigate manda in scena un'avventura a bivi scritta per quel posto.\n\nL'ultimo nodo paga: una reliquia, equipaggiamento, materiale di recupero, denaro, uno scontro con qualcosa del posto, un minigioco, un innesto, un cambio di reputazione con una fazione, un crimine a tuo carico, un riposo, oppure niente.\n\nEntra il capogruppo e il compagno che gli sta a fianco commenta col proprio registro. Certe scelte compaiono solo a un capogruppo di un certo temperamento, e la prosa è combinatoria.\n\nUn bioma porta un segnalino, due se è molto grande, e un luogo con un nome ne porta uno suo in aggiunta. Una casella risolta resta risolta."
     },
     "worldBologna": {
-      "title": "",
-      "description": ""
+      "title": "Bologna",
+      "description": "Bologna è nel gioco per quello che è, rasterizzata da OpenStreetMap in una griglia di celle grandi che si uniscono senza cuciture ai bordi.\n\nOgni edificio rasterizzato ha una porta sul lato sud e ogni porta è un ingresso. La maggior parte sono case; una quota sono negozi e locande, seminati per cella e per casella, così una porta è sempre la stessa attività.\n\nLe celle non hanno eventi piazzati a mano. La città si popola a runtime: cittadini presi dai volti del mondo stesso e dai bolognesi nati lì, più fauna secondo l'habitat, animali di strada sui marciapiedi, uccelli acquatici e pesci nei canali, uccelli sui tetti."
     },
     "worldPlatformer": {
-      "title": "",
-      "description": ""
+      "title": "Mappe a piattaforme",
+      "description": "Su una mappa marcata come livello a piattaforme i controlli diventano quelli di uno scorrimento laterale: sinistra e destra camminano, la barra spaziatrice salta, shift corre, la gravità tira giù, e saltando contro un muro ci si dà la spinta.\n\nLe scale si salgono con su. I compagni seguono il tuo percorso esatto con un attimo di ritardo."
     },
     "worldFlying": {
-      "title": "",
-      "description": ""
+      "title": "Volo",
+      "description": "Il volo ti muove come un'aeronave: liberamente, in ogni direzione, sopra qualsiasi cosa. Il tasto di conferma ti fa atterrare.\n\nArriva da certi oggetti, abilità e veicoli, invece di essere qualcosa che si possiede per sempre."
     },
     "worldConnections": {
-      "title": "",
-      "description": ""
+      "title": "La mappa delle mappe",
+      "description": "Una seconda mappa mostra ogni mappa che conosci e come si collegano, costruita dagli eventi di trasferimento e dalle porte che le uniscono.\n\nClicca un nodo per fissarlo come destinazione e il percorso più breve si illumina. Nell'angolo compare una bussola che punta al prossimo passaggio e sparisce all'arrivo."
     },
     "worldTreasure": {
-      "title": "",
-      "description": ""
+      "title": "Forzieri e stanze del tesoro",
+      "description": "Il contenuto dei forzieri è generato contro il livello mediano del gruppo. Un forziere svuotato resta vuoto, e i forzieri aperti restano aperti.\n\nAlcune mappe nascondono stanze del tesoro: stanze raggiungibili, piazzate a caso, con contenuti più ricchi."
     },
     "worldTechTree": {
-      "title": "",
-      "description": ""
+      "title": "Ricerca e scoperte",
+      "description": "Sette alberi di scoperte, uno per disciplina: Social Sciences, Alchemistry, Technomagica, Physics, Arcane, Mathematics, Astronomy, Theotecnical.\n\nGli alberi scientifici seguono il progresso reale dal 2001 al 2012. Arcane e Technomagica seguono la riscoperta della magia perduta e la sua fusione con le macchine. Theotecnical segue il Vaticano che ricostruisce il proprio dogma attorno ai motori. Ognuno porta anche rami eretici e qualche nodo generato dal seme del mondo.\n\nI nodi completati registrano il leader che ci è arrivato per primo. Ricercarne uno consuma materiali da artigianato e restituisce gran parte di quel costo come sottoprodotti raffinati."
     },
     "travelOverview": {
-      "title": "",
-      "description": ""
+      "title": "Viaggio rapido",
+      "description": "Qualsiasi posto segnato come destinazione si può raggiungere in viaggio invece che a piedi. Fermate dell'autobus e cartelli aprono la schermata dei viaggi.\n\nUna destinazione e un mezzo ti mettono su una mappa di viaggio dedicata a quel trasporto, con un conto alla rovescia che continua a scorrere mentre apri i menu o combatti e sopravvive ai cambi di scena. A zero arrivi.\n\nI compagni parlano durante il tragitto, gli equipaggi dei veicoli dormono a turni, e l'orologio del mondo continua a girare."
     },
     "travelModes": {
-      "title": "",
-      "description": ""
+      "title": "I trenta modi di viaggiare",
+      "description": "Ogni destinazione elenca i trasporti che la raggiungono. Sono trenta, e scambiano denaro contro tempo.\n\nAndare a piedi è gratis ed è il più lento. La bicicletta costa poco ed è un po' più rapida, il cavallo va meglio della bicicletta, e il car sharing o il camper costano carburante invece che denaro.\n\nAutobus, treno, taxi, barca e traghetto sono le tariffe ordinarie. Il treno è veloce per quel che costa, il taxi ha la stessa velocità al doppio del prezzo.\n\nVoli, limousine, elicotteri e jet privati costano cari, e un jet privato va dieci volte la velocità di marcia. Crociere, sottomarini, mongolfiere e zeppelin sono lenti e costosi.\n\nIl livello esotico comprende tappeti magici e draghi, cerchi di teletrasporto a venti volte la velocità di marcia per una cifra modesta, hypermetro, maglev e hyperloop, e poi astronavi, wormhole, salti quantici, macchine del tempo e attraversamenti dimensionali. Un attraversamento dimensionale costa mille volte la tariffa base ed è mille volte più veloce.\n\nIl costo è la tariffa base per la distanza, e la velocità divide il tempo."
     },
     "vehiclesOverview": {
-      "title": "",
-      "description": ""
+      "title": "Possedere un veicolo",
+      "description": "Un veicolo si dimostra con un oggetto. Avere la chiave, l'atto di proprietà o la scopa lo fa comparire nel menu Vehicles e lo rende evocabile e guidabile.\n\nI veicoli restano parcheggiati nel mondo, non li porti addosso, e la posizione di ognuno viene salvata, quadrato del mondo e livello sotterraneo compresi. Dove ne stanno diversi sullo stesso tile, interagire ti chiede quale intendevi.\n\nAvvicinarsi a un veicolo parcheggiato apre il suo menu: guidare, entrare nell'interno, usare lo stivaggio, fare rifornimento, riparare.\n\nIl camper, l'auto e l'astronave hanno interni percorribili a piedi con stive."
     },
     "vehicleCamper": {
-      "title": "",
-      "description": ""
+      "title": "Veicolo: il camper",
+      "description": "Il veicolo più grande. Cento litri di carburante, un interno in cui si cammina con letti e stivaggio, riparabile e migliorabile, fa rifornimento a qualsiasi pompa lungo la strada.\n\nÈ un veicolo di terra, quindi attraversa le caselle di strada più in fretta della campagna aperta, e il viaggio rapido in camper costa carburante invece che denaro.\n\nDue moduli d'officina lo estendono. Aquatic lo fa galleggiare e immergere, con C per scendere e risalire. Flight monta i rotori, con F per decollare e atterrare.\n\nGuidarlo apre una scena 3D, e a bordo ci vive un equipaggio."
     },
     "vehicleCar": {
-      "title": "",
-      "description": ""
+      "title": "Veicolo: l'automobile",
+      "description": "Più veloce del camper e molto più piccola. Sessanta litri di carburante, un interno ristretto, fa rifornimento a qualsiasi pompa, prende il bonus strada, e il viaggio rapido in auto costa carburante invece che denaro.\n\nQualsiasi auto parcheggiata sulla mappa si può rubare: mettiti di fronte, premi il tasto azione e scegli di rubarla. Si apre il minigioco dello scasso e serve un grimaldello, oppure una chiave universale, che la apre di colpo. Se riesci ti ritrovi le chiavi in mano e l'auto sparisce dal mondo. Se fallisci ti viene contestato un furto di veicolo."
     },
     "vehicleBike": {
-      "title": "",
-      "description": ""
+      "title": "Veicolo: la bicicletta",
+      "description": "Va a forza umana, quindi non vuole carburante e non resta mai a secco. È il veicolo più rapido disponibile presto, prende il bonus strada, e non ha interno, né stivaggio, né costi di riparazione.\n\nNessun turno di equipaggio: chi pedala fa tutto."
     },
     "vehicleBroom": {
-      "title": "",
-      "description": ""
+      "title": "Veicolo: la scopa volante",
+      "description": "Non vuole carburante, funziona al chiuso e si infila nello zaino come un oggetto.\n\nVola, quindi passa sopra ogni tile di ogni mappa: muri, acqua, dirupi ed eventi. Atterra su qualsiasi cosa calpestabile, tetti e ponti compresi, e ci si sale dalla tile su cui è atterrata.\n\nNon prende il bonus stradale."
     },
     "vehicleBoat": {
-      "title": "",
-      "description": ""
+      "title": "Veicolo: la barca",
+      "description": "Un gommone. Niente carburante, niente interni, niente stiva, niente riparazioni, e va solo su acqua aperta.\n\nIl gruppo è disegnato a bordo: tutti sulle panche, prua in avanti, rivolti verso la direzione di marcia, con l'animale a poppa."
     },
     "vehicleStarship": {
-      "title": "",
-      "description": ""
+      "title": "Veicolo: l'astronave",
+      "description": "Duecento litri di carburante e un interno interamente percorribile a piedi. Non si rifornisce a una pompa sul ciglio della strada.\n\nScafo, disposizione e aspetto sono generati da una serie di assi di tratti e si possono modificare.\n\nNon le serve un pilota e vola da sola, quindi la pagina dell'equipaggio riguarda la vita a bordo più che la guida. Si usa dalla mappa stellare."
     },
     "vehicleFuel": {
-      "title": "",
-      "description": ""
+      "title": "Carburante",
+      "description": "Il camper, l'auto e l'astronave bruciano carburante. La moto, la scopa e la barca no.\n\nIl carburante si compra alle pompe a un prezzo che si muove con il mercato petrolifero del mondo. Camper e auto fanno il pieno a qualunque pompa lungo la strada; l'astronave no.\n\nIl consumo va a distanza e cambia da veicolo a veicolo, con un indicatore nell'angolo mentre guidi. Restare a secco ti pianta lì."
     },
     "vehicleRepair": {
-      "title": "",
-      "description": ""
+      "title": "Danni e riparazioni dei veicoli",
+      "description": "Un veicolo ha dodici componenti, ognuno con la propria salute. Motore, trasmissione, freni e sterzo sono critici e lo bloccano del tutto se si rompono; batteria, alternatore, radiatore, impianto di alimentazione, scarico, sospensioni, gomme e carrozzeria costano solo prestazioni.\n\nIl danno dipende da cosa colpisci. Qualcosa di morbido segna solo il muso; un altro veicolo a velocità stradale si sente dappertutto. La notifica dice quali parti.\n\nLe riparazioni consumano materiali da lavorazione, in proporzione alla profondità dell'intervento. Mentre guidi, lo stato del veicolo è disegnato come una barra HP sulla HUD del gruppo."
     },
     "vehicleUpgrades": {
-      "title": "",
-      "description": ""
+      "title": "L'officina",
+      "description": "I veicoli si migliorano in officina con i materiali da crafting.\n\nQuattro potenziamenti, tre livelli ciascuno: accelerazione, velocità, capacità del serbatoio e integrità strutturale. Due moduli una tantum, solo per il camper: acquatico, che galleggia e si immerge, e volo, che monta i rotori.\n\nIl lavoro aerodinamico riduce quanto tempo di gioco costa un tile della mappa del mondo.\n\nOgni livello chiede materiali più esotici, dall'acciaio e la plastica al titanio e alla circuiteria, fino a materia varleniana, nanotubi e componenti quantistici."
     },
     "vehicleCrew": {
-      "title": "",
-      "description": ""
+      "title": "L'equipaggio",
+      "description": "Alla partenza si mette al volante il leader, e solo chi guida guadagna l'esperienza di specializzazione del veicolo.\n\nLe ore al volante vengono contate per persona come sforzo, e la lucidità è il sonno del gruppo meno lo sforzo di quel membro. Sotto il 40% il volante passa al più riposato sopra quella soglia, e chi non guida smaltisce sforzo. Quando nessuno è in grado di dare il cambio, chi guida tira avanti e tu vieni avvisato.\n\nI passeggeri dormono. I pisolini partono sotto il 40% di sonno e durano fino al pieno o fino alla fine del viaggio. Si svegliano quando il pisolino finisce, quando il gruppo scende, quando qualcuno entra in cabina, e in caso di incidente, che li tiene svegli anche per l'ora successiva.\n\nLa moto e la scopa non hanno turni. L'astronave non ha un pilota, e il suo equipaggio soddisfa un bisogno alla volta attingendo alla stiva."
     },
     "vehicleDriving": {
-      "title": "",
-      "description": ""
+      "title": "Guida in 3D",
+      "description": "Guidare il camper apre una scena stradale in 3D costruita sulla mappa del mondo: la stessa griglia di biomi, le montagne come campi di altezza a rumore, l'acqua piatta e blu, le strade come asfalto a doppia corsia, tutto il resto terreno del colore di quel bioma. Le coste degradano verso il mare, e lungo il percorso sono sparse città, foreste e cactus.\n\nTre visuali, si scambiano con Tab o Y: prima persona dietro un volante animato e un cruscotto funzionante, telecamera a inseguimento con zoom, e una visuale libera in cabina a cui si accede da una porta.\n\nW dà gas, Shift è il turbo, S frena e va in retro, A e D sterzano, la barra spaziatrice è il freno a mano, il mouse guarda in giro.\n\nIl modello ha un automatico a cinque rapporti con nota motore sui giri, scivolamento laterale così il freno a mano fa derapare, aderenza diversa tra asfalto, terra, erba, sabbia, neve e roccia, gravità in pendenza e un telaio che segue il terreno.\n\nIl traffico gira su nove modelli, dalla utilitaria all'autobus urbano, costruiti in scala reale rispetto al camper. Frenano, affrontano gli incroci e ci si può andare addosso, e un autobus spinge più forte di una utilitaria.\n\nA piedi il leader tiene l'arma in mano, e il d-pad scorre tutte le armi nelle borse che può impugnare. Ai bordi della strada oziano nemici scelti in base al bioma."
     },
     "roadTraffic": {
-      "title": "",
-      "description": ""
+      "title": "Traffico, investimenti e furti",
+      "description": "Il traffico sulla mappa lo guida il gioco, non le pagine evento.\n\nUn'auto occupa tanti tile quanto è lungo il suo sprite, e vale per tutto: non entra mai dentro un muro che sta superando, le auto si urtano carrozzeria contro carrozzeria, e chi finisce sotto la carrozzeria viene investito. Solo un'auto in movimento colpisce qualcosa; il traffico cittadino frena per le persone, quello in superstrada no.\n\nEssere investiti ti sbalza di lato e fa scattare un incidente. Un NPC preso da un'auto si porta a casa condizioni di ferita scritte sul suo profilo; una creatura colpita abbastanza forte muore e lascia un cadavere.\n\nInvestire tu qualcuno lo ferisce, abbassa la sua opinione di ogni membro del gruppo e fa aprire un fascicolo per omissione di soccorso. Speronare una creatura la sbalza dal cofano le prime due volte; dalla terza le probabilità che si giri e combatta salgono ripidamente.\n\nOgni tanto un'auto accosta e il conducente scende, gira un po' e poi riparte. Quel conducente è un normale NPC vagante, e intanto l'auto resta parcheggiata e rubabile."
     },
     "peopleOverview": {
-      "title": "",
-      "description": ""
+      "title": "Qui le persone sono vere",
+      "description": "Ogni persona sulla mappa porta un profilo completo, generato dal suo nome e dal seme del mondo:\n\n- una personalità tra venticinque archetipi, che decide come parla\n- tratti, gli stessi che portano i tuoi personaggi\n- una ideologia su cinque assi: economia, autorità, tradizione, militarismo, misticismo\n- ricchezza, abilità, inventario ed equipaggiamento\n- una fazione, una casa, un lavoro e una routine\n- un passato pescato dalla storia del tuo mondo\n- una storia clinica, malattie passate e ossa saldate male comprese\n\nUna parte della popolazione è fatta di animali, coniati dallo stesso sistema. Una creatura di una classe bestiale non è senziente: niente conversazione, niente politica, niente risparmi, niente proprietà."
     },
     "peopleEmpathize": {
-      "title": "",
-      "description": ""
+      "title": "Il pannello Empathize",
+      "description": "Parlare davvero con qualcuno apre il pannello Empathize: identità, storia, biologia, salute, vita sentimentale, vita quotidiana, politica, e il registro delle sue ultime conversazioni.\n\nDa lì puoi parlare, lodare, insultare, scherzare, regalare, commerciare, corteggiare, proporre, reclutare, e leggere perché quella persona la pensa così su di te.\n\nLa considerazione è per singolo membro del gruppo, e solo chi sta parlando muove la propria.\n\nUn campo di chat libera accetta testo scritto e genera una risposta. Con il modello linguistico locale attivo è lui a scriverla; altrimenti ci pensa una catena di Markov."
     },
     "peopleOpinion": {
-      "title": "",
-      "description": ""
+      "title": "Come qualcuno decide cosa pensa di te",
+      "description": "L'opinione che un NPC ha di un tuo personaggio si compone di quattro parti:\n\n- opinione di base, mossa da tutto quello che gli hai fatto\n- compatibilità di tratti, applicata prima che si apra bocca\n- ideologia, quanto sono vicini i vostri credo sui cinque assi, vale fino a una dozzina di punti in un senso o nell'altro\n- igiene, che odore avete l'uno per l'altro in questo momento\n\nGuadagnare considerazione nutre anche il bisogno sociale di chi l'ha guadagnata.\n\nL'attrazione viene tenuta separata dall'opinione. Conversazione, regali e scambi muovono solo l'opinione; il corteggiamento muove l'attrazione, e una mossa romantica rilegge compatibilità di tratti e igiene una seconda volta, con peso maggiore."
     },
     "peopleLives": {
-      "title": "",
-      "description": ""
+      "title": "Le persone hanno una vita",
+      "description": "La vita di tutti avanza ogni volta che avanza il tempo: minuto per minuto, e attraverso qualsiasi salto.\n\n- nascono in un posto a una data e tengono il conto di ogni trasloco successivo, con le ragioni\n- si incontrano, si frequentano, si sposano, divorziano e si separano, preferendo partner del proprio insediamento\n- fanno carriere prese dalla lista dei mestieri reali, con uno storico dal primo anno di lavoro, cambi con l'età e pensione\n- i disonesti si portano dietro condanne, pene scontate fuori scena e taglie ancora aperte, e una condanna può costare il posto di lavoro\n\nUn anno passato in sonno criogenico è un anno in cui tutti sono invecchiati, hanno cambiato lavoro, si sono sposati e si sono seppelliti a vicenda."
     },
     "peopleTalking": {
-      "title": "",
-      "description": ""
+      "title": "Cosa si dicono le persone fra loro",
+      "description": "Due persone che passeggiando si ritrovano vicine si fermano, si voltano l'una verso l'altra e tengono una conversazione, una battuta alla volta in nuvolette di pensiero. Il tono, positivo, negativo, neutro o un battibecco, dipende da cosa pensano l'una dell'altra e dalle loro personalità. Arrivare in fondo sposta entrambe le opinioni.\n\nChi condivide una stanza mentre è occupato si scambia battute a due righe senza fermarsi.\n\nCiascuna delle venticinque personalità ha le sue battute sul tempo e sull'ora del giorno, il suo monologo interiore, e le sue aperture e chiusure.\n\nLe ultime venti conversazioni di ogni persona si leggono nel suo pannello."
     },
     "peopleSettlements": {
-      "title": "",
-      "description": ""
+      "title": "Gli insediamenti e ciò che capita loro",
+      "description": "Ogni insediamento porta tre indicatori civici. La prosperità viene dall'occupazione, dall'economia nazionale e dagli eventi recenti; la sicurezza dai crimini per abitante, dall'onestà del capitano delle guardie locale, dalla stabilità nazionale e da quanto sei ricercato; l'umore dagli altri due più malcontento, feste, epidemie e traffico per strada.\n\nSopra di essi si innestano gli episodi:\n\n- ondata di criminalità: parte quando la sicurezza crolla. Il crimine rende di più e il giro di vite prende più ladri, quindi l'ondata si spegne da sola\n- boom e crisi: partono agli estremi della prosperità e fanno oscillare assunzioni, crimine, divorzi, prezzi dei negozi e umore del mercato, poi erodono la propria causa\n- festa: la dichiara una città in salute. Umore e movimento salgono, i negozi sono più forniti, i borseggiatori lavorano la folla\n- epidemia: rara, e peggiore nelle città infelici. Umore, assunzioni e clienti nei negozi crollano finché non si esaurisce\n\nLa disoccupazione alimenta il crimine, il crimine alimenta la repressione, la repressione riempie le prigioni, le prigioni alimentano la disoccupazione. Tutto questo arriva ai notiziari, alla borsa, alle assunzioni e alle chiacchiere."
     },
     "peoplePolitics": {
-      "title": "",
-      "description": ""
+      "title": "Politica",
+      "description": "Ogni iperpotenza ha un governo, e le forme cambiano parecchio: teocrazie, stati a partito unico, monarchie parlamentari, tecnocrazie, sultanati, pantheon divini, serenissime repubbliche, corporatocrazie, confederazioni di bande armate. Ognuna ha partiti, ordini o clan, una classe politica con carisma, integrità, astuzia e ambizione, un capo di stato, e indicatori di legittimità, stabilità, malcontento, economia e tesoro.\n\nLe elezioni seguono il linguaggio di ciascuna potenza: elezioni generali, conclavi papali su più scrutini, plenum del politburo che annunciano risultati al 99%, assemblee di azionisti pesate sulla ricchezza, raduni goblin dove chi arriva secondo rischia di finire a tavola, tornei di ascensione divina, successioni di palazzo e il Grande Esame dell'Archive Foundation.\n\nTra un voto e l'altro: scandali, editti, proteste, rivolte, colpi di stato, rivoluzioni, omicidi politici, referendum, e governanti che invecchiano e muoiono.\n\nOgni persona ha una identità politica: ideologia su cinque assi, un partito, un livello di impegno che va da apatico a organizzatore, uno storico di voto, e rancori verso i partiti che hanno battuto il suo.\n\nOgni insediamento elegge un sindaco ogni anno, che nomina un capitano delle guardie, un esattore e un sommo sacerdote tra i suoi alleati."
     },
     "peopleFactions": {
-      "title": "",
-      "description": ""
+      "title": "Fazioni e reputazione",
+      "description": "Diciotto fazioni. La considerazione con ciascuna va da -100 a +100, e si muove con i contratti accettati, i reati commessi, le avventure risolte e le parti prese.\n\nLe fazioni rispondono alle iperpotenze. Una fazione legata a un'iperpotenza ne è una diramazione, quindi il credito guadagnato con la casa madre può ricadere sulle sue diramazioni.\n\nLa considerazione decide quale lavoro ti viene offerto, quali prezzi ti vengono fatti, chi ti rivolge la parola e quali seggi puoi occupare."
     },
     "peopleONU": {
-      "title": "",
-      "description": ""
+      "title": "L'Assemblea",
+      "description": "Ogni iperpotenza tiene un seggio su terreno neutrale dentro la Torre Omega. Una volta a settimana di gioco le delegazioni discutono di alleanze, commercio, guerra e fatti recenti.\n\nUn membro del gruppo può prendere posto. Il seggio, il prestigio che ne ricava e lo stipendio settimanale sono soltanto suoi, e lo stipendio cresce con la reputazione che ha presso la potenza che serve. Se scende troppo, viene congedato. Lo accettano solo le potenze che già lo giudicano con neutralità o con favore, si entra una volta sola, e dimettersi costa molto più di quanto abbia reso l'ingresso.\n\nUna sessione estrae da una a tre mozioni. Prendono la parola da due a cinque delegazioni, ciascuna con la propria voce, tu rispondi, e ogni seggio vota. Le votazioni sono palesi, e la casella con il nome si tinge di verde o di rosso mentre viene letta, oppure segrete, mescolate senza etichetta, così che di sicuro ci sia solo il conteggio.\n\nLe mozioni gravi, guerra, ammissione, territorio, artefatti, ordigni teonucleari e la questione goblin, passano al Consiglio di Sicurezza: le cinque potenze più forti rimaste in piedi nel tuo secolo. Decide la maggioranza e il Segretario Generale rompe la parità; senza di lui la mozione cade.\n\nI Tourists occupano una sedia senza voto, prendono la parola quando vogliono e non ammettono nessuno."
     },
     "lawCrime": {
-      "title": "",
-      "description": ""
+      "title": "Reati e taglia",
+      "description": "Ogni reato viene registrato per nome con il suo valore di taglia, e la tua taglia è la loro somma. Reati deliberati: furto, effrazione, furto di veicolo. E anche quelli accidentali, tipo investire qualcuno.\n\nLa taglia abbassa l'indicatore di sicurezza degli insediamenti in cui ti trovi, diventa pettegolezzo, cambia il comportamento delle guardie e viene letta in tribunale.\n\nLa fedina si può consultare in qualsiasi momento e saldare dal portale della polizia."
     },
     "lawPolice": {
-      "title": "",
-      "description": ""
+      "title": "Il portale della polizia",
+      "description": "L'applicazione N€police sull'Hypernet è il portale della polizia continentale, e sistema la tua fedina senza aspettare che ti prendano.\n\n- fascicolo: ogni capo d'accusa con la sua multa, saldabile uno per volta o tutti insieme\n- autodenuncia: confessa qualcosa non ancora registrato, a metà della multa consueta\n- custodia: costituisciti, oppure chiedi un'udienza davanti a Eris\n\nEntrambe le opzioni di custodia fanno uscire dal computer, perché le celle e l'aula del tribunale sono luoghi sulla mappa."
     },
     "lawTrial": {
-      "title": "",
-      "description": ""
+      "title": "Il processo",
+      "description": "La giustizia la amministra Eris, e ogni processo viene generato invece che scritto a mano. Aula, pubblico, personale e atmosfera vengono tirati da capo ogni volta, e lei cita giurisprudenza inventata e tira fuori prove inventate a udienza aperta.\n\nLa difesa si sceglie prima che l'udienza si apra: ingaggi uno dei cinque avvocati, nomini un membro del gruppo, oppure te la vedi da solo. I cinque sono persone del tuo mondo, fisse per tutta la sua durata, e reclutarne uno lo cancella dall'albo.\n\nLa scheda mostra per ogni opzione livello, INT, SAG, livello di Law, opinione su di te, parcella e le probabilità previste di ogni esito, calcolate con lo stesso modello su cui gira il verdetto. Le probabilità oscillano con l'umore di Eris, e in certi umori caccia via il difensore: il bonus sparisce e la parcella non torna indietro.\n\nDifenderti da solo, o far alzare un compagno, frutta qualche punto della specializzazione Law a udienza, che a sua volta rientra nelle probabilità. Un professionista non insegna niente al gruppo.\n\nL'udienza è una dichiarazione, poi una serie di scelte, poi un verdetto che dipende moltissimo dal suo umore. Le serate passate con Eris alzano un legame, e un imputato con cui ha cenato trova una ruota degli umori più tiepida, meno probabilità di condanna e pene più corte.\n\nIn modalità sandbox esiste il processo al contrario, dove Eris la interpreti tu."
     },
     "lawPrison": {
-      "title": "",
-      "description": ""
+      "title": "Pene e carcere",
+      "description": "Le pene hanno due forme. Una pena a termine si sconta con l'orologio di gioco: il tempo passa in cella e alla scarcerazione la taglia è azzerata. Una pena senza termine non ha data di uscita e consuma la taglia giorno dopo giorno.\n\nCostituirsi al portale della polizia porta dritto al secondo tipo, senza udienza.\n\nAll'uscita Eris commenta, secondo come stanno le cose tra voi due."
     },
     "lawEris": {
-      "title": "",
-      "description": ""
+      "title": "Uscire con Eris",
+      "description": "Eris si può corteggiare, e una serata con lei è una scena generata.\n\nSi svolge in un bioma, e ogni bioma ha la sua apertura, le sue domande, il suo momento romantico, il suo momento caotico, la sua attività in comune e i suoi incidenti locali. Sopra a tutto questo viene estratto uno scenario, picnic, seduta spiritica, appostamento e altri ancora, così uno stesso bioma ospita molte serate diverse.\n\nIl suo umore esce da sedici possibilità: giocoso, romantico, caotico, nervoso, sicuro di sé, premuroso, colpevole, esaltato, fuori di testa, in pieno solipsismo, eldritch, malinconico, compiaciuto, paranoico, profetico, annoiato. Può cambiare a metà serata. Nell'umore eldritch le sue battute si deformano, il suo battito riporta cose che non sono numeri e il ritratto si comporta male.\n\nOgni appuntamento estrae anche un registro, sincero, capriccioso o del tutto fuori di senno, che regola quanto spesso la serata viene interrotta e quanto violentemente oscillano i suoi sentimenti. Lei interrompe con delle sfide, fino a rapinare una banca. Anche le tue risposte sono generate, e come lei le prenda dipende dall'umore.\n\nSullo schermo vengono disegnati due battiti, il tuo e il suo. Lei ricorda gli appuntamenti passati, tiene un punteggio separato per ogni membro del gruppo, e a volte a metà serata si gira verso uno dei tuoi compagni.\n\nIl primo appuntamento che finisce bene paga un blade seed, una volta sola per salvataggio."
     },
     "societyMail": {
-      "title": "",
-      "description": ""
+      "title": "La posta",
+      "description": "Un gruppo può scrivere a un altro gruppo dello stesso mondo, oppure a un gruppo di un mondo diverso sulla tua macchina. La lettera aspetta nella loro casella finché qualcuno non li gioca.\n\nOgni lettera porta una data di consegna sull'orologio del mondo destinatario, e chi scrive può trattenerla di giorni, mesi o anni. Scrivere al proprio gruppo con un ritardo è una lettera al proprio io futuro.\n\nSi possono allegare denaro e merci. Escono subito dalle tasche del mittente e vengono consegnati quando il destinatario li ritira.\n\nLa posta interna a un mondo è gratis. Attraversare verso un altro si paga sulle due merci che sopravvivono al passaggio, petrolio e anime: i loro prezzi moltiplicati, raddoppiati a ogni passo di distanza dimensionale, mai meno di trecentomila euro."
     },
     "societyNews": {
-      "title": "",
-      "description": ""
+      "title": "Le notizie",
+      "description": "Il mondo scrive le proprie notizie, e le voci portano effetti: prezzi degli immobili, occupazione dei negozi, sentiment di mercato.\n\nVicende degli insediamenti, rivolte, colpi di stato, elezioni, epidemie e il divorzio del sindaco finiscono tutti in prima pagina. Il mercato immobiliare si muove su quelle notizie, la borsa ne trae il sentiment, e la gente ne parla."
     },
     "societyDiary": {
-      "title": "",
-      "description": ""
+      "title": "Il diario del gruppo",
+      "description": "Il diario è il resoconto che un gruppo tiene della propria vita, scritto mentre accade.\n\nRaccoglie viaggi e arrivi, atterraggi e salti, la prima volta che entri in un luogo con un nome, i piani dei sotterranei, il sonno e l'attesa, il sonno criogenico, combattimenti vinti e persi, boss, serie di vittorie nell'arena, chi entra e chi esce dal gruppo, morti, livelli, animali, creature convinte a parole, nascite, amicizie, inimicizie, corteggiamenti, serate con Eris, malattie, arti perduti, innesti, operazioni, ritrovamenti notevoli, acquisti e vendite, furti, proprietà, prestiti, compravendite di azioni, crimini, processi, prigione, turni di lavoro, raccolti, forgiatura, cucina, fermentazione, costruzioni, abilità, ricerca, incarichi, voci del bestiario, minigiochi, televisione e sogni.\n\nNon vengono registrati: le conversazioni ordinarie, le descrizioni delle statue, gli stati che vanno e vengono, gli oggetti buttati via.\n\nLe voci sono salvate come chiavi, quindi un diario scritto in una lingua si legge correttamente in un'altra. Il sistema di battute prende le righe più recenti e le trasforma in ciò di cui il gruppo parla."
     },
     "societyTopics": {
-      "title": "",
-      "description": ""
+      "title": "Argomenti di conversazione",
+      "description": "Certi dialoghi insegnano un argomento, scritto fra parentesi quadre nella battuta in cui compare. Appena un personaggio lo sente, lo sa tutto il gruppo.\n\nUn'opzione di dialogo che richiede un argomento resta invisibile fino ad allora, non in grigio.\n\nOgni argomento imparato viene annunciato. La scheda Topics di questo libro li elenca con chi conosce cosa, e alcuni hanno una pagina tutta loro."
     },
     "societyArmy": {
-      "title": "",
-      "description": ""
+      "title": "Eserciti",
+      "description": "Oltre al gruppo di tre c'è un esercito. Le truppe si reclutano per fazione, fino a cento, e il conteggio è disegnato sopra il tuo sprite sulla mappa del mondo.\n\nAltri eserciti riempiono la mappa del mondo. Circa un quinto sono eserciti di fazione da duecento a mille truppe, che restano dentro i confini del proprio paese. Il resto sono bande indipendenti da cinque a trenta, che vagano ovunque e compaiono vicino a te.\n\nToccarne uno apre una battaglia campale in una vista tattica in tempo reale: le tue unità in giallo, le loro in rosso, schierate per ruolo, corpo a corpo davanti, supporto dietro, tiratori in fondo, e combattono con le proprie statistiche. Le truppe ferite scendono a un punto ferita e si fermano; quelle uccise sono perse per sempre."
     },
     "societyMultiplayer": {
-      "title": "",
-      "description": ""
+      "title": "Multigiocatore",
+      "description": "Due modi per giocare con altre persone.\n\nOnline, tramite un server centrale oppure tramite Steam. Una sessione su server regge molti giocatori, e su una stessa mappa vengono disegnati gli otto più vicini. Una lobby Steam si ferma a otto e imposta la rich presence, così gli amici vedono Join Game nella loro lista.\n\nSchermo diviso in locale, due giocatori sulla stessa macchina con un gamepad a testa. Le due inquadrature sono indipendenti e si fondono in una sola quando i giocatori sono vicini, e il secondo giocatore interagisce direttamente con gli eventi.\n\nLo schermo diviso gestisce anche l'alternanza al comando nei minigiochi, senza bisogno di una sessione a schermo diviso sulla mappa. I cabinati in tempo reale lasciano guidare entrambi; scacchi, biliardo e bowling si giocano a turni.\n\nDurante una battaglia sulla mappa le inquadrature si fondono e il secondo giocatore comanda il secondo membro del gruppo."
     },
     "societyHistory": {
-      "title": "",
-      "description": ""
+      "title": "Il secolo alle tue spalle",
+      "description": "Prima che tu faccia un passo, il mondo ha già vissuto un secolo: una storia alternativa generata dell'Europa dal 1900 al 2001.\n\nProduce colpi di stato, elezioni, epurazioni e omicidi politici; guerre, assedi, ammutinamenti e conquiste; cinquanta tipi di anomalia paranormale, riti occulti e lo Squishing stesso; spedizioni scientifiche, disastri naturali e criminalità organizzata; mutamenti economici e svolte tecnologiche. I pesi favoriscono il paranormale e l'occulto.\n\nQuella storia decide quali iperpotenze esistono e quanto sono forti, quali cinque siedono nel Consiglio di Sicurezza, quali epidemie ha visto il secolo scorso, e cosa ha attraversato la gente che incontri.\n\nLa cronologia completa si legge nell'Archivio Storico."
     },
     "econMoney": {
-      "title": "",
-      "description": ""
+      "title": "Denaro",
+      "description": "Il denaro sono euro, scritti con due decimali.\n\nNon esiste altra valuta tranne che in sala giochi, dove gli euro comprano gettoni e i gettoni si rivendono a un cambio fisso.\n\nLa schermata Assets somma contanti, saldo in banca, immobili, azioni e bestiame, sottrae i debiti, e chiama il risultato patrimonio netto."
     },
     "econShops": {
-      "title": "",
-      "description": ""
+      "title": "Negozi",
+      "description": "I negozi sono di diversi tipi.\n\n- negozio al banco: una griglia di merci a categorie, ordinata per prezzo, con scheda di dettaglio\n- ordine a domicilio: arriva da uno a sette giorni a seconda del prezzo, fino a sei per volta\n- negozio casuale giornaliero: assortimento seminato dalle sue coordinate e dal seme del mondo, ritirato ogni giorno di gioco\n- distributore automatico: lo stesso, in una griglia 4x4 di prodotti a codice, tre acquisti per slot al giorno, con almeno un articolo strano ciascuno\n- negozio di insegnamento: vende abilità invece di merci, a prezzo scontato\n\nLa tassa si paga su tutto tranne che sulle abilità, a un'aliquota che si muove con l'economia e non scende mai sotto il trenta percento. Un negozio svuotato si rifornisce a mezzanotte."
     },
     "econStealing": {
-      "title": "",
-      "description": ""
+      "title": "Rubare",
+      "description": "Tutto quello che sta sugli scaffali di un negozio si può rubare. La finestra di furto passa al setaccio la mappa in cerca di eventi negozio ed elenca cosa tengono, con una percentuale di riuscita per oggetto calcolata su agilità, valore dell'oggetto e peso: leggero ed economico è facile, pesante e prezioso no.\n\nI negozi normali vengono cercati su tutta la mappa, un mercante giornaliero casuale solo entro cinque tile.\n\nFarsi beccare apre un fascicolo e abbassa la sicurezza dell'insediamento. Durante un'ondata di criminalità rubare diventa sensibilmente più difficile."
     },
     "econBank": {
-      "title": "",
-      "description": ""
+      "title": "Banca e prestiti",
+      "description": "La banca accetta depositi, paga interessi sul saldo e presta a interesse con una scadenza. Entrambi girano sull'orologio del mondo, quindi maturano mentre cammini, dormi, viaggi o resti in sonno criogenico.\n\nMancare la scadenza viene penalizzato. La schermata Assets mostra il saldo, il prestito residuo e la data."
     },
     "econStocks": {
-      "title": "",
-      "description": ""
+      "title": "La borsa",
+      "description": "Il mercato tratta due materie prime, petrolio e cristalli d'anima, da un terminale di una pagina sola. I prezzi sono una passeggiata aleatoria inclinata da quello che succede nel mondo: boom e crisi degli insediamenti, notizie, condizione delle potenze.\n\nLa schermata Assets disegna il grafico in tempo reale sopra il tuo portafoglio. Il prezzo del petrolio è anche quello che ti chiede la pompa di benzina e quanto costa una lettera verso un'altra dimensione."
     },
     "econProperty": {
-      "title": "",
-      "description": ""
+      "title": "Immobili",
+      "description": "Trenta immobili sparsi per le città, classificati da una a cinque stelle. Un posto da una stella costa meno di mille euro; quelli da quattro e cinque stelle sono tenute.\n\nSe ne compri uno per intero puoi affittarlo agli NPC, con incasso a mezzanotte e il primo del mese. Prenderlo in affitto da inquilino è invece una spesa mensile ricorrente, senza subaffitto; se salti i pagamenti ti sfrattano.\n\nI prezzi si muovono con le notizie legate a città precise.\n\nAffittare una stanza in locanda è un'altra cosa: la stanza è prenotata per 24 ore di gioco e non si può prenotare due volte."
     },
     "econShopOwning": {
-      "title": "",
-      "description": ""
+      "title": "Avere un negozio",
+      "description": "Un negozio di tua proprietà tiene scorte, un magazzino e una linea di produzione. Gli oggetti con una ricetta si producono con i materiali presenti nel locale, le consegne si fanno ai punti di consegna sulle mappe, e si possono assumere NPC che facciano il lavoro.\n\nQuattro pagine: panoramica, scorte a scaffale, magazzino e catalogo di quello che si può produrre."
     },
     "econWork": {
-      "title": "",
-      "description": ""
+      "title": "Lavoro",
+      "description": "Più di trenta lavori divisi in categorie, e qualsiasi membro del gruppo può essere mandato a lavorare.\n\nOgni lavoro dichiara per primi i requisiti di statistica, e chi non li raggiunge viene segnalato ma mai bloccato.\n\nUn turno consuma tempo di gioco, lo schermo si scurisce, e l'esito nasce dalle statistiche e dalla fortuna di chi lavora. La paga è in denaro; un disastro può costare denaro, infliggere danno o lasciarti addosso uno stato.\n\nIl menu Job Offers elenca cosa è disponibile adesso e dove."
     },
     "econQuests": {
-      "title": "",
-      "description": ""
+      "title": "Incarichi",
+      "description": "Gli incarichi sono generati, e le offerte di una bacheca dipendono da dove si trova.\n\nOgni incarico è un elenco di passi: uno solo se è semplice, due o tre se è una catena. I passi sono primitive di rilevamento collegate al resto del gioco:\n\n- raggiungere certe coordinate del mondo, o una destinazione con un nome\n- aprire uno scrigno piazzato in automatico, oppure scavare in un punto, cosa che richiede una pala\n- atterrare su un pianeta e aprire la sua cache di campioni\n- uccidere un nemico di alto livello, evocato di forza su una casella, che resta lì finché non muore anche se l'incarico fallisce\n- scansionare statue o cartelli, oppure smontare un certo numero di alberi, rocce o cumuli di macerie\n- aprire la bacheca degli incarichi di un'altra città, o interrogare un cittadino tramite Empathize\n- consegnare oggetti, o aspettare l'arrivo di una merce\n- vincere combattimenti nell'arena, abbattere un certo numero di nemici, o possedere un certo numero di azioni petrolifere\n\nLe condizioni si leggono prima di accettare: ricompensa, costo iniziale, anticipo versato, scadenza, penale in caso di fallimento, taglia per inadempienza e variazione di reputazione. Le truffe mentono su tutto questo.\n\nRicompense e difficoltà scalano sul livello mediano del gruppo. La seconda scheda della bacheca elenca i contratti firmati con progressi e conti alla rovescia, e permette di riscuotere o abbandonare.\n\nIl registro degli incarichi è una lavagna di foglietti adesivi su tre colonne, trascinabili dall'una all'altra."
     },
     "econNotices": {
-      "title": "",
-      "description": ""
+      "title": "Leggere un annuncio",
+      "description": "Un annuncio di incarico è scritto con la voce di chi l'ha appeso. Esistono decine di registri di fazione e una ventina di registri di personalità: un contratto aziendale, uno scarabocchio goblin, una nota militare censurata, una supplica privata e nervosa.\n\nCosa viene taciuto, cosa viene spiegato troppo e cosa è palesemente una bugia si leggono prima di accettare. Il pannello delle condizioni dà i numeri."
     },
     "econVending": {
-      "title": "",
-      "description": ""
+      "title": "Gettoni da sala giochi",
+      "description": "Le macchine da sala giochi prendono gettoni. I gettoni si comprano con gli euro alla macchina convertitrice o al Token Exchange sulla Hypernet, e quelli avanzati si riconvertono.\n\nEntrambi applicano lo stesso cambio."
     },
     "craftThinker": {
-      "title": "",
-      "description": ""
+      "title": "Il banco da lavoro",
+      "description": "Il Thinker è il banco da lavoro generico: montare e smontare. La ricetta è scritta sull'oggetto stesso.\n\nUna ricetta resta nascosta finché non è stata realizzata almeno una volta, anche se quelle comuni stanno in bacheca fin dall'inizio.\n\nI materiali di base si ricavano smontando il mondo: abbattere alberi, scavare rocce, rompere mobili, recuperare pezzi dall'equipaggiamento."
     },
     "craftForge": {
-      "title": "",
-      "description": ""
+      "title": "La Forgia",
+      "description": "Ogni arma e ogni armatura del gioco stanno sul banco della forgia fin dalla prima visita. L'addestramento cambia quali riesci a fabbricare.\n\nQuattro schede: cosa puoi forgiare adesso, per cosa ti mancano i materiali, cosa sta sopra il tuo addestramento e cosa questo gruppo ha già forgiato.\n\nIn gioco ci sono circa trentuno mestieri, uno per oggetto: una veste è Tailoring, una parrucca è Wig Making, un fucile è Gunsmithing, un cappotto intessuto di circuiti è Electronics.\n\nOgni pezzo finito viene registrato con una sua identità, quindi due non si impilano mai. Tre cose ne scrivono la scheda: quanto il mestiere del fabbro è addestrato oltre il grado richiesto, quanto era ricca la distinta e il calore di quel giorno. Poi ogni parametro deriva per conto suo e il prezzo segue.\n\nLe finiture si scelgono da una striscia di campioni, e il seme sotto cui viene girato il modello 3D si tira una volta sola e resta sul pezzo.\n\nSmelt rifonde nei suoi materiali un pezzo che porti addosso: metà della distinta, di più da un pezzo ben fatto.\n\nIl selettore del personaggio decide in quale scheda finisce una voce e chi guadagna i punti specializzazione."
     },
     "craftAlchemy": {
-      "title": "",
-      "description": ""
+      "title": "Alchimia",
+      "description": "Ogni ricetta alchemica è leggibile fin dall'inizio e niente è riservato a una classe.\n\nUna ricetta si copia su un banco, e quello che modifichi e avvii è il banco, quindi una stessa ricetta può essere impostata in due modi diversi allo stesso tempo.\n\nLa riuscita è una prova di abilità. Soddisfare ogni requisito dà 0% di fallimento, ogni grado mancante alza la probabilità, e i gradi sopra quanto la ricetta chiede pagano in prodotto extra, fino a un tetto.\n\nLa durata dei passi è in minuti di gioco, quindi un lotto cuoce mentre cammini, lavori, viaggi o dormi.\n\nUn banco impostato in ripetizione ricompra i reagenti e riparte, e si ferma con un avviso quando lo zaino non può pagare un ciclo."
     },
     "craftCooking": {
-      "title": "",
-      "description": ""
+      "title": "Cucina",
+      "description": "Cucinare unisce due oggetti di recupero in uno solo. Il recupero del primo viene raddoppiato e vi si somma quello del secondo, quindi l'ordine conta.\n\nCucinare due volte la stessa cosa aggiunge invece un aggettivo casuale, che porta un bonus o un malus. Il nome si costruisce con la prima parola del primo ingrediente e l'ultima parola del secondo.\n\nIl cibo porta calorie, grassi e proteine, e un piatto cucinato vale quanto ci è finito dentro."
     },
     "craftBrewing": {
-      "title": "",
-      "description": ""
+      "title": "Fermentazione",
+      "description": "Le botti fermentano sull'orologio del mondo. Carica una botte, lasciala stare, e fermentazione e distillazione vanno avanti mentre giochi.\n\nÈ l'artigianato più lento e non chiede attenzione."
     },
     "craftFurniture": {
-      "title": "",
-      "description": ""
+      "title": "Costruire e arredare",
+      "description": "Il menu Build piazza mobili sulle caselle, agganciati alla griglia. I pezzi si possono fabbricare con i materiali, comprare, e smontare per recuperarli. I pezzi su più caselle sono supportati e alcuni si possono specchiare.\n\nI mobili da parete vanno solo sui muri, le caselle superiori di un mobile ordinario possono sovrapporsi a un muro ma quelle inferiori no, e certi terreni rifiutano l'arredo.\n\nDal menu Build si comprano anche gli animali."
     },
     "craftPlants": {
-      "title": "",
-      "description": ""
+      "title": "Agricoltura",
+      "description": "Qualsiasi terreno arato si può coltivare. Le piante hanno un ciclo di vita guidato dall'orologio, dalla stagione e dal meteo.\n\nCrescono solo nelle loro stagioni, e fuori stagione restano dormienti. La pioggia accelera la crescita del 30%, i temporali del 10%, la neve la dimezza, e una serra va a piena velocità tutto l'anno. Una pianta al 100% si raccoglie sul posto; il menu di gestione si apre solo su una coltura ancora in crescita.\n\nAnche il terreno arato sulle mappe procedurali si coltiva. La prima visita a un quadrato del mondo tira quali appezzamenti sono già seminati e con cosa, quindi un campo intero cresce la stessa coltura."
     },
     "craftAnimals": {
-      "title": "",
-      "description": ""
+      "title": "Animali",
+      "description": "Gli animali si comprano nel menu Build e si piazzano su un tile, poi si gestiscono dalla schermata Assets come bestiame da cui raccogliere, da vendere o da trasformare in animale da compagnia.\n\nCrescono da cuccioli ad adulti in un certo numero di giorni, e gli adulti producono a intervalli: un uovo, un secchio di latte, un vello.\n\nOgni animale porta un valore di compagnia che va nel bisogno sociale del gruppo quando ci interagisci, una volta per giorno di gioco. Cani, asini e galli non producono niente e si tengono per questo."
     },
     "craftApiary": {
-      "title": "",
-      "description": ""
+      "title": "Apicoltura",
+      "description": "Un alveare è una simulazione di colonia. Regina, operaie, nutrici, guardiane, bottinatrici e fuchi hanno ciascuno un ciclo che va da uovo a larva e pupa, poi adulto e morte. Il favo è disegnato a esagoni, e la colonia produce miele, polline, pappa reale e cera.\n\nStagioni e meteo agiscono su di lei, malattie e parassiti la minacciano, e umore ed efficienza seguono come viene tenuta."
     },
     "craftArtifacts": {
-      "title": "",
-      "description": ""
+      "title": "Artefatti procedurali",
+      "description": "Gli artefatti sono oggetti, armi e armature generati con proprietà tirate a caso. Compaiono nel bottino, nelle cripte, alla fine delle avventure e da certi riti.\n\nUn rito trasforma un membro del gruppo in un'arma."
     },
     "craftLoot": {
-      "title": "",
-      "description": ""
+      "title": "Come si tira il bottino",
+      "description": "Il bottino casuale prende un punteggio da 0 a 100: il livello mediano del gruppo più un modificatore di difficoltà che il luogo si porta addosso. Il punteggio sceglie la fascia di rarità, da quasi tutto comune fra 0 e 20, passando per una distribuzione equilibrata a 50, fino a quasi tutto leggendario a 100.\n\nLa rarità si legge dal prezzo, e la stessa scala colora i nomi degli oggetti nello zaino, nel negozio, nel riquadro delle ricompense e nell'elenco dei contenitori.\n\nLa cripta di un mecenate spinge le tabelle verso il costoso."
     },
     "craftContainers": {
-      "title": "",
-      "description": ""
+      "title": "Contenitori",
+      "description": "I contenitori tengono oggetti senza limite, e ognuno è unico per la sua mappa e il suo evento. Il contenuto è generato dalle categorie che il contenitore dichiara, pesate per rarità.\n\nIl contenitore extradimensionale si apre da qualsiasi posto e viaggia col gruppo, come le stive del camper e dell'auto."
     },
     "galaxyOverview": {
-      "title": "",
-      "description": ""
+      "title": "La mappa stellare",
+      "description": "La mappa stellare è una vista 3D in tempo reale dell'universo a più scale: il sistema in cui ti trovi, la galassia, il gruppo locale, il superammasso, la rete cosmica e l'universo osservabile. Alla scala del sistema una unità è una unità astronomica, e i corpi sono disegnati più grandi del vero per restare visibili.\n\nTrascina per orbitare, rotella per lo zoom. Cliccare un corpo lo seleziona e propone cosa puoi farci: viaggiarci, oppure atterrare.\n\nI pianeti hanno terminatori di giorno e notte che seguono la loro stella, e strati di nubi, atmosfere e anelli che ruotano ognuno per conto suo. Le superfici stellari ribollono."
     },
     "galaxyTravel": {
-      "title": "",
-      "description": ""
+      "title": "Viaggiare fra le stelle",
+      "description": "Seleziona un sistema e viaggia verso di esso. Il viaggio consuma tempo e carburante, ed è il carburante a fissare la tua autonomia.\n\nSolo una normale stella che fonde può alimentare un rifornimento. Le stelle di sequenza principale di ogni classe vanno bene; resti stellari, nane brune e buchi neri no. Refuel avvia le pompe se sei parcheggiato accanto a una, traccia un salto breve se ce n'è una altrove nel sistema, e altrimenti traccia una rotta verso il sistema più vicino che ne ha una.\n\nSu qualunque mappa interna alla nave i finestrini mostrano dove ti trovi davvero, e si allungano e scorrono mentre sei in viaggio."
     },
     "galaxyShip": {
-      "title": "",
-      "description": ""
+      "title": "La tua astronave",
+      "description": "La nave è generata. Scafo, disposizione, piastre, linee dei pannelli, livrea, decalcomanie, finestrini illuminati e usura sono tutti procedurali, e l'aspetto predefinito viene dal seme del tuo mondo.\n\nDal menu dei veicoli puoi ritirare tutto da capo oppure scorrere i singoli tratti e tenere il resto.\n\nIn viaggio l'equipaggio si occupa di un bisogno alla volta: un pasto, una lavata, una chiacchierata, una partita, un turno di sonno. Mangiare consuma cibo dalla stiva."
     },
     "galaxyLanding": {
-      "title": "",
-      "description": ""
+      "title": "Atterraggio",
+      "description": "Dall'orbita puoi atterrare. Dove esistono siti di atterraggio scegli da un elenco; altrimenti tocchi terra sulla superficie.\n\nUna superficie aliena è una mappa esplorabile, generata come quelle terrestri ma da una tavolozza diversa, con decine di biomi alieni scelti in base al tipo di mondo.\n\n- gli incontri non sono scalati sul tuo gruppo né sulla distanza da casa. Decide il livello del pianeta, leggibile dalla sua biosignatura prima di impegnarti\n- non c'è niente da raccogliere. Il cibo viene dal macellare la fauna locale\n- un corpo spogliato delle sue risorse resta spogliato\n\nLe specie identificate finiscono nella pagina aliena del bestiario."
     },
     "galaxyAnomalies": {
-      "title": "",
-      "description": ""
+      "title": "Anomalie",
+      "description": "Ogni sistema stellare con pianeti porta almeno un mondo anomalo, segnato da un punto interrogativo.\n\nRestare in orbita sopra propone di indagare, una volta sola. Quello che segue è un incontro a bivi scritto per quel tipo di mondo, che paga in una reliquia, in materiale di recupero, in uno scontro con qualcosa di autoctono, oppure in niente.\n\nGira sullo stesso motore delle avventure sulla mappa terrestre."
     },
     "galaxyBodies": {
-      "title": "",
-      "description": ""
+      "title": "Cosa c'è là fuori",
+      "description": "Le stelle esistono nelle classi reali e in un paio di dozzine di tipi esotici, ognuno col suo modello: resti stellari, nane brune, binarie a raggi X che divorano la compagna. I sistemi possono essere binari o contenere più stelle, e ogni stella si raggiunge per conto suo.\n\nI buchi neri hanno tre pesi, e il più grande è disegnato con billboard lenticolari e un flusso di accrescimento che si avvolge lungo tutta la separazione. I pianeti erranti vagano tra le stelle senza un sole.\n\nUna ventina di nebulose reali stanno alle loro vere coordinate galattiche, modellate a mano: la Testa di Cavallo, la Nebulosa di Orione, le nebulose oscure. Le sfere di Dyson esistono.\n\nSopra la galassia la mappa continua: gruppo locale, superammassi, filamenti della rete cosmica e i gusci dell'universo osservabile.\n\nIl nostro sistema solare è scritto a mano, con i suoi dodici corpi reali, le sue fasce e un guscio di detriti orbitali."
     },
     "galaxyPatrons": {
-      "title": "",
-      "description": ""
+      "title": "Mondi dei mecenati",
+      "description": "Alcuni mondi in altre galassie portano il nome delle persone che hanno pagato il gioco. Sono abitabili e ospitano vita, orbitano attorno a oggetti esotici, stanno in sistemi da nove pianeti dove non ce ne sono due dello stesso tipo, e nel catalogo della mappa stellare sono elencati sotto Patrons.\n\nOgnuna di quelle persone possiede anche una botola su esattamente un quadrato della mappa del mondo. Non si può smantellare e sopra non ci cresce nulla. Scendere apre la sua cripta: una grande sala con camere blindate e una camera profonda sul fondo, piena di denaro e di armi, con le tabelle del bottino pesate verso il costoso.\n\nLe posizioni delle botole sono cifrate nei dati di gioco."
     },
     "galaxySky": {
-      "title": "",
-      "description": ""
+      "title": "Il cielo notturno",
+      "description": "Una carta del cielo notturno, separata dalla mappa stellare: un planisfero trascinabile e zoomabile, con le stelle dimensionate per magnitudine, le costellazioni tracciate in oro, una griglia di ascensione retta e declinazione e la fascia della Via Lattea.\n\nTab passa da un insieme di costellazioni all'altro, europeo e cinese, che tracciano figure diverse sulle stesse stelle."
     },
     "hypernetOS": {
-      "title": "",
-      "description": ""
+      "title": "Il desktop Hypernet",
+      "description": "La Hypernet è un sistema operativo simulato dell'epoca: desktop, barra delle applicazioni, menu start, finestre trascinabili e ridimensionabili, e una serie di applicazioni.\n\nHa un file system virtuale e un registro, entrambi salvati dentro il tuo salvataggio, quindi i file scritti e le impostazioni cambiate restano.\n\n- WASD o le frecce spostano l'anello di selezione, Tab cicla\n- Enter o Space attivano\n- Escape esce da un campo di testo, poi chiude la finestra, poi esce del tutto\n- col controller: il d-pad naviga, A attiva, B chiude, la levetta sinistra è un cursore libero"
     },
     "hypernetBrowser": {
-      "title": "",
-      "description": ""
+      "title": "Applicazione: Hypernet Explorer",
+      "description": "Il browser. Schede con cronologia propria, indietro, avanti, stop, aggiorna e home, barra degli indirizzi con completamento automatico, barra dei collegamenti, barra di esplorazione con ricerca, preferiti e cronologia, trova nella pagina, visualizza sorgente, salvataggio della pagina, download, anteprima di stampa, zoom, codifica, blocco dei pop up, posta e newsgroup, e una pagina 404 che propone alternative.\n\nOgni pagina dell'archivio è un documento completo. Preferenze, preferiti, cronologia e download stanno nel registro e restano nel tuo salvataggio."
     },
     "hypernetMyComputer": {
-      "title": "",
-      "description": ""
+      "title": "Applicazione: My Computer",
+      "description": "L'esplora risorse. Naviga il file system virtuale: unità, cartelle, My Documents, e tutto ciò che hai scritto tu o un'applicazione.\n\nI file si aprono nell'applicazione che li possiede: un file di testo in Notepad, una pagina web salvata nel browser."
     },
     "hypernetNotepad": {
-      "title": "",
-      "description": ""
+      "title": "App: Notepad",
+      "description": "Un editor di testo semplice che scrive nel file system virtuale. Le note battute qui finiscono nel salvataggio, si possono riaprire, e qualsiasi applicazione che legge file può leggerle."
     },
     "hypernetControlPanel": {
-      "title": "",
-      "description": ""
+      "title": "Applicazione: Control Panel",
+      "description": "Le impostazioni della macchina. Le statistiche del tuo gruppo sono presentate come specifiche hardware. Sfondi, impostazioni dello schermo e il resto della configurazione stanno qui.\n\nLe modifiche vengono salvate nel registro."
     },
     "hypernetTVGuide": {
-      "title": "",
-      "description": ""
+      "title": "App: guida TV",
+      "description": "I palinsesti televisivi, letti dal database delle trasmissioni. Sfoglia ogni canale, il suo cast e i suoi programmi.\n\nSelezionare un programma ne manda in onda la trasmissione lì dentro, una riga ogni paio di secondi, senza lasciare il desktop.\n\nIl palinsesto si rigenera ogni settimana di gioco e resta fisso per quella settimana."
     },
     "hypernetObjectIndex": {
-      "title": "",
-      "description": ""
+      "title": "App: l'indice degli oggetti",
+      "description": "Il catalogo dell'archivio di ogni oggetto che risulti esistere: circa millecento dossier, uno per oggetto, con tutti i metadati dichiarati.\n\nLa pagina di sinistra è il catalogo, raggruppato per categoria, con una casella di ricerca. La pagina di destra è il dossier: identificazione, paragrafo di lore, commercio, proprietà fisiche, valori di sostentamento, composizione e tag grezzi della dichiarazione.\n\nIl paragrafo di lore è combinatorio e viene risolto dal seme del mondo. Randomize lo ritira solo per questa finestra."
     },
     "hypernetNeuroPolice": {
-      "title": "",
-      "description": ""
+      "title": "Applicazione: N€police",
+      "description": "Il portale della polizia continentale, per sistemare la fedina penale senza aspettare di essere presi.\n\n- fascicolo: ogni capo d'accusa con la sua multa, saldabile uno per volta o tutti insieme\n- autodenuncia: confessa qualcosa non ancora registrato, a metà della multa consueta\n- custodia: costituisciti, oppure chiedi un'udienza davanti a Eris\n\nLe opzioni di custodia chiudono il computer, perché le celle e l'aula del tribunale sono luoghi sulla mappa."
     },
     "hypernetEurodemics": {
-      "title": "",
-      "description": ""
+      "title": "App: Eurodemics",
+      "description": "Il terminale pubblico dell'osservatorio epidemico continentale, che legge il grimorie dei focolai in tempo reale.\n\n- situation: focolai in corso, malati, morti, città colpite e una lettura di dove stai tu\n- outbreaks: ogni focolaio ancora acceso, ciascuno con la sua curva giornaliera ridisegnata a mezzanotte, sopra la tabella città per città\n- archive: i focolai che questo mondo ha chiuso, più le epidemie e le isterie di massa dell'ultimo secolo"
     },
     "hypernetArtifactAnalyzer": {
-      "title": "",
-      "description": ""
+      "title": "Applicazione: Artifact Analyzer",
+      "description": "Analizza gli artefatti procedurali e riferisce cosa fanno davvero."
     },
     "hypernetTokenExchange": {
-      "title": "",
-      "description": ""
+      "title": "App: Token Exchange",
+      "description": "Converte euro in gettoni da sala giochi e viceversa, allo stesso cambio della macchinetta fisica."
     },
     "hypernetPhone": {
-      "title": "",
-      "description": ""
+      "title": "L'Hexphone",
+      "description": "Il gruppo porta con sé un telefono cellulare: credito, rubrica, registro chiamate, casella dei messaggi e un paio di giochi integrati.\n\nChiamare un contatto attiva ciò che quella persona fa quando viene chiamata. Le chiamate in arrivo si presentano con la scelta fra rispondere e rifiutare.\n\nLe cifre del tastierino compongono e fanno da scorciatoia, Enter seleziona, chiama e apre, Escape chiude e torna indietro.\n\nI telefoni pubblici condividono la stessa rubrica e lo stesso grimorie del credito, ma fanno solo chiamate in uscita: niente messaggi, niente giochi, niente chiamate in arrivo."
     },
     "hypernetTV": {
-      "title": "",
-      "description": ""
+      "title": "Televisione",
+      "description": "Una televisione si può guardare ovunque la trovi. Sintonizzarsi su un canale ti porta dentro lo studio di quel canale, dove il cast recita la trasmissione: chi ha un nome si gira verso di te, prende il proprio sprite e legge le sue battute. Un programma senza cast viene narrato.\n\nI dialoghi nascono da modelli costruiti su banche di lore e ci innestano dentro lo stato attuale del tuo mondo, così il canale di storia e il telegiornale rileggono il secolo simulato e le notizie del momento.\n\nIl palinsesto settimanale si rigenera ogni settimana di gioco. Il copione viene riestratto a ogni sintonizzazione, da dieci a sedici battute per fascia.\n\nLa pubblicità vende o un prodotto, quotato al suo prezzo reale, o una posizione politica pagata da una delle potenze.\n\nFinire una trasmissione alza il Fun di tutto il gruppo; chi ha il tratto Technophobe perde invece la stessa quantità.\n\nLa guida ai canali è disegnata come una pagina di televideo di quaranta per venticinque."
     },
     "hypernetRadio": {
-      "title": "",
-      "description": ""
+      "title": "La radio",
+      "description": "Le radio si sintonizzano sulle bande AM, FM ed EM. Le stazioni sono costruite sui file musicali che il gioco porta con sé, quindi ogni traccia sta da qualche parte sulla manopola.\n\nSinistra e destra cambiano frequenza, su e giù cambiano banda, page up e page down fanno la scansione, Enter segna un preferito. Fra una stazione e l'altra c'è la scarica.\n\nL'ultima stazione sintonizzata resta in memoria."
     },
     "hypernetMusic": {
-      "title": "",
-      "description": ""
+      "title": "Musica e suono",
+      "description": "La musica di battaglia si sceglie in Options. Random pesca una traccia diversa all'inizio di ogni scontro, None fa combattere in silenzio.\n\nLa musica delle mappe è seminata: una traccia per ogni combinazione di bioma, nazione e ora del giorno. Una parte viene generata dal vivo da un sistema procedurale.\n\nQualunque cosa suoni si annuncia, come notifica oppure come cassetta disegnata, con traccia e artista.\n\nI passi cambiano con la superficie sotto i piedi."
     },
     "gamesOverview": {
-      "title": "",
-      "description": ""
+      "title": "Passatempi",
+      "description": "I giochi 3D sono simulazioni rese attraverso uno shader retro, e quasi tutti si giocano dove ti trovi: il tavolo da biliardo, il campo da basket, la pista da bowling e la scacchiera vengono calati nello scenario della mappa in cui sei.\n\nGiocare a qualunque cosa nutre il Fun di tutto il gruppo. Le indicazioni sui comandi non vengono stampate; i tasti sono quelli che usi già.\n\nDue giocatori possono condividerli quasi tutti. I giochi in tempo reale lasciano guidare entrambi, quelli a turni passano il comando a turno."
     },
     "gamesArcade": {
-      "title": "",
-      "description": ""
+      "title": "Il cabinato da sala giochi",
+      "description": "I cabinati prendono gettoni, comprati con gli euro al convertitore o sulla Hypernet. Un cabinato conserva i punteggi migliori con le iniziali e parte in demo quando resta fermo.\n\nOgni cartuccia è un gioco completo, disegnato in ASCII a colori:\n\n- Snake, contro un serpente rosso del computer che compete per le stesse mele\n- Manpac, un labirinto di pallini con tre cacciatori e pillole che li rendono commestibili\n- Hoppa, attraverso strade e fiumi fino a cinque caselle di arrivo\n- Astro Intruders, con barriere distruttibili\n- Meteoroids, con rocce che si dividono e schermo che si avvolge\n- Wallbreaker, con capsule che cadono\n- Crawler, che si divide se colpito nel mezzo, con un ragno che mangia i funghi\n- Bubble Pop, colori che si attaccano e grappoli che cadono\n- Boot sequence, un cabinato che si avvia e poi uno spazio in cui camminare"
     },
     "gamesBowling": {
-      "title": "",
-      "description": ""
+      "title": "Bowling",
+      "description": "Una pista 3D con fisica a corpi rigidi per i birilli, simulata in metri alle misure regolamentari: 18,29 metri fino al birillo di testa, corsia da 1,07 metri, canaline, palla da 6,35 chili e birilli da 1,53 chili.\n\nLa telecamera accompagna la palla lungo la corsia e stacca sul fondo per lo strike, e un rastrello spazza i birilli caduti tra un tiro e l'altro.\n\nMira, potenza ed effetto usano il cursore oscillante condiviso con biliardo e basket."
     },
     "gamesPool": {
-      "title": "",
-      "description": ""
+      "title": "Biliardo",
+      "description": "Un tavolo da nove piedi simulato in metri. Le bilie rotolano con l'attrito del panno, si sviano a vicenda nell'impatto, sbattono nelle mascelle di una buca e cadono.\n\nMira, potenza ed effetto si impostano con il cursore oscillante. Il tavolo viene calato nello scenario in cui ti trovi."
     },
     "gamesBasketball": {
-      "title": "",
-      "description": ""
+      "title": "Basket",
+      "description": "Una sfida ai tiri liberi contro un avversario del computer, su mezzo campo misurato in metri: linea a 4.57 metri, ferro a 3.05 metri d'altezza e tabellone.\n\nLa palla descrive un arco sotto la gravità, sbatte sul ferro, rimbalza sul tabellone e cade nella retina, oppure sbaglia."
     },
     "gamesChess": {
-      "title": "",
-      "description": ""
+      "title": "Scacchi",
+      "description": "Scacchi a regole complete su una scacchiera 3D low poly. Ogni pezzo è una creatura del sistema di battler 3D, pescata dal seme del mondo, quindi un mondo schiera sempre gli stessi due eserciti: uno chiaro per il Bianco e uno scuro per il Nero.\n\nDue modalità: scacchi normali e Chaos."
     },
     "gamesFishing": {
-      "title": "",
-      "description": ""
+      "title": "Pesca",
+      "description": "Pesca in prima persona. Pesci, rifiuti e incontri ostili sono costruiti dallo stesso sistema procedurale di battler che usano le battaglie, quindi un Megalodon agganciato nel lago è il Megalodon che poi combatti.\n\nSi mira guardandosi intorno. Un anello sull'acqua mostra dove cade il lancio, poi è una gara fra la lenza e ciò che ha abboccato."
     },
     "gamesSurfing": {
-      "title": "",
-      "description": ""
+      "title": "Surf",
+      "description": "Surf in prima persona. Ogni onda è un'ondulazione che viaggia con la cresta inclinata, quindi si apre di lato: il punto di frangenza corre lungo la spiaggia a una decina di metri al secondo e la schiuma si mangia l'onda dietro di sé.\n\nStai in piedi sulla tavola, che beccheggia, rolla e sbatte sul mare mosso. Il gioco sta nel leggere l'apertura e restarle davanti."
     },
     "gamesShooting": {
-      "title": "",
-      "description": ""
+      "title": "Il poligono di tiro",
+      "description": "Un poligono in prima persona. L'arma in inquadratura è lo stesso modello 3D che alza l'overlay di battaglia, costruita, impugnata, puntata e sparata dal sistema armi, quindi ogni pistola e ogni arco si comportano come in combattimento.\n\nSul tuo personaggio non viene equipaggiato niente: il poligono ti presta l'arma e se la riprende all'uscita, quindi è anche il posto dove provare un'arma prima di comprarla.\n\nLa rastrelliera tiene solo archi, armi da lancio e armi da fuoco."
     },
     "gamesHorseRace": {
-      "title": "",
-      "description": ""
+      "title": "La corsa dei cavalli",
+      "description": "Un ippodromo in erba in 3D: prato rasato, steccati, gabbie di partenza, pali delle distanze, il palo del traguardo e una tribuna.\n\nI concorrenti sono creature procedurali costruite dal proprio nome: il nome viene passato in hash al sistema dei battler, che gli associa un manto, un colore e una corporatura, così un cavallo con quel nome è lo stesso cavallo in ogni mondo.\n\nLe quote si calcolano simulando la corsa molte volte sulla stessa funzione a passi che poi la corsa esegue davvero."
     },
     "gamesTournament": {
-      "title": "",
-      "description": ""
+      "title": "Il torneo dei mostri",
+      "description": "Un torneo di mostri a eliminazione diretta su cui scommettere. Scegli un lottatore, punta dei token, e ti vengono mostrati solo gli incontri del tuo mostro.\n\nGli incontri li gioca il motore di battaglia: l'IA sceglie le abilità, ne paga i costi, tira per colpire, schivare e fare critico, applica le formule di danno, infligge stati e fa scattare il veleno a fine turno. Il risultato viene poi ripetuto in un'arena 3D con le animazioni.\n\nScommettere non cambia l'esito."
     },
     "gamesGambling": {
-      "title": "",
-      "description": ""
+      "title": "Slot, gratta e vinci e tarocchi",
+      "description": "Slot machine: un cabinato i cui rulli sono tamburi veri. Ogni simbolo è una placca su una faccia di un cilindro, quindi un giro fa ruotare il tamburo e l'arrivo supera il suo fermo e rimbalza indietro. I simboli vengono dal set di icone del gioco.\n\nGratta e vinci: biglietti stampati da grattare pannello per pannello nell'ordine che preferisci, e intanto la carta si può girare nella luce.\n\nTavolo dei tarocchi: il mazzo si mescola a ponte, il lettore lo taglia, le carte volano al loro posto coperte e si scoprono una alla volta."
     },
     "gamesPiano": {
-      "title": "",
-      "description": ""
+      "title": "Il pianoforte",
+      "description": "Una tastiera suonabile di tre ottave, da C3 a B5. Si suona con la tastiera del computer disposta come due manuali, i tasti bianchi su una fila e i neri sopra, con un gamepad, oppure con il mouse. I tasti si accendono mentre suonano.\n\nSuonarlo nutre il bisogno di Fun."
     },
     "gamesLockpick": {
-      "title": "",
-      "description": ""
+      "title": "Scassinare",
+      "description": "Scassinare una serratura è un puzzle a blocchi che cadono: un dente di chiave deve incastrarsi in una gola già in parte occupata, e la difficoltà della serratura decide quanto sia stretto l'incastro.\n\nFallire consuma un grimaldello. Un passe-partout salta il gioco e apre la serratura di netto.\n\nScassinare apre porte chiuse a chiave e auto parcheggiate. Farsi sorprendere è reato."
     },
     "gamesHyperTamer": {
-      "title": "",
-      "description": ""
+      "title": "HyperTamer",
+      "description": "Un animale virtuale su un portatile con LCD monocromatico, pescato dal database delle creature e dotato di una personalità che ne cambia il comportamento.\n\nVa a tempo reale: mangia, dorme, gioca e può morire se lo trascuri, e il tempo passa anche a gioco chiuso. I minigiochi di addestramento ne alzano le statistiche e lui cresce di conseguenza."
     },
     "gamesCards": {
-      "title": "",
-      "description": ""
+      "title": "Il gioco di carte",
+      "description": "Un gioco di carte collezionabili con una collezione, un costruttore di mazzi e i duelli.\n\nUna carta è un mostro, un'arma o un pezzo di armatura preso dal database del gioco, stampato con cinque statistiche, FRZ, SAG, DES, PSI e COS, ognuna da 0 a 13. Quei numeri sono percentili calcolati sul roster della carta stessa, non parametri grezzi. L'equipaggiamento si innesta su un mostro già sul tavolo e i suoi valori si sommano, con tetto a 13.\n\nUn mazzo va da 9 a 20 carte e può contenere solo copie che possiedi. Chi non apre mai il costruttore riceve il miglior mazzo legale che la sua collezione permetta.\n\nIl duello si gioca su tre per tre. Nel tuo turno peschi tre carte oppure ne giochi una: un mostro su una casella libera, o equipaggiamento su un mostro tuo, un'arma e un'armatura ciascuno.\n\nQuando l'ultima casella viene occupata, ogni mostro guarda i quattro vicini ortogonali, sceglie fra questi il nemico più debole e lo affronta. Ogni scontro viene calcolato su una sola istantanea congelata del tavolo e tutte le morti cadono insieme. Vince chi si aggiudica più statistiche, la parità distrugge entrambi. Chi resta con più mostri in piedi vince il duello, e in caso di pareggio decide la somma delle statistiche dei sopravvissuti.\n\nLe buste contengono sei carte da un unico pool, pesate in modo che l'ultima non sia mai comune.\n\nLe carte si vincono anche catturando una creatura in battaglia. La cattura prende la creatura più debole ancora in piedi, aiutata dal PSI di chi lancia contro quello della preda, ed è impossibile contro qualcosa che superi di più di dieci livelli la mediana del gruppo. Se riesce aggiunge la carta e uccide la creatura, quindi il bottino cade comunque."
     },
     "gamesRaman": {
-      "title": "",
-      "description": ""
+      "title": "Lo scanner Raman",
+      "description": "Uno scanner a spettroscopia che analizza l'oggetto che hai davanti: statue, dipinti, maschere, librerie e oggetti da biblioteca. Identifica il materiale, disegna il suo spettro Raman e paga punti conoscenza."
     },
     "gamesPeriodic": {
-      "title": "",
-      "description": ""
+      "title": "La tavola periodica",
+      "description": "Un visore per la tavola periodica, impaginato come un libro: la griglia completa sulla pagina di sinistra, lantanidi, attinidi e una serie di elementi esoterici che in nessuna tavola reale compaiono, con la descrizione dell'elemento selezionato sulla destra."
     },
     "arcaneSurge": {
       "title": "Stato: Impeto Arcano",

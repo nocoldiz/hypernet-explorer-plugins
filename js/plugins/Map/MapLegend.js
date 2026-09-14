@@ -98,25 +98,6 @@
  * entirely and the same key brings it up. While the sheet answers to H the
  * help menu does not: it is reached through the pause menu instead.
  *
- * The strip is a first visit and nothing more. It teaches, so it teaches once:
- * the first time the party stands on one of those places the folded sheet is
- * in the corner, and every visit after that it is off the screen the way any
- * other map's is. Which places are spent is remembered on $gameSystem, and the
- * place underfoot is not spent by being stood on: it keeps the strip for the
- * whole visit and is only spent once the party walks out.
- *
- * ---------------------------------------------------------------------------
- * The key on a zone
- * ---------------------------------------------------------------------------
- * While the party stands on a zone, H and R3 are the notice's rather than the
- * list's, wherever that zone is and whether or not it was ever read: the
- * folded strip reads "Info" in place of "Controls" and pressing the key reads
- * the place out. The controls list is not drawn beside it, so the key opens
- * one thing and one thing only. Walking off the zone hands the key back to
- * the list. The three states of the notices setting decide whether a notice
- * speaks up unasked, not whether it can be asked for; "off" is the one state
- * that takes the zone away entirely and leaves the key to the list.
- *
  * ---------------------------------------------------------------------------
  * Where a notice comes from
  * ---------------------------------------------------------------------------
@@ -274,9 +255,14 @@
     menu: "Y",
     hotbarStep: "L1 / R1",
     visitPlace: "Select",
-    zoom: "L2 / R2",
-    wait: "L3",
-    fold: "R3",
+    zoom: "L2 + RS \u2191\u2193",
+    pan: "RS",
+    quickMenu: "Hold Y",
+    wait: "R",
+    vehicles: "L3",
+    build: "R3",
+    fold: "L2",
+    partyCycle: "R2",
   };
   // i18n-ignore-end
 
@@ -296,6 +282,29 @@
       labelKey: "MapLegend.controls.hotbarUse", key: "1 / 2 / 3",
       padLabelKey: "MapLegend.controls.hotbarCycle", pad: PAD.hotbarStep,
     },
+    // Never named on the sheet on either device, which for the pad meant a
+    // control nobody could have found. Tab walks the party forwards and Shift
+    // walks it back; the pad has no modifier to spare, so R2 goes forwards and
+    // wraps round at the end.
+    {
+      id: "leadSwap", labelKey: "MapLegend.controls.leadSwap",
+      key: "Tab", pad: PAD.partyCycle,
+    },
+    // The two stick clicks, which the map had nothing on at all. Both are
+    // polled raw by UI/CustomMainMenuLayout.js, out of the same HOTKEYS table
+    // that owns the keys beside them.
+    // The right stick is the camera's pan on every map, which the sheet has
+    // never said. Held under L2 on the world map it is the zoom instead
+    // (worldZoom below); that is the only place the stick means anything else.
+    // Held rather than pressed: the tap each of these already had is untouched
+    // (Tab steps the item hotbar, Y opens the menu), and holding either brings
+    // up the menu's pockets on one list (UI/QuickMainMenuLayout.js).
+    { id: "quickMenu", labelKey: "MapLegend.controls.quickMenu",
+      keyKey: "MapLegend.controls.holdTab", pad: PAD.quickMenu },
+    { id: "pan", labelKey: "MapLegend.controls.pan",
+      mouseKey: "MapLegend.controls.dragMap", pad: PAD.pan },
+    { id: "vehicles", labelKey: "MapLegend.controls.vehicles", key: "V", pad: PAD.vehicles },
+    { id: "build", labelKey: "MapLegend.controls.build", key: "B", pad: PAD.build },
   ];
 
   // The world map (315) answers to three controls no other ground does: T /
@@ -306,13 +315,20 @@
 
   const WORLD_MAP_CONTROLS = [
     { id: "visitPlace", labelKey: "MapLegend.controls.stopTravel", key: "T", pad: PAD.visitPlace },
-    // L3 is the wait sheet's, on the world map and everywhere else: the pad
-    // half of R is polled raw by UI/CustomMainMenuLayout.js and drawn here.
-    // The fold is R3, so no button is named for two different things.
-    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R", pad: PAD.wait },
+    // R only. L3 was the wait sheet's for a while and is the vehicles now;
+    // the sheet is still one press away through the menu, and the two stick
+    // clicks went to the things the field actually reaches for.
+    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R" },
+    // L2 HELD, and the right stick pushed forward or back. The trigger is a
+    // modifier rather than a zoom of its own: the stick is the camera's pan
+    // everywhere, and holding L2 turns it into the camera's zoom for as long as
+    // it is down. Let go without touching the stick and the same trigger folds
+    // this sheet instead (foldPadButton above), which is the only other thing
+    // a tap of it can mean.
     {
       id: "worldZoom", labelKey: "MapLegend.controls.zoom",
-      key: "+ / -", mouseKey: "MapLegend.controls.scrollWheel", pad: PAD.zoom,
+      key: "+ / -", mouseKey: "MapLegend.controls.scrollWheel",
+      padLabelKey: "MapLegend.controls.zoomHold", pad: PAD.zoom,
     },
   ];
 
@@ -332,13 +348,20 @@
   // The menu keys are not written out here: UI/CustomMainMenuLayout.js owns the
   // one table that binds them and prints their badges, and it hands it out as
   // window.MenuHotkeys, so the sheet reads that instead of keeping a second
-  // copy that would drift. Each symbol borrows the name its own pockets tile
-  // wears, so a key and the screen it opens are never called two things.
-  // None of them has a button of its own: on a pad every one is reached
-  // through the pause menu, so they are drawn to the keys alone.
+  // copy that would drift. The NAME each row wears is read the same way, off
+  // window.MainMenuVoices, which is the very table the pockets page and the
+  // quick menu are built from: a pocket added, renamed or re-iconed over there
+  // is a row here on the same save, so a command new to the quick menu can
+  // never be missing from this sheet. The table below is only the fallback for
+  // a runtime where that list has not been published yet.
+  //
+  // None of them has a button of its own, but none of them is keyboard-only
+  // either: on a pad every one is reached by holding Y and picking it off the
+  // quick menu (UI/QuickMainMenuLayout.js), so each row names both faces.
   const MENU_HOTKEY_LABELS = {
     item: "MainMenu.cmd.backpack",
     quest_log: "MainMenu.cmd.questLog",
+    cooking: "MainMenu.cmd.cooking",
     skill: "MainMenu.cmd.skills",
     status1: "MainMenu.cmd.status",
     equip: "MainMenu.cmd.equip",
@@ -351,16 +374,28 @@
     thinker: "MainMenu.cmd.thinker",
   };
 
+  // symbol -> the i18n key of the name that voice wears on the pockets page.
+  function voiceLabelKeys() {
+    const voices = window.MainMenuVoices;
+    const out = {};
+    if (!voices || !voices.list) return out;
+    for (const voice of voices.list()) {
+      if (voice && voice.symbol && voice.labelKey) out[voice.symbol] = voice.labelKey;
+    }
+    return out;
+  }
+
   function menuHotkeyControls() {
     const table = window.MenuHotkeys && window.MenuHotkeys.list
       ? window.MenuHotkeys.list() : [];
+    const labelKeys = voiceLabelKeys();
     const rows = [];
     for (const hotkey of table) {
-      const labelKey = MENU_HOTKEY_LABELS[hotkey.symbol];
+      const labelKey = labelKeys[hotkey.symbol] || MENU_HOTKEY_LABELS[hotkey.symbol];
       if (!labelKey) continue;
       rows.push({
         id: "menu_" + hotkey.symbol, labelKey, key: hotkey.key,
-        input: hotkey.input, keyboardOnly: true,
+        input: hotkey.input, pad: PAD.quickMenu,
       });
     }
     return rows;
@@ -488,16 +523,6 @@
     return notice;
   }
 
-  // What the ground has to say, whether or not it has already been said. The
-  // setting above decides when a notice speaks up on its own; it does not take
-  // the zone away, so the fold key can still be pointed at it. "off" is the
-  // one state that does: with the notices switched off there is no zone to
-  // stand in and the key is the controls list's the way it always was.
-  function zoneNotice() {
-    if (!legendEnabled()) return null;
-    return resolveNotice();
-  }
-
   function proceduralMapId() {
     const wmt = window.WorldMapTransfer;
     return (wmt && wmt.procMapId) || PROCEDURAL_MAP_ID;
@@ -563,12 +588,6 @@
 
   // A pad button with no Input.gamepadMapper action on it, read raw the way
   // WorldMap.js reads Start.
-  function padButtonTriggered(name) {
-    const stick = analogStick();
-    if (!stick || !stick.isButtonTriggered || !stick.BUTTON) return false;
-    const index = stick.BUTTON[name];
-    return index === undefined ? false : !!stick.isButtonTriggered(index);
-  }
 
   //===========================================================================
   // Notice resolution
@@ -756,59 +775,11 @@
     return false;
   }
 
-  // The ground the sheet would stay pinned to even folded: the story mode, the
-  // tutorial tree and the square the game opened on.
-  function pinnedGround() {
+  // Where the sheet stays on the screen even folded.
+  function pinnedContext() {
     if (storyMode()) return true;
     if (!$gameMap) return false;
     return tutorialMap($gameMap.mapId()) || onStartPlace();
-  }
-
-  // The strip teaches, so it teaches once: the first time the party walks onto
-  // one of those places the folded sheet stands in the corner, and every visit
-  // after that it is off the screen the way any other map's is. Which places
-  // are spent is remembered on $gameSystem, and the one underfoot is not spent
-  // by being stood on: it keeps the strip for the whole visit and is only
-  // spent once the party walks out.
-  const pinWatch = { place: null };
-
-  function placeKey(place) {
-    if (!place) return "";
-    return place.world
-      ? place.mapId + "@" + place.world.x + "," + place.world.y
-      : String(place.mapId);
-  }
-
-  function pinnedSeen() {
-    return ($gameSystem && $gameSystem._mapLegendPinnedSeen) || {};
-  }
-
-  function markPinnedSeen(key) {
-    if (!$gameSystem || !key) return false;
-    const seen = pinnedSeen();
-    if (seen[key]) return false;
-    seen[key] = true;
-    $gameSystem._mapLegendPinnedSeen = seen;
-    return true;
-  }
-
-  function resetPinnedSeen() {
-    if ($gameSystem) $gameSystem._mapLegendPinnedSeen = {};
-    pinWatch.place = null;
-  }
-
-  // Where the sheet stays on the screen even folded.
-  function pinnedContext() {
-    if (!pinnedGround()) { pinWatch.place = null; return false; }
-    const key = placeKey(currentPlace());
-    if (!key) return false;
-    if (pinnedSeen()[key] && pinWatch.place !== key) {
-      pinWatch.place = null;
-      return false;
-    }
-    pinWatch.place = key;
-    markPinnedSeen(key);
-    return true;
   }
 
   // Folded is remembered on $gameSystem, so a save reopens the way it was
@@ -830,10 +801,25 @@
     return true;
   }
 
-  // The pad's fold button. R3 on every map, the world map included: L3 is the
-  // wait sheet's everywhere, so the right stick click is the one left free.
+  // The pad's fold button: a TAP of L2, on every map including the world map.
+  // It was R3, which nothing else wanted but which nobody found either.
+  //
+  // A trigger is not a button. Held, L2 is the camera pulling back (MousePan),
+  // and the only thing that keeps one pull from doing both is the tap window,
+  // which is owned in ONE place - the lead switcher in Core/AutoIdleExplorer.js,
+  // which already reads both triggers that way for the party cycle on R2. So
+  // the tap is not read here at all: that owner calls toggleFold() when it sees
+  // one, and this side only says whether there is a fold to be had.
   function foldPadButton() {
     return PAD.fold;
+  }
+
+  // Whether a tap of L2 should fold the sheet right now: only with a pad in
+  // hand and a legend on screen to fold. Asked by the trigger's owner before it
+  // claims the pull, so on a map with no legend the triggers stay whole for the
+  // camera.
+  function padFoldAvailable() {
+    return foldable() && padConnected() && legendEnabled();
   }
 
   function foldChipLabel() {
@@ -870,12 +856,12 @@
     foldHotkeySpliced = true;
   }
 
-  // The pad button has no table to fight over, so it is read straight off the
-  // map. With CustomMainMenuLayout absent there is no help menu to protect
-  // either, and the key is read here too.
+  // H, and only H. The pad half of the fold is a TAP of L2 and is read by the
+  // one place that owns the trigger tap window (see foldPadButton above), which
+  // calls toggleFold() directly. With CustomMainMenuLayout absent there is no
+  // help menu to protect, and the key is read here rather than spliced.
   function readFoldKey() {
     if (!foldable()) return;
-    if (padButtonTriggered(foldPadButton())) { toggleFold(); return; }
     if (foldHotkeySpliced) return;
     if (Input.isTriggered(FOLD_INPUT)) toggleFold();
   }
@@ -1006,7 +992,7 @@
       let ctlSig = "";
       for (const entry of rows) ctlSig += entry.id + "";
       ctlSig += "" + (folded ? 1 : 0) + (state.foldable ? 1 : 0) +
-        (state.hasPad ? 1 : 0) + (notice ? 1 : 0) + (state.zone ? 1 : 0) + "" + (state.foldChip || "");
+        (state.hasPad ? 1 : 0) + (notice ? 1 : 0) + "" + (state.foldChip || "");
       const wantControls = rows.length || (state.foldable && !notice);
       if (wantControls) {
         const ctl = this.controlsElement();
@@ -1078,10 +1064,8 @@
         }
       }
       if (state.foldable && !hasNotice) {
-        // On a zone the strip is the place's, not the list's: it names the
-        // info waiting behind the key, and pressing it reads the place out.
         const hint = bareFold
-          ? T(state.zone ? "MapLegend.infoHint" : "MapLegend.controlsHeading")
+          ? T("MapLegend.controlsHeading")
           : T("MapLegend.foldHint");
         parts.push(this._foldHtml(hint, state));
       }
@@ -1200,20 +1184,13 @@
     }
     updateTooltipWatch();
     readFoldKey();
-    // Standing on a zone, the key belongs to what the place has to say rather
-    // than to the controls list: the strip reads [H] Info instead of [H]
-    // Controls and unfolding reads the place out, even where it was read
-    // before. The setting still decides whether it speaks up unasked.
-    const zone = zoneNotice();
-    const spoken = allowedNotice(zone);
+    const notice = legendEnabled() ? allowedNotice(resolveNotice()) : null;
     const folded = isFolded();
-    const notice = folded ? spoken : (zone || spoken);
-    const rows = (folded || zone) ? [] : visibleRows();
-    // Folded, the sheet stays up as a strip only where it is pinned - the
-    // story mode and the tutorial maps, and only the first time the party
-    // stands there - or where a zone has something to be asked for. Anywhere
-    // else folded is off the screen, and the same key brings it back.
-    if (folded && !zone && !pinnedContext()) {
+    const rows = folded ? [] : visibleRows();
+    // Folded, the sheet stays up as a strip only where it is pinned: the
+    // story mode and the tutorial maps. Anywhere else folded is off the
+    // screen, and the same key brings it back.
+    if (folded && !pinnedContext()) {
       sheet.hide();
       return;
     }
@@ -1223,7 +1200,7 @@
     }
     sheet.draw(notice, rows, {
       folded, foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
-      foldPad: foldPadChip(), zone: !!zone,
+      foldPad: foldPadChip(),
     });
     sheet.setBehindBusts(bustOnScreen());
   }
@@ -1260,17 +1237,12 @@
   Game_Map.prototype.setup = function (mapId) {
     _Game_Map_setup.call(this, mapId);
     resetTooltipWatch();
-    // The place underfoot is about to change, so whichever one was holding the
-    // strip up lets it go: a map already taught does not get a second lesson
-    // because the party walked back onto it.
-    pinWatch.place = null;
   };
 
   const _DataManager_extractSaveContents = DataManager.extractSaveContents;
   DataManager.extractSaveContents = function (contents) {
     _DataManager_extractSaveContents.call(this, contents);
     resetTooltipWatch();
-    pinWatch.place = null;
   };
 
   //===========================================================================
@@ -1315,7 +1287,6 @@
     markNoticeSeen,
     resetNoticesSeen,
     allowedNotice,
-    zoneNotice,
     visibleRows,
     rowKeys,
     rowFace,
@@ -1359,17 +1330,12 @@
     legendEnabled,
     tutorialMap,
     pinnedContext,
-    pinnedGround,
-    pinnedSeen,
-    markPinnedSeen,
-    resetPinnedSeen,
-    placeKey,
-    pinWatch,
     isFolded,
     toggleFold,
     foldable,
     foldPadButton,
     foldPadChip,
+    padFoldAvailable,
 
     refresh() { sheet.destroy(); updateLegend(); },
     hide() { sheet.hide(); },

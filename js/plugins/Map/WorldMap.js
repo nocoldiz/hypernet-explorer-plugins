@@ -475,6 +475,13 @@
 
     window.WorldMapView = {
         focusAt: focusWorldMapAt,
+        // The M key's own toggle, exposed so the menu's world-map pocket can be
+        // opened from somewhere other than the key: from the pockets page, and
+        // from the quick list held open on the field (UI/QuickMainMenuLayout.js
+        // through CustomMainMenuLayout's MAP_HOTKEY_ACTIONS). Without it that
+        // pocket was the one voice of the menu with no way of being reached
+        // except by pressing M.
+        toggle: () => { autoOpenedForTravel = false; toggleMapState(); },
         requestFocusAt: requestWorldMapFocus,
         isMinimapVisible: () => isMinimapVisible(),
         setMinimapVisible: (v) => setMinimapVisible(v),

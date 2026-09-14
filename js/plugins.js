@@ -87,6 +87,7 @@ var $plugins =
 {"name":"BattleSystem/ArenaBattleHandlerUI","status":true,"description":"Arena Battle Handler UI - Themed book-spread screens (party -> mode -> gauntlet/biome).","parameters":{}},
 {"name":"UI/TwoPanelPicker","status":true,"description":"Two-panel picker: one shared widget for moving rows between two lists, by drag and drop or by the row button.","parameters":{}},
 {"name":"UI/CustomMainMenuLayout","status":true,"description":"XP-style desktop menu with selectable wallpaper and icon-based layout [Claude+GPT Rework].","parameters":{"Default Wallpaper":"crayon"}},
+{"name":"UI/QuickMainMenuLayout","status":true,"description":"v1.0.0 Hold Tab / Y on the map for the menu pockets on one list","parameters":{}},
 {"name":"UI/CustomMainMenuSearch","status":true,"description":"Main-menu search: one field over the party cards that finds items, gear, skills, recipes and creatures.","parameters":{}},
 {"name":"UI/SpecializationMenu","status":true,"description":"Specializations menu: browses js/db/Skills/Specialization.json, 5-level tiers seeded by class and trait [Claude].","parameters":{}},
 {"name":"Crafting/CookingSystem","status":true,"description":"Implements a cooking system that allows combining two recovery items for enhanced effects.","parameters":{"Play Recovery Sound":"true","Recovery Sound ID":"41"}},

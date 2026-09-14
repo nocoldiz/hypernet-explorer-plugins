@@ -269,57 +269,31 @@
 
   let _picker = null;   // { item, index, rows }
 
-  // A severed-magic world has no magic to spend, so no MP is printed.
-  function showMp() {
-    const MN = window.MagicNature;
-    return !(MN && typeof MN.level === 'function' && MN.level() === 'severed');
-  }
-
-  // Who the item can be handed to: every member, plus the whole party when the
-  // item is scoped to all of them.
+  // The card is the shared one (window.ItemTargetCard, ItemSystemUtils.js):
+  // the backpack asks the same question with the same panel.
   function pickerRows(item) {
-    const rows = $gameParty.members().map((actor) => ({ actor }));
     // "Everyone" is not a second answer when there is only one of you.
-    if ((item.scope === 8 || item.scope === 10) && rows.length > 1) rows.push({ actor: null });
-    return rows;
-  }
-
-  // A ration is eaten, not administered: the card asking who gets it says so.
-  function pickerTitle(item) {
-    const isFood = !!(window.ItemSystemUtils &&
-      window.ItemSystemUtils.hasItemCategory(item, 'Food' /* i18n-ignore: category tag */));
-    return isFood
-      ? T('Inventory.ui.eatItem', { item: item.name })
-      : T('Inventory.ui.useItemOn', { item: item.name });
+    const includeAll = (item.scope === 8 || item.scope === 10) && $gameParty.members().length > 1;
+    return window.ItemTargetCard.rows(item, { includeAll });
   }
 
   function renderPicker() {
     if (!_picker) return;
     const el = document.getElementById(PICKER_ID);
     if (!el) return;
-    const mp = showMp();
-    const rowsHTML = _picker.rows.map((row, idx) => {
-      const sel = idx === _picker.index ? ' selected' : '';
-      const name = row.actor ? row.actor.name() : T('Inventory.ui.allPartyCompanions');
-      const vitals = row.actor
-        ? `<div class="htp-vitals">
-             <span class="htp-hp">HP ${row.actor.hp}/${row.actor.mhp}</span>
-             ${mp ? `<span class="htp-mp">MP ${row.actor.mp}/${row.actor.mmp}</span>` : ''}
-           </div>`
-        : '';
-      return `
-        <div class="htp-row${sel}" data-idx="${idx}">
-          <div class="htp-num">${idx + 1}</div>
-          <div class="htp-name">${name}</div>
-          ${vitals}
-        </div>`;
-    }).join('');
+    el.innerHTML = window.ItemTargetCard.html({
+      title: window.ItemTargetCard.title(_picker.item),
+      rows:  _picker.rows,
+      index: _picker.index,
+    });
+    window.ItemTargetCard.paint(el);
+  }
 
-    el.innerHTML = `
-      <div class="htp-panel">
-        <div class="htp-title">${pickerTitle(_picker.item)}</div>
-        ${rowsHTML}
-      </div>`;
+  // Walking the rows only moves the mark: a redrawn card would throw the
+  // sprites away and load them again on every keypress.
+  function markPicker() {
+    if (!_picker) return;
+    window.ItemTargetCard.mark(document.getElementById(PICKER_ID), _picker.index);
   }
 
   function openTargetPicker(item) {
@@ -332,6 +306,7 @@
 
     const el = document.createElement('div');
     el.id = PICKER_ID;
+    el.className = 'item-target-card';
     // The map is underneath: no click of this card may reach it.
     el.addEventListener('mousedown', (e) => e.stopPropagation());
     el.addEventListener('mouseup', (e) => e.stopPropagation());
@@ -395,11 +370,11 @@
     if (Input.isRepeated('down')) {
       SoundManager.playCursor();
       _picker.index = (_picker.index + 1) % _picker.rows.length;
-      renderPicker();
+      markPicker();
     } else if (Input.isRepeated('up')) {
       SoundManager.playCursor();
       _picker.index = (_picker.index - 1 + _picker.rows.length) % _picker.rows.length;
-      renderPicker();
+      markPicker();
     } else if (Input.isTriggered('ok')) {
       spendOkPress();
       applyPicker(_picker.index);

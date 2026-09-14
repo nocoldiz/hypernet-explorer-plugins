@@ -221,7 +221,7 @@
     const NEED_KEYS = ['hunger', 'sleep', 'hygiene', 'social', 'leisure'];
 
     const alertText = (key, critical, pct) => {
-        const label = T('PartyHud.alert.' + key + (critical ? 'Critical' : ''));
+        const label = T('PartyHud.alert.' + key + (critical ? 'Critical' : '')); // i18n-ignore: key suffix
         return label + ' ' + Math.max(0, Math.round(pct)) + '%';
     };
 

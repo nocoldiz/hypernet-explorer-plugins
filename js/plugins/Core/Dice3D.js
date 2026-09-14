@@ -194,12 +194,6 @@
             // would land on top of each other, so a second one waits.
             this._pendingRolls = 0;
             this._rollChain = null;
-            // Bumped by cancelPending(). A throw remembers the epoch it was
-            // asked in and never leaves the hand once that epoch is over.
-            this._rollEpoch = 0;
-            // How the die in the air is brought down early, set by _throwD20
-            // for as long as one is tumbling.
-            this._abortThrow = null;
             this._initStyles();
         }
 
@@ -207,17 +201,6 @@
         // landed. A caller that must not fire twice asks this before rolling.
         isRolling() {
             return this._pendingRolls > 0;
-        }
-
-        // Called by a panel on its way out: the die in the air comes down at
-        // once and every throw still queued behind it is dropped. The checks
-        // themselves still answer, so nothing the panel already decided on is
-        // left hanging; what stops is the throwing.
-        cancelPending() {
-            this._rollEpoch++;
-            const abort = this._abortThrow;
-            this._abortThrow = null;
-            if (typeof abort === 'function') abort();
         }
 
         _shouldShow3D(options = {}) {
@@ -283,7 +266,7 @@
                     background: rgba(10, 9, 8, 0.82);
                     border: 1px solid rgba(212, 175, 55, 0.28);
                     border-radius: 3px;
-                    font-family: var(--font-ui);
+                    font-family: 'Cinzel', var(--font-ui), 'GameFont';
                     color: var(--text-success-active);
                     opacity: 0;
                     transform: translateY(10px);
@@ -392,7 +375,7 @@
                     justify-content: center;
                     background: rgba(0, 0, 0, 0.55);
                     backdrop-filter: blur(2px);
-                    font-family: var(--font-ui);
+                    font-family: 'Cinzel', var(--font-ui), 'GameFont';
                     opacity: 0;
                     transition: opacity 0.18s ease;
                 }
@@ -826,20 +809,7 @@
             // One die on screen at a time: a throw asked for while another is
             // still tumbling is queued behind it rather than stealing its
             // scene, its card and its frame loop half way through.
-            // The panel that asked, and the epoch it asked in. A die still
-            // waiting its turn when that panel closes is dropped rather than
-            // thrown: a handful of impatient clicks used to leave a line of
-            // dice raining on a screen the player had already walked away
-            // from. The result stands either way, only the throw is skipped.
-            const epoch = this._rollEpoch;
-            const askedIn = (typeof SceneManager !== 'undefined' && SceneManager._scene) || null;
-            const throwIt = () => {
-                if (epoch !== this._rollEpoch) return resultData;
-                if (askedIn && typeof SceneManager !== 'undefined' && SceneManager._scene !== askedIn) {
-                    return resultData;
-                }
-                return this._throwD20(resultData, options);
-            };
+            const throwIt = () => this._throwD20(resultData, options);
             this._pendingRolls++;
             // Nothing in the air: the die leaves the hand now. Something in the
             // air: this one waits behind it, however that one ends.
@@ -869,26 +839,6 @@
                 if (!this._container) {
                     return resolve(resultData);
                 }
-                // The one way this throw ever ends, whether the die landed on
-                // its own or was brought down early by cancelPending(). The
-                // result it was asked for comes back regardless: a cancelled
-                // throw is a die not shown, not a check not made.
-                let ended = false;
-                const finish = () => {
-                    if (ended) return;
-                    ended = true;
-                    if (this._abortThrow === finish) this._abortThrow = null;
-                    if (this._animFrameId !== null) {
-                        cancelAnimationFrame(this._animFrameId);
-                        this._animFrameId = null;
-                    }
-                    if (this._container) {
-                        this._container.style.display = 'none';
-                        this._container.className = '';
-                    }
-                    resolve(resultData);
-                };
-                this._abortThrow = finish;
                 this._container.className = '';
                 this._container.style.display = 'flex';
                 this._banner.className = '';
@@ -1065,8 +1015,11 @@
                     if (elapsed < totalDuration) {
                         this._animFrameId = requestAnimationFrame(animate);
                     } else {
-                        this._animFrameId = null;
-                        setTimeout(finish, 50);
+                        setTimeout(() => {
+                            this._container.style.display = 'none';
+                            this._container.className = '';
+                            resolve(resultData);
+                        }, 50);
                     }
                 };
 

@@ -105,7 +105,7 @@
   const PRESET_BUSTS = "presets/";
   const skin = (key, asset, folder) => ({
     key,
-    sprite: (folder || "Skab") + "/!$" + asset,
+    sprite: (folder || "Skab") + "/!$" + asset, // i18n-ignore: sprite folder name
     spriteIndex: 0,
     busts: PRESET_BUSTS + asset,
   });
@@ -797,11 +797,11 @@
   // anything but a witch), and the whole caster set stands in if the theme ever
   // stops being written.
   function storyModeWitchSpritePool() {
-    const casters = storyModeCatalogPool("Humanoid", (entry) =>
+    const casters = storyModeCatalogPool("Humanoid", /* i18n-ignore: catalogue archetype id */ (entry) =>
       entry.magical === true && Array.isArray(entry.classes) && entry.classes.includes(2));
     const arcane = casters.filter((key) => {
       const entry = (window.WorldGen && window.WorldGen.NPCs || {})[key];
-      return entry && entry.theme === "Arcane";
+      return entry && entry.theme === "Arcane"; // i18n-ignore: catalogue theme id
     });
     return arcane.length > 0 ? arcane : casters;
   }
@@ -816,7 +816,7 @@
     if (poolKey === "slime") return STORY_MODE_SLIME_SPRITES;
     // A goblin is a humanoid with a goblin's face, not an archetype of its own,
     // so the pool is the sheets whose own names say goblin.
-    if (poolKey === "goblin") return storyModeCatalogPool("Humanoid")
+    if (poolKey === "goblin") return storyModeCatalogPool("Humanoid") // i18n-ignore: catalogue archetype id
       .filter((key) => /goblin/i.test(key));
     if (poolKey === "witch") return storyModeWitchSpritePool();
     return STORY_MODE_SPRITE_LISTS[poolKey] || null;
@@ -916,7 +916,7 @@
       storyModeOnly: true,
       endless: true,
       characterType: "creature",
-      archetypes: ["Slime"],
+      archetypes: ["Slime"], // i18n-ignore: creature archetype id
       classId: 64, // Mimic
       spritePoolKey: "slime",
       spriteIndex: 0,
@@ -2016,7 +2016,7 @@
     // filtered out of the board only, so lookups by id, a save that already
     // carries the character, and the story mode's own flow are untouched.
     return getCharacterPresets().filter(
-      (preset) => !preset.hidden && preset.name !== "Bubba" && (preset.endless || used.indexOf(preset.id) < 0)
+      (preset) => !preset.hidden && preset.name !== "Bubba" /* i18n-ignore: preset id */ && (preset.endless || used.indexOf(preset.id) < 0)
     );
   }
 
@@ -2571,7 +2571,7 @@
       enemyId: actor._recruitedEnemyId || 0,
       isCreature: isCreatureSlot(actor),
       gender: actor.gender ? actor.gender() : 0,
-      hidden: !!(actor && typeof actor.name === "function" && actor.name() === "Bubba"),
+      hidden: !!(actor && typeof actor.name === "function" && actor.name() === "Bubba"), // i18n-ignore: preset id
       retired: true,
       retiredAtMin: minute,
       retiredDate: dateStr,
@@ -2682,7 +2682,7 @@
     const allowBubba = isEmStoryParty();
     return getRetiredPresets().filter((preset) => {
       if (used.indexOf(preset.id) >= 0) return false;
-      if (preset.name === "Bubba" && !allowBubba) return false;
+      if (preset.name === "Bubba" && !allowBubba) return false; // i18n-ignore: preset id
       return true;
     });
   }
@@ -2788,7 +2788,7 @@
 
     const preset = getAvailableRetiredPresets().find((entry) => entry.id === presetId);
     if (!preset) return { ok: false, reason: "notRetired" };
-    if (preset.name === "Bubba" && !isEmStoryParty()) {
+    if (preset.name === "Bubba" && !isEmStoryParty()) { // i18n-ignore: preset id
       return { ok: false, reason: "storyLocked" };
     }
     if ($gameParty.members().some((mem) => mem.name() === preset.name)) {

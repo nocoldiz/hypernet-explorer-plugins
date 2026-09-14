@@ -873,13 +873,7 @@
     const selRef = selectedItem
       ? `${DataManager.isWeapon(selectedItem) ? 'w' : DataManager.isArmor(selectedItem) ? 'a' : 'i'}${selectedItem.id}${this.isItemFavorited(selectedItem) ? '*' : ''}`
       : '-';
-    // While the picker is up the party's own HP is printed beside each name, so
-    // it is part of what the page says.
-    const targetRef = (this._dndTargetingMode && this._dndTargetingItem)
-      ? `${this._dndTargetingItem.id}:${this._dndStudyPicking ? 's' : 'u'}:` +
-        $gameParty.members().map(a => `${a.hp}/${a.mhp}`).join('.')
-      : '-';
-    const rightKey     = `${selRef}|${targetRef}`;
+    const rightKey     = selRef;
     const rightChanged = !leftPageContainer || this._lastRightKey !== rightKey;
     this._lastRightKey = rightKey;
 
@@ -887,45 +881,6 @@
 
     if (!rightChanged) {
       // nothing to build: the card on the page already says this
-    } else if (this._dndTargetingMode && this._dndTargetingItem) {
-      const item = this._dndTargetingItem;
-      // Studying names its reader first: the hours are one member's, and the
-      // knowledge is theirs, so the list is asking who sits down with it.
-      const studyPick = !!this._dndStudyPicking;
-      let targetsHTML = '';
-      $gameParty.members().forEach((actor, idx) => {
-        const isFocused = (this._dndActiveSection === 'targets' && this._selectedTargetIndex === idx) ? 'selected' : '';
-        const call = studyPick ? `applyUIStudy(${idx})` : `applyUITarget(${idx})`;
-        targetsHTML += `<div class="target-option ${isFocused}" onclick="SceneManager._scene.${call}">${actor.name()} (HP: ${actor.hp}/${actor.mhp})</div>`;
-      });
-      if (!studyPick && (item.scope === 8 || item.scope === 10)) {
-        const allFocused = (this._dndActiveSection === 'targets' && this._selectedTargetIndex === $gameParty.members().length) ? 'selected' : '';
-        targetsHTML += `<div class="target-option ${allFocused}" onclick="SceneManager._scene.applyUITarget(${$gameParty.members().length})">${T('Inventory.ui.allPartyCompanions')}</div>`;
-      }
-      // A ration is eaten, not administered; the heading says so, exactly as the
-      // hotbar's own target card does.
-      const isFood = !!(window.ItemSystemUtils &&
-        window.ItemSystemUtils.hasItemCategory(item, 'Food' /* i18n-ignore: category tag */));
-      const targetTitle = studyPick
-        ? T('Inventory.study.who', { item: item.name, duration: this.studyDurationLabel(item) })
-        : isFood
-          ? T('Inventory.ui.eatItem', { item: item.name })
-          : T('Inventory.ui.useItemOn', { item: item.name });
-      const specialCommands = studyPick ? [] : this.parseSpecialCommands(item);
-      specialCommands.forEach((specCmd, sIdx) => {
-        const globalIdx = $gameParty.members().length + (item.scope === 8 || item.scope === 10 ? 1 : 0) + sIdx;
-        const isFocused = (this._dndActiveSection === 'targets' && this._selectedTargetIndex === globalIdx) ? 'selected' : '';
-        const label = T('Inventory.ui.special', { command: this.translateSpecialCommand(specCmd) });
-        targetsHTML += `<div class="target-option target-option--special ${isFocused}" onclick="SceneManager._scene.triggerUISpecialAction('${specCmd}')">${label}</div>`;
-      });
-      rightPageInnerHTML = `
-        <div class="target-overlay">
-          <h3 class="target-title">${targetTitle}</h3>
-          <div class="inspect-actions">
-            ${targetsHTML}
-            <div class="inspect-btn inspect-btn--secondary" onclick="SceneManager._scene.cancelUITargeting()">${T('Inventory.ui.cancel')}</div>
-          </div>
-        </div>`;
     } else if (!selectedItem) {
       rightPageInnerHTML = `
         <div class="item-inspect item-inspect--empty">
@@ -1067,6 +1022,7 @@
     // ever re-rendered into it, never rebuilt from scratch with the page.
     if (window.ItemHotbar) window.ItemHotbar.renderInventoryBar(this);
 
+    this.refreshUITargetModal();
     this.markUIRightFocus();
 
     if (rightChanged) {
@@ -1128,15 +1084,15 @@
   // of who the item is being used on. Both are drawn in the order the cursor
   // walks them, so the index is the position in the row.
   Scene_EnhancedItem.prototype.markUIRightFocus = function () {
-    const rightPage = this._dndContainer && this._dndContainer.querySelector('.right-page');
-    if (!rightPage) return;
     if (this._dndTargetingMode) {
-      rightPage.querySelectorAll('.target-option').forEach((el, idx) => {
-        el.classList.toggle('selected',
-          this._dndActiveSection === 'targets' && this._selectedTargetIndex === idx);
-      });
+      // The question of who the item is for is asked by a modal over the page
+      // now (window.ItemTargetCard), not by a column printed on it.
+      window.ItemTargetCard.mark(document.getElementById(TARGET_MODAL_ID),
+        this._dndActiveSection === 'targets' ? this._selectedTargetIndex : -1);
       return;
     }
+    const rightPage = this._dndContainer && this._dndContainer.querySelector('.right-page');
+    if (!rightPage) return;
     rightPage.querySelectorAll('.inspect-actions .inspect-btn').forEach((el, idx) => {
       el.classList.toggle('selected',
         this._dndActiveSection === 'actions' && this._selectedActionIndex === idx);
@@ -1315,6 +1271,87 @@
   // =========================================================================
   // Targeting
   // =========================================================================
+
+  // The target card is the shared one the quick bar asks with
+  // (window.ItemTargetCard, ItemSystemUtils.js): the party a row each, with
+  // sprite, class, level and what they have left. It stands over the spread as
+  // its own modal rather than being printed down the right page, so the item
+  // being handed out is still on the page behind the question.
+  const TARGET_MODAL_ID = 'item-target-modal';
+
+  // What the card is saying right now. Nothing but a change here rebuilds it;
+  // walking the rows only moves the mark, so the sprites are loaded once.
+  Scene_EnhancedItem.prototype.targetModalKey = function () {
+    const item = this._dndTargetingItem;
+    if (!this._dndTargetingMode || !item) return '';
+    return `${item.id}:${this._dndStudyPicking ? 's' : 'u'}:` +
+      $gameParty.members().map(a => `${a.hp}/${a.mhp}/${a.mp}/${Math.floor(a.tp)}`).join('.');
+  };
+
+  Scene_EnhancedItem.prototype.targetModalRows = function () {
+    const item      = this._dndTargetingItem;
+    const studyPick = !!this._dndStudyPicking;
+    const special   = studyPick ? [] : this.parseSpecialCommands(item).map(cmd => ({
+      command: cmd,
+      label:   T('Inventory.ui.special', { command: this.translateSpecialCommand(cmd) }),
+    }));
+    return window.ItemTargetCard.rows(item, {
+      includeAll: !studyPick && (item.scope === 8 || item.scope === 10),
+      special,
+    });
+  };
+
+  Scene_EnhancedItem.prototype.refreshUITargetModal = function () {
+    let el = document.getElementById(TARGET_MODAL_ID);
+    if (!this._dndTargetingMode || !this._dndTargetingItem) {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      this._targetModalKey = '';
+      return;
+    }
+    const key = this.targetModalKey();
+    if (el && this._targetModalKey === key) return;
+    if (!el) {
+      el = document.createElement('div');
+      el.id        = TARGET_MODAL_ID;
+      el.className = 'army-dialog-overlay item-target-card';
+      // The rows carry their own index, so one listener answers for all of
+      // them however often the card is rebuilt.
+      el.addEventListener('click', (e) => {
+        const row = e.target.closest && e.target.closest('.htp-row');
+        const scene = SceneManager._scene;
+        if (!row || !scene || !scene.applyUITargetRow) return;
+        const idx = parseInt(row.getAttribute('data-idx'), 10);
+        if (!isNaN(idx)) scene.applyUITargetRow(idx);
+      });
+      this._dndContainer.appendChild(el);
+    }
+    this._targetModalKey = key;
+    const item      = this._dndTargetingItem;
+    const studyPick = !!this._dndStudyPicking;
+    // Studying names its reader first: the hours are one member's, and the
+    // knowledge is theirs, so the card is asking who sits down with it.
+    const title = studyPick
+      ? T('Inventory.study.who', { item: item.name, duration: this.studyDurationLabel(item) })
+      : window.ItemTargetCard.title(item);
+    el.innerHTML = window.ItemTargetCard.html({
+      title,
+      rows:  this.targetModalRows(),
+      index: this._dndActiveSection === 'targets' ? this._selectedTargetIndex : -1,
+      extra: `<div class="htp-cancel" onclick="SceneManager._scene.cancelUITargeting()">${T('Inventory.ui.cancel')}</div>`,
+    });
+    window.ItemTargetCard.paint(el);
+  };
+
+  // One row taken, whatever kind it is. The cursor indices the key handlers
+  // walk are the same ones, so this is also what OK ends up calling.
+  Scene_EnhancedItem.prototype.applyUITargetRow = function (idx) {
+    const rows = this.targetModalRows();
+    const row  = rows[idx];
+    if (!row) return;
+    if (this._dndStudyPicking) { this.applyUIStudy(idx); return; }
+    if (row.kind === 'special') this.triggerUISpecialAction(row.command);
+    else this.applyUITarget(idx);
+  };
 
   Scene_EnhancedItem.prototype.cancelUITargeting = function () {
     this._dndTargetingMode  = false;
@@ -1600,8 +1637,11 @@
 
   // The pockets wear the same collapsed search every other menu does
   // (UI/MenuSearchBar.js): a handle at the top right of the page, and the field
-  // itself only once it has been clicked. The handle is never '.focusable', so
-  // the controller walks the tabs and the slots and never the search.
+  // itself only once it has been clicked. A search field is a keyboard control -
+  // there is no typing a query on a pad - so the shared handle takes ITSELF off
+  // the page while a pad is in hand and is '.focusable' the rest of the time.
+  // The controller walks the tabs and the slots and never a field it could not
+  // use; a keyboard reaches the search like any other control.
   Scene_EnhancedItem.prototype.searchFieldHTML = function () {
     const open = !!this._searchOpen || !!this._searchText;
     const handle = window.MenuSearchBar
@@ -1933,21 +1973,7 @@
         const action = scene._dndActionsList[scene._selectedActionIndex];
         if (action) scene.triggerUIItemAction(action);
       } else if (section === 'targets') {
-        const item          = scene._dndTargetingItem;
-        const partySize     = $gameParty.members().length;
-        if (scene._dndStudyPicking) {
-          scene.applyUIStudy(scene._selectedTargetIndex);
-          return;
-        }
-        const hasAllParty   = (item.scope === 8 || item.scope === 10);
-        const specialStart  = partySize + (hasAllParty ? 1 : 0);
-        if (scene._selectedTargetIndex < specialStart) {
-          scene.applyUITarget(scene._selectedTargetIndex);
-        } else {
-          const specCmds = scene.parseSpecialCommands(item);
-          const specIdx  = scene._selectedTargetIndex - specialStart;
-          if (specIdx >= 0 && specIdx < specCmds.length) scene.triggerUISpecialAction(specCmds[specIdx]);
-        }
+        scene.applyUITargetRow(scene._selectedTargetIndex);
       }
     },
 

@@ -6014,19 +6014,28 @@
             this._wakeLock = 6;   // brief input lockout so the opening press is ignored
 
             const wrap = document.createElement('div');
-            wrap.className = 'dream-wake';
+            wrap.style.cssText = 'position:absolute;top:0;right:0;bottom:0;left:0;z-index:5;' +
+                'display:flex;align-items:center;justify-content:center;' +
+                'background:var(--bg-bg-alt-1-translucent-70, rgba(0,0,0,0.7));' +
+                'font-family:var(--font-terminal, "Courier New", monospace);';
             const panel = document.createElement('div');
-            panel.className = 'dream-wake-panel';
+            panel.style.cssText = 'min-width:340px;padding:26px 34px;text-align:center;' +
+                'background:var(--bg-panel, #0a0a0a);' +
+                'border:1px solid var(--border-gold-amber, #d4a050);' +
+                'box-shadow:0 0 0 1px var(--bg-base, #000) inset, 0 10px 40px var(--shadow-heavy, rgba(4,2,1,0.96));';
             const title = document.createElement('div');
             title.textContent = T('Dream.dreamThins');
-            title.className = 'dream-wake-title';
+            title.style.cssText = 'font-size:20px;margin-bottom:20px;letter-spacing:3px;text-transform:uppercase;' +
+                'color:var(--text-primary-hover, #ffcc66);' +
+                '';
             panel.appendChild(title);
 
             const btns = [];
             items.forEach((label, i) => {
                 const b = document.createElement('div');
                 b.textContent = label;
-                b.className = 'dream-wake-opt';
+                b.style.cssText = 'font-size:17px;padding:11px 16px;margin:6px 0;cursor:pointer;' +
+                    'letter-spacing:1px;border:1px solid transparent;transition:all .12s;';
                 b.addEventListener('mouseenter', () => { this._wakeSel = i; this._paintWake(); });
                 b.addEventListener('click', () => { this._wakeSel = i; this._confirmWake(); });
                 panel.appendChild(b);
@@ -6065,7 +6074,17 @@
         _paintWake() {
             if (!this._wakeBtns) return;
             this._wakeBtns.forEach((b, i) => {
-                b.classList.toggle('selected', i === this._wakeSel);
+                if (i === this._wakeSel) {
+                    b.style.color = 'var(--text-primary-hover, #ffcc66)';
+                    b.style.borderColor = 'var(--border-gold-amber, #d4a050)';
+                    b.style.background = 'var(--bg-primary-hover-translucent-35, rgba(255,204,102,0.08))';
+                    b.style.textShadow = '0 0 10px var(--accent-amber-glow, #ffe9a8)';
+                } else {
+                    b.style.color = 'var(--text-info, #b89060)';
+                    b.style.borderColor = 'transparent';
+                    b.style.background = 'transparent';
+                    b.style.textShadow = 'none';
+                }
             });
         }
 

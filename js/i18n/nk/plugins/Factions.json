@@ -43,7 +43,7 @@
   "selectTitle": "SELECT FACTION",
   "selectHint": "SELECT A FACTION FROM DA LIST ON DA LEFT TA VIEW ITS IDEOLOGY, LEADERSHIP, AN' RELATIONSHIP ALIGNMENTS!",
   "pastGovernments": "PAST GOVERNMENTS:",
-  "reignSpan": "{from}–{to}",
+  "reignSpan": "{from}-{to}",
   "reignOpen": "SINCE {from}",
   "independent": "INDEPENDENT.",
   "diplomaticAgreements": "DIPLOMATIC AGREEMENTS",

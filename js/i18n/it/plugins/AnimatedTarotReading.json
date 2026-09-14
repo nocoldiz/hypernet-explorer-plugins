@@ -351,7 +351,7 @@
   "spreads": {
     "three": {
       "name": "LE TRE PARCHE",
-      "blurb": "Tre carte: passato, presente e futuro.",
+      "blurb": "Tre carte. La forma di una vita in un solo sguardo.",
       "slots": {
         "0": "PASSATO",
         "1": "PRESENTE",
@@ -360,7 +360,7 @@
     },
     "cross": {
       "name": "LA CROCE ELEMENTALE",
-      "blurb": "Cinque carte a croce.",
+      "blurb": "Cinque carte. Ciò che ti trattiene e ciò che ti tira.",
       "slots": {
         "0": "IL CUORE",
         "1": "CIÒ CHE STA DIETRO",
@@ -371,7 +371,7 @@
     },
     "horseshoe": {
       "name": "IL FERRO DI CAVALLO",
-      "blurb": "Sette carte disposte ad arco.",
+      "blurb": "Sette carte disposte in arco. La risposta lunga.",
       "slots": {
         "0": "IL PASSATO",
         "1": "IL PRESENTE",
@@ -384,7 +384,7 @@
     },
     "celtic": {
       "name": "LA CROCE CELTICA",
-      "blurb": "Dieci carte, la croce celtica completa.",
+      "blurb": "Dieci carte. L'opera completa. Non chiederla due volte.",
       "slots": {
         "0": "IL SIGNIFICATORE",
         "1": "L'INCROCIO",

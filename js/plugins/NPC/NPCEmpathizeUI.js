@@ -4662,13 +4662,16 @@
       delta   = Number(pool.delta) || -4;
     } else {
       const chance = _proposeChance(profile, npcName, actor, styleKey, priorAttraction, priorOpinion);
-      const res = await this._rollCheck(chance, {
-        actionName: `Proposal: ${nm(style)}`,
-        statName: 'PSI',
-        modifier: actor?.psiMod || 0
-      });
-      if (!res) return; // a die is already up: this press asks nothing
-      landed = res.success;
+      if (window.Dice3D) {
+        const res = await window.Dice3D.rollPercentage(chance, {
+          actionName: `Proposal: ${nm(style)}`,
+          statName: 'PSI',
+          modifier: actor?.psiMod || 0
+        });
+        landed = res.success;
+      } else {
+        landed = Math.random() * 100 < chance;
+      }
       npcLine = fill(_rand(landed ? bank.accept : bank.reject));
       delta   = landed ? 20 : -14;
     }
@@ -4760,14 +4763,15 @@
       const chance = guaranteed ? 100 : _romanceChance(profile, npcName, actor, def, priorOpinion, priorAttraction);
       if (guaranteed) {
         landed = true;
-      } else {
-        const res = await this._rollCheck(chance, {
+      } else if (window.Dice3D) {
+        const res = await window.Dice3D.rollPercentage(chance, {
           actionName: `Romance: ${def.label || id}`,
           statName: 'PSI',
           modifier: actor?.psiMod || 0
         });
-        if (!res) return; // a die is already up: this press asks nothing
         landed = res.success;
+      } else {
+        landed = Math.random() * 100 < chance;
       }
       npcLine = fill(_rand(landed ? def.responseGood : def.responseBad));
       delta   = landed

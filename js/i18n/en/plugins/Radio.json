@@ -42,7 +42,7 @@
   "webRadioFileHeader": "# Web radio stations. One per line:  Name | https://stream.url",
   "addStation": "ADD",
   "addStationTitle": "Add a web radio",
-  "addStationHint": "Paste the URL of a streaming station. It is saved in webradio.txt next to the game and gets its own frequency.",
+  "addStationHint": "Paste the address of a streaming station. It is kept in webradio.txt next to the game and lands on a frequency of its own.",
   "addStationName": "Station name (optional)",
   "addStationUrl": "https://stream.url",
   "addStationOk": "TUNE IN",

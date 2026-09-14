@@ -120,9 +120,9 @@
   // The rail's captions. One word apiece, so the row reads as a row of tabs
   // rather than a paragraph, and localised rather than written here: the id is
   // what NPCs.json is tagged with, the caption is what the tab shows.
-  const spriteTabLabel = (id, fallback) => {
+  const spriteTabLabel = (id) => {
     const key = 'CharCreate.spriteTab.' + id;
-    return T.has(key) ? T(key) : fallback;
+    return T.has(key) ? T(key) : id;
   };
 
   // Both halves of a catalogued body. A sheet may be spliced from a second
@@ -130,21 +130,22 @@
   // sheet is made of asks about the pair, not the primary alone.
   const archetypesOf = (e) => [e && e.Archetype, e && e.SecondaryArchetype].filter(Boolean);
 
+  // i18n-ignore-start: NPCs.json archetype, theme and folder ids; the captions come from CharCreate.spriteTab
   const SPRITE_TABS = [
-    { id: "all", label: spriteTabLabel("all", "All"), match: (e) => true },
+    { id: "all", label: spriteTabLabel("all"), match: (e) => true },
 
     // The Monsters folder itself, read off the disk rather than out of
     // NPCs.json: those sheets are enemy art and are not catalogued as NPCs, so
     // nothing else on this rail would ever offer them. It is the board a
     // creature opens on (see create()), and only a creature is shown it.
-    { id: "monsters", label: spriteTabLabel("monsters", "Monsters"), folder: "Monsters" },
+    { id: "monsters", label: spriteTabLabel("monsters"), folder: "Monsters" },
 
     // Special Entity Types (from NPCs.json flags)
-    { id: "aliens", label: spriteTabLabel("aliens", "Aliens"), match: (e) => !!(e.aliens || e.alien) },
-    { id: "animals", label: spriteTabLabel("animals", "Animals"), match: (e) => !!(e.animals || e.animal || archetypesOf(e).some((a) => ["Beast", "Bird", "Rabbit", "Horse"].includes(a))) },
-    { id: "creatures", label: spriteTabLabel("creatures", "Creatures"), match: (e) => !!(e.creatures || e.creature || archetypesOf(e).some((a) => ["Slime", "ChestMimic", "Mushroom", "Spherical", "Mutant", "Frog"].includes(a))) },
-    { id: "varlenian", label: spriteTabLabel("varlenian", "Varlenian"), match: (e) => !!e.varlenian },
-    { id: "undead", label: spriteTabLabel("undead", "Undead"), match: (e) => !!(e.zombie || archetypesOf(e).some((a) => ["Undead", "Ghost", "ConstructedUndead"].includes(a))) },
+    { id: "aliens", label: spriteTabLabel("aliens"), match: (e) => !!(e.aliens || e.alien) },
+    { id: "animals", label: spriteTabLabel("animals"), match: (e) => !!(e.animals || e.animal || archetypesOf(e).some((a) => ["Beast", "Bird", "Rabbit", "Horse"].includes(a))) },
+    { id: "creatures", label: spriteTabLabel("creatures"), match: (e) => !!(e.creatures || e.creature || archetypesOf(e).some((a) => ["Slime", "ChestMimic", "Mushroom", "Spherical", "Mutant", "Frog"].includes(a))) },
+    { id: "varlenian", label: spriteTabLabel("varlenian"), match: (e) => !!e.varlenian },
+    { id: "undead", label: spriteTabLabel("undead"), match: (e) => !!(e.zombie || archetypesOf(e).some((a) => ["Undead", "Ghost", "ConstructedUndead"].includes(a))) },
 
     // Archetypes (from NPCs.json Archetype)
     // The peoples are one archetype now: an elf, a goblin, a dwarf and an ogre
@@ -152,23 +153,24 @@
     // second argument every match is handed) instead of an archetype that no
     // longer exists. A secondary archetype counts as much as the primary: a
     // sheet spliced with a beast belongs on that beast's rail too.
-    { id: "humanoid", label: spriteTabLabel("humanoid", "Humanoid"), match: (e) => !e.Archetype || e.Archetype === "Humanoid" },
-    { id: "elven", label: spriteTabLabel("elven", "Elven"), match: (e, key) => /elven|elf/i.test(key || "") },
-    { id: "goblin", label: spriteTabLabel("goblin", "Goblin"), match: (e, key) => /goblin/i.test(key || "") },
-    { id: "dwarves", label: spriteTabLabel("dwarves", "Dwarves"), match: (e, key) => /dwarf|dwarven/i.test(key || "") || archetypesOf(e).includes("Gnome") },
-    { id: "insectoid", label: spriteTabLabel("insectoid", "Insectoid"), match: (e) => archetypesOf(e).some((a) => ["Insectoid", "Crustacean", "Frog"].includes(a)) },
-    { id: "demons", label: spriteTabLabel("demons", "Demons"), match: (e, key) => archetypesOf(e).includes("Demon") || /ogre/i.test(key || "") },
+    { id: "humanoid", label: spriteTabLabel("humanoid"), match: (e) => !e.Archetype || e.Archetype === "Humanoid" },
+    { id: "elven", label: spriteTabLabel("elven"), match: (e, key) => /elven|elf/i.test(key || "") },
+    { id: "goblin", label: spriteTabLabel("goblin"), match: (e, key) => /goblin/i.test(key || "") },
+    { id: "dwarves", label: spriteTabLabel("dwarves"), match: (e, key) => /dwarf|dwarven/i.test(key || "") || archetypesOf(e).includes("Gnome") },
+    { id: "insectoid", label: spriteTabLabel("insectoid"), match: (e) => archetypesOf(e).some((a) => ["Insectoid", "Crustacean", "Frog"].includes(a)) },
+    { id: "demons", label: spriteTabLabel("demons"), match: (e, key) => archetypesOf(e).includes("Demon") || /ogre/i.test(key || "") },
 
     // Humanoid themes (from the NPCs.json "theme" tag, one word apiece)
-    { id: "space", label: spriteTabLabel("space", "Space"), match: (e) => e.theme === "Space" },
-    { id: "arcane", label: spriteTabLabel("arcane", "Arcane"), match: (e) => e.theme === "Arcane" || e.magical === true },
-    { id: "military", label: spriteTabLabel("military", "Military"), match: (e) => e.theme === "Military" },
-    { id: "underworld", label: spriteTabLabel("underworld", "Underworld"), match: (e) => e.theme === "Underworld" },
-    { id: "urban", label: spriteTabLabel("urban", "Urban"), match: (e) => e.theme === "Urban" },
-    { id: "nobility", label: spriteTabLabel("nobility", "Nobility"), match: (e) => e.theme === "Nobility" },
-    { id: "wilderness", label: spriteTabLabel("wilderness", "Wilderness"), match: (e) => e.theme === "Wilderness" },
-    { id: "bards", label: spriteTabLabel("bards", "Bards"), match: (e) => e.theme === "Bards" }
+    { id: "space", label: spriteTabLabel("space"), match: (e) => e.theme === "Space" },
+    { id: "arcane", label: spriteTabLabel("arcane"), match: (e) => e.theme === "Arcane" || e.magical === true },
+    { id: "military", label: spriteTabLabel("military"), match: (e) => e.theme === "Military" },
+    { id: "underworld", label: spriteTabLabel("underworld"), match: (e) => e.theme === "Underworld" },
+    { id: "urban", label: spriteTabLabel("urban"), match: (e) => e.theme === "Urban" },
+    { id: "nobility", label: spriteTabLabel("nobility"), match: (e) => e.theme === "Nobility" },
+    { id: "wilderness", label: spriteTabLabel("wilderness"), match: (e) => e.theme === "Wilderness" },
+    { id: "bards", label: spriteTabLabel("bards"), match: (e) => e.theme === "Bards" }
   ];
+  // i18n-ignore-end
 
 
   // ---------------------------------------------------------------------------
@@ -177,7 +179,7 @@
   // the file name with its "$"/"!" markers stripped and its CamelCase split,
   // which is the name the creature board shows for the same art.
   // ---------------------------------------------------------------------------
-  const MONSTER_FOLDER = "Monsters";
+  const MONSTER_FOLDER = "Monsters"; // i18n-ignore: img/characters folder name
   let monsterFolderCache = null;
 
   const monsterFolderOptions = () => {

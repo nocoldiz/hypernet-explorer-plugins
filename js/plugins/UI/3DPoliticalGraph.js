@@ -687,7 +687,7 @@
           ctx.stroke();
 
           // Larger Node Label Text
-          ctx.font = isSelected ? 'bold 15px Georgia, serif' : 'bold 13px sans-serif';
+          ctx.font = isSelected ? 'bold 15px Georgia, serif' : 'bold 13px sans-serif'; // i18n-ignore: canvas font spec
           ctx.fillStyle = '#ffffff';
           ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
           ctx.shadowBlur = 4;

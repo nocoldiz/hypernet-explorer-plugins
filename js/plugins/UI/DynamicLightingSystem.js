@@ -1691,7 +1691,7 @@
             const mw = typeof map.width === 'function' ? map.width() : 0;
             const mh = typeof map.height === 'function' ? map.height() : 0;
             for (const feature of CAVE_LIGHT_FEATURES) {
-                const isTorch = feature === 'Torch';
+                const isTorch = feature === 'Torch'; // i18n-ignore: Features.json feature id
                 const ids = featureTileIdsFor(tilesetId, feature);
                 if (!ids || !ids.size) continue;
                 for (let x = 0; x < mw; x++) {

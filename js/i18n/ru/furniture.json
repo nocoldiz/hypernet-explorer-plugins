@@ -434,7 +434,7 @@
     },
     "game_console_ps1": {
       "name": "Battlestation 1",
-      "description": "Приставка Sony PlayStation (эпохи 2001 года)."
+      "description": "Приставка Sonic StationPlay (эпохи 2001 года)."
     },
     "game_console_n64": {
       "name": "Tintendon 666",
@@ -442,7 +442,7 @@
     },
     "dreamcast_console": {
       "name": "Приставка Mastercast",
-      "description": "Игровая приставка Sega Dreamcast."
+      "description": "Игровая приставка Saga Dreamchaser."
     },
     "crt_television": {
       "name": "ЭЛТ-телевизор",

@@ -851,17 +851,10 @@ var WeaponSystemProcedural = {
     return model;
   },
 
-  /**
-   * The colour pass: the frame dark and everything else the one gold, which is
-   * the element's own colour. A physical gun has no element colour of its own,
-   * so it is painted in the gold the frame was made in rather than left in the
-   * wood and bare steel of its weapon type: black and gold is what the weapon
-   * is, not what one setting of it looks like.
-   */
+  /** The colour pass: the frame dark, the accents and the glow the element. */
   applyVectorFormAccent(model) {
     const VG = window.VectorGun;
-    const color = (VG && VG.elementColor ? VG.elementColor() : null)
-      || (this.VECTOR_GOLD || 0xC9A227);
+    const color = VG && VG.elementColor ? VG.elementColor() : null;
     if (!model || !color || !model.traverse) return model;
     const seen = new Set();
     model.traverse((node) => {
@@ -957,72 +950,22 @@ var WeaponSystemProcedural = {
   // tags tickModelParts animates), a pair's other half, and anything so far out
   // that it must be there on purpose.
 
-  // A part within this share of the model's diagonal counts as attached: the
-  // primitives abut rather than interpenetrate.
-  WELD_TOUCH: 0.012,
   // The furthest a part is ever pulled in one pass. Beyond it, it is a design.
   WELD_MAX: 0.16,
   // Passes, so a part welded to a part welded to the body still comes home.
   WELD_PASSES: 4,
-  WELD_SAMPLES: 24,
   MOVING_PART_KEYS: ['spin', 'orbit', 'bob', 'sway', 'pulse', 'dynamic'],
 
-  /** What welding needs of one mesh: its oriented box and a few of its points. */
-  _weldPart(mesh) {
-    if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
-    const pos = mesh.geometry.attributes.position;
-    const step = Math.max(1, Math.floor(pos.count / this.WELD_SAMPLES));
-    const pts = [];
+  /** The world box a set of parts stands in. */
+  _partsBox(parts) {
+    const b = new THREE.Box3();
     const v = new THREE.Vector3();
-    for (let i = 0; i < pos.count; i += step) {
-      pts.push(v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld).clone());
+    for (const p of parts) {
+      const r = Math.hypot(p.e[0], p.e[1], p.e[2]);
+      b.expandByPoint(v.copy(p.c).addScalar(r));
+      b.expandByPoint(v.copy(p.c).addScalar(-r));
     }
-    const world = new THREE.Box3().setFromObject(mesh);
-    const size = world.getSize(new THREE.Vector3());
-    let moving = false;
-    for (let p = mesh; p; p = p.parent) {
-      const ud = p.userData;
-      if (ud && this.MOVING_PART_KEYS.some(k => ud[k] !== undefined)) { moving = true; break; }
-    }
-    return {
-      mesh, world, pts, moving,
-      local: mesh.geometry.boundingBox,
-      inv: new THREE.Matrix4().copy(mesh.matrixWorld).invert(),
-      volume: Math.max(size.x, 1e-4) * Math.max(size.y, 1e-4) * Math.max(size.z, 1e-4)
-    };
-  },
-
-  /** Distance from a world point to a part's oriented box (0 inside it). */
-  _weldPointGap(part, p) {
-    const q = p.clone().applyMatrix4(part.inv);
-    const b = part.local;
-    return Math.hypot(
-      Math.max(b.min.x - q.x, 0, q.x - b.max.x),
-      Math.max(b.min.y - q.y, 0, q.y - b.max.y),
-      Math.max(b.min.z - q.z, 0, q.z - b.max.z));
-  },
-
-  /** Per-axis separation of two world boxes (0 where they already overlap). */
-  _weldAxisGaps(a, b) {
-    return [
-      Math.max(0, a.min.x - b.max.x, b.min.x - a.max.x),
-      Math.max(0, a.min.y - b.max.y, b.min.y - a.max.y),
-      Math.max(0, a.min.z - b.max.z, b.min.z - a.max.z)
-    ];
-  },
-
-  /**
-   * How far apart two parts really are. Axis-aligned boxes alone call a rotated
-   * grip "touching" a barrel it is nowhere near, so the boxes only decide
-   * whether it is worth measuring surface to surface.
-   */
-  _weldGap(a, b) {
-    const axis = this._weldAxisGaps(a.world, b.world);
-    const rough = Math.hypot(axis[0], axis[1], axis[2]);
-    let best = Infinity;
-    for (const p of a.pts) { const d = this._weldPointGap(b, p); if (d < best) best = d; }
-    for (const p of b.pts) { const d = this._weldPointGap(a, p); if (d < best) best = d; }
-    return Math.max(best, rough);
+    return b;
   },
 
   weldLooseParts(model) {
@@ -1035,65 +978,31 @@ var WeaponSystemProcedural = {
 
   /** One welding pass. Returns true when something moved. */
   _weldPass(model) {
-    model.updateMatrixWorld(true);
-    const parts = [];
-    model.traverse((o) => {
-      if (o.isMesh && o.geometry && o.geometry.attributes && o.geometry.attributes.position) {
-        parts.push(this._weldPart(o));
-      }
-    });
+    const parts = this._seamParts(model);
     if (parts.length < 3) return false;
+    const comps = this._seamComponents(parts);
+    if (comps.length < 2) return false;
 
-    const whole = new THREE.Box3();
-    for (const p of parts) whole.union(p.world);
-    const diag = whole.getSize(new THREE.Vector3()).length();
+    const diag = this._partsBox(parts).getSize(new THREE.Vector3()).length();
     if (!(diag > 0)) return false;
-    const eps = diag * this.WELD_TOUCH;
-
-    // Group the parts that touch.
-    const owner = parts.map((_, i) => i);
-    const find = (i) => { while (owner[i] !== i) { owner[i] = owner[owner[i]]; i = owner[i]; } return i; };
-    for (let i = 0; i < parts.length; i++) {
-      for (let j = i + 1; j < parts.length; j++) {
-        if (find(i) === find(j)) continue;
-        const axis = this._weldAxisGaps(parts[i].world, parts[j].world);
-        if (Math.hypot(axis[0], axis[1], axis[2]) > eps) continue;   // certainly apart
-        if (this._weldGap(parts[i], parts[j]) <= eps) owner[find(i)] = find(j);
-      }
-    }
-    const groups = new Map();
-    parts.forEach((p, i) => {
-      const r = find(i);
-      if (!groups.has(r)) groups.set(r, []);
-      groups.get(r).push(p);
-    });
-    if (groups.size < 2) return false;
 
     // The weapon is the component carrying the most substance.
-    const comps = [...groups.values()]
-      .map(members => ({ members, volume: members.reduce((s, m) => s + m.volume, 0) }))
-      .sort((a, b) => b.volume - a.volume);
     const body = comps[0];
-    const boxOf = (members) => {
-      const b = new THREE.Box3();
-      for (const m of members) b.union(m.world);
-      return b;
-    };
-    const bodyCentre = boxOf(body.members).getCenter(new THREE.Vector3());
+    const bodyCentre = this._partsBox(body).getCenter(new THREE.Vector3());
 
     let moved = false;
     for (const comp of comps.slice(1)) {
-      if (comp.members.every(m => m.moving)) continue;
+      if (comp.every(m => m.moving)) continue;
       // A pair of fists, claws or bracers is two halves, not a loose part.
-      const centre = boxOf(comp.members).getCenter(new THREE.Vector3());
+      const centre = this._partsBox(comp).getCenter(new THREE.Vector3());
       if (Math.abs(centre.x) > diag * 0.02 &&
           Math.abs(centre.x + bodyCentre.x) < diag * 0.06 &&
           Math.abs(centre.y - bodyCentre.y) < diag * 0.06 &&
           Math.abs(centre.z - bodyCentre.z) < diag * 0.06) continue;
 
-      const move = this._weldOffset(comp.members, body.members, diag);
+      const move = this._weldOffset(comp, body, diag);
       if (!move) continue;
-      for (const m of comp.members) this._translateWorld(m.mesh, move);
+      for (const m of comp) this._translateWorld(m.mesh, move.clone());
       moved = true;
     }
     if (moved) model.updateMatrixWorld(true);
@@ -1101,94 +1010,270 @@ var WeaponSystemProcedural = {
   },
 
   /**
-   * The smallest translation that puts a component back in contact with the
-   * body. A part that already lines up with something on two axes only has to
-   * close the third, which is what nearly every one of these is: a head at the
-   * wrong height, a grip at the wrong depth. Anything else is carried straight
-   * to its nearest neighbour.
+   * The smallest translation that buries a loose component in the body: the
+   * shortest separating axis between any of its parts and any of the body's,
+   * plus the bite that turns contact into a join.
    */
   _weldOffset(members, body, diag) {
     // How far this piece may be carried. Never more than WELD_MAX of the
     // weapon, and never much further than the piece is big: a whole head that
     // sits an inch too high is an error, a bead carried across the model to the
     // far end is a design being demolished.
-    const own = new THREE.Box3();
-    for (const m of members) own.union(m.world);
-    const limit = Math.min(
-      diag * this.WELD_MAX,
-      Math.max(diag * 0.04, own.getSize(new THREE.Vector3()).length() * 1.2));
-    let best = null;
-    let bestCost = Infinity;
-    let nearest = null;
-    let nearestCost = Infinity;
-
+    const own = this._partsBox(members).getSize(new THREE.Vector3()).length();
+    const limit = Math.min(diag * this.WELD_MAX, Math.max(diag * 0.04, own * 1.2));
+    const scratch = { d: new THREE.Vector3(), axis: new THREE.Vector3(), L: new THREE.Vector3() };
+    let gap = Infinity;
+    let dir = null;
     for (const m of members) {
       for (const b of body) {
-        const a = m.world, o = b.world;
-        const gaps = this._weldAxisGaps(a, o);
-        const dir = [
-          a.min.x > o.max.x ? -1 : 1,
-          a.min.y > o.max.y ? -1 : 1,
-          a.min.z > o.max.z ? -1 : 1
-        ];
-        // Straight move: close the one axis that keeps them apart.
-        for (let k = 0; k < 3; k++) {
-          if (gaps[k] <= 0) continue;
-          if (gaps[(k + 1) % 3] > 0 || gaps[(k + 2) % 3] > 0) continue;
-          if (gaps[k] < bestCost) {
-            bestCost = gaps[k];
-            best = new THREE.Vector3(
-              k === 0 ? dir[0] * gaps[0] : 0,
-              k === 1 ? dir[1] * gaps[1] : 0,
-              k === 2 ? dir[2] * gaps[2] : 0);
-          }
-        }
-        const diagCost = Math.hypot(gaps[0], gaps[1], gaps[2]);
-        if (diagCost > 0 && diagCost < nearestCost) {
-          nearestCost = diagCost;
-          nearest = new THREE.Vector3(dir[0] * gaps[0], dir[1] * gaps[1], dir[2] * gaps[2]);
-        }
+        const r = this._obbSeparation(m, b, scratch);
+        if (r.gap < gap) { gap = r.gap; dir = r.dir.clone(); }
       }
     }
-    let move = best && bestCost <= limit ? best
-      : (nearest && nearestCost <= limit ? nearest : null);
-
-    // Boxes that overlap are not surfaces that touch: a rotated part's box
-    // swallows the space around it, so a fork can sit inside the box of the
-    // handle it is nowhere near. When that is what happened, carry the part
-    // along the line between the two nearest points instead.
-    if (!move) {
-      let gap = Infinity;
-      let from = null;
-      let to = null;
-      for (const m of members) {
-        for (const b of body) {
-          for (const p of m.pts) {
-            const d = this._weldPointGap(b, p);
-            if (d < gap) { gap = d; from = p; to = b; }
-          }
-        }
-      }
-      if (!from || gap > limit || gap <= diag * this.WELD_TOUCH) return null;
-      // The nearest point of the body's box, back in world space.
-      const q = from.clone().applyMatrix4(to.inv).clamp(to.local.min, to.local.max)
-        .applyMatrix4(to.mesh.matrixWorld);
-      move = q.sub(from);
-      if (move.lengthSq() === 0) return null;
-    }
-    if (!move) return null;
-    // Overlap very slightly so the join reads as one solid thing.
-    return move.multiplyScalar(1 + diag * 0.004 / (move.length() || 1));
+    if (!dir || !(gap > 0) || gap > limit) return null;
+    // Overlap slightly so the join reads as one solid thing.
+    return dir.multiplyScalar(gap + diag * this.SEAM_BITE);
   },
 
-  /** Moves a mesh by a world-space offset, whatever it is parented to. */
+  /**
+   * Moves a mesh by a world-space offset, whatever it is parented to.
+   *
+   * The offset is a direction and a length in world units, and a position is
+   * written in the parent's units, so the whole inverse parent transform has
+   * to be applied and not only its rotation: a part hung under a group scaled
+   * to a tenth was being moved ten times as far as it was asked to go, which
+   * is how a nudge could throw a slingshot's fork clear of the model.
+   */
   _translateWorld(mesh, offset) {
     const parent = mesh.parent;
     if (!parent) { mesh.position.add(offset); return; }
-    const local = offset.clone().applyMatrix4(
-      new THREE.Matrix4().extractRotation(parent.matrixWorld).transpose());
-    mesh.position.add(local);
+    const inv = new THREE.Matrix4().copy(parent.matrixWorld).invert();
+    const origin = new THREE.Vector3().applyMatrix4(inv);
+    const moved = offset.clone().applyMatrix4(inv).sub(origin);
+    mesh.position.add(moved);
     mesh.updateMatrixWorld(true);
+  },
+
+  // ============================================================
+  // Seams
+  // ============================================================
+  // Welding answers a coarse question: is any piece of this weapon floating on
+  // its own? Underneath it sits a finer one. A model is a few dozen primitives
+  // written at rounded coordinates, so a ring sits exactly on the surface of
+  // the shaft it rings, a guard's arm ends exactly where the blade begins, a
+  // cone's base is exactly the top of the cylinder it caps. Two surfaces that
+  // meet exactly do not read as one solid object: the shading breaks along the
+  // join, and at the sub-pixel jitter of a weapon being swung, daylight shows
+  // through it. Parts have to overlap, not abut. This pass gives every part
+  // that only reaches its neighbour a small bite into it.
+
+  // The furthest a part is carried to close a seam, as a share of the model's
+  // diagonal. Beyond it the space is a design, not a rounding error.
+  SEAM_MAX: 0.03,
+  // How deep a closed seam sits inside what it joins, same units.
+  SEAM_BITE: 0.004,
+  SEAM_PASSES: 2,
+
+  /** Every mesh a rope owns: those are posed each frame, never nudged. */
+  _ropeMeshes(model) {
+    const set = new Set();
+    const add = (rope) => {
+      if (!rope) return;
+      for (const m of rope.segmentMeshes || []) set.add(m);
+      for (const m of rope.jointMeshes || []) set.add(m);
+      if (rope.headMeshGroup) rope.headMeshGroup.traverse(o => set.add(o));
+    };
+    const ud = model.userData || {};
+    add(ud._verletRope);
+    for (const r of ud._verletRopes || []) add(r);
+    return set;
+  },
+
+  /**
+   * Every mesh of a model as an oriented box: centre, unit axes and extents,
+   * in world space. This is what seams are measured between.
+   */
+  _seamParts(model) {
+    if (!model || typeof THREE === 'undefined') return [];
+    model.updateMatrixWorld(true);
+    const ropes = this._ropeMeshes(model);
+    const parts = [];
+    model.traverse((o) => {
+      if (!o.isMesh || !o.geometry || !o.geometry.attributes || !o.geometry.attributes.position) return;
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+      const bb = o.geometry.boundingBox;
+      if (!bb || !isFinite(bb.min.x) || !isFinite(bb.max.x)) return;
+      let moving = ropes.has(o);
+      for (let p = o; p && !moving; p = p.parent) {
+        const pd = p.userData;
+        if (pd && this.MOVING_PART_KEYS.some(k => pd[k] !== undefined)) moving = true;
+      }
+      const pos = new THREE.Vector3();
+      const quat = new THREE.Quaternion();
+      const scl = new THREE.Vector3();
+      o.matrixWorld.decompose(pos, quat, scl);
+      // The box centre is a point of the mesh, so it goes through the whole
+      // matrix; the extents are half sizes, so they only take the scale.
+      const centre = bb.getCenter(new THREE.Vector3()).applyMatrix4(o.matrixWorld);
+      const half = bb.getSize(new THREE.Vector3()).multiplyScalar(0.5);
+      const e = [
+        Math.max(Math.abs(half.x * scl.x), 1e-6),
+        Math.max(Math.abs(half.y * scl.y), 1e-6),
+        Math.max(Math.abs(half.z * scl.z), 1e-6)
+      ];
+      const u = [
+        new THREE.Vector3(1, 0, 0).applyQuaternion(quat),
+        new THREE.Vector3(0, 1, 0).applyQuaternion(quat),
+        new THREE.Vector3(0, 0, 1).applyQuaternion(quat)
+      ];
+      parts.push({ mesh: o, c: centre, u, e, moving, volume: e[0] * e[1] * e[2] });
+    });
+    return parts;
+  },
+
+  /**
+   * Separating axis theorem over two oriented boxes: the largest gap found on
+   * any of the 15 candidate axes, with the direction that closes it.
+   *
+   * A positive result is a real gap, and moving `a` that far along the
+   * returned direction is guaranteed to put the two boxes in contact, because
+   * the axis that separated them no longer does. Zero or less means the boxes
+   * already interpenetrate, which is what "joined" means here. Axis-aligned
+   * boxes cannot answer this: one swallows the space around a rotated part and
+   * calls a grip inside a barrel it is nowhere near.
+   */
+  _obbSeparation(a, b, out) {
+    const d = (out && out.d) || new THREE.Vector3();
+    d.subVectors(a.c, b.c);
+    const axis = (out && out.axis) || new THREE.Vector3();
+    const L = (out && out.L) || new THREE.Vector3();
+    let best = -Infinity;
+    const test = (lx, ly, lz) => {
+      const len = Math.hypot(lx, ly, lz);
+      if (len < 1e-6) return;                       // parallel axes: degenerate
+      L.set(lx / len, ly / len, lz / len);
+      let ra = 0, rb = 0;
+      for (let i = 0; i < 3; i++) {
+        ra += a.e[i] * Math.abs(a.u[i].dot(L));
+        rb += b.e[i] * Math.abs(b.u[i].dot(L));
+      }
+      const t = d.dot(L);
+      const sep = Math.abs(t) - ra - rb;
+      if (sep > best) {
+        best = sep;
+        // Toward b: the sign that shrinks the distance between the centres.
+        axis.copy(L).multiplyScalar(t >= 0 ? -1 : 1);
+      }
+    };
+    for (let i = 0; i < 3; i++) test(a.u[i].x, a.u[i].y, a.u[i].z);
+    for (let i = 0; i < 3; i++) test(b.u[i].x, b.u[i].y, b.u[i].z);
+    if (best <= 0) {
+      // Only when the faces alone have not split them: the nine edge-pair
+      // axes are the expensive half and decide nothing once a gap is found.
+      for (let i = 0; i < 3 && best <= 0; i++) {
+        for (let j = 0; j < 3 && best <= 0; j++) {
+          const x = a.u[i], y = b.u[j];
+          test(x.y * y.z - x.z * y.y, x.z * y.x - x.x * y.z, x.x * y.y - x.y * y.x);
+        }
+      }
+    }
+    return { gap: best, dir: axis };
+  },
+
+  /**
+   * The parts of a model that touch nothing: each with the shortest move that
+   * buries it in its nearest neighbour. A part already inside something is not
+   * listed, and neither is one whose nearest neighbour is further off than
+   * SEAM_MAX, which is a piece held apart on purpose.
+   */
+  _openSeams(parts) {
+    const open = [];
+    if (!parts || parts.length < 2) return open;
+    const whole = new THREE.Box3();
+    const v = new THREE.Vector3();
+    for (const p of parts) {
+      const r = Math.hypot(p.e[0], p.e[1], p.e[2]);
+      whole.expandByPoint(v.copy(p.c).addScalar(r));
+      whole.expandByPoint(v.copy(p.c).addScalar(-r));
+    }
+    const diag = whole.getSize(new THREE.Vector3()).length();
+    if (!(diag > 0)) return open;
+    const scratch = { d: new THREE.Vector3(), axis: new THREE.Vector3(), L: new THREE.Vector3() };
+    for (let i = 0; i < parts.length; i++) {
+      const a = parts[i];
+      let gap = Infinity;
+      let dir = null;
+      for (let j = 0; j < parts.length; j++) {
+        if (i === j) continue;
+        const r = this._obbSeparation(a, parts[j], scratch);
+        if (r.gap < gap) { gap = r.gap; dir = r.dir.clone(); }
+        if (gap <= 0) break;                        // joined; nothing to close
+      }
+      if (!(gap > 0) || !dir) continue;
+      open.push({ index: i, part: a, gap, rel: gap / diag, dir, diag });
+    }
+    return open;
+  },
+
+  /**
+   * The parts of a model grouped into the pieces they actually form: two parts
+   * are in the same piece when their oriented boxes interpenetrate.
+   *
+   * This is the only answer in the plugin to "does this weapon hold together",
+   * and both the part audit and the seam audit ask it here rather than each
+   * measuring contact their own way. Sampled vertices cannot answer it: a box
+   * crossing another box like a T has every one of its corners outside the
+   * other, so a sampled measure calls a solid join a gap.
+   *
+   * @returns {Array<Array<object>>} the pieces, biggest by volume first.
+   */
+  _seamComponents(parts) {
+    const owner = parts.map((_, i) => i);
+    const find = (i) => { while (owner[i] !== i) { owner[i] = owner[owner[i]]; i = owner[i]; } return i; };
+    const scratch = { d: new THREE.Vector3(), axis: new THREE.Vector3(), L: new THREE.Vector3() };
+    for (let i = 0; i < parts.length; i++) {
+      for (let j = i + 1; j < parts.length; j++) {
+        if (find(i) === find(j)) continue;
+        if (this._obbSeparation(parts[i], parts[j], scratch).gap <= 0) owner[find(i)] = find(j);
+      }
+    }
+    const groups = new Map();
+    parts.forEach((part, i) => {
+      const r = find(i);
+      if (!groups.has(r)) groups.set(r, []);
+      groups.get(r).push(part);
+    });
+    return [...groups.values()].sort(
+      (a, b) => b.reduce((s, m) => s + m.volume, 0) - a.reduce((s, m) => s + m.volume, 0));
+  },
+
+  /**
+   * Closes every seam a model can be closed on: each part that only reaches
+   * its neighbour is pushed a little way into it, so the two read as one solid
+   * piece from any angle and under any jitter.
+   */
+  closeSeams(model) {
+    if (!model || typeof THREE === 'undefined') return model;
+    for (let pass = 0; pass < this.SEAM_PASSES; pass++) {
+      const parts = this._seamParts(model);
+      const open = this._openSeams(parts);
+      let moved = false;
+      for (const s of open) {
+        if (s.part.moving) continue;
+        if (s.rel > this.SEAM_MAX) continue;        // held apart on purpose
+        // Never drag a part much further than it is big: a bead may be nudged
+        // onto the cord it hangs on, never carried down the model to the far
+        // end of it. The measure is the part's own diagonal, not its thinnest
+        // side, or a plate would be judged by its thickness and never moved.
+        const own = Math.hypot(s.part.e[0], s.part.e[1], s.part.e[2]) * 2;
+        if (s.gap > Math.max(own * 0.75, s.diag * 0.006)) continue;
+        this._translateWorld(s.part.mesh, s.dir.multiplyScalar(s.gap + s.diag * this.SEAM_BITE));
+        moved = true;
+      }
+      if (!moved) break;
+      model.updateMatrixWorld(true);
+    }
+    return model;
   },
 
   finish(model, weapon) {
@@ -1205,6 +1290,9 @@ var WeaponSystemProcedural = {
     // Pull anything that came out floating back onto the weapon, before the
     // gun parts are tagged (prepareGun measures the muzzle off the geometry).
     this.weldLooseParts(model);
+    // Then the fine pass: a part that only reaches what it is fixed to is
+    // given a bite into it, so no join shows daylight while the weapon moves.
+    this.closeSeams(model);
     // Weapon type 9 is the firearm rack, but a thing that fires is not always
     // filed as one: the crowd-control devices (663-665) declare no weapon type
     // at all. A model that tagged its own trigger and muzzle is asking to be
@@ -5412,7 +5500,27 @@ var WeaponSystemProcedural = {
    * @param {number} numPoints - Number of points (segments + 1)
    * @param {number} segmentLength - Rest length between consecutive points
    * @param {THREE.Vector3} anchorPos - World-space anchor (handle tip)
-   * @param {object} opts - { gravity, damping, iterations, stiffness }
+   * @param {object} opts - { gravity, damping, iterations, stiffness, endMass,
+   *   tipMass, bend, drag, tipDamping, alternate }
+   *
+   * The last five are what turns a chain into a lash and are all off by
+   * default, so a flail or a nunchaku behaves exactly as it did:
+   *  - tipMass   the mass at the far end, as a share of the mass at the hand.
+   *              A rope that thins towards the tip carries less and less to
+   *              move, so the same pull moves it further and further: this is
+   *              the whole of why a whip cracks, and here it is the one number
+   *              that makes the constraint solver share a correction by weight
+   *              instead of splitting it down the middle.
+   *  - bend      how much the rope resists a kink, strongest at the hand and
+   *              gone by the tip: a bullwhip has a body you can point with and
+   *              an end that goes where it likes.
+   *  - drag      air, which is what has the lash trail behind the hand rather
+   *              than swing like a rope with a weight on it.
+   *  - tipDamping  the damping at the far end, when the tip should keep
+   *              travelling after the hand has stopped.
+   *  - alternate solve the constraints end to end and back again on alternate
+   *              iterations, so a movement of the hand travels down the lash
+   *              instead of piling up against the anchor.
    * @returns {object} rope instance
    */
   createVerletRope(numPoints, segmentLength, anchorPos, opts = {}) {
@@ -5420,6 +5528,7 @@ var WeaponSystemProcedural = {
     const damping = opts.damping !== undefined ? opts.damping : 0.97;
     const iterations = opts.iterations || 6;
     const stiffness = opts.stiffness !== undefined ? opts.stiffness : 1.0;
+    const tipMass = opts.tipMass !== undefined ? opts.tipMass : 1.0;
 
     const points = [];
     for (let i = 0; i < numPoints; i++) {
@@ -5428,10 +5537,14 @@ var WeaponSystemProcedural = {
         anchorPos.y + i * segmentLength,
         anchorPos.z
       );
+      const t = numPoints > 1 ? i / (numPoints - 1) : 0;
       points.push({
         pos: pos.clone(),
         prev: pos.clone(),
-        pinned: i === 0  // first point is pinned to the anchor
+        pinned: i === 0,  // first point is pinned to the anchor
+        // The taper, as a weight. Squared, because a lash thins in both of its
+        // cross-section's dimensions at once.
+        mass: 1 + (tipMass - 1) * t * t
       });
     }
 
@@ -5450,8 +5563,15 @@ var WeaponSystemProcedural = {
       anchorPos: anchorPos.clone(),
       // Meshes array, filled by createWhipModel / createFlailModel
       segmentMeshes: [],
+      // The bead drawn over each join, when the rope carries them.
+      jointMeshes: [],
       // Optional end-mass (heavier tail for flails)
       endMass: opts.endMass || 1.0,
+      tipMass,
+      bend: opts.bend || 0,
+      drag: opts.drag || 0,
+      tipDamping: opts.tipDamping,
+      alternate: !!opts.alternate,
       headMeshGroup: null
     };
   },
@@ -5561,9 +5681,12 @@ var WeaponSystemProcedural = {
   tickRope(rope, dt, anchorWorld, worldScale) {
     dt = Math.min(dt, 0.033); // cap at ~30fps equivalent to prevent explosion
     const pts = rope.points;
+    const last = pts.length - 1;
     const scale = (worldScale && worldScale > 0) ? worldScale : 1;
     const g = rope.gravity * scale;
     const damp = rope.damping;
+    const tipDamp = rope.tipDamping === undefined ? damp : rope.tipDamping;
+    const drag = rope.drag;
     const s = this._ensureRopeScratch();
 
     // Update anchor
@@ -5587,11 +5710,18 @@ var WeaponSystemProcedural = {
     for (let i = 0; i < pts.length; i++) {
       if (pts[i].pinned) continue;
       const p = pts[i];
+      const t = last > 0 ? i / last : 0;
       const vel = s.vel.subVectors(p.pos, p.prev);
-      vel.multiplyScalar(damp);
+      vel.multiplyScalar(damp + (tipDamp - damp) * t);
+      // Air, which costs a fast part of the lash more than a slow one and is
+      // what has it stream out behind the hand instead of swinging.
+      if (drag) {
+        const speed = vel.length() / scale;
+        if (speed > 0) vel.multiplyScalar(1 / (1 + drag * speed));
+      }
 
       // Heavier end mass pulls down harder
-      const massFactor = (i === pts.length - 1) ? rope.endMass : 1.0;
+      const massFactor = (i === last) ? rope.endMass : 1.0;
 
       p.prev.copy(p.pos);
       p.pos.add(vel);
@@ -5599,28 +5729,49 @@ var WeaponSystemProcedural = {
     }
 
     // Constraint solving iterations
+    const n = rope.constraints.length;
     for (let iter = 0; iter < rope.iterations; iter++) {
-      for (let c = 0; c < rope.constraints.length; c++) {
-        const con = rope.constraints[c];
+      // A lash is solved hand to tip and back again on alternate passes, so a
+      // movement of the hand travels the length of it within the frame it
+      // happens in. One direction only and the correction piles up against the
+      // anchor, which is a rope that sags rather than one that is thrown.
+      const back = rope.alternate && (iter & 1);
+      for (let k = 0; k < n; k++) {
+        const con = rope.constraints[back ? n - 1 - k : k];
         const a = pts[con.a];
         const b = pts[con.b];
         const diff = s.diff.subVectors(b.pos, a.pos);
         const dist = diff.length();
         if (dist < 0.0001) continue;
         const error = (dist - con.length * scale) / dist;
-        const correction = diff.multiplyScalar(error * 0.5 * rope.stiffness);
+        // Shared by weight: the light end of a tapering lash takes nearly all
+        // of the correction, which is the whole of why the tip outruns the
+        // hand. Equal masses give the even split this always used to make.
+        const wa = a.pinned ? 0 : 1 / a.mass;
+        const wb = b.pinned ? 0 : 1 / b.mass;
+        const sum = wa + wb;
+        if (sum <= 0) continue;
+        const correction = diff.multiplyScalar(error * rope.stiffness / sum);
+        if (!a.pinned) a.pos.addScaledVector(correction, wa);
+        if (!b.pinned) b.pos.addScaledVector(correction, -wb);
+      }
 
-        if (!a.pinned) a.pos.add(correction);
-        if (!b.pinned) b.pos.sub(correction);
+      // The lash's own body: a whip is stiff where it leaves the hand and
+      // limp at the cracker, so each point is drawn towards the straight line
+      // between its neighbours by an amount that runs out along the length.
+      if (rope.bend > 0) {
+        for (let i = 1; i < last; i++) {
+          const p = pts[i];
+          if (p.pinned) continue;
+          const k = rope.bend * (1 - i / last);
+          if (k <= 0) continue;
+          const mid = s.mid.addVectors(pts[i - 1].pos, pts[i + 1].pos).multiplyScalar(0.5);
+          p.pos.lerp(mid, k);
+        }
       }
     }
   },
 
-  /**
-   * Updates the visual meshes of a rope to match the physics state.
-   * @param {object} rope - rope instance
-   * @param {THREE.Matrix4} [invWorldMatrix] - inverse of model's world matrix for local-space conversion
-   */
   updateRopeMeshes(rope, invWorldMatrix) {
     const pts = rope.points;
     const s = this._ensureRopeScratch();
@@ -5645,10 +5796,44 @@ var WeaponSystemProcedural = {
       const dir = s.dir.subVectors(b, a);
       const len = dir.length();
       if (len > 0.0001) {
+        // A segment covers the span between two points, and that span is not
+        // the rest length: a rope under a heavy head is pulled taut and its
+        // links stand further apart than they were built, and a mesh cut to the
+        // rest length then stops short of the next one. Every link is drawn
+        // along the span it is actually covering, and a quarter longer again,
+        // so it reaches into the one on either side of it whatever the rope is
+        // doing. It is also the shape a chain link really is, pulled out along
+        // its own axis rather than a ring standing on its own.
+        //
+        // The number a builder has to be asked for is the span its mesh was cut
+        // for; where it has not said, it is worked out once from how long the
+        // mesh is and kept.
+        if (mesh.userData._stretch === undefined) {
+          if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
+          const bb = mesh.geometry.boundingBox;
+          const own = bb ? bb.max.y - bb.min.y : 0;
+          mesh.userData._stretch = own > 1e-6 ? own / 1.28 : 0;
+        }
+        if (mesh.userData._stretch) mesh.scale.y = len / mesh.userData._stretch;
         dir.normalize();
         const quat = s.quat.setFromUnitVectors(s.up, dir);
         mesh.quaternion.copy(quat);
+        // The turn of the plait this segment stands at. The solver writes the
+        // whole orientation every frame, so a roll a builder wants kept has to
+        // be re-applied here, about the segment's own axis, after it.
+        if (mesh.userData._roll) mesh.rotateY(mesh.userData._roll);
       }
+    }
+
+    // The beads over the joins. Segments are straight and a lash is not, so
+    // every bend opens a wedge between one segment and the next: a bead of the
+    // lash's own thickness sitting on the join is what closes it.
+    for (let i = 0; i < rope.jointMeshes.length; i++) {
+      const bead = rope.jointMeshes[i];
+      if (!bead || i >= pts.length) continue;
+      const p = s.a.copy(pts[i].pos);
+      if (invWorldMatrix) p.applyMatrix4(invWorldMatrix);
+      bead.position.copy(p);
     }
 
     // Update head mesh group position (for flail ball, whip tip, etc.)
@@ -5658,6 +5843,15 @@ var WeaponSystemProcedural = {
         lastPt.applyMatrix4(invWorldMatrix);
       }
       rope.headMeshGroup.position.copy(lastPt);
+      // The tip points the way the last stretch of the lash is running, so
+      // whatever is tied to it (a cracker, a dart, a ball) follows the lash
+      // instead of standing upright whatever the rope is doing.
+      const before = s.b.copy(pts[pts.length - 2].pos);
+      if (invWorldMatrix) before.applyMatrix4(invWorldMatrix);
+      const dir = s.dir.subVectors(lastPt, before);
+      if (dir.lengthSq() > 1e-8 && rope.aimHead) {
+        rope.headMeshGroup.quaternion.copy(s.quat.setFromUnitVectors(s.up, dir.normalize()));
+      }
     }
   },
 
@@ -5949,51 +6143,15 @@ var WeaponSystemProcedural = {
   // and a Slime's pseudopod are not the same weapon. Builders are registered
   // per Archetypes.json key rather than per weapon id, since there is no
   // database weapon to key on.
-  //
-  // These are the CREATURES' hands. A person shows the authored rig below
-  // whatever archetype was crossed into them (see isCreatureHanded), so only
-  // a creature character, an NPC on a creature class and the enemies out in
-  // the world are ever built one of them.
   UNARMED_MODELS: {},
   DEFAULT_ARCHETYPE: 'Humanoid',
 
   /**
-   * Whether an empty hand is a creature's rather than a person's. Only a
-   * creature is given the fist Weapon3D_Unarmed builds for its archetype: a
-   * person keeps the authored hands whatever archetype has been crossed into
-   * their body, since a second archetype is something the body carries and
-   * not a new pair of hands. Anything that is not an actor at all (an enemy,
-   * a summon) reads as a creature, so a monster still punches with the fist
-   * of its own species.
-   */
-  isCreatureHanded(battler) {
-    if (!battler) return false;
-    try {
-      if (typeof battler.isActor === 'function' && !battler.isActor()) return true;
-      if (battler._isCreatureActor) return true;
-      const HC = window.HealthCore;
-      if (HC && typeof HC.isCreatureBody === 'function' && HC.isCreatureBody(battler)) return true;
-      const NC = window.NPCCreature;
-      if (NC && typeof NC.isNonSentientActor === 'function' && NC.isNonSentientActor(battler)) return true;
-      // Each of the three player slots records the monster form it was built
-      // in on a switch of its own (76 + slot), which is what the status screen
-      // reads to know it is drawing a beast rather than a bust.
-      const slot = typeof battler.actorId === 'function' ? battler.actorId() : 0;
-      if (slot >= 1 && slot <= 3 && typeof $gameSwitches !== 'undefined' && $gameSwitches &&
-          $gameSwitches.value(76 + slot)) return true;
-    } catch (e) { /* nothing loaded that could answer: a person, then */ }
-    return false;
-  },
-
-  /**
    * The archetype whose fist a character shows. A hybrid ("Dragon / Elven")
    * uses the FIRST of its archetypes, so a mixed character always reads as
-   * one thing rather than something in between. A character who is not a
-   * creature never reads as anything but the default: the archetype fists
-   * belong to creatures alone.
+   * one thing rather than something in between.
    */
   archetypeOf(actor) {
-    if (!this.isCreatureHanded(actor)) return this.DEFAULT_ARCHETYPE;
     try {
       if (actor && window.HealthCore && typeof window.HealthCore.getActorArchetypeKeys === 'function') {
         const keys = window.HealthCore.getActorArchetypeKeys(actor);
@@ -6084,11 +6242,10 @@ var WeaponSystemProcedural = {
   // and it is the rig's own animation that swings rather than the generated
   // punch - which is the whole point of having one.
   //
-  // Every character who is not a creature takes it, whatever archetypes they
-  // carry, since archetypeOf answers Humanoid for all of them. A creature is
-  // the exception: a dragon's claw, a slime's pseudopod and the other
-  // seventy-odd fists Weapon3D_Unarmed builds are untouched, and one entry in
-  // `archetypes` is all it takes to hand the rig to one of them too.
+  // Only the archetypes whose hands ARE a pair of human hands take it. A
+  // dragon's claw, a slime's pseudopod and the other seventy-odd fists
+  // Weapon3D_Unarmed builds are untouched: one entry in `archetypes` is all
+  // it takes to hand the rig to another of them.
   //
   // Nothing outside the sprite knows about this. The empty hand is still the
   // procedural weapon unarmedWeaponFor builds (same id, same weight, same
@@ -6107,15 +6264,10 @@ var WeaponSystemProcedural = {
     // elbows out of the bottom edge, fists up in the middle of the frame.
     rotation: { x: 52, y: 180, z: 0 },
     // The share of the frame the posed hands are fitted into, and how far
-    // past the bottom edge the elbows are allowed to run off it. Sized to sit
-    // in the quarter of the screen a scene keeps clear for what is held,
-    // rather than to fill the frame the way a true first person game would.
-    fillW: 0.55,
-    fillH: 0.52,
+    // past the bottom edge the elbows are allowed to run off it.
+    fillW: 0.62,
+    fillH: 0.58,
     sink: 0.10,
-    // How much clear screen is kept beside them when the anchor they are hung
-    // on would otherwise push an arm off the edge.
-    margin: 0.02,
     // The pose the fit is measured in: whatever the hands do when nothing is
     // happening. Measuring the bind pose instead frames a pair of arms nobody
     // ever sees.
@@ -6270,18 +6422,15 @@ var WeaponSystemProcedural = {
   },
 
   /**
-   * How big the hands are and what silhouette they cut, measured once per rig
-   * per screen size: fitted by their posed shape rather than by any authored
-   * scale, so the same rig frames the same way at every resolution. WHERE they
-   * are then put is the sprite's business (Sprite_3DWeapon#_rigFrame): a
-   * battle and the world out of the windscreen keep different parts of the
-   * screen clear.
+   * Where the hands sit and how big they are, measured once per rig per screen
+   * size: fitted to the frame by their posed silhouette rather than by any
+   * authored scale, so the same rig frames the same way at every resolution.
    */
-  rigMetricsFor(entry, spec, model) {
+  rigFrameFor(entry, spec, model) {
     const screenW = (typeof Graphics !== 'undefined' && Graphics.width) ? Graphics.width : 816;
     const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
     const key = screenW + 'x' + screenH;
-    if (entry._metrics && entry._metricsFor === key) return entry._metrics;
+    if (entry._frame && entry._frameFor === key) return entry._frame;
 
     // The silhouette is measured ONCE, while the hands are still standing in
     // the pose they were fitted for; a later measurement (the player changed
@@ -6305,17 +6454,16 @@ var WeaponSystemProcedural = {
     const width = Math.max(box.max.x - box.min.x, 1e-6);
     const height = Math.max(box.max.y - box.min.y, 1e-6);
     const scale = Math.min(screenW * spec.fillW / width, screenH * spec.fillH / height);
-    const metrics = {
+    const frame = {
       scale,
-      // The middle of the silhouette and its foot, in screen pixels, so a
-      // placement only has to say where it wants those two to land.
-      midX: ((box.min.x + box.max.x) / 2) * scale,
-      footY: box.min.y * scale,
-      halfW: (width / 2) * scale
+      // Centred across the frame, and standing ON the bottom edge with the
+      // forearms running off it rather than floating above it.
+      x: -((box.min.x + box.max.x) / 2) * scale,
+      y: -screenH / 2 - screenH * spec.sink - box.min.y * scale
     };
-    entry._metrics = metrics;
-    entry._metricsFor = key;
-    return metrics;
+    entry._frame = frame;
+    entry._frameFor = key;
+    return frame;
   },
 
   // ============================================================
@@ -6451,8 +6599,8 @@ var WeaponSystemProcedural = {
       const w = this._weapon;
       // A pair of authored hands is fitted to the frame by its posed
       // silhouette when it arrives (_rigPose), not by any authored scale.
-      if (this._rig && this._rigEntry && this._rigEntry._metrics) {
-        return this._rigEntry._metrics.scale;
+      if (this._rig && this._rigEntry && this._rigEntry._frame) {
+        return this._rigEntry._frame.scale;
       }
       if (w.model3d) return w.model3dScale || 1.0;
       const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
@@ -6719,53 +6867,14 @@ var WeaponSystemProcedural = {
     };
 
     /**
-     * Where the hands stand on screen.
-     *
-     * NOT in the middle of it. A first person pair of hands wants the bottom
-     * centre of the frame and that is the one place it cannot have: in a
-     * battle the command list, the log and the party bars are HTML at z-index
-     * 350 over a weapon canvas at z-index 10, so hands framed there are drawn
-     * and then covered up. That is the whole reason a held weapon is drawn at
-     * x=660 rather than down the centre line (Weapon3DOverlay's
-     * getScaledWeaponX), and the hands follow the same anchor: whatever part
-     * of the screen the scene keeps clear for what the character is holding is
-     * where they go, in a battle and out in the world alike.
-     *
-     * Vertically they still STAND ON the bottom edge, sunk past it, since arms
-     * cut off by the frame is what reads as first person and arms ending in
-     * mid air does not.
-     */
-    Sprite_3DWeapon.prototype._rigFrame = function() {
-      const m = WeaponSystemProcedural.rigMetricsFor(this._rigEntry, this._rig, this._model);
-      const screenW = (typeof Graphics !== 'undefined' && Graphics.width) ? Graphics.width : 816;
-      const screenH = (typeof Graphics !== 'undefined' && Graphics.height) ? Graphics.height : 624;
-      const key = screenW + 'x' + screenH + '@' + this._screenX;
-      if (this._rigFramedFor === key) return this._rigFramed;
-
-      const spec = this._rig;
-      // The anchor, in the overlay's world units: the same x the scene would
-      // have drawn a sword at, kept far enough from either edge that the whole
-      // span of the arms is on screen.
-      const edge = m.halfW + screenW * spec.margin;
-      const anchorX = Math.min(Math.max(this._screenX - screenW / 2, -screenW / 2 + edge),
-        screenW / 2 - edge);
-      this._rigFramed = {
-        scale: m.scale,
-        x: anchorX - m.midX,
-        y: -screenH / 2 - screenH * spec.sink - m.footY
-      };
-      this._rigFramedFor = key;
-      return this._rigFramed;
-    };
-
-    /**
      * Keeps the hands framed. The rig animates itself, so the only thing left
-     * to write is where the whole of it sits, and that it drifts out with the
-     * exit fade at the end of a battle like everything else in the overlay.
+     * to write is where the whole of it sits: fitted to the screen, centred,
+     * standing on the bottom edge, and drifting out with the exit fade at the
+     * end of a battle like everything else in the overlay.
      */
     Sprite_3DWeapon.prototype._rigPose = function() {
       if (!this._model || !this._rigEntry) return;
-      const frame = this._rigFrame();
+      const frame = WeaponSystemProcedural.rigFrameFor(this._rigEntry, this._rig, this._model);
       const r = this._rig.rotation;
       this._model.rotation.set(
         THREE.MathUtils.degToRad(r.x),

@@ -2077,7 +2077,7 @@
   },
   "530": {
     "name": "Cappuccio della Piena Ley",
-    "description": "Un cappuccio che ronza sulle linee ley."
+    "description": "Un cappuccio che ronza sulle leyline."
   },
   "531": {
     "name": "Vesti della Grande Bestia",
@@ -2956,7 +2956,7 @@
     "description": "Una veste rattoppata da apprendista."
   },
   "790": {
-    "name": "Scialle delle Linee Ley",
+    "name": "Scialle delle Leyline",
     "description": "Uno scialle che ronza vicino ai tralicci."
   },
   "791": {

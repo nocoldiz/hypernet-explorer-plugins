@@ -692,7 +692,6 @@
     }
 
     .ts-tab {
-        padding: 3px 7px;
         font-size: 0.78rem;
     }
 
@@ -820,7 +819,6 @@
     }
 
     .cc-spec-tab {
-        padding: 3px 7px;
         font-size: 0.78rem;
     }
 
@@ -1021,6 +1019,7 @@
         max-height: 72px;
         margin-bottom: 4px;
         gap: 4px;
+        padding-bottom: 4px;
     }
 
     .cc-sprite-portrait {
@@ -1390,11 +1389,13 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    /* --- Left page: the tab strip, the search field and the grid. */
-    .backpack-tabs,
-    .cc-sprite-tab-bar,
-    .ts-tab-row,
-    .cc-spec-tab-row {
+    /* --- Left page: the tab strip, the search field and the grid.
+           Only the backpack's own strip: the three character-creation tab
+           rows used to be grouped in here too, which quietly widened them
+           past the tighter figures their own block above had already set,
+           and left that block reading as applied when it was not. Each strip
+           is now sized once, where it belongs. */
+    .backpack-tabs {
         gap: 4px;
         margin-bottom: 8px;
         padding-bottom: 5px;
@@ -1452,10 +1453,6 @@
 
     .inspect-section-title {
         margin: 8px 0 4px 0;
-    }
-
-    .inspect-actions {
-        gap: 5px;
     }
 
     .inspect-btn {
@@ -1637,91 +1634,6 @@
 
     #menu-container .opt-inspect-img-wrap {
         margin: 0 0 8px 0;
-    }
-}
-
-
-/* ==========================================================================
-   The quest log board (Quest/KanbanQuestLog.js)
-   --------------------------------------------------------------------------
-   Not a spread: a full-screen board of four columns, authored at desk size
-   throughout, and the worst offender in the menu tree on a handheld. The card
-   is what has to fit, so the reclaim is concentrated on the card and on the
-   air between cards.
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    #kb-board-header {
-        gap: 12px;
-        padding: 10px 20px 8px;
-    }
-
-    .kb-board-title {
-        font-size: 1.85rem;
-    }
-
-    .kb-column {
-        padding: 0 6px;
-    }
-
-    .kb-col-header {
-        padding: 5px 14px 6px;
-        margin: 0 0 9px;
-    }
-
-    .kb-col-divider {
-        margin: 8px 6px;
-    }
-
-    .kb-cards-wrap {
-        gap: 8px;
-        padding: 6px 4px 12px;
-    }
-
-    .kb-card {
-        padding: 8px 10px;
-    }
-
-    .kb-card-title,
-    .kb-card-giver {
-        margin-bottom: 5px;
-    }
-
-    .kb-empty-col {
-        padding: 16px 10px;
-    }
-
-    /* The quest's own page, opened over the board. Its margins are a printed
-       page's, and a printed page is not what this is on a handheld. */
-    .kb-detail-page {
-        padding: 24px 32px 32px;
-    }
-
-    .kb-detail-header {
-        font-size: 2rem;
-        padding-bottom: 8px;
-    }
-
-    .kb-detail-giver {
-        margin: 8px 0 16px;
-    }
-
-    .kb-detail-body {
-        font-size: 1.38rem;
-        margin-bottom: 16px;
-    }
-
-    .kb-detail-sec {
-        margin: 18px 0 8px;
-    }
-
-    .kb-detail-btns {
-        gap: 12px;
-        margin-top: 22px;
-    }
-
-    .kb-detail-close {
-        padding: 9px 26px;
     }
 }
 
@@ -3217,13 +3129,6 @@
         padding-bottom: 4px;
     }
 
-    /* Same trap on the spread's frame: the thinker and the forge scope their
-       own copy of .book-spread, so the thinner border set above never reached
-       their outline. */
-    #thinker-container .book-spread,
-    #blacksmith-container .book-spread {
-        outline-offset: -5px;
-    }
 
     /* And the same on the pockets-style inspect page (the backpack drawn as a
        full spread rather than in a side panel): every one of these is the
@@ -4086,17 +3991,22 @@
    ========================================================================== */
 @media (max-width: 1366px) and (max-height: 860px) {
 
-    #hotbar-target-picker .htp-panel {
+    .item-target-card .htp-panel {
         padding: 15px 20px;
     }
 
-    #hotbar-target-picker .htp-row {
+    .item-target-card .htp-row {
         gap: 10px;
         padding: 6px 10px;
     }
 
-    #hotbar-target-picker .htp-vitals {
-        gap: 12px;
+    .item-target-card .htp-vitals {
+        gap: 2px;
+        min-width: 150px;
+    }
+
+    .item-target-card .htp-panel {
+        min-width: 460px;
     }
 }
 
@@ -4560,6 +4470,490 @@
 
 
 /* ==========================================================================
+   TYPE THAT WAS ALREADY AT THE FLOOR
+   --------------------------------------------------------------------------
+   Every other block in this file compacts. This one only raises type, and it
+   is the one place in the file where that is the whole of the rule rather than
+   a floor paid for by reclaimed space nearby.
+
+   The reason it is separate is that these lines are not small because the menu
+   around them is cramped. They were authored at 9px and 10px on a desk, where
+   9px is a deliberate quiet mark next to 14px body copy. On the panel the
+   whole screen is then drawn down again, and 9px lands near 8: below the size
+   at which the game's UI face resolves a lowercase letter at all. They stop
+   being quiet and become a smudge, and a smudge that is a date, a track name,
+   a count of letters or a REDEEMED stamp is worth reading.
+
+   11px is the floor used throughout, which is the smallest size anything else
+   in this file is allowed to land on. Nothing here changes a box: the lines
+   are single words and short counts sitting in boxes that already hold more
+   than they need, so the extra pixel or two costs no layout anywhere.
+   ========================================================================== */
+@media (max-width: 1366px) and (max-height: 860px) {
+
+    /* --- The magic system wheel (SkillMaster/SkillMasterMagicSystems.js).
+           Hard or soft, printed under a node's name. The desk sets it at 9px
+           against a 15px name; the panel cannot afford the same distance. */
+    .ms-rigor {
+        font-size: 11px;
+    }
+
+    /* --- The five figures on a card being opened out of a booster
+           (Cards/CardGameCollection.js). The numbers ARE the card: they are
+           what a player is looking for as the pack opens. */
+    .cp-stats {
+        font-size: 0.72rem;
+    }
+
+    /* --- The desktop clock (Hypernet/HypernetOS.js). The date under the time,
+           which is the half of it that is a word rather than digits. */
+    #tray-clock-date {
+        font-size: 11px;
+    }
+
+    /* --- The desktop apps (Hypernet/HypernetOS.js). Each of these is the
+           second line of a pair: the artist under the track, the extra reading
+           under the day, the count beside the find box. The first line of each
+           pair is 12px or more and is left alone. */
+    .hyperamp-meta,
+    .hyperamp-toggle,
+    .hyperamp-count {
+        font-size: 11px;
+    }
+
+    .whether-day-extra,
+    .whether-footer {
+        font-size: 11px;
+    }
+
+    .incanta-letter,
+    .incanta-count {
+        font-size: 11px;
+    }
+
+    /* The sort arrow on a column heading in My Computer: one glyph that says
+       which way a folder is ordered, and the only thing that says it. */
+    .explorer-col.asc::after,
+    .explorer-col.desc::after {
+        font-size: 11px;
+    }
+
+    /* --- The quest log as an app on the desktop (Quest/KanbanQuestLog.js).
+           Its two stamps, URGENT and the resolved mark. The rest of that app's
+           type is 11px or more already, so these two are the outliers rather
+           than the pattern, and the board's own block further down does not
+           reach them: they are scoped to the app container on purpose. */
+    #kanban-quest-content .kb-urgent,
+    #kanban-quest-content .kb-resolved-stamp {
+        font-size: 11px;
+    }
+}
+
+
+/* ==========================================================================
+   THE TWO CORK BOARDS (Quest/QuestBoardUI.js, Quest/KanbanQuestLog.js)
+   --------------------------------------------------------------------------
+   The board of quest offers and the quest log are the two screens in the game
+   that get NO help from anything else in this file, and it is worth being
+   precise about why, because it is the opposite of how every other menu here
+   works.
+
+   Every other DOM menu is a backdrop that flex-centres one panel, so
+   css/theme.css gives the panel `zoom: var(--ui-zoom)` and it is drawn down to
+   whatever the viewport has room for; what this file does for those menus is
+   reclaim chrome so that zoom can be nearer 1. These two are full-bleed boards
+   whose children are meant to reach the screen edges, so theme.css names them
+   in its list of roots that are deliberately NOT zoomed. Nothing scales them.
+   Every px below is a real px on the panel, and the desk values were authored
+   against 1920x1080: an 18px frame with a 5px liner inside it, a 37px title, a
+   268px note and a detail page 1180px wide inside 60px margins, which is
+   1300px of page on a screen that has 1280.
+
+   So this block is sizing the boards outright rather than buying back room for
+   a scaler. The budget it works to, on the 1280x800 panel:
+
+     frame      18 + 5 a side costs 46 of 1280 and 46 of 800, and the liner is
+                pure decoration, so the frame goes to 10 + 3 and gives 20 back
+                on each axis
+     head       the title, the tab row and their padding took 117 of the 800
+                before a single note was drawn; at handheld sizes they take 71
+     notes      268px notes at a 34px gap laid 3 to a row and left 250px of the
+                row empty. 232 at a 20px gap lays 4, which is the desk's own
+                density rather than a thinner version of it
+     the page   980 inside 30px margins is 1040, and it is the reading column
+                that a long notice is set in, so it loses width before it
+                loses the type size that makes it readable
+
+   The two boards are written as one block because they are one design: the
+   same cork, the same brass pins, the same notes, and the detail page behind
+   the quest board is the detail page behind the log with different class
+   names. Where a rule applies to both, both selectors are on it.
+
+   ONE PLACE THIS BLOCK MUST NOT REACH
+   The log is also an app on the Hypernet desktop, where css/theme.css dresses
+   it through `#kanban-quest-content .kb-*`. Those rules are already compact
+   (11px to 13px) and they outrank everything below on specificity, which is
+   the right outcome: the app is inside a window that does its own fitting and
+   must not be compacted twice. Nothing below is scoped to that container, so
+   nothing below touches it.
+   ========================================================================== */
+@media (max-width: 1366px) and (max-height: 860px) {
+
+    /* --- The frame of both boards, and the liner drawn inside it. */
+    #qb-overlay,
+    #kb-board-overlay {
+        border-width: 10px;
+    }
+
+    #qb-overlay::before,
+    #kb-board-overlay::before {
+        border-width: 3px;
+    }
+
+    /* --- The head of the board: title, subtitle and the hint on the right. */
+    #qb-header {
+        gap: 12px;
+        padding: 10px 20px 4px;
+    }
+
+    #kb-board-header {
+        gap: 12px;
+        padding: 10px 20px 8px;
+        min-height: 2rem;
+    }
+
+    #qb-title,
+    .kb-board-title {
+        font-size: 1.6rem;
+        letter-spacing: 2px;
+    }
+
+    #qb-sub {
+        font-size: 1.02rem;
+    }
+
+    #qb-hint,
+    .kb-board-hint {
+        font-size: 0.95rem;
+    }
+
+    /* --- The tab row. */
+    #qb-tabs {
+        gap: 7px;
+        padding: 6px 20px 0;
+    }
+
+    .qb-tab {
+        padding: 6px 18px 7px;
+        font-size: 1.02rem;
+    }
+
+    /* --- The field of notes. The gap is cut harder than the padding: it is
+           repeated between every pair of notes, so it is where a row of four
+           is actually won. */
+    #qb-cards {
+        gap: 18px 20px;
+        padding: 18px 22px 24px;
+    }
+
+    .qb-note {
+        flex: 0 0 232px;
+        width: 232px;
+        min-height: 182px;
+        padding: 26px 13px 13px;
+    }
+
+    /* A contract and a posted notice are the wide notes on the same board, and
+       they are held to the same 4-to-a-row arithmetic: a contract is two
+       ordinary notes plus the gap between them. */
+    .qb-contract {
+        flex: 0 0 340px;
+        width: 340px;
+        min-height: 176px;
+    }
+
+    .qb-posted {
+        flex: 0 0 276px;
+        width: 276px;
+    }
+
+    .qb-note-title,
+    .kb-card-title {
+        font-size: 1.04rem;
+        margin-bottom: 5px;
+    }
+
+    .qb-note-giver,
+    .kb-card-giver {
+        margin-bottom: 5px;
+    }
+
+    .qb-empty {
+        font-size: 1.2rem;
+        padding: 30px 18px;
+    }
+
+    .qb-post-plus {
+        font-size: 2.2rem;
+    }
+
+    /* The wax seal and the star row are the note's two pieces of furniture and
+       they scale with it rather than sitting on top of a smaller note. */
+    .qb-seal,
+    .kb-seal {
+        width: 28px;
+        height: 28px;
+        font-size: 0.98rem;
+    }
+
+    .qb-btn {
+        padding: 5px 13px;
+    }
+
+    /* --- The columns of the quest log. The divider and the column padding are
+           paid three or four times across the row, so they go first and the
+           card keeps its width. */
+    #kb-columns {
+        padding: 12px 14px 16px;
+    }
+
+    .kb-col-divider {
+        margin: 8px 5px;
+    }
+
+    .kb-column {
+        padding: 0 5px;
+    }
+
+    .kb-col-header {
+        gap: 7px;
+        padding: 5px 12px 6px;
+        margin: 0 0 9px;
+    }
+
+    .kb-col-title {
+        font-size: 1.04rem;
+        letter-spacing: 1px;
+    }
+
+    .kb-col-count {
+        font-size: 0.98rem;
+        padding: 1px 7px;
+        min-width: 26px;
+    }
+
+    /* The air between cards is paid once per card down a column that is
+       already scrolling, so it is the cheapest room on the board and the
+       first thing spent: 8px fits a whole card more per screen. */
+    .kb-cards-wrap {
+        gap: 8px;
+        padding: 6px 4px 12px;
+    }
+
+    .kb-empty-col {
+        font-size: 1.02rem;
+        padding: 16px 8px;
+    }
+
+    .kb-card {
+        max-width: 258px;
+        min-height: 116px;
+        padding: 26px 13px 13px;
+    }
+
+    .kb-checklist {
+        font-size: 1.06rem;
+        line-height: 1.45;
+    }
+
+    .kb-check-order {
+        font-size: 0.98rem;
+    }
+
+    /* --- The detail page, shared by both boards: a single reading column set
+           on parchment. The column narrows and its margins halve; the body
+           type comes down from 24px, which was set for a 1920px page, to a
+           size that still fits roughly the same words to the line at 980. */
+    #qb-detail,
+    #qb-compose,
+    #kb-detail-panel {
+        border-width: 8px;
+    }
+
+    #qb-detail .qb-d-page,
+    #qb-compose .qb-c-page,
+    .kb-detail-page {
+        max-width: 980px;
+        padding: 22px 30px 30px;
+    }
+
+    #qb-detail h2,
+    .kb-detail-header {
+        font-size: 1.75rem;
+        padding-bottom: 8px;
+    }
+
+    #qb-compose h2 {
+        font-size: 1.68rem;
+        padding-bottom: 7px;
+    }
+
+    #qb-detail .qb-d-giver,
+    .kb-detail-giver {
+        font-size: 1.06rem;
+        margin: 8px 0 14px;
+    }
+
+    #qb-detail .qb-d-body,
+    .kb-detail-body {
+        font-size: 1.12rem;
+        line-height: 1.55;
+        margin-bottom: 14px;
+    }
+
+    #qb-detail .qb-d-body::first-letter,
+    .kb-detail-body::first-letter {
+        font-size: 2rem;
+        padding: 2px 6px 0 0;
+    }
+
+    #qb-detail .qb-d-sec,
+    .kb-detail-sec {
+        font-size: 1.02rem;
+        margin: 16px 0 7px;
+    }
+
+    #qb-detail .qb-d-line,
+    .kb-detail-line {
+        font-size: 1.06rem;
+    }
+
+    #qb-detail .qb-d-steps,
+    .kb-detail-steps {
+        font-size: 1.08rem;
+        line-height: 1.45;
+    }
+
+    .kb-upd-row {
+        padding: 6px 0 7px;
+    }
+
+    .kb-upd-date {
+        font-size: 0.96rem;
+    }
+
+    .kb-upd-text {
+        font-size: 1.06rem;
+        line-height: 1.45;
+    }
+
+    /* The page's own button bar. 40px of side padding on a button is a desk
+       measurement; the label is what has to stay legible, not the plate. */
+    #qb-detail .qb-d-btns,
+    .kb-detail-btns {
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    #qb-detail .qb-d-btns .qb-btn,
+    .kb-detail-close {
+        font-size: 1.06rem;
+        padding: 9px 22px;
+    }
+
+    /* --- Composing a notice: a form of label / value rows. The label track is
+           the one that gives, because it holds a fixed phrase while the value
+           beside it holds the thing being chosen. */
+    .qb-c-intro {
+        font-size: 1.02rem;
+        margin: 8px 0 12px;
+    }
+
+    .qb-c-row {
+        gap: 10px;
+        padding: 5px 9px;
+        min-height: 32px;
+    }
+
+    .qb-c-label {
+        flex: 0 0 180px;
+        font-size: 1rem;
+    }
+
+    .qb-c-field {
+        font-size: 1.04rem;
+    }
+
+    .qb-c-arrow {
+        width: 22px;
+        font-size: 1.2rem;
+    }
+
+    .qb-c-val {
+        min-width: 148px;
+    }
+
+    .qb-c-chip {
+        padding: 2px 7px;
+        font-size: 0.96rem;
+    }
+
+    .qb-c-rate {
+        font-size: 1.04rem;
+    }
+
+    .qb-c-note {
+        font-size: 1rem;
+    }
+
+    .qb-c-preview {
+        padding: 12px 16px;
+    }
+
+    .qb-c-prev-title {
+        font-size: 1.14rem;
+    }
+
+    .qb-c-prev-body {
+        font-size: 1.02rem;
+        line-height: 1.45;
+    }
+
+    .qb-c-prev-steps {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    /* --- The reward picker, the one modal on the board. It caps itself at
+           92vw already, so only its insides are compacted. */
+    #qb-pick {
+        padding: 14px 16px 11px;
+        border-width: 6px;
+    }
+
+    .qb-p-head {
+        gap: 12px;
+        font-size: 1.02rem;
+        padding-bottom: 7px;
+    }
+
+    .qb-p-row {
+        gap: 7px;
+        padding: 4px 6px;
+        font-size: 0.98rem;
+    }
+
+    .qb-p-price {
+        flex: 0 0 110px;
+    }
+
+    .qb-p-held {
+        flex: 0 0 96px;
+    }
+}
+
+
+/* ==========================================================================
    FEWER THINGS TO A ROW
    --------------------------------------------------------------------------
    The rest of this file reclaims space so the panel can be scaled down less.
@@ -4604,13 +4998,11 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* --- The main menu (UI/CustomMainMenuLayout.js). The Dynamics hub's rows
-           of commands and the ability cards under them. Six abilities across a
-           1280px page is a strip of glyphs with no room for the word beneath. */
-    .commands-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
+    /* --- The main menu (UI/CustomMainMenuLayout.js). The command rows keep the
+           desk's four tracks, so a page holds the same buttons in the same
+           places at every resolution and nothing reflows onto a second screen
+           of scroll. Only the ability cards are thinned: six glyphs across a
+           1280px page leave no room for the word beneath. */
     .ability-container {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -4711,12 +5103,10 @@
     }
 
 
-    /* The height PadUI's placement assumes, said out loud so a bigger caption
-       cannot push the chip past the foot of the pane it marks. */
+    /* The placement measures the chip now, so the height is free to follow the
+       caption; only the padding is tightened for the handheld. */
     #pad-rails .pad-rail-chip {
-        height: 18px;
         padding: 0 3px;
-        line-height: 18px;
     }
 
     /* The row a hidden search field leaves behind. `.msb-field-only` holds the

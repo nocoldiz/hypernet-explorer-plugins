@@ -95,6 +95,26 @@
     const ZOOM_WHEEL_STEP = 0.1;
     const ZOOM_TRIGGER_RATE = 0.03; // zoom change per frame at full trigger pull
     const ZOOM_TRIGGER_DEADZONE = 0.15;
+    const ZOOM_STICK_DEADZONE = 0.25; // on the right stick, held under L2
+
+    // L2 HELD: the map's zoom modifier. Held, it turns the right stick from the
+    // camera's pan into the camera's zoom; tapped and let go it folds the map
+    // legend (Map/MapLegend.js). One button, told apart by how long it is down
+    // and by whether the stick moved with it.
+    //
+    // Asked before the stick is read, and the answer is the only thing that
+    // decides which of the two the push means, so the pan and the zoom can never
+    // both act on one frame.
+    function zoomModifierHeld() {
+        // Only where there is a zoom to modify, which is the world map alone.
+        // Anywhere else L2 is not the map's at all and the stick goes on panning
+        // with it held - and, just as important, the trigger is not READ here,
+        // so it is left whole to whatever else on that map wants it.
+        if (!cameraZoomAllowed()) return false;
+        const pads = window.AnalogStickInput;
+        if (!pads || !pads.leftTrigger) return false;
+        return pads.leftTrigger() > ZOOM_TRIGGER_DEADZONE;
+    }
     const ZOOM_NEUTRAL = 1;         // the map's native scale: the detent both directions stop on
     const ZOOM_EPSILON = 0.0005;
 
@@ -251,21 +271,35 @@
             if (keyStep) stepCameraZoom(keyStep, false);
         }
 
-        // A short pull of L2/R2 hands the party to the next member
-        // (Core/AutoIdleExplorer.js), so the zoom waits out that tap window and
-        // takes the trigger only once it is clear the player is holding it.
-        const lead = window.AutoIdleExplorer && window.AutoIdleExplorer.lead;
-        const tapPending = !!(lead && lead.padClaimsTriggers && lead.padClaimsTriggers());
+        // L2 HELD, AND THE RIGHT STICK PUSHED: forward pulls the camera in,
+        // back pushes it out. The stick is the map's pan the rest of the time
+        // (updateStickPan below stands down while the trigger is held), so L2 is
+        // read here as a modifier rather than as a zoom of its own - the same
+        // shape as the voxel world's second layer, and the reason the stick can
+        // mean two things on one screen without a mode to switch between them.
+        //
+        // It used to be the two triggers pulled against each other, which left
+        // the right stick panning on a map that also wanted it for the camera
+        // and gave R2 two jobs (it hands the party to the next member now).
         let pull = 0;
-        if (window.AnalogStickInput && !tapPending) {
-            const rt = window.AnalogStickInput.rightTrigger ? window.AnalogStickInput.rightTrigger() : 0;
-            const lt = window.AnalogStickInput.leftTrigger ? window.AnalogStickInput.leftTrigger() : 0;
-            pull = (rt > ZOOM_TRIGGER_DEADZONE ? rt : 0) - (lt > ZOOM_TRIGGER_DEADZONE ? lt : 0);
+        const zoomHeld = zoomModifierHeld();
+        if (zoomHeld && window.AnalogStickInput && window.AnalogStickInput.rightY) {
+            // Reading the stick CLAIMS it for the frame (AnalogStickInput), which
+            // is what keeps the pan below and the menu scroll service off the
+            // same push.
+            const ry = window.AnalogStickInput.rightY();
+            // Screen Y runs down, so a stick pushed forward reads negative.
+            if (Math.abs(ry) > ZOOM_STICK_DEADZONE) pull = -ry;
         }
         if (!pull) {
             zoomSnapLatched = false;
         } else if (!zoomSnapLatched) {
             stepCameraZoom(pull * ZOOM_TRIGGER_RATE, true);
+            // A held trigger that has just zoomed is not a tap, so letting go of
+            // it must not also fold the map legend (Map/MapLegend.js, through the
+            // tap window Core/AutoIdleExplorer.js owns).
+            const lead = window.AutoIdleExplorer && window.AutoIdleExplorer.lead;
+            if (lead && lead.cancelPadTap) lead.cancelPadTap();
         }
 
         // A zoom the player set on a wide map may show past the edge of the one
@@ -747,6 +781,14 @@
         // idle check costs nothing, and the walk for a pane only runs on the
         // frames the stick is actually off centre.
         if (pad.rightStickIdle && pad.rightStickIdle()) {
+            isStickPanning = false;
+            return;
+        }
+        // L2 HELD TURNS THIS PUSH INTO A ZOOM (updateCameraZoom, which runs
+        // earlier in the frame and has already read the stick for it). Without
+        // the trigger the stick is the pan, which is what it is on every map;
+        // the zoom is the world map's alone.
+        if (zoomModifierHeld()) {
             isStickPanning = false;
             return;
         }

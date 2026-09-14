@@ -38,7 +38,7 @@
     },
     "camelcaseMagic": {
       "title": "CamelCase Magic",
-      "description": "Every spell cast since the Squishing must be written and spoken in CamelCase: words run together, a capital opening each. FireBall works. 'Fire ball' does not, and saying it costs the caster.\n\nMulti-word formulas are a different tier: transcendentals, powerful enough to reshape reality on command, and the province of gods. A mortal who breaks a spell into separate words has the universe read it as an attempted transcendental and bill them for it, from the loss of their voice upward.\n\nGrimoires make the rule visible. A spell written wrong infects the words beside it with copies of itself, and a book left unburned will eat whatever is next to it.\n\nActive spells are chosen while the caster sleeps, each with its own cap on daily uses. Two in one slot fuse into a temporary spell for as long as it holds. Permanent versions of proven combinations can be bought from vending machines, or earned by ritual."
+      "description": "Every spell cast since the Squishing must be written and spoken in CamelCase: words run together, a capital opening each. FireBall works. 'Fire ball' does not, and saying it costs the caster. Two words is the working shape of a spell; three or more is reserved for the few that are powerful enough to earn the extra breath.\n\nMulti-word formulas are a different tier: transcendentals, powerful enough to reshape reality on command, and the province of gods. A mortal who breaks a spell into separate words has the universe read it as an attempted transcendental and bill them for it, from the loss of their voice upward.\n\nGrimoires make the rule visible. A spell written wrong infects the words beside it with copies of itself, and a book left unburned will eat whatever is next to it.\n\nActive spells are chosen while the caster sleeps, each with its own cap on daily uses. Two in one slot fuse into a temporary spell for as long as it holds. Permanent versions of proven combinations can be bought from vending machines, or earned by ritual."
     },
     "alagaddaCityOfMasks": {
       "title": "Alagadda, City of Masks",
@@ -146,7 +146,7 @@
     },
     "truckersSociety": {
       "title": "The Truckers Society",
-      "description": "The real knights of the Road. They do not just haul cargo; they keep the connections alive between communities living in mutually inaccessible realities, with their own hierarchy and a dense network for trading word of what waits further down the highway.\n\nNone of them leave home without an old Anoki phone."
+      "description": "The real knights of the Road. They haul cargo, and they are the only line still open between communities living in mutually inaccessible realities. They keep a hierarchy of their own and a dense network for trading word of what waits further down the highway.\n\nNone of them leave home without an old Anoki phone."
     },
     "marioDraghi": {
       "title": "Mario Draghi",
@@ -186,7 +186,7 @@
     },
     "jennaOfNorthpoint": {
       "title": "Jenna of Northpoint",
-      "description": "Jenna of Northpoint claims to be the Second Coming, and enough people believe her that the claim carries real weight in a world where belief keeps a god alive.\n\nShe did not arrive preaching. She arrived running a business, and the first thing she did with it was gut Northpoint's arena from the inside. It had spent decades running death matches. She kept the crowds, the wagering and every bit of the spectacle, and cut out the killing, putting choreography and real athletic skill where the body count used to be.\n\nPeter II has declared her the Antichrist and taken the Holy Vatican Empire to war over the refusal alone. Jenna has not answered in kind. She keeps running her bloodless arena and lets his war make her case for her."
+      "description": "Jenna of Northpoint claims to be the Second Coming, and enough people believe her that the claim carries real weight. Belief keeps a god alive here, and hers has the numbers.\n\nShe did not arrive preaching. She arrived running a business, and the first thing she did with it was gut Northpoint's arena from the inside. It had spent decades running death matches. She kept the crowds, the wagering and every bit of the spectacle, and cut out the killing, putting choreography and real athletic skill where the body count used to be.\n\nPeter II has declared her the Antichrist and taken the Holy Vatican Empire to war over the refusal alone. Jenna has not answered in kind. She keeps running her bloodless arena and lets his war make her case for her."
     },
     "popePetrusII": {
       "title": "Pope Petrus II",
@@ -218,7 +218,7 @@
     },
     "dprkorea": {
       "title": "The Democratic People's Republic of Korea",
-      "description": "The Kim line runs the Democratic People's Republic of Korea the way it always has, father to son to grandson, with a small permanent bench of party men filling out whatever the family does not want to handle directly.\n\nWhat sets this timeline's version apart is not the politics, which nobody outside sees clearly enough to judge, but how load-bearing the personality cult has become. State media does not just praise the Kims. It insists on impossible things about them, weather control, instant mastery, effortless victory, with a consistency that starts to look less like propaganda and more like a claim."
+      "description": "The Kim line runs the Democratic People's Republic of Korea the way it always has, father to son to grandson, with a small permanent bench of party men filling out whatever the family does not want to handle directly.\n\nThe politics nobody outside sees clearly enough to judge. What is visible is how load-bearing the personality cult has become. State media insists on impossible things about the Kims, weather control, instant mastery, effortless victory, with a consistency that stops reading as propaganda and starts reading as a claim."
     },
     "dharmaDirectorate": {
       "title": "The Dharma Directorate",
@@ -226,7 +226,7 @@
     },
     "illuminatedKhanate": {
       "title": "The Illuminated Khanate",
-      "description": "Mongolia rules itself as a fusion nobody planned: half khanate, half Buddhist theocracy, with an Illuminated Khan on one side of the throne and a line of Bogd Khans and lama regents on the other, each supplying legitimacy the other cannot manufacture alone.\n\nIt is a small hyperpower by every material measure, and stays one on the strength of a monastic tradition that treats spellcraft as prayer, and prayer as a discipline nobody outside the Khanate has mastered half as well."
+      "description": "Mongolia rules itself as a fusion nobody planned: a khanate grafted onto a Buddhist theocracy, with an Illuminated Khan on one side of the throne and a line of Bogd Khans and lama regents on the other, each supplying legitimacy the other cannot manufacture alone.\n\nIt is a small hyperpower by every material measure, and stays one on the strength of a monastic tradition that treats spellcraft as prayer, and prayer as a discipline nobody outside the Khanate has mastered half as well."
     },
     "solomonicRepublic": {
       "title": "The Solomonic Republic",
@@ -300,10 +300,6 @@
       "title": "Esoteric Heavy Industries",
       "description": "Makers of flying broomsticks, fusion reactors and everything in between. Their goods ignore the Rule of 80: move an EHI object slower than eighty and it still does not reset. Nobody has ever seen a factory or a worker, the stock simply appears in the warehouse when nobody is looking."
     },
-    "topicEuronymous": {
-      "title": "Euronymous",
-      "description": "The Mahyem guitarist who survived Varg's knife and came out of the brain trauma with acquired savant syndrome, now one of the most powerful psionics alive. The rest of the band live as gods; he walked off the stage entirely and nobody knows where he went."
-    },
     "topicGiulioAndreotti": {
       "title": "Giulio Andreotti",
       "description": "The Italian politician Em found aboard a Tourist mothership over Roccalonga on the night of the Y2K event, deep in conversation with Marco Marco Marco. Nobody has explained what either of them was doing up there."
@@ -323,10 +319,6 @@
     "topicLeylines": {
       "title": "Leylines",
       "description": "Invisible rivers of arcane power that surface at oil wells and connect places of historical, religious or arcane weight. The closer a caster stands the stronger the spell and the harder it is to hold, and standing directly on one without the training snaps it: where a leyline is broken nobody lights so much as a candle by magic again."
-    },
-    "topicMahyem": {
-      "title": "Mahyem",
-      "description": "The Norwegian black metal band the Naguka took up as gods in the nineties, and mass worship is all it takes. They steer the goblin collective unconscious with their music and lead the hordes pushing down through Scandinavia, and every government on the planet has failed to kill them."
     },
     "topicMainMenu": {
       "title": "The Main Menu",
@@ -350,7 +342,7 @@
     },
     "topicOverviewEffect": {
       "title": "The Overview Effect",
-      "description": "What takes hold of a person who sees the whole Earth at once from orbit. It reportedly declines to visit billionaires, and nobody has offered a convincing explanation for that."
+      "description": "What takes hold of a person who sees the whole Earth at once from orbit. It reportedly declines to visit billionaires. Nobody has explained that convincingly."
     },
     "topicPet": {
       "title": "Pet",

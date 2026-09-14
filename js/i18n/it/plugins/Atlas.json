@@ -63,8 +63,8 @@
   "today": "Oggi",
   "openArticle": "Apri la voce della nazione",
   "era": {
-    "before": "Prima dello Schiacciamento",
-    "during": "Lo Schiacciamento, {pct}%",
-    "after": "Dopo lo Schiacciamento"
+    "before": "Prima dello Squishing",
+    "during": "Lo Squishing, {pct}%",
+    "after": "Dopo lo Squishing"
   }
 }

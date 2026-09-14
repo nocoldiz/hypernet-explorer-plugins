@@ -64,16 +64,6 @@
     const CAVE_RADIUS   = 3;   // tiles streamed while underground (surface: 5)
     const CAVE_DRAW_R   = 1;   // ...and how many of them are actually drawn
 
-    // The box a tile is culled by (see cullTo). Wider than the square itself,
-    // because a few things a square is dressed with are placed by hand and
-    // reach past its edge - a dock deck is a hundred and fifty units long - and
-    // a tile clipped off one frame early at the side of the screen is the one
-    // mistake this must not make. The vertical span is the world's: bedrock at
-    // VOX.MIN_Y to the ceiling placed blocks may reach at VOX.MAX_Y.
-    const CULL_PAD_XZ = 120;
-    const CULL_Y_LO   = VOX.MIN_Y * VOX.SIZE - 80;
-    const CULL_Y_HI   = VOX.MAX_Y * VOX.SIZE + 80;
-
     // How far past a LOD boundary a tile has to be before it takes the change,
     // in tiles. Without a dead band the bands are decided by a rounded distance
     // and a camera loitering on a boundary flips a whole ring of tiles back and
@@ -84,16 +74,9 @@
     // Give back everything a subtree holds. An InstancedMesh keeps a buffer of
     // its own on top of its geometry, and a streaming world builds and drops
     // thousands of them.
-    // A geometry flagged vwShared belongs to the decorator, not to this chunk:
-    // one cylinder is every tree trunk in the world and one quad is every
-    // billboard, handed out to the instanced mesh of every tile that wants one.
-    // Freeing it here deleted the GL buffers the other hundred-odd live tiles
-    // were still drawing with, and they were uploaded again on the next frame -
-    // once per tile eviction, which on a drive is continuous. The InstancedMesh
-    // itself still gives back its own per-tile matrix buffer.
     function disposeTree(root) {
         root.traverse(o => {
-            if (o.geometry && !o.geometry.userData.vwShared) o.geometry.dispose();
+            if (o.geometry) o.geometry.dispose();
             if (o.isInstancedMesh && o.dispose) o.dispose();
         });
     }
@@ -625,66 +608,8 @@
             if (!caves && !this._ringApplied) return;
             this._ringApplied = caves;
             for (const ch of this._chunks.values()) {
-                // Recorded on the chunk rather than written straight onto the
-                // group: cullTo() below decides visibility every frame, and two
-                // hands writing the same flag would fight - the ring runs only
-                // when the camera crosses a square, so whichever wrote last
-                // would stick until the next crossing.
-                ch.ringOn = !caves ||
+                const on = !caves ||
                     (Math.abs(ch.wx - cwx) <= CAVE_DRAW_R && Math.abs(ch.wy - cwy) <= CAVE_DRAW_R);
-            }
-        }
-
-        // ---------------------------------------------------------------------
-        // Culling, at the TILE
-        // ---------------------------------------------------------------------
-        // Everything a square is dressed with - the trees, the plants, the
-        // rocks, every building of a town - is an InstancedMesh with
-        // frustumCulled switched off, and it has to be: in this build of three
-        // an InstancedMesh carries no bound of its own, so it would be tested
-        // against the unit cube its GEOMETRY is, sitting at the middle of the
-        // square, and a town would wink out the moment the camera looked off
-        // that one point.
-        //
-        // So the test is made one level up, where there IS an honest bound: the
-        // square itself, five hundred units across and in a known place. A ring
-        // of a hundred and twenty one dressed tiles was submitting every one of
-        // its thousand-odd draw calls on every frame, the tiles behind the
-        // camera included; now a tile is drawn when some part of it could be
-        // seen and skipped when it could not, and the patches inside a tile
-        // that IS drawn go on being culled individually on their own real
-        // bounds.
-        //
-        // The vertical span is the world's own - bedrock to the ceiling for
-        // placed blocks - rather than anything measured per tile. A tall box
-        // rarely fails the up-down test, which is the half of the frustum that
-        // was never going to save much anyway; what this is for is the two
-        // thirds of the ring that is beside and behind the eye.
-        cullTo(camera) {
-            if (!camera || !this._chunks.size) return;
-            const F = this._cullFrustum || (this._cullFrustum = new THREE.Frustum());
-            const M = this._cullMat || (this._cullMat = new THREE.Matrix4());
-            const B = this._cullBox || (this._cullBox = new THREE.Box3());
-            // updateWorldMatrix(true, ...), not updateMatrixWorld(): on foot the
-            // camera hangs off the walker's rig, and its own world matrix is
-            // only true once its ANCESTORS have been brought up to date. The
-            // renderer does that walk after this runs, so asking the cheap way
-            // would cull this frame against where the party stood last frame -
-            // which a fast turn shows as a square blinking at the edge of the
-            // screen.
-            camera.updateWorldMatrix(true, false);
-            M.copy(camera.matrixWorld).invert();
-            M.premultiply(camera.projectionMatrix);
-            F.setFromProjectionMatrix(M);
-            const h = this._ts * 0.5 + CULL_PAD_XZ;
-            for (const ch of this._chunks.values()) {
-                if (ch.ringOn === false) {
-                    if (ch.grp.visible) ch.grp.visible = false;
-                    continue;
-                }
-                B.min.set(ch.px - h, CULL_Y_LO, ch.pz - h);
-                B.max.set(ch.px + h, CULL_Y_HI, ch.pz + h);
-                const on = F.intersectsBox(B);
                 if (ch.grp.visible !== on) ch.grp.visible = on;
             }
         }
@@ -732,9 +657,6 @@
                 done: null,        // which patches of the new step have landed
                 stamp: 0,
                 sub: 0, n: 0, span: 0,
-                // The cave ring's verdict on this tile (see _applyCaveDrawRing);
-                // above ground every tile is in the ring.
-                ringOn: true,
                 decorated: false, dressed: false, road: null, roadFine: null
             };
             this._setGrid(ch, step);
@@ -774,7 +696,7 @@
         _relod(ch, step, now) {
             if (ch.step === step) return;
             // Whatever is still queued for the step it is leaving means nothing.
-            this._dropDirty(tileKey(ch.wx, ch.wy));
+            this._dropDirty(ch.wx + ',' + ch.wy);
             const stash = ch.old || (ch.old = new Map());
             for (const [k, rec] of ch.subs) {
                 // A patch that was never shown - it was still waiting on the

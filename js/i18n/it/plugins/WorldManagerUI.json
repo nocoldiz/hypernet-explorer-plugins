@@ -56,7 +56,7 @@
     "Dicembre"
   ],
   "confirmDelete": "Eliminare il mondo \"{name}\" con tutta la sua storia, NPC e salvataggi? Non può essere annullato.",
-  "enemyFloor": "Lo Schiacciamento va avanti da un po': la fascia di livello dei nemici di ogni nazione è salita di {level} livelli. Belgio e Regno Unito sono l'eccezione e restano dal livello 1 al 15.",
+  "enemyFloor": "Lo Squishing va avanti da un po': la fascia di livello dei nemici di ogni nazione è salita di {level} livelli. Belgio e Regno Unito sono l'eccezione e restano dal livello 1 al 15.",
   "enemyFloorOpen": "La fauna è fuori controllo: la fascia di livello dei nemici di ogni nazione è salita di {level} livelli, e fuori dalla Terra vaga qualunque cosa fino al livello {ceiling}. Belgio e Regno Unito restano dal livello 1 al 15.",
   "enemyFloorCollapse": "Il paradosso si è compiuto: la fascia di livello dei nemici di ogni nazione è salita di {level} livelli, e fuori dalla Terra non resta nulla sotto il livello {floor}. Belgio e Regno Unito restano dal livello 1 al 15.",
   "storyTutorialDisabled": "La modalità storia è scritta per l'anno 2001. Iniziare nel {year} disattiva il tutorial: la storia si apre direttamente sul suo punto di partenza, senza l'introduzione guidata.",
@@ -97,7 +97,7 @@
   "magicalNotes": {
     "normal": "",
     "severed": "La magia è stata cancellata dal mondo. Incantesimi, oggetti incantati e creature magiche non compaiono più, e la barra MP è rimossa. Il gruppo mantiene solo ciò che riceve alla creazione.",
-    "unbound": "La magia dilaga in tutto il mondo. Le armi sono incantate, le malattie sono maledizioni e le creature mutano per l'energia delle linee di ley. Negozi e bottini non contengono equipaggiamento ordinario."
+    "unbound": "La magia dilaga in tutto il mondo. Le armi sono incantate, le malattie sono maledizioni e le creature mutano per l'energia delle leyline. Negozi e bottini non contengono equipaggiamento ordinario."
   },
   "magicalLocked": "Scelta una sola volta, alla creazione, e indipendente dalla linea temporale: qualsiasi combinazione delle due è un mondo che puoi creare."
 }

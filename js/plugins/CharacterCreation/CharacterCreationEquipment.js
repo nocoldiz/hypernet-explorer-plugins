@@ -310,6 +310,7 @@
     if (fixedIds.length > 0) {
       const weapons = fixedIds.map((id) => $dataWeapons[id]).filter(isRealEntry);
       if (weapons.length === 0) {
+        // i18n-ignore-start: developer diagnostic
         console.warn(`StartWeapon tag for class ${classId} points at no real weapon.`);
         return false;
       }

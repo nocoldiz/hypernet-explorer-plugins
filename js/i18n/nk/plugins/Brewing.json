@@ -28,7 +28,7 @@
   "missing": "MISSIN': {list}",
   "started": "BREWIN' STARTED: {recipe}",
   "itemNumbered": "ITEM#{id} ×{qty}",
-  "units": "{min}–{max} UNITS",
+  "units": "{min}-{max} UNITS",
   "stage": {
     "primary": "PRIMARY FERMENTATION",
     "secondary": "SECONDARY FERMENTATION",

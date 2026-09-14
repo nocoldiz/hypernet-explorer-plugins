@@ -246,7 +246,7 @@
   "downloads": {
     "title": "Download",
     "heading": "Download",
-    "hint": "I file scaricati vengono salvati in C:\\Documents.",
+    "hint": "I file prelevati dall'Hypernet finiscono in C:\\Documents.",
     "empty": "Nessun download.",
     "file": "File",
     "from": "Origine",
@@ -261,7 +261,7 @@
   "mail": {
     "title": "Posta Hypernet",
     "heading": "Posta in arrivo",
-    "hint": "Posta ricevuta su questo terminale. Non si puo rispondere ai messaggi.",
+    "hint": "Posta trattenuta per questo terminale. Non si può rispondere a nulla: il ripetitore va in una sola direzione dal passaggio al 2000.",
     "from": "Da",
     "subject": "Oggetto",
     "received": "Ricevuto",
@@ -437,7 +437,7 @@
   "helpPage": {
     "title": "Guida di Hypernet Explorer",
     "heading": "Guida di Hypernet Explorer",
-    "intro": "Ogni funzione del browser e il suo tasto di scelta rapida.",
+    "intro": "Tutto quello che questo browser sa fare, e il tasto che lo fa.",
     "navHeading": "Muoversi",
     "navBody": "Digita un indirizzo nella barra degli indirizzi e premi Invio. Un indirizzo senza punti viene invece cercato. Una pagina che non si trova su questo gateway mostra l'avviso 404 del gateway con sotto gli indirizzi più simili.",
     "keysHeading": "Tastiera",

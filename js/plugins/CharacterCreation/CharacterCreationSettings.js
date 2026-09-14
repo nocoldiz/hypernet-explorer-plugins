@@ -89,14 +89,14 @@
         {
           key: 'difficulty',
           get label() {
-            return (typeof T === 'function' && (T.has('CharCreate.difficulty') ? T('CharCreate.difficulty') : (T.has('SaveSystem.difficulty') ? T('SaveSystem.difficulty') : T('CharCreate.selectDifficulty')))) || 'Difficulty';
+            return T('CharCreate.difficulty');
           },
           get _modes() {
             return [
               {
                 symbol: 'roguelite',
-                get name() { return (typeof T === 'function' && T('CharCreate.choice.roguelite.name')) || 'Roguelite'; },
-                get description() { return cleanDesc((typeof T === 'function' && T('CharCreate.choice.roguelite.desc')) || 'If defeated you rewake at the base floor of the dungeon. Fallen allies stay in the party and can be resurrected after battle.'); },
+                get name() { return T('CharCreate.choice.roguelite.name'); },
+                get description() { return cleanDesc(T('CharCreate.choice.roguelite.desc')); },
                 apply() {
                   if (window.$gameSwitches) {
                     $gameSwitches.setValue(9, false);
@@ -111,8 +111,8 @@
               },
               {
                 symbol: 'permadeath',
-                get name() { return (typeof T === 'function' && T('CharCreate.choice.permadeath.name')) || 'Permadeath'; },
-                get description() { return cleanDesc((typeof T === 'function' && T('CharCreate.choice.permadeath.desc')) || 'If your character perishes in battle you must create a new one. Allies not resurrected by the end of the battle die permanently.'); },
+                get name() { return T('CharCreate.choice.permadeath.name'); },
+                get description() { return cleanDesc(T('CharCreate.choice.permadeath.desc')); },
                 apply() {
                   if (window.$gameSwitches) {
                     $gameSwitches.setValue(9, true);
@@ -127,8 +127,8 @@
               },
               {
                 symbol: 'blood_and_oil',
-                get name() { return (typeof T === 'function' && T('CharCreate.choice.bloodAndOil.name')) || 'Blood and Oil'; },
-                get description() { return cleanDesc((typeof T === 'function' && T('CharCreate.choice.bloodAndOil.desc')) || 'Body parts reduced to zero HP are lost, with permanent stat debuffs. Losing a vital organ kills the character instantly. Allies not resurrected by the end of the battle die permanently.'); },
+                get name() { return T('CharCreate.choice.bloodAndOil.name'); },
+                get description() { return cleanDesc(T('CharCreate.choice.bloodAndOil.desc')); },
                 apply() {
                   if (window.$gameSwitches) {
                     $gameSwitches.setValue(9, true);
@@ -143,8 +143,8 @@
               },
               {
                 symbol: 'peaceful',
-                get name() { return (typeof T === 'function' && T('CharCreate.choice.peaceful.name')) || 'Peaceful'; },
-                get description() { return cleanDesc((typeof T === 'function' && T('CharCreate.choice.peaceful.desc')) || 'Enemies never attack or chase you unless provoked, and you can Talk to them in battle. Defeat just returns you to your last respawn point.'); },
+                get name() { return T('CharCreate.choice.peaceful.name'); },
+                get description() { return cleanDesc(T('CharCreate.choice.peaceful.desc')); },
                 apply() {
                   if (window.$gameSwitches) {
                     $gameSwitches.setValue(9, false);

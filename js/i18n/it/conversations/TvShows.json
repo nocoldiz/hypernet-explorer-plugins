@@ -1355,5 +1355,45 @@
       "In questa produzione è tutto accurato tranne le parti documentate.",
       "E così l'epoca si volta, come fanno le epoche, nell'ultima bobina."
     ]
+  },
+  "wrestling_chaos": {
+    "beats": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "wrestling_martial": {
+    "beats": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
   }
 }

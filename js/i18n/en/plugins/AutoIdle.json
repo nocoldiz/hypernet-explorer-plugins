@@ -1,7 +1,6 @@
 {
   "optionName": "Auto Idle Explorer",
   "badge": "AUTO P2",
-  "badgeMain": "AUTO",
   "lead": {
     "toast": "{name} takes the lead"
   },

@@ -723,18 +723,18 @@
 
         return `
             <div class="status-stat-breakdown-card">
-                <div class="card-label status-04">${T('SceneStatus.ui.statBreakdown') || "Stat Bonuses & Modifiers"}</div>
+                <div class="card-label status-04">${T('SceneStatus.ui.statBreakdown')}</div>
                 <table class="status-stat-table">
                     <thead>
                         <tr>
-                            <th>${T('SceneStatus.parameters') || "Stat"}</th>
-                            <th>${T('SceneStatus.ui.statBase') || "Base"}</th>
-                            <th>${T('SceneStatus.ui.statGear') || "Gear"}</th>
-                            <th>${T('SceneStatus.ui.statTraits') || "Traits"}</th>
-                            <th>${T('SceneStatus.ui.statAwarded') || "Points"}</th>
-                            <th>${T('SceneStatus.ui.statInjuries') || "Injuries"}</th>
-                            <th>${T('SceneStatus.total') || "Total"}</th>
-                            <th>${T('SceneStatus.ui.statMod') || "Mod"}</th>
+                            <th>${T('SceneStatus.parameters')}</th>
+                            <th>${T('SceneStatus.ui.statBase')}</th>
+                            <th>${T('SceneStatus.ui.statGear')}</th>
+                            <th>${T('SceneStatus.ui.statTraits')}</th>
+                            <th>${T('SceneStatus.ui.statAwarded')}</th>
+                            <th>${T('SceneStatus.ui.statInjuries')}</th>
+                            <th>${T('SceneStatus.total')}</th>
+                            <th>${T('SceneStatus.ui.statMod')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -778,11 +778,11 @@
         const genderVal = actor.gender ? actor.gender() : (profile?.gender ?? 0);
         let genderLabel = "";
         switch (genderVal) {
-            case 0: genderLabel = `${T("MainMenu.gender.male") || "Male"} (He/Him)`; break;
-            case 1: genderLabel = `${T("MainMenu.gender.female") || "Female"} (She/Her)`; break;
-            case 2: genderLabel = `${T("MainMenu.gender.nonBinary") || "Non-Binary"} (They/Them)`; break;
-            case 3: genderLabel = `${T("MainMenu.gender.cocoon") || "Cocoon"} (It/Its)`; break;
-            default: genderLabel = T("MainMenu.gender.fluid") || "Fluid"; break;
+            case 0: genderLabel = `${T("MainMenu.gender.male")} (He/Him)`; break;
+            case 1: genderLabel = `${T("MainMenu.gender.female")} (She/Her)`; break;
+            case 2: genderLabel = `${T("MainMenu.gender.nonBinary")} (They/Them)`; break;
+            case 3: genderLabel = `${T("MainMenu.gender.cocoon")} (It/Its)`; break;
+            default: genderLabel = T("MainMenu.gender.fluid"); break;
         }
 
         const ccUtils = window.CharacterCreationUtils;
@@ -791,20 +791,20 @@
         const repType = $gameVariables ? $gameVariables.value(repVar) : 0;
         let repName = "";
         switch (repType) {
-            case -1: repName = T("MainMenu.reproduction.none") || "None"; break;
-            case 0: repName = T("MainMenu.reproduction.testicles") || "Testicles"; break;
-            case 1: repName = T("MainMenu.reproduction.uterus") || "Uterus"; break;
-            case 2: repName = T("MainMenu.reproduction.oviparous") || "Oviparous"; break;
-            case 3: repName = T("MainMenu.reproduction.plant") || "Plant"; break;
-            case 4: repName = T("MainMenu.reproduction.mitosis") || "Mitosis"; break;
-            default: repName = T("MainMenu.reproduction.unknown") || "Unknown"; break;
+            case -1: repName = T("MainMenu.reproduction.none"); break;
+            case 0: repName = T("MainMenu.reproduction.testicles"); break;
+            case 1: repName = T("MainMenu.reproduction.uterus"); break;
+            case 2: repName = T("MainMenu.reproduction.oviparous"); break;
+            case 3: repName = T("MainMenu.reproduction.plant"); break;
+            case 4: repName = T("MainMenu.reproduction.mitosis"); break;
+            default: repName = T("MainMenu.reproduction.unknown"); break;
         }
         const health = window.HealthCore;
         const gestationDays = health && health.getPregnancyDuration ? health.getPregnancyDuration(actor, repType) : (repType === 4 ? 1 : 280);
 
         const archKeys = (health && health.getActorArchetypeKeys) ? health.getActorArchetypeKeys(actor) : [];
         const archNames = archKeys.map(k => health.getArchetypeDisplayName(k)).filter(Boolean);
-        const archetypeText = archNames.length ? archNames.join(" / ") : (profile?.isCreature ? "Creature" : "Humanoid");
+        const archetypeText = archNames.length ? archNames.join(" / ") : (profile?.isCreature ? T('SceneStatus.ui.archetypeCreature') : T('SceneStatus.ui.archetypeHumanoid'));
 
         const nowYear = (window.NPCLifeSim && window.NPCLifeSim.currentYear) ? window.NPCLifeSim.currentYear() : 2001;
         let ageVal = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIndex]) ||
@@ -893,16 +893,16 @@
         }
 
         const wealthTier = profile?.wealthTierChosen != null ? profile.wealthTierChosen : (profile?.wealthTierBase ?? 2);
-        const wealthLabels = [T("Empathize.destitute") || "Destitute", T("Empathize.poor") || "Poor", T("Empathize.workingClass") || "Working Class", T("Empathize.middleClass") || "Middle Class", T("Empathize.wealthy") || "Wealthy"];
+        const wealthLabels = [T("Empathize.destitute"), T("Empathize.poor"), T("Empathize.workingClass"), T("Empathize.middleClass"), T("Empathize.wealthy")];
         const wealthText = wealthLabels[wealthTier] || wealthLabels[2];
 
         const morality = profile?.moralityScore ?? 0;
         const moralMap = [
-            { threshold: -60, label: T("Empathize.evil") || "Evil", band: "wicked" },
-            { threshold: -20, label: T("Empathize.dishonest") || "Dishonest", band: "wicked" },
-            { threshold: 20, label: T("Empathize.neutral") || "Neutral", band: "neutral" },
-            { threshold: 60, label: T("Empathize.honest") || "Honest", band: "upright" },
-            { threshold: Infinity, label: T("Empathize.virtuous") || "Virtuous", band: "upright" }
+            { threshold: -60, label: T("Empathize.evil"), band: "wicked" },
+            { threshold: -20, label: T("Empathize.dishonest"), band: "wicked" },
+            { threshold: 20, label: T("Empathize.neutral"), band: "neutral" },
+            { threshold: 60, label: T("Empathize.honest"), band: "upright" },
+            { threshold: Infinity, label: T("Empathize.virtuous"), band: "upright" }
         ];
         const moralEntry = moralMap.find(e => morality < e.threshold) || moralMap[2];
 
@@ -930,7 +930,7 @@
                 specs.map(s => `<span class="status-spec-tag"><span style="${iconStyle(s.icon, 16)}"></span>${escapeAttr(s.name)} <b>(${escapeAttr(s.levelName)})</b></span>`).join("") +
                 `</div>`;
         } else {
-            specsHTML = `<div class="status-06">${T('SceneStatus.ui.noSpecializations') || "No trained specializations..."}</div>`;
+            specsHTML = `<div class="status-06">${T('SceneStatus.ui.noSpecializations')}</div>`;
         }
 
         // 4. Backstory Narrative & Formative Events
@@ -971,8 +971,8 @@
         if (section === "backstory") {
             return `
             <div class="status-bio-section">
-                <div class="card-label">${T('SceneStatus.ui.backstoryTitle') || "Backstory & Formative Events"}</div>
-                ${narrative ? `<div class="status-bio-narrative">${escapeAttr(narrative)}</div>` : `<div class="status-06">${T('SceneStatus.ui.noBackstory') || "No backstory recorded..."}</div>`}
+                <div class="card-label">${T('SceneStatus.ui.backstoryTitle')}</div>
+                ${narrative ? `<div class="status-bio-narrative">${escapeAttr(narrative)}</div>` : `<div class="status-06">${T('SceneStatus.ui.noBackstory')}</div>`}
                 ${eventsHTML}
             </div>
         `;
@@ -980,68 +980,68 @@
 
         return `
             <div class="status-bio-section">
-                <div class="card-label">${T('SceneStatus.ui.identityTitle') || "Identity & Demographics"}</div>
+                <div class="card-label">${T('SceneStatus.ui.identityTitle')}</div>
                 <div class="status-bio-grid">
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.gender') || "Gender"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.gender')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(genderLabel)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.reproduction') || "Reproduction"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.reproduction')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(repName)} <span class="status-07">(${gestationDays}d)</span></span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.archetype') || "Archetype"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.archetype')}:</span>
                         <span class="status-bio-item-val status-08">${escapeAttr(archetypeText)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.age') || "Age"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.age')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(ageVal)} <span class="status-07">(${birthYearVal})</span></span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.bloodType') || "Blood Type"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.bloodType')}:</span>
                         <span class="status-bio-item-val status-02">${escapeAttr(bloodType)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.hometown') || "Hometown"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.hometown')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(homeTown)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.nation') || "Nation"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.nation')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(nationName)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.sexualOrientation') || "Sexual"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.sexualOrientation')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(sexualOrientation)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.romanticOrientation') || "Romantic"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.romanticOrientation')}:</span>
                         <span class="status-bio-item-val">${escapeAttr(romanticOrientation)}</span>
                     </div>
                 </div>
             </div>
 
             <div class="status-bio-section">
-                <div class="card-label">${T('SceneStatus.ui.societyTitle') || "Society & Creed"}</div>
+                <div class="card-label">${T('SceneStatus.ui.societyTitle')}</div>
                 <div class="status-bio-grid">
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.personality') || "Personality"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.personality')}:</span>
                         <span class="status-bio-item-val"><span style="${iconStyle(persIcon, 16)} vertical-align:middle"></span> ${escapeAttr(persName)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.ideology') || "Ideology"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.ideology')}:</span>
                         <span class="status-bio-item-val"><span style="${iconStyle(186, 16)} vertical-align:middle"></span> ${escapeAttr(ideologyName)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.faction') || "Faction"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.faction')}:</span>
                         <span class="status-bio-item-val"><span style="${iconStyle(factionIcon, 16)} vertical-align:middle"></span> ${escapeAttr(factionName)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.wealth') || "Wealth"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.wealth')}:</span>
                         <span class="status-bio-item-val"><span style="${iconStyle(314, 16)} vertical-align:middle"></span> ${escapeAttr(wealthText)}</span>
                     </div>
                     <div class="status-bio-item">
-                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.morality') || "Morality"}:</span>
+                        <span class="status-bio-item-lbl">${T('SceneStatus.ui.morality')}:</span>
                         <span class="status-bio-item-val badge morality--${moralEntry.band}">${escapeAttr(moralEntry.label)} (${morality >= 0 ? '+' : ''}${morality})</span>
                     </div>
                 </div>
@@ -1049,7 +1049,7 @@
             </div>
 
             <div class="status-bio-section">
-                <div class="card-label">${T('SceneStatus.ui.specializationsTitle') || "Specializations & Skills"}</div>
+                <div class="card-label">${T('SceneStatus.ui.specializationsTitle')}</div>
                 ${specsHTML}
             </div>
         `;
@@ -1701,12 +1701,18 @@
             const spentHTML = spent > 0
                 ? `<div class="stat-medallion-spent">+${spent}</div>`
                 : "";
-            const raiseHTML = window.StatPoints.canSpend(actor, p.id)
+            const canRaise = window.StatPoints.canSpend(actor, p.id);
+            const raiseHTML = canRaise
                 ? `<div class="stat-medallion-raise focusable" title="${escapeAttr(T('SceneStatus.ui.raiseAttribute'))}" onclick="SceneManager._scene.spendStatPoint(${p.id})">+</div>`
                 : "";
+            // The mouse has the + itself; a keyboard and a pad walk the raisable
+            // stats with Y and spend into the lit one with X (see
+            // updateUIStatusInput). Without this the + was the one control on
+            // the sheet that only a mouse could ever press.
+            const litRaise = canRaise && p.id === this.raiseCursorParam();
 
             paramsGridHTML += `
-                <div class="stat-medallion">
+                <div class="stat-medallion${litRaise ? ' raise-lit' : ''}">
                     <div class="stat-medallion-lbl">${p.name}</div>
                     <div class="stat-medallion-row">
                         <div class="stat-medallion-val">${displayValHTML}</div>
@@ -1722,7 +1728,7 @@
         // not missed while the sheet is on another tab.
         const pointsLeft = window.StatPoints.available(actor);
         const pointsHTML = pointsLeft > 0
-            ? `<div class="stat-points-banner">${T('SceneStatus.ui.attributePoints').replace("{points}", pointsLeft)}</div>`
+            ? `<div class="stat-points-banner">${T('SceneStatus.ui.attributePoints', { points: pointsLeft })}</div>`
             : "";
 
         const medallionsEl = spread.querySelector("#status-medallions");
@@ -2423,6 +2429,35 @@
         }
     };
 
+    // The attributes a point could go into right now, in the order the
+    // medallions are drawn in. Read for the keyboard cursor below and nowhere
+    // else, so the grid stays the one place that decides the order.
+    Scene_Status.prototype.raisableParams = function () {
+        const actor = this.actor();
+        if (!actor || !window.StatPoints) return [];
+        return [2, 3, 6, 4, 5, 7].filter((id) => window.StatPoints.canSpend(actor, id));
+    };
+
+    // Which of them the cursor is on. Kept as a POSITION rather than as a param
+    // id, because spending a point can take a stat out of the list under the
+    // cursor (the pool empties, or the stat caps) and a position simply lands on
+    // whatever is there now.
+    Scene_Status.prototype.raiseCursorParam = function () {
+        const list = this.raisableParams();
+        if (!list.length) return -1;
+        const at = (this._raiseCursor || 0) % list.length;
+        return list[at];
+    };
+
+    Scene_Status.prototype.stepRaiseCursor = function (dir) {
+        const list = this.raisableParams();
+        if (list.length < 2) return false;
+        this._raiseCursor = ((this._raiseCursor || 0) + dir + list.length) % list.length;
+        SoundManager.playCursor();
+        this.refreshUIStatus();
+        return true;
+    };
+
     // Spending an attribute point from the medallion grid. Permanent: the
     // point is written into the actor and the sheet is redrawn under it.
     Scene_Status.prototype.spendStatPoint = function (paramId) {
@@ -2525,6 +2560,19 @@
         if (Input.isTriggered('ok')) {
             this.openStatusEmpathize();
             return;
+        }
+
+        // The medallions' + was the one control on this sheet a mouse alone
+        // could press. Y walks the stats a point could go into, X spends into
+        // the one it is lit on; both do nothing at all while there is no point
+        // to spend, so neither is in the way on an ordinary read of the sheet.
+        if (Input.isTriggered('menu') && this.stepRaiseCursor(1)) return;
+        if (Input.isTriggered('shift')) {
+            const id = this.raiseCursorParam();
+            if (id >= 0) {
+                this.spendStatPoint(id);
+                return;
+            }
         }
 
         // The traits and bio pages are scrollable dossiers

@@ -190,7 +190,7 @@
   },
   "listEmpty": "[Empty]",
   "sellCollectibles": "VENDI CIMELI",
-  "sellCollectiblesHint": "Vendi subito tutti i collezionabili nel tuo inventario. I collezionabili hanno un prezzo fisso e nessun altro uso.",
+  "sellCollectiblesHint": "Consegna in una volta sola ogni oggetto da collezione nello zaino. Hanno un prezzo fisso e nessun altro uso.",
   "noCollectibles": "Nello zaino non c'e altro che roba che serve davvero a qualcosa.",
   "soldCollectibles": "Consegnati {count} cimeli per {money}.",
   "year": "Anno",

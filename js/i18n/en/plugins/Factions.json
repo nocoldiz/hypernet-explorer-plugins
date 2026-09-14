@@ -43,7 +43,7 @@
  "selectTitle": "Select Faction",
  "selectHint": "Select a faction from the list on the left to view its ideology, leadership, and relationship alignments.",
  "pastGovernments": "Past Governments:",
- "reignSpan": "{from}–{to}",
+ "reignSpan": "{from}-{to}",
  "reignOpen": "since {from}",
  "currentGovernment": "Current Government:",
  "rulingPartyLine": "ruling party: {party}",

@@ -77,18 +77,6 @@
  * @on Enable Command Debug Mode
  * @off Disable Command Debug Mode
  *
- * @param exportAllMapsOnStart
- * @desc On boot, export a 1:1 JPG of every map in the game to img/maps as Map<id>.jpg (no player transfer, no events)
- * @default false
- * @type boolean
- * @on Export Every Map On Start
- * @off Do Nothing
- *
- * @param exportAllMapsPath
- * @desc Folder the boot export writes into, relative to the game root
- * @default img/maps
- * @type text
- *
  * @help
  * Check keycodes at  http://www.javascriptkeycode.com
  *
@@ -135,8 +123,6 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
     $.Param.fullDebug = $.Parameters.fullDebug === "true";
     $.Param.autoCaptureMode = $.Parameters.autoCaptureMode === "true";
     $.Param.commandDebugMode = $.Parameters.commandDebugMode === "true";
-    $.Param.exportAllMapsOnStart = $.Parameters.exportAllMapsOnStart === "true";
-    $.Param.exportAllMapsPath = $.Parameters.exportAllMapsPath || 'img/maps';
 
     $.Param.keyCode = Number($.Parameters.keyCode || 44);
 
@@ -1039,128 +1025,6 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
                     $.saveMapshot();
                 }
             }
-        }
-    };
-
-    //=========================================================================
-    // EXPORT EVERY MAP ON START
-    // A 1:1 picture of each map in MapInfos, painted on an offscreen Tilemap
-    // straight from the map file, so nothing is transferred to, no event runs
-    // and no autosave fires. Written as JPG to img/maps/Map<id>.jpg, the same
-    // names the map teleporter and the map graph already look for.
-    //=========================================================================
-    $.exportAllMaps = {
-        mapIds: function (mapInfos) {
-            var ids = [];
-            for (var i = 1; i < mapInfos.length; i++) {
-                if (mapInfos[i]) ids.push(i);
-            }
-            return ids;
-        },
-        fileName: function (mapId) {
-            return 'Map' + String(mapId).padZero(3) + '.jpg';
-        },
-        jpegQuality: function () {
-            return Math.min(Math.max($.Param.imageQuality, 1), 100) / 100;
-        },
-        // Paints one map onto a fresh bitmap with the plugin's own tile painter.
-        paint: function (mapData, tileset, bitmaps, tileWidth, tileHeight) {
-            var tilemap = new Tilemap();
-            tilemap.tileWidth = tileWidth;
-            tilemap.tileHeight = tileHeight;
-            tilemap.setData(mapData.width, mapData.height, mapData.data);
-            tilemap.flags = tileset.flags;
-            tilemap._bitmaps = bitmaps;
-            var w = mapData.width * tileWidth;
-            var h = mapData.height * tileHeight;
-            var lower = new Bitmap(w, h);
-            var upper = new Bitmap(w, h);
-            for (var y = 0; y < mapData.height; y++) {
-                for (var x = 0; x < mapData.width; x++) {
-                    tilemap._paintTilesOnBitmap(lower, upper, x, y);
-                }
-            }
-            var out = new Bitmap(w, h);
-            out.blt(lower, 0, 0, w, h, 0, 0, w, h);
-            out.blt(upper, 0, 0, w, h, 0, 0, w, h);
-            return out;
-        },
-        loadMap: function (mapId, done) {
-            var xhr = new XMLHttpRequest();
-            var url = 'data/Map' + String(mapId).padZero(3) + '.json';
-            xhr.open('GET', url);
-            xhr.overrideMimeType('application/json');
-            xhr.onload = function () {
-                if (xhr.status < 400) {
-                    try { done(JSON.parse(xhr.responseText)); return; } catch (e) { /* fall through */ }
-                }
-                done(null);
-            };
-            xhr.onerror = function () { done(null); };
-            xhr.send();
-        },
-        baseDir: function () {
-            var nodePath = require('path');
-            if (typeof process !== 'undefined' && process.mainModule) {
-                return nodePath.dirname(process.mainModule.filename);
-            }
-            return '.';
-        },
-        run: function (done) {
-            if (!Utils.isNwjs()) { if (done) done(0); return; }
-            var self = this;
-            var fs = require('fs');
-            var nodePath = require('path');
-            var dir = nodePath.join(this.baseDir(), $.Param.exportAllMapsPath);
-            fs.mkdirSync(dir, { recursive: true });
-            var ids = this.mapIds($dataMapInfos);
-            var tileWidth = $dataSystem && 'tileSize' in $dataSystem ? $dataSystem.tileSize : 48;
-            var tileHeight = tileWidth;
-            var written = 0;
-            var index = 0;
-
-            var next = function () {
-                if (index >= ids.length) {
-                    console.log('[OrangeMapshotMZ] exported ' + written + ' of ' + ids.length + ' maps to ' + dir);
-                    if (done) done(written);
-                    return;
-                }
-                var mapId = ids[index++];
-                self.loadMap(mapId, function (mapData) {
-                    var tileset = mapData && $dataTilesets[mapData.tilesetId];
-                    if (!mapData || !tileset) { setTimeout(next, 0); return; }
-                    var bitmaps = tileset.tilesetNames.map(function (name) {
-                        return ImageManager.loadTileset(name);
-                    });
-                    var wait = function () {
-                        if (!bitmaps.every(function (b) { return b.isReady() || b.isError(); })) {
-                            setTimeout(wait, 16);
-                            return;
-                        }
-                        try {
-                            var bitmap = self.paint(mapData, tileset, bitmaps, tileWidth, tileHeight);
-                            var urlData = bitmap.canvas.toDataURL('image/jpeg', self.jpegQuality());
-                            var base64Data = urlData.replace(/^data:image\/jpeg;base64,/, '');
-                            fs.writeFileSync(nodePath.join(dir, self.fileName(mapId)), base64Data, 'base64');
-                            written++;
-                        } catch (error) {
-                            console.error('[OrangeMapshotMZ] could not export map ' + mapId, error);
-                        }
-                        setTimeout(next, 0);
-                    };
-                    wait();
-                });
-            };
-            next();
-        }
-    };
-
-    const _Scene_Boot_start = Scene_Boot.prototype.start;
-    Scene_Boot.prototype.start = function () {
-        _Scene_Boot_start.call(this);
-        if ($.Param.exportAllMapsOnStart && !$._exportAllMapsRan) {
-            $._exportAllMapsRan = true;
-            $.exportAllMaps.run();
         }
     };
 

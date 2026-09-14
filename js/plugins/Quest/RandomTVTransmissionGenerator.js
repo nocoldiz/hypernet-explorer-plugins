@@ -730,7 +730,20 @@
         } catch (e) { /* fall back to lazy sync load */ }
     })();
 
-    function tvChannelById(id) { return loadTVDB().channels.find(c => c.id === id) || null; }
+    // Every channel this world actually broadcasts. A world with nobody left
+    // in it still has transmitters, but the wrestling hour needs two
+    // promotions and a crowd, so both wrestling channels drop off the dial
+    // rather than airing a card nobody could have wrestled.
+    function tvActiveChannels() {
+        const all = loadTVDB().channels;
+        let live = true;
+        try { live = window.WrestlingLeague ? window.WrestlingLeague.enabled() : true; }
+        catch (e) { live = true; }
+        if (live) return all;
+        return all.filter(c => TV_WRESTLING_CHANNELS.indexOf(c.id) < 0);
+    }
+
+    function tvChannelById(id) { return tvActiveChannels().find(c => c.id === id) || null; }
     // The schedule data carries i18n keys, not titles (see HypernetTVGuide).
     function tvText(value) {
         if (!value) return '';
@@ -789,10 +802,22 @@
         const perWeek = db.programsPerWeek || 6;
         const slots = (db.slotHours && db.slotHours.length) ? db.slotHours : [6, 9, 12, 15, 18, 21, 24];
         const out = {};
-        db.channels.forEach(ch => {
+        tvActiveChannels().forEach(ch => {
             const rng = tvRng((tvHistorySeed() ^ Math.imul(week + 1, 0x9E3779B1) ^ tvHash(ch.id)) >>> 0);
             const entries = [];
             const used = {};
+            // The wrestling hour is not scheduled, it is fixed: both
+            // promotions go out at the same hour every night of the week, and
+            // have done since before either of them could have stopped.
+            if (TV_WRESTLING_CHANNELS.indexOf(ch.id) >= 0) {
+                const hour = (window.WrestlingLeague && window.WrestlingLeague.SHOW_HOUR) || 21;
+                for (let day = 0; day < 7; day++) {
+                    const prog = tvPick(rng, ch.programs) || (ch.programs || [])[0];
+                    if (prog) entries.push({ channelId: ch.id, programId: prog.id, day, hour });
+                }
+                out[ch.id] = entries;
+                return;
+            }
             for (let i = 0; i < perWeek; i++) {
                 const prog = tvPick(rng, ch.programs) || (ch.programs || [])[0];
                 if (!prog) continue;
@@ -954,8 +979,40 @@
             const it = tvNewsItems(rng, 1)[0];
             return (it && it.title) ? it.title + (it.location ? ` (${it.location})` : "")
                                     : tvT(rng, tvPick(rng, LORE().pseudonews));
-        }
+        },
+        // The live wrestling desk. A wrestling channel reads out the actual
+        // roster and the actual result of last night's card, so watching the
+        // hour is following the same league the Slamgrimorie books.
+        wrestler: rng => tvWrestlingName(rng),
+        wrestling: rng => tvWrestlingResult(rng)
     };
+
+    // One wrestler's ring name, from whichever promotion, or nothing at all
+    // where this world has no wrestling to speak of.
+    function tvWrestlingName(rng) {
+        try {
+            const L = window.WrestlingLeague;
+            if (!L || !L.enabled()) return "";
+            const all = L.FEDS.reduce((acc, f) => acc.concat(L.roster(f)), []);
+            if (!all.length) return "";
+            return all[Math.floor(rng() * all.length)].name;
+        } catch (e) { return ""; }
+    }
+
+    // A finish off last night's card, quoted as the desk wrote it.
+    function tvWrestlingResult(rng) {
+        try {
+            const L = window.WrestlingLeague;
+            if (!L || !L.enabled()) return "";
+            const lines = [];
+            L.FEDS.forEach(f => {
+                const card = L.card(f, L.tonight());
+                if (card) card.matches.forEach(m => { if (m.result) lines.push(m.result.text); });
+            });
+            if (!lines.length) return "";
+            return lines[Math.floor(rng() * lines.length)];
+        } catch (e) { return ""; }
+    }
     const TV_DYNAMIC = () => TV_DYNAMIC_TABLE;
 
     // Picks one advertisable product and pins name/price/category into the
@@ -1920,6 +1977,12 @@
     // meter of everyone in the party. Technophobes hate the thing in the
     // corner of the room, so the same broadcast costs them the same amount.
     const TV_TECHNOPHOBE_TRAIT_ID = 34;
+    // The two channels that carry the continental wrestling hour. Both go out
+    // at the same time and both are dead air in a world with nobody left to
+    // promote anything: window.WrestlingLeague.enabled() is the only answer to
+    // that, and it is asked rather than re-derived from a population mode.
+    const TV_WRESTLING_CHANNELS = ['slamdrome', 'circle']; // i18n-ignore  channel ids
+
     const TV_FUN_FULL = 8;          // sat through the whole transmission
     const TV_FUN_PARTIAL = 3;       // cut it short
 
@@ -2032,7 +2095,7 @@
         if (_tvCastIndex) return _tvCastIndex;
         const map = {};
         try {
-            loadTVDB().channels.forEach(ch => {
+            tvActiveChannels().forEach(ch => {
                 (ch.programs || []).forEach(prog => {
                     tvCastMembers(prog).forEach(m => {
                         const key = String(m.characterName).trim();
@@ -2180,6 +2243,13 @@
             if (!pend || pend.rewarded) return;
             pend.rewarded = true;
             tvFunToast(tvApplyFun(full ? TV_FUN_FULL : TV_FUN_PARTIAL));
+            // Watching wrestling is how a party learns wrestling. The two
+            // wrestling channels are the only ones that teach anything, and
+            // window.WrestlingLeague owns how much: nothing here decides it.
+            if (TV_WRESTLING_CHANNELS.indexOf(String(pend.channelId || '')) >= 0) {
+                try { window.WrestlingLeague?.train?.(full ? 2 : 1, 'tv', 60); }
+                catch (e) { /* the league is not loaded in this build */ }
+            }
         },
         // Cancel/back during a broadcast: stop the transmission where it is.
         abort() { tvAbortBroadcast(); }
@@ -2442,8 +2512,8 @@
 
     class Window_TVChannels extends Window_TTList {
         constructor(rect) { super(rect); this.refresh(); this.select(0); }
-        maxItems() { return loadTVDB().channels.length; }
-        channels() { return loadTVDB().channels; }
+        maxItems() { return tvActiveChannels().length; }
+        channels() { return tvActiveChannels(); }
         currentChannel() { return this.channels()[this.index()] || null; }
         // Teletext channel numbers run 101, 102, ... like Televideo pages.
         pageNumber(index) { return String(101 + index); }
@@ -2592,7 +2662,7 @@
             const sched = tvGetSchedule();
             const days = tvDayNames();
             const rows = [];
-            loadTVDB().channels.forEach((ch, ci) => {
+            tvActiveChannels().forEach((ch, ci) => {
                 rows.push({ type: "header", ch, page: String(101 + ci) });
                 const list = sched[ch.id] || [];
                 if (!list.length) rows.push({ type: "empty" });

@@ -2634,6 +2634,212 @@
           ]
         }
       ]
+    },
+    {
+      "id": "slamdrome",
+      "name": "HypernetTVGuide.channel.slamdrome.name",
+      "tone": "chaotic",
+      "color": 2,
+      "room": {
+        "x": 40,
+        "y": 40,
+        "dir": 8
+      },
+      "programs": [
+        {
+          "id": "slam_vigil",
+          "format": "wrestling_chaos",
+          "title": "HypernetTVGuide.program.slamdrome.slam_vigil.title",
+          "tone": "chaotic",
+          "cast": [
+            {
+              "characterName": "Denio Falck",
+              "characterSprite": "NPCs/!$Announcer1",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Bet Corvaglia",
+              "characterSprite": "Skab/!$Wrestler",
+              "bustName": "Wrestler"
+            }
+          ]
+        },
+        {
+          "id": "slam_aftershow",
+          "format": "wrestling_chaos",
+          "title": "HypernetTVGuide.program.slamdrome.slam_aftershow.title",
+          "tone": "wry",
+          "cast": [
+            {
+              "characterName": "Denio Falck",
+              "characterSprite": "NPCs/!$Announcer1",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Bet Corvaglia",
+              "characterSprite": "Skab/!$Wrestler",
+              "bustName": "Wrestler"
+            }
+          ]
+        },
+        {
+          "id": "slam_classics",
+          "format": "wrestling_chaos",
+          "title": "HypernetTVGuide.program.slamdrome.slam_classics.title",
+          "tone": "wry",
+          "cast": [
+            {
+              "characterName": "Denio Falck",
+              "characterSprite": "NPCs/!$Announcer1",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Bet Corvaglia",
+              "characterSprite": "Skab/!$Wrestler",
+              "bustName": "Wrestler"
+            }
+          ]
+        },
+        {
+          "id": "slam_contracts",
+          "format": "wrestling_chaos",
+          "title": "HypernetTVGuide.program.slamdrome.slam_contracts.title",
+          "tone": "serious",
+          "cast": [
+            {
+              "characterName": "Denio Falck",
+              "characterSprite": "NPCs/!$Announcer1",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Bet Corvaglia",
+              "characterSprite": "Skab/!$Wrestler",
+              "bustName": "Wrestler"
+            }
+          ]
+        },
+        {
+          "id": "slam_mundane_hour",
+          "format": "wrestling_chaos",
+          "title": "HypernetTVGuide.program.slamdrome.slam_mundane_hour.title",
+          "tone": "serious",
+          "cast": [
+            {
+              "characterName": "Denio Falck",
+              "characterSprite": "NPCs/!$Announcer1",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Bet Corvaglia",
+              "characterSprite": "Skab/!$Wrestler",
+              "bustName": "Wrestler"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "circle",
+      "name": "HypernetTVGuide.channel.circle.name",
+      "tone": "serious",
+      "color": 4,
+      "room": {
+        "x": 32,
+        "y": 32,
+        "dir": 8
+      },
+      "programs": [
+        {
+          "id": "sanctioned_hour",
+          "format": "wrestling_martial",
+          "title": "HypernetTVGuide.program.circle.sanctioned_hour.title",
+          "tone": "serious",
+          "cast": [
+            {
+              "characterName": "Notary Ambrus",
+              "characterSprite": "Skab/!$Announcer",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Halina Vrsic",
+              "characterSprite": "Skab/!$OldGladiator",
+              "bustName": "OldGladiator"
+            }
+          ]
+        },
+        {
+          "id": "form_and_fall",
+          "format": "wrestling_martial",
+          "title": "HypernetTVGuide.program.circle.form_and_fall.title",
+          "tone": "solemn",
+          "cast": [
+            {
+              "characterName": "Notary Ambrus",
+              "characterSprite": "Skab/!$Announcer",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Halina Vrsic",
+              "characterSprite": "Skab/!$OldGladiator",
+              "bustName": "OldGladiator"
+            }
+          ]
+        },
+        {
+          "id": "the_notariat",
+          "format": "wrestling_martial",
+          "title": "HypernetTVGuide.program.circle.the_notariat.title",
+          "tone": "serious",
+          "cast": [
+            {
+              "characterName": "Notary Ambrus",
+              "characterSprite": "Skab/!$Announcer",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Halina Vrsic",
+              "characterSprite": "Skab/!$OldGladiator",
+              "bustName": "OldGladiator"
+            }
+          ]
+        },
+        {
+          "id": "open_division",
+          "format": "wrestling_martial",
+          "title": "HypernetTVGuide.program.circle.open_division.title",
+          "tone": "wry",
+          "cast": [
+            {
+              "characterName": "Notary Ambrus",
+              "characterSprite": "Skab/!$Announcer",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Halina Vrsic",
+              "characterSprite": "Skab/!$OldGladiator",
+              "bustName": "OldGladiator"
+            }
+          ]
+        },
+        {
+          "id": "school_of_the_week",
+          "format": "wrestling_martial",
+          "title": "HypernetTVGuide.program.circle.school_of_the_week.title",
+          "tone": "solemn",
+          "cast": [
+            {
+              "characterName": "Notary Ambrus",
+              "characterSprite": "Skab/!$Announcer",
+              "bustName": "Announcer"
+            },
+            {
+              "characterName": "Halina Vrsic",
+              "characterSprite": "Skab/!$OldGladiator",
+              "bustName": "OldGladiator"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

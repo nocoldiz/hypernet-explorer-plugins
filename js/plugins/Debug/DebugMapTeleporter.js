@@ -178,38 +178,20 @@
         doc.title = 'Debug Map Teleporter';
         
         // Create HTML structure
-        // The teleporter is a window.open popup, not an overlay inside the
-        // game, so none of the game's stylesheets reach it on its own. Link
-        // css/vars.css and the whole token palette comes with it, live preset
-        // and all: GameOptions writes the chosen theme over that file. A <base>
-        // pins the relative paths (the stylesheet, the map previews) to the
-        // game's own directory instead of leaving them on about:blank.
-        const baseHref = window.location.href.replace(/[^/]*$/, '');
-        doc.head.innerHTML =
-            `<base href="${baseHref}">` +
-            `<link rel="stylesheet" href="css/vars.css">`;
-
         doc.body.innerHTML = `
             <style>
                 body {
-                    font-family: var(--font-ui);
+                    font-family: Arial, sans-serif;
                     margin: 0;
                     padding: 20px;
-                    background: var(--bg-secondary-hover);
-                    color: var(--text-success-active);
+                    background: #2c3e50;
+                    color: white;
                 }
                 .header {
                     text-align: center;
                     margin-bottom: 20px;
-                    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+                    border-bottom: 2px solid #3498db;
                     padding-bottom: 15px;
-                }
-                h1 {
-                    font-size: var(--fs-title);
-                    font-weight: bold;
-                    letter-spacing: 1px;
-                    color: var(--text-detail-heading);
-                    margin: 0 0 10px 0;
                 }
                 .search-container {
                     margin: 15px 0;
@@ -218,32 +200,31 @@
                     width: 60%;
                     max-width: 400px;
                     padding: 10px;
-                    font-family: var(--font-ui);
-                    font-size: var(--fs-body);
-                    border: 1px solid var(--border-subtle);
-                    border-radius: 4px;
-                    background: var(--bg-input-hover);
-                    color: var(--text-success-active);
+                    font-size: 19px;
+                    border: 2px solid #3498db;
+                    border-radius: 5px;
+                    background: #34495e;
+                    color: white;
                     outline: none;
                 }
                 #mapFilter:focus {
-                    border-color: var(--text-primary-hover);
+                    border-color: #2ecc71;
+                    box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
                 }
                 .search-info {
                     margin-top: 8px;
-                    font-size: var(--fs-caption);
-                    color: var(--text-text-alt-4);
+                    font-size: 17px;
+                    color: #bdc3c7;
                 }
-                /* A section heading is ink and a rule, never a plate. */
                 .section-header {
-                    font-size: var(--fs-detail-heading);
+                    font-size: 21px;
                     font-weight: bold;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    color: var(--text-detail-heading);
+                    color: #e74c3c;
                     margin: 20px 0 10px 0;
-                    padding: 8px 0;
-                    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
+                    padding: 8px 12px;
+                    background: rgba(231, 76, 60, 0.1);
+                    border-left: 4px solid #e74c3c;
+                    border-radius: 0 4px 4px 0;
                 }
                 .map-grid {
                     display: grid;
@@ -252,26 +233,26 @@
                     margin-bottom: 30px;
                     padding: 10px;
                 }
-                /* No plate and no frame behind an option: the ground is the
-                   page, and only the row being pointed at draws a hairline. */
                 .map-item {
-                    position: relative;
-                    background: transparent;
-                    border: 1px solid transparent;
-                    border-radius: 4px;
+                    background: #34495e;
+                    border: 2px solid #3498db;
+                    border-radius: 8px;
                     padding: 10px;
                     cursor: pointer;
+                    transition: all 0.3s;
                     text-align: center;
-                    transition: 0.2s ease;
-                    transition-property: background-color, border-color, color;
                 }
-                .map-item:hover,
-                .map-item.kb-focus {
-                    border-color: var(--text-primary-hover);
+                .map-item.quick-access {
+                    border-color: #e74c3c;
+                    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
                 }
-                .map-item:hover .map-name,
-                .map-item.kb-focus .map-name {
-                    color: var(--text-primary-hover);
+                .map-item:hover {
+                    background: #3498db;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                }
+                .map-item.quick-access:hover {
+                    background: #e74c3c;
                 }
                 .map-image {
                     width: 100%;
@@ -279,83 +260,65 @@
                     object-fit: cover;
                     border-radius: 4px;
                     margin-bottom: 8px;
-                    background: var(--bg-well);
-                    border: 1px solid var(--border-subtle);
+                    background: #2c3e50;
+                    border: 1px solid #3498db;
                 }
                 .map-image.error {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: var(--text-text-alt-4);
-                    font-size: var(--fs-caption);
+                    color: #bdc3c7;
+                    font-size: 15px;
                     text-align: center;
                 }
                 .map-info {
-                    font-size: var(--fs-label);
+                    font-size: 17px;
                 }
                 .map-name {
                     font-weight: bold;
                     margin-bottom: 4px;
-                    color: var(--text-success-active);
                 }
                 .map-id {
-                    color: var(--text-text-alt-4);
-                    font-size: var(--fs-caption);
+                    color: #bdc3c7;
+                    font-size: 15px;
                 }
                 .loading {
                     text-align: center;
                     padding: 50px;
-                    font-size: var(--fs-heading);
-                    color: var(--text-text-alt-4);
+                    font-size: 21px;
+                    color: #3498db;
                 }
                 .error {
-                    color: var(--text-text-alt-10);
+                    color: #e74c3c;
                     text-align: center;
                     padding: 20px;
+                }
+                /* The card the arrow keys are resting on. The list is walked
+                   as well as clicked: the search field keeps the caret, and the
+                   arrows move this ring through whatever the filter left. */
+                .map-item.kb-focus {
+                    outline: 3px solid #f1c40f;
+                    outline-offset: 2px;
                 }
                 .map-item.hidden {
                     display: none;
                 }
-                /* The one mark that says a map is in Quick Access. */
                 .quick-access-badge {
                     position: absolute;
                     top: 5px;
                     right: 5px;
-                    background: var(--chip-active-bg);
-                    color: var(--chip-active-fg);
-                    border: 1px solid var(--border-gold-amber);
-                    border-radius: 2px;
+                    background: #e74c3c;
+                    color: white;
                     padding: 2px 6px;
-                    font-size: var(--fs-caption);
+                    font-size: 13px;
                     font-weight: bold;
-                    letter-spacing: 0.06em;
                 }
-                .back-button {
-                    position: absolute;
-                    top: 15px;
-                    left: 15px;
-                    font-family: var(--font-ui);
-                    font-size: var(--fs-body);
-                    font-weight: bold;
-                    text-transform: uppercase;
-                    padding: 6px 14px;
-                    background: transparent;
-                    border: 1.5px solid var(--text-primary-hover);
-                    border-radius: 4px;
-                    color: var(--text-primary-hover);
-                    cursor: pointer;
-                    transition: 0.2s ease;
-                    transition-property: background-color, border-color, color;
-                }
-                .back-button:hover,
-                .back-button:focus-visible {
-                    background: var(--chip-active-bg);
-                    color: var(--chip-active-fg);
-                    border-color: var(--chip-active-fg);
+                .map-item {
+                    position: relative;
                 }
             </style>
             <div class="header">
-                <button id="debugBackButton" class="back-button">Back (Esc)</button>
+                <button id="debugBackButton" style="position:absolute; top:15px; left:15px; padding:8px 16px; font-size:17px; font-weight:bold; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer">Back (Esc)</button>
                 <h1>Debug Map Teleporter</h1>
                 <div class="search-container">
                     <input type="text" id="mapFilter" placeholder="Search maps by name or ID..." />

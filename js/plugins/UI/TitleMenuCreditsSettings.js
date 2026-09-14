@@ -60,6 +60,8 @@
     // by:      who made it, when they are credited by name
     // urls:    where it came from, written without the protocol
 
+    // i18n-ignore-start: a person, a pack, a plugin or a URL reads the same in every
+    // language; only the section titles are translated (TitleCredits.sections)
     const CREDITS_SECTIONS = [
         {
             section: 'team',
@@ -180,6 +182,7 @@
             ]
         }
     ];
+    // i18n-ignore-end
 
     //=============================================================================
     // Scene_Title Modifications

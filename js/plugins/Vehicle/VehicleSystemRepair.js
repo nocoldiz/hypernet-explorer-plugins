@@ -224,52 +224,46 @@
   // Upgrade catalog. `kind:'level'` upgrades stack to `max` levels; `kind:'bool'`
   // upgrades are one-shot ability unlocks. Costs are { itemId: quantity } maps.
   // Display copy lives in the namespace, keyed by upgrade id.
-  //
-  // These are meant to be a season's work on a machine, not an afternoon's: a
-  // couple of steel bars bought the first turbo before, so a party walked out of
-  // its first town with every module fitted and the whole workshop spent. Each
-  // rank costs roughly half again what the one under it did, and the third rank
-  // of anything wants the materials that only come out of deep country.
   const UPGRADES = {
     accel: {
       kind: 'level', max: 3, icon: 78,
       costs: [
-        { [MAT.steel]: 14, [MAT.oil]: 8, [MAT.circuit]: 3 },
-        { [MAT.titanium]: 16, [MAT.circuit]: 8, [MAT.oil]: 14 },
-        { [MAT.varlenia]: 14, [MAT.nanotube]: 18, [MAT.quantum]: 8 }
+        { [MAT.steel]: 2, [MAT.oil]: 1 },
+        { [MAT.titanium]: 2, [MAT.circuit]: 1 },
+        { [MAT.varlenia]: 1, [MAT.nanotube]: 1 }
       ]
     },
     speed: {
       kind: 'level', max: 3, icon: 73,
       costs: [
-        { [MAT.plastic]: 16, [MAT.resin]: 10, [MAT.steel]: 6 },
-        { [MAT.titanium]: 16, [MAT.glass]: 14, [MAT.resin]: 10 },
-        { [MAT.varlenia]: 14, [MAT.quantum]: 10, [MAT.nanotube]: 18 }
+        { [MAT.plastic]: 2, [MAT.resin]: 1 },
+        { [MAT.titanium]: 2, [MAT.glass]: 2 },
+        { [MAT.varlenia]: 1, [MAT.quantum]: 1 }
       ]
     },
     fuel: {
       kind: 'level', max: 3, icon: 314, noBike: true, noBoat: true,
       costs: [
-        { [MAT.plastic]: 20, [MAT.steel]: 12, [MAT.resin]: 6 },
-        { [MAT.resin]: 16, [MAT.battery]: 12, [MAT.titanium]: 12 },
-        { [MAT.titanium]: 22, [MAT.nanotube]: 16, [MAT.quantum]: 8 }
+        { [MAT.plastic]: 3, [MAT.steel]: 1 },
+        { [MAT.resin]: 2, [MAT.battery]: 2 },
+        { [MAT.titanium]: 2, [MAT.nanotube]: 1 }
       ]
     },
     health: {
       kind: 'level', max: 3, icon: 81,
       costs: [
-        { [MAT.steel]: 22, [MAT.cloth]: 14, [MAT.leather]: 8 },
-        { [MAT.titanium]: 20, [MAT.resin]: 14, [MAT.steel]: 16 },
-        { [MAT.varlenia]: 16, [MAT.crystal]: 14, [MAT.titanium]: 22 }
+        { [MAT.steel]: 3, [MAT.cloth]: 2 },
+        { [MAT.titanium]: 3, [MAT.resin]: 2 },
+        { [MAT.varlenia]: 2, [MAT.crystal]: 1 }
       ]
     },
     aquatic: {
       kind: 'bool', camperOnly: true, icon: 67,
-      cost: { [MAT.resin]: 28, [MAT.ethereal]: 7, [MAT.steel]: 32, [MAT.glass]: 12 }
+      cost: { [MAT.resin]: 4, [MAT.ethereal]: 1, [MAT.steel]: 4 }
     },
     flight: {
       kind: 'bool', camperOnly: true, icon: 69,
-      cost: { [MAT.quantum]: 9, [MAT.nanotube]: 24, [MAT.titanium]: 30, [MAT.arcane]: 7 }
+      cost: { [MAT.quantum]: 1, [MAT.nanotube]: 3, [MAT.titanium]: 4 }
     }
   };
   const UPGRADE_ORDER = ['accel', 'speed', 'fuel', 'health', 'aquatic', 'flight'];
@@ -803,9 +797,6 @@
             ${T('VehicleRepair.changeAppearance')}
           </div>` : "";
 
-      // The machine is the page. The portrait takes every pixel the header, the
-      // plate and the footer do not, rather than sitting at postage-stamp size
-      // over an empty lore box that filled the rest of the leaf with nothing.
       const leftPageHTML = `
         <div class="page-header-bar">
           <div class="back-button focusable" onclick="SceneManager._scene.exitMaintenance()">${T('VehicleRepair.close')}</div>
@@ -813,17 +804,16 @@
         </div>
 
         <div class="vrep-portrait">
-          <canvas id="vehicle-sprite-canvas" width="512" height="512"></canvas>
+          <canvas id="vehicle-sprite-canvas" width="150" height="150" style="image-rendering:${shipSpec ? 'auto' : 'pixelated'}"></canvas>
         </div>
+        ${shipPlateHTML}
 
-        <div class="vrep-plate">
-          ${shipPlateHTML}
-          <p class="vrep-desc">${vehicleDesc}</p>
-          <div class="vrep-status gauge-ink ${isBroken ? 'gauge-band--bad' : 'gauge-band--ok'}">
-            ${isBroken ? (T('VehicleRepair.statusBroken')) : (T('VehicleRepair.statusOperational'))}
-          </div>
-          ${appearanceBtnHTML ? `<div class="inspect-actions">${appearanceBtnHTML}</div>` : ''}
+        <p class="inspect-lore vrep-desc">${vehicleDesc}</p>
+
+        <div class="vrep-status gauge-ink ${isBroken ? 'gauge-band--bad' : 'gauge-band--ok'}">
+          ${isBroken ? (T('VehicleRepair.statusBroken')) : (T('VehicleRepair.statusOperational'))}
         </div>
+        ${appearanceBtnHTML ? `<div class="inspect-actions">${appearanceBtnHTML}</div>` : ''}
 
         <div class="ui-footer vrep-note">
           ${T('VehicleRepair.allCriticalComponentsMustMaintain')}
@@ -920,46 +910,46 @@
         const cost = upgradeCost(key, type);
         const afford = !maxed && canAfford(cost);
 
-        // The module's standing, read at a glance from the header row: a rank
-        // of pips for the levelled modules, a single badge for the one-shots.
+        // Level pips / installed badge.
         let progressHTML;
         if (isBool) {
-          progressHTML = `<span class="ui-chip gauge-ink ${maxed ? 'gauge-band--ok' : 'gauge-band--warn'}">${
-            maxed ? (T('VehicleRepair.installed')) : (T('VehicleRepair.notInstalled'))}</span>`;
+          progressHTML = `<span class="ui-chip gauge-ink ${maxed ? 'gauge-band--ok' : 'gauge-band--warn'}">
+            ${maxed ? (T('VehicleRepair.installed')) : (T('VehicleRepair.notInstalled'))}</span>`;
         } else {
           let pips = "";
           for (let i = 0; i < def.max; i++) {
             pips += `<span class="vrep-pip${i < level ? ' filled' : ''}"></span>`;
           }
-          progressHTML = `<span class="vrep-pips">${pips}</span><span class="ui-chip">${T('VehicleRepair.lv')} ${level}/${def.max}</span>`;
+          progressHTML = `<span class="ui-chip">${T('VehicleRepair.lv')} ${level}/${def.max}</span>${pips}`;
         }
 
-        const iconStyle = `background-position: -${(def.icon % 16) * 32}px -${Math.floor(def.icon / 16) * 32}px;`;
+        // Effect line (current -> next).
+        const effectHTML = `<div class="vrep-effect">${this.upgradeEffectText(type, key, useItalian)}</div>`;
 
-        // The whole card is one column: what it is, what it does, what it costs
-        // and the button, in that order. The cost sat in a stack of its own
-        // beside the text before, which squeezed the blurb into a narrow black
-        // box and pushed the pips into a vertical string down the margin.
-        const footHTML = maxed
-          ? `<div class="vrep-upgrade-foot"><span class="ui-chip gauge-ink gauge-band--ok">${T('VehicleRepair.maxed')}</span></div>`
-          : `
-            <div class="vrep-upgrade-foot">
+        const iconStyle = `background: url('img/system/IconSet.png') -${(def.icon % 16) * 32}px -${Math.floor(def.icon / 16) * 32}px no-repeat; width:32px; height:32px; flex:0 0 32px;`;
+
+        let actionHTML;
+        if (maxed) {
+          actionHTML = `<div class="inspect-actions"><span class="ui-chip gauge-ink gauge-band--ok">${T('VehicleRepair.maxed')}</span></div>`;
+        } else {
+          actionHTML = `
+            <div class="inspect-actions">
               <span class="vrep-btn-cost">${this.renderCost(cost)}</span>
               <div class="inspect-btn focusable${afford ? '' : ' unusable'}" onclick="SceneManager._scene.purchaseUpgrade('${key}')">
                 ${isBool ? (T('VehicleRepair.install')) : (T('VehicleRepair.upgradeAction'))}
               </div>
             </div>`;
+        }
 
         cardsHTML += `
-          <div class="item-slot vrep-upgrade${maxed ? ' vrep-upgrade--maxed' : ''}">
-            <div class="vrep-upgrade-head">
-              <div class="vrep-upgrade-icon" style="${iconStyle}"></div>
+          <div class="item-slot vrep-upgrade">
+            <div class="item-icon" style="${iconStyle}"></div>
+            <div class="item-slot-info">
               <div class="item-slot-name">${name}</div>
-              <div class="vrep-upgrade-rank">${progressHTML}</div>
+              <div class="inspect-lore">${desc}</div>
+              ${effectHTML}
             </div>
-            <p class="vrep-upgrade-desc">${desc}</p>
-            <div class="vrep-effect">${this.upgradeEffectText(type, key, useItalian)}</div>
-            ${footHTML}
+            <div class="vrep-upgrade-side">${progressHTML}${actionHTML}</div>
           </div>`;
       });
 
@@ -1015,9 +1005,9 @@
         const have = matOwned(id);
         const ok = have >= qty || ($gameSystem && $gameSystem._isSandboxMode);
         const icon = matIcon(id);
-        const iconStyle = `background-position: -${(icon % 16) * 24}px -${Math.floor(icon / 16) * 24}px;`;
+        const iconStyle = `background: url('img/system/IconSet.png') -${(icon % 16) * 24}px -${Math.floor(icon / 16) * 24}px no-repeat; background-size:384px auto; width:24px; height:24px; display:inline-block; vertical-align:middle;`;
         return `<span class="vrep-cost gauge-ink ${ok ? 'gauge-band--ok' : 'gauge-band--bad'}" title="${matName(id)}">
-          <span class="vrep-cost-icon" style="${iconStyle}"></span>${have}/${qty}</span>`;
+          <span style="${iconStyle}"></span>${have}/${qty}</span>`;
       }).join('');
     }
 
@@ -1120,11 +1110,7 @@
       if (canvas3d && window.VehicleModels && window.VehicleModels.has(this._vehicleType)) {
         this._vehiclePreview =
           window.VehicleModels.createPreview(canvas3d, this._vehicleType);
-        if (this._vehiclePreview) {
-          // A live render, not a sprite: it is not to be point-sampled.
-          canvas3d.classList.add('vrep-canvas--live');
-          return;
-        }
+        if (this._vehiclePreview) return;
         // No WebGL, or no model built: the sprite below still carries it.
       }
 
@@ -1151,20 +1137,11 @@
         const sx = (blockX + 1) * pw; // middle (standing) frame
         const sy = (blockY + 0) * ph; // down-facing row
 
-        // The portrait is sized by the page, so the buffer is matched to it:
-        // drawn at a fixed square it came out stretched on a panel that is not.
-        const cw = Math.max(1, Math.round(canvas.clientWidth || canvas.width));
-        const ch = Math.max(1, Math.round(canvas.clientHeight || canvas.height));
-        if (canvas.width !== cw) canvas.width = cw;
-        if (canvas.height !== ch) canvas.height = ch;
-
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.imageSmoothingEnabled = false;
 
-        // Whole steps only, and never past 8: a 48px sprite blown to fill a
-        // half-page leaf is a wall of mush, and a fractional step shimmers.
-        const scale = Math.max(1, Math.min(8, Math.floor(Math.min(canvas.width / pw, canvas.height / ph))));
+        const scale = Math.min(canvas.width / pw, canvas.height / ph);
         const dw = pw * scale;
         const dh = ph * scale;
         const dx = (canvas.width - dw) / 2;

@@ -517,7 +517,7 @@
     },
     "My": {
       "name": "Mythril",
-      "desc": "A legendary silver metal lighter than silk yet stronger than tempered steel, found only in the deepest dwarven mines far below the roots of ancient mountains. Its molecular structure seems to defy conventional physics ,  maintaining perfect crystalline order indefinitely while remaining malleable under the hammer of a master smith."
+      "desc": "A legendary silver metal lighter than silk yet stronger than tempered steel, found only in the deepest dwarven mines far below the roots of ancient mountains. Its molecular structure seems to defy conventional physics, maintaining perfect crystalline order indefinitely while remaining malleable under the hammer of a master smith."
     },
     "Ad": {
       "name": "Adamantine",
@@ -529,11 +529,11 @@
     },
     "Vd": {
       "name": "Voidite",
-      "desc": "Matter harvested from the null-space between planes of existence, so dark it renders the space around it visually indeterminate, and cold far beyond absolute zero. Any energy that contacts it is absorbed completely ,  light, heat, magic alike ,  making it invaluable for certain forbidden rituals and extraordinarily lethal to contain without the proper warding glyphs."
+      "desc": "Matter harvested from the null-space between planes of existence, so dark it renders the space around it visually indeterminate, and cold far beyond absolute zero. Any energy that contacts it is absorbed completely: light, heat and magic alike. That makes it invaluable for certain forbidden rituals and extraordinarily lethal to contain without the proper warding glyphs."
     },
     "Sl": {
       "name": "Soulite",
-      "desc": "Crystallized essence of living souls, formed only at nexuses where the spiritual energy of thousands of deaths has pooled and solidified over centuries into translucent, rose-tinted fragments. Each piece hums with a faint persistent emotion ,  the last feeling of whatever consciousness contributed its vital force to the crystal's formation."
+      "desc": "Crystallized essence of living souls, formed only at nexuses where the spiritual energy of thousands of deaths has pooled and solidified over centuries into translucent, rose-tinted fragments. Each piece hums with a faint persistent emotion, the last feeling of whatever consciousness contributed its vital force to the crystal's formation."
     },
     "Dc": {
       "name": "Dracite",

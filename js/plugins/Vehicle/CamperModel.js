@@ -1088,48 +1088,15 @@
             key1.position.set(6, 10, 8);
             scene.add(key1);
 
-            // Framed off what the model actually occupies, not off the length it
-            // declares: the starship comes out of GalaxySim at whatever size its
-            // hull class wants and its `length` is a nominal figure, so framing
-            // on that alone left a ringed voyager as a dot in the middle of the
-            // page. The declared length is only the fallback for a model whose
-            // geometry has not uploaded yet.
+            // Framed off the model's own length, so a bike fills the frame as
+            // well as a starship does.
             const turn = new THREE.Group();
             turn.add(model.group);
             scene.add(turn);
-            let span = model.length || 10;
-            let midY = span * 0.16;
-            try {
-                const box = new THREE.Box3().setFromObject(model.group);
-                if (box.isEmpty && !box.isEmpty()) {
-                    const size = box.getSize(new THREE.Vector3());
-                    const reach = Math.max(size.x, size.y, size.z);
-                    if (reach > 0.0001) {
-                        span = reach;
-                        midY = (box.min.y + box.max.y) / 2;
-                    }
-                }
-            } catch (e) { /* no geometry to measure: keep the declared length */ }
-
-            const camera = new THREE.PerspectiveCamera(38, w / h, span * 0.002, span * 40);
-            const d = span * 1.35;
+            const camera = new THREE.PerspectiveCamera(38, w / h, 0.1, 400);
+            const d = model.length * 1.35;
             camera.position.set(d * 0.62, d * 0.44, d * 0.9);
-            camera.lookAt(0, midY, 0);
-
-            // The page the canvas sits on is laid out in percentages, so its
-            // pixel size is not known until it is on screen and changes with the
-            // window: the drawing buffer follows it instead of staying at
-            // whatever it measured on the first frame.
-            let lastW = w, lastH = h;
-            const fit = () => {
-                const cw = Math.max(1, canvas.clientWidth || lastW);
-                const ch = Math.max(1, canvas.clientHeight || lastH);
-                if (cw === lastW && ch === lastH) return;
-                lastW = cw; lastH = ch;
-                renderer.setSize(cw, ch, false);
-                camera.aspect = cw / ch;
-                camera.updateProjectionMatrix();
-            };
+            camera.lookAt(0, model.length * 0.16, 0);
 
             let raf = null, t0 = null, dead = false;
             const frame = (now) => {
@@ -1137,7 +1104,6 @@
                 raf = requestAnimationFrame(frame);
                 if (t0 == null) t0 = now;
                 const t = (now - t0) / 1000;
-                fit();
                 turn.rotation.y = t * 0.5;
                 if (model.update) model.update(t);
                 renderer.render(scene, camera);

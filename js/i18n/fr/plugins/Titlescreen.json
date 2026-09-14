@@ -46,13 +46,13 @@
     "boosterPack": "Booster",
     "lockpick": "Crochetage",
     "arcadeSnake": "Arcade : Snake",
-    "arcadeFrogger": "Arcade : Frogger",
+    "arcadeFrogger": "Arcade : Hoppa",
     "arcadeBubblePop": "Arcade : Bubble Pop",
-    "arcadeSpaceInvaders": "Arcade : Space Invaders",
-    "arcadeBreakout": "Arcade : Breakout",
+    "arcadeSpaceInvaders": "Arcade : Astro Intruders",
+    "arcadeBreakout": "Arcade : Wallbreaker",
     "arcadeManpac": "Arcade : Manpac",
-    "arcadeAsteroids": "Arcade : Asteroids",
-    "arcadeCentipede": "Arcade : Centipede",
+    "arcadeAsteroids": "Arcade : Meteoroids",
+    "arcadeCentipede": "Arcade : Crawler",
     "piano": "Piano"
   },
   "disclaimer": {

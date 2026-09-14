@@ -3018,6 +3018,11 @@
   // no Scene_Battle to hang an update on: without this the spell quickbar
   // simply never appeared once a fight was played out on the map.
   window.BattleHotbar.update = _updateBattleHotbar;
+  // Whether the bar, rather than the command list beside it, owns direction
+  // input this frame. Asked by whoever else overrides the list's cursor
+  // (BattleSystemEnhanchedCommands.js loads after this file and wraps it), so
+  // one press is never read by both.
+  window.BattleHotbar.hasFocus = function () { return _hotbarActive; };
   window.BattleHotbar.hide = function () {
     _hotbarActive = false;
     _hotbarReturnIndex = null;
@@ -3048,8 +3053,13 @@
   const _Window_ActorCommand_processCursorMove_hotbar = Window_ActorCommand.prototype.processCursorMove;
   Window_ActorCommand.prototype.processCursorMove = function () {
     if (_hotbarActive) return;
-    const back = Input.isTriggered('left') || Input.isTriggered('pageup');
-    const fwd = Input.isTriggered('right') || Input.isTriggered('pagedown');
+    // LEFT AND RIGHT ONLY. The shoulders used to walk onto the bar as well,
+    // from the days when the command list ate the horizontal presses and there
+    // was no other way onto it. L1 is the basic-skills row now and R1 is free
+    // (BattleSystemEnhanchedCommands.js), and one control doing two things was
+    // how L1 came to open a list and step a bar on the same press.
+    const back = Input.isTriggered('left');
+    const fwd = Input.isTriggered('right');
     if (this.isCursorMovable() && (back || fwd)) {
       const skills = _hotbarSkills(this._actor);
       if (skills.length > 0) {

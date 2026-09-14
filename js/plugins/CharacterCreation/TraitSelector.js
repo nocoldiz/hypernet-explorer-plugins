@@ -200,145 +200,6 @@
     return picked;
   };
 
-  // --- Archetypes ---------------------------------------------------------
-  // A ready-made build: the whole purse spent for you on a set of traits that
-  // read as one character. The simple creation board offers these instead of
-  // the 199-card book, so a player who does not want to shop for traits still
-  // walks out with a build that plays like something rather than with three
-  // cheap traits picked off the top of the list; detailed mode then edits the
-  // result card by card.
-  //
-  // Every entry here is checked by test/test_traitpoints.js: it must spend the
-  // purse EXACTLY, stay under the pick cap, and hold no pair of traits that
-  // clash. Illnesses are never part of one - an archetype is a build, not a
-  // diagnosis.
-  //
-  // Traits are named by their slug (the middle of "traits.<slug>.name") rather
-  // than by id, so a build reads as what it is at a glance.
-  const TRAIT_ARCHETYPE_FAMILIES = [
-    "basics", "combat", "underworld", "mind", "mystic", "wilds", "social", "oddity",
-  ];   // i18n-ignore: keys into Traits.archetypeFamilies.*
-
-  const TRAIT_ARCHETYPES = [
-    // basics
-    { id: "hardy_brawn", family: "basics", traits: ["muscular", "athletic", "heat-adapted"] },
-    { id: "nimble_hands", family: "basics", traits: ["quick_reflexes", "ambidextrous", "early_bird", "polydactyly"] },
-    { id: "bright_mind", family: "basics", traits: ["genius", "photographic_memory", "scholar", "humble"] },
-    { id: "natural_charmer", family: "basics", traits: ["charismatic", "beautiful", "extrovert", "silvertongue", "romantic"] },
-    { id: "lucky_wanderer", family: "basics", traits: ["lucky", "optimist", "navigator", "generous", "honest"] },
-    { id: "steady_hand", family: "basics", traits: ["defensive", "stoic", "loyal", "humble"] },
-
-    // combat
-    { id: "frontline_soldier", family: "combat", traits: ["veteran", "shield_master", "defensive"] },
-    { id: "blade_duelist", family: "combat", traits: ["duelist", "quick_reflexes", "proud", "honest"] },
-    { id: "berserker", family: "combat", traits: ["berserker", "berserker_rage", "muscular", "masochist", "gigantism"] },
-    { id: "martial_artist", family: "combat", traits: ["martial_artist", "monk-trained"] },
-    { id: "sharpshooter", family: "combat", traits: ["marksman", "quick_reflexes", "trigger_happy"] },
-    { id: "ranger_archer", family: "combat", traits: ["archer", "tracker", "survivalist", "early_bird"] },
-    { id: "knight_errant", family: "combat", traits: ["mounted_combat", "noble", "loyal", "heir", "proud"] },
-    { id: "bar_brawler", family: "combat", traits: ["brawler", "muscular", "booming_voice", "blunt"] },
-    { id: "war_tactician", family: "combat", traits: ["tactician", "veteran", "pragmatist", "slothful"] },
-
-    // underworld
-    { id: "master_thief", family: "underworld", traits: ["thief", "kleptomaniac", "quick_reflexes", "paranoid", "impostor_syndrome"] },
-    { id: "assassin", family: "underworld", traits: ["assassin", "sociopath", "anonymous", "night_owl", "paranoid"] },
-    { id: "street_urchin", family: "underworld", traits: ["street_urchin", "thief", "illiterate"] },
-    { id: "con_artist", family: "underworld", traits: ["compulsive_liar", "extrovert", "charismatic", "merchant", "infamous"] },
-    { id: "gunslinger", family: "underworld", traits: ["gun_fu", "trigger_happy", "marksman", "wanted", "nicotine_addict"] },
-    { id: "criminal_fixer", family: "underworld", traits: ["criminal", "merchant", "treacherous", "wanted"] },
-    { id: "polyglot_spy", family: "underworld", traits: ["polyglot", "anonymous", "compulsive_liar", "treacherous", "night_owl", "paranoid"] },
-
-    // mind
-    { id: "scholar", family: "mind", traits: ["scholar", "genius", "photographic_memory", "eidetic_reader", "humble", "nearsighted"] },
-    { id: "alchemist", family: "mind", traits: ["alchemist", "herbalist", "perfectionist"] },
-    { id: "tinker_smith", family: "mind", traits: ["tech_savvy", "ambidextrous", "blacksmith"] },
-    { id: "field_physician", family: "mind", traits: ["herbalist", "empath", "scholar", "generous"] },
-    { id: "cartographer", family: "mind", traits: ["navigator", "polyglot", "scholar", "early_bird"] },
-    { id: "detective", family: "mind", traits: ["skeptic", "photographic_memory", "synesthete", "tracker"] },
-
-    // mystic
-    { id: "battlemage", family: "mystic", traits: ["magically_gifted", "sensitive", "spell-scarred", "witch-marked"] },
-    { id: "devout_pilgrim", family: "mystic", traits: ["devout", "pilgrim", "ascetic"] },
-    { id: "heretic_witch", family: "mystic", traits: ["heretic", "witch-marked", "cursed", "excommunicated", "clairvoyant"] },
-    { id: "oracle", family: "mystic", traits: ["prophetic", "clairvoyant", "sensitive", "nyctophobic"] },
-    { id: "nightborn", family: "mystic", traits: ["vampire", "night_owl", "cold-blooded", "beautiful", "albinism"] },
-    { id: "beast_whisperer", family: "mystic", traits: ["beast_whisperer", "animal_handler", "nature_attuned", "feral"] },
-
-    // wilds
-    { id: "hermit_survivalist", family: "wilds", traits: ["survivalist", "tracker", "ascetic", "agoraphobic"] },
-    { id: "mountain_ranger", family: "wilds", traits: ["mountain-born", "athletic", "early_bird", "humble"] },
-    { id: "desert_nomad", family: "wilds", traits: ["desert_dweller", "heat-adapted", "navigator", "generous"] },
-    { id: "farmstead_settler", family: "wilds", traits: ["farmer", "animal_handler", "workaholic", "generous", "humble", "early_bird"] },
-    { id: "island_sailor", family: "wilds", traits: ["island-raised", "navigator", "survivalist", "optimist"] },
-    { id: "spelunker", family: "wilds", traits: ["cave_dweller", "tracker", "congenital_analgesia", "dwarfism", "night_owl", "colorblind"] },
-
-    // social
-    { id: "travelling_bard", family: "social", traits: ["bard", "charismatic", "extrovert", "booming_voice"] },
-    { id: "noble_heir", family: "social", traits: ["noble", "heir", "wealthy", "beautiful", "polyglot", "scholar"] },
-    { id: "merchant_prince", family: "social", traits: ["merchant", "greedy", "silvertongue", "wealthy", "ambitious", "famous"] },
-    { id: "diplomat", family: "social", traits: ["polyglot", "silvertongue", "pragmatist", "honest", "humble", "forgiving", "generous"] },
-    { id: "celebrated_hero", family: "social", traits: ["hero", "famous", "charismatic", "generous", "proud"] },
-
-    // oddity
-    { id: "blind_seer", family: "oddity", traits: ["blind", "prophetic", "sensitive", "empath", "superstitious", "nyctophobic", "autophobic"] },
-    { id: "silent_monk", family: "oddity", traits: ["mute", "monk-trained", "humble"] },
-    { id: "mad_arsonist", family: "oddity", traits: ["pyromaniac", "hot-headed", "nihilist", "infamous", "wanted", "nicotine_addict"] },
-    { id: "hoarder_tinker", family: "oddity", traits: ["hoarder", "tech_savvy", "blacksmith", "workaholic"] },
-    { id: "degenerate_gambler", family: "oddity", traits: ["gambling_addict", "lucky", "adrenaline_junkie", "alcoholic", "silvertongue", "greedy"] },
-    { id: "caffeine_insomniac", family: "oddity", traits: ["night_owl", "caffeine_dependent", "adhd", "tech_savvy", "synesthete", "nicotine_addict", "impostor_syndrome"] },
-    { id: "glass_cannon", family: "oddity", traits: ["frail", "genius", "magically_gifted", "sensitive", "chronic_pain"] },
-    { id: "gentle_giant", family: "oddity", traits: ["gigantism", "booming_voice", "generous", "pacifist", "muscular", "slothful"] },
-    { id: "tiny_terror", family: "oddity", traits: ["dwarfism", "quick_reflexes", "spiteful", "berserker", "thief", "paranoid", "impostor_syndrome"] },
-    { id: "feral_child", family: "oddity", traits: ["feral", "illiterate", "survivalist", "congenital_analgesia", "xenophobic"] },
-    { id: "doomsday_prepper", family: "oddity", traits: ["hypochondriac", "survivalist", "hoarder", "skeptic", "thanatophobic", "tracker", "nyctophobic"] },
-    { id: "gentle_ascetic", family: "oddity", traits: ["vegan", "pacifist", "ascetic", "minimalist", "forgiving", "humble"] },
-  ];   // i18n-ignore: ids key into Traits.archetypes.*, traits are Traits.json slugs
-
-  // Slug -> trait, off the same book the board draws, so a world that hides
-  // the magical traits hides them here too.
-  const traitsBySlug = () => {
-    const map = {};
-    getTraits().forEach((trait) => {
-      const slug = String(trait.name || "").split(".")[1];
-      if (slug) map[slug] = trait;
-    });
-    return map;
-  };
-
-  // The archetypes a character can actually be built as right now. A build is
-  // offered whole or not at all: one whose traits are not all in the book (a
-  // severed world hides the magical ones) would no longer spend the purse it
-  // was written for, so it is dropped rather than quietly shortened.
-  const archetypeList = () => {
-    const map = traitsBySlug();
-    const rows = [];
-    TRAIT_ARCHETYPES.forEach((arch) => {
-      const traits = arch.traits.map((slug) => map[slug]).filter(Boolean);
-      if (traits.length !== arch.traits.length) return;
-      rows.push({
-        id: arch.id,
-        family: arch.family,
-        traits,
-        ids: traits.map((trait) => trait.id),
-        tally: traitTally(traits),
-      });
-    });
-    return rows;
-  };
-
-  // Named out of the Traits bank. T answers with the key itself when a bank
-  // has not loaded, so a board never prints "Traits.archetypes.x.name" at a
-  // player: the id stands in for a missing name and a missing description is
-  // simply not shown.
-  const archetypeText = (arch, field, fallback) => {
-    if (!arch) return fallback;
-    const key = `archetypes.${arch.id}.${field}`;
-    const text = t(key);
-    return (text && text !== `Traits.${key}`) ? text : fallback;
-  };
-  const archetypeName = (arch) => archetypeText(arch, "name", (arch && arch.id) || "");
-  const archetypeDesc = (arch) => archetypeText(arch, "description", "");
-
   // "diseases" is a fifth tab and not a fifth kind of trait: what is picked
   // there is an illness the character walks in already carrying, it costs no
   // trait points at all, and it is handed to Health_DiseaseSystem rather
@@ -446,20 +307,6 @@
     }
     return value || (trait[type] || "");
   };
-
-  // A card's name as the player reads it, whichever kind of card it is: an
-  // illness carries its name as plain text, a trait carries an i18n key.
-  const cardName = (card) =>
-    card ? (card.diseaseId ? (card.name || "") : getTraitText(card, "name")) : "";
-
-  // Cards read in alphabetical order, whichever tab they are on. The book is
-  // 199 traits long and its file order is the order the traits were written
-  // in, so a player looking for one had nothing to scan by. Sorted on the
-  // NAME AS SHOWN, so the Italian board reads alphabetically in Italian
-  // rather than in English.
-  const sortCardsByName = (rows) =>
-    (rows || []).slice().sort((a, b) =>
-      cardName(a).localeCompare(cardName(b), undefined, { sensitivity: "base" }));
 
   // The engine's own param names (ATT, M.DEF, LUCK) are not what this game
   // calls its attributes: a trait's stat line reads STR, WIS and PSI like the
@@ -608,7 +455,7 @@
         const rows = getTraits().filter((trait) => (trait.category || "mental") === category);
         // Do not memoise an empty result: window.Health may still be loading.
         if (!rows.length) return rows;
-        this._categoryCache[category] = sortCardsByName(rows);
+        this._categoryCache[category] = rows;
       }
       return this.filterTraits(this._categoryCache[category]);
     }
@@ -1794,14 +1641,6 @@
     // dossier panel in character creation) has to ask for it here or its
     // Diseases tab comes up empty.
     diseaseCards: getDiseaseCards,
-    // The ready-made builds the simple creation board offers in place of the
-    // card-by-card shop, and the two helpers that name one.
-    ARCHETYPE_FAMILIES: TRAIT_ARCHETYPE_FAMILIES,
-    archetypes: archetypeList,
-    archetypeName,
-    archetypeDesc,
-    // The alphabetical order every trait board draws its cards in.
-    sortByName: sortCardsByName,
     // Undoing a build (the Reset button on the creation board) has to take the
     // granted skills, items and equipment back off the actor.
     revertGrants: revertTraitGrants,

@@ -54,7 +54,7 @@
       "effects": "Effects"
     },
     "tabDeck": "Deck ({n})",
-    "empty": "No cards yet. Open a booster pack.",
+    "empty": "Nothing on the shelf yet. Open a booster pack.",
     "pickACard": "Pick a card to read it.",
     "saveDeck": "Save deck",
     "newDeck": "New deck",
@@ -124,8 +124,8 @@
     "left": "{n} left",
     "soldOut": "Sold out",
     "owned": "you hold {n}",
-    "hint": "New lots are listed every day. Sold-out lots do not return.",
-    "hintSell": "The site buys at a lower price than it sells.",
+    "hint": "A new set of lots is listed every day. When a lot is gone it is gone.",
+    "hintSell": "The site pays less than it asks. That difference is its living.",
     "emptyStock": "Nothing listed today.",
     "emptyShelf": "You have no cards to sell.",
     "bought": "Bought {name} for {price}.",
@@ -142,7 +142,7 @@
     "deckRandom": "A rolled deck",
     "deckOwnNote": "Your deck: {n} cards.",
     "deckOwnShort": "You have no legal deck ({min} cards at least), so one will be lent to you.",
-    "deckRandomNote": "A random deck drawn from the whole catalogue, the same way the CPU gets its deck.",
+    "deckRandomNote": "A deck rolled out of the whole catalogue, the same way the machine gets one.",
     "levelHeading": "Opponent",
     "levelFallback": "Level {n}",
     "levels": [

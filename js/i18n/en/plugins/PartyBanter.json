@@ -70,7 +70,7 @@
       ],
       [
         "I dreamed we were still walking.",
-        "That is not a dream, that is a memory arriving early."
+        "That is a memory arriving early."
       ],
       [
         "I had a dream about this place. Do not ask.",
@@ -452,7 +452,7 @@
       ],
       [
         "Do you ever want to travel with anybody else?",
-        "No. That is not sentiment, it is arithmetic. New people get killed."
+        "No. That is arithmetic. New people get killed."
       ],
       [
         "I would tell you if I was thinking of leaving.",
@@ -930,7 +930,7 @@
         "Do you want to know what I want?",
         "Yes.",
         "A quiet week and somebody else's roof.",
-        "That is not a want, that is a shopping list."
+        "That is a shopping list."
       ],
       [
         "We are going to be all right, are we not?",
@@ -1947,7 +1947,7 @@
           "Take it. We move again when the shadow moves."
         ],
         [
-          "It is not the heat, it is the light.",
+          "The light is what gets you here.",
           "It is definitely also the heat."
         ],
         [
@@ -3298,7 +3298,7 @@
         ],
         [
           "Do we trust them with the fund?",
-          "Not this month. That is not personal, it is the arrangement."
+          "Not this month. Nothing personal. That is the arrangement."
         ],
         [
           "Where did {ev_name} come from? Really.",
@@ -3725,7 +3725,7 @@
         ],
         [
           "{ev_hours} hours and I dreamed about walking.",
-          "That is not rest, that is unpaid work."
+          "That is unpaid work."
         ],
         [
           "We should do that whenever we can afford it.",
@@ -5705,7 +5705,7 @@
         "Nobody is going to be difficult about it. I will make sure."
       ],
       "authoritative": [
-        "Next time the purchase goes past me first. That is not a punishment, it is an arrangement.",
+        "Next time the purchase goes past me first. Call it an arrangement.",
         "Acceptable. But we are keeping a running total from now on.",
         "Noted in the book. Fund balance is announced at every stop from here.",
         "It is a good buy. It was still made without consultation.",
@@ -6244,7 +6244,7 @@
       "I would not be standing here for anybody else. I hope that is understood.",
       "You went back for me. I have not forgotten.",
       "Whatever gets decided, I am on that side of it.",
-      "I would not be on this road for anybody else. That is not a compliment, it is a fact.",
+      "I would not be on this road for anybody else. That is simply a fact.",
       "You came back for me at the bridge. I have not forgotten and I will not.",
       "Say the word and I will stand where you tell me to stand.",
       "Nobody in this party gets left because it was convenient.",
@@ -6260,7 +6260,7 @@
       "I will go first. It is not a discussion.",
       "If something is in there, better it meets me than you.",
       "Stop looking for the safe way. There is not one.",
-      "I will go first. It is not a discussion, it is an arrangement.",
+      "I will go first. That is settled.",
       "If something is in there, better it meets me than either of you.",
       "Stop looking for the safe way. There is not one and we are wasting light.",
       "I would rather walk into it than wait for it to arrive.",
@@ -6516,7 +6516,7 @@
       "I will decide. You will dislike it and we will move on.",
       "Noted and overruled. Next.",
       "You have made your case. It is on the record.",
-      "That is not a plan, it is a preference. Give me a plan.",
+      "That is a preference. Give me a plan.",
       "Do it my way once and if I am wrong you can say so in front of everyone.",
       "We are not voting on this in the dark.",
       "Fine. You have the flank, and you answer to me for it.",
@@ -8684,7 +8684,7 @@
         "There is a blanket behind the seat. Use it.",
         "Eat something before you sleep or you will wake up worse.",
         "Boots off. You will sleep better and so will everyone's nose.",
-        "Lie flat. Sitting up is not sleeping, it is waiting.",
+        "Lie flat. Sitting up is just waiting.",
         "I have kept the last of the warm drink for whoever drives.",
         "You are not to wake up and take over early. I will know.",
         "Both of you sleep. I have done this on less.",
@@ -9036,7 +9036,7 @@
         "I know a way to make a gauge read higher. Not helpful, but interesting.",
         "The last station left the pump unlocked. Purely an observation.",
         "We could sell the spare wheel for fuel. Whose wheel is it, technically?",
-        "Coast up behind a lorry. It is not cheating, it is aerodynamics.",
+        "Coast up behind a lorry. That is aerodynamics.",
         "I have got a can hidden. I want something for it.",
         "There is a siphon in the back. I say nothing more.",
         "Define empty. I have found more at empty than once."
@@ -9344,7 +9344,7 @@
         "Their doors are painted. All of them, differently."
       ],
       "adventurous": [
-        "Good. I have never been. That is the whole point of roads.",
+        "Good. I have never been. Roads are for that.",
         "Somewhere in here there is something nobody has written down.",
         "New country means new ruins nobody has emptied.",
         "The maps of this place are bad. That is excellent news.",
@@ -9603,7 +9603,7 @@
       "disciplined": [
         "Log the material and the yield. Both.",
         "It goes on the maintenance list tonight.",
-        "Good work, done in the time we set aside for it. That is the whole point."
+        "Good work, done in the time we set aside for it. Exactly as intended."
       ],
       "fatalistic": [
         "It will end up rusting in a ditch. But it will be a good one.",

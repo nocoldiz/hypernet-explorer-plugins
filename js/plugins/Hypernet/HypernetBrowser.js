@@ -89,6 +89,58 @@
         return (h >>> 0);
     }
 
+    // ── Live documents ──────────────────────────────────────────────────────
+    // A page whose content is generated rather than stored. The archive is a
+    // folder of files and always will be, but some of what this world publishes
+    // has no file to be: a roster that is rolled from the world seed cannot be
+    // written to disk before the world exists. A plugin registers an address
+    // (or a pattern) and the HTML for it is asked for at navigation time.
+    //
+    //   window.HypernetSites.registerLive('hexapedia.com/wrestlers', () => ({
+    //       title: 'Wrestlers', html: '<div>...</div>' }));
+    //
+    // The handler returns { title, html } or null, and null falls through to
+    // the ordinary gateway 404, so a registered pattern never swallows an
+    // address it cannot actually answer.
+
+    const Live = {
+        _entries: [],
+
+        register(pattern, handler) {
+            if (!pattern || typeof handler !== 'function') return;
+            const key = (pattern instanceof RegExp) ? pattern : String(pattern).toLowerCase();
+            this._entries = this._entries.filter(e => String(e.key) !== String(key));
+            this._entries.push({ key, handler });
+        },
+
+        // The document for an address, or null. Addresses are normalised the
+        // same way a stored page's is, so www., a scheme and a trailing slash
+        // make no difference to whether a live page is found.
+        resolve(address) {
+            const norm = Addr.normalize(address).toLowerCase();
+            if (!norm) return null;
+            for (const entry of this._entries) {
+                try {
+                    if (entry.key instanceof RegExp) {
+                        const m = entry.key.exec(norm);
+                        if (m) {
+                            const doc = entry.handler(m, norm);
+                            if (doc && doc.html) return doc;
+                        }
+                    } else if (entry.key === norm) {
+                        const doc = entry.handler(norm);
+                        if (doc && doc.html) return doc;
+                    }
+                } catch (e) {
+                    console.warn('[Hypernet] live document failed for ' + norm, e);
+                }
+            }
+            return null;
+        },
+
+        has(address) { return !!this.resolve(address); }
+    };
+
     // ── Site index ──────────────────────────────────────────────────────────
     // The gateway's catalogue of documents. Built once, from whichever source
     // the runtime can offer, and consulted for every address.
@@ -907,6 +959,13 @@
             });
         });
 
+        // A capturing listener on the document, alongside the desktop's own
+        // focus ring rather than instead of it. It is NOT `data-self-nav`: that
+        // opt-out hands a window the directions, OK and B (HypernetOS's
+        // _activeWindowIsSelfNav), and this window wants none of them - its
+        // menus, tabs and links are ordinary '.focusable' controls the ring
+        // walks. What is taken here is only the accelerators a browser has and
+        // a ring has no way to express: Ctrl+T, Alt+Left, F5, Escape.
         this._onKey = (e) => this.onKey(e);
         document.addEventListener('keydown', this._onKey, true);
 
@@ -1177,6 +1236,33 @@
             this.el('#hnb-url').value = tab.address;
             this.renderInternal(page, arg);
             this.recordVisit(tab.address, this.internalTitle(page));
+            this.updateNavButtons();
+            this.renderTabs();
+            return;
+        }
+
+        // A generated page is served before the archive is consulted: it has no
+        // file, so Addr.toPath would answer 404 for something that does exist.
+        const live = Live.resolve(raw);
+        if (live) {
+            const host = this.el('#hnb-page');
+            const frame = this.el('#hnb-frame');
+            frame.classList.add('hnb-hidden');
+            frame.removeAttribute('data-path');
+            host.classList.remove('hnb-hidden');
+            host.scrollTop = 0;
+            tab.internal = null;
+            tab.path = null;
+            tab.address = Addr.normalize(raw).toLowerCase();
+            tab.title = live.title || tab.address;
+            tab.loading = false;
+            if (!options.noHistory) this.pushHistory(tab, tab.address);
+            this.el('#hnb-url').value = tab.address;
+            host.innerHTML = live.html;
+            this.applyRendering(null);
+            this.setTitle(tab.title);
+            this.recordVisit(tab.address, tab.title);
+            this.status(t('status.done'));
             this.updateNavButtons();
             this.renderTabs();
             return;
@@ -2837,7 +2923,12 @@
         addressFor: (path) => Addr.fromPath(path),
         exists: (address) => !!Addr.toPath(address),
         suggest: (address, limit) => Addr.suggest(address, limit),
-        database: (cb) => SiteDb.load(cb)
+        database: (cb) => SiteDb.load(cb),
+        // Generated pages: an address (or a RegExp over one) plus a handler
+        // returning { title, html }. See the Live block above.
+        registerLive: (pattern, handler) => Live.register(pattern, handler),
+        liveDocument: (address) => Live.resolve(address),
+        hasLive: (address) => Live.has(address)
     };
 
     if (window.HypernetOS) {

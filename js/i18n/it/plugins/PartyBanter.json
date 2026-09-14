@@ -70,7 +70,7 @@
       ],
       [
         "Ho sognato che stavamo ancora camminando.",
-        "Quello non è un sogno, è un ricordo arrivato in anticipo."
+        "Quello è un ricordo arrivato in anticipo."
       ],
       [
         "Ho fatto un sogno su questo posto. Non chiedere.",
@@ -452,7 +452,7 @@
       ],
       [
         "Ti viene mai voglia di viaggiare con qualcun altro?",
-        "No. Non è sentimentalismo, è aritmetica. La gente nuova ci muore."
+        "No. È aritmetica. La gente nuova ci muore."
       ],
       [
         "Te lo direi se stessi pensando di andarmene.",
@@ -930,7 +930,7 @@
         "Vuoi sapere cosa voglio?",
         "Sì.",
         "Una settimana tranquilla e il tetto di qualcun altro.",
-        "Quello non è un desiderio, è una lista della spesa."
+        "Quella è una lista della spesa."
       ],
       [
         "Andrà tutto bene, vero?",
@@ -1947,7 +1947,7 @@
           "Prendila. Ripartiamo quando si sposta l'ombra."
         ],
         [
-          "Non è il caldo, è la luce.",
+          "Qui ti frega la luce.",
           "È decisamente anche il caldo."
         ],
         [
@@ -2627,7 +2627,7 @@
           "Allora davanti c'è un mercato e dietro una fattoria. Bene."
         ],
         [
-          "Questo fondo è di prima dello Schiacciamento. Si capisce da come tiene.",
+          "Questo fondo è di prima dello Squishing. Si capisce da come tiene.",
           "Da allora nessuno ha fatto una strada che duri."
         ],
         [
@@ -3298,7 +3298,7 @@
         ],
         [
           "Gli affidiamo la cassa?",
-          "Non questo mese. Non è personale, è l'accordo."
+          "Non questo mese. Niente di personale. È l'accordo."
         ],
         [
           "Da dove viene {ev_name}? Davvero.",
@@ -3725,7 +3725,7 @@
         ],
         [
           "{ev_hours} ore e ho sognato di camminare.",
-          "Quello non è riposo, è lavoro non pagato."
+          "Quello è lavoro non pagato."
         ],
         [
           "Dovremmo farlo ogni volta che possiamo permettercelo.",
@@ -5705,7 +5705,7 @@
         "Nessuno farà storie. Ci penso io."
       ],
       "authoritative": [
-        "La prossima volta l'acquisto passa prima da me. Non è una punizione, è un accordo.",
+        "La prossima volta l'acquisto passa prima da me. Chiamalo un accordo.",
         "Accettabile. Ma d'ora in poi teniamo il conto aggiornato.",
         "Annotato sul registro. Da qui il saldo della cassa si annuncia a ogni sosta.",
         "È un buon acquisto. È stato fatto comunque senza consultare nessuno.",
@@ -5719,7 +5719,7 @@
       "scholarly": [
         "Sappiamo davvero cosa fa, o abbiamo comprato la descrizione del bottegaio?",
         "Il prezzo era sopra mercato. Ho tenuto i numeri.",
-        "Quella è una fusione di prima dello Schiacciamento. Quelle nuove non tengono una saldatura così.",
+        "Quella è una fusione di prima dello Squishing. Quelle nuove non tengono una saldatura così.",
         "L'ha fatto la Esoteric Heavy Industries, o qualcuno li ha copiati bene.",
         "Vicino a una linea di forza si comporterà diversamente. Tutto quello che è di quella fattura lo fa.",
         "I segni sulla base sono un artigiano e un anno. Interessanti entrambi.",
@@ -6090,7 +6090,7 @@
       "La muratura qui è almeno due secoli più vecchia del resto.",
       "Ho preso appunti. Vuoi sentirli o smetto?",
       "C'è uno schema nei posti dove continuiamo a trovarle. Ne sono quasi certo.",
-      "Quella muratura è di prima dello Schiacciamento e la malta no. Qualcuno ha riparato di recente.",
+      "Quella muratura è di prima dello Squishing e la malta no. Qualcuno ha riparato di recente.",
       "Tre di questi segnali, adesso. Tre è uno schema, non fortuna.",
       "Il dialetto è cambiato un chilometro indietro. Abbiamo passato qualcosa più vecchio del confine.",
       "Il nome dell'incantesimo si pronuncia come si deve o non si pronuncia. CamelCase, in un fiato.",
@@ -6131,7 +6131,7 @@
       "Due ore fuori strada e vediamo una cosa che nessuno ha messo per iscritto.",
       "Voglio sapere cosa c'è dall'altra parte più di quanto voglia cena.",
       "Ogni bella storia che abbiamo è cominciata con qualcuno che diceva che era una cattiva idea.",
-      "Quella porta non si apre da prima dello Schiacciamento. Rimediamo.",
+      "Quella porta non si apre da prima dello Squishing. Rimediamo.",
       "Le uscite sulla Strada Universale non si ripetono. Questa è una sola volta.",
       "Non sono stanco. Sono il contrario di stanco ed è scomodo.",
       "Vieni a vedere questo prima che decida di scalarlo da solo.",
@@ -6244,7 +6244,7 @@
       "Non sarei qui per nessun altro. Spero sia chiaro.",
       "Sei tornato indietro a prendermi. Non me lo sono dimenticato.",
       "Qualunque cosa si decida, io sto da quella parte.",
-      "Non sarei su questa strada per nessun altro. Non è un complimento, è un fatto.",
+      "Non sarei su questa strada per nessun altro. È semplicemente un fatto.",
       "Sei tornato a prendermi al ponte. Non l'ho dimenticato e non lo dimenticherò.",
       "Dimmi una parola e mi metto dove mi dici di stare.",
       "In questo gruppo nessuno viene lasciato indietro perché era comodo.",
@@ -6260,7 +6260,7 @@
       "Vado io per primo. Non è una discussione.",
       "Se là dentro c'è qualcosa, meglio che incontri me che te.",
       "Smettila di cercare la via sicura. Non ce n'è una.",
-      "Vado io per primo. Non è una discussione, è un accordo.",
+      "Vado io per primo. È deciso.",
       "Se là dentro c'è qualcosa, meglio che incontri me e non uno di voi due.",
       "Smetti di cercare la via sicura. Non c'è e stiamo sprecando luce.",
       "Preferisco entrarci dentro che aspettare che arrivi.",
@@ -6516,7 +6516,7 @@
       "Decido io. Non ti piacerà e andremo avanti.",
       "Preso nota e respinto. Avanti.",
       "Hai esposto la tua posizione. È agli atti.",
-      "Quello non è un piano, è una preferenza. Dammi un piano.",
+      "Quella è una preferenza. Dammi un piano.",
       "Fallo a modo mio una volta e se sbaglio potrai dirlo davanti a tutti.",
       "Su questo non si vota nel buio.",
       "Va bene. Prendi il fianco, e ne rispondi a me.",
@@ -7604,7 +7604,7 @@
         "Il dialetto è cambiato un chilometro indietro. È più vecchio di qualsiasi confine.",
         "Se avessi una settimana qui tornerei con qualcosa che nessuno sa.",
         "I nomi sono potere, e questa valle è stata rinominata due volte.",
-        "La geologia dopo lo Schiacciamento non è geologia. È contabilità.",
+        "La geologia dopo lo Squishing non è geologia. È contabilità.",
         "Dovrei datarlo come si deve prima che il ricordo lo arrotondi.",
         "Sei spiegazioni. Una è noiosa e quindi probabile.",
         "Quella pietra è stata tagliata con un attrezzo che nessuno usa più.",
@@ -7864,7 +7864,7 @@
         "C'è un segno sopra. Il segno di qualcuno, non di un artigiano.",
         "È più vecchio della strada e le sopravvivrà.",
         "Non toccare la scritta. I nomi sono più pesanti di come sembrano.",
-        "Lavoro di prima dello Schiacciamento. Niente costruito da allora tiene una linea così.",
+        "Lavoro di prima dello Squishing. Niente costruito da allora tiene una linea così.",
         "Qualcuno è già passato di qui e ha lasciato la parte utile.",
         "Quello è stato fatto per essere visto da più lontano di così.",
         "È stato spostato e rimesso. Non del tutto dritto.",
@@ -8313,7 +8313,7 @@
         "Il rivestimento di fantanero è graffiato. Conta più del pannello.",
         "Un suono così viaggia nel telaio, non nell'aria. È strutturale.",
         "A quella velocità l'energia deve andare da qualche parte. È andata nel supporto.",
-        "Il fondo stradale qui è di prima dello Schiacciamento. Sotto carico si comporta diversamente.",
+        "Il fondo stradale qui è di prima dello Squishing. Sotto carico si comporta diversamente.",
         "Posso dirti esattamente cosa si è rotto e nessun modo di aggiustarlo.",
         "L'energia è andata nel supporto. È quello che si sente.",
         "Segna i chilometri. Un danno che nessuno registra diventa un mistero."
@@ -8684,7 +8684,7 @@
         "C'è una coperta dietro il sedile. Usala.",
         "Mangia qualcosa prima di dormire o ti sveglierai peggio.",
         "Stivali via. Dormirai meglio, e anche il naso di tutti.",
-        "Stenditi. Stare seduti non è dormire, è aspettare.",
+        "Stenditi. Stare seduti è solo aspettare.",
         "Ho tenuto l'ultimo goccio caldo per chi guida.",
         "Non devi svegliarti e prendere il turno in anticipo. Lo saprò.",
         "Dormite entrambi. L'ho fatto con meno di così.",
@@ -9036,7 +9036,7 @@
         "Conosco un modo per far segnare di più a un indicatore. Non utile, ma interessante.",
         "L'ultima stazione ha lasciato la pompa aperta. Pura osservazione.",
         "Potremmo vendere la ruota di scorta per il carburante. Tecnicamente, di chi è la ruota?",
-        "Mettiti in scia a un camion. Non è barare, è aerodinamica.",
+        "Mettiti in scia a un camion. Quella è aerodinamica.",
         "Ho una tanica nascosta. Voglio qualcosa in cambio.",
         "Dietro c'è un tubo per travasare. Non aggiungo altro.",
         "Definisci vuoto. A vuoto ho trovato ancora qualcosa più di una volta."
@@ -9603,7 +9603,7 @@
       "disciplined": [
         "Registra il materiale e la resa. Tutti e due.",
         "Stasera va sulla lista della manutenzione.",
-        "Bel lavoro, fatto nel tempo che gli avevamo dato. È tutto lì il punto."
+        "Bel lavoro, fatto nel tempo che gli avevamo dato. Esattamente come doveva andare."
       ],
       "fatalistic": [
         "Finirà ad arrugginire in un fosso. Ma sarà un bell'oggetto.",

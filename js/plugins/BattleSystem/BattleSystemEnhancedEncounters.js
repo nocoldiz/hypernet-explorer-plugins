@@ -1323,40 +1323,6 @@
     };
 
     // ------------------------------------------------------------------------
-    // <Boss>: the one authority on what a boss is
-    // ------------------------------------------------------------------------
-    // A <Boss> creature is a WRITTEN encounter: it is placed by the hand that
-    // wrote it (a dungeon's own event, the arena roster, the petrodemon the
-    // party calls up), and never by the spawner. No roster this file builds
-    // holds one - not the biome rosters, the era elites, the special biomes,
-    // the structure lists, the no-biome fallback, the level bands, the chaos
-    // hat, the alien lists, the rarities, nor a troop restored from a square's
-    // own cache. Every one of them asks here rather than reading the tag, so
-    // the boundary is stated once.
-    const BOSS_NOTE_RE = /<Boss>/i;
-
-    BSE.Helpers.isBossEnemyData = function(data) {
-        return !!(data && BOSS_NOTE_RE.test(data.note || ""));
-    };
-
-    BSE.Helpers.isBossEnemyId = function(enemyId) {
-        return BSE.Helpers.isBossEnemyData(
-            (typeof $dataEnemies !== "undefined" && $dataEnemies) ? $dataEnemies[enemyId] : null);
-    };
-
-    // One boss member makes the whole troop a boss encounter: a troop is
-    // spawned whole, so there is no way to place the rest of it without it.
-    BSE.Helpers.troopDataHoldsBoss = function(troop) {
-        return !!(troop && troop.members &&
-            troop.members.some(m => BSE.Helpers.isBossEnemyId(m.enemyId)));
-    };
-
-    BSE.Helpers.troopHoldsBoss = function(troopId) {
-        return BSE.Helpers.troopDataHoldsBoss(
-            (typeof $dataTroops !== "undefined" && $dataTroops) ? $dataTroops[troopId] : null);
-    };
-
-    // ------------------------------------------------------------------------
     // The world of chaos: every roster is drawn out of the hat
     // ------------------------------------------------------------------------
     // A chaos world keeps every troop it always had, and every rule about where
@@ -1377,7 +1343,7 @@
         for (let i = 1; i < $dataEnemies.length; i++) {
             const data = $dataEnemies[i];
             if (!data || !data.name) continue;
-            if (BSE.Helpers.isBossEnemyData(data)) continue;
+            if (/<Boss>/i.test(data.note || "")) continue;
             chaosPool.push(i);
         }
         return chaosPool;
@@ -1455,10 +1421,14 @@
         if (!troop || !troop.members || !troop.members.length) return true;
         // A <Boss> creature is a hand-authored encounter, not ambient fauna: it
         // never turns up through the ordinary biome spawn roster, the era
-        // elites or the level-band boss pools alike. No world is an exception,
-        // the empty one included: a world with nothing left roaming it is meant
-        // to be walked across empty, not handed its bosses instead.
-        if (BSE.Helpers.troopDataHoldsBoss(troop)) return false;
+        // elites or the level-band boss pools alike. An empty world is the one
+        // exception, since nothing else is left roaming it to meet the party.
+        if (mode !== "empty" && troop.members.some(m => {
+            const data = $dataEnemies[m.enemyId];
+            return !!(data && /<Boss>/i.test(data.note || ""));
+        })) {
+            return false;
+        }
         if (mode !== "monster" && mode !== "empty" && mode !== "zombie") return true;
         // One disallowed member disqualifies the troop: a troop is spawned
         // whole, so there is no way to place "most" of it.
@@ -3130,16 +3100,7 @@
                 if (isProcGenMap) {
                     if (!$gameSystem._procGenEnemyTroops) $gameSystem._procGenEnemyTroops = {};
                     const savedTroopId = $gameSystem._procGenEnemyTroops[ev.eventId()];
-                    // The cache is written by this same pass, so it normally
-                    // holds nothing the rosters would not have dealt. A save
-                    // made before the boss rule was absolute still can, and the
-                    // creature it names is re-placed from here without any
-                    // roster being consulted, so the rule is repeated on the
-                    // way out of the cache as well as on the way in.
-                    if (savedTroopId && $dataTroops[savedTroopId] &&
-                        !BSE.Helpers.troopHoldsBoss(savedTroopId)) {
-                        chosenTroopId = savedTroopId;
-                    }
+                    if (savedTroopId && $dataTroops[savedTroopId]) chosenTroopId = savedTroopId;
                 }
 
                 if (chosenTroopId === null) {
@@ -3541,12 +3502,9 @@
         }
         const note = this.event().note || "";
         if (note.includes('?')) {
-            // "?" means "whatever roams here", so it draws on the same table
-            // the spawner does and is bound by the same rules: no scratch slot,
-            // no creature the world's population bars, and no <Boss>.
             const validTroopIds = $dataTroops.slice(1)
                 .map((t, i) => t ? i + 1 : 0)
-                .filter(id => id > 0 && BSE.Helpers.isSpawnableTroopData($dataTroops[id]));
+                .filter(id => id > 0 && $dataTroops[id].members.length > 0);
             if (validTroopIds.length > 0) {
                 this._fixedTroopId = validTroopIds[Math.floor(Math.random() * validTroopIds.length)];
             }
@@ -4769,9 +4727,7 @@
         this.events().forEach(event => {
             const persistentId = `${this._mapId}_${event._eventId}`;
             const pData = BSE.State.persistentEnemyData[persistentId];
-            // Same reading as the per-tile cache above: a troop remembered by
-            // an older save is not a roster's answer, so it is asked as well.
-            if (pData && pData.needsResprite && !BSE.Helpers.troopHoldsBoss(pData.troopId)) {
+            if (pData && pData.needsResprite) {
                 event._fixedTroopId = pData.troopId;
                 event.updateCharacterSprite();
                 pData.needsResprite = false;
@@ -5569,7 +5525,7 @@
         for (let i = 1; i < $dataEnemies.length; i++) {
             const e = $dataEnemies[i];
             if (!e || !e.name || !e.params || e._bsePetrodemon) continue;
-            if (BSE.Helpers.isBossEnemyData(e)) continue;
+            if (/<Boss>/i.test(e.note || '')) continue;
             const lv = BSE.Helpers.getEnemyLevel(e.note);
             if (lv < 1 || lv > PETRO_REF_MAX_LEVEL) continue;
             _petroLevelled.push({ lv: lv, e: e });
@@ -5757,15 +5713,6 @@
 
     BSE.Functions.isPetrodemonDifficulty = function(key) {
         return !!PETRO[String(key || '').toLowerCase()];
-    };
-
-    // Is this creature a petrodemon? The scratch slot carries the marker, and
-    // the note carries the seed it was drawn from, so a demon read back out of
-    // a battle that outlived the slot still answers yes. Asked by everything
-    // that has to tell a called-up demon from an authored <Boss>: the free
-    // escape (PerfectEscape) is the one that lets the party walk away from it.
-    BSE.Functions.isPetrodemonEnemyData = function(data) {
-        return !!(data && (data._bsePetrodemon || (data.meta && data.meta.PetroSeed)));
     };
 
     // A petrodemon rises with its gauge full: the physical half of its

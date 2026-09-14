@@ -843,16 +843,6 @@
     "description": "DialogueTopics.topicEsotericHeavyIndustries.description",
     "image": ""
   },
-  "topicEuronymous": {
-    "type": "topic",
-    "group": "topics",
-    "order": 16760,
-    "keyword": "Euronymous",
-    "synonyms": [],
-    "title": "DialogueTopics.topicEuronymous.title",
-    "description": "DialogueTopics.topicEuronymous.description",
-    "image": ""
-  },
   "topicGiulioAndreotti": {
     "type": "topic",
     "group": "topics",
@@ -913,16 +903,6 @@
     ],
     "title": "DialogueTopics.topicLeylines.title",
     "description": "DialogueTopics.topicLeylines.description",
-    "image": ""
-  },
-  "topicMahyem": {
-    "type": "topic",
-    "group": "topics",
-    "order": 16820,
-    "keyword": "Mahyem",
-    "synonyms": [],
-    "title": "DialogueTopics.topicMahyem.title",
-    "description": "DialogueTopics.topicMahyem.description",
     "image": ""
   },
   "topicMainMenu": {

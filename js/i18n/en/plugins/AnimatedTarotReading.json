@@ -351,7 +351,7 @@
   "spreads": {
     "three": {
       "name": "THE THREE FATES",
-      "blurb": "Three cards: past, present and future.",
+      "blurb": "Three cards. The shape of a life in one glance.",
       "slots": {
         "0": "PAST",
         "1": "PRESENT",
@@ -360,7 +360,7 @@
     },
     "cross": {
       "name": "THE ELEMENTAL CROSS",
-      "blurb": "Five cards in a cross.",
+      "blurb": "Five cards. What holds you, and what pulls.",
       "slots": {
         "0": "THE HEART",
         "1": "WHAT IS BEHIND",
@@ -371,7 +371,7 @@
     },
     "horseshoe": {
       "name": "THE HORSESHOE",
-      "blurb": "Seven cards laid in an arc.",
+      "blurb": "Seven cards laid in an arc. The long answer.",
       "slots": {
         "0": "THE PAST",
         "1": "THE PRESENT",
@@ -384,7 +384,7 @@
     },
     "celtic": {
       "name": "THE CELTIC CROSS",
-      "blurb": "Ten cards, the full Celtic cross.",
+      "blurb": "Ten cards. The full working. Do not ask it twice.",
       "slots": {
         "0": "THE SIGNIFICATOR",
         "1": "THE CROSSING",

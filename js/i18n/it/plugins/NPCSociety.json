@@ -97,11 +97,11 @@
       "Anni dopo {sub} {saw} da vicino il momento in cui {event}.",
       "Poi venne la stagione in cui {event}.",
       "Poco dopo {sub} {has} imparato che cosa significa quando {event}.",
-      "{cap} {remembers} la settimana in cui {event}, e non ne parla volentieri."
+      "{cap} {remembers} la settimana in cui {event}: un ricordo di cui non si parla volentieri."
     ],
     "moral": {
       "high": [
-        "{cap} {is} una persona di integrità incrollabile.",
+        "{cap} {has} un'integrità incrollabile.",
         "La gente si fida di {obj} a prima vista, e di rado sbaglia.",
         "Non c'è mai stato bisogno di chiedere due volte a {obj} di fare la cosa giusta."
       ],
@@ -113,7 +113,7 @@
       "weary": [
         "La vita ha lasciato a {obj} poche illusioni.",
         "{cap} {has} smesso da anni di aspettarsi qualcosa dagli altri.",
-        "{cap} non {is} né crudele né gentile: {is} soltanto senza più forze."
+        "{cap} non {has} più né crudeltà né gentilezza: soltanto stanchezza."
       ],
       "loose": [
         "{cap} {has} imparato che le regole valgono per gli altri.",
@@ -145,7 +145,7 @@
       "Un'infanzia {placeIn} fatta di tessere annonarie, e poi la settimana in cui {event}. {later} {moral}"
     ],
     "postwar": [
-      "{born} nel {year} {placeIn}, {sub} {is} un'anima {adj} cresciuta negli anni in cui {event}. {later} {moral}",
+      "{born} nel {year} {placeIn}, {sub} {has} l'anima {adj} di chi è cresciuto negli anni in cui {event}. {later} {moral}",
       "{cap} {grewUp} {placeIn} in un paese da ricostruire, di tempra {adj} e impaziente, e {saw} tutto da vicino quando {event}. {later} {moral}",
       "{born} {placeIn} nel {year}, {sub} {has} raccontato mille volte come {event}. {later} {moral}",
       "Figura {adj} del {year} {placeIn}, {sub} {had} un turno come tanti il giorno in cui {event}. {later} {moral}"
@@ -153,7 +153,7 @@
     "modern": [
       "{born} {placeIn} mentre il mondo si faceva strano, {sub} non {has} mai dimenticato quando {event}. {later} {moral}",
       "{born} nel {year} {placeIn}, {sub} {grewUp} sentendo raccontare come {event}. {later} {moral}",
-      "{cap} {is} un'anima {adj} di fine secolo, venuta al mondo {placeIn} e segnata ancora dall'anno in cui {event}. {later} {moral}",
+      "{cap} {has} l'anima {adj} di fine secolo, venuta al mondo {placeIn} e segnata ancora dall'anno in cui {event}. {later} {moral}",
       "{born} {placeIn} nel {year}, tra schermi e disturbi di segnale: {sub} {saw} tutto in diretta quando {event}. {later} {moral}"
     ],
     "bornMeta": "Nascita {year} · {place}"

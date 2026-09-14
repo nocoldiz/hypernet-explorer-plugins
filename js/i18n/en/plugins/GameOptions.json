@@ -103,41 +103,41 @@
   "languageProgress": "{name} 1% done",
   "settingsInSection": "{count} settings in this section.",
   "desc": {
-    "mapStreaming": "Joins neighbouring procedural map squares into one seamless map. Off loads one square at a time and switches map at the border.",
-    "runInBackground": "Keeps the game running when its window is not focused.",
-    "weatherVolume": "Volume of outdoor ambient sounds: rain, storms, wind and biome sounds. Does not affect interiors.",
+    "mapStreaming": "Stitches neighbouring procedural squares into one seamless map you can walk straight across. Off loads one square at a time and pans the screen to the next when you reach a border.",
+    "runInBackground": "Keeps the game running while its window is not focused, so you can alt tab away without it pausing.",
+    "weatherVolume": "Volume of outdoor ambience: rain, storms, wind and biome sounds. Interiors are unaffected.",
     "partyHud": "A card per party member in the top-left: HP, MP, states and urgent needs.",
-    "musicArtistDisplay": "Shows the name and artist of the music currently playing.",
-    "battleMusicName": "Track played when a battle starts. Biome (default) uses the battle theme of the current area.",
-    "battleMusicRandom": "Plays a random track at the start of every battle. Hides the track selection while on.",
-    "markovLlmModel": "GGUF language model used to generate dialogue. Off uses Markov chains only. Place a .gguf file in the game models folder to list it here.",
-    "dialogueMode": "How NPCs without scripted dialogue respond. Empathize uses a Socialize action based on their personality, or a rumour. Markovian generates a new line from the NPC word bank.",
-    "mapTooltips": "Shows tutorial messages, compass quest targets and context tips while exploring the map.",
-    "dialogueVoices": "Plays a short sound for each letter of typed dialogue. Pitch depends on the speaker, and keywords are pitched higher.",
-    "dialogueVoicesVolume": "Volume of the dialogue letter sounds, separate from other sound effects.",
-    "battleLogPosition": "Screen corner where the battle log is shown.",
-    "battleCommandPosition": "Screen side where the battle command list, skill page and backpack are shown.",
-    "lowModelDetail": "Builds procedural weapons and items with fewer polygons. Improves performance on slower machines at the cost of detail."
+    "musicArtistDisplay": "Whether the game tells you what music is playing and who made it.",
+    "battleMusicName": "Which track plays when a fight starts. Biome, the default, uses the battle theme of the place you are fighting in.",
+    "battleMusicRandom": "Draws a different track at the start of every battle. While it is on the track selection is hidden.",
+    "markovLlmModel": "Which GGUF language model writes generated dialogue. Off leaves every generated line to the Markov chains. Drop a .gguf file into the game's models folder and it is listed here.",
+    "dialogueMode": "How an NPC with nothing scripted to say responds when you talk to them. Empathize plays out a Socialize action from their personality, falling back to a flavour rumour. Markovian generates a fresh line from the NPC's own word bank instead.",
+    "mapTooltips": "Real-time tutorial messages, compass quest targets and written context tips while you walk the map.",
+    "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
+    "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
+    "battleLogPosition": "Which corner of the screen the running battle commentary hangs in.",
+    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
+    "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier."
   },
   "descState": {
     "musicArtistDisplay": [
-      "First time: announced only the first time a track plays. Changing this setting resets the memory.",
-      "Every time: a cassette appears whenever a track starts. Never in battle, and never twice within five minutes.",
+      "First time: announced only the first time you hear a track. Changing this setting resets what it remembers.",
+      "Every time: a labelled tape slides in whenever the track returns. Never in battle, never twice within five minutes.",
       "Minimal: track and artist in the usual corner notification.",
       "Off: no announcement."
     ],
     "shaderStyle": [
-      "Off: plain rendering with no wobble, colour banding or downsampling.",
-      "SnapVertex: PlayStation-1 look. Vertices snap to a grid, colours band and the image renders below full resolution.",
-      "Pixel Art: sprite look. Flat cel shading, large pixels and an optional limited palette."
+      "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
+      "SnapVertex: the first-gen console look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
+      "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
     ],
     "battleLogPosition": [
-      "Bottom Left: the log starts at the bottom left and grows upward.",
-      "Top Right: the log starts at the top right and grows downward."
+      "Bottom Left: the log stands on the floor of the left and grows upward.",
+      "Top Right: the log hangs from the top of the right and grows downward."
     ],
     "battleCommandPosition": [
-      "Left: command list, skills and backpack on the left of the screen.",
-      "Right: command list, skills and backpack on the right of the screen, away from the weapon."
+      "Left: the command list, skills and backpack stand on the left of the screen.",
+      "Right: they stand on the right, clear of the weapon in hand."
     ]
   },
   "shaderMode": {

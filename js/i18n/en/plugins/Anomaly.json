@@ -2609,7 +2609,7 @@
      }
     },
     "c2": {
-     "text": "{many} minutes of the inside of a hollow world sells for {what a small moon sells for|the price of a small moon}. The buyer does not give a name and does not haggle, which is its own kind of answer.",
+     "text": "{many} minutes of the inside of a hollow world sells for {what a small moon sells for|the price of a small moon}. The buyer does not give a name and does not haggle. That tells you enough.",
      "outcome": {
       "kind": "gold",
       "mag": "large",
@@ -5551,7 +5551,7 @@
      }
     },
     "c1": {
-     "text": "It opens outwards, which is wrong for a mound, and the cold that comes out of it is not a temperature, it is a weight.\nInside there is a stair, and at the bottom of the stair there is a room with eleven thousand years of quiet in it and something in the middle of the quiet that has been waiting for the ground to soften.",
+     "text": "It opens outwards, which is wrong for a mound, and the cold that comes out of it sits on you with real weight.\nInside there is a stair, and at the bottom of the stair there is a room with eleven thousand years of quiet in it and something in the middle of the quiet that has been waiting for the ground to soften.",
      "outcome": {
       "kind": "battle",
       "count": 2,
@@ -8474,7 +8474,7 @@
    "nodes": {
     "n0": {
      "text": "{A fair on the green: four stalls, a generator, a hoopla, and a shooting gallery with a man behind it who is far too good at his own game.\nThree shots a go. The top prize has been on the shelf since before any of you were born and the dust on it has been dusted round rather than off.\n\"Nobody's had it,\" he says, cheerfully. \"You're welcome to try. Everybody's welcome to try.\"|The situation is pretty straightforward: A fair on the green: four stalls, a generator, a hoopla, and a shooting gallery with a man behind it who is far too good at his own game.\nThree shots a go. The top prize has been on the shelf since before any of you were born and the dust on it has been dusted round rather than off.\n\"Nobody's had it,\" he says, cheerfully. \"You're welcome to try. Everybody's welcome to try.\"|Things are typically messy here: A fair on the green: four stalls, a generator, a hoopla, and a shooting gallery with a man behind it who is far too good at his own game.\nThree shots a go. The top prize has been on the shelf since before any of you were born and the dust on it has been dusted round rather than off.\n\"Nobody's had it,\" he says, cheerfully. \"You're welcome to try. Everybody's welcome to try.\"}",
-     "emText": "A fair on a green, and a shooting gallery whose top prize has been on the shelf so long the dust has been dusted around it rather than off it.\n\"Nobody's had it. You're welcome to try.\" The prize is a small carved thing you cannot look at directly, and it is not a prize, it is a bet somebody made a long time ago and has been winning every year since.",
+     "emText": "A fair on a green, and a shooting gallery whose top prize has been on the shelf so long the dust has been dusted around it rather than off it.\n\"Nobody's had it. You're welcome to try.\" The prize is a small carved thing you cannot look at directly, and it is a bet somebody made a long time ago and has been winning every year since.",
      "bubba": "Bubba puts money down for three shots without breaking stride. \"Now hold on. Hold on. I been shootin' since I was six. Mo' vedimmo.\" He misses all three.",
      "asides": {
       "adventurous": "{member} {grins: \"Now this is what I signed up for.\"|is already climbing the rubble to see what's on the other side|can't wait to see what's behind the blast door|rushes ahead to get the first look}",
@@ -10511,7 +10511,7 @@
      }
     },
     "c": {
-     "text": "{She is living in a caravan on the rim with binoculars and eleven years of notebooks, and she got out in the second week and has been watching ever since.\n\"You can't pull them out,\" she says. \"I've had two out. They come apart at about four days. It's not a place, it's a shape, and they're part of the shape now.\"|The situation is pretty straightforward: She is living in a caravan on the rim with binoculars and eleven years of notebooks, and she got out in the second week and has been watching ever since.\n\"You can't pull them out,\" she says. \"I've had two out. They come apart at about four days. It's not a place, it's a shape, and they're part of the shape now.\"|Things are typically messy here: She is living in a caravan on the rim with binoculars and eleven years of notebooks, and she got out in the second week and has been watching ever since.\n\"You can't pull them out,\" she says. \"I've had two out. They come apart at about four days. It's not a place, it's a shape, and they're part of the shape now.\"}",
+     "text": "{She is living in a caravan on the rim with binoculars and eleven years of notebooks, and she got out in the second week and has been watching ever since.\n\"You can't pull them out,\" she says. \"I've had two out. They come apart at about four days. It's a shape down there. They're part of the shape now.\"|The situation is pretty straightforward: She is living in a caravan on the rim with binoculars and eleven years of notebooks, and she got out in the second week and has been watching ever since.\n\"You can't pull them out,\" she says. \"I've had two out. They come apart at about four days. It's a shape down there. They're part of the shape now.\"|Things are typically messy here: She is living in a caravan on the rim with binoculars and eleven years of notebooks, and she got out in the second week and has been watching ever since.\n\"You can't pull them out,\" she says. \"I've had two out. They come apart at about four days. It's a shape down there. They're part of the shape now.\"}",
      "choices": [
       {
        "text": "{Ask what would break the shape.|Try to ask what would break the shape|Go ahead and ask what would break the shape|Take a chance and ask what would break the shape}",
@@ -12328,7 +12328,7 @@
      ]
     },
     "a": {
-     "text": "\"My father did the second weld,\" he says. \"I did the fourth. There will be a fifth and it will not be me.\"\nHe has sat here on and off for eleven years. He does not believe in anything. He is very clear about that, four separate times, and then he tells you what he hears through the plate when the site is quiet, and it is not a sound, it is a schedule.",
+     "text": "\"My father did the second weld,\" he says. \"I did the fourth. There will be a fifth and it will not be me.\"\nHe has sat here on and off for eleven years. He does not believe in anything. He is very clear about that, four separate times, and then he tells you what he hears through the plate when the site is quiet. It is a schedule.",
      "choices": [
       {
        "text": "Sit the night with him.",
@@ -15645,7 +15645,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{brokenthing} stands over {place}, dead, panels open to {ground}. {asker} is halfway up it with {instrument} and comes down without hurrying, because hurrying stopped helping {a while ago|on day two|before the party landed}.\nThe list of what it needs is short. It needs {qty} {material}. {sound}, and the mast does nothing about it, which is the point being made.",
+     "text": "{brokenthing} stands over {place}, dead, panels open to {ground}. {asker} is halfway up it with {instrument} and comes down without hurrying, because hurrying stopped helping {a while ago|on day two|before the party landed}.\nThe list of what it needs is short. It needs {qty} {material}. {sound}, and the mast does nothing about it. He lets you hear that.",
      "asides": {
       "cynical": "{member} {snorts: \"Great. More overpriced scrap.\"|rolls their eyes: \"Ten credits says there's nothing useful inside.\"|scoffs: \"If there was anything valuable here, someone would have stolen it already.\"|shrugs: \"Let's just grab the loot before something explodes.\"}",
       "disciplined": "{member} {follows standard breach protocol by the book|clears every corner with military precision|keeps a steady firing stance and monitors the sensors|checks the ammo count and maintains position}",
@@ -16421,7 +16421,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Snares on posted ground at {place}: {few} of them, set {this morning|recently|badly, which is its own kind of cruelty}, and one of them holding something still alive.\nThe land belongs to {stranger}, by {sign} on the gate. Whoever set the wire will be back before dark.",
+     "text": "Snares on posted ground at {place}: {few} of them, set {this morning|recently|badly, which is a cruelty of its own}, and one of them holding something still alive.\nThe land belongs to {stranger}, by {sign} on the gate. Whoever set the wire will be back before dark.",
      "asides": {
       "empathetic": "{member} {looks at the wreckage and shakes their head: \"Tough way to go.\"|checks for survivor logs with a quiet sigh|hopes whoever was here got out in time|mutters a quiet condolence for the crew}",
       "aggressive": "{member} has picked out a waiting spot with a view of the gate and is standing in it.",
@@ -17486,7 +17486,7 @@
      ]
     },
     "touch": {
-     "text": "It is cold and it is not stone and something goes up the arm and keeps going.\nWhen it lets go, the world is arranged slightly differently and {leader} has something they did not {Walk in|Step through the entrance|Cross the threshold|Head inside} with, and no training anywhere accounts for it, which is {exactly the point of it|the whole point of it|the point}.",
+     "text": "It is cold and it is not stone and something goes up the arm and keeps going.\nWhen it lets go, the world is arranged slightly differently and {leader} has something they did not {Walk in|Step through the entrance|Cross the threshold|Head inside} with, and no training anywhere accounts for it, {which is what it came for|which is what it wanted|which is the trade}.",
      "outcome": {
       "kind": "skill",
       "pool": "esoteric",
@@ -18147,7 +18147,7 @@
      }
     },
     "rep": {
-     "text": "It goes on paper and the paper goes in at the desk with {paper} attached, and the room is cleared within a day.\nThe party never learns which of the two possible reasons it was cleared for, which is its own {kind of answer|sort of answer|answer}.",
+     "text": "It goes on paper and the paper goes in at the desk with {paper} attached, and the room is cleared within a day.\nThe party never learns which of the two possible reasons it was cleared for, {which is an answer of a kind|which answers it well enough|which is answer enough}.",
      "outcome": {
       "kind": "gold",
       "mag": "medium",
@@ -19110,7 +19110,7 @@
      }
     },
     "ran": {
-     "text": "Holding a thing at seventy-nine the whole length of the straight with a crowd screaming at you to do the one thing that will end you is not a driving problem, it is a nerve problem.\n{leader} takes it at a walking pace by comparison to everybody else and wins, and the straight gives them the sort of silence that turns into a roar.",
+     "text": "Holding a thing at seventy-nine the whole length of the straight, with a crowd screaming at you to do the one thing that will end you, is a test of nerve.\n{leader} takes it at a walking pace by comparison to everybody else and wins, and the straight gives them the sort of silence that turns into a roar.",
      "outcome": {
       "kind": "gold",
       "mag": "large",

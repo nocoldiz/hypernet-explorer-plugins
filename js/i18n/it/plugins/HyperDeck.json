@@ -203,7 +203,7 @@
     "bus": "Bus",
     "instr": "Istr",
     "presetHeading": "SCHEMI PRONTI",
-    "presetHint": "Scegli un preset per disegnarlo al cursore. Viene posato come tessere ordinarie, quindi puoi spostarlo, estenderlo o inciderlo cosi com'e.",
+    "presetHint": "Scegline uno e viene disegnato dove stai guardando. Tutto cio che posa sono caselle ordinarie: spostale, collegale a qualcosa di piu grande, o incidile cosi come sono.",
     "placing": "{name} in mano. Clicca per posarlo, tasto destro o Esc per rimetterlo giu.",
     "app": {
       "name": "Editor di circuiti",

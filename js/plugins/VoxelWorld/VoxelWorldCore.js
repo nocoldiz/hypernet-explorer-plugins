@@ -2072,7 +2072,6 @@
     // actually walk around them.
 
     const _charSheetTex = new Map();
-    const _charSheetMat = new Map();
 
     // One character sheet, loaded once and shared. Every figure drawn off it
     // clones the texture (a clone owns its own offset, which is what lets two
@@ -2093,34 +2092,6 @@
         }
         _charSheetTex.set(sheet, t);
         return t;
-    }
-
-    // ONE material per sheet, shared by every figure drawn off it.
-    //
-    // A card used to own a CLONE of the sheet, because a clone owns its own
-    // offset and that is what let two people off one sheet face different ways.
-    // The price was hidden and large: a clone is a texture of its own as far as
-    // the renderer is concerned, so the same pixels were uploaded again for
-    // every figure in the world - a city square deals out well over a hundred -
-    // and a texture of its own meant a material of its own, so no two figures
-    // could ever share a thing.
-    //
-    // The frame is chosen in the GEOMETRY instead (see _reskin): every card
-    // already owns its own plane, cut to the shape of the art, and moving four
-    // pairs of UVs costs nothing. So the sheet is used as it was loaded, the
-    // material is common, and the hour is carried per figure on a vertex colour
-    // rather than on a material colour.
-    function characterSheetMaterial(sheet) {
-        let m = _charSheetMat.get(sheet);
-        if (m !== undefined) return m;
-        const tex = characterSheetTexture(sheet);
-        m = new THREE.MeshBasicMaterial({
-            map: tex, transparent: true, alphaTest: 0.4,
-            side: THREE.DoubleSide, depthWrite: true, fog: true,
-            vertexColors: true
-        });
-        _charSheetMat.set(sheet, m);
-        return m;
     }
 
     // Where one character's block of frames sits on its sheet. A `$` sheet holds
@@ -2240,15 +2211,6 @@
     // built this array again on every one of them.
     const WALK_CYCLE = [1, 0, 1, 2];
 
-    // What a card is drawn with where there is no sheet to draw it with at all
-    // (no TextureLoader, which is the test harness rather than the game). One
-    // of them, shared, so a card with nothing on it is not also a material.
-    let _blankMat = null;
-    function _blankCardMat() {
-        if (!_blankMat) _blankMat = new THREE.MeshBasicMaterial({ visible: false });
-        return _blankMat;
-    }
-
     class CharacterBillboard {
         constructor(sheet, index, height) {
             this.sheet  = sheet;
@@ -2263,14 +2225,21 @@
             this.cols = lay.cols; this.rows = lay.rows;
             this.colBase = lay.colBase; this.rowBase = lay.rowBase;
 
-            // Both shared, and neither is this card's to change or to free.
             this.base = characterSheetTexture(sheet);
-            this.mat  = this.base ? characterSheetMaterial(sheet) : null;
-            this.tex  = this.base;
+            this.tex  = this.base ? this.base.clone() : null;
+            if (this.tex) {
+                this.tex.repeat.set(1 / this.cols, 1 / this.rows);
+                this.tex.offset.set(this.colBase / this.cols, 1 - (this.rowBase + 1) / this.rows);
+                if (this.base.image && this.base.image.width) this.tex.needsUpdate = true;
+            }
             _billboards.add(this);
-            this.mesh = new THREE.Mesh(
-                this._plane(this.h * 0.66, this.h),
-                this.mat || _blankCardMat());
+            // Unlit, and dimmed by hand with the hour (see setDaylight): a card
+            // that always turns to the camera has no honest normal to light.
+            this.mat = new THREE.MeshBasicMaterial({
+                map: this.tex, transparent: true, alphaTest: 0.4,
+                side: THREE.DoubleSide, depthWrite: true, fog: true
+            });
+            this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(this.h * 0.66, this.h), this.mat);
             // Every figure in the world is a card of its own, and a town square
             // deals out a dozen and a half of them: left uncullable they were
             // all drawn, the ones behind the camera included. The plane is
@@ -2284,47 +2253,6 @@
             // card IS the figure, which is what it always used to be.
             this.cardH = this.h;
             this.foot  = 1;
-        }
-
-        // The card itself. A plane of four vertices carrying two things the
-        // shared material cannot: which cell of the sheet this figure is
-        // showing (the UVs), and how dark the hour has made it (the colour).
-        // Both used to live on a texture and a material of this card's own,
-        // which is what stopped a hundred and fifty figures ever sharing one.
-        _plane(w, h) {
-            const geo = new THREE.PlaneGeometry(w, h);
-            geo.setAttribute('color',
-                new THREE.BufferAttribute(new Float32Array(12).fill(1), 3));
-            this._uvAttr  = geo.attributes.uv;
-            this._colAttr = geo.attributes.color;
-            this._uvKey   = -1;       // force the first write through
-            this._writeUv(this.colBase, this.rowBase);
-            if (this._df !== undefined) this._writeTint(this._df);
-            return geo;
-        }
-
-        // The cell at (col, row) of the sheet, written into the four corners.
-        // PlaneGeometry lays its vertices out top-left, top-right, bottom-left,
-        // bottom-right, so the V of the top pair is the HIGHER one.
-        _writeUv(col, row) {
-            const key = row * 64 + col;
-            if (key === this._uvKey) return;
-            this._uvKey = key;
-            const du = 1 / this.cols, dv = 1 / this.rows;
-            const u0 = col * du;
-            const v0 = 1 - (row + 1) * dv;
-            const a = this._uvAttr.array;
-            a[0] = u0;      a[1] = v0 + dv;
-            a[2] = u0 + du; a[3] = v0 + dv;
-            a[4] = u0;      a[5] = v0;
-            a[6] = u0 + du; a[7] = v0;
-            this._uvAttr.needsUpdate = true;
-        }
-
-        _writeTint(v) {
-            const a = this._colAttr.array;
-            for (let i = 0; i < 12; i++) a[i] = v;
-            this._colAttr.needsUpdate = true;
         }
 
         // `y` is the GROUND under the figure, not the middle of the card. It is
@@ -2352,10 +2280,7 @@
             const v = 0.42 + 0.58 * Math.max(0, Math.min(1, df));
             if (this._df === v) return;
             this._df = v;
-            // Onto this card's own four vertices. The material is shared with
-            // every other figure off the same sheet now, so tinting IT would
-            // put the whole town in whatever light the last one asked for.
-            this._writeTint(v);
+            this.mat.color.setRGB(v, v, v);
         }
 
         // Re-cut the card to the real shape of the art the moment it lands, turn
@@ -2364,6 +2289,8 @@
             if (!this.tex) return;
             if (!this._sized && this.base.image && this.base.image.width) {
                 this._sized = true;
+                this.tex.image = this.base.image;
+                this.tex.needsUpdate = true;
                 const fw = this.base.image.width / this.cols;
                 const fh = this.base.image.height / this.rows;
                 if (fh > 0) {
@@ -2371,13 +2298,8 @@
                     this.foot = fig ? fig.foot : 1;
                     const cut = this._cut(fw, fh, fig);
                     this.cardH = cut.h;
-                    // The card this figure is carrying is its own, so it is
-                    // given back; the frame it was showing and the light it was
-                    // in are written onto the new one by _plane.
                     this.mesh.geometry.dispose();
-                    const keep = this._uvKey;
-                    this.mesh.geometry = this._plane(cut.w, cut.h);
-                    if (keep >= 0) this._writeUv(keep % 64, Math.floor(keep / 64));
+                    this.mesh.geometry = new THREE.PlaneGeometry(cut.w, cut.h);
                     // Whoever placed it did so against the old card, so it is
                     // put back on the same ground rather than nudged from where
                     // the old one happened to sit.
@@ -2407,17 +2329,16 @@
             const row = characterFacingRow(this.yaw,
                 camX - this.mesh.position.x, camZ - this.mesh.position.z);
             const col = this.moving ? WALK_CYCLE[Math.floor(this.step / 7) % 4] : 1;
-            this._writeUv(this.colBase + col, this.rowBase + row);
+            this.tex.offset.set((this.colBase + col) / this.cols,
+                1 - (this.rowBase + row + 1) / this.rows);
         }
 
-        // The card goes; the SHEET and the material it is drawn with stay. They
-        // belong to every other figure off the same sheet, and freeing them
-        // here would take the art out from under a townful of people the moment
-        // one of them walked off the edge of the world.
         dispose() {
             _billboards.delete(this);
             if (this.mesh.parent) this.mesh.parent.remove(this.mesh);
             this.mesh.geometry.dispose();
+            this.mat.dispose();
+            if (this.tex) this.tex.dispose();
         }
     }
 

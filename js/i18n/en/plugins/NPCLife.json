@@ -63,10 +63,10 @@
     "worksAs": "Works as {job} (since {year}).",
     "betweenJobs": "Currently between jobs.",
     "pastWork": "Past work: {jobs}.",
-    "pastJob": "{job} ({from}–{to})",
+    "pastJob": "{job} ({from}-{to})",
     "marriedTo": "Married to {name}.",
     "seeing": "Seeing {name}.",
-    "formerPartner": "Former partner: {name} ({from}–{to}, {outcome}).",
+    "formerPartner": "Former partner: {name} ({from}-{to}, {outcome}).",
     "cleanRecord": "Clean criminal record.",
     "criminalRecord": "Criminal record: {convictions} ({served} served), latest: {crime} ({year}).",
     "convictionCount": {

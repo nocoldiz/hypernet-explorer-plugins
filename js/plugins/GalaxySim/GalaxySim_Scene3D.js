@@ -2014,7 +2014,7 @@
       if (!H) return "";
       const broken = H.brokenCount();
       const state = H.isOperational()
-        ? `<span class="gx-svc-ok">${T('Galaxy.service.operational')}</span>`
+        ? `<span style="color:#60b345">${T('Galaxy.service.operational')}</span>`
         : T.n('Galaxy.service.belowLimit', broken);
       return T('Galaxy.service.condition', { pct: H.condition(), state: state });
     }

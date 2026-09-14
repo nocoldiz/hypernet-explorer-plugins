@@ -201,10 +201,7 @@
   // Biologic.json), so the sheet, the register and this selector all call a
   // uterus the same thing.
   function ccReproLabels() {
-    return ccList('Biologic.reproductionType', [
-      "Testicles", "Uterus", "Oviduct",
-      "Sporangium", "Mitotic Gland"
-    ]);
+    return ccList('Biologic.reproductionType');
   }
   function ccReproChoices() {
     const R = ccReproTypes();
@@ -212,23 +209,20 @@
     // A bank that answers with a short list (an unfinished locale, a bank that
     // did not load) used to print a chip labelled "undefined" rather than
     // simply falling back to English for the entries it is missing.
-    const label = (i, fallback) => labels[i] || fallback;
+    const label = (i) => labels[i];
     return [
-      { val: R.TESTICLES, label: label(0, "Testicles") },
-      { val: R.UTERUS, label: label(1, "Uterus") },
-      { val: R.OVIPAROUS, label: label(2, "Oviduct") },
-      { val: R.PLANT, label: label(3, "Sporangium") },
-      { val: R.MITOSIS, label: label(4, "Mitotic Gland") },
-      { val: R.NONE, label: ccT('CharCreate.reproNone', "Sterile") }
+      { val: R.TESTICLES, label: label(0) },
+      { val: R.UTERUS, label: label(1) },
+      { val: R.OVIPAROUS, label: label(2) },
+      { val: R.PLANT, label: label(3) },
+      { val: R.MITOSIS, label: label(4) },
+      { val: R.NONE, label: ccT('CharCreate.reproNone') }
     ];
   }
   // Where a body sits reads as a phrase rather than as a number: "leaning
   // androgenic" is what the slider is actually saying.
   function ccHormoneLean(balance) {
-    const bands = ccList('CharCreate.hormoneLean', [
-      "Strongly oestrogenic", "Oestrogenic", "Evenly balanced",
-      "Androgenic", "Strongly androgenic"
-    ]);
+    const bands = ccList('CharCreate.hormoneLean');
     const index = balance < 15 ? 0 : balance < 35 ? 1 : balance < 65 ? 2 : balance < 85 ? 3 : 4;
     return bands[index] || bands[bands.length - 1] || "";
   }
@@ -546,8 +540,8 @@
   // The wizard's own theme. Started once (settings page) and never restarted:
   // every later request goes through AudioManager.playBgm, which leaves the
   // track playing when it is already this one.
-  // i18n-ignore-next-line: bgm file name
-  const CREATION_BGM = "KevinMacLeod/Jazz/Cool Vibes";
+  // bgm file name
+  const CREATION_BGM = "KevinMacLeod/Jazz/Cool Vibes"; // i18n-ignore: bgm file name
 
   // Music tracks for the initial settings step (values must match MusicSelectionSystem.js)
   // i18n-ignore-start: bgm file names. Only the first three carry a label of
@@ -646,7 +640,7 @@
   // The board's own tab, sitting in front of the categories: the ones this
   // member already stands above Untrained in, bought or granted. It is an id,
   // not a label, so it never collides with a Specialization.json category.
-  const SPEC_TAB_CURRENT = "Current";
+  const SPEC_TAB_CURRENT = "Current"; // i18n-ignore: internal tab id
 
   // ── Creature archetypes ─────────────────────────────────────────────────
   // Two namespaces name the same creatures: Health/Archetypes.json spells them
@@ -1128,25 +1122,25 @@
             name: T('CharCreate.male'),
             symbol: "gender",
             value: 0,
-            description: "Traditional male biology and identity. Pronouns: He/Him. Associated with testicular/insemination biology.",
+            description: T('CharCreate.genderDesc.male'),
           },
           {
             name: T('CharCreate.female'),
             symbol: "gender",
             value: 1,
-            description: "Traditional female biology and identity. Pronouns: She/Her. Associated with uterine/gestation biology.",
+            description: T('CharCreate.genderDesc.female'),
           },
           {
             name: T('CharCreate.nonBinary'),
             symbol: "gender",
             value: 2,
-            description: "Fluid or non-conforming presentation. Pronouns: They/Them. Features adaptable biological traits.",
+            description: T('CharCreate.genderDesc.nonBinary'),
           },
           {
             name: T('CharCreate.cocoon'),
             symbol: "gender",
             value: 3,
-            description: "Metamorphic, synthetic, or vegetative chassis. Pronouns: It/They. Operates via mitotic or engineered reproduction.",
+            description: T('CharCreate.genderDesc.cocoon'),
           },
         ];
       },
@@ -1203,7 +1197,7 @@
       // Macro BIO Step (the page a new character opens on): Ideology, Morality, Hometown, Age, Personality, Wealth, Blood Type (Optional)
       id: "bio",
       get title() {
-        return T('CharCreate.biography') || "Biography & Ideology";
+        return T('CharCreate.biography');
       },
       get choices() {
         return [];
@@ -1223,7 +1217,7 @@
       // the rest of the game already knows how to read back.
       id: "romance",
       get title() {
-        return T('CharCreate.romanceTab') || "Romance & Bonds";
+        return T('CharCreate.romanceTab');
       },
       get choices() {
         return [];
@@ -1405,13 +1399,7 @@
       handler: function (symbol) {
         if (symbol === "random_traits") {
           const targetActorId = Scene_CharacterCreation.getCurrentActorId();
-          // Simple mode deals a whole archetype: what that mode offers is
-          // ready-made builds, so its Random hands over one of those rather
-          // than a loose handful of traits (CharacterCreationSteps.js).
-          const rolled = Scene_CharacterCreation.isSimpleMode() &&
-            this._ccRollArchetypeFor &&
-            this._ccRollArchetypeFor(Scene_CharacterCreation.getCurrentActor());
-          if (!rolled && window.randomizeTraitsForActor) {
+          if (window.randomizeTraitsForActor) {
             window.randomizeTraitsForActor(targetActorId);
           }
         }
@@ -1423,7 +1411,7 @@
       // Specializations (Optional)
       id: "specializations",
       get title() {
-        return T('CharCreate.specializations') || "Specializations";
+        return T('CharCreate.specializations');
       },
       get choices() {
         return [];
@@ -2434,7 +2422,7 @@
         const dbName = ((record && record.name) || "").trim();
         // Anything the player has already typed stands, and so does a name a
         // dossier or a randomizer has already written.
-        if (given && given !== dbName && given !== "Unnamed" && given !== "Harold") return;
+        if (given && given !== dbName && given !== "Unnamed" && given !== "Harold") return; // i18n-ignore: default-name sentinels
         actor.setName(Scene_CharacterCreation.generateRandomMarkovName(idx));
         actor._ccNameSeeded = true;
       });
@@ -2684,22 +2672,22 @@
 
       // 0. Settings Tab (First Tab on the Left)
       const settingsTabHtml = `
-        <div class="cc-folder-tab ${isSettingsActive ? 'active' : ''}" onclick="SceneManager._scene.onSettingsTabClick()" title="${ccT('CharCreate.initialSettings', 'Initial Settings')}">
+        <div class="cc-folder-tab ${isSettingsActive ? 'active' : ''}" onclick="SceneManager._scene.onSettingsTabClick()" title="${ccT('CharCreate.initialSettings')}">
           ${this._ccIconHtml(SETTINGS_TAB_ICON, 16)}
-          <span>${ccT('CharCreate.settings', 'Settings')}</span>
+          <span>${ccT('CharCreate.settings')}</span>
         </div>
       `;
 
       // 1. Top Left: Party Member Tabs + Pet Slot
       const partyTabsHtml = partyMembers.map((partyActor, idx) => {
-        const name = partyActor.name() || `Member ${idx + 1}`;
+        const name = partyActor.name() || T('CharCreate.memberN', { n: idx + 1 });
         const isActive = !isSettingsActive && !isScenarioMode && !isPetActive && !isVehicleActive && idx === currentMemberIndex;
         const isComp = partyActor.name() && partyActor._classId > 0 && partyActor.characterName();
         const roman = idx === 0 ? 'I' : (idx === 1 ? 'II' : 'III');
         const isLeader = idx === 0;
 
         const removeBtn = !isLeader ? `
-          <span class="cc-tab-remove-x" title="${ccT('CharCreate.deleteMember', 'Remove Member')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePartyMember(${idx}, event)">
+          <span class="cc-tab-remove-x" title="${ccT('CharCreate.deleteMember')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePartyMember(${idx}, event)">
             ✕
           </span>
         ` : '';
@@ -2718,7 +2706,7 @@
       // The story mode plays one character and one companion, so the seat is not
       // offered there at all.
       const addBtnHtml = partySize < 3 && !Scene_CharacterCreation._storyMode ? `
-        <div class="cc-folder-tab cc-tab-add-plus ${railFocus === 'add' ? 'selected' : ''}" title="${ccT('CharCreate.addPartyMember', 'Add Member')}" onclick="SceneManager._scene.onAddPartyMember()">
+        <div class="cc-folder-tab cc-tab-add-plus ${railFocus === 'add' ? 'selected' : ''}" title="${ccT('CharCreate.addPartyMember')}" onclick="SceneManager._scene.onAddPartyMember()">
           +
         </div>
       ` : '';
@@ -2727,11 +2715,11 @@
       // Only the story mode keeps a familiar: everywhere else the tab is the
       // party's pets, and it is named that.
       const petTabLabel = Scene_CharacterCreation._storyMode
-        ? ccT('CharCreate.companion', "Familiar")
-        : ccT('CharCreate.petsTab', "Pets");
+        ? ccT('CharCreate.companion')
+        : ccT('CharCreate.petsTab');
       const petName = pet ? pet.name : petTabLabel;
       const removePetBtn = pet ? `
-        <span class="cc-tab-remove-x" title="${this._petWord('CharCreate.releasePet', 'Release Familiar', 'CharCreate.petsTabRelease', 'Release Pet')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePet(event)">
+        <span class="cc-tab-remove-x" title="${this._petWord('CharCreate.releasePet', 'CharCreate.petsTabRelease')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePet(event)">
           ✕
         </span>
       ` : '';
@@ -2742,7 +2730,7 @@
       const vehicleTabHtml = Scene_CharacterCreation._storyMode ? '' : `
         <div class="cc-folder-tab cc-vehicle-tab ${!isSettingsActive && !isScenarioMode && isVehicleActive ? 'active' : ''}" onclick="SceneManager._scene.onVehicleTabClick()">
           <span class="cc-tab-dot ${chosenVehicles.length ? 'done' : ''}"></span>
-          <span>${ccT('CharCreate.vehiclesTab', 'Vehicles')}${chosenVehicles.length ? ` (${chosenVehicles.length})` : ''}</span>
+          <span>${ccT('CharCreate.vehiclesTab')}${chosenVehicles.length ? ` (${chosenVehicles.length})` : ''}</span>
         </div>
       `;
 
@@ -2764,7 +2752,7 @@
       // party member's sheet, so neither stands under that rail either.
       const stepTabsHtml = (isSettingsActive || isPetActive || isVehicleActive) ? '' : isScenarioMode ? `
         <div class="cc-folder-tab active" onclick="SceneManager._scene.onReturnToPartyDossier()">
-          ${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.scenarioShared', "Scenario & Origin")}</span>
+          ${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.scenarioShared')}</span>
         </div>
       ` : tabs.map((tab) => {
         if (tab.id === "origin") return ""; // Origin is moved to dedicated scenario confirm
@@ -2792,9 +2780,9 @@
 
       const isSimple = Scene_CharacterCreation.isSimpleMode();
       const modeToggleHtml = (isSettingsActive || isScenarioMode || Scene_CharacterCreation._storyMode) ? '' : `
-        <div class="cc-mode-toggle" title="${ccT('CharCreate.toggleModeTooltip', 'Toggle between Simple and Detailed creation mode')}">
-          <button type="button" class="cc-mode-pill ${isSimple ? 'active' : ''}" data-nav="simple-mode" data-nav-key="cc-mode-simple" onclick="event.stopPropagation(); SceneManager._scene.onSetSimpleMode(true)">${ccT('CharCreate.simpleMode', 'Simple mode')}</button>
-          <button type="button" class="cc-mode-pill ${!isSimple ? 'active' : ''}" data-nav="detailed-mode" data-nav-key="cc-mode-detailed" onclick="event.stopPropagation(); SceneManager._scene.onSetSimpleMode(false)">${ccT('CharCreate.detailedMode', 'Detailed mode')}</button>
+        <div class="cc-mode-toggle" title="${ccT('CharCreate.toggleModeTooltip')}">
+          <button type="button" class="cc-mode-pill ${isSimple ? 'active' : ''}" data-nav="simple-mode" data-nav-key="cc-mode-simple" onclick="event.stopPropagation(); SceneManager._scene.onSetSimpleMode(true)">${ccT('CharCreate.simpleMode')}</button>
+          <button type="button" class="cc-mode-pill ${!isSimple ? 'active' : ''}" data-nav="detailed-mode" data-nav-key="cc-mode-detailed" onclick="event.stopPropagation(); SceneManager._scene.onSetSimpleMode(false)">${ccT('CharCreate.detailedMode')}</button>
         </div>
       `;
 
@@ -3087,31 +3075,23 @@
       const bio = {
         id: "bio",
         iconIndex: 183,
-        title: ccT('CharCreate.biography', 'Bio & Ideology'),
-        subtitle: (actor && actor._bioSet) ? ccT('CharCreate.customized', "Customized") : ccT('CharCreate.optional', "Optional"),
+        title: ccT('CharCreate.biography'),
+        subtitle: (actor && actor._bioSet) ? ccT('CharCreate.customized') : ccT('CharCreate.optional'),
         step: STEP.BIO
       };
       const klass = {
         id: "class",
         iconIndex: 322,
-        title: ccT('CharCreate.class', "Class"),
-        subtitle: (actor && $dataClasses[actor._classId] && window.CCDbName($dataClasses[actor._classId])) || ccT('CharCreate.pending', "Choose"),
+        title: ccT('CharCreate.class'),
+        subtitle: (actor && $dataClasses[actor._classId] && window.CCDbName($dataClasses[actor._classId])) || ccT('CharCreate.pending'),
         step: STEP.CLASS
       };
 
-      // On the simple board a build has a name, so the tab carries that name
-      // rather than a count of the traits inside it.
-      const traitCount = (actor && actor._selectedTraits && actor._selectedTraits.length) || 0;
-      const worn = (traitCount && this._ccActiveArchetype) ? this._ccActiveArchetype(actor) : null;
       const traits = {
         id: "traits",
         iconIndex: 87,
-        title: ccT('CharCreate.traits', 'Traits'),
-        subtitle: worn
-          ? ((window.TraitPoints && window.TraitPoints.archetypeName) ? window.TraitPoints.archetypeName(worn) : worn.id)
-          : (traitCount > 0
-            ? ccTp('Traits.traitsCount', { count: traitCount }, traitCount + ' traits')
-            : ccT('CharCreate.optional', "Optional")),
+        title: ccT('CharCreate.traits'),
+        subtitle: actor && actor._selectedTraits && actor._selectedTraits.length > 0 ? `${actor._selectedTraits.length} traits` : ccT('CharCreate.optional'),
         step: STEP.TRAITS
       };
 
@@ -3130,14 +3110,14 @@
           return [bio, {
             id: "romance",
             iconIndex: 84,
-            title: ccT('CharCreate.romanceTab', 'Romance & Bonds'),
-            subtitle: (actor && actor._ccRomance) ? ccT('CharCreate.customized', "Customized") : ccT('CharCreate.optional', "Optional"),
+            title: ccT('CharCreate.romanceTab'),
+            subtitle: (actor && actor._ccRomance) ? ccT('CharCreate.customized') : ccT('CharCreate.optional'),
             step: STEP.ROMANCE
           }, traits, {
             id: "specializations",
             iconIndex: 126,
-            title: ccT('CharCreate.specializations', 'Specializations'),
-            subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional', "Optional")),
+            title: ccT('CharCreate.specializations'),
+            subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional')),
             step: STEP.SPECIALIZATIONS
           }];
         }
@@ -3152,22 +3132,22 @@
       const romance = {
         id: "romance",
         iconIndex: 84,
-        title: ccT('CharCreate.romanceTab', 'Romance & Bonds'),
-        subtitle: (actor && actor._ccRomance) ? ccT('CharCreate.customized', "Customized") : ccT('CharCreate.optional', "Optional"),
+        title: ccT('CharCreate.romanceTab'),
+        subtitle: (actor && actor._ccRomance) ? ccT('CharCreate.customized') : ccT('CharCreate.optional'),
         step: STEP.ROMANCE
       };
       const archetype = {
         id: "archetype",
         iconIndex: 292,
-        title: ccT('CharCreate.archetype', "Archetype"),
-        subtitle: archetypeDisplayName(actorArchetypeKey(actor)) || ccT('CharCreate.pending', "Choose"),
+        title: ccT('CharCreate.archetype'),
+        subtitle: archetypeDisplayName(actorArchetypeKey(actor)) || ccT('CharCreate.pending'),
         step: STEP.GENDER
       };
       const specializations = {
         id: "specializations",
         iconIndex: 126,
-        title: ccT('CharCreate.specializations', 'Specializations'),
-        subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional', "Optional")),
+        title: ccT('CharCreate.specializations'),
+        subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional')),
         step: STEP.SPECIALIZATIONS
       };
 
@@ -3187,7 +3167,7 @@
           return isCreature ? !!(actor._creatureArchetypes && actor._creatureArchetypes.length > 0) : true;
         case "appearance":
         case "identity":
-          return !!(actor.name() && actor.name().trim() && actor.name() !== "Unnamed" && actor.name() !== "Harold" && actor.characterName() && actor.characterName().length > 0);
+          return !!(actor.name() && actor.name().trim() && actor.name() !== "Unnamed" && actor.name() !== "Harold" /* i18n-ignore: default-name sentinels */ && actor.characterName() && actor.characterName().length > 0);
         case "class":
           return !!(actor._classId && actor._classId > 0);
         case "traits":
@@ -3265,7 +3245,7 @@
             actor.changeClass(65, false);
           }
           if (!actorArchetypeKey(actor)) {
-            const archetypes = creatureArchetypeKeys().filter((k) => k !== "Humanoid");
+            const archetypes = creatureArchetypeKeys().filter((k) => k !== "Humanoid"); // i18n-ignore: archetype id
             const randomArch = archetypes[Math.floor(Math.random() * archetypes.length)] || DEFAULT_CREATURE_ARCHETYPE;
             applyArchetypeToActor(actor, randomArch);
           }
@@ -3392,15 +3372,6 @@
         };
       }
       if (this._step === STEP.TRAITS) {
-        // The simple board is a rail of archetype families over ready-made
-        // builds, not one of trait categories over the trait book.
-        if (this._ccUsesArchetypeBoard && this._ccUsesArchetypeBoard()) {
-          return {
-            ids: this._archetypeFamilies().map((f) => f.id),
-            active: Scene_CharacterCreation._activeArchetypeFamily || "all",
-            select: (id) => this.onArchetypeFamilySelect(id),
-          };
-        }
         return {
           ids: this._traitCategories().map((c) => c.id),
           active: Scene_CharacterCreation._activeTraitCategory || "all",

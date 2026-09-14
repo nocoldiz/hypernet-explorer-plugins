@@ -39,6 +39,12 @@
     },
     "mediahex": {
       "name": "Mediahex"
+    },
+    "slamdrome": {
+      "name": ""
+    },
+    "circle": {
+      "name": ""
     }
   },
   "program": {
@@ -577,6 +583,40 @@
       },
       "know_the_latest": {
         "title": "Lo Sai l'Ultima?"
+      }
+    },
+    "slamdrome": {
+      "slam_vigil": {
+        "title": ""
+      },
+      "slam_aftershow": {
+        "title": ""
+      },
+      "slam_classics": {
+        "title": ""
+      },
+      "slam_contracts": {
+        "title": ""
+      },
+      "slam_mundane_hour": {
+        "title": ""
+      }
+    },
+    "circle": {
+      "sanctioned_hour": {
+        "title": ""
+      },
+      "form_and_fall": {
+        "title": ""
+      },
+      "the_notariat": {
+        "title": ""
+      },
+      "open_division": {
+        "title": ""
+      },
+      "school_of_the_week": {
+        "title": ""
       }
     }
   }

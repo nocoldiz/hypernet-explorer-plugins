@@ -128,12 +128,12 @@
         SoundManager.playBuzzer();
         return;
       }
-      const name = targetActor ? targetActor.name() : ccT('CharCreate.unnamed', 'Unnamed');
+      const name = targetActor ? targetActor.name() : ccT('CharCreate.unnamed');
 
       this._ccConfirm({
-        title: ccT('CharCreate.removeMemberTitle', 'Remove from party'),
-        body: ccTp('CharCreate.removeMemberBody', { name }, name + ' will be removed from the party.'),
-        acceptLabel: ccT('CharCreate.deleteMember', 'Remove Member')
+        title: ccT('CharCreate.removeMemberTitle'),
+        body: ccTp('CharCreate.removeMemberBody', { name }),
+        acceptLabel: ccT('CharCreate.deleteMember')
       }, () => this._removePartyMemberConfirmed(idx));
     }
 
@@ -242,7 +242,7 @@
       }
       this._commitSpecPoints();
       const p1 = $gameActors.actor(1);
-      if (!p1 || !p1.name() || p1.name() === "Unnamed") {
+      if (!p1 || !p1.name() || p1.name() === "Unnamed") { // i18n-ignore: default-name sentinel
         if (p1) p1.setName(Scene_CharacterCreation.generateRandomMarkovName(0));
       }
       if (!p1 || !p1._classId) {
@@ -270,7 +270,7 @@
         const traits = this._petTraits();
         window.PetSystem.recruitPet({
           id: $gameSystem._partyPet.id,
-          name: $gameSystem._partyPet.name || "Companion",
+          name: $gameSystem._partyPet.name || ccT('CharCreate.petDefaultName'),
           characterName: $gameSystem._partyPet.sprite,
           characterIndex: $gameSystem._partyPet.spriteIndex || 0,
           isFollower: traits.sentient, // sentient = free to leave = a follower, not a dependent pet

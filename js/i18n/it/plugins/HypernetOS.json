@@ -984,7 +984,7 @@
       "cdBody": "Inserire il primo floppy o il CD-ROM di installazione del prodotto e fare clic su Avanti. Non c'e' un lettore in cui inserirlo.",
       "componentsIntro": "Per aggiungere o rimuovere un componente, selezionare la casella. Una casella ombreggiata indica che sara' installata solo una parte del componente.",
       "next": "Avanti",
-      "componentsDone": "Archways ha terminato la configurazione dei componenti. Non e' cambiato nulla di visibile, ed e' questo il punto.",
+      "componentsDone": "Archways ha terminato la configurazione dei componenti. Non e' cambiato nulla di visibile. E' previsto.",
       "defaultsIntro": "Una configurazione dei programmi specifica i programmi predefiniti per alcune attivita', come la navigazione Web o la posta, e quali programmi sono accessibili dal menu Start, dal desktop e da altri percorsi.",
       "defaultsArchways": "Predefiniti di Archways",
       "defaultsNonArchways": "Non Archways (non ce ne sono)",
@@ -1439,28 +1439,28 @@
     },
     "allprograms": {
       "appName": "Tutti i programmi",
-      "hint": "Programmi non presenti sul desktop. Trascinane uno sul desktop per fissarlo. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
+      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
       "empty": "Ogni programma e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "programs": {
       "appName": "Programmi",
-      "hint": "Programmi installati non presenti sul desktop. Trascinane uno sul desktop per fissarlo. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
+      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
       "empty": "Ogni programma e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "games": {
       "appName": "Giochi",
-      "hint": "Giochi installati non presenti sul desktop. Trascinane uno sul desktop per fissarlo. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
+      "hint": "Ogni gioco che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
       "empty": "Ogni gioco e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "utilities": {
       "appName": "Utilità",
-      "hint": "Utilita installate non presenti sul desktop. Trascinane una sul desktop per fissarla. Trascina un collegamento del desktop qui, o nel Cestino, per rimuoverlo.",
+      "hint": "Ogni utilità che non e' sul desktop. Trascinane una sul desktop per tenerla li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporla.",
       "empty": "Ogni utilità e' gia' sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"

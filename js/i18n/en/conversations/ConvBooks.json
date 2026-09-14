@@ -1739,24 +1739,24 @@
     "a giant dragonfly (Meganeura) with wing venation intact",
     "an anomalocaris with grasping appendages visible",
     "a Cambrian Hallucigenia, spines and tentacles preserved",
-    "a Tully monster (Tullimonstrum) ,  classification still debated",
+    "a Tully monster (Tullimonstrum), classification still debated",
     "a mosasaur skull with recurved teeth",
     "a plesiosaur neck section with gastroliths",
     "an ichthyosaur giving birth, mother and offspring preserved",
     "a mammoth molar the size of a dinner plate",
     "a giant ground sloth claw, still partially sheathed",
     "a terror bird (Phorusrhacid) skull with hooked beak",
-    "a Helicoprion jaw whorl ,  a spiral of shark teeth",
+    "a Helicoprion jaw whorl, a spiral of shark teeth",
     "a coelacanth lobe-fin, almost identical to living specimens",
     "an Opabinia with five eyes and a frontal nozzle",
     "a Wiwaxia covered in sclerite armour",
     "a giant sea lily (crinoid) crown section",
-    "a horseshoe crab trail ending abruptly ,  the crab above, fossilized mid-walk",
+    "a horseshoe crab trail ending abruptly, the crab above, fossilized mid-walk",
     "a nautiloid with visible siphuncle and chamber walls",
-    "a Dickinsonia, flat and radially symmetrical ,  possibly the earliest animal",
+    "a Dickinsonia, flat and radially symmetrical, possibly the earliest animal",
     "a Charnia frond, Ediacaran in age and of uncertain biology",
     "a cluster of orthocone nautiloids in predatory pile-up",
-    "a Pikaia ,  possibly the earliest known chordate",
+    "a Pikaia, possibly the earliest known chordate",
     "a petrified egg clutch of unknown species"
   ],
   "weirdPreservation": [
@@ -1769,7 +1769,7 @@
     "cast in iron oxide",
     "with soft tissue outline visible",
     "remarkably complete",
-    "articulated ,  likely buried alive"
+    "articulated, likely buried alive"
   ],
   "amberVertebrate": [
     "a gecko toe pad",
@@ -1798,7 +1798,7 @@
   "weirdDescriptionPatterns": [
     "Embedded in {matrix} ({age}), {creature} is {preservation}. {detail}",
     "This {preservation} specimen from {matrix} ({age}) shows {creature}. {detail}",
-    "From {matrix} deposits of {age}, {creature} ,  {preservation}. {detail}",
+    "From {matrix} deposits of {age}, {creature}, {preservation}. {detail}",
     "A {preservation} fossil in {matrix} ({age}): {creature}. {detail}"
   ],
   "locations": [
@@ -2131,7 +2131,7 @@
     "Pleistocene (~500 Ka)"
   ],
   "weirdDetails": [
-    "No living relatives are known ,  the lineage is entirely extinct.",
+    "No living relatives are known, the lineage is entirely extinct.",
     "The taxonomy of this specimen remains contested among specialists.",
     "Micro-CT scanning revealed internal organs still in anatomical position.",
     "The specimen represents the oldest known record of this body plan.",

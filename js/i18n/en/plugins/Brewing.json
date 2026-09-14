@@ -28,7 +28,7 @@
   "missing": "Missing: {list}",
   "started": "Brewing started: {recipe}",
   "itemNumbered": "Item#{id} ×{qty}",
-  "units": "{min}–{max} units",
+  "units": "{min}-{max} units",
   "stage": {
     "primary": "Primary Fermentation",
     "secondary": "Secondary Fermentation",
@@ -62,32 +62,32 @@
     "herbal_tea": {
       "name": "Herbal Tea",
       "description": "A simple steeping of herb extract in water. No yeast, no fermentation, just warmth and time.",
-      "outputPreview": "2–4x Herbal Tea"
+      "outputPreview": "2-4x Herbal Tea"
     },
     "honey_mead": {
       "name": "Honey Mead",
       "description": "Wild honey dissolved in spring water and left to ferment in the dark. The oldest brew known.",
-      "outputPreview": "2–5x Honey Mead"
+      "outputPreview": "2-5x Honey Mead"
     },
     "nun_beer": {
       "name": "Nun Beer",
       "description": "A dark malt-style brew made from honey and bottled water, fermented slow and cold like the monastery cellars.",
-      "outputPreview": "3–6x Nun Beer"
+      "outputPreview": "3-6x Nun Beer"
     },
     "varlenias_wine": {
       "name": "Varlenia's Wine",
       "description": "A ruby-gold wine pressed from golden sunfruit, aged with a touch of wild honey for sweetness.",
-      "outputPreview": "2–4x Varlenia's Wine"
+      "outputPreview": "2-4x Varlenia's Wine"
     },
     "aged_wine": {
       "name": "Aged Wine",
       "description": "Crystal nectar fruit blended with royal meat honey produces a luxurious vintage that demands patience.",
-      "outputPreview": "1–3x Aged Wine"
+      "outputPreview": "1-3x Aged Wine"
     },
     "ethanol": {
       "name": "Ethanol",
       "description": "A potent distillate fermented from Dragon's Breath Fruit and Void Starfruit. Dangerously pure alcohol.",
-      "outputPreview": "1–4x Ethanol"
+      "outputPreview": "1-4x Ethanol"
     }
   }
 }

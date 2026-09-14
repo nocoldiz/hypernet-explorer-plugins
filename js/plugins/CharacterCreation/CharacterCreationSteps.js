@@ -106,310 +106,16 @@
 
     _traitCategories() {
       return [
-        { id: "all", label: ccT("CharCreate.filterAll", "All"), icon: 87 },
-        { id: "genetic", label: ccT('Traits.tabGenetic', "Genetic"), icon: 292 },
-        { id: "physical", label: ccT('Traits.tabPhysical', "Physical"), icon: 135 },
-        { id: "mental", label: ccT('Traits.tabMental', "Mental"), icon: 183 },
-        { id: "magical", label: ccT('Traits.tabMagical', "Magical"), icon: 165 },
-        { id: "diseases", label: ccT('Traits.tabDiseases', "Diseases"), icon: 177 }
+        { id: "all", label: ccT("CharCreate.filterAll"), icon: 87 },
+        { id: "genetic", label: ccT('Traits.tabGenetic'), icon: 292 },
+        { id: "physical", label: ccT('Traits.tabPhysical'), icon: 135 },
+        { id: "mental", label: ccT('Traits.tabMental'), icon: 183 },
+        { id: "magical", label: ccT('Traits.tabMagical'), icon: 165 },
+        { id: "diseases", label: ccT('Traits.tabDiseases'), icon: 177 }
       ];
     }
 
-    // ── Archetypes: what the simple board offers instead of the trait book ──
-    //
-    // Simple mode does not shop 199 cards one at a time. It offers ready-made
-    // builds out of TraitSelector's catalogue, each one spending the whole
-    // purse on a set of traits that read as one character, and taking one
-    // writes that whole build onto the member. Detailed mode is where a build
-    // is then edited trait by trait, which is what the hint under the board
-    // says. Illnesses are not part of any archetype and are not offered here.
-    _ccArchetypes() {
-      const TP = window.TraitPoints;
-      if (!TP || typeof TP.archetypes !== "function") return [];
-      // Not memoised while it comes back empty: window.Health may still be
-      // loading, the same reason the trait tabs do not cache an empty tab.
-      if (!this._ccArchetypeCache || !this._ccArchetypeCache.length) {
-        this._ccArchetypeCache = TP.archetypes();
-      }
-      return this._ccArchetypeCache;
-    }
-
-    _ccUsesArchetypeBoard() {
-      return Scene_CharacterCreation.isSimpleMode() && this._ccArchetypes().length > 0;
-    }
-
-    _archetypeName(arch) {
-      const TP = window.TraitPoints;
-      return (TP && TP.archetypeName) ? TP.archetypeName(arch) : (arch && arch.id) || "";
-    }
-
-    _archetypeDesc(arch) {
-      const TP = window.TraitPoints;
-      return (TP && TP.archetypeDesc) ? TP.archetypeDesc(arch) : "";
-    }
-
-    // The rail over the board. A family is drawn with the icon of the first
-    // trait of its first build rather than one picked by hand, so every tab
-    // carries a real icon out of the same book the cards under it come from.
-    _archetypeFamilies() {
-      const TP = window.TraitPoints;
-      const rows = this._ccArchetypes();
-      const list = [{ id: "all", label: ccT('Traits.archetypeAll', 'All'), icon: 87 }];
-      ((TP && TP.ARCHETYPE_FAMILIES) || []).forEach((family) => {
-        const first = rows.find((arch) => arch.family === family);
-        if (!first) return;
-        list.push({
-          id: family,
-          label: ccT('Traits.archetypeFamilies.' + family, family),
-          icon: (first.traits[0] && first.traits[0].icon) || 87
-        });
-      });
-      return list;
-    }
-
-    // The archetype the member is currently built as, or null when their
-    // traits are not exactly one of them (a rolled build, or one edited in
-    // detailed mode). Compared as a set: the order traits were written in
-    // never made a build a different build.
-    _ccActiveArchetype(actor) {
-      const picked = selectedTraitIds(actor).map(String).sort().join(",");
-      if (!picked) return null;
-      return this._ccArchetypes().find(
-        (arch) => arch.ids.map(String).sort().join(",") === picked
-      ) || null;
-    }
-
-    // One build off the catalogue, rolled and written onto a member. Every
-    // random path that fills traits in while the simple board is the board
-    // being played goes through this, so what it deals is always something the
-    // board can show as picked; it answers false when there is no catalogue to
-    // roll from and the caller falls back to its own loose roll.
-    _ccRollArchetypeFor(actor) {
-      if (!actor) return false;
-      const rows = this._ccArchetypes();
-      if (!rows.length) return false;
-      const roll = rows[Math.floor(Math.random() * rows.length)];
-      if (!roll) return false;
-      const TP = window.TraitPoints;
-      // Whatever the member was carrying goes back with its skills and items,
-      // the same as taking a build off by hand.
-      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
-      actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
-      this._ccApplyTraitIds(actor, roll.ids.slice());
-      if (actor.refresh) actor.refresh();
-      return roll;
-    }
-
-    _archetypeBoardLeftHtml() {
-      const actor = Scene_CharacterCreation.getCurrentActor();
-      const active = this._ccActiveArchetype(actor);
-      const family = Scene_CharacterCreation._activeArchetypeFamily || "all";
-      const railFocused = !!this._pageRailFocused;
-
-      const tabsHtml = this._archetypeFamilies().map((fam) => {
-        const isActive = family === fam.id;
-        return `
-          <div class="ts-tab ${isActive ? 'active' : ''} ${isActive && railFocused ? 'selected' : ''}" onclick="SceneManager._scene.onArchetypeFamilySelect('${fam.id}')">
-            ${this._ccIconHtml(fam.icon, 16)} <span>${fam.label}</span>
-          </div>
-        `;
-      }).join("");
-
-      const rows = this._ccArchetypes()
-        .filter((arch) => family === "all" || arch.family === family)
-        .slice()
-        .sort((a, b) => this._archetypeName(a).localeCompare(this._archetypeName(b), undefined, { sensitivity: "base" }));
-
-      const cardsHtml = rows.map((arch) => {
-        const isActive = !!active && active.id === arch.id;
-        const meta = ccTp('Traits.archetypeMeta',
-          { count: arch.traits.length, points: arch.tally.spent },
-          `${arch.traits.length} traits, ${arch.tally.spent} pts`);
-        return `
-          <div class="cc-card-option cc-tarch-card ${isActive ? 'selected' : ''}"
-               onclick="SceneManager._scene.onArchetypeSelect('${arch.id}')"
-               onmouseenter="SceneManager._scene.onArchetypeHover('${arch.id}')">
-            <div class="cc-tarch-head">
-              <span class="cc-rpg-icon" style="${this._ccIconStyle((arch.traits[0] && arch.traits[0].icon) || 87, 20)}"></span>
-              <div class="cc-option-title">${this._archetypeName(arch)}</div>
-            </div>
-            <div class="cc-tarch-meta">${meta}</div>
-          </div>
-        `;
-      }).join("");
-
-      const emptyHtml = `<div class="cc-class-empty">${ccT('Traits.archetypeEmpty', 'Nothing here')}</div>`;
-
-      return `
-        <div class="cc-page cc-page-left ts-page cc-trait-board cc-page-column">
-          <div class="ts-tab-row">${tabsHtml}</div>
-          <div class="cc-select-grid cc-trait-grid cc-tarch-grid">
-            ${cardsHtml || emptyHtml}
-          </div>
-        </div>
-      `;
-    }
-
-    _archetypeBoardRightHtml() {
-      const actor = Scene_CharacterCreation.getCurrentActor();
-      const rows = this._ccArchetypes();
-      const active = this._ccActiveArchetype(actor);
-      const shownId = Scene_CharacterCreation._hoveredArchetypeId ||
-        (active && active.id) || (rows[0] && rows[0].id);
-      const shown = rows.find((arch) => arch.id === shownId) || rows[0] || null;
-
-      // The purse still reads off the member, not off the card under the
-      // cursor: what it prints is what this character has actually spent, so a
-      // build carried in from detailed mode reads honestly here.
-      const TP = window.TraitPoints;
-      const traitBank = this._ccTraitBank();
-      const carried = selectedTraitIds(actor)
-        .map((id) => traitBank.find((t) => String(t.id) === String(id)))
-        .filter(Boolean);
-      const tally = TP && TP.tally ? TP.tally(carried) : { spent: 0, refunded: 0, remaining: 10 };
-
-      const purseHtml = `
-        <div class="ts-purse ts-purse--sheet">
-          <div class="ts-purse-cell spend">
-            <span class="ts-purse-value">${tally.spent}</span>
-            <span class="ts-purse-label">${ccT('Traits.purseSpent', 'Spent')}</span>
-          </div>
-          <div class="ts-purse-cell refund">
-            <span class="ts-purse-value">+${tally.refunded}</span>
-            <span class="ts-purse-label">${ccT('Traits.purseRefunds', 'Refunds')}</span>
-          </div>
-          <div class="ts-purse-cell ${tally.remaining < 0 ? 'over' : ''}">
-            <span class="ts-purse-value">${tally.remaining}</span>
-            <span class="ts-purse-label">${ccT('Traits.purseLeft', 'Remaining')}</span>
-          </div>
-        </div>
-      `;
-
-      // What the open build is made of. The chips are read-only here: this
-      // board takes a build whole, and pulling one trait out of it is what
-      // detailed mode is for.
-      const chipFor = (trait) => {
-        const name = (trait.name && resolveTraitName(trait.name, trait.id)) || trait.id;
-        const cost = Number.isFinite(Number(trait.cost)) ? Number(trait.cost) : 1;
-        return `
-          <div class="cc-picked-chip cc-tarch-chip">
-            <span class="cc-rpg-icon" style="${this._ccIconStyle(trait.icon || 87, 18)}"></span>
-            <span>${name}</span>
-            <span class="trait-cost ${cost < 0 ? 'refund' : ''}">${cost < 0 ? `+${-cost}` : cost}</span>
-          </div>
-        `;
-      };
-
-      let detailHtml = "";
-      if (shown) {
-        const totals = { hp: 0, mp: 0, atk: 0, def: 0, mat: 0, mdf: 0, agi: 0, luk: 0 };
-        shown.traits.forEach((trait) => {
-          Object.keys(trait.positive || {}).forEach((k) => { if (totals[k] !== undefined) totals[k] += trait.positive[k]; });
-          Object.keys(trait.negative || {}).forEach((k) => { if (totals[k] !== undefined) totals[k] += trait.negative[k]; });
-        });
-        const bonusBadges = Object.entries(totals)
-          .filter(([, v]) => v !== 0)
-          .map(([k, v]) => `<span class="cc-element-badge ${v > 0 ? 'cc-badge-good' : 'cc-badge-bad'}">${window.TraitParams.text(k, v)}</span>`)
-          .join(" ") || `<span class="cc-note-faint">${ccT('CharCreate.noDefiningTraits', 'No trait modifiers')}</span>`;
-
-        detailHtml = `
-          <div class="cc-dossier-card ts-detail-card cc-gap-below">
-            <div class="ts-detail-head">
-              <span class="cc-rpg-icon" style="${this._ccIconStyle((shown.traits[0] && shown.traits[0].icon) || 87, 26)}"></span>
-              <span class="ts-detail-label">${this._archetypeName(shown)}</span>
-              <span class="trait-cost">${shown.tally.spent} ${ccT('Traits.pts', 'pts')}</span>
-            </div>
-            <div class="ts-detail-desc">${this._archetypeDesc(shown)}</div>
-            <div class="cc-grant-note"><strong>${ccT('Traits.archetypeTraitsLabel', 'What it takes')}:</strong></div>
-            <div class="cc-picked-row">${shown.traits.map(chipFor).join("")}</div>
-            <div class="ts-badge-row cc-row-start cc-gap-above-tight">${bonusBadges}</div>
-          </div>
-        `;
-      }
-
-      const carriedLabel = active
-        ? this._archetypeName(active)
-        : (carried.length
-          ? ccT('Traits.archetypeCustom', 'Custom build')
-          : ccT('Traits.archetypeNone', 'No archetype chosen'));
-
-      return `
-        <div class="cc-page cc-page-right ts-page cc-trait-detail cc-page-column">
-          <div class="ts-sheet-head">
-            ${purseHtml}
-            <div class="ts-sheet-actions">
-              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onTraitResetForCurrentActor()">${ccT('Traits.resetTraits', 'Reset')}</button>
-              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeTraitsForCurrentActor()">${ccT('CharCreate.randomize', 'Randomize')}</button>
-            </div>
-          </div>
-
-          ${detailHtml}
-
-          <div class="ts-picked-block">
-            <h3 class="cc-subheader ts-section-head">
-              <span>${ccT('Traits.selectedTraitsLabel', 'Selected Traits')}</span>
-              <span class="ts-count">${carriedLabel}</span>
-            </h3>
-            <div class="cc-picked-row">
-              ${carried.length
-                ? carried.map(chipFor).join("")
-                : `<span class="cc-picked-empty">${ccT('CharCreate.noDefiningTraits', 'None selected')}</span>`}
-            </div>
-          </div>
-
-          <div class="cc-note-faint cc-tarch-hint">${ccT('Traits.archetypeHint', 'Pick a ready-made build. Switch to Detailed mode to change it trait by trait.')}</div>
-        </div>
-      `;
-    }
-
-    onArchetypeFamilySelect(family) {
-      Scene_CharacterCreation._activeArchetypeFamily = family;
-      SoundManager.playCursor();
-      const container = this._dndContainer;
-      const leftPage = container && container.querySelector(".cc-page-left");
-      if (leftPage) { this._ccSwapPage(leftPage, this._archetypeBoardLeftHtml()); return; }
-      this.refreshUIOverlayDOM();
-    }
-
-    onArchetypeHover(archetypeId) {
-      if (String(Scene_CharacterCreation._hoveredArchetypeId) === String(archetypeId)) return;
-      Scene_CharacterCreation._hoveredArchetypeId = archetypeId;
-      const rightPage = this._dndContainer && this._dndContainer.querySelector(".cc-page-right");
-      if (rightPage) this._ccSwapPage(rightPage, this._archetypeBoardRightHtml());
-    }
-
-    // Taking a build replaces whatever the member was carrying: an archetype
-    // is the whole purse, so it cannot be added on top of another one. Taking
-    // the one already worn puts it down again, the way a picked card does.
-    onArchetypeSelect(archetypeId) {
-      if (this._refusePresetEdit()) return;
-      const actor = Scene_CharacterCreation.getCurrentActor();
-      if (!actor) return;
-      const arch = this._ccArchetypes().find((row) => row.id === archetypeId);
-      if (!arch) return;
-
-      const active = this._ccActiveArchetype(actor);
-      const TP = window.TraitPoints;
-      // Whatever was granted by the build being taken off has to go back with
-      // it, or a member who tried three archetypes keeps all three sets of
-      // skills and items.
-      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
-      actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
-
-      if (active && active.id === arch.id) {
-        this._ccApplyTraitIds(actor, []);
-        SoundManager.playCancel();
-      } else {
-        this._ccApplyTraitIds(actor, arch.ids.slice());
-        Scene_CharacterCreation._hoveredArchetypeId = arch.id;
-        SoundManager.playOk();
-      }
-      if (actor.refresh) actor.refresh();
-      this._refreshTraitBoard();
-    }
-
     _traitPickerLeftHtml() {
-      if (this._ccUsesArchetypeBoard()) return this._archetypeBoardLeftHtml();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const traitBank = this._ccTraitBank();
       const selectedTraits = this._ccPickedCardIds(actor);
@@ -428,22 +134,11 @@
 
       // Filter traits. "All" is all TRAITS: illnesses are free and have their
       // own tab, so mixing them into the priced list would only bury it.
-      const unsorted = activeCategory === "all"
+      const filtered = activeCategory === "all"
         ? traitBank.filter((t) => !t.diseaseId)
         : activeCategory === "diseases"
           ? traitBank.filter((t) => !!t.diseaseId)
           : traitBank.filter((t) => !t.diseaseId && t.category === activeCategory);
-
-      // Alphabetical, on the name as shown. Traits.json is in the order its
-      // traits were written in, which gave a player scanning 199 cards nothing
-      // to scan by; sorting on the localized name keeps the Italian board
-      // alphabetical in Italian. TraitSelector owns the comparison so both
-      // trait boards order their cards the same way.
-      const nameOf = (t) => (t.diseaseId ? (t.name || "") : ((t.name && resolveTraitName(t.name, t.id)) || String(t.id)));
-      const TPsort = window.TraitPoints;
-      const filtered = (TPsort && TPsort.sortByName)
-        ? TPsort.sortByName(unsorted)
-        : unsorted.slice().sort((a, b) => nameOf(a).localeCompare(nameOf(b), undefined, { sensitivity: "base" }));
 
       const cardsHtml = filtered.map((trait) => {
         const isSelected = selectedTraits.some((id) => String(id) === String(trait.id));
@@ -465,7 +160,7 @@
         `;
       }).join("");
 
-      const emptyHtml = `<div class="cc-class-empty">${ccT('Traits.noneInCategory', 'Nothing here')}</div>`;
+      const emptyHtml = `<div class="cc-class-empty">${ccT('Traits.noneInCategory')}</div>`;
 
       return `
         <div class="cc-page cc-page-left ts-page cc-trait-board cc-page-column">
@@ -478,7 +173,6 @@
     }
 
     _traitPickerRightHtml() {
-      if (this._ccUsesArchetypeBoard()) return this._archetypeBoardRightHtml();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const traitBank = this._ccTraitBank();
       const selectedTraits = this._ccPickedCardIds(actor);
@@ -505,15 +199,15 @@
         <div class="ts-purse ts-purse--sheet">
           <div class="ts-purse-cell spend">
             <span class="ts-purse-value">${spent}</span>
-            <span class="ts-purse-label">${ccT('Traits.purseSpent', 'Spent')}</span>
+            <span class="ts-purse-label">${ccT('Traits.purseSpent')}</span>
           </div>
           <div class="ts-purse-cell refund">
             <span class="ts-purse-value">+${refunded}</span>
-            <span class="ts-purse-label">${ccT('Traits.purseRefunds', 'Refunds')}</span>
+            <span class="ts-purse-label">${ccT('Traits.purseRefunds')}</span>
           </div>
           <div class="ts-purse-cell ${remaining < 0 ? 'over' : ''}">
             <span class="ts-purse-value">${remaining}</span>
-            <span class="ts-purse-label">${ccT('Traits.purseLeft', 'Remaining')}</span>
+            <span class="ts-purse-label">${ccT('Traits.purseLeft')}</span>
           </div>
         </div>
       `;
@@ -529,10 +223,10 @@
           : ((hoveredTrait.description && resolveTraitDesc(hoveredTrait.description, hoveredTrait.id)) || "");
         const cost = Number.isFinite(Number(hoveredTrait.cost)) ? Number(hoveredTrait.cost) : 1;
         const costBadge = hoveredTrait.diseaseId
-          ? `<span class="trait-cost refund">${ccT('Traits.tabDiseases', 'Diseases')}</span>`
+          ? `<span class="trait-cost refund">${ccT('Traits.tabDiseases')}</span>`
           : cost < 0
-            ? `<span class="trait-cost refund">+${-cost} ${ccT('Traits.refundWord', 'refund')}</span>`
-            : `<span class="trait-cost">${cost} ${ccT('Traits.pts', 'pts')}</span>`;
+            ? `<span class="trait-cost refund">+${-cost} ${ccT('Traits.refundWord')}</span>`
+            : `<span class="trait-cost">${cost} ${ccT('Traits.pts')}</span>`;
 
         let statRows = "";
         if (hoveredTrait.positive) {
@@ -548,8 +242,8 @@
 
         let extraGrants = "";
         if (hoveredTrait.skills && hoveredTrait.skills.length > 0 && typeof $dataSkills !== "undefined") {
-          const sNames = hoveredTrait.skills.map((sid) => ($dataSkills[sid] ? $dataSkills[sid].name : `Skill #${sid}`)).join(", ");
-          extraGrants += `<div class="cc-grant-note"><strong>${ccT('Traits.grantsSkills', 'Skills')}:</strong> ${sNames}</div>`;
+          const sNames = hoveredTrait.skills.map((sid) => ($dataSkills[sid] ? $dataSkills[sid].name : ccTp('CharCreate.skillNumber', { id: sid }))).join(", ");
+          extraGrants += `<div class="cc-grant-note"><strong>${ccT('Traits.grantsSkills')}:</strong> ${sNames}</div>`;
         }
 
         detailHtml = `
@@ -601,17 +295,17 @@
       const bonusBadges = Object.entries(totals)
         .filter(([k, v]) => v !== 0)
         .map(([k, v]) => `<span class="cc-element-badge ${v > 0 ? 'cc-badge-good' : 'cc-badge-bad'}">${window.TraitParams.text(k, v)}</span>`)
-        .join(" ") || `<span class="cc-note-faint">${ccT('CharCreate.noDefiningTraits', 'No trait modifiers')}</span>`;
+        .join(" ") || `<span class="cc-note-faint">${ccT('CharCreate.noDefiningTraits')}</span>`;
 
-      const totalBonusesTitle = (ccT('Traits.totalBonuses', 'Total Modifiers')).replace(/[:\s]+$/, '');
+      const totalBonusesTitle = (ccT('Traits.totalBonuses')).replace(/[:\s]+$/, '');
 
       return `
         <div class="cc-page cc-page-right ts-page cc-trait-detail cc-page-column">
           <div class="ts-sheet-head">
             ${purseHtml}
             <div class="ts-sheet-actions">
-              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onTraitResetForCurrentActor()">${ccT('Traits.resetTraits', 'Reset')}</button>
-              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeTraitsForCurrentActor()">${ccT('CharCreate.randomize', 'Randomize')}</button>
+              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onTraitResetForCurrentActor()">${ccT('Traits.resetTraits')}</button>
+              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeTraitsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
             </div>
           </div>
 
@@ -619,18 +313,18 @@
 
           <div class="ts-picked-block">
             <h3 class="cc-subheader ts-section-head">
-              <span>${ccT('Traits.selectedTraitsLabel', 'Selected Traits')}</span>
+              <span>${ccT('Traits.selectedTraitsLabel')}</span>
               <span class="ts-count">${traitOnlyIds.length}/8</span>
             </h3>
             <div class="cc-picked-row">
-              ${pickedChips || `<span class="cc-picked-empty">${ccT('CharCreate.noDefiningTraits', 'None selected')}</span>`}
+              ${pickedChips || `<span class="cc-picked-empty">${ccT('CharCreate.noDefiningTraits')}</span>`}
             </div>
           </div>
 
           ${diseaseChips ? `
             <div class="ts-picked-block">
               <h3 class="cc-subheader ts-section-head">
-                <span>${ccT('Traits.tabDiseases', 'Diseases')}</span>
+                <span>${ccT('Traits.tabDiseases')}</span>
                 <span class="ts-count">${diseaseIds.length}</span>
               </h3>
               <div class="cc-picked-row">${diseaseChips}</div>
@@ -811,21 +505,6 @@
     onRandomizeTraitsForCurrentActor() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
-      // On the simple board, Random rolls one of the ready-made builds rather
-      // than a loose handful of traits: that board never shows a build that is
-      // not an archetype, so a roll that made one would leave the cards
-      // showing nothing picked.
-      if (this._ccUsesArchetypeBoard()) {
-        const roll = this._ccRollArchetypeFor(actor);
-        if (roll) {
-          Scene_CharacterCreation._hoveredArchetypeId = roll.id;
-          SoundManager.playOk();
-        } else {
-          SoundManager.playBuzzer();
-        }
-        this._refreshTraitBoard();
-        return;
-      }
       const targetActorId = (Scene_CharacterCreation._currentPartyMemberIndex || 0) + 1;
       if (window.randomizeTraitsForActor) {
         window.randomizeTraitsForActor(targetActorId);
@@ -969,7 +648,7 @@
     // description.
     _filteredSpecs() {
       const catalog = this._specsCatalog();
-      const activeCat = Scene_CharacterCreation._activeSpecCategory || "All";
+      const activeCat = Scene_CharacterCreation._activeSpecCategory || "All"; // i18n-ignore: specialization category id
       const q = (Scene_CharacterCreation._specSearchQuery || "").toLowerCase().trim();
       const S = window.Specializations || {};
       const nameOf = (sp) => (S.displayName ? S.displayName(sp) : sp.name) || "";
@@ -979,7 +658,7 @@
         return this._specsWithLevels(Scene_CharacterCreation.getCurrentActor())
           .slice().sort((a, b) => nameOf(a).localeCompare(nameOf(b)));
       }
-      const byCat = activeCat === "All"
+      const byCat = activeCat === "All" // i18n-ignore: specialization category id
         ? catalog
         : activeCat === SPEC_TAB_CURRENT
           ? this._specsWithLevels(Scene_CharacterCreation.getCurrentActor())
@@ -1019,8 +698,7 @@
     // 1 itself meaning Untrained, so it wants rank+1 or a rank-1 trained pick
     // reads back as Untrained.
     _specRankName(rank) {
-      const rankNames = ccList('SpecMenu.rankNames',
-        ["Untrained", "Novice (+1)", "Adept (+2)", "Expert (+3)", "Master (+4)"]);
+      const rankNames = ccList('SpecMenu.rankNames');
       return (window.Specializations && window.Specializations.levelName) ? window.Specializations.levelName(rank + 1) : (rankNames[rank] || rankNames[0]);
     }
 
@@ -1036,12 +714,12 @@
       // at, so repeating that category on every card is only useful on the
       // mixed-category tabs (All, and Current which spans whatever the
       // member trained).
-      const activeCat = Scene_CharacterCreation._activeSpecCategory || "All";
+      const activeCat = Scene_CharacterCreation._activeSpecCategory || "All"; // i18n-ignore: specialization category id
       const readOnly = this._specsReadOnly();
-      const showCatLabel = readOnly || activeCat === "All" || activeCat === SPEC_TAB_CURRENT;
+      const showCatLabel = readOnly || activeCat === "All" || activeCat === SPEC_TAB_CURRENT; // i18n-ignore: specialization category id
       return specs.map((spec) => {
         const specName = S.displayName ? S.displayName(spec) : spec.name;
-        const specCatLabel = S.categoryLabel ? S.categoryLabel(spec.category) : (spec.category || "General");
+        const specCatLabel = S.categoryLabel ? S.categoryLabel(spec.category) : (spec.category || "General") /* i18n-ignore: specialization category id */;
         // A class or trait head start is a floor the card can never fall below.
         const grantRank = this._specGrantRankIn(ctx, spec);
         const currentRank = Math.max((actor && actor._specTrained && actor._specTrained[spec.id]) || 0, grantRank);
@@ -1106,7 +784,7 @@
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-left"></div>`;
 
-      const activeCat = Scene_CharacterCreation._activeSpecCategory || "All";
+      const activeCat = Scene_CharacterCreation._activeSpecCategory || "All"; // i18n-ignore: specialization category id
       const categories = this._specsCategories();
       const remaining = this._specsRemaining(actor);
       const budget = CC_SPEC_BUDGET;
@@ -1117,10 +795,10 @@
       const railFocused = !!this._pageRailFocused;
       const catTabsHtml = categories.map((cat) => {
         const isActive = cat === activeCat;
-        const catLabel = cat === "All"
+        const catLabel = cat === "All" // i18n-ignore: specialization category id
           ? T('SpecMenu.ui.all')
           : cat === SPEC_TAB_CURRENT
-            ? ccT('CharCreate.specsCurrent', "Current")
+            ? ccT('CharCreate.specsCurrent')
             : ((window.Specializations && window.Specializations.categoryLabel) ? window.Specializations.categoryLabel(cat) : cat);
         return `
           <button class="cc-spec-tab ${isActive ? 'active' : ''} ${isActive && railFocused ? 'selected' : ''}" data-cat="${cat}" onclick="SceneManager._scene.onSpecCategorySelect('${cat}')">
@@ -1168,7 +846,7 @@
       if (hoveredSpec) {
         const specName = (window.Specializations && window.Specializations.displayName) ? window.Specializations.displayName(hoveredSpec) : hoveredSpec.name;
         const specDesc = (window.Specializations && window.Specializations.describe) ? window.Specializations.describe(hoveredSpec) : (hoveredSpec.description || "");
-        const catLabel = (window.Specializations && window.Specializations.categoryLabel) ? window.Specializations.categoryLabel(hoveredSpec.category) : (hoveredSpec.category || "General");
+        const catLabel = (window.Specializations && window.Specializations.categoryLabel) ? window.Specializations.categoryLabel(hoveredSpec.category) : (hoveredSpec.category || "General") /* i18n-ignore: specialization category id */;
         const rank = this._specRankIn(grantCtx, actor, hoveredSpec);
         const grantRank = this._specGrantRankIn(grantCtx, hoveredSpec);
         const rankLabel = this._specRankName(rank);
@@ -1182,10 +860,10 @@
               </div>
               <span class="trait-cost cc-detail-rank">${rankLabel}</span>
             </div>
-            <div class="cc-detail-desc">${specDesc || ccT('CharCreate.specGenericDesc', 'Proficiency acquired through rigorous study and fieldwork.')}</div>
-            <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('SpecMenu.ui.category', 'Category')}:</span><span class="cc-dossier-value">${catLabel}</span></div>
-            <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('SpecMenu.ui.governingStat', 'Governing Attribute')}:</span><span class="cc-dossier-value">${ccStatLabel(hoveredSpec.stat || "INT")}</span></div>
-            ${grantRank > 0 ? `<div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.specGranted', 'Granted by Class and Traits')}:</span><span class="cc-dossier-value">${this._specRankName(grantRank)}</span></div>` : ''}
+            <div class="cc-detail-desc">${specDesc || ccT('CharCreate.specGenericDesc')}</div>
+            <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('SpecMenu.ui.category')}:</span><span class="cc-dossier-value">${catLabel}</span></div>
+            <div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('SpecMenu.ui.governingStat')}:</span><span class="cc-dossier-value">${ccStatLabel(hoveredSpec.stat || "INT")}</span></div>
+            ${grantRank > 0 ? `<div class="cc-dossier-row"><span class="cc-dossier-label">${ccT('CharCreate.specGranted')}:</span><span class="cc-dossier-value">${this._specRankName(grantRank)}</span></div>` : ''}
           </div>
         `;
       }
@@ -1197,13 +875,13 @@
       const readOnly = this._specsReadOnly();
       const trainedBadges = trainedEntries.map(([idStr, rank, grantRank]) => {
         const spec = catalog.find((s) => s.id === Number(idStr));
-        const name = spec ? ((window.Specializations && window.Specializations.displayName) ? window.Specializations.displayName(spec) : spec.name) : `Spec #${idStr}`;
+        const name = spec ? ((window.Specializations && window.Specializations.displayName) ? window.Specializations.displayName(spec) : spec.name) : ccTp('CharCreate.specNumber', { id: idStr });
         const isGranted = grantRank >= rank;
         return `
           <div class="cc-spec-badge-row${isGranted ? ' granted' : ''}" onmouseenter="SceneManager._scene.onSpecCardHover(${idStr})">
             <span class="cc-spec-badge-row-name">${name}</span>
             <span class="cc-spec-stat-badge cc-inline-gutter">${this._specRankName(rank)}</span>
-            ${readOnly ? '' : `<button class="cc-spec-badge-delete" title="${ccT('CharCreate.removeAllocated', 'Remove')}" ${isGranted ? 'disabled' : ''} onclick="event.stopPropagation(); SceneManager._scene.onSpecDeleteAllocated(${idStr})">&times;</button>`}
+            ${readOnly ? '' : `<button class="cc-spec-badge-delete" title="${ccT('CharCreate.removeAllocated')}" ${isGranted ? 'disabled' : ''} onclick="event.stopPropagation(); SceneManager._scene.onSpecDeleteAllocated(${idStr})">&times;</button>`}
           </div>
         `;
       }).join("");
@@ -1212,17 +890,17 @@
         <div class="cc-page cc-page-right cc-spec-detail ts-page cc-page-column">
           ${readOnly ? '' : `
           <div class="cc-row-end cc-row-end-wrap">
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onSuggestSpecsForCurrentActor()">${ccT('CharCreate.suggestSpecs', 'Suggested')}</button>
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onResetSpecsForCurrentActor()">${ccT('CharCreate.resetSpecs', 'Reset')}</button>
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeSpecsForCurrentActor()">${ccT('CharCreate.randomize', 'Randomize')}</button>
+            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onSuggestSpecsForCurrentActor()">${ccT('CharCreate.suggestSpecs')}</button>
+            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onResetSpecsForCurrentActor()">${ccT('CharCreate.resetSpecs')}</button>
+            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeSpecsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
           </div>`}
           ${detailHtml}
 
           <h3 class="cc-subheader cc-gap-above">
-            <span>${ccT('CharCreate.allocatedTalents', 'Allocated Talents')} (${trainedEntries.length})</span>
+            <span>${ccT('CharCreate.allocatedTalents')} (${trainedEntries.length})</span>
           </h3>
           <div class="cc-stack cc-stack-roster">
-            ${trainedBadges || `<span class="cc-note-faint cc-note-faint-padded">${ccT('CharCreate.noTalentsSpent', 'No specialization points allocated yet.')}</span>`}
+            ${trainedBadges || `<span class="cc-note-faint cc-note-faint-padded">${ccT('CharCreate.noTalentsSpent')}</span>`}
           </div>
         </div>
       `;
@@ -1545,7 +1223,7 @@
       const numbers = ccTp('CharCreate.hormoneReadout', {
         tLow: Math.round(test.min), tHigh: Math.round(test.max),
         eLow: Math.round(est.min), eHigh: Math.round(est.max)
-      }, `Testosterone ${Math.round(test.min)}-${Math.round(test.max)} ng/dL, estrogen ${Math.round(est.min)}-${Math.round(est.max)} pg/mL`);
+      });
       return `<b>${lean}</b> &middot; ${numbers}`;
     }
 
@@ -1570,18 +1248,18 @@
       // stripe of pills that belonged to the old sidebar.
       return `
         <div class="cc-bio-section">
-          <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.characterType', 'Character Type')}</span></div>
+          <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.characterType')}</span></div>
           <div class="cc-bio-chips-row">
             <button class="cc-bio-chip cc-type-chip ${!isCreature && !isPresetActor && !isPreset ? 'selected' : ''}" onclick="SceneManager._scene.onSetCharacterType('humanoid')">
-              ${ccT('CharCreate.humanoid', 'Humanoid')}
+              ${ccT('CharCreate.humanoid')}
             </button>
             <button class="cc-bio-chip cc-type-chip ${isCreature && !isPresetActor && !isPreset ? 'selected' : ''}" onclick="SceneManager._scene.onSetCharacterType('creature')">
-              ${ccT('CharCreate.creature', 'Creature')}
+              ${ccT('CharCreate.creature')}
             </button>
             <button class="cc-bio-chip cc-type-chip ${(isPresetActor || isPreset) ? 'selected' : ''} ${isPresetDisabled ? 'disabled' : ''}"
-               title="${isPresetDisabled ? ccT('CharCreate.onlyOnePreset', 'Only 1 preset character allowed in the party') : ccT('CharCreate.presetDossiers', 'Preset Dossiers')}"
+               title="${isPresetDisabled ? ccT('CharCreate.onlyOnePreset') : ccT('CharCreate.presetDossiers')}"
                onclick="${isPresetDisabled ? 'SoundManager.playBuzzer()' : "SceneManager._scene.onSetCharacterType('preset')"}">
-              ${ccT('CharCreate.preset', 'Preset')}
+              ${ccT('CharCreate.preset')}
             </button>
           </div>
         </div>
@@ -1609,7 +1287,7 @@
         .map((opt) => `<option value="${opt}" ${opt === selected ? 'selected' : ''}>${archetypeDisplayName(opt)}</option>`)
         .join("");
       const primaryOptionsHtml = archetypeOptions(currentArch, secondArch);
-      const secondaryOptionsHtml = `<option value="" ${secondArch ? '' : 'selected'}>${ccT('CharCreate.none', 'None')}</option>` +
+      const secondaryOptionsHtml = `<option value="" ${secondArch ? '' : 'selected'}>${ccT('CharCreate.none')}</option>` +
         archetypeOptions(secondArch, currentArch);
       // What the spliced body can hold, asked of the one place that answers it.
       // Two different numbers: how many grips the body has at all (hands, plus
@@ -1622,11 +1300,11 @@
       const slots = layout ? layout.slots : 0;
       const maxWeapons = (HS && HS.maxWeapons) ? HS.maxWeapons(actor) : 0;
       const slotsHtml = `<div class="cc-bio-note">` +
-        `${ccTp('CharCreate.weaponSlotsHeld', { n: maxWeapons }, `Weapons held: ${maxWeapons}`)}` +
-        ` <span class="cc-bio-note-dim">${ccTp('CharCreate.handSlotsHeld', { n: slots }, `(${slots} grips)`)}</span>` +
+        `${ccTp('CharCreate.weaponSlotsHeld', { n: maxWeapons })}` +
+        ` <span class="cc-bio-note-dim">${ccTp('CharCreate.handSlotsHeld', { n: slots })}</span>` +
         `</div>`;
       const primaryHtml = isCreature ? `
-          <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.primaryArchetype', 'Primary Archetype')}</span></div>
+          <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.primaryArchetype')}</span></div>
           <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureArchetype(this.value)">
             ${primaryOptionsHtml}
           </select>
@@ -1634,7 +1312,7 @@
           <div class="cc-bio-section-title">`;
       return `
         <div class="cc-bio-section">
-          ${primaryHtml}${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.secondaryArchetype', 'Secondary Archetype')}</span></div>
+          ${primaryHtml}${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.secondaryArchetype')}</span></div>
           <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureSecondaryArchetype(this.value)">
             ${secondaryOptionsHtml}
           </select>
@@ -1664,10 +1342,10 @@
 
       // Gender picker
       const genders = [
-        { val: 0, label: ccT('CharCreate.bio.gender.male', "Male ♂") },
-        { val: 1, label: ccT('CharCreate.bio.gender.female', "Female ♀") },
-        { val: 2, label: ccT('CharCreate.bio.gender.nonBinary', "Non binary ⚦") },
-        { val: 3, label: ccT('CharCreate.bio.gender.cocoon', "Cocoon ⯐") }
+        { val: 0, label: ccT('CharCreate.bio.gender.male') },
+        { val: 1, label: ccT('CharCreate.bio.gender.female') },
+        { val: 2, label: ccT('CharCreate.bio.gender.nonBinary') },
+        { val: 3, label: ccT('CharCreate.bio.gender.cocoon') }
       ];
       const currentMemberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const currentGender = $gameVariables.value(38 + currentMemberIdx);
@@ -1723,16 +1401,16 @@
       // mode's Em opens on Thelema instead and is offered the short shelf of
       // creeds that fits her, nothing else (CharacterPresets).
       const ideologyChoicesHtml = isStoryEm ? ideologyOptionsHtml : `
-        <option value="" ${currentIdeology ? '' : 'selected'}>${ccT('CharCreate.none', 'None')}</option>
+        <option value="" ${currentIdeology ? '' : 'selected'}>${ccT('CharCreate.none')}</option>
         ${ideologyOptionsHtml}`;
 
       // Morality Alignments
       const alignments = [
-        { val: 2, label: ccT('CharCreate.bio.morality.saintly', "Saintly (+2)") },
-        { val: 1, label: ccT('CharCreate.bio.morality.principled', "Principled (+1)") },
-        { val: 0, label: ccT('CharCreate.bio.morality.pragmatic', "Pragmatic (0)") },
-        { val: -1, label: ccT('CharCreate.bio.morality.ruthless', "Ruthless (-1)") },
-        { val: -2, label: ccT('CharCreate.bio.morality.vile', "Vile (-2)") },
+        { val: 2, label: ccT('CharCreate.bio.morality.saintly') },
+        { val: 1, label: ccT('CharCreate.bio.morality.principled') },
+        { val: 0, label: ccT('CharCreate.bio.morality.pragmatic') },
+        { val: -1, label: ccT('CharCreate.bio.morality.ruthless') },
+        { val: -2, label: ccT('CharCreate.bio.morality.vile') },
       ];
       const currentMorality = actor._morality != null ? actor._morality : 0;
       const moralityChips = alignments.map((a) => {
@@ -1743,8 +1421,8 @@
       // Hometowns
       const hometowns = (window.WorkSystem && window.WorkSystem.Destinations)
         ? Object.keys(window.WorkSystem.Destinations)
-        : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"];
-      const currentHometown = $gameSystem._ccHometown || "Paris";
+        : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"]; // i18n-ignore: WorkSystem.Destinations ids
+      const currentHometown = $gameSystem._ccHometown || "Paris"; // i18n-ignore: WorkSystem.Destinations id
       // A dossier may name a town the work destinations never list (Em's
       // Wimbledon): without this the select silently fell back to its first
       // entry and the sheet claimed a birthplace nobody had chosen.
@@ -1754,10 +1432,10 @@
 
       // Age Bands
       const ageBands = [
-        { key: "age_young", label: ccT('CharCreate.bio.age.young', "Young (18-25)"), age: 22 },
-        { key: "age_adult", label: ccT('CharCreate.bio.age.adult', "Adult (26-40)"), age: 32 },
-        { key: "age_middle", label: ccT('CharCreate.bio.age.middle', "Middle-Aged (41-60)"), age: 48 },
-        { key: "age_elder", label: ccT('CharCreate.bio.age.elder', "Elder (61+)"), age: 68 },
+        { key: "age_young", label: ccT('CharCreate.bio.age.young'), age: 22 },
+        { key: "age_adult", label: ccT('CharCreate.bio.age.adult'), age: 32 },
+        { key: "age_middle", label: ccT('CharCreate.bio.age.middle'), age: 48 },
+        { key: "age_elder", label: ccT('CharCreate.bio.age.elder'), age: 68 },
       ];
       const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const currentAge = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIdx]) || 28;
@@ -1768,10 +1446,10 @@
 
       // Wealth Tiers
       const wealthTiers = [
-        { tier: 0, label: ccT('CharCreate.bio.wealth.destitute', "Destitute") },
-        { tier: 1, label: ccT('CharCreate.bio.wealth.working', "Working Class") },
-        { tier: 2, label: ccT('CharCreate.bio.wealth.middle', "Middle Class") },
-        { tier: 3, label: ccT('CharCreate.bio.wealth.wealthy', "Wealthy") },
+        { tier: 0, label: ccT('CharCreate.bio.wealth.destitute') },
+        { tier: 1, label: ccT('CharCreate.bio.wealth.working') },
+        { tier: 2, label: ccT('CharCreate.bio.wealth.middle') },
+        { tier: 3, label: ccT('CharCreate.bio.wealth.wealthy') },
       ];
       const currentWealth = actor._wealthTier != null ? actor._wealthTier : 2;
       const wealthChips = wealthTiers.map((w) => {
@@ -1780,6 +1458,7 @@
       }).join("");
 
       // Blood Types from BloodTypeService or comprehensive list
+      // i18n-ignore-start: BloodTypeService fallback rows, .type is the id stored on the actor
       const bloodList = (window.BloodTypeService && window.BloodTypeService.list && window.BloodTypeService.list()) || [
         { id: "O_POS", type: "O+", rarityKey: "common", category: "standard" },
         { id: "A_POS", type: "A+", rarityKey: "common", category: "standard" },
@@ -1797,7 +1476,7 @@
         { id: "BOMBAY_HH", type: "Bombay (hh)", rarityKey: "ultraRare", category: "rare_human" },
         { id: "DUFFY_NEG", type: "Duffy-", rarityKey: "veryRare", category: "rare_human" },
         { id: "DIEGO_B_NEG", type: "Diego(b-)", rarityKey: "veryRare", category: "rare_human" },
-        { id: "KIDD_B_NEG", type: "Kidd(b-)", rarityKey: "veryRare", category: "rare_human" },
+        { id: "KIDD_B_NEG", type: "Kidd(b-)", rarityKey: "veryRare", category: "rare_human" }, // i18n-ignore-end
         { id: "COLTON_NEG", type: "Colton(a-)", rarityKey: "veryRare", category: "rare_human" },
         { id: "LUTHERAN_NEG", type: "Lutheran(a-b-)", rarityKey: "veryRare", category: "rare_human" }
       ];
@@ -1819,17 +1498,17 @@
         compatHtml = `
           <div class="cc-blood-panel">
             <div class="cc-blood-panel-head">
-              <span>${ccT('CharCreate.bio.compatTitle', "Party Transfusion Compatibility")}</span>
-              <span class="cc-blood-panel-selected">${ccT('CharCreate.bio.compatSelected', "Selected")}: <b>${currentBloodEntry.type}</b></span>
+              <span>${ccT('CharCreate.bio.compatTitle')}</span>
+              <span class="cc-blood-panel-selected">${ccT('CharCreate.bio.compatSelected')}: <b>${currentBloodEntry.type}</b></span>
             </div>
             <div class="cc-stack-gapped">
               <div class="cc-blood-line cc-blood-line--donate">
-                <span class="cc-blood-line-label">↳ ${ccT('CharCreate.bio.canDonate', "Can donate to:")}</span>
-                <span>${compat.canDonateTo.length > 0 ? compat.canDonateTo.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span class="cc-note-quiet">${ccT('CharCreate.bio.noDonor', "None (Incompatible donor)")}</span>`}</span>
+                <span class="cc-blood-line-label">↳ ${ccT('CharCreate.bio.canDonate')}</span>
+                <span>${compat.canDonateTo.length > 0 ? compat.canDonateTo.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span class="cc-note-quiet">${ccT('CharCreate.bio.noDonor')}</span>`}</span>
               </div>
               <div class="cc-blood-line cc-blood-line--receive">
-                <span class="cc-blood-line-label">↳ ${ccT('CharCreate.bio.canReceive', "Can receive from:")}</span>
-                <span>${compat.canReceiveFrom.length > 0 ? compat.canReceiveFrom.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span class="cc-note-quiet">${ccT('CharCreate.bio.noRecipient', "None (Requires matched donor)")}</span>`}</span>
+                <span class="cc-blood-line-label">↳ ${ccT('CharCreate.bio.canReceive')}</span>
+                <span>${compat.canReceiveFrom.length > 0 ? compat.canReceiveFrom.map(m => `<b>${m.name}</b> (${m.type})`).join(", ") : `<span class="cc-note-quiet">${ccT('CharCreate.bio.noRecipient')}</span>`}</span>
               </div>
             </div>
           </div>
@@ -1846,7 +1525,7 @@
         if (specialTrait) {
           compatHtml = `
             <div class="cc-blood-trait">
-              <span class="cc-blood-line-label">${ccT('CharCreate.bio.traitLabel', "Trait:")}</span> ${specialTrait}
+              <span class="cc-blood-line-label">${ccT('CharCreate.bio.traitLabel')}</span> ${specialTrait}
             </div>
           `;
         }
@@ -1864,14 +1543,14 @@
       const allJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
       const currentJobId = actor._jobId != null ? actor._jobId : 0;
       const currentJob = currentJobId > 0 ? (allJobs.find(j => j.id === currentJobId) || null) : null;
-      const currentJobName = currentJob ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(currentJob) : (currentJob.name || `Job #${currentJob.id}`)) : ccT('CharCreate.bio.jobless', "Jobless / Unemployed");
+      const currentJobName = currentJob ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(currentJob) : (currentJob.name || ccTp('CharCreate.jobNumber', { id: currentJob.id }))) : ccT('CharCreate.bio.jobless');
 
-      const joblessOptionHtml = `<option value="0" ${currentJobId === 0 ? 'selected' : ''}>-- ${ccT('CharCreate.bio.joblessOption', "None")} --</option>`;
+      const joblessOptionHtml = `<option value="0" ${currentJobId === 0 ? 'selected' : ''}>-- ${ccT('CharCreate.bio.joblessOption')} --</option>`;
       // Sorted on the name the player actually reads, so the list is walkable
       // in every language rather than in Jobs.json's authoring order.
       const sortedJobs = allJobs.slice().map((j) => ({
         job: j,
-        label: window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(j) : (j.name || `Job #${j.id}`)
+        label: window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(j) : (j.name || ccTp('CharCreate.jobNumber', { id: j.id }))
       })).sort((a, b) => a.label.localeCompare(b.label));
       const jobOptionsHtml = joblessOptionHtml + sortedJobs.map((entry) => {
         const isSelected = currentJob && currentJob.id === entry.job.id;
@@ -1882,7 +1561,7 @@
       if (currentJob && Array.isArray(currentJob.items) && currentJob.items.length > 0) {
         jobItemsBadges = currentJob.items.map((itemId) => {
           const item = (typeof $dataItems !== 'undefined' && $dataItems[itemId]) ? $dataItems[itemId] : null;
-          const itemName = item ? item.name : `Item #${itemId}`;
+          const itemName = item ? item.name : ccTp('CharCreate.itemNumber', { id: itemId });
           const iconIndex = item ? item.iconIndex : 160;
           return `
             <span class="cc-element-badge cc-element-badge--plain">
@@ -1930,7 +1609,7 @@
 
       const professionSectionHtml = `
         <div class="cc-bio-section">
-          <div class="cc-bio-section-title">${this._ccIconHtml(193, 16)} <span>${ccT('CharCreate.professionJob', "Profession")}</span></div>
+          <div class="cc-bio-section-title">${this._ccIconHtml(193, 16)} <span>${ccT('CharCreate.professionJob')}</span></div>
           <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('job', this.value)">
             ${jobOptionsHtml}
           </select>
@@ -1949,18 +1628,18 @@
               ${typePillsHtml}
               ${archetypeBioHtml}
               <div class="cc-bio-section">
-                <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender', "Gender")}</span></div>
+                <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender')}</span></div>
                 <div class="cc-bio-chips-row">${genderChipsHtml}</div>
               </div>
               ${professionSectionHtml}
               <div class="cc-bio-section">
-                <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology', "Creed")}</span></div>
+                <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
                 <select id="cc-ideology-select" class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
                   ${ideologyChoicesHtml}
                 </select>
               </div>
               <div class="cc-bio-section cc-bio-section-flush">
-                <div class="cc-bio-section-title">${this._ccIconHtml(322, 16)} <span>${ccT('CharCreate.class', "Class")}</span></div>
+                <div class="cc-bio-section-title">${this._ccIconHtml(322, 16)} <span>${ccT('CharCreate.class')}</span></div>
                 <div class="cc-bio-chips-row">
                   ${classChipsHtml}
                 </div>
@@ -1976,19 +1655,19 @@
             ${typePillsHtml}
             ${archetypeBioHtml}
             <div class="cc-bio-section">
-              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender', "Gender")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender')}</span></div>
               <div class="cc-bio-chips-row">${genderChipsHtml}</div>
             </div>
             <div class="cc-bio-section">
-              <div class="cc-bio-section-title">${this._ccIconHtml(267, 16)} <span>${ccT('CharCreate.reproductiveOrgans', "Reproductive Organs")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(267, 16)} <span>${ccT('CharCreate.reproductiveOrgans')}</span></div>
               <div class="cc-bio-chips-row">${reproChipsHtml}</div>
-              <div class="cc-bio-section-title cc-gap-above">${this._ccIconHtml(179, 16)} <span>${ccT('CharCreate.hormoneBalance', "Endocrine Balance")}</span></div>
+              <div class="cc-bio-section-title cc-gap-above">${this._ccIconHtml(179, 16)} <span>${ccT('CharCreate.hormoneBalance')}</span></div>
               <div class="cc-bio-slider-row">
-                <span class="cc-bio-slider-end">${ccT('CharCreate.hormoneOestrogenic', "Oestrogenic")}</span>
+                <span class="cc-bio-slider-end">${ccT('CharCreate.hormoneOestrogenic')}</span>
                 <input id="cc-hormone-slider" class="cc-bio-slider" type="range" min="0" max="100" step="1" value="${hormoneBalance}"
                   oninput="SceneManager._scene.onHormoneSliderPreview(this.value)"
                   onchange="SceneManager._scene.onBioOptionChange('hormones', this.value)">
-                <span class="cc-bio-slider-end">${ccT('CharCreate.hormoneAndrogenic', "Androgenic")}</span>
+                <span class="cc-bio-slider-end">${ccT('CharCreate.hormoneAndrogenic')}</span>
               </div>
               <div id="cc-hormone-readout" class="cc-bio-slider-readout">${this._hormoneReadoutHtml(hormoneBalance)}</div>
             </div>
@@ -1996,37 +1675,37 @@
             <div class="cc-bio-section">
               <div class="cc-row-wide">
                 <div class="cc-col-grow">
-                  <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology', "Creed")}</span></div>
+                  <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
                   <div class="cc-row-inline">
                     <select id="cc-ideology-select" class="cc-bio-select cc-col-grow" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
                       ${ideologyChoicesHtml}
                     </select>
-                    <button type="button" class="cc-bio-chip" onclick="if(window.PoliticalGraph3D && SceneManager._scene){ SceneManager._scene.markReturnStep(); SceneManager._scene.closeStepUI(); window.PoliticalGraph3D.openModal({ focusId: (document.getElementById('cc-ideology-select') ? document.getElementById('cc-ideology-select').value : ''), onSelect: function(id) { Scene_CharacterCreation.applyIdeologySelection(id); } }); }" title="${ccT('CharCreate.openPoliticalGraph', 'Open the political graph')}">${ccT('CharCreate.politicalGraph', 'Graph')}</button>
+                    <button type="button" class="cc-bio-chip" onclick="if(window.PoliticalGraph3D && SceneManager._scene){ SceneManager._scene.markReturnStep(); SceneManager._scene.closeStepUI(); window.PoliticalGraph3D.openModal({ focusId: (document.getElementById('cc-ideology-select') ? document.getElementById('cc-ideology-select').value : ''), onSelect: function(id) { Scene_CharacterCreation.applyIdeologySelection(id); } }); }" title="${ccT('CharCreate.openPoliticalGraph')}">${ccT('CharCreate.politicalGraph')}</button>
                   </div>
                 </div>
                 <div class="cc-col-grow">
-                  <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity', "Hometown")}</span></div>
+                  <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity')}</span></div>
                   <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('hometown', this.value)">${hometownOptions}</select>
                 </div>
               </div>
             </div>
             <div class="cc-bio-section">
-              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.moralityAlignment', "Morality")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.moralityAlignment')}</span></div>
               <div class="cc-bio-chips-row">${moralityChips}</div>
             </div>
             <div class="cc-bio-section">
-              <div class="cc-bio-section-title">${this._ccIconHtml(113, 16)} <span>${ccT('CharCreate.ageBand', "Age")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(113, 16)} <span>${ccT('CharCreate.ageBand')}</span></div>
               <div class="cc-bio-chips-row">${ageChips}</div>
             </div>
             <div class="cc-bio-section">
-              <div class="cc-bio-section-title">${this._ccIconHtml(208, 16)} <span>${ccT('CharCreate.socialStanding', "Social Standing")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(208, 16)} <span>${ccT('CharCreate.socialStanding')}</span></div>
               <div class="cc-bio-chips-row">${wealthChips}</div>
             </div>
             <div class="cc-bio-section cc-bio-section-flush">
-              <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.bloodType', "Blood Type")}</span></div>
-              <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodStandard', "Standard Blood")}</div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.bloodType')}</span></div>
+              <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodStandard')}</div>
               <div class="cc-bio-chips-row cc-gap-below-tight">${renderChips(standardBloods)}</div>
-              <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodExotic', "Exotic Blood")}</div>
+              <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodExotic')}</div>
               <div class="cc-bio-chips-row">${renderChips(specialBloods)}</div>
               ${compatHtml}
             </div>
@@ -2075,7 +1754,7 @@
         ? window.NPCHistSim.buildBackstoryHTML(backstory)
         : "";
       if (html) return html;
-      return `<div class="npc-backstory-text">${ccT('CharCreate.bio.noBackstory', 'No backstory recorded yet.')}</div>`;
+      return `<div class="npc-backstory-text">${ccT('CharCreate.bio.noBackstory')}</div>`;
     }
 
     _renderSimpleClassDetailsHtml(actor, c) {
@@ -2098,7 +1777,7 @@
       const limitHtml = limit && limit.name ? `
         <div class="cc-class-passive cc-gap-above-tight">
           <div class="cc-class-passive-name">${this._ccIconHtml(76, 18)} <span>${limit.name}</span>
-            <span class="cc-class-passive-tag">${ccT('CharCreate.limitBreak', 'Limit break')}</span></div>
+            <span class="cc-class-passive-tag">${ccT('CharCreate.limitBreak')}</span></div>
           ${limit.desc ? `<p class="cc-class-passive-desc">${limit.desc}</p>` : ''}
         </div>
       ` : "";
@@ -2107,10 +1786,10 @@
       const hasEquipTrait = (code, dataId) =>
         (c.traits || []).some((t) => t.code === code && t.dataId === dataId && t.value === 1);
       const weaponNames = {
-        1: ccT('CharCreate.light', 'Light'), 2: ccT('CharCreate.sword', 'Sword'), 3: ccT('CharCreate.heavy', 'Heavy'),
-        4: ccT('CharCreate.axe', 'Axe'), 5: ccT('CharCreate.whip', 'Whip'), 6: ccT('CharCreate.staff', 'Staff'),
-        7: ccT('CharCreate.bow', 'Bow'), 8: ccT('CharCreate.projectile', 'Projectile'), 9: ccT('CharCreate.gun', 'Gun'),
-        10: ccT('CharCreate.claw', 'Claw'), 11: ccT('CharCreate.glove', 'Glove'), 12: ccT('CharCreate.spear', 'Spear')
+        1: ccT('CharCreate.light'), 2: ccT('CharCreate.sword'), 3: ccT('CharCreate.heavy'),
+        4: ccT('CharCreate.axe'), 5: ccT('CharCreate.whip'), 6: ccT('CharCreate.staff'),
+        7: ccT('CharCreate.bow'), 8: ccT('CharCreate.projectile'), 9: ccT('CharCreate.gun'),
+        10: ccT('CharCreate.claw'), 11: ccT('CharCreate.glove'), 12: ccT('CharCreate.spear')
       };
       const weaponIcons = (window.StartingEquipment && window.StartingEquipment.weaponTypeIcons) || {};
       const weaponRows = [];
@@ -2138,7 +1817,7 @@
         if (!sk) return "";
         const iconIndex = sk.iconIndex || 79;
         const sName = window.CCDbName ? window.CCDbName(sk) : sk.name;
-        const lvLabel = `${ccT('CharCreate.abbrev.level', 'Lv')} ${l.level}`;
+        const lvLabel = `${ccT('CharCreate.abbrev.level')} ${l.level}`;
         const hoverAttrs = typeof this._ccHoverAttrs === "function" ? this._ccHoverAttrs("skill", sk.id) : "";
         if (typeof this._ccLoadoutRowHtml === "function") {
           return this._ccLoadoutRowHtml(iconIndex, sName, lvLabel, { valueColor: 'var(--text-primary-hover)', hover: hoverAttrs });
@@ -2159,21 +1838,21 @@
             ${window.CCDbName ? window.CCDbName(c) : c.name}
           </h3>
           <div class="cc-dossier-card cc-class-section cc-gap-below">
-            <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.classProfile', 'Class Skills')}</h4>
+            <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.classProfile')}</h4>
             ${passiveHtml}
             ${limitHtml}
           </div>
 
           ${weaponRows.length ? (
             typeof this._ccLoadoutSectionHtml === "function" ? this._ccLoadoutSectionHtml(
-              ccT('CharCreate.startingWeaponProficiencies', 'Starting Weapon Proficiencies'),
+              ccT('CharCreate.startingWeaponProficiencies'),
               weaponRows.join(""),
-              ccT('CharCreate.none', 'None'),
+              ccT('CharCreate.none'),
               true,
               'cc-loadout-grid-cols'
             ) : `
               <div class="cc-dossier-card cc-class-section cc-gap-below">
-                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.startingWeaponProficiencies', 'Starting Weapon Proficiencies')}</h4>
+                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.startingWeaponProficiencies')}</h4>
                 <div class="cc-loadout-grid-cols">${weaponRows.join("")}</div>
               </div>
             `
@@ -2181,13 +1860,13 @@
 
           ${roadmapRows ? (
             typeof this._ccLoadoutSectionHtml === "function" ? this._ccLoadoutSectionHtml(
-              ccT('CharCreate.skillRoadmap', 'Skill Roadmap') + ' (Lv 1 - 10)',
+              ccT('CharCreate.skillRoadmap') + ' (Lv 1 - 10)',
               `<div class="cc-loadout-col">${roadmapRows}</div>`,
               "",
               true
             ) : `
               <div class="cc-dossier-card cc-class-section cc-gap-above-tight">
-                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.skillRoadmap', 'Skill Roadmap')} (Lv 1 - 10)</h4>
+                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.skillRoadmap')} (Lv 1 - 10)</h4>
                 <div class="cc-loadout-col">${roadmapRows}</div>
               </div>
             `
@@ -2208,7 +1887,7 @@
         avatarStyle = this.getSpriteStyle(actor.characterName(), actor.characterIndex());
       }
       const classData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
-      const className = classData ? (window.CCDbName ? window.CCDbName(classData) : classData.name) : ccT('CharCreate.defaultClassName', 'Operative');
+      const className = classData ? (window.CCDbName ? window.CCDbName(classData) : classData.name) : ccT('CharCreate.defaultClassName');
 
       // The biography every other screen shows for this character, not a
       // sentence assembled out of the picker's own fields: the backstory the
@@ -2228,7 +1907,7 @@
             </div>
 
             <h3 class="cc-subheader cc-subheader-ruled">
-              ${ccT('CharCreate.narrativeHistory', 'Backstory')}
+              ${ccT('CharCreate.narrativeHistory')}
             </h3>
             ${storyHtml}
 
@@ -2276,12 +1955,8 @@
 
     _ensureSimpleModeStatsAndTraits(actor) {
       if (!actor) return;
-      // Auto-assign random traits if not yet selected. Simple mode deals a
-      // whole archetype rather than a loose handful: that is what its board
-      // offers, so a member who never opened it walks out built the same way
-      // as one who did.
-      if ((!actor._selectedTraits || actor._selectedTraits.length === 0) &&
-          !this._ccRollArchetypeFor(actor)) {
+      // Auto-assign random traits if not yet selected
+      if (!actor._selectedTraits || actor._selectedTraits.length === 0) {
         if (window.randomizeTraitsForActor) {
           const aId = typeof actor.actorId === "function" ? actor.actorId() : 1;
           window.randomizeTraitsForActor(aId);
@@ -2623,7 +2298,7 @@
       const desc = current !== null ? this._romanceText(scale[current]) : "";
       return `
         <div class="cc-bio-chips-row">${chips}</div>
-        ${desc ? `<div class="cc-bio-slider-readout"><b>${ccT("CharCreate.romance.kinseyLabel", "Kinsey")} ${current}</b>, ${desc}</div>` : ""}
+        ${desc ? `<div class="cc-bio-slider-readout"><b>${ccT("CharCreate.romance.kinseyLabel")} ${current}</b>, ${desc}</div>` : ""}
       `;
     }
 
@@ -2644,7 +2319,7 @@
       const bonds = this._romanceBanks().rel.bonds || [];
       const others = ($gameParty ? $gameParty.members() : []).filter((m) => m && m.actorId() !== actor.actorId());
       if (others.length === 0) {
-        return `<div class="cc-bio-slider-readout cc-note-quiet">${ccT("CharCreate.romance.noOthers", "Nobody else has been created yet. Add a second member and their standing with this one can be set here.")}</div>`;
+        return `<div class="cc-bio-slider-readout cc-note-quiet">${ccT("CharCreate.romance.noOthers")}</div>`;
       }
       return others.map((other) => {
         const currentKey = state.bonds[other.actorId()] || "none";
@@ -2679,7 +2354,7 @@
       const style = this._romanceEntry(banks.rel.styles, state.styleKey);
 
       const pctLine = (o) => o && o.pct != null
-        ? `<div class="cc-bio-slider-readout">${o.pct}% ${ccT("CharCreate.romance.ofPopulation", "of the population")}${o.esoteric ? ", " + ccT("CharCreate.romance.esoteric", "esoteric") : ""}</div>`
+        ? `<div class="cc-bio-slider-readout">${o.pct}% ${ccT("CharCreate.romance.ofPopulation")}${o.esoteric ? ", " + ccT("CharCreate.romance.esoteric") : ""}</div>`
         : "";
       const descLine = (o) => o && o.desc
         ? `<div class="cc-bio-slider-readout">${this._romanceText(o.desc)}</div>` : "";
@@ -2689,28 +2364,28 @@
         <div class="cc-page cc-page-left ts-page cc-page-column">
           <div class="cc-bio-container cc-step-scroll">
             <div class="cc-bio-section cc-bio-section--plain">
-              <div class="cc-bio-section-title">${this._ccIconHtml(84, 16)} <span>${ccT("CharCreate.romance.romanticOrientation", "Romantic Orientation")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(84, 16)} <span>${ccT("CharCreate.romance.romanticOrientation")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceOrientChipsHtml("romantic", state.romanticKey)}</div>
               ${descLine(romantic)}
               ${pctLine(romantic)}
             </div>
             <div class="cc-bio-section cc-bio-section--plain">
-              <div class="cc-bio-section-title">${this._ccIconHtml(267, 16)} <span>${ccT("CharCreate.romance.sexualOrientation", "Sexual Orientation")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(267, 16)} <span>${ccT("CharCreate.romance.sexualOrientation")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceOrientChipsHtml("sexual", state.sexualKey)}</div>
               ${descLine(sexual)}
               ${pctLine(sexual)}
             </div>
             <div class="cc-bio-section cc-bio-section--plain">
-              <div class="cc-bio-section-title">${this._ccIconHtml(87, 16)} <span>${ccT("CharCreate.romance.kinseyScale", "Kinsey Scale Placement")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(87, 16)} <span>${ccT("CharCreate.romance.kinseyScale")}</span></div>
               ${this._romanceKinseyHtml(state)}
             </div>
             <div class="cc-bio-section cc-bio-section--plain">
-              <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT("CharCreate.romance.style", "Preferred Relationship Style")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT("CharCreate.romance.style")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceStyleChipsHtml(state.styleKey)}</div>
               ${descLine(style)}
             </div>
             <div class="cc-bio-section cc-bio-section-flush">
-              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT("CharCreate.romance.bonds", "Standing With The Rest Of The Party")}</span></div>
+              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT("CharCreate.romance.bonds")}</span></div>
               ${this._romanceBondsHtml(actor, state)}
             </div>
           </div>
@@ -2731,7 +2406,7 @@
       const kinseyKey = state.kinsey === null || state.kinsey === undefined ? null : String(state.kinsey);
 
       const classData = $dataClasses[actor._classId];
-      const className = classData ? window.CCDbName(classData) : ccT("CharCreate.defaultClassName", "Operative");
+      const className = classData ? window.CCDbName(classData) : ccT("CharCreate.defaultClassName");
       let avatarStyle = "";
       if (actor.characterName()) {
         avatarStyle = this.getSpriteStyle(actor.characterName(), actor.characterIndex());
@@ -2756,7 +2431,7 @@
       return `
         <div class="cc-page cc-page-right ts-page cc-page-column">
           <div class="cc-row-end">
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize", "Randomize")}</button>
+            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize")}</button>
           </div>
           <div class="cc-dossier-card cc-step-scroll-padded">
             <div class="cc-bio-identity">
@@ -2765,24 +2440,24 @@
               <span class="cc-bio-identity-class">(${className})</span>
             </div>
             <h3 class="cc-subheader cc-subheader-ruled">
-              ${ccT("CharCreate.romance.summaryTitle", "Attachment Record")}
+              ${ccT("CharCreate.romance.summaryTitle")}
             </h3>
             <p class="cc-text-desc cc-prose-left">
-              ${ccTp("CharCreate.romance.summaryPara1", params, "")}
+              ${ccTp("CharCreate.romance.summaryPara1", params)}
             </p>
             ${kinseyKey !== null ? `
               <p class="cc-text-desc cc-prose-left">
-                ${ccTp("CharCreate.romance.summaryPara2", params, "")} ${this._romanceText(scale[kinseyKey])}
+                ${ccTp("CharCreate.romance.summaryPara2", params)} ${this._romanceText(scale[kinseyKey])}
               </p>
             ` : ""}
             ${bondLines ? `
               <h3 class="cc-subheader cc-subheader-ruled">
-                ${ccT("CharCreate.romance.bondsTitle", "Ties Already Held")}
+                ${ccT("CharCreate.romance.bondsTitle")}
               </h3>
               <ul class="cc-bond-list">${bondLines}</ul>
             ` : `
               <p class="cc-text-desc cc-prose-aside">
-                ${ccT("CharCreate.romance.noBonds", "This one starts out tied to nobody in the party.")}
+                ${ccT("CharCreate.romance.noBonds")}
               </p>
             `}
           </div>
@@ -2930,7 +2605,7 @@
 
       actor._morality = Math.floor(Math.random() * 5) - 2;
 
-      const hometowns = ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"];
+      const hometowns = ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"]; // i18n-ignore: WorkSystem.Destinations ids
       $gameSystem._ccHometown = hometowns[Math.floor(Math.random() * hometowns.length)];
 
       if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
@@ -2944,6 +2619,7 @@
       this.onBioOptionChange("reproduction", reproChoices[Math.floor(Math.random() * reproChoices.length)].val);
       if (actor.setHormoneBalance) actor.setHormoneBalance(Math.floor(Math.random() * 101));
 
+      // i18n-ignore-start: BloodTypeService fallback rows, .type is the id stored on the actor
       const bloodList = (window.BloodTypeService && window.BloodTypeService.list && window.BloodTypeService.list()) || [];
       if (bloodList.length > 0) {
         const picked = bloodList[Math.floor(Math.random() * bloodList.length)];
@@ -2953,7 +2629,7 @@
           window.BloodTypeService.setForActor(actor, picked.id);
         }
       } else {
-        const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "Synthetic-Δ", "Azure (Hemocyanin)"];
+        const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "Synthetic-Δ", "Azure (Hemocyanin)"]; // i18n-ignore: blood type ids
         actor._bloodType = bloodTypes[Math.floor(Math.random() * bloodTypes.length)];
       }
 
@@ -2988,6 +2664,7 @@
           .trim();
       };
 
+      // i18n-ignore-start: pet kind ids, matched against _petCategories
       const classifyKind = (entry, name) => {
         if (entry && entry.animal) return "Animal";
         if (entry && entry.creature) return "Creature";
@@ -3004,6 +2681,7 @@
         }
         return "Creature";
       };
+      // i18n-ignore-end
 
       // 1. Load from NPCs.json database (animal, creature, beast entries)
       for (const [spriteKey, data] of Object.entries(npcDb)) {
@@ -3021,8 +2699,8 @@
         const def = 8 + ((hash >> 6) % 22);
         const agi = 8 + ((hash >> 9) % 24);
 
-        const icon = kind === "Animal" ? 292 : (kind === "Construct" ? 141 : (kind === "Undead" ? 136 : 176));
-        const desc = ccT('CharCreate.petDesc', "A companion attuned to the surrounding ecosystem. Resilient, vigilant, and devoted to trailing and safeguarding the party.");
+        const icon = kind === "Animal" ? 292 : (kind === "Construct" ? 141 : (kind === "Undead" ? 136 : 176)); // i18n-ignore: pet kind ids
+        const desc = ccT('CharCreate.petDesc');
 
         catalog.push({
           id: id,
@@ -3063,7 +2741,7 @@
             const atk = 10 + ((hash >> 3) % 26);
             const def = 8 + ((hash >> 6) % 22);
             const agi = 8 + ((hash >> 9) % 24);
-            const icon = kind === "Animal" ? 292 : (kind === "Construct" ? 141 : (kind === "Undead" ? 136 : 176));
+            const icon = kind === "Animal" ? 292 : (kind === "Construct" ? 141 : (kind === "Undead" ? 136 : 176)); // i18n-ignore: pet kind ids // i18n-ignore: pet kind ids
 
             catalog.push({
               id: id,
@@ -3077,7 +2755,7 @@
               atk: atk,
               def: def,
               agi: agi,
-              desc: ccTp('CharCreate.petDescKind', { kind: kind.toLowerCase() }, `A wilderness ${kind.toLowerCase()} companion attuned to the surrounding ecosystem.`)
+              desc: ccTp('CharCreate.petDescKind', { kind: kind.toLowerCase() })
             });
           }
         }
@@ -3089,13 +2767,15 @@
     }
 
     _petCategories() {
+      // i18n-ignore-start: pet kind ids
       return [
-        { id: "all",       label: ccT('CharCreate.filterAll', 'All') },
-        { id: "Animal",    label: ccT('CharCreate.petKindAnimals', 'Animals') },
-        { id: "Creature",  label: ccT('CharCreate.petKindCreatures', 'Creatures') },
-        { id: "Construct", label: ccT('CharCreate.petKindConstructs', 'Constructs') },
-        { id: "Undead",    label: ccT('CharCreate.petKindUndead', 'Undead') },
+        { id: "all",       label: ccT('CharCreate.filterAll') },
+        { id: "Animal",    label: ccT('CharCreate.petKindAnimals') },
+        { id: "Creature",  label: ccT('CharCreate.petKindCreatures') },
+        { id: "Construct", label: ccT('CharCreate.petKindConstructs') },
+        { id: "Undead",    label: ccT('CharCreate.petKindUndead') },
       ];
+      // i18n-ignore-end
     }
 
     // Travelling alone leads the board. It was always allowed, but the only way
@@ -3104,20 +2784,20 @@
     // The board belongs to a familiar in the story mode and to the party's
     // pets everywhere else, and every word on it follows the tab rather than
     // half of them saying one thing and half the other.
-    _petWord(storyKey, storyFallback, petsKey, petsFallback) {
+    _petWord(storyKey, petsKey) {
       return Scene_CharacterCreation._storyMode
-        ? ccT(storyKey, storyFallback)
-        : ccT(petsKey, petsFallback);
+        ? ccT(storyKey)
+        : ccT(petsKey);
     }
 
     _petNoneCard() {
       return {
         id: PET_NONE_ID,
-        name: this._petWord('CharCreate.noCompanion', 'No familiar', 'CharCreate.petsNone', 'No pet'),
-        kind: ccT('CharCreate.petKindNone', 'Alone'),
+        name: this._petWord('CharCreate.noCompanion', 'CharCreate.petsNone'),
+        kind: ccT('CharCreate.petKindNone'),
         sprite: "",
         spriteIndex: 0,
-        desc: this._petWord('CharCreate.noCompanionDesc', 'Set out with nobody at your heel.', 'CharCreate.petsNoneDesc', 'Set out with nobody at your heel.'),
+        desc: this._petWord('CharCreate.noCompanionDesc', 'CharCreate.petsNoneDesc'),
       };
     }
 
@@ -3157,10 +2837,10 @@
         <div class="cc-page cc-page-full ts-page cc-page-column">
           <div class="cc-row-controls">
             <input type="text" class="backpack-search-input cc-rail-search"
-                   placeholder="${this._petWord('CharCreate.petSearchPlaceholder', 'Search familiar monsters...', 'CharCreate.petsSearchPlaceholder', 'Search pet monsters...')}"
+                   placeholder="${this._petWord('CharCreate.petSearchPlaceholder', 'CharCreate.petsSearchPlaceholder')}"
                    value="${Scene_CharacterCreation._petSearchQuery || ''}"
                    oninput="SceneManager._scene.onPetSearch(this.value)" />
-            <span class="cc-count-badge">${ccTp('CharCreate.petCount', { n: petCount }, petCount + ' monsters')}</span>
+            <span class="cc-count-badge">${ccTp('CharCreate.petCount', { n: petCount })}</span>
           </div>
           <div class="ts-tab-row">${catTabsHtml}</div>
           <div class="cc-pet-grid" id="cc-pet-grid-virt">
@@ -3206,7 +2886,7 @@
     // `scrollTop` is the current scroll position of the grid container.
     _buildPetCardsWindow(filtered, scrollTop, metrics) {
       if (!filtered || filtered.length === 0) {
-        return `<div class="cc-empty-note">${this._petWord('CharCreate.petNoneFound', 'No familiar monsters match this filter', 'CharCreate.petsNoneFound', 'No pet monsters match this filter')}</div>`;
+        return `<div class="cc-empty-note">${this._petWord('CharCreate.petNoneFound', 'CharCreate.petsNoneFound')}</div>`;
       }
 
       const OVERSCAN_ROWS = 3; // extra rows rendered above/below the viewport
@@ -3369,7 +3049,7 @@
                 <div class="cc-col cc-col-gap-1 cc-col-grow">
                   <div class="cc-row-spread">
                     <span class="cc-pet-sidebar-name">${pet.name}</span>
-                    <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizePet()" title="${ccT('CharCreate.randomize', 'Randomize')}">
+                    <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizePet()" title="${ccT('CharCreate.randomize')}">
                       ${this._ccIconHtml(83, 16)}
                     </button>
                   </div>
@@ -3380,11 +3060,11 @@
             ${statsHtml}
 
             ${this._ccLoadoutSectionHtml(
-              ccT('CharCreate.petTraitsTitle', 'Traits'),
+              ccT('CharCreate.petTraitsTitle'),
               `<div class="cc-row-inline cc-gap-below">
-                 <button class="cc-bio-chip ${traits.sentient ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('sentient')">${ccT('CharCreate.petTraitSentient', 'Sentient')}</button>
-                 <button class="cc-bio-chip ${traits.magical ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('magical')">${ccT('CharCreate.petTraitMagical', 'Magical')}</button>
-                 <button class="cc-bio-chip ${traits.geneticFreak ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('geneticFreak')">${ccT('CharCreate.petTraitGeneticFreak', 'Genetic Freak')}</button>
+                 <button class="cc-bio-chip ${traits.sentient ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('sentient')">${ccT('CharCreate.petTraitSentient')}</button>
+                 <button class="cc-bio-chip ${traits.magical ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('magical')">${ccT('CharCreate.petTraitMagical')}</button>
+                 <button class="cc-bio-chip ${traits.geneticFreak ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('geneticFreak')">${ccT('CharCreate.petTraitGeneticFreak')}</button>
                </div>`,
               "",
               true
@@ -3393,7 +3073,7 @@
           </div>
 
           <div class="cc-compact-actions cc-stack">
-            <button class="cc-compact-btn ${isChosen ? '' : 'primary'}" onclick="SceneManager._scene.onPetCardSelect('${pet.id}')">${isChosen ? ccT('CharCreate.selectedCompanion', 'Companion selected') : this._petWord('CharCreate.chooseAsCompanion', 'Choose as initial familiar', 'CharCreate.petsChoose', 'Choose as starting pet')}</button>
+            <button class="cc-compact-btn ${isChosen ? '' : 'primary'}" onclick="SceneManager._scene.onPetCardSelect('${pet.id}')">${isChosen ? ccT('CharCreate.selectedCompanion') : this._petWord('CharCreate.chooseAsCompanion', 'CharCreate.petsChoose')}</button>
           </div>
         </div>
       `;
@@ -3429,7 +3109,7 @@
       // count froze at whatever the last full rebuild had written.
       const badge = this._dndContainer && this._dndContainer.querySelector(".cc-count-badge");
       if (badge) {
-        badge.textContent = ccTp('CharCreate.petCount', { n: filtered.length }, filtered.length + ' monsters');
+        badge.textContent = ccTp('CharCreate.petCount', { n: filtered.length }); // i18n-ignore: argument is an i18n key
       }
       if (grid) {
         grid.scrollTop = 0;
@@ -3565,7 +3245,7 @@
               <div class="cc-sprite cc-sprite-x12" style="${this.getSpriteStyle(v.sprite, 0)}"></div>
             </div>
             <div class="cc-pet-name" title="${v.name}">${v.name}</div>
-            <div class="cc-pet-kind">${isSel ? ccT('CharCreate.vehicleOwned', 'In the garage') : ccT('CharCreate.vehicleFree', 'Not taken')}</div>
+            <div class="cc-pet-kind">${isSel ? ccT('CharCreate.vehicleOwned') : ccT('CharCreate.vehicleFree')}</div>
           </div>
         `;
       }).join("");
@@ -3574,7 +3254,7 @@
         <div class="cc-page cc-page-full ts-page cc-page-column">
           <div class="cc-row-controls">
             <h3 class="cc-subheader cc-subheader--flush">${T('CharCreate.chooseYourVehicle')}</h3>
-            <span class="cc-count-badge">${ccTp('CharCreate.vehicleCount', { n: chosen.length }, chosen.length + ' selected')}</span>
+            <span class="cc-count-badge">${ccTp('CharCreate.vehicleCount', { n: chosen.length })}</span>
           </div>
           <div class="cc-pet-grid">
             ${cards}
@@ -3610,7 +3290,7 @@
           </div>
 
           <div class="cc-compact-actions cc-stack">
-            <button class="cc-compact-btn ${isSel ? '' : 'primary'}" onclick="SceneManager._scene.onVehicleCardToggle('${v.symbol}')">${isSel ? ccT('CharCreate.vehicleDrop', 'Leave it behind') : ccT('CharCreate.vehicleTake', 'Take this vehicle')}</button>
+            <button class="cc-compact-btn ${isSel ? '' : 'primary'}" onclick="SceneManager._scene.onVehicleCardToggle('${v.symbol}')">${isSel ? ccT('CharCreate.vehicleDrop') : ccT('CharCreate.vehicleTake')}</button>
           </div>
         </div>
       `;
@@ -3844,24 +3524,18 @@
       // never get a sculpted 3D model, so pin the exclusive portrait style.
       const randomActor = $gameActors.actor(targetActorId);
       if (randomActor && randomActor.setPortraitMode) randomActor.setPortraitMode("bust");
-      // The simple board deals whole builds, so a randomized member is dealt
-      // one too rather than a handful of traits that board could not show as
-      // picked. Detailed mode keeps the loose roll.
-      const rolledBuild = Scene_CharacterCreation.isSimpleMode() &&
-        !!this._ccRollArchetypeFor(randomActor);
-      if (rolledBuild) {
-        // already built
-      } else if (window.randomizeTraitsForActor) {
+      if (window.randomizeTraitsForActor) {
         window.randomizeTraitsForActor(targetActorId);
       } else {
         const traitBank = (window.Health && window.Health.Traits && window.Health.Traits.length > 0)
           ? window.Health.Traits
+          // i18n-ignore-start: mirror of the Health trait rows, which carry their own i18n
           : ((window.HealthCore && window.HealthCore.Traits) || [
             { id: "claustrophobic", name: "Claustrophobic", cost: -3 },
             { id: "genius", name: "Genius", cost: 3 },
             { id: "athletic", name: "Athletic", cost: 5 },
             { id: "lucky", name: "Lucky", cost: 3 },
-            { id: "paranoid", name: "Paranoid", cost: -1 }
+            { id: "paranoid", name: "Paranoid", cost: -1 } // i18n-ignore-end
           ]);
         const picked = [];
         const drawbacks = traitBank.filter((t) => (Number(t.cost) || 1) < 0 && t.category !== "genetic");
@@ -3918,7 +3592,7 @@
 
       const hometowns = (window.WorkSystem && window.WorkSystem.Destinations)
         ? Object.keys(window.WorkSystem.Destinations)
-        : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"];
+        : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"]; // i18n-ignore: WorkSystem.Destinations ids
       $gameSystem._ccHometown = hometowns[Math.floor(Math.random() * hometowns.length)];
 
       if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
@@ -3934,6 +3608,7 @@
       else $gameVariables.setValue([87, 115, 116][currentMemberIndex] || 87, rolledRepro);
       if (currentActor.setHormoneBalance) currentActor.setHormoneBalance(Math.floor(Math.random() * 101));
 
+      // i18n-ignore-start: BloodTypeService fallback rows, .type is the id stored on the actor
       const bloodList = (window.BloodTypeService && window.BloodTypeService.list && window.BloodTypeService.list()) || [];
       if (bloodList.length > 0) {
         const pickedBlood = bloodList[Math.floor(Math.random() * bloodList.length)];
@@ -3943,7 +3618,7 @@
           window.BloodTypeService.setForActor(currentActor, pickedBlood.id);
         }
       } else {
-        const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "Synthetic-Δ", "Azure (Hemocyanin)"];
+        const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "Synthetic-Δ", "Azure (Hemocyanin)"]; // i18n-ignore: blood type ids
         currentActor._bloodType = bloodTypes[Math.floor(Math.random() * bloodTypes.length)];
       }
 

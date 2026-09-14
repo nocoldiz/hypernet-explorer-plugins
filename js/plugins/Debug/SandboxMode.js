@@ -763,6 +763,14 @@
         static update() {
             if (!this.active) return;
 
+            // A QUERY BEING TYPED IS NOT A CURSOR MOVE. The search field is an
+            // ordinary DOM input sitting over this cursor, so without this the
+            // arrow keys walking a word also walked the list behind it, and any
+            // letter core maps to an action (X is cancel) backed out of the menu
+            // mid-word. Every other search in the game asks this before it moves
+            // anything (UI/MenuSearchBar.js).
+            if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) return;
+
             // A granted wish holds the sanctum on its card until the hold runs
             // out; any key or click dismisses it sooner. Nothing else is read,
             // so a second destiny can never be picked.
@@ -1655,7 +1663,7 @@
             ? window.MenuSearchBar.toggleHTML('SceneManager._scene.toggleSearchField()', open)
             : '';
         const field = open
-            ? `<div class="msb-field"><input class="sandbox-45" type="text" id="sandbox-search" placeholder="Search outcomes..." value="${escapeHtml(this._searchQuery)}" oninput="SceneManager._scene.handleSearchInput(this.value)"></div>`
+            ? `<div class="msb-field"><input class="sandbox-45" type="text" id="sandbox-search" placeholder="Search outcomes..." value="${escapeHtml(this._searchQuery)}" oninput="SceneManager._scene.handleSearchInput(this.value)" onkeydown="event.stopPropagation()" onkeyup="event.stopPropagation()" onkeypress="event.stopPropagation()"></div>`
             : '';
         return `<div class="msb msb-field-only${open ? '' : ' msb-collapsed'}" id="sandbox-search-field">${field}${handle}</div>`;
     };

@@ -522,8 +522,9 @@
     panel(slots = {}) {
       const { back = "", middle = "", next = "", cls = "" } = slots;
       const mid = Array.isArray(middle) ? middle.join("") : middle;
+      const clsAttr = cls ? " " + cls : ""; // i18n-ignore: CSS class name
       return `
-        <div class="cc-button-panel cc-nav${cls ? " " + cls : ""}">
+        <div class="cc-button-panel cc-nav${clsAttr}">
           <div class="cc-nav-slot cc-nav-back">${back}</div>
           <div class="cc-nav-slot cc-nav-mid">${mid}</div>
           <div class="cc-nav-slot cc-nav-next">${next}</div>

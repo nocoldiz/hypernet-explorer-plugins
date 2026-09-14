@@ -127,7 +127,6 @@
             'app-eurodemics': 'reference', 'app-artifact-analyzer': 'reference',
             'app-bank-system': 'economy', 'app-stock-market': 'economy', 'app-real-estate': 'economy',
             'app-token-exchange': 'economy', 'app-job-offers': 'economy',
-            'app-bulk-materials': 'economy',
             'app-kanban-quest': 'office',
             'app-colosseum': 'games', 'app-bobnzi': 'games',
             'app-minesweeper': 'games', 'app-solitaire': 'games',
@@ -195,7 +194,7 @@
             'my-computer', 'my-documents',
             'app-hypernet-browser', 'app-hypernet-shop', 'app-stock-market',
             'app-neuropolice', 'app-card-arena', 'app-hexcel', 'app-hypernet-paint',
-            'app-object-index', 'app-job-offers', 'app-colosseum', 'app-bulk-materials',
+            'app-object-index', 'app-job-offers', 'app-colosseum',
             'app-news-history', 'app-real-estate', 'app-bank-system', 'app-bestiary-encarta'
         ],
         // Programs, Games and Utilities are the drawers every other shortcut

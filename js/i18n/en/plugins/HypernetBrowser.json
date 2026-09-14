@@ -246,7 +246,7 @@
   "downloads": {
     "title": "Downloads",
     "heading": "Downloads",
-    "hint": "Downloaded files are saved in C:\\Documents.",
+    "hint": "Files pulled off the Hypernet land in C:\\Documents.",
     "empty": "No downloads yet.",
     "file": "File",
     "from": "From",
@@ -261,7 +261,7 @@
   "mail": {
     "title": "Hypernet Mail",
     "heading": "Inbox",
-    "hint": "Mail received at this terminal. Messages cannot be replied to.",
+    "hint": "Mail held for this terminal. Nothing here can be replied to; the relay has been one-way since the Y2K rollover.",
     "from": "From",
     "subject": "Subject",
     "received": "Received",
@@ -437,7 +437,7 @@
   "helpPage": {
     "title": "Hypernet Explorer Help",
     "heading": "Hypernet Explorer Help",
-    "intro": "Every browser function and its shortcut key.",
+    "intro": "Everything this browser can do, and the key that does it.",
     "navHeading": "Getting around",
     "navBody": "Type an address in the Address bar and press Enter. An address with no dot in it is searched for instead. A page that is not on this gateway shows the gateway's own 404 notice with the nearest matching addresses under it.",
     "keysHeading": "Keyboard",

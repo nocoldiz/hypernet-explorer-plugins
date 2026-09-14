@@ -1,59 +1,46 @@
 0.6.19a
 
 Added:
- - materials bulk trader app on the hypernet os desktop
- - thinker menu turns a weapon you own into an artifact
- - trait archetype presets instead of individual traits in minimal mode
- - a field revive and cures for every school of magic
-
+ - 3d weapon model editor in the thinker menu
+ - spaceship controls when in flyby mode
+ - gas giant upper atmosphere
 Changed:
- - flavoured UI descriptions and blurbs rewritten to plain mechanics
- - reenable italian language in language selector
- - reworked vector gun menu with calibrate tab and ten new forms
- - ascii headers now golden, restyled remaining off-theme UI screens
- - archetype fist models now used only by creature characters
- - sandbox Eris starts with every skill and the vector gun
- - skill invocation speed now moves the battle turn order
- - reworked vector gun forms as black and gold folding pieces
- - reworked ship repair and upgrades screen, costlier upgrades
- - reworked balance, skill effects and armours
-
+ - reworked italian Eris dialogue into roman dialect
+ - reworked 3d weapon models to close the gaps between their parts
+ - reworked inventory target selector into a shared party modal
+ - quickmenu commands shown in controls for keyboard and controller
+ - reworked italian i18n strings
+ - reworked controller bindings on map, battle, voxel and menus
+ - reworked vector gun modes, unlocked as Em levels
+ - reworked vector gun forms with an origami folding animation
+ - reworked steam deck ui so every menu is readable and fits
+ - junk weapons now give nausea, oily or poison
+ - all Em sprites reference the Em bust
+ - replaced unarmed animation in battle and voxel world
+ - reworked movement system sprites for Em when diving
+ - gas giants and surfaceless planets are flyby only
+ - reworked training menu
+ - reworked starmap: live ship background and a refuel pass through the star
+ - battlelog on the left is taller, up to the last party bar
 Fixed:
- - blade seed spirits now learn real skills again
- - lowercase "em" no longer golden in dialogue
- - bosses never spawn in map, and petrodemons can be escaped
- - empathize dice no longer keep rolling after the dialogue closes
-
+ - gas giant flyby opens high enough to see the curve
+ - empty inventory would not close on ESC
+ - landing site grid was empty and would not open
 
 
 0.6.18a
 
 Added:
- - authored skilltree branches for every skill category
- - events tagged Underwater render only when diving with the diving suit
- - 3d weapon model editor in the thinker menu
  - new underground for alien biomes
  - new warp animations inspired by 2001 Space odissey
- - spaceship controls when in flyby mode
- - gas giant upper atmosphere
  - new procedural "Rarities" enemies with golden level number, they are unique for savegame and never respawn
 Changed:
- - H controls popup shows only the first visit, Info over a zone
- - voxelmode performance
- - junk weapons now give nausea, oily or poison
- - all Em sprites reference the Em bust
- - replaced unarmed animation in battle and voxel world
- - reworked movement system sprites for Em when diving
- - reworked vector gun forms with an origami folding animation
- - gas giants and surfaceless planets are flyby only
- - reworked training menu
- - reworked starmap: live ship background and a refuel pass through the star
- - battlelog on the left is taller, up to the last party bar
  - reworked hunting quests: half ask for a rarity creature
  - back button shows the B pad face after its label
  - reworked spell incantations recital
  - added spell damage/heal bonus for Em when she recites the full incantation   
  - reworked enemy bars: no AP orb, no MP bar at 1 MP
+ - reworked game balance and gave every skill its own effect
  - removed five tree sprites from spawning and furniture
  - reworked enemy spawning with nation level brackets
  - reworked battlelog move option and the battle Actions menu
@@ -64,10 +51,6 @@ Changed:
  - ship avatar is a dingbat instead of an emoji
  - no puddles spawn on the world map or procedural map
 Fixed:
- - story mode starts with Em alone, no second party member
- - gas giant flyby opens high enough to see the curve
- - empty inventory would not close on ESC
- - landing site grid was empty and would not open
  - liminal walk crashed on PSXShader.isPixelArt
  - boot screen no longer drops out of fullscreen and blacks out
  - fix partyhud not visible in map

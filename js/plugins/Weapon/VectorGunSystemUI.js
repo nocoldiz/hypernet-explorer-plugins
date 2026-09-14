@@ -20,7 +20,10 @@
  * gun is running along the bottom.
  *
  * The two pages:
- *   modes  - the twenty odd operating modes, three across
+ *   modes  - the twenty-five operating modes, three across, in the order
+ *            they come open in rather than alphabetically: the five she
+ *            starts with first, the ones she has not levelled into yet greyed
+ *            out with the level written where the bay number goes
  *   form   - the shapes the gun folds into AND the element it carries, one
  *            page because both are "what the weapon is" rather than what it
  *            is running
@@ -59,7 +62,7 @@
 
   // The shapes and the element are one page: both answer "what is this weapon",
   // where the modes answer "what is it doing".
-  const TABS = ['modes', 'form', 'calibrate'];
+  const TABS = ['modes', 'form'];
   // How many cards a line of the grid holds. Must match .vg-grid's
   // grid-template-columns in css/theme.css, the way every other grid scene
   // keeps its own COLS in step with the sheet.
@@ -132,16 +135,6 @@
     kia: 143,           // Gauntlets of Might
     longinus: 381,      // Fire Lance
     solomon: 187,       // Book: the grimoire that is read instead of swung
-    fists: 141,         // Gauntlets of Might: the empty hands
-    twin: 117,          // Pistol: the pair
-    crossbow: 371,      // Crossbow
-    eris: 353,          // Frost Whip: the nunchaku on its chain
-    maat: 109,          // Flaming Mace: the ankh on its chain
-    bubba: 223,         // Wrench
-    yaldabaoth: 119,    // Flaming Sword: the bar and its teeth
-    nyarlathotep: 381,  // Fire Lance: the scythe on its haft
-    freud: 112,         // Katana
-    gautama: 72,        // Heal: the beads that mend
   };
 
   // The stripe down the left edge of a card, the one thing that says at a
@@ -178,130 +171,6 @@
     const bank = (window.T && window.T.list) ? window.T.list('Bestiary.elements') : [];
     const source = bank.length > 1 ? bank : (($dataSystem && $dataSystem.elements) || []);
     return source[id] || '';
-  }
-
-  //--------------------------------------------------------------------------
-  // How a calibration row reads
-  //--------------------------------------------------------------------------
-  // The system says WHAT a shape may be set to; this says how each option is
-  // named and what face it wears. Every name comes from wherever the game
-  // already keeps it - the element roll, the state table, the skill database,
-  // the weather model, the school list - and only the shapes' own vocabulary
-  // is written in this plugin's bank.
-
-  /** The face a section of the Calibrate page wears when nothing else says. */
-  const CAL_SECTION_ICONS = {
-    element: 96, rack: 445, marks: 177, stance: 129, sky: 130, schools: 187,
-    quarry: 292, lash: 216, venom: 177, head: 109, cleave: 351, draw: 370,
-    charge: 381, pattern: 115, bolt: 371, discord: 353, measure: 187,
-    reads: 119, bargain: 126, mends: 72, known: 79, reach: 80,
-  };
-
-  /** A state's own row, or nothing at all where the database is not up. */
-  function stateRow(id) {
-    return (typeof $dataStates !== 'undefined' && $dataStates) ? ($dataStates[id] || null) : null;
-  }
-
-  /** What a state is called, out of the database the whole game reads. */
-  function stateName(id) {
-    const row = stateRow(id);
-    return row ? row.name : '';
-  }
-
-  /** What a skill is called and what it costs, off its own row. */
-  function skillRow(id) {
-    return (typeof $dataSkills !== 'undefined' && $dataSkills) ? $dataSkills[id] : null;
-  }
-
-  /** A parameter by the name the whole game shows it under (PSI, DEX...). */
-  function paramName(id) {
-    if (typeof TextManager !== 'undefined' && TextManager.param) return TextManager.param(id);
-    return '';
-  }
-
-  /** A sky, by the name the weather model gives it. */
-  function weatherName(id) {
-    const names = window.WeatherNames;
-    if (names && names.label) {
-      const label = names.label(id);
-      if (label) return label;
-    }
-    return line('VectorGun.cal.sky.' + id + '.name');
-  }
-
-  /** A school of magic, by the name the skill categories give it. */
-  function schoolName(key) {
-    const SM = window.SkillMaster;
-    if (SM && SM.getCategoryDisplayName) {
-      const name = SM.getCategoryDisplayName(key);
-      if (name) return name;
-    }
-    return key;
-  }
-
-  /** What a creature is filed as, by the name the health system shows. */
-  function archetypeName(key) {
-    const HC = window.HealthCore;
-    if (HC && HC.getArchetypeDisplayName) {
-      const name = HC.getArchetypeDisplayName(key);
-      if (name) return name;
-    }
-    return String(key);
-  }
-
-  /**
-   * The name, the face and the line under it for one calibration row. The
-   * `source` on the row says which of the game's own registers to ask.
-   */
-  function calRowText(row, section) {
-    const text = calRowSource(row, section);
-    // A card with no name at all is unpickable. Every register the names come
-    // from is somebody else's - the state table, the parameter names, the
-    // weather model - and any of them can be missing under a load order or a
-    // language that has not been given the line, so the value itself is the
-    // last thing standing.
-    if (!text.name) text.name = String(row.value);
-    return text;
-  }
-
-  function calRowSource(row, section) {
-    switch (row.source) {
-      case 'element':
-        return { name: elementName(row.value), icon: ELEMENT_ICONS[row.value] || 0,
-                 meta: line('VectorGun.element.desc.' + row.value) };
-      case 'mode':
-        return { name: T('VectorGun.mode.' + row.value + '.name'),
-                 icon: MODE_ICONS[row.value] || 0,
-                 meta: line('VectorGun.mode.' + row.value + '.desc') };
-      case 'state':
-        return { name: stateName(row.value) ||
-                   line('VectorGun.cal.' + section + '.' + row.value + '.name'),
-                 icon: (stateRow(row.value) || {}).iconIndex || 0,
-                 meta: line('VectorGun.cal.' + section + '.' + row.value + '.desc') };
-      case 'skill': {
-        const skill = skillRow(row.value);
-        return { name: skill ? skill.name : '',
-                 icon: skill ? skill.iconIndex : 0,
-                 // The grid card says only what a skill COSTS: what it hits for
-                 // is worked out off real actions and belongs on the detail
-                 // card, which is asked for one row at a time.
-                 meta: skill ? T('VectorGun.cal.apCost', { ap: skill.tpCost || 0 }) : '' };
-      }
-      case 'weather':
-        return { name: weatherName(row.value), icon: CAL_SECTION_ICONS.sky,
-                 meta: line('VectorGun.cal.sky.' + row.value + '.desc') };
-      case 'school':
-        return { name: schoolName(row.value), icon: CAL_SECTION_ICONS.schools, meta: '' };
-      case 'archetype':
-        return { name: archetypeName(row.value), icon: CAL_SECTION_ICONS.quarry, meta: '' };
-      case 'param':
-        return { name: paramName(row.value), icon: CAL_SECTION_ICONS.lash,
-                 meta: line('VectorGun.cal.lash.desc') };
-      default:
-        return { name: T('VectorGun.cal.' + section + '.' + row.value + '.name'),
-                 icon: CAL_SECTION_ICONS[section] || 0,
-                 meta: line('VectorGun.cal.' + section + '.' + row.value + '.desc') };
-    }
   }
 
   //--------------------------------------------------------------------------
@@ -386,38 +255,18 @@
       const byName = (list, name) => list.slice().sort(
         (a, b) => String(name(a)).localeCompare(String(name(b))));
       if (this._tab === 'modes') {
-        return byName(MODE_KEYS, (key) => T('VectorGun.mode.' + key + '.name'))
-          .map((key) => ({ kind: 'mode', key: key }));
+        // The ONE page that is not alphabetical: the modes are a progression,
+        // so they read in the order they come open in (VectorGun.MODE_ORDER),
+        // the five she starts with first and Tracker rounds last. A locked
+        // card keeps its place in that run and prints the level instead.
+        return VG.MODE_ORDER.map((key) => ({ kind: 'mode', key: key }));
       }
-      if (this._tab === 'calibrate') return this.calRows();
       return [{ kind: 'head', text: T('VectorGun.section.forms') }]
         .concat(byName(FORM_CHOICES, (key) => shapeText(key, 'name'))
           .map((key) => ({ kind: 'form', key: key })))
         .concat([{ kind: 'head', text: T('VectorGun.section.elements') }])
         .concat(byName(ELEMENT_IDS, elementName)
           .map((id) => ({ kind: 'element', id: id })));
-    }
-
-    /**
-     * The calibrate page: the ONE gimmick of the shape that is fitted, as the
-     * system hands it over, split into the sections it named. A shape with
-     * nothing to set says so rather than showing an empty page.
-     */
-    calRows() {
-      const fitted = VG.fittedForm();
-      const actor = VG.wielder() || VG.emActor();
-      const rows = VG.calibrationRows(fitted, actor) || [];
-      if (!rows.length) return [{ kind: 'head', text: T('VectorGun.cal.none') }];
-      const out = [];
-      let section = null;
-      for (const row of rows) {
-        if (row.section !== section) {
-          section = row.section;
-          out.push({ kind: 'head', text: T('VectorGun.cal.section.' + section) });
-        }
-        out.push({ kind: 'cal', row: row, form: fitted, section: section });
-      }
-      return out;
     }
 
     /** The cards a cursor can actually land on, in grid order. */
@@ -457,18 +306,8 @@
      * place the gun stands as it.
      */
     standTarget() {
-      const row = this.current();
-      // The shapes page: a shape card stands as that shape, and an element
-      // card stands as the pistol, which is what the element is loaded into.
-      if (this._tab === 'form') return (row && row.kind === 'form') ? ALT_STAND : GUN_FORM;
-      // The calibrate page: the shape being calibrated is the one on the
-      // bench, which with the gun fitted is the coilgun it racks out into -
-      // except over an element card, which is the coilgun's own element and
-      // so is watched on the coilgun too.
-      if (this._tab === 'calibrate') return ALT_STAND;
-      // The modes page: the bays are the PISTOL's, so the pistol is what is
-      // being modified and the pistol is what stands there.
-      return GUN_FORM;
+      const row = this._tab === 'form' ? this.current() : null;
+      return (row && row.kind === 'form') ? ALT_STAND : GUN_FORM;
     }
 
     /** Brings the stand to whatever the cursor asks for. */
@@ -626,49 +465,19 @@
         setElement(row.id);
         SoundManager.playOk();
         this._toast(T('VectorGun.toast.element', { element: elementName(row.id) }), 'vgelement');
-      } else if (row.kind === 'cal') {
-        this._calibrate(row);
       }
       this._paint();
     }
 
-    /**
-     * Sets one thing about the shape that is fitted. A one-of row replaces
-     * whatever was there; an any-of row toggles, and at the group's cap the
-     * oldest is pushed out the way a mode bay does rather than the pick being
-     * refused.
-     */
-    _calibrate(entry) {
-      const row = entry.row;
-      const text = calRowText(row, entry.section);
-      SoundManager.playOk();
-      if (row.kind === 'multi') {
-        const result = VG.toggleCalibration(entry.form, row.field, row.value);
-        if (result.state === 'off') {
-          this._toast(T('VectorGun.toast.uncalibrated', { choice: text.name }), 'vgcal');
-        } else if (result.replaced !== null && result.replaced !== undefined) {
-          const old = calRowText(
-            { source: row.source, value: result.replaced }, entry.section);
-          this._toast(T('VectorGun.toast.calSwapped', {
-            choice: text.name, old: old.name,
-          }), 'vgcal');
-        } else {
-          this._toast(T('VectorGun.toast.calibrated', {
-            shape: shapeText(entry.form, 'name'), choice: text.name,
-          }), 'vgcal');
-        }
-        return;
-      }
-      VG.setCalibration(entry.form, row.field, row.value);
-      this._toast(T('VectorGun.toast.calibrated', {
-        shape: shapeText(entry.form, 'name'), choice: text.name,
-      }), 'vgcal');
-    }
-
     _fit(key) {
       const result = VG.fitMode(key);
-      SoundManager.playOk();
       const name = T('VectorGun.mode.' + key + '.name');
+      if (result.state === 'locked') {
+        SoundManager.playBuzzer();
+        this._toast(T('VectorGun.toast.locked', { mode: name, n: result.level }), 'vgmode');
+        return;
+      }
+      SoundManager.playOk();
       if (result.state === 'off') {
         this._toast(T('VectorGun.toast.removed', { mode: name }), 'vgmode');
       } else if (result.replaced) {
@@ -825,7 +634,7 @@
         .forEach((slot, i) => slot.classList.toggle('selected', i === this._index));
       this._el.querySelector('.vg-detail').innerHTML = this._detailHTML();
       this._scrollToSelection();
-      if (this._tab !== 'modes') this._queueStand();
+      if (this._tab === 'form') this._queueStand();
     }
 
     _scrollToSelection() {
@@ -844,29 +653,23 @@
 
     /**
      * The one line over the grid: how many bays are taken, what shape the frame
-     * is fitted as and what it is carrying. It sat in a footer under the list
-     * before, where it fought the list for the last inch of the page. The frame
-     * does not grow with Em, so there is nothing here about a level: what the
-     * gun is worth is what is fitted to it.
+     * is fitted as, what it is carrying, and how many modes are still shut. It
+     * sat in a footer under the list before, where it fought the list for the
+     * last inch of the page. The frame itself still does not grow with Em: a
+     * level buys the RIGHT to fit a mode, never a number on the weapon.
      */
     _statusHTML() {
-      const fitted = VG.fittedForm();
+      const shut = VG.lockedModes();
       const chips = [
         T('VectorGun.slots', { used: modes().length, max: MAX_MODES }),
-        shapeText(fitted, 'name'),
+        shapeText(VG.fittedForm(), 'name'),
         elementName(elementId()),
       ];
-      // What the fitted shape is set to, which is the one thing it carries of
-      // its own now that the bays and the element stop at the gun.
-      // Only what is lit: the whole page of a skill shape means ranking a
-      // category by what it hits for, and the strip is repainted on every
-      // confirm.
-      const calibrated = (VG.calibrationRows(
-        fitted, VG.wielder() || VG.emActor(), { chosenOnly: true }) || [])
-        .filter((row) => row.on);
-      chips.push(calibrated.length
-        ? calibrated.map((row) => calRowText(row, row.section).name).filter(Boolean).join(', ')
-        : T('VectorGun.cal.none'));
+      // What is left to come, and the first one of it: the frame still does not
+      // grow with her, but the right to fit a mode does.
+      if (shut.length) {
+        chips.push(T('VectorGun.lock.remaining', { n: shut.length, next: shut[0].level }));
+      }
       return chips.map((chip) => `<span class="vg-status-chip">${esc(chip)}</span>`).join('');
     }
 
@@ -884,11 +687,10 @@
         pick++;
         const card = row.kind === 'mode' ? this._modeCard(row.key)
           : row.kind === 'form' ? this._formCard(row.key)
-          : row.kind === 'cal' ? this._calCard(row)
           : this._elementCard(row.id);
         const index = pick;
         return `
-          <div class="item-slot focusable${index === this._index ? ' selected' : ''}${card.on ? ' vg-on' : ''}"
+          <div class="item-slot focusable${index === this._index ? ' selected' : ''}${card.on ? ' vg-on' : ''}${card.locked ? ' vg-locked' : ''}"
                onclick="SceneManager._scene.confirmRow(${index})">
             <div class="item-rarity-bar" style="background:${card.stripe};"></div>
             ${iconHTML(card.icon)}
@@ -905,15 +707,20 @@
 
     _modeCard(key) {
       const bay = modes().indexOf(key);
+      const locked = !VG.isModeUnlocked(key);
       return {
         name: T('VectorGun.mode.' + key + '.name'),
         icon: MODE_ICONS[key] || 0,
         // The one line under the name is what the mode DOES: a page of cards
         // all saying "Idle" says nothing at all.
         meta: line('VectorGun.mode.' + key + '.desc'),
-        chip: bay >= 0 ? T('VectorGun.bay.loaded', { n: bay + 1 }) : '',
+        // A mode she has not reached yet says so where a fitted one says which
+        // bay it is in: the level is the only thing about it she can act on.
+        chip: locked ? T('VectorGun.lock.level', { n: VG.unlockLevel(key) })
+          : bay >= 0 ? T('VectorGun.bay.loaded', { n: bay + 1 }) : '',
         stripe: bay >= 0 ? STRIPE_ON : STRIPE_OFF,
         on: bay >= 0,
+        locked: locked,
       };
     }
 
@@ -926,19 +733,6 @@
         chip: fitted ? T('VectorGun.form.fitted') : '',
         stripe: fitted ? STRIPE_ON : STRIPE_OFF,
         on: fitted,
-      };
-    }
-
-    _calCard(entry) {
-      const row = entry.row;
-      const text = calRowText(row, entry.section);
-      return {
-        name: text.name,
-        icon: text.icon,
-        meta: text.meta,
-        chip: row.on ? T('VectorGun.cal.chip.selected') : '',
-        stripe: row.on ? STRIPE_ON : STRIPE_OFF,
-        on: row.on,
       };
     }
 
@@ -963,7 +757,6 @@
       if (!row) return '';
       const card = row.kind === 'mode' ? this._modeDetail(row.key)
         : row.kind === 'form' ? this._formDetail(row.key)
-        : row.kind === 'cal' ? this._calDetail(row)
         : this._elementDetail(row.id);
       return `
         <div class="ui-detail-head">
@@ -1008,12 +801,18 @@
     }
 
     _modeDetail(key) {
+      const locked = !VG.isModeUnlocked(key);
       return {
         name: T('VectorGun.mode.' + key + '.name'),
-        kind: T('VectorGun.detail.modesTitle'),
+        kind: locked ? T('VectorGun.lock.title') : T('VectorGun.detail.modesTitle'),
         // The card is the long form: the grid already carries the short one.
         prose: line('VectorGun.mode.' + key + '.effect'),
-        specs: [],
+        // What a shut mode is waiting for, and what she is at now: the two
+        // numbers together are the whole answer.
+        specs: locked
+          ? [[T('VectorGun.lock.unlocksAt'), String(VG.unlockLevel(key))],
+             [T('VectorGun.lock.current'), String(VG.gunLevel())]]
+          : [],
       };
     }
 
@@ -1030,11 +829,11 @@
       const bonus = Math.round((VG.FORM_DAMAGE_BONUS || 0) * 100);
       const specs = [];
       VG.withForm(folded, () => {
-        specs.push([T('VectorGun.detail.range'), T('VectorGun.detail.rangeTiles', { n: VG.weaponReach(Number(baseRange)) })]);
-        // The frame condenses its own rounds, so no shape carries ammunition.
-        // What a shape can have is a rack of its own - the coilgun's three,
-        // the crossbow's single bolt - and those are the cards with a number.
-        if ((VG.FORM_MODES[folded] || {}).bullets) {
+        specs.push([T('VectorGun.detail.range'), String(VG.weaponReach(Number(baseRange)))]);
+        // The frame condenses its own rounds, so no shape carries ammunition:
+        // the only count left is the coilgun's rack, and it is the only card
+        // that has a number to show.
+        if (folded === VG.SNIPER_FORM) {
           specs.push([T('VectorGun.detail.magazine'),
             String(VG.magazineSize(Number(baseBullets)))]);
         }
@@ -1048,49 +847,6 @@
           }),
         specs: specs,
       };
-    }
-
-    /**
-     * The card for one calibration row. This is the ONE place a skill's damage
-     * is worked out, because working it out builds real actions against real
-     * creatures: one row at a time, and the answer is kept for as long as the
-     * screen is open.
-     */
-    _calDetail(entry) {
-      const row = entry.row;
-      const text = calRowText(row, entry.section);
-      const specs = [];
-      if (row.source === 'skill') {
-        const skill = skillRow(row.value);
-        const actor = VG.wielder() || VG.emActor();
-        specs.push([T('VectorGun.cal.apCost', { ap: (skill && skill.tpCost) || 0 }),
-          entry.section === 'known' ? T('VectorGun.cal.known') : T('VectorGun.cal.borrowed')]);
-        const hit = this._skillDamage(skill, actor);
-        if (hit) specs.push([T('VectorGun.detail.damage'), String(hit)]);
-      }
-      return {
-        name: text.name,
-        kind: T('VectorGun.detail.calibrateTitle'),
-        prose: (line('VectorGun.cal.form.' + entry.form + '.hint') || '') +
-          (text.meta ? '<br><br>' + text.meta : ''),
-        specs: specs,
-      };
-    }
-
-    /** What a skill would actually hit for, measured once and remembered. */
-    _skillDamage(skill, actor) {
-      if (!skill || !actor) return 0;
-      if (!this._damageMemo) this._damageMemo = {};
-      const key = skill.id + ':' + (actor.level || 1);
-      if (this._damageMemo[key] !== undefined) return this._damageMemo[key];
-      let hit = 0;
-      const SD = window.SkillDetails;
-      if (SD && SD.medianDamageFor) {
-        try { hit = Math.round(Number(SD.medianDamageFor(skill, actor)) || 0); }
-        catch (e) { hit = 0; }
-      }
-      this._damageMemo[key] = hit;
-      return hit;
     }
 
     _elementDetail(id) {
