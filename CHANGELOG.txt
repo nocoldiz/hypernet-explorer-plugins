@@ -4,7 +4,7 @@ Added:
  - RocketLaunchPlugin coilgun launch cinematic
  - alcohol and drugs give screen effects and slurred empathize dialogue
  - hotbar skill tooltips in combat
- - arena matches restore AP
+ - arena matches restore AP 
 
 Changed:
  - Structure of base floor of Omega tower
