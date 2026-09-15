@@ -265,7 +265,6 @@
 
     // Whole categories that are inherently strange merchandise.
     const WEIRD_BUCKETS = [
-        { cat: 'Counterfeits', max: 999999, weight: 4 },
         { cat: 'Trash', max: 999999, weight: 4 },
         { cat: 'BodyPart', max: 999999, weight: 3 },
         { cat: 'Monsters', max: 8000, weight: 1 }

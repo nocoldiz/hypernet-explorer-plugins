@@ -50,13 +50,13 @@
     "boosterPack": "BOOSTER PACK",
     "lockpick": "LOCKPICK",
     "arcadeSnake": "ARCADE: SNAKE",
-    "arcadeFrogger": "ARCADE: FROGGER",
+    "arcadeFrogger": "ARCADE: HOPPA",
     "arcadeBubblePop": "ARCADE: BUBBLE POP",
-    "arcadeSpaceInvaders": "ARCADE: SPACE INVADERS",
-    "arcadeBreakout": "ARCADE: BREAKOUT",
+    "arcadeSpaceInvaders": "ARCADE: ASTRO INTRUDERS",
+    "arcadeBreakout": "ARCADE: WALLBREAKER",
     "arcadeManpac": "ARCADE: MANPAC",
-    "arcadeAsteroids": "ARCADE: ASTEROIDS",
-    "arcadeCentipede": "ARCADE: CENTIPEDE",
+    "arcadeAsteroids": "ARCADE: METEOROIDS",
+    "arcadeCentipede": "ARCADE: CRAWLER",
     "piano": "PIANO"
   },
   "minigameSetup": {

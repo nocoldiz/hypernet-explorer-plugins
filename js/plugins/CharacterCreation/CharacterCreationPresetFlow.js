@@ -785,7 +785,7 @@
     // outright, and the one page still owed after it is the vehicle.
     _presetConfirmLabel() {
       return Scene_CharacterCreation._storyMode
-        ? ccT('CharCreate.confirmParty', 'Confirm Party')
+        ? ccT('CharCreate.confirmParty')
         : T('CharCreate.applyToMember');
     }
 
@@ -818,7 +818,7 @@
       if (!this._presetIsPlayerMade(preset)) return "";
       return `
           <button class="cc-sidebar-btn cc-btn-full cc-btn-danger" onclick="SceneManager._scene.onDeletePreset(${activeIndex})">
-            ${this._ccIconHtml(168, 18)} <span>${ccT('CharCreate.deletePreset', 'Delete Dossier')}</span>
+            ${this._ccIconHtml(168, 18)} <span>${ccT('CharCreate.deletePreset')}</span>
           </button>`;
     }
 
@@ -831,10 +831,9 @@
         : null;
       if (!this._presetIsPlayerMade(preset)) { SoundManager.playBuzzer(); return; }
       this._ccConfirm({
-        title: ccT('CharCreate.deletePreset', 'Delete Dossier'),
-        body: ccTp('CharCreate.deletePresetBody', { name: preset.name },
-          `Delete the dossier of ${preset.name}? This cannot be undone.`),
-        acceptLabel: ccT('CharCreate.deletePreset', 'Delete Dossier')
+        title: ccT('CharCreate.deletePreset'),
+        body: ccTp('CharCreate.deletePresetBody', { name: preset.name }),
+        acceptLabel: ccT('CharCreate.deletePreset')
       }, () => {
         const CP = window.CharacterPresets;
         if (!CP || !CP.removePresetById(preset.id, { playerOnly: true })) {
@@ -873,7 +872,7 @@
       const briefHtml = (preset && preset.storyModeOnly)
         ? this._storyModeClassBriefHtml(preset)
         : `<p class="cc-text-desc cc-text-desc--body">
-            ${this.cleanText(presetLore || ccT('CharCreate.presetNoLore', 'A distinguished operative prepared for network field operations.'))}
+            ${this.cleanText(presetLore || ccT('CharCreate.presetNoLore'))}
           </p>`;
       const presetGold = preset ? (presetLoadout(preset).money || 200000) : 200000;
       const presetMoneyFormatted = this._formatGoldToEuros(presetGold);
@@ -883,6 +882,7 @@
       // are picked here, before the character is taken, and the look chosen
       // is the one they are then played as. Only shown for a dossier that
       // actually has more than one, so nobody else grows an empty row.
+      const skinKeyPad = skinKeyPadOn() ? "1" : "0"; // i18n-ignore: DOM data attribute value
       const skinsHtml = skins.length > 1 ? `
           <div class="cc-skins-row">
             ${skins.map((s, si) => `
@@ -894,7 +894,7 @@
             `).join("")}
           </div>
           <div class="cc-skins-hint">
-            <span class="cc-key-chip" data-pad="${skinKeyPadOn() ? "1" : "0"}">${skinKeyLabel()}</span>
+            <span class="cc-key-chip" data-pad="${skinKeyPad}">${skinKeyLabel()}</span>
             <span>${T('CharPresets.skinHint')} (${currentSkinIdx + 1}/${skins.length})</span>
           </div>` : "";
 
@@ -908,7 +908,7 @@
           </div>
           ${skinsHtml}
           <div class="cc-dossier-card cc-card-padded">
-            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.dossierName', 'Name')}</span><span class="cc-dossier-value">${preset.name}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.dossierName')}</span><span class="cc-dossier-value">${preset.name}</span></div>
             <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${T('CharCreate.vocation')}</span><span class="cc-dossier-value">${className}</span></div>
           </div>
           <div class="cc-scroll-pane">
@@ -968,7 +968,7 @@
           <div class="cc-wanted-card ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onPresetCardClick(${index})">
             <div class="cc-wanted-sprite" style="${this.getSpriteStyle(cardSkin.sprite, cardSkin.spriteIndex)}"></div>
             <div class="cc-wanted-name">${p.name}</div>
-            <div class="cc-wanted-class">${$dataClasses[p.classId] ? window.CCDbName($dataClasses[p.classId]) : "Operative"}</div>
+            <div class="cc-wanted-class">${$dataClasses[p.classId] ? window.CCDbName($dataClasses[p.classId]) : T('CharCreate.defaultClassName')}</div>
           </div>
         `;
       }).join("");
@@ -999,7 +999,7 @@
       const avatarStyle = skin.sprite ? this.getSpriteStyle(skin.sprite, skin.spriteIndex || 0) : "";
 
       const classData = $dataClasses[preset.classId];
-      const className = classData ? window.CCDbName(classData) : ccT('CharCreate.class', 'Class');
+      const className = classData ? window.CCDbName(classData) : ccT('CharCreate.class');
 
       const identityHeaderHtml = `
         <div class="cc-compact-identity-card">
@@ -1106,7 +1106,7 @@
       });
       const moneyRowHtml = this._ccLoadoutRowHtml(
         208,
-        ccT('CharCreate.startingFunds', 'Starting Funds'),
+        ccT('CharCreate.startingFunds'),
         this._formatGoldToEuros(loadout.money),
         { nameColor: 'var(--text-primary-hover)', valueColor: 'var(--text-cost-ok)' }
       );
@@ -1363,8 +1363,8 @@
       return { ok: false, reason: "unknownPreset" };
     }
     const isEmStoryParty = (typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(100)) &&
-      (typeof $gameParty !== "undefined" && $gameParty && $gameParty.leader() ? $gameParty.leader().name() === "Em" : true);
-    if (preset.name === "Bubba" && !isEmStoryParty) {
+      (typeof $gameParty !== "undefined" && $gameParty && $gameParty.leader() ? $gameParty.leader().name() === "Em" : true); // i18n-ignore: story preset ids
+    if (preset.name === "Bubba" && !isEmStoryParty) { // i18n-ignore: preset id
       return { ok: false, reason: "storyLocked" };
     }
     if ($gameParty.members().some((mem) => mem.name() === preset.name)) {

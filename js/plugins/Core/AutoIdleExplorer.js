@@ -3219,14 +3219,24 @@
         // The pad's triggers, read as a tap: a pull is only answered once it has
         // been RELEASED, and only if it was let go inside the tap window.
         // Anything longer is a zoom and is left to MousePan.
-        padStep() {
+        //
+        // Both triggers are read here and nowhere else, because the tap window
+        // is the whole of what keeps one pull from doing two things. What each
+        // TAP then means is not this method's business: it reports the side and
+        // update() below hands it to whoever owns it - R2 the next party member,
+        // L2 the map legend. A long pull of either is still a zoom.
+        padTap() {
             // Asked before anything is read: reading a trigger claims it for
             // the frame (AnalogStickInput), and a screen that wants the same
             // pull for itself stands down when somebody else has. Claiming it
             // on a map where the party cannot cycle anyway - mid-message, in a
             // vehicle, while an event runs - would cost every overlay open over
             // that map its own use of the triggers for nothing.
-            if (!this.available() || this.typing()) {
+            // Not gated on whether the LEAD may change hands any more: L2 folds
+            // the legend on every map, including the ones the party cannot cycle
+            // on (the world map, a solo party), so the tap has to be read there
+            // too. Each half checks its own owner in update().
+            if (this.typing() || !this.padWanted()) {
                 this._padDir = 0;
                 this._padHold = 0;
                 return 0;
@@ -3256,19 +3266,51 @@
             return was && held <= this.PAD_TAP ? was : 0;
         },
 
+        // A pull that has already done something else - zoomed the world map
+        // camera (Core/MousePan.js) - is no longer a tap, and letting go of it
+        // must not fold the legend on the way out. Forgetting the pull is enough:
+        // a tap is only ever answered on RELEASE, off a pull this still remembers.
+        cancelPadTap() {
+            this._padDir = 0;
+            this._padHold = 0;
+        },
+
+        // Whether anything on this map wants a trigger TAP at all: the lead may
+        // change hands (R2), or there is a legend to fold (L2). With neither,
+        // the triggers are not read and are left whole to the camera.
+        padWanted() {
+            if (this.available()) return true;
+            return !!(window.MapLegend && window.MapLegend.padFoldAvailable &&
+                window.MapLegend.padFoldAvailable());
+        },
+
         // True while a trigger pull is still short enough to turn out to be a
-        // party cycle. MousePan asks before zooming, so one tap never does both.
+        // tap. MousePan asks before zooming, so one pull never does both.
         padClaimsTriggers() {
-            return this._padDir !== 0 && this._padHold <= this.PAD_TAP && this.available();
+            return this._padDir !== 0 && this._padHold <= this.PAD_TAP && this.padWanted();
         },
 
         update() {
             this.updatePan();
+            // TAB IS UNCHANGED: forwards, and backwards with Shift. The keyboard
+            // keeps both directions because it has a modifier to spare; the pad
+            // does not, so R2 walks the party forwards and wraps, and L2 was
+            // wanted for the legend instead.
             let dir = 0;
             if (!this.typing() && Input.isTriggered("tab")) {
                 dir = Input.isPressed("shift") ? -1 : 1;
             } else {
-                dir = this.padStep();
+                const tap = this.padTap();
+                // L2: the map legend's controls and info sheet, which is H on a
+                // keyboard and is folded by its own owner (Map/MapLegend.js).
+                if (tap < 0) {
+                    if (window.MapLegend && window.MapLegend.padFoldAvailable &&
+                        window.MapLegend.padFoldAvailable()) {
+                        window.MapLegend.toggleFold();
+                    }
+                    return;
+                }
+                dir = tap;
             }
             if (!dir || !this.available()) return;
             if (this.cycle(dir)) SoundManager.playOk();

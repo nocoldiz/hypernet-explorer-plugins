@@ -20,7 +20,10 @@
  * gun is running along the bottom.
  *
  * The two pages:
- *   modes  - the twenty odd operating modes, three across
+ *   modes  - the twenty-five operating modes, three across, in the order
+ *            they come open in rather than alphabetically: the five she
+ *            starts with first, the ones she has not levelled into yet greyed
+ *            out with the level written where the bay number goes
  *   form   - the shapes the gun folds into AND the element it carries, one
  *            page because both are "what the weapon is" rather than what it
  *            is running
@@ -252,8 +255,11 @@
       const byName = (list, name) => list.slice().sort(
         (a, b) => String(name(a)).localeCompare(String(name(b))));
       if (this._tab === 'modes') {
-        return byName(MODE_KEYS, (key) => T('VectorGun.mode.' + key + '.name'))
-          .map((key) => ({ kind: 'mode', key: key }));
+        // The ONE page that is not alphabetical: the modes are a progression,
+        // so they read in the order they come open in (VectorGun.MODE_ORDER),
+        // the five she starts with first and Tracker rounds last. A locked
+        // card keeps its place in that run and prints the level instead.
+        return VG.MODE_ORDER.map((key) => ({ kind: 'mode', key: key }));
       }
       return [{ kind: 'head', text: T('VectorGun.section.forms') }]
         .concat(byName(FORM_CHOICES, (key) => shapeText(key, 'name'))
@@ -465,8 +471,13 @@
 
     _fit(key) {
       const result = VG.fitMode(key);
-      SoundManager.playOk();
       const name = T('VectorGun.mode.' + key + '.name');
+      if (result.state === 'locked') {
+        SoundManager.playBuzzer();
+        this._toast(T('VectorGun.toast.locked', { mode: name, n: result.level }), 'vgmode');
+        return;
+      }
+      SoundManager.playOk();
       if (result.state === 'off') {
         this._toast(T('VectorGun.toast.removed', { mode: name }), 'vgmode');
       } else if (result.replaced) {
@@ -642,17 +653,23 @@
 
     /**
      * The one line over the grid: how many bays are taken, what shape the frame
-     * is fitted as and what it is carrying. It sat in a footer under the list
-     * before, where it fought the list for the last inch of the page. The frame
-     * does not grow with Em, so there is nothing here about a level: what the
-     * gun is worth is what is fitted to it.
+     * is fitted as, what it is carrying, and how many modes are still shut. It
+     * sat in a footer under the list before, where it fought the list for the
+     * last inch of the page. The frame itself still does not grow with Em: a
+     * level buys the RIGHT to fit a mode, never a number on the weapon.
      */
     _statusHTML() {
+      const shut = VG.lockedModes();
       const chips = [
         T('VectorGun.slots', { used: modes().length, max: MAX_MODES }),
         shapeText(VG.fittedForm(), 'name'),
         elementName(elementId()),
       ];
+      // What is left to come, and the first one of it: the frame still does not
+      // grow with her, but the right to fit a mode does.
+      if (shut.length) {
+        chips.push(T('VectorGun.lock.remaining', { n: shut.length, next: shut[0].level }));
+      }
       return chips.map((chip) => `<span class="vg-status-chip">${esc(chip)}</span>`).join('');
     }
 
@@ -673,7 +690,7 @@
           : this._elementCard(row.id);
         const index = pick;
         return `
-          <div class="item-slot focusable${index === this._index ? ' selected' : ''}${card.on ? ' vg-on' : ''}"
+          <div class="item-slot focusable${index === this._index ? ' selected' : ''}${card.on ? ' vg-on' : ''}${card.locked ? ' vg-locked' : ''}"
                onclick="SceneManager._scene.confirmRow(${index})">
             <div class="item-rarity-bar" style="background:${card.stripe};"></div>
             ${iconHTML(card.icon)}
@@ -690,15 +707,20 @@
 
     _modeCard(key) {
       const bay = modes().indexOf(key);
+      const locked = !VG.isModeUnlocked(key);
       return {
         name: T('VectorGun.mode.' + key + '.name'),
         icon: MODE_ICONS[key] || 0,
         // The one line under the name is what the mode DOES: a page of cards
         // all saying "Idle" says nothing at all.
         meta: line('VectorGun.mode.' + key + '.desc'),
-        chip: bay >= 0 ? T('VectorGun.bay.loaded', { n: bay + 1 }) : '',
+        // A mode she has not reached yet says so where a fitted one says which
+        // bay it is in: the level is the only thing about it she can act on.
+        chip: locked ? T('VectorGun.lock.level', { n: VG.unlockLevel(key) })
+          : bay >= 0 ? T('VectorGun.bay.loaded', { n: bay + 1 }) : '',
         stripe: bay >= 0 ? STRIPE_ON : STRIPE_OFF,
         on: bay >= 0,
+        locked: locked,
       };
     }
 
@@ -779,12 +801,18 @@
     }
 
     _modeDetail(key) {
+      const locked = !VG.isModeUnlocked(key);
       return {
         name: T('VectorGun.mode.' + key + '.name'),
-        kind: T('VectorGun.detail.modesTitle'),
+        kind: locked ? T('VectorGun.lock.title') : T('VectorGun.detail.modesTitle'),
         // The card is the long form: the grid already carries the short one.
         prose: line('VectorGun.mode.' + key + '.effect'),
-        specs: [],
+        // What a shut mode is waiting for, and what she is at now: the two
+        // numbers together are the whole answer.
+        specs: locked
+          ? [[T('VectorGun.lock.unlocksAt'), String(VG.unlockLevel(key))],
+             [T('VectorGun.lock.current'), String(VG.gunLevel())]]
+          : [],
       };
     }
 

@@ -1,0 +1,142 @@
+{
+  "site": {
+    "taranto": {
+      "name": "Taranto",
+      "blurb": "Il cantiere ionico. Due mari, quattro ciminiere che non si spengono mai, e una canna posata sul salso."
+    },
+    "greenwich": {
+      "name": "Greenwich",
+      "blurb": "Il pilone del meridiano. Mattoni, nebbia di fiume, e una linea verde tirata a nord sulla citta."
+    }
+  },
+  "mode": {
+    "orbital": {
+      "name": "Orbitale",
+      "blurb": "Dritto in alto, fuori attraverso la fascia, e appuntamento con l'astronave. Tre stadi. La corazza non torna indietro."
+    },
+    "suborbital": {
+      "name": "Suborbitale",
+      "blurb": "Lo stesso cannone usato come trasporto. Una parabola fino all'altra rampa, un ribaltamento in cima, e il carburante speso per fermarsi. Due stadi."
+    }
+  },
+  "phase": {
+    "hold": "Attesa",
+    "countdown": "Conto alla rovescia",
+    "coil": "Rilascio su rotaia",
+    "coast": "Volo balistico",
+    "ignition": "Accensione",
+    "burn": "Salita propulsa",
+    "kessler": "Fascia di detriti",
+    "clear": "Fascia superata",
+    "rendezvous": "Appuntamento",
+    "dock": "Attracco",
+    "aboard": "A bordo",
+    "ascent": "Salita balistica",
+    "apogee": "Ribaltamento all'apogeo",
+    "retroburn": "Retroaccensione",
+    "reentry": "Rientro",
+    "terminal": "Fase terminale",
+    "touchdown": "Atterraggio",
+    "arrived": "Arrivati"
+  },
+  "band": {
+    "troposphere": "Troposfera",
+    "maxq": "Max Q",
+    "stratosphere": "Stratosfera",
+    "ignition": "Accensione",
+    "karman": "Karman",
+    "thermosphere": "Termosfera",
+    "kessler": "Kessler",
+    "rendezvous": "Appuntamento",
+    "retro": "Retro",
+    "apogee": "Apogeo"
+  },
+  "hud": {
+    "altitude": "Quota",
+    "velocity": "Verticale",
+    "density": "Aria",
+    "downrange": "Mancano",
+    "plates": "Piastre {n}",
+    "stages": "Std {n}",
+    "integrity": "Scafo",
+    "caution": "Allarme generale - detriti",
+    "camHint": "Trascina ruota OK ricentra  Tieni X salta",
+    "freeCam": "Camera libera",
+    "noThree": "3D non disponibile"
+  },
+  "unit": {
+    "m": "m",
+    "km": "km",
+    "ms": "m/s",
+    "kms": "km/s"
+  },
+  "select": {
+    "title": "Sito di lancio",
+    "subtitle": "Da dove parte il colpo",
+    "modeTitle": "Piano di volo",
+    "modeSubtitle": "Lo stesso cannone, due voli molto diversi",
+    "latitude": "Lat",
+    "weather": "Meteo",
+    "light": "Luce",
+    "night": "Notte",
+    "golden": "Sole basso",
+    "day": "Giorno",
+    "hazard": "Costo scafo",
+    "confirm": "OK conferma   X indietro",
+    "stages": "Stadi",
+    "apogee": "Apogeo",
+    "armour": "Corazza",
+    "armourKept": "Intatta",
+    "armourLost": "Strappata",
+    "arrives": "Arriva a",
+    "starship": "Astronave",
+    "track": "Tratta",
+    "vertical": "Verticale"
+  },
+  "weather": {
+    "none": "Sereno",
+    "rain": "Pioggia",
+    "storm": "Tempesta",
+    "snow": "Neve"
+  },
+  "telemetry": {
+    "ready": "Poligono di {site} verde. Piano {mode} caricato.",
+    "padClear": "Rampa libera. Sono tutti dietro il terrapieno.",
+    "countStart": "Conto terminale avviato. Adesso il volo lo tiene il cannone.",
+    "coilCharge": "Banchi in carica. Anelli in salita dal basso.",
+    "gantryClear": "La torre di servizio si sta scostando.",
+    "release": "Rilascio. Il proiettile e in canna.",
+    "railExit": "Uscita dalla rotaia. Due virgola quattro chilometri al secondo, e niente che bruci.",
+    "ballistic": "Balistico. Nessun motore, nessun controllo, solo l'arco che gli ha dato il cannone.",
+    "maxQ": "Max Q. L'aria gli sta portando via la vernice.",
+    "thinAir": "L'aria si dirada. Carichi strutturali in calo.",
+    "ignition": "Accensione a {alt}. Finalmente non c'e piu niente da combattere.",
+    "burning": "Combustione pulita. Camera stabile.",
+    "karman": "Linea di Karman. Ufficialmente fuori dal cielo.",
+    "beltAhead": "Fascia in avvicinamento. Il tracciamento non ha niente di utile da dire.",
+    "beltEntry": "Dentro la fascia. Reggetevi.",
+    "beltDeep": "Ancora dentro. Scafo al {pct}.",
+    "beltBare": "Non c'e quasi piu niente da perdere la fuori. Scafo {pct}.",
+    "beltClear": "Fuori dalla fascia. Qualunque cosa sia, vola ancora.",
+    "shipSighted": "Astronave in vista, sale dal bordo del pianeta.",
+    "closing": "In avvicinamento. Il collare ci ha presi.",
+    "softDock": "Attracco morbido.",
+    "hardDock": "Attracco rigido. Ganci bloccati.",
+    "aboard": "A bordo. Scafo {pct} e neanche una piastra di margine.",
+    "proximity": "Prossimita. Qualcosa di grosso, e non sta rallentando.",
+    "impact": "Impatto. Scafo {pct}.",
+    "hopPadClear": "Rampa libera. Tratta tracciata fino a {dest}.",
+    "hopCount": "Conto terminale. Profilo suborbitale, due stadi.",
+    "hopBallistic": "Salita balistica. Niente brucia fino alla cima.",
+    "hopApogeeNear": "Apogeo in arrivo. Pronti a girarla.",
+    "hopFlip": "Ribaltamento. Testa coda, a freddo.",
+    "hopFlipDone": "Ribaltamento completato. Adesso il motore punta a {dest}.",
+    "hopRetro": "Retroaccensione. Tutto quello che resta nei serbatoi va nel frenare.",
+    "hopBraking": "Frenata dura. La velocita scende.",
+    "hopReentry": "Rientro. Il pennacchio e lo scudo termico.",
+    "hopTerminal": "Piazzale di {dest} in vista. Le luci ci portano dentro.",
+    "hopApron": "Sopra il piazzale. Gambe fuori.",
+    "hopTouchdown": "Contatto. Scafo {pct}, con tutti gli strati ancora addosso.",
+    "hopArrived": "Arrivati a {dest}. Stesso proiettile, altro mare."
+  }
+}

@@ -177,11 +177,11 @@
     },
     "generic": {
       "templates": [
-        "An old craft of uncertain origin, {mechanism}. {Token}.",
-        "{Era}: its first practitioner is forgotten, yet {token}.",
-        "{Art} passed from master to pupil across the ages; {token}.",
-        "Lore of long standing, {mechanism}; {token}.",
-        "{Attrib} carried {art} down the years, and {token}."
+        "A craft with no founder on record, {mechanism}. {Token}.",
+        "{Era}: whoever did it first left no name, and {token}.",
+        "{Art}, taught hand to hand and written down badly; {token}.",
+        "Unchartered, undocumented, still in daily use, {mechanism}; {token}.",
+        "{Attrib} carried {art} through three centuries of nobody caring, and {token}."
       ]
     },
     "forged": {
@@ -247,28 +247,28 @@
   },
   "fallbackArchetype": {
     "art": [
-      "the old craft",
-      "the handed-down art",
-      "the long-kept skill",
-      "the elder discipline"
+      "the craft with no founder",
+      "the trade nobody filed a claim on",
+      "the art that lost its first page",
+      "the discipline the guilds never chartered"
     ],
     "era": [
-      "of uncertain origin",
-      "its first day forgotten",
-      "of long standing",
-      "older than the records"
+      "undated in every surviving copy",
+      "its first day torn out of the register",
+      "older than the oldest copy anyone still owns",
+      "older than the archive that would have logged it"
     ],
     "mechanism": [
-      "passed from master to pupil across the ages",
-      "kept alive against every forgetting",
-      "handed down where it was needed most",
-      "carried quietly through the years"
+      "taught hand to hand because nobody wrote it down correctly",
+      "surviving in workshop notes and in no textbook at all",
+      "copied wrong four times and working anyway",
+      "kept by people who needed it more than they needed a name for it"
     ],
     "attrib": [
-      "forgotten first practitioners",
-      "the masters who kept it alive",
-      "those who valued it in hard times",
-      "the pupils who carried it on"
+      "practitioners whose names went unrecorded",
+      "masters who taught it for board and bread",
+      "labourers who used it long before anyone studied it",
+      "pupils who learned it standing up, in the yard"
     ]
   },
   "archetypes": {

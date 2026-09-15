@@ -78,8 +78,6 @@
  * @value
  * @option Alchemistry
  * @value Alchemistry
- * @option Arctic
- * @value Arctic
  * @option Armor
  * @value Armor
  * @option Armor: Clothes
@@ -94,8 +92,6 @@
  * @value Armor: Equipment
  * @option Armor: Shield
  * @value Armor: Shield
- * @option Artisan
- * @value Artisan
  * @option BodyPart
  * @value BodyPart
  * @option Books
@@ -106,12 +102,8 @@
  * @value Combat
  * @option Component
  * @value Component
- * @option Counterfeits
- * @value Counterfeits
  * @option Crafting
  * @value Crafting
- * @option Espionage
- * @value Espionage
  * @option Farming
  * @value Farming
  * @option Food
@@ -149,8 +141,6 @@
  * @value
  * @option Alchemistry
  * @value Alchemistry
- * @option Arctic
- * @value Arctic
  * @option Armor
  * @value Armor
  * @option Armor: Clothes
@@ -165,8 +155,6 @@
  * @value Armor: Equipment
  * @option Armor: Shield
  * @value Armor: Shield
- * @option Artisan
- * @value Artisan
  * @option BodyPart
  * @value BodyPart
  * @option Books
@@ -177,12 +165,8 @@
  * @value Combat
  * @option Component
  * @value Component
- * @option Counterfeits
- * @value Counterfeits
  * @option Crafting
  * @value Crafting
- * @option Espionage
- * @value Espionage
  * @option Farming
  * @value Farming
  * @option Food
@@ -220,8 +204,6 @@
  * @value
  * @option Alchemistry
  * @value Alchemistry
- * @option Arctic
- * @value Arctic
  * @option Armor
  * @value Armor
  * @option Armor: Clothes
@@ -236,8 +218,6 @@
  * @value Armor: Equipment
  * @option Armor: Shield
  * @value Armor: Shield
- * @option Artisan
- * @value Artisan
  * @option BodyPart
  * @value BodyPart
  * @option Books
@@ -248,12 +228,8 @@
  * @value Combat
  * @option Component
  * @value Component
- * @option Counterfeits
- * @value Counterfeits
  * @option Crafting
  * @value Crafting
- * @option Espionage
- * @value Espionage
  * @option Farming
  * @value Farming
  * @option Food

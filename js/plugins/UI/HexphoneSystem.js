@@ -441,6 +441,7 @@
     //=============================================================================
 
     // country name (as in js/db/WorldGen/Countries.json) -> [police, fire, medical]
+    // i18n-ignore-start: lookup keys matched against Countries.json / WeatherSystem nation ids, never printed
     const EMERGENCY_BY_COUNTRY = {
         'Albania': ['129', '128', '127'],
         'Andorra': ['110', '118', '116'],
@@ -576,6 +577,7 @@
         'Middle East': ['112', '112', '112'],
         'Oceania': ['112', '112', '112']
     };
+    // i18n-ignore-end
 
     const GSM_UNIVERSAL = '112';
 

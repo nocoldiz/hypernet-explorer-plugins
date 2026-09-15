@@ -1147,6 +1147,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Floor 0: the hall the lower tower hangs off. Coming back up from -1
     // lands north of its down staircase, facing away from it.
     STAIRS_HALL: { mapId: 635, x: 13, y: 19, dir: 8 },
+    // Where climbing out of floor -1 puts the party: not the Stairs Hall, but
+    // the mouth the lower tower actually opens onto.
+    LOWER_EXIT: { mapId: 314, x: 61, y: 100, dir: 8 },
     SECRET_STAIRWAY: {
       floor: -22, mapId: 1177,
       down: { x: 3, y: 6, dir: 2 },   // arrived from -21, on the way deeper
@@ -1669,14 +1672,14 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     enterGeneratedLowerFloor(floor, arrival);
   }
 
-  // Out of floor -1 and back into the hall the tower hangs off.
+  // Out of floor -1 and back up to the mouth the lower tower opens onto.
   function leaveLowerTower() {
     $gameVariables.setValue(params.currentFloorVariable, 0);
     $gameVariables.setValue(params.elevatorFloorVariable, 0);
     clearTowerSession();
-    const hall = TOWER.STAIRS_HALL;
+    const exit = TOWER.LOWER_EXIT;
     $gameScreen.startFadeOut(1);
-    $gamePlayer.reserveTransfer(hall.mapId, hall.x, hall.y, hall.dir, 0);
+    $gamePlayer.reserveTransfer(exit.mapId, exit.x, exit.y, exit.dir, 0);
   }
 
   // What the elevator's floor list calls a lower floor. An unreached one is

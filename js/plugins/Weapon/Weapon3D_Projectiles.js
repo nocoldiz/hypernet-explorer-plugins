@@ -501,7 +501,9 @@
         group.add(shot);
         for (let i = 0; i < 4; i++) {
           const wrap = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.026, 0.024), tape);
-          wrap.position.y = -0.01 - i * 0.028;
+          // Tape overlaps the turn below it; wound in a spiral it cannot do
+          // anything else, and wraps laid end to end leave a ring of daylight.
+          wrap.position.y = -0.01 - i * 0.022;
           wrap.rotation.y = rand();
           group.add(wrap);
         }
@@ -1020,13 +1022,14 @@
           a.rotation.z = angle;
           return a;
         };
-        group.add(arm(0.5));
-        group.add(arm(-0.5 + Math.PI * 0.35));
+        const ARM_A = 0.95, ARM_B = -0.95;
+        group.add(arm(ARM_A));
+        group.add(arm(ARM_B));
         const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.02, this.seg(10, 6), this.seg(7, 5)), wood);
         elbow.scale.z = 0.6;
         group.add(elbow);
         // The rounded upper surface: a raised spine down each arm.
-        for (const angle of [0.5, -0.5 + Math.PI * 0.35]) {
+        for (const angle of [ARM_A, ARM_B]) {
           const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.01, 0.18, this.seg(8, 5)), wood);
           spine.position.set(Math.sin(-angle) * 0.09, Math.cos(angle) * 0.09, 0.008);
           spine.rotation.z = angle;
@@ -1035,7 +1038,7 @@
         // Painted bands, the way they always are.
         const bands = this.isLowDetail() ? 3 : 6;
         for (let i = 0; i < bands; i++) {
-          const angle = i < bands / 2 ? 0.5 : -0.5 + Math.PI * 0.35;
+          const angle = i < bands / 2 ? ARM_A : ARM_B;
           const t = (i % (bands / 2)) / (bands / 2);
           const b = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.008, 0.014), i % 2 ? paint : burn);
           b.position.set(Math.sin(-angle) * (0.06 + t * 0.1), Math.cos(angle) * (0.06 + t * 0.1), 0.004);
@@ -1056,7 +1059,10 @@
         const coils = this.isLowDetail() ? 4 : 7;
         for (let i = 0; i < coils; i++) {
           const c = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.005, this.seg(4, 3), this.seg(12, 7)), cord);
-          c.position.y = -0.06 - i * 0.014;
+          // Turns of a coil lie against each other: spaced wider than the cord
+          // is thick they are seven separate rings, and the welder treats each
+          // one as a part that came loose.
+          c.position.y = -0.06 - i * 0.009;
           c.rotation.set(Math.PI / 2 + 0.2, 0, i * 0.5);
           group.add(c);
         }

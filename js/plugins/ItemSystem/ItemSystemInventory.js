@@ -428,11 +428,11 @@
     this.popScene();
   };
 
-  // The tabs are a fixed row of shelves, not one tab per <category:> tag the
-  // loot happens to carry. The tags are a stock-keeping vocabulary, not a way
-  // to find something in a hurry: a row of twenty of them wrapped over three
-  // lines and still buried the potions. What a player opens the pockets for is
-  // what a thing DOES, so that is what the row asks.
+  // The row is the same one the shop counter draws: a shelf per <category:> tag
+  // the pockets actually hold, so a thing is looked for under the word it was
+  // sold under. The shelves below are what answers for an item carrying no tag
+  // of its own - gear, the library, a pastime - and for the two standing tabs
+  // that are not categories at all.
   const ALL_CATEGORY = "All";              // i18n-ignore  item-category id
   const FAVORITES_CATEGORY = "Favorites";  // i18n-ignore  item-category id
   const MISC_CATEGORY = "Misc";            // i18n-ignore  item-category id
@@ -455,13 +455,15 @@
     MISC_CATEGORY, WEAPONS_CATEGORY, ARMOR_CATEGORY
   ];
 
-  const rawCategoryOf = (item) => {
+  const rawCategoryFromNote = (item) => {
     const utils = window.ItemSystemUtils;
-    const raw = utils && typeof utils.getRawCategoryFromNote === "function"
+    return utils && typeof utils.getRawCategoryFromNote === "function"
       ? utils.getRawCategoryFromNote(item)
       : null;
-    return String(raw || "").trim().toLowerCase();
   };
+
+  const rawCategoryOf = (item) =>
+    String(rawCategoryFromNote(item) || "").trim().toLowerCase();
 
   // A book is anything the party reads rather than drinks or swings: the Books
   // tag, a title that names itself one, or a page that teaches a skill. The
@@ -473,8 +475,11 @@
   // Effect 43 is LEARN_SKILL: a skill book by what it does, whatever it is called.
   const LEARN_SKILL_EFFECT = 43;
 
-  const isBookItem = (item) => {
-    if (rawCategoryOf(item) === "books") return true;  // i18n-ignore  category tag
+  // `raw` is the item's <category:> tag, lowercased, read once by the caller:
+  // filing one item asks several of these questions and the note is not read
+  // again for each of them.
+  const isBookItem = (item, raw) => {
+    if ((raw === undefined ? rawCategoryOf(item) : raw) === "books") return true;  // i18n-ignore  category tag
     if (BOOK_NAME_RE.test(String(item.name || ""))) return true;
     return (item.effects || []).some((e) => e && e.code === LEARN_SKILL_EFFECT);
   };
@@ -484,8 +489,8 @@
   // off, which is what a potion is whatever shelf it was filed under.
   const HEAL_EFFECT_CODES = [11, 12, 22];  // recover HP, recover MP, remove state
 
-  const isMedicalItem = (item) => {
-    const raw = rawCategoryOf(item);
+  const isMedicalItem = (item, rawTag) => {
+    const raw = rawTag === undefined ? rawCategoryOf(item) : rawTag;
     if (raw === "medical" || raw === "homeopathy") return true;  // i18n-ignore  category tags
     return (item.effects || []).some((e) => e && HEAL_EFFECT_CODES.includes(e.code));
   };
@@ -498,15 +503,25 @@
     if (!item) return MISC_CATEGORY;
     if (DataManager.isWeapon(item)) return WEAPONS_CATEGORY;
     if (DataManager.isArmor(item)) return ARMOR_CATEGORY;
-    if (isBookItem(item)) return BOOKS_CATEGORY;
+    // The <category:> tag, read once and handed on: the tag is the id the whole
+    // game files items under and the caption for it lives in the one table both
+    // this row and the shop counter read (Inventory.category.<tag>), so a tag
+    // nobody has written a caption for still earns a shelf and reads as itself.
+    const tag = String(rawCategoryFromNote(item) || "").trim();
+    const raw = tag.toLowerCase();
+    if (isBookItem(item, raw)) return BOOKS_CATEGORY;
+    // A pastime is what it is for before it is what it is filed as: an mp3
+    // player is not a tool and a saxophone is not a curiosity
+    // (window.ItemLeisure owns the <Leisure:> tag).
+    if (window.ItemLeisure && window.ItemLeisure.isLeisure(item)) return LEISURE_CATEGORY;
+    // Then the shelf the shop counter files it under. Everything below is the
+    // answer for an item that carries no tag at all.
+    if (tag) return tag;
     const utils = window.ItemSystemUtils;
     if (utils && typeof utils.isFoodItem === "function" && utils.isFoodItem(item)) {
       return FOOD_CATEGORY;
     }
-    if (isMedicalItem(item)) return MEDICAL_CATEGORY;
-    // A pastime is what it is for: an mp3 player is not a tool and a saxophone
-    // is not a curiosity (window.ItemLeisure owns the <Leisure:> tag).
-    if (window.ItemLeisure && window.ItemLeisure.isLeisure(item)) return LEISURE_CATEGORY;
+    if (isMedicalItem(item, raw)) return MEDICAL_CATEGORY;
     if (item.occasion === 1) return COMBAT_CATEGORY;
     if (item.occasion === 0 || item.occasion === 2) return USABLE_CATEGORY;
     return MISC_CATEGORY;
@@ -557,13 +572,20 @@
     return pocketStamp();
   };
 
+  // A shelf the row knows the place of keeps it; a <category:> shelf falls in
+  // behind them all, in the order its caption reads.
   const categoryRank = (label) => {
     const idx = UI_CATEGORIES.indexOf(label);
     return idx >= 0 ? idx : UI_CATEGORIES.length;
   };
 
+  const captionOf = (category) => {
+    const key = 'Inventory.category.' + category;
+    return T.has(key) ? T(key) : String(category);
+  };
+
   const compareCategories = (a, b) =>
-    (categoryRank(a) - categoryRank(b)) || String(a).localeCompare(String(b));
+    (categoryRank(a) - categoryRank(b)) || captionOf(a).localeCompare(captionOf(b));
 
   function matchesUICategory(item, category) {
     if (!item) return false;
@@ -574,9 +596,10 @@
     return uiCategoryOf(item) === category;
   }
 
-  // The row itself: the two standing tabs, then whichever shelves are not
-  // empty, in the fixed order above. Favourites earns its place whatever is
-  // carried, it is a shelf the player builds rather than one the loot decides.
+  // The row itself: the two standing tabs, then whichever shelves are not empty -
+  // the fixed ones in the order above, the <category:> ones behind them by
+  // caption. Favourites earns its place whatever is carried, it is a shelf the
+  // player builds rather than one the loot decides.
   Scene_EnhancedItem.prototype.uiCategories = function () {
     const stamp = pocketStamp();
     if (this._uiCategoriesMemo && this._uiCategoriesMemo.stamp === stamp) {
@@ -586,6 +609,11 @@
     for (const item of $gameParty.allItems()) { if (item) present.add(uiCategoryOf(item)); }
     const value = UI_CATEGORIES.filter((cat) =>
       cat === ALL_CATEGORY || cat === FAVORITES_CATEGORY || present.has(cat));
+    // Then every <category:> shelf the pockets hold that the fixed row has no
+    // place for: a tab exists only while something is standing on it.
+    const extra = Array.from(present).filter((cat) => !UI_CATEGORIES.includes(cat));
+    extra.sort((a, b) => captionOf(a).localeCompare(captionOf(b)));
+    value.push(...extra);
     this._uiCategoriesMemo = { stamp, value };
     return value;
   };
@@ -594,8 +622,7 @@
   // one table the whole game names item categories out of, and a shelf nobody
   // has written a caption for reads as itself.
   Scene_EnhancedItem.prototype.uiCategoryLabel = function (category) {
-    const key = 'Inventory.category.' + category;
-    return T.has(key) ? T(key) : String(category);
+    return captionOf(category);
   };
 
   // The heading one item files under.

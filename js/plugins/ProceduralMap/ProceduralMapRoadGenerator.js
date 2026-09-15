@@ -159,6 +159,16 @@
   }
 
   /**
+   * A settlement of any size or variant: every Village, Burg and City biome,
+   * including the desert / ice / mountain / river / sea spellings of each.
+   * These are the biomes that carry a music pool of their own, so the audio
+   * layer asks this rather than re-deriving the family from a literal.
+   */
+  function isSettlementBiome(biomeName) {
+    return !!(isCityBiome(biomeName) || isVillageBiome(biomeName) || isBurgBiome(biomeName));
+  }
+
+  /**
    * A road connects onward only to another road or to a settlement
    * (Village, Burg, City). Anything else is a dead end for that direction.
    */
@@ -1433,6 +1443,7 @@ function drawDashedCornerLines(
     isCityBiome,
     isVillageBiome,
     isBurgBiome,
+    isSettlementBiome,
     isConnectableBiome,
     parseRoadConfig,
     getDashedLineTileId,

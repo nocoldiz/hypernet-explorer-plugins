@@ -785,7 +785,7 @@
     },
     "gamesArcade": {
       "title": "The Arcade Cabinet",
-      "description": "Arcade cabinets take tokens, bought with euros at the converter or on the Hypernet. A cabinet keeps high scores with letter entry and runs a demo when idle.\n\nEach cart is a complete game, drawn in colour ASCII:\n\n- Snake, against a red computer snake competing for the same apples\n- Manpac, a pellet maze with three hunters and power pills that make them edible\n- Frogger, across roads and rivers to five home slots\n- Space Invaders, with destructible barriers\n- Asteroids, with splitting rocks and a wrapping screen\n- Breakout, with falling capsules\n- Centipede, splitting when shot in the middle, with a spider that eats the mushrooms\n- Bubble Pop, colours that stick and clusters that fall\n- Boot sequence, a cabinet booting up and then a space to walk around in"
+      "description": "Arcade cabinets take tokens, bought with euros at the converter or on the Hypernet. A cabinet keeps high scores with letter entry and runs a demo when idle.\n\nEach cart is a complete game, drawn in colour ASCII:\n\n- Snake, against a red computer snake competing for the same apples\n- Manpac, a pellet maze with three hunters and power pills that make them edible\n- Hoppa, across roads and rivers to five home slots\n- Astro Intruders, with destructible barriers\n- Meteoroids, with splitting rocks and a wrapping screen\n- Wallbreaker, with falling capsules\n- Crawler, splitting when shot in the middle, with a spider that eats the mushrooms\n- Bubble Pop, colours that stick and clusters that fall\n- Boot sequence, a cabinet booting up and then a space to walk around in"
     },
     "gamesBowling": {
       "title": "Bowling",

@@ -340,8 +340,21 @@
                 gearUp: { face: 'R1', key: 'pagedown' },
                 zoomOut: { face: 'L2' },
                 zoomIn: { face: 'R2' },
-                horn: { face: 'L3' },
-                exit: { face: 'START', key: 'wmrToggle' }
+                // There is no horn in this game, on any device. L3 carried one
+                // here for a while and nothing ever read it; a binding nobody
+                // works is a row in a legend promising something that does not
+                // happen, so it is gone rather than half-kept.
+                exit: { face: 'START', key: 'wmrToggle' },
+                // The second layer (see CHORD_FACE). Keyed on a keyboard where
+                // the rest of the voxel world's keys are, so no Input name is
+                // invented here.
+                door: { chord: true, face: 'A' },
+                dive: { chord: true, face: 'B' },
+                map: { chord: true, face: 'X' },
+                flight: { chord: true, face: 'Y' },
+                respawn: { chord: true, face: 'SELECT' },
+                help: { chord: true, face: 'START' },
+                vehicle: { chord: true, face: 'R1' }
             },
             // At the helm of something that flies: a starship over a world, or
             // a broom. The left stick still yaws and throttles the way it
@@ -373,7 +386,19 @@
                 dig: { face: 'R1', key: 'pagedown' },
                 zoomOut: { face: 'L2' },
                 zoomIn: { face: 'R2' },
-                exit: { face: 'START', key: 'wmrToggle' }
+                exit: { face: 'START', key: 'wmrToggle' },
+                // The second layer (see CHORD_FACE). On foot in the voxel world
+                // a player can do a dozen things a pad has no face left for:
+                // these are the ones a keyboard had to itself.
+                // No `key` on any of them: a keyboard already has its own key
+                // for each, read where the rest of the voxel world's keys are
+                // read (the DOM listeners in VoxelWorldScene.js), so naming an
+                // Input key here would only invent a second one.
+                interact: { chord: true, face: 'A' },
+                place: { chord: true, face: 'B' },
+                map: { chord: true, face: 'X' },
+                crouch: { chord: true, face: 'Y' },
+                help: { chord: true, face: 'START' }
             },
             dream: {
                 interact: { face: 'A', key: 'ok' },
@@ -412,10 +437,35 @@
             return table[action] || null;
         },
 
+        //---------------------------------------------------------------------
+        // The second layer
+        //---------------------------------------------------------------------
+        // A pad has four faces, two shoulders and a d-pad. The voxel world has
+        // more than that to do: on foot alone there is dig, place, jump, run,
+        // crouch, interact, the quick bar, the map and the way out, and every
+        // one of them was on a key. The ones that would not fit moved to a
+        // layer instead of nowhere: hold L2 and the faces mean something else,
+        // the way a keyboard holds Shift.
+        //
+        // L2 alone still zooms, which is what it does everywhere else in the
+        // game and costs nothing here: a zoom is analog and springs back. What
+        // must not happen is L2+A reading as a jump as well as an interact, so
+        // a plain binding is deaf while the layer is held and a layered one is
+        // deaf while it is not.
+        CHORD_FACE: 'L2',
+
+        chordHeld(player) { return this.pressed(this.CHORD_FACE, player); },
+
+        // Whether this binding's FACE is live right now. The key half is never
+        // gated: a keyboard has its own key for each of these and no layer.
+        _faceLive(bind, player) {
+            return !!bind.face && this.chordHeld(player) === !!bind.chord;
+        },
+
         action(name, player) {
             const bind = this.binding(name);
             if (!bind) return false;
-            if (bind.face && this.pressed(bind.face, player)) return true;
+            if (this._faceLive(bind, player) && this.pressed(bind.face, player)) return true;
             return !!(bind.key && (player || 0) === 0 &&
                 typeof Input !== 'undefined' && Input.isPressed(bind.key));
         },
@@ -423,7 +473,7 @@
         actionTriggered(name, player) {
             const bind = this.binding(name);
             if (!bind) return false;
-            if (bind.face && this.triggered(bind.face, player)) return true;
+            if (this._faceLive(bind, player) && this.triggered(bind.face, player)) return true;
             return !!(bind.key && (player || 0) === 0 &&
                 typeof Input !== 'undefined' && Input.isTriggered(bind.key));
         },
@@ -436,12 +486,22 @@
             return this.stick(bind.stick, player);
         },
 
-        // The face an action wears, for a tip strip or a badge.
+        // The face an action wears, for a tip strip or a badge. An action on the
+        // second layer wears the pair that works it, written as the player has
+        // to press it.
         faceOf(action, mode) {
             const bind = this.binding(action, mode);
-            if (bind && bind.face) return bind.face;
+            // i18n-ignore-next-line  physical button faces
+            if (bind && bind.face) return bind.chord ? this.CHORD_FACE + '+' + bind.face : bind.face;
             if (bind && bind.stick) return bind.stick === 'right' ? 'RS' : 'LS';
             return '';
+        },
+
+        // Every action of a mode that sits on the second layer, for a legend
+        // that shows what the layer does while it is held.
+        chordActions(mode) {
+            const table = this.BINDINGS[mode || this._mode] || this.BINDINGS.menu;
+            return Object.keys(table).filter((name) => table[name].chord);
         },
 
         //=====================================================================
@@ -832,13 +892,15 @@
         // somewhere to go that way.
         RAIL_ID: 'pad-rails',
 
-        // Raised only while there is a rail to hang on it. It used to be built
-        // on the first frame of the game and left standing for the session: an
-        // empty div the size of the window, over everything, which every
-        // overlay that asks whether a DOM page is covering the game view
-        // (window.FrameBudget, Core/ParchmentToast.js) had to read as a page.
-        // The party cards (UI/PartyHud.js) took themselves down on every map
-        // because of it.
+        // Raised on the first rail and then left standing. It used to be taken
+        // out of the document whenever no pane scrolled, because an empty div
+        // the size of the window, over everything, was read as a page covering
+        // the game view by window.FrameBudget (Core/ParchmentToast.js) - and
+        // the party cards (UI/PartyHud.js) took themselves down on every map
+        // because of it. FrameBudget answers that itself now: its
+        // paintsNothing() exempts a layer that takes no clicks and lays no
+        // ground, which is exactly this one. Taking it in and out of the
+        // document on a six-frame tick was half of the flicker, so it stays.
         railLayer(create) {
             let layer = document.getElementById(this.RAIL_ID);
             if (!layer && create) {
@@ -849,66 +911,104 @@
             return layer || null;
         },
 
+        // ONE definition of "a pane", shared with the file that actually moves
+        // them (UIScroll in Core/MouseControls.js). A rail over a pane the
+        // stick would never have picked promises something the stick does not
+        // do, which is worse than no rail at all.
         scrollPanes() {
             const UIScroll = window.UIScroll;
             if (!UIScroll || !UIScroll.topOverlay) return [];
             const overlay = UIScroll.topOverlay();
-            if (!overlay || !overlay.querySelectorAll) return [];
-            const out = [];
-            const seen = new Set();
-            const consider = (el) => {
-                if (!el || seen.has(el)) return;
-                seen.add(el);
-                if (!UIScroll.isScrollable(el)) return;
-                if (el.scrollHeight - el.clientHeight < 8) return;
-                if (el.clientHeight < 60) return;
-                out.push(el);
-            };
-            consider(overlay);
-            for (const el of overlay.querySelectorAll('*')) consider(el);
-            return out;
+            if (!overlay) return [];
+            return UIScroll.scrollablePanes(overlay);
         },
 
-        updateRails() {
-            const panes = this.active() ? this.scrollPanes() : [];
-            const wanted = panes.length * 2;
-            const layer = this.railLayer(wanted > 0);
-            if (!layer) return;
-            while (layer.children.length < wanted) {
+        // Chips belong to their PANE, not to a slot in the layer. Menus in this
+        // game rebuild their innerHTML on every cursor move - that is why the
+        // badges are put back by a MutationObserver rather than by each screen
+        // remembering - so a list indexed by position reassigned every chip
+        // whenever a pane appeared, went or merely changed order, and the pair
+        // visibly jumped. A pane that survives a rebuild keeps its own two
+        // nodes.
+        railChips(pane) {
+            if (!this._railChips) this._railChips = new WeakMap();
+            const layer = this.railLayer(true);
+            if (!layer) return null;
+            let pair = this._railChips.get(pane);
+            if (pair && pair[0].parentNode === layer && pair[1].parentNode === layer) {
+                return pair;
+            }
+            const make = () => {
                 const chip = document.createElement('div');
                 chip.className = 'pad-rail-chip';
                 layer.appendChild(chip);
-            }
-            while (layer.children.length > wanted) {
-                const last = layer.lastChild;
-                if (!last) break;
-                layer.removeChild(last);
-                if (layer.lastChild === last) break;
-            }
-            // Nothing left on it: the layer goes out of the document rather
-            // than hanging there empty over the whole screen.
-            if (!wanted) {
-                if (layer.parentNode) layer.parentNode.removeChild(layer);
+                return chip;
+            };
+            pair = [make(), make()];
+            this._railChips.set(pane, pair);
+            return pair;
+        },
+
+        // The `spent` half of a rail is the only part that has to keep up with
+        // the player: it says whether there is anywhere left to go that way, and
+        // it changes on the frame the pane moves. Geometry is re-measured on the
+        // slow tick; this runs the moment something scrolls (see UIScroll).
+        markRailEnds(pane) {
+            const pair = this._railChips && this._railChips.get(pane);
+            if (!pair) return;
+            pair[0].classList.toggle('spent', pane.scrollTop <= 1);
+            pair[1].classList.toggle('spent',
+                pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1);
+        },
+
+        updateRails() {
+            const layer = document.getElementById(this.RAIL_ID);
+            const panes = this.active() ? this.scrollPanes() : [];
+            if (!panes.length) {
+                if (layer) {
+                    layer.classList.add('empty');
+                    while (layer.firstChild) layer.removeChild(layer.firstChild);
+                }
                 return;
             }
-            panes.forEach((pane, i) => {
+            const live = new Set();
+            for (const pane of panes) {
+                const pair = this.railChips(pane);
+                if (!pair) continue;
+                live.add(pair[0]);
+                live.add(pair[1]);
                 const box = pane.getBoundingClientRect();
-                const atTop = pane.scrollTop <= 1;
-                const atEnd = pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1;
-                const place = (chip, face, x, y, spent) => {
+                // Measured, not assumed: the handheld stylesheet had to pin the
+                // chip to 18px only because that number was written in here.
+                const tall = pair[1].offsetHeight || 18;
+                // Clear of the native scrollbar rather than on top of it.
+                const x = box.right - this.RAIL_GUTTER;
+                const place = (chip, face, y, spent) => {
                     if (chip.textContent !== face) chip.textContent = face;
                     chip.classList.toggle('spent', spent);
                     chip.style.setProperty('--ui-at-x', Math.round(x) + 'px');
                     chip.style.setProperty('--ui-at-y', Math.round(y) + 'px');
                 };
                 // i18n-ignore-start  physical button faces
-                place(layer.children[i * 2], this.BUTTON.scrollUp,
-                    box.right - 6, box.top + 2, atTop);
-                place(layer.children[i * 2 + 1], this.BUTTON.scrollDown,
-                    box.right - 6, box.bottom - 18, atEnd);
+                place(pair[0], this.BUTTON.scrollUp, box.top + 2,
+                    pane.scrollTop <= 1);
+                place(pair[1], this.BUTTON.scrollDown, box.bottom - tall - 2,
+                    pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1);
                 // i18n-ignore-end
-            });
+            }
+            const host = this.railLayer(true);
+            if (!host) return;
+            host.classList.remove('empty');
+            // Chips whose pane is gone. Removed by identity, so the survivors
+            // are never touched.
+            for (const chip of Array.from(host.children)) {
+                if (!live.has(chip)) host.removeChild(chip);
+            }
         },
+
+        // How far in from the pane's right edge a chip hangs: enough to clear
+        // the native scrollbar the pane draws there.
+        RAIL_GUTTER: 18,
 
         //---------------------------------------------------------------------
         // The tip strip, for the screens that have no controls to stamp

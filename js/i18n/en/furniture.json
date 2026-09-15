@@ -434,7 +434,7 @@
     },
     "game_console_ps1": {
       "name": "Battlestation 1",
-      "description": "Sony PlayStation console (2001 era)."
+      "description": "Sonic StationPlay console (2001 era)."
     },
     "game_console_n64": {
       "name": "Tintendon 666",
@@ -442,7 +442,7 @@
     },
     "dreamcast_console": {
       "name": "Mastercast Console",
-      "description": "Sega Dreamcast gaming console."
+      "description": "Saga Dreamchaser gaming console."
     },
     "crt_television": {
       "name": "CRT Television",

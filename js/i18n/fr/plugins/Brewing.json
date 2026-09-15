@@ -62,32 +62,32 @@
     "herbal_tea": {
       "name": "Tisane",
       "description": "Une simple infusion d'extrait d'herbes dans l'eau. Ni levure, ni fermentation, juste de la chaleur et du temps.",
-      "outputPreview": "2–4x Tisane"
+      "outputPreview": "2-4x Tisane"
     },
     "honey_mead": {
       "name": "Hydromel",
       "description": "Du miel sauvage dissous dans l'eau de source et laissé fermenter dans le noir. Le plus ancien des breuvages.",
-      "outputPreview": "2–5x Hydromel"
+      "outputPreview": "2-5x Hydromel"
     },
     "nun_beer": {
       "name": "Bière des Nonnes",
       "description": "Une brune de malt faite de miel et d'eau en bouteille, fermentée lentement et au froid comme dans les caves du monastère.",
-      "outputPreview": "3–6x Bière des Nonnes"
+      "outputPreview": "3-6x Bière des Nonnes"
     },
     "varlenias_wine": {
       "name": "Vin de Varlenia",
       "description": "Un vin rubis et or pressé de fruits-soleil dorés, vieilli avec une pointe de miel sauvage.",
-      "outputPreview": "2–4x Vin de Varlenia"
+      "outputPreview": "2-4x Vin de Varlenia"
     },
     "aged_wine": {
       "name": "Vin Vieilli",
       "description": "Le fruit de nectar de cristal marié au miel de viande royale donne un millésime somptueux qui exige de la patience.",
-      "outputPreview": "1–3x Vin Vieilli"
+      "outputPreview": "1-3x Vin Vieilli"
     },
     "ethanol": {
       "name": "Éthanol",
       "description": "Un puissant distillat fermenté à partir de Fruit du Souffle de Dragon et de Carambole du Vide. Un alcool dangereusement pur.",
-      "outputPreview": "1–4x Éthanol"
+      "outputPreview": "1-4x Éthanol"
     }
   }
 }

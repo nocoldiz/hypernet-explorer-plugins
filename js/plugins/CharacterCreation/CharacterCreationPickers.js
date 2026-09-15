@@ -179,12 +179,12 @@
         `;
       }).join("");
 
-      const emptyHtml = `<div class="cc-class-empty">${ccT('CharCreate.noClassMatches', 'No class matches that search.')}</div>`;
+      const emptyHtml = `<div class="cc-class-empty">${ccT('CharCreate.noClassMatches')}</div>`;
 
       return `
         <div class="cc-page cc-page-left cc-class-board cc-col">
           <input type="text" class="cc-bio-select cc-class-search" value="${query.replace(/"/g, '&quot;')}"
-                 placeholder="${ccT('CharCreate.search', 'Search...')}"
+                 placeholder="${ccT('CharCreate.search')}"
                  oninput="SceneManager._scene.onClassSearch(this.value)" />
           <div class="cc-select-grid cc-compact cc-two-col cc-class-grid">
             ${cardsHtml || emptyHtml}
@@ -313,7 +313,7 @@
         const sk = $dataSkills[l.skillId];
         if (!sk) return "";
         return this._ccLoadoutRowHtml(sk.iconIndex || 79, window.CCDbName(sk),
-          `${ccT('CharCreate.abbrev.level', 'Lv')} ${l.level}`,
+          `${ccT('CharCreate.abbrev.level')} ${l.level}`,
           { valueColor: 'var(--text-primary-hover)', hover: this._ccHoverAttrs("skill", sk.id) });
       };
       const roadmapLow = sortedLearnings.filter((l) => l.level <= 50).map(roadmapRowHtml).join("");
@@ -342,7 +342,7 @@
           </div>
 
           <div class="cc-class-detail-body">
-            ${card(ccT('CharCreate.classAbilities', 'Class Abilities'), metaRows + passiveHtml + limitHtml)}
+            ${card(ccT('CharCreate.classAbilities'), metaRows + passiveHtml + limitHtml)}
             ${this._ccLoadoutSectionHtml(
               T('CharCreate.startingWeaponProficiencies'),
               weaponRows.join(""),
@@ -350,7 +350,7 @@
               true,
               'cc-loadout-grid-cols'
             )}
-            ${card(ccT('CharCreate.elementalAffinities', 'Elemental Affinities'), badgeRow(affinityBadges))}
+            ${card(ccT('CharCreate.elementalAffinities'), badgeRow(affinityBadges))}
             ${Scene_CharacterCreation.isQuickMode() ? "" : this._ccLoadoutSectionHtml(T('CharCreate.skillRoadmap'), roadmapRows, "", true)}
           </div>
         </div>
@@ -398,18 +398,18 @@
         const entry = table[key] || null;
         const partCount = entry && entry.parts ? Object.keys(entry.parts).length : 0;
         const role = isPrimary
-          ? `<span class="cc-role-badge primary">${ccT('CharCreate.primary', 'Primary')}</span>`
-          : (isSecondary ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary', 'Secondary')}</span>` : "");
+          ? `<span class="cc-role-badge primary">${ccT('CharCreate.primary')}</span>`
+          : (isSecondary ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary')}</span>` : "");
         // Nothing is its own other half, so the pick-as-second button is left
         // off the card that already holds the primary.
         const secondBtn = isPrimary ? "" : `
-          <button class="cc-archetype-second-btn" title="${ccT('CharCreate.secondaryArchetype', 'Secondary Archetype')}"
+          <button class="cc-archetype-second-btn" title="${ccT('CharCreate.secondaryArchetype')}"
                   onclick="event.stopPropagation(); SceneManager._scene.onSelectArchetypeSecondCard('${key}')">${isSecondary ? '-' : '+'}</button>
         `;
         return `
           <div class="cc-card-option cc-archetype-card ${isPrimary ? 'selected' : ''} ${isSecondary ? 'is-secondary' : ''}" onclick="SceneManager._scene.onSelectArchetypeCard('${key}')">
             <div class="cc-option-title cc-option-title--tight">${archetypeDisplayName(key)}</div>
-            <div class="cc-archetype-card-meta">${partCount} ${ccT('CharCreate.bodyParts', 'Body parts')}</div>
+            <div class="cc-archetype-card-meta">${partCount} ${ccT('CharCreate.bodyParts')}</div>
             ${role}
             ${secondBtn}
           </div>
@@ -418,9 +418,9 @@
 
       return `
         <div class="cc-page cc-page-left cc-col">
-          <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.chooseAnArchetype', 'Choose an archetype')}</h3>
+          <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.chooseAnArchetype')}</h3>
           <p class="cc-text-desc cc-text-desc--intro">
-            ${ccT('CharCreate.archetypeBoardHint', 'Pick one archetype for a baseline body, or add a second to splice a hybrid.')}
+            ${ccT('CharCreate.archetypeBoardHint')}
           </p>
           <div class="cc-select-grid cc-compact cc-three-col cc-archetype-grid cc-scroll-pane cc-grid-start">
             ${cards}
@@ -449,7 +449,7 @@
       }
       const partKeys = Object.keys(parts || {});
       if (!partKeys.length) {
-        return `<p class="cc-text-desc cc-text-desc--body">${ccT('CharCreate.noAnatomicalOrgansDefined', 'No anatomical organs defined')}</p>`;
+        return `<p class="cc-text-desc cc-text-desc--body">${ccT('CharCreate.noAnatomicalOrgansDefined')}</p>`;
       }
       const spliced = (keys || []).length > 1;
       return partKeys.map((partKey) => {
@@ -458,12 +458,12 @@
           ? HC.archetypePartName(part)
           : ((window.getArchetypeText ? window.getArchetypeText(part.name) : part.name) || partKey);
         const badge = !spliced ? "" : (part.fromArchetype === 1
-          ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary', 'Secondary')}</span>`
-          : `<span class="cc-role-badge primary">${ccT('CharCreate.primary', 'Primary')}</span>`);
+          ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary')}</span>`
+          : `<span class="cc-role-badge primary">${ccT('CharCreate.primary')}</span>`);
         return `
           <div class="cc-archetype-part-row cc-dossier-row cc-dossier-row--tight">
             <span class="cc-dossier-label">${name}${badge}</span>
-            <span class="cc-dossier-value">${part.hpPercent}% HP${part.vital ? ` ${ccT('CharCreate.vital', 'Vital')}` : ''}</span>
+            <span class="cc-dossier-value">${part.hpPercent}% HP${part.vital ? ` ${ccT('CharCreate.vital')}` : ''}</span>
           </div>
         `;
       }).join("");
@@ -490,7 +490,7 @@
         .filter(Boolean);
       const title = secondary
         ? `${archetypeDisplayName(current)} + ${archetypeDisplayName(secondary)}`
-        : (archetypeDisplayName(current) || ccT('CharCreate.pending', 'Pending'));
+        : (archetypeDisplayName(current) || ccT('CharCreate.pending'));
 
       return `
         <div class="cc-page cc-page-right cc-col">
@@ -502,26 +502,26 @@
 
           <div class="cc-dossier-card cc-card-padded">
             <div class="cc-dossier-row cc-dossier-row--lead">
-              <span class="cc-dossier-label">${ccT('CharCreate.bodyParts', 'Body parts')}:</span>
+              <span class="cc-dossier-label">${ccT('CharCreate.bodyParts')}:</span>
               <span class="cc-dossier-value">${partCount}</span>
             </div>
             <div class="cc-dossier-row cc-dossier-row--lead">
-              <span class="cc-dossier-label">${ccT('CharCreate.classesOfThisArchetype', 'Classes of this archetype')}:</span>
+              <span class="cc-dossier-label">${ccT('CharCreate.classesOfThisArchetype')}:</span>
               <span class="cc-dossier-value">${classNames.length}</span>
             </div>
           </div>
 
           <div class="cc-dossier-card cc-card-padded cc-scroll-pane">
-            <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.anatomy', 'Anatomy')}</h3>
+            <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.anatomy')}</h3>
             ${anatomyRows}
-            <h3 class="cc-subheader">${ccT('CharCreate.classesOfThisArchetype', 'Classes of this archetype')}</h3>
+            <h3 class="cc-subheader">${ccT('CharCreate.classesOfThisArchetype')}</h3>
             <p class="cc-text-desc cc-text-desc--body">
-              ${classNames.length ? classNames.join(", ") : ccT('CharCreate.onlyWhatYourArchetypesSupport', 'Only what your archetypes support.')}
+              ${classNames.length ? classNames.join(", ") : ccT('CharCreate.onlyWhatYourArchetypesSupport')}
             </p>
           </div>
 
           <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onOpenCreature3DStudio()">
-            ${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.custom3dModel', '3D Model')}</span>
+            ${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.custom3dModel')}</span>
           </button>
         </div>
       `;
@@ -794,7 +794,7 @@
             ${dossierHtml}
           </div>
           <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onFinishPartyCreation()">
-            ${this._ccIconHtml(78, 20)} <span>${T('CharCreate.embark') || "Embark & Begin Journey"}</span>
+            ${this._ccIconHtml(78, 20)} <span>${T('CharCreate.embark')}</span>
           </button>
         </div>
       `;

@@ -39,6 +39,12 @@
     },
     "mediahex": {
       "name": "Mediahex"
+    },
+    "slamdrome": {
+      "name": "Slamdrome 2"
+    },
+    "circle": {
+      "name": "Circle Sanctioned"
     }
   },
   "program": {
@@ -577,6 +583,40 @@
       },
       "know_the_latest": {
         "title": "Do You Know The Latest?"
+      }
+    },
+    "slamdrome": {
+      "slam_vigil": {
+        "title": "Slam Vigil"
+      },
+      "slam_aftershow": {
+        "title": "After the Bell"
+      },
+      "slam_classics": {
+        "title": "Tapes Nobody Kept"
+      },
+      "slam_contracts": {
+        "title": "Read The Contract"
+      },
+      "slam_mundane_hour": {
+        "title": "No Hands But These"
+      }
+    },
+    "circle": {
+      "sanctioned_hour": {
+        "title": "The Sanctioned Hour"
+      },
+      "form_and_fall": {
+        "title": "Form and Fall"
+      },
+      "the_notariat": {
+        "title": "The Notariat"
+      },
+      "open_division": {
+        "title": "Open Division"
+      },
+      "school_of_the_week": {
+        "title": "School of the Week"
       }
     }
   }

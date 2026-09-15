@@ -3838,6 +3838,13 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // makes the Empathize panel and the wiki work on them.
     spawnHere() {
       if (!$dataMap || !$gameMap || !$gameSystem) return 0;
+      // A procedural interior (dungeon, crypt, sewer, cellar, cave and every
+      // layer below the surface) carries no population at all, the same rule
+      // setupProceduralMapNPCs applies to the citizens of the square. Another
+      // playthrough that saved down there is still recorded where it stood, but
+      // its party is not put on the ground here: a group of adventurers turning
+      // up in a dungeon is exactly what the interiors are cleared of.
+      if (window.ProceduralInteriors?.isCurrent?.()) return 0;
       const visitors = this.visitorsHere();
       if (!visitors.length) return 0;
       if (!$dataMap.events) $dataMap.events = [null];
@@ -3885,6 +3892,25 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     },
 
     spawnOne(person, party) {
+      // A sprite-less member (a creature, or an actor whose face is a 3D model
+      // rather than a character sheet) used to be injected with characterName
+      // "", which is a solid, invisible event standing in the road. Borrow a
+      // sheet from the same wardrobe every procedural citizen is dressed from,
+      // seeded off the member key so the visitor always wears the same face,
+      // and leave them unspawned rather than blank if the wardrobe is empty.
+      let charName = person.characterName || "";
+      let charIndex = person.characterIndex || 0;
+      if (!charName) {
+        let seed = 0;
+        for (const ch of String(person.key || person.name || "")) {
+          seed = ((seed * 31) + ch.charCodeAt(0)) >>> 0;
+        }
+        seed = seed || 1;
+        charName = pickNPCCharacter(Utils.seededRandom(seed), buildNPCCharacterPool()) || "";
+        if (!charName) return null;
+        charIndex = charName.includes("!$") // i18n-ignore: sprite-sheet prefix
+          ? 0 : Math.floor(Utils.seededRandom(seed * 2) * 8);
+      }
       const spot = this.findSpot(party);
       const eventId = $dataMap.events.length;
       // <AI> is what injectBrain reads to hand the event a controller; the
@@ -3902,8 +3928,8 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
           directionFix: false,
           image: {
             tileId: 0,
-            characterName: person.characterName || "",
-            characterIndex: person.characterIndex || 0,
+            characterName: charName,
+            characterIndex: charIndex,
             direction: 2, pattern: 1
           },
           list: [

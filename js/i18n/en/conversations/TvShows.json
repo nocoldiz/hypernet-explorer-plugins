@@ -1355,5 +1355,45 @@
       "Everything in this production is accurate except the parts that are documented.",
       "And so the age turns, as ages do, in the last reel."
     ]
+  },
+  "wrestling_chaos": {
+    "beats": [
+      "{Tonight|This hour} from the Slamdrome: {faction} have bought the {advertising boards|ringside seats|entire upper tier} and nobody knows why.",
+      "The referee has been {banished|counted out|replaced mid-match} and the count is continuing {without him|on its own|anyway}.",
+      "That is an {illegal|unlicensed|undeclared} hex, and it is {beautiful|working|already too late}.",
+      "A {chair|ladder|notarised document} has entered the ring and the commission has {left the building|stopped watching|filed a complaint with itself}.",
+      "Both of them are {on the floor|in the crowd|somewhere under the ring} and the bell has not rung.",
+      "{Somebody|A third party|Somebody in a mask} has come through the crowd, and the whole card is {off|different now|being rewritten}.",
+      "The mundane one is {still standing|winning|refusing to fall}, and {this building has lost its mind|the roof is coming off|nobody is sitting down}.",
+      "Gravity {went out|was withdrawn|stopped applying} in the third fall and has not {come back|been restored|been returned}.",
+      "The champion has been {stripped|reinstated|stripped again} since the last advertising break.",
+      "Two {ghosts|passengers|things that were not on the card} are in there with them and one of them is {legal|paying tax|under contract}.",
+      "The crowd is chanting {something the commission has banned|the finish|a legal citation}.",
+      "That is the {ninth|eleventh|fourteenth} run-in of the night and we are {not at the main event|forty minutes in|barely started}.",
+      "From last night: {wrestling}",
+      "{wrestler} is {in the building|backstage|refusing to come out}, and {somebody|the commission|nobody} has told {wrestler} why.",
+      "Result as filed: {wrestling}",
+      "{wrestler} against {wrestler}, {tomorrow|at the same hour tomorrow|on the next card}, and {the building is already sold out|the tickets went in nine minutes|nobody can get in}."
+    ]
+  },
+  "wrestling_martial": {
+    "beats": [
+      "Clean break on the ropes. {Correct|Noted|As it should be}. The notary has {stamped it|recorded it|logged the fall}.",
+      "{Eleven permitted holds|Three permitted invocations|One notary at ringside} and they have used {four|two|none of them} so far.",
+      "That is a point of technique {you will see argued about for years|the schools will fight over|worth the whole hour}.",
+      "{Forty seconds|A full minute|Ninety seconds} of {nothing visible|stillness|a single grip} and it is the best {forty seconds|minute|passage} on the continent.",
+      "The challenger trained at {a dockyard gym|a cellar|the Slow Mat}, and it {shows|shows in the feet|shows in the hands}.",
+      "A declared invocation, {correctly announced|within the schedule|third of the permitted three}, and the notary allows it.",
+      "Both wrestlers are mundane tonight, which the Circle {still calls the purest card|regards as the sport proper|prints on the tickets}.",
+      "That hold has a {name|number|case citation} and the name is {older than the promotion|older than the building|older than the rulebook}.",
+      "Time is called. {Neither has given ground|No fall|A draw the schools will study}.",
+      "The commission has {reviewed|upheld|allowed} the fall and {it stands|the tape agrees|the notary concurs}.",
+      "A {reversal|counter|escape} taught in {every school|only one school|a school that burned down}.",
+      "Weight, leverage and {patience|a very long minute|arithmetic}. That is the whole sport.",
+      "The fall, as recorded: {wrestling}",
+      "{wrestler} has {declared|logged|posted} an invocation for the next card, {correctly|in writing|in advance}.",
+      "From the Salle last night: {wrestling}",
+      "{wrestler} and {wrestler} meet again, and the schools are {already arguing|divided|quietly confident}."
+    ]
   }
 }

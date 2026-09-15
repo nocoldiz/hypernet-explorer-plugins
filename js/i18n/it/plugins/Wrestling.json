@@ -1,0 +1,637 @@
+{
+  "appName": "",
+  "subtitle": "",
+  "tagline": "",
+  "oneDivision": "",
+  "fed": {
+    "slam": {
+      "name": "",
+      "short": "",
+      "show": "",
+      "ethos": "",
+      "venueWord": ""
+    },
+    "circle": {
+      "name": "",
+      "short": "",
+      "show": "",
+      "ethos": "",
+      "venueWord": ""
+    }
+  },
+  "tab": {
+    "tonight": "",
+    "card": "",
+    "roster": "",
+    "angles": "",
+    "betting": "",
+    "ratings": "",
+    "titles": ""
+  },
+  "label": {
+    "day": "",
+    "airtime": "",
+    "mainEvent": "",
+    "openDivision": "",
+    "record": "",
+    "momentum": "",
+    "alignment": "",
+    "style": "",
+    "gimmick": "",
+    "finisher": "",
+    "champion": "",
+    "vacant": "",
+    "reign": "",
+    "condition": "",
+    "heat": "",
+    "viewers": "",
+    "share": "",
+    "wonNight": "",
+    "tiedNight": "",
+    "stipulation": "",
+    "finish": "",
+    "odds": "",
+    "stake": "",
+    "payout": "",
+    "openBets": "",
+    "settled": "",
+    "noBets": "",
+    "placeBet": "",
+    "watchPromo": "",
+    "readCard": "",
+    "tomorrow": "",
+    "lastNight": "",
+    "signature": "",
+    "school": "",
+    "debut": "",
+    "banked": "",
+    "totalViewers": "",
+    "overUnder": "",
+    "over": "",
+    "under": "",
+    "whoWinsHour": "",
+    "noCard": "",
+    "injured": "",
+    "cursed": "",
+    "fine": "",
+    "mundane": "",
+    "arcana": "",
+    "noMagic": "",
+    "mundaneFilter": ""
+  },
+  "alignment": {
+    "face": "",
+    "heel": "",
+    "enigma": ""
+  },
+  "condition": {
+    "fit": "",
+    "hurt": "",
+    "cursed": "",
+    "haunted": "",
+    "suspended": ""
+  },
+  "style": {
+    "technical": "",
+    "brawler": "",
+    "highflyer": "",
+    "powerhouse": "",
+    "hexcaster": "",
+    "ritualist": "",
+    "shootfighter": "",
+    "puppeteer": "",
+    "cryomancer": "",
+    "ironform": "",
+    "grinder": "",
+    "catchwrestler": "",
+    "striker": ""
+  },
+  "school": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "gimmick": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "ring": {
+    "adjective": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "noun": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "epithet": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "given": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "family": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "move": {
+    "finisher": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "signature": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "stipulation": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "finish": {
+    "pinfall": "",
+    "submission": "",
+    "knockout": "",
+    "banishment": "",
+    "countout": "",
+    "disqualification": "",
+    "interference": "",
+    "double": "",
+    "draw": "",
+    "titleChange": ""
+  },
+  "dqReason": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "interferenceDeed": [
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "title": {
+    "slamOpen": "",
+    "slamChaos": "",
+    "circleOpen": "",
+    "circleTechnical": ""
+  },
+  "angle": {
+    "rivalry": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "betrayal": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "titlechase": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "curse": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "possession": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "contract": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "factionwar": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "ghost": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "respect": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "invasion": {
+      "name": "",
+      "beat": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    }
+  },
+  "promo": {
+    "open": {
+      "face": [
+        "",
+        "",
+        ""
+      ],
+      "heel": [
+        "",
+        "",
+        ""
+      ],
+      "enigma": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "callout": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "answer": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "boast": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "threat": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "close": {
+      "face": [
+        "",
+        "",
+        ""
+      ],
+      "heel": [
+        "",
+        "",
+        ""
+      ],
+      "enigma": [
+        "",
+        "",
+        ""
+      ]
+    },
+    "third": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "fourth": [
+      "",
+      "",
+      ""
+    ]
+  },
+  "commentary": {
+    "slam": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "circle": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "ratings": {
+    "headline": {
+      "win": "",
+      "tie": ""
+    },
+    "reason": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "bet": {
+    "title": "",
+    "match": "",
+    "hour": "",
+    "audience": "",
+    "placed": "",
+    "won": "",
+    "lost": "",
+    "tooPoor": "",
+    "closed": "",
+    "min": "",
+    "max": "",
+    "settledNight": ""
+  },
+  "hexapedia": {
+    "category": "",
+    "categoryIntro": "",
+    "infobox": {
+      "ringName": "",
+      "legalName": "",
+      "promotion": "",
+      "billed": "",
+      "trained": "",
+      "style": "",
+      "finisher": "",
+      "alignment": "",
+      "record": "",
+      "titles": "",
+      "debut": "",
+      "arcana": ""
+    },
+    "bio": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "careerNone": "",
+    "careerLine": "",
+    "anglesHeading": "",
+    "matchesHeading": "",
+    "noAngles": ""
+  },
+  "toast": {
+    "titleChange": "",
+    "betWon": "",
+    "betLost": ""
+  },
+  "mundane": {
+    "tag": "",
+    "note": "",
+    "wikiLine": "",
+    "promo": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "commentary": [
+      "",
+      "",
+      ""
+    ]
+  },
+  "deadWorld": "",
+  "world": {
+    "severed": "",
+    "unbound": "",
+    "monster": "",
+    "zombie": "",
+    "goblin": ""
+  }
+}

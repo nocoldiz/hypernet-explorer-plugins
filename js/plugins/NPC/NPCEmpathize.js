@@ -2755,6 +2755,19 @@
       return _bubbaContext(this._focusActor());
     }
 
+    // Everything the party member says in this panel goes out through here, so
+    // that a drink or a dose is heard in it: window.Intoxication.slur returns
+    // the line exactly as it came in for anyone sober, and mangles it into the
+    // register they are actually in for anyone who is not. Slurring at PUSH
+    // time and not at render time is deliberate: what was said stays said, and
+    // sobering up does not quietly tidy up the log afterwards.
+    _pushPlayerLine(text) {
+      const actor = this._focusActor();
+      const said = window.Intoxication ? window.Intoxication.slur(text, actor) : text;
+      this._chatHistory.push({ role: 'player', text: said });
+      return said;
+    }
+
     // Seeds the NPC's standing with Bubba the first time they meet, then has
     // them say so. Called from _renderInner alongside _prepareEmMeeting; both
     // halves are idempotent, and only one of the two can ever be in play (they
@@ -3580,10 +3593,7 @@
 
       const own = _rand(T[def.bank] || []);
       if (own) {
-        this._chatHistory.push({
-          role: 'player',
-          text: String(own).replace(/\{kind\}/g, kind).replace(/\{name\}/g, npcName),
-        });
+        this._pushPlayerLine(String(own).replace(/\{kind\}/g, kind).replace(/\{name\}/g, npcName));
       }
 
       // A creature that is liked gets away with more, one that is feared is
@@ -4152,7 +4162,7 @@
       // action row, same as Cancel would.
       this._socialMode  = false;
       this._activeTab   = 'chat';
-      this._chatHistory.push({ role: 'player', text: playerLine });
+      this._pushPlayerLine(playerLine);
       this._isTyping = true;
       this._joinMessage = {
         type: delta >= 0 ? 'accept' : 'reject',
@@ -5138,7 +5148,7 @@
       // Small talk moves no opinion, but it is still somebody to talk to.
       this._gainCompany();
 
-      this._chatHistory.push({ role: 'player', text: phrase });
+      this._pushPlayerLine(phrase);
       this._isTyping = true;
       this._render();
       this._scrollChatToBottom();
@@ -6247,9 +6257,7 @@
       const other = side === 'em' ? EM_NAME : BUBBA_NAME;
       const walking = ($gameParty?.members?.() ?? [])
         .some(m => m && String(m.name() || '').trim().toLowerCase() === other.toLowerCase())
-        || (other.toLowerCase() === BUBBA_NAME.toLowerCase()
-            && !!(window.$gameSwitches?.value(100))
-            && !!window.PartyRoster?.isBubbaTravelling?.());
+        || (other.toLowerCase() === BUBBA_NAME.toLowerCase() && !!(window.$gameSwitches?.value(100)));
       if (!walking) return null;
       const line = _pairSituationLine(_pairData(side));
       return line ? vary(String(line)) : null;

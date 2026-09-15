@@ -237,7 +237,16 @@
     "forged": "Forged"
   },
   "allTrades": "All trades",
-  "shortBy": "No materials",
+  "shortBy": "Missing {n}",
+  "readyCount": "{n} ready",
+  "tradeHint": "{known} of {total} formulas readable by these hands",
+  "legend": {
+    "title": "What the marks mean",
+    "ready": "Ready: everything it takes is in the sack",
+    "short": "Missing: how many lines of the bill are short",
+    "locked": "Untrained: the level in the trade it asks for",
+    "forged": "Forged: already beaten out, and how it came out"
+  },
   "pieceCount": "{n} pieces",
   "pickHint": "Pick a piece to see what it takes to make.",
   "smelt": "Smelt",

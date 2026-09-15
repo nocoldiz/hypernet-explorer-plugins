@@ -408,29 +408,7 @@
         return Math.abs(wx - cx) <= half && Math.abs(wy - cz) <= half;
     }
 
-    // Whether a world square is somebody's hand-made front room, and which.
-    //
-    // Memoised per square. The answer belongs to the square and never changes
-    // while the game is running, but finding it walks every destination in the
-    // game comparing a "x,y" string against each one's reserved list - and the
-    // drive asks it on EVERY FRAME for the square the party is standing on
-    // (see _guardReservedSquares), which for a party standing still is the same
-    // square and the same walk, sixty times a second.
-    const _reservedCache = new Map();
-    const RESERVED_CACHE_MAX = 512;
     function reservedPlaceAt(wx, wy) {
-        const key = wx * 65536 + wy;
-        const hit = _reservedCache.get(key);
-        if (hit !== undefined) return hit;
-        const out = _reservedPlaceOf(wx, wy);
-        if (_reservedCache.size >= RESERVED_CACHE_MAX) {
-            _reservedCache.delete(_reservedCache.keys().next().value);
-        }
-        _reservedCache.set(key, out);
-        return out;
-    }
-
-    function _reservedPlaceOf(wx, wy) {
         if (isOmegaTowerTile(wx, wy)) {
             return { name: 'Omega Tower', hand: true };
         }
@@ -950,15 +928,8 @@
             // On a planet, what roams is what lives there: the roster the
             // galaxy simulation generated for this world, not Earth's fauna.
             // A dead world has none, and nothing roams it.
-            //
-            // `species` is the world's SURFACE roster, and it is null exactly
-            // when the world has no life (GalaxySim only builds one for a planet
-            // planetHasLife says is inhabited). Under the ground a living world
-            // holds a different set, so that one is asked for by name rather
-            // than reusing the surface list.
             if (this._alien && this._bioEnemies) {
-                this._bioEnemies.setAlienRoster(this._alien.species || null,
-                    this._alienUnderSpecies());
+                this._bioEnemies.setRoster(this._alien.species || null);
             }
             // A second player, where there is a split-screen session running.
             // Built before the landmarks so the first frame already has both.
@@ -1093,14 +1064,11 @@
                 this._onMapKey = (e) => {
                     if (e.code !== 'KeyM' || !VoxelWorldSystem.isActive() || !this._hud) return;
                     if (this.isPaused() && !this._isFullMapOpen()) return;
-                    this._teachControl('voxMap');
-                    this._hud.cycleMapMode();
-                    this._hud._drawMiniMap(this._vanX, this._vanZ);
                     // The map is dragged with the mouse, so the mouse has to be
                     // the player's again while it is open; walking back out of
-                    // it takes the world's grab back on the next click.
-                    if (this._isFullMapOpen()) releasePointerLock();
-                    if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+                    // it takes the world's grab back on the next click. All of
+                    // that is _cycleMapView, which the pad reaches too.
+                    this._cycleMapView();
                 };
                 document.addEventListener('keydown', this._onMapKey);
 
@@ -1464,23 +1432,6 @@
         // the fog, the lantern, the bubbles and the HUD's element chip all read,
         // so a dive really does go dark and green and a flight really does read
         // as one.
-        // What lives under this world, where anything does. Asked only of a
-        // world that has life at all: `alien.species` is GalaxySim's own answer
-        // to that question, and a dead planet must stay dead underground too.
-        _alienUnderSpecies() {
-            if (!this._alien || !this._alien.species) return null;
-            const GS = window.GalaxySim;
-            if (!GS || !GS.alienSpeciesRoster) return null;
-            try {
-                const list = GS.alienSpeciesRoster(this._alien.planet || null,
-                    { realm: 'under' }) || [];
-                const ids = list.map(sp => sp && sp.enemyId).filter(id => id > 0);
-                return ids.length ? ids : null;
-            } catch (e) {
-                return null;
-            }
-        }
-
         _footEnv() {
             const f = this._fpc;
             if (!f) return 'road';
@@ -2969,7 +2920,7 @@
 
             // Whatever just moved the party - the walk, the swim, the flight or
             // the camper - a hand-made town's squares are not theirs to cross.
-            this._guardReservedSquares(delta);
+            this._guardReservedSquares();
             this._updateUnderground();
             this._updateOmegaTower();
             this._checkLeavingAtmosphere();
@@ -3041,20 +2992,14 @@
             // Underground it is taken down outright: the sheet runs at one level
             // across the whole world, and every passage down there is below it.
             this._water.setVisible(this._terrain.seaNear && !this._underground);
-            // Which way the eye is looking, asked once. Every card in the world
-            // turns to it, and each of the four things below used to ask again:
-            // the answer comes off an ancestor walk and a quaternion decompose,
-            // and the camera has not moved since it was set at the top of the
-            // frame.
-            const frameYaw = this._cameraYaw();
             this._traffic.update(this._vanX, this._vanZ, delta,
-                this._dayFactor == null ? 1 : this._dayFactor, frameYaw);
+                this._dayFactor == null ? 1 : this._dayFactor, this._cameraYaw());
             if (this._parked) {
                 // The vehicle being driven is under the party, and
                 // parked wherever they left it the moment they are not.
                 this._parked.setDriving(this._footOnly ? null : (this._vehicleId || 'camper'));
                 const p = this._contactPoint();
-                this._parked.update(delta, p.x, p.z, frameYaw);
+                this._parked.update(delta, p.x, p.z, this._cameraYaw());
             }
             // On foot the wildlife lives around the WALKER, not around the
             // parked camper: what spawns, what despawns and how big a name plate
@@ -3073,7 +3018,7 @@
             // cards that turn to the camera (see CharacterBillboard). The crowd
             // only lives in towns; the followers only show on foot.
             if (this._crowd || this._followers) {
-                const camYaw = frameYaw;
+                const camYaw = this._cameraYaw();
                 const df = this._dayFactor == null ? 1 : this._dayFactor;
                 if (this._crowd) this._crowd.update(delta, this._vanX, this._vanZ, camYaw, df);
                 // Insides are only worth building for somebody who could walk
@@ -3123,15 +3068,11 @@
             // with 0 so any lingering warp / fog / overlay is cleanly reset.
             this._liminalI = 0;
             if (this._engine) this._engine.setLiminal(0);
-            // The same object every frame rather than a fresh one. The effect
-            // is off and LiminalFx stops at its first line, so this literal was
-            // the whole of what it cost.
-            const lim = this._limArgs || (this._limArgs = {});
-            lim.camera = this._camera; lim.van = this._van; lim.terrain = this._terrain;
-            lim.renderer = this._renderer; lim.scene = this._scene;
-            lim.viewMode = this._viewMode; lim.intensity = 0;
-            lim.time = tsec; lim.delta = delta; lim.baseExposure = this._baseExposure;
-            this._liminal.update(lim);
+            this._liminal.update({
+                camera: this._camera, van: this._van, terrain: this._terrain,
+                renderer: this._renderer, scene: this._scene, viewMode: this._viewMode,
+                intensity: 0, time: tsec, delta, baseExposure: this._baseExposure
+            });
 
             // Solomon Ritual FX
             if (this._solomon) {
@@ -3202,12 +3143,6 @@
             // player's view over both. A drive fast enough to bend space is a
             // drive, and a drive merges the screen anyway.
             if (this._splitNow && this._coop) { this._renderSplit(); return; }
-            // Which squares are worth drawing at all, decided against the eye
-            // that is about to draw them (see VoxelTerrain#cullTo). Here rather
-            // than in the streaming update because that only re-reads the ring
-            // when the party MOVES, and a head turning on the spot changes the
-            // answer for most of the ring.
-            this._terrain.cullTo(this._camera);
             // Effekseer draws straight onto the canvas, over whatever three.js
             // has just put there, so every path out of this method goes through
             // one line: the world, then the spells going off in it.
@@ -3286,10 +3221,6 @@
                 // in the OTHER player's pass.
                 this._showBodies(i === 1, i === 0);
                 faceBillboards(eye.x, eye.z, yaws[i]);
-                // Two players looking two ways see two different halves of the
-                // ring, so the squares are chosen again for each of them, in
-                // the same place the cards are turned again.
-                this._terrain.cullTo(v.cam);
                 r.render(this._scene, v.cam);
             }
             r.setScissorTest(false);
@@ -3655,7 +3586,9 @@
                 !this._flying && this._env !== 'air';
             const rolling = this._speedKmh > 6;
             const airborneNow = this._flying && this._canFly();
-            this._handbrake = drivingMode && rolling &&
+            // Not while the second layer is held: A is the door there, and a
+            // reach for it should not lock the rears on the way past.
+            this._handbrake = drivingMode && rolling && !this._chordHeld() &&
                 (this._freeMoveKeys.has('Space') || Input.isPressed('ok'));
 
             // The legend's rows have two faces, and a pad reaches most of them
@@ -3675,7 +3608,16 @@
                 if (Input.isTriggered('pageup')) this._teachControl('voxSlot');
             }
 
-            if (Input.isTriggered('ok')) {
+            // THE SECOND LAYER. Hold L2 and the faces mean the controls that
+            // only ever had a key: interact, place, the map, the crouch, the
+            // legend itself. Read before the plain faces, and every plain face
+            // below is deaf while it is held, so one press of A is an interact
+            // OR a jump and never both. The sticks are NOT gated: looking around
+            // while reaching for a door is the whole point of a second layer
+            // rather than a second mode.
+            const chord = this._updateChordInput();
+
+            if (!chord && Input.isTriggered('ok')) {
                 if (this._viewMode === 'foot') {
                     this._fpc.requestJump();
                 } else if (!(drivingMode && rolling) && !airborneNow) {
@@ -3691,7 +3633,7 @@
             // party's on foot, the vehicle's at the wheel. A walk can still be
             // ended outright with T / Select, the key that puts the world map
             // away everywhere else in the game.
-            if (Input.isTriggered('cancel') && VoxelWorldSystem.isActive()) {
+            if (!chord && Input.isTriggered('cancel') && VoxelWorldSystem.isActive()) {
                 this._openEscMenu();
             }
             // T / Select is the way out of this world, walking or driving. It
@@ -3700,7 +3642,7 @@
             // Where exactly that is - the square walked to, the square driven
             // to, the ship in orbit of an alien world, the menu a free-play
             // session came from - is _endDriveToWorldMap's own answer.
-            if (!this._titleMode && Input.isTriggered('wmrToggle')) this._requestExit();
+            if (!chord && !this._titleMode && Input.isTriggered('wmrToggle')) this._requestExit();
 
             // FLYING CLAIMS THE RIGHT STICK FIRST. AnalogStickInput.rightY()
             // claims the stick for the frame, so exactly one reader may ask:
@@ -3746,8 +3688,9 @@
                 }
             }
 
-            // Y toggles first/third person, mirroring TAB.
-            if (GamepadRaw.triggeredY() && !this.isPaused()) {
+            // Y toggles first/third person, mirroring TAB. On the second layer
+            // it is the crouch on foot and the flight toggle at the wheel.
+            if (!chord && GamepadRaw.triggeredY() && !this.isPaused()) {
                 this._cycleViewMode();
             }
 
@@ -3762,6 +3705,69 @@
                         this._fpc.pitch.rotation.x - ry * 0.05));
                 }
             }
+        }
+
+        // Whether the pad's second layer is held right now, for the controls
+        // that are read somewhere other than _updateChordInput.
+        _chordHeld() {
+            const C = window.Controller;
+            return !!(C && C.chordHeld && C.chordHeld());
+        }
+
+        // The pad's second layer, held on L2. The mode decides what the faces
+        // mean, exactly as it does for the plain ones, and the ONE table that
+        // says so is Controller.BINDINGS - nothing about the pairing is written
+        // out here. Every action lands on the same method the key lands on, so
+        // there is one implementation of each and one place to change it.
+        //
+        // Returns true while the layer is held, which is what makes the plain
+        // faces stand down for as long as it is.
+        _updateChordInput() {
+            const C = window.Controller;
+            if (!C || !C.chordHeld || !C.actionTriggered) return false;
+            const onFoot = this._viewMode === 'foot';
+            // Only two tables carry a second layer: what a walker needs and
+            // what a driver needs. A pilot reaching for the map or the legend is
+            // answered out of the driving one rather than out of nothing, which
+            // is why flying is not a third case here. The legend asks for its
+            // badges by mode BY NAME, so it is unaffected by this.
+            C.setMode(onFoot ? 'walk' : 'drive');
+            if (!C.chordHeld()) return false;
+            if (this.isPaused() && !this._isFullMapOpen()) return true;
+
+            const fired = (name) => C.actionTriggered(name);
+
+            if (onFoot) {
+                if (fired('interact')) this._interact();
+                if (fired('place'))    this._placeReq = true;
+                if (fired('map'))      this._cycleMapView();
+                if (fired('help') && this._hud && this._hud.toggleCommands) {
+                    this._hud.toggleCommands();
+                }
+                return true;
+            }
+
+            if (fired('door'))     this._interact();
+            if (fired('dive'))     this._toggleDive();
+            if (fired('flight'))   this._toggleFlight();
+            if (fired('respawn'))  this._respawnCamper();
+            if (fired('vehicle'))  this._openDriveMenu();
+            if (fired('map'))      this._cycleMapView();
+            if (fired('help') && this._hud && this._hud.toggleCommands) {
+                this._hud.toggleCommands();
+            }
+            return true;
+        }
+
+        // Cycling the map views, from the pad as well as from M. Was written
+        // into the M handler alone, so the pad had no way to it at all.
+        _cycleMapView() {
+            if (!this._hud) return;
+            this._teachControl('voxMap');
+            this._hud.cycleMapMode();
+            this._hud._drawMiniMap(this._vanX, this._vanZ);
+            if (this._isFullMapOpen()) releasePointerLock();
+            if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
         }
 
         // ---------------------------------------------------------------------
@@ -5251,36 +5257,21 @@
 
             // A building whose inside is standing is not a block any more: it is
             // its own walls, with a doorway through them.
-            //
-            // Worked out once per square and kept. This is called up to twice
-            // on every frame the party is on their feet, and it was building a
-            // fresh list - one object per lot of the square, and another per
-            // wall of every building standing open on it - both times. The
-            // answer only changes when an inside goes up or comes down, which
-            // BuildingInteriors counts on `version`.
-            const IN = this._interiors;
-            const ver = IN ? IN.version : -1;
-            let cache = this._solidCache;
-            if (!cache || cache.tx !== tx || cache.tz !== tz ||
-                cache.ver !== ver || cache.plan !== plan) {
-                cache = this._solidCache = { tx, tz, ver, plan, blocks: null };
-                const live = IN ? IN.liveLots(BuildingInteriors.tileKeyOf(tx, tz)) : null;
-                if (live && live.size) {
-                    const arr = [];
-                    for (let i = 0; i < plan.lots.length; i++) {
-                        if (live.has(i)) continue;
-                        const l = plan.lots[i];
-                        arr.push({ x: l.x, z: l.z, w: l.w, d: l.d });
-                    }
-                    const walls = IN.wallRects(BuildingInteriors.tileKeyOf(tx, tz), []);
-                    for (const w of walls) {
-                        if (w.over) continue;             // that one is the lintel
-                        arr.push({ x: w.x - ox, z: w.z - oz, w: w.w, d: w.d });
-                    }
-                    cache.blocks = arr;
+            const live = this._interiors ? this._interiors.liveLots(tx + ',' + tz) : null;
+            let blocks = plan.solids;
+            if (live && live.size) {
+                blocks = [];
+                for (let i = 0; i < plan.lots.length; i++) {
+                    if (live.has(i)) continue;
+                    const l = plan.lots[i];
+                    blocks.push({ x: l.x, z: l.z, w: l.w, d: l.d });
+                }
+                const walls = this._interiors.wallRects(tx + ',' + tz, []);
+                for (const w of walls) {
+                    if (w.over) continue;                 // that one is the lintel
+                    blocks.push({ x: w.x - ox, z: w.z - oz, w: w.w, d: w.d });
                 }
             }
-            const blocks = cache.blocks || plan.solids;
 
             // Buildings: rectangles, pushed out of along whichever side is
             // nearest. Several passes, always resolving the deepest one first:
@@ -6241,7 +6232,6 @@
         // Spriteset_Battle samples is alive.
         _drawBattleFrame() {
             this._scene.overrideMaterial = null;
-            this._terrain.cullTo(this._camera);
             this._renderer.render(this._scene, this._camera);
         }
 
@@ -6504,14 +6494,14 @@
         // position, and this puts that position back the moment it lands on a
         // square that town owns. Being stopped by it IS approaching it, so the
         // same press that walked them into it asks whether they are going in.
-        _guardReservedSquares(delta) {
+        _guardReservedSquares() {
             // Earth's hand-made towns are Earth's. Nothing on another world is
             // spoken for.
             if (this._titleMode || this._standalone || this._alien) return;
             const ts = WORLD_TILE_SIZE;
             const at = this._contactPoint();
             const wx = Math.floor(at.x / ts), wy = Math.floor(at.z / ts);
-            this._placeAskT = Math.max(0, (this._placeAskT || 0) - (delta || 0.016));
+            this._placeAskT = Math.max(0, (this._placeAskT || 0) - 0.016);
             const place = reservedPlaceAt(wx, wy);
             if (!place) { this._lastFreeX = at.x; this._lastFreeZ = at.z; return; }
 
@@ -7108,7 +7098,11 @@
 
             // R1 on a pad swings the same way the mouse button does, so it digs
             // the same way too.
-            const padDig = (typeof Input !== 'undefined' && Input.isPressed &&
+            // Deaf while the second layer is held: R1 is the vehicle menu there
+            // (Controller.BINDINGS.drive), and a reach for it must not also cut
+            // a hole in whatever the party happens to be facing.
+            const chord = this._chordHeld();
+            const padDig = !chord && (typeof Input !== 'undefined' && Input.isPressed &&
                             Input.isPressed('pagedown'));
             // L1 is the bar itself: one press walks blocks -> spells -> items,
             // the pad's Tab. It used to step along the cells of whichever bar
@@ -7116,7 +7110,7 @@
             // shoulder buttons doing halves of the same job and the triggers,
             // which are the camera's, doing a third. The cells are stepped with
             // the d-pad now (below), so one button answers each question.
-            if (typeof Input !== 'undefined' && Input.isTriggered &&
+            if (!chord && typeof Input !== 'undefined' && Input.isTriggered &&
                 Input.isTriggered('pageup')) {
                 this._cycleBarMode(1);
             }

@@ -1001,7 +1001,12 @@
                 this._zoomAt(ev.deltaY > 0 ? 1.18 : 1 / 1.18, ev.clientX, ev.clientY);
             }, { passive: false });
 
+            // Right click is the cancel gesture: it must never start a drag,
+            // and the browser menu must never stand over the map.
+            el.addEventListener("contextmenu", (ev) => ev.preventDefault());
+
             frame.addEventListener("pointerdown", (ev) => {
+                if (ev.button !== undefined && ev.button !== 0) return;
                 this._drag = { x: ev.clientX, y: ev.clientY };
                 this._dragged = false;
                 frame.classList.add("dragging");
@@ -1060,7 +1065,7 @@
                 this._setMode(MODES[(MODES.indexOf(this._mode) + 1) % MODES.length]);
             } else if (Input.isTriggered("ok")) {
                 if (this._selected) { SoundManager.playOk(); this._centreOn(this._selected); }
-            } else if (Input.isTriggered("cancel")) {
+            } else if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
                 SoundManager.playCancel();
                 this.popScene();
             }

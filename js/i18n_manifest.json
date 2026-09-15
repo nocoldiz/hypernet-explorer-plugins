@@ -167,6 +167,7 @@
     "plugins/PublicPhone.json",
     "plugins/QuestBoard.json",
     "plugins/Quests.json",
+    "plugins/QuickMenu.json",
     "plugins/Radio.json",
     "plugins/Raman.json",
     "plugins/RealEstate.json",
@@ -176,6 +177,7 @@
     "plugins/Rent.json",
     "plugins/ResolutionSwitcher.json",
     "plugins/RoadCar.json",
+    "plugins/RocketLaunch.json",
     "plugins/SaveSystem.json",
     "plugins/SceneStatus.json",
     "plugins/ScratchingCard.json",
@@ -229,6 +231,7 @@
     "plugins/WorldMapReturn.json",
     "plugins/WorldNames.json",
     "plugins/WorldWeb.json",
+    "plugins/Wrestling.json",
     "plugins/constellation.json"
   ],
   "fr": [
@@ -613,6 +616,7 @@
     "plugins/PublicPhone.json",
     "plugins/QuestBoard.json",
     "plugins/Quests.json",
+    "plugins/QuickMenu.json",
     "plugins/Radio.json",
     "plugins/Raman.json",
     "plugins/RealEstate.json",
@@ -622,6 +626,7 @@
     "plugins/Rent.json",
     "plugins/ResolutionSwitcher.json",
     "plugins/RoadCar.json",
+    "plugins/RocketLaunch.json",
     "plugins/SaveSystem.json",
     "plugins/SceneStatus.json",
     "plugins/ScratchingCard.json",
@@ -675,6 +680,7 @@
     "plugins/WorldMapReturn.json",
     "plugins/WorldNames.json",
     "plugins/WorldWeb.json",
+    "plugins/Wrestling.json",
     "plugins/constellation.json"
   ],
   "ko": [

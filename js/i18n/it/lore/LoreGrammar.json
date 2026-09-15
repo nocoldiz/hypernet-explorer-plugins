@@ -44,7 +44,7 @@
       "i fedeli di {deity} dentro {faction} ne conservano ogni parola",
       "{nation} brucia chi ne ruba i testi, eppure {faction} ne tiene i registri",
       "gli adepti di {faction} ne portano il rito fuori da {city} per conto di {leader}",
-      "le linee di ley sotto {city} rispondono soltanto ai {title} di {faction}",
+      "le leyline sotto {city} rispondono soltanto ai {title} di {faction}",
       "{leader} di {faction} ne tiene i nomi in CamelCase sigillati lontano da {nation}",
       "{govType} di {nation} ne vieta il rito, così {faction} lo pratica sotto {city}",
       "i {title} di {faction} ne incidono i sigilli sulle pietre miliari fuori da {city}",
@@ -62,7 +62,7 @@
       "gli adepti di {faction} ne barattano le strofe in cambio di passaggio sicuro per {nation}",
       "{leader} di {faction} ha pagato una strada nel sangue per l'ultimo grimorio rimasto a {city}",
       "i {title} di {govType} danno la caccia a chi ne pratica il rito, e {faction} ne nasconde i testi nelle cantine di {city}",
-      "{nation} giura che {deity} ne abbia deposto il seme nelle linee di ley sotto {city}",
+      "{nation} giura che {deity} ne abbia deposto il seme nelle leyline sotto {city}",
       "le streghe di ley di {faction} ne sussurrano le formule a {leader} e a nessun altro a {city}"
     ]
   },
@@ -136,7 +136,7 @@
         "{Art}, fuorilegge da quando {attrib} osarono per primi, {mechanism}; {token}.",
         "Stregoneria nera, {era}, {mechanism}. {Token}.",
         "{Attrib} si passarono {art} di nascosto, e {token}.",
-        "Un rito interdetto: {art} deforma le linee di ley; {mechanism}, e {token}."
+        "Un rito interdetto: {art} deforma le leyline; {mechanism}, e {token}."
       ]
     },
     "martial": {
@@ -177,11 +177,11 @@
     },
     "generic": {
       "templates": [
-        "Un vecchio mestiere di origine incerta, {mechanism}. {Token}.",
-        "Un sapere {era}: chi lo praticò per primo è dimenticato, eppure {token}.",
-        "{Art}, passata di maestro in allievo attraverso le epoche; {token}.",
-        "Sapere di lunga data, {mechanism}; {token}.",
-        "{Attrib} portarono {art} attraverso gli anni, e {token}."
+        "Un mestiere senza fondatore a registro, {mechanism}. {Token}.",
+        "Un sapere {era}: chi lo fece per primo non ha lasciato il nome, e {token}.",
+        "{Art}, insegnata a mano e messa per iscritto male; {token}.",
+        "Non registrata, non documentata, ancora in uso ogni giorno, {mechanism}; {token}.",
+        "{Attrib} hanno portato {art} attraverso tre secoli di totale indifferenza, e {token}."
       ]
     },
     "forged": {
@@ -229,7 +229,7 @@
         "{Art}, {era}, {mechanism}. {Token}.",
         "Una cosa {era}: {attrib} portarono per primi {art}, e {token}.",
         "{Attrib} portarono {art} attraverso le vecchie guerre, {mechanism}; {token}.",
-        "{Art} della linea di ley e del passato profondo, {mechanism}. {Token}.",
+        "{Art} della leyline e del passato profondo, {mechanism}. {Token}.",
         "Una cosa che ha un nome, {era}, {mechanism}; {token}.",
         "Più antica dello Squishing, e più strana per questo: {art}, {mechanism}. {Token}."
       ]
@@ -247,28 +247,28 @@
   },
   "fallbackArchetype": {
     "art": [
-      "il vecchio mestiere",
-      "l'arte tramandata",
-      "la perizia conservata a lungo",
-      "la disciplina più antica"
+      "il mestiere senza fondatore",
+      "l'arte su cui nessuno ha mai messo il nome",
+      "l'arte che ha perso la prima pagina",
+      "la disciplina che le corporazioni non hanno mai registrato"
     ],
     "era": [
-      "di origine incerta",
-      "col suo primo giorno dimenticato",
-      "di lunga data",
-      "più antica dei registri"
+      "senza data su nessuna copia rimasta",
+      "col primo giorno strappato dal registro",
+      "di là dalla copia più antica ancora in circolazione",
+      "che precede l'archivio che l'avrebbe registrata"
     ],
     "mechanism": [
-      "passando di maestro in allievo attraverso le epoche",
-      "tenendosi in vita contro ogni dimenticanza",
-      "tramandandosi dove più serviva",
-      "attraversando gli anni in silenzio"
+      "insegnandosi a mano perché nessuno la mise mai per iscritto come si deve",
+      "sopravvivendo negli appunti di bottega e in nessun manuale",
+      "ricopiandosi male quattro volte e funzionando lo stesso",
+      "tenuta in vita da chi ne aveva bisogno più di quanto gli servisse darle un nome"
     ],
     "attrib": [
-      "i primi praticanti dimenticati",
-      "i maestri che la tennero in vita",
-      "coloro che ne ebbero bisogno nei tempi duri",
-      "gli allievi che la portarono avanti"
+      "praticanti di cui nessuno ha registrato il nome",
+      "maestri che la insegnavano per vitto e alloggio",
+      "manovali che la usavano molto prima che qualcuno la studiasse",
+      "allievi che l’hanno imparata in piedi, nel cortile"
     ]
   },
   "archetypes": {
@@ -293,7 +293,7 @@
       ],
       "mechanism": [
         "attingendo ai petrodemoni addormentati nel greggio",
-        "legando sangue, olio e linea di ley attraverso fili di Porfirina",
+        "legando sangue, olio e leyline attraverso fili di Porfirina",
         "traendo potere dal midollo stesso della Terra",
         "rispondendo all'olio nero e senziente delle profondità",
         "ascoltando la pressione del mare di petrolio sepolto",
@@ -516,7 +516,7 @@
         "bruciando la corruzione dalla carne e dall'anima",
         "cantando i malvagi fino a ridurli in cenere con una nota pulita",
         "posando la grazia su una compagnia come acqua fresca",
-        "bruciando ciò che la linea di ley aveva fatto marcire in un'anima"
+        "bruciando ciò che la leyline aveva fatto marcire in un'anima"
       ],
       "attrib": [
         "i soldati di Giovanna d'Arco (1412-1431) sui campi di Francia",
@@ -777,7 +777,7 @@
         "il viaggio fra stelle e vuoto",
         "la stregoneria astrale",
         "l'arte cosmica",
-        "la cavalcata delle linee di ley"
+        "la cavalcata delle leyline"
       ],
       "era": [
         "che si cartografò solo dopo lo Squishing del 2003",
@@ -787,12 +787,12 @@
       ],
       "mechanism": [
         "cartografando i Frammenti del Creato",
-        "cavalcando le linee di ley fra i mondi",
+        "cavalcando le leyline fra i mondi",
         "percorrendo le strade astrali messe a nudo dal collasso",
         "traendo potere dallo spazio fra le stelle"
       ],
       "attrib": [
-        "i viandanti che cavalcano le linee di ley",
+        "i viandanti che cavalcano le leyline",
         "i veggenti mandati lungo le strade astrali",
         "i cartografi di stelle del cielo spezzato",
         "gli adepti cosmici del mondo nuovo"
@@ -831,7 +831,7 @@
         "il rito proscritto",
         "l'arte interdetta",
         "l'opera sigillata",
-        "il rito che deforma le linee di ley",
+        "il rito che deforma le leyline",
         "la stregoneria che si paga"
       ],
       "era": [
@@ -844,11 +844,11 @@
         "di un costo che nessuna epoca ha voluto sostenere apertamente"
       ],
       "mechanism": [
-        "deformando le linee di ley attorno a chi la pratica",
+        "deformando le leyline attorno a chi la pratica",
         "comprando potere a un prezzo terribile",
         "torcendo la realtà oltre quanto dovrebbe essere permesso",
         "liberando ciò che sarebbe dovuto restare sigillato",
-        "aprendo uno squarcio dove le linee di ley avrebbero dovuto tenere",
+        "aprendo uno squarcio dove le leyline avrebbero dovuto tenere",
         "pagando con qualcosa che chi la pratica non può riavere",
         "liberando una cosa che l'ultimo che la vincolò giurò sigillata"
       ],
@@ -1469,7 +1469,7 @@
         "di un'epoca anteriore al primo incantesimo scritto",
         "che si conserva da quando il potere ebbe bisogno di una forma in cui scorrere",
         "un mestiere che lo Squishing non ha fatto che affinare",
-        "non più giovane delle scuole delle linee di ley",
+        "non più giovane delle scuole delle leyline",
         "che si tramanda dalle antiche sale dei grimori",
         "che si porta per la prima volta prima delle mura di qualsiasi città"
       ],
@@ -1483,7 +1483,7 @@
       ],
       "attrib": [
         "gli artefici di verghe delle antiche sale dei grimori",
-        "gli adepti delle linee di ley che firmavano ogni bordone",
+        "gli adepti delle leyline che firmavano ogni bordone",
         "i maghi di gilda che insegnavano l'incanalamento",
         "i fabbricanti che leggevano il legno per posarvi il filo",
         "i veggenti che lo portavano come segno del proprio mestiere",
@@ -1782,7 +1782,7 @@
       "mechanism": [
         "temprandosi nel sangue e restando a bere da chi la porta",
         "portando inciso un nome che nessun fabbro pronuncerebbe ad alta voce",
-        "forgiandosi dove le linee di ley correvano nere e storte",
+        "forgiandosi dove le leyline correvano nere e storte",
         "legandosi a una fame che sopravvive a chi la impugna",
         "temprandosi nel vuoto perché il filo non si smussi e non perdoni",
         "sigillandosi con un rito che le gilde brucerebbero un paese per impedire"
@@ -1874,7 +1874,7 @@
         "il marchio del petrodemone"
       ],
       "era": [
-        "che si forgiò dove sangue, olio e linea di ley si incontrano",
+        "che si forgiò dove sangue, olio e leyline si incontrano",
         "che si porta da quando il catrame istruì per la prima volta l'acciaio",
         "una cosa che lo Squishing ha pompato su dal basso",
         "non più giovane dei pozzi di petrolio profondo",
@@ -2006,7 +2006,7 @@
         "il paramento grigio",
         "il manto dai molti orli",
         "la tonaca di cenere",
-        "il manto cucito lungo le linee di ley",
+        "il manto cucito lungo le leyline",
         "la sopravveste del diacono"
       ],
       "era": [
@@ -2022,7 +2022,7 @@
         "tingendosi nella cenere di un fuoco consacrato",
         "adornandosi di amuleti che chi la porta non comprende più",
         "cucendosi perché ogni orlo porti una parola di protezione",
-        "tessendosi con filo tirato lungo una linea di ley viva",
+        "tessendosi con filo tirato lungo una leyline viva",
         "benedicendosi una sola volta e non lavandosi più per paura di perderla"
       ],
       "attrib": [
@@ -2258,7 +2258,7 @@
       "mechanism": [
         "fondendosi a chi la indossa così da non staccarsi di buon grado",
         "raffreddandosi con ciò che ha bevuto dall'ultimo proprietario",
-        "portando sigilli che dolgono contro le linee di ley",
+        "portando sigilli che dolgono contro le leyline",
         "cucendosi attraverso la carne a un prezzo terribile",
         "temprandosi una volta nel sangue e non venendo più ripulita",
         "vincolandosi con un patto che chi la porta non ricorda del tutto"

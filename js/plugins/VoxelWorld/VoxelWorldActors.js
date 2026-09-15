@@ -292,6 +292,20 @@
                 left  = this.move.left     || Input.isPressed('left');
                 right = this.move.right    || Input.isPressed('right');
                 sprint = this.move.sprint || Input.isPressed('shift');
+                // Crouch is held, like sprint, and on a pad it is on the second
+                // layer: L2 turns the faces into the controls a keyboard had to
+                // itself, and Y is this one (Controller.BINDINGS.walk).
+                //
+                // Added to whatever else has set the flag rather than replacing
+                // it: the key sets it directly, and so does anything driving a
+                // walker from outside, so the pad only ever clears a crouch the
+                // pad itself began.
+                const C = window.Controller;
+                const padCrouch = !!(this.worldMode && C && C.action && C.mode &&
+                    C.mode() === 'walk' && C.action('crouch'));
+                if (padCrouch) this.crouching = true;
+                else if (this._padCrouchWas) this.crouching = false;
+                this._padCrouchWas = padCrouch;
             }
 
             this.direction.z = Number(fwd)   - Number(back);

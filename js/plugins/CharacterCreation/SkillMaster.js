@@ -256,7 +256,7 @@
     // categories are untouched.
     const MAGIC_TREE_PREFIX = 'MagicSystem:';
     const EM_STORY_SWITCH = 49;   // raised when a story run is started
-    const EM_SKILL_TREES = ['Firearms'];
+    const EM_SKILL_TREES = ['Firearms']; // i18n-ignore: skill category id / type discriminator
     const MAGIC_TREE_ICON = 79;
 
     function isMagicTree(category) {
@@ -287,7 +287,7 @@
     }
 
     function getEmCurriculumCategories() {
-        const list = ['All'].concat(EM_SKILL_TREES);
+        const list = ['All'].concat(EM_SKILL_TREES); // i18n-ignore: skill category id / type discriminator
         for (const sys of getAllMagicalSystems()) {
             if (sys && sys.id) list.push(MAGIC_TREE_PREFIX + sys.id);
         }
@@ -374,7 +374,7 @@
     }
 
     function getMagicSystemRigorHint(id) {
-        const key = 'SkillMaster.magicSystem.rigor.' + getMagicSystemRigor(id) + 'Hint';
+        const key = 'SkillMaster.magicSystem.rigor.' + getMagicSystemRigor(id) + 'Hint'; // i18n-ignore: i18n key prefix
         return (typeof T === 'function' && T.has(key)) ? T(key) : '';
     }
 
@@ -404,11 +404,11 @@
         return list;
     }
 
-    const FUSION_CATEGORY = 'Fusion';
+    const FUSION_CATEGORY = 'Fusion'; // i18n-ignore: skill category id / type discriminator
     // Every category whose entries live on $gameSystem rather than in the
     // database: the forge's fusions and the two benches' own writing. They are
     // read out of the save, never scanned for in $dataSkills.
-    const CUSTOM_CATEGORIES = ['Fusion', 'Crafted', 'Devised'];
+    const CUSTOM_CATEGORIES = ['Fusion', 'Crafted', 'Devised']; // i18n-ignore: skill category id / type discriminator
 
     const actorCategoryManager = {
         _primary: [],
@@ -507,7 +507,7 @@
         if (usesEmCurriculum()) return getEmCurriculumCategories();
         const allowed = actorCategoryManager.allowedCategories();
         const categories = new Set();
-        categories.add("All");
+        categories.add("All"); // i18n-ignore: skill category id / type discriminator
 
         const MN = window.MagicNature;
         const filterNature = !!(MN && MN.isFiltering());
@@ -531,10 +531,10 @@
     }
 
     function getCategoryType(category) {
-        if (category === 'All') return 'Skill';
-        if (isMagicTree(category)) return 'Magic';
+        if (category === 'All') return 'Skill'; // i18n-ignore: skill category id / type discriminator
+        if (isMagicTree(category)) return 'Magic'; // i18n-ignore: skill category id / type discriminator
         const data = CATEGORY_DATA[category] || SkillMaster.CATEGORY_DATA[category];
-        return (data && data.type === 'Magic') ? 'Magic' : 'Skill';
+        return (data && data.type === 'Magic') ? 'Magic' : 'Skill'; // i18n-ignore: skill category id / type discriminator
     }
 
     function getSplitSkillCategories() {
@@ -542,14 +542,14 @@
         const skills = [];
         const magic = [];
         for (const cat of all) {
-            if (cat === 'All') continue;
-            if (getCategoryType(cat) === 'Magic') magic.push(cat);
+            if (cat === 'All') continue; // i18n-ignore: skill category id / type discriminator
+            if (getCategoryType(cat) === 'Magic') magic.push(cat); // i18n-ignore: skill category id / type discriminator
             else skills.push(cat);
         }
         const byName = (a, b) => getCategoryDisplayName(a).localeCompare(getCategoryDisplayName(b));
         skills.sort(byName);
         magic.sort(byName);
-        skills.push('All');
+        skills.push('All'); // i18n-ignore: skill category id / type discriminator
         return { Skill: skills, Magic: magic };
     }
 
@@ -576,10 +576,10 @@
             return alphabetical(getSkillsForMagicSystem(magicTreeId(category))
                 .filter(s => s && s.name && !s.name.startsWith('<--') && (!filter0 || MN0.allowsData(s))));
         }
-        if (category === 'All' && usesEmCurriculum()) {
+        if (category === 'All' && usesEmCurriculum()) { // i18n-ignore: skill category id / type discriminator
             const out = [];
             for (const cat of getEmCurriculumCategories()) {
-                if (cat === 'All') continue;
+                if (cat === 'All') continue; // i18n-ignore: skill category id / type discriminator
                 for (const skill of getSkillsByCategory(cat)) {
                     if (!out.includes(skill)) out.push(skill);
                 }
@@ -885,7 +885,7 @@
     Game_System.prototype.addCustomSpell = function (skill) {
         const mine = this.getCustomSpells().filter(s => s && s._ownerActorId === skill._ownerActorId);
         skill.note = String(skill.note || '').replace(/\n?<Node:[^>]*>/i, '')
-            + '\n<Node: 0,' + mine.length + '>';
+            + '\n<Node: 0,' + mine.length + '>'; // i18n-ignore: note tag
         this.getCustomSpells().push(skill);
         if (typeof $dataSkills !== 'undefined' && $dataSkills) $dataSkills[skill.id] = skill;
     };
@@ -987,13 +987,13 @@
         const categories = getAllSkillCategories();
         for (const category of categories) {
             let commandName = getCategoryDisplayName(category);
-            if (category !== "All") {
+            if (category !== "All") { // i18n-ignore: skill category id / type discriminator
                 if (actorCategoryManager.isPrimary(category)) {
                     commandName += " (3x)";
                 } else if (actorCategoryManager.isSecondary(category)) {
                     commandName += " (1.5x)";
                 } else if (actorCategoryManager.isForeign(category)) {
-                    commandName += ` (${typeof T === 'function' ? T('SkillMaster.foreignSchool') : 'Foreign'})`;
+                    commandName += ` (${T('SkillMaster.foreignSchool')})`;
                 }
             }
             const icon = getCategoryIcon(category);
@@ -1006,7 +1006,7 @@
         const data = this.commandData(index);
         const members = $gameParty ? $gameParty.members() : [];
         let isSelectedCategory = false;
-        const categorySkills = getSkillsByCategory(data.ext ? data.ext.category : "All");
+        const categorySkills = getSkillsByCategory(data.ext ? data.ext.category : "All"); // i18n-ignore: skill category id / type discriminator
         for (const actor of members) {
             if (categorySkills.some(s => actor.isLearnedSkill(s.id))) {
                 isSelectedCategory = true;
@@ -1037,7 +1037,7 @@
     Window_SkillCategory.prototype.currentCategory = function () {
         const ext = this.currentExt();
         if (ext && ext.category) return ext.category;
-        return this.currentData() ? this.currentData().name : "All";
+        return this.currentData() ? this.currentData().name : "All"; // i18n-ignore: skill category id / type discriminator
     };
 
     //=============================================================================
@@ -1053,7 +1053,7 @@
 
     Window_SkillMasterList.prototype.initialize = function (rect) {
         Window_Selectable.prototype.initialize.call(this, rect);
-        this._category = "All";
+        this._category = "All"; // i18n-ignore: skill category id / type discriminator
         this._data = [];
         this.refresh();
     };
@@ -1169,7 +1169,7 @@
             const cost = $gameSystem.getSkillKnowledgeCost(this._skill.id, actorId);
             const canAfford = knowledge >= cost;
             this._actions.push({
-                name: typeof T === 'function' ? T('SkillMaster.teachActor', { actor: actor.name(), cost: cost }) : `Teach ${actor.name()} (${cost} KP)`,
+                name: T('SkillMaster.teachActor', { actor: actor.name(), cost: cost }),
                 symbol: 'learn',
                 enabled: canAfford,
                 actorId: actorId,
@@ -1210,7 +1210,7 @@
     Window_SkillDetail.prototype.refresh = function () {
         this.contents.clear();
         if (!this._skill) {
-            const text = typeof T === 'function' ? T('SkillMaster.selectSkillForDetails') : "Select a skill";
+            const text = T('SkillMaster.selectSkillForDetails');
             this.drawText(text, 0, this.contentsHeight() / 2 - this.lineHeight(), this.contentsWidth(), "center");
             return;
         }
@@ -1222,7 +1222,7 @@
 
         this.contents.fontSize = 32;
         this.drawIcon(this._skill.iconIndex || 0, padding, leftY);
-        this.drawText(this._skill.name || "Unknown", padding + ImageManager.iconWidth + 8, leftY, halfWidth - ImageManager.iconWidth - 8, "left");
+        this.drawText(this._skill.name || T('SkillMaster.unknownSkill'), padding + ImageManager.iconWidth + 8, leftY, halfWidth - ImageManager.iconWidth - 8, "left");
         this.resetFontSize();
         leftY += 42;
 
@@ -1240,7 +1240,7 @@
         this.contents.fontSize = 24;
         if (this._skill.mpCost > 0) {
             this.changeTextColor(ColorManager.systemColor());
-            this.drawText(typeof T === 'function' ? T('SkillMaster.mpLabel') : 'MP', padding, leftY, 80);
+            this.drawText(T('SkillMaster.mpLabel'), padding, leftY, 80);
             this.resetTextColor();
             this.drawText(this._skill.mpCost, padding + 80, leftY, halfWidth - 80, "right");
             leftY += this.lineHeight();
@@ -1248,7 +1248,7 @@
 
         if (this._skill.tpCost > 0) {
             this.changeTextColor(ColorManager.systemColor());
-            this.drawText(typeof T === 'function' ? T('SkillMaster.apLabel') : 'AP', padding, leftY, 80);
+            this.drawText(T('SkillMaster.apLabel'), padding, leftY, 80);
             this.resetTextColor();
             this.drawText(this._skill.tpCost, padding + 80, leftY, halfWidth - 80, "right");
             leftY += this.lineHeight();
@@ -1262,7 +1262,7 @@
         if (this._skill.damage && this._skill.damage.formula) {
             const isItalian = ConfigManager.language === 'it';
             this.changeTextColor(ColorManager.systemColor());
-            this.drawText(typeof T === 'function' ? T('SkillMaster.scale') : 'Scaling', padding, leftY, halfWidth);
+            this.drawText(T('SkillMaster.scale'), padding, leftY, halfWidth);
             this.resetTextColor();
             leftY += this.lineHeight();
 
@@ -1276,7 +1276,7 @@
         const damageText = this.getDamageTypeText(this._skill);
         if (damageText) {
             this.changeTextColor(ColorManager.systemColor());
-            this.drawText(typeof T === 'function' ? T('SkillMaster.effectLabel') : 'Effect', padding, leftY, halfWidth);
+            this.drawText(T('SkillMaster.effectLabel'), padding, leftY, halfWidth);
             this.resetTextColor();
             leftY += this.lineHeight();
 
@@ -1289,14 +1289,14 @@
 
         const rightX = padding * 2 + halfWidth;
         this.changeTextColor(ColorManager.systemColor());
-        this.drawText(typeof T === 'function' ? T('SkillMaster.descriptionLabel') : 'Description', rightX, rightY, halfWidth);
+        this.drawText(T('SkillMaster.descriptionLabel'), rightX, rightY, halfWidth);
         this.resetTextColor();
         rightY += this.lineHeight();
 
         this.drawHorzLine(rightY, rightX, halfWidth);
         rightY += 10;
 
-        let description = this._skill.description || (typeof T === 'function' ? T('SkillMaster.noDescription') : 'No description');
+        let description = this._skill.description || (T('SkillMaster.noDescription'));
         if (window.translateText) description = window.translateText(description);
 
         this.resetTextColor();
@@ -1312,7 +1312,7 @@
 
         const knowledge = $gameSystem.getKnowledge();
         this.changeTextColor(ColorManager.systemColor());
-        this.drawText(typeof T === 'function' ? T('SkillMaster.knowledgeLabel') : 'Knowledge', rightX, rightY, halfWidth * 0.6);
+        this.drawText(T('SkillMaster.knowledgeLabel'), rightX, rightY, halfWidth * 0.6);
         this.resetTextColor();
         this.changeTextColor(ColorManager.textColor(knowledge > 0 ? 3 : 7));
         this.contents.fontSize = 22;
@@ -1417,12 +1417,12 @@
     Window_SkillDetail.prototype.getDamageTypeText = function (skill) {
         const damage = skill.damage;
         let text = "";
-        if (damage.type === 1) text = typeof T === 'function' ? T('SkillMaster.hpDamage') : 'HP Damage';
-        else if (damage.type === 2) text = typeof T === 'function' ? T('SkillMaster.mpDamage') : 'MP Damage';
-        else if (damage.type === 3) text = typeof T === 'function' ? T('SkillMaster.hpRecovery') : 'HP Recovery';
-        else if (damage.type === 4) text = typeof T === 'function' ? T('SkillMaster.mpRecovery') : 'MP Recovery';
-        else if (damage.type === 5) text = typeof T === 'function' ? T('SkillMaster.hpDrain') : 'HP Drain';
-        else if (damage.type === 6) text = typeof T === 'function' ? T('SkillMaster.mpDrain') : 'MP Drain';
+        if (damage.type === 1) text = T('SkillMaster.hpDamage');
+        else if (damage.type === 2) text = T('SkillMaster.mpDamage');
+        else if (damage.type === 3) text = T('SkillMaster.hpRecovery');
+        else if (damage.type === 4) text = T('SkillMaster.mpRecovery');
+        else if (damage.type === 5) text = T('SkillMaster.hpDrain');
+        else if (damage.type === 6) text = T('SkillMaster.mpDrain');
 
         if (damage.variance > 0 && text) text += ` (±${damage.variance}%)`;
 
@@ -1433,7 +1433,7 @@
                 const paramKeys = ["HP", "MP", "ATT", "DEF", "M.ATT", "M.DEF", "AGILITY", "LUCK"];
                 const key = paramKeys[e.dataId];
                 const paramName = key ? _si18n(key) : TextManager.param(e.dataId);
-                const type = e.code === 31 ? (typeof T === 'function' ? T('SkillMaster.buff') : 'Buff') : (typeof T === 'function' ? T('SkillMaster.debuff') : 'Debuff');
+                const type = e.code === 31 ? (T('SkillMaster.buff')) : (T('SkillMaster.debuff'));
                 return `${type} ${paramName}`;
             });
             if (text) text += ", ";
@@ -1444,12 +1444,12 @@
         if (stateEffects.length > 0) {
             const stateTexts = stateEffects.map(e => {
                 const state = $dataStates[e.dataId];
-                return `${state ? state.name : (typeof T === 'function' ? T('SkillMaster.state') : 'State')}`;
+                return `${state ? state.name : (T('SkillMaster.state'))}`;
             });
             if (text) text += ", ";
             text += stateTexts.join(", ");
         }
-        return text || (typeof T === 'function' ? T('SkillMaster.none') : 'None');
+        return text || (T('SkillMaster.none'));
     };
 
     Window_SkillDetail.prototype.drawHorzLine = function (y, x, width) {
@@ -1550,10 +1550,10 @@
         this.contents.fontSize = 18;
         if (hasSkill) {
             this.changeTextColor(ColorManager.textColor(3));
-            this.drawText(typeof T === 'function' ? T('SkillMaster.learnedMark') : 'Learned', textX, statusY, textW);
+            this.drawText(T('SkillMaster.learnedMark'), textX, statusY, textW);
         } else {
             this.changeTextColor(canAfford ? ColorManager.textColor(1) : ColorManager.textColor(7));
-            this.drawText(typeof T === 'function' ? T('SkillMaster.costKp', { cost: cost }) : `${cost} KP`, textX, statusY, textW);
+            this.drawText(T('SkillMaster.costKp', { cost: cost }), textX, statusY, textW);
         }
         this.resetTextColor();
         this.contents.fontSize = $gameSystem.mainFontSize();
@@ -1650,8 +1650,8 @@
     const GROVE_MAX = 20;
     const GROVE_MIN = 4;
     const GROVE_FANOUT = 3;
-    const FUSION_CATEGORY = 'Fusion';
-    const CUSTOM_CATEGORIES = (window.SkillMaster && window.SkillMaster.CUSTOM_CATEGORIES) || ['Fusion', 'Crafted', 'Devised'];
+    const FUSION_CATEGORY = 'Fusion'; // i18n-ignore: skill category id / type discriminator
+    const CUSTOM_CATEGORIES = (window.SkillMaster && window.SkillMaster.CUSTOM_CATEGORIES) || ['Fusion', 'Crafted', 'Devised']; // i18n-ignore: skill category id / type discriminator
     const ROLE_RE = /<role:\s*([^>]+)>/i;
 
     const SKY_SCHOOLS = {
@@ -1731,51 +1731,6 @@
     window.SkillShapes = SkillShapes;
     SkillMaster.SkillShapes = SkillShapes;
 
-    //=========================================================================
-    // The authored trees, js/db/Skills/SkillTrees.json.
-    //
-    // A school's shape is data, not an accident of the runtime: every category
-    // there lists its branches, every branch its nodes in climbing order with
-    // the node each one hangs from. Skills the file does not mention - a new
-    // one, a player's own spell - still fall through to the self-organising
-    // path below, so nothing ever disappears from a tree.
-    //=========================================================================
-    const SkillTreeData = {
-        _doc: undefined,
-
-        doc: function () {
-            if (this._doc === undefined) {
-                const bank = window.Skills && window.Skills.SkillTrees;
-                this._doc = (bank && bank.trees) ? bank : null;
-            }
-            return this._doc;
-        },
-
-        branches: function (category) {
-            const doc = this.doc();
-            const tree = doc && doc.trees[category];
-            return (tree && Array.isArray(tree.branches)) ? tree.branches : null;
-        },
-
-        // The branch name in the player's language, resolved the way a category
-        // name is: an i18n key first, so a translator can overrule the file,
-        // then the pair the file itself carries.
-        title: function (branch) {
-            if (!branch) return '';
-            const key = 'SkillMaster.branch.' + branch.id;
-            if (typeof T === 'function' && T.has(key)) return T(key);
-            const name = branch.name;
-            if (!name) return '';
-            const lang = typeof T === 'function' ? T.language() : (ConfigManager.language || 'en');
-            return (lang === 'it' ? name.it : name.en) || name.en || '';
-        },
-
-        invalidate: function () { this._doc = undefined; }
-    };
-
-    window.SkillTreeData = SkillTreeData;
-    SkillMaster.SkillTreeData = SkillTreeData;
-
     const SkillGraph = {
         _trees: null,
         _index: null,
@@ -1814,6 +1769,12 @@
             this._trees[key] = tree;
             if (!skills.length) return tree;
 
+            const forbidden = [];
+            const climb = [];
+            for (const skill of skills) {
+                (this.isForbidden(skill.id) ? forbidden : climb).push(skill);
+            }
+
             const power = {};
             const scoreFn = SkillMaster.skillPower || window.skillPower || (() => 1);
             for (const skill of skills) power[skill.id] = scoreFn(skill);
@@ -1824,14 +1785,6 @@
             laneNames.forEach((name, i) => { laneOf[name] = i; });
             tree.lanes = laneNames;
 
-            const left = this._plantAuthored(tree, category, skills, laneOf);
-
-            const forbidden = [];
-            const climb = [];
-            for (const skill of left) {
-                (this.isForbidden(skill.id) ? forbidden : climb).push(skill);
-            }
-
             for (const members of this._groves(climb, rank)) {
                 this._grow(tree, category, members, laneOf, false);
             }
@@ -1841,77 +1794,6 @@
 
             this._rank(tree);
             return tree;
-        },
-
-        // Lay the authored branches of a school down as groves, in file order,
-        // and hand back the skills the file said nothing about. A node whose
-        // parent is filtered out of this view (the Magic Nature filter hides
-        // it) climbs to the nearest ancestor that survived, so a branch never
-        // breaks into loose nodes.
-        _plantAuthored: function (tree, category, skills, laneOf) {
-            if (CUSTOM_CATEGORIES.includes(category)) return skills;
-            const branches = SkillTreeData.branches(category);
-            if (!branches || !branches.length) return skills;
-
-            const shown = {};
-            for (const skill of skills) shown[skill.id] = skill;
-            const taken = {};
-
-            for (const branch of branches) {
-                const nodes = branch.nodes || [];
-                const authored = {};
-                for (const node of nodes) authored[node.id] = node;
-
-                const members = nodes.filter(node => shown[node.id]);
-                if (!members.length) continue;
-
-                const grove = {
-                    index: tree.groves.length, nodes: [], forbidden: false,
-                    id: branch.id, title: SkillTreeData.title(branch), icon: branch.icon || 0
-                };
-                members.forEach((node, seat) => {
-                    const skill = shown[node.id];
-                    const placed = {
-                        id: skill.id, skill: skill, category: category,
-                        tier: node.tier || 0, grove: grove.index, seat: seat,
-                        lane: laneOf[this._lane(skill)] || 0,
-                        forbidden: this.isForbidden(skill.id), authored: true,
-                        parents: this._authoredParents(node, authored, shown),
-                        children: [], need: 0
-                    };
-                    placed.need = placed.parents.length ? 1 : 0;
-                    grove.nodes.push(placed);
-                    tree.nodes[skill.id] = placed;
-                    tree.order.push(placed);
-                    this._index[skill.id] = placed;
-                    taken[skill.id] = true;
-                });
-                for (const node of grove.nodes) {
-                    for (const parent of node.parents) {
-                        if (tree.nodes[parent]) tree.nodes[parent].children.push(node.id);
-                    }
-                }
-                grove.depth = grove.nodes.reduce((d, n) => Math.max(d, n.tier), 0);
-                tree.groves.push(grove);
-            }
-
-            return skills.filter(skill => !taken[skill.id]);
-        },
-
-        _authoredParents: function (node, authored, shown) {
-            const out = [];
-            const seen = {};
-            const walk = (ids) => {
-                for (const id of ids || []) {
-                    if (seen[id]) continue;
-                    seen[id] = true;
-                    if (shown[id]) { if (!out.includes(id)) out.push(id); continue; }
-                    const up = authored[id];
-                    if (up) walk(up.requires);
-                }
-            };
-            walk(node.requires);
-            return out;
         },
 
         _groves: function (climb, rank) {
@@ -1973,11 +1855,7 @@
         _rank: function (tree) {
             let deepest = 0;
             for (const node of tree.order) if (!node.forbidden) deepest = Math.max(deepest, node.tier);
-            // A forbidden skill the authored file placed already closes its own
-            // branch; only the loose ones are pushed under everything else.
-            for (const node of tree.order) {
-                if (node.forbidden && !node.authored) node.tier = deepest + 1;
-            }
+            for (const node of tree.order) if (node.forbidden) node.tier = deepest + 1;
             const tiers = [];
             for (const node of tree.order) {
                 (tiers[node.tier] = tiers[node.tier] || []).push(node);
@@ -2097,7 +1975,6 @@
             this._trees = null;
             this._index = null;
             this._core = {};
-            SkillTreeData.invalidate();
         },
 
         graph: function (category) {
@@ -2121,8 +1998,7 @@
 
             tree.graph = {
                 nodes: nodes, edges: edges,
-                tiers: tree.tiers.length, groves: tree.groves.length,
-                groveTitles: tree.groves.map(g => g.title || '')
+                tiers: tree.tiers.length, groves: tree.groves.length
             };
             return tree.graph;
         }
@@ -2191,11 +2067,10 @@
             const cfg = SkillShapes.school(category);
             const seed = SkillShapes.hash(category);
 
-            const titles = graph.groveTitles || [];
             const byId = {};
             const groves = [];
             for (const n of graph.nodes) {
-                const g = (groves[n.grove] = groves[n.grove] || { index: n.grove, nodes: [], title: titles[n.grove] || '' });
+                const g = (groves[n.grove] = groves[n.grove] || { index: n.grove, nodes: [] });
                 const node = {
                     id: n.id, skill: n.skill, category: category,
                     tier: n.tier, grove: n.grove, seat: n.seat,
@@ -2228,19 +2103,6 @@
             const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
             for (const n of nodes) { n.x -= cx; n.y -= cy; }
 
-            // One heading per branch, sitting a row above its first tier, so a
-            // school reads as named crafts instead of anonymous clusters.
-            const groveLabels = [];
-            for (const grove of groves) {
-                if (!grove || !grove.title || !grove.nodes.length) continue;
-                let gx = Infinity, gy = Infinity;
-                for (const n of grove.nodes) {
-                    if (n.x < gx) gx = n.x;
-                    if (n.y < gy) gy = n.y;
-                }
-                groveLabels.push({ title: grove.title, x: gx, y: gy - SKY_ROW * 0.75 });
-            }
-
             const edges = [];
             for (const [a, b] of graph.edges) {
                 if (byId[a.id] && byId[b.id]) edges.push([byId[a.id], byId[b.id]]);
@@ -2250,7 +2112,7 @@
             const height = (maxY - minY) + SKY_PAD * 2;
             return {
                 category: category, hue: cfg.hue,
-                nodes: nodes, edges: edges, groveLabels: groveLabels,
+                nodes: nodes, edges: edges,
                 groves: boxes.length, seed: seed,
                 width: width, height: height,
                 radius: Math.hypot(width, height) / 2
@@ -2707,8 +2569,7 @@
             // 3. Draw Edge Connection Lines & Flow Energy Particles
             this._drawEdges(st, ctx, dt);
 
-            // 4. Draw Branch Headings & Skill Nodes
-            this._drawBranchTitles(st, ctx);
+            // 4. Draw Skill Nodes
             this._drawNodes(st, ctx);
 
             ctx.restore();
@@ -2818,25 +2679,6 @@
                 }
             }
 
-            ctx.restore();
-        },
-
-        _drawBranchTitles: function (st, ctx) {
-            const labels = st.figure && st.figure.groveLabels;
-            if (!labels || !labels.length) return;
-            const scale = st.scaleFactor;
-            const hue = (st.atlas && st.atlas.hue != null) ? st.atlas.hue : 210;
-
-            ctx.save();
-            ctx.font = '600 15px sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'alphabetic';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-            ctx.shadowBlur = 6;
-            ctx.fillStyle = `hsla(${hue}, 60%, 82%, 0.92)`;
-            for (const label of labels) {
-                ctx.fillText(label.title, label.x * scale - 22, label.y * scale);
-            }
             ctx.restore();
         },
 
@@ -3284,9 +3126,9 @@
         const previewable = !!(anim && anim.effectName && !anim.frames);
         const animLabel = anim && anim.name
             ? `#${skill.animationId} · ${anim.name}`
-            : (typeof T === 'function' ? T('SkillMaster.noAnimation') : 'No Animation');
+            : (T('SkillMaster.noAnimation'));
         const noEfkNote = previewable ? '' :
-            `<div class="sm-stage-note">${typeof T === 'function' ? T('SkillMaster.no3dAnimationForThis') : 'No 3D Animation'}</div>`;
+            `<div class="sm-stage-note">${T('SkillMaster.no3dAnimationForThis')}</div>`;
 
         const old = document.getElementById('spell-preview-overlay');
         if (old && old.parentNode) old.parentNode.removeChild(old);
@@ -3299,7 +3141,7 @@
         ov.innerHTML = `
             <div class="ui-panel sm-preview-panel">
                 <div class="page-header-bar">
-                    <div class="back-button focusable" onclick="SceneManager._scene.closeSpellPreview()">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
+                    <div class="back-button focusable" onclick="SceneManager._scene.closeSpellPreview()">${T('SkillMaster.close')}</div>
                     <h2 class="title">${skill.name}</h2>
                 </div>
                 <div class="ui-panel-body sm-preview-body">
@@ -3312,7 +3154,7 @@
                     <div class="sm-preview-anim">${animLabel}</div>
                 </div>
                 <div class="inspect-actions ui-panel-actions">
-                    <div class="inspect-btn focusable" onclick="SceneManager._scene.replaySpellPreview()">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
+                    <div class="inspect-btn focusable" onclick="SceneManager._scene.replaySpellPreview()">${T('SkillMaster.replay')}</div>
                 </div>
             </div>`;
         this._dndContainer.appendChild(ov);
@@ -3401,7 +3243,7 @@
         fused.iconIndex = dominant.iconIndex;
 
         const recCat = recessive ? SkillMaster.getSkillCategory(recessive.id) : null;
-        const recIsSkill = recCat ? SkillMaster.getCategoryType(recCat) !== 'Magic' : false;
+        const recIsSkill = recCat ? SkillMaster.getCategoryType(recCat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
         fused._resultIsSkill = recIsSkill;
         if (recIsSkill && recessive) {
             fused.stypeId = recessive.stypeId;
@@ -3416,9 +3258,7 @@
 
         const names = components.map(c => c.name).join(' + ');
         const descKey = recIsSkill ? 'SkillMaster.fusedSkillDesc' : 'SkillMaster.fusedSpellDesc';
-        fused.description = typeof T === 'function'
-            ? T(descKey, { parts: names, dominant: dominant.name })
-            : `${names} (Dominant: ${dominant.name})`;
+        fused.description = T(descKey, { parts: names, dominant: dominant.name });
 
         fused.note = '<customSpell>\n<category:' + SkillMaster.FUSION_CATEGORY + '>';
         fused.meta = { customSpell: true };
@@ -3467,8 +3307,8 @@
             if (Array.isArray(s.effects) && s.effects.some(e => e && e.code === Game_Action.EFFECT_COMMON_EVENT)) return false;
             const cat = SkillMaster.getSkillCategory(s.id);
             if (cat && cat.toLowerCase() === 'basic') return false;
-            const type = cat ? SkillMaster.getCategoryType(cat) : 'Skill';
-            return dominantSlot ? type === 'Magic' : true;
+            const type = cat ? SkillMaster.getCategoryType(cat) : 'Skill'; // i18n-ignore: skill category id / type discriminator
+            return dominantSlot ? type === 'Magic' : true; // i18n-ignore: skill category id / type discriminator
         });
     };
 
@@ -3615,7 +3455,7 @@
 
         if (window.Dice3D) {
             rollRes = await window.Dice3D.rollD20({
-                actionName: `Arcane Fusion: ${components.map(c => c.name).join(' + ')}`,
+                actionName: T('SkillMaster.fusionRollAction', { parts: components.map(c => c.name).join(' + ') }),
                 statName: 'INT',
                 modifier: intMod,
                 dc: dc,
@@ -3771,10 +3611,10 @@
         const animPicking = this._editorAnimPicking;
 
         const slotMeta = [
-            { label: typeof T === 'function' ? T('SkillMaster.dominantSpell') : 'Dominant Spell',
-              hint: typeof T === 'function' ? T('SkillMaster.magicOnlyDefinesTheEffect') : 'Magic only · Defines effect & damage' },
-            { label: typeof T === 'function' ? T('SkillMaster.recessiveSpellOrSkill') : 'Recessive Spell / Skill',
-              hint: typeof T === 'function' ? T('SkillMaster.spellOrSkillSetsThe') : 'Spell or Skill · Determines result type' }
+            { label: T('SkillMaster.dominantSpell'),
+              hint: T('SkillMaster.magicOnlyDefinesTheEffect') },
+            { label: T('SkillMaster.recessiveSpellOrSkill'),
+              hint: T('SkillMaster.spellOrSkillSetsThe') }
         ];
         let slotsHTML = '';
         this._editorSlots.forEach((id, i) => {
@@ -3784,13 +3624,13 @@
             let typeBadge = '';
             if (skill && i === FORGE_RECESSIVE_IDX) {
                 const cat = SkillMaster.getSkillCategory(skill.id);
-                const isSkill = cat ? SkillMaster.getCategoryType(cat) !== 'Magic' : false;
-                const bLabel = isSkill ? (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill') : (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic');
+                const isSkill = cat ? SkillMaster.getCategoryType(cat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
+                const bLabel = isSkill ? (T('SkillMaster.skill')) : (T('SkillMaster.magic'));
                 typeBadge = `<span class="sm-forge-badge">${bLabel}</span>`;
             }
             const value = skill
                 ? `<span class="sm-forge-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span><span class="inspect-spec-value">${skill.name}</span><span class="sm-forge-cost">MP ${skill.mpCost} &middot; AP ${skill.tpCost}</span>`
-                : `<span class="inspect-spec-value inspect-spec-value--muted">${typeof T === 'function' ? T('SkillMaster.emptySlot') : 'Empty'}</span>`;
+                : `<span class="inspect-spec-value inspect-spec-value--muted">${T('SkillMaster.emptySlot')}</span>`;
             slotsHTML += `
                 <div class="sm-forge-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})">
                     <span class="inspect-spec-label">${meta.label}${typeBadge}</span>
@@ -3801,11 +3641,11 @@
 
         const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
         const animData = animId && $dataAnimations ? $dataAnimations[animId] : null;
-        const animName = animData ? `#${animId} · ${animData.name}` : (typeof T === 'function' ? T('SkillMaster.default') : 'Default');
+        const animName = animData ? `#${animId} · ${animData.name}` : (T('SkillMaster.default'));
         const animFocused = !animPicking && this._editorFocus === FORGE_ANIM_IDX;
         const animRowHTML = `
             <div class="sm-forge-row focusable ${animFocused ? 'focused' : ''}" onclick="SceneManager._scene.openAnimPicker()">
-                <span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.animation') : 'Animation'}</span>
+                <span class="inspect-spec-label">${T('SkillMaster.animation')}</span>
                 <span class="sm-forge-answer"><span class="inspect-spec-value">${animName}</span></span>
             </div>`;
 
@@ -3818,11 +3658,11 @@
         const createHTML = `
             <div class="inspect-actions sm-forge-actions">
                 <div class="inspect-btn focusable ${createFocused ? 'selected' : ''} ${canForge ? '' : 'unusable'}" onclick="SceneManager._scene.editorCreate()">
-                    ${typeof T === 'function' ? T('SkillMaster.fuseSpells2') : 'Fuse Spells'}${costTag}
+                    ${T('SkillMaster.fuseSpells2')}${costTag}
                 </div>
             </div>
             <div class="sm-forge-knowledge ${canPay ? '' : 'sm-forge-knowledge--short'}">
-                ${typeof T === 'function' ? T('SkillMaster.knowledge') : 'Knowledge'}: <strong>${knowledge} KP</strong>${allFilled && !canPay ? (typeof T === 'function' ? T('SkillMaster.notEnough') : ' (Not enough KP)') : ''}
+                ${T('SkillMaster.knowledge')}: <strong>${knowledge} KP</strong>${allFilled && !canPay ? (T('SkillMaster.notEnough')) : ''}
             </div>`;
 
         const customSpells = this.getEditorCustomSpells();
@@ -3833,13 +3673,13 @@
             fusedListHTML += `
                 <div class="sm-skill-row focusable ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorSplit(${s.id})">
                     <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${s.name}</span></span>
-                    <span class="ui-chip sm-skill-badge">${typeof T === 'function' ? T('SkillMaster.split') : 'Split'}</span>
+                    <span class="ui-chip sm-skill-badge">${T('SkillMaster.split')}</span>
                 </div>`;
         });
-        if (!fusedListHTML) fusedListHTML = `<div class="ui-empty"><div class="ui-empty-text">${typeof T === 'function' ? T('SkillMaster.noFusedSpellsYet') : 'No fused spells forged yet'}</div></div>`;
+        if (!fusedListHTML) fusedListHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('SkillMaster.noFusedSpellsYet')}</div></div>`;
 
-        const backBtn = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
-        const title = typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion';
+        const backBtn = T('SkillMaster.back');
+        const title = T('SkillMaster.fuseSpells3');
         leftBox.innerHTML = `
             <div class="page-header-bar">
               <div class="back-button focusable" onclick="SceneManager._scene.closeSpellEditor()">${backBtn}</div>
@@ -3851,7 +3691,7 @@
                 ${createHTML}
             </div>
             <div class="ui-section sm-forged-section">
-                <h4 class="inspect-section-title">${typeof T === 'function' ? T('SkillMaster.fusedSpells') : 'Forged Spells'}</h4>
+                <h4 class="inspect-section-title">${T('SkillMaster.fusedSpells')}</h4>
             </div>
             <div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list">
                 ${fusedListHTML}
@@ -3870,10 +3710,10 @@
                         <span class="sm-skill-cost">MP ${s.mpCost} · AP ${s.tpCost}</span>
                     </div>`;
             });
-            if (!candHTML) candHTML = `<div class="ui-empty"><div class="ui-empty-text">${typeof T === 'function' ? T('SkillMaster.noAvailableSkillsForThis') : 'No available skills for this slot'}</div></div>`;
+            if (!candHTML) candHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('SkillMaster.noAvailableSkillsForThis')}</div></div>`;
             const pickTitle = slotIdx === FORGE_DOMINANT_IDX
-                ? (typeof T === 'function' ? T('SkillMaster.chooseDominantSpell') : 'Choose Dominant Spell')
-                : (typeof T === 'function' ? T('SkillMaster.chooseRecessive') : 'Choose Recessive Component');
+                ? (T('SkillMaster.chooseDominantSpell'))
+                : (T('SkillMaster.chooseRecessive'));
             rightHTML = `
                 <div class="ui-detail">
                     <div class="ui-detail-head">
@@ -3895,9 +3735,9 @@
                         <span class="sm-skill-cost">#${a.id}</span>
                     </div>`;
             });
-            const pickTitle = typeof T === 'function' ? T('SkillMaster.chooseAnimation') : 'Choose Animation';
-            const useLbl = typeof T === 'function' ? T('SkillMaster.use') : 'Use';
-            const backLbl = typeof T === 'function' ? T('SkillMaster.cancel') : 'Cancel';
+            const pickTitle = T('SkillMaster.chooseAnimation');
+            const useLbl = T('SkillMaster.use');
+            const backLbl = T('SkillMaster.cancel');
             rightHTML = `
                 <div class="ui-detail">
                     <div class="ui-detail-head">
@@ -3922,36 +3762,36 @@
                 const mp = filled.reduce((a, s) => a + (s.mpCost || 0), 0);
                 const ap = filled.reduce((a, s) => a + (s.tpCost || 0), 0);
                 const recCat = recessive ? SkillMaster.getSkillCategory(recessive.id) : null;
-                const resultIsSkill = recCat ? SkillMaster.getCategoryType(recCat) !== 'Magic' : false;
-                const resultKind = resultIsSkill ? (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill') : (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic');
+                const resultIsSkill = recCat ? SkillMaster.getCategoryType(recCat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
+                const resultKind = resultIsSkill ? (T('SkillMaster.skill')) : (T('SkillMaster.magic'));
                 const previewCost = this.editorFusionCost();
                 rightHTML = `
                     <div class="ui-detail sm-fuse-preview">
                         <div class="ui-detail-head">
                             <div class="ui-detail-titles">
                                 <h3 class="sm-detail-name">${previewName}</h3>
-                                <div class="sm-detail-meta">${typeof T === 'function' ? T('SkillMaster.preview2') : 'Preview'}</div>
+                                <div class="sm-detail-meta">${T('SkillMaster.preview2')}</div>
                             </div>
-                            <span class="ui-chip sm-result-chip">${typeof T === 'function' ? T('SkillMaster.becomesA') : 'Becomes a'} ${resultKind}</span>
+                            <span class="ui-chip sm-result-chip">${T('SkillMaster.becomesA')} ${resultKind}</span>
                         </div>
                         <div class="ui-detail-scroll ui-scroll">
                             <div class="inspect-spec-grid">
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.mpLabel') : 'MP'}</span><span class="inspect-spec-value">${mp}</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.apLabel') : 'AP'}</span><span class="inspect-spec-value">${ap}</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.fusionCost') : 'Fusion Cost'}</span><span class="inspect-spec-value ${knowledge >= previewCost ? '' : 'sm-value--short'}">${previewCost} KP</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.youHold') : 'You have'}</span><span class="inspect-spec-value">${knowledge} KP</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.dominant') : 'Dominant'}</span><span class="inspect-spec-value">${dominant.name}</span></div>
-                                <div class="inspect-spec-row"><span class="inspect-spec-label">${typeof T === 'function' ? T('SkillMaster.recessive') : 'Recessive'}</span><span class="inspect-spec-value">${recessive.name}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.mpLabel')}</span><span class="inspect-spec-value">${mp}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.apLabel')}</span><span class="inspect-spec-value">${ap}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.fusionCost')}</span><span class="inspect-spec-value ${knowledge >= previewCost ? '' : 'sm-value--short'}">${previewCost} KP</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.youHold')}</span><span class="inspect-spec-value">${knowledge} KP</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.dominant')}</span><span class="inspect-spec-value">${dominant.name}</span></div>
+                                <div class="inspect-spec-row"><span class="inspect-spec-label">${T('SkillMaster.recessive')}</span><span class="inspect-spec-value">${recessive.name}</span></div>
                             </div>
-                            <div class="ui-prose">${typeof T === 'function' ? T('SkillMaster.theDominantDefinesDamageAnd') : 'Dominant sets core properties, recessive provides mixed traits.'}</div>
+                            <div class="ui-prose">${T('SkillMaster.theDominantDefinesDamageAnd')}</div>
                         </div>
                     </div>`;
             } else {
                 rightHTML = `
                     <div class="ui-empty sm-empty">
                         <div class="sm-empty-icon" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
-                        <h3 class="sm-detail-name">${typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion'}</h3>
-                        <div class="ui-empty-text">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${actor.name()}.`}</div>
+                        <h3 class="sm-detail-name">${T('SkillMaster.fuseSpells3')}</h3>
+                        <div class="ui-empty-text">${T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge })}</div>
                     </div>`;
             }
         }
@@ -4097,8 +3937,8 @@
         const rightPageBox = document.getElementById('right-page-content');
         if (!leftPageBox || !rightPageBox) return;
 
-        const backLabel = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
-        const titleLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.title') : 'Magical Systems';
+        const backLabel = T('SkillMaster.back');
+        const titleLabel = T('SkillMaster.magicSystem.title');
 
         leftPageBox.innerHTML = `
             <div class="page-header-bar">
@@ -4156,7 +3996,7 @@
             const skills = SkillMaster.getSkillsForMagicSystem(p.sys.id);
             const known = actor ? skills.filter(s => actor.isLearnedSkill(s.id)).length : 0;
             const pctLabel = skills.length ? Math.round(known / skills.length * 100) + '%' : '&mdash;';
-            const yourSysTitle = typeof T === 'function' ? T('SkillMaster.magicSystem.yourSystem') : 'Your System';
+            const yourSysTitle = T('SkillMaster.magicSystem.yourSystem');
             nodesHTML += `
                 <div class="ms-node ${isSel ? 'ms-selected' : ''} ${isActor ? 'ms-actor' : ''}" data-id="${p.sys.id}" onclick="SceneManager._scene.selectMagicSystem('${p.sys.id}')" title="${isActor ? yourSysTitle : ''}" style="--ms-x:${(p.x - 70).toFixed(1)}px; --ms-y:${(p.y - 46).toFixed(1)}px; --ms-ink:${p.sys.color}">
                     <div class="ms-ring"><span class="ms-pct">${pctLabel}</span></div>
@@ -4185,14 +4025,14 @@
     Proto.renderMagicSystemDetailHTML = function () {
         const id = this._magicSystemSelected;
         if (!id) {
-            const emptyLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.empty') : 'Select a system to inspect';
+            const emptyLabel = T('SkillMaster.magicSystem.empty');
             return `
                 <div class="ui-empty"><div class="ui-empty-text">${emptyLabel}</div></div>`;
         }
         const sys = SkillMaster.getAllMagicalSystems().find(s => s.id === id);
         const color = sys ? sys.color : 'var(--text-secondary-active)';
         const classNames = SkillMaster.getClassesForMagicSystem(id);
-        const noClassesLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.noClasses') : 'No classes affiliated';
+        const noClassesLabel = T('SkillMaster.magicSystem.noClasses');
         const classesHTML = classNames.length
             ? `<ul class="sm-ms-list">${classNames.map(n => `<li>${n}</li>`).join('')}</ul>`
             : `<div class="ui-empty-note">${noClassesLabel}</div>`;
@@ -4201,9 +4041,9 @@
         const skills = SkillMaster.getSkillsForMagicSystem(id);
         const known = actor ? skills.filter(s => actor.isLearnedSkill(s.id)).length : 0;
         const fractionLine = skills.length
-            ? `<div class="sm-ms-fraction">${typeof T === 'function' ? T('SkillMaster.magicSystem.knownFraction', { known: known, total: skills.length, pct: Math.round(known / skills.length * 100) }) : `Known: ${known} / ${skills.length} (${Math.round(known / skills.length * 100)}%)`}</div>`
+            ? `<div class="sm-ms-fraction">${T('SkillMaster.magicSystem.knownFraction', { known: known, total: skills.length, pct: Math.round(known / skills.length * 100) })}</div>`
             : '';
-        const noSpellsLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.noSpells') : 'No spells listed';
+        const noSpellsLabel = T('SkillMaster.magicSystem.noSpells');
         const spellsHTML = skills.length
             ? `<ul class="sm-ms-list">${skills.map(s => {
                 const isKnown = actor && actor.isLearnedSkill(s.id);
@@ -4212,12 +4052,12 @@
             : `<div class="ui-empty-note">${noSpellsLabel}</div>`;
 
         const loreText = SkillMaster.getMagicSystemLore(id);
-        const loreHeading = typeof T === 'function' ? T('SkillMaster.magicSystem.loreHeading') : 'Lore';
+        const loreHeading = T('SkillMaster.magicSystem.loreHeading');
         const loreHTML = loreText
             ? `<div class="ui-section"><h4 class="inspect-section-title">${loreHeading}</h4><div class="ui-prose sm-ms-lore">${loreText}</div></div>`
             : '';
-        const classesHeading = typeof T === 'function' ? T('SkillMaster.magicSystem.classesHeading') : 'Affiliated Classes';
-        const spellsHeading = typeof T === 'function' ? T('SkillMaster.magicSystem.spellsHeading') : 'Curriculum Spells';
+        const classesHeading = T('SkillMaster.magicSystem.classesHeading');
+        const spellsHeading = T('SkillMaster.magicSystem.spellsHeading');
 
         return `
             <div class="ui-detail sm-ms-detail" style="--ms-ink:${color}">
@@ -4320,7 +4160,7 @@
                 if (category) {
                     this._selectedCategory = category;
                     const split = SkillMaster.getSplitSkillCategories();
-                    const pane = SkillMaster.getCategoryType(category) === 'Magic' ? 1 : 0;
+                    const pane = SkillMaster.getCategoryType(category) === 'Magic' ? 1 : 0; // i18n-ignore: skill category id / type discriminator
                     const list = pane === 1 ? split.Magic : split.Skill;
                     const catIdx = list.indexOf(category);
                     if (catIdx !== -1) {
@@ -4466,7 +4306,7 @@
 
     Scene_SkillEncyclopedia.prototype.atlasCategories = function () {
         const split = this.getSplitCategoriesCached();
-        return split.Skill.filter(c => c !== 'All').concat(split.Magic);
+        return split.Skill.filter(c => c !== 'All').concat(split.Magic); // i18n-ignore: skill category id / type discriminator
     };
 
     Scene_SkillEncyclopedia.prototype.viewedCategory = function () {
@@ -4590,7 +4430,7 @@
 
     Scene_SkillEncyclopedia.prototype.atlasProgressText = function (category) {
         const count = this.atlasLearnedCount(category);
-        return typeof T === 'function' ? T('SkillMaster.atlas.progress', { learned: count.learned, total: count.total }) : `${count.learned} / ${count.total}`;
+        return T('SkillMaster.atlas.progress', { learned: count.learned, total: count.total });
     };
 
     Scene_SkillEncyclopedia.prototype.atlasZoom = function () {
@@ -4715,7 +4555,7 @@
     Scene_SkillEncyclopedia.prototype.renderAtlasChromeHTML = function () {
         const category = this.viewedCategory();
         const count = this.atlasLearnedCount(category);
-        const progressText = typeof T === 'function' ? T('SkillMaster.atlas.progress', { learned: count.learned, total: count.total }) : `${count.learned} / ${count.total}`;
+        const progressText = T('SkillMaster.atlas.progress', { learned: count.learned, total: count.total });
         return `
             <div class="sg-topbar">
                 <span class="sg-progress">${progressText}</span>
@@ -4744,8 +4584,8 @@
             const isLearned = teachActor ? teachActor.isLearnedSkill(skill.id) : false;
             const isOpen = window.SkillGraph ? window.SkillGraph.isOpen(teachActor, skill.id) : true;
             const badge = isLearned
-                ? `<span class="ui-chip sm-skill-badge sm-skill-badge--learned">${typeof T === 'function' ? T('SkillMaster.mastered') : 'Mastered'}</span>`
-                : (!isOpen ? `<span class="ui-chip sm-skill-badge sm-skill-badge--locked">${typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked'}</span>` : '');
+                ? `<span class="ui-chip sm-skill-badge sm-skill-badge--learned">${T('SkillMaster.mastered')}</span>`
+                : (!isOpen ? `<span class="ui-chip sm-skill-badge sm-skill-badge--locked">${T('SkillMaster.graph.locked')}</span>` : '');
 
             skillsListHTML += `
                 <div class="sm-skill-row focusable ${isFocused ? 'focused' : ''} ${isLearned || isOpen ? '' : 'is-shut'}" onclick="SceneManager._scene.selectSkill(${idx})">
@@ -4859,7 +4699,7 @@
             const isOpen = window.SkillGraph ? window.SkillGraph.isOpen(actor, skill.id) : true;
 
             if (hasSkill) {
-                const learnedLabel = typeof T === 'function' ? T('SkillMaster.learned') : 'Learned';
+                const learnedLabel = T('SkillMaster.learned');
                 actionsListHTML += `
                     <div class="sm-state-row sm-state-row--learned">
                         <span class="sm-state-title">${actor.name()}</span>
@@ -4876,17 +4716,17 @@
                 const arcana = window.SkillArcana;
                 const arcaneReason = arcana ? arcana.treeBlockReason(actor, skill.id) : null;
                 const lockLine = arcaneReason === 'cultist'
-                    ? (typeof T === 'function' ? T('SkillMaster.graph.lockedCultist') : 'A Cultist learns only from grimoires and skill books.')
+                    ? (T('SkillMaster.graph.lockedCultist'))
                     : arcaneReason === 'level'
-                    ? (typeof T === 'function'
-                        ? T(arcana.isForbidden(skill.id) ? 'SkillMaster.graph.lockedForbiddenLevel' : 'SkillMaster.graph.lockedEsotericLevel', { level: arcana.requiredLevel(skill.id) })
-                        : `Requires level ${arcana.requiredLevel(skill.id)}`)
+                    ? (arcana.isForbidden(skill.id)
+                        ? T('SkillMaster.graph.lockedForbiddenLevel', { level: arcana.requiredLevel(skill.id) })
+                        : T('SkillMaster.graph.lockedEsotericLevel', { level: arcana.requiredLevel(skill.id) }))
                     : (openers.length
                         ? (wanted > 1
-                            ? (typeof T === 'function' ? T('SkillMaster.graph.lockedByCount', { need: wanted, skills: openers.join(', ') }) : `Requires ${wanted} more of: ${openers.join(', ')}`)
-                            : (typeof T === 'function' ? T('SkillMaster.graph.lockedBy', { skills: openers.join(', ') }) : `Requires: ${openers.join(', ')}`))
-                        : (typeof T === 'function' ? T('SkillMaster.graph.lockedHint') : 'Prerequisites not yet unlocked.'));
-                const lockedTitle = typeof T === 'function' ? T('SkillMaster.graph.locked') : 'Locked';
+                            ? (T('SkillMaster.graph.lockedByCount', { need: wanted, skills: openers.join(', ') }))
+                            : (T('SkillMaster.graph.lockedBy', { skills: openers.join(', ') })))
+                        : (T('SkillMaster.graph.lockedHint')));
+                const lockedTitle = T('SkillMaster.graph.locked');
                 actionsListHTML += `
                     <div class="sm-state-row sm-state-row--locked">
                         <div class="sm-state-line">
@@ -4897,7 +4737,7 @@
                     </div>
                 `;
             } else {
-                const teachText = typeof T === 'function' ? T('SkillMaster.teachPupil', { actor: actor.name() }) : `Teach ${actor.name()}`;
+                const teachText = T('SkillMaster.teachPupil', { actor: actor.name() });
                 actionsListHTML += `
                     <div class="inspect-btn sm-wide-btn focusable ${isActionFocused ? 'selected' : ''} ${!canAfford ? 'unusable' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})">
                         <span class="sm-btn-label">${teachText}</span>
@@ -4916,7 +4756,7 @@
             ? window.SkillDetails.incantationOf(skill) : '';
         const escText = (str) => String(str == null ? '' : str)
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const incantationLabel = typeof T === 'function' ? T('SkillsMenu.section.incantation') : 'Incantation';
+        const incantationLabel = T('SkillsMenu.section.incantation');
         const incantationHTML = incantation
             ? `<div class="ui-section sm-detail-incantation">
                    <h4 class="inspect-section-title">${escText(incantationLabel)}</h4>
@@ -4926,30 +4766,30 @@
         const detailedInfoHTML = window.SkillDetails
             ? window.SkillDetails.build(skill, actor, { skipLore: !!incantation }) : '';
 
-        let descriptionText = skill.description || (typeof T === 'function' ? T('SkillMaster.noDescriptionAvailable') : 'No description available');
+        let descriptionText = skill.description || (T('SkillMaster.noDescriptionAvailable'));
         if (window.translateText) descriptionText = window.translateText(descriptionText);
 
         const isPreviewFocused = allowActionFocus && (this._selectedActionIndex === 1);
-        const previewLabel = typeof T === 'function' ? T('SkillMaster.preview') : 'Preview';
+        const previewLabel = T('SkillMaster.preview');
         const previewBtnHTML = `
             <div class="inspect-btn sm-preview-btn focusable ${isPreviewFocused ? 'selected' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})">
                 ${previewLabel}
             </div>`;
 
         const note = skill.note || '';
-        const tagForbidden = typeof T === 'function' ? T('SkillMaster.tag.forbidden') : 'Forbidden';
-        const tagEsoteric = typeof T === 'function' ? T('SkillMaster.tag.esoteric') : 'Esoteric';
+        const tagForbidden = T('SkillMaster.tag.forbidden');
+        const tagEsoteric = T('SkillMaster.tag.esoteric');
         const occultBadge = /<Forbidden>/i.test(note)
             ? `<span class="sg-occult sg-forbidden">${tagForbidden}</span>`
             : (/<Esoteric>/i.test(note) ? `<span class="sg-occult">${tagEsoteric}</span>` : '');
 
         const rootClass = opts.popup ? 'sm-skill-detail--popup' : '';
         const closeBtnHTML = opts.popup
-            ? `<div class="sm-detail-close focusable" onclick="SceneManager._scene.dismissSkillDetail()" title="${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}">✕</div>`
+            ? `<div class="sm-detail-close focusable" onclick="SceneManager._scene.dismissSkillDetail()" title="${T('SkillMaster.close')}">✕</div>`
             : '';
 
-        const teachLabel = typeof T === 'function' ? T('SkillMaster.teach') : 'Teach';
-        const heldLabel = typeof T === 'function' ? T('SkillMaster.atlas.held', { knowledge: knowledge }) : `${knowledge} KP held`;
+        const teachLabel = T('SkillMaster.teach');
+        const heldLabel = T('SkillMaster.atlas.held', { knowledge: knowledge });
 
         return `
             <div class="ui-detail sm-skill-detail ${rootClass}">
@@ -5101,13 +4941,13 @@
                 const focused = (this._categoryPane === pane && this._selectedCategoryIndex === idx);
                 const catName = SkillMaster.getCategoryDisplayName(cat);
                 let bonusBadge = "";
-                if (cat !== "All") {
+                if (cat !== "All") { // i18n-ignore: skill category id / type discriminator
                     if (SkillMaster.actorCategoryManager.isPrimary(cat)) {
-                        bonusBadge = `<span class="sm-school-badge">${typeof T === 'function' ? T('SkillMaster.primarySchool') : 'Primary'}</span>`;
+                        bonusBadge = `<span class="sm-school-badge">${T('SkillMaster.primarySchool')}</span>`;
                     } else if (SkillMaster.actorCategoryManager.isSecondary(cat)) {
-                        bonusBadge = `<span class="sm-school-badge">${typeof T === 'function' ? T('SkillMaster.secondarySchool') : 'Secondary'}</span>`;
+                        bonusBadge = `<span class="sm-school-badge">${T('SkillMaster.secondarySchool')}</span>`;
                     } else if (SkillMaster.actorCategoryManager.isForeign(cat)) {
-                        bonusBadge = `<span class="sm-school-badge sm-school-badge--foreign">${typeof T === 'function' ? T('SkillMaster.foreignSchool') : 'Foreign'}</span>`;
+                        bonusBadge = `<span class="sm-school-badge sm-school-badge--foreign">${T('SkillMaster.foreignSchool')}</span>`;
                     }
                 }
                 html += `
@@ -5134,10 +4974,10 @@
             if (this._viewMode === 'category') {
                 const split = SkillMaster.getSplitSkillCategories();
                 const categoriesListHTML = renderCategoryCardsHTML(split.Skill, 0);
-                const backBtnText = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
-                const skillsTitle = typeof T === 'function' ? T('SkillMaster.skills') : 'Skills';
+                const backBtnText = T('SkillMaster.back');
+                const skillsTitle = T('SkillMaster.skills');
 
-                const craftSkillLabel = typeof T === 'function' ? T('SkillMaster.craft.buttonSkill') : 'Craft Skill';
+                const craftSkillLabel = T('SkillMaster.craft.buttonSkill');
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.categoryBack()">${backBtnText}</div>
@@ -5151,7 +4991,7 @@
                     </div>
                 `;
             } else {
-                const returnBtnText = typeof T === 'function' ? T('SkillMaster.back') : 'Back';
+                const returnBtnText = T('SkillMaster.back');
                 const onAtlas = this.usesGraphView();
                 const bodyHTML = onAtlas ? this.renderSkillAtlasHTML() : this.renderSkillListHTML();
                 const heading = onAtlas ? this.focusedCategory() : this._selectedCategory;
@@ -5233,12 +5073,12 @@
             if (this._viewMode === 'category') {
                 const split = SkillMaster.getSplitSkillCategories();
                 const magicListHTML = renderCategoryCardsHTML(split.Magic, 1);
-                const magicTitle = typeof T === 'function' ? T('SkillMaster.magic') : 'Magic';
-                const pupilLine = `<div class="sm-pupil-line">${typeof T === 'function' ? T('SkillMaster.atlas.held', { knowledge: knowledge }) : `${knowledge} KP`}</div>`;
-                const fuseLabel = typeof T === 'function' ? T('SkillMaster.fuseSpells') : 'Fuse Spells';
-                const magicSysLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.tabLabel') : 'Magical Systems Wheel';
+                const magicTitle = T('SkillMaster.magic');
+                const pupilLine = `<div class="sm-pupil-line">${T('SkillMaster.atlas.held', { knowledge: knowledge })}</div>`;
+                const fuseLabel = T('SkillMaster.fuseSpells');
+                const magicSysLabel = T('SkillMaster.magicSystem.tabLabel');
 
-                const craftSpellLabel = typeof T === 'function' ? T('SkillMaster.craft.buttonSpell') : 'Craft Spell';
+                const craftSpellLabel = T('SkillMaster.craft.buttonSpell');
                 const fuseBtn = `
                     <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${fuseLabel}</div>
                     <div class="inspect-btn craft-spell-btn focusable" onclick="SceneManager._scene.openCraftBench('spell')">${craftSpellLabel}</div>`;
@@ -5260,7 +5100,7 @@
                 `;
             } else if (this._viewMode === 'list' || this._viewMode === 'detail') {
                 if (!skill) {
-                    const selectPrompt = typeof T === 'function' ? T('SkillMaster.selectASkill') : 'Select a skill';
+                    const selectPrompt = T('SkillMaster.selectASkill');
                     rightPageHTML = `
                         <div class="ui-empty sm-empty">
                             <div class="sm-empty-icon" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
@@ -5296,7 +5136,7 @@
         this._selectedSkillIndex = 0;
 
         const allowed = SkillMaster.actorCategoryManager.allowedCategories();
-        const stillOpen = !this._selectedCategory || this._selectedCategory === 'All' || !allowed || allowed.includes(this._selectedCategory);
+        const stillOpen = !this._selectedCategory || this._selectedCategory === 'All' || !allowed || allowed.includes(this._selectedCategory); // i18n-ignore: skill category id / type discriminator
         this._atlasZoom = 0;
         this._atlasMemory = {};
         if (this._atlasCategory && allowed && !allowed.includes(this._atlasCategory)) {
@@ -5376,9 +5216,9 @@
         const locked = LO.isAlwaysCarried(actor, skill);
         const active = LO.isActive(actor, skill);
         const full = !active && !locked && !LO.hasRoom(actor);
-        const label = locked ? (typeof T === 'function' ? T('SkillMaster.carry.locked') : 'Always Carried')
-            : active ? (typeof T === 'function' ? T('SkillMaster.carry.drop') : 'Unequip Skill')
-                : full ? (typeof T === 'function' ? T('SkillMaster.carry.full') : 'Loadout Full') : (typeof T === 'function' ? T('SkillMaster.carry.take') : 'Equip Skill');
+        const label = locked ? (T('SkillMaster.carry.locked'))
+            : active ? (T('SkillMaster.carry.drop'))
+                : full ? (T('SkillMaster.carry.full')) : (T('SkillMaster.carry.take'));
         const count = `${LO.count(actor)} / ${LO.MAX}`;
         const focused = allowFocus && (this._selectedActionIndex === 0) && !locked;
         const usable = !locked && (active || !full);
@@ -5414,8 +5254,8 @@
                 ${label}
             </div>
         `;
-        const renameLabel = typeof T === 'function' ? T('SkillMaster.rename') : 'Rename';
-        const dissolveLabel = typeof T === 'function' ? T('SkillMaster.dissolve') : 'Dissolve';
+        const renameLabel = T('SkillMaster.rename');
+        const dissolveLabel = T('SkillMaster.dissolve');
         return `
             <div class="inspect-actions ui-panel-actions sm-fusion-actions">
                 ${btn(renameLabel, `SceneManager._scene.renameFusedSpell(${skill.id})`, false)}
@@ -5428,7 +5268,7 @@
         const spell = $dataSkills[skillId];
         if (!spell || !spell._customSpell) return;
         const current = spell.name || '';
-        const promptText = typeof T === 'function' ? T('SkillMaster.renamePrompt') : 'Enter new spell name:';
+        const promptText = T('SkillMaster.renamePrompt');
         const next = (window.prompt && window.prompt(promptText, current)) || '';
         const clean = next.trim();
         if (!clean || clean === current) return;
@@ -5441,7 +5281,7 @@
         const actor = this.getTeachActor();
         const spell = $dataSkills[skillId];
         if (!actor || !spell || !spell._customSpell) return;
-        const confirmText = typeof T === 'function' ? T('SkillMaster.dissolveConfirm', { name: spell.name }) : `Dissolve ${spell.name} into knowledge?`;
+        const confirmText = T('SkillMaster.dissolveConfirm', { name: spell.name });
         if (window.confirm && !window.confirm(confirmText)) return;
         const refund = Math.floor(SkillMaster.kpTeachCost(spell) * 0.5);
         $gameSystem.addKnowledge(refund);
@@ -5468,12 +5308,12 @@
             const arcana = window.SkillArcana;
             const why = arcana ? arcana.treeBlockReason(actor, skill.id) : null;
             const toast = why === 'cultist'
-                ? (typeof T === 'function' ? T('SkillMaster.graph.lockedCultist') : 'A Cultist learns only from grimoires and skill books.')
+                ? (T('SkillMaster.graph.lockedCultist'))
                 : why === 'level'
-                ? (typeof T === 'function'
-                    ? T(arcana.isForbidden(skill.id) ? 'SkillMaster.graph.lockedForbiddenLevel' : 'SkillMaster.graph.lockedEsotericLevel', { level: arcana.requiredLevel(skill.id) })
-                    : `Requires level ${arcana.requiredLevel(skill.id)}`)
-                : (typeof T === 'function' ? T('SkillMaster.graph.lockedToast', { skill: skill.name }) : `${skill.name} is locked!`);
+                ? (arcana.isForbidden(skill.id)
+                    ? T('SkillMaster.graph.lockedForbiddenLevel', { level: arcana.requiredLevel(skill.id) })
+                    : T('SkillMaster.graph.lockedEsotericLevel', { level: arcana.requiredLevel(skill.id) }))
+                : (T('SkillMaster.graph.lockedToast', { skill: skill.name }));
             this._skillDetailWindow.showMessage(toast);
             this.refreshUISkillDOM();
             return;
@@ -5484,7 +5324,7 @@
         this.invalidateLearnedSkillCaches();
         SoundManager.playRecovery();
 
-        const learnedToast = typeof T === 'function' ? T('SkillMaster.actorLearned', { actor: actor.name(), skill: skill.name }) : `${actor.name()} learned ${skill.name}!`;
+        const learnedToast = T('SkillMaster.actorLearned', { actor: actor.name(), skill: skill.name });
         this._skillDetailWindow.showMessage(learnedToast);
         this.refreshUISkillDOM();
     };
@@ -5662,7 +5502,7 @@
                 SoundManager.playCursor();
                 this.refreshUISkillDOM();
                 const boxId = pane === 1 ? 'category-scroll-box-right' : 'category-scroll-box-left';
-                this.scrollToActiveItem(boxId, `#${boxId} .category-card.focused`);
+                this.scrollToActiveItem(boxId, `#${boxId} .category-card.focused`); // i18n-ignore: CSS selector
             }
         } else if (this._viewMode === 'list') {
             if (this.usesGraphView()) {
@@ -5940,8 +5780,8 @@
 
     window.SkillMaster = window.SkillMaster || {};
 
-    const CRAFT_SPELL_CATEGORY = 'Crafted';
-    const CRAFT_SKILL_CATEGORY = 'Devised';
+    const CRAFT_SPELL_CATEGORY = 'Crafted'; // i18n-ignore: skill category id / type discriminator
+    const CRAFT_SKILL_CATEGORY = 'Devised'; // i18n-ignore: skill category id / type discriminator
     SkillMaster.CRAFT_SPELL_CATEGORY = CRAFT_SPELL_CATEGORY;
     SkillMaster.CRAFT_SKILL_CATEGORY = CRAFT_SKILL_CATEGORY;
 
@@ -6184,8 +6024,8 @@
         const defStat = spell ? 'b.mdf' : 'b.def';
         const mult = Math.round(core.power * power.mult * 100) / 100;
 
-        if (core.dmg === 3) return `${atkStat} * ${mult} + a.level * 2`;
-        if (core.dmg === 4) return `${atkStat} * ${mult} + a.level`;
+        if (core.dmg === 3) return `${atkStat} * ${mult} + a.level * 2`; // i18n-ignore: RPG Maker damage formula
+        if (core.dmg === 4) return `${atkStat} * ${mult} + a.level`; // i18n-ignore: RPG Maker damage formula
         const pierce = Math.round(ctx.pierce * 100) / 100;
         if (pierce <= 0) return `${atkStat} * ${mult}`;
         return `${atkStat} * ${mult} - ${defStat} * ${pierce}`;

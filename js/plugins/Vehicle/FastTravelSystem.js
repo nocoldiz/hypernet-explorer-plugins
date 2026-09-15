@@ -225,6 +225,68 @@
         (dest && dest.customName) ? dest.customName : destLabel(dest && dest.name);
 
     // ------------------------------------------------------------------------
+    // HOW HARD THE GROUND IS THERE
+    // ------------------------------------------------------------------------
+    // A ticket is bought before the place is seen, so the one thing the book
+    // owes the reader beside the fare is what lives at the other end. Every
+    // Europe-zone nation was dealt a level bracket when the world was made
+    // (BattleSystemEnhancedEncounters, section 3c) and the calendar has been
+    // moving it ever since; a stop prints the window of the NATION it stands
+    // in, because that bracket, not the stop, is what the fauna around it is
+    // pitched at. Two stops in one country therefore read the same, which is
+    // the truth: the country is the whole rule.
+    //
+    // The nation is asked for by the world map's own id first ("nationId" on
+    // the Destinations.json entry) and by its "country" name second, so a stop
+    // whose country is spelled in a way the table does not know still answers.
+    // Where the deal never reached - a stop outside the Europe zone, a square
+    // the party wrote down themselves, a session with no fauna table loaded -
+    // the entry's own "minLevel" stands in, and a stop with neither prints no
+    // level at all rather than a "Lv. 0".
+    function destLevelInfo(dest) {
+        if (!dest || dest.custom) return null;
+        const entry = TRANSPORT_DESTINATIONS[dest.name] || dest;
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        let info = null;
+        if (BSEH && typeof BSEH.describeNationLevels === 'function') {
+            try {
+                if (entry.nationId && typeof BSEH.describeNationLevelsById === 'function') {
+                    info = BSEH.describeNationLevelsById(entry.nationId);
+                }
+                if ((!info || !info.median) && entry.country) {
+                    info = BSEH.describeNationLevels(entry.country);
+                }
+            } catch (e) {
+                info = null;
+            }
+        }
+        if (info && info.median) return info;
+        const min = Number(entry.minLevel);
+        if (min > 0) return { median: min, min: min, max: min, frozen: false };
+        return null;
+    }
+
+    // The level a row, a pin and the confirmation print, or "" where the place
+    // has nothing to say. The tooltip carries the window the median came out
+    // of, so the spread around it is one hover away without crowding the row.
+    function destLevelText(dest) {
+        const info = destLevelInfo(dest);
+        return info ? T('FastTravel.destLevel', { level: info.median }) : '';
+    }
+
+    function destLevelTitle(dest) {
+        const info = destLevelInfo(dest);
+        if (!info) return '';
+        return T(info.frozen ? 'FastTravel.destLevelBandFrozen' : 'FastTravel.destLevelBand',
+            { min: info.min, max: info.max });
+    }
+
+    // Written straight into a title="..." attribute, where a translation that
+    // quotes something would otherwise close it early. The DOM property the
+    // confirmation panel sets takes the plain text instead.
+    const attr = (text) => String(text == null ? '' : text).replace(/"/g, '&quot;');
+
+    // ------------------------------------------------------------------------
     // AFTER THE IMPACT
     // ------------------------------------------------------------------------
     // Once Earth has been struck out (switch 199, WorldMapTransfer.earthLost)
@@ -2255,11 +2317,20 @@
                 ? `<span class="travel-dest-hub" title="${T('FastTravel.hubTitle')}">${T('FastTravel.hubBadge')}</span>`
                 : "";
 
+            // What lives there, beside what it costs to get there. A frozen
+            // nation's window is called out as frozen in the hover: it is the
+            // one thing about a stop the calendar will never change.
+            const levelInfo = destLevelInfo(dest);
+            const levelHTML = levelInfo
+                ? `<span class="travel-dest-level${levelInfo.frozen ? ' is-frozen' : ''}" title="${attr(destLevelTitle(dest))}">${destLevelText(dest)}</span>`
+                : "";
+
             return `
                 <div class="travel-dest-item ${disabledClass}${hubClass}${customClass}${kindClass(dest)}" data-name="${dest.name}" onclick="SceneManager._scene.selectTravelDestination('${dest.name}')">
                     <span class="travel-dest-name">${rowLabel(dest)}${hubBadge}</span>
                     <span class="travel-dest-meta">
-                        <span>Distance: ${distanceInKm} km</span>
+                        <span>${T('FastTravel.ui.distance')} ${distanceInKm} km</span>
+                        ${levelHTML}
                         <span class="travel-dest-cost">${costText}</span>
                     </span>
                 </div>
@@ -2284,7 +2355,11 @@
             const hubClass = (hub ? " is-hub" : "") + (dest.custom ? " is-custom" : "");
             const baseLabel = hub
                 ? T('FastTravel.hubLabel', { place: rowLabel(dest) }) : rowLabel(dest);
-            const label = isSandbox ? `${baseLabel} (X: ${Math.round(x)}, Y: ${Math.round(y)})` : baseLabel;
+            // A pin says what the row under it says: the place, and what the
+            // ground there is pitched at.
+            const pinLevel = destLevelText(dest);
+            const levelledLabel = pinLevel ? `${baseLabel} - ${pinLevel}` : baseLabel;
+            const label = isSandbox ? `${levelledLabel} (X: ${Math.round(x)}, Y: ${Math.round(y)})` : levelledLabel;
 
             return `
                 <div class="travel-marker${hubClass}${kindClass(dest)}" id="marker-${dest.name}" style="left:${x}px; top:${y}px" onclick="SceneManager._scene.selectTravelDestination('${dest.name}')">
@@ -2368,6 +2443,10 @@
                             <div class="inspect-spec-row">
                                 <span class="inspect-spec-label">${T('FastTravel.ui.cost')}</span>
                                 <span class="inspect-spec-value travel-dest-cost" id="sidebar-cost-val">1.20&euro;</span>
+                            </div>
+                            <div class="inspect-spec-row" id="sidebar-level-row">
+                                <span class="inspect-spec-label">${T('FastTravel.ui.enemyLevel')}</span>
+                                <span class="inspect-spec-value travel-dest-level" id="sidebar-level-val">-</span>
                             </div>
                             <div class="inspect-spec-row">
                                 <span class="inspect-spec-label">${T('FastTravel.ui.travelTime')}</span>
@@ -2494,18 +2573,45 @@
         document.addEventListener('keydown', this._travelKeyHandler);
     };
 
+    // The map sheet is panned with a CSS transform on #travel-wrapper, and a
+    // transform's translate is in the element's OWN layout pixels. The panel
+    // around it carries `zoom: var(--ui-zoom)` (css/theme.css lists
+    // #travel-overlay among the roots it scales), so getBoundingClientRect on
+    // the viewer answers in RENDERED pixels instead, and the two disagree by
+    // exactly that zoom.
+    //
+    // On a desk the zoom is 1 and the mistake is invisible, which is why every
+    // centring below was written against the rect. On a 1280x800 handheld it is
+    // near 0.9, and every "put this at the middle of the map" lands a tenth of
+    // the page short: opening the map centres the player off toward one corner,
+    // and picking a destination slides it to the wrong place.
+    //
+    // clientWidth/clientHeight are already in the wrapper's own space, so the
+    // centring is taken from those. uiZoom is handed back for the one caller
+    // that genuinely starts in rendered pixels (the wheel, which begins at a
+    // mouse position) and has to convert the other way.
+    Scene_Map.prototype.travelViewerMetrics = function (viewer) {
+        const w = viewer.clientWidth || 864;
+        const h = viewer.clientHeight || 800;
+        const rect = viewer.getBoundingClientRect();
+        const uiZoom = (rect.width > 0 && w > 0) ? rect.width / w : 1;
+        return { w: w, h: h, cx: w / 2, cy: h / 2, uiZoom: uiZoom || 1 };
+    };
+
     Scene_Map.prototype.initTravelMapInteractions = function (playerX, playerY) {
         const viewer = document.getElementById('travel-viewer');
         const wrapper = document.getElementById('travel-wrapper');
         if (!viewer || !wrapper) return;
 
         this._travelZoom = 1.0;
-        // Center on player initially
-        const rect = viewer.getBoundingClientRect();
-        const centerX = rect.width / 2 || 432;
-        const centerY = rect.height / 2 || 400;
-        this._travelPanX = centerX - playerX;
-        this._travelPanY = centerY - playerY;
+        // Center on player initially. The marker coordinates are in sheet
+        // pixels, so they are scaled by the map's own zoom before being used as
+        // an offset, the same way selectTravelDestination does it below.
+        const metrics = this.travelViewerMetrics(viewer);
+        const centerX = metrics.cx;
+        const centerY = metrics.cy;
+        this._travelPanX = centerX - playerX * this._travelZoom;
+        this._travelPanY = centerY - playerY * this._travelZoom;
 
         const updateTransform = () => {
             wrapper.style.transform = `translate(${this._travelPanX}px, ${this._travelPanY}px) scale(${this._travelZoom})`;
@@ -2522,6 +2628,9 @@
         let draggedMarker = null;
         let markerStartClientX = 0, markerStartClientY = 0;
         let markerStartLeft = 0, markerStartTop = 0;
+        // A drag starts in rendered pixels and ends up in the wrapper own space,
+        // so the panel zoom in force when the drag began is captured with it.
+        let dragZoom = 1;
 
         viewer.addEventListener('mousedown', (e) => {
             const markerEl = e.target.closest('.travel-marker');
@@ -2530,6 +2639,7 @@
                 e.stopPropagation();
                 isDraggingMarker = true;
                 draggedMarker = markerEl;
+                dragZoom = this.travelViewerMetrics(viewer).uiZoom;
                 markerStartClientX = e.clientX;
                 markerStartClientY = e.clientY;
                 markerStartLeft = parseFloat(markerEl.style.left) || 0;
@@ -2539,8 +2649,9 @@
             if (e.target.closest('.travel-marker') || e.target.closest('.inspect-btn') || e.target.closest('.travel-zoom-btn') || e.target.closest('.travel-edit-btn')) return;
             isDragging = true;
             viewer.style.cursor = 'grabbing';
-            startX = e.clientX - this._travelPanX;
-            startY = e.clientY - this._travelPanY;
+            dragZoom = this.travelViewerMetrics(viewer).uiZoom;
+            startX = e.clientX / dragZoom - this._travelPanX;
+            startY = e.clientY / dragZoom - this._travelPanY;
         });
 
         // Remove any stale window-level drag handlers from a prior open (prevents accumulation/leak)
@@ -2549,8 +2660,8 @@
 
         this._travelMouseMoveHandler = (e) => {
             if (isDraggingMarker && draggedMarker) {
-                const dx = (e.clientX - markerStartClientX) / this._travelZoom;
-                const dy = (e.clientY - markerStartClientY) / this._travelZoom;
+                const dx = (e.clientX - markerStartClientX) / dragZoom / this._travelZoom;
+                const dy = (e.clientY - markerStartClientY) / dragZoom / this._travelZoom;
                 const newLeft = markerStartLeft + dx;
                 const newTop = markerStartTop + dy;
                 draggedMarker.style.left = `${newLeft}px`;
@@ -2563,8 +2674,8 @@
                 return;
             }
             if (!isDragging) return;
-            this._travelPanX = e.clientX - startX;
-            this._travelPanY = e.clientY - startY;
+            this._travelPanX = e.clientX / dragZoom - startX;
+            this._travelPanY = e.clientY / dragZoom - startY;
             updateTransform();
         };
         window.addEventListener('mousemove', this._travelMouseMoveHandler);
@@ -2589,9 +2700,12 @@
                 this._travelZoom = Math.max(this._travelZoom / zoomFactor, 0.5);
             }
 
+            // A mouse position is in rendered pixels; the pan it is about to be
+            // folded into is in the wrapper's own. Divide by the panel's zoom.
             const vRect = viewer.getBoundingClientRect();
-            const mouseX = e.clientX - vRect.left;
-            const mouseY = e.clientY - vRect.top;
+            const vZoom = this.travelViewerMetrics(viewer).uiZoom;
+            const mouseX = (e.clientX - vRect.left) / vZoom;
+            const mouseY = (e.clientY - vRect.top) / vZoom;
 
             this._travelPanX = mouseX - (mouseX - this._travelPanX) * (this._travelZoom / oldZoom);
             this._travelPanY = mouseY - (mouseY - this._travelPanY) * (this._travelZoom / oldZoom);
@@ -2609,9 +2723,9 @@
         const oldZoom = this._travelZoom;
         this._travelZoom = Math.max(0.5, Math.min(3.5, this._travelZoom * factor));
 
-        const rect = viewer.getBoundingClientRect();
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+        const metrics = this.travelViewerMetrics(viewer);
+        const centerX = metrics.cx;
+        const centerY = metrics.cy;
 
         this._travelPanX = centerX - (centerX - this._travelPanX) * (this._travelZoom / oldZoom);
         this._travelPanY = centerY - (centerY - this._travelPanY) * (this._travelZoom / oldZoom);
@@ -2698,9 +2812,9 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
         const viewer = document.getElementById('travel-viewer');
         if (viewer && this._updateTravelTransform) {
-            const rect = viewer.getBoundingClientRect();
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+            const metrics = this.travelViewerMetrics(viewer);
+            const centerX = metrics.cx;
+            const centerY = metrics.cy;
             const destX = destPix.x;
             const destY = destPix.y;
             const startPanX = this._travelPanX;
@@ -2793,9 +2907,9 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         // Center the view on the selected destination with a slight animation!
         const viewer = document.getElementById('travel-viewer');
         if (viewer && this._updateTravelTransform) {
-            const rect = viewer.getBoundingClientRect();
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+            const metrics = this.travelViewerMetrics(viewer);
+            const centerX = metrics.cx;
+            const centerY = metrics.cy;
             const destX = destPix.x;
             const destY = destPix.y;
 
@@ -2916,6 +3030,22 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         document.getElementById('sidebar-transport-val').innerText = transportDisplayName;
         document.getElementById('sidebar-distance-val').innerText = `${distanceInKm} km`;
         document.getElementById('sidebar-cost-val').innerText = costValueText;
+
+        // The danger row is the place's, not the journey's: it is taken away
+        // rather than left reading "-" when the stop stands somewhere no
+        // bracket reaches.
+        const levelRow = document.getElementById('sidebar-level-row');
+        const levelVal = document.getElementById('sidebar-level-val');
+        if (levelRow && levelVal) {
+            const levelInfo = destLevelInfo(dest);
+            levelRow.style.display = levelInfo ? '' : 'none';
+            if (levelInfo) {
+                levelVal.innerText = T('FastTravel.destLevelDetail',
+                    { level: levelInfo.median, min: levelInfo.min, max: levelInfo.max });
+                levelVal.title = destLevelTitle(dest);
+                levelVal.classList.toggle('is-frozen', !!levelInfo.frozen);
+            }
+        }
         document.getElementById('sidebar-time-val').innerText =
             this._travelPickHandler ? '-' : timeText;
 
@@ -3543,6 +3673,11 @@ Scene_Map.prototype.printTravelCoordinates = function () {
                     text = T('FastTravel.destCost', { place: destLabel(dest.name),
                         cost: costEuros, km: distanceInKm });
                 }
+
+                // The list window says what the book's rows say. It has no
+                // second line to hang it on, so the level follows the fare.
+                const levelText = destLevelText(dest);
+                if (levelText) text += ' ' + levelText;
 
                 this.addCommand(text, "destination", enabled, dest);
             });

@@ -460,7 +460,7 @@
     },
     "originDiplomat": {
       "name": "Diplomatico",
-      "desc": "Inizi a Bruxelles con un seggio alle Nazioni Unite e credenziali diplomatiche. "
+      "desc": "Inizi a Bruxelles con un seggio alle Nazioni Unite e credenziali diplomatiche."
     },
     "originHypernetExplorer": {
       "name": "Esploratore Hypernet",
@@ -1007,5 +1007,23 @@
   "vehicleTake": "Prendi questo veicolo",
   "vehicleDrop": "Lascialo indietro",
   "classAbilities": "Abilità di Classe",
-  "limitBreak": "Limit break"
+  "limitBreak": "Limit break",
+  "genderDesc": {
+    "male": "Biologia e identità maschili tradizionali. Pronomi: lui. Legata alla biologia testicolare e all'inseminazione.",
+    "female": "Biologia e identità femminili tradizionali. Pronomi: lei. Legata alla biologia uterina e alla gestazione.",
+    "nonBinary": "Presentazione fluida o non conforme. Pronomi: loro. Presenta tratti biologici adattabili.",
+    "cocoon": "Telaio metamorfico, sintetico o vegetativo. Pronomi: esso, loro. Si riproduce per mitosi o per ingegneria."
+  },
+  "memberN": "Membro {n}",
+  "petDefaultName": "Compagno",
+  "jobNumber": "Lavoro #{id}",
+  "skillNumber": "Abilità #{id}",
+  "specNumber": "Spec. #{id}",
+  "itemNumber": "Oggetto #{id}",
+  "petsNone": "Nessun animale",
+  "petsNoneDesc": "Parti senza nessuno alle calcagna.",
+  "petsSearchPlaceholder": "Cerca mostri da compagnia...",
+  "petsNoneFound": "Nessun mostro da compagnia corrisponde a questo filtro",
+  "petsChoose": "Scegli come animale iniziale",
+  "petsTabRelease": "Libera l'animale"
 }

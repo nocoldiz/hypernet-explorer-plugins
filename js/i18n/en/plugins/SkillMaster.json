@@ -633,5 +633,6 @@
         }
       }
     }
-  }
+  },
+  "fusionRollAction": "Arcane Fusion: {parts}"
 }

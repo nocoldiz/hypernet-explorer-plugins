@@ -57,7 +57,7 @@
       "You're already beaten. I won't stand over a corpse.",
       "Enough. I don't fight the dying.",
       "Take your fallen and go. I've seen enough blood today.",
-      "This isn't a fight anymore, it's a mercy killing. I'll pass.",
+      "This stopped being a fight. It's a mercy killing now. I'll pass.",
       "Get your people out of here before it's too late."
     ]
   },
@@ -541,7 +541,7 @@
     "behaviour": [
       "It answers movement rather than sound.",
       "It hunts on a schedule keyed to a day nobody here is living.",
-      "It has no reaction to being looked at, which is its own kind of answer.",
+      "It has no reaction to being looked at. That in itself tells you something.",
       "It treats a landing party as weather.",
       "It is territorial about ground identical to all the other ground.",
       "It swarms, then does not, and the change has no visible cause.",

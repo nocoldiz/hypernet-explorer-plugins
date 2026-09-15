@@ -290,6 +290,9 @@
       // an item to somebody already calls this, so a cigarette works wherever
       // a meal does.
       this.applyAddictionRelief(actor, item);
+      // And so does what the drink or the dose actually does to them: the same
+      // tag says how much of it went down (window.Intoxication, TimeDateSystem).
+      if (window.Intoxication) window.Intoxication.onConsume(actor, item);
       const restores = this.getNeedRestores(item);
       if (!restores.length || !actor) return [];
       const isLeaderActor = actor.actorId && actor.actorId() === 1;
@@ -1592,7 +1595,12 @@
       const restoreGeometry = this._patchGeometryBudget();
       try {
         const model = this.build(this.builderFor(entry), entry, rand);
-        if (model) this.weldLooseParts(model);
+        if (model) {
+          this.weldLooseParts(model);
+          // Same fine pass the weapons get: a part that only reaches what it is
+          // fixed to is given a bite into it, so no join shows daylight.
+          this.closeSeams(model);
+        }
         return model;
       } catch (e) {
         console.warn("[ItemModelSystem] model build failed for " + (entry && entry.name), e);
@@ -2395,4 +2403,169 @@
   };
 
   window.ItemLeisure = ItemLeisure;
+})();
+
+(function () {
+  "use strict";
+
+  //=============================================================================
+  // The target card (window.ItemTargetCard)
+  //
+  // "Who is this for?" is asked in two places: from the quick bar out on the
+  // map, and from the backpack's right page. Both used to answer it their own
+  // way, one as a card over the map and the other as a column of names printed
+  // over the inspect page. There is one card now, and both ask with it: the
+  // party as a row each, with their sprite, their class and level, and what
+  // they have left of HP, MP and AP, so the question is answered by looking at
+  // the people rather than at a list of names.
+  //
+  // The card only draws and marks. Who owns the cursor, what a row does when it
+  // is taken and how the thing is closed stay with whoever opened it.
+  //=============================================================================
+
+  const T = window.T || ((k) => k);
+
+  let _spriteSeq = 0;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  // A severed-magic world has no magic to spend, so no MP is printed.
+  function showMp() {
+    const MN = window.MagicNature;
+    return !(MN && typeof MN.level === 'function' && MN.level() === 'severed');
+  }
+
+  function gaugeHTML(kind, label, now, max) {
+    const pct = Math.max(0, Math.min(100, max > 0 ? (now / max) * 100 : 0));
+    return `
+      <div class="htp-gauge htp-gauge--${kind}">
+        <span class="htp-gauge-label">${esc(label)}</span>
+        <span class="htp-gauge-track"><span class="htp-gauge-fill" style="width:${pct}%"></span></span>
+        <span class="htp-gauge-value">${Math.floor(now)}/${Math.floor(max)}</span>
+      </div>`;
+  }
+
+  const ItemTargetCard = {
+    showMp,
+
+    // Who the item can be handed to, in the order the cursor walks them: every
+    // member, then the whole party, then the item's own special commands.
+    rows(item, opts) {
+      const o = opts || {};
+      const rows = $gameParty.members().map((actor) => ({ kind: 'actor', actor }));
+      if (o.includeAll) rows.push({ kind: 'all', actor: null, label: T('Inventory.ui.allPartyCompanions') });
+      (o.special || []).forEach((cmd) => {
+        rows.push({
+          kind: 'special', actor: null,
+          command: cmd.command !== undefined ? cmd.command : cmd,
+          label:   cmd.label   !== undefined ? cmd.label   : String(cmd),
+        });
+      });
+      return rows;
+    },
+
+    // A ration is eaten, not administered: the card asking who gets it says so.
+    title(item) {
+      const isFood = !!(window.ItemSystemUtils &&
+        window.ItemSystemUtils.hasItemCategory(item, 'Food' /* i18n-ignore: category tag */));
+      return isFood
+        ? T('Inventory.ui.eatItem', { item: item.name })
+        : T('Inventory.ui.useItemOn', { item: item.name });
+    },
+
+    // The card itself. `extra` is dropped in under the rows (the backpack puts
+    // its Cancel button there); the quick bar leaves it empty.
+    html(opts) {
+      const o = opts || {};
+      const rows = o.rows || [];
+      const mp = showMp();
+      const prefix = `itc${++_spriteSeq}`;
+      const rowsHTML = rows.map((row, idx) => {
+        const sel = idx === o.index ? ' selected' : '';
+        if (row.kind === 'actor') {
+          const a = row.actor;
+          const cls = a.currentClass && a.currentClass() ? a.currentClass().name : '';
+          const maxAp = Math.max(1, a.maxTp ? a.maxTp() : 100);
+          return `
+            <div class="htp-row${sel}" data-idx="${idx}" data-sprite="${prefix}-${idx}">
+              <div class="htp-num">${idx + 1}</div>
+              <div class="htp-portrait"><canvas id="${prefix}-${idx}" width="48" height="48"></canvas></div>
+              <div class="htp-ident">
+                <div class="htp-name">${esc(a.name())}</div>
+                <div class="htp-sub">${esc(cls)}${cls ? ' - ' : ''}${T('ItemUtils.targetCard.level', { n: a.level })}</div>
+              </div>
+              <div class="htp-vitals">
+                ${gaugeHTML('hp', T('ItemUtils.targetCard.hp'), a.hp, a.mhp)}
+                ${mp ? gaugeHTML('mp', T('ItemUtils.targetCard.mp'), a.mp, a.mmp) : ''}
+                ${gaugeHTML('ap', T('ItemUtils.targetCard.ap'), Math.floor(a.tp), maxAp)}
+              </div>
+            </div>`;
+        }
+        const special = row.kind === 'special' ? ' htp-row--special' : ' htp-row--all';
+        return `
+          <div class="htp-row${special}${sel}" data-idx="${idx}">
+            <div class="htp-num">${idx + 1}</div>
+            <div class="htp-name htp-name--wide">${esc(row.label)}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="htp-panel">
+          <div class="htp-title">${esc(o.title || '')}</div>
+          <div class="htp-rows">${rowsHTML}</div>
+          ${o.extra || ''}
+        </div>`;
+    },
+
+    // The sprites, once the card is in the document. Drawn the way the main
+    // menu draws its party portraits: the down-facing centre frame of the
+    // sheet, fitted to the square without smoothing.
+    paint(root) {
+      if (!root) return;
+      root.querySelectorAll('.htp-row[data-sprite]').forEach((rowEl) => {
+        const idx = parseInt(rowEl.getAttribute('data-idx'), 10);
+        const actor = $gameParty.members()[idx];
+        const canvas = document.getElementById(rowEl.getAttribute('data-sprite'));
+        if (!actor || !canvas) return;
+        const name = actor.characterName();
+        if (!name) return;
+        const bitmap = ImageManager.loadCharacter(name);
+        const draw = () => {
+          const ctx = canvas.getContext('2d');
+          // A sheet that never arrived leaves a sizeless bitmap behind it, and
+          // drawImage throws on a source of width or height zero. This runs
+          // from the bitmap's own load listener, outside the game loop, so the
+          // throw would take the game down: draw nothing instead.
+          if (!ctx || !bitmap.width || !bitmap.height) return;
+          ctx.imageSmoothingEnabled = false;
+          const isBig = ImageManager.isBigCharacter(name);
+          const pw = bitmap.width / (isBig ? 3 : 12);
+          const ph = bitmap.height / (isBig ? 4 : 8);
+          const ci = actor.characterIndex();
+          const sx = ((ci % 4) * 3 + 1) * pw;
+          const sy = (Math.floor(ci / 4) * 4) * ph;
+          const fit = Math.min(canvas.width / pw, canvas.height / ph);
+          const dw = pw * fit, dh = ph * fit;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(bitmap.canvas, sx, sy, pw, ph,
+            (canvas.width - dw) / 2, (canvas.height - dh) / 2, dw, dh);
+        };
+        if (bitmap.isReady()) draw(); else bitmap.addLoadListener(draw);
+      });
+    },
+
+    // Where the cursor is, as a class mark rather than a redrawn card: the
+    // sprites would be thrown away and loaded again on every keypress.
+    mark(root, index) {
+      if (!root) return;
+      root.querySelectorAll('.htp-row').forEach((el, idx) => {
+        el.classList.toggle('selected', idx === index);
+      });
+    },
+  };
+
+  window.ItemTargetCard = ItemTargetCard;
 })();

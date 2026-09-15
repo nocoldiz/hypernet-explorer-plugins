@@ -8317,6 +8317,67 @@
 .forge-known-of {
     color: var(--text-text-alt-10);
 }
+/* How many pieces in this trade can be worked right now. It leads the count of
+   what is readable because it is the one number that says where to go next. */
+.forge-trade-ready {
+    font-family: var(--font-ui);
+    color: var(--text-success-active);
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+/* The key to the four marks a card can carry, at the foot of the left page.
+   It is kept off the scrolling shelf above it so it never scrolls away. */
+.forge-legend {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--border-secondary-hover-translucent-15);
+    padding-top: 6px;
+    margin-top: 6px;
+}
+.forge-legend-title {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label);
+    color: var(--text-text-alt-10);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+.forge-legend-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    line-height: 1.25;
+    margin-bottom: 2px;
+}
+.forge-legend-mark {
+    flex: 0 0 auto;
+    min-width: 1.2em;
+}
+.forge-legend-text {
+    font-size: var(--fs-caption);
+    color: var(--text-card-medium);
+    overflow-wrap: anywhere;
+}
+
+/* What the grid under it is actually showing, in words: trade, state, count,
+   and what to do with it. */
+.forge-context {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    padding: 2px 0 4px;
+}
+.forge-context-scope { color: var(--text-secondary-active); }
+.forge-context-sep { color: var(--text-text-alt-10); }
+.forge-context-count { color: var(--text-text-alt-10); }
+.forge-context-hint {
+    margin-left: auto;
+    color: var(--text-card-medium);
+    font-style: italic;
+}
 
 /* Each card carries only the piece's name and its one mark now: the trade is
    already the row picked on the left page, so repeating it truncated in every
@@ -10485,6 +10546,14 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+/* The medallion the raise cursor is on. A mouse presses the + directly; a
+   keyboard and a pad walk the raisable stats and need to see which one a point
+   would go into. */
+.stat-medallion.raise-lit .stat-medallion-raise {
+    outline: 2px solid var(--border-primary-hover-translucent-15);
+    outline-offset: 2px;
 }
 
 .stat-medallion-spent {
@@ -13488,6 +13557,20 @@
 .travel-dest-cost {
     font-weight: bold;
     color: var(--text-success-active);
+}
+
+/* What roams at the far end of the ticket, between the distance and the fare.
+   It reads as a warning rather than as a price, and a country whose window the
+   calendar can never move is written in the gold every fixed thing in the book
+   is written in. */
+.travel-dest-level {
+    font-weight: bold;
+    color: var(--text-danger-hover);
+    white-space: nowrap;
+}
+
+.travel-dest-level.is-frozen {
+    color: var(--accent-gold-pure);
 }
 
 .travel-dest-item.disabled {
@@ -21212,6 +21295,32 @@ body, canvas {
 .actorcmd-cost.dim {
     opacity: 0.38;
 }
+/* The button that works a battle command row, on a pad
+   (BattleSystem/BattleSystemEnhanchedCommands.js). Sits inside the row, to the
+   left of what it costs, so a member reading down the list sees what reaches
+   each one without walking to it. Never drawn on a keyboard: the row is walked
+   to there, and a face nobody is holding is an instruction to press something
+   that is not on the desk. */
+.actorcmd-pad {
+    flex: 0 0 auto;
+    margin-right: 10px;
+    padding: 0 5px;
+    font-family: monospace;
+    font-weight: bold;
+    line-height: 1.4;
+    color: var(--actorcmd-ink-cost, var(--text-primary-hover));
+    background: var(--shadow-primary-hover-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 3;
+    position: relative;
+}
+
+.actorcmd-pad.dim {
+    opacity: 0.45;
+}
+
 .actorcmd-icon.dim {
     opacity: 0.38;
 }
@@ -21721,6 +21830,32 @@ body, canvas {
     font-size: 17px;
     white-space: nowrap;
     pointer-events: none;
+}
+
+/* The reading card a quick-bar slot puts up: same frame, but a block of text
+   instead of one line, so a skill can say what it actually does without the
+   row widening to hold it. */
+.hotbar-tooltip-card {
+    white-space: normal;
+    width: max-content;
+    max-width: 320px;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.hotbar-tooltip-card .hotbar-tip-title {
+    font-weight: bold;
+    color: var(--border-gold-amber);
+}
+
+.hotbar-tooltip-card .hotbar-tip-cost {
+    font-size: 15px;
+    color: var(--text-text-alt-7);
+}
+
+.hotbar-tooltip-card .hotbar-tip-body {
+    margin-top: 3px;
+    font-size: 15px;
 }
 
 /* ==========================================================================
@@ -25479,6 +25614,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #cs-mini .cs-head .msb-field { width:230px; }
 #cs-mini .backpack-search-input { font-size:20px; padding:6px 11px; }
 #cs-mini .cs-search { padding:10px 15px 0; margin-bottom:0; }
+/* The category chips over the shelf, read the same way the pockets' own tabs
+   are and sized up to this window like everything else in it. */
+#cs-mini .cs-categories { padding:10px 15px 0; }
+#cs-mini .cs-categories .backpack-tab { font-size:18px; padding:5px 11px; }
 #cs-mini .backpack-sort-tags { gap:6px; }
 #cs-mini .sort-tag { font-size:18px; padding:5px 11px; border-radius:6px; }
 
@@ -26668,71 +26807,168 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   background: transparent;
   user-select: none;
 }
-#hotbar-target-picker .htp-panel {
+/* The target card, shared by the quick bar (over the map) and the backpack
+   (over the spread): the party a row each, with their sprite, their class and
+   level, and what they have left. The quick bar's own overlay is deliberately
+   unpainted, the backpack's is the standard dialog sheet; the panel below
+   carries the frame either way, so it stands off both. */
+.item-target-card .htp-panel {
   /* Sized to be read across the room rather than squinted at: this is a modal
-     question over the map, not a corner readout. */
-  min-width: 520px;
-  max-width: 70vw;
+     question, not a corner readout. */
+  min-width: 560px;
+  max-width: 76vw;
+  max-height: 84%;
+  overflow-y: auto;
   margin: auto;
-  padding: 24px 30px;
+  padding: 22px 26px;
   background: var(--bg-panel);
   border: 2px solid var(--border-gold-amber);
   border-radius: 6px;
   box-shadow: 0 10px 30px var(--shadow-heavy);
   font-family: var(--font-ui);
+  box-sizing: border-box;
 }
-#hotbar-target-picker .htp-title {
-  font-size: 1.5rem;
+.item-target-card .htp-title {
+  font-size: 1.4rem;
   font-weight: bold;
   color: var(--text-primary-hover);
-  border-bottom: none;
+  border-bottom: 1px solid var(--border-gold-amber);
   padding-bottom: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   text-align: center;
 }
-#hotbar-target-picker .htp-row {
+.item-target-card .htp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.item-target-card .htp-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 14px;
-  font-size: 1.2rem;
-  border: 1px solid transparent;
+  padding: 8px 12px;
+  font-size: 1.1rem;
+  border: 1px solid var(--border-subtle, transparent);
   border-radius: 4px;
   cursor: pointer;
   color: var(--text-success-active);
+  background: var(--bg-subtle-translucent-15);
 }
-#hotbar-target-picker .htp-row:hover,
-#hotbar-target-picker .htp-row.selected {
+.item-target-card .htp-row:hover,
+.item-target-card .htp-row.selected {
   background: var(--bg-primary-hover-translucent-35);
   border-color: var(--text-primary-hover);
 }
-#hotbar-target-picker .htp-num {
+.item-target-card .htp-num {
   flex: 0 0 auto;
-  width: 24px;
+  width: 22px;
   text-align: center;
   font-weight: bold;
   color: var(--text-primary-hover);
   opacity: 0.8;
 }
-#hotbar-target-picker .htp-name {
+.item-target-card .htp-portrait {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-gold-amber);
+  border-radius: 4px;
+  background: var(--bg-secondary-hover);
+}
+.item-target-card .htp-portrait canvas {
+  image-rendering: pixelated;
+  width: 48px;
+  height: 48px;
+}
+.item-target-card .htp-ident {
   flex: 1 1 auto;
+  min-width: 0;
+}
+.item-target-card .htp-name {
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-primary-hover);
 }
-#hotbar-target-picker .htp-vitals {
+.item-target-card .htp-name--wide { flex: 1 1 auto; }
+.item-target-card .htp-sub {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-target-card .htp-vitals {
   flex: 0 0 auto;
   display: flex;
-  gap: 18px;
-  font-size: 1.05rem;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 190px;
+}
+.item-target-card .htp-gauge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
   font-weight: bold;
 }
-/* Gold, not the danger red the wound-coloured HP elsewhere uses: the Omega
-   Tower preset paints --text-danger-hover black (it is a colour for text sat on
-   a red plate), which on this black panel made the vitals unreadable. */
-#hotbar-target-picker .htp-hp { color: var(--text-gold-dark); }
-#hotbar-target-picker .htp-mp { color: var(--text-info); }
+.item-target-card .htp-gauge-label {
+  width: 22px;
+  /* Gold, not the danger red the wound-coloured HP elsewhere uses: the Omega
+     Tower preset paints --text-danger-hover black (a colour for text sat on a
+     red plate), which on this panel made the vitals unreadable. */
+  color: var(--text-gold-dark);
+}
+.item-target-card .htp-gauge-track {
+  flex: 1 1 auto;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-secondary-hover);
+  border: 1px solid var(--border-subtle, var(--border-gold-amber));
+  overflow: hidden;
+}
+.item-target-card .htp-gauge-fill {
+  display: block;
+  height: 100%;
+  background: var(--text-gold-dark);
+}
+.item-target-card .htp-gauge--mp .htp-gauge-label,
+.item-target-card .htp-gauge--mp .htp-gauge-fill { color: var(--text-info); background-color: var(--text-info); }
+.item-target-card .htp-gauge--mp .htp-gauge-label { background: none; }
+.item-target-card .htp-gauge--ap .htp-gauge-label,
+.item-target-card .htp-gauge--ap .htp-gauge-fill { color: var(--text-success-active); background-color: var(--text-success-active); }
+.item-target-card .htp-gauge--ap .htp-gauge-label { background: none; }
+.item-target-card .htp-gauge-value {
+  flex: 0 0 auto;
+  width: 66px;
+  text-align: right;
+  opacity: 0.9;
+}
+/* A special command is not a party member: it is stamped rather than listed,
+   so it cannot be mistaken for someone to hand the item to. */
+.item-target-card .htp-row--special {
+  border-color: var(--text-gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.item-target-card .htp-cancel {
+  margin: 14px auto 0 auto;
+  padding: 6px 20px;
+  width: fit-content;
+  border: 1px solid var(--text-primary-hover);
+  border-radius: 4px;
+  background: var(--bg-primary-hover-translucent-35);
+  color: var(--text-success-active);
+  cursor: pointer;
+}
+.item-target-card .htp-cancel:hover {
+  background: var(--chip-active-bg);
+  color: var(--chip-active-fg);
+}
 
 
 /* ==========================================================================
@@ -38123,6 +38359,17 @@ select option:hover {
     color: var(--text-primary, #f0c674);
 }
 
+/* A mode Em has not levelled into yet. The card stays on the page and keeps
+   its place in the run, because the point of it is that it is COMING: it is
+   dimmed, and the level it opens at sits where a fitted mode writes its bay. */
+.vg-grid .item-slot.vg-locked {
+    opacity: 0.45;
+}
+
+.vg-grid .item-slot.vg-locked .item-slot-count {
+    color: var(--text-primary, #f0c674);
+}
+
 .vg-icon {
     width: 32px;
     height: 32px;
@@ -38440,6 +38687,13 @@ select option:hover {
     opacity: 0.35;
 }
 
+/* No pane on screen scrolls. The layer stays in the document rather than being
+   taken out and put back on a six-frame tick, which made the chips flicker
+   every time a menu rebuilt itself; hidden costs nothing and keeps the nodes. */
+#pad-rails.empty {
+    display: none;
+}
+
 /* The tip strip: what the buttons do on a screen that has no controls to stamp
    a badge inside (a 3D minigame, the voxel world). Written by the controller
    layer (Core/ControllerSystem.js) and only while a pad is the device in hand. */
@@ -38633,4 +38887,71 @@ body.pad-input .kb-only {
     font-size: var(--fs-caption);
     color: var(--text-text-alt-4);
     padding: 4px 2px 8px;
+}
+
+/* ===========================================================================
+   The quick pockets list (UI/QuickMainMenuLayout.js)
+   ---------------------------------------------------------------------------
+   Held open with Tab or Y out on the map: the menu's own pockets on one
+   column, so one of them can be reached without the page in between. Every
+   colour is a token out of css/vars.css, the way the rest of the parchment
+   interface is, so it repaints with the preset instead of being one panel in
+   somebody else's palette. */
+#quick-main-menu {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11000;
+    pointer-events: auto;
+    min-width: 260px;
+    max-width: 340px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 6px;
+    background: var(--bg-secondary-hover);
+    color: var(--text-primary-hover);
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    box-shadow: 0 6px 24px var(--shadow-primary-hover-translucent-5);
+}
+
+#quick-main-menu .qmm-head {
+    font-size: var(--fs-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 6px;
+}
+
+#quick-main-menu .qmm-list {
+    max-height: 46vh;
+    overflow-y: auto;
+}
+
+#quick-main-menu .qmm-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+#quick-main-menu .qmm-row.qmm-on {
+    background: var(--shadow-primary-hover-translucent-5);
+    outline: 1px solid var(--border-primary-hover-translucent-15);
+}
+
+/* A pocket that exists but cannot be opened from where the party is standing,
+   drawn the same way the pockets page draws it rather than hidden: the player
+   knows it is there and knows why it is not offered. */
+#quick-main-menu .qmm-row.qmm-off {
+    opacity: 0.4;
+    cursor: default;
+}
+
+#quick-main-menu .qmm-icon {
+    --icon-size: 20px;
 }

@@ -77,10 +77,16 @@
    * A row of numbered slots.
    *
    * Entries passed to render() are either null (empty slot) or:
-   *   { iconIndex, enabled, count, tooltip, label, swatch }
+   *   { iconIndex, enabled, count, tooltip, label, swatch, detail }
    *
    * `label` is what the name line under the row says for that slot; it falls
    * back to `tooltip` when a caller has only the one string.
+   *
+   * `detail` is the reading card the slot puts up while the pointer is on it
+   * or while the keys have it armed: `{ title, cost, body }`, all optional
+   * strings, drawn as text and never as markup. A bar carrying details shows
+   * them even when it also carries a name line: the line has room for the name
+   * only, and the card is what says what the thing does.
    *
    * `swatch` is a CSS colour drawn in place of the icon, for a bar whose
    * contents are not things out of the icon sheet: the 3D world's block bar
@@ -135,6 +141,7 @@
       this.onPageNext = o.onPageNext || null;
       this._root = null;
       this._labelEl = null;
+      this._slotEls = [];
       this._entries = [];
       this._state = {};
       this._hoverIndex = -1;
@@ -192,15 +199,79 @@
       if (root.parentNode !== parent) parent.appendChild(root);
     }
 
-    showTooltip(text, slotEl) {
-      if (!text) return;
+    /**
+     * Put a reading card over a slot: the same shared tooltip node, laid out
+     * as title / cost / body instead of one line. Everything is written as
+     * text, so a database description can say what it likes.
+     */
+    showDetail(detail, slotEl) {
+      if (!detail || !slotEl) return;
       const tip = tooltipEl();
-      tip.textContent = text;
+      // Rebuilt only when the card has something else to say: a bar armed on
+      // one slot re-renders every frame, and re-writing three text nodes sixty
+      // times a second for the same three strings is work nobody asked for.
+      const key = [detail.title, detail.cost, detail.body].join('');
+      if (tip.dataset.cardKey === key && tip.style.display === 'block') {
+        this._placeTooltip(tip, slotEl);
+        return;
+      }
+      tip.dataset.cardKey = key;
+      tip.className = 'hotbar-tooltip hotbar-tooltip-card';
+      tip.innerHTML = '';
+      const line = (cls, text) => {
+        if (!text) return;
+        const el = document.createElement('div');
+        el.className = cls;
+        el.textContent = String(text);
+        tip.appendChild(el);
+      };
+      line('hotbar-tip-title', detail.title);
+      line('hotbar-tip-cost', detail.cost);
+      line('hotbar-tip-body', detail.body);
+      if (!tip.childNodes.length) { hideTooltip(); return; }
+      this._placeTooltip(tip, slotEl);
+    }
+
+    _placeTooltip(tip, slotEl) {
       tip.style.zIndex = String(this.zIndex + 1);
       const r = slotEl.getBoundingClientRect();
       tip.style.left = (r.left + r.width / 2) + 'px';
       tip.style.top = r.top + 'px';
       tip.style.display = 'block';
+    }
+
+    /**
+     * What the shared tooltip should be showing right now: the slot under the
+     * pointer first, else the slot the keys have armed. A card (`detail`) goes
+     * up either way, so a player who arms a slot from the keyboard reads the
+     * same thing a player who hovers it does. A plain one-line tooltip stays
+     * hover-only, and stays out of the way of bars that already print the name
+     * under the row.
+     */
+    _syncDetail() {
+      const st = this._state || {};
+      const entries = this._entries || [];
+      const hovered = this._hoverIndex >= 0;
+      const index = hovered ? this._hoverIndex
+        : (st.active && st.selected != null ? st.selected : -1);
+      const entry = index >= 0 ? entries[index] : null;
+      const slot = index >= 0 && this._slotEls ? this._slotEls[index] : null;
+      if (!entry || !slot || st.inert) { hideTooltip(); return; }
+      if (entry.detail) { this.showDetail(entry.detail, slot); return; }
+      if (hovered && !this.showLabel && entry.tooltip) {
+        this.showTooltip(entry.tooltip, slot);
+        return;
+      }
+      hideTooltip();
+    }
+
+    showTooltip(text, slotEl) {
+      if (!text || !slotEl) return;
+      const tip = tooltipEl();
+      tip.dataset.cardKey = '';
+      tip.className = 'hotbar-tooltip';
+      tip.textContent = text;
+      this._placeTooltip(tip, slotEl);
     }
 
     _key(entries, state) {
@@ -244,6 +315,9 @@
       // than leave a name up for a slot that no longer exists. The next mouse
       // move puts it back.
       this._hoverIndex = -1;
+      // The card a hovered or armed slot puts up is anchored on the slot
+      // itself, so the row keeps its elements to hand.
+      this._slotEls = [];
       // Not `row`: the icon blitting below already uses that name for the
       // icon sheet's row.
       const rowEl = document.createElement('div');
@@ -298,21 +372,14 @@
         // stale slot.
         if (entry || (this.emptyClickable && this.onSlotClick)) slot.style.cursor = 'pointer';
         slot.addEventListener('mouseenter', () => {
-          const cur = this._entries[i];
-          if (this.showLabel) {
-            this._hoverIndex = i;
-            this._syncLabel();
-          } else if (cur && cur.tooltip) {
-            this.showTooltip(cur.tooltip, slot);
-          }
+          this._hoverIndex = i;
+          this._syncLabel();
+          this._syncDetail();
         });
         slot.addEventListener('mouseleave', () => {
-          if (this.showLabel) {
-            if (this._hoverIndex === i) this._hoverIndex = -1;
-            this._syncLabel();
-          } else {
-            hideTooltip();
-          }
+          if (this._hoverIndex === i) this._hoverIndex = -1;
+          this._syncLabel();
+          this._syncDetail();
         });
         slot.addEventListener('pointerup', (e) => {
           if (e.button !== undefined && e.button !== 0) return;
@@ -320,6 +387,7 @@
           // asking; it comes back if the pointer leaves and returns.
           this._hoverIndex = -1;
           this._syncLabel();
+          this._syncDetail();
           if (this.onSlotClick) this.onSlotClick(i, this._entries[i] || null, e);
         });
         slot.addEventListener('pointerdown', (e) => {
@@ -364,6 +432,7 @@
         }
 
         rowEl.appendChild(slot);
+        this._slotEls[i] = slot;
       }
       // Chevrons only appear once there is a second page to turn to, and they
       // sit on the row's own middle line, one at either end of the slots.
@@ -454,10 +523,8 @@
       const inert = !!st.inert;
       root.classList.toggle('hotbar-inert', inert);
       root.style.pointerEvents = inert ? 'none' : 'auto';
-      if (inert) {
-        this._hoverIndex = -1;
-        hideTooltip();
-      }
+      if (inert) this._hoverIndex = -1;
+      this._syncDetail();
       if (root.style.display !== 'flex') root.style.display = 'flex';
       if (!this.inline) this._position();
     }

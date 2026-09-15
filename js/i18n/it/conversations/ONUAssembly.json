@@ -1,18 +1,18 @@
 {
   "venues": [
-    "il {novantunesimo|sessantaquattresimo|trentatreesimo|dodicesimo} piano della Torre Omega, {dove la moquette è ancora bagnata|che tecnicamente è tre piani insieme|affittato a ore dalla Fondazione Archivio}",
+    "il {novantunesimo|sessantaquattresimo|trentatreesimo|dodicesimo} piano della Torre Omega, {dove la moquette è ancora bagnata|che tecnicamente è tre piani insieme|affittato a ore dall'Archive Foundation}",
     "un {grande magazzino|radura di giungla sotterranea|galleria di reattori} dentro la Torre che nessuno ha {finito di|cominciato a|ammesso di} riconvertire",
     "la Sala del Terreno Neutrale della Torre, {un corridoio di tende da campeggio|un ex centro ristoro|una stanza che si misura diversa ogni volta che la si misura}",
     "la Camera {Grande|Provvisoria|d'Emergenza}, {rimontata dopo che l'ultima è andata alla deriva|appesa fra due piani con dei cavi|che sa ancora della giungla da cui è stata ritagliata}",
     "una {sala conferenze|sala da ballo|banchina di carico} al quarantaquattresimo piano della Torre, {illuminata da un solo neon funzionante|aperta sul vano ascensore da un lato|dove la gravità è un suggerimento}",
-    "la sala di lettura della Fondazione Archivio, {sgomberata degli scaffali per l'occasione|con gli scaffali lasciati esattamente dov'erano|sotto un soffitto di schede catalografiche}"
+    "la sala di lettura dell'Archive Foundation, {sgomberata degli scaffali per l'occasione|con gli scaffali lasciati esattamente dov'erano|sotto un soffitto di schede catalografiche}"
   ],
   "chairs": [
-    "il Capo Bibliotecario Silenzio della Fondazione Archivio",
-    "un presidente {a rotazione|provvisorio|profondamente riluttante} della Fondazione Archivio",
+    "il Capo Bibliotecario Silenzio dell'Archive Foundation",
+    "un presidente {a rotazione|provvisorio|profondamente riluttante} dell'Archive Foundation",
     "il Curatore Magnus, {che presiede|che batte il martelletto|che legge da un cartoncino}",
     "l'Archivista Vera, che {sta anche verbalizzando|sta verbalizzando tutto, questo compreso|sta registrando l'aula per la pubblicazione}",
-    "il Custode Silas della Fondazione Archivio, {che presiede sotto protesta|che presiede per la nona settimana di fila}",
+    "il Custode Silas dell'Archive Foundation, {che presiede sotto protesta|che presiede per la nona settimana di fila}",
     "il Presidente, {il cui nome è sull'ordine del giorno ma non sul cartellino|che non ha dato un nome}"
   ],
   "openings": [
@@ -46,7 +46,7 @@
       "title": "Mozione di {sponsor}: un trattato di mutua difesa con {target}",
       "text": [
         "{sponsor} propone un trattato di mutua difesa con {target}. {leader} lo ha già firmato, {cosa che il presidente osserva non essere la procedura|con inchiostro ancora fresco|in tre copie, una delle quali risulta mancante}.",
-        "La mozione di {sponsor}: {target} e {sponsor} unite {contro chiunque|in caso di accelerazione dello Schiacciamento|per un periodo di novantadue anni}. {leader} la definisce {tardiva|inevitabile|una formalità}.",
+        "La mozione di {sponsor}: {target} e {sponsor} unite {contro chiunque|in caso di accelerazione dello Squishing|per un periodo di novantadue anni}. {leader} la definisce {tardiva|inevitabile|una formalità}.",
         "{sponsor} chiede all'assemblea di riconoscere un patto difensivo con {target}. Il testo è di {quattro pagine|una pagina|quattrocento pagine}, e {due sono bianche|l'ultima clausola è in una lingua che nessuno dei presenti legge|la clausola nove rimanda a una clausola dieci che non esiste}."
       ]
     },
@@ -83,7 +83,7 @@
       "text": [
         "{sponsor} rivendica {un corridoio|una costa|quattrocento chilometri quadrati di un posto che continua a resettarsi} oggi amministrati da {target}. {leader} esibisce {una mappa|un atto|una fotografia} come prova.",
         "La rivendicazione di {sponsor}: territori tenuti da {target} che secondo {sponsor} non furono {mai ceduti|ceduti sotto costrizione|ceduti a uno Stato che non esiste più}. {leader} è disposto ad aspettare una pronuncia. {leader} non è disposto ad aspettare a lungo.",
-        "{sponsor} chiede il riconoscimento di un confine che {target} non riconosce. Entrambe le delegazioni hanno portato {la stessa mappa|mappe diverse dello stesso posto|mappe disegnate dopo lo Schiacciamento, che il presidente dichiara inammissibili}."
+        "{sponsor} chiede il riconoscimento di un confine che {target} non riconosce. Entrambe le delegazioni hanno portato {la stessa mappa|mappe diverse dello stesso posto|mappe disegnate dopo lo Squishing, che il presidente dichiara inammissibili}."
       ]
     },
     "incident": {
@@ -160,9 +160,9 @@
     },
     "reparations": {
       "tag": "le riparazioni",
-      "title": "Mozione di {sponsor}: riparazioni per lo Schiacciamento",
+      "title": "Mozione di {sponsor}: riparazioni per lo Squishing",
       "text": [
-        "{sponsor} propone che le potenze risparmiate dallo Schiacciamento paghino a quelle che non lo sono state. {leader} cita {Canadafrica|i Campi Verdi|la dimensione settantasette} come caso esemplare.",
+        "{sponsor} propone che le potenze risparmiate dallo Squishing paghino a quelle che non lo sono state. {leader} cita {Canadafrica|i Campi Verdi|la dimensione settantasette} come caso esemplare.",
         "Riparazioni. {sponsor} dice che il paradosso non si è distribuito equamente e nemmeno il conto dovrebbe. {target} dice che il paradosso non ha autore e quindi non ha debitore. {leader} dice che un autore ce l'ha e tutti ne conoscono il nome.",
         "{sponsor} deposita un prelievo {sulla vendita di motori liminali|su ogni transito della Strada Onnicomprensiva|sul commercio di armi arcane}, da versare alle comunità che vivono dentro gli anelli. {leader} lo chiama affitto."
       ]
@@ -172,7 +172,7 @@
       "title": "Mozione di {sponsor}: il bilancio annuale dell'assemblea",
       "text": [
         "Il bilancio. {sponsor} presenta i conti dell'assemblea per l'anno: {la traduzione|i piccioni|l'edificio}. {leader} si scusa in anticipo per quanto ci vorrà.",
-        "{sponsor} presenta le previsioni. Tre quarti della somma sono {il servizio piccioni viaggiatori|la verbalizzazione della Fondazione Archivio|l'affitto a una Torre che non ha padrone}. {leader} invita chiunque a trovare un modo più economico.",
+        "{sponsor} presenta le previsioni. Tre quarti della somma sono {il servizio piccioni viaggiatori|la verbalizzazione dell'Archive Foundation|l'affitto a una Torre che non ha padrone}. {leader} invita chiunque a trovare un modo più economico.",
         "Denaro. {sponsor} deposita i conti. {target} contesta {la voce undici|il tasso di cambio usato|l'esistenza stessa della voce undici}. {leader} suggerisce di risolverla prima della fine della frase."
       ]
     },
@@ -436,7 +436,7 @@
     },
     "archive": {
       "open": [
-        "Ha la parola la Fondazione Archivio. {leader} {si alza|si alza, continuando a scrivere|non smette di scrivere}.",
+        "Ha la parola l'Archive Foundation. {leader} {si alza|si alza, continuando a scrivere|non smette di scrivere}.",
         "{leader}, per la Fondazione, {esordisce|prima corregge il verbale|prima corregge il verbale di una seduta del 1997}.",
         "La delegazione della Fondazione {viene chiamata|sta verbalizzando dall'aula|solleva una mozione d'ordine prima di essere chiamata}."
       ],
@@ -847,7 +847,7 @@
     ],
     "wild": [
       "L'aula {si azzittisce del tutto|non si azzittisce affatto|produce un suono che non aveva mai fatto}.",
-      "L'intervento di {power} viene messo a verbale {alla lettera|alla lettera, due volte|con una nota della Fondazione Archivio}.",
+      "L'intervento di {power} viene messo a verbale {alla lettera|alla lettera, due volte|con una nota dell'Archive Foundation}.",
       "Da qualche parte dietro le delegazioni, {qualcuno ride|qualcuno si alza|cade una sedia}.",
       "Il presidente {lo dichiara ammissibile|lo dichiara inammissibile e lo lascia agli atti|si rifiuta di pronunciarsi}."
     ]
@@ -902,7 +902,7 @@
     "carried": [
       "La mozione passa, {forCount} a {againstCount}. \"{title}\" entra a verbale.",
       "Approvata: {forCount} favorevoli, {againstCount} contrari. Il presidente registra \"{title}\" come adottata e passa oltre {subito|prima che qualcuno la riapra|con visibile sollievo}.",
-      "{forCount} a {againstCount}. Passa. {Da qualche parte un trattato acquisisce un numero|La Fondazione Archivio comincia a pubblicare prima che cali il martelletto|Tre delegazioni cominciano a redigere obiezioni per la settimana prossima}."
+      "{forCount} a {againstCount}. Passa. {Da qualche parte un trattato acquisisce un numero|L'Archive Foundation comincia a pubblicare prima che cali il martelletto|Tre delegazioni cominciano a redigere obiezioni per la settimana prossima}."
     ],
     "failed": [
       "La mozione cade, {forCount} a {againstCount}. \"{title}\" non va oltre.",
@@ -912,7 +912,7 @@
   },
   "closings": [
     "{chair} chiude la seduta. {carried} mozioni approvate su {total}. Le delegazioni {escono in fila|non escono in fila|restano sedute a discutere per un'altra ora}.",
-    "Cala il martelletto. {carried} approvate su {total}. {La Fondazione Archivio sta già pubblicando|I piccioni sono già partiti|Qualcuno ha preso i biscotti}.",
+    "Cala il martelletto. {carried} approvate su {total}. {L'Archive Foundation sta già pubblicando|I piccioni sono già partiti|Qualcuno ha preso i biscotti}.",
     "Seduta chiusa. {carried} su {total}. {chair} ringrazia l'assemblea {senza convinzione|con le stesse parole della settimana scorsa|e non lo si sente sopra lo stridere delle sedie}."
   ],
   "lobby": {

@@ -91,6 +91,19 @@
     //=========================================================================
     // ArenaBattleHandler core
     //=========================================================================
+    // Between bouts a fighter is put back on their feet whole: health, magic
+    // and AP alike. AP is not part of the engine's own recoverAll, so a bout
+    // used to open with whatever the last one had left, and a member who had
+    // spent theirs walked in unable to act.
+    function _restorePartyForBout() {
+        $gameParty.members().forEach(actor => {
+            actor.setHp(actor.mhp);
+            actor.setMp(actor.mmp);
+            if (actor.maxTp) actor.setTp(actor.maxTp());
+            actor.clearStates();
+        });
+    }
+
     const ArenaBattleHandler = {
         // Exposed so the UI plugin can build bracket lists without duplicating data.
         BRACKETS,
@@ -107,6 +120,13 @@
                     : this.selectTroop(wins);
             }
             if (troop) {
+                // A bout opens with the party whole. Health and magic are put
+                // back by the arena itself; AP is not part of the engine's
+                // recoverAll, so it is restored here rather than left as the
+                // one resource a fighter carries a fight's worth of loss into.
+                $gameParty.members().forEach(actor => {
+                    if (actor.maxTp) actor.setTp(actor.maxTp());
+                });
                 this._ensureBattleMapReady();
                 BattleManager.setup(troop.id, true, false);
                 BattleManager.setBattleTest(false);
@@ -231,13 +251,10 @@
         //=====================================================================
         // Gauntlet engine
         //=====================================================================
+
         startGauntletBattle() {
             // Fully restore party before each bout.
-            $gameParty.members().forEach(actor => {
-                actor.setHp(actor.mhp);
-                actor.setMp(actor.mmp);
-                actor.clearStates();
-            });
+            _restorePartyForBout();
 
             const currentBracket = $gameVariables.value(gauntletBracketVarId);
             const bracket = BRACKETS[currentBracket - 1] || BRACKETS[0];
@@ -768,6 +785,7 @@
             actor._equips.forEach(e => e.setObject(null));
             actor.changeLevel(targetLevel, false);
             actor.recoverAll();
+            if (actor.maxTp) actor.setTp(actor.maxTp());
             this._equipActorForBracket(actor, minLevel, maxLevel);
         });
         $gamePlayer.refresh();
@@ -794,6 +812,7 @@
             actor.changeLevel(targetLevel, false);
             this._equipActorForBracket(actor, minLevel, maxLevel);
             actor.recoverAll();
+            if (actor.maxTp) actor.setTp(actor.maxTp());
         });
         $gamePlayer.refresh();
 
@@ -970,6 +989,7 @@
             actor.changeLevel(lv, false);
             this._equipActorForBracket(actor, lv, lv);
             actor.recoverAll();
+            if (actor.maxTp) actor.setTp(actor.maxTp());
         });
         $gamePlayer.refresh();
     };
@@ -1023,7 +1043,7 @@
         this.applyBiomePartyLevel(t.partyLevel);
 
         $gameSystem._forcedBattleBiome = t.biome;
-        $gameParty.members().forEach(actor => { actor.setHp(actor.mhp); actor.setMp(actor.mmp); actor.clearStates(); });
+        _restorePartyForBout();
 
         this._ensureBattleMapReady();
         BattleManager.setup(entry.troopId, true, false);
@@ -1146,7 +1166,7 @@
             t.lastLevel = entry.level;
         }
 
-        $gameParty.members().forEach(actor => { actor.setHp(actor.mhp); actor.setMp(actor.mmp); actor.clearStates(); });
+        _restorePartyForBout();
 
         this._ensureBattleMapReady();
         BattleManager.setup(entry.troopId, true, false);

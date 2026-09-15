@@ -237,7 +237,16 @@
     "forged": "Forgiati"
   },
   "allTrades": "Tutti i mestieri",
-  "shortBy": "Senza materiali",
+  "shortBy": "Mancanti {n}",
+  "readyCount": "{n} pronti",
+  "tradeHint": "{known} formule su {total} leggibili da queste mani",
+  "legend": {
+    "title": "Cosa significano i segni",
+    "ready": "Pronto: tutto il necessario è nella sacca",
+    "short": "Mancanti: quante voci della distinta sono scoperte",
+    "locked": "Non addestrato: il livello nel mestiere richiesto",
+    "forged": "Forgiato: già battuto, e com'è venuto"
+  },
   "pieceCount": "{n} pezzi",
   "pickHint": "Scegli un pezzo per vedere cosa serve a farlo.",
   "smelt": "Fondi",

@@ -1,0 +1,637 @@
+{
+  "appName": "Slamgrimorie",
+  "subtitle": "Two shows. One hour. Nobody is well.",
+  "tagline": "The continental wrestling desk, updated every night at the bell.",
+  "oneDivision": "One division. Every gender in it. That has never once been the controversial part.",
+  "fed": {
+    "slam": {
+      "name": "Hexa-Slam Continental Wrestling",
+      "short": "HEXA-SLAM",
+      "show": "Slam Vigil",
+      "ethos": "Hexes are legal, gravity is a suggestion and the paperwork is written afterwards in whatever is left of the ring.",
+      "venueWord": "Slamdrome"
+    },
+    "circle": {
+      "name": "Sanctioned Circle of Grappling Arts",
+      "short": "THE CIRCLE",
+      "show": "The Sanctioned Hour",
+      "ethos": "Eleven permitted holds, three permitted invocations, one notary at ringside and a mat that remembers every foot placed on it.",
+      "venueWord": "Salle"
+    }
+  },
+  "tab": {
+    "tonight": "Tonight",
+    "card": "Cards",
+    "roster": "Roster",
+    "angles": "Storylines",
+    "betting": "Betting",
+    "ratings": "Ratings War",
+    "titles": "Titles"
+  },
+  "label": {
+    "day": "Night {n}",
+    "airtime": "Both shows go live at {hour}. They always have.",
+    "mainEvent": "Main event",
+    "openDivision": "Open Division",
+    "record": "Record",
+    "momentum": "Momentum",
+    "alignment": "Alignment",
+    "style": "Style",
+    "gimmick": "Gimmick",
+    "finisher": "Finisher",
+    "champion": "Champion",
+    "vacant": "Vacant",
+    "reign": "{n} nights",
+    "condition": "Condition",
+    "heat": "Heat",
+    "viewers": "Viewers",
+    "share": "Share",
+    "wonNight": "{fed} won the hour",
+    "tiedNight": "The hour was split down the middle",
+    "stipulation": "Stipulation",
+    "finish": "Finish",
+    "odds": "Odds",
+    "stake": "Stake",
+    "payout": "Payout",
+    "openBets": "Open bets",
+    "settled": "Settled",
+    "noBets": "Nothing staked on tomorrow yet.",
+    "placeBet": "Stake",
+    "watchPromo": "Watch the promo",
+    "readCard": "Read the card",
+    "tomorrow": "Tomorrow night",
+    "lastNight": "Last night",
+    "signature": "Signature",
+    "school": "School",
+    "debut": "Debut",
+    "banked": "Banked",
+    "totalViewers": "Combined audience",
+    "overUnder": "Over / under {n}",
+    "over": "Over",
+    "under": "Under",
+    "whoWinsHour": "Who wins the hour",
+    "noCard": "The card has not been posted yet.",
+    "injured": "Hurt",
+    "cursed": "Cursed",
+    "fine": "Fit",
+    "mundane": "Mundane",
+    "arcana": "Arcana",
+    "noMagic": "No magic. None. Ever.",
+    "mundaneFilter": "Mundane only"
+  },
+  "alignment": {
+    "face": "Beloved",
+    "heel": "Despised",
+    "enigma": "Unreadable"
+  },
+  "condition": {
+    "fit": "walking fine",
+    "hurt": "taped up",
+    "cursed": "carrying something that is not an injury",
+    "haunted": "being followed",
+    "suspended": "suspended by the commission"
+  },
+  "style": {
+    "technical": "Technical grappling",
+    "brawler": "Brawler",
+    "highflyer": "High flyer",
+    "powerhouse": "Powerhouse",
+    "hexcaster": "Hexcaster",
+    "ritualist": "Ritualist",
+    "shootfighter": "Shoot fighter",
+    "puppeteer": "Puppeteer",
+    "cryomancer": "Cryomancer",
+    "ironform": "Iron form",
+    "grinder": "Grinder",
+    "catchwrestler": "Catch wrestler",
+    "striker": "Striker"
+  },
+  "school": [
+    "the Bologna Grappling Notariat",
+    "a Kola wrestling barracks nobody will name",
+    "the Verden Slow Mat",
+    "a Ghent dockyard gym with one working light",
+    "the Vatican Pin Seminary",
+    "an unlicensed cellar under the Omega Tower",
+    "the Naguka Circle of Standing Stones",
+    "a Midwest carnival tent that toured for forty years",
+    "the Hexorcist Corps physical wing",
+    "their own grandmother, in a kitchen",
+    "a correspondence course that should not have worked",
+    "the Salt Ring at Trieste"
+  ],
+  "gimmick": [
+    "a retired notary who wrestles to settle contracts",
+    "a beekeeper whose swarm is legally part of the entourage",
+    "the reanimated gimmick of a wrestler who died in 1974",
+    "a monk of a silence order who screams only at the finish",
+    "a tax auditor with a grudge against the whole continent",
+    "the last graduate of a school that burned down",
+    "a weather front that took a human shape and a contract",
+    "a hexcaster who insists every spell is a wrestling hold",
+    "a butcher who talks to the crowd like they are customers",
+    "somebody's actual grandmother, undefeated",
+    "a lighthouse keeper who wrestles for the hour of sleep",
+    "one of two twins who have never been photographed together",
+    "a drag queen who fights in full regalia and has never smudged",
+    "a courier who has never once been late to the ring",
+    "an exorcist who is losing a long argument with a passenger",
+    "a chess prodigy who calls every move before making it",
+    "a former traffic warden who tickets illegal moves in the ring",
+    "an opera singer whose high note is an actual attack",
+    "a cryptid who signed the contract in good faith",
+    "a miner who has never seen the top rope from the top"
+  ],
+  "ring": {
+    "adjective": [
+      "Concrete",
+      "Velvet",
+      "Hollow",
+      "Sanctioned",
+      "Unlicensed",
+      "Brass",
+      "Salted",
+      "Nocturnal",
+      "Marble",
+      "Sleepless",
+      "Static",
+      "Gilded",
+      "Iron",
+      "Candlelit",
+      "Quiet",
+      "Municipal",
+      "Radiant",
+      "Foreclosed",
+      "Barbed",
+      "Tidal",
+      "Ashen",
+      "Certified",
+      "Concussive",
+      "Feral"
+    ],
+    "noun": [
+      "Cardinal",
+      "Notary",
+      "Comet",
+      "Widow",
+      "Auditor",
+      "Landslide",
+      "Verdict",
+      "Lighthouse",
+      "Bailiff",
+      "Aurochs",
+      "Requiem",
+      "Quarry",
+      "Seamstress",
+      "Ordinance",
+      "Gravedigger",
+      "Hurricane",
+      "Deacon",
+      "Machinist",
+      "Dowager",
+      "Menhir",
+      "Furnace",
+      "Custodian",
+      "Vesper",
+      "Threshold",
+      "Bricklayer",
+      "Mistral",
+      "Archivist",
+      "Bellringer"
+    ],
+    "epithet": [
+      "of the Long Count",
+      "Who Will Not Be Filed",
+      "of Nine Returns",
+      "Last of the Slow Mat",
+      "of the Second Bell",
+      "Undefeated on Paper",
+      "of the Cold Corner",
+      "Who Remembers Every Match",
+      "of Gate Seven",
+      "Sealed by Notary",
+      "of the Broken Escalator",
+      "Who Sold the Farm"
+    ],
+    "given": [
+      "Ines",
+      "Kovac",
+      "Marisol",
+      "Teodor",
+      "Halina",
+      "Bruno",
+      "Sevda",
+      "Ottilie",
+      "Rezso",
+      "Nuray",
+      "Gabor",
+      "Solveig",
+      "Amadeo",
+      "Jarn",
+      "Lubomira",
+      "Ferran",
+      "Ysolde",
+      "Tibor",
+      "Nkechi",
+      "Emrys",
+      "Vitt",
+      "Ariadne",
+      "Osmo",
+      "Rada",
+      "Casimir",
+      "Nadia",
+      "Lorcan",
+      "Perpetua"
+    ],
+    "family": [
+      "Bellandi",
+      "Vrsic",
+      "Okonkwo",
+      "Haverkamp",
+      "Szilagyi",
+      "Duquesne",
+      "Karelin",
+      "Moretti",
+      "Bjornsdottir",
+      "Achterberg",
+      "Falcone",
+      "Radulescu",
+      "Lindqvist",
+      "Yilmaz",
+      "Corvaglia",
+      "Weisz",
+      "Novak",
+      "Aubert",
+      "Marchetti",
+      "Stavros",
+      "Vandermeer",
+      "Pirlot"
+    ]
+  },
+  "move": {
+    "finisher": [
+      "the Filed Petition",
+      "Nine Points of Contact",
+      "the Long Tuesday",
+      "the Sanctioned Drop",
+      "Gravity, Withdrawn",
+      "the Closing Argument",
+      "the Widow's Brace",
+      "Second Bell Special",
+      "the Tidal Slam",
+      "the Notarised Choke",
+      "the Candle Snuffer",
+      "Municipal Collapse",
+      "the Quiet Part",
+      "Hexlock Alpha",
+      "the Inheritance",
+      "the Cold Corner Cradle",
+      "Requiem in Four Counts",
+      "the Foreclosure",
+      "the Standing Stone",
+      "Salt and Iron",
+      "the Last Delivery",
+      "the Unpaid Invoice",
+      "Ashfall",
+      "the Reversal of Fortune"
+    ],
+    "signature": [
+      "a rolling arm-drag that hums",
+      "a suplex performed at half speed on purpose",
+      "a hex that only makes the opponent honest",
+      "a top-rope entry from no visible rope",
+      "a chop that frosts the ropes",
+      "a hold that borrows the crowd's breath",
+      "a lariat announced in advance and unavoidable anyway",
+      "a submission that resolves as a legal document",
+      "a dive that pauses briefly at the apex",
+      "a strike delivered by a shadow half a second early"
+    ]
+  },
+  "stipulation": [
+    "Straight fall, one referee, no invocations",
+    "Sealed Circle: nobody in, nothing out, salt on the apron",
+    "Mirror Match: the ring is doubled, only one is real",
+    "Inverted Gravity Cage",
+    "Chain of Notaries: every fall witnessed and stamped",
+    "Candle Match: the loser is whoever the last candle stops liking",
+    "Ladder to a contract nobody has read",
+    "Two falls out of three, the third fought in the dark",
+    "Summoner's Gauntlet: each wrestler brings one thing",
+    "Lumberjack match, lumberjacks provided by the commission",
+    "First Blood, Then Paperwork",
+    "Ghost Rules: the referee is deceased and counting slowly",
+    "Weather Permitting",
+    "Strap Match, strap of unclear provenance",
+    "Casket Match, casket rented",
+    "No Disqualification, No Insurance",
+    "Iron Hour: as many falls as fit in sixty minutes",
+    "Tag rules, partners chosen by the crowd",
+    "Blindfold Hex Match",
+    "Loser Leaves the Continent"
+  ],
+  "finish": {
+    "pinfall": "{winner} pinned {loser} after {move}.",
+    "submission": "{loser} tapped to {move} at {time}.",
+    "knockout": "{loser} did not answer the count after {move}.",
+    "banishment": "{move} put {loser} somewhere the referee could not count them out of.",
+    "countout": "{loser} was counted out and has still not come back.",
+    "disqualification": "{loser} was disqualified: {reason}.",
+    "interference": "{winner} won after {third} came through the crowd and did {reason}.",
+    "double": "Both went down to {move}. The commission is reviewing the tape and the tape is reviewing back.",
+    "draw": "Time limit. {winner} and {loser} shook hands and neither let go first.",
+    "titleChange": "{winner} is the new {title}."
+  },
+  "dqReason": [
+    "an unlicensed hex in a licensed building",
+    "the swarm",
+    "a chair that was, legally, a person",
+    "refusing to stop after the bell for nine minutes",
+    "bringing a notary into the ring without filing",
+    "the wrong kind of salt",
+    "an invocation in a language the commission cannot transcribe"
+  ],
+  "interferenceDeed": [
+    "something with a chair",
+    "a hex through the ropes",
+    "a very calm handshake that took ten years off the referee",
+    "nothing at all, which was worse",
+    "the thing they promised to do on Tuesday"
+  ],
+  "title": {
+    "slamOpen": "Hexa-Slam Continental Championship",
+    "slamChaos": "Slamdrome Hardcore Grimorie",
+    "circleOpen": "Sanctioned Circle Open Championship",
+    "circleTechnical": "Circle Technical Laurel"
+  },
+  "angle": {
+    "rivalry": {
+      "name": "{a} and {b} cannot be in the same building",
+      "beat": [
+        "{a} called {b} out by their legal name, which is not done.",
+        "{b} attacked {a} during someone else's entrance.",
+        "The commission put a partition between their dressing rooms. {a} wrestled through it.",
+        "{a} and {b} were booked as partners. It lasted four minutes.",
+        "{b} has started arriving at the building before it opens, to wait."
+      ]
+    },
+    "betrayal": {
+      "name": "{b} owes {a} an explanation",
+      "beat": [
+        "{b} walked away from the ring while {a} was still in the hold.",
+        "{a} found a clause in their own contract, signed by {b}.",
+        "{b} says it was for {a}'s own good and will not elaborate.",
+        "{a} has stopped naming {b} in promos. That is the worst sign."
+      ]
+    },
+    "titlechase": {
+      "name": "{a} is coming for the {title}",
+      "beat": [
+        "{a} has pinned three contenders in eleven nights and asked for nothing else.",
+        "The commission cannot find a reason to deny {a} a shot, and has looked hard.",
+        "{b} says {a} is not ready. {a} agrees, and wants the match anyway.",
+        "{a} carried a second belt to the ring and left it in the centre."
+      ]
+    },
+    "curse": {
+      "name": "Something is wrong with {a}",
+      "beat": [
+        "{a}'s entrance music played twice, and only one of them was in the building.",
+        "{a} won, then asked the referee who had won.",
+        "Two rows behind {a}'s corner are being kept empty on medical advice.",
+        "{a} has begun speaking in the past tense about tomorrow's match."
+      ]
+    },
+    "possession": {
+      "name": "{a} is not alone in there",
+      "beat": [
+        "The passenger took over at the count of two and let {a} back at three.",
+        "{a} filed a complaint against themselves. It was accepted.",
+        "The Hexorcist Corps has sent an observer, who has stopped taking notes.",
+        "{b} has offered to help. {a}'s passenger accepted before {a} could."
+      ]
+    },
+    "contract": {
+      "name": "Nobody has read {a}'s contract",
+      "beat": [
+        "{a}'s contract obliges the promotion to a match nobody remembers agreeing to.",
+        "A clause was found requiring {b} to defend the {title} on demand.",
+        "The document is now thirty pages long and grows on nights {a} loses.",
+        "{a} offered to tear it up in the ring. The commission said no, quickly."
+      ]
+    },
+    "factionwar": {
+      "name": "{a}'s people and {b}'s people, again",
+      "beat": [
+        "Both stables cleared the ring and then the concourse.",
+        "{b} recruited somebody from {a}'s corner during the broadcast.",
+        "A truce was signed at ringside and held for one commercial break.",
+        "The commission has banned everyone from ringside and everyone came anyway."
+      ]
+    },
+    "ghost": {
+      "name": "The old champion is back for {a}",
+      "beat": [
+        "A retired name nobody has said aloud in years appeared on {a}'s entrance video.",
+        "{a} has been wrestling toward a corner that is not occupied.",
+        "The old belt was found in {a}'s bag. {a} did not put it there.",
+        "{a} has started using a finish that belongs to somebody long dead."
+      ]
+    },
+    "respect": {
+      "name": "{a} and {b} keep trying to finish this cleanly",
+      "beat": [
+        "Forty minutes, one fall, both still standing at the end of it.",
+        "{b} refused a count when {a}'s shoulder was up, and cost themselves the match.",
+        "They have agreed on a third match and on nothing else in their lives.",
+        "{a} asked the crowd to stop booing {b}. It did not take."
+      ]
+    },
+    "invasion": {
+      "name": "{a} wants to wrestle for the other lot",
+      "beat": [
+        "{a} was seen in the other promotion's building, not wrestling, just looking.",
+        "A contract offer from across the hour was read out on air.",
+        "{b} says a defector is worse than a heel and would know.",
+        "{a} has started wearing the wrong colours to the wrong show."
+      ]
+    }
+  },
+  "promo": {
+    "open": {
+      "face": [
+        "I have heard the count three times tonight and got up on two every time.",
+        "You came out in the rain for this, so I will not waste it.",
+        "I do not have a speech. I have a match and I have you."
+      ],
+      "heel": [
+        "Sit down. All of you. The professionals are working.",
+        "I do not need this crowd. I have never needed this crowd.",
+        "You cheer for the ones who lose beautifully. I win ugly and I sleep well."
+      ],
+      "enigma": [
+        "I was told to say something. This is something.",
+        "There is a version of tonight where I do not come out here at all. I looked at it.",
+        "Count with me. Not to three. Keep going."
+      ]
+    },
+    "callout": [
+      "{foe}. You knew where I was. You have always known where I was.",
+      "They gave you the {title} and you have been apologising for it ever since, {foe}.",
+      "{foe}, I watched your last match twice, and the second time I watched the crowd.",
+      "I have a name for what you did, {foe}, and the commission has a form for it.",
+      "{foe}, you wrestle like somebody reading their own contract in the dark."
+    ],
+    "answer": [
+      "You want a speech about respect. I want the {title}.",
+      "I did what I did. I would file it again.",
+      "You say my name like it belongs to you. It does not. Nothing does.",
+      "I am not here to be understood, {foe}. I am here at {hour}.",
+      "One of us leaves that ring standing, and it has never once been you."
+    ],
+    "boast": [
+      "{move} has ended eleven careers and started two.",
+      "I have never lost in this building and this building has never forgiven me for it.",
+      "I trained at {school}. You trained on television.",
+      "There is no hex in the book that survives contact with my hands."
+    ],
+    "threat": [
+      "Tomorrow, under that stipulation, I am going to be extremely thorough.",
+      "Bring whoever you like. I will count them on the way in.",
+      "I am going to take the {title} off you slowly, so the tape is useful later.",
+      "When the bell goes I stop being polite, and I am being polite now."
+    ],
+    "close": {
+      "face": [
+        "See you at {hour}.",
+        "Same hour. Same ring. Bring the noise.",
+        "I will be the one still standing. Look for me."
+      ],
+      "heel": [
+        "Do not applaud. You will only encourage yourselves.",
+        "I have said what I came to say. Cut my music.",
+        "Enjoy the rest of the card. It is all you are getting."
+      ],
+      "enigma": [
+        "That is all I was given to say.",
+        "I will see some of you tomorrow.",
+        "The hour is coming whether we talk or not."
+      ]
+    },
+    "third": [
+      "Nobody asked either of you.",
+      "I have been standing here the whole time. Neither of you looked.",
+      "Whatever you two settle tomorrow, I am the one who collects.",
+      "I signed for this match before either of you were told about it."
+    ],
+    "fourth": [
+      "This was a two-person conversation an hour ago.",
+      "I came out to stop this and I have changed my mind.",
+      "Put my name on the contract or get out of my building."
+    ]
+  },
+  "commentary": {
+    "slam": [
+      "That is not a legal hold in eleven countries and we are in one of them!",
+      "The ring is on fire. The referee is counting. This is wrestling.",
+      "Get the notary! GET THE NOTARY!",
+      "They have been banished and they are still arguing!",
+      "The crowd is chanting the finish before it happens. They are usually right."
+    ],
+    "circle": [
+      "Clean break. Correct. Noted.",
+      "Third permitted invocation of the night, correctly declared.",
+      "That is a point of technique you will see argued about for years.",
+      "The notary has stamped the fall. It stands.",
+      "Forty seconds of nothing and it is the best forty seconds on the continent."
+    ]
+  },
+  "ratings": {
+    "headline": {
+      "win": "{fed} took the hour: {viewers} against {rival}.",
+      "tie": "Dead heat at {viewers} apiece. Nobody is admitting it."
+    },
+    "reason": [
+      "the main event went long and everybody stayed",
+      "a title changed hands in the first segment",
+      "the other show opened with talking",
+      "half the continent had the weather for staying in",
+      "word got out about the run-in before the show aired",
+      "a defection was announced on air",
+      "the ratings were carried by one promo and everyone knows which"
+    ]
+  },
+  "bet": {
+    "title": "Tomorrow's book",
+    "match": "{a} vs {b}",
+    "hour": "Which show wins the hour",
+    "audience": "Combined audience over / under {n}",
+    "placed": "{stake} on {pick} at {odds}.",
+    "won": "Paid {amount}: {pick} came in at {odds}.",
+    "lost": "Lost {amount} on {pick}.",
+    "tooPoor": "Not enough in the purse for that.",
+    "closed": "The book on that night is closed.",
+    "min": "Minimum stake is {amount}.",
+    "max": "Maximum stake is {amount}.",
+    "settledNight": "Night {n} settled: {net}."
+  },
+  "hexapedia": {
+    "category": "Wrestlers",
+    "categoryIntro": "Every contracted wrestler of the two continental promotions, as filed. Both promotions run one open division and have never run any other kind.",
+    "infobox": {
+      "ringName": "Ring name",
+      "legalName": "Legal name",
+      "promotion": "Promotion",
+      "billed": "Billed from",
+      "trained": "Trained by",
+      "style": "Style",
+      "finisher": "Finisher",
+      "alignment": "Disposition",
+      "record": "Record",
+      "titles": "Titles held",
+      "debut": "Debut",
+      "arcana": "Arcana"
+    },
+    "bio": [
+      "{w} wrestles for {fed}, out of {place}, and is {gimmick}.",
+      "Trained at {school}, {w} works a {style} game and finishes with {move}.",
+      "{w} came up out of {place} and has never given a straight answer about why.",
+      "Filed under the open division, like everyone else on the continent: {fed} has never run any other kind."
+    ],
+    "careerNone": "No completed matches on file.",
+    "careerLine": "{wins} wins, {losses} losses across {total} nights on television.",
+    "anglesHeading": "Current storylines",
+    "matchesHeading": "Recent matches",
+    "noAngles": "Nothing on file. This is unusual and the desk is watching."
+  },
+  "toast": {
+    "titleChange": "{winner} takes the {title}",
+    "betWon": "Slamgrimorie paid out {amount}",
+    "betLost": "Slamgrimorie: {amount} gone"
+  },
+  "mundane": {
+    "tag": "Mundane",
+    "note": "{w} has no arcana at all and has never pretended otherwise.",
+    "wikiLine": "Registered mundane: no invocation, no hex, no licence. {w} wrestles with hands and weight and nothing else.",
+    "promo": [
+      "I do not have a hex. I have never had a hex. I have hands.",
+      "You brought a ritual to a wrestling match. I brought forty minutes of cardio.",
+      "Half this roster needs a licence to touch me. I need a taped wrist.",
+      "When your candle goes out you will still be in the hold.",
+      "They call me mundane like it is a weight class. Fine. I am the champion of it."
+    ],
+    "commentary": [
+      "No arcana on that side of the ring and none needed!",
+      "A mundane wrestler outworking a ritualist, and the building knows it.",
+      "That hex did everything it was supposed to do and the mundane got up anyway."
+    ]
+  },
+  "deadWorld": "Nobody is promoting anything. There is no card, no hour to win and nothing to bet on: both channels have been dead air for as long as anyone here can remember.",
+  "world": {
+    "severed": "Magic is severed in this world. Every wrestler on both rosters is mundane, every match is a straight fall, and the commission has never had to ban a single hex.",
+    "unbound": "Magic is unbound in this world. Almost nobody on either roster is mundane and almost nothing on either card is legal anywhere else.",
+    "monster": "Both promotions card creatures and animals. There has never been a human wrestler in either building and the crowd would not know what to do with one.",
+    "zombie": "Both rosters are dead and both shows still go out at the same hour. The count is slower. Everything else is the same.",
+    "goblin": "Both promotions are Varlenian concerns, and the Circle has the older rulebook by about nine hundred years."
+  }
+}

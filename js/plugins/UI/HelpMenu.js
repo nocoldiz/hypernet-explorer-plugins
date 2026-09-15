@@ -69,7 +69,7 @@
     const _readHelpBank = async (lang) => {
         const bank = {};
         for (const file of HELP_I18N_FILES) {
-            const url = `js/i18n/${lang}/${file}`;
+            const url = `js/i18n/${lang}/${file}`; // i18n-ignore: file path
             try {
                 const response = await fetch(url);
                 _mergeBank(bank, await response.json());

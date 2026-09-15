@@ -128,7 +128,7 @@
     ],
     "shaderStyle": [
       "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
-      "SnapVertex: the PlayStation-1 look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
+      "SnapVertex: the first-gen console look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
       "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
     ],
     "battleLogPosition": [

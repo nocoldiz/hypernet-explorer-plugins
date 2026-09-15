@@ -4,12 +4,12 @@
     "praise": {
       "label": "Praise",
       "player": [
-        "{You handled that better than anyone I know, {name}.|Look, you handled that better than anyone i know, {name}.|I have to say, you handled that better than anyone i know, {name}.}",
+        "{You handled that better than anyone I know, {name}.|Look, you handled that better than anyone I know, {name}.|I have to say, you handled that better than anyone I know, {name}.}",
         "{Honestly, {name}, you're one of the sharpest people here.|Look, honestly, {name}, you're one of the sharpest people here.|I have to say, honestly, {name}, you're one of the sharpest people here.}",
-        "{I've seen a lot of folks, but you stand out, {name}.|Look, i've seen a lot of folks, but you stand out, {name}.|I have to say, i've seen a lot of folks, but you stand out, {name}.}",
+        "{I've seen a lot of folks, but you stand out, {name}.|Look, I've seen a lot of folks, but you stand out, {name}.|I have to say, I've seen a lot of folks, but you stand out, {name}.}",
         "{That was genuinely impressive, {name}.|Look, that was genuinely impressive, {name}.|I have to say, that was genuinely impressive, {name}.}",
         "{People should pay more attention to what you do, {name}.|Look, people should pay more attention to what you do, {name}.|I have to say, people should pay more attention to what you do, {name}.}",
-        "{You've got real talent, {name}. Don't waste it.|Look, you've got real talent, {name}. don't waste it.|I have to say, you've got real talent, {name}. don't waste it.}"
+        "{You've got real talent, {name}. Don't waste it.|Look, you've got real talent, {name}. Don't waste it.|I have to say, you've got real talent, {name}. Don't waste it.}"
       ],
       "responseGood": [
         "{...Thank you. I needed to hear that.|Appreciate it.|Thanks, that helps.|Good to know.}",
@@ -31,7 +31,7 @@
       "player": [
         "{That's a good look on you, {name}.|Look, that's a good look on you, {name}.|I have to say, that's a good look on you, {name}.}",
         "{You've got great taste, {name}.|Look, you've got great taste, {name}.|I have to say, you've got great taste, {name}.}",
-        "{I like the way you carry yourself, {name}.|Look, i like the way you carry yourself, {name}.|I have to say, i like the way you carry yourself, {name}.}",
+        "{I like the way you carry yourself, {name}.|Look, I like the way you carry yourself, {name}.|I have to say, I like the way you carry yourself, {name}.}",
         "{You always seem so put-together, {name}.|Look, you always seem so put-together, {name}.|I have to say, you always seem so put-together, {name}.}",
         "{There's something reassuring about you, {name}.|Look, there's something reassuring about you, {name}.|I have to say, there's something reassuring about you, {name}.}",
         "{You make this place a little brighter, {name}.|Look, you make this place a little brighter, {name}.|I have to say, you make this place a little brighter, {name}.}"
@@ -54,12 +54,12 @@
     "encourage": {
       "label": "Encourage",
       "player": [
-        "{Don't give up, {name}. You've got this.|Look, don't give up, {name}. you've got this.|I have to say, don't give up, {name}. you've got this.}",
+        "{Don't give up, {name}. You've got this.|Look, don't give up, {name}. You've got this.|I have to say, don't give up, {name}. You've got this.}",
         "{Whatever you're facing, {name}, you can handle it.|Look, whatever you're facing, {name}, you can handle it.|I have to say, whatever you're facing, {name}, you can handle it.}",
-        "{Keep going, {name}. It gets easier.|Look, keep going, {name}. it gets easier.|I have to say, keep going, {name}. it gets easier.}",
-        "{I believe in you, {name}. Truly.|Look, i believe in you, {name}. truly.|I have to say, i believe in you, {name}. truly.}",
+        "{Keep going, {name}. It gets easier.|Look, keep going, {name}. It gets easier.|I have to say, keep going, {name}. It gets easier.}",
+        "{I believe in you, {name}. Truly.|Look, I believe in you, {name}. Truly.|I have to say, I believe in you, {name}. Truly.}",
         "{You're stronger than you think, {name}.|Look, you're stronger than you think, {name}.|I have to say, you're stronger than you think, {name}.}",
-        "{One step at a time, {name}. You'll get there.|Look, one step at a time, {name}. you'll get there.|I have to say, one step at a time, {name}. you'll get there.}"
+        "{One step at a time, {name}. You'll get there.|Look, one step at a time, {name}. You'll get there.|I have to say, one step at a time, {name}. You'll get there.}"
       ],
       "responseGood": [
         "{...Maybe you're right. Thank you.|Appreciate it.|Thanks, that helps.|Good to know.}",
@@ -83,7 +83,7 @@
         "{A person of your standing deserves the best, {name}.|Look, a person of your standing deserves the best, {name}.|I have to say, a person of your standing deserves the best, {name}.}",
         "{They'd be lost around here without you, {name}.|Look, they'd be lost around here without you, {name}.|I have to say, they'd be lost around here without you, {name}.}",
         "{You're clearly the most capable one in the room, {name}.|Look, you're clearly the most capable one in the room, {name}.|I have to say, you're clearly the most capable one in the room, {name}.}",
-        "{I only trust someone as wise as you, {name}.|Look, i only trust someone as wise as you, {name}.|I have to say, i only trust someone as wise as you, {name}.}",
+        "{I only trust someone as wise as you, {name}.|Look, I only trust someone as wise as you, {name}.|I have to say, I only trust someone as wise as you, {name}.}",
         "{Everyone speaks so highly of you, {name}.|Look, everyone speaks so highly of you, {name}.|I have to say, everyone speaks so highly of you, {name}.}"
       ],
       "responseGood": [
@@ -105,18 +105,18 @@
       "label": "Thank",
       "player": [
         "{Thank you for everything, {name}.|Look, thank you for everything, {name}.|I have to say, thank you for everything, {name}.}",
-        "{I owe you one, {name}. Really.|Look, i owe you one, {name}. really.|I have to say, i owe you one, {name}. really.}",
-        "{I won't forget your kindness, {name}.|Look, i won't forget your kindness, {name}.|I have to say, i won't forget your kindness, {name}.}",
-        "{You've been a real help, {name}. Thanks.|Look, you've been a real help, {name}. thanks.|I have to say, you've been a real help, {name}. thanks.}",
-        "{I'm grateful for you, {name}.|Look, i'm grateful for you, {name}.|I have to say, i'm grateful for you, {name}.}",
-        "{Cheers, {name}. I mean it.|Look, cheers, {name}. i mean it.|I have to say, cheers, {name}. i mean it.}"
+        "{I owe you one, {name}. Really.|Look, I owe you one, {name}. Really.|I have to say, I owe you one, {name}. Really.}",
+        "{I won't forget your kindness, {name}.|Look, I won't forget your kindness, {name}.|I have to say, I won't forget your kindness, {name}.}",
+        "{You've been a real help, {name}. Thanks.|Look, you've been a real help, {name}. Thanks.|I have to say, you've been a real help, {name}. Thanks.}",
+        "{I'm grateful for you, {name}.|Look, I'm grateful for you, {name}.|I have to say, I'm grateful for you, {name}.}",
+        "{Cheers, {name}. I mean it.|Look, cheers, {name}. I mean it.|I have to say, cheers, {name}. I mean it.}"
       ],
       "responseGood": [
         "{Think nothing of it.|Appreciate it.|Thanks, that helps.|Good to know.}",
         "{Anytime.|Appreciate it.|Thanks, that helps.|Good to know.}",
         "{That's what people are for.|Appreciate it.|Thanks, that helps.|Good to know.}",
         "{You're welcome. Truly.|Appreciate it.|Thanks, that helps.|Good to know.}",
-        "{It was nothing, but... thank you.|Appreciate it.|Thanks, that helps.|Good to know.}"
+        "{It was nothing, but... Thank you.|Appreciate it.|Thanks, that helps.|Good to know.}"
       ],
       "responseBad": [
         "{You thank me, but you never return the favor.|Save your breath.|I don't have time for this.|Whatever you say.}",
@@ -155,11 +155,11 @@
       "label": "Gossip",
       "player": [
         "{Heard anything interesting lately, {name}?|Look, heard anything interesting lately, {name}?|I have to say, heard anything interesting lately, {name}?}",
-        "{People have been talking, {name}. Have you heard?|Look, people have been talking, {name}. have you heard?|I have to say, people have been talking, {name}. have you heard?}",
+        "{People have been talking, {name}. Have you heard?|Look, people have been talking, {name}. Have you heard?|I have to say, people have been talking, {name}. Have you heard?}",
         "{Between us, {name}, what's the word on the street?|Look, between us, {name}, what's the word on the street?|I have to say, between us, {name}, what's the word on the street?}",
-        "{You always know the rumors, {name}. Spill.|Look, you always know the rumors, {name}. spill.|I have to say, you always know the rumors, {name}. spill.}",
+        "{You always know the rumors, {name}. Spill.|Look, you always know the rumors, {name}. Spill.|I have to say, you always know the rumors, {name}. Spill.}",
         "{Any juicy news around here, {name}?|Look, any juicy news around here, {name}?|I have to say, any juicy news around here, {name}?}",
-        "{Come on, {name}, tell me something I don't know.|Look, come on, {name}, tell me something i don't know.|I have to say, come on, {name}, tell me something i don't know.}"
+        "{Come on, {name}, tell me something I don't know.|Look, come on, {name}, tell me something I don't know.|I have to say, come on, {name}, tell me something I don't know.}"
       ],
       "responseGood": [
         "{Well, since you asked...|Appreciate it.|Thanks, that helps.|Good to know.}",
@@ -206,7 +206,7 @@
       "player": [
         "{You're a waste of space, {name}.|Look, you're a waste of space, {name}.|I have to say, you're a waste of space, {name}.}",
         "{Honestly, {name}, you're pathetic.|Look, honestly, {name}, you're pathetic.|I have to say, honestly, {name}, you're pathetic.}",
-        "{I've met rocks smarter than you, {name}.|Look, i've met rocks smarter than you, {name}.|I have to say, i've met rocks smarter than you, {name}.}",
+        "{I've met rocks smarter than you, {name}.|Look, I've met rocks smarter than you, {name}.|I have to say, I've met rocks smarter than you, {name}.}",
         "{You're an embarrassment, {name}.|Look, you're an embarrassment, {name}.|I have to say, you're an embarrassment, {name}.}",
         "{Nobody actually likes you, {name}.|Look, nobody actually likes you, {name}.|I have to say, nobody actually likes you, {name}.}",
         "{You're useless, {name}, and everyone knows it.|Look, you're useless, {name}, and everyone knows it.|I have to say, you're useless, {name}, and everyone knows it.}"
@@ -229,12 +229,12 @@
     "mock": {
       "label": "Mock",
       "player": [
-        "{Nice work, {name}. Did you practice failing?|Look, nice work, {name}. did you practice failing?|I have to say, nice work, {name}. did you practice failing?}",
-        "{Oh, brilliant plan, {name}. Truly inspired.|Look, oh, brilliant plan, {name}. truly inspired.|I have to say, oh, brilliant plan, {name}. truly inspired.}",
+        "{Nice work, {name}. Did you practice failing?|Look, nice work, {name}. Did you practice failing?|I have to say, nice work, {name}. Did you practice failing?}",
+        "{Oh, brilliant plan, {name}. Truly inspired.|Look, oh, brilliant plan, {name}. Truly inspired.|I have to say, oh, brilliant plan, {name}. Truly inspired.}",
         "{Wow, {name}, you must be so proud of yourself.|Look, wow, {name}, you must be so proud of yourself.|I have to say, wow, {name}, you must be so proud of yourself.}",
         "{Careful, {name}, all that thinking might hurt you.|Look, careful, {name}, all that thinking might hurt you.|I have to say, careful, {name}, all that thinking might hurt you.}",
-        "{Cute effort, {name}. Adorable, really.|Look, cute effort, {name}. adorable, really.|I have to say, cute effort, {name}. adorable, really.}",
-        "{Bravo, {name}. A performance for the ages.|Look, bravo, {name}. a performance for the ages.|I have to say, bravo, {name}. a performance for the ages.}"
+        "{Cute effort, {name}. Adorable, really.|Look, cute effort, {name}. Adorable, really.|I have to say, cute effort, {name}. Adorable, really.}",
+        "{Bravo, {name}. A performance for the ages.|Look, bravo, {name}. A performance for the ages.|I have to say, bravo, {name}. A performance for the ages.}"
       ],
       "responseGood": [
         "{Very funny. Really.|Appreciate it.|Thanks, that helps.|Good to know.}",
@@ -256,8 +256,8 @@
       "player": [
         "{You could have done that far better, {name}.|Look, you could have done that far better, {name}.|I have to say, you could have done that far better, {name}.}",
         "{That was sloppy work, {name}.|Look, that was sloppy work, {name}.|I have to say, that was sloppy work, {name}.}",
-        "{I expected more from you, {name}.|Look, i expected more from you, {name}.|I have to say, i expected more from you, {name}.}",
-        "{You're cutting corners, {name}. It shows.|Look, you're cutting corners, {name}. it shows.|I have to say, you're cutting corners, {name}. it shows.}",
+        "{I expected more from you, {name}.|Look, I expected more from you, {name}.|I have to say, I expected more from you, {name}.}",
+        "{You're cutting corners, {name}. It shows.|Look, you're cutting corners, {name}. It shows.|I have to say, you're cutting corners, {name}. It shows.}",
         "{Frankly, {name}, that wasn't good enough.|Look, frankly, {name}, that wasn't good enough.|I have to say, frankly, {name}, that wasn't good enough.}",
         "{You keep making the same mistakes, {name}.|Look, you keep making the same mistakes, {name}.|I have to say, you keep making the same mistakes, {name}.}"
       ],
@@ -281,9 +281,9 @@
       "player": [
         "{Cross me and you'll regret it, {name}.|Look, cross me and you'll regret it, {name}.|I have to say, cross me and you'll regret it, {name}.}",
         "{You don't want me as an enemy, {name}.|Look, you don't want me as an enemy, {name}.|I have to say, you don't want me as an enemy, {name}.}",
-        "{Watch yourself, {name}. I'm warning you.|Look, watch yourself, {name}. i'm warning you.|I have to say, watch yourself, {name}. i'm warning you.}",
+        "{Watch yourself, {name}. I'm warning you.|Look, watch yourself, {name}. I'm warning you.|I have to say, watch yourself, {name}. I'm warning you.}",
         "{One wrong move, {name}, and it's over for you.|Look, one wrong move, {name}, and it's over for you.|I have to say, one wrong move, {name}, and it's over for you.}",
-        "{I could make your life very difficult, {name}.|Look, i could make your life very difficult, {name}.|I have to say, i could make your life very difficult, {name}.}",
+        "{I could make your life very difficult, {name}.|Look, I could make your life very difficult, {name}.|I have to say, I could make your life very difficult, {name}.}",
         "{Remember who you're talking to, {name}.|Look, remember who you're talking to, {name}.|I have to say, remember who you're talking to, {name}.}"
       ],
       "responseGood": [
@@ -516,7 +516,7 @@
       "aromantic": {
         "reasonLabel": "aromantic",
         "lines": [
-          "I don't fall in love. Not with anyone. It isn't a wound, it's just true.",
+          "I don't fall in love. Not with anyone. Nothing hurt me into it. It is just true.",
           "Romance is a language I've never spoken.",
           "You want something I don't have to give. Friendship I can manage.",
           "There's nothing there to reach. There never is."
@@ -573,7 +573,7 @@
           "Whoa now, chiano chiano. Put that down before you finish it, darlin'.",
           "Em. Em, look at me. I'm still hers. Eris. Ain't stopped bein' hers for a single day and I'm not goin' to.",
           "You're the best friend I got in ninety-two dimensions. Anythin' more than that'd just be weird, guaglio'.",
-          "Nah. Nah, darlin'. We're travel buddies. That's not the small version of somethin', that's the whole thing.",
+          "Nah. Nah, darlin'. We're travel buddies. That's the whole thing right there, all of it.",
           "She left me and I'm still married to it. That isn't fair on you and I'm not pretendin' otherwise.",
           "Amice simme e amice restammo. Friends we are and friends we stay. That's the deal and I like the deal.",
           "Mannaggia, Em. Imagine it. Imagine us. You'd hate it by Thursday and I'd hate it by Wednesday.",
@@ -1742,7 +1742,7 @@
           "I don't like it down here and I'm sayin' so out loud so it's said.",
           "Keep the light on me and I'll keep the wrench on whatever's next, guaglio'.",
           "{name} whistles something with too much accordion in it and pretends it is not for the dark.",
-          "If I stop talkin' it isn't because I'm scared, it's because I'm concentratin'. Both, actually.",
+          "If I stop talkin' I'm concentratin'. Not scared. Both, actually.",
           "Stone don't lie, guaglio'. That's about all the comfort I got down here."
         ],
         "space": [
@@ -1985,7 +1985,7 @@
       "Statt' bbuono. Save the big words for somebody who deserves 'em.",
       "My hands did it, and my hands aren't takin' compliments today.",
       "Chiano chiano, now. You'll have me blushin' in front of the whole street.",
-      "Every good thing I ever done, somebody else needed it first. That's not modesty, that's just how it went.",
+      "Every good thing I ever done, somebody else needed it first. That's just how it went.",
       "Jamme, ask me about somethin' I'm actually good at. Ask me about gaskets.",
       "There's a hundred fellas coulda built it. I'm just the one what didn't have nothin' else on.",
       "Madonna. Look, if it helped, I'm glad. That's the end of the story and I haven't got a better one.",
@@ -2076,7 +2076,7 @@
         "You are being sincere at me before noon. It is a great deal to absorb.",
         "Thank you. Genuinely, and not in the way where the words mean the opposite. I checked which way I meant it.",
         "I have no idea what to do with that, so I am going to stand here holding it awkwardly, like a trophy for a sport I do not play.",
-        "Do you know, I think that may be the whole point of having a person.",
+        "Do you know, I think that may be what having a person is for.",
         "{name} writes something in the margin of the grimoire, which is where she keeps the things she cannot say out loud.",
         "You are appallingly good at this and I have never once matched you at it.",
         "I have four hundred books and not one of them explains why that landed. Which I mean as praise.",
@@ -2256,7 +2256,7 @@
         },
         {
           "player": "You spent HOW much on a book?",
-          "reply": "It was bound in something that used to have opinions. That is not an expense, it is a rescue."
+          "reply": "It was bound in something that used to have opinions. Call it a rescue."
         },
         {
           "player": "I'm just sayin', a little modesty wouldn't kill you.",
@@ -2316,7 +2316,7 @@
         },
         {
           "player": "I'm not stoppin' again, Em. That's the fourth time.",
-          "reply": "It was a bookshop, Bubba. A bookshop is not a stop, it is a destination that happened to be on the way."
+          "reply": "It was a bookshop, Bubba. A bookshop is a destination that happened to be on the way."
         },
         {
           "player": "You called my nonna's recipe 'structurally unsound'.",
@@ -2456,7 +2456,7 @@
           "Everything, in every direction, and none of it remembers me. Pick a way, Bubba, I do not mind which.",
           "I have a map, a camper and a man with a spanner. Historically that has been sufficient.",
           "{name} turns the map ninety degrees, considers it, and turns it back.",
-          "Every direction is the same to me, Bubba. That is not despair, that is genuinely liberating.",
+          "Every direction is the same to me, Bubba. I find that genuinely liberating.",
           "Choose. You always choose better than I do and we both know why."
         ],
         "night": [

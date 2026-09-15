@@ -310,6 +310,7 @@
     if (fixedIds.length > 0) {
       const weapons = fixedIds.map((id) => $dataWeapons[id]).filter(isRealEntry);
       if (weapons.length === 0) {
+        // i18n-ignore-start: developer diagnostic
         console.warn(`StartWeapon tag for class ${classId} points at no real weapon.`);
         return false;
       }
@@ -639,7 +640,15 @@
   Game_Actor.prototype.changeClass = function (classId, keepExp) {
     const previous = this._classId;
     _Game_Actor_changeClass.call(this, classId, keepExp);
-    if (!previous || !isCreationScene()) return;
+    if (!isCreationScene()) return;
+    // The starter skills every character keeps are taught here rather than at
+    // the class board, because only ONE of the many ways a class can be picked
+    // went through that board: the quick class strip, the random roll, the
+    // mana cyborg entry, the detailed sheet's class field and the creature
+    // flow all land here instead, and members after the first are usually
+    // built through one of those, which is how they ended up with none.
+    learnStarterSkills(this);
+    if (!previous) return;
     // The same class picked twice is still a second deal, so its kit is taken
     // back too; only the skills are left alone, since nothing changed there.
     if (previous !== classId) forgetClassSkills(this, previous, classId);

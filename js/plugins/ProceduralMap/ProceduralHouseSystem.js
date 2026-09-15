@@ -74,6 +74,97 @@
  * @command Elevator
  * @text Open Elevator
  * @desc Shows a floor picker (every floor except the current) and rides to the chosen floor with a distance-based delay.
+ *
+ * @command visitShop
+ * @text Visit Shop
+ * @desc Enters a procedural shop, picked by name or map id, or listed in game when neither is set.
+ *
+ * @arg shopId
+ * @text Shop Map ID
+ * @desc Map id of the shop to enter directly. Leave 0 to show the picker with every available shop.
+ * @type number
+ * @min 0
+ * @default 0
+ *
+ * @arg shopName
+ * @text Shop
+ * @desc Pick a shop by name. Ignored when Shop Map ID is set. Leave empty to show the in-game picker.
+ * @type select
+ * @option 
+ * @value 0
+ * @option Academy Bookstore
+ * @value 1763
+ * @option Antiques Dealer
+ * @value 1764
+ * @option Augmentation Clinic
+ * @value 1751
+ * @option Bakery
+ * @value 1726
+ * @option Betting Parlor
+ * @value 652
+ * @option Butcher
+ * @value 1725
+ * @option Camping Outfitter
+ * @value 1724
+ * @option Coffee House
+ * @value 1720
+ * @option Electronics Store
+ * @value 1722
+ * @option Esoteric Shop
+ * @value 1768
+ * @option Fast Food
+ * @value 1715
+ * @option Fertility Clinic
+ * @value 1765
+ * @option Fisherman's Shop
+ * @value 1718
+ * @option Florist
+ * @value 1771
+ * @option Garage
+ * @value 1745
+ * @option Gift Shop
+ * @value 1730
+ * @option Greengrocer
+ * @value 1727
+ * @option Gym Supplies
+ * @value 1716
+ * @option Hardware Store
+ * @value 1723
+ * @option Household
+ * @value 1767
+ * @option Hypermarket
+ * @value 1773
+ * @option Ice Cream
+ * @value 1393
+ * @option Jeweler
+ * @value 1772
+ * @option Junk Shop
+ * @value 657
+ * @option Music Store
+ * @value 1758
+ * @option Newsstand
+ * @value 1738
+ * @option Optician
+ * @value 1770
+ * @option Reliquary
+ * @value 661
+ * @option Surplus Armory
+ * @value 658
+ * @option Tailor
+ * @value 1760
+ * @option Toy Store
+ * @value 1769
+ * @option Trattoria
+ * @value 1729
+ * @option Wine store
+ * @value 1721
+ * @default 0
+ *
+ * @arg facing
+ * @text Use Facing Direction
+ * @desc When true, uses the tile the player is facing instead of event location
+ * @type boolean
+ * @default false
  */
 
 (() => {
@@ -331,6 +422,18 @@
 
   PluginManager.registerCommand(pluginName, "Elevator", (args) => {
     openElevator();
+  });
+
+  PluginManager.registerCommand(pluginName, "visitShop", function (args) {
+    if (doorEntryBusy()) return;
+    _callerEventId = (typeof this.eventId === "function") ? this.eventId() : 0;
+    // Two ways to name the same shop: the raw map id (what an expanded command
+    // or another plugin passes), or the editor dropdown, whose values are those
+    // same map ids. The explicit id wins; with neither set the picker opens.
+    const shopId = Number(args.shopId || 0) || Number(args.shopName || 0);
+    const useFacing = args.facing === "true" || args.facing === true;
+    if (shopId > 0) enterShop(shopId, useFacing);
+    else openShopPicker(useFacing);
   });
 
   function createLocationKey() {
@@ -1793,6 +1896,67 @@
 
   // Show a choice list of every floor except the current one, then ride to the
   // chosen floor. Only works inside a multi-floor building.
+  // ── Shop directory ───────────────────────────────────
+  // Every shop interior is a child map of the "shops" parent in MapInfos, so
+  // the map id IS the stable id of that shop: it never shifts when new shop
+  // maps are added, and an event can pass it straight to the visitShop command
+  // instead of depending on this list's ordering.
+  function getShopDirectory() {
+    return getHouseList("shops", true)
+      .filter((id) => $dataMapInfos && $dataMapInfos[id])
+      .map((id) => ({ id, name: shopDisplayName(id) }))
+      .sort((a, b) => a.name.localeCompare(b.name) || a.id - b.id);
+  }
+
+  // MapInfos names are authored as "652 - Betting Parlor"; drop the duplicated
+  // id so the picker prints it once, in one shape.
+  function shopDisplayName(mapId) {
+    // i18n-ignore-start  data/MapInfos.json map names and ids
+    const raw = String(($dataMapInfos[mapId] && $dataMapInfos[mapId].name) || "").trim();
+    return raw.replace(/^\s*\d+\s*-\s*/, "") || raw;
+    // i18n-ignore-end
+  }
+
+  function shopChoiceLabel(shop) {
+    return `#${shop.id} ${shop.name}`;  // i18n-ignore  map id and map name
+  }
+
+  function openShopPicker(useFacing = false) {
+    const shops = getShopDirectory();
+    if (shops.length === 0) {
+      window.skipLocalization = true;
+      $gameMessage.add(T('ProceduralHouse.noShops'));
+      window.skipLocalization = false;
+      return;
+    }
+    const choices = shops.map(shopChoiceLabel);
+    choices.push(T('ProceduralHouse.cancel'));
+
+    window.skipLocalization = true;
+    $gameMessage.add(T('ProceduralHouse.selectShop'));
+    $gameMessage.setChoices(choices, 0, choices.length - 1);
+    $gameMessage.setChoiceBackground(0);
+    $gameMessage.setChoicePositionType(2);
+    window.skipLocalization = false;
+    $gameMessage.setChoiceCallback((index) => {
+      const shop = shops[index];
+      if (shop) enterShop(shop.id, useFacing);
+    });
+  }
+
+  // A picked shop is always entered directly: the player asked for THAT map,
+  // so the seeded pool roll and the door lock are both bypassed.
+  function enterShop(shopId, useFacing = false) {
+    const id = Number(shopId);
+    if (!getHouseList("shops", true).includes(id)) {
+      window.skipLocalization = true;
+      $gameMessage.add(T('ProceduralHouse.noSuchShop'));
+      window.skipLocalization = false;
+      return;
+    }
+    visitHouse("shops", useFacing, id, true);
+  }
+
   function openElevator() {
     if (!currentMultiBuilding || !currentMultiBuilding.structure) {
       window.skipLocalization = true;

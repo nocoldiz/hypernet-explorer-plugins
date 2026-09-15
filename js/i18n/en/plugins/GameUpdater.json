@@ -38,7 +38,7 @@
   "actDownloadOlder": "Download this older build",
   "actInstallStaged": "Install this build now",
   "actCancel": "Cancel the download",
-  "hint": "Up / Down, move  ,  Left / Right, switch panel  ,  PgUp / PgDn, switch channel  ,  OK, confirm  ,  Esc, back",
+  "hint": "Up / Down, move | Left / Right, switch panel | PgUp / PgDn, switch channel | OK, confirm | Esc, back",
   "noNode": "Updating needs the desktop build of the game.",
   "logHistory": "Reading the builds on %1 ...",
   "logHistoryFound": "%1 build(s) listed.",

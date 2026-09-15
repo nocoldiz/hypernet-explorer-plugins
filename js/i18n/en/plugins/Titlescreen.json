@@ -57,13 +57,13 @@
     "boosterPack": "Booster Pack",
     "lockpick": "Lockpick",
     "arcadeSnake": "Arcade: Snake",
-    "arcadeFrogger": "Arcade: Frogger",
+    "arcadeFrogger": "Arcade: Hoppa",
     "arcadeBubblePop": "Arcade: Bubble Pop",
-    "arcadeSpaceInvaders": "Arcade: Space Invaders",
-    "arcadeBreakout": "Arcade: Breakout",
+    "arcadeSpaceInvaders": "Arcade: Astro Intruders",
+    "arcadeBreakout": "Arcade: Wallbreaker",
     "arcadeManpac": "Arcade: Manpac",
-    "arcadeAsteroids": "Arcade: Asteroids",
-    "arcadeCentipede": "Arcade: Centipede",
+    "arcadeAsteroids": "Arcade: Meteoroids",
+    "arcadeCentipede": "Arcade: Crawler",
     "piano": "Piano",
     "hyperdeck": "Build a Hyperdeck"
   },
@@ -139,7 +139,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.18a"
+    "text": "0.6.21a"
   },
   "language": {
     "label": "✦ LANG"

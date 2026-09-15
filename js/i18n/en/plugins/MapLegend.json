@@ -17,16 +17,24 @@
     "holdShift": "Hold Shift",
     "hotbarCycle": "Change hotbar item",
     "hotbarUse": "Use hotbar item",
+    "leadSwap": "Switch party member",
     "interact": "Interact with or dismantle an object",
     "leftClick": "Left Click",
     "menu": "Menu",
     "move": "Move",
+    "dragMap": "Drag the map",
+    "pan": "Pan the camera",
     "returnToWorld": "Return to the world map",
     "run": "Run",
     "scrollWheel": "Scroll wheel",
     "stopTravel": "Stop travelling",
     "wait": "Wait",
-    "zoom": "Zoom in and out"
+    "build": "Build",
+    "vehicles": "Vehicles",
+    "zoom": "Zoom in and out",
+    "zoomHold": "Hold L2 and push the right stick",
+    "quickMenu": "Quick pockets list",
+    "holdTab": "Hold Tab"
   },
   "areas": {
     "m721_zone": {
@@ -63,7 +71,7 @@
     },
     "m1006_zone2": {
       "title": "Monster tournament",
-      "text": "Use this terminal to watch and bet monster fights",
+      "text": "Use this terminal to watch and bet on monster fights",
       "generic": {
         "title": "Monster tournament",
         "text": "A terminal onto the arena: watch the fights and bet on them."
@@ -87,7 +95,7 @@
     },
     "m1023_zone": {
       "title": "Ghent Hospital",
-      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access to the [Fertility database]",
+      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access the [Fertility database]",
       "generic": {
         "title": "Ghent Hospital",
         "text": "A hospital: diseases are diagnosed here, augments are fitted, body parts are replaced, and the [Fertility database] is open to visitors."
@@ -103,7 +111,7 @@
     },
     "m1414_zone2": {
       "title": "Hypermetro trains",
-      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent for stocking up on items.",
+      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent to stock up on items.",
       "generic": {
         "title": "Hypermetro trains",
         "text": "The hypermetro runs between the hub cities. The line ends at the Omega Tower, and Ghent is the stop worth breaking the journey at to stock up."
@@ -111,7 +119,7 @@
     },
     "m1414_zone3": {
       "title": "Crafting",
-      "text": "In this shack  you can find some materials, use the [Thinker] option in pause menu to assembly items and [Blacksmithing] to smelt and forge new ones",
+      "text": "In this shack you can find some materials. Use the [Thinker] option in the pause menu to assemble items and [Blacksmithing] to smelt and forge new ones",
       "generic": {
         "title": "Crafting",
         "text": "A shack with materials lying about. The [Thinker] option in the pause menu assembles items, [Blacksmithing] smelts and forges them."
@@ -127,7 +135,7 @@
     },
     "m1414_zone5": {
       "title": "High level enemis",
-      "text": "Some enemies are too powerful for your current party. when you are outside dungeons you can freely escape only in the first tur.",
+      "text": "Some enemies are too powerful for your current party. Outside dungeons you can escape freely, but only on the first turn.",
       "generic": {
         "title": "High level enemies",
         "text": "The things down this way are above the party's weight. Outside a dungeon an escape is free on the first turn only."
@@ -167,7 +175,7 @@
     },
     "m1414_zone11": {
       "title": "Farm",
-      "text": "You can take over this abandoned farm: it's owner was recently killed by getting hit via a satellite debris and nobody has claimed it yet.\nUse the [Build] option in pause menu to buy animals and personalize this farm.",
+      "text": "You can take over this abandoned farm: its owner was recently killed by satellite debris and nobody has claimed it yet.\nUse the [Build] option in the pause menu to buy animals and personalise this farm.",
       "generic": {
         "title": "Farm",
         "text": "An abandoned farm, free to take over: the owner was killed by falling satellite debris and nobody has claimed it since.\nThe [Build] option in the pause menu buys animals and furnishes the place."
@@ -175,7 +183,7 @@
     },
     "m1414_zone9": {
       "title": "Library",
-      "text": "Visit libraries to buy book and grimories",
+      "text": "Visit libraries to buy books and grimories",
       "generic": {
         "title": "Library",
         "text": "A library. Books and grimoires are sold over the desk."
@@ -199,7 +207,7 @@
     },
     "m1416_zone2": {
       "title": "Quest board",
-      "text": "Uset the quest board to accept quests",
+      "text": "Use the quest board to accept quests",
       "generic": {
         "title": "Quest board",
         "text": "A cork board of notices. Take one and the errand is yours."
@@ -215,7 +223,7 @@
     },
     "m1416_zone4": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it.",
       "generic": {
         "title": "Bathroom",
         "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
@@ -231,7 +239,7 @@
     },
     "m1416_zone6": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -239,7 +247,7 @@
     },
     "m1416_zone7": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -247,7 +255,7 @@
     },
     "m1416_zone8": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -255,7 +263,7 @@
     },
     "m1416_zone9": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -263,7 +271,7 @@
     },
     "m1416_zone11": {
       "title": "Sleeè",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -271,7 +279,7 @@
     },
     "m1416_zone12": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -279,7 +287,7 @@
     },
     "m1416_zone13": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -287,7 +295,7 @@
     },
     "m1416_zone14": {
       "title": "Sleep",
-      "text": "If your party sleep is low you will start losing MP,\nmake sure to rest everyday!\nYou can also drink coffee to keep you awake.",
+      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot.",
       "generic": {
         "title": "Sleep",
         "text": "A bed. A party short on sleep starts bleeding MP, so rest every day; coffee only puts it off."
@@ -295,7 +303,7 @@
     },
     "m1416_zone15": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it.",
       "generic": {
         "title": "Bathroom",
         "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
@@ -303,7 +311,7 @@
     },
     "m1416_zone16": {
       "title": "Bathroom",
-      "text": "Use bathrooms to clean yourself and increase your higiene. Higiene is important when talking to someone, unless he don't care about it.",
+      "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it.",
       "generic": {
         "title": "Bathroom",
         "text": "A bathroom. Washing raises hygiene, and hygiene is read by everyone the party talks to, apart from those who could not care less."
@@ -319,7 +327,7 @@
     },
     "m1416_zone19": {
       "title": "Minigames",
-      "text": "Minigames use arcade coins to play but some are free. Use the arcade converter to get coins.",
+      "text": "Minigames use arcade coins to play, though some are free. Use the arcade converter to get coins.",
       "generic": {
         "title": "Minigames",
         "text": "Cabinets and tables. Most of them take arcade tokens, a few are free, and the converter hands the tokens out."
@@ -327,7 +335,7 @@
     },
     "m1416_zone10": {
       "title": "Renting",
-      "text": "Interact with the door or talk to innkeeper to  rent a room",
+      "text": "Interact with the door or talk to the innkeeper to rent a room",
       "generic": {
         "title": "Renting",
         "text": "A room to rent, through the door or through the innkeeper."

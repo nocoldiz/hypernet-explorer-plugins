@@ -1391,7 +1391,10 @@
                 this.switchToPreviousCharacter();
             } else if (enableSwitching && isRight) {
                 this.switchToNextCharacter();
-            } else if (Input.isTriggered('menu')) {
+            } else if (Input.isTriggered('menu') && !Input.isTriggered('escape')) {
+                // MZ answers 'menu' for the Escape key too
+                // (Input._isEscapeCompatible), so the button is told apart from
+                // a cancel: leaving the page must not strip a slot on the way.
                 // Y takes the piece out of the slot under the cursor, the same
                 // verb the backpack's Y throws one away with: the page's third
                 // button is always the one that removes something. Taking a

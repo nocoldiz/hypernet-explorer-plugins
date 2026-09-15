@@ -11,5 +11,8 @@
   "floorNumbered": "Piano {n}",
   "noElevator": "Qui non c'è nessun ascensore.",
   "selectFloor": "Scegli un piano:",
-  "doorHeld": "La porta rinforzata ha retto alla tua spallata."
+  "doorHeld": "La porta rinforzata ha retto alla tua spallata.",
+  "selectShop": "Scegli un negozio:",
+  "noShops": "Non ci sono negozi disponibili.",
+  "noSuchShop": "Non esiste un negozio con quell’id."
 }

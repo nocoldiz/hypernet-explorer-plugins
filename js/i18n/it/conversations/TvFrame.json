@@ -283,6 +283,14 @@
     "history_panel": [
       "La domanda di stasera: {è successo davvero|è successo qualcosa di tutto questo|è vero}? {hist}",
       "{Nel panel di stasera|Con me stasera|Il panel di stasera}: {due storici e uno che c'era|uno storico, un archivista e un testimone oculare che nessuno riesce a verificare|tre persone che non vanno d'accordo}. {hist} {Non la risolveremo|Queste non le risolviamo mai|Non ne verremo a capo}."
+    ],
+    "wrestling_chaos": [
+      "",
+      ""
+    ],
+    "wrestling_martial": [
+      "",
+      ""
     ]
   },
   "tail": {
@@ -409,6 +417,14 @@
     "late_night": [
       "{Restate con me|Restate con noi|Fatemi compagnia}. La notte è lunga qui fuori sulla Strada.",
       "{Domani sono di nuovo qui|Domani ci risiamo|Domani ci sarò}. {Ci sono sempre|Dove altro dovrei essere|Sono sempre in onda}. {Dormite, se ci riuscite|Provate a dormire|Fatevi una dormita}."
+    ],
+    "wrestling_chaos": [
+      "",
+      ""
+    ],
+    "wrestling_martial": [
+      "",
+      ""
     ]
   },
   "gameShowIntro": "Benvenuti a {show}! Il prossimo concorrente rischierà tutto per {prize}!",

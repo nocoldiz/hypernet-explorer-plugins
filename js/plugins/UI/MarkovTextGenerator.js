@@ -1137,7 +1137,7 @@
     // cross origin one and depend on the server's CORS headers.
     function llmRequest(pathname, payload, timeoutMs) {
         return new Promise((resolve, reject) => {
-            if (!NodeIO) return reject(new Error('no node'));
+            if (!NodeIO) return reject(new Error('no node')); // i18n-ignore: internal diagnostic
             const body = payload ? Buffer.from(JSON.stringify(payload), 'utf8') : null;
             const req = NodeIO.http.request({
                 host: '127.0.0.1',
@@ -1272,16 +1272,16 @@
         return new Promise((resolve, reject) => {
             const https = require('https');
             const req = https.get(url, {
-                headers: { 'User-Agent': 'HypernetExplorer', 'Accept': '*/*' }
+                headers: { 'User-Agent': 'HypernetExplorer', 'Accept': '*/*' } // i18n-ignore: HTTP header names
             }, res => {
                 if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
                     res.resume();
-                    if (redirectsLeft <= 0) return reject(new Error('too many redirects'));
+                    if (redirectsLeft <= 0) return reject(new Error('too many redirects')); // i18n-ignore: internal diagnostic
                     return resolve(httpsGet(res.headers.location, destPath, redirectsLeft - 1));
                 }
                 if (res.statusCode !== 200) {
                     res.resume();
-                    return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+                    return reject(new Error(`HTTP ${res.statusCode} for ${url}`)); // i18n-ignore: internal diagnostic
                 }
                 if (destPath) {
                     const file = NodeIO.fs.createWriteStream(destPath);
@@ -1319,8 +1319,10 @@
             : [
                 ['tar', ['-xf', archivePath, '-C', destDir]],
                 ['unzip', ['-q', '-o', archivePath, '-d', destDir]],
+                // i18n-ignore-start: shell command lines
                 ['powershell', ['-NoProfile', '-NonInteractive', '-Command',
                     `Expand-Archive -LiteralPath "${archivePath}" -DestinationPath "${destDir}" -Force`]]
+                // i18n-ignore-end
             ];
         for (const [cmd, args] of attempts) {
             if (await runTool(cmd, args)) return true;

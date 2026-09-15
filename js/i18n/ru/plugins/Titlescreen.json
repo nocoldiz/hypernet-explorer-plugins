@@ -46,13 +46,13 @@
     "boosterPack": "Бустер",
     "lockpick": "Взлом замка",
     "arcadeSnake": "Аркада: Snake",
-    "arcadeFrogger": "Аркада: Frogger",
+    "arcadeFrogger": "Аркада: Hoppa",
     "arcadeBubblePop": "Аркада: Bubble Pop",
-    "arcadeSpaceInvaders": "Аркада: Space Invaders",
-    "arcadeBreakout": "Аркада: Breakout",
+    "arcadeSpaceInvaders": "Аркада: Astro Intruders",
+    "arcadeBreakout": "Аркада: Wallbreaker",
     "arcadeManpac": "Аркада: Manpac",
-    "arcadeAsteroids": "Аркада: Asteroids",
-    "arcadeCentipede": "Аркада: Centipede",
+    "arcadeAsteroids": "Аркада: Meteoroids",
+    "arcadeCentipede": "Аркада: Crawler",
     "piano": "Пианино"
   },
   "disclaimer": {

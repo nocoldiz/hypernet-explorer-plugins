@@ -984,7 +984,7 @@
       "cdBody": "Insert the product's first installation floppy disk or CD-ROM, and then click Next. There is no drive to insert it in.",
       "componentsIntro": "To add or remove a component, click the check box. A shaded box means that only part of the component will be installed.",
       "next": "Next",
-      "componentsDone": "Archways has finished configuring the components. Nothing visible changed, which is the point.",
+      "componentsDone": "Archways has finished configuring the components. Nothing visible changed. That is expected.",
       "defaultsIntro": "A program configuration specifies default programs for certain activities, such as Web browsing or sending e-mail, and which programs are accessible from the Start menu, desktop, and other locations.",
       "defaultsArchways": "Archways defaults",
       "defaultsNonArchways": "Non-Archways (there are none)",

@@ -11,5 +11,8 @@
   "floorNumbered": "Floor {n}",
   "noElevator": "There is no elevator here.",
   "selectFloor": "Select a floor:",
-  "doorHeld": "The reinforced door held firm against your shoulder."
+  "doorHeld": "The reinforced door held firm against your shoulder.",
+  "selectShop": "Select a shop:",
+  "noShops": "There are no shops available.",
+  "noSuchShop": "There is no shop with that id."
 }

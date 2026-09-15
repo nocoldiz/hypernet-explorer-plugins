@@ -46,13 +46,13 @@
     "boosterPack": "부스터 팩",
     "lockpick": "자물쇠 따기",
     "arcadeSnake": "아케이드: 스네이크",
-    "arcadeFrogger": "아케이드: 프로거",
+    "arcadeFrogger": "아케이드: 호파",
     "arcadeBubblePop": "아케이드: 버블 팝",
-    "arcadeSpaceInvaders": "아케이드: 스페이스 인베이더",
-    "arcadeBreakout": "아케이드: 브레이크아웃",
+    "arcadeSpaceInvaders": "아케이드: 아스트로 침입자",
+    "arcadeBreakout": "아케이드: 월브레이커",
     "arcadeManpac": "아케이드: 맨팩",
-    "arcadeAsteroids": "아케이드: 애스터로이드",
-    "arcadeCentipede": "아케이드: 센티피드",
+    "arcadeAsteroids": "아케이드: 메테오로이드",
+    "arcadeCentipede": "아케이드: 크롤러",
     "piano": "피아노"
   },
   "disclaimer": {

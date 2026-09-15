@@ -341,48 +341,48 @@
     "Ho il diritto di essere due cose insieme. Oggi sono l'altra."
   ],
   "erisWarmthLines": [
-    "*legge il nome sul fascicolo, e poi lo rilegge più lentamente*",
+    "*legge er nome sur fascicolo, e poi lo rilegge più lentamente*",
     "Oh. Sei tu.",
-    "La corte da atto di {conoscere|aver incontrato|aver cenato con} l'imputato. La corte non intende dilungarsi.",
-    "Cancella dal verbale. Cancella soprattutto il modo in cui l'ho detto.",
-    "Faranno tutti finta di non essersene accorti. Tutti.",
-    "Sono {perfettamente|del tutto|professionalmente} imparziale. Chiedilo a chiunque. Non chiederlo a nessuno.",
-    "Non userai questa cosa contro di me. Lo farai, vero.",
-    "*per la durata di un battito non è affatto un giudice*"
+    "La corte da atto di {conoscere|aver incontrato|aver cenato con} l'imputato. La corte nun intenne dilungarsi.",
+    "Cancella dar verbale. Cancella soprattutto er modo in cui l'ho detto.",
+    "Faranno tutti finta di nun essersene accorti. Tutti.",
+    "So' {perfettamente|der tutto|professionalmente} imparziale. Chiedilo a chiunque. Nun chiederlo a nessuno.",
+    "Nun userai 'sta cosa contro di me. Lo farai, vero.",
+    "*per la durata di un battito nun è affatto un giudice*"
   ],
   "erisClemencyLines": [
     [
       "Ho letto abbastanza.",
       "Archiviato.",
-      "\\C[3]Tutte le accuse. Taglia azzerata. Vai.\\C[0]",
-      "Non ringraziarmi davanti alla stenografa."
+      "\\C[3]Tutte le accuse. Taja azzerata. Vai.\\C[0]",
+      "Nun ringraziarmi davanti alla stenografa."
     ],
     [
-      "La corte rileva un vizio {procedurale|istruttorio|di cancelleria} nel fascicolo.",
-      "Il vizio e che oggi non ho voglia di farlo.",
-      "\\C[3]Non colpevole. Esci prima che se ne accorgano le scartoffie.\\C[0]"
+      "La corte rileva un vizio {procedurale|istruttorio|di cancelleria} ner fascicolo.",
+      "Er vizio e che oggi nun ho voja di farlo.",
+      "\\C[3]Nun colpevole. Esci prima che se ne accorgano le scartoffie.\\C[0]"
     ],
     [
-      "*il martelletto non cala*",
-      "*lo riappoggia sul banco, con cura, dal verso giusto*",
+      "*er martelletto nun cala*",
+      "*lo riappoggia sur banco, con cura, dar verso giusto*",
       "\\C[3]Assolto.\\C[0]",
-      "E la seconda volta. Non farne un'abitudine. Fanne un'abitudine."
+      "E la seconna vorta. Nun farne un'abitudine. Fanne un'abitudine."
     ],
     [
-      "Quattro miliardi di processi stamattina e sono {distratta|lenta|imperdonabilmente tenera} esattamente in uno.",
+      "Quattro miliardi di processi stamattina e so' {distratta|lenta|imperdonabilmente tenera} esattamente in uno.",
       "\\C[3]Accuse ritirate.\\C[0]",
-      "Non dire niente. Non dire proprio niente."
+      "Nun dì gnente. Nun dì proprio gnente."
     ],
     [
-      "Potrei condannarti stando a testa in giù.",
-      "\\C[3]Non ho intenzione di farlo.\\C[0]",
-      "Vai a casa. Fai la strada lunga. Mi piace guardare."
+      "Potrei connannarti stanno a testa in giù.",
+      "\\C[3]Nun ho intenzione di farlo.\\C[0]",
+      "Vai a casa. Fai la strada lunga. Me piace guardà."
     ]
   ],
   "erisColdSnapLines": [
-    "Non guardarmi così. Qui dentro non funziona.",
-    "Qualunque cosa pensi di aver comprato l'ultima volta, non hai comprato questo.",
-    "Prima sono il banco, e tutto il resto viene molto dopo. Colpevole.",
+    "Nun guardarmi così. Qui dentro nun funziona.",
+    "Quarunque cosa pensi di aver comprato l'ultima vorta, nun hai comprato questo.",
+    "Prima so' er banco, e tutto er resto viene assai dopo. Colpevole.",
     "Una cena. Una. E hai pensato fosse una chiave."
   ],
   "lawyerGreetings": {
@@ -487,13 +487,13 @@
   ],
   "lawyerErisReplies": [
     "...E fastidiosamente ragionevole.",
-    "Respinta. {Splendidamente argomentata|Ben fatto|Bel tentativo} e respinta.",
-    "Accolta. Non faccia quella faccia soddisfatta.",
-    "Lo sto mettendo per iscritto. Non ho intenzione di rileggerlo.",
-    "La corte fingera di non aver sentito, e se lo ricordera per sempre.",
-    "Lei e {bravo|caro|sprecato qui}. Non bastera. Forse bastera.",
+    "Respinta. {Splennidamente argomentata|Ben fatto|Bel tentativo} e respinta.",
+    "Accolta. Nun faccia quella faccia soddisfatta.",
+    "Lo sto mettenno per iscritto. Nun ho intenzione di rileggerlo.",
+    "La corte fingera di nun aver sentito, e se lo ricordera per sempre.",
+    "Lei e {bravo|caro|sprecato qui}. Nun bastera. Forse bastera.",
     "Preso atto, e fastidioso.",
-    "*non risponde per un attimo leggermente troppo lungo*"
+    "*nun risponne per 'n attimo leggermente troppo lungo*"
   ],
   "reverseMoodLabels": {
     "benevolent": "Benevola",
@@ -647,22 +647,22 @@
   "bank": {
     "showReleaseMessage": {
       "messages": [
-        "Sei libero di andare!\nMa ti sto {tenendo d'occhio|guardando|contando i passi}...",
-        "Il tuo tempo è finito!\nVattene prima che {cambi idea|mi annoi|riapra il fascicolo}!",
-        "Libertà! Per ora...\nNon farti vedere di nuovo qui!",
-        "Hmm, hai pagato il tuo debito.\nOra sparisci!",
+        "Sei libero di annà!\nMa te sto {tenenno d'occhio|guardanno|contanno i passi}...",
+        "Er tuo tempo è finito!\nVattene prima che {cambi idea|mi annoi|riapra er fascicolo}!",
+        "Libertà! Per mo'...\nNun farti vedé di nuovo qui!",
+        "Hmm, hai pagato er tuo debito.\nMo' sparisci!",
         "Bene bene, sei sopravvissuto!\nFuori dalla mia vista!",
-        "Il tempo è scaduto!\nSei libero... tecnicamente.",
+        "Er tempo è scaduto!\nSei libero... tecnicamente.",
         "Congratulazioni!\nHai scontato la tua pena!\n...Che noia.",
-        "FINALMENTE!\nPensavo non te ne saresti mai andato!",
-        "Libertà conquistata!\nMa ricorda: ti sto guardando!",
-        "Vai via!\nE non tornare con altri crimini!"
+        "FINALMENTE!\nPensavo nun te ne saresti mai annato!",
+        "Libertà conquistata!\nMa ricorda: te sto guardanno!",
+        "Vai via!\nE nun tornà con antri crimini!"
       ]
     },
     "getRandomCrimeAccusation": {
       "accusations": [
-        "aver rubato le nuvole dal cielo",
-        "aver disturbato il sonno delle formiche",
+        "aver rubato le nuvole dar cielo",
+        "aver disturbato er sonno delle formiche",
         "aver pensato pensieri illegali",
         "aver camminato troppo rumorosamente",
         "aver guardato male una statua",
@@ -675,29 +675,29 @@
     },
     "zeroBountyRant": {
       "rants": [
-        "COSA?! ZERO?!\nNon hai NESSUNA taglia?!\n...Perché sei qui allora?!",
-        "Aspetta aspetta aspetta...\nZERO euro di taglia?!\nChi ti ha mandato qui?!",
-        "...\nSei serio?\nNESSUNA taglia?\nVattene! VIA!",
-        "MI STAI PRENDENDO IN GIRO?!\nNon hai fatto NIENTE di male?!\nChe tipo di criminale sei?!",
-        "Zero taglia...\nZERO!\nMi hai fatto sprecare il mio tempo!\nFUORI!",
-        "NON HO TEMPO PER INNOCENTI!\nVia! Via! VIA!\nE la prossima volta porta almeno\nqualche crimine decente!",
-        "Come ho fatto a... aspetta...\nHo sbagliato persona?!\nNo no no, questo è imbarazzante...",
-        "Io... la grande Eris...\nho convocato qualcuno con zero taglia?\nQuesta è umiliante!",
-        "Il SISTEMA mi ha mandato\nqualcuno INNOCENTE?!\nChe spreco di potere divino!",
-        "Chi gestisce questo tribunale?!\nOh giusto, sono io...\nBeh, questo è imbarazzante.",
-        "Le guardie mi hanno portato\nla PERSONA SBAGLIATA!\nTeste di rapa!\n...Aspetta, non ho guardie.",
-        "Zero? ZERO?!\nMa allora... perché...\nSai cosa? Non importa! Vai via!",
-        "Hmm... nessuna taglia...\nForse sei TU quello innocente!\nO forse sono io quella colpevole!\nO forse... vai via, mi confondi!",
-        "AHAHAHA! Zero taglia!\nÈ così ridicolo che è quasi perfetto!\n...No aspetta, è solo ridicolo. Vattene.",
-        "Nessuna taglia...\nSei l'essere più innocente che abbia mai visto...\nO il più grande criminale che non è stato ancora scoperto.\nNon voglio scoprirlo. Via!"
+        "COSA?! ZERO?!\nNun hai NESSUNA taja?!\n...Perché sei qui allora?!",
+        "Aspetta aspetta aspetta...\nZERO euro di taja?!\nChi ti ha mannato qui?!",
+        "...\nSei serio?\nNESSUNA taja?\nVattene! VIA!",
+        "ME STAI PRENNENNO IN GIRO?!\nNun hai fatto GNENTE di male?!\nChe tipo di criminale sei?!",
+        "Zero taja...\nZERO!\nMi hai fatto sprecà er mio tempo!\nFUORI!",
+        "NUN HO TEMPO PER INNOCENTI!\nVia! Via! VIA!\nE la prossima vorta porta almeno\nquarche crimine decente!",
+        "Come ho fatto a... aspetta...\nHo sbajato persona?!\nNo no no, questo è imbarazzante...",
+        "Io... la granne Eris...\nho convocato quarcuno con zero taja?\nQuesta è umiliante!",
+        "Er SISTEMA mi ha mannato\nquarcuno INNOCENTE?!\nChe spreco di podé divino!",
+        "Chi gestisce 'sto tribunale?!\nOh giusto, so' io...\nBeh, questo è imbarazzante.",
+        "Le guardie mi hanno portato\nla PERSONA SBAJATA!\nTeste di rapa!\n...Aspetta, nun ho guardie.",
+        "Zero? ZERO?!\nMa allora... perché...\nSai cosa? Nun importa! Vai via!",
+        "Hmm... nessuna taja...\nForse sei TU quello innocente!\nO forse so' io quella colpevole!\nO forse... vai via, me confonni!",
+        "AHAHAHA! Zero taja!\nÈ così ridicolo che è quasi perfetto!\n...No aspetta, è solo ridicolo. Vattene.",
+        "Nessuna taja...\nSei l'esse più innocente che abbia mai visto...\nO er più granne criminale che nun è stato ancora scoperto.\nNun vojo scoprirlo. Via!"
       ],
       "additionalRants": [
-        "E non farmi più perdere tempo!",
-        "Questo non è mai successo prima...",
-        "Il mio prestigio... rovinato...",
-        "Racconteranno questa storia per secoli...",
+        "E nun farmi più perde tempo!",
+        "Questo nun è mai successo prima...",
+        "Er mio prestigio... rovinato...",
+        "Racconteranno 'sta storia per secoli...",
         "Dimenticalo. Dimentica tutto questo.",
-        "Non parlarne a NESSUNO!"
+        "Nun parlarne a NESSUNO!"
       ]
     },
     "showOpening": {
@@ -705,66 +705,66 @@
         [
           "Oh! Un visitatore!",
           "Che sorpresa piacevole... o almeno così sembra.",
-          "Sai, non molti hanno il coraggio di presentarsi\ndavanti a me volontariamente.",
+          "Sai, nun parecchi hanno er coraggio di presentarsi\ndavanti a me volontariamente.",
           "O forse sei stato... convinto? Ah, i dettagli!"
         ],
         [
           "Benvenuto, benvenuto!",
-          "Oggi mi sento particolarmente... come dire...",
+          "Oggi me sento particolarmente... come dì...",
           "Magnanima? Generosa? Quasi umana?",
-          "Beh, non esageriamo. Ma potrebbe andare peggio per te!"
+          "Beh, nun esageriamo. Ma potrebbe annà peggio per te!"
         ],
         [
           "Ah, eccoti qui.",
-          "Vedi, sono stata una dea della discordia...",
-          "Ma ora sono la Dea della Giustizia!",
-          "Ironico, vero? A me fa ancora ridere."
+          "Vedi, so' stata una dea della discordia...",
+          "Ma mo' so' la Dea della Giustizia!",
+          "Ironico, vero? A me fa ancora ride."
         ]
       ],
       "openings2": [
         [
           "TU!",
           "Osi presentarti davanti a ME?!",
-          "Alla GRANDE ERIS?!",
+          "Alla GRANNE ERIS?!",
           "L'audacia... l'arroganza...",
-          "Mi fa quasi venir voglia di rispettarti.",
+          "Me fa quasi venir voja di rispettarti.",
           "Quasi."
         ],
         [
-          "Un altro criminale...",
-          "Un altro mortale patetico che pensa di poterla fare franca...",
-          "Sapete cosa mi diverte di voi?",
-          "NIENTE! Assolutamente niente!",
-          "Siete tutti uguali. Noiosi. Colpevoli."
+          "Un antro criminale...",
+          "Un antro mortale patetico che pensa di poterla fà franca...",
+          "Sapete cosa me diverte di voi?",
+          "GNENTE! Assolutamente gnente!",
+          "Sete tutti uguali. Pallosi. Colpevoli."
         ],
         [
-          "Ah, guarda chi abbiamo qui.",
-          "Pensavi davvero di sfuggirmi?",
+          "Ah, guarda chi avemo qui.",
+          "Pensavi davero di sfuggirmi?",
           "Pensavi che i tuoi crimini sarebbero passati inosservati?",
           "Io vedo TUTTO.",
-          "E non dimentico MAI."
+          "E nun dimentico MAI."
         ]
       ],
       "openings3": [
         [
           "AHAHAHA!",
-          "Un processo! Un glorioso, meraviglioso PROCESSO!",
+          "Un processo! Un glorioso, meravijoso PROCESSO!",
           "O aspetta... è un compleanno?",
           "No no, è decisamente un processo.",
           "...Credo."
         ],
         [
-          "Benvenuto! O dovrei dire... addio?",
-          "Le parole sono così confuse a volte!",
+          "Benvenuto! O dovrei dì... addio?",
+          "Le parole so' così confuse a vorte!",
           "Giustizia, ingiustizia, pizza...",
-          "Sono tutte la stessa cosa se ci pensi abbastanza!",
+          "So' tutte la stessa cosa se ce pensi abbastanza!",
           "O abbastanza poco! Chi lo sa!"
         ],
         [
           "TU! SÌ, TU!",
           "Sei qui per... per...",
           "Perché sei qui di nuovo?",
-          "Ah sì! Il GIUDIZIO!",
+          "Ah sì! Er GIUDIZIO!",
           "O era un gioco? Giochiamo comunque!"
         ]
       ],
@@ -772,21 +772,21 @@
         [
           "Ooh, che carino!",
           "Un nuovo giocattolo... ehm, imputato!",
-          "Sai una cosa? Mi piaci già!",
-          "Questa faccia... questa postura...",
-          "Così piena di... colpa? Speranza? Paura?",
+          "Sai una cosa? Me piaci già!",
+          "'Sta faccia... 'sta postura...",
+          "Così piena di... corpa? Speranza? Paura?",
           "Deliziosa confusione!"
         ],
         [
           "Ehi! Ciao!",
-          "Vuoi sapere un segreto?",
-          "Non ho idea di cosa sto facendo!",
-          "Ma non dirlo a nessuno, okay?",
+          "Vuoi sapé un segreto?",
+          "Nun ho idea di cosa sto facenno!",
+          "Ma nun dirlo a nessuno, okay?",
           "Rovinerebbe tutta la mia immagine divina!",
           "*ridacchia*"
         ],
         [
-          "Benvenuto nel mio parco giochi personale!",
+          "Benvenuto ner mio parco giochi personale!",
           "Oggi giochiamo a 'Tribunale'!",
           "È come monopoli, ma con più verdetti arbitrari!",
           "E meno proprietà!",
@@ -795,28 +795,28 @@
       ],
       "openings5": [
         [
-          "*sbadiglio*",
-          "Un altro processo...",
+          "*sbadijo*",
+          "Un antro processo...",
           "Lo sai quanti di questi ho fatto oggi?",
           "Nemmeno io.",
-          "Ho smesso di contare dopo... tre? Forse due?",
-          "Il punto è: sono ANNOIATA."
+          "Ho smesso di contà dopo... tre? Forse due?",
+          "Er punto è: so' ANNOIATA."
         ],
         [
           "Ugh.",
-          "Davvero devo fare questo?",
-          "Non posso semplicemente... non so... leggerti la mente?",
+          "Davero devo fà questo?",
+          "Nun posso semplicemente... nun so... leggerti la mente?",
           "Oh aspetta, posso!",
-          "Ma sarebbe noioso quanto parlare con te.",
-          "Va bene, facciamola finita."
+          "Ma sarebbe palloso quanto parlà con te.",
+          "Va be', facciamola finita."
         ],
         [
           "Ciao.",
           "Sì, ciao a te.",
-          "Sono la Dea della Giustizia.",
+          "So' la Dea della Giustizia.",
           "Applausi, eccetera eccetera.",
-          "Puoi saltare le presentazioni, ti conosco già.",
-          "Annoiami il meno possibile, per favore."
+          "Puoi sartà le presentazioni, te conosco già.",
+          "Annoiami er meno possibile, per favore."
         ]
       ],
       "openings6": [
@@ -824,40 +824,40 @@
           "SILENZIO!",
           "LA CORTE DELLA DIVINA ERIS È UFFICIALMENTE IN SESSIONE!",
           "*tuono drammatico in lontananza*",
-          "Oh, quello sono io.",
+          "Oh, quello so' io.",
           "Adoro gli effetti speciali.",
-          "ORA! Dove eravamo... Ah sì!",
-          "QUESTO PROCESSO CAMBIERÀ IL CORSO DELLA STORIA!"
+          "MO'! Dove eravamo... Ah sì!",
+          "QUESTO PROCESSO CAMBIERÀ ER CORSO DELLA STORIA!"
         ],
         [
           "Benvenuto, mortale!",
-          "In questo giorno fatidico...",
-          "In questa ora oscura...",
-          "Sotto questi cieli tempestosi...",
-          "...okay, i cieli non sono tempestosi, ma suona bene...",
-          "Il tuo destino sarà DECISO!",
+          "In 'sto giorno fatidico...",
+          "In 'sta mo' oscura...",
+          "Sotto 'sti cieli tempestosi...",
+          "...okay, i cieli nun so' tempestosi, ma suona bene...",
+          "Er tuo destino sarà DECISO!",
           "Da ME! La magnifica, terribile, DIVINA ERIS!"
         ],
         [
           "ECCO! L'IMPUTATO GIUNGE!",
-          "Le stelle stesse hanno predetto questo momento!",
-          "Gli dèi antichi tremano!",
-          "Il fato stesso aspetta con il fiato sospeso!",
-          "...o forse è solo gas. Non sono sicura.",
-          "COMUNQUE! Sei qui per essere GIUDICATO!"
+          "Le stelle stesse hanno predetto 'sto momento!",
+          "Li dèi antichi tremano!",
+          "Er fato stesso aspetta con er fiato sospeso!",
+          "...o forse è solo gas. Nun so' sicura.",
+          "COMUNQUE! Sei qui per esse GIUDICATO!"
         ]
       ],
       "openings7": [
         [
           "Tch.",
           "Guardati.",
-          "Hai già rovinato la mia giornata e non hai ancora aperto bocca.",
+          "Hai già rovinato la mia giornata e nun hai ancora aperto bocca.",
           "Impressionante, in modo negativo.",
-          "Parliamoci chiaro: non mi piaci già."
+          "Parliamoci chiaro: nun me piaci già."
         ],
         [
           "Perfetto. Proprio perfetto.",
-          "Stavo avendo una giornata MERAVIGLIOSA.",
+          "Stavo avenno una giornata MERAVIJOSA.",
           "Stavo per rilassarmi, magari causare un po' di caos...",
           "E poi ARRIVI TU.",
           "Con i tuoi crimini stupidi e la tua faccia irritante.",
@@ -865,9 +865,9 @@
         ],
         [
           "Mi hai già stufato.",
-          "Non so nemmeno cosa hai fatto, ma sono già stanca di te.",
-          "È un talento, davvero.",
-          "Essere così irritante senza nemmeno provare.",
+          "Nun so nemmeno cosa hai fatto, ma so' già stanca di te.",
+          "È un talento, davero.",
+          "Esse così irritante senza nemmeno provà.",
           "Bene. Iniziamo così posso liberarmi di te prima."
         ]
       ],
@@ -875,16 +875,16 @@
         [
           "Bene.",
           "Sei qui.",
-          "Io sono qui.",
-          "Dobbiamo fare questo processo.",
-          "Semplice, efficiente, al punto."
+          "Io so' qui.",
+          "Dovemo fà 'sto processo.",
+          "Semplice, efficiente, ar punto."
         ],
         [
-          "Benvenuto al tribunale.",
-          "Sono Eris.",
-          "Ero la dea della discordia, ora sono la Dea della Giustizia.",
+          "Benvenuto ar tribunale.",
+          "So' Eris.",
+          "Ero la dea della discordia, mo' so' la Dea della Giustizia.",
           "È una lunga storia.",
-          "Non te la racconterò."
+          "Nun te la racconterò."
         ],
         [
           "Procediamo.",
@@ -894,23 +894,23 @@
         ]
       ],
       "bountyAnnouncements": [
-        "La tua taglia ammonta a {bounty}.",
-        "Interessante... {bounty} di taglia.",
+        "La tua taja ammonta a {bounty}.",
+        "Interessante... {bounty} di taja.",
         "Vedo qui che devi {bounty}...",
-        "{bounty}! Non male!",
+        "{bounty}! Nun male!",
         "Ah sì, {bounty} di debito con la società."
       ]
     },
     "showEmOpening": {
       "softer": [
         "...",
-        "Non era necessario. Nessuna di queste cose lo era.",
-        "Andiamo avanti."
+        "Nun era necessario. Nessuna di 'ste cose lo era.",
+        "Annamo avanti."
       ],
       "announcements": [
-        "La tua taglia e {bounty}. L'ho arrotondata {per eccesso|a mio piacimento}.",
+        "La tua taja e {bounty}. L'ho arrotonnata {per eccesso|a mio piacimento}.",
         "{bounty}. Sai che una parte di quella cifra l'ho messa io, vero?",
-        "Qui dice {bounty}. Qui dice anche molte altre cose su di te."
+        "Qui dice {bounty}. Qui dice anche parecchie antre cose su di te."
       ]
     },
     "immediateVerdict": {
@@ -918,21 +918,21 @@
         "Sai cosa? COLPEVOLE!\nVia di qui!",
         "No, aspetta... INNOCENTE!\nAnzi no, COLPEVOLE!",
         "Mi hai guardato male.\nPRIGIONE!",
-        "Hmm... la tua faccia non mi piace.\nCOLPEVOLE!"
+        "Hmm... la tua faccia nun me piace.\nCOLPEVOLE!"
       ]
     },
     "askPlea": {
       "introductions": [
         [
-          "Ora...",
+          "Mo'...",
           "La parte importante.",
           "O almeno dovrebbe esserlo.",
-          "Dipende da come mi sento.",
-          "Che non è molto prevedibile!"
+          "Dipenne da come me sento.",
+          "Che nun è assai prevedibile!"
         ],
         [
           "È tempo...",
-          "Tempo per TE di parlare!",
+          "Tempo per TE di parlà!",
           "Sì, tu!",
           "Finalmente!",
           "Ho parlato abbastanza, no?"
@@ -940,31 +940,31 @@
         [
           "Bene bene bene...",
           "Ascoltiamo la tua versione.",
-          "Anche se probabilmente è piena di bugie.",
-          "Ma ehi, mi diverto comunque!"
+          "Anche se probabilmente è piena di bucie.",
+          "Ma ehi, me diverto comunque!"
         ]
       ],
       "pleaQuestions": [
         [
           "Allora...",
-          "Come ti dichiari?",
+          "Come te dichiari?",
           "Colpevole o innocente?",
-          "O qualcos'altro?",
-          "Sorprendimi!"
+          "O qualcos'antro?",
+          "Sorprennimi!"
         ],
         [
-          "La domanda classica:",
+          "La domanna classica:",
           "Colpevole?",
           "O innocente?",
           "Scegli saggiamente!",
-          "...O stupidamente, mi diverto comunque."
+          "...O stupidamente, me diverto comunque."
         ],
         [
           "Momento della verità!",
-          "Come ti dichiari davanti a me?",
+          "Come te dichiari davanti a me?",
           "Davanti alla DIVINA ERIS?",
           "Beh?",
-          "RISPONDI!"
+          "RISPONNI!"
         ]
       ],
       "choices": [
@@ -977,27 +977,27 @@
     },
     "benevolentTrial": {
       "intro": [
-        "Vediamo...",
-        "Oggi mi sento... comprensiva.",
+        "Vedemo...",
+        "Oggi me sento... comprensiva.",
         "Raro per me, lo so.",
         "Approfittiamone mentre dura!"
       ],
       "questions": [
         [
           "Dimmi una cosa...",
-          "Hai mai aiutato qualcuno?",
-          "E intendo VERAMENTE aiutato.",
-          "Non solo per sembrare buono."
+          "Hai mai aiutato quarcuno?",
+          "E intenno VERAMENTE aiutato.",
+          "Nun solo per sembrare buono."
         ],
         [
           "Sei pentito delle tue azioni?",
-          "E non dirmi quello che pensi voglia sentire.",
-          "Posso vedere attraverso le bugie.",
-          "...La maggior parte del tempo."
+          "E nun dirmi quello che pensi voja sentì.",
+          "Posso vedé attraverso le bucie.",
+          "...La maggior parte der tempo."
         ],
         [
-          "Facciamo un patto.",
-          "Promettimi di essere buono.",
+          "Famo un patto.",
+          "Promettimi di esse buono.",
           "O almeno... meno cattivo?",
           "È tutto quello che chiedo. Oggi."
         ]
@@ -1011,28 +1011,28 @@
       "musings": [
         [
           "Sai...",
-          "Non sono sempre stata così.",
-          "Una volta ero... diversa.",
+          "Nun so' sempre stata così.",
+          "Una vorta ero... diversa.",
           "Più caotica. Meno giusta.",
-          "O forse il contrario?"
+          "O forse er contrario?"
         ],
         [
-          "Vedo qualcosa in te...",
-          "Non so cosa sia.",
+          "Vedo quarcosa in te...",
+          "Nun so cosa sia.",
           "Forse bontà? Potenziale?",
-          "O forse solo vedo quello che voglio vedere."
+          "O forse solo vedo quello che vojo vedé."
         ],
         [
           "La giustizia è strana.",
-          "A volte la pietà è più giusta della giustizia.",
-          "A volte la giustizia è pura crudeltà.",
+          "A vorte la pietà è più giusta della giustizia.",
+          "A vorte la giustizia è pura crudeltà.",
           "Filosofia divina. Che mal di testa!"
         ]
       ],
       "responses": {
         "0": [
           "Sì?",
-          "Hmm... mi piace questa risposta.",
+          "Hmm... me piace 'sta risposta.",
           "Onesta. Diretta.",
           "O almeno spero lo sia."
         ],
@@ -1040,16 +1040,16 @@
           "No?",
           "Beh... apprezzo l'onestà.",
           "Anche se è deprimente.",
-          "Almeno non hai mentito!"
+          "Almeno nun hai mentito!"
         ],
         "2": [
           "Forse...",
-          "La risposta del codardo!",
-          "O del saggio?",
-          "Non sono sicura quale sei tu."
+          "La risposta der codardo!",
+          "O der saggio?",
+          "Nun so' sicura quale sei tu."
         ],
         "3": [
-          "Non lo sai?",
+          "Nun lo sai?",
           "Almeno sei onesto sulla tua confusione.",
           "È... rinfrescante?",
           "In un modo strano."
@@ -1059,28 +1059,28 @@
     "vindictiveTrial": {
       "intro": [
         "Bene bene bene...",
-        "Guardiamoti meglio.",
-        "Sì... vedo la colpa scritta su tutta la tua faccia.",
+        "Guardiamoti mejo.",
+        "Sì... vedo la corpa scritta su tutta la tua faccia.",
         "È praticamente luminosa!",
-        "Come potrei NON vederla?"
+        "Come potrei NUN vederla?"
       ],
       "futureCrimes": [
         "E sai cosa?",
-        "Probabilmente hai già pianificato altri crimini!",
+        "Probabilmente hai già pianificato antri crimini!",
         "Posso vederlo nei tuoi occhi!",
         "Quello sguardo di 'commetterò reati in futuro'!",
-        "Ti conosco!"
+        "Te conosco!"
       ],
       "rants": [
         [
-          "Sai qual è il tuo problema?",
-          "E il problema di TUTTI i criminali?",
-          "Pensate di essere furbi!",
-          "Pensate di poterla fare franca!",
+          "Sai qual è er tuo problema?",
+          "E er problema di TUTTI i criminali?",
+          "Pensate di esse furbi!",
+          "Pensate di poterla fà franca!",
           "MA IO VEDO TUTTO!"
         ],
         [
-          "Sono stanca.",
+          "So' stanca.",
           "Così stanca di gente come te.",
           "Sempre a infrangere le regole...",
           "Sempre a causare problemi...",
@@ -1088,35 +1088,35 @@
           "RIDICOLO!"
         ],
         [
-          "Voglio che tu sappia una cosa.",
+          "Vojo che tu sappia una cosa.",
           "Ogni singolo criminale che ho giudicato...",
-          "Ha avuto la stessa espressione che hai tu ora.",
-          "E sai dove sono finiti?",
+          "Ha avuto la stessa espressione che hai tu mo'.",
+          "E sai dove so' finiti?",
           "Beh, lo scoprirai presto!"
         ]
       ],
       "additional": [
         "E inoltre!",
         "{crime}!",
-        "Non pensare che me ne sia dimenticata!",
-        "Io NON dimentico MAI!"
+        "Nun pensà che me ne sia dimenticata!",
+        "Io NUN dimentico MAI!"
       ],
       "accusations": [
         [
           "Sei accusato di {crime}!",
-          "E non negarlo!",
+          "E nun negarlo!",
           "Ho le prove qui davanti a me!",
-          "...Da qualche parte."
+          "...Da quarche parte."
         ],
         [
           "{crime}!",
           "Sì! Proprio quello!",
           "Pensavi di sfuggire?",
-          "Pensavi fossi stupida?!",
-          "Beh, sono molte cose, ma stupida NO!"
+          "Pensavi fossi grulla?!",
+          "Beh, so' parecchie cose, ma grulla NO!"
         ],
         [
-          "Il crimine: {crime}.",
+          "Er crimine: {crime}.",
           "Orribile, vero?",
           "Disgustoso.",
           "Imperdonabile!",
@@ -1127,34 +1127,34 @@
     "playfulTrial": {
       "intro": [
         "Okay okay okay!",
-        "Sono ANNOIATA dei processi normali.",
-        "Facciamo qualcosa di DIVERTENTE!",
+        "So' ANNOIATA dei processi normali.",
+        "Famo quarcosa di DIVERTENTE!",
         "Tipo... un gioco!",
-        "Ti piacciono i giochi, vero? VERO?!"
+        "Te piacciono i giochi, vero? VERO?!"
       ],
       "games": [
         [
-          "Giochiamo a indovina il numero!",
-          "Sto pensando a un numero tra 1 e 1000!",
-          "Se indovini, sei innocente!",
-          "Se sbagli... beh...",
+          "Giochiamo a innovina er numero!",
+          "Sto pensanno a un numero tra 1 e 1000!",
+          "Se innovini, sei innocente!",
+          "Se sbaji... beh...",
           "Dai, prova!"
         ],
         [
-          "Facciamo così:",
-          "Se riesci a farmi ridere...",
-          "Proprio ridere davvero...",
-          "Ti lascio andare!",
-          "Anzi no, forse ti faccio andare in prigione!",
-          "O forse ti libero!",
-          "Chi lo sa! Questo è il divertimento!"
+          "Famo così:",
+          "Se riesci a farmi ride...",
+          "Proprio ride davero...",
+          "Te lascio annà!",
+          "Anzi no, forse te faccio annà in prigione!",
+          "O forse te libero!",
+          "Chi lo sa! Questo è er divertimento!"
         ],
         [
           "Ooh, ho un'idea!",
           "Cantiamo una canzone insieme!",
-          "Io canto la prima parte, tu la seconda!",
-          "E se la canzone mi piace...",
-          "Deciderò il tuo destino in base alle note!",
+          "Io canto la prima parte, tu la seconna!",
+          "E se la canzone me piace...",
+          "Deciderò er tuo destino in base alle note!",
           "Perfetto, no?"
         ]
       ],
@@ -1166,29 +1166,29 @@
       ],
       "extra": [
         "Sai cosa?",
-        "Mi stai simpatico!",
-        "Non so perché, ma è così!",
-        "Forse è il tuo viso.",
-        "O forse sono solo di buon umore.",
+        "Me stai simpatico!",
+        "Nun so perché, ma è così!",
+        "Forse è er tuo viso.",
+        "O forse so' solo di buon umore.",
         "Chi può dirlo!"
       ],
       "lines": [
         "OH! Che entusiasmo!",
-        "Mi piace! Mi piace tantissimo!",
+        "Me piace! Me piace tantissimo!",
         "Così energico!",
         "Così... vivo!",
         "Fantastico!"
       ],
       "lines2": [
         "No?",
-        "NON vuoi giocare?",
+        "NUN vuoi giocà?",
         "Ma... ma...",
-        "Questo non era nel copione!",
-        "Sei noioso! NOIOSO!"
+        "Questo nun era ner copione!",
+        "Sei palloso! PALLOSO!"
       ],
       "lines3": [
         "RIDICOLO?!",
-        "Tu osi chiamare RIDICOLO il mio gioco?!",
+        "Tu osi chiamà RIDICOLO er mio gioco?!",
         "...Hai ragione, è totalmente ridicolo.",
         "MA È DIVERTENTE!",
         "E questo conta!"
@@ -1199,40 +1199,40 @@
         "Oh mio dio, hai capito la citazione!",
         "Sei PERFETTO!",
         "O forse solo un nerd.",
-        "Entrambi sono accettabili!"
+        "Entrambi so' accettabili!"
       ]
     },
     "boredTrial": {
       "intro": [
-        "*sbadiglio*",
-        "Dio, un altro processo...",
-        "Non ne posso più.",
-        "Davvero, non ne posso più.",
+        "*sbadijo*",
+        "Dio, un antro processo...",
+        "Nun ne posso più.",
+        "Davero, nun ne posso più.",
         "Ma va bene, facciamolo."
       ],
       "bored": [
         [
           "Allora...",
-          "Hai qualcosa da dire in tua difesa?",
-          "Qualcosa di interessante?",
-          "No, chi sto prendendo in giro.",
-          "Niente è interessante."
+          "Hai quarcosa da dì in tua difesa?",
+          "Quarcosa di interessante?",
+          "No, chi sto prennenno in giro.",
+          "Gnente è interessante."
         ],
         [
-          "Senti, facciamo veloce.",
-          "Ho cose migliori da fare.",
-          "Come... non so...",
-          "Fissare il soffitto.",
-          "Contare i granelli di polvere.",
-          "Qualsiasi cosa tranne questo."
+          "Senti, famo veloce.",
+          "Ho cose mijori da fà.",
+          "Come... nun so...",
+          "Fissare er soffitto.",
+          "Contà i granelli di porvere.",
+          "Quarsiasi cosa tranne questo."
         ],
         [
-          "*sbadiglio di nuovo*",
+          "*sbadijo di nuovo*",
           "Sei colpevole o innocente?",
           "Decidi in fretta.",
-          "Non ho tutto il giorno.",
-          "Anzi, tecnicamente sì, sono immortale.",
-          "Ma preferisco non sprecare il mio tempo."
+          "Nun ho tutto er giorno.",
+          "Anzi, tecnicamente sì, so' immortale.",
+          "Ma preferisco nun sprecà er mio tempo."
         ]
       ],
       "choices": [
@@ -1242,23 +1242,23 @@
         "..."
       ],
       "complaint": [
-        "Sai cosa mi manca?",
-        "Quando ero la dea della discordia.",
+        "Sai cosa me manca?",
+        "Quanno ero la dea della discordia.",
         "Quello era divertente.",
         "Questo? Questo è lavoro.",
-        "Lavoro noioso."
+        "Lavoro palloso."
       ],
       "lines": [
         "Una storia lunga?",
         "OH NO.",
         "Assolutamente NO.",
-        "Non raccontare storie lunghe.",
+        "Nun raccontà storie lunghe.",
         "Riassumi in tre parole o taci."
       ],
       "lines2": [
-        "Puoi andare?",
-        "Ah! Finalmente qualcuno che capisce!",
-        "Mi piace questa domanda!",
+        "Puoi annà?",
+        "Ah! Finalmente quarcuno che capisce!",
+        "Me piace 'sta domanna!",
         "Purtroppo la risposta è no.",
         "Devo comunque giudicarti.",
         "*sospiro*"
@@ -1266,15 +1266,15 @@
       "0": [
         "Innocente.",
         "Certo che lo sei.",
-        "Tutti dicono di essere innocenti.",
+        "Tutti dicono di esse innocenti.",
         "È così... prevedibile."
       ],
       "3": [
         "...",
         "Stai zitto anche tu?",
         "Bene.",
-        "Apprezzo il silenzio.",
-        "È così raro di questi tempi."
+        "Apprezzo er silenzio.",
+        "È così raro di 'sti tempi."
       ]
     },
     "dramaticTrial": {
@@ -1288,41 +1288,41 @@
       ],
       "dramatic": [
         [
-          "Oh, quello sono io il tuono.",
+          "Oh, quello so' io er tuono.",
           "Effetti speciali divini!",
           "Costano una fortuna ma ne valgono la pena!",
-          "DRAMMATICITÀ AL MASSIMO!"
+          "DRAMMATICITÀ AR MASSIMO!"
         ],
         [
           "Benvenuto, mortale!",
-          "In questo giorno che sarà ricordato...",
+          "In 'sto giorno che sarà ricordato...",
           "Nei secoli dei secoli...",
           "Per tutta l'eternità...",
           "O almeno fino a domani."
         ],
         [
           "LE STELLE STESSE TREMANO!",
-          "IL FATO ASPETTA!",
-          "GLI DÈI ANTICHI OSSERVANO!",
+          "ER FATO ASPETTA!",
+          "LI DÈI ANTICHI OSSERVANO!",
           "...Probabilmente.",
-          "Non ho controllato."
+          "Nun ho controllato."
         ]
       ],
       "proclamation": [
         "QUESTO...",
-        "NON È UN SEMPLICE PROCESSO!",
+        "NUN È UN SEMPLICE PROCESSO!",
         "Questo è...",
         "UN MOMENTO EPICO!",
         "UNO SCONTRO TRA GIUSTIZIA E CRIMINALITÀ!",
-        "UNA BATTAGLIA PER LA TUA ANIMA!",
+        "UNA BATTAJA PER LA TUA ANIMA!",
         "...O forse no, ma suona bene!"
       ],
       "question": [
-        "E ORA...",
+        "E MO'...",
         "Prima che io pronunci...",
-        "IL VERDETTO CHE ECHEGGERÀ NELL'ETERNITÀ...",
-        "CHE SCUOTERÀ LE FONDAMENTA DELL'UNIVERSO...",
-        "Cosa hai da dire?!"
+        "ER VERDETTO CHE ECHEGGERÀ NELL'ETERNITÀ...",
+        "CHE SCUOTERÀ LE FONNAMENTA DELL'UNIVERSO...",
+        "Cosa hai da dì?!"
       ],
       "choices": [
         "Pietà!",
@@ -1331,11 +1331,11 @@
         "Sei pazza!"
       ],
       "finale": [
-        "E ORA...",
-        "Il momento che tutti stavate aspettando...",
-        "Il climax di questo processo epico...",
+        "E MO'...",
+        "Er momento che tutti stavate aspettanno...",
+        "Er climax di 'sto processo epico...",
         "LA DECISIONE FINALE!",
-        "...Dopo questa pausa drammatica."
+        "...Dopo 'sta pausa drammatica."
       ],
       "lines": [
         "GIUSTIZIA!",
@@ -1346,11 +1346,11 @@
         "...Forse!"
       ],
       "lines2": [
-        "NON TE NE IMPORTA?!",
+        "NUN TE NE IMPORTA?!",
         "HAI L'AUDACIA...",
         "LA SFRONTATEZZA...",
         "L'IMPUDENZA...",
-        "Di non avere paura di me?!",
+        "Di nun avé paura di me?!",
         "MAGNIFICO!"
       ],
       "0": [
@@ -1358,77 +1358,77 @@
         "IMPLORI PIETÀ?!",
         "Quanto... quanto...",
         "DRAMMATICO!",
-        "MI PIACE!"
+        "ME PIACE!"
       ],
       "3": [
         "PAZZA?!",
-        "TU MI CHIAMI PAZZA?!",
+        "TU ME CHIAMI PAZZA?!",
         "IO?!",
         "La DIVINA ERIS?!",
-        "...Hai ragione, ma questo è oltre il punto!",
+        "...Hai ragione, ma questo è oltre er punto!",
         "COME OSI?!"
       ]
     },
     "chaoticTrial": {
       "intro": [
         "Okay! Allora!",
-        "Cosa stiamo facendo?",
+        "Cosa stiamo facenno?",
         "Processo? Festa? Entrambi?",
-        "Non lo so! Non lo saprai nemmeno tu!",
+        "Nun lo so! Nun lo saprai nemmeno tu!",
         "PERFETTO!"
       ],
       "random": [
         [
           "Sai cosa?",
-          "Parliamo del tempo invece!",
+          "Parlamo der tempo invece!",
           "È bello oggi, vero?",
           "O forse piove?",
-          "Non guardo mai fuori.",
-          "Aspetta, siamo fuori?"
+          "Nun guardo mai fuori.",
+          "Aspetta, semo fuori?"
         ],
         [
-          "Mi piacciono le farfalle.",
+          "Me piacciono le farfalle.",
           "Tu?",
-          "Sono così colorate!",
+          "So' così colorate!",
           "E volano!",
-          "Proprio come... aspetta, cosa stavamo facendo?"
+          "Proprio come... aspetta, cosa stavamo facenno?"
         ],
         [
-          "Hai mai visto un drago che piange?",
+          "Hai mai visto un drago che piagne?",
           "Io sì.",
           "È bellissimo.",
           "E triste.",
           "Ma soprattutto bagnato.",
-          "I draghi producono MOLTO liquido lacrimale."
+          "I draghi producono ASSAI liquido lacrimale."
         ]
       ],
       "forget": [
         "Aspetta...",
         "Perché sei qui?",
-        "No davvero, perché?",
-        "Ah sì! Il processo!",
+        "No davero, perché?",
+        "Ah sì! Er processo!",
         "O era una festa?",
-        "Sono confusa.",
-        "Questo succede spesso."
+        "So' confusa.",
+        "'Sto succede spesso."
       ],
       "argue": [
         "È colpevole!",
         "NO, aspetta!",
         "È innocente!",
         "Ma che dico?!",
-        "Sono IO la colpevole!",
-        "No aspetta, quello non ha senso!",
+        "So' IO la colpevole!",
+        "No aspetta, quello nun ha senso!",
         "O forse sì?",
         "CHI LO SA!"
       ],
       "chaos": [
         "TUTTO È CAOS!",
-        "Il caos è ordine!",
+        "Er caos è ordine!",
         "L'ordine è caos!",
         "Tu sei me!",
-        "Io sono te!",
-        "Noi siamo... pizza?",
-        "No aspetta, quello non funziona.",
+        "Io so' te!",
+        "Noi semo... pizza?",
+        "No aspetta, quello nun funziona.",
         "OPPURE SÌ!"
       ],
       "extra": [
@@ -1442,44 +1442,44 @@
         "Sei chiaramente colpevole di {crime}!",
         "È OVVIO!",
         "Come puoi negarlo?!",
-        "Oh aspetta, non stavi negando nulla.",
-        "Beh, troppo tardi ora!"
+        "Oh aspetta, nun stavi neganno gnente.",
+        "Beh, troppo tardi mo'!"
       ]
     },
     "announceVerdict": {
       "drumrolls": [
         [
           "Bene allora...",
-          "È arrivato il momento...",
-          "Il momento che stavamo aspettando...",
-          "O almeno che IO stavo aspettando...",
+          "È arrivato er momento...",
+          "Er momento che stavamo aspettanno...",
+          "O almeno che IO stavo aspettanno...",
           "Tu probabilmente lo temevi."
         ],
         [
           "Dopo attenta considerazione...",
-          "E profonda riflessione...",
-          "E consultazione con gli dèi antichi...",
-          "...Sto mentendo, non ho consultato nessuno.",
-          "Facciamo finta di sì."
+          "E profonna riflessione...",
+          "E consultazione con li dèi antichi...",
+          "...Sto mentenno, nun ho consultato nessuno.",
+          "Famo finta di sì."
         ],
         [
-          "Il verdetto...",
-          "Il fatidico verdetto...",
+          "Er verdetto...",
+          "Er fatidico verdetto...",
           "Quello che cambierà la tua vita...",
           "O almeno la tua giornata...",
-          "Sta per essere pronunciato!"
+          "Sta per esse pronunciato!"
         ]
       ],
       "guiltyVerdicts": [
         [
           "COLPEVOLE!",
           "Sì, hai sentito bene!",
-          "COL-PE-VO-LE!",
+          "COR-PE-VO-LE!",
           "In tutte le lettere!",
           "In prigione!!!"
         ],
         [
-          "Il verdetto è...",
+          "Er verdetto è...",
           "...",
           "COLPEVOLE!",
           "Sorpreso?",
@@ -1487,23 +1487,23 @@
           "Sembrava ovvio fin dall'inizio!"
         ],
         [
-          "Colpevole come il peccato!",
+          "Colpevole come er peccato!",
           "Colpevole come...",
-          "Come... qualcosa di molto colpevole!",
-          "Non ho altre similitudini!",
-          "Ma il punto è: COLPEVOLE!"
+          "Come... quarcosa di assai colpevole!",
+          "Nun ho antre similitudini!",
+          "Ma er punto è: COLPEVOLE!"
         ],
         [
           "DECISAMENTE COLPEVOLE!",
-          "Non c'erano dubbi!",
+          "Nun c'erano dubbi!",
           "Beh, forse uno o due...",
           "Ma li ho ignorati!",
           "PRIGIONE!"
         ],
         [
-          "La corte ti dichiara...",
+          "La corte te dichiara...",
           "*pausa drammatica*",
-          "*altra pausa*",
+          "*antra pausa*",
           "*okay basta pause*",
           "SUPER MEGA ULTRA COLPEVOLE!",
           "Arrivederci!"
@@ -1514,24 +1514,24 @@
           "E sai cosa?",
           "Probabilmente te lo meriti!",
           "O forse no.",
-          "Ma è troppo tardi per cambiare idea!"
+          "Ma è troppo tardi per cambià idea!"
         ],
         [
-          "La prossima volta...",
+          "La prossima vorta...",
           "Pensa prima di...",
-          "Di fare qualsiasi cosa tu abbia fatto!",
-          "O non fatto!",
+          "Di fà quarsiasi cosa tu abbia fatto!",
+          "O nun fatto!",
           "Boh!"
         ],
         [
           "In prigione!",
-          "E non tornare!",
-          "Beh, tornerai quando finisci la pena.",
-          "Ma poi non tornare di nuovo!"
+          "E nun tornà!",
+          "Beh, tornerai quanno finisci la pena.",
+          "Ma poi nun tornà di nuovo!"
         ],
         [
           "Questo ti insegnerà!",
-          "A fare... cose!",
+          "A fà... cose!",
           "Cose cattive!",
           "Probabilmente!",
           "COMUNQUE PRIGIONE!"
@@ -1542,66 +1542,66 @@
           "Innocente!",
           "Sì, hai sentito bene!",
           "IN-NO-CEN-TE!",
-          "Sorprendente!",
+          "Sorprennente!",
           "Anche per me!"
         ],
         [
-          "Non colpevole!",
-          "Questa volta.",
+          "Nun colpevole!",
+          "'Sta vorta.",
           "Sei libero!",
           "Vai via prima che cambi idea!",
           "VELOCE!"
         ],
         [
-          "Innocente... per ora!",
-          "Non so come sia successo.",
+          "Innocente... per mo'!",
+          "Nun so come sia successo.",
           "Ma eccoci qui.",
           "Goditi la tua libertà!",
           "Finché dura!"
         ],
         [
-          "La corte ti trova...",
-          "Sorprendentemente...",
+          "La corte te trova...",
+          "Sorprennentemente...",
           "Incredibilmente...",
           "Miracolosamente...",
           "INNOCENTE!",
-          "Ora sparisci!"
+          "Mo' sparisci!"
         ],
         [
           "Vai! Sei libero!",
-          "Non so perché!",
-          "Ma non fare domande!",
+          "Nun so perché!",
+          "Ma nun fà domanne!",
           "Accetta e vai!",
           "PRIMA CHE CAMBI IDEA!"
         ]
       ],
       "extras2": [
         [
-          "Ma ti tengo d'occhio!",
+          "Ma te tengo d'occhio!",
           "Sempre!",
           "SEMPRE!",
-          "Non pensare di sfuggirmi!"
+          "Nun pensà di sfuggirmi!"
         ],
         [
-          "Non tornare qui!",
+          "Nun tornà qui!",
           "Mai più!",
-          "Beh, a meno che non commetti altri crimini.",
+          "Beh, a meno che nun commetti antri crimini.",
           "Cosa che farai.",
           "Lo so."
         ],
         [
           "Questa è la tua occasione!",
-          "Non sprecarla!",
-          "Perché non ce ne saranno altre!",
+          "Nun sprecarla!",
+          "Perché nun ce ne saranno antre!",
           "Beh, forse una o due.",
-          "Ma non molte!"
+          "Ma nun parecchie!"
         ],
         [
           "Sei fortunato oggi!",
-          "Molto fortunato!",
-          "Non succede spesso!",
-          "Goditi questo momento!",
-          "Potrebbe non ripetersi!"
+          "Assai fortunato!",
+          "Nun succede spesso!",
+          "Goditi 'sto momento!",
+          "Potrebbe nun ripetersi!"
         ]
       ]
     },
@@ -1609,7 +1609,7 @@
       "guilty": [
         "Colpevole.",
         "Ovviamente colpevole.",
-        "Non c'è mai stato un momento in cui non lo fossi."
+        "Nun c'è mai stato un momento in cui nun lo fossi."
       ]
     },
     "_chooseVerdict": {
@@ -1626,22 +1626,22 @@
     },
     "onTurnEnd": {
       "lines": [
-        "Su su, non vorrai morire COSÌ presto!\nEcco, tutto a posto. Riproviamo!",
-        "Oh no, vi stavate facendo male?\nNon su MIO orologio. *schiocco di dita*",
-        "Vi ho rimessi a nuovo!\nVoglio godermi ogni singolo istante di questo.",
-        "Curati! Tutti curati!\nNon è divertente se finisce subito, vero?",
+        "Su su, nun vorrai morì COSÌ presto!\nEcco, tutto a posto. Riproviamo!",
+        "Oh no, vi stavate facenno male?\nNun su MIO orologio. *schiocco di dita*",
+        "Vi ho rimessi a nuovo!\nVojo godermi ogni singolo istante di questo.",
+        "Curati! Tutti curati!\nNun è divertente se finisce subito, vero?",
         "Sareste già morti senza di me.\nRingraziatemi. Forza, ringraziatemi!"
       ],
       "lines2": [
         "Sbuffa, sbuffa. Che adorabile inutilità.",
-        "Colpitemi pure! Oh aspettate, non potete.",
-        "Mi annoio. Rendetevi interessanti!",
+        "Colpitemi pure! Oh aspettate, nun potete.",
+        "Mi annoio. Rennetevi interessanti!",
         "Ancora vivi? Che tenacia patetica."
       ],
       "lines3": [
-        "Bene. Mi sono divertita abbastanza.\nORA si fa sul serio. Niente più rete di sicurezza!",
-        "Lo spettacolo è finito.\nDa adesso, potete morire. E lo farete.",
-        "Basta giochi. Mi rimetto a nuovo IO...\ne voi? Voi siete da soli."
+        "Bene. Me so' divertita abbastanza.\nMO' se fa sur serio. Gnente più rete di sicurezza!",
+        "Lo spettacolo è finito.\nDa mo', potete morì. E lo farete.",
+        "Basta giochi. Me rimetto a nuovo IO...\ne voi? Voi sete da soli."
       ]
     },
     "respondToPlea": {
@@ -1650,8 +1650,8 @@
       ],
       "lines2": [
         "FINALMENTE!",
-        "Qualcuno che ammette i propri crimini!",
-        "Pensavo non sarebbe mai successo!",
+        "Quarcuno che ammette i propri crimini!",
+        "Pensavo nun sarebbe mai successo!",
         "Di solito mentite tutti!",
         "TUTTI!",
         "Ma tu... tu sei diverso.",
@@ -1660,17 +1660,17 @@
       "lines3": [
         "Colpevole?",
         "COLPEVOLE?!",
-        "Ma io ti volevo innocente!",
-        "Avevo già preparato il discorso!",
+        "Ma io te volevo innocente!",
+        "Avevo già preparato er discorso!",
         "E i fuochi d'artificio!",
-        "...Non avevo preparato niente.",
-        "Ma sono comunque delusa!"
+        "...Nun avevo preparato gnente.",
+        "Ma so' comunque delusa!"
       ],
       "lines4": [
         "Ooh! Colpevole!",
         "Che onesto!",
-        "Mi piacciono le persone oneste!",
-        "Anche se sono criminali!",
+        "Me piacciono le persone oneste!",
+        "Anche se so' criminali!",
         "È così... rinfrescante!",
         "Come una brezza estiva!",
         "O un gelato!",
@@ -1679,9 +1679,9 @@
       "lines5": [
         "Colpevole.",
         "Okay.",
-        "Grazie per non farmi perdere tempo.",
+        "Grazie per nun farmi perde tempo.",
         "Almeno questo.",
-        "Posso saltare la parte della ricerca prove?",
+        "Posso sartà la parte della ricerca prove?",
         "Perfetto."
       ],
       "lines6": [
@@ -1689,15 +1689,15 @@
         "Tutti mentono!",
         "SEMPRE!",
         "È così frustrante!",
-        "Non puoi essere onesto UNA volta?!",
-        "UNA SINGOLA VOLTA?!",
+        "Nun puoi esse onesto UNA vorta?!",
+        "UNA SINGOLA VORTA?!",
         "No, ovviamente no!",
         "COLPEVOLE!"
       ],
       "lines7": [
-        "Non colpevole?",
+        "Nun colpevole?",
         "Perfetto!",
-        "Ti dichiaro...",
+        "Te dichiaro...",
         "COLPEVOLE!",
         "Aspetta no...",
         "INNOCENTE!",
@@ -1705,38 +1705,38 @@
         "Boh, deciderò dopo!"
       ],
       "lines8": [
-        "Non colpevole!",
-        "Mi piace!",
+        "Nun colpevole!",
+        "Me piace!",
         "È come un gioco!",
         "Tu dici una cosa!",
-        "Io dico un'altra!",
+        "Io dico un'antra!",
         "E alla fine...",
-        "Vediamo chi vince!",
+        "Vedemo chi vince!",
         "Spoiler: vinco sempre io!"
       ],
       "lines9": [
-        "Non colpevole.",
+        "Nun colpevole.",
         "Certo.",
         "Come no.",
-        "Tutti sono innocenti.",
-        "Nessuno fa mai niente di male.",
-        "E io sono la Regina d'Inghilterra.",
+        "Tutti so' innocenti.",
+        "Nessuno fa mai gnente di male.",
+        "E io so' la Regina d'Inghilterra.",
         "*sospiro*"
       ],
       "lines10": [
         "COMPLICATO?!",
-        "Non ho tempo per le complicazioni!",
-        "Le cose sono semplici!",
+        "Nun ho tempo per le complicazioni!",
+        "Le cose so' semplici!",
         "Colpevole o innocente!",
         "Bianco o nero!",
         "...O viola.",
-        "Mi piace il viola.",
-        "MA QUESTO NON È IL PUNTO!"
+        "Me piace er viola.",
+        "MA QUESTO NUN È ER PUNTO!"
       ],
       "lines11": [
         "Complicato!",
-        "OOH MI PIACE COMPLICATO!",
-        "Complicato è il mio secondo nome!",
+        "OOH ME PIACE COMPLICATO!",
+        "Complicato è er mio seconno nome!",
         "Anzi no, è 'Caos'.",
         "O era 'Discordia'?",
         "Aspetta, ho troppi nomi!",
@@ -1744,11 +1744,11 @@
       ],
       "lines12": [
         "Complicato...",
-        "Mi piacciono le cose complicate!",
-        "Sono come puzzle!",
+        "Me piacciono le cose complicate!",
+        "So' come puzzle!",
         "O labirinti!",
         "O... ehm...",
-        "Cosa stavamo dicendo?",
+        "Cosa stavamo dicenno?",
         "Ah sì, complicazioni!",
         "Divertenti!"
       ],
@@ -1757,8 +1757,8 @@
         "Fantastico.",
         "Proprio quello che volevo.",
         "Più complicazioni.",
-        "Come se la mia vita non fosse già abbastanza complicata.",
-        "Va bene, spara."
+        "Come se la mia vita nun fosse già abbastanza complicata.",
+        "Va be', spara."
       ],
       "lines14": [
         "COME OSI?!",
@@ -1773,60 +1773,60 @@
       "lines15": [
         "IO COLPEVOLE?!",
         "AHAHAHA!",
-        "MI PIACE IL TUO STILE!",
+        "ME PIACE ER TUO STILE!",
         "Hai ragione!",
-        "Sono colpevolissima!",
+        "So' colpevolissima!",
         "Di tutto!",
         "Sei innocente!",
         "Aspetta no, sei colpevole!",
-        "O era il contrario?"
+        "O era er contrario?"
       ],
       "lines16": [
         "Io colpevole?",
         "Sì!",
         "Assolutamente!",
-        "Sono colpevole di essere adorabile!",
+        "So' colpevole di esse adorabile!",
         "E potente!",
         "E un po' pazza!",
         "Ma questo è irrilevante!",
-        "Parliamo di TE!"
+        "Parlamo di TE!"
       ],
       "lines17": [
-        "Sì, sono colpevole.",
+        "Sì, so' colpevole.",
         "E allora?",
-        "Non cambia niente.",
-        "Io sono il giudice.",
+        "Nun cambia gnente.",
+        "Io so' er giudice.",
         "Tu sei l'imputato.",
         "Matematica semplice.",
-        "Ora possiamo continuare?"
+        "Mo' potemo continuà?"
       ],
       "dramatic": [
         "COLPEVOLE!",
         "LO AMMETTI!",
         "DAVANTI AGLI DÈI!",
-        "DAVANTI AL FATO!",
+        "DAVANTI AR FATO!",
         "DAVANTI... a me!",
         "Che... che coraggio!",
         "Che audacia!",
         "Che... beh, stupidità!"
       ],
       "benevolent": [
-        "Non colpevole...",
+        "Nun colpevole...",
         "Hmm.",
         "Tutti dicono così.",
-        "Ma c'è qualcosa in te...",
-        "Non so cosa.",
+        "Ma c'è quarcosa in te...",
+        "Nun so cosa.",
         "Forse sincerità?",
         "O forse sei solo un buon bugiardo."
       ],
       "dramatic2": [
-        "NON COLPEVOLE?!",
+        "NUN COLPEVOLE?!",
         "OSI PROCLAMARE LA TUA INNOCENZA?!",
         "DAVANTI A ME?!",
         "La DIVINA ERIS?!",
         "Che... che audacia!",
         "Che sfrontatezza!",
-        "Mi piace!",
+        "Me piace!",
         "Ma sei comunque in guai seri!"
       ],
       "benevolent2": [
@@ -1834,26 +1834,26 @@
         "Ah...",
         "La vita è sempre complicata.",
         "Capisco.",
-        "O almeno... penso di capire.",
-        "Non sono mai stata brava con le sfumature.",
-        "Ma ci provo!"
+        "O almeno... penso di capì.",
+        "Nun so' mai stata brava con le sfumature.",
+        "Ma ce provo!"
       ],
       "dramatic3": [
         "COMPLICATO!",
-        "COME TUTTE LE GRANDI STORIE!",
+        "COME TUTTE LE GRANNI STORIE!",
         "LE TRAGEDIE GRECHE!",
-        "LE EPICHE BATTAGLIE!",
+        "LE EPICHE BATTAJE!",
         "I... i.. i...",
         "Okay ho finito le similitudini.",
-        "Ma capisci il punto!"
+        "Ma capisci er punto!"
       ],
       "benevolent3": [
         "Io?",
         "COLPEVOLE?",
         "Beh...",
         "Tecnicamente... sì.",
-        "Sono colpevole di molte cose.",
-        "Ma questo non ti aiuterà!",
+        "So' colpevole di parecchie cose.",
+        "Ma questo nun ti aiuterà!",
         "...O forse sì?",
         "Hmm..."
       ],
@@ -1864,59 +1864,59 @@
         "QUALE ACCUSA!",
         "QUALE AUDACIA MAGNIFICA!",
         "Hai ragione!",
-        "Sono colpevole di TUTTO!",
-        "Ma questo rende il tuo processo...",
+        "So' colpevole di TUTTO!",
+        "Ma 'sto renne er tuo processo...",
         "ANCORA PIÙ EPICO!"
       ]
     },
     "challengeEris": {
       "dialogues": {
         "benevolent": [
-          "Mi... mi stai sfidando?",
-          "Oh, dolce mortale.",
-          "Apprezzo il coraggio.\nLo ricorderò quando ti spezzerò.",
-          "E va bene! Mostrami cosa sai fare!"
+          "Mi... me stai sfidanno?",
+          "Oh, dorce mortale.",
+          "Apprezzo er coraggio.\nLo ricorderò quanno te spezzerò.",
+          "E va bene! Mostrami cosa sai fà!"
         ],
         "vindictive": [
           "TU?! Sfidare ME?!",
-          "Finalmente! Una scusa per non trattenermi!",
-          "Pregherai di essere tornato in cella!",
+          "Finalmente! Una scusa per nun trattenermi!",
+          "Pregherai di esse tornato in cella!",
           "AVANTI, ALLORA!"
         ],
         "chaotic": [
-          "UN DUELLO?! SÌ! MILLE VOLTE SÌ!",
-          "Non ho idea di chi vincerà!",
+          "UN DUELLO?! SÌ! MILLE VORTE SÌ!",
+          "Nun ho idea di chi vincerà!",
           "Ed è ESATTAMENTE per questo che è perfetto!",
           "COMBATTIAMO!"
         ],
         "whimsical": [
-          "Ooh! Vuoi giocare alla LOTTA?!",
-          "Adoro questo gioco!",
+          "Ooh! Vuoi giocà alla LOTTA?!",
+          "Adoro 'sto gioco!",
           "Avviso: io baro sempre.",
           "Ma sarà DIVERTENTISSIMO! Vieni!"
         ],
         "bored": [
-          "Una sfida. Davvero.",
+          "Una sfida. Davero.",
           "Suppongo che almeno spezzerà la noia.",
-          "Va bene. Facciamola finita in fretta.",
-          "Stupiscimi. Ti sfido."
+          "Va be'. Facciamola finita in fretta.",
+          "Stupiscimi. Te sfido."
         ],
         "dramatic": [
           "UNA SFIDA!",
-          "DAVANTI AGLI DÈI E AL FATO STESSO!",
+          "DAVANTI AGLI DÈI E AR FATO STESSO!",
           "QUESTO GIORNO SARÀ CANTATO PER ERE!",
           "IN GUARDIA, MORTALE!"
         ],
         "irritated": [
           "Vuoi combattere? Bene.",
-          "Mi stavi già facendo venire il mal di testa.",
-          "Almeno così ti faccio tacere.",
-          "Forza, sbrighiamoci."
+          "Me stavi già facenno venì er mal di testa.",
+          "Almeno così te faccio tace.",
+          "Daje, sbrighiamoci."
         ],
         "neutral": [
           "Una sfida formale.",
           "Insolito. Ma accettata.",
-          "Vediamo se le tue azioni valgono le tue parole.",
+          "Vedemo se le tue azioni valgono le tue parole.",
           "Preparati."
         ]
       }

@@ -255,9 +255,14 @@
     menu: "Y",
     hotbarStep: "L1 / R1",
     visitPlace: "Select",
-    zoom: "L2 / R2",
-    wait: "L3",
-    fold: "R3",
+    zoom: "L2 + RS \u2191\u2193",
+    pan: "RS",
+    quickMenu: "Hold Y",
+    wait: "R",
+    vehicles: "L3",
+    build: "R3",
+    fold: "L2",
+    partyCycle: "R2",
   };
   // i18n-ignore-end
 
@@ -277,6 +282,29 @@
       labelKey: "MapLegend.controls.hotbarUse", key: "1 / 2 / 3",
       padLabelKey: "MapLegend.controls.hotbarCycle", pad: PAD.hotbarStep,
     },
+    // Never named on the sheet on either device, which for the pad meant a
+    // control nobody could have found. Tab walks the party forwards and Shift
+    // walks it back; the pad has no modifier to spare, so R2 goes forwards and
+    // wraps round at the end.
+    {
+      id: "leadSwap", labelKey: "MapLegend.controls.leadSwap",
+      key: "Tab", pad: PAD.partyCycle,
+    },
+    // The two stick clicks, which the map had nothing on at all. Both are
+    // polled raw by UI/CustomMainMenuLayout.js, out of the same HOTKEYS table
+    // that owns the keys beside them.
+    // The right stick is the camera's pan on every map, which the sheet has
+    // never said. Held under L2 on the world map it is the zoom instead
+    // (worldZoom below); that is the only place the stick means anything else.
+    // Held rather than pressed: the tap each of these already had is untouched
+    // (Tab steps the item hotbar, Y opens the menu), and holding either brings
+    // up the menu's pockets on one list (UI/QuickMainMenuLayout.js).
+    { id: "quickMenu", labelKey: "MapLegend.controls.quickMenu",
+      keyKey: "MapLegend.controls.holdTab", pad: PAD.quickMenu },
+    { id: "pan", labelKey: "MapLegend.controls.pan",
+      mouseKey: "MapLegend.controls.dragMap", pad: PAD.pan },
+    { id: "vehicles", labelKey: "MapLegend.controls.vehicles", key: "V", pad: PAD.vehicles },
+    { id: "build", labelKey: "MapLegend.controls.build", key: "B", pad: PAD.build },
   ];
 
   // The world map (315) answers to three controls no other ground does: T /
@@ -287,13 +315,20 @@
 
   const WORLD_MAP_CONTROLS = [
     { id: "visitPlace", labelKey: "MapLegend.controls.stopTravel", key: "T", pad: PAD.visitPlace },
-    // L3 is the wait sheet's, on the world map and everywhere else: the pad
-    // half of R is polled raw by UI/CustomMainMenuLayout.js and drawn here.
-    // The fold is R3, so no button is named for two different things.
-    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R", pad: PAD.wait },
+    // R only. L3 was the wait sheet's for a while and is the vehicles now;
+    // the sheet is still one press away through the menu, and the two stick
+    // clicks went to the things the field actually reaches for.
+    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R" },
+    // L2 HELD, and the right stick pushed forward or back. The trigger is a
+    // modifier rather than a zoom of its own: the stick is the camera's pan
+    // everywhere, and holding L2 turns it into the camera's zoom for as long as
+    // it is down. Let go without touching the stick and the same trigger folds
+    // this sheet instead (foldPadButton above), which is the only other thing
+    // a tap of it can mean.
     {
       id: "worldZoom", labelKey: "MapLegend.controls.zoom",
-      key: "+ / -", mouseKey: "MapLegend.controls.scrollWheel", pad: PAD.zoom,
+      key: "+ / -", mouseKey: "MapLegend.controls.scrollWheel",
+      padLabelKey: "MapLegend.controls.zoomHold", pad: PAD.zoom,
     },
   ];
 
@@ -313,13 +348,20 @@
   // The menu keys are not written out here: UI/CustomMainMenuLayout.js owns the
   // one table that binds them and prints their badges, and it hands it out as
   // window.MenuHotkeys, so the sheet reads that instead of keeping a second
-  // copy that would drift. Each symbol borrows the name its own pockets tile
-  // wears, so a key and the screen it opens are never called two things.
-  // None of them has a button of its own: on a pad every one is reached
-  // through the pause menu, so they are drawn to the keys alone.
+  // copy that would drift. The NAME each row wears is read the same way, off
+  // window.MainMenuVoices, which is the very table the pockets page and the
+  // quick menu are built from: a pocket added, renamed or re-iconed over there
+  // is a row here on the same save, so a command new to the quick menu can
+  // never be missing from this sheet. The table below is only the fallback for
+  // a runtime where that list has not been published yet.
+  //
+  // None of them has a button of its own, but none of them is keyboard-only
+  // either: on a pad every one is reached by holding Y and picking it off the
+  // quick menu (UI/QuickMainMenuLayout.js), so each row names both faces.
   const MENU_HOTKEY_LABELS = {
     item: "MainMenu.cmd.backpack",
     quest_log: "MainMenu.cmd.questLog",
+    cooking: "MainMenu.cmd.cooking",
     skill: "MainMenu.cmd.skills",
     status1: "MainMenu.cmd.status",
     equip: "MainMenu.cmd.equip",
@@ -332,16 +374,28 @@
     thinker: "MainMenu.cmd.thinker",
   };
 
+  // symbol -> the i18n key of the name that voice wears on the pockets page.
+  function voiceLabelKeys() {
+    const voices = window.MainMenuVoices;
+    const out = {};
+    if (!voices || !voices.list) return out;
+    for (const voice of voices.list()) {
+      if (voice && voice.symbol && voice.labelKey) out[voice.symbol] = voice.labelKey;
+    }
+    return out;
+  }
+
   function menuHotkeyControls() {
     const table = window.MenuHotkeys && window.MenuHotkeys.list
       ? window.MenuHotkeys.list() : [];
+    const labelKeys = voiceLabelKeys();
     const rows = [];
     for (const hotkey of table) {
-      const labelKey = MENU_HOTKEY_LABELS[hotkey.symbol];
+      const labelKey = labelKeys[hotkey.symbol] || MENU_HOTKEY_LABELS[hotkey.symbol];
       if (!labelKey) continue;
       rows.push({
         id: "menu_" + hotkey.symbol, labelKey, key: hotkey.key,
-        input: hotkey.input, keyboardOnly: true,
+        input: hotkey.input, pad: PAD.quickMenu,
       });
     }
     return rows;
@@ -534,12 +588,6 @@
 
   // A pad button with no Input.gamepadMapper action on it, read raw the way
   // WorldMap.js reads Start.
-  function padButtonTriggered(name) {
-    const stick = analogStick();
-    if (!stick || !stick.isButtonTriggered || !stick.BUTTON) return false;
-    const index = stick.BUTTON[name];
-    return index === undefined ? false : !!stick.isButtonTriggered(index);
-  }
 
   //===========================================================================
   // Notice resolution
@@ -753,10 +801,25 @@
     return true;
   }
 
-  // The pad's fold button. R3 on every map, the world map included: L3 is the
-  // wait sheet's everywhere, so the right stick click is the one left free.
+  // The pad's fold button: a TAP of L2, on every map including the world map.
+  // It was R3, which nothing else wanted but which nobody found either.
+  //
+  // A trigger is not a button. Held, L2 is the camera pulling back (MousePan),
+  // and the only thing that keeps one pull from doing both is the tap window,
+  // which is owned in ONE place - the lead switcher in Core/AutoIdleExplorer.js,
+  // which already reads both triggers that way for the party cycle on R2. So
+  // the tap is not read here at all: that owner calls toggleFold() when it sees
+  // one, and this side only says whether there is a fold to be had.
   function foldPadButton() {
     return PAD.fold;
+  }
+
+  // Whether a tap of L2 should fold the sheet right now: only with a pad in
+  // hand and a legend on screen to fold. Asked by the trigger's owner before it
+  // claims the pull, so on a map with no legend the triggers stay whole for the
+  // camera.
+  function padFoldAvailable() {
+    return foldable() && padConnected() && legendEnabled();
   }
 
   function foldChipLabel() {
@@ -793,12 +856,12 @@
     foldHotkeySpliced = true;
   }
 
-  // The pad button has no table to fight over, so it is read straight off the
-  // map. With CustomMainMenuLayout absent there is no help menu to protect
-  // either, and the key is read here too.
+  // H, and only H. The pad half of the fold is a TAP of L2 and is read by the
+  // one place that owns the trigger tap window (see foldPadButton above), which
+  // calls toggleFold() directly. With CustomMainMenuLayout absent there is no
+  // help menu to protect, and the key is read here rather than spliced.
   function readFoldKey() {
     if (!foldable()) return;
-    if (padButtonTriggered(foldPadButton())) { toggleFold(); return; }
     if (foldHotkeySpliced) return;
     if (Input.isTriggered(FOLD_INPUT)) toggleFold();
   }
@@ -1272,6 +1335,7 @@
     foldable,
     foldPadButton,
     foldPadChip,
+    padFoldAvailable,
 
     refresh() { sheet.destroy(); updateLegend(); },
     hide() { sheet.hide(); },

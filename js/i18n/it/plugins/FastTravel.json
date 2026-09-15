@@ -46,6 +46,10 @@
   "timeToArrival": "Tempo all'arrivo:",
   "destFuel": "{place} ({liters}L, {km} km)",
   "destCost": "{place} ({cost}€, {km} km)",
+  "destLevel": "Lv. {level}",
+  "destLevelDetail": "Lv. {level} (fascia {min}-{max})",
+  "destLevelBand": "Cosa si aggira in zona: livelli da {min} a {max}",
+  "destLevelBandFrozen": "Cosa si aggira in zona: livelli da {min} a {max}, e gli anni non li muovono mai",
   "ui": {
     "back": "Indietro",
     "edit": "Modifica",
@@ -63,7 +67,8 @@
     "travel": "Viaggia",
     "free": "Gratis",
     "startHere": "Parti da Qui",
-    "travelNoTicket": "Viaggia Senza Biglietto"
+    "travelNoTicket": "Viaggia Senza Biglietto",
+    "enemyLevel": "Livello nemici:"
   },
   "refused": {
     "title": "Respinti allo sportello",

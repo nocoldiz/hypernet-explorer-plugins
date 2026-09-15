@@ -4756,8 +4756,8 @@
     "description": "A grimoire of Meta Magic magic.\nUse to learn one of five revealed spells."
   },
   "1408": {
-    "name": "Meta Magic Grimoire",
-    "description": "A grimoire of Meta Magic magic.\nUse to learn one of five revealed spells."
+    "name": "Forgotten Grimoire",
+    "description": "A grimoire of no single school.\nUse to learn one of five revealed spells."
   },
   "1409": {
     "name": "Psychic Abilities Grimoire",
@@ -4848,8 +4848,8 @@
     "description": "A skill book of Roguery.\nUse to learn one of five revealed techniques."
   },
   "1432": {
-    "name": "Roguery Skill Book",
-    "description": "A skill book of Roguery.\nUse to learn one of five revealed techniques."
+    "name": "Apprentice Primer",
+    "description": "A skill book of common technique.\nUse to learn one of five revealed techniques."
   },
   "1433": {
     "name": "Pastoral Skill Book",

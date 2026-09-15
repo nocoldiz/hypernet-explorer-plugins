@@ -2735,7 +2735,14 @@
       this.chooseGraftSocket(idx);
     } else {
       UIShopInputManager.focusRow(idx);
-      this._focusedRow = idx;
+      // The facing page follows the ROW, and the mouse reaches a row without
+      // ever moving the ring (onUIFocusChange is the keyboard's path alone).
+      // Left unrefreshed, the button on the right still belonged to the row
+      // the cursor was parked on: it wore that row's price, that row's greying
+      // and that row's action symbol while the operation it fired was this
+      // one - a button that read as refused when it was not, or that was not
+      // drawn at all when the old row had no operation to offer.
+      this.onUIFocusChange(idx);
       UIShopInputManager.mode = 'actions';
       UIShopInputManager.actionIndex = 0;
       UIShopInputManager.updateFocus();

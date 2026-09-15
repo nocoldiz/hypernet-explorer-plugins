@@ -95,8 +95,10 @@
     // menu's own tabs and the rest are category ids, which stay English because
     // the list is filtered on them. Only the label is localised.
     function categoryTabLabel(cat) {
+        // i18n-ignore-start: 'Trained' and 'All' are the filter-row ids the list is filtered on
         if (cat === 'Trained') return T('SpecMenu.ui.trained');
         if (cat === 'All') return T('SpecMenu.ui.all');
+        // i18n-ignore-end
         return window.Specializations.categoryLabel(cat);
     }
 

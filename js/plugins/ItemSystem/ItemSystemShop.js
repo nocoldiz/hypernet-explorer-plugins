@@ -1461,7 +1461,11 @@
     // entry in Input.gamepadMapper, so a pad reaches it through Y ('menu'), the
     // one face button the shop leaves free: A is OK, B is cancel, X is the
     // single-line multi-select above, and the bumpers switch Buy/Sell.
-    if (((Input.isTriggered('tab') && Input.isPressed('shift')) || Input.isTriggered('menu')) && !this._numberWindow.active) {
+    // MZ answers 'menu' for the Escape key too (Input._isEscapeCompatible), so
+    // Y has to be told apart from a cancel or leaving the shop would take the
+    // category under the cursor into the cart on the way out.
+    const padCategoryKey = Input.isTriggered('menu') && !Input.isTriggered('escape');
+    if (((Input.isTriggered('tab') && Input.isPressed('shift')) || padCategoryKey) && !this._numberWindow.active) {
       const buying = this._buyWindow.active;
       const selling = this._sellWindow.active && !this._chipFocus;
       if (buying || selling) {

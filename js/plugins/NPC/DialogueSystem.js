@@ -3911,10 +3911,7 @@ Imported.DialogueSystem = true;
             const inParty = $gameParty.members().find(a => a && a.name && a.name().trim() === name);
             if (inParty) return inParty;
             if (name === STORY_ASK_BUBBA && $gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) {
-                // Benched, but on the road: before he has joined there is
-                // nobody to ask (PartyRoster owns that answer).
-                return window.PartyRoster?.isBubbaTravelling?.()
-                    ? window.PartyRoster.getBubbaActor?.() || null : null;
+                return window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
             }
             return null;
         } catch (err) { return null; }
@@ -3992,6 +3989,12 @@ Imported.DialogueSystem = true;
     // The scenes are readable outside the plugin command too (a quest step, a
     // cutscene, the test harness).
     window.StoryDialogue = {
+        // A scene built in code rather than written in a script file: the same
+        // bust stage, handed its steps directly. A step is
+        // { imageName, displayName, text, side }, and side ('left' / 'right')
+        // is what lets a caller stage three or four speakers in one exchange
+        // instead of the two a written scene resolves by name.
+        playSteps: (steps) => startNPCExchange(Array.isArray(steps) ? steps : [], true),
         load:   loadStoryScript,
         split:  splitStoryScenes,
         scenes: storySceneNames,
@@ -4041,8 +4044,7 @@ Imported.DialogueSystem = true;
 
     function combatTutorialWalksWithBubba() {
         try {
-            if ($gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH) &&
-                window.PartyRoster?.isBubbaTravelling?.()) return true;
+            if ($gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) return true;
             return $gameParty.members().some(
                 a => a && a.name && a.name().trim() === STORY_ASK_BUBBA);
         } catch (err) { return false; }

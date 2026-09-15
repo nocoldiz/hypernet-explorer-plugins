@@ -682,7 +682,7 @@
       if (cats.length < 2) return '';
       const tab = (label, key, on) =>
         `<div class="backpack-tab focusable${on ? ' selected' : ''}" tabindex="0"` +
-        ` onclick="SceneManager._scene?.setCategoryFilter?.(${key})">${escapeHtml(label)}</div>`;
+        ` onclick="SceneManager._scene?.setCategoryFilter?.(${escapeHtml(key)})">${escapeHtml(label)}</div>`;
       const html = [tab(T('Assets.ui.allCategories'), 'null', !this._catFilter)]
         .concat(cats.map(c => tab(c, JSON.stringify(c), this._catFilter === c)));
       return `<div class="backpack-tabs">${html.join('')}</div>`;

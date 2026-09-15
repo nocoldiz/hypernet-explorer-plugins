@@ -1,25 +1,77 @@
-0.6.18a
+0.6.21a
 
 Added:
- - authored skilltree branches for every skill category
- - events tagged Underwater render only when diving with the diving suit
+ - RocketLaunchPlugin coilgun launch cinematic
+ - alcohol and drugs give screen effects and slurred empathize dialogue
+ - hotbar skill tooltips in combat
+ - arena matches restore AP
+
+Changed:
+ - Structure of base floor of Omega tower
+ - no biome bgs in city, village and burg interiors
+ - reworked quick travel: destination list shows the encounter level of each city
+ - day and night bgs selection per biome, no birds at night
+ - normalize volume of all bgs tracks
+ - reworked enemy drops, biomes and diurnal nocturnal tags
+ - moved entrance to lower dungeon levels to reactor room
+ - reworked enemy spawn distribution to favour low levels under party median 5
+ - shop item categories now in the inventory and transfer UI
+ - reworked thinker menu interface to be easier to navigate
+
+Fixed:
+ - blank invisible npcs in procedural dungeons
+ - escape in the backpack now closes it instead of asking to drop an item
+ - duped items replaced with two new books
+ - psyker and gunmancer had no specializations in character creation
+ - battle skill menu and implant buttons ignored the chosen row
+ - assets menu category tabs crash on click
+ - boomerang model looked like a stick
+ - party members after the first now gain their starting skills
+ - cannot press right mouse click to close atlas
+
+
+0.6.20a
+
+Changed:
+ - reworked italian Eris dialogue into roman dialect
+ - reworked italian i18n strings
+ - reworked controller bindings on map, battle, voxel and menus
+ - quickmenu commands shown in controls for keyboard and controller
+ - reworked steam deck ui so every menu is readable and fits
+ - reworked 3d weapon models to close the gaps between their parts
+ - reworked inventory target selector into a shared party modal
+ - reworked vector gun modes, unlocked as Em levels
+
+
+0.6.19a
+
+Added:
  - 3d weapon model editor in the thinker menu
- - new underground for alien biomes
- - new warp animations inspired by 2001 Space odissey
  - spaceship controls when in flyby mode
  - gas giant upper atmosphere
- - new procedural "Rarities" enemies with golden level number, they are unique for savegame and never respawn
 Changed:
- - voxelmode performance
+ - reworked vector gun forms with an origami folding animation
  - junk weapons now give nausea, oily or poison
  - all Em sprites reference the Em bust
  - replaced unarmed animation in battle and voxel world
  - reworked movement system sprites for Em when diving
- - reworked vector gun forms with an origami folding animation
  - gas giants and surfaceless planets are flyby only
  - reworked training menu
  - reworked starmap: live ship background and a refuel pass through the star
  - battlelog on the left is taller, up to the last party bar
+Fixed:
+ - gas giant flyby opens high enough to see the curve
+ - empty inventory would not close on ESC
+ - landing site grid was empty and would not open
+
+
+0.6.18a
+
+Added:
+ - new underground for alien biomes
+ - new warp animations inspired by 2001 Space odissey
+ - new procedural "Rarities" enemies with golden level number, they are unique for savegame and never respawn
+Changed:
  - reworked hunting quests: half ask for a rarity creature
  - back button shows the B pad face after its label
  - reworked spell incantations recital
@@ -36,10 +88,6 @@ Changed:
  - ship avatar is a dingbat instead of an emoji
  - no puddles spawn on the world map or procedural map
 Fixed:
- - story mode starts with Em alone, no second party member
- - gas giant flyby opens high enough to see the curve
- - empty inventory would not close on ESC
- - landing site grid was empty and would not open
  - liminal walk crashed on PSXShader.isPixelArt
  - boot screen no longer drops out of fullscreen and blacks out
  - fix partyhud not visible in map

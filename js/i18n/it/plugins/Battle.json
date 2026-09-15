@@ -57,7 +57,7 @@
       "Siete già sconfitti. Non mi accanirò su un cadavere.",
       "Basta. Non combatto chi sta morendo.",
       "Portate via i vostri caduti e andate. Ho visto abbastanza sangue oggi.",
-      "Questo non è più un combattimento, è un'eutanasia. Passo.",
+      "Questo ha smesso di essere un combattimento. Ormai è un'eutanasia. Passo.",
       "Portate via la vostra gente prima che sia troppo tardi."
     ]
   },
@@ -541,7 +541,7 @@
     "behaviour": [
       "Risponde al movimento, non al suono.",
       "Caccia su un orario legato a un giorno che qui non vive nessuno.",
-      "Non reagisce a essere guardata, il che è già una risposta.",
+      "Non reagisce a essere guardata. Anche questo dice qualcosa.",
       "Tratta una squadra di sbarco come fosse il tempo atmosferico.",
       "È territoriale su un terreno identico a tutto il resto del terreno.",
       "Sciama, poi smette, e il cambio non ha causa visibile.",

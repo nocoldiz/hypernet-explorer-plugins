@@ -62,5 +62,11 @@
       "bet": "{name} sta studiando le quote di {item}",
       "gamble": "{name} sta giocando {item}"
     }
+  },
+  "targetCard": {
+    "level": "Liv {n}",
+    "hp": "HP",
+    "mp": "MP",
+    "ap": "AP"
   }
 }

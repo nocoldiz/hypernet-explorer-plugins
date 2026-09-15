@@ -410,15 +410,16 @@
     }
 
     // A creature walking onto ground a Cull was left on dies where it stands.
+    // The tile is emptied at once: the turn that follows is decided on the board
+    // as it really is, and a death held back for the animation would let a board
+    // read as full long enough to call a clash the trap has already undone.
     springTrap(index) {
-      setTimeout(() => {
-        if (!this._board[index]) return;
-        this.shatter(this.tileEl(index));
-        this._board[index] = null;
-        this.invalidateTile(index);
-        playSe("Collapse2", 85, 105);
-        this.renderBoard();
-      }, 320);
+      if (!this._board[index]) return;
+      this._board[index] = null;
+      this.shatter(this.tileEl(index));
+      this.invalidateTile(index);
+      playSe("Collapse2", 85, 105);
+      setTimeout(() => this.renderBoard(), 320);
     }
 
     tileEl(index) {
@@ -438,18 +439,24 @@
       setTimeout(() => tile.classList.remove(cls), 700);
     }
 
+    // Every ward barring this player falls away: it was worth one turn of theirs
+    // and that turn has now been spent, whether they played on it or not.
+    lapseWards(player) {
+      for (let i = 0; i < this._blocked.length; i++) {
+        if (this._blocked[i] && this._blocked[i].barred === player) {
+          this._blocked[i] = null;
+          this.invalidateTile(i);
+        }
+      }
+    }
+
     endTurn() {
       if (this._phase !== "play") return;
       // A half-picked Displace never survives the turn it was started on.
       this._pendingSwap = null;
       // A ward shuts a tile for exactly one of the barred player's turns, so it
       // lapses as that turn ends.
-      for (let i = 0; i < this._blocked.length; i++) {
-        if (this._blocked[i] && this._blocked[i].barred === this._turn) {
-          this._blocked[i] = null;
-          this.invalidateTile(i);
-        }
-      }
+      this.lapseWards(this._turn);
       if (this.freeTiles() === 0) { this.startClash(); return; }
       const next = 1 - this._turn;
       // Every turn opens with its own deal, so the hand a side is judged on is
@@ -458,6 +465,10 @@
       // A side with nothing legal left to do passes rather than blocking; if
       // neither can move the board is finished as it stands.
       if (!this.canAct(next)) {
+        // A side that cannot move still spends its turn, so whatever wards it
+        // lapses now rather than standing over that tile for the rest of the
+        // duel and leaving the board forever one tile short of a clash.
+        this.lapseWards(next);
         this.drawHandful(this._turn);
         if (!this.canAct(this._turn)) { this.startClash(); return; }
       } else {

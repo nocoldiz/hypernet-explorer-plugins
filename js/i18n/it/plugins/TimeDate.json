@@ -125,6 +125,35 @@
     "minutesOne": "1 minuto senza dormire",
     "seized": "{name}: {state}. {time}."
   },
+  "intox": {
+    "hics": [
+      "*hic*",
+      "*hic!*",
+      "...ehh",
+      "*rutto*",
+      "eh",
+      "...ecco",
+      "*hic*",
+      "pff"
+    ],
+    "drifts": [
+      "...whoa",
+      "...già",
+      "...mm",
+      "...oh",
+      "...eh",
+      "...wow",
+      "...aspetta"
+    ],
+    "rise": {
+      "drunk1": "{name} ha un bel calduccio addosso.",
+      "drunk2": "{name} è ubriaco.",
+      "drunk3": "{name} si regge a malapena in piedi.",
+      "high1": "{name} sente i contorni farsi morbidi.",
+      "high2": "{name} è lontanissimo.",
+      "high3": "{name} ha lasciato la stanza."
+    }
+  },
   "stateNeed": {
     "sleep": "{name}: Riposo +{percent}%",
     "hygiene": "{name}: Igiene +{percent}%"

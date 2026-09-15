@@ -28,7 +28,7 @@
   "missing": "Mancano: {list}",
   "started": "Fermentazione avviata: {recipe}",
   "itemNumbered": "Oggetto#{id} ×{qty}",
-  "units": "{min}–{max} unità",
+  "units": "{min}-{max} unità",
   "stage": {
     "primary": "Fermentazione primaria",
     "secondary": "Fermentazione secondaria",
@@ -62,32 +62,32 @@
     "herbal_tea": {
       "name": "Tisana",
       "description": "Un semplice infuso di estratto d'erbe in acqua. Niente lievito, niente fermentazione, solo calore e tempo.",
-      "outputPreview": "2–4x Tisana"
+      "outputPreview": "2-4x Tisana"
     },
     "honey_mead": {
       "name": "Idromele",
       "description": "Miele selvatico sciolto in acqua di sorgente e lasciato fermentare al buio. Il distillato più antico che si conosca.",
-      "outputPreview": "2–5x Idromele"
+      "outputPreview": "2-5x Idromele"
     },
     "nun_beer": {
       "name": "Birra delle Monache",
       "description": "Una scura birra di malto fatta con miele e acqua imbottigliata, fermentata lenta e fredda come nelle cantine del monastero.",
-      "outputPreview": "3–6x Birra delle Monache"
+      "outputPreview": "3-6x Birra delle Monache"
     },
     "varlenias_wine": {
       "name": "Vino di Varlenia",
       "description": "Un vino rubino-dorato spremuto da solfrutti dorati, affinato con un tocco di miele selvatico per addolcirlo.",
-      "outputPreview": "2–4x Vino di Varlenia"
+      "outputPreview": "2-4x Vino di Varlenia"
     },
     "aged_wine": {
       "name": "Vino Invecchiato",
       "description": "Frutto di nettare di cristallo unito al miele di carne reale: un'annata sontuosa che esige pazienza.",
-      "outputPreview": "1–3x Vino Invecchiato"
+      "outputPreview": "1-3x Vino Invecchiato"
     },
     "ethanol": {
       "name": "Etanolo",
       "description": "Un potente distillato fermentato da Frutto del Respiro di Drago e Stellafrutto del Vuoto. Alcol pericolosamente puro.",
-      "outputPreview": "1–4x Etanolo"
+      "outputPreview": "1-4x Etanolo"
     }
   }
 }

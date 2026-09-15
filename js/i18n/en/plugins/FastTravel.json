@@ -46,6 +46,10 @@
   "timeToArrival": "Time to Arrival:",
   "destFuel": "{place} ({liters}L, {km} km)",
   "destCost": "{place} ({cost}€, {km} km)",
+  "destLevel": "Lv. {level}",
+  "destLevelDetail": "Lv. {level} (band {min}-{max})",
+  "destLevelBand": "What roams there: levels {min} to {max}",
+  "destLevelBandFrozen": "What roams there: levels {min} to {max}, and the years never move them",
   "ui": {
     "back": "Back",
     "edit": "Edit",
@@ -63,7 +67,8 @@
     "travel": "Travel",
     "free": "Free",
     "startHere": "Start Here",
-    "travelNoTicket": "Travel With No Ticket"
+    "travelNoTicket": "Travel With No Ticket",
+    "enemyLevel": "Enemy level:"
   },
   "refused": {
     "title": "Turned away at the counter",

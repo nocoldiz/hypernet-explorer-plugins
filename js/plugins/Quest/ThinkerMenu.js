@@ -71,14 +71,10 @@
         // i18n-ignore-start: <category:> note-tag ids; the label the player sees
         // comes from categoryLabel()
         switch (category) {
-            case "Arctic": return 67;
-            case "Artisan": return 188;
             case "Combat": return 334;
             case "Collectibles": return 210;
             case "Component": return 83;
-            case "Counterfeits": return 306;
             case "Enhancers": return 179;
-            case "Espionage": return 130;
             case "Essentials": return 83;
             case "Food": return 265;
             case "Homeopathy": return 273;
@@ -358,16 +354,12 @@
     // armor answer to the forge whatever category they were filed under.
     // i18n-ignore-start
     const CATEGORY_SPECS = {
-        Arctic: 'Igloo Building',
         Armor: 'Armor Smithing',
-        Artisan: 'Woodcarving',
         Books: 'Bookbinding',
         Collectibles: 'Antique Restoration',
         Combat: 'Improvised Explosives',
         Component: 'Electronics',
-        Counterfeits: 'Counterfeiting',
         Enhancers: 'Alchemy',
-        Espionage: 'Electronics',
         Essentials: 'Fabrication',
         Farming: 'Farming',
         Food: 'Cooking',
@@ -409,7 +401,7 @@
 
     // The one trade a recipe belongs to. An entry may name it outright with the
     // forge's own <Craft:> tag, which is how a thing filed on one shelf is made
-    // at another bench: a lockpick sits under Espionage with the rest of the
+    // at another bench: a lockpick sits under Tools with the rest of the
     // burglar's kit, but it is two bits of steel and a smith makes it. Failing
     // that, the shelf answers for it.
     function recipeSpec(item) {
@@ -1990,11 +1982,13 @@
                             </div>
                             <div class="left-header"><span class="category-name">${escapeHtml(T('Blacksmith.methods'))}</span></div>
                             <div class="list-viewport" id="forge-trades"></div>
+                            <div id="forge-legend" class="forge-legend"></div>
                         </div>
                         <div class="right-page">
                             <div id="forge-companion-row" class="companion-switcher companion-switcher--header"></div>
                             <div id="forge-search-slot"></div>
                             <div id="forge-tabs"></div>
+                            <div id="forge-context" class="forge-context"></div>
                             <div class="list-viewport" id="forge-list"></div>
                         </div>
                         <div id="forge-modal"></div>
@@ -2023,7 +2017,9 @@
 
             this.renderSwitcher();
             this.renderTrades();
+            this.renderLegend();
             this.renderFilters();
+            this.renderContext();
             this.renderList();
             this.renderDetail();
             this.renderOverlay();
@@ -2068,22 +2064,73 @@
             const rows = this.trades();
             const counts = this.boardCounts();
 
-            const row = (key, label, known, total, idx) => {
+            // A trade says three things now, in the order they matter: its
+            // name, how many pieces in it can be worked THIS MINUTE, and how
+            // much of it these hands can read at all. The ready badge is why
+            // the shelf is worth reading: it points at the one trade that has
+            // work waiting instead of leaving the player to open each in turn.
+            const row = (key, label, ready, known, total, idx) => {
                 const active = this._trade === key ? 'active' : '';
                 const focused = (this._activeArea === 'trades' && this._tradeIndex === idx) ? 'focused' : '';
+                const badge = ready > 0
+                    ? `<span class="forge-trade-ready">${escapeHtml(T('Blacksmith.readyCount', { n: ready }))}</span>`
+                    : '';
                 return `
-                    <div class="category-row forge-trade-row focusable ${active} ${focused}" tabindex="0" data-trade="${escapeHtml(key)}">
+                    <div class="category-row forge-trade-row focusable ${active} ${focused}" tabindex="0" data-trade="${escapeHtml(key)}"
+                         title="${escapeHtml(T('Blacksmith.tradeHint', { known: known, total: total }))}">
                         <div class="category-meta-left"><span class="category-name">${escapeHtml(label)}</span></div>
-                        <div class="category-meta-left"><span class="forge-known-count">${known}<span class="forge-known-of">/${total}</span></span></div>
+                        <div class="category-meta-left">${badge}<span class="forge-known-count">${known}<span class="forge-known-of">/${total}</span></span></div>
                     </div>`;
             };
 
-            let html = row('', t.allTrades, counts.all - (counts.locked || 0), counts.all, 0);
-            rows.forEach((r, idx) => { html += row(r.key, r.label, r.known, r.total, idx + 1); });
+            let html = row('', t.allTrades, counts.ready || 0,
+                counts.all - (counts.locked || 0), counts.all, 0);
+            rows.forEach((r, idx) => { html += row(r.key, r.label, r.ready, r.known, r.total, idx + 1); });
             el.innerHTML = html;
 
             const focus = el.querySelector('.forge-trade-row.focused');
             if (focus) focus.scrollIntoView({ block: 'nearest' });
+        }
+
+        // The key to the marks the cards carry, at the foot of the left page.
+        // Every mark on the board is one of these four, and reading the board
+        // used to mean guessing which; the legend says it outright, in the same
+        // glyph and the same colour the card itself uses.
+        renderLegend() {
+            const el = document.getElementById('forge-legend');
+            if (!el) return;
+            const line = (mark, cls, key) =>
+                `<div class="forge-legend-row">
+                    <span class="forge-legend-mark ${cls}">${mark}</span>
+                    <span class="forge-legend-text">${escapeHtml(T('Blacksmith.legend.' + key))}</span>
+                </div>`;
+            el.innerHTML =
+                `<div class="forge-legend-title">${escapeHtml(T('Blacksmith.legend.title'))}</div>` +
+                line('&#10004;', 'forge-mat-state ok', 'ready') +
+                line('&#10006;', 'forge-mat-state short', 'short') +
+                line('&#x1F512;', 'forge-tier-need', 'locked') +
+                line('&#9670;', 'forge-quality-mark', 'forged');
+        }
+
+        // One line over the grid saying, in words, exactly what is under the
+        // cursor's filters: which trade, which state, and how many pieces came
+        // out of it. The chips and the shelf each say half of that; nothing on
+        // the page said the whole of it, so a board filtered down to nothing
+        // read as a bug rather than as a filter.
+        renderContext() {
+            const el = document.getElementById('forge-context');
+            if (!el) return;
+            const t = bsText();
+            const trade = this._trade ? this.tradeLabelOf(this._trade) : t.allTrades;
+            const status = T('Blacksmith.status.' + this._status);
+            const n = this.listItems().length;
+            el.innerHTML =
+                `<span class="forge-context-scope">${escapeHtml(trade)}</span>` +
+                `<span class="forge-context-sep">&middot;</span>` +
+                `<span class="forge-context-scope">${escapeHtml(status)}</span>` +
+                `<span class="forge-context-sep">&middot;</span>` +
+                `<span class="forge-context-count">${escapeHtml(T('Blacksmith.pieceCount', { n: n }))}</span>` +
+                `<span class="forge-context-hint">${escapeHtml(T('Blacksmith.pickHint'))}</span>`;
         }
 
         // What state a piece is in, over the grid it filters. The trade strip
@@ -2184,10 +2231,14 @@
             const hidden = isBenchItem(item) && b && !b.knows(item);
 
             let mark;
+            // The same four glyphs the legend on the left page spells out, so a
+            // card is read off the key rather than guessed at. The locked and
+            // short marks carry the number that says HOW locked or HOW short,
+            // which is what decides whether a piece is worth walking towards.
             if (status === 'forged') {
-                mark = `<span class="forge-quality-mark">${escapeHtml(qualityLabel(item.meta.ForgeQuality))}</span>`;
+                mark = `<span class="forge-quality-mark">&#9670; ${escapeHtml(qualityLabel(item.meta.ForgeQuality))}</span>`;
             } else if (status === 'locked') {
-                mark = `<span class="forge-tier-need">${escapeHtml(
+                mark = `<span class="forge-tier-need">&#x1F512; ${escapeHtml(
                     isBenchItem(item) && b ? b.tierLevelName(item) : levelName(craftTier(item)))}</span>`;
             } else if (status === 'short') {
                 mark = `<span class="forge-mat-state short">&#10006; ${escapeHtml(

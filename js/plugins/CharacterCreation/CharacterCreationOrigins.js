@@ -510,7 +510,7 @@
   const CEO_COMPANY_KEY = "LimeCorp";
   const CEO_OWNERSHIP = 0.8;                  // 80% controlling stake
   const CEO_START = { mapId: 1036, x: 25, y: 31, dir: 2 }; // facing down
-  const CEO_PLACE = "Ghent";                  // HQ's town: the anchor's world square
+  const CEO_PLACE = "Ghent"; // i18n-ignore: world-square id                  // HQ's town: the anchor's world square
 
   function startCEOOrigin() {
     // The €1,000,000 purse itself is handed out by giveStartingMoney, via
@@ -1252,6 +1252,7 @@
    * editing the table.
    * @returns {array} Offending { origin, problems } rows
    */
+  // i18n-ignore-start: developer audit, console output only
   function auditOriginFavorites() {
     const offenders = [];
     Object.keys(ORIGIN_LOADOUTS).forEach((symbol) => {
@@ -1288,6 +1289,7 @@
     });
     return offenders;
   }
+  // i18n-ignore-end
 
   // How many characters the loadout is being sized for. The origin step is the
   // last one in the wizard, so the whole party already exists by then.
@@ -1439,7 +1441,7 @@
       grimoireBooks: items.filter((i) =>
         /<Grimoire:/i.test(i.note || "") && i.price <= GRIMOIRE_BOOK_PRICE_CAP
       ).sort(byPrice),
-      magicItems: items.filter((i) => inCategory(i, "Magic") && i.price <= MAGIC_ITEM_PRICE_CAP).sort(byPrice),
+      magicItems: items.filter((i) => inCategory(i, "Magic") /* i18n-ignore: item category id */ && i.price <= MAGIC_ITEM_PRICE_CAP).sort(byPrice),
       rangedWeapons: weapons.filter((w) =>
         RANGED_WTYPES.includes(w.wtypeId) &&
         w.price >= RANGED_WEAPON_PRICE_FLOOR && w.price <= RANGED_WEAPON_PRICE_CAP
@@ -1452,10 +1454,10 @@
       // HP or MP or clears a status, which is what leaves the recreational half
       // of the Medical shelf (cocaine, angel dust, opium) out of it.
       medicalItems: items.filter((i) =>
-        inCategory(i, "Medical") && i.price <= MEDICAL_ITEM_PRICE_CAP &&
+        inCategory(i, "Medical") /* i18n-ignore: item category id */ && i.price <= MEDICAL_ITEM_PRICE_CAP &&
         (i.effects || []).some((e) => e && MEDICINE_EFFECT_CODES.includes(e.code))
       ).sort(byPrice),
-      survivalItems: items.filter((i) => inCategory(i, "Survival") && i.price <= SURVIVAL_ITEM_PRICE_CAP).sort(byPrice),
+      survivalItems: items.filter((i) => inCategory(i, "Survival") /* i18n-ignore: item category id */ && i.price <= SURVIVAL_ITEM_PRICE_CAP).sort(byPrice),
       // The sealed shelf: one vial per disease in the library, each naming what
       // is in it. Read off the tag rather than the category so a vial is only
       // ever dealt when it really carries a disease id to open.
@@ -1480,7 +1482,7 @@
       // somebody scavenging components would plausibly have accumulated, not a
       // scrying mirror and a bottled storm.
       components: items.filter((i) =>
-        inCategory(i, "Component") && i.price <= ORIGIN_COMPONENT_PRICE_CAP
+        inCategory(i, "Component") /* i18n-ignore: item category id */ && i.price <= ORIGIN_COMPONENT_PRICE_CAP
       ).sort(byPrice),
       summonSkills: $dataSkills.filter((s) => {
         if (!isRealDbEntry(s) || (s.meta && s.meta.Forbidden)) return false;
@@ -1946,7 +1948,7 @@
 
   // Diplomat origin: the ONU assembly's seat of business, Brussels (map 400).
   const DIPLOMAT_ORIGIN = { mapId: 400, x: 41, y: 15, dir: 2 }; // facing down
-  const DIPLOMAT_PLACE = "Brusselles";  // the assembly's town: the anchor's world square
+  const DIPLOMAT_PLACE = "Brusselles"; // i18n-ignore: world-square id  // the assembly's town: the anchor's world square
 
   // Diplomat origin: start in Brussels with the ONU Terminal its loadout lists,
   // remote access into the assembly (see ONUAssembly.js).

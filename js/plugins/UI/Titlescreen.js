@@ -73,7 +73,7 @@
 */
 
 (() => {
-    const pluginName = "Titlescreen";
+    const pluginName = "Titlescreen"; // i18n-ignore: PluginManager lookup name
     const params = PluginManager.parameters(pluginName);
     const toPct = v => Number(v) / 100;
     const windowWidthPct = Number(params.windowWidth) || 35;
@@ -1023,6 +1023,7 @@
     // and fishing build their world out of the map they are played on, and the
     // arcade has no map, so the player is asked instead of being given the
     // default (open water, whatever hour the empty world clock reads).
+    // i18n-ignore-start: the label fields are i18n keys, not display text
     const WATER_VENUES = [
         { venue: 'exterior', label: 'Titlescreen.minigameSetup.exterior' },
         { venue: 'interior', label: 'Titlescreen.minigameSetup.interior' }
@@ -1051,6 +1052,7 @@
         { key: 'boat',   label: 'Titlescreen.minigameSetup.boat',   transport: 'boat' },
         { key: 'broom',  label: 'Titlescreen.minigameSetup.broom',  transport: 'magic_carpet' }
     ];
+    // i18n-ignore-end
 
     // Where the borrowed travel map opens when there is no party to open it on:
     // the square the Omega Tower stands beside, the one fixed point of this
@@ -1857,7 +1859,7 @@
     // New story and New party start here when the world folder is empty.
     async function createDefaultWorld() {
         const WM = window.WorldManager;
-        let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story';
+        let base = (WM.randomWorldName && WM.randomWorldName()) || 'Story'; // i18n-ignore: world folder name under save/worlds/, persistence key
         let name = base;
         let n = 2;
         while (WM.worldExists(name)) name = base + ' ' + (n++);
@@ -4116,9 +4118,11 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // camera drag. Match the interactive list itself, not
             // #title-menu-container: that wrapper covers the whole screen, so
             // testing against it would treat every background press as a UI press.
+            // i18n-ignore-start: CSS selector list
             const onUI = (target) => !!(target && target.closest && target.closest(
                 '.ts-menu-overlay, #title-bg-switch, #title-music-switch, #title-hyperverse-info, ' +
                 '#title-hyperverse-next, #title-hyperverse-catalog-btn, #title-hyperverse-catalog'));
+            // i18n-ignore-end
 
             this._onDown = (e) => {
                 if (e.button !== undefined && e.button !== 0 && e.button !== 2) return;
@@ -5563,7 +5567,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 `<div class="title-info-head">${ap('header')}</div>` +
                 `<div class="title-drive-road" id="ad-road">--</div>` +
                 `<div class="title-drive-place" id="ad-place">--</div>` +
-                `<div class="title-drive-stat" id="ad-speed">${ap('speed')} -- km/h</div>` +
+                `<div class="title-drive-stat" id="ad-speed">${ap('speed')} -- km/h</div>` + // i18n-ignore: km/h is a unit symbol, identical in every language
                 `<div class="title-drive-stat" id="ad-head">${ap('heading')} --</div>` +
                 `<div class="title-info-foot">${ap('lookHint')}</div>`;
             this._roadEl = box.querySelector('#ad-road');

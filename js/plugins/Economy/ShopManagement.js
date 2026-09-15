@@ -1809,7 +1809,7 @@
   // already stocks, so the shelves are never empty on the first morning.
   const PROPERTY_TRADES = [
     'Food', 'Medical', 'Alchemistry', 'Books', 'Magic',
-    'Tools', 'Component', 'Artisan', 'Collectibles', 'Combat',
+    'Tools', 'Component', 'Crafting', 'Collectibles', 'Combat',
   ];
 
   // The trade is the property's, not the roll of the day: the same deed is

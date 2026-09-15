@@ -2617,6 +2617,25 @@
     return (scene instanceof Scene_Battle) ? scene._actorCommandWindow : null;
   }
 
+  // The command list is not the actor's own command list while another list has
+  // taken the window over: the carried skills, a target being picked, and the
+  // Aim, Wrestle and Talk pages all REPLACE the rows for as long as they are up
+  // (BattleSystemEnhanchedCommands.js, Window_ActorCommand.makeCommandList).
+  // None of those is a list the bar may be walked off, and none of them is a
+  // list the bar may answer an OK for. Left unguarded, one Left or Right press
+  // inside an open skill list handed the keyboard to the bar while the skills
+  // stayed on screen, so the next OK cast the slot under the bar instead of the
+  // row under the cursor - a skill nobody picked, out of a list that had stopped
+  // answering.
+  function _cmdListTakenOver() {
+    const win = _hotbarCommandWindow();
+    if (!win) return false;
+    return !!(win._skillSession || win._targetSession ||
+      (window.Wrestling && window.Wrestling.isMenuOpen && window.Wrestling.isMenuOpen(win)) ||
+      (window.Aiming && window.Aiming.isMenuOpen && window.Aiming.isMenuOpen(win)) ||
+      (window.TalkMenu && window.TalkMenu.isMenuOpen && window.TalkMenu.isMenuOpen(win)));
+  }
+
   // Give the focus back, on the row the list was standing on. The row is put
   // back rather than left alone because the list goes on being rebuilt while
   // the bar holds the keyboard, and a rebuild under a pointer can move its
@@ -2728,18 +2747,55 @@
   // of blows cannot be practised without when that weapon is not in hand: the
   // slot is already drawn dark (entries read canUse below, which asks
   // window.SkillWeaponReq), and this is where it says why.
-  function _hotbarTooltipText(actor, skill) {
-    let costText = '';
+  function _hotbarCostText(actor, skill) {
     if (actor.skillTpCost(skill) > 0) {
-      costText = `${actor.skillTpCost(skill)} ${TextManager.tp}`;
-    } else if (actor.skillMpCost(skill) > 0) {
-      costText = `${actor.skillMpCost(skill)} ${TextManager.mp}`;
+      return `${actor.skillTpCost(skill)} ${TextManager.tp}`;
     }
-    let text = costText ? `${skill.name} - ${costText}` : skill.name;
+    if (actor.skillMpCost(skill) > 0) {
+      return `${actor.skillMpCost(skill)} ${TextManager.mp}`;
+    }
+    return '';
+  }
+
+  // The weapon a school of blows cannot be practised without, when it is not
+  // the weapon in hand; '' when the skill is castable as the member stands.
+  function _hotbarWeaponNote(actor, skill) {
     const wpn = window.SkillWeaponReq;
     const hands = wpn ? wpn.check(actor, skill) : null;
-    if (hands && !hands.met) text += ` - ${wpn.label(hands.need)}`;
+    return (hands && !hands.met) ? wpn.label(hands.need) : '';
+  }
+
+  function _hotbarTooltipText(actor, skill) {
+    const costText = _hotbarCostText(actor, skill);
+    let text = costText ? `${skill.name} - ${costText}` : skill.name;
+    const note = _hotbarWeaponNote(actor, skill);
+    if (note) text += ` - ${note}`;
     return text;
+  }
+
+  // A database record's own name and description are the English ones the
+  // editor wrote; the engine swaps them at draw time through hooks a DOM node
+  // never reaches, so anything this bar prints goes through here.
+  function _hotbarDbText(text) {
+    if (!text) return '';
+    return typeof window.Hendrix_Localization === 'function'
+      ? window.Hendrix_Localization(String(text))
+      : String(text);
+  }
+
+  // The reading card a slot puts up while the pointer is on it or while the
+  // keys have it armed. The name line under the row only has room for the name
+  // and its cost; a player reaching for a spell mid-fight is asking what it
+  // does, and this is the answer they would otherwise have to open the skill
+  // menu for.
+  function _hotbarDetail(actor, skill) {
+    const cost = _hotbarCostText(actor, skill);
+    const note = _hotbarWeaponNote(actor, skill);
+    return {
+      title: _hotbarDbText(skill.name),
+      cost: note ? (cost ? `${cost} - ${note}` : note) : cost,
+      body: _hotbarDbText(skill.description)
+    };
   }
 
   // The row is rebuilt only when something it draws has moved. It used to build
@@ -2778,7 +2834,8 @@
       entries.push(skill ? {
         iconIndex: skill.iconIndex,
         enabled: actor.canUse(skill),
-        tooltip: _hotbarTooltipText(actor, skill)
+        tooltip: _hotbarTooltipText(actor, skill),
+        detail: _hotbarDetail(actor, skill)
       } : null);
     }
     _hotbarEntriesKey = stamp;
@@ -2960,7 +3017,11 @@
     // Pressing a second number while the first is still down re-arms onto the
     // new one, and the keys underneath it are spent, so releasing them later
     // does nothing.
-    if (inert) {
+    // A list that has been taken over is as inert as MapBattleMode's own
+    // inert flag: the bar is still drawn, but it answers nothing, and a focus
+    // it was already holding when the takeover opened is handed straight back.
+    if (inert || _cmdListTakenOver()) {
+      if (_hotbarActive) _hotbarReleaseFocus();
       _hotbarActive = false;
       _clearHotbarKeys();
       _updateHotbarPosition(actor, skills);
@@ -3018,6 +3079,11 @@
   // no Scene_Battle to hang an update on: without this the spell quickbar
   // simply never appeared once a fight was played out on the map.
   window.BattleHotbar.update = _updateBattleHotbar;
+  // Whether the bar, rather than the command list beside it, owns direction
+  // input this frame. Asked by whoever else overrides the list's cursor
+  // (BattleSystemEnhanchedCommands.js loads after this file and wraps it), so
+  // one press is never read by both.
+  window.BattleHotbar.hasFocus = function () { return _hotbarActive; };
   window.BattleHotbar.hide = function () {
     _hotbarActive = false;
     _hotbarReturnIndex = null;
@@ -3048,9 +3114,14 @@
   const _Window_ActorCommand_processCursorMove_hotbar = Window_ActorCommand.prototype.processCursorMove;
   Window_ActorCommand.prototype.processCursorMove = function () {
     if (_hotbarActive) return;
-    const back = Input.isTriggered('left') || Input.isTriggered('pageup');
-    const fwd = Input.isTriggered('right') || Input.isTriggered('pagedown');
-    if (this.isCursorMovable() && (back || fwd)) {
+    // LEFT AND RIGHT ONLY. The shoulders used to walk onto the bar as well,
+    // from the days when the command list ate the horizontal presses and there
+    // was no other way onto it. L1 is the basic-skills row now and R1 is free
+    // (BattleSystemEnhanchedCommands.js), and one control doing two things was
+    // how L1 came to open a list and step a bar on the same press.
+    const back = Input.isTriggered('left');
+    const fwd = Input.isTriggered('right');
+    if (this.isCursorMovable() && (back || fwd) && !_cmdListTakenOver()) {
       const skills = _hotbarSkills(this._actor);
       if (skills.length > 0) {
         // Right walks onto the FIRST slot of the row and Left onto its LAST -

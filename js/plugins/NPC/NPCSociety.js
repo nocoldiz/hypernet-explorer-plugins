@@ -1062,8 +1062,8 @@
       ["Food","Survival","Homeopathy"],
       ["Food","Tools","Survival","Crafting"],
       ["Food","Tools","Lifestyle","Medical"],
-      ["Tools","Lifestyle","Medical","Artisan","Component"],
-      ["Magic","Collectibles","Espionage","Artisan"],
+      ["Tools","Lifestyle","Medical","Crafting","Component"],
+      ["Magic","Collectibles","Tools","Crafting"],
     ],
     // i18n-ignore-end
 

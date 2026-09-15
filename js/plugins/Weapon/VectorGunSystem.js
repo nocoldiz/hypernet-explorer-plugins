@@ -15,8 +15,11 @@
  * something to leave in a chest, and what it does in a fight is chosen in the
  * main menu rather than written into the weapon. Two choices, kept apart:
  *
- *   OPERATING MODES  what the gun does. Fifteen of them, three running at
- *                    once, from Mana bullets to Hexed rounds.
+ *   OPERATING MODES  what the gun does. Twenty-five of them, three running
+ *                    at once, from Mana bullets to Hexed rounds. Em walks in
+ *                    with five and earns the other twenty a level at a time,
+ *                    up to Tracker rounds at 99; the screen lists them in that
+ *                    order and prints the level on the ones still shut.
  *   THE FORM         what the gun is. One shape fitted at a time, out of the
  *                    gun's own and the eleven weapon types it folds into. In
  *                    battle the reload row is SWITCH: it reconstructs the
@@ -103,6 +106,73 @@
     'executioner', 'ambush', 'resonance', 'overpressure',
     'hollowPoint', 'deepMagazine',
   ];
+
+  // What Em has earned the right to run. The frame itself still does not grow
+  // with her (see above): a mode is worth exactly what it says whenever it is
+  // fitted, and nothing is handed over for standing still except the RIGHT to
+  // fit it. She walks in with five, and the other twenty come open one at a
+  // time across the ninety-nine levels.
+  //
+  // The order is the order of what a mode is worth: the five she starts with
+  // are the ones that decorate a shot, the last ones are the ones that rewrite
+  // what a fight is. A mode that only marks a target comes before one that
+  // multiplies a number, and one that multiplies a number comes before one
+  // that deletes a rule of the battle map (guard, evasion, the miss).
+  const MODE_UNLOCK = {
+    // Level 1: the five she is handed with the gun. The recital is one of
+    // them, so the pact shape is readable from her very first fight.
+    card: 1,                 // no number at all: a kill files a card
+    solomonIncantation: 1,   // +15% on spells, and only with the book fitted
+    venom: 1,                // one mark, 30% of the time
+    wide: 1,                 // MORE bodies hit for LESS damage: a trade, not a gain
+    recoil: 1,               // knockback and a float: placement, not damage
+    // The rest, weakest first.
+    concussion: 4,           // the same one mark, on a better state
+    thermalOverload: 8,
+    thermalUnderload: 12,
+    siphon: 17,              // 15% of the damage back as mana
+    deepMagazine: 22,        // four more coilgun rounds, damage untouched
+    longshot: 27,            // twice the reach, in a ranged shape only
+    resonance: 32,           // up to +40%, and only off a full reservoir
+    ambush: 38,              // +50%, and only in the opening round
+    mana: 44,                // the shot rescaled onto INT
+    psi: 50,                 // the shot rescaled onto PSI
+    executioner: 56,         // up to +60%, as the target bleeds out
+    hollowPoint: 62,         // +75% on a critical, whenever one lands
+    overpressure: 68,        // +35% flat, paid for out of the rack
+    drain: 74,               // a quarter of everything dealt, back as health
+    deadeye: 80,             // +40 points of critical chance, unconditional
+    overload: 85,            // the rack doubled, for 15% off every shot
+    burst: 89,               // two shots an attack: 140% of one
+    hex: 93,                 // five afflictions, 40% of the time, every shot
+    pierce: 96,              // guard stops being a rule
+    tracker: 99,             // and so does evasion
+  };
+
+  // The modes in that order: the screen lists them this way rather than
+  // alphabetically, so the page reads as a progression instead of a catalogue.
+  const MODE_ORDER = BASE_MODE_KEYS.slice().sort((a, b) =>
+    (MODE_UNLOCK[a] || 1) - (MODE_UNLOCK[b] || 1)
+    || BASE_MODE_KEYS.indexOf(a) - BASE_MODE_KEYS.indexOf(b));
+
+  /** The level a mode comes open at. */
+  const unlockLevel = (key) => MODE_UNLOCK[key] || 1;
+
+  /**
+   * Whose levels the gun answers to: Em's, and in the sandbox (where nobody is
+   * Em) whoever is carrying it. With the gun nowhere, the frame is as new.
+   */
+  function gunLevel() {
+    const actor = emActor() || wielder();
+    return actor && actor.level ? actor.level : 1;
+  }
+
+  /** Whether the mode may be fitted at all right now. */
+  const isModeUnlocked = (key) => gunLevel() >= unlockLevel(key);
+
+  /** The modes still to come, weakest first, each with the level it opens at. */
+  const lockedModes = () => MODE_ORDER.filter((key) => !isModeUnlocked(key))
+    .map((key) => ({ key: key, level: unlockLevel(key) }));
 
   // The shapes the frame reconstructs itself into, one per weapon type the game
   // knows. ONE of them is fitted at a time, in a selector of its own, and the
@@ -219,7 +289,7 @@
     const stray = $gameSystem._vectorGunModes.find(isFormMode);
     if (stray && !$gameSystem._vectorGunFitted) $gameSystem._vectorGunFitted = stray;
     $gameSystem._vectorGunModes = $gameSystem._vectorGunModes
-      .filter((key) => BASE_MODE_KEYS.includes(key))
+      .filter((key) => BASE_MODE_KEYS.includes(key) && isModeUnlocked(key))
       .slice(0, MAX_MODES);
     return $gameSystem._vectorGunModes;
   }
@@ -233,7 +303,7 @@
    * @returns {string} 'on', 'off' or 'full'
    */
   function toggleMode(key) {
-    if (!MODE_KEYS.includes(key)) return 'full';
+    if (!MODE_KEYS.includes(key) || !isModeUnlocked(key)) return 'locked';
     const list = modes();
     const at = list.indexOf(key);
     if (at >= 0) {
@@ -251,11 +321,14 @@
    * OLDEST out instead of being refused. Confirming a mode that is already
    * running unloads it.
    * @param {string} key - One of MODE_KEYS
-   * @returns {{state: string, replaced: ?string}} 'on' or 'off', and whatever
-   *   was pushed out to make room.
+   * @returns {{state: string, replaced: ?string, level: ?number}} 'on', 'off'
+   *   or 'locked', whatever was pushed out to make room, and the level a
+   *   locked mode comes open at.
    */
   function fitMode(key) {
-    if (!MODE_KEYS.includes(key)) return { state: 'off', replaced: null };
+    if (!MODE_KEYS.includes(key) || !isModeUnlocked(key)) {
+      return { state: 'locked', replaced: null, level: unlockLevel(key) };
+    }
     const list = modes();
     const at = list.indexOf(key);
     if (at >= 0) {
@@ -1206,7 +1279,9 @@
   };
 
   window.VectorGun = {
-    WEAPON_ID: VG_ID, MAX_MODES, MODE_KEYS, FLOATING_STATE,
+    WEAPON_ID: VG_ID, MAX_MODES, MODE_KEYS, MODE_ORDER, FLOATING_STATE,
+    // What she has earned: the modes come open one at a time as she levels.
+    MODE_UNLOCK, unlockLevel, isModeUnlocked, lockedModes, gunLevel,
     isVectorGun, isBound, isEm, inStoryMode, inSandboxMode, gunData,
     modes, hasMode, toggleMode, fitMode,
     emActor, wielder, firing,

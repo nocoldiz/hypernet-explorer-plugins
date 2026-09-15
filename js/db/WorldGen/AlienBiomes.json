@@ -1836,7 +1836,6 @@
     ],
     "bgs": [
       "desert-ambient-loop",
-      "desert",
       "desert2"
     ],
     "dayTemperature": 35,
@@ -2344,7 +2343,7 @@
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
-      "countryside-swamp9"
+      "swamp-long"
     ],
     "bgs": [
       "swamp-woods",

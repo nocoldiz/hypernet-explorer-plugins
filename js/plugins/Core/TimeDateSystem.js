@@ -2646,6 +2646,250 @@
   };
 
   //=============================================================================
+  // Intoxication - what a drink or a dose does to the eyes and to the tongue
+  //=============================================================================
+  // Alcohol and narcotics already feed a craving and stamp a state on whoever
+  // takes them; neither of those says anything about what the world LOOKS like
+  // from behind those eyes, or about how the drinker then talks to people. This
+  // does both, and it reads the dose off the tag the items already carry:
+  // <Addiction: alcohol N> and <Addiction: narcotic N> say how completely the
+  // thing answers the craving, which is also how hard it lands. Nicotine is in
+  // here only so that a cigarette is not nothing. <Addiction: all N> is the
+  // detox case and takes a load off instead of adding one.
+  //
+  // The load is kept per actor and decays against the WORLD CLOCK rather than
+  // on a tick, so hours passed in a bed, a menu or a work shift sober somebody
+  // up exactly the way walking them off does.
+  //
+  // Two registers come out of it: alcohol reads as `drunk` (slurred, loud,
+  // swaying) and narcotics as `high` (drifting, soft, colours crawling). The
+  // heavier load decides which, because that is the one doing the talking.
+  const INTOX_DOSE   = { alcohol: 0.45, narcotic: 0.50, nicotine: 0.06 };
+  const INTOX_CLEAR  = { alcohol: 0.42, narcotic: 0.55, nicotine: 1.20 }; // per game minute
+  const INTOX_STAGES = [15, 40, 70]; // sober | tipsy | drunk | gone
+  const INTOX_CAP    = 180;          // a load can sit past 100 and take its time coming down
+
+  window.Intoxication = {
+    KEYS: ["alcohol", "narcotic", "nicotine"],
+
+    // The store, decayed up to now before anybody reads it. An actor who has
+    // never touched anything gets an empty one and no save weight worth the
+    // name (three zeroes and a stamp).
+    _store(actor) {
+      if (!actor) return null;
+      const now = getGameTimeMinutes();
+      let st = actor._intox;
+      if (!st) {
+        st = actor._intox = { alcohol: 0, narcotic: 0, nicotine: 0, min: now };
+        return st;
+      }
+      const elapsed = Math.max(0, now - (Number(st.min) || 0));
+      st.min = now;
+      if (elapsed > 0) {
+        for (const key of this.KEYS) {
+          st[key] = Math.max(0, (Number(st[key]) || 0) - elapsed * INTOX_CLEAR[key]);
+        }
+      }
+      return st;
+    },
+
+    /** How much of one substance is still in them, 0 upward. */
+    load(actor, key) {
+      const st = this._store(actor);
+      return st ? Math.max(0, Number(st[key]) || 0) : 0;
+    },
+
+    /** Everything at once, read as 0..100. This is the number the eyes use. */
+    level(actor) {
+      const st = this._store(actor);
+      if (!st) return 0;
+      let sum = 0;
+      for (const key of this.KEYS) sum += Math.max(0, Number(st[key]) || 0);
+      return Math.min(100, sum);
+    },
+
+    /** 0 sober, 1 tipsy, 2 drunk, 3 gone. */
+    stage(actor) {
+      const level = this.level(actor);
+      let n = 0;
+      for (const line of INTOX_STAGES) { if (level >= line) n++; }
+      return n;
+    },
+
+    /** Which of the two registers is doing the talking. */
+    register(actor) {
+      return this.load(actor, "narcotic") > this.load(actor, "alcohol") ? "high" : "drunk";
+    },
+
+    /** Whose eyes the screen is looked through: whoever is walking in front. */
+    viewer() {
+      return (typeof $gameParty !== "undefined" && $gameParty && $gameParty.leader)
+        ? $gameParty.leader() : null;
+    },
+
+    /** Put something in them. `amount` is the tag's 1-100 figure. */
+    dose(actor, key, amount) {
+      if (!actor || !INTOX_DOSE[key]) return;
+      const before = this.stage(actor);
+      const st = this._store(actor);
+      st[key] = Math.min(INTOX_CAP, (Number(st[key]) || 0) + Number(amount || 0) * INTOX_DOSE[key]);
+      const after = this.stage(actor);
+      if (after > before) this._announce(actor, after);
+    },
+
+    /** Take it back out: what a detox drug, a purge or a long sleep does. */
+    sober(actor, amount) {
+      const st = this._store(actor);
+      if (!st) return;
+      const bite = amount === undefined || amount === null ? INTOX_CAP : Number(amount) * 1.2;
+      for (const key of this.KEYS) st[key] = Math.max(0, (Number(st[key]) || 0) - bite);
+    },
+
+    clear(actor) { this.sober(actor, null); },
+
+    /**
+     * Read one used item and take whatever is in it. Called from the one place
+     * an item lands on an actor (ItemSystemUtils.applyNeedRestores), so a drink
+     * poured in the inventory, in a bar or aboard the camper all count alike.
+     */
+    onConsume(actor, item) {
+      const utils = window.ItemSystemUtils;
+      if (!actor || !item || !utils || !utils.getAddictionRelief) return;
+      for (const relief of utils.getAddictionRelief(item)) {
+        if (relief.key === "all") this.sober(actor, relief.amount);
+        else this.dose(actor, relief.key, relief.amount);
+      }
+    },
+
+    _announce(actor, stage) {
+      if (!window.ParchmentToast || !actor) return;
+      const key = "TimeDate.intox.rise." + this.register(actor) + stage;
+      window.ParchmentToast.show(T(key, { name: actor.name() }), {
+        severity: stage >= 3 ? "danger" : "info",
+        key: "intox-" + actor.actorId(),
+      });
+    },
+
+    //-------------------------------------------------------------------------
+    // The tongue
+    //-------------------------------------------------------------------------
+    // Everything here works on whatever string it is handed, letter by letter
+    // and word by word, so it slurs Italian as readily as English and needs no
+    // second bank of written lines. Only the interjections are authored, and
+    // those come out of i18n like any other prose.
+    /**
+     * The same sentence as it actually leaves their mouth. Sober, or with no
+     * actor to be drunk, it is returned exactly as it came in.
+     */
+    slur(text, actor) {
+      const stage = this.stage(actor);
+      const source = String(text == null ? "" : text);
+      if (!stage || !source.trim()) return source;
+      const high = this.register(actor) === "high";
+      const p = stage / 3;
+      const roll = (chance) => Math.random() < chance;
+      const letter = /[A-Za-zÀ-ɏ]/;
+
+      let out = source.split(/(\s+)/).map((word) => {
+        if (!letter.test(word)) return word;
+        let w = word;
+        if (high) {
+          // Nothing is slurred on a narcotic: it is stretched, and it trails.
+          if (roll(0.22 * p)) w = w.replace(/([aeiouAEIOU])/, (m) => m + m + m);
+          if (roll(0.14 * p)) w = w + "...";
+        } else {
+          if (roll(0.30 * p)) w = w.replace(/s/g, "sh").replace(/S/g, "Sh");
+          if (roll(0.24 * p)) w = w.replace(/([aeiouAEIOU])/, (m) => m + m);
+          if (roll(0.12 * p)) w = w.replace(/^([A-Za-zÀ-ɏ])/, (m) => m + "-" + m.toLowerCase());
+        }
+        return w;
+      }).join("");
+
+      const pool = T.pool(high ? "TimeDate.intox.drifts" : "TimeDate.intox.hics");
+      if (pool.length && roll(0.25 + 0.45 * p)) {
+        const bit = pool[Math.floor(Math.random() * pool.length)];
+        out = roll(0.5) ? bit + " " + out : out.replace(/\s+$/, "") + " " + bit;
+      }
+      // Gone is loud on a drink and far away on a dose.
+      if (stage >= 3 && !high && roll(0.30)) out = out.toUpperCase();
+      if (stage >= 2 && high) out = out.replace(/[.!?]+\s*$/, "") + "...";
+      return out;
+    },
+
+    //-------------------------------------------------------------------------
+    // The eyes
+    //-------------------------------------------------------------------------
+    // Drawn on the canvas element rather than inside the renderer, because the
+    // whole frame is meant to go, three.js scenes and battle alike, and because
+    // a CSS filter costs nothing when it is not there. Sober takes it all back
+    // off in one go and leaves the element exactly as it was found.
+    _canvasEl() {
+      return (typeof Graphics !== "undefined" && Graphics._canvas)
+        || (typeof document !== "undefined" && document.getElementById
+            ? document.getElementById("gameCanvas") : null);
+    },
+
+    _clearScreen(el) {
+      if (!el || !el.dataset || !el.dataset.intox) return;
+      el.style.filter = "";
+      el.style.webkitFilter = "";
+      el.style.transform = "";
+      delete el.dataset.intox;
+    },
+
+    /** Called every frame from whatever scene is up. */
+    updateScreen() {
+      const el = this._canvasEl();
+      if (!el || !el.style) return;
+      const actor = this.viewer();
+      const level = actor ? this.level(actor) : 0;
+      if (level < INTOX_STAGES[0]) return this._clearScreen(el);
+
+      const t = Math.min(1, (level - INTOX_STAGES[0]) / (100 - INTOX_STAGES[0]));
+      const high = this.register(actor) === "high";
+      const now = (typeof performance !== "undefined" && performance.now
+        ? performance.now() : Date.now()) / 1000;
+      const n = (v) => v.toFixed(2);
+
+      // A drink doubles the world and rocks it; a dose softens it and lets the
+      // colour crawl. Both stay well under the point where the HUD stops being
+      // readable, because a screen you cannot read is not an effect.
+      const blur   = (high ? 0.7 : 1.6) * t;
+      const ghost  = (high ? 1.2 : 6.0) * t;
+      const hue    = high ? Math.sin(now * 0.55) * 45 * t : Math.sin(now * 0.20) * 9 * t;
+      const sat    = 1 + (high ? 0.80 : 0.35) * t;
+      const bright = 1 + (high ? 0.10 : -0.05) * t;
+      el.style.filter =
+        "blur(" + n(blur) + "px) saturate(" + n(sat) + ") brightness(" + n(bright) + ") " +
+        "hue-rotate(" + n(hue) + "deg) drop-shadow(" +
+        n(Math.sin(now * 0.90) * ghost) + "px " +
+        n(Math.cos(now * 0.70) * ghost * 0.4) + "px 0 " +
+        (high ? "rgba(255,140,220," : "rgba(120,180,255,") + n(0.45 * t) + "))";
+      el.style.webkitFilter = el.style.filter;
+
+      const swayX = Math.sin(now * (high ? 0.40 : 1.10)) * 7 * t;
+      const swayY = Math.cos(now * (high ? 0.30 : 0.80)) * 4 * t;
+      const roll  = Math.sin(now * 0.35) * (high ? 0.4 : 1.2) * t;
+      const zoom  = high ? 1 + Math.sin(now * 0.8) * 0.012 * t : 1;
+      el.style.transform =
+        "translate(" + n(swayX) + "px, " + n(swayY) + "px) rotate(" + n(roll) + "deg)" +
+        (high ? " scale(" + zoom.toFixed(4) + ")" : "");
+      el.dataset.intox = "1";
+    },
+  };
+
+  // One hook for every scene there is: the map, a battle, a 3D world and the
+  // menus in between all look the same from behind those eyes, and a scene that
+  // is looked at while sober clears the canvas back on its first frame.
+  if (typeof Scene_Base !== "undefined" && Scene_Base.prototype) {
+    const _Intox_Scene_Base_update = Scene_Base.prototype.update;
+    Scene_Base.prototype.update = function () {
+      _Intox_Scene_Base_update.call(this);
+      try { window.Intoxication.updateScreen(); } catch (e) { /* never break a frame over it */ }
+    };
+  }
+
+  //=============================================================================
   // PartyNeeds - shared needs vocabulary for the whole party
   //=============================================================================
   // Single source of truth for "what needs exist" and "what is the party's

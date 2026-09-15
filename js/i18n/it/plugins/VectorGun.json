@@ -159,7 +159,15 @@
     "element": "Elemento impostato su {element}.",
     "swapped": "{mode} attiva, {old} inattiva.",
     "form": "Forma impostata su {form}.",
-    "unracked": "Coilgun esaurito, torna pistola."
+    "unracked": "Coilgun esaurito, torna pistola.",
+    "locked": "{mode} si sblocca al livello {n}."
+  },
+  "lock": {
+    "title": "Non ancora ottenuta",
+    "level": "Livello {n}",
+    "unlocksAt": "Si sblocca al livello",
+    "current": "Livello di Em",
+    "remaining": "{n} modalita ancora chiuse, la prossima al livello {next}"
   },
   "locked": {
     "equip": "Solo Em puo equipaggiare la pistola vettoriale.",

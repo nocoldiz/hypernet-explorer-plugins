@@ -1399,7 +1399,9 @@
             else if (notes.match(/<Crepuscular>/i)) result.timeOfDay = "Crepuscular";
 
             if (notes.match(/<GreenBlood>/i)) result.bloodType = "Green";
-            else if (notes.match(/<BlueBlood>/i)) result.bloodType = "Blue";
+            // <AzureBlood> is the spelling ReactiveEnemyBattler paints by; the
+            // database uses both and they name one colour.
+            else if (notes.match(/<BlueBlood>|<AzureBlood>/i)) result.bloodType = "Blue";
             else if (notes.match(/<BlackBlood>/i)) result.bloodType = "Black";
             else if (notes.match(/<NoBlood>/i)) result.bloodType = "None";
             // i18n-ignore-end

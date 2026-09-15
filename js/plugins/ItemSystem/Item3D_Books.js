@@ -505,8 +505,8 @@
   });
 
   // The grimoires (ids 1400-1439): one line per school. The leather and the
-  // sigil are the school's own, so two copies of Meta Magic are the same book
-  // and Pyromancy is unmistakably not Cryomancy.
+  // sigil are the school's own, so the school-less Forgotten Grimoire looks
+  // like nobody's, and Pyromancy is unmistakably not Cryomancy.
   const GRIMOIRES = {
     1400: { cover: 0x5A1E14, sigil: 0xE0602A, trim: 0xC8A54A, sides: 6 },
     1401: { cover: 0xE8E0C8, sigil: 0xF0E8A0, trim: 0xC8A54A, sides: 8, glowStrength: 0.8 },
@@ -516,7 +516,7 @@
     1405: { cover: 0x1E2A4A, sigil: 0x8AC8F0, trim: 0xB0B6BC, sides: 8 },
     1406: { cover: 0x2A2A4A, sigil: 0x6A8AE0, trim: 0xC8A54A, sides: 6 },
     1407: { cover: 0x3A3A44, sigil: 0xC8C8D0, trim: 0xB0B6BC, sides: 4 },
-    1408: { cover: 0x3A3A44, sigil: 0xC8C8D0, trim: 0xB0B6BC, sides: 4 },
+    1408: { cover: 0x1A1814, sigil: 0xA89060, trim: 0x6A5A3A, sides: 9 },
     1409: { cover: 0x3A1E4A, sigil: 0xE060C8, trim: 0xC8A54A, sides: 7 },
     1410: { cover: 0x4A4A2A, sigil: 0xC8C840, trim: 0x8A8A5A, sides: 6 },
     1411: { cover: 0x2A1A2A, sigil: 0xC85AE0, trim: 0x8A6A3A, sides: 5 },
@@ -546,7 +546,7 @@
     1429: { cover: 0x2A3A5A, band: 0xC8A54A },
     1430: { cover: 0x3A4A3A, band: 0xB0B6BC },
     1431: { cover: 0x22222A, band: 0x8A8A92 },
-    1432: { cover: 0x22222A, band: 0x8A8A92 },
+    1432: { cover: 0x8A7A5A, band: 0xE0D8C0 },
     1433: { cover: 0x4A6A3A, band: 0xE0D8B0 },
     1436: { cover: 0x4A2A2A, band: 0xC8A54A },
     1437: { cover: 0x2A4A4A, band: 0xC8C840 },

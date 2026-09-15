@@ -984,7 +984,7 @@
       "cdBody": "Inserire il primo floppy o il CD-ROM di installazione del prodotto e fare clic su Avanti. Non c'e' un lettore in cui inserirlo.",
       "componentsIntro": "Per aggiungere o rimuovere un componente, selezionare la casella. Una casella ombreggiata indica che sara' installata solo una parte del componente.",
       "next": "Avanti",
-      "componentsDone": "Archways ha terminato la configurazione dei componenti. Non e' cambiato nulla di visibile, ed e' questo il punto.",
+      "componentsDone": "Archways ha terminato la configurazione dei componenti. Non e' cambiato nulla di visibile. E' previsto.",
       "defaultsIntro": "Una configurazione dei programmi specifica i programmi predefiniti per alcune attivita', come la navigazione Web o la posta, e quali programmi sono accessibili dal menu Start, dal desktop e da altri percorsi.",
       "defaultsArchways": "Predefiniti di Archways",
       "defaultsNonArchways": "Non Archways (non ce ne sono)",

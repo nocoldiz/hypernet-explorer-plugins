@@ -32,7 +32,7 @@
     },
     "tm_dead_repo_fork": {
       "name": "Il Fork dei Novantadue",
-      "desc": "Le novantadue dimensioni perdute nello Schiacciamento vengono trattate come repository non mantenuti. Le opere superstiti vengono estratte, ripulite dalle dipendenze che in questa dimensione non risolvono nulla, e portate su primitive di leyline vive, riscrivendo i punti di chiamata uno alla volta e confrontando il comportamento con la documentazione che è uscita insieme al codice. Per nessuna di esse si può stabilire la provenienza: non c'è firma autenticata, non c'è suite di test e non c'è un autore a cui chiedere. Gli import passano la suite nelle piane morte e vengono distribuiti."
+      "desc": "Le novantadue dimensioni perdute nello Squishing vengono trattate come repository non mantenuti. Le opere superstiti vengono estratte, ripulite dalle dipendenze che in questa dimensione non risolvono nulla, e portate su primitive di leyline vive, riscrivendo i punti di chiamata uno alla volta e confrontando il comportamento con la documentazione che è uscita insieme al codice. Per nessuna di esse si può stabilire la provenienza: non c'è firma autenticata, non c'è suite di test e non c'è un autore a cui chiedere. Gli import passano la suite nelle piane morte e vengono distribuiti."
     },
     "tm_wired_grimoire": {
       "name": "Il Grimorio Cablato",

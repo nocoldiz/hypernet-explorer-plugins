@@ -672,8 +672,8 @@
     const Catalogue = {
         // i18n-ignore-start: category ids from the <category:> note tag
         CUSTOM_ICONS: {
-            Arctic: 67, Artisan: 188, Combat: 334, Collectibles: 210, Component: 83,
-            Counterfeits: 306, Enhancers: 179, Espionage: 130, Books: 186, Tools: 83,
+            Combat: 334, Collectibles: 210, Component: 83,
+            Enhancers: 179, Books: 186, Tools: 83,
             Food: 265, Homeopathy: 273, Jungle: 277, Lifestyle: 84, Magic: 72,
             Medical: 176, Monsters: 293, Plants: 182, Recovery: 180, Survival: 209,
             Trash: 289, Misc: 245

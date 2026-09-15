@@ -4756,8 +4756,8 @@
     "description": "Un grimorio della scuola Meta Magic.\nUsalo per imparare uno dei cinque incantesimi rivelati."
   },
   "1408": {
-    "name": "Grimorio di Meta Magic",
-    "description": "Un grimorio della scuola Meta Magic.\nUsalo per imparare uno dei cinque incantesimi rivelati."
+    "name": "Grimorio Dimenticato",
+    "description": "Un grimorio di nessuna scuola in particolare.\nUsalo per imparare uno dei cinque incantesimi rivelati."
   },
   "1409": {
     "name": "Grimorio di Psychic Abilities",
@@ -4848,8 +4848,8 @@
     "description": "Un manuale di Roguery.\nUsalo per imparare una delle cinque tecniche rivelate."
   },
   "1432": {
-    "name": "Manuale di Roguery",
-    "description": "Un manuale di Roguery.\nUsalo per imparare una delle cinque tecniche rivelate."
+    "name": "Manuale dell’Apprendista",
+    "description": "Un manuale di tecniche comuni.\nUsalo per imparare una delle cinque tecniche rivelate."
   },
   "1433": {
     "name": "Manuale di Pastoral",

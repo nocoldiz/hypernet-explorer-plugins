@@ -55,15 +55,11 @@
       Trash: 'createTrashItemModel',
       Books: 'createBookItemModel',
       Magic: 'createMagicItemModel',
-      Counterfeits: 'createCounterfeitItemModel',
       Tools: 'createToolItemModel',
-      Artisan: 'createArtisanItemModel',
       Crafting: 'createCraftingItemModel',
       Component: 'createComponentItemModel',
       Combat: 'createCombatItemModel',
-      Espionage: 'createEspionageItemModel',
       Survival: 'createSurvivalItemModel',
-      Arctic: 'createArcticItemModel',
       Jungle: 'createJungleItemModel',
       Farming: 'createFarmingItemModel',
       Plants: 'createPlantItemModel',
@@ -375,32 +371,6 @@
         return group;
       },
 
-      // Counterfeits: the magic item as sold on a market stall. The same
-      // silhouette in painted plastic, with a dull stone and no light at all.
-      createCounterfeitItemModel(entry, rand) {
-        const group = new THREE.Group();
-        const plastic = this._mat(this._itemColor(rand, [0x8A7AB0, 0x7AB0A0, 0xB08A9A, 0xB0A070]),
-          { roughness: 0.7, metalness: 0.05 });
-        const base = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.022, 0.028, 0.012, this.seg(10, 6)),
-          this._mat(0x50484E, { roughness: 0.85, metalness: 0.05 }));
-        base.position.y = 0.006;
-        group.add(base);
-        const stone = new THREE.Mesh(new THREE.OctahedronGeometry(0.021, 0), plastic);
-        stone.position.y = 0.042;
-        stone.scale.y = 1.3;
-        stone.rotation.z = 0.12;
-        group.add(stone);
-        if (this.wantsTrim()) {
-          const sticker = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.001, this.seg(10, 6)),
-            this._mat(0xE0C040, { roughness: 0.9, metalness: 0.0 }));
-          sticker.rotation.x = Math.PI / 2;
-          sticker.position.set(0.014, 0.01, 0.026);
-          group.add(sticker);
-        }
-        return group;
-      },
-
       // ======================================================================
       // Made things
       // ======================================================================
@@ -424,25 +394,6 @@
           collar.position.y = 0.072;
           group.add(collar);
         }
-        return group;
-      },
-
-      // Artisan: the tool of a trade, kept in a fitted case. The case is the
-      // point: these are bought as a set rather than used loose.
-      createArtisanItemModel(entry, rand) {
-        const group = new THREE.Group();
-        const leather = this._mat(this._itemColor(rand, [0x5A3A22, 0x3A2A2A, 0x4A4230]),
-          { roughness: 0.9, metalness: 0.0 });
-        const brass = this._mat(0xB08A3A, { roughness: 0.4, metalness: 0.7 });
-        this._slab(group, 0.1, 0.03, 0.06, leather, 0.015);
-        const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.1, this.seg(14, 8), 1, false, 0, Math.PI), leather);
-        lid.rotation.z = Math.PI / 2;
-        lid.scale.z = 0.55;
-        lid.position.y = 0.03;
-        group.add(lid);
-        const clasp = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.012, 0.004), brass);
-        clasp.position.set(0, 0.028, 0.031);
-        group.add(clasp);
         return group;
       },
 
@@ -514,22 +465,6 @@
         return group;
       },
 
-      // Espionage: a flat kit that fits in a pocket, its tools folded in.
-      createEspionageItemModel(entry, rand) {
-        const group = new THREE.Group();
-        const case_ = this._mat(0x1E1E24, { roughness: 0.6, metalness: 0.2 });
-        this._slab(group, 0.075, 0.008, 0.04, case_, 0.004);
-        const steel = this._steel(0xA8ADB4, 0.3);
-        const count = this.wantsTrim() ? 3 : 1;
-        for (let i = 0; i < count; i++) {
-          const pick = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.001, 0.003), steel);
-          pick.position.set(0.004, 0.0085, -0.012 + i * 0.012);
-          pick.rotation.y = (i - 1) * 0.16;
-          group.add(pick);
-        }
-        return group;
-      },
-
       // Survival: field kit. A rolled bundle strapped to a tin cup, the sort
       // of thing that hangs off a pack.
       createSurvivalItemModel(entry, rand) {
@@ -547,26 +482,6 @@
           band.rotation.y = Math.PI / 2;
           band.position.set(x, 0.022, 0);
           group.add(band);
-        }
-        return group;
-      },
-
-      // Arctic: cold-country goods, wrapped in hide against the weather and
-      // tied off at both ends.
-      createArcticItemModel(entry, rand) {
-        const group = new THREE.Group();
-        const hide = this._mat(this._itemColor(rand, [0xC8C0B0, 0x8A8A92, 0xA89880]),
-          { roughness: 0.95, metalness: 0.0 });
-        const bundle = new THREE.Mesh(new THREE.SphereGeometry(0.03, this.seg(12, 7), this.seg(9, 5)), hide);
-        bundle.scale.set(1.25, 0.8, 0.9);
-        bundle.position.y = 0.024;
-        group.add(bundle);
-        const cord = this._mat(0x5A4A3A, { roughness: 1.0, metalness: 0.0 });
-        for (const x of [-0.03, 0.03]) {
-          const tie = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.006, 0.012, this.seg(8, 5)), cord);
-          tie.rotation.z = Math.PI / 2;
-          tie.position.set(x * 1.15, 0.024, 0);
-          group.add(tie);
         }
         return group;
       },

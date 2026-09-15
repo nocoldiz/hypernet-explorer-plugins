@@ -23,10 +23,13 @@
  * ----------------------------------------------------------------------------
  * The COUNTRY decides how hard the ground is, and the biome decides what
  * shape the creature standing on it takes. Every nation of the Europe zone is
- * dealt a level bracket when the world is made (section 3c): France, Belgium
- * and the UK open at levels 1-15, every other nation is rolled somewhere
- * between 1 and 100, and the deal is written into the world folder so every
- * savegame of that world reads the same map of danger.
+ * dealt a level bracket when the world is made (section 3c). A few are written
+ * down rather than dealt, against the Countries.json id that names them:
+ * France, Belgium and the UK open at levels 1-15 and the Vatican's Italy sits
+ * at 40-60. Every other nation is rolled somewhere between 1 and 100, and the
+ * deal is written into the world folder so every savegame of that world reads
+ * the same map of danger. The travel book prints the window of every stop it
+ * lists, so a journey can be read before it is bought.
  *
  * The party is not consulted. A level 60 party that walks into a 1-15 nation
  * meets that nation's rats; a level 3 party that wanders into a 70-90 one is
@@ -52,10 +55,13 @@
  * The calendar (what the years do to the brackets)
  * ----------------------------------------------------------------------------
  * Every nation's bracket climbs 5 levels a year, so a party that stands still
- * while the years run watches the whole continent get away from it. Belgium
- * and the UK are the two exceptions and never move: they are levels 1 to 15 in
- * 2001 and levels 1 to 15 in 2013, which keeps a corner of the world walkable
- * whatever year a world is begun in.
+ * while the years run watches the whole continent get away from it. The frozen
+ * nations are the exceptions and never move: Belgium and the UK are levels 1 to
+ * 15 in 2001 and levels 1 to 15 in 2013, which keeps a corner of the world
+ * walkable whatever year a world is begun in, and the Vatican's Italy is 40 to
+ * 60 in both, one wall the climbing continent passes through rather than
+ * carries with it. France opens low with its neighbours but climbs like
+ * everybody else.
  *
  * Where no nation rules - off Earth, an alien surface, a world with no country
  * table - the older calendar band is what is left:
@@ -375,25 +381,43 @@
     };
 
     /**
-     * Get which activity patterns should spawn at current time
+     * Which activity patterns are awake right now.
+     *
+     * Each window is exclusive: a diurnal creature is not out at night, a
+     * nocturnal one is not out at noon, and crepuscular means the twilight
+     * hours themselves rather than "any hour". Nothing is rolled - the clock
+     * alone decides, so the same hour always fields the same kinds.
      */
     BSE.Helpers.getApplicableActivityPatterns = function() {
-        const timeOfDay = BSE.Helpers.getTimeOfDay();
-        switch (timeOfDay) {
-            case 'day':
-                return ['Diurnal', 'Crepuscular'];
-            case 'night':
-                return ['Nocturnal', 'Crepuscular'];
-            case 'dawn': {
-                const rand = Math.random();
-                return rand < 0.7 ? ['Crepuscular'] : ['Crepuscular', 'Diurnal'];
-            }
-            case 'dusk': {
-                const rand = Math.random();
-                return rand < 0.7 ? ['Crepuscular'] : ['Crepuscular', 'Nocturnal'];
-            }
+        switch (BSE.Helpers.getTimeOfDay()) {
+            case 'day':   return ['Diurnal'];
+            case 'night': return ['Nocturnal'];
+            case 'dawn':  return ['Crepuscular'];
+            case 'dusk':  return ['Crepuscular'];
         }
         return ['Crepuscular'];
+    };
+
+    /**
+     * Does the sun reach this map at all?
+     *
+     * Only the open air has a day and a night. A roofed map - a hand-made
+     * <Interior>, or a generated cave, dungeon, crypt, sewer or building
+     * interior cut into the procedural square - is lit the same at every hour,
+     * so its whole biome roster stands in it around the clock and the activity
+     * pattern is never consulted. The two sources read here are the same ones
+     * WeatherSystem and DynamicLightingSystem tint the world by.
+     */
+    BSE.Helpers.mapUsesDaylightGate = function() {
+        if (typeof window.isProceduralInteriorMap === 'function' &&
+            window.isProceduralInteriorMap()) return false;
+        if ($dataMap && $dataMap.note && /<Interior>/i.test($dataMap.note)) return false;
+        // An alien surface keeps none of Earth's machinery (see section 16),
+        // and the clock the tags are read against is Earth's calendar. The
+        // planet's own species roster stands on it at every hour.
+        const GS = window.GalaxySim;
+        if (GS && typeof GS.isAlienSurface === 'function' && GS.isAlienSurface()) return false;
+        return true;
     };
 
     /**
@@ -408,35 +432,44 @@
     };
 
     /**
-     * Check if a troop can spawn at current time
+     * May this troop stand on the map at the current hour?
+     *
+     * Every member has to be awake, not merely one of them: a troop that
+     * pairs a nocturnal creature with a diurnal one used to spawn at both
+     * hours and drag the sleeping half along with it. An untagged member is
+     * awake at any hour and never bars anything. Under a roof the question
+     * does not arise at all (see mapUsesDaylightGate).
      */
     BSE.Helpers.canTroopSpawnAtCurrentTime = function(troopId) {
         const troop = $dataTroops[troopId];
         if (!troop || !troop.members.length) return true;
+        if (!BSE.Helpers.mapUsesDaylightGate()) return true;
         const applicablePatterns = BSE.Helpers.getApplicableActivityPatterns();
-        let hasTimeRestriction = false;
         for (const member of troop.members) {
             const enemyData = $dataEnemies[member.enemyId];
             if (!enemyData) continue;
             const activityPattern = BSE.Helpers.getEnemyActivityPattern(enemyData);
             if (!activityPattern) continue;
-            hasTimeRestriction = true;
-            if (applicablePatterns.includes(activityPattern)) return true;
+            if (!applicablePatterns.includes(activityPattern)) return false;
         }
-        // Troops with no time-restricted members may spawn at any time; troops
-        // with restrictions only spawn when a member's pattern matches now.
-        return !hasTimeRestriction;
+        return true;
     };
 
     /**
-     * Filter encounter list by current time
+     * Cull an encounter list to what is awake now.
+     *
+     * This is a HARD gate and has no fallback onto the barred: a map whose
+     * whole roster is asleep stands empty for those hours, the way the
+     * population rule already empties a map it has nothing legal for. What
+     * keeps that from happening in practice is that untagged enemies are
+     * awake around the clock, and that a roofed map is never filtered at all.
      */
     BSE.Helpers.filterEncountersByTime = function(encounterList) {
         if (!encounterList || !encounterList.length) return encounterList;
-        const validTroops = encounterList.filter(enc =>
+        if (!BSE.Helpers.mapUsesDaylightGate()) return encounterList;
+        return encounterList.filter(enc =>
             BSE.Helpers.canTroopSpawnAtCurrentTime(enc.troopId)
         );
-        return validTroops.length > 0 ? validTroops : encounterList;
     };
 
     // ========================================================================
@@ -761,6 +794,7 @@
     // reading before it is walked.
     //
     //   France, Belgium, UK   the low countries the game opens on: levels 1-15
+    //   Italy                 the Holy Vatican Empire's ground: levels 40-60
     //   everything else       a seeded window somewhere between 1 and 100
     //
     // The deal is the world SEED's, so two worlds made on one seed are the same
@@ -771,9 +805,12 @@
     //
     // The calendar moves every bracket up BRACKET_YEAR_STEP levels a year, so a
     // party that stands still while the years run watches the whole continent
-    // get away from it. Belgium and the UK are the two exceptions and never
-    // move: they are levels 1 to 15 in 2001 and levels 1 to 15 in 2013, which
-    // is what keeps a corner of the world walkable whenever a party starts.
+    // get away from it. The frozen entries of BRACKET_HARDCODED are the
+    // exceptions and never move: Belgium and the UK are levels 1 to 15 in 2001
+    // and levels 1 to 15 in 2013, which is what keeps a corner of the world
+    // walkable whenever a party starts, and the Vatican's Italy holds 40 to 60
+    // in every year of the game. France is dealt the low window too but climbs
+    // out of it with everybody else.
     //
     // Nothing about this bracket is a wall. Creatures BELOW it and creatures
     // ABOVE it both keep a real chance of turning up (see nationBracketWeight),
@@ -788,15 +825,60 @@
     //   - a nation outside the Europe zone, and any world with no country table
     //     loaded at all: the biome's own ladder, exactly as before
 
-    // i18n-ignore-start  Countries.json ids, never shown as they are written here
-    const BRACKET_HOME_NATIONS   = ['France', 'Belgium', 'UK'];
-    const BRACKET_FROZEN_NATIONS = ['Belgium', 'UK'];
-    const BRACKET_REGION         = 'Europe';
-    const BRACKET_TOWER_NATION   = 'OmegaTower';
+    // The nations that are NOT dealt from the seed. Their window is written
+    // here, against the Countries.json ID that names them on the world map, and
+    // that ID is the identity this table is matched on: it is what the atlas
+    // paints, what a Destinations.json stop carries as "nationId" and what
+    // Variable 86 holds, so a country respelled in the data keeps its window.
+    // The name is only the fallback for a session whose country table has not
+    // loaded yet.
+    //
+    //   France (102)    opens at 1-15 like its neighbours, but CLIMBS: the
+    //                   country the game starts in gets away from a party that
+    //                   stands still, and that is what makes them move
+    //   Belgium (121)   frozen at 1-15 forever
+    //   UK (38)         frozen at 1-15 forever
+    //                   between them they are the corner of the world a party
+    //                   of any year can always walk
+    //   Italy (78)      frozen at 40-60: the ground the Holy Vatican Empire
+    //                   holds (Countries.json gives Italy as its controller).
+    //                   Fixed in both directions on purpose - it is never
+    //                   walkable at level 3 and never trivial at level 90, so
+    //                   the whole climbing continent passes through one wall
+    //                   that stays where it is
+    // i18n-ignore-start  Countries.json ids and names, never shown as written here
+    const BRACKET_HARDCODED = [
+        { id: 102, country: 'France',  min: 1,  max: 15, frozen: false },
+        { id: 121, country: 'Belgium', min: 1,  max: 15, frozen: true  },
+        { id: 38,  country: 'UK',      min: 1,  max: 15, frozen: true  },
+        { id: 78,  country: 'Italy',   min: 40, max: 60, frozen: true  }
+    ];
+    const BRACKET_REGION       = 'Europe';
+    const BRACKET_TOWER_NATION = 'OmegaTower';
     // i18n-ignore-end
 
-    const BRACKET_HOME_MIN   = 1;   // the level the opening countries start at
-    const BRACKET_HOME_MAX   = 15;  // and the level they stop at
+    // The written window this nation holds, or null where it is dealt from the
+    // seed like everybody else. The ID is asked first and the name second; ID 0
+    // is the shared "never placed on the map" id a dozen entries carry and is
+    // never allowed to match anything.
+    function hardcodedBracket(countryName, countryId) {
+        let id = countryId;
+        if (id === undefined || id === null) {
+            const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+            const hit = countries.find(c => c && c.country === countryName);
+            id = hit ? hit.id : null;
+        }
+        return BRACKET_HARDCODED.find(e =>
+            (id && e.id === id) || (countryName && e.country === countryName)) || null;
+    }
+
+    // Read by the atlas, the travel book and the tests: is this nation's window
+    // written down rather than dealt, and does the calendar leave it alone?
+    BSE.Helpers.getHardcodedNationBracket = function(countryName, countryId) {
+        const fixed = hardcodedBracket(countryName, countryId);
+        return fixed ? { min: fixed.min, max: fixed.max, frozen: !!fixed.frozen } : null;
+    };
+
     const BRACKET_CEILING    = 100; // the top of the book: no bracket is rolled above it
     const BRACKET_MIN_WIDTH  = 10;  // narrowest window a rolled nation gets
     const BRACKET_MAX_WIDTH  = 25;  // widest
@@ -835,8 +917,9 @@
         for (const c of countries) {
             if (!c || !c.country || c.region !== BRACKET_REGION) continue;
             if (c.country === BRACKET_TOWER_NATION) continue;
-            if (BRACKET_HOME_NATIONS.indexOf(c.country) >= 0) {
-                out[c.country] = [BRACKET_HOME_MIN, BRACKET_HOME_MAX];
+            const fixed = hardcodedBracket(c.country, c.id);
+            if (fixed) {
+                out[c.country] = [fixed.min, fixed.max];
                 continue;
             }
             const width = BRACKET_MIN_WIDTH + Math.floor(
@@ -916,10 +999,12 @@
         return { min: Math.max(1, pair[0] | 0), max: Math.max(1, pair[1] | 0) };
     };
 
-    // Levels this nation's bracket has climbed since the 2001 epoch. Belgium
-    // and the UK never move; everybody else takes BRACKET_YEAR_STEP a year.
+    // Levels this nation's bracket has climbed since the 2001 epoch. The
+    // frozen entries of BRACKET_HARDCODED (Belgium, the UK and the Vatican's
+    // Italy) never move; everybody else takes BRACKET_YEAR_STEP a year.
     BSE.Helpers.getNationYearShift = function(countryName) {
-        if (BRACKET_FROZEN_NATIONS.indexOf(countryName) >= 0) return 0;
+        const fixed = hardcodedBracket(countryName);
+        if (fixed && fixed.frozen) return 0;
         const year = Math.floor(BSE.Helpers.getCurrentGameYear());
         return Math.max(0, year - SPAWN_START_YEAR) * BRACKET_YEAR_STEP;
     };
@@ -1078,8 +1163,21 @@
             baseMin: bracket.min,
             baseMax: bracket.max,
             shift: BSE.Helpers.getNationYearShift(countryName),
-            frozen: BRACKET_FROZEN_NATIONS.indexOf(countryName) >= 0
+            frozen: !!(hardcodedBracket(countryName) || {}).frozen
         };
+    };
+
+    // The same answer asked for by the world map's own nation ID instead of by
+    // a name. A Destinations.json stop carries that ID ("nationId") and the
+    // travel book reads it, so a stop whose "country" is spelled in a way the
+    // country table does not know still prints the right window. ID 0 is the
+    // shared unplaced id and never resolves to anybody.
+    BSE.Helpers.describeNationLevelsById = function(nationId) {
+        const id = nationId | 0;
+        if (!id) return null;
+        const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+        const hit = countries.find(c => c && c.id === id && c.region === BRACKET_REGION);
+        return hit ? BSE.Helpers.describeNationLevels(hit.country) : null;
     };
 
     // ========================================================================
@@ -1552,14 +1650,15 @@
         // party is not consulted at all - a level 60 party in a 1-15 nation
         // meets that nation's rats, which is what makes the map worth reading.
         if (band && band.nation) {
-            return BSE.Helpers.spreadNationBracket(encList, band);
+            return BSE.Helpers.applyNoviceTilt(
+                BSE.Helpers.spreadNationBracket(encList, band));
         }
         if (BSE.Helpers.rollBiomeTether()) {
-            return BSE.Helpers.filterTroopsInLevelBand(
-                encList, BSE.Helpers.getBiomeTetherBand());
+            return BSE.Helpers.applyNoviceTilt(BSE.Helpers.filterTroopsInLevelBand(
+                encList, BSE.Helpers.getBiomeTetherBand()));
         }
-        return BSE.Helpers.spreadBiomeRoster(
-            BSE.Helpers.filterTroopsInLevelBand(encList, band));
+        return BSE.Helpers.applyNoviceTilt(BSE.Helpers.spreadBiomeRoster(
+            BSE.Helpers.filterTroopsInLevelBand(encList, band)));
     };
 
     // How likely a creature of `troopLevel` is to be the one met by a party of
@@ -1716,6 +1815,63 @@
         if (!encList || !encList.length) return encList;
         return encList.map(enc => Object.assign({}, enc, {
             weight: (enc.weight || 1) * BSE.Helpers.biomeSpreadWeight(
+                BSE.Helpers.getTroopMaxLevel(enc.troopId))
+        }));
+    };
+
+    // ========================================================================
+    // 4c. THE NOVICE TILT (the first few levels are fought against small fry)
+    // ========================================================================
+    // A party whose median level is still under NOVICE_MEDIAN_CEILING is at the
+    // very start of the game, and the bands above are indifferent to that: a
+    // 2001 biome ladder centred on level 20, or a nation dealt a 45-65 bracket,
+    // both hand a level 2 party fights it cannot read, let alone win. So while
+    // the party is that young every candidate at or under NOVICE_LEVEL_MAX is
+    // weighted up hard, in every biome and under every nation alike. Nothing is
+    // removed and no band is narrowed: the over-levelled strays that give a
+    // square its character are all still there, just far outnumbered by the
+    // rats. The moment the median reaches NOVICE_MEDIAN_CEILING the tilt stops
+    // outright and the ordinary rules are back, untouched.
+    //
+    // Two places are exempt, and keep exactly the rules they already had:
+    //   - the Omega Tower, upper and lower: a floor's DEPTH is its level, and a
+    //     party walking in under-levelled is the statement the shaft makes
+    //   - procedural interiors (a structure's inside): the rung the place sits
+    //     on is what it is worth, and a cellar is already the safe rung
+    const NOVICE_MEDIAN_CEILING = 5;  // median at or over this and the tilt is off
+    const NOVICE_LEVEL_MAX      = 10; // the top of the small fry being favoured
+    const NOVICE_BOOST          = 10; // how much likelier one of them is
+
+    // Is the party still inside the novice window?
+    BSE.Helpers.isNoviceParty = function() {
+        return BSE.Helpers.getPartyReferenceLevel() < NOVICE_MEDIAN_CEILING;
+    };
+
+    // ...and is this a place the tilt is allowed to touch?
+    BSE.Helpers.noviceTiltApplies = function() {
+        if (!BSE.Helpers.isNoviceParty()) return false;
+        if (BSE.Helpers.getTowerFloorLevel()) return false;
+        if (BSE.Helpers.getTowerAuthoredBand()) return false;
+        try {
+            if (window.ProceduralInteriors &&
+                typeof window.ProceduralInteriors.isCurrent === 'function' &&
+                window.ProceduralInteriors.isCurrent()) return false;
+        } catch (e) { /* no interior service loaded: the tilt stands */ }
+        return true;
+    };
+
+    // The multiplier a creature of this level carries while the tilt is on.
+    BSE.Helpers.noviceWeight = function(troopLevel) {
+        return (troopLevel || 1) <= NOVICE_LEVEL_MAX ? NOVICE_BOOST : 1;
+    };
+
+    // Lay the tilt over an already-weighted candidate list. Entries are left
+    // alone and nothing is dropped, so no list this touches can be emptied.
+    BSE.Helpers.applyNoviceTilt = function(encList) {
+        if (!encList || !encList.length) return encList;
+        if (!BSE.Helpers.noviceTiltApplies()) return encList;
+        return encList.map(enc => Object.assign({}, enc, {
+            weight: (enc.weight || 1) * BSE.Helpers.noviceWeight(
                 BSE.Helpers.getTroopMaxLevel(enc.troopId))
         }));
     };
@@ -3111,7 +3267,11 @@
                     // event to something there are four hundred of.
                     if (!rarityPlaced && rarity) {
                         const troopId = BSE.Helpers.getRarityTroopId(rarity.key);
+                        // The hour binds the one-of-a-kind too: being the only
+                        // one of its kind in the world is not a reason to be
+                        // awake at an hour its species never is.
                         if (troopId &&
+                            BSE.Helpers.canTroopSpawnAtCurrentTime(troopId) &&
                             BSE.Helpers.canTroopSpawnInRegion(troopId, currentRegion, loc.x, loc.y)) {
                             chosenTroopId = troopId;
                         }
@@ -3124,13 +3284,17 @@
                     // guarantee holds on any map with two events to give.
                     if (chosenTroopId === null && !specialPlaced && specialPool.length > 0) {
                         const specialHere = specialPool.filter(enc =>
+                            BSE.Helpers.canTroopSpawnAtCurrentTime(enc.troopId) &&
                             BSE.Helpers.canTroopSpawnInRegion(enc.troopId, currentRegion, loc.x, loc.y));
                         if (specialHere.length > 0) {
                             // Whichever resident sits nearest the band, so the
                             // creature the party meets still fits where they
                             // are: the filters fall back to the closest level
-                            // when the band holds none of them, which is what
-                            // makes the guarantee unconditional.
+                            // when the band holds none of them. The level is
+                            // the only thing the guarantee bends on; the hour
+                            // it does not, so a grove whose whole exclusive
+                            // roster is asleep simply holds none of them until
+                            // they wake.
                             const inBand = bandApplies ? applyBand(specialHere) : specialHere;
                             chosenTroopId = selectWeightedRandom(
                                 inBand.length > 0 ? inBand : specialHere).troopId;
@@ -3145,6 +3309,7 @@
                     if (chosenTroopId === null && eraElitePool.length > 0 &&
                         !uniformSpecies && Math.random() < spawnEra.eliteShare) {
                         const eliteHere = eraElitePool.filter(enc =>
+                            BSE.Helpers.canTroopSpawnAtCurrentTime(enc.troopId) &&
                             BSE.Helpers.canTroopSpawnInRegion(enc.troopId, currentRegion, loc.x, loc.y)
                         );
                         if (eliteHere.length > 0) {

@@ -3502,6 +3502,18 @@
     return typeof biomeName === "string" && biomeName.indexOf("AlienUnder") === 0;
   }
 
+  // Everything that is not Earth: every alien biome (surface and underground -
+  // they are the only biome names in the game that begin "Alien") plus the two
+  // space biomes. Nothing out here is scored. A planet surface, the vaults under
+  // it and the vacuum are carried by their ambience alone, so the track the
+  // party warped in with is stopped rather than followed out into space. The
+  // `bgm` pools stay in js/db/WorldGen/AlienBiomes.json, unread, so turning the
+  // music back on is one predicate away.
+  function isOffworldBiome(biomeName) {
+    const name = String(biomeName || "");
+    return /^Alien/i.test(name) || name === "Space" || name === "Spacecenter";  // i18n-ignore  biome ids
+  }
+
   // ---- the planet-wide field ------------------------------------------------
   //
   // A hash lattice rather than ProcGenUtils' noise, which is cached per integer
@@ -5469,9 +5481,17 @@
       // Choose appropriate BGS array based on time of day. Blank entries are
       // discarded, and an empty list means the biome has no ambience at all,
       // which stops whatever BGS was playing (the BGM is left untouched).
+      // WorldMapReturn owns that choice, interiorBgs included, so a settlement
+      // interior stays silent here too; the local fallback is the outdoor bed.
       const clean = (arr) => (arr || []).filter((n) => n && n.trim());
-      const nightList = clean(finalBiome.bgsNight);
-      const bgsArray = isNightTime && nightList.length > 0 ? nightList : clean(finalBiome.bgs);
+      const wmr = window.WorldMapReturn;
+      let bgsArray;
+      if (wmr && typeof wmr.biomeBgsList === "function") {
+        bgsArray = wmr.biomeBgsList(finalBiome, isNightTime);
+      } else {
+        const nightList = clean(finalBiome.bgsNight);
+        bgsArray = isNightTime && nightList.length > 0 ? nightList : clean(finalBiome.bgs);
+      }
 
       if (bgsArray.length > 0) {
         const rng = createSeededRandom(seed + originX * 7 + originY * 13);
@@ -5502,11 +5522,24 @@
   // dungeon, a cave. Out in the open the procedural map is scored by its
   // ambience alone, so walking back up a staircase into the daylight stops
   // whatever the room below was playing.
+  //
+  // Two exceptions, both of which this function must keep its hands off:
+  //
+  //  - A SETTLEMENT is scored, but not from here. Its theme belongs to the town
+  //    rather than to the square, and a town covers several world squares, so
+  //    WorldMapReturn's biome-music layer owns it and carries it across the
+  //    crossings between them. Stopping it here would cut the theme every time
+  //    the party walked from one side of a city to the other, and restarting it
+  //    from zero right afterwards.
+  //  - OFF-WORLD is silent. An alien vault has a pool in AlienBiomes.json and
+  //    is an interior, so it would otherwise be scored: it is stopped instead.
   function applyBiomeBgm(biomeName, biomeEntry, seed, originX, originY) {
+    const here = biomeName || "";
+    if (isCityBiome(here) || isVillageBiome(here) || isBurgBiome(here)) return;
     const list = (biomeEntry && Array.isArray(biomeEntry.bgm))
       ? biomeEntry.bgm.filter((n) => n && n.trim())
       : [];
-    if (!isInteriorBiome(biomeName || "") || list.length === 0) {
+    if (!isInteriorBiome(here) || isOffworldBiome(here) || list.length === 0) {
       AudioManager.stopBgm();
       return;
     }
@@ -7375,6 +7408,7 @@
     generateAlienBandedTerrain,
     generateAlienUndergroundTerrain,
     isUndergroundBiome: isAlienUndergroundBiome,
+    isOffworldBiome,
     undergroundBiomeFor: alienUndergroundBiomeFor,
     aquiferLevel: alienAquiferLevel,
     fieldContext: alienFieldContext,

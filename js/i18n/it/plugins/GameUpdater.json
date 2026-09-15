@@ -38,7 +38,7 @@
   "actDownloadOlder": "Scarica questa versione precedente",
   "actInstallStaged": "Installa subito questa versione",
   "actCancel": "Annulla il download",
-  "hint": "Su / Giù, muovi  ,  Sinistra / Destra, pannello  ,  PgSu / PgGiù, canale  ,  OK, conferma  ,  Esc, indietro",
+  "hint": "Su / Giù, muovi | Sinistra / Destra, pannello | PgSu / PgGiù, canale | OK, conferma | Esc, indietro",
   "noNode": "Gli aggiornamenti richiedono la versione desktop del gioco.",
   "logHistory": "Lettura delle versioni su %1 ...",
   "logHistoryFound": "%1 versioni elencate.",

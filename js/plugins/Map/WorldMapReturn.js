@@ -350,31 +350,70 @@
     }
 
     // ============================================================================
-    // BIOME MUSIC SELECTION (OFF-WORLD ONLY)
+    // BIOME MUSIC SELECTION (SETTLEMENTS)
     // ----------------------------------------------------------------------------
-    // Nothing on Earth carries a track pool any more. A map's BGM is whatever
-    // the map was authored with or whatever an event started, and nothing here
-    // overrides it, borrows over it or stops it: settlements, dungeons, caves
-    // and open country all keep the music they were given.
+    // A MAP'S OWN BGM ALWAYS WINS. Biome music is the fallback underneath it and
+    // nothing more: a hand-made map that autoplays a track, or an event that
+    // started one, is never overridden here, whether or not that map declares a
+    // <Biome:> of its own. What follows only ever decides what plays where
+    // nothing else has an opinion.
     //
-    // Off-world is the exception. Alien surfaces and Space are generated and
-    // have no authored track to fall back on, so they keep their pools (`bgm`
-    // for day, `bgmNight` for night; alien pools are drawn from Atmospheric by
-    // day and Dark by night, see js/db/WorldGen/AlienBiomes.json).
+    // Exactly one family of biome carries a pool: the SETTLEMENTS - every
+    // Village, Burg and City biome and their desert / ice / mountain / river /
+    // sea variants (js/db/WorldGen/Biomes.json `bgm`).
     //
-    // Only ONE track of a pool is heard while the party stays put: it is picked
-    // deterministically from the world seed, the biome name, the day/night half
-    // and the NATION the player is standing in (Variable 86, set by
-    // WeatherSystem.setCurrentCountry). No per-visit shuffling, no restart when
-    // stepping between two maps of the same biome, no state to persist.
+    // The pick is seeded on the PLACE NAME rather than on the square. A town is
+    // not one world square but a footprint of several (`reservedTiles` in
+    // js/db/WorkSystem/Destinations.json, flattened into
+    // WorldGen.HardcodedBiomeNames at load), so seeding on the name is what
+    // makes every square of Amsterdam play the same theme and keeps a walk
+    // across town from reshuffling it at each border crossing. Two different
+    // towns that happen to be neighbours still get a track each. A settlement
+    // square no named place claims falls back to its biome name, so the
+    // anonymous villages of one family at least agree with each other.
+    //
+    // There is no night pool and there is not meant to be one: a town keeps its
+    // day theme after dark, which is what biomeTrackPool already does when
+    // `bgmNight` is absent. Do not fill one in for these biomes.
+    //
+    // OFF-WORLD is silenced outright. Alien surfaces, the vaults under them and
+    // Space carry their ambience and nothing else, so the track the party
+    // warped in with is faded out rather than followed into the vacuum. Their
+    // `bgm` pools are left in the database, unread.
+    //
+    // A settlement theme is also the biome layer's to take away again: it stops
+    // on crossing out into open country, and on stepping off the procedural map
+    // altogether (see stopBiomeBgm). Music that came from anywhere else - a
+    // dungeon's interior pool, a map's autoplay, an event - is never touched.
     // ============================================================================
 
-    // Biome music is no longer a thing on Earth. A map's BGM is whatever the
-    // map was authored with or whatever an event started, and nothing here
-    // overrides it or stops it. The one exception is off-world: alien biomes
-    // and Space keep their pools, because those maps are generated and have no
-    // authored track of their own to fall back on.
-    function biomeMusicAllowed(biomeName) {
+    // Village, Burg and City in every variant: the biomes that carry a pool.
+    // ProcGenRoads owns the family test; the literal is the fallback for a load
+    // order that has not reached it yet.
+    function isSettlementBiome(biomeName) {
+        const R = window.ProcGenRoads;
+        if (R && R.isSettlementBiome) return !!R.isSettlementBiome(biomeName);
+        const name = String(biomeName || '').toLowerCase();
+        return name.includes('city') || name.includes('village') || name.includes('burg');
+    }
+
+    // The biome a hand-made map declares, by <Biome: Name> note or by meta.
+    // Null for a map that declares none (and for the procedural map, which is
+    // not authored and carries its biome on _procGenData instead).
+    function declaredBiomeOf(mapData) {
+        if (!mapData) return null;
+        if (mapData.note) {
+            const m = mapData.note.match(/<Biome:\s*(.+?)>/i);
+            if (m) return m[1].trim();
+        }
+        return (mapData.meta && mapData.meta.Biome) || null;
+    }
+
+    // Everything that is not Earth. ProceduralMapBiomeGenerator owns this one
+    // (it silences the alien vaults on the same rule); same fallback story.
+    function isOffworldBiome(biomeName) {
+        const A = window.ProcGenAlienTerrain;
+        if (A && A.isOffworldBiome) return !!A.isOffworldBiome(biomeName);
         const name = String(biomeName || '');
         return /^Alien/i.test(name) || name === 'Space' || name === 'Spacecenter';   // i18n-ignore  biome ids
     }
@@ -401,12 +440,40 @@
         return h >>> 0;
     }
 
-    function pickBiomeTrack(biomeName, tracks, isNight) {
+    // A settlement's theme is a property of its NAME and of nothing else: not the
+    // square, not the hour, not the nation, not the world seed. Every square of
+    // a town therefore agrees on it, and so do two saves and two worlds. FNV-1a
+    // over the name is all the spread a five-track pool needs.
+    function settlementMusicSeed(placeName) {
+        const key = String(placeName || '').toLowerCase();
+        let h = 0x811c9dc5;
+        for (let i = 0; i < key.length; i++) {
+            h ^= key.charCodeAt(i);
+            h = Math.imul(h, 0x01000193);
+        }
+        h ^= h >>> 15;
+        return h >>> 0;
+    }
+
+    // The name of the place this world square belongs to: the Destinations.json
+    // entry whose footprint covers it, which DataService flattens into
+    // WorldGen.HardcodedBiomeNames ("x,y" -> entry key) at load. Null off the
+    // procedural map, or on a settlement square no named place claims.
+    function settlementNameAt(procGenData) {
+        const names = window.WorldGen && window.WorldGen.HardcodedBiomeNames;
+        if (!names || !procGenData) return null;
+        const x = procGenData.originX, y = procGenData.originY;
+        if (typeof x !== 'number' || typeof y !== 'number') return null;
+        return names[x + ',' + y] || null;
+    }
+
+    function pickBiomeTrack(biomeName, tracks, isNight, seedOverride) {
         if (!tracks || tracks.length === 0) return null;
         if (tracks.length === 1) return tracks[0];
-        const rng = createSeededRandom
-            ? createSeededRandom(biomeMusicSeed(biomeName, isNight))
-            : () => Math.random();
+        const seed = (seedOverride === undefined || seedOverride === null)
+            ? biomeMusicSeed(biomeName, isNight)
+            : seedOverride;
+        const rng = createSeededRandom ? createSeededRandom(seed) : () => Math.random();
         return tracks[Math.min(tracks.length - 1, Math.floor(rng() * tracks.length))];
     }
 
@@ -457,8 +524,25 @@
     // into open country. A hand-made map is authored, not generated, so there it
     // still means "carry on with whatever is playing".
     function biomeMusicDecision(biome, biomeName, procGenData, isNight, isProcGenMap) {
-        // On Earth there is nothing to decide: leave the BGM alone.
-        if (!biomeMusicAllowed(biomeName)) return { tracks: [], name: biomeName, borrowed: false, action: 'keep' };
+        // Off-world carries no music at all, pool or no pool.
+        if (isOffworldBiome(biomeName)) {
+            return { tracks: [], name: biomeName, borrowed: false, action: 'stop', seed: null };
+        }
+        // Not a settlement: biome music does not apply here. On a procedural map
+        // that means silence, because a procedural map IS its biome - crossing
+        // out of a town into the fields around it fades the town's theme out
+        // rather than dragging it across open country. On a hand-made map it
+        // means "leave the BGM alone": that map is authored and its own track
+        // outranks anything the biome would have to say.
+        if (!isSettlementBiome(biomeName)) {
+            return {
+                tracks: [], name: biomeName, borrowed: false,
+                action: isProcGenMap ? 'stop' : 'keep', seed: null
+            };
+        }
+        // A settlement with an empty pool borrows from the ground it sits on or
+        // from next door, exactly as before - only the music, never the
+        // ambience, so a river village still sounds like a river.
         let musicBiome = biome, musicBiomeName = biomeName;
         if (biomeTrackPool(biome, isNight).length === 0) {
             const borrowed = borrowedMusicBiome(biomeName, procGenData, isNight);
@@ -468,11 +552,16 @@
             }
         }
         const tracks = biomeTrackPool(musicBiome, isNight);
+        // The town's name is the seed, so every square of it picks the same
+        // track; an unnamed settlement square falls back to its biome name.
+        const place = settlementNameAt(procGenData) || musicBiomeName;
         return {
             tracks,
             name: musicBiomeName,
+            place,
             borrowed: musicBiomeName !== biomeName,
-            action: tracks.length > 0 ? 'play' : (isProcGenMap ? 'stop' : 'keep')
+            action: tracks.length > 0 ? 'play' : (isProcGenMap ? 'stop' : 'keep'),
+            seed: settlementMusicSeed(place)
         };
     }
 
@@ -527,6 +616,23 @@
     const BGS_FADE_SECONDS = 1.5;
     const BGM_FADE_SECONDS = 1.5;
 
+    // The track the biome layer itself put on, remembered so it can be taken off
+    // again without touching music that came from anywhere else: a cave or
+    // dungeon scored by ProceduralMapBiomeGenerator's own interior pool, a
+    // hand-made map's autoplay, an event. Answers false when there was nothing
+    // of ours playing, so the caller can say so rather than claim a stop.
+    let _biomeBgmName = null;
+
+    function stopBiomeBgm() {
+        const started = _biomeBgmName;
+        _biomeBgmName = null;
+        if (!started) return false;
+        const playing = AudioManager._currentBgm && AudioManager._currentBgm.name;
+        if (playing !== started) return false;
+        fadeOutBiomeBgm();
+        return true;
+    }
+
     // Hand the playing ambience over to a fade and give it back to nobody: it is
     // off AudioManager from here on, so the playBgs that starts the next bed
     // cannot destroy it half way down. Freed once it is inaudible, since
@@ -577,6 +683,38 @@
         return true;
     }
 
+    // Indoors the biome answers with a different bed, so the ambience layer has
+    // to know which side of the wall the party is on. A hand-made map says so
+    // with the <Interior> note every other plugin already reads; a procedural
+    // interior (dungeon, crypt, sewer, cave den, ...) is one by construction.
+    function isInteriorMap() {
+        if ($dataMap && $dataMap.note && /<Interior>/i.test($dataMap.note)) return true;
+        if (typeof window.isProceduralInteriorMap === 'function') {
+            return !!window.isProceduralInteriorMap();
+        }
+        return isProceduralInterior();
+    }
+
+    // The map's own autoplay ambience, asked first and given the last word: a
+    // bed authored on a map is a deliberate choice about that one room or
+    // street, and outranks whatever the biome would have picked. Played through
+    // the plain BGS volume rather than WeatherAudio, which is for weather-scaled
+    // beds only. Answers false when the map names none, which is every
+    // procedural square and most interiors.
+    function playMapBgs() {
+        const bgs = $dataMap && $dataMap.autoplayBgs ? $dataMap.bgs : null;
+        if (!bgs || !bgs.name) return false;
+        crossfadeBiomeBgs(bgs, () => AudioManager.playBgs(bgs));
+        return true;
+    }
+
+    // Ambience with no biome behind it: the map's own bed if it has one, silence
+    // otherwise. Every path out of updateBiomeAudio that never reaches a biome
+    // goes through here, so an authored BGS survives a map that names no biome.
+    function fallBackToMapBgs() {
+        if (!playMapBgs()) fadeOutBiomeBgs();
+    }
+
     function updateBiomeAudio() {
         const procGenData  = $gameSystem._procGenData;
         // _procGenData keeps the surrounding town's biome alive while the player
@@ -605,7 +743,7 @@
         // leave the BGM alone. That is missing data rather than a quiet place, so
         // whatever is playing carries on; a biome that IS in the database and
         // simply has no tracks falls silent on a procedural map (see below).
-        if (!biomeName) { fadeOutBiomeBgs(); return; }
+        if (!biomeName) { fallBackToMapBgs(); return; }
 
         let biome = getBiomeByName(biomeName);
         // 'Island' is a display substitution, not a database biome, so fall back
@@ -614,7 +752,7 @@
             biomeName = procGenData.currentBiome;
             biome     = getBiomeByName(biomeName);
         }
-        if (!biome) { fadeOutBiomeBgs(); return; }
+        if (!biome) { fallBackToMapBgs(); return; }
 
         const isNightTime = isNightTimeNow();
         // Must be built exactly as watchNationMusicChange builds it, or the
@@ -633,47 +771,63 @@
             }
             const tracks  = decision.tracks;
             const target  = decision.action === 'play'
-                ? pickBiomeTrack(decision.name, tracks, isNightTime)
+                ? pickBiomeTrack(decision.name, tracks, isNightTime, decision.seed)
                 : null;
             const playing = AudioManager._currentBgm && AudioManager._currentBgm.name;
             if (!target) {
-                // A procedural map IS its biome, so a biome with nothing to play
-                // and nothing next door to borrow is a silent place: fade out
-                // whatever the party walked in with rather than dragging a
-                // settlement theme across the open country around it. Hand-made
-                // maps (house interiors, generic homes, ...) keep the old rule and
-                // inherit the BGM of the map they were entered from.
+                // Out of the town and into the country around it, or off-world:
+                // the theme the biome layer started is taken away again. Only
+                // that one - a dungeon's own interior music and a hand-made
+                // map's autoplay are not ours to stop (see stopBiomeBgm).
                 if (decision.action === 'stop') {
-                    fadeOutBiomeBgm();
-                    console.log(`[updateBiomeAudio] No BGM list for biome: ${biomeName}, stopping BGM`);  // i18n-ignore  console diagnostic
+                    const stopped = stopBiomeBgm();
+                    console.log(`[updateBiomeAudio] No BGM for biome: ${biomeName}, ` +   // i18n-ignore  console diagnostic
+                                (stopped ? 'stopped the biome BGM' : 'nothing of ours was playing'));
                 } else {
                     console.log(`[updateBiomeAudio] No BGM list for biome: ${biomeName}, keeping current BGM`);  // i18n-ignore  console diagnostic
                 }
             } else if (playing === target) {
-                // The pick is stable for this (biome, nation, half of day), so
-                // walking between two maps of the same biome never restarts it.
+                // The pick is stable for the whole town, so walking from one of
+                // its squares to the next never restarts the theme.
+                _biomeBgmName = target;
                 console.log(`[updateBiomeAudio] Keeping BGM: ${playing} for biome: ${biomeName}`);
             } else {
                 AudioManager.playBgm({ name: target, volume: 90, pitch: 100, pan: 0 });
-                console.log(`[updateBiomeAudio] Playing BGM: ${target} for biome: ${decision.name} ` +
-                            `(nation ${currentNationId()}, ${tracks.length} candidates)`);  // i18n-ignore  console diagnostic
+                _biomeBgmName = target;
+                console.log(`[updateBiomeAudio] Playing BGM: ${target} for ${decision.place} ` +
+                            `(biome ${decision.name}, ${tracks.length} candidates)`);  // i18n-ignore  console diagnostic
             }
         }
 
-        // Ambience is biome-driven on every map that declares a biome, not just
-        // procedural ones, so tagged interiors get their room tone too. Maps
-        // carrying their own autoplay BGS keep it.
-        if (!isProcGenMap && $dataMap && $dataMap.autoplayBgs) return;
+        // Ambience is read in one fixed order and the map always speaks first:
+        // a map carrying its own autoplay BGS keeps it, hand-made or not. Only
+        // when nothing is authored does the biome answer, on every map that
+        // declares one and not just the procedural ones, so tagged interiors
+        // get their room tone too.
+        if (playMapBgs()) return;
         playBiomeBgs(biome, biomeName, isNightTime, procGenData, isProcGenMap);
     }
 
-    // Pick and start the biome's ambience. An empty (or all-blank) list means
-    // "this biome has no ambience", which stops whatever BGS was playing.
-    function playBiomeBgs(biome, biomeName, isNightTime, procGenData, isProcGenMap) {
+    // Which of a biome's four ambience lists speaks here. Indoors a biome answers
+    // with interiorBgs / interiorBgsNight, which may be declared and deliberately
+    // EMPTY: a city, a burg and a village have no room tone of their own, so a
+    // house in one is silent unless the map itself names a bed. A biome that does
+    // not declare the key at all - a cave, a dungeon, every biome that already IS
+    // an interior - keeps answering with its ordinary one. The single answer to
+    // that question: ProceduralMapBiomeGenerator asks it too, through the export.
+    function biomeBgsList(biome, isNightTime) {
+        if (!biome) return [];
         const clean     = arr => (arr || []).filter(n => n && n.trim());
-        const nightList = clean(biome.bgsNight);
-        const dayList   = clean(biome.bgs);
-        const bgsList   = (isNightTime && nightList.length > 0) ? nightList : dayList;
+        const indoors   = isInteriorMap() && Array.isArray(biome.interiorBgs);
+        const nightList = clean(indoors ? biome.interiorBgsNight : biome.bgsNight);
+        const dayList   = clean(indoors ? biome.interiorBgs      : biome.bgs);
+        return (isNightTime && nightList.length > 0) ? nightList : dayList;
+    }
+
+    // Pick and start the biome's ambience. An empty (or all-blank) list means
+    // "this biome has no ambience here", which stops whatever BGS was playing.
+    function playBiomeBgs(biome, biomeName, isNightTime, procGenData, isProcGenMap) {
+        const bgsList = biomeBgsList(biome, isNightTime);
 
         if (bgsList.length === 0) { fadeOutBiomeBgs(); return; }
 
@@ -6436,6 +6590,26 @@
             stopAllBgsExceptWeather();
             console.log('[Scene_Map.onMapLoaded] Back on the world map, cleared BGS (weather kept)');
         }
+        // A settlement theme belongs to the settlement. Stepping off the
+        // procedural map - into a house, a shop, a dungeon, a vehicle, anywhere
+        // authored - ends it, so it never plays on under a map that has music of
+        // its own.
+        //
+        // Two maps are left alone. One that autoplays a track is about to
+        // replace the theme anyway, and its own BGM outranks the biome's, so
+        // stopping first would only open a gap (autoplay runs in
+        // Scene_Map.start, AFTER this, which is why the flag is read from the
+        // data rather than from what happens to be playing). And one that
+        // declares a settlement biome of its own is still in the town: the
+        // theme is its fallback music, and updateBiomeAudio is about to confirm
+        // the very same track - cutting it here would restart it a frame later.
+        if ($gameMap.mapId() !== PROC_MAP_ID && !($dataMap && $dataMap.autoplayBgm) &&
+            !isSettlementBiome(declaredBiomeOf($dataMap))) {
+            if (stopBiomeBgm()) {
+                console.log('[Scene_Map.onMapLoaded] Left the procedural map, stopped the biome BGM');  // i18n-ignore  console diagnostic
+            }
+        }
+
         _lastLoadedMapId = $gameMap.mapId();
 
         // Update audio for non-proc maps with biome notes
@@ -7406,6 +7580,12 @@
         // wants to know what a biome sounds like without playing it.
         pickBiomeTrack,
         biomeTrackPool,
+        // Which ambience list a biome speaks with here, indoors or out, and the
+        // indoor/outdoor question itself. ProceduralMapBiomeGenerator starts the
+        // bed of a square it has just built and must not answer either its own
+        // way, or a settlement interior goes back to playing street noise.
+        biomeBgsList,
+        isInteriorMap,
         currentNationId,
         // The procedural square the party is standing on, saved and put back.
         // Anything that takes them off map 636 into a submap and later returns

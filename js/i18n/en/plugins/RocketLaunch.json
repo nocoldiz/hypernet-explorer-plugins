@@ -1,0 +1,142 @@
+{
+  "site": {
+    "taranto": {
+      "name": "Taranto",
+      "blurb": "The Ionian yard. Two seas, four stacks that never go out, and a barrel laid over the salt."
+    },
+    "greenwich": {
+      "name": "Greenwich",
+      "blurb": "The meridian mast. Brick, river fog, and a green line thrown due north across the city."
+    }
+  },
+  "mode": {
+    "orbital": {
+      "name": "Orbital",
+      "blurb": "Straight up, out through the belt, and a rendezvous with the starship. Three stages. You will not bring the armour back."
+    },
+    "suborbital": {
+      "name": "Suborbital",
+      "blurb": "The same gun used as transport. A parabola to the other pad, a flip at the top, and the fuel spent stopping. Two stages."
+    }
+  },
+  "phase": {
+    "hold": "Hold",
+    "countdown": "Countdown",
+    "coil": "Rail release",
+    "coast": "Ballistic coast",
+    "ignition": "Ignition",
+    "burn": "Powered climb",
+    "kessler": "Debris belt",
+    "clear": "Belt clear",
+    "rendezvous": "Rendezvous",
+    "dock": "Docking",
+    "aboard": "Aboard",
+    "ascent": "Ballistic ascent",
+    "apogee": "Apogee flip",
+    "retroburn": "Retro burn",
+    "reentry": "Reentry",
+    "terminal": "Terminal",
+    "touchdown": "Touchdown",
+    "arrived": "Arrived"
+  },
+  "band": {
+    "troposphere": "Troposphere",
+    "maxq": "Max Q",
+    "stratosphere": "Stratosphere",
+    "ignition": "Ignition",
+    "karman": "Karman",
+    "thermosphere": "Thermosphere",
+    "kessler": "Kessler",
+    "rendezvous": "Rendezvous",
+    "retro": "Retro",
+    "apogee": "Apogee"
+  },
+  "hud": {
+    "altitude": "Alt",
+    "velocity": "Vertical",
+    "density": "Air",
+    "downrange": "To run",
+    "plates": "Plates {n}",
+    "stages": "Stg {n}",
+    "integrity": "Hull",
+    "caution": "Master caution - debris",
+    "camHint": "Drag look  Wheel zoom  OK recenter  Hold X skip",
+    "freeCam": "Free camera",
+    "noThree": "3D unavailable"
+  },
+  "unit": {
+    "m": "m",
+    "km": "km",
+    "ms": "m/s",
+    "kms": "km/s"
+  },
+  "select": {
+    "title": "Launch site",
+    "subtitle": "Where the shot leaves from",
+    "modeTitle": "Flight plan",
+    "modeSubtitle": "The same gun, two very different flights",
+    "latitude": "Lat",
+    "weather": "Weather",
+    "light": "Light",
+    "night": "Night",
+    "golden": "Low sun",
+    "day": "Day",
+    "hazard": "Hull cost",
+    "confirm": "OK confirm   X back",
+    "stages": "Stages",
+    "apogee": "Apogee",
+    "armour": "Armour",
+    "armourKept": "Kept",
+    "armourLost": "Stripped",
+    "arrives": "Arrives",
+    "starship": "Starship",
+    "track": "Track",
+    "vertical": "Vertical"
+  },
+  "weather": {
+    "none": "Clear",
+    "rain": "Rain",
+    "storm": "Storm",
+    "snow": "Snow"
+  },
+  "telemetry": {
+    "ready": "{site} range is green. {mode} plan loaded.",
+    "padClear": "Pad clear. Everyone is behind the berm.",
+    "countStart": "Terminal count running. The gun has the flight now.",
+    "coilCharge": "Banks charging. Rings coming up bottom to top.",
+    "gantryClear": "Gantry swinging clear.",
+    "release": "Release. The round is in the barrel.",
+    "railExit": "Rail exit. Two point four kilometres a second, and nothing burning.",
+    "ballistic": "Ballistic. No engine, no control, just the arc the gun gave it.",
+    "maxQ": "Max Q. The air is taking the paint off.",
+    "thinAir": "Air thinning out. Airframe loads dropping.",
+    "ignition": "Ignition at {alt}. There is finally nothing left to fight.",
+    "burning": "Burning clean. Chamber steady.",
+    "karman": "Karman line. Officially out of the sky.",
+    "beltAhead": "Belt ahead. Tracking has nothing useful to say.",
+    "beltEntry": "In the belt. Brace.",
+    "beltDeep": "Still in it. Hull at {pct}.",
+    "beltBare": "Almost nothing left out there to lose. Hull {pct}.",
+    "beltClear": "Clear of the belt. Whatever that is, it is still flying.",
+    "shipSighted": "Starship in sight, coming up off the limb.",
+    "closing": "Closing. Collar has us.",
+    "softDock": "Soft dock.",
+    "hardDock": "Hard dock. Clamps locked.",
+    "aboard": "Aboard. Hull {pct} and not one plate to spare.",
+    "proximity": "Proximity. Something big, and it is not slowing down.",
+    "impact": "Impact. Hull {pct}.",
+    "hopPadClear": "Pad clear. Ground track laid to {dest}.",
+    "hopCount": "Terminal count. Suborbital profile, two stages.",
+    "hopBallistic": "Ballistic ascent. Nothing burning until the top.",
+    "hopApogeeNear": "Coming up on apogee. Ready to turn her round.",
+    "hopFlip": "Flipping. End over end, cold.",
+    "hopFlipDone": "Flip complete. Motor is pointed at {dest} now.",
+    "hopRetro": "Retro burn. Everything in the tanks goes into stopping.",
+    "hopBraking": "Braking hard. Speed coming off.",
+    "hopReentry": "Reentry. The plume is the heat shield.",
+    "hopTerminal": "{dest} apron in sight. Lights are walking us in.",
+    "hopApron": "Over the apron. Legs out.",
+    "hopTouchdown": "Touchdown. Hull {pct}, every layer still on her.",
+    "hopArrived": "Arrived at {dest}. Same round, different sea."
+  }
+}

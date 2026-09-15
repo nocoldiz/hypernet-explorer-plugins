@@ -1,12 +1,8 @@
 {
   "category": {
-    "Arctic": "ARCTIC",
-    "Artisan": "ARTISAN",
     "Combat": "COMBAT",
     "Collectibles": "COLLECTIBLES",
-    "Counterfeits": "COUNTERFEITS",
     "Enhancers": "ENHANCERS",
-    "Espionage": "ESPIONAGE",
     "Tools": "TOOLS",
     "Books": "BOOKS",
     "Food": "FOOD",

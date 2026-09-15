@@ -828,7 +828,7 @@
   // a curated humanoid head is, of course, humanoid.
   function healthArchetypeOfModel(modelKey) {
     if (!modelKey || modelKey === "default") return null;
-    if (isHeadPreset(modelKey)) return healthArchetypeName("Humanoid");
+    if (isHeadPreset(modelKey)) return healthArchetypeName("Humanoid"); // i18n-ignore: Health archetype id
     return healthArchetypeName(modelKey) || enemyModelIndex().archetypeOf[modelKey] || null;
   }
 

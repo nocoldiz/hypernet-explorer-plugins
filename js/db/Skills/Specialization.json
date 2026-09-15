@@ -208,7 +208,6 @@
       "sentient": false,
       "classStart": {
         "Commander": 2,
-        "Beast": 2,
         "Monster": 2
       },
       "traitStart": {
@@ -1118,7 +1117,6 @@
       "category": "Athletics",
       "sentient": true,
       "classStart": {
-        "Brawler": 2,
         "Boxer": 3
       },
       "traitStart": {
@@ -1612,7 +1610,6 @@
         "Cultist": 3,
         "Martial Artist": 3,
         "Berserker": 3,
-        "Brawler": 3,
         "Pro Wrestler": 3,
         "Rogue": 3,
         "Warlock": 3,
@@ -1704,7 +1701,7 @@
       "sentient": true,
       "classStart": {
         "Illusionist": 2,
-        "Psychologist": 2,
+        "Psyker": 2,
         "Mimic": 2
       },
       "traitStart": {
@@ -2910,7 +2907,10 @@
       "stat": "INT",
       "category": "Combat",
       "sentient": true,
-      "implemented": false
+      "implemented": false,
+      "classStart": {
+        "Gunmancer": 2
+      }
     },
     {
       "id": 354,
@@ -3298,7 +3298,6 @@
         "Berserker": 3,
         "Acrobat": 3,
         "Monk": 3,
-        "Brawler": 3,
         "Boxer": 3,
         "Pro Wrestler": 3,
         "Rogue": 3,
@@ -3475,7 +3474,7 @@
         "Firefighter": 3,
         "Police Officer": 3,
         "Journalist": 3,
-        "Psychologist": 3,
+        "Psyker": 3,
         "Archaeologist": 3,
         "Nurse": 3,
         "Physicist": 3,
@@ -3487,7 +3486,8 @@
         "Wretch": 3,
         "Mimic": 3,
         "Monster": 3,
-        "Mana Cyborg": 3
+        "Mana Cyborg": 3,
+        "Gunmancer": 3
       },
       "traitStart": {
         "gun_fu": 3,
@@ -3513,7 +3513,8 @@
       "category": "Crafting",
       "sentient": true,
       "classStart": {
-        "Mercenary": 2
+        "Mercenary": 2,
+        "Gunmancer": 2
       },
       "implemented": false
     },
@@ -4163,7 +4164,7 @@
       "sentient": true,
       "classStart": {
         "Police Officer": 3,
-        "Psychologist": 2
+        "Psyker": 2
       },
       "implemented": true
     },
@@ -4444,8 +4445,7 @@
       "category": "Athletics",
       "sentient": true,
       "classStart": {
-        "Martial Artist": 2,
-        "Brawler": 2
+        "Martial Artist": 2
       },
       "implemented": true
     },
@@ -4588,7 +4588,6 @@
         "Cultist": 3,
         "Combat Medic": 3,
         "Enchanter": 3,
-        "Brawler": 3,
         "Fire Mage": 3,
         "Rogue": 3,
         "Warlock": 3,
@@ -4604,7 +4603,7 @@
         "Doctor": 3,
         "Chef": 3,
         "Journalist": 3,
-        "Psychologist": 3,
+        "Psyker": 3,
         "Nurse": 3,
         "Mechanic": 3,
         "Shopkeeper": 3,
@@ -4614,7 +4613,8 @@
         "Mimic": 3,
         "Monster": 3,
         "Mana Cyborg": 3,
-        "Convoker": 3
+        "Convoker": 3,
+        "Gunmancer": 3
       },
       "traitStart": {
         "assassin": 2
@@ -4984,7 +4984,7 @@
       "category": "Social",
       "sentient": true,
       "classStart": {
-        "Psychologist": 2
+        "Psyker": 2
       },
       "implemented": false
     },
@@ -5524,7 +5524,6 @@
       "sentient": false,
       "classStart": {
         "Berserker": 2,
-        "Brawler": 2,
         "Boxer": 2,
         "Barbarian": 2,
         "Wretch": 2,
@@ -6258,7 +6257,7 @@
       "category": "Medicine",
       "sentient": true,
       "classStart": {
-        "Psychologist": 2
+        "Psyker": 2
       },
       "implemented": true
     },
@@ -6270,7 +6269,7 @@
       "category": "Medicine",
       "sentient": true,
       "classStart": {
-        "Psychologist": 3
+        "Psyker": 3
       },
       "traitStart": {
         "empath": 2,
@@ -6502,7 +6501,7 @@
       "category": "Crime",
       "sentient": true,
       "classStart": {
-        "Psychologist": 2
+        "Psyker": 2
       },
       "implemented": false
     },
@@ -6597,8 +6596,7 @@
       "sentient": false,
       "classStart": {
         "Firefighter": 2,
-        "Lumberjack": 2,
-        "Beast": 2
+        "Lumberjack": 2
       },
       "traitStart": {
         "mountain-born": 2
@@ -7118,9 +7116,7 @@
       "stat": "WIS",
       "category": "Survival",
       "sentient": false,
-      "classStart": {
-        "Beast": 2
-      },
+      "classStart": {},
       "implemented": false
     },
     {
@@ -7371,7 +7367,8 @@
         "Ice Mage": 2,
         "Archmage": 2,
         "Spellblade": 2,
-        "Battlemage": 2
+        "Battlemage": 2,
+        "Gunmancer": 2
       },
       "implemented": true
     },
@@ -7383,7 +7380,8 @@
       "category": "Arcana",
       "sentient": true,
       "classStart": {
-        "Archmage": 2
+        "Archmage": 2,
+        "Gunmancer": 2
       },
       "implemented": true
     },
@@ -7468,7 +7466,6 @@
         "Enchanter": 3,
         "Acrobat": 3,
         "Monk": 3,
-        "Brawler": 3,
         "Fire Mage": 3,
         "Ice Mage": 3,
         "Paladin": 3,
@@ -7775,8 +7772,7 @@
       "classStart": {
         "Ranger": 2,
         "Scout": 2,
-        "Hunter-Gatherer": 2,
-        "Beast": 3
+        "Hunter-Gatherer": 2
       },
       "traitStart": {
         "survivalist": 3,
@@ -8236,8 +8232,7 @@
       "classStart": {
         "Ranger": 2,
         "Scout": 3,
-        "Hunter-Gatherer": 2,
-        "Beast": 2
+        "Hunter-Gatherer": 2
       },
       "traitStart": {
         "tracker": 3,
@@ -8319,9 +8314,7 @@
       "stat": "DEX",
       "category": "Athletics",
       "sentient": false,
-      "classStart": {
-        "Beast": 2
-      },
+      "classStart": {},
       "implemented": false
     },
     {
@@ -8408,8 +8401,7 @@
       "sentient": false,
       "classStart": {
         "Martial Artist": 3,
-        "Monk": 2,
-        "Brawler": 3
+        "Monk": 2
       },
       "traitStart": {
         "monk-trained": 2,
@@ -8633,7 +8625,10 @@
       "traitStart": {
         "trigger_happy": 2
       },
-      "implemented": true
+      "implemented": true,
+      "classStart": {
+        "Gunmancer": 2
+      }
     },
     {
       "id": 807,
@@ -8842,7 +8837,6 @@
       "category": "Athletics",
       "sentient": false,
       "classStart": {
-        "Brawler": 2,
         "Pro Wrestler": 3,
         "Gladiator": 2
       },

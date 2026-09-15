@@ -159,7 +159,15 @@
     "element": "Element set to {element}.",
     "swapped": "{mode} is running, {old} is idle.",
     "form": "Form set to {form}.",
-    "unracked": "Coilgun spent, folded back into the pistol."
+    "unracked": "Coilgun spent, folded back into the pistol.",
+    "locked": "{mode} opens at level {n}."
+  },
+  "lock": {
+    "title": "Not yet earned",
+    "level": "Level {n}",
+    "unlocksAt": "Opens at level",
+    "current": "Em's level",
+    "remaining": "{n} modes still shut, next at level {next}"
   },
   "locked": {
     "equip": "Only Em can equip the vector gun.",

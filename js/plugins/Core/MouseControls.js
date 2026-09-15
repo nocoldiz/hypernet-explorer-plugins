@@ -443,6 +443,54 @@
             return found && this.canScroll(found, delta) ? found : null;
         },
 
+        // Every pane of `root` big enough to be worth a push. ONE definition of
+        // "a pane", shared with the rails the controller layer hangs on them
+        // (PadUI.scrollPanes in Core/ControllerSystem.js): a rail promising the
+        // stick will move something, over a pane this file would never have
+        // picked, was the whole of the complaint.
+        //
+        // Unbounded on purpose where onlyPaneOf is bounded: that one is walked
+        // per wheel notch, this one at most once a frame and usually every
+        // sixth.
+        MIN_PANE_OVERFLOW: 8,
+        MIN_PANE_HEIGHT: 60,
+
+        scrollablePanes(root) {
+            const out = [];
+            if (!root || !root.querySelectorAll) return out;
+            const consider = (el) => {
+                if (!this.isScrollable(el)) return;
+                if (this.ownsWheel(el)) return;
+                if (el.scrollHeight - el.clientHeight < this.MIN_PANE_OVERFLOW) return;
+                if (el.clientHeight < this.MIN_PANE_HEIGHT) return;
+                out.push(el);
+            };
+            consider(root);
+            for (const el of root.querySelectorAll('*')) consider(el);
+            return out;
+        },
+
+        // The last word, when every rule above has declined to guess. A page
+        // with a list down one side and prose down the other has two panes and
+        // no way to say which the player means, and for a long time this file
+        // answered that by doing nothing at all - which is why the stick felt
+        // dead on most of the game's menus.
+        //
+        // Doing nothing is the worse answer. The biggest pane with room left in
+        // the pushed direction is the one the player is reading: it is the one
+        // holding the most of what they cannot see, and on a book spread it is
+        // the prose page rather than the list the cursor already walks.
+        // Measured by height alone: the push is vertical, so the tallest pane is
+        // the one carrying the most of what the player cannot see.
+        largestPaneOf(root, delta) {
+            let best = null;
+            for (const pane of this.scrollablePanes(root)) {
+                if (!this.canScroll(pane, delta)) continue;
+                if (!best || pane.clientHeight > best.clientHeight) best = pane;
+            }
+            return best;
+        },
+
         // ---- The right stick, the controller's wheel ----------------------
         // The walk above answers a notch of the wheel. A pad has no notch: MZ's
         // gamepad map folds the LEFT stick into the d-pad and names nothing
@@ -508,7 +556,8 @@
                 return activeWin ? this.windowPaneOf(activeWin, delta) : null;
             }
             return this.onlyPaneOf(overlay, delta) ||
-                this.rightPageOf(overlay, delta);
+                this.rightPageOf(overlay, delta) ||
+                this.largestPaneOf(overlay, delta);
         },
 
         // The overlay a plugin has put over the game: the last child of the
@@ -575,7 +624,17 @@
                 if (!fires) return;
             }
             const pane = this.activePane(amount);
-            if (pane) pane.scrollTop += amount;
+            if (pane) this.scrollPane(pane, amount);
+        },
+
+        // Moving a pane and telling the controller layer about it, in one place.
+        // The rails hung on the pane (PadUI in Core/ControllerSystem.js) grey
+        // out the end the pane has reached, and reading that off a tick of its
+        // own put the answer up to a tenth of a second behind the stick.
+        scrollPane(pane, amount) {
+            pane.scrollTop += amount;
+            const pad = typeof window !== 'undefined' && window.PadUI;
+            if (pad && typeof pad.markRailEnds === 'function') pad.markRailEnds(pane);
         },
 
         // The name the poll was born with, when it was the triggers that
@@ -602,7 +661,7 @@
             }
             const pane = this.paneFor(target, delta);
             if (!pane) return;
-            pane.scrollTop += delta;
+            this.scrollPane(pane, delta);
             event.preventDefault();
             event.stopPropagation();
         },

@@ -1086,7 +1086,10 @@
         for (let i = 0; i < 12; i++) {
           const angle = (i / 12) * Math.PI * 2;
           const mark = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.012, 0.003), glowMat);
-          mark.position.set(Math.sin(angle) * 0.055, headPos, Math.cos(angle) * 0.055 + 0.062);
+          // Around the waist of the hourglass, where the cones are widest, so
+          // every mark is set into the bronze. Pushed forward off the axis the
+          // front half of the ring stood in mid air.
+          mark.position.set(Math.sin(angle) * 0.055, headPos, Math.cos(angle) * 0.055);
           mark.rotation.y = angle;
           group.add(mark);
         }
@@ -2736,7 +2739,9 @@
         const pale = this._mat(0xDCE4EA, { roughness: 0.3, metalness: 0.6 });
 
         // Half a kilo of flail, which should not be possible.
-        this._hilt(group, rand, { height: 0.28, rTop: 0.017, rBot: 0.015, mat: pale, sides: this.seg(10, 6), offset: -0.02 });
+        // No offset on the grip: dropped clear of the collar it is bolted to, the
+        // haft hung off the bottom of the flail on nothing.
+        this._hilt(group, rand, { height: 0.28, rTop: 0.017, rBot: 0.015, mat: pale, sides: this.seg(10, 6) });
         const collar = new THREE.Mesh(new THREE.TorusGeometry(0.018, 0.005, this.seg(4, 3), this.seg(12, 7)), mithril);
         collar.rotation.x = Math.PI / 2;
         group.add(collar);

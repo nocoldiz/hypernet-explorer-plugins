@@ -90,7 +90,9 @@
     "statAwarded": "Punti",
     "attributePoints": "{points} punti attributo da spendere",
     "raiseAttribute": "Aumenta permanentemente questo attributo",
-    "attributeRaised": "{stat} aumentata permanentemente a {value}"
+    "attributeRaised": "{stat} aumentata permanentemente a {value}",
+    "archetypeCreature": "Creatura",
+    "archetypeHumanoid": "Umanoide"
   },
   "trait": {
     "category": "Categoria:",

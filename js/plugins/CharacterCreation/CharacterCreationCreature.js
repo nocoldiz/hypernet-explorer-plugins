@@ -136,7 +136,7 @@
   function archetypeOfferedInPopulation(key) {
     if (populationMode() !== "monster") return true;
     const people = (window.SpriteCatalog && window.SpriteCatalog.PEOPLE_ARCHETYPES) ||
-                   ["Humanoid", "DoubleHeadedHumanoid"];
+                   ["Humanoid", "DoubleHeadedHumanoid"]; // i18n-ignore: SpriteCatalog archetype ids
     return !people.includes(key);
   }
 
@@ -144,7 +144,7 @@
   // it is just a person with a monster's sheet, so it is never offered here.
   // (DoubleHeadedHumanoid and the rest of the people archetypes stay , they are
   // shapes a creature can plausibly be built on.)
-  const HIDDEN_ARCHETYPES = ["Humanoid"];
+  const HIDDEN_ARCHETYPES = ["Humanoid"]; // i18n-ignore: archetype id
 
   Window_ArchetypeSelect.prototype.makeItemList = function () {
     this._data = [];

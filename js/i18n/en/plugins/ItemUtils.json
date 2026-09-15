@@ -62,5 +62,11 @@
       "bet": "{name} is studying the odds on the {item}",
       "gamble": "{name} is playing the {item}"
     }
+  },
+  "targetCard": {
+    "level": "Lv {n}",
+    "hp": "HP",
+    "mp": "MP",
+    "ap": "AP"
   }
 }

@@ -63,10 +63,10 @@
     "worksAs": "Lavora come {job} (dal {year}).",
     "betweenJobs": "Al momento senza lavoro.",
     "pastWork": "Lavori passati: {jobs}.",
-    "pastJob": "{job} ({from}–{to})",
+    "pastJob": "{job} ({from}-{to})",
     "marriedTo": "Sposato con {name}.",
     "seeing": "Frequenta {name}.",
-    "formerPartner": "Ex partner: {name} ({from}–{to}, {outcome}).",
+    "formerPartner": "Ex partner: {name} ({from}-{to}, {outcome}).",
     "cleanRecord": "Fedina penale pulita.",
     "criminalRecord": "Precedenti penali: {convictions} ({served} scontate), l'ultima: {crime} ({year}).",
     "convictionCount": {

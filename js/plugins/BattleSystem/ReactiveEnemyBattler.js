@@ -37,7 +37,8 @@
  * - <Spark> - Electric sparks (no ground stains)
  * - <Rock> - Rock debris flying (no ground stains)
  * - <GreenBlood> - Green blood with ground stains
- * - <AzureBlood> - Azure/cyan blood with ground stains
+ * - <AzureBlood> - Azure/cyan blood with ground stains (<BlueBlood> is the
+ *   same colour under the name the Bestiary and the database use)
  * - <BlackBlood> - Black blood with ground stains
  * 
  * Default: Red blood with ground stains
@@ -303,7 +304,7 @@
             this._particleType = 'rock';
         } else if (note.match(/<GreenBlood>/i)) {
             this._particleType = 'greenBlood';
-        } else if (note.match(/<AzureBlood>/i)) {
+        } else if (note.match(/<AzureBlood>|<BlueBlood>/i)) {
             this._particleType = 'azureBlood';
         } else if (note.match(/<BlackBlood>/i)) {
             this._particleType = 'blackBlood';

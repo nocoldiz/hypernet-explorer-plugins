@@ -662,8 +662,7 @@
     "bgs": [
       "People2",
       "gym-ambience",
-      "funfair-ambience",
-      "crowd-shouting"
+      "funfair-ambience"
     ],
     "dayTemperature": 20,
     "nightTemperature": 15,
@@ -793,7 +792,9 @@
     "specialBiomes": [],
     "lowerLayer": "Cave",
     "bgsNight": [
-      "winchester-wind-ambience"
+      "winchester-wind-ambience",
+      "desert-ambience",
+      "night-crickets"
     ],
     "bgs": [
       "wind-in-the-desert-countryside"
@@ -945,7 +946,9 @@
     "specialBiomes": [],
     "lowerLayer": "Cave",
     "bgsNight": [
-      "crickets"
+      "crickets5",
+      "night-crickets",
+      "bamboo-creaking-in-wind"
     ],
     "bgs": [
       "bamboo-creaking-in-wind",
@@ -1262,7 +1265,9 @@
     "specialBiomes": [],
     "lowerLayer": "Cave",
     "bgsNight": [
-      "winchester-wind-ambience"
+      "winchester-wind-ambience",
+      "mountain-wind",
+      "night-ambience"
     ],
     "bgs": [
       "mountain-wind"
@@ -2145,6 +2150,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "bgm": [
+      "Town7",
+      "KevinMacLeod/Jazz/Airport Lounge",
+      "KevinMacLeod/Calm/Your Call",
+      "KevinMacLeod/Jazz/Jazz Brunch",
+      "KevinMacLeod/Jazz/Samba Isobel"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2159,8 +2171,9 @@
       "city-ambience2",
       "city-soundscape",
       "city-soundscape2",
-      "crowd-shouting"
+      "desert"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -2307,6 +2320,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "bgm": [
+      "Town7",
+      "KevinMacLeod/Jazz/Airport Lounge",
+      "KevinMacLeod/Calm/Your Call",
+      "KevinMacLeod/Jazz/Jazz Brunch",
+      "KevinMacLeod/Jazz/Samba Isobel"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2317,6 +2337,7 @@
       "city-soundscape",
       "desert-ambient-loop"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -2465,6 +2486,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "bgm": [
+      "Town7",
+      "KevinMacLeod/Jazz/Airport Lounge",
+      "KevinMacLeod/Calm/Your Call",
+      "KevinMacLeod/Jazz/Jazz Brunch",
+      "KevinMacLeod/Jazz/Samba Isobel"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2475,6 +2503,7 @@
       "city-soundscape",
       "wind-soft"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -2624,6 +2653,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "bgm": [
+      "Town7",
+      "KevinMacLeod/Jazz/Airport Lounge",
+      "KevinMacLeod/Calm/Your Call",
+      "KevinMacLeod/Jazz/Jazz Brunch",
+      "KevinMacLeod/Jazz/Samba Isobel"
+    ],
     "bgsNight": [
       "city-night",
       "city-night2",
@@ -2635,6 +2671,7 @@
       "village-at-morning",
       "funfair-ambience"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -2776,6 +2813,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "bgm": [
+      "Town7",
+      "KevinMacLeod/Jazz/Airport Lounge",
+      "KevinMacLeod/Calm/Your Call",
+      "KevinMacLeod/Jazz/Jazz Brunch",
+      "KevinMacLeod/Jazz/Samba Isobel"
+    ],
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -2786,6 +2830,7 @@
       "desert-ambient-loop",
       "village-at-morning"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -2917,6 +2962,13 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "bgm": [
+      "Town7",
+      "KevinMacLeod/Jazz/Airport Lounge",
+      "KevinMacLeod/Calm/Your Call",
+      "KevinMacLeod/Jazz/Jazz Brunch",
+      "KevinMacLeod/Jazz/Samba Isobel"
+    ],
     "bgsNight": [
       "cold-wind-loop",
       "wind-soft",
@@ -2927,6 +2979,7 @@
       "wind-soft2",
       "village-at-morning"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 16,
     "seasons": {
@@ -3139,9 +3192,9 @@
     "specialBiomes": [],
     "lowerLayer": "Cave",
     "bgsNight": [
-      "crickets5",
-      "night-crickets",
-      "night-crickets2"
+      "ce-cavern-looped",
+      "cave-deep",
+      "cave-temple2"
     ],
     "bgs": [
       "ce-cracking",
@@ -3304,7 +3357,6 @@
     ],
     "bgs": [
       "desert-ambient-loop",
-      "desert",
       "desert2"
     ],
     "dayTemperature": 35,
@@ -4812,9 +4864,9 @@
     "lowerLayer": "Cave",
     "bgsNight": [
       "industrial-ambience",
-      "industrial-machinery",
       "factory-buzz",
-      "boiler-generator-loop"
+      "boiler-generator-loop",
+      "night-ambience"
     ],
     "bgs": [
       "industrial-ambience",
@@ -5052,7 +5104,6 @@
     "bgs": [
       "forest-birds-ambient-seamless-loop",
       "forest-birds",
-      "birds",
       "birdsong-ambient"
     ],
     "dayTemperature": 22,
@@ -6798,7 +6849,7 @@
     "bgsNight": [
       "night-crickets",
       "crickets5",
-      "night-ambience"
+      "mountain-wind"
     ],
     "bgs": [
       "mountain-wind",
@@ -8334,7 +8385,9 @@
     "specialBiomes": [],
     "lowerLayer": "Cave",
     "bgsNight": [
-      "landfill"
+      "landfill",
+      "night-crickets",
+      "night-ambience"
     ],
     "bgs": [
       "landfill"
@@ -10941,7 +10994,9 @@
     "specialBiomes": [],
     "lowerLayer": "Cave",
     "bgsNight": [
-      "highway-distant"
+      "bus-night",
+      "highway-distant",
+      "night-crickets"
     ],
     "bgs": [
       "highway-distant"
@@ -12502,7 +12557,7 @@
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
-      "countryside-swamp9"
+      "crickets5"
     ],
     "bgs": [
       "swamp-woods",
@@ -13551,7 +13606,6 @@
     ],
     "bgs": [
       "thrushes-tits-city-dawn",
-      "birds",
       "backyard",
       "morning-countryside",
       "park-birds-long"
@@ -13743,6 +13797,11 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "bgm": [
+      "Town3",
+      "Town1",
+      "KevinMacLeod/Bright/Achaidh Cheide"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2"
@@ -13753,6 +13812,7 @@
       "backyard",
       "morning-countryside"
     ],
+    "interiorBgs": [],
     "dayTemperature": 22,
     "nightTemperature": 15,
     "seasons": {
@@ -13948,6 +14008,12 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "bgm": [
+      "Town4",
+      "Town8",
+      "KevinMacLeod/Jazz/Cool Vibes",
+      "Theme1"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -13958,6 +14024,7 @@
       "wind-soft",
       "People2"
     ],
+    "interiorBgs": [],
     "dayTemperature": -5,
     "nightTemperature": -10,
     "seasons": {
@@ -14138,6 +14205,11 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "bgm": [
+      "Town3",
+      "Town1",
+      "KevinMacLeod/Bright/Achaidh Cheide"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14148,6 +14220,7 @@
       "mountain-ambience",
       "backyard"
     ],
+    "interiorBgs": [],
     "dayTemperature": 16,
     "nightTemperature": 8,
     "seasons": {
@@ -14303,6 +14376,10 @@
       217
     ],
     "lowerLayer": "Dungeon",
+    "bgm": [
+      "KevinMacLeod/Mysterious/Ibn Al-Noor",
+      "KevinMacLeod/Bright/Sardana"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14312,6 +14389,7 @@
       "village-at-morning",
       "desert-ambient-loop"
     ],
+    "interiorBgs": [],
     "dayTemperature": 26,
     "nightTemperature": 20,
     "seasons": {
@@ -14484,6 +14562,11 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "bgm": [
+      "Town3",
+      "Town1",
+      "KevinMacLeod/Bright/Achaidh Cheide"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14495,6 +14578,7 @@
       "backyard",
       "park-river-long"
     ],
+    "interiorBgs": [],
     "dayTemperature": 20,
     "nightTemperature": 14,
     "seasons": {
@@ -14651,6 +14735,11 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "bgm": [
+      "Town3",
+      "Town1",
+      "KevinMacLeod/Bright/Achaidh Cheide"
+    ],
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -14661,6 +14750,7 @@
       "waves-and-seagulls",
       "ocean-waves"
     ],
+    "interiorBgs": [],
     "dayTemperature": 24,
     "nightTemperature": 18,
     "seasons": {
@@ -14828,8 +14918,8 @@
     "lowerLayer": "Cave",
     "bgsNight": [
       "lava-loop-1",
-      "lava-loop-2",
-      "lava-loop-3"
+      "lava-loop-3",
+      "mountain-wind"
     ],
     "bgs": [
       "lava-loop-1",

@@ -4713,7 +4713,7 @@
     this._proposeMode = false;
     this._romanceMode = false;
     this._activeTab   = 'chat';
-    this._chatHistory.push({ role: 'player', text: playerLine });
+    this._pushPlayerLine(playerLine);
     this._isTyping    = true;
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
     this._joinMessage = charge
@@ -4814,7 +4814,7 @@
 
     this._romanceMode = false;
     this._activeTab   = 'chat';
-    this._chatHistory.push({ role: 'player', text: playerLine });
+    this._pushPlayerLine(playerLine);
     this._isTyping    = true;
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
     this._joinMessage = charge
@@ -4981,7 +4981,7 @@
     this._directionsMode = false;
     this._activeTab      = 'chat';
     this._joinMessage    = null;
-    this._chatHistory.push({ role: 'player', text: ask });
+    this._pushPlayerLine(ask);
     this._isTyping       = true;
     this._render();
     this._scrollChatToBottom();

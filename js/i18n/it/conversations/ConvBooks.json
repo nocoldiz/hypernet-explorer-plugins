@@ -1604,24 +1604,24 @@
     "una libellula gigante (Meganeura) con venatura alare intatta",
     "un anomalocaris con appendici prensili visibili",
     "una Hallucigenia cambriana con spine e tentacoli conservati",
-    "un Tully monster (Tullimonstrum) ,  classificazione ancora dibattuta",
+    "un Tully monster (Tullimonstrum), classificazione ancora dibattuta",
     "un cranio di mosasauro con denti ricurvi",
     "una sezione del collo di plesiosauro con gastroliti",
     "un ittiosauro che partorisce, madre e prole conservati",
     "un molare di mammut grande quanto un piatto",
     "un artiglio di bradipo gigante ancora parzialmente guainato",
     "un cranio di uccello del terrore (Foruscrachide) con becco adunco",
-    "una spirale mascellare di Helicoprion ,  spirale di denti di squalo",
+    "una spirale mascellare di Helicoprion, spirale di denti di squalo",
     "una pinna lobata di celacanto, quasi identica agli esemplari viventi",
     "una Opabinia con cinque occhi e ugello frontale",
     "una Wiwaxia ricoperta di armatura sclerite",
     "una sezione della corona di un giglio di mare (crinoide)",
-    "la pista di un granchio ferrato che si interrompe bruscamente ,  il granchio sopra, fossilizzato a metà cammino",
+    "la pista di un granchio ferrato che si interrompe bruscamente, il granchio sopra, fossilizzato a metà cammino",
     "un nautiloide con sifone e pareti delle camere visibili",
-    "una Dickinsonia, piatta e radialmente simmetrica ,  forse il primo animale",
+    "una Dickinsonia, piatta e radialmente simmetrica, forse il primo animale",
     "una fronda di Charnia, ediacariana e di biologia incerta",
     "un ammasso di nautiloidi ortoconi in pila predatoria",
-    "una Pikaia ,  forse il più antico cordato conosciuto",
+    "una Pikaia, forse il più antico cordato conosciuto",
     "un nido di uova pietrificate di specie sconosciuta"
   ],
   "weirdPreservation": [
@@ -1634,7 +1634,7 @@
     "impresso in ossido di ferro",
     "con contorno di tessuto molle visibile",
     "notevolmente completo",
-    "articolato ,  probabilmente sepolto vivo"
+    "articolato, probabilmente sepolto vivo"
   ],
   "amberVertebrate": [
     "un polpastrello di geco",
@@ -1663,7 +1663,7 @@
   "weirdDescriptionPatterns": [
     "Inglobato in {matrix} ({age}), {creature} risulta {preservation}. {detail}",
     "Questo reperto {preservation} proveniente da {matrix} ({age}) mostra {creature}. {detail}",
-    "Da depositi di {matrix} risalenti a {age}, {creature} ,  {preservation}. {detail}",
+    "Da depositi di {matrix} risalenti a {age}, {creature}, {preservation}. {detail}",
     "Un fossile {preservation} in {matrix} ({age}): {creature}. {detail}"
   ],
   "locations": [

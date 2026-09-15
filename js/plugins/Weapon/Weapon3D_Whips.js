@@ -74,10 +74,26 @@
        * cracker. Every whip here that actually hangs is this call plus whatever
        * is tied to the end of it, so the rope wiring lives in one place rather
        * than in each builder.
+       *
+       * Three things make it a lash rather than a string of cylinders:
+       *
+       *  - the taper follows the profile of a real plaited whip, full through
+       *    the first third of its length and falling away to almost nothing at
+       *    the end, instead of thinning evenly from hand to tip;
+       *  - the segments overrun each other and a bead of the lash's own
+       *    thickness sits on every join, so a bend cannot open a wedge of
+       *    daylight between one segment and the next, which is the one thing
+       *    that gives a jointed rope away;
+       *  - each segment is rolled a little further round than the one below it,
+       *    so the flats of the low-poly cross-section wind up the length as the
+       *    turns of a plait.
+       *
        * @param opts { segments, length, x, y, z, baseR, tipR, mat, sides, flat,
-       *   gravity, damping, stiffness, endMass }
+       *   joints, jointMat, gravity, damping, stiffness, endMass, bend, drag,
+       *   tipMass, taper }
        * @returns the rope: `headMeshGroup` is the tip mount, already out at the
-       *   end of the lash, and `segmentMeshes` are the segments to decorate.
+       *   end of the lash and turned to follow it, and `segmentMeshes` are the
+       *   segments to decorate.
        */
       _lashRig(group, opts) {
         const o = opts || {};
@@ -87,25 +103,65 @@
         const anchor = new THREE.Vector3(o.x || 0, o.y || 0, o.z || 0);
         const rope = this.createVerletRope(n + 1, segLen, anchor, {
           gravity: o.gravity === undefined ? -0.0006 : o.gravity,
-          damping: o.damping === undefined ? 0.94 : o.damping,
-          iterations: 8,
-          stiffness: o.stiffness === undefined ? 0.85 : o.stiffness,
-          endMass: o.endMass === undefined ? 0.6 : o.endMass
+          damping: o.damping === undefined ? 0.965 : o.damping,
+          iterations: this.isLowDetail() ? 6 : 10,
+          stiffness: o.stiffness === undefined ? 1.0 : o.stiffness,
+          endMass: o.endMass === undefined ? 0.6 : o.endMass,
+          // The tail carries a fraction of what the thong does, so a pull at
+          // the hand arrives at the cracker as a much larger movement.
+          tipMass: o.tipMass === undefined ? 0.06 : o.tipMass,
+          // Body near the hand, nothing at all by the fall.
+          bend: o.bend === undefined ? 0.12 : o.bend,
+          // Leather through air: this is what has it stream out rather than
+          // swing, and what settles it when the hand stops.
+          drag: o.drag === undefined ? 0.35 : o.drag,
+          tipDamping: o.tipDamping === undefined ? 0.998 : o.tipDamping,
+          alternate: true
         });
+        rope.aimHead = true;
         const baseR = o.baseR === undefined ? 0.011 : o.baseR;
         const tipR = o.tipR === undefined ? 0.004 : o.tipR;
+        const taper = o.taper === undefined ? 1.3 : o.taper;
+        rope.taper = taper;
+        const radius = (t) => this._lashProfile(baseR, tipR, t, taper);
+        const sides = this.seg(o.sides || 6, 4);
+        // Not on a strap or a ribbon: there the overrun alone closes the bend,
+        // and a bead reads as a stud hammered into the flat of a blade.
+        const beads = o.joints !== false && !o.flat && !this.isLowDetail();
         for (let i = 0; i < n; i++) {
-          const r = baseR + (tipR - baseR) * (i / n);
-          const rNext = baseR + (tipR - baseR) * ((i + 1) / n);
+          const r = radius(i / n);
+          const rNext = radius((i + 1) / n);
           const seg = new THREE.Mesh(
-            new THREE.CylinderGeometry(rNext, r, segLen * 1.06, this.seg(o.sides || 6, 4)), o.mat);
+            // A quarter longer than the span it covers: consecutive segments
+            // overrun each other, so however sharply the rope turns the two
+            // still meet.
+            new THREE.CylinderGeometry(rNext, r, segLen * 1.28, sides), o.mat);
           seg.position.set(anchor.x, anchor.y + i * segLen + segLen / 2, anchor.z);
           // A strap is the same rope squashed flat: the solver rewrites the
           // position and the rotation of a segment every frame, but never its
           // scale, so the cross section survives.
           if (o.flat) seg.scale.z = o.flat;
+          // The turn of the plait, re-applied after the solver has aimed the
+          // segment, in updateRopeMeshes. A flat lash is a ribbon of steel or a
+          // strap of leather and does not plait: rolled, it reads as a blade
+          // shattered into pieces rather than one bending.
+          seg.userData._roll = o.flat ? 0 : i * 0.55;
+          // The span this segment was cut for, so the solver can stretch it to
+          // the span it ends up covering.
+          seg.userData._stretch = segLen;
           group.add(seg);
           rope.segmentMeshes.push(seg);
+          if (beads && i > 0) {
+            const bead = new THREE.Mesh(
+              // Just proud of the flats of the cylinder, never a bulge: the bead is
+              // there to fill the wedge a bend opens at the axis, not to be seen.
+              new THREE.SphereGeometry(r * 0.9, this.seg(6, 4), this.seg(4, 3)),
+              o.jointMat || o.mat);
+            if (o.flat) bead.scale.z = o.flat;
+            bead.position.set(anchor.x, anchor.y + i * segLen, anchor.z);
+            group.add(bead);
+            rope.jointMeshes[i] = bead;
+          }
         }
         const tip = new THREE.Group();
         tip.position.set(anchor.x, anchor.y + length, anchor.z);
@@ -116,9 +172,20 @@
         return rope;
       },
 
+      /**
+       * The profile of a plaited whip: the thong keeps nearly its full
+       * thickness for the first third of the length and then falls away to the
+       * fall and the cracker. A straight taper from hand to tip reads as a
+       * cone, which is the one thing a whip does not look like.
+       */
+      _lashProfile(baseR, tipR, t, taper) {
+        const k = Math.pow(Math.max(0, 1 - t * t), taper === undefined ? 1.3 : taper);
+        return tipR + (baseR - tipR) * k;
+      },
+
       /** Radius of a lash built with these ends at segment `i` of `n`. */
       _lashRadius(baseR, tipR, i, n) {
-        return baseR + (tipR - baseR) * (i / n);
+        return this._lashProfile(baseR, tipR, n ? i / n : 0);
       },
 
       // ---- 238: Fly Swatter ---------------------------------------------------
@@ -1446,11 +1513,12 @@
         guard.rotation.z = Math.PI / 2;
         group.add(guard);
 
-        // ---- Linked-segment whip with Verlet physics ----
+        // ---- The lash ----
+        // One rig for every whip in the game, so the generic one bends, plaits
+        // and cracks exactly like the twenty-three bespoke ones do.
         const whipType = Math.floor(rand() * 3);
         const numSegments = 14 + Math.floor(rand() * 6); // 14-19 linked segments
         const totalLength = 0.35 + rand() * 0.25;
-        const segLen = totalLength / numSegments;
 
         // Whip tapers from thick base to thin tip
         const baseRadius = whipType === 1 ? 0.012 : (whipType === 2 ? 0.008 : 0.010);
@@ -1459,44 +1527,34 @@
         // Choose segment material based on whip type
         const segMat = whipType === 0 ? darkMat : (whipType === 1 ? gemMat : metalMat);
 
-        // Create Verlet rope anchored at handle tip (y=0)
-        const anchorPos = new THREE.Vector3(0, 0, 0);
-        const rope = this.createVerletRope(numSegments + 1, segLen, anchorPos, {
-          gravity: -0.0006,
-          damping: 0.94,
-          iterations: 8,
-          stiffness: 0.85,
-          endMass: 0.6
+        const rope = this._lashRig(group, {
+          segments: numSegments, length: totalLength, mat: segMat,
+          baseR: baseRadius, tipR: tipRadius,
+          // A length of cable has more body than plaited leather, and a strung
+          // line of light has almost none.
+          bend: whipType === 2 ? 0.2 : (whipType === 1 ? 0.06 : 0.12),
+          drag: whipType === 1 ? 0.6 : 0.35
         });
+        const segLen = totalLength / rope.segmentMeshes.length;
+        const segs = rope.segmentMeshes;
 
-        // Create per-segment cylinder meshes
-        for (let i = 0; i < numSegments; i++) {
-          const t = i / numSegments;
-          const radius = baseRadius + (tipRadius - baseRadius) * t;
-          const nextRadius = baseRadius + (tipRadius - baseRadius) * ((i + 1) / numSegments);
-
-          const segGeo = new THREE.CylinderGeometry(nextRadius, radius, segLen, 6);
-          const segMesh = new THREE.Mesh(segGeo, segMat);
-
-          // Initial position along Y axis
-          segMesh.position.set(0, i * segLen + segLen / 2, 0);
-          group.add(segMesh);
-          rope.segmentMeshes.push(segMesh);
+        for (let i = 0; i < segs.length; i++) {
+          const radius = this._lashRadius(baseRadius, tipRadius, i, segs.length);
 
           // Type 2 (blade whip): add barb spikes to every 2nd-3rd segment
           if (whipType === 2 && i > 2 && i % 2 === 0) {
             const barbSize = 0.008 + rand() * 0.006;
             const barb = new THREE.Mesh(new THREE.ConeGeometry(barbSize, barbSize * 2.5, 4), metalMat);
-            barb.position.set(radius * 1.5, 0, 0);
+            barb.position.set(radius * 0.7, 0, 0);
             barb.rotation.z = -Math.PI / 2;
-            segMesh.add(barb);
+            segs[i].add(barb);
 
             // Opposing barb
             if (rand() > 0.4) {
               const barb2 = new THREE.Mesh(new THREE.ConeGeometry(barbSize * 0.8, barbSize * 2, 4), metalMat);
-              barb2.position.set(-radius * 1.5, 0, 0);
+              barb2.position.set(-radius * 0.7, 0, 0);
               barb2.rotation.z = Math.PI / 2;
-              segMesh.add(barb2);
+              segs[i].add(barb2);
             }
           }
 
@@ -1504,24 +1562,25 @@
           if (whipType === 1 && i > 0 && i % 3 === 0) {
             const node = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.8, 4, 4), gemMat);
             node.position.set(0, -segLen / 2, 0);
-            segMesh.add(node);
+            segs[i].add(node);
           }
 
           // Type 0 (leather): add occasional braided knots
           if (whipType === 0 && i > 3 && i % 4 === 0) {
-            const knot = new THREE.Mesh(new THREE.TorusGeometry(radius * 1.5, radius * 0.6, 4, 6), darkMat);
+            const knot = new THREE.Mesh(new THREE.TorusGeometry(radius * 1.2, radius * 0.5, 4, 6), darkMat);
             knot.rotation.x = Math.PI / 2;
             knot.position.set(0, -segLen / 2, 0);
-            segMesh.add(knot);
+            segs[i].add(knot);
           }
         }
 
-        // Whip tip (cracker / spike / energy orb)
-        const tipGroup = new THREE.Group();
+        // Whip tip (cracker / spike / energy orb). The rig turns the mount to
+        // follow the last stretch of the lash, so all of these run on from it.
+        const tipGroup = rope.headMeshGroup;
         if (whipType === 0) {
           // Leather cracker, thin tapered cone
-          const cracker = new THREE.Mesh(new THREE.ConeGeometry(tipRadius * 0.6, segLen * 1.5, 4), darkMat);
-          cracker.position.y = segLen * 0.75;
+          const cracker = new THREE.Mesh(new THREE.ConeGeometry(tipRadius * 0.8, segLen * 1.5, 4), darkMat);
+          cracker.position.y = segLen * 0.6;
           tipGroup.add(cracker);
         } else if (whipType === 1) {
           // Energy orb at the tip
@@ -1530,19 +1589,13 @@
         } else {
           // Blade spike tip
           const spike = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.035, 4), metalMat);
-          spike.position.y = 0.017;
+          spike.position.y = 0.014;
           tipGroup.add(spike);
           // Small gem embedded
           const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.006, 0), gemMat);
-          gem.position.y = -0.005;
+          gem.position.y = -0.003;
           tipGroup.add(gem);
         }
-        tipGroup.position.set(0, totalLength, 0);
-        group.add(tipGroup);
-        rope.headMeshGroup = tipGroup;
-
-        // Store rope on the group for physics ticking
-        group.userData._verletRope = rope;
 
         return group;
       }

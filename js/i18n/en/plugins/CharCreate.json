@@ -1007,5 +1007,23 @@
   "vehicleTake": "Take this vehicle",
   "vehicleDrop": "Leave it behind",
   "classAbilities": "Class Abilities",
-  "limitBreak": "Limit break"
+  "limitBreak": "Limit break",
+  "genderDesc": {
+    "male": "Traditional male biology and identity. Pronouns: He/Him. Associated with testicular/insemination biology.",
+    "female": "Traditional female biology and identity. Pronouns: She/Her. Associated with uterine/gestation biology.",
+    "nonBinary": "Fluid or non-conforming presentation. Pronouns: They/Them. Features adaptable biological traits.",
+    "cocoon": "Metamorphic, synthetic, or vegetative chassis. Pronouns: It/They. Operates via mitotic or engineered reproduction."
+  },
+  "memberN": "Member {n}",
+  "petDefaultName": "Companion",
+  "jobNumber": "Job #{id}",
+  "skillNumber": "Skill #{id}",
+  "specNumber": "Spec #{id}",
+  "itemNumber": "Item #{id}",
+  "petsNone": "No pet",
+  "petsNoneDesc": "Set out with nobody at your heel.",
+  "petsSearchPlaceholder": "Search pet monsters...",
+  "petsNoneFound": "No pet monsters match this filter",
+  "petsChoose": "Choose as starting pet",
+  "petsTabRelease": "Release Pet"
 }

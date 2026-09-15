@@ -20,12 +20,44 @@
     // Scene_Container, compact centered DOM window
     //=============================================================================
 
+    // --- Categories -----------------------------------------------------------
+    // The chest is read under the same words the shop counter and the backpack
+    // use: one chip per <category:> the shelf actually holds, so a thing put away
+    // is found again under the word it was bought under. A category with nothing
+    // on it has no chip.
+    const ALL_CATEGORIES = 'all'; // i18n-ignore: filter id
+
+    // The category id an item files under: its <category:> tag, or the weapon /
+    // armour type for a piece of gear that carries no tag.
+    const categoryIdOf = (item) => {
+        const utils = window.ItemSystemUtils;
+        const name = utils && typeof utils.getItemCategoryName === "function"
+            ? utils.getItemCategoryName(item)
+            : null;
+        return String(name || "").trim();
+    };
+
+    // The caption it is printed under: Inventory.category.<id> is the one table
+    // the whole game names item categories out of, and an id nobody has written a
+    // caption for reads as itself.
+    const categoryLabelOf = (item) => {
+        const id = categoryIdOf(item);
+        if (!id) return T('Inventory.category.Misc');
+        const key = 'Inventory.category.' + id;
+        return T.has(key) ? T(key) : id;
+    };
+
+    const categoryKeyOf = (item) => categoryLabelOf(item).toLowerCase();
+
     class Scene_Container extends Scene_MenuBase {
         constructor() {
             super();
             this._containerId = null;
             this._isExtradimensional = false;
             this._weightLimit = 0; // grams, 0 = unlimited
+            // Which category chip is lit on each side of the transfer. The two
+            // shelves hold different things, so each keeps its own.
+            this._catFilters = { container: ALL_CATEGORIES, backpack: ALL_CATEGORIES };
         }
 
         prepare(containerId, isExtradimensional = false, weightLimit = 0) {
@@ -124,6 +156,8 @@
 
         _applyFilterSort(list) {
             let items = list.slice();
+            const cat = this.categoryFilter();
+            if (cat !== ALL_CATEGORIES) items = items.filter(item => categoryKeyOf(item) === cat);
             const query = (this._searchText || "").trim().toLowerCase();
             if (query) items = items.filter(item => String(item.name).toLowerCase().includes(query));
 
@@ -144,6 +178,68 @@
                 return String(a.name).localeCompare(String(b.name));
             });
             return items;
+        }
+
+        // --- Categories ---
+
+        // What the open shelf could ever show, before a chip narrows it.
+        _categoryPool() {
+            return this._activeTab === "backpack" ? this._getBackpackItems() : this._getContainerItems();
+        }
+
+        // One chip per category the open shelf is actually holding, in the order
+        // the captions read, behind an All that is always there.
+        _categoryChips() {
+            const byKey = new Map();
+            for (const item of this._categoryPool()) {
+                if (!item) continue;
+                const label = categoryLabelOf(item);
+                const key = label.toLowerCase();
+                if (!byKey.has(key)) byKey.set(key, label);
+            }
+            const chips = Array.from(byKey, ([key, label]) => ({ key, label }));
+            chips.sort((a, b) => a.label.localeCompare(b.label));
+            chips.unshift({ key: ALL_CATEGORIES, label: T('Inventory.category.All') });
+            return chips;
+        }
+
+        // Which chip is lit. The last of a category can leave the shelf while its
+        // chip is the one pressed, so a filter whose category has emptied falls
+        // back to All rather than leaving an empty list with no way out of it.
+        categoryFilter() {
+            const tab = this._activeTab === "backpack" ? "backpack" : "container";
+            const key = (this._catFilters && this._catFilters[tab]) || ALL_CATEGORIES;
+            if (key === ALL_CATEGORIES) return ALL_CATEGORIES;
+            const held = this._categoryPool().some(item => item && categoryKeyOf(item) === key);
+            if (!held) { this._catFilters[tab] = ALL_CATEGORIES; return ALL_CATEGORIES; }
+            return key;
+        }
+
+        setCategoryFilter(key) {
+            const tab = this._activeTab === "backpack" ? "backpack" : "container";
+            const next = key || ALL_CATEGORIES;
+            if (this._catFilters[tab] === next) return;
+            SoundManager.playCursor();
+            this._catFilters[tab] = next;
+            this._selectedIndex = 0;
+            this._refreshDOM();
+        }
+
+        // The chip row, walked rather than clicked: one press moves along it.
+        cycleCategory(dir) {
+            const chips = this._categoryChips();
+            if (chips.length <= 1) return;
+            const cur = Math.max(0, chips.findIndex(c => c.key === this.categoryFilter()));
+            this.setCategoryFilter(chips[(cur + dir + chips.length) % chips.length].key);
+        }
+
+        _categoryChipsHTML() {
+            const active = this.categoryFilter();
+            return this._categoryChips().map(chip =>
+                `<div class="backpack-tab focusable ${chip.key === active ? "active" : ""}"`
+                + ` onclick="SceneManager._scene.setCategoryFilter(this.dataset.cat)"`
+                + ` data-cat="${chip.key.replace(/"/g, "&quot;")}">${chip.label}</div>`
+            ).join("");
         }
 
         // --- Search and sort ---
@@ -400,6 +496,7 @@
                     ${this._searchFieldHTML()}
                 </div>
                 <div class="cs-tabs">${tabsHTML}</div>
+                <div class="backpack-tabs-row cs-categories">${this._categoryChipsHTML()}</div>
                 <div class="backpack-search cs-search">
                     <div class="backpack-sort-tags">${this._sortTagsHTML()}</div>
                 </div>
@@ -639,10 +736,15 @@
                 return;
             }
 
-            // Left/Right (and L1/R1) switch tabs; Up/Down move within the list.
-            if (Input.isTriggered('pageup') || Input.isTriggered('left')) {
+            // Left/Right switch shelves, L1/R1 walk the category chips above them,
+            // Up/Down move within the list.
+            if (Input.isTriggered('pageup')) {
+                scene.cycleCategory(-1);
+            } else if (Input.isTriggered('pagedown')) {
+                scene.cycleCategory(+1);
+            } else if (Input.isTriggered('left')) {
                 this._switchTab(scene, -1);
-            } else if (Input.isTriggered('pagedown') || Input.isTriggered('right')) {
+            } else if (Input.isTriggered('right')) {
                 this._switchTab(scene, +1);
             } else if (Input.isRepeated('up')) {
                 this._move(scene, -1);

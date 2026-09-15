@@ -29,6 +29,10 @@
  *     1/2/3 Thinker / Multiplayer / Hypernet (inside the menu only)
  *     F9   Quicksave, F10 Quickload (Core/SaveSystem.js)
  *
+ *   On a pad, out on the map: L3 is Vehicles and R3 is Build, the two the
+ *   field wants without a menu first. A tap of L2 folds the map legend and a
+ *   tap of R2 hands the lead to the next party member; held, both zoom.
+ *
  *   W/A/S/D move, Z/X are ok/cancel and Q/E zoom the world map
  *   (Map/WorldMap.js), so none of those are available for commands. T is
  *   world map <-> procedural map (Map/WorldMapReturn.js). Assets, Biologics
@@ -217,6 +221,65 @@
         vehicles: 195,
         army: 131
     };
+
+    // =====================================================================
+    // THE VOICES OF THIS MENU, in ONE place (window.MainMenuVoices)
+    // =====================================================================
+    // Every pocket the menu offers, as { symbol, labelKey, icon }. The quick
+    // menu held open on the field (UI/QuickMainMenuLayout.js) draws its wheel
+    // from THIS list, so the two can never fall out of step: a pocket added to
+    // the pockets page is in the quick menu the same day, with the same icon
+    // and the same name, and one deleted is gone from both.
+    //
+    // *** KEEP THE TWO FILES IN STEP ***
+    // If you are adding, renaming or removing a main-menu voice, the entry goes
+    // HERE and nowhere else. UI/QuickMainMenuLayout.js must not keep a list of
+    // its own; if you find yourself about to write one, add the field you need
+    // to this table instead. The pairing is asserted by
+    // test/test_quick_main_menu.js, which fails if the quick menu names a voice
+    // this table does not, or draws one with a different icon or label.
+    //
+    // The ORDER here is the pockets page's order, which is grouped by subject.
+    // The quick menu sorts its own copy alphabetically by the drawn name, as a
+    // thing you hold open and read down rather than a page you learn the shape
+    // of.
+    const VOICES = [
+        { symbol: "sandbox",         labelKey: "MainMenu.cmd.sandbox" },
+        { symbol: "dynamics",        labelKey: "MainMenu.cmd.dynamics" },
+        { symbol: "item",            labelKey: "MainMenu.cmd.backpack" },
+        { symbol: "equip",           labelKey: "MainMenu.cmd.equip" },
+        { symbol: "skill",           labelKey: "MainMenu.cmd.skills" },
+        { symbol: "vector_gun",      labelKey: "VectorGun.menu" },
+        { symbol: "status1",         labelKey: "MainMenu.cmd.status" },
+        { symbol: "specializations", labelKey: "MainMenu.cmd.specializations" },
+        { symbol: "biologics",       labelKey: "MainMenu.cmd.biologics" },
+        { symbol: "augments",        labelKey: "MainMenu.cmd.augments" },
+        { symbol: "world_map",       labelKey: "MainMenu.cmd.worldMap" },
+        { symbol: "vehicles",        labelKey: "MainMenu.cmd.vehicles" },
+        { symbol: "sleep_menu",      labelKey: "MainMenu.cmd.wait" },
+        { symbol: "cooking",         labelKey: "MainMenu.cmd.cooking" },
+        { symbol: "thinker",         labelKey: "MainMenu.cmd.thinker" },
+        { symbol: "alchemistry",     labelKey: "MainMenu.cmd.alchemistry" },
+        { symbol: "build",           labelKey: "MainMenu.cmd.build" },
+        { symbol: "search",          labelKey: "MainMenu.cmd.find" },
+        { symbol: "quest_log",       labelKey: "MainMenu.cmd.questLog" },
+        { symbol: "diary",           labelKey: "MainMenu.cmd.diary" },
+        { symbol: "hypernet",        labelKey: "MainMenu.cmd.hyperdeck" },
+        { symbol: "radio",           labelKey: "MainMenu.cmd.radio" },
+        { symbol: "bestiary",        labelKey: "MainMenu.cmd.bestiary" },
+        { symbol: "cards",           labelKey: "MainMenu.cmd.cards" },
+        { symbol: "help",            labelKey: "MainMenu.cmd.archive" },
+        { symbol: "factions",        labelKey: "MainMenu.cmd.factions" },
+        { symbol: "research",        labelKey: "MainMenu.cmd.research" },
+        { symbol: "assets",          labelKey: "MainMenu.cmd.assets" },
+        { symbol: "pets",            labelKey: "MainMenu.cmd.pets" },
+        { symbol: "training",        labelKey: "MainMenu.cmd.training" },
+        { symbol: "army",            labelKey: "MainMenu.cmd.workforce" },
+        { symbol: "save",            labelKey: "MainMenu.cmd.save" },
+        { symbol: "multiplayer",     labelKey: "MainMenu.cmd.multiplayer" },
+        { symbol: "options",         labelKey: "MainMenu.cmd.preferences" },
+        { symbol: "gameEnd",         labelKey: "MainMenu.cmd.resign" },
+    ];
 
     // The rows that are not main-menu commands: the World Map page, the Tools
     // pocket and the Dynamics tiles. They live here so every icon the menu
@@ -1640,7 +1703,7 @@
                                 <div class="roster-actions">
                                     ${leaderBtn}
                                     ${benchBtn}
-                                    <div class="command-item focusable roster-action" onclick="window.NPCEmpathize?.openForActor(${actorId})">${T('MainMenu.roster.empathize')}</div>
+                                    <div class="command-item focusable roster-action" onclick="window.NPCEmpathize?.openForActor(${actorId})" /* i18n-ignore: inline JavaScript */>${T('MainMenu.roster.empathize')}</div>
                                     ${step(-1, T('MainMenu.dynamics.moveUp'), first)}
                                     ${step(1, T('MainMenu.dynamics.moveDown'), last)}
                                 </div>
@@ -2047,7 +2110,7 @@
                 </div>
                 <div class="save-map-segment-frame">
                     <img class="save-map-segment-img" src="img/worldmap/row-${row}-column-${col}.jpg"
-                         onerror="this.onerror=null; this.src='img/worldmap/row-6-column-3.jpg';" />
+                         onerror="this.onerror=null; this.src='img/worldmap/row-6-column-3.jpg';" /* i18n-ignore: asset path fallback */ />
                     <div class="save-map-pin" style="--ui-at-x:${pinX.toFixed(1)}%; --ui-at-y:${pinY.toFixed(1)}%">
                         <div class="save-pin-dot"></div>
                         <div class="save-pin-label">${escapeHtml(v.name)}</div>
@@ -3630,7 +3693,56 @@
             if (!scene.openWaitMenu) return;
             SoundManager.playOk();
             scene.openWaitMenu();
-        }
+        },
+        // The rest of the pockets, so that every voice of the menu (VOICES
+        // above) can be opened from the field as well as from the page. The
+        // quick menu held open on the map (UI/QuickMainMenuLayout.js) runs
+        // through this table, and a voice with no entry here would be a row in
+        // that list that did nothing when it was picked.
+        //
+        // The scene each one opens is the same scene triggerUICommand pushes
+        // from inside the menu; where that method does something more than a
+        // push (the radio's cassette, the search overlay) the call is the same
+        // call, not a second way of doing it.
+        // The chart the M key raises. WorldMap.js owns the toggle; this is the
+        // same call the key makes, not a second way of opening it.
+        world_map: () => {
+            if (!window.WorldMapView || !window.WorldMapView.toggle) return;
+            SoundManager.playOk();
+            window.WorldMapView.toggle();
+        },
+        specializations: () => pushMapScene(
+            typeof Scene_Specializations !== "undefined" ? Scene_Specializations : window.Scene_Specializations),
+        vector_gun: () => pushMapScene(window.Scene_VectorGun),
+        thinker:    () => pushMapScene(typeof Scene_Thinker !== "undefined" ? Scene_Thinker : window.Scene_Thinker),
+        alchemistry: () => { if (isAlchemistryAvailable()) pushMapScene(window.Scene_Alchemistry); },
+        diary:      () => pushMapScene(window.Scene_Diary),
+        cards:      () => pushMapScene(
+            typeof Scene_CardCollection !== "undefined" ? Scene_CardCollection : window.Scene_CardCollection),
+        research:   () => pushMapScene(typeof Scene_TechTree !== "undefined" ? Scene_TechTree : window.Scene_TechTree),
+        army:       () => pushMapScene(typeof Scene_Army !== "undefined" ? Scene_Army : window.Scene_Army),
+        save:       () => pushMapScene(typeof Scene_Save !== "undefined" && Scene_Save),
+        multiplayer: () => pushMapScene(
+            typeof Scene_Multiplayer !== "undefined" ? Scene_Multiplayer : window.Scene_Multiplayer),
+        gameEnd:    () => pushMapScene(typeof Scene_GameEnd !== "undefined" && Scene_GameEnd),
+        hypernet:   () => pushMapScene(window.Scene_HyperDeck || window.Scene_HypernetOS),
+        radio:      () => {
+            if (!window.TunableRadio || !window.TunableRadio.open) return;
+            SoundManager.playOk();
+            window.TunableRadio.open();
+        },
+        search:     () => {
+            if (!window.MenuSearch || !window.MenuSearch.open) return;
+            SoundManager.playOk();
+            window.MenuSearch.open();
+        },
+        // Two pockets that are PAGES OF THE MENU rather than scenes of their
+        // own: the Dynamics hub and the pet roster are drawn inside Scene_Menu
+        // and cannot be opened without it. Picking either from the field opens
+        // the menu itself, which is where they live and where the player was
+        // heading anyway.
+        dynamics:   () => pushMapScene(typeof Scene_Menu !== "undefined" && Scene_Menu),
+        pets:       () => pushMapScene(typeof Scene_Menu !== "undefined" && Scene_Menu),
     };
 
     function pushMapScene(sceneClass) {
@@ -3659,7 +3771,52 @@
             if (!action) return false;
             action(scene || SceneManager._scene);
             return true;
-        }
+        }    };
+
+    // The voices of this menu, for the quick menu held open on the field
+    // (UI/QuickMainMenuLayout.js). ONE list, read rather than copied - see the
+    // VOICES table above and the note over it.
+    //
+    //   list()      every voice: { symbol, labelKey, label, icon, enabled }
+    //   iconOf(sym) the IconSet cell that voice wears on the pockets page
+    //   run(sym)    open it from the field (through MenuHotkeys.run)
+    window.MainMenuVoices = {
+        list() {
+            return VOICES.map((v) => ({
+                symbol: v.symbol,
+                labelKey: v.labelKey,
+                label: T(v.labelKey),
+                icon: COMMAND_ICONS[v.symbol] || 0,
+                enabled: window.MainMenuVoices.enabled(v.symbol),
+            }));
+        },
+        iconOf(symbol) { return COMMAND_ICONS[symbol] || 0; },
+        // The same answers the pockets page greys a tile out with. Kept here so
+        // the quick menu greys out exactly what the page does, rather than
+        // offering a pocket that opens onto nothing.
+        enabled(symbol) {
+            const sandboxTester = $gameActors && $gameActors.actor(1) &&
+                $gameActors.actor(1).name().toLowerCase() === "test";
+            const sandboxActive = !!($gameSystem && $gameSystem._isSandboxMode);
+            switch (symbol) {
+                case "sandbox": return sandboxTester || sandboxActive;
+                case "build":
+                    return window.FurnitureSystem?.canBuildOnCurrentMap?.() ?? ($gameMap.mapId() !== 315);
+                case "alchemistry": return isAlchemistryAvailable();
+                case "pets": return (window.PetSystem?.getPets?.() ?? []).length > 0;
+                case "vehicles": return (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
+                case "army": return typeof $gameArmy !== "undefined" && $gameArmy?.getTroopCount?.() > 0;
+                case "vector_gun": return !!window.Scene_VectorGun;
+                default: return true;
+            }
+        },
+        // Sandbox is not merely disabled off a tester's save: it is not there at
+        // all, on the page or in the wheel.
+        visible(symbol) {
+            if (symbol !== "sandbox") return true;
+            return window.MainMenuVoices.enabled("sandbox");
+        },
+        run(symbol, scene) { return window.MenuHotkeys.run(symbol, scene); },
     };
 
     // Scenes that read $gameParty.menuActor(): point them at the party leader,
@@ -3674,16 +3831,29 @@
         if ($gameMap.isEventRunning()) return;
         if ($gameTemp._sleepMenuOpen) return; // the wait/rest popup owns the keyboard
 
-        // The pad's half of R. Clicking the left stick has no Input.gamepadMapper
-        // action on it, so it is polled raw through AnalogStickInput the same way
-        // Map/WorldMap.js polls Start for the map sheet; binding it in the mapper
-        // would make every key sharing that action fire twice. Map/MapLegend.js
-        // draws it as the wait row's pad chip.
-        const padWait = window.AnalogStickInput &&
-            window.AnalogStickInput.isButtonTriggered(window.AnalogStickInput.BUTTON.L3);
-        if (padWait && MAP_HOTKEY_ACTIONS.sleep_menu) {
-            MAP_HOTKEY_ACTIONS.sleep_menu(this);
-            return;
+        // THE TWO STICK CLICKS, which are the only buttons on the pad the map
+        // had nothing on: L3 is the vehicles (V) and R3 is the build mode (B),
+        // the two things a player reaches for out in the field often enough to
+        // want without going through the menu first. R3 used to fold the map
+        // legend; that is a tap of L2 now (Map/MapLegend.js).
+        //
+        // Clicking a stick has no Input.gamepadMapper action on it, so both are
+        // polled raw through AnalogStickInput the same way Map/WorldMap.js polls
+        // Start for the map sheet; binding them in the mapper would make every
+        // key sharing that action fire twice. Map/MapLegend.js draws them as the
+        // pad chips of their rows.
+        const STICK_HOTKEYS = [
+            ["L3", "vehicles"],
+            ["R3", "build"],
+        ];
+        const stick = window.AnalogStickInput;
+        if (stick && stick.isButtonTriggered && stick.BUTTON) {
+            for (const [face, symbol] of STICK_HOTKEYS) {
+                const index = stick.BUTTON[face];
+                if (index === undefined || !stick.isButtonTriggered(index)) continue;
+                const action = MAP_HOTKEY_ACTIONS[symbol];
+                if (action) { action(this); return; }
+            }
         }
 
         // One key opens one screen. Two hotkeys read as triggered on the same

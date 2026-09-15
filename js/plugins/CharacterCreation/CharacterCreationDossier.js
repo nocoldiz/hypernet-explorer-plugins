@@ -104,7 +104,7 @@
         if (label) return label;
         return cat.toUpperCase();
       }
-      return ccT('CharCreate.traitTypeLabel', 'TRAIT');
+      return ccT('CharCreate.traitTypeLabel');
     }
 
     // ── Item Hover Tooltip Handlers ──
@@ -153,7 +153,7 @@
       const name = window.CCDbName(item);
       // The description is translated the same way the name is: the record's
       // own line is English, and the DOM never reaches the engine's draw hooks.
-      const desc = window.CCDbDesc(item) || ccT('CharCreate.standardIssueGear', "Standard issue item or gear.");
+      const desc = window.CCDbDesc(item) || ccT('CharCreate.standardIssueGear');
       const iconHtml = this._ccIconHtml(item.iconIndex, 20);
       // A skill card is tagged with the school it belongs to (Arcanism,
       // Swordsmanship), read off the same Categories.json the skill menus use,
@@ -206,7 +206,7 @@
         </div>
         <div class="cc-item-tooltip-desc">${desc}</div>
         ${statsHtml ? `<div class="cc-item-tooltip-stats">${statsHtml}</div>` : ""}
-        ${price ? `<div class="cc-item-tooltip-price">${ccT('CharCreate.estimatedValue', 'Estimated Value')}: ${price}</div>` : ""}
+        ${price ? `<div class="cc-item-tooltip-price">${ccT('CharCreate.estimatedValue')}: ${price}</div>` : ""}
       `;
 
       this._ccPositionTooltip(event, tooltip);
@@ -324,8 +324,8 @@
       const identityJobId = actor._jobId != null ? actor._jobId : 0;
       const identityJob = identityJobId > 0 ? (identityJobs.find((j) => j.id === identityJobId) || null) : null;
       const jobName = identityJob
-        ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(identityJob) : (identityJob.name || `Job #${identityJob.id}`))
-        : ccT('CharCreate.bio.joblessShort', 'Jobless');
+        ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(identityJob) : (identityJob.name || ccTp('CharCreate.jobNumber', { id: identityJob.id })))
+        : ccT('CharCreate.bio.joblessShort');
 
       const startingGold = CC_BASE_START_GOLD + (typeof classStartingMoney === 'function' ? classStartingMoney(actor._classId) : 0) + (typeof traitStartingMoney === 'function' ? traitStartingMoney(actor) : 0) + (typeof wealthStartingMoney === 'function' ? wealthStartingMoney(actor) : 0);
       const startingMoneyFormatted = this._formatGoldToEuros(startingGold);
@@ -340,15 +340,15 @@
         <div class="cc-compact-identity-card">
           <div class="cc-row-inline cc-row-gap-wide">
             ${!isPetActive ? `
-              <div class="cc-compact-avatar-wrap" title="${isLocked ? ccT('CharCreate.spriteLockedHint', 'Preset sprite (locked)') : ccT('CharCreate.spriteClickHint', 'Sprite: click to open the grid selector')}" onclick="${isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenSpriteGallery()'}">
+              <div class="cc-compact-avatar-wrap" title="${isLocked ? ccT('CharCreate.spriteLockedHint') : ccT('CharCreate.spriteClickHint')}" onclick="${isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenSpriteGallery()'}">
                 <div class="cc-compact-avatar" style="${avatarStyle}"></div>
               </div>
             ` : ''}
             <div class="cc-col cc-col-gap-1 cc-col-grow">
               <div class="cc-row-inline cc-row-gap-tight">
-                <input type="text" class="cc-bio-select cc-name-input ${isLocked ? 'cc-locked' : ''}" value="${actor.name() || ccT('CharCreate.defaultName', 'Hero')}" oninput="SceneManager._scene.onNameChange(this.value)" placeholder="${ccT('CharCreate.defaultName', 'Hero')}" ${isLocked ? 'readonly disabled' : ''} />
+                <input type="text" class="cc-bio-select cc-name-input ${isLocked ? 'cc-locked' : ''}" value="${actor.name() || ccT('CharCreate.defaultName')}" oninput="SceneManager._scene.onNameChange(this.value)" placeholder="${ccT('CharCreate.defaultName')}" ${isLocked ? 'readonly disabled' : ''} />
                 ${!isLocked ? `
-                  <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizeNameClick()" title="${ccT('CharCreate.randomize', 'Randomize Name')}">
+                  <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizeNameClick()" title="${ccT('CharCreate.randomize')}">
                     ${this._ccIconHtml(83, 16)}
                   </button>
                 ` : ''}
@@ -397,8 +397,8 @@
           // gallery opens on it. The Appearance button underneath said the
           // same thing twice and ate a row of the sidebar.
           const bustTitle = isLocked
-            ? ccT('CharCreate.bustLockedHint', 'Preset portrait (locked)')
-            : ccT('CharCreate.bustClickHint', 'Portrait: click to choose a bust');
+            ? ccT('CharCreate.bustLockedHint')
+            : ccT('CharCreate.bustClickHint');
           const bustClick = isLocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onOpenBustGallery()';
 
           profileBoxHtml = `
@@ -409,14 +409,14 @@
                 <div class="cc-compact-bust-full empty ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
                   <div class="cc-col cc-col-gap-2 cc-fill-center">
                     ${this._ccIconHtml(224, 28)}
-                    <span class="cc-portrait-caption cc-portrait-caption--empty">${ccT('CharCreate.noBustSelected', 'No portrait chosen')}</span>
+                    <span class="cc-portrait-caption cc-portrait-caption--empty">${ccT('CharCreate.noBustSelected')}</span>
                   </div>
                 </div>
               `}
               ${isLocked ? `
                 <div class="cc-compact-portrait-controls">
                   <div class="cc-portrait-footnote">
-                    ${this._ccIconHtml(195, 14)} <span>${ccT('CharCreate.presetLocked', 'Preset')}</span>
+                    ${this._ccIconHtml(195, 14)} <span>${ccT('CharCreate.presetLocked')}</span>
                   </div>
                 </div>
               ` : ''}
@@ -524,7 +524,7 @@
 
       const moneyRowHtml = this._ccLoadoutRowHtml(
         208,
-        ccT('CharCreate.startingFunds', 'Starting Funds'),
+        ccT('CharCreate.startingFunds'),
         startingMoneyFormatted,
         { nameColor: 'var(--text-primary-hover)', valueColor: 'var(--text-cost-ok)' }
       );
@@ -573,8 +573,8 @@
       // story mode is played as one of four dossiers and nothing else, so the two
       // buttons that would throw that dossier away are not drawn there.
       const randomizeBtnsHtml = Scene_CharacterCreation._storyMode ? '' : `
-            <button class="cc-compact-btn" onclick="SceneManager._scene.onQuickRandomizeMember()">${ccT('CharCreate.randomizeMember', 'Randomize Member')}</button>
-            <button class="cc-compact-btn" onclick="SceneManager._scene.createTotalRandomPartyAll()">${ccT('CharCreate.randomizeParty', 'Randomize Party')}</button>`;
+            <button class="cc-compact-btn" onclick="SceneManager._scene.onQuickRandomizeMember()">${ccT('CharCreate.randomizeMember')}</button>
+            <button class="cc-compact-btn" onclick="SceneManager._scene.createTotalRandomPartyAll()">${ccT('CharCreate.randomizeParty')}</button>`;
 
       return `
         <div class="cc-compact-sidebar">
@@ -677,7 +677,7 @@
           <span class="cc-loadout-name">${it.name}</span>
           <span class="cc-loadout-qty">x${it.qty}</span>
         </div>
-      `).join("") || `<span class="cc-note-faint">${ccT('CharCreate.noPersonalEquipment', 'No personal equipment')}</span>`;
+      `).join("") || `<span class="cc-note-faint">${ccT('CharCreate.noPersonalEquipment')}</span>`;
 
       // Traits badges
       const traitsBadges = selectedTraitObjects(actor).map(tr => {
@@ -701,18 +701,18 @@
           </div>
 
           <div class="cc-dossier-card cc-card-padded">
-            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.name', 'Name')}:</span><span class="cc-dossier-value">${actor.name()}</span></div>
-            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('ClassSelect.vocation', 'Vocation')}:</span><span class="cc-dossier-value">${className}</span></div>
-            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.gender', 'Gender')}:</span><span class="cc-dossier-value">${genderName}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.name')}:</span><span class="cc-dossier-value">${actor.name()}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('ClassSelect.vocation')}:</span><span class="cc-dossier-value">${className}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.gender')}:</span><span class="cc-dossier-value">${genderName}</span></div>
           </div>
 
           <div class="cc-gap-below">
-            <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.coreAttributes', 'Core Attributes')}</span>
+            <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.coreAttributes')}</span>
             <div class="cc-stat-grid">${statBoxes}</div>
           </div>
 
           <div class="cc-dossier-card cc-card-padded cc-gap-below cc-col cc-col-grow-scroll">
-            <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.personalInventory', 'Personal Inventory & Gear')}</span>
+            <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.personalInventory')}</span>
             <div class="cc-col cc-col-gap-hair cc-scroll-pane">
               ${itemsRows}
             </div>
@@ -720,7 +720,7 @@
 
           ${traitsBadges ? `
             <div class="cc-gap-above-hair">
-              <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.traits', 'Traits')}</span>
+              <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.traits')}</span>
               <div class="cc-chip-row">${traitsBadges}</div>
             </div>
           ` : ''}
@@ -828,7 +828,7 @@
           </div>
 
           ${section(T('CharCreate.traits'), traitBadges ? `<div class="cc-badge-wrap cc-badge-grid-3">${traitBadges}</div>` : "")}
-          ${section(ccT('Traits.tabDiseases', 'Diseases'), illnessBadges ? `<div class="cc-badge-wrap cc-badge-grid-3">${illnessBadges}</div>` : "")}
+          ${section(ccT('Traits.tabDiseases'), illnessBadges ? `<div class="cc-badge-wrap cc-badge-grid-3">${illnessBadges}</div>` : "")}
           ${this._ccLoadoutSectionHtml(
             T('CharCreate.startingSkills'),
             skillRows,
@@ -912,11 +912,11 @@
 
       const scenarioSectionsHtml = `
         ${suggestedEntries.length ? `
-          <div class="cc-scenario-group-title">${ccT('CharCreate.suggestedScenarios', 'Suggested Scenarios')}</div>
+          <div class="cc-scenario-group-title">${ccT('CharCreate.suggestedScenarios')}</div>
           ${suggestedEntries.map((e) => renderCard(e.choice, e.index)).join("")}
         ` : ''}
         ${otherEntries.length ? `
-          <div class="cc-scenario-group-title">${ccT('CharCreate.otherScenarios', 'Other Scenarios')}</div>
+          <div class="cc-scenario-group-title">${ccT('CharCreate.otherScenarios')}</div>
           ${otherEntries.map((e) => renderCard(e.choice, e.index)).join("")}
         ` : ''}
       `;
@@ -925,20 +925,20 @@
         <div class="cc-scenario-dossier">
           <div class="cc-page cc-scenario-list">
             <div class="cc-scenario-list-head">
-              <h2 class="cc-subheader">${ccT('CharCreate.scenarioPickPrompt', 'Pick the scenario this party starts in')}</h2>
+              <h2 class="cc-subheader">${ccT('CharCreate.scenarioPickPrompt')}</h2>
               <span class="ts-count">${(stepData.choices || []).length}</span>
             </div>
             <div class="cc-select-grid cc-scenario-grid">
               ${scenarioSectionsHtml}
             </div>
             <div class="cc-scenario-list-actions">
-              <button class="cc-compact-btn primary cc-scenario-embark" onclick="SceneManager._scene.onFinishPartyCreation()">${ccT('CharCreate.embark', "Embark")}</button>
+              <button class="cc-compact-btn primary cc-scenario-embark" onclick="SceneManager._scene.onFinishPartyCreation()">${ccT('CharCreate.embark')}</button>
               ${chaos ? `
               <button class="cc-compact-btn cc-scenario-reroll" onclick="SceneManager._scene.onChaosRerollParty()">
-                ${this._ccIconHtml(136, 16)} <span>${ccT('CharCreate.randomizeParty', 'Randomize Party')}</span>
+                ${this._ccIconHtml(136, 16)} <span>${ccT('CharCreate.randomizeParty')}</span>
               </button>` : `
               <button class="cc-compact-btn cc-scenario-back" onclick="SceneManager._scene.onReturnToPartyDossier()">
-                ${this._ccIconHtml(82, 16)} <span>${ccT('CharCreate.returnToParty', 'Return to Party Configuration')}</span>
+                ${this._ccIconHtml(82, 16)} <span>${ccT('CharCreate.returnToParty')}</span>
               </button>`}
             </div>
           </div>
@@ -953,22 +953,22 @@
             <div class="cc-scenario-brief-body">
               <div class="cc-dossier-card cc-class-section">
                 <h3 class="cc-subheader">
-                  <span>${ccT('CharCreate.scenarioExclusiveItems', 'Exclusive kit')}</span>
+                  <span>${ccT('CharCreate.scenarioExclusiveItems')}</span>
                   ${goldBonus ? `<span class="cc-scenario-bonus">+${this._formatGoldToEuros(goldBonus)}</span>` : ''}
                 </h3>
                 ${exclusive.length
                   ? `<div class="cc-compact-loadout-grid cc-loadout-open cc-loadout-grid-cols">${exclusive.map((e) => this._scenarioItemRowHtml(e)).join("")}</div>`
-                  : `<span class="cc-class-none">${ccT('CharCreate.scenarioNoExclusiveItems', 'No exclusive kit for this scenario')}</span>`}
+                  : `<span class="cc-class-none">${ccT('CharCreate.scenarioNoExclusiveItems')}</span>`}
               </div>
 
               <div class="cc-dossier-card cc-class-section">
                 <h3 class="cc-subheader">
-                  <span>${ccT('CharCreate.scenarioPartyInventory', 'Party inventory')}</span>
+                  <span>${ccT('CharCreate.scenarioPartyInventory')}</span>
                   ${partyInventory.length ? `<span class="ts-count">${partyInventory.length}</span>` : ''}
                 </h3>
                 ${partyInventory.length
                   ? `<div class="cc-compact-loadout-grid cc-loadout-open cc-loadout-grid-cols-3">${partyInventory.map((e) => this._scenarioItemRowHtml(e)).join("")}</div>`
-                  : `<span class="cc-class-none">${ccT('CharCreate.scenarioNoPartyInventory', 'The party is not carrying anything yet')}</span>`}
+                  : `<span class="cc-class-none">${ccT('CharCreate.scenarioNoPartyInventory')}</span>`}
               </div>
             </div>
 
@@ -976,7 +976,7 @@
 
           <div class="cc-page cc-scenario-roster-col">
             <h3 class="cc-subheader cc-scenario-roster-head">
-              <span>${ccT('CharCreate.scenarioRoster', 'Party dossiers')}</span>
+              <span>${ccT('CharCreate.scenarioRoster')}</span>
               <span class="ts-count">${partyMembers.length}</span>
             </h3>
             <div class="cc-scenario-sheets">
@@ -992,11 +992,11 @@
     // asked nothing after her sheet, so its one button begins the adventure.
     _partyConfirmLabel() {
       if (Scene_CharacterCreation._storyMode) {
-        return ccT('CharCreate.beginAdventure', 'Begin Adventure');
+        return ccT('CharCreate.beginAdventure');
       }
       return this._hasPresetInParty(false)
-        ? ccT('CharCreate.startGame', 'Start Game')
-        : ccT('CharCreate.confirmPartyScenario', 'Confirm Party & Scenario');
+        ? ccT('CharCreate.startGame')
+        : ccT('CharCreate.confirmPartyScenario');
     }
 
     onProceedToScenario() {

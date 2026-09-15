@@ -866,7 +866,7 @@
             ${bonusesSectionHtml}
 
             <div class="cc-dossier-card cc-card-tight">
-              <h3 class="cc-subheader">${T('CharCreate.startingWeaponProficiencies')||'Weapon Proficiencies'}</h3>
+              <h3 class="cc-subheader">${T('CharCreate.startingWeaponProficiencies')}</h3>
               <div class="cc-chip-row">
                 ${weaponBadges.join("") || `<span class="cc-class-empty">${T('CharCreate.none')||'None'}</span>`}
                 ${dualWieldBadge}

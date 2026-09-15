@@ -238,7 +238,7 @@
     },
     "intellectualChallenge": {
       "choices": [
-        "{The paradox IS the answer. It's load-bearing.|The contradiction is the point. Frame it, don't solve it.|It's not a bug in omnipotence, it's the signature.}",
+        "{The paradox IS the answer. It's load-bearing.|The contradiction is the point. Frame it, don't solve it.|That's omnipotence signing its work.}",
         "{Real power includes the power to limit yourself.|Omnipotence that can't tie its own hands is just strength.|Making the stone is the flex. Not lifting it is the art.}",
         "{The riddle only breaks mortal logic. Yours never applied.|You're grading divinity on a mortal curve.|The question smuggles in rules you never agreed to.}",
         "{You make it AND lift it, simultaneously, and dare anyone to object.|Both. At once. You're Eris, not a logician.|Do both and let the philosophers bill each other.}"
@@ -1867,7 +1867,7 @@
       "Let's leave {a fake treasure map|an ominous note|one single shoe} here for a stranger to find."
     ],
     "blunt": [
-      "You bend probability to ruin people's lives. {That's not a hobby, that's a felony.|How is that going for you?|Does it help?}",
+      "You bend probability to ruin people's lives. {Where I come from that's a felony.|How is that going for you?|Does it help?}",
       "Are you actually a goddess, or just {very confident|extremely uninsured|loud in a cosmic way}?",
       "Is any of this real, or am I {content|an audience|a witness you're grooming}?",
       "What do you actually want from me? {Plainly.|No riddles.|You can just say it.}",
@@ -2489,7 +2489,14 @@
       "Sign your name on a blank contract written on parchment that feels like cold snake skin.",
       "Drink a glass of liquid that shifts between boiling black pitch and freezing liquid nitrogen."
     ],
-    "endNote": "The cosmic tear stitches itself closed with a wet, tearing sound, leaving you alone on the pavement with a pounding headache and a receipt written in burning sulfur."
+    "endNote": [
+      "The cosmic tear stitches itself closed with a wet, tearing sound, leaving you alone on the pavement with a pounding headache and a receipt written in burning sulfur.",
+      "The evening lets go of you slowly, the way deep water does. By the time you can name what was strange about her, the names no longer fit.",
+      "She does not leave so much as recede. The smile is the last of her to go, and it stays several seconds longer than the rest of her, apologetically.",
+      "Afterwards the night files itself in the wrong order, and one hour refuses to be found. It will write later, saying it is happy where it is.",
+      "The birds come back first. Then the ordinary dark. Then the sound of your own heartbeat, which you notice is keeping better time than it used to.",
+      "You walk home with the distinct sense of having been escorted, although there is nothing beside you but a hand-wide warmth between your shoulder blades."
+    ]
   },
   "sandbox": {
     "menu": "Date with Eris",
