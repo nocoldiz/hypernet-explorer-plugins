@@ -232,13 +232,28 @@
         return !!(DF && typeof DF.escapeIsContested === "function" && DF.escapeIsContested());
     }
 
+    // True while any living enemy carries the <Boss> tag, read the same way
+    // PerfectEscape.js reads it.
+    function troopHasBoss() {
+        try {
+            return $gameTroop.aliveMembers().some(function(enemy) {
+                const data = enemy && enemy.enemy && enemy.enemy();
+                return !!(data && /<Boss>/i.test(data.note || ""));
+            });
+        } catch (e) {
+            return false;
+        }
+    }
+
     const _BattleManager_makeEscapeRatio = BattleManager.makeEscapeRatio;
     BattleManager.makeEscapeRatio = function() {
         _BattleManager_makeEscapeRatio.call(this);
         // The free first-turn getaway belongs to the open world. Inside the
         // tower the odds stay as they were rolled, and a failed run costs a
         // turn like any other action.
-        if (_battleTurnCount <= 1 && !escapeIsContested()) this._escapeRatio = 1.0;
+        // A boss is never handed the free getaway either: PerfectEscape.js owns
+        // the long odds a boss is fled on, and they stand from the first turn.
+        if (_battleTurnCount <= 1 && !escapeIsContested() && !troopHasBoss()) this._escapeRatio = 1.0;
     };
 
     const _BattleManager_makeRewards = BattleManager.makeRewards;

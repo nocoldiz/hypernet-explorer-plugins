@@ -131,5 +131,36 @@
     "notYet": "Quella lettera non è ancora stata consegnata.",
     "emptyEnvelope": "Nella busta non c'è nulla da tirare fuori.",
     "stillFull": "Svuota la busta prima di bruciare la lettera."
+  },
+  "app": {
+    "appName": "Posta Express",
+    "newMessage": "Nuovo messaggio",
+    "folder": {
+      "inbox": "Cassetta",
+      "transit": "In viaggio",
+      "compose": "Nuovo messaggio",
+      "book": "Rubrica"
+    },
+    "tool": {
+      "write": "Scrivi",
+      "collect": "Svuota la busta",
+      "discard": "Brucia",
+      "sync": "Invia e ricevi"
+    },
+    "synced": "La rubrica è stata riletta.",
+    "account": "{party} - {world}",
+    "counts": "{unread} da leggere, {transit} in viaggio",
+    "nothingInTransit": "Non c'è nulla in viaggio verso questo gruppo.",
+    "arrivesOn": "Arriva il {date}",
+    "replyTo": "Rispondi",
+    "reSubject": "R: {subject}",
+    "purse": "Nella borsa: {money}",
+    "holdBack": "Trattenuta prima della consegna",
+    "clear": "Straccia il foglio",
+    "bookBlurb": "Ogni gruppo che ha lasciato un recapito, in questo mondo e in quelli accanto. L'affrancatura è calcolata per dimensione attraversata.",
+    "colParty": "Gruppo",
+    "colMembers": "Membri",
+    "colSeen": "Visto l'ultima volta",
+    "thisIsYou": "(tu)"
   }
 }

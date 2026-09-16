@@ -115,7 +115,12 @@
     "lockedStructure": "No swapping companions inside a place like this: whoever walked in has to walk out.",
     "busyTitle": "Busy",
     "busyAt": "{job} · {time} left",
-    "busyRemaining": "{hours}h {minutes}m"
+    "busyRemaining": "{hours}h {minutes}m",
+    "dossierTitle": "Dossier",
+    "dossierTurn": "Acts {position} of {count}",
+    "dossierParams": "Attributes",
+    "dossierSkills": "Skills known",
+    "dossierTraits": "Traits"
   },
   "roster": {
     "travelling": "Travelling",

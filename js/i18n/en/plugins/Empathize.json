@@ -438,12 +438,12 @@
   "frontierSettlement": "Frontier settlement",
   "frontierOf": "{country} frontier",
   "genital": {
-    "none": "None",
     "0": "Testicles",
     "1": "Uterus",
     "2": "Oviduct",
     "3": "Sporangium",
-    "4": "Mitotic Gland"
+    "4": "Mitotic Gland",
+    "none": "None"
   },
   "partyThought": {
     "hurt": "I'm not sure I can keep going like this...",
@@ -854,5 +854,30 @@
   "armyStatusMarching": "Marching",
   "armyStatusReinforcing": "Reinforcing",
   "armyStatusBattling": "In battle",
-  "armyStatusRetreating": "Retreating"
+  "armyStatusRetreating": "Retreating",
+  "llm": {
+    "personalityLbl": "Personality",
+    "classLbl": "Trade",
+    "moralityLbl": "Morals",
+    "factionLbl": "Faction",
+    "jobLbl": "Work",
+    "needLow": "badly wanting",
+    "bandHostile": "hostile towards",
+    "bandCold": "cold towards",
+    "bandNeutral": "indifferent to",
+    "bandWarm": "fond of",
+    "bandDevoted": "devoted to",
+    "opinionOf": "You are {band} {speaker} ({score} out of 100).",
+    "attractedTo": "You are drawn to {speaker} ({score} out of 100).",
+    "moodBetter": "better disposed towards them",
+    "moodWorse": "worse disposed towards them",
+    "moodSame": "no different towards them",
+    "situationAction": "{speaker} has just tried this on you: {action}. It has left you {mood}.",
+    "situationDirections": "{speaker} has asked you the way to {target} and you are telling them.",
+    "situationBicker": "The two of you are winding each other up, the way you always do.",
+    "situationGift": "{speaker} has just handed you {item} and you are keeping it.",
+    "situationGiftRefused": "{speaker} has offered you {item} and you will not take it.",
+    "situationJoinRefused": "{speaker} has asked you to travel with them and you are saying no.",
+    "rewrite": "{situation} Say this, in your own words: \"{line}\""
+  }
 }

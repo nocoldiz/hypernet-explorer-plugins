@@ -34,5 +34,64 @@
   "purseLeft": "Rimanenti",
   "pts": "pt",
   "refundWord": "rimborso",
-  "searchPlaceholder": "Cerca tratti…"
+  "searchPlaceholder": "Cerca tratti…",
+  "packsHint": "Un pacchetto \u00e8 un punto di partenza: passa alla modalit\u00e0 Dettagliata per aggiungere, togliere o sostituire i suoi tratti.",
+  "packs": {
+    "soldier": {
+      "name": "Vecchio Soldato",
+      "description": "Anni sotto le armi, una voce piatta e un vizio tornato a casa con loro."
+    },
+    "scholar": {
+      "name": "Studioso",
+      "description": "Una mente brillante e piena di letture, rimasta troppo a lungo vicina alla pagina."
+    },
+    "outlaw": {
+      "name": "Fuorilegge",
+      "description": "Mani leggere, scrupoli ancora pi\u00f9 leggeri e un nome che qualcuno sta ancora cercando."
+    },
+    "healer": {
+      "name": "Guaritore",
+      "description": "Erbe, pazienza e il rifiuto di alzare le mani su chiunque."
+    },
+    "mystic": {
+      "name": "Mistico",
+      "description": "Nato per l'arte, esperto di alambicchi e attento ai presagi."
+    },
+    "brawler": {
+      "name": "Rissoso",
+      "description": "Fatto per questo, allenato per questo e svelto a trovarne il motivo."
+    },
+    "noble": {
+      "name": "Di Nobili Natali",
+      "description": "Una casata, un'eredit\u00e0 e modi che aprono le porte."
+    },
+    "wanderer": {
+      "name": "Viandante",
+      "description": "Legge la terra, segue una traccia e non perde mai la via di casa."
+    },
+    "gunslinger": {
+      "name": "Pistolero",
+      "description": "Occhio fermo, mano rapida e pochissima esitazione."
+    },
+    "pilgrim": {
+      "name": "Pellegrino",
+      "description": "Una strada percorsa per un credo, e un credo portato in silenzio."
+    },
+    "performer": {
+      "name": "Artista",
+      "description": "Una voce che arriva lontano, il gusto del piacere e il dono del pubblico."
+    },
+    "merchant": {
+      "name": "Mercante",
+      "description": "Fiuto per il prezzo, occhio alla scalata e lingua che chiude gli affari."
+    },
+    "hexed": {
+      "name": "Maledetto",
+      "description": "Segnato, sfregiato e in disgrazia con chiunque dovrebbe ascoltare."
+    },
+    "tinkerer": {
+      "name": "Artigiano",
+      "description": "Forgia, banco da lavoro e una giornata che nessun altro reggerebbe."
+    }
+  }
 }

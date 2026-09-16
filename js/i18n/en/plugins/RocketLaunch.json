@@ -33,10 +33,10 @@
     "aboard": "Aboard",
     "ascent": "Ballistic ascent",
     "apogee": "Apogee flip",
-    "retroburn": "Retro burn",
+    "prograde": "Prograde burn",
     "reentry": "Reentry",
     "terminal": "Terminal",
-    "touchdown": "Touchdown",
+    "capture": "Magnetic capture",
     "arrived": "Arrived"
   },
   "band": {
@@ -48,7 +48,7 @@
     "thermosphere": "Thermosphere",
     "kessler": "Kessler",
     "rendezvous": "Rendezvous",
-    "retro": "Retro",
+    "prograde": "Prograde",
     "apogee": "Apogee"
   },
   "hud": {
@@ -131,12 +131,14 @@
     "hopApogeeNear": "Coming up on apogee. Ready to turn her round.",
     "hopFlip": "Flipping. End over end, cold.",
     "hopFlipDone": "Flip complete. Motor is pointed at {dest} now.",
-    "hopRetro": "Retro burn. Everything in the tanks goes into stopping.",
+    "hopPrograde": "Flipped and burning prograde. The bell is pointed where we are going, so this slows us down.",
     "hopBraking": "Braking hard. Speed coming off.",
     "hopReentry": "Reentry. The plume is the heat shield.",
     "hopTerminal": "{dest} apron in sight. Lights are walking us in.",
-    "hopApron": "Over the apron. Legs out.",
-    "hopTouchdown": "Touchdown. Hull {pct}, every layer still on her.",
+    "hopMuzzle": "{dest} gun has us. Muzzle is lit and the bore is charged to catch.",
+    "hopCapture": "In the bore. Rings firing in reverse - it is a brake now.",
+    "hopBraked": "Speed coming off hard. The banks are taking back what they spent.",
+    "hopDocked": "Docked in the breech. Hull {pct}, every layer still on her.",
     "hopArrived": "Arrived at {dest}. Same round, different sea."
   }
 }

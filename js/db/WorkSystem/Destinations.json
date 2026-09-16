@@ -169,6 +169,7 @@
     "minLevel": 1
   },
   "Kola Superdeep Borehole": {
+    "locked": true,
     "name": "Kola Superdeep Borehole",
     "type": "dungeon",
     "country": "Russia",
@@ -237,6 +238,7 @@
     "minLevel": 8
   },
   "Luxembourg": {
+    "locked": true,
     "name": "Luxembourg",
     "type": "village",
     "country": "Luxembourg",
@@ -267,6 +269,7 @@
     }
   },
   "Amsterdam": {
+    "locked": true,
     "name": "Amsterdam",
     "picture": "destinations/Amsterdam",
     "type": "city",
@@ -626,6 +629,7 @@
     ]
   },
   "London": {
+    "locked": true,
     "name": "London",
     "picture": "destinations/London",
     "type": "city",
@@ -668,6 +672,7 @@
     ]
   },
   "Vatican Citadel": {
+    "locked": true,
     "name": "Vatican Citadel",
     "picture": "destinations/VaticanCitadel",
     "type": "village",
@@ -875,6 +880,7 @@
     ]
   },
   "Wimbledon": {
+    "locked": true,
     "name": "Wimbledon",
     "picture": "destinations/Wimbledon",
     "type": "village",
@@ -951,7 +957,10 @@
       "y": 89
     },
     "reservedTiles": [
-      "62,89"
+      "62,89",
+      "62,88",
+      "63,88",
+      "63,89"
     ]
   },
   "Glasgow": {
@@ -1085,6 +1094,7 @@
     ]
   },
   "Roma": {
+    "locked": true,
     "name": "Roma",
     "picture": "destinations/Roma",
     "type": "village",
@@ -1206,6 +1216,7 @@
     ]
   },
   "Dublin": {
+    "locked": true,
     "name": "Dublin",
     "picture": "destinations/Dublin",
     "type": "city",
@@ -1310,6 +1321,7 @@
     ]
   },
   "Brusselles": {
+    "locked": false,
     "name": "Bruxelles",
     "picture": "destinations/Brusselles",
     "type": "city",
@@ -1339,6 +1351,7 @@
     ]
   },
   "Reykyavik": {
+    "locked": true,
     "name": "Reykjavik",
     "picture": "destinations/Reykyavik",
     "type": "city",
@@ -1548,6 +1561,7 @@
     ]
   },
   "Madrid": {
+    "locked": true,
     "name": "Madrid",
     "picture": "destinations/Madrid",
     "type": "city",
@@ -1877,6 +1891,7 @@
     ]
   },
   "San Marino": {
+    "locked": true,
     "name": "San Marino",
     "picture": "destinations/SanMarino",
     "type": "village",
@@ -2352,6 +2367,7 @@
     ]
   },
   "Atene": {
+    "locked": true,
     "name": "Atene",
     "picture": "destinations/Atene",
     "type": "city",
@@ -2375,6 +2391,7 @@
     ]
   },
   "Instanbul": {
+    "locked": true,
     "name": "Istanbul",
     "picture": "destinations/Instanbul",
     "type": "city",
@@ -2446,6 +2463,7 @@
     ]
   },
   "Berlin": {
+    "locked": true,
     "name": "Berlin",
     "picture": "destinations/Berlin",
     "type": "city",
@@ -2469,6 +2487,7 @@
     ]
   },
   "Copenaghen": {
+    "locked": true,
     "name": "Copenaghen",
     "picture": "destinations/Copenaghen",
     "type": "city",
@@ -2515,6 +2534,7 @@
     ]
   },
   "Oslo": {
+    "locked": true,
     "name": "Oslo",
     "picture": "destinations/Oslo",
     "type": "city",
@@ -2538,6 +2558,7 @@
     ]
   },
   "Paris": {
+    "locked": true,
     "name": "Paris",
     "picture": "destinations/Paris",
     "type": "city",
@@ -2621,6 +2642,7 @@
     ]
   },
   "Berna": {
+    "locked": true,
     "name": "Berna",
     "picture": "destinations/Berna",
     "type": "city",
@@ -2707,6 +2729,7 @@
     ]
   },
   "Liechtenstein": {
+    "locked": true,
     "name": "Liechtenstein",
     "picture": "destinations/Liechtenstein",
     "type": "city",
@@ -3079,6 +3102,7 @@
     }
   },
   "Lisbona": {
+    "locked": true,
     "name": "Lisbona",
     "picture": "destinations/Lisbona",
     "type": "city",
@@ -3125,6 +3149,7 @@
     ]
   },
   "Santiago di Compostela": {
+    "locked": true,
     "name": "Santiago di Compostela",
     "picture": "destinations/SantiagodiCompostela",
     "type": "city",
@@ -3191,6 +3216,7 @@
     ]
   },
   "Sarajevo": {
+    "locked": true,
     "name": "Sarajevo",
     "picture": "destinations/Sarajevo",
     "type": "city",
@@ -3214,6 +3240,7 @@
     ]
   },
   "Belgrado": {
+    "locked": true,
     "name": "Belgrado",
     "picture": "destinations/Belgrado",
     "type": "city",
@@ -3257,6 +3284,7 @@
     ]
   },
   "Tirana": {
+    "locked": true,
     "name": "Tirana",
     "picture": "destinations/Tirana",
     "type": "village",
@@ -3277,6 +3305,7 @@
     ]
   },
   "Sofia": {
+    "locked": true,
     "name": "Sofia",
     "picture": "destinations/Sofia",
     "type": "city",
@@ -3300,6 +3329,7 @@
     ]
   },
   "Bucarest": {
+    "locked": true,
     "name": "Bucarest",
     "picture": "destinations/Bucarest",
     "type": "city",
@@ -3363,6 +3393,7 @@
     ]
   },
   "Rome": {
+    "locked": true,
     "name": "Rome",
     "picture": "destinations/Rome",
     "type": "village",

@@ -10,7 +10,12 @@
   "signalLost": "Il segnale si sfalda prima che se ne possa ricavare qualcosa.",
   "walkAway": "Lascia perdere.",
   "walkedAway": "La squadra se ne va, e quella cosa resta là dov'era.",
-  "mapClose": "Chiudi la pagina"
+  "mapClose": "Chiudi la pagina",
+  "riskChip": "rischio {pct}%",
+  "infectionSource": "{un'anomalia|qualcosa là fuori|il sito}",
+  "specChip": "{spec} CD {dc} {mod}",
+  "specNeedChip": "richiede {spec} ({tier})",
+  "specAction": "{spec}, {name}"
  },
  "reward": {
   "artifact": "Recuperato: {name}.",
@@ -32,7 +37,12 @@
   "augment": "Installato su {who}: {name}.",
   "needs": "Tutti tornano rimessi a nuovo: {list}.",
   "gave": "Consegnati {qty}x {name}",
-  "skill": "{who} ha imparato {name}"
+  "skill": "{who} ha imparato {name}",
+  "stateGained": "{{who} ne esce {state}.|{state}: {who}.|Ora {who} è {state}.|Tornata così: {who}, {state}.}",
+  "infected": "{{who} si è preso qualcosa: {name}.|{who} sta covando {name}.|{name}, e ce l'ha {who}.|{who} ha rimediato {name} là sotto.}",
+  "lostGold": "{Più leggeri di €{amount}.|€{amount} spariti.|È costata €{amount}.|Di tasca: €{amount}.}",
+  "lostItems": "{Spariti dallo zaino: {list}.|Non più a bordo: {list}.|Persi: {list}.|Lasciati lì: {list}.}",
+  "dungeon": "{C'è un ingresso, ed è aperto.|La discesa è aperta.|Si apre su qualcosa, e quel qualcosa va a fondo.|Una porta, e dietro le scale.}"
  },
  "relic": {
   "nameTemplate": "{noun} {prefix} di {of}",
@@ -1770,7 +1780,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Qualcosa sta crescendo a {place}, secondo uno schema, e lo schema è una spirale che si chiude su un punto invece di aprirsi da esso.\nÈ l'unica cosa viva che la scansione abbia trovato qui, copre nove ettari, e {instrument} dice che è raddoppiata da quando la nave è in orbita.",
+     "text": "Qualcosa sta crescendo a {place}, secondo uno schema, e lo schema è una spirale che si chiude su un punto invece di aprirsi da esso.\nÈ l'unica cosa viva che la scansione abbia trovato qui, copre nove ettari, e {instrument} dice che è raddoppiata da quando la nave è in orbita.\nLa spirale si stringe a ritmo costante, il che vuol dire che è cominciata da qualche parte, in un giorno preciso, e quel giorno si può calcolare.",
      "choices": [
       {
        "text": "Camminare fino al centro della spirale.",
@@ -1874,6 +1884,30 @@
       "mag": "small",
       "exp": 14
      }
+    },
+    "c_m": {
+     "text": "Il taglio tagliafuoco brucia {una linea pulita|una corsia pulita} attraverso il braccio della spirale e la crescita non prova ad attraversarlo. Gira intorno, in tutte e due le direzioni, e si ritrova.\nQuello che resta è un anello di terreno non bruciato al centro, con la crescita sigillata fuori, e l'anello è largo {nove metri|una decina di metri|abbastanza}, e dentro non si muove niente.",
+     "asides": {
+      "cynical": "{member}: \"{Gli abbiamo appena costruito un muro.|Ce lo ha lasciato fare.|Dieci metri dove non può andare, e non ci prova nemmeno.}\"",
+      "any": "{member} {percorre la linea bruciata una volta, tutta|guarda l'anello invece del fuoco|posa la torcia}"
+     },
+     "choices": [
+      {
+       "text": "Entrare nell'anello."
+      },
+      {
+       "text": "Bruciare tutto quanto, anello compreso."
+      },
+      {
+       "text": "Calcolare quando è cominciata la spirale."
+      }
+     ]
+    },
+    "c_ring": {
+     "text": "Dentro l'anello il terreno è {nudo|pulito|raschiato}, e al centro c'è un incavo della forma esatta di qualcosa che lì non c'è più.\nLa crescita fuori dalla linea smette di crescere quella notte. Tutta, ovunque, nello stesso momento: è così che la squadra scopre che la spirale non era l'organismo, era {la ricerca|lo scavo|quello che l'organismo fa quando cerca qualcosa}."
+    },
+    "c_date": {
+     "text": "Il tasso di crescita contro il passo della spirale dà una data, e la data è {undici anni fa|la primavera di un anno che la squadra sa nominare|una settimana precisa}, e il registro dei rilevamenti per questa roccia ha una voce per quella settimana.\nLa voce è un atterraggio. Una nave, tre giorni, e una ripartenza registrata {quattro ore|qualche ora|un bel po'} più tardi di quanto dica il giornale di bordo della nave stessa."
     }
    }
   },
@@ -1882,7 +1916,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "La trasmissione è una voce, in una lingua che le tabelle della nave decifrano all'ottanta per cento, e chiede aiuto per nome. Non il nome della nave. Quello di {leader}.\nLa sorgente è un rifugio presso {place}, scavato contro {hazard} e ancora in pressione.",
+     "text": "La trasmissione è una voce, in una lingua che le tabelle della nave decifrano all'ottanta per cento, e chiede aiuto per nome. Non il nome della nave. Quello di {leader}.\nLa sorgente è un rifugio presso {place}, scavato contro {hazard} e ancora in pressione.\nNel kit c'è un secondo faro di soccorso e non è mai stato acceso, il che richiede {una decisione|di decidere|che qualcuno decida} e non un incidente.",
      "choices": [
       {
        "text": "Bussare.",
@@ -1987,6 +2021,50 @@
       "mag": "small",
       "exp": 12
      }
+    },
+    "a1_m": {
+     "text": "Ci vuole {un'ora|quasi un'ora|due ore}. Erano su un rilevamento che non è mai stato registrato, sono soli da prima che la squadra nascesse, e non stanno chiedendo di essere salvati.\nQuello che chiedono ci mette {altri venti minuti|un altro quarto d'ora|un altro po'} ad arrivare, perché non hanno mai dovuto formularlo per nessuno e continua a uscire come {una scusa|delle giustificazioni|un elenco di motivi}.",
+     "asides": {
+      "nurturing": "{member} ha spostato una sedia sul pavimento senza che nessuno la sentisse ed è seduta dove batte la luce.",
+      "any": "{member} {controlla l'orologio della tuta e lo lascia correre|non interrompe|tiene le mani bene in vista}"
+     },
+     "choices": [
+      {
+       "text": "Lasciarli finire. Quanto ci vuole."
+      },
+      {
+       "text": "Chiedere del secondo faro."
+      },
+      {
+       "text": "Leggere la tuta prima di credere a una sola parola."
+      }
+     ]
+    },
+    "a1_beacon": {
+     "text": "Il secondo faro non è mai stato acceso perché accenderlo è la fine dell'accordo, e l'accordo è l'unica cosa quaggiù che ha sempre rispettato la sua parte.\nCosa sia l'accordo richiede {nove minuti|il resto dell'ora|un po'} di spiegazione e non è follia, ed è questa la parte che costa il sonno a tutti. È anche, nei suoi termini, {stabile|funzionante|del tutto regolare}, e la squadra ne è adesso la terza parte contraente."
+    },
+    "a1_suit": {
+     "text": "La tuta è vecchia di {due generazioni|una generazione|tre generazioni} e la persona dentro ha la taglia giusta e respira al ritmo giusto ed è viva secondo ogni lettura che si possa fare attraverso un visore.\nLa cosa sbagliata sono le mani. Sono rimaste nella stessa posizione per tutta l'ora, comprese {due|tre} gesti che avrebbero dovuto muoverle, e una volta vista la cosa non si può più non vedere."
+    },
+    "c1_m": {
+     "text": "Vuole quello che ha sempre voluto, e lo spiega per esteso, e a {due terzi|metà|buona parte} della spiegazione si ferma e chiede se la squadra preferisce la versione breve.\nLa versione breve è {quattro parole|una frase|cortissima}. Quella lunga va avanti da {anni|moltissimo tempo|prima che il rifugio fosse qui} e non l'ha mai sentita nessuno.",
+     "choices": [
+      {
+       "text": "La versione lunga. Tutta."
+      },
+      {
+       "text": "La versione breve."
+      },
+      {
+       "text": "Nessuna delle due. Chiedere cosa ci vuole perché smetta di volerlo."
+      }
+     ]
+    },
+    "c1_short": {
+     "text": "Quattro parole, e sono parole comuni in un ordine comune, e nessuno della squadra riesce a ripeterle dopo, nemmeno agli altri.\nQuello che sopravvive alla risalita sta nelle mani di {leader} ed è molto piccolo ed è caldo. La banda resta muta fino all'orbita, la prima volta da quando la nave è arrivata."
+    },
+    "c1_stop": {
+     "text": "Nessuno gliel'ha mai chiesto. Ci mette {una lunga pausa|una pausa lunghissima|la pausa più lunga del pomeriggio} a rispondere, e la risposta è una condizione, ed è piccola e precisa e quattro persone con una navetta possono soddisfarla.\nViene soddisfatta. Il rifugio tace {quella sera stessa|entro l'ora|prima che la nave riparta} e continua a tacere, e la banda che usava è libera per la prima volta da {anni|un decennio|parecchio}."
     }
    }
   },
@@ -1995,7 +2073,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Il segnale è una portante di soccorso, e va avanti da tanto che {a|nessuno si aspetta una risposta|l'energia che l'ha generata avrebbe dovuto esaurirsi due volte}. Arriva da {place}: uno scafo, spezzato a metà, con accanto {remnant}.\n{leader} porta giù la squadra. Da vicino il relitto è più vecchio della trasmissione, e la trasmissione è più vecchia di chiunque sia a bordo.",
+     "text": "Il segnale è una portante di soccorso, e va avanti da tanto che {a|nessuno si aspetta una risposta|l'energia che l'ha generata avrebbe dovuto esaurirsi due volte}. Arriva da {place}: uno scafo, spezzato a metà, con accanto {remnant}.\n{leader} porta giù la squadra. Da vicino il relitto è più vecchio della trasmissione, e la trasmissione è più vecchia di chiunque sia a bordo.\nIl faro non va con l'energia della nave. È stato {ricablato|spostato|staccato dalla linea} e gli hanno dato una cella tutta sua.",
      "choices": [
       {
        "text": "Tagliare lo scafo pressurizzato.",
@@ -2099,6 +2177,50 @@
       "mag": "large",
       "exp": 10
      }
+    },
+    "c1_m": {
+     "text": "Sotto lo scafo c'è un reattore {grande come un barile|non più grande di un barile}, ancora acceso, ancora regolato, e un recupero di quella qualità non capita {due volte|due volte distinte} in una carriera.\nÈ anche imbullonato a qualcosa. Non alla nave: attraverso la nave, dentro quello che c'è sotto, da qualcuno che aveva gli attrezzi e il tempo e l'ha fatto {dopo|molto dopo|parecchio tempo dopo} lo schianto.",
+     "asides": {
+      "cynical": "{member}: \"{Qualcuno ha ormeggiato un reattore a questa roccia.|Non è un recupero, è un impianto.|Imbullonato. Dopo. Pensateci.}\"",
+      "any": "{member} {mette una luce sui bulloni|fa un passo indietro senza deciderlo|conta i fissaggi}"
+     },
+     "choices": [
+      {
+       "text": "Tagliare i bulloni e prenderlo."
+      },
+      {
+       "text": "Leggere l'impianto prima di toccarlo."
+      },
+      {
+       "text": "Lasciarlo acceso. Prendere i sacchi e ripartire."
+      }
+     ]
+    },
+    "c1_read": {
+     "text": "Non è un lavoro di recupero, è una centrale: il reattore alimenta una linea di cavo che scende nel terreno, e la linea è lunga {quattrocento metri|parecchio|più di quanto copra il rilevamento} e sta ancora portando corrente.\nQualunque cosa ci sia all'altro capo ha avuto energia per tutto il tempo in cui questo relitto è stato qui. La squadra può prendere il reattore o seguire il cavo, e non c'è modo onesto di fare tutte e due con la luce che resta."
+    },
+    "c1_arc": {
+     "text": "Il primo bullone viene via bene. Il secondo non è un bullone: è un conduttore, ed è in tensione da {anni|moltissimo tempo|tutto il tempo del relitto}.\nL'arco si porta via la cesoia, il guanto e {quattro ore|il resto del turno|mezza giornata} di pomeriggio. Il reattore resta esattamente dov'è, ronzando, per niente impressionato."
+    },
+    "b1_m": {
+     "text": "Il nucleo esce dall'albero {tutto intero|intero|in un pezzo solo}, più pesante di quanto abbia diritto di essere, e la portante di soccorso si spegne nel momento in cui è fuori dalla sede.\nIl silenzio dopo dura {quattro secondi|pochi secondi|poco}, e poi l'albero riparte, sulla stessa portante, senza nucleo dentro.",
+     "choices": [
+      {
+       "text": "Prendere il nucleo e andarsene. In fretta."
+      },
+      {
+       "text": "Scoprire cosa sta alimentando l'albero adesso."
+      },
+      {
+       "text": "Rimettere il nucleo a posto."
+      }
+     ]
+    },
+    "b1_drive": {
+     "text": "Non è niente a bordo a farlo funzionare. L'albero è pilotato da {altrove|fuori scafo|un rilevamento}, e il rilevamento è {centoundici gradi|fisso|costante} e non si muove con il cielo, il che vuol dire che non è in orbita e non è lontano.\nQuel rilevamento vale più del nucleo, e la squadra ha tutti e due, e la camminata fino alla navetta la fanno guardando dalla parte giusta per tutto il tempo."
+    },
+    "b1_back": {
+     "text": "Il nucleo torna nella sede e si siede con {uno scatto|un rumore|un suono} troppo soddisfatto per un pezzo di ferramenta.\nLa portante cambia. È lo stesso segnale ed è adesso {più forte|molto più forte|diretto da qualche parte}, e la squadra è giù dal relitto in {quattro minuti|niente|due minuti} e non ne parla fino all'orbita."
     }
    }
   },
@@ -2107,7 +2229,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Non c'è suolo su cui posarsi. Il segnale arriva da una quota fissa in {place}, in stazione dentro un'atmosfera che avrebbe dovuto portar via qualunque cosa in un'ora.\n{leader} porta giù la capsula. {ground} chiude la vista dagli obli a nove chilometri.",
+     "text": "Non c'è suolo su cui posarsi. Il segnale arriva da una quota fissa in {place}, in stazione dentro un'atmosfera che avrebbe dovuto portar via qualunque cosa in un'ora.\n{leader} porta giù la capsula. {ground} chiude la vista dagli obli a nove chilometri.\nÈ rimasta a quella profondità esatta da quando esistono i rilevamenti, attraverso {quattro|cinque} stagioni di tempeste che avrebbero dovuto spostarla.",
      "choices": [
       {
        "text": "Portarsi alla sua quota e restare.",
@@ -2212,6 +2334,50 @@
       "mag": "large",
       "exp": 12
      }
+    },
+    "a1_m": {
+     "text": "L'attracco prende la capsula come se fosse stato costruito per lei, perché lo è stato, e dentro c'è aria, e gravità, e un unico corridoio con una porta in fondo.\nIl corridoio è lungo {novanta metri|molto|più di quanto la piattaforma sembrasse da fuori}, e la porta in fondo si apre per {leader} e per nessun altro, e c'è tutto il tempo di pensarci mentre si cammina.",
+     "asides": {
+      "cynical": "{member}: \"{Si è aperta per uno solo. Uno.|Non entrarci da solo.|Una porta che sa chi è chi tra noi.}\"",
+      "any": "{member} {percorre il corridoio con una mano sul muro|conta i passi|mette un fermo alla camera stagna alle spalle}"
+     },
+     "choices": [
+      {
+       "text": "Passare la porta."
+      },
+      {
+       "text": "Mandare dentro tutta la squadra insieme, porta o no."
+      },
+      {
+       "text": "Leggere il corridoio prima di farci un altro metro."
+      }
+     ]
+    },
+    "a1_all": {
+     "text": "Quattro persone attraversano una porta che si apre per una sola, il che è permesso, nel senso che non le ferma nessuno.\nQuello che c'è dall'altra parte è disposto per una persona e non si ridispone. Escono tutti. {Tre di loro|Gli altri tre|Tre} concordano su cosa ci fosse dentro e il quarto no, e il quarto è {leader}."
+    },
+    "a1_corr": {
+     "text": "Misurato a passi, il corridoio è {più lungo di quanto la piattaforma sia larga|quattro metri più lungo di quanto lo scafo consenta|di una lunghezza che l'esterno di questa cosa non può contenere}, e la differenza è costante invece di crescere, il che ne fa un dato e non un errore.\nLa porta si apre. Dietro c'è quello che c'è sempre stato, e la squadra entra sapendo esattamente quanta parte di questa piattaforma non stia dentro il suo esterno, che è la differenza fra una scoperta e un rilevamento."
+    },
+    "b2_m": {
+     "text": "Il braccio di campionamento torna con tre grammi di colonna nel contenitore, e il contenitore pesa {molti} chili, e si sta ancora raffreddando.\nMentre si raffredda, la colonna fa una cosa che non ha fatto nei {quaranta minuti|nell'ora|nel tempo} in cui la capsula è stata sotto di lei: si {stringe|ritira|chiude} di circa un metro, dal basso verso l'alto, alla velocità con cui si muove una cosa che si è accorta di qualcosa.",
+     "choices": [
+      {
+       "text": "Prendere il contenitore e risalire, subito."
+      },
+      {
+       "text": "Rimettere a posto i tre grammi."
+      },
+      {
+       "text": "Tenere la posizione e guardarla arrivare."
+      }
+     ]
+    },
+    "b2_back": {
+     "text": "Tre grammi tornano fuori dal contenitore e sulla colonna, cosa {più difficile|molto più difficile|parecchio più laboriosa} che toglierli, e la colonna smette di stringersi prima che il braccio sia rientrato del tutto.\nLa capsula risale con un contenitore vuoto, duecento fotogrammi della colonna e l'informazione più utile che sia mai stata riportata da questo mondo, cioè che le si può chiedere qualcosa."
+    },
+    "b2_watch": {
+     "text": "Restare fermi mentre qualcosa grande come un sistema di tempeste si avvicina alla capsula è una decisione che va presa {quattro|cinque|parecchie} volte separate man mano che arriva.\nSi ferma a {nove metri|cento metri|poca distanza}, e resta lì, e per {undici minuti|un quarto d'ora|un bel po'} stanno lì tutti e due. Quello che viene registrato in quei minuti verrà discusso da gente che non c'era per il resto della vita della squadra."
     }
    }
   },
@@ -2220,7 +2386,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Il calore qui basta a chiudere una discussione senza protezione in meno di un secondo, e il segnale arriva dal punto più caldo del rilievo.\nCiò che trasmette non si ripara da {hazard}. Se ne serve.",
+     "text": "Il calore qui basta a chiudere una discussione senza protezione in meno di un secondo, e il segnale arriva dal punto più caldo del rilievo.\nCiò che trasmette non si ripara da {hazard}. Se ne serve.\nLa fase fredda segue un ciclo, e il ciclo è {regolare|esatto|preciso al minuto}, cosa che su questa roccia non ha diritto di essere.",
      "choices": [
       {
        "text": "Entrare con la tuta al massimo raffreddamento.",
@@ -2325,6 +2491,53 @@
       "reward": "artifact",
       "exp": 14
      }
+    },
+    "c1_m": {
+     "text": "Il rivestimento viene via a fogli, {leggeri come stagnola|leggeri quanto la stagnola}, e ogni foglio tiene la temperatura come se avesse un'opinione in merito. Ce n'è abbastanza da foderare una nave.\nSotto il terzo strato i fogli smettono di essere vuoti. Sul retro c'è del lavoro: {figure|linee|un disegno}, ripetuto, e la ripetizione passa da un foglio all'altro, il che vuol dire che tutta la cavità è una sola superficie che dice una sola cosa.",
+     "asides": {
+      "cynical": "{member}: \"{Stiamo staccando una pagina.|Quella è scrittura e la stiamo vendendo come isolante.|Qualcuno vorrà sapere in che ordine sono venuti via.}\"",
+      "any": "{member} {comincia a numerare i fogli man mano che escono|fotografa la cavità prima che si muova un altro foglio|smette di staccare}"
+     },
+     "choices": [
+      {
+       "text": "Continuare a staccare. Vale di più come lamiera."
+      },
+      {
+       "text": "Numerare ogni foglio e prendere il rivestimento in ordine."
+      },
+      {
+       "text": "Fermarsi. Prendere quattro fogli e lasciare in piedi il resto."
+      }
+     ]
+    },
+    "c1_order": {
+     "text": "Numerare {centoquaranta|moltissimi|tutti i} fogli mentre escono dalla parete di una cavità, in tuta al massimo del raffreddamento, aggiunge {tre ore|mezza giornata|quasi un turno} a un lavoro che era già al limite dell'autonomia.\nRicomposto sul pavimento di un hangar è un unico documento continuo, e non è una lingua, ed è leggibile lo stesso, che è la parte che richiede {due anni|molto tempo|diverse carriere} per essere spiegata."
+    },
+    "c1_four": {
+     "text": "Quattro fogli, presi dallo strato superiore dove non c'è scritto niente, e la cavità lasciata in piedi con la parete intatta.\nÈ una frazione di quello che si poteva portare via ed è abbastanza per foderare una cabina, e la squadra è l'unico equipaggio che potrà mai dire di aver trovato quella cavità e di averla lasciata intera, il che si scopre contare {più avanti|molto, più avanti|per qualcuno}."
+    },
+    "b1_m": {
+     "text": "Il drone è al bordo del calore, {posato con la faccia verso l'esterno|posato rivolto verso fuori}, con il registratore pieno e l'involucro carico di qualcosa che a quella temperatura non dovrebbe esistere.\nÈ anche stato riparato. Il braccio del rotore che era incrinato all'andata non è più incrinato, e la riparazione è {migliore dell'originale|pulita|fatta con un materiale che non è nella distinta del drone}.",
+     "choices": [
+      {
+       "text": "Raccoglierlo e uscire dal calore."
+      },
+      {
+       "text": "Guardare bene la riparazione prima di toccare l'involucro."
+      },
+      {
+       "text": "Lasciarlo lì. Mandare un secondo drone a guardare il primo."
+      }
+     ]
+    },
+    "b1_fix": {
+     "text": "La riparazione non è una riparazione in nessun senso che un'officina riconoscerebbe. Il braccio è stato {ricresciuto|continuato|finito}, nella stessa lega, nella stessa sezione, con l'incrinatura chiusa dall'interno.\nQualunque cosa l'abbia fatto lavorava sulla struttura stessa del drone come specifica. Cosa questo implichi sul {remnant} che sta nel fuoco senza un segno è il paragrafo più prezioso del rapporto della nave di quell'anno."
+    },
+    "b1_hot": {
+     "text": "L'involucro viene raccolto al bordo di un calore che {sta tornando|sale|non resta dov'era}, e il timer della tuta diventa l'unica cosa che qualcuno stia ascoltando.\nEscono tutti. Il drone esce. Quello che aveva nell'involucro non sopravvive al salto di pressione alla camera stagna, e quel che resta è {una macchia|un residuo|tre grammi di vetro} e un registratore pieno di ottime riprese."
+    },
+    "b1_watch": {
+     "text": "Il secondo drone vola un'orbita lenta al bordo del calore per {quattro ore|il resto della fase|finché tengono le celle} con la telecamera puntata sul primo.\nNon viene niente a prenderlo. {Alla fine della quarta ora|Alla fine della fase|Al tramonto} il primo drone si rialza sul proprio carrello, si gira verso il secondo e tiene quella posizione finché le celle non finiscono."
     }
    }
   },
@@ -2333,7 +2546,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Qui ci sono undici navi, ormeggiate a {place} in fila ordinata, tutte diverse, nessuna proveniente da un registro che la nave abbia a bordo.\nNon sono relitti. Sono parcheggiate, e qualcuno ha spazzato {ground} tra l'una e l'altra.",
+     "text": "Qui ci sono undici navi, ormeggiate a {place} in fila ordinata, tutte diverse, nessuna proveniente da un registro che la nave abbia a bordo.\nNon sono relitti. Sono parcheggiate, e qualcuno ha spazzato {ground} tra l'una e l'altra.\nGli scafi sono disposti in file. Non sparsi: {file|ranghi|linee}, con lo spazio in mezzo perché qualcosa ci passi.",
      "choices": [
       {
        "text": "Salire a bordo della più vecchia.",
@@ -2439,6 +2652,53 @@
       "mag": "medium",
       "exp": 14
      }
+    },
+    "b2_m": {
+     "text": "Il reattore si accende al {terzo|secondo|quarto} tentativo e la nave sale del tutto, ogni quadro verde, e per {quattro minuti|qualche minuto|un po'} è la cosa più viva su questa roccia.\nPoi non vuole mollare gli ormeggi. Non è un guasto: lo sgancio è alimentato, ed è sano, e viene {trattenuto|rifiutato|risposto con un no} da qualche parte che non è il ponte.",
+     "asides": {
+      "cynical": "{member}: \"{La nave non vuole andarsene.|Gli ormeggi ce li ha in mano qualcun altro.|Tutti i quadri verdi e non molla una cima.}\"",
+      "any": "{member} {va a guardare gli ormeggi da fuori|rilegge due volte il circuito di sgancio|posa una mano sulla consolle e la lascia lì}"
+     },
+     "choices": [
+      {
+       "text": "Tagliare gli ormeggi e partire."
+      },
+      {
+       "text": "Scoprire cosa li tiene."
+      },
+      {
+       "text": "Rispegnere tutto e lasciarla com'era."
+      }
+     ]
+    },
+    "b2_hold": {
+     "text": "Il circuito di sgancio è stato {giuntato|prolungato|portato fuori} attraverso lo scafo e giù nell'ormeggio, e all'altro capo della giunta, sotto terra, qualcosa tiene aperto un interruttore.\nÈ il lavoro dello spazzino: la giunta è la stessa giunta con cui si ripara ogni cima rotta del cantiere. La nave non è sotto sequestro. È {accudita|ormeggiata come si deve|tenuta}, e la squadra è il primo equipaggio da anni a capirlo."
+    },
+    "b2_burn": {
+     "text": "Il circuito viene tracciato con il reattore acceso, ed è così che la squadra scopre che la giunta porta corrente, e il tester diventa {nero|inservibile|scoria} in una mano.\nGli ormeggi alla fine vengono tagliati lo stesso. La nave parte trascinandosi dietro le cime di qualcun altro, e il cantiere ha {quattro scafi|uno scafo|una fila} in meno ed è molto meno ospitale con il prossimo equipaggio che ci atterra."
+    },
+    "b2_down": {
+     "text": "Tutti i quadri verdi, e poi tutti i quadri spenti, nell'ordine giusto, da qualcuno che si prende {i venti minuti|il quarto d'ora|il tempo} di fare lo spegnimento come si deve invece di staccare l'interruttore.\nLo scafo resta esattamente come è stato trovato, con il giornale chiuso e il portello assicurato. {Nove giorni|Due settimane|Qualche tempo} dopo, in banda, una portante si alza sulla frequenza del cantiere e dice grazie in un formato che non si usa più da {un secolo|moltissimo tempo}."
+    },
+    "c2_m": {
+     "text": "Casa è un buco sotto l'ormeggio, e ci vuole {un'ora|tutto il giro|un pedinamento} ad arrivarci e non è nascosto: semplicemente nessuno lo guarda.\nDentro c'è ogni cima che si sia mai rotta in questo cantiere, {rigiuntata|rifatta intera}, avvolta, appesa in ordine, e in fondo c'è una rastrelliera con {quattro|cinque} ganci vuoti e le etichette ancora sotto.",
+     "choices": [
+      {
+       "text": "Prendere gli attrezzi e andarsene."
+      },
+      {
+       "text": "Leggere le etichette dei ganci vuoti."
+      },
+      {
+       "text": "Appendere a un gancio vuoto una cima nostra."
+      }
+     ]
+    },
+    "c2_hooks": {
+     "text": "Le etichette sono nomi di navi e le navi sono nel cantiere, e le quattro con il gancio vuoto sono i quattro scafi che sono {pietra|i più vecchi|di un posto che le tavole della squadra non riconoscono}.\nNon ha riparato le loro cime. Non può: le loro cime non sono cime. Quello che fa invece, da quando esiste il cantiere, è aspettare che qualcuno gli porti qualcosa che si possa giuntare, e la squadra ne ha {parecchie centinaia di metri|in abbondanza|esattamente}."
+    },
+    "c2_hang": {
+     "text": "Una matassa di cima della squadra va su un gancio vuoto, come si deve, con l'impiombatura finita, e ci vogliono {dieci minuti|un quarto d'ora|più di quanto sembri}.\nNon succede niente mentre qualcuno guarda. Gli ormeggi della navetta, controllati all'alba per abitudine, sono stati {rifatti|rilegati|rifiniti} a uno standard che nessuno a bordo saprebbe eguagliare, e sulla rampa c'è qualcosa di avvolto che al tramonto non c'era."
     }
    }
   },
@@ -2447,7 +2707,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "La massa non torna. Il corpo ha le dimensioni che dice il catalogo e pesa un terzo del dovuto, e l'impulso di rilevamento torna indietro da una parete interna.\nC'è un ingresso a {place}: un pozzo, dritto, scavato, con {remnant} al collare.",
+     "text": "La massa non torna. Il corpo ha le dimensioni che dice il catalogo e pesa un terzo del dovuto, e l'impulso di rilevamento torna indietro da una parete interna.\nC'è un ingresso a {place}: un pozzo, dritto, scavato, con {remnant} al collare.\nLe cavità non sono casuali. Riportate sul rilevamento fanno una forma, e la forma ha {un asse di simmetria|una simmetria|un asse}.",
      "choices": [
       {
        "text": "Scendere nel pozzo.",
@@ -2552,6 +2812,50 @@
       "mag": "large",
       "exp": 10
      }
+    },
+    "a1_m": {
+     "text": "Attraversare fino al centro di un mondo cavo vuol dire attraversare {quattrocento metri|un bel pezzo|tutta la larghezza interna} di pavimento che si incurva verso l'alto da ogni lato, al buio, con le lampade che arrivano fin dove arrivano.\nA metà strada le lampade prendono il punto in cui si incrociano {due|tre} altre serie di impronte, tutte dirette dalla stessa parte, tutte {vecchie|vecchissime|più vecchie del rilevamento}, e nessuna che torni indietro.",
+     "asides": {
+      "cynical": "{member}: \"{Tre gruppi dentro. Nessuno fuori.|Nessuno ha mai riattraversato questo pavimento.|Non siamo i primi e i primi sono ancora qui.}\"",
+      "any": "{member} {prende un rilevamento verso il pozzo e se lo scrive sul guanto|conta le serie|non smette di camminare}"
+     },
+     "choices": [
+      {
+       "text": "Andare avanti fino al centro."
+      },
+      {
+       "text": "Seguire invece la serie di impronte più vecchia."
+      },
+      {
+       "text": "Stendere una cima fino al pozzo prima di fare un altro metro."
+      }
+     ]
+    },
+    "a1_old": {
+     "text": "La serie più vecchia non va al centro. Arriva a {tre quarti|quasi|poco prima} e poi gira e ci cammina intorno, due volte, e poi torna alla parete in un punto diverso da quello del pozzo.\nIn quel punto della parete c'è un portello, ed è sul lato interno di un mondo in cui nessuno ha costruito una porta, e si apre."
+    },
+    "a1_line": {
+     "text": "Quattrocento metri di cima srotolati su un pavimento che si incurva da ogni lato, fissati a tutti e due i capi, che costano {un'ora|molto tempo|quasi tutta l'autonomia d'aria}.\nLa cosa al centro lascia prendere a {leader} quello che prende, esattamente come avrebbe fatto comunque. La differenza è che il ritorno è una camminata invece che {una ricerca|quattro ore di lampade|tutta l'aria che resta}, e sono tutti sulla rampa prima del buio."
+    },
+    "c1_m": {
+     "text": "Il drone è {molti} metri più in basso, intatto, e punta verso l'alto lungo il pozzo. Qualcosa l'ha posato {con attenzione|con cura}, e gli ha messo accanto qualcosa, e se n'è andato.\nLa cosa accanto è {grande come un pugno|piccola|circa come un casco} ed è l'unico oggetto in tutto l'interno che non faccia parte dell'interno, ed è stata messa dove la telecamera di un drone la vede.",
+     "choices": [
+      {
+       "text": "Prenderla e risalire."
+      },
+      {
+       "text": "Prima fotografare tutto di come è stata posata."
+      },
+      {
+       "text": "Mettercene accanto una nostra e lasciarle lì tutte e due."
+      }
+     ]
+    },
+    "c1_place": {
+     "text": "È stata posata alla distanza di fuoco del drone, in squadra con l'obiettivo, su una superficie {spazzata|ripulita|preparata} prima. Tutto della disposizione è una risposta a una telecamera.\nIl che vuol dire che è stata lasciata per chi ha mandato il drone e non per chi la trova, e quello è un oggetto completamente diverso, e va riportato come tale."
+    },
+    "c1_swap": {
+     "text": "Un attrezzo della squadra, posato alla stessa distanza di fuoco, in squadra con lo stesso obiettivo, sulla stessa superficie spazzata.\nIl drone viene lasciato acceso. Trasmette per {undici ore|quasi un giorno|molto tempo} e poi si ferma, e quello che ha mandato negli ultimi quattro minuti è il motivo per cui la nave resta in questo sistema un'altra {quindicina|tre settimane|mese}."
     }
    }
   },
@@ -2560,7 +2864,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Il segnale è la telemetria delle tute della squadra, cinque canali, intestazioni corrette, nomi dell'equipaggio corretti, e viene ricevuto da {place} undici minuti prima che la squadra vi atterri.\n{leader} atterra lo stesso.",
+     "text": "Il segnale è la telemetria delle tute della squadra, cinque canali, intestazioni corrette, nomi dell'equipaggio corretti, e viene ricevuto da {place} undici minuti prima che la squadra vi atterri.\n{leader} atterra lo stesso.\nLa firma duplicata non è identica. È {mezzo secondo|una frazione|leggermente} in anticipo, e lo scarto si sta chiudendo da quando il lander ha toccato terra.",
      "choices": [
       {
        "text": "Seguire le tracce dell'altra squadra.",
@@ -2666,6 +2970,50 @@
       "mag": "large",
       "exp": 18
      }
+    },
+    "b1_m": {
+     "text": "Commerciano in modo corretto, e duro, e sanno {esattamente|con precisione} di cosa la squadra può fare a meno, che è la cosa più spaventosa dello scambio.\nQuello che offrono in cambio sono {quattro|cinque} oggetti, stesi su un telo, e uno di questi è una cosa che la squadra non ha ancora perso: ce l'ha qualcuno alla cintura in questo momento, e sul telo ce n'è un secondo.",
+     "asides": {
+      "cynical": "{member}: \"{Non raccoglierlo.|Quello è mio. È addosso a me. Adesso.|Ci stanno vendendo la nostra settimana.}\"",
+      "any": "{member} {si copre la cintura con una mano|conta due volte gli oggetti sul telo|fa un passo indietro dal telo}"
+     },
+     "choices": [
+      {
+       "text": "Commerciare. Prendere tutti e quattro."
+      },
+      {
+       "text": "Prendere tutto tranne il doppione."
+      },
+      {
+       "text": "Chiedere come hanno avuto quello che è ancora alla nostra cintura."
+      }
+     ]
+    },
+    "b1_three": {
+     "text": "Tre oggetti dal telo e il quarto lasciato lì, cosa che accettano senza commentare e senza raccoglierlo.\nÈ ancora sul telo quando la squadra si volta a guardare da {duecento metri|dal crinale|da lontano}, ed è ancora lì il giorno dopo, e il giorno dopo ancora non c'è più, e non c'è più nemmeno quello che era alla cintura."
+    },
+    "b1_ask": {
+     "text": "La domanda viene fatta chiaramente e la risposta viene data chiaramente, ed è l'unica volta che una delle due parti lo fa: l'hanno avuto nello stesso modo in cui la squadra sta per averlo, cioè {al contrario|dall'altro capo|nell'ordine in cui sono messi}.\nLo scambio si conclude. Tutti e due i gruppi se ne vanno. Sulla via del lander {member} capisce cosa voglia dire quella risposta e deve sedersi su {ground} per un minuto, e non spiega."
+    },
+    "c2_m": {
+     "text": "A {place} non c'è niente tranne {remnant} e una vista {molto|straordinariamente} nitida, e arrivarci a piedi richiede {due ore|il pomeriggio|più di quanto dica la mappa}.\nLa vista è nitida in tutte le direzioni compresa quella da cui sono arrivati, e da qui si vedono il lander, le impronte della squadra, e {cinque|quattro} figure al lander che non ci sono ancora.",
+     "choices": [
+      {
+       "text": "Tornare indietro. Contare tutti quanti alla rampa."
+      },
+      {
+       "text": "Restare a {place} finché le figure non se ne vanno."
+      },
+      {
+       "text": "Guardarle con l'ottica e capire cosa stiano facendo."
+      }
+     ]
+    },
+    "c2_wait": {
+     "text": "Seduti a {place} con una vista libera per {quattro ore|il resto della luce|molto tempo}, a guardare un lander con quattro persone accanto e quattro persone che ci stanno camminando verso e quattro persone sedute su un crinale.\nLe figure al lander entrano al tramonto. La squadra torna al buio, trova il portello assicurato dall'interno, e lo apre, e a bordo non c'è nessuno e il bollitore è caldo."
+    },
+    "c2_watch": {
+     "text": "Con l'ottica, a {quattro chilometri|quella distanza|molta distanza}, i cinque stanno facendo esattamente quello che ha fatto la squadra all'atterraggio: gli stessi controlli, nello stesso ordine, con lo stesso che fa due volte il giro dell'attrezzatura.\nE poi uno di loro si ferma, e si gira, e guarda verso {place}, verso il crinale, verso l'ottica. La squadra se ne va prima che arrivino gli altri. Il giornale di bordo registra una partenza pulita e un conteggio dell'equipaggio esatto."
     }
    }
   },
@@ -2674,7 +3022,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Il segnale è un transponder, standard di bordo, su una frequenza che nessuno usa da decenni, e si sta muovendo. Lentamente, su {ground}, lungo una linea che incrocerà il cammino della squadra.\nSi ferma quando la squadra si ferma. Non è la prima volta che lo fa.",
+     "text": "Il segnale è un transponder, standard di bordo, su una frequenza che nessuno usa da decenni, e si sta muovendo. Lentamente, su {ground}, lungo una linea che incrocerà il cammino della squadra.\nSi ferma quando la squadra si ferma. Non è la prima volta che lo fa.\nIl faro che porta è stato dichiarato distrutto {undici anni|un decennio|molto tempo} fa, insieme al relitto e a tutti quelli che erano a bordo.",
      "choices": [
       {
        "text": "Preparare un'imboscata e aspettarlo.",
@@ -2782,6 +3130,50 @@
       "reward": "artifact",
       "exp": 12
      }
+    },
+    "a2_m": {
+     "text": "Trascina la rete davanti al riparo a {quattro metri|distanza ravvicinata|un braccio} senza guardare, e tira dritto, e si torna a respirare circa un minuto dopo.\nRipone la rete in un deposito sotto uno strapiombo, con le altre. Ci sono {molti} anni di altre, e sono impilate in ordine di data, e le più vecchie in fondo sono state {aperte|passate in rassegna|ordinate} e le più recenti no.",
+     "asides": {
+      "cynical": "{member}: \"{Le tiene per qualcosa.|In ordine di data. Quella è una collezione.|Niente caccia e poi archivia.}\"",
+      "any": "{member} {legge le date sull'esterno delle reti|ne solleva una e la trova più pesante del previsto|calcola quanti anni ci sono nella pila}"
+     },
+     "choices": [
+      {
+       "text": "Prenderne una e sparire."
+      },
+      {
+       "text": "Aprire la più vecchia, in fondo."
+      },
+      {
+       "text": "Capire in che ordine le sta davvero tenendo."
+      }
+     ]
+    },
+    "a2_old": {
+     "text": "La rete più vecchia è già stata aperta e richiusa, con cura, e quello che c'è dentro è stato {disposto|steso|ordinato} invece che stivato.\nÈ un equipaggio. Tutto, ogni membro, con l'attrezzatura di ciascuno accanto nell'ordine in cui la portava. Da quella non si prende niente. Quello che si prende invece è {il giornale di bordo|una targhetta|il nome}, che basta a chiudere un fascicolo aperto da dieci anni."
+    },
+    "a2_order": {
+     "text": "Non in ordine di data. In ordine di {dimensione|massa|peso}, e dentro quello in ordine di data, e tutta la pila è graduata così finemente che i vuoti si leggono come il contenuto.\nCi sono {tre|quattro} vuoti. Tre reti sono state tolte da questo deposito e non rimesse, da qualcosa che non è quella con il faro, ed è la cosa più utile che si sia imparata su questa roccia."
+    },
+    "b1_m": {
+     "text": "Arrivare al casco vuol dire fare {quattro metri|il fosso|l'ultimo tratto} mentre quella cosa è seduta nella sua conca a fare con le mani qualcosa che nessuno vuole sentirsi descrivere.\nDentro al casco c'è un nome {stampinato|stampinato a vernice} e nel collare c'è ancora un registratore. C'è anche, sotto il casco, un secondo, e un terzo, e la pila scende più in basso di quanto arrivi la luce.",
+     "choices": [
+      {
+       "text": "Prendere il casco in cima e uscire."
+      },
+      {
+       "text": "Togliere il registratore da ogni casco raggiungibile."
+      },
+      {
+       "text": "Leggere i nomi senza spostare niente."
+      }
+     ]
+    },
+    "b1_all": {
+     "text": "{Nove|Undici|Sette} registratori da {nove|undici|sette} collari, uno alla volta, a tatto, con qualcosa che respira a {quattro metri|pochi passi|troppo poco}.\nL'ottavo fa clic. Quello che succede dopo il clic dura quattro minuti ed è il motivo per cui due della squadra non passeranno mai più per primi da un portello, e ne escono tutti, e i registratori escono con loro."
+    },
+    "b1_names": {
+     "text": "I nomi si leggono su {quattro|cinque} collari senza posare un dito su nessuno, cosa che richiede pazienza, una buona luce e la disponibilità a restare immobili in una conca.\nSono tutti della stessa nave e la nave è {una di cui la squadra ha sentito parlare|nel registro|non un relitto: risulta in servizio}. È quest'ultima parte quella che si portano via, e vale più di qualunque casco."
     }
    }
   },
@@ -2790,7 +3182,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "{place} ospita una città. Non un campo, non un avamposto: strade, canali di scolo, una piazza, e {remnant} al centro, dove starebbe un monumento.\nQui non è bruciato niente e non è crollato niente. Si sono semplicemente fermati, e {leader} e la prima cosa a percorrere queste strade da moltissimo tempo.",
+     "text": "{place} ospita una città. Non un campo, non un avamposto: strade, canali di scolo, una piazza, e {remnant} al centro, dove starebbe un monumento.\nQui non è bruciato niente e non è crollato niente. Si sono semplicemente fermati, e {leader} e la prima cosa a percorrere queste strade da moltissimo tempo.\nQui non è crollato niente. Ogni edificio che è aperto è aperto perché {è stato tolto un muro|qualcuno ha rimosso una parete|è stato aperto}, dall'interno, {con cura|ordinatamente|senza fretta}.",
      "choices": [
       {
        "text": "Entrare nell'edificio più grande.",
@@ -2895,6 +3287,50 @@
       "mag": "medium",
       "exp": 16
      }
+    },
+    "a1_m": {
+     "text": "La macchina viene lasciata andare. Ci mette {nove|sette|undici} minuti, ed è un messaggio, ed è una richiesta di perdono, e a {due terzi|metà|buona parte} smette di essere rivolto a chi stava sulle sedie e comincia a essere rivolto a chi sta in piedi dove sta la squadra.\nLi descrive. Non per nome: per {numero|posizione|quanti sono}, ed è esatto.",
+     "asides": {
+      "cynical": "{member}: \"{Ci sta contando.|Quattro. Ha detto quattro.|È stato registrato prima che nascesse chiunque qui dentro.}\"",
+      "any": "{member} {si siede su una delle sedie|guarda le file vuote invece del palco|la lascia andare}"
+     },
+     "choices": [
+      {
+       "text": "Lasciarla finire e prendere quello che lascia."
+      },
+      {
+       "text": "Rispondere. È un messaggio, e ai messaggi si risponde."
+      },
+      {
+       "text": "Fermare la macchina prima dell'ultimo minuto."
+      }
+     ]
+    },
+    "a1_reply": {
+     "text": "Rispondere a una registrazione non è un gesto sensato e viene fatto lo stesso, nella stessa costruzione, nello stesso ordine, in piedi nel corridoio con le sedie {vuote|che guardano|alle spalle}.\nLa macchina si ferma prima della propria fine. Manda una seconda traccia che non è mai stata riprodotta, {più corta|di quattro minuti|molto più breve}, che non è affatto una richiesta di perdono, e che vale la pena riportare per intero."
+    },
+    "a1_stop": {
+     "text": "La macchina viene fermata {con una mano|con una leva|dal comando ovvio} a otto minuti e qualcosa, ed è la prima volta da moltissimo tempo che qualcuno la interrompe.\nLa sala diventa {immediatamente|di colpo|all'istante} un'altra stanza. Le sedie sono soltanto sedie. Sulla porta, uscendo, l'ultima cosa che si sente è la macchina che riparte dall'inizio, per nessuno, esattamente come prima."
+    },
+    "c2_m": {
+     "text": "Copiare il registro è {quattro ore|un pomeriggio|un lavoro lungo} di fotografie ai muri, e da qualche parte nella terza ora le colonne smettono di essere un turno e diventano altro: le date superano l'ultimo nome e proseguono, nella stessa grafia, {nell'anno prossimo|in avanti|oltre oggi}.\nLe colonne avanti sono vuote. Le intestazioni no.",
+     "choices": [
+      {
+       "text": "Copiare tutto e andarsene. È solo un registro."
+      },
+      {
+       "text": "Leggere le intestazioni delle colonne che non sono ancora successe."
+      },
+      {
+       "text": "Scrivere un nome nella prima casella vuota."
+      }
+     ]
+    },
+    "c2_head": {
+     "text": "Le intestazioni sono mansioni, e sono mansioni ordinarie: sorvegliare, dare da mangiare, {girare qualcosa|tenere qualcosa|sempre gli stessi tre verbi}, assegnate in un turno che non si è mai interrotto da quando esiste la piazza e che ha {quattro|tre} secoli di caselle vuote davanti.\nQuello che questo implica sulla cosa sotto la piazza viene messo per iscritto sulla via del ritorno ed è il documento più letto che la Fondazione pubblichi quell'anno."
+    },
+    "c2_sign": {
+     "text": "Un nome nella prima casella vuota della colonna, a gesso, da qualcuno che sul momento dice che è uno scherzo.\nC'è ancora {un anno dopo|quando qualcuno ricontrolla|nelle fotografie}, in una grafia che non è più gesso. Non viene a prendere nessuno. È questa la parte difficile da reggere nelle stagioni seguenti: non viene niente, e il turno continua a essere esatto."
     }
    }
   },
@@ -2903,7 +3339,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "A {place} c'è una struttura che nulla su questo mondo poteva costruire e che nulla su questo mondo ha toccato. È custodita. Qualcosa tiene pulito {ground} tutt'intorno.\nNe esce {sound}, in uno schema che {instrument} insiste essere una lingua.",
+     "text": "A {place} c'è una struttura che nulla su questo mondo poteva costruire e che nulla su questo mondo ha toccato. È custodita. Qualcosa tiene pulito {ground} tutt'intorno.\nNe esce {sound}, in uno schema che {instrument} insiste essere una lingua.\nIl gradino è consumato. Non eroso: {camminato|consumato da piedi|usato}, in un posto dove non cammina niente.",
      "choices": [
       {
        "text": "Entrare.",
@@ -3008,6 +3444,50 @@
       "mag": "medium",
       "exp": 14
      }
+    },
+    "b2_m": {
+     "text": "La seconda offerta è {una fotografia|una fotografia presa dall'armadietto di qualcuno}, che è la cosa più cara che abbia addosso chiunque qui, e posarla sul gradino richiede {più del dovuto|un attimo|una certa fatica}.\nNon viene presa. Resta lì per {nove secondi|un conto fino a nove|un po'}, e poi viene girata, da niente, in modo che l'immagine stia verso l'alto, e poi viene lasciata lì.",
+     "asides": {
+      "nurturing": "{member} non stacca gli occhi dal gradino per tutti e nove i secondi.",
+      "any": "{member} {mette una mano sulla spalla di chi possiede la fotografia|non dice niente|si segna l'ora}"
+     },
+     "choices": [
+      {
+       "text": "Riprendere la fotografia e andarsene."
+      },
+      {
+       "text": "Lasciarla. Posarci accanto qualcosa che le faccia compagnia."
+      },
+      {
+       "text": "Chiedere ad alta voce a cosa serva."
+      }
+     ]
+    },
+    "b2_pair": {
+     "text": "Una seconda fotografia, da un altro armadietto, posata accanto alla prima, con l'immagine verso l'alto, nello stesso verso.\nAl mattino non ci sono più tutte e due e al loro posto sul gradino c'è qualcosa di {piccolo|non grande|grande come una mano} e caldo, e chiunque lo guardi ci vede una cosa diversa, e hanno ragione tutti."
+    },
+    "b2_ask": {
+     "text": "Fare una domanda ad alta voce a un edificio davanti al proprio equipaggio è {una cosa che si fa una volta sola|una decisione|non poco}, e la risposta arriva nell'unico modo in cui questo posto sa rispondere, cioè per scambio.\nQuello che viene posato sul gradino in risposta è una fotografia. Non è di nessuno della squadra. È di {questo posto|del santuario|del gradino}, scattata da dove sta la squadra, da qualcuno che non è ancora nato."
+    },
+    "c1_m": {
+     "text": "La traccia gira intorno al sito nove volte e poi esce dritta, e seguirla richiede {due ore|il resto della luce|una lunga camminata} su un terreno che diventa progressivamente peggiore.\nFinisce a un deposito interrato {un metro|due metri|mezzo metro} sotto, imballato ed etichettato da qualcuno con un metodo, e le etichette sono in {due|tre} grafie, e una delle due è molto più recente dell'altra.",
+     "choices": [
+      {
+       "text": "Dissotterrarlo e prendere tutto."
+      },
+      {
+       "text": "Prima separare le etichette recenti da quelle vecchie."
+      },
+      {
+       "text": "Ricoprirlo e segnare la posizione per la nave."
+      }
+     ]
+    },
+    "c1_sort": {
+     "text": "La grafia vecchia ha imballato un deposito. La grafia recente lo ha {rifornito|mantenuto|tenuto in ordine}, e l'aggiunta più recente è di {questa stagione|qualche settimana fa|per niente vecchia}, ed è un kit di sopravvivenza di una marca che la squadra riconosce.\nQualcuno è vivo quaggiù, da solo, e usa questo deposito da un po'. La squadra ci lascia un biglietto e prende solo quello che si sta rovinando, che è la risposta giusta e non è quella redditizia."
+    },
+    "c1_mark": {
+     "text": "Torna nella buca esattamente com'era uscito, e la posizione va alla nave con una nota che dice di non toccarlo.\nQuella nota viene ignorata {undici mesi|l'anno dopo|prima o poi} dall'equipaggio di qualcun altro, e la squadra legge cosa è successo loro in un bollettino, e per un po' a tavola non si dice niente."
     }
    }
   },
@@ -3016,7 +3496,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Non è una chiamata di soccorso. È {tone}, e viene emesso da {place} {a|da quando il catalogo ha voci su questo sistema|da più tempo di quanto il catalogo ammetta}.\n{leader} scende alla sorgente. Il conteggio non cambia quando la squadra arriva, il che in qualche modo peggiora le cose.",
+     "text": "Non è una chiamata di soccorso. È {tone}, e viene emesso da {place} {a|da quando il catalogo ha voci su questo sistema|da più tempo di quanto il catalogo ammetta}.\n{leader} scende alla sorgente. Il conteggio non cambia quando la squadra arriva, il che in qualche modo peggiora le cose.\nIl ciclo non è del tutto un ciclo. Ogni {nove|undici} ripetizioni {salta un battito|ne aggiunge uno|cambia in un punto}, e il punto non è mai lo stesso due volte.",
      "choices": [
       {
        "text": "Rispondere con lo stesso schema.",
@@ -3122,6 +3602,47 @@
       "slot": "weapon",
       "exp": 12
      }
+    },
+    "b1_m": {
+     "text": "Dentro il collare il meccanismo è {bellissimo|di una fattura assurda|il lavoro di qualcuno che aveva tempo}: un conteggio, meccanico, a ingranaggi, che aziona un trasmettitore alimentato dal terreno stesso da più tempo di quanto si possa stimare.\nSotto, in una nicchia, c'è un'offerta. Qualcuno ne mette una lì, regolarmente, e quelle vecchie sotto sono {marcite|ridotte in polvere|diventate niente} e la più recente è {fresca|recente|di questa stagione}.",
+     "asides": {
+      "cynical": "{member}: \"{Qualcuno lo nutre.|Quella è manutenzione, e ha un calendario.|Siamo in piedi nella cappella di qualcuno.}\"",
+      "any": "{member} {conta gli strati nella nicchia|fotografa la nicchia prima che si tocchi niente|non ci infila la mano}"
+     },
+     "choices": [
+      {
+       "text": "Prendere il meccanismo. È la parte di valore."
+      },
+      {
+       "text": "Calcolare ogni quanto vengono lasciate le offerte."
+      },
+      {
+       "text": "Lasciarne una nostra e richiudere il portello."
+      }
+     ]
+    },
+    "b1_rate": {
+     "text": "Strato per strato viene fuori {una volta a stagione|quattro volte per anno locale|con regolarità}, e gli strati scendono per {novecento|moltissimi|più in basso della carota}, e quello in cima non è l'ultimo: c'è un vuoto, e poi quello di questa stagione.\nQualcosa ha smesso di venire per {undici anni|un decennio|parecchio} e poi ha ricominciato. Capire cosa sia cambiato in quel vuoto è la cosa più pubblicabile che qualcuno riporti da questa roccia."
+    },
+    "c1_m": {
+     "text": "Il disturbatore vince, {alla fine|prima o poi|col tempo}, e la sorgente muore con un rumore come {un respiro trattenuto che si lascia andare|un fiato finalmente lasciato andare}, e tutta la banda si appiattisce per davvero.\nE resta piatta. Compresi i canali della squadra, compreso il faro del lander, compreso {il collegamento con la nave|l'orbita|il ponte radio}, cosa che non era prevista e che non torna quando il disturbatore viene spento.",
+     "choices": [
+      {
+       "text": "Dissotterrare l'emettitore e andarsene da questa roccia."
+      },
+      {
+       "text": "Far ripartire il conteggio. Rimetterlo com'era."
+      },
+      {
+       "text": "Tornare al lander a piedi, senza radio e senza correre."
+      }
+     ]
+    },
+    "c1_restart": {
+     "text": "Far ripartire un conteggio meccanico che gira da prima che la specie che l'ha costruito avesse una parola per contare richiede {quattro ore|il resto della giornata|molto tempo} e moltissima attenzione alla fase.\nRiparte. Due secondi dopo riparte anche tutto il resto: il lander, il faro, la nave, tutto insieme. Nessuno a bordo scrive mai un resoconto completo del perché il collegamento fosse caduto, perché non c'è modo di scriverlo che non suoni come delle scuse rivolte a una macchina."
+    },
+    "c1_walk": {
+     "text": "{Quattro chilometri|Una lunga camminata|Tutto il tragitto} in terreno aperto senza radio, a passo deciso, perché correre sarebbe un'ammissione.\nIl lander è dove è stato lasciato. Il portello è chiuso, ed era stato lasciato aperto, e si apre su una cabina in cui tutti i canali sono di nuovo vivi e il conteggio è su tutti, a {quattro volte|il doppio|molto più di} la sua vecchia cadenza."
     }
    }
   },
@@ -3130,7 +3651,7 @@
    "start": "n0",
    "nodes": {
     "n0": {
-     "text": "Qui ci sono macchine, e sono occupate. Migliaia, nessuna più grande di una mano, che si muovono su {ground} a {place} in un lavoro che va avanti chiaramente da secoli.\nIgnorano completamente la squadra, il che non equivale a non averla notata.",
+     "text": "Qui ci sono macchine, e sono occupate. Migliaia, nessuna più grande di una mano, che si muovono su {ground} a {place} in un lavoro che va avanti chiaramente da secoli.\nIgnorano completamente la squadra, il che non equivale a non averla notata.\nStanno smontando il posto nell'ordine inverso a quello in cui è stato costruito, il che vuol dire che hanno {i disegni|una copia dei disegni|qualcosa su cui lavorare}.",
      "choices": [
       {
        "text": "Capire cosa stiano costruendo.",
@@ -3235,6 +3756,53 @@
       "mag": "medium",
       "exp": 14
      }
+    },
+    "a1_m": {
+     "text": "In fondo alla linea c'è una catasta, divisa per materiale, {più alta del lander|più alta del lander stesso}, e cresce da moltissimo tempo.\nIn cima, sola su una piattaforma spianata, c'è la prima cosa che abbiano mai preso da questo mondo, e non è materia prima e non è stata divisa. È stata {tenuta|messa da parte|messa dove si vede}.",
+     "asides": {
+      "cynical": "{member}: \"{Quella non è una catasta, è un monumento.|Tutto il resto è diviso. Quella è esposta.|Hanno tenuto la prima.}\"",
+      "any": "{member} {calcola l'altezza della catasta|conta le fasce di materiale lungo il fianco|guarda la piattaforma invece dell'oggetto}"
+     },
+     "choices": [
+      {
+       "text": "Scalarla e prendere la cosa in cima."
+      },
+      {
+       "text": "Leggere la catasta dal basso verso l'alto."
+      },
+      {
+       "text": "Aggiungere alla catasta qualcosa di nostro, nella fascia giusta."
+      }
+     ]
+    },
+    "a1_read": {
+     "text": "Le fasce che salgono lungo la catasta sono i materiali di questo mondo nell'ordine in cui sono stati presi, e quell'ordine è l'ordine in cui un costruttore smonta, e l'ultima fascia è {a metà|sottile|appena cominciata}.\nIl che vuol dire che hanno quasi finito, e cosa succeda a uno sciame che finisce è una domanda con {due|tre} risposte possibili, e la squadra ha circa {una stagione|un anno|poco tempo} per decidere a chi venderla."
+    },
+    "a1_give": {
+     "text": "Una piastra dal rivestimento del lander, tagliata a misura, portata fino alla catasta e inserita a mano nella fascia di materiale giusta mentre la linea gira intorno agli stivali della squadra.\nLo sciame si ferma. Tutto, ovunque, per {nove secondi|un conto fino a nove|il tempo della posa}. Poi torna al lavoro, e la piastra resta dove è stata messa, e un drone segue la squadra fino al lander e non sale a bordo e non se ne va."
+    },
+    "c1_m": {
+     "text": "La cesoia viene posata sulla linea. Le sciamano addosso, la misurano, la smontano e la rimontano {migliorata|meglio di com'era}, e la lasciano su {ground} puntata verso la squadra.\nIl miglioramento non è una riparazione. C'è dentro un componente che prima non c'era, e il componente non è lavorato a macchina: è {cresciuto|dello stesso materiale dello sciame|parte di uno di loro}.",
+     "choices": [
+      {
+       "text": "Raccoglierla. Una cesoia migliore è una cesoia migliore."
+      },
+      {
+       "text": "Togliere il componente nuovo prima di usarla."
+      },
+      {
+       "text": "Posare un altro attrezzo e vedere cosa ne fanno."
+      }
+     ]
+    },
+    "c1_part": {
+     "text": "Esce pulito, il che è già informativo, e sotto la lente è {uno di loro|un drone|un membro dello sciame}, ripiegato fino alle dimensioni di un componente, che faceva il lavoro del componente.\nLa cesoia funziona lo stesso senza. La cosa nel barattolo vale molto più della cesoia e sarà l'oggetto di {quattro|cinque} pubblicazioni, tutte in disaccordo sul fatto che fosse un dono o un passeggero."
+    },
+    "c1_keep": {
+     "text": "Toglierlo va storto nel modo in cui vanno storte le cose quando non sai cosa hai in mano, e quello che esce è {a pezzi|non più intero|morto, se è la parola giusta}.\nLa cesoia è peggiore di com'era prima che lo sciame la toccasse. Adesso la linea le gira intorno invece di andarle incontro, e su questa roccia niente si avvicina più alla squadra per il resto del rilevamento."
+    },
+    "c1_more": {
+     "text": "Un secondo attrezzo posato, poi un terzo, poi una scatoletta di razioni, poi un casco, e ognuno torna {migliorato|modificato|migliore} in un modo più specifico per il suo proprietario del precedente.\nAl quarto è inequivocabile: non stanno migliorando gli attrezzi. Stanno imparando la squadra, un oggetto alla volta, e il casco torna con una modifica che nessuno ha mai raccontato a nessuno."
     }
    }
   }

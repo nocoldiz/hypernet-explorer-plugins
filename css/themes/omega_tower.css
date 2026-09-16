@@ -13,22 +13,22 @@
        Six sizes, and nothing between them. Every reworked screen reads its
        font sizes from here; theme.css held 251 different ones before this
        existed. --fs-caption is the floor: nothing in the game is smaller. */
-    --fs-title: 1.55rem;
-    --fs-heading: 1.15rem;
-    --fs-body: 1.08rem;
-    --fs-label: 1.02rem;
-    --fs-chip: 1rem;
-    --fs-caption: 0.92rem;
+    --fs-title: 1.78rem;
+    --fs-heading: 1.32rem;
+    --fs-body: 1.22rem;
+    --fs-label: 1.14rem;
+    --fs-chip: 1.1rem;
+    --fs-caption: 1.04rem;
 
     /* The right column, one scale for every screen (docs/task/ui_fixing.md).
        A detail card is read, not scanned, so its type is a step LARGER than a
        list row and it is the same size on the backpack, the codex, the skill
        atlas, the register and every other page that draws .ui-detail. No
        screen sets a right-page size of its own. */
-    --fs-detail-title: 1.62rem;
-    --fs-detail-prose: 1.26rem;
-    --fs-detail-body: 1.20rem;
-    --fs-detail-heading: 1.18rem;
+    --fs-detail-title: 1.86rem;
+    --fs-detail-prose: 1.42rem;
+    --fs-detail-body: 1.34rem;
+    --fs-detail-heading: 1.32rem;
 
     /* The muted half of a label/value pair in a right column. The page
        ink (#b0a080 / #6b5242) reads as a smudge at this size, and a
@@ -2318,7 +2318,8 @@ select option:hover {
 
 /* The open tab is the page's own top edge, so it has no bottom edge of its
    own: the line under it read as a closed box sitting above the page. */
-.cc-folder-tab.active {
+.cc-folder-tab.active,
+.cc-step-tab.active {
     border-bottom: none !important;
     box-shadow: none !important;
 }

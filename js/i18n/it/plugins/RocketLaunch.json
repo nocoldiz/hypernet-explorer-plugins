@@ -33,10 +33,10 @@
     "aboard": "A bordo",
     "ascent": "Salita balistica",
     "apogee": "Ribaltamento all'apogeo",
-    "retroburn": "Retroaccensione",
+    "prograde": "Accensione prograda",
     "reentry": "Rientro",
     "terminal": "Fase terminale",
-    "touchdown": "Atterraggio",
+    "capture": "Cattura magnetica",
     "arrived": "Arrivati"
   },
   "band": {
@@ -48,7 +48,7 @@
     "thermosphere": "Termosfera",
     "kessler": "Kessler",
     "rendezvous": "Appuntamento",
-    "retro": "Retro",
+    "prograde": "Prograda",
     "apogee": "Apogeo"
   },
   "hud": {
@@ -131,12 +131,14 @@
     "hopApogeeNear": "Apogeo in arrivo. Pronti a girarla.",
     "hopFlip": "Ribaltamento. Testa coda, a freddo.",
     "hopFlipDone": "Ribaltamento completato. Adesso il motore punta a {dest}.",
-    "hopRetro": "Retroaccensione. Tutto quello che resta nei serbatoi va nel frenare.",
+    "hopPrograde": "Ribaltati e in accensione prograda. L'ugello punta dove stiamo andando, quindi ci frena.",
     "hopBraking": "Frenata dura. La velocita scende.",
     "hopReentry": "Rientro. Il pennacchio e lo scudo termico.",
     "hopTerminal": "Piazzale di {dest} in vista. Le luci ci portano dentro.",
-    "hopApron": "Sopra il piazzale. Gambe fuori.",
-    "hopTouchdown": "Contatto. Scafo {pct}, con tutti gli strati ancora addosso.",
+    "hopMuzzle": "Il cannone di {dest} ci ha presi. Bocca illuminata e canna carica per la presa.",
+    "hopCapture": "Dentro la canna. Anelli in accensione inversa: adesso e un freno.",
+    "hopBraked": "La velocita cala di colpo. I banchi si riprendono quello che hanno speso.",
+    "hopDocked": "Attraccati nella culatta. Scafo {pct}, con tutti gli strati ancora addosso.",
     "hopArrived": "Arrivati a {dest}. Stesso proiettile, altro mare."
   }
 }

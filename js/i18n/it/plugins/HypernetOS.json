@@ -42,6 +42,12 @@
   "taskManager": "Gestione attività",
   "taskManagerTitle": "Gestione attività esoterica",
   "oomTitle": "Memoria esaurita",
+  "noConnectionTitle": "Nessuna connessione",
+
+  "noConnectionMessage": "{name} non riesce a raggiungere l’Hypernet. Da qui non c’è linea.",
+
+  "noConnectionTray": "Nessuna connessione",
+
   "oomMessage": "Memoria insufficiente per avviare {name}. Chiudi un programma e riprova.",
   "systemLoad": "Carico di sistema:",
   "memory": "Memoria:",

@@ -939,7 +939,8 @@
             // The one landmark on this world. Built once and stood in it: it is
             // neither terrain nor a town, so nothing streams it in and out.
             this._omega = null;
-            if (!this._alien) this._buildOmegaTower();
+            this._domes = null;
+            if (!this._alien) { this._buildOmegaTower(); this._buildLockedDomes(); }
             this._applyStarLight();
             this._water        = new WaterPlane(this._scene);
             this._traffic      = new TrafficManager(this._scene, this._titleMode);
@@ -2923,6 +2924,7 @@
             this._guardReservedSquares();
             this._updateUnderground();
             this._updateOmegaTower();
+            this._updateLockedDomes();
             this._checkLeavingAtmosphere();
 
             this._updateFuel(delta);
@@ -5231,6 +5233,11 @@
         // nothing to walk into.
         _resolveSolids(x, z, r) {
             const ts = WORLD_TILE_SIZE;
+            // The skin of a spacetime bubble, before anything else: it stands
+            // outside the town's own squares, so a walker meets it first and is
+            // never pushed INTO it by a building on the far side.
+            const dome = this._resolveDomes(x, z, r);
+            if (dome) return dome;
             const tx = Math.floor(x / ts), tz = Math.floor(z / ts);
             const plan = this._planAt(tx, tz);
             // Omega Tower: solid base collision across its entire footprint
@@ -5766,6 +5773,133 @@
         }
 
         // ---------------------------------------------------------------------
+        // The spacetime bubbles
+        // ---------------------------------------------------------------------
+        // A place sealed in Destinations.json (`"locked": true`) stands under a
+        // dome out here: a hemisphere of faintly lit glass over its whole
+        // footprint, visible from a way off and solid at the skin. Drive at it
+        // and the camper stops against it; walk at it and so do you.
+        //
+        // The dome is NOT the reason the place cannot be entered - the guard on
+        // reserved squares already refuses that, and refuses it the same way in
+        // every scene. The dome is what that refusal LOOKS like from inside the
+        // 3D world, which otherwise would have the party bouncing off nothing at
+        // the edge of an ordinary-looking field.
+        //
+        // One geometry and one material, shared by all of them: there are only a
+        // couple of dozen sealed places on Earth and nearly all of them are over
+        // the horizon at any moment, so the cost is the draw call for whichever
+        // one or two are in sight.
+        _buildLockedDomes() {
+            const WMR = window.WorldMapReturn;
+            if (!WMR || !WMR.lockedFootprints) return;
+            const places = WMR.lockedFootprints();
+            if (!places.length) return;
+
+            const ts = WORLD_TILE_SIZE;
+            // A unit hemisphere, scaled per dome. Open at the bottom: there is
+            // ground under it and no reason to pay for a face nobody can see.
+            const geo = new THREE.SphereGeometry(1, 32, 18, 0, Math.PI * 2, 0, Math.PI / 2);
+            const mat = new THREE.MeshBasicMaterial({
+                color: 0x8ec8ff,
+                transparent: true,
+                opacity: 0.17,
+                side: THREE.DoubleSide,
+                depthWrite: false,
+                fog: false
+            });
+            // The skin, drawn again as a wireframe so the dome reads as a
+            // surface with a grain rather than as coloured air. Faint enough
+            // that the town behind it is still legible.
+            const wireMat = new THREE.MeshBasicMaterial({
+                color: 0xcfe9ff,
+                transparent: true,
+                opacity: 0.10,
+                wireframe: true,
+                depthWrite: false,
+                fog: false
+            });
+
+            this._domes = [];
+            for (const place of places) {
+                // Radius in world units, with the same padding the world-map
+                // bubble uses, so the two are plainly the same object seen two
+                // ways. The height is a touch under the radius: a true
+                // hemisphere over a six-square town is taller than the mountains
+                // and reads as a wall rather than as a dome.
+                const r = place.radius * ts + ts * 0.55;
+                const group = new THREE.Group();
+                const shell = new THREE.Mesh(geo, mat);
+                const wire  = new THREE.Mesh(geo, wireMat);
+                shell.scale.set(r, r * 0.78, r);
+                wire.scale.set(r * 1.002, r * 0.78 * 1.002, r * 1.002);
+                shell.renderOrder = 3;
+                wire.renderOrder  = 4;
+                group.add(shell, wire);
+                group.position.set(place.centreX * ts, 0, place.centreY * ts);
+                group.visible = false;
+                this._scene.add(group);
+                this._domes.push({
+                    group,
+                    place,
+                    x: place.centreX * ts,
+                    z: place.centreY * ts,
+                    r,
+                    groundY: null
+                });
+            }
+            this._domeGeo = geo;
+            this._domeMats = [mat, wireMat];
+        }
+
+        // How far off a dome is still worth drawing. Past this it is smaller
+        // than the haze and nothing is lost by dropping it.
+        static get DOME_SIGHT() { return 16000; }
+
+        _updateLockedDomes() {
+            if (!this._domes || !this._domes.length) return;
+            const at = this._contactPoint();
+            const sight = VoxelWorldScene.DOME_SIGHT;
+            for (const d of this._domes) {
+                const dist = Math.hypot(at.x - d.x, at.z - d.z);
+                if (dist > sight) { d.group.visible = false; continue; }
+                d.group.visible = true;
+                // Sit it on the ground once the terrain under it has been built,
+                // and keep correcting while the party is near enough for the
+                // seam at its foot to be visible.
+                if (d.groundY === null || dist < d.r * 3) {
+                    d.groundY = this._terrain.getTerrainHeight(d.x / WORLD_TILE_SIZE, d.z / WORLD_TILE_SIZE);
+                }
+                d.group.position.y = (d.groundY != null ? d.groundY : 0) - 2;
+            }
+        }
+
+        // The dome whose skin this point is inside, or null. World units, and
+        // the circle in plan: the party never gets high enough for the curve of
+        // the roof to be the surface they meet.
+        _domeAt(x, z, r) {
+            if (!this._domes) return null;
+            const pad = r || 0;
+            for (const d of this._domes) {
+                const dx = x - d.x, dz = z - d.z;
+                if (dx * dx + dz * dz < (d.r + pad) * (d.r + pad)) return d;
+            }
+            return null;
+        }
+
+        // Push a point out to the skin of the dome it has got inside, along the
+        // line from the dome's middle. Returns the corrected position, or null
+        // where the point was already outside every dome.
+        _resolveDomes(x, z, r) {
+            const d = this._domeAt(x, z, r);
+            if (!d) return null;
+            const dx = x - d.x, dz = z - d.z;
+            const len = Math.hypot(dx, dz) || 1;
+            const want = d.r + (r || 0);
+            return { x: d.x + (dx / len) * want, z: d.z + (dz / len) * want };
+        }
+
+        // ---------------------------------------------------------------------
         // The second player
         // ---------------------------------------------------------------------
         // Everything a walker needs is already built to be handed round: the
@@ -6252,6 +6386,7 @@
                 this._dayFactor == null ? 1 : this._dayFactor, this._cameraYaw());
             if (this._parked) this._parked.update(delta, at.x, at.z);
             this._updateOmegaTower();
+            this._updateLockedDomes();
             if (this._crowd || this._followers) {
                 const camYaw = this._cameraYaw();
                 const df = this._dayFactor == null ? 1 : this._dayFactor;
@@ -6502,6 +6637,30 @@
             const at = this._contactPoint();
             const wx = Math.floor(at.x / ts), wy = Math.floor(at.z / ts);
             this._placeAskT = Math.max(0, (this._placeAskT || 0) - 0.016);
+
+            // A sealed place is met at the skin of its dome, which stands a good
+            // way outside the squares it is drawn over: the party is stopped
+            // there and told why, and is never offered the way in. Tested before
+            // the squares below for that reason - by the time those would fire,
+            // the dome has already been driven through.
+            const sealed = this._domeAt(at.x, at.z, 0);
+            if (sealed) {
+                // The square to put them back on has to be OUTSIDE the dome, or
+                // a party that somehow began inside one is handed back into it
+                // every frame for ever. Where the last free spot is itself
+                // sealed, the skin is used instead.
+                const free = this._resolveDomes(this._lastFreeX, this._lastFreeZ, 8);
+                if (free) { this._lastFreeX = free.x; this._lastFreeZ = free.z; }
+                this._putBackOutside();
+                if (this._placeAskT > 0) return;
+                this._placeAskT = 2.5;
+                const WMR = window.WorldMapReturn;
+                if (WMR && WMR.showLockedNotice) {
+                    WMR.showLockedNotice(WMR.lockedPlaceMessage(sealed.place));
+                }
+                return;
+            }
+
             const place = reservedPlaceAt(wx, wy);
             if (!place) { this._lastFreeX = at.x; this._lastFreeZ = at.z; return; }
 
@@ -7400,6 +7559,14 @@
             if (this._traffic)      this._traffic.dispose();
             if (this._parked)       this._parked.dispose();
             if (this._omega)        this._omega.dispose();
+            // Every dome shares one geometry and one pair of materials, so they
+            // are freed once rather than per dome.
+            if (this._domes) {
+                for (const d of this._domes) this._scene.remove(d.group);
+                if (this._domeGeo) this._domeGeo.dispose();
+                for (const m of (this._domeMats || [])) m.dispose();
+                this._domes = null; this._domeGeo = null; this._domeMats = null;
+            }
             this._stopCoop();
             if (this._underwaterFx) this._underwaterFx.dispose();
             if (this._skyFx)        this._skyFx.dispose();

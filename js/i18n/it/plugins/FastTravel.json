@@ -100,5 +100,6 @@
     "title": "Fine del viaggio",
     "visit": "Visita {biome}",
     "worldMap": "Resta sulla mappa del mondo"
-  }
+  },
+  "offline": "Offline"
 }

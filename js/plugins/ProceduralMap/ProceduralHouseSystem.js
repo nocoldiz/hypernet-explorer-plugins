@@ -96,8 +96,6 @@
  * @value 1763
  * @option Antiques Dealer
  * @value 1764
- * @option Augmentation Clinic
- * @value 1751
  * @option Bakery
  * @value 1726
  * @option Betting Parlor
@@ -114,8 +112,6 @@
  * @value 1768
  * @option Fast Food
  * @value 1715
- * @option Fertility Clinic
- * @value 1765
  * @option Fisherman's Shop
  * @value 1718
  * @option Florist
@@ -158,6 +154,39 @@
  * @value 1729
  * @option Wine store
  * @value 1721
+ * @default 0
+ *
+ * @arg facing
+ * @text Use Facing Direction
+ * @desc When true, uses the tile the player is facing instead of event location
+ * @type boolean
+ * @default false
+ *
+ * @command visitClinic
+ * @text Visit Clinic
+ * @desc Enters a clinic interior, picked by name or map id, or listed in game when neither is set.
+ *
+ * @arg clinicId
+ * @text Clinic Map ID
+ * @desc Map id of the clinic to enter directly. Leave 0 to show the picker with every available clinic.
+ * @type number
+ * @min 0
+ * @default 0
+ *
+ * @arg clinicName
+ * @text Clinic
+ * @desc Pick a clinic by name. Ignored when Clinic Map ID is set. Leave empty to show the in-game picker.
+ * @type select
+ * @option 
+ * @value 0
+ * @option Augmentation Clinic
+ * @value 1751
+ * @option Clinic
+ * @value 609
+ * @option Fertility Clinic
+ * @value 1765
+ * @option Hospital
+ * @value 1396
  * @default 0
  *
  * @arg facing
@@ -264,18 +293,20 @@
     "skyfloors": 1137,
     "abandoned": 1394,
     "inns": 1156,
-    "shops": 1157
+    "shops": 1157,
+    "clinics": 1395
   };
   
   const housePoolsJSON = {
-    "abandoned": [1395, 1396, 1397],
+    "abandoned": [1397],
     "houses": [638, 640, 641, 642, 643, 644, 646, 648, 649, 651, 653, 653, 656, 665, 669, 670, 673],
     "skyscrapers": [649, 671, 672],
     "villas": [644, 647, 650, 652, 655, 657, 658, 661, 662, 666, 668],
     "skyfloors": [1143, 1144, 1145, 1146, 1147, 1148, 1149, 1150, 1151],
     "floors": [1138, 1139, 1140, 1141, 1142, 1152, 1153, 1154, 1155],
     "inns": [1390,1391],
-    "shops": [1392,1393]
+    "shops": [1392,1393],
+    "clinics": [609, 1396, 1751, 1765]
   };
   
   let housePools = null;
@@ -434,6 +465,18 @@
     const useFacing = args.facing === "true" || args.facing === true;
     if (shopId > 0) enterShop(shopId, useFacing);
     else openShopPicker(useFacing);
+  });
+
+  // Clinics left the shop pool: the Clinic, the Hospital and the two specialist
+  // premises are child maps of the "Clinics" parent (1395) now, so they are
+  // entered through their own command rather than as one more shop.
+  PluginManager.registerCommand(pluginName, "visitClinic", function (args) {
+    if (doorEntryBusy()) return;
+    _callerEventId = (typeof this.eventId === "function") ? this.eventId() : 0;
+    const clinicId = Number(args.clinicId || 0) || Number(args.clinicName || 0);
+    const useFacing = args.facing === "true" || args.facing === true;
+    if (clinicId > 0) enterClinic(clinicId, useFacing);
+    else openClinicPicker(useFacing);
   });
 
   function createLocationKey() {
@@ -1287,7 +1330,7 @@
   // interiors were never authored quietly falls back to the ordinary shop pool.
   // i18n-ignore-start  Features.json ids and data/MapInfos.json map ids
   const TRADE_DOORS = {
-    DoorClinic:        [1765, 1751],                    // Fertility, Augmentation
+    DoorClinic:        [609, 1396, 1751, 1765],         // Clinic, Hospital, Augmentation, Fertility
     DoorPoliceStation: [1429],                          // Police Station
     DoorWeaponStore:   [1425, 1426, 1427, 1428, 658],   // Weapon Shops, Surplus Armory
     DoorGym:           [1716],                          // Gym Supplies
@@ -1295,6 +1338,12 @@
     DoorIceCream:      [1393],                          // Ice Cream
     DoorMusicStore:    [1758],                          // Music Store
     GarageDoor:        [1745],                          // Garage
+  };
+  // The pool each trade door's interiors belong to. Only the clinics sit
+  // outside the shop pool (their own parent map), and a door whose trade is not
+  // named here opens onto a shop, as every trade door used to.
+  const TRADE_DOOR_POOLS = {
+    DoorClinic: "clinics",
   };
   // i18n-ignore-end
 
@@ -1480,7 +1529,7 @@
         // ordinary shop pool only where the trade has no interior authored yet.
         if (!TRADE_DOORS[name]) return false;
         const c = getEventCoordinates(true);
-        visitHouse("shops", true, tradeDoorMapId(name, c.x, c.y));
+        visitHouse(TRADE_DOOR_POOLS[name] || "shops", true, tradeDoorMapId(name, c.x, c.y));
         return true;
       }
     }
@@ -1896,17 +1945,21 @@
 
   // Show a choice list of every floor except the current one, then ride to the
   // chosen floor. Only works inside a multi-floor building.
-  // ── Shop directory ───────────────────────────────────
-  // Every shop interior is a child map of the "shops" parent in MapInfos, so
-  // the map id IS the stable id of that shop: it never shifts when new shop
-  // maps are added, and an event can pass it straight to the visitShop command
-  // instead of depending on this list's ordering.
-  function getShopDirectory() {
-    return getHouseList("shops", true)
+  // ── Premises directory ───────────────────────────────────
+  // Every shop interior is a child map of the "shops" parent in MapInfos, and
+  // every clinic one of the "clinics" parent, so the map id IS the stable id of
+  // that place: it never shifts when new maps are added, and an event can pass
+  // it straight to the visitShop / visitClinic command instead of depending on
+  // this list's ordering.
+  function getPoolDirectory(poolName) {
+    return getHouseList(poolName, true)
       .filter((id) => $dataMapInfos && $dataMapInfos[id])
       .map((id) => ({ id, name: shopDisplayName(id) }))
       .sort((a, b) => a.name.localeCompare(b.name) || a.id - b.id);
   }
+
+  function getShopDirectory() { return getPoolDirectory("shops"); }
+  function getClinicDirectory() { return getPoolDirectory("clinics"); }
 
   // MapInfos names are authored as "652 - Betting Parlor"; drop the duplicated
   // id so the picker prints it once, in one shape.
@@ -1921,40 +1974,58 @@
     return `#${shop.id} ${shop.name}`;  // i18n-ignore  map id and map name
   }
 
-  function openShopPicker(useFacing = false) {
-    const shops = getShopDirectory();
-    if (shops.length === 0) {
+  // One picker for both trades: the pool decides which maps are listed and
+  // which two lines are printed when the list is empty or the pick refused.
+  function openPoolPicker(poolName, useFacing, emptyKey, promptKey, missingKey) {
+    const places = getPoolDirectory(poolName);
+    if (places.length === 0) {
       window.skipLocalization = true;
-      $gameMessage.add(T('ProceduralHouse.noShops'));
+      $gameMessage.add(T(emptyKey));
       window.skipLocalization = false;
       return;
     }
-    const choices = shops.map(shopChoiceLabel);
+    const choices = places.map(shopChoiceLabel);
     choices.push(T('ProceduralHouse.cancel'));
 
     window.skipLocalization = true;
-    $gameMessage.add(T('ProceduralHouse.selectShop'));
+    $gameMessage.add(T(promptKey));
     $gameMessage.setChoices(choices, 0, choices.length - 1);
     $gameMessage.setChoiceBackground(0);
     $gameMessage.setChoicePositionType(2);
     window.skipLocalization = false;
     $gameMessage.setChoiceCallback((index) => {
-      const shop = shops[index];
-      if (shop) enterShop(shop.id, useFacing);
+      const place = places[index];
+      if (place) enterPoolMap(poolName, place.id, useFacing, missingKey);
     });
   }
 
-  // A picked shop is always entered directly: the player asked for THAT map,
+  // A picked interior is always entered directly: the player asked for THAT map,
   // so the seeded pool roll and the door lock are both bypassed.
-  function enterShop(shopId, useFacing = false) {
-    const id = Number(shopId);
-    if (!getHouseList("shops", true).includes(id)) {
+  function enterPoolMap(poolName, mapId, useFacing, missingKey) {
+    const id = Number(mapId);
+    if (!getHouseList(poolName, true).includes(id)) {
       window.skipLocalization = true;
-      $gameMessage.add(T('ProceduralHouse.noSuchShop'));
+      $gameMessage.add(T(missingKey));
       window.skipLocalization = false;
       return;
     }
-    visitHouse("shops", useFacing, id, true);
+    visitHouse(poolName, useFacing, id, true);
+  }
+
+  function openShopPicker(useFacing = false) {
+    openPoolPicker("shops", useFacing, 'ProceduralHouse.noShops', 'ProceduralHouse.selectShop', 'ProceduralHouse.noSuchShop');
+  }
+
+  function openClinicPicker(useFacing = false) {
+    openPoolPicker("clinics", useFacing, 'ProceduralHouse.noClinics', 'ProceduralHouse.selectClinic', 'ProceduralHouse.noSuchClinic');
+  }
+
+  function enterShop(shopId, useFacing = false) {
+    enterPoolMap("shops", shopId, useFacing, 'ProceduralHouse.noSuchShop');
+  }
+
+  function enterClinic(clinicId, useFacing = false) {
+    enterPoolMap("clinics", clinicId, useFacing, 'ProceduralHouse.noSuchClinic');
   }
 
   function openElevator() {

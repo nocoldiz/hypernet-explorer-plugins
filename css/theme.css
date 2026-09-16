@@ -282,7 +282,8 @@
     box-shadow: none;
 }
 
-.cc-folder-tab {
+.cc-folder-tab,
+.cc-step-tab {
     position: relative;
     display: flex;
     align-items: center;
@@ -304,7 +305,8 @@
 
 /* Where the pad is resting when that is not also the open page: the empty
    party seat, which L1/R1 stop on and Confirm fills. */
-.cc-folder-tab.selected {
+.cc-folder-tab.selected,
+.cc-step-tab.selected {
     border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
 }
@@ -323,14 +325,16 @@
     z-index: 3;
 }
 
-.cc-folder-tab:hover {
+.cc-folder-tab:hover,
+.cc-step-tab:hover {
     background: linear-gradient(180deg, var(--bg-primary-hover-translucent-35), var(--bg-panel));
     color: var(--text-primary-hover);
     border-color: var(--text-primary-hover);
     transform: translateY(-2px);
 }
 
-.cc-folder-tab.active {
+.cc-folder-tab.active,
+.cc-step-tab.active {
     background: linear-gradient(180deg, var(--bg-tertiary-focus-translucent-45), var(--bg-panel)) !important;
     border-color: var(--text-primary-hover) !important;
     border-bottom: 2px solid transparent;
@@ -341,7 +345,8 @@
     z-index: 5;
 }
 
-.cc-folder-tab .cc-tab-dot {
+.cc-folder-tab .cc-tab-dot,
+.cc-step-tab .cc-tab-dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -350,7 +355,8 @@
 
 /* A party tab is read by the face on it: the member's own sprite, front
    facing and zoomed onto the head and shoulders inside a small frame. */
-.cc-folder-tab .cc-tab-portrait {
+.cc-folder-tab .cc-tab-portrait,
+.cc-step-tab .cc-tab-portrait {
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -362,15 +368,18 @@
     position: relative;
 }
 
-.cc-folder-tab .cc-tab-portrait.done {
+.cc-folder-tab .cc-tab-portrait.done,
+.cc-step-tab .cc-tab-portrait.done {
     border-color: var(--text-forest-complete);
 }
 
-.cc-folder-tab.active .cc-tab-portrait {
+.cc-folder-tab.active .cc-tab-portrait,
+.cc-step-tab.active .cc-tab-portrait {
     border-color: var(--text-primary-hover);
 }
 
-.cc-folder-tab .cc-tab-portrait-sprite {
+.cc-folder-tab .cc-tab-portrait-sprite,
+.cc-step-tab .cc-tab-portrait-sprite {
     display: block;
     position: absolute;
     top: 0;
@@ -388,15 +397,18 @@
     margin-left: 2px;
 }
 
-.cc-folder-tab .cc-tab-dot.done {
+.cc-folder-tab .cc-tab-dot.done,
+.cc-step-tab .cc-tab-dot.done {
     background: var(--text-forest-complete);
 }
 
-.cc-folder-tab.cc-pet-tab {
+.cc-folder-tab.cc-pet-tab,
+.cc-step-tab.cc-pet-tab {
     border-color: var(--border-forest-green);
 }
 
-.cc-folder-tab.cc-pet-tab.active {
+.cc-folder-tab.cc-pet-tab.active,
+.cc-step-tab.cc-pet-tab.active {
     border-color: var(--text-forest-complete);
     box-shadow: 0 -2px 10px var(--border-success-medium-35);
 }
@@ -2393,16 +2405,19 @@
     gap: 6px;
     padding: 6px 8px;
     text-align: left;
+    border-color: transparent;
     border-width: 1px;
     box-shadow: none;
     border-radius: 5px;
     min-width: 0;
 }
 
-/* Flat hover - colour shift only, NO translateY (this is the flicker fix) */
+/* Flat hover - colour shift only, no frame and NO translateY (the frame drawn
+   around a card the pointer merely crossed read as a pick that had not
+   happened) */
 .cc-trait-grid .cc-card-option:hover {
     transform: none;
-    border-color: var(--border-focus-hover);
+    border-color: transparent;
     background: var(--bg-secondary-hover);
     box-shadow: none;
 }
@@ -2413,9 +2428,35 @@
 }
 
 .cc-trait-grid .cc-card-option.selected {
-    border-color: var(--text-primary-hover);
+    border-color: transparent;
     background: var(--bg-tertiary-focus-translucent-45);
     box-shadow: none;
+}
+
+/* A package card carries more than a trait card does: the kind of person on
+   top, the traits it deals underneath. Two columns of the four, since the list
+   of names needs the width to stay readable. */
+.cc-trait-grid .cc-card-option.cc-trait-pack {
+    grid-column: span 2;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 8px 10px;
+}
+
+.cc-trait-grid .cc-trait-pack .cc-option-sub {
+    flex: 1 1 100%;
+    margin-top: 2px;
+    font-size: var(--fs-caption);
+    line-height: 1.3;
+    opacity: 0.7;
+    white-space: normal;
+}
+
+/* The line at the foot of the simple board pointing at the detailed one. */
+.ts-pack-note {
+    flex: 0 0 auto;
+    padding: 2px 4px 4px 4px;
+    text-align: left;
 }
 
 .cc-trait-grid .cc-option-title {
@@ -2588,12 +2629,24 @@
     content: none;
 }
 
+/* The roster reads as a list of names: only the class the character took is
+   written in gold, and the frame is the cursor, drawn under the pointer rather
+   than left standing around the pick. */
+.cc-class-grid .cc-card-option.cc-class-card {
+    border-color: transparent;
+}
+
 .cc-class-grid .cc-card-option.cc-class-card:hover,
 .cc-class-grid .cc-card-option.cc-class-card:focus,
-.cc-class-grid .cc-card-option.cc-class-card.focused,
-.cc-class-grid .cc-card-option.cc-class-card.selected {
+.cc-class-grid .cc-card-option.cc-class-card.focused {
     transform: none;
     border-color: var(--text-primary-hover);
+    background: none;
+    box-shadow: none;
+}
+
+.cc-class-grid .cc-card-option.cc-class-card.selected {
+    transform: none;
     background: none;
     box-shadow: none;
 }
@@ -2717,16 +2770,14 @@
 }
 
 
-/* The class list on the left page: one row per class, no plate and no frame.
-   The element the class answers to is the one mark a row carries, as a rule
-   down its left edge, and the row the cursor is on takes the gold hairline
-   every picked control in the game wears. */
+/* The class list on the left page: one row per class, no plate, no frame and
+   no element rule down its edge. The row the cursor is on takes the gold
+   hairline every picked control in the game wears, and nothing else. */
 .cc-class-row {
     display: flex;
     align-items: center;
     padding: 6px 10px 6px 12px;
     border: 1px solid transparent;
-    border-left: 3px solid var(--cc-class-elem, var(--border-gold-amber-30));
     border-radius: 2px;
     background: none;
     cursor: pointer;
@@ -2738,7 +2789,6 @@
 .cc-class-row.focused,
 .cc-class-row.selected {
     border-color: var(--text-primary-hover);
-    border-left-color: var(--cc-class-elem, var(--text-primary-hover));
 }
 
 .cc-class-row-name {
@@ -2762,7 +2812,12 @@
     border-left: 3px solid var(--text-forest-green);
 }
 
+.cc-class-grid .cc-class-card.selected .cc-option-title {
+    color: var(--text-primary-hover);
+}
+
 .cc-class-grid .cc-class-card .cc-option-title {
+    color: var(--text-pure-white);
     margin: 0;
     width: 100%;
     font-size: var(--fs-heading);
@@ -33632,6 +33687,115 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     cursor: grab;
 }
 
+/* A row dragged over another one: dropping it there takes that acting slot,
+   so the row that is about to be displaced is the thing that lights up. */
+.dyn-row--over {
+    border-color: var(--text-primary-hover);
+}
+
+/* The row whose dossier is open on the right page. */
+.dyn-row--picked {
+    border-color: var(--text-primary-hover);
+}
+
+/* The portrait and the name are what picks a row up onto the right page; the
+   buttons beside them keep doing their own jobs. */
+.dyn-pick {
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   The dossier: the right page of the Dynamics board. Whoever is picked on the
+   board, travelling or in the reserves, read as one card.
+   --------------------------------------------------------------------------- */
+.dyn-dossier {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.dyn-dossier-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.dyn-dossier-face {
+    flex: 0 0 auto;
+    width: 96px;
+    height: 128px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--text-text-alt-4);
+    border-radius: 4px;
+}
+
+.dyn-dossier-bust {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+.dyn-dossier-sprite {
+    image-rendering: pixelated;
+}
+
+.dyn-dossier-id {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.dyn-dossier-turn {
+    margin-top: 4px;
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-4);
+}
+
+.dyn-dossier-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dyn-dossier-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: var(--fs-body);
+}
+
+.dyn-dossier-lbl {
+    color: var(--text-text-alt-4);
+}
+
+.dyn-dossier-lore {
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-4);
+    margin: 0;
+}
+
+.dyn-dossier-params {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 12px;
+}
+
+.dyn-dossier-param {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: var(--fs-body);
+}
+
+.dyn-dossier-param-lbl {
+    color: var(--text-text-alt-4);
+}
+
 .dyn-row[draggable="true"]:active {
     cursor: grabbing;
 }
@@ -38216,7 +38380,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    ------------------------------------------------------------------------ */
 .cc-mode-pill.active,
 .cc-folder-tab.active,
+.cc-step-tab.active,
 .cc-folder-tab.selected,
+.cc-step-tab.selected,
 .cc-compact-toggle-btn.active,
 .cc-compact-type-pill.active,
 .cc-compact-btn.selected,
@@ -38954,4 +39120,283 @@ body.pad-input .kb-only {
 
 #quick-main-menu .qmm-icon {
     --icon-size: 20px;
+}
+
+/* ---------------------------------------------------------------------------
+   Fast travel: stops sealed in a spacetime bubble
+   ---------------------------------------------------------------------------
+   A locked Destinations.json entry is still printed in the book - the town is
+   real and the line used to run there - but nothing departs for it any more.
+   The row is dimmed rather than removed and its fare column reads "Offline";
+   the pin keeps its shape so the place is still findable on the sheet, and is
+   drained of colour instead. Both refuse the cursor outright: there is nothing
+   behind them to open. */
+.travel-dest-item.is-offline {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.travel-dest-item.is-offline:hover,
+.travel-dest-item.is-offline.selected {
+    border-color: transparent;
+}
+
+.travel-dest-item.is-offline .travel-dest-cost {
+    color: var(--text-danger-hover);
+    font-style: italic;
+}
+
+.travel-marker.is-offline {
+    background: var(--text-disabled);
+    border-color: var(--text-disabled);
+    box-shadow: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Character creation: the action bar, the pick sheet and the description page
+   ==========================================================================
+   The three pieces of chrome the creation spread grew when its choices stopped
+   being dropdowns and its buttons stopped moving from page to page. */
+
+/* --- The action bar -------------------------------------------------------
+   The last row of the spread. Back on the left, setting out on the right, in
+   the same place on every page of the wizard. */
+.cc-action-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 60px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    background: linear-gradient(0deg, var(--bg-panel), var(--bg-surface));
+    border-top: 2px solid var(--border-gold-amber-30);
+    box-shadow: 0 -4px 16px var(--shadow-black-translucent-80);
+    z-index: 30;
+}
+
+.cc-action-spacer {
+    flex: 1 1 auto;
+}
+
+/* Why Embark is shut, said on the bar rather than in a tooltip nobody hovers. */
+.cc-action-note {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label);
+    color: var(--text-detail-label);
+    opacity: 0.85;
+}
+
+.cc-action-bar .cc-compact-btn {
+    font-size: var(--fs-body);
+    padding: 10px 22px;
+    min-height: 44px;
+}
+
+.cc-action-bar .cc-action-embark {
+    font-size: var(--fs-heading);
+    padding: 10px 34px;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+}
+
+.cc-action-bar .cc-compact-btn.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* --- The pick trigger -----------------------------------------------------
+   What a <select> used to be. It keeps the plate the select wore so the sheet
+   reads the same, and gains a caret that says it opens something. */
+.cc-pick-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    min-height: 40px;
+    font-size: var(--fs-body);
+}
+
+.cc-pick-trigger-label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cc-pick-trigger-caret {
+    flex: 0 0 auto;
+    opacity: 0.7;
+    font-size: var(--fs-caption);
+}
+
+.cc-pick-trigger:hover {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+}
+
+/* --- The pick sheet -------------------------------------------------------
+   The modal a choice is made in. Two shapes: a column of rows, or that column
+   with the row under the cursor written out beside it. */
+.cc-pick {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(560px, 88vw);
+    max-height: 82vh;
+}
+
+.cc-pick--detail {
+    width: min(1040px, 94vw);
+}
+
+.cc-pick .cc-pick-body {
+    display: flex;
+    gap: 14px;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.cc-pick-list {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* The written-out half of a detail sheet: read, not scanned, so it is set at
+   the detail scale the rest of the game's right columns use. */
+.cc-pick-detail {
+    flex: 1 1 52%;
+    min-width: 0;
+    overflow-y: auto;
+    padding-left: 14px;
+    border-left: 1px solid var(--border-gold-amber-30);
+    font-size: var(--fs-detail-body);
+    line-height: 1.5;
+}
+
+.cc-pick-search {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 12px;
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    background: transparent;
+    border: 1px solid var(--border-gold-amber-30);
+    border-radius: 4px;
+    color: var(--text-card-dark);
+}
+
+.cc-pick-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    border: 1px solid transparent;
+}
+
+.cc-pick-row .cc-pick-label {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cc-pick-row .cc-pick-hint {
+    flex: 0 1 auto;
+    font-size: var(--fs-caption);
+    color: var(--text-detail-label);
+    opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 46%;
+}
+
+.cc-pick-row.selected {
+    background: var(--bg-tertiary-focus-translucent-45);
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+}
+
+/* The one already chosen, marked so it is findable in a long list. */
+.cc-pick-row.current .cc-pick-label::after {
+    content: " \2713";
+    color: var(--text-primary-hover);
+}
+
+.cc-pick-row.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.cc-pick-group {
+    padding: 10px 12px 4px;
+    font-size: var(--fs-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-detail-heading);
+    opacity: 0.9;
+}
+
+.cc-pick-empty {
+    padding: 18px 12px;
+    font-size: var(--fs-body);
+    color: var(--text-detail-label);
+    opacity: 0.8;
+}
+
+/* --- The description page -------------------------------------------------
+   The character's written history, given the whole spread. Prose, so it is set
+   at the detail scale and held to a readable measure rather than run edge to
+   edge across a wide screen. */
+.cc-description-page {
+    gap: 14px;
+    min-height: 0;
+}
+
+.cc-description-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.cc-description-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    font-size: var(--fs-detail-prose);
+    line-height: 1.62;
+    max-width: 78ch;
+}
+
+.cc-description-body .npc-backstory-text {
+    font-size: var(--fs-detail-prose);
+    line-height: 1.62;
+    margin-bottom: 0.9em;
+}
+
+.cc-desc-rewrite {
+    flex: 0 0 auto;
+}
+
+/* The one press that answers the whole simple sheet. It leads the page, so it
+   is a full-width action rather than a button tucked into a row. */
+.cc-simple-roll {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: var(--fs-heading);
+    padding: 12px 18px;
+    flex-shrink: 0;
 }

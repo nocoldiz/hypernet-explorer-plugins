@@ -138,41 +138,44 @@
     }
 
     .cc-mode-pill {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
     }
 
-    .cc-folder-tab {
+    .cc-folder-tab,
+    .cc-step-tab {
         padding: 5px 10px;
-        font-size: 0.82rem;
+        font-size: 0.927rem;
         gap: 5px;
         border-radius: 6px 6px 0 0;
     }
 
-    .cc-folder-tab .cc-tab-portrait {
+    .cc-folder-tab .cc-tab-portrait,
+    .cc-step-tab .cc-tab-portrait {
         width: 20px;
         height: 20px;
         border-radius: 3px;
     }
 
-    .cc-folder-tab .cc-tab-dot {
+    .cc-folder-tab .cc-tab-dot,
+    .cc-step-tab .cc-tab-dot {
         width: 6px;
         height: 6px;
     }
 
     .cc-tab-done-mark {
-        font-size: 0.7rem;
+        font-size: 0.85rem;
     }
 
     .cc-tab-remove-x {
         width: 12px;
         height: 12px;
-        font-size: 0.58rem;
+        font-size: 0.85rem;
         margin-left: 3px;
     }
 
     .cc-tab-add-plus {
         padding: 4px 8px;
-        font-size: 0.95rem;
+        font-size: 1.074rem;
     }
 
     /* 2. Dossier Main Container & Center Spine */
@@ -214,11 +217,11 @@
     }
 
     .cc-bio-identity-name {
-        font-size: 0.95rem;
+        font-size: 1.074rem;
     }
 
     .cc-bio-identity-class {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     /* Portrait scaled from 320px to 185px height to fit within 800px vertical bounds */
@@ -242,12 +245,12 @@
 
     .cc-compact-toggle-btn {
         padding: 4px 6px;
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-compact-edit-btn {
         padding: 4px 6px;
-        font-size: 0.78rem;
+        font-size: 0.881rem;
         gap: 4px;
     }
 
@@ -257,7 +260,7 @@
 
     .cc-compact-type-pill {
         padding: 4px 5px;
-        font-size: 0.76rem;
+        font-size: 0.859rem;
     }
 
     .cc-compact-loadout-grid {
@@ -268,11 +271,11 @@
 
     .cc-compact-loadout-grid .cc-compact-loadout-item {
         padding: 2px;
-        font-size: 0.82rem;
+        font-size: 0.927rem;
     }
 
     .cc-compact-loadout-grid .cc-compact-loadout-item .cc-loadout-name {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
     }
 
     .cc-compact-loadout-grid.cc-loadout-grid-cols {
@@ -284,7 +287,7 @@
     }
 
     .cc-compact-loadout-grid.cc-loadout-grid-cols-3 .cc-compact-loadout-item .cc-loadout-name {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-compact-actions {
@@ -295,7 +298,7 @@
     .cc-compact-btn,
     .cc-sidebar-btn {
         padding: 5px 8px;
-        font-size: 0.84rem;
+        font-size: 0.949rem;
         height: 32px;
     }
 
@@ -309,11 +312,11 @@
     }
 
     .cc-stat-label {
-        font-size: 0.65rem;
+        font-size: 0.85rem;
     }
 
     .cc-stat-val {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
     }
 
     /* 4. Spread Pages & Layout Metrics */
@@ -337,24 +340,24 @@
     }
 
     .cc-header-gothic {
-        font-size: 1.45rem;
+        font-size: 1.638rem;
         margin: 0 0 8px 0;
         padding-bottom: 4px;
     }
 
     .cc-subheader {
-        font-size: 1.12rem;
+        font-size: 1.266rem;
         margin-bottom: 6px;
         padding-bottom: 3px;
     }
 
     .cc-weapon-slots {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
         margin: -4px 0 6px 0;
     }
 
     .cc-text-desc {
-        font-size: 0.9rem;
+        font-size: 1.017rem;
         line-height: 1.35;
         margin-bottom: 10px;
     }
@@ -374,7 +377,7 @@
     }
 
     .cc-dossier-row {
-        font-size: 0.88rem;
+        font-size: 0.994rem;
         margin-bottom: 4px;
         padding-bottom: 2px;
     }
@@ -385,13 +388,13 @@
     }
 
     .cc-card-tight .cc-subheader {
-        font-size: 0.95rem;
+        font-size: 1.074rem;
         margin-bottom: 4px;
         padding-bottom: 2px;
     }
 
     .cc-card-tight .cc-dossier-row {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
         margin-bottom: 2px;
         padding-bottom: 1px;
     }
@@ -409,12 +412,12 @@
 
     .cc-name-text-input {
         padding: 6px 12px;
-        font-size: 1.15rem;
+        font-size: 1.299rem;
     }
 
     .cc-dice-btn {
         padding: 6px 12px;
-        font-size: 1.1rem;
+        font-size: 1.243rem;
     }
 
     .cc-trait-budget-container {
@@ -423,11 +426,11 @@
     }
 
     .cc-trait-budget-label {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-trait-budget-val {
-        font-size: 1.15rem;
+        font-size: 1.299rem;
     }
 
     /* 6. Settings Mode (Initial Settings Screen) */
@@ -436,16 +439,16 @@
     }
 
     #character-creation-container .option-name {
-        font-size: 1.05rem;
+        font-size: 1.187rem;
     }
 
     #character-creation-container .option-status-toggle {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
     }
 
     #character-creation-container .option-select-val {
         min-width: 90px;
-        font-size: 0.92rem;
+        font-size: 1.04rem;
     }
 
     #character-creation-container .option-select .arrow-btn {
@@ -461,21 +464,21 @@
     }
 
     .cc-settings-detail-title {
-        font-size: 1.25rem;
+        font-size: 1.412rem;
     }
 
     .cc-settings-glyph {
-        font-size: 2.5rem;
+        font-size: 2.825rem;
         margin: 8px 0;
     }
 
     .cc-settings-value {
-        font-size: 1.15rem;
+        font-size: 1.299rem;
         margin: 4px 0;
     }
 
     .cc-settings-desc {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
         line-height: 1.35;
         max-width: 28em;
         margin-bottom: 6px;
@@ -486,13 +489,13 @@
     }
 
     .cc-settings-img-caption {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
         margin-top: 4px;
         max-width: 320px;
     }
 
     .cc-settings-hint {
-        font-size: 0.84rem;
+        font-size: 0.949rem;
         margin-top: 4px;
     }
 
@@ -514,12 +517,12 @@
     }
 
     .cc-wanted-name {
-        font-size: 1.05rem;
+        font-size: 1.187rem;
         margin-bottom: 1px;
     }
 
     .cc-wanted-class {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-presets-board .cc-wanted-card.cc-card-flat {
@@ -528,15 +531,15 @@
     }
 
     .cc-card-flat .cc-wanted-name {
-        font-size: 0.95rem;
+        font-size: 1.074rem;
     }
 
     .cc-card-flat .cc-wanted-class {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-roster-head {
-        font-size: 0.88rem;
+        font-size: 0.994rem;
         margin: 6px 0 2px;
         padding-bottom: 2px;
     }
@@ -552,11 +555,11 @@
     }
 
     .cc-skin-name {
-        font-size: 0.76rem;
+        font-size: 0.859rem;
     }
 
     .cc-skins-hint {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
         margin-top: 6px;
         gap: 5px;
     }
@@ -577,12 +580,12 @@
     }
 
     .cc-class-board-head .cc-subheader {
-        font-size: 1.1rem;
+        font-size: 1.243rem;
     }
 
     .cc-class-search {
         height: 26px;
-        font-size: 0.85rem;
+        font-size: 0.96rem;
         padding: 3px 6px;
     }
 
@@ -598,15 +601,15 @@
     }
 
     .cc-class-grid .cc-class-card .cc-option-title {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
     }
 
     .cc-class-detail-head .cc-header-gothic {
-        font-size: 1.25rem;
+        font-size: 1.412rem;
     }
 
     .cc-class-quote {
-        font-size: 0.8rem;
+        font-size: 0.904rem;
         line-height: 1.25;
     }
 
@@ -616,12 +619,12 @@
     }
 
     .cc-class-section .cc-subheader {
-        font-size: 0.84rem;
+        font-size: 0.949rem;
         margin: 0 0 2px 0;
     }
 
     .cc-class-section .cc-dossier-row {
-        font-size: 0.8rem;
+        font-size: 0.904rem;
     }
 
     .cc-class-passive {
@@ -630,12 +633,12 @@
     }
 
     .cc-class-passive-name {
-        font-size: 0.85rem;
+        font-size: 0.96rem;
         gap: 4px;
     }
 
     .cc-class-passive-desc {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
         line-height: 1.25;
         margin-top: 2px;
     }
@@ -645,13 +648,13 @@
     }
 
     .cc-class-growth {
-        font-size: 0.74rem;
+        font-size: 0.85rem;
     }
 
     .cc-class-confirm {
         height: 30px;
         margin-top: 4px;
-        font-size: 0.88rem;
+        font-size: 0.994rem;
     }
 
     /* 9. Traits Selection Step */
@@ -678,11 +681,11 @@
     }
 
     .ts-purse-value {
-        font-size: 1.15rem;
+        font-size: 1.299rem;
     }
 
     .ts-purse-label {
-        font-size: 0.74rem;
+        font-size: 0.85rem;
     }
 
     .ts-tab-row {
@@ -692,7 +695,7 @@
     }
 
     .ts-tab {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .ts-search-slot {
@@ -711,11 +714,11 @@
     }
 
     .cc-trait-grid .cc-option-title {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
     }
 
     .trait-cost {
-        font-size: 0.74rem;
+        font-size: 0.85rem;
         min-width: 16px;
         padding: 0 3px;
     }
@@ -727,7 +730,7 @@
     }
 
     .ts-purse--sheet .ts-purse-value {
-        font-size: 1.05rem;
+        font-size: 1.187rem;
     }
 
     .ts-detail {
@@ -742,17 +745,17 @@
     }
 
     .ts-detail-label {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
     }
 
     .ts-detail-desc {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
         line-height: 1.3;
         margin-bottom: 4px;
     }
 
     .ts-detail-note {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
         padding: 3px 6px;
         margin-bottom: 4px;
     }
@@ -769,11 +772,11 @@
     }
 
     .cc-trait-picked-name {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
     }
 
     .cc-slot-remove {
-        font-size: 0.85rem;
+        font-size: 0.96rem;
         padding: 0 4px;
     }
 
@@ -784,7 +787,7 @@
 
     .ts-summary-row {
         padding: 2px 0;
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-picked-row {
@@ -795,7 +798,7 @@
 
     .cc-picked-chip {
         padding: 2px 5px;
-        font-size: 0.74rem;
+        font-size: 0.85rem;
         gap: 3px;
     }
 
@@ -819,7 +822,7 @@
     }
 
     .cc-spec-tab {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-spec-grid {
@@ -834,20 +837,20 @@
     }
 
     .cc-spec-title {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
     }
 
     .cc-spec-meta {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
         gap: 3px;
     }
 
     .cc-spec-cat-label {
-        font-size: 0.68rem;
+        font-size: 0.85rem;
     }
 
     .cc-spec-stat-badge {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
         padding: 1px 4px;
     }
 
@@ -858,7 +861,7 @@
     .cc-spec-btn {
         width: 20px;
         height: 20px;
-        font-size: 0.8rem;
+        font-size: 0.904rem;
     }
 
     .cc-spec-pip {
@@ -868,14 +871,14 @@
 
     .cc-spec-badge-row {
         padding: 3px 5px;
-        font-size: 0.76rem;
+        font-size: 0.859rem;
         gap: 4px;
     }
 
     .cc-spec-badge-delete {
         width: 16px;
         height: 16px;
-        font-size: 0.7rem;
+        font-size: 0.85rem;
     }
 
     /* 11. Bio Step (Demographics, Gender, Ideology, Morality) */
@@ -889,7 +892,7 @@
     }
 
     .cc-bio-section-title {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
         margin-bottom: 3px;
         gap: 4px;
     }
@@ -900,12 +903,12 @@
 
     .cc-bio-chip {
         padding: 3px 7px;
-        font-size: 0.8rem;
+        font-size: 0.904rem;
     }
 
     .cc-bio-select {
         padding: 3px 6px;
-        font-size: 0.84rem;
+        font-size: 0.949rem;
     }
 
     .cc-bio-slider-row {
@@ -913,11 +916,11 @@
     }
 
     .cc-bio-slider-end {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
     }
 
     .cc-bio-slider-readout {
-        font-size: 0.8rem;
+        font-size: 0.904rem;
         margin-top: 2px;
     }
 
@@ -941,21 +944,21 @@
     }
 
     .cc-pet-name {
-        font-size: 0.78rem;
+        font-size: 0.881rem;
         margin-bottom: 1px;
     }
 
     .cc-pet-kind {
-        font-size: 0.65rem;
+        font-size: 0.85rem;
     }
 
     .cc-pet-trait-toggle {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
         padding: 3px 5px;
     }
 
     .cc-pet-sidebar-name {
-        font-size: 0.95rem;
+        font-size: 1.074rem;
     }
 
     /* 13. Generic Option Cards, Archetype & Dropdown Lists */
@@ -977,21 +980,21 @@
     }
 
     .cc-option-title {
-        font-size: 1.05rem;
+        font-size: 1.187rem;
         margin-bottom: 3px;
     }
 
     .cc-option-desc {
-        font-size: 0.84rem;
+        font-size: 0.949rem;
         line-height: 1.25;
     }
 
     .cc-select-grid.cc-compact .cc-option-title {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
     }
 
     .cc-select-grid.cc-compact.cc-three-col.cc-align-left .cc-option-title {
-        font-size: 0.85rem;
+        font-size: 0.96rem;
     }
 
     .cc-select-grid.cc-archetype-grid .cc-card-option {
@@ -1001,7 +1004,7 @@
     }
 
     .cc-archetype-card-meta {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
     }
 
     .cc-select-grid.cc-dropdown-list {
@@ -1045,17 +1048,17 @@
     }
 
     .cc-categories-list .cc-option-title {
-        font-size: 0.9rem;
+        font-size: 1.017rem;
     }
 
     .cc-categories-list .cc-element-badge {
-        font-size: 0.74rem;
+        font-size: 0.85rem;
         padding: 1px 5px;
     }
 
     .cc-species-search {
         padding: 4px 8px;
-        font-size: 0.88rem;
+        font-size: 0.994rem;
         margin-bottom: 4px;
     }
 
@@ -1087,25 +1090,25 @@
     }
 
     .cc-scenario-brief-head .cc-header-gothic {
-        font-size: 1.2rem;
+        font-size: 1.356rem;
     }
 
     .cc-scenario-brief-head .cc-money-badge {
-        font-size: 0.88rem;
+        font-size: 0.994rem;
         padding: 2px 6px;
     }
 
     .cc-scenario-brief .cc-class-quote {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
         padding-bottom: 4px;
     }
 
     .cc-scenario-grid .cc-scenario-card .cc-option-title {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
     }
 
     .cc-scenario-group-title {
-        font-size: 0.82rem;
+        font-size: 0.927rem;
         padding: 4px 2px 2px 2px;
     }
 
@@ -1115,7 +1118,7 @@
 
     .cc-scenario-back {
         height: 30px;
-        font-size: 0.84rem;
+        font-size: 0.949rem;
     }
 
     .cc-scenario-sheet {
@@ -1134,12 +1137,12 @@
     }
 
     .cc-scenario-sheet-name {
-        font-size: 0.92rem;
+        font-size: 1.04rem;
     }
 
     .cc-scenario-sheet-class,
     .cc-scenario-sheet-money {
-        font-size: 0.8rem;
+        font-size: 0.904rem;
     }
 
     .cc-scenario-stat-grid {
@@ -1148,24 +1151,24 @@
     }
 
     .cc-scenario-stat {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
     }
 
     .cc-scenario-stat b {
-        font-size: 0.84rem;
+        font-size: 0.949rem;
     }
 
     .cc-scenario-dossier .cc-dossier-label,
     .cc-scenario-dossier .cc-dossier-value {
-        font-size: 0.84rem !important;
+        font-size: 0.949rem !important;
     }
 
     .cc-scenario-dossier .cc-loadout-section-title {
-        font-size: 0.88rem !important;
+        font-size: 0.994rem !important;
     }
 
     .cc-scenario-dossier .cc-loadout-empty {
-        font-size: 0.8rem !important;
+        font-size: 0.904rem !important;
     }
 
     /* 16. Creature Lab & 3D Anatomy Editor */
@@ -1175,11 +1178,11 @@
     }
 
     .cc3d-title {
-        font-size: 0.88rem;
+        font-size: 0.994rem;
     }
 
     .cc3d-chip {
-        font-size: 0.74rem;
+        font-size: 0.85rem;
         padding: 2px 6px;
     }
 
@@ -1195,7 +1198,7 @@
 
     .cc3d-part {
         padding: 2px 5px;
-        font-size: 0.78rem;
+        font-size: 0.881rem;
         gap: 3px;
     }
 
@@ -1206,7 +1209,7 @@
     }
 
     .cc-chamber-label {
-        font-size: 1.15rem;
+        font-size: 1.299rem;
     }
 
     .cc-incubator-frame {
@@ -1222,7 +1225,7 @@
 
     .cc-anatomy-row {
         padding: 4px 8px;
-        font-size: 0.84rem;
+        font-size: 0.949rem;
     }
 
     .cc-balance-pockets {
@@ -1231,7 +1234,7 @@
     }
 
     .cc-balance-line {
-        font-size: 0.85rem;
+        font-size: 0.96rem;
         margin-bottom: 3px;
         padding-bottom: 2px;
     }
@@ -1252,7 +1255,7 @@
     }
 
     .cc-btn-treaty {
-        font-size: 1.15rem;
+        font-size: 1.299rem;
         padding: 6px 16px;
     }
 
@@ -1266,19 +1269,19 @@
     }
 
     .cc-modal-title {
-        font-size: 1.05rem;
+        font-size: 1.187rem;
         margin-bottom: 6px;
     }
 
     .cc-modal-body {
-        font-size: 0.84rem;
+        font-size: 0.949rem;
         margin-bottom: 12px;
     }
 
     .cc-modal-actions .cc-sidebar-btn {
         min-width: 90px;
         height: 30px;
-        font-size: 0.8rem;
+        font-size: 0.904rem;
     }
 }
 
@@ -1647,12 +1650,12 @@
 @media (max-width: 1366px) and (max-height: 860px) {
 
     .sg3-label-name {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
     }
 
     .sg3-label-cost {
         margin-left: 3px;
-        font-size: 0.9rem;
+        font-size: 1.017rem;
     }
 
     .sg3-label.sg3-focus .sg3-label-name {
@@ -1761,7 +1764,7 @@
     }
 
     #diary-container .diary-date-text {
-        font-size: 1.5rem;
+        font-size: 1.695rem;
     }
 
     #diary-container .diary-binding {
@@ -2183,7 +2186,7 @@
     .work-09,
     .work-21,
     .bank-23 {
-        font-size: 1.7rem;
+        font-size: 1.921rem;
         margin-bottom: 9px;
     }
 
@@ -2214,7 +2217,7 @@
     }
 
     .work-24 {
-        font-size: 1.45rem;
+        font-size: 1.638rem;
         padding-bottom: 4px;
     }
 
@@ -2298,7 +2301,7 @@
     }
 
     .bank-51 {
-        font-size: 2.1rem;
+        font-size: 2.373rem;
     }
 
     .bank-55 {
@@ -2326,7 +2329,7 @@
     }
 
     .news-masthead-title {
-        font-size: 2.6rem;
+        font-size: 2.938rem;
     }
 
     .news-masthead-rule {
@@ -2352,7 +2355,7 @@
     }
 
     .news-article-title {
-        font-size: 1.55rem;
+        font-size: 1.751rem;
         margin-bottom: 5px;
         padding-bottom: 5px;
     }
@@ -2573,7 +2576,7 @@
     }
 
     #arena-ui-container .arena-icon {
-        font-size: 1.4rem;
+        font-size: 1.582rem;
     }
 
     #arena-ui-container .arena-right {
@@ -2586,7 +2589,7 @@
     }
 
     #arena-ui-container .arena-big-glyph {
-        font-size: 3rem;
+        font-size: 3.39rem;
     }
 
     #arena-ui-container .arena-info-card {
@@ -2872,7 +2875,7 @@
         width: 96px;
         height: 96px;
         margin: 14px auto 6px;
-        font-size: 2.6rem;
+        font-size: 2.938rem;
     }
 
     .npc-entity-title {
@@ -4502,7 +4505,7 @@
            (Cards/CardGameCollection.js). The numbers ARE the card: they are
            what a player is looking for as the pack opens. */
     .cp-stats {
-        font-size: 0.72rem;
+        font-size: 0.85rem;
     }
 
     /* --- The desktop clock (Hypernet/HypernetOS.js). The date under the time,
@@ -4624,17 +4627,17 @@
 
     #qb-title,
     .kb-board-title {
-        font-size: 1.6rem;
+        font-size: 1.808rem;
         letter-spacing: 2px;
     }
 
     #qb-sub {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
     }
 
     #qb-hint,
     .kb-board-hint {
-        font-size: 0.95rem;
+        font-size: 1.074rem;
     }
 
     /* --- The tab row. */
@@ -4645,7 +4648,7 @@
 
     .qb-tab {
         padding: 6px 18px 7px;
-        font-size: 1.02rem;
+        font-size: 1.153rem;
     }
 
     /* --- The field of notes. The gap is cut harder than the padding: it is
@@ -4679,7 +4682,7 @@
 
     .qb-note-title,
     .kb-card-title {
-        font-size: 1.04rem;
+        font-size: 1.175rem;
         margin-bottom: 5px;
     }
 
@@ -4689,12 +4692,12 @@
     }
 
     .qb-empty {
-        font-size: 1.2rem;
+        font-size: 1.356rem;
         padding: 30px 18px;
     }
 
     .qb-post-plus {
-        font-size: 2.2rem;
+        font-size: 2.486rem;
     }
 
     /* The wax seal and the star row are the note's two pieces of furniture and
@@ -4703,7 +4706,7 @@
     .kb-seal {
         width: 28px;
         height: 28px;
-        font-size: 0.98rem;
+        font-size: 1.107rem;
     }
 
     .qb-btn {
@@ -4732,12 +4735,12 @@
     }
 
     .kb-col-title {
-        font-size: 1.04rem;
+        font-size: 1.175rem;
         letter-spacing: 1px;
     }
 
     .kb-col-count {
-        font-size: 0.98rem;
+        font-size: 1.107rem;
         padding: 1px 7px;
         min-width: 26px;
     }
@@ -4751,7 +4754,7 @@
     }
 
     .kb-empty-col {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
         padding: 16px 8px;
     }
 
@@ -4762,12 +4765,12 @@
     }
 
     .kb-checklist {
-        font-size: 1.06rem;
+        font-size: 1.198rem;
         line-height: 1.45;
     }
 
     .kb-check-order {
-        font-size: 0.98rem;
+        font-size: 1.107rem;
     }
 
     /* --- The detail page, shared by both boards: a single reading column set
@@ -4789,48 +4792,48 @@
 
     #qb-detail h2,
     .kb-detail-header {
-        font-size: 1.75rem;
+        font-size: 1.977rem;
         padding-bottom: 8px;
     }
 
     #qb-compose h2 {
-        font-size: 1.68rem;
+        font-size: 1.898rem;
         padding-bottom: 7px;
     }
 
     #qb-detail .qb-d-giver,
     .kb-detail-giver {
-        font-size: 1.06rem;
+        font-size: 1.198rem;
         margin: 8px 0 14px;
     }
 
     #qb-detail .qb-d-body,
     .kb-detail-body {
-        font-size: 1.12rem;
+        font-size: 1.266rem;
         line-height: 1.55;
         margin-bottom: 14px;
     }
 
     #qb-detail .qb-d-body::first-letter,
     .kb-detail-body::first-letter {
-        font-size: 2rem;
+        font-size: 2.26rem;
         padding: 2px 6px 0 0;
     }
 
     #qb-detail .qb-d-sec,
     .kb-detail-sec {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
         margin: 16px 0 7px;
     }
 
     #qb-detail .qb-d-line,
     .kb-detail-line {
-        font-size: 1.06rem;
+        font-size: 1.198rem;
     }
 
     #qb-detail .qb-d-steps,
     .kb-detail-steps {
-        font-size: 1.08rem;
+        font-size: 1.22rem;
         line-height: 1.45;
     }
 
@@ -4839,11 +4842,11 @@
     }
 
     .kb-upd-date {
-        font-size: 0.96rem;
+        font-size: 1.085rem;
     }
 
     .kb-upd-text {
-        font-size: 1.06rem;
+        font-size: 1.198rem;
         line-height: 1.45;
     }
 
@@ -4857,7 +4860,7 @@
 
     #qb-detail .qb-d-btns .qb-btn,
     .kb-detail-close {
-        font-size: 1.06rem;
+        font-size: 1.198rem;
         padding: 9px 22px;
     }
 
@@ -4865,7 +4868,7 @@
            the one that gives, because it holds a fixed phrase while the value
            beside it holds the thing being chosen. */
     .qb-c-intro {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
         margin: 8px 0 12px;
     }
 
@@ -4877,16 +4880,16 @@
 
     .qb-c-label {
         flex: 0 0 180px;
-        font-size: 1rem;
+        font-size: 1.13rem;
     }
 
     .qb-c-field {
-        font-size: 1.04rem;
+        font-size: 1.175rem;
     }
 
     .qb-c-arrow {
         width: 22px;
-        font-size: 1.2rem;
+        font-size: 1.356rem;
     }
 
     .qb-c-val {
@@ -4895,15 +4898,15 @@
 
     .qb-c-chip {
         padding: 2px 7px;
-        font-size: 0.96rem;
+        font-size: 1.085rem;
     }
 
     .qb-c-rate {
-        font-size: 1.04rem;
+        font-size: 1.175rem;
     }
 
     .qb-c-note {
-        font-size: 1rem;
+        font-size: 1.13rem;
     }
 
     .qb-c-preview {
@@ -4911,16 +4914,16 @@
     }
 
     .qb-c-prev-title {
-        font-size: 1.14rem;
+        font-size: 1.288rem;
     }
 
     .qb-c-prev-body {
-        font-size: 1.02rem;
+        font-size: 1.153rem;
         line-height: 1.45;
     }
 
     .qb-c-prev-steps {
-        font-size: 1rem;
+        font-size: 1.13rem;
         line-height: 1.4;
     }
 
@@ -4933,14 +4936,14 @@
 
     .qb-p-head {
         gap: 12px;
-        font-size: 1.02rem;
+        font-size: 1.153rem;
         padding-bottom: 7px;
     }
 
     .qb-p-row {
         gap: 7px;
         padding: 4px 6px;
-        font-size: 0.98rem;
+        font-size: 1.107rem;
     }
 
     .qb-p-price {

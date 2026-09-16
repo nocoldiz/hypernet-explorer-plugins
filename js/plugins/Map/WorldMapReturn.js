@@ -97,6 +97,14 @@
  * @default 0
  * @desc Extra seed ingredient, so two entrances of the same kind on one world square open onto different structures.
  *
+ * @arg Return
+ * @text Way Back Out
+ * @type select
+ * @option here
+ * @option worldmap
+ * @default here
+ * @desc Where the border of the generated structure hands the party back: the spot they were standing on, or the world map square itself.
+ *
  * @command exitStructure
  * @text Exit Structure
  * @desc Leave the structure the party is inside (a patron's vault, a cellar, a crypt) and step back out on the entrance tile - the hatch, under a patron's square.
@@ -3047,6 +3055,14 @@
             const facingTeleport = facingEvents.find(e => e && e.event() && e.event().name && e.event().name.startsWith('Teleport'));
             if (facingTeleport) { facingTeleport.start(); return true; }
 
+            // A vehicle parked on a named place's own square (its
+            // Destinations.json reservedTiles footprint) contests the OK button
+            // with that place: the travel menu below would open every time and
+            // the vehicle could never be reached again. Neither wins on its
+            // own, so the party is asked which of the two they meant first.
+            const squareOverlap = vehicleOnDestinationSquare();
+            if (squareOverlap) { openDestinationVehicleChoice(squareOverlap); return true; }
+
             // Named hardcoded locations (London, Milano, ...) always offer the
             // "Visit <name>" travel menu, taking precedence over a Teleport event
             // sharing the same tile (that one is stood on, not aimed at).
@@ -3112,6 +3128,8 @@
         // Vehicles keep their own action menu on the OK button; clicking a route
         // while sailing or driving must stay pure movement.
         if (this.isInVehicle()) return false;
+        const clickOverlap = vehicleOnDestinationSquare();
+        if (clickOverlap) { openDestinationVehicleChoice(clickOverlap); return true; }
         const scene = SceneManager._scene;
         if (!scene || !scene.openTravelDecision || !canOpenTravelDecisionHere()) return false;
         scene.openTravelDecision();
@@ -3508,6 +3526,11 @@
         // may be consulted for it (the same rule ProcGenSquare.resolve follows).
         const alien = procGen() && procGen().alienGrid;
         if (!alien && !depth && authoredDoorAt(wx, wy)) return false;
+        // A sealed square is never laid alongside another one, whether or not
+        // anybody drew a door onto it. Stitching it on would put its ground
+        // inside the window and let the party walk over it without ever
+        // touching a border, which is the one thing the bubble is there to stop.
+        if (!alien && !depth && lockedPlaceAtWorldSquare(wx, wy)) return false;
         const api = ProcGenSquareApi();
         if (!api) return false;
         const resolved = api.resolve(wx, wy, { depth });
@@ -4900,6 +4923,14 @@
             return;
         }
 
+        // A bubble of frozen spacetime stands over the square next door. The
+        // step is refused here, before anything is stitched or faded, so the
+        // border reads as a wall rather than as a crossing that goes wrong.
+        if (crossingEntersLockedPlace(exitDirection)) {
+            showLockedNotice(lockedAheadMessage());
+            return;
+        }
+
         // A neighbour on this square's own tileset is not somewhere else, it is
         // more of here. Lay it down and take the step: no fade, no reload.
         if (window.ProcStitch && window.ProcStitch.growTowards(exitDirection, x, y)) {
@@ -5015,6 +5046,22 @@
         if (getNonProceduralDestination(wx, wy, exitDirection).destination) return true;
         const adj = $gameSystem.getAdjacentWorldCoordinates(exitDirection);
         return !!getNonProceduralDestination(adj.x, adj.y, exitDirection).destination;
+    }
+
+    // Is the square on the far side of this border sealed in a spacetime bubble?
+    // Asked BEFORE the crossing is scheduled, so a sealed place costs neither a
+    // fade nor a pan: the party simply cannot take the step, and is told why.
+    //
+    // Only above ground and only on Earth, for the same two reasons every other
+    // reading of Destinations.json here is: a planet's landing grid has (gx, gy)
+    // that can collide with a real Earth square, and underground the named
+    // squares are generated like open country and have nothing sealed over them.
+    function crossingEntersLockedPlace(exitDirection) {
+        const pg = procGen();
+        if (!pg || pg.alienGrid) return false;
+        if ((pg.biomeLayerStack || []).length) return false;
+        const adj = $gameSystem.getAdjacentWorldCoordinates(exitDirection);
+        return !!lockedPlaceAtWorldSquare(adj.x, adj.y);
     }
 
     // Show the crossing and schedule the seamless biome-to-biome edge transition
@@ -5154,6 +5201,12 @@
                 if (!wouldLeave) return false;
                 // Already mid-transition: swallow further input so we don't reschedule.
                 if ($gameSystem._procGenData && $gameSystem._procGenData._edgeTransitionScheduled) return true;
+                // The same sealed border Player 1 is refused at. P2 walking into
+                // it must not move the whole party either.
+                if (crossingEntersLockedPlace(exitDirection)) {
+                    showLockedNotice(lockedAheadMessage());
+                    return true;
+                }
                 // Same-tileset neighbour: grow the map under both players rather
                 // than moving the party (see Game_Player.moveStraight above).
                 // P2 then simply takes the step it was going to take.
@@ -5318,14 +5371,38 @@
     // the brightness ramp is the whole transition.
     //
     // Trigger edge transition callback once the screen is fully black
+    // How many frames a scheduled transition has been waiting for the screen to
+    // go black. The fade is ten frames long, so anything past a second means the
+    // black never arrived: something restarted a fade-in over the top of it, the
+    // scene was rebuilt mid-fade (closing a menu does exactly that), or the
+    // fade-out was cleared outright. Left alone the party stayed where they were
+    // with the destination's data already written on them - the layer stack
+    // popped, the biome swapped, the lighting reading the new layer while the old
+    // one was still under their feet - and only a SECOND descent or ascent moved
+    // them. The watchdog blacks the screen itself and dispatches, so one press is
+    // always one move.
+    let _edgeWaitFrames = 0;
+    const EDGE_WAIT_LIMIT = 60;
+
+    function edgeTransitionWaiting(pg) {
+        return !!(pg && pg._edgeTransitionScheduled && pg._edgeTransitionCallback &&
+                  !pg._edgeTransitionDispatching);
+    }
+
     const _Game_Screen_update = Game_Screen.prototype.update;
     Game_Screen.prototype.update = function() {
         _Game_Screen_update.call(this);
-        if ($gameSystem._procGenData &&
-            $gameSystem._procGenData._edgeTransitionScheduled &&
-            $gameSystem._procGenData._edgeTransitionCallback &&
-            !$gameSystem._procGenData._edgeTransitionDispatching &&
-            this._brightness === 0) {
+        const waiting = edgeTransitionWaiting($gameSystem && $gameSystem._procGenData);
+        if (!waiting) {
+            _edgeWaitFrames = 0;
+        } else if (this._brightness !== 0 && ++_edgeWaitFrames >= EDGE_WAIT_LIMIT) {
+            logWarn(`Edge transition waited ${_edgeWaitFrames} frames for a black screen - forcing it.`);
+            this._fadeOutDuration = 0;
+            this._fadeInDuration  = 0;
+            this._brightness      = 0;
+        }
+        if (waiting && this._brightness === 0) {
+            _edgeWaitFrames = 0;
             // Mark as dispatching so the per-frame update does not queue a second
             // timeout while this one is pending. Wrap in try/catch so a generator
             // exception can never leave the screen faded out with no fade-in.
@@ -5556,6 +5633,13 @@
         const system      = $gameSystem;
         const procGenData = system._procGenData;
         if (!procGenData) { logWarn('GoDown: no procedural map active.'); return; }
+
+        // One descent at a time. The menu row can be pressed again while the
+        // screen is still fading, and a second run pushed a second layer onto
+        // the stack for a single move: the party landed one floor deeper than
+        // they asked for and everything that reads the depth (the lighting, the
+        // encounters, the seed) disagreed with the square they were standing on.
+        if (edgeTransitionWaiting(procGenData)) { logWarn('GoDown: a transition is already under way.'); return; }
 
         // Digging needs a world square to dig into. The travel menu only ever
         // offers "Go underground" on the procedural map (Window_WorldMapChoice),
@@ -5813,6 +5897,17 @@
             ? window.ProcStitch.local($gamePlayer.x, $gamePlayer.y)
             : { x: $gamePlayer.x, y: $gamePlayer.y };
         const returnFrom = { mapId: $gameMap.mapId(), x: returnLocal.x, y: returnLocal.y, dir: $gamePlayer.direction() };
+        // A quest structure (Procedural/ProceduralAdventureSystem.js) is not a
+        // door in a field: nobody walked in, the adventure put the party inside
+        // it. There is no doorway to step back out of, so its border hands them
+        // to the world map square the structure stands on instead.
+        const returnToWorldMap = String((args && args.Return) || 'here') === 'worldmap';
+        if (returnToWorldMap) {
+            const wc = currentWorldCoords();
+            returnFrom.mapId = worldMapId;
+            returnFrom.x = wc.x;
+            returnFrom.y = wc.y;
+        }
 
         // Entered off the procedural map (a Grate, a flight of stairs, a cave
         // mouth, a patron's hatch): snapshot the square itself, tiles included,
@@ -5974,6 +6069,10 @@
         const procGenData = system._procGenData;
         if (!procGenData) { logWarn('GoUp: no procedural map active.'); return; }
 
+        // The same rule the descent follows: a second press while the screen is
+        // still fading used to pop a second layer off the stack for one move.
+        if (edgeTransitionWaiting(procGenData)) { logWarn('GoUp: a transition is already under way.'); return; }
+
         if (!procGenData.biomeLayerStack || procGenData.biomeLayerStack.length === 0) {
             logWarn('GoUp: Not underground.'); return;
         }
@@ -6128,6 +6227,7 @@
         const system      = $gameSystem;
         const procGenData = system._procGenData;
         if (!procGenData) return;
+        if (edgeTransitionWaiting(procGenData)) { logWarn('switchLayer: a transition is already under way.'); return; }
 
         const isUnderground = procGenData.biomeLayerStack && procGenData.biomeLayerStack.length > 0;
         const playerX       = $gamePlayer.x, playerY = $gamePlayer.y, playerDir = $gamePlayer.direction();
@@ -7100,6 +7200,59 @@
             hasFacedInteraction();
     }
 
+    // The Destinations.json place occupying world square (x, y), or "" when the
+    // square belongs to no named place. HardcodedBiomeNames is the flattened
+    // reservedTiles footprint of every entry (built in Core/DataService.js).
+    function destinationKeyAt(x, y) {
+        const names = window.WorldGen && window.WorldGen.HardcodedBiomeNames;
+        return (names && names[`${x},${y}`]) || '';
+    }
+
+    // A vehicle parked on a named place's own square: the place and everything
+    // parked there, both named. Null when the party neither stands on nor faces
+    // such a square, or when nothing of theirs is parked within reach of it.
+    function vehicleOnDestinationSquare() {
+        const VS = window.MergedVehicleSystem;
+        if (!VS || !VS.reachableVehicles) return null;
+        if ($gameMessage.isBusy()) return null;
+        if ($gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) return null;
+        const faced = facedWorldCoords();
+        const key = destinationKeyAt($gamePlayer.x, $gamePlayer.y) ||
+            (faced ? destinationKeyAt(faced.x, faced.y) : '');
+        if (!key) return null;
+        const vehicles = VS.reachableVehicles();
+        if (!vehicles.length) return null;
+        const place = (window.WorkSystem && window.WorkSystem.destinationName)
+            ? window.WorkSystem.destinationName(key) : key;
+        return { place, vehicles };
+    }
+
+    // "<Place> / <vehicle> / Cancel". Both picks are deferred by a frame: a
+    // choice list cannot be replaced from inside its own callback (the message
+    // is cleared right after it returns).
+    function openDestinationVehicleChoice(overlap) {
+        if ($gameMessage.isBusy()) return;
+        const rows = [{
+            label: overlap.place,
+            run: () => { $gameTemp._pendingWorldMapCommand = 'travelDecision'; },
+        }];
+        overlap.vehicles.forEach(v => {
+            rows.push({
+                label: v.name,
+                run: () => { window.MergedVehicleSystem.openVehicleMenu(v.key); },
+            });
+        });
+        rows.push({ label: T('WorldMapReturn.cancel'), run: null });
+        const cancelIndex = rows.length - 1;
+        $gameMessage.setChoices(rows.map(r => r.label), 0, cancelIndex);
+        $gameMessage.setChoiceCallback((choice) => {
+            const row = rows[choice];
+            if (row && row.run) row.run();
+        });
+        Input.clear();
+        $gameTemp.clearDestination();
+    }
+
     Scene_Map.prototype.openTravelDecision = function() {
         if (!canOpenTravelDecisionHere()) return;
         const Earth = adventureSystem();
@@ -7123,19 +7276,31 @@
                 run: () => { Earth.beginAt(faced.x, faced.y); },
             });
         }
+        // A sealed place keeps its row - it is still named, still drawn, still
+        // somewhere the party can point at - but picking it says the bubble's
+        // line instead of generating the square. The refusal belongs here as
+        // well as on the Teleport events: "Visit London" reaches the same
+        // ground by a different door, and a door the bubble does not cover is
+        // a hole in it.
+        const hereLocked = lockedPlaceAtWorldSquare($gamePlayer.x, $gamePlayer.y);
         rows.push({
             label: T('WorldMapReturn.visit', { place: getCurrentLocationName() }),
-            run: () => { performStopTravel(); },
+            run: hereLocked
+                ? () => { showLockedNotice(lockedPlaceMessage(hereLocked)); }
+                : () => { performStopTravel(); },
         });
         const facedPlace = facedDestination(faced);
         if (facedPlace) {
+            const facedLocked = lockedPlaceAtWorldSquare(faced.x, faced.y);
             rows.push({
                 label: T('WorldMapReturn.visit', { place: facedPlace }),
                 // Visiting the next square over IS entering it, so the party is
                 // put on it first: vars 43/44, the generator's origin and the
                 // door picked for the side crossed all read the same square the
                 // player aimed at, exactly as if they had taken the last step.
-                run: () => { $gamePlayer.locate(faced.x, faced.y); performStopTravel(); },
+                run: facedLocked
+                    ? () => { showLockedNotice(lockedPlaceMessage(facedLocked)); }
+                    : () => { $gamePlayer.locate(faced.x, faced.y); performStopTravel(); },
             });
         }
         // Walking the square in 3D instead of stepping across it on the map.
@@ -7244,6 +7409,10 @@
                 // night also washes, feeds and reunites the party (CampRest, in
                 // Core/TimeDateSystem.js).
                 PluginManager.callCommand($gameMap._interpreter, 'TimeDateSystem', 'MakeCamp', {});
+            } else if (cmd === 'travelDecision') {
+                // The square was picked over the vehicle parked on it, so its
+                // usual travel menu opens now that the choice list has closed.
+                if (this.openTravelDecision) this.openTravelDecision();
             } else if (cmd === 'freeWalk') {
                 PluginManager.callCommand($gameMap._interpreter, 'VoxelWorldSystem', 'StartFreeWalk', {});
             }
@@ -7540,6 +7709,282 @@
     }
 
     // ============================================================================
+    // PLACES SEALED IN A SPACETIME BUBBLE
+    // ----------------------------------------------------------------------------
+    // A Destinations.json entry may carry `"locked": true`. That place is still
+    // on the map, still named, still drawn - it simply cannot be reached. A
+    // bubble of frozen spacetime stands over its whole footprint and every way
+    // in stops at the skin of it:
+    //
+    //   - the world map's Teleport events (the section below hooks their start),
+    //   - the procedural map's border crossings, in both directions,
+    //   - the 3D world, where the bubble is a dome you can drive up to and not
+    //     through (VoxelWorld/VoxelWorldScene.js),
+    //   - the fast-travel book and every line in it, where the stop reads
+    //     "Offline" (Vehicle/FastTravelSystem.js).
+    //
+    // All four ask HERE rather than carrying a list of their own, so unlocking a
+    // place later is one word in one JSON file and nothing else. `locked` is the
+    // only thing that makes a place unreachable: `procedural: false` and a
+    // missing entrance are different questions with different answers, and the
+    // three must not be confused.
+    //
+    // The footprint is the same one placeAtWorldSquare walks: `reservedTiles`
+    // where an entry declares one, the single `base` square where it does not.
+
+    // Is this Destinations.json entry (or the key of one) sealed?
+    function isLockedPlaceEntry(entryOrKey) {
+        if (!entryOrKey) return false;
+        const entry = (typeof entryOrKey === 'string')
+            ? getWorldMapCoordinates()[entryOrKey]
+            : entryOrKey;
+        return !!(entry && entry.locked === true);
+    }
+
+    // The sealed place that owns this world square, or null. Cheaper than
+    // placeAtWorldSquare for the callers that only want the yes/no, and the one
+    // answer the border crossing, the dome and the teleport hook all take.
+    function lockedPlaceAtWorldSquare(x, y) {
+        const at = placeAtWorldSquare(x, y);
+        return (at && isLockedPlaceEntry(at.entry)) ? at : null;
+    }
+
+    // Every sealed footprint, as a list of world squares per place. Built once:
+    // Destinations.json does not change while the game is running. The 3D world
+    // and the world-map overlay both want the whole set rather than a square at
+    // a time, because they are drawing the bubbles, not testing a step.
+    let lockedFootprintCache = null;
+    function lockedFootprints() {
+        if (lockedFootprintCache) return lockedFootprintCache;
+        const all = getWorldMapCoordinates();
+        const out = [];
+        for (const key in all) {
+            const entry = all[key];
+            if (!isLockedPlaceEntry(entry)) continue;
+            const tiles = [];
+            const reserved = Array.isArray(entry.reservedTiles) ? entry.reservedTiles : null;
+            if (reserved) {
+                for (const t of reserved) {
+                    const p = String(t).split(',');
+                    const x = parseInt(p[0], 10), y = parseInt(p[1], 10);
+                    if (isFinite(x) && isFinite(y)) tiles.push({ x, y });
+                }
+            } else if (entry.base) {
+                const x = parseInt(entry.base.x, 10), y = parseInt(entry.base.y, 10);
+                if (isFinite(x) && isFinite(y)) tiles.push({ x, y });
+            }
+            if (!tiles.length) continue;
+            // The middle of the footprint and the radius that covers it, in
+            // world squares. The radius is the HALF-DIAGONAL of the bounding
+            // box, not half its longest side: a square town's corners stick out
+            // of a circle drawn to its edges, and a bubble that clips the corner
+            // of the place it seals is a hole in the wall (Madrid and Istanbul
+            // are both three squares by three, and both leaked). A one-square
+            // place still comes out wide enough to read as a dome rather than
+            // as a dot on a roof.
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            for (const t of tiles) {
+                if (t.x < minX) minX = t.x;
+                if (t.y < minY) minY = t.y;
+                if (t.x > maxX) maxX = t.x;
+                if (t.y > maxY) maxY = t.y;
+            }
+            out.push({
+                key,
+                entry,
+                name: entry.name || key,
+                tiles,
+                centreX: (minX + maxX + 1) / 2,
+                centreY: (minY + maxY + 1) / 2,
+                radius: Math.hypot(maxX - minX + 1, maxY - minY + 1) / 2 + 0.5
+            });
+        }
+        lockedFootprintCache = out;
+        return out;
+    }
+
+    // The refusals are said on a path that must never throw: a border crossing
+    // and a dome are both touched by a held key, and a localizer that is not up
+    // yet (or a harness that has none at all) would otherwise turn "you cannot
+    // go there" into a crash mid-step. A missing line costs the text and
+    // nothing else; the refusal itself still stands.
+    function lockedText(key, params) {
+        try {
+            if (typeof T === 'function') return T(key, params);
+        } catch (e) { /* fall through to the key */ }
+        return '';
+    }
+
+    // "This location is trapped in a space and time bubble" - said when a way IN
+    // is refused (a teleport event, a fast-travel ticket, the dome's gate).
+    function lockedPlaceMessage(place) {
+        return lockedText('WorldMapReturn.lockedPlace',
+            { place: localizeName(place && (place.name || place.key) || '') });
+    }
+
+    // "There is a spacetime bubble ahead, you cannot proceed" - said when the
+    // party walks into the skin of one from outside, where the place on the far
+    // side is not necessarily something they have been told the name of.
+    function lockedAheadMessage() {
+        return lockedText('WorldMapReturn.lockedAhead');
+    }
+
+    // One refusal, shown at most once every few seconds. The border and the dome
+    // are both touched by a HELD key, so without a gate the message would be
+    // queued on every frame the party leans on the wall.
+    let lastLockedNoticeAt = 0;
+    function showLockedNotice(text) {
+        const now = Date.now();
+        if (now - lastLockedNoticeAt < 2000) return;
+        lastLockedNoticeAt = now;
+        if (!text) return;
+        if (window.ParchmentToast && window.ParchmentToast.show) {
+            window.ParchmentToast.show(text);
+        } else if (typeof $gameMessage !== 'undefined' && !$gameMessage.isBusy()) {
+            $gameMessage.add(text);
+        }
+    }
+
+    // ============================================================================
+    // THE WORLD MAP'S TELEPORT EVENTS
+    // ----------------------------------------------------------------------------
+    // Map 315 carries one "Teleport - <key>" event per place, and each is a plain
+    // Transfer command written in the editor. Rather than edit a hundred and
+    // fifty events (and the map file they live in), the refusal is made where
+    // they START: a sealed place's event says its line and never runs its page.
+    // The event's own name is the Destinations.json key, which is exactly what
+    // FastTravelSystem already reads it as.
+    // ============================================================================
+
+    const TELEPORT_EVENT_PREFIX = 'Teleport - ';   // i18n-ignore  editor event name
+
+    // The Destinations.json entry a world-map event is a door onto, or null.
+    function teleportEventEntry(event) {
+        if (!event || $gameMap.mapId() !== worldMapId) return null;
+        const data = event.event && event.event();
+        const name = data && data.name;
+        if (!name || name.indexOf(TELEPORT_EVENT_PREFIX) !== 0) return null;
+        const key = name.slice(TELEPORT_EVENT_PREFIX.length).trim();
+        const entry = getWorldMapCoordinates()[key];
+        return entry ? { key, entry, name: entry.name || key } : null;
+    }
+
+    const _lockedEvent_start = Game_Event.prototype.start;
+    Game_Event.prototype.start = function() {
+        const at = teleportEventEntry(this);
+        if (at && isLockedPlaceEntry(at.entry)) {
+            this._starting = false;
+            showLockedNotice(lockedPlaceMessage(at));
+            return;
+        }
+        _lockedEvent_start.call(this);
+    };
+
+    // ----------------------------------------------------------------------------
+    // THE BUBBLE, SEEN FROM THE WORLD MAP
+    // ----------------------------------------------------------------------------
+    // One world square is one tile of map 315, so a sealed place's footprint is
+    // a handful of tiles and the bubble over it is a circle drawn around their
+    // middle. It is deliberately not a wall sprite: what is being shown is that
+    // the place is still there and still visible, with something the party
+    // cannot pass standing in the way of it.
+    //
+    // Drawn once per map load, into the spriteset's base layer so it scrolls
+    // with the ground, and given a slow breathing pulse so it reads as a field
+    // rather than as a painted ring.
+
+    const BUBBLE_TILE_PAD = 0.55;   // how far past the footprint the skin sits
+
+    class Sprite_SpacetimeBubble extends Sprite {
+        constructor(place) {
+            super();
+            this._place = place;
+            this._tileX = place.centreX;
+            this._tileY = place.centreY;
+            this.createBitmap();
+            this.anchor.set(0.5, 0.5);
+            this.blendMode = PIXI.BLEND_MODES.ADD;
+            this.updatePosition();
+        }
+
+        createBitmap() {
+            const ts  = $gameMap.tileWidth();
+            const rad = (this._place.radius + BUBBLE_TILE_PAD) * ts;
+            const d   = Math.ceil(rad * 2) + 4;
+            const bitmap = new Bitmap(d, d);
+            const ctx = bitmap.context;
+            const c = d / 2;
+
+            // The body of the field: bright at the skin, all but clear through
+            // the middle, so the town underneath stays readable.
+            const grad = ctx.createRadialGradient(c, c, rad * 0.25, c, c, rad);
+            grad.addColorStop(0,    'rgba(120, 190, 255, 0.00)');
+            grad.addColorStop(0.72, 'rgba(120, 190, 255, 0.10)');
+            grad.addColorStop(0.93, 'rgba(180, 225, 255, 0.34)');
+            grad.addColorStop(1,    'rgba(120, 190, 255, 0.00)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(c, c, rad, 0, Math.PI * 2);
+            ctx.fill();
+
+            // The skin itself, and a second ring just inside it: two surfaces
+            // catching the light is what stops a flat disc reading as a stain.
+            ctx.strokeStyle = 'rgba(205, 235, 255, 0.75)';
+            ctx.lineWidth   = 2;
+            ctx.beginPath();
+            ctx.arc(c, c, rad - 1, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.strokeStyle = 'rgba(150, 205, 255, 0.30)';
+            ctx.lineWidth   = 1;
+            ctx.beginPath();
+            ctx.arc(c, c, rad * 0.82, 0, Math.PI * 2);
+            ctx.stroke();
+
+            bitmap._baseTexture.update();
+            this.bitmap = bitmap;
+        }
+
+        updatePosition() {
+            const ts = $gameMap.tileWidth();
+            this.x = $gameMap.adjustX(this._tileX) * ts;
+            this.y = $gameMap.adjustY(this._tileY) * $gameMap.tileHeight();
+            // Slow, shallow breathing. Two frequencies so the loop does not
+            // land on the same beat as everything else pulsing on this map.
+            const t = Graphics.frameCount * 0.02;
+            this.scale.set(1 + Math.sin(t) * 0.02, 1 + Math.sin(t) * 0.02);
+            this.opacity = 205 + Math.sin(t * 1.37) * 45;
+        }
+
+        update() {
+            super.update();
+            this.updatePosition();
+        }
+    }
+
+    let bubbleSprites = [];
+
+    function clearBubbleSprites() {
+        for (const s of bubbleSprites) {
+            if (!s) continue;
+            if (s.parent) s.parent.removeChild(s);
+            if (s.bitmap && s.bitmap.destroy) s.bitmap.destroy();
+        }
+        bubbleSprites = [];
+    }
+
+    const _lockedBubbles_createLowerLayer = Spriteset_Map.prototype.createLowerLayer;
+    Spriteset_Map.prototype.createLowerLayer = function() {
+        _lockedBubbles_createLowerLayer.call(this);
+        clearBubbleSprites();
+        if (!$gameMap || $gameMap.mapId() !== worldMapId) return;
+        for (const place of lockedFootprints()) {
+            const sprite = new Sprite_SpacetimeBubble(place);
+            this._baseSprite.addChild(sprite);
+            bubbleSprites.push(sprite);
+        }
+    };
+
+    // ============================================================================
     // PUBLIC API
     // ============================================================================
 
@@ -7563,6 +8008,18 @@
             const at = placeAtWorldSquare(x, y);
             return !!(at && at.hand && placeEntranceFor(at.entry, null));
         },
+        // Places sealed in a spacetime bubble (`"locked": true` in
+        // Destinations.json). This is the ONLY answer to "can the party get in
+        // there": the world map's teleports, the procedural border, the 3D
+        // world's dome and the fast-travel book all ask these and carry no list
+        // of their own.
+        isLockedPlaceEntry,
+        lockedPlaceAtWorldSquare,
+        isLockedPlaceSquare(x, y) { return !!lockedPlaceAtWorldSquare(x, y); },
+        lockedFootprints,
+        lockedPlaceMessage,
+        lockedAheadMessage,
+        showLockedNotice,
         worldMapId,
         procMapId,
         // The name to file a place under (Assets menu, delivery targets, ...).
@@ -7724,7 +8181,16 @@
         // the switch itself, and `towerLanding()` is the one address that
         // replaces it: { mapId, x, y, dir }.
         earthLost,
-        towerLanding
+        towerLanding,
+
+        // --- mid-move ---
+        // True between the moment a layer change, a border crossing or a
+        // structure exit is scheduled and the moment the party actually lands.
+        // The record already describes the DESTINATION while this is true, so
+        // anything that paints the party's surroundings off it (the lighting,
+        // above all) has to hold its last answer instead of reading a square
+        // the party is not standing on yet.
+        transitionPending: () => edgeTransitionWaiting($gameSystem && $gameSystem._procGenData)
     };
 
 

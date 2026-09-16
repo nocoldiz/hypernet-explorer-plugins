@@ -225,6 +225,27 @@
         (dest && dest.customName) ? dest.customName : destLabel(dest && dest.name);
 
     // ------------------------------------------------------------------------
+    // STOPS THAT ARE OFF THE NETWORK
+    // ------------------------------------------------------------------------
+    // A place sealed in a spacetime bubble (`"locked": true` in
+    // Destinations.json) is still printed in the book - it is a real town and
+    // the line used to run there - but nothing goes there any more, on any
+    // transport. Its row and its pin read "Offline" in place of a fare, the row
+    // cannot be picked, and executeTravel refuses it as well in case anything
+    // ever reaches it another way (the train's own restricted list, a plugin
+    // command, a saved journey resumed from an older build).
+    //
+    // WorldMapReturn owns the question; the book carries no list of its own. A
+    // point the party wrote down themselves is never sealed: it is a coordinate,
+    // not a place, and the index knows nothing about it.
+    function isDestOffline(dest) {
+        if (!dest || dest.custom || dest.founded) return false;
+        const WMR = window.WorldMapReturn;
+        if (!WMR || !WMR.isLockedPlaceEntry) return false;
+        return WMR.isLockedPlaceEntry(TRANSPORT_DESTINATIONS[dest.name]);
+    }
+
+    // ------------------------------------------------------------------------
     // HOW HARD THE GROUND IS THERE
     // ------------------------------------------------------------------------
     // A ticket is bought before the place is seen, so the one thing the book
@@ -1317,6 +1338,18 @@
     function executeTravel(destination, cost, ticketless) {
         const data = getFastTravelData();
 
+        // The last gate, and the one that catches everything the picker does
+        // not: the train's restricted list, a plugin command naming a stop
+        // outright, a journey saved before the place was sealed. Nothing that
+        // reaches here departs for a sealed stop.
+        if (isDestOffline(destination)) {
+            const WMR = window.WorldMapReturn;
+            if (WMR && WMR.showLockedNotice) {
+                WMR.showLockedNotice(WMR.lockedPlaceMessage({ name: rowLabel(destination) }));
+            }
+            return;
+        }
+
         if ($gameTemp && $gameTemp._characterCreationTravelMode) {
             $gameTemp._characterCreationTravelMode = false;
             // One journey per confirmation. The button can be clicked and the OK
@@ -2309,7 +2342,16 @@
                 costText = `${costEuros}€`;
             }
 
+            // Sealed: the fare is replaced by the reason, and no fuel or purse
+            // check can make the row pickable again.
+            const offline = isDestOffline(dest);
+            if (offline) {
+                enabled  = false;
+                costText = T('FastTravel.offline');
+            }
+
             const disabledClass = enabled ? "" : "disabled";
+            const offlineClass = offline ? " is-offline" : "";
             const customClass = dest.custom ? " is-custom" : "";
             const hub = isHub(dest);
             const hubClass = hub ? " is-hub" : "";
@@ -2326,7 +2368,7 @@
                 : "";
 
             return `
-                <div class="travel-dest-item ${disabledClass}${hubClass}${customClass}${kindClass(dest)}" data-name="${dest.name}" onclick="SceneManager._scene.selectTravelDestination('${dest.name}')">
+                <div class="travel-dest-item ${disabledClass}${offlineClass}${hubClass}${customClass}${kindClass(dest)}" data-name="${dest.name}" onclick="SceneManager._scene.selectTravelDestination('${dest.name}')">
                     <span class="travel-dest-name">${rowLabel(dest)}${hubBadge}</span>
                     <span class="travel-dest-meta">
                         <span>${T('FastTravel.ui.distance')} ${distanceInKm} km</span>
@@ -2352,12 +2394,15 @@
             const y = pix.y;
 
             const hub = isHub(dest);
-            const hubClass = (hub ? " is-hub" : "") + (dest.custom ? " is-custom" : "");
+            const offline = isDestOffline(dest);
+            const hubClass = (hub ? " is-hub" : "") + (dest.custom ? " is-custom" : "") +
+                (offline ? " is-offline" : "");
             const baseLabel = hub
                 ? T('FastTravel.hubLabel', { place: rowLabel(dest) }) : rowLabel(dest);
             // A pin says what the row under it says: the place, and what the
-            // ground there is pitched at.
-            const pinLevel = destLevelText(dest);
+            // ground there is pitched at - or, where the line no longer runs
+            // there at all, that and nothing else.
+            const pinLevel = offline ? T('FastTravel.offline') : destLevelText(dest);
             const levelledLabel = pinLevel ? `${baseLabel} - ${pinLevel}` : baseLabel;
             const label = isSandbox ? `${levelledLabel} (X: ${Math.round(x)}, Y: ${Math.round(y)})` : levelledLabel;
 
@@ -2877,6 +2922,17 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
         const dest = data.destinations.find(d => d.name === destName);
         if (!dest) return;
+
+        // Sealed: the confirmation panel never opens. The refusal is said out
+        // loud rather than left as a row that simply does not respond.
+        if (isDestOffline(dest)) {
+            SoundManager.playBuzzer();
+            const WMR = window.WorldMapReturn;
+            if (WMR && WMR.showLockedNotice) {
+                WMR.showLockedNotice(WMR.lockedPlaceMessage({ name: rowLabel(dest) }));
+            }
+            return;
+        }
 
         const destPix = destPixel(dest);
 

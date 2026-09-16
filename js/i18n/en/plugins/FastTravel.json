@@ -100,5 +100,6 @@
     "title": "Journey's end",
     "visit": "Visit the {biome}",
     "worldMap": "Stay on the world map"
-  }
+  },
+  "offline": "Offline"
 }

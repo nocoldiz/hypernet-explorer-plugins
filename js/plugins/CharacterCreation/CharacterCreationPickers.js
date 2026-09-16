@@ -173,6 +173,7 @@
         return `
           ${head}
           <div class="cc-card-option cc-class-card ${isSelected ? 'selected' : ''} ${isCurrent ? 'current' : ''}"
+               data-choice-index="${index}" data-class-id="${c ? c.id : 0}"
                onclick="SceneManager._scene.onOptionCardClick(${index})">
             <div class="cc-option-title">${ch.name || ""}</div>
           </div>
@@ -521,7 +522,7 @@
           </div>
 
           <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onOpenCreature3DStudio()">
-            ${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.custom3dModel')}</span>
+            <span>${ccT('CharCreate.custom3dModel')}</span>
           </button>
         </div>
       `;
@@ -793,9 +794,6 @@
           <div class="cc-scroll-pane">
             ${dossierHtml}
           </div>
-          <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onFinishPartyCreation()">
-            ${this._ccIconHtml(78, 20)} <span>${T('CharCreate.embark')}</span>
-          </button>
         </div>
       `;
     }

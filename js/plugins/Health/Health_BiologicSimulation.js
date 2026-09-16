@@ -2905,6 +2905,36 @@
       row.entry.diagnosed = true;
       if (row.actor.refresh) row.actor.refresh();
     },
+
+    // Once an illness has a name, the surgery can also act on it on the spot.
+    // What that costs is the shelf price of the medicine a doctor would reach
+    // for times every dose the course takes: the same pack the player could
+    // buy and swallow day by day, only paid for and settled here and now.
+    // Only a curable illness is actually seen off. An incurable one has no
+    // course to finish, so the money buys a stock of the suppressant that
+    // keeps it at bay, nothing more.
+    treatment(row) {
+      if (!row || !row.entry.diagnosed) return null;
+      const remedy = window.BiologicCure && window.BiologicCure.pickRemedy(row.entry.id);
+      if (!remedy) return null;
+      const item = $dataItems[remedy.itemId];
+      if (!item) return null;
+      const curable = remedy.kind === "cure";
+      const doses = Math.max(1, curable ? remedy.days : CURE_MANAGE_STOCK_DAYS);
+      return { remedy, item, doses, curable, cost: doses * (item.price || 0) };
+    },
+
+    // Settling that course. The caller has already checked the gold.
+    treat(row, plan) {
+      $gameParty.loseGold(plan.cost);
+      if (plan.curable) {
+        if (window.DiseaseSystem) window.DiseaseSystem.cureActor(row.actor, row.entry.id);
+      } else {
+        // Nothing to cure: the party leaves with the doses that hold it down.
+        $gameParty.gainItem(plan.item, plan.doses);
+      }
+      if (row.actor.refresh) row.actor.refresh();
+    },
   };
 
   function Window_BiologicDiagnosis() {
@@ -2931,11 +2961,18 @@
     this.changePaintOpacity(this.isCommandEnabled(index));
     this.drawText(cmd.name, rect.x, rect.y, rect.width - 140);
     if (row.entry.diagnosed) {
-      // MZ keeps the palette on ColorManager; Window_Base.textColor was an MV method, and
-      // this window does not carry the shim Window_BiologicSimulation has.
-      this.changeTextColor(ColorManager.textColor(3));
-      this.drawText(T("Biologic.diagnose.knownTag"), rect.x, rect.y, rect.width, "right");
-      this.resetTextColor();
+      // A named illness is either something the surgery can treat on the spot,
+      // priced like the pack it would take, or just a name on the chart.
+      const plan = window.BiologicDiagnosis.treatment(row);
+      if (plan) {
+        this.drawCurrencyValue(plan.cost, $dataSystem.currencyUnit, rect.x, rect.y, rect.width);
+      } else {
+        // MZ keeps the palette on ColorManager; Window_Base.textColor was an MV method, and
+        // this window does not carry the shim Window_BiologicSimulation has.
+        this.changeTextColor(ColorManager.textColor(3));
+        this.drawText(T("Biologic.diagnose.knownTag"), rect.x, rect.y, rect.width, "right");
+        this.resetTextColor();
+      }
     } else {
       this.drawCurrencyValue(window.BiologicDiagnosis.COST, $dataSystem.currencyUnit, rect.x, rect.y, rect.width);
     }
@@ -2949,7 +2986,34 @@
     const row = cmd && cmd.ext;
     if (!row) return;
     if (row.entry.diagnosed) {
-      SoundManager.playBuzzer();
+      const plan = window.BiologicDiagnosis.treatment(row);
+      if (!plan) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      if ($gameParty.gold() < plan.cost) {
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T("Biologic.diagnose.treatTooExpensive"), { severity: "warning", duration: 150 });
+        }
+        return;
+      }
+      const treatedName = row.actor.name();
+      const diseaseName = row.disease.name;
+      const icon = plan.item.iconIndex;
+      window.BiologicDiagnosis.treat(row, plan);
+      SoundManager.playShop();
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(
+          T(plan.curable ? "Biologic.diagnose.treated" : "Biologic.diagnose.managed",
+            { actor: treatedName, disease: diseaseName, item: plan.item.name, count: plan.doses }),
+          { severity: "good", duration: 200, icon }
+        );
+      }
+      this.refresh();
+      // Curing drops the row, so the cursor can be left past the end.
+      this.select(Math.min(this.index(), Math.max(0, this.maxItems() - 1)));
+      this.activate();
       return;
     }
     if ($gameParty.gold() < window.BiologicDiagnosis.COST) {
@@ -6553,6 +6617,262 @@
       this._lastPregnancyHour = hourStamp;
       tickPregnancies();
     };
+  }
+
+  // ── VirtuaHealer, the clinic that answers over the network ────────────────
+  // A surgery reached from wherever the party is standing: it reads their
+  // charts, names what it finds, posts a course of medicine by courier and,
+  // for the illnesses that can be seen off at all, burns one out of the body
+  // with a rite. Everything costs more than walking into a surgery would,
+  // because the distance is paid for.
+  //
+  // It needs something to reach. No line goes down into a dungeon, a crypt or
+  // any other procedural interior, and none of it reaches the Omega Tower
+  // floors the lift serves. window.RemoteClinic is the one answer to that, and
+  // the Remote Bistury asks it rather than re-deriving the boundary.
+  const VH_APP_ID = 'app-virtuahealer';
+  const VH_WINDOW_ID = 'win-virtuahealer';
+  const VH_APP_ICON = 192;
+  const VH_DIAGNOSIS_RATE = 1.5;   // a reading taken at a distance
+  const VH_COURIER_RATE = 1.25;    // medicine posted rather than handed over
+  const VH_RITE_RATE = 3;          // burning the illness out costs what magic costs
+  const VH_GOLD_PER_HP = 40;
+  const VH_GOLD_PER_MP = 25;
+  const VH_GOLD_PER_PART = 2000;
+
+  window.RemoteClinic = {
+    // Why the network cannot be reached from here, or "" when it can.
+    blockedReason() {
+      if (window.ProceduralInteriors && typeof window.ProceduralInteriors.isCurrent === 'function'
+          && window.ProceduralInteriors.isCurrent()) {
+        return T('Biologic.remote.noSignalUnderground');
+      }
+      const floors = window.DungeonFloors;
+      if (floors) {
+        if (typeof floors.insideTower === 'function' && floors.insideTower()) {
+          return T('Biologic.remote.noSignalTower');
+        }
+        if (typeof floors.currentAuthoredFloor === 'function' && floors.currentAuthoredFloor() > 0) {
+          return T('Biologic.remote.noSignalTower');
+        }
+      }
+      return '';
+    },
+    available() { return !this.blockedReason(); },
+  };
+
+  // Everything the clinic will do for the party right now, each as a line with
+  // a price on it. A line it cannot act on still shows, with the reason where
+  // the price would be: a patient reads why, an empty screen says nothing.
+  function vhServices() {
+    const out = [];
+    if (!window.$gameParty) return out;
+    const diag = window.BiologicDiagnosis;
+    if (!diag) return out;
+    const rows = diag.entries();
+
+    for (const row of rows) {
+      if (row.entry.diagnosed) continue;
+      out.push({
+        section: 'diagnosis',
+        label: T('Biologic.remote.diagnoseLine', { actor: row.actor.name() }),
+        detail: T('Biologic.remote.diagnoseDetail'),
+        cost: Math.round(diag.COST * VH_DIAGNOSIS_RATE),
+        act(cost) {
+          $gameParty.loseGold(cost);
+          diag.reveal(row);
+          return T('Biologic.diagnose.revealed', { actor: row.actor.name(), disease: row.disease.name });
+        },
+      });
+    }
+
+    for (const row of rows) {
+      if (!row.entry.diagnosed) continue;
+      const plan = diag.treatment(row);
+      const label = T('Biologic.remote.riteLine', { actor: row.actor.name(), disease: row.disease.name });
+      // No rite finishes an illness medicine cannot finish either: an
+      // incurable one is only ever held down, and the prescription below is
+      // all the clinic can do about it.
+      if (!plan || !plan.curable) {
+        const reason = plan ? T('Biologic.remote.incurable') : T('Biologic.remote.noRemedy');
+        out.push({ section: 'cure', label, detail: reason, blocked: reason });
+        continue;
+      }
+      out.push({
+        section: 'cure',
+        label,
+        detail: T('Biologic.remote.riteDetail'),
+        cost: Math.round(plan.cost * VH_RITE_RATE),
+        act(cost) {
+          $gameParty.loseGold(cost);
+          if (window.DiseaseSystem) window.DiseaseSystem.cureActor(row.actor, row.entry.id);
+          if (row.actor.refresh) row.actor.refresh();
+          return T('Biologic.remote.rited', { actor: row.actor.name(), disease: row.disease.name });
+        },
+      });
+    }
+
+    const cure = window.BiologicCure;
+    for (const row of (cure ? cure.rows() : [])) {
+      if (row.needed <= 0) continue;
+      out.push({
+        section: 'prescription',
+        label: T('Biologic.remote.postLine', { actor: row.actor.name(), disease: row.disease.name }),
+        detail: T('Biologic.remote.postDetail', { count: row.needed, item: row.item.name }),
+        cost: Math.round(row.cost * VH_COURIER_RATE),
+        act(cost) {
+          $gameParty.loseGold(cost);
+          $gameParty.gainItem(row.item, row.needed);
+          return T('Biologic.cure.bought', { actor: row.actor.name(), item: row.item.name, count: row.needed });
+        },
+      });
+    }
+
+    for (const actor of diag.targets()) {
+      const missingHp = Math.max(0, actor.mhp - actor.hp);
+      const missingMp = Math.max(0, actor.mmp - actor.mp);
+      const parts = actor._bodyParts || {};
+      const hurtParts = Object.keys(parts).filter((key) => {
+        const part = parts[key];
+        return part && (part.damaged || part.currentHp < part.maxHp);
+      }).length;
+      if (!missingHp && !missingMp && !hurtParts) continue;
+      out.push({
+        section: 'healing',
+        label: T('Biologic.remote.healLine', { actor: actor.name() }),
+        detail: T('Biologic.remote.healDetail', { hp: missingHp, mp: missingMp, parts: hurtParts }),
+        cost: Math.max(1, missingHp * VH_GOLD_PER_HP + missingMp * VH_GOLD_PER_MP + hurtParts * VH_GOLD_PER_PART),
+        act(cost) {
+          $gameParty.loseGold(cost);
+          if (window.HealthCore && window.HealthCore.restoreAllBodyParts) {
+            window.HealthCore.restoreAllBodyParts(actor);
+          }
+          actor.setHp(actor.mhp);
+          actor.setMp(actor.mmp);
+          if (actor.refresh) actor.refresh();
+          return T('Biologic.remote.healed', { actor: actor.name() });
+        },
+      });
+    }
+
+    return out;
+  }
+
+  const VH_SECTION_KEYS = ['diagnosis', 'cure', 'prescription', 'healing'];
+
+  window.VirtuaHealer = {
+    services: vhServices,
+    launch() {
+      if (!window.HypernetOS || !window.HypernetOS.Syscalls) return;
+      const blocked = window.RemoteClinic.blockedReason();
+      const iconHTML = (index, size) =>
+        (window.HypernetOS.getIconHTML ? window.HypernetOS.getIconHTML(index, size) : '');
+
+      const contentHTML = `
+        <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
+          <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
+            <div>
+              <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px">${T('Biologic.remote.banner')}</div>
+              <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${T('Biologic.remote.tagline')}</div>
+            </div>
+            <div id="vh-wallet" style="margin-left:auto; text-align:right; color:var(--xp-sky-4); font-size:13px"></div>
+          </div>
+          <div id="vh-body" style="flex:1; padding:10px 14px 12px 14px; overflow-y:auto"></div>
+          <div id="vh-status" style="border-top:1px solid var(--xp-ink-pale-2); padding:3px 10px; background:var(--xp-bg); font-size:13px; color:var(--xp-text-muted); flex-shrink:0">${T('Biologic.remote.hint')}</div>
+        </div>`;
+
+      const win = window.HypernetOS.Syscalls.createWindow({
+        id: VH_WINDOW_ID,
+        title: T('Biologic.remote.title'),
+        contentHTML,
+        width: 560,
+        height: 470,
+        icon: VH_APP_ICON,
+      });
+      if (!win) return;
+
+      const body = win.querySelector('#vh-body');
+      const wallet = win.querySelector('#vh-wallet');
+      const status = win.querySelector('#vh-status');
+
+      function setStatus(text, bad) {
+        status.textContent = text;
+        status.style.color = bad ? 'var(--xp-red-4)' : 'var(--xp-text-muted)';
+      }
+
+      function render() {
+        wallet.innerHTML = '&euro;' + ($gameParty.gold() / 100).toFixed(2);
+        if (blocked) {
+          body.innerHTML = `<div style="padding:26px 10px; text-align:center; color:var(--xp-ink-5); font-size:15px; line-height:1.6">`
+            + iconHTML(VH_APP_ICON, 32) + `<div style="margin-top:10px">${blocked}</div></div>`;
+          return;
+        }
+        const all = vhServices();
+        if (!all.length) {
+          body.innerHTML = `<div style="padding:26px 10px; text-align:center; color:var(--xp-ink-5); font-size:15px">${T('Biologic.remote.nothingToDo')}</div>`;
+          return;
+        }
+        let html = '';
+        for (const key of VH_SECTION_KEYS) {
+          const rows = all.filter((row) => row.section === key);
+          if (!rows.length) continue;
+          html += `<div style="font-size:13px; letter-spacing:1px; color:var(--xp-ink-soft); margin:8px 0 4px 2px">${T('Biologic.remote.section.' + key)}</div>`;
+          for (const row of rows) {
+            const slot = all.indexOf(row);
+            const price = row.blocked
+              ? `<span style="color:var(--xp-ink-faint)">${row.blocked}</span>`
+              : '&euro;' + (row.cost / 100).toFixed(2);
+            const affordable = !row.blocked && $gameParty.gold() >= row.cost;
+            html += `<button class="focusable" data-focus-key="vh-row-${slot}" data-row="${slot}" tabindex="0"
+                ${row.blocked ? 'disabled' : ''}
+                style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; margin-bottom:4px; padding:7px 10px; font-family:Tahoma,sans-serif; font-size:14px; background:var(--xp-white); border:1px solid var(--xp-silver-3); cursor:${row.blocked ? 'default' : 'pointer'}; opacity:${row.blocked ? '0.6' : '1'}">
+                <span style="flex:1">
+                  <span style="color:var(--xp-ink-3)">${row.label}</span><br>
+                  <span style="font-size:13px; color:var(--xp-ink-soft)">${row.detail}</span>
+                </span>
+                <span style="font-weight:bold; color:${affordable ? '#1d6b2f' : 'var(--xp-red-4)'}">${price}</span>
+              </button>`;
+          }
+        }
+        body.innerHTML = html;
+        body.querySelectorAll('[data-row]').forEach((btn) => {
+          btn.addEventListener('click', () => act(Number(btn.dataset.row)));
+        });
+      }
+
+      // The list is rebuilt from the party on every press, so the row is looked
+      // up again rather than captured: curing one illness moves every row under
+      // it.
+      function act(slot) {
+        const row = vhServices()[slot];
+        if (!row || row.blocked) {
+          if (window.SoundManager) SoundManager.playBuzzer();
+          return;
+        }
+        if ($gameParty.gold() < row.cost) {
+          if (window.SoundManager) SoundManager.playBuzzer();
+          setStatus(T('Biologic.remote.tooExpensive'), true);
+          return;
+        }
+        const message = row.act(row.cost);
+        if (window.SoundManager) SoundManager.playShop();
+        setStatus(message, false);
+        render();
+      }
+
+      render();
+    },
+  };
+
+  if (window.HypernetOS && window.HypernetOS.registerApp) {
+    window.HypernetOS.registerApp({
+      id: VH_APP_ID,
+      name: T('Biologic.remote.title'),
+      icon: VH_APP_ICON,
+      category: 'internet',
+      desktopShortcut: true,
+      launchFn() { window.VirtuaHealer.launch(); },
+    });
   }
 
   // Add compatibility methods for MV if running in MZ

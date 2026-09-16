@@ -28,15 +28,20 @@
  * ---------------------------------------------------------------------------
  * SUBORBITAL - two stages, and it comes home with every layer it left with
  * ---------------------------------------------------------------------------
- * The same gun used as transport: Greenwich to Taranto or the other way.
+ * The same gun used as transport: Greenwich to Taranto or the other way. It
+ * does NOT land on a pad - it DOCKS WITH THE OTHER COILGUN, flying into its
+ * muzzle and letting that barrel run in reverse to brake it magnetically. A
+ * mass driver run backwards is a brake, and the energy goes back into the
+ * capacitor halls at the receiving end.
  *
  *   COIL        the rail throws it on a parabola, apogee 180 km
  *   ASCENT      unpowered, all the way to the top
- *   APOGEE      THE FLIP - end over end, nothing burning
- *   RETROBURN   the motor, now pointed forward, spends its fuel killing speed
+ *   APOGEE      THE FLIP - end over end at max height, nothing burning
+ *   PROGRADE    the motor now points the way it is going, so thrust brakes
  *   REENTRY     the plume is the heat shield
- *   TERMINAL    the far apron comes up under it
- *   TOUCHDOWN   and the party walks out at the other pad
+ *   TERMINAL    the far gun's muzzle comes up under it
+ *   CAPTURE     down the receiving barrel, the coil running in reverse
+ *   ARRIVED     docked in the breech, and the party walks out
  *
  * Nothing on the hop takes armour off: it never reaches the belt and nothing
  * at 180 km is moving fast enough relative to the vehicle to matter. The
@@ -353,14 +358,22 @@
     { key: "countdown", dur: COUNTDOWN_S, from: 0, to: 0, ease: "linear", dFrom: 0, dTo: 0 },
     { key: "coil", dur: 2.4, from: 0, to: RAIL_LEN_M, ease: "accel", dFrom: 0, dTo: 0.004, dEase: "accel" },
     { key: "ascent", dur: 9.0, from: RAIL_LEN_M, to: SUB_APOGEE_M, ease: "ballistic", dFrom: 0.004, dTo: 0.34, dEase: "linear" },
-    // The flip. Nothing burns; the vehicle simply turns round, and from here
-    // on the motor is pointed at where it is going rather than where it came
-    // from. This is the whole trick of a point to point shot.
-    { key: "apogee", dur: 5.0, from: SUB_APOGEE_M, to: SUB_APOGEE_M * 0.97, ease: "linear", dFrom: 0.34, dTo: 0.47, dEase: "linear" },
-    { key: "retroburn", dur: 9.0, from: SUB_APOGEE_M * 0.97, to: 62000, ease: "accel", dFrom: 0.47, dTo: 0.76, dEase: "decel" },
-    { key: "reentry", dur: 7.0, from: 62000, to: 13000, ease: "linear", dFrom: 0.76, dTo: 0.93, dEase: "decel" },
-    { key: "terminal", dur: 5.5, from: 13000, to: 400, ease: "decel", dFrom: 0.93, dTo: 0.995, dEase: "decel" },
-    { key: "touchdown", dur: 4.0, from: 400, to: 0, ease: "decel", dFrom: 0.995, dTo: 1, dEase: "decel" },
+    // THE FLIP, and it happens at the top. Altitude is all but flat across
+    // this beat because that is what apogee is: the vehicle turns end over
+    // end, cold, with nothing burning, and comes out of it with the motor
+    // pointed PROGRADE - along the way it is already going.
+    { key: "apogee", dur: 5.0, from: SUB_APOGEE_M, to: SUB_APOGEE_M * 0.99, ease: "linear", dFrom: 0.34, dTo: 0.47, dEase: "linear" },
+    // And now thrust SLOWS it, because the bell is facing the direction of
+    // travel. Everything left in the tanks goes into arriving slowly.
+    { key: "prograde", dur: 9.0, from: SUB_APOGEE_M * 0.99, to: 62000, ease: "accel", dFrom: 0.47, dTo: 0.76, dEase: "decel" },
+    { key: "reentry", dur: 7.0, from: 62000, to: 13000, ease: "linear", dFrom: 0.76, dTo: 0.94, dEase: "decel" },
+    // Lining up on the muzzle of the far gun, which is the only thing at this
+    // end big enough to catch it.
+    { key: "terminal", dur: 5.5, from: 13000, to: RAIL_LEN_M, ease: "decel", dFrom: 0.94, dTo: 1, dEase: "decel" },
+    // Down the barrel with the motor shut down: the receiving coil fires in
+    // reverse and takes the last of the speed out magnetically, the same way
+    // the launching one put it in. This is the dock.
+    { key: "capture", dur: 5.0, from: RAIL_LEN_M, to: 0, ease: "decel", dFrom: 1, dTo: 1 },
     { key: "arrived", dur: 3.0, from: 0, to: 0, ease: "linear", dFrom: 1, dTo: 1 },
   ];
 
@@ -799,13 +812,18 @@
   // ever visible in the first and last few percent of it, so all this number
   // has to do is carry them out of shot at a believable rate.
   const DOWNRANGE_VIS_M = 900000;
+  // How far the far camera is tilted down, at full orbital altitude, to put the
+  // planet in the frame. See _updateCamera for where the number comes from.
+  const FAR_TILT = 0.55;
 
-  // How far the retro look is dialled down here. The pad wants its floodlights
-  // and the belt wants its sparks; full vertex snap turns both to soup.
-  const PSX_SOFTEN = { vertexSnap: 1.6, colorLevels: 1.25, dither: 0.7, downscale: 1 };
-  const softPSX = (fn) => (window.PSXShader && window.PSXShader.withScale)
-    ? window.PSXShader.withScale(PSX_SOFTEN, fn)
-    : fn();
+  // NO retro look here, and it is not a style choice.
+  //
+  // PSXShader.render draws into a low-res target and then blits it back as an
+  // OPAQUE full-screen quad. Called twice - once for the far scene and once for
+  // the near one - the second blit paints clean over the first, which erased
+  // the Earth every frame. GalaxySim is exempt from the retro look anyway (see
+  // RetroShader.NONE), and this scene borrows GalaxySim's own Earth and
+  // starship, so both passes are rendered plainly and the two agree.
 
   class LaunchStage {
     constructor(width, height, site, env, profile, destSite) {
@@ -830,7 +848,7 @@
       this.impactFlash = 0;
 
       this._initThree();
-      softPSX(() => {
+      {
         this._buildFar();
         this._buildSky();
         this._buildPad();
@@ -839,7 +857,7 @@
         if (this.profile.belt) this._buildBelt();
         if (!this.profile.downrange) this._buildShip();
         this._buildParticles();
-      });
+      }
       this.update(0, 0);
     }
 
@@ -906,8 +924,8 @@
     dispose() {
       this._disposables.forEach((d) => { try { d.dispose && d.dispose(); } catch (e) { /* already gone */ } });
       this._disposables.length = 0;
-      if (this.earthBody && window.GalaxySim && window.GalaxySim.Renderer3D) {
-        try { window.GalaxySim.Renderer3D.disposeBodyGroup(this.earthBody); } catch (e) { /* not ours to keep */ }
+      if (this.earthBody && this._r3d) {
+        try { this._r3d.disposeBodyGroup(this.earthBody); } catch (e) { /* not ours to keep */ }
       }
       if (this.shipModel) { try { this.shipModel.dispose(); } catch (e) { /* idem */ } }
       try {
@@ -924,14 +942,20 @@
     _buildFar() {
       // The Earth is GalaxySim's own body wherever that plugin is loaded: the
       // same NASA-mapped sphere the star map shows, so the planet the party
-      // leaves is the planet the party can later fly back to. The fallback is
-      // a painted sphere, because a launch cinematic that needs the whole
-      // space simulation present to run at all is a bad dependency.
+      // leaves is the planet the party can later fly back to.
+      //
+      // That map DECODES ASYNCHRONOUSLY, and an unloaded texture samples black
+      // in WebGL - GalaxySim says so itself in _realPlanetTexture. A launch is
+      // twenty seconds from the pad to orbit, so "the planet is a black ball
+      // for the first few seconds" is most of the shot. A painted stand-in is
+      // therefore ALWAYS built and shown until the real map has landed, and
+      // the swap uses GalaxySim's own _solTexPending counter.
       const holder = new THREE.Group();
       this.earthPivot = holder;
       this.far.add(holder);
 
       const R3D = window.GalaxySim && window.GalaxySim.Renderer3D;
+      this._r3d = R3D || null;
       let body = null;
       if (R3D && typeof R3D.buildPlanetGroup === "function") {
         try {
@@ -941,13 +965,31 @@
       if (body) {
         this.earthBody = body;
         body.scale.setScalar(EARTH_VIS_R);
+        body.visible = false;
         holder.add(body);
-      } else {
-        const geo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R, 64, 48));
-        const mat = this._phong({ map: this._paintEarth(), shininess: 14, specular: 0x223344 });
-        this.earthFallback = new THREE.Mesh(geo, mat);
-        holder.add(this.earthFallback);
       }
+
+      const geo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R, 64, 48));
+      const mat = this._phong({ map: this._paintEarth(), shininess: 14, specular: 0x223344 });
+      this.earthFallback = new THREE.Mesh(geo, mat);
+      holder.add(this.earthFallback);
+
+      // THE CITY LIGHTS.
+      //
+      // A shell a hair above the surface, painted with the grid of everything
+      // anybody ever wired up, drawn additively so it only ever adds glow. It
+      // is not masked per pixel and does not need to be: a sphere only shows
+      // the hemisphere facing the camera, and the camera is always over the
+      // launch site, so when that site is in darkness the hemisphere on screen
+      // IS the night side. The opacity is driven by the site's own local hour
+      // and the lights simply fade up as the pad goes dark.
+      const lightGeo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 1.002, 48, 32));
+      this.cityLights = new THREE.Mesh(lightGeo, this._mat(new THREE.MeshBasicMaterial({
+        map: this._paintCityLights(),
+        transparent: true, opacity: 0,
+        blending: THREE.AdditiveBlending, depthWrite: false,
+      })));
+      holder.add(this.cityLights);
 
       // The limb: a thin shell of atmosphere seen edge-on from outside, which
       // is the single thing that sells an orbital shot.
@@ -959,13 +1001,23 @@
       holder.add(this.limb);
 
       // The site is a lit speck on the surface, so the player can watch the
-      // pad they just left go over the horizon.
+      // pad they just left go over the horizon. Brighter in the dark, because
+      // at night a launch site is the brightest thing for fifty kilometres.
       const markGeo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 0.008, 6, 5));
       this.siteMark = new THREE.Mesh(markGeo, this._basic({ color: this.site.coil }));
       this.siteMark.position.set(0, EARTH_VIS_R * 1.004, 0);
       holder.add(this.siteMark);
 
       this.far.add(this._buildStarfield());
+    }
+
+    // Is GalaxySim's photograph of the Earth decoded yet? Until it is, the
+    // painted stand-in stands in.
+    _earthMapReady() {
+      if (!this.earthBody) return false;
+      const r = this._r3d;
+      if (!r) return true;
+      return !(r._solTexPending > 0);
     }
 
     // The planet record GalaxySim's renderer wants. Named Earth so the real
@@ -1010,6 +1062,110 @@
           ctx.beginPath();
           ctx.ellipse(r() * w, r() * h, 6 + r() * 30, 3 + r() * 9, 0, 0, Math.PI * 2);
           ctx.fill();
+        }
+      });
+    }
+
+    // Every settlement anybody ever wired up, from six hundred kilometres.
+    // Not a map of Earth - the pivot spins and the geography under the camera
+    // is not the geography under the pad - but the DISTRIBUTION is right, and
+    // from orbit that is all the eye reads: dense temperate bands, strings
+    // along the coasts and the rivers, nothing in the deep ocean or the ice.
+    _paintCityLights() {
+      return this._tex(1024, 512, (ctx, w, h) => {
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, w, h);
+        const r = makeRng(0x0c17a1);
+
+        // Latitude weighting. v runs 0 at the north pole to 1 at the south, so
+        // the two temperate bands are where almost everyone actually lives and
+        // the poles and the deep tropics are nearly empty.
+        const habit = (v) => {
+          const lat = (0.5 - v) * 180;
+          const north = Math.exp(-Math.pow((lat - 45) / 17, 2));
+          const tropic = Math.exp(-Math.pow((lat - 10) / 20, 2)) * 0.55;
+          const south = Math.exp(-Math.pow((lat + 30) / 16, 2)) * 0.4;
+          return Math.min(1, north + tropic + south);
+        };
+
+        // Land. Big soft blobs of it, and lights only go on inside them: an
+        // even scatter over the whole sphere reads as static, not as a planet.
+        const land = [];
+        for (let i = 0; i < 34; i++) {
+          const v = r();
+          if (r() > 0.25 + habit(v) * 0.75) continue;
+          land.push({ x: r() * w, y: v * h, rx: 30 + r() * 150, ry: 20 + r() * 70 });
+        }
+
+        const inLand = (x, y) => {
+          for (let i = 0; i < land.length; i++) {
+            const L = land[i];
+            // Wrap in longitude, because the texture meets itself.
+            let dx = Math.abs(x - L.x);
+            if (dx > w / 2) dx = w - dx;
+            const k = Math.pow(dx / L.rx, 2) + Math.pow((y - L.y) / L.ry, 2);
+            if (k < 1) return 1 - k;
+          }
+          return 0;
+        };
+
+        const dot = (x, y, rad, alpha, warm) => {
+          const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+          const c = warm ? "255,214,150" : "200,222,255";
+          g.addColorStop(0, "rgba(" + c + "," + alpha.toFixed(3) + ")");
+          g.addColorStop(0.45, "rgba(" + c + "," + (alpha * 0.35).toFixed(3) + ")");
+          g.addColorStop(1, "rgba(" + c + ",0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(x, y, rad, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        // Conurbations: a few dozen genuinely large ones, each a bright core
+        // with a halo of suburb.
+        for (let i = 0; i < 260; i++) {
+          const x = r() * w, y = r() * h;
+          const depth = inLand(x, y);
+          if (depth <= 0) continue;
+          if (r() > habit(y / h) * depth + 0.06) continue;
+          const big = r() > 0.88;
+          dot(x, y, big ? 16 + r() * 18 : 4 + r() * 8, big ? 0.85 : 0.5, r() > 0.35);
+        }
+
+        // Ribbon development: the roads, the rivers and the coasts, which from
+        // orbit are strings of light between the cities and are most of what
+        // makes a night side look inhabited rather than speckled.
+        for (let i = 0; i < 90; i++) {
+          let x = r() * w, y = r() * h;
+          if (inLand(x, y) <= 0) continue;
+          const steps = 8 + Math.floor(r() * 26);
+          let a = r() * Math.PI * 2;
+          for (let k = 0; k < steps; k++) {
+            a += (r() - 0.5) * 0.7;
+            x += Math.cos(a) * (5 + r() * 9);
+            y += Math.sin(a) * (3 + r() * 5);
+            if (x < 0) x += w; else if (x > w) x -= w;
+            if (y < 4 || y > h - 4) break;
+            if (inLand(x, y) <= 0) break;
+            dot(x, y, 2 + r() * 4, 0.22 + r() * 0.3, r() > 0.4);
+          }
+        }
+
+        // And the single pixels: everywhere with a streetlamp and a name.
+        for (let i = 0; i < 5200; i++) {
+          const x = Math.floor(r() * w), y = Math.floor(r() * h);
+          if (inLand(x, y) <= 0) continue;
+          if (r() > habit(y / h)) continue;
+          ctx.fillStyle = r() > 0.4 ? "rgba(255,226,170,0.85)" : "rgba(205,226,255,0.7)";
+          ctx.fillRect(x, y, 1, 1);
+        }
+
+        // Gas flares: a handful of points brighter than any city, burning in
+        // the middle of nothing. They are the give-away that this is a real
+        // night side and not a star field pasted on a ball.
+        for (let i = 0; i < 9; i++) {
+          const x = r() * w, y = h * 0.3 + r() * h * 0.4;
+          dot(x, y, 7 + r() * 6, 0.95, true);
         }
       });
     }
@@ -1177,54 +1333,47 @@
       this.sea = sea;
       g.add(sea);
 
-      // The arrival pad is a catcher, not a gun: same ground, same town, same
-      // floods, but the barrel stays at the pad that fired.
-      if (!o.arrival) this._buildRail();
-      else this._buildCatcher(g, s);
+      // BOTH ends of a hop are the same installation. The far pad is not a
+      // landing strip with a cradle on it: it is the other coilgun, and the
+      // round is caught by running it in reverse. So the same barrel is built
+      // either way and only the approach lighting differs.
+      const rail = this._buildRail(g, s, o.arrival);
+      if (o.arrival) this.railB = rail; else this.railA = rail;
       this._buildTown(g, s);
       this._buildFloodlights(g);
       if (s.meridian) this._buildMeridian(g);
       return g;
     }
 
-    // The far end of a suborbital hop: a cradle of arrestor towers round a
-    // scorched apron, with the landing lights the vehicle comes down onto.
-    _buildCatcher(g, s) {
+    // The approach lighting on a receiving gun: an apron of scorched concrete
+    // and a ring of lamps round the MUZZLE, a kilometre up, which is the only
+    // part of it the arriving round needs to be able to find.
+    _buildApproach(g, top) {
       const concrete = this._phong({ color: 0x7e7c74, shininess: 4 });
-      const steel = this._phong({ color: s.rail, shininess: 20, specular: 0x555a63 });
-      const apron = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(120, 132, 10, 20)), concrete);
-      apron.position.y = 5;
-      g.add(apron);
       const scorch = new THREE.Mesh(
-        this._geo(new THREE.CircleGeometry(58, 24)),
+        this._geo(new THREE.CircleGeometry(150, 24)),
         this._basic({ color: 0x14100e })
       );
       scorch.rotation.x = -Math.PI / 2;
-      scorch.position.y = 10.2;
+      scorch.position.y = 0.4;
       g.add(scorch);
+      const apron = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(168, 180, 8, 20)), concrete);
+      apron.position.y = -4;
+      g.add(apron);
 
-      this.landingLights = [];
-      const towerGeo = this._geo(new THREE.CylinderGeometry(4.5, 7, 140, 8));
-      const armGeo = this._geo(new THREE.BoxGeometry(46, 5, 5));
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2;
-        const d = 96;
-        const tw = new THREE.Mesh(towerGeo, steel);
-        tw.position.set(Math.cos(a) * d, 80, Math.sin(a) * d);
-        g.add(tw);
-        const arm = new THREE.Mesh(armGeo, steel);
-        arm.position.set(Math.cos(a) * (d - 22), 146, Math.sin(a) * (d - 22));
-        arm.rotation.y = -a;
-        g.add(arm);
-        const lamp = new THREE.Mesh(
-          this._geo(new THREE.SphereGeometry(4.2, 7, 6)),
-          this._mat(new THREE.MeshBasicMaterial({ color: 0x0d2a18 }))
-        );
-        lamp.position.set(Math.cos(a) * (d - 44), 146, Math.sin(a) * (d - 44));
+      this.approachLights = [];
+      const lampGeo = this._geo(new THREE.SphereGeometry(5.2, 7, 6));
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2;
+        const lamp = new THREE.Mesh(lampGeo, this._mat(new THREE.MeshBasicMaterial({ color: 0x0d2a18 })));
+        lamp.position.set(Math.cos(a) * 52, top + 26, Math.sin(a) * 52);
         lamp.userData.order = i;
         g.add(lamp);
-        this.landingLights.push(lamp);
+        this.approachLights.push(lamp);
       }
+      this.approachGlow = new THREE.PointLight(0x4fe0a0, 0, 900, 2);
+      this.approachGlow.position.set(0, top + 20, 0);
+      g.add(this.approachGlow);
     }
 
     _buildArrivalPad() {
@@ -1271,11 +1420,10 @@
     // that TRACKS THE BULLET: each one lights as the round reaches it and
     // dies behind it, so the launch is legible as a single pulse running the
     // length of the tower.
-    _buildRail() {
-      const s = this.site;
+    _buildRail(into, forSite, arrival) {
+      const s = forSite || this.site;
       const g = new THREE.Group();
-      this.rail = g;
-      this.pad.add(g);
+      (into || this.pad).add(g);
 
       const H = RAIL_LEN_M;
       const BORE = 34;          // ring inner radius: the bullet is 3
@@ -1303,7 +1451,7 @@
 
       // --- the capacitor halls. Twelve of them, ringing the foot, and they
       // are where the energy for the shot has been accumulating all night.
-      this.capacitors = [];
+      const capacitors = [];
       const capGeo = this._geo(new THREE.CylinderGeometry(19, 22, 76, 12));
       const trunkGeo = this._geo(new THREE.CylinderGeometry(3.4, 3.4, 240, 6));
       for (let i = 0; i < 12; i++) {
@@ -1322,7 +1470,7 @@
         band.rotation.x = Math.PI / 2;
         band.position.set(c.position.x, 70, c.position.z);
         g.add(band);
-        this.capacitors.push(band);
+        capacitors.push(band);
         // The trunk carrying it up to the mast, slung at an angle.
         const trunk = new THREE.Mesh(trunkGeo, darkMat);
         trunk.position.set(Math.cos(a) * d * 0.62, 150, Math.sin(a) * d * 0.62);
@@ -1358,7 +1506,7 @@
 
       // --- the rings. Fifty of them up the bore, each a slab of laminated
       // iron the size of a house with the coil wound inside it.
-      this.coilRings = [];
+      const coilRings = [];
       const RINGS = 50;
       const ringGeo = this._geo(new THREE.TorusGeometry(BORE, 7.2, 8, 22));
       const yokeGeo = this._geo(new THREE.BoxGeometry(BORE * 2.5, 5, 5));
@@ -1375,7 +1523,7 @@
         ring.userData.y = y;
         ring.userData.k = i / (RINGS - 1);
         g.add(ring);
-        this.coilRings.push(ring);
+        coilRings.push(ring);
         // Every fourth ring is tied back to the legs.
         if (i % 4 === 0) {
           for (let f = 0; f < 2; f++) {
@@ -1403,7 +1551,7 @@
 
       // Obstruction strobes, up the whole tower. On at night and in the murk,
       // and they are what gives the thing its height at a glance.
-      this.strobes = [];
+      const strobes = [];
       const strobeGeo = this._geo(new THREE.SphereGeometry(3.4, 6, 5));
       for (let i = 0; i < 9; i++) {
         const y = 140 + i * ((H - 140) / 8);
@@ -1412,24 +1560,32 @@
           m.position.set(f ? LEG : -LEG, y, f ? LEG : -LEG);
           m.userData.phase = i * 0.24 + f * 0.5;
           g.add(m);
-          this.strobes.push(m);
+          strobes.push(m);
         }
       }
 
       // The service gantry that swings clear at T-0, scaled to the tower it
       // hangs off rather than to the round it services.
       const gantryMat = this._phong({ color: 0x8a5a2e, shininess: 8 });
-      this.gantry = new THREE.Group();
+      const gantry = new THREE.Group();
       const tower = new THREE.Mesh(this._geo(new THREE.BoxGeometry(26, 460, 26)), gantryMat);
       tower.position.set(128, 310, 0);
-      this.gantry.add(tower);
+      gantry.add(tower);
       const armGeo = this._geo(new THREE.BoxGeometry(96, 9, 22));
       [140, 260, 400, 520].forEach((y) => {
         const arm = new THREE.Mesh(armGeo, gantryMat);
         arm.position.set(80, y, 0);
-        this.gantry.add(arm);
+        gantry.add(arm);
       });
-      g.add(this.gantry);
+      // A gun that is expecting a round rather than sending one has its gantry
+      // already parked clear, and wears the approach lighting instead.
+      if (arrival) { gantry.rotation.y = 1.4; gantry.position.x = 90; }
+      g.add(gantry);
+
+      const top = 86 + (H - 40);
+      if (arrival) this._buildApproach(g, top);
+
+      return { group: g, rings: coilRings, capacitors, gantry, strobes, top };
     }
 
     // The skyline: a low sprawl of lit boxes, plus whatever each pad is known
@@ -2132,20 +2288,24 @@
           // Held off the flank for the flip, high enough that the Earth's
           // curve is behind the whole manoeuvre.
           return { target: T.set(0, 0, 0), yaw: 1.4 + k * 0.5, pitch: 0.3 - k * 0.12, dist: lerp(74, 50, smooth(k)), fov: 54 };
-        case "retroburn":
+        case "prograde":
           // From ahead, looking back down the flame at the vehicle it is
-          // slowing: the shot that says this is a landing and not a crash.
+          // slowing: the shot that says the motor is pointed the way it is
+          // travelling and this is braking, not a crash.
           return { target: T.set(0, 6, 0), yaw: 2.9, pitch: 0.42, dist: lerp(42, 70, smooth(k)), fov: 60 };
         case "reentry":
           return { target: T.set(0, 0, 0), yaw: 2.2 - k * 0.8, pitch: 0.34, dist: lerp(64, 52, k), fov: 62 };
         case "terminal":
-          // Pulling out as the apron comes up, so the pad arrives in frame
-          // under the vehicle rather than behind it.
-          return { target: T.set(0, lerp(0, -14, smooth(k)), 0), yaw: 1.2 + k * 0.6, pitch: lerp(0.3, -0.08, smooth(k)), dist: lerp(58, 130, smooth(k)), fov: 58 };
-        case "touchdown":
-          return { target: T.set(0, lerp(-14, -6, smooth(k)), 0), yaw: 1.8 + k * 0.4, pitch: lerp(-0.08, 0.06, smooth(k)), dist: lerp(130, 210, smooth(k)), fov: 55 };
+          // Pulling right out, because what is coming up underneath is another
+          // kilometre of gun and the shot is worthless if it does not fit.
+          return { target: T.set(0, lerp(0, -40, smooth(k)), 0), yaw: 1.2 + k * 0.6, pitch: lerp(0.3, 0.02, smooth(k)), dist: lerp(58, 900, smooth(k)), fov: lerp(58, 68, k) };
+        case "capture":
+          // Trackside at the receiving barrel, the mirror of the shot that
+          // launched it: the round plunging down through the rings as they
+          // fire in reverse and take the speed back out.
+          return { target: T.set(0, 0, 0), yaw: -1.0, pitch: 0.06 + (1 - k) * 0.45, dist: lerp(900, 210, smooth(k)), fov: lerp(72, 52, k) };
         case "arrived":
-          return { target: T.set(0, -8, 0), yaw: 2.2, pitch: 0.12, dist: 230, fov: 52 };
+          return { target: T.set(0, -10, 0), yaw: -0.6, pitch: 0.16, dist: 260, fov: 52 };
         default:
           return { target: T.set(0, 0, -6), yaw: 1.35, pitch: 0.1, dist: 26, fov: 48 };
       }
@@ -2185,14 +2345,23 @@
       this.camera.lookAt(look.x, look.y, look.z);
       if (this.roll) this.camera.rotateZ(this.roll);
 
-      // The far camera shares the near camera's ORIENTATION and nothing else:
-      // it sits at the vehicle's true distance from the centre of the Earth,
-      // looking the same way, so the planet is where it should be in the frame
-      // and at the size it should be for the altitude on the tape.
+      // The far camera sits at the vehicle's TRUE distance from the centre of
+      // the Earth and looks the way the near camera looks, so the planet is at
+      // the size the altitude on the tape says it should be.
+      //
+      // With no other help it is also just off the bottom of the screen. At
+      // 1300 km the Earth's angular radius is 56 degrees and its limb sits 34
+      // degrees below a level camera, while half of a 64 degree field is only
+      // 32: the planet misses the frame by two degrees and the shot reads as
+      // empty space. So the far camera is tilted DOWN, eased in on the same
+      // ramp that fades the planet in, which lifts the limb into the lower
+      // third where it belongs. The near camera is untouched - the vehicle
+      // stays framed where the director put it.
       const d = EARTH_VIS_R * (1 + this.alt / EARTH_R_M);
       this.farCamera.fov = rig.fov;
       this.farCamera.updateProjectionMatrix();
       this.farCamera.quaternion.copy(this.camera.quaternion);
+      this.farCamera.rotateX(-FAR_TILT * (this.orbitalK || 0));
       this.farCamera.position.set(0, d, 0);
       // The pad is at a latitude, so the planet hangs under the vehicle at an
       // angle rather than squarely below it.
@@ -2250,20 +2419,29 @@
 
     _updateSun() {
       const e = this.env;
-      // Azimuth from the hour, elevation from the hour and the latitude. Above
-      // the atmosphere the sun is a hard white with no scattering left in it.
+      // Azimuth from the hour, ELEVATION as a real angle. The old version put
+      // the sun on a unit circle in the horizontal plane and only varied its
+      // height, which pinned the horizontal component at full length and
+      // capped the elevation near thirty degrees - so noon lit the launch site
+      // at barely half strength and the Earth read as dark from orbit at every
+      // hour of the day. A proper spherical direction fixes both.
       const az = ((e.clock - 6) / 12) * Math.PI;
-      const el = e.dayK * (1 - Math.abs(this.site.lat) / 140);
+      const elev = e.dayK * (Math.PI / 2) * (1 - Math.abs(this.site.lat) / 140);
+      const ch = Math.cos(elev);
       const hi = ramp(this.alt, 40000, 140000);
       const dir = this.sun;
-      dir.position.set(Math.cos(az) * 1000, Math.max(-300, el * 1000), Math.sin(az) * 1000);
+      dir.position.set(Math.cos(az) * ch * 1000, Math.sin(elev) * 1000, Math.sin(az) * ch * 1000);
       const warm = e.golden ? 0xffb066 : e.night ? 0x2a3a66 : 0xfff0dc;
       dir.color.setHex(warm).lerp(new THREE.Color(0xffffff), hi);
       dir.intensity = lerp(e.night ? 0.12 : (e.storm ? 0.45 : e.wet ? 0.6 : 1.0), 1.5, hi);
       this.ambient.intensity = lerp(e.night ? 0.16 : 0.5, 0.06, hi);
       this.ambient.color.setHex(e.night ? 0x243354 : 0x6f86a8);
+
+      // In vacuum there is no weather and no dusk: the far scene is lit hard
+      // and from the same direction, and the night side is left genuinely dark
+      // so the city lights have something to be brighter than.
       this.farSun.position.copy(dir.position);
-      this.farSun.intensity = 1.35;
+      this.farSun.intensity = 1.6;
     }
 
     _updateSky(dt) {
@@ -2280,10 +2458,28 @@
       // The Earth from outside: the limb lights up as the vehicle gets far
       // enough for the atmosphere to be a visible shell rather than the room
       // it is standing in.
-      const orbital = smooth(ramp(this.alt, 60000, 260000));
+      // Low enough that the hop sees a curved Earth under its own flip at 180
+      // km, not just the orbital flight on its way to the belt.
+      const orbital = smooth(ramp(this.alt, 40000, 160000));
+      this.orbitalK = orbital;
       this.limb.material.opacity = orbital * 0.42;
       if (this.earthPivot) this.earthPivot.visible = orbital > 0.005;
       this.siteMark.visible = orbital > 0.2 && orbital < 0.95;
+
+      // The photograph, once it has decoded; the painting until then. Checked
+      // every frame because the swap can land mid-flight.
+      const ready = this._earthMapReady();
+      if (this.earthBody) this.earthBody.visible = ready;
+      this.earthFallback.visible = !ready;
+
+      // CITY LIGHTS. How dark it is at the pad, which is the hemisphere the
+      // camera is over: full from civil twilight down, gone by mid-morning.
+      const nightK = 1 - smooth(ramp(this.env.dayK, -0.22, 0.16));
+      this.nightK = nightK;
+      this.cityLights.material.opacity = nightK * orbital * 0.95;
+      this.cityLights.visible = this.cityLights.material.opacity > 0.01;
+      // A launch site at night is the brightest thing for fifty kilometres.
+      this.siteMark.scale.setScalar(1 + nightK * 1.6);
 
       // Cloud decks: they sit at their altitude in world terms, so as the
       // ground falls away they rush down past the camera and then are below.
@@ -2332,7 +2528,7 @@
       const charging = ph.key === "countdown" ? ph.progress : (ph.index > 1 ? 1 : 0);
       const firing = ph.key === "coil";
       const bulletY = this.alt + RAIL_LOAD_Y;
-      this.coilRings.forEach((ring, i) => {
+      this.railA.rings.forEach((ring, i) => {
         const k = ring.userData.k;
         let e = 0;
         if (charging > 0) e = k <= charging ? 0.3 + 0.18 * Math.sin(this._time * 8 + i * 0.7) : 0;
@@ -2351,9 +2547,9 @@
 
       // The banks come up during the count in the same order, and dump on the
       // shot.
-      if (this.capacitors) {
-        this.capacitors.forEach((band, i) => {
-          const k = (i + 0.5) / this.capacitors.length;
+      if (this.railA.capacitors) {
+        this.railA.capacitors.forEach((band, i) => {
+          const k = (i + 0.5) / this.railA.capacitors.length;
           let e = charging > 0 && k <= charging ? 0.5 + 0.35 * Math.sin(this._time * 6 + i) : 0;
           if (firing) e = 3.2 * (1 - ph.progress);
           band.material.emissiveIntensity = e;
@@ -2361,9 +2557,9 @@
       }
 
       // Obstruction strobes, out of phase up the tower.
-      if (this.strobes) {
+      if (this.railA.strobes) {
         const lit = this.env.night || this.env.storm || this.env.wet;
-        this.strobes.forEach((m) => {
+        this.railA.strobes.forEach((m) => {
           const on = lit && ((this._time * 0.9 + m.userData.phase) % 1) < 0.14;
           m.material.color.setHex(on ? 0xff6a4a : 0x3a0806);
         });
@@ -2372,11 +2568,11 @@
       // The gantry swings clear in the last two seconds of the count.
       if (ph.key === "countdown") {
         const swing = smooth(ramp(ph.progress, 0.78, 0.97));
-        this.gantry.rotation.y = swing * 1.4;
-        this.gantry.position.x = swing * 90;
+        this.railA.gantry.rotation.y = swing * 1.4;
+        this.railA.gantry.position.x = swing * 90;
       } else if (ph.index > 1) {
-        this.gantry.rotation.y = 1.4;
-        this.gantry.position.x = 90;
+        this.railA.gantry.rotation.y = 1.4;
+        this.railA.gantry.position.x = 90;
       }
 
       if (this.flares) {
@@ -2387,27 +2583,76 @@
       if (this.meridian) this.meridian.material.opacity = this.env.night ? 0.62 : 0.2;
     }
 
-    // The far pad comes up out of the haze ahead, rises as the vehicle sinks
-    // onto it, and takes the landing. Everything behind the vehicle on the
-    // ground track is the pad it left; everything ahead is this one.
+    // The receiving gun.
+    //
+    // It comes up out of the haze ahead, and in the last beat the round is
+    // INSIDE it: the pad is offset by the same RAIL_LOAD_Y the launching one
+    // used, so the barrel axis runs exactly through the stationary vehicle and
+    // the muzzle swallows it at the top of the capture. The rings then fire in
+    // reverse and take the speed back out magnetically - a mass driver run
+    // backwards is a brake, and the energy goes back into the capacitor halls
+    // it came out of at the other end.
     _updateArrivalPad(dt, ph) {
       const b = this.padB;
-      const ahead = (1 - this.downrange) * DOWNRANGE_VIS_M;
+      const rail = this.railB;
+      const capturing = ph.key === "capture" || ph.key === "arrived";
       const show = this.alt < 60000 && this.downrange > 0.55;
       b.visible = show;
       if (!show) return;
-      b.position.y = -(this.alt + 8);
+
+      const ahead = (1 - this.downrange) * DOWNRANGE_VIS_M;
+      b.position.y = -(this.alt + RAIL_LOAD_Y);
       b.position.z = -ahead;
 
-      if (this.landingLights) {
-        // A ladder of green walking inward, faster the closer it gets, and
-        // solid once the vehicle is over the apron.
-        const k = clamp01((this.downrange - 0.9) / 0.1);
-        this.landingLights.forEach((L) => {
-          const on = this.alt < 260
+      // Approach lights: a ladder walking inward round the muzzle, faster the
+      // closer it gets, solid once the round is committed to the bore.
+      if (this.approachLights) {
+        const k = clamp01((this.downrange - 0.94) / 0.06);
+        this.approachLights.forEach((L) => {
+          const on = capturing
             ? true
-            : ((Math.floor(this._time * (2 + k * 9)) + L.userData.order) % 6) < 2;
-          L.material.color.setHex(on ? 0x6bffb0 : 0x0d2a18);
+            : ((Math.floor(this._time * (2 + k * 10)) + L.userData.order) % 10) < 3;
+          L.material.color.setHex(on ? 0x8affc4 : 0x0d2a18);
+        });
+        if (this.approachGlow) this.approachGlow.intensity = 0.3 + k * 3.4;
+      }
+
+      if (!rail) return;
+      const bulletY = this.alt + RAIL_LOAD_Y;
+
+      // The braking wave. The coil the round is passing is the one doing the
+      // work, and the ones it has already cleared hold it on the axis, so the
+      // bright band sits AT the round and the afterglow trails upward behind
+      // it - the launching gun's wave, running the other way.
+      rail.rings.forEach((ring, i) => {
+        let e = 0;
+        if (capturing) {
+          const d = ring.userData.y - bulletY;
+          const at = clamp01(1 - Math.abs(d) / 110);
+          const behind = d > 0 ? clamp01(1 - d / 260) : 0;
+          e = at * 6.0 + behind * 1.6;
+        } else if (this.downrange > 0.7) {
+          // Standing by: a slow breathing charge all the way up the bore, so
+          // the gun visibly knows something is coming.
+          e = 0.22 + 0.16 * Math.sin(this._time * 3 - i * 0.28);
+        }
+        ring.material.emissiveIntensity = e;
+      });
+
+      // The banks FILL as the round is braked: the shot is being paid back.
+      if (rail.capacitors) {
+        const soak = capturing ? smooth(ph.key === "arrived" ? 1 : ph.progress) : 0;
+        rail.capacitors.forEach((band, i) => {
+          const k = (i + 0.5) / rail.capacitors.length;
+          band.material.emissiveIntensity = k <= soak ? 1.4 + 0.5 * Math.sin(this._time * 7 + i) : 0;
+        });
+      }
+
+      if (rail.strobes) {
+        const lit = this.env.night || this.env.storm || this.env.wet;
+        rail.strobes.forEach((m) => {
+          const on = lit && ((this._time * 0.9 + m.userData.phase) % 1) < 0.14;
+          m.material.color.setHex(on ? 0xff6a4a : 0x3a0806);
         });
       }
     }
@@ -2434,13 +2679,16 @@
       // the top of the belt. On the hop it does not light on the way UP at
       // all: the rail did that. It lights after the flip, pointing forward,
       // and everything it burns is spent killing the speed the gun gave it.
+      // The capture is deliberately absent from the hop's list: by then the
+      // tanks are dry and the receiving coil is doing the braking, which is
+      // the whole reason the hop is two stages and not three.
       const LIT = this.profile.downrange
-        ? { retroburn: 1, terminal: 1, touchdown: 1 }
+        ? { prograde: 1, terminal: 1 }
         : { ignition: 1, burn: 1, kessler: 1, clear: 1 };
-      const starting = this.profile.downrange ? "retroburn" : "ignition";   // i18n-ignore  phase keys
+      const starting = this.profile.downrange ? "prograde" : "ignition";   // i18n-ignore  phase keys
       let ramping = LIT[ph.key] ? 1 : 0;
       if (ph.key === starting) ramping = smooth(clamp01(ph.progress / 0.25));
-      if (ph.key === "touchdown") ramping *= 0.45 + 0.55 * (1 - ph.progress);
+      if (ph.key === "terminal") ramping *= 0.5 + 0.5 * (1 - ph.progress);
       const flick = 0.85 + Math.sin(this._time * 34) * 0.1 + Math.sin(this._time * 71) * 0.05;
       const p = ramping * flick;
       this.plumeCore.material.opacity = p * 0.95;
@@ -2501,7 +2749,7 @@
 
       // What is left of it spins a little more freely the less of it there is.
       const bare = 1 - clamp01((this.integrity - INTEGRITY_FLOOR) / (INTEGRITY_START - INTEGRITY_FLOOR));
-      const settling = ph.key === "touchdown" || ph.key === "arrived";
+      const settling = ph.key === "capture" || ph.key === "arrived";
       this.vehicle.rotation.y += settling ? 0 : dt * (0.25 + bare * 2.2);
       const loose = (ph.key === "coast" || ph.key === "ascent" || ph.key === "kessler" || ph.key === "reentry");
       const wobZ = loose ? Math.sin(this._time * 1.7) * 0.03 * (1 + bare * 4) : 0;
@@ -2718,20 +2966,14 @@
 
     render() {
       const r = this.renderer;
+      // Far first, then the depth buffer alone is cleared, so the Earth and
+      // the stars are a backdrop the near scene cannot z-fight with and
+      // cannot be painted over. autoClear is off for exactly this reason: the
+      // colour buffer is cleared ONCE, here, and not again between passes.
       r.clear();
-      // Far first, with depth cleared after it, so the Earth and the stars are
-      // a backdrop the near scene cannot z-fight with.
-      if (window.PSXShader && window.PSXShader.render) {
-        softPSX(() => {
-          window.PSXShader.render(r, this.far, this.farCamera);
-          r.clearDepth();
-          window.PSXShader.render(r, this.near, this.camera);
-        });
-      } else {
-        r.render(this.far, this.farCamera);
-        r.clearDepth();
-        r.render(this.near, this.camera);
-      }
+      r.render(this.far, this.farCamera);
+      r.clearDepth();
+      r.render(this.near, this.camera);
     }
   }
 
@@ -2759,7 +3001,7 @@
         { from: 0, to: MAXQ_START_M, key: "troposphere", color: P.dim },
         { from: MAXQ_START_M, to: MAXQ_END_M, key: "maxq", color: P.amber },
         { from: MAXQ_END_M, to: 62000, key: "stratosphere", color: P.dim },
-        { from: 62000, to: null, key: "retro", color: P.green },
+        { from: 62000, to: null, key: "prograde", color: P.green },
         { from: KARMAN_M, to: null, key: "karman", color: P.cyan },
         { from: SUB_APOGEE_M, to: null, key: "apogee", color: P.green },
       ];
@@ -3160,13 +3402,15 @@
     { at: ["ascent", 0.88], key: "hopApogeeNear", se: SE.computer, vol: 55 },
     { at: ["apogee", 0.1], key: "hopFlip", se: SE.rumble, vol: 70 },
     { at: ["apogee", 0.75], key: "hopFlipDone", se: SE.power, vol: 60 },
-    { at: ["retroburn", 0.05], key: "hopRetro", se: SE.ignite, vol: 95 },
-    { at: ["retroburn", 0.6], key: "hopBraking", se: SE.burn, vol: 80 },
+    { at: ["prograde", 0.05], key: "hopPrograde", se: SE.ignite, vol: 95 },
+    { at: ["prograde", 0.6], key: "hopBraking", se: SE.burn, vol: 80 },
     { at: ["reentry", 0.1], key: "hopReentry", se: SE.gale, vol: 80 },
     { at: ["terminal", 0.1], key: "hopTerminal", se: SE.radio, vol: 70 },
-    { at: ["terminal", 0.7], key: "hopApron", se: SE.computer, vol: 55 },
-    { at: ["touchdown", 0.55], key: "hopTouchdown", se: SE.clamp, vol: 90 },
-    { at: ["arrived", 0.2], key: "hopArrived", se: SE.aboard, vol: 80 },
+    { at: ["terminal", 0.75], key: "hopMuzzle", se: SE.charge, vol: 75 },
+    { at: ["capture", 0.05], key: "hopCapture", se: SE.coilRing, vol: 85 },
+    { at: ["capture", 0.6], key: "hopBraked", se: SE.rumble, vol: 80 },
+    { at: ["capture", 0.95], key: "hopDocked", se: SE.clamp, vol: 90 },
+    { at: ["arrived", 0.2], key: "hopArrived", se: SE.airlock, vol: 80 },
   ];
 
   function cuesFor(profile) {

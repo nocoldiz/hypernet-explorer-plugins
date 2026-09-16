@@ -438,12 +438,12 @@
   "frontierSettlement": "Insediamento di frontiera",
   "frontierOf": "frontiera di {country}",
   "genital": {
-    "none": "Nessuno",
     "0": "Testicoli",
     "1": "Utero",
     "2": "Ovidotto",
     "3": "Sporangio",
-    "4": "Ghiandola Mitotica"
+    "4": "Ghiandola Mitotica",
+    "none": "Nessuno"
   },
   "partyThought": {
     "hurt": "Non so per quanto ancora reggo così...",
@@ -854,5 +854,30 @@
   "armyStatusMarching": "In marcia",
   "armyStatusReinforcing": "In rinforzo",
   "armyStatusBattling": "In battaglia",
-  "armyStatusRetreating": "In ritirata"
+  "armyStatusRetreating": "In ritirata",
+  "llm": {
+    "personalityLbl": "Indole",
+    "classLbl": "Mestiere",
+    "moralityLbl": "Morale",
+    "factionLbl": "Fazione",
+    "jobLbl": "Lavoro",
+    "needLow": "ne senti forte il bisogno",
+    "bandHostile": "ostile verso",
+    "bandCold": "freddo verso",
+    "bandNeutral": "indifferente a",
+    "bandWarm": "affezionato a",
+    "bandDevoted": "devoto a",
+    "opinionOf": "Sei {band} {speaker} ({score} su 100).",
+    "attractedTo": "Provi attrazione per {speaker} ({score} su 100).",
+    "moodBetter": "meglio disposto verso di loro",
+    "moodWorse": "peggio disposto verso di loro",
+    "moodSame": "disposto verso di loro come prima",
+    "situationAction": "{speaker} ha appena provato questo con te: {action}. Ti ha lasciato {mood}.",
+    "situationDirections": "{speaker} ti ha chiesto la strada per {target} e gliela stai indicando.",
+    "situationBicker": "Ve le state dando di santa ragione a parole, come sempre.",
+    "situationGift": "{speaker} ti ha appena dato {item} e lo tieni.",
+    "situationGiftRefused": "{speaker} ti ha offerto {item} e non lo accetti.",
+    "situationJoinRefused": "{speaker} ti ha chiesto di viaggiare insieme e stai rifiutando.",
+    "rewrite": "{situation} Di' questo, con parole tue: \"{line}\""
+  }
 }

@@ -876,6 +876,7 @@
       this._exiting = false;
       this._exitElapsed = 0;
       this._transitionDX = this._entrySlideX();
+      this._transitionDY = this._entrySlideY();
       this._fadeActive = false;
       WeaponThreeScene.ref();
       this._loadModel();
@@ -890,7 +891,7 @@
     }
 
     _worldY(sy) {
-      return -( sy - (Graphics.height || 624) / 2 );
+      return -( sy - (Graphics.height || 624) / 2 ) + (this._transitionDY || 0);
     }
 
     _loadModel() {
@@ -1134,6 +1135,16 @@
       return isRight ? ENTRY_MARGIN_PX : -(this._screenX + ENTRY_MARGIN_PX);
     }
 
+    /**
+     * How far BELOW its resting place the entry starts. Zero for a weapon,
+     * which is carried in from the side; a pair of bare hands comes up from
+     * under the bottom edge instead (WeaponSystemProcedural), because that is
+     * the one direction fists read as being raised from.
+     */
+    _entrySlideY() {
+      return 0;
+    }
+
     /** Fade the weapon out of frame rather than cutting it (battle over). */
     beginExit() {
       if (this._exiting) return;
@@ -1154,6 +1165,7 @@
         const t = Math.min(this._exitElapsed / EXIT_DURATION_MS, 1);
         // Drifts back the way it came as it goes, accelerating out of frame.
         this._transitionDX = this._entrySlideX() * EXIT_DRIFT * t * t;
+        this._transitionDY = this._entrySlideY() * EXIT_DRIFT * t * t;
         this._applyFade(1 - t);
         if (t >= 1) {
           this._model.visible = false;
@@ -1164,6 +1176,7 @@
 
       if (this._entryDone) {
         this._transitionDX = 0;
+        this._transitionDY = 0;
         this._applyFade(1);
         return;
       }
@@ -1172,6 +1185,7 @@
       const t = Math.min(this._entryElapsed / ENTRY_DURATION_MS, 1);
       const eased = 1 - Math.pow(1 - t, 3);
       this._transitionDX = this._entrySlideX() * (1 - eased);
+      this._transitionDY = this._entrySlideY() * (1 - eased);
       // Opacity leads the slide so the weapon is solid well before it settles.
       this._applyFade(Math.min(t * 2, 1));
       if (t >= 1) this._entryDone = true;

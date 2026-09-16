@@ -124,6 +124,20 @@ Fomar.ITBS.passText = Fomar.ITBS.parameters["Pass Command Name"] || "Pass";
       ids.splice(to, 0, ids.splice(from, 1)[0]);
       window.BattleTurnOrder.set(ids);
       return true;
+    },
+
+    // Drop a member straight into somebody else's slot, which is what dragging
+    // one row onto another on the Dynamics board means. move() above is this
+    // with the slot worked out from a step, so the two share the one splice and
+    // the one pinning rule: whatever the player was looking at is what is
+    // captured.
+    moveTo(actorId, index) {
+      const ids = window.BattleTurnOrder.members().map(mem => mem.actorId());
+      const from = ids.indexOf(actorId);
+      if (from < 0 || index < 0 || index >= ids.length || index === from) return false;
+      ids.splice(index, 0, ids.splice(from, 1)[0]);
+      window.BattleTurnOrder.set(ids);
+      return true;
     }
   };
 

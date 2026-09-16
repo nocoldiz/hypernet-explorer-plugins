@@ -218,6 +218,10 @@
     // is confirmed. Cleared on the way out (see onFinishPartyCreation).
     _recordPresetLanding(preset) {
       if (!preset) return;
+      // A dossier the player saved off the board is a template: it says who
+      // somebody is, not where the party sets out from, so it leaves the origin
+      // board to answer that the way it always would.
+      if (!preset.mapId) return;
       $gameSystem._ccPresetLanding = {
         id: preset.id,
         name: preset.name,
@@ -818,13 +822,34 @@
       if (!this._presetIsPlayerMade(preset)) return "";
       return `
           <button class="cc-sidebar-btn cc-btn-full cc-btn-danger" onclick="SceneManager._scene.onDeletePreset(${activeIndex})">
-            ${this._ccIconHtml(168, 18)} <span>${ccT('CharCreate.deletePreset')}</span>
+            <span>${ccT('CharCreate.deletePreset')}</span>
           </button>`;
     }
 
     // Asked on the same parchment every other confirmation is asked on, and
     // answered by CharacterPresets.removePresetById, which refuses anything the
     // game itself wrote even when something asks it to.
+    // Filing the member being edited as one of the player's own dossiers. It
+    // goes into their collection rather than into the world, so it is never
+    // spent: every later party, in every world, can take it again and edit it
+    // from there. Saving twice under one name rewrites that dossier.
+    onSaveMemberAsPreset() {
+      const CP = window.CharacterPresets;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!CP || !CP.savePlayerPresetFromActor || !actor) { SoundManager.playBuzzer(); return; }
+      if (this._isActorLockedPreset(actor)) { SoundManager.playBuzzer(); return; }
+      const result = CP.savePlayerPresetFromActor(actor);
+      if (!result.ok) { SoundManager.playBuzzer(); return; }
+      SoundManager.playSave();
+      window.ParchmentToast?.show?.(ccTp(
+        result.replaced ? 'CharCreate.presetResaved' : 'CharCreate.presetSavedToast',
+        { name: result.preset.name }
+      ));
+      // The board reads the collection, so a dossier saved while it is open has
+      // to be re-listed rather than waiting for the next visit.
+      if (this._presetWindow && this._presetWindow.rebuild) this._presetWindow.rebuild();
+    }
+
     onDeletePreset(index) {
       const preset = this._presetWindow && this._presetWindow.itemAt
         ? this._presetWindow.itemAt(index)
@@ -915,7 +940,7 @@
             ${briefHtml}
           </div>
           <button class="cc-sidebar-btn cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onApplyPresetToCurrentMember(${activeIndex})">
-            ${this._ccIconHtml(189, 18)} <span>${this._presetConfirmLabel()}</span>
+            <span>${this._presetConfirmLabel()}</span>
           </button>
           ${this._presetDeleteButtonHtml(preset, activeIndex)}
         </div>

@@ -3932,6 +3932,20 @@
 .hypernet-balloon-x:hover { opacity: 1; }
 .hypernet-balloon-text { line-height: 1.35; }
 .tray-icon.tray-volume { background: radial-gradient(circle at 40% 50%, #cfe2ff, #4a7bd0 70%); border-radius: 3px; }
+/* The uplink light: a small red cross over the two screens while the deck has
+   no line out (down the tower, underground, inside a structure). */
+.tray-icon.tray-net-down { position: relative; opacity: 0.75; }
+.tray-icon.tray-net-down::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d33;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
 
 /* --- Power, welcome, shutdown ------------------------------------------------- */
 .hypernet-xp-overlay {

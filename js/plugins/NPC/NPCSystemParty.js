@@ -340,6 +340,11 @@
             const index = members.findIndex(mem => mem.actorId() === actorId);
             if (index < 0) return { ok: false, reason: "notInParty" };
             if (index === 0) return { ok: false, reason: "alreadyLeader" };
+            // A member who is down is carried, not followed: the party is
+            // never handed to a body. Every route in (Tab, the pad triggers,
+            // the Dynamics board) asks here rather than matching on hit points
+            // for itself.
+            if (members[index].isDead && members[index].isDead()) return { ok: false, reason: "knockedOut" };
             $gameParty.swapOrder(0, index);
             return { ok: true };
         },

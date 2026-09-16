@@ -121,6 +121,7 @@
             'sys-task-mgr': 'system', 'sys-terminal': 'system', 'control-panel': 'system',
             'my-computer': 'system', 'my-documents': 'system', 'app-bios': 'system',
             'app-hypernet-browser': 'internet', 'app-hypernet-shop': 'internet', 'app-news-history': 'internet',
+            'app-hypermail': 'internet',
             'tv-guide': 'media', 'app-hyperamp': 'media',
             'app-hypernet-notepad': 'accessories', 'app-hypernet-paint': 'accessories',
             'app-weather': 'reference', 'app-bestiary-encarta': 'reference', 'app-object-index': 'reference',
@@ -193,7 +194,7 @@
             'app-all-programs', 'app-games', 'app-utilities',
             'my-computer', 'my-documents',
             'app-hypernet-browser', 'app-hypernet-shop', 'app-stock-market',
-            'app-neuropolice', 'app-card-arena', 'app-hexcel', 'app-hypernet-paint',
+            'app-neuropolice', 'app-card-arena', 'app-hexcel', 'app-hypernet-paint', 'app-hypermail',
             'app-object-index', 'app-job-offers', 'app-colosseum',
             'app-news-history', 'app-real-estate', 'app-bank-system', 'app-bestiary-encarta'
         ],
@@ -249,6 +250,11 @@
             const app = this._apps[id];
             if (app && !this.isInstalled(app)) {
                 if (this.Dialog) this.Dialog.error(T('HypernetOS.xp.run.removed', { name: app.name }), app.name);
+                return;
+            }
+            // Nothing that needs the line opens while there is no line.
+            if (app && this.Net.needsUplink(id) && !this.Net.hasUplink()) {
+                this.Net.refuse(app);
                 return;
             }
             if (app && typeof app.launchFn === 'function') {
@@ -4961,6 +4967,74 @@
         const fs = window.HypernetFileSystem;
         return fs ? (fs.getRegistry('removedApps', []) || []) : [];
     };
+
+    // =========================================================================
+    // The uplink
+    // =========================================================================
+    // A deck carried up the tower, down under the ground or shut inside a
+    // generated structure has no line out. Whatever the machine already holds
+    // keeps working; every program that has to reach a server says there is no
+    // connection and opens nothing.
+    window.HypernetOS.Net = {
+        // Programs that are nothing without the line: the Hypernet itself, the
+        // shops and markets, the broadcast guides, the civic desks and the
+        // remote services.
+        // i18n-ignore-start  app ids
+        ONLINE_APPS: [
+            'app-hypernet-browser', 'app-hypernet-shop', 'app-store', 'app-news-history',
+            'tv-guide', 'app-eurodemics', 'app-neuropolice', 'app-bank-system',
+            'app-stock-market', 'app-real-estate', 'app-token-exchange', 'app-job-offers',
+            'app-virtuahealer', 'app-remote-bistury', 'app-cadd-trader', 'app-slamgrimorie',
+            'app-colosseum', 'app-weather', 'app-hypermail'
+        ],
+        // Squares of the procedural map that are underground without being one
+        // of the catalogued structures.
+        UNDERGROUND_BIOME_RE: /^(cave|mine|underdark|crystals|lair|seabed|metro)/,
+        // i18n-ignore-end
+
+        needsUplink(id) {
+            return this.ONLINE_APPS.indexOf(id) >= 0;
+        },
+
+        hasUplink() {
+            try {
+                if (typeof $gameMap === 'undefined' || !$gameMap || !$gameMap.mapId()) return true;
+                const DF = window.DungeonFloors;
+                if (DF && typeof DF.insideTower === 'function' && DF.insideTower()) return false;
+                const data = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._procGenData : null;
+                if ($gameMap.mapId() === 636 && data) {
+                    if (data.biomeLayerStack && data.biomeLayerStack.length > 0) return false;
+                    const biome = String(data.currentBiome || '');
+                    const PI = window.ProceduralInteriors;
+                    if (PI && typeof PI.isStructureBiome === 'function' && PI.isStructureBiome(biome)) return false;
+                    if (this.UNDERGROUND_BIOME_RE.test(biome.toLowerCase())) return false;
+                }
+                return true;
+            } catch (e) {
+                return true;
+            }
+        },
+
+        // The one place the "no connection" answer is spoken.
+        refuse(app) {
+            const name = (app && app.name) || '';
+            if (window.SoundManager) SoundManager.playBuzzer();
+            if (window.HypernetOS.Dialog) {
+                window.HypernetOS.Dialog.error(T('HypernetOS.noConnectionMessage', { name }),
+                    T('HypernetOS.noConnectionTitle'));
+            }
+        },
+
+        // The tray light, repainted on the second hand.
+        refreshTray() {
+            const icon = document.getElementById('tray-net');
+            if (!icon) return;
+            const up = this.hasUplink();
+            icon.classList.toggle('tray-net-down', !up);
+            icon.title = up ? T('HypernetOS.networkEstablished') : T('HypernetOS.noConnectionTray');
+        }
+    };
+
     window.HypernetOS.isInstalled = function(app) {
         if (!app) return false;
         return !this.removedApps().includes(app.id);
@@ -5228,6 +5302,7 @@
         // --- The second hand --------------------------------------------------
         tick() {
             if (!this._scene || !this._scene.isActive()) return;
+            window.HypernetOS.Net.refreshTray();
             // Scheduled tasks fire on the game clock, once per minute.
             const stamp = window.HypernetOS.clockStamp();
             const hhmm = stamp.slice(11);
@@ -5691,7 +5766,7 @@
             const tray = document.getElementById('hypernet-system-tray');
             if (!tray) return;
             const icons = tray.querySelectorAll('.tray-icon');
-            if (icons[0]) { icons[0].id = 'tray-net'; icons[0].classList.add('focusable'); icons[0].tabIndex = 0; icons[0].addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-netstat'); }); }
+            if (icons[0]) { icons[0].id = 'tray-net'; icons[0].classList.add('focusable'); icons[0].tabIndex = 0; icons[0].addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-netstat'); }); window.HypernetOS.Net.refreshTray(); }
             if (icons[1]) { icons[1].id = 'tray-shield'; icons[1].classList.add('focusable'); icons[1].tabIndex = 0; icons[1].addEventListener('click', e => { e.stopPropagation(); window.HypernetOS.launchApp('app-wscui'); }); }
             if (this.reg('trayVolume', true) && !document.getElementById('tray-volume')) {
                 const vol = document.createElement('div');
@@ -6444,7 +6519,7 @@
             msg.textContent = T_('syncing', { server: q(root, '#td-server').value });
             const p = window.HypernetOS.Host.profile();
             setTimeout(() => {
-                msg.textContent = p.linkKbps ? T_('syncOk', { server: q(root, '#td-server').value, time: window.HypernetOS.clockStamp() }) : T_('syncFail', { server: q(root, '#td-server').value });
+                msg.textContent = (p.linkKbps && window.HypernetOS.Net.hasUplink()) ? T_('syncOk', { server: q(root, '#td-server').value, time: window.HypernetOS.clockStamp() }) : T_('syncFail', { server: q(root, '#td-server').value });
             }, 1800);
         });
     });
@@ -7366,15 +7441,17 @@
     // --- Connection Status --------------------------------------------------------------------------
     xpApp('app-netstat', 'netstat', 188, [380, 330], (win, root, T_) => {
         const p = window.HypernetOS.Host.profile();
-        const dialup = p.linkKbps && p.linkKbps < 1000;
+        // The fitted modem is one thing, a line to plug it into is another.
+        const linkKbps = window.HypernetOS.Net.hasUplink() ? p.linkKbps : 0;
+        const dialup = linkKbps && linkKbps < 1000;
         let sent = 1200 + (xpHash(p.hostname) % 5000), recv = 3400 + (xpHash(p.serial) % 9000);
-        const speed = !p.linkKbps ? T_('noLink') : dialup ? T_('kbps', { n: p.linkKbps }) : T_('mbps', { n: p.linkKbps / 1000 });
+        const speed = !linkKbps ? T_('noLink') : dialup ? T_('kbps', { n: linkKbps }) : T_('mbps', { n: linkKbps / 1000 });
         root.innerHTML = `
             <div class="xp-netstat">
                 ${tabBar(T_, ['general', 'support'])}
                 ${pane('general', `
                     <div class="xp-group"><div class="xp-group-title">${T_('connection')}</div>
-                        <div class="xp-regedit-row"><span>${T_('status')}</span><span>${p.linkKbps ? T_('connected') : T_('disconnected')}</span></div>
+                        <div class="xp-regedit-row"><span>${T_('status')}</span><span>${linkKbps ? T_('connected') : T_('disconnected')}</span></div>
                         <div class="xp-regedit-row"><span>${T_('duration')}</span><span id="ns-dur"></span></div>
                         <div class="xp-regedit-row"><span>${T_('speed')}</span><span>${speed}</span></div>
                     </div>
@@ -7397,7 +7474,7 @@
             const two = n => String(n).padStart(2, '0');
             const dur = q(root, '#ns-dur');
             if (dur) dur.textContent = `${two(Math.floor(s / 3600))}:${two(Math.floor(s % 3600 / 60))}:${two(s % 60)}`;
-            if (p.linkKbps) { sent += Math.floor(Math.random() * 3); recv += Math.floor(Math.random() * 7); }
+            if (linkKbps) { sent += Math.floor(Math.random() * 3); recv += Math.floor(Math.random() * 7); }
             if (q(root, '#ns-sent')) { q(root, '#ns-sent').textContent = sent; q(root, '#ns-recv').textContent = recv; }
         }, 1000);
         win.addEventListener('hypernet-closed', () => clearInterval(timer));
@@ -7589,7 +7666,7 @@
     xpApp('app-netconn', 'netconn', 188, [440, 320], (win, root, T_) => {
         const K = k => T_(k);
         const p = window.HypernetOS.Host.profile();
-        const up = !window.HypernetOS.isEmptyWorld();
+        const up = !window.HypernetOS.isEmptyWorld() && window.HypernetOS.Net.hasUplink();
         const rows = [
             { group: 'dialup', name: p.modem, on: up },
             { group: 'lan', name: p.board, on: up }

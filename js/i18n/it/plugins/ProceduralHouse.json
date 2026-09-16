@@ -14,5 +14,8 @@
   "doorHeld": "La porta rinforzata ha retto alla tua spallata.",
   "selectShop": "Scegli un negozio:",
   "noShops": "Non ci sono negozi disponibili.",
-  "noSuchShop": "Non esiste un negozio con quell’id."
+  "noSuchShop": "Non esiste un negozio con quell’id.",
+  "selectClinic": "Scegli una clinica:",
+  "noClinics": "Non ci sono cliniche disponibili.",
+  "noSuchClinic": "Non esiste una clinica con quell’id."
 }

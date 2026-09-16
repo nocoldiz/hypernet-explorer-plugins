@@ -177,6 +177,103 @@
     return window.NPCSim?.npcNameForEvent?.(ev) ?? (ev.event()?.name?.trim() || '');
   }
 
+  // ── Character sheets for the language model ─────────────────────────────
+  // What the game knows for certain about one person, as one line of
+  // "label: value" pairs. Handed to a .gguf model (MarkovTextGenerator.js) so
+  // that an answer is written by THIS person to THIS member of the party,
+  // rather than by a stranger to another stranger. The society profile answers
+  // for most of it; an actor is consulted for the two things only a party
+  // member has, their trade and the level they are actually carrying.
+  //
+  // Read by the Empathize panel and by the message-box dialogue path alike,
+  // through window.NPCEmpathize.conversationContext().
+  function _llmTraitNames(profile) {
+    const all = window._NPCSocietyDataLoader?.traits || [];
+    return (profile?.traitIds || []).map(id => {
+      const raw = String(all.find(t => t && t.id === id)?.name || '');
+      const seg = raw.split('.')[1] || raw;
+      return seg.split(/[_-]/).filter(Boolean)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }).filter(Boolean).slice(0, 6);
+  }
+
+  function _llmGenderLabel(value) {
+    const T = _getT();
+    return [T.genderMale, T.genderFemale, T.genderNonBinary, T.genderCocoon][value | 0] || '';
+  }
+
+  function _llmWealthLabel(tier) {
+    const T = _getT();
+    return [T.destitute, T.poor, T.workingClass, T.middleClass, T.wealthy][tier ?? 2] || '';
+  }
+
+  function _llmMoralLabel(score) {
+    const T = _getT();
+    const n = score ?? 0;
+    return n < -60 ? T.evil : n < -20 ? T.dishonest : n < 20 ? T.neutral
+         : n < 60 ? T.honest : T.virtuous;
+  }
+
+  function _llmCharacterSheet(profile, actor) {
+    const T  = _getT();
+    const L  = T.llm || {};
+    const dl = window._NPCSocietyDataLoader;
+    if (!profile && !actor) return '';
+    const bits = [];
+    const push = (label, value) => {
+      const v = String(value ?? '').trim();
+      if (label && v) bits.push(label + ': ' + v);
+    };
+    push(L.personalityLbl, _personalityName(profile));
+    push(T.archetypeLbl, window.NPCCreature?.archetypeLabel?.(profile) || '');
+    push(T.genderLbl, _llmGenderLabel(actor?.gender ? actor.gender() : profile?.gender));
+    push(L.classLbl, actor?.currentClass?.()?.name || '');
+    push(T.levelLbl, actor ? actor.level : profile?.level);
+    push(T.wealthLbl, _llmWealthLabel(profile?.wealthTierBase));
+    push(L.moralityLbl, _llmMoralLabel(profile?.moralityScore));
+    const ideology = profile ? window.NPCShared?.ideologyFor?.(profile) : null;
+    if (ideology) {
+      push(T.ideologyLbl, window.DataService?.t?.(ideology.name)
+        || String(ideology.name || '').split('.').pop().split('_').join(' '));
+    }
+    const faction = (profile?.factionIndex >= 0 && dl?.factions) ? dl.factions[profile.factionIndex] : null;
+    if (faction) {
+      push(L.factionLbl, dl.getFactionName?.(faction)
+        || String(faction.name || '').split('.')[1] || faction.name);
+    }
+    push(T.hometownLbl, profile?._homeGroupName);
+    const job = (window.WorkSystem?.Jobs || []).find(j => j && j.id === profile?.currentJobId);
+    if (job) push(L.jobLbl, window.DataService?.t?.(job.name) || job.name);
+    const traits = _llmTraitNames(profile);
+    if (traits.length) push(T.traits, traits.join(', '));
+    // What the body is asking for right now, and only when it is asking loudly
+    // enough to be heard in an answer.
+    if ((profile?.hunger  ?? 100) < 40) push(T.hungerLabel,  L.needLow);
+    if ((profile?.sleep   ?? 100) < 40) push(T.sleepLabel,   L.needLow);
+    if ((profile?.hygiene ?? 100) < 40) push(T.hygieneLabel, L.needLow);
+    return bits.join('; ');
+  }
+
+  // Where the two of them stand with each other: the standing this actor has
+  // earned with this person, and whether they are wanted.
+  function _llmRelationLine(profile, actor, opinion) {
+    const T = _getT();
+    const L = T.llm || {};
+    if (!profile || !actor) return '';
+    const op = opinion ?? 0;
+    const band = op <= -60 ? L.bandHostile : op <= -20 ? L.bandCold
+               : op < 20 ? L.bandNeutral : op < 60 ? L.bandWarm : L.bandDevoted;
+    const bits = [window.T('Empathize.llm.opinionOf', {
+      speaker: actor.name(), band: band || '', score: op,
+    })];
+    const attraction = profile.attraction?.[actor.actorId()] ?? 0;
+    if (attraction > 20) {
+      bits.push(window.T('Empathize.llm.attractedTo',
+        { speaker: actor.name(), score: attraction }));
+    }
+    return bits.join(' ');
+  }
+
   function _getProfile(npcName) {
     const profile = window.NPCSocietyRegistry?.getProfile(npcName) ?? null;
     // The society table is keyed by name and the profile itself does not carry
@@ -1576,6 +1673,12 @@
   // going wrong.
   const PET_OPINION = 5;
 
+  // How long the panel waits on the language model before speaking the line
+  // the bank had written for it. The model has a timeout of its own on every
+  // request; this is the panel's own patience on top of it, so a server that
+  // stops answering altogether can never leave a typing indicator standing.
+  const LLM_PANEL_TIMEOUT_MS = 25000;
+
   // Feeding is judged by what is in the bowl. Cooked food does the animal good
   // in proportion to its calories, raw meat is swallowed without thanks, and a
   // piece of something that used to be alive is worse still: neither is what a
@@ -2838,8 +2941,8 @@
       this._socialMode = false;
       this._activeTab  = 'chat';
       this._menuIndex  = 0;
-      this._pushChat('player', fill(beat.player));
-      this._pushChat('npc',    fill(beat.reply));
+      const said = this._pushChat('player', fill(beat.player));
+      this._replyNpc(fill(beat.reply), window.T('Empathize.llm.situationBicker'), said);
       // Winding each other up is time spent together and nothing else: a point
       // of standing, never a loss, whichever way the jab went.
       _addPairBond(1 + Math.floor(Math.random() * 3));
@@ -3616,13 +3719,13 @@
       // comes back is a beast's answer: noise, not a sentence about noise.
       let reply = _feralLine('feralReact', this._focusOpinion(profile), npcName, kind);
       if (reply && this._isNonSentientSubject()) reply = _feralGrowlFor(reply, this._subjectCreatureClass());
-      if (reply) this._chatHistory.push({ role: 'npc', text: reply });
-      if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-
       if (delta >= 0) SoundManager.playOk(); else SoundManager.playBuzzer();
       this._activeTab = 'chat';
-      this._render();
-      this._scrollChatToBottom();
+      // A person answering a beast is answering in words, so a model picked in
+      // Options gets to write them. A beast answering a beast never reaches
+      // here as prose, and _replyNpc keeps it out of the model's hands anyway.
+      if (reply) this._replyNpc(reply, this._llmSituation(_getT()['feralLabel' + id.charAt(0).toUpperCase() + id.slice(1)] || id, delta), '');
+      else { this._render(); this._scrollChatToBottom(); }
     }
 
     // The NPC noticing what has wandered up to them. Mirrors _sayEmGreeting:
@@ -3682,9 +3785,118 @@
 
     // One line into the log, oldest trimmed off the top like everywhere else.
     _pushChat(role, text) {
-      if (!text) return;
-      this._chatHistory.push({ role, text: String(text) });
+      if (!text) return '';
+      const line = String(text);
+      this._chatHistory.push({ role, text: line });
       if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
+      return line;
+    }
+
+    // ── The language model as the panel's voice ────────────────────────────
+    // Every reply in this panel is written ahead of time in a line bank. With
+    // a .gguf model picked in Options > Experimental those banks stop being
+    // what is spoken and become the FALLBACK: the bank's line still decides
+    // WHAT the answer is (it was rolled against the opinion maths and it moved
+    // the reputation), and the model is asked to say that same thing in this
+    // particular person's own words, having been told who they are, who is
+    // standing in front of them, where the two of them stand with each other
+    // and what has just happened between them. With no model picked, or one
+    // that fails or runs out of time, the bank's line is spoken exactly as it
+    // was before.
+    //
+    // The one thing never handed to a model is a beast: a non-sentient subject
+    // answers in the voice of its class and holds no prose at all, whoever is
+    // doing the writing (window.NPCCreature owns that boundary).
+    _llmOn() {
+      const llm = window.MarkovLLM;
+      if (!llm?.isEnabled?.() || typeof llm.reply !== 'function') return false;
+      return !this._isNonSentientSubject();
+    }
+
+    // The sheets of the two people in this conversation, and where they stand
+    // with each other. The builders themselves are module functions so the
+    // message-box dialogue path can ask for exactly the same thing
+    // (window.NPCEmpathize.conversationContext).
+    _llmNpcSheet() {
+      return _llmCharacterSheet(
+        _getProfile(this._targetName()),
+        this._actorId != null ? $gameActors.actor(this._actorId) : null
+      );
+    }
+
+    _llmSpeakerSheet() {
+      const actor = this._focusActor();
+      return actor ? _llmCharacterSheet(_getProfile(actor.name()), actor) : '';
+    }
+
+    _llmRelation() {
+      const profile = _getProfile(this._targetName());
+      const actor   = this._focusActor();
+      if (!profile || !actor) return '';
+      return _llmRelationLine(profile, actor, this._focusOpinion(profile) ?? 0);
+    }
+
+    // Ask the model for the line, told what has just happened and what the
+    // bank would have had this person say about it. An empty answer is the
+    // caller's signal that the bank's line is spoken as it stands.
+    async _llmSay(fallback, situation, playerLine) {
+      if (!this._llmOn()) return '';
+      // The player's own line is already on the log; it is the line being
+      // answered, not part of the backlog leading up to it.
+      const history = this._chatHistory
+        .filter(t => !(t && t.role === 'player' && t.text === playerLine))
+        .slice(-8);
+      try {
+        return await window.MarkovLLM.reply({
+          npcName:      this._targetName() || '',
+          npcBio:       this._llmBio(),
+          npcSheet:     this._llmNpcSheet(),
+          speakerName:  this._focusActor()?.name() || '',
+          speakerSheet: this._llmSpeakerSheet(),
+          relation:     this._llmRelation(),
+          situation:    window.T('Empathize.llm.rewrite', {
+            situation: String(situation || ''), line: String(fallback || ''),
+          }),
+          startText:    playerLine || '',
+          history:      history,
+        }) || '';
+      } catch (e) {
+        return '';
+      }
+    }
+
+    // What has just happened, in one sentence, for the model to answer to.
+    _llmSituation(actionLabel, delta) {
+      const T = _getT();
+      const L = T.llm || {};
+      const actor = this._focusActor();
+      const mood = (delta || 0) > 0 ? L.moodBetter : (delta || 0) < 0 ? L.moodWorse : L.moodSame;
+      return window.T('Empathize.llm.situationAction', {
+        speaker: actor ? actor.name() : '', action: String(actionLabel || ''), mood: mood || '',
+      });
+    }
+
+    // The panel's one way of speaking an NPC's answer: the typing indicator,
+    // the line, the trim and the scroll, in one place. Without a model this is
+    // the same 350ms beat every one of these actions used to run on its own.
+    _replyNpc(fallbackLine, situation, playerLine) {
+      this._isTyping = true;
+      this._render();
+      this._scrollChatToBottom();
+      const land = (text) => {
+        if (SceneManager._scene !== this) return;
+        this._isTyping = false;
+        this._pushChat('npc', text || fallbackLine);
+        this._render();
+        this._scrollChatToBottom();
+      };
+      if (!this._llmOn()) { setTimeout(() => land(''), 350); return; }
+      let settled = false;
+      const once = (text) => { if (!settled) { settled = true; land(text); } };
+      this._llmSay(fallbackLine, situation, playerLine).then(once).catch(() => once(''));
+      // The panel is never held past its own patience, whatever the server is
+      // doing: past this the bank's line is spoken and a late answer is dropped.
+      setTimeout(() => once(''), LLM_PANEL_TIMEOUT_MS);
     }
 
     // A hand laid on the animal. No band and no roll: this is the one action in
@@ -4162,22 +4374,16 @@
       // action row, same as Cancel would.
       this._socialMode  = false;
       this._activeTab   = 'chat';
-      this._pushPlayerLine(playerLine);
-      this._isTyping = true;
+      const said = this._pushPlayerLine(playerLine);
       this._joinMessage = {
         type: delta >= 0 ? 'accept' : 'reject',
         text: `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`
           + (funStep ? ` +${funStep} ☺` : ''),
       };
-      this._render();
-      this._scrollChatToBottom();
-      setTimeout(() => {
-        this._isTyping = false;
-        this._chatHistory.push({ role: 'npc', text: npcLine });
-        if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-        this._render();
-        this._scrollChatToBottom();
-      }, 350);
+      // The bank's line is what this person means; with a model picked it is
+      // said in their own words instead (_replyNpc).
+      const label = (this._socialCatalog?.() || []).find(a => a && a.id === id)?.label || id;
+      this._replyNpc(npcLine, this._llmSituation(label, delta), said);
     }
 
     // Buy the procedural-house floor the player is currently standing in from
@@ -4254,11 +4460,9 @@
         this._joinMessage = { type: 'reject', text: T.giftRefused(npcName, item.name) };
         const refusal = _rand(T.giftRefusalLines || []);
         if (refusal) {
-          this._chatHistory.push({
-            role: 'npc',
-            text: String(refusal).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName),
-          });
-          if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
+          this._replyNpc(
+            String(refusal).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName),
+            window.T('Empathize.llm.situationGiftRefused', { item: item.name }), '');
         }
         if (profile) {
           (profile.eventLog ??= []).push({
@@ -4299,18 +4503,16 @@
         : delta >= 18               ? 'giftReactionWarm'
         :                             'giftReactionPlain';
       const line = _rand(T[bank] || []);
-      if (line) {
-        this._chatHistory.push({
-          role: 'npc',
-          text: String(line).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName),
-        });
-        if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-      }
-
       this._giftMode    = false;
       this._feedMode    = false;
-      this._render();
-      this._scrollChatToBottom();
+      if (line) {
+        this._replyNpc(
+          String(line).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName),
+          window.T('Empathize.llm.situationGift', { item: item.name }), '');
+      } else {
+        this._render();
+        this._scrollChatToBottom();
+      }
     }
 
     _bribe() {
@@ -4896,10 +5098,8 @@
         SoundManager.playBuzzer();
         const line = _rand(emCtx.data.refuseJoin);
         if (line) {
-          this._chatHistory.push({ role: 'npc', text: String(line).replace(/\{name\}/g, npcName) });
-          if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-          this._render();
-          this._scrollChatToBottom();
+          this._replyNpc(String(line).replace(/\{name\}/g, npcName),
+            window.T('Empathize.llm.situationJoinRefused'), '');
         }
         return;
       }
@@ -4942,10 +5142,7 @@
         }
         const phrases = T.joinRefusalPhrases;
         const refusal = phrases[Math.floor(Math.random() * phrases.length)];
-        this._chatHistory.push({ role: 'npc', text: refusal });
-        if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-        this._render();
-        this._scrollChatToBottom();
+        this._replyNpc(refusal, window.T('Empathize.llm.situationJoinRefused'), '');
         return;
       }
 
@@ -5208,6 +5405,13 @@
           response = await llm.reply({
             npcName: speaker,
             npcBio: this._llmBio(),
+            // Everything the panel knows about the two of them, so the answer
+            // is this person's answer to THIS member of the party rather than
+            // a stranger's answer to another stranger.
+            npcSheet: this._llmNpcSheet(),
+            speakerName: this._focusActor()?.name() || '',
+            speakerSheet: this._llmSpeakerSheet(),
+            relation: this._llmRelation(),
             startText: phrase,
             history: this._chatHistory.slice(0, -1)
           });
@@ -6144,6 +6348,38 @@
   }
 
   window.NPCEmpathize = {
+    // Everything a language model needs to know about a conversation before it
+    // writes a line of one: who is being talked to, who is doing the talking,
+    // and where the two of them stand with each other. The Empathize panel
+    // builds this for itself; this is the same thing for everybody else, and
+    // it is what MarkovTextGenerator's message-box path feeds the model.
+    //
+    // `target` is an event id, an event name or an NPC name. The speaker is the
+    // party leader unless an actor is named. A non-sentient subject answers in
+    // the voice of its class and is never handed to a model, so it comes back
+    // as null (window.NPCCreature owns that boundary).
+    conversationContext(target, speakerActor) {
+      let npcName = '';
+      if (typeof target === 'number') npcName = _getNPCName(target);
+      else if (typeof target === 'string') {
+        const ev = _findEventByName(target);
+        npcName = ev ? _getNPCName(ev.eventId()) || target : target;
+      }
+      if (!npcName) return null;
+      if (_isNonSentientNpc(npcName)) return null;
+      const profile = _getProfile(npcName);
+      const actor   = speakerActor || $gameParty?.leader() || null;
+      if (actor && _isNonSentientActor(actor)) return null;
+      return {
+        npcName:      npcName,
+        npcSheet:     _llmCharacterSheet(profile, null),
+        speakerName:  actor ? actor.name() : '',
+        speakerSheet: actor ? _llmCharacterSheet(_getProfile(actor.name()), actor) : '',
+        relation:     (profile && actor)
+          ? _llmRelationLine(profile, actor, _npcEffectiveOpinion(profile, actor))
+          : '',
+      };
+    },
     open(evNameOrId) {
       if ($gameTemp._NPCEmpathizeBypass) {
         $gameTemp._NPCEmpathizeBypass = false;

@@ -1121,8 +1121,305 @@
     placeAt(el, x, y) { UI().placeAt(el, x, y); }
   };
 
+  //===========================================================================
+  // CCPick - the one modal every choice in creation is made in
+  //===========================================================================
+  //
+  // A native <select> cannot be operated with a pad. The focus ring activates a
+  // control by synthesising a click (CCNav.confirm), and a click on a <select>
+  // opens a list the host browser draws in its own chrome, which no amount of
+  // Input reading can walk. Every dropdown in creation was therefore a dead end
+  // for a controller player, and the hometown list was special-cased in the
+  // wizard's scroll handler just to make the wheel reach it.
+  //
+  // So creation has no dropdowns any more. A choice is a TRIGGER - a plain div
+  // wearing the same plate the select wore - and pressing it opens this modal,
+  // which is ours: it draws on the same parchment, it reads the pad itself, and
+  // it is the same object whether it is being asked for a hometown or for a
+  // class.
+  //
+  // Two shapes, one cursor
+  // ----------------------
+  // LIST    a column of options. What a dropdown was.
+  // DETAIL  the same column, with the option under the cursor written out in
+  //         full beside it. What a character is actually chosen with: the class
+  //         and the anatomy boards, where the choice is only meaningful if you
+  //         can read what it does before you commit to it.
+  //
+  // The shape is picked by whether the caller passed a `detail` function, so no
+  // call site has to say which it wants.
+  //
+  // The veil carries .cc-modal-veil, which is the class CCNav.modalUp() already
+  // watches: the ring stands down while a pick is open without CCNav knowing
+  // this exists. The modal reads the pad in its own keydown handler and through
+  // pollInput(), which the wizard calls once a frame.
+  const CCPickState = { veil: null, opts: null, index: 0, filtered: null, query: "", onKey: null };
+
+  const CCPick = {
+    // Is a pick open right now? The wizard asks before it reads the pad, so one
+    // press is never answered twice.
+    isOpen() { return !!CCPickState.veil; },
+
+    // opts:
+    //   title     heading of the sheet
+    //   options   [{ value, label, hint, group, icon, disabled }]
+    //   value     the option that is current, so it opens on it
+    //   detail    optional (option) => html, which turns the sheet into a spread
+    //   search    force the search strip on or off (default: on past 12 rows)
+    //   onPick    (value, option) => void
+    open(opts) {
+      if (!opts || typeof document === "undefined") return;
+      this.close(true);
+      const container = document.getElementById("character-creation-container") ||
+        document.body;
+      if (!container) return;
+
+      const options = (opts.options || []).filter(Boolean);
+      CCPickState.opts = Object.assign({}, opts, { options });
+      CCPickState.query = "";
+      CCPickState.filtered = options.slice();
+      // Open on what is already chosen, so Confirm with no movement is a no-op
+      // rather than a silent change to whatever happened to be first.
+      const at = options.findIndex((o) => String(o.value) === String(opts.value));
+      CCPickState.index = at >= 0 ? at : 0;
+
+      const veil = document.createElement("div");
+      veil.className = "cc-modal-veil cc-pick-veil";
+      veil.setAttribute("data-nav-modal", "1");
+      CCPickState.veil = veil;
+      container.appendChild(veil);
+
+      this._render();
+      // Clicking off the sheet and the keyboard both dismiss it, so the two are
+      // bound together rather than the veil reading as a control of its own.
+      const onKey = (e) => {
+        if (!CCPickState.veil) return;
+        if (e.key === "Escape") {
+          e.stopPropagation(); if (e.preventDefault) e.preventDefault();
+          this._sound("cancel"); this.close();
+        } else if (e.key === "Enter") {
+          e.stopPropagation(); if (e.preventDefault) e.preventDefault();
+          this.confirm();
+        } else if (e.key === "ArrowDown") {
+          e.stopPropagation(); if (e.preventDefault) e.preventDefault();
+          this.move(1);
+        } else if (e.key === "ArrowUp") {
+          e.stopPropagation(); if (e.preventDefault) e.preventDefault();
+          this.move(-1);
+        }
+      };
+      CCPickState.onKey = onKey;
+      veil.addEventListener("click", (e) => {
+        if (e.target === veil) { this._sound("cancel"); this.close(); }
+      });
+      document.addEventListener("keydown", onKey, true);
+    },
+
+    close(silent) {
+      if (!CCPickState.veil) return;
+      if (CCPickState.onKey) {
+        document.removeEventListener("keydown", CCPickState.onKey, true);
+        CCPickState.onKey = null;
+      }
+      const veil = CCPickState.veil;
+      if (veil.remove) veil.remove();
+      else if (veil.parentNode) veil.parentNode.removeChild(veil);
+      CCPickState.veil = null;
+      CCPickState.opts = null;
+      CCPickState.filtered = null;
+      CCPickState.query = "";
+      CCPickState.index = 0;
+    },
+
+    // ------------------------------------------------------------- movement --
+
+    rows() { return CCPickState.filtered || []; },
+
+    move(step) {
+      const rows = this.rows();
+      if (!rows.length) return;
+      const n = rows.length;
+      let i = CCPickState.index;
+      // Step past a disabled row rather than resting on one, so the cursor is
+      // never somewhere Confirm does nothing.
+      for (let guard = 0; guard < n; guard++) {
+        i = (i + step + n) % n;
+        if (!rows[i].disabled) break;
+      }
+      if (i === CCPickState.index) return;
+      CCPickState.index = i;
+      this._sound("cursor");
+      this._paint();
+    },
+
+    confirm() {
+      const rows = this.rows();
+      const row = rows[CCPickState.index];
+      if (!row || row.disabled) { this._sound("buzzer"); return; }
+      const onPick = CCPickState.opts && CCPickState.opts.onPick;
+      this.close(true);
+      if (onPick) onPick(row.value, row);
+    },
+
+    setQuery(q) {
+      if (!CCPickState.opts) return;
+      CCPickState.query = q || "";
+      const needle = CCPickState.query.trim().toLowerCase();
+      const all = CCPickState.opts.options;
+      CCPickState.filtered = !needle ? all.slice() : all.filter((o) =>
+        String(o.label || "").toLowerCase().indexOf(needle) >= 0 ||
+        String(o.hint || "").toLowerCase().indexOf(needle) >= 0);
+      CCPickState.index = 0;
+      this._paint();
+    },
+
+    // Read once a frame by the scene that opened the pick, before it reads the
+    // pad itself. Returns true when the press belonged to the modal.
+    pollInput() {
+      if (!this.isOpen()) return false;
+      if (typeof Input === "undefined") return false;
+      // The search box owns the keyboard while the caret is in it; the pad
+      // still walks the list.
+      const typing = typeof document !== "undefined" && document.activeElement &&
+        String(document.activeElement.tagName || "").toUpperCase() === "INPUT";
+      const rep = (d) => Input.isTriggered(d) || Input.isRepeated(d);
+      if (Input.isTriggered("cancel") ||
+          (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
+        this._sound("cancel"); this.close(); return true;
+      }
+      if (!typing && Input.isTriggered("ok")) { this.confirm(); return true; }
+      if (rep("down")) { this.move(1); return true; }
+      if (rep("up")) { this.move(-1); return true; }
+      // The shoulder buttons page through a long list a screenful at a time,
+      // which is what they do on every other board in creation.
+      const dir = window.CCNav ? window.CCNav.railDir() : 0;
+      if (dir) { this.move(dir * 8); return true; }
+      return true; // a pick is modal: nothing behind it reads the pad
+    },
+
+    // -------------------------------------------------------------- drawing --
+
+    _sound(kind) {
+      if (typeof SoundManager === "undefined") return;
+      if (kind === "cursor" && SoundManager.playCursor) SoundManager.playCursor();
+      else if (kind === "cancel" && SoundManager.playCancel) SoundManager.playCancel();
+      else if (kind === "buzzer" && SoundManager.playBuzzer) SoundManager.playBuzzer();
+    },
+
+    _esc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    },
+
+    _wantsSearch() {
+      const o = CCPickState.opts;
+      if (!o) return false;
+      if (typeof o.search === "boolean") return o.search;
+      return o.options.length > 12;
+    },
+
+    _render() {
+      const veil = CCPickState.veil;
+      const o = CCPickState.opts;
+      if (!veil || !o) return;
+      const detailed = typeof o.detail === "function";
+      const searchHtml = this._wantsSearch() ? `
+        <input type="text" class="cc-pick-search" autocomplete="off" spellcheck="false"
+               placeholder="${this._esc(T('CharCreate.pickSearch'))}"
+               value="${this._esc(CCPickState.query)}">` : "";
+
+      veil.innerHTML = `
+        <div class="cc-modal cc-pick ${detailed ? 'cc-pick--detail' : ''}" role="dialog" aria-modal="true">
+          <h3 class="cc-modal-title">${this._esc(o.title || "")}</h3>
+          ${searchHtml}
+          <div class="cc-pick-body">
+            <div class="cc-pick-list cc-scroll-pane"></div>
+            ${detailed ? '<div class="cc-pick-detail cc-scroll-pane"></div>' : ''}
+          </div>
+          <div class="cc-modal-actions">
+            <button class="cc-sidebar-btn cc-pick-cancel">${this._esc(T('CharCreate.cancel'))}</button>
+            <button class="cc-sidebar-btn primary cc-pick-accept">${this._esc(T('CharCreate.confirm'))}</button>
+          </div>
+        </div>`;
+
+      const cancel = veil.querySelector("button.cc-pick-cancel");
+      if (cancel) cancel.addEventListener("click", () => { this._sound("cancel"); this.close(); });
+      const accept = veil.querySelector("button.cc-pick-accept");
+      if (accept) accept.addEventListener("click", () => this.confirm());
+      const search = veil.querySelector("input.cc-pick-search");
+      if (search) {
+        search.addEventListener("input", (e) => this.setQuery(e.target.value));
+        if (search.focus) search.focus();
+      }
+      this._paint();
+    },
+
+    // Only the list and the detail pane are redrawn as the cursor moves: the
+    // search box keeps its caret because it is never rebuilt under it.
+    _paint() {
+      const veil = CCPickState.veil;
+      const o = CCPickState.opts;
+      if (!veil || !o) return;
+      const list = veil.querySelector(".cc-pick-list");
+      const rows = this.rows();
+      if (list) {
+        if (!rows.length) {
+          list.innerHTML = `<div class="cc-pick-empty">${this._esc(T('CharCreate.pickNoResults'))}</div>`;
+        } else {
+          let lastGroup = null;
+          list.innerHTML = rows.map((row, i) => {
+            let head = "";
+            if (row.group && row.group !== lastGroup) {
+              head = `<div class="cc-pick-group">${this._esc(row.group)}</div>`;
+              lastGroup = row.group;
+            }
+            const current = String(row.value) === String(o.value);
+            const marks = (i === CCPickState.index ? " selected" : "") +
+              (row.disabled ? " disabled" : "") + (current ? " current" : "");
+            return `${head}<div class="cc-pick-row focusable${marks}" tabindex="0" data-pick-index="${i}">
+              ${row.icon ? `<span class="cc-pick-icon">${row.icon}</span>` : ''}
+              <span class="cc-pick-label">${this._esc(row.label)}</span>
+              ${row.hint ? `<span class="cc-pick-hint">${this._esc(row.hint)}</span>` : ''}
+            </div>`;
+          }).join("");
+          const cells = list.querySelectorAll(".cc-pick-row");
+          for (let i = 0; i < cells.length; i++) {
+            cells[i].addEventListener("click", (e) => {
+              const at = parseInt(e.currentTarget.getAttribute("data-pick-index"), 10);
+              if (isNaN(at)) return;
+              // One click moves the cursor there AND takes it: a mouse player
+              // should not have to click a row and then click Confirm.
+              CCPickState.index = at;
+              this.confirm();
+            });
+            cells[i].addEventListener("mousemove", (e) => {
+              const at = parseInt(e.currentTarget.getAttribute("data-pick-index"), 10);
+              if (isNaN(at) || at === CCPickState.index) return;
+              CCPickState.index = at;
+              this._paint();
+            });
+          }
+          const sel = list.querySelector(".cc-pick-row.selected");
+          if (sel && sel.getBoundingClientRect && list.getBoundingClientRect) {
+            const r = sel.getBoundingClientRect();
+            const p = list.getBoundingClientRect();
+            if (r.top < p.top) list.scrollTop -= (p.top - r.top) + 8;
+            else if (r.bottom > p.bottom) list.scrollTop += (r.bottom - p.bottom) + 8;
+          }
+        }
+      }
+      const pane = veil.querySelector(".cc-pick-detail");
+      if (pane && typeof o.detail === "function") {
+        const row = rows[CCPickState.index];
+        pane.innerHTML = row ? (o.detail(row) || "") : "";
+      }
+    },
+  };
+
   window.CCPanel = CCPanel;
   window.CCScroll = CCScroll;
+  window.CCPick = CCPick;
   window.CCButtons = CCButtons;
   window.CreatureClasses = CreatureClasses;
   // The attribute names every creation panel labels its stat boxes with.

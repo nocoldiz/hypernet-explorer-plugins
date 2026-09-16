@@ -27,6 +27,11 @@
     "chatPlace": "You are both in {place}.",
     "chatFlavour": "The talk around here goes like this: {text}",
     "chatStyle": "Answer in character, in English, in one or two short sentences. Never describe your actions, never use lists or markdown, never mention being a model.",
+    "chatSheet": "Your own sheet, {npc}: {sheet}",
+    "chatSpeaker": "The one speaking to you is {speaker}.",
+    "chatSpeakerSheet": "What you can see of {speaker}: {sheet}",
+    "chatRelation": "Between the two of you: {relation}",
+    "chatSituation": "What is happening right now: {situation}",
     "chatOpen": "Say something to me."
   }
 }

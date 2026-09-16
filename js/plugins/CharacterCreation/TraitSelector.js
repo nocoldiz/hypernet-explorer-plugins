@@ -1627,6 +1627,59 @@
   // The trait economy, for every other screen that has to price a trait, print
   // a purse or roll a build the budget can pay for (the character sheet, the
   // NPC society generator, the detailed creation panel).
+  //===========================================================================
+  // Trait packages
+  //===========================================================================
+  // Picking eight traits off a board of two hundred is a detailed-mode job. The
+  // simple board asks the one question underneath it instead - what kind of
+  // person is this - and answers it with a package: a small, thematic set of
+  // traits that fits inside the budget on its own. Taking one REPLACES whatever
+  // the member had, and the detailed board is then free to add to it, take from
+  // it or throw it away, so a package is a starting point and never a lock.
+  // Every list is kept compatible (Traits.json `incompatible`) and under the
+  // ten-point budget; traitPackages() drops any id the database no longer has.
+  const TRAIT_PACKAGES = [
+    { id: "soldier", icon: 128, traits: [136, 95, 102] },
+    { id: "scholar", icon: 121, traits: [7, 41, 132, 13] },
+    { id: "outlaw", icon: 142, traits: [142, 49, 176] },
+    { id: "healer", icon: 176, traits: [138, 33, 88, 25] },
+    { id: "mystic", icon: 79, traits: [190, 139, 36] },
+    { id: "brawler", icon: 76, traits: [6, 153, 10] },
+    { id: "noble", icon: 163, traits: [123, 127, 81, 91, 131] },
+    { id: "wanderer", icon: 190, traits: [97, 96, 140] },
+    { id: "gunslinger", icon: 137, traits: [12, 202, 4] },
+    { id: "pilgrim", icon: 194, traits: [116, 119, 92] },
+    { id: "performer", icon: 80, traits: [143, 165, 94, 16] },
+    { id: "merchant", icon: 208, traits: [133, 87, 16, 85] },
+    { id: "hexed", icon: 165, traits: [99, 193, 192, 118] },
+    { id: "tinkerer", icon: 223, traits: [35, 141, 40] },
+  ];
+
+  /**
+   * The packages the simple board offers, each with the trait records it holds
+   * and what it costs out of the budget.
+   * @returns {Array<{id: string, icon: number, name: string, description: string,
+   *   traits: number[], rows: object[], cost: number}>}
+   */
+  const traitPackages = () => {
+    const bank = getTraits();
+    return TRAIT_PACKAGES.map((pack) => {
+      const rows = pack.traits
+        .map((id) => bank.find((trait) => Number(trait.id) === id))
+        .filter(Boolean);
+      const tally = traitTally(rows);
+      return {
+        id: pack.id,
+        icon: pack.icon,
+        name: t("packs." + pack.id + ".name"),
+        description: t("packs." + pack.id + ".description"),
+        traits: rows.map((trait) => trait.id),
+        rows,
+        cost: tally.spent - tally.refunded,
+      };
+    }).filter((pack) => pack.traits.length > 0);
+  };
+
   window.TraitPoints = {
     BUDGET: TRAIT_POINT_BUDGET,
     REFUND_CAP: TRAIT_REFUND_CAP,
@@ -1636,6 +1689,10 @@
     fits: traitFits,
     pick: pickRandomTraits,
     costBadgeHTML,
+    // The simple board picks a whole kind of person at once; the detailed one
+    // then edits what the package dealt (CharacterCreationSteps.js).
+    packages: traitPackages,
+    PACKAGES: TRAIT_PACKAGES,
     // The illness library dressed as trait cards. It is not part of
     // window.Health.Traits, so any other board that draws the five tabs (the
     // dossier panel in character creation) has to ask for it here or its

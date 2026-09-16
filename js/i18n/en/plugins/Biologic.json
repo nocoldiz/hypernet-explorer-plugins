@@ -673,7 +673,10 @@
   "knownTag": "Known",
   "empty": "Nobody in the party is carrying anything.",
   "tooExpensive": "Not enough money for the exam.",
-  "revealed": "{actor}'s illness is {disease}."
+  "revealed": "{actor}'s illness is {disease}.",
+  "treatTooExpensive": "Not enough money for the treatment.",
+  "treated": "{actor} is cured of {disease}: a full course of {count}x {item}.",
+  "managed": "{disease} cannot be cured: {count}x {item} to keep it at bay for {actor}."
  },
  "cure": {
   "rowLine": "{actor}: {disease}",
@@ -681,5 +684,33 @@
   "empty": "Nobody has a diagnosed illness worth medicine right now.",
   "tooExpensive": "Not enough money for the medicine.",
   "bought": "Bought {count}x {item} for {actor}."
+ },
+ "remote": {
+  "title": "VirtuaHealer",
+  "banner": "VIRTUAHEALER",
+  "tagline": "The surgery that answers wherever you stand",
+  "hint": "Pick a service to pay for it.",
+  "nothingToDo": "Nobody in the party needs anything today.",
+  "tooExpensive": "Not enough money for that service.",
+  "noSignalUnderground": "No signal down here. VirtuaHealer cannot reach a party underground.",
+  "noSignalTower": "The tower takes the line with it. VirtuaHealer cannot reach these floors.",
+  "section": {
+   "diagnosis": "Remote diagnosis",
+   "cure": "Arcane cure",
+   "prescription": "Prescriptions by courier",
+   "healing": "Healing rite"
+  },
+  "diagnoseLine": "Read {actor}'s chart",
+  "diagnoseDetail": "Names whatever they are carrying.",
+  "riteLine": "{actor}: {disease}",
+  "riteDetail": "Burns the illness out at once.",
+  "incurable": "Cannot be cured, only held at bay",
+  "noRemedy": "No remedy exists for this",
+  "rited": "The rite burns {disease} out of {actor}.",
+  "postLine": "{actor}: {disease}",
+  "postDetail": "{count}x {item} delivered to the pack.",
+  "healLine": "Mend {actor}",
+  "healDetail": "{hp} HP, {mp} MP and {parts} hurt parts.",
+  "healed": "{actor} is whole again."
  }
 }

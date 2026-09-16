@@ -115,7 +115,12 @@
     "lockedStructure": "Niente scambi di compagni in un posto come questo: chi è entrato deve uscire.",
     "busyTitle": "Impegnati",
     "busyAt": "{job} · {time} rimanenti",
-    "busyRemaining": "{hours}h {minutes}m"
+    "busyRemaining": "{hours}h {minutes}m",
+    "dossierTitle": "Dossier",
+    "dossierTurn": "Agisce {position} su {count}",
+    "dossierParams": "Attributi",
+    "dossierSkills": "Abilità conosciute",
+    "dossierTraits": "Tratti"
   },
   "roster": {
     "travelling": "In viaggio",

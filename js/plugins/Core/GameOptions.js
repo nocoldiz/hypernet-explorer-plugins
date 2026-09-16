@@ -122,8 +122,9 @@ const GameOptions = {
      * @returns {string[]} An array of theme filenames.
      */
     // The look the ASCII layer wears (UI/ASCIIMode.js). It is not a stylesheet:
-    // picking it turns the experimental ASCII mode on, and turning that mode on
-    // from the Experimental page picks it here. One state, two doors.
+    // picking it dresses the interface as a terminal (the ASCII HUD styling)
+    // and leaves the map alone. Turning the experimental ASCII map mode on
+    // from the Experimental page still picks this theme here.
     ASCII_THEME: 'ascii', // i18n-ignore: sentinel, not a label
 
     getThemes: function () {
@@ -259,10 +260,14 @@ const GameOptions = {
         this._injectTheme(themes[themeIndex] || themes[0]);
     },
 
-    // Guards the two directions of the ASCII theme against each other: picking
-    // the ASCII theme turns ASCII mode on, and turning ASCII mode on picks the
-    // ASCII theme. Without this they would call each other forever.
+    // Guards the two directions of the ASCII theme against each other: turning
+    // ASCII mode on picks the ASCII theme, and picking a theme can move the
+    // ASCII switches. Without this they would call each other forever.
     _themeSyncing: false,
+
+    // True when the ASCII theme, rather than the player's own Experimental
+    // switch, is what turned the terminal DOM styling on.
+    _asciiUiFromTheme: false,
 
     /**
      * The one entry point for a theme change the player made. Applies the look
@@ -277,10 +282,20 @@ const GameOptions = {
         this._themeSyncing = true;
         try {
             if (this.isAsciiTheme(index)) {
-                // Remember what to come back to, then hand the look to ASCII.
-                ConfigManager.asciiModeEnabled = 1;
+                // The theme is a LOOK, not the render mode: it dresses the DOM
+                // as a terminal and leaves the map drawn as it was. Turning the
+                // experimental ASCII map mode on stays the player's own call,
+                // made on the Experimental page.
+                this._asciiUiFromTheme = !ConfigManager.asciiHudEnabled;
+                ConfigManager.asciiHudEnabled = true;
             } else {
                 if (ConfigManager.asciiModeEnabled) ConfigManager.asciiModeEnabled = 0;
+                // Only take the terminal look back off if this theme is what
+                // put it on in the first place.
+                if (this._asciiUiFromTheme) {
+                    this._asciiUiFromTheme = false;
+                    ConfigManager.asciiHudEnabled = false;
+                }
                 ConfigManager.themeBeforeAscii = index;
                 this._injectTheme(themes[index]);
             }

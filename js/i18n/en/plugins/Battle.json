@@ -564,7 +564,7 @@
   },
   "escape": {
     "failed": "You fail to break away!",
-    "boss": "There is no escaping this foe!",
+    "boss": "This foe will not let you go!",
     "tooClose": "They are too close to break away!"
   },
   "hud": {

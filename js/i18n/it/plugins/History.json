@@ -450,7 +450,9 @@
     "plotFailedExecuted": "L'attentato a {leader} fallisce. Il rivale {rival} viene giustiziato.",
     "alliance": "{leader} e {rival} stringono una difficile alleanza politica in {place}.",
     "diagnosed": "A {leader} di {place} è stata diagnosticata {disease}. I medici non danno speranza di guarigione.",
+    "diagnosedHopeful": "A {leader} di {place} è stata diagnosticata {disease}. I medici sono cautamente ottimisti.",
     "diedOfIllness": "{leader} di {place} è morto di {disease}.",
+    "recovered": "{leader} di {place} è guarito da {disease} e torna in carica.",
     "diedOfOldAge": "{leader} di {place} è morto di vecchiaia, a {age} anni."
   },
   "effect": {

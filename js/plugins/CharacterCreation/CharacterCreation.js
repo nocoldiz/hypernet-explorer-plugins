@@ -1105,7 +1105,10 @@
           // Randomize every party slot, then jump straight to the options step
           this.createTotalRandomPartyAll();
         } else {
-          // Go to preset selection
+          // Go to preset selection, over the whole pool
+          if (window.CharacterPresets && window.CharacterPresets.setPresetBoardKind) {
+            window.CharacterPresets.setPresetBoardKind("");
+          }
           this.showPresetSelection();
         }
       },
@@ -1204,6 +1207,22 @@
       },
       handler: function () {
         markStepCompleted(STEP.BIO);
+        this.nextStep();
+      },
+    },
+    {
+      // Description: the character's own written history, read rather than
+      // operated. It was a column of the Bio page; prose set in a column beside
+      // a board of chips is prose nobody reads, so it stands alone.
+      id: "description",
+      get title() {
+        return T('CharCreate.description');
+      },
+      get choices() {
+        return [];
+      },
+      handler: function () {
+        markStepCompleted(STEP.DESCRIPTION);
         this.nextStep();
       },
     },
@@ -1715,6 +1734,7 @@
       TRAITS: byId.traits,
       SPECIALIZATIONS: byId.specializations,
       BIO: byId.bio,
+      DESCRIPTION: byId.description,
       ROMANCE: byId.romance,
       PERSONALITY: byId.personality,
       HOMETOWN: byId.hometown,
@@ -2562,23 +2582,6 @@
       this.refreshUIOverlayDOM();
     }
 
-    // CCScroll hook: the hometown step is a dropdown, so a wheel notch or a
-    // trigger pull moves the highlighted row instead of scrolling the list.
-    ccScrollStep(dir) {
-      const stepData = this.currentStepData();
-      if (!stepData || stepData.id !== "hometown") return false;
-      const w = this._gridWindow;
-      if (!w || !w.active) return false;
-      const max = w.maxItems();
-      if (max <= 0) return false;
-      const idx = Math.max(0, Math.min(max - 1, w.index() + dir));
-      if (idx === w.index()) return true;
-      SoundManager.playCursor();
-      w.select(idx);
-      this.refreshUIOverlayDOM();
-      return true;
-    }
-
     // Scenic battlebacks used as a randomized backdrop behind the parchment pockets.
     static get SCENE_BACKDROPS() {
       return [
@@ -2751,7 +2754,8 @@
       // open page. The familiar and the garage are the same case: neither is a
       // party member's sheet, so neither stands under that rail either.
       const stepTabsHtml = (isSettingsActive || isPetActive || isVehicleActive) ? '' : isScenarioMode ? `
-        <div class="cc-folder-tab active" onclick="SceneManager._scene.onReturnToPartyDossier()">
+        <div class="cc-step-tab active focusable" tabindex="0" data-nav-key="cc-step-scenario"
+             onclick="SceneManager._scene.onReturnToPartyDossier()">
           ${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.scenarioShared')}</span>
         </div>
       ` : tabs.map((tab) => {
@@ -2760,7 +2764,9 @@
         const isCompleted = this._isTabCompleted(tab.id);
 
         return `
-          <div class="cc-folder-tab ${isTabActive ? 'active' : ''}" onclick="SceneManager._scene.onTabClick(${tab.step}, '${tab.id}')">
+          <div class="cc-step-tab focusable ${isTabActive ? 'active' : ''}" tabindex="0"
+               data-nav-key="cc-step-${tab.id}"
+               onclick="SceneManager._scene.onTabClick(${tab.step}, '${tab.id}')">
             ${this._ccIconHtml(tab.iconIndex, 16)}
             <span>${tab.title.replace(/\s*\(Optional\)/i, "")}</span>
             ${isCompleted ? '<span class="cc-tab-done-mark">✓</span>' : ''}
@@ -2797,6 +2803,139 @@
           </div>
         </div>
       `;
+    }
+
+    // ── The action bar ───────────────────────────────────────────────────────
+    //
+    // Embark used to be drawn three times, on three different pages, and was
+    // wherever the page you happened to be on had put it. It is one button now,
+    // in one place, on every page: the last row of the spread, left slot for
+    // going back, right slot for leaving.
+    //
+    // Both slots are .focusable and named, so they are the last stop in reading
+    // order and the ring finds them again after the spread redraws.
+
+    // Is the party in a state that can actually set out? A seat with no name or
+    // no face would embark as an unnamed Harold, which is the one thing the
+    // roster refuses at the end.
+    _embarkBlockedReason() {
+      const members = $gameParty ? $gameParty.members() : [];
+      if (!members.length) return ccT('CharCreate.embarkLocked');
+      for (const m of members) {
+        const named = m.name() && m.name().trim() &&
+          m.name() !== "Unnamed" && m.name() !== "Harold"; // i18n-ignore: default-name sentinels
+        if (!named || !m.characterName()) return ccT('CharCreate.embarkLocked');
+      }
+      return "";
+    }
+
+    // What the left slot goes back TO depends on where you are, and nowhere
+    // else on the page has to know: the scenario sheet returns to the party,
+    // a chaos world rerolls the three characters it dealt (there is no party
+    // page behind it to return to), and everywhere else steps back a page.
+    _actionBarBackHtml() {
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      if (isScenario) {
+        return Scene_CharacterCreation.isChaosWorld()
+          ? `<button class="cc-compact-btn cc-action-back focusable" tabindex="0"
+                data-nav-key="cc-action-back"
+                onclick="SceneManager._scene.onChaosRerollParty()">
+              <span>${ccT('CharCreate.randomizeParty')}</span>
+            </button>`
+          : `<button class="cc-compact-btn cc-action-back focusable" tabindex="0"
+                data-nav-key="cc-action-back"
+                onclick="SceneManager._scene.onReturnToPartyDossier()">
+              <span>${ccT('CharCreate.returnToParty')}</span>
+            </button>`;
+      }
+      return `<button class="cc-compact-btn cc-action-back focusable" tabindex="0"
+              data-nav-key="cc-action-back"
+              onclick="SceneManager._scene.onActionBarBack()">
+            <span>${ccT('CharCreate.back')}</span>
+          </button>`;
+    }
+
+    // Rolling the whole party is a party level action, so it sits in the action
+    // bar beside the forward button rather than on a single member's sheet. The
+    // story mode plays four fixed dossiers and never rerolls them.
+    // Rolling the open member sits beside the one that rolls the whole party,
+    // to its left, so the two rerolls read as one pair.
+    _actionBarRandomizeMemberHtml() {
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      if (isScenario || Scene_CharacterCreation._storyMode || this._presetWindow) return '';
+      if (!Scene_CharacterCreation.getCurrentActor()) return '';
+      return `<button class="cc-compact-btn cc-action-randomize-member focusable" tabindex="0"
+              data-nav-key="cc-action-randomize-member"
+              onclick="SceneManager._scene.onQuickRandomizeMember()">
+            <span>${ccT('CharCreate.randomizeMember')}</span>
+          </button>`;
+    }
+
+    _actionBarRandomizePartyHtml() {
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      if (isScenario || Scene_CharacterCreation._storyMode) return '';
+      return `<button class="cc-compact-btn cc-action-randomize focusable" tabindex="0"
+              data-nav-key="cc-action-randomize"
+              onclick="SceneManager._scene.onActionBarRandomizeParty()">
+            <span>${ccT('CharCreate.randomizeParty')}</span>
+          </button>`;
+    }
+
+    // Filing the open sheet as a dossier of the player's own. A hand-authored
+    // dossier is the game's and is never re-filed (savePlayerPresetFromActor
+    // refuses it), so the button is not drawn on a locked one.
+    _actionBarSavePresetHtml() {
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      if (isScenario || Scene_CharacterCreation._storyMode || this._presetWindow) return '';
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor || this._isActorLockedPreset(actor)) return '';
+      if (!(window.CharacterPresets && window.CharacterPresets.savePlayerPresetFromActor)) return '';
+      return `<button class="cc-compact-btn cc-action-save-preset focusable" tabindex="0"
+              data-nav-key="cc-action-save-preset"
+              onclick="SceneManager._scene.onSaveMemberAsPreset()">
+            <span>${ccT('CharCreate.saveAsPreset')}</span>
+          </button>`;
+    }
+
+    _renderActionBarHtml() {
+      const blocked = this._embarkBlockedReason();
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      // Before the scenario sheet, the forward action is choosing one; on it,
+      // the forward action is leaving.
+      const forward = isScenario
+        ? `<button class="cc-compact-btn cc-action-embark focusable${blocked ? ' disabled' : ''}"
+                tabindex="0" data-nav-key="cc-action-embark"
+                title="${blocked}"
+                onclick="${blocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onFinishPartyCreation()'}">
+            <span>${ccT('CharCreate.embark')}</span>
+          </button>`
+        : `<button class="cc-compact-btn cc-action-embark focusable${blocked ? ' disabled' : ''}"
+                tabindex="0" data-nav-key="cc-action-embark"
+                title="${blocked}"
+                onclick="${blocked ? 'SoundManager.playBuzzer()' : 'SceneManager._scene.onProceedToScenario()'}">
+            <span>${this._partyConfirmLabel()}</span>
+          </button>`;
+
+      return `
+        <div class="cc-action-bar">
+          ${this._actionBarBackHtml()}
+          <span class="cc-action-spacer"></span>
+          ${blocked ? `<span class="cc-action-note">${blocked}</span>` : ''}
+          ${this._actionBarRandomizeMemberHtml()}
+          ${this._actionBarRandomizePartyHtml()}
+          ${this._actionBarSavePresetHtml()}
+          ${forward}
+        </div>
+      `;
+    }
+
+    // The left slot on an ordinary page: back one step, or out of the wizard
+    // when there is no page behind this one.
+    onActionBarBack() {
+      if (window.CCPick && window.CCPick.isOpen()) return;
+      if (this._presetWindow) { this.onPresetCancel(); return; }
+      SoundManager.playCancel();
+      this.previousStep();
     }
 
     // ── Helper methods for connected busts and currency ──
@@ -2901,6 +3040,7 @@
             <div class="cc-dossier-main">
               ${scenarioContent}
             </div>
+            ${this._renderActionBarHtml()}
           </div>
         `;
         this._lastIndex = activeIndex;
@@ -2936,6 +3076,10 @@
         } else if (this._step === STEP.BIO || this._isBioPickerStep()) {
           leftHtml = this._bioPickerLeftHtml();
           rightHtml = this._bioPickerRightHtml();
+        } else if (this._step === STEP.DESCRIPTION) {
+          // One wide page, no facing board: the history is read, not picked.
+          leftHtml = this._descriptionPageHtml();
+          rightHtml = "";
         } else if (this._step === STEP.ROMANCE) {
           leftHtml = this._romancePickerLeftHtml();
           rightHtml = this._romancePickerRightHtml();
@@ -2975,10 +3119,17 @@
                 </div>
               </div>
             </div>
+            ${this._renderActionBarHtml()}
           </div>
         `;
       } else {
         this._refreshTopFolderTabs();
+
+        // The bar is outside the spread, so it is refreshed on its own: what it
+        // offers changes with the page, and whether Embark is open at all
+        // changes with the party.
+        const bar = this._dndContainer.querySelector(".cc-action-bar");
+        if (bar) bar.outerHTML = this._renderActionBarHtml();
 
         const pane = this._dndContainer.querySelector(".cc-content-pane");
         if (pane) pane.classList.toggle("cc-preset-locked", this._presetEditBlocked());
@@ -3013,6 +3164,21 @@
       }
     }
 
+    // Moves the "picked" and "current class" marks onto the cards already on
+    // the class board. False when the board is not drawn yet, so the caller
+    // knows it still has to build it.
+    _markClassCardsInPlace(container, index) {
+      const cards = container.querySelectorAll(".cc-class-grid .cc-class-card[data-choice-index]");
+      if (!cards.length) return false;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      const currentClassId = actor ? actor._classId : 0;
+      cards.forEach((el) => {
+        el.classList.toggle("selected", Number(el.dataset.choiceIndex) === Number(index));
+        el.classList.toggle("current", Number(el.dataset.classId) === Number(currentClassId));
+      });
+      return true;
+    }
+
     // Swaps one whole page column of the spread for freshly built markup.
     // The builders already return the column's own <div class="cc-page ...">
     // wrapper, so the wrapper is swapped along with its contents. The old code
@@ -3033,8 +3199,24 @@
       // makes, so a swapped-in page is exempted from it.
       fresh.classList.add("cc-no-anim");
       const scroller = el.scrollTop;
+      // The column itself is rarely the thing that scrolls: the list inside it
+      // is. A rebuilt page that only put the column's own scrollTop back threw
+      // the reader to the top of whichever list they were in, so every scrolled
+      // descendant is measured by its place in the tree and put back where it
+      // was. The tree is the same shape either side of the swap, since only the
+      // marks on it changed.
+      const inner = [];
+      if (el.querySelectorAll) {
+        el.querySelectorAll("*").forEach((node, i) => {
+          if (node.scrollTop) inner.push([i, node.scrollTop]);
+        });
+      }
       el.replaceWith(fresh);
       fresh.scrollTop = scroller;
+      if (inner.length) {
+        const nodes = fresh.querySelectorAll("*");
+        inner.forEach(([i, top]) => { if (nodes[i]) nodes[i].scrollTop = top; });
+      }
       return fresh;
     }
 
@@ -3087,6 +3269,14 @@
         step: STEP.CLASS
       };
 
+      const description = {
+        id: "description",
+        iconIndex: 190,
+        title: ccT('CharCreate.description'),
+        subtitle: (actor && actor._ccBackstory) ? ccT('CharCreate.customized') : ccT('CharCreate.optional'),
+        step: STEP.DESCRIPTION
+      };
+
       const traits = {
         id: "traits",
         iconIndex: 87,
@@ -3107,7 +3297,7 @@
         // page is offered too, and it is the one page there she is actually
         // written on (see _presetLockFreeStep).
         if (Scene_CharacterCreation._storyMode) {
-          return [bio, {
+          return [bio, klass, {
             id: "romance",
             iconIndex: 84,
             title: ccT('CharCreate.romanceTab'),
@@ -3119,9 +3309,9 @@
             title: ccT('CharCreate.specializations'),
             subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional')),
             step: STEP.SPECIALIZATIONS
-          }];
+          }, description];
         }
-        return [bio, traits];
+        return [bio, klass, traits, description];
       }
 
       const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
@@ -3152,8 +3342,8 @@
       };
 
       return isCreature
-        ? [bio, romance, archetype, klass, traits, specializations]
-        : [bio, romance, klass, traits, specializations];
+        ? [bio, romance, archetype, klass, traits, specializations, description]
+        : [bio, romance, klass, traits, specializations, description];
     }
 
     _isTabCompleted(tabId) {
@@ -3172,6 +3362,7 @@
           return !!(actor._classId && actor._classId > 0);
         case "traits":
         case "specializations":
+        case "description":
         case "bio":
         case "romance":
         case "personality":
@@ -3227,9 +3418,19 @@
         this._clearPresetLock(actor);
       }
 
-      if (type === 'preset') {
+      // The written characters the world holds one of each are their own kind
+      // of dossier, so they are browsed on their own board (see isVipPreset);
+      // the Preset board keeps the ones a player can take again and again.
+      if (type === 'preset' || type === 'vip') {
+        if (window.CharacterPresets && window.CharacterPresets.setPresetBoardKind) {
+          window.CharacterPresets.setPresetBoardKind(type);
+        }
+        if (this._presetWindow) this.onPresetCancel();
         this.showPresetSelection();
         return;
+      }
+      if (window.CharacterPresets && window.CharacterPresets.setPresetBoardKind) {
+        window.CharacterPresets.setPresetBoardKind("");
       }
 
       if (this._presetWindow) {
@@ -3810,7 +4011,12 @@
         // where the picked one would have been on the unfiltered board.
         if (this._step === STEP.CLASS || this._isClassPickerStep()) {
           Scene_CharacterCreation._classHoverIndex = index;
-          this._ccSwapPage(container.querySelector(".cc-page-left"), this._classPickerLeftHtml(stepData2, index));
+          // Picking a class does not change the roster, only which card is
+          // marked, so the cards are re-marked where they stand: rebuilding the
+          // column would throw the list back to the top and blur the search box.
+          if (!this._markClassCardsInPlace(container, index)) {
+            this._ccSwapPage(container.querySelector(".cc-page-left"), this._classPickerLeftHtml(stepData2, index));
+          }
           this._ccSwapPage(container.querySelector(".cc-page-right"), this._classPickerRightHtml(stepData2, index));
           const sidebarSlot = container.querySelector(".cc-sidebar-slot");
           if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
@@ -4614,6 +4820,10 @@
     }
 
     updateUIInput() {
+      // A pick sheet is modal. It is read before anything else on the page so
+      // the press that walks its list never also moves the board behind it.
+      if (window.CCPick && window.CCPick.pollInput()) return;
+
       // Settings step: use dedicated input handler instead of grid navigation
       const _sd = this._step < CharacterCreationData.length ? CharacterCreationData[this._step] : null;
       if (_sd && _sd.isSettingsStep) {

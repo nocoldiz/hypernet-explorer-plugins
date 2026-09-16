@@ -4713,21 +4713,12 @@
     this._proposeMode = false;
     this._romanceMode = false;
     this._activeTab   = 'chat';
-    this._pushPlayerLine(playerLine);
-    this._isTyping    = true;
+    const said        = this._pushPlayerLine(playerLine);
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
     this._joinMessage = charge
       ? { type: 'reject', text: `${charge} ${deltaText}` }
       : { type: landed ? 'accept' : 'reject', text: deltaText };
-    this._render();
-    this._scrollChatToBottom();
-    setTimeout(() => {
-      this._isTyping = false;
-      this._chatHistory.push({ role: 'npc', text: npcLine });
-      if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-      this._render();
-      this._scrollChatToBottom();
-    }, 350);
+    this._replyNpc(npcLine, this._llmSituation(nm(style), delta), said);
   };
 
   Scene_NPCEmpathize.prototype._romanceInteract = async function (id) {
@@ -4814,21 +4805,14 @@
 
     this._romanceMode = false;
     this._activeTab   = 'chat';
-    this._pushPlayerLine(playerLine);
-    this._isTyping    = true;
+    const said        = this._pushPlayerLine(playerLine);
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
     this._joinMessage = charge
       ? { type: 'reject', text: `${charge} ${deltaText}` }
       : { type: delta >= 0 ? 'accept' : 'reject', text: deltaText };
-    this._render();
-    this._scrollChatToBottom();
-    setTimeout(() => {
-      this._isTyping = false;
-      this._chatHistory.push({ role: 'npc', text: npcLine });
-      if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-      this._render();
-      this._scrollChatToBottom();
-    }, 350);
+    // The bank's line is what this person means; with a .gguf model picked it
+    // is said in their own words instead.
+    this._replyNpc(npcLine, this._llmSituation(def.label || id, delta), said);
   };
 
   // ============================================================================
@@ -4981,17 +4965,11 @@
     this._directionsMode = false;
     this._activeTab      = 'chat';
     this._joinMessage    = null;
-    this._pushPlayerLine(ask);
-    this._isTyping       = true;
-    this._render();
-    this._scrollChatToBottom();
-    setTimeout(() => {
-      this._isTyping = false;
-      this._chatHistory.push({ role: 'npc', text: answer });
-      if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
-      this._render();
-      this._scrollChatToBottom();
-    }, 350);
+    const said           = this._pushPlayerLine(ask);
+    // The directions themselves are the panel's answer and never the model's:
+    // the bearing and the distance are facts. What a model changes is only the
+    // wording they are given in, which is why the line is handed over whole.
+    this._replyNpc(answer, T('Empathize.llm.situationDirections', { target: entry.label }), said);
   };
 
   // ============================================================================

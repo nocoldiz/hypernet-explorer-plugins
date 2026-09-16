@@ -1455,6 +1455,24 @@
   }
 
   /**
+   * True where there is no sky to fly in: under a roof (a house, a cave, a
+   * dungeon, a procedural interior) or anywhere inside the Omega Tower, upper
+   * floors and lower alike. A broom is still ridden there, and still carries
+   * its rider faster than their own legs would, but it hugs the floor: no
+   * passing through walls, no crossing a chasm, no setting down on a ledge the
+   * party could not have walked to.
+   */
+  function flightGroundedHere() {
+    if (typeof $gameMap === 'undefined' || !$gameMap) return false;
+    const mapId = $gameMap.mapId();
+    if (!mapId) return false;
+    if (mapCache.isInterior(mapId)) return true;
+    const floors = window.DungeonFloors;
+    if (floors && typeof floors.insideTower === 'function' && floors.insideTower()) return true;
+    return false;
+  }
+
+  /**
    * Where a flying vehicle may set down. It flies over everything, so the only
    * question is what the rider can stand on once it stops, and the answer is
    * deliberately generous: anything the party could walk on, PLUS the three
@@ -2278,7 +2296,14 @@
       // so the only question left is whether the tile exists at all. This sits
       // above the interior rule below because a corridor wall is exactly the
       // sort of thing it is meant to go straight over.
-      if (isFlyingVehicle(this)) return $gameMap.isValid(x2, y2);
+      if (isFlyingVehicle(this)) {
+        if (!flightGroundedHere()) return $gameMap.isValid(x2, y2);
+        // Under a roof the broom is a fast walk and nothing more: it goes
+        // exactly where the party could have gone on foot.
+        if (!$gameMap.isValid(x2, y2)) return false;
+        if (isVehicleBlockedTile(x2, y2, $gameMap.mapId())) return false;
+        return $gameMap.isPassable(x2, y2, this.reverseDir(d));
+      }
 
       // A bridge deck (region 12) is always drivable. Everything that rolls or
       // floats crosses a bridge, indoors or out, whatever the tile's own
@@ -2353,7 +2378,7 @@
     const wasGettingOn = this._vehicleGettingOn;
     _Game_Player_updateVehicleGetOn.call(this);
     if (wasGettingOn && !this._vehicleGettingOn && isPlayerRidingFlying()) {
-      this.setThrough(true);
+      this.setThrough(!flightGroundedHere());
     }
   };
 
@@ -2361,7 +2386,15 @@
   // stand on: rooftops, cliff tops and bridges included (isFlyingLandingTile).
   const _Game_Vehicle_isLandOk = Game_Vehicle.prototype.isLandOk;
   Game_Vehicle.prototype.isLandOk = function (x, y, d) {
-    if (isFlyingVehicle(this)) return isFlyingLandingTile(x, y);
+    if (isFlyingVehicle(this)) {
+      // Grounded flight never reached a roof or a cliff top in the first place,
+      // so the landing question is only ever "can the party stand here".
+      if (flightGroundedHere()) {
+        return $gameMap.isValid(x, y) && $gameMap.regionId(x, y) !== 10 &&
+          [2, 4, 6, 8].some(dir => $gameMap.isPassable(x, y, dir));
+      }
+      return isFlyingLandingTile(x, y);
+    }
     return _Game_Vehicle_isLandOk.call(this, x, y, d);
   };
 
@@ -2389,6 +2422,19 @@
     this.makeEncounterCount();
     this.gatherFollowers();
     return true;
+  };
+
+  // The roof can arrive under a rider who is already in the air: a cave mouth,
+  // a house door and a procedural interior are all entered mid-flight, and the
+  // lower tower is entered by a lift. The through-flag is therefore answered
+  // every frame rather than once at take-off.
+  const _Game_Player_update_VSFlight = Game_Player.prototype.update;
+  Game_Player.prototype.update = function (sceneActive) {
+    _Game_Player_update_VSFlight.call(this, sceneActive);
+    if (isPlayerRidingFlying() && !this._vehicleGettingOn && !this._vehicleGettingOff) {
+      const shouldPass = !flightGroundedHere();
+      if (this.isThrough() !== shouldPass) this.setThrough(shouldPass);
+    }
   };
 
   const _Game_Player_updateVehicleGetOff_VS = Game_Player.prototype.updateVehicleGetOff;
@@ -4669,6 +4715,30 @@
     cache: mapCache,
     manager: vehicleManager,
 
+    // Vehicles the party can act on from where they stand ({ key, name }, most
+    // recently parked first). The world map asks this to tell a parked vehicle
+    // apart from the town square it is standing on (Map/WorldMapReturn.js).
+    reachableVehicles() {
+      try {
+        return reachableVehicleKeys().map(key => {
+          const config = configForVehicleKey(key);
+          return config ? { key, name: vehicleDisplayName(config) } : null;
+        }).filter(Boolean);
+      } catch (e) {
+        return [];
+      }
+    },
+
+    // Opens the action menu of one of those vehicles. Callers are inside another
+    // choice list's callback, so the menu waits a frame exactly like the
+    // showVehicleChoiceMenu one does.
+    openVehicleMenu(key) {
+      const vehicle = materializeVehicle(key);
+      if (!vehicle) return false;
+      pendingVehicleMenu = vehicle;
+      return true;
+    },
+
     // Teleport the player into the Starship interior (map 721). Reuses the same
     // path as the "saveAirshipAndTravel" plugin command, so it works from foot
     // (e.g. the "Return to Ship" menu action on an alien planet surface) as well
@@ -5135,7 +5205,7 @@
     if (portable) {
       if (this.isTransparent()) this.setTransparent(false);
       if (isFlyingConfig(portable)) {
-        this.setThrough(true);
+        this.setThrough(!flightGroundedHere());
       }
     }
   };

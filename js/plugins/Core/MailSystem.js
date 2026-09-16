@@ -68,6 +68,14 @@
  *     .send(letter)               -> { ok, error, fee }
  *     .collect(id) / .markRead(id) / .discard(id)
  *
+ * POST EXPRESS
+ *   The same post as a HypernetOS program, "app-hypermail", registered on the
+ *   desktop by default: folders, a reading pane, an address book of every
+ *   dimension and a compose sheet that encloses money and goods exactly as the
+ *   parchment does. Launch it with window.HyperMailApp.launch(), or straight
+ *   onto a blank sheet with window.HyperMailApp.compose(). The half written
+ *   letter lives on $gameSystem._hypermailDraft.
+ *
  * Requires Core/WorldManager (world folders) and reads Economy/StockMarket
  * prices when they are loaded. Load after WorldManager.
  * ============================================================================
@@ -1711,5 +1719,694 @@
   for (const name of ["Core/MailSystem", "MailSystem"]) {
     PluginManager.registerCommand(name, "OpenMailCompose", () => openMail("compose"));
     PluginManager.registerCommand(name, "OpenMailbox", () => openMail("inbox"));
+  }
+
+  //=========================================================================
+  // Post Express
+  //
+  // The same post, read and written at a desk instead of on a writing slope:
+  // a HypernetOS window in the shape of the mail clients of the day. Three
+  // panes, a folder list down the left, the letters top right and whichever
+  // one is picked opened underneath. Everything it does it does through the
+  // service above, so a letter written here and a letter written on the
+  // parchment are the same letter, crossing into other dimensions included.
+  //=========================================================================
+
+  const HM_APP_ID = "app-hypermail";
+  const HM_APP_ICON = 192; // Letter, per js/db/Sprites/Icons.json
+
+  // The desk furniture, in the shell's own tokens so the window follows
+  // whichever theme the desktop is wearing.
+  const HS = {
+    app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+         "font-family:'Tahoma',sans-serif; font-size:14px; color:var(--xp-ink-2);",
+    bar: "display:flex; align-items:center; gap:4px; padding:4px 6px; " +
+         "background:linear-gradient(to bottom,var(--xp-paper),var(--xp-face-5)); " +
+         "border-bottom:1px solid var(--xp-face-shade);",
+    tool: "display:flex; align-items:center; gap:5px; padding:4px 9px; border:1px solid transparent; " +
+          "border-radius:3px; cursor:pointer; user-select:none;",
+    body: "flex:1; display:flex; min-height:0;",
+    folders: "width:168px; flex-shrink:0; background:var(--xp-face-6); " +
+             "border-right:1px solid var(--xp-face-shade); padding:6px 0; overflow-y:auto;",
+    folder: "padding:6px 10px; cursor:pointer; border-left:4px solid transparent; user-select:none; " +
+            "display:flex; align-items:center; gap:6px;",
+    right: "flex:1; display:flex; flex-direction:column; min-width:0;",
+    list: "height:44%; min-height:96px; overflow-y:auto; background:var(--xp-white); " +
+          "border-bottom:2px solid var(--xp-face-shade);",
+    pane: "flex:1; overflow-y:auto; padding:12px 14px; background:var(--xp-face-2);",
+    row: "display:flex; gap:8px; align-items:baseline; padding:5px 9px; cursor:pointer; " +
+         "border-bottom:1px solid var(--xp-face-6);",
+    rowOn: "background:#316ac5; color:var(--xp-white);",
+    status: "display:flex; gap:14px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+            "padding:3px 9px; background:var(--xp-face-5); font-size:13px; color:var(--xp-ink-4);",
+    card: "background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; " +
+          "padding:10px 12px; margin-bottom:8px;",
+    btn: "display:inline-block; padding:4px 12px; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); " +
+         "border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; color:var(--xp-ink); user-select:none;",
+    h: "margin:0 0 8px; font-size:16px; font-weight:bold; color:#0b3d91;",
+    note: "color:var(--xp-ink-soft-2); font-size:13px; line-height:1.5;",
+    label: "display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.4px; " +
+           "color:var(--xp-ink-soft-2); margin-bottom:2px;",
+    field: "width:100%; box-sizing:border-box; padding:4px 6px; font-family:inherit; font-size:14px; " +
+           "border:1px solid var(--xp-face-4); background:var(--xp-white); color:var(--xp-ink);",
+    table: "width:100%; border-collapse:collapse; font-size:13px;",
+    th: "text-align:left; padding:3px 6px; border-bottom:1px solid var(--xp-face-shade); font-weight:bold;",
+    td: "padding:3px 6px; border-bottom:1px solid #e6e3d8;"
+  };
+
+  const HM_FOLDERS = ["inbox", "transit", "compose", "book"];
+
+  function hmIcon(index, size) {
+    return window.HypernetOS && window.HypernetOS.getIconHTML
+      ? window.HypernetOS.getIconHTML(index, size || 16) : "";
+  }
+
+  function hmBlankLetter() {
+    return { world: null, partyId: null, subject: "", body: "", gold: 0, items: [],
+      delay: { days: 0, months: 0, years: 0 } };
+  }
+
+  // The desk keeps its own half-written letter, so closing the window and
+  // opening it again finds the sheet exactly where it was left. It rides on
+  // $gameSystem, which means it survives a save the way the parchment draft does.
+  function hmDraft() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return hmBlankLetter();
+    const d = $gameSystem._hypermailDraft;
+    if (!d || typeof d !== "object") {
+      $gameSystem._hypermailDraft = hmBlankLetter();
+    } else {
+      if (!d.delay || typeof d.delay !== "object") d.delay = { days: 0, months: 0, years: 0 };
+      if (!Array.isArray(d.items)) d.items = [];
+    }
+    return $gameSystem._hypermailDraft;
+  }
+
+  function hmClearDraft() {
+    if (typeof $gameSystem !== "undefined" && $gameSystem) $gameSystem._hypermailDraft = hmBlankLetter();
+  }
+
+  // What is in the bags moves without the post knowing, so an enclosure is
+  // trimmed to what the party can actually hand over before it is drawn.
+  function hmReconcile() {
+    const d = hmDraft();
+    if (!hasParty()) return d;
+    d.items = d.items.filter((ref) => {
+      const obj = resolveRef(ref);
+      if (!obj) return false;
+      const held = $gameParty.numItems(obj);
+      if (held <= 0) return false;
+      ref.count = Math.min(ref.count, held);
+      return ref.count > 0;
+    });
+    d.gold = Math.max(0, Math.min(Math.floor(Number(d.gold) || 0), $gameParty.gold()));
+    if (d.world && d.partyId && !findCard(d.world, d.partyId)) {
+      d.world = null;
+      d.partyId = null;
+    }
+    return d;
+  }
+
+  function hmSpanLabel(delay) {
+    const parts = [];
+    for (const unit of ["years", "months", "days"]) {
+      const n = Math.max(0, Number(delay && delay[unit]) || 0);
+      if (n > 0) parts.push(T.n("Mail.span." + unit, n, { count: n }));
+    }
+    return parts.length ? parts.join(", ") : T("Mail.span.none");
+  }
+
+  window.HyperMailApp = {
+    win: null,
+    folder: "inbox",
+    selectedId: null,
+    message: "",
+
+    launch: function () {
+      if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+      const existing = document.getElementById(HM_APP_ID);
+      if (existing) {
+        this.win = existing;
+        if (window.HypernetOS.WindowManager.focusWindow) {
+          window.HypernetOS.WindowManager.focusWindow(existing);
+        }
+        this.render();
+        return;
+      }
+      // A desk that is written from is a desk anybody may write back to.
+      try { registerSelf(); } catch (e) { console.error("[PostExpress] registerSelf failed", e); }
+
+      const contentHTML = `
+        <div style="${HS.app}">
+          <div style="${HS.bar}" id="hm-toolbar"></div>
+          <div style="${HS.body}">
+            <div style="${HS.folders}" id="hm-folders"></div>
+            <div style="${HS.right}">
+              <div style="${HS.list}" id="hm-list"></div>
+              <div style="${HS.pane}" id="hm-pane"></div>
+            </div>
+          </div>
+          <div style="${HS.status}">
+            <span id="hm-account"></span>
+            <span id="hm-counts"></span>
+            <span id="hm-message" style="margin-left:auto; color:#0b3d91"></span>
+          </div>
+        </div>`;
+
+      const win = window.HypernetOS.WindowManager.createWindow({
+        id: HM_APP_ID,
+        title: T("Mail.app.appName"),
+        icon: HM_APP_ICON,
+        width: 780,
+        height: 540,
+        contentHTML: contentHTML
+      });
+      this.win = win;
+      this.message = "";
+      this.render();
+    },
+
+    // Open the desk straight on a blank sheet.
+    compose: function () {
+      this.folder = "compose";
+      this.launch();
+    },
+
+    say: function (text) {
+      this.message = text || "";
+      const el = this.win && this.win.querySelector("#hm-message");
+      if (el) el.textContent = this.message;
+    },
+
+    el: function (tag, style, text, id) {
+      const node = document.createElement(tag);
+      if (style) node.style.cssText = style;
+      if (text != null) node.textContent = text;
+      if (id) node.id = id;
+      return node;
+    },
+
+    button: function (label, style, id, onClick) {
+      const b = this.el("div", style, label, id);
+      b.className = "focusable";
+      b.tabIndex = 0;
+      b.addEventListener("click", (e) => { e.stopPropagation(); onClick(); });
+      return b;
+    },
+
+    render: function () {
+      if (!this.win || !this.win.isConnected) return;
+      this.renderToolbar();
+      this.renderFolders();
+      if (this.folder === "compose") this.renderCompose();
+      else if (this.folder === "book") this.renderBook();
+      else this.renderLetters();
+      this.renderStatus();
+    },
+
+    // --- Chrome ------------------------------------------------------------
+
+    renderToolbar: function () {
+      const bar = this.win.querySelector("#hm-toolbar");
+      if (!bar) return;
+      bar.innerHTML = "";
+      const tools = [
+        { id: "new", icon: 192, label: T("Mail.app.tool.write"), run: () => {
+            this.folder = "compose"; this.render(); } },
+        { id: "open", icon: 191, label: T("Mail.app.tool.collect"), run: () => this.collectSelected() },
+        { id: "del", icon: 168, label: T("Mail.app.tool.discard"), run: () => this.discardSelected() },
+        { id: "sync", icon: 83, label: T("Mail.app.tool.sync"), run: () => {
+            invalidateDirectory();
+            try { registerSelf(); } catch (e) { console.error("[PostExpress] registerSelf failed", e); }
+            this.say(T("Mail.app.synced"));
+            this.render();
+            if (window.SoundManager) SoundManager.playOk();
+          } }
+      ];
+      tools.forEach((tool) => {
+        const b = this.button("", HS.tool, "hm-tool-" + tool.id, tool.run);
+        b.innerHTML = `${hmIcon(tool.icon, 16)}<span>${escapeHtml(tool.label)}</span>`;
+        b.addEventListener("mouseenter", () => {
+          b.style.background = "var(--xp-face-2)"; b.style.borderColor = "var(--xp-face-4)";
+        });
+        b.addEventListener("mouseleave", () => {
+          b.style.background = "transparent"; b.style.borderColor = "transparent";
+        });
+        bar.appendChild(b);
+      });
+    },
+
+    renderFolders: function () {
+      const box = this.win.querySelector("#hm-folders");
+      if (!box) return;
+      box.innerHTML = "";
+      const unread = hasParty() ? unreadCount() : 0;
+      const waiting = hasParty() ? pendingCount() : 0;
+      HM_FOLDERS.forEach((key) => {
+        const on = this.folder === key;
+        const count = key === "inbox" ? unread : key === "transit" ? waiting : 0;
+        const item = this.button("", HS.folder +
+          (on ? "background:var(--xp-face-2); border-left-color:#0b3d91; font-weight:bold;" : ""),
+          "hm-folder-" + key, () => {
+            if (this.folder === key) return;
+            this.folder = key;
+            this.selectedId = null;
+            if (window.SoundManager) SoundManager.playCursor();
+            this.render();
+          });
+        item.innerHTML = `${hmIcon(key === "book" ? 189 : key === "compose" ? 193 : 192, 16)}` +
+          `<span>${escapeHtml(T("Mail.app.folder." + key))}</span>` +
+          (count ? `<span style="margin-left:auto; font-weight:bold">${count}</span>` : "");
+        box.appendChild(item);
+      });
+    },
+
+    renderStatus: function () {
+      const set = (sel, text) => {
+        const el = this.win.querySelector(sel);
+        if (el) el.textContent = text;
+      };
+      const world = activeWorld();
+      set("#hm-account", world && hasParty()
+        ? T("Mail.app.account", { party: partyLabel(selfCard()), world: world })
+        : T("Mail.ui.noWorld"));
+      set("#hm-counts", world && hasParty()
+        ? T("Mail.app.counts", { unread: unreadCount(), transit: pendingCount() })
+        : "");
+      set("#hm-message", this.message || "");
+    },
+
+    // --- The letters -------------------------------------------------------
+
+    letters: function () {
+      if (!activeWorld() || !hasParty()) return [];
+      const now = worldClock(activeWorld());
+      if (this.folder === "transit") {
+        return inbox({ pending: true }).filter((m) => (Number(m.deliverAt) || 0) > now);
+      }
+      return inbox();
+    },
+
+    renderLetters: function () {
+      const list = this.win.querySelector("#hm-list");
+      const pane = this.win.querySelector("#hm-pane");
+      if (!list || !pane) return;
+      list.style.display = "";
+      const rows = this.letters();
+      if (!rows.length) {
+        list.innerHTML = `<div style="${HS.note} padding:14px">` +
+          `${escapeHtml(this.folder === "transit" ? T("Mail.app.nothingInTransit") : T("Mail.inbox.empty"))}</div>`;
+        pane.innerHTML = "";
+        return;
+      }
+      if (!rows.some((m) => m.id === this.selectedId)) this.selectedId = rows[0].id;
+
+      list.innerHTML = "";
+      rows.forEach((m) => {
+        const on = m.id === this.selectedId;
+        const crossed = !!(m.from && m.from.world && m.to && m.from.world !== m.to.world);
+        const row = this.button("", HS.row + (on ? HS.rowOn : (m.read ? "" : "font-weight:bold;")),
+          "hm-row-" + m.id, () => {
+            this.selectedId = m.id;
+            if (this.folder === "inbox") markRead(m.id);
+            if (window.SoundManager) SoundManager.playCursor();
+            this.render();
+          });
+        const enclosed = (m.gold > 0 || (m.items || []).length) && !m.collected;
+        row.innerHTML =
+          `<span style="width:16px; flex-shrink:0">${enclosed ? hmIcon(191, 14) : ""}</span>` +
+          `<span style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">` +
+            `${escapeHtml(m.subject || T("Mail.noSubject"))}</span>` +
+          `<span style="width:34%; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ` +
+            `font-size:13px; ${on ? "" : "color:var(--xp-ink-soft-2)"}">` +
+            `${escapeHtml((m.from && m.from.label) || T("Mail.unknownParty"))}` +
+            `${crossed ? " " + escapeHtml(T("Mail.inbox.crossed")) : ""}</span>` +
+          `<span style="flex-shrink:0; font-size:12px; ${on ? "" : "color:var(--xp-ink-soft-2)"}">` +
+            `${escapeHtml(stampOf(m.deliverAt))}</span>`;
+        list.appendChild(row);
+      });
+
+      this.renderLetter(pane, rows.find((m) => m.id === this.selectedId));
+    },
+
+    renderLetter: function (pane, m) {
+      if (!pane) return;
+      if (!m) { pane.innerHTML = `<div style="${HS.note}">${T("Mail.inbox.pickOne")}</div>`; return; }
+      const crossed = !!(m.from && m.from.world && m.to && m.from.world !== m.to.world);
+      const goods = (m.items || []).map((ref) => {
+        const obj = resolveRef(ref);
+        return obj ? `${obj.name} x${ref.count}` : null;
+      }).filter(Boolean);
+      const held = (m.delay && (m.delay.days || m.delay.months || m.delay.years))
+        ? T("Mail.inbox.heldBack", { span: hmSpanLabel(m.delay) }) : "";
+      const late = (Number(m.deliverAt) || 0) > worldClock(activeWorld());
+      const hasEnclosure = m.gold > 0 || goods.length > 0;
+
+      pane.innerHTML = `
+        <div style="${HS.card}">
+          <div style="font-size:17px; font-weight:bold; margin-bottom:4px">${escapeHtml(m.subject || T("Mail.noSubject"))}</div>
+          <div style="${HS.note}">${escapeHtml(m.from && m.from.partyId === partyId() && !crossed
+              ? T("Mail.inbox.fromSelf")
+              : T("Mail.inbox.fromLine", {
+                  who: (m.from && m.from.label) || T("Mail.unknownParty"),
+                  world: (m.from && m.from.world) || "?" }))}</div>
+          <div style="${HS.note}">${escapeHtml(T("Mail.inbox.written", { date: stampOf(m.sentMinute) }))}</div>
+          <div style="${HS.note}">${escapeHtml(late
+              ? T("Mail.app.arrivesOn", { date: stampOf(m.deliverAt) })
+              : T("Mail.inbox.arrived", { date: stampOf(m.deliverAt) }))}</div>
+          ${held ? `<div style="${HS.note}">${escapeHtml(held)}</div>` : ""}
+          ${crossed ? `<div style="${HS.note}">${escapeHtml(T("Mail.inbox.crossedFrom",
+              { world: m.from.world, fee: euroLabel(m.fee || 0) }))}</div>` : ""}
+        </div>
+        <div style="${HS.card} white-space:pre-wrap; line-height:1.55; font-size:15px">${escapeHtml(m.body || "")}</div>
+        <div style="${HS.card}">
+          <div style="font-weight:bold; margin-bottom:4px">${escapeHtml(T("Mail.inbox.enclosed"))}</div>
+          ${hasEnclosure ? `
+            ${m.gold > 0 ? `<div>${escapeHtml(T("Mail.inbox.moneyLine"))}: ${escapeHtml(moneyLabel(m.gold))}</div>` : ""}
+            ${goods.length ? `<div>${escapeHtml(goods.join(", "))}</div>` : ""}
+            ${m.collected ? `<div style="${HS.note} margin-top:4px">${escapeHtml(T("Mail.inbox.collectedAlready"))}</div>` : ""}
+          ` : `<div style="${HS.note}">${escapeHtml(T("Mail.inbox.nothingEnclosed"))}</div>`}
+        </div>
+        <div id="hm-letter-actions" style="display:flex; gap:6px"></div>`;
+
+      const actions = pane.querySelector("#hm-letter-actions");
+      if (!m.collected && hasEnclosure && !late) {
+        actions.appendChild(this.button(T("Mail.inbox.collect"), HS.btn, "hm-collect", () => this.collectSelected()));
+      }
+      actions.appendChild(this.button(T("Mail.app.replyTo"), HS.btn, "hm-reply", () => this.replyTo(m)));
+      if (!late) {
+        actions.appendChild(this.button(T("Mail.inbox.discard"), HS.btn, "hm-discard", () => this.discardSelected()));
+      }
+    },
+
+    collectSelected: function () {
+      if (!this.selectedId) return;
+      const result = collect(this.selectedId);
+      if (!result.ok) {
+        this.say(result.error);
+        if (window.SoundManager) SoundManager.playBuzzer();
+      } else {
+        const goods = result.items.reduce((n, ref) => n + ref.count, 0);
+        this.say(T("Mail.toast.collected", {
+          money: moneyLabel(result.gold),
+          goods: goods ? T.n("Mail.toast.goods", goods, { count: goods }) : T("Mail.compose.noGoods")
+        }));
+        if (window.SoundManager) SoundManager.playOk();
+      }
+      this.render();
+    },
+
+    discardSelected: function () {
+      if (!this.selectedId) return;
+      const letter = this.letters().find((m) => m.id === this.selectedId);
+      if (letter && !letter.collected && (letter.gold > 0 || (letter.items || []).length)) {
+        this.say(T("Mail.error.stillFull"));
+        if (window.SoundManager) SoundManager.playBuzzer();
+        return;
+      }
+      if (!discard(this.selectedId)) {
+        this.say(T("Mail.error.gone"));
+        return;
+      }
+      this.selectedId = null;
+      if (window.SoundManager) SoundManager.playCancel();
+      this.render();
+    },
+
+    replyTo: function (m) {
+      const d = hmDraft();
+      if (m && m.from && m.from.world && m.from.partyId) {
+        d.world = m.from.world;
+        d.partyId = m.from.partyId;
+        d.subject = T("Mail.app.reSubject", { subject: m.subject || T("Mail.noSubject") }).slice(0, 120);
+      }
+      this.folder = "compose";
+      this.render();
+    },
+
+    // --- The address book --------------------------------------------------
+
+    renderBook: function () {
+      const list = this.win.querySelector("#hm-list");
+      const pane = this.win.querySelector("#hm-pane");
+      if (!list || !pane) return;
+      list.style.display = "none";
+      const groups = activeWorld() ? directory() : [];
+      if (!groups.length) {
+        pane.innerHTML = `<div style="${HS.card} ${HS.note}">${escapeHtml(T("Mail.compose.noAddresses"))}</div>`;
+        return;
+      }
+      const here = activeWorld();
+      pane.innerHTML = `<h2 style="${HS.h}">${escapeHtml(T("Mail.app.folder.book"))}</h2>` +
+        `<div style="${HS.note} margin-bottom:10px">${escapeHtml(T("Mail.app.bookBlurb"))}</div>` +
+        groups.map((group) => {
+          const steps = dimensionalDistance(here, group.world);
+          return `<div style="${HS.card}">
+            <div style="font-weight:bold">${escapeHtml(group.world)}</div>
+            <div style="${HS.note} margin-bottom:6px">${escapeHtml(group.foreign
+              ? T("Mail.compose.routeAcross", { world: group.world, steps: steps }) + " " +
+                T("Mail.compose.feeShort", { fee: euroLabel(postage(group.world, null)) })
+              : T("Mail.compose.routeHome", { world: group.world }))}</div>
+            <table style="${HS.table}">
+              <thead><tr>
+                <th style="${HS.th}">${escapeHtml(T("Mail.app.colParty"))}</th>
+                <th style="${HS.th}">${escapeHtml(T("Mail.app.colMembers"))}</th>
+                <th style="${HS.th}">${escapeHtml(T("Mail.app.colSeen"))}</th>
+              </tr></thead>
+              <tbody>${group.parties.map((card) => `<tr>
+                <td style="${HS.td}">${escapeHtml(partyLabel(card))}${card.isSelf
+                  ? ` <span style="${HS.note}">${escapeHtml(T("Mail.app.thisIsYou"))}</span>` : ""}</td>
+                <td style="${HS.td}">${escapeHtml(T.n("Mail.compose.memberCount",
+                  (card.members || []).length, { count: (card.members || []).length }))}</td>
+                <td style="${HS.td}">${escapeHtml(T("Mail.compose.seenOn", { date: stampOf(card.minute) }))}</td>
+              </tr>`).join("")}</tbody>
+            </table>
+          </div>`;
+        }).join("");
+    },
+
+    // --- Writing one -------------------------------------------------------
+
+    renderCompose: function () {
+      const list = this.win.querySelector("#hm-list");
+      const pane = this.win.querySelector("#hm-pane");
+      if (!list || !pane) return;
+      list.style.display = "none";
+      if (!activeWorld() || !hasParty()) {
+        pane.innerHTML = `<div style="${HS.card} ${HS.note}">${escapeHtml(T("Mail.ui.noWorld"))}</div>`;
+        return;
+      }
+      const d = hmReconcile();
+      // The recipient is picked by its place in this list rather than by a
+      // joined key: a world may be named anything at all, separators included.
+      const options = [];
+      directory().forEach((group) => group.parties.forEach((card) => options.push({
+        world: group.world,
+        id: card.id,
+        label: card.isSelf
+          ? T("Mail.compose.yourself", { leader: card.name })
+          : T("Mail.compose.addressLine", { who: partyLabel(card), world: group.world })
+      })));
+      const chosen = options.findIndex((o) => o.world === d.world && o.id === d.partyId);
+      const fee = d.world ? postage(d.world, { gold: d.gold, items: d.items }) : 0;
+      const total = fee * GOLD_PER_EURO + Math.max(0, Number(d.gold) || 0);
+      const short = total - $gameParty.gold();
+      const arrival = addDelay(worldClock(d.world || activeWorld()), d.delay);
+
+      pane.innerHTML = `
+        <h2 style="${HS.h}">${escapeHtml(T("Mail.app.newMessage"))}</h2>
+        <div style="${HS.card}">
+          <label style="${HS.label}">${escapeHtml(T("Mail.compose.recipient"))}</label>
+          <select id="hm-to" class="focusable" style="${HS.field}">
+            <option value="-1">${escapeHtml(T("Mail.compose.noRecipient"))}</option>
+            ${options.map((o, i) => `<option value="${i}" ${i === chosen ? "selected" : ""}>${escapeHtml(o.label)}</option>`).join("")}
+          </select>
+          <div style="${HS.note} margin-top:6px" id="hm-route"></div>
+        </div>
+        <div style="${HS.card}">
+          <label style="${HS.label}">${escapeHtml(T("Mail.compose.subject"))}</label>
+          <input id="hm-subject" class="focusable" style="${HS.field}" maxlength="120"
+                 placeholder="${escapeHtml(T("Mail.compose.subjectPlaceholder"))}" value="${escapeHtml(d.subject)}">
+          <label style="${HS.label} margin-top:8px">${escapeHtml(T("Mail.compose.body"))}</label>
+          <textarea id="hm-body" class="focusable" rows="7" spellcheck="false"
+                    style="${HS.field} resize:vertical; line-height:1.5"
+                    placeholder="${escapeHtml(T("Mail.compose.bodyPlaceholder"))}"></textarea>
+        </div>
+        <div style="${HS.card}">
+          <label style="${HS.label}">${escapeHtml(T("Mail.compose.money"))}</label>
+          <input id="hm-gold" class="focusable" style="${HS.field}" type="number" min="0"
+                 max="${$gameParty.gold()}" step="100" value="${Math.max(0, Number(d.gold) || 0)}">
+          <div style="${HS.note}">${escapeHtml(T("Mail.app.purse", { money: moneyLabel($gameParty.gold()) }))}</div>
+          <label style="${HS.label} margin-top:10px">${escapeHtml(T("Mail.compose.items"))}</label>
+          <div id="hm-goods"></div>
+        </div>
+        <div style="${HS.card}">
+          <label style="${HS.label}">${escapeHtml(T("Mail.app.holdBack"))}</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            ${["days", "months", "years"].map((unit) => `
+              <div style="flex:1; min-width:96px">
+                <div style="${HS.note}">${escapeHtml(T("Mail.compose.delay" + unit.charAt(0).toUpperCase() + unit.slice(1)))}</div>
+                <input id="hm-delay-${unit}" class="focusable" style="${HS.field}" type="number"
+                       min="0" max="${DELAY_LIMITS[unit]}" value="${Math.max(0, Number(d.delay[unit]) || 0)}">
+              </div>`).join("")}
+          </div>
+          <div style="${HS.note} margin-top:6px">${escapeHtml(T("Mail.compose.arrives", {
+            date: stampOf(arrival), span: hmSpanLabel(d.delay) }))}</div>
+        </div>
+        <div style="${HS.card}">
+          <div id="hm-postage">${escapeHtml(!d.world ? T("Mail.compose.noRecipient")
+            : fee <= 0 ? T("Mail.compose.postageFree")
+            : T("Mail.compose.postageLine", { fee: euroLabel(fee), total: moneyLabel(total) }))}</div>
+          ${short > 0 ? `<div style="color:#b00020; margin-top:4px">${escapeHtml(
+            T("Mail.compose.cannotAfford", { short: moneyLabel(short) }))}</div>` : ""}
+          <div id="hm-send-row" style="display:flex; gap:6px; margin-top:8px"></div>
+        </div>`;
+
+      const body = pane.querySelector("#hm-body");
+      if (body) body.value = d.body || "";
+
+      const route = pane.querySelector("#hm-route");
+      if (route) {
+        route.textContent = !d.world ? ""
+          : d.world === activeWorld() ? T("Mail.compose.routeHome", { world: d.world })
+          : T("Mail.compose.routeAcross", { world: d.world, steps: dimensionalDistance(activeWorld(), d.world) });
+      }
+
+      const commit = () => {
+        const to = pane.querySelector("#hm-to");
+        if (to) {
+          const pick = options[Number(to.value)];
+          d.world = pick ? pick.world : null;
+          d.partyId = pick ? pick.id : null;
+        }
+        const subject = pane.querySelector("#hm-subject");
+        if (subject) d.subject = subject.value.slice(0, 120);
+        if (body) d.body = body.value.slice(0, 8000);
+        const gold = pane.querySelector("#hm-gold");
+        if (gold) d.gold = Math.max(0, Math.min($gameParty.gold(), Math.floor(Number(gold.value) || 0)));
+        ["days", "months", "years"].forEach((unit) => {
+          const field = pane.querySelector("#hm-delay-" + unit);
+          if (field) d.delay[unit] = Math.max(0, Math.min(DELAY_LIMITS[unit], Math.floor(Number(field.value) || 0)));
+        });
+      };
+      // Every field writes itself back as it is typed in, so nothing is lost by
+      // clicking a folder mid-sentence; the ones that change the price of the
+      // stamp redraw the sheet when they are let go of.
+      ["#hm-subject", "#hm-body", "#hm-gold", "#hm-delay-days", "#hm-delay-months", "#hm-delay-years"]
+        .forEach((sel) => {
+          const field = pane.querySelector(sel);
+          if (field) field.addEventListener("input", commit);
+        });
+      ["#hm-to", "#hm-gold", "#hm-delay-days", "#hm-delay-months", "#hm-delay-years"].forEach((sel) => {
+        const field = pane.querySelector(sel);
+        if (field) field.addEventListener("change", () => { commit(); this.render(); });
+      });
+
+      this.renderGoods(pane.querySelector("#hm-goods"), d, commit);
+
+      const row = pane.querySelector("#hm-send-row");
+      row.appendChild(this.button(T("Mail.compose.send"), HS.btn + "font-weight:bold;", "hm-send",
+        () => { commit(); this.trySend(); }));
+      row.appendChild(this.button(T("Mail.app.clear"), HS.btn, "hm-clear", () => {
+        hmClearDraft();
+        if (window.SoundManager) SoundManager.playCancel();
+        this.say("");
+        this.render();
+      }));
+    },
+
+    renderGoods: function (holder, d, commit) {
+      if (!holder) return;
+      const stock = mailableStock();
+      if (!stock.length) {
+        holder.innerHTML = `<div style="${HS.note}">${escapeHtml(T("Mail.compose.nothingToSend"))}</div>`;
+        return;
+      }
+      holder.innerHTML = "";
+      const attached = (kind, id) => {
+        const ref = d.items.find((r) => r.kind === kind && Number(r.id) === Number(id));
+        return ref ? ref.count : 0;
+      };
+      const setAttached = (kind, id, count) => {
+        const at = d.items.findIndex((r) => r.kind === kind && Number(r.id) === Number(id));
+        const value = Math.max(0, Math.floor(count));
+        if (value <= 0) { if (at >= 0) d.items.splice(at, 1); }
+        else if (at >= 0) d.items[at].count = value;
+        else d.items.push({ kind, id: Number(id), count: value });
+      };
+
+      const box = this.el("div", "max-height:150px; overflow-y:auto; border:1px solid var(--xp-face-4); " +
+        "background:var(--xp-white)");
+      stock.forEach((entry) => {
+        const line = this.el("div", "display:flex; align-items:center; gap:8px; padding:3px 6px; " +
+          "border-bottom:1px solid #e6e3d8");
+        const name = this.el("span", "flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap");
+        name.innerHTML = `${hmIcon(entry.item.iconIndex, 16)} ${escapeHtml(entry.item.name)}`;
+        line.appendChild(name);
+        line.appendChild(this.el("span", HS.note + "flex-shrink:0",
+          T.n("Mail.compose.held", entry.held, { count: entry.held })));
+        const step = (delta) => {
+          commit();
+          setAttached(entry.kind, entry.id,
+            Math.min(entry.held, attached(entry.kind, entry.id) + delta));
+          if (window.SoundManager) SoundManager.playCursor();
+          this.render();
+        };
+        line.appendChild(this.button("-", HS.btn + "padding:1px 8px;",
+          `hm-goods-less-${entry.kind}-${entry.id}`, () => step(-1)));
+        line.appendChild(this.el("span", "min-width:22px; text-align:center; font-weight:bold",
+          String(attached(entry.kind, entry.id))));
+        line.appendChild(this.button("+", HS.btn + "padding:1px 8px;",
+          `hm-goods-more-${entry.kind}-${entry.id}`, () => step(1)));
+        box.appendChild(line);
+      });
+      holder.appendChild(box);
+    },
+
+    trySend: function () {
+      const d = hmDraft();
+      const result = send({
+        world: d.world, partyId: d.partyId, subject: d.subject, body: d.body,
+        gold: d.gold, items: d.items, delay: d.delay
+      });
+      if (!result.ok) {
+        this.say(result.error);
+        if (window.SoundManager) SoundManager.playBuzzer();
+        if (window.HypernetOS && window.HypernetOS.Dialog) {
+          window.HypernetOS.Dialog.error(result.error, T("Mail.app.appName"));
+        }
+        return;
+      }
+      hmClearDraft();
+      this.say(result.fee > 0
+        ? T("Mail.toast.sentAcross", { fee: euroLabel(result.fee) })
+        : T("Mail.toast.sent"));
+      if (window.SoundManager) SoundManager.playOk();
+      this.folder = "inbox";
+      this.selectedId = null;
+      this.render();
+    }
+  };
+
+  // The desk is registered with the shell, which loads after this plugin, so
+  // the registration waits for the boot when HypernetOS is not there yet.
+  function registerMailApp() {
+    if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
+    window.HypernetOS.registerApp({
+      id: HM_APP_ID,
+      name: T("Mail.app.appName"),
+      icon: HM_APP_ICON,
+      category: "internet",   // i18n-ignore  category id
+      launchFn: function () { window.HyperMailApp.launch(); },
+      desktopShortcut: true
+    });
+    return true;
+  }
+
+  if (!registerMailApp()) {
+    const _Scene_Boot_create_mail = Scene_Boot.prototype.create;
+    Scene_Boot.prototype.create = function () {
+      _Scene_Boot_create_mail.call(this);
+      registerMailApp();
+    };
   }
 })();

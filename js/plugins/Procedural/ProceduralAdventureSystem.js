@@ -502,11 +502,43 @@
   // session's own stream, which keeps it deterministic there.
   const ANOM_STAT_PARAMS = { STR: 2, CON: 3, INT: 4, WIS: 5, DEX: 6, PSI: 7, LUK: 7 };   // i18n-ignore: stat ids
 
+  // A specialization the party may or may not have trained. `check: { spec:
+  // "Archaeology", dc: 14 }` throws the same d20, but what it adds is the
+  // quester’s tier in the trade (SpecializationMenu.js: 1 Untrained to 5)
+  // on top of the ability the trade is read on. A party with nobody who has
+  // ever held a trowel can still try it and will usually fail; a trained
+  // hand opens a door the rest of the party cannot.
+  function anomSpecDef(name) {
+    const S = window.Specializations;
+    if (!S || !S.byName) return null;
+    return S.byName.get(String(name)) || (S.byId && S.byId.get(String(name))) || null;
+  }
+
+  // The tier the quester holds in it, 1 (Untrained) to 5.
+  function anomSpecTier(session, name) {
+    const XP = window.SpecializationXP;
+    const who = anomQuester(session);
+    if (!XP || !XP.levelOf) return 1;
+    try { return XP.levelOf(who, String(name)) || 1; } catch (e) { return 1; }
+  }
+
   function anomCheckOf(choice) {
     const c = choice && choice.check;
     if (!c) return null;
     if (c.chance > 0) {
       return { chance: Math.max(5, Math.min(95, Math.round(c.chance))), stat: null };
+    }
+    if (c.spec) {
+      // The trade is read on the ability its own record names, so a Surgery
+      // check is a DEX check for anybody who has never trained it.
+      const def = anomSpecDef(c.spec);
+      const stat = String((c.stat || (def && def.stat) || "INT")).toUpperCase();
+      return {
+        spec: String(c.spec),
+        specLabel: (def && def.name) || String(c.spec),
+        stat: ANOM_STAT_PARAMS[stat] ? stat : null,
+        dc: c.dc > 0 ? Math.round(c.dc) : 13,
+      };
     }
     const stat = String(c.stat || "").toUpperCase();
     if (!ANOM_STAT_PARAMS[stat] && !(c.dc > 0)) return null;
@@ -527,6 +559,17 @@
   // The quester's modifier: the D&D-style ability mod the battle system
   // already derives from the stat (BattleSystemEnhanced), or the same
   // arithmetic done here when that plugin is not up.
+  // What the quester adds to a check: the ability modifier, plus two per
+  // tier of the trade when the check names one. Untrained adds nothing, a
+  // master adds eight, which is the difference between "we could try" and
+  // "this is what they do".
+  function anomCheckMod(session, check) {
+    if (!check) return 0;
+    let mod = check.stat ? anomStatMod(session, check.stat) : 0;
+    if (check.spec) mod += 2 * (anomSpecTier(session, check.spec) - 1);
+    return mod;
+  }
+
   function anomStatMod(session, stat) {
     const pid = ANOM_STAT_PARAMS[stat];
     const who = anomQuester(session);
@@ -542,14 +585,17 @@
   // die takes its time crossing the screen.
   function anomRollCheck(session, check) {
     const statName = check.stat || "";
-    const modifier = check.stat ? anomStatMod(session, check.stat) : 0;
+    const modifier = anomCheckMod(session, check);
     const who = anomQuester(session);
     const D = window.Dice3D;
     if (D && typeof D.rollD20 === "function") {
       const opts = {
         statName,
-        actionName: anomText("ui.checkAction",
-          { stat: statName || "D20", name: who ? who.name() : "" }),
+        actionName: check.spec
+          ? anomText("ui.specAction",
+              { spec: check.specLabel || check.spec, name: who ? who.name() : "" })
+          : anomText("ui.checkAction",
+              { stat: statName || "D20", name: who ? who.name() : "" }),
         force3D: true,
       };
       if (check.chance) return D.rollPercentage(check.chance, opts);
@@ -765,6 +811,7 @@
     exp: 87, harm: 6, heal: 176, battle: 322, knowledge: 189,
     reputation: 145, reputationLost: 282, failed: 282, minigame: 196,
     crime: 111, augment: 339, needs: 219, skill: 186, eris: 84,
+    stateGained: 6, infected: 41, lostGold: 282, lostItems: 282, dungeon: 235,
   };
 
   function anomLine(key, text, opts) {
@@ -986,6 +1033,275 @@
     });
   }
 
+  // ---- What an ending takes ------------------------------------------------
+  // Everything above hands something over. These take something away, and they
+  // are what makes a branch a gamble rather than a menu: a story that can only
+  // pay is not a risk, it is an errand. Any outcome may carry them, a `fail`
+  // branch included, and a choice may carry them on the way past (`risk`).
+
+  // A state, by the name it wears in the database. Content writes the plain id
+  // ("poison", "bleeding", "guardbroken") and this resolves it against
+  // $dataStates, so nothing here hardcodes a numeric id and a database that
+  // renames or renumbers a state is followed rather than contradicted.
+  let _anomStateIndex = null;
+  function anomStateKey(name) {
+    return String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+  function anomStateIdByKey(key) {
+    if (typeof $dataStates === "undefined" || !$dataStates) return 0;
+    if (!_anomStateIndex || _anomStateIndex.length !== $dataStates.length) {
+      _anomStateIndex = { length: $dataStates.length, map: {} };
+      for (let i = 1; i < $dataStates.length; i++) {
+        const st = $dataStates[i];
+        if (st && st.name) _anomStateIndex.map[anomStateKey(st.name)] = i;
+      }
+    }
+    return _anomStateIndex.map[anomStateKey(key)] || 0;
+  }
+
+  // Who an affliction lands on: the whole away team by default, or just
+  // whoever was holding the die ("who": "quester").
+  function anomAfflicted(session, out) {
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    if (out && out.who === "quester") {   // i18n-ignore: outcome field value
+      const who = anomQuester(session);
+      return who ? [who] : [];
+    }
+    if (out && out.who === "member" && members.length > 1) {   // i18n-ignore: outcome field value
+      return [anomAugmentTarget(session, out)].filter((a) => a);
+    }
+    return members;
+  }
+
+  // States the party walks out wearing. `states: ["poison"]`, or the long form
+  // { list: [...], who: "quester", chance: 60 } when it is not a certainty.
+  function anomApplyStates(session, out, lines) {
+    const raw = out && out.states;
+    if (!raw) return false;
+    const spec = Array.isArray(raw) ? { list: raw } : raw;
+    const list = (Array.isArray(spec.list) ? spec.list : [spec.list]).filter((k) => k);
+    if (!list.length) return false;
+    const rng = anomRng(session);
+    const targets = anomAfflicted(session, Object.assign({}, out, spec));
+    let landed = false;
+    list.forEach((key) => {
+      const id = anomStateIdByKey(key);
+      if (!id) return;
+      if (spec.chance > 0 && rng() * 100 >= spec.chance) return;
+      const name = $dataStates[id].name;
+      const caught = [];
+      targets.forEach((a) => {
+        if (!a || typeof a.addState !== "function" || a.isStateAffected(id)) return;
+        a.addState(id);
+        caught.push(a.name());
+      });
+      if (!caught.length) return;
+      landed = true;
+      anomReward(lines, "stateGained", { who: caught.join(", "), state: name });
+    });
+    return landed;
+  }
+
+  // Something caught down there. `infect: true` takes whatever fits the place;
+  // `infect: "tetanus"` names it; { cat: "parasitic", chance: 50 } narrows the
+  // draw. The illness itself is the disease system's, with its own window
+  // period, course and cure: nothing about an infection is invented here.
+  const ANOM_INFECT_EARTH = ["bacterial", "viral", "parasitic", "fungal", "protozoan"];   // i18n-ignore: disease category ids
+  const ANOM_INFECT_ALIEN = ["cosmic", "anomalous", "esoteric", "cursed", "digital"];     // i18n-ignore: disease category ids
+  function anomApplyInfection(session, out, lines) {
+    const raw = out && out.infect;
+    if (!raw) return false;
+    const DS = window.DiseaseSystem;
+    if (!DS || !DS.infectActor) return false;
+    const spec = (typeof raw === "object") ? raw : (raw === true ? {} : { id: raw });
+    const rng = anomRng(session);
+    if (spec.chance > 0 && rng() * 100 >= spec.chance) return false;
+    let id = spec.id || null;
+    if (!id) {
+      const db = window.Diseases;
+      const all = Array.isArray(db) ? db : ((db && db.diseases) || []);
+      const cats = spec.cat
+        ? [spec.cat]
+        : (session && session.earth ? ANOM_INFECT_EARTH : ANOM_INFECT_ALIEN);
+      const pool = all.filter((d) => d && d.id && cats.indexOf(d.category) >= 0);
+      if (!pool.length) return false;
+      id = pool[Math.floor(rng() * pool.length)].id;
+    }
+    const targets = anomAfflicted(session, Object.assign({}, out, spec));
+    const who = targets[Math.floor(rng() * Math.max(1, targets.length))] || targets[0];
+    if (!who) return false;
+    if (!DS.infectActor(who, id, anomText("ui.infectionSource"), null, { silent: true })) return false;
+    const entry = DS.byId ? DS.byId(id) : null;
+    anomReward(lines, "infected", { who: who.name(), name: (entry && entry.name) || id });
+    return true;
+  }
+
+  // Coin and goods that leave with somebody else. `loss: { gold: "medium" }`
+  // is priced like an ending of that magnitude, `mats: 2` takes kinds of
+  // material out of the pack, and `item: 1` lifts a carried item at random.
+  // Only what the party actually holds can be taken: an empty pack is its own
+  // protection, and nothing here can put a count below zero.
+  function anomApplyLoss(session, out, lines) {
+    const raw = out && out.loss;
+    if (!raw) return false;
+    const spec = (typeof raw === "object") ? raw : { gold: raw };
+    const rng = anomRng(session);
+    let took = false;
+
+    if (spec.gold) {
+      const price = (typeof spec.gold === "number")
+        ? Math.round(spec.gold)
+        : anomGoldPrice(String(spec.gold));
+      const held = ($gameParty && $gameParty.gold) ? $gameParty.gold() : 0;
+      const amount = Math.min(held, price);
+      if (amount > 0) {
+        $gameParty.loseGold(amount);
+        const shown = (amount / 100).toFixed(2);
+        anomReward(lines, "lostGold", { amount: shown },
+          { count: "-" + anomText("ui.goldChip", { amount: shown }) });
+        took = true;
+      }
+    }
+
+    const kinds = Math.max(0, Math.round(Number(spec.mats) || 0));
+    if (kinds > 0) {
+      const MAT = materials();
+      const held = Object.keys(MAT)
+        .map((k) => MAT[k])
+        .filter((id) => matUsable(id) && matOwned(id) > 0);
+      const gone = [];
+      for (let i = 0; i < kinds && held.length; i++) {
+        const idx = Math.floor(rng() * held.length);
+        const id = held.splice(idx, 1)[0];
+        const qty = Math.max(1, Math.min(matOwned(id),
+          Math.round((spec.qty || 2) * anomMag(out))));
+        matTake(id, qty);
+        gone.push(qty + "× " + matName(id));
+      }
+      if (gone.length) {
+        anomReward(lines, "lostItems", { list: gone.join(", ") });
+        took = true;
+      }
+    }
+
+    const items = Math.max(0, Math.round(Number(spec.item) || 0));
+    if (items > 0 && $gameParty && $gameParty.items) {
+      const carried = $gameParty.items().filter((it) => it && it.name &&
+        it.itypeId === 1 && $gameParty.numItems(it) > 0);
+      const gone = [];
+      for (let i = 0; i < items && carried.length; i++) {
+        const idx = Math.floor(rng() * carried.length);
+        const it = carried.splice(idx, 1)[0];
+        $gameParty.loseItem(it, 1, false);
+        gone.push(it.name);
+      }
+      if (gone.length) {
+        anomReward(lines, "lostItems", { list: gone.join(", ") });
+        took = true;
+      }
+    }
+    return took;
+  }
+
+  // Everything an outcome takes rather than gives, in one call, so a reward
+  // branch and a failure branch price their consequences identically.
+  function anomApplyConsequences(session, out, lines) {
+    anomApplyStates(session, out, lines);
+    anomApplyInfection(session, out, lines);
+    anomApplyLoss(session, out, lines);
+  }
+
+  // ---- Risk on the way past -----------------------------------------------
+  // A choice may cost something to take without branching the story: content
+  // writes `risk: { chance: 35, harm: "small", states: [...], loss: {...} }`
+  // and the throw happens when the row is chosen, out of the session's own
+  // stream. `chance` is the chance the bad thing HAPPENS. What lands is read
+  // out on the node the choice leads to, so the party learns what it cost
+  // exactly where they find out what was behind the door.
+  function anomApplyRisk(session, choice) {
+    const risk = choice && choice.risk;
+    if (!risk) return [];
+    const rng = anomRng(session);
+    const chance = risk.chance > 0 ? Math.min(95, risk.chance) : 30;
+    if (rng() * 100 >= chance) return [];
+    const lines = [];
+    if (risk.harm) {
+      const pct = Math.min(0.5, 0.08 * (ANOM_MAG[risk.harm] || ANOM_MAG.small));
+      ($gameParty ? $gameParty.members() : []).forEach((a) => {
+        a.setHp(Math.max(1, Math.floor(a.hp - a.mhp * pct)));
+      });
+      anomReward(lines, "harm", { pct: Math.round(pct * 100) });
+    }
+    anomApplyConsequences(session, risk, lines);
+    anomApplyCrime(risk, lines);
+    anomApplyReputation(risk, lines);
+    return lines;
+  }
+
+  // ---- A quest that is a place --------------------------------------------
+  // Some answers are not paid out at all: they open a way down, and what the
+  // party came for is somewhere inside it. The structure is one of the
+  // catalogue's own (Dungeon, Catacombs, Mineshaft, SunkenLibrary, ...),
+  // generated fresh off this encounter's key and stocked by the same rules
+  // every procedural structure is stocked by, which is what levels it for the
+  // party standing in its doorway. It belongs to the quest and to nothing
+  // else: no doorway in the world leads back to it, so its border hands the
+  // party out onto the world map rather than into a field.
+  const ANOM_DUNGEON_FALLBACK = ["Dungeon", "Crypt", "Catacombs", "Mineshaft", "CaveDen"];   // i18n-ignore: biome ids
+  const ANOM_DUNGEON_PRIVATE = ["PatronVault", "Sewer"];   // i18n-ignore: biome ids
+
+  // The structure this ending opens. Named by the content when it knows what
+  // it wrote ("biome"), otherwise drawn, weighted, from the structure
+  // catalogue, so the same square always opens onto the same place.
+  function anomDungeonBiome(session, out) {
+    const asked = out && out.biome;
+    const D = window.ProcGenDungeon;
+    if (asked && (!D || !D.isStructure || D.isStructure(asked))) return String(asked);
+    const rng = anomRng(session);
+    const list = (D && D.structures) ? D.structures() : [];
+    const pool = list.filter((st) => st && st.key && st.weight > 0 &&
+      ANOM_DUNGEON_PRIVATE.indexOf(st.key) < 0);
+    if (!pool.length) {
+      return ANOM_DUNGEON_FALLBACK[Math.floor(rng() * ANOM_DUNGEON_FALLBACK.length)];
+    }
+    let total = 0;
+    pool.forEach((st) => { total += st.weight; });
+    let roll = rng() * total;
+    for (let i = 0; i < pool.length; i++) {
+      roll -= pool[i].weight;
+      if (roll <= 0) return pool[i].key;
+    }
+    return pool[pool.length - 1].key;
+  }
+
+  // Can the party be put in one from where they are standing? Only on Earth:
+  // the star map's encounters are answered from orbit, and a structure whose
+  // border returns to Earth's world map would strand a landing party there.
+  function anomCanOpenDungeon(session) {
+    if (!session || !session.earth) return false;
+    if (typeof $gameMap === "undefined" || !$gameMap) return false;
+    return !!(window.PluginManager && PluginManager.callCommand);
+  }
+
+  // The way in, opened. The quest's structure is generated and entered exactly
+  // as Sandbox Mode's is (WorldMapReturn's startForcedBiome), salted with the
+  // encounter's own key so two adventures never open the same rooms, and told
+  // to hand the party back to the world map when they walk out of it.
+  function anomOpenDungeon(session, out) {
+    const biome = anomDungeonBiome(session, out);
+    let salt = 0;
+    const key = String((session && session.key) || biome);
+    for (let i = 0; i < key.length; i++) salt = (Math.imul(salt, 31) + key.charCodeAt(i)) | 0;
+    try {
+      PluginManager.callCommand($gameMap._interpreter || {}, "WorldMapReturn",   // i18n-ignore: plugin name
+        "startForcedBiome", { Biome: biome, Salt: String(salt || 1), Return: "worldmap" });   // i18n-ignore: command + arg ids
+    } catch (e) {
+      console.error("[ProceduralAdventure] dungeon", e);
+      return false;
+    }
+    return true;
+  }
+
   // ---- Augments -----------------------------------------------------------
   // Some endings leave somebody changed. The augment is fitted through the
   // prosthetic shop's own installer (stat effects, learned skills, the lot), so
@@ -1189,6 +1505,10 @@
     if (kind !== "augment" && out && out.augment) anomApplyAugment(session, out, lines);
     anomApplyNeeds(out, lines);
     anomApplyCrime(out, lines);
+    // ...and may have cost them something they were carrying, left somebody
+    // ill, or put a state on the whole away team. A reward with a price is
+    // still a reward, and this is where it is charged.
+    anomApplyConsequences(session, out, lines);
 
     // Every ending teaches the away team something, even the empty ones.
     const expBand = anomBracket(level);
@@ -1218,6 +1538,7 @@
   // more: it is settled here, on her ledger (anomApplyEris).
   let _anomPendingBattle = null;
   let _anomPendingMinigame = null;
+  let _anomPendingDungeon = null;
   let _anomMinigameSettle = null;   // a contest being played right now
 
   // An ending that was not reached: the party ran, or the party lost. It pays
@@ -1357,6 +1678,18 @@
       // party was never given the chance to lose it.
       return anomApplyOutcome(session, Object.assign({}, outcome,
         { kind: outcome.reward || "gold" }));
+    }
+    if (outcome.kind === "dungeon") {
+      // The answer is a place. Whatever the ending pays is paid here (most
+      // pay nothing: what the party came for is inside), and the way in is
+      // armed for the map scene to open once the prose has been read.
+      const lines = anomApplyOutcome(session, Object.assign({}, outcome,
+        { kind: outcome.reward || "none" }));
+      if (anomCanOpenDungeon(session)) {
+        _anomPendingDungeon = { outcome, key: session.key };
+        lines.push(anomLine("dungeon", anomText("reward.dungeon")));
+      }
+      return lines;
     }
     if (outcome.kind === "date") {
       // The evening itself is no longer played out here: an encounter that
@@ -1506,6 +1839,29 @@
           if (c.pass) row.pass = c.pass;
           if (c.fail) row.fail = c.fail;
         }
+        // A road that is only open to somebody who has actually trained the
+        // trade. The row is shown either way, with what it would take on it:
+        // a door the party can see but not open is a reason to go and learn
+        // something, which is the whole point of having trades at all.
+        if (c.req && c.req.spec) {
+          const tier = anomSpecTier(session, c.req.spec);
+          const need = Math.max(2, Math.round(c.req.tier || 2));
+          const def = anomSpecDef(c.req.spec);
+          row.reqLabel = anomText("ui.specNeedChip", {
+            spec: (def && def.name) || c.req.spec,
+            tier: (window.Specializations && window.Specializations.levelName)
+              ? window.Specializations.levelName(need) : need,
+          });
+          if (tier < need) row.locked = true;
+        }
+        // A row that can hurt says so before it is taken. The odds are the
+        // content's own; what is at stake is not spelled out, because half
+        // of a risk is not knowing exactly which way it goes wrong.
+        if (c.risk) {
+          row.risk = c.risk;
+          row.riskLabel = anomText("ui.riskChip",
+            { pct: Math.min(95, c.risk.chance > 0 ? c.risk.chance : 30) });
+        }
         const cost = anomGiveCost(session, c.give);
         if (c.give && !cost) row.broken = true;   // asked for something unpriceable
         if (cost) {
@@ -1654,11 +2010,22 @@
       // the crate before anything else happens, exactly like the prose says.
       if (choice.cost) anomPayCost(choice.cost);
 
+      // What the row itself costs on the way past: thrown here, read out on
+      // the node it leads to, so the party finds out what it cost in the
+      // same breath as what was behind the door.
+      const toll = anomApplyRisk(s, choice);
+
       let targetNode = choice.to;
       if (choice.check) {
         const res = await anomRollCheck(s, choice.check);
         if (res && res.success) { if (choice.pass) targetNode = choice.pass; }
         else if (choice.fail) targetNode = choice.fail;
+        // Doing the thing is how the thing is learned, and a check thrown on
+        // a trade IS doing the thing: the attempt pays, the success pays more.
+        if (choice.check.spec && window.SpecializationXP) {
+          window.SpecializationXP.award(choice.check.spec, (res && res.success) ? 2 : 1,
+            { actor: anomQuester(s) });
+        }
       }
 
       const db = anomalyDB();
@@ -1666,7 +2033,12 @@
       s.node = targetNode;
       const node = sc && sc.nodes && sc.nodes[s.node];
       if (node && node.outcome) s.rewards = anomArm(s, node.outcome);
-      return anomBuildView(s);
+      if (toll.length) s.rewards = toll.concat(s.rewards || []);
+      const view = anomBuildView(s);
+      // A branch that is not an ending has no payout panel of its own: what
+      // the risk took is toasted instead, so it is never silently swallowed.
+      if (toll.length && !view.done) anomToast(toll, false);
+      return view;
     },
     // Close the encounter for good and record how it ended. `finalLines` is what
     // a handover paid once it knew (a fight won, a game lost); without it the
@@ -1734,6 +2106,25 @@
       hookMinigameResult();
       SceneManager.push(Scene);
       return true;
+    },
+    // A way down was the answer: the structure is generated and entered from
+    // here, and the encounter closes as it goes. What is inside it is the
+    // dungeon's own business from then on - the quest was the door.
+    hasPendingDungeon() { return !!_anomPendingDungeon; },
+    openDungeon() {
+      const pend = _anomPendingDungeon;
+      _anomPendingDungeon = null;
+      if (!pend) return false;
+      const session = Anomaly.session();
+      const opened = session ? anomOpenDungeon(session, pend.outcome) : false;
+      if (!opened && session) {
+        // Nothing could be generated from where the party stands: the ending
+        // pays out instead of leaving them with a door that is not there.
+        anomToast(anomApplyOutcome(session, Object.assign({}, pend.outcome,
+          { kind: pend.outcome.reward || "loot" })), true);
+      }
+      Anomaly.end();
+      return opened;
     },
     // Called on the way back to the map, once the minigame's scene is gone.
     settleMinigame() {
@@ -2538,14 +2929,17 @@
         if (choice.check.chance) {
           bits.push(anomText("ui.chanceChip", { pct: choice.check.chance }));
         } else {
-          const mod = choice.check.stat ? anomStatMod(Anomaly.session(), choice.check.stat) : 0;
-          bits.push(anomText("ui.checkChip", {
+          const mod = anomCheckMod(Anomaly.session(), choice.check);
+          bits.push(anomText(choice.check.spec ? "ui.specChip" : "ui.checkChip", {
             stat: choice.check.stat || "D20",
+            spec: choice.check.specLabel || choice.check.spec || "",
             dc: choice.check.dc,
             mod: (mod >= 0 ? "+" : "") + mod,
           }));
         }
       }
+      if (choice.reqLabel) bits.push(choice.reqLabel);
+      if (choice.riskLabel) bits.push(choice.riskLabel);
       if (choice.costLabel) bits.push(choice.costLabel);
       return bits.join(" · ");
     },
@@ -2943,6 +3337,9 @@
       }
       if (Anomaly.hasPendingMinigame()) {
         try { Anomaly.startMinigame(); return; } catch (e) { console.error(e); }
+      }
+      if (Anomaly.hasPendingDungeon()) {
+        try { Anomaly.openDungeon(); return; } catch (e) { console.error(e); }
       }
       Anomaly.end();
     },

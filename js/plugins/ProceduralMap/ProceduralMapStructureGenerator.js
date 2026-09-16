@@ -3103,8 +3103,12 @@
    * @param {number} height - Map height
    * @param {{horizontal: object|null, vertical: object|null}} [zebra] - Orientation-aware crossing tile grids
    * @param {Function} [rng] - Seeded random function, gates the occasional crossing
+   * @param {number} [stop] - How far in the run goes, in place of the map centre.
+   *   The city plan stops its connectors on the orbital road that rings the
+   *   reserved superblock, so nothing is painted across the reserve itself.
    */
-  function drawBorderConnectionRoad(mapData, centerX, centerY, direction, roadTile, dashedLines, width, height, zebra, rng) {
+  function drawBorderConnectionRoad(mapData, centerX, centerY, direction, roadTile, dashedLines, width, height, zebra, rng, stop) {
+    const runEnd = (typeof stop === "number") ? stop : null;
     const roadWidth = 7;  // Single 7-tile wide road centered on border
     const halfRoad = Math.floor(roadWidth / 2);
     const DASH_LENGTH = window.ProcGenRoads?.DASH_LENGTH ?? 1;
@@ -3130,7 +3134,8 @@
       const endX = startX + roadWidth;
       const centerLineX = centerX;
 
-      for (let y = 0; y <= centerY; y++) {
+      const stopY = runEnd !== null ? runEnd : centerY;
+      for (let y = 0; y <= stopY; y++) {
         // Draw road
         for (let x = startX; x < endX; x++) {
           if (x >= 0 && x < width) {
@@ -3147,8 +3152,8 @@
         }
       }
 
-      if (zebra?.vertical && rng && centerY > ZEBRA_MARGIN * 2 && rng() < ZEBRA_CHANCE) {
-        const crossY = ZEBRA_MARGIN + Math.floor(rng() * (centerY - ZEBRA_MARGIN * 2));
+      if (zebra?.vertical && rng && stopY > ZEBRA_MARGIN * 2 && rng() < ZEBRA_CHANCE) {
+        const crossY = ZEBRA_MARGIN + Math.floor(rng() * (stopY - ZEBRA_MARGIN * 2));
         window.ProcGenRoads?.stampZebraCrossing(mapData, zebra.vertical, "vertical", startX, roadWidth, crossY, width, height);
       }
     } else if (direction === "south") {
@@ -3157,7 +3162,8 @@
       const endX = startX + roadWidth;
       const centerLineX = centerX;
 
-      for (let y = centerY; y < height; y++) {
+      const fromY = runEnd !== null ? runEnd : centerY;
+      for (let y = fromY; y < height; y++) {
         // Draw road
         for (let x = startX; x < endX; x++) {
           if (x >= 0 && x < width) {
@@ -3174,9 +3180,9 @@
         }
       }
 
-      const southSpan = height - centerY;
+      const southSpan = height - fromY;
       if (zebra?.vertical && rng && southSpan > ZEBRA_MARGIN * 2 && rng() < ZEBRA_CHANCE) {
-        const crossY = centerY + ZEBRA_MARGIN + Math.floor(rng() * (southSpan - ZEBRA_MARGIN * 2));
+        const crossY = fromY + ZEBRA_MARGIN + Math.floor(rng() * (southSpan - ZEBRA_MARGIN * 2));
         window.ProcGenRoads?.stampZebraCrossing(mapData, zebra.vertical, "vertical", startX, roadWidth, crossY, width, height);
       }
     } else if (direction === "east") {
@@ -3185,7 +3191,8 @@
       const endY = startY + roadWidth;
       const centerLineY = centerY;
 
-      for (let x = centerX; x < width; x++) {
+      const fromX = runEnd !== null ? runEnd : centerX;
+      for (let x = fromX; x < width; x++) {
         // Draw road
         for (let y = startY; y < endY; y++) {
           if (y >= 0 && y < height) {
@@ -3202,9 +3209,9 @@
         }
       }
 
-      const eastSpan = width - centerX;
+      const eastSpan = width - fromX;
       if (zebra?.horizontal && rng && eastSpan > ZEBRA_MARGIN * 2 && rng() < ZEBRA_CHANCE) {
-        const crossX = centerX + ZEBRA_MARGIN + Math.floor(rng() * (eastSpan - ZEBRA_MARGIN * 2));
+        const crossX = fromX + ZEBRA_MARGIN + Math.floor(rng() * (eastSpan - ZEBRA_MARGIN * 2));
         window.ProcGenRoads?.stampZebraCrossing(mapData, zebra.horizontal, "horizontal", startY, roadWidth, crossX, width, height);
       }
     } else if (direction === "west") {
@@ -3213,7 +3220,8 @@
       const endY = startY + roadWidth;
       const centerLineY = centerY;
 
-      for (let x = 0; x <= centerX; x++) {
+      const stopX = runEnd !== null ? runEnd : centerX;
+      for (let x = 0; x <= stopX; x++) {
         // Draw road
         for (let y = startY; y < endY; y++) {
           if (y >= 0 && y < height) {
@@ -3230,8 +3238,8 @@
         }
       }
 
-      if (zebra?.horizontal && rng && centerX > ZEBRA_MARGIN * 2 && rng() < ZEBRA_CHANCE) {
-        const crossX = ZEBRA_MARGIN + Math.floor(rng() * (centerX - ZEBRA_MARGIN * 2));
+      if (zebra?.horizontal && rng && stopX > ZEBRA_MARGIN * 2 && rng() < ZEBRA_CHANCE) {
+        const crossX = ZEBRA_MARGIN + Math.floor(rng() * (stopX - ZEBRA_MARGIN * 2));
         window.ProcGenRoads?.stampZebraCrossing(mapData, zebra.horizontal, "horizontal", startY, roadWidth, crossX, width, height);
       }
     }
@@ -3271,22 +3279,23 @@
    * Draws roads from center to edges where adjacent cities/burgs/roads exist
    * Uses dual road style with dashed center lines matching city streets
    */
-  function applyBorderRoadConnections(mapData, width, height, adjacentBiomes, roadTile, dashedLines, zebra, rng) {
+  function applyBorderRoadConnections(mapData, width, height, adjacentBiomes, roadTile, dashedLines, zebra, rng, stops) {
     const centerX = Math.floor(width / 2);
     const centerY = Math.floor(height / 2);
     const borderDirs = getCityBorderRoadDirections(adjacentBiomes);
 
+    const stop = stops || {};
     if (borderDirs.north) {
-      drawBorderConnectionRoad(mapData, centerX, centerY, "north", roadTile, dashedLines, width, height, zebra, rng);
+      drawBorderConnectionRoad(mapData, centerX, centerY, "north", roadTile, dashedLines, width, height, zebra, rng, stop.north);
     }
     if (borderDirs.south) {
-      drawBorderConnectionRoad(mapData, centerX, centerY, "south", roadTile, dashedLines, width, height, zebra, rng);
+      drawBorderConnectionRoad(mapData, centerX, centerY, "south", roadTile, dashedLines, width, height, zebra, rng, stop.south);
     }
     if (borderDirs.east) {
-      drawBorderConnectionRoad(mapData, centerX, centerY, "east", roadTile, dashedLines, width, height, zebra, rng);
+      drawBorderConnectionRoad(mapData, centerX, centerY, "east", roadTile, dashedLines, width, height, zebra, rng, stop.east);
     }
     if (borderDirs.west) {
-      drawBorderConnectionRoad(mapData, centerX, centerY, "west", roadTile, dashedLines, width, height, zebra, rng);
+      drawBorderConnectionRoad(mapData, centerX, centerY, "west", roadTile, dashedLines, width, height, zebra, rng, stop.west);
     }
 
     dlog(
@@ -4250,14 +4259,205 @@
   //
   // What is generated now:
   //   1. the biome's own ground, so the Desert and Ice variants stay themselves
-  //   2. a real street grid - one avenue each way through the centre (which is
-  //      what the border roads run into) and secondary streets outward from it
-  //      every 8-14 tiles, so a 64-tile square carries 9 to 25 blocks
+  //   2. the block plan below: a reserved 32x32 superblock inside an orbital
+  //      road, and the land left over cut into ordinary blocks by streets the
+  //      border roads run into
   //   3. a zoning per block: built / park / car park / plaza / vacant
   //   4. one prefab per built block (the existing prefab pass)
   //   5. pavement, and sidewalks around every carriageway
   //   6. the street itself (dressCityStreets above)
   // Straight through, on the frame that asks for it.
+  // ==========================================================================
+  // CITY BLOCK PLAN
+  // ==========================================================================
+  //
+  // A 64x64 square with a centred cross avenue can never hold a 32x32 lot: the
+  // avenue cuts every quadrant down to 29 tiles a side, so the big authored city
+  // prefabs (32 tiles and up) had nowhere to stand and only the 17x13 houses
+  // were ever built. The plan below reserves ONE superblock big enough for them
+  // and rings it with an orbital road, the way a European city carries its
+  // traffic around a cathedral precinct rather than through it.
+  //
+  //   +----------------------------+   the reserve is pushed into a corner, so
+  //   | . . . . . . . . . . . . . .|   what is left over is an L of open land
+  //   | +======================+ . |   with real depth on two sides rather than
+  //   | |                      | . |   four thin strips: the ordinary blocks,
+  //   | |   reserved 32x32     | . |   and the smaller buildings with them.
+  //   | |                      | . |
+  //   | +======================+ . |   ===  the orbital road
+  //   | . . . . . . . . . . . . . .|   . .  the fringe, cut into ordinary blocks
+  //   +----------------------------+
+  //
+  // The border connection roads still arrive down the middle of each edge; each
+  // one stops where it meets the orbital, which is what carries it on around.
+  //
+  // Pure function of (size, borderDirs, rng): no map data, no tile ids, so the
+  // node harness in test/test_proc_cityblocks.js can plan a city without the
+  // RMMZ runtime behind it.
+  const CITY_SUPER_LOT = 32;   // the lot the biggest prefabs need
+  const CITY_SUPER_SKIRT = 1;  // its pavement, as every other lot gets
+  const CITY_RESERVE = CITY_SUPER_LOT + CITY_SUPER_SKIRT * 2;
+  const CITY_RING_W = 3;       // the orbital road around the reserve
+  const CITY_MARGIN = 2;
+  const CITY_BORDER_ROAD_WIDTH = 7;
+  const CITY_STREET_W = 3;
+  const CITY_AVENUE_W = 5;
+  const CITY_BLOCK_MIN = 15;   // frontage between two fringe streets: a 15-tile
+                               // block is a 13-tile lot, the depth the 17x13
+                               // houses need
+  const CITY_BLOCK_MAX = 24;
+
+  function cityRectsOverlap(a, b) {
+    return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+  }
+
+  // The largest piece of `block` that lies wholly outside `hole`, or null when
+  // nothing usable is left. A block straddling a road becomes the frontage on
+  // its near side instead of being thrown away.
+  function cityClipOutOf(block, hole) {
+    if (!block || !hole || !cityRectsOverlap(block, hole)) return block || null;
+    const parts = [
+      { x: block.x, y: block.y, w: hole.x - block.x, h: block.h },
+      { x: hole.x + hole.w, y: block.y, w: block.x + block.w - (hole.x + hole.w), h: block.h },
+      { x: block.x, y: block.y, w: block.w, h: hole.y - block.y },
+      { x: block.x, y: hole.y + hole.h, w: block.w, h: block.y + block.h - (hole.y + hole.h) },
+    ].filter(p => p.w >= 4 && p.h >= 4);
+    if (!parts.length) return null;
+    parts.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+    return parts[0];
+  }
+
+  // Where the reserve sits on one axis. It keeps clear of the map edge (the
+  // orbital and a margin), it is pushed toward one end so the land left over is
+  // deep enough to build on, and its ring must still cross the centre axis,
+  // because the border roads arrive down the middle of each edge and stop when
+  // they reach it.
+  function cityPlaceReserve(size, center, rng) {
+    const lo = CITY_RING_W + CITY_MARGIN;
+    const hi = size - CITY_RESERVE - CITY_RING_W - CITY_MARGIN;
+    if (hi < lo) return null;
+    const halfBorder = Math.floor(CITY_BORDER_ROAD_WIDTH / 2);
+    const from = Math.max(lo, center + halfBorder + 1 - CITY_RESERVE);
+    const to = Math.min(hi, center - halfBorder - 1);
+    if (to < from) return null;
+    // Hard against one end or the other, never part way: every tile the
+    // reserve is moved inward is a tile taken off the deep band, and the band
+    // has to stay wide enough for the 17x13 houses (a 19-tile block).
+    const pos = rng() < 0.5 ? lo : hi;
+    return Math.max(from, Math.min(to, pos));
+  }
+
+  // Cut one fringe band into blocks with streets across it. `axis` is the axis
+  // the streets are dealt along: "x" for a band that runs left to right, "y"
+  // for one that runs top to bottom. Each street reaches the whole way across
+  // the band, and out to the map edge where a neighbour is there to meet it.
+  function cityCutBand(band, axis, reach, rng, cuts, blocks) {
+    if (!band || band.w < 4 || band.h < 4) return;
+    const start = axis === "x" ? band.x : band.y;
+    const end = axis === "x" ? band.x + band.w : band.y + band.h;
+    const marks = [];
+    let at = start;
+    for (;;) {
+      const block = CITY_BLOCK_MIN + Math.floor(rng() * (CITY_BLOCK_MAX - CITY_BLOCK_MIN + 1));
+      const w = rng() < 0.25 ? CITY_AVENUE_W : CITY_STREET_W;
+      const pos = at + block;
+      // Stop before a street that would leave a tail too short to build on:
+      // every block a band is cut into is at least CITY_BLOCK_MIN deep.
+      if (pos + w + CITY_BLOCK_MIN > end) break;
+      marks.push({ pos, w });
+      at = pos + w;
+    }
+    for (const m of marks) {
+      cuts.push({ pos: m.pos, w: m.w, from: reach.from, to: reach.to });
+    }
+    let from = start;
+    for (const m of marks.concat([{ pos: end, w: 0 }])) {
+      if (m.pos - from >= CITY_BLOCK_MIN) {
+        blocks.push(axis === "x"
+          ? { x: from, y: band.y, w: m.pos - from, h: band.h }
+          : { x: band.x, y: from, w: band.w, h: m.pos - from });
+      }
+      from = m.pos + m.w;
+    }
+  }
+
+  function planCityBlocks(width, height, borderDirs, rng) {
+    const centerX = Math.floor(width / 2);
+    const centerY = Math.floor(height / 2);
+    const dirs = borderDirs || { north: false, south: false, east: false, west: false };
+    const M = CITY_MARGIN;
+
+    // --- the reserved superblock and its orbital road ---------------------
+    const rx = cityPlaceReserve(width, centerX, rng);
+    const ry = cityPlaceReserve(height, centerY, rng);
+    let reserve = null, core = null, superLot = null;
+    if (rx !== null && ry !== null) {
+      reserve = { x: rx, y: ry, w: CITY_RESERVE, h: CITY_RESERVE };
+      core = {
+        x: rx - CITY_RING_W, y: ry - CITY_RING_W,
+        w: CITY_RESERVE + CITY_RING_W * 2, h: CITY_RESERVE + CITY_RING_W * 2,
+      };
+      superLot = {
+        x: rx + CITY_SUPER_SKIRT, y: ry + CITY_SUPER_SKIRT,
+        w: CITY_SUPER_LOT, h: CITY_SUPER_LOT, reserved: true,
+      };
+    }
+
+    // How far each border connection road runs before it meets the orbital.
+    const stops = core ? {
+      north: reserve.y - 1,
+      south: reserve.y + reserve.h,
+      west: reserve.x - 1,
+      east: reserve.x + reserve.w,
+    } : { north: centerY, south: centerY, west: centerX, east: centerX };
+
+    // The corridors those roads occupy. Nothing is built in them.
+    const halfBorder = Math.floor(CITY_BORDER_ROAD_WIDTH / 2);
+    const corridors = [];
+    if (dirs.north) corridors.push({ x: centerX - halfBorder, y: 0, w: CITY_BORDER_ROAD_WIDTH, h: stops.north + 1 });
+    if (dirs.south) corridors.push({ x: centerX - halfBorder, y: stops.south, w: CITY_BORDER_ROAD_WIDTH, h: height - stops.south });
+    if (dirs.west) corridors.push({ x: 0, y: centerY - halfBorder, w: stops.west + 1, h: CITY_BORDER_ROAD_WIDTH });
+    if (dirs.east) corridors.push({ x: stops.east, y: centerY - halfBorder, w: width - stops.east, h: CITY_BORDER_ROAD_WIDTH });
+
+    // --- the fringe: the frame of open land around the core ---------------
+    // Left and right take the full height, top and bottom only the core's own
+    // width, so the four bands tile the frame exactly and never overlap.
+    const vCuts = [];   // vertical streets   (x band, y range)
+    const hCuts = [];   // horizontal streets (y band, x range)
+    const raw = [];
+    if (core) {
+      const left = { x: M, y: M, w: core.x - M, h: height - M * 2 };
+      const right = { x: core.x + core.w, y: M, w: width - M - (core.x + core.w), h: height - M * 2 };
+      const top = { x: core.x, y: M, w: core.w, h: core.y - M };
+      const bottom = { x: core.x, y: core.y + core.h, w: core.w, h: height - M - (core.y + core.h) };
+      // A street across a tall band runs the band width, and on out to the map
+      // edge when the square that way is one a road can be joined to.
+      cityCutBand(left, "y", { from: dirs.west ? 0 : left.x, to: core.x }, rng, hCuts, raw);
+      cityCutBand(right, "y", { from: right.x, to: dirs.east ? width : right.x + right.w }, rng, hCuts, raw);
+      cityCutBand(top, "x", { from: dirs.north ? 0 : top.y, to: core.y }, rng, vCuts, raw);
+      cityCutBand(bottom, "x", { from: bottom.y, to: dirs.south ? height : bottom.y + bottom.h }, rng, vCuts, raw);
+    } else {
+      // No room for a reserve (a smaller map than the procedural square): fall
+      // back to a plain grid over the whole square.
+      const band = { x: M, y: M, w: width - M * 2, h: height - M * 2 };
+      cityCutBand(band, "x", { from: M, to: height - M }, rng, vCuts, raw);
+      const columns = raw.splice(0, raw.length);
+      for (const col of columns) cityCutBand(col, "y", { from: col.x, to: col.x + col.w }, rng, hCuts, raw);
+    }
+
+    const blocks = [];
+    if (superLot) blocks.push({ x: reserve.x, y: reserve.y, w: reserve.w, h: reserve.h, reserved: true });
+    for (let block of raw) {
+      for (const corridor of corridors) {
+        block = cityClipOutOf(block, corridor);
+        if (!block) break;
+      }
+      if (block) blocks.push(block);
+    }
+
+    return { centerX, centerY, reserve, core, superLot, stops, corridors, vCuts, hCuts, blocks };
+  }
+
   function generateCityBiome(biome, seed, allFeatures, adjacentBiomes, allOtherData = {}) {
     return runSteps(generateCityBiomeSteps(biome, seed, allFeatures, adjacentBiomes, allOtherData));
   }
@@ -4311,79 +4511,70 @@
       if (x >= 0 && x < width && y >= 0 && y < height) occupiedMap[y * width + x] = 1;
     };
 
-    // --- STEP 0: the roads the neighbouring squares run into this one --------
-    applyBorderRoadConnections(mapData, width, height, adjacentBiomes, roadTile, dashedLines, zebra, rng);
-
-    const centerX = Math.floor(width / 2);
-    const centerY = Math.floor(height / 2);
-    const borderDirs = getCityBorderRoadDirections(adjacentBiomes);
-    const BORDER_ROAD_WIDTH = 7;
-    const borderHalfRoad = Math.floor(BORDER_ROAD_WIDTH / 2);
-
-    const markBorderRun = (x0, y0, x1, y1) => {
-      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) markRoad(x, y);
-    };
-    if (borderDirs.north) markBorderRun(centerX - borderHalfRoad, 0, centerX + borderHalfRoad, centerY);
-    if (borderDirs.south) markBorderRun(centerX - borderHalfRoad, centerY, centerX + borderHalfRoad, height - 1);
-    if (borderDirs.west) markBorderRun(0, centerY - borderHalfRoad, centerX, centerY + borderHalfRoad);
-    if (borderDirs.east) markBorderRun(centerX, centerY - borderHalfRoad, width - 1, centerY + borderHalfRoad);
-
-    yield;
-
-
-    // --- STEP 1: the street grid --------------------------------------------
-    // Cuts are dealt outward from the centre so the main avenues always meet
-    // where the border roads arrive, and everything else hangs off them.
-    const MARGIN = 3;
-    const MAIN_WIDTH = 5;
-    function axisCuts(center, size, mainWidth) {
-      const half = Math.floor(mainWidth / 2);
-      const cuts = [{ pos: center - half, w: mainWidth, main: true }];
-      for (const dir of [-1, 1]) {
-        let edge = dir < 0 ? center - half : center - half + mainWidth;
-        for (;;) {
-          // 16-30 tiles of frontage: wide enough, once inset for pavement,
-          // to actually hold the authored city buildings (mostly 12-28 tiles
-          // a side). The old 8-14 tile blocks were narrower than almost every
-          // building in the pool, so a prefab could never fit and the "built"
-          // lots came out as bare pavement instead.
-          const block = 16 + Math.floor(rng() * 15);
-          const w = rng() < 0.3 ? 5 : 3;                // an avenue or a street
-          const pos = dir < 0 ? edge - block - w : edge + block;
-          if (pos < MARGIN || pos + w > size - MARGIN) break;
-          cuts.push({ pos, w, main: false });
-          edge = dir < 0 ? pos : pos + w;
-        }
-      }
-      return cuts.sort((a, b) => a.pos - b.pos);
-    }
-
-    const vCuts = axisCuts(centerX, width, borderDirs.north || borderDirs.south ? BORDER_ROAD_WIDTH : MAIN_WIDTH);
-    const hCuts = axisCuts(centerY, height, borderDirs.east || borderDirs.west ? BORDER_ROAD_WIDTH : MAIN_WIDTH);
-
-    // Every street that runs toward a bordering city/burg/road/village reaches
-    // that edge outright, not just the one centred connector: two city squares
-    // sharing an edge should meet as a street grid, not as one avenue with a
-    // dead end either side of it. A side with no connectable neighbour still
-    // keeps its MARGIN clearance from the map edge.
-    const vTop = borderDirs.north ? 0 : MARGIN;
-    const vBottom = borderDirs.south ? height : height - MARGIN;
-    const hLeft = borderDirs.west ? 0 : MARGIN;
-    const hRight = borderDirs.east ? width : width - MARGIN;
-
     const paintRoad = (x, y) => {
       if (x < 0 || y < 0 || x >= width || y >= height) return;
       mapData[calculateIndex(x, y, 0, width, height)] = roadTile;
       markRoad(x, y);
     };
+
+    // --- STEP 0: the plan, then the roads the neighbours run into this one ---
+    // The whole layout is decided up front (see planCityBlocks): where the
+    // reserved 32x32 superblock stands, the orbital road around it, and the
+    // ordinary grid in the land left over. Everything below only paints it.
+    const borderDirs = getCityBorderRoadDirections(adjacentBiomes);
+    const plan = planCityBlocks(width, height, borderDirs, rng);
+    const centerX = plan.centerX;
+    const centerY = plan.centerY;
+    const core = plan.core;
+    const inCore = (x, y) =>
+      !!core && x >= core.x && x < core.x + core.w && y >= core.y && y < core.y + core.h;
+    const inReserve = (x, y) => {
+      const r = plan.reserve;
+      return !!r && x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
+    };
+
+    // The connection roads stop at the orbital instead of running on into the
+    // reserve: the ring is what carries them across the middle of the map.
+    applyBorderRoadConnections(mapData, width, height, adjacentBiomes, roadTile, dashedLines, zebra, rng, plan.stops);
+
+    const BORDER_ROAD_WIDTH = 7;
+    const borderHalfRoad = Math.floor(BORDER_ROAD_WIDTH / 2);
+    const markBorderRun = (x0, y0, x1, y1) => {
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) markRoad(x, y);
+    };
+    if (borderDirs.north) markBorderRun(centerX - borderHalfRoad, 0, centerX + borderHalfRoad, plan.stops.north);
+    if (borderDirs.south) markBorderRun(centerX - borderHalfRoad, plan.stops.south, centerX + borderHalfRoad, height - 1);
+    if (borderDirs.west) markBorderRun(0, centerY - borderHalfRoad, plan.stops.west, centerY + borderHalfRoad);
+    if (borderDirs.east) markBorderRun(plan.stops.east, centerY - borderHalfRoad, width - 1, centerY + borderHalfRoad);
+
+    // The orbital itself: the core rect minus the reserve it encloses.
+    if (core) {
+      for (let y = core.y; y < core.y + core.h; y++) {
+        for (let x = core.x; x < core.x + core.w; x++) {
+          if (!inReserve(x, y)) paintRoad(x, y);
+        }
+      }
+    }
+
+    yield;
+
+
+    // --- STEP 1: the street grid --------------------------------------------
+    // The planner cut the fringe into blocks; these are the streets between
+    // them. Each one carries the range it runs over, so a street in the left
+    // band stops at the orbital instead of crossing the reserve, and reaches
+    // the map edge only where a neighbour is there to meet it.
+    const vCuts = plan.vCuts;   // vertical streets,   y from .from to .to
+    const hCuts = plan.hCuts;   // horizontal streets, x from .from to .to
+
     for (const c of vCuts) {
-      for (let y = vTop; y < vBottom; y++) {
-        for (let x = c.pos; x < c.pos + c.w; x++) paintRoad(x, y);
+      for (let y = c.from; y < c.to; y++) {
+        for (let x = c.pos; x < c.pos + c.w; x++) if (!inCore(x, y)) paintRoad(x, y);
       }
     }
     for (const c of hCuts) {
-      for (let x = hLeft; x < hRight; x++) {
-        for (let y = c.pos; y < c.pos + c.w; y++) paintRoad(x, y);
+      for (let y = c.pos; y < c.pos + c.w; y++) {
+        for (let x = c.from; x < c.to; x++) if (!inCore(x, y)) paintRoad(x, y);
       }
     }
 
@@ -4396,9 +4587,10 @@
       for (const c of vCuts) {
         if (c.w < 5) continue;
         const cx = c.pos + Math.floor(c.w / 2);
-        for (let y = vTop; y < vBottom; y++) {
+        for (let y = c.from; y < c.to; y++) {
           if (y % DASH_CYCLE >= DASH_LENGTH) continue;
           if (hCuts.some(h => y >= h.pos - 1 && y < h.pos + h.w + 1)) continue;
+          if (inCore(cx, y)) continue;
           mapData[calculateIndex(cx, y, 1, width, height)] = dashedLines.vertical;
         }
       }
@@ -4407,9 +4599,10 @@
       for (const c of hCuts) {
         if (c.w < 5) continue;
         const cy = c.pos + Math.floor(c.w / 2);
-        for (let x = hLeft; x < hRight; x++) {
+        for (let x = c.from; x < c.to; x++) {
           if (x % DASH_CYCLE >= DASH_LENGTH) continue;
           if (vCuts.some(v => x >= v.pos - 1 && x < v.pos + v.w + 1)) continue;
+          if (inCore(x, cy)) continue;
           mapData[calculateIndex(x, cy, 1, width, height)] = dashedLines.horizontal;
         }
       }
@@ -4425,8 +4618,9 @@
         if (c.w < 5) continue;
         if (rng() >= ZEBRA_CHANCE) continue;
         const candidates = [];
-        for (let y = MARGIN + 2; y < height - MARGIN - 2; y++) {
+        for (let y = c.from + 2; y < c.to - 2; y++) {
           if (hCuts.some(h => y >= h.pos - 2 && y < h.pos + h.w + 2)) continue;
+          if (core && y >= core.y - 2 && y < core.y + core.h + 2) continue;
           candidates.push(y);
         }
         if (!candidates.length) continue;
@@ -4439,8 +4633,9 @@
         if (c.w < 5) continue;
         if (rng() >= ZEBRA_CHANCE) continue;
         const candidates = [];
-        for (let x = MARGIN + 2; x < width - MARGIN - 2; x++) {
+        for (let x = c.from + 2; x < c.to - 2; x++) {
           if (vCuts.some(v => x >= v.pos - 2 && x < v.pos + v.w + 2)) continue;
+          if (core && x >= core.x - 2 && x < core.x + core.w + 2) continue;
           candidates.push(x);
         }
         if (!candidates.length) continue;
@@ -4453,25 +4648,9 @@
 
 
     // --- STEP 2: the blocks between the streets, and what each one is for ----
-    const spans = (cuts, size) => {
-      const out = [];
-      let from = MARGIN;
-      for (const c of cuts) {
-        if (c.pos - from >= 4) out.push({ from, to: c.pos });
-        from = c.pos + c.w;
-      }
-      if (size - MARGIN - from >= 4) out.push({ from, to: size - MARGIN });
-      return out;
-    };
-    const xs = spans(vCuts, width);
-    const ys = spans(hCuts, height);
-
-    const blocks = [];
-    for (const sy of ys) {
-      for (const sx of xs) {
-        blocks.push({ x: sx.from, y: sy.from, w: sx.to - sx.from, h: sy.to - sy.from });
-      }
-    }
+    // Already cut by the planner, and already clear of the orbital and its
+    // reserve. The reserved block is the first one in the list.
+    const blocks = plan.blocks;
 
     // A block too small to hold a building is never zoned as one. Weighted
     // heavily toward "built" so a prefab claims most of the grid first; the
@@ -4486,6 +4665,7 @@
       { kind: "vacant", weight: 6 },
     ];
     const zoneFor = (block) => {
+      if (block.reserved) return "built";   // the superblock is what it is for
       if (block.w < 6 || block.h < 6) return rng() < 0.5 ? "plaza" : "vacant";
       let total = 0;
       for (const z of ZONES) total += z.weight;
@@ -4501,7 +4681,11 @@
       if (kind === "built") {
         // Inset by one so the building never sits flush against the kerb: that
         // one tile is the pavement the sidewalk pass and the furniture use.
-        const lot = { x: block.x + 1, y: block.y + 1, w: block.w - 2, h: block.h - 2 };
+        // The reserve's lot is the planner's: centred in the block, with the
+        // skirt left over as its pavement.
+        const lot = block.reserved
+          ? { x: plan.superLot.x, y: plan.superLot.y, w: plan.superLot.w, h: plan.superLot.h }
+          : { x: block.x + 1, y: block.y + 1, w: block.w - 2, h: block.h - 2 };
         if (lot.w < 4 || lot.h < 4) { openBlocks.push({ kind: "vacant", rect: block }); continue; }
         // A block wide or deep enough for two buildings gets two: one prefab
         // per block left the widest blocks as a single house standing in a
@@ -4519,8 +4703,12 @@
             : [{ x: l.x, y: l.y, w: l.w, h: half },
                { x: l.x, y: l.y + half + 2, w: l.w, h: size - half - 2 }];
         };
-        let lots = lot.w >= lot.h ? splitAlong(lot, "x") : splitAlong(lot, "y");
-        if (lots.length === 1 && rng() < 0.5) {
+        // The reserve exists to hand ONE 32x32 lot to the biggest prefabs, so
+        // it is never halved however wide it is.
+        let lots = block.reserved
+          ? [lot]
+          : (lot.w >= lot.h ? splitAlong(lot, "x") : splitAlong(lot, "y"));
+        if (!block.reserved && lots.length === 1 && rng() < 0.5) {
           lots = lot.w >= lot.h ? splitAlong(lot, "y") : splitAlong(lot, "x");
         }
         for (const l of lots) buildingLots.push(l);
@@ -5151,6 +5339,7 @@ function generateBurgBiome(biome, seed, allFeatures, adjacentBiomes, allOtherDat
     generateDungeonBiome,
     generateVillageBiome,
     generateCityBiome,
+    planCityBlocks,
     generateBurgBiome,
     // The resumable forms of the two heaviest settlement passes: the stitched
     // window steps these so a town built ahead of the party costs a few

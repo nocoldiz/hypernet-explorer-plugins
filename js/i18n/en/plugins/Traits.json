@@ -34,5 +34,64 @@
   "purseRefunds": "Refunds",
   "purseLeft": "Remaining",
   "pts": "pts",
-  "refundWord": "refund"
+  "refundWord": "refund",
+  "packsHint": "A package is a starting point: switch to Detailed mode to add, remove or replace any of its traits.",
+  "packs": {
+    "soldier": {
+      "name": "Old Soldier",
+      "description": "Years under arms, a flat voice and a habit that came home with them."
+    },
+    "scholar": {
+      "name": "Scholar",
+      "description": "A brilliant, well-read mind that has spent too long too close to the page."
+    },
+    "outlaw": {
+      "name": "Outlaw",
+      "description": "Light fingers, lighter scruples, and a name somebody is still looking for."
+    },
+    "healer": {
+      "name": "Healer",
+      "description": "Herbs, patience and a refusal to raise a hand to anyone."
+    },
+    "mystic": {
+      "name": "Mystic",
+      "description": "Born to the work, versed in the still, and careful about omens."
+    },
+    "brawler": {
+      "name": "Brawler",
+      "description": "Built for it, trained for it, and quick to find a reason."
+    },
+    "noble": {
+      "name": "Noble Born",
+      "description": "A house, an inheritance and a manner that opens doors."
+    },
+    "wanderer": {
+      "name": "Wanderer",
+      "description": "Reads the land, follows a track and never loses the way home."
+    },
+    "gunslinger": {
+      "name": "Gunslinger",
+      "description": "A steady eye, a fast hand and very little hesitation."
+    },
+    "pilgrim": {
+      "name": "Pilgrim",
+      "description": "A road walked for a creed, and a creed carried quietly."
+    },
+    "performer": {
+      "name": "Performer",
+      "description": "A voice that carries, a taste for pleasure and a way with an audience."
+    },
+    "merchant": {
+      "name": "Merchant",
+      "description": "A nose for a price, an eye on the ladder and a tongue that closes deals."
+    },
+    "hexed": {
+      "name": "Hexed",
+      "description": "Marked, scarred and out of favour with whoever is meant to be listening."
+    },
+    "tinkerer": {
+      "name": "Tinkerer",
+      "description": "Forge, workbench and a working day nobody else would keep."
+    }
+  }
 }

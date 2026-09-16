@@ -115,7 +115,69 @@
       ];
     }
 
+    // The packages the simple board deals, or an empty list when the trait
+    // plugin is too old to know about them.
+    _traitPackages() {
+      const api = window.TraitPoints;
+      if (!api || typeof api.packages !== "function") return [];
+      if (!this._ccTraitPackageCache || !this._ccTraitPackageCache.length) {
+        this._ccTraitPackageCache = api.packages() || [];
+      }
+      return this._ccTraitPackageCache;
+    }
+
+    // Which package the member is standing on: the one whose whole list they
+    // carry. Editing it on the detailed board drops the mark, which is exactly
+    // what should happen - the build is then the player's, not the package's.
+    _activeTraitPackageId(actor) {
+      const picked = selectedTraitIds(actor).map(String);
+      const pack = this._traitPackages().find((entry) =>
+        entry.traits.length === picked.length &&
+        entry.traits.every((id) => picked.includes(String(id))));
+      return pack ? pack.id : "";
+    }
+
+    // The simple trait board: one card per kind of person, each holding a small
+    // set of traits that fits the budget on its own. The whole two hundred card
+    // library is the detailed board's business, and the note at the foot says so.
+    _traitPackageBoardHtml() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      const packages = this._traitPackages();
+      const activeId = this._activeTraitPackageId(actor);
+
+      const cardsHtml = packages.map((pack) => {
+        const traitNames = pack.rows
+          .map((tr) => (tr.name && resolveTraitName(tr.name, tr.id)) || tr.id)
+          .join(", ");
+        return `
+          <div class="cc-card-option cc-trait-pack ${pack.id === activeId ? 'selected' : ''}"
+               data-pack-id="${pack.id}"
+               onclick="SceneManager._scene.onTraitPackageSelect('${pack.id}')">
+            <span class="cc-rpg-icon" style="${this._ccIconStyle(pack.icon || 87, 20)}"></span>
+            <div class="cc-option-title">${pack.name}</div>
+            <div class="cc-option-sub">${traitNames}</div>
+            <span class="trait-cost">${pack.cost}</span>
+          </div>
+        `;
+      }).join("");
+
+      const emptyHtml = `<div class="cc-class-empty">${ccT('Traits.noneInCategory')}</div>`;
+
+      return `
+        <div class="cc-page cc-page-left ts-page cc-trait-board cc-page-column">
+          <div class="cc-select-grid cc-trait-grid">
+            ${cardsHtml || emptyHtml}
+          </div>
+          <div class="cc-note-faint ts-pack-note">${ccT('Traits.packsHint')}</div>
+        </div>
+      `;
+    }
+
     _traitPickerLeftHtml() {
+      // Simple mode asks the one question the two hundred cards are underneath:
+      // what kind of person is this. The card library itself belongs to the
+      // detailed board, which edits whatever the package dealt.
+      if (Scene_CharacterCreation.isSimpleMode()) return this._traitPackageBoardHtml();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const traitBank = this._ccTraitBank();
       const selectedTraits = this._ccPickedCardIds(actor);
@@ -151,8 +213,8 @@
 
         return `
           <div class="cc-card-option ${isSelected ? 'selected' : ''}"
-               onclick="SceneManager._scene.onTraitToggle('${trait.id}')"
-               onmouseenter="SceneManager._scene.onTraitCardHover('${trait.id}')">
+               data-trait-id="${trait.id}"
+               onclick="SceneManager._scene.onTraitToggle('${trait.id}')">
             <span class="cc-rpg-icon" style="${this._ccIconStyle(trait.icon || 87, 20)}"></span>
             <div class="cc-option-title">${name}</div>
             ${costHtml}
@@ -195,7 +257,11 @@
       const credit = Math.min(refunded, 6);
       const remaining = 10 + credit - spent;
 
-      const purseHtml = `
+      // The simple board deals whole packages: there is no purse to spend and
+      // nothing to put down card by card, so the running total, the two editing
+      // buttons and the remove crosses belong to the detailed board alone.
+      const isSimpleTraits = Scene_CharacterCreation.isSimpleMode();
+      const purseHtml = isSimpleTraits ? "" : `
         <div class="ts-purse ts-purse--sheet">
           <div class="ts-purse-cell spend">
             <span class="ts-purse-value">${spent}</span>
@@ -270,11 +336,11 @@
           ? ""
           : `<span class="trait-cost ${cost < 0 ? 'refund' : ''}">${cost < 0 ? `+${-cost}` : cost}</span>`;
         return `
-          <div class="cc-picked-chip ${tr.diseaseId ? 'illness' : ''}" onclick="SceneManager._scene.onTraitToggle('${tr.id}')">
+          <div class="cc-picked-chip ${tr.diseaseId ? 'illness' : ''}"${isSimpleTraits ? "" : ` onclick="SceneManager._scene.onTraitToggle('${tr.id}')"`}>
             <span class="cc-rpg-icon" style="${this._ccIconStyle(tr.icon || 87, 18)}"></span>
             <span>${name}</span>
             ${badge}
-            <span class="cc-slot-remove">&#10005;</span>
+            ${isSimpleTraits ? "" : `<span class="cc-slot-remove">&#10005;</span>`}
           </div>
         `;
       };
@@ -303,14 +369,16 @@
         <div class="cc-page cc-page-right ts-page cc-trait-detail cc-page-column">
           <div class="ts-sheet-head">
             ${purseHtml}
+            ${isSimpleTraits ? "" : `
             <div class="ts-sheet-actions">
-              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onTraitResetForCurrentActor()">${ccT('Traits.resetTraits')}</button>
-              <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeTraitsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
-            </div>
+              <button class="cc-compact-btn" onclick="SceneManager._scene.onTraitResetForCurrentActor()">${ccT('Traits.resetTraits')}</button>
+              <button class="cc-compact-btn" onclick="SceneManager._scene.onRandomizeTraitsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
+            </div>`}
           </div>
 
           ${detailHtml}
 
+          ${isSimpleTraits ? "" : `
           <div class="ts-picked-block">
             <h3 class="cc-subheader ts-section-head">
               <span>${ccT('Traits.selectedTraitsLabel')}</span>
@@ -319,7 +387,7 @@
             <div class="cc-picked-row">
               ${pickedChips || `<span class="cc-picked-empty">${ccT('CharCreate.noDefiningTraits')}</span>`}
             </div>
-          </div>
+          </div>`}
 
           ${diseaseChips ? `
             <div class="ts-picked-block">
@@ -353,6 +421,43 @@
         }
       }
       this.refreshUIOverlayDOM();
+    }
+
+    // Taking a package REPLACES the build: its traits are the member's whole
+    // list, and what the old ones granted goes back first so nothing is kept
+    // twice. Illnesses are untouched - they are not bought and not part of any
+    // package. Clicking the package a member already stands on puts it down.
+    onTraitPackageSelect(packageId) {
+      if (this._refusePresetEdit()) return;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      const pack = this._traitPackages().find((entry) => entry.id === packageId);
+      if (!pack) { SoundManager.playBuzzer(); return; }
+
+      // A character on the simple board always stands on a package: clicking the
+      // one they already carry changes nothing rather than leaving them with no
+      // traits at all.
+      if (this._activeTraitPackageId(actor) === pack.id) { SoundManager.playCursor(); return; }
+      const putDown = false;
+      const TP = window.TraitPoints;
+      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
+      actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
+      this._ccApplyTraitIds(actor, putDown ? [] : pack.traits.slice());
+      if (actor.refresh) actor.refresh();
+
+      Scene_CharacterCreation._hoveredTraitId = putDown ? null : pack.traits[0];
+      if (putDown) SoundManager.playCancel();
+      else SoundManager.playOk();
+      this._refreshTraitBoard();
+    }
+
+    // The facing page follows what was PICKED, never what the pointer happens to
+    // be passing over: a sheet that rewrote itself under a wandering mouse was
+    // unreadable. Kept as an entry point for the pad, which moves a real cursor.
+    onTraitPackageHover(packageId) {
+      const pack = this._traitPackages().find((entry) => entry.id === packageId);
+      if (!pack || !pack.traits.length) return;
+      this.onTraitCardHover(pack.traits[0]);
     }
 
     onTraitCardHover(traitId) {
@@ -425,6 +530,9 @@
       }
 
       this._ccApplyTraitIds(actor, picked);
+      // The facing page reads the card that was just clicked, since it no longer
+      // follows the pointer.
+      Scene_CharacterCreation._hoveredTraitId = trait.id;
       this._refreshTraitBoard();
     }
 
@@ -473,10 +581,36 @@
 
     // Both pages of the trait spread plus the dossier sidebar, redrawn from the
     // actor as it stands now.
+    // Picking a card changes nothing about the card library itself, only which
+    // cards are marked: rebuilding the left page would throw the grid back to
+    // the top and lose the place the player was reading. So the marks are moved
+    // in place, and the page is only rebuilt when the cards are not there yet.
+    _markTraitCardsInPlace(container) {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (Scene_CharacterCreation.isSimpleMode()) {
+        const packs = container.querySelectorAll(".cc-trait-pack[data-pack-id]");
+        if (!packs.length) return false;
+        const activeId = this._activeTraitPackageId(actor);
+        packs.forEach((el) => {
+          el.classList.toggle("selected", el.dataset.packId === String(activeId));
+        });
+        return true;
+      }
+      const cards = container.querySelectorAll(".cc-trait-grid .cc-card-option[data-trait-id]");
+      if (!cards.length) return false;
+      const picked = this._ccPickedCardIds(actor).map(String);
+      cards.forEach((el) => {
+        el.classList.toggle("selected", picked.includes(el.dataset.traitId));
+      });
+      return true;
+    }
+
     _refreshTraitBoard() {
       const container = this._dndContainer;
       if (!container) { this.refreshUIOverlayDOM(); return; }
-      this._ccSwapPage(container.querySelector(".cc-page-left"), this._traitPickerLeftHtml());
+      if (!this._markTraitCardsInPlace(container)) {
+        this._ccSwapPage(container.querySelector(".cc-page-left"), this._traitPickerLeftHtml());
+      }
       this._ccSwapPage(container.querySelector(".cc-page-right"), this._traitPickerRightHtml());
       const sidebarSlot = container.querySelector(".cc-sidebar-slot");
       if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
@@ -890,9 +1024,9 @@
         <div class="cc-page cc-page-right cc-spec-detail ts-page cc-page-column">
           ${readOnly ? '' : `
           <div class="cc-row-end cc-row-end-wrap">
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onSuggestSpecsForCurrentActor()">${ccT('CharCreate.suggestSpecs')}</button>
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onResetSpecsForCurrentActor()">${ccT('CharCreate.resetSpecs')}</button>
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeSpecsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
+            <button class="cc-compact-btn" onclick="SceneManager._scene.onSuggestSpecsForCurrentActor()">${ccT('CharCreate.suggestSpecs')}</button>
+            <button class="cc-compact-btn" onclick="SceneManager._scene.onResetSpecsForCurrentActor()">${ccT('CharCreate.resetSpecs')}</button>
+            <button class="cc-compact-btn" onclick="SceneManager._scene.onRandomizeSpecsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
           </div>`}
           ${detailHtml}
 
@@ -1241,6 +1375,12 @@
       const isPresetActor = !!(actor._isPresetActor);
       const hasAnotherPreset = this._hasPresetInParty(true);
       const isPresetDisabled = hasAnotherPreset && !isPresetActor;
+      // A dossier the world holds one of is filed under VIP rather than under
+      // Preset, so the chip that is marked is the board the member came off.
+      const API = window.CharacterPresets || {};
+      const takenPreset = (isPresetActor && API.findPresetForActor)
+        ? API.findPresetForActor(actor) : null;
+      const isVipActor = !!(takenPreset && API.isVipPreset && API.isVipPreset(takenPreset));
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isCreature = !isPresetActor && !isPreset && !!(actor._isCreatureActor || $gameSwitches.value(77 + currentMemberIndex));
       // Drawn as the Bio tab's own kind of question: a titled section with a
@@ -1256,10 +1396,15 @@
             <button class="cc-bio-chip cc-type-chip ${isCreature && !isPresetActor && !isPreset ? 'selected' : ''}" onclick="SceneManager._scene.onSetCharacterType('creature')">
               ${ccT('CharCreate.creature')}
             </button>
-            <button class="cc-bio-chip cc-type-chip ${(isPresetActor || isPreset) ? 'selected' : ''} ${isPresetDisabled ? 'disabled' : ''}"
+            <button class="cc-bio-chip cc-type-chip ${(isPresetActor || isPreset) && !isVipActor ? 'selected' : ''} ${isPresetDisabled ? 'disabled' : ''}"
                title="${isPresetDisabled ? ccT('CharCreate.onlyOnePreset') : ccT('CharCreate.presetDossiers')}"
                onclick="${isPresetDisabled ? 'SoundManager.playBuzzer()' : "SceneManager._scene.onSetCharacterType('preset')"}">
               ${ccT('CharCreate.preset')}
+            </button>
+            <button class="cc-bio-chip cc-type-chip ${isVipActor ? 'selected' : ''} ${isPresetDisabled ? 'disabled' : ''}"
+               title="${isPresetDisabled ? ccT('CharCreate.onlyOnePreset') : ccT('CharCreate.vipDossiers')}"
+               onclick="${isPresetDisabled ? 'SoundManager.playBuzzer()' : "SceneManager._scene.onSetCharacterType('vip')"}">
+              ${ccT('CharCreate.vip')}
             </button>
           </div>
         </div>
@@ -1277,18 +1422,199 @@
     // humanoid is a humanoid, but it may be spliced with anything, which grafts
     // that body's extra parts on (more arms means more weapons held, see
     // HandSlots in ItemSystemEquipment.js).
+    // ── Choices, made in a modal rather than in a dropdown ───────────────────
+    //
+    // Every choice that used to be a <select> is drawn as this plate and opened
+    // with CCPick. The markup carries only what the choice is FOR - a kind and,
+    // where the page draws several alike, which one - so the option list is
+    // built from live data at the moment it is asked for rather than baked into
+    // a string that goes stale the instant anything else on the sheet changes.
+    //
+    // The plate is .focusable, so the ring reaches it, and CCNav.confirm()'s
+    // synthesised click is exactly what a mouse does to it. That is the whole
+    // reason the dropdowns went: a click on a native <select> opens a list the
+    // host browser draws in its own chrome, which no pad can walk.
+    _pickTriggerHtml(kind, label, arg) {
+      const text = (label == null || label === "") ? ccT('CharCreate.none') : label;
+      const safe = String(text)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const hasArg = arg !== undefined && arg !== null;
+      const at = hasArg ? `, ${JSON.stringify(arg)}` : "";
+      return `<div class="cc-bio-select cc-pick-trigger focusable" tabindex="0"
+           data-nav-key="pick-${kind}${hasArg ? '-' + arg : ''}"
+           data-pick-kind="${kind}"
+           onclick="SceneManager._scene.onOpenPick('${kind}'${at})">
+        <span class="cc-pick-trigger-label">${safe}</span>
+        <span class="cc-pick-trigger-caret">▾</span>
+      </div>`;
+    }
+
+    // ── The option banks ─────────────────────────────────────────────────────
+    // One method per choice, each reading the same catalogue the <option> loop
+    // it replaced read. They are the single source for both the list the modal
+    // shows and the label the trigger wears, so the two can never disagree.
+
+    _jobPickOptions() {
+      const allJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
+      const jobLabel = (j) => (window.WorkSystem && window.WorkSystem.jobName)
+        ? window.WorkSystem.jobName(j)
+        : (j.name || ccTp('CharCreate.jobNumber', { id: j.id }));
+      // Sorted on the name the player actually reads, so the list is walkable
+      // in every language rather than in Jobs.json's authoring order.
+      const rows = allJobs.slice()
+        .map((j) => ({ value: j.id, label: jobLabel(j) }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+      return [{ value: 0, label: ccT('CharCreate.bio.joblessOption') }].concat(rows);
+    }
+
+    _creedPickOptions() {
+      const CP = window.CharacterPresets;
+      const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm());
+      const emCreedChoices = (isStoryEm && CP && CP.storyModeEmIdeologyChoices)
+        ? CP.storyModeEmIdeologyChoices() : [];
+      const all = (window.NPCShared && window.NPCShared.ideologyList &&
+        window.NPCShared.ideologyList()) || [];
+      // The fallback is still needed for the case where no ideology bank loaded.
+      const coreQuickPicks = [
+        { id: "techno_monism" }, { id: "transhumanism" }, { id: "cyber_anarchism" },
+        { id: "democratic_socialist" }, { id: "high_frequency_trader" },
+        { id: "neo_feudalism" }, { id: "pragmatist" },
+      ];
+      const rows = (all.length > 0 ? all : coreQuickPicks)
+        .map((item) => ({ value: item.id || item, label: this._formatIdeologyName(item) }))
+        .filter((entry) => !isStoryEm || emCreedChoices.includes(entry.value))
+        .sort((a, b) => a.label.localeCompare(b.label));
+      // A creed held is a creed chosen: the list opens on nobody's. The story
+      // mode's Em is the exception - she already holds one, and is offered the
+      // short shelf that fits her, so there is no None on it.
+      return isStoryEm ? rows : [{ value: "", label: ccT('CharCreate.none') }].concat(rows);
+    }
+
+    _hometownPickOptions() {
+      const hometowns = (window.WorkSystem && window.WorkSystem.Destinations)
+        ? Object.keys(window.WorkSystem.Destinations)
+        : ["Paris", "Tokyo", "Neo-Cairo", "Brussels", "Berlin", "London", "Rome", "New York", "Geneva", "Athens"]; // i18n-ignore: WorkSystem.Destinations ids
+      const current = $gameSystem._ccHometown || "Paris"; // i18n-ignore: WorkSystem.Destinations id
+      // A dossier may name a town the work destinations never list (Em's
+      // Wimbledon): without this the list silently fell back to its first entry
+      // and the sheet claimed a birthplace nobody had chosen.
+      const list = hometowns.includes(current) ? hometowns : [current].concat(hometowns);
+      return list.map((city) => ({ value: city, label: city }));
+    }
+
+    _bondPickOptions() {
+      const bonds = this._romanceBanks().rel.bonds || [];
+      return bonds.map((b) => ({
+        value: b.key,
+        label: this._romanceText(b.name),
+        hint: b.desc ? this._romanceText(b.desc) : ""
+      }));
+    }
+
+    // ── The dispatcher ───────────────────────────────────────────────────────
+
+    _pickOptions(kind, arg) {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      switch (kind) {
+        case "archetype":
+        case "archetype2": {
+          // The two halves of a spliced body are always two different
+          // archetypes, so neither list offers what the other one holds.
+          const primary = actorArchetypeKey(actor) || "Humanoid"; // i18n-ignore: Archetypes.json keys
+          const second = actorSecondaryArchetypeKey(actor) || "";
+          const taken = kind === "archetype" ? second : primary;
+          const rows = creatureArchetypeKeys()
+            .filter((opt) => opt !== taken)
+            .map((opt) => ({ value: opt, label: archetypeDisplayName(opt) }));
+          return kind === "archetype2"
+            ? [{ value: "", label: ccT('CharCreate.none') }].concat(rows)
+            : rows;
+        }
+        case "job":      return this._jobPickOptions();
+        case "creed":    return this._creedPickOptions();
+        case "hometown": return this._hometownPickOptions();
+        case "bond":     return this._bondPickOptions(arg);
+        default:         return [];
+      }
+    }
+
+    _pickTitle(kind) {
+      switch (kind) {
+        case "archetype":  return ccT('CharCreate.pickArchetype');
+        case "archetype2": return ccT('CharCreate.pickSecondaryArchetype');
+        case "job":        return ccT('CharCreate.pickJob');
+        case "creed":      return ccT('CharCreate.pickCreed');
+        case "hometown":   return ccT('CharCreate.pickHometown');
+        case "bond":       return ccT('CharCreate.pickBond');
+        default:           return "";
+      }
+    }
+
+    // What that choice currently is, so the sheet opens on it.
+    _pickCurrent(kind, arg) {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      switch (kind) {
+        case "archetype":  return actorArchetypeKey(actor) || "";
+        case "archetype2": return actorSecondaryArchetypeKey(actor) || "";
+        case "job":        return (actor && actor._jobId != null) ? actor._jobId : 0;
+        case "creed":      return (actor && actor._ideologyId) || "";
+        case "hometown":   return $gameSystem._ccHometown || "Paris"; // i18n-ignore: WorkSystem.Destinations id
+        case "bond": {
+          const state = actor ? this._romanceState(actor) : null;
+          return (state && state.bonds[arg]) || "none";
+        }
+        default: return "";
+      }
+    }
+
+    // Where a picked value goes. Each arm calls the handler the <select>'s
+    // onchange called, so nothing downstream of the choice knows the dropdown
+    // is gone.
+    _applyPick(kind, value, arg) {
+      switch (kind) {
+        case "archetype":  this.onSelectCreatureArchetype(value); break;
+        case "archetype2": this.onSelectCreatureSecondaryArchetype(value); break;
+        case "job":        this.onBioOptionChange('job', value); break;
+        case "creed":      this.onBioOptionChange('ideology', value); break;
+        case "hometown":   this.onBioOptionChange('hometown', value); break;
+        case "bond":       this.onRomanceBondChange(arg, value); break;
+        default: break;
+      }
+    }
+
+    onOpenPick(kind, arg) {
+      if (!window.CCPick) return;
+      const options = this._pickOptions(kind, arg) || [];
+      if (!options.length) { SoundManager.playBuzzer(); return; }
+      window.CCPick.open({
+        title: this._pickTitle(kind),
+        options,
+        value: this._pickCurrent(kind, arg),
+        onPick: (value) => {
+          this._applyPick(kind, value, arg);
+          // The sheet the choice was made on is redrawn around it.
+          this._lastStep = -1;
+          this._lastIndex = -1;
+          this.refreshUIOverlayDOM();
+        }
+      });
+    }
+
+    // The label a trigger wears: the chosen option's own label, looked up in
+    // the same bank the modal will show, so a value with no matching row reads
+    // as unset rather than as whatever happened to be first.
+    _pickLabel(kind, arg) {
+      const value = this._pickCurrent(kind, arg);
+      const row = (this._pickOptions(kind, arg) || [])
+        .find((o) => String(o.value) === String(value));
+      return row ? row.label : "";
+    }
+
     _archetypeBioHtml(actor, isCreature) {
       const currentArch = actorArchetypeKey(actor) || (isCreature ? "Beast" : "Humanoid"); // i18n-ignore: Archetypes.json keys
       const secondArch = actorSecondaryArchetypeKey(actor) || "";
       // Neither list offers what the other one holds: the two halves of a
       // spliced body are always two different archetypes.
-      const archetypeOptions = (selected, taken) => creatureArchetypeKeys()
-        .filter((opt) => opt !== taken)
-        .map((opt) => `<option value="${opt}" ${opt === selected ? 'selected' : ''}>${archetypeDisplayName(opt)}</option>`)
-        .join("");
-      const primaryOptionsHtml = archetypeOptions(currentArch, secondArch);
-      const secondaryOptionsHtml = `<option value="" ${secondArch ? '' : 'selected'}>${ccT('CharCreate.none')}</option>` +
-        archetypeOptions(secondArch, currentArch);
       // What the spliced body can hold, asked of the one place that answers it.
       // Two different numbers: how many grips the body has at all (hands, plus
       // a mouth for the class that fights with a blade in its teeth) and how
@@ -1305,17 +1631,13 @@
         `</div>`;
       const primaryHtml = isCreature ? `
           <div class="cc-bio-section-title">${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.primaryArchetype')}</span></div>
-          <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureArchetype(this.value)">
-            ${primaryOptionsHtml}
-          </select>
+          ${this._pickTriggerHtml('archetype', this._pickLabel('archetype'))}
           <div class="cc-bio-section-title cc-gap-above">` : `
           <div class="cc-bio-section-title">`;
       return `
         <div class="cc-bio-section">
           ${primaryHtml}${this._ccIconHtml(224, 16)} <span>${ccT('CharCreate.secondaryArchetype')}</span></div>
-          <select class="cc-bio-select" onchange="SceneManager._scene.onSelectCreatureSecondaryArchetype(this.value)">
-            ${secondaryOptionsHtml}
-          </select>
+          ${this._pickTriggerHtml('archetype2', this._pickLabel('archetype2'))}
           ${slotsHtml}
         </div>
       `;
@@ -1370,7 +1692,6 @@
       const emCreedChoices = (isStoryEm && CP && CP.storyModeEmIdeologyChoices)
         ? CP.storyModeEmIdeologyChoices() : [];
       const allIdeologies = (window.NPCShared && window.NPCShared.ideologyList && window.NPCShared.ideologyList()) || [];
-      const currentIdeology = actor._ideologyId || "";
 
       // A handful of creeds used to sit above the list as chips, which said that
       // those seven were the ones worth having. Every creed is in the list (and
@@ -1389,20 +1710,6 @@
       // Full dropdown options with clean translated names
       // Alphabetical on the displayed creed name: the bank arrives grouped by
       // political family, which reads as no order at all in a flat dropdown.
-      const ideologyOptionsHtml = (allIdeologies.length > 0 ? allIdeologies : coreQuickPicks)
-        .map((item) => ({ id: item.id || item, label: this._formatIdeologyName(item) }))
-        .filter((entry) => !isStoryEm || emCreedChoices.includes(entry.id))
-        .sort((a, b) => a.label.localeCompare(b.label))
-        .map((entry) => {
-          const isSelected = currentIdeology === entry.id;
-          return `<option value="${entry.id}" ${isSelected ? 'selected' : ''}>${entry.label}</option>`;
-        }).join("");
-      // A creed held is a creed chosen: the list opens on nobody's. The story
-      // mode's Em opens on Thelema instead and is offered the short shelf of
-      // creeds that fits her, nothing else (CharacterPresets).
-      const ideologyChoicesHtml = isStoryEm ? ideologyOptionsHtml : `
-        <option value="" ${currentIdeology ? '' : 'selected'}>${ccT('CharCreate.none')}</option>
-        ${ideologyOptionsHtml}`;
 
       // Morality Alignments
       const alignments = [
@@ -1426,9 +1733,6 @@
       // A dossier may name a town the work destinations never list (Em's
       // Wimbledon): without this the select silently fell back to its first
       // entry and the sheet claimed a birthplace nobody had chosen.
-      const hometownList = hometowns.includes(currentHometown)
-        ? hometowns : [currentHometown].concat(hometowns);
-      const hometownOptions = hometownList.map((city) => `<option value="${city}" ${city === currentHometown ? 'selected' : ''}>${city}</option>`).join("");
 
       // Age Bands
       const ageBands = [
@@ -1545,17 +1849,6 @@
       const currentJob = currentJobId > 0 ? (allJobs.find(j => j.id === currentJobId) || null) : null;
       const currentJobName = currentJob ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(currentJob) : (currentJob.name || ccTp('CharCreate.jobNumber', { id: currentJob.id }))) : ccT('CharCreate.bio.jobless');
 
-      const joblessOptionHtml = `<option value="0" ${currentJobId === 0 ? 'selected' : ''}>-- ${ccT('CharCreate.bio.joblessOption')} --</option>`;
-      // Sorted on the name the player actually reads, so the list is walkable
-      // in every language rather than in Jobs.json's authoring order.
-      const sortedJobs = allJobs.slice().map((j) => ({
-        job: j,
-        label: window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(j) : (j.name || ccTp('CharCreate.jobNumber', { id: j.id }))
-      })).sort((a, b) => a.label.localeCompare(b.label));
-      const jobOptionsHtml = joblessOptionHtml + sortedJobs.map((entry) => {
-        const isSelected = currentJob && currentJob.id === entry.job.id;
-        return `<option value="${entry.job.id}" ${isSelected ? 'selected' : ''}>${entry.label}</option>`;
-      }).join("");
 
       let jobItemsBadges = "";
       if (currentJob && Array.isArray(currentJob.items) && currentJob.items.length > 0) {
@@ -1571,36 +1864,8 @@
         }).join(" ");
       }
 
-      // Classes list for Simple Mode
-      let availableClasses = [];
       const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
       const isCreature = !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + memberIndex)));
-      if (isCreature && window.CreatureClasses) {
-        const cIds = typeof window.CreatureClasses.creatureRoster === "function"
-          ? window.CreatureClasses.creatureRoster()
-          : (window.CreatureClasses.forActor(actor) || []);
-        const sAllowed = typeof window.CreatureClasses.sentientAllowedFor === "function"
-          ? window.CreatureClasses.sentientAllowedFor(
-              typeof actorArchetypeKey === "function" ? actorArchetypeKey(actor) : null,
-              typeof actorSecondaryArchetypeKey === "function" ? actorSecondaryArchetypeKey(actor) : null)
-          : true;
-        const sIds = (sAllowed && window.CreatureClasses.sentientRoster) ? window.CreatureClasses.sentientRoster() : [];
-        const combined = Array.from(new Set([...cIds, ...sIds]));
-        availableClasses = combined.map(id => (typeof $dataClasses !== 'undefined' ? $dataClasses[id] : null)).filter(Boolean);
-      } else if (window.CreatureClasses && window.CreatureClasses.sentientRoster) {
-        availableClasses = window.CreatureClasses.sentientRoster().map(id => (typeof $dataClasses !== 'undefined' ? $dataClasses[id] : null)).filter(Boolean);
-      } else if (typeof $dataClasses !== 'undefined') {
-        availableClasses = $dataClasses.filter(c => c && c.id > 0 && c.name);
-      }
-      availableClasses.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
-      const currentClassId = (actor && actor._classId) ? actor._classId : 1;
-      const classChipsHtml = availableClasses.map((c) => {
-        const cName = window.CCDbName ? window.CCDbName(c) : c.name;
-        const isSelected = currentClassId === c.id;
-        const click = isStoryEm ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onBioOptionChange('class', ${c.id})`;
-        return `<button type="button" class="cc-bio-chip ${isSelected ? 'selected' : ''} ${isStoryEm ? 'disabled' : ''}" onclick="${click}">${cName}</button>`;
-      }).join("");
 
       // Story mode reads Em's sheet rather than writing it: the whole detailed
       // page is drawn, down to her organs, her standing and her blood, and the
@@ -1610,9 +1875,7 @@
       const professionSectionHtml = `
         <div class="cc-bio-section">
           <div class="cc-bio-section-title">${this._ccIconHtml(193, 16)} <span>${ccT('CharCreate.professionJob')}</span></div>
-          <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('job', this.value)">
-            ${jobOptionsHtml}
-          </select>
+          ${this._pickTriggerHtml('job', this._pickLabel('job'))}
           ${jobItemsBadges ? `
             <div class="cc-stack-tight">
               <div class="cc-row-chips">${jobItemsBadges}</div>
@@ -1632,17 +1895,9 @@
                 <div class="cc-bio-chips-row">${genderChipsHtml}</div>
               </div>
               ${professionSectionHtml}
-              <div class="cc-bio-section">
-                <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
-                <select id="cc-ideology-select" class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
-                  ${ideologyChoicesHtml}
-                </select>
-              </div>
               <div class="cc-bio-section cc-bio-section-flush">
-                <div class="cc-bio-section-title">${this._ccIconHtml(322, 16)} <span>${ccT('CharCreate.class')}</span></div>
-                <div class="cc-bio-chips-row">
-                  ${classChipsHtml}
-                </div>
+                <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
+                ${this._pickTriggerHtml('creed', this._pickLabel('creed'))}
               </div>
             </div>
           </div>
@@ -1677,15 +1932,13 @@
                 <div class="cc-col-grow">
                   <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
                   <div class="cc-row-inline">
-                    <select id="cc-ideology-select" class="cc-bio-select cc-col-grow" onchange="SceneManager._scene.onBioOptionChange('ideology', this.value)">
-                      ${ideologyChoicesHtml}
-                    </select>
-                    <button type="button" class="cc-bio-chip" onclick="if(window.PoliticalGraph3D && SceneManager._scene){ SceneManager._scene.markReturnStep(); SceneManager._scene.closeStepUI(); window.PoliticalGraph3D.openModal({ focusId: (document.getElementById('cc-ideology-select') ? document.getElementById('cc-ideology-select').value : ''), onSelect: function(id) { Scene_CharacterCreation.applyIdeologySelection(id); } }); }" title="${ccT('CharCreate.openPoliticalGraph')}">${ccT('CharCreate.politicalGraph')}</button>
+                    ${this._pickTriggerHtml('creed', this._pickLabel('creed'))}
+                    <button type="button" class="cc-bio-chip" onclick="if(window.PoliticalGraph3D && SceneManager._scene){ SceneManager._scene.markReturnStep(); SceneManager._scene.closeStepUI(); window.PoliticalGraph3D.openModal({ focusId: SceneManager._scene._pickCurrent('creed'), onSelect: function(id) { Scene_CharacterCreation.applyIdeologySelection(id); } }); }" title="${ccT('CharCreate.openPoliticalGraph')}">${ccT('CharCreate.politicalGraph')}</button>
                   </div>
                 </div>
                 <div class="cc-col-grow">
                   <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity')}</span></div>
-                  <select class="cc-bio-select" onchange="SceneManager._scene.onBioOptionChange('hometown', this.value)">${hometownOptions}</select>
+                  ${this._pickTriggerHtml('hometown', this._pickLabel('hometown'))}
                 </div>
               </div>
             </div>
@@ -1875,6 +2128,79 @@
       `;
     }
 
+    // The character's written history, given the whole spread. It is the
+    // longest prose in creation and the one thing on the sheet that is read
+    // rather than operated, so it is set as one wide column at the detail type
+    // scale instead of being squeezed into a page beside a board of chips.
+    //
+    // The prose itself is not written here: _bioBackstoryHtml is the one place
+    // that answers "what is this character's history", dossier or generated,
+    // and it is asked the same question it was asked on the Bio page.
+    _descriptionPageHtml() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return `<div class="cc-page cc-page-full"></div>`;
+
+      const memberIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      const age = ($gameSystem._ccBirthAge && $gameSystem._ccBirthAge[memberIdx]) || 28;
+      const avatarStyle = actor.characterName()
+        ? this.getSpriteStyle(actor.characterName(), actor.characterIndex()) : "";
+      const classData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
+      const className = classData
+        ? (window.CCDbName ? window.CCDbName(classData) : classData.name)
+        : ccT('CharCreate.defaultClassName');
+
+      // A written dossier carries the biography its own entry states, and that
+      // one is not rerolled: there is nothing to reroll it to.
+      const rewritable = !this._presetLoreHtml(actor);
+      const rewriteHtml = rewritable ? `
+        <button class="cc-sidebar-btn cc-desc-rewrite focusable" tabindex="0"
+                data-nav-key="cc-desc-rewrite"
+                onclick="SceneManager._scene.onRegenerateBackstory()">
+          <span>${ccT('CharCreate.regenerateBackstory')}</span>
+        </button>` : "";
+
+      return `
+        <div class="cc-page cc-page-full cc-description-page cc-col">
+          <div class="cc-bio-identity cc-description-head">
+            <span class="cc-compact-avatar cc-avatar-sm" style="${avatarStyle}"></span>
+            <span class="cc-bio-identity-name">${actor.name()}</span>
+            <span class="cc-bio-identity-class">(${className})</span>
+            <span class="cc-col-grow"></span>
+            ${rewriteHtml}
+          </div>
+          <div class="cc-description-body cc-scroll-pane">
+            ${this._bioBackstoryHtml(actor, age)}
+          </div>
+        </div>
+      `;
+    }
+
+    // The history is rewritten by dropping the cached one and asking for it
+    // again: the society registry is what holds it, so that is what is cleared.
+    onRegenerateBackstory() {
+      if (this._refusePresetEdit()) return;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor || !actor.name()) { SoundManager.playBuzzer(); return; }
+      const profile = window.NPCSocietyRegistry?.getProfile?.(actor.name()) || null;
+      if (!profile) { SoundManager.playBuzzer(); return; }
+      // The picks BackstoryGenerator makes are seeded by the name, so dropping
+      // the cached bio and asking again writes the same life back out. Only the
+      // salted reroll gives a different one.
+      if (window.NPCHistSim?.rerollBackstory) {
+        window.NPCHistSim.rerollBackstory(actor.name());
+      } else {
+        profile.backstory = null;
+      }
+      // A history the player asked for is a history they chose, so the tab
+      // stops reading as untouched.
+      actor._ccBackstory = true;
+      this._ensureActorLore(actor, actor._gender);
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
     _bioPickerRightHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-right"></div>`;
@@ -1889,11 +2215,6 @@
       const classData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
       const className = classData ? (window.CCDbName ? window.CCDbName(classData) : classData.name) : ccT('CharCreate.defaultClassName');
 
-      // The biography every other screen shows for this character, not a
-      // sentence assembled out of the picker's own fields: the backstory the
-      // NPC society writes against the world's timeline, formative events and
-      // birth line included.
-      const storyHtml = this._bioBackstoryHtml(actor, age);
       const isSimpleMode = Scene_CharacterCreation.isSimpleMode();
       const simpleClassHtml = isSimpleMode ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
 
@@ -1905,11 +2226,6 @@
               <span class="cc-bio-identity-name">${actor.name()}</span>
               <span class="cc-bio-identity-class">(${className})</span>
             </div>
-
-            <h3 class="cc-subheader cc-subheader-ruled">
-              ${ccT('CharCreate.narrativeHistory')}
-            </h3>
-            ${storyHtml}
 
             ${simpleClassHtml}
 
@@ -2336,7 +2652,7 @@
               <span class="cc-compact-avatar cc-avatar-xs" style="${avatar}"></span>
               <span class="cc-col-grow cc-romance-name">${other.name()}</span>
             </div>
-            <select class="cc-bio-select" onchange="SceneManager._scene.onRomanceBondChange(${other.actorId()}, this.value)">${options}</select>
+            ${this._pickTriggerHtml('bond', this._pickLabel('bond', other.actorId()), other.actorId())}
             ${desc && currentKey !== "none" ? `<div class="cc-bio-slider-readout">${desc}</div>` : ""}
           </div>
         `;
@@ -2431,7 +2747,7 @@
       return `
         <div class="cc-page cc-page-right ts-page cc-page-column">
           <div class="cc-row-end">
-            <button class="cc-profile-open-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize")}</button>
+            <button class="cc-compact-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize")}</button>
           </div>
           <div class="cc-dossier-card cc-step-scroll-padded">
             <div class="cc-bio-identity">
@@ -3392,7 +3708,20 @@
       this.refreshUIOverlayDOM();
     }
 
-    createTotalRandomPartyAll() {
+    // Rerolling the whole party from the action bar is a reroll and nothing
+    // more: it stays on the page the player is reading instead of throwing them
+    // forward onto the scenario board.
+    onActionBarRandomizeParty() {
+      const step = this._step;
+      this.createTotalRandomPartyAll({ advance: false });
+      this._step = step;
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    createTotalRandomPartyAll(options = {}) {
       const MAX_PARTY = 3;
 
       for (let i = 0; i < MAX_PARTY; i++) {
@@ -3410,7 +3739,9 @@
       Scene_CharacterCreation._isCreatureMode = false;
       // Remember this jump so Back from origin can return to character-type
       // selection instead of stepping through skipped per-member steps.
-      Scene_CharacterCreation._randomizedAllParty = true;
+      Scene_CharacterCreation._randomizedAllParty = options.advance !== false;
+
+      if (options.advance === false) return;
 
       // Jump to the origin step (nextStep increments ADD_MEMBER -> ORIGIN). The
       // origin handler finalizes creation.

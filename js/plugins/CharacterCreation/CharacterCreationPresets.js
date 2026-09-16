@@ -51,6 +51,10 @@
  * - window.CharacterPresets.retirePartyMember(actorId)
  * - window.CharacterPresets.unretirePartyMember(presetId)
  * - window.CharacterPresets.getAvailableRetiredPresets()
+ * - window.CharacterPresets.getPlayerPresets()
+ * - window.CharacterPresets.savePlayerPresetFromActor(actor)
+ * - window.CharacterPresets.removePlayerPreset(presetId)
+ * - window.CharacterPresets.isPlayerPreset(presetId)
  * - window.CharacterPresets.isPresetUsed(presetId)
  * - window.CharacterPresets.isPresetEndless(presetId)
  * - window.CharacterPresets.markPresetUsed(presetId)
@@ -1598,6 +1602,52 @@
   ];
   const EM_STORY_JOB_ID = 0;         // No profession, and no way to pick one
 
+  // The lines Em is already drawn on when the story opens. She is a witch of
+  // the Guild in everything but paperwork, and the Empire keeps a file on her:
+  // its every arm loathes her, with the one exception of the arm the Empire
+  // itself would rather not talk about. Held as power NAMES and a faction name
+  // fragment, not as ids, so Factions.json can be renumbered without moving her
+  // history under somebody else's banner.
+  const EM_FRIENDLY_POWER = "Mages Guild";
+  const EM_HOSTILE_POWER = "Holy Vatican Empire";
+  const EM_HOSTILE_EXCEPTION = "gaylobby";
+  const EM_FRIENDLY_STANDING = 60;
+  const EM_HOSTILE_STANDING = -90;
+
+  /**
+   * Em's fixed standing with every faction, as the detailed sheet shows it and
+   * as the party walks in with it. Keys are faction ids written as strings plus
+   * the "hp:<id>" key of each power, which are the keys Game_Factions files a
+   * character's own opinions under.
+   * @returns {object} standing key -> value in -100..100
+   */
+  function storyModeEmFactionStandings() {
+    const out = {};
+    const gf = typeof $gameFactions !== "undefined" ? $gameFactions : null;
+    const factions = gf && gf.getAllFactions ? (gf.getAllFactions() || []) : [];
+    if (!factions.length) return out;
+    const powers = gf.getHyperpowers ? (gf.getHyperpowers() || []) : [];
+    const powerKey = (name) => {
+      const hp = powers.find((power) => power && power.name === name);
+      return hp ? gf.hyperpowerStandingKey(hp.id) : null;
+    };
+    factions.forEach((faction) => {
+      if (!faction) return;
+      if (faction.parentHyperpower === EM_FRIENDLY_POWER) {
+        out[String(faction.id)] = EM_FRIENDLY_STANDING;
+      } else if (faction.parentHyperpower === EM_HOSTILE_POWER) {
+        const slug = String(faction.name || "").split(".")[1] || "";
+        out[String(faction.id)] = slug === EM_HOSTILE_EXCEPTION
+          ? EM_FRIENDLY_STANDING : EM_HOSTILE_STANDING;
+      }
+    });
+    const friendlyKey = powerKey(EM_FRIENDLY_POWER);
+    if (friendlyKey) out[friendlyKey] = EM_FRIENDLY_STANDING;
+    const hostileKey = powerKey(EM_HOSTILE_POWER);
+    if (hostileKey) out[hostileKey] = EM_HOSTILE_STANDING;
+    return out;
+  }
+
   /**
    * Whether the wizard is currently editing story mode's Em: the one character
    * whose dossier the player is given rather than allowed to write.
@@ -1667,6 +1717,14 @@
       actor._ideologyId = locks.ideologyId;
     }
     actor._jobId = locks.jobId;
+    // Her file with the powers belongs to the dossier, not to play: it is
+    // written every time the sheet is touched, so a detailed-mode visit can
+    // never leave her standing somewhere the story does not put her.
+    const gf = typeof $gameFactions !== "undefined" ? $gameFactions : null;
+    if (gf && gf.setReputationFor) {
+      const standings = storyModeEmFactionStandings();
+      Object.keys(standings).forEach((key) => gf.setReputationFor(actor, key, standings[key]));
+    }
   }
 
 
@@ -1905,6 +1963,188 @@
     return Array.isArray(list) ? list : [];
   }
 
+  //=============================================================================
+  // Dossiers the player wrote
+  //=============================================================================
+  // A sheet saved off the creation board is the player's own template, not a
+  // character the world spent: it belongs to the installation rather than to a
+  // savegame or to a world folder, so it is kept in localStorage and every new
+  // party in every world can take it again, as many times as it likes. Its id
+  // lives in its own 2000+ band so it can never collide with a hand-authored
+  // dossier (1..999) or with a retired companion (1000+).
+  const PLAYER_PRESET_STORAGE_KEY = "HypernetExplorer.playerCharacterPresets";
+  const PLAYER_PRESET_ID_BASE = 2000;
+  let playerPresetCache = null;
+
+  /**
+   * The dossiers the player saved, read once and then kept in memory.
+   * @returns {array} Array of preset objects (live reference, safe to mutate)
+   */
+  function getPlayerPresets() {
+    if (playerPresetCache) return playerPresetCache;
+    let raw = null;
+    try {
+      raw = localStorage.getItem(PLAYER_PRESET_STORAGE_KEY);
+    } catch (e) {
+      raw = null;
+    }
+    let parsed = [];
+    if (raw) {
+      try {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data)) parsed = data.filter((entry) => entry && entry.id > 0);
+      } catch (e) {
+        console.error("CharacterPresets: the saved dossier file could not be read", e);
+        parsed = [];
+      }
+    }
+    playerPresetCache = parsed;
+    return playerPresetCache;
+  }
+
+  /**
+   * Write the player's own dossiers back out.
+   * @param {array} presets - The whole list, as it should stand
+   */
+  function savePlayerPresets(presets) {
+    playerPresetCache = Array.isArray(presets) ? presets : [];
+    try {
+      localStorage.setItem(PLAYER_PRESET_STORAGE_KEY, JSON.stringify(playerPresetCache));
+    } catch (e) {
+      console.error("CharacterPresets: the saved dossiers could not be written", e);
+    }
+  }
+
+  /**
+   * Whether an id belongs to a dossier the player saved themselves.
+   * @param {number} presetId - Preset ID
+   * @returns {boolean} True for a player-written dossier
+   */
+  function isPlayerPreset(presetId) {
+    const id = Number(presetId);
+    return id >= PLAYER_PRESET_ID_BASE && getPlayerPresets().some((entry) => entry.id === id);
+  }
+
+  /**
+   * Next id in the player's own band.
+   * @returns {number} Next player preset ID
+   */
+  function getNextPlayerPresetId() {
+    const ids = getPlayerPresets().map((entry) => Number(entry.id) || 0);
+    return Math.max(PLAYER_PRESET_ID_BASE - 1, ...ids) + 1;
+  }
+
+  /**
+   * Snapshot a sheet being built on the creation board as a reusable dossier.
+   * Deliberately carries no landing (no mapId): a template says who somebody is,
+   * not where the party sets out from, so taking one leaves the origin board to
+   * answer that as it always would.
+   * @param {Game_Actor} actor - The member being written
+   * @returns {object} Preset object
+   */
+  // The bodies a creature member was built out of, spelled the way a dossier
+  // spells them (see _applyPreset -> applyCreatureSelection). Read off the
+  // actor itself rather than through the wizard, which is not loaded yet when
+  // this file runs.
+  function creatureArchetypeKeys(actor) {
+    const raw = (actor && actor._creatureArchetypes && actor._creatureArchetypes.length)
+      ? actor._creatureArchetypes
+      : [actor && actor._currentArchetype];
+    return raw.filter(Boolean).slice(0, 2);
+  }
+
+  function buildPlayerPreset(actor) {
+    const equips = actor.equips().map((item) =>
+      item ? { id: item.id, w: item.etypeId === 1 } : null);
+    const weapons = [];
+    const armors = [];
+    actor.equips().forEach((item) => {
+      if (!item) return;
+      (item.etypeId === 1 ? weapons : armors).push({ id: item.id, amount: 1 });
+    });
+    const specializations = Object.keys(actor._specLevels || {}).map((id) => ({
+      id: Number(id),
+      level: actor._specLevels[id],
+    }));
+    const isCreature = !!(actor._isCreatureActor || isCreatureSlot(actor));
+
+    return {
+      id: getNextPlayerPresetId(),
+      name: actor.name(),
+      classId: actor._classId,
+      sprite: actor.characterName(),
+      spriteIndex: actor.characterIndex(),
+      // Deliberately empty: a template must not switch on live story flags, and
+      // it must not carry a founding fortune either (the class purse stands).
+      switches: [],
+      money: 0,
+      items: [],
+      weapons,
+      armors,
+      equips,
+      skills: actor.skills().map((skill) => skill.id),
+      traits: (actor._selectedTraits || []).map((trait) => trait.id || trait).filter((id) => id > 0),
+      specializations,
+      busts: actor.vnBust ? actor.vnBust() : "",
+      battler: actor.vnBattler ? actor.vnBattler() : "",
+      enemyId: actor._recruitedEnemyId || 0,
+      isCreature,
+      characterType: isCreature ? "creature" : "humanoid", // i18n-ignore: preset field value
+      archetypes: isCreature ? creatureArchetypeKeys(actor) : undefined,
+      gender: actor.gender ? actor.gender() : 0,
+      jobId: actor._jobId || 0,
+      playerMade: true,
+      lore: T.has('CharPresets.playerMadeLore') ? T('CharPresets.playerMadeLore') : "",
+    };
+  }
+
+  /**
+   * Save the member being edited on the creation board as one of the player's
+   * own dossiers. A second save under the same name rewrites that dossier
+   * rather than filling the board with copies of one person.
+   * @param {Game_Actor} actor - The member being written
+   * @returns {object} { ok: boolean, reason?: string, preset?: object, replaced?: boolean }
+   */
+  function savePlayerPresetFromActor(actor) {
+    if (!actor || !actor.name || !actor.name()) return { ok: false, reason: "noActor" };
+    // A hand-authored dossier is the game's, not the player's: re-filing one
+    // under the player's own collection would make it editable for good.
+    if (actor._isPresetActor && isAuthoredPreset(actor._presetId)) {
+      return { ok: false, reason: "authored" };
+    }
+    let preset;
+    try {
+      preset = buildPlayerPreset(actor);
+    } catch (e) {
+      console.error("CharacterPresets: the member could not be filed as a dossier", e);
+      return { ok: false, reason: "buildFailed" };
+    }
+    const list = getPlayerPresets();
+    const existing = list.findIndex((entry) => entry.name === preset.name);
+    const replaced = existing >= 0;
+    if (replaced) {
+      preset.id = list[existing].id;
+      list[existing] = preset;
+      savePlayerPresets(list.slice());
+    } else {
+      savePlayerPresets(list.concat(preset));
+    }
+    return { ok: true, preset, replaced };
+  }
+
+  /**
+   * Throw one of the player's own dossiers away.
+   * @param {number} presetId - Preset ID
+   * @returns {boolean} Success status
+   */
+  function removePlayerPreset(presetId) {
+    const id = Number(presetId);
+    const list = getPlayerPresets();
+    if (!list.some((entry) => entry.id === id)) return false;
+    savePlayerPresets(list.filter((entry) => entry.id !== id));
+    return true;
+  }
+
   /**
    * Get current character presets (dossiers + retired party members)
    * @returns {array} Array of preset objects (read-only: may be a fresh array)
@@ -1912,7 +2152,8 @@
   function getCharacterPresets() {
     const base = getBasePresets();
     const retired = getRetiredPresets();
-    const all = retired.length ? base.concat(retired) : base.slice();
+    const player = getPlayerPresets();
+    const all = base.concat(retired, player);
     // Endless dossiers (Em) head the board: they are the only ones always
     // there, whatever the world has already spent. Sorted rather than kept
     // first in the array literal, so presets restored from an older save
@@ -1958,6 +2199,9 @@
    */
   function isPresetUsed(presetId) {
     if (isPresetEndless(presetId)) return false;
+    // A dossier the player wrote is a template, not a person the world can use
+    // up: it can be taken by every party, in every world, as often as they like.
+    if (isPlayerPreset(presetId)) return false;
     return getUsedPresetIds().indexOf(presetId) >= 0;
   }
 
@@ -1985,7 +2229,7 @@
     if (typeof $gameSystem === "undefined" || !$gameSystem) return;
     if (!(presetId > 0)) return;
     recordEndlessPick(presetId);
-    if (isPresetEndless(presetId) || isPresetUsed(presetId)) return;
+    if (isPresetEndless(presetId) || isPlayerPreset(presetId) || isPresetUsed(presetId)) return;
     // Assign a new array instead of pushing: the WorldManager-backed field is a
     // getter/setter pair, so only a completed write reaches the world file.
     $gameSystem._usedCharacterPresets = getUsedPresetIds().concat(presetId);
@@ -2007,7 +2251,7 @@
    * Presets that can still be picked in this world
    * @returns {array} Array of preset objects
    */
-  function getAvailableCharacterPresets() {
+  function getAvailableCharacterPresets(kind) {
     // The story mode offers its own three dossiers and nothing else (see
     // STORY_MODE_PRESETS above); the world's own pool is never mixed in.
     if (isStoryModePresetFlow()) return getStoryModeCharacterPresets();
@@ -2015,9 +2259,39 @@
     // A hidden dossier is a record the game still owns but never offers: it is
     // filtered out of the board only, so lookups by id, a save that already
     // carries the character, and the story mode's own flow are untouched.
-    return getCharacterPresets().filter(
+    const board = getCharacterPresets().filter(
       (preset) => !preset.hidden && preset.name !== "Bubba" /* i18n-ignore: preset id */ && (preset.endless || used.indexOf(preset.id) < 0)
     );
+    const wanted = kind || presetBoardKind;
+    if (!wanted) return board;
+    return board.filter((preset) => (wanted === "vip") === isVipPreset(preset));
+  }
+
+  /**
+   * A written character the world holds one of: a hand-authored dossier that is
+   * spent the moment somebody plays it. Retired companions (1000+) and the
+   * player's own saved sheets (2000+) are not these, and neither is a dossier
+   * the world can deal again and again (endless).
+   * @param {object} preset - Preset record
+   * @returns {boolean} Whether the board should file it under VIP
+   */
+  function isVipPreset(preset) {
+    if (!preset) return false;
+    if (preset.playerMade || preset.endless) return false;
+    return Number(preset.id) < PLAYER_PRESET_ID_BASE - 1000;
+  }
+
+  // Which half of the pool the dossier board is showing: the VIPs, the ordinary
+  // dossiers, or (empty) everything, which is what every caller outside the
+  // creation board still asks for.
+  let presetBoardKind = "";
+
+  /**
+   * Point the dossier board at one half of the pool.
+   * @param {string} kind - "vip", "preset", or "" for the whole pool
+   */
+  function setPresetBoardKind(kind) {
+    presetBoardKind = kind === "vip" || kind === "preset" ? kind : "";
   }
 
   //=============================================================================
@@ -2297,6 +2571,13 @@
     // collection: the board may delete what the player saved, never this.
     if (opts && opts.playerOnly && isAuthoredPreset(presetId)) {
       return false;
+    }
+
+    // A dossier the player wrote lives in their own collection, outside both
+    // the world folder and the preset array.
+    if (removePlayerPreset(presetId)) {
+      console.log(`Removed a saved dossier from the collection (ID: ${presetId})`);
+      return true;
     }
 
     // Retired party members live in the world folder, not in the preset array.
@@ -3267,6 +3548,8 @@
     getRetiredPresets,
     getAvailableRetiredPresets,
     getAvailableCharacterPresets,
+    isVipPreset,
+    setPresetBoardKind,
     retirePartyMember,
     benchActorAsPreset,
     unretirePartyMember,
@@ -3295,6 +3578,7 @@
     isStoryModeEm,
     storyModeEmLocks,
     storyModeEmIdeologyChoices,
+    storyModeEmFactionStandings,
     applyStoryModeEmLocks,
     isBeastCrew,
     emLabel,
@@ -3307,6 +3591,12 @@
     applyPresetIdentity,
     applyPresetVehicle,
     saveCurrentCharacterAsPreset,
+    getPlayerPresets,
+    savePlayerPresets,
+    savePlayerPresetFromActor,
+    removePlayerPreset,
+    isPlayerPreset,
+    getNextPlayerPresetId,
     savePartyMemberAsPreset,
     markStepCompleted,
     isStepCompleted,

@@ -510,13 +510,35 @@
     const ILLNESS_MIN_MONTHS = 2;
     const ILLNESS_MAX_MONTHS = 30;
     const ILLNESS_MIN_AGE = 30;             // nobody younger is written up as terminal
+    // Not every diagnosis is the end of the story. Medicine gets better across
+    // the century, so the odds of a leader pulling through climb with the year:
+    // a 1910 diagnosis is a sentence, a 1995 one is a fight some of them win.
+    const ILLNESS_SURVIVAL_1900 = 0.05;
+    const ILLNESS_SURVIVAL_2000 = 0.42;
+    // The odds of something happening in ONE MONTH, given the odds of it
+    // happening across a whole year. The mortality passes run monthly, so a
+    // yearly hazard has to be converted rather than merely divided by the days
+    // in a month - which is what MONTHLY() above does, because everything else
+    // that uses it is asked every day.
+    const PER_MONTH = (yearly) => {
+        if (!(yearly > 0)) return 0;
+        if (yearly >= 1) return 1;
+        return 1 - Math.pow(1 - yearly, 1 / 12);
+    };
+    // A leader the book never gave a birthday to still gets old. Rather than
+    // being quietly immortal, they are assumed to have taken their first year
+    // in office somewhere in middle age - the same span real ones do - drawn
+    // from their own name so the answer never changes between runs.
+    const UNDATED_MIN_AGE_AT_OFFICE = 42;
+    const UNDATED_AGE_SPREAD = 22;
     // A handful of names had not been given to anything yet. A 1912 chancellor
     // does not die of a disease medicine had not described, so these carry the
     // year they became sayable; everything else is fair game for the century.
     const ILLNESS_EARLIEST = {
         hiv: 1981, aids: 1981, cjd: 1920, kuru: 1957, 'fatal-insomnia': 1986,
         legionellosis: 1976, hantavirus: 1993, ebola: 1976, marburg: 1967,
-        'mad-cow': 1986, sars: 2002, 'hepatitis-c': 1989
+        'mad-cow': 1986, sars: 2002, 'hepatitis-c': 1989, covid: 2019,
+        'spanish-flu': 1918, polio: 1908, lassa: 1969, nipah: 1998
     };
 
     // Every mortal disease in the table, read once. The epidemic layer owns the
@@ -878,6 +900,7 @@
             this._artifactRecords = {}; // "kind:id" → {name, date, action, holders:[...]}
             this._leaderDeaths = {};    // leader name → {date, cause}
             this._leaderIllness = {};   // leader name → {diseaseId, diseaseName, since, until}
+            this._sealed = false;       // set once sealFinalOffices has run
             this._epidemics = [];       // the century's plagues and panics
             this._earthRegionSet = null; // rebuilt from the countries below
 
@@ -1096,6 +1119,10 @@
                     this.handleFoundings(date);
                     this.updateActiveLeaders(date);
                     this.handleLeaderMortality(date);
+                    // Whoever the month just buried leaves a seat empty, and an
+                    // empty seat is filled the same month rather than standing
+                    // vacant until the next one.
+                    this.updateActiveLeaders(date);
                     // A fixed event is keyed by its month (History.fixed.<yyyy-mm>),
                     // so it is still read once, on the first.
                     this.handleFixedEvents(date);
@@ -1132,6 +1159,14 @@
                 date.setDate(date.getDate() + 1);
             }
 
+            // The world always opens on two plagues, whatever the century
+            // happened to roll. They are dated before the run's last day, so
+            // the chronicle is put back in order afterwards: the sort is stable,
+            // which leaves everything that already shared a date as it was.
+            if (!emptyWorld && this.seedFoundingEpidemics(endYear).length) {
+                this._events.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+            }
+
             this.sealFinalOffices();
             this.saveToGameSystem();
             console.log(`[HistorySimulator] Simulation complete. ${this._events.length} events generated.`);
@@ -1161,6 +1196,9 @@
             seat(FINAL_MORAL_GUIDES, this._currentMoralGuides);
             seat(FINAL_MORAL_GUIDES, this._currentHolyLeaders);   // the old dual-track reader
             seat(FINAL_POLITICAL_LEADERS, this._currentLeaders);
+            // From here on the live chronicle runs on top of a finished
+            // century, and the offices it opens with are not up for grabs.
+            this._sealed = true;
         }
 
         // The two offices, for anything that wants to print them.
@@ -1535,30 +1573,63 @@
             return this._epidemicTownList;
         }
 
-        handleEpidemics(date) {
-            // Roughly one remembered epidemic every four years, asked daily.
-            if (this._rand() > MONTHLY(0.021)) return;
-            const pool = this._epidemicDiseases();
-            const towns = this._epidemicTowns();
-            if (!pool.length || !towns.length) return;
+        // One strain out of the library, of the kind asked for. A century
+        // remembers its panics as clearly as its plagues, so the kind is chosen
+        // first and the strain only within it (otherwise the far larger medical
+        // library would crowd hysteria out entirely), and rare strains stay
+        // rare across a whole century too.
+        // Everything the world could have named in this year. A century does
+        // not remember an outbreak of something nobody had a word for yet, and
+        // the table that decides which year a name became sayable is the same
+        // one a leader's diagnosis reads (ILLNESS_EARLIEST).
+        _epidemicPoolFor(year) {
+            // Asked every day of the century, so the answer is kept for as long
+            // as the year it was asked about.
+            if (this._epidemicYearPool && this._epidemicYearPool.year === year) {
+                return this._epidemicYearPool.list;
+            }
+            const list = this._epidemicDiseases().filter(d => !(ILLNESS_EARLIEST[d.id] > year));
+            this._epidemicYearPool = { year, list };
+            return list;
+        }
 
-            // A century remembers its panics as clearly as its plagues, so the
-            // kind is chosen first and the strain only within it (otherwise the
-            // far larger medical library would crowd hysteria out entirely).
-            const wantHysteria = this._rand() < 0.42;
+        _pickEpidemicDisease(pool, wantHysteria, filter) {
             let kindPool = pool.filter(d => ((d.kind || 'medical') === 'hysteria') === wantHysteria);
+            if (filter) {
+                const narrowed = kindPool.filter(filter);
+                if (narrowed.length) kindPool = narrowed;
+            }
             if (!kindPool.length) kindPool = pool;
-
-            // Rare strains stay rare across a whole century, too.
+            if (!kindPool.length) return null;
             const weights = { common: 6, uncommon: 3, rare: 1 };
             let total = 0;
             const w = kindPool.map(d => { const v = weights[d.rarity] || 3; total += v; return v; });
             let r = this._rand() * total;
-            let disease = kindPool[kindPool.length - 1];
             for (let i = 0; i < kindPool.length; i++) {
-                if ((r -= w[i]) <= 0) { disease = kindPool[i]; break; }
+                if ((r -= w[i]) <= 0) return kindPool[i];
             }
+            return kindPool[kindPool.length - 1];
+        }
 
+        handleEpidemics(date) {
+            // Roughly one remembered epidemic every four years, asked daily.
+            if (this._rand() > MONTHLY(0.021)) return;
+            const pool = this._epidemicPoolFor(date.getFullYear());
+            const towns = this._epidemicTowns();
+            if (!pool.length || !towns.length) return;
+
+            const disease = this._pickEpidemicDisease(pool, this._rand() < 0.42);
+            if (!disease) return;
+            this.recordEpidemic(date, disease, towns);
+        }
+
+        // Writes one outbreak into the century: how far it reached, how long it
+        // ran, who caught it and who died of it, plus the entry the chronicle
+        // prints. `opts.months` and `opts.reach` pin a founding outbreak whose
+        // shape the world already knows (seedFoundingEpidemics); left out, both
+        // are rolled. Returns the stored record.
+        recordEpidemic(date, disease, towns, opts) {
+            opts = opts || {};
             const hysteria = (disease.kind || 'medical') === 'hysteria';
             // Towns are recorded by their Destinations.json key (that is what
             // the epidemic ledger matches on); the chronicle names them the way
@@ -1566,15 +1637,18 @@
             const townName = key => (window.WorkSystem && window.WorkSystem.destinationName)
                 ? window.WorkSystem.destinationName(key) : key;
             const origin = towns[Math.floor(this._rand() * towns.length)];
-            const reach = 1 + Math.floor(this._rand() * (hysteria ? 5 : 7));
+            const reach = opts.reach || 1 + Math.floor(this._rand() * (hysteria ? 5 : 7));
             const places = [origin];
             for (let i = 1; i < reach; i++) {
                 const town = towns[Math.floor(this._rand() * towns.length)];
                 if (!places.includes(town)) places.push(town);
             }
 
-            const months = 1 + Math.floor(this._rand() * (hysteria ? 8 : 14));
-            const end = new Date(date.getFullYear(), date.getMonth() + months, 1);
+            const months = opts.months || 1 + Math.floor(this._rand() * (hysteria ? 8 : 14));
+            // It runs for the months it runs for, counted from the day it broke
+            // out. Rounding the end down to the first of a month used to hand a
+            // late-October outbreak of "one month" a two-day life.
+            const end = new Date(date.getFullYear(), date.getMonth() + months, date.getDate());
             const infected = Math.round((900 + this._rand() * 26000) * places.length *
                 (disease.r0 > 4 ? 1.8 : 1));
             const deaths = Math.round(infected * (disease.cfr || 0) * (0.35 + this._rand() * 0.5));
@@ -1583,14 +1657,19 @@
             const nameKey = hysteria ? 'History.epidemic.hysteriaName' : 'History.epidemic.medicalName';
             const nameParams = { disease: disease.name, origin: townName(origin), year: date.getFullYear() };
 
-            this._epidemics.push({
+            const record = {
                 id: `HEP-${this._epidemics.length + 1}`,
                 name: T(nameKey, nameParams), nameKey, nameParams,
                 diseaseId: disease.id, diseaseName: disease.name,
                 kind: hysteria ? 'hysteria' : 'medical',
                 origin, places, startDate: dateStr, endDate: endStr,
                 months, infected, deaths, historical: true,
-            });
+                // A founding outbreak is the one the world opens on: it began
+                // before the first day of play and the living memory of it is
+                // still fresh (seedFoundingEpidemics).
+                founding: opts.founding === true,
+            };
+            this._epidemics.push(record);
 
             const spread = places.length > 1
                 ? LK('History.epidemic.spread', { places: places.slice(1).map(townName).join(', ') })
@@ -1607,6 +1686,53 @@
                       deaths: num(deaths), months: months, spread: spread }),
                 iconIndex: hysteria ? ICONS.paranormal : ICONS.epidemic
             });
+            return record;
+        }
+
+        // The two outbreaks every world opens on. Whatever the century rolled,
+        // the years immediately before the first day of play always carry two
+        // remembered plagues: one that ran a few years back and burned out, and
+        // one that started months ago and is STILL running when the player
+        // arrives, so the news, the Eurodemics portal and any NPC from a town
+        // it touched all have something current to say. Both are drawn from the
+        // run's own seeded stream, so a world with a given seed always opens on
+        // the same two.
+        seedFoundingEpidemics(endYear) {
+            const pool = this._epidemicPoolFor(endYear);
+            const towns = this._epidemicTowns();
+            if (!pool.length || !towns.length) return [];
+            const out = [];
+
+            // The one the world remembers: three to five years back, medical,
+            // and mortal enough to have been worth remembering.
+            const pastYear = endYear - (3 + Math.floor(this._rand() * 3));
+            const past = this._pickEpidemicDisease(pool, false,
+                d => (typeof d.cfr === 'number' && d.cfr >= 0.05) || d.rarity === 'rare');
+            if (past) {
+                const start = new Date(pastYear, Math.floor(this._rand() * 12), 1 + Math.floor(this._rand() * 27));
+                const rec = this.recordEpidemic(start, past, towns, {
+                    months: 4 + Math.floor(this._rand() * 11),
+                    reach: 3 + Math.floor(this._rand() * 5), founding: true
+                });
+                if (rec) out.push(rec);
+            }
+
+            // The one still burning: it started between six and twenty months
+            // ago, and it runs on past the first day of play.
+            // Something that spreads, so the outbreak the player walks into is
+            // one the towns around them are actually passing to each other.
+            const live = this._pickEpidemicDisease(pool, this._rand() < 0.35,
+                d => typeof d.r0 === 'number' && d.r0 >= 1.5 && (d.cfr || 0) >= 0.01);
+            if (live) {
+                const head = 6 + Math.floor(this._rand() * 15);
+                const start = new Date(endYear, -head, 1 + Math.floor(this._rand() * 27));
+                const rec = this.recordEpidemic(start, live, towns, {
+                    months: head + 2 + Math.floor(this._rand() * 10),
+                    reach: 2 + Math.floor(this._rand() * 5), founding: true
+                });
+                if (rec) { rec.ongoing = true; out.push(rec); }
+            }
+            return out;
         }
 
         // Already-discovered artifacts occasionally change hands; every holder
@@ -1699,9 +1825,37 @@
                 if (!isNaN(parsed)) born = parsed;
             }
             if (!born && Number.isFinite(leader.birthYear)) born = new Date(leader.birthYear, 0, 1);
+            if (!born) {
+                const year = this.assumedBirthYear(leader);
+                if (year !== null) born = new Date(year, 0, 1);
+            }
             if (!born) return null;
             const age = (date - born) / (365.2425 * 24 * 3600 * 1000);
             return age > 0 && age < 130 ? age : null;
+        }
+
+        // The year a leader with no written birthday must have been born in:
+        // middle-aged when their years in the book start. Derived from the
+        // name, so the same person is the same age in every run of every world,
+        // and cached so a monthly pass is not re-hashing a string forever.
+        assumedBirthYear(leader) {
+            if (!leader || !leader.name || !Array.isArray(leader.years)) return null;
+            const from = Number(leader.years[0]);
+            if (!Number.isFinite(from)) return null;
+            if (!this._assumedBirthYears) this._assumedBirthYears = {};
+            const held = this._assumedBirthYears[leader.name];
+            if (held !== undefined) return held;
+            const offset = UNDATED_MIN_AGE_AT_OFFICE +
+                (normalizeHistorySeed(leader.name) >>> 0) % UNDATED_AGE_SPREAD;
+            const year = from - offset;
+            this._assumedBirthYears[leader.name] = year;
+            return year;
+        }
+
+        // A yearly hazard as the odds of it landing in ONE month, which is how
+        // often both mortality passes are asked.
+        monthlyOdds(yearly) {
+            return PER_MONTH(yearly);
         }
 
         // The Gompertz odds of dying of nothing in particular in a given year.
@@ -1727,6 +1881,13 @@
             return pool[Math.floor(this._rand() * pool.length)];
         }
 
+        // How likely a leader diagnosed in this year is to survive it. Flat at
+        // either end of the century, and a straight climb between them.
+        illnessSurvivalChance(year) {
+            const t = Math.max(0, Math.min(1, (year - 1900) / 100));
+            return ILLNESS_SURVIVAL_1900 + (ILLNESS_SURVIVAL_2000 - ILLNESS_SURVIVAL_1900) * t;
+        }
+
         // The illness a stored record names, as a marker the reader resolves.
         diseaseLabel(disease) {
             return disease ? DZ(disease.id, disease.name) : '';
@@ -1744,9 +1905,23 @@
                 const name = leader.name;
                 const illness = this._leaderIllness[name];
 
-                // Already dying: the day comes when it comes.
+                // Already dying: the day comes when it comes - unless it does
+                // not, because they were one of the ones who recovered. That is
+                // settled the day they were diagnosed, so the world cannot roll
+                // for it twice.
                 if (illness) {
                     if (dayStr(date) < illness.until) continue;
+                    if (illness.survives) {
+                        delete this._leaderIllness[name];
+                        this._events.push({
+                            date: dayStr(date), category: 'political', type: 'recovery',
+                            ...descOf('History.internal.recovered',
+                                { leader: name, place: actor,
+                                  disease: DZ(illness.diseaseId, illness.diseaseName) }),
+                            iconIndex: ICONS['epidemic'] || 0
+                        });
+                        continue;
+                    }
                     this._deadLeaders.add(name);
                     this._markLeaderDead(name, date,
                         LK('History.leaderDeath.illness',
@@ -1770,7 +1945,7 @@
                 if (age === null || age >= ILLNESS_MIN_AGE) {
                     const scale = age === null ? 1
                         : Math.max(0.25, Math.pow(2, (age - MORTALITY_BASE_AGE) / MORTALITY_DOUBLING));
-                    if (this._rand() < MONTHLY(Math.min(ILLNESS_YEARLY_CHANCE * scale, 0.2))) {
+                    if (this._rand() < this.monthlyOdds(Math.min(ILLNESS_YEARLY_CHANCE * scale, 0.2))) {
                         const disease = this.pickMortalDisease(year);
                         if (disease) {
                             const months = ILLNESS_MIN_MONTHS +
@@ -1778,13 +1953,15 @@
                             const due = new Date(date.getTime());
                             due.setMonth(due.getMonth() + months);
                             const diseaseName = this.diseaseLabel(disease);
+                            const survives = this._rand() < this.illnessSurvivalChance(year);
                             this._leaderIllness[name] = {
                                 diseaseId: disease.id, diseaseName: disease.name,
-                                since: dayStr(date), until: dayStr(due)
+                                since: dayStr(date), until: dayStr(due), survives
                             };
                             this._events.push({
                                 date: dayStr(date), category: 'political', type: 'diagnosis',
-                                ...descOf('History.internal.diagnosed',
+                                ...descOf(survives ? 'History.internal.diagnosedHopeful'
+                                                   : 'History.internal.diagnosed',
                                     { leader: name, place: actor, disease: diseaseName }),
                                 iconIndex: ICONS['epidemic'] || 0
                             });
@@ -1795,7 +1972,7 @@
 
                 // Old age, for whoever the book gave a birthday to.
                 const yearly = this.oldAgeYearlyChance(age);
-                if (yearly > 0 && this._rand() < MONTHLY(yearly)) {
+                if (yearly > 0 && this._rand() < this.monthlyOdds(yearly)) {
                     this._deadLeaders.add(name);
                     this._markLeaderDead(name, date,
                         LK('History.leaderDeath.oldAge', { age: Math.floor(age) }));
@@ -1914,7 +2091,21 @@
                     }
                     return year >= l.years[0] && year <= l.years[1] && !this._deadLeaders.has(l.name);
                 });
-                if (!this._currentLeaders[power] || !available.includes(this._currentLeaders[power])) {
+                // Once the century is sealed the seat is the seat: the live
+                // chronicle reseats a power whose leader has just died, but it
+                // never unseats the sealed ones (Thatcher, Clinton, Bush), whose
+                // years in the book are behind them and who the world every
+                // savegame opens into is written around.
+                // A seat is matched BY NAME, not by object identity: a world
+                // read back from its folder holds copies of these records, and
+                // identity alone would depose every one of them on load.
+                const seated = this._currentLeaders[power];
+                const stillEligible = seated && available.find(l => l.name === seated.name);
+                const sealedSeat = this._sealed && seated && seated.protected === true &&
+                    !this._deadLeaders.has(seated.name);
+                if (stillEligible) {
+                    this._currentLeaders[power] = stillEligible;
+                } else if (!sealedSeat) {
                     this._currentLeaders[power] = available[0] || null;
                 }
                 this.ensureMoralGuide(power);
@@ -1951,7 +2142,11 @@
                 const available = (entry.leaders || []).filter(l =>
                     year >= l.years[0] && year <= l.years[1] && !this._deadLeaders.has(l.name)
                 );
-                if (!this._currentFactionLeaders[faction] || !available.includes(this._currentFactionLeaders[faction])) {
+                const seated = this._currentFactionLeaders[faction];
+                const stillEligible = seated && available.find(l => l.name === seated.name);
+                if (stillEligible) {
+                    this._currentFactionLeaders[faction] = stillEligible;
+                } else {
                     this._currentFactionLeaders[faction] = available[0] || null;
                 }
             }
@@ -2344,6 +2539,12 @@
                 WM.setField("history", "leaderIllness", this._leaderIllness);
                 WM.setField("history", "holyLeaders", this._currentHolyLeaders);
                 WM.setField("history", "moralGuides", this._currentMoralGuides);
+                // The seats themselves. Without these a reloaded world had no
+                // political leader at all until something re-seated one, and
+                // the sealed offices the world opens on were lost with them.
+                WM.setField("history", "leaders", this._currentLeaders);
+                WM.setField("history", "factionLeaders", this._currentFactionLeaders);
+                WM.setField("history", "sealed", this._sealed === true);
                 WM.setField("history", "epidemics", this._epidemics);
                 if (this._seed !== undefined) {
                     WM.setField("history", "seed", this._seed);
@@ -2365,6 +2566,9 @@
                 $gameSystem._historicalLeaderIllness = this._leaderIllness;
                 $gameSystem._historicalHolyLeaders = this._currentHolyLeaders;
                 $gameSystem._historicalMoralGuides = this._currentMoralGuides;
+                $gameSystem._historicalLeaders = this._currentLeaders;
+                $gameSystem._historicalFactionLeaders = this._currentFactionLeaders;
+                $gameSystem._historicalSealed = this._sealed === true;
                 $gameSystem._historicalEpidemics = this._epidemics;
                 if (this._seed !== undefined) {
                     $gameSystem._historySeed = this._seed;
@@ -2389,6 +2593,9 @@
                     factions: "_historicalFactions",
                     deadLeaders: "_historicalDeadLeaders",
                     moralGuides: "_historicalMoralGuides",
+                    leaders: "_historicalLeaders",
+                    factionLeaders: "_historicalFactionLeaders",
+                    sealed: "_historicalSealed",
                     startYear: "_historicalStartYear",
                     countries: "_historicalCountries",
                     nationHistory: "_historicalNationHistory",
@@ -2901,6 +3108,10 @@
             leaderIllness: this._liveGet("leaderIllness"),
             deadLeaders: this._liveGet("deadLeaders"),
             holyLeaders: this._liveGet("holyLeaders"),
+            moralGuides: this._liveGet("moralGuides"),
+            leaders: this._liveGet("leaders"),
+            factionLeaders: this._liveGet("factionLeaders"),
+            sealed: this._liveGet("sealed"),
             epidemics: this._liveGet("epidemics"),
         };
         if (held.hyperpowers) this._currentHyperpowers = held.hyperpowers;
@@ -2911,6 +3122,12 @@
         if (held.leaderDeaths) this._leaderDeaths = held.leaderDeaths;
         if (held.leaderIllness) this._leaderIllness = held.leaderIllness;
         if (held.holyLeaders) this._currentHolyLeaders = held.holyLeaders;
+        if (held.moralGuides) this._currentMoralGuides = held.moralGuides;
+        // The seats the century ended on. A world written before these were
+        // stored has none, and reseats from the book as it always did.
+        if (held.leaders) this._currentLeaders = held.leaders;
+        if (held.factionLeaders) this._currentFactionLeaders = held.factionLeaders;
+        this._sealed = held.sealed !== false;
         if (Array.isArray(held.epidemics)) this._epidemics = held.epidemics;
         if (Array.isArray(held.deadLeaders)) this._deadLeaders = new Set(held.deadLeaders);
         this._liveCastReady = true;
@@ -2986,6 +3203,7 @@
                 // eleven months after the game starts.
                 this.handleFoundings(date);
                 this.handleLeaderMortality(date);
+                this.updateActiveLeaders(date);
                 this.handleEpidemics(date);
                 this.handleInternalPolitics(date, false);
                 this.handleInternalPolitics(date, true);

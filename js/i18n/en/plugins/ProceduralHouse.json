@@ -14,5 +14,8 @@
   "doorHeld": "The reinforced door held firm against your shoulder.",
   "selectShop": "Select a shop:",
   "noShops": "There are no shops available.",
-  "noSuchShop": "There is no shop with that id."
+  "noSuchShop": "There is no shop with that id.",
+  "selectClinic": "Select a clinic:",
+  "noClinics": "There are no clinics available.",
+  "noSuchClinic": "There is no clinic with that id."
 }

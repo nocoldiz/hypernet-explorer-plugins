@@ -42,6 +42,12 @@
   "taskManager": "Task Manager",
   "taskManagerTitle": "Esoteric Task Manager",
   "oomTitle": "Out of Memory",
+  "noConnectionTitle": "No Connection",
+
+  "noConnectionMessage": "{name} cannot reach the Hypernet. There is no line out from here.",
+
+  "noConnectionTray": "No Connection",
+
   "oomMessage": "There is not enough memory to start {name}. Close a program and try again.",
   "systemLoad": "System Load:",
   "memory": "Memory:",

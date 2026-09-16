@@ -27,5 +27,7 @@
   "wilderness": "Wilderness",
   "mapNumbered": "Map {id}",
   "underground": "underground level {depth}",
-  "atTile": "at {x},{y}"
+  "atTile": "at {x},{y}",
+  "lockedPlace": "{place} is trapped in a space and time bubble",
+  "lockedAhead": "There is a spacetime bubble ahead, you cannot proceed"
 }

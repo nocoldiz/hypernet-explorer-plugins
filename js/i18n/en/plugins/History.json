@@ -450,7 +450,9 @@
     "plotFailedExecuted": "Assassination attempt on {leader} failed. Rival {rival} was executed.",
     "alliance": "{leader} and {rival} form an uneasy political alliance in {place}.",
     "diagnosed": "{leader} of {place} has been diagnosed with {disease}. Physicians give no hope of a cure.",
+    "diagnosedHopeful": "{leader} of {place} has been diagnosed with {disease}. Physicians are cautiously hopeful.",
     "diedOfIllness": "{leader} of {place} has died of {disease}.",
+    "recovered": "{leader} of {place} has recovered from {disease} and returns to office.",
     "diedOfOldAge": "{leader} of {place} has died of old age, aged {age}."
   },
   "effect": {

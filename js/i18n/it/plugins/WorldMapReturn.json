@@ -27,5 +27,7 @@
   "wilderness": "Terre selvagge",
   "mapNumbered": "Mappa {id}",
   "underground": "livello sotterraneo {depth}",
-  "atTile": "a {x},{y}"
+  "atTile": "a {x},{y}",
+  "lockedPlace": "{place} è intrappolata in una bolla di spazio e tempo",
+  "lockedAhead": "C'è una bolla spaziotemporale davanti a te, non puoi proseguire"
 }

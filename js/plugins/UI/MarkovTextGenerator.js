@@ -1588,6 +1588,13 @@
         const place = $gameMap && $gameMap.displayName ? $gameMap.displayName() : '';
         if (place) lines.push(T('Markov.llm.place', { place: place }));
         if (spec.npcName) lines.push(T('Markov.llm.withNpc', { npc: spec.npcName }));
+        // A completion model has no system turn to be told any of this in, so
+        // the two sheets go into the scenario itself, which is the only place
+        // it reads anything.
+        if (spec.npcSheet) lines.push(T('Markov.llm.chatSheet', { npc: spec.npcName || T('Markov.unknownName'), sheet: spec.npcSheet }));
+        if (spec.speakerSheet) lines.push(T('Markov.llm.chatSpeakerSheet', { speaker: spec.speakerName || T('Markov.unknownName'), sheet: spec.speakerSheet }));
+        if (spec.relation) lines.push(T('Markov.llm.chatRelation', { relation: spec.relation }));
+        if (spec.situation) lines.push(T('Markov.llm.chatSituation', { situation: spec.situation }));
         const sample = llmSampleSentences(spec.dbText, 4);
         if (sample) lines.push(sample);
         const scenario = lines.join(' ').slice(0, LLM_SCENARIO_CHARS);
@@ -1664,9 +1671,22 @@
         const npc = spec.npcName || T('Markov.unknownName');
         const place = $gameMap && $gameMap.displayName ? $gameMap.displayName() : '';
         const sample = llmSampleSentences(spec.dbText, 3);
+        // Who is standing in front of the model matters as much as who it is
+        // playing: the answer is written TO that person, in the register their
+        // own sheet asks for. Both sheets are the caller's, built out of
+        // whatever the game knows for certain about each of the two.
+        const speaker = String(spec.speakerName || '').trim();
         const system = [
             T('Markov.llm.chatSystem', { npc: npc }),
             spec.npcBio ? T('Markov.llm.chatAbout', { bio: spec.npcBio }) : '',
+            spec.npcSheet ? T('Markov.llm.chatSheet', { npc: npc, sheet: spec.npcSheet }) : '',
+            speaker ? T('Markov.llm.chatSpeaker', { speaker: speaker }) : '',
+            spec.speakerSheet
+                ? T('Markov.llm.chatSpeakerSheet', {
+                    speaker: speaker || T('Markov.unknownName'), sheet: spec.speakerSheet })
+                : '',
+            spec.relation ? T('Markov.llm.chatRelation', { relation: spec.relation }) : '',
+            spec.situation ? T('Markov.llm.chatSituation', { situation: spec.situation }) : '',
             place ? T('Markov.llm.chatPlace', { place: place }) : '',
             sample ? T('Markov.llm.chatFlavour', { text: sample }) : '',
             T('Markov.llm.chatStyle')
@@ -1842,7 +1862,33 @@
         window.skipLocalization = false;
     }
 
-    function speakGenerated(interpreter, spec, fallbackText, background, position) {
+    // Who is talking to whom, filled in from the NPC suite before the request
+    // goes out. A line spoken in the message box is spoken BY somebody TO
+    // somebody, and the model writes a far better one when it has been told
+    // which two: the sheets are the same ones the Empathize panel hands it
+    // (window.NPCEmpathize.conversationContext), so a person answers the same
+    // way in the box as they do in the panel. Nothing is filled in for a
+    // non-sentient NPC, which is never handed to a model at all, and nothing
+    // the caller supplied itself is overwritten.
+    function llmFillContext(spec, interpreter) {
+        const opts = Object.assign({}, spec);
+        const EM = window.NPCEmpathize;
+        if (!EM || typeof EM.conversationContext !== 'function') return opts;
+        const target = opts.npcName || (interpreter && interpreter._eventId) || null;
+        if (!target) return opts;
+        let ctx = null;
+        try { ctx = EM.conversationContext(target); } catch (e) { ctx = null; }
+        if (!ctx) return opts;
+        if (!opts.npcName) opts.npcName = ctx.npcName;
+        if (!opts.npcSheet) opts.npcSheet = ctx.npcSheet;
+        if (!opts.speakerName) opts.speakerName = ctx.speakerName;
+        if (!opts.speakerSheet) opts.speakerSheet = ctx.speakerSheet;
+        if (!opts.relation) opts.relation = ctx.relation;
+        return opts;
+    }
+
+    function speakGenerated(interpreter, rawSpec, fallbackText, background, position) {
+        const spec = llmFillContext(rawSpec, interpreter);
         $gameMessage.setBackground(background);
         $gameMessage.setPositionType(position);
         if (!llmEnabled()) {

@@ -62,6 +62,27 @@
   // plugin hangs the editor page.
   const CC_TAB = "ccEdit";
 
+  // The standing tab's own id, the same way: a tab the panel does not know, so
+  // the base _render() hands it to _buildMoreHTML with the editor page.
+  const FACTIONS_TAB = "ccFactions";
+
+  // Where a character stands with the powers before the first day of play. A
+  // budget rather than a free hand: goodwill is bought a band at a time, and
+  // the only way to walk in adored by several factions is to walk in loathed
+  // by others.
+  const STANDING_BUDGET = 6;        // bands of goodwill to spend
+  const STANDING_STEP = 20;         // one band
+  const STANDING_MAX = 60;          // revered, the best a new character buys
+  const STANDING_MIN = -40;         // unfriendly, the worst they can sell into
+  // Swearing to a faction: the oath itself costs, and what it pays out (that
+  // faction's favour, its siblings' and its power's, and the suspicion of
+  // everyone it is at odds with) rides free on top of it.
+  const ALLEGIANCE_COST = 2;
+  const ALLEGIANCE_SWORN = 40;
+  const ALLEGIANCE_SIBLING = 20;
+  const ALLEGIANCE_POWER = 40;
+  const ALLEGIANCE_RIVAL = -20;
+
   // Reproduction type variable per party member (see CharacterCreationShared).
   const REPRO_VARS = [87, 115, 116];
   // Creature switch per party member.
@@ -501,6 +522,48 @@
     if (!profile) return;
     if (!profile._orientOverride) profile._orientOverride = {};
     profile._orientOverride[kind === "sexual" ? "sexualKey" : "romanticKey"] = key;
+  }
+
+  // The relationship styles are the wizard's Romance page's other half, and the
+  // detailed panel replaces that page whole: without this row the way a
+  // character is tied to somebody could not be answered at all in this mode.
+  let _relationshipBank = null;
+  function relationshipBank() {
+    if (_relationshipBank) return _relationshipBank;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", "js/db/NPC/Relationships.json", false);
+      xhr.send();
+      if (xhr.status === 200 || xhr.status === 0) {
+        _relationshipBank = JSON.parse(xhr.responseText);
+        return _relationshipBank;
+      }
+    } catch (e) {
+      console.warn("[CharacterCreationFull] could not read Relationships.json", e);
+    }
+    _relationshipBank = { styles: [], bonds: [] };
+    return _relationshipBank;
+  }
+
+  // The answer is kept in both places the wizard keeps it: on the actor, which
+  // is what its own Romance page reads back, and as the profile override the
+  // rest of the simulation reads.
+  function currentRelStyle() {
+    const actor = editedActor();
+    const profile = editedProfile();
+    const key = (actor && actor._ccRomance && actor._ccRomance.styleKey) ||
+      (profile && profile._relStyleOverride) || null;
+    if (!key) return null;
+    return (relationshipBank().styles || []).find((s) => s.key === key) || null;
+  }
+
+  function applyRelStyle(key) {
+    const actor = editedActor();
+    if (actor) {
+      actor._ccRomance = Object.assign({}, actor._ccRomance || {}, { styleKey: key });
+    }
+    const profile = editedProfile();
+    if (profile) profile._relStyleOverride = key;
   }
 
   function societyData() {
@@ -1056,6 +1119,11 @@
           value: orientationName(currentOrientation("sexual")) || T("detailed.rolled"), kind: "pick",
         },
         {
+          id: "relStyle", label: T("detailed.row.relStyle"),
+          value: (currentRelStyle() && dbText(currentRelStyle().name)) || T("detailed.rolled"),
+          kind: "pick",
+        },
+        {
           id: "reproduction", label: T("detailed.row.reproduction"),
           value: reproductionLabel(reproductionValue()), kind: "pick",
         },
@@ -1296,6 +1364,15 @@
           })),
         };
       }
+      case "relStyle":
+        return {
+          title: T("detailed.row.relStyle"),
+          options: (relationshipBank().styles || []).map((entry) => ({
+            key: entry.key,
+            label: dbText(entry.name),
+            sub: dbText(entry.desc),
+          })),
+        };
       case "reproduction":
         return {
           title: T("detailed.row.reproduction"),
@@ -1403,6 +1480,9 @@
       case "romantic":
       case "sexual":
         applyOrientation(id === "sexual" ? "sexual" : "romantic", key);
+        return false;
+      case "relStyle":
+        applyRelStyle(key);
         return false;
       case "reproduction":
         applyReproduction(Number(key));
@@ -1519,6 +1599,205 @@
   }
 
   //===========================================================================
+  // Faction standing
+  //===========================================================================
+  //
+  // What the character is worth to each of the powers on the day they are made.
+  // The numbers are written onto the actor with the per-character standing API
+  // (NPC/FactionDataManager.js, actor._factionRep), so the party walks out of
+  // creation already liked and disliked by the right people. The player's own
+  // picks are kept beside them on the actor (_ccFactionPicks) so the budget can
+  // be read back: a stored total is the pick PLUS whatever the oath paid, and
+  // only the pick was bought.
+
+  function factionsAPI() {
+    return (typeof $gameFactions !== "undefined" && $gameFactions
+      && $gameFactions.getAllFactions) ? $gameFactions : null;
+  }
+
+  function allFactions() {
+    const gf = factionsAPI();
+    const list = gf ? gf.getAllFactions() : null;
+    return Array.isArray(list) ? list.filter(Boolean) : [];
+  }
+
+  // The player's own picks, one per standing key, created on first write.
+  function factionPicks() {
+    const actor = editedActor();
+    if (!actor) return {};
+    if (!actor._ccFactionPicks) actor._ccFactionPicks = {};
+    return actor._ccFactionPicks;
+  }
+
+  function swornFactionId() {
+    const actor = editedActor();
+    const id = actor ? actor._ccSwornFaction : null;
+    return (id === null || id === undefined) ? null : Number(id);
+  }
+
+  // The story mode's Em is shown her file, not asked to write it.
+  function standingsLocked() {
+    const CP = window.CharacterPresets;
+    return !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(editedActor()));
+  }
+
+  function lockedStandings() {
+    const CP = window.CharacterPresets;
+    return (CP && CP.storyModeEmFactionStandings) ? CP.storyModeEmFactionStandings() : {};
+  }
+
+  // Everything the oath hands out, keyed the way the standings are: the sworn
+  // faction, its siblings under the same power, that power itself, and every
+  // faction the relationship matrix puts it against.
+  function allegianceBonuses() {
+    const out = {};
+    const gf = factionsAPI();
+    const id = swornFactionId();
+    if (!gf || id === null) return out;
+    const sworn = gf.getFaction(id);
+    if (!sworn) return out;
+    out[String(sworn.id)] = ALLEGIANCE_SWORN;
+    const power = gf.hyperpowerOfFaction(sworn);
+    if (power) {
+      out[gf.hyperpowerStandingKey(power.id)] = ALLEGIANCE_POWER;
+      gf.getHyperpowerFactions(power.id).forEach((sibling) => {
+        if (sibling && sibling.id !== sworn.id) out[String(sibling.id)] = ALLEGIANCE_SIBLING;
+      });
+    }
+    // The matrix is indexed by a faction's SLOT in Factions.json, not by its
+    // id: the ids have gaps in them, so the slots are what it is read with.
+    const list = allFactions();
+    const FDM = window.FactionDataManager;
+    const matrix = FDM && FDM.instance ? FDM.instance._relationships : null;
+    const row = matrix ? matrix[list.indexOf(sworn)] : null;
+    if (row) {
+      list.forEach((faction, index) => {
+        if (faction.id === sworn.id) return;
+        if ((row[index] || 0) < 0) out[String(faction.id)] = ALLEGIANCE_RIVAL;
+      });
+    }
+    return out;
+  }
+
+  function clampStanding(value) {
+    return Math.max(-100, Math.min(100, Math.round(Number(value) || 0)));
+  }
+
+  // What the sheet shows, and what the actor is written with: the pick plus
+  // whatever the oath paid on that key.
+  function standingOf(key) {
+    if (standingsLocked()) return clampStanding(lockedStandings()[key] || 0);
+    const pick = Number(factionPicks()[key]) || 0;
+    const bonus = Number(allegianceBonuses()[key]) || 0;
+    return clampStanding(pick + bonus);
+  }
+
+  // Bands of goodwill still unspent. A band sold (a standing pushed below
+  // neutral) funds one bought somewhere else, which is the only way a character
+  // walks in adored by three factions at once.
+  function standingPointsLeft() {
+    let spent = swornFactionId() !== null ? ALLEGIANCE_COST : 0;
+    const picks = factionPicks();
+    Object.keys(picks).forEach((key) => {
+      spent += Math.round((Number(picks[key]) || 0) / STANDING_STEP);
+    });
+    return STANDING_BUDGET - spent;
+  }
+
+  // Moves one standing a band up or down, inside the budget and the offered
+  // range. Returns false when the move is not on the table, so the caller can
+  // buzz rather than redraw nothing.
+  function stepStanding(key, direction) {
+    if (standingsLocked() || !key) return false;
+    const picks = factionPicks();
+    const current = Number(picks[key]) || 0;
+    const wanted = current + direction * STANDING_STEP;
+    if (wanted > STANDING_MAX || wanted < STANDING_MIN) return false;
+    if (direction > 0 && standingPointsLeft() <= 0) return false;
+    if (wanted === 0) delete picks[key];
+    else picks[key] = wanted;
+    writeStandings();
+    return true;
+  }
+
+  // Swearing to one faction, or renouncing (id null). Only a faction that
+  // answers to a power can be sworn to: an orphan holds no seat and takes
+  // nobody's oath (Game_Factions.isOrphanFaction).
+  function swearAllegiance(factionId) {
+    if (standingsLocked()) return false;
+    const actor = editedActor();
+    const gf = factionsAPI();
+    if (!actor || !gf) return false;
+    if (factionId === null) {
+      if (swornFactionId() === null) return false;
+      actor._ccSwornFaction = null;
+      writeStandings();
+      return true;
+    }
+    const faction = gf.getFaction(factionId);
+    if (!faction || gf.isOrphanFaction(faction)) return false;
+    // Swearing elsewhere is one oath, not two: the point is already spent.
+    const cost = swornFactionId() === null ? ALLEGIANCE_COST : 0;
+    if (standingPointsLeft() < cost) return false;
+    actor._ccSwornFaction = Number(factionId);
+    writeStandings();
+    return true;
+  }
+
+  // Every key the tab can write: the factions, and the hyperpowers, which carry
+  // standings of their own under "hp:<id>".
+  function standingKeys() {
+    const gf = factionsAPI();
+    const keys = allFactions().map((faction) => String(faction.id));
+    if (gf && gf.getHyperpowers) {
+      (gf.getHyperpowers() || []).forEach((hp) => keys.push(gf.hyperpowerStandingKey(hp.id)));
+    }
+    return keys;
+  }
+
+  // Writes every standing the sheet shows onto the actor. Called after each
+  // change and once more when the editor closes, so a member who never opened
+  // the tab still walks out with the standings their sheet claims.
+  function writeStandings() {
+    const actor = editedActor();
+    const gf = factionsAPI();
+    if (!actor || !gf || !gf.setReputationFor) return;
+    if (standingsLocked()) {
+      const locked = lockedStandings();
+      Object.keys(locked).forEach((key) => gf.setReputationFor(actor, key, locked[key]));
+      return;
+    }
+    standingKeys().forEach((key) => gf.setReputationFor(actor, key, standingOf(key)));
+  }
+
+  // The tree the tab is drawn as: one group per power, its branches under it,
+  // and the orphans last. The same shape the faction screen prints.
+  function standingTree() {
+    const gf = factionsAPI();
+    if (!gf) return [];
+    const groups = (gf.getHyperpowers() || []).map((hp) => ({
+      key: gf.hyperpowerStandingKey(hp.id),
+      title: gf.hyperpowerLabel(hp),
+      factions: gf.getHyperpowerFactions(hp.id),
+    })).filter((group) => group.factions.length);
+    const orphans = gf.getIndependentFactions ? gf.getIndependentFactions() : [];
+    if (orphans.length) {
+      groups.push({ key: null, title: T("detailed.factionsIndependents"), factions: orphans });
+    }
+    return groups;
+  }
+
+  function standingLabel(value) {
+    const gf = factionsAPI();
+    return gf && gf.reputationLevelOf ? gf.reputationLevelOf(value) : String(value);
+  }
+
+  function standingClass(value) {
+    const gf = factionsAPI();
+    return gf && gf.reputationClassOf ? gf.reputationClassOf(value) : "";
+  }
+
+  //===========================================================================
   // Public entry point
   //===========================================================================
 
@@ -1547,6 +1826,14 @@
       // A member of their own: whatever the one before them spent their points
       // against says nothing about this one.
       Session.specBuild = null;
+      // Standing is part of the sheet, so a member opening the editor for the
+      // first time starts from nothing rather than from whoever sat in this
+      // actor slot before. A member coming back keeps what they picked.
+      const seat = editedActor();
+      if (seat && !seat._ccFactionPicks) {
+        seat._ccFactionPicks = {};
+        seat._ccSwornFaction = null;
+      }
       // The creature switch can still be carrying a previous playthrough's
       // answer, so it is squared with the class this member actually has
       // before the first row is drawn.
@@ -1576,6 +1863,9 @@
       // the starting kit are handed out by the wizard at the end of creation,
       // so nothing is granted here.
       syncTraitsToProfile();
+      // The standings are written on every change, but a story-mode sheet and a
+      // member who never opened the tab are both settled here.
+      writeStandings();
       Session.active = false;
       if (window.Scene_CharacterCreation && Session.resumeStep >= 0) {
         window.Scene_CharacterCreation._interruptedStep = Session.resumeStep;
@@ -1619,7 +1909,7 @@
   const _tabOrder = Scene_NPCEmpathize.prototype._tabOrder;
   Scene_NPCEmpathize.prototype._tabOrder = function () {
     if (!isEditing(this) || this._entity) return _tabOrder.call(this);
-    return [CC_TAB, "info", "background", "biologics", "health", "romance", "lifeHistory", "wiki"];
+    return [CC_TAB, FACTIONS_TAB, "info", "background", "biologics", "health", "romance", "lifeHistory", "wiki"];
   };
 
   const _buildTabsHTML = Scene_NPCEmpathize.prototype._buildTabsHTML;
@@ -1630,7 +1920,9 @@
       health: T2.healthTab, romance: T2.romanceTab, lifeHistory: T2.lifeHistory, wikiTab: T2.wikiTab,
     };
     return this._buildBackBtnHTML(T2) + this._tabOrder().map((id) => {
-      const label = id === CC_TAB ? T("detailed.tab") : (id === "wiki" ? labels.wikiTab : labels[id]);
+      const label = id === CC_TAB ? T("detailed.tab")
+        : id === FACTIONS_TAB ? T("detailed.factionsTab")
+        : (id === "wiki" ? labels.wikiTab : labels[id]);
       return `<div class="npc-tab${this._activeTab === id ? " active" : ""}"
            onmousedown="event.stopPropagation();SceneManager._scene._setTab('${id}')">${esc(label)}</div>`;
     }).join("");
@@ -1666,7 +1958,9 @@
   // tab it does not know to it, which is exactly what CC_TAB is.
   const _buildMoreHTML = Scene_NPCEmpathize.prototype._buildMoreHTML;
   Scene_NPCEmpathize.prototype._buildMoreHTML = function (T2) {
-    if (!isEditing(this) || this._activeTab !== CC_TAB) return _buildMoreHTML.call(this, T2);
+    if (!isEditing(this)) return _buildMoreHTML.call(this, T2);
+    if (this._activeTab === FACTIONS_TAB) return this._buildCCFactionsHTML();
+    if (this._activeTab !== CC_TAB) return _buildMoreHTML.call(this, T2);
     return this._ccPicker ? this._buildCCPickerHTML() : this._buildCCEditorHTML();
   };
 
@@ -1766,6 +2060,95 @@
   };
 
   //---------------------------------------------------------------------------
+  // The standing page
+  //---------------------------------------------------------------------------
+
+  Scene_NPCEmpathize.prototype._buildCCFactionsHTML = function () {
+    const actor = editedActor();
+    const gf = factionsAPI();
+    if (!actor) return `<p class="cc-empty-note">${esc(T("detailed.unavailable"))}</p>`;
+    const tree = standingTree();
+    // The page is also where the sheet and the actor are squared up: a locked
+    // sheet (story mode) and a member whose standing was written by something
+    // other than these chips both land on the actor by being looked at.
+    writeStandings();
+    if (!gf || !tree.length) return `<p class="cc-empty-note">${esc(T("detailed.factionsNoData"))}</p>`;
+
+    const locked = standingsLocked();
+    const sworn = swornFactionId();
+    const swornName = sworn !== null ? factionName(gf.getFaction(sworn)) : "";
+
+    let html = `<div class="npc-profile-name">${esc(actor.name())}</div>` +
+      `<div class="npc-profile-sub">${esc(T("detailed.factionsTitle"))}</div>` +
+      `<div class="npc-cc-hint">${esc(locked ? T("detailed.factionsLocked") : T("detailed.factionsHint"))}</div>`;
+    if (!locked) {
+      html += `<div class="npc-cc-note">${esc(T("detailed.factionsBudget", {
+        left: standingPointsLeft(), total: STANDING_BUDGET,
+      }))}</div>`;
+      html += `<div class="npc-cc-row${sworn === null ? " npc-cc-row--spent" : ""}"
+           onmousedown="event.stopPropagation();SceneManager._scene._ccRenounce()">
+        <span class="npc-cc-row-lbl">${esc(T("detailed.factionsSworn"))}</span>
+        <span class="npc-cc-row-val">${esc(swornName || T("detailed.none"))}</span>
+        ${sworn === null ? "" : `<span class="npc-cc-row-rand">${esc(T("detailed.factionsRenounce"))}</span>`}
+        <span class="npc-cc-row-arrow">${sworn === null ? "" : "\u2715"}</span>
+      </div>`;
+    }
+
+    tree.forEach((group) => {
+      html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${esc(group.title)}</div>`;
+      if (group.key) html += this._ccStandingRowHTML(group.key, group.title, null, locked);
+      group.factions.forEach((faction) => {
+        html += this._ccStandingRowHTML(String(faction.id), factionName(faction), faction, locked);
+      });
+    });
+    return html;
+  };
+
+  // One standing: its name, the band it sits in, and the two chips that move it
+  // a band at a time. A faction that answers to a power also carries the oath
+  // chip, which is the only thing on the page that spends more than one point.
+  Scene_NPCEmpathize.prototype._ccStandingRowHTML = function (key, label, faction, locked) {
+    const gf = factionsAPI();
+    const value = standingOf(key);
+    const isSworn = !!faction && swornFactionId() === faction.id;
+    const canSwear = !locked && !!faction && !isSworn && !!(gf && !gf.isOrphanFaction(faction));
+    const chips = locked ? "" :
+      `<span class="npc-cc-row-rand"
+         onmousedown="event.stopPropagation();SceneManager._scene._ccStepStanding('${key}',-1)">\u2212</span>
+       <span class="npc-cc-row-rand"
+         onmousedown="event.stopPropagation();SceneManager._scene._ccStepStanding('${key}',1)">+</span>` +
+      (canSwear ? `<span class="npc-cc-row-rand"
+         onmousedown="event.stopPropagation();SceneManager._scene._ccSwear(${faction.id})">${esc(T("detailed.factionsSwear"))}</span>` : "");
+    return `<div class="npc-cc-row${locked ? " npc-cc-row--spent" : ""}">
+      <span class="npc-cc-row-lbl">${esc(label)}${isSworn ? " \u2694" : ""}</span>
+      <span class="npc-cc-row-val ${standingClass(value)}">${esc(standingLabel(value))} (${value > 0 ? "+" : ""}${value})</span>
+      ${chips}
+      <span class="npc-cc-row-arrow"></span>
+    </div>`;
+  };
+
+  Scene_NPCEmpathize.prototype._ccStepStanding = function (key, direction) {
+    if (!isEditing(this)) return;
+    if (!stepStanding(key, Number(direction))) { SoundManager.playBuzzer(); return; }
+    SoundManager.playCursor();
+    this._render();
+  };
+
+  Scene_NPCEmpathize.prototype._ccSwear = function (factionId) {
+    if (!isEditing(this)) return;
+    if (!swearAllegiance(Number(factionId))) { SoundManager.playBuzzer(); return; }
+    SoundManager.playCursor();
+    this._render();
+  };
+
+  Scene_NPCEmpathize.prototype._ccRenounce = function () {
+    if (!isEditing(this)) return;
+    if (!swearAllegiance(null)) { SoundManager.playBuzzer(); return; }
+    SoundManager.playCancel();
+    this._render();
+  };
+
+  //---------------------------------------------------------------------------
   // Row + picker handling
   //---------------------------------------------------------------------------
 
@@ -1861,13 +2244,13 @@
 
   const _contentNavEnabled = Scene_NPCEmpathize.prototype._contentNavEnabled;
   Scene_NPCEmpathize.prototype._contentNavEnabled = function () {
-    if (isEditing(this) && this._activeTab === CC_TAB) return true;
+    if (isEditing(this) && (this._activeTab === CC_TAB || this._activeTab === FACTIONS_TAB)) return true;
     return _contentNavEnabled.call(this);
   };
 
   const _contentItems = Scene_NPCEmpathize.prototype._contentItems;
   Scene_NPCEmpathize.prototype._contentItems = function () {
-    if (isEditing(this) && this._activeTab === CC_TAB) {
+    if (isEditing(this) && (this._activeTab === CC_TAB || this._activeTab === FACTIONS_TAB)) {
       if (!this._rightEl) return [];
       // The search field (UI/MenuSearchBar.js) is mouse-only by its own
       // convention, the same as everywhere else it is used: opening it is a

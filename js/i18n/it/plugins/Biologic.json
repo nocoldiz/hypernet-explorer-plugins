@@ -730,7 +730,10 @@
   "knownTag": "Nota",
   "empty": "Nessuno nel gruppo si porta dietro niente.",
   "tooExpensive": "Non abbastanza denaro per la visita.",
-  "revealed": "La malattia di {actor} è {disease}."
+  "revealed": "La malattia di {actor} è {disease}.",
+  "treatTooExpensive": "Non abbastanza denaro per la cura.",
+  "treated": "{actor} è guarito da {disease}: un ciclo completo di {count}x {item}.",
+  "managed": "{disease} non si può guarire: {count}x {item} per tenerla a bada per {actor}."
  },
  "cure": {
   "rowLine": "{actor}: {disease}",
@@ -738,5 +741,33 @@
   "empty": "Nessuno ha una malattia diagnosticata che valga una cura, per ora.",
   "tooExpensive": "Non abbastanza denaro per le medicine.",
   "bought": "Comprate {count}x {item} per {actor}."
+ },
+ "remote": {
+  "title": "VirtuaHealer",
+  "banner": "VIRTUAHEALER",
+  "tagline": "L'ambulatorio che risponde ovunque tu sia",
+  "hint": "Scegli un servizio per pagarlo.",
+  "nothingToDo": "Oggi nel gruppo nessuno ha bisogno di niente.",
+  "tooExpensive": "Non abbastanza denaro per questo servizio.",
+  "noSignalUnderground": "Nessun segnale quaggiù. VirtuaHealer non raggiunge un gruppo sottoterra.",
+  "noSignalTower": "La torre si porta via la linea. VirtuaHealer non raggiunge questi piani.",
+  "section": {
+   "diagnosis": "Diagnosi a distanza",
+   "cure": "Cura arcana",
+   "prescription": "Ricette per corriere",
+   "healing": "Rito di guarigione"
+  },
+  "diagnoseLine": "Leggi la cartella di {actor}",
+  "diagnoseDetail": "Dà un nome a ciò che si porta dietro.",
+  "riteLine": "{actor}: {disease}",
+  "riteDetail": "Brucia via la malattia all'istante.",
+  "incurable": "Non si può guarire, solo tenere a bada",
+  "noRemedy": "Non esiste alcun rimedio",
+  "rited": "Il rito brucia via {disease} da {actor}.",
+  "postLine": "{actor}: {disease}",
+  "postDetail": "{count}x {item} consegnati nello zaino.",
+  "healLine": "Rimetti in sesto {actor}",
+  "healDetail": "{hp} HP, {mp} MP e {parts} parti ferite.",
+  "healed": "{actor} è di nuovo integro."
  }
 }

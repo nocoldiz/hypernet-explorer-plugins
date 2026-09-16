@@ -3034,6 +3034,272 @@
     });
   }
 
+  // ── Remote Bistury, the theatre held together by a force field ────────────
+  // Surgery at a distance: a technomagical field stands in for the surgeon's
+  // hands, so the operation is rolled the way a field one is rather than
+  // simply bought, and the lag on the link takes a further bite out of the
+  // odds. What it charges is the clinic's price several times over.
+  //
+  // What it is for is the catalogue. Every body part any archetype defines is
+  // on the shelf, whether or not a surgery within walking distance stocks it,
+  // and anything the party is already carrying is grafted for the labour fee
+  // alone.
+  //
+  // It reaches the party the same way VirtuaHealer does, so it is out of range
+  // in a dungeon, a crypt or any other procedural interior, and on the Omega
+  // Tower floors the lift serves (window.RemoteClinic).
+  const RB_APP_ID = 'app-remote-bistury';
+  const RB_WINDOW_ID = 'win-remote-bistury';
+  const RB_APP_ICON = 193;
+  const RB_RATE = 4;              // what the field costs over a surgery's bench
+  const RB_LINK_PENALTY = -20;    // hands that are a long way from the patient
+
+  // Who is steering the field: the party's best Surgery hand, since somebody
+  // still has to hold the link. The odds are theirs, in this weather and this
+  // venue, minus the distance.
+  function rbOperator(patient) {
+    const members = window.$gameParty ? $gameParty.members() : [];
+    let best = null;
+    let bestLevel = -1;
+    for (const actor of members) {
+      if (!actor || actor === patient) continue;
+      const level = window.SpecializationXP ? window.SpecializationXP.levelOf(actor, SURGERY_SPEC) : 1;
+      if (level > bestLevel) { best = actor; bestLevel = level; }
+    }
+    return best;
+  }
+
+  function rbOdds(patient) {
+    const operator = rbOperator(patient);
+    const odds = surgeryOdds(operator, patient);
+    const chance = Math.max(SURGERY_MIN_CHANCE, Math.min(SURGERY_MAX_CHANCE, odds.chance + RB_LINK_PENALTY));
+    return Object.assign({}, odds, { chance, operator, linkMod: RB_LINK_PENALTY });
+  }
+
+  // Every part defined anywhere, one row per genuinely distinct slot, plus
+  // whatever the pack is already carrying. A slot the patient has filled is
+  // left out: this fits what is missing, it does not replace what is there.
+  function rbCatalogue(actor) {
+    const rows = [];
+    const Archetypes = getArchetypes();
+    const seen = new Set();
+    const owned = new Set(Object.keys((actor && actor._bodyParts) || {}));
+    const ownedNames = new Set(
+      Object.values((actor && actor._bodyParts) || {}).map((part) => String(part.name || '').toLowerCase())
+    );
+    if (Archetypes) {
+      for (const archetypeKey of Object.keys(Archetypes)) {
+        const archetype = Archetypes[archetypeKey];
+        if (!archetype || !archetype.parts) continue;
+        for (const partKey of Object.keys(archetype.parts)) {
+          const part = archetype.parts[partKey];
+          if (!part) continue;
+          if (owned.has(partKey)) continue;
+          const name = getTranslated(part, 'name') || partKey;
+          const nameKey = String(name).toLowerCase();
+          if (ownedNames.has(nameKey) || seen.has(nameKey)) continue;
+          seen.add(nameKey);
+          const cost = chaosCost(partKey, Math.round((part.hpPercent * 1000 +
+            Math.abs((part.statEffect && part.statEffect.amount) || 0) * 10000) * RB_RATE));
+          rows.push({
+            archetypeKey, partKey, name,
+            hpPercent: part.hpPercent,
+            vital: part.vital,
+            statEffect: part.statEffect || null,
+            statBonus: computeStatBonus(part.statEffect),
+            skillId: part.skillId || 0,
+            archPart: part,
+            itemId: part.itemId || 0,
+            fromPack: false,
+            blockedReason: graftBlockedReason(actor, partKey),
+            cost,
+          });
+        }
+      }
+    }
+    // A part out of the pack costs the labour only, at the same multiple: the
+    // party already owns the thing being fitted.
+    for (const entry of getInventoryBodyParts(actor)) {
+      rows.push(Object.assign({}, entry, {
+        fromPack: true,
+        cost: INSTALLATION_FEE * RB_RATE,
+        name: entry.name + ' ' + T('Prosthetics.remote.fromPack'),
+      }));
+    }
+    rows.sort((a, b) => (a.fromPack === b.fromPack ? a.cost - b.cost : (a.fromPack ? -1 : 1)));
+    return rows;
+  }
+
+  window.RemoteBistury = {
+    odds: rbOdds,
+    catalogue: rbCatalogue,
+
+    // One operation. Returns what happened, for the screen to report.
+    operate(actor, row) {
+      const odds = rbOdds(actor);
+      const roll = Math.floor(Math.random() * 100) + 1;
+      const success = roll <= odds.chance;
+      if (window.SpecializationXP && odds.operator) {
+        window.SpecializationXP.awardCapped(SURGERY_SPEC, success ? 3 : 1, { actor: odds.operator, soloist: true });
+      }
+      if (!success) {
+        const slip = applySurgicalSlip(actor, roll - odds.chance);
+        return { success: false, slip };
+      }
+      $gameParty.loseGold(row.cost);
+      if (row.fromPack && row.itemId && $dataItems[row.itemId]) {
+        $gameParty.loseItem($dataItems[row.itemId], 1);
+      }
+      const HC = window.HealthCore;
+      const open = (HC && HC.openLimbSockets) ? HC.openLimbSockets(actor) : [];
+      graftBodyPart(actor, row, row.partKey, row.archPart, row.itemId,
+        socketForGraft(actor, row.partKey, open[0] || null));
+      if (actor.refresh) actor.refresh();
+      return { success: true };
+    },
+  };
+
+  window.RemoteBisturyApp = {
+    launch() {
+      if (!window.HypernetOS || !window.HypernetOS.Syscalls) return;
+      const blocked = window.RemoteClinic ? window.RemoteClinic.blockedReason() : '';
+      let patient = $gameParty.members()[0];
+      let filter = '';
+
+      const contentHTML = `
+        <div style="display:flex; flex-direction:column; height:100%; font-family:Tahoma,sans-serif; background:var(--xp-bg); overflow:hidden">
+          <div style="background:linear-gradient(135deg, var(--xp-navy-8) 0%, var(--xp-navy-7) 55%, var(--xp-sky) 100%); padding:11px 16px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--xp-navy-6); flex-shrink:0">
+            <div>
+              <div style="color:var(--xp-white); font-weight:bold; font-size:17px; letter-spacing:2px">${T('Prosthetics.remote.banner')}</div>
+              <div style="color:var(--xp-sky-4); font-size:13px; margin-top:2px">${T('Prosthetics.remote.tagline')}</div>
+            </div>
+            <div id="rb-wallet" style="margin-left:auto; text-align:right; color:var(--xp-sky-4); font-size:13px"></div>
+          </div>
+          <div id="rb-patients" style="display:flex; gap:1px; background:var(--xp-ink-pale-2); flex-shrink:0"></div>
+          <div id="rb-odds" style="padding:6px 14px; background:#f4f4ec; border-bottom:1px solid #c8c8b8; font-size:13px; color:var(--xp-ink-5); flex-shrink:0"></div>
+          <div style="padding:6px 14px 0 14px; flex-shrink:0">
+            <input id="rb-filter" class="focusable" data-focus-key="rb-filter" tabindex="0" type="text"
+                   placeholder="${T('Prosthetics.remote.filter')}"
+                   style="width:100%; box-sizing:border-box; padding:4px 6px; font-family:Tahoma,sans-serif; font-size:14px; border:1px solid var(--xp-silver-3); background:var(--xp-white)">
+          </div>
+          <div id="rb-body" style="flex:1; padding:8px 14px 12px 14px; overflow-y:auto"></div>
+          <div id="rb-status" style="border-top:1px solid var(--xp-ink-pale-2); padding:3px 10px; background:var(--xp-bg); font-size:13px; color:var(--xp-text-muted); flex-shrink:0">${T('Prosthetics.remote.hint')}</div>
+        </div>`;
+
+      const win = window.HypernetOS.Syscalls.createWindow({
+        id: RB_WINDOW_ID,
+        title: T('Prosthetics.remote.title'),
+        contentHTML,
+        width: 620,
+        height: 520,
+        icon: RB_APP_ICON,
+      });
+      if (!win) return;
+
+      const body = win.querySelector('#rb-body');
+      const wallet = win.querySelector('#rb-wallet');
+      const oddsLine = win.querySelector('#rb-odds');
+      const tabs = win.querySelector('#rb-patients');
+      const status = win.querySelector('#rb-status');
+      const filterBox = win.querySelector('#rb-filter');
+
+      function setStatus(text, bad) {
+        status.textContent = text;
+        status.style.color = bad ? 'var(--xp-red-4)' : 'var(--xp-text-muted)';
+      }
+
+      filterBox.addEventListener('input', () => { filter = filterBox.value.toLowerCase(); renderList(); });
+
+      function renderTabs() {
+        tabs.innerHTML = $gameParty.members().map((actor, i) => {
+          const active = actor === patient;
+          return `<button class="focusable" data-focus-key="rb-tab-${i}" data-tab="${i}" tabindex="0"
+            style="flex:1; padding:6px 0; font-family:Tahoma,sans-serif; font-size:14px; border:none; cursor:pointer;
+                   background:${active ? 'var(--xp-white)' : 'var(--xp-bg)'}; font-weight:${active ? 'bold' : 'normal'}">${actor.name()}</button>`;
+        }).join('');
+        tabs.querySelectorAll('[data-tab]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            patient = $gameParty.members()[Number(btn.dataset.tab)];
+            render();
+          });
+        });
+      }
+
+      function renderList() {
+        wallet.innerHTML = '&euro;' + ($gameParty.gold() / 100).toFixed(2);
+        if (blocked) {
+          oddsLine.textContent = '';
+          body.innerHTML = `<div style="padding:26px 10px; text-align:center; color:var(--xp-ink-5); font-size:15px">${blocked}</div>`;
+          return;
+        }
+        const odds = rbOdds(patient);
+        oddsLine.textContent = T('Prosthetics.remote.odds', {
+          chance: odds.chance,
+          operator: odds.operator ? odds.operator.name() : T('Prosthetics.remote.noOperator'),
+        });
+        const rows = rbCatalogue(patient).filter((row) => !filter || row.name.toLowerCase().includes(filter));
+        if (!rows.length) {
+          body.innerHTML = `<div style="padding:26px 10px; text-align:center; color:var(--xp-ink-5); font-size:15px">${T('Prosthetics.remote.nothingToFit')}</div>`;
+          return;
+        }
+        body.innerHTML = rows.map((row, i) => {
+          const affordable = $gameParty.gold() >= row.cost && !row.blockedReason;
+          const note = row.blockedReason || T('Prosthetics.remote.partNote', {
+            hp: row.hpPercent,
+            stat: row.statBonus ? ('+' + row.statBonus) : T('Prosthetics.remote.noBonus'),
+          });
+          return `<button class="focusable" data-focus-key="rb-row-${i}" data-row="${i}" tabindex="0"
+              ${row.blockedReason ? 'disabled' : ''}
+              style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; margin-bottom:4px; padding:7px 10px; font-family:Tahoma,sans-serif; font-size:14px; background:var(--xp-white); border:1px solid var(--xp-silver-3); cursor:${row.blockedReason ? 'default' : 'pointer'}; opacity:${row.blockedReason ? '0.6' : '1'}">
+              <span style="flex:1">
+                <span style="color:var(--xp-ink-3)">${row.name}</span><br>
+                <span style="font-size:13px; color:var(--xp-ink-soft)">${note}</span>
+              </span>
+              <span style="font-weight:bold; color:${affordable ? '#1d6b2f' : 'var(--xp-red-4)'}">&euro;${(row.cost / 100).toFixed(2)}</span>
+            </button>`;
+        }).join('');
+        body.querySelectorAll('[data-row]').forEach((btn) => {
+          btn.addEventListener('click', () => operate(rows[Number(btn.dataset.row)]));
+        });
+      }
+
+      function render() { renderTabs(); renderList(); }
+
+      function operate(row) {
+        if (!row || row.blockedReason) { if (window.SoundManager) SoundManager.playBuzzer(); return; }
+        if ($gameParty.gold() < row.cost) {
+          if (window.SoundManager) SoundManager.playBuzzer();
+          setStatus(T('Prosthetics.remote.tooExpensive'), true);
+          return;
+        }
+        const result = window.RemoteBistury.operate(patient, row);
+        if (result.success) {
+          if (window.SoundManager) SoundManager.playShop();
+          setStatus(T('Prosthetics.remote.grafted', { part: row.name, actor: patient.name() }), false);
+        } else {
+          if (window.SoundManager) SoundManager.playBuzzer();
+          setStatus(result.slip
+            ? T('Prosthetics.remote.failedWound', { part: result.slip.partName })
+            : T('Prosthetics.remote.failed'), true);
+        }
+        renderList();
+      }
+
+      render();
+    },
+  };
+
+  if (window.HypernetOS && window.HypernetOS.registerApp) {
+    window.HypernetOS.registerApp({
+      id: RB_APP_ID,
+      name: T('Prosthetics.remote.title'),
+      icon: RB_APP_ICON,
+      category: 'internet',
+      desktopShortcut: true,
+      launchFn() { window.RemoteBisturyApp.launch(); },
+    });
+  }
+
   // The same theatre with nobody to pay and nobody qualified: one member cuts,
   // another is cut, and only what is already in the pack can be fitted.
   const openFieldSurgery = () => {

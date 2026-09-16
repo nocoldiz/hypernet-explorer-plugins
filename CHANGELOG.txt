@@ -1,3 +1,37 @@
+0.6.22a
+
+Added:
+ - post express mail app on the hypernet desktop
+ - visit clinic command for clinic maps
+ - save characters as  presets
+ - virtuahealer and remote bistury hypernet apps, cure from diagnose menu
+ - locked destinations sealed behind spacetime bubbles
+ - starting faction relationship selector in detailed character editor
+ - longer map events with more endings and quest dungeons
+
+Changed:
+ - randomize party button no longer takes you to scenarios
+ - gguf model writes every empathize reply, fed both characters info
+ - reworked city generator so it has space to spawn 32x32 prefabs
+ - flying broom no longer passes obstacles indoors, only adds speed
+ - reworked character creation buttons, VIP dossiers and tab redrawing
+ - move dynamics after status
+ - reworked world history generation: leaders age, sicken and die
+ - reworked character creation layout, tabs and dropdowns
+ - online apps show no connection in the tower, underground and dungeons
+ - escaping from boss enemies enabled but harder
+
+Fixed:
+ - character creation steps: three classes no longer end on a weak skill
+ - visiting a locked location now shows the timeloop bubble warning
+ - go underground and go to surface no longer need two presses
+ - party members follow the leader in column only on the world map
+ - ascii mode no longer turns on with the ascii theme
+ - interacting with vehicle parked on a town or village tile will ask if you want to interacti wit vehicle or city
+ - ko party member body carried fluidly, and never made leader
+ - dynamics up and down buttons now reorder the party
+ - c during a flyby opened the character menu instead of climbing
+
 0.6.21a
 
 Added:
@@ -19,6 +53,7 @@ Changed:
  - reworked thinker menu interface to be easier to navigate
 
 Fixed:
+ - 3d fist model now shows as a proper fps viewmodel
  - blank invisible npcs in procedural dungeons
  - escape in the backpack now closes it instead of asking to drop an item
  - duped items replaced with two new books

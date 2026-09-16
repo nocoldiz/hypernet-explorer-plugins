@@ -6260,14 +6260,28 @@ var WeaponSystemProcedural = {
     // the overlay's is orthographic and looks straight down -Z, where arms
     // pointing away from it would project to almost nothing. So it is turned
     // to put that camera behind them (180 about Y) and then pitched over,
-    // which lays the length of the forearms into the vertical of the screen:
-    // elbows out of the bottom edge, fists up in the middle of the frame.
-    rotation: { x: 52, y: 180, z: 0 },
-    // The share of the frame the posed hands are fitted into, and how far
-    // past the bottom edge the elbows are allowed to run off it.
-    fillW: 0.62,
-    fillH: 0.58,
-    sink: 0.10,
+    // which lays the length of the forearms into the vertical of the screen.
+    // The pitch is also what the view is READ from, and an orthographic camera
+    // reads it literally: too shallow and the arms foreshorten into stumps,
+    // too steep and you are looking down on your own chest. At this angle the
+    // forearms run out to the bottom corners at about the slant a first person
+    // viewmodel holds them.
+    rotation: { x: 62, y: 180, z: 0 },
+    // WHAT IS IN FRAME IS THE FISTS. Fitting the whole posed silhouette
+    // instead - the obvious thing, and what this did first - frames the arms
+    // by their widest part, which on a pair of arms viewed from above is the
+    // shoulders: it put two deltoids across the bottom of the screen with the
+    // fists small and dead centre over the enemy, reading as somebody else
+    // reaching up at the player rather than as the player's own hands. So the
+    // fit is stated about the hands alone and everything behind them (wrists,
+    // forearms, elbows, shoulders) is allowed to run off the bottom edge,
+    // which is exactly where a first person viewmodel keeps it.
+    //
+    // How wide the two fists stand across the screen, and how far up it their
+    // centre sits. Low enough to leave the top of the frame - where whatever
+    // is being punched stands - clear.
+    handSpan: 0.30,
+    handY: 0.25,
     // The pose the fit is measured in: whatever the hands do when nothing is
     // happening. Measuring the bind pose instead frames a pair of arms nobody
     // ever sees.
@@ -6305,21 +6319,67 @@ var WeaponSystemProcedural = {
    */
   acquireRig(spec, cb) {
     if (!this._rigPool) this._rigPool = {};
+    if (!this._rigLoading) this._rigLoading = {};
     const free = this._rigPool[spec.file];
     if (free && free.length) { cb(free.pop()); return; }
     if (!window.THREE || !THREE.GLTFLoader) { cb(null); return; }
+
+    // One read at a time per file. The battle warms the pool as it opens and
+    // the first command window asks for the hands a moment later, while that
+    // read is still running: without this the 19MB file would be read twice
+    // over and the second copy dropped straight into the pool beside the first.
+    const waiting = this._rigLoading[spec.file];
+    if (waiting) { waiting.push(cb); return; }
+    this._rigLoading[spec.file] = [cb];
+
+    const settle = (entry) => {
+      const queue = this._rigLoading[spec.file] || [];
+      delete this._rigLoading[spec.file];
+      // The rig that was read goes to whoever asked first. Anyone behind them
+      // asks again rather than being handed the same bones: two sprites cannot
+      // pose one skeleton. Usually the first caller is the warm-up, which puts
+      // it straight in the pool, and the second is answered out of that.
+      for (let i = 0; i < queue.length; i++) {
+        if (i === 0 || !entry) queue[i](entry);
+        else this.acquireRig(spec, queue[i]);
+      }
+    };
+
     new THREE.GLTFLoader().load(
       'models/' + spec.file,
-      (gltf) => cb(this.prepareRig(gltf, spec)),
+      (gltf) => settle(this.prepareRig(gltf, spec)),
       undefined,
       (err) => {
         // Once it has failed it has failed: every empty hand from here on
         // builds its own fist rather than asking for the file again.
         spec.unavailable = true;
         console.error('[WeaponSystemProcedural] could not load the hands: ' + spec.file, err);
-        cb(null);
+        settle(null);
       }
     );
+  },
+
+  /**
+   * Read the rig off disk before anything asks to hold it, so the first empty
+   * hand of the battle is answered out of the pool instead of waiting on a
+   * 19MB file. Only for party members who are actually unarmed: a party that
+   * all hold weapons never touches the file.
+   */
+  warmRig(actors) {
+    if (!actors || !actors.length) return;
+    const asked = {};
+    for (const actor of actors) {
+      if (!actor || (actor.weapons && actor.weapons().length)) continue;
+      const spec = this.rigSpecFor(this.unarmedWeaponFor(actor));
+      if (!spec || asked[spec.file]) continue;
+      asked[spec.file] = true;
+      // Already warm, or already on its way: acquiring would pop the one copy
+      // out of the pool and put it straight back, which is free but pointless.
+      const pool = this._rigPool && this._rigPool[spec.file];
+      if (pool && pool.length) continue;
+      if (this._rigLoading && this._rigLoading[spec.file]) continue;
+      this.acquireRig(spec, (entry) => this.releaseRig(spec, entry));
+    }
   },
 
   /** How many idle copies of one rig are worth keeping loaded. */
@@ -6354,6 +6414,15 @@ var WeaponSystemProcedural = {
     }
     scene.traverse((obj) => {
       if (obj.geometry) obj.geometry._fxShared = true;
+      // A skinned mesh is culled on the bounding sphere of its BIND pose, which
+      // three never expands for the skinning that actually moves the vertices.
+      // These arms are modelled spread out and a mile below where the idle
+      // holds them, so that sphere lands entirely off the bottom of the
+      // overlay camera and the hands were thrown away before they were ever
+      // drawn: loaded, posed, framed, and culled. They are always in frame by
+      // construction (rigFrameFor fits them to it), so there is nothing for
+      // the cull to win here anyway.
+      if (obj.isMesh) obj.frustumCulled = false;
       const mats = obj.material ? (Array.isArray(obj.material) ? obj.material : [obj.material]) : [];
       for (const mat of mats) {
         for (const key in mat) {
@@ -6422,8 +6491,57 @@ var WeaponSystemProcedural = {
   },
 
   /**
+   * Which of a rig's bones are the hands. Deliberately read off the names
+   * rather than off a list of indices: a rig is an authored file, and the one
+   * thing every human rig in every exporter agrees on is what it calls a
+   * thumb.
+   */
+  HAND_BONES: /hand|palm|thumb|f_index|f_middle|f_ring|f_pinky/i,
+
+  /**
+   * The box the HANDS occupy, AS THEY ARE POSED - the part of a pair of arms
+   * that is meant to be in frame. A vertex counts as hand if most of its
+   * weight is on hand bones, so the wrists fade out of the measurement
+   * instead of dragging it down the forearm.
+   *
+   * A rig whose bones are named nothing like a hand falls back to its whole
+   * silhouette, which frames small rather than wrong.
+   */
+  handBoundsOf(root) {
+    const box = new THREE.Box3();
+    const v = new THREE.Vector3();
+    let found = false;
+    root.updateMatrixWorld(true);
+    root.traverse((obj) => {
+      if (!obj.isSkinnedMesh) return;
+      const attr = obj.geometry && obj.geometry.attributes;
+      const pos = attr && attr.position, idx = attr && attr.skinIndex, wgt = attr && attr.skinWeight;
+      if (!pos || !idx || !wgt) return;
+      const isHand = obj.skeleton.bones.map((b) => this.HAND_BONES.test(b.name || ''));
+      if (isHand.indexOf(true) < 0) return;
+      // three names this boneTransform up to r151 and applyBoneTransform after.
+      const skin = obj.applyBoneTransform || obj.boneTransform;
+      for (let i = 0; i < pos.count; i++) {
+        let share = 0;
+        for (let k = 0; k < 4; k++) {
+          const bone = idx.array[i * idx.itemSize + k];
+          const weight = wgt.array[i * wgt.itemSize + k];
+          if (weight > 0 && isHand[bone]) share += weight;
+        }
+        if (share < 0.5) continue;
+        v.fromBufferAttribute(pos, i);
+        if (skin) skin.call(obj, i, v);
+        v.applyMatrix4(obj.matrixWorld);
+        box.expandByPoint(v);
+        found = true;
+      }
+    });
+    return found ? box : this.posedBoundsOf(root);
+  },
+
+  /**
    * Where the hands sit and how big they are, measured once per rig per screen
-   * size: fitted to the frame by their posed silhouette rather than by any
+   * size: fitted to the frame by the fists themselves rather than by any
    * authored scale, so the same rig frames the same way at every resolution.
    */
   rigFrameFor(entry, spec, model) {
@@ -6432,8 +6550,8 @@ var WeaponSystemProcedural = {
     const key = screenW + 'x' + screenH;
     if (entry._frame && entry._frameFor === key) return entry._frame;
 
-    // The silhouette is measured ONCE, while the hands are still standing in
-    // the pose they were fitted for; a later measurement (the player changed
+    // The fists are measured ONCE, while they are still standing in the pose
+    // they were fitted for; a later measurement (the player changed
     // resolution) would catch them mid-punch and resize the whole rig to it.
     if (!entry._box) {
       const restPos = model.position.clone();
@@ -6445,21 +6563,20 @@ var WeaponSystemProcedural = {
         THREE.MathUtils.degToRad(spec.rotation.y),
         THREE.MathUtils.degToRad(spec.rotation.z)
       );
-      entry._box = this.posedBoundsOf(model);
+      entry._box = this.handBoundsOf(model);
       model.position.copy(restPos);
       model.scale.copy(restScale);
     }
     const box = entry._box;
 
-    const width = Math.max(box.max.x - box.min.x, 1e-6);
-    const height = Math.max(box.max.y - box.min.y, 1e-6);
-    const scale = Math.min(screenW * spec.fillW / width, screenH * spec.fillH / height);
+    const span = Math.max(box.max.x - box.min.x, 1e-6);
+    const scale = screenW * spec.handSpan / span;
     const frame = {
       scale,
-      // Centred across the frame, and standing ON the bottom edge with the
-      // forearms running off it rather than floating above it.
+      // The pair of fists centred across the frame and held low in it. What
+      // is placed is the hands; the arms follow them off the bottom edge.
       x: -((box.min.x + box.max.x) / 2) * scale,
-      y: -screenH / 2 - screenH * spec.sink - box.min.y * scale
+      y: (spec.handY - 0.5) * screenH - ((box.min.y + box.max.y) / 2) * scale
     };
     entry._frame = frame;
     entry._frameFor = key;
@@ -6791,10 +6908,16 @@ var WeaponSystemProcedural = {
      */
     Sprite_3DWeapon.prototype._loadRig = function(spec) {
       this._rig = spec;
-      // The hands are not slid in from off the edge like a weapon: they have
-      // an equip of their own to arrive with.
-      this._entryDone = true;
-      this._transitionDX = 0;
+      // A weapon is carried in from the side of the screen. Hands are RAISED:
+      // they come up from under the bottom edge into the guard, over the same
+      // clock and the same ease as that slide, on top of the rig's own equip.
+      // The entry is restated here rather than left as the constructor set it
+      // because the constructor ran before this sprite knew it was holding a
+      // rig, and so measured the slide for a weapon.
+      this._entryElapsed = 0;
+      this._entryDone = false;
+      this._transitionDX = this._entrySlideX();
+      this._transitionDY = this._entrySlideY();
       WeaponSystemProcedural.acquireRig(spec, (entry) => {
         // A large file read is a long time to be away: the sprite may have
         // been let go, and the overlay torn down, before the hands arrive.
@@ -6872,6 +6995,33 @@ var WeaponSystemProcedural = {
      * standing on the bottom edge, and drifting out with the exit fade at the
      * end of a battle like everything else in the overlay.
      */
+    // A pair of hands never comes in from the side, so the weapon slide is
+    // traded for a vertical one: the whole rig starts a screen's height below
+    // where it is framed and is raised into it.
+    const _Sprite_3DWeapon_entrySlideX = Sprite_3DWeapon.prototype._entrySlideX;
+    Sprite_3DWeapon.prototype._entrySlideX = function() {
+      if (this._rig) return 0;
+      return _Sprite_3DWeapon_entrySlideX.call(this);
+    };
+    Sprite_3DWeapon.prototype._entrySlideY = function() {
+      if (!this._rig) return 0;
+      return -(Graphics.height || 624);
+    };
+
+    /**
+     * Raise the hands into frame again, the person behind them having changed.
+     * The rig is the same file whoever is holding it, so a party member taking
+     * over from another is not worth a reload: the hands drop out of frame and
+     * come back up with that character's own equip.
+     */
+    Sprite_3DWeapon.prototype.replayRigEntry = function() {
+      if (!this._rig || this._exiting) return;
+      this._entryElapsed = 0;
+      this._entryDone = false;
+      this._transitionDY = this._entrySlideY();
+      if (this._model) this._playRigClip('Equip');
+    };
+
     Sprite_3DWeapon.prototype._rigPose = function() {
       if (!this._model || !this._rigEntry) return;
       const frame = WeaponSystemProcedural.rigFrameFor(this._rigEntry, this._rig, this._model);
@@ -6882,7 +7032,11 @@ var WeaponSystemProcedural = {
         THREE.MathUtils.degToRad(r.z)
       );
       this._model.scale.set(frame.scale, frame.scale, frame.scale);
-      this._model.position.set(frame.x + (this._transitionDX || 0), frame.y, 0);
+      this._model.position.set(
+        frame.x + (this._transitionDX || 0),
+        frame.y + (this._transitionDY || 0),
+        0
+      );
     };
 
     // Override _applyKeyframe to reset back to idle instead of hiding the weapon at the end of keyframes

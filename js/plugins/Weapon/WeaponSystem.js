@@ -604,6 +604,15 @@
         skill.weaponAnimations = anims;
         debugLog(`Skill ${skill.name}: Movement`, anims);
       }
+
+      // Whether this is thrown WITH THE HANDS. A martial art is a whole body:
+      // a jab, a palm strike and a hammerfist are the hands, a roundhouse, a
+      // knee, a headbutt and a shoulder throw are not, and the pair of bare
+      // hands in frame is the only part of it the player ever sees. Tagged,
+      // the hands throw it; untagged, they hold their guard through it rather
+      // than miming a punch the character never threw.
+      // tools/skills/tag_hand_skills.js is what stamps the tag.
+      skill.handAnimation = /<HandAnimation>/i.test(skillNote);
     }
 
     const model3dMatch = note.match(/<3DModel:\s*(.+?)>/i);
@@ -1000,12 +1009,24 @@
         // to fall back on, so a skill would swing them like a sword.
         const swings = declared && wtypeId !== 10 && wtypeId !== 11;
 
+        // A skill tagged <HandAnimation> is thrown with the hands, so a hand
+        // with nothing in it throws it: the bare fists in frame swing. It only
+        // reads off an EMPTY hand, since a character holding a sword throws
+        // the sword's motion whatever the skill is called.
+        const throwsHands = !!(skill && skill.handAnimation) && !weapons[hand];
+
         if (shoots && (declared || action.isPhysical())) {
           this._lastAttacker = subject;
           this._multiAttackHitCount = 0;
           // null: its own shot, not whatever movement the skill named.
           this._skillAnimations = null;
           debugLog(`Skill ${skill.name} shoots with the weapon's own motion`);
+        } else if (throwsHands && !declared) {
+          this._lastAttacker = subject;
+          this._multiAttackHitCount = 0;
+          // null: the empty hand's own motion, which is a punch.
+          this._skillAnimations = null;
+          debugLog(`Skill ${skill.name} is thrown with the hands`);
         } else if (swings) {
           this._lastAttacker = subject;
           this._multiAttackHitCount = 0;
@@ -1402,6 +1423,13 @@
     // case any other code path ever instantiates one while it's active.
     if (window.MapBattleMode && window.MapBattleMode.isActive()) return;
     this._3dWeaponSprites = {};
+    // Read the hands off disk NOW, while the battle is still opening. The rig
+    // is a 19MB file: asked for at the moment the first command window opens,
+    // it arrives a second or two later, which is why the fists used to turn up
+    // only after the first blow had already been thrown.
+    if (window.WeaponSystemProcedural && $gameParty) {
+      WeaponSystemProcedural.warmRig($gameParty.battleMembers());
+    }
     this.updateWeaponSprite();
   };
 
@@ -1516,8 +1544,22 @@
     // playWeaponAnimation that there is a second claw to move.
     this._mirroredOffhand = (!weapons[1] && isClaws && leftWeapon === weapons[0]);
 
-    this.setHeldWeaponModel('right', rightWeapon || shieldModel(rightShield));
-    this.setHeldWeaponModel('left', leftWeapon || shieldModel(leftShield));
+    // Whose hands these are. A rig is the same file for every humanoid, so one
+    // unarmed party member taking over from another is the same sprite holding
+    // the same model and nothing below would rebuild it: the fists would
+    // simply stand there through the handover. They are raised again instead,
+    // which is the only thing on screen that says the hands changed owner.
+    const handover = this._weaponActorId !== undefined &&
+      this._weaponActorId !== actor.actorId();
+    this._weaponActorId = actor.actorId();
+
+    const right = this.setHeldWeaponModel('right', rightWeapon || shieldModel(rightShield));
+    const left = this.setHeldWeaponModel('left', leftWeapon || shieldModel(leftShield));
+    if (handover) {
+      for (const sprite of [right, left]) {
+        if (sprite && sprite.replayRigEntry) sprite.replayRigEntry();
+      }
+    }
   };
 
   // How long a blow takes to arrive when the weapon has no movement to read it

@@ -572,9 +572,13 @@
       // Rolling a character, or a whole party, is the wizard's business. The
       // story mode is played as one of four dossiers and nothing else, so the two
       // buttons that would throw that dossier away are not drawn there.
-      const randomizeBtnsHtml = Scene_CharacterCreation._storyMode ? '' : `
-            <button class="cc-compact-btn" onclick="SceneManager._scene.onQuickRandomizeMember()">${ccT('CharCreate.randomizeMember')}</button>
-            <button class="cc-compact-btn" onclick="SceneManager._scene.createTotalRandomPartyAll()">${ccT('CharCreate.randomizeParty')}</button>`;
+      // Rolling the open member moved to the action bar beside the one that
+      // rolls the whole party (see _actionBarRandomizeMemberHtml).
+      const randomizeBtnsHtml = ''
+
+      // Filing the sheet as a dossier of the player's own is a party level
+      // action now: the button lives in the action bar (see
+      // _actionBarSavePresetHtml) beside the one that rolls the whole party.
 
       return `
         <div class="cc-compact-sidebar">
@@ -588,7 +592,6 @@
           </div>
           <div class="cc-compact-actions cc-col cc-col-gap-2">
             ${randomizeBtnsHtml}
-            <button class="cc-compact-btn primary" onclick="SceneManager._scene.onProceedToScenario()">${this._partyConfirmLabel()}</button>
           </div>
         </div>
       `;
@@ -930,16 +933,6 @@
             </div>
             <div class="cc-select-grid cc-scenario-grid">
               ${scenarioSectionsHtml}
-            </div>
-            <div class="cc-scenario-list-actions">
-              <button class="cc-compact-btn primary cc-scenario-embark" onclick="SceneManager._scene.onFinishPartyCreation()">${ccT('CharCreate.embark')}</button>
-              ${chaos ? `
-              <button class="cc-compact-btn cc-scenario-reroll" onclick="SceneManager._scene.onChaosRerollParty()">
-                ${this._ccIconHtml(136, 16)} <span>${ccT('CharCreate.randomizeParty')}</span>
-              </button>` : `
-              <button class="cc-compact-btn cc-scenario-back" onclick="SceneManager._scene.onReturnToPartyDossier()">
-                ${this._ccIconHtml(82, 16)} <span>${ccT('CharCreate.returnToParty')}</span>
-              </button>`}
             </div>
           </div>
 

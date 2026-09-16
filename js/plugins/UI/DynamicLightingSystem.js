@@ -1320,7 +1320,17 @@
         update() {
             super.update();
 
-            if (--this._visCheck <= 0) {
+            // A layer change writes the destination onto the procedural record
+            // the instant it is asked for, and the party only lands ten frames
+            // later. Re-reading it in between lit a dungeon up while the party
+            // was still in it, or dropped the dark over a field, and if the move
+            // was slow to land the two stayed apart for as long as it took. The
+            // last answer is held until they are actually standing in the new
+            // place; the sprite is rebuilt on arrival and snaps there.
+            const midMove = !!(window.WorldMapTransfer &&
+                typeof window.WorldMapTransfer.transitionPending === 'function' &&
+                window.WorldMapTransfer.transitionPending());
+            if (--this._visCheck <= 0 && !midMove) {
                 this._context = this.darkContext();
                 this._nightFactor = this.getNightLightIntensity();
                 this._targetIntensity = this.computeTargetIntensity();

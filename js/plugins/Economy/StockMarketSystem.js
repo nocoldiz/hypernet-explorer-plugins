@@ -148,11 +148,16 @@
   const STOCKS_CONFIG = {};
 
   // Helper i18n
+  // Several of these paths are deliberate probes with a fallback behind them
+  // (a sector label shares the Real Estate register), so the key is asked about
+  // before it is asked for: calling T on a key that was never meant to be here
+  // is reported as a missing string by the i18n tooling.
   const _smi18n = (path, vars) => {
-    if (typeof T === "function") {
-      const res = T('StockMarket.' + path, vars || {});
-      if (res && !res.startsWith('StockMarket.')) return res;
-    }
+    if (typeof T !== "function") return null;
+    const key = 'StockMarket.' + path;
+    if (T.has && !T.has(key)) return null;
+    const res = T(key, vars || {});
+    if (res && !res.startsWith('StockMarket.')) return res;
     return null;
   };
 

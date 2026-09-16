@@ -258,9 +258,15 @@
     const BOUNTY_VAR = 66; // Crime bounty (euros)
 
     // -------------------------------------------------------------- the party
-    // The members walk the engine's own caterpillar behind the leader. All that
-    // is left of the party's own voice is the bubble over a head, which the
-    // travelling banter (NPC/PartyBanter.js) still puts there.
+    // The members walk LOOSE: each one keeps its own tile and drifts about on
+    // its own near the leader, and the engine caterpillar (everybody in the
+    // leader's exact footsteps) is only the shape they take on the world map,
+    // where one tile is a whole region and the party is drawn as a single dot.
+    // How far one of them may drift before it comes back, how long it stands
+    // between steps, and how often a standing member takes one at all.
+    const LOOSE_LEASH = 4;      // tiles from the leader
+    const LOOSE_PAUSE = 12;     // frames stood still before another step
+    const LOOSE_ODDS  = 0.08;   // chance of a step once it has stood that long
     const LOOSE_CHATTER = params.looseChatter !== "false";
     const BUBBLE_MS = 3400;   // how long one line of chatter stays up
     // A party that comments on everything talks over itself and over the town,
@@ -2289,18 +2295,16 @@
     // ========================================================================
     // The party on the map
     // ========================================================================
-    // The party walks the engine's own caterpillar and nothing else: every
-    // member steps into the tile the one in front of them has just left, one
-    // behind the other, in the leader's exact footsteps, and nobody leaves the
-    // column. The loose layer that used to walk them about on their own, with
-    // its errands, its strolls and the conversations it held with the town
-    // while the player was looking somewhere else, is gone, and with it every
-    // reason a member had to stand anywhere but at the leader's back.
+    // The party walks loose on ordinary ground: every member keeps a tile of
+    // its own, drifts about near the leader and comes back when it has strayed
+    // past the leash. The engine caterpillar, one behind the other in the
+    // leader's exact footsteps, is kept for the world map, for a gather, for a
+    // hull and for anything being played out as an event.
     //
-    // What is left here is the handful of questions about the party ON THE MAP
-    // that the rest of this file still asks: whether a map battle owns the
-    // bodies, whether they are stowed in a hull, where to put them down after a
-    // transfer, and who the leader is standing face to face with.
+    // The rest of this is the handful of questions about the party ON THE MAP
+    // that the file still asks: whether a map battle owns the bodies, whether
+    // they are stowed in a hull, where to put them down after a transfer, and
+    // who the leader is standing face to face with.
     const Loose = {
         // The map the party was last seen on, so arriving somewhere new can be
         // told from coming back to the map it never left.
@@ -2356,6 +2360,40 @@
 
         dist(a, b) {
             return $gameMap.distance(a.x, a.y, b.x, b.y);
+        },
+        // ------------------------------------------------- walking loose
+        // Is the party free to walk about on its own this frame? The column is
+        // the right shape for the world map, for a gather, for a hull and for a
+        // tactical fight, and an event being played out wants everybody where
+        // the event left them rather than wandering off mid-line.
+        looseActive() {
+            if (!$gamePlayer || !$gameMap || !$gameParty) return false;
+            if (this.onWorldMap() || this.inMapBattle()) return false;
+            if ($gameParty.inBattle()) return false;
+            if ($gamePlayer.isInVehicle() || this.stowedInVehicle()) return false;
+            if ($gamePlayer.isTransferring()) return false;
+            if ($gamePlayer.areFollowersGathering && $gamePlayer.areFollowersGathering()) return false;
+            if ($gameMap.isEventRunning()) return false;
+            if ($gameMessage && $gameMessage.isBusy()) return false;
+            return true;
+        },
+
+        // One frame of it. A member that has drifted past the leash walks back;
+        // anyone else stands a moment and then takes a step of its own. Bodies
+        // being carried and the slot the second pad is holding are walked by
+        // somebody else and are left alone.
+        stepLoose(data) {
+            for (const f of (data || [])) {
+                if (!f || !f.isVisible() || this.heldByP2(f)) continue;
+                if (typeof Carry !== "undefined" && Carry.isBody && Carry.isBody(f)) continue;
+                if (f.isMoving() || f.isMoveRouteForcing()) continue;
+                if ((f._stopCount || 0) < LOOSE_PAUSE) continue;
+                if (this.dist(f, $gamePlayer) > LOOSE_LEASH) {
+                    f.moveTowardCharacter($gamePlayer);
+                    continue;
+                }
+                if (Math.random() < LOOSE_ODDS) f.moveRandom();
+            }
         },
 
         // One member put down beside the leader, on the first free tile of the
@@ -3081,6 +3119,11 @@
             const members = $gameParty.members();
             const to = members.findIndex((mem) => mem && mem.actorId() === actorId);
             if (to <= 0) return false;
+            // Somebody who is down cannot be handed the party: a body does not
+            // read the map. The same answer PartyRoster.setLeader gives the
+            // Dynamics board, asked here so Tab and the pad triggers never even
+            // start the swap.
+            if (members[to].isDead && members[to].isDead()) return false;
 
             // Riding, the party is stowed in the hull and there are no two
             // bodies to exchange: the order changes and nothing moves.
@@ -3094,6 +3137,10 @@
             const fy = swap ? f.y : py;
             const fd = swap ? f.direction() : pd;
 
+            // Whoever was holding a fallen member puts them down as the lead
+            // changes hands: the body is taken up again by whoever the party
+            // can spare once the two have exchanged places.
+            if (AutoIdle.carry) AutoIdle.carry.dropAll();
             if (window.PartyRoster && window.PartyRoster.setLeader) {
                 const result = window.PartyRoster.setLeader(actorId);
                 if (!result || !result.ok) return false;
@@ -3377,16 +3424,21 @@
         _Game_Followers_update_worldMap.call(this);
     };
 
-    // 1) The chase itself, which is the engine's own: every member steps into
-    //    the tile the one in front of them has just left. The single exception
-    //    is a map battle (BattleSystem/MapBattleMode.js), which walks every
-    //    member itself, tile by tile, and where each one holds the ground it is
-    //    fighting from: letting the chase run there would drag the whole train
-    //    along behind every tactical step the leader takes, undoing the
-    //    positioning the fight is being fought over.
+    // 1) The step. On ordinary ground the party walks loose, every member on
+    //    its own tile, and only comes back to the leader when it has drifted
+    //    too far; the engine chase, which puts them in the leader's exact
+    //    footsteps, is kept for the world map alone. A map battle
+    //    (BattleSystem/MapBattleMode.js) walks every member itself, tile by
+    //    tile, and each one holds the ground it is fighting from, so nothing
+    //    here touches them: either shape would undo the positioning the fight
+    //    is being fought over.
     const _Game_Followers_updateMove_party = Game_Followers.prototype.updateMove;
     Game_Followers.prototype.updateMove = function () {
         if (Loose.inMapBattle()) return;
+        if (Loose.looseActive()) {
+            Loose.stepLoose(this._data);
+            return;
+        }
         _Game_Followers_updateMove_party.call(this);
     };
 
@@ -3808,59 +3860,151 @@
 
     // --- 2. Follower Carrying for Downed Members ---
 
-    // Hauling a body needs a spare pair of hands, not the last one. Two
-    // travellers alone cannot manage it: the one still standing has the map,
-    // the pack and the road to deal with, so a downed partner is left where
-    // they fell until they come round. Three is enough, because one can carry
-    // while the other walks. A summon out on the map is a body like any other
-    // and counts toward the three, which is what makes calling one the answer
-    // to a two-handed party.
-    const CARRY_MIN_BODIES = 3;
+    // Hauling a body needs a spare pair of hands. Who ends up holding one is a
+    // question of who can be spared rather than who is nearest: an animal
+    // walking at heel or a summon called up for the road is carrying nothing
+    // else, so one of those takes the body first. Failing that it goes to
+    // somebody walking behind, because the person in front has the map, the
+    // pack and the road to deal with. Only a pair travelling alone puts the
+    // body on the leader, there being nobody else to put it on.
+    //
+    // A body is HELD, not dragged along the column: it rides the carrier's own
+    // position frame by frame, so it moves as smoothly as the carrier does
+    // rather than snapping from tile to tile. A body nobody can lift lies
+    // exactly where it fell.
+    const Carry = {
+        // Who is holding this body, named in a way that changes the moment the
+        // party is rearranged: the lead changing hands must read as a DIFFERENT
+        // carrier even though the body walking in front is the same one.
+        keyOf(carrier) {
+            if (!carrier) return null;
+            if (carrier === $gamePlayer) {
+                const leader = $gameParty.leader();
+                return leader ? "actor:" + leader.actorId() : null;
+            }
+            if (window.Game_PetFollower && carrier instanceof window.Game_PetFollower) return "pet";
+            if (window.Game_SummonFollower && carrier instanceof window.Game_SummonFollower) return "summon";
+            const actor = carrier.actor && carrier.actor();
+            return actor ? "actor:" + actor.actorId() : null;
+        },
 
-    function carryingBodies() {
-        let bodies = $gameParty ? $gameParty.size() : 0;
-        if (window.SummonSystem && window.SummonSystem.isMapActive &&
-            window.SummonSystem.isMapActive()) bodies++;
-        return bodies;
-    }
+        // The animal or the companion walking at heel (NPC/PetFollowerSystem.js).
+        pet() {
+            if (!window.Game_PetFollower) return null;
+            const slot = $gamePlayer.followers().data()
+                .find(f => f instanceof window.Game_PetFollower);
+            return slot && slot.isVisible() ? slot : null;
+        },
 
-    function partyCanCarryDowned() {
-        return carryingBodies() >= CARRY_MIN_BODIES;
-    }
+        // Whatever rite the party is walking with (BattleSystem/SummonSystem.js).
+        summon() {
+            if (!window.Game_SummonFollower) return null;
+            const slot = $gamePlayer.followers().data()
+                .find(f => f instanceof window.Game_SummonFollower);
+            return slot && slot.isVisible() ? slot : null;
+        },
 
-    // Walking in the column a downed member would trail along behind the party
-    // on their own feet, which is not what being down means. Once there are
-    // enough hands for it they are carried instead: the body is held on the
-    // carrier's own tile, facing the way the carrier faces, for as long as they
-    // are out.
+        // A party member who is down: their body is placed by the carry code,
+        // never walked along the column on its own feet.
+        isBody(follower) {
+            const actor = follower && follower.actor && follower.actor();
+            return !!(actor && actor.isDead && actor.isDead());
+        },
+
+        // Who should be holding this body right now, or null when there is
+        // nobody left standing to hold it.
+        carrierFor(body) {
+            const pet = this.pet();
+            if (pet && pet !== body) return pet;
+            const summon = this.summon();
+            if (summon && summon !== body) return summon;
+            for (const other of $gamePlayer.followers().data()) {
+                if (other === body) continue;
+                const actor = other.actor && other.actor();
+                if (actor && !actor.isDead() && (!other.isVisible || other.isVisible())) return other;
+            }
+            const leader = $gameParty.leader();
+            if (leader && !leader.isDead() && !$gamePlayer.isTransparent()) return $gamePlayer;
+            return null;
+        },
+
+        // Held on the carrier's own tile and facing the way they face. The
+        // fractional position is copied too, which is what makes the body glide
+        // with the carrier instead of jumping a tile at a time.
+        ride(body, carrier) {
+            body._x = carrier._x !== undefined ? carrier._x : carrier.x;
+            body._y = carrier._y !== undefined ? carrier._y : carrier.y;
+            body._realX = carrier._realX !== undefined ? carrier._realX : body._x;
+            body._realY = carrier._realY !== undefined ? carrier._realY : body._y;
+            body.setDirection(carrier.direction());
+            body.setThrough(true);
+        },
+
+        // One body, one frame.
+        update(body) {
+            if (!this.isBody(body)) {
+                body._carriedKey = null;
+                return;
+            }
+            const carrier = this.carrierFor(body);
+            const key = this.keyOf(carrier);
+            if (!carrier || !key) {
+                body._carriedKey = null;
+                return;
+            }
+            if (body._carriedKey !== key) {
+                // Somebody else's turn to take it: the body is put down where it
+                // is and stays there until the new carrier walks up to it.
+                body._carriedKey = null;
+                const dist = Math.abs(carrier.x - body.x) + Math.abs(carrier.y - body.y);
+                if (dist > 1) return;
+                body._carriedKey = key;
+            }
+            this.ride(body, carrier);
+        },
+
+        // The lead changing hands puts down whatever the party was carrying, so
+        // the next frame hands it to somebody else (Lead.switchTo calls this).
+        dropAll() {
+            if (!$gamePlayer || !$gamePlayer.followers) return;
+            for (const follower of $gamePlayer.followers().data()) follower._carriedKey = null;
+        },
+    };
+    AutoIdle.carry = Carry;
+
     const _Game_Follower_update_carry = Game_Follower.prototype.update;
     Game_Follower.prototype.update = function () {
         _Game_Follower_update_carry.call(this);
         try {
-            const actor = this.actor && this.actor();
-            if (!actor || !actor.isDead()) return;
-            // Too few of them to lift anybody: the body walks itself, the way
-            // every other member does.
-            if (!partyCanCarryDowned()) return;
-            let carrier = null;
-            if (!$gamePlayer.isTransparent() && $gameParty.leader() && !$gameParty.leader().isDead()) {
-                carrier = $gamePlayer;
-            } else {
-                for (const other of $gamePlayer.followers().data()) {
-                    const otherActor = other.actor && other.actor();
-                    if (otherActor && !otherActor.isDead()) {
-                        carrier = other;
-                        break;
-                    }
-                }
-            }
-            if (carrier && carrier !== this) {
-                this.locate(carrier.x, carrier.y);
-                this.setDirection(carrier.direction());
-                this.setThrough(true);
-            }
+            Carry.update(this);
         } catch (e) {
             console.error("[AutoIdleExplorer] downed member carry error:", e);
+        }
+    };
+
+    // A body neither walks itself nor holds up the column: the one behind it
+    // chases whoever is in front of IT instead, and a body being held is placed
+    // by the carry code rather than by the chase.
+    const _Game_Follower_chaseCharacter_carry = Game_Follower.prototype.chaseCharacter;
+    Game_Follower.prototype.chaseCharacter = function (character) {
+        if (Carry.isBody(this)) return;
+        _Game_Follower_chaseCharacter_carry.call(this, character);
+    };
+
+    const _Game_Followers_updateMove_carry = Game_Followers.prototype.updateMove;
+    Game_Followers.prototype.updateMove = function () {
+        if (!this._data || !this._data.some(f => Carry.isBody(f))) {
+            _Game_Followers_updateMove_carry.call(this);
+            return;
+        }
+        for (let i = this._data.length - 1; i >= 0; i--) {
+            let ahead = $gamePlayer;
+            for (let j = i - 1; j >= 0; j--) {
+                if (Carry.isBody(this._data[j])) continue;
+                ahead = this._data[j];
+                break;
+            }
+            this._data[i].chaseCharacter(ahead);
         }
     };
 

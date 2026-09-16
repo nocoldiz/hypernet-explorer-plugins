@@ -163,5 +163,22 @@
   "free": "FREE",
   "implantChip": "Implant",
   "implantWarning": "The installed implant will be permanently lost.",
-  "nothingHere": "Nothing here."
+  "nothingHere": "Nothing here.",
+ "remote": {
+  "title": "Remote Bistury",
+  "banner": "REMOTE BISTURY",
+  "tagline": "A theatre held together by a force field",
+  "hint": "Pick a part to have the field fit it.",
+  "filter": "Search the catalogue",
+  "odds": "{chance}% the graft takes, with {operator} holding the link",
+  "noOperator": "nobody",
+  "nothingToFit": "Nothing left to fit on this patient.",
+  "tooExpensive": "Not enough money for that operation.",
+  "partNote": "{hp}% of the body, {stat}",
+  "noBonus": "no bonus",
+  "fromPack": "(from the pack)",
+  "grafted": "The field grafts the {part} onto {actor}.",
+  "failedWound": "The field slips and opens the {part}.",
+  "failed": "The field slips. Nothing takes."
+ }
 }

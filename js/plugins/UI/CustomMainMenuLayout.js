@@ -1662,21 +1662,40 @@
             : '';
         const zone = (kind) => ` ondragover="SceneManager._scene?.onDynamicsDragOver?.(event)" ondrop="SceneManager._scene?.onDynamicsDrop?.(event, '${kind}')"`;
 
+        // A row is a drop target of its own: dropping a travelling companion on
+        // another one puts them in that one's acting slot, which is the whole
+        // point of dragging a sprite about on this board. A reserve dossier
+        // dropped on a row is simply called up, the same as dropping it on the
+        // list.
+        const rowZone = (actorId) => ` ondragover="SceneManager._scene?.onDynamicsRowDragOver?.(event)" ondragleave="SceneManager._scene?.onDynamicsRowDragLeave?.(event)" ondrop="SceneManager._scene?.onDynamicsRowDrop?.(event, ${actorId})"`;
+
         // ---- Active -------------------------------------------------------
+        // The rows are laid out in the order the party ACTS, not in the order
+        // $gameParty happens to hold them: the number to the left of a row is
+        // the slot it acts in, so a nudge with Up/Down, or a row dragged onto
+        // another one, moves the row itself. Drawn in party order instead, the
+        // two buttons changed nothing but a digit, which read as buttons that
+        // did nothing at all.
+        const ordered = order.length ? order : members;
+        const picked = this.dynamicsSelectedEntry();
         let activeRows = '';
-        members.forEach((mem, idx) => {
+        ordered.forEach((mem, turnIdx) => {
             const actorId  = mem.actorId();
-            const isLeader = (idx === 0);
-            const turnIdx  = order.findIndex(m => m.actorId() === actorId);
+            const isLeader = members.length > 0 && members[0].actorId() === actorId;
             const first    = turnIdx === 0;
-            const last     = turnIdx === order.length - 1;
-            const step = (delta, label, disabled) => (disabled || turnIdx < 0
+            const last     = turnIdx === ordered.length - 1;
+            const isPicked = !!picked && picked.kind === 'active' && picked.actor.actorId() === actorId;
+            const step = (delta, label, disabled) => (disabled
                 ? `<div class="command-item roster-action--fixed is-disabled">${label}</div>`
                 : `<div class="command-item focusable roster-action--fixed" onclick="SceneManager._scene?.moveUITurnOrder?.(${actorId}, ${delta})">${label}</div>`);
 
             // Story mode keeps the party in one pair of hands, so the offer to
             // hand it over is not made (PartyRoster.canSwitchLeader).
-            const canLead = window.PartyRoster?.canSwitchLeader?.() !== false;
+            // A member who is down is carried by the party, not followed by it:
+            // the offer to hand them the lead is not made either (PartyRoster.setLeader
+            // refuses it anyway).
+            const canLead = window.PartyRoster?.canSwitchLeader?.() !== false
+                && !(mem.isDead && mem.isDead());
             const leaderBtn = isLeader
                 ? `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.leader')}</div>`
                 : !canLead
@@ -1689,14 +1708,18 @@
                 ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.retireUIMember?.(${actorId})">${T('MainMenu.roster.setInactive')}</div>`
                 : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setInactive')}</div>`;
 
+            // Every travelling row can be picked up, the leader included: the
+            // leader is dragged to change WHERE THEY ACT, and a leader dropped
+            // on the reserves is turned back with the reason why rather than
+            // being a row that cannot be lifted at all.
             activeRows += `
-                        <div class="npc-dynamics-member dyn-row roster-row"${drag('active', actorId, canBench && !isLeader && !storyLocked)}>
-                            <div class="dyn-order">${turnIdx >= 0 ? turnIdx + 1 : '-'}</div>
-                            <div class="portrait-frame">
+                        <div class="npc-dynamics-member dyn-row roster-row${isPicked ? ' dyn-row--picked' : ''}"${drag('active', actorId, !locked)}${rowZone(actorId)}>
+                            <div class="dyn-order">${turnIdx + 1}</div>
+                            <div class="portrait-frame focusable dyn-pick" onclick="SceneManager._scene?.pickDynamicsMember?.('active', ${actorId})">
                                 <canvas id="roster-canvas-${actorId}" width="48" height="48"></canvas>
                             </div>
                             <div class="roster-action">
-                                <div class="roster-name">
+                                <div class="roster-name dyn-pick" onclick="SceneManager._scene?.pickDynamicsMember?.('active', ${actorId})">
                                     ${escapeHtml(mem.name())}
                                     <span class="roster-sub">${escapeHtml(mem.currentClass() ? mem.currentClass().name : '')} ${T('MainMenu.roster.levelAbbr')}${mem.level} · ${dexLabel} ${mem.agi}${isLeader ? ' · ' + T('MainMenu.roster.leader') : ''}</span>
                                 </div>
@@ -1761,13 +1784,14 @@
                 ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
                 : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setActive')}</div>`;
 
+            const benchPicked = !!picked && picked.kind === 'bench' && picked.preset.id === preset.id;
             benchRows += `
-                        <div class="npc-dynamics-member dyn-row roster-row"${drag('bench', preset.id, hasRoom)}>
-                            <div class="portrait-frame">
+                        <div class="npc-dynamics-member dyn-row roster-row${benchPicked ? ' dyn-row--picked' : ''}"${drag('bench', preset.id, hasRoom)}>
+                            <div class="portrait-frame focusable dyn-pick" onclick="SceneManager._scene?.pickDynamicsMember?.('bench', ${preset.id})">
                                 <canvas id="bench-canvas-${preset.id}" width="48" height="48"></canvas>
                             </div>
                             <div class="roster-action">
-                                <div class="roster-name">
+                                <div class="roster-name dyn-pick" onclick="SceneManager._scene?.pickDynamicsMember?.('bench', ${preset.id})">
                                     ${escapeHtml(preset.name)}
                                     <span class="roster-sub">${escapeHtml(className)} ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</span>
                                 </div>
@@ -1869,6 +1893,7 @@
     Scene_Menu.prototype.onDynamicsDragEnd = function () {
         this._dynamicsDrag = null;
         document.querySelectorAll('.dyn-slot').forEach(el => el.classList.remove('dyn-slot--over'));
+        document.querySelectorAll('.dyn-row').forEach(el => el.classList.remove('dyn-row--over'));
     };
 
     Scene_Menu.prototype.onDynamicsDragOver = function (event) {
@@ -1889,6 +1914,197 @@
         if (target === 'bench') this.retireUIMember(drag.id);
         else this.reactivateUIMember(drag.id);
     });
+
+    // ---- Dragging one travelling companion onto another --------------------
+    // Reordering by hand is the reason the rows carry sprites at all: a row is
+    // picked up and dropped on the slot it should act in. It funnels into the
+    // same BattleTurnOrder the Up/Down buttons nudge, so the two routes cannot
+    // drift apart.
+    Scene_Menu.prototype.onDynamicsRowDragOver = function (event) {
+        if (!this._dynamicsDrag) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+        const row = event.currentTarget;
+        if (row && row.classList) row.classList.add('dyn-row--over');
+    };
+
+    Scene_Menu.prototype.onDynamicsRowDragLeave = function (event) {
+        const row = event.currentTarget;
+        if (row && row.classList) row.classList.remove('dyn-row--over');
+    };
+
+    Scene_Menu.prototype.onDynamicsRowDrop = guardedBoardAction(function (event, actorId) {
+        event.preventDefault();
+        // The row sits inside the active zone, which is a drop target too: let
+        // the row answer for the drop and stop it there.
+        event.stopPropagation();
+        const drag = this._dynamicsDrag;
+        this.onDynamicsDragEnd();
+        if (!drag) return;
+        // A reserve dossier dropped on a row is called up, exactly as it is
+        // when dropped on the list around the rows.
+        if (drag.kind === 'bench') {
+            this.reactivateUIMember(drag.id);
+            return;
+        }
+        if (drag.id === actorId) return;
+        const ids = (window.BattleTurnOrder?.members?.() ?? []).map(mem => mem.actorId());
+        const to = ids.indexOf(actorId);
+        if (to < 0 || !window.BattleTurnOrder?.moveTo?.(drag.id, to)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        SoundManager.playCursor();
+        this.refreshUIMenuDOM(false);
+    });
+
+    // ---- The dossier on the right page -------------------------------------
+    // Picking a row opens that person on the right page: their face, their
+    // class and level, what they are carrying in HP and MP and where they act.
+    // It reads the same for somebody travelling and for somebody in the
+    // reserves, so a reserve dossier can be read before deciding to call them up.
+    Scene_Menu.prototype.pickDynamicsMember = function (kind, id) {
+        const pick = { kind: kind === 'bench' ? 'bench' : 'active', id: Number(id) };
+        const same = this._dynamicsSelection
+            && this._dynamicsSelection.kind === pick.kind
+            && this._dynamicsSelection.id === pick.id;
+        this._dynamicsSelection = pick;
+        if (!same) SoundManager.playCursor();
+        this.refreshUIMenuDOM(false);
+    };
+
+    // Whoever the board is reading right now: a travelling member, a reserve
+    // dossier, or the leader when nothing has been picked yet. Everything the
+    // right page prints is read off this one answer, so the sprite drawn on the
+    // canvas and the text around it can never describe two different people.
+    // A pick that no longer exists (they were called up, or benched, since it
+    // was made) falls back to the leader rather than leaving an empty page.
+    Scene_Menu.prototype.dynamicsSelectedEntry = function () {
+        const members = $gameParty.members();
+        const pick = this._dynamicsSelection;
+        if (pick && pick.kind === 'bench') {
+            const preset = (window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [])
+                .find(entry => entry.id === pick.id);
+            if (preset) return { kind: 'bench', preset };
+        }
+        if (pick && pick.kind === 'active') {
+            const mem = members.find(entry => entry.actorId() === pick.id);
+            if (mem) return { kind: 'active', actor: mem };
+        }
+        return members.length ? { kind: 'active', actor: members[0] } : null;
+    };
+
+    // The dossier itself. A travelling member is a live actor, so the page is
+    // read straight off them; a reserve is a saved dossier with no actor behind
+    // it, so it prints what the dossier holds and nothing it would have to
+    // invent.
+    Scene_Menu.prototype.generateUIDynamicsDossierHTML = function () {
+        const entry = this.dynamicsSelectedEntry();
+        if (!entry) return `<div class="roster-empty">${T('MainMenu.dynamics.noMembers')}</div>`;
+
+        const actor  = entry.actor;
+        const preset = entry.preset;
+        const isActive = entry.kind === 'active';
+        const name = escapeHtml(actor ? actor.name() : preset.name);
+        const className = escapeHtml(actor
+            ? (actor.currentClass() ? actor.currentClass().name : T('MainMenu.roster.classless'))
+            : (preset.retiredClassName
+                || ($dataClasses[preset.classId] ? $dataClasses[preset.classId].name : T('MainMenu.roster.classless'))));
+        const level = actor ? actor.level : (preset.level || 1);
+
+        // The face: the bust when they have one, and the walking sprite blown
+        // up on a canvas when they do not. BustPath is the one authority on
+        // where a bust lives, so a name that resolves to nothing falls back to
+        // the sprite here rather than leaving a broken image on the page.
+        const bustName = actor ? (actor.vnBust ? actor.vnBust() : '') : preset.busts;
+        const bustUrl = window.BustPath?.exists?.(bustName) ? window.BustPath.url(bustName) : '';
+        const face = bustUrl
+            ? `<img class="dyn-dossier-bust" src="${escapeHtml(bustUrl)}" alt="${name}">`
+            : `<canvas id="dyn-dossier-canvas" class="dyn-dossier-sprite" width="96" height="96"></canvas>`;
+
+        const statusLabel = isActive ? T('MainMenu.roster.travelling') : T('MainMenu.roster.inactive');
+        const statusBand  = isActive ? 'roster--active' : 'roster--retired';
+
+        // Where they act, said in words: the same number the row carries, but
+        // the right page is read on its own and a bare digit says nothing.
+        let turnHTML = '';
+        if (isActive) {
+            const order = window.BattleTurnOrder?.members?.() ?? $gameParty.members();
+            const at = order.findIndex(mem => mem.actorId() === actor.actorId());
+            if (at >= 0) {
+                turnHTML = `<div class="dyn-dossier-turn">${T('MainMenu.dynamics.dossierTurn', {
+                    position: at + 1, count: order.length
+                })}</div>`;
+            }
+        }
+
+        let vitalsHTML = '';
+        let paramsHTML = '';
+        if (isActive) {
+            const hpPct = Math.floor(actor.hpRate() * 100);
+            const mpPct = actor.mmp > 0 ? Math.floor(actor.mpRate() * 100) : 100;
+            const tpPct = Math.floor(actor.tpRate() * 100);
+            const band = pct => (pct <= 25 ? 'gauge-band--bad' : pct <= 50 ? 'gauge-band--warn' : '');
+            vitalsHTML = `
+                <div class="bio-vitals dyn-dossier-vitals">
+                    <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.hp')}</span><span class="bio-vital-val gauge-ink ${band(hpPct)}">${actor.hp}/${actor.mhp}</span></div>
+                    <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.mp')}</span><span class="bio-vital-val gauge-ink ${band(mpPct)}">${actor.mp}/${actor.mmp}</span></div>
+                    <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.ap')}</span><span class="bio-vital-val gauge-ink ${band(tpPct)}">${Math.floor(actor.tp)}</span></div>
+                </div>`;
+            // The six fighting attributes, in the game's own labels: the two
+            // pools above already say what MHP and MMP are.
+            paramsHTML = `
+                <h3 class="dyn-section-title">${T('MainMenu.dynamics.dossierParams')}</h3>
+                <div class="dyn-dossier-params">
+                    ${[2, 3, 4, 5, 6, 7].map(id => `
+                    <div class="dyn-dossier-param">
+                        <span class="dyn-dossier-param-lbl">${escapeHtml(TextManager.param(id))}</span>
+                        <span class="dyn-dossier-param-val">${actor.param(id)}</span>
+                    </div>`).join('')}
+                </div>`;
+        }
+
+        // What they know and what they are like. A reserve dossier keeps ids
+        // rather than objects, so what it knows is counted instead of listed.
+        const skillCount = actor ? actor.skills().length : (preset.skills || []).length;
+        const traitNames = actor
+            ? (actor._selectedTraits || []).map(trait => trait && trait.name).filter(Boolean)
+            : [];
+        const traitsHTML = traitNames.length
+            ? `<div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${T('MainMenu.dynamics.dossierTraits')}</span><span>${escapeHtml(traitNames.join(', '))}</span></div>`
+            : '';
+
+        // Only a reserve has a date and a note about how they came to be one.
+        const sinceHTML = (!isActive && preset.retiredDate)
+            ? `<div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${T('MainMenu.roster.inactive')}</span><span>${escapeHtml(preset.retiredDate)}</span></div>`
+            : '';
+        const loreHTML = (!isActive && preset.lore)
+            ? `<p class="dyn-dossier-lore">${escapeHtml(preset.lore)}</p>`
+            : '';
+
+        return `
+            <div class="dyn-dossier">
+                <div class="right-tools-title">${T('MainMenu.dynamics.dossierTitle')}</div>
+                <div class="dyn-dossier-head">
+                    <div class="dyn-dossier-face">${face}</div>
+                    <div class="dyn-dossier-id">
+                        <h3 class="char-name">${name}</h3>
+                        <p class="char-class">${className} (${T('MainMenu.roster.levelAbbr')} ${level})</p>
+                        <span class="roster-past-status ${statusBand}">${statusLabel}</span>
+                        ${turnHTML}
+                    </div>
+                </div>
+                ${vitalsHTML}
+                <div class="dyn-dossier-lines">
+                    <div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${T('MainMenu.dynamics.dossierSkills')}</span><span>${skillCount}</span></div>
+                    ${traitsHTML}
+                    ${sinceHTML}
+                </div>
+                ${loreHTML}
+                ${paramsHTML}
+            </div>`;
+    };
 
     // The World Map pocket has no page of its own: it opens the zoomable map
     // straight away. The rows that page used to carry live in the pockets (the
@@ -1983,7 +2199,12 @@
                 (window.CharacterPresets?.getAvailableRetiredPresets?.() ?? []).map(p => p.id).join('-'),
                 // Reordering the turn order leaves the party itself untouched,
                 // so the pinned order has to be part of the key of its own.
-                (window.BattleTurnOrder?.pinned?.() ?? []).join('-')
+                (window.BattleTurnOrder?.pinned?.() ?? []).join('-'),
+                // Which row is open on the right page is drawn on the left one
+                // too, as the highlight on that row.
+                this._dynamicsSelection
+                    ? this._dynamicsSelection.kind + '.' + this._dynamicsSelection.id
+                    : ''
             ].join(':')
             : '';
         // Abandoning a pet, handing the leash to another one, renaming one or
@@ -2362,6 +2583,10 @@
             // results, as it is in every other list menu.
             return window.MenuSearch.rightPageHTML();
         }
+        // The board hands the right page over to whoever is picked on it: the
+        // party cards below are about the party as a whole, and the board is
+        // about one person at a time, reserves included.
+        if (this._isDynamicsPage) return this.generateUIDynamicsDossierHTML();
 
         // Parse survival parameters safely
         const weatherName = (window.WeatherNames && window.weatherName)
@@ -2908,12 +3133,12 @@
                     // Character: your active member's sheet, gear and body,
                     // with the roster that says whose sheet this is
                     [
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.backpack'), "item"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.equip'), "equip"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.skills'), "skill"),
                         vectorGunHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.status'), "status1"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.dynamics'), "dynamics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.specializations'), "specializations"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.biologics'), "biologics"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.augments'), "augments"),
@@ -3202,6 +3427,19 @@
                 characterIndex: () => preset.spriteIndex || 0
             }, `bench-canvas-${preset.id}`);
         });
+        // The dossier on the right page falls back to the walking sprite when
+        // whoever it is reading has no bust; the canvas only exists then.
+        const picked = this.dynamicsSelectedEntry();
+        if (picked && document.getElementById('dyn-dossier-canvas')) {
+            const sheet = picked.actor ? picked.actor.characterName() : (picked.preset.sprite || '');
+            const at = picked.actor ? picked.actor.characterIndex() : (picked.preset.spriteIndex || 0);
+            if (sheet) {
+                this.drawUIActorPortrait({
+                    characterName: () => sheet,
+                    characterIndex: () => at
+                }, 'dyn-dossier-canvas');
+            }
+        }
     };
 
     // Renders actor graphic directly on canvas
@@ -3829,6 +4067,13 @@
 
     Scene_Map.prototype.updateMenuHotkeys = function () {
         if ($gameMap.isEventRunning()) return;
+        // The 3D world is drawn OVER the map and keeps its own keyboard: F, C,
+        // E, G, Q and the rest are flight, dive, interact and the quick bar out
+        // there, and it runs the party's menus itself through MenuHotkeys (see
+        // VoxelWorldScene's _onMenuHotkey). The map polling the same letters
+        // underneath meant a dive during a flyby also pushed the status screen.
+        const VW = window.VoxelWorldSystem;
+        if (VW && VW.isActive && VW.isActive()) return;
         if ($gameTemp._sleepMenuOpen) return; // the wait/rest popup owns the keyboard
 
         // THE TWO STICK CLICKS, which are the only buttons on the pad the map

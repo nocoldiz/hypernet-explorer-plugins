@@ -564,7 +564,7 @@
   },
   "escape": {
     "failed": "Non riesci a svincolarti!",
-    "boss": "Non c'è via di fuga da questo nemico!",
+    "boss": "Questo nemico non ti lascia andare!",
     "tooClose": "Sono troppo vicini per svincolarsi!"
   },
   "hud": {

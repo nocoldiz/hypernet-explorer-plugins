@@ -163,5 +163,22 @@
   "free": "GRATIS",
   "implantChip": "Impianto",
   "implantWarning": "L'impianto installato andrà perduto per sempre.",
-  "nothingHere": "Niente qui."
+  "nothingHere": "Niente qui.",
+ "remote": {
+  "title": "Remote Bistury",
+  "banner": "REMOTE BISTURY",
+  "tagline": "Una sala operatoria tenuta insieme da un campo di forza",
+  "hint": "Scegli una parte perché il campo la innesti.",
+  "filter": "Cerca nel catalogo",
+  "odds": "{chance}% che l'innesto attecchisca, con {operator} a reggere il collegamento",
+  "noOperator": "nessuno",
+  "nothingToFit": "Non resta niente da innestare su questo paziente.",
+  "tooExpensive": "Non abbastanza denaro per questa operazione.",
+  "partNote": "{hp}% del corpo, {stat}",
+  "noBonus": "nessun bonus",
+  "fromPack": "(dallo zaino)",
+  "grafted": "Il campo innesta {part} su {actor}.",
+  "failedWound": "Il campo scivola e apre {part}.",
+  "failed": "Il campo scivola. Niente attecchisce."
+ }
 }

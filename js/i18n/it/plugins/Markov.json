@@ -27,6 +27,11 @@
     "chatPlace": "Vi trovate entrambi in {place}.",
     "chatFlavour": "Da queste parti si parla così: {text}",
     "chatStyle": "Rispondi restando nel personaggio, in italiano, in una o due frasi brevi. Non descrivere mai le tue azioni, non usare elenchi né markdown, non dire mai di essere un modello.",
+    "chatSheet": "La tua scheda, {npc}: {sheet}",
+    "chatSpeaker": "Chi ti sta parlando è {speaker}.",
+    "chatSpeakerSheet": "Quel che vedi di {speaker}: {sheet}",
+    "chatRelation": "Tra voi due: {relation}",
+    "chatSituation": "Quel che sta succedendo ora: {situation}",
     "chatOpen": "Dimmi qualcosa."
   }
 }
