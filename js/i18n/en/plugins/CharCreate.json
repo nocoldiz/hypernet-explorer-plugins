@@ -465,6 +465,10 @@
     "originHypernetExplorer": {
       "name": "Hypernet Explorer",
       "desc": "You come round at a terminal in the Hypernet Point with a bag of components, an energy drink and no memory of paying for the hour. The deck is half built. The rest of it is out there somewhere, in shops, in skips, and in other people's houses."
+    },
+    "originPatronVault": {
+      "name": "Patron Vault",
+      "desc": "You wake on Floor -1 of a vault nobody else can reach, nine cellars deep under a hatch in open country. The way out is the patron's own hatch, and the way in was knowing where it is."
     }
   },
   "hairStyle": {
@@ -1053,5 +1057,13 @@
   "embarkLocked": "Every character needs a name and a face.",
   "saveAsPreset": "Save As Preset",
   "presetSavedToast": "{name} filed as one of your dossiers.",
-  "presetResaved": "The dossier of {name} was rewritten."
+  "presetResaved": "The dossier of {name} was rewritten.",
+  "patronVaultAskTitle": "The secret coordinates",
+  "patronVaultAskBody": "Only the patron who was given them knows where their hatch is stamped. Type the world square, as two numbers.",
+  "patronVaultAskPlaceholder": "79, 124",
+  "patronVaultWrongSquare": "No hatch answers to that square.",
+  "floorMinusOneOfAPatronsVault": "Floor -1 of a patron's vault",
+  "thePatronsOwnHatch": "The patron's own hatch, on the surface above",
+  "locked": "Locked by",
+  "theSecretCoordinates": "The secret coordinates of the square"
 }

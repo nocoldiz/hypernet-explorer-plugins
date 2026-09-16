@@ -115,6 +115,69 @@
       veil.querySelector(".cc-modal-accept").focus();
     }
 
+    // The same sheet as _ccConfirm, with a line to type on: a question whose
+    // answer is text rather than yes/no (the patron vault's coordinates).
+    // `opts.validate` is handed what was typed and answers with an error line
+    // to show - the sheet stays open on one - or null to accept.
+    _ccAsk(opts, onAccept) {
+      const container = this._dndContainer || document.getElementById("character-creation-container");
+      if (!container) return;
+
+      const existing = container.querySelector(".cc-modal-veil");
+      if (existing) existing.remove();
+
+      const esc = (s) => String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      const veil = document.createElement("div");
+      veil.className = "cc-modal-veil";
+      veil.setAttribute("data-nav-modal", "1");
+      veil.innerHTML = `
+        <div class="cc-modal" role="dialog" aria-modal="true">
+          <h3 class="cc-modal-title">${esc(opts.title || "")}</h3>
+          <p class="cc-modal-body">${esc(opts.body || "")}</p>
+          <input type="text" class="cc-pick-search cc-modal-input" autocomplete="off"
+                 spellcheck="false" placeholder="${esc(opts.placeholder || "")}">
+          <p class="cc-modal-error"></p>
+          <div class="cc-modal-actions">
+            <button class="cc-sidebar-btn cc-modal-cancel">${esc(T('CharCreate.cancel'))}</button>
+            <button class="cc-sidebar-btn cc-modal-accept">${esc(T('CharCreate.confirm'))}</button>
+          </div>
+        </div>
+      `;
+
+      const input = veil.querySelector(".cc-modal-input");
+      const errorLine = veil.querySelector(".cc-modal-error");
+      const close = () => {
+        document.removeEventListener("keydown", onKey, true);
+        veil.remove();
+      };
+      const accept = () => {
+        const value = input ? input.value : "";
+        const error = opts.validate ? opts.validate(value) : null;
+        if (error) {
+          SoundManager.playBuzzer();
+          if (errorLine) errorLine.textContent = error;
+          if (input && input.focus) input.focus();
+          return;
+        }
+        close();
+        if (onAccept) onAccept(value);
+      };
+      const onKey = (e) => {
+        if (e.key === "Escape") { e.stopPropagation(); SoundManager.playCancel(); close(); }
+        else if (e.key === "Enter") { e.stopPropagation(); accept(); }
+      };
+      veil.addEventListener("click", (e) => { if (e.target === veil) { SoundManager.playCancel(); close(); } });
+      veil.querySelector(".cc-modal-cancel").addEventListener("click", () => { SoundManager.playCancel(); close(); });
+      veil.querySelector(".cc-modal-accept").addEventListener("click", accept);
+      document.addEventListener("keydown", onKey, true);
+
+      container.appendChild(veil);
+      if (input && input.focus) input.focus();
+    }
+
     onRemovePartyMember(idx, event) {
       if (event) event.stopPropagation();
       if (idx === 0) return;

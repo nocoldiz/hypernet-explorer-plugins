@@ -3146,6 +3146,20 @@
     justify-content: flex-end;
 }
 
+/* The same sheet with a line to type on (the patron vault's coordinates), and
+   the refusal it answers with. */
+.cc-modal-input {
+    margin: 0 0 10px 0;
+}
+
+.cc-modal-error {
+    margin: 0 0 12px 0;
+    min-height: 1.2em;
+    font-size: var(--fs-caption);
+    color: var(--text-danger-dark);
+}
+
+
 .cc-modal-actions .cc-sidebar-btn {
     min-width: 116px;
     justify-content: center;

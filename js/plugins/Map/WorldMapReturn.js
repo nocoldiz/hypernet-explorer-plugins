@@ -7337,6 +7337,10 @@
         // The 3D drive / free walk runs over a live map scene and owns the
         // keyboard while it is up; it hands the party back itself.
         if (window.VoxelWorldSystem && VoxelWorldSystem.isActive()) return;
+        // A dream is a DOM overlay over whatever map the party fell asleep on,
+        // so this handler still sees the press: taking it would drop the
+        // sleeper on world square 0,0. The dream ends by waking, not by T.
+        if (window.DreamSystem && window.DreamSystem.isActive && window.DreamSystem.isActive()) return;
         // A map that holds the party says so rather than swallowing the press:
         // silence reads as a broken key.
         if (isReturnDisabled()) {

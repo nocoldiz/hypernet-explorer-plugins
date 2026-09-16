@@ -888,7 +888,7 @@
       });
 
       // Scenarios are divided into suggested scenarios and other scenarios
-      const suggestedSymbols = ["origin_train", "origin_camper", "origin_space", "origin_stranded", "origin_lot", "origin_dungeon", "origin_ceo"];
+      const suggestedSymbols = ["origin_train", "origin_camper", "origin_space", "origin_stranded", "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault"];
       const allChoices = stepData.choices || [];
       const suggestedEntries = [];
       const otherEntries = [];

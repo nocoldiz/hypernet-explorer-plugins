@@ -465,6 +465,10 @@
     "originHypernetExplorer": {
       "name": "Esploratore Hypernet",
       "desc": "Ti riprendi davanti a un terminale dell'Hypernet Point con una borsa di componenti, un energy drink e nessun ricordo di aver pagato l'ora. L'Hyperdeck e' montato a meta'. Il resto e' la' fuori, nei negozi, nei cassonetti e nelle case degli altri."
+    },
+    "originPatronVault": {
+      "name": "Cripta del Patrono",
+      "desc": "Ti svegli al Piano -1 di una cripta che nessun altro può raggiungere, nove cantine sotto una botola in aperta campagna. L'uscita è la botola del patrono, e l'ingresso era sapere dove si trova."
     }
   },
   "hairStyle": {
@@ -1053,5 +1057,13 @@
   "embarkLocked": "Ogni personaggio ha bisogno di un nome e di un volto.",
   "saveAsPreset": "Salva Come Preset",
   "presetSavedToast": "{name} archiviato tra i tuoi dossier.",
-  "presetResaved": "Il dossier di {name} \u00e8 stato riscritto."
+  "presetResaved": "Il dossier di {name} è stato riscritto.",
+  "patronVaultAskTitle": "Le coordinate segrete",
+  "patronVaultAskBody": "Solo il patrono a cui sono state date sa dove è stampata la sua botola. Scrivi il quadrante del mondo, come due numeri.",
+  "patronVaultAskPlaceholder": "79, 124",
+  "patronVaultWrongSquare": "Nessuna botola risponde a quel quadrante.",
+  "floorMinusOneOfAPatronsVault": "Piano -1 della cripta di un patrono",
+  "thePatronsOwnHatch": "La botola del patrono, sulla superficie sopra",
+  "locked": "Chiuso da",
+  "theSecretCoordinates": "Le coordinate segrete del quadrante"
 }

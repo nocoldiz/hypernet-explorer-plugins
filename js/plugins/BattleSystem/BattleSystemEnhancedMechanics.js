@@ -120,13 +120,25 @@
             }
         }
 
-        // Handle map deaths
+        // Handle map deaths. Going down is filed against whoever it was, but the
+        // death sequence itself belongs to the WHOLE party being on the ground:
+        // the same rule a battle is lost by. So the leader dropping while the
+        // others still stand is only a knockout (processMapDeath says the same),
+        // and a companion dropping last - with the leader already down - is what
+        // finishes the party off, which nothing used to notice at all.
         if (oldHp > 0 && this.hp <= 0 && !$gameParty.inBattle()) {
-            if (this === $gameParty.members()[0]) {
-                this.processMapDeath();
-            } else if (this === $gameParty.members()[1]) {
+            const members = $gameParty.members();
+            const slot = members.indexOf(this);
+            if (slot === 1) {
                 $gameSystem.setActor2Died(true, this.name());
                 $gameMap.requestRefresh();
+            } else if (slot === 2 && $gameSystem.setActor3Died) {
+                $gameSystem.setActor3Died(true, this.name());
+                $gameMap.requestRefresh();
+            }
+            const leader = members[0];
+            if (leader && members.every(m => !m || m.isDead())) {
+                leader.processMapDeath();
             }
         }
     };

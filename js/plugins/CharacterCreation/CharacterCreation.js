@@ -93,6 +93,11 @@
     startDiplomatOrigin,
     bunkerGoldPiles,
     startBunkerOrigin,
+    patronVaultAvailable,
+    patronVaultSquareAt,
+    patronVaultSquare,
+    setPatronVaultSquare,
+    startPatronVaultOrigin,
     startArtifactHeirOrigin,
     startCrashLandedOrigin,
     startWarlordOrigin,
@@ -1668,6 +1673,12 @@
           getLocalizedChoice(T('CharCreate.choice.originPlague.name'), "origin_plague", T('CharCreate.choice.originPlague.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDiplomat.name'), "origin_diplomat", T('CharCreate.choice.originDiplomat.desc')),
           getLocalizedChoice(T('CharCreate.choice.originHypernetExplorer.name'), "origin_hypernet_explorer", T('CharCreate.choice.originHypernetExplorer.desc')),
+          // Only where there is a patron whose square could be named: a build
+          // with an empty roster has no coordinates that would ever be right,
+          // so the scenario is not offered at all (see patronVaultAvailable).
+          ...(patronVaultAvailable()
+            ? [getLocalizedChoice(T('CharCreate.choice.originPatronVault.name'), "origin_patron_vault", T('CharCreate.choice.originPatronVault.desc'))]
+            : []),
         ];
       },
       handler: function (symbol) {
@@ -4522,6 +4533,16 @@
     // (Full mode, which runs this once a hometown from Destinations.json has
     // been picked).
     _finishOriginChoice(symbol) {
+      // The patron vault is the one origin that has to be UNLOCKED before it
+      // begins: it asks for the secret coordinates of the patron's own world
+      // square, and a pair no hatch answers to is refused, leaving the board
+      // exactly as it was. The question is asked before a single grant, so a
+      // refused scenario has changed nothing; answering it re-enters this
+      // method, which then runs like any other origin.
+      if (symbol === "origin_patron_vault" && !patronVaultSquare()) {
+        this._askPatronVaultSquare(() => this._finishOriginChoice(symbol));
+        return;
+      }
       // Whatever this origin decides below, the party is about to be set down
       // somewhere for the first time. Checked once on arrival, so no origin
       // can begin standing inside the scenery of a square that was generated
@@ -4560,6 +4581,8 @@
         startStrandedOrigin();
       } else if (symbol === "origin_bunker") {
         startBunkerOrigin();
+      } else if (symbol === "origin_patron_vault") {
+        startPatronVaultOrigin();
       } else if (symbol === "origin_ceo") {
         startCEOOrigin();
       } else if (symbol === "origin_artifact") {
@@ -4632,6 +4655,23 @@
       // no copy of the old world worth keeping.
       if (!$gameTemp || !$gameTemp._openCharacterCreationTrainTravel) clearOriginSnapshot();
       this.popScene();
+    }
+
+    // The patron vault's lock: two numbers, checked against the hatches
+    // themselves. Right coordinates run `next`; wrong ones say so and leave the
+    // sheet open, and backing out of it simply does not start the scenario.
+    _askPatronVaultSquare(next) {
+      this._ccAsk({
+        title: ccT('CharCreate.patronVaultAskTitle'),
+        body: ccT('CharCreate.patronVaultAskBody'),
+        placeholder: ccT('CharCreate.patronVaultAskPlaceholder'),
+        validate: (text) => {
+          const square = patronVaultSquareAt(text);
+          if (!square) return ccT('CharCreate.patronVaultWrongSquare');
+          setPatronVaultSquare(square);
+          return null;
+        },
+      }, next);
     }
 
     // Re-render the current step's choices in place (same step, new option

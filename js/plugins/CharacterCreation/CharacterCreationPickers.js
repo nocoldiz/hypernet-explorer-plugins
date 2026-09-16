@@ -680,6 +680,11 @@
           row(T('CharCreate.specializations'), T('CharCreate.craftingSpecsAllMembers', { count: CRAFTING_SPEC_IDS.length })),
         ],
         origin_dungeon: [row(T('CharCreate.start'), T('CharCreate.theTowerGate'))],
+        origin_patron_vault: [
+          row(T('CharCreate.start'), T('CharCreate.floorMinusOneOfAPatronsVault')),
+          row(T('CharCreate.wayBack'), T('CharCreate.thePatronsOwnHatch')),
+          row(T('CharCreate.locked'), T('CharCreate.theSecretCoordinates')),
+        ],
         origin_mayor: [row(T('CharCreate.start'), T('CharCreate.aCityOfYourChoice'))],
         origin_criminal: [
           row(T('CharCreate.start'), T('CharCreate.yourCamperParkedInACity')),

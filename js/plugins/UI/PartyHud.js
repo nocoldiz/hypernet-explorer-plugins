@@ -868,7 +868,7 @@
 
     PartyHudOverlay.prototype._needsFor = function (actor) {
         const id = actor.actorId();
-        if (this._needTimer >= NEED_REFRESH_FRAMES || !this._needs.has(id)) {
+        if (!this._needs.has(id)) {
             const read = window.PartyNeeds?.getMemberNeeds?.(actor) || {};
             this._needs.set(id, read);
             return read;
@@ -886,6 +886,16 @@
         const battle = inBattle();
         const acting = actingActor();
         const picker = allyPicker();
+        // The needs cadence is settled here, before the loop, because a card
+        // whose numbers have not moved skips its body entirely: leaving the
+        // timer to be cleared down there meant the due frame could pass with
+        // nobody reading, and the cached answer then stood forever (a member
+        // who had slept kept an "Exhausted" chip). Emptying the cache instead
+        // makes the next card that asks read fresh, whichever frame that is.
+        if (this._needTimer >= NEED_REFRESH_FRAMES) {
+            this._needTimer = 0;
+            this._needs.clear();
+        }
         this._chipTimer = (this._chipTimer + 1) % CHIP_REFRESH_FRAMES;
         const writeChips = this._chipTimer === 0;
         // The cards only take the mouse while there is something to aim at, so
@@ -991,7 +1001,6 @@
                     key: s.key, text: s.text, down: s.debuff, stateId: s.stateId
                 })) : [], 'phud-state');
         }
-        if (this._needTimer >= NEED_REFRESH_FRAMES) this._needTimer = 0;
     };
 
     //-------------------------------------------------------------------------

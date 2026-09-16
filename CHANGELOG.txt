@@ -1,3 +1,21 @@
+0.6.23a
+
+Added:
+ - omega tower casino
+ - patreon coordinates system
+Changed:
+ - bgm for ghent exteriors, antwerpen children and silenced maps
+
+Fixed:
+ - swim option missing on ocean water
+ - missing hospital conencted to new clinics system
+ - menu and map edge transfers in 2d platformer mode
+ - world map key disabled during dreams
+ - party hud health bar keeps stale status chips after sleeping
+ - dying and respawn sequence in procedural map battles
+ - cannot close constellation view with right click
+
+
 0.6.22a
 
 Added:

@@ -193,6 +193,14 @@
     //     generated square, still holding the tiles of the one they died on.
     function prepareRespawnDestination(dest) {
         const WMR = window.WorldMapReturn;
+        // The streamed window of squares (ProcStitch) is a window onto the
+        // ground the party DIED on: it remaps the coordinates of every transfer
+        // to map 636 into its own space, and it watches the party's steps to
+        // grow and recentre itself. Respawning underneath it would land the
+        // party at a remapped tile of a square that is no longer there and then
+        // have the window carry them off again, which is the second teleport.
+        // It is taken down; the next step out builds a new one.
+        if (window.ProcStitch?.active?.()) window.ProcStitch.close();
         if (dest.mapId === PROC_MAP_ID) {
             if (WMR?.restoreProcRespawn?.(dest.proc)) return dest;
             console.warn('BattleSystemEnhancedDeath: the respawn square could not be rebuilt; respawning at the default safe location.');
@@ -204,8 +212,115 @@
         return dest;
     }
 
+    // ------------------------------------------------------------------------
+    // ONE RESPAWN AT A TIME
+    // ------------------------------------------------------------------------
+    // Two things can ask for a respawn off the same death: the map-death hook on
+    // the leader (Game_Actor.setHp -> processMapDeath) and the post-battle branch
+    // that reads the wipe flag (Scene_Map.start -> handleActor1Respawn). Both
+    // reserve a transfer of their own, which is the party carried off twice, the
+    // second time out of a square the first has already rebuilt. The first to ask
+    // owns the sequence; every later ask while it is still running is dropped.
+    let _respawnPending = false;
+    BSE.State.respawnPending = false;
+
+    function respawnClaimed() {
+        if (_respawnPending) return false;
+        _respawnPending = true;
+        BSE.State.respawnPending = true;
+        return true;
+    }
+
+    function releaseRespawn() {
+        _respawnPending = false;
+        BSE.State.respawnPending = false;
+    }
+
+    // Back on their feet where they wake up, not where they fell. The heal is
+    // repeated HERE, on the far side of the transfer, because a heal applied
+    // before it is only as good as whatever the arrival then does to the party:
+    // what the HUD draws and what the party actually has must be one number, and
+    // waking on a full bar with one hit point left is the party losing that bet.
+    function revivePartyOnRespawn() {
+        for (const member of $gameParty.members()) {
+            if (!member) continue;
+            member._koDownedAtMinutes = null;
+            if (member.isDead && member.isDead()) member.removeState(member.deathStateId());
+            if (member.recoverAll) member.recoverAll();
+            if (window.HealthCore && window.HealthCore.restoreAllBodyParts) {
+                window.HealthCore.restoreAllBodyParts(member);
+            }
+            if (member.refresh) member.refresh();
+        }
+        BSE.Helpers.refillPartyNeeds();
+        if ($gameSystem.setActor2Died) $gameSystem.setActor2Died(false, '');
+        if ($gameSystem.setActor3Died) $gameSystem.setActor3Died(false, '');
+        if ($gamePlayer.refresh) $gamePlayer.refresh();
+    }
+
+    // The party is standing again on the map they were sent to: the walk-through
+    // that carried them there comes down, the death flags come down with it, and
+    // the weather is the weather of the place they woke up in.
+    function finishRespawn() {
+        $gamePlayer._priorityType = 1;
+        $gamePlayer._through = false;
+        $gamePlayer.setThrough(false);
+        $gameSystem.setActor1Died(false);
+        BSE.State.needsRespawn = false;
+        revivePartyOnRespawn();
+        if ($gameWeather) {
+            $gameWeather.updateTimeAndWeather();
+            $gameWeather.updateTimeOfDayTint();
+        }
+        releaseRespawn();
+    }
+
+    // Reserve the one transfer and wait for it to land. Nothing may reserve a
+    // second one in between, and the party is only counted as arrived once the
+    // transfer itself has been performed: a respawn onto the map the party died
+    // on names the map it is already standing on, and the map id alone would
+    // call it arrived before it had moved.
+    function startRespawnTransfer(dest) {
+        setTimeout(() => {
+            // Left until the transfer is actually reserved: rebuilding the
+            // respawn square rewrites the party's world coordinates, and the map
+            // they died on is still the one on screen until then.
+            dest = prepareRespawnDestination(dest);
+            const respawnMapId = dest.mapId;
+            $gamePlayer.reserveTransfer(respawnMapId, dest.x, dest.y, 2, 0);
+            let mapLoadAttempts = 0;
+            const mapLoadInterval = setInterval(() => {
+                // Give up after ~10s so the transfer never landing does not leak
+                // a forever-running interval - and never leaves the guard up, or
+                // the next death would find itself refused a respawn.
+                if (++mapLoadAttempts > 100) {
+                    clearInterval(mapLoadInterval);
+                    releaseRespawn();
+                    return;
+                }
+                if ($gameMap.mapId() === respawnMapId && !$gamePlayer.isTransferring()) {
+                    clearInterval(mapLoadInterval);
+                    finishRespawn();
+                }
+            }, 100);
+        }, 500);
+    }
+
+    BSE.Functions.revivePartyOnRespawn = revivePartyOnRespawn;
+
     Game_Actor.prototype.processMapDeath = function() {
         if (this !== $gameParty.members()[0]) return;
+
+        // A leader going down is not the party going down. The battle system has
+        // held that rule since the leader stopped ending fights on his own
+        // (BattleSystemEnhancedState.processDefeat), and a death out on the map
+        // answers to it too: while anybody else is still standing this is a
+        // knockout, they carry him, and he comes round an hour later at one hit
+        // point (section 6). Only a whole party on the ground is a death.
+        if ($gameParty.members().some(m => m && m !== this && !m.isDead())) {
+            $gameSystem.setActor1Died(true);
+            return;
+        }
 
         // Hardcore / Blood and Oil: death is terminal -> Game Over, no respawn.
         if (isTerminalDeath()) {
@@ -214,6 +329,9 @@
             window.SaveSystem.triggerGameOver();
             return;
         }
+
+        // The post-battle branch may already be carrying this party off.
+        if (!respawnClaimed()) return;
 
         if ($gameSwitches.value(9)) {
             saveDeathData();
@@ -244,31 +362,7 @@
             $gameTemp.requestAnimation([$gamePlayer], 1078);
         }
 
-        setTimeout(() => {
-            // Left until the transfer is actually reserved: rebuilding the
-            // respawn square rewrites the party's world coordinates, and the map
-            // they died on is still the one on screen until then.
-            dest = prepareRespawnDestination(dest);
-            const respawnMapId = dest.mapId;
-            $gamePlayer.reserveTransfer(respawnMapId, dest.x, dest.y, 2, 0);
-            let mapLoadAttempts = 0;
-            const mapLoadInterval = setInterval(() => {
-                // Give up after ~10s so the transfer never landing does not leak
-                // a forever-running interval.
-                if (++mapLoadAttempts > 100) { clearInterval(mapLoadInterval); return; }
-                if ($gameMap.mapId() === respawnMapId) {
-                    $gamePlayer._priorityType = 1;
-                    $gamePlayer._through = false;
-                    $gameSystem.setActor1Died(false);
-                    BSE.State.needsRespawn = false;
-                    if ($gameWeather) {
-                        $gameWeather.updateTimeAndWeather();
-                        $gameWeather.updateTimeOfDayTint();
-                    }
-                    clearInterval(mapLoadInterval);
-                }
-            }, 100);
-        }, 500);
+        startRespawnTransfer(dest);
     };
 
     // ========================================================================
@@ -281,6 +375,13 @@
         if (isTerminalDeath()) {
             BSE.State.needsRespawn = false;
             window.SaveSystem.triggerGameOver();
+            return;
+        }
+
+        // The leader's own map-death hook may already be carrying this party
+        // off: one death, one journey.
+        if (!respawnClaimed()) {
+            BSE.State.needsRespawn = false;
             return;
         }
 
@@ -318,26 +419,10 @@
         }
 
         $gameScreen.startFadeOut(30);
-        setTimeout(() => {
-            // Same as processMapDeath: the square is put back only once the
-            // party is actually leaving for it.
-            dest = prepareRespawnDestination(dest);
-            const respawnMapId = dest.mapId;
-            $gamePlayer.reserveTransfer(respawnMapId, dest.x, dest.y, 2, 0);
-            BSE.State.needsRespawn = false;
-
-            let weatherAttempts = 0;
-            const weatherUpdateInterval = setInterval(() => {
-                // Give up after ~10s to avoid leaking a forever-running interval
-                // if the transfer never lands on the respawn map.
-                if (++weatherAttempts > 100) { clearInterval(weatherUpdateInterval); return; }
-                if ($gameMap.mapId() === respawnMapId && $gameWeather) {
-                    $gameWeather.updateTimeAndWeather();
-                    $gameWeather.updateTimeOfDayTint();
-                    clearInterval(weatherUpdateInterval);
-                }
-            }, 100);
-        }, 500);
+        // The same single journey the map-death path takes: the square is put
+        // back only once the party is actually leaving for it, and the party is
+        // put back together once it has arrived.
+        startRespawnTransfer(dest);
     };
 
     // ========================================================================

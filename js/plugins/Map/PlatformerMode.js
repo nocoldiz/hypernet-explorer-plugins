@@ -23,11 +23,19 @@
  *   - Followers replay the leader's path a few frames behind
  *   - Transfers freeze the body, resolve the landing spot out of any solid and
  *     snap the camera, so teleporting in and out never drops the party in a wall
+ *   - Leaving the map: standing on a walkable border tile crosses as it always
+ *     did, and holding a direction into the map edge, or into the fence painted
+ *     along it, takes the grid step that <Worldmap>, the procedural edges, the
+ *     stitched window and a dungeon exit all hang off
  *
  * Other systems:
  *   - window.PlatformerMode.isActive() is the one answer to "are we in the
  *     platformer". The autonomous NPC simulation (NPC/NPCSystem.js) asks it and
  *     stays out; AutoIdleExplorer asks it too.
+ *   - Game_Player.isMoving() is false here. A platform body sits between tiles,
+ *     so the engine's own test was true on nearly every frame, and everything
+ *     that waits for the party to stand still waited forever: the menu, Escape
+ *     and the parchment main menu among them.
  *   - Split screen (Multiplayer/SplitScreenMultiplayer.js) hands Player 2's
  *     avatar to updateSplitScreenP2 so it runs the same physics.
  *   - Network play (Multiplayer/MultiplayerSystem.js) sends sub tile
@@ -82,6 +90,12 @@
 
   const MAX_SUBSTEP = 0.2;   // tiles per collision substep
   const EPS = 1e-6;
+
+  // Leaving a map by pushing against its edge. The probe is the same hair the
+  // wall tests use; the hold keeps a wall jump, which also means holding a
+  // direction into a wall, from reading as a request to leave the map.
+  const EDGE_PROBE = 0.06;
+  const EDGE_PRESS_FRAMES = 12;
 
   // ---------------------------------------------------------------------------
   // Pure physics core. Everything here takes an explicit `world` (the four
@@ -203,6 +217,19 @@
     return !!world.isLadder(tx, Math.floor((b.y1 + b.y2) / 2));
   }
 
+  // Which way is a body pushing when it cannot go that way? On the grid a
+  // refused step is a whole failed move and every map exit hangs off it; here
+  // the body is simply flush against something and no step is ever taken, so
+  // the intent has to be read off the buttons and the geometry instead.
+  function pressedBlockedDirection(world, body, input) {
+    const i = input || {};
+    if (i.left && !i.right && collides(world, body.x - EDGE_PROBE, body.y)) return 4;
+    if (i.right && !i.left && collides(world, body.x + EDGE_PROBE, body.y)) return 6;
+    if (i.up && !i.down && collides(world, body.x, body.y - EDGE_PROBE)) return 8;
+    if (i.down && !i.up && collides(world, body.x, body.y + EDGE_PROBE)) return 2;
+    return 0;
+  }
+
   function newBody(x, y) {
     return {
       x: x, y: y, vx: 0, vy: 0,
@@ -309,6 +336,8 @@
     isInWater: isInWater, isHeadUnderwater: isHeadUnderwater, onGround: onGround,
     touchingLeftWall: touchingLeftWall, touchingRightWall: touchingRightWall,
     isLadderAt: isLadderAt, newBody: newBody, stepBody: stepBody,
+    pressedBlockedDirection: pressedBlockedDirection,
+    EDGE_PRESS_FRAMES: EDGE_PRESS_FRAMES,
   };
 
   // Headless callers (the test harness) load the file for its physics alone and
@@ -365,6 +394,10 @@
       body.x = spot.x; body.y = spot.y;
       body.vx = 0; body.vy = 0;
       body.jumping = false; body.coyote = 0; body.buffer = 0;
+    }
+    if (character === (typeof $gamePlayer !== "undefined" ? $gamePlayer : null)) {
+      character._pfEdgeDir = 0;
+      character._pfEdgeFrames = 0;
     }
   }
 
@@ -554,6 +587,22 @@
     _GP_initMembers.call(this);
     this._pfBody = null;
     this._animCounter = 0;
+    this._pfEdgeDir = 0;
+    this._pfEdgeFrames = 0;
+  };
+
+  // A grid step takes several frames, and every system that waits for the party
+  // to stand still asks isMoving() about it: Scene_Map.updateCallMenu holds the
+  // menu (and with it the whole parchment main menu, and Escape) until the step
+  // finishes, and Game_Player.tryBorderReturn refuses to cross a map edge
+  // mid step. The platformer has no step: the body lives between tiles, so
+  // _realX almost never equals _x and the engine's test answered "moving" on
+  // nearly every frame, which is why neither could ever fire. Nothing here is
+  // ever in the middle of a move, so say so.
+  const _GP_isMoving = Game_Player.prototype.isMoving;
+  Game_Player.prototype.isMoving = function () {
+    if (isPlatformMap()) return false;
+    return _GP_isMoving.call(this);
   };
 
   const _GP_update = Game_Player.prototype.update;
@@ -591,7 +640,13 @@
     this._pfUpdateAnimation(body);
     this._pfUpdateFollowers();
     this._pfUpdateCamera();
-    if (!held) this._pfCheckEventTrigger();
+    if (!held) {
+      this._pfCheckEventTrigger();
+      this._pfCheckEdgeTransfer(body, input);
+    } else {
+      this._pfEdgeDir = 0;
+      this._pfEdgeFrames = 0;
+    }
 
     // Game_Player.update (bypassed here) normally runs the per step processing
     // in updateNonmoving: encounter stepping and $gameParty.onPlayerWalk()
@@ -676,6 +731,59 @@
       for (const event of $gameMap.eventsXy(this.x, this.y)) {
         if (!event._starting && event._trigger !== 0 && event._trigger !== 4) event.start();
       }
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Leaving a platform map
+  // ---------------------------------------------------------------------------
+  // Every way out of a map that is not a Transfer event hangs off the grid step:
+  // Game_Player.moveStraight is where Map/WorldMapReturn.js reads the map's
+  // <Worldmap N S E W> tag, where a procedural map's edge schedules the next
+  // biome, where the stitched window grows and where a dungeon session finds its
+  // exit. The platformer never calls moveStraight, so on a <Platform> map all of
+  // that was unreachable and the only way off the map was a Transfer event.
+  //
+  // Standing ON a walkable border tile is already handled: the tile changes, and
+  // WorldMapReturn's own update hook (which wraps this one) runs
+  // checkBorderTeleport. What is left is the intent that never becomes a tile,
+  // which is pushing against an edge, or against the fence painted along it, and
+  // that is what this reads: a direction held into something the body cannot
+  // pass, long enough that a wall jump does not count as asking to leave.
+  Game_Player.prototype._pfCheckEdgeTransfer = function (body, input) {
+    const direction = (body.onGround || body.onLadder || body.inWater)
+      ? pressedBlockedDirection(liveWorld, body, input) : 0;
+
+    if (!direction || direction !== this._pfEdgeDir) {
+      this._pfEdgeDir = direction;
+      this._pfEdgeFrames = 0;
+      if (!direction) return;
+    }
+    if (++this._pfEdgeFrames < EDGE_PRESS_FRAMES) return;
+    this._pfEdgeFrames = 0;
+
+    if (this.isTransferring() || $gameMap.isEventRunning() || $gameMessage.isBusy()) return;
+
+    const step = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] }[direction];
+    const facing = this.direction();
+
+    if (!$gameMap.isValid(this.x + step[0], this.y + step[1])) {
+      // The next tile is off the map, so the grid step cannot possibly move the
+      // party anywhere: canPass refuses it and moveStraight only reports the
+      // refusal. That makes it safe to take the whole grid path here, and the
+      // grid path is what every kind of map transition is wired into.
+      this.moveStraight(direction);
+    } else if (this.tryBorderReturn) {
+      // Still on the map, but nothing except fence between here and the edge.
+      // tryBorderReturn asks the map whether that counts as a crossing.
+      this.tryBorderReturn(direction);
+    }
+
+    // moveStraight and tryBorderReturn both turn the party to face the step.
+    // Up and down are climb controls here, not a way to face, so hand the
+    // sprite back the direction the body is actually in.
+    if (!this.isTransferring() && (direction === 2 || direction === 8)) {
+      this.setDirection(facing);
     }
   };
 

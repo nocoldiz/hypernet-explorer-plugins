@@ -22,15 +22,21 @@
  *      nothing ever grows over it or walls it in. It cannot be dismantled.
  *      The exception is an alien surface (a GalaxySim landing reuses this map
  *      and world variables 43/44 for its own landing grid), where no hatch is
- *      ever stamped. Going down it opens their HOME: one of the eight villa
- *      interiors (ProceduralHouseSystem's "villas" pool), pinned to their
- *      world square alone, so a patron owns the same villa in every world and
- *      every savegame. The door is never locked against them and the hatch
- *      tile is the way back out, exactly as for any other door on the
- *      procedural map.
- *      The old PatronVault - the loot cellar's generator on a far bigger plan,
- *      buried in gold and rare weapons - is no longer behind the hatch at all:
- *      it is now the rarest structure an ordinary StairsDown can open onto
+ *      ever stamped. Going down it opens their VAULT: nine hand-made cellars
+ *      stacked under the hatch, Floor -1 (map 664) down to Floor -9, the same
+ *      nine in every world and every savegame. They are walked exactly like a
+ *      skyscraper's floors, only downwards (ProceduralHouseSystem's descending
+ *      fixed stack): the party lands on Floor -1 at 15,18 facing down, each
+ *      floor's Downstairs digs one floor deeper, its Upstairs climbs one back
+ *      and its Elevator rides to any of them, and the Upstairs on Floor -1
+ *      leaves the vault altogether, back onto the hatch tile. Floor -9 is the
+ *      bottom and has no Downstairs. The hatch is never locked against its
+ *      owner and the tile is the way back out, exactly as for any other door
+ *      on the procedural map.
+ *      The PatronVault BIOME - the loot cellar's generator on a far bigger
+ *      plan, buried in gold and rare weapons - is a separate thing, and is not
+ *      behind the hatch: it is the rarest structure an ordinary StairsDown can
+ *      open onto
  *      (ProceduralMapStructureGenerator), found by anybody, anywhere. This
  *      plugin still owns what happens inside one: the loot tables
  *      (RandomLootSystem, ContainerSystem), the gold hoards and the weapon
@@ -109,7 +115,7 @@
  *                                                   DataManager.loadMapData,
  *                                                   after the prefab pass)
  *   window.PatreonRewards.openHatch(tile)           hatch interaction handler
- *   window.PatreonRewards.vaultHouseId(x, y)        the villa a hatch opens onto
+ *   window.PatreonRewards.vaultHouseId()            Floor -1 of the vault
  *   window.PatreonRewards.isInPatronVault()         inside a vault structure?
  *   window.PatreonRewards.vaultPatron()             whose vault it is
  *   window.PatreonRewards.lootRarityBonus()         rarity push for that vault
@@ -139,10 +145,17 @@
   // plan, defined in js/db/WorldGen/Biomes.json and laid out by
   // ProceduralMapStructureGenerator (isVault).
   const VAULT_BIOME = "PatronVault";
-  // What a patron's hatch actually opens onto now: one of the villa interiors
-  // (ProceduralHouseSystem's "villas" pool, the eight maps under parent 1135),
-  // pinned per world square by vaultHouseId.
-  const VAULT_POOL = "villas";
+  // What a patron's hatch actually opens onto: the VAULT, nine hand-made
+  // cellars stacked under the hatch tile, Floor -1 down to Floor -9. They are
+  // walked exactly like a skyscraper's floors, only downwards
+  // (ProceduralHouseSystem's descending fixed stack): each floor carries its
+  // own Upstairs, Downstairs and Elevator events, the Upstairs on Floor -1
+  // leaving the vault back onto the hatch tile.
+  // i18n-ignore-start  map ids
+  const VAULT_FLOORS = [664, 666, 662, 660, 659, 668, 655, 647, 1135];
+  // Where the party lands on Floor -1, coming down the hatch.
+  const VAULT_ENTRY = { x: 15, y: 18, direction: 2 };
+  // i18n-ignore-end
 
   // A slot with a blank id is RESERVED: its world square and hatch tile are
   // already rolled and encrypted, waiting for the next patron, but it has no
@@ -558,37 +571,29 @@
    * patron owns the same one of the eight villa interiors in every world, in
    * every savegame, forever.
    */
-  function vaultHouseId(worldX, worldY) {
-    const PHS = window.ProceduralHouseSystem;
-    if (!PHS || typeof PHS._getHouseList !== "function") return null;
-    const list = (PHS._getHouseList(VAULT_POOL) || []).slice().sort((a, b) => a - b);
-    if (!list.length) return null;
-    let h = 0x50415452;                                   // i18n-ignore  seed salt
-    h = (Math.imul(h ^ (worldX | 0), 73856093) ^ Math.imul(worldY | 0, 19349663)) >>> 0;
-    h = Math.imul(h ^ (h >>> 13), 0x5bd1e995) >>> 0;
-    return list[(h >>> 3) % list.length];
+  function vaultHouseId() {
+    return VAULT_FLOORS[0];
   }
 
   /**
-   * Hatch interaction: the patron's own home, one of the villa interiors, the
-   * same one every time (vaultHouseId). ProceduralHouseSystem owns the entry,
-   * so the door tile is the return point exactly as it is for every other door
-   * on the procedural map; the hatch is never locked against its owner.
-   * Called by ProceduralTerrainInteractions' Hatch handler. Never dismantles
-   * anything. The vault the hatch used to open onto is now a rare structure
-   * found behind ordinary stairways (ProceduralMapStructureGenerator).
+   * Hatch interaction: the patron's vault, the same nine cellars on every visit
+   * and in every world. ProceduralHouseSystem owns the entry, so the hatch tile
+   * is the return point exactly as it is for every other door on the procedural
+   * map, and the hatch is never locked against its owner. Called by
+   * ProceduralTerrainInteractions' Hatch handler. Never dismantles anything.
    */
   function openHatch(tile) {
     const patron = patronOfHatchTile(tile);
     if (!patron) return false;
     const PHS = window.ProceduralHouseSystem;
-    if (!PHS || typeof PHS.enterTileDoorAt !== "function") {
+    if (!PHS || typeof PHS.enterTileStackAt !== "function") {
       warn("ProceduralHouseSystem is missing: the hatch cannot open");
       return false;
     }
-    const here = currentWorldCoords();
-    const houseId = here ? vaultHouseId(here.x, here.y) : null;
-    if (!PHS.enterTileDoorAt(VAULT_POOL, tile.x, tile.y, houseId, true)) return false;
+    if (!PHS.enterTileStackAt(tile.x, tile.y, VAULT_FLOORS, {
+      descending: true,
+      x: VAULT_ENTRY.x, y: VAULT_ENTRY.y, direction: VAULT_ENTRY.direction,
+    })) return false;
     AudioManager.playSe({ name: "Door1", volume: 90, pitch: 100, pan: 0 });
     return true;
   }
@@ -936,7 +941,8 @@
     // The public half only: the encrypted blob stays inside the plugin.
     patrons: () => PATRONS.map(({ secret, ...rest }) => rest),
     VAULT_BIOME,
-    VAULT_POOL,
+    VAULT_FLOORS,
+    VAULT_ENTRY,
     vaultHouseId,
     patronAtWorld,
     patronById,

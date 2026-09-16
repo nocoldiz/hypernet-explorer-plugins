@@ -271,6 +271,11 @@
       // seed which cell it is through setSeedSaltProvider. interiorMapIdFor
       // answers "what is behind this door" without opening it.
       enterTileDoorAt(poolName, x, y, forcedHouseId, forceOpen) { return enterTileDoorAt(poolName, x, y, forcedHouseId, forceOpen); },
+      // -- Fixed floor stacks ------------------------------------------------
+      // A hand-made list of floor maps entered through one tile, numbered
+      // downwards when `descending` (PatreonRewards' vault under a hatch).
+      enterTileStackAt(x, y, floors, opts) { return enterTileStackAt(x, y, floors, opts); },
+      enterFixedFloors(floors, opts) { return enterFixedFloors(floors, opts); },
       interiorMapIdFor(poolName, x, y, mapId) { return interiorMapIdFor(poolName, x, y, mapId); },
       // ── Doors that name their own trade (tileset 303) ──────────────────────
       // Which interiors a trade door may open onto, and which one THIS door
@@ -958,8 +963,14 @@
     const upstairsEvent = findEventByName("Upstairs");
     const downstairsEvent = findEventByName("Downstairs");
     // i18n-ignore-end
-    if (upstairsEvent && floor >= total - 1) $gameMap.event(upstairsEvent.eventId()).erase();
-    if (downstairsEvent && floor <= 0) $gameMap.event(downstairsEvent.eventId()).erase();
+    // Downwards the two ends swap: the bottom cellar has nothing below it, and
+    // the first one keeps its Upstairs, because that is the way back out.
+    if (currentMultiBuilding.structure.descending) {
+      if (downstairsEvent && floor >= total - 1) $gameMap.event(downstairsEvent.eventId()).erase();
+    } else {
+      if (upstairsEvent && floor >= total - 1) $gameMap.event(upstairsEvent.eventId()).erase();
+      if (downstairsEvent && floor <= 0) $gameMap.event(downstairsEvent.eventId()).erase();
+    }
     $gameMap.refresh();
   }
 
@@ -1451,9 +1462,9 @@
 
   // Every DoorHouse opens onto the one residential pool, whatever the biome
   // around it: the old huts pool was folded into houses, so a lone farmstead
-  // and a townhouse draw from the same interiors. The villas pool is not a
-  // residential pool at all any more: it belongs to the patron vault hatches,
-  // and no procedural door and no NPC home ever selects it.
+  // and a townhouse draw from the same interiors. The villas pool is retired:
+  // its maps are the patron vault's nine cellars now (PatreonRewards), and no
+  // procedural door and no NPC home ever selects it.
   function residentialPoolForDoor() {
     return "houses";
   }
@@ -1553,9 +1564,8 @@
   // seed, the return point, the lock and the lockpick prompt all read the door
   // tile rather than wherever the party happens to be standing. Returns true
   // only when the entry was actually taken.
-  // forcedHouseId pins the interior instead of rolling one off the door tile
-  // (PatreonRewards' hatch, which owes its patron ONE villa, the same one on
-  // every visit and in every world), and forceOpen skips the lock entirely.
+  // forcedHouseId pins the interior instead of rolling one off the door tile,
+  // and forceOpen skips the lock entirely.
   // A pinned interior is always the single floor it names: rolling a second one
   // on top of it would put the party in a stairwell the pin never asked for.
   function enterTileDoorAt(poolName, x, y, forcedHouseId = null, forceOpen = false) {
@@ -1563,7 +1573,7 @@
     const pool = normalizePoolName(poolName) || "houses";
     _callerEventId = 0;
     return withDoorTile({ x, y }, () => {
-      // Shops, inns and pinned villas are always one floor; a house rolls a
+      // Shops, inns and pinned interiors are always one floor; a house rolls a
       // second one off its own tile, exactly like a DoorHouse feature does.
       if (!forcedHouseId && pool === "houses" &&
           seededFloorCount(true, 1, 2, 0x484F) >= 2) {
@@ -1919,26 +1929,115 @@
 
   function changeFloor(direction) {
     if (!currentMultiBuilding) return;
+    const structure = currentMultiBuilding.structure;
     const current = currentMultiBuilding.currentFloorIndex;
-    const total = currentMultiBuilding.structure.totalFloors;
-    const nextIndex = direction === 'next' ? current + 1 : current - 1;
+    const total = structure.totalFloors;
+    // A DESCENDING stack (a patron's vault) is numbered downwards: index 0 is
+    // the first cellar and every further index is one floor deeper, so the
+    // Downstairs event ("previous") digs and the Upstairs event ("next")
+    // climbs. Climbing off the first cellar leaves the stack altogether, back
+    // out by the hatch it was entered through.
+    const descending = !!structure.descending;
+    if (descending && direction === 'next' && current === 0) {
+        exitHouse();
+        return;
+    }
+    const step = descending
+      ? (direction === 'next' ? -1 : 1)
+      : (direction === 'next' ? 1 : -1);
+    const nextIndex = current + step;
 
     if (nextIndex >= 0 && nextIndex < total) {
         _savedBgm = AudioManager._bgm;
         currentMultiBuilding.currentFloorIndex = nextIndex;
-        setCurrentFloor(nextIndex, currentMultiBuilding.structure.floors[nextIndex]);
+        setCurrentFloor(nextIndex, structure.floors[nextIndex]);
         const floorSeed = currentMultiBuilding.baseSeed + nextIndex * 5000;
-        _postTransferActions = { 
-            type: 'floorChange', 
+        _postTransferActions = {
+            type: 'floorChange',
             direction: direction,
-            seed: floorSeed
+            seed: floorSeed,
+            // A FIXED stack is hand-made: its stairs stand where the mapper put
+            // them and must never be moved onto a seeded tile.
+            fixed: !!structure.fixed
         };
-        $gamePlayer.reserveTransfer(currentMultiBuilding.structure.floors[nextIndex], 0, 0, $gamePlayer.direction(), 0);
+        $gamePlayer.reserveTransfer(structure.floors[nextIndex], 0, 0, $gamePlayer.direction(), 0);
     }
+  }
+
+  // -- Fixed stacks: a hand-made list of floors, walked downwards -------------
+  // Everything above rolls its floors out of a pool. A fixed stack is handed the
+  // exact maps, in order, and (descending) numbers them downwards: PatreonRewards'
+  // vault is nine authored cellars under one hatch. Those floors carry their own
+  // Upstairs / Downstairs / Elevator events, so nothing here is ever relocated.
+  // `opts.returnPoint` hands the way out in rather than reading it off the map:
+  // character creation's patron-vault origin begins the party on Floor -1 with
+  // no door behind them, and leaving still walks out onto the hatch tile of the
+  // world square the vault belongs to.
+  function enterFixedFloors(floors, opts = {}) {
+    if (!Array.isArray(floors) || floors.length === 0) return false;
+    const given = opts.returnPoint || null;
+    const locationKey = opts.key || (given
+      ? `${given.mapId}:${given.worldX},${given.worldY}_${given.eventX}_${given.eventY}_f0`
+      : createLocationKey());
+    const eventCoords = given
+      ? { x: given.eventX, y: given.eventY }
+      : getEventCoordinates(true);
+    const entranceMapId = given ? given.mapId : $gameMap.mapId();
+    const seed = createSeed(entranceMapId, eventCoords.x, eventCoords.y);
+    const structure = {
+      floors: floors.slice(),
+      totalFloors: floors.length,
+      fixed: true,
+      descending: opts.descending !== false,
+    };
+    multiBuildingStructures[locationKey] = structure;
+
+    _savedBgm = AudioManager._bgm;
+    if (given) {
+      const sessionId = Date.now() + "_" + Math.random();
+      houseReturnPoints[sessionId] = Object.assign({ direction: 2 }, given);
+      currentHouseSessionId = sessionId;
+    } else {
+      saveHouseReturnPoint(true);
+    }
+    currentMultiBuilding = {
+      entranceKey: locationKey,
+      currentFloorIndex: 0,
+      structure: structure,
+      baseSeed: seed,
+    };
+
+    setCurrentBuilding({
+      mapId: entranceMapId, x: eventCoords.x, y: eventCoords.y, seed,
+      type: 'enterMultiBuilding',
+      baseFloorPool: opts.poolName || '', upperFloorsPool: opts.poolName || '',
+      numFloors: floors.length - 1,
+      totalFloors: structure.totalFloors, floorIndex: 0,
+      capacity: structure.totalFloors,
+      interiorMapId: floors[0],
+    });
+
+    const dir = Number(opts.direction) || 2;
+    _postTransferActions = { type: 'fixedFloorEnter' };
+    $gamePlayer.reserveTransfer(floors[0], Number(opts.x) || 0, Number(opts.y) || 0, dir, 0);
+    return true;
+  }
+
+  // Public: enter a fixed stack from a door TILE (PatreonRewards' hatch), so the
+  // return point is the tile itself and the party leaves by it, exactly as they
+  // would from any other tile door.
+  function enterTileStackAt(x, y, floors, opts = {}) {
+    if (!interactFeatureReady(true)) return false;
+    _callerEventId = 0;
+    return withDoorTile({ x, y }, () => enterFixedFloors(floors, opts));
   }
 
   // Human-friendly label for a floor index in the elevator picker.
   function elevatorFloorLabel(index) {
+    // A descending stack counts down from the surface: index 0 is Floor -1.
+    if (currentMultiBuilding && currentMultiBuilding.structure && currentMultiBuilding.structure.descending) {
+      return T('ProceduralHouse.floorNumbered', { n: -(index + 1) });
+    }
     return index === 0 ? T('ProceduralHouse.groundFloor')
       : T('ProceduralHouse.floorNumbered', { n: index });
   }
@@ -2040,8 +2139,11 @@
     const current = currentMultiBuilding.currentFloorIndex;
     const choices = [];
     const targets = [];
-    // List top-down, like a real elevator panel (top floor first).
-    for (let i = total - 1; i >= 0; i--) {
+    // List top-down, like a real elevator panel (top floor first). A descending
+    // stack's topmost floor is index 0, so its panel runs the other way.
+    const descending = !!currentMultiBuilding.structure.descending;
+    for (let n = 0; n < total; n++) {
+      const i = descending ? n : total - 1 - n;
       if (i === current) continue;
       choices.push(elevatorFloorLabel(i));
       targets.push(i);
@@ -2085,7 +2187,7 @@
     currentMultiBuilding.currentFloorIndex = targetFloorIndex;
     setCurrentFloor(targetFloorIndex, currentMultiBuilding.structure.floors[targetFloorIndex]);
     const floorSeed = currentMultiBuilding.baseSeed + targetFloorIndex * 5000;
-    _postTransferActions = { type: 'elevator', seed: floorSeed };
+    _postTransferActions = { type: 'elevator', seed: floorSeed, fixed: !!currentMultiBuilding.structure.fixed };
     // Fade type 2 (no fade): the screen is already black from startFadeOut, so
     // we skip the transfer's own fade and fade back in after landing.
     $gamePlayer.reserveTransfer(currentMultiBuilding.structure.floors[targetFloorIndex], 0, 0, $gamePlayer.direction(), 2);
@@ -2265,8 +2367,16 @@
                   continueSavedBgm();
                   applyInteriorBiomeAudio();
                   break;
+              case 'fixedFloorEnter': {
+                  // The transfer already named the tile and the facing, and the
+                  // floors are hand-made: nothing is placed or moved here.
+                  updateStairVisibility();
+                  continueSavedBgm();
+                  applyInteriorBiomeAudio();
+                  break;
+              }
               case 'elevator': {
-                  placeStairsAtSeededPosition(actions.seed);
+                  if (!actions.fixed) placeStairsAtSeededPosition(actions.seed);
                   // Land south of the first "Elevator" event; fall back to the
                   // downward stairs, then to the spawn region tile.
                   // i18n-ignore-start  event names
@@ -2293,8 +2403,10 @@
                   break;
               }
               case 'floorChange': {
-                  placeStairsAtSeededPosition(actions.seed);
-                  const stairPos = getSeededStairPositions(actions.seed);
+                  if (!actions.fixed) placeStairsAtSeededPosition(actions.seed);
+                  const stairPos = actions.fixed
+                    ? { upstairs: null, downstairs: null }
+                    : getSeededStairPositions(actions.seed);
                   const hasRegion14 = stairPos.upstairs !== null;
                   if (hasRegion14) {
                       const landingPos = actions.direction === 'next' ? stairPos.downstairs : stairPos.upstairs;

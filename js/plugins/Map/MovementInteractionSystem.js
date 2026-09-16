@@ -2602,13 +2602,33 @@
     // launchable from here too (see canUseBoatOn for when it shows).
     const canBoat = canUseBoatOn(character);
     const hasDivingSuit = $gameParty.hasItem($dataItems[DIVING_SUIT_ITEM_ID]);
+    // Open sea is still water: everything the ordinary water menu offers is on
+    // offer here too. Only the Dive entry means something else (the descent to
+    // the seabed layer rather than a swim under the surface), so it keeps its
+    // own branch below. Swim is dropped in split screen for the same reason the
+    // ordinary menu drops it: walking in already starts both players swimming.
+    const isMultiplayer = window.$gameSplitScreen && window.$gameSplitScreen.active;
+    const canSwim = !isMultiplayer;
+    const hasRod = Utils.hasFishingRod();
     const choices = [];
+    if (canSwim) choices.push(T('Movement.swim'));
+    if (hasRod) choices.push(T('Movement.fish'));
     if (hasDivingSuit) choices.push(T('Movement.dive'));
     if (canBoat) choices.push(T('Movement.useBoat'));
     choices.push(drinkLabel, T('Movement.cancel'));
     $gameMessage._eventActivator = (character === $gamePlayer) ? "p1" : "p2";
     $gameMessage.setChoices(choices, 0, choices.length - 1);
     $gameMessage.setChoiceCallback((index) => {
+      if (canSwim && index === choices.indexOf(T('Movement.swim'))) {
+        MovementSystem.enterSwimMode(character);
+        // Step into the water, or the swimmer stands up again on the same frame.
+        character.moveStraight(character.direction());
+        return;
+      }
+      if (hasRod && index === choices.indexOf(T('Movement.fish'))) {
+        MovementSystem.performFishing(character);
+        return;
+      }
       if (canBoat && index === choices.indexOf(T('Movement.useBoat'))) {
         useBoatOn(character);
         return;

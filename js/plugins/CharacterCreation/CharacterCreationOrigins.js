@@ -961,6 +961,16 @@
       { id: ITEM_CHEESE_WHEEL, qty: 1 },
       { id: ITEM_AGED_WINE, qty: 1 },
     ]),
+    // Woken in your own vault: a light, the square's map, and what was left on
+    // the table. The nine floors below hold everything else.
+    origin_patron_vault: [
+      { id: ITEM_FLASHLIGHT, qty: 1 },
+      { id: ITEM_LOCAL_MAP, qty: 1 },
+      { id: ITEM_TRAVEL_JOURNAL, qty: 1 },
+      { id: ITEM_HEALTH_POTION, qty: 2, each: true },
+      { id: ITEM_ELVEN_WAYBREAD, qty: 2, each: true },
+      { id: ITEM_SPRING_WATER, qty: 2, each: true },
+    ],
     // Delve kit: light, rope, and more potions than anyone else starts with.
     origin_dungeon: [
       { id: ITEM_HEALTH_POTION, qty: 3, each: true },
@@ -1179,6 +1189,8 @@
     origin_mayor: [ITEM_POCKET_NOTEBOOK, ITEM_ORATORS_ELIXIR, ITEM_LOCAL_MAP],
     // Delving: light first, rope second, the way out third.
     origin_dungeon: [ITEM_FLASHLIGHT, ITEM_CLIMBING_ROPE, ITEM_ROUTES_MAP],
+    // Your own vault: the light, the square above it, the book you keep it in.
+    origin_patron_vault: [ITEM_FLASHLIGHT, ITEM_LOCAL_MAP, ITEM_TRAVEL_JOURNAL],
     // Wanted: the way out, the untraceable call, the way past a lock.
     origin_criminal: [ITEM_ESCAPE_KIT, ITEM_BURNER_PHONE, ITEM_LIMINAL_CUFFS],
     // Castaway: get off the shore, catch dinner, carry water.
@@ -2008,6 +2020,106 @@
     pg._dungeonSession = { type: "bunker" };
   }
 
+  // ==========================================================================
+  // Patron Vault origin
+  // ==========================================================================
+  // The party wakes on Floor -1 of a patron's own vault, the nine hand-made
+  // cellars PatreonRewards stacks under that patron's hatch. Nothing about it
+  // is guessable and nothing in the game points at it: the only way to begin
+  // here is to already know the secret coordinates of the square the hatch is
+  // stamped on, which is what the patron was given and nobody else has. A pair
+  // no hatch answers to is refused outright (patronVaultSquareAt), so a wrong
+  // guess never starts the scenario.
+  //
+  // The square itself is built before the vault is entered, so climbing the
+  // Upstairs on Floor -1 walks out onto the hatch exactly as it would for a
+  // party that had come down it (see the return point handed to the house
+  // system).
+
+  // The roster has to hold somebody before the scenario is worth offering: a
+  // build shipped with an empty Patrons.json has no square that could ever be
+  // right, so the board does not list it at all.
+  function patronVaultAvailable() {
+    const PR = window.PatreonRewards;
+    if (!PR || typeof PR.hatchTileAtWorld !== "function") return false;
+    if (!window.ProceduralHouseSystem || !window.ProceduralHouseSystem.enterFixedFloors) return false;
+    const floors = PR.VAULT_FLOORS;
+    if (!Array.isArray(floors) || !floors.length) return false;
+    try {
+      return (PR.patrons() || []).length > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // "79,124", "79 124", "(79, 124)": whatever the player types, two numbers.
+  function parseWorldSquare(text) {
+    const m = /(-?\d+)\D+(-?\d+)/.exec(String(text == null ? "" : text));
+    if (!m) return null;
+    return { x: Number(m[1]), y: Number(m[2]) };
+  }
+
+  // The one answer to "are these the right coordinates": the square is right
+  // only if a patron's hatch actually stands on it. Returns the square with its
+  // hatch tile, or null - which is what refuses the scenario.
+  function patronVaultSquareAt(text) {
+    const square = parseWorldSquare(text);
+    if (!square || !patronVaultAvailable()) return null;
+    const hatch = window.PatreonRewards.hatchTileAtWorld(square.x, square.y);
+    if (!hatch) return null;
+    return { x: square.x, y: square.y, hatchX: hatch[0], hatchY: hatch[1] };
+  }
+
+  // The square the player proved they knew, kept on $gameTemp between the
+  // question and the start (the wizard asks, then runs the origin again).
+  function patronVaultSquare() {
+    return ($gameTemp && $gameTemp._ccPatronVaultSquare) || null;
+  }
+
+  function setPatronVaultSquare(square) {
+    if ($gameTemp) $gameTemp._ccPatronVaultSquare = square || null;
+  }
+
+  function startPatronVaultOrigin() {
+    const square = patronVaultSquare();
+    const PR = window.PatreonRewards;
+    const PHS = window.ProceduralHouseSystem;
+    if (!square || !PR || !PHS || !PHS.enterFixedFloors) {
+      console.warn("CharacterCreation: no patron square for the vault origin; starting at the tower gate instead.");
+      startDungeonOrigin();
+      return false;
+    }
+    // Build the surface square the hatch is stamped on, so the way out of the
+    // vault is ground that exists. Also syncs the world-coordinate variables.
+    const built = $gameSystem.generateOriginBiomeMap
+      ? $gameSystem.generateOriginBiomeMap({ worldX: square.x, worldY: square.y })
+      : null;
+    if (!built) {
+      console.warn("CharacterCreation: the patron's square could not be built; starting at the tower gate instead.");
+      startDungeonOrigin();
+      return false;
+    }
+    anchorAt(built.worldX, built.worldY);
+    // The two "the procedural map is live" flags, exactly as
+    // startOnProceduralSquare raises them: without them the square the party
+    // climbs out onto loads as a dead map with no borders.
+    $gameVariables.setValue(110, 1);
+    $gameVariables.setValue(111, 1);
+    const entry = PR.VAULT_ENTRY || { x: 0, y: 0, direction: 2 };
+    return PHS.enterFixedFloors(PR.VAULT_FLOORS, {
+      descending: true,
+      x: entry.x, y: entry.y, direction: entry.direction,
+      returnPoint: {
+        mapId: proceduralMapId(),
+        // Square-local, like every return point recorded on the procedural map:
+        // the hatch tile is stored that way and ProcStitch converts on the way
+        // back in.
+        eventX: square.hatchX, eventY: square.hatchY, direction: 2,
+        worldX: built.worldX, worldY: built.worldY,
+      },
+    });
+  }
+
   // Artifact Heir origin: inherit one of the world's 13 generated historical
   // artifacts (HistorySimulator.js ids 1501-1513, each existing as an item,
   // a weapon AND an armor variant) at random, with whatever provenance the
@@ -2292,6 +2404,11 @@
     startDiplomatOrigin,
     bunkerGoldPiles,
     startBunkerOrigin,
+    patronVaultAvailable,
+    patronVaultSquareAt,
+    patronVaultSquare,
+    setPatronVaultSquare,
+    startPatronVaultOrigin,
     startArtifactHeirOrigin,
     startCrashLandedOrigin,
     startWarlordOrigin,

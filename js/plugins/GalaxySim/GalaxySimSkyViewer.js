@@ -353,6 +353,16 @@ ${this._isTelescope ? '<div class="gsv-scope"></div>' : ""}
                 this._zoomAt(factor, e.clientX, e.clientY);
             };
             this._svgEl.addEventListener("wheel", this._onWheel, { passive: false });
+
+            // The overlay sits above the game canvas, so TouchInput never sees
+            // the right button here and the browser would answer with its own
+            // context menu instead. Right click is the one way out a mouse
+            // player reaches for, so the overlay closes on it itself.
+            this._onContextMenu = (e) => {
+                e.preventDefault();
+                this.close();
+            };
+            root.addEventListener("contextmenu", this._onContextMenu);
         }
 
         // --- Data / layout ---------------------------------------------
@@ -545,7 +555,7 @@ ${this._isTelescope ? '<div class="gsv-scope"></div>' : ""}
         }
 
         _updateInput() {
-            if (Input.isTriggered("cancel") || Input.isTriggered("escape")) {
+            if (Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled()) {
                 this.close();
                 return true;
             }
@@ -626,6 +636,7 @@ ${this._isTelescope ? '<div class="gsv-scope"></div>' : ""}
         close() {
             if (this._onWindowMouseMove) window.removeEventListener("mousemove", this._onWindowMouseMove);
             if (this._onWindowMouseUp) window.removeEventListener("mouseup", this._onWindowMouseUp);
+            if (this._root && this._onContextMenu) this._root.removeEventListener("contextmenu", this._onContextMenu);
             if (this._root) {
                 this._root.remove();
                 this._root = null;

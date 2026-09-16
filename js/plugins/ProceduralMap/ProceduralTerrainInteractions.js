@@ -1910,8 +1910,8 @@
     return true;
   };
 
-  // --- Hatch: a patron's private way down into their own villa (one of the
-  // "villas" interiors, opened by PatreonRewards.openHatch). Only ever
+  // --- Hatch: a patron's private way down into their own vault (the nine
+  // stacked cellars, opened by PatreonRewards.openHatch). Only ever
   // stamped on that patron's own world square, and never dismantled: it is not
   // in the dismantle table and this handler removes nothing, so the hatch is
   // still there on every later visit. Faced anywhere else it does nothing. ---
