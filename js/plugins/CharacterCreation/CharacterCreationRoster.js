@@ -115,10 +115,15 @@
       veil.querySelector(".cc-modal-accept").focus();
     }
 
-    // The same sheet as _ccConfirm, with a line to type on: a question whose
+    // The same sheet as _ccConfirm, with lines to type on: a question whose
     // answer is text rather than yes/no (the patron vault's coordinates).
     // `opts.validate` is handed what was typed and answers with an error line
     // to show - the sheet stays open on one - or null to accept.
+    //
+    // One line by default. `opts.fields` asks for several instead - each
+    // { key, label, placeholder } - and validate is then handed an object of
+    // what was typed, keyed by field, rather than a single string. A sheet
+    // with fields carries no prose: the labels are the question.
     _ccAsk(opts, onAccept) {
       const container = this._dndContainer || document.getElementById("character-creation-container");
       if (!container) return;
@@ -130,15 +135,25 @@
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
 
+      const fields = Array.isArray(opts.fields) && opts.fields.length
+        ? opts.fields
+        : [{ key: "", label: "", placeholder: opts.placeholder }];
+      const lines = fields.map((f) => `
+          <label class="cc-modal-field">
+            ${f.label ? `<span class="cc-modal-label">${esc(f.label)}</span>` : ""}
+            <input type="text" class="cc-pick-search cc-modal-input" autocomplete="off"
+                   spellcheck="false" data-field="${esc(f.key || "")}"
+                   placeholder="${esc(f.placeholder || "")}">
+          </label>`).join("");
+
       const veil = document.createElement("div");
       veil.className = "cc-modal-veil";
       veil.setAttribute("data-nav-modal", "1");
       veil.innerHTML = `
         <div class="cc-modal" role="dialog" aria-modal="true">
           <h3 class="cc-modal-title">${esc(opts.title || "")}</h3>
-          <p class="cc-modal-body">${esc(opts.body || "")}</p>
-          <input type="text" class="cc-pick-search cc-modal-input" autocomplete="off"
-                 spellcheck="false" placeholder="${esc(opts.placeholder || "")}">
+          ${opts.body ? `<p class="cc-modal-body">${esc(opts.body)}</p>` : ""}
+          ${lines}
           <p class="cc-modal-error"></p>
           <div class="cc-modal-actions">
             <button class="cc-sidebar-btn cc-modal-cancel">${esc(T('CharCreate.cancel'))}</button>
@@ -147,14 +162,25 @@
         </div>
       `;
 
-      const input = veil.querySelector(".cc-modal-input");
+      const inputs = Array.from(veil.querySelectorAll(".cc-modal-input"));
+      const input = inputs[0];
       const errorLine = veil.querySelector(".cc-modal-error");
+      // One line answers with its own string; several answer with an object
+      // keyed by field, which is what a multi-field validate is written for.
+      const answer = () => {
+        if (!Array.isArray(opts.fields) || !opts.fields.length) {
+          return input ? input.value : "";
+        }
+        const out = {};
+        for (const el of inputs) out[el.getAttribute("data-field")] = el.value;
+        return out;
+      };
       const close = () => {
         document.removeEventListener("keydown", onKey, true);
         veil.remove();
       };
       const accept = () => {
-        const value = input ? input.value : "";
+        const value = answer();
         const error = opts.validate ? opts.validate(value) : null;
         if (error) {
           SoundManager.playBuzzer();

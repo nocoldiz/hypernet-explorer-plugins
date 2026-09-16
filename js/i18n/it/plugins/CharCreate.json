@@ -1059,11 +1059,14 @@
   "presetSavedToast": "{name} archiviato tra i tuoi dossier.",
   "presetResaved": "Il dossier di {name} è stato riscritto.",
   "patronVaultAskTitle": "Le coordinate segrete",
-  "patronVaultAskBody": "Solo il patrono a cui sono state date sa dove è stampata la sua botola. Scrivi il quadrante del mondo, come due numeri.",
-  "patronVaultAskPlaceholder": "79, 124",
-  "patronVaultWrongSquare": "Nessuna botola risponde a quel quadrante.",
+  "patronVaultAskWorld": "Quadrante del mondo",
+  "patronVaultAskWorldHint": "79, 124",
+  "patronVaultAskTile": "Casella della botola",
+  "patronVaultAskTileHint": "38, 27",
+  "patronVaultWrongSquare": "Nessuna botola risponde a quelle coordinate.",
+  "patronVaultTravelName": "Cripta Patreon",
   "floorMinusOneOfAPatronsVault": "Piano -1 della cripta di un patrono",
   "thePatronsOwnHatch": "La botola del patrono, sulla superficie sopra",
   "locked": "Chiuso da",
-  "theSecretCoordinates": "Le coordinate segrete del quadrante"
+  "theSecretCoordinates": "Le coordinate segrete della botola"
 }

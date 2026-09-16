@@ -47,7 +47,8 @@
     "category": "Sector:",
     "volatility": "Volatility Rating:",
     "float": "Shares Issued:",
-    "ownership": "Your Stake:"
+    "ownership": "Your Stake:",
+    "dividend": "Daily Dividend:"
   },
   "assets": {
     "oil": {
@@ -69,7 +70,9 @@
     "moveNote": "[{sign}{pct}%]"
   },
   "errors": {
-    "noFloat": "No unissued shares left"
+    "noFloat": "No unissued shares left",
+    "noGold": "Not enough money for that order",
+    "noShares": "You do not hold that many shares"
   },
   "headlines": {
     "oil": [
@@ -154,5 +157,10 @@
         "{company} restates last year's figures by a rounding error."
       ]
     }
+  },
+  "dividends": {
+    "tag": "DIV",
+    "paid": "Dividends credited: {amount} for {days} day(s) of holdings.",
+    "toast": "Dividends paid: {amount}"
   }
 }

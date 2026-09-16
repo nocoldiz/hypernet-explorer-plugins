@@ -3147,9 +3147,22 @@
 }
 
 /* The same sheet with a line to type on (the patron vault's coordinates), and
-   the refusal it answers with. */
+   the refusal it answers with. A sheet that asks for more than one pair drops
+   the prose and labels the lines instead: the label IS the question. */
 .cc-modal-input {
     margin: 0 0 10px 0;
+}
+
+.cc-modal-field {
+    display: block;
+    margin: 0 0 4px 0;
+}
+
+.cc-modal-label {
+    display: block;
+    margin: 0 0 4px 0;
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-2);
 }
 
 .cc-modal-error {

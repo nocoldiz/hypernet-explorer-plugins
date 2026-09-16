@@ -275,6 +275,7 @@
       // A hand-made list of floor maps entered through one tile, numbered
       // downwards when `descending` (PatreonRewards' vault under a hatch).
       enterTileStackAt(x, y, floors, opts) { return enterTileStackAt(x, y, floors, opts); },
+      registerFixedStack(floors, opts) { return registerFixedStack(floors, opts); },
       enterFixedFloors(floors, opts) { return enterFixedFloors(floors, opts); },
       interiorMapIdFor(poolName, x, y, mapId) { return interiorMapIdFor(poolName, x, y, mapId); },
       // ── Doors that name their own trade (tileset 303) ──────────────────────
@@ -956,7 +957,7 @@
   }
 
   function updateStairVisibility() {
-    if (!currentMultiBuilding) return;
+    if (!currentMultiBuilding && !adoptFixedStack()) return;
     const floor = currentMultiBuilding.currentFloorIndex;
     const total = currentMultiBuilding.structure.totalFloors;
     // i18n-ignore-start  event names
@@ -1928,7 +1929,7 @@
   }
 
   function changeFloor(direction) {
-    if (!currentMultiBuilding) return;
+    if (!currentMultiBuilding && !adoptFixedStack()) return;
     const structure = currentMultiBuilding.structure;
     const current = currentMultiBuilding.currentFloorIndex;
     const total = structure.totalFloors;
@@ -2021,6 +2022,73 @@
     _postTransferActions = { type: 'fixedFloorEnter' };
     $gamePlayer.reserveTransfer(floors[0], Number(opts.x) || 0, Number(opts.y) || 0, dir, 0);
     return true;
+  }
+
+  // Fixed stacks that exist whether or not anybody walked into them. A floor of
+  // one can be reached without a session behind it - a map opened straight from
+  // the editor, a debug teleport, a save made before the stack existed - and its
+  // stairs and elevator have to work all the same, so the session is rebuilt
+  // from the map the party is standing on (adoptFixedStack). PatreonRewards
+  // registers the vault's nine cellars; nothing else registers anything yet.
+  const fixedStacks = [];
+
+  function registerFixedStack(floors, opts = {}) {
+    if (!Array.isArray(floors) || floors.length === 0) return;
+    const key = opts.key || `stack:${floors[0]}`;
+    const at = fixedStacks.findIndex((s) => s.key === key);
+    // `opts.exitFallback` is the stack's OWN answer to "climb out of here with
+    // nothing recorded behind you". A patron's vault is the only stack that has
+    // one: its floors stand under a hatch, so walking out of a session that was
+    // never entered properly surfaces on a hatch rather than on whatever square
+    // the world variables happened to be left pointing at.
+    const stack = {
+      key, floors: floors.slice(), descending: opts.descending !== false,
+      exitFallback: typeof opts.exitFallback === "function" ? opts.exitFallback : null,
+    };
+    if (at >= 0) fixedStacks[at] = stack;
+    else fixedStacks.push(stack);
+  }
+
+  // Rebuild the session for the floor the party is standing on, if that floor
+  // belongs to a registered stack. The way OUT is not known here (nobody
+  // recorded a door), so exitHouse falls back to its own answers.
+  function adoptFixedStack() {
+    if (currentMultiBuilding) return true;
+    if (typeof $gameMap === "undefined" || !$gameMap) return false;
+    const here = $gameMap.mapId();
+    for (const stack of fixedStacks) {
+      const floorIndex = stack.floors.indexOf(here);
+      if (floorIndex < 0) continue;
+      const structure = {
+        floors: stack.floors.slice(),
+        totalFloors: stack.floors.length,
+        fixed: true,
+        descending: stack.descending,
+      };
+      multiBuildingStructures[stack.key] = structure;
+      // Nothing recorded the way into THIS stack, and a session id left over
+      // from some earlier building is not it: clearing it is what lets the
+      // stack answer for its own exit instead of walking out of a door in
+      // another map entirely.
+      currentHouseSessionId = null;
+      currentMultiBuilding = {
+        entranceKey: stack.key,
+        currentFloorIndex: floorIndex,
+        structure: structure,
+        baseSeed: createSeed(stack.floors[0], 0, 0),
+      };
+      setCurrentBuilding({
+        mapId: stack.floors[0], x: 0, y: 0, seed: currentMultiBuilding.baseSeed,
+        type: 'enterMultiBuilding',
+        baseFloorPool: '', upperFloorsPool: '',
+        numFloors: structure.totalFloors - 1,
+        totalFloors: structure.totalFloors, floorIndex: floorIndex,
+        capacity: structure.totalFloors,
+        interiorMapId: here,
+      });
+      return true;
+    }
+    return false;
   }
 
   // Public: enter a fixed stack from a door TILE (PatreonRewards' hatch), so the
@@ -2128,6 +2196,7 @@
   }
 
   function openElevator() {
+    if (!currentMultiBuilding) adoptFixedStack();
     if (!currentMultiBuilding || !currentMultiBuilding.structure) {
       window.skipLocalization = true;
       $gameMessage.add(T('ProceduralHouse.noElevator'));
@@ -2211,6 +2280,27 @@
   // spat the party out at the Omega Tower. The party's world square is recorded
   // by WorldMapTransfer on every map load, so ask for it instead and step back
   // out onto it. Answers false only when even that is unknown.
+  // The registered stack the party is standing in, if the floor they are on
+  // belongs to one, and its own way out if it declared one.
+  function fixedStackExit() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return false;
+    const here = $gameMap.mapId();
+    const stack = fixedStacks.find((s) => s.exitFallback && s.floors.indexOf(here) >= 0);
+    if (!stack) return false;
+    let left = false;
+    try {
+      left = !!stack.exitFallback();
+    } catch (e) {
+      console.warn("ProceduralHouseSystem: the " + stack.key + " stack could not answer for its own exit", e);
+      return false;
+    }
+    if (!left) return false;
+    currentHouseSessionId = null;
+    currentMultiBuilding = null;
+    setCurrentBuilding(null);
+    return true;
+  }
+
   function returnToRecordedSquare() {
     const WMT = window.WorldMapTransfer;
     if (!WMT) return false;
@@ -2284,6 +2374,11 @@
       currentHouseSessionId = null;
       currentMultiBuilding = null;
       setCurrentBuilding(null);
+    } else if (fixedStackExit()) {
+      // The stack answered for itself: a vault with no way out recorded puts
+      // the party back on a hatch, which is the only ground its floors belong
+      // under. Asked BEFORE the recorded square, because the world coordinates
+      // left over from wherever the party was last are not this stack's ground.
     } else if (returnToRecordedSquare()) {
       // Nothing recorded the way in, but the party's world square is still
       // known, so they leave by the front of the square they are standing on.
@@ -2414,7 +2509,13 @@
                   } else {
                       const eventName = actions.direction === 'next' ? "Downstairs" : "Upstairs";  // i18n-ignore  event names
                       const event = findEventByName(eventName);
-                      if (event) $gamePlayer.locate(event.x, event.y);
+                      // Standing ON the stair is standing on the way back: the
+                      // party arrives one tile south of it, facing down, off the
+                      // flight they just came off.
+                      if (event) {
+                          $gamePlayer.locate(event.x, event.y + 1);
+                          $gamePlayer.setDirection(2);
+                      }
                   }
                   updateStairVisibility();
                   // Furniture-system decoration disabled for now.

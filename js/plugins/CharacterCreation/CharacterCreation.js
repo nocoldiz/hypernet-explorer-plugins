@@ -4657,16 +4657,29 @@
       this.popScene();
     }
 
-    // The patron vault's lock: two numbers, checked against the hatches
-    // themselves. Right coordinates run `next`; wrong ones say so and leave the
-    // sheet open, and backing out of it simply does not start the scenario.
+    // The patron vault's lock: the two pairs the patron was given, the world
+    // square and the tile the hatch is stamped on, checked against the hatches
+    // themselves. Two labelled lines and nothing else - there is no prose to
+    // read here, and anybody who has the coordinates knows what they are for.
+    // Right ones run `next`; wrong ones say so and leave the sheet open, and
+    // backing out of it simply does not start the scenario.
     _askPatronVaultSquare(next) {
       this._ccAsk({
         title: ccT('CharCreate.patronVaultAskTitle'),
-        body: ccT('CharCreate.patronVaultAskBody'),
-        placeholder: ccT('CharCreate.patronVaultAskPlaceholder'),
-        validate: (text) => {
-          const square = patronVaultSquareAt(text);
+        fields: [
+          {
+            key: "world",
+            label: ccT('CharCreate.patronVaultAskWorld'),
+            placeholder: ccT('CharCreate.patronVaultAskWorldHint'),
+          },
+          {
+            key: "tile",
+            label: ccT('CharCreate.patronVaultAskTile'),
+            placeholder: ccT('CharCreate.patronVaultAskTileHint'),
+          },
+        ],
+        validate: (values) => {
+          const square = patronVaultSquareAt(values.world, values.tile);
           if (!square) return ccT('CharCreate.patronVaultWrongSquare');
           setPatronVaultSquare(square);
           return null;

@@ -1373,7 +1373,9 @@
       if (Scene_CharacterCreation._storyMode) return "";
       const isPreset = !!this._presetWindow;
       const isPresetActor = !!(actor._isPresetActor);
-      const hasAnotherPreset = this._hasPresetInParty(true);
+      // Only a VIP closes the dossier chip to the other seats: a party may hold
+      // any number of dossiers the player saved, but one VIP at most.
+      const hasAnotherPreset = this._hasAuthoredPresetInParty(true);
       const isPresetDisabled = hasAnotherPreset && !isPresetActor;
       // A dossier the world holds one of is filed under VIP rather than under
       // Preset, so the chip that is marked is the board the member came off.

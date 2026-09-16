@@ -7,6 +7,10 @@
  * @text Patron Report
  * @desc Prints every registered patron (world square, hatch tile, room, planet) to the console.
  *
+ * @command goToHatch
+ * @text Go To My Hatch
+ * @desc Builds the patron square this savegame knows and sets the party down on the hatch itself. Does nothing where none is known.
+ *
  * @help
  * ============================================================================
  * Patron Rewards
@@ -16,10 +20,14 @@
  *   1. A HATCH on one procedural world square (map 636 at their world
  *      coordinates). The hatch is a Hatch terrain feature stamped by this
  *      plugin after everything else has generated, on exactly the tile their
- *      secret names, in any biome, over whatever was there: the tile and its
- *      neighbours are wiped of scatter and walls and the ground under them is
- *      repaired if need be, so the hatch is always where the record says and
- *      nothing ever grows over it or walls it in. It cannot be dismantled.
+ *      secret names, in any biome, over whatever was there: a 5x5 yard around
+ *      it is wiped of scatter and walls, the ground under it is repaired if
+ *      need be and a structure's keep-out region is lifted off it, so the hatch
+ *      is always where the record says, is approachable from every side, and
+ *      nothing ever grows over it or walls it in. The prefab pass is handed
+ *      that yard as keep-out ground before it places anything
+ *      (hatchKeepOutRect), so ordinarily there is nothing standing there to
+ *      demolish. It cannot be dismantled.
  *      The exception is an alien surface (a GalaxySim landing reuses this map
  *      and world variables 43/44 for its own landing grid), where no hatch is
  *      ever stamped. Going down it opens their VAULT: nine hand-made cellars
@@ -110,10 +118,14 @@
  *   window.PatreonRewards.patrons()                 the table (no coordinates)
  *   window.PatreonRewards.patronAtWorld(x, y)       patron owning a world square
  *   window.PatreonRewards.hatchTileAtWorld(x, y)    their hatch tile on it
+ *   window.PatreonRewards.hatchKeepOutRect(x, y)    ground no prefab may take
  *   window.PatreonRewards.applyMapFeatures(mapData, biome, worldCoords)
  *                                                   stamps the hatch (hooked on
  *                                                   DataManager.loadMapData,
  *                                                   after the prefab pass)
+ *   window.PatreonRewards.ownHatch()                this savegame's own hatch
+ *   window.PatreonRewards.goToOwnHatch()            put the party back on it
+ *                                                   (plugin command goToHatch)
  *   window.PatreonRewards.openHatch(tile)           hatch interaction handler
  *   window.PatreonRewards.vaultHouseId()            Floor -1 of the vault
  *   window.PatreonRewards.isInPatronVault()         inside a vault structure?
@@ -157,6 +169,12 @@
   const VAULT_ENTRY = { x: 15, y: 18, direction: 2 };
   // i18n-ignore-end
 
+  // Back to the hatch the party came up by, from anywhere: the vault origin's
+  // one square, or whichever patron square this savegame last recognised.
+  PluginManager.registerCommand(PLUGIN_NAME, "goToHatch", () => {
+    goToOwnHatch();
+  });
+
   // A slot with a blank id is RESERVED: its world square and hatch tile are
   // already rolled and encrypted, waiting for the next patron, but it has no
   // name, no vault and no planet yet. Nothing in the game may act on
@@ -189,11 +207,23 @@
   // indexed by rarity tier (Common -> Legendary).
   const CONTAINER_TIER_WEIGHTS = [0.1, 0.4, 2, 10, 26];
 
-  // Tiles cleared of scatter around a stamped hatch, in each direction. The
-  // hatch tile itself is never negotiable, so this is kept small: it is enough
-  // to keep the hatch approachable without demolishing whatever the map had
-  // standing next to it.
-  const HATCH_CLEARANCE = 1;
+  // Tiles cleared of scatter around a stamped hatch, in each direction: a
+  // 5x5 yard with the hatch in the middle. The hatch tile itself is never
+  // negotiable, and neither is room to stand on every side of it - a hatch
+  // reachable from one diagonal only is a hatch the party walks past - so the
+  // yard is swept of terrain features, prefab walls and keep-out marks alike.
+  // Wider than this and every hatch would start eating the buildings around it.
+  const HATCH_CLEARANCE = 2;
+
+  // The keep-out square the prefab pass is handed for a patron's own world
+  // square (hatchKeepOutRect): the swept yard plus a tile of margin, so a
+  // prefab is never even laid over the ground the stamp is about to clear and
+  // the yard is not a hole punched through somebody's wall.
+  const HATCH_KEEPOUT_MARGIN = 1;
+
+  // The region mark a structure paints over its dead mass. It is lifted inside
+  // the yard: a sealed-region map refuses to walk on it, hatch or no hatch.
+  const NO_GO_REGION = (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
 
   const log = (...a) => console.log("[PatreonRewards]", ...a);
   const warn = (...a) => console.warn("[PatreonRewards]", ...a);
@@ -297,8 +327,116 @@
       const open = openSecret(patron.secret, key, x, y);
       if (open) { found = { patron, mapCoordinates: [open.mapX, open.mapY] }; break; }
     }
+    if (found) rememberHatch(x, y, found);
     _squareCache.set(cacheKey, found);
     return found;
+  }
+
+  // ==========================================================================
+  // Squares the game has already recognised
+  // ==========================================================================
+  // A square is never stored, only RECOGNISED: the crypt opens a secret with a
+  // key derived from the square itself, so there is no way to ask the roster
+  // which squares the patrons hold - only to stand on one and be told. That
+  // makes "a hatch, any hatch" a question nothing can answer from the file.
+  //
+  // What CAN be answered is "a hatch this savegame has already met": every
+  // square the lookup above opens is written down as it is opened - by the map
+  // generator stamping the hatch, by a hatch being used, by the character
+  // creation vault origin proving the coordinates it was handed. One is always
+  // written down before anybody can be standing inside a vault.
+  function knownStore() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+    if (!Array.isArray($gameSystem._patronKnownHatches)) $gameSystem._patronKnownHatches = [];
+    return $gameSystem._patronKnownHatches;
+  }
+
+  function rememberHatch(x, y, rec) {
+    const store = knownStore();
+    if (!store) return;
+    if (store.some((h) => h.x === x && h.y === y)) return;
+    store.push({ id: rec.patron.id, x: x, y: y, mapX: rec.mapCoordinates[0], mapY: rec.mapCoordinates[1] });
+  }
+
+  /** Every patron square this savegame has already recognised. */
+  function knownHatches() {
+    return (knownStore() || []).map((h) => Object.assign({}, h));
+  }
+
+  /** One of them at random, or null while none has been met. */
+  function randomKnownHatch() {
+    const store = knownStore();
+    if (!store || !store.length) return null;
+    return Object.assign({}, store[Math.floor(Math.random() * store.length)]);
+  }
+
+  /**
+   * Climb out of a vault that has no way out recorded - a floor opened from the
+   * editor, a debug teleport, a save made before the session existed - by
+   * surfacing on a patron hatch: the square is built and the party is set down
+   * on the lid itself, exactly where walking out of the vault properly would
+   * leave them. Answers false while no patron square has been met, leaving the
+   * house system its own fallbacks.
+   */
+  function surfaceOnRandomHatch() {
+    return surfaceOnHatch(randomKnownHatch());
+  }
+
+  /**
+   * The hatch this savegame calls its own: the one last stamped (the square the
+   * party is standing on, or the one the vault origin proved on its way in),
+   * and failing that the first square this game ever recognised. A party that
+   * began in a patron's vault has exactly one, so this is that one.
+   */
+  function ownHatch() {
+    if (typeof $gameSystem !== "undefined" && $gameSystem) {
+      const last = $gameSystem._patronHatch;
+      if (last && Number.isFinite(last.worldX) && Number.isFinite(last.worldY)) {
+        return { id: last.id, x: last.worldX, y: last.worldY, mapX: last.x, mapY: last.y };
+      }
+    }
+    const store = knownStore();
+    if (store && store.length) return Object.assign({}, store[0]);
+    return null;
+  }
+
+  /**
+   * Surface on a named hatch: build its world square and set the party down on
+   * the lid, exactly where climbing out of the vault properly would leave them.
+   * The one road to a hatch, shared by the random fallback and the plugin
+   * command. False where the square cannot be built.
+   */
+  function surfaceOnHatch(hatch) {
+    if (!hatch) return false;
+    if (typeof $gameSystem === "undefined" || !$gameSystem.generateOriginBiomeMap) return false;
+    const built = $gameSystem.generateOriginBiomeMap({ worldX: hatch.x, worldY: hatch.y });
+    if (!built) return false;
+    // The two "the procedural map is live" flags, as every arrival onto a built
+    // square raises them: without them the square loads with no borders out.
+    $gameVariables.setValue(110, 1);
+    $gameVariables.setValue(111, 1);
+    if (window.WorldMapTransfer) window.WorldMapTransfer.setPlayerWorld(built.worldX, built.worldY);
+    // Square-local, like every procedural-map arrival: ProcStitch converts it on
+    // the way in and the load settles the party on a tile they can stand on.
+    $gamePlayer.reserveTransfer(PROC_MAP_ID, hatch.mapX, hatch.mapY, 2, 0);
+    return true;
+  }
+
+  /**
+   * The plugin command's own answer: the party's own hatch, with a word to say
+   * where they have been put. False, and nothing said, where this savegame has
+   * never met a patron square - an ordinary party that never began in a vault.
+   */
+  function goToOwnHatch() {
+    const hatch = ownHatch();
+    if (!surfaceOnHatch(hatch)) return false;
+    const patron = patronById(hatch.id);
+    if (window.ParchmentToast && window.ParchmentToast.show) {
+      window.ParchmentToast.show(patron
+        ? T('Patron.hatchReturn', { patron: patron.name })
+        : T('Patron.hatchReturnUnknown'));
+    }
+    return true;
   }
 
   function patronAtWorld(x, y) {
@@ -320,6 +458,33 @@
   function hatchTileAtWorld(x, y) {
     const rec = patronRecordAtWorld(x, y);
     return rec ? rec.mapCoordinates.slice() : null;
+  }
+
+  /**
+   * The square on the procedural map that nothing else may build on, for a
+   * patron's own world square: the hatch's yard plus a tile of margin, clamped
+   * to the map. ProceduralMapPrefabs asks for this before it places anything,
+   * so a house is never dropped over a hatch and the yard the stamp sweeps is
+   * open ground to begin with rather than a hole through a wall.
+   *
+   * Null for every square that is not a patron's, and for an alien surface,
+   * where no hatch is ever stamped.
+   */
+  function hatchKeepOutRect(worldX, worldY) {
+    if (isAlienSurface(null)) return null;
+    const tile = hatchTileAtWorld(worldX, worldY);
+    if (!tile) return null;
+    const U = procUtils();
+    const width = (U && U.PROC_MAP_WIDTH) || 64;
+    const height = (U && U.PROC_MAP_HEIGHT) || 64;
+    const hx = Math.max(1, Math.min(width - 2, tile[0]));
+    const hy = Math.max(1, Math.min(height - 3, tile[1]));
+    const reach = HATCH_CLEARANCE + HATCH_KEEPOUT_MARGIN;
+    const x0 = Math.max(0, hx - reach);
+    const y0 = Math.max(0, hy - reach);
+    const x1 = Math.min(width - 1, hx + reach);
+    const y1 = Math.min(height - 1, hy + reach);
+    return { x: x0, y: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 };
   }
 
   // ==========================================================================
@@ -470,11 +635,14 @@
       return best;
     };
 
-    // Clear the hatch tile and its immediate neighbours on every feature layer
-    // - scatter, walls, whatever a prefab put there - so the hatch is never
-    // boxed in and is always approachable, and repair any ground that will not
-    // carry a walker. Deliberately a small box: this overrides what is there,
-    // and the less of somebody else's building it takes with it the better.
+    // Clear the hatch tile and the yard around it on every feature layer -
+    // scatter, walls, whatever a prefab put there - so the hatch is never boxed
+    // in and is always approachable from any side, repair any ground that will
+    // not carry a walker, and lift the keep-out region a structure may have
+    // painted over the mass. Deliberately a small box: this overrides what is
+    // there, and the less of somebody else's building it takes with it the
+    // better. The prefab pass is asked to leave this square alone up front
+    // (hatchKeepOutRect), so ordinarily there is nothing here to demolish.
     let fill = 0;
     for (let dy = -HATCH_CLEARANCE; dy <= HATCH_CLEARANCE; dy++) {
       for (let dx = -HATCH_CLEARANCE; dx <= HATCH_CLEARANCE; dx++) {
@@ -485,6 +653,10 @@
         if (!walkable(x, y)) {
           if (!fill) fill = groundTile();
           if (fill) mapData[idx(x, y, 0)] = fill;
+        }
+        const region = idx(x, y, 5);
+        if (region < mapData.length && mapData[region] === NO_GO_REGION) {
+          mapData[region] = 0;
         }
       }
     }
@@ -933,6 +1105,26 @@
   });
   // i18n-ignore-end
 
+  // The vault's floors are told to the house system at boot, not only when the
+  // hatch is opened: a party standing on one of them without a session behind
+  // it (a map opened from the editor, a debug teleport, an old save) still has
+  // working stairs and a working elevator.
+  const _PR_Scene_Boot_start = Scene_Boot.prototype.start;
+  Scene_Boot.prototype.start = function () {
+    _PR_Scene_Boot_start.call(this);
+    const PHS = window.ProceduralHouseSystem;
+    if (PHS && typeof PHS.registerFixedStack === "function") {
+      PHS.registerFixedStack(VAULT_FLOORS, {
+        key: "patronvault",  // i18n-ignore  stack id
+        descending: true,
+        // Climbing out of a vault nobody entered by the hatch: the way out is
+        // a hatch all the same, so the party surfaces on one of the patron
+        // squares this savegame has met rather than on a square with no lid.
+        exitFallback: surfaceOnRandomHatch,
+      });
+    }
+  };
+
   // ==========================================================================
   // Public API
   // ==========================================================================
@@ -947,6 +1139,13 @@
     patronAtWorld,
     patronById,
     hatchTileAtWorld,
+    hatchKeepOutRect,
+    knownHatches,
+    randomKnownHatch,
+    surfaceOnRandomHatch,
+    ownHatch,
+    surfaceOnHatch,
+    goToOwnHatch,
     applyMapFeatures,
     openHatch,
     isPatronHatch: (tile) => !!patronOfHatchTile(tile),

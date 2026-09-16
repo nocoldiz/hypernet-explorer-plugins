@@ -146,9 +146,12 @@
         if (this._gridWindow) this._gridWindow.activate();
         return;
       }
-      // A party carries one dossier at most: it is the dossier that decides the
-      // purse, the kit and where the party wakes up.
-      if (this._hasPresetInParty(true)) {
+      // A party carries one VIP dossier at most: it is the VIP that decides the
+      // purse, the kit and where the party wakes up. Dossiers the player saved
+      // are only character sheets, so any number of them may be taken; the
+      // board is only refused when nothing on it could still be picked.
+      if (this._hasAuthoredPresetInParty(true) &&
+          !availablePresets().some((pr) => this._isPlayerMadePreset(pr))) {
         SoundManager.playBuzzer();
         if (this._gridWindow) this._gridWindow.activate();
         return;
@@ -722,6 +725,31 @@
       return false;
     }
 
+    // A dossier the player wrote off the board says who somebody is, not where
+    // the party sets out from: it leaves the scenario board alone. Only the
+    // hand-authored VIP dossiers carry a landing of their own and close it.
+    // True for a dossier the player wrote off the board, false for the
+    // hand-authored VIPs the game ships.
+    _isPlayerMadePreset(preset) {
+      const CP = window.CharacterPresets;
+      if (!preset) return false;
+      if (!CP || !CP.isAuthoredPreset) return false;
+      return !CP.isAuthoredPreset(preset.id);
+    }
+
+    _hasAuthoredPresetInParty(excludeCurrentMember = true) {
+      const CP = window.CharacterPresets;
+      const currentIdx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      for (let i = 0; i < 3; i++) {
+        if (excludeCurrentMember && i === currentIdx) continue;
+        const actor = $gameActors.actor(i + 1);
+        if (!actor || !actor._isPresetActor) continue;
+        if (CP && CP.isAuthoredPreset && !CP.isAuthoredPreset(actor._presetId)) continue;
+        return true;
+      }
+      return false;
+    }
+
     _isActorLockedPreset(actor) {
       if (!actor) actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor || !actor._isPresetActor) return false;
@@ -1214,9 +1242,10 @@
       const presets = availablePresets();
       const preset = presets[presetIndex] || (this._presetWindow && this._presetWindow.currentPreset());
       if (!preset) return false;
-      // One dossier to a party: a second one would overwrite the first one's
-      // purse, kit and landing.
-      if (this._hasPresetInParty(true)) {
+      // One VIP to a party: a second one would overwrite the first one's purse,
+      // kit and landing. A dossier the player saved carries none of those, so it
+      // may join a party that already holds one.
+      if (!this._isPlayerMadePreset(preset) && this._hasAuthoredPresetInParty(true)) {
         SoundManager.playBuzzer();
         return false;
       }

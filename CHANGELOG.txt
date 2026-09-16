@@ -1,9 +1,23 @@
+0.6.24a
+Added:
+ - patreon star item to teleport to patreon hatch, exclusive to patreon vault custom scenario
+ - omega tower augmentation clinic
+
+Changed:
+ - stock market QOL edits
+  - patrons hatches spawn free ground around
+ - only VIP characters lock the scenario selection
+
+ Fix:
+- character creation scenario fixes
+
 0.6.23a
 
 Added:
  - omega tower casino
  - patreon coordinates system
 Changed:
+ - only VIP characters lock the scenario selection
  - bgm for ghent exteriors, antwerpen children and silenced maps
 
 Fixed:

@@ -401,6 +401,10 @@
   const ITEM_PREMIUM_WHISKEY = 572;   // CEO
   const ITEM_ENERGY_DRINK = 23;       // CEO
   const ITEM_RESONANCE_SCANNER = 139; // artifact heir
+  // The vault's own keepsake. Item slot 174 is blank in the database as it
+  // ships, so nothing is handed over until somebody fills it in: the grant is
+  // written here so that the day it is filled, it is already in the loadout.
+  const ITEM_PATRON_KEEPSAKE = 174;   // patron vault
   const ITEM_TRAVEL_JOURNAL = 128;    // artifact heir
   const ITEM_MEMORY_AMBER = 675;      // artifact heir
   const ITEM_LENS_OF_REVELATION = 679; // artifact heir
@@ -964,6 +968,7 @@
     // Woken in your own vault: a light, the square's map, and what was left on
     // the table. The nine floors below hold everything else.
     origin_patron_vault: [
+      { id: ITEM_PATRON_KEEPSAKE, qty: 1 },
       { id: ITEM_FLASHLIGHT, qty: 1 },
       { id: ITEM_LOCAL_MAP, qty: 1 },
       { id: ITEM_TRAVEL_JOURNAL, qty: 1 },
@@ -2060,13 +2065,23 @@
   }
 
   // The one answer to "are these the right coordinates": the square is right
-  // only if a patron's hatch actually stands on it. Returns the square with its
-  // hatch tile, or null - which is what refuses the scenario.
-  function patronVaultSquareAt(text) {
+  // only if a patron's hatch actually stands on it, and the tile is right only
+  // if it is the tile that hatch is stamped on. Both halves of what the patron
+  // was given are asked for, so knowing only which square it is does not open
+  // the vault. Returns the square with its hatch tile, or null - which is what
+  // refuses the scenario.
+  //
+  // `tileText` is optional: called without it, the square alone is checked,
+  // which is what any caller that only wants to know whose square this is asks.
+  function patronVaultSquareAt(text, tileText) {
     const square = parseWorldSquare(text);
     if (!square || !patronVaultAvailable()) return null;
     const hatch = window.PatreonRewards.hatchTileAtWorld(square.x, square.y);
     if (!hatch) return null;
+    if (tileText != null && String(tileText).trim() !== "") {
+      const tile = parseWorldSquare(tileText);
+      if (!tile || tile.x !== hatch[0] || tile.y !== hatch[1]) return null;
+    }
     return { x: square.x, y: square.y, hatchX: hatch[0], hatchY: hatch[1] };
   }
 
@@ -2080,6 +2095,17 @@
     if ($gameTemp) $gameTemp._ccPatronVaultSquare = square || null;
   }
 
+  // What the vault is called on the travel map. The wizard's own i18n bank,
+  // read the way CharacterCreation reads it, so nothing here is hardcoded.
+  function patronVaultTravelName() {
+    try {
+      if (typeof T === "function" && T.has && T.has("CharCreate.patronVaultTravelName")) {
+        const res = T("CharCreate.patronVaultTravelName");
+        if (typeof res === "string" && res.trim()) return res;
+      }
+    } catch (e) { /* no localization loaded */ }
+    return "Patreon vault";
+  }
   function startPatronVaultOrigin() {
     const square = patronVaultSquare();
     const PR = window.PatreonRewards;
@@ -2105,6 +2131,17 @@
     // climbs out onto loads as a dead map with no borders.
     $gameVariables.setValue(110, 1);
     $gameVariables.setValue(111, 1);
+    // The square the patron proved they knew is written onto the travel map as
+    // a place of the party's own, so the vault is a destination they can drive
+    // back to. It aims at the hatch tile itself rather than the middle of the
+    // square: arriving puts them on the lid they first climbed out of.
+    if (window.FastTravelSystem && window.FastTravelSystem.addCustomPoint) {
+      window.FastTravelSystem.addCustomPoint({
+        x: built.worldX, y: built.worldY,
+        name: patronVaultTravelName(),
+        landingTile: { x: square.hatchX, y: square.hatchY },
+      });
+    }
     const entry = PR.VAULT_ENTRY || { x: 0, y: 0, direction: 2 };
     return PHS.enterFixedFloors(PR.VAULT_FLOORS, {
       descending: true,

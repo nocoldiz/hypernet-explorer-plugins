@@ -460,6 +460,28 @@
    * placement checks and by the final collision-guarantee pass so the two can
    * never disagree.
    */
+  // Ground this map may not build on at all, whoever asks and whatever the
+  // placement branch: currently the yard around a patron's hatch, which is
+  // stamped onto the finished map and must come down on open ground rather
+  // than punch a hole through a prefab wall. Set once per map by
+  // applyPrefabsToMapSteps and read by canPlacePrefabAt, so every branch -
+  // city blocks, rooms, roadside pairs, the random scatter - honours it.
+  let keepOutAreas = [];
+
+  function refreshKeepOutAreas(worldCoords) {
+    keepOutAreas = [];
+    if (!worldCoords) return;
+    const rewards = window.PatreonRewards;
+    if (!rewards || typeof rewards.hatchKeepOutRect !== "function") return;
+    try {
+      const rect = rewards.hatchKeepOutRect(worldCoords.x, worldCoords.y);
+      if (rect && rect.width > 0 && rect.height > 0) keepOutAreas.push(rect);
+    } catch (e) {
+      // A patron square that cannot be read is simply not kept out: the stamp
+      // still lands, it just clears whatever it finds.
+    }
+  }
+
   function rectsCollide(x, y, w, h, other, spacing) {
     const s = spacing !== undefined ? spacing : 1;
     const separated = (
@@ -549,6 +571,14 @@
       const A = waterSatData[y * satWidth + x];
 
       if ((D - B - C + A) > 0) return false; // Contains at least 1 water tile
+    }
+
+    // 2c. Keep-out ground (a patron's hatch yard). Checked with no spacing of
+    // its own: the rect already carries its margin.
+    for (let i = 0; i < keepOutAreas.length; i++) {
+      if (rectsCollide(x, y, prefabWidth, prefabHeight, keepOutAreas[i], 0)) {
+        return false;
+      }
     }
 
     // 3. Strict Prefab Overlap Check (AABB) - shared with the final guarantee pass
@@ -1240,6 +1270,10 @@
       worldCoords: { x: worldCoords.x, y: worldCoords.y },
       mapIds: []
     };
+    // Whatever this square may not be built on, before a single position is
+    // rolled. Cleared for every square that reserves nothing, so the previous
+    // map's keep-out never leaks into this one.
+    refreshKeepOutAreas(worldCoords);
     // An alien surface takes no prefabs for the moment: the prefab pool is
     // authored terrestrial architecture, and a GalaxySim landing has nothing
     // for it to stand in. Every alien biome is named "Alien<Type>"

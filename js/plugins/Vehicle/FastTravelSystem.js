@@ -1047,6 +1047,11 @@
                 y: String(Math.round(point.y * MAP_SCALE_Y + MAP_OFFSET_Y)),
             },
             transportOverrides: { base: { x: point.x, y: point.y } },
+            // Square-local tile the arrival aims at, where the point names one
+            // (the patron hatch does). A plain written-down square names none
+            // and lands in the middle, exactly as it always has.
+            landingTile: (point.landingTile && Number.isFinite(point.landingTile.x))
+                ? { x: point.landingTile.x, y: point.landingTile.y } : null,
         };
     }
 
@@ -1637,7 +1642,7 @@
         // startProcGen); without them the square loads with no borders out of it.
         $gameVariables.setValue(110, 1);
         $gameVariables.setValue(111, 1);
-        const tile = procSquareCentre();
+        const tile = (dest && dest.landingTile) || procSquareCentre();
         bookProcLandingFixup();
         // Which tile of the square anybody stands on is only settled once the
         // houses and the prefabs are stamped onto it, so the vehicle is dropped
@@ -3951,6 +3956,31 @@ Scene_Map.prototype.printTravelCoordinates = function () {
     // signed for has to be dropped (Crafting/FurnitureSystem.js calls this).
     window.FastTravelSystem = window.FastTravelSystem || {};
     window.FastTravelSystem.refreshDestinations = refreshDestinationCache;
+
+    /**
+     * Write a square down on the party's behalf, for a place they were GIVEN
+     * rather than one they drove past: the patron vault origin hands over the
+     * hatch square the scenario began on, so the party can always go back to
+     * it. The refusals the modal enforces are the player's own rules for
+     * picking a square off the map and do not apply here - the square is known
+     * to be real - but a square already written down is never doubled.
+     *
+     *   point.landingTile  square-local tile the arrival aims at, optional
+     */
+    window.FastTravelSystem.addCustomPoint = function (point) {
+        if (!point || !$gameSystem) return false;
+        const x = Number(point.x), y = Number(point.y);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+        const points = customTravelPoints();
+        if (points.some(p => p.x === x && p.y === y)) return false;
+        const entry = { x: x, y: y, name: String(point.name || defaultCustomName(x, y)) };
+        if (point.landingTile && Number.isFinite(point.landingTile.x)) {
+            entry.landingTile = { x: point.landingTile.x, y: point.landingTile.y };
+        }
+        points.push(entry);
+        refreshDestinationCache();
+        return true;
+    };
 
     window.FastTravelPicker = {
         // Teach a scene the map. Idempotent: a scene class is only ever taught

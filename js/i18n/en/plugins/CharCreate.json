@@ -1059,11 +1059,14 @@
   "presetSavedToast": "{name} filed as one of your dossiers.",
   "presetResaved": "The dossier of {name} was rewritten.",
   "patronVaultAskTitle": "The secret coordinates",
-  "patronVaultAskBody": "Only the patron who was given them knows where their hatch is stamped. Type the world square, as two numbers.",
-  "patronVaultAskPlaceholder": "79, 124",
-  "patronVaultWrongSquare": "No hatch answers to that square.",
+  "patronVaultAskWorld": "World square",
+  "patronVaultAskWorldHint": "79, 124",
+  "patronVaultAskTile": "Hatch tile",
+  "patronVaultAskTileHint": "38, 27",
+  "patronVaultWrongSquare": "No hatch answers to those coordinates.",
+  "patronVaultTravelName": "Patreon vault",
   "floorMinusOneOfAPatronsVault": "Floor -1 of a patron's vault",
   "thePatronsOwnHatch": "The patron's own hatch, on the surface above",
   "locked": "Locked by",
-  "theSecretCoordinates": "The secret coordinates of the square"
+  "theSecretCoordinates": "The secret coordinates of the hatch"
 }

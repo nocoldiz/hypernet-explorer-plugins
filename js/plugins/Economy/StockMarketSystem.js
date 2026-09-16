@@ -115,6 +115,30 @@
     }
   };
 
+  // What a sector pays its shareholders, as a fraction of the share price per
+  // trading year. A holding earns its slice of that every in-game day it is
+  // held, so a portfolio left alone still does something, and a company the
+  // party controls outright pays the whole profit instead of a minority's cut
+  // (see CONTROL_PREMIUM). Commodities pay nothing: a barrel is not a company.
+  const SECTOR_DIVIDEND = {
+    consumertech: 0.02,
+    energy: 0.045,
+    occult: 0.06,
+    telecom: 0.03,
+    industrial: 0.04,
+    agriculture: 0.035,
+    finance: 0.05,
+    transport: 0.03,
+    misc: 0.03
+  };
+  const DIVIDEND_DAYS_PER_YEAR = 365;
+  // A majority holder takes more than its shares alone would pay: at 50% the
+  // dividend is unchanged, at 100% it is doubled.
+  const CONTROL_PREMIUM = 1;
+  // The most back pay a single settlement may hand over, so a save left alone
+  // for a game year does not pay for the next one on the spot.
+  const DIVIDEND_MAX_CATCHUP_DAYS = 30;
+
   // How jumpy a listing is, by the sector id carried in Companies.json.
   const SECTOR_VOLATILITY = {
     consumertech: 0.30,
@@ -374,6 +398,7 @@
       this._lastUpdateTime = 0;
       this._sessionStartTime = Date.now();
 
+      this._lastDividendDay = null; // the last in-game day a dividend was paid
       this._lastPctMove = {};   // last tick's move per stock, for tracking betas
       this._lastQuotedEuros = {}; // last per-share euro price written to the register
 
@@ -649,6 +674,8 @@
       setOilSharesVariable(this._oilShares);
       setSoulSharesVariable(this._soulsShares);
 
+      if (jsonObj.lastDividendDay !== undefined) this._lastDividendDay = Number(jsonObj.lastDividendDay);
+
       if (Array.isArray(jsonObj.orders)) {
         this._orders = jsonObj.orders;
       }
@@ -671,9 +698,82 @@
         this._lastUpdateTime = Date.now();
         this.updatePrices();
         this.evaluateOpenOrders();
+        this.payDividends();
         return true;
       }
       return false;
+    }
+
+    // =========================================================================
+    // Dividends
+    // =========================================================================
+
+    // The in-game day, off the world clock in minutes (Variable 114).
+    _marketDay() {
+      if (typeof $gameVariables === 'undefined' || !$gameVariables) return null;
+      const minutes = Number($gameVariables.value(114)) || 0;
+      return Math.floor(minutes / 1440);
+    }
+
+    // What one share of a listing pays per in-game day, in cents, before the
+    // control premium. Zero for the commodities.
+    dividendPerShare(stockId) {
+      const def = STOCKS_CONFIG[stockId];
+      const stock = this._stocks[stockId];
+      if (!def || !stock || def.commodity || !def.totalShares) return 0;
+      const sectorId = String(def.sectorKey || 'misc').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const yearly = SECTOR_DIVIDEND[sectorId] || SECTOR_DIVIDEND.misc;
+      return (stock.currentPrice * yearly) / DIVIDEND_DAYS_PER_YEAR;
+    }
+
+    // How much bigger a stake's dividend is for controlling the company.
+    controlMultiplier(stockId) {
+      const pct = this.ownershipPct(stockId);
+      if (pct <= 50) return 1;
+      return 1 + CONTROL_PREMIUM * ((pct - 50) / 50);
+    }
+
+    // What the whole portfolio pays in one in-game day, in cents.
+    dailyDividend() {
+      let total = 0;
+      for (const id of Object.keys(this._stocks)) {
+        const held = this._shares[id] || 0;
+        if (held <= 0) continue;
+        total += this.dividendPerShare(id) * held * this.controlMultiplier(id);
+      }
+      return total;
+    }
+
+    // Settle every whole in-game day that has passed since the last payment.
+    // Called on every market tick, so it lands whether or not the terminal is
+    // the screen the player is looking at.
+    payDividends() {
+      const day = this._marketDay();
+      if (day === null) return 0;
+      if (this._lastDividendDay === null || this._lastDividendDay === undefined) {
+        this._lastDividendDay = day;
+        return 0;
+      }
+      const owed = day - this._lastDividendDay;
+      if (owed <= 0) {
+        if (owed < 0) this._lastDividendDay = day;
+        return 0;
+      }
+      this._lastDividendDay = day;
+      const days = Math.min(owed, DIVIDEND_MAX_CATCHUP_DAYS);
+      const paid = Math.floor(this.dailyDividend() * days);
+      if (paid <= 0) return 0;
+      if (typeof $gameParty !== 'undefined' && $gameParty) $gameParty.gainGold(paid);
+      this._news.unshift({
+        time: _smi18n('news.justNow') || '',
+        tag: _smi18n('dividends.tag') || '',
+        text: _smi18n('dividends.paid', { amount: formatMoney(paid), days }) || ''
+      });
+      if (this._news.length > 20) this._news.pop();
+      if (window.ParchmentToast && window.ParchmentToast.show) {
+        window.ParchmentToast.show(_smi18n('dividends.toast', { amount: formatMoney(paid) }) || '');
+      }
+      return paid;
     }
 
     updatePrices() {
@@ -920,6 +1020,15 @@
       }
     }
 
+    // Trading itself teaches, not only trading well: a player who buys and
+    // holds a fortune used to learn nothing at all, because only a realized
+    // gain paid out. A filled order trains on a twentieth of what it moved, so
+    // the desk work counts and a profit still counts for far more.
+    _trainOnTrade(notionalInGold) {
+      if (!window.SpecializationXP || !(notionalInGold > 0)) return;
+      window.SpecializationXP.awardForValue('Stock Trading', notionalInGold * 0.05);
+    }
+
     _trainOnRealizedProfit(revenueInGold, costBasis, sharesHeld, sharesSold) {
       if (!window.SpecializationXP) return;
       const avgCost = sharesHeld > 0 ? (costBasis || 0) / sharesHeld : 0;
@@ -946,6 +1055,7 @@
         this._costBasis[stockId] = (this._costBasis[stockId] || 0) + costInGold;
 
         this._pushPosition(stockId);
+        this._trainOnTrade(costInGold);
 
         this.recordTrade({
           stockId,
@@ -974,6 +1084,7 @@
         const avgCost = currentShares > 0 ? basis / currentShares : 0;
         const realizedPnl = Math.round(revenueInGold - (avgCost * shares));
 
+        this._trainOnTrade(revenueInGold);
         this._trainOnRealizedProfit(revenueInGold, basis, currentShares, shares);
 
         this._costBasis[stockId] = currentShares > 0
@@ -1135,6 +1246,7 @@
         this._costBasis[order.stockId] = (this._costBasis[order.stockId] || 0) + actualCost;
 
         this._pushPosition(order.stockId);
+        this._trainOnTrade(actualCost);
 
         this.recordTrade({
           stockId: order.stockId,
@@ -1155,6 +1267,7 @@
         const avgCost = currentShares > 0 ? basis / currentShares : 0;
         const realizedPnl = Math.round(revenue - (avgCost * order.shares));
 
+        this._trainOnTrade(revenue);
         this._trainOnRealizedProfit(revenue, basis, currentShares, order.shares);
 
         this._costBasis[order.stockId] = currentShares > 0
@@ -1539,9 +1652,41 @@
       }
     }
 
+    // What the player is in the middle of typing, so the market ticking twice
+    // a second does not throw the caret out of the quantity box mid-number.
+    _captureFocus() {
+      const active = document.activeElement;
+      if (!active || !active.id || !document.getElementById("stock-container")) return null;
+      if (!document.getElementById("stock-container").contains(active)) return null;
+      const state = { id: active.id };
+      if (active.tagName === "INPUT") {
+        state.value = active.value;
+        try {
+          state.selStart = active.selectionStart;
+          state.selEnd = active.selectionEnd;
+        } catch (e) {}
+      }
+      return state;
+    }
+
+    _restoreFocus(state) {
+      if (!state) return;
+      const el = document.getElementById(state.id);
+      if (!el) return;
+      if (state.value !== undefined && el.tagName === "INPUT") {
+        el.value = state.value;
+      }
+      el.focus();
+      if (state.selStart != null && el.setSelectionRange) {
+        // A number input refuses setSelectionRange, so ask on the value instead.
+        try { el.setSelectionRange(state.selStart, state.selEnd); } catch (e) {}
+      }
+    }
+
     refreshUIStock() {
       const container = document.getElementById("stock-container");
       if (!container) return;
+      const focusState = this._captureFocus();
 
       const sm = $gameSystem.stockMarket;
       const allStocks = sm.getAllStocks();
@@ -1973,7 +2118,8 @@
               <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.volatility') || ''}</span><b>${(currentStock.volatility * 100).toFixed(0)}%</b></div>
               ${currentStock.totalShares ? `
               <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.float') || ''}</span><b>${currentStock.totalShares.toLocaleString()}</b></div>
-              <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.ownership') || ''}</span><b>${sm.ownershipPct(currentStock.id).toFixed(1)}%</b></div>` : ''}
+              <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.ownership') || ''}</span><b>${sm.ownershipPct(currentStock.id).toFixed(1)}%</b></div>
+              <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.dividend') || ''}</span><b>${formatMoney(sm.dividendPerShare(currentStock.id) * (sm.getShares(currentStock.id) || 0) * sm.controlMultiplier(currentStock.id))}</b></div>` : ''}
             </div>
           </div>
 
@@ -2068,7 +2214,7 @@
                 <span>ORDER QUANTITY</span>
                 <span>Available: <b>${isBuy ? goldToEurosForDisplay(playerGold) : `${sharesHeld} shares`}</b></span>
               </div>
-              <input type="number" id="sm-input-qty" value="${this._inputShares}" min="1" max="99999" style="width:100%; box-sizing:border-box; padding:4px 6px; font-weight:bold; font-size:14px; text-align:center; border:1px solid var(--xp-border)">
+              <input type="number" id="sm-input-qty" value="${this._inputShares}" min="1" max="999999999" style="width:100%; box-sizing:border-box; padding:4px 6px; font-weight:bold; font-size:14px; text-align:center; border:1px solid var(--xp-border)">
               <div style="display:flex; gap:3px; align-items:center; flex-wrap:wrap; margin-top:4px">
                 <button class="sm-action-btn focusable" data-action="step-qty" data-step="-10000" style="flex:1; min-width:0; padding:4px 2px">-10k</button>
                 <button class="sm-action-btn focusable" data-action="step-qty" data-step="-1000" style="flex:1; min-width:0; padding:4px 2px">-1k</button>
@@ -2120,6 +2266,7 @@
 
       this.paintStockGraph();
       this.attachUIEventListeners(container);
+      this._restoreFocus(focusState);
     }
 
     attachUIEventListeners(container) {
@@ -2199,7 +2346,11 @@
           if (preset === 'max') {
             if (this._tradeSide === 'buy') {
               const price = this._orderType === 'market' ? sm.getPrice(this._selectedStockId) : this._customTargetPrice;
-              const maxBuy = price > 0 ? Math.floor(getPlayerGoldInCents() / price) : 1;
+              const affordable = price > 0 ? Math.floor(getPlayerGoldInCents() / price) : 1;
+              // A purse deeper than the company is large buys the float, not
+              // more shares than were ever issued.
+              const float = sm.availableShares(this._selectedStockId);
+              const maxBuy = Math.min(affordable, isFinite(float) ? float : affordable);
               this._inputShares = Math.max(1, maxBuy);
             } else {
               this._inputShares = Math.max(1, sm.getShares(this._selectedStockId));
@@ -2315,7 +2466,10 @@
             this.refreshUIStock();
           } else {
             SoundManager.playBuzzer();
-            this.showToast("Cannot execute buy order: insufficient gold", true);
+            const noFloat = shares > sm.availableShares(stockId);
+            this.showToast(noFloat
+              ? (_smi18n('errors.noFloat') || '')
+              : (_smi18n('errors.noGold') || ''), true);
           }
         } else {
           if (sm.sellStock(stockId, shares)) {
@@ -2324,7 +2478,7 @@
             this.refreshUIStock();
           } else {
             SoundManager.playBuzzer();
-            this.showToast("Cannot execute sell order: insufficient shares", true);
+            this.showToast(_smi18n('errors.noShares') || '', true);
           }
         }
       } else {

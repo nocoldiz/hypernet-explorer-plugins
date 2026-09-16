@@ -1,5 +1,7 @@
 {
   "vaultName": "{patron}'s Vault",
   "starLabel": "{planet} Star",
-  "surveyNote": "Charted, named and left alone. The survey tag reads {patron}, patron of this reality."
+  "surveyNote": "Charted, named and left alone. The survey tag reads {patron}, patron of this reality.",
+  "hatchReturn": "Back on {patron}'s hatch.",
+  "hatchReturnUnknown": "Back on the hatch."
 }

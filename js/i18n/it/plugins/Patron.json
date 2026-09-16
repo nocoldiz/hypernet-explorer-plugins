@@ -1,5 +1,7 @@
 {
   "vaultName": "Cripta di {patron}",
   "starLabel": "Stella {planet}",
-  "surveyNote": "Mappata, battezzata e lasciata in pace. La targa del rilevamento dice {patron}, patrono di questa realtà."
+  "surveyNote": "Mappata, battezzata e lasciata in pace. La targa del rilevamento dice {patron}, patrono di questa realtà.",
+  "hatchReturn": "Di nuovo sulla botola di {patron}.",
+  "hatchReturnUnknown": "Di nuovo sulla botola."
 }

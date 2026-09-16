@@ -987,7 +987,7 @@
       if (Scene_CharacterCreation._storyMode) {
         return ccT('CharCreate.beginAdventure');
       }
-      return this._hasPresetInParty(false)
+      return this._hasAuthoredPresetInParty(false)
         ? ccT('CharCreate.startGame')
         : ccT('CharCreate.confirmPartyScenario');
     }
@@ -1000,8 +1000,10 @@
         this.finishStoryModeCreation();
         return;
       }
-      // If any party member is a preset character, skip scenario selection and finalize immediately!
-      if (this._hasPresetInParty(false)) {
+      // A hand-authored VIP dossier says where the party wakes up, so it skips the
+      // scenario board. A dossier the player saved is only a character sheet: it
+      // picks its scenario like anybody else.
+      if (this._hasAuthoredPresetInParty(false)) {
         this.onFinishPartyCreation();
         return;
       }

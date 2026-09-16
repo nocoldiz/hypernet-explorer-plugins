@@ -47,7 +47,8 @@
     "category": "Settore:",
     "volatility": "Indice di volatilità:",
     "float": "Azioni emesse:",
-    "ownership": "La tua quota:"
+    "ownership": "La tua quota:",
+    "dividend": "Dividendo giornaliero:"
   },
   "assets": {
     "oil": {
@@ -69,7 +70,9 @@
     "moveNote": "[{sign}{pct}%]"
   },
   "errors": {
-    "noFloat": "Non restano azioni da emettere"
+    "noFloat": "Non restano azioni da emettere",
+    "noGold": "Denaro insufficiente per questo ordine",
+    "noShares": "Non possiedi cosi tante azioni"
   },
   "headlines": {
     "oil": [
@@ -154,5 +157,10 @@
         "{company} corregge i conti dell'anno scorso di un arrotondamento."
       ]
     }
+  },
+  "dividends": {
+    "tag": "DIV",
+    "paid": "Dividendi accreditati: {amount} per {days} giorno/i di possesso.",
+    "toast": "Dividendi pagati: {amount}"
   }
 }

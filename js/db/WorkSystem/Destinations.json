@@ -520,6 +520,56 @@
       "102,107"
     ]
   },
+    "Mont Blanc tunnel south": {
+    "name": "Mont Blanc tunnel south",
+    "type": "dungeon",
+    "country": "Italy",
+    "nationId": 78,
+    "procedural": false,
+    "tag": "industrial",
+    "mapOffset": {
+      "x": 335,
+      "y": 486
+    },
+    "entrance": {
+      "id": 1017,
+      "x": 19,
+      "y": 123,
+      "direction": 1
+    },
+    "base": {
+      "x": 112,
+      "y": 161
+    },
+    "reservedTiles": [
+      "112,161"
+    ]
+  },
+   "Mont Blanc tunnel north": {
+    "name": "Mont Blanc tunnel north",
+    "type": "dungeon",
+    "country": "France",
+    "nationId": 102,
+    "procedural": false,
+    "tag": "industrial",
+    "mapOffset": {
+      "x": 335,
+      "y": 486
+    },
+    "entrance": {
+      "id": 1017,
+      "x": 7,
+      "y": 9,
+      "direction": 1
+    },
+    "base": {
+      "x": 107,
+      "y": 159
+    },
+    "reservedTiles": [
+      "107,159"
+    ]
+  },
   "Tritunnel Ovest": {
     "name": "Tritunnel Ovest",
     "type": "dungeon",
@@ -1310,6 +1360,34 @@
     },
     "reservedTiles": [
       "73,111"
+    ]
+  },
+    "Trick Castle": {
+    "name": "Trick Castle",
+    "type": "dungeon",
+    "country": "UK",
+    "nationId": 38,
+    "procedural": false,
+    "tag": "industrial",
+    "mapOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "base": {
+      "x": 60,
+      "y": 92
+    },
+    "entrance": {
+      "id": 589,
+      "x": 21,
+      "y": 38,
+      "direction": 3
+    },
+    "reservedTiles": [
+      "59,91",
+      "60,91",
+      "59,92",
+      "60,92"
     ]
   },
   "Killarney": {
