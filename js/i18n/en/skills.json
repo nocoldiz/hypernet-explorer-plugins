@@ -151,7 +151,7 @@
   },
   "34": {
     "name": "Defensive Stance",
-    "description": "May grant Winded to the user. Strikes first.",
+    "description": "Raises the user's CON and DEX. Grants Rooted.\nStrikes first.",
     "message1": "%1 assumes a defensive stance!",
     "message2": ""
   },
@@ -163,13 +163,13 @@
   },
   "36": {
     "name": "Chi Focus",
-    "description": "May grant Unbalanced to the user. Strikes first.",
+    "description": "Raises the user's DEX and INT. Grants Combo.\nStrikes first.",
     "message1": "%1 focuses their chi!",
     "message2": ""
   },
   "37": {
     "name": "Water Flow Stance",
-    "description": "May grant Guard Broken to the user. Strikes\nfirst.",
+    "description": "Raises the user's STR and CON. Grants Flow.\nStrikes first.",
     "message1": "%1 enters a fluid stance!",
     "message2": ""
   },
@@ -187,7 +187,7 @@
   },
   "40": {
     "name": "Power Stance",
-    "description": "Lowers the user's CON. Strikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 powers up!",
     "message2": ""
   },
@@ -199,19 +199,19 @@
   },
   "42": {
     "name": "Willpower",
-    "description": "Lowers the user's DEX. May grant Unbalanced.\nStrikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 sets their mind against it all!",
     "message2": ""
   },
   "43": {
     "name": "Clear Mind",
-    "description": "Lowers the user's CON. May grant Winded. Strikes\nfirst.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 cleared their mind!",
     "message2": ""
   },
   "44": {
     "name": "Peek-a-boo Stance",
-    "description": "Lowers the user's DEX. May grant Unbalanced.\nStrikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 assumes a peek-a-boo stance!",
     "message2": ""
   },
@@ -223,43 +223,43 @@
   },
   "46": {
     "name": "Ginga",
-    "description": "May grant Concussed to the user. Strikes first.",
+    "description": "Raises the user's INT and WIS. Grants Flow.\nStrikes first.",
     "message1": "%1 performs the Ginga!",
     "message2": ""
   },
   "47": {
     "name": "Siu Nim Tau",
-    "description": "Lowers the user's CON. Strikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 assumes the Wing Chun stance!",
     "message2": ""
   },
   "48": {
     "name": "Tai Chi Form",
-    "description": "Lowers the user's DEX. Strikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 assumes Tai Chi stance!",
     "message2": ""
   },
   "49": {
     "name": "Systema Breathing",
-    "description": "Restores HP to the user and may grant Guard\nBroken.",
+    "description": "Restores HP to the user.",
     "message1": "%1 performs deep breathing!",
     "message2": ""
   },
   "50": {
     "name": "Aikido Flow",
-    "description": "Lowers the user's CON. May grant Winded. Strikes\nfirst.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 flows like water!",
     "message2": ""
   },
   "51": {
     "name": "Sumo Shiko",
-    "description": "Lowers the user's DEX. May grant Unbalanced.\nStrikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 stomps with authority!",
     "message2": ""
   },
   "52": {
     "name": "Limit Release",
-    "description": "Lowers the user's DEX. Strikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 unleashes hidden potential!",
     "message2": ""
   },
@@ -271,31 +271,31 @@
   },
   "54": {
     "name": "Muscle Guard",
-    "description": "Lowers the user's DEX. Strikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 tenses their muscles!",
     "message2": ""
   },
   "55": {
     "name": "Dynamic Stretch",
-    "description": "Lowers the user's CON. May grant Unbalanced.\nStrikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 performs dynamic stretches!",
     "message2": ""
   },
   "56": {
     "name": "Stance Martial Arts",
-    "description": "May grant Unbalanced to the user. Strikes first.",
+    "description": "Raises the user's WIS. Strikes first.",
     "message1": "%1 improves their stance!",
     "message2": ""
   },
   "57": {
     "name": "Precision Drill",
-    "description": "May grant Guard Broken to the user. Strikes\nfirst.",
+    "description": "Raises the user's CON. Grants Perfect Focus.\nStrikes first.",
     "message1": "%1 practices precision strikes!",
     "message2": ""
   },
   "58": {
     "name": "Breath Control",
-    "description": "May grant Winded to the user. Strikes first.",
+    "description": "Raises the user's PSI. Strikes first.",
     "message1": "%1 performs breathing exercises!",
     "message2": ""
   },
@@ -307,13 +307,13 @@
   },
   "60": {
     "name": "Over Break",
-    "description": "Lowers the user's STR. Strikes first.",
+    "description": "Raises the user's STR. Strikes first.",
     "message1": "%1 pushes beyond normal limits!",
     "message2": ""
   },
   "61": {
     "name": "Core Martial Arts",
-    "description": "Lowers the user's CON. Strikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 strengthens their core!",
     "message2": ""
   },
@@ -337,49 +337,49 @@
   },
   "65": {
     "name": "Combat Readiness",
-    "description": "May grant Vital Exposed to the user. Strikes\nfirst.",
+    "description": "Raises the user's CON and DEX. Strikes first.",
     "message1": "%1 enters a state of heightened focus!",
     "message2": ""
   },
   "66": {
     "name": "Rapid Conditioning",
-    "description": "May grant Grappled to the user. Strikes first.",
+    "description": "Raises the user's PSI and STR. Strikes first.",
     "message1": "%1 performs intense rapid MartialArts!",
     "message2": ""
   },
   "67": {
     "name": "Defensive Conditioning",
-    "description": "May grant Vital Exposed to the user. Strikes\nfirst.",
+    "description": "Raises the user's DEX and STR. Strikes first.",
     "message1": "%1 focuses on defensive techniques!",
     "message2": ""
   },
   "68": {
     "name": "Offensive Conditioning",
-    "description": "Lowers the user's DEX. Strikes first.",
+    "description": "Raises the user's DEX. Strikes first.",
     "message1": "%1 focuses on offensive techniques!",
     "message2": ""
   },
   "69": {
     "name": "Battle Martial Arts",
-    "description": "May grant Concussed to the user. Strikes first.",
+    "description": "Raises the user's STR/CON/DEX/INT. Strikes\nfirst.",
     "message1": "%1 completes battle MartialArts!",
     "message2": ""
   },
   "70": {
     "name": "Spiritual Martial Arts",
-    "description": "May grant Concussed to the user. Strikes first.",
+    "description": "Raises the user's WIS and PSI. Strikes first.",
     "message1": "%1 undergoes spiritual MartialArts!",
     "message2": ""
   },
   "71": {
     "name": "Divine Communion",
-    "description": "Restores HP to the user and lowers their STR.\nMay grant Unbalanced.",
+    "description": "Restores HP to the user and raises their STR.",
     "message1": "%1 enters divine communion!",
     "message2": ""
   },
   "72": {
     "name": "Malicious Focus",
-    "description": "May grant Concussed to the user. Strikes first.",
+    "description": "Raises the user's WIS and PSI. Grants Combo.\nStrikes first.",
     "message1": "%1 focuses on evil intentions!",
     "message2": ""
   },
@@ -439,7 +439,7 @@
   },
   "82": {
     "name": "Tai Chi Healing",
-    "description": "Restores HP to the user and may grant Grappled.",
+    "description": "Restores HP to the user.",
     "message1": "%1 channels healing chi!",
     "message2": ""
   },
@@ -463,7 +463,7 @@
   },
   "86": {
     "name": "Chi Healing",
-    "description": "Restores HP to the user and lowers their CON.\nMay grant Unbalanced.",
+    "description": "Restores HP to the user and raises their CON.",
     "message1": "%1 channels healing chi!",
     "message2": ""
   },
@@ -577,7 +577,7 @@
   },
   "105": {
     "name": "Zen Meditation",
-    "description": "Restores HP to the user and lowers their CON.",
+    "description": "Restores HP to the user and raises their CON.",
     "message1": "%1 performs deep meditation!",
     "message2": ""
   },
@@ -697,7 +697,7 @@
   },
   "125": {
     "name": "Counter Stance",
-    "description": "Lowers the user's CON. Strikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 prepares to counter!",
     "message2": ""
   },
@@ -829,7 +829,7 @@
   },
   "147": {
     "name": "Systema Flow",
-    "description": "Lowers the user's STR. May grant Unbalanced.\nStrikes first.",
+    "description": "Raises the user's STR. Strikes first.",
     "message1": "%1 moves with fluid efficiency!",
     "message2": ""
   },
@@ -895,7 +895,7 @@
   },
   "158": {
     "name": "Meditate",
-    "description": "Restores HP to the user and lowers their DEX.",
+    "description": "Restores HP to the user and raises their DEX.",
     "message1": "%1 meditates!",
     "message2": ""
   },
@@ -955,7 +955,7 @@
   },
   "168": {
     "name": "Arcane Armor",
-    "description": "May grant Winded to the user. Strikes first.",
+    "description": "Raises the user's DEX and STR. Strikes first.",
     "message1": "%1 uses Arcane Armor!",
     "message2": ""
   },
@@ -1171,7 +1171,7 @@
   },
   "204": {
     "name": "Qigong",
-    "description": "Restores HP to the user and lowers their STR.",
+    "description": "Restores HP to the user and raises their STR.",
     "message1": "%1 works the breath through every meridian!",
     "message2": ""
   },
@@ -1201,13 +1201,13 @@
   },
   "209": {
     "name": "Tumbling Evasion",
-    "description": "Lowers the user's CON. May grant Winded. Strikes\nfirst.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 uses Tumbling Evasion!",
     "message2": ""
   },
   "210": {
     "name": "Mantra of Peace",
-    "description": "Restores HP to the user and lowers their STR.",
+    "description": "Restores HP to the user and raises their STR.",
     "message1": "%1 uses Mantra of Peace!",
     "message2": ""
   },
@@ -1285,7 +1285,7 @@
   },
   "223": {
     "name": "Nirvana Reach",
-    "description": "Restores HP to the user and lowers their CON.\nMay grant Winded.",
+    "description": "Restores HP to the user and raises their CON.",
     "message1": "%1 uses Nirvana Reach!",
     "message2": ""
   },
@@ -1303,7 +1303,7 @@
   },
   "236": {
     "name": "Protect",
-    "description": "Lowers the user's CON. May grant Unbalanced.\nStrikes first.",
+    "description": "Raises the user's CON. Strikes first.",
     "message1": "%1 protects team.",
     "message2": ""
   },
@@ -1315,7 +1315,7 @@
   },
   "238": {
     "name": "Knight's Resolve",
-    "description": "May grant Unbalanced to all allies.",
+    "description": "Raises all allies' CON. Grants Perfect Focus.",
     "message1": "%1 uses Knight's Resolve!",
     "message2": ""
   },
@@ -1429,7 +1429,7 @@
   },
   "257": {
     "name": "Phalanx Formation",
-    "description": "Lowers all allies' CON. May grant Bleeding.",
+    "description": "Raises all allies' CON.",
     "message1": "%1 uses Phalanx Formation!",
     "message2": ""
   },
@@ -1507,13 +1507,13 @@
   },
   "270": {
     "name": "Spirit of the Bushido",
-    "description": "May grant Bleeding to all allies.",
+    "description": "Raises all allies' DEX and INT. Grants Inspired\nand restores 25 AP.",
     "message1": "%1 uses Spirit of the Bushido!",
     "message2": ""
   },
   "271": {
     "name": "Kingdom's Shield",
-    "description": "Lowers all allies' CON. May grant Bleeding.",
+    "description": "Raises all allies' CON.",
     "message1": "%1 uses Kingdom's Shield!",
     "message2": ""
   },
@@ -1603,13 +1603,13 @@
   },
   "286": {
     "name": "Impenetrable Defense",
-    "description": "May grant Winded to all allies.",
+    "description": "Raises all allies' DEX and INT. Grants Protect.",
     "message1": "%1 uses Impenetrable Defense!",
     "message2": ""
   },
   "287": {
     "name": "Aegis of the Ancients",
-    "description": "May grant Winded to all allies.",
+    "description": "Raises all allies' STR and CON. Grants Divine\nShield.",
     "message1": "%1 uses Aegis of the Ancients!",
     "message2": ""
   },
@@ -1639,7 +1639,7 @@
   },
   "302": {
     "name": "Berserker Mode",
-    "description": "Lowers the user's CON. May grant Rage.",
+    "description": "Raises the user's CON. May grant Rage.",
     "message1": "%1 enters berserker mode!",
     "message2": ""
   },
@@ -1705,19 +1705,19 @@
   },
   "313": {
     "name": "Bloodlust",
-    "description": "May grant Infected to all allies.",
+    "description": "Raises all allies' STR. Grants Rage.",
     "message1": "%1 uses Bloodlust!",
     "message2": ""
   },
   "314": {
     "name": "Frenzy",
-    "description": "Lowers all allies' CON. May grant Rage.",
+    "description": "Raises all allies' CON. May grant Rage.",
     "message1": "%1 uses Frenzy!",
     "message2": ""
   },
   "315": {
     "name": "Forage",
-    "description": "Lowers all allies' DEX. May grant Bleeding.",
+    "description": "Raises all allies' CON.",
     "message1": "%1 uses Forage!",
     "message2": ""
   },
@@ -1885,7 +1885,7 @@
   },
   "343": {
     "name": "Reconnaissance",
-    "description": "Lowers the user's CON. May grant Bleeding.",
+    "description": "Raises the user's CON.",
     "message1": "%1 uses Reconnaissance!",
     "message2": ""
   },
@@ -1933,7 +1933,7 @@
   },
   "351": {
     "name": "Primal Instinct",
-    "description": "Lowers all allies' CON.",
+    "description": "Raises all allies' CON.",
     "message1": "%1 uses Primal Instinct!",
     "message2": ""
   },
@@ -2005,7 +2005,7 @@
   },
   "363": {
     "name": "Shapeshift",
-    "description": "Becomes the enemy: its stats, health, skills and\nbody, until the fight ends.",
+    "description": "Raises the user's CON and DEX. Grants Hide and\nrestores 20 AP.",
     "message1": "%1 becomes the enemy!",
     "message2": ""
   },
@@ -2041,7 +2041,7 @@
   },
   "369": {
     "name": "Bristled Retaliation",
-    "description": "May grant Bleeding to the user. Strikes last.",
+    "description": "Raises the user's CON. Grants Counter Attack.\nStrikes last.",
     "message1": "%1 bristles, ready to retaliate!",
     "message2": ""
   },
@@ -2059,19 +2059,19 @@
   },
   "380": {
     "name": "FireSnap",
-    "description": "Lowers one ally's DEX. May grant Burned.",
+    "description": "Raises one ally's DEX.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "381": {
     "name": "Icify",
-    "description": "Lowers one ally's DEX. May grant Rooted.",
+    "description": "Raises one ally's DEX. May grant Rooted.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "382": {
     "name": "ThunderWeapon",
-    "description": "Lowers one ally's CON. May grant Static.",
+    "description": "Raises one ally's CON. May grant Static.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -2101,31 +2101,31 @@
   },
   "387": {
     "name": "FlameInfusion",
-    "description": "May grant Burned to all allies. Strikes last.",
+    "description": "Raises all allies' STR. Grants Hot. Strikes\nlast.",
     "message1": "%1 infuses weapons with fire!",
     "message2": ""
   },
   "388": {
     "name": "FrostInfusion",
-    "description": "Lowers all allies' INT. May grant Cold. Strikes\nlast.",
+    "description": "Raises all allies' INT. May grant Cold. Strikes\nlast.",
     "message1": "%1 infuses weapons with ice!",
     "message2": ""
   },
   "389": {
     "name": "ThunderInfusion",
-    "description": "Lowers all allies' DEX. May grant Stun. Strikes\nlast.",
+    "description": "Raises all allies' DEX. Strikes last.",
     "message1": "%1 infuses weapons with lightning!",
     "message2": ""
   },
   "390": {
     "name": "Windshield",
-    "description": "Lowers all allies' DEX. May grant Floating.\nStrikes last.",
+    "description": "Raises all allies' DEX. May grant Floating.\nStrikes last.",
     "message1": "%1 creates a wind barrier!",
     "message2": ""
   },
   "391": {
     "name": "WeaponWarming",
-    "description": "Lowers one ally's CON. Strikes last. Lands 50%\nof the time.",
+    "description": "Raises one ally's CON. Strikes last. Lands 50%\nof the time.",
     "message1": "%1 slightly warms a weapon!",
     "message2": ""
   },
@@ -2155,7 +2155,7 @@
   },
   "396": {
     "name": "IronShell",
-    "description": "Lowers one ally's STR. May grant Oily. Strikes\nlast.",
+    "description": "Raises one ally's STR. Strikes last.",
     "message1": "%1 creates a defensive shell!",
     "message2": ""
   },
@@ -2167,7 +2167,7 @@
   },
   "398": {
     "name": "StoneSkin",
-    "description": "Lowers one ally's DEX. May grant Pinned. Strikes\nlast.",
+    "description": "Raises one ally's DEX. Strikes last.",
     "message1": "%1 creates an immobile fortress!",
     "message2": ""
   },
@@ -2179,7 +2179,7 @@
   },
   "400": {
     "name": "PaperHeal",
-    "description": "Restores HP to one ally and lowers their CON.",
+    "description": "Restores HP to one ally and raises their CON.",
     "message1": "%1 casts minor healing!",
     "message2": ""
   },
@@ -2251,7 +2251,7 @@
   },
   "412": {
     "name": "IceBarrier",
-    "description": "May grant Winded to one ally. Strikes last.",
+    "description": "Raises one ally's CON. Grants Provoke. Strikes\nlast.",
     "message1": "%1 creates an ice barrier!",
     "message2": ""
   },
@@ -2371,7 +2371,7 @@
   },
   "432": {
     "name": "WeatherForecast",
-    "description": "Lowers all allies' WIS.",
+    "description": "Raises all allies' WIS.",
     "message1": "%1 uses Weather Forecast!",
     "message2": ""
   },
@@ -2821,7 +2821,7 @@
   },
   "517": {
     "name": "DivineBless",
-    "description": "May grant Silence to one ally.",
+    "description": "Raises one ally's WIS.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -2833,7 +2833,7 @@
   },
   "519": {
     "name": "LuminousTransfiguration",
-    "description": "Lowers one ally's STR. May grant Blind. Strikes\nlast.",
+    "description": "Raises one ally's STR. Strikes last.",
     "message1": "%1 transforms into luminous energy!",
     "message2": ""
   },
@@ -2845,31 +2845,31 @@
   },
   "521": {
     "name": "DivinePerfection",
-    "description": "Lowers all allies' STR. May grant Silence.\nStrikes last.",
+    "description": "Raises all allies' STR. Strikes last.",
     "message1": "%1 unleashes ultimate enhancement!",
     "message2": ""
   },
   "522": {
     "name": "BlessingProtection",
-    "description": "Lowers one ally's STR. May grant Blind. Strikes\nlast.",
+    "description": "Raises one ally's STR. Strikes last.",
     "message1": "%1 bestows a blessing of protection!",
     "message2": ""
   },
   "523": {
     "name": "DivineEmpowerment",
-    "description": "May grant Death Mark to one ally. Strikes last.",
+    "description": "Raises one ally's STR and INT. Strikes last.",
     "message1": "%1 prays for divine STR!",
     "message2": ""
   },
   "524": {
     "name": "PurifyingPrayer",
-    "description": "Lowers one ally's STR. May grant Silence.\nStrikes last.",
+    "description": "Raises one ally's STR. Strikes last.",
     "message1": "%1 performs ritual cleansing!",
     "message2": ""
   },
   "525": {
     "name": "MassPurification",
-    "description": "May grant Silence to all allies. Strikes last.",
+    "description": "Cures several negative states on all allies.\nStrikes last.",
     "message1": "%1 performs a mass purification!",
     "message2": ""
   },
@@ -2881,7 +2881,7 @@
   },
   "527": {
     "name": "DivineShield",
-    "description": "May grant Death Mark to all allies. Strikes\nlast.",
+    "description": "Raises all allies' CON and WIS. Strikes last.",
     "message1": "%1 creates a divine shield!",
     "message2": ""
   },
@@ -2893,19 +2893,19 @@
   },
   "529": {
     "name": "RegenerativeBlessing",
-    "description": "May grant Confusion to one ally. Strikes last.",
+    "description": "Raises one ally's PSI. Strikes last.",
     "message1": "%1 casts regenerative blessing!",
     "message2": ""
   },
   "530": {
     "name": "DivineInsight",
-    "description": "May grant Vulnerability to the user.",
+    "description": "Raises the user's INT and MP.",
     "message1": "%1 prays for divine insight!",
     "message2": ""
   },
   "531": {
     "name": "DivineResilience",
-    "description": "Lowers the user's INT.",
+    "description": "Raises the user's INT.",
     "message1": "%1 prays for divine resilience!",
     "message2": ""
   },
@@ -2917,25 +2917,25 @@
   },
   "533": {
     "name": "HolyChant",
-    "description": "May grant Confusion to the user.",
+    "description": "Raises the user's INT and WIS.",
     "message1": "%1 recites a holy chant!",
     "message2": ""
   },
   "534": {
     "name": "SacredVow",
-    "description": "Lowers the user's STR. May grant Blind.",
+    "description": "Raises the user's STR.",
     "message1": "%1 takes a sacred vow!",
     "message2": ""
   },
   "535": {
     "name": "HealingScripture",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Death Mark.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 recites healing scripture!",
     "message2": ""
   },
   "536": {
     "name": "DivineHealing",
-    "description": "Restores HP to one ally and may grant Confusion.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 prays for healing!",
     "message2": ""
   },
@@ -2947,7 +2947,7 @@
   },
   "538": {
     "name": "MiraculousHealing",
-    "description": "Restores HP to one ally and may grant Death\nMark.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 performs a miraculous healing!",
     "message2": ""
   },
@@ -2965,7 +2965,7 @@
   },
   "541": {
     "name": "BlessingField",
-    "description": "May grant Blind to all allies.",
+    "description": "Raises all allies' INT.",
     "message1": "%1 creates a blessing void!",
     "message2": ""
   },
@@ -3049,7 +3049,7 @@
   },
   "555": {
     "name": "HealingField",
-    "description": "Restores HP to all allies and lowers their PSI.\nStrikes last.",
+    "description": "Restores HP to all allies and raises their PSI.\nStrikes last.",
     "message1": "%1 creates a healing field!",
     "message2": ""
   },
@@ -3061,7 +3061,7 @@
   },
   "557": {
     "name": "HolySacrament",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Blind.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 uses Holy Sacrament!",
     "message2": ""
   },
@@ -3085,31 +3085,31 @@
   },
   "561": {
     "name": "CureWounds",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Death Mark.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 uses Cure Wounds!",
     "message2": ""
   },
   "562": {
     "name": "Foresight",
-    "description": "May grant Blind to all allies.",
+    "description": "Raises all allies' DEX. Grants Perfect Focus.",
     "message1": "%1 uses Foresight!",
     "message2": ""
   },
   "563": {
     "name": "MirrorImage",
-    "description": "Lowers all allies' STR. May grant Blind.",
+    "description": "Raises all allies' STR.",
     "message1": "%1 uses Mirror Image!",
     "message2": ""
   },
   "564": {
     "name": "Prayer",
-    "description": "Restores HP to all allies and lowers their INT.\nMay grant Blind.",
+    "description": "Restores HP to all allies and raises their INT.",
     "message1": "%1 uses Prayer!",
     "message2": ""
   },
   "565": {
     "name": "LifeShower",
-    "description": "Restores HP to all allies and lowers their INT.\nMay grant Blind.",
+    "description": "Restores HP to all allies and raises their INT.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -3127,19 +3127,19 @@
   },
   "568": {
     "name": "HealAlly",
-    "description": "Restores HP to one ally and lowers their PSI.\nMay grant Blind.",
+    "description": "Restores HP to one ally and raises their PSI.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "569": {
     "name": "ChemicalSanctuary",
-    "description": "Restores HP to all allies and lowers their INT.\nMay grant Blind.",
+    "description": "Restores HP to all allies and raises their INT.",
     "message1": "%1 uses Chemical Sanctuary!",
     "message2": ""
   },
   "570": {
     "name": "LayOnHands",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Death Mark.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 uses Lay on Hands!",
     "message2": ""
   },
@@ -3151,7 +3151,7 @@
   },
   "572": {
     "name": "PropheticVision",
-    "description": "May grant Silence to all allies.",
+    "description": "Raises all allies' STR and CON. Grants Perfect\nFocus and restores 20 AP.",
     "message1": "%1 uses Prophetic Vision!",
     "message2": ""
   },
@@ -3169,43 +3169,43 @@
   },
   "575": {
     "name": "RestoreHumors",
-    "description": "Restores HP to all allies and may grant\nVulnerability.",
+    "description": "Restores HP to all allies.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "576": {
     "name": "BigCure",
-    "description": "Restores HP to one ally and lowers their INT.\nMay grant Blind.",
+    "description": "Restores HP to one ally and raises their INT.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "577": {
     "name": "HealParty",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Blind.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "578": {
     "name": "MiracleOfTheGoddess",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Silence.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 uses Miracle of the Goddess!",
     "message2": ""
   },
   "579": {
     "name": "AuraOfProtection",
-    "description": "Lowers all allies' STR. May grant Silence.",
+    "description": "Raises all allies' STR.",
     "message1": "%1 uses Aura of Protection!",
     "message2": ""
   },
   "580": {
     "name": "DivineIntervention",
-    "description": "Restores HP to one fallen ally and lowers their\nINT.",
+    "description": "Restores HP to one fallen ally and raises their\nINT.",
     "message1": "%1 uses Divine Intervention!",
     "message2": ""
   },
   "581": {
     "name": "DivineRevelation",
-    "description": "May grant Blind to all allies.",
+    "description": "Raises all allies' INT and WIS. Grants Inspired.",
     "message1": "%1 uses Divine Revelation!",
     "message2": ""
   },
@@ -3223,31 +3223,31 @@
   },
   "584": {
     "name": "Regenega",
-    "description": "Restores HP to one ally and lowers their STR.\nMay grant Silence.",
+    "description": "Restores HP to one ally and raises their STR.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
   "585": {
     "name": "AbsoluteAbsolution",
-    "description": "Restores HP to all allies and lowers their STR.\nMay grant Death Mark.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 uses Absolute Absolution!",
     "message2": ""
   },
   "586": {
     "name": "AegisOfLight",
-    "description": "Lowers all allies' INT. May grant Blind.",
+    "description": "Raises all allies' INT.",
     "message1": "%1 uses Divine Judgment!",
     "message2": ""
   },
   "587": {
     "name": "DivineRestoration",
-    "description": "Restores HP to all fallen allies and may grant\nDeath Mark.",
+    "description": "Restores HP to all fallen allies.",
     "message1": "%1 uses Resurrection!",
     "message2": ""
   },
   "588": {
     "name": "FatesDecree",
-    "description": "Lowers all allies' STR.",
+    "description": "Raises all allies' STR.",
     "message1": "%1 uses Fate's Decree!",
     "message2": ""
   },
@@ -3421,7 +3421,7 @@
   },
   "637": {
     "name": "DeathSlumber",
-    "description": "Restores MP to the user and lowers their WIS.",
+    "description": "Restores MP to the user and raises their WIS.",
     "message1": "%1 falls into a death-like slumber!",
     "message2": ""
   },
@@ -3457,7 +3457,7 @@
   },
   "643": {
     "name": "LifeForceDrain",
-    "description": "Restores HP to the user and lowers their WIS.\nMay grant Death Mark.",
+    "description": "Restores HP to the user and raises their WIS.",
     "message1": "%1 activates life force healing!",
     "message2": ""
   },
@@ -3469,13 +3469,13 @@
   },
   "645": {
     "name": "VitalDrain",
-    "description": "Restores MP to the user and may grant\nVulnerability.",
+    "description": "Restores MP to the user.",
     "message1": "%1 drains their own life force!",
     "message2": ""
   },
   "646": {
     "name": "DespairingSacrifice",
-    "description": "Restores MP to the user and may grant Death\nMark.",
+    "description": "Restores MP to the user.",
     "message1": "%1 makes a terrible life sacrifice!",
     "message2": ""
   },
@@ -3517,7 +3517,7 @@
   },
   "663": {
     "name": "PotentiaIncertus",
-    "description": "Raises one ally's STR and INT. Lowers their CON\nand DEX. Strikes last.",
+    "description": "Raises one ally's STR/INT/CON/DEX. Strikes last.",
     "message1": "%1 invokes chaotic enhancement!",
     "message2": ""
   },
@@ -3583,7 +3583,7 @@
   },
   "674": {
     "name": "PurifyingBlaze",
-    "description": "Restores MP to the user and lowers their STR and\nCON. Grants Burned.",
+    "description": "Restores MP to the user and raises their STR and\nCON.",
     "message1": "%1 ignites in purifying flames!",
     "message2": ""
   },
@@ -3619,7 +3619,7 @@
   },
   "680": {
     "name": "SelfElectrocution",
-    "description": "Restores MP to the user and lowers their DEX and\nPSI. Grants Paralysis.",
+    "description": "Restores MP to the user and raises their DEX and\nPSI.",
     "message1": "%1 electrocutes themself!",
     "message2": ""
   },
@@ -3643,13 +3643,13 @@
   },
   "684": {
     "name": "FleshConsumption",
-    "description": "Restores MP to the user and lowers their STR and\nDEX. Grants Burned.",
+    "description": "Restores MP to the user and raises their STR and\nDEX.",
     "message1": "%1 burns with consuming flames!",
     "message2": ""
   },
   "685": {
     "name": "BloodFreezing",
-    "description": "Restores MP to the user and lowers their DEX and\nPSI. May grant Freeze.",
+    "description": "Restores MP to the user and raises their DEX and\nPSI.",
     "message1": "%1 freezes their own blood!",
     "message2": ""
   },
@@ -3691,7 +3691,7 @@
   },
   "692": {
     "name": "BoneCrushing",
-    "description": "Restores MP to the user and lowers their\nSTR/CON/DEX. Grants Stun.",
+    "description": "Restores MP to the user and raises their\nSTR/CON/DEX.",
     "message1": "%1 crushes their own bones!",
     "message2": ""
   },
@@ -3721,13 +3721,13 @@
   },
   "697": {
     "name": "ChaosSacrifice",
-    "description": "Restores MP to the user and lowers their INT and\nWIS. Grants Confusion.",
+    "description": "Restores MP to the user and raises their INT and\nWIS.",
     "message1": "%1 makes a chaotic sacrifice!",
     "message2": ""
   },
   "698": {
     "name": "SoulCorruption",
-    "description": "Restores MP to the user and lowers their\nSTR/CON/INT/WIS.",
+    "description": "Restores MP to the user and raises their\nSTR/CON/INT/WIS.",
     "message1": "%1 invites darkness into their soul!",
     "message2": ""
   },
@@ -3787,7 +3787,7 @@
   },
   "708": {
     "name": "TotalDestruction",
-    "description": "Restores MP to the user and lowers all their\nstats. Grants several ailments.",
+    "description": "Restores MP to the user and raises all their\nstats.",
     "message1": "%1 completely self-destructs!",
     "message2": ""
   },
@@ -3805,7 +3805,7 @@
   },
   "711": {
     "name": "SalutisProhibitum",
-    "description": "Restores HP to all allies and may grant\nPoison/Blind/Silence. Cures Dead. Strikes last.",
+    "description": "Restores HP to all allies and cures Dead.\nStrikes last.",
     "message1": "%1 invokes forbidden healing!",
     "message2": ""
   },
@@ -3973,7 +3973,7 @@
   },
   "749": {
     "name": "TemporalReversion",
-    "description": "Restores HP to one ally and may grant\nUnbalanced.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 reverses time!",
     "message2": ""
   },
@@ -4039,7 +4039,7 @@
   },
   "770": {
     "name": "ArcaneQuill",
-    "description": "May grant Unbalanced to the user.",
+    "description": "Raises the user's INT. Grants Arcane Surge.",
     "message1": "%1 casts %2!",
     "message2": ""
   },
@@ -4057,13 +4057,13 @@
   },
   "773": {
     "name": "AbsoluteBarrier",
-    "description": "May grant Vulnerability to one ally. Strikes\nlast.",
+    "description": "Grants Protect to one ally. Strikes last.",
     "message1": "%1 casts absolute barrier!",
     "message2": ""
   },
   "774": {
     "name": "SpellReflection",
-    "description": "Lowers one ally's INT. May grant Arcane Surge.\nStrikes last.",
+    "description": "Raises one ally's INT. May grant Arcane Surge.\nStrikes last.",
     "message1": "%1 casts spell reflection!",
     "message2": ""
   },
@@ -4117,7 +4117,7 @@
   },
   "783": {
     "name": "WisdomOfTheAncients",
-    "description": "Lowers all allies' INT. May grant Silence.",
+    "description": "Raises all allies' INT.",
     "message1": "%1 uses Wisdom of the Ancients!",
     "message2": ""
   },
@@ -4165,7 +4165,7 @@
   },
   "791": {
     "name": "GreatHeal",
-    "description": "Restores HP to all allies and may grant Silence.",
+    "description": "Restores HP to all allies.",
     "message1": "%1 uses Great Heal!",
     "message2": ""
   },
@@ -4189,7 +4189,7 @@
   },
   "795": {
     "name": "Omniscience",
-    "description": "Lowers all allies' INT.",
+    "description": "Raises all allies' CON/DEX/INT. Grants Locked on\nand restores 30 AP.",
     "message1": "%1 uses Omniscience!",
     "message2": ""
   },
@@ -4327,19 +4327,19 @@
   },
   "828": {
     "name": "MightAura",
-    "description": "Raises one ally's STR and CON. Lowers their DEX.\nStrikes last.",
+    "description": "Raises one ally's STR/CON/DEX. Strikes last.",
     "message1": "%1 creates physical enhancement!",
     "message2": ""
   },
   "829": {
     "name": "SwiftAura",
-    "description": "Raises one ally's DEX and PSI. Lowers their CON.\nStrikes last.",
+    "description": "Raises one ally's DEX/PSI/CON. Strikes last.",
     "message1": "%1 enhances mobility!",
     "message2": ""
   },
   "830": {
     "name": "MindAura",
-    "description": "Raises one ally's INT and WIS. Lowers their STR.\nStrikes last.",
+    "description": "Raises one ally's INT/WIS/STR. Strikes last.",
     "message1": "%1 enhances mental capacity!",
     "message2": ""
   },
@@ -4369,7 +4369,7 @@
   },
   "835": {
     "name": "RageTrance",
-    "description": "Raises one ally's STR. Lowers their CON. Strikes\nlast.",
+    "description": "Raises one ally's STR and CON. Strikes last.",
     "message1": "%1 induces a berserker state!",
     "message2": ""
   },
@@ -4417,7 +4417,7 @@
   },
   "843": {
     "name": "MagicSeverance",
-    "description": "Restores MP to the user and lowers their INT and\nWIS. Grants Silence.",
+    "description": "Restores MP to the user and raises their INT and\nWIS.",
     "message1": "%1 severs their magical connection!",
     "message2": ""
   },
@@ -4633,7 +4633,7 @@
   },
   "890": {
     "name": "Barkskin",
-    "description": "Lowers the user's STR. May grant Bleeding.",
+    "description": "Raises the user's STR.",
     "message1": "%1 hardens its bark!",
     "message2": ""
   },
@@ -4693,13 +4693,13 @@
   },
   "900": {
     "name": "Photosynthesis",
-    "description": "Restores HP to the user and lowers their DEX.",
+    "description": "Restores HP to the user and raises their DEX.",
     "message1": "%1 absorbs sunlight!",
     "message2": ""
   },
   "901": {
     "name": "Regrowth",
-    "description": "Restores HP to the user and may grant Bleeding.",
+    "description": "Restores HP to the user.",
     "message1": "%1 draws life from the earth!",
     "message2": ""
   },
@@ -4711,7 +4711,7 @@
   },
   "903": {
     "name": "Forest Embrace",
-    "description": "Restores HP to all allies and lowers their DEX.",
+    "description": "Restores HP to all allies and raises their DEX.",
     "message1": "Forest's embrace restores HP!",
     "message2": ""
   },
@@ -5059,19 +5059,19 @@
   },
   "991": {
     "name": "Panacea",
-    "description": "May grant Infected to one ally. Strikes last.",
+    "description": "Cures several negative states on one ally.\nStrikes last.",
     "message1": "%1 administers a panacea!",
     "message2": ""
   },
   "992": {
     "name": "Strength Compound",
-    "description": "Lowers one ally's CON. May grant Poison. Strikes\nlast.",
+    "description": "Raises one ally's STR. Strikes last.",
     "message1": "%1 administers a compound!",
     "message2": ""
   },
   "993": {
     "name": "Defensive Compound",
-    "description": "Lowers one ally's DEX. May grant Poison. Strikes\nlast.",
+    "description": "Raises one ally's CON. Strikes last.",
     "message1": "%1 administers a defensive compound!",
     "message2": ""
   },
@@ -5155,7 +5155,7 @@
   },
   "1007": {
     "name": "Ultimate Potion",
-    "description": "Restores HP to one ally and may grant Blind.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 administers an ultimate potion!",
     "message2": ""
   },
@@ -5167,19 +5167,19 @@
   },
   "1009": {
     "name": "Diagnosis",
-    "description": "May grant Poison to all allies.",
+    "description": "Raises all allies' DEX. Grants Locked on.",
     "message1": "%1 uses Diagnosis!",
     "message2": ""
   },
   "1010": {
     "name": "First Aid",
-    "description": "Restores HP to all allies and lowers their STR.",
+    "description": "Restores HP to all allies and raises their STR.",
     "message1": "%1 uses First Aid!",
     "message2": ""
   },
   "1011": {
     "name": "Field Dressing",
-    "description": "Restores HP to one ally and may grant Poison.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 performs %2!",
     "message2": ""
   },
@@ -5191,13 +5191,13 @@
   },
   "1013": {
     "name": "Field Surgery",
-    "description": "Restores HP to all allies and lowers their DEX.",
+    "description": "Restores HP to all allies and raises their DEX.",
     "message1": "%1 uses Field Surgery!",
     "message2": ""
   },
   "1014": {
     "name": "Medical Kit",
-    "description": "Restores HP to all allies and lowers their CON.",
+    "description": "Restores HP to all allies and raises their CON.",
     "message1": "%1 uses Medical Kit!",
     "message2": ""
   },
@@ -5209,13 +5209,13 @@
   },
   "1016": {
     "name": "Group Healing",
-    "description": "Restores HP to all allies and lowers their CON.",
+    "description": "Restores HP to all allies and raises their CON.",
     "message1": "%1 casts group healing!",
     "message2": ""
   },
   "1017": {
     "name": "Defibrillator Shock",
-    "description": "Restores HP to one fallen ally and lowers their\nSTR.",
+    "description": "Restores HP to one fallen ally and raises their\nSTR.",
     "message1": "%1 uses Defibrillator Shock!",
     "message2": ""
   },
@@ -5227,7 +5227,7 @@
   },
   "1019": {
     "name": "Intensive Care",
-    "description": "Restores HP to all allies and lowers their CON.\nMay grant Oily.",
+    "description": "Restores HP to all allies and raises their CON.",
     "message1": "%1 uses Intensive Care!",
     "message2": ""
   },
@@ -5239,13 +5239,13 @@
   },
   "1021": {
     "name": "Total Recovery",
-    "description": "Restores HP to all allies and may grant\nInfected.",
+    "description": "Restores HP to all allies.",
     "message1": "%1 uses Panacea!",
     "message2": ""
   },
   "1022": {
     "name": "Nightingales Grace",
-    "description": "Restores HP to all allies and lowers their CON.",
+    "description": "Restores HP to all allies and raises their CON.",
     "message1": "%1 uses Nightingale's Grace!",
     "message2": ""
   },
@@ -5263,13 +5263,13 @@
   },
   "1035": {
     "name": "Precision Focus",
-    "description": "May grant Vital Exposed to one ally. Strikes\nlast.",
+    "description": "Raises one ally's PSI and STR. Strikes last.",
     "message1": "%1 activates precise mode!",
     "message2": ""
   },
   "1036": {
     "name": "Assisted aim",
-    "description": "Lowers one ally's STR. Strikes last.",
+    "description": "Raises one ally's STR. Strikes last.",
     "message1": "%1 grants supernatural precision!",
     "message2": ""
   },
@@ -5407,7 +5407,7 @@
   },
   "1069": {
     "name": "Hearty Stew",
-    "description": "Restores HP to all allies and may grant\nUnbalanced.",
+    "description": "Restores HP to all allies.",
     "message1": "%1 serves warm stew!",
     "message2": ""
   },
@@ -5419,7 +5419,7 @@
   },
   "1071": {
     "name": "Golden Pie",
-    "description": "Restores HP to one ally and may grant Confusion.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 serves a golden pie!",
     "message2": ""
   },
@@ -5431,7 +5431,7 @@
   },
   "1073": {
     "name": "Chop & Heal",
-    "description": "Restores HP to the user and may grant\nUnbalanced.",
+    "description": "Restores HP to the user.",
     "message1": "%1 chops rapidly!",
     "message2": ""
   },
@@ -5833,7 +5833,7 @@
   },
   "1160": {
     "name": "Berserk Encouragement",
-    "description": "Raises one ally's STR and INT. Lowers their CON\nand WIS. Strikes last.",
+    "description": "Raises one ally's STR/INT/CON/WIS. Strikes last.",
     "message1": "%1 activates berserk mode!",
     "message2": ""
   },
@@ -6229,7 +6229,7 @@
   },
   "1236": {
     "name": "Nano-Repair",
-    "description": "Restores HP to the user and lowers their CON.",
+    "description": "Restores HP to the user and raises their CON.",
     "message1": "%1 activates nano-repair!",
     "message2": ""
   },
@@ -6289,7 +6289,7 @@
   },
   "1256": {
     "name": "Warm-up",
-    "description": "Lowers the user's DEX. May grant Vital Exposed.",
+    "description": "Raises the user's DEX.",
     "message1": "%1 started warming up!",
     "message2": ""
   },
@@ -6301,7 +6301,7 @@
   },
   "1258": {
     "name": "Hide",
-    "description": "May grant Vital Exposed to the user.",
+    "description": "Raises the user's DEX and INT.",
     "message1": "%1 hid.",
     "message2": ""
   },
@@ -6313,7 +6313,7 @@
   },
   "1260": {
     "name": "Stealth",
-    "description": "May grant Unbalanced to the user.",
+    "description": "Raises the user's PSI. Grants Hide.",
     "message1": "%1 becomes stealthy!",
     "message2": ""
   },
@@ -6325,7 +6325,7 @@
   },
   "1262": {
     "name": "Lockpicking",
-    "description": "Lowers the user's CON. May grant Blind.",
+    "description": "Raises the user's CON.",
     "message1": "%1 picks the lock!",
     "message2": ""
   },
@@ -6385,7 +6385,7 @@
   },
   "1272": {
     "name": "Jury Rig",
-    "description": "Lowers all allies' CON. May grant Bleeding.",
+    "description": "Raises all allies' CON.",
     "message1": "%1 uses Jury Rig!",
     "message2": ""
   },
@@ -6403,7 +6403,7 @@
   },
   "1275": {
     "name": "Overdrive",
-    "description": "May grant Bleeding to all allies.",
+    "description": "Raises all allies' DEX and STR.",
     "message1": "%1 uses Overdrive!",
     "message2": ""
   },
@@ -8215,7 +8215,7 @@
   },
   "1736": {
     "name": "HealLight",
-    "description": "Restores HP to one ally and may grant\nUnbalanced.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 unleashes HealLight!",
     "message2": ""
   },
@@ -8227,7 +8227,7 @@
   },
   "1738": {
     "name": "GroupMend",
-    "description": "Restores HP to all allies and may grant\nConfusion.",
+    "description": "Restores HP to all allies.",
     "message1": "%1 unleashes GroupMend!",
     "message2": ""
   },
@@ -8473,19 +8473,19 @@
   },
   "1779": {
     "name": "StardustHeal",
-    "description": "Restores HP to all allies and may grant\nConfusion.",
+    "description": "Restores HP to all allies.",
     "message1": "%1 unleashes StardustHeal!",
     "message2": ""
   },
   "1780": {
     "name": "CleansingRain",
-    "description": "Restores HP to all allies and lowers their CON.",
+    "description": "Restores HP to all allies and raises their CON.",
     "message1": "%1 unleashes CleansingRain!",
     "message2": ""
   },
   "1781": {
     "name": "MendingBloom",
-    "description": "Restores HP to one ally and may grant\nUnbalanced.",
+    "description": "Restores HP to one ally.",
     "message1": "%1 unleashes MendingBloom!",
     "message2": ""
   },

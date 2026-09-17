@@ -301,7 +301,23 @@
         const appraisal = window.SpecializationXP
             ? (window.SpecializationXP.partyLevel('Appraising') - 1) * 4 : 0;
         const yearBonus = getYearLootBonus();
-        let rarityInfluence = levelBracket * 10 + maxFloor + lootBonus + appraisal + yearBonus;
+        // On the procedural map the encounter level is set by the nation (or
+        // biome when no nation rules the square), not the party level. The spawn
+        // band center is the same value the atlas prints and the encounter engine
+        // uses, so loot in a hard country is hard-country loot regardless of
+        // how strong the party is. The party level still acts as a floor: loot
+        // is never worse than party level would give.
+        let baseLootLevel = levelBracket * 10;
+        if (onProcMap && window.BSE && window.BSE.Helpers &&
+                typeof window.BSE.Helpers.getSpawnBand === 'function') {
+            try {
+                const band = window.BSE.Helpers.getSpawnBand();
+                if (band && typeof band.center === 'number') {
+                    baseLootLevel = Math.max(baseLootLevel, Math.round(band.center));
+                }
+            } catch (e) { /* safe fallback to party level */ }
+        }
+        let rarityInfluence = baseLootLevel + maxFloor + lootBonus + appraisal + yearBonus;
         rarityInfluence = Math.max(0, Math.min(100, rarityInfluence));
         
         // Calculate weighted probability for each item

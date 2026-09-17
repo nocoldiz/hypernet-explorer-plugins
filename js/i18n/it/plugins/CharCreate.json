@@ -411,11 +411,11 @@
       "desc": "Cattura e combatti con i mostri. \\C[1]Non potrà essere cambiato in seguito.\\C[0]"
     },
     "combatMap": {
-      "name": "Battaglia sulla Mappa",
+      "name": "Battaglia Strategica",
       "desc": "Combattimenti tattici sulla mappa invece che in una schermata separata. Ti muovi sulla griglia, armi e abilità hanno una portata e la linea di vista conta. Modificabile in seguito nelle Opzioni."
     },
     "combatRpg": {
-      "name": "RPG Classico",
+      "name": "Battaglia a Turni",
       "desc": "Combattimento a turni standard. Le abilità costano MP/AP e si scelgono dal menu comandi."
     },
     "peaceful": {
@@ -593,6 +593,12 @@
   "enemyBattlers": "Nemici in Battaglia",
   "howEnemiesAreShownInBattle2dTheClassicBattle": "Come appaiono i nemici in battaglia. 3D: modelli 3D procedurali (goblin, slime, elementali...). Sprite: lo sprite del personaggio nemico dalle sue info. 2D: un'immagine fissa dello stesso modello 3D, la più leggera delle tre.",
   "3dRendersProceduralModelsSpritesUsesTheEnemy": "3D mostra modelli procedurali, Sprite usa lo sprite del nemico.",
+  "battleMode": "Modalità Battaglia",
+  "battleModeDesc": "Presentazione della battaglia. Battaglia a Turni combatte nella classica scena a turni. Battaglia Strategica combatte battaglie tattiche sulla griglia della mappa.",
+  "battleModeTurn": "Battaglia a Turni",
+  "battleModeStrategic": "Battaglia Strategica",
+  "battleModeTurnDesc": "Combattimento classico a turni in una scena di battaglia dedicata.",
+  "battleModeStrategicDesc": "Combattimento tattico disputato direttamente sulla griglia della mappa.",
   "battleMusic": "Musica di Battaglia",
   "musicTrackPlayedDuringCombatPressToPreviewTr": "Traccia musicale in combattimento. Premi ←→ per ascoltare un'anteprima.",
   "uiTheme": "Tema UI",

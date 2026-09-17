@@ -1739,6 +1739,11 @@
             const here = this._fpc.getRig().position;
             const hit = this._parked.nearest(here.x, here.z, BOARD_REACH);
             if (!hit || hit.key === this._vehicleId) return false;
+            const owns = (window.VehiclePosition && typeof window.VehiclePosition.owns === 'function')
+                ? window.VehiclePosition.owns(hit.key)
+                : (window.VehicleSystem && typeof window.VehicleSystem.ownsVehicleKey === 'function'
+                    ? window.VehicleSystem.ownsVehicleKey(hit.key) : true);
+            if (!owns) return false;
             this._mountVehicle(hit.key, hit.x, hit.z);
             return true;
         }

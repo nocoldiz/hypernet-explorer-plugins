@@ -548,7 +548,31 @@
       }
 
       if (actor._morality == null) actor._morality = 0;
-      if (!actor._jobId) actor._jobId = 0;
+      if (preset.jobId !== undefined) {
+        actor._jobId = Number(preset.jobId) || 0;
+      } else if (!actor._jobId) {
+        actor._jobId = 0;
+      }
+      if (window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getActorProfile === "function") {
+        const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
+        if (prof) prof.jobId = actor._jobId;
+      }
+
+      if (preset.sexualOrientation || preset.romanticOrientation || preset.relStyle || preset.romance) {
+        actor._ccRomance = Object.assign(
+          {},
+          actor._ccRomance || {},
+          preset.romance || {},
+          {
+            sexualKey: preset.sexualOrientation || (preset.romance && preset.romance.sexualKey) || "hetero",
+            romanticKey: preset.romanticOrientation || (preset.romance && preset.romance.romanticKey) || "hetero",
+            styleKey: preset.relStyle || (preset.romance && preset.romance.styleKey) || "monogamous"
+          }
+        );
+        if (typeof this._romanceMirrorToProfile === "function") {
+          this._romanceMirrorToProfile(actor);
+        }
+      }
 
       if (!actor._ccBloodType && !actor._bloodType) {
         const bloods = (window.BloodTypeService && window.BloodTypeService.list && window.BloodTypeService.list()) || [];

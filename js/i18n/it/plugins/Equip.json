@@ -43,5 +43,46 @@
     "dex": "DES",
     "psi": "PSI"
   },
-  "otherGroup": "Altro"
+  "otherGroup": "Altro",
+  "paperdoll": "Sagoma",
+  "backToPaperdoll": "Indietro",
+  "slotHead": "Testa",
+  "slotBody": "Corpo",
+  "slotClothes": "Vestiti",
+  "slotRobe": "Tunica",
+  "slotArmor": "Armatura",
+  "slotGear": "Accessori",
+  "tabAll": "Tutti",
+  "tabWeapons": "Armi",
+  "tabArmor": "Armature",
+  "tabShields": "Scudi",
+  "tabHead": "Testa",
+  "tabBody": "Corpo",
+  "tabGear": "Accessori",
+  "dropHere": "Trascina qui",
+  "dragHint": "Trascina su uno slot o clicca per ispezionare",
+  "unequip": "Rimuovi",
+  "equipped": "Equipaggiato",
+  "weaponTypes": {
+    "1": "Leggera",
+    "2": "Spada",
+    "3": "Pesante",
+    "4": "Ascia",
+    "5": "Frusta",
+    "6": "Bastone",
+    "7": "Arco",
+    "8": "Proiettile",
+    "9": "Arma da fuoco",
+    "10": "Artiglio",
+    "11": "Guanto",
+    "12": "Lancia"
+  },
+  "armorTypes": {
+    "1": "Abiti",
+    "2": "Veste",
+    "3": "Armatura Leggera",
+    "4": "Armatura Pesante",
+    "5": "Equipaggiamento",
+    "6": "Scudo"
+  }
 }

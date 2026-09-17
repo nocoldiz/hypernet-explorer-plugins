@@ -157,10 +157,18 @@
         if (this._itemWindow)    { this._itemWindow.deactivate();    this._itemWindow.hide();    }
 
         this._currentActorIndex = $gameParty.allMembers().indexOf(this._actor);
-        this._activeArea        = 'commands'; // 'commands' | 'slots' | 'inventory'
-        this._commandIndex      = 0;          // 0: Equip, 1: Optimize, 2: Random, 3: Clear
+        this._memberIndex       = 0;
+        this._activeArea        = 'grid'; // 'paperdoll' | 'grid' | 'commands'
+        this._commandIndex      = 0;      // 0: Optimize, 1: Random, 2: Clear
         this._slotIndex         = 0;
+        this._gridIndex         = 0;
         this._inventoryIndex    = 0;
+        this._viewMode          = 'paperdoll'; // 'paperdoll' | 'detail'
+        this._activeTab         = 'all';
+        this._inspectedItem     = null;
+        this._inspectedSlotIdx  = -1;
+        this._draggedItem       = null;
+        this._dragSource        = null;
 
         // WASD state
         this._wasdInput      = { up: false, down: false, left: false, right: false };
@@ -546,29 +554,16 @@
 
     Scene_Equip.prototype.init3DWeaponPreview = function () {
         this.cleanup3DWeaponPreview();
+        if (this._viewMode !== 'detail' || !this._inspectedItem) return;
 
-        // Whatever the first two hands are holding, shields included: a shield
-        // has a model of its own, built through the weapon pipeline
-        // (WeaponSystemProcedural.shieldWeaponFor).
-        const equips  = this._hoverPreviewEquips || this._actor.equips();
-        const weapons = [];
-        // Keyed by the hand, not by how many cards have been filled: the card
-        // for the second hand is canvas 1 even when the first hand is empty.
-        [equips[0], equips[1]].forEach((item, index) => {
-            const model = previewModelFor(item);
-            if (model) weapons.push({ item: model, canvasId: 'weapon-preview-canvas-' + index });
-        });
-        if (weapons.length === 0) return;
-
+        const modelItem = previewModelFor(this._inspectedItem) || this._inspectedItem;
         this._previewTimer = setTimeout(() => {
             this._previewTimer = 0;
             this._previewRenderers = [];
-            weapons.forEach(wData => {
-                const canvas = document.getElementById(wData.canvasId);
-                if (!canvas) return;
-                const entry = window.Weapon3DPreview.mount(canvas, wData.item);
-                if (entry) this._previewRenderers.push(entry);
-            });
+            const canvas = document.getElementById('weapon-preview-canvas-inspect');
+            if (!canvas) return;
+            const entry = window.Weapon3DPreview.mount(canvas, modelItem);
+            if (entry) this._previewRenderers.push(entry);
         }, PREVIEW_SETTLE_MS);
     };
 
@@ -717,63 +712,397 @@
         return this._standIn;
     };
 
-    Scene_Equip.prototype._buildRightPageHTML = function () {
+    // =============================================================================
+    // Equipment tabs & items query
+    // =============================================================================
+
+    const getWeaponTypeName = (wtypeId) => {
+        const key = 'Equip.weaponTypes.' + wtypeId;
+        const localized = equipT(key, '');
+        if (localized && localized !== key) return localized;
+        const wtypes = ($dataSystem && $dataSystem.weaponTypes) || [];
+        const raw = wtypes[wtypeId];
+        return (raw && window.translateText) ? window.translateText(raw) : (raw || '');
+    };
+
+    const getArmorTypeName = (atypeId) => {
+        const key = 'Equip.armorTypes.' + atypeId;
+        const localized = equipT(key, '');
+        if (localized && localized !== key) return localized;
+        const atypes = ($dataSystem && $dataSystem.armorTypes) || [];
+        const raw = atypes[atypeId];
+        return (raw && window.translateText) ? window.translateText(raw) : (raw || '');
+    };
+
+    const getEquipTabs = () => {
+        const lang = ConfigManager.language || 'en';
+        const t    = i18n[lang] || i18n['en'];
+        const tabs = [
+            { id: 'all', label: t.tabAll || 'All' }
+        ];
+        const wtypes = ($dataSystem && $dataSystem.weaponTypes) || [];
+        for (let i = 1; i < wtypes.length; i++) {
+            if (wtypes[i]) {
+                const name = (typeof t.weaponTypes === 'object' && t.weaponTypes && typeof t.weaponTypes[i] === 'string' && t.weaponTypes[i].length > 1)
+                    ? t.weaponTypes[i]
+                    : (getWeaponTypeName(i) || wtypes[i]);
+                if (name && name.length > 1) {
+                    tabs.push({ id: `w_${i}`, label: name });
+                }
+            }
+        }
+        tabs.push({ id: 'shields', label: t.tabShields || 'Shields' });
+        tabs.push({ id: 'head', label: t.tabHead || 'Head' });
+        tabs.push({ id: 'body', label: t.tabBody || 'Body' });
+        tabs.push({ id: 'gear', label: t.tabGear || 'Gear' });
+
+        const atypes = ($dataSystem && $dataSystem.armorTypes) || [];
+        for (let j = 1; j < atypes.length; j++) {
+            const aname = atypes[j];
+            if (aname && aname !== 'Shield' && aname !== 'Equipment') {
+                const name = (typeof t.armorTypes === 'object' && t.armorTypes && typeof t.armorTypes[j] === 'string' && t.armorTypes[j].length > 1)
+                    ? t.armorTypes[j]
+                    : (getArmorTypeName(j) || aname);
+                if (name && name.length > 1) {
+                    tabs.push({ id: `a_${j}`, label: name });
+                }
+            }
+        }
+        return tabs;
+    };
+
+    Scene_Equip.prototype.getFilteredPartyEquipment = function () {
+        let weapons = ($gameParty && typeof $gameParty.weapons === 'function') ? $gameParty.weapons() : [];
+        let armors  = ($gameParty && typeof $gameParty.armors === 'function')  ? $gameParty.armors()  : [];
+        if (weapons.length === 0 && armors.length === 0 && $gameParty && typeof $gameParty.equipItems === 'function') {
+            const all = $gameParty.equipItems();
+            weapons = all.filter(it => DataManager.isWeapon(it));
+            armors = all.filter(it => DataManager.isArmor(it));
+        }
+        if (weapons.length === 0 && armors.length === 0 && this._actor && typeof this._actor.slotCandidates === 'function') {
+            const slots = this._actor.equipSlots();
+            slots.forEach((_, s) => {
+                const cands = this._actor.slotCandidates(s) || [];
+                cands.forEach(it => {
+                    if (DataManager.isWeapon(it) && !weapons.includes(it)) weapons.push(it);
+                    if (DataManager.isArmor(it) && !armors.includes(it)) armors.push(it);
+                });
+            });
+        }
+        const tab = this._activeTab || 'all';
+
+        let list = [];
+        if (tab === 'all') {
+            list = weapons.concat(armors);
+        } else if (tab.startsWith('w_')) {
+            const wt = parseInt(tab.slice(2));
+            list = weapons.filter(w => w && w.wtypeId === wt);
+        } else if (tab === 'shields') {
+            list = armors.filter(a => a && (a.etypeId === 2 || (a.atypeId && String(($dataSystem.armorTypes || [])[a.atypeId] || '').toLowerCase().includes('shield'))));
+        } else if (tab === 'head') {
+            list = armors.filter(a => a && a.etypeId === 3);
+        } else if (tab === 'body') {
+            list = armors.filter(a => a && a.etypeId === 4);
+        } else if (tab === 'gear') {
+            list = armors.filter(a => a && a.etypeId === 5);
+        } else if (tab.startsWith('a_')) {
+            const at = parseInt(tab.slice(2));
+            list = armors.filter(a => a && a.atypeId === at);
+        } else {
+            list = weapons.concat(armors);
+        }
+
+        const map = new Map();
+        list.forEach(item => {
+            if (!item) return;
+            const key = (item.wtypeId !== undefined ? 'w_' : 'a_') + item.id;
+            if (!map.has(key)) {
+                map.set(key, item);
+            }
+        });
+        return Array.from(map.values());
+    };
+
+    Scene_Equip.prototype.getInventoryItemsForSlot = function (slotIndex) {
+        const slot = slotIndex !== undefined ? slotIndex : this._slotIndex;
+        if (this._actor && typeof this._actor.slotCandidates === 'function') {
+            const cands = this._actor.slotCandidates(slot);
+            if (cands && cands.length) return cands.filter(it => it && !it.isRemoveOption);
+        }
+        const allItems = this.getFilteredPartyEquipment();
+        if (slot < 0 || !this._actor) return allItems;
+        return allItems.filter(item => window.HandSlots ? window.HandSlots.slotFits(this._actor, slot, item) : true);
+    };
+
+    // =============================================================================
+    // Right Page: 3 Party Members Paperdolls (Triangle disposition) & 3D Detail
+    // =============================================================================
+
+    Scene_Equip.prototype.partyMembers = function () {
+        const list = ($gameParty && typeof $gameParty.members === 'function')
+            ? $gameParty.members()
+            : (($gameParty && typeof $gameParty.allMembers === 'function')
+                ? $gameParty.allMembers()
+                : (this._actor ? [this._actor] : []));
+        const filtered = list.filter(Boolean);
+        if (this._actor && !filtered.includes(this._actor)) {
+            filtered.unshift(this._actor);
+        }
+        return filtered.slice(0, 3);
+    };
+
+    Scene_Equip.prototype._buildSinglePaperdollHTML = function (actor, memberIdx = 0) {
+        if (!actor) return '';
+        const lang  = ConfigManager.language || 'en';
+        const t     = i18n[lang] || i18n['en'];
+
+        const layout = window.HandSlots
+            ? window.HandSlots.layout(actor)
+            : { hands: 2, mouth: false, slots: 2, head: true, body: true };
+        const equipSlots = actor.equipSlots();
+        const equips     = actor.equips();
+
+        const headSlotIdx  = equipSlots.indexOf(3);
+        const mouthSlotIdx = layout.mouth ? layout.hands : -1;
+
+        // 3 body slots: clothes, robe, and armour (Light/Heavy armor)
+        const clothesSlotIdx = equipSlots.findIndex((_, idx) => window.HandSlots && window.HandSlots.slotKind(actor, idx) === 'clothes');
+        const robeSlotIdx    = equipSlots.findIndex((_, idx) => window.HandSlots && window.HandSlots.slotKind(actor, idx) === 'robe');
+        const armorSlotIdx   = equipSlots.findIndex((_, idx) => window.HandSlots && window.HandSlots.slotKind(actor, idx) === 'armor');
+
+        const bodySlotIndices = [];
+        if (clothesSlotIdx >= 0) bodySlotIndices.push(clothesSlotIdx);
+        if (robeSlotIdx >= 0)    bodySlotIndices.push(robeSlotIdx);
+        if (armorSlotIdx >= 0)   bodySlotIndices.push(armorSlotIdx);
+        if (bodySlotIndices.length === 0) {
+            equipSlots.forEach((et, idx) => {
+                if (et === 4) bodySlotIndices.push(idx);
+            });
+        }
+
+        const gearSlotIndices = [];
+        equipSlots.forEach((et, idx) => {
+            if (et === 5 && idx !== headSlotIdx && !bodySlotIndices.includes(idx) && idx >= layout.slots) {
+                gearSlotIndices.push(idx);
+            }
+        });
+        const handSlotIndices = [];
+        for (let h = 0; h < layout.hands; h++) {
+            handSlotIndices.push(h);
+        }
+
+        const isActorActive = (actor === this._actor);
+
+        const renderSlotBox = (slotId) => {
+            if (slotId < 0 || slotId >= equipSlots.length) return '';
+            const slotName = actor.equipSlotName(slotId) || t.emptySlot;
+            const bodyPart = window.HandSlots && window.HandSlots.bodyPartName ? window.HandSlots.bodyPartName(actor, slotId) : '';
+            const equipped = equips[slotId];
+            const isFocused = (this._activeArea === 'paperdoll' && this._memberIndex === memberIdx && this._slotIndex === slotId);
+
+            let contentHtml = '';
+            if (equipped) {
+                const iconIdx   = equipped.iconIndex;
+                const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
+                const rarity    = window.ItemSystemUtils ? window.ItemSystemUtils.getItemRarity(equipped) : 'common';
+                const rarityCls = window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarity) : 'rarity--common';
+
+                let statText = '';
+                if (equipped.params) {
+                    if (equipped.params[2] > 0) statText = `+${equipped.params[2]} ATK`;
+                    else if (equipped.params[3] > 0) statText = `+${equipped.params[3]} DEF`;
+                }
+
+                contentHtml = `
+                    <div class="slot-equipped-content" draggable="true" data-member-idx="${memberIdx}" data-slot-idx="${slotId}">
+                        <div class="item-rarity-bar ${rarityCls}"></div>
+                        <div class="slot-item-icon"><div class="item-icon" style="${iconStyle}"></div></div>
+                        <div class="slot-item-info">
+                            <div class="slot-item-name" title="${escapeHtml(equipped.name)}">${escapeHtml(equipped.name)}</div>
+                            ${statText ? `<div class="slot-item-stat">${statText}</div>` : ''}
+                        </div>
+                        <button class="slot-remove-btn" data-member-idx="${memberIdx}" data-slot-idx="${slotId}" title="${t.unequip || 'Unequip'}">✖</button>
+                    </div>`;
+            } else {
+                contentHtml = `
+                    <div class="slot-empty-content">
+                        <span class="slot-empty-glyph">☐</span>
+                        <span class="slot-empty-text">${escapeHtml(slotName)}</span>
+                    </div>`;
+            }
+
+            return `
+                <div class="paperdoll-slot ${equipped ? 'has-item' : 'is-empty'} ${isFocused ? 'focused' : ''}" data-member-idx="${memberIdx}" data-slot-idx="${slotId}" data-idx="${slotId}">
+                    <div class="slot-header">
+                        <span class="slot-title">${escapeHtml(slotName)}</span>
+                        ${bodyPart ? `<span class="slot-bodypart">${escapeHtml(bodyPart)}</span>` : ''}
+                    </div>
+                    <div class="slot-body">
+                        ${contentHtml}
+                    </div>
+                </div>`;
+        };
+
+        const handBoxesHtml = handSlotIndices.map(renderSlotBox).join('');
+        const mouthBox      = mouthSlotIdx >= 0 ? renderSlotBox(mouthSlotIdx) : '';
+        const headBox       = headSlotIdx >= 0 ? renderSlotBox(headSlotIdx) : '';
+        const gearBoxes     = gearSlotIndices.map(renderSlotBox).join('');
+        const bodyBoxesHtml = bodySlotIndices.map(renderSlotBox).join('');
+        const upperBoxesHtml = handBoxesHtml + mouthBox + headBox + gearBoxes;
+
+        const className = actor.currentClass ? actor.currentClass().name : '';
+
+        const sT = (k, def) => (t.short && t.short[k]) || def;
+        const totalStatsList = [
+            { key: 'HP',  label: sT('hp', 'HP'),   val: actor.mhp, isBase: false },
+            { key: 'MP',  label: sT('mp', 'MP'),   val: actor.mmp, isBase: false },
+            { key: 'STR', label: sT('str', 'STR'), val: actor.atk, isBase: true },
+            { key: 'CON', label: sT('con', 'CON'), val: actor.def, isBase: true },
+            { key: 'INT', label: sT('int', 'INT'), val: actor.mat, isBase: true },
+            { key: 'WIS', label: sT('wis', 'WIS'), val: actor.mdf, isBase: true },
+            { key: 'DEX', label: sT('dex', 'DEX'), val: actor.agi, isBase: true },
+            { key: 'PSI', label: sT('psi', 'PSI'), val: actor.luk, isBase: true }
+        ];
+        let totalStatsHtml = '<div class="inspect-spec-grid stats-grid stats-grid--4col paperdoll-stats-grid">';
+        totalStatsList.forEach(st => {
+            let modHtml = '';
+            if (st.isBase) {
+                const mod = Math.floor((st.val - 10) / 2);
+                const modStr = mod >= 0 ? '+' + mod : String(mod);
+                modHtml = ` <span class="equip-stat-mod">(${modStr})</span>`;
+            }
+            totalStatsHtml += `
+                <div class="inspect-spec-row stat-row" data-stat="${st.key}">
+                    <span class="inspect-spec-label stat-label">${escapeHtml(st.label)}</span>
+                    <span class="inspect-spec-value stat-val-container">
+                        <span class="stat-val">${st.val}${modHtml}</span>
+                    </span>
+                </div>`;
+        });
+        totalStatsHtml += '</div>';
+
+        return `
+            <div class="paperdoll-container member-equip-container ${isActorActive ? 'active-actor' : ''}" data-member-idx="${memberIdx}">
+                <div class="paperdoll-actor-bar">
+                    <span class="paperdoll-actor-name">${escapeHtml(actor.name())}</span>
+                    <span class="paperdoll-actor-class">${escapeHtml(className)} (Lv. ${actor.level})</span>
+                </div>
+                <div class="paperdoll-slots-grid">
+                    <div class="paperdoll-slots-row paperdoll-slots-row--upper">
+                        ${upperBoxesHtml}
+                    </div>
+                    <div class="paperdoll-slots-row paperdoll-body-slots">
+                        ${bodyBoxesHtml}
+                    </div>
+                </div>
+                ${totalStatsHtml}
+            </div>`;
+    };
+
+    Scene_Equip.prototype._buildPartyPaperdollsHTML = function () {
+        const members = this.partyMembers();
+        let rowsHtml = '';
+        members.forEach((member, idx) => {
+            if (member) {
+                rowsHtml += `
+                    <div class="paperdoll-row-item" data-member-idx="${idx}">
+                        ${this._buildSinglePaperdollHTML(member, idx)}
+                    </div>`;
+            }
+        });
+
+        return `<div class="party-paperdolls-stacked">${rowsHtml}</div>`;
+    };
+
+    Scene_Equip.prototype._buildPaperdollHTML = function (specificActor) {
+        if (specificActor) {
+            return this._buildSinglePaperdollHTML(specificActor, 0);
+        }
+        return this._buildPartyPaperdollsHTML();
+    };
+
+    Scene_Equip.prototype._buildDetailHTML = function () {
         const actor = this._actor;
         const lang  = ConfigManager.language || 'en';
         const t     = i18n[lang] || i18n['en'];
 
-        // Build tempActor for stat-delta preview when browsing inventory
-        let tempActor = null;
+        let item = undefined;
+        let targetSlot = -1;
+
         if (this._activeArea === 'inventory') {
-            const itemList = this.getInventoryItemsForSlot();
-            if (itemList.length > 0) {
-                this._inventoryIndex = Math.max(0, Math.min(itemList.length - 1, this._inventoryIndex));
-                const selectedItem   = itemList[this._inventoryIndex];
-                tempActor = this.standInActor();
-                tempActor.forceChangeEquip(this._slotIndex, selectedItem.isRemoveOption ? null : selectedItem);
+            const list = this.getInventoryItemsForSlot();
+            if (list && list[this._inventoryIndex]) {
+                item = list[this._inventoryIndex];
             }
         }
 
-        // Expose to 3D preview init
-        this._hoverPreviewEquips = tempActor ? tempActor.equips() : null;
+        if (item === undefined && this._inspectedItem !== undefined) {
+            item = this._inspectedItem;
+        }
 
-        // Weapon scaling: which base stat(s) the equipped weapon(s) scale on.
-        // Instead of a separate "Scaling: STR" line, the scaling stat's own
-        // label in the grid below is picked out in gold.
-        // Whatever is in the character's hands, in slot order. With more than
-        // two hands the first two are the ones the page reports on.
-        const holder  = tempActor || actor;
-        const held    = window.HandSlots ? window.HandSlots.heldItems(holder)
-                                         : [holder.equips()[0], holder.equips()[1]];
-        const [weapon1, weapon2] = held || [];
+        if (this._inspectedSlotIdx >= 0) {
+            targetSlot = this._inspectedSlotIdx;
+            if (item === undefined) item = actor.equips()[targetSlot];
+        } else if (this._slotIndex != null && this._slotIndex >= 0) {
+            targetSlot = this._slotIndex;
+            if (item === undefined) item = actor.equips()[targetSlot];
+        }
+
+        if (!item) {
+            const slotName = (targetSlot >= 0 && actor && actor.equipSlotName) ? actor.equipSlotName(targetSlot) : '';
+            return `
+                <div class="paperdoll-detail-view">
+                    <div class="detail-header">
+                        ${slotName ? `<div class="detail-item-title">${escapeHtml(slotName)}</div>` : ''}
+                    </div>
+                    <div class="placeholder-message">${t.emptySlot}</div>
+                    <div class="detail-actions-row">
+                        <button class="equip-action-btn equip-close-btn focusable">${t.backToPaperdoll || t.back || 'Back'}</button>
+                    </div>
+                </div>`;
+        }
+
+        if (targetSlot < 0) {
+            targetSlot = (window.HandSlots && typeof window.HandSlots.targetSlotFor === 'function')
+                ? window.HandSlots.targetSlotFor(actor, item)
+                : -1;
+            if (targetSlot < 0) {
+                const isWpn = DataManager.isWeapon(item);
+                if (isWpn) {
+                    targetSlot = window.HandSlots ? window.HandSlots.emptySlotFor(actor, item) : 0;
+                    if (targetSlot < 0) targetSlot = 0;
+                } else if (item.etypeId === 2) {
+                    targetSlot = 1;
+                } else {
+                    targetSlot = actor.equipSlots().indexOf(item.etypeId);
+                    if (targetSlot < 0) targetSlot = 0;
+                }
+            }
+        }
+
+        const tempActor = this.standInActor();
+        const isEquippedHere = actor.equips()[targetSlot] === item;
+        if (!isEquippedHere) {
+            tempActor.forceChangeEquip(targetSlot, item);
+        }
+
+        const s1 = actor.getWeaponScalingType(item);
         const getCodes = (s) => {
             if (!s) return [];
             if (s === 'MIX') return ['STR', 'DEX'];
             if (s === 'ARC') return ['STR', 'INT'];
             return [s];
         };
+        const scalingCodes = new Set(getCodes(s1));
+        if (scalingCodes.size === 0 && DataManager.isWeapon(item)) scalingCodes.add('STR');
 
-        const s1 = actor.getWeaponScalingType(weapon1);
-        const s2 = actor.getWeaponScalingType(weapon2);
-        const scalingCodes = new Set([...getCodes(s1), ...getCodes(s2)]);
-        if (scalingCodes.size === 0) scalingCodes.add('STR');
-
-        // Proficiency grade (F to S) per scaling code, read off the weapon that
-        // earns it. Shown right of the stat's own abbreviation in the grid below.
         const weaponProf = window.WeaponProficiency;
         const codeGradeMap = {};
-        if (weaponProf && weapon1 && DataManager.isWeapon(weapon1)) {
-            const grade1 = weaponProf.gradeFor(actor, weapon1);
-            getCodes(s1).forEach(code => { codeGradeMap[code] = grade1; });
-        }
-        if (weaponProf && weapon2 && DataManager.isWeapon(weapon2)) {
-            const grade2 = weaponProf.gradeFor(actor, weapon2);
-            getCodes(s2).forEach(code => { codeGradeMap[code] = grade2; });
+        if (weaponProf && DataManager.isWeapon(item)) {
+            const grade = weaponProf.gradeFor(actor, item);
+            getCodes(s1).forEach(c => { codeGradeMap[c] = grade; });
         }
 
-        // Base + alchemical stats, interleaved into one 3-column grid: the
-        // custom stats (Arcane/Substance/Stealth/Intimidation) ride as plain
-        // numbers in the third column rather than their own bars.
         const cBefore = actor.calculateCustomStats();
         const cAfter  = tempActor ? tempActor.calculateCustomStats() : cBefore;
         const gridStats = [
@@ -818,7 +1147,7 @@
                 valBeforeFormatted = `${stat.valBefore} <span class="equip-stat-mod">(${modBeforeStr})</span>`;
                 valAfterFormatted = `${stat.valAfter} <span class="equip-stat-mod">(${modAfterStr})</span>`;
                 const modDiff = modAfter - modBefore;
-                if (tempActor && modDiff !== 0) {
+                if (modDiff !== 0) {
                     modBonusHtml = `<span class="stat-diff equip-stat-diff ${modDiff > 0 ? 'positive' : 'negative'}">[${modDiff > 0 ? '+' + modDiff : modDiff} Mod]</span>`;
                 }
             }
@@ -828,101 +1157,137 @@
                     <span class="${labelCls}">${labelHtml}</span>
                     <span class="inspect-spec-value stat-val-container">
                         <span class="${valCls}">${valBeforeFormatted}</span>
-                        ${tempActor && diff !== 0 ? `➔ <span class="stat-val-new">${valAfterFormatted}</span>` : ''}
+                        ${diff !== 0 ? `➔ <span class="stat-val-new">${valAfterFormatted}</span>` : ''}
                         ${stat.code ? modBonusHtml : diffHtml}
                     </span>
                 </div>`;
         }
 
-        // Weapon preview box
-        const w0 = weapon1;
-        const w1 = weapon2;
-        const hasW0   = !!previewModelFor(w0);
-        const hasW1   = !!previewModelFor(w1);
-        const hasThree = typeof THREE !== 'undefined';
-
-        // The bench stands wherever the party stands: the ground behind the
-        // pieces is the battleground this map fights on (BattleSystem/
-        // AnimatedBattleBackgrounds.js), not a grey box.
-        const groundImg = (typeof window.getMapBattlebackImage === 'function')
-            ? window.getMapBattlebackImage() : null;
-        const groundStyle = groundImg
-            ? ` style="background-image:url('${groundImg.replace(/['"]/g, '')}');"` : '';
-
-        let previewBoxHTML = '<div class="weapon-previews-container">';
-
-        const cardClass = (hasW0 && hasW1) ? 'weapon-preview-card--half' : 'weapon-preview-card--single';
-
-        // The preview is the weapon's real 3D model, the same one the battle
-        // overlay holds. Without three.js there is nothing to draw it with, so
-        // the card falls back to the item's icon on its rarity ring.
-        const addCardHTML = (weapon, canvasId) => {
-            if (hasThree) {
-                return `<div class="weapon-preview-card ${cardClass}"${groundStyle}><canvas id="weapon-preview-canvas-${canvasId}" width="140" height="380"></canvas></div>`;
-            }
-            const iconIdx    = weapon.iconIndex;
-            const iconStyle  = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
-            const rarityCls  = window.ItemSystemUtils ? window.ItemSystemUtils.itemRarityClass(weapon) : 'rarity--common';
-            const inner = `<div class="weapon-preview-icon-wrapper"><div class="weapon-preview-icon-circle ${rarityCls}"><div class="item-icon" style="${iconStyle}"></div></div></div>`;
-            return `<div class="weapon-preview-card ${cardClass}"${groundStyle}>${inner}</div>`;
-        };
-
-        if (hasW0) previewBoxHTML += addCardHTML(w0, 0);
-        if (hasW1) previewBoxHTML += addCardHTML(w1, 1);
-        previewBoxHTML += '</div>';
-
-        // Dynamic lore for the previewed/equipped item (resolves {nation}/{leader}/... tokens).
-        let loreItem = null;
-        if (this._activeArea === 'inventory') {
-            const list = this.getInventoryItemsForSlot();
-            const sel  = list[this._inventoryIndex];
-            if (sel && !sel.isRemoveOption) loreItem = sel;
-        } else if (this._slotIndex != null) {
-            loreItem = actor.equips()[this._slotIndex];
+        let dtHtml = '';
+        const dt = (item.meta && item.meta.DamageType) ||
+            (item.note && (item.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
+        if (dt) {
+            dtHtml += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.damageType')}:</span> <strong>${escapeHtml(String(dt).trim())}</strong></div>`;
         }
-        // Short description (what it does) above the combinatorial lore, under
-        // the name of whatever the cursor is on so the page always says which
-        // piece it is describing.
-        let loreHTML = '';
-        if (loreItem) {
-            let loreName = String(loreItem.name || '');
-            if (window.translateText) loreName = window.translateText(loreName);
-            loreHTML += `<div class="equip-lore-name">${escapeHtml(loreName)}</div>`;
-        } else if (this._activeArea !== 'inventory' && this._slotIndex != null) {
-            const slotName = actor.equipSlotName(this._slotIndex) || t.emptySlot;
-            loreHTML += `<div class="equip-lore-name">${escapeHtml(slotName)}</div>` +
-                        `<div class="equip-desc equip-desc--empty">${escapeHtml(t.emptySlot)}</div>`;
+        const wtype = DataManager.isWeapon(item) ? (($dataSystem.weaponTypes || [])[item.wtypeId] || '') : '';
+        if (wtype) {
+            dtHtml += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.weaponType')}:</span> <strong>${escapeHtml(String(wtype).trim())}</strong></div>`;
         }
-        if (loreItem) {
-            const dt = (loreItem.meta && loreItem.meta.DamageType) ||
-                (loreItem.note && (loreItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-            if (dt) {
-                loreHTML += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.damageType')}:</span> <strong>${escapeHtml(String(dt).trim())}</strong></div>`;
-            }
-            const wtype = DataManager.isWeapon(loreItem) ? ($dataSystem.weaponTypes[loreItem.wtypeId] || '') : '';
-            if (wtype) {
-                loreHTML += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.weaponType')}:</span> <strong>${escapeHtml(String(wtype).trim())}</strong></div>`;
-            }
-        }
-        if (loreItem && loreItem.description && String(loreItem.description).trim()) {
-            let desc = String(loreItem.description).trim();
+
+        let descHtml = '';
+        if (item.description && String(item.description).trim()) {
+            let desc = String(item.description).trim();
             if (window.translateText && typeof window.translateText === 'function') desc = window.translateText(desc);
-            // Database descriptions are hard-wrapped for the message window;
-            // only a blank line is a real break here, the rest reflows.
             desc = desc.replace(/\s*\n\s*\n\s*/g, '<br><br>').replace(/\s*\n\s*/g, ' ');
-            loreHTML += `<div class="equip-desc">${desc}</div>`;
+            descHtml = `<div class="equip-desc">${desc}</div>`;
         }
-        if (loreItem && window.ItemSystemUtils && typeof window.ItemSystemUtils.loreFor === 'function') {
-            const loreText = window.ItemSystemUtils.loreFor(loreItem);
-            if (loreText) loreHTML += `<div class="equip-lore">${loreText}</div>`;
+        let loreHtml = '';
+        if (window.ItemSystemUtils && typeof window.ItemSystemUtils.loreFor === 'function') {
+            const loreText = window.ItemSystemUtils.loreFor(item);
+            if (loreText) loreHtml = `<div class="equip-lore">${loreText}</div>`;
+        }
+
+        const isCurrentlyWorn = actor.equips().includes(item);
+        const actionButtons = isCurrentlyWorn
+            ? `<button class="equip-action-btn unequip-now-btn focusable" data-slot="${targetSlot}">${t.unequip || 'Unequip'}</button>`
+            : `<button class="equip-action-btn equip-now-btn focusable" data-slot="${targetSlot}">${t.equip || 'Equip'}</button>`;
+
+        return `
+            <div class="paperdoll-detail-view">
+                <div class="detail-header">
+                    <div class="detail-item-title">${escapeHtml(item.name)}</div>
+                </div>
+                <div class="detail-preview-box">
+                    <canvas id="weapon-preview-canvas-inspect" width="220" height="200"></canvas>
+                </div>
+                <div class="bottom-stats-block">
+                    ${dtHtml}
+                    <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col">${statsGridHTML}</div>
+                    <div class="equip-lore-col">
+                        ${descHtml}
+                        ${loreHtml}
+                    </div>
+                </div>
+                <div class="detail-actions-row">
+                    ${actionButtons}
+                    <button class="equip-action-btn equip-close-btn focusable">${t.backToPaperdoll || t.back || 'Back'}</button>
+                </div>
+            </div>`;
+    };
+
+    Scene_Equip.prototype._buildLeftPageHTML = function () {
+        return this._buildPartyPaperdollsHTML();
+    };
+
+    Scene_Equip.prototype._buildRightPageHTML = function () {
+        if (this._viewMode === 'detail') {
+            return this._buildDetailHTML();
+        }
+        const actor = this._actor;
+        const lang  = ConfigManager.language || 'en';
+        const t     = i18n[lang] || i18n['en'];
+
+        const tabs = getEquipTabs();
+        let tabsHtml = '';
+        tabs.forEach(tab => {
+            const active = (this._activeTab === tab.id) ? 'active' : '';
+            tabsHtml += `<div class="equip-type-tab ${active}" data-tab-id="${tab.id}">${escapeHtml(tab.label)}</div>`;
+        });
+
+        const items = this.getFilteredPartyEquipment();
+        let cardsHtml = '';
+        if (items.length === 0) {
+            cardsHtml = `<div class="placeholder-message">${t.emptySlot || 'No equipment in this category...'}</div>`;
+        } else {
+            items.forEach((item, idx) => {
+                const isWpn = DataManager.isWeapon(item);
+                const iconIdx = item.iconIndex;
+                const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
+                const rarity = window.ItemSystemUtils ? window.ItemSystemUtils.getItemRarity(item) : 'common';
+                const rarityCls = window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarity) : 'rarity--common';
+                const count = ($gameParty && $gameParty.numItems) ? $gameParty.numItems(item) : 1;
+
+                let statBadge = '';
+                if (item.params) {
+                    if (item.params[2] > 0) statBadge = `<span class="equip-card-stat">+${item.params[2]} ATK</span>`;
+                    else if (item.params[3] > 0) statBadge = `<span class="equip-card-stat">+${item.params[3]} DEF</span>`;
+                }
+
+                const prof = window.WeaponProficiency;
+                const untrained = prof && isWpn && prof.isUntrained(actor, item);
+                const profTag = untrained
+                    ? `<span class="item-proficiency-tag">${prof.levelNameFor(actor, item) || t.untrained}</span>`
+                    : '';
+
+                const isFocused = (this._activeArea === 'grid' && this._gridIndex === idx);
+
+                cardsHtml += `
+                    <div class="equip-card ${isFocused ? 'focused' : ''}" draggable="true" data-item-type="${isWpn ? 'weapon' : 'armor'}" data-item-id="${item.id}" data-idx="${idx}">
+                        <div class="item-rarity-bar ${rarityCls}"></div>
+                        <div class="equip-card-icon"><div class="item-icon" style="${iconStyle}"></div></div>
+                        <div class="equip-card-info">
+                            <div class="equip-card-name-row">
+                                <span class="equip-card-name">${escapeHtml(item.name)}</span>
+                                ${count > 1 ? `<span class="equip-card-qty">×${count}</span>` : ''}
+                            </div>
+                            <div class="equip-card-meta">
+                                ${statBadge}
+                                ${profTag}
+                            </div>
+                        </div>
+                    </div>`;
+            });
         }
 
         return `
-            <div class="equip-right-content ui-detail">
-                ${previewBoxHTML}
-                <div class="bottom-stats-block">
-                    <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col">${statsGridHTML}</div>
-                    <div class="equip-lore-col">${loreHTML}</div>
+            <div class="equip-type-tabs">
+                <div class="equip-type-tabs-scroll">
+                    ${tabsHtml}
+                </div>
+            </div>
+            <div class="equip-grid-container">
+                <div class="equip-grid">
+                    ${cardsHtml}
                 </div>
             </div>`;
     };
@@ -938,31 +1303,15 @@
         const actor       = this._actor;
         const lang        = ConfigManager.language || 'en';
         const t           = i18n[lang] || i18n['en'];
-        const useItalian  = ConfigManager.language === 'it';
 
-        // ── Left: command bar ──────────────────────────────────────────────────
-
-        const commands      = ['equip', 'optimize', 'random', 'clear'];
-        const commandLabels = [t.equip, t.optimize, t.random, t.clear];
-        // The command rail is the same rail the Skills menu wears: the backpack's
-        // own chips, so a row of tabs reads the same wherever it is met.
+        const commands      = ['optimize', 'random', 'clear'];
+        const commandLabels = [t.optimize, t.random, t.clear];
         let commandsBtnsHTML = '';
         commands.forEach((cmd, idx) => {
             let cls = 'backpack-tab';
-            if (idx === this._commandIndex && this._activeArea === 'commands') cls += ' active selected';  // i18n-ignore  css classes
+            if (idx === this._commandIndex && this._activeArea === 'commands') cls += ' active selected';
             commandsBtnsHTML += `<div class="${cls}" data-cmd="${cmd}">${commandLabels[idx]}</div>`;
         });
-
-        const allMembers = $gameParty.allMembers();
-        let tabsHTML = '';
-        allMembers.forEach((member, idx) => {
-            const sel = member === actor ? 'selected' : '';
-            tabsHTML += `<div class="companion-tab ${sel}" data-actor-idx="${idx}">${member.name()}</div>`;
-        });
-
-        const switcherHTML = enableSwitching
-            ? window.CharSwitcher.inner(`<div class="companion-tabs-row">${tabsHTML}</div>`, allMembers.length)
-            : `<div class="companion-tabs-row">${tabsHTML}</div>`;
 
         const commandBarHTML = `
             <div class="equip-command-bar">
@@ -971,184 +1320,74 @@
                 </div>
             </div>`;
 
-        // ── Left: main content (slots or inventory) ────────────────────────────
-
-        let mainContentHTML = '';
-        const backBtnText   = T('Equip.back');
-
-        if (this._activeArea === 'inventory') {
-            const itemList  = this.getInventoryItemsForSlot();
-            const slotName  = actor.equipSlotName(this._slotIndex) || t.emptySlot;
-
-            mainContentHTML = `
-                <div class="inventory-header">
-                    <span>${slotName}</span>
-                    <span class="inventory-back-btn" id="inventory-back">◀ ${t.clear}</span>
-                </div>`;
-
-            if (itemList.length === 0) {
-                mainContentHTML += `<div class="placeholder-message">${useItalian ? 'Nessun equipaggiamento disponibile...' : 'No matching equipment available...'}</div>`;
-            } else {
-                mainContentHTML += '<div class="backpack-grid equip-pick-grid">';
-                const shortName = k => T('Equip.short.' + k);
-                const paramNames = [shortName('hp'), shortName('mp'), shortName('str'), shortName('con'),
-                                    shortName('int'), shortName('wis'), shortName('dex'), shortName('psi')];
-                const getParams  = a => [a.mhp, a.mmp, a.atk, a.def, a.mat, a.mdf, a.agi, a.luk];
-                const beforeParams = getParams(actor);
-                // Mutate _equips directly rather than through changeEquip/forceChangeEquip:
-                // param() already reads traits (including PARAM-rate modifiers like the
-                // percentage boosts/penalties some weapons carry) straight off the
-                // battler's live equips, and going through the change hooks would also
-                // fire saveCustomStatsToVariables for every row in the list.
-                const diffActor = JsonEx.makeDeepCopy(actor);
-                // The bench walks the same lines the backpack walks: a heading
-                // opens each type, the rows under it are pockets, and the
-                // layout the cursor moves through is recorded as it is built.
-                this._invLayout = [];
-                let row = [];
-                let lastGroup = null;
-                const closeRow = () => { if (row.length) { this._invLayout.push(row); row = []; } };
-                itemList.forEach((item, idx) => {
-                    const focused = idx === this._inventoryIndex ? 'selected' : '';
-                    if (item.isRemoveOption) {
-                        closeRow();
-                        this._invLayout.push([idx]);
-                        mainContentHTML += `
-                            <div class="item-slot equip-pick-row equip-pick-row--full ${focused}" data-idx="${idx}">
-                                <div class="item-icon-empty">✖</div>
-                                <div class="item-slot-info">
-                                    <div class="item-slot-name inventory-remove-name">${item.name}</div>
-                                </div>
-                            </div>`;
-                        return;
-                    }
-                    const group = equipGroupOf(item);
-                    if (group !== lastGroup) {
-                        lastGroup = group;
-                        closeRow();
-                        mainContentHTML += `<div class="backpack-group-title">${escapeHtml(group)}</div>`;
-                    }
-                    if (row.length >= 3) closeRow();
-                    row.push(idx);
-
-                    const iconIdx   = item.iconIndex;
-                    const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
-                    const rarity    = window.ItemSystemUtils.getItemRarity(item);
-                    const gi = new Game_Item();
-                    gi.setObject(item);
-                    diffActor._equips[this._slotIndex] = gi;
-                    const afterParams = getParams(diffActor);
-                    // Only the stats this piece actually moves, as short signed
-                    // chips; the full description lives on the right page.
-                    const paramDesc  = [];
-                    for (let p = 0; p < 8; p++) {
-                        const delta = afterParams[p] - beforeParams[p];
-                        if (delta !== 0) {
-                            const cls = delta > 0 ? 'positive' : 'negative';
-                            paramDesc.push(`<span class="equip-delta-chip ${cls}">${paramNames[p]} ${delta>0?'+':''}${delta}</span>`);
-                        }
-                    }
-                    // Weapons below Intermediate proficiency fight at reduced
-                    // stats; flag the tier the character is actually at.
-                    const prof = window.WeaponProficiency;
-                    const untrained = prof && DataManager.isWeapon(item) && prof.isUntrained(actor, item);
-                    const profTag = untrained
-                        ? `<span class="item-proficiency-tag">${prof.levelNameFor(actor, item) || t.untrained}</span>`
-                        : '';
-                    mainContentHTML += `
-                        <div class="item-slot equip-pick-row ${focused}" data-idx="${idx}">
-                            <div class="item-rarity-bar ${window.ItemSystemUtils.rarityClass(rarity)}"></div>
-                            <div class="item-slot-icon"><div class="item-icon" style="${iconStyle}"></div></div>
-                            <div class="item-slot-info">
-                                <div class="item-name-row"><span class="item-slot-name">${item.name}</span>${profTag}</div>
-                                <div class="item-slot-meta equip-delta-row">${paramDesc.join('')}</div>
-                            </div>
-                        </div>`;
-                });
-                closeRow();
-                mainContentHTML += '</div>';
-            }
-        } else {
-            const slots  = actor.equipSlots();
-            const equips = actor.equips();
-            slots.forEach((etypeId, idx) => {
-                const slotTypeName  = actor.equipSlotName(idx) || t.emptySlot;
-                const equippedItem  = equips[idx];
-                const focused       = (idx === this._slotIndex && this._activeArea === 'slots') ? 'focused' : '';
-
-                let slotItemHTML = '';
-                if (equippedItem) {
-                    const iconIdx   = equippedItem.iconIndex;
-                    const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
-                    const rarity    = window.ItemSystemUtils.getItemRarity(equippedItem);
-                    const prof      = window.WeaponProficiency;
-                    const profTag   = (prof && DataManager.isWeapon(equippedItem) && prof.isUntrained(actor, equippedItem))
-                        ? `<span class="item-proficiency-tag">${prof.levelNameFor(actor, equippedItem) || t.untrained}</span>`
-                        : '';
-                    slotItemHTML = `
-                        <div class="item-rarity-bar ${window.ItemSystemUtils.rarityClass(rarity)}"></div>
-                        <div class="item-icon" style="${iconStyle}"></div>
-                        <span class="item-name">${equippedItem.name}</span>${profTag}`;
-                } else {
-                    slotItemHTML = `<div class="item-icon-empty">☐</div><span class="item-name-empty">${t.emptySlot}</span>`;
-                }
-
-                mainContentHTML += `
-                    <div class="equip-slot-row ${focused}" data-idx="${idx}">
-                        <div class="slot-label-col">${slotTypeName}</div>
-                        <div class="slot-item-col">${slotItemHTML}</div>
-                    </div>`;
-            });
-        }
-
-        // ── Build / reuse DOM structure ────────────────────────────────────────
-
         let spread = container.querySelector('.book-spread');
-        if (!spread) {
+        if (!spread && !container.querySelector('.left-content-area')) {
             container.innerHTML = `
                 <div class="book-spread">
                     <div class="left-page">
                         <div class="page-header-bar">
-                            <div class="back-button focusable">${backBtnText}</div>
+                            <div class="back-button focusable">${T('Equip.back')}</div>
                             <h2 class="title">${t.equip}</h2>
                         </div>
                         <div class="left-commands-area"></div>
                         <div class="left-content-area equip-main-content"></div>
                     </div>
                     <div class="right-page">
-                        <div class="companion-switcher" id="equip-companion-switcher"></div>
+                        <div class="right-page-header">
+                            <div class="companion-switcher" id="equip-companion-switcher"></div>
+                        </div>
                         <div class="right-content-area"></div>
                     </div>
                 </div>`;
             spread = container.querySelector('.book-spread');
 
-            spread.querySelector('.back-button').addEventListener('click', (e) => {
-                e.stopPropagation();
-                SoundManager.playCancel();
-                SceneManager._scene.popScene();
-            });
-
-            const leftCA = spread.querySelector('.left-content-area');
-            if (leftCA) leftCA.addEventListener('wheel', (e) => e.stopPropagation(), { passive: true });
+            const backBtn = spread.querySelector('.back-button');
+            if (backBtn) {
+                backBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                    if (SceneManager._scene && SceneManager._scene.popScene) SceneManager._scene.popScene();
+                });
+            }
         }
 
-        // Selective area updates
-        const switcherSlot = spread.querySelector('#equip-companion-switcher');
-        if (switcherSlot) switcherSlot.innerHTML = switcherHTML;
-        spread.querySelector('.left-commands-area').innerHTML = commandBarHTML;
+        const allMembers = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [actor];
+        let tabsHTML = '';
+        allMembers.forEach((member, idx) => {
+            const sel = member === actor ? 'selected' : '';
+            tabsHTML += `<div class="companion-tab ${sel} focusable" data-actor-idx="${idx}">${escapeHtml(member.name())}</div>`;
+        });
 
-        const leftContentArea = spread.querySelector('.left-content-area');
-        const savedScroll     = leftContentArea.scrollTop;
-        leftContentArea.innerHTML = mainContentHTML;
-        leftContentArea.scrollTop = savedScroll;
+        const switcherHTML = enableSwitching
+            ? window.CharSwitcher.inner(`<div class="companion-tabs-row">${tabsHTML}</div>`, allMembers.length)
+            : `<div class="companion-tabs-row">${tabsHTML}</div>`;
 
-        this.cleanup3DWeaponPreview();
-        spread.querySelector('.right-content-area').innerHTML = this._buildRightPageHTML();
-        this.init3DWeaponPreview();
+        if (spread) {
+            const switcherSlot = spread.querySelector('#equip-companion-switcher');
+            if (switcherSlot) switcherSlot.innerHTML = switcherHTML;
+            const cmdArea = spread.querySelector('.left-commands-area');
+            if (cmdArea) cmdArea.innerHTML = commandBarHTML;
+        }
 
-        // ── Mouse / click bindings ─────────────────────────────────────────────
+        this._refreshLeftPage();
+        this._refreshRightPage();
 
-        this._bindStatTooltips();
+        container.querySelectorAll('.companion-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const idx = parseInt(tab.getAttribute('data-actor-idx'));
+                const all = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
+                const target = all[idx];
+                if (target && target !== this._actor) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._actor = target;
+                    this._currentActorIndex = idx;
+                    const members = this.partyMembers();
+                    const mIdx = members.indexOf(target);
+                    if (mIdx >= 0) this._memberIndex = mIdx;
+                    this._refreshDOM();
+                }
+            });
+        });
 
         container.querySelectorAll('.equip-commands .backpack-tab').forEach((btn, idx) => {
             btn.addEventListener('click', () => {
@@ -1157,67 +1396,22 @@
                 this.executeCommandAction(btn.getAttribute('data-cmd'));
             });
         });
-
-        container.querySelectorAll('.companion-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const idx    = parseInt(tab.getAttribute('data-actor-idx'));
-                const target = $gameParty.allMembers()[idx];
-                if (target && target !== this._actor) {
-                    SoundManager.playOk();
-                    this._actor             = target;
-                    this._currentActorIndex = $gameParty.allMembers().indexOf(target);
-                    this._refreshDOM();
-                }
-            });
-        });
-
-        if (this._activeArea !== 'inventory') {
-            container.querySelectorAll('.equip-slot-row').forEach(row => {
-                row.addEventListener('mouseover', () => {
-                    const idx = parseInt(row.getAttribute('data-idx'));
-                    if (idx === this._slotIndex && this._activeArea === 'slots') return;
-                    this._slotIndex  = idx;
-                    this._activeArea = 'slots';
-                    this._updateSlotHighlight();
-                });
-                row.addEventListener('click', () => {
-                    this._slotIndex  = parseInt(row.getAttribute('data-idx'));
-                    this._activeArea = 'slots';
-                    SoundManager.playOk();
-                    this.openInventorySelection();
-                });
-            });
-        } else {
-            const backBtn = container.querySelector('#inventory-back');
-            if (backBtn) {
-                backBtn.addEventListener('click', () => {
-                    this._activeArea = 'slots';
-                    SoundManager.playCancel();
-                    this._refreshDOM();
-                });
-            }
-            container.querySelectorAll('.equip-pick-row').forEach(row => {
-                row.addEventListener('mouseover', () => {
-                    const idx = parseInt(row.getAttribute('data-idx'));
-                    if (idx !== this._inventoryIndex) {
-                        this._inventoryIndex = idx;
-                        this._updateInventoryHighlight();
-                    }
-                });
-                row.addEventListener('click', () => {
-                    this._inventoryIndex = parseInt(row.getAttribute('data-idx'));
-                    this.equipSelectedItem();
-                });
-            });
-        }
     };
 
     // =============================================================================
-    // Selective highlight updates (avoids full DOM rebuild on navigation)
+    // Selective page updates & Drag-Drop event bindings
     // =============================================================================
 
-    // The right page is rebuilt whenever the cursor moves, so it always reads
-    // the piece under the cursor rather than the one it was built with.
+    Scene_Equip.prototype._refreshLeftPage = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const leftArea = container.querySelector('.left-content-area');
+        if (!leftArea) return;
+        leftArea.innerHTML = this._buildLeftPageHTML();
+        this._bindStatTooltips();
+        this._bindLeftPageEvents();
+    };
+
     Scene_Equip.prototype._refreshRightPage = function () {
         const container = document.getElementById('equip-container');
         if (!container) return;
@@ -1225,25 +1419,321 @@
         if (!rightArea) return;
         this.cleanup3DWeaponPreview();
         rightArea.innerHTML = this._buildRightPageHTML();
-        this.init3DWeaponPreview();
-        this._bindStatTooltips();
+        if (this._viewMode === 'detail') {
+            this.init3DWeaponPreview();
+            this._bindStatTooltips();
+        }
+        this._bindRightPageEvents();
     };
 
-    Scene_Equip.prototype._updateSlotHighlight = function () {
+    Scene_Equip.prototype.executeTransferEquip = function (srcMemberIdx, srcSlotId, targetMemberIdx, targetSlotId) {
+        const members = this.partyMembers();
+        const srcActor = members[srcMemberIdx] || this._actor;
+        const targetActor = members[targetMemberIdx] || this._actor;
+        if (!srcActor || !targetActor) return;
+        if (srcMemberIdx === targetMemberIdx && srcSlotId === targetSlotId) return;
+
+        const srcItem = srcActor.equips()[srcSlotId];
+        const targetItem = targetActor.equips()[targetSlotId];
+        if (!srcItem) return;
+
+        if (!targetItem) {
+            const fits = window.HandSlots ? window.HandSlots.slotFits(targetActor, targetSlotId, srcItem) : true;
+            if (!fits) {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                return;
+            }
+            if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+            srcActor.changeEquip(srcSlotId, null);
+            targetActor.changeEquip(targetSlotId, srcItem);
+        } else {
+            const fitsTarget = window.HandSlots ? window.HandSlots.slotFits(targetActor, targetSlotId, srcItem) : true;
+            const fitsSrc = window.HandSlots ? window.HandSlots.slotFits(srcActor, srcSlotId, targetItem) : true;
+            if (!fitsTarget || !fitsSrc) {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                return;
+            }
+            if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+            srcActor.changeEquip(srcSlotId, targetItem);
+            targetActor.changeEquip(targetSlotId, srcItem);
+        }
+        this._refreshDOM();
+    };
+
+    Scene_Equip.prototype._highlightDroppableSlots = function (item, sourceMemberIdx, sourceSlot) {
         const container = document.getElementById('equip-container');
         if (!container) return;
-        container.querySelectorAll('.equip-slot-row').forEach((row, idx) => {
-            row.classList.toggle('focused', idx === this._slotIndex);
+        container.classList.add('is-dragging-equip');
+        const members = this.partyMembers();
+        container.querySelectorAll('.paperdoll-slot').forEach(slotEl => {
+            const mIdx = parseInt(slotEl.getAttribute('data-member-idx'));
+            const sId  = parseInt(slotEl.getAttribute('data-slot-idx'));
+            if (mIdx === sourceMemberIdx && sId === sourceSlot) return;
+            const actor = (!isNaN(mIdx) && members[mIdx]) ? members[mIdx] : this._actor;
+            if (!actor) return;
+
+            let canFit = window.HandSlots ? window.HandSlots.slotFits(actor, sId, item) : true;
+            const targetEquipped = actor.equips()[sId];
+            if (targetEquipped && sourceMemberIdx !== undefined && sourceSlot !== undefined) {
+                const srcActor = members[sourceMemberIdx] || this._actor;
+                if (srcActor && window.HandSlots) {
+                    canFit = canFit && window.HandSlots.slotFits(srcActor, sourceSlot, targetEquipped);
+                }
+            }
+            if (canFit) {
+                slotEl.classList.add('drag-target-valid');
+                slotEl.classList.remove('drag-target-invalid');
+            } else {
+                slotEl.classList.add('drag-target-invalid');
+                slotEl.classList.remove('drag-target-valid');
+            }
         });
-        const focused = container.querySelector('.equip-slot-row.focused');
-        if (focused) focused.scrollIntoView({ block: 'nearest' });
-        this._refreshRightPage();
-        SoundManager.playCursor();
     };
 
-    // Hovering a stat row explains what that stat does, on the same card the
-    // character sheet uses. The right page is rebuilt on every selection, so
-    // the rows are rebound each time it is.
+    Scene_Equip.prototype._clearSlotHighlights = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        container.classList.remove('is-dragging-equip');
+        container.querySelectorAll('.paperdoll-slot').forEach(slotEl => {
+            slotEl.classList.remove('drag-target-valid', 'drag-target-invalid', 'drag-over');
+        });
+    };
+
+    Scene_Equip.prototype._bindLeftPageEvents = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const members = this.partyMembers();
+
+        // Paperdoll container header clicks to select active actor
+        container.querySelectorAll('.paperdoll-container').forEach(pEl => {
+            pEl.addEventListener('click', (e) => {
+                if (e.target.closest('.paperdoll-slot') || e.target.closest('.slot-remove-btn')) return;
+                const mIdx = parseInt(pEl.getAttribute('data-member-idx'));
+                if (!isNaN(mIdx) && members[mIdx] && members[mIdx] !== this._actor) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._actor = members[mIdx];
+                    this._memberIndex = mIdx;
+                    this._currentActorIndex = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers().indexOf(members[mIdx]) : mIdx;
+                    this._refreshDOM();
+                }
+            });
+        });
+
+        container.querySelectorAll('.paperdoll-slot').forEach(slotEl => {
+            const memberIdx = parseInt(slotEl.getAttribute('data-member-idx')) || 0;
+            const slotId    = parseInt(slotEl.getAttribute('data-slot-idx'));
+            const actor     = members[memberIdx] || this._actor;
+
+            slotEl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                let canDrop = false;
+                if (this._draggedItem && actor && window.HandSlots) {
+                    canDrop = window.HandSlots.slotFits(actor, slotId, this._draggedItem);
+                    if (canDrop && this._dragSource && this._dragSource.type === 'slot' && this._dragSource.memberIdx !== undefined) {
+                        const targetEquipped = actor.equips()[slotId];
+                        if (targetEquipped) {
+                            const srcActor = members[this._dragSource.memberIdx] || this._actor;
+                            canDrop = srcActor && window.HandSlots.slotFits(srcActor, this._dragSource.slotId, targetEquipped);
+                        }
+                    }
+                }
+                if (canDrop) {
+                    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+                    slotEl.classList.add('drag-over');
+                } else {
+                    if (e.dataTransfer) e.dataTransfer.dropEffect = 'none';
+                }
+            });
+
+            slotEl.addEventListener('dragleave', () => {
+                slotEl.classList.remove('drag-over');
+            });
+
+            slotEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                slotEl.classList.remove('drag-over');
+                if (this._dragSource && this._dragSource.type === 'slot') {
+                    this.executeTransferEquip(this._dragSource.memberIdx, this._dragSource.slotId, memberIdx, slotId);
+                    this._refreshDOM();
+                } else if (this._dragSource && this._dragSource.type === 'grid') {
+                    const item = this._draggedItem;
+                    if (item && actor && window.HandSlots && window.HandSlots.slotFits(actor, slotId, item)) {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        actor.changeEquip(slotId, item);
+                        this._refreshDOM();
+                    } else {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                    }
+                }
+                this._clearSlotHighlights();
+                this._draggedItem = null;
+                this._dragSource = null;
+            });
+
+            slotEl.addEventListener('click', (e) => {
+                if (e.target.classList.contains('slot-remove-btn')) return;
+                const equipped = actor ? actor.equips()[slotId] : null;
+                if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                this._actor = actor;
+                this._memberIndex = memberIdx;
+                this._inspectedItem = equipped;
+                this._inspectedSlotIdx = slotId;
+                this._viewMode = 'detail';
+                this._refreshRightPage();
+            });
+
+            const removeBtn = slotEl.querySelector('.slot-remove-btn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (actor) {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        actor.changeEquip(slotId, null);
+                        this._refreshDOM();
+                    }
+                });
+            }
+
+            const equippedEl = slotEl.querySelector('.slot-equipped-content');
+            if (equippedEl) {
+                equippedEl.addEventListener('dragstart', (e) => {
+                    const equipped = actor ? actor.equips()[slotId] : null;
+                    if (equipped) {
+                        this._draggedItem = equipped;
+                        this._dragSource = { type: 'slot', memberIdx, slotId, item: equipped };
+                        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+                        this._highlightDroppableSlots(equipped, memberIdx, slotId);
+                    }
+                });
+                equippedEl.addEventListener('dragend', () => {
+                    this._clearSlotHighlights();
+                    this._draggedItem = null;
+                    this._dragSource = null;
+                });
+            }
+        });
+    };
+
+    Scene_Equip.prototype._bindRightPageEvents = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+
+        if (this._viewMode === 'detail') {
+            const backBtn = container.querySelector('.paperdoll-back-btn') || container.querySelector('.equip-close-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                    this._viewMode = 'paperdoll';
+                    this.cleanup3DWeaponPreview();
+                    this._refreshRightPage();
+                });
+            }
+
+            const equipBtn = container.querySelector('.equip-now-btn');
+            if (equipBtn) {
+                equipBtn.addEventListener('click', () => {
+                    const targetSlot = parseInt(equipBtn.getAttribute('data-slot'));
+                    if (targetSlot >= 0 && this._inspectedItem && this._actor) {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        this._actor.changeEquip(targetSlot, this._inspectedItem);
+                        this._viewMode = 'paperdoll';
+                        this.cleanup3DWeaponPreview();
+                        this._refreshDOM();
+                    } else {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                    }
+                });
+            }
+
+            const unequipBtn = container.querySelector('.unequip-now-btn');
+            if (unequipBtn) {
+                unequipBtn.addEventListener('click', () => {
+                    const targetSlot = parseInt(unequipBtn.getAttribute('data-slot'));
+                    if (targetSlot >= 0 && this._actor) {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        this._actor.changeEquip(targetSlot, null);
+                        this._viewMode = 'paperdoll';
+                        this.cleanup3DWeaponPreview();
+                        this._refreshDOM();
+                    }
+                });
+            }
+        } else {
+            container.querySelectorAll('.equip-type-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab-id');
+                    if (this._activeTab !== tabId) {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                        this._activeTab = tabId;
+                        this._gridIndex = 0;
+                        this._refreshRightPage();
+                    }
+                });
+            });
+
+            const items = this.getFilteredPartyEquipment();
+            container.querySelectorAll('.equip-card').forEach(card => {
+                const idx = parseInt(card.getAttribute('data-idx'));
+                const item = items[idx];
+                if (!item) return;
+
+                card.addEventListener('dragstart', (e) => {
+                    this._draggedItem = item;
+                    this._dragSource = { type: 'grid', item };
+                    if (e.dataTransfer) {
+                        e.dataTransfer.effectAllowed = 'copyMove';
+                        try {
+                            e.dataTransfer.setData('text/plain', JSON.stringify({
+                                kind: DataManager.isWeapon(item) ? 'weapon' : 'armor',
+                                id: item.id
+                            }));
+                        } catch (err) {}
+                    }
+                    this._highlightDroppableSlots(item);
+                });
+
+                card.addEventListener('dragend', () => {
+                    this._clearSlotHighlights();
+                    this._draggedItem = null;
+                    this._dragSource = null;
+                });
+
+                card.addEventListener('click', () => {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    this._inspectedItem = item;
+                    this._inspectedSlotIdx = -1;
+                    this._viewMode = 'detail';
+                    this._refreshRightPage();
+                });
+            });
+
+            const gridContainer = container.querySelector('.equip-grid-container');
+            if (gridContainer) {
+                gridContainer.addEventListener('dragover', (e) => {
+                    if (this._dragSource && this._dragSource.type === 'slot') {
+                        e.preventDefault();
+                        if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+                    }
+                });
+                gridContainer.addEventListener('drop', (e) => {
+                    if (this._dragSource && this._dragSource.type === 'slot') {
+                        e.preventDefault();
+                        const members = this.partyMembers();
+                        const srcActor = members[this._dragSource.memberIdx] || this._actor;
+                        if (srcActor) {
+                            if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                            srcActor.changeEquip(this._dragSource.slotId, null);
+                            this._refreshDOM();
+                        }
+                        this._clearSlotHighlights();
+                        this._draggedItem = null;
+                        this._dragSource = null;
+                    }
+                });
+            }
+        }
+    };
+
     Scene_Equip.prototype._bindStatTooltips = function () {
         const container = document.getElementById('equip-container');
         if (!container) return;
@@ -1255,48 +1745,72 @@
         });
     };
 
+    Scene_Equip.prototype._updateSlotHighlight = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const slots = container.querySelectorAll('.paperdoll-slot');
+        slots.forEach((slotEl, idx) => {
+            const mIdx = parseInt(slotEl.getAttribute('data-member-idx'));
+            const sId  = parseInt(slotEl.getAttribute('data-slot-idx'));
+            const isFoc = (!isNaN(mIdx) && !isNaN(sId))
+                ? (mIdx === this._memberIndex && sId === this._slotIndex)
+                : (idx === this._slotIndex);
+            slotEl.classList.toggle('focused', isFoc);
+        });
+        const focused = container.querySelector('.paperdoll-slot.focused');
+        if (focused && focused.scrollIntoView) focused.scrollIntoView({ block: 'nearest' });
+        if (this._viewMode === 'detail') {
+            const members = this.partyMembers();
+            const actor = members[this._memberIndex] || this._actor;
+            this._actor = actor;
+            this._inspectedSlotIdx = this._slotIndex;
+            this._inspectedItem = actor ? actor.equips()[this._slotIndex] : null;
+            this._refreshRightPage();
+        }
+        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+    };
+
     Scene_Equip.prototype._updateInventoryHighlight = function () {
         const container = document.getElementById('equip-container');
         if (!container) return;
-        container.querySelectorAll('.equip-pick-row').forEach(row => {
-            const idx = parseInt(row.getAttribute('data-idx'));
-            row.classList.toggle('selected', idx === this._inventoryIndex);
+        container.querySelectorAll('.equip-card').forEach((card, idx) => {
+            card.classList.toggle('focused', idx === this._gridIndex);
         });
-        const focused = container.querySelector('.equip-pick-row.selected');
-        if (focused) focused.scrollIntoView({ block: 'nearest' });
-
-        // Rebuild only the right page (stat deltas change per selected item)
-        this._refreshRightPage();
-        SoundManager.playCursor();
+        const focused = container.querySelector('.equip-card.focused');
+        if (focused && focused.scrollIntoView) focused.scrollIntoView({ block: 'nearest' });
+        if (this._viewMode === 'detail') {
+            const items = this.getFilteredPartyEquipment();
+            if (items[this._gridIndex]) {
+                this._inspectedItem = items[this._gridIndex];
+                this._inspectedSlotIdx = -1;
+                this._refreshRightPage();
+            }
+        }
+        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
     };
 
-    // =============================================================================
-    // Actions
-    // =============================================================================
-
     Scene_Equip.prototype.openInventorySelection = function () {
-        this._activeArea     = 'inventory';
-        this._inventoryIndex = 0;
+        this._activeArea = 'grid';
+        this._gridIndex = 0;
         this._refreshDOM();
     };
 
     Scene_Equip.prototype.equipSelectedItem = function () {
-        const itemList = this.getInventoryItemsForSlot();
-        if (itemList.length === 0) return;
-        const selected = itemList[this._inventoryIndex];
-        this._actor.changeEquip(this._slotIndex, selected.isRemoveOption ? null : selected);
-        SoundManager.playEquip();
-        this._activeArea = 'slots';
-        this._refreshDOM();
+        const items = this.getFilteredPartyEquipment();
+        if (items.length === 0) return;
+        const selected = items[this._gridIndex];
+        if (selected) {
+            const targetSlot = window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, selected) : 0;
+            if (targetSlot >= 0) {
+                this._actor.changeEquip(targetSlot, selected);
+                SoundManager.playEquip();
+                this._refreshDOM();
+            }
+        }
     };
 
     Scene_Equip.prototype.executeCommandAction = function (cmd) {
         switch (cmd) {
-            case 'equip':
-                this._activeArea = 'slots';
-                this._slotIndex  = 0;
-                SoundManager.playOk();
-                break;
             case 'optimize':
                 this._actor.optimizeEquipments();
                 SoundManager.playEquip();
@@ -1318,7 +1832,6 @@
     // =============================================================================
 
     Scene_Equip.prototype.updateUIEquipInput = function () {
-        // WASD hold-repeat simulation
         for (const dir of ['up', 'down', 'left', 'right']) {
             if (this._wasdHeld[dir]) {
                 this._wasdHoldFrames[dir]++;
@@ -1337,131 +1850,133 @@
         const isLeft  = Input.isTriggered('left')  || Input.isRepeated('left')  || this._wasdInput.left;
         this._wasdInput.up = this._wasdInput.down = this._wasdInput.left = this._wasdInput.right = false;
 
-        // L1/R1, character switching from anywhere in the scene
         if (enableSwitching) {
             if (Input.isTriggered('pageup'))   { this.switchToPreviousCharacter(); return; }
             if (Input.isTriggered('pagedown')) { this.switchToNextCharacter();     return; }
         }
 
-        const isOk       = Input.isTriggered('ok');
-        const isCancel    = Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled();
+        const isOk     = Input.isTriggered('ok');
+        const isCancel = Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled();
 
-        // ── Commands area ──────────────────────────────────────────────────────
-        if (this._activeArea === 'commands') {
-            if (isRight) {
-                this._commandIndex = (this._commandIndex + 1) % 4;
-                SoundManager.playCursor();
-                this._refreshDOM();
+        if (this._viewMode === 'detail') {
+            if (isCancel) {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                this._viewMode = 'paperdoll';
+                this.cleanup3DWeaponPreview();
+                this._refreshRightPage();
+                return;
+            }
+            if (isOk) {
+                const target = this._inspectedSlotIdx >= 0 ? this._inspectedSlotIdx : (window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, this._inspectedItem) : 0);
+                if (target >= 0 && this._inspectedItem && this._actor) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                    this._actor.changeEquip(target, this._inspectedItem);
+                    this._viewMode = 'paperdoll';
+                    this.cleanup3DWeaponPreview();
+                    this._refreshDOM();
+                }
+                return;
+            }
+        }
+
+        if (isCancel) {
+            if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+            this.popScene();
+            return;
+        }
+
+        if (this._activeArea === 'grid') {
+            const items = this.getFilteredPartyEquipment();
+            if (isLeft && this._gridIndex % 2 === 0) {
+                this._activeArea = 'paperdoll';
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                this._updateSlotHighlight();
             } else if (isLeft) {
-                this._commandIndex = (this._commandIndex - 1 + 4) % 4;
-                SoundManager.playCursor();
-                this._refreshDOM();
-            } else if (isDown) {
-                this._activeArea = 'slots';
-                this._slotIndex  = 0;
-                SoundManager.playCursor();
-                this._refreshDOM();
-            } else if (isOk) {
-                const cmds = ['equip', 'optimize', 'random', 'clear'];
-                this.executeCommandAction(cmds[this._commandIndex]);
-            } else if (isCancel) {
-                SoundManager.playCancel();
-                this.popScene();
-            }
-
-        // ── Slots area ─────────────────────────────────────────────────────────
-        } else if (this._activeArea === 'slots') {
-            const maxSlots = this._actor.equipSlots().length;
-
-            if (isDown) {
-                if (this._slotIndex < maxSlots - 1) {
-                    this._slotIndex++;
-                    this._updateSlotHighlight();
-                }
-            } else if (isUp) {
-                if (this._slotIndex === 0) {
-                    this._activeArea = 'commands';
-                    SoundManager.playCursor();
-                    this._refreshDOM();
-                } else {
-                    this._slotIndex--;
-                    this._updateSlotHighlight();
-                }
-            } else if (enableSwitching && isLeft) {
-                this.switchToPreviousCharacter();
-            } else if (enableSwitching && isRight) {
-                this.switchToNextCharacter();
-            } else if (Input.isTriggered('menu') && !Input.isTriggered('escape')) {
-                // MZ answers 'menu' for the Escape key too
-                // (Input._isEscapeCompatible), so the button is told apart from
-                // a cancel: leaving the page must not strip a slot on the way.
-                // Y takes the piece out of the slot under the cursor, the same
-                // verb the backpack's Y throws one away with: the page's third
-                // button is always the one that removes something. Taking a
-                // slot's piece off used to mean opening its list and picking
-                // the Remove row at the top of it.
-                const worn = this._actor.equips()[this._slotIndex];
-                if (worn) {
-                    SoundManager.playEquip();
-                    this._actor.changeEquip(this._slotIndex, null);
-                    this._refreshDOM();
-                } else {
-                    SoundManager.playBuzzer();
-                }
-            } else if (isOk) {
-                SoundManager.playOk();
-                this.openInventorySelection();
-            } else if (isCancel) {
-                this._activeArea = 'commands';
-                SoundManager.playCancel();
-                this._refreshDOM();
-            }
-
-        // ── Inventory area, 2D grid navigation ────────────────────────────────
-        } else if (this._activeArea === 'inventory') {
-            const itemList = this.getInventoryItemsForSlot();
-            const total    = itemList.length;
-            const idx      = this._inventoryIndex;
-            // The rows are the ones the page was actually built with: type
-            // headings break a line early, so counting three at a time would
-            // walk off the list the reader sees.
-            const layout   = this._invLayout && this._invLayout.length
-                ? this._invLayout
-                : (() => { const rows = []; for (let i = 0; i < total; i += 3) rows.push(itemList.slice(i, i + 3).map((_, k) => i + k)); return rows; })();
-            let r = -1, c = 0;
-            for (let i = 0; i < layout.length; i++) {
-                const at = layout[i].indexOf(idx);
-                if (at >= 0) { r = i; c = at; break; }
-            }
-            const moveTo = (row, col) => {
-                const line = layout[row];
-                if (!line || !line.length) return;
-                const target = line[Math.min(col, line.length - 1)];
-                if (target != null && target !== this._inventoryIndex) {
-                    this._inventoryIndex = target;
+                if (this._gridIndex > 0) {
+                    this._gridIndex--;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                     this._updateInventoryHighlight();
                 }
-            };
-
-            if (isOk) {
-                this.equipSelectedItem();
-            } else if (isCancel) {
-                this._activeArea = 'slots';
-                SoundManager.playCancel();
-                this._refreshDOM();
-            } else if (r < 0) {
-                // Nothing focused yet: any direction lands on the first row.
-                moveTo(0, 0);
-            } else if (isDown) {
-                moveTo(r + 1, c);
-            } else if (isUp) {
-                moveTo(r - 1, c);
             } else if (isRight) {
-                if (c + 1 < layout[r].length) moveTo(r, c + 1);
-                else moveTo(r + 1, 0);
-            } else if (isLeft) {
-                if (c > 0) moveTo(r, c - 1);
-                else if (r > 0) moveTo(r - 1, (layout[r - 1] || []).length - 1);
+                if (this._gridIndex < items.length - 1) {
+                    this._gridIndex++;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateInventoryHighlight();
+                }
+            } else if (isDown) {
+                if (this._gridIndex + 2 < items.length) {
+                    this._gridIndex += 2;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateInventoryHighlight();
+                }
+            } else if (isUp) {
+                if (this._gridIndex - 2 >= 0) {
+                    this._gridIndex -= 2;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateInventoryHighlight();
+                }
+            } else if (isOk) {
+                if (items[this._gridIndex]) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    this._inspectedItem = items[this._gridIndex];
+                    this._inspectedSlotIdx = -1;
+                    this._viewMode = 'detail';
+                    this._refreshRightPage();
+                }
+            }
+        } else if (this._activeArea === 'paperdoll') {
+            const members = this.partyMembers();
+            const currActor = members[this._memberIndex] || this._actor;
+            const slotsCount = currActor ? currActor.equipSlots().length : 0;
+
+            if (isRight) {
+                this._activeArea = 'grid';
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                this._updateInventoryHighlight();
+            } else if (isDown) {
+                if (this._slotIndex < slotsCount - 1) {
+                    this._slotIndex++;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateSlotHighlight();
+                } else if (this._memberIndex < members.length - 1) {
+                    this._memberIndex++;
+                    this._actor = members[this._memberIndex];
+                    this._slotIndex = 0;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateSlotHighlight();
+                }
+            } else if (isUp) {
+                if (this._slotIndex > 0) {
+                    this._slotIndex--;
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateSlotHighlight();
+                } else if (this._memberIndex > 0) {
+                    this._memberIndex--;
+                    this._actor = members[this._memberIndex];
+                    const prevSlotsCount = this._actor ? this._actor.equipSlots().length : 1;
+                    this._slotIndex = Math.max(0, prevSlotsCount - 1);
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._updateSlotHighlight();
+                }
+            } else if (isOk) {
+                const worn = currActor ? currActor.equips()[this._slotIndex] : null;
+                if (worn) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    this._actor = currActor;
+                    this._inspectedItem = worn;
+                    this._inspectedSlotIdx = this._slotIndex;
+                    this._viewMode = 'detail';
+                    this._refreshRightPage();
+                }
+            } else if (Input.isTriggered('menu')) {
+                const worn = currActor ? currActor.equips()[this._slotIndex] : null;
+                if (worn) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                    currActor.changeEquip(this._slotIndex, null);
+                    this._refreshDOM();
+                } else {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                }
             }
         }
     };

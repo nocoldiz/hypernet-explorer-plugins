@@ -39,7 +39,8 @@
     "showFps": "Show FPS Counter",
     "lowModelDetail": "Reduced Model Detail",
     "activeTheme": "Active Theme",
-    "mapBattle": "Map Battle",
+    "mapBattle": "Battle Mode",
+    "battleMode": "Battle Mode",
     "mapStreaming": "Map Streaming",
     "shaderStyle": "Shader Style",
     "renderResolution": "Render Resolution",
@@ -90,6 +91,10 @@
     "Empathize",
     "Markovian"
   ],
+  "battleMode": {
+    "turn": "Turn Battle",
+    "strategic": "Strategic Battle"
+  },
   "enemyBattler": [
     "3D",
     "Sprites",
@@ -103,6 +108,8 @@
   "languageProgress": "{name} 1% done",
   "settingsInSection": "{count} settings in this section.",
   "desc": {
+    "mapBattleMode": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
+    "battleMode": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
     "mapStreaming": "Stitches neighbouring procedural squares into one seamless map you can walk straight across. Off loads one square at a time and pans the screen to the next when you reach a border.",
     "runInBackground": "Keeps the game running while its window is not focused, so you can alt tab away without it pausing.",
     "weatherVolume": "Volume of outdoor ambience: rain, storms, wind and biome sounds. Interiors are unaffected.",

@@ -1,3 +1,18 @@
+0.6.27a
+
+Added:
+ - add in initial options the map battle option
+
+Changed:
+ - random loot scales with nation encounter level on procedural map
+ - reworked equipment into grid layout to fit all 3 party members
+ - states that persist after battle except death removed after 50 steps
+ - converted party debuff skills into buffs
+
+Fixed:
+ - unreachable Crabby beach
+ - fixed character creation specializations and presets persistence
+
 0.6.26a
 
 Changed:

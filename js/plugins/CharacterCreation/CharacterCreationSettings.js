@@ -37,6 +37,7 @@
     _buildSettingsRows() {
       const scene = this;
       if (ConfigManager.fogOfWar === undefined) ConfigManager.fogOfWar = false;
+      if (ConfigManager.mapBattleMode === undefined) ConfigManager.mapBattleMode = false;
       if (ConfigManager.enemyBattlers === undefined) ConfigManager.enemyBattlers = 1;
       if (!ConfigManager.battleMusicName) {
         const mss = window.MusicSelectionSystem;
@@ -295,6 +296,35 @@
           prev() { this._apply(window.EnemyBattlerModes.step(this.currentIndex, -1)); },
         },
         {
+          key: 'battleMode',
+          label: T('CharCreate.battleMode'),
+          description: T('CharCreate.battleModeDesc'),
+          get currentImage() {
+            return ConfigManager.mapBattleMode ? "Settings/MapBattleON" : "Settings/MapBattleOFF";
+          },
+          get currentCaption() {
+            return ConfigManager.mapBattleMode
+              ? T('CharCreate.battleModeStrategicDesc')
+              : T('CharCreate.battleModeTurnDesc');
+          },
+          get currentIndex() {
+            return ConfigManager.mapBattleMode === true ? 1 : 0;
+          },
+          get currentLabel() {
+            return this.currentIndex === 1
+              ? T('CharCreate.battleModeStrategic')
+              : T('CharCreate.battleModeTurn');
+          },
+          next() {
+            ConfigManager.mapBattleMode = !ConfigManager.mapBattleMode;
+            ConfigManager.save();
+          },
+          prev() {
+            ConfigManager.mapBattleMode = !ConfigManager.mapBattleMode;
+            ConfigManager.save();
+          },
+        },
+        {
           // Which look every three.js viewport wears (PSXShader.js). Mirrors
           // Options > Shader > Shader Style, which owns the very same
           // ConfigManager.retroShaderMode and can still change it later; it is
@@ -481,15 +511,14 @@
 
       // Left page: option name as title, OFF image + caption, ON image + caption
       let previewHtml = '';
-      if (currentRow.imageOff || currentRow.imageOn) {
+      if (currentRow.currentImage || currentRow.imageOff || currentRow.imageOn) {
         // One plate, not two: the setting is either on or off, and showing the
         // state it is NOT in beside the state it IS in only made the reader
         // work out which of the pair was the live one. The plate the page does
         // show is given the whole width for it. Both picture rows read index 0
         // as the on state (see _buildSettingsRows).
-        const isOn = currentRow.currentIndex === 0;
-        const file = isOn ? currentRow.imageOn : currentRow.imageOff;
-        const caption = isOn ? currentRow.captionOn : currentRow.captionOff;
+        const file = currentRow.currentImage || (currentRow.currentIndex === 0 ? currentRow.imageOn : currentRow.imageOff);
+        const caption = (currentRow.currentCaption !== undefined) ? currentRow.currentCaption : (currentRow.currentIndex === 0 ? currentRow.captionOn : currentRow.captionOff);
         previewHtml = file ? `
           <div class="cc-settings-img-stack">
             <div class="cc-settings-img-entry">

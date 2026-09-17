@@ -1113,6 +1113,9 @@
     // The park record for a vehicle, or null if it was never parked.
     get(key) { return (key && this._store()[key]) || null; },
 
+    // Whether the party currently owns this vehicle
+    owns(key) { return ownsVehicleKey(key); },
+
     // worldX / worldY are optional: when omitted they are resolved from the map
     // being parked on (its own tile on map 315, its <Coords> tag elsewhere), so
     // legacy callers that only pass a tile still get correct world coords.
@@ -4714,6 +4717,7 @@
     version: '3.4.0',
     cache: mapCache,
     manager: vehicleManager,
+    ownsVehicleKey(key) { return ownsVehicleKey(key); },
 
     // Vehicles the party can act on from where they stand ({ key, name }, most
     // recently parked first). The world map asks this to tell a parked vehicle
@@ -5045,6 +5049,7 @@
       return isRidingOnWorldRoad() ? ROAD_TIME_FACTOR : 1;
     }
   };
+  window.VehicleSystem = window.MergedVehicleSystem;
 
   // ============================================================================
   // Game_Vehicle Hooks for graphics and riding sprites

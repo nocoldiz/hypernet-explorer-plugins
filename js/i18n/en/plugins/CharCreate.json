@@ -411,11 +411,11 @@
       "desc": "Capture and battle with monsters. \\C[1]This cannot be changed later.\\C[0]"
     },
     "combatMap": {
-      "name": "Map Battle",
+      "name": "Strategic Battle",
       "desc": "Tactical fights on the live map instead of a separate battle screen. Move on the tile grid, weapons and skills have a reach, and line of sight matters. Can be changed later in Options."
     },
     "combatRpg": {
-      "name": "Classic RPG",
+      "name": "Turn Battle",
       "desc": "Standard turn-based combat. Skills cost MP/AP and are picked from your command menu."
     },
     "peaceful": {
@@ -593,6 +593,12 @@
   "enemyBattlers": "Enemy Battlers",
   "howEnemiesAreShownInBattle2dTheClassicBattle": "How enemies are shown in battle. 3D: procedural 3D models (goblins, slimes, elementals...). Sprites: the enemy's character sprite from its info. 2D: a still picture of the same 3D model, the lightest of the three.",
   "3dRendersProceduralModelsSpritesUsesTheEnemy": "3D renders procedural models, Sprites uses the enemy's character sprite.",
+  "battleMode": "Battle Mode",
+  "battleModeDesc": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
+  "battleModeTurn": "Turn Battle",
+  "battleModeStrategic": "Strategic Battle",
+  "battleModeTurnDesc": "Classic turn-based combat in a dedicated battle scene.",
+  "battleModeStrategicDesc": "Tactical combat fought directly on the live map tile grid.",
   "battleMusic": "Battle Music",
   "musicTrackPlayedDuringCombatPressToPreviewTr": "Music track played during combat. Press ←→ to preview tracks.",
   "uiTheme": "UI Theme",

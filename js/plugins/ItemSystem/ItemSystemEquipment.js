@@ -88,7 +88,14 @@
     // shape is kept so the UI's `i18n[lang] || i18n['en']` call sites and
     // window.EquipI18n consumers are unchanged.
     const equipText = new Proxy({}, {
-        get: (_, key) => T('Equip.' + String(key))
+        get: (_, key) => {
+            if (key === 'weaponTypes' || key === 'armorTypes' || key === 'short') {
+                return new Proxy({}, {
+                    get: (__, subKey) => T('Equip.' + String(key) + '.' + String(subKey))
+                });
+            }
+            return T('Equip.' + String(key));
+        }
     });
     const i18n = new Proxy({}, { get: () => equipText });
 
@@ -407,6 +414,31 @@
             return -1;
         },
 
+        // Friendly name of the anatomy body part behind a slot.
+        bodyPartName(actor, slotId) {
+            const partKey = this.partForSlot(actor, slotId);
+            if (partKey) {
+                const parts = actor && actor._bodyParts;
+                if (parts && parts[partKey] && parts[partKey].name) {
+                    const raw = parts[partKey].name;
+                    return (typeof T === 'function' ? T(raw) : (window.translateText ? window.translateText(raw) : raw));
+                }
+                return partKey.replace(/_/g, ' ').toLowerCase();
+            }
+            if (actor && actor.equipSlots) {
+                const slots = actor.equipSlots();
+                const etype = slots[slotId];
+                if (etype === ETYPE_HEAD) return T('Equip.slotHead');
+                const kind = this.slotKind(actor, slotId);
+                if (kind === 'clothes') return T('Equip.slotClothes');
+                if (kind === 'robe') return T('Equip.slotRobe');
+                if (kind === 'armor') return T('Equip.slotArmor');
+                if (etype === ETYPE_BODY) return T('Equip.slotBody');
+                if (etype === 5) return T('Equip.slotGear');
+            }
+            return '';
+        },
+
         /**
          * A limb is finished: cut off, or destroyed where it stands. Hand back
          * what THAT limb was carrying, before the slot list renumbers around
@@ -434,12 +466,31 @@
             actor.refresh();
         },
 
-        // 'hand', 'mouth', or null for the head/body/gear slots below them.
+        // 'hand', 'mouth', 'clothes', 'robe', 'armor', 'head', 'gear'
         slotKind(actor, slotId) {
-            if (slotId < 0) return null;
+            if (slotId < 0 || !actor) return null;
             const layout = this.layout(actor);
             if (slotId < layout.hands) return 'hand';
             if (layout.mouth && slotId === layout.hands) return 'mouth';
+            let cur = layout.slots;
+            if (layout.head) {
+                if (slotId === cur) return 'head';
+                cur++;
+            }
+            if (layout.body) {
+                if (slotId === cur) return 'clothes';
+                if (slotId === cur + 1) return 'robe';
+                if (slotId === cur + 2) return 'armor';
+                cur += 3;
+            }
+            if (slotId === cur) return 'gear';
+            if (typeof actor.equipSlots === 'function') {
+                const slots = actor.equipSlots();
+                if (slotId >= slots.length) return null;
+                if (slots[slotId] === ETYPE_HEAD) return 'head';
+                if (slots[slotId] === ETYPE_BODY) return 'clothes';
+                if (slots[slotId] === 5) return 'gear';
+            }
             return null;
         },
 
@@ -469,7 +520,24 @@
             const slots = actor.equipSlots();
             if (slotId >= slots.length) return false;
             const kind = this.slotKind(actor, slotId);
-            if (!kind) return item.etypeId === slots[slotId];
+            if (kind === 'clothes') {
+                return item.etypeId === ETYPE_BODY && item.atypeId === 1;
+            }
+            if (kind === 'robe') {
+                return item.etypeId === ETYPE_BODY && item.atypeId === 2;
+            }
+            if (kind === 'armor') {
+                return item.etypeId === ETYPE_BODY && (item.atypeId === 3 || item.atypeId === 4);
+            }
+            if (kind === 'head') {
+                return item.etypeId === ETYPE_HEAD;
+            }
+            if (kind === 'gear') {
+                return item.etypeId === 5;
+            }
+            if (!kind || (kind !== 'hand' && kind !== 'mouth')) {
+                return item.etypeId === slots[slotId];
+            }
             if (!isHeldItem(item)) return false;
             // One hand is one weapon, and a small one at that.
             if (kind === 'hand' && isTwoHandedWeapon(item) && this.layout(actor).hands < 2) return false;
@@ -506,6 +574,18 @@
             for (let i = 0; i < slots.length; i++) {
                 if (equips[i]) continue;
                 if (this.hasRoomFor(actor, i, item)) return i;
+            }
+            return -1;
+        },
+
+        // Best slot for inspecting / equipping an item: empty slot first, or first fitting slot.
+        targetSlotFor(actor, item) {
+            if (!item || !actor) return -1;
+            const empty = this.emptySlotFor(actor, item);
+            if (empty >= 0) return empty;
+            const slots = actor.equipSlots();
+            for (let i = 0; i < slots.length; i++) {
+                if (this.slotFits(actor, i, item)) return i;
             }
             return -1;
         },
@@ -587,19 +667,26 @@
     // Equip slots
     // =============================================================================
 
-    const _Game_Actor_equipSlots_hands = Game_Actor.prototype.equipSlots;
     Game_Actor.prototype.equipSlots = function () {
-        const base = _Game_Actor_equipSlots_hands.call(this);
         const layout = HandSlots.layout(this);
         // The stock weapon and off-hand slots are replaced wholesale; head,
         // body and gear keep their places behind the hands.
-        const rest = base.filter(e => {
-            if (e === ETYPE_WEAPON || e === ETYPE_OFFHAND) return false;
-            // No head, no helmet; nothing to go round, no breastplate.
-            if (e === ETYPE_HEAD) return layout.head;
-            if (e === ETYPE_BODY) return layout.body;
-            return true;
-        });
+        // Body provides 3 slots: Clothes, Robe, and Armour (Light/Heavy).
+        const rest = [];
+        const types = (typeof $dataSystem !== 'undefined' && $dataSystem && $dataSystem.equipTypes)
+            ? $dataSystem.equipTypes
+            : ["", "Weapon", "Off-hand", "Head", "Body", "Gear"];
+        for (let i = 3; i < types.length; i++) {
+            if (i === ETYPE_HEAD) {
+                if (layout.head) rest.push(ETYPE_HEAD);
+            } else if (i === ETYPE_BODY) {
+                if (layout.body) {
+                    rest.push(ETYPE_BODY, ETYPE_BODY, ETYPE_BODY);
+                }
+            } else {
+                rest.push(i);
+            }
+        }
         const held = [];
         for (let i = 0; i < layout.slots; i++) held.push(ETYPE_WEAPON);
         return held.concat(rest);
@@ -616,6 +703,9 @@
             if (slotId === 1) return T('Equip.slotOffHand');
             return T('Equip.slotExtraHand', { n: slotId + 1 });
         }
+        if (kind === 'clothes') return T('Equip.slotClothes');
+        if (kind === 'robe') return T('Equip.slotRobe');
+        if (kind === 'armor') return T('Equip.slotArmor');
         return $dataSystem.equipTypes[this.equipSlots()[slotId]] || '';
     };
 
@@ -670,6 +760,11 @@
         if (this._releasingHeld) return;
         this._releasingHeld = true;
         try {
+            if (!this._equips) this._equips = [];
+            const slots = this.equipSlots();
+            while (this._equips.length < slots.length) {
+                this._equips.push(new Game_Item());
+            }
             for (;;) {
                 let changed = false;
                 const equips = this.equips();
@@ -991,7 +1086,20 @@
     // "Random" is deliberately left alone, it may still pick anything.
     const _Game_Actor_bestEquipItem = Game_Actor.prototype.bestEquipItem;
     Game_Actor.prototype.bestEquipItem = function (slotId) {
-        if (!HandSlots.slotKind(this, slotId)) return _Game_Actor_bestEquipItem.call(this, slotId);
+        const kind = HandSlots.slotKind(this, slotId);
+        if (kind !== 'hand' && kind !== 'mouth') {
+            const items = this.slotCandidates(slotId);
+            let bestItem = null;
+            let bestPerformance = -1000;
+            for (const item of items) {
+                const performance = this.calcEquipItemPerformance(item);
+                if (performance > bestPerformance) {
+                    bestPerformance = performance;
+                    bestItem = item;
+                }
+            }
+            return bestItem;
+        }
 
         const items = this.slotCandidates(slotId);
         const trained = items.filter(item => !WeaponProficiency.isUntrained(this, item));

@@ -1781,7 +1781,7 @@
     //   2001        map 169 at 67,33, where the story proper opens
     //   any other   Em's own starting place (her dossier's map)
     //   after 2012  the Omega Tower, the only ground left once Earth is gone
-    const STORY_MODE_SWITCH = 49;
+    const STORY_MODE_SWITCH = 100;
     const STORY_CANON_YEAR = 2001;
     const STORY_EARTH_LOST_YEAR = 2012; // Nibiru: 21 December 2012
 

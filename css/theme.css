@@ -13113,13 +13113,38 @@
     margin-right: 4px;
 }
 
-/* ── ItemSystemEquipment UI additions ── */
+#equip-container .back-button {
+    font-family: var(--font-ui);
+    font-size: 1.05rem;
+    font-weight: bold;
+    text-align: center;
+    text-transform: none;
+    background: var(--bg-secondary-hover);
+    border: 2px solid var(--text-primary-hover);
+    color: var(--text-primary-hover);
+    padding: 7px 22px;
+    min-width: 96px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    user-select: none;
+    transition: 0.2s ease;
+}
 
-/* The header bar uses the shared .page-header-bar + .back-button pair with no
-   scoped overrides. There used to be an #equip-container .back-button block that
-   re-declared everything but font-family, at a larger font-size and thinner
-   border, which made this one Back button read as a different control from every
-   other screen's. */
+#equip-container .back-button:hover,
+#equip-container .back-button.selected,
+#equip-container .back-button.focused,
+#equip-container .back-button:focus-visible {
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    border-color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+}
 
 /* Command bar row (commands + companion tabs side by side) */
 .equip-command-bar {
@@ -13286,15 +13311,14 @@
    the bench itself the wide one, so the pieces are shown as large as the screen
    allows. The crease moves with them. */
 #equip-container .left-page {
-    width: 58%;
+    width: 42%;
 }
 
 #equip-container .book-spread {
-    --spine-x: 58%;
+    --spine-x: 42%;
 }
 
-/* Right page layout. The companion switcher sits above this block in the
-   normal flow, so the content area takes what is left rather than the full
+/* Right page layout. The content area takes what is left rather than the full
    page height, which used to push the weapon preview under the tabs. */
 #equip-container .right-content-area {
     flex: 1 1 auto;
@@ -13306,14 +13330,15 @@
 }
 
 #equip-container .right-page {
-    width: 42%;
+    width: 58%;
     justify-content: flex-start;
 }
 
-.equip-right-content {
+.equip-left-content {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
     gap: 0;
 }
 
@@ -13462,6 +13487,581 @@
 /* Remove-item option name color */
 .inventory-remove-name {
     color: var(--text-text-alt-10);
+}
+
+/* --- Paperdoll & Equipment System (3 Party Members Stacked Rows Layout) --- */
+#equip-container .party-paperdolls-stacked {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+#equip-container .party-paperdolls-stacked .paperdoll-row-item {
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+#equip-container .paperdoll-container {
+    display: flex;
+    flex-direction: column;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 2px 4px;
+    gap: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+#equip-container .paperdoll-container:not(.active-actor) {
+    opacity: 0.42;
+    filter: grayscale(1);
+}
+
+#equip-container .paperdoll-container:not(.active-actor):hover {
+    opacity: 0.72;
+    filter: grayscale(0.3);
+}
+
+#equip-container .paperdoll-container.active-actor {
+    opacity: 1;
+    filter: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* When dragging items, always show all paperdolls and slots at full visibility */
+#equip-container.is-dragging-equip .paperdoll-container,
+#equip-container.is-dragging-equip .paperdoll-container:not(.active-actor) {
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+#equip-container.is-dragging-equip .paperdoll-slot {
+    opacity: 1 !important;
+}
+
+#equip-container .right-page-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 6px;
+    flex: 0 0 auto;
+}
+
+#equip-container .paperdoll-actor-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 6px;
+    background: none;
+    border: none;
+    font-family: var(--font-ui);
+    margin-bottom: 2px;
+}
+
+#equip-container .paperdoll-container.active-actor .paperdoll-actor-name {
+    color: var(--text-primary-hover);
+    text-shadow: 0 0 4px var(--shadow-primary-translucent-30);
+}
+
+#equip-container .paperdoll-actor-name {
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: var(--text-card-dark);
+}
+
+#equip-container .paperdoll-actor-class {
+    color: var(--text-card-medium);
+    font-size: 0.86rem;
+}
+
+#equip-container .paperdoll-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 8px;
+    row-gap: 2px;
+    width: 100%;
+    margin-top: 5px;
+    padding: 3px 6px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#equip-container .paperdoll-stats-grid .inspect-spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-size: 0.76rem;
+    line-height: 1.3;
+    transition: background 0.15s ease;
+}
+
+#equip-container .paperdoll-stats-grid .inspect-spec-row:hover {
+    background: var(--bg-subtle-translucent-10);
+}
+
+#equip-container .paperdoll-stats-grid .inspect-spec-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-card-medium);
+    text-transform: uppercase;
+}
+
+#equip-container .paperdoll-stats-grid .stat-val {
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: var(--text-card-dark);
+}
+
+#equip-container .paperdoll-stats-grid .equip-stat-mod {
+    font-size: 0.68rem;
+    color: var(--text-card-medium);
+    opacity: 0.85;
+}
+
+#equip-container .paperdoll-slots-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    margin-top: 2px;
+}
+
+#equip-container .paperdoll-slots-row {
+    width: 100%;
+}
+
+#equip-container .paperdoll-slots-row--upper,
+#equip-container .paperdoll-body-slots {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    width: 100%;
+}
+
+#equip-container .paperdoll-slot {
+    background: var(--bg-subtle-translucent-5);
+    border: 1px solid var(--border-secondary-hover-translucent-15);
+    border-radius: 4px;
+    padding: 4px 6px;
+    box-sizing: border-box;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    position: relative;
+    min-height: 44px;
+}
+
+#equip-container .paperdoll-slot:hover {
+    background: var(--bg-subtle-translucent-8);
+    border-color: var(--text-primary-hover);
+}
+
+#equip-container .paperdoll-slot.focused {
+    border-color: var(--text-primary-hover);
+    box-shadow: 0 0 6px var(--shadow-primary-translucent-30);
+}
+
+#equip-container .paperdoll-slot.drag-target-valid {
+    border-color: #4ade80 !important;
+    background: rgba(74, 222, 128, 0.08) !important;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.35);
+    animation: pulse-valid 1.2s infinite ease-in-out;
+}
+
+#equip-container .paperdoll-slot.drag-target-invalid {
+    opacity: 0.35;
+    border-color: #ef4444;
+}
+
+#equip-container .paperdoll-slot.drag-over {
+    border-color: #22c55e !important;
+    background: rgba(34, 197, 94, 0.2) !important;
+    transform: scale(1.02);
+}
+
+@keyframes pulse-valid {
+    0%, 100% { box-shadow: 0 0 4px rgba(74, 222, 128, 0.2); }
+    50% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
+}
+
+#equip-container .slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--text-card-medium);
+    margin-bottom: 2px;
+    line-height: 1.15;
+}
+
+#equip-container .slot-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#equip-container .slot-bodypart {
+    font-size: 0.58rem;
+    opacity: 0.7;
+    white-space: nowrap;
+    margin-left: 2px;
+}
+
+#equip-container .slot-body {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+}
+
+#equip-container .slot-empty-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-card-medium);
+    font-size: 0.74rem;
+    font-style: italic;
+    opacity: 0.6;
+}
+
+#equip-container .slot-empty-glyph {
+    font-size: 0.85rem;
+}
+
+#equip-container .slot-equipped-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    position: relative;
+}
+
+#equip-container .slot-item-icon {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+}
+
+#equip-container .slot-item-icon .item-icon {
+    transform: scale(0.75);
+    transform-origin: 0 0;
+}
+
+#equip-container .slot-item-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+#equip-container .slot-item-name {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-card-dark);
+    line-height: 1.2;
+}
+
+#equip-container .slot-item-stat {
+    font-size: 0.68rem;
+    color: var(--text-cost-ok);
+    line-height: 1.1;
+    font-weight: bold;
+}
+
+#equip-container .slot-remove-btn {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--text-card-medium);
+    font-size: 0.80rem;
+    cursor: pointer;
+    padding: 1px 3px;
+    border-radius: 2px;
+    opacity: 0.5;
+    transition: all 0.15s ease;
+}
+
+#equip-container .slot-remove-btn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    opacity: 1;
+}
+
+/* 3D Detail inspection view on the left page */
+#equip-container .paperdoll-detail-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    gap: 8px;
+}
+
+#equip-container .detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
+}
+
+#equip-container .paperdoll-back-btn {
+    background: var(--bg-subtle-translucent-8);
+    border: 1px solid var(--border-secondary-hover-translucent-15);
+    color: var(--text-card-dark);
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+#equip-container .paperdoll-back-btn:hover {
+    background: var(--bg-subtle-translucent-15);
+    color: var(--text-primary-hover);
+}
+
+#equip-container .detail-item-title {
+    font-family: var(--font-ui);
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: var(--text-card-dark);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+#equip-container .detail-preview-box {
+    width: 100%;
+    height: 200px;
+    flex: 0 0 200px;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--bg-white-translucent-25);
+}
+
+#equip-container .detail-preview-box canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+}
+
+#equip-container .detail-actions-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+#equip-container .equip-action-btn {
+    flex: 1;
+    font-family: var(--font-ui);
+    font-size: var(--fs-body, 0.88rem);
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1.5px solid var(--text-primary-hover);
+    background: transparent;
+    color: var(--text-primary-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    box-shadow: none;
+    transition: 0.2s ease;
+}
+
+#equip-container .equip-action-btn:hover,
+#equip-container .equip-action-btn.focused,
+#equip-container .equip-action-btn:focus-visible {
+    background: var(--chip-active-bg, var(--text-primary-hover));
+    color: var(--chip-active-fg, #fff);
+    border-color: var(--chip-active-fg, var(--text-primary-hover));
+    box-shadow: 0 4px 8px var(--shadow-gold-amber-50, rgba(0,0,0,0.25));
+}
+
+#equip-container .equip-action-btn.equip-now-btn {
+    background: var(--text-primary-hover);
+    color: #1a1a1a;
+    border-color: var(--text-primary-hover);
+}
+
+#equip-container .equip-action-btn.equip-now-btn:hover,
+#equip-container .equip-action-btn.equip-now-btn.focused {
+    background: var(--bg-primary-hover, #ffd700);
+    color: #000;
+}
+
+#equip-container .equip-action-btn.unequip-now-btn {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+#equip-container .equip-action-btn.unequip-now-btn:hover,
+#equip-container .equip-action-btn.unequip-now-btn.focused {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* Category & Type Tabs on right page */
+#equip-container .equip-type-tabs {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    flex: 0 0 auto;
+    scrollbar-width: thin;
+}
+
+#equip-container .equip-type-tabs-scroll {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+#equip-container .equip-type-tab {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 3px;
+    background: var(--bg-subtle-translucent-5);
+    border: 1px solid var(--border-secondary-hover-translucent-15);
+    color: var(--text-card-medium);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+#equip-container .equip-type-tab:hover {
+    background: var(--bg-subtle-translucent-12);
+    color: var(--text-card-dark);
+}
+
+#equip-container .equip-type-tab.active {
+    background: var(--bg-primary-translucent-18);
+    border-color: var(--border-primary-translucent-40);
+    color: var(--text-primary-hover);
+    font-weight: bold;
+}
+
+/* Equipment Grid on right page */
+#equip-container .equip-grid-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding-right: 4px;
+}
+
+#equip-container .equip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 6px;
+}
+
+#equip-container .equip-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: var(--bg-subtle-translucent-5);
+    border: 1px solid var(--border-secondary-hover-translucent-15);
+    border-radius: 4px;
+    cursor: grab;
+    transition: all 0.15s ease;
+    user-select: none;
+    position: relative;
+}
+
+#equip-container .equip-card:hover {
+    background: var(--bg-subtle-translucent-10);
+    border-color: var(--text-primary-hover);
+    transform: translateY(-1px);
+}
+
+#equip-container .equip-card.active,
+#equip-container .equip-card.focused {
+    border-color: var(--text-primary-hover);
+    box-shadow: 0 0 6px var(--shadow-primary-translucent-30);
+}
+
+#equip-container .equip-card:active {
+    cursor: grabbing;
+}
+
+#equip-container .equip-card-icon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+}
+
+#equip-container .equip-card-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+#equip-container .equip-card-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+#equip-container .equip-card-name {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.84rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-card-dark);
+}
+
+#equip-container .equip-card-qty {
+    font-size: 0.72rem;
+    color: var(--text-card-medium);
+    opacity: 0.8;
+}
+
+#equip-container .equip-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    font-size: 0.72rem;
+}
+
+#equip-container .equip-card-stat {
+    color: var(--text-cost-ok);
+    font-weight: 600;
 }
 
 /* Extracted from FastTravelSystem.js */

@@ -2156,7 +2156,29 @@ window.GameOptions = GameOptions;
             }
             ConfigManager.mapBattleMode = !!value;
         },
-        'gameplay', 'boolean');
+        'gameplay', 'boolean',
+        (value) => value ? T('GameOptions.battleMode.strategic') : T('GameOptions.battleMode.turn'),
+        function () {
+            if (window.MultiplayerRemote && window.MultiplayerRemote.isMapBattleLocked()) {
+                if (window.ParchmentToast && window.ParchmentToast.show) {
+                    window.ParchmentToast.show(T('Multiplayer.lan.mapBattleLockedByHost'));
+                }
+                return;
+            }
+            let v = !this.getConfigValue('mapBattleMode');
+            this.setConfigValue('mapBattleMode', v);
+        },
+        function () {
+            if (window.MultiplayerRemote && window.MultiplayerRemote.isMapBattleLocked()) {
+                if (window.ParchmentToast && window.ParchmentToast.show) {
+                    window.ParchmentToast.show(T('Multiplayer.lan.mapBattleLockedByHost'));
+                }
+                return;
+            }
+            let v = !this.getConfigValue('mapBattleMode');
+            this.setConfigValue('mapBattleMode', v);
+        }
+    );
 
     //=========================================================================
     // Retro shader options (the low-poly/low-res 3D shader, PSXShader.js)

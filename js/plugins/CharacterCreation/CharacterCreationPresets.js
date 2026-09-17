@@ -2068,6 +2068,34 @@
     }));
     const isCreature = !!(actor._isCreatureActor || isCreatureSlot(actor));
 
+    let gender = (actor.gender && typeof actor.gender === "function") ? actor.gender() : 0;
+    const memberIdx = ($gameParty && typeof $gameParty.members === "function") ? $gameParty.members().indexOf(actor) : -1;
+    if ((!gender || gender === 0) && memberIdx >= 0) {
+      const v = $gameVariables.value(38 + memberIdx);
+      if (v !== undefined && v !== null && v !== "") gender = Number(v) || 0;
+    }
+
+    let jobId = actor._jobId != null ? actor._jobId : 0;
+    if (!jobId && window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getActorProfile === "function") {
+      const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
+      if (prof && prof.jobId) jobId = prof.jobId;
+    }
+
+    const romance = actor._ccRomance || {};
+    let sexualOrientation = romance.sexualKey || "";
+    let romanticOrientation = romance.romanticKey || "";
+    let relStyle = romance.styleKey || "";
+    if (!sexualOrientation && window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getActorProfile === "function") {
+      const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
+      if (prof && prof._orientOverride) {
+        sexualOrientation = prof._orientOverride.sexualKey || "";
+        romanticOrientation = prof._orientOverride.romanticKey || "";
+      }
+      if (prof && prof._relStyleOverride) {
+        relStyle = prof._relStyleOverride;
+      }
+    }
+
     return {
       id: getNextPlayerPresetId(),
       name: actor.name(),
@@ -2091,8 +2119,12 @@
       isCreature,
       characterType: isCreature ? "creature" : "humanoid", // i18n-ignore: preset field value
       archetypes: isCreature ? creatureArchetypeKeys(actor) : undefined,
-      gender: actor.gender ? actor.gender() : 0,
-      jobId: actor._jobId || 0,
+      gender,
+      jobId,
+      sexualOrientation: sexualOrientation || undefined,
+      romanticOrientation: romanticOrientation || undefined,
+      relStyle: relStyle || undefined,
+      romance: Object.keys(romance).length > 0 ? Object.assign({}, romance) : undefined,
       playerMade: true,
       lore: T.has('CharPresets.playerMadeLore') ? T('CharPresets.playerMadeLore') : "",
     };
@@ -2424,13 +2456,32 @@
       actor.setGender(preset.gender);
     }
 
+    if (preset.jobId !== undefined) {
+      actor._jobId = Number(preset.jobId) || 0;
+    }
+
+    if (preset.sexualOrientation || preset.romanticOrientation || preset.relStyle || preset.romance) {
+      actor._ccRomance = Object.assign(
+        {},
+        actor._ccRomance || {},
+        preset.romance || {},
+        {
+          sexualKey: preset.sexualOrientation || (preset.romance && preset.romance.sexualKey) || "hetero",
+          romanticKey: preset.romanticOrientation || (preset.romance && preset.romance.romanticKey) || "hetero",
+          styleKey: preset.relStyle || (preset.romance && preset.romance.styleKey) || "monogamous"
+        }
+      );
+    }
+
     const name = actor.name();
     if (!name || typeof $gameSystem === "undefined" || !$gameSystem) return;
 
     const pending = {};
     if (preset.gender !== undefined) pending.gender = preset.gender;
+    if (preset.jobId !== undefined) pending.jobId = Number(preset.jobId) || 0;
     if (preset.sexualOrientation) pending.sexualKey = preset.sexualOrientation;
     if (preset.romanticOrientation) pending.romanticKey = preset.romanticOrientation;
+    if (preset.relStyle) pending.relStyle = preset.relStyle;
     if (preset.birthDate) {
       const year = parseInt(String(preset.birthDate).slice(0, 4), 10);
       if (!isNaN(year)) pending.birthYear = year;

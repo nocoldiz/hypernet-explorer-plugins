@@ -1406,11 +1406,10 @@
             const state = this.getFile("state");
             if (!state.switches) return;
             for (const id of WORLD_PRIVATE_SWITCHES) {
-                // Story mode mode is the one exception: it was never turned off
-                // again, so a world that once played the story mode has it stored
-                // as true and every legacy savegame would adopt it. A savegame
-                // that says nothing about it is not in the story mode.
-                if (id === STORY_MODE_SWITCH_ID) continue;
+                // Story mode, dossier, vehicle unlock and creature switches are
+                // party-specific: adopting them from world state would bleed one
+                // party's identity or unlocked vehicles into another savegame.
+                if (id === STORY_MODE_SWITCH_ID || (id >= 48 && id <= 51) || id === 58 || id === 64 || (id >= 77 && id <= 79)) continue;
                 const stored = state.switches[id];
                 if (stored === undefined) continue;
                 const current = $gameSwitches._data[id];

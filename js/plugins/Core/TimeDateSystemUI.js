@@ -967,7 +967,6 @@
       <div class="cryo-panel">
         <div class="cryo-panel-head">
           <h3>${t.cryoTravelTitle}</h3>
-          <p class="cryo-panel-sub" id="cryo-sub">${t.cryoTravelSub}</p>
         </div>
         <div class="cryo-clock">
           <div class="cryo-clock-year" id="cryo-year">${start ? start.year : ""}</div>

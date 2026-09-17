@@ -1221,11 +1221,19 @@
     // not empty the purse into a single specialization. Shared by Randomize
     // and by whatever budget Suggested leaves over.
     _randomSpendSpecs(actor, grantCtx, catalog, remaining) {
+      const candidates = (Array.isArray(catalog) ? catalog : []).filter((sp) => {
+        if (!sp) return false;
+        if (window.Specializations && typeof window.Specializations.isImplemented === "function") {
+          return window.Specializations.isImplemented(sp);
+        }
+        return sp.implemented !== false;
+      });
+      if (candidates.length === 0) return remaining;
       let left = remaining;
       let attempts = 0;
       while (left > 0 && attempts < 400) {
         attempts++;
-        const spec = catalog[Math.floor(Math.random() * catalog.length)];
+        const spec = candidates[Math.floor(Math.random() * candidates.length)];
         if (!spec) continue;
         const floor = this._specGrantRankIn(grantCtx, spec);
         const current = Math.max(actor._specTrained[spec.id] || 0, floor);
@@ -1266,26 +1274,29 @@
       this._patchSpecBoard();
     }
 
-    // A one-click starting build for the class actually picked: every
-    // specialization the class has a head start in (Specialization.json
-    // classStart) gets maxed out, richest affinity first, before anything
-    // else is touched. A class with fewer affinities than the budget affords
-    // spends what is left over the same way Randomize does, so the purse is
-    // never left holding points back.
-    onSuggestSpecsForCurrentActor() {
-      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
-      const actor = Scene_CharacterCreation.getCurrentActor();
+    // A starting build for the class actually picked: every specialization the
+    // class has a head start in (Specialization.json classStart) gets maxed out,
+    // richest affinity first, before anything else is touched. A class with fewer
+    // affinities than the budget affords spends what is left over on implemented
+    // specializations only.
+    _applySuggestedSpecs(actor, catalog) {
       if (!actor) return;
-      const catalog = this._specsCatalog();
+      const cat = Array.isArray(catalog) ? catalog : this._specsCatalog();
+      if (!Array.isArray(cat) || cat.length === 0) return;
       actor._specTrained = {};
-      if (!Array.isArray(catalog) || catalog.length === 0) return;
 
       const grantCtx = this._specGrantContext(actor);
-      const className = grantCtx.className;
-      let remaining = CC_SPEC_BUDGET;
+      const className = grantCtx ? grantCtx.className : null;
+      let remaining = typeof CC_SPEC_BUDGET !== "undefined" ? CC_SPEC_BUDGET : 12;
 
-      const affinityOrder = catalog
-        .filter((sp) => className && sp.classStart && sp.classStart[className])
+      const affinityOrder = cat
+        .filter((sp) => {
+          if (!className || !sp.classStart || !sp.classStart[className]) return false;
+          if (window.Specializations && typeof window.Specializations.isImplemented === "function") {
+            return window.Specializations.isImplemented(sp);
+          }
+          return sp.implemented !== false;
+        })
         .sort((a, b) => (b.classStart[className] || 0) - (a.classStart[className] || 0));
 
       affinityOrder.forEach((spec) => {
@@ -1299,9 +1310,16 @@
       });
 
       if (remaining > 0) {
-        this._randomSpendSpecs(actor, grantCtx, catalog, remaining);
+        this._randomSpendSpecs(actor, grantCtx, cat, remaining);
       }
+      actor._specPointsSpent = (typeof CC_SPEC_BUDGET !== "undefined" ? CC_SPEC_BUDGET : 12) - remaining;
+    }
 
+    onSuggestSpecsForCurrentActor() {
+      if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      this._applySuggestedSpecs(actor);
       this._patchSpecBoard();
     }
 
@@ -2439,13 +2457,8 @@
       // wrote down, and the board there only reads it back.
       if (!Scene_CharacterCreation._storyMode &&
           (!actor._specTrained || Object.keys(actor._specTrained).length === 0)) {
-        const catalog = typeof this._specsCatalog === "function" ? this._specsCatalog() : [];
-        if (Array.isArray(catalog) && catalog.length > 0) {
-          actor._specTrained = {};
-          const grantCtx = typeof this._specGrantContext === "function" ? this._specGrantContext(actor) : null;
-          if (typeof this._randomSpendSpecs === "function") {
-            this._randomSpendSpecs(actor, grantCtx, catalog, typeof CC_SPEC_BUDGET !== "undefined" ? CC_SPEC_BUDGET : 12);
-          }
+        if (typeof this._applySuggestedSpecs === "function") {
+          this._applySuggestedSpecs(actor);
         }
       }
       // Ensure gender defaults for organs & hormones
@@ -3991,24 +4004,11 @@
       const specCatalog = this._specsCatalog ? this._specsCatalog() : ((window.Specializations && window.Specializations.list) || []);
       currentActor._specTrained = {};
       if (Array.isArray(specCatalog) && specCatalog.length > 0) {
-        // The class and the traits were rolled a moment ago, so their head
-        // starts are read now and the budget is spent strictly on top of them.
         const specGrantCtx = this._specGrantContext ? this._specGrantContext(currentActor) : null;
-        let specRemaining = CC_SPEC_BUDGET;
-        let attempts = 0;
-        while (specRemaining > 0 && attempts < 400) {
-          attempts++;
-          const spec = specCatalog[Math.floor(Math.random() * specCatalog.length)];
-          if (!spec) continue;
-          const floor = specGrantCtx ? this._specGrantRankIn(specGrantCtx, spec) : 0;
-          const currentRank = Math.max(currentActor._specTrained[spec.id] || 0, floor);
-          if (currentRank < 4) {
-            const add = Math.min(specRemaining, 4 - currentRank, Math.floor(Math.random() * 2) + 1);
-            currentActor._specTrained[spec.id] = currentRank + add;
-            specRemaining -= add;
-          }
+        if (typeof this._randomSpendSpecs === "function") {
+          const left = this._randomSpendSpecs(currentActor, specGrantCtx, specCatalog, CC_SPEC_BUDGET);
+          currentActor._specPointsSpent = CC_SPEC_BUDGET - left;
         }
-        currentActor._specPointsSpent = CC_SPEC_BUDGET - specRemaining;
       }
 
       // Random Bio & Ideology

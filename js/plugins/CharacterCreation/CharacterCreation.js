@@ -4196,7 +4196,7 @@
         // (adding a party member) leave it alone: by then it is the player's own
         // Options > Gameplay choice.
         if (!hasCompletedFirstCreation()) {
-          ConfigManager.mapBattleMode = false;
+          if (ConfigManager.mapBattleMode === undefined) ConfigManager.mapBattleMode = false;
           ConfigManager.save();
         }
         markStepCompleted(STEP.COMBAT_MODE);

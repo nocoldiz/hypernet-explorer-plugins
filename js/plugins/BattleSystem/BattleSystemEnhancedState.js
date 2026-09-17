@@ -1199,12 +1199,82 @@
         });
     };
 
+    const PERSISTENT_STATE_MAX_STEPS = 50;
+
     const _Game_Actor_onBattleEnd = Game_Actor.prototype.onBattleEnd;
     Game_Actor.prototype.onBattleEnd = function() {
         _Game_Actor_onBattleEnd.call(this);
         if (this === $gameParty.members()[0] && $gameSystem.isActor1Died() && $gameSystem.isFullPartyWipe()) {
             this.recoverAll();
         }
+        if (!this._stateSteps) this._stateSteps = {};
+        const deathId = this.deathStateId ? this.deathStateId() : 1;
+        const currentStates = this.states ? this.states() : [];
+        for (const state of currentStates) {
+            if (state && state.id !== deathId) {
+                this._stateSteps[state.id] = PERSISTENT_STATE_MAX_STEPS;
+            }
+        }
     };
+
+    // ========================================================================
+    // 13. Persistent State Step Removal
+    // ========================================================================
+    // States that persist after battle (removeAtBattleEnd is false), except
+    // death, are removed after 50 steps of walking on the map.
+
+    if (typeof Game_Party !== 'undefined' && Game_Party.prototype && Game_Party.prototype.onBattleEnd) {
+        const _Game_Party_onBattleEnd = Game_Party.prototype.onBattleEnd;
+        Game_Party.prototype.onBattleEnd = function() {
+            _Game_Party_onBattleEnd.call(this);
+            const members = this.allMembers ? this.allMembers() : (this.members ? this.members() : []);
+            for (const actor of members) {
+                if (!actor || !actor.states) continue;
+                if (!actor._stateSteps) actor._stateSteps = {};
+                const deathId = actor.deathStateId ? actor.deathStateId() : 1;
+                for (const state of actor.states()) {
+                    if (state && state.id !== deathId) {
+                        actor._stateSteps[state.id] = PERSISTENT_STATE_MAX_STEPS;
+                    }
+                }
+            }
+        };
+    }
+
+    if (typeof Game_Actor !== 'undefined' && Game_Actor.prototype) {
+        if (Game_Actor.prototype.resetStateCounts) {
+            const _Game_Actor_resetStateCounts = Game_Actor.prototype.resetStateCounts;
+            Game_Actor.prototype.resetStateCounts = function(stateId) {
+                _Game_Actor_resetStateCounts.call(this, stateId);
+                const state = typeof $dataStates !== 'undefined' && $dataStates && $dataStates[stateId];
+                const deathId = this.deathStateId ? this.deathStateId() : 1;
+                if (state && !state.removeAtBattleEnd && stateId !== deathId) {
+                    if (!this._stateSteps) this._stateSteps = {};
+                    this._stateSteps[stateId] = PERSISTENT_STATE_MAX_STEPS;
+                }
+            };
+        }
+
+        if (Game_Actor.prototype.updateStateSteps) {
+            const _Game_Actor_updateStateSteps = Game_Actor.prototype.updateStateSteps;
+            Game_Actor.prototype.updateStateSteps = function(state) {
+                if (!state) return;
+                const deathId = this.deathStateId ? this.deathStateId() : 1;
+                if (state.id !== deathId && (!state.removeAtBattleEnd || state.removeByWalking)) {
+                    if (!this._stateSteps) this._stateSteps = {};
+                    if (typeof this._stateSteps[state.id] !== 'number') {
+                        this._stateSteps[state.id] = !state.removeAtBattleEnd ? PERSISTENT_STATE_MAX_STEPS : (state.stepsToRemove || PERSISTENT_STATE_MAX_STEPS);
+                    }
+                    if (this._stateSteps[state.id] > 0) {
+                        if (--this._stateSteps[state.id] === 0) {
+                            this.removeState(state.id);
+                        }
+                    }
+                    return;
+                }
+                _Game_Actor_updateStateSteps.call(this, state);
+            };
+        }
+    }
 
 })();

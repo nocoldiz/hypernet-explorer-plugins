@@ -1909,6 +1909,11 @@
             const want = new Map();
             for (const key of VM.KEYS) {
                 if (key === this._driving) continue;
+                const owns = (window.VehiclePosition && typeof window.VehiclePosition.owns === 'function')
+                    ? window.VehiclePosition.owns(key)
+                    : (window.VehicleSystem && typeof window.VehicleSystem.ownsVehicleKey === 'function'
+                        ? window.VehicleSystem.ownsVehicleKey(key) : true);
+                if (!owns) continue;
                 if (VP.mapId(key) !== WORLD_MAP_ID) continue;
                 const wx = VP.worldX(key), wy = VP.worldY(key);
                 if (!(wx > 0) && !(wy > 0)) continue;

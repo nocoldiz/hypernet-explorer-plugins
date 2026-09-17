@@ -61,7 +61,6 @@
     "cryoNoFunds": "The pod will not run for less than %1 a day.",
     "cryoEraOver": "The pod is dead. Nothing was built to sleep through 2012.",
     "cryoTravelTitle": "Cryogenic suspension",
-    "cryoTravelSub": "Vital signs held. The world outside is not.",
     "cryoWakeSub": "The lid opens.",
     "cryoWakeClean": "Steady",
     "cryoElapsed": "Elapsed: %1",

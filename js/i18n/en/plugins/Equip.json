@@ -43,5 +43,46 @@
     "dex": "DEX",
     "psi": "PSI"
   },
-  "otherGroup": "Other"
+  "otherGroup": "Other",
+  "paperdoll": "Paperdoll",
+  "backToPaperdoll": "Back",
+  "slotHead": "Head",
+  "slotBody": "Body",
+  "slotClothes": "Clothes",
+  "slotRobe": "Robe",
+  "slotArmor": "Armour",
+  "slotGear": "Gear",
+  "tabAll": "All",
+  "tabWeapons": "Weapons",
+  "tabArmor": "Armor",
+  "tabShields": "Shields",
+  "tabHead": "Head",
+  "tabBody": "Body",
+  "tabGear": "Gear",
+  "dropHere": "Drop here",
+  "dragHint": "Drag to slot or click to inspect",
+  "unequip": "Unequip",
+  "equipped": "Equipped",
+  "weaponTypes": {
+    "1": "Light",
+    "2": "Sword",
+    "3": "Heavy",
+    "4": "Axe",
+    "5": "Whip",
+    "6": "Staff",
+    "7": "Bow",
+    "8": "Projectile",
+    "9": "Gun",
+    "10": "Claw",
+    "11": "Glove",
+    "12": "Spear"
+  },
+  "armorTypes": {
+    "1": "Clothes",
+    "2": "Robe",
+    "3": "Light Armor",
+    "4": "Heavy Armor",
+    "5": "Equipment",
+    "6": "Shield"
+  }
 }

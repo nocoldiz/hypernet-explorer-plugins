@@ -39,7 +39,8 @@
     "showFps": "Mostra Contatore FPS",
     "lowModelDetail": "Dettaglio Modelli Ridotto",
     "activeTheme": "Tema Attivo",
-    "mapBattle": "Battaglia sulla Mappa",
+    "mapBattle": "Modalità Battaglia",
+    "battleMode": "Modalità Battaglia",
     "mapStreaming": "Streaming Mappa",
     "shaderStyle": "Stile Shader",
     "renderResolution": "Risoluzione di Render",
@@ -90,6 +91,10 @@
     "Empatia",
     "Markoviano"
   ],
+  "battleMode": {
+    "turn": "Battaglia a Turni",
+    "strategic": "Battaglia Strategica"
+  },
   "enemyBattler": [
     "3D",
     "Sprite",
@@ -103,6 +108,8 @@
   "languageProgress": "{name} tradotto all'1%",
   "settingsInSection": "{count} impostazioni in questa sezione.",
   "desc": {
+    "mapBattleMode": "Presentazione della battaglia. Battaglia a Turni combatte nella classica scena a turni. Battaglia Strategica combatte battaglie tattiche sulla griglia della mappa.",
+    "battleMode": "Presentazione della battaglia. Battaglia a Turni combatte nella classica scena a turni. Battaglia Strategica combatte battaglie tattiche sulla griglia della mappa.",
     "mapStreaming": "Unisce i quadranti procedurali adiacenti in una sola mappa continua da attraversare senza interruzioni. Se disattivato carica un quadrante alla volta e scorre lo schermo verso il successivo quando raggiungi un bordo.",
     "runInBackground": "Mantiene il gioco in esecuzione mentre la finestra non è attiva, così puoi passare ad altre finestre senza metterlo in pausa.",
     "weatherVolume": "Volume dei suoni ambientali esterni: pioggia, temporali, vento e rumori del bioma. Non tocca gli interni.",

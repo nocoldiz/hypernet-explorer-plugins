@@ -179,6 +179,13 @@
     // Set gender variable
     $gameVariables.setValue(genderVar, genderValue);
 
+    // Keep actor's gender field in sync if present
+    const partyActor = ($gameParty && typeof $gameParty.members === 'function')
+      ? $gameParty.members()[memberIndex] : null;
+    if (partyActor && typeof partyActor.setGender === 'function') {
+      partyActor.setGender(genderValue);
+    }
+
     // Set reproduction type based on gender
     switch (genderValue) {
       case GENDER_TYPES.MALE:
