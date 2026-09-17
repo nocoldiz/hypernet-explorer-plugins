@@ -1,3 +1,26 @@
+0.6.25a
+
+Added:
+ - many new magical items
+
+Changed:
+ - renamed plugin command events and added items for unlinked commands
+ - reworked hypertamer to a clear LCD screen
+ - reworked custom main menu layout to be fully controller accessible
+ - simple character creation is one tab per character
+ - disabled right stick scrolling and its controller overlay
+ - update container item generation categories
+ - adventures, eris dates and quests fill party social
+ - hunger bar now appears on top right
+ - party HUD tags only near critical
+ - hide battle commands when inactive instead of fading
+
+Fixed:
+ - party members autowalk and satisfy their needs again
+ - diseases category added to container generator dropdown
+ - right click deselects active element and closes menus
+ - party members no longer share the same assigned starting skills
+
 0.6.24a
 Added:
  - patreon star item to teleport to patreon hatch, exclusive to patreon vault custom scenario

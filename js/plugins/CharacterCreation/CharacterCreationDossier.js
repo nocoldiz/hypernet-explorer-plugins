@@ -587,7 +587,7 @@
             ${profileBoxHtml}
             ${statsHtml}
             ${traitsSectionHtml}
-            ${skillsSectionHtml}
+            ${Scene_CharacterCreation.isSimpleMode() ? "" : skillsSectionHtml}
             ${startingItemsSectionHtml}
           </div>
           <div class="cc-compact-actions cc-col cc-col-gap-2">
@@ -1017,6 +1017,12 @@
       }
       Scene_CharacterCreation._isScenarioMode = true;
       this._step = STEP.ORIGIN;
+      // The scenario cards are a BOARD (.cc-card-option), so the ring steps
+      // over them and the origin window is what walks them. Setting the step
+      // without setting the board up left that window holding the PREVIOUS
+      // step's choices, and a pad could open the page but never pick a
+      // scenario on it: only a mouse could, through the card's own onclick.
+      this.setupStep();
       this._lastStep = -1;
       this._lastIndex = -1;
       this.refreshUIOverlayDOM();
@@ -1024,7 +1030,11 @@
 
     onReturnToPartyDossier() {
       Scene_CharacterCreation._isScenarioMode = false;
-      this._step = STEP.CLASS;
+      // Simple mode has one page per character and the class board is not one
+      // of them any more, so the party is returned to on the sheet itself.
+      this._step = (Scene_CharacterCreation.isSimpleMode() && !Scene_CharacterCreation._storyMode)
+        ? STEP.BIO
+        : STEP.CLASS;
       SoundManager.playCancel();
       this._lastStep = -1;
       this._lastIndex = -1;

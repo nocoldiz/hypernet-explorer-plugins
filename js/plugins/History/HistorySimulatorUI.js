@@ -61,17 +61,8 @@
                 this.popScene();
                 return;
             }
-            if (Input.isTriggered('cancel')) {
-                SoundManager.playCancel();
-                if (window.Scene_CharacterCreation) {
-                    // Resume creation just before character-type selection
-                    // (interruptedStep + 1 lands on the next interactive step).
-                    Scene_CharacterCreation._interruptedStep =
-                        (window.CCSteps && window.CCSteps.WORLD_HISTORY) != null
-                            ? window.CCSteps.WORLD_HISTORY
-                            : 2;
-                }
-                this.popScene();
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                this.onCancel();
                 return;
             }
 
@@ -81,7 +72,9 @@
                 const step = (Input.isTriggered('down') || Input.isRepeated('down')) ? 1
                     : ((Input.isTriggered('up') || Input.isRepeated('up')) ? -1 : 0);
                 if (!step) return;
-                const next = Math.max(0, Math.min((this._diseaseIndex || 0) + step, rows.length - 1));
+                const next = (this._diseaseIndex == null || this._diseaseIndex < 0)
+                    ? (step > 0 ? 0 : rows.length - 1)
+                    : Math.max(0, Math.min(this._diseaseIndex + step, rows.length - 1));
                 if (next === this._diseaseIndex) return;
                 this._diseaseIndex = next;
                 SoundManager.playCursor();
@@ -95,20 +88,59 @@
 
             const currentIndex = this._historyWindow.index();
             if (Input.isTriggered('down') || Input.isRepeated('down')) {
-                const next = Math.min(currentIndex + 1, allEvents.length - 1);
+                const next = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, allEvents.length - 1);
                 if (next !== currentIndex) {
                     SoundManager.playCursor();
                     this._historyWindow.select(next);
                     this.syncUIHistoryState();
                 }
             } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
-                const prev = Math.max(currentIndex - 1, 0);
+                const prev = currentIndex < 0 ? allEvents.length - 1 : Math.max(currentIndex - 1, 0);
                 if (prev !== currentIndex) {
                     SoundManager.playCursor();
                     this._historyWindow.select(prev);
                     this.syncUIHistoryState();
                 }
             }
+        }
+
+        onCancel() {
+            if (this._archiveMode === "diseases") {
+                if (this._diseaseIndex !== -1 && this._diseaseIndex != null) {
+                    this._diseaseIndex = -1;
+                    SoundManager.playCancel();
+                    const box = this._uiContainer || document.getElementById("history-container");
+                    if (box) {
+                        box.querySelectorAll("[data-disease-idx]").forEach(card => card.classList.remove("selected"));
+                        const detail = box.querySelector(".hist-detail");
+                        if (detail) detail.innerHTML = "";
+                    }
+                    return;
+                }
+            } else {
+                if (this._historyWindow.index() >= 0) {
+                    this._historyWindow.select(-1);
+                    this._lastIndex = -1;
+                    SoundManager.playCancel();
+                    const box = this._uiContainer || document.getElementById("history-container");
+                    if (box) {
+                        const prev = this._focusedCard;
+                        if (prev) { prev.classList.remove("selected"); this._focusedCard = null; }
+                        box.querySelectorAll(".hist-row.selected").forEach(c => c.classList.remove("selected"));
+                        const detail = box.querySelector(".hist-detail");
+                        if (detail) detail.innerHTML = "";
+                    }
+                    return;
+                }
+            }
+            SoundManager.playCancel();
+            if (window.Scene_CharacterCreation) {
+                Scene_CharacterCreation._interruptedStep =
+                    (window.CCSteps && window.CCSteps.WORLD_HISTORY) != null
+                        ? window.CCSteps.WORLD_HISTORY
+                        : 2;
+            }
+            this.popScene();
         }
 
         update() {
@@ -274,11 +306,17 @@
         }
 
         initUIHistoryDOM() {
-            if (!document.getElementById("history-container")) {
-                const container = document.createElement("div");
+            let container = document.getElementById("history-container");
+            if (!container) {
+                container = document.createElement("div");
                 container.id = "history-container";
                 document.body.appendChild(container);
             }
+            container.addEventListener('contextmenu', (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onCancel();
+            });
         }
 
         // The archive keeps two shelves. The timeline is the century that was
@@ -451,6 +489,15 @@
             let existingSpread = this._uiSpread;
             if (!existingSpread || !existingSpread.isConnected) {
                 existingSpread = this._uiSpread = container.querySelector(".hist-spread");
+            }
+            if (currentIndex < 0) {
+                if (this._focusedCard) {
+                    this._focusedCard.classList.remove("selected");
+                    this._focusedCard = null;
+                }
+                const detail = container.querySelector(".hist-detail");
+                if (detail) detail.innerHTML = "";
+                return;
             }
             if (this._lastIndex === currentIndex && existingSpread) return;
             this._lastIndex = currentIndex;

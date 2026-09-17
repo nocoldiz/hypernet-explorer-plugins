@@ -451,6 +451,24 @@
         const list = this._el.querySelector('#sl-list');
         if (list) list.scrollTop += ev.deltaY;
       }, { passive: false });
+
+      this._el.addEventListener('contextmenu', ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.onCancel();
+      });
+    }
+
+    onCancel() {
+      if (this._idx !== -1) {
+        this._idx = -1;
+        SoundManager.playCancel();
+        this._updateHighlight();
+        this._updateDetail();
+      } else {
+        SoundManager.playCancel();
+        this.popScene();
+      }
     }
 
     // ── Selection ─────────────────────────────────────────────
@@ -487,16 +505,15 @@
     update() {
       super.update();
       if (Input.isRepeated('down') || Input.isRepeated('s')) {
-        this._select(this._idx + 1, true);
+        this._select(this._idx === -1 ? 0 : this._idx + 1, true);
       } else if (Input.isRepeated('up') || Input.isRepeated('w')) {
-        this._select(this._idx - 1, true);
+        this._select(this._idx === -1 ? this._states.length - 1 : this._idx - 1, true);
       } else if (Input.isRepeated('right') || Input.isRepeated('pagedown')) {
-        this._select(this._idx + PAGE_JUMP, true);
+        this._select(this._idx === -1 ? 0 : this._idx + PAGE_JUMP, true);
       } else if (Input.isRepeated('left') || Input.isRepeated('pageup')) {
-        this._select(this._idx - PAGE_JUMP, true);
-      } else if (Input.isTriggered('cancel')) {
-        SoundManager.playCancel();
-        this.popScene();
+        this._select(this._idx === -1 ? 0 : this._idx - PAGE_JUMP, true);
+      } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+        this.onCancel();
       }
     }
 

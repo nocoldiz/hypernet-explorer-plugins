@@ -153,16 +153,17 @@
     const FLASH_MS = 420;           // damage / healing wash on the HP bar
 
     // Where a meter stops being comfortable and where it becomes an emergency.
-    // Health, food and rest are what a walk can end on, so they speak up early;
-    // hygiene, company and fun only once they are genuinely neglected, or the
-    // cards would carry three chips at all times and say nothing.
+    // A chip is for an emergency and for the short run up to one, nothing
+    // earlier: the warning band sits just above its own critical mark, so a
+    // card carries a chip when something is about to go wrong rather than
+    // standing there all day. WARN_PCT still colours the bars themselves.
     const WARN_PCT = 30;
     const CRIT_PCT = 15;
-    const NEED_WARN = { hunger: 30, sleep: 30, hygiene: 20, social: 20, leisure: 20 };
+    const NEED_WARN = { hunger: 20, sleep: 20, hygiene: 11, social: 11, leisure: 11 };
     const NEED_CRIT = { hunger: 15, sleep: 15, hygiene: 8, social: 8, leisure: 8 };
     // A craving is worth a chip once it is close to the withdrawal state, which
     // AddictionSystem hands out at 100 and only clears again under 80.
-    const CRAVING_WARN = 80;
+    const CRAVING_WARN = 90;
     const CRAVING_CRIT = 95;
 
 
@@ -216,13 +217,14 @@
     //=========================================================================
     // Every meter the HUD is prepared to complain about. Each key names its own
     // wording under PartyHud.alert, in two registers: `<key>` for the warning
-    // and `<key>Critical` for the emergency, so a member reads "Hungry 26%"
-    // first and "Starving 9%" later.
+    // and `<key>Critical` for the emergency, so a member reads "Hungry" first
+    // and "Starving" later.
     const NEED_KEYS = ['hunger', 'sleep', 'hygiene', 'social', 'leisure'];
 
-    const alertText = (key, critical, pct) => {
-        const label = T('PartyHud.alert.' + key + (critical ? 'Critical' : '')); // i18n-ignore: key suffix
-        return label + ' ' + Math.max(0, Math.round(pct)) + '%';
+    // The chip names the condition and nothing else: the exact figure belongs
+    // to the needs menu, and a number on the card only crowded the strip.
+    const alertText = (key, critical) => {
+        return T('PartyHud.alert.' + key + (critical ? 'Critical' : '')); // i18n-ignore: key suffix
     };
 
     // The chips one member has earned, worst first, capped at MAX_ALERTS.
@@ -234,9 +236,11 @@
         if (actor.isDead()) {
             out.push({ key: 'dead', text: T('PartyHud.alert.dead'), critical: true, sort: -1 });
         } else {
+            // Only the emergency register earns a chip: the health bar already
+            // says how hurt a member is, so the warning one stays silent.
             const hpPct = actor.mhp > 0 ? (actor.hp / actor.mhp) * 100 : 100;
-            if (hpPct <= WARN_PCT) {
-                out.push({ key: 'hp', text: alertText('hp', hpPct <= CRIT_PCT, hpPct), critical: hpPct <= CRIT_PCT, sort: hpPct });
+            if (hpPct <= CRIT_PCT) {
+                out.push({ key: 'hp', text: alertText('hp', true), critical: true, sort: hpPct });
             }
         }
 
@@ -245,7 +249,7 @@
             if (pct === null || pct === undefined) continue;
             if (pct > NEED_WARN[key]) continue;
             const critical = pct <= NEED_CRIT[key];
-            out.push({ key, text: alertText(key, critical, pct), critical, sort: pct });
+            out.push({ key, text: alertText(key, critical), critical, sort: pct });
         }
 
         // Being ill is a standing condition, so it keeps a chip for as long as

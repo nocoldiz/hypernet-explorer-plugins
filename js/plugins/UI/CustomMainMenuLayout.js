@@ -209,6 +209,7 @@
         help: 186,
         options: 83,
         tools: 216,
+        locked: 281,
         dynamics: 196,
         sandbox: 245,
         multiplayer: 246,
@@ -382,7 +383,27 @@
             this.cols = cols;
             this.active = true;
             this.buildRows();
+            this.bindHover();
             this.updateFocus();
+        }
+
+        // The mouse pointer and the pad cursor are the same cursor: pointing at a
+        // tile moves the focus ring onto it, so the gold hairline is never in two
+        // places at once and carrying on with the stick resumes from where the
+        // hand left off. The listener is added once per element per activate()
+        // (activate() re-reads the DOM, so the old nodes go with it).
+        static bindHover() {
+            this.activeElements.forEach(el => {
+                if (el._dndHoverBound) return;
+                el._dndHoverBound = true;
+                el.addEventListener('mouseenter', () => {
+                    if (!this.active) return;
+                    const at = this.activeElements.indexOf(el);
+                    if (at < 0 || at === this.focusIndex) return;
+                    this.focusIndex = at;
+                    this.updateFocus(true);
+                });
+            });
         }
 
         // The commands pockets are split into logical groups of any size, so a tile's
@@ -396,15 +417,29 @@
             const boxes = this.activeElements.map(el => el.getBoundingClientRect());
             if (!boxes.length || boxes.every(b => !b.width && !b.height)) return;
 
+            // The spread is two pages side by side, and a tools tile on the right
+            // page often sits at the same height as a pockets tile on the left.
+            // Bucketing on `top` alone would weld them into one row, so the page a
+            // tile lives on is part of its row identity: rows belong to a pane, and
+            // up/down walks one pane only. Crossing is left/right's job (moveColumn).
             const rows = [];
             boxes.forEach((box, i) => {
-                const row = rows.find(r => Math.abs(r.top - box.top) <= Math.max(4, box.height / 2));
+                const pane = this.paneOf(this.activeElements[i]);
+                const row = rows.find(r => r.pane === pane
+                    && Math.abs(r.top - box.top) <= Math.max(4, box.height / 2));
                 if (row) row.items.push({ index: i, left: box.left });
-                else rows.push({ top: box.top, items: [{ index: i, left: box.left }] });
+                else rows.push({ top: box.top, pane, items: [{ index: i, left: box.left }] });
             });
-            rows.sort((a, b) => a.top - b.top);
+            rows.sort((a, b) => (a.pane === b.pane ? a.top - b.top : (a.pane === 'left' ? -1 : 1)));
             rows.forEach(r => r.items.sort((a, b) => a.left - b.left));
             this._rows = rows;
+        }
+
+        // Which page of the spread a tile is drawn on. Anything outside a
+        // .right-page (the pockets grid, the travel page, a list page) counts as
+        // the left page, so a spread with no right page navigates as it always did.
+        static paneOf(el) {
+            return (el && el.closest && el.closest('.right-page')) ? 'right' : 'left';
         }
 
         // Position of the focused tile as [row, column] within this._rows.
@@ -424,12 +459,38 @@
             if (!pos) return false;
             const [row, col] = pos;
             const left = this._rows[row].items[col].left;
-            const target = this._rows[(row + delta + this._rows.length) % this._rows.length];
+            // Up and down stay on the page the cursor is already on, and wrap
+            // around that page's own first and last row.
+            const pane = this._rows[row].pane;
+            const inPane = this._rows.map((r, i) => (r.pane === pane ? i : -1)).filter(i => i >= 0);
+            const at = inPane.indexOf(row);
+            const target = this._rows[inPane[(at + delta + inPane.length) % inPane.length]];
             let best = target.items[0];
             target.items.forEach(it => {
                 if (Math.abs(it.left - left) < Math.abs(best.left - left)) best = it;
             });
             this.focusIndex = best.index;
+            return true;
+        }
+
+        // Step onto the other page, landing on the row nearest the height the
+        // cursor left at: right off the last column of the pockets grid reaches
+        // the tools on the right page, left off their first column comes back.
+        static crossPane(delta) {
+            const pos = this.focusPosition();
+            if (!pos) return false;
+            const [row] = pos;
+            const from = this._rows[row];
+            const wanted = delta > 0 ? 'right' : 'left';
+            if (from.pane === wanted) return false;
+            const candidates = this._rows.filter(r => r.pane === wanted);
+            if (!candidates.length) return false;
+            let best = candidates[0];
+            candidates.forEach(r => {
+                if (Math.abs(r.top - from.top) < Math.abs(best.top - from.top)) best = r;
+            });
+            const landing = delta > 0 ? best.items[0] : best.items[best.items.length - 1];
+            this.focusIndex = landing.index;
             return true;
         }
 
@@ -439,8 +500,13 @@
             if (!pos) return false;
             const [row, col] = pos;
             const next = this._rows[row].items[col + delta];
-            if (!next) return true;
-            this.focusIndex = next.index;
+            if (next) {
+                this.focusIndex = next.index;
+                return true;
+            }
+            // Off the end of the row: the pages are side by side, so this is the
+            // step onto the other one rather than a dead end.
+            this.crossPane(delta);
             return true;
         }
 
@@ -560,11 +626,13 @@
             }
         }
 
-        static updateFocus() {
+        static updateFocus(fromPointer = false) {
             this.activeElements.forEach((el, idx) => {
                 if (idx === this.focusIndex) {
                     el.classList.add('selected');
-                    el.scrollIntoView({ block: 'nearest' });
+                    // The pointer is already on the tile it just focused, so
+                    // scrolling to it would shove the page out from under the hand.
+                    if (!fromPointer) el.scrollIntoView({ block: 'nearest' });
                 } else {
                     el.classList.remove('selected');
                 }
@@ -3173,6 +3241,11 @@
                         atlasHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.factions'), "factions"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.research'), "research"),
+                        // The pocket that is not there yet. It squares the archive
+                        // group off against the grid's columns so the rows below it
+                        // are not shifted out of line, and it is inert: the cursor
+                        // reaches it, nothing opens.
+                        this.generateUILockedCommandItemHTML(),
                     ],
                     // Party: the people and creatures travelling with you
                     [
@@ -3372,6 +3445,18 @@
                 <span>${label}</span>
                 ${pointsAlert}
                 ${hotkey}
+            </div>
+        `;
+    };
+
+    // A pocket the party has not found. It is focusable so the pad cursor walks
+    // the grid without a hole in it (and so right off it still reaches the tools
+    // on the facing page), and it is disabled so picking it does nothing.
+    Scene_Menu.prototype.generateUILockedCommandItemHTML = function () {
+        return `
+            <div class="command-item focusable is-disabled" data-symbol="locked">
+                <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.locked)}"></span>
+                <span>${T('MainMenu.cmd.locked')}</span>
             </div>
         `;
     };
@@ -4076,20 +4161,16 @@
         if (VW && VW.isActive && VW.isActive()) return;
         if ($gameTemp._sleepMenuOpen) return; // the wait/rest popup owns the keyboard
 
-        // THE TWO STICK CLICKS, which are the only buttons on the pad the map
-        // had nothing on: L3 is the vehicles (V) and R3 is the build mode (B),
-        // the two things a player reaches for out in the field often enough to
-        // want without going through the menu first. R3 used to fold the map
-        // legend; that is a tap of L2 now (Map/MapLegend.js).
-        //
-        // Clicking a stick has no Input.gamepadMapper action on it, so both are
-        // polled raw through AnalogStickInput the same way Map/WorldMap.js polls
-        // Start for the map sheet; binding them in the mapper would make every
+        // FIELD PAD HOTKEYS: L3 is vehicles (V), R3 is build mode (B), and
+        // START opens the sleep/wait menu (R). None of these has an
+        // Input.gamepadMapper action of its own, so they are polled raw through
+        // AnalogStickInput; binding them in the mapper would make every
         // key sharing that action fire twice. Map/MapLegend.js draws them as the
         // pad chips of their rows.
         const STICK_HOTKEYS = [
             ["L3", "vehicles"],
             ["R3", "build"],
+            ["START", "sleep_menu"],
         ];
         const stick = window.AnalogStickInput;
         if (stick && stick.isButtonTriggered && stick.BUTTON) {

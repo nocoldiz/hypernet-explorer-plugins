@@ -36,6 +36,7 @@
   "crime": "A tuo carico: {crime}.",
   "augment": "Installato su {who}: {name}.",
   "needs": "Tutti tornano rimessi a nuovo: {list}.",
+  "company": "{Un pomeriggio vissuto insieme. Nessuno si sente più solo.|Qualunque altra cosa sia stata, è stata compagnia.|La squadra torna più unita di quando è partita.}",
   "gave": "Consegnati {qty}x {name}",
   "skill": "{who} ha imparato {name}",
   "stateGained": "{{who} ne esce {state}.|{state}: {who}.|Ora {who} è {state}.|Tornata così: {who}, {state}.}",

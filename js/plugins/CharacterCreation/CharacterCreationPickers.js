@@ -308,7 +308,7 @@
       // the whole back half of the plan in one column, not zigzagging
       // between two lists that interleave low and high levels.
       const sortedLearnings = (c.learnings || [])
-        .filter((l) => l.level > 1)
+        .filter((l) => l.level >= 1)
         .sort((a, b) => a.level - b.level);
       const roadmapRowHtml = (l) => {
         const sk = $dataSkills[l.skillId];
@@ -554,10 +554,16 @@
       // and so the weapons the new body holds are counted again.
       if (this._step === STEP.BIO) {
         const leftPage = container.querySelector(".cc-page-left");
-        if (leftPage) leftPage.outerHTML = this._bioPickerLeftHtml();
+        if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+        const rightPage = container.querySelector(".cc-page-right");
+        if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
       }
-      const sidebar = container.querySelector(".cc-compact-sidebar");
-      if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
+      const sidebarSlot = container.querySelector(".cc-sidebar-slot");
+      if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+      else {
+        const sidebar = container.querySelector(".cc-compact-sidebar");
+        if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
+      }
       this._refreshTopFolderTabs();
     }
 

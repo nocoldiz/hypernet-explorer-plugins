@@ -535,6 +535,76 @@
     return { ok: true, fee, message };
   }
 
+  /**
+   * Post a letter nobody wrote and nobody paid for: a delivery the WORLD makes,
+   * to a party that may not even be the one playing. No sender party, no
+   * postage, no stock check - the goods are conjured into the parcel rather
+   * than taken out of somebody's pack, which is the whole difference from
+   * send() above.
+   *
+   * letter: { world, partyId, from, subject, body, gold, items }
+   * `from` is a plain label for the sender line. Answers { ok, message }.
+   *
+   * Idempotent on `letter.once`: a key stamped on the message and on the
+   * recipient's box, so the same delivery made twice - two map loads, a reload -
+   * lands once. This is what the patron vault's vessel is posted with.
+   */
+  function post(letter) {
+    const world = letter && letter.world;
+    const toId = letter && letter.partyId;
+    if (!world || !toId) return { ok: false, error: T("Mail.error.noRecipient") };
+    const data = readMail(world);
+    if (!Array.isArray(data.inbox[toId])) data.inbox[toId] = [];
+    const once = letter.once ? String(letter.once) : null;
+    if (once && data.inbox[toId].some((m) => m && m.once === once)) {
+      return { ok: false, already: true };
+    }
+    const items = sanitizeItems(letter.items);
+    const gold = Math.max(0, Math.floor(Number(letter.gold) || 0));
+    const recipient = findCard(world, toId);
+    const id = "M" + (data.nextId++) + "-" + Date.now().toString(36);
+    const message = {
+      id,
+      once,
+      from: {
+        world,
+        partyId: null,
+        name: String(letter.from || T("Mail.unknownParty")),
+        label: String(letter.from || T("Mail.unknownParty"))
+      },
+      to: { world, partyId: toId, label: partyLabel(recipient) },
+      subject: String(letter.subject || "").slice(0, 120).trim() || T("Mail.noSubject"),
+      body: String(letter.body || "").slice(0, 8000),
+      gold,
+      items,
+      fee: 0,
+      delay: { days: 0, months: 0, years: 0 },
+      sentAt: Date.now(),
+      sentMinute: worldClock(world),
+      // Already on the doormat: a world's own delivery does not travel.
+      deliverAt: worldClock(world),
+      read: false,
+      announced: false,
+      collected: false
+    };
+    data.inbox[toId].push(message);
+    if (!writeMail(world, data)) {
+      data.inbox[toId].pop();
+      data.nextId--;
+      return { ok: false, error: T("Mail.error.notPosted") };
+    }
+    return { ok: true, message };
+  }
+
+  /** Every party this world has written into its address book. */
+  function partiesIn(world) {
+    if (!world) return [];
+    const data = readMail(world);
+    return Object.keys(data.parties)
+      .map((id) => data.parties[id])
+      .filter((card) => card && card.id);
+  }
+
   function ownLetters() {
     const world = activeWorld();
     if (!world || !hasParty()) return { world: null, data: null, list: [] };
@@ -640,6 +710,8 @@
     itemKind,
     isMailable,
     send,
+    post,
+    partiesIn,
     inbox,
     pendingCount,
     unreadCount,
@@ -1648,7 +1720,8 @@
       if (window.ParchmentToast && window.ParchmentToast.show) {
         window.ParchmentToast.show(text, {
           duration: bad ? 220 : 170,
-          severity: bad ? "warning" : "good"
+          severity: bad ? "warning" : "good",
+          category: "mail"
         });
       }
     }
@@ -1694,7 +1767,7 @@
       const text = arrivals.length === 1
         ? T("Mail.toast.arrivedOne", { subject: arrivals[0].subject })
         : T.n("Mail.toast.arrivedMany", arrivals.length);
-      window.ParchmentToast.show(text, { duration: 300, severity: "good" });
+      window.ParchmentToast.show(text, { duration: 300, severity: "good", category: "mail" });
     }
   };
 

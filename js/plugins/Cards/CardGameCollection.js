@@ -120,6 +120,7 @@
       this._actionIndex = 0;
       this._spriteFrame = 1;
       this._spriteTimer = 0;
+      this._leaving = false;
       // A per-card art seed, stable while the menu is open and re-rollable, so
       // a stack shows ONE representative specimen rather than flickering.
       this._seeds = {};
@@ -291,22 +292,53 @@
           if (window.CardDuel) { SoundManager.playOk(); window.CardDuel.startPractice(); return; }
           break;
         case "close":
-          SoundManager.playCancel();
-          this.popScene();
+          this.close();
           return;
       }
       this.render();
     }
 
+    close() {
+      if (this._leaving) return;
+      this._leaving = true;
+      SoundManager.playCancel();
+      this.popScene();
+    }
+
     //-------------------------------------------------------------------------
     // Input
-    //-------------------------------------------------------------------------
+    deselect() {
+      this._index = -1;
+      this._area = null;
+      SoundManager.playCancel();
+      const container = document.getElementById("cardcol-container");
+      if (!container) return;
+      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el) => {
+        el.classList.remove("selected");
+      });
+      container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el) => {
+        el.classList.remove("selected");
+      });
+      this.renderDossier(container);
+    }
+
+    onCancelAction() {
+      if (this._area === "actions") {
+        this._area = "grid";
+        SoundManager.playCancel();
+        this.render();
+        return;
+      }
+      if (this._index >= 0) {
+        this.deselect();
+        return;
+      }
+      this.close();
+    }
 
     updateInput() {
-      if (Input.isTriggered("cancel")) {
-        if (this._area !== "grid") { this._area = "grid"; SoundManager.playCancel(); this.render(); return; }
-        SoundManager.playCancel();
-        this.popScene();
+      if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
+        this.onCancelAction();
         return;
       }
       if (Input.isTriggered("pageup") || Input.isTriggered("pagedown")) {
@@ -379,7 +411,8 @@
     // already takes (selectAt).
     moveIndex(delta, length) {
       if (!length) return;
-      const next = Math.max(0, Math.min(length - 1, this._index + delta));
+      const base = this._index < 0 ? (delta < 0 ? length : -1) : this._index;
+      const next = Math.max(0, Math.min(length - 1, base + delta));
       SoundManager.playCursor();
       if (next === this._index && this._area === "grid") return;
       this._index = next;
@@ -428,7 +461,12 @@
       // The way out stands where every other screen keeps it: first child of
       // the header bar. Cancel does the same thing from anywhere on the page.
       const back = container.querySelector("#cgc-back");
-      if (back) back.addEventListener("click", () => this.runAction("close"));
+      if (back) back.addEventListener("click", () => this.close());
+      container.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onCancelAction();
+      });
     }
 
     render() {
@@ -480,8 +518,7 @@
       // A shelf entry is the same card face the duel deals into the hand
       // (Cards/CardGameDuel.js renderHand): the rarity frame, the head with
       // how many are owned and what kind it is, the name, the art well and the
-      // five figures under it. An effect prints its rule where a creature
-      // prints its numbers.
+      // five figures under it.
       const isDeckTab = FILTERS[this._filter] === "deck";
       grid.innerHTML = keys.map((key, i) => {
         const qty = isDeckTab ? this.inDeck(key) : CGx.countOf(key);
@@ -493,7 +530,7 @@
             : CGx.isWeapon(key) ? T("CardGame.type.weapon") : T("CardGame.type.armor");
         const stats = CGx.statsFor(key);
         const foot = effect
-          ? `<div class="cgc-fxrule">${escapeHtml(CGx.cardText(key, this.seedFor(key)))}</div>`
+          ? ""
           : `<div class="cgc-cstats">${CGx.STATS.map((id) =>
             `<div>${escapeHtml(CGx.statLabel(id))}<b>${stats[id]}</b></div>`).join("")}</div>`;
         return `<div class="cgc-cell rarity--${rare}${i === this._index ? " selected" : ""}${spent}" data-i="${i}" style="--d:${Math.min(i, 40)}">
@@ -689,7 +726,7 @@
     update() {
       super.update();
       if (Input.isTriggered("ok") || TouchInput.isTriggered()) this.advance();
-      else if (Input.isTriggered("cancel")) {
+      else if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
         if (this._stage === "sealed") this.advance(); else this.finish();
       }
     }
@@ -727,6 +764,11 @@
         <div class="cp-row" id="cp-row" style="display:none"></div>
         <div class="cp-hint" id="cp-hint"></div>`;
       container.querySelector("#cp-pack").addEventListener("click", () => this.advance());
+      container.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.finish();
+      });
     }
 
     rip() {

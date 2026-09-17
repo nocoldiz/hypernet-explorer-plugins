@@ -504,6 +504,8 @@
         // "look at the rest of it", doing nothing on a menu.
         //
         // Same pane, same rules, polled once a frame instead of once a notch.
+        // The right stick does not scroll panes (see updateScroll).
+        STICK_SCROLL_ENABLED: false,
         STICK_SPEED: 26,      // pixels a frame at a fully pushed stick
         STICK_DEADZONE: 0.15, // on top of the helper's own radial deadzone
         STEP_WAIT: 20,        // frames before a held push starts repeating
@@ -599,6 +601,11 @@
         // somebody else has already asked, so one push never does two things
         // at once.
         updateScroll() {
+            // Right-stick pane scrolling is off. It fought with the screens that
+            // read the stick for themselves and with the rail chips drawn over
+            // the pane, so the stick no longer scrolls anything: the wheel and
+            // the pane's own scrollbar are the whole answer.
+            if (this.STICK_SCROLL_ENABLED !== true) return;
             const pads = window.AnalogStickInput;
             if (!pads || typeof pads.rightY !== 'function') return;
             if (typeof pads.rightStickReadsThisFrame === 'function' &&

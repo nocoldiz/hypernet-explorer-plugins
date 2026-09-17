@@ -170,6 +170,11 @@
             this._container.id = 'brewery-container';
             this._container.style.opacity = '0';
             this._container.style.transition = 'opacity 0.22s ease-out';
+            this._container.addEventListener('contextmenu', (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onCancelAction();
+            });
             document.body.appendChild(this._container);
 
             this.refreshUI();
@@ -265,25 +270,37 @@
             }
         }
 
-        updateBreweryInput() {
-            const count = this._recipes.length;
-            if (Input.isTriggered('cancel')) {
+        onCancelAction() {
+            if (this._selectedIndex !== -1 && this._selectedIndex != null) {
+                this._selectedIndex = -1;
+                SoundManager.playCancel();
+                this.refreshUI();
+            } else {
                 SoundManager.playCancel();
                 this.popScene();
+            }
+        }
+
+        updateBreweryInput() {
+            const count = this._recipes.length;
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                this.onCancelAction();
             } else if (Input.isRepeated('up')) {
                 if (count > 0) {
-                    this._selectedIndex = (this._selectedIndex - 1 + count) % count;
+                    this._selectedIndex = this._selectedIndex === -1 ? count - 1 : (this._selectedIndex - 1 + count) % count;
                     SoundManager.playCursor();
                     this.refreshUI();
                 }
             } else if (Input.isRepeated('down')) {
                 if (count > 0) {
-                    this._selectedIndex = (this._selectedIndex + 1) % count;
+                    this._selectedIndex = this._selectedIndex === -1 ? 0 : (this._selectedIndex + 1) % count;
                     SoundManager.playCursor();
                     this.refreshUI();
                 }
             } else if (Input.isTriggered('ok')) {
-                this.executeAction();
+                if (this._selectedIndex !== -1) {
+                    this.executeAction();
+                }
             }
         }
 
@@ -418,9 +435,10 @@
 
             // Ingredient availability check (only when barrel is empty)
             let ingredientCheckHTML = '';
-            if (!savedData && recipes.length > 0) {
+            if (!savedData && recipes.length > 0 && this._selectedIndex >= 0) {
                 const sel    = recipes[this._selectedIndex];
-                const checks = sel.ingredients.map(ing => {
+                if (sel) {
+                    const checks = sel.ingredients.map(ing => {
                     const item = $dataItems[ing.item_id];
                     if (!item) return '';
                     const have   = $gameParty.numItems(item);
@@ -429,11 +447,12 @@
                     const mkIcon = ok ? ic(87, 14) : ic(12, 14);
                     return `<div class="brewery-ingredient-check" style="color:${color}">${mkIcon} ${item.name} ×${ing.quantity} <span style="opacity:0.65; font-size:0.903rem">(have ${have})</span></div>`;
                 }).join('');
-                ingredientCheckHTML = `
-                    <div class="apiary-section" style="margin-top:14px">
-                        <div class="apiary-section-title">${ic(105, 14)} ${T('Brewing.ui.ingredients')}</div>
-                        ${checks}
-                    </div>`;
+                    ingredientCheckHTML = `
+                        <div class="apiary-section" style="margin-top:14px">
+                            <div class="apiary-section-title">${ic(105, 14)} ${T('Brewing.ui.ingredients')}</div>
+                            ${checks}
+                        </div>`;
+                }
             }
 
             // ── Right page: barrel status ──────────────────────────────────────

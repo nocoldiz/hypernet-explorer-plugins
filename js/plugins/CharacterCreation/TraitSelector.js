@@ -625,6 +625,16 @@
         el.addEventListener("click", () => this.onTabClick(el.dataset.category));
       });
 
+      this._dndContainer.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this._confirmYes !== null) {
+          this.answerPrompt(false);
+        } else {
+          this.releaseLast();
+        }
+      });
+
       this.buildButtons(q("#ts-buttons"));
       this.syncOverlay(true);
     }
@@ -1084,8 +1094,10 @@
     releaseLast() {
       if (this._selectedTraits.length > 0) {
         this.releaseTrait(this._selectedTraits[this._selectedTraits.length - 1]);
+      } else if (this._selectedDiseases.length > 0) {
+        this.releaseTrait(this._selectedDiseases[this._selectedDiseases.length - 1]);
       } else {
-        SoundManager.playBuzzer();
+        this.onTraitsBack();
       }
     }
 
@@ -1181,7 +1193,7 @@
           this._confirmYes = !this._confirmYes;
         } else if (Input.isTriggered("ok")) {
           this.answerPrompt(this._confirmYes);
-        } else if (Input.isTriggered("cancel")) {
+        } else if (Input.isTriggered("cancel") || (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
           this.answerPrompt(false);
         }
         return;
@@ -1231,7 +1243,7 @@
         } else {
           this.toggleTrait(trait);
         }
-      } else if (Input.isTriggered("cancel")) {
+      } else if (Input.isTriggered("cancel") || (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
         this.releaseLast();
       }
 

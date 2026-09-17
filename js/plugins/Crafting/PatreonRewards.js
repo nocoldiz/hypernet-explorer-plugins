@@ -123,6 +123,11 @@
  *                                                   stamps the hatch (hooked on
  *                                                   DataManager.loadMapData,
  *                                                   after the prefab pass)
+ *   window.PatreonRewards.claimSquare(x, y)         the world's own claim, written
+ *                                                   when somebody proves the
+ *                                                   coordinates; posts the
+ *                                                   vessel to every party in it
+ *   window.PatreonRewards.claimedSquare()           that claim, or null
  *   window.PatreonRewards.ownHatch()                this savegame's own hatch
  *   window.PatreonRewards.goToOwnHatch()            put the party back on it
  *                                                   (plugin command goToHatch)
@@ -165,6 +170,17 @@
   // leaving the vault back onto the hatch tile.
   // i18n-ignore-start  map ids
   const VAULT_FLOORS = [664, 666, 662, 660, 659, 668, 655, 647, 1135];
+
+  // The vessel: the one item that carries a party back down to the vault. It is
+  // granted per WORLD, not per party - proving the coordinates once is a fact
+  // about the world, so every party that world ever raises is handed one,
+  // whatever scenario it began in.
+  const VESSEL_ITEM_ID = 174;
+  // Where the proof is kept: a field of the world's own state file, so it
+  // outlives the savegame that proved it and is shared by every savegame of
+  // that world (WorldManager, save/worlds/<name>/state.json).
+  const WORLD_FILE = "state";        // i18n-ignore  world data file key
+  const WORLD_FIELD = "patronVault"; // i18n-ignore  field in it
   // Where the party lands on Floor -1, coming down the hatch.
   const VAULT_ENTRY = { x: 15, y: 18, direction: 2 };
   // i18n-ignore-end
@@ -333,6 +349,115 @@
   }
 
   // ==========================================================================
+  // The world's own claim
+  // ==========================================================================
+  // Typing the coordinates is not something a party does, it is something that
+  // happens to a WORLD: the patron proved, once, which square is theirs. The
+  // proof is written into the world folder, so a second party raised in that
+  // world - any scenario, any savegame - starts knowing where the vault is and
+  // is handed the vessel that opens it.
+  function claimedSquare() {
+    const WM = window.WorldManager;
+    if (!WM || typeof WM.getField !== "function") return null;
+    if (WM.hasActiveWorld && !WM.hasActiveWorld()) return null;
+    try {
+      const rec = WM.getField(WORLD_FILE, WORLD_FIELD);
+      if (!rec || !Number.isFinite(rec.x) || !Number.isFinite(rec.y)) return null;
+      return Object.assign({}, rec);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Write the square down as this world's, from the coordinates somebody has
+   * just proved they knew. Handed the world square; the hatch tile and the
+   * owner are read off the roster, which is the same lookup that proved them.
+   * Silently does nothing where no world is active (a playtest straight into a
+   * map), leaving the savegame's own record to carry it.
+   */
+  function claimSquare(worldX, worldY) {
+    const rec = patronRecordAtWorld(worldX, worldY);
+    if (!rec) return false;
+    const WM = window.WorldManager;
+    if (!WM || typeof WM.setField !== "function") return false;
+    if (WM.hasActiveWorld && !WM.hasActiveWorld()) return false;
+    try {
+      WM.setField(WORLD_FILE, WORLD_FIELD, {
+        id: rec.patron.id, x: worldX, y: worldY,
+        mapX: rec.mapCoordinates[0], mapY: rec.mapCoordinates[1],
+      });
+    } catch (e) {
+      return false;
+    }
+    postVesselToExistingParties(rec.patron);
+    // Unlocked on the spot. The party standing there is handed the vessel the
+    // moment the coordinates prove out - no scenario has to be chosen, and
+    // backing out of the sheet afterwards takes nothing back.
+    grantVessel();
+    return true;
+  }
+
+  /**
+   * The parties already living in this world do not reload their character
+   * sheet, so they are sent the vessel by POST instead: one parcel each, from
+   * the vault itself, with the item enclosed and nothing to pay. Stamped with a
+   * key so the same parcel is never delivered twice, whatever reopens this.
+   */
+  function postVesselToExistingParties(patron) {
+    const MS = window.MailSystem;
+    const WM = window.WorldManager;
+    if (!MS || typeof MS.post !== "function" || typeof MS.partiesIn !== "function") return 0;
+    const world = WM && WM.activeWorldName;
+    if (!world) return 0;
+    const item = $dataItems && $dataItems[VESSEL_ITEM_ID];
+    if (!item) return 0;
+    let sent = 0;
+    for (const card of MS.partiesIn(world)) {
+      const res = MS.post({
+        world,
+        partyId: card.id,
+        from: T('Patron.vesselSender'),
+        subject: T('Patron.vesselSubject'),
+        body: T('Patron.vesselBody', { patron: patron ? patron.name : "" }),
+        items: [{ kind: "item", id: VESSEL_ITEM_ID, count: 1 }], // i18n-ignore: item kind
+        once: "patronvessel", // i18n-ignore: delivery key
+      });
+      if (res && res.ok) sent++;
+    }
+    return sent;
+  }
+
+  /**
+   * Hand this party the vessel, if the world has a claim and they have none.
+   * Idempotent: a party that already carries one (the vault origin's own
+   * loadout hands it over on the spot) is not given a second.
+   */
+  function grantVessel() {
+    if (!claimedSquare()) return false;
+    if (typeof $gameParty === "undefined" || !$gameParty) return false;
+    const item = $dataItems && $dataItems[VESSEL_ITEM_ID];
+    if (!item) return false;
+    if ($gameParty.numItems(item) > 0) return false;
+    $gameParty.gainItem(item, 1);
+    return true;
+  }
+
+  // Every party that walks a map in a world whose coordinates have been proved
+  // is handed the vessel, whatever scenario raised it. Checked on map load
+  // rather than at party creation so that a world claimed by a party that
+  // already exists reaches the parties already in it too.
+  const _Scene_Map_onMapLoaded_vessel = Scene_Map.prototype.onMapLoaded;
+  Scene_Map.prototype.onMapLoaded = function () {
+    _Scene_Map_onMapLoaded_vessel.call(this);
+    try {
+      grantVessel();
+    } catch (e) {
+      warn("the vessel could not be handed over: " + e.message);
+    }
+  };
+
+  // ==========================================================================
   // Squares the game has already recognised
   // ==========================================================================
   // A square is never stored, only RECOGNISED: the crypt opens a secret with a
@@ -397,6 +522,12 @@
     }
     const store = knownStore();
     if (store && store.length) return Object.assign({}, store[0]);
+    // Nothing in this savegame, but the WORLD may know: a party raised after
+    // somebody else proved the coordinates has never met the square itself and
+    // still owns the vault. This is what makes the command work for every party
+    // of a claimed world, whatever scenario raised it.
+    const claimed = claimedSquare();
+    if (claimed) return Object.assign({}, claimed);
     return null;
   }
 
@@ -419,6 +550,11 @@
     // Square-local, like every procedural-map arrival: ProcStitch converts it on
     // the way in and the load settles the party on a tile they can stand on.
     $gamePlayer.reserveTransfer(PROC_MAP_ID, hatch.mapX, hatch.mapY, 2, 0);
+    // Called from inside the vault, this IS the way out, so the building
+    // session goes with it: left standing, the game still believes the party is
+    // nine floors underground.
+    const PHS = window.ProceduralHouseSystem;
+    if (PHS && typeof PHS.clearHouseSession === "function") PHS.clearHouseSession();
     return true;
   }
 
@@ -455,6 +591,23 @@
    * is also the tile anything climbing back out of a patron's ground should
    * arrive on (WorldMapReturn's exitStructure).
    */
+  /**
+   * The tile a record's hatch is actually STAMPED on: the secret's own tile,
+   * pulled just inside the map edge if a hand-set coordinate ever pointed at
+   * the border. Every place that writes the hatch, looks for it or asks whether
+   * the party is standing on it goes through this, so none of them can disagree
+   * about a square's lid by a tile.
+   */
+  function stampedHatchTile(rec) {
+    const U = procUtils();
+    const width = (U && U.PROC_MAP_WIDTH) || 64;
+    const height = (U && U.PROC_MAP_HEIGHT) || 64;
+    return [
+      Math.max(1, Math.min(width - 2, rec.mapCoordinates[0])),
+      Math.max(1, Math.min(height - 3, rec.mapCoordinates[1])),
+    ];
+  }
+
   function hatchTileAtWorld(x, y) {
     const rec = patronRecordAtWorld(x, y);
     return rec ? rec.mapCoordinates.slice() : null;
@@ -599,10 +752,8 @@
       return;
     }
 
-    // The tile the secret names, pulled just inside the map edge if a hand-set
-    // coordinate ever pointed at the border.
-    const hx = Math.max(1, Math.min(width - 2, rec.mapCoordinates[0]));
-    const hy = Math.max(1, Math.min(height - 3, rec.mapCoordinates[1]));
+    // The tile the secret names, as every other answer here reads it.
+    const [hx, hy] = stampedHatchTile(rec);
 
     // Already stamped: this map array was built earlier in the session and is
     // being re-entered.
@@ -684,7 +835,13 @@
     // Variables 43/44 mean something else entirely while the party is on an
     // alien surface, so nothing below may even look at them.
     if (isAlienSurface(null)) return;
-    const worldCoords = {
+    // WHICH SQUARE THIS IS: the procgen data's own answer first, the world
+    // variables only as a fallback. They disagree for one frame on exactly the
+    // route that matters - climbing out of the vault, where the square is
+    // restored before the variables catch up - and reading the variables there
+    // meant the square loaded with no hatch on it until something else (a
+    // battle, a menu) reloaded the map and asked again.
+    const worldCoords = currentWorldCoords() || {
       x: $gameVariables.value(43) || 0,
       y: $gameVariables.value(44) || 0,
     };
@@ -704,6 +861,107 @@
     }
   };
 
+  /**
+   * The same stamp, on the LIVE map, once the scene has it. Everything that
+   * rebuilds or re-injects this square - WorldMapReturn putting the saved tiles
+   * back, ProcStitch blitting a stitched window, a structure restoring the
+   * surface behind it - writes into $dataMap.data AFTER DataManager.loadMapData
+   * has run, and any one of them can lay the square back down without the lid.
+   * So the hatch is asserted here as well, where nothing runs after it: cheap
+   * (one tile read on a patron square, nothing at all anywhere else) and the
+   * only way the hatch is on the map the party is actually walking on.
+   */
+  function stampLiveMap() {
+    if (typeof $gameMap === "undefined" || !$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return;
+    if (!$dataMap || !$dataMap.data || !PATRONS.length) return;
+    if (isAlienSurface(null) || isUnderground()) return;
+    const here = currentWorldCoords();
+    if (!here) return;
+    const rec = patronRecordAtWorld(here.x, here.y);
+    if (!rec) return;
+    const pg = $gameSystem && $gameSystem._procGenData;
+    const biome = pg ? biomeByName(pg.currentBiome) : null;
+    if (!biome || isStructureBiome(biome)) return;
+    const hatch = (biomeFeatures(biome)["Hatch"] || [])   // i18n-ignore: Features.json id
+      .find((v) => v && v.type === "single" && v.tileId);
+    if (!hatch) return;
+    // The square is always stamped in ITS OWN array, which is a plain 64x64
+    // square whatever the scene is showing. $dataMap is only written directly
+    // when it IS that square: a stitched window is a bigger map holding a copy
+    // of several, and ProcStitch is the one thing that knows how to put a cell
+    // back into it.
+    const U = procUtils();
+    const w = (U && U.PROC_MAP_WIDTH) || 64;
+    const h = (U && U.PROC_MAP_HEIGHT) || 64;
+    const [hx, hy] = stampedHatchTile(rec);
+    const stitch = window.ProcStitch && window.ProcStitch.active && window.ProcStitch.active();
+    if (pg && pg.generatedMapData) {
+      applyMapFeatures(pg.generatedMapData, biome, here);
+    }
+    if (stitch) {
+      window.ProcStitch.syncCell(here.x, here.y);
+    } else if ($dataMap.width === w && $dataMap.height === h) {
+      if ($dataMap.data[2 * w * h + hy * w + hx] === hatch.tileId) return;
+      applyMapFeatures($dataMap.data, biome, here);
+    }
+    if ($gameMap.requestRefresh) $gameMap.requestRefresh();
+  }
+
+  /**
+   * Every patron square standing in a stitched window gets its lid, not just
+   * the one the window was opened around. A window is several squares laid side
+   * by side and grown as the party walks: a square joined on at the edge was
+   * built by the square API and laid down without this plugin ever seeing a map
+   * load, so its hatch would be missing until something reloaded the whole map.
+   * Each cell carries its own array, which is the array the stamp belongs in;
+   * syncCell blits it back into the window.
+   */
+  function stampWindowCells() {
+    const stitch = window.ProcStitch;
+    if (!stitch || !stitch.active || !stitch.active()) return;
+    if (typeof stitch.window !== "function" || typeof stitch.syncCell !== "function") return;
+    const win = stitch.window();
+    if (!win || !Array.isArray(win.cells)) return;
+    for (const cell of win.cells) {
+      const built = cell && cell.built;
+      if (!built || !built.mapData) continue;
+      if (!patronRecordAtWorld(cell.worldX, cell.worldY)) continue;
+      const name = built.resolved && built.resolved.biomeName;
+      const biome = name ? biomeByName(name) : null;
+      if (!biome || isStructureBiome(biome)) continue;
+      applyMapFeatures(built.mapData, biome, { x: cell.worldX, y: cell.worldY });
+      stitch.syncCell(cell.worldX, cell.worldY);
+    }
+  }
+
+  const _Scene_Map_onMapLoaded_hatch = Scene_Map.prototype.onMapLoaded;
+  Scene_Map.prototype.onMapLoaded = function () {
+    _Scene_Map_onMapLoaded_hatch.call(this);
+    try {
+      populateVaultFloor();
+    } catch (e) {
+      warn("the vault's residents could not be put on the floor: " + e.message);
+    }
+    try {
+      stampLiveMap();
+      stampWindowCells();
+    } catch (e) {
+      warn("the hatch could not be asserted on the live map: " + e.message);
+    }
+  };
+
+  // ... and again whenever the party sets foot in a different square without a
+  // transfer, which is how a window's far cells are reached.
+  if (window.ProcStitch && typeof window.ProcStitch.onSquareChanged === "function") {
+    window.ProcStitch.onSquareChanged(() => {
+      try {
+        stampWindowCells();
+      } catch (e) {
+        warn("the hatch could not be asserted on the square walked into: " + e.message);
+      }
+    });
+  }
+
   function biomeByName(name) {
     const list = (window.WorldGen && window.WorldGen.Biomes) || [];
     return list.find((b) => b && b.name === name) || null;
@@ -718,23 +976,46 @@
     return { x, y };
   }
 
+  /**
+   * A MAP coordinate on the procedural map, resolved into the world square it
+   * stands on and its position inside that square. The two are the same thing
+   * only when one square is loaded on its own: a stitched window is a single
+   * map holding several squares side by side, so the party can be walking
+   * around at map coordinate 84,21 while the hatch's secret says 20,21 of the
+   * square next door. Everything that compares a tile against a secret has to
+   * come through here, or a hatch in a window is a tile nothing answers for.
+   */
+  function squareOfMapTile(tile) {
+    const stitch = window.ProcStitch;
+    if (stitch && stitch.active && stitch.active() &&
+        typeof stitch.squareAt === "function" && typeof stitch.local === "function") {
+      const world = stitch.squareAt(tile.x, tile.y);
+      const local = stitch.local(tile.x, tile.y);
+      if (world && local) return { world, local };
+    }
+    const here = currentWorldCoords();
+    return here ? { world: here, local: { x: tile.x, y: tile.y } } : null;
+  }
+
   /** The patron whose hatch sits on (tile.x, tile.y) of the current map. */
   function patronOfHatchTile(tile) {
     if (typeof $gameMap === "undefined" || !$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return null;
     if (isAlienSurface(null)) return null;
     const pg = $gameSystem && $gameSystem._procGenData;
-    const here = currentWorldCoords();
-    if (!pg || !here) return null;
-    const patron = patronAtWorld(here.x, here.y);
-    if (!patron) return null;
-    const rec = $gameSystem._patronHatch;
-    // The recorded tile is the authority when it matches this square; a hatch
-    // faced on a patron square without a record (an older save) still opens.
-    if (rec && rec.worldX === here.x && rec.worldY === here.y &&
-        (rec.x !== tile.x || rec.y !== tile.y)) {
-      return null;
-    }
-    return patron;
+    const at = squareOfMapTile(tile);
+    if (!pg || !at) return null;
+    const here = at.world;
+    // The SECRET is the authority on where this square's hatch is, not the
+    // note the stamp left on $gameSystem: that note is one square's worth of
+    // bookkeeping and can be left over from another square entirely (the vault
+    // origin writes it before the party has stood anywhere), and a hatch that
+    // does not answer to the tile it is stamped on is a hatch the party walks
+    // over for good.
+    const rec = patronRecordAtWorld(here.x, here.y);
+    if (!rec) return null;
+    const [hx, hy] = stampedHatchTile(rec);
+    if (hx !== at.local.x || hy !== at.local.y) return null;
+    return rec.patron;
   }
 
   /**
@@ -770,6 +1051,133 @@
     return true;
   }
 
+  // Stepping onto the lid opens it. ProceduralTerrainInteractions already
+  // walks the party into every other structure entrance, but it refuses on a
+  // handful of conditions of its own (a dungeon session left on the procgen
+  // data, a layer stack, its own step lock) and the hatch is the one entrance
+  // that must never be walked over: it is the only way into a vault, it is
+  // stamped after generation, and a party standing on their own lid trying to
+  // get in is not in a position to guess why nothing happened. So the step is
+  // answered here as well, off the player's own step, and the two routes cannot
+  // both fire because opening transfers the party off the tile.
+  let _hatchStepLock = 0;
+
+  function tryHatchUnderfoot() {
+    if (typeof $gamePlayer === "undefined" || !$gamePlayer) return false;
+    if (Graphics.frameCount < _hatchStepLock) return false;
+    if ($gamePlayer.isInVehicle()) return false;
+    if ($gameMap && $gameMap.isEventRunning()) return false;
+    if ($gameMessage && $gameMessage.isBusy && $gameMessage.isBusy()) return false;
+    // A real event standing on the tile speaks for itself, exactly as the
+    // terrain interactions let it.
+    if ($gameMap && $gameMap.events().some((e) => e && e.x === $gamePlayer.x && e.y === $gamePlayer.y)) {
+      return false;
+    }
+    if (!patronOfHatchTile({ x: $gamePlayer.x, y: $gamePlayer.y })) return false;
+    if (!openHatch({ x: $gamePlayer.x, y: $gamePlayer.y })) return false;
+    _hatchStepLock = Graphics.frameCount + 60;
+    return true;
+  }
+
+  const _Game_Player_increaseSteps_hatch = Game_Player.prototype.increaseSteps;
+  Game_Player.prototype.increaseSteps = function () {
+    _Game_Player_increaseSteps_hatch.call(this);
+    try {
+      tryHatchUnderfoot();
+    } catch (e) {
+      warn("the hatch underfoot could not open: " + e.message);
+    }
+  };
+
+  // ==========================================================================
+  // Who lives down there
+  // ==========================================================================
+  // An unlocked vault is not nine empty cellars: it is where the world's idle
+  // companions ended up. Everybody this world ever recorded as having left a
+  // party and joined no other - the retired, the dismissed, the ones a
+  // savegame walked away from - is somewhere on the nine floors, living the
+  // ordinary NPC life every other person in the world lives (NPCSystem's brain
+  // and society profile, so they roam, they talk, they can be empathized with
+  // and they turn up in the wiki), in the equipment they left in.
+  //
+  // Which floor is a pure function of the name, so a companion is always on
+  // the same floor of the same vault, and they are spread evenly over the nine
+  // rather than crowding the one the party arrives on.
+
+  function floorIndexForName(name) {
+    let seed = 0;
+    for (const ch of String(name || "")) seed = ((seed * 31) + ch.charCodeAt(0)) >>> 0;
+    return seed % VAULT_FLOORS.length;
+  }
+
+  // A tile on this floor somebody can stand on, picked by name so they are
+  // always in the same corner of it. Scans the floor for standable, unoccupied
+  // ground rather than guessing at coordinates: the nine cellars are
+  // hand-drawn and no two are laid out alike.
+  function vaultSpotForName(name) {
+    if (!$gameMap) return null;
+    const free = [];
+    for (let y = 0; y < $gameMap.height(); y++) {
+      for (let x = 0; x < $gameMap.width(); x++) {
+        if (!$gameMap.isPassable(x, y, 2)) continue;
+        if ($gameMap.eventsXy(x, y).length) continue;
+        if ($gamePlayer && $gamePlayer.x === x && $gamePlayer.y === y) continue;
+        free.push({ x, y });
+      }
+    }
+    if (!free.length) return null;
+    let seed = 7;
+    for (const ch of String(name || "")) seed = ((seed * 33) + ch.charCodeAt(0)) >>> 0;
+    return free[seed % free.length];
+  }
+
+  /**
+   * Put this floor's share of the world's idle companions on it. Answers how
+   * many were newly spawned; does nothing at all outside a vault, in a world
+   * whose coordinates nobody has proved, or where the roster is empty.
+   */
+  function populateVaultFloor() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return 0;
+    const floor = VAULT_FLOORS.indexOf($gameMap.mapId());
+    if (floor < 0) return 0;
+    // Locked, and nobody is down there: the vault is not part of this world yet.
+    if (!claimedSquare()) return 0;
+    const roster = window.PartyRoster;
+    const VP = window.PartyPresence;
+    if (!roster || typeof roster.worldInactive !== "function") return 0;
+    if (!VP || typeof VP.spawnOne !== "function") return 0;
+    if (!$dataMap) return 0;
+    if (!$dataMap.events) $dataMap.events = [null];
+    let spawned = 0;
+    for (const member of roster.worldInactive()) {
+      if (floorIndexForName(member.name) !== floor) continue;
+      const key = "vaultresident:" + member.name;  // i18n-ignore: event key
+      if (VP.findEvent && VP.findEvent(key)) continue;
+      const spot = vaultSpotForName(member.name);
+      if (!spot) continue;
+      const person = {
+        key,
+        name: member.name,
+        characterName: member.characterName || "",
+        characterIndex: member.characterIndex || 0,
+        classId: member.classId,
+        level: member.level,
+      };
+      // spawnOne reads the party's recorded location for somewhere to stand;
+      // down here that is the tile picked above, and it is on this floor.
+      if (!VP.spawnOne(person, { slot: null, location: { x: spot.x, y: spot.y } })) continue;
+      spawned++;
+      // They are still in what they left in, and the profile is where anything
+      // that inspects them (the Empathize panel, the wiki) reads it from.
+      try {
+        const profile = window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile
+          ? window.NPCSocietyRegistry.getProfile(member.name) : null;
+        if (profile && Array.isArray(member.equips)) profile.equipment = member.equips.slice();
+      } catch (e) { /* the resident stands there dressed either way */ }
+    }
+    return spawned;
+  }
+
   // ==========================================================================
   // Inside a patron's vault
   // ==========================================================================
@@ -798,6 +1206,28 @@
     return here ? patronAtWorld(here.x, here.y) : null;
   }
 
+  /**
+   * Whose vault this is, standing at the top of it. The floors are hand-made
+   * maps shared by every patron, so the owner is not written on the map: it is
+   * whoever's lid was opened to get here (the note the stamp leaves, which is
+   * exactly one square's worth of bookkeeping and is right for as long as the
+   * party is under that square), and failing that the square this world has had
+   * proved to it. Null in a world nobody has claimed - the floors keep their
+   * authored names there.
+   *
+   * Only FLOOR -1 is renamed. It is the one the party arrives on, so it is
+   * where the name belongs; every floor under it says how deep it is instead,
+   * which is what is worth knowing down there.
+   */
+  function vaultFloorPatron() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return null;
+    if ($gameMap.mapId() !== VAULT_FLOORS[0]) return null;
+    const hatch = ownHatch();
+    if (!hatch) return null;
+    return patronById(hatch.id) || (Number.isFinite(hatch.x)
+      ? patronAtWorld(hatch.x, hatch.y) : null);
+  }
+
   function lootRarityBonus() {
     return isInPatronVault() ? LOOT_RARITY_BONUS : 0;
   }
@@ -814,7 +1244,7 @@
   // on purpose - the vault is named, not rated.
   const _Game_Map_displayName = Game_Map.prototype.displayName;
   Game_Map.prototype.displayName = function () {
-    const patron = vaultPatron();
+    const patron = vaultPatron() || vaultFloorPatron();
     if (patron) return T('Patron.vaultName', { patron: patron.name });
     return _Game_Map_displayName.call(this);
   };
@@ -1118,9 +1548,11 @@
         key: "patronvault",  // i18n-ignore  stack id
         descending: true,
         // Climbing out of a vault nobody entered by the hatch: the way out is
-        // a hatch all the same, so the party surfaces on one of the patron
-        // squares this savegame has met rather than on a square with no lid.
-        exitFallback: surfaceOnRandomHatch,
+        // a hatch all the same. It is THIS party's own hatch - the square the
+        // vault origin proved, or the last patron square recognised - and only
+        // a random known one where there is no own hatch to name, so a party
+        // that knows two patron squares never surfaces on the wrong one.
+        exitFallback: () => surfaceOnHatch(ownHatch()) || surfaceOnRandomHatch(),
       });
     }
   };
@@ -1146,11 +1578,22 @@
     ownHatch,
     surfaceOnHatch,
     goToOwnHatch,
+    claimedSquare,
+    claimSquare,
+    grantVessel,
+    VESSEL_ITEM_ID,
     applyMapFeatures,
+    stampLiveMap,
+    stampWindowCells,
+    squareOfMapTile,
     openHatch,
+    tryHatchUnderfoot,
     isPatronHatch: (tile) => !!patronOfHatchTile(tile),
     isInPatronVault,
     vaultPatron,
+    vaultFloorPatron,
+    populateVaultFloor,
+    floorIndexForName,
     lootRarityBonus,
     containerTierWeight,
     ensureSystems,

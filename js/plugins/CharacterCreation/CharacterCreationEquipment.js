@@ -48,8 +48,18 @@
   // Constants - Global Starter Skills
   //=============================================================================
 
-  // Skills that all characters learn on creation
-  const GLOBAL_STARTER_SKILLS = [2, 836, 837, 838, 839, 847];
+  // The basics every character is created knowing, whatever their class: Guard,
+  // Escape and Dodge. All three are <category:Basic> <Nature: Mundane> and cost
+  // nothing but a little TP, so they set a floor without adding a kit.
+  //
+  // This list used to read [2, 836, 837, 838, 839, 847], which handed every
+  // member five MetaMagic spells out of the 836-847 block, one of them
+  // UncannyBlast, the Warlock's own <Signature:>. A class kit is 4 to 6 skills
+  // and two classes share 0.11 of them on average, so those five turned a party
+  // whose classes had nothing in common into members over half of whose
+  // starting book was identical. A member knows their class's skills at
+  // starting level plus whatever their traits granted, and nothing else.
+  const GLOBAL_STARTER_SKILLS = [2, 5, 8];
 
   //=============================================================================
   // Constants - Weapon Type Icons

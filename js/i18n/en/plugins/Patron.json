@@ -1,7 +1,10 @@
 {
-  "vaultName": "{patron}'s Vault",
+  "vaultName": "Vault of {patron}",
   "starLabel": "{planet} Star",
   "surveyNote": "Charted, named and left alone. The survey tag reads {patron}, patron of this reality.",
   "hatchReturn": "Back on {patron}'s hatch.",
-  "hatchReturnUnknown": "Back on the hatch."
+  "hatchReturnUnknown": "Back on the hatch.",
+  "vesselSender": "The Vault",
+  "vesselSubject": "Your way down",
+  "vesselBody": "The coordinates have been spoken aloud in this world, so the vault answers to it now. Enclosed is the vessel that carries you back down to {patron}'s hatch, whenever you want it."
 }

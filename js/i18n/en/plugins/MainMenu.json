@@ -45,7 +45,8 @@
     "returnToElevator": "Return to the elevator",
     "chooseLandingSite": "Choose landing site",
     "stopTravel": "Stop travel",
-    "deeds": "Deeds"
+    "deeds": "Deeds",
+    "locked": "???"
   },
   "cmdDesc": {
     "backpack": "Manage party inventory and carried items",

@@ -330,10 +330,10 @@
             this._container = document.createElement('div');
             this._container.id = 'pt-container';
             this._container.className = 'ui-overlay pt-overlay';
-            // Right-click closes the book. TouchInput (polled in _handleInput)
-            // sees the mousedown on document, so only the native menu is killed.
             this._container.addEventListener('contextmenu', (event) => {
                 event.preventDefault();
+                event.stopPropagation();
+                this.onCancelAction();
             });
 
             document.body.appendChild(this._container);
@@ -363,14 +363,14 @@
         _refresh() {
             if (!this._container) return;
 
-            const el    = ELEMENTS[this._selectedIdx];
-            const props = ELEM_PROPS[el.sym] || el;
+            const el    = this._selectedIdx >= 0 ? ELEMENTS[this._selectedIdx] : null;
+            const props = el ? (ELEM_PROPS[el.sym] || el) : null;
 
-            const entry  = T.obj('PeriodicTable.data')[el.sym] || {};
-            const name   = entry.name || el.sym;
+            const entry  = (el && T.obj('PeriodicTable.data')[el.sym]) || {};
+            const name   = entry.name || (el ? el.sym : '');
             const desc   = entry.desc || '';
-            const catLbl = T('PeriodicTable.categories.' + el.cat);
-            const state  = T('PeriodicTable.states.' + (props.state || el.state || 'unknown'));
+            const catLbl = el ? T('PeriodicTable.categories.' + el.cat) : '';
+            const state  = el ? T('PeriodicTable.states.' + (props.state || el.state || 'unknown')) : '';
 
             const ui = {
                 title: T('PeriodicTable.ui.title'),
@@ -421,13 +421,15 @@
             if (this._prevSym && this._prevSym !== this._selectedSym) {
                 this._setCellSelected(this._prevSym, false);
             }
-            this._setCellSelected(this._selectedSym, true);
+            if (this._selectedSym) {
+                this._setCellSelected(this._selectedSym, true);
+            }
             this._prevSym = this._selectedSym;
 
             // Update right page only
             const rightPage = this._container.querySelector('.right-page');
             if (rightPage) {
-                rightPage.innerHTML = this._buildDetailHTML(el, props, name, desc, catLbl, state, ui);
+                rightPage.innerHTML = el ? this._buildDetailHTML(el, props, name, desc, catLbl, state, ui) : '';
             }
         }
 
@@ -584,8 +586,7 @@
 
         _handleInput() {
             if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
-                SoundManager.playCancel();
-                this.popScene();
+                this.onCancelAction();
             } else if (Input.isRepeated('left')) {
                 this._move(-1);
             } else if (Input.isRepeated('right')) {
@@ -597,8 +598,28 @@
             }
         }
 
+        onCancelAction() {
+            if (this._selectedIdx !== -1 && this._selectedIdx != null) {
+                if (this._prevSym) this._setCellSelected(this._prevSym, false);
+                if (this._selectedSym) this._setCellSelected(this._selectedSym, false);
+                this._prevSym = null;
+                this._selectedIdx = -1;
+                this._selectedSym = null;
+                SoundManager.playCancel();
+                const rightPage = this._container && this._container.querySelector('.right-page');
+                if (rightPage) rightPage.innerHTML = '';
+            } else {
+                SoundManager.playCancel();
+                this.popScene();
+            }
+        }
+
         _move(delta) {
             const len = ELEMENTS.length;
+            if (this._selectedIdx < 0) {
+                this._selectAt(delta > 0 ? 0 : len - 1);
+                return;
+            }
             this._selectAt(((this._selectedIdx + delta) % len + len) % len);
         }
 
@@ -606,6 +627,10 @@
         // given direction (-1 up / +1 down) for the next populated row and lands
         // on the element in that row whose column is closest to the current one.
         _moveVertical(dir) {
+            if (this._selectedIdx < 0) {
+                this._selectAt(dir > 0 ? 0 : ELEMENTS.length - 1);
+                return;
+            }
             const cur = _elementCoord(ELEMENTS[this._selectedIdx]);
             for (let r = cur.row + dir; r >= 1 && r <= 10; r += dir) {
                 const rowEls = _rowElements[r];

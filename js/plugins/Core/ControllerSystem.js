@@ -961,9 +961,14 @@
                 pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1);
         },
 
+        // Off with the stick scrolling it advertised (UIScroll in
+        // Core/MouseControls.js): a chip promising the stick scrolls this pane
+        // is a lie once the stick does nothing, so no rail is ever drawn.
+        RAILS_ENABLED: false,
+
         updateRails() {
             const layer = document.getElementById(this.RAIL_ID);
-            const panes = this.active() ? this.scrollPanes() : [];
+            const panes = (this.RAILS_ENABLED && this.active()) ? this.scrollPanes() : [];
             if (!panes.length) {
                 if (layer) {
                     layer.classList.add('empty');

@@ -83,11 +83,10 @@
  * Folding it away
  * ---------------------------------------------------------------------------
  * H folds the sheet and unfolds it, on every map, whether or not Bubba is
- * along: the fold is the list's, not the notices'. On a pad it is R3, on
- * every map alike, because L3 is the wait sheet everywhere. The fold line
- * writes the key out and hangs R3 off the end of it while a pad is plugged
- * in, the way every row does. Whether it is folded is remembered on
- * $gameSystem and it starts folded.
+ * along: the fold is the list's, not the notices'. On a pad it is L2, on
+ * every map alike. The fold line writes the key out and hangs L2 off the
+ * end of it while a pad is plugged in, the way every row does. Whether it
+ * is folded is remembered on $gameSystem and it starts folded.
  *
  * Folded means two different things depending on where the party stands. In
  * the story mode, on the map the game starts on and on the tutorial map (1414)
@@ -258,7 +257,7 @@
     zoom: "L2 + RS \u2191\u2193",
     pan: "RS",
     quickMenu: "Hold Y",
-    wait: "R",
+    wait: "Start",
     vehicles: "L3",
     build: "R3",
     fold: "L2",
@@ -315,10 +314,8 @@
 
   const WORLD_MAP_CONTROLS = [
     { id: "visitPlace", labelKey: "MapLegend.controls.stopTravel", key: "T", pad: PAD.visitPlace },
-    // R only. L3 was the wait sheet's for a while and is the vehicles now;
-    // the sheet is still one press away through the menu, and the two stick
-    // clicks went to the things the field actually reaches for.
-    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R" },
+    // Start / R. The Start button on controller opens the sleep wait, mirroring R.
+    { id: "wait", labelKey: "MapLegend.controls.wait", key: "R", pad: PAD.wait },
     // L2 HELD, and the right stick pushed forward or back. The trigger is a
     // modifier rather than a zoom of its own: the stick is the camera's pan
     // everywhere, and holding L2 turns it into the camera's zoom for as long as
@@ -393,9 +390,10 @@
     for (const hotkey of table) {
       const labelKey = labelKeys[hotkey.symbol] || MENU_HOTKEY_LABELS[hotkey.symbol];
       if (!labelKey) continue;
+      const pad = hotkey.symbol === "sleep_menu" ? PAD.wait : PAD.quickMenu;
       rows.push({
         id: "menu_" + hotkey.symbol, labelKey, key: hotkey.key,
-        input: hotkey.input, pad: PAD.quickMenu,
+        input: hotkey.input, pad,
       });
     }
     return rows;
@@ -587,7 +585,7 @@
   //===========================================================================
 
   // A pad button with no Input.gamepadMapper action on it, read raw the way
-  // WorldMap.js reads Start.
+  // CustomMainMenuLayout.js reads Start for the sleep wait menu.
 
   //===========================================================================
   // Notice resolution

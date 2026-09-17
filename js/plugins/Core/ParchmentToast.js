@@ -387,7 +387,25 @@
     // owns the top-left one, so the two never have to dodge each other.
     s.left = "auto";
     s.right = (window.innerWidth - r.right) + 20 * sx + "px";
-    s.top = r.top + 20 * sy + "px";
+
+    // All toasts are drawn below the location name (MapLevelDisplay / #html-map-name-overlay).
+    let top = r.top + 20 * sy;
+    const mapNameEl = (typeof document !== "undefined" && document.getElementById)
+      ? document.getElementById("html-map-name-overlay")
+      : null;
+    if (mapNameEl) {
+      top = Math.max(top, r.top + 56 * sy);
+      if (mapNameEl.style && mapNameEl.style.display !== "none") {
+        const op = parseFloat(mapNameEl.style.opacity || "0");
+        if (op > 0.01 && typeof mapNameEl.getBoundingClientRect === "function") {
+          const mb = mapNameEl.getBoundingClientRect();
+          if (mb && mb.bottom > 0) {
+            top = Math.max(top, mb.bottom + 8 * sy);
+          }
+        }
+      }
+    }
+    s.top = Math.round(top) + "px";
     s.fontSize = Math.round(16 * sy) + "px";
   }
 
@@ -546,6 +564,47 @@
       (persist ? " html-toast--sticky" : "");
   }
 
+  const PRIORITY_STICKY = 5;
+  const PRIORITY_ITEM = 10;
+  const PRIORITY_DEFAULT = 20;
+  const PRIORITY_QUEST_MAIL = 30;
+
+  function detectPriority(opts, text) {
+    if (opts.persist) return PRIORITY_STICKY;
+    const cat = opts.category || (opts.type === "item" || opts.type === "quest" || opts.type === "mail" ? opts.type : null);
+    if (cat === "item" || opts.isItem) return PRIORITY_ITEM;
+    if (cat === "quest" || opts.isQuest) return PRIORITY_QUEST_MAIL;
+    if (cat === "mail" || opts.isMail) return PRIORITY_QUEST_MAIL;
+
+    if (opts.key && typeof opts.key === "string") {
+      if (/^(reward|gold):/.test(opts.key)) return PRIORITY_ITEM;
+      if (/^quest:/.test(opts.key)) return PRIORITY_QUEST_MAIL;
+      if (/^mail:/.test(opts.key)) return PRIORITY_QUEST_MAIL;
+    }
+    if (opts.html && typeof text === "string" && (text.includes("toast-item") || text.includes("toast-rarity"))) {
+      return PRIORITY_ITEM;
+    }
+    return PRIORITY_DEFAULT;
+  }
+
+  function insertToastElement(stack, el, priority) {
+    if (el.dataset) el.dataset.priority = String(priority);
+    if (el.style) el.style.order = String(priority);
+
+    if (typeof stack.insertBefore === "function") {
+      const children = Array.from(stack.children || []);
+      for (const child of children) {
+        if (child === el) continue;
+        const childPri = Number(child.dataset && child.dataset.priority) || PRIORITY_DEFAULT;
+        if (priority < childPri) {
+          stack.insertBefore(el, child);
+          return;
+        }
+      }
+    }
+    stack.appendChild(el);
+  }
+
   function show(text, opts = {}) {
     if (text === null || text === undefined || text === "") return;
     const severity = opts.severity || "info";
@@ -573,6 +632,9 @@
     const durationMs = (opts.duration || DEFAULT_DURATION) * FRAME_MS;
     const key = String(opts.key != null ? opts.key : text);
     const hideAt = persist ? Infinity : Date.now() + durationMs;
+    const priority = detectPriority(opts, text);
+
+    const stack = ensureStack();
 
     const existing = _live.get(key);
     if (existing) {
@@ -588,28 +650,38 @@
       existing.fading = false;
       existing.hideAt = hideAt;
       existing.persist = persist;
+      existing.priority = priority;
       existing.onDismiss = opts.onDismiss;
       existing.el.className = classNameFor(severity, persist);
       existing.el.style.opacity = "1";
+      insertToastElement(stack, existing.el, priority);
       renderInto(existing.el, text, opts);
+      syncPosition();
       return;
     }
 
-    const stack = ensureStack();
-
-    // Cap the stack: drop the oldest transient toast. A standing notification
-    // is never evicted, since the condition it reports is still true.
+    // Cap the stack: drop the oldest transient toast. Items are protected
+    // over quest/mail/default toasts, and standing notifications are never evicted.
     if (_live.size >= MAX_TOASTS) {
+      let evictKey = null;
+      let highestPri = -1;
       for (const [k, toast] of _live) {
         if (toast.persist) continue;
+        const pri = toast.priority != null ? toast.priority : PRIORITY_DEFAULT;
+        if (pri > highestPri) {
+          highestPri = pri;
+          evictKey = k;
+        }
+      }
+      if (evictKey) {
+        const toast = _live.get(evictKey);
         if (toast.fadeTimer != null) {
           clearTimeout(toast.fadeTimer);
           toast.fadeTimer = null;
         }
         toast.onDismiss = null;
         if (toast.el.parentNode) toast.el.parentNode.removeChild(toast.el);
-        _live.delete(k);
-        break;
+        _live.delete(evictKey);
       }
     }
 
@@ -618,14 +690,14 @@
     renderInto(el, text, opts);
 
     el.style.opacity = "0";
-    stack.appendChild(el);
+    insertToastElement(stack, el, priority);
     syncPosition();
     // Fade in on the next frame, after initial layout
     requestAnimationFrame(() => {
       el.style.opacity = "1";
     });
 
-    _live.set(key, { el, hideAt, fading: false, persist, onDismiss: opts.onDismiss });
+    _live.set(key, { el, hideAt, fading: false, persist, onDismiss: opts.onDismiss, priority });
     if (_rafId === null) _rafId = requestAnimationFrame(tick);
   }
 
@@ -818,6 +890,7 @@
         severity: opts.severity || "info",
         duration,
         html: true,
+        category: "item",
         // Rewards are always a fresh event, never a repeat of a live toast.
         key: chunkKey,
         onDismiss: () => {

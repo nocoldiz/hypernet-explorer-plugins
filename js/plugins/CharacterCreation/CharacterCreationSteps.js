@@ -45,6 +45,7 @@
     actorArchetypeKey,
     actorSecondaryArchetypeKey,
     applyArchetypesToActor,
+    CharacterCreationData,
     STEP,
   } = window.CCKit;
 
@@ -448,6 +449,20 @@
       Scene_CharacterCreation._hoveredTraitId = putDown ? null : pack.traits[0];
       if (putDown) SoundManager.playCancel();
       else SoundManager.playOk();
+      const bioStep = window.CCSteps ? window.CCSteps.BIO : 6;
+      if (this._step === bioStep) {
+        const container = this._dndContainer;
+        if (container) {
+          const sidebarSlot = container.querySelector(".cc-sidebar-slot");
+          if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+          const leftPage = container.querySelector(".cc-page-left");
+          if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+          const rightPage = container.querySelector(".cc-page-right");
+          if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+          this._refreshTopFolderTabs();
+          return;
+        }
+      }
       this._refreshTraitBoard();
     }
 
@@ -1029,13 +1044,6 @@
             <button class="cc-compact-btn" onclick="SceneManager._scene.onRandomizeSpecsForCurrentActor()">${ccT('CharCreate.randomize')}</button>
           </div>`}
           ${detailHtml}
-
-          <h3 class="cc-subheader cc-gap-above">
-            <span>${ccT('CharCreate.allocatedTalents')} (${trainedEntries.length})</span>
-          </h3>
-          <div class="cc-stack cc-stack-roster">
-            ${trainedBadges || `<span class="cc-note-faint cc-note-faint-padded">${ccT('CharCreate.noTalentsSpent')}</span>`}
-          </div>
         </div>
       `;
     }
@@ -1504,6 +1512,39 @@
       return list.map((city) => ({ value: city, label: city }));
     }
 
+    // The vocations the class board would have dealt this member, read off the
+    // board's own choice list so the two can never drift apart. The one card
+    // that is not a vocation at all - the command that hands the screen over to
+    // the full roster scene - is dropped: a modal cannot leave the wizard.
+    _classPickOptions() {
+      const stepData = (CharacterCreationData && CharacterCreationData[STEP.CLASS]) || {};
+      const choices = stepData.choices || [];
+      return choices
+        .filter((ch) => ch && ch.symbol && ch.symbol !== "select_class")
+        .map((ch) => ({
+          value: ch.symbol,
+          label: ch.name || "",
+          hint: (typeof this._classOfChoice === "function" && this._classOfChoice(ch))
+            ? this._classElementName(this._classElementId(this._classOfChoice(ch)))
+            : "",
+          group: ch.groupTitle || ""
+        }));
+    }
+
+    // The simple board deals whole packages rather than single traits, so the
+    // sheet asks the one question those cards asked: what kind of person is
+    // this. Each row carries the traits the package holds, so the list reads
+    // the same as the board it replaced.
+    _traitPackPickOptions() {
+      return this._traitPackages().map((pack) => ({
+        value: pack.id,
+        label: pack.name,
+        hint: pack.rows
+          .map((tr) => (tr.name && resolveTraitName(tr.name, tr.id)) || tr.id)
+          .join(", ")
+      }));
+    }
+
     _bondPickOptions() {
       const bonds = this._romanceBanks().rel.bonds || [];
       return bonds.map((b) => ({
@@ -1536,6 +1577,8 @@
         case "creed":    return this._creedPickOptions();
         case "hometown": return this._hometownPickOptions();
         case "bond":     return this._bondPickOptions(arg);
+        case "class":    return this._classPickOptions();
+        case "traitpack": return this._traitPackPickOptions();
         default:         return [];
       }
     }
@@ -1548,6 +1591,8 @@
         case "creed":      return ccT('CharCreate.pickCreed');
         case "hometown":   return ccT('CharCreate.pickHometown');
         case "bond":       return ccT('CharCreate.pickBond');
+        case "class":      return ccT('CharCreate.pickClass');
+        case "traitpack":  return ccT('CharCreate.pickTraitPackage');
         default:           return "";
       }
     }
@@ -1565,6 +1610,8 @@
           const state = actor ? this._romanceState(actor) : null;
           return (state && state.bonds[arg]) || "none";
         }
+        case "class":     return actor ? "quick_class_" + actor._classId : "";
+        case "traitpack": return this._activeTraitPackageId(actor);
         default: return "";
       }
     }
@@ -1580,8 +1627,38 @@
         case "creed":      this.onBioOptionChange('ideology', value); break;
         case "hometown":   this.onBioOptionChange('hometown', value); break;
         case "bond":       this.onRomanceBondChange(arg, value); break;
+        case "class":      this.onSimpleClassPick(value); break;
+        case "traitpack":  this.onTraitPackageSelect(value); break;
         default: break;
       }
+    }
+
+    // The class board's cards, taken from the sheet instead. A card is a symbol
+    // rather than a class id (the roll is a card too), so the symbol is read
+    // here and the vocation behind it is handed to the one place a class is
+    // ever changed.
+    onSimpleClassPick(symbol) {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      let classId = 0;
+      if (symbol === "random_class") {
+        const CC = window.CreatureClasses;
+        const roster = (CC && Scene_CharacterCreation.isCreatureActor &&
+          Scene_CharacterCreation.isCreatureActor(actor))
+          ? (CC.creatureRoster ? CC.creatureRoster() : [])
+          : (CC && CC.sentientRoster ? CC.sentientRoster() : []);
+        if (roster.length) classId = roster[Math.floor(Math.random() * roster.length)];
+      } else if (String(symbol).indexOf("quick_class_") === 0) {
+        classId = parseInt(String(symbol).slice("quick_class_".length), 10);
+      } else if (symbol === "mana_cyborg") {
+        classId = 66;
+      }
+      if (!classId || typeof $dataClasses === "undefined" || !$dataClasses[classId]) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      this.onBioOptionChange("class", classId);
+      if (typeof markStepCompleted === "function") markStepCompleted(STEP.CLASS);
     }
 
     onOpenPick(kind, arg) {
@@ -1594,10 +1671,12 @@
         value: this._pickCurrent(kind, arg),
         onPick: (value) => {
           this._applyPick(kind, value, arg);
-          // The sheet the choice was made on is redrawn around it.
-          this._lastStep = -1;
-          this._lastIndex = -1;
-          this.refreshUIOverlayDOM();
+          const container = this._dndContainer;
+          if (!container) {
+            this._lastStep = -1;
+            this._lastIndex = -1;
+            this.refreshUIOverlayDOM();
+          }
         }
       });
     }
@@ -1896,6 +1975,7 @@
                 <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender')}</span></div>
                 <div class="cc-bio-chips-row">${genderChipsHtml}</div>
               </div>
+              ${this._simpleSheetPickersHtml()}
               ${professionSectionHtml}
               <div class="cc-bio-section cc-bio-section-flush">
                 <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
@@ -2005,10 +2085,14 @@
       }
       const lore = this._ensureActorLore(actor, actor._gender) || profile;
       const backstory = lore && lore.backstory;
-      const html = backstory && window.NPCHistSim?.buildBackstoryHTML
+      let html = backstory && window.NPCHistSim?.buildBackstoryHTML
         ? window.NPCHistSim.buildBackstoryHTML(backstory)
         : "";
-      if (html) return html;
+      if (html) {
+        html = html.replace(/<div class="npc-backstory-events">[\s\S]*?<\/div>/g, "");
+        html = html.replace(/<div class="npc-backstory-meta">[\s\S]*?<\/div>/g, "");
+        return html;
+      }
       return `<div class="npc-backstory-text">${ccT('CharCreate.bio.noBackstory')}</div>`;
     }
 
@@ -2064,7 +2148,7 @@
 
       // Learnings up to level 10
       const sortedLearnings = (c.learnings || [])
-        .filter((l) => l.level > 1 && l.level <= 10)
+        .filter((l) => l.level >= 1 && l.level <= 10)
         .sort((a, b) => a.level - b.level);
 
       const roadmapRowHtml = (l) => {
@@ -2219,6 +2303,7 @@
 
       const isSimpleMode = Scene_CharacterCreation.isSimpleMode();
       const simpleClassHtml = isSimpleMode ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
+      const sheetHistoryHtml = this._simpleSheetHistoryHtml(actor, age);
 
       return `
         <div class="cc-page cc-page-right ts-page cc-page-column">
@@ -2229,9 +2314,72 @@
               <span class="cc-bio-identity-class">(${className})</span>
             </div>
 
+            ${sheetHistoryHtml}
+
             ${simpleClassHtml}
 
           </div>
+        </div>
+      `;
+    }
+
+    _simpleSheetTraitsHtml(actor) {
+      if (!actor) return "";
+      const picked = selectedTraitObjects ? (selectedTraitObjects(actor) || []) : [];
+      const traitBadges = picked.length ? picked.map((tr) => {
+        const name = (tr.name && resolveTraitName(tr.name, tr.id)) || tr.id;
+        const icon = tr.icon || 87;
+        const hoverAttrs = typeof this._ccHoverAttrs === "function" ? this._ccHoverAttrs("trait", tr.id) : "";
+        return `<span class="cc-element-badge cc-element-badge--icon" ${hoverAttrs}>`
+          + `<span class="cc-badge-icon">${this._ccIconHtml(icon, 16)}</span>`
+          + `<span class="cc-badge-name">${name}</span></span>`;
+      }).filter(Boolean).join("") : `<span class="cc-note-faint">${ccT('CharCreate.noDefiningTraits')}</span>`;
+
+      return `
+        <div class="cc-dossier-card cc-class-section cc-gap-below">
+          <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.traits')}</h4>
+          <div class="cc-badge-wrap">${traitBadges}</div>
+        </div>
+      `;
+    }
+
+    // The two choices the simple sheet used to send a player to another tab
+    // for: which vocation this member takes, and which package of traits they
+    // are the kind of person for. Both are ordinary pick triggers, shown side
+    // by side in a row on the left page.
+    _simpleSheetPickersHtml() {
+      const packLabel = this._pickLabel('traitpack');
+      return `
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(322, 16)} <span>${ccT('CharCreate.class')}</span></div>
+          ${this._pickTriggerHtml('class', this._pickLabel('class'))}
+        </div>
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(87, 16)} <span>${ccT('CharCreate.traits')}</span></div>
+          ${this._pickTriggerHtml('traitpack', packLabel)}
+          <div class="cc-note-faint ts-pack-note cc-gap-above-tight">${ccT('Traits.packsHint')}</div>
+        </div>
+      `;
+    }
+
+    // The life the sheet wrote, on the sheet rather than behind a tab. Same
+    // block the description page draws, and the same button rewrites it.
+    _simpleSheetHistoryHtml(actor, age) {
+      if (!actor) return "";
+      const rewritable = !this._presetLoreHtml(actor);
+      const rewriteHtml = rewritable ? `
+        <button class="cc-sidebar-btn cc-desc-rewrite focusable" tabindex="0"
+                data-nav-key="cc-desc-rewrite"
+                onclick="SceneManager._scene.onRegenerateBackstory()">
+          <span>${ccT('CharCreate.regenerateBackstory')}</span>
+        </button>` : "";
+      return `
+        <div class="cc-dossier-card cc-class-section cc-gap-above">
+          <h3 class="cc-subheader">
+            <span>${ccT('CharCreate.description')}</span>
+            ${rewriteHtml}
+          </h3>
+          ${this._bioBackstoryHtml(actor, age)}
         </div>
       `;
     }
@@ -2391,8 +2539,17 @@
           window.HealthCore.ensureBodyPartSkills(actor);
         }
         SoundManager.playCursor();
-        this._lastStep = -1;
-        this._lastIndex = -1;
+        const container = this._dndContainer;
+        if (container) {
+          const sidebarSlot = container.querySelector(".cc-sidebar-slot");
+          if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+          const leftPage = container.querySelector(".cc-page-left");
+          if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+          const rightPage = container.querySelector(".cc-page-right");
+          if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+          this._refreshTopFolderTabs();
+          return;
+        }
         this.refreshUIOverlayDOM();
         return;
       }
@@ -2464,10 +2621,13 @@
 
       const container = this._dndContainer;
       if (container) {
+        const sidebarSlot = container.querySelector(".cc-sidebar-slot");
+        if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
         const leftPage = container.querySelector(".cc-page-left");
-        this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+        if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
         const rightPage = container.querySelector(".cc-page-right");
-        this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+        if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+        this._refreshTopFolderTabs();
         return;
       }
       this.refreshUIOverlayDOM();
@@ -2679,8 +2839,11 @@
 
 
       return `
-        <div class="cc-page cc-page-left ts-page cc-page-column">
+        <div class="cc-page cc-page-full ts-page cc-page-column">
           <div class="cc-bio-container cc-step-scroll">
+            <div class="cc-row-end">
+              <button class="cc-compact-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize")}</button>
+            </div>
             <div class="cc-bio-section cc-bio-section--plain">
               <div class="cc-bio-section-title">${this._ccIconHtml(84, 16)} <span>${ccT("CharCreate.romance.romanticOrientation")}</span></div>
               <div class="cc-bio-chips-row">${this._romanceOrientChipsHtml("romantic", state.romanticKey)}</div>
@@ -2712,84 +2875,16 @@
     }
 
     _romancePickerRightHtml() {
-      const actor = Scene_CharacterCreation.getCurrentActor();
-      if (!actor) return `<div class="cc-page cc-page-right"></div>`;
-
-      const state = this._romanceState(actor);
-      const banks = this._romanceBanks();
-      const sexual = this._romanceEntry(banks.orient.sexual, state.sexualKey);
-      const romantic = this._romanceEntry(banks.orient.romantic, state.romanticKey);
-      const style = this._romanceEntry(banks.rel.styles, state.styleKey);
-      const scale = banks.orient.kinseyScale || {};
-      const kinseyKey = state.kinsey === null || state.kinsey === undefined ? null : String(state.kinsey);
-
-      const classData = $dataClasses[actor._classId];
-      const className = classData ? window.CCDbName(classData) : ccT("CharCreate.defaultClassName");
-      let avatarStyle = "";
-      if (actor.characterName()) {
-        avatarStyle = this.getSpriteStyle(actor.characterName(), actor.characterIndex());
-      }
-
-      const params = {
-        name: actor.name(),
-        romantic: this._romanceText(romantic && romantic.name),
-        sexual: this._romanceText(sexual && sexual.name),
-        style: this._romanceText(style && style.name),
-        kinsey: kinseyKey === null ? "" : kinseyKey,
-      };
-
-      const bondEntries = Object.keys(state.bonds || {})
-        .map((id) => ({ other: $gameActors.actor(Number(id)), key: state.bonds[id] }))
-        .filter((b) => b.other && b.key && b.key !== "none" && $gameParty.members().includes(b.other));
-      const bondLines = bondEntries.map((b) => {
-        const entry = this._romanceEntry(banks.rel.bonds, b.key);
-        return `<li class="cc-bond-line"><b>${this._romanceText(entry && entry.name)}</b>: ${b.other.name()}</li>`;
-      }).join("");
-
-      return `
-        <div class="cc-page cc-page-right ts-page cc-page-column">
-          <div class="cc-row-end">
-            <button class="cc-compact-btn" onclick="SceneManager._scene.onRandomizeRomanceForCurrentActor()">${ccT("CharCreate.randomize")}</button>
-          </div>
-          <div class="cc-dossier-card cc-step-scroll-padded">
-            <div class="cc-bio-identity">
-              <span class="cc-compact-avatar cc-avatar-sm" style="${avatarStyle}"></span>
-              <span class="cc-bio-identity-name">${actor.name()}</span>
-              <span class="cc-bio-identity-class">(${className})</span>
-            </div>
-            <h3 class="cc-subheader cc-subheader-ruled">
-              ${ccT("CharCreate.romance.summaryTitle")}
-            </h3>
-            <p class="cc-text-desc cc-prose-left">
-              ${ccTp("CharCreate.romance.summaryPara1", params)}
-            </p>
-            ${kinseyKey !== null ? `
-              <p class="cc-text-desc cc-prose-left">
-                ${ccTp("CharCreate.romance.summaryPara2", params)} ${this._romanceText(scale[kinseyKey])}
-              </p>
-            ` : ""}
-            ${bondLines ? `
-              <h3 class="cc-subheader cc-subheader-ruled">
-                ${ccT("CharCreate.romance.bondsTitle")}
-              </h3>
-              <ul class="cc-bond-list">${bondLines}</ul>
-            ` : `
-              <p class="cc-text-desc cc-prose-aside">
-                ${ccT("CharCreate.romance.noBonds")}
-              </p>
-            `}
-          </div>
-        </div>
-      `;
+      return "";
     }
 
     _romanceRepaint() {
       const container = this._dndContainer;
       if (container) {
-        const leftPage = container.querySelector(".cc-page-left");
-        this._ccSwapPage(leftPage, this._romancePickerLeftHtml());
+        const page = container.querySelector(".cc-page-full") || container.querySelector(".cc-page-left");
+        if (page) this._ccSwapPage(page, this._romancePickerLeftHtml());
         const rightPage = container.querySelector(".cc-page-right");
-        this._ccSwapPage(rightPage, this._romancePickerRightHtml());
+        if (rightPage) rightPage.innerHTML = "";
         this._refreshTopFolderTabs();
         return;
       }
@@ -3692,6 +3787,9 @@
       this.createTotalRandomPartyAll();
       Scene_CharacterCreation._isScenarioMode = true;
       this._step = STEP.ORIGIN;
+      // See onProceedToScenario: the scenario cards are walked by the origin
+      // board, and the board is only dealt its choices by setupStep.
+      this.setupStep();
       this._lastStep = -1;
       this._lastIndex = -1;
     }
@@ -3702,6 +3800,9 @@
       this.createTotalRandomPartyAll();
       Scene_CharacterCreation._isScenarioMode = true;
       this._step = STEP.ORIGIN;
+      // See onProceedToScenario: without this the origin board keeps whatever
+      // choices the last step dealt it and the pad cannot pick a scenario.
+      this.setupStep();
       // The wizard is silent on a confirm: only the cursor, the refusal and
       // the cancel are heard on it (test_cc_reachability).
       SoundManager.playCursor();

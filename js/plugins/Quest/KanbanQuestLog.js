@@ -241,7 +241,8 @@
             if (window.ParchmentToast) {
                 window.ParchmentToast.show(text, {
                     severity: type === 'update' ? 'warning' : 'info',
-                    duration: 180
+                    duration: 180,
+                    category: 'quest'
                 });
                 return;
             }

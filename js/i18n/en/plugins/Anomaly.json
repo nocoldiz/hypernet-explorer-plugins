@@ -42,6 +42,7 @@
   "crime": "{Bounty on your head: {crime}|Crime reported: {crime}|Warrant issued: {crime}|Infraction logged: {crime}}.",
   "augment": "{Installed on {who}: {name}|Fitted to {who}: {name}|Upgraded {who} with {name}|Cyberware fitted to {who}: {name}}.",
   "needs": "{Everyone feels a bit better: {list}|Party status improved: {list}|Vitals restored: {list}|Needs addressed: {list}}.",
+  "company": "{An afternoon lived through together. Everyone feels less alone.|Whatever else it was, it was company.|The away team comes back closer than it left.}",
   "gave": "{Handed over {qty}× {name}|Delivered {qty}× {name}|Paid out {qty}× {name}|Transferred {qty}× {name}}.",
   "skill": "{{who} learned {name}|{who} mastered {name}|{who} acquired {name}|New skill for {who}: {name}}.",
   "stateGained": "{{who} walks out of it {state}.|{state}: {who}.|{who} is {state} now.|Came back {state}: {who}.}",

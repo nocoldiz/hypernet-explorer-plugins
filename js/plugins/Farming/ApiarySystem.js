@@ -1514,6 +1514,12 @@
                     this.executeApiaryAction(idx);
                 });
             });
+
+            this._container.addEventListener('contextmenu', (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onCancelAction();
+            });
         }
 
         executeApiaryAction(idx) {
@@ -1590,21 +1596,33 @@
             this.updateApiaryInput();
         }
 
-        updateApiaryInput() {
-            const count = (this._maxActionIndex || 1) + 1;
-            if (Input.isTriggered('cancel')) {
+        onCancelAction() {
+            if (this._actionIndex !== -1 && this._actionIndex != null) {
+                this._actionIndex = -1;
+                SoundManager.playCancel();
+                this.refreshUIApiary();
+            } else {
                 SoundManager.playCancel();
                 this.popScene();
+            }
+        }
+
+        updateApiaryInput() {
+            const count = (this._maxActionIndex || 1) + 1;
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                this.onCancelAction();
             } else if (Input.isRepeated('up')) {
-                this._actionIndex = (this._actionIndex - 1 + count) % count;
+                this._actionIndex = this._actionIndex === -1 ? count - 1 : (this._actionIndex - 1 + count) % count;
                 SoundManager.playCursor();
                 this.refreshUIApiary();
             } else if (Input.isRepeated('down')) {
-                this._actionIndex = (this._actionIndex + 1) % count;
+                this._actionIndex = this._actionIndex === -1 ? 0 : (this._actionIndex + 1) % count;
                 SoundManager.playCursor();
                 this.refreshUIApiary();
             } else if (Input.isTriggered('ok')) {
-                this.executeApiaryAction(this._actionIndex);
+                if (this._actionIndex !== -1 && this._actionIndex != null) {
+                    this.executeApiaryAction(this._actionIndex);
+                }
             }
         }
     }

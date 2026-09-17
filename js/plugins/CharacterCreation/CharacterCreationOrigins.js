@@ -2085,6 +2085,20 @@
     return { x: square.x, y: square.y, hatchX: hatch[0], hatchY: hatch[1] };
   }
 
+  // The square THIS WORLD has already had proved to it, hatch tile and all, or
+  // null while none has been. The sheet writes it back into its own lines, so a
+  // patron who has typed the coordinates once in a world never types them
+  // again; nothing else is ever offered, so a refused guess is never prefilled.
+  function patronVaultClaim() {
+    const PR = window.PatreonRewards;
+    if (!PR || typeof PR.claimedSquare !== "function") return null;
+    try {
+      return PR.claimedSquare();
+    } catch (e) {
+      return null;
+    }
+  }
+
   // The square the player proved they knew, kept on $gameTemp between the
   // question and the start (the wizard asks, then runs the origin again).
   function patronVaultSquare() {
@@ -2093,6 +2107,13 @@
 
   function setPatronVaultSquare(square) {
     if ($gameTemp) $gameTemp._ccPatronVaultSquare = square || null;
+    // Typing the coordinates is a fact about the WORLD, not about this party:
+    // the square is written into the world folder, every party that world ever
+    // raises is handed the vessel that opens the vault, and the parties already
+    // living there are posted one. Proving them once is proving them for good.
+    if (square && window.PatreonRewards && window.PatreonRewards.claimSquare) {
+      window.PatreonRewards.claimSquare(square.x, square.y);
+    }
   }
 
   // What the vault is called on the travel map. The wizard's own i18n bank,
@@ -2444,6 +2465,7 @@
     patronVaultAvailable,
     patronVaultSquareAt,
     patronVaultSquare,
+    patronVaultClaim,
     setPatronVaultSquare,
     startPatronVaultOrigin,
     startArtifactHeirOrigin,

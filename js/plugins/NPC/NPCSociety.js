@@ -2490,19 +2490,7 @@
     // Exposed so NPCEmpathize._buildHistoryHTML can call it if needed externally.
     buildBackstoryHTML(backstory) {
       if (!backstory) return '';
-      const ICONS = window.HistorySimulator_ICONS ?? {};
-      const iconFor = cat => {
-        const id = ICONS[cat] ?? 245;
-        return `<img src="img/system/IconSet.png" style="width:16px;height:16px;object-fit:none;object-position:-${(id % 16) * 32}px -${Math.floor(id / 16) * 32}px;image-rendering:pixelated;vertical-align:middle;margin-right:3px;">`;
-      };
-      const eventsHTML = (backstory.formativeEvents ?? []).map(e =>
-        `<div class="npc-backstory-event">${iconFor(e.category)}<span>${escapeHtml(e.date)}</span>, ${escapeHtml(_eventText(e))}</div>`
-      ).join('');
-      return `
-        <div class="npc-backstory-text">${escapeHtml(BackstoryGenerator.narrativeOf(backstory))}</div>
-        <div class="npc-backstory-events">${eventsHTML}</div>
-        <div class="npc-backstory-meta">${escapeHtml(T('NPCSociety.bio.bornMeta', { year: backstory.birthYear,
-          place: window.WorldNames ? window.WorldNames.place(backstory.birthplace) : backstory.birthplace }))}</div>`;
+      return `<div class="npc-backstory-text">${escapeHtml(BackstoryGenerator.narrativeOf(backstory))}</div>`;
     },
   };
 

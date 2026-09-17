@@ -186,6 +186,64 @@
         return $gameSystem._npcPastPartyMembers;
     }
 
+    // ── The world's own roster of the inactive ──────────────────────────────
+    // A departure is a fact about the WORLD, not about the savegame it happened
+    // in: the companion who retired in one playthrough is still out there when
+    // another one walks past. So every snapshot is mirrored into the world
+    // folder, keyed by name, and read back from there by anything that asks who
+    // is no longer travelling with anybody (PatreonRewards puts them in the
+    // vault). A member who is walking with SOMEBODY is not inactive, so the
+    // list is filtered against the party doing the asking before it is used.
+    const WORLD_FILE = "party";       // i18n-ignore  world data file key
+    const WORLD_FIELD = "inactive";   // i18n-ignore  field in it
+
+    function worldInactiveStore() {
+        const WM = window.WorldManager;
+        if (!WM || typeof WM.getField !== "function") return null;
+        if (WM.hasActiveWorld && !WM.hasActiveWorld()) return null;
+        let held = null;
+        try { held = WM.getField(WORLD_FILE, WORLD_FIELD); } catch (e) { return null; }
+        if (!held || typeof held !== "object") {
+            held = {};
+            try { WM.setField(WORLD_FILE, WORLD_FIELD, held); } catch (e) { return null; }
+        }
+        return held;
+    }
+
+    // What a departed member is carrying. Nothing strips a leaving member's
+    // equipment, so the actor still wears it in the savegame they left; this is
+    // the copy every OTHER savegame of the world has to read them by, and the
+    // copy they are dressed back in if they are ever taken on again.
+    function equipSnapshot(actor) {
+        const out = [];
+        if (!actor || typeof actor.equips !== "function") return out;
+        const equips = actor.equips() || [];
+        for (let slot = 0; slot < equips.length; slot++) {
+            const item = equips[slot];
+            if (!item) continue;
+            const kind = DataManager.isWeapon(item) ? "weapon"   // i18n-ignore: item kind
+                : DataManager.isArmor(item) ? "armor" : null;    // i18n-ignore: item kind
+            if (!kind) continue;
+            out.push({ slot, kind, id: item.id });
+        }
+        return out;
+    }
+
+    function rememberInWorld(snapshot) {
+        const store = worldInactiveStore();
+        if (!store || !snapshot || !snapshot.name) return false;
+        store[snapshot.name] = Object.assign({}, snapshot);
+        return true;
+    }
+
+    function forgetInWorld(name) {
+        const store = worldInactiveStore();
+        if (!store || !name) return false;
+        if (!(name in store)) return false;
+        delete store[name];
+        return true;
+    }
+
     function joinMinutes() {
         if (!$gameSystem) return {};
         if (!$gameSystem._npcPartyJoinMinutes) $gameSystem._npcPartyJoinMinutes = {};
@@ -207,7 +265,39 @@
         _Game_Party_addActor.call(this, actorId);
         if (wasInParty || !$gameSystem || isSummonProxy(actorId)) return;
         joinMinutes()[actorId] = nowMinute();
+        // Back on the road: they are nobody's idle companion any more, and
+        // whatever they walked away in goes back on (dressBack does nothing to
+        // an actor who still has it, which is the ordinary case).
+        const actor = $gameActors ? $gameActors.actor(actorId) : null;
+        if (!actor) return;
+        const store = worldInactiveStore();
+        const snapshot = store && store[actor.name()];
+        if (snapshot) dressBack(actor, snapshot);
+        forgetInWorld(actor.name());
     };
+
+    // Put a snapshot's equipment back on an actor, slot by slot, skipping every
+    // slot they have already filled: a companion taken on again in another
+    // savegame arrives in the gear they left in rather than naked, and one who
+    // never took it off is not disturbed.
+    function dressBack(actor, snapshot) {
+        if (!actor || !snapshot || !Array.isArray(snapshot.equips)) return false;
+        let dressed = false;
+        for (const entry of snapshot.equips) {
+            if (!entry || entry.slot == null) continue;
+            const db = entry.kind === "weapon" ? $dataWeapons    // i18n-ignore: item kind
+                : entry.kind === "armor" ? $dataArmors : null;   // i18n-ignore: item kind
+            const item = db ? db[Number(entry.id)] : null;
+            if (!item) continue;
+            const held = actor.equips()[entry.slot];
+            if (held) continue;
+            try {
+                actor.forceChangeEquip(entry.slot, item);
+                dressed = true;
+            } catch (e) { /* a slot this class does not have: leave it empty */ }
+        }
+        return dressed;
+    }
 
     // Dossier switches that say a named character is travelling with this party
     // (CharacterCreationPresets.js). They drive the whole social layer written
@@ -237,6 +327,11 @@
             level: actor.level,
             characterName: actor.characterName(),
             characterIndex: actor.characterIndex(),
+            faceName: actor.faceName ? actor.faceName() : "",
+            faceIndex: actor.faceIndex ? actor.faceIndex() : 0,
+            // They walk away in what they were wearing, and they are still
+            // wearing it wherever they turn up.
+            equips: equipSnapshot(actor),
             reason,
             leftAtMin: minute,
             leftDate: rosterDateOf(minute),
@@ -250,6 +345,8 @@
         if (existing >= 0) past[existing] = snapshot;
         else past.push(snapshot);
         delete joinMinutes()[actorId];
+        // And into the world, where every other savegame of it can meet them.
+        rememberInWorld(snapshot);
     }
 
     // i18n-ignore: actor names, matched at runtime
@@ -277,6 +374,28 @@
     // ========================================================================
 
     window.PartyRoster = {
+        // Everybody in this WORLD who is travelling with nobody: every
+        // departure any savegame of it ever recorded, minus whoever is walking
+        // with the party asking. Each entry carries the gear they left in, so
+        // they can be met, met again, or taken on, dressed as they were.
+        worldInactive() {
+            const store = worldInactiveStore();
+            if (!store) return [];
+            const here = new Set(($gameParty?.members() ?? []).map(a => a.name()));
+            return Object.keys(store)
+                .map(name => store[name])
+                .filter(entry => entry && entry.name && !here.has(entry.name))
+                .map(entry => Object.assign({}, entry));
+        },
+
+        // Put a snapshot's equipment back on. Published because anything that
+        // takes one of them on (a recruitment, a rescue, the vault's own
+        // roster) has to dress them the same way.
+        dressBack(actor, snapshot) { return dressBack(actor, snapshot); },
+
+        // Forget somebody: they are travelling again, or they are gone.
+        forgetInactive(name) { return forgetInWorld(name); },
+
         // The full roster ledger: everyone currently travelling plus every
         // recorded departure, newest departure last. Current members shadow an
         // older snapshot of the same name (they came back).

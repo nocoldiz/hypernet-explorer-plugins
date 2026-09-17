@@ -6950,5 +6950,381 @@
   "1966": {
     "name": "Bugatti Radiator Badge",
     "description": "Enamel and a horseshoe grille, off a car that was never found."
+  },
+  "1972": {
+    "name": "Ticker Slate",
+    "description": "Opens the stock market terminal."
+  },
+  "1973": {
+    "name": "Bearer Chequebook",
+    "description": "Opens the bank: deposits, withdrawals and loans."
+  },
+  "1974": {
+    "name": "Estate Portfolio",
+    "description": "Opens the property market to buy and sell."
+  },
+  "1975": {
+    "name": "Owner's Clipboard",
+    "description": "Opens shop management for the shops you own."
+  },
+  "1976": {
+    "name": "Warehouse Manifest",
+    "description": "Opens your shop warehouse."
+  },
+  "1977": {
+    "name": "Day Labour Chit",
+    "description": "Opens the work menu to take a job."
+  },
+  "1978": {
+    "name": "Postings Bulletin",
+    "description": "Lists the job offers of this location."
+  },
+  "1979": {
+    "name": "Elemental Lattice Chart",
+    "description": "Opens the table of esoteric elements."
+  },
+  "1980": {
+    "name": "Research Dossier",
+    "description": "Opens the tech tree of world discoveries."
+  },
+  "1981": {
+    "name": "Pocket Modem",
+    "description": "Opens the Hypernet browser."
+  },
+  "1982": {
+    "name": "Rap Sheet Copy",
+    "description": "Lists your crimes and current bounty."
+  },
+  "1983": {
+    "name": "Teletext Wand",
+    "description": "Shows the TV schedule for the week."
+  },
+  "1984": {
+    "name": "Soul Chronicle",
+    "description": "Shows the life history of a nearby NPC."
+  },
+  "1985": {
+    "name": "Stockman's Tally",
+    "description": "Opens the menu of the animals you own."
+  },
+  "1986": {
+    "name": "Milking Pail",
+    "description": "Collects the produce of all your animals."
+  },
+  "1987": {
+    "name": "Smoker Bellows",
+    "description": "Advances your hives and their honey."
+  },
+  "1988": {
+    "name": "Crystal Radio Set",
+    "description": "Opens the tunable radio and its stations."
+  },
+  "1989": {
+    "name": "Folding Keyboard",
+    "description": "Opens a playable three octave keyboard."
+  },
+  "1990": {
+    "name": "Pocket Cue Case",
+    "description": "Starts a game of pool."
+  },
+  "1991": {
+    "name": "Deck of Ninety Fates",
+    "description": "Starts a tarot reading."
+  },
+  "1992": {
+    "name": "Lever Luck Chip",
+    "description": "Plays one round on the slot machine."
+  },
+  "1993": {
+    "name": "Arena Token",
+    "description": "Starts one arena battle."
+  },
+  "1994": {
+    "name": "Tournament Ticket",
+    "description": "Starts a monster tournament you can bet on."
+  },
+  "1995": {
+    "name": "Gauntlet Sigil",
+    "description": "Starts the arena gauntlet of successive fights."
+  },
+  "1996": {
+    "name": "Convoked Jerrycan",
+    "description": "Fills the camper and the car to full fuel."
+  },
+  "1997": {
+    "name": "Wayfarer's Compass",
+    "description": "Opens fast travel to any known destination."
+  },
+  "1998": {
+    "name": "Airship Whistle",
+    "description": "Summons the airship to your position."
+  },
+  "1999": {
+    "name": "Hour Sand",
+    "description": "Passes one hour of game time."
+  },
+  "2000": {
+    "name": "Day Sand",
+    "description": "Passes a full day of game time."
+  },
+  "2001": {
+    "name": "Glyph Lens",
+    "description": "Toggles the ASCII render mode."
+  },
+  "2002": {
+    "name": "Weathervane Charm",
+    "description": "Forces the weather to change."
+  },
+  "2003": {
+    "name": "Relic Convokation Sigil",
+    "description": "Conjures one random item for your level."
+  },
+  "2004": {
+    "name": "Armament Convokation Sigil",
+    "description": "Conjures one random weapon for your level."
+  },
+  "2005": {
+    "name": "Bulwark Convokation Sigil",
+    "description": "Conjures one random armour for your level."
+  },
+  "2006": {
+    "name": "Spirit Choir Bell",
+    "description": "Adds every spirit battler to your roster."
+  },
+  "2007": {
+    "name": "Hurricane Heart",
+    "description": "Calls a storm and forces the weather to turn."
+  },
+  "2008": {
+    "name": "Century Glass",
+    "description": "Simulates a hundred years of world time."
+  },
+  "2009": {
+    "name": "Worldquake Geode",
+    "description": "Regenerates the world map and reveals it."
+  },
+  "2010": {
+    "name": "Crown of Coronation",
+    "description": "Sets a faction to allied and grants troops."
+  },
+  "2011": {
+    "name": "Chronicle Rewriter",
+    "description": "Runs the history simulation forward again."
+  },
+  "2012": {
+    "name": "Philosopher's Convokation Stone",
+    "description": "Grants gold and a random item, weapon and armour."
+  },
+  "2013": {
+    "name": "Pedlar's Calling Card",
+    "description": "Opens a general store wherever you stand."
+  },
+  "2014": {
+    "name": "Apothecary's Calling Card",
+    "description": "Opens a pharmacy wherever you stand."
+  },
+  "2015": {
+    "name": "Armourer's Calling Card",
+    "description": "Opens an armour shop wherever you stand."
+  },
+  "2016": {
+    "name": "Weaponsmith's Calling Card",
+    "description": "Opens a weapon shop wherever you stand."
+  },
+  "2017": {
+    "name": "Sorcerer's Calling Card",
+    "description": "Opens a magic shop wherever you stand."
+  },
+  "2018": {
+    "name": "Taverner's Calling Card",
+    "description": "Opens a tavern counter wherever you stand."
+  },
+  "2019": {
+    "name": "Jeweller's Calling Card",
+    "description": "Opens a luxury shop wherever you stand."
+  },
+  "2020": {
+    "name": "Outfitter's Calling Card",
+    "description": "Opens an adventurer shop wherever you stand."
+  },
+  "2021": {
+    "name": "Toolsmith's Calling Card",
+    "description": "Opens a hardware shop wherever you stand."
+  },
+  "2022": {
+    "name": "Alchemist's Calling Card",
+    "description": "Opens an alchemistry shop wherever you stand."
+  },
+  "2023": {
+    "name": "Librarian's Calling Card",
+    "description": "Opens an academy shop wherever you stand."
+  },
+  "2024": {
+    "name": "Organ Trader's Calling Card",
+    "description": "Opens an organ trader shop wherever you stand."
+  },
+  "2025": {
+    "name": "Bestiary Index Leaf",
+    "description": "Reveals every entry of the bestiary."
+  },
+  "2026": {
+    "name": "Almanac Fragment",
+    "description": "Tells one fact from the world’s history."
+  },
+  "2027": {
+    "name": "Clippings Folder",
+    "description": "Shows the news published so far."
+  },
+  "2028": {
+    "name": "Surveyor's Sheet",
+    "description": "Opens the zoomable world map."
+  },
+  "2029": {
+    "name": "Realm Report",
+    "description": "Reports the governments of every hyperpower."
+  },
+  "2030": {
+    "name": "Census Lens",
+    "description": "Shows the politics of a nearby NPC."
+  },
+  "2031": {
+    "name": "Confidant's Ribbon",
+    "description": "Opens the Empathize panel on an NPC."
+  },
+  "2032": {
+    "name": "Clinic Card",
+    "description": "Opens the biologic simulation of the party."
+  },
+  "2033": {
+    "name": "Builder's Level",
+    "description": "Opens the builder to place furniture."
+  },
+  "2034": {
+    "name": "Brewer's Hydrometer",
+    "description": "Opens the brewery and its barrels."
+  },
+  "2035": {
+    "name": "Stockbusters Card",
+    "description": "Opens the Stockbusters marketplace."
+  },
+  "2036": {
+    "name": "Token Sleeve",
+    "description": "Converts euros into arcade tokens and back."
+  },
+  "2037": {
+    "name": "Silence Fork",
+    "description": "Stops the procedural music playing."
+  },
+  "2038": {
+    "name": "Travelling Chess Set",
+    "description": "Starts a game of chess."
+  },
+  "2039": {
+    "name": "Chaos Chess Set",
+    "description": "Starts a game of chaos chess."
+  },
+  "2040": {
+    "name": "Race Card",
+    "description": "Starts a horse race you can bet on."
+  },
+  "2041": {
+    "name": "Lane Pass",
+    "description": "Starts a game of bowling."
+  },
+  "2042": {
+    "name": "Board Wax",
+    "description": "Starts the surfing minigame."
+  },
+  "2043": {
+    "name": "Practice Lock",
+    "description": "Starts the lockpicking block puzzle."
+  },
+  "2044": {
+    "name": "Bologna Ticket",
+    "description": "Travels to the streets of Bologna."
+  },
+  "2045": {
+    "name": "Booster Sleeve",
+    "description": "Opens a booster pack of cards."
+  },
+  "2046": {
+    "name": "Livestock Voucher",
+    "description": "Buys one animal for your farm."
+  },
+  "2047": {
+    "name": "Summoner's Stirrup",
+    "description": "Teleports you into your parked vehicle."
+  },
+  "2048": {
+    "name": "Interest Grimorie",
+    "description": "Pays out a day of bank interest."
+  },
+  "2049": {
+    "name": "Rent Collector's Tally",
+    "description": "Collects a day of income from your property."
+  },
+  "2050": {
+    "name": "Knitting Salve",
+    "description": "Heals the broken body parts of the party."
+  },
+  "2051": {
+    "name": "Quartermaster's Crate",
+    "description": "Fills a container with random supplies."
+  },
+  "2052": {
+    "name": "Field Cot",
+    "description": "Fully restores the whole party."
+  },
+  "2053": {
+    "name": "Guild Favour Token",
+    "description": "Raises your reputation with a faction."
+  },
+  "2054": {
+    "name": "Mercenary Contract",
+    "description": "Buys troops for your army."
+  },
+  "2055": {
+    "name": "Mirage Step",
+    "description": "Teleports you to a new place by cutscene."
+  },
+  "2056": {
+    "name": "Amnesty Writ",
+    "description": "Clears your bounty with the police."
+  },
+  "2057": {
+    "name": "Patron's Dividend Slip",
+    "description": "Adds phone credit and a day of rent income."
+  },
+  "2058": {
+    "name": "Fleshwright's Kit",
+    "description": "Creates a creature character from parts."
+  },
+  "2059": {
+    "name": "Labyrinth Seed",
+    "description": "Generates a new multi floor dungeon."
+  },
+  "2060": {
+    "name": "Web Waken Horn",
+    "description": "Runs a world pulse over every settlement."
+  },
+  "2061": {
+    "name": "Catch-Up Bell",
+    "description": "Catches up politics, NPC lives and world web."
+  },
+  "2062": {
+    "name": "Election Edict",
+    "description": "Holds elections in every hyperpower."
+  },
+  "2063": {
+    "name": "Tree of Futures",
+    "description": "Generates a new tech tree of discoveries."
+  },
+  "2064": {
+    "name": "Selfshape Mirror",
+    "description": "Changes the body archetype of a member."
+  },
+  "2065": {
+    "name": "World Shaper's Nail",
+    "description": "Starts procedural generation of new land."
   }
 }

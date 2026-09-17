@@ -119,6 +119,23 @@
         });
         el.addEventListener('click', () => { this._idx = i; this._confirmSelection(); });
       });
+      this._el.addEventListener('contextmenu', ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.onCancel();
+      });
+    }
+
+    onCancel() {
+      if (this._idx !== -1) {
+        this._idx = -1;
+        SoundManager.playCancel();
+        this._updateHighlight();
+        this._updateRight();
+      } else {
+        SoundManager.playCancel();
+        this.popScene();
+      }
     }
 
     // ── Highlight + right-page update ─────────────────────────
@@ -177,17 +194,20 @@
 
       if (Input.isRepeated('down') || Input.isRepeated('s')) {
         if (this._idx < len - 1) { this._idx++; SoundManager.playCursor(); this._onNavigate(); }
+        else if (this._idx === -1 && len > 0) { this._idx = 0; SoundManager.playCursor(); this._onNavigate(); }
       }
       if (Input.isRepeated('up') || Input.isRepeated('w')) {
         if (this._idx > 0) { this._idx--; SoundManager.playCursor(); this._onNavigate(); }
+        else if (this._idx === -1 && len > 0) { this._idx = len - 1; SoundManager.playCursor(); this._onNavigate(); }
       }
       if (Input.isTriggered('ok')) {
-        this._confirmSelection();
-        this.popScene();
+        if (this._idx !== -1) {
+          this._confirmSelection();
+          this.popScene();
+        }
       }
-      if (Input.isTriggered('cancel')) {
-        SoundManager.playCancel();
-        this.popScene();
+      if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+        this.onCancel();
       }
     }
 

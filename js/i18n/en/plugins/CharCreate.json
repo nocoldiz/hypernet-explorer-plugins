@@ -1054,6 +1054,7 @@
   "pickSecondaryArchetype": "Choose a second anatomy",
   "pickBond": "Choose a bond",
   "pickClass": "Choose a vocation",
+  "pickTraitPackage": "Choose a kind of person",
   "embarkLocked": "Every character needs a name and a face.",
   "saveAsPreset": "Save As Preset",
   "presetSavedToast": "{name} filed as one of your dossiers.",

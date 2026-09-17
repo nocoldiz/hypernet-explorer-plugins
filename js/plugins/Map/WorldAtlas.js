@@ -912,6 +912,23 @@
             this._refreshDossier();
         }
 
+        _deselect() {
+            if (!this._selected) return;
+            this._mark(this._selected, "selected", false);
+            this._selected = null;
+            SoundManager.playCancel();
+            this._refreshDossier();
+        }
+
+        _onCancel() {
+            if (this._selected) {
+                this._deselect();
+            } else {
+                SoundManager.playCancel();
+                this.popScene();
+            }
+        }
+
         _stepSelection(delta) {
             if (!this._entries.length) return;
             let idx = this._entries.findIndex((c) => c.country === this._selected);
@@ -1003,7 +1020,11 @@
 
             // Right click is the cancel gesture: it must never start a drag,
             // and the browser menu must never stand over the map.
-            el.addEventListener("contextmenu", (ev) => ev.preventDefault());
+            el.addEventListener("contextmenu", (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this._onCancel();
+            });
 
             frame.addEventListener("pointerdown", (ev) => {
                 if (ev.button !== undefined && ev.button !== 0) return;
@@ -1066,8 +1087,7 @@
             } else if (Input.isTriggered("ok")) {
                 if (this._selected) { SoundManager.playOk(); this._centreOn(this._selected); }
             } else if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
-                SoundManager.playCancel();
-                this.popScene();
+                this._onCancel();
             }
         }
 

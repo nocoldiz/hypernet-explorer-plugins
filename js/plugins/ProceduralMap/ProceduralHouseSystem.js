@@ -277,6 +277,15 @@
       enterTileStackAt(x, y, floors, opts) { return enterTileStackAt(x, y, floors, opts); },
       registerFixedStack(floors, opts) { return registerFixedStack(floors, opts); },
       enterFixedFloors(floors, opts) { return enterFixedFloors(floors, opts); },
+      // Drop the building session without walking out of it: something else has
+      // moved the party off these floors under its own power (the patron
+      // vault's own teleport out onto the hatch), so what is left behind is a
+      // session for a building nobody is standing in.
+      clearHouseSession() {
+        currentHouseSessionId = null;
+        currentMultiBuilding = null;
+        setCurrentBuilding(null);
+      },
       interiorMapIdFor(poolName, x, y, mapId) { return interiorMapIdFor(poolName, x, y, mapId); },
       // ── Doors that name their own trade (tileset 303) ──────────────────────
       // Which interiors a trade door may open onto, and which one THIS door
@@ -2312,11 +2321,25 @@
     if (typeof wx !== 'number' || typeof wy !== 'number') return false;
     if (wx === tpl.x && wy === tpl.y) return false;
     if (pg && pg.generatedMapData) {
+      // Where to come up. The middle of the square is only the answer when the
+      // square has nothing better: a patron square has a HATCH, and a party
+      // walking out of a cellar under it belongs beside that lid, not fifteen
+      // tiles away in the clearing. This is the same tile the recorded return
+      // point would have used, so both ways out of a vault agree.
+      let landX = 32;
+      let landY = 32;
+      const PR = window.PatreonRewards;
+      if (PR && typeof PR.hatchTileAtWorld === "function") {
+        try {
+          const hatch = PR.hatchTileAtWorld(wx, wy);
+          if (hatch) { landX = hatch[0]; landY = hatch[1] + 1; }
+        } catch (e) { /* not a patron square: the clearing it is */ }
+      }
       // Square-local: ProcStitch's performTransfer hook converts it, and
       // onMapLoaded moves the party off the tile if it is not standable.
       $gameVariables.setValue(43, wx);
       $gameVariables.setValue(44, wy);
-      $gamePlayer.reserveTransfer(PROC_MAP_ID, 32, 32, 2, 0);
+      $gamePlayer.reserveTransfer(PROC_MAP_ID, landX, landY, 2, 0);
     } else {
       // No square built: the world map itself, which is redirected to the tower
       // by WorldMapReturn when there is no Earth left to arrive on.

@@ -2391,8 +2391,28 @@
     return kp + T('Quests.knowledge');
   }
 
+  // A contract worked through together is company as much as it is pay: the
+  // whole party's Social meter fills a share of it when the job is handed in,
+  // the leader (who did the talking at the board) a little more. The harder the
+  // contract, the longer they were out there and the more it counts.
+  const QUEST_SOCIAL_PCT = 10;        // of the meter, at one star
+  const QUEST_SOCIAL_PER_STAR = 4;    // added per star above the first
+  const QUEST_SOCIAL_LEADER_BONUS = 1.4;
+  function fillQuestSocial(q) {
+    const PN = window.PartyNeeds;
+    if (!PN || !PN.addSocialToAll) return;
+    const members = $gameParty ? $gameParty.members() : [];
+    if (members.length < 2) return;   // nobody to keep company with
+    const max = (window.TimeDateSystem && window.TimeDateSystem.maxNeed) || 100;
+    const stars = Math.max(1, Math.min(5, Number(q.diff) || 1));
+    const pct = QUEST_SOCIAL_PCT + QUEST_SOCIAL_PER_STAR * (stars - 1);
+    PN.addSocialToAll(max * (pct / 100),
+      { focus: $gameParty.leader(), focusBonus: QUEST_SOCIAL_LEADER_BONUS });
+  }
+
   function grantRewards(q) {
     const lines = [];
+    fillQuestSocial(q);
     const kp = questKnowledge(q);
     if (kp > 0 && $gameSystem.addKnowledge) {
       $gameSystem.addKnowledge(kp);

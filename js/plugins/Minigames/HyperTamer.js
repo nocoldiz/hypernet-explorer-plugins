@@ -196,25 +196,16 @@
                 varying vec2 vTextureCoord;
                 uniform sampler2D uSampler;
                 uniform vec3 tint;
-                uniform float pixelSize;
                 
                 void main(void) {
-                    vec2 coord = vTextureCoord;
+                    // Direct 1:1 texture sampling for crystal-clear LCD display
+                    vec4 color = texture2D(uSampler, vTextureCoord);
                     
-                    // Pixelate effect
-                    coord = floor(coord / pixelSize) * pixelSize;
-                    
-                    vec4 color = texture2D(uSampler, coord);
-                    
-                    // Convert to grayscale
+                    // Convert to grayscale luminance
                     float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
                     
-                    // Apply LCD tint
+                    // Apply LCD tint: maps luminance onto the LCD green color scheme
                     vec3 tinted = mix(vec3(0.0), tint, gray);
-                    
-                    // Add slight grid pattern
-                    float grid = sin(vTextureCoord.x * 200.0) * sin(vTextureCoord.y * 200.0) * 0.05;
-                    tinted += grid;
                     
                     gl_FragColor = vec4(tinted, color.a);
                 }
@@ -227,7 +218,6 @@
                 ((lcdColorTint >> 8) & 0xFF) / 255,
                 (lcdColorTint & 0xFF) / 255
             ]);
-            this.uniforms.pixelSize = 0.004;
         }
     }
     
@@ -444,6 +434,7 @@
         setupFrames() {
             const w = 58, h = 24;
             this.bitmap = new Bitmap(w, h);
+            this.bitmap.outlineWidth = 0;
             this.bitmap.fontSize = 14;
             this.bitmap.drawText(this._label || '', 0, 0, w, h, 'center');
             this.setColdFrame(0, 0, w, h);
@@ -484,6 +475,7 @@
 
         _redraw() {
             this.bitmap.clear();
+            this.bitmap.outlineWidth = 0;
             this.bitmap.fontSize = 16;
             this.bitmap.drawText(T('HyperTamer.' + this._type + 'Training'), 0, 0, 220, 30, 'center');
             this.bitmap.drawText(T('HyperTamer.scoreLine', { score: this._score }), 0, 30, 220, 30, 'center');
@@ -580,6 +572,7 @@
                         maxHeight / this._petSprite.bitmap.height,
                         1
                     );
+                    this._petBaseScale = baseScale;
                     const growthScale = data.size;
                     
                     this._petSprite.scale.x = baseScale * growthScale;
@@ -626,6 +619,7 @@
         createDeathScreen() {
             this._deathText = new Sprite();
             this._deathText.bitmap = new Bitmap(320, 240);
+            this._deathText.bitmap.outlineWidth = 0;
             this._deathText.bitmap.fontSize = 24;
             this._deathText.bitmap.drawText(T('HyperTamer.petDied'), 0, 100, 320, 32, 'center');
             this._deathText.bitmap.fontSize = 16;
@@ -640,6 +634,7 @@
             // Create UI container
             this._uiContainer = new Sprite();
             this._uiContainer.bitmap = new Bitmap(320, 240);
+            this._uiContainer.bitmap.outlineWidth = 0;
             this._lcdContainer.addChild(this._uiContainer);
             
             // Create status bars
@@ -675,7 +670,7 @@
             this._buttons.forEach((button, index) => {
                 const selected = index === this._selectedButtonIndex;
                 button.scale.set(selected ? 1.15 : 1.0);
-                button.opacity = selected ? 255 : 180;
+                button.opacity = selected ? 255 : 160;
             });
         }
         
@@ -689,20 +684,17 @@
             bitmap.fontSize = 12;
             bitmap.drawText(icon, x - 25, y - 2, 20, height + 4, 'center');
             
-            // Draw bar background
+            // Draw bar background (unlit LCD segment)
             bitmap.fillRect(x, y, width, height, '#333333');
             
-            // Draw bar fill
+            // Draw bar fill (lit LCD segment)
             const fillWidth = Math.floor((width - 2) * value / 100);
             const fillColor = this.getBarColor(need, value);
             bitmap.fillRect(x + 1, y + 1, fillWidth, height - 2, fillColor);
         }
         
         getBarColor(need, value) {
-            if (need === 'health') {
-                return value > 50 ? '#00FF00' : value > 20 ? '#FFFF00' : '#FF0000';
-            }
-            return value > 30 ? '#00FF00' : value > 10 ? '#FFFF00' : '#FF0000';
+            return '#ffffff';
         }
         
         createDeviceFrame() {
@@ -824,12 +816,14 @@
             if (!this._messageSprite) {
                 this._messageSprite = new Sprite();
                 this._messageSprite.bitmap = new Bitmap(200, 32);
+                this._messageSprite.bitmap.outlineWidth = 0;
                 this._messageSprite.x = 60;
                 this._messageSprite.y = 150;
                 this._lcdContainer.addChild(this._messageSprite);
             }
             
             this._messageSprite.bitmap.clear();
+            this._messageSprite.bitmap.outlineWidth = 0;
             this._messageSprite.bitmap.fontSize = 16;
             this._messageSprite.bitmap.drawText(text, 0, 0, 200, 32, 'center');
             this._messageSprite.opacity = 255;
@@ -874,6 +868,7 @@
         refreshDisplay() {
             if (this._uiContainer && this._uiContainer.bitmap) {
                 this._uiContainer.bitmap.clear();
+                this._uiContainer.bitmap.outlineWidth = 0;
                 const needs = ['hunger', 'happiness', 'cleanliness', 'energy', 'health'];
                 const icons = ['', '', '', '', ''];
                 
@@ -886,6 +881,7 @@
                 const data = $gameSystem.hyperTamerData();
                 if (data && data.isAlive) {
                     const bitmap = this._uiContainer.bitmap;
+                    bitmap.outlineWidth = 0;
                     bitmap.fontSize = 12;
                     const personalityText = T('HyperTamer.' + data.personality);
                     const enemy = $dataEnemies[data.petId];
@@ -893,15 +889,16 @@
                     bitmap.drawText(`${petName} (${personalityText}) ${T('HyperTamer.level')}${data.stats.level}`, 10, 220, 300, 20, 'left');
                     
                     // Draw stats
-                    bitmap.fontSize = 10;
+                    bitmap.fontSize = 11;
+                    bitmap.outlineWidth = 0;
                     const str = T('HyperTamer.strength').substr(0, 3).toUpperCase();
                     const int = T('HyperTamer.intelligence').substr(0, 3).toUpperCase();
                     const agi = T('HyperTamer.agility').substr(0, 3).toUpperCase();
-                    bitmap.drawText(`${str}:${data.stats.strength} ${int}:${data.stats.intelligence} ${agi}:${data.stats.agility}`, 10, 205, 150, 20, 'left');
+                    bitmap.drawText(`${str}:${data.stats.strength} ${int}:${data.stats.intelligence} ${agi}:${data.stats.agility}`, 10, 204, 150, 20, 'left');
                     
                     // Draw item counts
                     const items = $gameSystem.hyperTamerItems();
-                    bitmap.drawText(`${T('HyperTamer.food')}: ${items.food}`, 170, 205, 80, 20, 'left');
+                    bitmap.drawText(`${T('HyperTamer.food')}: ${items.food}`, 170, 204, 80, 20, 'left');
                 }
             }
         }
@@ -996,11 +993,12 @@
                 
                 if (data.isSleeping) {
                     // Gentle breathing animation when sleeping
+                    const base = this._petBaseScale || 1.0;
                     this._petSprite.scale.x = this._petSprite.scale.y =
-                        (data.size * 0.95) + Math.sin(this._animationTimer * 0.02) * 0.05;
+                        base * ((data.size * 0.95) + Math.sin(this._animationTimer * 0.02) * 0.05);
                 } else {
-                    // Bouncing animation
-                    this._petSprite.y = baseY + Math.sin(this._animationTimer * animSpeed) * animRange;
+                    // Bouncing animation snapped to integer pixels for LCD sharpness
+                    this._petSprite.y = Math.round(baseY + Math.sin(this._animationTimer * animSpeed) * animRange);
                 }
             }
         }

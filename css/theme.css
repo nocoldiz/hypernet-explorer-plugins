@@ -4042,9 +4042,12 @@
     cursor: default;
 }
 
-.command-item.is-disabled:hover {
+/* A tile that cannot be used still shows the cursor that reached it: it takes
+   the same hairline, muted by the 0.45 the whole tile is drawn at. */
+.command-item.is-disabled:hover,
+.command-item.is-disabled.selected {
     background: transparent;
-    border: 1px solid transparent;
+    border: 1px solid var(--border-focus-hover);
     box-shadow: none;
     text-shadow: none;
     color: var(--text-card-medium);
@@ -4557,6 +4560,14 @@
     color: var(--text-card-dark);
     font-family: var(--font-ui);
     font-size: var(--fs-heading);
+}
+
+/* The host's own focus ring is not wanted on these plates, but the pad's is. A
+   bare "outline: none" on the plate sits LATER in this file than .cc-nav-focus
+   and carries the same weight, so it won: every pick trigger on the bio sheet
+   (the job, the creed, the hometown) was walked by the ring without ever
+   lighting up. Only the browser's own focus is silenced now. */
+.cc-bio-select:focus:not(.cc-nav-focus) {
     outline: none;
 }
 
@@ -5429,7 +5440,8 @@
 .command-item:hover,
 .command-item.selected {
     background-color: transparent;
-    border: 1px solid transparent;
+    border: 1px solid var(--border-focus-hover);
+    border-radius: 6px;
     color: var(--text-primary-hover);
     box-shadow: none;
     text-shadow: none;
@@ -17475,7 +17487,7 @@
 #html-map-name-overlay {
     position: fixed;
     display: none;
-    z-index: 490;
+    z-index: 495;
     pointer-events: none;
     box-sizing: border-box;
     overflow: hidden;
@@ -19513,12 +19525,13 @@ padding: 2px 10px;
 /* Toast stack (ParchmentToast.js) - top-right transient notifications */
 #html-toast-stack {
     position: fixed;
-    z-index: 491;
+    z-index: 490;
     pointer-events: none;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
+    transition: top 0.2s ease;
 }
 #html-toast-stack .html-toast {
     position: static;
@@ -19596,12 +19609,11 @@ padding: 2px 10px;
    ========================================================================== */
 #meal-bars-overlay {
     position: fixed;
-    left: 50%;
-    bottom: 6%;
+    right: 1.2em;
+    top: 1.2em;
     /* Over the full-screen menu overlays (#menu-container and friends sit at
        1000), because the whole point is that a meal can now be eaten inside
        one and watched land. Below the modal dialogs above them. */
-    transform: translateX(-50%);
     z-index: 1200;
     pointer-events: none;
     min-width: 18em;

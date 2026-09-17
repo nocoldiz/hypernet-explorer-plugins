@@ -31,10 +31,6 @@
   // drawn at exactly the same height or a click lands on the wrong command:
   // both come from ROW_HEIGHT, and theme.css owns the colours only.
   const ROW_HEIGHT = 40;
-  // How far the command list steps back while the action it was given plays out
-  // (see _updateCmdHtmlPos). Far enough to read as out of the way, not so far
-  // that the player loses track of what they picked.
-  const INERT_OPACITY = 0.45;
   const ICON_PX    = 22;   // IconSet cells are 32px, scaled down to this
   const LABEL_PX   = 16;
   // The menu is as wide as the longest row it is showing, between these two.
@@ -903,9 +899,22 @@
     const opacity = this.visible ? (this.openness / 255) : 0;
     const s       = this._cmdHtmlRoot.style;
 
+    // Once the command has been chosen the window stops taking input. The list
+    // is left STANDING on purpose (see endCommandSelection) rather than popped
+    // out and back in for whoever acts next, but a list sitting over the fight
+    // while the blow it ordered is landing reads as a list still waiting to be
+    // used, so it is hidden outright until it is the thing being used again.
+    const live = this.active ||
+      !!(this._targetSession && this._targetSession.activeWindow &&
+         this._targetSession.activeWindow.active);
+    if (this._cmdLastLive !== live) {
+      this._cmdHtmlRoot.classList.toggle('inert', !live);
+      this._cmdLastLive = live;
+    }
+
     // Read scale AFTER the closed-window guard, so a hidden command menu does
     // no work (and, before caching, forced no reflow).
-    if (opacity <= 0) {
+    if (opacity <= 0 || !live) {
       if (this._cmdLastDisplay !== 'none') {
         s.display = 'none';
         this._cmdLastDisplay = 'none';
@@ -914,22 +923,6 @@
     }
 
     const sc = _cmdGetScale();
-
-    // Once the command has been chosen the window stops taking input, so the
-    // row it left behind should stop wearing the cursor border too: the plate
-    // stays readable, the highlight goes - and the whole list steps back, at
-    // INERT_OPACITY below. It is left STANDING on purpose (see
-    // endCommandSelection) rather than popped out and back in for whoever acts
-    // next, but a list at full strength while the blow it ordered is landing
-    // reads as a list still waiting to be used. Faded, it reads as what it is:
-    // the order already given, and the fight in front of it.
-    const live = this.active ||
-      !!(this._targetSession && this._targetSession.activeWindow &&
-         this._targetSession.activeWindow.active);
-    if (this._cmdLastLive !== live) {
-      this._cmdHtmlRoot.classList.toggle('inert', !live);
-      this._cmdLastLive = live;
-    }
 
     // Resolve global canvas position via PIXI transform chain
     let pt;
@@ -951,9 +944,8 @@
     const left       = (sc.ox + (pt.x + pad) * sc.sx) + 'px';
     const top        = (sc.oy + (pt.y + pad) * sc.sy) + 'px';
     const transform  = `scale(${sc.sx}, ${sc.sy})`;
-    // The window's own open/close animation, stepped back while the list is not
-    // the thing being used.
-    const opacityStr = String(opacity * (live ? 1 : INERT_OPACITY));
+    // The window's own open/close animation. A non-live list never gets here.
+    const opacityStr = String(opacity);
 
     if (this._cmdLastDisplay !== 'block') { s.display = 'block'; this._cmdLastDisplay = 'block'; }
     if (this._cmdLastLeft !== left)           { s.left = left; this._cmdLastLeft = left; }

@@ -199,6 +199,12 @@
   const GIFT_ITEM_ID = 165; // Blade seed
   const GIFT_FLAG = "_erisGiftGiven";
 
+  // What an evening out does for the party's Social meters (see _fillSocial).
+  const DATE_SOCIAL_PCT = 35;        // of the meter, for a full-length date
+  const DATE_SOCIAL_DATER_BONUS = 1.5;
+  const DATE_SOCIAL_MIN_BEATS = 6;   // shorter than this was not an evening
+  const DATE_SOCIAL_FULL_BEATS = 30; // beats that count as the whole night
+
   const MOOD_LABELS = () => dateBank('ErisDate.moodLabels');
 
   const TRAIT_LABELS = () => dateBank('ErisDate.traitLabels');
@@ -2301,8 +2307,25 @@
       await this._waitForAdvance();
     }
 
+    // An evening out is the whole party's social life, not only the dater's:
+    // every member's Social meter takes a share of it and whoever sat across
+    // the table takes more. Scaled by how long the evening actually ran, so a
+    // date cut off after two lines is not worth a night out.
+    _fillSocial() {
+      const PN = window.PartyNeeds;
+      if (!PN || !PN.addSocialToAll) return;
+      const beats = this._dialogueLog ? this._dialogueLog.length : 0;
+      if (beats < DATE_SOCIAL_MIN_BEATS) return;
+      const max = (window.TimeDateSystem && window.TimeDateSystem.maxNeed) || 100;
+      const share = Math.min(1, beats / DATE_SOCIAL_FULL_BEATS);
+      const focus = window.$gameParty ? $gameParty.leader() : null;
+      PN.addSocialToAll(max * (DATE_SOCIAL_PCT / 100) * share,
+        { focus: focus, focusBonus: DATE_SOCIAL_DATER_BONUS });
+    }
+
     cleanup() {
       dateActive = false;
+      this._fillSocial();
       // Persist the opinion even if the date was cut short by an error.
       $gameVariables.setValue(opinionVariableId, this.opinion);
       this._removeDateUI();

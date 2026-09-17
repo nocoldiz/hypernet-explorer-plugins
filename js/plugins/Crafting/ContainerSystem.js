@@ -104,6 +104,8 @@
  * @value Component
  * @option Crafting
  * @value Crafting
+ * @option Diseases
+ * @value Diseases
  * @option Farming
  * @value Farming
  * @option Food
@@ -130,6 +132,8 @@
  * @value Tools
  * @option Trash
  * @value Trash
+ * @option Vehicles
+ * @value Vehicles
  * @option Weapons
  * @value Weapons
  * @default Food
@@ -167,6 +171,8 @@
  * @value Component
  * @option Crafting
  * @value Crafting
+ * @option Diseases
+ * @value Diseases
  * @option Farming
  * @value Farming
  * @option Food
@@ -193,6 +199,8 @@
  * @value Tools
  * @option Trash
  * @value Trash
+ * @option Vehicles
+ * @value Vehicles
  * @option Weapons
  * @value Weapons
  * @default
@@ -230,6 +238,8 @@
  * @value Component
  * @option Crafting
  * @value Crafting
+ * @option Diseases
+ * @value Diseases
  * @option Farming
  * @value Farming
  * @option Food
@@ -256,6 +266,8 @@
  * @value Tools
  * @option Trash
  * @value Trash
+ * @option Vehicles
+ * @value Vehicles
  * @option Weapons
  * @value Weapons
  * @default
@@ -335,9 +347,6 @@
             const name = (item.name || '').trim();
             if (name === '') return false;
             if (/^<--.*-->$/.test(name)) return false;
-            // A sealed vial of a live pathogen is contraband somebody bottled
-            // on purpose. It is never what is at the bottom of a crate.
-            if (item.note && /<category:\s*Diseases\s*>/i.test(item.note)) return false;
             // A <Restricted> row is granted by the one system that owns it and
             // is never found in a container either.
             if (window.ItemSystemUtils && window.ItemSystemUtils.isRestrictedEntry(item)) return false;

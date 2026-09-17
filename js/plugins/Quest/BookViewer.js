@@ -1677,7 +1677,7 @@
         updateInput() {
             // 'run' and 'kick' are the L2/R2 (LT/RT) action slots in this
             // game's gamepad map, reused here as jump-to-cover / jump-to-end.
-            if (Input.isTriggered('cancel') || TouchInput.isTriggered() && TouchInput.isLongPressed()) {
+            if (Input.isTriggered('cancel') || TouchInput.isCancelled() || (TouchInput.isTriggered() && TouchInput.isLongPressed())) {
                 this.onCancel();
             } else if (Input.isTriggered('ok')) {
                 this.toggleBookmark();

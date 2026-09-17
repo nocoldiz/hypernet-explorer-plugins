@@ -156,10 +156,27 @@
       this._el = document.createElement('div');
       this._el.id = 'blade-bind-container';
       this._el.style.cssText = 'opacity:0;transition:opacity 0.2s ease-out;';
+      this._el.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onCancelAction();
+      });
       document.body.appendChild(this._el);
 
       this._render();
       requestAnimationFrame(() => { if (this._el) this._el.style.opacity = '1'; });
+    }
+
+    onCancelAction() {
+      if (this._phase === 'preview') {
+        this._onBack();
+      } else if (this._selIdx !== -1) {
+        this._selIdx = -1;
+        SoundManager.playCancel();
+        this._updateSel();
+      } else {
+        this._onCancel();
+      }
     }
 
     update() {
@@ -167,15 +184,23 @@
       const { up, down, left, right } = this._wasd.tick();
 
       if (this._phase === 'weaponSelect') {
-        if (up   && this._selIdx > 0)                     { this._selIdx--; SoundManager.playCursor(); this._updateSel(); }
-        if (down && this._selIdx < this._weapons.length-1){ this._selIdx++; SoundManager.playCursor(); this._updateSel(); }
+        if (up) {
+          this._selIdx = this._selIdx <= 0 ? this._weapons.length - 1 : this._selIdx - 1;
+          SoundManager.playCursor();
+          this._updateSel();
+        }
+        if (down) {
+          this._selIdx = this._selIdx < 0 ? 0 : (this._selIdx < this._weapons.length - 1 ? this._selIdx + 1 : 0);
+          SoundManager.playCursor();
+          this._updateSel();
+        }
         if (Input.isTriggered('ok'))                        this._onWeaponOk();
-        if (Input.isTriggered('cancel') || Input.isTriggered('escape')) this._onCancel();
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) this.onCancelAction();
       } else {
         if (left)                                           this._stepLook(-1);
         if (right)                                          this._stepLook(1);
         if (Input.isTriggered('ok'))                        this._onConfirm();
-        if (Input.isTriggered('cancel') || Input.isTriggered('escape')) this._onBack();
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) this.onCancelAction();
       }
     }
 
@@ -458,10 +483,26 @@
       this._el = document.createElement('div');
       this._el.id = 'blade-status-container';
       this._el.style.cssText = 'opacity:0;transition:opacity 0.2s ease-out;';
+      this._el.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onCancelAction();
+      });
       document.body.appendChild(this._el);
 
       this._render();
       requestAnimationFrame(() => { if (this._el) this._el.style.opacity = '1'; });
+    }
+
+    onCancelAction() {
+      if (this._selIdx !== -1) {
+        this._selIdx = -1;
+        SoundManager.playCancel();
+        this._updateSkillSel();
+      } else {
+        SoundManager.playCancel();
+        SceneManager.pop();
+      }
     }
 
     update() {
@@ -481,13 +522,21 @@
 
       if (this._rightTab === 'skills') {
         const list = this._skillList();
-        if (up   && this._selIdx > 0)           { this._selIdx--; SoundManager.playCursor(); this._updateSkillSel(); }
-        if (down && this._selIdx < list.length-1){ this._selIdx++; SoundManager.playCursor(); this._updateSkillSel(); }
+        if (up) {
+          this._selIdx = this._selIdx <= 0 ? list.length - 1 : this._selIdx - 1;
+          SoundManager.playCursor();
+          this._updateSkillSel();
+        }
+        if (down) {
+          this._selIdx = this._selIdx < 0 ? 0 : (this._selIdx < list.length - 1 ? this._selIdx + 1 : 0);
+          SoundManager.playCursor();
+          this._updateSkillSel();
+        }
         if (Input.isTriggered('ok') && this._skillMode === 'learn') this._learnSkill();
       }
 
-      if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
-        SoundManager.playCancel(); SceneManager.pop();
+      if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+        this.onCancelAction();
       }
     }
 

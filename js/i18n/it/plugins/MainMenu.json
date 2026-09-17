@@ -45,7 +45,8 @@
     "returnToElevator": "Torna all'ascensore",
     "chooseLandingSite": "Scegli il sito di atterraggio",
     "stopTravel": "Interrompi viaggio",
-    "deeds": "Atti"
+    "deeds": "Atti",
+    "locked": "???"
   },
   "cmdDesc": {
     "backpack": "Gestisci inventario e oggetti del gruppo",

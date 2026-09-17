@@ -245,6 +245,12 @@
       const back = this._overlay.querySelector('#pgraph-back');
       back.addEventListener('click', () => SceneManager.pop());
 
+      this._overlay.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onCancelAction();
+      });
+
       // The camera presets and the quadrant filters are two runs of the one tab
       // rail every menu in the game wears, not a bar of this screen's own.
       const views = this._overlay.querySelector('#pgraph-views');
@@ -399,7 +405,11 @@
     // a head, a grid of label/value pairs, then a titled section.
     updateDetailPanel() {
       const details = document.getElementById('pgraph-detail');
-      if (!details || !this._selectedIdeology) return;
+      if (!details) return;
+      if (!this._selectedIdeology) {
+        details.innerHTML = '';
+        return;
+      }
 
       const item = this._selectedIdeology;
       const name = this.getLocalizedName(item);
@@ -541,8 +551,8 @@
         this.render3D();
         return;
       }
-      if (Input.isTriggered('escape') || Input.isTriggered('cancel')) {
-        SceneManager.pop();
+      if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+        this.onCancelAction();
         return;
       }
       // The ring is read before the camera: a direction moves the cursor over
@@ -556,6 +566,17 @@
         this._rotY += 0.005;
       }
       this.render3D();
+    }
+
+    onCancelAction() {
+      if (this._selectedIdeology) {
+        this.selectIdeology(null);
+        this.updateIdeologyList();
+        SoundManager.playCancel();
+      } else {
+        SoundManager.playCancel();
+        SceneManager.pop();
+      }
     }
 
     checkNodeHover(mx, my) {

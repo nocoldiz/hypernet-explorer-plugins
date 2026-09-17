@@ -6950,5 +6950,381 @@
   "1966": {
     "name": "Stemma da Radiatore Bugatti",
     "description": "Smalto e calandra a ferro di cavallo, da un'auto mai ritrovata."
+  },
+  "1972": {
+    "name": "Lavagna dei Listini",
+    "description": "Apre il terminale della borsa."
+  },
+  "1973": {
+    "name": "Libretto al Portatore",
+    "description": "Apre la banca: depositi, prelievi e prestiti."
+  },
+  "1974": {
+    "name": "Portafoglio Immobiliare",
+    "description": "Apre il mercato immobiliare per comprare e vendere."
+  },
+  "1975": {
+    "name": "Cartella del Proprietario",
+    "description": "Apre la gestione dei negozi che possiedi."
+  },
+  "1976": {
+    "name": "Manifesto di Magazzino",
+    "description": "Apre il magazzino del negozio."
+  },
+  "1977": {
+    "name": "Buono di Giornata",
+    "description": "Apre il menu del lavoro per un incarico."
+  },
+  "1978": {
+    "name": "Bollettino degli Annunci",
+    "description": "Elenca le offerte di lavoro di questo luogo."
+  },
+  "1979": {
+    "name": "Tavola del Reticolo Elementale",
+    "description": "Apre la tavola degli elementi esoterici."
+  },
+  "1980": {
+    "name": "Dossier di Ricerca",
+    "description": "Apre l’albero tecnologico delle scoperte."
+  },
+  "1981": {
+    "name": "Modem Tascabile",
+    "description": "Apre il browser dell’Ipernet."
+  },
+  "1982": {
+    "name": "Copia della Fedina",
+    "description": "Elenca i tuoi crimini e la taglia attuale."
+  },
+  "1983": {
+    "name": "Bacchetta del Televideo",
+    "description": "Mostra il palinsesto TV della settimana."
+  },
+  "1984": {
+    "name": "Cronaca dell’Anima",
+    "description": "Mostra la storia di vita di un PNG vicino."
+  },
+  "1985": {
+    "name": "Registro del Mandriano",
+    "description": "Apre il menu degli animali che possiedi."
+  },
+  "1986": {
+    "name": "Secchio da Mungitura",
+    "description": "Raccoglie i prodotti di tutti i tuoi animali."
+  },
+  "1987": {
+    "name": "Affumicatore a Soffietto",
+    "description": "Fa avanzare gli alveari e il loro miele."
+  },
+  "1988": {
+    "name": "Radio a Galena",
+    "description": "Apre la radio sintonizzabile e le sue stazioni."
+  },
+  "1989": {
+    "name": "Tastiera Pieghevole",
+    "description": "Apre una tastiera suonabile di tre ottave."
+  },
+  "1990": {
+    "name": "Custodia da Stecca",
+    "description": "Avvia una partita a biliardo."
+  },
+  "1991": {
+    "name": "Mazzo dei Novanta Destini",
+    "description": "Avvia una lettura dei tarocchi."
+  },
+  "1992": {
+    "name": "Gettone della Leva",
+    "description": "Gioca un giro alla slot machine."
+  },
+  "1993": {
+    "name": "Gettone dell’Arena",
+    "description": "Avvia un incontro nell’arena."
+  },
+  "1994": {
+    "name": "Biglietto del Torneo",
+    "description": "Avvia un torneo di mostri su cui scommettere."
+  },
+  "1995": {
+    "name": "Sigillo del Gauntlet",
+    "description": "Avvia il gauntlet dell’arena, incontri di fila."
+  },
+  "1996": {
+    "name": "Tanica Convocata",
+    "description": "Riempie di carburante camper e auto."
+  },
+  "1997": {
+    "name": "Bussola del Viandante",
+    "description": "Apre il viaggio rapido verso ogni meta nota."
+  },
+  "1998": {
+    "name": "Fischietto dell’Aeronave",
+    "description": "Evoca l’aeronave alla tua posizione."
+  },
+  "1999": {
+    "name": "Sabbia dell’Ora",
+    "description": "Fa passare un’ora di gioco."
+  },
+  "2000": {
+    "name": "Sabbia del Giorno",
+    "description": "Fa passare un giorno intero di gioco."
+  },
+  "2001": {
+    "name": "Lente dei Glifi",
+    "description": "Attiva o disattiva la modalità ASCII."
+  },
+  "2002": {
+    "name": "Amuleto della Banderuola",
+    "description": "Forza un cambio di tempo atmosferico."
+  },
+  "2003": {
+    "name": "Sigillo di Convokazione del Cimelio",
+    "description": "Evoca un oggetto casuale per il tuo livello."
+  },
+  "2004": {
+    "name": "Sigillo di Convokazione dell’Arma",
+    "description": "Evoca un’arma casuale per il tuo livello."
+  },
+  "2005": {
+    "name": "Sigillo di Convokazione dell’Egida",
+    "description": "Evoca un’armatura casuale per il tuo livello."
+  },
+  "2006": {
+    "name": "Campana del Coro degli Spiriti",
+    "description": "Aggiunge ogni spirito combattente al gruppo."
+  },
+  "2007": {
+    "name": "Cuore d’Uragano",
+    "description": "Chiama una tempesta e forza il cambio di tempo."
+  },
+  "2008": {
+    "name": "Vetro del Secolo",
+    "description": "Simula cent’anni di tempo del mondo."
+  },
+  "2009": {
+    "name": "Geode del Terremoto del Mondo",
+    "description": "Rigenera la mappa del mondo e la rivela."
+  },
+  "2010": {
+    "name": "Corona dell’Incoronazione",
+    "description": "Porta una fazione ad alleata e dà truppe."
+  },
+  "2011": {
+    "name": "Riscrittore delle Cronache",
+    "description": "Esegue di nuovo la simulazione storica."
+  },
+  "2012": {
+    "name": "Pietra Filosofale di Convokazione",
+    "description": "Dà oro e oggetto, arma e armatura casuali."
+  },
+  "2013": {
+    "name": "Biglietto del Merciaio",
+    "description": "Apre un emporio ovunque ti trovi."
+  },
+  "2014": {
+    "name": "Biglietto dello Speziale",
+    "description": "Apre una farmacia ovunque ti trovi."
+  },
+  "2015": {
+    "name": "Biglietto dell’Armaiolo",
+    "description": "Apre un negozio di armature ovunque ti trovi."
+  },
+  "2016": {
+    "name": "Biglietto del Forgiatore",
+    "description": "Apre un negozio di armi ovunque ti trovi."
+  },
+  "2017": {
+    "name": "Biglietto dello Stregone",
+    "description": "Apre un negozio di magia ovunque ti trovi."
+  },
+  "2018": {
+    "name": "Biglietto dell’Oste",
+    "description": "Apre un bancone da taverna ovunque ti trovi."
+  },
+  "2019": {
+    "name": "Biglietto del Gioielliere",
+    "description": "Apre un negozio di lusso ovunque ti trovi."
+  },
+  "2020": {
+    "name": "Biglietto dell’Equipaggiatore",
+    "description": "Apre un negozio da avventura ovunque ti trovi."
+  },
+  "2021": {
+    "name": "Biglietto del Ferramenta",
+    "description": "Apre una ferramenta ovunque ti trovi."
+  },
+  "2022": {
+    "name": "Biglietto dell’Alchimista",
+    "description": "Apre un negozio di alchimia ovunque ti trovi."
+  },
+  "2023": {
+    "name": "Biglietto del Bibliotecario",
+    "description": "Apre un negozio accademico ovunque ti trovi."
+  },
+  "2024": {
+    "name": "Biglietto del Mercante d’Organi",
+    "description": "Apre un mercante d’organi ovunque ti trovi."
+  },
+  "2025": {
+    "name": "Foglio d’Indice del Bestiario",
+    "description": "Rivela ogni voce del bestiario."
+  },
+  "2026": {
+    "name": "Frammento d’Almanacco",
+    "description": "Racconta un fatto della storia del mondo."
+  },
+  "2027": {
+    "name": "Cartella dei Ritagli",
+    "description": "Mostra le notizie pubblicate finora."
+  },
+  "2028": {
+    "name": "Foglio del Geometra",
+    "description": "Apre la mappa del mondo ingrandibile."
+  },
+  "2029": {
+    "name": "Rapporto del Reame",
+    "description": "Riporta i governi di ogni iperpotenza."
+  },
+  "2030": {
+    "name": "Lente del Censimento",
+    "description": "Mostra la politica di un PNG vicino."
+  },
+  "2031": {
+    "name": "Nastro del Confidente",
+    "description": "Apre il pannello Empatia su un PNG."
+  },
+  "2032": {
+    "name": "Tessera della Clinica",
+    "description": "Apre la simulazione biologica del gruppo."
+  },
+  "2033": {
+    "name": "Livella del Costruttore",
+    "description": "Apre il costruttore per piazzare mobili."
+  },
+  "2034": {
+    "name": "Densimetro del Birraio",
+    "description": "Apre la distilleria e le sue botti."
+  },
+  "2035": {
+    "name": "Tessera Stockbusters",
+    "description": "Apre il mercato Stockbusters."
+  },
+  "2036": {
+    "name": "Astuccio dei Gettoni",
+    "description": "Converte euro in gettoni da sala e viceversa."
+  },
+  "2037": {
+    "name": "Forchetta del Silenzio",
+    "description": "Ferma la musica procedurale in riproduzione."
+  },
+  "2038": {
+    "name": "Scacchiera da Viaggio",
+    "description": "Avvia una partita a scacchi."
+  },
+  "2039": {
+    "name": "Scacchiera del Caos",
+    "description": "Avvia una partita a scacchi del caos."
+  },
+  "2040": {
+    "name": "Programma delle Corse",
+    "description": "Avvia una corsa di cavalli su cui scommettere."
+  },
+  "2041": {
+    "name": "Tessera della Pista",
+    "description": "Avvia una partita a bowling."
+  },
+  "2042": {
+    "name": "Cera da Tavola",
+    "description": "Avvia il minigioco del surf."
+  },
+  "2043": {
+    "name": "Serratura da Esercizio",
+    "description": "Avvia il rompicapo dello scasso."
+  },
+  "2044": {
+    "name": "Biglietto per Bologna",
+    "description": "Porta nelle strade di Bologna."
+  },
+  "2045": {
+    "name": "Bustina di Espansione",
+    "description": "Apre una bustina di carte."
+  },
+  "2046": {
+    "name": "Buono per Bestiame",
+    "description": "Compra un animale per la tua fattoria."
+  },
+  "2047": {
+    "name": "Staffa dell’Evocatore",
+    "description": "Ti teletrasporta nel veicolo parcheggiato."
+  },
+  "2048": {
+    "name": "Grimorie degli Interessi",
+    "description": "Paga un giorno di interessi bancari."
+  },
+  "2049": {
+    "name": "Registro dell’Esattore",
+    "description": "Riscuote un giorno di rendita dai tuoi immobili."
+  },
+  "2050": {
+    "name": "Unguento che Ricuce",
+    "description": "Cura le parti del corpo rotte del gruppo."
+  },
+  "2051": {
+    "name": "Cassa del Quartiermastro",
+    "description": "Riempie un contenitore di provviste casuali."
+  },
+  "2052": {
+    "name": "Branda da Campo",
+    "description": "Ripristina completamente tutto il gruppo."
+  },
+  "2053": {
+    "name": "Gettone del Favore di Gilda",
+    "description": "Aumenta la tua reputazione con una fazione."
+  },
+  "2054": {
+    "name": "Contratto Mercenario",
+    "description": "Compra truppe per il tuo esercito."
+  },
+  "2055": {
+    "name": "Passo del Miraggio",
+    "description": "Ti teletrasporta altrove con una scena."
+  },
+  "2056": {
+    "name": "Atto di Amnistia",
+    "description": "Azzera la tua taglia con la polizia."
+  },
+  "2057": {
+    "name": "Cedola del Mecenate",
+    "description": "Aggiunge credito e un giorno di rendita."
+  },
+  "2058": {
+    "name": "Kit del Plasmacarne",
+    "description": "Crea un personaggio creatura da parti."
+  },
+  "2059": {
+    "name": "Seme del Labirinto",
+    "description": "Genera un nuovo sotterraneo a più piani."
+  },
+  "2060": {
+    "name": "Corno del Risveglio della Rete",
+    "description": "Esegue un impulso su ogni insediamento."
+  },
+  "2061": {
+    "name": "Campana del Recupero",
+    "description": "Recupera politica, vite dei PNG e rete."
+  },
+  "2062": {
+    "name": "Editto Elettorale",
+    "description": "Indice elezioni in ogni iperpotenza."
+  },
+  "2063": {
+    "name": "Albero dei Futuri",
+    "description": "Genera un nuovo albero delle scoperte."
+  },
+  "2064": {
+    "name": "Specchio del Rimodellarsi",
+    "description": "Cambia l’archetipo corporeo di un membro."
+  },
+  "2065": {
+    "name": "Chiodo del Plasmatore",
+    "description": "Avvia la generazione di terre nuove."
   }
 }

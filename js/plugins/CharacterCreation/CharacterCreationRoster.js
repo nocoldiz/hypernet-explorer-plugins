@@ -137,12 +137,13 @@
 
       const fields = Array.isArray(opts.fields) && opts.fields.length
         ? opts.fields
-        : [{ key: "", label: "", placeholder: opts.placeholder }];
+        : [{ key: "", label: "", placeholder: opts.placeholder, value: opts.value }];
       const lines = fields.map((f) => `
           <label class="cc-modal-field">
             ${f.label ? `<span class="cc-modal-label">${esc(f.label)}</span>` : ""}
             <input type="text" class="cc-pick-search cc-modal-input" autocomplete="off"
                    spellcheck="false" data-field="${esc(f.key || "")}"
+                   value="${esc(f.value || "")}"
                    placeholder="${esc(f.placeholder || "")}">
           </label>`).join("");
 
@@ -202,6 +203,9 @@
 
       container.appendChild(veil);
       if (input && input.focus) input.focus();
+      // A line that came prefilled is selected, not just filled: Confirm takes
+      // it as it stands, and typing replaces it without having to clear it.
+      if (input && input.value && input.select) input.select();
     }
 
     onRemovePartyMember(idx, event) {

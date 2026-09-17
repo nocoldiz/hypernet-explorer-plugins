@@ -787,11 +787,6 @@ body {
 #party-hud .phud-alert-critical {
     color: #ffe9e9;
     background: var(--text-blood-red);
-    animation: phud-chip 1.1s ease-in-out infinite;
-}
-@keyframes phud-chip {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.55; }
 }
 /* ASCII mode has no party readout of its own in a fight, so the cards stay up
    and dress for the terminal instead: monospace, a square grey frame and flat

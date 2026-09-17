@@ -810,7 +810,7 @@
     artifact: 245, gear: 96, materials: 209, gold: 191, schrodingerite: 158,
     exp: 87, harm: 6, heal: 176, battle: 322, knowledge: 189,
     reputation: 145, reputationLost: 282, failed: 282, minigame: 196,
-    crime: 111, augment: 339, needs: 219, skill: 186, eris: 84,
+    crime: 111, augment: 339, needs: 219, skill: 186, eris: 84, company: 84,
     stateGained: 6, infected: 41, lostGold: 282, lostItems: 282, dungeon: 235,
   };
 
@@ -1011,6 +1011,23 @@
       filled.push(label);
     });
     if (filled.length) anomReward(lines, "needs", { list: filled.join(", ") });
+  }
+
+  // Living something through together is company, whatever it paid out: an
+  // afternoon down a hole with the away team fills everybody's Social meter a
+  // little, and the quester who did the talking a little more. The explicit
+  // explicit `needs` of an ending stack on top of this.
+  const ANOM_SOCIAL_PCT = 8;        // of the meter, per resolved encounter
+  const ANOM_SOCIAL_QUESTER = 1.6;  // the one who lived it gets more
+  function anomApplyCompany(session, lines) {
+    const PN = window.PartyNeeds;
+    if (!PN || !PN.addSocialToAll) return;
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    if (members.length < 2) return;   // nobody to keep company with
+    const max = (window.TimeDateSystem && window.TimeDateSystem.maxNeed) || ANOM_NEED_MAX;
+    const amount = max * (ANOM_SOCIAL_PCT / 100);
+    PN.addSocialToAll(amount, { focus: anomQuester(session), focusBonus: ANOM_SOCIAL_QUESTER });
+    anomReward(lines, "company", {});
   }
 
   // ---- Crime --------------------------------------------------------------
@@ -1504,6 +1521,7 @@
     // somebody carrying new hardware, and may simply have done everybody good.
     if (kind !== "augment" && out && out.augment) anomApplyAugment(session, out, lines);
     anomApplyNeeds(out, lines);
+    anomApplyCompany(session, lines);
     anomApplyCrime(out, lines);
     // ...and may have cost them something they were carrying, left somebody
     // ill, or put a state on the whole away team. A reward with a price is

@@ -96,6 +96,7 @@
     patronVaultAvailable,
     patronVaultSquareAt,
     patronVaultSquare,
+    patronVaultClaim,
     setPatronVaultSquare,
     startPatronVaultOrigin,
     startArtifactHeirOrigin,
@@ -2149,7 +2150,20 @@
       // Back/Forward and the editor is the only landing point per member.
       if (Scene_CharacterCreation.isDetailedMode() && detailedModeAvailable() &&
           [STEP.GENDER, STEP.CLASS, STEP.TRAITS, STEP.PERSONALITY,
-           STEP.HOMETOWN, STEP.BIRTHDATE].includes(step)) {
+           STEP.HOMETOWN, STEP.BIRTHDATE, STEP.DESCRIPTION].includes(step)) {
+        return true;
+      }
+
+      // Simple mode: one sheet per character. The vocation, the kind of person
+      // and the history the sheet wrote are all asked for on the bio page now
+      // (see _simpleSheetPickersHtml), and nothing draws a tab that would open
+      // them, so the walk steps over the pages that used to ask separately.
+      // Specializations are not asked for in this mode at all: they are spent
+      // for the player when the party is confirmed
+      // (_ensureSimpleModeStatsAndTraits), so that page is walked past too and
+      // the walk lands on the sheet.
+      if (!isStoryMode && Scene_CharacterCreation.isSimpleMode() &&
+          [STEP.CLASS, STEP.TRAITS, STEP.SPECIALIZATIONS, STEP.DESCRIPTION].includes(step)) {
         return true;
       }
 
@@ -3093,7 +3107,7 @@
           rightHtml = "";
         } else if (this._step === STEP.ROMANCE) {
           leftHtml = this._romancePickerLeftHtml();
-          rightHtml = this._romancePickerRightHtml();
+          rightHtml = "";
         } else if (this._step === STEP.CLASS || this._isClassPickerStep()) {
           leftHtml = this._classPickerLeftHtml(stepData, activeIndex);
           rightHtml = this._classPickerRightHtml(stepData, activeIndex);
@@ -3201,6 +3215,7 @@
     // the board was unreadable.
     _ccSwapPage(el, html) {
       if (!el) return null;
+      if (typeof document === "undefined" || !document.createElement) return el;
       const holder = document.createElement("template");
       holder.innerHTML = String(html).trim();
       const fresh = holder.content.firstElementChild;
@@ -3320,9 +3335,15 @@
             title: ccT('CharCreate.specializations'),
             subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional')),
             step: STEP.SPECIALIZATIONS
-          }, description];
+          }];
         }
-        return [bio, klass, traits, description];
+        // Simple mode is ONE sheet per character. The vocation, the traits and
+        // the history the wizard used to ask for on tabs of their own are all
+        // on the bio sheet now (see _simpleSheetPickersHtml), so there is no
+        // strip left to draw: the party rail above it is the only tab row, and
+        // a character is a tab. Followers and the scenario keep their own
+        // pages, since neither belongs to any one member.
+        return [];
       }
 
       const memberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
@@ -3353,8 +3374,8 @@
       };
 
       return isCreature
-        ? [bio, romance, archetype, klass, traits, specializations, description]
-        : [bio, romance, klass, traits, specializations, description];
+        ? [bio, romance, archetype, klass, traits, specializations]
+        : [bio, romance, klass, traits, specializations];
     }
 
     _isTabCompleted(tabId) {
@@ -3552,9 +3573,14 @@
       if ($gameSystem) $gameSystem._ccIsSimpleMode = Scene_CharacterCreation._isSimpleMode;
       SoundManager.playCursor();
       if (Scene_CharacterCreation._isSimpleMode) {
-        // Traits are a simple-mode page too, so switching modes on that board
-        // leaves the player where they were rather than kicking them to Bio.
-        if (this._step !== STEP.BIO && this._step !== STEP.TRAITS && this._step !== STEP.SETTINGS && this._step !== STEP.ORIGIN) {
+        // Simple mode has one page per character and the trait board is not it
+        // any more: the package is picked on the sheet, so switching modes on
+        // the trait board lands on the sheet rather than on a page with no tab
+        // left to leave it by. The story mode keeps its own strip.
+        const keepsPages = Scene_CharacterCreation._storyMode;
+        const onOwnPage = this._step === STEP.SETTINGS || this._step === STEP.ORIGIN ||
+          (keepsPages && this._step === STEP.TRAITS);
+        if (this._step !== STEP.BIO && !onOwnPage) {
           this._step = STEP.BIO;
         }
       }
@@ -4664,6 +4690,11 @@
     // Right ones run `next`; wrong ones say so and leave the sheet open, and
     // backing out of it simply does not start the scenario.
     _askPatronVaultSquare(next) {
+      // Coordinates already proved in this world come back written in: the
+      // patron who typed them once should not have to remember them again for
+      // every party they raise. Only a claim the world itself kept is offered,
+      // so nothing is ever prefilled with a guess that was refused.
+      const known = patronVaultClaim();
       this._ccAsk({
         title: ccT('CharCreate.patronVaultAskTitle'),
         fields: [
@@ -4671,11 +4702,13 @@
             key: "world",
             label: ccT('CharCreate.patronVaultAskWorld'),
             placeholder: ccT('CharCreate.patronVaultAskWorldHint'),
+            value: known ? `${known.x}, ${known.y}` : "",
           },
           {
             key: "tile",
             label: ccT('CharCreate.patronVaultAskTile'),
             placeholder: ccT('CharCreate.patronVaultAskTileHint'),
+            value: known ? `${known.mapX}, ${known.mapY}` : "",
           },
         ],
         validate: (values) => {

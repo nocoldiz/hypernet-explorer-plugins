@@ -3800,6 +3800,14 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       return this.otherParties().filter(party => this.isHere(party));
     },
 
+    // Everybody spawnOne has put on the ground this session, by key. Most of
+    // them are somebody else's party members and are in party.json; some are
+    // not - the world's idle companions living in a patron's vault
+    // (PatreonRewards.populateVaultFloor) are spawned the same way and belong
+    // to no party at all - and those would otherwise have no record behind
+    // their event, which is to say nothing to say when they are talked to.
+    _spawned: {},
+
     // The record behind a spawned event, or null when the event is not one.
     memberForEvent(event) {
       const key = event && event[this.EVENT_TAG];
@@ -3809,6 +3817,8 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
           if (person && person.key === key) return { person, party };
         }
       }
+      const loose = this._spawned[key];
+      if (loose) return loose;
       return null;
     },
 
@@ -3947,6 +3957,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       ev[this.EVENT_TAG] = person.key;
       ev._visitorSlot = party.slot;
       $gameMap._events[eventId] = ev;
+      // So that whoever this is can be talked to, whether or not any party on
+      // file claims them.
+      this._spawned[person.key] = { person, party };
 
       // A face the world knows: the same society profile everybody else has,
       // which is what the panel, the wiki and the activity sim all read.

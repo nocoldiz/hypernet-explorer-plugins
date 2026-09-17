@@ -872,6 +872,13 @@
                 AudioManager.playSe({ name: 'Switch2', volume: 80, pitch: 85 });
                 this.showTempLCDMessage(T('Vending.billAccepted'), 1000);
             });
+
+            container.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this._isDispensing) return;
+                this.onCancelAction();
+            });
         }
 
         // Physical letter keys are off limits: W/A/S/D are bound to the RMMZ
@@ -927,18 +934,33 @@
                 Input.clear();
                 if (this._typedCode !== '') this.submitTypedCode();
                 else this.buySelected();
-            } else if (Input.isTriggered('cancel')) {
-                Input.clear();
-                if (this._typedCode !== '') {
-                    this._typedCode = '';
-                    this._dirtyDom = true;
-                } else {
-                    this.onExitClick();
-                }
+            } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+                this.onCancelAction();
+            }
+        }
+
+        onCancelAction() {
+            Input.clear();
+            if (this._typedCode !== '') {
+                this._typedCode = '';
+                this._dirtyDom = true;
+            } else if (this._selIndex !== -1) {
+                this._selIndex = -1;
+                AudioManager.playSe({ name: 'Cursor1', volume: 50, pitch: 80 });
+                this._dirtyDom = true;
+            } else {
+                this.onExitClick();
             }
         }
 
         moveSelection(dx, dy) {
+            if (this._selIndex < 0) {
+                this._selIndex = 0;
+                this._typedCode = '';
+                AudioManager.playSe({ name: 'Cursor1', volume: 60, pitch: 100 });
+                this._dirtyDom = true;
+                return;
+            }
             const col = (this._selIndex % COL_COUNT + dx + COL_COUNT) % COL_COUNT;
             const rowCount = ROW_LETTERS.length;
             const row = (Math.floor(this._selIndex / COL_COUNT) + dy + rowCount) % rowCount;

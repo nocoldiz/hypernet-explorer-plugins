@@ -3,7 +3,6 @@
   "fuel": "CARB.",
   "alert": {
     "dead": "A terra",
-    "hp": "Ferito",
     "hpCritical": "In fin di vita",
     "hunger": "Affamato",
     "hungerCritical": "Denutrito",

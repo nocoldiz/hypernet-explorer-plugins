@@ -1239,6 +1239,11 @@
             }
 
             this._dndContainer.classList.add('news-root--fullscreen');
+            this._dndContainer.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.onCancelAction();
+            });
             document.body.appendChild(this._dndContainer);
         }
 
@@ -1542,7 +1547,7 @@
                     const currentIndex = this._newsWindow.index();
                     const maxItems = this._newsWindow.maxItems();
                     if (maxItems > 0) {
-                        const nextIndex = currentIndex < maxItems - 1 ? currentIndex + 1 : 0;
+                        const nextIndex = currentIndex < 0 ? 0 : (currentIndex < maxItems - 1 ? currentIndex + 1 : 0);
                         this._newsWindow.select(nextIndex);
                         moved = true;
                     }
@@ -1550,7 +1555,7 @@
                     const currentIndex = this._newsWindow.index();
                     const maxItems = this._newsWindow.maxItems();
                     if (maxItems > 0) {
-                        const prevIndex = currentIndex > 0 ? currentIndex - 1 : maxItems - 1;
+                        const prevIndex = currentIndex < 0 ? maxItems - 1 : (currentIndex > 0 ? currentIndex - 1 : maxItems - 1);
                         this._newsWindow.select(prevIndex);
                         moved = true;
                     }
@@ -1564,21 +1569,26 @@
                     moved = true;
                 }
 
-                if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
-                    // Cancel takes the query off first and the screen down
-                    // second, which is what the Clear button beside the field
-                    // does and the only way to reach it without a mouse.
-                    if (this._newsWindow._searchQuery) {
-                        this.clearNewspaperSearch();
-                    } else {
-                        SoundManager.playCancel();
-                        this.popScene();
-                    }
+                if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+                    this.onCancelAction();
                 }
 
                 if (moved) {
                     this.refreshUINewspaperDOM();
                 }
+            }
+        }
+
+        onCancelAction() {
+            if (this._newsWindow && this._newsWindow._searchQuery) {
+                this.clearNewspaperSearch();
+            } else if (this._newsWindow && this._newsWindow.index() >= 0) {
+                this._newsWindow.select(-1);
+                SoundManager.playCancel();
+                this.refreshUINewspaperDOM();
+            } else {
+                SoundManager.playCancel();
+                this.popScene();
             }
         }
 
