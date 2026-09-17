@@ -1019,6 +1019,47 @@
     return { x: 0, y: 0 };
   }
 
+  // BFS from (cx, cy): return the nearest tile that is passable (from the south)
+  // and carries neither region 7 nor region 4. Those regions are used for
+  // impassable/blocked decorative areas in house interiors and on stairs, so
+  // landing on them after a floor change would trap the player. The search
+  // radiates outward in taxicab distance, so the result is always the closest
+  // usable tile to the stair event's position. Fallback to (cx, cy) when the
+  // whole map is blocked (should never happen in practice).
+  function findNearestPassableStairLanding(cx, cy) {
+    if (!$dataMap || !$gameMap) return { x: cx, y: cy };
+    const w = $dataMap.width;
+    const h = $dataMap.height;
+    const BLOCKED_REGIONS = new Set([7, 4]);
+    const visited = new Uint8Array(w * h);
+    const queue = [];
+    const clamp = (v, min, max) => v < min ? min : v > max ? max : v;
+    const sx = clamp(cx, 0, w - 1);
+    const sy = clamp(cy, 0, h - 1);
+    queue.push(sx, sy);
+    visited[sy * w + sx] = 1;
+    let head = 0;
+    while (head < queue.length) {
+      const x = queue[head++];
+      const y = queue[head++];
+      const rid = $gameMap.regionId(x, y);
+      if (!BLOCKED_REGIONS.has(rid) && $gameMap.isPassable(x, y, 2)) {
+        return { x, y };
+      }
+      const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+      for (const [dx, dy] of dirs) {
+        const nx = x + dx;
+        const ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+        const idx = ny * w + nx;
+        if (visited[idx]) continue;
+        visited[idx] = 1;
+        queue.push(nx, ny);
+      }
+    }
+    return { x: sx, y: sy };
+  }
+
   function findAllPositionsWithRegionId(regionId) {
     const positions = [];
     if (!$dataMap) return positions;

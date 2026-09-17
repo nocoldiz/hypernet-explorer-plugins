@@ -765,21 +765,27 @@
   }
 
   /**
-   * Place 3-tile wide sidewalks around roads
-   * Scans for road tiles and places sidewalk tiles 1-3 tiles away from roads
+   * Place sidewalks around roads
+   * Scans for road tiles and paves up to `band` tiles away from them. A city
+   * wears the wide default band; a village asks for band 1, because a two-ring
+   * pavement laid around every lane stops reading as a pavement and reads as a
+   * paved square with a village lost somewhere inside it.
    * IMPORTANT: Does not overwrite Path/PathDesert/PathIce tiles
-   */function placeSidewalksAroundRoads(mapData, width, height, roadSet, sidewalkTiles, rng, pathTileIds, baseTile) {
+   */function placeSidewalksAroundRoads(mapData, width, height, roadSet, sidewalkTiles, rng, pathTileIds, baseTile, band = 3) {
     if (!sidewalkTiles || sidewalkTiles.length === 0) return;
 
     const sidewalkTile = sidewalkTiles[0];
     const placedSidewalks = new Set();
     const pathTileSet = new Set(pathTileIds || []);
+    const outer = Math.max(1, band);
+    // The wide band starts one tile off the kerb; a narrow one is the kerb.
+    const inner = outer >= 3 ? 2 : 1;
 
     for (const roadKey of roadSet) {
       const [rx, ry] = roadKey.split(',').map(Number);
 
-      for (let dy = -3; dy <= 3; dy++) {
-        for (let dx = -3; dx <= 3; dx++) {
+      for (let dy = -outer; dy <= outer; dy++) {
+        for (let dx = -outer; dx <= outer; dx++) {
           const sx = rx + dx;
           const sy = ry + dy;
           const sidewalkKey = `${sx},${sy}`;
@@ -789,7 +795,7 @@
 
           const dist = Math.max(Math.abs(dx), Math.abs(dy));
 
-          if (dist >= 2 && dist <= 3) {
+          if (dist >= inner && dist <= outer) {
             const idx = calculateIndex(sx, sy, 0, width, height);
             const currentTile = mapData[idx];
 
@@ -2848,19 +2854,25 @@
     const midBlock = (GRID - 1) >> 1;
     const ox = Math.floor(width / 2) - (midBlock * CELL + halfCell);
     const oy = Math.floor(height / 2) - (midBlock * CELL + halfCell);
+    // A village is houses, not tarmac: at most one street beyond the central
+    // cross, and every open block that fronts it built on. The lots are what
+    // the prefab pass has to work with, so the plan hands it as many as the
+    // grid can hold rather than spending the room on more carriageway.
     const layout = planSettlementBlocks(GRID, GRID, rng, {
-      buildingChance: 0.4,
-      houseChance: 0.85,
-      extraRoads: 2 + Math.floor(rng() * 2),
+      buildingChance: 0.5,
+      houseChance: 0.95,
+      extraRoads: rng() < 0.5 ? 1 : 0,
     });
 
     // The high street is as wide as the road arriving at that border, so the
-    // two are one carriageway and not one road beside another. With nothing
-    // arriving on that axis it is a two-lane street, and every other street in
-    // the village is a lane.
+    // two are one carriageway and not one road beside another. Only an axis a
+    // neighbouring road or settlement actually arrives on earns that width:
+    // with nothing arriving, the main street is a lane like every other street
+    // in the village, because a village has no reason to pave a dual
+    // carriageway through its own middle.
     const SIDE_ROAD_W = 3;
-    const mainColW = (borderDirs.north || borderDirs.south) ? 7 : 5;
-    const mainRowW = (borderDirs.east || borderDirs.west) ? 7 : 5;
+    const mainColW = (borderDirs.north || borderDirs.south) ? 7 : SIDE_ROAD_W;
+    const mainRowW = (borderDirs.east || borderDirs.west) ? 7 : SIDE_ROAD_W;
     const cellCenterX = c => ox + c * CELL + Math.floor(CELL / 2);
     const cellCenterY = r => oy + r * CELL + Math.floor(CELL / 2);
     const roadWidthOf = (c, r) => {
@@ -3060,8 +3072,8 @@
     if (sidewalkTiles) {
       const tilesToProtect = [...pathTiles];
       if (streetIsPaved) tilesToProtect.push(streetTile);
-      // Pass baseTile as the last argument
-      placeSidewalksAroundRoads(mapData, width, height, roadSet, sidewalkTiles, rng, tilesToProtect, baseTile);
+      // Band 1: a village gets a kerb, not the city's three-tile apron.
+      placeSidewalksAroundRoads(mapData, width, height, roadSet, sidewalkTiles, rng, tilesToProtect, baseTile, 1);
     }
 
     addDirectionalBeach(mapData, width, height, adjacentBiomes, allFeatures, rng);

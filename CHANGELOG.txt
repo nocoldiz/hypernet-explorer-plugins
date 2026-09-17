@@ -1,3 +1,11 @@
+0.6.26a
+
+Changed:
+ - villages have smaller sidewalks, fewer roads and more prefabs
+
+    Fixed:
+ - city keeps its tileset when re-entered from a house or road
+
 0.6.25a
 
 Added:
@@ -7,6 +15,7 @@ Changed:
  - renamed plugin command events and added items for unlinked commands
  - reworked hypertamer to a clear LCD screen
  - reworked custom main menu layout to be fully controller accessible
+ - reworked character creation simple and detailed mode layouts
  - simple character creation is one tab per character
  - disabled right stick scrolling and its controller overlay
  - update container item generation categories
@@ -16,6 +25,7 @@ Changed:
  - hide battle commands when inactive instead of fading
 
 Fixed:
+ - city keeps its tileset when re-entered from a house or road
  - party members autowalk and satisfy their needs again
  - diseases category added to container generator dropdown
  - right click deselects active element and closes menus

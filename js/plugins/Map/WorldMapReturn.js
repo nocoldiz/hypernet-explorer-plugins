@@ -1824,7 +1824,13 @@
             currentRoadDirection:   pg.currentRoadDirection,
             currentUnderBiome:      pg.currentUnderBiome,
             currentBridgeDirection: pg.currentBridgeDirection,
-            currentBiomeTileset:    pg.currentBiomeTileset,
+            // Never taken straight off _procGenData: a square reached by a route
+            // that wrote the biome NAME and not its id would put a snapshot with
+            // no tileset in it into the save, and restoring one of those is what
+            // drew a city street in grass. procSurfaceTilesetId answers with the
+            // id the square carries, the biome's own, or the square's world
+            // coordinates, in that order.
+            currentBiomeTileset:    procSurfaceTilesetId(),
             seed:                   pg.seed,
             biomeLayerStack:        (pg.biomeLayerStack || []).slice(),
             displayAsBeach:         !!pg.displayAsBeach,
@@ -1896,7 +1902,17 @@
         pg.currentRoadDirection   = snap.currentRoadDirection || null;
         pg.currentUnderBiome      = snap.currentUnderBiome || null;
         pg.currentBridgeDirection = snap.currentBridgeDirection || null;
-        pg.currentBiomeTileset    = snap.currentBiomeTileset;
+        // The tileset the square is DRAWN with, and the one field here a snapshot
+        // is allowed to be missing: return points recorded before snapshots
+        // carried one (an older save, a building walked into back then) have no
+        // id in them at all. Assigning that straight across wiped the id the
+        // square was standing on, and with it the only answer left for a biome
+        // NAME the database does not hold -- a structure, a forced biome -- so
+        // walking out of a house onto a city square drew the streets and the
+        // buildings in Map636's placeholder grass, and kept drawing them that way.
+        pg.currentBiomeTileset    = snap.currentBiomeTileset ||
+            tilesetIdForBiomeName(snap.currentBiome) ||
+            pg.currentBiomeTileset;
         pg.biomeLayerStack        = (snap.biomeLayerStack || []).slice();
         pg.displayAsBeach         = !!snap.displayAsBeach;
         pg.displayAsIsland        = !!snap.displayAsIsland;
@@ -2052,16 +2068,48 @@
     // DATAMANAGER OVERRIDE
     // ============================================================================
 
+    // The tileset a biome NAME is drawn with, or 0 when the database holds no
+    // biome by that name (a structure, a forced biome, a description written by
+    // something that is not in Biomes.json).
+    function tilesetIdForBiomeName(biomeName) {
+        if (!biomeName) return 0;
+        const biome = getBiomeByName(biomeName);
+        return (biome && biome.tilesetId) || 0;
+    }
+
     // The tileset the square under the party is drawn with, off _procGenData:
-    // the id it carries, and the biome's own only as a fallback for a record
-    // written before the id was kept. Zero when neither answers, which is the
-    // one case where Map636's own tileset is the honest answer.
+    // the id it carries, then the biome's own for a record written before the id
+    // was kept, and finally the square's own WORLD COORDINATES, which answer for
+    // a name the database does not hold at all. That last one is asked only on
+    // the surface: below it the square is a structure of its own and the world
+    // map has nothing to say about what it is drawn with. Zero when none of the
+    // three answers, which is the one case where Map636's own tileset is honest.
     function procSurfaceTilesetId() {
         const pg = $gameSystem && $gameSystem._procGenData;
         if (!pg) return 0;
         if (pg.currentBiomeTileset) return pg.currentBiomeTileset;
-        const biome = getBiomeByName(pg.currentBiome);
-        return (biome && biome.tilesetId) || 0;
+        const named = tilesetIdForBiomeName(pg.currentBiome);
+        if (named) return named;
+        // Inside a structure entered off the square (a dungeon behind a door, a
+        // cellar, a vault) the party is not standing on the world's ground at
+        // all, so the world map is not allowed to answer for it.
+        if ((pg.biomeLayerStack || []).length || pg._dungeonSession) return 0;
+        return worldSquareTilesetId(pg.originX, pg.originY);
+    }
+
+    // What the world map says the square at these coordinates is drawn with.
+    // The resolver is the same one the stitched window is planned with, so this
+    // can never disagree with the ground that is actually laid down.
+    function worldSquareTilesetId(worldX, worldY) {
+        if (typeof worldX !== 'number' || typeof worldY !== 'number') return 0;
+        const api = window.ProcGenSquare;
+        if (!api || typeof api.resolve !== 'function') return 0;
+        try {
+            const resolved = api.resolve(worldX, worldY, { depth: 0 });
+            return (resolved && resolved.tilesetId) || 0;
+        } catch (e) {
+            return 0;
+        }
     }
 
     // Map636.json's own tileset is a placeholder (300, the Fields set) and must
@@ -2324,9 +2372,9 @@
             // finished; the dispatcher clears _edgeTransitionScheduled before it
             // reserves the transfer, so the swap lands on a black screen.
             if (_shownTileset && tilesetSwapWouldShow(pg)) return _shownTileset;
-            const biomeObj = getBiomeByName(pg.currentBiome);
-            const tilesetId = pg.currentBiomeTileset ||
-                (biomeObj && biomeObj.tilesetId) || 0;
+            // One answer, asked in one place: the id the square carries, its
+            // biome's own, then the world square itself (see procSurfaceTilesetId).
+            const tilesetId = procSurfaceTilesetId();
             const tilesetData = tilesetId ? $dataTilesets[tilesetId] : null;
             if (tilesetData) {
                 _shownTileset = tilesetData;
@@ -5069,7 +5117,26 @@
     // Player 2 (split-screen, via window.WorldMapReturnP2.handleP2Move) so that
     // EITHER player walking off the proc-map edge moves the whole party to the
     // adjacent biome.
+    // The tile the crossing lands on, in the square being LEFT. Inside a stitched
+    // window the party's map coordinates run over the whole window (0..127 for a
+    // 2x2), and getEdgeCoordinateForDirection reads them as a position inside one
+    // 64x64 square: it keeps the along-edge one and clamps it to 62. So a party
+    // standing anywhere but the window's top-left cell walked out of the world and
+    // came back in on a row or column that was not theirs, and the square-local
+    // tile that produced could fall in a NEIGHBOURING cell of the window built on
+    // the far side. Everything about the square is then adopted from that
+    // neighbour -- which beside a city is open country on the Fields tileset, so
+    // the city came back drawn in grass and stayed that way.
+    function squareLocalPlayerCoord(mapX, mapY) {
+        const S = window.ProcStitch;
+        if (!S || !S.active() || typeof S.local !== 'function') return { x: mapX, y: mapY };
+        return S.local(mapX, mapY);
+    }
+
     function scheduleProcEdgeTransition(exitDirection, playerX, playerY, d) {
+        const local = squareLocalPlayerCoord(playerX, playerY);
+        playerX = local.x;
+        playerY = local.y;
         // Pull Player 2 to Player 1 once the new biome map loads so the split-screen
         // companion does not get stranded on the old edge.
         if (window.SplitScreenManager && window.SplitScreenManager.active) {

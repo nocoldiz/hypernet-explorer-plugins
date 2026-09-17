@@ -2303,7 +2303,7 @@
 
       const isSimpleMode = Scene_CharacterCreation.isSimpleMode();
       const simpleClassHtml = isSimpleMode ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
-      const sheetHistoryHtml = this._simpleSheetHistoryHtml(actor, age);
+      const sheetHistoryHtml = isSimpleMode ? this._simpleSheetHistoryHtml(actor, age) : "";
 
       return `
         <div class="cc-page cc-page-right ts-page cc-page-column">
