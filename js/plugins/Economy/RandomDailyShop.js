@@ -42,6 +42,8 @@
  * @value cafe
  * @option Drogheria
  * @value drogheria
+ * @option Doctor's Office
+ * @value doctor
  * @option Electronics Store
  * @value electronics
  * @option Enoteca
@@ -568,13 +570,13 @@
     },
     pharmacy: {
       get label() { return T('DailyShop.shopType.pharmacy'); },
-      ids: [4, 5, 9, 12, 13, 16, 17, 25, 1444, 1445, 1450, 1453, 1466, 1468,
+      ids: [4, 5, 9, 12, 13, 16, 17, 25, 737, 740, 741, 742, 746, 1444, 1445, 1450, 1453, 1466, 1468,
             1469, 1470, 1462],
       // Never out of the things a pharmacy is for: a kit, an antibiotic
       // course, rehydration salts, a multivitamin and the surgical tools,
       // on top of the three over-the-counter staples.
       fixed: [1, 3, 19, 1443, 1446, 1464, 1465, 244],
-      categories: ["medical"],
+      categories: ["medical", "fertility"],
       // The one shop the disease system sends the player to by name, so it
       // draws several times as deep and reserves most of that for real drugs.
       shelf: [26, 40],
@@ -689,7 +691,7 @@
       get label() { return T('DailyShop.shopType.electronics'); },
       ids: [122, 133, 134, 136, 137, 143, 144, 149, 153, 154, 157, 160, 162,
             179, 185, 186, 190, 193, 721, 726, 394, 852, 853, 854, 135, 130,
-            388, 387],
+            388, 387, 2066],
       fixed: [179, 122, 1319, 1325],   // batteries, charger, a processor, a memory module
       categories: ["tools", "lifestyle", "component"],
     },
@@ -698,7 +700,8 @@
     hardware: {
       get label() { return T('DailyShop.shopType.hardware'); },
       ids: [138, 156, 814, 811, 813, 132, 119, 807, 118, 121, 115, 870, 859,
-            863, 867, 855, 856, 146, 406, 151, 374, 739, 861, 868, 805, 804],
+            863, 867, 855, 856, 146, 406, 151, 374, 739, 861, 868, 805, 804,
+            2066],
       fixed: [374, 814, 138, 136],   // lockpick, multi-tool, shovel, flashlight
       categories: ["tools", "component"],
     },
@@ -788,7 +791,7 @@
     occult: {
       get label() { return T('DailyShop.shopType.occult'); },
       ids: [352, 354, 346, 675, 676, 683, 673, 724, 725, 650, 652, 97, 98,
-            262, 264, 680, 349, 359, 360, 355, 679, 682, 348],
+            262, 264, 680, 349, 359, 360, 355, 679, 682, 348, 2066],
       fixed: [262, 115],        // empty spellbook, candle
       categories: ["monsters", "books"],
       artifacts: "item",
@@ -924,17 +927,25 @@
     },
     fertilityClinic: {
       get label() { return T('DailyShop.shopType.fertilityClinic'); },
-      ids: [716, 717, 729, 730, 738, 737, 32, 733, 734, 887, 962, 958, 1, 884,
+      ids: [716, 717, 729, 730, 738, 737, 740, 741, 742, 743, 744, 745, 746, 32, 733, 734, 887, 962, 958, 1, 884,
             19, 59, 949],
       fixed: [729, 737],        // human sample, gestation accelerator
-      categories: ["medical", "bodypart"],
+      categories: ["fertility", "medical", "bodypart"],
     },
     cyberClinic: {
       get label() { return T('DailyShop.shopType.cyberClinic'); },
       ids: [731, 732, 733, 734, 735, 736, 59, 763, 768, 769, 857, 851, 853,
-            727, 722, 715, 852, 961, 960],
+            727, 722, 715, 852, 961, 960, 2066],
       fixed: [59, 731],         // repair nanites, neural amplifier
       categories: ["bodypart", "medical"],
+    },
+    doctor: {
+      get label() { return T('DailyShop.shopType.doctor'); },
+      ids: [1, 3, 19, 25, 244, 729, 737, 740, 741, 742, 746, 1443, 1446, 1464, 1465],
+      fixed: [1, 740, 1443],    // hand sanitizer, pregnancy test, first aid kit
+      categories: ["medical", "fertility"],
+      shelf: [10, 20],
+      curatedShare: 0.35
     },
     travelAgency: {
       get label() { return T('DailyShop.shopType.travelAgency'); },

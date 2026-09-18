@@ -1127,6 +1127,8 @@
     /** One ally: the target picker's answer, wherever it was asked. */
     onActor(actor, item) {
       if (!actor || !item) return NO_USE;
+      if ($gameParty && $gameParty.setTargetActor) $gameParty.setTargetActor(actor);
+      if ($gameTemp) $gameTemp._mindWiperActorId = actor.actorId();
 
       const isFood = utils.hasItemCategory(item, "Food");  // i18n-ignore  item-category id
 

@@ -749,6 +749,7 @@
         this._isPetsPage = false;
         this._petAbandonId = null;
         this._isVehiclesPage = false;
+        this._rightToolsTab = 'tools';
         this._rightClickStartedOnMenu = false;
 
         // Painting of the windows built in here is suspended for the whole of
@@ -920,6 +921,13 @@
         SoundManager.playCancel();
         this._isToolsPage = false;
         this.refreshUIMenuDOM(true); // Enable premium smooth transitions!
+    };
+
+    Scene_Menu.prototype.setRightToolsTab = function (tab) {
+        if (this._rightToolsTab === tab) return;
+        SoundManager.playCursor();
+        this._rightToolsTab = tab;
+        this.refreshUIMenuDOM(true);
     };
 
     Scene_Menu.prototype.addMenuEventListeners = function () {
@@ -2301,7 +2309,7 @@
         // filters or the selected row redraws it, so the whole search state is
         // part of the key.
         const searchKey = window.MenuSearch ? window.MenuSearch.stateKey() : '';
-        return `${this._isToolsPage}_${this._isDynamicsPage}${dynamicsKey}_${this._isDeedsPage}_${this._isPetsPage}${petsKey}_${this._isVehiclesPage}_${searchKey}`;
+        return `${this._isToolsPage}_${this._isDynamicsPage}${dynamicsKey}_${this._isDeedsPage}_${this._isPetsPage}${petsKey}_${this._isVehiclesPage}_${this._rightToolsTab}_${searchKey}`;
     };
 
     // Uniform needs palette: gold when healthy, orange when low, red when
@@ -2752,18 +2760,19 @@
             </div>
 
             <div class="right-tools">
-                <div class="right-tools-title">${T('MainMenu.page.tools')}</div>
+                <div class="right-tools-tabs">
+                    <button class="right-tools-tab${this._rightToolsTab === 'tools' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
+                    <button class="right-tools-tab${this._rightToolsTab === 'medical' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
+                    <button class="right-tools-tab${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
+                    <button class="right-tools-tab${this._rightToolsTab === 'books' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
+                    <button class="right-tools-tab${this._rightToolsTab === 'favourites' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
+                </div>
                 <div class="right-tools-grid">
-                    <div class="command-item focusable" data-symbol="hexphone" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('hexphone')">
-                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.hexphone)}"></span>
-                        <span>${T('MainMenu.tools.hexphone')}</span>
-                    </div>
-                    ${isAlchemistryAvailable() ? `
-                    <div class="command-item focusable" data-symbol="alchemistry" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('alchemistry')">
-                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.alchemistryKit)}"></span>
-                        <span>${T('MainMenu.tools.alchemistryKit')}</span>
-                    </div>` : ''}
-                    ${this.generateUIToolItemsListHTML()}
+                    ${this._rightToolsTab === 'tools' ? this.generateUIToolItemsListHTML() : ''}
+                    ${this._rightToolsTab === 'medical' ? this.generateUIMedicalItemsListHTML() : ''}
+                    ${this._rightToolsTab === 'lifestyle' ? this.generateUILifestyleItemsListHTML() : ''}
+                    ${this._rightToolsTab === 'books' ? this.generateUIBooksItemsListHTML() : ''}
+                    ${this._rightToolsTab === 'favourites' ? this.generateUIFavouritesItemsListHTML() : ''}
                 </div>
             </div>
 
@@ -3480,6 +3489,125 @@
                 </div>
             `;
         }
+        if (!html) html = `<div class="right-tools-empty">${T('MainMenu.toolsTab.toolsEmpty')}</div>`;
+        return html;
+    };
+
+    // Medical tab: items tagged <category: medical> that the party is carrying.
+    Scene_Menu.prototype.generateUIMedicalItemsListHTML = function () {
+        let html = "";
+        const seen = new Set();
+        for (let i = 1; i < $dataItems.length; i++) {
+            const item = $dataItems[i];
+            if (!item) continue;
+            const category = item.meta ? (item.meta.category || item.meta.Category) : null;
+            if (!category || String(category).trim().toLowerCase() !== "medical") continue;
+            if (!$gameParty.hasItem(item)) continue;
+            if (seen.has(item.id)) continue;
+            seen.add(item.id);
+            const iconIndex = item.iconIndex || 0;
+            html += `
+                <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
+                    <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
+                    <span>${item.name}</span>
+                </div>
+            `;
+        }
+        if (!html) html = `<div class="right-tools-empty">${T('MainMenu.toolsTab.medicalEmpty')}</div>`;
+        return html;
+    };
+
+    // Lifestyle tab: items tagged <category: lifestyle> that the party is carrying.
+    Scene_Menu.prototype.generateUILifestyleItemsListHTML = function () {
+        let html = "";
+        const seen = new Set();
+        for (let i = 1; i < $dataItems.length; i++) {
+            const item = $dataItems[i];
+            if (!item) continue;
+            const category = item.meta ? (item.meta.category || item.meta.Category) : null;
+            if (!category || String(category).trim().toLowerCase() !== "lifestyle") continue;
+            if (!$gameParty.hasItem(item)) continue;
+            if (seen.has(item.id)) continue;
+            seen.add(item.id);
+            const iconIndex = item.iconIndex || 0;
+            html += `
+                <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
+                    <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
+                    <span>${item.name}</span>
+                </div>
+            `;
+        }
+        if (!html) html = `<div class="right-tools-empty">${T('MainMenu.toolsTab.lifestyleEmpty')}</div>`;
+        return html;
+    };
+
+    Scene_Menu.prototype.isUIBookOrSkillBookItem = function (item) {
+        if (!item) return false;
+        const meta = item.meta;
+        const category = meta ? (meta.category || meta.Category) : null;
+        if (category && String(category).trim().toLowerCase() === "books") return true;
+        if (meta && (meta.Book || meta.book || meta.Grimoire || meta.grimoire || meta.SkillBook || meta.skillBook)) return true;
+        const note = item.note || "";
+        if (/<Book:|<Grimoire:|<SkillBook:/i.test(note)) return true;
+        if (Array.isArray(item.effects) && item.effects.some(e => e && e.code === 43)) return true;
+        if (/grimoire|spellbook|skill book|\bbook\b|\btome\b|\bcodex\b/i.test(String(item.name || ""))) return true;
+        return false;
+    };
+
+    // Books tab: normal books and skill books that the party is carrying.
+    Scene_Menu.prototype.generateUIBooksItemsListHTML = function () {
+        let html = "";
+        const seen = new Set();
+        for (let i = 1; i < $dataItems.length; i++) {
+            const item = $dataItems[i];
+            if (!item) continue;
+            if (!this.isUIBookOrSkillBookItem(item)) continue;
+            if (!$gameParty.hasItem(item)) continue;
+            if (seen.has(item.id)) continue;
+            seen.add(item.id);
+            const iconIndex = item.iconIndex || 0;
+            html += `
+                <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
+                    <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
+                    <span>${item.name}</span>
+                </div>
+            `;
+        }
+        if (!html) html = `<div class="right-tools-empty">${T('MainMenu.toolsTab.booksEmpty')}</div>`;
+        return html;
+    };
+
+    // Favourites tab: items in the party's quick-slots/hotbar.
+    Scene_Menu.prototype.generateUIFavouritesItemsListHTML = function () {
+        let html = "";
+        const seen = new Set();
+        const addFavorite = (item) => {
+            if (!item || seen.has(item.id)) return;
+            if (!$gameParty.hasItem(item)) return;
+            seen.add(item.id);
+            const iconIndex = item.iconIndex || 0;
+            html += `
+                <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
+                    <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
+                    <span>${item.name}</span>
+                </div>
+            `;
+        };
+
+        if (window.ItemHotbar) {
+            for (let i = 0; i < window.ItemHotbar.SLOTS; i++) {
+                const item = window.ItemHotbar.itemAt(i);
+                if (item) addFavorite(item);
+            }
+        } else if (typeof $gameSystem !== 'undefined' && $gameSystem && typeof $gameSystem.getFavoriteItem === 'function') {
+            for (let i = 1; i <= 9; i++) {
+                const id = $gameSystem.getFavoriteItem(String(i));
+                const item = id && $dataItems ? $dataItems[id] : null;
+                if (item) addFavorite(item);
+            }
+        }
+
+        if (!html) html = `<div class="right-tools-empty">${T('MainMenu.toolsTab.favouritesEmpty')}</div>`;
         return html;
     };
 
@@ -3828,6 +3956,9 @@
         const item = $dataItems[itemId];
         if (item && $gameParty.hasItem(item)) {
             SoundManager.playUseItem();
+            if ($gameParty && typeof $gameParty.setLastItem === 'function') {
+                $gameParty.setLastItem(item);
+            }
             if (item.consumable) {
                 $gameParty.loseItem(item, 1);
             }

@@ -45,14 +45,6 @@
         "text": "Racks of crops under lamps, watered without soil. The ship eats what this room grows."
       }
     },
-    "storyModeVillage": {
-      "title": "Village",
-      "text": "Village sample text",
-      "generic": {
-        "title": "Village",
-        "text": "A handful of roofs around a well. Somebody here always has work that needs doing."
-      }
-    },
     "storyModeWaterfall": {
       "title": "Secret Waterfall",
       "text": "You should check behind every waterfall",
@@ -134,19 +126,11 @@
       }
     },
     "m1414_zone5": {
-      "title": "High level enemis",
+      "title": "High level enemeis",
       "text": "Some enemies are too powerful for your current party. Outside dungeons you can escape freely, but only on the first turn.",
       "generic": {
         "title": "High level enemies",
         "text": "The things down this way are above the party's weight. Outside a dungeon an escape is free on the first turn only."
-      }
-    },
-    "m1414_zone6": {
-      "title": "Shop",
-      "text": "",
-      "generic": {
-        "title": "Shop",
-        "text": "A counter with goods behind it."
       }
     },
     "m1414_zone7": {
@@ -155,14 +139,6 @@
       "generic": {
         "title": "Dungeon",
         "text": "A way down into the dark. Rare loot is carried back out of places like this."
-      }
-    },
-    "m1414_zone8": {
-      "title": "Trash",
-      "text": "Dive in the trash to recover hidden pre Y2K gems, but be wary of nausea.",
-      "generic": {
-        "title": "Trash",
-        "text": "A heap worth diving through: pre-Y2K gems end up in these. It comes with the nausea."
       }
     },
     "m1414_zone10": {
@@ -339,6 +315,270 @@
       "generic": {
         "title": "Renting",
         "text": "A room to rent, through the door or through the innkeeper."
+      }
+    },
+    "m136_zone": {
+      "title": "Omega Tower Entrance",
+      "text": "",
+      "generic": {
+        "title": "Omega Tower Entrance",
+        "text": ""
+      }
+    },
+    "m169_zone": {
+      "title": "Abandoned Farm",
+      "text": "",
+      "generic": {
+        "title": "Abandoned Farm",
+        "text": ""
+      }
+    },
+    "m169_zone2": {
+      "title": "Trash",
+      "text": "",
+      "generic": {
+        "title": "Trash",
+        "text": ""
+      }
+    },
+    "m169_zone3": {
+      "title": "Chaos",
+      "text": "",
+      "generic": {
+        "title": "Chaos",
+        "text": ""
+      }
+    },
+    "m169_zone4": {
+      "title": "Materials",
+      "text": "",
+      "generic": {
+        "title": "Materials",
+        "text": ""
+      }
+    },
+    "m169_zone5": {
+      "title": "Underwater treasure",
+      "text": "",
+      "generic": {
+        "title": "Underwater treasure",
+        "text": ""
+      }
+    },
+    "m169_zone6": {
+      "title": "Sacrificial altar",
+      "text": ""
+    },
+    "m169_zone7": {
+      "title": "Goblins",
+      "text": "",
+      "generic": {
+        "title": "Goblins",
+        "text": ""
+      }
+    },
+    "m169_zone8": {
+      "title": "Block pushing puzzle",
+      "text": "",
+      "generic": {
+        "title": "Block pushing puzzle",
+        "text": ""
+      }
+    },
+    "m689_zone": {
+      "title": "Hardware stores",
+      "text": ""
+    },
+    "m689_zone2": {
+      "title": "Tavern",
+      "text": "",
+      "generic": {
+        "title": "Tavern",
+        "text": ""
+      }
+    },
+    "m689_zone3": {
+      "title": "Garage",
+      "text": ""
+    },
+    "m689_zone4": {
+      "title": "Bowling alley",
+      "text": "",
+      "generic": {
+        "title": "Tavern",
+        "text": ""
+      }
+    },
+    "m689_zone5": {
+      "title": "Mages Guild",
+      "text": "",
+      "generic": {
+        "title": "Mages Guild",
+        "text": ""
+      }
+    },
+    "m689_zone6": {
+      "title": "Shop tunnel",
+      "text": "",
+      "generic": {
+        "title": "Shop tunnel",
+        "text": ""
+      }
+    },
+    "m704_zone": {
+      "title": "Clocktower dungeon",
+      "text": "",
+      "generic": {
+        "title": "Clocktower dungeon",
+        "text": ""
+      }
+    },
+    "m704_zone2": {
+      "title": "Training center",
+      "text": "",
+      "generic": {
+        "title": "Training center",
+        "text": ""
+      }
+    },
+    "m704_zone3": {
+      "title": "Bus stop",
+      "text": "",
+      "generic": {
+        "title": "Bus stop",
+        "text": ""
+      }
+    },
+    "m704_zone4": {
+      "title": "Fairy maze",
+      "text": "",
+      "generic": {
+        "title": "Fairy maze",
+        "text": ""
+      }
+    },
+    "m708_zone": {
+      "title": "Wilderness",
+      "text": "",
+      "generic": {
+        "title": "Wilderness",
+        "text": ""
+      }
+    },
+    "m1414_zone13": {
+      "title": "Diving",
+      "text": "",
+      "generic": {
+        "title": "Diving",
+        "text": ""
+      }
+    },
+    "m1414_zone14": {
+      "title": "Abandoned train depot",
+      "text": "",
+      "generic": {
+        "title": "Abandoned train depot",
+        "text": ""
+      }
+    },
+    "m1414_zone15": {
+      "title": "Esoteric Shop",
+      "text": "",
+      "generic": {
+        "title": "Esoteric Shop",
+        "text": ""
+      }
+    },
+    "m1414_zone16": {
+      "title": "Armory shop",
+      "text": "",
+      "generic": {
+        "title": "Armory shop",
+        "text": ""
+      }
+    },
+    "m1414_zone17": {
+      "title": "Wilderness",
+      "text": "",
+      "generic": {
+        "title": "Wilderness",
+        "text": ""
+      }
+    },
+    "m1414_zone18": {
+      "title": "Wilderness",
+      "text": "",
+      "generic": {
+        "title": "Wilderness",
+        "text": ""
+      }
+    },
+    "m1414_zone19": {
+      "title": "Wilderness",
+      "text": "",
+      "generic": {
+        "title": "Wilderness",
+        "text": ""
+      }
+    },
+    "m1414_zone20": {
+      "title": "Slimes",
+      "text": "",
+      "generic": {
+        "title": "Slimes",
+        "text": ""
+      }
+    },
+    "m1414_zone21": {
+      "title": "Block pushing puzzle",
+      "text": ""
+    },
+    "m1415_zone": {
+      "title": "Pushing block puzzle",
+      "text": "",
+      "generic": {
+        "title": "Pushing block puzzle",
+        "text": ""
+      }
+    },
+    "m1415_zone2": {
+      "title": "Pre Y2K Cache",
+      "text": "",
+      "generic": {
+        "title": "Pre Y2K Cache",
+        "text": ""
+      }
+    },
+    "m1415_zone3": {
+      "title": "Unfinished puzzle",
+      "text": "",
+      "generic": {
+        "title": "Unfinished puzzle",
+        "text": ""
+      }
+    },
+    "m1415_zone4": {
+      "title": "Ice block puzzle",
+      "text": "",
+      "generic": {
+        "title": "Ice block puzzle",
+        "text": ""
+      }
+    },
+    "m1415_zone5": {
+      "title": "High level enemies",
+      "text": "",
+      "generic": {
+        "title": "High level enemies",
+        "text": ""
+      }
+    },
+    "m1415_zone6": {
+      "title": "Fog of war",
+      "text": "",
+      "generic": {
+        "title": "Fog of war",
+        "text": ""
       }
     }
   },

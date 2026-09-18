@@ -448,7 +448,7 @@
 
       Scene_CharacterCreation._hoveredTraitId = putDown ? null : pack.traits[0];
       if (putDown) SoundManager.playCancel();
-      else SoundManager.playOk();
+      else SoundManager.playCursor();
       const bioStep = window.CCSteps ? window.CCSteps.BIO : 6;
       if (this._step === bioStep) {
         const container = this._dndContainer;
@@ -1683,10 +1683,12 @@
       if (!window.CCPick) return;
       const options = this._pickOptions(kind, arg) || [];
       if (!options.length) { SoundManager.playBuzzer(); return; }
+      const fromController = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad") || (window.CCNav && window.CCNav._lastActionByPad);
       window.CCPick.open({
         title: this._pickTitle(kind),
         options,
         value: this._pickCurrent(kind, arg),
+        fromController: !!fromController,
         onPick: (value) => {
           this._applyPick(kind, value, arg);
           const container = this._dndContainer;

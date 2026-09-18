@@ -66,5 +66,10 @@
     "before": "Before the Squishing",
     "during": "The Squishing, {pct}%",
     "after": "After the Squishing"
-  }
+  },
+  "hyperpowersTitle": "Hyperpowers",
+  "hyperpowersSubtitle": "Territory breakdown in {year}",
+  "territoryCount": "{n} territories",
+  "territoriesCovered": "Territory covered",
+  "allPowers": "All Hyperpowers"
 }

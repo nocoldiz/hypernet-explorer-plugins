@@ -278,6 +278,18 @@
     "hexphone": "Hexphone",
     "alchemistryKit": "Kit di alchimica"
   },
+  "toolsTab": {
+    "tools": "Strumenti",
+    "medical": "Medici",
+    "lifestyle": "Stile di vita",
+    "books": "Libri",
+    "favourites": "Preferiti",
+    "toolsEmpty": "Nessuno strumento trasportato.",
+    "medicalEmpty": "Nessun oggetto medico trasportato.",
+    "lifestyleEmpty": "Nessun oggetto stile di vita trasportato.",
+    "booksEmpty": "Nessun libro trasportato.",
+    "favouritesEmpty": "Nessun oggetto preferito assegnato."
+  },
   "search": {
     "placeholder": "Cerca oggetti, equipaggiamento, abilità, ricette, creature…",
     "title": "Cerca ({count})",

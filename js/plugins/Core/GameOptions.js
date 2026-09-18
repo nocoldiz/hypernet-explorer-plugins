@@ -404,7 +404,7 @@ const GameOptions = {
             groups: [
                 { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers', 'autoIdle'] },
                 { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
-                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming', 'mapTooltips'] },
+                { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming'] },
                 { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
                 // Language is left out while the game is locked to English; if it
                 // is ever unlocked the registered row lands under "other".
@@ -2396,41 +2396,6 @@ window.GameOptions = GameOptions;
         if (mult === 1) return base;
         return Math.round(base * mult);
     };
-
-    //=========================================================================
-    // Map tooltips (the written tips and compass targets the map shows)
-    //=========================================================================
-    // The setting lives on switch 75, which the map hints and the story-mode
-    // rules of BattleSystemEnhanced already read, so it belongs to the save
-    // rather than to ConfigManager. Outside a running game there is nothing to
-    // read, and the row reads as off.
-    // Three states, not a toggle: a tip read once and never again, a tip read
-    // every time the party stands there, or none at all. ConfigManager.
-    // showMapNotices is the setting; switch 75, which the map hints and the
-    // story-mode rules of BattleSystemEnhanced read, follows it so the two
-    // never disagree about whether the map is talking.
-    const MAP_NOTICE_MODES = ['first', 'always', 'off'];   // i18n-ignore: setting values
-
-    const mapNoticeMode = () => (window.MapLegend ? window.MapLegend.noticesMode()
-        : (MAP_NOTICE_MODES.includes(ConfigManager.showMapNotices) ? ConfigManager.showMapNotices : 'first'));
-
-    const setMapNoticeMode = (mode) => {
-        if (window.MapLegend) window.MapLegend.setNoticesMode(mode);
-        else ConfigManager.showMapNotices = mode;
-        if (window.$gameSwitches) $gameSwitches.setValue(75, mode !== 'off');
-    };
-
-    const stepMapNotices = (dir) => function () {
-        const i = Math.max(0, MAP_NOTICE_MODES.indexOf(mapNoticeMode()));
-        setMapNoticeMode(MAP_NOTICE_MODES[(i + dir + MAP_NOTICE_MODES.length) % MAP_NOTICE_MODES.length]);
-    };
-
-    GameOptions.registerOption('mapTooltips', T('GameOptions.label.mapTooltips'),
-        mapNoticeMode,
-        setMapNoticeMode,
-        'gameplay', 'boolean',
-        (value) => T('MapLegend.setting.mode.' + (MAP_NOTICE_MODES.includes(value) ? value : 'first')),
-        stepMapNotices(1), stepMapNotices(-1));
 
     //=========================================================================
     // CPU Party Members (auto-control every party member except the leader)

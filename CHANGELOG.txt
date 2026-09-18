@@ -1,3 +1,21 @@
+0.6.28a
+
+Added:
+ - add RoomOverEdge spell for Convoker class
+ - tabs for tools medical lifestyle books and favourites in main menu
+ - add mind wiper tool to reset level and change class
+ - randomized map 647 themed shop plugin commands to available ones
+
+Changed:
+ - character creation controller navigation and trigger tab cycling
+ - map tooltip displayed only in story mode as collapsed
+ - atlas countries border zoom detail and default hyperpowers territory view
+
+Fixed:
+ - fixed scenario selector controller selecting skipping values and keyboard navigation
+ - party members caterpillar movement and KO on world map 315
+
+
 0.6.27a
 
 Added:

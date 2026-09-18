@@ -66,5 +66,10 @@
     "before": "Prima dello Squishing",
     "during": "Lo Squishing, {pct}%",
     "after": "Dopo lo Squishing"
-  }
+  },
+  "hyperpowersTitle": "Superpotenze",
+  "hyperpowersSubtitle": "Distribuzione dei territori nel {year}",
+  "territoryCount": "{n} territori",
+  "territoriesCovered": "Territorio controllato",
+  "allPowers": "Tutte le Superpotenze"
 }

@@ -17,5 +17,20 @@
   "noSuchShop": "There is no shop with that id.",
   "selectClinic": "Select a clinic:",
   "noClinics": "There are no clinics available.",
-  "noSuchClinic": "There is no clinic with that id."
+  "noSuchClinic": "There is no clinic with that id.",
+  "roomOverEdgeTitle": "RoomOverEdge",
+  "teleport": "Teleport",
+  "reserveRoom": "Reserve Room",
+  "noRoomSelected": "No room selected.",
+  "currentlyReserved": "Currently Reserved: {name}",
+  "reservedSuccess": "Reserved room: {name}",
+  "allInteriors": "All",
+  "poolHouses": "Houses",
+  "poolShops": "Shops",
+  "poolClinics": "Clinics",
+  "poolInns": "Inns",
+  "poolSkyscrapers": "Skyscrapers",
+  "poolAbandoned": "Abandoned",
+  "searchPlaceholder": "Search interiors...",
+  "selectRoomPrompt": "Select a procedural interior to reserve:"
 }

@@ -2661,6 +2661,7 @@
 
         // The states of the game in which no follower may be walking itself.
         conditionsMet() {
+            if (this.onWorldMap()) return false;
             if (this.inMapBattle()) return false;
             // A <Platform> map is a side view platformer (Map/PlatformerMode.js):
             // the followers replay the leader's jump arc, and nothing here may
@@ -3024,17 +3025,32 @@
             // A member who is down has no life of their own to live: their body
             // is placed by the carry code further down this file, on the tile of
             // whoever is holding it.
-            if (typeof Carry !== "undefined" && Carry.isBody && Carry.isBody(f)) return;
-            // On the world map one tile is a whole region and the party is drawn
-            // as a single dot (the followers are held at opacity 0 by the hook
-            // further down), so there is no life to live out there: every member
-            // is simply kept on the leader's own tile.
+            if (typeof Carry !== "undefined" && Carry.isBody && Carry.isBody(f)) {
+                if (this.onWorldMap()) {
+                    f.setOpacity(0);
+                    f.setTransparent(true);
+                    if (f.x !== $gamePlayer.x || f.y !== $gamePlayer.y) f.locate($gamePlayer.x, $gamePlayer.y);
+                }
+                return;
+            }
+            // On the world map (315), party moves caterpillar style following closely
+            // the leader and followers are impassable (through = false).
             if (this.onWorldMap()) {
-                // The one place the flag goes on for a reason other than being
-                // stowed: they ARE stowed, into the dot the party is drawn as.
-                if (!f.isThrough()) f.setThrough(true);
-                if (f.x !== $gamePlayer.x || f.y !== $gamePlayer.y) f.locate($gamePlayer.x, $gamePlayer.y);
-                f.setDirection($gamePlayer.direction());
+                const actor = f.actor && f.actor();
+                const isDead = !!(actor && actor.isDead && actor.isDead());
+                if (isDead) {
+                    f.setOpacity(0);
+                    f.setTransparent(true);
+                    if (f.x !== $gamePlayer.x || f.y !== $gamePlayer.y) f.locate($gamePlayer.x, $gamePlayer.y);
+                    return;
+                }
+                if (this.needsThrough()) {
+                    if (!f.isThrough()) f.setThrough(true);
+                } else if (f.isThrough()) {
+                    f.setThrough(false);
+                }
+                if (f.opacity() !== 255) f.setOpacity(255);
+                if (f.isTransparent()) f.setTransparent(false);
                 return;
             }
             // A member walks through nothing. The engine ships its followers
@@ -4336,6 +4352,16 @@
         // battle, taking a transfer event, or arriving on a new map.
         gatherNear() {
             if (!$gamePlayer || !$gameMap) return;
+            if (this.onWorldMap()) {
+                if ($gamePlayer.followers()) {
+                    $gamePlayer.followers().synchronize($gamePlayer.x, $gamePlayer.y, $gamePlayer.direction());
+                }
+                this._recall = false;
+                this._still = 0;
+                this._run = 0;
+                Bubbles.clear();
+                return;
+            }
             // Riding, the party is inside the vehicle with the leader; putting
             // them on the tiles around it would drop them in the water. On a bike
             // they are already on the tiles around it, each on their own, so they
@@ -5355,16 +5381,37 @@
     const _Game_Followers_update_worldMap = Game_Followers.prototype.update;
     Game_Followers.prototype.update = function () {
         const onWorldMap = $gameMap && $gameMap.mapId() === 315;
-        const targetOpacity = onWorldMap ? 0 : 255;
         const ss = window.SplitScreenManager;
         const session = !!(ss && ss.active && typeof ss.isP2Follower === "function");
         for (const follower of this._data) {
             // Player 2's own slot stays hidden whatever the map: it is drawn as
             // the split-screen avatar instead.
+            const actor = follower.actor && follower.actor();
+            const isDead = !!(actor && actor.isDead && actor.isDead());
+            const targetOpacity = (onWorldMap && isDead) ? 0 : 255;
             const target = (session && ss.isP2Follower(follower)) ? 0 : targetOpacity;
             if (follower.opacity() !== target) follower.setOpacity(target);
+            if (onWorldMap) {
+                if (isDead) {
+                    follower.setTransparent(true);
+                    if (follower.x !== $gamePlayer.x || follower.y !== $gamePlayer.y) {
+                        follower.locate($gamePlayer.x, $gamePlayer.y);
+                    }
+                } else if (follower.isTransparent()) {
+                    follower.setTransparent(false);
+                }
+            }
         }
         _Game_Followers_update_worldMap.call(this);
+    };
+
+    const _Game_Follower_isVisible_world315 = Game_Follower.prototype.isVisible;
+    Game_Follower.prototype.isVisible = function () {
+        if ($gameMap && $gameMap.mapId() === 315) {
+            const actor = this.actor && this.actor();
+            if (actor && actor.isDead && actor.isDead()) return false;
+        }
+        return _Game_Follower_isVisible_world315.call(this);
     };
 
     // 1) The chase itself. The rope is cut, except while the party is being
@@ -5848,8 +5895,13 @@
     Sprite_Character.prototype.update = function () {
         _Sprite_Character_update_downed.call(this);
         if (this._character instanceof Game_Follower) {
+            const onWorldMap = $gameMap && $gameMap.mapId() === 315;
             const actor = this._character.actor && this._character.actor();
             if (actor && actor.isDead()) {
+                if (onWorldMap) {
+                    this.visible = false;
+                    return;
+                }
                 this.rotation = Math.PI / 2;
                 this.anchor.x = 0.5;
                 this.anchor.y = 0.5;
@@ -5945,6 +5997,10 @@
 
         // One body, one frame.
         update(body) {
+            if ($gameMap && $gameMap.mapId() === 315) {
+                body._carriedKey = null;
+                return;
+            }
             if (!this.isBody(body)) {
                 body._carriedKey = null;
                 return;
@@ -5991,6 +6047,32 @@
     const _Game_Follower_chaseCharacter_carry = Game_Follower.prototype.chaseCharacter;
     Game_Follower.prototype.chaseCharacter = function (character) {
         if (Carry.isBody(this)) return;
+        if ($gameMap && $gameMap.mapId() === 315) {
+            const sx = this.deltaXFrom(character.x);
+            const sy = this.deltaYFrom(character.y);
+            if (sx !== 0 && sy !== 0) {
+                this.moveDiagonally(sx > 0 ? 4 : 6, sy > 0 ? 8 : 2);
+                if (!this.isMovementSucceeded()) {
+                    if (Math.abs(sx) > Math.abs(sy)) {
+                        this.moveStraight(sx > 0 ? 4 : 6);
+                        if (!this.isMovementSucceeded() && sy !== 0) {
+                            this.moveStraight(sy > 0 ? 8 : 2);
+                        }
+                    } else {
+                        this.moveStraight(sy > 0 ? 8 : 2);
+                        if (!this.isMovementSucceeded() && sx !== 0) {
+                            this.moveStraight(sx > 0 ? 4 : 6);
+                        }
+                    }
+                }
+            } else if (sx !== 0) {
+                this.moveStraight(sx > 0 ? 4 : 6);
+            } else if (sy !== 0) {
+                this.moveStraight(sy > 0 ? 8 : 2);
+            }
+            this.setMoveSpeed($gamePlayer.realMoveSpeed());
+            return;
+        }
         _Game_Follower_chaseCharacter_carry.call(this, character);
     };
 

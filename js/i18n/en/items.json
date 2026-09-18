@@ -2455,6 +2455,34 @@
     "name": "Skeleton Key",
     "description": "Unlocks any mundane lock."
   },
+  "740": {
+    "name": "Pregnancy Test",
+    "description": "A rapid diagnostic strip to detect pregnancy."
+  },
+  "741": {
+    "name": "Pregnancy Blocker",
+    "description": "Hormonal pills that suppress ovulation and block conception."
+  },
+  "742": {
+    "name": "Fertility Increaser",
+    "description": "Fertility stimulant that induces multiple ovulations, raising the chance of twins or quadruplets."
+  },
+  "743": {
+    "name": "Egg Warmer",
+    "description": "A thermal brood wrap that keeps laid eggs incubated and accelerates clutch hatching."
+  },
+  "744": {
+    "name": "Mitosis Accelerator",
+    "description": "A cellular cleavage enzyme that accelerates mitotic division and asexual replication."
+  },
+  "745": {
+    "name": "Pollen Catalyst",
+    "description": "A phytohormone blend that triggers rapid floral blooming and seed stockpiling."
+  },
+  "746": {
+    "name": "Motility Booster",
+    "description": "A concentrated zinc and peptide formula enhancing gamete count and virility."
+  },
   "750": {
     "name": "<-- Monsters -->",
     "description": ""
@@ -7326,5 +7354,9 @@
   "2065": {
     "name": "World Shaper's Nail",
     "description": "Starts procedural generation of new land."
+  },
+  "2066": {
+    "name": "Mind Wiper",
+    "description": "Sets the member's level to 1, keeping all skills, and opens class selection."
   }
 }

@@ -143,6 +143,7 @@
     _keyNth: 0,       // which control of that name, when a page draws several
     _active: false,   // is the ring showing and eating input
     _wasdMapped: false,
+    _lastActionByPad: false,
 
     // ---------------------------------------------------------------- setup --
 
@@ -536,15 +537,18 @@
 
       if (Input.isTriggered("cancel") ||
           (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
+        this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
         this.leave(true);
         return true;
       }
       if (Input.isTriggered("ok")) {
+        this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
         this.confirm();
         return true;
       }
       for (const dir of ["up", "down", "left", "right"]) {
         if (!pressed(dir)) continue;
+        this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
         if (this.move(dir)) return true;
         // Off the top or the left of the layer: back to the board the page
         // was walking before, so the two layers are one loop and not a trap.
@@ -564,6 +568,7 @@
       if (!this.isAttached() || this._active) return false;
       if (this.modalUp() || this.typing()) return false;
       if (!this.targets().length) return false;
+      this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
       if (typeof SoundManager !== "undefined") SoundManager.playCursor();
       return this.enter(dir);
     },

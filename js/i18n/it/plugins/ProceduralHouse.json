@@ -17,5 +17,20 @@
   "noSuchShop": "Non esiste un negozio con quell’id.",
   "selectClinic": "Scegli una clinica:",
   "noClinics": "Non ci sono cliniche disponibili.",
-  "noSuchClinic": "Non esiste una clinica con quell’id."
+  "noSuchClinic": "Non esiste una clinica con quell’id.",
+  "roomOverEdgeTitle": "RoomOverEdge",
+  "teleport": "Teletrasporto",
+  "reserveRoom": "Prenota stanza",
+  "noRoomSelected": "Nessuna stanza selezionata.",
+  "currentlyReserved": "Attualmente prenotata: {name}",
+  "reservedSuccess": "Stanza prenotata: {name}",
+  "allInteriors": "Tutte",
+  "poolHouses": "Case",
+  "poolShops": "Negozi",
+  "poolClinics": "Cliniche",
+  "poolInns": "Locande",
+  "poolSkyscrapers": "Grattacieli",
+  "poolAbandoned": "Abbandonate",
+  "searchPlaceholder": "Cerca interni...",
+  "selectRoomPrompt": "Seleziona un interno procedurale da prenotare:"
 }

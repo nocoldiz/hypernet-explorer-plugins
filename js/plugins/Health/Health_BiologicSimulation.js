@@ -22,6 +22,55 @@
  * @command BirthSeed
  * @desc Plants one seed from stockpile (Plant-type reproduction only).
  *
+ * @command PregnancyTest
+ * @desc Checks reproductive and gestational status of a party member.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to test (0 = ask or leader).
+ *
+ * @command BlockPregnancy
+ * @desc Administers contraceptive to block conception or terminate early pregnancy.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to treat (0 = ask or leader).
+ *
+ * @command IncreaseFertility
+ * @desc Stimulates multiple births (twins or quadruplets) or boosts reproductive rate.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to treat (0 = ask or leader).
+ *
+ * @command WarmEggs
+ * @desc Incubates and accelerates clutch development for oviparous species.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to warm (0 = ask or leader).
+ *
+ * @command AccelerateMitosis
+ * @desc Accelerates cellular division or triggers immediate mitosis.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to accelerate (0 = ask or leader).
+ *
+ * @command CatalyzePollen
+ * @desc Stimulates seed development and storage for plant species.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to catalyze (0 = ask or leader).
+ *
+ * @command BoostMotility
+ * @desc Boosts sperm motility and gamete count for testes reproduction.
+ * @arg actorId
+ * @type actor
+ * @default 0
+ * @desc Party member to boost (0 = ask or leader).
+ *
  * @command InfectMember
  * @desc Asks which party member to infect, then gives them the disease.
  * Works on the map and in battle. Used by the disease vials.
@@ -755,6 +804,7 @@
   }
 
   Window_BiologicSimulation.prototype.constructor = Window_BiologicSimulation;
+  window.Window_BiologicSimulation = Window_BiologicSimulation;
 
   Scene_BiologicSimulation.prototype = Object.create(Scene_MenuBase.prototype);
   Scene_BiologicSimulation.prototype.constructor = Scene_BiologicSimulation;
@@ -3990,11 +4040,21 @@
         lastStatusCheck: convertGameDateToTimestamp(getGameDateFromVariable()),
         lastCycleUpdate: convertGameDateToTimestamp(getGameDateFromVariable()),
         birthReady: false,
+        litterSize: 1,
+        contraceptiveDays: 0,
+        contraceptiveDate: null,
+        fertilityBoost: 0,
+        fertilityBoostDays: 0,
+        fertilityBoostDate: null,
       };
     }
 
-    // Always sync with the actor's reproduction variable (87/115/116 by party index)
-    this._actor._uterusData.pregnancyType = getReproductionType(this._actor) || 0;
+    if (this._actor._uterusData) {
+      if (this._actor._uterusData.litterSize === undefined) this._actor._uterusData.litterSize = 1;
+      if (this._actor._uterusData.contraceptiveDays === undefined) this._actor._uterusData.contraceptiveDays = 0;
+      // Always sync with the actor's reproduction variable (87/115/116 by party index)
+      this._actor._uterusData.pregnancyType = getReproductionType(this._actor) || 0;
+    }
   };
   Window_BiologicSimulation.prototype.updatePregnancy = function () {
     if (!this._actor._uterusData) return;
@@ -4290,8 +4350,16 @@
     }
 
     // Determine fertile window (days 12-16)
-    ovulation.fertile =
-      ovulation.dayInCycle >= 12 && ovulation.dayInCycle <= 16;
+    var isFertile = ovulation.dayInCycle >= 12 && ovulation.dayInCycle <= 16;
+    if (uterus.contraceptiveDays > 0 && uterus.contraceptiveDate) {
+      if (now - uterus.contraceptiveDate < uterus.contraceptiveDays) {
+        isFertile = false;
+      } else {
+        uterus.contraceptiveDays = 0;
+        uterus.contraceptiveDate = null;
+      }
+    }
+    ovulation.fertile = isFertile;
   };
 
   // Whatever a pregnancy produces is a person the party now travels with: it is
@@ -4310,6 +4378,7 @@
 
   Window_BiologicSimulation.prototype.giveBirth = function () {
     var uterus = this._actor._uterusData;
+    var litterSize = (uterus && uterus.litterSize) || 1;
     uterus.isPregnant = false;
     uterus.conceptionDate = null;
     uterus.dueDate = null;
@@ -4317,14 +4386,28 @@
     uterus.fetus = null;
     uterus.birthReady = true;
     uterus.notedQuarter = 0;
+    uterus.litterSize = 1;
 
-    pregToast(this._actor, T('Biologic.toast.birth', { actor: this._actor.name() }),
+    var toastMsg;
+    if (litterSize === 2) {
+      toastMsg = T('Biologic.toast.twinsBirth', { actor: this._actor.name() });
+    } else if (litterSize >= 4) {
+      toastMsg = T('Biologic.toast.quadsBirth', { actor: this._actor.name() });
+    } else {
+      toastMsg = T('Biologic.toast.birth', { actor: this._actor.name() });
+    }
+    pregToast(this._actor, toastMsg,
       { severity: 'good', duration: 300, key: 'birth' });
-    registerOffspring(this._actor);
+
+    for (var i = 0; i < litterSize; i++) {
+      registerOffspring(this._actor);
+    }
   };
   Window_BiologicSimulation.prototype.layEggs = function () {
     var uterus = this._actor._uterusData;
-    uterus.eggsToLay = Math.floor(Math.random() * 4) + 1; // 1-4 eggs
+    var bonus = (uterus && uterus.clutchBonus) || 0;
+    if (uterus) uterus.clutchBonus = 0;
+    uterus.eggsToLay = Math.floor(Math.random() * 4) + 1 + bonus; // 1-4 eggs + bonus
     uterus.isPregnant = false;
     uterus.conceptionDate = null;
     uterus.dueDate = null;
@@ -6310,17 +6393,64 @@
   };
   // Static methods for pregnancy plugin commands
 
-  Window_BiologicSimulation.makePregnant = function () {
-    var actor = $gameParty.members()[0];
+  function resolveReproActor(targetActor) {
+    if (targetActor && typeof targetActor.name === 'function') return targetActor;
+    if (typeof targetActor === 'number' && targetActor > 0) {
+      if (typeof $gameActors !== 'undefined' && $gameActors.actor) {
+        var act = $gameActors.actor(targetActor);
+        if (act) return act;
+      }
+      if (typeof $gameParty !== 'undefined' && $gameParty.members) {
+        var byIdx = $gameParty.members()[targetActor - 1] || $gameParty.members()[targetActor];
+        if (byIdx) return byIdx;
+      }
+    }
+    if (typeof SceneManager !== 'undefined' && SceneManager._scene && SceneManager._scene._actor) {
+      return SceneManager._scene._actor;
+    }
+    if (typeof $gameParty !== 'undefined' && $gameParty.members && $gameParty.members().length > 0) {
+      return $gameParty.members()[0];
+    }
+    return null;
+  }
+
+  function withReproActor(targetActor, action) {
+    if (targetActor) {
+      var resolved = resolveReproActor(targetActor);
+      if (resolved) return action(resolved);
+    }
+    var members = (typeof $gameParty !== 'undefined' && $gameParty.members) ? $gameParty.members() : [];
+    if (members.length <= 1) {
+      var single = members[0] || resolveReproActor(null);
+      if (single) return action(single);
+      return;
+    }
+    if (typeof $gameMessage !== 'undefined' && $gameMessage && !$gameMessage.isBusy()) {
+      $gameMessage.setChoices(
+        members.map(function (a) { return a.name(); }).concat(T('Biologic.cancel') || 'Cancel'),
+        0,
+        members.length
+      );
+      $gameMessage.setChoiceCallback(function (index) {
+        var chosen = members[index];
+        if (chosen) action(chosen);
+      });
+      return;
+    }
+    return action(members[0]);
+  }
+
+  Window_BiologicSimulation.makePregnant = function (targetActor) {
+    var actor = resolveReproActor(targetActor);
     if (!actor) return;
 
-    var pregnancyType = $gameVariables.value(87) || 0;
+    var pregnancyType = getReproductionType(actor) || 0;
 
     // Check if reproduction is possible
     if (pregnancyType === 0) {
       var message = T('Biologic.noReproductiveSystemAvailableSetVariable87Fi');
       window.skipLocalization = true;
-      $gameMessage.add(message);
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
       window.skipLocalization = false;
       return;
     }
@@ -6345,27 +6475,47 @@
         seedDevelopment: 0,
         seedsReady: 0,
         mitosisDevelopment: 0,
-        // Seed with game-day timestamps (not Date.now() ms) so updateOvulationCycle,
-        // which compares game-day timestamps, sees a sane delta and progresses.
         lastStatusCheck: convertGameDateToTimestamp(getGameDateFromVariable()),
         lastCycleUpdate: convertGameDateToTimestamp(getGameDateFromVariable()),
         birthReady: false,
+        litterSize: 1,
+        contraceptiveDays: 0,
+        contraceptiveDate: null,
+        fertilityBoost: 0,
+        fertilityBoostDays: 0,
+        fertilityBoostDate: null,
       };
     }
 
     var uterus = actor._uterusData;
+    var currentGameDate = convertGameDateToTimestamp(getGameDateFromVariable());
+
+    // Check contraceptive
+    if (uterus.contraceptiveDays > 0 && uterus.contraceptiveDate && (currentGameDate - uterus.contraceptiveDate < uterus.contraceptiveDays)) {
+      var blockMsg = T('Biologic.contraceptiveBlockedConception', { actor: actor.name() });
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(blockMsg);
+      window.skipLocalization = false;
+      return;
+    }
 
     // Check if already pregnant
     if (uterus.isPregnant) {
       var message = T('Biologic.alreadyInReproductiveProcess');
       window.skipLocalization = true;
-      $gameMessage.add(message);
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
       window.skipLocalization = false;
       return;
     }
 
+    // Apply fertility boost to litter size if active
+    if (uterus.fertilityBoost && uterus.fertilityBoostDate && (currentGameDate - uterus.fertilityBoostDate < (uterus.fertilityBoostDays || 30))) {
+      uterus.litterSize = uterus.fertilityBoost;
+    } else if (!uterus.litterSize) {
+      uterus.litterSize = 1;
+    }
+
     // Make pregnant based on type using game date
-    var currentGameDate = convertGameDateToTimestamp(getGameDateFromVariable());
     uterus.isPregnant = true;
     uterus.conceptionDate = currentGameDate;
     uterus.gestationalAge = 0;
@@ -6400,33 +6550,21 @@
     }
 
     window.skipLocalization = true;
-    $gameMessage.add(message);
+    if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
     window.skipLocalization = false;
   };
 
-
-
-
-
-
-
-
-
-
-
-  var _Game_Interpreter_pluginCommand_pregnancy =
-    Game_Interpreter.prototype.pluginCommand;
-  Window_BiologicSimulation.shortenPregnancy = function () {
-    var actor = $gameParty.members()[0];
+  Window_BiologicSimulation.shortenPregnancy = function (targetActor) {
+    var actor = resolveReproActor(targetActor);
     if (!actor || !actor._uterusData) return;
 
     var uterus = actor._uterusData;
-    var pregnancyType = $gameVariables.value(87) || 0;
+    var pregnancyType = getReproductionType(actor) || 0;
 
     if (!uterus.isPregnant) {
       var message = T('Biologic.notCurrentlyInReproductiveProcess');
       window.skipLocalization = true;
-      $gameMessage.add(message);
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
       window.skipLocalization = false;
       return;
     }
@@ -6458,7 +6596,6 @@
         break;
 
       case 2: // Oviparous
-        // elapsed is in game-days; mirror updateUterusStatus' term.
         uterus.eggDevelopment = Math.min(100, (elapsed / term) * 100);
 
         if (uterus.eggDevelopment >= 100) {
@@ -6470,7 +6607,6 @@
         break;
 
       case 3: // Plant seeds
-        // elapsed is in game-days; mirror updateUterusStatus' term.
         uterus.seedDevelopment = Math.min(100, (elapsed / term) * 100);
 
         if (uterus.seedDevelopment >= 100) {
@@ -6483,7 +6619,6 @@
         break;
 
       case 4: // Mitosis
-        // elapsed is in game-days; mirror updateUterusStatus' term.
         uterus.mitosisDevelopment = Math.min(100, (elapsed / term) * 100);
 
         if (uterus.mitosisDevelopment >= 100) {
@@ -6497,20 +6632,30 @@
     }
 
     window.skipLocalization = true;
-    $gameMessage.add(message);
+    if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
     window.skipLocalization = false;
+
+    if (shouldComplete) {
+      var proxy = Object.create(Window_BiologicSimulation.prototype);
+      proxy._actor = actor;
+      if (pregnancyType === 1) proxy.giveBirth();
+      else if (pregnancyType === 2) proxy.layEggs();
+      else if (pregnancyType === 3) proxy.produceSeed();
+      else if (pregnancyType === 4) proxy.completeMitosis();
+    }
   };
-  Window_BiologicSimulation.birthSeed = function () {
-    var actor = $gameParty.members()[0];
+
+  Window_BiologicSimulation.birthSeed = function (targetActor) {
+    var actor = resolveReproActor(targetActor);
     if (!actor || !actor._uterusData) return;
 
     var uterus = actor._uterusData;
-    var pregnancyType = $gameVariables.value(87) || 0;
+    var pregnancyType = getReproductionType(actor) || 0;
 
     if (pregnancyType !== 3) {
       var message = T('Biologic.thisCommandOnlyWorksForPlantTypeReproduction');
       window.skipLocalization = true;
-      $gameMessage.add(message);
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
       window.skipLocalization = false;
       return;
     }
@@ -6518,7 +6663,7 @@
     if (uterus.seedsReady <= 0) {
       var message = T('Biologic.noSeedsAvailableToPlant');
       window.skipLocalization = true;
-      $gameMessage.add(message);
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
       window.skipLocalization = false;
       return;
     }
@@ -6528,37 +6673,449 @@
 
     var message = T('Biologic.seedPlanted', { count: uterus.seedsReady });
     window.skipLocalization = true;
-    $gameMessage.add(message);
+    if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
     window.skipLocalization = false;
     pregToast(actor, message, { severity: 'good', duration: 300, key: 'conceived' });
 
-    // A planted seed is where a plant pregnancy actually produces somebody, so
-    // the sprout joins the family here rather than when the seed was grown.
     registerOffspring(actor);
 
     // Trigger birth event
-    $gameTemp.reserveCommonEvent(139);
-  };
-  var _Game_Interpreter_pluginCommand_birthSeed =
-    Game_Interpreter.prototype.pluginCommand;
-  Game_Interpreter.prototype.pluginCommand = function (command, args) {
-    _Game_Interpreter_pluginCommand_birthSeed.call(this, command, args);
-
-    if (command === "BirthSeed") {
-      Window_BiologicSimulation.birthSeed();
+    if (typeof $gameTemp !== 'undefined' && $gameTemp.reserveCommonEvent) {
+      $gameTemp.reserveCommonEvent(139);
     }
   };
 
-  // For MZ
-  if (Utils.RPGMAKER_NAME === "MZ") {
-    PluginManager.registerCommand(
-      "Health_BiologicSimulation",
-      "BirthSeed",
-      (args) => {
-        Window_BiologicSimulation.birthSeed();
+  Window_BiologicSimulation.pregnancyTest = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var uterus = actor._uterusData;
+      var msg = "";
+      var result = { actor: actor, type: pType, pregnant: false };
+
+      if (pType === 0) {
+        msg = T('Biologic.testResultMale', { actor: actor.name() });
+        result.testes = true;
+      } else if (pType === 1) {
+        if (uterus && uterus.isPregnant) {
+          result.pregnant = true;
+          var age = toHumanScaleAge(actor, uterus.gestationalAge || 0);
+          var weeks = Math.floor(age / 7);
+          var stage = (uterus.fetus && uterus.fetus.stage) || T('Biologic.firstTrimester');
+          msg = T('Biologic.testResultPositiveUterus', { actor: actor.name(), weeks: weeks, stage: stage });
+          if (uterus.litterSize > 1) {
+            msg += " " + T('Biologic.testResultMultipleHeartbeats', { count: uterus.litterSize });
+          }
+          result.weeks = weeks;
+          result.stage = stage;
+          result.litterSize = uterus.litterSize || 1;
+        } else {
+          msg = T('Biologic.testResultNegativeUterus', { actor: actor.name() });
+          var now = convertGameDateToTimestamp(getGameDateFromVariable());
+          if (uterus && uterus.contraceptiveDays > 0 && uterus.contraceptiveDate && (now - uterus.contraceptiveDate < uterus.contraceptiveDays)) {
+            msg += " " + T('Biologic.testResultContraceptiveActive');
+            result.contraceptive = true;
+          } else if (uterus && uterus.ovulationCycle && uterus.ovulationCycle.fertile) {
+            msg += " " + T('Biologic.testResultFertileWindow');
+            result.fertile = true;
+          }
+        }
+      } else if (pType === 2) {
+        if (uterus && uterus.isPregnant) {
+          result.pregnant = true;
+          var pct = Math.floor(uterus.eggDevelopment || 0);
+          msg = T('Biologic.testResultPositiveOviparous', { actor: actor.name(), percent: pct });
+          result.eggDevelopment = pct;
+        } else {
+          msg = T('Biologic.testResultNegativeOviparous', { actor: actor.name() });
+        }
+      } else if (pType === 3) {
+        if (uterus && uterus.isPregnant) {
+          result.pregnant = true;
+          var pct = Math.floor(uterus.seedDevelopment || 0);
+          msg = T('Biologic.testResultPositivePlant', { actor: actor.name(), percent: pct });
+          result.seedDevelopment = pct;
+        } else {
+          msg = T('Biologic.testResultNegativePlant', { actor: actor.name(), seeds: (uterus && uterus.seedsReady) || 0 });
+          result.seedsReady = (uterus && uterus.seedsReady) || 0;
+        }
+      } else if (pType === 4) {
+        if (uterus && uterus.isPregnant) {
+          result.pregnant = true;
+          var pct = Math.floor(uterus.mitosisDevelopment || 0);
+          msg = T('Biologic.testResultPositiveMitosis', { actor: actor.name(), percent: pct });
+          result.mitosisDevelopment = pct;
+        } else {
+          msg = T('Biologic.testResultNegativeMitosis', { actor: actor.name() });
+        }
+      } else {
+        msg = T('Biologic.noReproductiveSystemPresent');
       }
-    );
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: result.pregnant ? 'good' : 'info', duration: 260, key: 'testResult' });
+      return result;
+    });
+  };
+
+  Window_BiologicSimulation.blockPregnancy = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var uterus = actor._uterusData;
+      var now = convertGameDateToTimestamp(getGameDateFromVariable());
+      var msg = "";
+      var result = { actor: actor, blocked: true };
+
+      if (pType === 1) {
+        if (!uterus) {
+          var proxy = Object.create(Window_BiologicSimulation.prototype);
+          proxy._actor = actor;
+          proxy.initializeUterusData();
+          uterus = actor._uterusData;
+        }
+        if (uterus && uterus.isPregnant) {
+          var age = toHumanScaleAge(actor, uterus.gestationalAge || 0);
+          if (age <= 14) {
+            uterus.isPregnant = false;
+            uterus.conceptionDate = null;
+            uterus.dueDate = null;
+            uterus.gestationalAge = 0;
+            uterus.fetus = null;
+            uterus.contraceptiveDays = 30;
+            uterus.contraceptiveDate = now;
+            uterus.litterSize = 1;
+            msg = T('Biologic.contraceptiveTerminatedEarly', { actor: actor.name() });
+            result.terminatedEarly = true;
+          } else {
+            uterus.contraceptiveDays = 30;
+            uterus.contraceptiveDate = now;
+            msg = T('Biologic.contraceptiveTooLate', { actor: actor.name() });
+            result.terminatedEarly = false;
+          }
+        } else {
+          if (uterus) {
+            uterus.contraceptiveDays = 30;
+            uterus.contraceptiveDate = now;
+            if (uterus.ovulationCycle) uterus.ovulationCycle.fertile = false;
+          }
+          msg = T('Biologic.contraceptiveActive', { actor: actor.name(), days: 30 });
+          result.terminatedEarly = false;
+        }
+      } else if (pType === 0) {
+        if (actor.testesData) {
+          actor.testesData.contraceptiveDays = 30;
+          actor.testesData.contraceptiveDate = now;
+          actor.testesData.spermMotility = Math.max(5, (actor.testesData.spermMotility || 50) * 0.2);
+        }
+        msg = T('Biologic.contraceptiveMaleActive', { actor: actor.name(), days: 30 });
+      } else {
+        if (uterus) {
+          uterus.contraceptiveDays = 30;
+          uterus.contraceptiveDate = now;
+        }
+        msg = T('Biologic.contraceptiveSuppressed', { actor: actor.name(), days: 30 });
+      }
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: 'info', duration: 260, key: 'contraceptive' });
+      return result;
+    });
+  };
+
+  Window_BiologicSimulation.increaseFertility = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var uterus = actor._uterusData;
+      var now = convertGameDateToTimestamp(getGameDateFromVariable());
+      var multi = Math.random() < 0.3 ? 4 : 2;
+      var msg = "";
+      var result = { actor: actor, success: true };
+
+      if (pType === 1) {
+        if (!uterus) {
+          var proxy = Object.create(Window_BiologicSimulation.prototype);
+          proxy._actor = actor;
+          proxy.initializeUterusData();
+          uterus = actor._uterusData;
+        }
+        if (uterus && uterus.isPregnant) {
+          var age = toHumanScaleAge(actor, uterus.gestationalAge || 0);
+          if (age < 56) {
+            uterus.litterSize = multi;
+            msg = multi === 4
+              ? T('Biologic.fertilityQuadrupletsConceived', { actor: actor.name() })
+              : T('Biologic.fertilityTwinsConceived', { actor: actor.name() });
+            result.litterSize = multi;
+          } else {
+            msg = T('Biologic.fertilityTooLate', { actor: actor.name() });
+            result.success = false;
+          }
+        } else {
+          if (uterus) {
+            uterus.fertilityBoost = multi;
+            uterus.fertilityBoostDays = 30;
+            uterus.fertilityBoostDate = now;
+            if (uterus.ovulationCycle) uterus.ovulationCycle.fertile = true;
+          }
+          msg = multi === 4
+            ? T('Biologic.fertilityBoostedQuads', { actor: actor.name() })
+            : T('Biologic.fertilityBoostedTwins', { actor: actor.name() });
+          result.boost = multi;
+        }
+      } else if (pType === 0) {
+        if (actor.testesData) {
+          actor.testesData.spermCount = Math.floor((actor.testesData.spermCount || 200000000) * 1.5);
+          actor.testesData.spermMotility = Math.min(100, (actor.testesData.spermMotility || 50) * 1.3);
+        }
+        msg = T('Biologic.fertilityMaleBoosted', { actor: actor.name() });
+      } else if (pType === 2) {
+        if (uterus) uterus.clutchBonus = (uterus.clutchBonus || 0) + 2;
+        msg = T('Biologic.fertilityClutchBoosted', { actor: actor.name() });
+      } else {
+        msg = T('Biologic.fertilityGenericBoosted', { actor: actor.name() });
+      }
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: 'good', duration: 260, key: 'fertility' });
+      return result;
+    });
+  };
+
+  Window_BiologicSimulation.warmEggs = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var uterus = actor._uterusData;
+      var msg = "";
+      var result = { actor: actor, success: true };
+
+      if (pType === 2) {
+        if (uterus && uterus.isPregnant) {
+          uterus.eggDevelopment = Math.min(100, (uterus.eggDevelopment || 0) + 25);
+          result.eggDevelopment = uterus.eggDevelopment;
+          if (uterus.eggDevelopment >= 100) {
+            var proxy = Object.create(Window_BiologicSimulation.prototype);
+            proxy._actor = actor;
+            proxy.layEggs();
+            result.laid = true;
+            return result;
+          } else {
+            msg = T('Biologic.eggWarmerAccelerated', { actor: actor.name(), percent: Math.floor(uterus.eggDevelopment) });
+          }
+        } else {
+          msg = T('Biologic.eggWarmerPrimed', { actor: actor.name() });
+          result.primed = true;
+        }
+      } else {
+        msg = T('Biologic.eggWarmerNotOviparous', { actor: actor.name() });
+        result.success = false;
+      }
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: result.success ? 'good' : 'info', duration: 260, key: 'eggWarmer' });
+      return result;
+    });
+  };
+
+  Window_BiologicSimulation.accelerateMitosis = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var uterus = actor._uterusData;
+      var msg = "";
+      var result = { actor: actor, success: true };
+
+      if (pType === 4) {
+        if (uterus && uterus.isPregnant) {
+          uterus.mitosisDevelopment = Math.min(100, (uterus.mitosisDevelopment || 0) + 50);
+          result.mitosisDevelopment = uterus.mitosisDevelopment;
+          if (uterus.mitosisDevelopment >= 100) {
+            var proxy = Object.create(Window_BiologicSimulation.prototype);
+            proxy._actor = actor;
+            proxy.completeMitosis();
+            result.completed = true;
+            return result;
+          } else {
+            msg = T('Biologic.mitosisAcceleratedProgress', { actor: actor.name(), percent: Math.floor(uterus.mitosisDevelopment) });
+          }
+        } else {
+          var now = convertGameDateToTimestamp(getGameDateFromVariable());
+          var term = getPregnancyDuration(actor);
+          if (!uterus) {
+            var proxy = Object.create(Window_BiologicSimulation.prototype);
+            proxy._actor = actor;
+            proxy.initializeUterusData();
+            uterus = actor._uterusData;
+          }
+          uterus.isPregnant = true;
+          uterus.conceptionDate = now;
+          uterus.dueDate = now + term;
+          uterus.gestationalAge = 0;
+          uterus.mitosisDevelopment = 25;
+          uterus.notedQuarter = 1;
+          msg = T('Biologic.mitosisTriggered', { actor: actor.name() });
+          result.triggered = true;
+        }
+      } else {
+        if (actor.hp !== undefined && actor.mhp !== undefined && actor.hp < actor.mhp) {
+          if (typeof actor.gainHp === 'function') actor.gainHp(Math.floor(actor.mhp * 0.25));
+        }
+        msg = T('Biologic.mitosisHealNonMitotic', { actor: actor.name() });
+        result.healed = true;
+      }
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: 'good', duration: 260, key: 'mitosisAccel' });
+      return result;
+    });
+  };
+
+  Window_BiologicSimulation.catalyzePollen = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var uterus = actor._uterusData;
+      var msg = "";
+      var result = { actor: actor, success: true };
+
+      if (pType === 3) {
+        if (!uterus) {
+          var proxy = Object.create(Window_BiologicSimulation.prototype);
+          proxy._actor = actor;
+          proxy.initializeUterusData();
+          uterus = actor._uterusData;
+        }
+        uterus.seedsReady = (uterus.seedsReady || 0) + 1;
+        if (uterus.isPregnant) {
+          uterus.seedDevelopment = Math.min(100, (uterus.seedDevelopment || 0) + 50);
+        }
+        msg = T('Biologic.pollenCatalyzed', { actor: actor.name(), count: uterus.seedsReady });
+        result.seedsReady = uterus.seedsReady;
+      } else {
+        if (actor.mp !== undefined && actor.mmp !== undefined && actor.mp < actor.mmp) {
+          if (typeof actor.gainMp === 'function') actor.gainMp(Math.floor(actor.mmp * 0.25));
+        }
+        msg = T('Biologic.pollenNotPlant', { actor: actor.name() });
+        result.boostedMp = true;
+      }
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: 'good', duration: 260, key: 'pollen' });
+      return result;
+    });
+  };
+
+  Window_BiologicSimulation.boostMotility = function (targetActor) {
+    return withReproActor(targetActor, function (actor) {
+      var pType = getReproductionType(actor);
+      var msg = "";
+      var result = { actor: actor, success: true };
+
+      if (pType === 0) {
+        if (!actor.testesData) {
+          var bio = actor._biologicData;
+          actor.testesData = {
+            spermCount: 300000000,
+            spermMotility: 60,
+            spermMorphology: 10,
+            testosteroneProduction: (bio && bio.hormones && bio.hormones.testosterone) || 500,
+            fertilityRate: 80,
+            dailySpermProduction: 100000000,
+            lastUpdate: convertGameDateToTimestamp(getGameDateFromVariable())
+          };
+        }
+        actor.testesData.spermMotility = Math.min(100, (actor.testesData.spermMotility || 50) + 25);
+        actor.testesData.spermCount = (actor.testesData.spermCount || 200000000) + 100000000;
+        msg = T('Biologic.motilityBoosted', { actor: actor.name(), motility: Math.round(actor.testesData.spermMotility) });
+        result.spermMotility = actor.testesData.spermMotility;
+      } else {
+        if (typeof actor.gainTp === 'function') actor.gainTp(50);
+        msg = T('Biologic.motilityNotTestes', { actor: actor.name() });
+        result.boostedTp = true;
+      }
+
+      window.skipLocalization = true;
+      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
+      window.skipLocalization = false;
+      pregToast(actor, msg, { severity: 'good', duration: 260, key: 'motility' });
+      return result;
+    });
+  };
+
+  // Helper to register commands for MZ
+  function registerReproCommand(name, fn) {
+    if (typeof PluginManager !== 'undefined' && PluginManager.registerCommand) {
+      PluginManager.registerCommand("Health_BiologicSimulation", name, fn);
+      PluginManager.registerCommand("Health/Health_BiologicSimulation", name, fn);
+    }
   }
+
+  // Register all commands with PluginManager (MZ)
+  registerReproCommand("MakePregnant", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.makePregnant(a);
+  });
+  registerReproCommand("ShortenPregnancy", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.shortenPregnancy(a);
+  });
+  registerReproCommand("BirthSeed", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.birthSeed(a);
+  });
+  registerReproCommand("PregnancyTest", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.pregnancyTest(a);
+  });
+  registerReproCommand("BlockPregnancy", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.blockPregnancy(a);
+  });
+  registerReproCommand("IncreaseFertility", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.increaseFertility(a);
+  });
+  registerReproCommand("WarmEggs", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.warmEggs(a);
+  });
+  registerReproCommand("AccelerateMitosis", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.accelerateMitosis(a);
+  });
+  registerReproCommand("CatalyzePollen", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.catalyzePollen(a);
+  });
+  registerReproCommand("BoostMotility", function (args) {
+    var a = (args && args.actorId) ? parseInt(args.actorId, 10) : null;
+    Window_BiologicSimulation.boostMotility(a);
+  });
+
+  // Also hook Game_Interpreter for legacy / script plugin command dispatch
+  var _Game_Interpreter_pluginCommand_repro = Game_Interpreter.prototype.pluginCommand;
+  Game_Interpreter.prototype.pluginCommand = function (command, args) {
+    _Game_Interpreter_pluginCommand_repro.call(this, command, args);
+    var targetActor = (args && args.length > 0) ? parseInt(args[0], 10) : null;
+    if (command === "MakePregnant") Window_BiologicSimulation.makePregnant(targetActor);
+    if (command === "ShortenPregnancy") Window_BiologicSimulation.shortenPregnancy(targetActor);
+    if (command === "BirthSeed") Window_BiologicSimulation.birthSeed(targetActor);
+    if (command === "PregnancyTest") Window_BiologicSimulation.pregnancyTest(targetActor);
+    if (command === "BlockPregnancy") Window_BiologicSimulation.blockPregnancy(targetActor);
+    if (command === "IncreaseFertility") Window_BiologicSimulation.increaseFertility(targetActor);
+    if (command === "WarmEggs") Window_BiologicSimulation.warmEggs(targetActor);
+    if (command === "AccelerateMitosis") Window_BiologicSimulation.accelerateMitosis(targetActor);
+    if (command === "CatalyzePollen") Window_BiologicSimulation.catalyzePollen(targetActor);
+    if (command === "BoostMotility") Window_BiologicSimulation.boostMotility(targetActor);
+  };
   // ==========================================================================
   // The clock
   // ==========================================================================

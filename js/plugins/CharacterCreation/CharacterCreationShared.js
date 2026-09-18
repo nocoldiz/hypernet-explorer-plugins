@@ -1185,6 +1185,10 @@
       CCPickState.opts = Object.assign({}, opts, { options });
       CCPickState.query = "";
       CCPickState.filtered = options.slice();
+      const fromController = opts.fromController !== undefined
+        ? !!opts.fromController
+        : ((typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad") || (window.CCNav && window.CCNav._lastActionByPad));
+      CCPickState.fromController = !!fromController;
       // Open on what is already chosen, so Confirm with no movement is a no-op
       // rather than a silent change to whatever happened to be first.
       const at = options.findIndex((o) => String(o.value) === String(opts.value));
@@ -1236,6 +1240,7 @@
       CCPickState.filtered = null;
       CCPickState.query = "";
       CCPickState.index = 0;
+      CCPickState.fromController = false;
     },
 
     // ------------------------------------------------------------- movement --
@@ -1322,6 +1327,7 @@
     _wantsSearch() {
       const o = CCPickState.opts;
       if (!o) return false;
+      if (CCPickState.fromController) return false;
       if (typeof o.search === "boolean") return o.search;
       return o.options.length > 12;
     },

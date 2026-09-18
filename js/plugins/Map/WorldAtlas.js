@@ -395,8 +395,7 @@
                 .sort((a, b) => nationLabel(a.country).localeCompare(nationLabel(b.country)));
             this._byName = {};
             this._entries.forEach((c) => { this._byName[c.country] = c; });
-            this._selected = partyCountryName();
-            if (!this._byName[this._selected]) this._selected = null;
+            this._selected = null;
             this._hovered = null;
             this._focusHolder = null;
             this._view = null;
@@ -559,12 +558,110 @@
 
         // ── right page ──────────────────────────────────────────────────────
 
+        _groupedByHolder() {
+            const map = new Map();
+            this._entries.forEach((c) => {
+                const holder = this._holderOf(c);
+                if (!map.has(holder)) map.set(holder, []);
+                map.get(holder).push(c);
+            });
+            const list = Array.from(map.entries()).map(([power, territories]) => ({
+                power,
+                territories: territories.sort((a, b) => nationLabel(a.country).localeCompare(nationLabel(b.country))),
+                ink: powerInk(power),
+                name: power === NEUTRAL ? T("Atlas.unaligned") : powerLabel(power),
+            }));
+            list.sort((a, b) => {
+                if (a.power === NEUTRAL) return 1;
+                if (b.power === NEUTRAL) return -1;
+                if (b.territories.length !== a.territories.length) {
+                    return b.territories.length - a.territories.length;
+                }
+                return a.name.localeCompare(b.name);
+            });
+            return list;
+        }
+
+        _hyperpowersDossier() {
+            if (!this._entries.length) {
+                return `<div class="ui-empty"><p class="ui-empty-text">${escHtml(T("Atlas.selectPrompt"))}</p></div>`;
+            }
+            if (this._focusHolder) {
+                const power = this._focusHolder;
+                const powerName = power === NEUTRAL ? T("Atlas.unaligned") : powerLabel(power);
+                const territories = this._entries
+                    .filter((c) => this._holderOf(c) === power)
+                    .sort((a, b) => nationLabel(a.country).localeCompare(nationLabel(b.country)));
+                const ink = powerInk(power);
+                const chips = territories.map((c) =>
+                    `<span class="ui-chip focusable wa-territory-chip" data-c="${escHtml(c.country)}" tabindex="0">${escHtml(nationLabel(c.country))}</span>`
+                ).join("");
+                const rows = [
+                    [T("Atlas.field.controller"), powerName],
+                    [T("Atlas.field.region"), territories[0] ? regionLabel(territories[0].region) : "-"],
+                ].map(([k, v]) =>
+                    `<div class="inspect-spec-row"><span class="inspect-spec-label">${escHtml(k)}</span>` +
+                    `<span class="inspect-spec-value">${escHtml(v)}</span></div>`).join("");
+
+                return `
+                    <div class="ui-detail-head">
+                        <span class="wa-swatch wa-swatch--large" style="--wa-ink:${ink}"></span>
+                        <div class="ui-detail-titles">
+                            <h3>${escHtml(powerName)}</h3>
+                            <div class="ui-detail-sub">${escHtml(T("Atlas.territoryCount", { n: territories.length }))}</div>
+                        </div>
+                    </div>
+                    <div class="ui-detail-scroll">
+                        <div class="inspect-spec-grid">${rows}</div>
+                        <div class="inspect-section-title">${escHtml(T("Atlas.territoriesCovered"))}</div>
+                        <div class="wa-power-territories">
+                            ${chips}
+                        </div>
+                    </div>
+                    <div class="inspect-actions">
+                        <div class="inspect-btn focusable" id="wa-all-powers" tabindex="0">${escHtml(T("Atlas.allPowers"))}</div>
+                    </div>`;
+            }
+
+            const groups = this._groupedByHolder();
+            const cards = groups.map((g) => {
+                const chips = g.territories.map((c) =>
+                    `<span class="ui-chip focusable wa-territory-chip" data-c="${escHtml(c.country)}" tabindex="0">${escHtml(nationLabel(c.country))}</span>`
+                ).join("");
+                return `
+                    <div class="wa-power-card focusable" data-power="${escHtml(g.power)}" tabindex="0">
+                        <div class="wa-power-card-head">
+                            <span class="wa-power-name">
+                                <span class="wa-swatch" style="--wa-ink:${g.ink}"></span>
+                                ${escHtml(g.name)}
+                            </span>
+                            <span class="wa-power-count">${escHtml(T("Atlas.territoryCount", { n: g.territories.length }))}</span>
+                        </div>
+                        <div class="wa-power-territories">
+                            ${chips}
+                        </div>
+                    </div>`;
+            }).join("");
+
+            return `
+                <div class="ui-detail-head">
+                    <div class="ui-detail-titles">
+                        <h3>${escHtml(T("Atlas.hyperpowersTitle"))}</h3>
+                        <div class="ui-detail-sub">${escHtml(T("Atlas.hyperpowersSubtitle", { year: this._year }))}</div>
+                    </div>
+                </div>
+                <div class="ui-detail-scroll">
+                    <div class="wa-power-list">
+                        ${cards}
+                    </div>
+                </div>`;
+        }
+
         _dossier() {
             const name = this._selected;
             const c = name ? this._byName[name] : null;
             if (!c) {
-                return `<div class="ui-empty"><p class="ui-empty-text">` +
-                    `${escHtml(T("Atlas.selectPrompt"))}</p></div>`;
+                return this._hyperpowersDossier();
             }
 
             const holder = this._holderOf(c);
@@ -923,6 +1020,12 @@
         _onCancel() {
             if (this._selected) {
                 this._deselect();
+            } else if (this._focusHolder) {
+                this._focusHolder = null;
+                SoundManager.playCancel();
+                this._paint();
+                this._refreshLegend();
+                this._refreshDossier();
             } else {
                 SoundManager.playCancel();
                 this.popScene();
@@ -947,6 +1050,7 @@
             });
             this._paint();
             this._refreshLegend();
+            this._refreshDossier();
         }
 
         // ── events ──────────────────────────────────────────────────────────
@@ -960,6 +1064,14 @@
                 if (ev.target.closest("#wa-year-back")) { this._setYear(this._year - 1, true); return; }
                 if (ev.target.closest("#wa-year-fwd")) { this._setYear(this._year + 1, true); return; }
                 if (ev.target.closest("#wa-year-now")) { this._setYear(this._today, true); return; }
+                if (ev.target.closest("#wa-all-powers")) {
+                    this._focusHolder = null;
+                    SoundManager.playCursor();
+                    this._paint();
+                    this._refreshLegend();
+                    this._refreshDossier();
+                    return;
+                }
                 // The nation's own article, in the same encyclopedia every other
                 // wiki link in the game opens (NPCEmpathize).
                 if (ev.target.closest("#wa-wiki")) {
@@ -967,6 +1079,22 @@
                         SoundManager.playOk();
                         window.NPCEmpathize.openEntity("nation", encodeURIComponent(this._selected));
                     }
+                    return;
+                }
+                const territoryChip = ev.target.closest(".wa-territory-chip");
+                if (territoryChip && territoryChip.dataset.c) {
+                    SoundManager.playOk();
+                    this._select(territoryChip.dataset.c, false);
+                    this._revealSelected();
+                    return;
+                }
+                const powerCard = ev.target.closest(".wa-power-card");
+                if (powerCard && powerCard.dataset.power !== undefined) {
+                    this._focusHolder = this._focusHolder === powerCard.dataset.power ? null : powerCard.dataset.power;
+                    SoundManager.playCursor();
+                    this._paint();
+                    this._refreshLegend();
+                    this._refreshDossier();
                     return;
                 }
                 const mode = ev.target.closest(".wa-mode");
@@ -977,12 +1105,18 @@
                     SoundManager.playCursor();
                     this._paint();
                     this._refreshLegend();
+                    this._refreshDossier();
                     return;
                 }
                 const country = ev.target.closest(".wa-country");
                 if (country && !this._dragged) {
                     SoundManager.playOk();
                     this._select(country.dataset.c, false);
+                    return;
+                }
+                if (!country && !this._dragged && ev.target.closest("#wa-svg") && this._selected) {
+                    this._deselect();
+                    return;
                 }
             });
 

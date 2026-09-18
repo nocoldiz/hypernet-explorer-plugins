@@ -11,6 +11,16 @@
  * @text Open Class Selection
  * @desc Opens the class selection menu
  *
+ * @command openMindWiper
+ * @text Open Mind Wiper
+ * @desc Opens the Mind Wiper class selection menu for an actor
+ *
+ * @arg actorId
+ * @text Actor ID
+ * @desc Target actor ID (0 for selected/target actor)
+ * @type actor
+ * @default 0
+ *
  * @param availableClasses
  * @text Available Classes
  * @desc List of class IDs that can be selected (comma-separated)
@@ -181,6 +191,7 @@
       // rather than lock the step out (same "never a locked door" rule the
       // sprite/bust wardrobes use).
       const magicAllowed = (ids) => {
+        if (window.$mindWiperActive) return ids;
         const MN = window.MagicNature;
         if (!MN || !MN.isFiltering()) return ids;
         const kept = ids.filter((id) => MN.allowsData($dataClasses[id]));
@@ -237,7 +248,9 @@
     }
 
     getClassLevel(classId) {
-      const actor = $gameParty.members()[0];
+      const actor = (window.$mindWiperActive && window.$mindWiperTargetActorId && $gameActors)
+        ? $gameActors.actor(window.$mindWiperTargetActorId)
+        : ($gameParty ? $gameParty.members()[0] : null);
       if (!actor) return 1;
 
       if (actor._classId === classId) {
@@ -1152,6 +1165,14 @@
     }
 
     onClassCancel() {
+      if (window.$mindWiperActive) {
+        window.$mindWiperActive = false;
+        window.$mindWiperTargetActorId = null;
+        window.$ccArchetypeClassFilter = null;
+        window.$ccClassReturnByPop = false;
+        this.popScene();
+        return;
+      }
       if (this._returnToPushingCaller()) return;
       // Creature flow: the roster on screen was derived from the creature's
       // archetypes, so Back returns to the creature builder (where those
@@ -1189,6 +1210,40 @@
     onClassSelect() {
       const classId = this._classWindow.itemAt(this._classWindow.index());
       const className = $dataClasses[classId].name;
+
+      if (window.$mindWiperActive) {
+        const targetId = window.$mindWiperTargetActorId || ($gameParty && $gameParty.targetActor() ? $gameParty.targetActor().actorId() : 1);
+        const actor = $gameActors ? $gameActors.actor(targetId) : null;
+        if (actor) {
+          const preservedSkills = (actor._skills || []).slice();
+          actor._exp = actor._exp || {};
+          actor._exp[classId] = 0;
+          actor.changeClass(classId, false);
+          actor._level = 1;
+          actor.initExp();
+          if (actor._classLevels) {
+            actor._classLevels[classId] = 1;
+          }
+          actor.clearParamPlus();
+          actor.recoverAll();
+          const newClass = $dataClasses ? $dataClasses[classId] : null;
+          if (newClass && newClass.learnings) {
+            newClass.learnings.forEach((l) => {
+              if (l.level === 1) actor.learnSkill(l.skillId);
+            });
+          }
+          preservedSkills.forEach((sid) => actor.learnSkill(sid));
+          if (window.HealthCore && window.HealthCore.ensureBodyPartSkills) {
+            window.HealthCore.ensureBodyPartSkills(actor);
+          }
+        }
+        window.$mindWiperActive = false;
+        window.$mindWiperTargetActorId = null;
+        window.$ccArchetypeClassFilter = null;
+        window.$ccClassReturnByPop = false;
+        this.popScene();
+        return;
+      }
 
       // Get the current actor being created
       const Scene_CharacterCreation = window.Scene_CharacterCreation;
@@ -1320,6 +1375,47 @@
     window.$ccCreatureClassFlow = null;
     SceneManager.push(Scene_ClassSelection);
   });
+
+  PluginManager.registerCommand(pluginName, "openMindWiper", (args) => {
+    const actorId = args && args.actorId ? Number(args.actorId) : 0;
+    if (window.MindWiper) {
+      window.MindWiper.apply(actorId);
+    }
+  });
+
+  //=============================================================================
+  // Mind Wiper
+  //=============================================================================
+
+  window.MindWiper = {
+    apply(actorId) {
+      const targetId = actorId || (window.$gameTemp && window.$gameTemp._mindWiperActorId) || ($gameParty && $gameParty.targetActor() ? $gameParty.targetActor().actorId() : 1);
+      const actor = $gameActors ? $gameActors.actor(targetId) : null;
+      if (!actor) return;
+      const preservedSkills = (actor._skills || []).slice();
+      actor._exp = actor._exp || {};
+      actor._exp[actor._classId] = 0;
+      actor._level = 1;
+      actor.initExp();
+      if (actor._classLevels) {
+        actor._classLevels[actor._classId] = 1;
+      }
+      actor.clearParamPlus();
+      actor.recoverAll();
+      preservedSkills.forEach((sid) => actor.learnSkill(sid));
+
+      window.$mindWiperActive = true;
+      window.$mindWiperTargetActorId = targetId;
+      window.$ccClassReturnByPop = true;
+      const creatureClasses = window.CreatureClasses ? window.CreatureClasses.creatureRoster() : [63, 64, 65, 66, 67, 68, 69, 70];
+      const sentientClasses = window.CreatureClasses ? window.CreatureClasses.sentientRoster() : Array.from({ length: 62 }, (_, i) => i + 1);
+      window.$ccArchetypeClassFilter = {
+        creature: creatureClasses,
+        sentient: sentientClasses
+      };
+      SceneManager.push(Scene_ClassSelection);
+    }
+  };
 
   //=============================================================================
   // Exports to Global Namespace

@@ -297,6 +297,14 @@
       tradeDoorMapId(name, x, y, mapId) { return tradeDoorMapId(name, x, y, mapId); },
       genericShopMapId(x, y, mapId) { return genericShopMapId(x, y, mapId); },
       setSeedSaltProvider(fn) { _seedSaltProvider = (typeof fn === "function") ? fn : null; },
+      // ── RoomOverEdge (Convoker spell) ──────────────────────────────────
+      getRoomOverEdgeReserved() { return getRoomOverEdgeReserved(); },
+      setRoomOverEdgeReserved(room) { return setRoomOverEdgeReserved(room); },
+      getProceduralInteriors() { return getProceduralInteriors(); },
+      useRoomOverEdge() { return useRoomOverEdge(); },
+      openRoomSelector() { return openRoomSelector(); },
+      teleportToReservedRoom(room) { return teleportToReservedRoom(room); },
+      _pendingRoomOverEdgeEscapeTeleport: null,
   };
   const parameters = PluginManager.parameters(pluginName);
   
@@ -492,6 +500,10 @@
     const useFacing = args.facing === "true" || args.facing === true;
     if (clinicId > 0) enterClinic(clinicId, useFacing);
     else openClinicPicker(useFacing);
+  });
+
+  PluginManager.registerCommand(pluginName, "roomOverEdge", function (args) {
+    useRoomOverEdge();
   });
 
   function createLocationKey() {
@@ -2433,7 +2445,9 @@
       // Square-local on the procedural map, plain map coordinates anywhere else:
       // ProcStitch's performTransfer hook is the one place that knows which is
       // which, and it converts on the way in.
-      $gamePlayer.reserveTransfer(returnPoint.mapId, returnPoint.eventX, returnPoint.eventY + 1, 2, 0);
+      const exitY = returnPoint.isRoomOverEdge ? returnPoint.eventY : (returnPoint.eventY + 1);
+      const exitDir = returnPoint.direction || 2;
+      $gamePlayer.reserveTransfer(returnPoint.mapId, returnPoint.eventX, exitY, exitDir, 0);
       delete houseReturnPoints[currentHouseSessionId];
       currentHouseSessionId = null;
       currentMultiBuilding = null;
@@ -2640,6 +2654,420 @@
         currentHouseSessionId = system.currentHouseSessionId || null;
         currentMultiBuilding = system.currentMultiBuilding || null;
         setCurrentBuilding(null); // predates the building descriptor
+    }
+  };
+
+  // =========================================================================
+  // RoomOverEdge (Convoker spell: teleport, reserve procedural interior, battle flee)
+  // =========================================================================
+
+  function getRoomOverEdgeReserved() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+    return $gameSystem._roomOverEdgeReserved || null;
+  }
+
+  function setRoomOverEdgeReserved(room) {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return;
+    $gameSystem._roomOverEdgeReserved = room ? {
+      mapId: Number(room.mapId),
+      name: String(room.name || ''),
+      poolName: String(room.poolName || '')
+    } : null;
+  }
+
+  function getProceduralInteriors() {
+    ensureHousePoolsInitialized();
+    const pools = [
+      { key: "houses", label: T('ProceduralHouse.poolHouses') },
+      { key: "shops", label: T('ProceduralHouse.poolShops') },
+      { key: "clinics", label: T('ProceduralHouse.poolClinics') },
+      { key: "inns", label: T('ProceduralHouse.poolInns') },
+      { key: "skyscrapers", label: T('ProceduralHouse.poolSkyscrapers') },
+      { key: "abandoned", label: T('ProceduralHouse.poolAbandoned') }
+    ];
+    const results = [];
+    const seen = new Set();
+    for (const p of pools) {
+      const maps = getHouseList(p.key, true) || [];
+      for (const mapId of maps) {
+        if (seen.has(mapId)) continue;
+        seen.add(mapId);
+        const info = ($dataMapInfos && $dataMapInfos[mapId]) ? $dataMapInfos[mapId] : null;
+        let displayName = (info && info.name) ? info.name : ('House ' + mapId);
+        const m = displayName.match(/^\d+\s*-\s*(.*)$/);
+        if (m && m[1]) {
+          const rest = m[1].trim();
+          displayName = rest ? (rest === 'House' || rest === 'Hut' ? rest + ' ' + mapId : rest) : ('Room ' + mapId);
+        }
+        results.push({
+          mapId: mapId,
+          pool: p.key,
+          poolName: p.key,
+          poolLabel: p.label,
+          name: displayName
+        });
+      }
+    }
+    return results;
+  }
+
+  function saveRoomOverEdgeReturnPoint() {
+    const returnPoint = {
+      mapId: $gameMap ? $gameMap.mapId() : 1,
+      eventX: $gamePlayer ? $gamePlayer.x : 0,
+      eventY: $gamePlayer ? $gamePlayer.y : 0,
+      direction: $gamePlayer ? $gamePlayer.direction() : 2,
+      isRoomOverEdge: true
+    };
+    $gameSystem._roomOverEdgeReturnPoint = returnPoint;
+    window.ProceduralHouseSystem.returnPoint = returnPoint;
+    if ($gameMap && $gameMap.mapId() === PROC_MAP_ID) {
+      const S = window.ProcStitch;
+      if (S && typeof S.localToParty === "function") {
+        const local = S.localToParty(returnPoint.eventX, returnPoint.eventY);
+        returnPoint.eventX = local.x;
+        returnPoint.eventY = local.y;
+      }
+      returnPoint.worldX = (typeof $gameVariables !== "undefined") ? $gameVariables.value(43) : 0;
+      returnPoint.worldY = (typeof $gameVariables !== "undefined") ? $gameVariables.value(44) : 0;
+      const wmr = window.WorldMapReturn;
+      if (wmr && typeof wmr.snapshotProcSurface === "function") {
+        returnPoint.savedBiomeData = wmr.snapshotProcSurface();
+      }
+    }
+    const sessionId = Date.now() + "_" + Math.random();
+    houseReturnPoints[sessionId] = returnPoint;
+    currentHouseSessionId = sessionId;
+    return sessionId;
+  }
+
+  function teleportToReservedRoom(room) {
+    if (!room) room = getRoomOverEdgeReserved();
+    if (!room || !room.mapId) {
+      if (typeof SoundManager !== "undefined" && SoundManager.playBuzzer) SoundManager.playBuzzer();
+      return false;
+    }
+    saveRoomOverEdgeReturnPoint();
+    _savedBgm = (typeof AudioManager !== "undefined" && AudioManager._bgm) ? AudioManager._bgm : null;
+    const seed = createSeed(room.mapId, 0, 0);
+    setCurrentBuilding({
+      mapId: $gameMap ? $gameMap.mapId() : 0,
+      x: $gamePlayer ? $gamePlayer.x : 0,
+      y: $gamePlayer ? $gamePlayer.y : 0,
+      seed: seed,
+      type: 'visitHouse',
+      poolName: room.poolName || '',
+      totalFloors: 1,
+      floorIndex: 0,
+      capacity: 2,
+      interiorMapId: room.mapId,
+    });
+    _postTransferActions = {
+      type: 'house',
+      spawnRegionId: Number(parameters["spawnRegionId"] || 13),
+      originalDirection: 2,
+      seed: seed
+    };
+    if (typeof AudioManager !== "undefined" && AudioManager.playSe) {
+      AudioManager.playSe({ name: "Move1", volume: 90, pitch: 100, pan: 0 });
+    }
+    $gamePlayer.reserveTransfer(room.mapId, 0, 0, 2, 0);
+    return true;
+  }
+
+  function useRoomOverEdge() {
+    const reserved = getRoomOverEdgeReserved();
+    const choices = [
+      T('ProceduralHouse.teleport'),
+      T('ProceduralHouse.reserveRoom'),
+      T('ProceduralHouse.cancel')
+    ];
+    $gameMessage._choiceEnables = [!!reserved, true, true];
+
+    window.skipLocalization = true;
+    if (reserved) {
+      $gameMessage.add(T('ProceduralHouse.currentlyReserved', { name: reserved.name }));
+    } else {
+      $gameMessage.add(T('ProceduralHouse.noRoomSelected'));
+    }
+    $gameMessage.setChoices(choices, reserved ? 0 : 1, 2);
+    $gameMessage.setChoiceBackground(0);
+    $gameMessage.setChoicePositionType(2);
+    window.skipLocalization = false;
+
+    $gameMessage.setChoiceCallback((index) => {
+      if (index === 0) {
+        if (reserved) {
+          teleportToReservedRoom(reserved);
+        } else {
+          SoundManager.playBuzzer();
+        }
+      } else if (index === 1) {
+        openRoomSelector();
+      }
+    });
+  }
+
+  // Hook ChoiceList to support $gameMessage._choiceEnables for greyed out options
+  const _WCL_makeCommandList_PHS = Window_ChoiceList.prototype.makeCommandList;
+  Window_ChoiceList.prototype.makeCommandList = function() {
+    _WCL_makeCommandList_PHS.call(this);
+    if ($gameMessage._choiceEnables && Array.isArray($gameMessage._choiceEnables)) {
+      for (let i = 0; i < this._list.length; i++) {
+        if ($gameMessage._choiceEnables[i] === false) {
+          this._list[i].enabled = false;
+        }
+      }
+    }
+  };
+
+  const _WCL_drawItem_PHS = Window_ChoiceList.prototype.drawItem;
+  Window_ChoiceList.prototype.drawItem = function(index) {
+    if (this._list && this._list[index] && this._list[index].enabled === false) {
+      this.changePaintOpacity(false);
+      _WCL_drawItem_PHS.call(this, index);
+      this.changePaintOpacity(true);
+    } else {
+      _WCL_drawItem_PHS.call(this, index);
+    }
+  };
+
+  let _activeRoomSelectorEl = null;
+
+  function closeRoomSelector() {
+    if (_activeRoomSelectorEl) {
+      if (_activeRoomSelectorEl.parentElement) {
+        _activeRoomSelectorEl.parentElement.removeChild(_activeRoomSelectorEl);
+      }
+      _activeRoomSelectorEl = null;
+    }
+  }
+
+  function openRoomSelector() {
+    closeRoomSelector();
+
+    const interiors = getProceduralInteriors();
+    const curReserved = getRoomOverEdgeReserved();
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let selectedIndex = 0;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'room-selector-overlay';
+    overlay.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.65);z-index:10000;display:flex;align-items:center;justify-content:center;';
+
+    const panel = document.createElement('div');
+    panel.id = 'room-selector-modal';
+    panel.style.cssText = 'width:75vw;max-width:920px;height:80vh;max-height:620px;background:var(--bg-panel,#1c1a17);border:2px solid var(--text-primary-hover,#d4af37);border-radius:8px;box-shadow:0 12px 40px rgba(0,0,0,0.85);display:flex;flex-direction:column;font-family:var(--font-ui,sans-serif);color:var(--text-color,#eee);overflow:hidden;user-select:none;';
+
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    _activeRoomSelectorEl = overlay;
+
+    const poolTabs = [
+      { key: 'all', label: T('ProceduralHouse.allInteriors') },
+      { key: 'houses', label: T('ProceduralHouse.poolHouses') },
+      { key: 'shops', label: T('ProceduralHouse.poolShops') },
+      { key: 'clinics', label: T('ProceduralHouse.poolClinics') },
+      { key: 'inns', label: T('ProceduralHouse.poolInns') },
+      { key: 'skyscrapers', label: T('ProceduralHouse.poolSkyscrapers') },
+      { key: 'abandoned', label: T('ProceduralHouse.poolAbandoned') }
+    ];
+
+    function render() {
+      const filtered = interiors.filter(item => {
+        if (currentFilter !== 'all' && item.poolName !== currentFilter) return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          return item.name.toLowerCase().includes(q) || item.poolName.toLowerCase().includes(q);
+        }
+        return true;
+      });
+
+      if (selectedIndex >= filtered.length) selectedIndex = Math.max(0, filtered.length - 1);
+
+      const reservedName = curReserved ? curReserved.name : T('ProceduralHouse.noRoomSelected');
+
+      panel.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.25);">
+          <div>
+            <div style="font-size:18px;font-weight:bold;color:var(--accent-orange,#f39c12);">${T('ProceduralHouse.roomOverEdgeTitle')} - ${T('ProceduralHouse.reserveRoom')}</div>
+            <div style="font-size:12px;opacity:0.8;margin-top:2px;">${T('ProceduralHouse.currentlyReserved', { name: reservedName })}</div>
+          </div>
+          <button class="room-selector-close" style="background:transparent;border:none;color:#aaa;font-size:22px;cursor:pointer;padding:4px 8px;line-height:1;">✕</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.15);gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" class="room-selector-tabs">
+            ${poolTabs.map(tab => `
+              <button class="room-selector-tab ${tab.key === currentFilter ? 'active' : ''}" data-tab="${tab.key}" style="background:${tab.key === currentFilter ? 'var(--accent-orange,#f39c12)' : 'rgba(255,255,255,0.08)'};color:${tab.key === currentFilter ? '#111' : '#ccc'};border:none;border-radius:4px;padding:5px 10px;font-size:12px;font-weight:bold;cursor:pointer;">${tab.label}</button>
+            `).join('')}
+          </div>
+          <input type="text" class="room-selector-search" placeholder="${T('ProceduralHouse.searchPlaceholder')}" value="${searchQuery.replace(/"/g, '&quot;')}" style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;color:#fff;padding:5px 10px;font-size:12px;width:180px;outline:none;">
+        </div>
+        <div class="room-selector-grid" style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:16px;">
+          ${filtered.length === 0 ? `<div style="grid-column:1/-1;text-align:center;color:#888;padding:40px;">-</div>` : filtered.map((item, idx) => {
+            const isReserved = curReserved && curReserved.mapId === item.mapId;
+            const isFocused = idx === selectedIndex;
+            return `
+              <div class="room-selector-card ${isReserved ? 'reserved' : ''} ${isFocused ? 'focused' : ''}" data-idx="${idx}" style="background:${isFocused ? 'rgba(212,175,55,0.18)' : 'rgba(255,255,255,0.04)'};border:1px solid ${isReserved ? 'var(--accent-orange,#f39c12)' : (isFocused ? '#d4af37' : 'rgba(255,255,255,0.1)')};box-shadow:${isReserved ? '0 0 8px rgba(243,156,18,0.4)' : 'none'};border-radius:6px;padding:12px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;min-height:75px;transition:all 0.1s;">
+                <div style="font-weight:bold;font-size:13px;color:#fff;margin-bottom:6px;">${item.name}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:11px;background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;color:#bbb;text-transform:capitalize;">${item.poolName}</span>
+                  ${isReserved ? `<span style="font-size:11px;color:var(--accent-orange,#f39c12);font-weight:bold;">★</span>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      // Event handlers
+      panel.querySelector('.room-selector-close').addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        SoundManager.playCancel();
+        closeRoomSelector();
+      });
+
+      panel.querySelectorAll('.room-selector-tab').forEach(btn => {
+        btn.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          currentFilter = btn.dataset.tab;
+          selectedIndex = 0;
+          SoundManager.playCursor();
+          render();
+        });
+      });
+
+      const searchInput = panel.querySelector('.room-selector-search');
+      if (searchInput) {
+        ['keydown', 'keyup', 'keypress'].forEach(ev => searchInput.addEventListener(ev, e => e.stopPropagation()));
+        searchInput.addEventListener('input', () => {
+          searchQuery = searchInput.value;
+          selectedIndex = 0;
+          render();
+        });
+      }
+
+      panel.querySelectorAll('.room-selector-card').forEach(card => {
+        card.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          const idx = Number(card.dataset.idx);
+          const item = filtered[idx];
+          if (item) {
+            setRoomOverEdgeReserved(item);
+            SoundManager.playOk();
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('ProceduralHouse.reservedSuccess', { name: item.name }), { severity: 'good' });
+            }
+            closeRoomSelector();
+          }
+        });
+      });
+    }
+
+    render();
+
+    // Keyboard navigation
+    const keyHandler = (e) => {
+      if (!_activeRoomSelectorEl) {
+        window.removeEventListener('keydown', keyHandler, true);
+        return;
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        SoundManager.playCancel();
+        closeRoomSelector();
+        window.removeEventListener('keydown', keyHandler, true);
+        return;
+      }
+      const filtered = interiors.filter(item => {
+        if (currentFilter !== 'all' && item.poolName !== currentFilter) return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          return item.name.toLowerCase().includes(q) || item.poolName.toLowerCase().includes(q);
+        }
+        return true;
+      });
+      if (e.key === 'ArrowRight' || e.key === 'Right') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (selectedIndex < filtered.length - 1) {
+          selectedIndex++;
+          SoundManager.playCursor();
+          render();
+        }
+      } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (selectedIndex > 0) {
+          selectedIndex--;
+          SoundManager.playCursor();
+          render();
+        }
+      } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (selectedIndex + 3 < filtered.length) {
+          selectedIndex += 3;
+          SoundManager.playCursor();
+          render();
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (selectedIndex - 3 >= 0) {
+          selectedIndex -= 3;
+          SoundManager.playCursor();
+          render();
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        const item = filtered[selectedIndex];
+        if (item) {
+          setRoomOverEdgeReserved(item);
+          SoundManager.playOk();
+          if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('ProceduralHouse.reservedSuccess', { name: item.name }), { severity: 'good' });
+          }
+          closeRoomSelector();
+          window.removeEventListener('keydown', keyHandler, true);
+        }
+      }
+    };
+    window.addEventListener('keydown', keyHandler, true);
+  }
+
+  // ── Battle Action Hook ───────────────────────────────────────────────────
+  const _Game_Action_applyGlobal_ROE = Game_Action.prototype.applyGlobal;
+  Game_Action.prototype.applyGlobal = function () {
+    _Game_Action_applyGlobal_ROE.call(this);
+    const item = this.item();
+    if (item && (item.id === 1934 || item.name === "RoomOverEdge")) {
+      if ($gameParty.inBattle()) {
+        if ($gameTemp && typeof $gameTemp.clearCommonEvent === 'function') {
+          $gameTemp.clearCommonEvent();
+        }
+        const escaped = BattleManager.processEscape();
+        if (escaped) {
+          const reserved = getRoomOverEdgeReserved();
+          if (reserved) {
+            window.ProceduralHouseSystem._pendingRoomOverEdgeEscapeTeleport = reserved;
+          }
+        }
+      }
+    }
+  };
+
+  // ── Scene_Map Start Hook (Post-Battle Teleport) ───────────────────────────
+  const _Scene_Map_start_ROE = Scene_Map.prototype.start;
+  Scene_Map.prototype.start = function () {
+    _Scene_Map_start_ROE.call(this);
+    if (window.ProceduralHouseSystem && window.ProceduralHouseSystem._pendingRoomOverEdgeEscapeTeleport) {
+      const room = window.ProceduralHouseSystem._pendingRoomOverEdgeEscapeTeleport;
+      window.ProceduralHouseSystem._pendingRoomOverEdgeEscapeTeleport = null;
+      window.ProceduralHouseSystem.teleportToReservedRoom(room);
     }
   };
 })();

@@ -675,7 +675,7 @@
             Combat: 334, Collectibles: 210, Component: 83,
             Enhancers: 179, Books: 186, Tools: 83,
             Food: 265, Homeopathy: 273, Jungle: 277, Lifestyle: 84, Magic: 72,
-            Medical: 176, Monsters: 293, Plants: 182, Recovery: 180, Survival: 209,
+            Medical: 176, Fertility: 273, Monsters: 293, Plants: 182, Recovery: 180, Survival: 209,
             Trash: 289, Misc: 245
         },
         // i18n-ignore-end

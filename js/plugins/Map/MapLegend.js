@@ -43,23 +43,8 @@
  * ---------------------------------------------------------------------------
  * When the sheet exists at all
  * ---------------------------------------------------------------------------
- * The notices are not the story mode's any more: they hang on every game, and
- * the setting above is the only thing that takes them off. What changes with
- * the story mode is the VOICE they are written in, not whether they exist.
- *
- * ---------------------------------------------------------------------------
- * The two voices
- * ---------------------------------------------------------------------------
- * While the story mode switch (100) and switch 49, BubbaInParty, are both on,
- * a notice is Bubba reading the place out loud and the paragraph is signed
- * with his name (the i18n key MapLegend.speaker). Anywhere else the same zone
- * speaks in the place's own voice, unsigned, out of the notice's "generic"
- * sub-key: "<key>.generic.title" and "<key>.generic.text".
- *
- * Neither voice falls back on the other. A zone Bubba has nothing to say about
- * is silent in the story mode, and a zone with no generic copy is silent
- * outside it: a missing voice draws no sheet rather than borrowing the other
- * one's words.
+ * The notices are displayed only in story mode as collapsed with key to open,
+ * written in Bubba's voice. Outside story mode, map tooltips are not displayed.
  *
  * ---------------------------------------------------------------------------
  * What the sheet shows
@@ -469,7 +454,7 @@
   }
 
   function noticesShown() {
-    return noticesMode() !== "off";
+    return storyMode() && noticesMode() !== "off";
   }
 
   function setNoticesShown(value) {
@@ -506,9 +491,13 @@
 
   // The tip the sheet is allowed to draw under the current setting.
   function allowedNotice(notice) {
-    const mode = noticesMode();
-    if (mode === "off" || !notice) {
+    if (!storyMode() || !notice) {
       if (!notice) noticeWatch.showing = null;
+      return null;
+    }
+    const mode = noticesMode();
+    if (mode === "off") {
+      noticeWatch.showing = null;
       return null;
     }
     if (mode === "always") { noticeWatch.showing = notice.key; return notice; }
@@ -604,19 +593,19 @@
   const VOICE_GENERIC = "generic";   // i18n-ignore: voice name, and the i18n sub-key
 
   function currentVoice() {
-    return bubbaVoice() ? VOICE_BUBBA : VOICE_GENERIC;
+    return VOICE_BUBBA;
   }
 
   function readNotice(baseKey, voice) {
     if (!baseKey) return null;
-    const said = voice || currentVoice();
-    const stem = said === VOICE_BUBBA ? baseKey : baseKey + "." + VOICE_GENERIC;
+    if (voice === VOICE_GENERIC) return null;
+    const stem = baseKey;
     const titleKey = stem + ".title";
     const textKey = stem + ".text";
     if (!has(titleKey)) return null;
     return {
       key: baseKey,
-      voice: said,
+      voice: VOICE_BUBBA,
       title: T(titleKey),
       text: has(textKey) ? T(textKey) : "",
     };
@@ -703,17 +692,13 @@
     return !!($gameSwitches && $gameSwitches.value(STORY_MODE_SWITCH_ID));
   }
 
-  // Whether the notices are Bubba's. Both switches, because he only reads the
-  // place out while he is actually walking with the party.
+  // Whether the notices are Bubba's.
   function bubbaVoice() {
-    return storyMode() && !!($gameSwitches && $gameSwitches.value(LEGEND_SWITCH_ID));
+    return storyMode();
   }
 
-  // The one answer to "is any of this running at all". It is the setting and
-  // nothing else now: the notices are every game's, and "off" is the only
-  // thing that takes them away.
   function legendEnabled() {
-    return noticesShown();
+    return true;
   }
 
   // The tutorial map and everything filed under it in the editor tree keep
@@ -1182,7 +1167,7 @@
     }
     updateTooltipWatch();
     readFoldKey();
-    const notice = legendEnabled() ? allowedNotice(resolveNotice()) : null;
+    const notice = noticesShown() ? allowedNotice(resolveNotice()) : null;
     const folded = isFolded();
     const rows = folded ? [] : visibleRows();
     // Folded, the sheet stays up as a strip only where it is pinned: the

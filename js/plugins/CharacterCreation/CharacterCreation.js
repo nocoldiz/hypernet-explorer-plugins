@@ -1655,6 +1655,12 @@
           getLocalizedChoice(T('CharCreate.choice.originLot.name'), "origin_lot", T('CharCreate.choice.originLot.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDungeon.name'), "origin_dungeon", T('CharCreate.choice.originDungeon.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCeo.name'), "origin_ceo", T('CharCreate.choice.originCeo.desc')),
+          // Only where there is a patron whose square could be named: a build
+          // with an empty roster has no coordinates that would ever be right,
+          // so the scenario is not offered at all (see patronVaultAvailable).
+          ...(patronVaultAvailable()
+            ? [getLocalizedChoice(T('CharCreate.choice.originPatronVault.name'), "origin_patron_vault", T('CharCreate.choice.originPatronVault.desc'))]
+            : []),
           getLocalizedChoice(T('CharCreate.choice.originCar.name'), "origin_car", T('CharCreate.choice.originCar.desc')),
           getLocalizedChoice(T('CharCreate.choice.originBike.name'), "origin_bike", T('CharCreate.choice.originBike.desc')),
           getLocalizedChoice(T('CharCreate.choice.originMayor.name'), "origin_mayor", T('CharCreate.choice.originMayor.desc')),
@@ -1674,12 +1680,6 @@
           getLocalizedChoice(T('CharCreate.choice.originPlague.name'), "origin_plague", T('CharCreate.choice.originPlague.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDiplomat.name'), "origin_diplomat", T('CharCreate.choice.originDiplomat.desc')),
           getLocalizedChoice(T('CharCreate.choice.originHypernetExplorer.name'), "origin_hypernet_explorer", T('CharCreate.choice.originHypernetExplorer.desc')),
-          // Only where there is a patron whose square could be named: a build
-          // with an empty roster has no coordinates that would ever be right,
-          // so the scenario is not offered at all (see patronVaultAvailable).
-          ...(patronVaultAvailable()
-            ? [getLocalizedChoice(T('CharCreate.choice.originPatronVault.name'), "origin_patron_vault", T('CharCreate.choice.originPatronVault.desc'))]
-            : []),
         ];
       },
       handler: function (symbol) {
@@ -2063,6 +2063,22 @@
         return true;
       }
       return !!this._isSimpleMode;
+    }
+
+    static isControllerConnected() {
+      if (window.AnalogStickInput && typeof window.AnalogStickInput.hasPad === "function") {
+        if (window.AnalogStickInput.hasPad()) return true;
+      }
+      if (typeof navigator !== "undefined" && navigator.getGamepads) {
+        const pads = navigator.getGamepads();
+        for (let i = 0; i < pads.length; i++) {
+          if (pads[i] && pads[i].connected) return true;
+        }
+      }
+      if (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad") {
+        return true;
+      }
+      return false;
     }
 
     // True when the CLASS step lists the whole sentient roster inline, one
@@ -2799,15 +2815,21 @@
         `;
       }).join("");
 
+      const padConnected = Scene_CharacterCreation.isControllerConnected();
+      const leftHintL = (padConnected && !isScenarioMode) ? '<span class="cc-pad-hint">L1</span>' : '';
+      const leftHintR = (padConnected && !isScenarioMode) ? '<span class="cc-pad-hint">R1</span>' : '';
+
       // The scenario page is the party's, not any one member's: the rail of
       // member tabs would offer pages that cannot be opened from here, so the
       // scenario tab stands alone.
       const leftTabsHtml = isScenarioMode ? '' : `
+            ${leftHintL}
             ${settingsTabHtml}
             ${partyTabsHtml}
             ${addBtnHtml}
             ${petTabHtml}
-            ${vehicleTabHtml}`;
+            ${vehicleTabHtml}
+            ${leftHintR}`;
 
       const isSimple = Scene_CharacterCreation.isSimpleMode();
       const modeToggleHtml = (isSettingsActive || isScenarioMode || Scene_CharacterCreation._storyMode) ? '' : `
@@ -2817,14 +2839,31 @@
         </div>
       `;
 
+      const selectHint = (padConnected && modeToggleHtml) ? '<span class="cc-pad-hint cc-pad-hint--select">SELECT</span>' : '';
+      const modeToggleWithHintHtml = modeToggleHtml ? `
+        <div class="cc-mode-toggle-wrap">
+          ${modeToggleHtml}
+          ${selectHint}
+        </div>
+      ` : '';
+
+      const hasStepTabs = !isScenarioMode && !isSettingsActive && !isPetActive && !isVehicleActive && !!stepTabsHtml.trim();
+      const rightHintL = (padConnected && hasStepTabs) ? '<span class="cc-pad-hint">L2</span>' : '';
+      const rightHintR = (padConnected && hasStepTabs) ? '<span class="cc-pad-hint">R2</span>' : '';
+      const stepTabsFullHtml = hasStepTabs ? `
+        ${rightHintL}
+        ${stepTabsHtml}
+        ${rightHintR}
+      ` : stepTabsHtml;
+
       return `
         <div class="cc-dossier-top-bar">
           <div class="cc-folder-tabs-left">
             ${leftTabsHtml}
           </div>
           <div class="cc-folder-tabs-right">
-            ${stepTabsHtml}
-            ${modeToggleHtml}
+            ${stepTabsFullHtml}
+            ${modeToggleWithHintHtml}
           </div>
         </div>
       `;
@@ -3058,6 +3097,8 @@
       let rightHtml = "";
 
       if (isScenario) {
+        const grid = this._dndContainer ? this._dndContainer.querySelector(".cc-scenario-grid") : null;
+        const prevScrollTop = grid ? grid.scrollTop : 0;
         const scenarioContent = this._renderScenarioDossierHtml();
         this._dndContainer.innerHTML = `
           <div class="cc-unified-layout">
@@ -3068,12 +3109,17 @@
             ${this._renderActionBarHtml()}
           </div>
         `;
+        const newGrid = this._dndContainer ? this._dndContainer.querySelector(".cc-scenario-grid") : null;
+        if (newGrid) newGrid.scrollTop = prevScrollTop;
+        const activeCard = this._dndContainer ? this._dndContainer.querySelector(".cc-scenario-card.selected") : null;
+        if (activeCard && activeCard.scrollIntoView) {
+          activeCard.scrollIntoView({ block: "nearest" });
+        }
         this._lastIndex = activeIndex;
         this._lastStep = currentStep;
         this._lastPresetMode = isPreset;
         this._lastMemberIndex = currentMemberIndex;
         this._lastPetMode = isPetMode;
-      this._lastVehicleMode = isVehicleMode;
         this._lastVehicleMode = isVehicleMode;
         this._lastScenarioMode = isScenario;
         return;
@@ -3744,11 +3790,95 @@
       this._openTopRailEntry(entries[next]);
     }
 
+    cycleRightRail(direction) {
+      const tabs = this._getCreationTabs().filter((t) => t && t.id !== "origin");
+      if (tabs.length < 2) return;
+      let cur = tabs.findIndex((t) => this._step === t.step || (t.id === "archetype" && this._step === STEP.GENDER));
+      if (cur < 0) cur = 0;
+      const next = (cur + direction + tabs.length) % tabs.length;
+      const target = tabs[next];
+      this.onTabClick(target.step, target.id);
+    }
+
+    readTriggerDir() {
+      let ltTriggered = false;
+      let rtTriggered = false;
+
+      const stick = window.AnalogStickInput;
+      if (stick && typeof stick.isButtonTriggered === "function") {
+        if (stick.isButtonTriggered(6)) ltTriggered = true;
+        if (stick.isButtonTriggered(7)) rtTriggered = true;
+      }
+
+      if (!ltTriggered && !rtTriggered && typeof navigator !== "undefined" && navigator.getGamepads) {
+        const pads = navigator.getGamepads();
+        for (let i = 0; i < pads.length; i++) {
+          const pad = pads[i];
+          if (!pad || !pad.connected || !pad.buttons) continue;
+          const b6 = pad.buttons[6];
+          const b7 = pad.buttons[7];
+          const ltDown = !!(b6 && (b6.pressed || b6.value > 0.4));
+          const rtDown = !!(b7 && (b7.pressed || b7.value > 0.4));
+          if (ltDown && !this._rawLtPrev) ltTriggered = true;
+          if (rtDown && !this._rawRtPrev) rtTriggered = true;
+          this._rawLtPrev = ltDown;
+          this._rawRtPrev = rtDown;
+          break;
+        }
+      }
+
+      if (ltTriggered && !rtTriggered) return -1;
+      if (rtTriggered && !ltTriggered) return 1;
+      return 0;
+    }
+
+    isSelectTriggered() {
+      const stick = window.AnalogStickInput;
+      if (stick && typeof stick.isButtonTriggered === "function") {
+        if (stick.isButtonTriggered(8)) return true;
+      }
+      if (typeof navigator !== "undefined" && navigator.getGamepads) {
+        const pads = navigator.getGamepads();
+        for (let i = 0; i < pads.length; i++) {
+          const pad = pads[i];
+          if (!pad || !pad.connected || !pad.buttons) continue;
+          const b8 = pad.buttons[8];
+          const selectDown = !!(b8 && (b8.pressed || b8.value > 0.5));
+          const triggered = selectDown && !this._rawSelectPrev;
+          this._rawSelectPrev = selectDown;
+          if (triggered) return true;
+          break;
+        }
+      }
+      if (typeof Input !== "undefined" && Input.isTriggered && Input.isTriggered("select")) {
+        return true;
+      }
+      return false;
+    }
+
     // Read before any other input on every page of the wizard, so the rail is
     // reachable from wherever the cursor happens to be. Returns true when it
     // has taken the press.
     updateTopRailInput() {
       if (Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN) return false;
+
+      // Select: switch between Simple and Detailed
+      if (this.isSelectTriggered()) {
+        const stepData = this.currentStepData ? this.currentStepData() : null;
+        const isSettings = this._step === STEP.SETTINGS || (stepData && stepData.isSettingsStep);
+        if (!isSettings && !Scene_CharacterCreation._storyMode) {
+          this.onSetSimpleMode(!Scene_CharacterCreation.isSimpleMode());
+          return true;
+        }
+      }
+
+      // L2 / R2: cycle right step tabs
+      const triggerDir = this.readTriggerDir();
+      if (triggerDir) {
+        this.cycleRightRail(triggerDir);
+        return true;
+      }
+
       // L1/PageUp back, R1/PageDown and Tab forward, Shift+Tab back: the one
       // reading of the rail inputs, shared by every rail in creation.
       const railDir = window.CCNav ? window.CCNav.railDir() : 0;
@@ -4068,7 +4198,15 @@
         if (this._step === STEP.ORIGIN) {
           const dossier = container.querySelector(".cc-scenario-dossier");
           if (dossier) {
+            const grid = container.querySelector(".cc-scenario-grid");
+            const prevScrollTop = grid ? grid.scrollTop : 0;
             dossier.outerHTML = this._renderScenarioDossierHtml();
+            const newGrid = container.querySelector(".cc-scenario-grid");
+            if (newGrid) newGrid.scrollTop = prevScrollTop;
+            const activeCard = container.querySelector(".cc-scenario-card.selected");
+            if (activeCard && activeCard.scrollIntoView) {
+              activeCard.scrollIntoView({ block: "nearest" });
+            }
             this._lastIndex = index;
             return;
           }
@@ -4780,6 +4918,10 @@
         this.exitToTitle();
         return;
       }
+      if (Scene_CharacterCreation._isScenarioMode) {
+        this.onReturnToPartyDossier();
+        return;
+      }
       SoundManager.playCancel();
       this.previousStep();
     }
@@ -4934,6 +5076,23 @@
       const isPreset = !!this._presetWindow;
       const windowObj = isPreset ? this._presetWindow : this._gridWindow;
       if (!windowObj || !windowObj.active) {
+        if (Input.isTriggered('cancel') || (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
+          const firstStep = Scene_CharacterCreation.getStartingStep();
+          const isLaterMemberTypeStep = this._step === STEP.CHARACTER_TYPE &&
+            (Scene_CharacterCreation._currentPartyMemberIndex || 0) > 0;
+          if (isPreset) {
+            SoundManager.playCancel();
+            this.onPresetCancel();
+            return;
+          } else if (this._step > firstStep || isLaterMemberTypeStep) {
+            SoundManager.playCancel();
+            this.onCancel();
+            return;
+          } else if (this.canExitToTitle()) {
+            this.exitToTitle();
+            return;
+          }
+        }
         // No board on this page at all (the scenario dossier, the preview):
         // the whole spread belongs to the focus ring, so any direction opens
         // it rather than dropping the press.
@@ -4943,12 +5102,23 @@
 
       const maxItems = windowObj.maxItems();
       if (maxItems <= 0) {
-        // Nothing to move between, but Back must still work: an empty preset
-        // board would otherwise trap the player with no way out.
-        if ((Input.isTriggered('cancel') || TouchInput.isCancelled()) && isPreset) {
-          SoundManager.playCancel();
-          this.onPresetCancel();
-          return;
+        // Nothing to move between, but Back must still work:
+        if (Input.isTriggered('cancel') || (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
+          const firstStep = Scene_CharacterCreation.getStartingStep();
+          const isLaterMemberTypeStep = this._step === STEP.CHARACTER_TYPE &&
+            (Scene_CharacterCreation._currentPartyMemberIndex || 0) > 0;
+          if (isPreset) {
+            SoundManager.playCancel();
+            this.onPresetCancel();
+            return;
+          } else if (this._step > firstStep || isLaterMemberTypeStep) {
+            SoundManager.playCancel();
+            this.onCancel();
+            return;
+          } else if (this.canExitToTitle()) {
+            this.exitToTitle();
+            return;
+          }
         }
         // An empty board still has a page around it: its buttons are the only
         // thing left to reach, so a direction steps straight onto them.
@@ -5055,6 +5225,17 @@
       if (moved) {
         SoundManager.playCursor();
         windowObj.select(index);
+        if (this._step === STEP.ORIGIN) {
+          const stepData = this.currentStepData();
+          const choice = stepData && stepData.choices && stepData.choices[index];
+          if (choice && choice.symbol) {
+            this._selectedOrigin = choice.symbol;
+            $gameSystem._ccOriginSymbol = choice.symbol;
+            const actor = Scene_CharacterCreation.getCurrentActor();
+            if (actor) actor._originSymbol = choice.symbol;
+            if (typeof captureOriginSnapshot === "function") captureOriginSnapshot();
+          }
+        }
         this.refreshUIOverlayDOM();
       }
     }
@@ -5070,6 +5251,11 @@
       if (this._isSubScreenRelay || this._ccHandingOver) return;
 
       if (this._dndContainer) {
+        const padConnected = Scene_CharacterCreation.isControllerConnected();
+        if (this._lastPadConnected !== padConnected) {
+          this._lastPadConnected = padConnected;
+          this._refreshTopFolderTabs();
+        }
         window.CCPanel.show(this._dndContainer);
         this.updateUIInput();
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
@@ -5279,6 +5465,12 @@
       ) {
       }
     }
+    processCursorMove() {
+      // All cursor navigation is handled by scene's updateUIInput() to prevent double-processing.
+    }
+    processHandling() {
+      // OK and Cancel handling are handled by scene's updateUIInput().
+    }
     processTouch() {
       // All mouse interaction is handled via DOM onclick, block RMMZ's
       // TouchInput path so it can't fire processOk/deactivate under DOM buttons.
@@ -5310,13 +5502,8 @@
           Scene_CharacterCreation.usesQuickFlow()) {
         return 2;
       }
-      // The origin step renders three across (cc-three-col), so the cursor has
-      // to move in three columns or left/right would do nothing and up/down
-      // would skip two entries at a time. The personality list is laid out the
-      // same way, and only while it actually renders as the picker.
-      if (sc && sc._step === STEP.ORIGIN) {
-        return 3;
-      }
+      // The personality list is laid out three across while it actually renders as the picker.
+      // Origin (scenario) renders as a single-column vertical list (cc-scenario-grid), so maxCols is 1.
       if (sc && sc._isPersonalityPickerStep && sc._isPersonalityPickerStep()) {
         return 3;
       }
@@ -5719,6 +5906,7 @@
     markFirstCreationComplete,
     beginStoryModeControlsLegend,
     Window_CharacterCreationTitle,
+    Window_CharacterCreationGrid,
     ccT,
     ccTp,
     ccStatLabel,

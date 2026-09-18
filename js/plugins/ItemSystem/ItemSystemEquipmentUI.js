@@ -158,8 +158,10 @@
 
         this._currentActorIndex = $gameParty.allMembers().indexOf(this._actor);
         this._memberIndex       = 0;
-        this._activeArea        = 'grid'; // 'paperdoll' | 'grid' | 'commands'
+        this._activeArea        = 'grid'; // 'paperdoll' | 'grid' | 'tabs' | 'commands' | 'back' | 'detail_btn'
         this._commandIndex      = 0;      // 0: Optimize, 1: Random, 2: Clear
+        this._tabIndex          = 0;      // equipment category tabs index
+        this._detailBtnIndex    = 0;      // 0: Equip/Unequip, 1: Back
         this._slotIndex         = 0;
         this._gridIndex         = 0;
         this._inventoryIndex    = 0;
@@ -1789,6 +1791,58 @@
         if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
     };
 
+    Scene_Equip.prototype._updateTabsHighlight = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const tabs = container.querySelectorAll('.equip-type-tab');
+        tabs.forEach((tab, idx) => {
+            tab.classList.toggle('focused', idx === this._tabIndex);
+        });
+        const focused = container.querySelector('.equip-type-tab.focused');
+        if (focused && focused.scrollIntoView) focused.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+    };
+
+    Scene_Equip.prototype._updateCommandsHighlight = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const cmds = container.querySelectorAll('.equip-commands .backpack-tab');
+        cmds.forEach((cmd, idx) => {
+            cmd.classList.toggle('focused', idx === this._commandIndex);
+        });
+        const focused = container.querySelector('.equip-commands .backpack-tab.focused');
+        if (focused && focused.scrollIntoView) focused.scrollIntoView({ block: 'nearest' });
+        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+    };
+
+    Scene_Equip.prototype._updateBackHighlight = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const backBtn = container.querySelector('.back-button');
+        if (backBtn) {
+            backBtn.classList.toggle('focused', this._activeArea === 'back');
+            if (this._activeArea === 'back' && backBtn.scrollIntoView) backBtn.scrollIntoView({ block: 'nearest' });
+        }
+        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+    };
+
+    Scene_Equip.prototype._updateDetailButtonsHighlight = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const btns = container.querySelectorAll('.detail-actions-row .equip-action-btn');
+        btns.forEach((btn, idx) => {
+            btn.classList.toggle('focused', idx === this._detailBtnIndex);
+        });
+        if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+    };
+
+    Scene_Equip.prototype._clearAllHighlights = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        container.querySelectorAll('.paperdoll-slot.focused, .equip-card.focused, .equip-type-tab.focused, .equip-commands .backpack-tab.focused, .back-button.focused, .detail-actions-row .equip-action-btn.focused')
+            .forEach(el => el.classList.remove('focused'));
+    };
+
     Scene_Equip.prototype.openInventorySelection = function () {
         this._activeArea = 'grid';
         this._gridIndex = 0;
@@ -1851,8 +1905,28 @@
         this._wasdInput.up = this._wasdInput.down = this._wasdInput.left = this._wasdInput.right = false;
 
         if (enableSwitching) {
-            if (Input.isTriggered('pageup'))   { this.switchToPreviousCharacter(); return; }
-            if (Input.isTriggered('pagedown')) { this.switchToNextCharacter();     return; }
+            if (Input.isTriggered('pageup')) {
+                const party = $gameParty.allMembers();
+                if (party.length > 1) {
+                    this.switchToPreviousCharacter();
+                    const members = this.partyMembers();
+                    const mIdx = members.indexOf(this._actor);
+                    if (mIdx >= 0) this._memberIndex = mIdx;
+                    if (this._activeArea === 'paperdoll') this._updateSlotHighlight();
+                }
+                return;
+            }
+            if (Input.isTriggered('pagedown')) {
+                const party = $gameParty.allMembers();
+                if (party.length > 1) {
+                    this.switchToNextCharacter();
+                    const members = this.partyMembers();
+                    const mIdx = members.indexOf(this._actor);
+                    if (mIdx >= 0) this._memberIndex = mIdx;
+                    if (this._activeArea === 'paperdoll') this._updateSlotHighlight();
+                }
+                return;
+            }
         }
 
         const isOk     = Input.isTriggered('ok');
@@ -1864,56 +1938,166 @@
                 this._viewMode = 'paperdoll';
                 this.cleanup3DWeaponPreview();
                 this._refreshRightPage();
+                this._activeArea = 'grid';
+                this._updateInventoryHighlight();
                 return;
             }
-            if (isOk) {
-                const target = this._inspectedSlotIdx >= 0 ? this._inspectedSlotIdx : (window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, this._inspectedItem) : 0);
-                if (target >= 0 && this._inspectedItem && this._actor) {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
-                    this._actor.changeEquip(target, this._inspectedItem);
-                    this._viewMode = 'paperdoll';
-                    this.cleanup3DWeaponPreview();
-                    this._refreshDOM();
+
+            const container = document.getElementById('equip-container');
+            const btns = container ? container.querySelectorAll('.detail-actions-row .equip-action-btn') : [];
+
+            if (isLeft || isRight) {
+                if (btns.length > 1) {
+                    this._detailBtnIndex = (this._detailBtnIndex === 0) ? 1 : 0;
+                    this._updateDetailButtonsHighlight();
                 }
                 return;
             }
+
+            if (isOk) {
+                const activeBtn = btns[this._detailBtnIndex];
+                if (activeBtn) {
+                    activeBtn.click();
+                } else {
+                    const target = this._inspectedSlotIdx >= 0 ? this._inspectedSlotIdx : (window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, this._inspectedItem) : 0);
+                    if (target >= 0 && this._inspectedItem && this._actor) {
+                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        this._actor.changeEquip(target, this._inspectedItem);
+                        this._viewMode = 'paperdoll';
+                        this.cleanup3DWeaponPreview();
+                        this._refreshDOM();
+                    }
+                }
+                return;
+            }
+            return;
         }
 
         if (isCancel) {
+            if (this._activeArea === 'tabs' || this._activeArea === 'commands') {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                this._clearAllHighlights();
+                this._activeArea = 'grid';
+                this._updateInventoryHighlight();
+                return;
+            }
+            if (this._activeArea === 'back') {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                this.popScene();
+                return;
+            }
             if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
             this.popScene();
             return;
         }
 
-        if (this._activeArea === 'grid') {
+        const tabs = getEquipTabs();
+
+        if (this._activeArea === 'tabs') {
+            if (isLeft) {
+                if (this._tabIndex > 0) {
+                    this._tabIndex--;
+                    this._updateTabsHighlight();
+                }
+            } else if (isRight) {
+                if (this._tabIndex < tabs.length - 1) {
+                    this._tabIndex++;
+                    this._updateTabsHighlight();
+                }
+            } else if (isDown) {
+                this._clearAllHighlights();
+                this._activeArea = 'grid';
+                this._gridIndex = 0;
+                this._updateInventoryHighlight();
+            } else if (isUp) {
+                this._clearAllHighlights();
+                this._activeArea = 'commands';
+                this._commandIndex = 0;
+                this._updateCommandsHighlight();
+            } else if (isOk) {
+                if (tabs[this._tabIndex]) {
+                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    this._activeTab = tabs[this._tabIndex].id;
+                    this._gridIndex = 0;
+                    this._refreshRightPage();
+                    this._updateTabsHighlight();
+                }
+            }
+        } else if (this._activeArea === 'commands') {
+            const cmds = ['optimize', 'random', 'clear'];
+            if (isLeft) {
+                if (this._commandIndex > 0) {
+                    this._commandIndex--;
+                    this._updateCommandsHighlight();
+                } else {
+                    this._clearAllHighlights();
+                    this._activeArea = 'back';
+                    this._updateBackHighlight();
+                }
+            } else if (isRight) {
+                if (this._commandIndex < cmds.length - 1) {
+                    this._commandIndex++;
+                    this._updateCommandsHighlight();
+                } else {
+                    this._clearAllHighlights();
+                    this._activeArea = 'tabs';
+                    this._updateTabsHighlight();
+                }
+            } else if (isDown) {
+                this._clearAllHighlights();
+                this._activeArea = 'paperdoll';
+                this._updateSlotHighlight();
+            } else if (isUp) {
+                this._clearAllHighlights();
+                this._activeArea = 'back';
+                this._updateBackHighlight();
+            } else if (isOk) {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                this.executeCommandAction(cmds[this._commandIndex]);
+                this._updateCommandsHighlight();
+            }
+        } else if (this._activeArea === 'back') {
+            if (isDown) {
+                this._clearAllHighlights();
+                this._activeArea = 'commands';
+                this._updateCommandsHighlight();
+            } else if (isRight) {
+                this._clearAllHighlights();
+                this._activeArea = 'commands';
+                this._updateCommandsHighlight();
+            } else if (isOk) {
+                if (typeof SoundManager !== 'undefined' && SoundManager.playCancel) SoundManager.playCancel();
+                this.popScene();
+            }
+        } else if (this._activeArea === 'grid') {
             const items = this.getFilteredPartyEquipment();
             if (isLeft && this._gridIndex % 2 === 0) {
+                this._clearAllHighlights();
                 this._activeArea = 'paperdoll';
-                if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                 this._updateSlotHighlight();
             } else if (isLeft) {
                 if (this._gridIndex > 0) {
                     this._gridIndex--;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                     this._updateInventoryHighlight();
                 }
             } else if (isRight) {
                 if (this._gridIndex < items.length - 1) {
                     this._gridIndex++;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                     this._updateInventoryHighlight();
                 }
             } else if (isDown) {
                 if (this._gridIndex + 2 < items.length) {
                     this._gridIndex += 2;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                     this._updateInventoryHighlight();
                 }
             } else if (isUp) {
                 if (this._gridIndex - 2 >= 0) {
                     this._gridIndex -= 2;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                     this._updateInventoryHighlight();
+                } else {
+                    this._clearAllHighlights();
+                    this._activeArea = 'tabs';
+                    this._updateTabsHighlight();
                 }
             } else if (isOk) {
                 if (items[this._gridIndex]) {
@@ -1921,7 +2105,9 @@
                     this._inspectedItem = items[this._gridIndex];
                     this._inspectedSlotIdx = -1;
                     this._viewMode = 'detail';
+                    this._detailBtnIndex = 0;
                     this._refreshRightPage();
+                    this._updateDetailButtonsHighlight();
                 }
             }
         } else if (this._activeArea === 'paperdoll') {
@@ -1930,33 +2116,46 @@
             const slotsCount = currActor ? currActor.equipSlots().length : 0;
 
             if (isRight) {
-                this._activeArea = 'grid';
-                if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
-                this._updateInventoryHighlight();
+                const nextSlot = this._slotIndex + 1;
+                if (nextSlot < slotsCount && (this._slotIndex === 0 || this._slotIndex === 1 || this._slotIndex === 2 || this._slotIndex === 4 || this._slotIndex === 5)) {
+                    this._slotIndex = nextSlot;
+                    this._updateSlotHighlight();
+                } else {
+                    this._clearAllHighlights();
+                    this._activeArea = 'grid';
+                    this._updateInventoryHighlight();
+                }
+            } else if (isLeft) {
+                const prevSlot = this._slotIndex - 1;
+                if (prevSlot >= 0 && (this._slotIndex === 1 || this._slotIndex === 2 || this._slotIndex === 3 || this._slotIndex === 5 || this._slotIndex === 6)) {
+                    this._slotIndex = prevSlot;
+                    this._updateSlotHighlight();
+                }
             } else if (isDown) {
-                if (this._slotIndex < slotsCount - 1) {
-                    this._slotIndex++;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                if (this._slotIndex < 4 && this._slotIndex + 4 < slotsCount) {
+                    this._slotIndex += 4;
                     this._updateSlotHighlight();
                 } else if (this._memberIndex < members.length - 1) {
                     this._memberIndex++;
                     this._actor = members[this._memberIndex];
                     this._slotIndex = 0;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                     this._updateSlotHighlight();
                 }
             } else if (isUp) {
-                if (this._slotIndex > 0) {
-                    this._slotIndex--;
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                if (this._slotIndex >= 4) {
+                    this._slotIndex -= 4;
                     this._updateSlotHighlight();
                 } else if (this._memberIndex > 0) {
                     this._memberIndex--;
                     this._actor = members[this._memberIndex];
                     const prevSlotsCount = this._actor ? this._actor.equipSlots().length : 1;
-                    this._slotIndex = Math.max(0, prevSlotsCount - 1);
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
+                    this._slotIndex = Math.min(this._slotIndex, prevSlotsCount - 1);
                     this._updateSlotHighlight();
+                } else {
+                    this._clearAllHighlights();
+                    this._activeArea = 'commands';
+                    this._commandIndex = 0;
+                    this._updateCommandsHighlight();
                 }
             } else if (isOk) {
                 const worn = currActor ? currActor.equips()[this._slotIndex] : null;
@@ -1966,14 +2165,17 @@
                     this._inspectedItem = worn;
                     this._inspectedSlotIdx = this._slotIndex;
                     this._viewMode = 'detail';
+                    this._detailBtnIndex = 0;
                     this._refreshRightPage();
+                    this._updateDetailButtonsHighlight();
                 }
-            } else if (Input.isTriggered('menu')) {
+            } else if (Input.isTriggered('menu') && !Input.isTriggered('escape')) {
                 const worn = currActor ? currActor.equips()[this._slotIndex] : null;
                 if (worn) {
                     if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
                     currActor.changeEquip(this._slotIndex, null);
                     this._refreshDOM();
+                    this._updateSlotHighlight();
                 } else {
                     if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
                 }

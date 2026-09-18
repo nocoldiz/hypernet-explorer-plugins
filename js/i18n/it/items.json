@@ -2455,6 +2455,34 @@
     "name": "Passepartout",
     "description": "Apre qualsiasi serratura comune."
   },
+  "740": {
+    "name": "Test di gravidanza",
+    "description": "Una striscia diagnostica rapida per rilevare la gravidanza."
+  },
+  "741": {
+    "name": "Bloccante di gravidanza",
+    "description": "Pillole ormonali che sopprimono l'ovulazione e bloccano il concepimento."
+  },
+  "742": {
+    "name": "Incrementatore di fertilità",
+    "description": "Stimolante della fertilità che induce ovulazioni multiple, aumentando le probabilità di gemelli o quadrigemelli."
+  },
+  "743": {
+    "name": "Scalda-uova",
+    "description": "Un involucro termico che mantiene incubate le uova deposte e accelera la schiusa."
+  },
+  "744": {
+    "name": "Acceleratore di mitosi",
+    "description": "Un enzima di scissione cellulare che accelera la divisione mitotica e la replicazione asessuata."
+  },
+  "745": {
+    "name": "Catalizzatore di polline",
+    "description": "Una miscela fitormonale che innesca una rapida fioritura e la produzione di semi."
+  },
+  "746": {
+    "name": "Stimolatore di motilità",
+    "description": "Una formula concentrata di zinco e peptidi che migliora il conteggio dei gameti e la virilità."
+  },
   "750": {
     "name": "<-- Monsters -->",
     "description": ""
@@ -7326,5 +7354,9 @@
   "2065": {
     "name": "Chiodo del Plasmatore",
     "description": "Avvia la generazione di terre nuove."
+  },
+  "2066": {
+    "name": "Cancellatore Neurale",
+    "description": "Imposta il livello del membro a 1, mantenendo le abilità, e apre la selezione classe."
   }
 }
