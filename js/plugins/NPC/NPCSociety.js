@@ -2649,4 +2649,92 @@
     },
   };
 
+
+  // ---------------------------------------------------------------------------
+  // Standing belongs to the savegame, not to the world
+  // ---------------------------------------------------------------------------
+  // A society profile lives in the world folder (npcs.json, WorldManager), which
+  // is how two savegames of a world meet the same people with the same jobs,
+  // homes and histories. What those people think of THIS party is not a fact
+  // about the world though, it is a fact about the playthrough: left in the world
+  // file, an opinion moved to 0 after a save is still 0 when that save is loaded
+  // back, and the -10 the party had earned is gone.
+  //
+  // So the three player-facing numbers on a profile travel in the binary
+  // savegame and are written back over the world copy on load. The
+  // cross-playthrough record is untouched: every move is still mirrored into
+  // party.json by NPCEmpathize (PartyPresence.setDisposition), which is where a
+  // standing that must outlive a savegame is kept.
+  const STANDING_FIELDS = ["opinions", "attraction", "playerOpinion"];
+
+  const society = () => (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._npcSociety) || {};
+
+  const NPCStanding = {
+    // What every profile in the world currently thinks of the party.
+    snapshot() {
+      const out = {};
+      for (const [name, profile] of Object.entries(society())) {
+        if (!profile) continue;
+        let held = null;
+        for (const field of STANDING_FIELDS) {
+          if (profile[field] == null) continue;
+          // Copied, not pointed at: the snapshot is what the party stood at when
+          // the save was written, and play goes on from there.
+          const value = profile[field];
+          (held || (held = {}))[field] = (value && typeof value === "object")
+            ? Object.assign({}, value) : value;
+        }
+        if (held) out[name] = held;
+      }
+      return out;
+    },
+
+    // Put a snapshot back: every profile forgets what the world file told it
+    // about the party, then takes what this savegame remembers. A name the
+    // snapshot never heard of is left neutral rather than left as it was.
+    apply(snapshot) {
+      const held = (snapshot && typeof snapshot === "object") ? snapshot : {};
+      for (const [name, profile] of Object.entries(society())) {
+        if (!profile) continue;
+        for (const field of STANDING_FIELDS) delete profile[field];
+        const mine = held[name];
+        if (!mine) continue;
+        for (const field of STANDING_FIELDS) {
+          if (mine[field] == null) continue;
+          const value = mine[field];
+          profile[field] = (value && typeof value === "object")
+            ? Object.assign({}, value) : value;
+        }
+      }
+    },
+
+    // A new party is a stranger to everybody, even in a world somebody else
+    // has already lived a life in.
+    clear() { this.apply({}); },
+  };
+
+  window.NPCStanding = NPCStanding;
+
+  const _DataManager_makeSaveContents_standing = DataManager.makeSaveContents;
+  DataManager.makeSaveContents = function () {
+    const contents = _DataManager_makeSaveContents_standing.call(this);
+    contents.npcStanding = NPCStanding.snapshot();
+    return contents;
+  };
+
+  const _DataManager_extractSaveContents_standing = DataManager.extractSaveContents;
+  DataManager.extractSaveContents = function (contents) {
+    _DataManager_extractSaveContents_standing.call(this, contents);
+    // A save written before standing travelled in the binary has nothing to say,
+    // and keeps whatever the world file holds, so nobody loses a reputation they
+    // earned on the day this is installed.
+    if (contents && contents.npcStanding) NPCStanding.apply(contents.npcStanding);
+  };
+
+  const _DataManager_setupNewGame_standing = DataManager.setupNewGame;
+  DataManager.setupNewGame = function () {
+    _DataManager_setupNewGame_standing.call(this);
+    NPCStanding.clear();
+  };
+
 })();

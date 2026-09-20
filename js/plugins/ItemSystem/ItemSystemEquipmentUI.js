@@ -783,6 +783,21 @@
         return tabs;
     };
 
+    const equipCategoryOf = (item) => {
+        if (!item) return '';
+        if (DataManager.isWeapon(item)) {
+            return getWeaponTypeName(item.wtypeId) || (($dataSystem.weaponTypes || [])[item.wtypeId] || '');
+        }
+        const lang = ConfigManager.language || 'en';
+        const t    = i18n[lang] || i18n['en'];
+        if (item.etypeId === 2) return t.tabShields || 'Shields';
+        const aname = getArmorTypeName(item.atypeId);
+        if (aname && aname.length > 1) return aname;
+        if (item.etypeId === 3) return t.tabHead || 'Head';
+        if (item.etypeId === 4) return t.tabBody || 'Body';
+        return t.tabGear || 'Gear';
+    };
+
     Scene_Equip.prototype.getFilteredPartyEquipment = function () {
         let weapons = ($gameParty && typeof $gameParty.weapons === 'function') ? $gameParty.weapons() : [];
         let armors  = ($gameParty && typeof $gameParty.armors === 'function')  ? $gameParty.armors()  : [];
@@ -832,7 +847,16 @@
                 map.set(key, item);
             }
         });
-        return Array.from(map.values());
+        const result = Array.from(map.values());
+        if (tab === 'all') {
+            const order = new Map();
+            result.forEach(it => {
+                const cat = equipCategoryOf(it);
+                if (!order.has(cat)) order.set(cat, order.size);
+            });
+            result.sort((a, b) => order.get(equipCategoryOf(a)) - order.get(equipCategoryOf(b)));
+        }
+        return result;
     };
 
     // =============================================================================
@@ -1150,24 +1174,26 @@
             getCodes(s1).forEach(c => { codeGradeMap[c] = grade; });
         }
 
+        const sh = t.short || {};
+        const S = (key, full) => sh[key] || full;
         const cBefore = actor.calculateCustomStats();
         const cAfter  = tempActor ? tempActor.calculateCustomStats() : cBefore;
         const gridStats = [
-            { label: t.hp,  code: null,  key: 'HP',  percent: false, valBefore: actor.mhp, valAfter: tempActor ? tempActor.mhp : actor.mhp },
-            { label: t.mp,  code: null,  key: 'MP',  percent: false, valBefore: actor.mmp, valAfter: tempActor ? tempActor.mmp : actor.mmp },
-            { label: t.arcane, code: null, key: 'ARCANE', percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
+            { label: S('hp', t.hp),  code: null,  key: 'HP',  percent: false, valBefore: actor.mhp, valAfter: tempActor ? tempActor.mhp : actor.mhp },
+            { label: S('mp', t.mp),  code: null,  key: 'MP',  percent: false, valBefore: actor.mmp, valAfter: tempActor ? tempActor.mmp : actor.mmp },
+            { label: S('arcane', t.arcane), code: null, key: 'ARCANE', percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
 
-            { label: t.str, code: 'STR', key: 'STR', percent: false, valBefore: actor.atk, valAfter: tempActor ? tempActor.atk : actor.atk },
-            { label: t.con, code: 'CON', key: 'CON', percent: false, valBefore: actor.def, valAfter: tempActor ? tempActor.def : actor.def },
-            { label: t.substance, code: null, key: 'SUBSTANCE', percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
+            { label: S('str', t.str), code: 'STR', key: 'STR', percent: false, valBefore: actor.atk, valAfter: tempActor ? tempActor.atk : actor.atk },
+            { label: S('con', t.con), code: 'CON', key: 'CON', percent: false, valBefore: actor.def, valAfter: tempActor ? tempActor.def : actor.def },
+            { label: S('substance', t.substance), code: null, key: 'SUBSTANCE', percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
 
-            { label: t.int, code: 'INT', key: 'INT', percent: false, valBefore: actor.mat, valAfter: tempActor ? tempActor.mat : actor.mat },
-            { label: t.wis, code: 'WIS', key: 'WIS', percent: false, valBefore: actor.mdf, valAfter: tempActor ? tempActor.mdf : actor.mdf },
-            { label: t.stealth, code: null, key: 'STEALTH', percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
+            { label: S('int', t.int), code: 'INT', key: 'INT', percent: false, valBefore: actor.mat, valAfter: tempActor ? tempActor.mat : actor.mat },
+            { label: S('wis', t.wis), code: 'WIS', key: 'WIS', percent: false, valBefore: actor.mdf, valAfter: tempActor ? tempActor.mdf : actor.mdf },
+            { label: S('stealth', t.stealth), code: null, key: 'STEALTH', percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
 
-            { label: t.dex, code: 'DEX', key: 'DEX', percent: false, valBefore: actor.agi, valAfter: tempActor ? tempActor.agi : actor.agi },
-            { label: t.psi, code: 'PSI', key: 'PSI', percent: false, valBefore: actor.luk, valAfter: tempActor ? tempActor.luk : actor.luk },
-            { label: t.intimidation, code: null, key: 'INTIMIDATION', percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
+            { label: S('dex', t.dex), code: 'DEX', key: 'DEX', percent: false, valBefore: actor.agi, valAfter: tempActor ? tempActor.agi : actor.agi },
+            { label: S('psi', t.psi), code: 'PSI', key: 'PSI', percent: false, valBefore: actor.luk, valAfter: tempActor ? tempActor.luk : actor.luk },
+            { label: S('intimidation', t.intimidation), code: null, key: 'INTIMIDATION', percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
         ];
 
         let statsGridHTML = '';
@@ -1244,12 +1270,14 @@
                 <div class="detail-header">
                     <div class="detail-item-title">${escapeHtml(item.name)}</div>
                 </div>
-                <div class="detail-preview-box">
-                    <canvas id="weapon-preview-canvas-inspect" width="220" height="200"></canvas>
+                <div class="detail-preview-row">
+                    <div class="detail-preview-box">
+                        <canvas id="weapon-preview-canvas-inspect" width="220" height="200"></canvas>
+                    </div>
+                    <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col detail-stats-side">${statsGridHTML}</div>
                 </div>
                 <div class="bottom-stats-block">
                     ${dtHtml}
-                    <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col">${statsGridHTML}</div>
                     <div class="equip-lore-col">
                         ${descHtml}
                         ${loreHtml}
@@ -1286,7 +1314,16 @@
         if (items.length === 0) {
             cardsHtml = `<div class="placeholder-message">${t.emptySlot || 'No equipment in this category...'}</div>`;
         } else {
+            const grouped = (this._activeTab || 'all') === 'all';
+            let lastCat = null;
             items.forEach((item, idx) => {
+                if (grouped) {
+                    const cat = equipCategoryOf(item);
+                    if (cat !== lastCat) {
+                        lastCat = cat;
+                        cardsHtml += `<div class="equip-group-header">${escapeHtml(cat)}</div>`;
+                    }
+                }
                 const isWpn = DataManager.isWeapon(item);
                 const iconIdx = item.iconIndex;
                 const iconStyle = `background:url('img/system/IconSet.png') -${(iconIdx%16)*32}px -${Math.floor(iconIdx/16)*32}px no-repeat;`;
@@ -1487,20 +1524,20 @@
         if (!targetItem) {
             const fits = window.HandSlots ? window.HandSlots.slotFits(targetActor, targetSlotId, srcItem) : true;
             if (!fits) {
-                if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                /* silent equip menu */
                 return;
             }
-            if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+            /* silent equip menu */
             srcActor.changeEquip(srcSlotId, null);
             targetActor.changeEquip(targetSlotId, srcItem);
         } else {
             const fitsTarget = window.HandSlots ? window.HandSlots.slotFits(targetActor, targetSlotId, srcItem) : true;
             const fitsSrc = window.HandSlots ? window.HandSlots.slotFits(srcActor, srcSlotId, targetItem) : true;
             if (!fitsTarget || !fitsSrc) {
-                if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                /* silent equip menu */
                 return;
             }
-            if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+            /* silent equip menu */
             srcActor.changeEquip(srcSlotId, targetItem);
             targetActor.changeEquip(targetSlotId, srcItem);
         }
@@ -1605,11 +1642,11 @@
                 } else if (this._dragSource && this._dragSource.type === 'grid') {
                     const item = this._draggedItem;
                     if (item && actor && window.HandSlots && window.HandSlots.slotFits(actor, slotId, item)) {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        /* silent equip menu */
                         actor.changeEquip(slotId, item);
                         this._refreshDOM();
                     } else {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                        /* silent equip menu */
                     }
                 }
                 this._clearSlotHighlights();
@@ -1620,7 +1657,7 @@
             slotEl.addEventListener('click', (e) => {
                 if (e.target.classList.contains('slot-remove-btn')) return;
                 const equipped = actor ? actor.equips()[slotId] : null;
-                if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                /* silent equip menu */
                 this._actor = actor;
                 this._memberIndex = memberIdx;
                 this._inspectedItem = equipped;
@@ -1634,7 +1671,7 @@
                 removeBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (actor) {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        /* silent equip menu */
                         actor.changeEquip(slotId, null);
                         this._refreshDOM();
                     }
@@ -1681,13 +1718,13 @@
                 equipBtn.addEventListener('click', () => {
                     const targetSlot = parseInt(equipBtn.getAttribute('data-slot'));
                     if (targetSlot >= 0 && this._inspectedItem && this._actor) {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        /* silent equip menu */
                         this._actor.changeEquip(targetSlot, this._inspectedItem);
                         this._viewMode = 'paperdoll';
                         this.cleanup3DWeaponPreview();
                         this._refreshDOM();
                     } else {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                        /* silent equip menu */
                     }
                 });
             }
@@ -1697,7 +1734,7 @@
                 unequipBtn.addEventListener('click', () => {
                     const targetSlot = parseInt(unequipBtn.getAttribute('data-slot'));
                     if (targetSlot >= 0 && this._actor) {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        /* silent equip menu */
                         this._actor.changeEquip(targetSlot, null);
                         this._viewMode = 'paperdoll';
                         this.cleanup3DWeaponPreview();
@@ -1746,7 +1783,7 @@
                 });
 
                 card.addEventListener('click', () => {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    /* silent equip menu */
                     this._inspectedItem = item;
                     this._inspectedSlotIdx = -1;
                     this._viewMode = 'detail';
@@ -1768,7 +1805,7 @@
                         const members = this.partyMembers();
                         const srcActor = members[this._dragSource.memberIdx] || this._actor;
                         if (srcActor) {
-                            if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                            /* silent equip menu */
                             srcActor.changeEquip(this._dragSource.slotId, null);
                             this._refreshDOM();
                         }
@@ -1902,7 +1939,7 @@
             const targetSlot = window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, selected) : 0;
             if (targetSlot >= 0) {
                 this._actor.changeEquip(targetSlot, selected);
-                SoundManager.playEquip();
+                /* silent equip menu */
                 this._refreshDOM();
             }
         }
@@ -1912,15 +1949,15 @@
         switch (cmd) {
             case 'optimize':
                 this._actor.optimizeEquipments();
-                SoundManager.playEquip();
+                /* silent equip menu */
                 break;
             case 'random':
                 this._actor.randomEquipments();
-                SoundManager.playEquip();
+                /* silent equip menu */
                 break;
             case 'clear':
                 this._actor.clearEquipments();
-                SoundManager.playEquip();
+                /* silent equip menu */
                 break;
         }
         this._refreshDOM();
@@ -2006,7 +2043,7 @@
                 } else {
                     const target = this._inspectedSlotIdx >= 0 ? this._inspectedSlotIdx : (window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, this._inspectedItem) : 0);
                     if (target >= 0 && this._inspectedItem && this._actor) {
-                        if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                        /* silent equip menu */
                         this._actor.changeEquip(target, this._inspectedItem);
                         this._viewMode = 'paperdoll';
                         this.cleanup3DWeaponPreview();
@@ -2061,7 +2098,7 @@
                 this._updateCommandsHighlight();
             } else if (isOk) {
                 if (tabs[this._tabIndex]) {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    /* silent equip menu */
                     this._activeTab = tabs[this._tabIndex].id;
                     this._gridIndex = 0;
                     this._refreshRightPage();
@@ -2097,7 +2134,7 @@
                 this._activeArea = 'back';
                 this._updateBackHighlight();
             } else if (isOk) {
-                if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                /* silent equip menu */
                 this.executeCommandAction(cmds[this._commandIndex]);
                 this._updateCommandsHighlight();
             }
@@ -2146,7 +2183,7 @@
                 }
             } else if (isOk) {
                 if (items[this._gridIndex]) {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    /* silent equip menu */
                     this._inspectedItem = items[this._gridIndex];
                     this._inspectedSlotIdx = -1;
                     this._viewMode = 'detail';
@@ -2205,7 +2242,7 @@
             } else if (isOk) {
                 const worn = currActor ? currActor.equips()[this._slotIndex] : null;
                 if (worn) {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playOk) SoundManager.playOk();
+                    /* silent equip menu */
                     this._actor = currActor;
                     this._inspectedItem = worn;
                     this._inspectedSlotIdx = this._slotIndex;
@@ -2217,12 +2254,12 @@
             } else if (Input.isTriggered('menu') && !Input.isTriggered('escape')) {
                 const worn = currActor ? currActor.equips()[this._slotIndex] : null;
                 if (worn) {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playEquip) SoundManager.playEquip();
+                    /* silent equip menu */
                     currActor.changeEquip(this._slotIndex, null);
                     this._refreshDOM();
                     this._updateSlotHighlight();
                 } else {
-                    if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
+                    /* silent equip menu */
                 }
             }
         }

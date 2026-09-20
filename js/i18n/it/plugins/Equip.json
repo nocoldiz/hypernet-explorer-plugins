@@ -44,7 +44,11 @@
     "int": "INT",
     "wis": "SAG",
     "dex": "DES",
-    "psi": "PSI"
+    "psi": "PSI",
+    "arcane": "ARC",
+    "substance": "SOS",
+    "stealth": "FUR",
+    "intimidation": "ITM"
   },
   "otherGroup": "Altro",
   "paperdoll": "Sagoma",

@@ -1672,6 +1672,29 @@
           });
         }
       }
+      // A beast that is not livestock , a Feral, a Ghost, a Mimic, anything
+      // AnimalGrowthSystem holds no breed for , gets neither of the two offers
+      // above, and the ordinary Join is only ever built when there is room for
+      // it, so a full party left the board with no way to recruit one at all.
+      // It is put back here and greyed out instead of missing: "not now" and
+      // "never" are different answers, and only the first one is true.
+      if (!animal && !this._justJoined) {
+        if (!this._chatActions.some(a => a.id === 'join')) {
+          this._chatActions.push({
+            id: 'join',
+            label: `${joinAsInactive ? T.joinPartyInactive : T.joinParty} (~${joinChance}%)`,
+            disabled: partyFull || !canVanishOnJoin || !joinLevelOk,
+          });
+        }
+        // And the lesser ask, which needs no slot at all: walk with us.
+        if (!this._chatActions.some(a => a.id === 'joinFollower')) {
+          this._chatActions.push({
+            id: 'joinFollower',
+            label: `${T.joinFollower} (~${joinChance}%)`,
+            disabled: !canVanishOnJoin || !joinLevelOk,
+          });
+        }
+      }
     }
 
     // And the same question asked of the roster page: the party's own creature
@@ -2796,6 +2819,14 @@
     // character (specializations, what they are carrying) is read off the actor
     // rather than off the society roll for somebody of the same name.
     const actorObj = this._actorId != null ? $gameActors.actor(this._actorId) : null;
+    // A non-sentient subject (a creature class, 63+; NPCCreature owns the
+    // boundary) holds no job, no money, no possessions, no creed and no
+    // faction, so the society roll behind it , which deals every profile the
+    // same way , must not be printed as if it did. The rows below are the
+    // whole of what was reading as "random human details" on an animal: a
+    // wage bracket, a street address, an ideology, a party card, a morality
+    // score and a kit of equipment, all of them rolled for a person.
+    const nonSentient = !!this._isNonSentientSubject?.();
     const wealthLabels = [T.destitute, T.poor, T.workingClass, T.middleClass, T.wealthy];
     const wealthLabel  = wealthLabels[profile?.wealthTierBase ?? 2] ?? '';
     const morality     = profile?.moralityScore ?? 0;
@@ -2811,8 +2842,8 @@
 
     const badgeHTML = `
       <div class="npc-badge-row">
-        ${wealthLabel ? `<span class="npc-badge">${_escapeHtml(wealthLabel)}</span>` : ''}
-        <span class="npc-badge npc-score--${moralBand}">Mor. ${morality} (${_escapeHtml(moralEntry.label)})</span>
+        ${wealthLabel && !nonSentient ? `<span class="npc-badge">${_escapeHtml(wealthLabel)}</span>` : ''}
+        ${nonSentient ? '' : `<span class="npc-badge npc-score--${moralBand}">Mor. ${morality} (${_escapeHtml(moralEntry.label)})</span>`}
         ${profile?._isPresetCharacter ? `<span class="npc-badge">${_iconSpan(82, 15)}${_escapeHtml(T.presetCharacterBadge)}</span>` : ''}
       </div>`;
 
@@ -2847,16 +2878,16 @@
       const genderVal   = actorObj?.gender ? actorObj.gender() : profile?.gender;
       const genderLabel = _presetGenderLabel(genderVal, T);
       if (genderLabel)  identHTML += `<div class="npc-ident-row">${_iconSpan(84, 17)}<span class="npc-sub">${_escapeHtml(T.genderLbl)}:</span>&nbsp;<span>${_escapeHtml(genderLabel)}</span></div>`;
-      if (wealthLabel)  identHTML += `<div class="npc-ident-row">${_iconSpan(314, 17)}<span>${_escapeHtml(wealthLabel)}</span></div>`;
-      const homeAddr = _homeAddressLabel(profile, T);
+      if (wealthLabel && !nonSentient) identHTML += `<div class="npc-ident-row">${_iconSpan(314, 17)}<span>${_escapeHtml(wealthLabel)}</span></div>`;
+      const homeAddr = nonSentient ? null : _homeAddressLabel(profile, T);
       if (homeAddr) {
         identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(T.residenceLbl || 'Residence')}:</span>&nbsp;<span>${_escapeHtml(homeAddr)}</span></div>`;
-      } else if (profile?.isHomeless) {
+      } else if (profile?.isHomeless && !nonSentient) {
         identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(T.residenceLbl || 'Residence')}:</span>&nbsp;<span class="npc-bad">${_escapeHtml(T.homelessLbl || 'Homeless')}</span></div>`;
       }
-      if (ideologyName) identHTML += `<div class="npc-ident-row">${_iconSpan(186, 17)}${_wikiLink('ideology', ideology ? ideology.id : '', ideologyName)}</div>`;
-      if (faction)      identHTML += `<div class="npc-ident-row">${_iconSpan(faction.iconIndex || 187, 17)}${_wikiLink('faction', _factionDisplayName(faction))}</div>`;
-      identHTML += `<div class="npc-ident-row">${_iconSpan(175, 17)}<span class="npc-score--${moralBand}">${_escapeHtml(moralEntry.label)}</span><span class="npc-faint">&nbsp;- ${morality}</span></div>`;
+      if (ideologyName && !nonSentient) identHTML += `<div class="npc-ident-row">${_iconSpan(186, 17)}${_wikiLink('ideology', ideology ? ideology.id : '', ideologyName)}</div>`;
+      if (faction && !nonSentient)      identHTML += `<div class="npc-ident-row">${_iconSpan(faction.iconIndex || 187, 17)}${_wikiLink('faction', _factionDisplayName(faction))}</div>`;
+      if (!nonSentient) identHTML += `<div class="npc-ident-row">${_iconSpan(175, 17)}<span class="npc-score--${moralBand}">${_escapeHtml(moralEntry.label)}</span><span class="npc-faint">&nbsp;- ${morality}</span></div>`;
       // Em (Switch 48): where this person stands on the witch who fed the
       // spear. Shown only while she is the one doing the talking.
       const emCtx = this._emCtx?.();
@@ -2890,7 +2921,9 @@
 
     // ── Political identity (NPCPolitics), every link opens a wiki profile ──
     let politicsHTML = '';
-    const identity = npcName ? window.NPCPolitics?.getIdentity?.(npcName) : null;
+    // Nothing votes that cannot speak: no citizenship, no nation, no party, no
+    // ballot and no local office for a beast.
+    const identity = (npcName && !nonSentient) ? window.NPCPolitics?.getIdentity?.(npcName) : null;
 
     // "Citizen of": the home map-pool (settlement/group the NPC belongs to) is
     // shown first, then the political nation/power when a political identity
@@ -2899,7 +2932,7 @@
     // Somebody who is not from here has no hometown and no nation: what they
     // have is a system they came from and a power out there that claims them,
     // so that is what the row says instead. Nothing on Earth applies to them.
-    const alien = _alienIdentity(profile, npcName, this._eventId);
+    const alien = nonSentient ? null : _alienIdentity(profile, npcName, this._eventId);
     if (alien) {
       citizenParts.push(`<span>${_escapeHtml(alien.originName)}</span>`);
       citizenParts.push(_wikiLink('power', alien.power, alien.powerName));
@@ -2909,7 +2942,7 @@
       // they are resolved straight from the home group, so procedural citizens
       // (and anyone the politics sim has not reached yet) still show the nation
       // their town stands in and the power that nation answers to.
-      const homeGroup = profile?._homeGroupName;
+      const homeGroup = nonSentient ? null : profile?._homeGroupName;
       const homeTown = _homeTownLabel(homeGroup);
       if (homeTown) citizenParts.push(`<span>${_escapeHtml(homeTown)}</span>`);
       const groupPolity = (identity?.country && identity?.power)
@@ -2926,7 +2959,7 @@
       if (homePower && homePower !== 'Neutral') citizenParts.push(_wikiLink('power', homePower));
     }
 
-    if (identity || citizenParts.length) {
+    if (!nonSentient && (identity || citizenParts.length)) {
       politicsHTML = `<hr class="npc-r-sep"><div class="npc-sec-hdr">${T.politicsSection}</div>`;
       if (citizenParts.length) {
         const label = alien ? T.originLbl : T.citizenOf;
@@ -2986,7 +3019,7 @@
     }
 
     let equipHTML = '';
-    if (actorObj || (profile && window.NPCSocietyGetEquip)) {
+    if (!nonSentient && (actorObj || (profile && window.NPCSocietyGetEquip))) {
       const equipItems = [];
       if (actorObj) {
         // What the player actually equipped, gaps and all.
@@ -3054,11 +3087,11 @@
         const needLabels = _needLabels(T);
         simHTML += `<div class="npc-ident-row">${_iconSpan(NEED_ICONS[profile.currentNeed] || 0, 17)}<span>${_escapeHtml(needLabels[profile.currentNeed] || profile.currentNeed)}</span></div>`;
       }
-      if (profile.currentJobId && window.WorkSystem?.getJob) {
+      if (profile.currentJobId && !nonSentient && window.WorkSystem?.getJob) {
         const job = window.WorkSystem.getJob(profile.currentJobId);
         if (job) simHTML += `<div class="npc-ident-row">${_iconSpan(126, 17)}<span>${_escapeHtml(window.WorkSystem.jobName(job))}</span></div>`;
       }
-      if (profile.money !== undefined) {
+      if (profile.money !== undefined && !nonSentient) {
         simHTML += `<div class="npc-ident-row npc-mt-1">${_iconSpan(314, 17)}<span>${_euros(profile.money)} ${T.onHand}</span></div>`;
       }
       if (opinion >= 20) {
@@ -3436,8 +3469,13 @@
   // ============================================================================
 
   Scene_NPCEmpathize.prototype._buildBackgroundTabHTML = function (T, profile, npcName) {
-    if (profile && !profile.backstory) window.NPCHistSim?.generateBackstoryNow?.(npcName);
-    const backstory  = profile?.backstory;
+    // A beast has no biography. The history simulator writes everybody the same
+    // life , a birthplace, a school, a first job, a marriage , and reading that
+    // off an animal is where most of the invented human detail came from, so it
+    // is neither generated nor printed for one (NPCCreature owns the boundary).
+    const nonSentient = !!this._isNonSentientSubject?.();
+    if (!nonSentient && profile && !profile.backstory) window.NPCHistSim?.generateBackstoryNow?.(npcName);
+    const backstory  = nonSentient ? null : profile?.backstory;
     const headerHTML = `<div class="npc-sec-hdr">${T.historyTitle}</div><hr class="npc-r-sep">`;
 
     let backstoryHTML;
@@ -3458,7 +3496,7 @@
     }
 
     let lifeSummaryHTML = '';
-    if (npcName && window.NPCLifeSim) {
+    if (npcName && !nonSentient && window.NPCLifeSim) {
       window.NPCLifeSim.ensureLifeRecord?.(npcName, profile?._homeGroupName);
       const bio = window.NPCLifeSim.buildBiography?.(npcName);
       if (bio) {

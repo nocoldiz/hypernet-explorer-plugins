@@ -963,5 +963,10 @@
     "val": "Hai donato lo sperma \\V[102] volte e hai\npartorito \\V[103] figli.",
     "excluded": "",
     "name": ""
+  },
+  "Pet": {
+    "val": "Accarezza",
+    "excluded": "",
+    "name": ""
   }
 }

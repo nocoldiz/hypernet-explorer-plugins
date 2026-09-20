@@ -115,6 +115,7 @@
     "pastTitle": "Membri passati",
     "lockedTower": "Il gruppo non puo essere modificato dentro la Torre Omega. Esci prima.",
     "lockedStructure": "Il gruppo non puo essere modificato dentro questo edificio. Esci prima.",
+    "lockedOffline": "Qui non c'e connessione Hypernet, quindi il gruppo non puo essere modificato. Trova prima una linea.",
     "busyTitle": "Impegnati",
     "busyAt": "{job} · {time} rimanenti",
     "busyRemaining": "{hours}h {minutes}m",

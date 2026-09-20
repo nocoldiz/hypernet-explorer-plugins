@@ -495,6 +495,8 @@
             timerTransport: 'walking',
             // Game minutes this journey has already put on the clock itself.
             timerAppliedMinutes: 0,
+            // Skipped minutes not yet worth a whole journey second.
+            timerSkipCarry: 0,
 
             // TimeDateSystem integration data
             travelStartGameTime: 0,
@@ -538,6 +540,7 @@
         data.totalTravelMinutes = totalGameMinutes;
         data.minutesPerSecond = minutesPerSecond;
         data.timerAppliedMinutes = 0;
+        data.timerSkipCarry = 0;
 
         // Start global interval timer
         if (globalTravelTimer) {
@@ -607,9 +610,17 @@
         const mins = Math.max(0, Number(minutes) || 0);
         if (mins <= 0) return 0;
 
+        // A wait, a sleep and a forage all report the minutes they cover a
+        // FRAME at a time, so a single call is usually worth a fraction of a
+        // journey second. Flooring each one on its own threw every fraction
+        // away and the countdown never moved at all; what is left over is
+        // carried instead, so a whole afternoon reported in slivers is worth
+        // exactly what the same afternoon reported in one go is.
         const rate = data.minutesPerSecond > 0 ? data.minutesPerSecond : 1;
-        const seconds = Math.min(data.timerRemainingTime, Math.floor(mins / rate));
-        if (seconds <= 0) return 0;
+        const carried = (data.timerSkipCarry || 0) + mins;
+        const seconds = Math.min(data.timerRemainingTime, Math.floor(carried / rate));
+        if (seconds <= 0) { data.timerSkipCarry = carried; return 0; }
+        data.timerSkipCarry = Math.max(0, carried - seconds * rate);
 
         data.timerStartTime -= seconds * 1000;
         const elapsed = Math.floor((Date.now() - data.timerStartTime) / 1000);

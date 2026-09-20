@@ -1393,6 +1393,54 @@
                             <h2 class="title status-12" id="status-actor-name"></h2>
                         </div>
                         
+                        <div class="status-portrait-column">
+                            <div class="status-bust-wrapper">
+                                <canvas id="status-bust" width="440" height="500"></canvas>
+                            </div>
+
+                            <div class="status-vitals-box">
+                            <div class="status-gauge-row">
+                                <div class="status-gauge-meta">
+                                    <span class="gauge-label">${T('SceneStatus.ui.hp')}</span>
+                                    <span class="gauge-value" id="status-hp-text"></span>
+                                </div>
+                                <div class="status-gauge-bar-outer">
+                                    <div class="status-gauge-bar-inner hp" id="status-hp-bar"></div>
+                                </div>
+                            </div>
+
+                            <div class="status-gauge-row">
+                                <div class="status-gauge-meta">
+                                    <span class="gauge-label">${T('SceneStatus.ui.mp')}</span>
+                                    <span class="gauge-value" id="status-mp-text"></span>
+                                </div>
+                                <div class="status-gauge-bar-outer">
+                                    <div class="status-gauge-bar-inner mp" id="status-mp-bar"></div>
+                                </div>
+                            </div>
+
+                            <!-- Action points are spent one at a time and never
+                                 read as a share of anything, so the number is the
+                                 whole reading and the track is gone. -->
+                            <div class="status-gauge-row status-vital-plain">
+                                <div class="status-gauge-meta">
+                                    <span class="gauge-label">${T('SceneStatus.ui.ap')}</span>
+                                    <span class="gauge-value" id="status-tp-text"></span>
+                                </div>
+                            </div>
+
+                            <div class="status-gauge-row">
+                                <div class="status-gauge-meta">
+                                    <span class="gauge-label">${T('SceneStatus.ui.experience')}</span>
+                                    <span class="gauge-value" id="status-exp-text"></span>
+                                </div>
+                                <div class="status-gauge-bar-outer">
+                                    <div class="status-gauge-bar-inner exp" id="status-exp-bar"></div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
                         <div class="backpack-tabs status-tabs" id="status-tabs"></div>
 
                         <div id="status-lower-cards">
@@ -1450,53 +1498,7 @@
                         </div>
 
                         <div class="status-left-body">
-                        <div class="status-bust-wrapper">
-                            <canvas id="status-bust" width="440" height="500"></canvas>
-                        </div>
-
                         <div class="status-gauges-box">
-                            <div class="status-gauge-grid">
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.hp')}</span>
-                                    <span class="gauge-value" id="status-hp-text"></span>
-                                </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner hp" id="status-hp-bar"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.mp')}</span>
-                                    <span class="gauge-value" id="status-mp-text"></span>
-                                </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner mp" id="status-mp-bar"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.ap')}</span>
-                                    <span class="gauge-value" id="status-tp-text"></span>
-                                </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner tp" id="status-tp-bar"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.experience')}</span>
-                                    <span class="gauge-value" id="status-exp-text"></span>
-                                </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner exp" id="status-exp-bar"></div>
-                                </div>
-                            </div>
-                            </div>
-
                             <div class="status-needs-rows" id="status-needs"></div>
                         </div>
 
@@ -1589,10 +1591,10 @@
             }
         }
 
+        // Action points are written as a plain number: they are spent one at a
+        // time, so how full the pool is says less than how many are in it.
         const tpTextEl = spread.querySelector("#status-tp-text");
-        if (tpTextEl) tpTextEl.textContent = `${Math.ceil(actor.tp)}`;
-        const tpBarEl = spread.querySelector("#status-tp-bar");
-        if (tpBarEl) tpBarEl.style.width = `${(actor.tp / actor.maxTp()) * 100}%`;
+        if (tpTextEl) tpTextEl.textContent = `${Math.ceil(actor.tp)} / ${actor.maxTp()}`;
 
         // The gauge counts the points earned inside the current level.
         const expTextEl = spread.querySelector("#status-exp-text");
@@ -1867,7 +1869,9 @@
                             <span class="bodypart-name">${partName}</span>
                             <span class="bodypart-hp-val">${hpText}</span>
                         </div>
-                        <div class="anatomy-cell-bar"><div class="bodypart-bar" style="width:${barWidth}%"></div></div>
+                        <div class="status-gauge-bar-outer anatomy-cell-bar">
+                            <div class="status-gauge-bar-inner bodypart-bar" style="width:${barWidth}%"></div>
+                        </div>
                     </div>
                 `;
             });
@@ -2007,6 +2011,13 @@
     function isMonsterPortraitActor(actor) {
         if (!actor) return false;
         if (typeof actor.portraitMode === 'function' && actor.portraitMode() === 'sprite') return true;
+        // A character whose class is one of the creature classes is a creature
+        // whatever portrait style its slot happens to carry: a beast recruited
+        // into the fourth seat never went through the wizard that writes the
+        // "sprite" style, and was being drawn as whoever held the slot before.
+        // window.NPCCreature owns that boundary; it is never re-derived here.
+        if (window.NPCCreature && window.NPCCreature.isNonSentientActor &&
+            window.NPCCreature.isNonSentientActor(actor)) return true;
         const slot = actor.actorId();
         return !!($gameSwitches && slot >= 1 && slot <= 3 && $gameSwitches.value(76 + slot));
     }
@@ -2045,7 +2056,10 @@
         // picked - so the flat enemy image (and any bust left on the slot by a
         // previous occupant) never stands in for it. The 2D battler art is only
         // the fallback for a species no archetype resolves for.
-        if (battlerField && typeof battlerField === 'string' && isMonsterPortraitActor(actor)) {
+        // The sculpture is asked for before the species image, because a
+        // creature that carries one is portrayed by it even with no battler
+        // recorded on the slot at all.
+        if (isMonsterPortraitActor(actor)) {
             // A creature the wizard built always carries its own sculpted body
             // (ensureCreatureModel stamps one the moment it becomes a creature),
             // parts, colours and proportions the player may have hand-edited in
@@ -2057,10 +2071,12 @@
                 const creatureCfg = window.CC3DModel.getConfig(actor.actorId());
                 if (creatureCfg) return { kind: 'custom', cfg: creatureCfg, actorId: actor.actorId() };
             }
-            for (const enemy of $dataEnemies) {
-                if (!enemy || enemy.battlerName !== battlerField) continue;
-                const key = window.Battler3D.resolveKey(enemy);
-                if (key) return { kind: 'enemy', archKey: key, enemyId: enemy.id, actorId: actor.actorId() };
+            if (battlerField && typeof battlerField === 'string') {
+                for (const enemy of $dataEnemies) {
+                    if (!enemy || enemy.battlerName !== battlerField) continue;
+                    const key = window.Battler3D.resolveKey(enemy);
+                    if (key) return { kind: 'enemy', archKey: key, enemyId: enemy.id, actorId: actor.actorId() };
+                }
             }
             return null;
         }

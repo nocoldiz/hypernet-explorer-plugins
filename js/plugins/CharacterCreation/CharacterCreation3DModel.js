@@ -2231,7 +2231,7 @@
       const reach = slot
         ? ` pick${slot === this._selected ? " on" : ""}" data-focus="1" data-hnav="body"
             onmouseenter="SceneManager._scene.selectSlot('${slot}')"
-            onclick="SceneManager._scene.selectSlot('${slot}')`
+            onclick="SceneManager._scene.selectSlot('${slot}')"`
         : `"`;
       return `<div class="cc3d-part${reach}>
           <span>${name}${tag}</span>

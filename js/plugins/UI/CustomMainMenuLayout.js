@@ -1649,9 +1649,20 @@
 
     // '' when the party may be rearranged, otherwise the i18n key under
     // MainMenu.dynamics that says why it may not.
+    //
+    // Calling somebody up from the reserves is a call placed over the Hypernet,
+    // so it needs the same line out every other remote service needs, and
+    // HypernetOS.Net is the one answer to whether there is one: the tower, any
+    // layer below the surface, a generated structure and every alien world but
+    // its spaceport pads are all out of reach, while the ship always has a
+    // relay of its own. The tower and the building keep their own wording
+    // because they are the two the player runs into most; everywhere else the
+    // board says the line is down.
     Scene_Menu.prototype.dynamicsSwapLocked = function () {
         if (window.DungeonFloors?.insideTower?.()) return 'lockedTower';
         if (window.ProceduralInteriors?.currentStructureBiome?.()) return 'lockedStructure';
+        const net = window.HypernetOS?.Net;
+        if (net?.hasUplink && !net.hasUplink()) return 'lockedOffline';
         return '';
     };
 

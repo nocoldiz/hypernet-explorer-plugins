@@ -963,5 +963,10 @@
     "val": "You donated sperm \\V[102] times and you have\ngiven birth to \\V[103] children.",
     "excluded": "",
     "name": ""
+  },
+  "Pet": {
+    "val": "Pet",
+    "excluded": "",
+    "name": ""
   }
 }

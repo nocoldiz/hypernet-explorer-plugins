@@ -1339,6 +1339,22 @@
   }
   window.GalaxySim.getGroundPlanet = groundPlanet;
 
+  // Whether the world whose ground is being built is haunted. Asked off
+  // groundPlanet for the reason written above it: currentWorldIsHaunted goes
+  // through isAlienSurface, which wants map 636 loaded and currentBiome
+  // written, and the generator runs on the far side of both, so a square built
+  // on arrival would read as an ordinary world and the one next door would not.
+  //
+  // This is what buries Earth's moons: AlienSubMercurian declares its graves,
+  // bones and skulls `haunted`, and the biome resolver
+  // (ProceduralMapUtils.getBiomeByName) keeps them only where this says yes.
+  // Every other sub-mercurian pebble in the galaxy is bare rock.
+  function landedWorldIsHaunted() {
+    const world = groundPlanet();
+    return !!(world && world.haunted);
+  }
+  window.GalaxySim.landedWorldIsHaunted = landedWorldIsHaunted;
+
   // ============================================================================
   // Alien ground terrain bridge
   // ----------------------------------------------------------------------------

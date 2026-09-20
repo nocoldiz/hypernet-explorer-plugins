@@ -5112,6 +5112,10 @@
         UNDERGROUND_BIOME_RE: /^(cave|mine|underdark|crystals|lair|seabed|metro)/,
         // i18n-ignore-end
 
+        // The starship carries its own relay, so the line is up in the hold
+        // however far out it is parked.
+        STARSHIP_INTERIOR_MAP_ID: 721,
+
         needsUplink(id) {
             return this.ONLINE_APPS.indexOf(id) >= 0;
         },
@@ -5119,6 +5123,18 @@
         hasUplink() {
             try {
                 if (typeof $gameMap === 'undefined' || !$gameMap || !$gameMap.mapId()) return true;
+                // Aboard the ship, always. It answers before anything else so
+                // the hold keeps its line wherever the ship is parked.
+                if ($gameMap.mapId() === this.STARSHIP_INTERIOR_MAP_ID) return true;
+                // No relay was ever hung over another world. The hand-authored
+                // pads are the exception: a spaceport is the one place out
+                // there with a dish pointed home, and GalaxySim reads a pad as
+                // one square of that planet's own landing grid, so the pad is
+                // asked for first (see GalaxySim_Core isAlienSurface).
+                const GS = window.GalaxySim;
+                if (GS && typeof GS.isAlienSurface === 'function' && GS.isAlienSurface()) {
+                    return !!(typeof GS.spaceportSurfaceSite === 'function' && GS.spaceportSurfaceSite());
+                }
                 const DF = window.DungeonFloors;
                 if (DF && typeof DF.insideTower === 'function' && DF.insideTower()) return false;
                 const data = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._procGenData : null;

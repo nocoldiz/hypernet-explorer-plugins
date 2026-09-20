@@ -186,8 +186,8 @@
  * 2. AUTO IDLE EXPLORER, default OFF
  * ============================================================================
  *
- * Adds an "Auto Idle Explorer" toggle to the Gameplay tab of the Options menu
- * (default OFF, persisted in the global config).
+ * Adds an "Auto Idle Explorer" toggle to the Experimental tab of the Options
+ * menu (default OFF, persisted in the global config).
  *
  * When the option is ON and the player stands still on a normal map for more
  * than the configured number of seconds (default 5), the CPU takes over:
@@ -196,23 +196,50 @@
  *     (the same routine the NPC system relies on for goal seeking).
  *   • It walks up to nearby events (NPCs, objects, doors) and interacts with
  *     them, preferring roaming enemy events so battles get started.
+ *   • It LEAVES. A door, a staircase, a cave mouth or any event that transfers
+ *     the player is a way out, and once the CPU has run its errands on a map it
+ *     takes the nearest one and carries on exploring the next map, rather than
+ *     circling the room it woke up in.
  *   • It advances dialogue boxes automatically (fast-forwarding the typewriter
  *     and tapping through each page), answers "Show Choices" with a random
  *     option, confirms number entry, and picks an item for "Select Item".
- *   • Battles are resolved automatically using each actor's auto-battle AI.
- *   • Between actions it keeps the party alive by casting healing skills or
- *     using healing items, and eats food when the party is hungry
- *     (when TimeDateSystem is present).
+ *   • It NEVER OPENS A MENU. Everything the leader needs is done where they
+ *     stand: a healing item is used out of the pack, a better weapon or piece
+ *     of armour is put on out of the pack, food is eaten out of the pack, a
+ *     skill is learnt on SkillMaster's own terms without the bench, and the
+ *     tile in front is foraged, felled, mined, tilled or harvested through the
+ *     one terrain table. A menu something ELSE opens is still closed for the
+ *     player, which is the only reason the dismissal machinery below remains.
+ *   • All of that is the PARTY LEADER's doing and nobody else's: the pack, the
+ *     gear and the party's knowledge are spent on whoever is walking in front.
+ *   • It SHOPS off the shelf rather than at a till. Every counter, stall and
+ *     machine near the party is read through Economy/StealingSystem.js, and
+ *     the leader pays for the healing, food or gear the party is short of. A
+ *     leader whose morality has gone far enough below zero (the same sheet the
+ *     Empathize panel shows) helps themselves instead, on the shop's own odds,
+ *     and takes the heat for it when the hand is caught.
+ *   • It KEEPS AWAY from trouble. An enemy whose level plate reads more than a
+ *     few levels above the party is left alone, and while the party is wanted
+ *     (Economy/CrimeSystem.js heat) the leader gives every officer a wide
+ *     berth instead of walking into their arms.
+ *   • Battles are resolved with each actor's auto-battle AI, and a fight the
+ *     party is LOSING is left: half the party down, or somebody badly hurt in
+ *     front of a troop that outranks them, and the leader runs.
+ *   • A map with nothing left on it is LEFT: through a door, a staircase or
+ *     any transfer if there is one, and otherwise by the T key out onto the
+ *     world map, where the party walks to another square and drops into it.
+ *   • EVERY ONE OF THOSE DECISIONS IS ANNOUNCED as a parchment toast, because
+ *     the player is looking somewhere else while the leader takes it.
  *   • Best-effort: it leaves standard shop scenes after a moment.
  *
- * Needs & menu profiles: the CPU keeps a table of "menu profiles" describing
- * what each menu is FOR. Every think-cycle it reads the party's stats (HP,
- * hunger, sleep, gold, bounty) and walks the profiles by priority; the first
- * profile whose need is met is fulfilled. Built-in profiles cover healing
- * (spell, then a healing item applied directly), eating, and stat-gated
- * templates for the Cooking and Work menus. A menu is only opened when it is
- * genuinely needed AND the CPU can operate it, it never opens a menu just to
- * leave it unused.
+ * Needs & profiles: the CPU keeps a table of profiles describing what the
+ * leader can DO. Every think-cycle it reads the party's stats (HP, hunger,
+ * sleep, gold, bounty) and walks the profiles by priority; the first profile
+ * whose need is met is fulfilled. Built-in profiles cover healing (spell, then
+ * a healing item applied directly), eating, putting on better gear, buying it,
+ * lifting it, working the tile in front and learning a skill. A profile that
+ * can only be fulfilled through a screen is understood and left alone: the
+ * autopilot has no way to open one and does not want one.
  *
  * Menu compatibility: if the CPU triggers ANY menu it does not need, or cannot
  * drive, a custom plugin scene, or a DOM-overlay menu (quest log, Hypernet OS,
@@ -234,12 +261,14 @@
  *   AutoIdleExplorer.registerMenu({
  *       id: "myShop",
  *       purpose: "Buy potions when low on healing items.",
- *       need:   (s) => s.injured,              // stat-based: when to use it
- *       open:   () => MyPlugin.openShop(),     // how to open it
- *       drive:  (scene) => MyPlugin.autoBuy(), // operate it; false when done
+ *       need:   (s) => s.injured,              // stat-based: when to act
+ *       act:    () => MyPlugin.buyPotion(),    // DO it, with no screen at all
  *       isOpen: () => MyPlugin.isOpen(),       // true while it owns the screen
  *       close:  () => MyPlugin.close(),        // optional clean dismissal
  *   });
+ *
+ * `open` is no longer honoured: a profile without an `act` is never used
+ * proactively, however it is registered.
  *
  * The stats object passed to need()/drive() exposes: injured, minHpRate, hunger,
  * hungerRate, hungry, sleep, gold, broke, bounty.
@@ -507,6 +536,27 @@
     const OVERLAY_IGNORE = 1800; // frames an undismissable DOM element is ignored.
     const OVERLAY_MIN_AREA = 0.22; // of the viewport, before a node counts as a menu.
     const DEST_STALL = 60;    // frames a stale touch destination may block engaging.
+    // Exploring is leaving. After this many errands on one map the CPU stops
+    // looking for another thing to poke and takes the first door, staircase or
+    // transfer it can see; before that it takes one now and then anyway, so a
+    // room it has nothing to do in does not hold it.
+    const EXPLORED_GOALS = 6;
+    const PORTAL_ODDS = 0.2;
+    // How many levels above the party an enemy may be before the CPU walks the
+    // other way, and how beaten the party has to be before it runs.
+    const LEVEL_MARGIN = 3;
+    const FLEE_HP = 0.35;
+    // The heat (Economy/CrimeSystem.js) at which the leader starts crossing
+    // the street to avoid an officer, and how wide a berth they give one.
+    const HEAT_SHY = 30;
+    const OFFICER_BERTH = 6;
+    // Shopping. The leader buys what the party is short of and no more, and
+    // keeps this much in the purse rather than spending the party dry.
+    const PURSE_FLOOR = 500;
+    // Lifting instead of paying is a question of character: this is how far
+    // below zero a leader's morality (NPC/NPCSociety.js) has to sit before
+    // they help themselves, and the chance they leave the shelf alone anyway.
+    const THIEF_MORALITY = -20;
 
     // ========================================================================
     // Menu profiles, the autopilot's understanding of what each menu is FOR.
@@ -547,27 +597,6 @@
     const MENU_PROFILES = [];
 
     // ========================================================================
-    // Menu navigation state, tracks the CPU's journey through Scene_Menu/Item.
-    // ========================================================================
-    const MenuNav = {
-        intent: null,        // 'item' | null
-        targetItem: null,    // $dataItems entry to use
-        targetMember: null,  // Game_Actor to target
-        phase: 'idle',       // 'idle'|'command'|'category'|'item'|'actor'|'done'
-        delay: 0,
-        timeout: 0,
-
-        clear() {
-            this.intent = null;
-            this.targetItem = null;
-            this.targetMember = null;
-            this.phase = 'idle';
-            this.delay = 0;
-            this.timeout = 0;
-        },
-    };
-
-    // ========================================================================
     // ConfigManager persistence. The autopilot is off by default. The party
     // has no formation setting: it walks loose, and always did by default.
     // ========================================================================
@@ -587,7 +616,7 @@
     };
 
     // ========================================================================
-    // Options menu entry (Gameplay tab).
+    // Options menu entry (Experimental tab).
     // ========================================================================
     // The label is passed as a function so the row re-reads itself when the
     // player changes language without leaving the menu.
@@ -597,10 +626,10 @@
             () => T('AutoIdle.optionName'),
             () => ConfigManager.autoIdle,
             (value) => { ConfigManager.autoIdle = value; if (!value) AutoIdle.disengage(); },
-            "gameplay",
+            "experimental",
             "boolean"
         );
-        const tab = GameOptions.tabs.find((t) => t.id === "gameplay");
+        const tab = GameOptions.tabs.find((t) => t.id === "experimental");
         if (tab && !tab.symbols.includes("autoIdle")) tab.symbols.push("autoIdle");
     } else {
         // Fallback: append to the vanilla options list.
@@ -735,6 +764,25 @@
     }
 
     // ------------------------------------------------------------------ heal
+    // A way OFF this map: a door, a staircase, a cave mouth, or any event
+    // whose page transfers the player. This is what keeps the autopilot
+    // exploring the world rather than the one room it woke up in: a portal is
+    // walked up to and used exactly as the player would use it.
+    function isPortalEvent(ev) {
+        const data = ev.event && ev.event();
+        const name = (data && data.name) || "";
+        const note = (data && data.note) || "";
+        if (/\bdoor\b|\bgate\b|stair|ladder|exit|entrance|cave|portal/i.test(name + " " + note)) return true;
+        const page = ev.page && ev.page();
+        const list = page && page.list;
+        if (list) {
+            for (const cmd of list) {
+                if (cmd.code === 201) return true; // Transfer Player
+            }
+        }
+        return false;
+    }
+
     function menuUsable(item) {
         return item && (item.occasion === 0 || item.occasion === 2);
     }
@@ -794,22 +842,6 @@
         return true;
     }
 
-    function hasCookableIngredients() {
-        // Cooking is enabled by carrying items 127-128, and combines two foods.
-        if (!$gameParty.hasItem($dataItems[127]) && !$gameParty.hasItem($dataItems[128])) {
-            return false;
-        }
-        let foods = 0;
-        for (const item of $gameParty.items()) {
-            const meta = item && item.meta;
-            if (meta && (meta.calories || (meta.Category && /food/i.test(String(meta.Category))))) {
-                foods += $gameParty.numItems(item);
-                if (foods >= 2) return true;
-            }
-        }
-        return false;
-    }
-
     // The living party member most in need of healing (or null).
     function neediestMember() {
         let worst = null;
@@ -839,6 +871,331 @@
             if (recoversHp(item) && menuUsable(item) && $gameParty.numItems(item) > 0) return item;
         }
         return null;
+    }
+
+    // ----------------------------------------------------------- the leader
+    // Everything the autopilot takes out of the pack is the LEADER's business.
+    // The pack is theirs to use, the gear is theirs to put on and the party's
+    // knowledge is theirs to spend: the CPU never reaches into the rest of the
+    // party while it is driving, it plays the one character the player left
+    // standing in front.
+    function autoActor() {
+        return $gameParty ? $gameParty.leader() : null;
+    }
+
+    // Every decision the leader takes is announced, because the player is not
+    // watching the screen when it is taken. One line, the leader's name first.
+    function announce(key, params, severity) {
+        try {
+            const actor = autoActor();
+            const text = T(key, Object.assign({ name: actor ? actor.name() : "" }, params || {}));
+            if (!text) return;
+            window.ParchmentToast && window.ParchmentToast.show(text, {
+                severity: severity || "info", duration: 150,
+            });
+        } catch (e) { /* a popup never stops the autopilot */ }
+    }
+
+    // ------------------------------------------------------------------ gear
+    // Worn straight out of the pack, no equip screen. The score is the plain
+    // sum of what a piece adds, which is all the CPU needs to tell an upgrade
+    // from the thing already on: anything finer is the player's judgement.
+    function gearScore(item) {
+        if (!item || !item.params) return -Infinity;
+        let total = 0;
+        for (const value of item.params) total += Number(value) || 0;
+        return total;
+    }
+
+    // The best upgrade in the pack for this actor, as { slot, item }, or null.
+    function betterEquip(actor) {
+        if (!actor || typeof actor.equipSlots !== "function") return null;
+        const slots = actor.equipSlots();
+        let best = null;
+        for (let slot = 0; slot < slots.length; slot++) {
+            const worn = actor.equips()[slot];
+            const wornScore = worn ? gearScore(worn) : 0;
+            const wanted = slots[slot];
+            const pack = wanted === 1 ? $gameParty.weapons() : $gameParty.armors();
+            for (const item of pack) {
+                if (!item || item === worn) continue;
+                if (wanted !== 1 && item.etypeId !== wanted) continue;
+                if (typeof actor.canEquip === "function" && !actor.canEquip(item)) continue;
+                const score = gearScore(item);
+                if (score <= wornScore) continue;
+                if (!best || score - wornScore > best.gain) {
+                    best = { slot, item, gain: score - wornScore };
+                }
+            }
+        }
+        return best;
+    }
+
+    function tryEquip() {
+        const actor = autoActor();
+        if (!actor || typeof actor.changeEquip !== "function") return false;
+        const pick = betterEquip(actor);
+        if (!pick) return false;
+        try {
+            actor.changeEquip(pick.slot, pick.item);
+        } catch (e) {
+            return false;
+        }
+        if (actor.equips()[pick.slot] !== pick.item) return false;
+        announce("AutoIdle.auto.equipped", { item: pick.item.name }, "good");
+        return true;
+    }
+
+    // ------------------------------------------------------------- knowledge
+    // A skill learnt through SkillMaster's own rules (the graph decides what is
+    // open, the knowledge is spent the way the bench spends it), but without
+    // the bench: the leader simply knows it afterwards. The cheapest thing they
+    // can afford is taken, so the party's knowledge is never blown on one trick.
+    function cheapestLearnable(actor) {
+        if (!actor || !$gameSystem || typeof $gameSystem.getSkillKnowledgeCost !== "function") return null;
+        const purse = Number($gameSystem.getKnowledge ? $gameSystem.getKnowledge() : 0) || 0;
+        if (purse <= 0) return null;
+        const graph = window.SkillGraph;
+        let best = null;
+        for (const skill of $dataSkills) {
+            if (!skill || !skill.name) continue;
+            if (actor.isLearnedSkill(skill.id)) continue;
+            if (graph && typeof graph.isOpen === "function" && !graph.isOpen(actor, skill.id)) continue;
+            let cost = 0;
+            try { cost = Number($gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId())) || 0; }
+            catch (e) { continue; }
+            if (cost <= 0 || cost > purse) continue;
+            if (!best || cost < best.cost) best = { skill, cost };
+        }
+        return best;
+    }
+
+    function tryLearnSkill() {
+        const actor = autoActor();
+        if (!actor) return false;
+        const pick = cheapestLearnable(actor);
+        if (!pick) return false;
+        try {
+            if (typeof $gameSystem.spendKnowledge === "function") $gameSystem.spendKnowledge(pick.cost);
+            actor.learnSkill(pick.skill.id);
+        } catch (e) {
+            return false;
+        }
+        announce("AutoIdle.auto.learned", { skill: pick.skill.name, cost: pick.cost }, "good");
+        return true;
+    }
+
+    // --------------------------------------------------------------- the land
+    // Foraging, felling, mining, digging a plot and pulling a crop are all one
+    // table (ProceduralMap/ProceduralTerrainInteractions.js), asked about the
+    // tile the leader faces. The leader works it the way the player would, by
+    // standing in front of it and using it, never through a screen.
+    function tryTerrain() {
+        const TI = window.TerrainInteractions;
+        if (!TI || typeof TI.tryInteract !== "function") return false;
+        let worked = false;
+        try { worked = !!TI.tryInteract($gamePlayer); } catch (e) { return false; }
+        if (worked) announce("AutoIdle.auto.worked", {}, "good");
+        return worked;
+    }
+
+    // ------------------------------------------------------------- the danger
+    // How outmatched the party is. The level on an enemy event is the one the
+    // plate over its head shows (BattleSystemEnhancedLevelDisplay.js), so the
+    // CPU keeps away from exactly what the player can see is too strong.
+    function partyLevel() {
+        const members = $gameParty ? $gameParty.battleMembers() : [];
+        if (!members.length) return 1;
+        let total = 0;
+        for (const m of members) total += m.level || 1;
+        return total / members.length;
+    }
+
+    function eventLevel(ev) {
+        if (typeof window.getEnemyLevelFromEvent !== "function") return 0;
+        try { return Number(window.getEnemyLevelFromEvent(ev)) || 0; } catch (e) { return 0; }
+    }
+
+    function tooStrong(ev) {
+        const level = eventLevel(ev);
+        return level > 0 && level > partyLevel() + LEVEL_MARGIN;
+    }
+
+    // --------------------------------------------------------------- the law
+    // An officer is whoever CrimeSystem says is one; the party keeps its
+    // distance from them while it is wanted, and pays them no mind while it is
+    // cold, exactly as the police themselves behave.
+    function heat() {
+        const CS = window.CrimeSystem;
+        if (!CS || typeof CS.getHeat !== "function") return 0;
+        try { return Number(CS.getHeat()) || 0; } catch (e) { return 0; }
+    }
+
+    function isOfficer(ev) {
+        const CS = window.CrimeSystem;
+        if (CS && typeof CS.isOfficerEvent === "function") {
+            try { return !!CS.isOfficerEvent(ev); } catch (e) { return false; }
+        }
+        return false;
+    }
+
+    // Is the leader giving this tile a wide berth? Only while they are wanted,
+    // and only around an officer: nothing else on the map pushes them about.
+    function underOfficerEye(x, y) {
+        if (heat() < HEAT_SHY || !$gameMap) return false;
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased || !isOfficer(ev)) continue;
+            if (Math.abs(ev.x - x) + Math.abs(ev.y - y) <= OFFICER_BERTH) return true;
+        }
+        return false;
+    }
+
+    // ---------------------------------------------------------- the counter
+    // Shopping without a shop screen. StealingSystem already reads every
+    // counter, stall and machine standing near the party off the map
+    // (Economy/StealingSystem.js), stock and all, so the leader buys and lifts
+    // off that same shelf rather than opening a till the player would have to
+    // watch. What they are short of decides what they reach for.
+    function shopShelf() {
+        const SS = window.StealingSystem;
+        if (!SS || typeof SS.scanItems !== "function") return [];
+        try { return SS.scanItems() || []; } catch (e) { return []; }
+    }
+
+    // Worth buying: something that mends, something that feeds, or a piece of
+    // gear better than the one the leader is wearing. Anything else is somebody
+    // else's shopping.
+    function wantedOnShelf(entry) {
+        const item = entry && entry.data;
+        if (!item) return false;
+        if (entry.type === "item") {
+            const utils = window.ItemSystemUtils;
+            const isFood = utils && utils.isFoodItem
+                ? utils.isFoodItem(item)
+                : !!(item.meta && item.meta.calories);
+            return recoversHp(item) || isFood;
+        }
+        const actor = autoActor();
+        if (!actor || typeof actor.canEquip !== "function" || !actor.canEquip(item)) return false;
+        const slots = actor.equipSlots();
+        for (let slot = 0; slot < slots.length; slot++) {
+            const wanted = slots[slot];
+            const fits = entry.type === "weapon" ? wanted === 1 : item.etypeId === wanted;
+            if (!fits) continue;
+            const worn = actor.equips()[slot];
+            if (gearScore(item) > (worn ? gearScore(worn) : 0)) return true;
+        }
+        return false;
+    }
+
+    // The leader's own conscience, off the same sheet the Empathize panel
+    // shows (NPC/NPCSociety.js). No profile, no theft: a character the sim
+    // knows nothing about is given the benefit of the doubt.
+    function leaderMorality() {
+        const actor = autoActor();
+        if (!actor) return 0;
+        try {
+            const profile = Loose.partyProfile(actor);
+            return profile ? Number(profile.moralityScore) || 0 : 0;
+        } catch (e) { return 0; }
+    }
+
+    function takeOffShelf(entry) {
+        const SS = window.StealingSystem;
+        try {
+            $gameParty.gainItem(entry.data, 1);
+            if (SS && typeof SS.reduceStock === "function") SS.reduceStock(entry);
+        } catch (e) { return false; }
+        return true;
+    }
+
+    // Paying for it.
+    function tryBuy() {
+        const actor = autoActor();
+        if (!actor) return false;
+        const shelf = shopShelf();
+        if (!shelf.length) return false;
+        const purse = $gameParty.gold();
+        let pick = null;
+        for (const entry of shelf) {
+            const price = Number(entry.data && entry.data.price) || 0;
+            if (price <= 0 || purse - price < PURSE_FLOOR) continue;
+            if (!wantedOnShelf(entry)) continue;
+            if (!pick || price < pick.price) pick = { entry, price };
+        }
+        if (!pick) return false;
+        $gameParty.loseGold(pick.price);
+        if (!takeOffShelf(pick.entry)) return false;
+        announce("AutoIdle.auto.bought", {
+            item: pick.entry.data.name,
+            price: window.MoneyFormatter && window.MoneyFormatter.format
+                ? window.MoneyFormatter.format(pick.price)
+                : pick.price,
+        }, "good");
+        return true;
+    }
+
+    // Not paying for it. The roll is StealingSystem's own, so a leader helping
+    // themselves faces exactly the odds the player would, and a botched lift
+    // costs them the same heat.
+    function trySteal() {
+        const SS = window.StealingSystem;
+        if (!SS || typeof SS.calcChance !== "function") return false;
+        if (leaderMorality() > THIEF_MORALITY) return false;
+        const actor = autoActor();
+        if (!actor) return false;
+        const shelf = shopShelf().filter(wantedOnShelf);
+        if (!shelf.length) return false;
+        const entry = shelf[0];
+        let chance = 0;
+        try { chance = Number(SS.calcChance(entry.data, actor.agi)) || 0; } catch (e) { return false; }
+        const caught = Math.random() * 100 >= chance;
+        if (caught) {
+            const CS = window.CrimeSystem;
+            try {
+                if (CS && typeof CS.addPresetCrime === "function") CS.addPresetCrime("shoplifting");
+            } catch (e) { /* the shame is enough */ }
+            announce("AutoIdle.auto.caught", { item: entry.data.name }, "bad");
+            return true;
+        }
+        if (!takeOffShelf(entry)) return false;
+        announce("AutoIdle.auto.stole", { item: entry.data.name }, "warning");
+        return true;
+    }
+
+    // ---------------------------------------------------------- the world map
+    // The T key, taken by the CPU: a party with nothing left to do where it is
+    // steps out onto the world map and walks to another square, which is how a
+    // player leaves a place they are finished with.
+    function canTakeWorldMap() {
+        const WMR = window.WorldMapReturn;
+        if (!WMR || typeof WMR.returnToWorldMap !== "function") return false;
+        if (typeof WMR.isReturnDisabled === "function" && WMR.isReturnDisabled()) return false;
+        return !Loose.onWorldMap();
+    }
+
+    function tryWorldMap() {
+        if (!canTakeWorldMap()) return false;
+        let left = false;
+        try { left = !!window.WorldMapReturn.returnToWorldMap(); } catch (e) { return false; }
+        if (!left) return false;
+        announce("AutoIdle.auto.worldMap", {}, "info");
+        return true;
+    }
+
+    // Standing on the world map, a square away from here is a place to go: the
+    // party walks a few squares off and drops into one, the way the player
+    // picks somewhere new on the continent.
+    function tryEnterSquare() {
+        const WMR = window.WorldMapReturn;
+        if (!WMR || typeof WMR.enterProceduralSquareAt !== "function") return false;
+        if (!Loose.onWorldMap()) return false;
+        const x = $gamePlayer.x, y = $gamePlayer.y;
+        let entered = false;
+        try { entered = !!WMR.enterProceduralSquareAt(x, y); } catch (e) { return false; }
+        if (!entered) return false;
+        announce("AutoIdle.auto.travelled", { x, y }, "info");
+        return true;
     }
 
     // ------------------------------------------------------------- stats snapshot
@@ -903,8 +1260,11 @@
             act: () => {
                 const item = findHealItem();
                 const member = neediestMember();
-                if (!item || !member) return false;
-                return applyMenuAction(member, item, member, true);
+                const actor = autoActor();
+                if (!item || !member || !actor) return false;
+                if (!applyMenuAction(actor, item, member, true)) return false;
+                announce("AutoIdle.auto.usedItem", { item: item.name, target: member.name() }, "good");
+                return true;
             },
         },
         {
@@ -916,31 +1276,49 @@
             act: () => tryEat(),
         },
         {
-            id: "cook",
-            label: "Cooking menu",
-            purpose: "Combine ingredients into a meal when hungry but carrying no ready food.",
+            id: "equip",
+            label: "Put on better gear",
+            purpose: "Wear the best weapon and armour in the pack, straight out of it.",
             priority: 70,
-            // Feature-detected; opened only when hungry AND there is nothing to
-            // eat AND two ingredients are on hand. Provide a `drive` (here or via
-            // registerMenu) to let the CPU actually operate Scene_Cooking.
-            get enabled() {
-                return typeof Scene_Cooking !== "undefined";
-            },
-            need: (s) => s.hungry && !foodItem() && hasCookableIngredients(),
-            open: () => SceneManager.push(Scene_Cooking),
-            isOpen: () => SceneManager._scene instanceof Scene_Cooking,
+            cooldown: 600,
+            need: () => !!betterEquip(autoActor()),
+            act: () => tryEquip(),
         },
         {
-            id: "work",
-            label: "Work / Jobs",
-            purpose: "Take a job to earn money when funds run low.",  // i18n-ignore-end
-            priority: 60,
-            get enabled() {
-                return typeof Scene_Work !== "undefined";
-            },
-            need: (s) => s.broke,
-            open: () => SceneManager.push(Scene_Work),
-            isOpen: () => SceneManager._scene instanceof Scene_Work,
+            id: "terrain",
+            label: "Work the tile in front",
+            purpose: "Forage, fell, mine, till or pull a crop off the tile being faced.",
+            priority: 50,
+            cooldown: 300,
+            need: () => !!window.TerrainInteractions,
+            act: () => tryTerrain(),
+        },
+        {
+            id: "buy",
+            label: "Buy off the shelf",
+            purpose: "Pay for the healing, food or gear the party is short of, with no shop screen.",
+            priority: 65,
+            cooldown: 900,
+            need: (s) => s.injured || s.hungry || !!betterEquip(autoActor()),
+            act: () => tryBuy(),
+        },
+        {
+            id: "steal",
+            label: "Lift it instead",
+            purpose: "A leader with no conscience left takes what the party needs rather than paying.",
+            priority: 64,
+            cooldown: 1800,
+            need: (s) => (s.broke || s.injured) && leaderMorality() <= THIEF_MORALITY,
+            act: () => trySteal(),
+        },
+        {
+            id: "learn",
+            label: "Learn a skill",
+            purpose: "Spend the party knowledge on the cheapest skill the leader can still learn.",  // i18n-ignore-end
+            priority: 40,
+            cooldown: 1800,
+            need: () => !!cheapestLearnable(autoActor()),
+            act: () => tryLearnSkill(),
         }
     );
 
@@ -960,6 +1338,7 @@
         destX: null,
         destY: null,
         recent: {},
+        shunned: {},    // enemies judged too strong, so each is refused once aloud
         mapId: 0,
         blocked: 0,       // frames stuck on a non-drivable map with no message/overlay
         dismissTries: 0,  // attempts made to close the current external menu
@@ -968,6 +1347,7 @@
         needCooldown: {}, // per-profile id → frame before it may be used again
         driving: null,    // id of the menu profile currently being operated
         destStall: 0,     // frames a pending touch destination has sat unmoved
+        goals: 0,         // errands run on this map, the cue to take a way out
         _overlayIgnoreUntil: 0, // frame the DOM overlay heuristic wakes up again
 
         reset() {
@@ -1017,8 +1397,10 @@
             if (this.mapId !== ($gameMap ? $gameMap.mapId() : 0)) {
                 this.mapId = $gameMap ? $gameMap.mapId() : 0;
                 this.recent = {};
+                this.shunned = {};
                 this.intent = null;
                 this.target = null;
+                this.goals = 0;
             }
 
             if (!ConfigManager.autoIdle) {
@@ -1388,34 +1770,20 @@
                 }
                 if (!needed) continue;
 
-                // 1) Direct fulfilment (no menu) is always preferred.
-                if (typeof p.act === "function") {
-                    try {
-                        if (p.act(stats)) {
-                            this.setNeedCooldown(p);
-                            return true;
-                        }
-                    } catch (e) {
-                        /* ignore and try the next profile */
-                    }
-                    continue;
-                }
-
-                // 2) Otherwise open the menu, but only if the CPU can actually
-                //    operate it (an existing handler, or a drive()), so it never
-                //    opens a menu just to have it auto-closed unused.
-                if (typeof p.open === "function" && (p.driven || typeof p.drive === "function")) {
-                    try {
-                        p.open(stats);
-                        this.driving = p.id;
+                // The need is met HERE, on the map, or it is not met at all. The
+                // autopilot never opens a menu of its own accord: a profile that
+                // can only be fulfilled through a screen is understood and left
+                // alone, and a menu something else opens is still driven or
+                // dismissed below.
+                if (typeof p.act !== "function") continue;
+                try {
+                    if (p.act(stats)) {
                         this.setNeedCooldown(p);
                         return true;
-                    } catch (e) {
-                        /* opening failed, move on */
                     }
+                } catch (e) {
+                    /* ignore and try the next profile */
                 }
-                // Needed but not operable: the CPU understands the menu's
-                // purpose but has no safe way to use it, so it does nothing.
             }
             return false;
         },
@@ -1511,10 +1879,12 @@
             const fy = $gamePlayer.y + (dir === 2 ? 1 : dir === 8 ? -1 : 0);
             for (const ev of $gameMap.eventsXy(fx, fy)) {
                 if (!isInteractable(ev)) continue;
-                const name = (ev.event() && ev.event().name) || "";
-                if (!/\bdoor\b/i.test(name)) continue;
+                if (!isPortalEvent(ev)) continue;
                 $gamePlayer.setDirection(dir);
                 this.recent[this.recentKey(ev)] = this.frame;
+                announce("AutoIdle.auto.door", {
+                    target: (ev.event() && ev.event().name) || "",
+                });
                 try {
                     ev.start();
                 } catch (e) {
@@ -1578,18 +1948,46 @@
 
         pickGoal() {
             const candidates = this.scanEvents();
+            // Once this map has had its errands the CPU takes the first way out
+            // and carries the exploration onto the next one instead of circling
+            // the same room: a door, a staircase or any event that transfers the
+            // player is walked to and used.
+            const portal = candidates.find((c) => c.portal && !c.enemy);
+            if (portal && (this.goals >= EXPLORED_GOALS || Math.random() < PORTAL_ODDS)) {
+                this.setTarget(portal.ev);
+                return;
+            }
+            // Standing on the world map, the next square IS the next place.
+            if (Loose.onWorldMap() && this.goals >= EXPLORED_GOALS && tryEnterSquare()) {
+                this.goals = 0;
+                return;
+            }
+            // A map with no errands left and no door out is left by the T key.
+            if (!candidates.length && this.goals >= EXPLORED_GOALS && tryWorldMap()) {
+                this.goals = 0;
+                return;
+            }
             if (candidates.length && Math.random() < 0.85) {
                 // Weighted random among the nearest few, enemies first.
                 const pick = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
-                this.intent = "target";
-                this.target = pick.ev;
-                this.destX = pick.ev.x;
-                this.destY = pick.ev.y;
-                this.sameCount = 0;
-                $gameTemp.setDestination(pick.ev.x, pick.ev.y);
+                this.setTarget(pick.ev);
                 return;
             }
             this.wander();
+        },
+
+        // Walk up to this event and use it.
+        setTarget(ev) {
+            announce(isPortalEvent(ev) ? "AutoIdle.auto.heads" : "AutoIdle.auto.goesTo", {
+                target: (ev.event() && ev.event().name) || "",
+            });
+            this.intent = "target";
+            this.target = ev;
+            this.destX = ev.x;
+            this.destY = ev.y;
+            this.sameCount = 0;
+            this.goals++;
+            $gameTemp.setDestination(ev.x, ev.y);
         },
 
         scanEvents() {
@@ -1600,12 +1998,31 @@
                 if (!isInteractable(ev)) continue;
                 const last = this.recent[this.recentKey(ev)];
                 if (last && this.frame - last < 1800) continue; // 30s cooldown
+                // Wanted, and this is the law: the leader looks the other way.
+                if (isOfficer(ev) && heat() >= HEAT_SHY) continue;
+                const enemy = isEnemyEvent(ev);
+                // A fight the party cannot win is not an errand. The level is
+                // the one on the plate over its head, so the CPU walks away
+                // from exactly what the player can see is too much for them.
+                if (enemy && tooStrong(ev)) {
+                    if (!this.shunned[this.recentKey(ev)]) {
+                        this.shunned[this.recentKey(ev)] = this.frame;
+                        announce("AutoIdle.auto.avoided", {
+                            target: (ev.event() && ev.event().name) || "",
+                            level: eventLevel(ev),
+                        }, "warning");
+                    }
+                    continue;
+                }
                 const dist = Math.abs(ev.x - px) + Math.abs(ev.y - py);
-                if (dist > SCAN_RADIUS) continue;
-                out.push({ ev, dist, enemy: isEnemyEvent(ev) });
+                const portal = isPortalEvent(ev);
+                // A way off the map is worth crossing a room for, so it is seen
+                // at twice the range everything else is.
+                if (dist > (portal ? SCAN_RADIUS * 2 : SCAN_RADIUS)) continue;
+                out.push({ ev, dist, enemy, portal });
             }
-            // Enemies first, then by distance.
-            out.sort((a, b) => (b.enemy - a.enemy) * 100 + (a.dist - b.dist));
+            // Enemies first, then the ways out, then by distance.
+            out.sort((a, b) => (b.enemy - a.enemy) * 1000 + (b.portal - a.portal) * 100 + (a.dist - b.dist));
             return out;
         },
 
@@ -1615,7 +2032,9 @@
                 const ang = Math.random() * Math.PI * 2;
                 const tx = Math.round($gamePlayer.x + Math.cos(ang) * dist);
                 const ty = Math.round($gamePlayer.y + Math.sin(ang) * dist);
-                if ((tx !== $gamePlayer.x || ty !== $gamePlayer.y) && tilePassable(tx, ty)) {
+                if ((tx !== $gamePlayer.x || ty !== $gamePlayer.y) && tilePassable(tx, ty) &&
+                    !underOfficerEye(tx, ty)) {
+                    announce("AutoIdle.auto.wanders", {});
                     this.intent = "wander";
                     this.destX = tx;
                     this.destY = ty;
@@ -1649,25 +2068,61 @@
         },
 
         // Open Scene_Menu and navigate to the given item for the given actor.
-        // Food is still handled silently (TimeDateSystem uses custom hunger calc).
-        openMenuForItem(item, member) {
-            if (MenuNav.intent) return; // already navigating
-            MenuNav.intent = 'item';
-            MenuNav.targetItem = item;
-            MenuNav.targetMember = member;
-            MenuNav.phase = 'command';
-            MenuNav.delay = 0;
-            MenuNav.timeout = 0;
-            SceneManager.push(Scene_Menu);
-        },
-
         shouldAutoBattle() {
             return ConfigManager.autoIdle && this.engaged;
+        },
+
+        // Is this a fight the party is losing? Two ways of being outmatched:
+        // the party is being cut down (anybody under FLEE_HP, or half of them
+        // already off their feet), or the troop simply outranks them.
+        losingFight() {
+            const members = $gameParty.battleMembers();
+            if (!members.length) return false;
+            let alive = 0, hurt = false;
+            for (const m of members) {
+                if (m.isAlive()) alive++;
+                if (m.isAlive() && m.hpRate() < FLEE_HP) hurt = true;
+            }
+            if (alive * 2 <= members.length) return true;
+            if (!hurt) return false;
+            // Hurt AND outranked is a fight to leave; hurt alone is a fight to
+            // finish, because the auto-battle AI heals as it goes.
+            let troopLevel = 0;
+            for (const enemy of $gameTroop.members()) {
+                const data = enemy && enemy.enemy && enemy.enemy();
+                const level = data && window.BSE && BSE.Helpers && BSE.Helpers.getEnemyLevel
+                    ? Number(BSE.Helpers.getEnemyLevel(data.note)) || 0
+                    : 0;
+                if (level > troopLevel) troopLevel = level;
+            }
+            return troopLevel > partyLevel() + LEVEL_MARGIN;
+        },
+
+        // Run for it, through whatever command window this battle system puts
+        // the Escape row in (IndividualBattleTurns.js moves it onto the actor).
+        fleeBattle(scene) {
+            if (BattleManager.canEscape && !BattleManager.canEscape()) return false;
+            for (const win of [scene._partyCommandWindow, scene._actorCommandWindow]) {
+                if (!win || !win.active || !win._list) continue;
+                const i = win._list.findIndex((c) => c && c.symbol === "escape");
+                if (i < 0) continue;
+                win.select(i);
+                if (win.callOkHandler) win.callOkHandler();
+                announce("AutoIdle.auto.flees", {}, "warning");
+                return true;
+            }
+            if (typeof BattleManager.processEscape === "function") {
+                announce("AutoIdle.auto.flees", {}, "warning");
+                BattleManager.processEscape();
+                return true;
+            }
+            return false;
         },
 
         driveBattle(scene) {
             try {
                 if (!BattleManager.isInputting || !BattleManager.isInputting()) return;
+                if (this.losingFight() && this.fleeBattle(scene)) return;
                 if (scene._partyCommandWindow && scene._partyCommandWindow.active && scene.commandFight) {
                     scene.commandFight();
                     return;
@@ -6026,132 +6481,22 @@
     };
 
     // ========================================================================
-    // Scene_Menu, navigate the command list to "Items", then close when done.
+    // Scene_Menu / Scene_Item. The autopilot never opens either of them: it
+    // uses, wears and eats what is in the pack where it stands. One that is
+    // open was opened by something else, so it is simply handed back closed.
     // ========================================================================
     const _SceneMenu_update = Scene_Menu.prototype.update;
     Scene_Menu.prototype.update = function () {
         _SceneMenu_update.call(this);
         if (!AutoIdle.shouldAutoBattle()) return;
-        if (MenuNav.delay > 0) { MenuNav.delay--; return; }
-
-        // Item use complete, Scene_Item already popped back here; close the menu.
-        if (MenuNav.phase === 'done') {
-            MenuNav.clear();
-            if (!this.isBusy() && this.popScene) this.popScene();
-            return;
-        }
-
-        // Safety: never stay stuck in the menu indefinitely.
-        if (++MenuNav.timeout > 300) {
-            MenuNav.clear();
-            if (this.popScene) this.popScene();
-            return;
-        }
-
-        const cw = this._commandWindow;
-        if (!cw || !cw.active) return;
-
-        if (MenuNav.intent === 'item') {
-            const list = cw._list || [];
-            for (let i = 0; i < list.length; i++) {
-                if (list[i] && list[i].symbol === 'item') {
-                    cw.select(i);
-                    if (cw.callOkHandler) cw.callOkHandler();
-                    MenuNav.delay = 15;
-                    return;
-                }
-            }
-            // No item command in this menu layout, bail out.
-            MenuNav.clear();
-            if (this.popScene) this.popScene();
-        } else {
-            // No remaining intent, close menu.
-            MenuNav.clear();
-            if (cw.processCancel) cw.processCancel();
-        }
+        if (!this.isBusy() && this.popScene) this.popScene();
     };
 
-    // ========================================================================
-    // Scene_Item, select category → item → actor target, then exit cleanly.
-    // ========================================================================
     const _SceneItem_update = Scene_Item.prototype.update;
     Scene_Item.prototype.update = function () {
         _SceneItem_update.call(this);
         if (!AutoIdle.shouldAutoBattle()) return;
-        if (!MenuNav.intent && MenuNav.phase !== 'done') return;
-        if (MenuNav.delay > 0) { MenuNav.delay--; return; }
-
-        const catW = this._categoryWindow;
-        const iw   = this._itemWindow;
-        const aw   = this._actorWindow;
-
-        // Phase done, unwind out of Scene_Item one cancel at a time.
-        if (MenuNav.phase === 'done') {
-            if (iw && iw.active) {
-                if (iw.processCancel) iw.processCancel();
-                MenuNav.delay = 10;
-            } else if (catW && catW.active) {
-                if (catW.processCancel) catW.processCancel();
-                MenuNav.delay = 10;
-            }
-            return;
-        }
-
-        // Category window, pick the consumable ('item') category.
-        if (catW && catW.active) {
-            const list = catW._list || [];
-            let idx = 0;
-            for (let i = 0; i < list.length; i++) {
-                if (list[i] && list[i].symbol === 'item') { idx = i; break; }
-            }
-            catW.select(idx);
-            if (catW.callOkHandler) catW.callOkHandler();
-            MenuNav.delay = 10;
-            MenuNav.phase = 'item';
-            return;
-        }
-
-        // No category window present, skip straight to item selection.
-        if (MenuNav.phase === 'category') MenuNav.phase = 'item';
-
-        // Item window, find and select our target item.
-        if (iw && iw.active && MenuNav.phase === 'item') {
-            const target = MenuNav.targetItem;
-            const count  = iw.maxItems ? iw.maxItems() : 0;
-            for (let i = 0; i < count; i++) {
-                const entry = iw.itemAt ? iw.itemAt(i) : (iw._data && iw._data[i]);
-                if (entry && entry.id === target.id) {
-                    iw.select(i);
-                    if (iw.callOkHandler) iw.callOkHandler();
-                    MenuNav.delay = 15;
-                    MenuNav.phase = 'actor';
-                    return;
-                }
-            }
-            // Item not visible in this category, bail.
-            MenuNav.intent = null;
-            MenuNav.phase  = 'done';
-            MenuNav.delay  = 5;
-            return;
-        }
-
-        // Actor window, select the target party member.
-        if (aw && aw.active && MenuNav.phase === 'actor') {
-            const idx = MenuNav.targetMember ? MenuNav.targetMember.index() : 0;
-            aw.select(Math.max(0, Math.min(idx, (aw.maxItems ? aw.maxItems() : 1) - 1)));
-            if (aw.callOkHandler) aw.callOkHandler();
-            MenuNav.intent = null;
-            MenuNav.phase  = 'done';
-            MenuNav.delay  = 15;
-            return;
-        }
-
-        // Actor phase but actor window never appeared (AoE/no-target item used directly).
-        if (iw && iw.active && MenuNav.phase === 'actor') {
-            MenuNav.intent = null;
-            MenuNav.phase  = 'done';
-            MenuNav.delay  = 10;
-        }
+        if (!this.isBusy() && this.popScene) this.popScene();
     };
 
     // ========================================================================

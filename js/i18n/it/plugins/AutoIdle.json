@@ -190,5 +190,22 @@
     "actionEmpathize": "Empatizza",
     "actionReserves": "Manda in riserva",
     "actionCancel": "Lascia stare"
+  },
+  "auto": {
+    "equipped": "{name} indossa {item}",
+    "usedItem": "{name} usa {item} su {target}",
+    "learned": "{name} impara {skill} per {cost} conoscenza",
+    "worked": "{name} lavora il terreno davanti a sé",
+    "bought": "{name} compra {item} per {price}",
+    "stole": "{name} arraffa {item} dallo scaffale",
+    "caught": "{name} viene colto a prendere {item}",
+    "goesTo": "{name} va a vedere {target}",
+    "heads": "{name} si dirige verso {target}",
+    "door": "{name} varca la porta di {target}",
+    "wanders": "{name} gironzola",
+    "avoided": "{name} sta alla larga da {target}, livello {level}",
+    "flees": "{name} fugge dallo scontro",
+    "worldMap": "{name} esce sulla mappa del mondo",
+    "travelled": "{name} scende in {x}, {y}"
   }
 }

@@ -166,5 +166,22 @@
     "actionEmpathize": "Empathize",
     "actionReserves": "Send to Reserves",
     "actionCancel": "Never mind"
+  },
+  "auto": {
+    "equipped": "{name} puts on {item}",
+    "usedItem": "{name} uses {item} on {target}",
+    "learned": "{name} learns {skill} for {cost} knowledge",
+    "worked": "{name} works the ground in front of them",
+    "bought": "{name} buys {item} for {price}",
+    "stole": "{name} lifts {item} off the shelf",
+    "caught": "{name} is caught taking {item}",
+    "goesTo": "{name} goes to see {target}",
+    "heads": "{name} heads for {target}",
+    "door": "{name} takes the door at {target}",
+    "wanders": "{name} wanders off",
+    "avoided": "{name} keeps away from {target}, level {level}",
+    "flees": "{name} runs from the fight",
+    "worldMap": "{name} steps out onto the world map",
+    "travelled": "{name} travels down into {x}, {y}"
   }
 }

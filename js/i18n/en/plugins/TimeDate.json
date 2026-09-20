@@ -190,6 +190,8 @@
   "forage": {
     "found": "The party comes back with {items}.",
     "nothing": "Hours of searching, and the country gives up nothing.",
+    "scavenged": "Hours going over the seats and the footwells turn up {items}.",
+    "nothingAboard": "Hours going over the seats, and not so much as a dropped ticket.",
     "learned": "The ground is better known now: {points} KP."
   }
 }

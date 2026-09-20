@@ -1280,6 +1280,28 @@
       ? patronAtWorld(hatch.x, hatch.y) : null);
   }
 
+  /**
+   * WHICH vault these nine floors are, this time down. The maps are shared by
+   * every patron, so this is the one thing that tells two vaults apart: the
+   * patron whose lid was lifted, and failing a named patron the world square
+   * the hatch is cut into. Null only where nothing has ever named a square -
+   * a floor reached by a debug teleport in a world with no claim - and there
+   * the floors keep sharing one instance, which is what they always did.
+   *
+   * It must not be derived from anything that moves between visits (the door's
+   * map coordinate moves with the stitched window), or the same patron's vault
+   * would be a different cellar every time it was opened.
+   */
+  function vaultInstanceKey() {
+    const hatch = ownHatch();
+    if (!hatch) return null;
+    if (hatch.id) return "p" + hatch.id;  // i18n-ignore  key prefix
+    if (Number.isFinite(hatch.x) && Number.isFinite(hatch.y)) {
+      return "w" + hatch.x + "," + hatch.y;  // i18n-ignore  key prefix
+    }
+    return null;
+  }
+
   function lootRarityBonus() {
     return isInPatronVault() ? LOOT_RARITY_BONUS : 0;
   }
@@ -1599,6 +1621,17 @@
       PHS.registerFixedStack(VAULT_FLOORS, {
         key: "patronvault",  // i18n-ignore  stack id
         descending: true,
+        // ONE copy of these nine maps per patron. Everything the house system
+        // files under an ownership key - the chests above all - is filed under
+        // this, so a bottle left in Yee's vault is in Yee's vault and nowhere
+        // else, and emptying one patron's cupboards leaves every other
+        // patron's full.
+        instanceKey: vaultInstanceKey,
+        // The vault is the party's own place. They were let in by the lid, so
+        // taking what is down there is not a theft and nothing is charged for
+        // it (ContainerSystem asks the house system, and only an unowned
+        // procedural house answers yes).
+        owned: true,
         // Climbing out of a vault nobody entered by the hatch: the way out is
         // a hatch all the same. It is THIS party's own hatch - the square the
         // vault origin proved, or the last patron square recognised - and only
@@ -1646,6 +1679,7 @@
     isInPatronVault,
     vaultPatron,
     vaultFloorPatron,
+    vaultInstanceKey,
     populateVaultFloor,
     randomVaultFloor,
     lootRarityBonus,

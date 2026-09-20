@@ -44,7 +44,11 @@
     "int": "INT",
     "wis": "WIS",
     "dex": "DEX",
-    "psi": "PSI"
+    "psi": "PSI",
+    "arcane": "ARC",
+    "substance": "SUB",
+    "stealth": "STL",
+    "intimidation": "ITM"
   },
   "otherGroup": "Other",
   "paperdoll": "Paperdoll",

@@ -1,8 +1,25 @@
+0.6.30a
+
+Added:
+ - patron coordinates for the new paying members
+
+Changed:
+ - spellcheck patron messages
+ - reworked autoexplore, experimental switch, menuless leader decisions
+ - party changes need a hypernet connection
+ - reworked status screen, ap as a number, yellow bodypart gauges
+ - patron messages written out in full, alphabetic order
+
+Fixed:
+ - patron vaults instanced per patron, container looting no longer a crime
+ - npc disposition no longer carries over saves
+ - pet NPC interaction, and graves all over the Moon
+ - waiting, sleeping and foraging in transport now pass the travel timer
+ - fix mail css
+
 0.6.29a
 
 Added:
- - copypastable patron coordinate messages doc
- - rocket system: patron vault, omega tower and starship launch pads
  - Patron vault waiting at your secret coordinates
  - Nudge, Homely, Chamber, Holdall, Lyceum, Grange, Tillbook, Wayfare and BeagleQuest apps on hypernet os
  - enchanting and book writing benches in training menu

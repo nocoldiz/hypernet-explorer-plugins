@@ -116,6 +116,7 @@
     "pastTitle": "Former Members",
     "lockedTower": "The party cannot be changed inside the Omega Tower. Leave it first.",
     "lockedStructure": "The party cannot be changed inside this building. Leave it first.",
+    "lockedOffline": "There is no Hypernet connection here, so the party cannot be changed. Find a line first.",
     "busyTitle": "Busy",
     "busyAt": "{job} · {time} left",
     "busyRemaining": "{hours}h {minutes}m",

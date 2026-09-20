@@ -5947,6 +5947,44 @@
     window.NPCEmpathize.open(evId);
   });
 
+  // A hand laid on the animal from the street, without the panel. The beast
+  // menu's first entry (NPCSystem's _creaturePageList) lands here: the same
+  // action the panel's Pet button performs, spent where the player is standing
+  // rather than behind a second window they then have to close. No band and no
+  // roll, exactly as in the panel: petting cannot go wrong.
+  PluginManager.registerCommand(pluginName, 'Pet', args => {
+    const evName = String(args?.eventName || '').trim().toLowerCase();
+    let ev = null;
+    if (evName) {
+      ev = $gameMap?.events().find(e => e?.event()?.name?.trim().toLowerCase() === evName) || null;
+    } else {
+      const evId = $gameMap?._interpreter?._eventId ?? null;
+      ev = evId ? $gameMap.event(evId) : null;
+    }
+    if (ev) ev.turnTowardPlayer();
+    const npcName = String(ev?.event()?.name || '').trim();
+    if (!npcName) return;
+
+    const T       = _getT();
+    const profile = _getProfile(npcName);
+    const actor   = $gameParty?.leader();
+    if (profile) {
+      _addNpcOpinion(profile, actor?.actorId(), PET_OPINION);
+      (profile.eventLog ??= []).push({
+        tag: 'feral', desc: 'pet', // i18n-ignore: event-log record id
+        timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
+      });
+    }
+
+    const kind = window.NPCCreature?.archetypeLabel?.(profile) || '';
+    const own  = String(_rand(T.beastActPet || []) || '')
+      .replace(/{name}/g, npcName).replace(/{kind}/g, kind);
+    const noise = _feralNoise(2, _creatureClassOfNpc(npcName));
+    const text  = [own, noise].filter(Boolean).join(' ');
+    if (text) window.ParchmentToast?.show?.(text, { severity: 'info', duration: 260 });
+    SoundManager.playOk();
+  });
+
   // ============================================================================
   // SECTION 8b, WIKI DATA LAYER
   // ============================================================================

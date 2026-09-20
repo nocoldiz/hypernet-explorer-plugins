@@ -1481,6 +1481,11 @@
     });
     // Global access for script calls
     window.CrimeSystem = CrimeSystem;
+    // Who the police are, asked from outside. An officer is recognised here and
+    // nowhere else, so anything that has to keep away from one (the autopilot in
+    // Core/AutoIdleExplorer.js) reads the same answer the officers themselves do
+    // rather than matching a name of its own.
+    CrimeSystem.isOfficerEvent = isOfficerEvent;
     window.PresetCrimes = PresetCrimes;
 
     // Initialize on new game or load game

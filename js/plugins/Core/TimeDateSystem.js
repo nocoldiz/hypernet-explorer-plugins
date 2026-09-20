@@ -3410,6 +3410,10 @@
     KNOWLEDGE_PER_HOUR: 2,
     // How often a find is something edible rather than something to build with.
     FOOD_SHARE: 0.55,
+    // An afternoon spent in a coach seat or a camper bunk is not an afternoon
+    // in a wood: there is no country to go over, only the floor under the
+    // seats, so the hours turn up litter and turn up less of it.
+    TRANSIT_FIND_SHARE: 0.5,
     // A whole party covers more ground than one person, but four people do not
     // search four times as well: the extra hands are worth a share each, and
     // the whole thing is capped.
@@ -3520,10 +3524,11 @@
     // a straight line: the player asked for a longer afternoon and gets one.
     // Training in Foraging and the number of hands doing the searching both
     // multiply it.
-    findCount(hours) {
+    findCount(hours, transit) {
       const h = Math.max(0, Number(hours) || 0);
       if (h <= 0) return 0;
       let rate = this.FINDS_PER_HOUR;
+      if (transit) rate *= this.TRANSIT_FIND_SHARE;
       try {
         if (window.SpecializationXP && window.SpecializationXP.multiplier) {
           rate *= window.SpecializationXP.multiplier("Foraging");  // i18n-ignore  Specialization.json id
@@ -3538,11 +3543,59 @@
       return whole + (Math.random() < exact - whole ? 1 : 0);
     },
 
+    // ----------------------------------------------------------------------
+    // Searching a seat rather than a country
+    // ----------------------------------------------------------------------
+    // The party is in transit when they are riding something - their own
+    // vehicle, or a coach, train or ferry with a journey still counting down.
+    // Neither is a place to forage: the hours are still spent searching, but
+    // what there is to search is the aisle, the footwell and the space under
+    // the seats.
+    inTransit() {
+      try {
+        if (window.$gamePlayer && $gamePlayer.isInVehicle &&
+            $gamePlayer.isInVehicle()) return true;
+        const sys = window.$gameSystem;
+        const data = sys && sys.getFastTravelData ? sys.getFastTravelData() : null;
+        if (data && data.timerActive && data.timerRemainingTime > 0) return true;
+      } catch (e) {
+        console.error("TimeDateSystem: the forage could not read the journey", e);
+      }
+      return false;
+    },
+
+    // What riding turns up: the Trash shelf of the item database (Items.json),
+    // named by the ids it occupies.
+    TRASH_FIRST_ID: 828,
+    TRASH_LAST_ID: 836,
+
+    trashPool() {
+      if (this._trashPool) return this._trashPool;
+      const all = (typeof $dataItems !== "undefined" && $dataItems) ? $dataItems : null;
+      if (!all) return [];
+      const pool = [];
+      for (let id = this.TRASH_FIRST_ID; id <= this.TRASH_LAST_ID; id++) {
+        const item = all[id];
+        // The shelf has empty slots after it, and an id that was never filled
+        // in is not a find.
+        if (item && item.name) pool.push(id);
+      }
+      this._trashPool = pool;
+      return pool;
+    },
+
+    rollTrash() {
+      const pool = this.trashPool();
+      if (!pool.length) return 0;
+      return pool[Math.floor(Math.random() * pool.length)];
+    },
+
     // One find, as an item id: wild food where the country grows any, and the
     // raw material lying about in a country of that kind otherwise. A biome no
     // family recognises has no food pool at all, so every find on it comes off
     // the base larder - which is the point of having one.
-    rollFind(biome) {
+    rollFind(biome, transit) {
+      if (transit) return this.rollTrash();
       const TI = window.TerrainInteractions;
       if (!TI) return 0;
       if (Math.random() < this.FOOD_SHARE && TI.forageFoodFor) {
@@ -3568,13 +3621,17 @@
     resolve(hours, opts) {
       const h = Math.max(0, Number(hours) || 0);
       const biome = (opts && opts.biome) || this.currentBiome();
-      const report = { hours: h, biome: biome, found: [], knowledge: 0 };
+      // Whether the party was riding is settled when the hours START, not when
+      // they end: a coach that pulls in halfway through still spent the
+      // afternoon as a coach.
+      const transit = (opts && "transit" in opts) ? !!opts.transit : this.inTransit();
+      const report = { hours: h, biome: biome, transit: transit, found: [], knowledge: 0 };
       if (h <= 0 || !window.$gameParty) return report;
 
       const counts = new Map();
-      const wanted = this.findCount(h);
+      const wanted = this.findCount(h, transit);
       for (let i = 0; i < wanted; i++) {
-        const id = this.rollFind(biome);
+        const id = this.rollFind(biome, transit);
         if (id) counts.set(id, (counts.get(id) || 0) + 1);
       }
       for (const [id, qty] of counts) {
@@ -3611,10 +3668,13 @@
           const name = window.translateText ? window.translateText(f.name) : f.name;
           return f.qty > 1 ? name + " x" + f.qty : name;
         });
-        toast.show(T("TimeDate.forage.found", { items: names.join(", ") }),
-          { severity: "good", key: "forage-found" });  // i18n-ignore  dedupe key
+        toast.show(
+          T(report.transit ? "TimeDate.forage.scavenged" : "TimeDate.forage.found",
+            { items: names.join(", ") }),
+          { severity: report.transit ? "info" : "good", key: "forage-found" });  // i18n-ignore  dedupe key
       } else {
-        toast.show(T("TimeDate.forage.nothing"),
+        toast.show(T(report.transit ? "TimeDate.forage.nothingAboard"
+                                    : "TimeDate.forage.nothing"),
           { severity: "warning", key: "forage-nothing" });  // i18n-ignore  dedupe key
       }
       if (report.knowledge > 0) {
@@ -4857,6 +4917,9 @@
       biome: foraging ? window.Forage.currentBiome() : "",
       // And so is how well they get on, which cannot change while they work.
       cohesion: foraging ? window.Forage.cohesion() : 0,
+      // And so is whether they are riding: a journey that ends mid-afternoon
+      // does not turn the rest of it back into a wood.
+      transit: foraging ? window.Forage.inTransit() : false,
     };
   };
 
@@ -5090,7 +5153,7 @@
 
     // An afternoon spent searching pays out what it found (window.Forage).
     if (a && a.forage) {
-      try { window.Forage.resolve(a.hours, { biome: a.biome }); } catch (e) {
+      try { window.Forage.resolve(a.hours, { biome: a.biome, transit: a.transit }); } catch (e) {
         console.error("TimeDateSystem: the forage payout failed", e);
       }
     }

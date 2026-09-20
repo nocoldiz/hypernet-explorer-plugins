@@ -190,6 +190,8 @@
   "forage": {
     "found": "Il gruppo torna con {items}.",
     "nothing": "Ore di ricerca, e questa terra non concede nulla.",
+    "scavenged": "Ore passate a frugare tra i sedili e i pianali portano alla luce {items}.",
+    "nothingAboard": "Ore passate a frugare tra i sedili, e nemmeno un biglietto caduto.",
     "learned": "Ora il terreno si conosce meglio: {points} KP."
   }
 }

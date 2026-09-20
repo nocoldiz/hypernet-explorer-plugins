@@ -411,7 +411,7 @@ const GameOptions = {
             nameKey: 'gameplay',
             categories: ['gameplay'],
             groups: [
-                { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers', 'autoIdle'] },
+                { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers'] },
                 { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
                 { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming'] },
                 { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
@@ -457,6 +457,7 @@ const GameOptions = {
             nameKey: 'experimental',
             categories: ['experimental'],
             groups: [
+                { key: 'autoExplore', symbols: ['autoIdle'] },
                 { key: 'ascii', symbols: ['asciiModeEnabled', 'asciiHudEnabled'] }
             ]
         }

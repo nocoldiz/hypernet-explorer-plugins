@@ -10730,7 +10730,6 @@
 
 /* Gauges are laid out two per line so the whole block fits the page without
    scrolling; the grid gap replaces the per-row bottom margin. */
-.status-gauge-grid,
 .status-needs-rows {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -10739,16 +10738,8 @@
     align-content: start;
 }
 
-.status-gauge-grid .status-gauge-row,
 .status-needs-rows .status-gauge-row {
     margin-bottom: 0;
-}
-
-/* HP and MP are the two that matter at a glance, so they are stacked full
-   width; AP and experience share the line under them. */
-.status-gauge-grid > .status-gauge-row:nth-child(1),
-.status-gauge-grid > .status-gauge-row:nth-child(2) {
-    grid-column: 1 / -1;
 }
 
 .status-gauge-meta {
@@ -10807,12 +10798,6 @@
 
 .status-gauge-note:empty {
     display: none;
-}
-
-.status-needs-rows {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: none;
 }
 
 .status-gauge-bar-inner.hunger {
@@ -13942,12 +13927,12 @@
 #equip-container .paperdoll-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 8px;
-    row-gap: 2px;
+    column-gap: 10px;
+    row-gap: 0;
     width: 100%;
-    margin-top: 5px;
-    padding: 3px 6px;
-    background: rgba(0, 0, 0, 0.15);
+    margin-top: 4px;
+    padding: 2px 4px;
+    background: transparent;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -13956,10 +13941,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1px 2px;
+    padding: 0 2px;
     border-radius: 2px;
-    font-size: 0.76rem;
-    line-height: 1.3;
+    font-size: 0.95rem;
+    line-height: 1.15;
     transition: background 0.15s ease;
 }
 
@@ -13968,20 +13953,20 @@
 }
 
 #equip-container .paperdoll-stats-grid .inspect-spec-label {
-    font-size: 0.68rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--text-card-medium);
     text-transform: uppercase;
 }
 
 #equip-container .paperdoll-stats-grid .stat-val {
-    font-size: 0.78rem;
+    font-size: 1rem;
     font-weight: bold;
     color: var(--text-card-dark);
 }
 
 #equip-container .paperdoll-stats-grid .equip-stat-mod {
-    font-size: 0.68rem;
+    font-size: 0.8rem;
     color: var(--text-card-medium);
     opacity: 0.85;
 }
@@ -14037,7 +14022,7 @@
 }
 
 #equip-container .paperdoll-slot {
-    background: var(--bg-subtle-translucent-5);
+    background: transparent;
     border: 1px solid var(--border-secondary-hover-translucent-15);
     border-radius: 5px;
     padding: 6px 9px;
@@ -14051,7 +14036,7 @@
 }
 
 #equip-container .paperdoll-slot:hover {
-    background: var(--bg-subtle-translucent-8);
+    background: transparent;
     border-color: var(--text-primary-hover);
 }
 
@@ -14247,7 +14232,44 @@
     position: relative;
     border-radius: 6px;
     overflow: hidden;
-    background-color: var(--bg-white-translucent-25);
+    background-color: transparent;
+}
+
+#equip-container .detail-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#equip-container .detail-preview-row .detail-preview-box {
+    flex: 0 0 220px;
+    width: 220px;
+}
+
+#equip-container .detail-stats-side {
+    flex: 1 1 auto;
+    min-width: 0;
+    column-gap: 14px;
+    row-gap: 0;
+}
+
+#equip-container .detail-stats-side .stat-row {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    padding: 0 2px;
+}
+
+#equip-container .equip-group-header {
+    grid-column: 1 / -1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-card-medium);
+    opacity: 0.85;
+    padding: 6px 2px 2px;
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
 }
 
 #equip-container .detail-preview-box canvas {
@@ -14376,7 +14398,7 @@
     align-items: center;
     gap: 8px;
     padding: 6px 8px;
-    background: var(--bg-subtle-translucent-5);
+    background: transparent;
     border: 1px solid var(--border-secondary-hover-translucent-15);
     border-radius: 4px;
     cursor: grab;
@@ -14386,7 +14408,7 @@
 }
 
 #equip-container .equip-card:hover {
-    background: var(--bg-subtle-translucent-10);
+    background: transparent;
     border-color: var(--text-primary-hover);
     transform: translateY(-1px);
 }
@@ -34403,19 +34425,19 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    companion switcher at the top right, because that is where every other
    parchment menu puts them. */
 #status-menu-container .left-page {
-    width: 42%;
+    width: 50%;
     padding: 35px 45px 35px 50px;
     justify-content: flex-start;
 }
 
 #status-menu-container .right-page {
-    width: 58%;
+    width: 50%;
     padding: 35px 50px 35px 45px;
     justify-content: flex-start;
 }
 
 #status-menu-container .book-spread {
-    --spine-x: 42%;
+    --spine-x: 50%;
 }
 
 /* The name shares the narrow leaf with the Back button now, so it is set a
@@ -34452,15 +34474,64 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     min-height: 0;
 }
 
-/* The portrait is measured against the PAGE, never against the viewport: the
-   52vh cap the shared rule carries is read at screen scale, so on an enlarged
-   interface (--ui-zoom above 1) the page is shorter than the viewport while the
-   cap is not, and the bust swallowed the gauges and pushed the anatomy off the
-   foot of the page. A share of the left body cannot do that at any scale. */
-#status-menu-container .status-bust-wrapper {
-    flex: 1 1 0;
+/* Who they are and how they are holding up: the portrait and the four vitals
+   stand together at the head of the left leaf, over the tabs, so the first
+   thing the page says is the character rather than a panel of text. */
+#status-menu-container .status-portrait-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    flex: 0 1 auto;
     min-height: 0;
-    max-height: 52%;
+    margin-bottom: var(--sp-3);
+}
+
+/* The portrait is as wide as the column it stands in, and is measured against
+   the PAGE, never against the viewport: the 52vh cap the shared rule carries is
+   read at screen scale, so on an enlarged interface (--ui-zoom above 1) the page
+   is shorter than the viewport while the cap is not, and the bust swallowed
+   everything under it. A share of the page cannot do that at any scale. */
+#status-menu-container .status-bust-wrapper {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    flex: 0 1 auto;
+    min-height: 120px;
+    height: 34vh;
+    max-height: 38%;
+}
+
+/* Health, mana, action points and experience, laid out the way the gauge block
+   they came from was: the two pools full width, the other two sharing a line. */
+#status-menu-container .status-vitals-box {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 10px;
+    align-content: start;
+    flex: 0 0 auto;
+}
+
+#status-menu-container .status-vitals-box > .status-gauge-row {
+    margin-bottom: 0;
+}
+
+#status-menu-container .status-vitals-box > .status-gauge-row:nth-child(1),
+#status-menu-container .status-vitals-box > .status-gauge-row:nth-child(2) {
+    grid-column: 1 / -1;
+}
+
+/* A gauge with no track: action points are counted, not measured, so the row
+   carries the number alone and keeps the height its neighbour has. */
+#status-menu-container .status-vital-plain {
+    display: flex;
+    align-items: flex-end;
+}
+
+#status-menu-container .status-vital-plain .status-gauge-meta {
+    width: 100%;
+    margin-bottom: 0;
+    padding-bottom: 11px;
 }
 
 /* The gauges are the point of the page and keep their full height. */
@@ -34541,11 +34612,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     white-space: nowrap;
 }
 
+/* The same track every other gauge on the sheet is drawn in, at the slimmer
+   height a grid of a dozen parts can carry. */
 .anatomy-cell-bar {
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border-primary-hover-translucent-15);
-    overflow: hidden;
+    height: 7px;
+    border-radius: 3px;
     margin-top: 2px;
     /* The bar inside is laid out against this track, not against the page. */
     position: relative;
@@ -34556,10 +34627,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
        .bodypart-bar), and .book-spread is the nearest positioned ancestor: an
        absolute bar was stretching left:0 / top:0 / height:100% across the whole
        spread, painting the page gold to red over the portrait and the gauges.
-       The grid draws it in flow, inside its own 4px track. */
+       The grid draws it in flow, inside its own track. */
     position: static;
     height: 100%;
-    background: var(--gradient-3);
+    /* One colour for every part, on the gauge palette: the anatomy is read as a
+       block, and a dozen bars each shading themselves red said less than the
+       hit points written beside them already do. A ruined part is struck
+       through and its bar is empty, which is the reading that matters. */
+    background: var(--gauge-ok);
     transition: width 0.3s ease;
 }
 
@@ -39007,6 +39082,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     align-items: center;
     font-family: var(--font-ui);
     box-sizing: border-box;
+    color: var(--text-primary-hover);
     opacity: 0;
     transition: opacity 0.22s ease-out;
 }

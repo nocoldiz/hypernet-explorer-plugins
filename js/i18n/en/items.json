@@ -7369,6 +7369,6 @@
   },
   "2067": {
     "name": "Surfboard",
-    "description": "A {waxed | fibreglass | foam-cored} board. {Carry it to the water and ride | Take it to any water and surf | Bring it to the water and catch} {a wave | the swell | a break}."
+    "description": "A {waxed | fibreglass} board.\n{Ride the swell | Catch a break} on any water."
   }
 }

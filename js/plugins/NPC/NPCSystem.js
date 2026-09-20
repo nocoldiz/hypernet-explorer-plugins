@@ -2772,7 +2772,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const count = Math.floor(rng.next() * (cap + 1));
       if (count === 0) return 0;
 
-      const tiles = ProceduralManager._creatureTiles();
+      const tiles = ProceduralManager._creatureTiles(rng);
       if (!tiles.length) return 0;
 
       let placed = 0;
@@ -2809,18 +2809,38 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Somewhere a creature can stand: on the map, walkable, off the blocked
     // terrain, and not on top of anybody. Sampled rather than swept, since a
     // procedural square is large and only a handful of tiles are ever needed.
-    _creatureTiles: () => {
+    // Sampled off the SAME seeded stream the identities are dealt from, never
+    // Math.random: the square is rebuilt from the template every time it is
+    // entered (a menu is enough, see Scene_Map.create), and an unseeded sample
+    // re-deals every creature onto a fresh tile, which reads as the animal the
+    // player was just talking to teleporting across the field.
+    // The sampling filter deliberately ignores where the party happens to be
+    // standing (_creatureTileStable): a tile refused because the player is on
+    // it would shift every later pick down the list, and the whole deal with
+    // it. Whether the tile is really free is asked again at placement.
+    _creatureTiles: (rng) => {
+      const roll = rng ? () => rng.next() : Math.random;
       const out = [];
       const w = $gameMap.width();
       const h = $gameMap.height();
       const wanted = 60;
       for (let tries = 0; tries < 400 && out.length < wanted; tries++) {
-        const x = 1 + Math.floor(Math.random() * Math.max(1, w - 2));
-        const y = 1 + Math.floor(Math.random() * Math.max(1, h - 2));
-        if (!ProceduralManager._creatureTileFree(x, y)) continue;
+        const x = 1 + Math.floor(roll() * Math.max(1, w - 2));
+        const y = 1 + Math.floor(roll() * Math.max(1, h - 2));
+        if (!ProceduralManager._creatureTileStable(x, y)) continue;
         out.push({ x, y });
       }
       return out;
+    },
+
+    // The half of the tile test that does not move: the map itself. Everything
+    // transient (the party, the events already minted) is left to
+    // _creatureTileFree at placement time.
+    _creatureTileStable: (x, y) => {
+      if (!$gameMap.isValid(x, y)) return false;
+      if (!$gameMap.isPassable(x, y, 2)) return false;
+      if (Utils.isBlockedTerrain && Utils.isBlockedTerrain(x, y)) return false;
+      return true;
     },
 
     _creatureTileFree: (x, y) => {
@@ -2928,11 +2948,16 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       return true;
     },
 
-    // Talk / Empathize, the same menu every procedural NPC slot carries.
+    // Pet / Empathize / Cancel. A beast is not talked to: the rumour mill is a
+    // thing people pass to each other, and running one through the growl bank
+    // only ever produced a townsman's sentence with the words knocked out of
+    // it. What a hand can do to an animal on the street is lay itself on the
+    // animal, so that is the first entry, and it answers where it stands
+    // (NPCEmpathize's Pet command, a line and a noise, no second window).
     _creaturePageList: () => ([
-      { code: 102, indent: 0, parameters: [["Talk", "Empathize", "Cancel"], 3, 0, 2, 0] },  // i18n-ignore: choice labels are localized by the engine's own pass
-      { code: 402, indent: 0, parameters: [0, "Talk"] },
-      { code: 357, indent: 1, parameters: ["NPC/DialogueSystem", "Rumors", "Rumors", {}] },
+      { code: 102, indent: 0, parameters: [["Pet", "Empathize", "Cancel"], 3, 0, 2, 0] },  // i18n-ignore: choice labels are localized by the engine's own pass
+      { code: 402, indent: 0, parameters: [0, "Pet"] },
+      { code: 357, indent: 1, parameters: ["NPC/NPCEmpathize", "Pet", "Pet", { eventName: "" }] },
       { code: 0, indent: 1, parameters: [] },
       { code: 402, indent: 0, parameters: [1, "Empathize"] },
       { code: 357, indent: 1, parameters: ["NPC/NPCEmpathize", "Open", "Open", { eventName: "" }] },

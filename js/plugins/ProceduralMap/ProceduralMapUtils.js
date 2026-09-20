@@ -516,17 +516,63 @@
     return GS.currentAlienGrowsBiosigns();
   }
 
-  const _biosignFreeBiomes = new WeakMap();
-  function _withoutBiosigns(biome) {
+  // ===== GRAVE FEATURES (haunted worlds) =====
+  //
+  // The same rule read the other way round. A feature marked `haunted` is not
+  // scenery every world of its biome carries either: it is what is left of the
+  // people who went there, and it grows only on a body Systems.json flags
+  // `haunted` (Earth's three moons). Sub-mercurian rock is sub-mercurian rock
+  // on every other star's dead pebble; on the Moon it is a burial ground, and
+  // the graves are scattered the whole way across the square rather than being
+  // one placed landmark, which is the point of putting them through the
+  // ordinary feature scatter instead of the structure catalogue.
+  //
+  // It answers the same question the encounter tables already ask of a haunted
+  // world (the flag is authored on the body in Systems.json): the dead are its
+  // only population, and this is where they are buried. Asked through
+  // landedWorldIsHaunted rather than currentWorldIsHaunted, because the square
+  // is generated before map 636 is loaded and before currentBiome is written,
+  // which is exactly what the latter waits for (it is keyed on groundPlanet,
+  // the same answer the alien terrain generators are).
+  function _hauntedAllowed() {
+    const GS = window.GalaxySim;
+    if (!GS || typeof GS.landedWorldIsHaunted !== "function") return false;
+    return GS.landedWorldIsHaunted();
+  }
+
+  // Which conditional markers this world satisfies, as one small number, so a
+  // filtered copy can be memoised per world instead of rebuilt on every
+  // lookup. getBiomeByName is called thousands of times while a square is
+  // built.
+  const MASK_BIOSIGNS = 1;
+  const MASK_HAUNTED  = 2;
+  function _featureMask() {
+    return (_biosignsAllowed() ? MASK_BIOSIGNS : 0) |
+           (_hauntedAllowed()  ? MASK_HAUNTED  : 0);
+  }
+
+  // Both markers are opt-in: a feature carrying one is dropped unless this
+  // world satisfies it. A feature carrying neither is scenery and always stays.
+  function _featureAllowed(f, mask) {
+    if (!f || typeof f !== "object") return true;
+    if (f.lifeSign && !(mask & MASK_BIOSIGNS)) return false;
+    if (f.haunted  && !(mask & MASK_HAUNTED))  return false;
+    return true;
+  }
+
+  const _filteredBiomes = new WeakMap();   // biome -> Map(mask -> filtered copy)
+  function _withoutConditionalFeatures(biome, mask) {
     if (!biome || !Array.isArray(biome.features)) return biome;
-    if (!_biosignFreeBiomes.has(biome)) {
-      const kept = biome.features.filter((f) => !(f && typeof f === "object" && f.lifeSign));
+    let byMask = _filteredBiomes.get(biome);
+    if (!byMask) { byMask = new Map(); _filteredBiomes.set(biome, byMask); }
+    if (!byMask.has(mask)) {
+      const kept = biome.features.filter((f) => _featureAllowed(f, mask));
       // Nothing to strip: the biome is already its own barren version.
-      _biosignFreeBiomes.set(biome, kept.length === biome.features.length
+      byMask.set(mask, kept.length === biome.features.length
         ? biome
         : Object.assign({}, biome, { features: kept }));
     }
-    return _biosignFreeBiomes.get(biome);
+    return byMask.get(mask);
   }
 
   /**
@@ -538,8 +584,11 @@
         Biomes.find((b) => b.name === biomeName) || null;
     }
     const biome = Cache.biomeNameCache[biomeName];
-    if (!biome || _biosignsAllowed()) return biome;
-    return _withoutBiosigns(biome);
+    if (!biome) return biome;
+    const mask = _featureMask();
+    // The common case by far: an ordinary world, where the biosigns are allowed
+    // and nothing is haunted, so only the haunted markers can bite.
+    return _withoutConditionalFeatures(biome, mask);
   }
 
   // ===== TERRAIN FEATURE PARSING =====

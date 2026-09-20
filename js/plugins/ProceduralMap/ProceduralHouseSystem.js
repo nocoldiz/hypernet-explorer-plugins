@@ -838,8 +838,28 @@
     // i18n-ignore-end
   }
 
+  // The registration a list of floor maps belongs to, if any.
+  function registeredStackFor(floors) {
+    if (!Array.isArray(floors) || !floors.length) return null;
+    return fixedStacks.find((s) => s.floors[0] === floors[0]) || null;
+  }
+
+  // The registered stack the party is standing in, if this is one at all.
+  function currentFixedStack() {
+    return (currentMultiBuilding && currentMultiBuilding.fixedStack) || null;
+  }
+
   function getCurrentOwnershipKey() {
     if (currentMultiBuilding) {
+      // A registered stack addresses itself: its key, plus whichever copy of it
+      // this is. The entrance tile cannot do that job here, because the door
+      // into a fixed stack is a tile on the procedural map, and that coordinate
+      // moves with the shape of the stitched window from one visit to the next.
+      const stack = currentFixedStack();
+      if (stack) {
+        const instance = stack.instanceKey ? stack.instanceKey() : null;
+        if (instance) return `${stack.key}:${instance}_f${currentMultiBuilding.currentFloorIndex}`;
+      }
       return `${currentMultiBuilding.entranceKey}_f${currentMultiBuilding.currentFloorIndex}`;
     }
     const rp = houseReturnPoints[currentHouseSessionId];
@@ -867,6 +887,11 @@
   function isCurrentFloorOwned() {
     const key = getCurrentOwnershipKey();
     if (!key) return false;
+    // A stack registered as the party's own (a patron's vault) is theirs on
+    // every floor, with no deed to buy: its cupboards are not somebody else's,
+    // so emptying them is never a crime.
+    const stack = currentFixedStack();
+    if (stack && stack.owned) return true;
     if (getOwnedHouses()[key]) return true;
     // Companion residences inherited on party-join grant build rights inside the
     // matching interior template (NPCSystemParty.registerNPCHouse). The home is an
@@ -2079,6 +2104,9 @@
       currentFloorIndex: 0,
       structure: structure,
       baseSeed: seed,
+      // Walking in through the door and being found standing on a floor have to
+      // reach the same cellar, so an entered stack carries its registration too.
+      fixedStack: registeredStackFor(floors),
     };
 
     setCurrentBuilding({
@@ -2114,9 +2142,19 @@
     // one: its floors stand under a hatch, so walking out of a session that was
     // never entered properly surfaces on a hatch rather than on whatever square
     // the world variables happened to be left pointing at.
+    // `opts.instanceKey` is the stack's OWN answer to "which copy of these
+    // floors is this". The maps are hand-made and shared, so without it every
+    // patron's vault would be one cellar: one chest, one set of contents,
+    // emptied for everybody at once. PatreonRewards answers with the patron the
+    // hatch belongs to, so the ownership key - and with it every container id
+    // filed under it - is per-patron. `opts.owned` says the stack is the
+    // party's own property wherever they find it, so lifting something out of
+    // its cupboards is not a theft.
     const stack = {
       key, floors: floors.slice(), descending: opts.descending !== false,
       exitFallback: typeof opts.exitFallback === "function" ? opts.exitFallback : null,
+      instanceKey: typeof opts.instanceKey === "function" ? opts.instanceKey : null,
+      owned: !!opts.owned,
     };
     if (at >= 0) fixedStacks[at] = stack;
     else fixedStacks.push(stack);
@@ -2149,6 +2187,7 @@
         currentFloorIndex: floorIndex,
         structure: structure,
         baseSeed: createSeed(stack.floors[0], 0, 0),
+        fixedStack: stack,
       };
       setCurrentBuilding({
         mapId: stack.floors[0], x: 0, y: 0, seed: currentMultiBuilding.baseSeed,
