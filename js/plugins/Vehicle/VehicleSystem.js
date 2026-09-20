@@ -4770,6 +4770,17 @@
       }
     },
 
+    // Is this map the inside of a vehicle? The hand-made cabins (the camper's,
+    // the car's, the starship's) are places the party owns outright, so
+    // anything that asks whose property the floor underfoot is - the container
+    // theft charge above all - has one answer here and it is "theirs".
+    // Defaults to the map being stood on.
+    isVehicleInteriorMap(mapId) {
+      const id = (mapId != null) ? mapId
+        : ((typeof $gameMap !== 'undefined' && $gameMap) ? $gameMap.mapId() : 0);
+      return !!interiorConfigForMap(id);
+    },
+
     // The maintenance key ('camper' | 'car' | 'bike' | 'boat' | 'broom' |
     // 'airship') of the vehicle the party is at the wheel of, or null on foot.
     // Whatever just ran into something wants to know what it is, so it can be

@@ -1,7 +1,16 @@
+0.6.31a
+
+Changed:
+ - build script and steam upload no longer include gguf models
+ - patron coordinates frozen, never to move again
+
+Fixed:
+ - materials no longer have weight
+
 0.6.30a
 
 Added:
- - patron coordinates for the new paying members
+ - patron coordinates for the new members
 
 Changed:
  - spellcheck patron messages
@@ -11,7 +20,7 @@ Changed:
  - patron messages written out in full, alphabetic order
 
 Fixed:
- - patron vaults instanced per patron, container looting no longer a crime
+ - patron vaults instanced per patron, own containers no longer stolen
  - npc disposition no longer carries over saves
  - pet NPC interaction, and graves all over the Moon
  - waiting, sleeping and foraging in transport now pass the travel timer

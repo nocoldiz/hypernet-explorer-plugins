@@ -531,6 +531,15 @@
     function isStolenContainer(containerId, isExtradimensional) {
         if (isExtradimensional || !containerId) return false;
         if (String(containerId).indexOf('vehicle_') === 0) return false;
+        // Inside the party's own camper, car or starship. The hold is already
+        // excluded by its id above; this covers every other box standing in
+        // those cabins (furniture the party placed, the crates the interior is
+        // drawn with), and it also settles a house session left over from
+        // whatever building they walked out of before climbing aboard.
+        const V = window.VehicleSystem || window.MergedVehicleSystem;
+        if (V && typeof V.isVehicleInteriorMap === 'function' && V.isVehicleInteriorMap()) {
+            return false;
+        }
         const H = window.ProceduralHouseSystem;
         if (!H || typeof H.isInsideHouse !== 'function') return false;
         return H.isInsideHouse() && !H.isCurrentFloorOwned();
