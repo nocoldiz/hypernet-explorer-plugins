@@ -25,13 +25,14 @@
     "titlePostSleep": "Risveglio",
     "titleCryo": "Risveglio in che data?",
     "titleWait": "Aspetta quanto?",
+    "titleForage": "Foraggiare per quanto?",
     "titleRoughSleep": "Dormi all'aperto per quanto?",
     "roughHint": "Nessun letto qui: solo il %1% del riposo di una notte.",
-    "beddingHint": "Con %1: riposo completo di una notte.",
     "titleCamp": "Accampamento",
     "titleCampSleep": "Dormi all'accampamento",
     "sleep": "Dormi",
     "wait": "Aspetta",
+    "forage": "Foraggia",
     "hoursWait": "%1 ore",
     "hourWait": "1 ora",
     "halfHour": "30 minuti",
@@ -59,7 +60,8 @@
     "cryoPurse": "Borsa",
     "cryoNights": "%1 notti nella capsula",
     "cryoNoFunds": "La capsula non parte per meno di %1 al giorno.",
-    "cryoEraOver": "La capsula è morta. Nessuno l'ha costruita per dormire attraverso il 2012.",
+    "cryoUnaffordable": "La borsa non copre questa tariffa.",
+    "cryoEraOver": "La capsula è morta. Nessuno l'ha costruita per dormire oltre la fine del 2012.",
     "cryoTravelTitle": "Sospensione criogenica",
     "cryoWakeSub": "Il coperchio si apre.",
     "cryoWakeClean": "Stabile",
@@ -184,5 +186,10 @@
     "talk": "{name} sta parlando con {other}",
     "wash": "{name} sta andando in bagno",
     "idle": "{name} si sta sgranchendo le gambe"
+  },
+  "forage": {
+    "found": "Il gruppo torna con {items}.",
+    "nothing": "Ore di ricerca, e questa terra non concede nulla.",
+    "learned": "Ora il terreno si conosce meglio: {points} KP."
   }
 }

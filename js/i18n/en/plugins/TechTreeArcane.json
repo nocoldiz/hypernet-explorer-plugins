@@ -1,6 +1,6 @@
 {
   "name": "Arcane",
-  "blurb": "A discipline lost in the Collapse and being reconstructed by survey and measurement: field strengths, tolerances, variance against distance from a line. The false leads are kept in the record because they were measured too.",
+  "blurb": "Magic measured as a field: strength, tolerance and falloff with distance. Failed lines stay on record.",
   "nodes": {
     "arc_leyline": {
       "name": "Leyline Cartography",

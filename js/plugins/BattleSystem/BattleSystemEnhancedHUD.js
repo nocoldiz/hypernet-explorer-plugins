@@ -718,7 +718,17 @@
       const maxW = Math.round(
         Math.min(HELP_MAX_W, Graphics.width * 0.52) * sc.sx
       );
-      const centreX = sc.ox + (Graphics.width * sc.sx) / 2;
+      // Centred ON THE QUICK BAR, not on the canvas: the bar is what the
+      // description belongs to, and the two read as one block only when they
+      // share a middle. The bar is a DOM row of its own (Core/HotbarUI.js) and
+      // may be paged or scaled, so its live rectangle is the answer; the canvas
+      // middle stands in while no bar is up.
+      let centreX = sc.ox + (Graphics.width * sc.sx) / 2;
+      const barRoot = document.getElementById('html-hotbar-overlay');
+      if (barRoot && barRoot.style.display !== 'none') {
+        const barRect = barRoot.getBoundingClientRect();
+        if (barRect.width > 0) centreX = barRect.left + barRect.width / 2;
+      }
       // The line the box's floor rests on; the panel itself is drawn upwards
       // from it (.bse-help-panel translates itself back by its own height).
       const topEdgeY =

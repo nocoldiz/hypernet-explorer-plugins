@@ -56,11 +56,11 @@
     "December"
   ],
   "confirmDelete": "Delete world \"{name}\" and all of its history, NPCs and savegames? This cannot be undone.",
-  "enemyFloor": "The Squishing has run for a while: every nation's enemy bracket has climbed {level} levels. Belgium and the UK are the exception and stay at levels 1 to 15.",
-  "enemyFloorOpen": "The fauna is out of hand: every nation's enemy bracket has climbed {level} levels, and off Earth anything up to level {ceiling} roams. Belgium and the UK stay at levels 1 to 15.",
-  "enemyFloorCollapse": "The paradox has completed: every nation's enemy bracket has climbed {level} levels, and off Earth nothing below level {floor} is left. Belgium and the UK stay at levels 1 to 15.",
+  "enemyFloor": "Every nation's enemy level bracket has risen by {level} levels. Belgium and the UK stay at levels 1 to 15.",
+  "enemyFloorOpen": "Every nation's enemy level bracket has risen by {level} levels, and off Earth anything up to level {ceiling} roams. Belgium and the UK stay at levels 1 to 15.",
+  "enemyFloorCollapse": "Every nation's enemy level bracket has risen by {level} levels, and off Earth nothing below level {floor} is left. Belgium and the UK stay at levels 1 to 15.",
   "storyTutorialDisabled": "Story mode is written for the year 2001. Beginning in {year} disables the tutorial: the story opens straight on its own landing, with none of the scripted introduction.",
-  "earthLost": "There is no Earth. Nibiru struck it on 21 December 2012 and the world map went with it: what stands in its orbit is the Omega Tower, and everything that would have taken you out onto the surface takes you there instead.",
+  "earthLost": "There is no Earth. Nibiru struck it on 21 December 2012 and the world map went with it. The Omega Tower stands in its orbit, and anything that would take you out onto the surface takes you there instead.",
   "startingLevel": "Starting level",
   "lowerLevel": "Lower level",
   "raiseLevel": "Raise level",
@@ -77,13 +77,13 @@
     "death": "Death world"
   },
   "populationNotes": {
-    "normal": "History as it happened. Everyone is who they are and the world is populated as it was written.",
-    "chaos": "Nothing is where it was put. Every encounter is drawn from the whole bestiary, every face in the crowd is a stranger's, every shop is stocked and priced at random, and a level up teaches whatever the world feels like teaching. What a thing is never changes: only which one you meet, and what it costs.",
-    "goblin": "Everyone is a goblin. Only goblin faces, busts and archetypes exist, every character you build is one, and goblins are far the commonest thing roaming the map.",
-    "monster": "Nothing human walks here. People, elves and goblins are gone from the crowd, from the wardrobe and from the fauna; the world is populated from every other archetype there is.",
-    "empty": "Nobody is left. No people, no shopkeepers, no news, no plagues, no law and no work; history stops on 1 January 2000, property is worth nothing, and the cities are going back to green.",
-    "zombie": "The dead got up. Nine people in ten are not people any more: where somebody would have been standing there is an undead thing instead, and it is still standing where they were.",
-    "death": "Nobody, and nothing, is left. Everything an empty world already lacks is gone here too, and on top of it every roaming creature is gone as well: no monster, no beast, nothing waiting in a dungeon, on a procedural map or on a hand-built one alike. Whatever wildlife once stood there is silence now."
+    "normal": "History as it happened. The world is populated as written.",
+    "chaos": "Every encounter is drawn from the whole bestiary, every NPC is a random stranger, every shop is stocked and priced at random, and a level up teaches a random skill. What each thing is never changes, only which one you meet and what it costs.",
+    "goblin": "Everyone is a goblin. Only goblin faces, busts and archetypes exist, every character you build is one, and goblins are the commonest creature on the map.",
+    "monster": "No humans, elves or goblins appear, in crowds, in the wardrobe or in the fauna. The world is populated from every other archetype.",
+    "empty": "Nobody is left. No shopkeepers, news, plagues, law or work; history stops on 1 January 2000 and property is worth nothing.",
+    "zombie": "Nine people in ten are replaced by an undead creature standing where they would have been.",
+    "death": "Nobody and nothing is left. Everything an empty world already lacks is gone, and no roaming creatures remain anywhere: no monsters, no beasts, nothing in dungeons or on any map."
   },
   "populationLocked": "Chosen once, at creation: a world cannot be repopulated later.",
   "magicalLevel": "Magic",
@@ -99,5 +99,5 @@
     "severed": "Magic has been stripped from the world. Spells, enchanted items, and magical creatures no longer appear, and the MP bar is removed. The party retains only what they are given at creation.",
     "unbound": "Magic runs wild across the world. Weapons are enchanted, illnesses are curses, and creatures mutate from raw ley energy. Shops and loot contain no ordinary gear."
   },
-  "magicalLocked": "Chosen once, at creation, and independent of the timeline: any combination of the two is a world you can make."
+  "magicalLocked": "Chosen once at creation and independent of the timeline. Any combination of the two can be made."
 }

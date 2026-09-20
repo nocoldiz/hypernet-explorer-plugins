@@ -841,15 +841,25 @@
     dlog(JSON.stringify(allConnections, null, 2));
     dlog("=== END OF JSON DATA ===");
 
-    $gameMessage.add(T('MapGraphs.jsonGenerated'));
-    $gameMessage.add(T('MapGraphs.checkConsole'));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.report([
+        T('MapGraphs.jsonGenerated'),
+        T('MapGraphs.checkConsole')
+      ], {
+        severity: 'info'
+      });
+    }
   });
   registerMapGraphCommand("clearConnectionCache", () => {
     $gameSystem._mapConnectionGraph = null;
     dlog(
       "Connection cache cleared. Next map analysis will rebuild from source."
     );
-    $gameMessage.add(T('MapGraphs.cacheCleared'));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('MapGraphs.cacheCleared'), {
+        severity: 'info'
+      });
+    }
   });
   registerMapGraphCommand("showConnectionStats", () => {
     const graph = buildCompleteConnectionGraph();
@@ -885,12 +895,18 @@
       `Using ${useHardcodedConnections ? "hardcoded" : "runtime"} analysis`
     );
 
-    $gameMessage.add(T('MapGraphs.mapStats', {
-      maps: totalMaps, links: Math.floor(totalConnections / 2),
-    }));
-    $gameMessage.add(T('MapGraphs.mostConnected', { map: maxConnectionsMap, links: maxConnections }));
-    $gameMessage.add(T('MapGraphs.mode', { mode: useHardcodedConnections
-      ? T('MapGraphs.modeHardcoded') : T('MapGraphs.modeRuntime') }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.report([
+        T('MapGraphs.mapStats', {
+        maps: totalMaps, links: Math.floor(totalConnections / 2),
+            }),
+        T('MapGraphs.mostConnected', { map: maxConnectionsMap, links: maxConnections }),
+        T('MapGraphs.mode', { mode: useHardcodedConnections
+        ? T('MapGraphs.modeHardcoded') : T('MapGraphs.modeRuntime') })
+      ], {
+        severity: 'info'
+      });
+    }
   });
   // Add menu command if enabled
 if (enableMenuCommand) {

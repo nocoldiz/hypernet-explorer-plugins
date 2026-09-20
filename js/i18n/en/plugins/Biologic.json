@@ -658,6 +658,14 @@
  "estrogenShotDelivered": "{name}: the estrogen autoinjector delivered today's dose.",
  "androgenGlandOutput": "Pumps testosterone, holding the blood at {low}-{high} ng/dL",
  "estrogenAutoinjectorOutput": "Injects {dose} pg/mL of estrogen a day, never dropping below {floor} pg/mL",
+ "intrauterineSpiralOutput": "Prevents uterine implantation and blocks conception while fitted.",
+ "vasectomyClipOutput": "Halts sperm transit, reducing effective gamete count and motility to zero.",
+ "tubalLigationBandOutput": "Constricts fallopian channels and oviducts, permanently blocking egg fertilization.",
+ "sporangialSuppressorOutput": "Suppresses sporogenesis and completely halts seed generation.",
+ "mitoticInhibitorOutput": "Cytostatic membrane inhibitor that blocks cellular mitosis division.",
+ "augmentBlockedConception": "{actor}'s {augment} prevented conception.",
+ "testResultAugmentFitted": "{actor} has an active contraceptive implant fitted ({augment}).",
+ "vasectomyBlockedMotility": "{actor}'s {augment} blocks gamete transit: ejaculate remains sterile.",
  "augmentGrantsSkill": "Grants the {skill} ability",
  "unit": {
   "breathsPerMinute": "{n} br/min",
@@ -683,7 +691,7 @@
  "cure": {
   "rowLine": "{actor}: {disease}",
   "stockedTag": "Stocked",
-  "empty": "Nobody has a diagnosed illness worth medicine right now.",
+  "empty": "Nobody has a diagnosed illness that needs medicine.",
   "tooExpensive": "Not enough money for the medicine.",
   "bought": "Bought {count}x {item} for {actor}."
  },
@@ -727,7 +735,7 @@
  "remote": {
   "title": "VirtuaHealer",
   "banner": "VIRTUAHEALER",
-  "tagline": "The surgery that answers wherever you stand",
+  "tagline": "Surgery available from anywhere.",
   "hint": "Pick a service to pay for it.",
   "nothingToDo": "Nobody in the party needs anything today.",
   "tooExpensive": "Not enough money for that service.",

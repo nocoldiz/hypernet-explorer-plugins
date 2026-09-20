@@ -83,6 +83,42 @@
     // leave character creation with a step it cannot complete.
     return kept.length ? kept : all;
   };
+  // --- Who a trait is for -------------------------------------------------
+  // Every entry in js/db/Health/Traits.json carries a `mind`, which says what
+  // kind of thing may hold it:
+  //
+  //   "sentient"  a person's trait alone. It needs language, money, belief, a
+  //               trade or a society to mean anything (Merchant, Heretic,
+  //               Polyglot), and nothing without a mind is ever dealt one.
+  //   "both"      a body's trait, held by anyone with a body: biology, reflex,
+  //               appetite and plain fear (Obese, Coward, Keen-eyed, Cursed).
+  //   "beast"     what an animal IS and no person ever is (Pack Hunter, Rabid,
+  //               Imprinted). Never offered on a person's board.
+  //
+  // An entry with no `mind` is read off the older `sentient` flag, so a mod's
+  // trait book that predates the field still answers. This is the one place
+  // the question is answered; NPCCreature answers the OTHER one, who is
+  // non-sentient in the first place.
+  const traitMind = (trait) => {
+    if (!trait) return "sentient";
+    if (trait.mind === "both" || trait.mind === "beast" || trait.mind === "sentient") return trait.mind;
+    return trait.sentient === false ? "both" : "sentient";
+  };
+  // `nonSentient` is what is holding the trait, not what the trait is.
+  const traitAllowsMind = (trait, nonSentient) =>
+    nonSentient ? traitMind(trait) !== "sentient" : traitMind(trait) !== "beast";
+  // The book as it stands open in front of one kind of holder.
+  const traitsForMind = (nonSentient) =>
+    getTraits().filter((trait) => traitAllowsMind(trait, nonSentient));
+  // Whether a given actor is one of those holders. NPCCreature owns the
+  // boundary (creature classes, 63+); without it nobody is a beast.
+  const actorIsNonSentient = (actor) =>
+    !!(actor && window.NPCCreature && window.NPCCreature.isNonSentientActor(actor));
+  // The board and the randomizer both open on somebody: this is the book as it
+  // stands open in front of THEM.
+  const traitsForActorId = (id) =>
+    traitsForMind(actorIsNonSentient($gameActors && $gameActors.actor(id)));
+
   // Database display names, localized. This plugin loads before
   // CharacterCreationShared, so the lookup stays lazy.
   const dbName = (entry) =>
@@ -165,7 +201,10 @@
     // Genetic traits are biology, settled by the body chosen earlier in
     // creation, so no roll ever draws one: a caller that wants them has to
     // hand in a pool that holds them.
-    const bag = (opts.pool || getTraits().filter((trait) => (trait.category || "mental") !== "genetic")).slice();
+    // A caller that names no pool is rolling a PERSON: a beast's own traits
+    // are never dealt by default, only to a board that asked for them
+    // (traitsForMind / traitsForActorId).
+    const bag = (opts.pool || traitsForMind(false).filter((trait) => (trait.category || "mental") !== "genetic")).slice();
     for (let i = bag.length - 1; i > 0; i--) {
       const j = Math.floor(rng() * (i + 1));
       const swap = bag[i];
@@ -452,7 +491,11 @@
         return this._diseaseCards;
       }
       if (!this._categoryCache[category]) {
-        const rows = getTraits().filter((trait) => (trait.category || "mental") === category);
+        // The tab is the book as it stands open in front of the member being
+        // edited: a beast is never offered a person's trait, and a person is
+        // never offered a beast's.
+        const rows = traitsForActorId(Scene_TraitSelector._targetActorId || actorId)
+          .filter((trait) => (trait.category || "mental") === category);
         // Do not memoise an empty result: window.Health may still be loading.
         if (!rows.length) return rows;
         this._categoryCache[category] = rows;
@@ -1125,7 +1168,8 @@
     // biology chosen earlier in creation.
     onTraitsRandom() {
       this._selectedTraits = pickRandomTraits({
-        pool: getTraits().filter((trait) => (trait.category || "mental") !== "genetic"),
+        pool: traitsForActorId(Scene_TraitSelector._targetActorId || actorId)
+          .filter((trait) => (trait.category || "mental") !== "genetic"),
       });
       this._cursor = 0;
       this.syncOverlay(false);
@@ -1558,7 +1602,8 @@
     // physical / mental / magical categories. The roll spends the same purse a
     // player would and can never hand back a build the budget cannot pay for.
     const selectedTraits = pickRandomTraits({
-      pool: getTraits().filter((trait) => (trait.category || "mental") !== "genetic"),
+      pool: traitsForActorId(targetId)
+        .filter((trait) => (trait.category || "mental") !== "genetic"),
     });
 
     // Apply the traits
@@ -1632,6 +1677,57 @@
     randomizeTraitsForActor(actorId);
   });
 
+  //===========================================================================
+  // Crossing the sentience line drops the build
+  //===========================================================================
+  // A person's traits and a beast's traits are two different books: a merchant,
+  // a polyglot and a heretic need a mind, a pack hunter and a rabid one need
+  // teeth, and js/db/Health/Traits.json says in each entry's `mind` which of
+  // the two may hold it. So the moment a character in creation crosses the
+  // line , a person turned creature, or a creature given a civilised trade ,
+  // the picks it made on the other side are not merely unavailable, they are
+  // invalid, and keeping them would leave a Feral holding a merchant's book
+  // of contacts and the param bonuses that came with it.
+  //
+  // Every route into creature mode ends in a changeClass (the wizard's two
+  // buttons, the detailed panel's creature toggle, the class browser, a
+  // loaded preset), so the drop hangs off changeClass rather than off any one
+  // of those screens. Only a crossing drops anything: switching Knight to
+  // Witch, or Feral to Mimic, leaves the build alone.
+  //
+  // window.NPCCreature owns the boundary and reads it off each class's own
+  // <Sentient> / <NonSentient> tag in Classes.json; nothing here compares ids.
+  function classIsNonSentient(classId) {
+    const NC = window.NPCCreature;
+    if (NC && NC.isNonSentientClassId) return NC.isNonSentientClassId(classId);
+    const CC = window.CreatureClasses;
+    if (CC && CC.isCreatureClass) return CC.isCreatureClass(classId);
+    return false;
+  }
+
+  // Take the whole build back off the actor: the granted skills, items and
+  // equipment first, then the param bonuses and the picked list itself.
+  function dropTraitsForSentienceChange(actor) {
+    if (!actor) return;
+    const had = actor._selectedTraits;
+    if (!had || !had.length) return;
+    revertTraitGrants(actor, had);
+    actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
+    actor._selectedTraits = [];
+    if (actor.refresh) actor.refresh();
+  }
+
+  if (typeof Game_Actor !== "undefined" && Game_Actor.prototype.changeClass) {
+    const _TraitSelector_changeClass = Game_Actor.prototype.changeClass;
+    Game_Actor.prototype.changeClass = function (classId, keepExp) {
+      const wasBeast = classIsNonSentient(this._classId);
+      _TraitSelector_changeClass.call(this, classId, keepExp);
+      if (classIsNonSentient(this._classId) !== wasBeast) {
+        dropTraitsForSentienceChange(this);
+      }
+    };
+  }
+
   // Export globally
   window.Scene_TraitSelector = Scene_TraitSelector;
   window.randomizeTraitsForActor = randomizeTraitsForActor;
@@ -1667,15 +1763,32 @@
     { id: "tinkerer", icon: 223, traits: [35, 141, 40] },
   ];
 
+  // The same idea for a body with no mind in it. The fourteen packages above
+  // are all a person's (a soldier, a merchant, a scholar), so a beast's board
+  // would come up empty without these: four shapes an animal actually comes
+  // in, built out of the beast-only traits and the body traits anything can
+  // hold. `mind: "beast"` is what keeps the two sets apart on the board.
+  const BEAST_PACKAGES = [
+    { id: "predator", icon: 76, mind: "beast", traits: [249, 254, 251] },
+    { id: "packbeast", icon: 128, mind: "beast", traits: [248, 254, 256] },
+    { id: "scavenger", icon: 190, mind: "beast", traits: [252, 250, 258] },
+    { id: "armoured", icon: 81, mind: "beast", traits: [253, 255, 259] },
+  ];
+
   /**
    * The packages the simple board offers, each with the trait records it holds
    * and what it costs out of the budget.
    * @returns {Array<{id: string, icon: number, name: string, description: string,
    *   traits: number[], rows: object[], cost: number}>}
    */
-  const traitPackages = () => {
+  const traitPackages = (nonSentient) => {
     const bank = getTraits();
-    return TRAIT_PACKAGES.map((pack) => {
+    // The board in front of a beast is the beast half of the shelf, and the
+    // board in front of a person is the other half. Called with nothing (an
+    // older caller, a preview that belongs to nobody) it is the person's, the
+    // way it always was.
+    const shelf = nonSentient ? BEAST_PACKAGES : TRAIT_PACKAGES;
+    return shelf.map((pack) => {
       const rows = pack.traits
         .map((id) => bank.find((trait) => Number(trait.id) === id))
         .filter(Boolean);
@@ -1693,6 +1806,13 @@
   };
 
   window.TraitPoints = {
+    // Who may hold a trait at all (Traits.json `mind`). Every board and every
+    // generator that offers or rolls traits asks here first, so a dog is never
+    // dealt Accountant and a person is never dealt Rabid.
+    mindOf: traitMind,
+    allowsMind: traitAllowsMind,
+    forMind: traitsForMind,
+    forActorId: traitsForActorId,
     BUDGET: TRAIT_POINT_BUDGET,
     REFUND_CAP: TRAIT_REFUND_CAP,
     MAX_PICKS: TRAIT_MAX_PICKS,
@@ -1713,6 +1833,10 @@
     // Undoing a build (the Reset button on the creation board) has to take the
     // granted skills, items and equipment back off the actor.
     revertGrants: revertTraitGrants,
+    // Dropping the whole build, which is what crossing the sentience line
+    // does. Exported so a screen that rebuilds a character without going
+    // through changeClass can do the same thing by hand.
+    dropAll: dropTraitsForSentienceChange,
     DISEASE_CATEGORY,
   };
 })();

@@ -1,8 +1,4 @@
 {
-  "1": {
-    "name": "",
-    "description": ""
-  },
   "2": {
     "name": "",
     "description": ""
@@ -121,50 +117,6 @@
   },
   "31": {
     "name": "Ceste",
-    "description": ""
-  },
-  "32": {
-    "name": "",
-    "description": ""
-  },
-  "33": {
-    "name": "",
-    "description": ""
-  },
-  "34": {
-    "name": "",
-    "description": ""
-  },
-  "35": {
-    "name": "",
-    "description": ""
-  },
-  "36": {
-    "name": "",
-    "description": ""
-  },
-  "37": {
-    "name": "",
-    "description": ""
-  },
-  "38": {
-    "name": "",
-    "description": ""
-  },
-  "39": {
-    "name": "",
-    "description": ""
-  },
-  "40": {
-    "name": "",
-    "description": ""
-  },
-  "41": {
-    "name": "",
-    "description": ""
-  },
-  "42": {
-    "name": "",
     "description": ""
   },
   "43": {
@@ -451,50 +403,6 @@
     "name": "",
     "description": ""
   },
-  "114": {
-    "name": "",
-    "description": ""
-  },
-  "115": {
-    "name": "",
-    "description": ""
-  },
-  "116": {
-    "name": "",
-    "description": ""
-  },
-  "117": {
-    "name": "",
-    "description": ""
-  },
-  "118": {
-    "name": "",
-    "description": ""
-  },
-  "119": {
-    "name": "",
-    "description": ""
-  },
-  "120": {
-    "name": "",
-    "description": ""
-  },
-  "121": {
-    "name": "",
-    "description": ""
-  },
-  "122": {
-    "name": "",
-    "description": ""
-  },
-  "123": {
-    "name": "",
-    "description": ""
-  },
-  "124": {
-    "name": "",
-    "description": ""
-  },
   "125": {
     "name": "",
     "description": ""
@@ -775,14 +683,6 @@
     "name": "Épée longue",
     "description": ""
   },
-  "195": {
-    "name": "",
-    "description": ""
-  },
-  "196": {
-    "name": "Hallebarde",
-    "description": ""
-  },
   "197": {
     "name": "",
     "description": ""
@@ -903,50 +803,6 @@
     "name": "",
     "description": ""
   },
-  "227": {
-    "name": "",
-    "description": ""
-  },
-  "228": {
-    "name": "",
-    "description": ""
-  },
-  "229": {
-    "name": "",
-    "description": ""
-  },
-  "230": {
-    "name": "",
-    "description": ""
-  },
-  "231": {
-    "name": "",
-    "description": ""
-  },
-  "232": {
-    "name": "",
-    "description": ""
-  },
-  "233": {
-    "name": "",
-    "description": ""
-  },
-  "234": {
-    "name": "",
-    "description": ""
-  },
-  "235": {
-    "name": "",
-    "description": ""
-  },
-  "236": {
-    "name": "",
-    "description": ""
-  },
-  "237": {
-    "name": "",
-    "description": ""
-  },
   "238": {
     "name": "",
     "description": ""
@@ -1040,50 +896,6 @@
     "description": ""
   },
   "261": {
-    "name": "",
-    "description": ""
-  },
-  "262": {
-    "name": "",
-    "description": ""
-  },
-  "263": {
-    "name": "",
-    "description": ""
-  },
-  "264": {
-    "name": "",
-    "description": ""
-  },
-  "265": {
-    "name": "",
-    "description": ""
-  },
-  "266": {
-    "name": "",
-    "description": ""
-  },
-  "267": {
-    "name": "",
-    "description": ""
-  },
-  "268": {
-    "name": "",
-    "description": ""
-  },
-  "269": {
-    "name": "",
-    "description": ""
-  },
-  "270": {
-    "name": "",
-    "description": ""
-  },
-  "271": {
-    "name": "",
-    "description": ""
-  },
-  "272": {
     "name": "",
     "description": ""
   },
@@ -1299,46 +1111,6 @@
     "name": "",
     "description": ""
   },
-  "326": {
-    "name": "",
-    "description": ""
-  },
-  "327": {
-    "name": "",
-    "description": ""
-  },
-  "328": {
-    "name": "",
-    "description": ""
-  },
-  "329": {
-    "name": "",
-    "description": ""
-  },
-  "330": {
-    "name": "",
-    "description": ""
-  },
-  "331": {
-    "name": "",
-    "description": ""
-  },
-  "332": {
-    "name": "",
-    "description": ""
-  },
-  "333": {
-    "name": "",
-    "description": ""
-  },
-  "334": {
-    "name": "",
-    "description": ""
-  },
-  "335": {
-    "name": "",
-    "description": ""
-  },
   "336": {
     "name": "",
     "description": ""
@@ -1468,50 +1240,6 @@
     "description": ""
   },
   "368": {
-    "name": "",
-    "description": ""
-  },
-  "369": {
-    "name": "",
-    "description": ""
-  },
-  "370": {
-    "name": "",
-    "description": ""
-  },
-  "371": {
-    "name": "",
-    "description": ""
-  },
-  "372": {
-    "name": "",
-    "description": ""
-  },
-  "373": {
-    "name": "",
-    "description": ""
-  },
-  "374": {
-    "name": "",
-    "description": ""
-  },
-  "375": {
-    "name": "",
-    "description": ""
-  },
-  "376": {
-    "name": "",
-    "description": ""
-  },
-  "377": {
-    "name": "",
-    "description": ""
-  },
-  "378": {
-    "name": "",
-    "description": ""
-  },
-  "379": {
     "name": "",
     "description": ""
   },
@@ -1656,50 +1384,6 @@
     "description": ""
   },
   "415": {
-    "name": "",
-    "description": ""
-  },
-  "416": {
-    "name": "",
-    "description": ""
-  },
-  "417": {
-    "name": "",
-    "description": ""
-  },
-  "418": {
-    "name": "",
-    "description": ""
-  },
-  "419": {
-    "name": "",
-    "description": ""
-  },
-  "420": {
-    "name": "",
-    "description": ""
-  },
-  "421": {
-    "name": "",
-    "description": ""
-  },
-  "422": {
-    "name": "",
-    "description": ""
-  },
-  "423": {
-    "name": "",
-    "description": ""
-  },
-  "424": {
-    "name": "",
-    "description": ""
-  },
-  "425": {
-    "name": "",
-    "description": ""
-  },
-  "426": {
     "name": "",
     "description": ""
   },
@@ -2108,50 +1792,6 @@
     "description": ""
   },
   "528": {
-    "name": "",
-    "description": ""
-  },
-  "529": {
-    "name": "",
-    "description": ""
-  },
-  "530": {
-    "name": "",
-    "description": ""
-  },
-  "531": {
-    "name": "",
-    "description": ""
-  },
-  "532": {
-    "name": "",
-    "description": ""
-  },
-  "533": {
-    "name": "",
-    "description": ""
-  },
-  "534": {
-    "name": "",
-    "description": ""
-  },
-  "535": {
-    "name": "",
-    "description": ""
-  },
-  "536": {
-    "name": "",
-    "description": ""
-  },
-  "537": {
-    "name": "",
-    "description": ""
-  },
-  "538": {
-    "name": "",
-    "description": ""
-  },
-  "539": {
     "name": "",
     "description": ""
   },

@@ -88,10 +88,18 @@
         "I needed that more than I knew.",
         "Nobody tell the party how much I lost.",
         "For a moment there I forgot the road."
+      ],
+      "fish": [
+        "The water did most of the talking.",
+        "An hour on the bank puts a road behind you.",
+        "I have not thought about anything in an hour. It was wonderful.",
+        "Say what you like about the weather, the fish were biting."
       ]
     },
     "toastRent": "{name} rented a room for {price}",
     "toastEat": "{name} ate {item}",
+    "toastFish": "{name} caught {item}",
+    "toastFishNothing": "{name} caught nothing, and did not mind",
     "toastOpinion": "{npc} thinks of {name}: {delta}",
     "toastPartyTalk": "{name} and {other} talked ({other}: {delta}, {name}: {back})"
   },

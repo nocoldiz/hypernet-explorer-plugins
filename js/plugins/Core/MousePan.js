@@ -914,8 +914,8 @@
         36: "Illusionist", 37: "Battlemage", 38: "Mercenary", 39: "Sage", 40: "Barbarian",
         41: "Doctor", 42: "Scientist", 43: "Firefighter", 44: "Police Officer", 45: "Chef",
         46: "Journalist", 47: "Construction Worker", 48: "Academic", 49: "Psychologist", 50: "Archaeologist",
-        51: "Nurse", 52: "Hunter-Gatherer", 53: "Physicist", 54: "Mechanic", 55: "Shopkeeper",
-        56: "Farmer", 57: "Lumberjack", 58: "Meteorologist", 59: "Priest", 60: "Entertainer",
+        51: "Nurse", 52: "Hunter-Gatherer", 53: "Technomage", 54: "Mechanic", 55: "Shopkeeper",
+        56: "Plant Mage", 57: "Lumberjack", 58: "Meteoarcanist", 59: "Priest", 60: "Entertainer",
         61: "Demigod", 62: "Wretch", 63: "Beast", 64: "Mimic", 65: "Monster", 66: "Cyborg"
     };
 
@@ -969,10 +969,29 @@
         const lower = trimmed.toLowerCase();
         if (HIDDEN_NAME_PREFIXES.some(p => lower.startsWith(p))) return true;
 
+        // The bare placeholder "NPC": a template event the NPC system never
+        // took over. Once it is spawned as a person, NPCSystem overwrites the
+        // name with a seeded one, so a still-bare "NPC" under the cursor is a
+        // piece of scenery with nobody in it.
+        if (lower === "npc") return true; // i18n-ignore: placeholder event name
+
         if (/^player[1-9]$/i.test(lower)) return true;
 
         return false;
     }
+
+    // The same answer, for anybody else who has to tell a person from a piece
+    // of machinery: the hover is the one place that judgement is written, and a
+    // party member walking up to an audio emitter to say hello is the same
+    // mistake as naming one under the cursor.
+    window.EventHoverFilter = {
+        shouldHide: shouldHideEvent,
+        // Convenience for a live Game_Event rather than a bare name.
+        isHidden(ev) {
+            const data = ev && ev.event ? ev.event() : null;
+            return shouldHideEvent(data ? data.name : null);
+        }
+    };
 
     // "Shop" events with no graphic/identity of their own are covered by an NPC
     // persona (see ShopShiftManager in NPCSimulationCore.js). When covered,

@@ -2,21 +2,39 @@
   "site": {
     "taranto": {
       "name": "Taranto",
-      "blurb": "Il cantiere ionico. Due mari, quattro ciminiere che non si spengono mai, e una canna posata sul salso."
+      "blurb": "Cantiere sullo Ionio."
     },
     "greenwich": {
       "name": "Greenwich",
-      "blurb": "Il pilone del meridiano. Mattoni, nebbia di fiume, e una linea verde tirata a nord sulla citta."
+      "blurb": "Torre sul meridiano."
+    },
+    "vault": {
+      "name": "Cripta di {patron}",
+      "blurb": "Cannone a pozzo sotto il caveau.",
+      "nameUnknown": "La Cripta",
+      "blurbUnknown": "Cannone a pozzo sotto un caveau."
+    },
+    "omega": {
+      "name": "Torre Omega",
+      "blurb": "La torre è il cannone."
+    },
+    "ship": {
+      "name": "Astronave",
+      "blurb": "La rotaia della nave."
     }
   },
   "mode": {
     "orbital": {
       "name": "Orbitale",
-      "blurb": "Dritto in alto, fuori attraverso la fascia, e appuntamento con l'astronave. Tre stadi. La corazza non torna indietro."
+      "blurb": "Tre stadi su. L'armatura resta in orbita."
     },
     "suborbital": {
       "name": "Suborbitale",
-      "blurb": "Lo stesso cannone usato come trasporto. Una parabola fino all'altra rampa, un ribaltamento in cima, e il carburante speso per fermarsi. Due stadi."
+      "blurb": "Due stadi, da rampa a rampa."
+    },
+    "deorbit": {
+      "name": "Deorbita",
+      "blurb": "Sparati verso il pianeta e lasciati cadere."
     }
   },
   "phase": {
@@ -37,7 +55,8 @@
     "reentry": "Rientro",
     "terminal": "Fase terminale",
     "capture": "Cattura magnetica",
-    "arrived": "Arrivati"
+    "arrived": "Arrivati",
+    "fall": "Caduta"
   },
   "band": {
     "troposphere": "Troposfera",
@@ -62,7 +81,8 @@
     "caution": "Allarme generale - detriti",
     "camHint": "Trascina ruota OK ricentra  Tieni X salta",
     "freeCam": "Camera libera",
-    "noThree": "3D non disponibile"
+    "noThree": "3D non disponibile",
+    "speed": "Velocità"
   },
   "unit": {
     "m": "m",
@@ -72,9 +92,9 @@
   },
   "select": {
     "title": "Sito di lancio",
-    "subtitle": "Da dove parte il colpo",
+    "subtitle": "Scegli il sito di lancio",
     "modeTitle": "Piano di volo",
-    "modeSubtitle": "Lo stesso cannone, due voli molto diversi",
+    "modeSubtitle": "Scegli il tipo di volo",
     "latitude": "Lat",
     "weather": "Meteo",
     "light": "Luce",
@@ -91,7 +111,10 @@
     "arrives": "Arriva a",
     "starship": "Astronave",
     "track": "Tratta",
-    "vertical": "Verticale"
+    "vertical": "Verticale",
+    "destTitle": "Destinazione",
+    "destSubtitle": "Scegli dove atterra il salto",
+    "choice": "A tua scelta"
   },
   "weather": {
     "none": "Sereno",
@@ -139,6 +162,21 @@
     "hopCapture": "Dentro la canna. Anelli in accensione inversa: adesso e un freno.",
     "hopBraked": "La velocita cala di colpo. I banchi si riprendono quello che hanno speso.",
     "hopDocked": "Attraccati nella culatta. Scafo {pct}, con tutti gli strati ancora addosso.",
-    "hopArrived": "Arrivati a {dest}. Stesso proiettile, altro mare."
+    "hopArrived": "Arrivati a {dest}. Stesso proiettile, altro mare.",
+    "deorbitClear": "Stiva libera. La rotaia ha il proiettile e il pianeta è dove lo avevamo lasciato.",
+    "deorbitCount": "Conto finale. Profilo di deorbita: non brucia niente, si cade e basta.",
+    "deorbitAway": "Partiti, e puntati in basso. Niente fra noi e la fascia.",
+    "entryInterface": "Interfaccia di rientro. Aria davanti, e parecchia.",
+    "entryPlasma": "Plasma. L'urto sta davanti al muso e lo scafo è una lampada.",
+    "entryBlackout": "Blackout. Nessuno ci sente e nessuno può aiutarci.",
+    "entryOut": "Passati. La velocità cala e il cielo è di nuovo azzurro.",
+    "chuteOut": "Paracadute aperto e pieno. Appesi alla tela.",
+    "landingMuzzle": "Il cannone di {dest} ci ha presi. Volata accesa, canna carica, paracadute sganciato.",
+    "landed": "A terra a {dest}. Scafo {pct}, e il mare è dal lato giusto del finestrino.",
+    "chute": "Prima il pilota, poi il principale. Questa è l'ultima velocità che resta.",
+    "stageSep": "Separazione dello stadio. Serbatoi vuoti, può andarsene.",
+    "stageLost": "Lo stadio è andato: qualcosa gli ha aperto i serbatoi. L'accensione era già fatta.",
+    "deorbitFall": "Lanciati, e in caduta. Non brucia niente e niente brucerà.",
+    "deorbitFalling": "Ancora in caduta. Da qui in poi lavora solo il pianeta."
   }
 }

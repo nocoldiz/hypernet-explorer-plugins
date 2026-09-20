@@ -910,6 +910,7 @@
       }
     }
     setMapExterior() {
+      this.rememberMapType(false);
       const wasInterior = this.isInterior;
       this.isInterior = false;
 
@@ -943,8 +944,33 @@
       this.updateTimeOfDayTint();
     }
 
+    // The <Interior>/<Exterior> tags are re-read from the map file on every
+    // scene rebuild, and closing a menu or coming back from a battle rebuilds
+    // Scene_Map. A map type set by plugin command was thrown away there, so
+    // the lighting flipped back the moment the party checked their bag. The
+    // choice is remembered against the map it was made on and re-applied on
+    // every rebuild; walking out of the map is what forgets it.
+    mapTypeOverride() {
+      const o = $gameSystem && $gameSystem._weatherMapTypeOverride;
+      if (!o || !$gameMap) return null;
+      return o.mapId === $gameMap.mapId() ? o : null;
+    }
+
+    rememberMapType(interior) {
+      if (!$gameSystem || !$gameMap) return;
+      $gameSystem._weatherMapTypeOverride = {
+        mapId: $gameMap.mapId(),
+        interior: !!interior,
+      };
+    }
+
+    forgetMapType() {
+      if ($gameSystem) $gameSystem._weatherMapTypeOverride = null;
+    }
+
     // Add this method to Game_WeatherTimeSystem class
     setMapInterior() {
+      this.rememberMapType(true);
       const wasExterior = !this.isInterior;
       this.isInterior = true;
 
@@ -1315,6 +1341,13 @@
         }
       }
 
+      // Aboard the starship, drinking off a star cooks the cabin: the heat
+      // climbs the whole time the pumps run and bleeds back out once the ship
+      // pulls away (see GalaxySim.interiorHeatCelsius).
+      if (window.GalaxySim && typeof window.GalaxySim.interiorHeatCelsius === "function") {
+        temperature += window.GalaxySim.interiorHeatCelsius() || 0;
+      }
+
       const newTemperature = Math.round(temperature);
 
       if (this.currentTemperature !== newTemperature) {
@@ -1417,7 +1450,12 @@
       // to agree about what time it is over the same planet.
       const total = ((typeof $gameVariables !== "undefined" && $gameVariables)
         ? $gameVariables.value(114) : 0) + 600;
-      const local = GS.localHourFor(lp, total);
+      // Where the party is standing, as an hour of local solar time: walking
+      // east across the surface walks into the evening, and the whole landing
+      // grid is one turn of the world. Null off a landing grid, and then the
+      // landing column the descriptor remembers stands in for it.
+      const lon = GS.surfaceColumnHour ? GS.surfaceColumnHour() : null;
+      const local = GS.localHourFor(lp, total, lon);
       return (local == null) ? earthHour : local;
     }
 
@@ -1476,16 +1514,23 @@
       if (typeof window.GalaxySim !== 'undefined' && window.GalaxySim.getSurfacePlanet) {
         const lp = window.GalaxySim.getSurfacePlanet();
         if (lp && lp.tintOffset) {
-          finalOffsetR += lp.tintOffset[0];
-          finalOffsetG += lp.tintOffset[1];
-          finalOffsetB += lp.tintOffset[2];
+          // It biases the DAYLIGHT, so it has to fade out with the daylight.
+          // Added flat it also stacked on top of the night tint, and a dark
+          // world - an airless moon above all - went from a normal night to a
+          // black screen. How lit the scene already is comes straight from the
+          // time-of-day offset: 1 at noon, near 0 at midnight.
+          const lit = Math.max(0, Math.min(1,
+            1 + (timeOffsetR + timeOffsetG + timeOffsetB) / 3 / 255));
+          finalOffsetR += lp.tintOffset[0] * lit;
+          finalOffsetG += lp.tintOffset[1] * lit;
+          finalOffsetB += lp.tintOffset[2] * lit;
         }
       }
 
       // Clamp the final values to ensure they are within the valid range for startTint
-      finalOffsetR = Math.max(-255, Math.min(255, finalOffsetR));
-      finalOffsetG = Math.max(-255, Math.min(255, finalOffsetG));
-      finalOffsetB = Math.max(-255, Math.min(255, finalOffsetB));
+      finalOffsetR = Math.round(Math.max(-255, Math.min(255, finalOffsetR)));
+      finalOffsetG = Math.round(Math.max(-255, Math.min(255, finalOffsetG)));
+      finalOffsetB = Math.round(Math.max(-255, Math.min(255, finalOffsetB)));
 
       // Skip the tint reassignment (and tone array allocation) when nothing
       // changed. Guards forced-call paths and any redundant invocation.
@@ -1604,6 +1649,12 @@
     checkMapTags(isNewMap = true) {
       if (!$dataMap || !$dataMap.meta) return;
 
+      // A genuine transfer is a new map and a fresh set of tags: whatever a
+      // plugin command said about the map just left does not follow the party
+      // onto the next one. A rebuild (menu closed, battle over) is not, and
+      // there the remembered choice wins over the tags below.
+      if (isNewMap) this.forgetMapType();
+      const typeOverride = this.mapTypeOverride();
       const wasInterior = this.isInterior;
       const hasInteriorTag = !!$dataMap.meta.Interior;
       const hasExteriorTag = !!$dataMap.meta.Exterior;
@@ -1640,6 +1691,8 @@
         isUnderground ||
         (!hasInteriorTag && !hasExteriorTag);
 
+      if (typeOverride) this.isInterior = typeOverride.interior;
+
       this.parseMapTags();
       // NEW: Special handling for covered maps - treat them like interiors but with different messaging
       if (this.isInterior) {
@@ -1667,7 +1720,7 @@
             console.log("Map loaded: DEFAULT INTERIOR (no tags, channel 4 BGS disabled)");
           }
         }
-      } else if (hasExteriorTag) {
+      } else if (hasExteriorTag || (typeOverride && !typeOverride.interior)) {
         this.updateTimeAndWeather();
 
         if (wasInterior) {
@@ -1976,7 +2029,19 @@
       // visual benefit to recomputing them every frame. Gating both behind the
       // minute change turns a ~60x/sec workload into ~1x/in-game-minute.
       const gameDate = getGameDateFromVariable();
-      if (this._lastUpdateMinute !== gameDate.minutes) {
+      // On an alien surface the hour also belongs to where the party is
+      // STANDING (longitude is local solar time), so a step east or west has to
+      // move the light even when the clock has not ticked. One integer compare
+      // per frame, and only while off Earth.
+      let walkedLongitude = false;
+      const GS = window.GalaxySim;
+      if (GS && GS.getAlienGridInfo && GS.getAlienGridInfo() && $gamePlayer) {
+        if (this._lastSkyColumnX !== $gamePlayer.x) {
+          this._lastSkyColumnX = $gamePlayer.x;
+          walkedLongitude = true;
+        }
+      }
+      if (this._lastUpdateMinute !== gameDate.minutes || walkedLongitude) {
         this._lastUpdateMinute = gameDate.minutes;
         this.updateTimeAndWeather();
         this.updateTimeOfDayTint();
@@ -3152,7 +3217,6 @@
         <div class="whether">
           <div class="whether-banner">
             <div class="whether-logo">${T_('appName')}</div>
-            <div class="whether-tagline">${T_('tagline')}</div>
           </div>
           <div class="whether-toolbar">
             <label>${T_('location')}</label>

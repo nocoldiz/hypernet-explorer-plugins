@@ -50,5 +50,8 @@
   "addStationBad": "Questo non è un indirizzo di streaming.",
   "battleOn": "BATTAGLIA: SÌ",
   "battleOff": "BATTAGLIA: NO",
-  "onAirStream": "IN ONDA • STREAMING • {url}"
+  "onAirStream": "IN ONDA • STREAMING • {url}",
+  "favoriteHint": "Segna questa stazione tra le preferite. Shift + Sinistra/Destra salta tra quelle segnate.",
+  "volumeHint": "Gira con la rotella o trascina su e giù",
+  "tuningHint": "Gira con la rotella o trascina su e giù"
 }

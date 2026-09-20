@@ -76,8 +76,42 @@
     if (!VW) { console.error('[VoxelWorld] core not loaded before VoxelWorldSystem.js'); return; }
 
     const {
-        FUEL_PER_KM, VoxelWorldScene, roadDataReady
+        FUEL_PER_KM, VoxelWorldScene, roadDataReady, buildingScene
     } = VW;
+
+    // =========================================================================
+    // Building one, when building one can fail
+    // =========================================================================
+    // Every way into this world goes through here. Raising it is a long job
+    // that reaches into half the game - the field, the settlements, the decor,
+    // the 3D battler families, the weapon overlay, the quick bar, the HUD - and
+    // any one of those throwing takes the whole `new` expression with it.
+    //
+    // What that used to leave behind is worse than the exception: the scene had
+    // already put its overlay on the page (a full-screen, opaque layer at the
+    // top of the stack), `this._scene` was never assigned, and isActive() then
+    // answered "no" for the rest of the session - so nothing, not stop(), not
+    // the title screen's sweep, not the world map's return, would ever take
+    // that rectangle down again. The game went on running underneath it, out of
+    // sight and out of reach.
+    //
+    // The half-built scene is disposed instead (it publishes itself while its
+    // constructor runs, see VoxelWorldScene's BUILDING), the page is swept of
+    // anything it left, and the caller is handed null - which every caller
+    // already has to handle, since startTitleDrive has always been able to
+    // return it.
+    function build(...args) {
+        try {
+            return new VoxelWorldScene(...args);
+        } catch (e) {
+            console.error('[VoxelWorld] could not raise the world', e);
+            const half = buildingScene ? buildingScene() : null;
+            if (half) { try { half.dispose(); } catch (e2) { console.error('[VoxelWorld] build cleanup', e2); } }
+            detachGroundSprite();
+            sweepOverlays();
+            return null;
+        }
+    }
 
     // =========================================================================
     // VoxelWorldSystem, static entry point
@@ -92,7 +126,7 @@
             if (this._scene) this.stop();
             const data     = (typeof $gameSystem !== 'undefined') ? $gameSystem.getFastTravelData() : null;
             const fuelCost = data ? (data.totalDistanceKm * FUEL_PER_KM) : 0;
-            this._scene = new VoxelWorldScene(
+            this._scene = build(
                 duration,
                 typeof destinationName === 'string' ? destinationName
                     : (destinationName?.name || T('CamperDrive.destination')),
@@ -121,7 +155,7 @@
             // Long "duration" so the auto-travel timer never ends the session; the
             // destination equals the start tile, so nothing is ever driven
             // anywhere the player did not drive it.
-            this._scene = new VoxelWorldScene(999999,
+            this._scene = build(999999,
                 o.label || T('CamperDrive.freeDrive'), 100, 0, {
                     standalone: true,
                     footOnly: !!o.footOnly,
@@ -151,7 +185,7 @@
             if (!biome) return null;
             if (this._scene) this.stop();
             const name = (planet && planet.name) || biome.name || '';
-            this._scene = new VoxelWorldScene(999999, name, 0, 0,
+            this._scene = build(999999, name, 0, 0,
                 { footOnly: true, alien: { biome, planet: planet || null, species: species || null } });
             return this._scene;
         },
@@ -169,7 +203,7 @@
             if (!biome) return null;
             if (this._scene) this.stop();
             const name = (planet && planet.name) || biome.name || '';
-            this._scene = new VoxelWorldScene(999999, name, 0, 0, {
+            this._scene = build(999999, name, 0, 0, {
                 vehicle: 'starship',
                 startFlying: true,
                 atHelm: !!(opts && opts.atHelm),
@@ -222,7 +256,7 @@
         // square they walked to.
         startFreeWalk() {
             if (this._scene) this.stop();
-            this._scene = new VoxelWorldScene(999999, T('CamperDrive.freeWalk'), 0, 0,
+            this._scene = build(999999, T('CamperDrive.freeWalk'), 0, 0,
                 { footOnly: true });
             return this._scene;
         },
@@ -236,7 +270,7 @@
         startTitleDrive() {
             if (!roadDataReady()) return null;
             if (this._scene) this.stop();
-            this._scene = new VoxelWorldScene(999999, T('CamperDrive.autopilot'), 100, 0, { titleMode: true });
+            this._scene = build(999999, T('CamperDrive.autopilot'), 100, 0, { titleMode: true });
             return this._scene;
         },
         // True once the world's road tags are available to plan a route from.
@@ -372,34 +406,14 @@
         });
     }
 
-    // The travel timer belongs to FastTravelSystem, which loads well after this
-    // file: wrapping it here at load time captured `undefined` and was then
-    // overwritten outright by FastTravelSystem's own plain assignment, so the
-    // camper never entered the 3D world on a fast travel and never left it on
-    // arrival. The wrappers are installed at boot instead, once every plugin has
-    // had its say, and each one carries the implementation that is actually there.
-    function wrapTravelTimer(name, after) {
-        const base = Game_System.prototype[name];
-        if (typeof base !== 'function') return;
-        if (base._voxelWrapped) return;
-        const wrapped = function(...args) {
-            const result = base.apply(this, args);
-            try { after.apply(this, args); } catch (e) { console.error('[VoxelWorld] ' + name, e); }
-            return result;
-        };
-        wrapped._voxelWrapped = true;
-        Game_System.prototype[name] = wrapped;
-    }
-
-    const _Scene_Boot_start_VoxelTravel = Scene_Boot.prototype.start;
-    Scene_Boot.prototype.start = function() {
-        _Scene_Boot_start_VoxelTravel.call(this);
-        wrapTravelTimer('startTravelTimer', function(duration, transport, destination, totalKm) {
-            if (transport === 'camper') VoxelWorldSystem.start(duration, destination, totalKm);
-        });
-        wrapTravelTimer('completeTravelTimer', function() { VoxelWorldSystem.stop(); });
-        wrapTravelTimer('stopTravelTimer', function() { VoxelWorldSystem.stop(); });
-    };
+    // A camper fast travel used to drop the party into the 3D world for the
+    // length of the journey: the travel timer was wrapped here and the drive
+    // started on the 'camper' transport. It does not any more. A booked
+    // journey is time passing inside the vehicle, not a road to be driven, so
+    // the party stays in the camper interior for the whole trip and watches it
+    // cross the chart on the wall. The 3D world is still entered deliberately,
+    // from the vehicle's own "Engage liminal drive" (Vehicle/VehicleSystem.js)
+    // and from the plugin commands above, but never by booking a seat.
 
     // The 3D scene owns the keyboard while it is up, and the map scene keeps
     // running underneath it. Nothing may walk the 2D player around down there:
@@ -508,7 +522,7 @@
         this.stopAudioOnBattleStart();
         SoundManager.playBattleStart();
         BattleManager.playBattleBgm();
-        if (this._mapNameWindow) this._mapNameWindow.hide();
+        if (this._mapNameWindow && this._mapNameWindow.hide) this._mapNameWindow.hide();
     };
 
     // The fade IN has to go with it. startFadeIn opens from a full black
@@ -554,6 +568,33 @@
         for (const s of layers) { if (s && s.visible) s.visible = false; }
     }
 
+    // The one texture both grounds are drawn from, keyed to the world's own
+    // canvas. PIXI hands the SAME texture back for the same canvas, and a
+    // destroyed one is still handed back by a cache entry that outlived it:
+    // its baseTexture, frame and orig are all null by then, so the very next
+    // read of them (sprite.width sizing the blit) dies with "cannot read
+    // property 'width' of null" and takes the game to a black screen. A
+    // texture that is no longer whole is dropped and built again.
+    function groundTexture(canvas) {
+        let texture = canvas._vwBattleTexture;
+        if (texture && (texture.destroyed || !texture.baseTexture ||
+                        !texture.orig || !texture._uvs)) {
+            try { PIXI.Texture.removeFromCache(texture); } catch (e) { /* not cached */ }
+            canvas._vwBattleTexture = null;
+            texture = null;
+        }
+        if (!texture) {
+            texture = PIXI.Texture.from(canvas);
+            if (!texture || !texture.baseTexture || !texture.orig) return null;
+            canvas._vwBattleTexture = texture;
+        }
+        const base = texture.baseTexture;
+        if (base.realWidth !== canvas.width || base.realHeight !== canvas.height) {
+            base.setRealSize(canvas.width, canvas.height);
+        }
+        return texture;
+    }
+
     Spriteset_Battle.prototype.createVoxelWorldGround = function() {
         const canvas = VoxelWorldSystem.battleCanvas();
         if (!canvas || !window.PIXI || !this._baseSprite) return;
@@ -563,12 +604,8 @@
         // (see beginBattleView), so the sprite is a straight 1:1 blit; the
         // declared size is restated anyway, since the world may have been drawn
         // at window size the last time this texture was looked at.
-        const texture = PIXI.Texture.from(canvas);
-        const base = texture.baseTexture;
-        if (base.realWidth !== canvas.width || base.realHeight !== canvas.height) {
-            base.setRealSize(canvas.width, canvas.height);
-        }
-        canvas._vwBattleTexture = texture;
+        const texture = groundTexture(canvas);
+        if (!texture) return;
         const sprite = new PIXI.Sprite(texture);
         sprite.width  = Graphics.width;
         sprite.height = Graphics.height;
@@ -644,12 +681,8 @@
     Spriteset_Map.prototype.createVoxelWorldGround = function() {
         const canvas = VoxelWorldSystem.battleCanvas();
         if (!canvas || !window.PIXI || !this._baseSprite) return;
-        const texture = PIXI.Texture.from(canvas);
-        const base = texture.baseTexture;
-        if (base.realWidth !== canvas.width || base.realHeight !== canvas.height) {
-            base.setRealSize(canvas.width, canvas.height);
-        }
-        canvas._vwBattleTexture = texture;
+        const texture = groundTexture(canvas);
+        if (!texture) return;
         const sprite = new PIXI.Sprite(texture);
         sprite.width  = Graphics.width;
         sprite.height = Graphics.height;

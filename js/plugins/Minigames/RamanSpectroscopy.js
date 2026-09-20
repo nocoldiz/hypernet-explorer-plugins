@@ -1280,7 +1280,6 @@
         }
         const choices = T.list('Raman.choices');
         const cancelIndex = choices.length - 1;
-        window.skipLocalization = true;
         $gameMessage.setChoices(choices, 0, cancelIndex);
         window.skipLocalization = false;
         $gameMessage.setChoiceBackground(0);
@@ -1380,11 +1379,15 @@
 
         if (!result) {
             // console.log('[Raman] No scannable material found ,  showing message');
-            window.skipLocalization = true;
-            $gameMessage.add(T('Raman.msgHeader'));
-            $gameMessage.add(T('Raman.msgNoMaterial'));
-            $gameMessage.add(T('Raman.msgHint'));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.report([
+                T('Raman.msgHeader'),
+                T('Raman.msgNoMaterial'),
+                T('Raman.msgHint')
+              ], {
+                severity: 'info'
+              });
+            }
             return;
         }
 

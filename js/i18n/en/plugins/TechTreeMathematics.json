@@ -1,6 +1,6 @@
 {
   "name": "Mathematics",
-  "blurb": "Proof and computation, from a deterministic primality test through the geometrisation of three-manifolds to an inequality whose verification never closed. A result here stands or falls on a referee, not on an instrument.",
+  "blurb": "Proofs and computation, including results that were never verified.",
   "nodes": {
     "math_aks": {
       "name": "AKS Primality Test",

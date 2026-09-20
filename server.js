@@ -5,8 +5,220 @@
 //=============================================================================
 
 const http = require('http');
-const WebSocket = require('ws');
 const dgram = require('dgram');
+const crypto = require('crypto');
+const { EventEmitter } = require('events');
+
+// --- WebSocket transport ----------------------------------------------------
+// `ws` is used when the machine has it (a server deployment runs `npm install`),
+// but a shipped game folder carries no node_modules, so LAN hosting would die on
+// the require. MiniWS below speaks the same small slice of the `ws` API this
+// file uses, over RFC 6455 frames, so hosting works out of the box.
+const WebSocket = (() => {
+    try {
+        return require('ws');
+    } catch (e) {
+        return buildMiniWS();
+    }
+})();
+
+function buildMiniWS() {
+    const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    const OPEN = 1;
+    const CLOSING = 2;
+    const CLOSED = 3;
+
+    // One connection. Frames in, frames out, nothing else.
+    class MiniSocket extends EventEmitter {
+        constructor(socket, head) {
+            super();
+            this._socket = socket;
+            this.readyState = OPEN;
+            // Bytes the HTTP parser read past the handshake: a client's first
+            // frame often arrives in that very packet.
+            this._buffer = (head && head.length) ? Buffer.from(head) : Buffer.alloc(0);
+            this._fragments = [];
+            this._fragmentOp = 0;
+            socket.on('data', (chunk) => {
+                this._buffer = Buffer.concat([this._buffer, chunk]);
+                this._drain();
+            });
+            socket.on('close', () => this._dead());
+            socket.on('error', (err) => this.emit('error', err));
+        }
+
+        _dead() {
+            if (this.readyState === CLOSED) return;
+            this.readyState = CLOSED;
+            this.emit('close');
+        }
+
+        _drain() {
+            for (;;) {
+                const frame = this._readFrame();
+                if (!frame) return;
+                this._handleFrame(frame);
+                if (this.readyState === CLOSED) return;
+            }
+        }
+
+        // Returns null until a whole frame has arrived.
+        _readFrame() {
+            const buf = this._buffer;
+            if (buf.length < 2) return null;
+            const fin = (buf[0] & 0x80) !== 0;
+            const opcode = buf[0] & 0x0f;
+            const masked = (buf[1] & 0x80) !== 0;
+            let len = buf[1] & 0x7f;
+            let offset = 2;
+            if (len === 126) {
+                if (buf.length < offset + 2) return null;
+                len = buf.readUInt16BE(offset);
+                offset += 2;
+            } else if (len === 127) {
+                if (buf.length < offset + 8) return null;
+                const big = buf.readBigUInt64BE(offset);
+                if (big > BigInt(64 * 1024 * 1024)) { this.terminate(); return null; }
+                len = Number(big);
+                offset += 8;
+            }
+            let mask = null;
+            if (masked) {
+                if (buf.length < offset + 4) return null;
+                mask = buf.slice(offset, offset + 4);
+                offset += 4;
+            }
+            if (buf.length < offset + len) return null;
+            const payload = Buffer.from(buf.slice(offset, offset + len));
+            if (mask) {
+                for (let i = 0; i < payload.length; i++) payload[i] ^= mask[i & 3];
+            }
+            this._buffer = buf.slice(offset + len);
+            return { fin, opcode, payload };
+        }
+
+        _handleFrame(frame) {
+            switch (frame.opcode) {
+                case 0x0:
+                case 0x1:
+                case 0x2: {
+                    if (frame.opcode !== 0x0) this._fragmentOp = frame.opcode;
+                    this._fragments.push(frame.payload);
+                    if (!frame.fin) return;
+                    const data = Buffer.concat(this._fragments);
+                    this._fragments = [];
+                    this.emit('message', this._fragmentOp === 0x2 ? data : data.toString('utf8'));
+                    break;
+                }
+                case 0x8:
+                    this.readyState = CLOSING;
+                    this._write(0x8, frame.payload);
+                    this.terminate();
+                    break;
+                case 0x9:
+                    this._write(0xA, frame.payload);
+                    break;
+                case 0xA:
+                    this.emit('pong', frame.payload);
+                    break;
+                default:
+                    this.terminate();
+                    break;
+            }
+        }
+
+        _write(opcode, payload) {
+            if (this.readyState === CLOSED) return;
+            const body = Buffer.isBuffer(payload) ? payload : Buffer.from(String(payload || ''), 'utf8');
+            let header;
+            if (body.length < 126) {
+                header = Buffer.alloc(2);
+                header[1] = body.length;
+            } else if (body.length < 65536) {
+                header = Buffer.alloc(4);
+                header[1] = 126;
+                header.writeUInt16BE(body.length, 2);
+            } else {
+                header = Buffer.alloc(10);
+                header[1] = 127;
+                header.writeBigUInt64BE(BigInt(body.length), 2);
+            }
+            header[0] = 0x80 | opcode;
+            try {
+                this._socket.write(Buffer.concat([header, body]));
+            } catch (e) {
+                this.terminate();
+            }
+        }
+
+        send(data) {
+            this._write(Buffer.isBuffer(data) ? 0x2 : 0x1, data);
+        }
+
+        ping(cb) {
+            this._write(0x9, Buffer.alloc(0));
+            if (typeof cb === 'function') cb();
+        }
+
+        close(code = 1000, reason = '') {
+            if (this.readyState !== OPEN) return this.terminate();
+            const body = Buffer.alloc(2 + Buffer.byteLength(String(reason)));
+            body.writeUInt16BE(code, 0);
+            body.write(String(reason), 2);
+            this.readyState = CLOSING;
+            this._write(0x8, body);
+            const timer = setTimeout(() => this.terminate(), 200);
+            if (timer.unref) timer.unref();
+        }
+
+        terminate() {
+            try { this._socket.destroy(); } catch (e) { /* already gone */ }
+            this._dead();
+        }
+    }
+
+    // The listener: one upgrade handler hung off the HTTP server.
+    class MiniServer extends EventEmitter {
+        constructor(options = {}) {
+            super();
+            this.clients = new Set();
+            this._http = options.server;
+            this._onUpgrade = (req, socket, head) => this._upgrade(req, socket, head);
+            if (this._http) this._http.on('upgrade', this._onUpgrade);
+        }
+
+        _upgrade(req, socket, head) {
+            const key = req.headers['sec-websocket-key'];
+            if (!key || String(req.headers.upgrade || '').toLowerCase() !== 'websocket') {
+                try { socket.destroy(); } catch (e) { /* gone */ }
+                return;
+            }
+            const accept = crypto.createHash('sha1').update(key + GUID).digest('base64');
+            socket.setNoDelay(true);
+            socket.write(
+                'HTTP/1.1 101 Switching Protocols\r\n' +
+                'Upgrade: websocket\r\n' +
+                'Connection: Upgrade\r\n' +
+                'Sec-WebSocket-Accept: ' + accept + '\r\n\r\n');
+            const client = new MiniSocket(socket, head);
+            this.clients.add(client);
+            client.on('close', () => this.clients.delete(client));
+            this.emit('connection', client, req);
+            // What came in with the handshake is only delivered once the
+            // connection handler above has attached its listeners.
+            client._drain();
+        }
+
+        close() {
+            if (this._http) this._http.removeListener('upgrade', this._onUpgrade);
+            for (const client of Array.from(this.clients)) client.terminate();
+            this.clients.clear();
+            this.emit('close');
+        }
+    }
+
+    return { Server: MiniServer, OPEN, CLOSING, CLOSED, isFallback: true };
+}
 
 // The UDP port a LAN host answers discovery probes on. A client sweeping the
 // local network broadcasts DISCOVERY_MAGIC here and every host in the same

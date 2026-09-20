@@ -1,7 +1,7 @@
 {
   "appName": "N€police",
   "banner": "N&euro;police",
-  "subtitle": "Ufficio nEuroPolice. Ufficio continentale delle taglie &amp; delle dichiarazioni volontarie",
+  "subtitle": "Ufficio delle taglie e delle dichiarazioni volontarie.",
   "tab": {
     "record": "Fascicolo",
     "report": "Autodenuncia",
@@ -34,17 +34,17 @@
     "other": "{count} accuse saldate per {total}."
   },
   "voluntaryDeclaration": "Dichiarazione volontaria",
-  "declarationBlurb": "Confessa qualcosa che l'Ufficio non ha ancora scoperto: l'accusa viene registrata a <b>metà</b> della multa. Resta comunque sulla fedina e alza la taglia finché non la saldi o non la sconti.",
+  "declarationBlurb": "Confessa un crimine che l'ufficio non ha registrato: la multa e dimezzata. L'accusa resta sulla fedina e aumenta la taglia finche non e pagata o scontata.",
   "searchOffences": "Cerca tra i reati...",
   "noOffenceMatch": "Nessun reato corrisponde alla ricerca.",
   "confess": "Confessa",
   "declared": "Dichiarato: {crime}. Accusa registrata a {amount}.",
   "custodyHearings": "Custodia &amp; udienze",
-  "custodyBlurb": "Taglia pendente: <b>{bounty}</b>. Entrambe le opzioni qui sotto ti disconnettono da questo terminale: le celle e l'aula di tribunale non sono in rete.",
+  "custodyBlurb": "Taglia in sospeso: <b>{bounty}</b>. Entrambe le opzioni qui sotto chiudono questo terminale.",
   "turnYourselfIn": "Costituisciti",
-  "surrenderBlurb": "Un furgone ti porta in cella. Il tempo scontato erode la taglia da solo ed esci appena arriva a zero. Nessuna udienza, nessun giudice.",
+  "surrenderBlurb": "Vieni portato in cella. Il tempo scontato riduce la taglia fino a zero, poi sei rilasciato. Nessuna udienza.",
   "requestHearing": "Chiedi un'udienza",
-  "hearingBlurb": "Il tuo fascicolo finisce davanti a Eris, dea della giustizia. Un'assoluzione cancella la fedina. Una condanna no.",
+  "hearingBlurb": "Il tuo caso va davanti a Eris. L'assoluzione cancella la fedina, la condanna no.",
   "alreadyInCustody": "Sei già in custodia. L'Ufficio apprezza l'entusiasmo.",
   "surrenderBtn": "Costituisciti",
   "surrenderConfirmTitle": "Vuoi costituirti?",
@@ -59,6 +59,6 @@
   "cancel": "Annulla",
   "record": {
     "heading": "Fascicolo &mdash; {name}",
-    "blurb": "Ogni capo d'accusa che il Bureau ha su di te, con la sua multa. Saldarne uno lo cancella dalla fedina e preleva subito i soldi."
+    "blurb": "Ogni accusa che l'ufficio ha a tuo carico, con la relativa multa. Saldarne una la rimuove dalla fedina e preleva subito il denaro."
   }
 }

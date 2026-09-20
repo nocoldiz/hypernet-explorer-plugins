@@ -264,6 +264,66 @@
     return parts;
   }
 
+  // ── How many augments a body will carry ──────────────────────────────────
+  // A socket holds one augment at a time, so seating a new one pulls whatever
+  // is already in there (installProstheticImmediate removes first): the real
+  // gain is the difference between the two, and a dozen augments in, that
+  // difference is often nothing at all. This is what the screen warns on.
+  function netImplantEffects(actor, partKey, prosthetic) {
+    const net = {};
+    const fold = (effects, sign) => {
+      for (const paramId in (effects || {})) {
+        const p = parseInt(paramId, 10);
+        net[p] = (net[p] || 0) + sign * effects[paramId];
+      }
+    };
+    fold(prosthetic && prosthetic.effects, 1);
+    const ProstheticTypes = getProstheticTypes();
+    const currentKey = actor && actor._prosthetics ? actor._prosthetics[partKey] : null;
+    const current = currentKey && ProstheticTypes ? ProstheticTypes[currentKey] : null;
+    fold(current && current.effects, -1);
+    for (const p of Object.keys(net)) if (!net[p]) delete net[p];
+    return net;
+  }
+
+  function netEffectText(net) {
+    return Object.keys(net).map((p) => {
+      const v = net[p];
+      return getParamName(parseInt(p, 10)) + " " + (v >= 0 ? "+" : "") + v;
+    });
+  }
+
+  // Nothing worth paying for: every param it touches ends level or lower.
+  function hasNoNetGain(net) {
+    const keys = Object.keys(net);
+    return !keys.length || keys.every((p) => net[p] <= 0);
+  }
+
+  // What a body tolerates is a matter of constitution: four augments on a +0
+  // COS, and one more socket for every point of bonus above that. A COS
+  // augment therefore buys the room for the next one, which is the trade.
+  const IMPLANT_SLOTS_BASE = 4;
+  const IMPLANT_SLOT_PARAM = 5; // COS
+
+  function constitutionBonus(actor) {
+    if (!actor) return 0;
+    return Math.floor((actor.param(IMPLANT_SLOT_PARAM) - 10) / 2);
+  }
+
+  function implantCapacity(actor) {
+    return IMPLANT_SLOTS_BASE + Math.max(0, constitutionBonus(actor));
+  }
+
+  function implantCount(actor) {
+    return actor && actor._prosthetics ? Object.keys(actor._prosthetics).length : 0;
+  }
+
+  window.ProstheticCapacity = {
+    capacity: implantCapacity,
+    fitted: implantCount,
+    bonus: constitutionBonus
+  };
+
   // "TrashCreature" is a key, not a name: the screen prints it spaced.
   function archetypeLabel(key) {
     return String(key || "").replace(/([A-Z])/g, " $1").trim();
@@ -2414,14 +2474,31 @@
       for (const prostheticKey of compatible) {
         const prosthetic = ProstheticTypes ? ProstheticTypes[prostheticKey] : null;
         if (!prosthetic) continue;
+        const net = netImplantEffects(this._selectedActor, this._selectedPartKey, prosthetic);
+        const displaces = !!currentProstheticKey && currentProstheticKey !== prostheticKey;
+        const noNetGain = displaces && hasNoNetGain(net);
+        // A swap costs no room: only filling an empty socket takes a slot.
+        const overCapacity = !currentProstheticKey &&
+          implantCount(this._selectedActor) >= implantCapacity(this._selectedActor);
+        const noteBits = implantEffectText(prosthetic);
+        if (displaces) {
+          noteBits.push(noNetGain
+            ? T('Prosthetics.noNetGain', { p1: implantName(currentProstheticKey) })
+            : T('Prosthetics.netChange', { p1: netEffectText(net).join(", ") }));
+        }
+        if (overCapacity) noteBits.push(T('Prosthetics.capacityFull'));
         this._activeListItems.push({
           isProsthetic: true,
           partKey: this._selectedPartKey,
           prostheticKey,
           prosthetic,
           name: implantName(prostheticKey),
-          note: implantEffectText(prosthetic).join(" | "),
+          note: noteBits.join(" | "),
           cost: prosthetic.cost,
+          displacedName: displaces ? implantName(currentProstheticKey) : "",
+          netEffectText: displaces ? netEffectText(net).join(", ") : "",
+          noNetGain,
+          overCapacity,
           isCurrentlyInstalled: currentProstheticKey === prostheticKey
         });
       }
@@ -2430,7 +2507,12 @@
       title: this._fieldMode ? T('Prosthetics.removeAugment') : T('Prosthetics.prostheticsList'),
       brief: this._fieldMode
         ? T('Prosthetics.fieldAugmentRemovalDesc')
-        : T('Prosthetics.selectAnAdvancedMicroChipOrProstheticImplant', { p1: this._selectedPartKey || "" })
+        : T('Prosthetics.selectAnAdvancedMicroChipOrProstheticImplant', { p1: this._selectedPartKey || "" }) +
+          " " + T('Prosthetics.capacityLine', {
+            p1: implantCount(this._selectedActor),
+            p2: implantCapacity(this._selectedActor),
+            p3: (constitutionBonus(this._selectedActor) >= 0 ? "+" : "") + constitutionBonus(this._selectedActor)
+          })
     };
   };
 
@@ -2489,6 +2571,16 @@
         : {
             title: T('Prosthetics.implantProtocol'),
             desc: T('Prosthetics.installTheAdvancedProstheticMicroDeviceInsid', { p1: item.name }),
+            warning: item.overCapacity
+              ? T('Prosthetics.capacityWarning', {
+                  p1: implantCapacity(this._selectedActor),
+                  p2: (constitutionBonus(this._selectedActor) >= 0 ? "+" : "") + constitutionBonus(this._selectedActor)
+                })
+              : (item.noNetGain
+                ? T('Prosthetics.noNetGainWarning', { p1: item.displacedName })
+                : (item.displacedName
+                  ? T('Prosthetics.displacesWarning', { p1: item.displacedName, p2: item.netEffectText })
+                  : "")),
             actionLabel: T('Prosthetics.installImplant2'),
             actionSymbol: "install_implant"
           };
@@ -2786,6 +2878,7 @@
     if (!item) return false;
     if (action === "remove" && item.vital) return false;
     if (action === "remove_implant") return !item.isRemoveOption || item.canRemove !== false;
+    if (action === "install_implant" && item.overCapacity) return false;
     if (item.blockedReason) return false;
     if (item.alreadyOwned && (action === "install")) return false;
     const price = this.priceOf(item.isInventoryPart && action === "install" ? INSTALLATION_FEE : item.cost);

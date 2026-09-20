@@ -239,7 +239,7 @@
   "allTrades": "Tutti i mestieri",
   "shortBy": "Mancanti {n}",
   "readyCount": "{n} pronti",
-  "tradeHint": "{known} formule su {total} leggibili da queste mani",
+  "tradeHint": "{known} di {total} formule conosciute",
   "legend": {
     "title": "Cosa significano i segni",
     "ready": "Pronto: tutto il necessario è nella sacca",
@@ -253,7 +253,7 @@
   "qtyMax": "Max",
   "batchCount": "x{n}",
   "autoSmith": "Auto",
-  "autoSmithHint": "Ogni pezzo va a chi nel gruppo è più bravo",
+  "autoSmithHint": "Ogni pezzo e forgiato dal membro del gruppo piu abile",
   "modelEdit": "Modifica modello",
   "modelEditFitted": "Modifica modello ({n} montate)",
   "sculpt": {
@@ -265,7 +265,7 @@
     "kept": "Tenuta",
     "removed": "Rimossa",
     "remove": "Togli questa parte",
-    "pickHint": "Scegli una parte montata, oppure prendine una da un'arma qui accanto.",
+    "pickHint": "Scegli una parte montata, o prendine una da un'altra arma mostrata a fianco.",
     "search": "Cerca armi",
     "noDonors": "Nessuna arma corrisponde",
     "undo": "Annulla",
@@ -292,5 +292,25 @@
     "tilt": "Inclinazione",
     "roll": "Rollio",
     "size": "Dimensione"
+  },
+  "backToBoard": "TORNA AL BANCO",
+  "appearanceHeader": "Come viene fuori",
+  "detailsHeader": "Che cos'è",
+  "carrying": "ne hai {n}",
+  "fixedPattern": "Fatta su un solo schema: questo telaio non si rimodella al banco.",
+  "nameEdit": "Scrivi il nome",
+  "tips": {
+    "pick": "Scegli",
+    "page": "Apri",
+    "batch": "Quanti",
+    "member": "Membro",
+    "trade": "Mestieri",
+    "state": "Stato",
+    "leave": "Esci",
+    "reroll": "Ritira",
+    "sculpt": "Muovi pezzo",
+    "mode": "Maniglia",
+    "fitting": "Innesto",
+    "done": "Fatto"
   }
 }

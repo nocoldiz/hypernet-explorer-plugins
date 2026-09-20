@@ -1844,6 +1844,13 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     floorLevel: towerEnemyLevel,
     // The party is on a floor the lift is the only way off of.
     insideTower,
+    // True when the map the party stands on is one of the authored dungeon's
+    // own maps (any map under the dungeon folders, an elevator hall or the boss
+    // floor). The floor variable outlives the dungeon, so anything reading it
+    // to decide "are we underground" has to ask this first.
+    isDungeonMap: (mapId) => isDungeonMap(
+        mapId != null ? mapId : (typeof $gameMap !== "undefined" && $gameMap ? $gameMap.mapId() : 0)
+    ),
     // The authored floor the party is on (upper tower), and the enemy levels
     // that floor holds. The encounter system reads these instead of the spawn
     // mode whenever they answer.

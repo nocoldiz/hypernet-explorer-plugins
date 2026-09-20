@@ -7,6 +7,14 @@
  * @text Open Card Collection
  * @desc Opens the party's card collection and deck builder.
  *
+ * @arg page
+ * @text Page
+ * @desc Which of the two pages it opens on: the deck builder, or the catalogue of every card that exists.
+ * @type select
+ * @option deck
+ * @option collection
+ * @default deck
+ *
  * @command OpenBoosterPack
  * @text Open Booster Pack
  * @desc Rolls a booster pack and opens it with the full animation. The cards are added to the party collection.
@@ -35,6 +43,15 @@
  * The collection belongs to the party, not to a member: one shelf, whoever is
  * leading. Copies of a card stack on one tile however differently each of them
  * was drawn.
+ *
+ * The screen is two pages. The DECK BUILDER shows what the party owns beside
+ * the deck being built: a card is clicked to put it in, its row in the list is
+ * clicked to give it back, every deck the party keeps is a chip at the top of
+ * the list, and the tally and the meter say how far the list is from legal. The
+ * CARD COLLECTION shows every card that exists, held or not, with the ones
+ * never held printed unlit; it is a reader, so the right page there is the card
+ * itself rather than the deck. Both pages narrow through the one shared filter
+ * strip (name, rarity and ordering) and are turned a page at a time.
  *
  * A deck holds between 9 and 20 cards and may only hold copies the party
  * actually owns. Several decks can be kept; one of them is active and is what a
@@ -105,7 +122,20 @@
   // Scene_CardCollection
   //===========================================================================
 
-  const FILTERS = ["all", "monsters", "weapons", "armor", "effects", "deck"];
+  // The type filters, the same five on both pages. The deck is no longer one of
+  // them: it stands on the right page at all times, the way a deck builder
+  // keeps the list it is building in sight of the cards it is building it from.
+  const FILTERS = ["all", "monsters", "weapons", "armor", "effects"];
+
+  // The two pages the screen is: the builder, which shows what the party owns
+  // and what the working deck is made of, and the collection, which shows the
+  // whole catalogue, owned or not, and reads a card rather than deals it.
+  const MODES = ["deck", "collection"];
+
+  // The catalogue runs to thousands of records, so the shelf is paged rather
+  // than laid out whole: one page is the faces that fit, with an honest count
+  // under them.
+  const PAGE_SIZE = 48;
 
   class Scene_CardCollection extends Scene_MenuBase {
     create() {
@@ -113,10 +143,15 @@
       if (this._helpWindow) { this._helpWindow.deactivate(); this._helpWindow.hide(); }
 
       const CGx = CG();
+      // An event can send the player straight to the catalogue; anything else
+      // opens on the bench, and the request is spent either way.
+      this._mode = Scene_CardCollection._openOn === "collection" ? 1 : 0;
+      Scene_CardCollection._openOn = null;
       this._filter = 0;
       this._index = 0;
+      this._page = 0;
       this._flourish = true;
-      this._area = "grid";      // tabs | grid | actions
+      this._area = "grid";      // grid | actions
       this._actionIndex = 0;
       this._spriteFrame = 1;
       this._spriteTimer = 0;
@@ -124,6 +159,22 @@
       // A per-card art seed, stable while the menu is open and re-rollable, so
       // a stack shows ONE representative specimen rather than flickering.
       this._seeds = {};
+
+      // The one shared filter strip: the name field, the ordering and the
+      // rarity picker all come from it, so this page narrows the way every
+      // other long page in the game narrows.
+      this._bar = window.MenuSearchBar ? window.MenuSearchBar.create({
+        id: "cardcol",
+        placeholder: T("CardGame.col.searchPlaceholder"),
+        sorts: ["name", "level", "price"],
+        sortLabels: {
+          level: T("CardGame.col.sortPower"),
+          price: T("CardGame.col.sortValue")
+        },
+        categories: () => CGx.RARITY_KEYS.map((key, i) => ({ key, label: CGx.rarityName(i) })),
+        categoryLabel: T("CardGame.col.anyRarity"),
+        onChange: () => { this._index = 0; this._page = 0; this.flourish(); this.render(); }
+      }) : null;
 
       // The working deck: the active one when there is one, otherwise the best
       // hand the collection can make, so the builder never opens empty.
@@ -151,6 +202,14 @@
     // Data
     //-------------------------------------------------------------------------
 
+    mode() {
+      return MODES[this._mode];
+    }
+
+    inCollection() {
+      return this.mode() === "collection";
+    }
+
     seedFor(key) {
       if (this._seeds[key] == null) this._seeds[key] = CG().hashString(key + ":look") >>> 0;
       return this._seeds[key];
@@ -161,30 +220,58 @@
       return this._seeds[key];
     }
 
-    // What the left page is showing: the collection under a filter, or the deck
-    // being built.
+    // Every card that exists, tricks included: the catalogue is the monsters
+    // and the gear, the effects live in their own list, and the collection page
+    // is the only place that prints a card the party has never held.
+    everyKey() {
+      if (!this._everyKey) {
+        const CGx = CG();
+        this._everyKey = (CGx.EFFECT_KEYS || []).concat(CGx.catalogue().all);
+      }
+      return this._everyKey;
+    }
+
+    // The pool the page draws from before any filter: the shelf on the builder,
+    // the whole catalogue on the collection.
+    poolKeys() {
+      return this.inCollection() ? this.everyKey() : CG().ownedKeys();
+    }
+
+    // The filtered, ordered list the shelf shows, across every page.
     visibleKeys() {
       const CGx = CG();
-      if (FILTERS[this._filter] === "deck") {
-        const counts = {};
-        this._working.forEach((key) => { counts[key] = (counts[key] || 0) + 1; });
-        return Object.keys(counts);
-      }
-      const owned = CGx.ownedKeys().sort((a, b) => {
-        const r = CGx.rarityOf(b) - CGx.rarityOf(a);
-        return r || CGx.nameOf(a).localeCompare(CGx.nameOf(b));
-      });
       const mode = FILTERS[this._filter];
-      if (mode === "monsters") return owned.filter(CGx.isMonster);
-      if (mode === "weapons") return owned.filter(CGx.isWeapon);
-      if (mode === "armor") return owned.filter(CGx.isArmor);
-      if (mode === "effects") return owned.filter(CGx.isEffect);
-      return owned;
+      let keys = this.poolKeys().filter((key) => {
+        if (mode === "monsters") return CGx.isMonster(key);
+        if (mode === "weapons") return CGx.isWeapon(key);
+        if (mode === "armor") return CGx.isArmor(key);
+        if (mode === "effects") return CGx.isEffect(key);
+        return true;
+      });
+      if (this._bar) {
+        keys = this._bar.apply(keys, (key) => ({
+          name: CGx.nameOf(key),
+          category: CGx.rarityKey(CGx.rarityOf(key)),
+          level: CGx.statTotal(CGx.statsFor(key)),
+          price: CGx.cardValue(key)
+        }));
+      } else {
+        keys = keys.slice().sort((a, b) => {
+          const r = CGx.rarityOf(b) - CGx.rarityOf(a);
+          return r || CGx.nameOf(a).localeCompare(CGx.nameOf(b));
+        });
+      }
+      return keys;
+    }
+
+    pageCount(total) {
+      return Math.max(1, Math.ceil((total == null ? this.visibleKeys().length : total) / PAGE_SIZE));
     }
 
     selectedKey() {
       const keys = this.visibleKeys();
-      return keys[Math.min(this._index, keys.length - 1)] || null;
+      if (this._index < 0) return null;
+      return keys[this._index] || null;
     }
 
     inDeck(key) {
@@ -225,17 +312,24 @@
     // Actions
     //-------------------------------------------------------------------------
 
+    // The builder keeps the deck's own verbs; the collection page is a reader
+    // and keeps only the two that make sense over a card nobody is holding.
     actions() {
       const CGx = CG();
+      const key = this.selectedKey();
+      if (this.inCollection()) {
+        return [
+          { id: "take", label: T("CardGame.col.addToDeck"), enabled: !!key && this.spare(key) > 0 },
+          { id: "reroll", label: T("CardGame.col.reroll"), enabled: !!key }
+        ];
+      }
       const legal = CGx.deckLegality(this._working);
       return [
         { id: "save", label: T("CardGame.col.saveDeck"), enabled: legal.ok },
-        { id: "newDeck", label: T("CardGame.col.newDeck"), enabled: true },
-        { id: "prevDeck", label: T("CardGame.col.prevDeck"), enabled: CGx.decks().length > 1 },
-        { id: "nextDeck", label: T("CardGame.col.nextDeck"), enabled: CGx.decks().length > 1 },
         { id: "auto", label: T("CardGame.col.autoDeck"), enabled: true },
         { id: "shuffle", label: T("CardGame.col.shuffleDeck"), enabled: CGx.ownedKeys().length > 0 },
-        { id: "reroll", label: T("CardGame.col.reroll"), enabled: !!this.selectedKey() },
+        { id: "clear", label: T("CardGame.col.clearDeck"), enabled: this._working.length > 0 },
+        { id: "delete", label: T("CardGame.col.deleteDeck"), enabled: this._deckIndex >= 0 },
         { id: "practice", label: T("CardGame.col.practice"), enabled: !!window.CardDuel && CGx.canDuel() }
       ];
     }
@@ -259,15 +353,17 @@
           this._working = [];
           SoundManager.playOk();
           break;
-        case "prevDeck":
-        case "nextDeck": {
-          const list = CGx.decks();
-          if (!list.length) { SoundManager.playBuzzer(); return; }
-          const step = id === "nextDeck" ? 1 : -1;
-          this._deckIndex = ((this._deckIndex < 0 ? 0 : this._deckIndex) + step + list.length) % list.length;
-          this._working = list[this._deckIndex].cards.slice();
-          CGx.setActiveDeck(this._deckIndex);
-          SoundManager.playCursor();
+        case "clear":
+          this._working = [];
+          playSe("Casino/card_slide_3", 55, 95);
+          break;
+        case "delete": {
+          if (this._deckIndex < 0) { SoundManager.playBuzzer(); return; }
+          CGx.deleteDeck(this._deckIndex);
+          this._deckIndex = CGx.decks().length ? Math.min(this._deckIndex, CGx.decks().length - 1) : -1;
+          this._working = this._deckIndex >= 0 ? CGx.decks()[this._deckIndex].cards.slice() : [];
+          if (this._deckIndex >= 0) CGx.setActiveDeck(this._deckIndex);
+          SoundManager.playCancel();
           break;
         }
         case "auto":
@@ -278,11 +374,11 @@
           // Dealt at random out of the whole collection and filled to the brim,
           // for a player who would rather be handed a deck than build one.
           this._working = CGx.shuffledDeck();
-          this._filter = FILTERS.indexOf("deck");
-          this._index = 0;
           playSe("Casino/card_fan_2", 80, 100);
-          this.flourish();
           break;
+        case "take":
+          this.addToDeck(this.selectedKey());
+          return;
         case "reroll": {
           const key = this.selectedKey();
           if (key) { this.rerollSeed(key); playSe("Casino/card_fan_1", 60, 110); }
@@ -295,6 +391,34 @@
           this.close();
           return;
       }
+      this.render();
+    }
+
+    // Switching pages always starts the new shelf at the top, with the filters
+    // the player had set left alone: the narrowing is theirs, not the page's.
+    setMode(mode) {
+      const at = MODES.indexOf(mode);
+      if (at < 0 || at === this._mode) return;
+      this._mode = at;
+      this._index = 0;
+      this._page = 0;
+      this._area = "grid";
+      this._actionIndex = 0;
+      this.flourish();
+      SoundManager.playOk();
+      this.render();
+    }
+
+    // Loading a saved deck onto the bench, or starting a fresh one when the
+    // chip clicked is the new-deck chip.
+    pickDeck(index) {
+      const CGx = CG();
+      const list = CGx.decks();
+      if (index < 0 || index >= list.length) { this.runAction("newDeck"); return; }
+      this._deckIndex = index;
+      this._working = list[index].cards.slice();
+      CGx.setActiveDeck(index);
+      SoundManager.playCursor();
       this.render();
     }
 
@@ -329,6 +453,9 @@
         this.render();
         return;
       }
+      // The collection is a page the bench was left for, so the way back out of
+      // it is the way back to the bench.
+      if (this.inCollection()) { this.setMode("deck"); return; }
       if (this._index >= 0) {
         this.deselect();
         return;
@@ -337,14 +464,23 @@
     }
 
     updateInput() {
+      // A hot search field owns the keyboard: a gamepad poll must not walk the
+      // cursor out from under the caret.
+      if (window.MenuSearchBar && window.MenuSearchBar.isTyping()) return;
+
       if (Input.isTriggered("cancel") || TouchInput.isCancelled()) {
         this.onCancelAction();
+        return;
+      }
+      if (Input.isTriggered("tab")) {
+        this.setMode(this.inCollection() ? "deck" : "collection");
         return;
       }
       if (Input.isTriggered("pageup") || Input.isTriggered("pagedown")) {
         const step = Input.isTriggered("pagedown") ? 1 : -1;
         this._filter = (this._filter + step + FILTERS.length) % FILTERS.length;
         this._index = 0;
+        this._page = 0;
         this.flourish();
         SoundManager.playCursor();
         this.render();
@@ -368,17 +504,26 @@
       if (Input.isRepeated("right")) { this.moveIndex(1, keys.length); }
       else if (Input.isRepeated("left")) { this.moveIndex(-1, keys.length); }
       else if (Input.isRepeated("down")) {
+        // Walking off the bottom of the last row lands on the buttons; on any
+        // page but the last it turns the page instead.
         if (this._index + cols >= keys.length) { this._area = "actions"; SoundManager.playCursor(); this.render(); }
         else this.moveIndex(cols, keys.length);
       } else if (Input.isRepeated("up")) { this.moveIndex(-cols, keys.length); }
       else if (Input.isTriggered("ok")) {
         const key = this.selectedKey();
         if (!key) { SoundManager.playBuzzer(); return; }
-        if (FILTERS[this._filter] === "deck") this.removeFromDeck(key); else this.addToDeck(key);
+        this.activate(key);
       } else if (Input.isTriggered("shift")) {
         const key = this.selectedKey();
         if (key) this.removeFromDeck(key);
       }
+    }
+
+    // What pressing a card does: the bench takes it, the catalogue only reads
+    // it, since a card nobody owns cannot be dealt.
+    activate(key) {
+      if (this.inCollection()) { SoundManager.playCursor(); return; }
+      this.addToDeck(key);
     }
 
     // Riffle the shelf on the next render.
@@ -395,8 +540,8 @@
       if (!container) return;
       this._area = "grid";
       this._index = i;
-      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el, n) => {
-        el.classList.toggle("selected", n === i);
+      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el) => {
+        el.classList.toggle("selected", parseInt(el.dataset.i, 10) === i);
       });
       container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el) => {
         el.classList.remove("selected");
@@ -408,19 +553,22 @@
     // reads, and nothing else. Rebuilding the shelf for it would lay out a card
     // face per key and hand every one of them a fresh canvas with its sprite
     // drawn into it, so the keyboard takes the same in-place path the pointer
-    // already takes (selectAt).
+    // already takes (selectAt). Walking past the end of a page turns it, which
+    // is the one case that does owe a full redraw.
     moveIndex(delta, length) {
       if (!length) return;
       const base = this._index < 0 ? (delta < 0 ? length : -1) : this._index;
       const next = Math.max(0, Math.min(length - 1, base + delta));
       SoundManager.playCursor();
       if (next === this._index && this._area === "grid") return;
+      const page = Math.floor(next / PAGE_SIZE);
       this._index = next;
       this._area = "grid";
+      if (page !== this._page) { this._page = page; this.flourish(); this.render(); return; }
       const container = document.getElementById("cardcol-container");
       if (!container) { this.render(); return; }
-      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el, n) => {
-        el.classList.toggle("selected", n === next);
+      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el) => {
+        el.classList.toggle("selected", parseInt(el.dataset.i, 10) === next);
       });
       container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el) => {
         el.classList.remove("selected");
@@ -428,6 +576,18 @@
       this.renderDossier(container);
       const cell = container.querySelector(".cgc-cell.selected");
       if (cell) cell.scrollIntoView({ block: "nearest" });
+    }
+
+    turnPage(step) {
+      const total = this.pageCount();
+      const next = Math.max(0, Math.min(total - 1, this._page + step));
+      if (next === this._page) { SoundManager.playBuzzer(); return; }
+      this._page = next;
+      this._index = next * PAGE_SIZE;
+      this._area = "grid";
+      this.flourish();
+      playSe("Casino/card_slide_3", 50, 105);
+      this.render();
     }
 
     //-------------------------------------------------------------------------
@@ -446,11 +606,14 @@
           <div class="left-page cgc-left">
             <div class="page-header-bar">
               <div class="back-button focusable" id="cgc-back">${escapeHtml(T("CardGame.col.close"))}</div>
-              <div class="title">${escapeHtml(T("CardGame.col.title"))}</div>
+              <div class="title" id="cgc-title">${escapeHtml(T("CardGame.col.title"))}</div>
               <span class="cgc-count" id="cgc-count"></span>
             </div>
+            <div class="cgc-modes" id="cgc-modes"></div>
             <div class="backpack-tabs" id="cgc-tabs"></div>
+            <div class="cgc-search" id="cgc-search"></div>
             <div class="cgc-grid" id="cgc-grid"></div>
+            <div class="cgc-pager" id="cgc-pager"></div>
           </div>
           <div class="right-page cgc-right">
             <div class="cgc-dossier" id="cgc-dossier"></div>
@@ -467,63 +630,117 @@
         e.stopPropagation();
         this.onCancelAction();
       });
+      this.mountSearch(container);
     }
 
     render() {
       const container = document.getElementById("cardcol-container");
       if (!container) return;
+      container.classList.toggle("cgc--collection", this.inCollection());
+      this.renderModes(container);
       this.renderTabs(container);
+      this.renderSearch(container);
       this.renderGrid(container);
       this.renderDossier(container);
       this.renderDeck(container);
       this.renderActions(container);
     }
 
+    // The two pages, side by side above the filters: the bench the party builds
+    // on, and the catalogue of every card that exists at all.
+    renderModes(container) {
+      const host = container.querySelector("#cgc-modes");
+      host.innerHTML = MODES.map((id) =>
+        `<button class="cgc-mode inspect-btn focusable${this.mode() === id ? " selected" : ""}" data-m="${id}">${escapeHtml(T("CardGame.col.mode." + id))}</button>`
+      ).join("");
+      host.querySelectorAll(".cgc-mode").forEach((el) => {
+        el.addEventListener("click", () => this.setMode(el.dataset.m));
+      });
+      const title = container.querySelector("#cgc-title");
+      if (title) title.textContent = this.inCollection() ? T("CardGame.col.catalogueTitle") : T("CardGame.col.title");
+    }
+
     renderTabs(container) {
       const CGx = CG();
       const tabs = container.querySelector("#cgc-tabs");
-      tabs.innerHTML = FILTERS.map((id, i) => {
-        const label = id === "deck"
-          ? T("CardGame.col.tabDeck", { n: this._working.length })
-          : T("CardGame.col.tab." + id);
-        return `<div class="backpack-tab focusable${i === this._filter ? " active" : ""}" data-i="${i}">${escapeHtml(label)}</div>`;
-      }).join("");
+      tabs.innerHTML = FILTERS.map((id, i) =>
+        `<div class="backpack-tab focusable${i === this._filter ? " active" : ""}" data-i="${i}">${escapeHtml(T("CardGame.col.tab." + id))}</div>`
+      ).join("");
       tabs.querySelectorAll(".backpack-tab").forEach((el) => {
         el.addEventListener("click", () => {
           this._filter = parseInt(el.dataset.i, 10);
           this._index = 0;
+          this._page = 0;
           this.flourish();
           SoundManager.playCursor();
           this.render();
         });
       });
-      container.querySelector("#cgc-count").textContent = T("CardGame.col.owned", {
-        cards: CGx.totalOwned(),
-        distinct: CGx.ownedKeys().length,
-        pct: CGx.completion().toFixed(1)
-      });
+      container.querySelector("#cgc-count").textContent = this.inCollection()
+        ? T("CardGame.col.catalogue", {
+          distinct: CGx.ownedKeys().length,
+          total: this.everyKey().length,
+          pct: CGx.completion().toFixed(1)
+        })
+        : T("CardGame.col.owned", {
+          cards: CGx.totalOwned(),
+          distinct: CGx.ownedKeys().length,
+          pct: CGx.completion().toFixed(1)
+        });
+    }
+
+    // The strip is mounted ONCE, and only its filters half is ever repainted.
+    // The field half is docked onto the header bar by MenuSearchBar itself, and
+    // docking APPENDS: mounting it again on every redraw leaves the docked one
+    // where it is and stacks a second magnifier onto the header beside it. The
+    // page redraws on every card taken and every tab pressed, so within a few
+    // clicks the header bar was a row of magnifiers. Leaving the field alone
+    // also means the caret survives a redraw on its own.
+    mountSearch(container) {
+      const host = container.querySelector("#cgc-search");
+      if (!host || !this._bar) return;
+      host.innerHTML = this._bar.html();
+      if (window.MenuSearchBar.dock) window.MenuSearchBar.dock();
+    }
+
+    renderSearch(container) {
+      const host = container.querySelector("#cgc-search");
+      if (!host || !this._bar) return;
+      const markup = this._bar.filtersHTML();
+      const filters = host.querySelector(".msb:not(.msb-field-only)");
+      if (filters) filters.outerHTML = markup;
+      else host.insertAdjacentHTML("beforeend", markup);
     }
 
     renderGrid(container) {
       const CGx = CG();
       const grid = container.querySelector("#cgc-grid");
       const keys = this.visibleKeys();
-      this._index = Math.max(0, Math.min(this._index, Math.max(0, keys.length - 1)));
+      const pages = this.pageCount(keys.length);
+      this._page = Math.max(0, Math.min(this._page, pages - 1));
+      if (keys.length) this._index = Math.max(0, Math.min(this._index, keys.length - 1));
+      const from = this._page * PAGE_SIZE;
+      const shown = keys.slice(from, from + PAGE_SIZE);
 
       if (!keys.length) {
-        grid.innerHTML = `<div class="cgc-empty">${escapeHtml(T("CardGame.col.empty"))}</div>`;
+        const empty = this._bar && !this._bar.isEmpty() ? "CardGame.col.noResults"
+          : this.inCollection() ? "CardGame.col.catalogueEmpty" : "CardGame.col.empty";
+        grid.innerHTML = `<div class="cgc-empty">${escapeHtml(T(empty))}</div>`;
+        this.renderPager(container, 0, pages);
         return;
       }
 
       // A shelf entry is the same card face the duel deals into the hand
       // (Cards/CardGameDuel.js renderHand): the rarity frame, the head with
       // how many are owned and what kind it is, the name, the art well and the
-      // five figures under it.
-      const isDeckTab = FILTERS[this._filter] === "deck";
-      grid.innerHTML = keys.map((key, i) => {
-        const qty = isDeckTab ? this.inDeck(key) : CGx.countOf(key);
+      // five figures under it. On the catalogue page a card the party has never
+      // held is still printed, only unlit.
+      grid.innerHTML = shown.map((key, n) => {
+        const i = from + n;
+        const owned = CGx.countOf(key);
         const rare = CGx.rarityKey(CGx.rarityOf(key));
-        const spent = !isDeckTab && this.spare(key) <= 0 ? " cgc-cell--spent" : "";
+        const locked = this.inCollection() && owned <= 0 ? " cgc-cell--locked" : "";
+        const spent = !this.inCollection() && this.spare(key) <= 0 ? " cgc-cell--spent" : "";
         const effect = CGx.isEffect(key);
         const type = effect ? T("CardGame.type.effect")
           : CGx.isMonster(key) ? T("CardGame.type.monster")
@@ -533,9 +750,15 @@
           ? ""
           : `<div class="cgc-cstats">${CGx.STATS.map((id) =>
             `<div>${escapeHtml(CGx.statLabel(id))}<b>${stats[id]}</b></div>`).join("")}</div>`;
-        return `<div class="cgc-cell rarity--${rare}${i === this._index ? " selected" : ""}${spent}" data-i="${i}" style="--d:${Math.min(i, 40)}">
+        // The bench marks how many copies the working deck has already taken,
+        // which is the one number a deck builder is read for.
+        const taken = this.inDeck(key);
+        const badge = !this.inCollection() && taken > 0
+          ? `<span class="cgc-indeck">${escapeHtml(T("CardGame.col.inDeck", { n: taken }))}</span>` : "";
+        return `<div class="cgc-cell rarity--${rare}${i === this._index ? " selected" : ""}${spent}${locked}" data-i="${i}" style="--d:${Math.min(n, 40)}">
             <div class="cgc-shine"></div>
-            <div class="cgc-chead"><span class="cgc-qty">x${qty}</span><span class="cgc-ctype">${escapeHtml(type)}</span></div>
+            ${badge}
+            <div class="cgc-chead"><span class="cgc-qty">x${owned}</span><span class="cgc-ctype">${escapeHtml(type)}</span></div>
             <div class="cgc-lbl">${escapeHtml(CGx.nameOf(key))}</div>
             <div class="cgc-artcell"></div>
             ${foot}
@@ -550,7 +773,8 @@
         setTimeout(() => grid.classList.remove("cgc-dealing"), 900);
       }
 
-      grid.querySelectorAll(".cgc-cell").forEach((el, i) => {
+      grid.querySelectorAll(".cgc-cell").forEach((el) => {
+        const i = parseInt(el.dataset.i, 10);
         const key = keys[i];
         const host = el.querySelector(".cgc-artcell");
         if (CGx.isEquip(key) || CGx.isEffect(key)) {
@@ -574,7 +798,8 @@
         el.addEventListener("click", () => {
           this._area = "grid";
           this._index = i;
-          const moved = isDeckTab ? this.removeFromDeck(key) : this.addToDeck(key);
+          if (this.inCollection()) { this.selectAt(i); return; }
+          const moved = this.addToDeck(key);
           // A refusal still owes the player the card it was pointed at.
           if (!moved) this.render();
         });
@@ -590,6 +815,25 @@
         const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
         this._cols = Math.max(1, Math.round((width + gap) / (first.offsetWidth + gap)));
       }
+      this.renderPager(container, keys.length, pages);
+    }
+
+    // A catalogue of thousands is turned a page at a time rather than scrolled
+    // forever, and the strip says where in it the player stands.
+    renderPager(container, total, pages) {
+      const host = container.querySelector("#cgc-pager");
+      if (!host) return;
+      if (pages <= 1) {
+        host.innerHTML = total ? `<span class="cgc-pagecount">${escapeHtml(T("CardGame.col.showing", { n: total }))}</span>` : "";
+        return;
+      }
+      host.innerHTML = `
+        <button class="inspect-btn focusable cgc-pagebtn${this._page <= 0 ? " inspect-btn--disabled" : ""}" data-s="-1">${escapeHtml(T("CardGame.col.prevPage"))}</button>
+        <span class="cgc-pagecount">${escapeHtml(T("CardGame.col.page", { n: this._page + 1, of: pages, total }))}</span>
+        <button class="inspect-btn focusable cgc-pagebtn${this._page + 1 >= pages ? " inspect-btn--disabled" : ""}" data-s="1">${escapeHtml(T("CardGame.col.nextPage"))}</button>`;
+      host.querySelectorAll(".cgc-pagebtn").forEach((el) => {
+        el.addEventListener("click", () => this.turnPage(parseInt(el.dataset.s, 10)));
+      });
     }
 
     renderDossier(container) {
@@ -600,10 +844,18 @@
       const stats = CGx.statsFor(key);
       const seed = this.seedFor(key);
       const effect = CGx.isEffect(key);
+      const owned = CGx.countOf(key);
       const type = effect ? T("CardGame.type.effect")
         : CGx.isMonster(key) ? T("CardGame.type.monster")
           : CGx.isWeapon(key) ? T("CardGame.type.weapon") : T("CardGame.type.armor");
       const rare = CGx.rarityKey(CGx.rarityOf(key));
+      // The one thing the catalogue page is read for: whether this card has
+      // ever been held, and what the market thinks it is worth.
+      const holding = `
+        <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(T("CardGame.col.ownedLabel"))}</span>
+          <span class="inspect-spec-value ${owned > 0 ? "cgc-legal--ok" : "cgc-legal--bad"}">${escapeHtml(owned > 0 ? T("CardGame.col.copies", { n: owned }) : T("CardGame.col.notOwned"))}</span></div>
+        <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(T("CardGame.col.valueLabel"))}</span>
+          <span class="inspect-spec-value">${escapeHtml(this.money(CGx.cardValue(key)))}</span></div>`;
       host.innerHTML = `
         <div class="ui-detail-head">
           <div class="ui-detail-titles">
@@ -613,6 +865,7 @@
         </div>
         <div class="ui-detail-scroll">
           <div class="cgc-art" id="cgc-art"></div>
+          <div class="inspect-spec-grid">${holding}</div>
           ${effect ? "" : `<div class="inspect-section-title">${escapeHtml(T("CardGame.col.statsHeading"))}</div>
           <div class="inspect-spec-grid">
             ${CGx.STATS.map((id) => `<div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(CGx.statLabel(id))}</span><span class="inspect-spec-value">${stats[id]}</span></div>`).join("")}
@@ -623,34 +876,68 @@
       fillArt(host.querySelector("#cgc-art"), key, 96);
     }
 
+    // Every figure on this page that is money is printed the one way the game
+    // prints money.
+    money(gold) {
+      if (window.MoneyFormatter && window.MoneyFormatter.format) return window.MoneyFormatter.format(gold);
+      return String(gold);
+    }
+
     renderDeck(container) {
       const CGx = CG();
       const host = container.querySelector("#cgc-deck");
+      // The catalogue page is a reader: the bench is put away while it is open,
+      // so the card being read has the whole right page to itself.
+      if (this.inCollection()) { host.innerHTML = ""; host.hidden = true; return; }
+      host.hidden = false;
       const legal = CGx.deckLegality(this._working);
-      const name = this._deckIndex >= 0 && CGx.decks()[this._deckIndex]
-        ? CGx.decks()[this._deckIndex].name
-        : T("CardGame.col.unsavedDeck");
       const reason = legal.ok ? T("CardGame.col.deckLegal")
         : legal.reason === "tooFew" ? T("CardGame.col.deckTooFew", { min: CGx.DECK_MIN })
           : legal.reason === "tooMany" ? T("CardGame.col.deckTooMany", { max: CGx.DECK_MAX })
             : T("CardGame.col.deckNotOwned");
 
+      // The decks the party keeps, as chips: one per saved deck plus the one
+      // that starts a fresh list, so changing deck is a click rather than a
+      // walk through two buttons that only said previous and next.
+      const chips = CGx.decks().map((deck, i) =>
+        `<button class="cgc-deckchip focusable${i === this._deckIndex ? " active" : ""}" data-d="${i}">${escapeHtml(deck.name)}</button>`
+      ).concat([
+        `<button class="cgc-deckchip focusable${this._deckIndex < 0 ? " active" : ""}" data-d="-1">${escapeHtml(T("CardGame.col.newDeck"))}</button>`
+      ]).join("");
+
       const counts = {};
       this._working.forEach((key) => { counts[key] = (counts[key] || 0) + 1; });
-      const rows = Object.keys(counts).sort((a, b) => CGx.nameOf(a).localeCompare(CGx.nameOf(b)))
-        .map((key) => `<div class="cgc-deckrow inspect-spec-row" data-k="${escapeHtml(key)}">
-            <span class="inspect-spec-label">${escapeHtml(CGx.nameOf(key))}</span><span class="inspect-spec-value">x${counts[key]}</span></div>`).join("");
+      // Ordered the way a deck list is read: the dearest cards at the top, ties
+      // broken by name.
+      const rows = Object.keys(counts)
+        .sort((a, b) => (CGx.rarityOf(b) - CGx.rarityOf(a)) || CGx.nameOf(a).localeCompare(CGx.nameOf(b)))
+        .map((key) => {
+          const rare = CGx.rarityKey(CGx.rarityOf(key));
+          const power = CGx.isEffect(key) ? "" : CGx.statTotal(CGx.statsFor(key));
+          return `<div class="cgc-deckrow rarity--${rare}" data-k="${escapeHtml(key)}">
+              <span class="cgc-gem"></span>
+              <span class="cgc-deckname">${escapeHtml(CGx.nameOf(key))}</span>
+              <span class="cgc-deckpower">${power}</span>
+              <span class="cgc-deckqty">${counts[key]}</span>
+            </div>`;
+        }).join("");
 
+      const filled = Math.min(100, (this._working.length / CGx.DECK_MAX) * 100);
       host.innerHTML = `
-        <div class="inspect-section-title">${escapeHtml(T("CardGame.col.deckHeading"))}</div>
-        <div class="inspect-spec-grid">
-          <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(name)}</span><span class="inspect-spec-value">${this._working.length} / ${CGx.DECK_MAX}</span></div>
-          <div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(T("CardGame.col.legalLabel"))}</span><span class="inspect-spec-value ${legal.ok ? "cgc-legal--ok" : "cgc-legal--bad"}">${escapeHtml(reason)}</span></div>
+        <div class="cgc-deckchips">${chips}</div>
+        <div class="cgc-deckhead">
+          <span class="cgc-deckheading">${escapeHtml(T("CardGame.col.deckHeading"))}</span>
+          <span class="cgc-decktally ${legal.ok ? "cgc-legal--ok" : "cgc-legal--bad"}">${this._working.length} / ${CGx.DECK_MAX}</span>
         </div>
-        <div class="cgc-decklist inspect-spec-grid">${rows || `<div class="ui-empty-note">${escapeHtml(T("CardGame.col.deckEmpty"))}</div>`}</div>`;
+        <div class="cgc-deckmeter"><div class="cgc-deckmeter-fill" style="--w:${filled}%"></div></div>
+        <div class="cgc-decklist">${rows || `<div class="ui-empty-note">${escapeHtml(T("CardGame.col.deckEmpty"))}</div>`}</div>
+        <div class="cgc-deckstanding ${legal.ok ? "cgc-legal--ok" : "cgc-legal--bad"}">${escapeHtml(reason)}</div>`;
 
       host.querySelectorAll(".cgc-deckrow").forEach((el) => {
         el.addEventListener("click", () => this.removeFromDeck(el.dataset.k));
+      });
+      host.querySelectorAll(".cgc-deckchip").forEach((el) => {
+        el.addEventListener("click", () => this.pickDeck(parseInt(el.dataset.d, 10)));
       });
     }
 
@@ -1267,7 +1554,10 @@
     });
   }
 
-  const openCollection = () => { SceneManager.push(Scene_CardCollection); };
+  const openCollection = (args) => {
+    Scene_CardCollection._openOn = args && args.page === "collection" ? "collection" : null;
+    SceneManager.push(Scene_CardCollection);
+  };
   const openPack = (args) => {
     const CGx = window.CardGame;
     if (!CGx) return;

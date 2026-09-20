@@ -115,12 +115,16 @@
         return n >= 1024 ? T('MyComputer.kb', { n: Math.ceil(n / 1024) }) : T('MyComputer.bytes', { n: n });
     }
 
+    // The explorer wears the desktop icon theme: a folder is a folder and a
+    // file is its mime type, the way the machine of the period drew them.
+    const tango = name => OS().Icons.path(name);
+
     function iconOf(item) {
         if (item.drive) return item.drive.icon;
-        if (item.shellPath) return item.shellPath === 'Network' ? 188 : 234;   // i18n-ignore  VFS path
-        if (item.type === 'directory') return 191;
+        if (item.shellPath) return tango(item.shellPath === 'Network' ? 'places-network-workgroup' : 'devices-printer');   // i18n-ignore  VFS path
+        if (item.type === 'directory') return tango('places-folder');
         const app = item.app && OS()._apps[item.app];
-        return app ? app.icon : 190;
+        return app ? app.icon : tango('mimetypes-text-x-generic');
     }
 
     window.HypernetMyComputer = {
@@ -227,7 +231,7 @@
                     const roots = (fsys() && fsys().drives ? fsys().drives() : []).filter(d => d.ready);
                     return `<div class="explorer-tree" id="explorer-tree">
                         <div class="explorer-tree-row focusable ${st.path === MY_COMPUTER ? 'selected' : ''}" data-goto="${MY_COMPUTER}" tabindex="0">
-                            <span class="explorer-tree-icon">${OS().getIconHTML(86, 16)}</span>
+                            <span class="explorer-tree-icon">${OS().getIconHTML(tango('devices-computer'), 16)}</span>
                             <span>${escapeHtml(MC('myComputer'))}</span></div>
                         ${roots.map(d => treeHTML(d.path, 1)).join('')}</div>`;
                 }
@@ -277,7 +281,7 @@
                 const open = String(st.path + '/').startsWith(p + '/');
                 const row = `<div class="explorer-tree-row focusable ${p === st.path ? 'selected' : ''}" data-goto="${escapeHtml(p)}" data-depth="${depth}" tabindex="0">
                     <span class="explorer-tree-indent" data-indent="${depth}"></span>
-                    <span class="explorer-tree-icon">${OS().getIconHTML(191, 16)}</span>
+                    <span class="explorer-tree-icon">${OS().getIconHTML(tango('places-folder'), 16)}</span>
                     <span>${escapeHtml(leafOf(p))}</span></div>`;
                 return row + (open ? kids.map(k => treeHTML(joinPath(p, k.name), depth + 1)).join('') : '');
             };
@@ -345,6 +349,14 @@
             };
 
             const openItem = (name, isDir) => {
+                // A real double click fires two clicks and then the dblclick,
+                // so the same row asks to be opened twice; the second ask would
+                // join the name onto the folder we just walked into and error.
+                // One opening of one row, once.
+                const now = Date.now();
+                if (st.lastOpen && st.lastOpen.name === name && st.lastOpen.from === st.path
+                    && (now - st.lastOpen.at) < 600) return;
+                st.lastOpen = { name: name, from: st.path, at: now };
                 // At My Computer a row is a drive or a shell folder, and each
                 // knows the path it stands for; anywhere else a row is a name
                 // inside the folder we are already in.

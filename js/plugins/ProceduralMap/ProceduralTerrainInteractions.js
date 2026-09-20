@@ -655,18 +655,23 @@
     return _forageIndex;
   }
 
-  // The pool keys the square the party is standing on answers to. Empty for an
-  // alien surface, and empty for a biome no family recognises, which is the
-  // signal to hand out no food at all.
-  function currentForageKeys() {
-    const pg = $gameSystem && $gameSystem._procGenData;
-    const biome = pg && pg.currentBiome ? String(pg.currentBiome) : "";
-    if (!biome || /^alien/i.test(biome)) return [];
+  // The pool keys ONE named biome answers to. Empty for an alien surface, and
+  // empty for a biome no family recognises, which is the signal to hand out no
+  // wild food at all: a hedgerow does not grow on Mars.
+  function forageKeysForBiome(biome) {
+    const name = biome ? String(biome) : "";
+    if (!name || /^alien/i.test(name)) return [];
     const keys = [];
     for (const fam of FORAGE_FAMILIES) {
-      if (fam.test.test(biome) && keys.indexOf(fam.key) < 0) keys.push(fam.key);
+      if (fam.test.test(name) && keys.indexOf(fam.key) < 0) keys.push(fam.key);
     }
     return keys;
+  }
+
+  // The pool keys the square the party is standing on answers to.
+  function currentForageKeys() {
+    const pg = $gameSystem && $gameSystem._procGenData;
+    return forageKeysForBiome(pg && pg.currentBiome ? String(pg.currentBiome) : "");
   }
 
   // One weighted draw across every pool in `keys`, as a single item id, or 0.
@@ -723,6 +728,60 @@
     if (typeof target === "string") {
       return drawFromPools([target], keys.filter(k => k !== target));
     }
+    return drawFromPools(keys);
+  }
+
+  // ==========================================================================
+  // What an hour spent searching a country turns up
+  // ==========================================================================
+  // Picking one bush is a single reward table (above). Spending an hour going
+  // over the whole square is the other half of the same answer: the food the
+  // tables already know about, plus the RAW MATERIAL lying about in a country
+  // of that kind - deadfall in a wood, chips of crystal in a cave, somebody
+  // else's rubbish in a city. Core/TimeDateSystem.js runs the activity and
+  // pays it out; the tables live here, next to the ones they belong with.
+
+  // i18n-ignore-start  Biomes.json family keys, never labels
+  const FORAGE_FAMILY_MATERIALS = {
+    ice:      [MAT.PLANT, MAT.BONE, MAT.MEAT, MAT.CLOTH],
+    volcanic: [MAT.CRYSTAL, MAT.GLASS, MAT.OIL, MAT.BONE],
+    desert:   [MAT.PLANT, MAT.BONE, MAT.GLASS, MAT.LEATHER],
+    wet:      [MAT.PLANT, MAT.MEAT, MAT.HERB, MAT.ACID],
+    woodland: [MAT.WOOD, MAT.PLANT, MAT.HERB, MAT.BONE],
+    tropical: [MAT.WOOD, MAT.PLANT, MAT.HERB, MAT.ACID],
+    rural:    [MAT.PLANT, MAT.WOOD, MAT.CLOTH, MAT.LEATHER],
+    mountain: [MAT.CRYSTAL, MAT.BONE, MAT.PLANT, MAT.STEEL],
+    cave:     [MAT.CRYSTAL, MAT.BONE, MAT.ARCANE, MAT.GLASS],
+    fungus:   [MAT.PLANT, MAT.HERB, MAT.ACID, MAT.BONE],
+    urban:    [MAT.PLASTIC, MAT.GLASS, MAT.CIRCUIT, MAT.CLOTH, MAT.STEEL],
+    weird:    [MAT.ARCANE, MAT.ETHEREAL, MAT.CRYSTAL, MAT.PLANT],
+  };
+  // i18n-ignore-end
+
+  // The base larder. A square nobody can classify - an unnamed biome, a modded
+  // one, another world entirely - still has things growing on it and things
+  // lying on it, so an hour spent searching one is never an hour wasted. It is
+  // deliberately the plainest table on the list: what turns up anywhere.
+  const FORAGE_BASE_MATERIALS = [MAT.PLANT, MAT.PLANT, MAT.WOOD, MAT.HERB, MAT.BONE];
+
+  // One material a given biome can give up, as an item id. Falls through to the
+  // base larder for every country the families do not recognise.
+  function forageMaterialFor(biome) {
+    const keys = forageKeysForBiome(biome);
+    let pool = [];
+    for (const key of keys) {
+      for (const id of FORAGE_FAMILY_MATERIALS[key] || []) pool.push(id);
+    }
+    if (!pool.length) pool = FORAGE_BASE_MATERIALS;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  // One wild food a given biome can give up, or 0 where nothing grows that a
+  // hedgerow would recognise. No chance gate: the caller decides how often an
+  // hour of searching turns up food rather than firewood.
+  function forageFoodFor(biome) {
+    const keys = forageKeysForBiome(biome);
+    if (!keys.length) return 0;
     return drawFromPools(keys);
   }
 
@@ -828,6 +887,9 @@
       const spot = storedSpot(t.x, t.y);
       if (!spot) continue;
       store.dismantled[key][`${spot.x},${spot.y}`] = name;
+      // Whatever stood here was taken apart, planted or not: the planting
+      // record must not put it back on the next load.
+      if (store.planted && store.planted[key]) delete store.planted[key][`${spot.x},${spot.y}`];
     }
     // Flush immediately so other savegames in the same world see the removal
     // even before the next in-game save.
@@ -900,6 +962,279 @@
       }
     }
     if ($gameMap) $gameMap.requestRefresh();
+  }
+
+
+  // ==========================================================================
+  // Planted features (scenery a contract needs to exist)
+  // ==========================================================================
+  // A notice that asks for statues to be scanned needs statues to stand on the
+  // square it names, and open wilderness rolls plenty of squares with none at
+  // all. So whoever needs them asks for them to be PLANTED: stamped onto free
+  // tiles and written into the world's terrain file in the same square-local
+  // coordinates a removal is written in. Every savegame of that world then sees
+  // the same stones in the same places, on this visit and on every later one,
+  // and a square regenerated from scratch gets them back.
+  //
+  // Most statues are not one tile: a tileset writes them as a grid (a column of
+  // two, sometimes a block of three by two), so a planting is a whole footprint
+  // and every cell of it has to be free before a single tile is written.
+  function plantedStore() {
+    const store = terrainStore();
+    if (!store) return null;
+    if (!store.planted) store.planted = {};
+    return store;
+  }
+
+  // The layer a feature belongs on, as Features.json declares it. featureAt
+  // reads 3 then 2, so either is found; writing it where the generator would
+  // have written it keeps a planted stone indistinguishable from a rolled one.
+  function plantLayerFor(name) {
+    const feats = window.WorldGen && window.WorldGen.Features;
+    if (feats) {
+      for (const key of Object.keys(feats)) {
+        const f = feats[key];
+        if (f && f.name === name && f.layer) return Math.min(3, Math.max(1, f.layer));
+      }
+    }
+    return 2;
+  }
+
+  // The first of `names` this tileset can actually draw, with its variants. A
+  // statue is a statue on the fields sheet and nowhere on some others, so the
+  // caller passes a list in order of preference and takes what the square's own
+  // tileset has.
+  function plantableVariants(tilesetId, names) {
+    const U = window.ProcGenUtils;
+    if (!U || !U.Cache || !tilesetId) return null;
+    const all = U.Cache.getTilesetFeatures(tilesetId) || {};
+    for (const name of names) {
+      const variants = (all[name] || []).filter(
+        (v) => v && ((v.type === "single" && v.tileId) || (v.type === "grid" && v.grid)));
+      if (variants.length) return { name: name, variants: variants };
+    }
+    return null;
+  }
+
+  // Every cell one variant would occupy with its top-left corner at (x, y).
+  function plantFootprint(variant, x, y) {
+    if (variant.type === "single") return [{ x: x, y: y, tileId: variant.tileId }];
+    const cells = [];
+    for (let gr = 0; gr < variant.grid.length; gr++) {
+      const row = variant.grid[gr];
+      for (let gc = 0; gc < row.length; gc++) {
+        if (row[gc]) cells.push({ x: x + gc, y: y + gr, tileId: row[gc] });
+      }
+    }
+    return cells;
+  }
+
+  // Is (x, y) a tile something may be planted on? Walkable ground, nothing of
+  // the map's own on any object layer (no tree, no rock, no road marking, no
+  // piece of a building or a prefab), no event standing there, not inside the
+  // keep-out mass a structure is cut from, and not over a seam into the next
+  // square, which is a different store key and not this square's business.
+  function canPlantAt(x, y) {
+    if (!$gameMap || !$dataMap || !$gameMap.isValid(x, y)) return false;
+    if (window.RegionRules && window.RegionRules.blocksSpawn(x, y)) return false;
+    if ($gameMap.regionId(x, y) === 99) return false;
+    if (!$gameMap.checkPassage(x, y, 0x0f)) return false;
+    if ($gameMap.eventsXy(x, y).length) return false;
+    if ($gamePlayer && $gamePlayer.x === x && $gamePlayer.y === y) return false;
+    for (let z = 1; z <= 3; z++) if ($gameMap.tileId(x, y, z) !== 0) return false;
+    const R = window.ProcGenRoads;
+    if (R && typeof R.isRoadFeatureTileAt === "function"
+        && R.isRoadFeatureTileAt(x, y)) return false;
+    return !!storedSpot(x, y);
+  }
+
+  function canPlantFootprint(cells, taken, spacing) {
+    for (const c of cells) {
+      if (!canPlantAt(c.x, c.y)) return false;
+      if (taken.some((t) => Math.abs(t.x - c.x) < spacing && Math.abs(t.y - c.y) < spacing)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function writePlantedCells(cells, name, layer) {
+    if (!$dataMap || !$dataMap.data) return false;
+    const w = $dataMap.width, h = $dataMap.height;
+    const store = plantedStore();
+    const key = store ? currentMapKey() : null;
+    for (const c of cells) {
+      $dataMap.data[layer * w * h + c.y * w + c.x] = c.tileId;
+      if (!store) continue;
+      const spot = storedSpot(c.x, c.y);
+      if (!spot) continue;
+      const coord = spot.x + "," + spot.y;
+      if (!store.planted[key]) store.planted[key] = {};
+      store.planted[key][coord] = { name: name, tileId: c.tileId, layer: layer };
+      // A removal recorded here long ago would blank the tile again on the next
+      // load, so the two records never describe the same tile.
+      if (store.dismantled[key]) delete store.dismantled[key][coord];
+    }
+    return true;
+  }
+
+  // Every tile of the current map already holding one of these features, one
+  // entry per feature rather than per tile: a two-tile statue is one statue.
+  function findFeatureTiles(names) {
+    const out = [];
+    if (!$gameMap || !$dataMap) return out;
+    const wanted = new Set(names);
+    const seen = new Set();
+    for (let y = 0; y < $dataMap.height; y++) {
+      for (let x = 0; x < $dataMap.width; x++) {
+        if (seen.has(x + "," + y)) continue;
+        const info = featureAt(x, y);
+        if (!info || !wanted.has(info.name)) continue;
+        const foot = computeFootprint(x, y, info.layer, info.tileId);
+        for (const t of foot) seen.add(t.x + "," + t.y);
+        out.push({ x: x, y: y, name: info.name });
+      }
+    }
+    return out;
+  }
+
+  // Last resort: the first spot anywhere on the map the whole footprint fits.
+  function sweepForPlantSpot(variant, taken, spacing) {
+    if (!$dataMap) return null;
+    for (let y = 1; y < $dataMap.height - 1; y++) {
+      for (let x = 1; x < $dataMap.width - 1; x++) {
+        const cells = plantFootprint(variant, x, y);
+        if (canPlantFootprint(cells, taken, spacing)) return cells;
+      }
+    }
+    return null;
+  }
+
+  function plantRng(key) {
+    let a = 2166136261 >>> 0;
+    const s = String(key);
+    for (let i = 0; i < s.length; i++) {
+      a ^= s.charCodeAt(i);
+      a = Math.imul(a, 16777619) >>> 0;
+    }
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function flushTerrain() {
+    if (window.WorldManager && typeof window.WorldManager.flush === "function") {
+      try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
+    }
+  }
+
+  // Plant enough of the first drawable name that `count` of them stand on this
+  // square, spread around its middle. Returns { name, tiles, planted } for what
+  // is there afterwards, or null when the tileset can draw none of them.
+  //
+  // What already stands counts: a square that rolled three statues of its own
+  // needs no fourth planted for a contract that asks for three.
+  function plantFeatures(names, count, opts) {
+    const o = opts || {};
+    const list = Array.isArray(names) ? names : [names];
+    const pick = plantableVariants(currentTilesetId(), list);
+    const existing = findFeatureTiles(pick ? [pick.name] : list);
+    if (!pick) {
+      return existing.length
+        ? { name: existing[0].name, tiles: existing, planted: 0 } : null;
+    }
+    const want = Math.max(0, count - existing.length);
+    if (want === 0) return { name: pick.name, tiles: existing, planted: 0 };
+
+    const layer = plantLayerFor(pick.name);
+    const rng = plantRng(o.seedKey || currentMapKey());
+    const w = $dataMap.width, h = $dataMap.height;
+    const cx = Math.floor(w / 2), cy = Math.floor(h / 2);
+    const minR = o.minR != null ? o.minR : 4;
+    const maxR = o.maxR != null ? o.maxR : Math.max(minR + 1, Math.min(cx, cy) - 3);
+    const spacing = o.spacing != null ? o.spacing : 3;
+    // `taken` is every tile spoken for, cell by cell, so the spacing rule is
+    // honest about a two-tile statue; `standing` holds one entry per feature,
+    // which is what a count of statues means.
+    const standing = existing.slice();
+    const taken = [];
+    for (const e of existing) {
+      const info = featureAt(e.x, e.y);
+      const foot = info ? computeFootprint(e.x, e.y, info.layer, info.tileId) : [e];
+      for (const t of foot) taken.push({ x: t.x, y: t.y, name: e.name });
+    }
+    let planted = 0;
+    for (let k = 0; k < want; k++) {
+      let cells = null;
+      const variant = pick.variants[Math.floor(rng() * pick.variants.length)];
+      // Rings around the middle first, then a sweep of the whole map: a square
+      // whose centre is all water or all rock still gets its stones, somewhere.
+      for (let attempt = 0; attempt < 400 && !cells; attempt++) {
+        const r = minR + rng() * (maxR - minR);
+        const a = rng() * Math.PI * 2;
+        const x = Math.max(1, Math.min(w - 3, Math.round(cx + Math.cos(a) * r)));
+        const y = Math.max(1, Math.min(h - 3, Math.round(cy + Math.sin(a) * r)));
+        const foot = plantFootprint(variant, x, y);
+        if (canPlantFootprint(foot, taken, spacing)) cells = foot;
+      }
+      if (!cells) cells = sweepForPlantSpot(variant, taken, spacing);
+      if (!cells) cells = sweepForPlantSpot(variant, taken, 1);
+      if (!cells) break;
+      writePlantedCells(cells, pick.name, layer);
+      for (const c of cells) taken.push({ x: c.x, y: c.y, name: pick.name });
+      standing.push({ x: cells[0].x, y: cells[0].y, name: pick.name });
+      planted++;
+    }
+    if (planted) {
+      flushTerrain();
+      if ($gameMap) $gameMap.requestRefresh();
+    }
+    return { name: pick.name, tiles: standing, planted: planted };
+  }
+
+  // Re-stamp everything planted on this square. Runs AFTER the stored removals
+  // are replayed, so a planted stone is never blanked by an old felling record
+  // that happens to name the same tile.
+  function applyPlantedToMap() {
+    const store = plantedStore();
+    if (!store || !$dataMap || !$dataMap.data) return;
+    const tiles = store.planted[currentMapKey()];
+    if (!tiles) return;
+    const w = $dataMap.width, h = $dataMap.height;
+    for (const coord of Object.keys(tiles)) {
+      const rec = tiles[coord];
+      if (!rec || !rec.tileId) continue;
+      const parts = coord.split(",");
+      const on = spotOnMap(parseInt(parts[0], 10), parseInt(parts[1], 10));
+      if (!on) continue;
+      if (on.x < 0 || on.y < 0 || on.x >= w || on.y >= h) continue;
+      const layer = rec.layer || 2;
+      const idx = layer * w * h + on.y * w + on.x;
+      // Something of the map's own got there first (a prefab, a building): the
+      // planting stays on the books but does not overwrite it.
+      if ($dataMap.data[idx] !== 0 && $dataMap.data[idx] !== rec.tileId) continue;
+      $dataMap.data[idx] = rec.tileId;
+    }
+    if ($gameMap) $gameMap.requestRefresh();
+  }
+
+  // Taking a planted feature apart retires the planting: the record must not
+  // put it back on the next load.
+  function forgetPlanted(tiles) {
+    const store = plantedStore();
+    if (!store) return;
+    const map = store.planted[currentMapKey()];
+    if (!map) return;
+    let hit = false;
+    for (const t of tiles) {
+      const spot = storedSpot(t.x, t.y);
+      const coord = spot ? spot.x + "," + spot.y : null;
+      if (coord && map[coord]) { delete map[coord]; hit = true; }
+    }
+    if (hit) flushTerrain();
   }
 
   // ==========================================================================
@@ -1081,16 +1416,17 @@
   function showSignPostMenu(name, tiles) {
     const choices = [T('Terrain.read'), T('Terrain.verb.dismantle'), T('Terrain.cancel')];
     $gameMessage._eventActivator = "p1";
-    window.skipLocalization = true;
     $gameMessage.setChoices(choices, 0, 2);
     window.skipLocalization = false;
     $gameMessage.setChoiceCallback((index) => {
       // Defer past the choice window teardown so any follow-up dialogue shows.
       if (index === 0) {
         setTimeout(() => {
-          window.skipLocalization = true;
-          $gameMessage.add(currentPlaceName());
-          window.skipLocalization = false;
+          if (window.ParchmentToast) {
+            window.ParchmentToast.show(currentPlaceName(), {
+              severity: 'info'
+            });
+          }
         }, 0);
       } else if (index === 1) {
         setTimeout(() => performSignPostDismantle(name, tiles), 0);
@@ -1109,7 +1445,6 @@
     $gameMessage._eventActivator = "p1";
     // Choice/message text is already resolved through T(); wrap so the shared
     // localization layer leaves it untouched.
-    window.skipLocalization = true;
     $gameMessage.setChoices(choices, 0, 1);
     window.skipLocalization = false;
     $gameMessage.setChoiceCallback((index) => {
@@ -1118,9 +1453,11 @@
       if (index !== 0) return;
       setTimeout(() => {
         if (cfg.req && !meetsRequirement(cfg.req)) {
-          window.skipLocalization = true;
-          $gameMessage.add(requirementError(cfg.req));
-          window.skipLocalization = false;
+          if (window.ParchmentToast) {
+            window.ParchmentToast.show(requirementError(cfg.req), {
+              severity: 'warning'
+            });
+          }
           return;
         }
         performDismantle(name, cfg, tiles, onRemove);
@@ -1134,7 +1471,6 @@
   function showChoiceMenu(choices, onSelect) {
     const full = choices.concat([T('Terrain.cancel')]);
     $gameMessage._eventActivator = "p1";
-    window.skipLocalization = true;
     $gameMessage.setChoices(full, 0, full.length - 1);
     window.skipLocalization = false;
     $gameMessage.setChoiceCallback((index) => {
@@ -2288,6 +2624,9 @@
     _Game_Map_setup.call(this, mapId);
     if (mapId === PROC_MAP_ID) {
       applyDismantledToMap();
+      // After the removals, never before: a planted stone must not be blanked
+      // by an old felling record that names the same tile.
+      applyPlantedToMap();
       rollInitialLitFeatures();
       // Surfacing puts the party back on the very tile they went in by, so give
       // the entrance a moment before it can swallow a still-held direction key.
@@ -2411,6 +2750,18 @@
 
   window.TerrainInteractions = {
     tryInteract, interactWithFeature, applyDismantledToMap,
+    // Scenery put down because something needs it to exist (a contract that
+    // asks for statues to be scanned on a square that rolled none). Planted
+    // tiles are written to the world folder, so every savegame of the world
+    // sees them and a regenerated square gets them back.
+    plantFeatures, applyPlantedToMap, findFeatureTiles,
+    // Every tile of the feature standing at (x, y), so a caller counting
+    // features (a scan contract) counts a two-tile statue once.
+    featureFootprintAt(x, y) {
+      const info = featureAt(x, y);
+      if (!info) return null;
+      return { name: info.name, tiles: computeFootprint(x, y, info.layer, info.tileId) };
+    },
     // Every removal recorded for one proc-map square (biome + world coordinate),
     // read by ProceduralMapPrefabs so a prefab never re-stamps scenery the party
     // already took apart on that square. Other squares running the same prefab
@@ -2429,6 +2780,12 @@
     // Every currently-lit Torch/Candle tile on the current proc-map coordinate;
     // DynamicLightingSystem re-creates their ad hoc lights from this on load.
     getLitTiles,
+    // The forage activity (Core/TimeDateSystem.js, window.Forage) reads the
+    // same tables a single pick does, asked about a NAMED biome rather than
+    // about the square underfoot: it also runs on the world map, where there
+    // is no proc-gen square to stand on.
+    forageKeysForBiome, forageFoodFor, forageMaterialFor,
+    FORAGE_BASE_MATERIALS,
   };
   // Legacy alias (pre-rename): same object, so wraps applied through either
   // name are seen by every consumer.

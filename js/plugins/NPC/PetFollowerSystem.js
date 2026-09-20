@@ -341,7 +341,9 @@ window.Game_PetFollower = Game_PetFollower;
         if (window.ParchmentToast) {
             window.ParchmentToast.show(text, { severity: severity || "info", duration: 180 });
         } else if (typeof $gameMessage !== "undefined" && $gameMessage) {
+            window.skipLocalization = true;
             $gameMessage.add(text);
+            window.skipLocalization = false;
         }
     }
 

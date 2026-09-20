@@ -93,6 +93,20 @@
     --z-dialog: 9000;
     --z-toast: 12000;
     --z-cursor: 20000;
+
+    /* === THE ONE MODAL LOOK (see theme.css) ===
+       Every confirmation window, prompt and write sheet outside HypernetOS and
+       the minigames is painted from these values and nothing else. A modal that
+       mixes in its own ground or its own frame reads as a different game, so
+       none of them do it any more. */
+    --modal-scrim: rgba(0, 0, 0, 0.55);
+    --modal-bg: var(--bg-panel);
+    --modal-border: none;
+    --modal-radius: 6px;
+    --modal-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    --modal-pad: 20px 24px;
+    --modal-gap: 12px;
+    --modal-fg: var(--text-success-active);
 }
 
 :root {
@@ -129,7 +143,7 @@
     --bg-overlay-hover: #000000;
     --bg-panel: #0a0a0a;
     --bg-pockets-clock: #0a0a0a;
-    --bg-primary-hover-translucent-35: rgba(255, 204, 102, 0.08);
+    --bg-primary-hover-translucent-35: rgba(255, 255, 255, 0.08);
     --bg-secondary-hover: #000000;
     --bg-surface: #000000;
     --bg-tertiary-focus-translucent-45: rgba(255, 204, 102, 0.18);
@@ -357,7 +371,7 @@
     --border-danger-active: #ff5555;
     --border-focus-hover: #ffcc66;
     --border-muted-focus: #5a4a2a;
-    --border-primary-hover-translucent-15: rgba(255, 204, 102, 0.3);
+    --border-primary-hover-translucent-15: rgba(255, 255, 255, 0.15);
     /* Fainter siblings of the rule above. theme.css already asked for both;
        until now nothing answered, so those hairlines drew as nothing. */
     --border-primary-hover-translucent-5: rgba(255, 204, 102, 0.10);

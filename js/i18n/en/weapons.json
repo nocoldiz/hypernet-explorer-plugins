@@ -1,2202 +1,2170 @@
 {
-  "1": {
-    "name": "Short Sword",
-    "description": "A light and easy-to-wield short-bladed sword."
-  },
   "2": {
-    "name": "Long Sword",
-    "description": "A long battle sword boasting a sharp cut. Can inflict Poison on hit."
+    "name": "Unbalanced Throwing Knife",
+    "description": "A throwing knife that wobbles in flight."
   },
   "3": {
-    "name": "Falchion",
-    "description": "A wide sword with a curved blade. Can inflict Poison on hit."
+    "name": "Bargain Knife",
+    "description": "A cheap knife whose handle works loose.\nCan blind on hit."
   },
   "4": {
-    "name": "Mithril Sword",
-    "description": "A long sword forged with mithril. Can inflict Poison on hit."
+    "name": "Broken Bottle",
+    "description": "A broken bottle wrapped in cloth.\nCan inflict Poison on hit."
   },
   "5": {
-    "name": "Dragon Blade",
-    "description": "A sword forged from the fangs of a dragon. Strikes with Sacred and can\ninflict Inspired."
+    "name": "Ruler Shiv",
+    "description": "A wooden ruler bound and sharpened.\nCan inflict Poison on hit."
   },
   "6": {
-    "name": "Vector gun",
-    "description": "A gnome forged handgun with control over vectors, press SHIFT to recoil\njump."
+    "name": "Kitchen Knife",
+    "description": "A steak knife with a bound handle.\nCan inflict Poison on hit."
   },
   "7": {
-    "name": "Wooden Staff",
-    "description": "An inexpensive and widely-used staff. Strikes with Cursed and can\ninflict Poison."
+    "name": "Combat Scissors",
+    "description": "Scissors with taped handles.\nCan inflict Poison on hit."
   },
   "8": {
-    "name": "Magic Wand",
-    "description": "A wand that slightly increases its wielder's magical powers. Strikes\nwith Cursed and can inflict Poison."
+    "name": "Kitchen Cleaver",
+    "description": "A meat cleaver with a taped handle.\nCan inflict Poison on hit."
   },
   "9": {
-    "name": "Force Wand",
-    "description": "A silver wand that increases its wielder's magical powers. Strikes with\nFire and can inflict Hot."
+    "name": "Bone Dagger",
+    "description": "A sharpened animal bone. Strikes Cursed."
   },
   "10": {
-    "name": "Mithril Rod",
-    "description": "A mithril rod that increases its wielder's magical powers. Strikes with\nSacred."
+    "name": "Wooden Stake",
+    "description": "A sharpened wooden stake, cut for the\nundead. Can blind on hit."
   },
   "11": {
-    "name": "Dragon Staff",
-    "description": "A dragon staff that increases its wielder's magical powers. Strikes with\nSacred."
+    "name": "Knife",
+    "description": "An everyday knife. Can blind on hit."
   },
   "12": {
-    "name": "Bubba'sShotgun",
-    "description": "A pump-action shotgun with devastating close-range power. Can inflict\nStun on hit."
+    "name": "Seed Dagger",
+    "description": "A dagger grown from a blade seed.\nCan poison on hit."
   },
   "13": {
-    "name": "Stone Flail",
-    "description": "A flail with a stone head attached to its handle with a chain. Strikes\nwith Petro."
+    "name": "Wooden Nunchaku",
+    "description": "Two wooden batons joined by a cord."
   },
   "14": {
-    "name": "Bronze Flail",
-    "description": "A flail with a bronze head attached to its handle with a chain."
+    "name": "Naval Dirk",
+    "description": "A sailor's short dagger.\nCan blind on hit."
   },
   "15": {
-    "name": "Morning Star",
-    "description": "A flail that has been strengthened with steel."
+    "name": "Dagger",
+    "description": "A short blade for close work.\nCan blind on hit."
   },
   "16": {
-    "name": "Mithril Flail",
-    "description": "A flail that has been strengthened with mithril. Can inflict Stun on\nhit."
+    "name": "Katar",
+    "description": "A push dagger with a T-shaped grip.\nCan blind on hit."
   },
   "17": {
-    "name": "Dragon Flail",
-    "description": "A flail that has been strengthened using fangs of a dragon. Can inflict\nStun on hit."
+    "name": "Combat Knife",
+    "description": "A compact knife for close quarters."
   },
   "18": {
-    "name": "",
-    "description": ""
+    "name": "Kukri",
+    "description": "A steel kukri with an inward curve."
   },
   "19": {
-    "name": "Hand Axe",
-    "description": "A small axe used for logging trees."
+    "name": "Machete",
+    "description": "A heavy chopping blade.\nCan blind on hit."
   },
   "20": {
-    "name": "Battle Axe",
-    "description": "A double-edged axe made for battle."
+    "name": "Twin Sai",
+    "description": "A pair of three-pronged parrying batons."
   },
   "21": {
-    "name": "Bardiche",
-    "description": "A battle axe with a crescent-shaped blade."
+    "name": "Mithril Dagger",
+    "description": "A dagger forged of mithril.\nCan blind on hit."
   },
   "22": {
-    "name": "Mithril Axe",
-    "description": "A battle axe forged with mithril. Can inflict Stun on hit."
+    "name": "Knife Hand",
+    "description": "A fighting style that strikes with the edge\nof the hand. Can blind on hit."
   },
   "23": {
-    "name": "Dragon Axe",
-    "description": "A battle axe forged from the fangs of a dragon."
+    "name": "Splitting Shuriken",
+    "description": "A throwing blade that splits in flight.\nCan blind on hit."
   },
   "24": {
-    "name": "",
-    "description": ""
+    "name": "Luminous Kukris",
+    "description": "Two enchanted curved daggers trailing light.\nStrikes with Thunder."
   },
   "25": {
-    "name": "Short Spear",
-    "description": "A short spear specialized for thrusting. Can inflict Poison on hit."
+    "name": "Dragon Dagger",
+    "description": "A dagger forged from a dragon's fangs."
   },
   "26": {
-    "name": "Long Spear",
-    "description": "A spear with the longest handle possible."
+    "name": "Memory Thief",
+    "description": "A dagger that takes the memories of what\nit cuts. Ice, inflicts Cold."
   },
   "27": {
-    "name": "Halberd",
-    "description": "A spear with an axe-head at its tip. Can inflict Poison on hit."
+    "name": "Knowledge Seeker",
+    "description": "A dagger out of Gobekli Tepe that shows\nhidden things. Ice, inflicts Cold."
   },
   "28": {
-    "name": "Mithril Spear",
-    "description": "A spear forged with mithril."
+    "name": "Psychic Crown",
+    "description": "A circlet that turns thought into a psychic\nstrike. Sacred, inflicts Inspired."
   },
   "29": {
-    "name": "Dragon Spear",
-    "description": "A spear forged from the fangs of a dragon. Can inflict Poison on hit."
+    "name": "EHI Flesh Dissolver",
+    "description": "A blade of shimmering oil. It phases through\narmour and eats the wielder's hand."
   },
   "30": {
-    "name": "",
-    "description": ""
+    "name": "Varlenia Twinblades",
+    "description": "Twin golden daggers of Varlenia steel.\nStrikes with Ice."
   },
   "31": {
-    "name": "Cestus",
-    "description": "A battle glove with spikes attached to its knuckles. Can inflict Stun on\nhit."
-  },
-  "32": {
-    "name": "Bagh Naka",
-    "description": "A combat weapon with 4 short claws attached."
-  },
-  "33": {
-    "name": "Iron Claw",
-    "description": "A combat weapon with iron talons attached. Can inflict Poison on hit."
-  },
-  "34": {
-    "name": "Mithril Claw",
-    "description": "A combat weapon with mithril talons attached."
-  },
-  "35": {
-    "name": "Dragon Claw",
-    "description": "A combat weapon with dragon talons attached."
-  },
-  "36": {
-    "name": "",
-    "description": ""
-  },
-  "37": {
-    "name": "Short Bow",
-    "description": "A short bow made for hunting. Can inflict Blind on hit."
-  },
-  "38": {
-    "name": "Long Bow",
-    "description": "A long bow for battle with superior power."
-  },
-  "39": {
-    "name": "Crossbow",
-    "description": "A crossbow that shoots arrows with powerful springs. Can inflict Blind\non hit."
-  },
-  "40": {
-    "name": "Mithril Bow",
-    "description": "A crossbow that shoots mithril arrows with powerful springs."
-  },
-  "41": {
-    "name": "Dragon Bow",
-    "description": "A long bow for battle made with dragon's whiskers."
-  },
-  "42": {
-    "name": "",
-    "description": ""
+    "name": "Timeflow Manipulator",
+    "description": "A Gobekli Tepe artifact that bends time\nand hastens its bearer. Strikes Water."
   },
   "43": {
-    "name": "Knife",
-    "description": "A knife used for day-to-day tasks. Can inflict Blind on hit."
+    "name": "Wooden Play Sword",
+    "description": "A wooden sword for children's games."
   },
   "44": {
-    "name": "Daggar",
-    "description": "A short blade used in close combat. Can inflict Blind on hit."
+    "name": "Training Sword",
+    "description": "A worn training sword, blunted and\nsplintering at the grip."
   },
   "45": {
-    "name": "Machete",
-    "description": "A dagger with a thicker, sturdier blade. Can inflict Blind on hit."
+    "name": "Decorative Sword",
+    "description": "A ceremonial sword with no edge,\nmade for display."
   },
   "46": {
-    "name": "Mithril Daggar",
-    "description": "A dagger forged with mithril. Can inflict Blind on hit."
+    "name": "Cheap Sword",
+    "description": "A badly forged sword that chips easily."
   },
   "47": {
-    "name": "Dragon Daggar",
-    "description": "A dagger forged from the fangs of a dragon."
+    "name": "Scrap Metal Shiv",
+    "description": "Sharpened scrap taped to a pipe.\nCan inflict Poison on hit."
   },
   "48": {
-    "name": "",
-    "description": ""
+    "name": "Saw Blade Sword",
+    "description": "Rusted saw blades nailed to a plank.\nCan inflict Poison on hit."
   },
   "49": {
-    "name": "",
-    "description": ""
+    "name": "Stop Sign Cleaver",
+    "description": "A broken road sign on a handle.\nCan inflict Poison on hit."
   },
   "50": {
-    "name": "",
-    "description": ""
+    "name": "Leaf Spring Machete",
+    "description": "A car leaf spring ground to an edge.\nCan inflict Oily on hit."
   },
   "51": {
     "name": "Bronze Age Sword",
-    "description": "An ancient bronze sword from early civilizations."
+    "description": "An ancient bronze sword."
   },
   "52": {
-    "name": "Scimitar",
-    "description": "A curved blade used by desert warriors."
+    "name": "Obsidian Blade",
+    "description": "Obsidian set in a wooden handle. Strikes\nwith Petro and can paralyse."
   },
   "53": {
-    "name": "Zweihander",
-    "description": "A massive two-handed greatsword. Can inflict Poison on hit."
+    "name": "Short Sword",
+    "description": "A light, short-bladed sword.\nCan poison on hit."
   },
   "54": {
-    "name": "Rapier",
-    "description": "An elegant blade with excellent balance. Can inflict Poison on hit."
+    "name": "Seed Sword",
+    "description": "A sword grown from a blade seed.\nCan poison on hit."
   },
   "55": {
-    "name": "Katana",
-    "description": "A traditional Japanese sword with exceptional cutting power. Can inflict\nPoison on hit."
+    "name": "Seed Mace",
+    "description": "A mace grown from a blade seed."
   },
   "56": {
-    "name": "Runic Blade",
-    "description": "A blade infused with ancient runes that glow with power. Strikes with\nSacred and can inflict Inspired."
+    "name": "Mesopotamian Sword",
+    "description": "A bronze sword of ancient Mesopotamia.\nCan poison on hit."
   },
   "57": {
-    "name": "Shadowsteel Sword",
-    "description": "A blade that absorbs light, becoming almost invisible when swung.\nStrikes with Cursed."
+    "name": "Long Sword",
+    "description": "A long battle sword with a keen edge.\nCan poison on hit."
   },
   "58": {
-    "name": "Pistol",
-    "description": "A basic handgun with moderate stopping power. Can inflict Stun on hit."
+    "name": "Gladius",
+    "description": "A Roman short sword for stabbing in rank."
   },
   "59": {
-    "name": "Shotgun",
-    "description": "A pump-action shotgun with devastating close-range power."
+    "name": "Khopesh",
+    "description": "A curved Egyptian sickle-sword."
   },
   "60": {
-    "name": "Assault Rifle",
-    "description": "A military-grade automatic rifle with excellent accuracy."
+    "name": "Scimitar",
+    "description": "A curved blade carried by desert warriors."
   },
   "61": {
-    "name": "Sniper Rifle",
-    "description": "A high-powered rifle for extreme long-range precision."
+    "name": "Rapier",
+    "description": "A slender duelling blade, finely balanced.\nCan poison on hit."
   },
   "62": {
-    "name": "SMG",
-    "description": "A compact submachine gun with high rate of fire. Can inflict Stun on\nhit."
+    "name": "Shamshir",
+    "description": "A curved single-edged Persian sabre."
   },
   "63": {
-    "name": "Boomerang",
-    "description": "A curved throwing stick that returns to the thrower. Can inflict Blind\non hit."
+    "name": "Patag",
+    "description": "A Tibetan sword, straight and single-edged.\nCan poison on hit."
   },
   "64": {
-    "name": "Sling",
-    "description": "A sling used to hurl stones with deadly force. Can inflict Blind on hit."
+    "name": "Naval Cutlass",
+    "description": "A curved naval sword for fighting aboard.\nCan poison on hit."
   },
   "65": {
-    "name": "Dory Spear",
-    "description": "A bronze-tipped spear from ancient Greece."
+    "name": "Falchion",
+    "description": "A broad, curved chopping sword.\nCan poison on hit."
   },
   "66": {
-    "name": "War Club",
-    "description": "A wooden club reinforced with bronze spikes."
+    "name": "European Longsword",
+    "description": "A cross-hilted sword for two hands."
   },
   "67": {
-    "name": "Khopesh",
-    "description": "A curved Egyptian sword-like weapon."
+    "name": "Shinai",
+    "description": "A bamboo practice sword used in kendo.\nCan poison on hit."
   },
   "68": {
-    "name": "War Hammer",
-    "description": "A heavy war hammer capable of crushing armor. Can inflict Stun on hit."
+    "name": "Estoc",
+    "description": "A rigid narrow sword for thrusting into\narmour joints. Can poison on hit."
   },
   "69": {
-    "name": "Poleaxe",
-    "description": "A long polearm with an axe blade and spike. Can inflict Poison on hit."
+    "name": "Urumi Whip Sword",
+    "description": "An Indian sword of flexible steel ribbons.\nCan poison on hit."
   },
   "70": {
-    "name": "Flail",
-    "description": "A spiked ball on a chain attached to a handle. Can inflict Stun on hit."
+    "name": "Kendo Bokken",
+    "description": "A long wooden practice sword, metal bound.\nCan poison on hit."
   },
   "71": {
-    "name": "Gladiator Net",
-    "description": "A weighted net used to entangle opponents. Can inflict Provoke on hit."
+    "name": "Claymore",
+    "description": "A Scottish two-edged sword with a sloping\ncrossguard. Can poison on hit."
   },
   "72": {
-    "name": "Katar",
-    "description": "A set of bladed tonfa-like weapons."
+    "name": "Katana",
+    "description": "A Japanese sword with a keen cutting edge.\nCan poison on hit."
   },
   "73": {
-    "name": "Combat Knife",
-    "description": "A compact tactical knife for close quarters."
+    "name": "Sword Breaker",
+    "description": "A toothed sword made to trap and snap\nan enemy blade."
   },
   "74": {
-    "name": "Compound Bow",
-    "description": "A special forces carbon fiber composite bow. Can inflict Blind on hit."
+    "name": "Zweihander",
+    "description": "A huge greatsword swung with both hands.\nCan poison on hit."
   },
   "75": {
-    "name": "Heavy Machine Gun",
-    "description": "A military-grade .50 caliber machine gun."
+    "name": "Blessed Silver Sword",
+    "description": "A blessed silver sword, made for the undead.\nStrikes with Sacred."
   },
   "76": {
-    "name": "RPG",
-    "description": "A portable shoulder-mounted rocket launcher. Can inflict Stun on hit."
+    "name": "Aerodynamic Blade",
+    "description": "A curved blade that meets almost no air."
   },
   "77": {
-    "name": "Brass Knuckles",
-    "description": "A set of brass knuckles for hand-to-hand combat. Can inflict Stun on\nhit."
+    "name": "Runic Blade",
+    "description": "A blade cut with glowing runes. Strikes\nwith Sacred and can inspire."
   },
   "78": {
-    "name": "Plasma Rifle",
-    "description": "An energy-based firearm that fires plasma bolts. Strikes with Thunder\nand can inflict Static."
+    "name": "Flamesong Blade",
+    "description": "A shortsword that takes fire when drawn.\nStrikes with Fire and can burn."
   },
   "79": {
-    "name": "Energy Blade",
-    "description": "A sword with an energy blade that can cut through almost anything.\nStrikes with Cursed."
+    "name": "Obsidian Sword",
+    "description": "A blade of hardened volcanic glass.\nStrikes with Petro and can paralyse."
   },
   "80": {
-    "name": "Sonic Gauntlet",
-    "description": "A gauntlet that generates sonic shockwaves. Can inflict Stun on hit."
+    "name": "Mithril Sword",
+    "description": "A long sword forged of mithril.\nCan poison on hit."
   },
   "81": {
-    "name": "Laser Rifle",
-    "description": "A rifle that fires concentrated beams of light. Strikes with Ice."
+    "name": "Vibro Blade",
+    "description": "A sword whose blade shivers at ultrasound."
   },
   "82": {
-    "name": "Gravity Crusher",
-    "description": "A launcher that creates miniature gravity wells to crush targets."
+    "name": "Astral Saber",
+    "description": "A curved blade lit from a far star.\nStrikes with Fire and can burn."
   },
   "83": {
-    "name": "Flamesong Blade",
-    "description": "A shortsword that bursts into flames when drawn. Strikes with Fire and\ncan inflict Hot."
+    "name": "Shadowsteel Sword",
+    "description": "A blade that drinks light and vanishes\nmid-swing. Strikes with Cursed."
   },
   "84": {
-    "name": "Void Edge",
-    "description": "A massive sword carved from a single piece of obsidian. Strikes with\nCursed."
+    "name": "Eternal Flame Sword",
+    "description": "A blade forged in dragon fire that never\ncools. Strikes with Fire."
   },
   "85": {
-    "name": "World Tree Staff",
-    "description": "A staff made from the World Tree, resonating with nature. Strikes with\nWater and can inflict Wet."
+    "name": "Dragon Scale Blade",
+    "description": "A sword serrated with dragon scale.\nCan poison on hit."
   },
   "86": {
-    "name": "Aetherial Bow",
-    "description": "A bow that forms arrows from pure magical energy. Strikes with Thunder."
+    "name": "Morphblade",
+    "description": "A sword that grows from dagger to greatsword\nat a word. Strikes with Cursed."
   },
   "87": {
-    "name": "Thornwhip",
-    "description": "A whip made from enchanted thorns that drain life force. Strikes with\nSacred and can inflict Inspired."
+    "name": "Starmetal Blade",
+    "description": "A sword forged from fallen star metal.\nCursed, inflicts Poison."
   },
   "88": {
-    "name": "Flying Ring Chain",
-    "description": "A chain of razor-sharp rings that can be thrown or used as a whip. Can\ninflict Provoke on hit."
+    "name": "Void Edge",
+    "description": "A blade with a hollow edge that swallows\nwhat it cuts. Strikes with Cursed."
   },
   "89": {
-    "name": "Urumi",
-    "description": "A flexible sword made of connected segments."
+    "name": "Volt Edge",
+    "description": "An old sword wrapped in crackling current.\nStrikes with Thunder."
   },
   "90": {
-    "name": "Three-Section Staff",
-    "description": "A three-sectioned staff connected by chains. Strikes with Ice and can\ninflict Cold."
+    "name": "Hero's Legacy",
+    "description": "A sword holding an old hero's soul, which\nadvises in battle. Strikes with Fire."
   },
   "91": {
-    "name": "Deer Horn Knives",
-    "description": "A pair of crescent-shaped blades with handles. Can inflict Poison on\nhit."
+    "name": "Phase Blade",
+    "description": "A sword half in another dimension. It passes\nthrough guards. Strikes with Water."
   },
   "92": {
-    "name": "Poison Blowpipe",
-    "description": "A blowgun that fires poison-tipped darts."
+    "name": "Shadowsteel Blade",
+    "description": "A blade of set shadow that ignores armour.\nStrikes with Cursed."
   },
   "93": {
-    "name": "Cyberarm Cannon",
-    "description": "An implanted arm cannon that fires concussive energy blasts. Strikes\nwith Fire."
+    "name": "Spellbreaker Blade",
+    "description": "A crystal sword that drinks spells cast at\nits bearer. Cursed, can poison."
   },
   "94": {
-    "name": "Neural Claws",
-    "description": "Retractable titanium claws embedded in cybernetic hands."
+    "name": "Psionic Edge",
+    "description": "A crystal blade that cuts mind and armour\nalike. Strikes with Sacred."
   },
   "95": {
-    "name": "Micro-Missile Array",
-    "description": "A shoulder-mounted targeting system firing guided mini-rockets. Strikes\nwith Ice."
+    "name": "Bloodthirster",
+    "description": "A sword that lightens and sharpens with\nevery kill. Strikes with Cursed."
   },
   "96": {
-    "name": "Polymorphic Arsenal",
-    "description": "A neural-linked weapon that morphs between blade and gun modes. Strikes\nwith Thunder."
+    "name": "Wardbreaker Blade",
+    "description": "A sword enchanted to cut through wards.\nThunder, inflicts Static."
   },
   "97": {
-    "name": "Optical Beam System",
-    "description": "Ocular implants that fire focused energy beams. Strikes with Cursed."
+    "name": "Spelldrainer Edge",
+    "description": "A black blade that turns spells cast at it\ninto edge. Strikes with Sacred."
   },
   "98": {
-    "name": "Thundercaller Staff",
-    "description": "A staff that summons and controls lightning strikes. Strikes with\nThunder."
+    "name": "Symbiotic Blade",
+    "description": "A living weapon that bonds to its bearer\nand grows with them."
   },
   "99": {
-    "name": "Eternal Flame Sword",
-    "description": "A blade forged in dragon fire that never cools. Strikes with Fire."
+    "name": "Twilight Edge",
+    "description": "A sword forged of dusk, between light\nand shadow."
   },
   "100": {
-    "name": "Frostbite Bow",
-    "description": "A bow that fires arrows of pure ice that freeze on impact. Strikes with\nIce and can inflict Cold."
+    "name": "Energy Blade",
+    "description": "A sword whose edge is pure energy.\nStrikes with Cursed."
   },
   "101": {
-    "name": "Earthshaker Maul",
-    "description": "A hammer infused with the power of earthquakes."
+    "name": "Divine Smiter",
+    "description": "A golden sword that smites the undead.\nStrikes with Sacred."
   },
   "102": {
-    "name": "Tempest Trident",
-    "description": "A trident that commands the power of raging storms. Strikes with Ice."
+    "name": "Arcane Blade",
+    "description": "A sword whose blade is raw magic.\nStrikes with Fire."
   },
   "103": {
-    "name": "Excalibur",
-    "description": "The mythical sword of King Arthur, glowing with holy power. Strikes with\nSacred and can inflict Inspired."
+    "name": "Dimension Blade",
+    "description": "A sword that cuts reality open.\nStrikes with Sacred."
   },
   "104": {
-    "name": "Mjölnir",
-    "description": "The mighty hammer of the thunder god, which returns when thrown. Strikes\nwith Ice and can inflict Cold."
+    "name": "T-Pillar Blade",
+    "description": "A stone blade out of Gobekli Tepe, cut with\nanimal signs. Can poison on hit."
   },
   "105": {
-    "name": "Dimensional Cutter",
-    "description": "A mysterious blade said to be able to cut through dimensions. Strikes\nwith Thunder and can inflict Static."
+    "name": "Star Cutter",
+    "description": "A curved Gobekli Tepe blade marked with lost\nconstellations. Can poison on hit."
   },
   "106": {
-    "name": "Divine Talons",
-    "description": "A pair of golden claws said to be worn by a god of war. Strikes with\nSacred and can inflict Inspired."
+    "name": "EHI Petroleum Edge",
+    "description": "A chainsaw sword weeping oil that eats its\nbearer's armour. Petro, can paralyse."
   },
   "107": {
-    "name": "Staff of Eternity",
-    "description": "A staff holding the wisdom of the ages and limitless magical power.\nStrikes with Sacred."
+    "name": "Skystone Greatsword",
+    "description": "A huge Gobekli Tepe stone sword that weighs\nalmost nothing. Wind, can blind."
   },
   "108": {
-    "name": "Volt Edge",
-    "description": "An ancient sword constantly surrounded by crackling electricity. Strikes\nwith Thunder."
+    "name": "EHI Omniscience Edge",
+    "description": "A blade of compressed encyclopedia pages.\nIt cuts guards and floods the mind."
   },
   "109": {
-    "name": "Explosive Crossbow",
-    "description": "A crossbow that fires bolts with explosive tips. Can inflict Blind on\nhit."
+    "name": "Golden Varlenia Blade",
+    "description": "A golden longsword of Varlenia steel.\nFire, inflicts Hot."
   },
   "110": {
-    "name": "Luminous Kukris",
-    "description": "A pair of enchanted curved daggers that leave trails of light. Strikes\nwith Thunder."
+    "name": "Quantum Superposition Blade",
+    "description": "A sword held in superposition. It strikes\nevery possible target at once. Ice."
   },
   "111": {
-    "name": "Dragon Scale Blade",
-    "description": "A sword with a serrated edge made from dragon scales. Can inflict Poison\non hit."
+    "name": "Excalibur",
+    "description": "The mythical sword of a British king,\nlit by holy power. Sacred, inspires."
   },
   "112": {
-    "name": "Paralyzer",
-    "description": "A dart gun that fires needles coated with paralyzing toxin. Can inflict\nStun on hit."
+    "name": "Dimensional Cutter",
+    "description": "A blade said to cut between dimensions.\nThunder, inflicts Static."
   },
   "113": {
-    "name": "Yggdrasil Branch",
-    "description": "A staff carved from a branch of the ancient World Tree. Strikes with\nFire."
-  },
-  "114": {
-    "name": "Astral Saber",
-    "description": "A curved blade that glows with the light of a distant star. Strikes with\nFire and can inflict Hot."
-  },
-  "115": {
-    "name": "Adamantine Fists",
-    "description": "A pair of heavy steel gauntlets reinforced with adamantine."
-  },
-  "116": {
-    "name": "Splitting Shuriken",
-    "description": "A throwing blade that splits into multiple projectiles in flight. Can\ninflict Blind on hit."
-  },
-  "117": {
-    "name": "Iron Tonfa",
-    "description": "A pair of arm-mounted iron tonfa used in various martial arts. Strikes\nwith Water."
-  },
-  "118": {
-    "name": "Training Nunchaku",
-    "description": "Wooden training nunchaku connected by a short chain. Can inflict Stun on\nhit."
-  },
-  "119": {
-    "name": "Steel Nunchaku",
-    "description": "Steel nunchaku with reinforced links and spiked ends. Can inflict Stun\non hit."
-  },
-  "120": {
-    "name": "Four-Section Staff",
-    "description": "A four-sectioned staff connected by chains for complex techniques.\nStrikes with Ice and can inflict Cold."
-  },
-  "121": {
-    "name": "Iron Knuckles",
-    "description": "Reinforced fighting gloves with iron plates over the knuckles. Can\ninflict Stun on hit."
-  },
-  "122": {
-    "name": "Mithril Strike Gloves",
-    "description": "Lightweight gloves with mithril-enhanced striking surfaces. Can inflict\nStun on hit."
-  },
-  "123": {
-    "name": "Master's Gauntlets",
-    "description": "Ancient gauntlets said to be worn by a legendary martial artist."
-  },
-  "124": {
-    "name": "Steel Chair",
-    "description": "A steel folding chair used as an improvised weapon. Can inflict Stun on\nhit."
+    "name": "Dragon Blade",
+    "description": "A sword forged from a dragon's fangs.\nSacred, inflicts Inspired."
   },
   "125": {
-    "name": "Breakaway Table",
-    "description": "A wooden table that breaks on impact for devastating damage."
+    "name": "Stale Baguette",
+    "description": "A loaf gone stale and hard as a stone.\nCan stun on hit."
   },
   "126": {
-    "name": "Heavy Chain",
-    "description": "A length of chain used to strike and bind opponents. Can inflict Stun on\nhit."
+    "name": "Dented Pan",
+    "description": "A dented frying pan, used as a club."
   },
   "127": {
-    "name": "Ring Bell",
-    "description": "A ring bell that creates a disorienting sound when struck."
+    "name": "Splintered Club",
+    "description": "A wooden club, split and cracked.\nCan stun on hit."
   },
   "128": {
-    "name": "Steel Ladder",
-    "description": "A reinforced ladder that can be climbed or used as a weapon. Can inflict\nStun on hit."
+    "name": "Wooden Flail",
+    "description": "A flail with a light wooden head."
   },
   "129": {
-    "name": "Champion's Belt",
-    "description": "A championship belt that grants confidence and fighting power."
+    "name": "Pot Metal Mace",
+    "description": "A mace whose soft metal head dents."
   },
   "130": {
-    "name": "Shinai",
-    "description": "A kendo bamboo practice sword used for precise strikes. Can inflict\nPoison on hit."
+    "name": "Wooden Club",
+    "description": "A plain wooden club, the oldest weapon\nthere is. Can stun on hit."
   },
   "131": {
-    "name": "Twin Sai",
-    "description": "A pair of sai - three-pronged metal batons for blocking and striking."
+    "name": "Unwieldy Hammer",
+    "description": "A great hammer on a handle too weak\nto swing it."
   },
   "132": {
-    "name": "Flexible Staff",
-    "description": "Hardened bamboo poles bound together into a flexible staff. Strikes with\nIce and can inflict Cold."
+    "name": "Trusty Frying Pan",
+    "description": "A frying pan with a taped handle.\nCan inflict Oily on hit."
   },
   "133": {
-    "name": "Arm Bracers",
-    "description": "Metal bands wrapped around forearms for blocking and striking."
+    "name": "Nail Board",
+    "description": "Rusty nails wired to a table leg.\nCan inflict Poison on hit."
   },
   "134": {
-    "name": "Knife Hand",
-    "description": "A fighting style that uses the edge of the hand as a weapon. Can inflict\nBlind on hit."
+    "name": "Chain Rolling Pin",
+    "description": "A rolling pin wrapped in chain.\nCan inflict Oily on hit."
   },
   "135": {
-    "name": "Flying Kicks",
-    "description": "Special training that allows kicks of devastating power."
+    "name": "Rebar Club",
+    "description": "Rebar with concrete still on the end.\nCan inflict Nausea on hit."
   },
   "136": {
-    "name": "Metal Man",
-    "description": "A metal kendo mask that can be used offensively. Can inflict Stun on\nhit."
+    "name": "Pipe Wrench Mace",
+    "description": "A pipe with a heavy valve on the end.\nCan inflict Oily on hit."
   },
   "137": {
-    "name": "Kendo Bokken",
-    "description": "A long wooden paddle reinforced with metal for striking. Can inflict\nPoison on hit."
+    "name": "Bike Chain Flail",
+    "description": "A bicycle chain with a padlock on it.\nCan inflict Oily on hit."
   },
   "138": {
-    "name": "Tekko-kagi",
-    "description": "Special metal claws that extend from a hand guard."
+    "name": "Modified Wrench",
+    "description": "A wrench with nuts welded along it.\nCan inflict Oily on hit."
   },
   "139": {
-    "name": "Rope and Hook",
-    "description": "A rope with a grappling hook that can pull opponents closer."
+    "name": "Nail Bat",
+    "description": "A bat wound with wire and nails.\nCan inflict Poison on hit."
   },
   "140": {
-    "name": "Trash Can Lid",
-    "description": "A steel trash can lid used as both a shield and weapon. Can inflict Stun\non hit."
+    "name": "Toolbox Flail",
+    "description": "A loaded toolbox swung on a chain.\nCan inflict Oily on hit."
   },
   "141": {
-    "name": "Flintlock Pistol",
-    "description": "An antique flintlock pistol with ornate engravings. Can inflict Stun on\nhit."
+    "name": "Concrete Sledge",
+    "description": "A sledgehammer set with concrete.\nStrikes Petro and can inflict Nausea."
   },
   "142": {
-    "name": "Musket",
-    "description": "A single-shot musket with a long barrel for improved accuracy. Can\ninflict Stun on hit."
+    "name": "Stone-Studded Club",
+    "description": "A long club studded with sharp stones.\nStrikes with Petro."
   },
   "143": {
-    "name": "Percussion Revolver",
-    "description": "A percussion cap revolver with a rotating cylinder."
+    "name": "Blackjack",
+    "description": "A stick with a leather-wrapped lead weight.\nCan stun on hit."
   },
   "144": {
-    "name": "Lever Action Rifle",
-    "description": "A lever-action rifle that can fire multiple shots quickly."
+    "name": "Stone Flail",
+    "description": "A flail with a stone head on a chain.\nStrikes with Petro."
   },
   "145": {
-    "name": "Double-Barrel Shotgun",
-    "description": "A double-barreled shotgun that can fire two shells in quick succession."
+    "name": "War Club",
+    "description": "A wooden club set with bronze spikes."
   },
   "146": {
-    "name": "Gatling Gun",
-    "description": "A Gatling gun with multiple rotating barrels for sustained fire."
+    "name": "Shark Tooth Club",
+    "description": "A Polynesian club edged with shark teeth.\nCan stun on hit."
   },
   "147": {
-    "name": "Blunderbuss",
-    "description": "An old-fashioned blunderbuss with a wide spread. Can inflict Stun on\nhit."
+    "name": "Sarcastic Pillow",
+    "description": "A pillow that hits far harder than it should\nand mutters insults. Inflicts Stun."
   },
   "148": {
-    "name": "Dueling Pistol",
-    "description": "An elegant dueling pistol with precision craftsmanship. Can inflict Stun\non hit."
+    "name": "Bronze Flail",
+    "description": "A flail with a bronze head on a chain."
   },
   "149": {
-    "name": "Bolt-Action Rifle",
-    "description": "A bolt-action rifle known for its reliability and accuracy. Can inflict\nStun on hit."
+    "name": "Master Flipper",
+    "description": "A spatula that flips a foe like a pancake\nand turns them around. Inflicts Stun."
   },
   "150": {
-    "name": "Six-Shooter",
-    "description": "A classic six-shooter revolver from the Old West."
+    "name": "Mere Club",
+    "description": "A Maori club cut from wood or whalebone.\nCan stun on hit."
   },
   "151": {
-    "name": "9mm Pistol",
-    "description": "A standard semi-automatic 9mm handgun."
+    "name": "Tessen",
+    "description": "A Japanese war fan ribbed with iron."
   },
   "152": {
-    "name": "Compact SMG",
-    "description": "A compact submachine gun with a folding stock."
+    "name": "Honking Mallet Duo",
+    "description": "Two squeaky toy hammers. Squeezed together\nthey throw a shockwave. Can stun."
   },
   "153": {
-    "name": "Magnum Revolver",
-    "description": "A high-caliber revolver with tremendous stopping power. Can inflict Stun\non hit."
+    "name": "Macuahuitl",
+    "description": "An Aztec club set with obsidian blades.\nCan stun on hit."
   },
   "154": {
-    "name": "Combat Shotgun",
-    "description": "A tactical shotgun with a drum magazine for increased capacity."
+    "name": "Number One Fan",
+    "description": "A foam hand that lands like a sledgehammer\nand honks doing it. Inflicts Stun."
   },
   "155": {
-    "name": "Bullpup Rifle",
-    "description": "A bullpup-design assault rifle with excellent balance."
+    "name": "Meteor Hammer",
+    "description": "A weighted head swung on a long rope."
   },
   "156": {
-    "name": "DMR",
-    "description": "A designated marksman rifle with enhanced optics."
+    "name": "Medieval Flail",
+    "description": "A spiked ball on a chain and handle."
   },
   "157": {
-    "name": "LMG",
-    "description": "A light machine gun designed for sustained suppressive fire. Can inflict\nStun on hit."
+    "name": "Flail",
+    "description": "A spiked ball on a short chain.\nCan stun on hit."
   },
   "158": {
-    "name": "PDW",
-    "description": "A compact personal defense weapon using specialized ammunition. Can\ninflict Stun on hit."
+    "name": "Flanged Mace",
+    "description": "A European mace with a flanged head for\nbreaking armour. Can stun on hit."
   },
   "159": {
-    "name": "Anti-Material Rifle",
-    "description": "A powerful anti-material rifle capable of penetrating armor."
+    "name": "Lucerne Hammer",
+    "description": "A Swiss war hammer spiked for punching\nthrough plate. Can stun on hit."
   },
   "160": {
-    "name": "Disposable Rocket",
-    "description": "A disposable single-shot rocket launcher. Strikes with Petro."
+    "name": "War Hammer",
+    "description": "A heavy hammer that crushes armour.\nCan stun on hit."
   },
   "161": {
-    "name": "Match Grade Pistol",
-    "description": "A customized marksman pistol with extended barrel."
+    "name": "Flanged War Mace",
+    "description": "A heavy flanged mace made to crush armour."
   },
   "162": {
-    "name": "Smart Grenade Launcher",
-    "description": "A high-tech grenade launcher with programmable detonation. Can inflict\nStun on hit."
+    "name": "Morning Star",
+    "description": "A spiked head on a chain, banded with steel."
   },
   "163": {
-    "name": "Tactical Shotgun",
-    "description": "A compact bullpup shotgun with devastating close-range power."
+    "name": "War Pick",
+    "description": "A war hammer with a pick on the back\nfor punching plate."
   },
   "164": {
-    "name": "Precision Rifle",
-    "description": "A precision bolt-action rifle with match-grade barrel."
+    "name": "Training Nunchaku",
+    "description": "Two wooden batons on a short chain.\nCan stun on hit."
   },
   "165": {
-    "name": "HMG",
-    "description": "A heavy machine gun mounted on a bipod for stability. Can inflict Stun\non hit."
+    "name": "Heavy Chain",
+    "description": "A length of chain, swung and wound round\na foe. Can stun on hit."
   },
   "166": {
-    "name": "Minigun",
-    "description": "A minigun with multiple rotating barrels for extreme rate of fire. Can\ninflict Stun on hit."
+    "name": "Spiked Battle Shield",
+    "description": "A spiked shield with a razor rim, swung\nas a weapon. Inflicts Stun."
   },
   "167": {
-    "name": "Double-Barrel Pistol",
-    "description": "A dual-barrel pistol that fires both barrels simultaneously."
+    "name": "Variable Chain Hammer",
+    "description": "A meteor hammer whose chain pays out\nto any length."
   },
   "168": {
-    "name": "Tactical Carbine",
-    "description": "A modern carbine rifle with modular attachments. Can inflict Stun on\nhit."
+    "name": "Mithril Flail",
+    "description": "A flail banded with mithril.\nCan stun on hit."
   },
   "169": {
-    "name": "Heavy Sniper",
-    "description": "A semi-automatic .50 caliber sniper rifle. Can inflict Stun on hit."
+    "name": "Steel Nunchaku",
+    "description": "Steel batons on reinforced links,\nspiked at the ends. Can stun on hit."
   },
   "170": {
-    "name": "Tactical Crossbow",
-    "description": "A modern crossbow with a scope and carbon fiber limbs. Can inflict Blind\non hit."
+    "name": "Siege Breaker",
+    "description": "A great two-handed mace for breaking walls.\nCan stun on hit."
   },
   "171": {
-    "name": "Stone Axe",
-    "description": "A primitive stone axe made from flint bound to a wooden handle. Strikes\nwith Petro."
+    "name": "Seismic Hammer",
+    "description": "A two-handed hammer that throws a shockwave\non impact."
   },
   "172": {
-    "name": "Wooden Club",
-    "description": "A simple wooden club, the earliest of human weapons. Can inflict Stun on\nhit."
+    "name": "Earthshaker Maul",
+    "description": "A maul carrying the force of an earthquake."
   },
   "173": {
-    "name": "Bone Dagger",
-    "description": "A sharpened animal bone used as a primitive stabbing weapon. Strikes\nwith Cursed."
+    "name": "Dragon Flail",
+    "description": "A flail banded with a dragon's fangs.\nCan stun on hit."
   },
   "174": {
-    "name": "Throwing Stick",
-    "description": "A primitive throwing stick used for hunting by ancient cultures. Strikes\nwith Ice."
+    "name": "Soul Drain Flail",
+    "description": "A flail headed with crystallised soul.\nCursed, inflicts Poison."
   },
   "175": {
-    "name": "Javelin",
-    "description": "A simple throwing spear used by early humans for hunting."
+    "name": "Earthshaker Mace",
+    "description": "A mace cut from elemental earth. It shakes\nthe ground. Strikes with Cursed."
   },
   "176": {
-    "name": "Obsidian Blade",
-    "description": "A sharpened obsidian blade attached to a wooden handle. Strikes with\nPetro and can inflict Paralysis."
+    "name": "Spellcrusher Maul",
+    "description": "A hammer that shatters wards and magical\nconstructs. Fire, inflicts Hot."
   },
   "177": {
-    "name": "Retiarius Net",
-    "description": "A weighted net used by ancient gladiators to entangle opponents. Can\ninflict Provoke on hit."
+    "name": "Thought Crusher",
+    "description": "A hammer that breaks the body and the\nthought behind it. Can stun on hit."
   },
   "178": {
-    "name": "Mesopotamian Sword",
-    "description": "A bronze sword from ancient Mesopotamian civilizations. Can inflict\nPoison on hit."
+    "name": "Celestial Hammer",
+    "description": "A hammer forged from a fallen star.\nSacred, inflicts Inspired."
   },
   "179": {
-    "name": "Sumerian Spear",
-    "description": "A Sumerian copper spear with a leaf-shaped blade. Can inflict Poison on\nhit."
+    "name": "Cosmic Pendulum",
+    "description": "A Gobekli Tepe flail cut with star charts.\nIt bends the space it swings through."
   },
   "180": {
-    "name": "Egyptian Axe",
-    "description": "An ancient Egyptian axe with a crescent-shaped blade."
+    "name": "Chronos Hammer",
+    "description": "A hammer that slows time where it lands.\nStrikes with Water and can wet."
   },
   "181": {
-    "name": "Atlatl Dart",
-    "description": "A lightweight throwing dart propelled by an atlatl for greater distance."
+    "name": "EHI Suicide Bomber",
+    "description": "A flail whose heads hold volatile oil and\nburst on impact. Can stun on hit."
   },
   "182": {
-    "name": "Fiber Sling",
-    "description": "A primitive sling made from woven plant fibers for hurling stones."
+    "name": "Boar Totem Hammer",
+    "description": "A great Gobekli Tepe stone hammer cut with\nboars. It lends brute strength. Ice."
   },
   "183": {
-    "name": "Stone-Studded Club",
-    "description": "A long wooden club studded with sharp stones. Strikes with Petro."
+    "name": "Varlenia War Fan",
+    "description": "A folding war fan of Varlenia steel blades.\nStrikes with Water and can wet."
   },
   "184": {
-    "name": "Shark Tooth Club",
-    "description": "A Polynesian war club carved from hardwood with shark teeth edges. Can\ninflict Stun on hit."
+    "name": "EHI Compression Maul",
+    "description": "A maul holding compressed oil. It throws\nshockwaves and slows its bearer."
   },
   "185": {
-    "name": "Macuahuitl",
-    "description": "An Aztec macuahuitl - a wooden club embedded with obsidian blades. Can\ninflict Stun on hit."
+    "name": "Mjölnir",
+    "description": "The hammer of a thunder god. Thrown,\nit comes back. Ice, inflicts Cold."
   },
   "186": {
-    "name": "Bola",
-    "description": "A bola made of stone weights connected by cord, used to entangle prey.\nCan inflict Blind on hit."
+    "name": "Busker's Acoustic",
+    "description": "A battered acoustic with three strings left,\nswung by the neck."
   },
   "187": {
-    "name": "Mere Club",
-    "description": "A traditional Māori club carved from wood or whalebone. Can inflict Stun\non hit."
+    "name": "Presidential Saxophone",
+    "description": "A brass tenor saxophone, swung by the bell."
   },
   "188": {
-    "name": "Gladius",
-    "description": "A Roman gladius - a short sword designed for stabbing in close\nformation."
+    "name": "Pawnshop Copy Guitar",
+    "description": "A copy of a copy, bought secondhand and\nnever in tune. Can stun on hit."
   },
   "189": {
-    "name": "Pilum",
-    "description": "A Roman pilum - a heavy javelin designed to bend on impact. Can inflict\nPoison on hit."
+    "name": "Infernal Guitar",
+    "description": "A quilted cherry-burst electric. Louder than\nthe room, hotter than the amp. Sacred."
   },
   "190": {
-    "name": "Shamshir",
-    "description": "A curved Middle Eastern scimitar with a single-edged blade."
+    "name": "Arrowhead Guitar",
+    "description": "A guitar shaped like the thing it gets used\nas. Can stun on hit."
   },
   "191": {
-    "name": "Composite Bow",
-    "description": "A recurve bow from the Eurasian steppes used by horse archers. Can\ninflict Blind on hit."
+    "name": "Bass Guitar",
+    "description": "Four strings, a long neck and a lot of mass.\nInflicts Stun."
   },
   "192": {
-    "name": "Medieval Flail",
-    "description": "A spiked ball attached to a handle by a chain."
+    "name": "Double-Neck Warhorse",
+    "description": "Twelve strings above, six below, on a strap\nthat has carried too much."
   },
   "193": {
-    "name": "Blackjack",
-    "description": "A wooden stick with a leather-wrapped lead weight at the end. Can\ninflict Stun on hit."
+    "name": "Feedback Cannon",
+    "description": "A guitar still wired to a stack that is no\nlonger there. It howls anyway."
   },
   "194": {
-    "name": "Longsword",
-    "description": "A European longsword designed for two-handed use."
-  },
-  "195": {
-    "name": "Claymore",
-    "description": "A Scottish claymore with a two-edged blade and distinctive crossguard.\nCan inflict Poison on hit."
-  },
-  "196": {
-    "name": "Halberd",
-    "description": "A European polearm with an axe blade and a spike."
+    "name": "Hellfire Superstrat",
+    "description": "A neck-through electric that has been on\nfire since it was strung. Fire."
   },
   "197": {
-    "name": "Lucerne Hammer",
-    "description": "A Swiss war hammer with a spike for puncturing armor. Can inflict Stun\non hit."
+    "name": "Foam Toy Axe",
+    "description": "A plastic toy axe with soft foam edges."
   },
   "198": {
-    "name": "Chu-Ko-Nu",
-    "description": "A Chinese repeating crossbow capable of rapid fire. Can inflict Blind on\nhit."
+    "name": "Rusty Sickle",
+    "description": "A farm sickle with a loose handle and rust\nacross the blade."
   },
   "199": {
-    "name": "Naginata",
-    "description": "A Japanese naginata - a pole weapon with a curved blade."
+    "name": "Practice Axe",
+    "description": "A wooden practice axe, edge dulled.\nCan stun on hit."
   },
   "200": {
-    "name": "Knuckle Dusters",
-    "description": "A set of iron knuckle dusters with spikes for devastating punches."
+    "name": "Budget Axe",
+    "description": "A cheap axe whose head wobbles when swung."
   },
   "201": {
-    "name": "Rope Dart",
-    "description": "A Chinese rope dart - a weighted metal dart on a rope. Can inflict Blind\non hit."
+    "name": "Stone Axe",
+    "description": "Flint bound to a wooden haft.\nStrikes with Petro."
   },
   "202": {
-    "name": "Bagh Nakh",
-    "description": "A pair of steel claws worn on the hands in Indian martial arts."
+    "name": "Sharpened Shovel",
+    "description": "A shovel ground to an edge.\nCan inflict Nausea on hit."
   },
   "203": {
-    "name": "Estoc",
-    "description": "A European estoc - a rigid, narrow sword designed for thrusting into\narmor joints. Can inflict Poison on hit."
+    "name": "Mower Blade Axe",
+    "description": "A mower blade bolted to a haft.\nCan inflict Oily on hit."
   },
   "204": {
-    "name": "Flanged Mace",
-    "description": "A European mace with flanged head for crushing armor. Can inflict Stun\non hit."
+    "name": "Hubcap Axe",
+    "description": "A sharpened car panel on a haft.\nCan inflict Oily on hit."
   },
   "205": {
-    "name": "Bamboo Blowgun",
-    "description": "A primitive bamboo blowgun used to fire poisoned darts."
+    "name": "Razor Fire Axe",
+    "description": "A fire axe taped with razor blades.\nStrikes Fire and can inflict Poison."
   },
   "206": {
-    "name": "Kukri",
-    "description": "A steel Kukri knife with an inwardly curved blade."
+    "name": "Seed Axe",
+    "description": "An axe grown from a blade seed."
   },
   "207": {
-    "name": "Iklwa",
-    "description": "A Zulu short spear with a long blade, designed for close combat."
+    "name": "Hand Axe",
+    "description": "A small axe for felling timber."
   },
   "208": {
-    "name": "Matchlock Musket",
-    "description": "A matchlock musket - an early firearm with a lit match to fire. Can\ninflict Stun on hit."
+    "name": "Egyptian Axe",
+    "description": "An ancient Egyptian axe with a crescent head."
   },
   "209": {
-    "name": "Wheellock Pistol",
-    "description": "A wheellock pistol - an early firearm using a spinning wheel to create\nsparks. Can inflict Stun on hit."
+    "name": "Francisca",
+    "description": "A Frankish axe balanced to be thrown."
   },
   "210": {
-    "name": "Urumi Whip Sword",
-    "description": "An Indian flexible sword made of connected metal segments. Can inflict\nPoison on hit."
+    "name": "Battle Axe",
+    "description": "A double-edged axe made for battle."
   },
   "211": {
-    "name": "Bullwhip",
-    "description": "A whip made from braided leather strips. Can inflict Provoke on hit."
+    "name": "Steel Chair",
+    "description": "A steel folding chair, swung flat.\nCan stun on hit."
   },
   "212": {
-    "name": "Patag",
-    "description": "A Tibetan sword with a straight, single-edged blade. Can inflict Poison\non hit."
+    "name": "Trash Can Lid",
+    "description": "A steel bin lid, held as shield and club.\nCan stun on hit."
   },
   "213": {
-    "name": "Katar",
-    "description": "A metal push dagger with a T-shaped handle for punching. Can inflict\nBlind on hit."
+    "name": "Bardiche",
+    "description": "A long axe with a crescent blade."
   },
   "214": {
-    "name": "Shongo",
-    "description": "A long, heavy African throwing knife with multiple blades. Can inflict\nBlind on hit."
+    "name": "Breakaway Table",
+    "description": "A wooden table built to break on impact."
   },
   "215": {
-    "name": "Hand Cannon",
-    "description": "An early Chinese hand cannon made of cast iron."
+    "name": "Ring Bell",
+    "description": "A ring bell that rings the head of whoever\nit hits."
   },
   "216": {
-    "name": "Iron Grenade",
-    "description": "A primitive grenade made from a cast iron shell filled with gunpowder.\nCan inflict Blind on hit."
+    "name": "Steel Ladder",
+    "description": "A reinforced ladder, climbed or swung.\nCan stun on hit."
   },
   "217": {
-    "name": "Flintlock Blunderbuss",
-    "description": "A blunderbuss with a flared muzzle for firing shot or scrap."
+    "name": "Mithril Axe",
+    "description": "A battle axe forged of mithril.\nCan stun on hit."
   },
   "218": {
-    "name": "Pepperbox Revolver",
-    "description": "A pepperbox revolver with multiple barrels that rotate. Can inflict Stun\non hit."
+    "name": "Bound Elemental Axe",
+    "description": "An axe holding a bound fire elemental,\nalways alight. Strikes with Thunder."
   },
   "219": {
-    "name": "Rifle Bayonet",
-    "description": "A bayonet attached to a rifle for close combat."
+    "name": "Volcanic Greataxe",
+    "description": "An axe forged in a volcano and still\nburning. Cursed, inflicts Poison."
   },
   "220": {
-    "name": "Rifled Musket",
-    "description": "A Civil War era rifled musket with improved accuracy. Can inflict Stun\non hit."
+    "name": "Gravity Crusher",
+    "description": "An axe that drops a small gravity well\nwhere it lands."
   },
   "221": {
-    "name": "Gatling Gun",
-    "description": "An early machine gun with hand-cranked operation. Can inflict Stun on\nhit."
+    "name": "Soul Cleaver",
+    "description": "A Gobekli Tepe ceremonial axe that cuts\nflesh and spirit. Fire, inflicts Hot."
   },
   "222": {
-    "name": "Breech-Loading Rifle",
-    "description": "A single-shot breech-loading rifle from the late 1800s."
+    "name": "Dragon Axe",
+    "description": "A battle axe forged from a dragon's fangs."
   },
   "223": {
-    "name": "Military Bolt-Action",
-    "description": "A World War I era bolt-action rifle with stripper clip loading."
+    "name": "Planar Divider",
+    "description": "A Gobekli Tepe axe that cuts the wall\nbetween worlds. Strikes with Ice."
   },
   "224": {
-    "name": "Tommy Gun",
-    "description": "A compact pistol-caliber submachine gun from the 1920s. Can inflict Stun\non hit."
+    "name": "EHI Petrocorruptor",
+    "description": "An axe edged with compressed oil. It cuts\nanything and rots its bearer."
   },
   "225": {
-    "name": "M1 Garand",
-    "description": "A World War II era M1 Garand semi-automatic rifle. Can inflict Stun on\nhit."
+    "name": "Varlenia Cleaver",
+    "description": "A great golden axe of Varlenia steel.\nWater, inflicts Wet."
   },
   "226": {
-    "name": "Flamethrower",
-    "description": "A handheld flamethrower that sprays burning fuel. Strikes with Fire."
-  },
-  "227": {
-    "name": "MP40",
-    "description": "A German MP40 submachine gun from World War II. Can inflict Stun on hit."
-  },
-  "228": {
-    "name": "Grenade Launcher",
-    "description": "A break-action grenade launcher firing 40mm explosive rounds. Can\ninflict Stun on hit."
-  },
-  "229": {
-    "name": "M14 Battle Rifle",
-    "description": "A Vietnam-era battle rifle with select-fire capability."
-  },
-  "230": {
-    "name": "AKS-74U",
-    "description": "A compact modern assault rifle with folding stock."
-  },
-  "231": {
-    "name": "Marksman Rifle",
-    "description": "A modern designated marksman rifle with match-grade barrel."
-  },
-  "232": {
-    "name": "Anti-Material Rifle",
-    "description": "A high-caliber anti-material rifle for long-range precision."
-  },
-  "233": {
-    "name": "MANPADS",
-    "description": "A portable surface-to-air missile launcher."
-  },
-  "234": {
-    "name": "Railgun Prototype",
-    "description": "A high-powered electromagnetic railgun prototype. Strikes with Thunder."
-  },
-  "235": {
-    "name": "Coilgun",
-    "description": "A portable coilgun that accelerates projectiles with electromagnetic\ncoils. Water, inflicts Wet."
-  },
-  "236": {
-    "name": "Active Denial System",
-    "description": "A directed energy weapon that emits a concentrated beam of microwaves.\nCan inflict Poison on hit."
-  },
-  "237": {
-    "name": "Sonic Staff",
-    "description": "A staff that creates powerful soundwaves to disorient and damage.\nStrikes with Water and can inflict Wet."
+    "name": "Dimensional Cleaver",
+    "description": "An axe that cleaves several worlds at once.\nSacred, inflicts Inspired."
   },
   "238": {
-    "name": "Air Pistol",
-    "description": "A pistol that fires compressed air capsules for non-lethal takedowns.\nStrikes with Wind."
+    "name": "Fly Swatter",
+    "description": "A light plastic swatter.\nCan provoke on hit."
   },
   "239": {
-    "name": "Foam Projector",
-    "description": "An experimental weapon that fires sticky foam to immobilize targets. Can\ninflict Poison on hit."
+    "name": "Cracked Whip",
+    "description": "A whip of badly tanned leather that splits."
   },
   "240": {
-    "name": "Electro-Net Launcher",
-    "description": "A weapon that fires electrified nets to capture targets."
+    "name": "Heavy Buckle Belt",
+    "description": "A belt with a reinforced buckle.\nCan inflict Nausea on hit."
   },
   "241": {
-    "name": "Golden Varlenia Blade",
-    "description": "A golden longsword forged with legendary Varlenia steel, glowing with\narcane energy. Fire, inflicts Hot."
+    "name": "Combat Fishing Rod",
+    "description": "A rod that casts spiked weights.\nCan inflict Oily on hit."
   },
   "242": {
-    "name": "Varlenia Twinblades",
-    "description": "Twin golden daggers made of Varlenia steel that leave traces of arcane\nlight when swung. Strikes with Ice."
+    "name": "Cord Whip",
+    "description": "A whip plaited from electrical flex.\nCan inflict Oily on hit."
   },
   "243": {
-    "name": "Varlenia Arcane Staff",
-    "description": "A golden staff forged from Varlenia steel that amplifies magical\nenergies. Strikes with Thunder."
+    "name": "Seed Whip",
+    "description": "A whip grown from a blade seed.\nCan provoke on hit."
   },
   "244": {
-    "name": "Varlenia Energy Bow",
-    "description": "A golden bow made of flexible Varlenia steel that materializes arrows of\npure energy. Strikes with Thunder."
+    "name": "Retiarius Net",
+    "description": "A gladiator's weighted net, thrown to\nentangle. Can provoke on hit."
   },
   "245": {
-    "name": "Varlenia Fist",
-    "description": "Golden gauntlets made of Varlenia steel that channel arcane power into\ndevastating punches. Thunder."
+    "name": "Bullwhip",
+    "description": "A whip of braided leather.\nCan provoke on hit."
   },
   "246": {
-    "name": "Varlenia Returning Spear",
-    "description": "A golden spear made of Varlenia steel that can be thrown and magically\nreturns to its wielder. Cursed, inflicts Poison."
+    "name": "Gladiator Net",
+    "description": "A heavier weighted net, thrown wide.\nCan provoke on hit."
   },
   "247": {
-    "name": "Varlenia Cleaver",
-    "description": "A massive golden axe forged from Varlenia steel that crackles with\nelemental energy. Water, inflicts Wet."
+    "name": "Flying Ring Chain",
+    "description": "A chain of razor rings, thrown or lashed.\nCan provoke on hit."
   },
   "248": {
-    "name": "Varlenia Beam Rifle",
-    "description": "A golden rifle made from Varlenia steel that fires concentrated beams of\narcane energy. Strikes with Fire."
+    "name": "Rope and Hook",
+    "description": "A rope and grapple that drags a foe closer."
   },
   "249": {
-    "name": "Varlenia Chain Whip",
-    "description": "A chain whip made with golden Varlenia steel links that can extend to\ngreat lengths. Thunder, inflicts Static."
+    "name": "Steel Cable Whip",
+    "description": "A whip of braided steel cable that cuts\nthrough armour."
   },
   "250": {
-    "name": "Varlenia War Fan",
-    "description": "A folding war fan made of razor-sharp Varlenia steel blades. Strikes\nwith Water and can inflict Wet."
+    "name": "Urumi",
+    "description": "A flexible sword of linked steel ribbons."
   },
   "251": {
-    "name": "Stone Darts",
-    "description": "Primitive stone-tipped darts used by ancient cultures. Strikes with\nPetro."
+    "name": "Frost Whip",
+    "description": "A whip of ice that never melts.\nStrikes with Ice and can chill."
   },
   "252": {
-    "name": "Wooden Nunchaku",
-    "description": "A flexible wooden weapon with segments connected by cord or chain."
+    "name": "Thornwhip",
+    "description": "A whip of enchanted thorns that drinks life.\nSacred, inflicts Inspired."
   },
   "253": {
-    "name": "Quarterstaff",
-    "description": "A staff with weighted ends used in martial arts. Strikes with Thunder\nand can inflict Static."
+    "name": "Energy Lash",
+    "description": "A whip of raw energy that runs out\nas far as it needs. Strikes with Fire."
   },
   "254": {
-    "name": "Escrima Sticks",
-    "description": "A pair of short metal batons used for close-quarters fighting. Strikes\nwith Ice and can inflict Cold."
+    "name": "Banshee's Wail",
+    "description": "A whip plaited from banshee hair.\nIt screams. Strikes with Ice."
   },
   "255": {
-    "name": "Chakram",
-    "description": "A chakram - a throwing weapon with a circular blade."
+    "name": "Champion's Belt",
+    "description": "A championship belt, swung by the buckle."
   },
   "256": {
-    "name": "Meteor Hammer",
-    "description": "A meteor hammer - a weighted head on a rope for swinging attacks."
+    "name": "Mindlash Whip",
+    "description": "A whip of massed thought that lashes body\nand mind. Thunder, inflicts Static."
   },
   "257": {
-    "name": "Tessen",
-    "description": "A Japanese war fan with metal ribs that can be used as a weapon."
+    "name": "Phoenix Intestines",
+    "description": "A whip made from a phoenix's gut.\nStrikes with Water."
   },
   "258": {
-    "name": "Volley Gun",
-    "description": "A hand-cranked volley gun with multiple barrels that fire\nsimultaneously. Can inflict Stun on hit."
+    "name": "Temporal Echo Whip",
+    "description": "A whip in several timelines at once.\nIt lands more than once. Cursed."
   },
   "259": {
-    "name": "Riot Gun",
-    "description": "A weapon that fires hardened rubber or plastic projectiles for crowd\ncontrol. Can inflict Stun on hit."
+    "name": "Liquid Stone Whip",
+    "description": "A Gobekli Tepe whip of stone links that\nmoves like water. Petro, can paralyse."
   },
   "260": {
-    "name": "Gas Launcher",
-    "description": "A launcher that fires tear gas or smoke grenades. Can inflict Stun on\nhit."
+    "name": "Varlenia Chain Whip",
+    "description": "A chain whip of golden Varlenia links that\nruns out far. Thunder, can static."
   },
   "261": {
-    "name": "Wooden Stake",
-    "description": "A sharpened wooden stake used against supernatural creatures. Can\ninflict Blind on hit."
-  },
-  "262": {
-    "name": "Blessed Silver Sword",
-    "description": "A blessed silver sword effective against undead and supernatural foes.\nStrikes with Sacred."
-  },
-  "263": {
-    "name": "Fire Lance",
-    "description": "Ancient Chinese rockets attached to spears, creating an early missile\nweapon. Strikes with Fire."
-  },
-  "264": {
-    "name": "Wind Staff",
-    "description": "A simple wooden staff that creates powerful gusts of wind. Strikes with\nWind."
-  },
-  "265": {
-    "name": "Net Crossbow",
-    "description": "A crossbow that fires specialized bolts that explode into entangling\nnets."
-  },
-  "266": {
-    "name": "Venom Claws",
-    "description": "Metal claws infused with paralyzing poison. Strikes with Cursed and can\ninflict Poison."
-  },
-  "267": {
-    "name": "Petrified Staff",
-    "description": "A staff made from fossilized ancient wood with earth magic properties.\nStrikes with Thunder."
-  },
-  "268": {
-    "name": "Aerodynamic Blade",
-    "description": "A curved blade that slices through the air with minimal resistance."
-  },
-  "269": {
-    "name": "Advanced Compound Bow",
-    "description": "A modern compound bow with advanced pulley system for power and\naccuracy. Can inflict Blind on hit."
-  },
-  "270": {
-    "name": "Water Jet Cutter",
-    "description": "A handheld weapon that fires a jet of pressurized water. Strikes with\nWater and can inflict Wet."
-  },
-  "271": {
-    "name": "Frost Whip",
-    "description": "A whip made from crystallized ice that never melts. Strikes with Ice and\ncan inflict Cold."
-  },
-  "272": {
-    "name": "Obsidian Sword",
-    "description": "A sword with a blade made of hardened volcanic glass. Strikes with Petro\nand can inflict Paralysis."
+    "name": "EHI Omniscient Binder",
+    "description": "A whip of living book pages. It binds foes\nand whispers at its bearer."
   },
   "273": {
-    "name": "Tranquilizer Rifle",
-    "description": "A rifle that fires darts filled with potent tranquilizers. Can inflict\nStun on hit."
+    "name": "Carved Stick",
+    "description": "A stick with crude carvings meant to pass\nfor a staff. Strikes with Fire."
   },
   "274": {
-    "name": "Seismic Hammer",
-    "description": "A massive two-handed hammer that creates shockwaves on impact."
+    "name": "Walking Stick",
+    "description": "A walking stick with too much flex in it.\nIce, inflicts Cold."
   },
   "275": {
-    "name": "Lightning-Struck Staff",
-    "description": "A staff made from the branch of a tree struck by lightning. Strikes with\nThunder and can inflict Static."
+    "name": "Novice Wand",
+    "description": "A wand of poor wood that barely conducts.\nStrikes with Water."
   },
   "276": {
-    "name": "Disc Launcher",
-    "description": "A weapon that launches sharp discs with cutting edges."
+    "name": "Apprentice Staff",
+    "description": "A staff of green wood that bends under\na blow. Strikes with Water."
   },
   "277": {
-    "name": "Vibro Blade",
-    "description": "A sword with a blade that vibrates at ultrasonic frequencies."
+    "name": "Spike Umbrella",
+    "description": "An umbrella with sharpened rib tips.\nStrikes Fire and can inflict Nausea."
   },
   "278": {
-    "name": "Heat Ray",
-    "description": "A weapon that generates intense heat to melt through objects. Strikes\nwith Water."
+    "name": "Spiked Crutch",
+    "description": "A crutch with nails through the top.\nStrikes Fire and can inflict Poison."
   },
   "279": {
-    "name": "Shock Gauntlets",
-    "description": "Gauntlets that deliver powerful electric shocks on impact. Strikes with\nThunder and can inflict Static."
+    "name": "Nail Mop Staff",
+    "description": "A mop handle with nails in the end.\nStrikes Ice and can inflict Poison."
   },
   "280": {
-    "name": "Starmetal Blade",
-    "description": "A sword forged from star metal that fell from the sky, giving it magical\nproperties. Cursed, inflicts Poison."
+    "name": "Razor Mop",
+    "description": "A mop wound with razor wire.\nStrikes Ice and can inflict Poison."
   },
   "281": {
-    "name": "Eye of Insight Staff",
-    "description": "A staff crowned with a living, sentient eye that can see invisible\nthings. Strikes with Water."
+    "name": "Barbed Hockey Stick",
+    "description": "A hockey stick wound with barbed wire.\nStrikes Water and can inflict Poison."
   },
   "282": {
-    "name": "Dragonbone Bow",
-    "description": "A bow carved from ancient dragonbone that never misses its target. Can\ninflict Blind on hit."
+    "name": "Throwing Stick",
+    "description": "A shaped throwing stick used for hunting.\nStrikes with Ice."
   },
   "283": {
-    "name": "Shadowsteel Blade",
-    "description": "A sword with a blade made of solidified shadow that passes through\narmor. Strikes with Cursed."
+    "name": "Wooden Staff",
+    "description": "A plain, common staff.\nCursed, can poison."
   },
   "284": {
-    "name": "Volcanic Greataxe",
-    "description": "An axe forged in the heart of a volcano, eternally burning with magical\nflame. Cursed, inflicts Poison."
+    "name": "Seed Staff",
+    "description": "A staff grown from a blade seed.\nStrikes with Sacred."
   },
   "285": {
-    "name": "Leviathan Fang Spear",
-    "description": "A spear made from the fang of a legendary sea serpent that controls\nwater. Strikes with Water."
+    "name": "Quarterstaff",
+    "description": "A staff weighted at both ends.\nThunder, inflicts Static."
   },
   "286": {
-    "name": "Thunder Lizard Gauntlets",
-    "description": "Gauntlets made from the scales of an ancient thunder lizard, crackling\nwith electricity. Strikes with Thunder."
+    "name": "Escrima Sticks",
+    "description": "A pair of short metal batons.\nIce, inflicts Cold."
   },
   "287": {
-    "name": "Arcane Crossbow",
-    "description": "A crossbow that fires bolts of pure magical energy. Strikes with Ice and\ncan inflict Cold."
+    "name": "Magic Wand",
+    "description": "A wand that lends a little magical power.\nCursed, can poison."
   },
   "288": {
-    "name": "Soul Drain Flail",
-    "description": "A flail with a head made of crystallized soul energy that drains life\nforce. Cursed, inflicts Poison."
+    "name": "Bounce Bubble Blower",
+    "description": "A bubble wand whose bubbles hold and bounce\na foe. Thunder, inflicts Static."
   },
   "289": {
-    "name": "Morphblade",
-    "description": "A magical sword that can change its size from dagger to greatsword at\nwill. Strikes with Cursed."
+    "name": "Peppermint Scepter",
+    "description": "A giant candy cane that fires peppermint\nbeams. Thunder, inflicts Static."
   },
   "290": {
-    "name": "Banshee's Wail",
-    "description": "A whip made from the hair of a banshee that screams when used. Strikes\nwith Ice."
+    "name": "Force Wand",
+    "description": "A silver wand that lends magical power.\nFire, inflicts Hot."
   },
   "291": {
-    "name": "Celestial Hammer",
-    "description": "A hammer forged from a fragment of a fallen star, glowing with celestial\nenergy. Sacred, inflicts Inspired."
+    "name": "Flexible Staff",
+    "description": "Hardened bamboo poles bound into one\nflexible staff. Ice, inflicts Cold."
   },
   "292": {
-    "name": "Frost Dragon Claws",
-    "description": "Claws carved from the teeth of an ancient frost dragon, emanating bitter\ncold. Strikes with Ice."
+    "name": "Iron Tonfa",
+    "description": "A pair of iron batons worn along the arm.\nStrikes with Water."
   },
   "293": {
-    "name": "World Tree Branch",
-    "description": "A staff made from a branch of the World Tree, containing ancient nature\nmagic. Strikes with Fire."
+    "name": "Wind Staff",
+    "description": "A plain staff that raises hard gusts.\nStrikes with Wind."
   },
   "294": {
-    "name": "Soulstring Bow",
-    "description": "A magical bow that forms arrows from the wielder's own life force.\nStrikes with Fire and can inflict Hot."
+    "name": "Three-Section Staff",
+    "description": "Three staff sections joined by chain.\nIce, inflicts Cold."
   },
   "295": {
-    "name": "Hero's Legacy",
-    "description": "A sword that contains the trapped soul of an ancient hero, granting\nwisdom in battle. Strikes with Fire."
+    "name": "Petrified Staff",
+    "description": "A staff of fossilised wood.\nStrikes with Thunder."
   },
   "296": {
-    "name": "Bloodthirster",
-    "description": "A sword that becomes lighter and sharper with each kill, feeding on\nblood. Strikes with Cursed."
+    "name": "Mithril Rod",
+    "description": "A mithril rod that lends magical power.\nStrikes with Sacred."
   },
   "297": {
-    "name": "Earthshaker Mace",
-    "description": "A mace made from a chunk of elemental earth, causing tremors on impact.\nStrikes with Cursed."
+    "name": "Four-Section Staff",
+    "description": "Four staff sections joined by chain.\nIce, inflicts Cold."
   },
   "298": {
-    "name": "Dimension Blade",
-    "description": "A sword that can cut through the fabric of reality to create dimensional\nportals. Strikes with Sacred."
+    "name": "Lightning-Struck Staff",
+    "description": "A staff cut from a lightning-struck tree.\nThunder, inflicts Static."
   },
   "299": {
-    "name": "Infinite Quiver",
-    "description": "A magical crossbow that never needs to be reloaded, materializing bolts\nfrom thin air. Strikes with Fire."
+    "name": "Yggdrasil Branch",
+    "description": "A staff cut from a branch of the world tree.\nStrikes with Fire."
   },
   "300": {
-    "name": "Lightning Elemental Fists",
-    "description": "Gauntlets made from the essence of a lightning elemental, striking with\nelectric fury. Thunder, inflicts Static."
+    "name": "Thundercaller Staff",
+    "description": "A staff that calls down lightning.\nStrikes with Thunder."
   },
   "301": {
-    "name": "Chronomancer's Staff",
-    "description": "A staff crafted from crystallized time, allowing the wielder to slow\nenemies. Fire, inflicts Hot."
+    "name": "Eye of Insight Staff",
+    "description": "A staff crowned with a living eye that sees\nwhat is hidden. Strikes with Water."
   },
   "302": {
-    "name": "Twilight Edge",
-    "description": "A sword forged from the essence of twilight, existing between light and\nshadow."
+    "name": "Sonic Staff",
+    "description": "A staff that throws hard soundwaves.\nStrikes with Water and can wet."
   },
   "303": {
-    "name": "Moonlight Bow",
-    "description": "A bow carved from moonlight that fires arrows of pure lunar energy.\nStrikes with Cursed and can inflict Poison."
+    "name": "World Tree Staff",
+    "description": "A staff of world tree wood that hums with\nthe forest. Water, can wet."
   },
   "304": {
-    "name": "Bound Elemental Axe",
-    "description": "An axe that contains a bound fire elemental, constantly ablaze with\nmagical flames. Strikes with Thunder."
+    "name": "World Tree Branch",
+    "description": "A living branch of the world tree, still\nin leaf. Strikes with Fire."
   },
   "305": {
-    "name": "Phoenix Intestines",
-    "description": "A whip made from the intestines of a phoenix, burning with eternal fire.\nStrikes with Water."
+    "name": "Unicorn Horn Staff",
+    "description": "A staff of unicorn horn that mends wounds.\nThunder, inflicts Static."
   },
   "306": {
-    "name": "Nightmare Gauntlets",
-    "description": "Gauntlets crafted from the solidified essence of nightmares, causing\nfear on contact."
+    "name": "Spell Absorber",
+    "description": "A warded staff that swallows hostile spells\nand keeps them. Fire, inflicts Hot."
   },
   "307": {
-    "name": "Spellbreaker Blade",
-    "description": "A magical crystalline sword that absorbs spells cast at its wielder.\nStrikes with Cursed and can inflict Poison."
+    "name": "Dragon Staff",
+    "description": "A dragon-headed staff that lends magical\npower. Strikes with Sacred."
   },
   "308": {
-    "name": "Unicorn Horn Staff",
-    "description": "A staff made from the horn of a legendary unicorn, with powerful healing\nmagic. Thunder, inflicts Static."
+    "name": "Chronomancer's Staff",
+    "description": "A staff of crystallised time that slows\na foe. Fire, inflicts Hot."
   },
   "309": {
-    "name": "T-Pillar Blade",
-    "description": "An impossibly precise stone blade from Göbekli Tepe, carved with animal\npictographs. Can inflict Poison on hit."
+    "name": "Barrier Staff",
+    "description": "A staff that raises barriers over its bearer\nand allies. Thunder, can static."
   },
   "310": {
-    "name": "Vulture Totem Staff",
-    "description": "A staff topped with the carved vulture of Göbekli Tepe, allowing\ncommunion with ancient spirits. Thunder, inflicts Static."
+    "name": "Gravity Manipulation Staff",
+    "description": "A staff that bends gravity to crush or lift.\nStrikes with Ice."
   },
   "311": {
-    "name": "Fox Spirit Fists",
-    "description": "Stone gauntlets carved with the fox symbols of Göbekli Tepe, granting\nsupernatural speed and cunning. Cursed."
+    "name": "Mind Shield Staff",
+    "description": "A staff that shields allies and turns PSI\ndamage back. Fire, inflicts Hot."
   },
   "312": {
-    "name": "Stellar Sling",
-    "description": "A mysterious sling from Göbekli Tepe that turns ordinary stones into\ndevastating projectiles of stellar energy. Inflicts Blind."
+    "name": "Arcane Sphere",
+    "description": "An orb that shields its bearer while firing\narcane bolts. Cursed, can poison."
   },
   "313": {
-    "name": "Boar Totem Hammer",
-    "description": "A massive stone hammer carved with the boar symbols from Göbekli Tepe,\nchanneling primal strength. Ice."
+    "name": "Mind Projector Staff",
+    "description": "A staff that throws the bearer's thoughts\ninto a foe's mind. Fire."
   },
   "314": {
-    "name": "Serpent Caller",
-    "description": "A spear tipped with a stone carving from Göbekli Tepe that summons\nserpent spirits when thrown. Cursed, inflicts Poison."
+    "name": "Mental Fortress Staff",
+    "description": "A staff that walls off the mind.\nStrikes with Cursed."
   },
   "315": {
-    "name": "Cosmic Pendulum",
-    "description": "A mysterious flail from Göbekli Tepe with astronomical carvings that\ndistorts space around it. Water."
+    "name": "Elemental Warden Staff",
+    "description": "A warded staff that blocks one element\nat a time. Cursed, can poison."
   },
   "316": {
-    "name": "Soul Cleaver",
-    "description": "A ceremonial axe from Göbekli Tepe that cuts through both physical\nmatter and spiritual energy. Fire, inflicts Hot."
+    "name": "Vulture Totem Staff",
+    "description": "A staff topped with the Gobekli Tepe vulture.\nThunder, inflicts Static."
   },
   "317": {
-    "name": "Crane Talons",
-    "description": "Ritual claws from Göbekli Tepe that allow the wearer to assume aspects\nof the sacred crane. Strikes with Ice."
+    "name": "Psychic Amplifier Crown",
+    "description": "A circlet that throws thought as a weapon\nand shields the mind. Ice."
   },
   "318": {
-    "name": "Bull Totem Bow",
-    "description": "A bow carved from impossible stone, adorned with the bull carvings of\nGöbekli Tepe. Strikes with Fire."
+    "name": "Celestial Alignment Rod",
+    "description": "A Gobekli Tepe staff crowned with sun and\nmoon. Strikes with Sacred."
   },
   "319": {
-    "name": "Star Cutter",
-    "description": "A curved blade from Göbekli Tepe inscribed with forgotten constellation\npatterns. Can inflict Poison on hit."
+    "name": "EHI Toxic Amplifier",
+    "description": "A staff of volatile petroleum. It amplifies\nmagic and poisons its bearer. Cursed."
   },
   "320": {
-    "name": "Portal Disc",
-    "description": "A strange circular weapon from Göbekli Tepe that creates portals when\nthrown, returning to the wielder. Thunder, inflicts Static."
+    "name": "Varlenia Arcane Staff",
+    "description": "A golden staff of Varlenia steel that\namplifies magic. Strikes with Thunder."
   },
   "321": {
-    "name": "Knowledge Seeker",
-    "description": "A mysterious dagger from Göbekli Tepe that reveals hidden knowledge when\nblood touches its blade. Ice, inflicts Cold."
+    "name": "EHI Forbidden Codex",
+    "description": "A staff holding every old civilisation's\nlearning. It ages its bearer fast."
   },
   "322": {
-    "name": "Celestial Alignment Rod",
-    "description": "A staff from Göbekli Tepe crowned with carvings of the sun and moon,\ncontrolling celestial energies. Sacred."
+    "name": "Staff of Eternity",
+    "description": "A staff holding the wisdom of ages and\nno limit of power. Strikes with Sacred."
   },
   "323": {
-    "name": "Gravity Spear",
-    "description": "A primitive-looking but technologically advanced spear from Göbekli Tepe\nthat can control gravity. Thunder."
+    "name": "EHI Petroleum Omniscience",
+    "description": "A staff holding all the oil-borne knowledge\nthere is. Strikes with Petro."
   },
   "324": {
-    "name": "Skystone Greatsword",
-    "description": "A massive stone sword from Göbekli Tepe that's impossibly light,\ninscribed with lost astronomical knowledge. Wind, inflicts Blind."
+    "name": "Universal Force Staff",
+    "description": "A staff that channels the fundamental\nforces. Strikes with Sacred."
   },
   "325": {
-    "name": "Phasing Touch",
-    "description": "Gauntlets from Göbekli Tepe that phase through matter, allowing the\nwearer to reach into objects. Ice."
-  },
-  "326": {
-    "name": "Liquid Stone Whip",
-    "description": "A mysterious whip from Göbekli Tepe made of impossible stone links that\nmoves like liquid. Petro, inflicts Paralysis."
-  },
-  "327": {
-    "name": "Planar Divider",
-    "description": "A ceremonial axe from Göbekli Tepe that can cut through the barriers\nbetween worlds. Strikes with Ice."
-  },
-  "328": {
-    "name": "Thought Projector",
-    "description": "A stone-carved launcher from Göbekli Tepe that fires energy bolts\npowered by thoughts. Fire, inflicts Hot."
-  },
-  "329": {
-    "name": "Timeflow Manipulator",
-    "description": "A bizarre Göbekli Tepe artifact that warps time around the wielder,\nincreasing their speed. Strikes with Water."
-  },
-  "330": {
-    "name": "EHI Crude Projector",
-    "description": "An industrial cannon that fires pressurized crude oil. Devastating but\nextremely unstable and may ignite the wielder."
-  },
-  "331": {
-    "name": "EHI Petroleum Edge",
-    "description": "A chainsaw sword dripping with oil that constantly corrodes its\nwielder's armor. Petro, inflicts Paralysis."
-  },
-  "332": {
-    "name": "EHI Toxic Amplifier",
-    "description": "A staff containing volatile petroleum derivatives that amplifies magic\nbut damages the user's health with toxic fumes. Cursed."
-  },
-  "333": {
-    "name": "EHI Petrochem Injectors",
-    "description": "Gauntlets that inject oil-based performance enhancers, greatly\nincreasing strength but causing severe organ damage. Petro."
-  },
-  "334": {
-    "name": "EHI Knowledge Injector",
-    "description": "A crossbow that fires bolts containing encyclopedic knowledge. Strikes\nwith Water and can inflict Wet."
-  },
-  "335": {
-    "name": "EHI Compression Maul",
-    "description": "A massive hammer containing compressed oil that creates devastating\nshockwaves but severely slows the wielder. Inflicts Stun."
+    "name": "Infernal Cane",
+    "description": "A gentleman's cane with a skull grip.\nThe shaft is a scabbard. Ice, can chill."
   },
   "336": {
-    "name": "EHI Omniscient Binder",
-    "description": "A whip made from living encyclopedia pages that bind enemies with\nknowledge but confuse the wielder with constant whispers."
+    "name": "Toy Bow",
+    "description": "A plastic toy bow on weak elastic.\nCan blind on hit."
   },
   "337": {
-    "name": "EHI Memetic Rifle",
-    "description": "A rifle that fires knowledge crystallized into bullets, devastating to\nenemies but causing memory loss in the user."
+    "name": "Warped Arrows",
+    "description": "A bundle of cheap arrows, shafts warped\nand fletching half off."
   },
   "338": {
-    "name": "EHI Omniscience Edge",
-    "description": "A sword with a blade made of encyclopedia pages compressed to diamond\nhardness, cutting through defenses but driving its wielder insane."
+    "name": "Flimsy Bow",
+    "description": "A crude bow of knotted wood that may snap."
   },
   "339": {
-    "name": "EHI Combustion Lance",
-    "description": "A spear tipped with crystallized oil that ignites on impact, creating\nmassive explosions but severely burning the user. Inflicts Poison."
+    "name": "Misaligned Hand Crossbow",
+    "description": "A pistol crossbow of weak wood that keeps\nslipping out of true."
   },
   "340": {
-    "name": "EHI Forbidden Codex",
-    "description": "A staff containing the complete knowledge of ancient civilizations,\ngranting immense magical power but rapidly aging the user."
+    "name": "Unreliable Crossbow",
+    "description": "A crossbow whose catch often fails to loose.\nCan blind on hit."
   },
   "341": {
-    "name": "EHI Psychoactive Talons",
-    "description": "Claws infused with a mixture of rare oils and encyclopedic knowledge,\ngranting unnatural speed but causing hallucinations. Sacred."
+    "name": "Shower Rod Bow",
+    "description": "A curtain rod strung with paracord.\nCan inflict Poison on hit."
   },
   "342": {
-    "name": "EHI Identity Eraser",
-    "description": "A bow that fires arrows containing concentrated knowledge, shattering\nminds but causing the user to forget their own identity."
+    "name": "PVC Bow",
+    "description": "A PVC pipe strung with old rope.\nCan inflict Nausea on hit."
   },
   "343": {
-    "name": "EHI Petrocorruptor",
-    "description": "An axe with a blade made of hyper-compressed oil that cuts through\nanything but slowly corrupts the wielder's body."
+    "name": "Junk Crossbow",
+    "description": "A homemade crossbow of scrap and springs.\nCan inflict Poison on hit."
   },
   "344": {
-    "name": "EHI Headache Inducer",
-    "description": "A pistol that fires bullets containing compressed encyclopedic\nknowledge, overwhelming targets but causing crippling migraines."
+    "name": "Seed Bow",
+    "description": "A bow grown from a blade seed.\nCan blind on hit."
   },
   "345": {
-    "name": "EHI Suicide Bomber",
-    "description": "A flail with heads containing volatile oil that explodes on impact,\ndamaging everyone Can inflict Stun on hit."
+    "name": "Short Bow",
+    "description": "A short hunting bow. Can blind on hit."
   },
   "346": {
-    "name": "EHI Flesh Dissolver",
-    "description": "A dagger with a blade made of shimmering oil that phases through armor\nbut slowly dissolves the wielder's flesh."
+    "name": "Long Bow",
+    "description": "A long war bow with a heavy draw."
   },
   "347": {
-    "name": "EHI Brain Hemorrhager",
-    "description": "A launcher firing projectiles that hold a whole library distilled. It\noverwhelms the enemy and bleeds the user's brain."
+    "name": "Composite Bow",
+    "description": "A steppe recurve bow shot from horseback.\nCan blind on hit."
   },
   "348": {
-    "name": "EHI Apocalypse Fists",
-    "description": "Gauntlets containing all the world's oil reserves in compressed form,\ngranting godlike strength but causing rapid cellular degeneration."
+    "name": "Chu-Ko-Nu",
+    "description": "A Chinese repeating crossbow.\nCan blind on hit."
   },
   "349": {
-    "name": "EHI Petroleum Omniscience",
-    "description": "A staff containing the complete oil-based knowledge of the universe.\nStrikes with Petro."
+    "name": "Net Crossbow",
+    "description": "A crossbow whose bolts burst into nets."
   },
   "350": {
-    "name": "Mind Projector Staff",
-    "description": "A staff that amplifies psychic abilities, allowing the wielder to\nproject mental attacks directly into enemies' minds. Fire, inflicts Hot."
+    "name": "Compound Bow",
+    "description": "A carbon fibre compound bow.\nCan blind on hit."
   },
   "351": {
-    "name": "Telekinetic Gauntlets",
-    "description": "Gauntlets that amplify telekinetic abilities, allowing the wielder to\nstrike enemies from a distance with psychic force."
+    "name": "Multi-Bolt Crossbow",
+    "description": "A crossbow loaded with specialist bolts.\nStrikes with Thunder."
   },
   "352": {
-    "name": "Psionic Edge",
-    "description": "A crystal blade that channels psychic energy, cutting through mental\ndefenses and physical armor alike. Sacred."
+    "name": "Advanced Compound Bow",
+    "description": "A compound bow on a modern pulley system.\nCan blind on hit."
   },
   "353": {
-    "name": "Mind Arrow Bow",
-    "description": "A bow that fires arrows of pure mental energy, bypassing physical\ndefenses to damage the target's psyche. Thunder, inflicts Static."
+    "name": "Frostbite Bow",
+    "description": "A bow that looses arrows of ice.\nStrikes with Ice and can chill."
   },
   "354": {
-    "name": "Psychic Crown",
-    "description": "A bracelet that focuses mental energy into devastating psychic attacks\nagainst all nearby enemies. Sacred, inflicts Inspired."
+    "name": "Aetherial Bow",
+    "description": "A bow that forms its arrows out of magic.\nStrikes with Thunder."
   },
   "355": {
-    "name": "Brainwave Amplifier",
-    "description": "A device that amplifies and focuses brainwaves into concentrated beams\nof destructive mental energy. Sacred, inflicts Inspired."
+    "name": "Infinite Quiver Bow",
+    "description": "A bow that draws arrows out of the air\nand never empties. Ice, can chill."
   },
   "356": {
-    "name": "Force Crush Gloves",
-    "description": "Gloves embedded with crystals that channel telekinetic force to crush\nopponents from within. Thunder, inflicts Static."
+    "name": "Dragon Bow",
+    "description": "A war bow strung with dragon whisker."
   },
   "357": {
-    "name": "Memory Thief",
-    "description": "A dagger that absorbs the thoughts and memories of those it cuts,\ntransferring knowledge to the wielder. Ice, inflicts Cold."
+    "name": "Infinite Bolt Crossbow",
+    "description": "A crossbow that never needs loading.\nStrikes with Fire."
   },
   "358": {
-    "name": "Mind Shield Staff",
-    "description": "A staff that creates powerful force fields to protect allies while\nreflecting PSI damage. Fire, inflicts Hot."
+    "name": "Arcane Crossbow",
+    "description": "A crossbow that looses bolts of raw magic.\nIce, inflicts Cold."
   },
   "359": {
-    "name": "Spell Absorber",
-    "description": "A staff wrapped in magical wards that absorbs hostile spells and stores\ntheir energy for later use. Fire, inflicts Hot."
+    "name": "Dragonbone Bow",
+    "description": "A bow carved of old dragonbone. It does not\nmiss. Can blind on hit."
   },
   "360": {
-    "name": "Wardbreaker Blade",
-    "description": "A sword crafted with enchantments specifically designed to cut through\nmagical protections and wards. Thunder, inflicts Static."
+    "name": "Mind Arrow Bow",
+    "description": "A bow that looses arrows of thought past\nany armour. Thunder, can static."
   },
   "361": {
     "name": "Spellbreaker Crossbow",
-    "description": "A crossbow enchanted to fire bolts that disrupt magical energy,\ntemporarily nullifying a target's magical abilities. Cursed."
+    "description": "A crossbow whose bolts cut a target off\nfrom its magic. Cursed."
   },
   "362": {
-    "name": "Spellcrusher Maul",
-    "description": "A hammer infused with anti-magic properties that shatters magical\nconstructs and barriers with ease. Fire, inflicts Hot."
+    "name": "Soulstring Bow",
+    "description": "A bow that forms arrows from the archer's\nown life. Fire, inflicts Hot."
   },
   "363": {
-    "name": "Barrier Staff",
-    "description": "A staff that creates powerful barriers of magical energy to protect the\nwielder and allies from harm. Thunder, inflicts Static."
+    "name": "Moonlight Bow",
+    "description": "A bow cut from moonlight, shooting lunar\nenergy. Cursed, can poison."
   },
   "364": {
-    "name": "Arcane Blade",
-    "description": "A sword with a blade of pure magical energy that causes devastating\narcane damage. Strikes with Fire."
+    "name": "Spellseeker Bow",
+    "description": "A bow whose arrows seek their target out.\nStrikes with Fire."
   },
   "365": {
-    "name": "Spellseeker Bow",
-    "description": "A bow that fires arrows of concentrated magical energy that seek out and\nstrike their targets. Fire."
+    "name": "Bull Totem Bow",
+    "description": "A stone bow cut with the Gobekli Tepe bulls.\nStrikes with Fire."
   },
   "366": {
-    "name": "Arcane Shield Gauntlets",
-    "description": "Gauntlets that create shields of pure magical energy to protect against\nphysical and magical attacks. Water."
+    "name": "EHI Identity Eraser",
+    "description": "A bow whose arrows carry compressed learning.\nIt breaks minds, the archer's too."
   },
   "367": {
-    "name": "Elemental Warden Staff",
-    "description": "A staff imbued with protection magic that can create barriers against\nspecific elemental attacks. Cursed, inflicts Poison."
+    "name": "Varlenia Energy Bow",
+    "description": "A golden bow of flexible Varlenia steel.\nStrikes with Thunder."
   },
   "368": {
-    "name": "Divine Smiter",
-    "description": "A golden sword that channels divine magic to smite evil and undead with\nholy power. Strikes with Sacred."
-  },
-  "369": {
-    "name": "Warding Spear",
-    "description": "A spear wrapped in protective enchantments that create fields of\ndefensive magic around the wielder. Fire."
-  },
-  "370": {
-    "name": "Arcane Sphere",
-    "description": "A magical orb that surrounds the wielder with protective energy while\nlaunching arcane attacks. Cursed, inflicts Poison."
-  },
-  "371": {
-    "name": "Spelldrainer Edge",
-    "description": "A black blade that absorbs magical attacks and converts them into\nadditional cutting power. Strikes with Sacred."
-  },
-  "372": {
-    "name": "Psychic Amplifier Crown",
-    "description": "A circlet that projects the wearer's thoughts as psychic attacks while\nproviding mental shields. Ice."
-  },
-  "373": {
-    "name": "Mind Piercer",
-    "description": "A rifle that fires bullets of concentrated psychic energy that penetrate\nmental defenses. Ice, inflicts Cold."
-  },
-  "374": {
-    "name": "Mind Ripper Claws",
-    "description": "Crystal claws that channel psychic energy to tear through both physical\narmor and mental barriers. Cursed."
-  },
-  "375": {
-    "name": "Mindlash Whip",
-    "description": "A whip made of concentrated thought energy that lashes both body and\nmind. Thunder, inflicts Static."
-  },
-  "376": {
-    "name": "Thought Crusher",
-    "description": "A hammer that shatters not only physical forms but the very thoughts of\nits targets. Can inflict Stun on hit."
-  },
-  "377": {
-    "name": "Mind Manipulator Gloves",
-    "description": "Gloves that allow the wearer to reach directly into the minds of\nenemies, extracting or altering thoughts."
-  },
-  "378": {
-    "name": "Neural Disruptor",
-    "description": "A weapon that fires concentrated bolts of mental energy directly into\nthe target's mind. Thunder, inflicts Static."
-  },
-  "379": {
-    "name": "Mental Fortress Staff",
-    "description": "A staff that creates impenetrable barriers of pure mental energy.\nStrikes with Cursed."
+    "name": "EHI Brain Hemorrhager",
+    "description": "A launcher firing shells packed with a whole\nlibrary. It bleeds the shooter's brain."
   },
   "380": {
-    "name": "Scrap Metal Shiv",
-    "description": "A crude blade made from sharpened scrap metal bound to a pipe with\nelectrical tape. Can inflict Poison on hit."
+    "name": "Uneven Slingshot",
+    "description": "A handmade slingshot with an uneven fork.\nCan blind on hit."
   },
   "381": {
-    "name": "Nail Bat",
-    "description": "A baseball bat wrapped in barbed wire and rusty nails for extra damage.\nCan inflict Poison on hit."
+    "name": "Stretchy Sling",
+    "description": "A sling of poor leather that stretches.\nCan blind on hit."
   },
   "382": {
-    "name": "Pipe Wrench Mace",
-    "description": "A length of pipe with a heavy valve attached to one end as a makeshift\nmace. Can inflict Oily on hit."
+    "name": "Leaky Blowgun",
+    "description": "A blowpipe of cracked reed that leaks air."
   },
   "383": {
-    "name": "Junk Slingshot",
-    "description": "A homemade slingshot made from a forked tree branch and rubber cut from\nold tires. Can inflict Oily on hit."
+    "name": "Hanger Slingshot",
+    "description": "A coat hanger and rubber bands.\nCan inflict Oily on hit."
   },
   "384": {
-    "name": "Broom Spear",
-    "description": "A rough spear made from a broom handle with a kitchen knife duct-taped\nto the end. Can inflict Poison on hit."
+    "name": "Junk Slingshot",
+    "description": "A forked branch strung with tyre rubber.\nCan inflict Oily on hit."
   },
   "385": {
-    "name": "Hubcap Axe",
-    "description": "A crude axe made from a sharpened car part attached to a wooden handle.\nCan inflict Oily on hit."
+    "name": "Pipe Slingshot",
+    "description": "A forked pipe strung with inner tube.\nCan inflict Oily on hit."
   },
   "386": {
-    "name": "PVC Bow",
-    "description": "A makeshift bow constructed from PVC pipe with string made from\nunraveled rope. Can inflict Nausea on hit."
+    "name": "Skewer Dart Gun",
+    "description": "A toy dart gun that fires skewers.\nCan inflict Poison on hit."
   },
   "387": {
-    "name": "Glass Knuckles",
-    "description": "Gloves with broken glass and metal fragments embedded for devastating\npunches. Can inflict Poison on hit."
+    "name": "Hairspray Torch",
+    "description": "A lacquer can with a lighter taped on.\nStrikes Fire and can inflict Nausea."
   },
   "388": {
-    "name": "Bike Chain Flail",
-    "description": "A chain made from bike parts with a padlock attached to the end as a\nflail. Can inflict Oily on hit."
+    "name": "Staple Shooter",
+    "description": "A staple gun that spits scrap metal.\nCan inflict Poison on hit."
   },
   "389": {
-    "name": "Junk Crossbow",
-    "description": "A homemade crossbow made from scavenged lumber, springs, and metal\nparts. Can inflict Poison on hit."
+    "name": "Stone Darts",
+    "description": "Darts tipped with knapped stone.\nStrikes with Petro."
   },
   "390": {
-    "name": "Concrete Sledge",
-    "description": "A sledgehammer with chunks of concrete still attached to its head for\nextra weight. Petro, inflicts Nausea."
+    "name": "Fiber Sling",
+    "description": "A sling woven from plant fibre."
   },
   "391": {
-    "name": "Razor Disc Claws",
-    "description": "Razor blades and broken CD shards attached to fingerless gloves for\nslashing attacks. Can inflict Poison on hit."
+    "name": "Atlatl Dart",
+    "description": "A light dart thrown with a spear-thrower."
   },
   "392": {
-    "name": "Garden Sprayer Flamer",
-    "description": "A crude flamethrower made from a garden sprayer, lighter, and gasoline.\nFire, inflicts Nausea."
+    "name": "Seed Grimorie",
+    "description": "A grimorie grown from a blade seed.\nIce, inflicts Cold."
   },
   "393": {
-    "name": "Nail Mop Staff",
-    "description": "A short staff made from an old mop handle with nails driven through the\nend. Ice, inflicts Poison."
+    "name": "Bola",
+    "description": "Stone weights on cords, thrown to entangle.\nCan blind on hit."
   },
   "394": {
-    "name": "Pipe Gun",
-    "description": "A makeshift gun pieced together from pipes, wood, and springs that fires\nsmall metal scraps. Inflicts Oily."
+    "name": "Sling",
+    "description": "A sling that throws a stone hard.\nCan blind on hit."
   },
   "395": {
-    "name": "Stop Sign Cleaver",
-    "description": "A jagged blade fashioned from a broken stop sign attached to a wooden\nhandle. Can inflict Poison on hit."
+    "name": "Boomerang",
+    "description": "A curved throwing stick that comes back.\nCan blind on hit."
   },
   "396": {
-    "name": "Cord Whip",
-    "description": "A whip made from electrical cords and extension cables tied together.\nCan inflict Oily on hit."
+    "name": "Rope Dart",
+    "description": "A Chinese weighted dart on a long rope.\nCan blind on hit."
   },
   "397": {
-    "name": "Leaf Spring Machete",
-    "description": "A crude sword fashioned from a car's leaf spring, sharpened along one\nedge. Can inflict Oily on hit."
+    "name": "Chakram",
+    "description": "A thrown ring with a sharpened rim."
   },
   "398": {
-    "name": "Pressure Gun",
-    "description": "A homemade harpoon gun made from a pressure washer, with metal rods as\nammunition. Can inflict Oily on hit."
+    "name": "Pepper Spray Cannon",
+    "description": "A canister that sprays concentrated capsaicin.\nCan blind on hit."
   },
   "399": {
-    "name": "Rubble Launcher",
-    "description": "A makeshift launcher that fires chunks of concrete with elastic surgical\ntubing. Can inflict Nausea on hit."
+    "name": "Shongo",
+    "description": "A heavy African throwing knife of several\nblades. Can blind on hit."
   },
   "400": {
-    "name": "Nail Board",
-    "description": "A bunch of rusty nails secured to the end of a table leg with wire and\nduct tape. Can inflict Poison on hit."
+    "name": "Returning Discus",
+    "description": "A bladed disc that returns after it strikes."
   },
   "401": {
-    "name": "Car Panel Claws",
-    "description": "Strips of metal from a car's chassis, sharpened and attached to\ngardening gloves. Can inflict Oily on hit."
+    "name": "Poison Blowpipe",
+    "description": "A blowpipe loaded with poisoned darts."
   },
   "402": {
-    "name": "Saw Blade Sword",
-    "description": "A wooden plank with rusted saw blades attached to create a crude sword.\nCan inflict Poison on hit."
+    "name": "Iron Grenade",
+    "description": "A cast iron shell packed with powder.\nCan blind on hit."
   },
   "403": {
-    "name": "Bike Pump Air Gun",
-    "description": "A makeshift air gun made from PVC pipe and a bicycle pump to fire small\nprojectiles. Wind, inflicts Oily."
+    "name": "Crossbow",
+    "description": "A crossbow that looses bolts on strong limbs.\nCan blind on hit."
   },
   "404": {
-    "name": "Rebar Club",
-    "description": "A length of rebar with a concrete chunk still attached at one end. Can\ninflict Nausea on hit."
+    "name": "Mithril Bow",
+    "description": "A bow that looses mithril-tipped arrows."
   },
   "405": {
-    "name": "Mirror Shard Fist",
-    "description": "Shards of mirror glass attached to duct tape wrapped around the hands.\nCan inflict Nausea on hit."
+    "name": "Disc Launcher",
+    "description": "A launcher that throws sharpened discs."
   },
   "406": {
-    "name": "Modified Wrench",
-    "description": "A large wrench with nuts and bolts welded to it for additional damage.\nCan inflict Oily on hit."
+    "name": "Explosive Crossbow",
+    "description": "A crossbow whose bolts carry a charge.\nCan blind on hit."
   },
   "407": {
-    "name": "Razor Fire Axe",
-    "description": "An old fire axe with razor blades attached to the striking edge with\nelectrical tape. Fire, inflicts Poison."
+    "name": "EMP Disruptor",
+    "description": "A handheld pulse that kills electronics\nand implants. Water, inflicts Wet."
   },
   "408": {
-    "name": "Pipe Slingshot",
-    "description": "An elastic slingshot made from a forked metal pipe and inner tube\nrubber. Can inflict Oily on hit."
+    "name": "Tactical Crossbow",
+    "description": "A modern crossbow with a scope and carbon\nlimbs. Can blind on hit."
   },
   "409": {
-    "name": "Razor Mop",
-    "description": "A mop with razor wire wrapped around its head for slashing attacks.\nStrikes with Ice and can inflict Poison."
+    "name": "Neural Scrambler",
+    "description": "A field emitter that scrambles nerves.\nStrikes with Thunder."
   },
   "410": {
-    "name": "Antenna Rapier",
-    "description": "A car antenna reinforced with tape and a sharpened tip for quick\nthrusting attacks. Can inflict Oily on hit."
+    "name": "Timed Explosive Launcher",
+    "description": "A launcher for timed charges, delay set\nby hand."
   },
   "411": {
-    "name": "Trusty Frying Pan",
-    "description": "A frying pan with the handle reinforced by duct tape, simple but\neffective. Can inflict Oily on hit."
+    "name": "Cyber Warfare Device",
+    "description": "A device that turns enemy systems against\ntheir own side. Strikes with Fire."
   },
   "412": {
-    "name": "Staple Shooter",
-    "description": "A modified staple gun that fires metal scraps at surprising velocity.\nCan inflict Poison on hit."
+    "name": "Stellar Sling",
+    "description": "A Gobekli Tepe sling that turns a plain\nstone into star-fire. Can blind."
   },
   "413": {
-    "name": "Barbed Hockey Stick",
-    "description": "A hockey stick with the blade wrapped in barbed wire and metal scraps.\nWater, inflicts Poison."
+    "name": "Drone Swarm Launcher",
+    "description": "A shoulder rack that looses small attack\ndrones."
   },
   "414": {
-    "name": "Golf Tee Glove",
-    "description": "A golf glove with golf tees sewn through it, points outward, for\npunching. Can inflict Nausea on hit."
+    "name": "EHI Knowledge Injector",
+    "description": "A crossbow whose bolts carry whole libraries.\nStrikes with Water and can wet."
   },
   "415": {
-    "name": "Deadly Plunger",
-    "description": "A toilet plunger modified with sharpened metal affixed to the rubber\ncup. Can inflict Nausea on hit."
-  },
-  "416": {
-    "name": "Hairspray Torch",
-    "description": "A can of hairspray with a lighter taped to it, creating a small\nflamethrower. Fire, inflicts Nausea."
-  },
-  "417": {
-    "name": "Ruler Shiv",
-    "description": "A wooden ruler reinforced with metal strips and sharpened to a point.\nCan inflict Poison on hit."
-  },
-  "418": {
-    "name": "Sign Post",
-    "description": "A street sign post pulled from the ground, still with concrete at the\nbase. Can inflict Nausea on hit."
-  },
-  "419": {
-    "name": "Sand-Filled Hose",
-    "description": "A length of garden hose filled with sand and sealed at both ends. Can\ninflict Nausea on hit."
-  },
-  "420": {
-    "name": "Broken Bottle",
-    "description": "A broken bottle with the jagged end wrapped in cloth for a handle. Can\ninflict Poison on hit."
-  },
-  "421": {
-    "name": "Shower Rod Bow",
-    "description": "A simple bow made from a bent shower curtain rod and paracord. Can\ninflict Poison on hit."
-  },
-  "422": {
-    "name": "Mower Blade Axe",
-    "description": "A lawn mower blade attached to a wooden handle with bolts and wire. Can\ninflict Oily on hit."
-  },
-  "423": {
-    "name": "Key Knuckles",
-    "description": "Keys jammed between fingers with tape to secure them in place. Can\ninflict Poison on hit."
-  },
-  "424": {
-    "name": "Hanger Slingshot",
-    "description": "A simple slingshot made from a wire coat hanger and rubber bands. Can\ninflict Oily on hit."
-  },
-  "425": {
-    "name": "Kitchen Cleaver",
-    "description": "A meat cleaver with its handle wrapped in grip tape for better control.\nCan inflict Poison on hit."
-  },
-  "426": {
-    "name": "Spiked Crutch",
-    "description": "A crutch with nails driven through the top and reinforced with duct\ntape. Fire, inflicts Poison."
+    "name": "Portal Disc",
+    "description": "A Gobekli Tepe disc that opens a portal\nwhere it lands. Thunder, can static."
   },
   "427": {
-    "name": "Spike Umbrella",
-    "description": "An umbrella with sharpened ends on the tips of the ribs. Strikes with\nFire and can inflict Nausea."
+    "name": "Suction Cup Dart Gun",
+    "description": "A dart gun with suction cups for tips."
   },
   "428": {
-    "name": "Modified Cap Gun",
-    "description": "A toy cap gun modified to shoot small metal projectiles. Can inflict\nNausea on hit."
+    "name": "Unreliable Pistol",
+    "description": "A pistol of poor parts. It jams and misfires."
   },
   "429": {
-    "name": "Garden Shear Claws",
-    "description": "Gardening shears attached to gloves to create makeshift claws. Can\ninflict Poison on hit."
+    "name": "Rusty Rifle",
+    "description": "An old rifle, barrel rusted and lock worn.\nCan stun on hit."
   },
   "430": {
-    "name": "Sharpened Shovel",
-    "description": "A shovel sharpened along the edge to create a crude cutting tool. Can\ninflict Nausea on hit."
+    "name": "Sand-Filled Hose",
+    "description": "A garden hose filled with sand.\nCan inflict Nausea on hit."
   },
   "431": {
-    "name": "Skewer Dart Gun",
-    "description": "A toy dart gun reinforced and modified to fire sharpened skewers. Can\ninflict Poison on hit."
+    "name": "Modified Cap Gun",
+    "description": "A cap gun rebuilt to throw metal.\nCan inflict Nausea on hit."
   },
   "432": {
-    "name": "Sharpened Pool Cue",
-    "description": "A pool cue with one end sharpened to a point for thrusting attacks. Can\ninflict Nausea on hit."
+    "name": "Bike Pump Air Gun",
+    "description": "PVC pipe on a bicycle pump.\nStrikes Wind and can inflict Oily."
   },
   "433": {
-    "name": "Chain Rolling Pin",
-    "description": "A wooden rolling pin wrapped with chains for added impact damage. Can\ninflict Oily on hit."
+    "name": "Potato Cannon",
+    "description": "A PVC pipe gun that throws hard shot.\nCan inflict Nausea on hit."
   },
   "434": {
-    "name": "Combat Fishing Rod",
-    "description": "A fishing rod modified to cast small spiked weights as weapons. Can\ninflict Oily on hit."
+    "name": "Pipe Gun",
+    "description": "Pipe, wood and springs, firing scrap.\nCan inflict Oily on hit."
   },
   "435": {
-    "name": "Combat Scissors",
-    "description": "A pair of scissors with the handles wrapped in tape for better grip. Can\ninflict Poison on hit."
+    "name": "Pressure Gun",
+    "description": "A pressure washer firing steel rods.\nCan inflict Oily on hit."
   },
   "436": {
-    "name": "Toolbox Flail",
-    "description": "An old toolbox filled with heavy objects and attached to a chain. Can\ninflict Oily on hit."
+    "name": "Garden Sprayer Flamer",
+    "description": "A garden sprayer, a lighter and petrol.\nStrikes Fire and can inflict Nausea."
   },
   "437": {
-    "name": "Kitchen Knife",
-    "description": "A steak knife with the handle wrapped in cloth strips for better grip.\nCan inflict Poison on hit."
+    "name": "Rubble Launcher",
+    "description": "Surgical tubing that slings concrete.\nCan inflict Nausea on hit."
   },
   "438": {
-    "name": "Potato Cannon",
-    "description": "A potato gun built from PVC pipes, capable of firing small, hard\nprojectiles. Can inflict Nausea on hit."
+    "name": "Seed Gun",
+    "description": "A gun grown from a blade seed."
   },
   "439": {
-    "name": "Heavy Buckle Belt",
-    "description": "A belt with its buckle reinforced to be used as a quick striking weapon.\nCan inflict Nausea on hit."
+    "name": "Bamboo Blowgun",
+    "description": "A bamboo blowpipe for poisoned darts."
   },
   "440": {
-    "name": "Cheap Sword",
-    "description": "A poorly forged sword with a dull edge and weak metal that chips easily."
+    "name": "Spud Launcher Deluxe",
+    "description": "A potato gun loaded with potatoes bred\nto burst on impact."
   },
   "441": {
-    "name": "Budget Axe",
-    "description": "A mass-produced axe with a loose head that wobbles when swung."
+    "name": "Flintlock Pistol",
+    "description": "An antique flintlock pistol, engraved.\nCan stun on hit."
   },
   "442": {
-    "name": "Apprentice Staff",
-    "description": "A flimsy staff made from green wood that bends when struck with force.\nStrikes with Water."
+    "name": "Combatant Angler",
+    "description": "A fishing rod that lands sea creatures\nand sets them on foes. Water, can wet."
   },
   "443": {
-    "name": "Flimsy Bow",
-    "description": "A crude bow made from a weak, knotted wood that might snap at any\nmoment."
+    "name": "Wheellock Pistol",
+    "description": "An early pistol sparked by a spinning wheel.\nCan stun on hit."
   },
   "444": {
-    "name": "Crude Spear",
-    "description": "A simple spear with a dull iron tip that bends on impact. Can inflict\nPoison on hit."
+    "name": "Pistol",
+    "description": "A plain handgun with fair stopping power.\nCan stun on hit."
   },
   "445": {
-    "name": "Shoddy Knuckles",
-    "description": "Poorly tanned leather gloves with small metal studs that come loose\neasily. Can inflict Stun on hit."
+    "name": "Musket",
+    "description": "A single-shot long-barrelled musket.\nCan stun on hit."
   },
   "446": {
-    "name": "Bargain Knife",
-    "description": "A poorly balanced knife with a handle that comes loose from the blade.\nCan inflict Blind on hit."
+    "name": "Extreme T-Shirt Cannon",
+    "description": "A shirt cannon tuned to knock down a wall.\nCan stun on hit."
   },
   "447": {
-    "name": "Pot Metal Mace",
-    "description": "A mace with a head made from weak pot metal that dents easily."
+    "name": "Matchlock Musket",
+    "description": "An early musket fired by a burning match.\nCan stun on hit."
   },
   "448": {
-    "name": "Unreliable Crossbow",
-    "description": "A crossbow with a weak firing mechanism that often fails to launch bolts\nproperly. Can inflict Blind on hit."
+    "name": "Pepperbox Revolver",
+    "description": "A revolver with a rotating cluster of barrels.\nCan stun on hit."
   },
   "449": {
-    "name": "Dull Claws",
-    "description": "Poorly crafted claws made from weak metal that dulls quickly."
+    "name": "Dueling Pistol",
+    "description": "A finely made duelling pistol.\nCan stun on hit."
   },
   "450": {
-    "name": "Unreliable Pistol",
-    "description": "A pistol made from substandard parts that frequently jams and misfires."
+    "name": "Flintlock Blunderbuss",
+    "description": "A flintlock with a flared muzzle for shot\nor scrap."
   },
   "451": {
-    "name": "Unwieldy Hammer",
-    "description": "A giant hammer that's too heavy for its poorly made handle."
+    "name": "Taser Rifle",
+    "description": "A rifle firing electroshock darts.\nFire, inflicts Hot."
   },
   "452": {
-    "name": "Cracked Whip",
-    "description": "A whip made from poorly tanned leather that cracks and splits easily."
+    "name": "Hand Cannon",
+    "description": "An early Chinese cast iron hand cannon."
   },
   "453": {
-    "name": "Training Sword",
-    "description": "A worn-out training sword with a blunted edge and splintering handle."
+    "name": "Rifled Musket",
+    "description": "A rifled musket of the civil war era.\nCan stun on hit."
   },
   "454": {
-    "name": "Rusty Rifle",
-    "description": "An ancient rifle with a rusty barrel and worn firing mechanism. Can\ninflict Stun on hit."
+    "name": "Percussion Revolver",
+    "description": "A revolver fired by percussion caps."
   },
   "455": {
-    "name": "Dented Pan",
-    "description": "A dented frying pan pressed into service as a makeshift weapon."
+    "name": "Blunderbuss",
+    "description": "An old blunderbuss with a wide spread.\nCan stun on hit."
   },
   "456": {
-    "name": "Stretchy Sling",
-    "description": "A sling made from poor quality leather that stretches unpredictably. Can\ninflict Blind on hit."
+    "name": "9mm Pistol",
+    "description": "A standard semi-automatic 9mm handgun."
   },
   "457": {
-    "name": "Splintered Club",
-    "description": "A wooden club with splits and cracks running through it. Can inflict\nStun on hit."
+    "name": "Riot Gun",
+    "description": "A gun that fires rubber baton rounds.\nCan stun on hit."
   },
   "458": {
-    "name": "Walking Stick",
-    "description": "A walking stick repurposed as a weapon, with a weak shaft that flexes\ntoo much. Ice, inflicts Cold."
+    "name": "Breech-Loading Rifle",
+    "description": "A single-shot breech-loading rifle."
   },
   "459": {
-    "name": "Leaky Blowgun",
-    "description": "A blow dart tube made from a cracked reed that leaks air."
+    "name": "Bubba's Shotgun",
+    "description": "A pump-action shotgun, sawn short.\nCan stun on hit."
   },
   "460": {
-    "name": "Practice Axe",
-    "description": "A wooden practice axe with a dulled edge for training purposes. Can\ninflict Stun on hit."
+    "name": "Shotgun",
+    "description": "A pump-action shotgun, brutal up close."
   },
   "461": {
-    "name": "Warped Arrows",
-    "description": "Cheap arrows with warped shafts and poorly attached fletching."
+    "name": "Six-Shooter",
+    "description": "A six-shot revolver of the old west."
   },
   "462": {
-    "name": "Makeshift Boxing Gloves",
-    "description": "Thin leather gloves with small iron nuggets sewn in that shift position.\nCan inflict Stun on hit."
+    "name": "Lever Action Rifle",
+    "description": "A lever-action rifle that cycles fast."
   },
   "463": {
-    "name": "Decorative Sword",
-    "description": "A mass-produced ceremonial sword with no edge, meant for display only."
+    "name": "Military Bolt-Action",
+    "description": "A bolt-action service rifle loaded by clip."
   },
   "464": {
-    "name": "Loose-headed Spear",
-    "description": "A spear with a head attached by loose bindings that might come undone."
+    "name": "Gas Launcher",
+    "description": "A launcher for tear gas and smoke.\nCan stun on hit."
   },
   "465": {
-    "name": "Tin Claws",
-    "description": "Metal claws fashioned from cheap tin that bend out of shape easily."
+    "name": "Double-Barrel Shotgun",
+    "description": "A double-barrelled shotgun, both barrels\nfired in a breath."
   },
   "466": {
-    "name": "Novice Wand",
-    "description": "A wand made from poor quality wood with minimal magical conductivity.\nStrikes with Water."
+    "name": "Tranquilizer Rifle",
+    "description": "A rifle firing tranquilliser darts.\nCan stun on hit."
   },
   "467": {
-    "name": "Uneven Slingshot",
-    "description": "A handmade slingshot with an uneven fork and weak elastic. Can inflict\nBlind on hit."
+    "name": "SMG",
+    "description": "A compact submachine gun with a high\nrate of fire. Can stun on hit."
   },
   "468": {
-    "name": "Rusty Sickle",
-    "description": "A farming sickle repurposed as a weapon, with a loose handle and spotted\nrust."
+    "name": "Bolt-Action Rifle",
+    "description": "A reliable, accurate bolt-action rifle.\nCan stun on hit."
   },
   "469": {
-    "name": "Wooden Flail",
-    "description": "A flail with a lightweight wooden head that causes minimal damage."
+    "name": "Tommy Gun",
+    "description": "A drum-fed pistol-calibre submachine gun.\nCan stun on hit."
   },
   "470": {
-    "name": "Misaligned Hand Crossbow",
-    "description": "A pistol crossbow made from weak wood that frequently needs realignment."
+    "name": "Air Pistol",
+    "description": "A pistol firing compressed air capsules.\nStrikes with Wind."
   },
   "471": {
-    "name": "Unbalanced Throwing Knife",
-    "description": "A poorly balanced throwing knife that wobbles in flight."
+    "name": "Volley Gun",
+    "description": "A hand-cranked gun whose barrels all fire\nat once. Can stun on hit."
   },
   "472": {
-    "name": "Beginner's Hand Wraps",
-    "description": "Flimsy leather hand wraps with small metal bits for striking. Can\ninflict Stun on hit."
+    "name": "PDW",
+    "description": "A compact defence weapon on special\nammunition. Can stun on hit."
   },
   "473": {
-    "name": "Toy Bow",
-    "description": "A toy bow made from flexible plastic with weak elastic string. Can\ninflict Blind on hit."
+    "name": "Paralyzer",
+    "description": "A dart gun loaded with paralysing needles.\nCan stun on hit."
   },
   "474": {
-    "name": "Wooden Play Sword",
-    "description": "A wooden sword used by children for playtime battles."
+    "name": "Compact SMG",
+    "description": "A compact submachine gun with a folding\nstock."
   },
   "475": {
-    "name": "Carved Stick",
-    "description": "A stick with crude carvings meant to resemble a magical staff. Strikes\nwith Fire."
+    "name": "Semi-Auto Service Rifle",
+    "description": "A wartime semi-automatic service rifle.\nCan stun on hit."
   },
   "476": {
-    "name": "Suction Cup Dart Gun",
-    "description": "A dart gun that uses suction cups instead of pointed tips."
+    "name": "Double-Barrel Pistol",
+    "description": "A pistol that fires both barrels together."
   },
   "477": {
-    "name": "Foam Toy Axe",
-    "description": "A plastic toy axe with soft foam edges for safety."
+    "name": "Wartime Submachine Gun",
+    "description": "A stamped-steel submachine gun of the war\nyears. Can stun on hit."
   },
   "478": {
-    "name": "Fly Swatter",
-    "description": "A swatter typically used for insects, made from lightweight plastic. Can\ninflict Provoke on hit."
+    "name": "Assault Rifle",
+    "description": "A military automatic rifle, accurate\nat range."
   },
   "479": {
-    "name": "Stale Baguette",
-    "description": "A stick of bread that's gone stale and hard as a rock. Can inflict Stun\non hit."
+    "name": "Magnum Revolver",
+    "description": "A large-calibre revolver with heavy\nstopping power. Can stun on hit."
   },
   "480": {
-    "name": "Sarcastic Pillow",
-    "description": "A sentient pillow that smacks enemies with surprising force and\noccasionally whispers insults at them. Inflicts Stun."
+    "name": "Gatling Gun",
+    "description": "An early hand-cranked machine gun.\nCan stun on hit."
   },
   "481": {
-    "name": "Spud Launcher Deluxe",
-    "description": "A potato gun that fires genetically modified exploding potatoes that\ndetonate on impact."
+    "name": "Compact Carbine",
+    "description": "A short assault carbine with a folding\nstock."
   },
   "482": {
-    "name": "Phantom Tickle Gloves",
-    "description": "Gloves that summon ghostly hands to tickle enemies into submission,\ncausing uncontrollable laughter. Sacred, inflicts Inspired."
+    "name": "Match Grade Pistol",
+    "description": "A target pistol with a long barrel."
   },
   "483": {
-    "name": "Number One Fan",
-    "description": "A giant foam finger that somehow hits with the force of a sledgehammer\nwhile making cartoon sound effects. Inflicts Stun."
+    "name": "Select-Fire Battle Rifle",
+    "description": "A full-calibre battle rifle that can\nfire automatic."
   },
   "484": {
-    "name": "Extreme T-Shirt Cannon",
-    "description": "A modified t-shirt cannon that fires shirts so hard they can knock down\ncastle walls. Can inflict Stun on hit."
+    "name": "Water Jet Cutter",
+    "description": "A handheld cutter firing a jet of water\nunder pressure. Water, can wet."
   },
   "485": {
-    "name": "Combatant Angler",
-    "description": "A fishing rod that catches and weaponizes random sea creatures to fight\nfor you. Water, inflicts Wet."
+    "name": "Combat Shotgun",
+    "description": "A tactical shotgun fed from a drum."
   },
   "486": {
-    "name": "Master Flipper",
-    "description": "A spatula that flips enemies as easily as pancakes, temporarily\nreversing their controls. Inflicts Stun."
+    "name": "Rotary Cannon",
+    "description": "A rotary gun whose barrels turn to keep\nup a sustained rate of fire."
   },
   "487": {
-    "name": "Peppermint Scepter",
-    "description": "A staff made from a giant candy cane that shoots peppermint beams and\nmakes enemies smell delicious. Thunder, inflicts Static."
+    "name": "Modular Combat Rifle",
+    "description": "A rifle with swappable barrels and parts."
   },
   "488": {
-    "name": "Bounce Bubble Blower",
-    "description": "A bubble wand that creates unbreakable bubbles that trap enemies and\nbounce them around the battlefield. Thunder, inflicts Static."
+    "name": "Grenade Launcher",
+    "description": "A break-action launcher for 40mm shells.\nCan stun on hit."
   },
   "489": {
-    "name": "Honking Mallet Duo",
-    "description": "A pair of squeaky toy hammers that create shockwaves when squeaked\ntogether. Can inflict Stun on hit."
+    "name": "Sniper Rifle",
+    "description": "A high-powered rifle for long range work."
   },
   "490": {
-    "name": "EMP Disruptor",
-    "description": "A handheld electromagnetic pulse device that disables electronic systems\nand cybernetic implants. Water, inflicts Wet."
+    "name": "Bullpup Rifle",
+    "description": "An assault rifle with the action behind\nthe grip."
   },
   "491": {
-    "name": "Pepper Spray Cannon",
-    "description": "A spray canister that fires concentrated capsaicin for non-lethal crowd\ncontrol. Can inflict Blind on hit."
+    "name": "Flamethrower",
+    "description": "A handheld thrower that sprays burning fuel.\nStrikes with Fire."
   },
   "492": {
-    "name": "Taser Rifle",
-    "description": "A weapon that fires electroshock darts to incapacitate targets\nnon-lethally. Fire, inflicts Hot."
+    "name": "Marksman Rifle",
+    "description": "A marksman rifle with a match-grade barrel."
   },
   "493": {
-    "name": "Drone Swarm Launcher",
-    "description": "A shoulder-mounted device that launches small autonomous attack drones."
+    "name": "Tactical Carbine",
+    "description": "A modern carbine with mounting rails.\nCan stun on hit."
   },
   "494": {
-    "name": "Spiked Battle Shield",
-    "description": "A reinforced shield with spikes and a razor edge that can be used for\ndevastating shield bashes. Inflicts Stun."
+    "name": "Tactical Shotgun",
+    "description": "A compact bullpup shotgun, brutal up close."
   },
   "495": {
-    "name": "War Pick",
-    "description": "A military hammer with a pick on the reverse side for penetrating armor."
+    "name": "Heat Ray",
+    "description": "An emitter that focuses a beam hot enough\nto melt through metal. Water."
   },
   "496": {
-    "name": "Naval Cutlass",
-    "description": "A curved naval sword designed for close-quarters combat on ships. Can\ninflict Poison on hit."
+    "name": "DMR",
+    "description": "A marksman rifle under heavy optics."
   },
   "497": {
-    "name": "Boarding Pike",
-    "description": "A long pike designed for repelling boarders on ships."
+    "name": "Heavy Machine Gun",
+    "description": "A military .50 calibre machine gun."
   },
   "498": {
-    "name": "Naval Dirk",
-    "description": "A short dagger used by sailors for shipboard combat and utility work.\nCan inflict Blind on hit."
+    "name": "Laser Rifle",
+    "description": "A rifle that fires a concentrated beam\nof light. Strikes with Ice."
   },
   "499": {
-    "name": "Sword Breaker",
-    "description": "A specialized sword designed to catch and break enemy blades."
+    "name": "Plasma Rifle",
+    "description": "An energy rifle firing bolts of plasma.\nThunder, inflicts Static."
   },
   "500": {
-    "name": "Francisca",
-    "description": "A Frankish throwing axe designed for both melee and ranged combat."
+    "name": "Cyberarm Cannon",
+    "description": "An implanted arm cannon firing concussive\nblasts. Strikes with Fire."
   },
   "501": {
-    "name": "Glaive",
-    "description": "A polearm with a curved blade, effective against cavalry."
+    "name": "Precision Rifle",
+    "description": "A precision bolt-action rifle, match barrel."
   },
   "502": {
-    "name": "Flanged War Mace",
-    "description": "A heavy mace with flanged head designed to crush armor."
+    "name": "Optical Beam System",
+    "description": "Eye implants that fire focused beams.\nStrikes with Cursed."
   },
   "503": {
-    "name": "Steel Cable Whip",
-    "description": "A whip made from braided steel cable that can slice through armor."
+    "name": "LMG",
+    "description": "A light machine gun for suppressing fire.\nCan stun on hit."
   },
   "504": {
-    "name": "Neural Scrambler",
-    "description": "A device that generates a localized electromagnetic field to disrupt\nneural activity. Strikes with Thunder."
+    "name": "Anti-Material Rifle",
+    "description": "A large-calibre rifle for long range work\nagainst materiel."
   },
   "505": {
-    "name": "Phase Blade",
-    "description": "A sword that exists partially in another dimension, allowing it to phase\nthrough defenses. Strikes with Water."
+    "name": "RPG",
+    "description": "A shoulder-fired rocket launcher.\nCan stun on hit."
   },
   "506": {
-    "name": "Symbiotic Blade",
-    "description": "A living weapon that bonds with its wielder, growing stronger over time."
+    "name": "Smart Grenade Launcher",
+    "description": "A grenade launcher with programmable fuses.\nCan stun on hit."
   },
   "507": {
-    "name": "Chronos Hammer",
-    "description": "A weapon that slows time around targets when it strikes. Strikes with\nWater and can inflict Wet."
+    "name": "Micro-Missile Array",
+    "description": "A shoulder rack of guided mini-rockets.\nStrikes with Ice."
   },
   "508": {
-    "name": "Metamorphic Gauntlets",
-    "description": "Gauntlets that can transform into various weapon forms at will."
+    "name": "Disposable Rocket",
+    "description": "A single-shot rocket launcher, thrown away\nafter firing. Strikes with Petro."
   },
   "509": {
-    "name": "Modular Combat Rifle",
-    "description": "A rifle with interchangeable barrels and modular components for\ndifferent combat situations."
+    "name": "Heavy Sniper",
+    "description": "A semi-automatic .50 calibre sniper rifle.\nCan stun on hit."
   },
   "510": {
-    "name": "Multi-Bolt Crossbow",
-    "description": "A crossbow that fires different types of specialized bolts for various\neffects. Strikes with Thunder."
+    "name": "HMG",
+    "description": "A heavy machine gun on a bipod.\nCan stun on hit."
   },
   "511": {
-    "name": "Cyber Warfare Device",
-    "description": "A device that hacks into enemy systems and turns them against their\nallies. Strikes with Fire."
+    "name": "Brainwave Amplifier",
+    "description": "A device that focuses brainwaves into\na destroying beam. Sacred."
   },
   "512": {
-    "name": "Variable Chain Hammer",
-    "description": "A meteor hammer with extendable chain length for variable range attacks."
+    "name": "Polymorphic Arsenal",
+    "description": "A neural-linked weapon that shifts between\nblade and gun. Strikes with Thunder."
   },
   "513": {
-    "name": "Infinite Quiver Bow",
-    "description": "A bow that creates arrows from ambient energy, never running out of\nammunition. Ice, inflicts Cold."
+    "name": "MANPADS",
+    "description": "A shoulder-fired surface-to-air missile."
   },
   "514": {
-    "name": "Returning Discus",
-    "description": "A circular blade weapon that returns to the thrower after striking\ntargets."
+    "name": "Mind Piercer",
+    "description": "A rifle firing bullets of psychic force\npast any mental guard. Ice, can chill."
   },
   "515": {
-    "name": "Energy Lash",
-    "description": "A whip made from pure energy that can extend to great lengths. Strikes\nwith Fire."
+    "name": "Neural Disruptor",
+    "description": "A weapon that fires bolts of thought into\na foe's mind. Thunder, can static."
   },
   "516": {
-    "name": "Timed Explosive Launcher",
-    "description": "A launcher that fires timed explosive charges with adjustable detonation\ndelays."
+    "name": "Coilgun",
+    "description": "A portable coilgun driven by electromagnets.\nWater, inflicts Wet."
   },
   "517": {
-    "name": "Siege Breaker",
-    "description": "A massive two-handed mace designed to shatter fortifications. Can\ninflict Stun on hit."
+    "name": "Heavy Anti-Material Rifle",
+    "description": "A heavy rifle that punches through armour\nplate."
   },
   "518": {
-    "name": "Life Drain Claws",
-    "description": "Claws that drain the life force of targets and transfer it to the\nwielder. Can inflict Poison on hit."
+    "name": "Railgun Prototype",
+    "description": "A prototype electromagnetic railgun.\nStrikes with Thunder."
   },
   "519": {
-    "name": "Gravity Manipulation Staff",
-    "description": "A staff that manipulates gravitational fields to crush or lift enemies.\nStrikes with Ice."
+    "name": "EHI Headache Inducer",
+    "description": "A pistol firing rounds of compressed\nlearning. It leaves the target migraines."
   },
   "520": {
-    "name": "Smart Tracking Rifle",
-    "description": "A sniper rifle with smart ammunition that tracks and adjusts its\ntrajectory mid-flight. Strikes with Cursed."
+    "name": "EHI Crude Projector",
+    "description": "An industrial cannon firing pressurised\ncrude. It may ignite its own gunner."
   },
   "521": {
-    "name": "Dimensional Cleaver",
-    "description": "An axe that cleaves through multiple dimensions, hitting enemies in\nparallel realities. Sacred, inflicts Inspired."
+    "name": "Minigun",
+    "description": "A rotary gun with an extreme rate of fire.\nCan stun on hit."
   },
   "522": {
-    "name": "Temporal Echo Whip",
-    "description": "A whip that exists in multiple timelines simultaneously, striking the\nsame target multiple times. Cursed."
+    "name": "Adaptive Combat AI",
+    "description": "A weapon that learns a fight and changes\nits load. Cursed, can poison."
   },
   "523": {
-    "name": "Adaptive Combat AI",
-    "description": "A weapon system that learns from combat and adapts its tactics and\nammunition type. Cursed, inflicts Poison."
+    "name": "Thought Projector",
+    "description": "A Gobekli Tepe stone launcher firing bolts\ndriven by thought. Fire, inflicts Hot."
   },
   "524": {
-    "name": "Molecular Manipulator Gloves",
-    "description": "Gauntlets that allow the wearer to manipulate matter at the molecular\nlevel. Cursed, inflicts Poison."
+    "name": "EHI Memetic Rifle",
+    "description": "A rifle firing crystallised knowledge.\nIt costs the shooter their memory."
   },
   "525": {
-    "name": "Quantum Superposition Blade",
-    "description": "A sword that exists in a state of quantum superposition, striking all\npossible targets simultaneously. Ice."
+    "name": "Vector Gun",
+    "description": "A gnome-forged handgun with a grip on\nvectors. It can kick you into a jump."
   },
   "526": {
-    "name": "Universal Force Staff",
-    "description": "A staff that channels the fundamental forces of the universe itself.\nStrikes with Sacred."
+    "name": "Varlenia Beam Rifle",
+    "description": "A golden Varlenia rifle firing arcane beams.\nStrikes with Fire."
   },
   "527": {
     "name": "Reality Distortion Cannon",
-    "description": "A reality-warping weapon that can rewrite the laws of physics in a\nlocalized area. Ice, inflicts Cold."
+    "description": "A cannon that rewrites local physics.\nIce, inflicts Cold."
   },
   "528": {
-    "name": "Omniadaptive Combat System",
-    "description": "The ultimate expression of combat technology, capable of adapting to any\nthreat."
-  },
-  "529": {
-    "name": "Seed Dagger",
-    "description": "A light and easy-to-wield short-bladed sword. Can inflict Poison on hit."
-  },
-  "530": {
-    "name": "Seed Sword",
-    "description": "A light and easy-to-wield short-bladed sword. Can inflict Poison on hit."
-  },
-  "531": {
-    "name": "Seed Mace",
-    "description": "A light and easy-to-wield short-bladed sword."
-  },
-  "532": {
-    "name": "Seed Axe",
-    "description": "A light and easy-to-wield short-bladed sword."
-  },
-  "533": {
-    "name": "Seed Whip",
-    "description": "A light and easy-to-wield short-bladed sword. Can inflict Provoke on\nhit."
-  },
-  "534": {
-    "name": "Seed Staff",
-    "description": "A light and easy-to-wield short-bladed sword. Strikes with Sacred."
-  },
-  "535": {
-    "name": "Seed Bow",
-    "description": "A light and easy-to-wield short-bladed sword. Can inflict Blind on hit."
-  },
-  "536": {
-    "name": "Seed Grimorie",
-    "description": "A light and easy-to-wield short-bladed sword. Strikes with Ice and can\ninflict Cold."
-  },
-  "537": {
-    "name": "Seed Gun",
-    "description": "A light and easy-to-wield short-bladed sword."
-  },
-  "538": {
-    "name": "Seed Claw",
-    "description": "A light and easy-to-wield short-bladed sword. Can inflict Poison on hit."
-  },
-  "539": {
-    "name": "Seed Glove",
-    "description": "A light and easy-to-wield short-bladed sword."
+    "name": "Smart Tracking Rifle",
+    "description": "A sniper rifle whose rounds steer themselves\nin flight. Strikes with Cursed."
   },
   "540": {
-    "name": "Seed Spear",
-    "description": "A light and easy-to-wield short-bladed sword. Can inflict Poison on hit."
+    "name": "Tin Claws",
+    "description": "Claws cut from cheap tin. They bend."
   },
   "541": {
-    "name": "Busker's Acoustic",
-    "description": "A battered dreadnought with three strings left, swung by the neck."
+    "name": "Dull Claws",
+    "description": "Claws of soft metal that go blunt fast."
   },
   "542": {
-    "name": "Presidential Saxophone",
-    "description": "A brass tenor sax, played on late night television and swung when the\nquestions get harder."
+    "name": "Garden Shear Claws",
+    "description": "Garden shears strapped to gloves.\nCan inflict Poison on hit."
   },
   "543": {
-    "name": "Pawnshop Stratocaster",
-    "description": "A copy of a copy, bought secondhand and never quite in tune. Can inflict\nStun on hit."
+    "name": "Car Panel Claws",
+    "description": "Sharpened car panel on work gloves.\nCan inflict Oily on hit."
   },
   "544": {
-    "name": "La chitarra infernale",
-    "description": "A cherry burst superstrat, quilted and shark-finned. It is louder than\nthe room and hotter than the amp. Sacred."
+    "name": "Razor Disc Claws",
+    "description": "Razor blades on cut-off gloves.\nCan inflict Poison on hit."
   },
   "545": {
-    "name": "Flying V",
-    "description": "A guitar shaped like the thing it is used as. Nobody has to explain this\none twice. Can inflict Stun on hit."
+    "name": "Seed Claw",
+    "description": "A claw grown from a blade seed.\nCan poison on hit."
   },
   "546": {
-    "name": "Bass Guitar",
-    "description": "Four strings, a long neck and a great deal of mass. The low end is felt\nrather than heard. Inflicts Stun."
+    "name": "Bagh Nakh",
+    "description": "A pair of steel claws worn across the palm."
   },
   "547": {
-    "name": "Double-Neck Warhorse",
-    "description": "Twelve strings above, six below, and a strap that has taken more weight\nthan any strap should."
+    "name": "Steel Finger Claws",
+    "description": "Four short claws fixed to a hand bar."
   },
   "548": {
-    "name": "Feedback Cannon",
-    "description": "A guitar wired straight into a stack that is no longer there. It still\nhowls."
+    "name": "Bladed Tonfa",
+    "description": "A pair of arm batons with blades fitted\nalong them."
   },
   "549": {
-    "name": "Hellfire Superstrat",
-    "description": "The neck runs the whole length of the body and the body has been on fire\nsince the day it was strung. Fire."
+    "name": "Iron Claw",
+    "description": "Iron talons strapped to the hand.\nCan poison on hit."
   },
   "550": {
-    "name": "Il bastone infernale",
-    "description": "A gentleman's cane with a skull grip. The shaft is a scabbard, and what\nit sheathes is not polite. Ice, inflicts Cold."
+    "name": "Deer Horn Knives",
+    "description": "A pair of crescent blades on short grips.\nCan poison on hit."
+  },
+  "551": {
+    "name": "Tekko-kagi",
+    "description": "Metal claws that run out from a hand guard."
+  },
+  "552": {
+    "name": "Venom Claws",
+    "description": "Metal claws smeared with a paralysing venom.\nCursed, can poison."
+  },
+  "553": {
+    "name": "Mithril Claw",
+    "description": "Mithril talons strapped to the hand."
+  },
+  "554": {
+    "name": "Life Drain Claws",
+    "description": "Claws that draw life out of what they cut.\nCan poison on hit."
+  },
+  "555": {
+    "name": "Neural Claws",
+    "description": "Titanium claws that slide out of\ncybernetic hands."
+  },
+  "556": {
+    "name": "Frost Dragon Claws",
+    "description": "Claws cut from an old frost dragon's teeth.\nStrikes with Ice."
+  },
+  "557": {
+    "name": "Dragon Claw",
+    "description": "Dragon talons strapped to the hand."
+  },
+  "558": {
+    "name": "Mind Ripper Claws",
+    "description": "Crystal claws that tear armour and mind\nalike. Cursed."
+  },
+  "559": {
+    "name": "Crane Talons",
+    "description": "Gobekli Tepe ritual claws that lend the\nwearer the crane. Strikes with Ice."
+  },
+  "560": {
+    "name": "EHI Psychoactive Talons",
+    "description": "Claws steeped in rare oils and learning.\nThey grant speed and hallucinations."
+  },
+  "561": {
+    "name": "Divine Talons",
+    "description": "Golden claws said to be a war god's.\nSacred, inflicts Inspired."
+  },
+  "573": {
+    "name": "Beginner's Hand Wraps",
+    "description": "Thin leather wraps with metal bits sewn in.\nCan stun on hit."
+  },
+  "574": {
+    "name": "Makeshift Boxing Gloves",
+    "description": "Thin gloves with iron nuggets that shift\nabout inside. Can stun on hit."
+  },
+  "575": {
+    "name": "Shoddy Knuckles",
+    "description": "Rough leather gloves with studs that work\nloose. Can stun on hit."
+  },
+  "576": {
+    "name": "Key Knuckles",
+    "description": "Keys taped between the fingers.\nCan inflict Poison on hit."
+  },
+  "577": {
+    "name": "Golf Tee Glove",
+    "description": "A golf glove sewn through with tees.\nCan inflict Nausea on hit."
+  },
+  "578": {
+    "name": "Mirror Shard Fist",
+    "description": "Mirror shards taped around the hands.\nCan inflict Nausea on hit."
+  },
+  "579": {
+    "name": "Glass Knuckles",
+    "description": "Gloves set with broken glass.\nCan inflict Poison on hit."
+  },
+  "580": {
+    "name": "Seed Glove",
+    "description": "A glove grown from a blade seed."
+  },
+  "581": {
+    "name": "Cestus",
+    "description": "A battle glove spiked over the knuckles.\nCan stun on hit."
+  },
+  "582": {
+    "name": "Knuckle Dusters",
+    "description": "Iron knuckle dusters with spikes."
+  },
+  "583": {
+    "name": "Brass Knuckles",
+    "description": "A set of brass knuckles.\nCan stun on hit."
+  },
+  "584": {
+    "name": "Phantom Tickle Gloves",
+    "description": "Gloves that call up ghostly hands to tickle\na foe helpless. Sacred."
+  },
+  "585": {
+    "name": "Arm Bracers",
+    "description": "Metal bands worn on the forearms to block\nand strike."
+  },
+  "586": {
+    "name": "Iron Knuckles",
+    "description": "Fighting gloves plated over the knuckles.\nCan stun on hit."
+  },
+  "587": {
+    "name": "Kendo Mask",
+    "description": "A steel kendo mask, swung by the cords.\nCan stun on hit."
+  },
+  "588": {
+    "name": "Flying Kicks",
+    "description": "Training that puts a body's whole weight\nbehind a kick."
+  },
+  "589": {
+    "name": "Adamantine Fists",
+    "description": "Heavy steel gauntlets faced with adamantine."
+  },
+  "590": {
+    "name": "Shock Gauntlets",
+    "description": "Gauntlets that throw a shock on impact.\nThunder, inflicts Static."
+  },
+  "591": {
+    "name": "Mithril Strike Gloves",
+    "description": "Light gloves faced with mithril.\nCan stun on hit."
+  },
+  "592": {
+    "name": "Sonic Gauntlet",
+    "description": "A gauntlet that throws a sonic shockwave.\nCan stun on hit."
+  },
+  "593": {
+    "name": "Thunder Lizard Gauntlets",
+    "description": "Gauntlets scaled from an old thunder lizard.\nStrikes with Thunder."
+  },
+  "594": {
+    "name": "Lightning Elemental Fists",
+    "description": "Gauntlets drawn from a lightning elemental.\nThunder, inflicts Static."
+  },
+  "595": {
+    "name": "Force Crush Gloves",
+    "description": "Gloves set with crystals that crush a foe\nfrom inside. Thunder, can static."
+  },
+  "596": {
+    "name": "Nightmare Gauntlets",
+    "description": "Gauntlets set from hardened nightmare.\nThey frighten on contact."
+  },
+  "597": {
+    "name": "Arcane Shield Gauntlets",
+    "description": "Gauntlets that raise shields against blade\nand spell alike. Water."
+  },
+  "598": {
+    "name": "Metamorphic Gauntlets",
+    "description": "Gauntlets that fold into other weapons\nat will."
+  },
+  "599": {
+    "name": "Master's Gauntlets",
+    "description": "Old gauntlets said to be a great martial\nartist's."
+  },
+  "600": {
+    "name": "Telekinetic Gauntlets",
+    "description": "Gauntlets that amplify telekinesis and\nstrike at a distance."
+  },
+  "601": {
+    "name": "Fox Spirit Fists",
+    "description": "Stone gauntlets cut with the Gobekli Tepe\nfoxes. They lend speed. Cursed."
+  },
+  "602": {
+    "name": "Mind Manipulator Gloves",
+    "description": "Gloves that reach into a mind and take\nor change what is there."
+  },
+  "603": {
+    "name": "EHI Petrochem Injectors",
+    "description": "Gauntlets that inject oil-based enhancers.\nGreat strength, ruined organs."
+  },
+  "604": {
+    "name": "Phasing Touch",
+    "description": "Gobekli Tepe gauntlets that pass through\nmatter. Ice."
+  },
+  "605": {
+    "name": "Varlenia Fist",
+    "description": "Golden Varlenia gauntlets that put arcane\nforce behind a punch. Thunder."
+  },
+  "606": {
+    "name": "Molecular Manipulator Gloves",
+    "description": "Gauntlets that rearrange matter itself.\nCursed, inflicts Poison."
+  },
+  "607": {
+    "name": "EHI Apocalypse Fists",
+    "description": "Gauntlets holding the world's oil compressed.\nGodlike strength, and cell rot."
+  },
+  "608": {
+    "name": "Omniadaptive Combat System",
+    "description": "A combat system that adapts to any threat\nput in front of it."
+  },
+  "620": {
+    "name": "Loose-headed Spear",
+    "description": "A spear whose head is bound on loosely."
+  },
+  "621": {
+    "name": "Crude Spear",
+    "description": "A plain spear with a soft iron tip.\nCan poison on hit."
+  },
+  "622": {
+    "name": "Deadly Plunger",
+    "description": "A plunger with sharpened metal in the cup.\nCan inflict Nausea on hit."
+  },
+  "623": {
+    "name": "Sharpened Pool Cue",
+    "description": "A pool cue sharpened at one end.\nCan inflict Nausea on hit."
+  },
+  "624": {
+    "name": "Broom Spear",
+    "description": "A broom handle with a knife taped on.\nCan inflict Poison on hit."
+  },
+  "625": {
+    "name": "Antenna Rapier",
+    "description": "A car aerial taped stiff and sharpened.\nCan inflict Oily on hit."
+  },
+  "626": {
+    "name": "Sign Post",
+    "description": "A sign post pulled up with its concrete.\nCan inflict Nausea on hit."
+  },
+  "627": {
+    "name": "Javelin",
+    "description": "A light throwing spear."
+  },
+  "628": {
+    "name": "Seed Spear",
+    "description": "A spear grown from a blade seed.\nCan poison on hit."
+  },
+  "629": {
+    "name": "Short Spear",
+    "description": "A short spear made for thrusting.\nCan poison on hit."
+  },
+  "630": {
+    "name": "Sumerian Spear",
+    "description": "A Sumerian copper spear with a leaf blade.\nCan poison on hit."
+  },
+  "631": {
+    "name": "Pilum",
+    "description": "A Roman javelin built to bend on impact.\nCan poison on hit."
+  },
+  "632": {
+    "name": "Dory Spear",
+    "description": "A bronze-tipped spear of ancient Greece."
+  },
+  "633": {
+    "name": "Boarding Pike",
+    "description": "A long pike for holding off boarders."
+  },
+  "634": {
+    "name": "Long Spear",
+    "description": "A spear on the longest haft that will\nstill be carried."
+  },
+  "635": {
+    "name": "Iklwa",
+    "description": "A Zulu short spear with a long blade,\nmade for close work."
+  },
+  "636": {
+    "name": "Rifle Bayonet",
+    "description": "A bayonet fixed to a rifle for close work."
+  },
+  "637": {
+    "name": "Naginata",
+    "description": "A Japanese polearm with a curved blade."
+  },
+  "638": {
+    "name": "Halberd",
+    "description": "A European polearm with an axe blade\nand a spike."
+  },
+  "639": {
+    "name": "Poleaxe",
+    "description": "A long polearm with axe blade and spike.\nCan poison on hit."
+  },
+  "640": {
+    "name": "Glaive",
+    "description": "A polearm with a curved blade, made\nagainst horsemen."
+  },
+  "641": {
+    "name": "Axe-Headed Pike",
+    "description": "A pike with an axe head at the tip.\nCan poison on hit."
+  },
+  "642": {
+    "name": "Fire Lance",
+    "description": "An early Chinese spear with a rocket tube\nlashed to it. Strikes with Fire."
+  },
+  "643": {
+    "name": "Mithril Spear",
+    "description": "A spear forged of mithril."
+  },
+  "644": {
+    "name": "Tempest Trident",
+    "description": "A trident that calls up a storm.\nStrikes with Ice."
+  },
+  "645": {
+    "name": "Dragon Spear",
+    "description": "A spear forged from a dragon's fangs.\nCan poison on hit."
+  },
+  "646": {
+    "name": "Warding Spear",
+    "description": "A warded spear that raises a field around\nits bearer. Fire."
+  },
+  "647": {
+    "name": "Leviathan Fang Spear",
+    "description": "A spear tipped with a sea serpent's fang.\nStrikes with Water."
+  },
+  "648": {
+    "name": "Serpent Caller",
+    "description": "A spear tipped with a Gobekli Tepe carving\nthat calls serpents. Cursed, can poison."
+  },
+  "649": {
+    "name": "EHI Combustion Lance",
+    "description": "A spear tipped with crystallised oil that\nbursts on impact, burning its bearer."
+  },
+  "650": {
+    "name": "Gravity Spear",
+    "description": "A plain-looking Gobekli Tepe spear that\nbends gravity. Thunder."
+  },
+  "651": {
+    "name": "Varlenia Returning Spear",
+    "description": "A golden Varlenia spear that comes back\nwhen thrown. Cursed, can poison."
+  },
+  "663": {
+    "name": "Foam Projector",
+    "description": "An experimental gun firing sticky foam\nto pin a target. Can poison on hit."
+  },
+  "664": {
+    "name": "Electro-Net Launcher",
+    "description": "A launcher firing electrified nets."
+  },
+  "665": {
+    "name": "Microwave Denial Emitter",
+    "description": "A directed emitter that throws a beam of\nmicrowaves. Can poison on hit."
   }
 }

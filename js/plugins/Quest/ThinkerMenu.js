@@ -1335,7 +1335,7 @@
 
     function finishesFor(item) {
         const P = window.WeaponSystemProcedural;
-        if (!P || !P.getTexturesForType) return [];
+        if (!P || !P.getTexturesForType || isFixedPattern(item)) return [];
         const seen = new Set();
         const out = [];
         // The class run first, then the dream bank: the strange sheets are a
@@ -1375,6 +1375,32 @@
     // off that bill will be built as, and it is previewed exactly that way.
     function pieceKey(item) {
         return `${DataManager.isWeapon(item) ? 'w' : 'a'}${item ? item.id : 0}`;
+    }
+
+    // ── Pieces made to one pattern ───────────────────────────────────────────
+    // Some pieces are a thing in the world before they are a line on a bill.
+    // The Vector gun is Em's own frame: its model, its finishes, its element
+    // and its name are all decided by the gun's own system
+    // (Weapon/VectorGunSystem.js), which reconstructs it into eleven shapes as
+    // she earns them. A smith may still build one from its recipe, but nothing
+    // in this workshop may re-cut it: what it looks like is not a smith's
+    // choice. window.VectorGun is the only answer to which piece that is; the
+    // id is never read as a literal here.
+    // A forged piece is a brand new row with a brand new id, so the gun's own
+    // test would not know one of its own. The entry it was beaten out from is
+    // written on it (<ForgeBaseId:>, see materialize) exactly so the model
+    // pipeline can still find the bespoke build, and the lock reads the same
+    // tag: a smith cannot get around the pattern by making one first.
+    function patternBase(item) {
+        if (!item) return null;
+        const baseId = Number((item.meta || {}).ForgeBaseId) || 0;
+        if (baseId && DataManager.isWeapon(item)) return $dataWeapons[baseId] || item;
+        return item;
+    }
+
+    function isFixedPattern(item) {
+        const VG = window.VectorGun;
+        return !!(item && VG && VG.isVectorGun && VG.isVectorGun(patternBase(item)));
     }
 
     function designIsEmpty(design) {
@@ -1417,7 +1443,7 @@
     // What a piece is sculpted as right now: its own, if it has been made, and
     // otherwise the draft drawn for the next one off its bill.
     function designFor(item) {
-        if (!item) return null;
+        if (!item || isFixedPattern(item)) return null;
         const rec = designRecordFor(item);
         if (rec) return rec.parts || null;
         return _draft.designs[pieceKey(item)] || null;
@@ -1428,7 +1454,9 @@
     // model without anything having to be told; the entry that comes back is a
     // NEW object, which is why callers take the return value.
     function commitDesign(item, design) {
-        if (!item) return item;
+        // A piece made to one pattern is never re-cut, whoever is asking:
+        // the editor, a plugin command or a test going through WeaponDesigns.
+        if (!item || isFixedPattern(item)) return item;
         const clean = designIsEmpty(design) ? null : design;
         const rec = designRecordFor(item);
         if (rec) {
@@ -1520,7 +1548,7 @@
             this._trade = '';             // '' is every trade
             this._tradeIndex = 0;
             this._activeArea = 'items';   // trades | status | items | finish | forge | smelt
-            this._modalOpen = false;      // is a piece open in its own window
+            this._modalOpen = false;      // is the book turned to a piece
             this._itemIndex = 0;
             this._selectedItem = null;
             this._smithIndex = AUTO_SMITH;
@@ -1970,9 +1998,15 @@
             // so they are read once for it.
             if (bench()) bench().clearKnowledgeCache();
 
+            // The workshop is two spreads, not a spread with a window over
+            // it: the board pieces are picked off, and the piece's own page.
+            // Turning between them rebuilds the spread, so each page is laid
+            // out for the whole book rather than for what is left over.
+            const mode = this.pieceMode() ? 'piece' : 'board';
             let spread = container.querySelector('.book-spread');
-            if (!spread) {
-                container.innerHTML = `
+            if (!spread || this._spreadMode !== mode) {
+                this._spreadMode = mode;
+                container.innerHTML = mode === 'piece' ? this.pieceSpreadHTML() : `
                     <div class="book-spread">
                         <div id="forge-overlay-container"></div>
                         <div class="left-page">
@@ -1991,7 +2025,6 @@
                             <div id="forge-context" class="forge-context"></div>
                             <div class="list-viewport" id="forge-list"></div>
                         </div>
-                        <div id="forge-modal"></div>
                     </div>`;
                 spread = container.querySelector('.book-spread');
                 spread.addEventListener('click', (e) => this.onSpreadClick(e));
@@ -2007,12 +2040,15 @@
                 // of trades, the grid of pieces, or the dossier in the window
                 // over them. Sending every wheel event to one list is what left
                 // the other pages stuck.
+                if (!this._wheelBound) {
+                this._wheelBound = true;
                 container.addEventListener('wheel', (e) => {
                     const under = e.target && e.target.closest
                         ? e.target.closest('.ui-detail-scroll, .list-viewport') : null;
                     const target = under || container.querySelector('#forge-list');
                     if (target) target.scrollTop += e.deltaY;
                 });
+                }
             }
 
             this.renderSwitcher();
@@ -2023,16 +2059,47 @@
             this.renderList();
             this.renderDetail();
             this.renderOverlay();
+            this.renderPadTips();
 
             if (window.SpecBadge) {
                 // The forge reports the trade the selected piece is made in; the
                 // bench reports Fabrication, which is what gates its tiers.
                 // The badge reports the trade of the piece under the cursor,
                 // whichever half of the workshop makes it.
-                const spec = this._selectedItem ? this.tradeOf(this._selectedItem) : null;
+                // The window over the board carries the trade in its own head,
+                // so the badge stands down while it is open rather than floating
+                // over the card that already says it.
+                const spec = (this._selectedItem && !this._modalOpen) ? this.tradeOf(this._selectedItem) : null;
                 if (spec) window.SpecBadge.show(spec, { actor: this.smithFor(this._selectedItem) });
                 else window.SpecBadge.hide();
             }
+        }
+
+        // What the buttons do on the half of the workshop the cursor is
+        // standing on. The badges inside the buttons say the rest; this is for
+        // the moves that are not a button at all - dialling a batch, crossing
+        // between the two pages, handing the bench to another member.
+        renderPadTips() {
+            if (!window.Controller || !Controller.tips) return;
+            if (Controller.textEntryOpen && Controller.textEntryOpen()) return;
+            const tip = (face, key) => ({ face: face, label: T('Blacksmith.tips.' + key) });
+            const area = this._activeArea;
+            let list;
+            if (!this.pieceMode()) {
+                list = [
+                    tip('A', 'page'),
+                    tip('dpad', area === 'trades' ? 'trade' : 'pick'),
+                    tip('L1', 'member'),
+                    tip('B', 'leave')
+                ];
+            } else if (area === 'name') {
+                list = [tip('A', 'done'), tip('dpad', 'reroll'), tip('B', 'leave')];
+            } else if (area === 'forge' || area === 'smelt') {
+                list = [tip('A', 'done'), tip('dpad', 'batch'), tip('B', 'leave')];
+            } else {
+                list = [tip('A', 'done'), tip('dpad', 'pick'), tip('B', 'leave')];
+            }
+            Controller.tips(list);
         }
 
         renderSwitcher() {
@@ -2284,6 +2351,7 @@
             this.selectRow(index);
             if (!this._selectedItem) { SoundManager.playBuzzer(); return; }
             this._modalOpen = true;
+            this._nameChip = 0;
             this._activeArea = this.hasFinishes() ? 'finish' : this.firstButtonArea();
             SoundManager.playOk();
             this.refreshForge();
@@ -2297,49 +2365,80 @@
             this.refreshForge();
         }
 
+        // Is the book turned to a piece, or to the board it was picked off?
+        pieceMode() {
+            return !!(this._modalOpen && this._selectedItem);
+        }
+
+        // The piece's spread, empty. Its two pages are filled by renderDetail,
+        // which is why the frame is built once and written into afterwards:
+        // dialling a batch redraws the facts without rebuilding the page the
+        // model is standing on.
+        pieceSpreadHTML() {
+            return `
+                <div class="book-spread forge-piece-spread">
+                    <div id="forge-overlay-container"></div>
+                    <div class="left-page">
+                        <div class="page-header-bar forge-header">
+                            <div class="back-button focusable" tabindex="0" id="forge-piece-back">${escapeHtml(T('Blacksmith.backToBoard'))}</div>
+                            <h2 class="title" id="forge-piece-title"></h2>
+                        </div>
+                        <div class="left-header"><span class="category-name">${escapeHtml(T('Blacksmith.appearanceHeader'))}</span></div>
+                        <div class="list-viewport ui-scroll" id="forge-piece-left"></div>
+                    </div>
+                    <div class="right-page">
+                        <div class="left-header"><span class="category-name">${escapeHtml(T('Blacksmith.detailsHeader'))}</span></div>
+                        <div id="forge-piece-context" class="forge-context"></div>
+                        <div class="list-viewport ui-scroll" id="forge-piece-right"></div>
+                        <div id="forge-piece-actions" class="forge-piece-actions"></div>
+                    </div>
+                </div>`;
+        }
+
+        // The piece's own spread: the left page is what it will look like when
+        // it comes off the fire, the right page is everything that is true
+        // about it, and the counter and the two buttons sit at the foot of the
+        // right page where they are spent. Nothing is stacked in a column in a
+        // window any more, so every part of it is read at full width.
         renderDetail() {
-            const el = document.getElementById('forge-modal');
-            if (!el) return;
             const item = this._selectedItem;
+            if (!this.pieceMode() || !item) { this.dispose3D(); return; }
 
-            if (!this._modalOpen || !item) {
-                this.dispose3D();
-                el.innerHTML = '';
-                el.classList.remove('open');
-                return;
-            }
-            el.classList.add('open');
-
-            const inner = (this.isBenchSide() && bench())
-                ? this.benchDetailHTML(item)
-                : this.forgeDetailHTML(item);
+            const parts = (this.isBenchSide() && bench())
+                ? this.benchPageParts(item)
+                : this.forgePageParts(item);
             if (this.isBenchSide() && bench()) this.dispose3D();
 
-            el.innerHTML = `
-                <div class="forge-modal-backdrop" id="forge-modal-close"></div>
-                <div class="forge-modal-card workbench">
-                    <div class="forge-modal-x focusable" tabindex="0" id="forge-modal-back">${escapeHtml(T('Blacksmith.close'))}</div>
-                    ${inner}
-                </div>`;
+            const title = document.getElementById('forge-piece-title');
+            if (title) {
+                title.className = 'title ' + (parts.rarityCls || '');
+                title.textContent = parts.title;
+            }
+            const ctx = document.getElementById('forge-piece-context');
+            if (ctx) ctx.innerHTML = parts.context || '';
+            const left = document.getElementById('forge-piece-left');
+            if (left) left.innerHTML = parts.left;
+            const right = document.getElementById('forge-piece-right');
+            if (right) right.innerHTML = parts.right;
+            const actions = document.getElementById('forge-piece-actions');
+            if (actions) actions.innerHTML = parts.actions;
 
-            // The dossier is taller than the window, so the button a keyboard
-            // player has just moved onto has to be brought into view.
-            const focus = el.querySelector('.inspect-btn.focused, .forge-swatch.focused');
+            // A page is taller than the paper, so whatever the cursor has just
+            // moved onto is brought into view.
+            const focus = document.querySelector('#forge-piece-left .focused, #forge-piece-actions .focused');
             if (focus) focus.scrollIntoView({ block: 'nearest' });
 
             if (!this.isBenchSide()) this.mount3D(item);
         }
 
-        // One head for both sides of the workshop: the icon, the name in its
-        // rarity, and the blurb under it at the shared prose measure.
-        detailHeadHTML(item, name, rarityCls) {
-            let html = `
-                <div class="ui-detail-head">
-                    <span class="menu-icon menu-icon--32" style="--icon-col:${item.iconIndex % 16};--icon-row:${Math.floor(item.iconIndex / 16)}"></span>
-                    <div class="ui-detail-titles">
-                        <h2 class="${rarityCls}">${escapeHtml(name)}</h2>
-                    </div>
-                </div>`;
+        // One line at the head of the right page: which trade the piece belongs
+        // to, what it asks of the hands working it, and how many the party is
+        // already carrying.
+        contextLineHTML(scope, note, owned) {
+            const sep = '<span class="forge-context-sep">&middot;</span>';
+            let html = `<span class="forge-context-scope">${escapeHtml(scope)}</span>`;
+            if (note) html += sep + `<span class="forge-context-scope">${escapeHtml(note)}</span>`;
+            if (owned > 0) html += sep + `<span class="forge-context-count">${escapeHtml(T('Blacksmith.carrying', { n: owned }))}</span>`;
             return html;
         }
 
@@ -2377,7 +2476,7 @@
         }
 
         // ------------------------------------------------------ the anvil page
-        forgeDetailHTML(item) {
+        forgePageParts(item) {
             const t = bsText();
             const rarity = rarityOf(item);
             const spec = craftSpec(item);
@@ -2391,25 +2490,32 @@
             const smeltable = owned > 0;
             const yields = smeltable ? (smeltYield(item) || {}) : {};
 
-            let body = '';
+            // The left page: the piece as it will be. The picture first, then
+            // the things that decide how it comes out, each under its own
+            // heading and in the order they are settled: its model, its name,
+            // its finish.
+            let left = this.previewHTML(item);
+            left += this.modelHTML(item);
+            left += this.nameHTML(item);
+            left += this.finishHTML(item);
+
+            // The right page: what it is, what it asks for, what it gives.
+            let right = '';
             if (item.description && String(item.description).trim()) {
                 const desc = (forged ? String(item.description) : tr(String(item.description)))
                     .replace(/\s*\n\s*/g, ' ').trim();
-                body += `<p class="ui-prose">${escapeHtml(desc)}</p>`;
+                right += `<p class="ui-prose">${escapeHtml(desc)}</p>`;
             }
-            body += this.previewHTML(item);
-            body += this.modelHTML(item);
-            body += this.nameHTML(item);
-            body += this.finishHTML(item);
 
             // The trade and the tier it asks for. A piece already made says
             // instead whose hands made it and how it came out.
-            body += this.sectionTitle(t.trades);
+            right += this.sectionTitle(t.trades);
+            let trades = '';
             if (forged) {
-                body += this.specRow(T('Blacksmith.madeBy', { smith: String(item.meta.Forged).trim() }),
+                trades += this.specRow(T('Blacksmith.madeBy', { smith: String(item.meta.Forged).trim() }),
                     qualityLabel(item.meta.ForgeQuality));
             } else {
-                body += this.specRow(T('Blacksmith.needs', {
+                trades += this.specRow(T('Blacksmith.needs', {
                     trade: spec ? window.Specializations.displayName(spec) : craftSpecName(item),
                     level: levelName(tier)
                 }), T('Blacksmith.have', {
@@ -2417,25 +2523,31 @@
                     level: levelName(level)
                 }));
             }
+            right += `<div class="inspect-spec-grid">${trades}</div>`;
 
             const bill = this.billHTML(recipe, yields);
-            if (bill) body += this.sectionTitle(t.materials) + bill;
-            body += this.metadataHTML(item);
+            if (bill) right += this.sectionTitle(t.materials) + `<div class="inspect-spec-grid">${bill}</div>`;
+            right += this.metadataHTML(item);
 
             const enabled = makeable && stocked;
             const btnLabel = forged ? t.alreadyForged
                 : (!makeable ? t.tooComplexShort : (stocked ? t.forge : t.noMaterials));
             const smeltLabel = smeltable ? t.smelt : t.smeltNone;
 
-            return `
-                <div class="ui-detail">
-                    ${this.detailHeadHTML(item, displayName(item), window.ItemSystemUtils.rarityClass(rarity))}
-                    <div class="ui-detail-scroll ui-scroll">${body}</div>
-                    ${this.actionsHTML([
-                        forged ? null : { id: 'forge-action', label: btnLabel, on: enabled, area: 'forge' },
-                        { id: 'forge-smelt', label: smeltLabel, on: smeltable, area: 'smelt' }
-                    ])}
-                </div>`;
+            return {
+                title: displayName(item),
+                rarityCls: window.ItemSystemUtils.rarityClass(rarity),
+                context: this.contextLineHTML(
+                    spec ? window.Specializations.displayName(spec) : craftSpecName(item),
+                    forged ? qualityLabel(item.meta.ForgeQuality) : levelName(tier),
+                    owned),
+                left: left,
+                right: right,
+                actions: this.actionsHTML([
+                    forged ? null : { id: 'forge-action', label: btnLabel, on: enabled, area: 'forge' },
+                    { id: 'forge-smelt', label: smeltLabel, on: smeltable, area: 'smelt' }
+                ])
+            };
         }
 
         // ------------------------------------------------------- how many, and go
@@ -2466,7 +2578,7 @@
         // The Thinker's side of the workshop, drawn in the same shape: what the
         // recipe is, what it asks for, what the bench thinks of the job, and one
         // button at the foot of it.
-        benchDetailHTML(item) {
+        benchPageParts(item) {
             const b = bench();
             const bt = b.text();
             const recipe = b.parseRecipe(item);
@@ -2474,20 +2586,26 @@
             const trade = b.readingSpec(item);
             const held = $gameParty.numItems(item);
 
-            let head, body = '';
+            // The left page carries the piece itself: its icon on the bench,
+            // or a sealed blueprint while nothing about it is known yet.
+            let left = '', body = '', title, rarityCls = '';
             if (!known) {
-                head = `
-                <div class="ui-detail-head">
-                    <span class="blueprint-icon-locked">?</span>
-                    <div class="ui-detail-titles"><h2>${escapeHtml(bt.blueprintLocked)}</h2></div>
-                </div>`;
+                title = bt.blueprintLocked;
+                left = `<div class="weapon-previews-container">
+                        <div class="weapon-preview-card weapon-preview-card--single">
+                            <div class="weapon-preview-icon-wrapper">
+                                <span class="blueprint-icon-locked">?</span>
+                            </div>
+                        </div>
+                    </div>`;
                 body += `<p class="ui-prose">${escapeHtml(T('Thinker.lockedRecipeHint'))}</p>`;
                 body += `<p class="ui-prose">${escapeHtml(T('Thinker.revealHint', {
                     spec: b.specLabel(trade.name), level: b.levelLabel(b.revealLevel(item))
                 }))}</p>`;
             } else {
-                head = this.detailHeadHTML(item, tr(item.name),
-                    window.ItemSystemUtils.rarityClass(b.rarityOf(item)));
+                title = tr(item.name);
+                rarityCls = window.ItemSystemUtils.rarityClass(b.rarityOf(item));
+                left = this.previewHTML(item);
                 if (item.description && String(item.description).trim()) {
                     body += `<p class="ui-prose">${escapeHtml(tr(String(item.description)).replace(/\s*\n\s*/g, ' ').trim())}</p>`;
                 }
@@ -2498,7 +2616,7 @@
             // mode to find out whether pulling one apart is worth it.
             if (recipe) {
                 body += this.sectionTitle(bt.reagents);
-                body += this.billHTML(recipe, null);
+                body += `<div class="inspect-spec-grid">${this.billHTML(recipe, null)}</div>`;
             }
 
             body += this.sectionTitle(bt.workbench);
@@ -2507,14 +2625,15 @@
                 const starter = b.isStarter(item);
                 const risk = Math.round(b.botchChance(item) * 100);
                 const reclaim = Math.round(b.reclaimChance(item) * 100);
-                body += this.specRow(
+                let facts = this.specRow(
                     starter ? T('Thinker.starterRecipe')
                         : T('Thinker.tierLabel', { tier: b.tier(item), level: b.tierLevelName(item) }),
                     trained && risk > 0 ? T('Thinker.botchRisk', { pct: risk }) : '');
-                body += this.specRow(
+                facts += this.specRow(
                     T('Thinker.tradeLabel', { spec: b.specLabel(trade.name), level: b.levelLabel(trade.level) }),
                     reclaim > 0 ? T('Thinker.reclaimChance', { pct: reclaim }) : '');
-                if (held > 0) body += this.specRow(bt.salvageYields, String(held));
+                if (held > 0) facts += this.specRow(bt.salvageYields, String(held));
+                body += `<div class="inspect-spec-grid">${facts}</div>`;
                 if (known && !starter && !$gameSystem.hasCrafted(item.id) && !b.isSandbox()) {
                     body += `<p class="ui-prose">${escapeHtml(T('Thinker.knownBySkill', {
                         spec: b.specLabel(trade.name), level: b.levelLabel(trade.level)
@@ -2527,15 +2646,20 @@
             }
 
             const canMake = !!recipe && b.hasMaterials(item) && b.tierMet(item);
-            return `
-                <div class="ui-detail">
-                    ${head}
-                    <div class="ui-detail-scroll ui-scroll">${body}</div>
-                    ${this.actionsHTML([
-                        { id: 'forge-action', label: bt.transmute, on: canMake, area: 'forge' },
-                        { id: 'forge-smelt', label: held > 0 ? bt.salvage : T('Thinker.noOwned'), on: held > 0, area: 'smelt' }
-                    ])}
-                </div>`;
+            return {
+                title: title,
+                rarityCls: rarityCls,
+                context: this.contextLineHTML(
+                    b.specLabel(trade.name),
+                    known && recipe ? b.tierLevelName(item) : b.levelLabel(b.revealLevel(item)),
+                    held),
+                left: left,
+                right: body,
+                actions: this.actionsHTML([
+                    { id: 'forge-action', label: bt.transmute, on: canMake, area: 'forge' },
+                    { id: 'forge-smelt', label: held > 0 ? bt.salvage : T('Thinker.noOwned'), on: held > 0, area: 'smelt' }
+                ])
+            };
         }
 
         // ------------------------------------------------- the finish picker
@@ -2587,7 +2711,7 @@
         // What the 3D card is asked to draw: the entry itself once it has been
         // forged, and a stand-in wearing this visit's choices before that.
         previewItem(item) {
-            if (isForged(item)) return item;
+            if (isForged(item) || isFixedPattern(item)) return item;
             const finish = this.chosenFinish(item);
             const seed = this.pendingSeed(item);
             const parts = encodeDesign(designFor(item));
@@ -2606,17 +2730,59 @@
         // A weapon rolls its own name the moment it is looked at (pendingName),
         // typed over freely and rerolled on demand; armor keeps the plain
         // "{smith}'s {piece}" naming, since only a weapon was asked for this.
+        // A weapon rolls a name of its own and the player may keep it, type
+        // over it or roll again. The field is the keyboard's half of that and
+        // is taken off screen while a pad is in hand (.kb-only); the two
+        // buttons beside it are the whole of it on a pad, and the left one
+        // opens the letter sheet the controller layer draws.
+        hasName(item) {
+            const piece = item || this._selectedItem;
+            if (!piece || isForged(piece) || !DataManager.isWeapon(piece)) return false;
+            return !isFixedPattern(piece);
+        }
+
         nameHTML(item) {
-            if (isForged(item) || !DataManager.isWeapon(item)) return '';
+            if (!this.hasName(item)) return '';
             const name = this.pendingName(item);
+            const on = this._activeArea === 'name';
+            const chip = this._nameChip || 0;
             return `
                 <h4 class="inspect-section-title">${escapeHtml(T("Blacksmith.nameHeader"))}</h4>
                 <div class="forge-name-row">
-                    <input type="text" id="forge-name-input" class="forge-name-input"
+                    <input type="text" id="forge-name-input" class="forge-name-input kb-only"
                            value="${escapeHtml(name)}" maxlength="60"
                            placeholder="${escapeHtml(T('Blacksmith.namePlaceholder'))}">
-                    <div class="forge-name-reroll" id="forge-name-reroll" title="${escapeHtml(T('Blacksmith.nameReroll'))}">&#8635;</div>
+                    <div class="inspect-btn forge-name-edit focusable ${on && chip === 0 ? 'focused' : ''}"
+                         tabindex="0" id="forge-name-edit" data-pad="confirm">${escapeHtml(T('Blacksmith.nameEdit'))}</div>
+                    <div class="forge-name-reroll focusable ${on && chip === 1 ? 'focused' : ''}" tabindex="0"
+                         id="forge-name-reroll" data-pad="alt"
+                         title="${escapeHtml(T('Blacksmith.nameReroll'))}">&#8635;</div>
                 </div>`;
+        }
+
+        // The name typed with no keyboard in the room. The sheet belongs to the
+        // controller layer, so the forge never grows one of its own.
+        openNameEditor() {
+            const item = this._selectedItem;
+            if (!this.hasName(item)) return;
+            if (window.Controller && Controller.usingPad && Controller.usingPad()) {
+                Controller.textEntry({
+                    title: T('Blacksmith.nameHeader'),
+                    value: this.pendingName(item),
+                    max: 60,
+                    onCommit: (value) => {
+                        this.setName(item, String(value || '').trim());
+                        this.refreshForge();
+                    }
+                });
+                return;
+            }
+            const field = document.getElementById('forge-name-input');
+            if (field) {
+                field.focus();
+                try { field.setSelectionRange(field.value.length, field.value.length); }
+                catch (e) { /* focus is enough */ }
+            }
         }
 
         finishHTML(item) {
@@ -2731,11 +2897,14 @@
                 const finish = isForged(item)
                     ? (item.meta.ForgeTexture ? String(item.meta.ForgeTexture).trim() : '')
                     : this.chosenFinish(item);
+                // The finish is the stuff the piece is made of, so it is worn BY
+                // the piece: it fills the disc the icon sits on. Washing the
+                // whole card in it only ever looked like a change of wallpaper.
                 const skin = finish
-                    ? ` style="background-image:url('${escapeHtml(finishSrc(finish))}'); background-size:cover; background-position:center"`
+                    ? `background-image:url('${escapeHtml(finishSrc(finish))}'); background-size:cover; background-position:center;`
                     : '';
-                const inner = `<div class="weapon-preview-icon-wrapper"><div class="weapon-preview-icon-circle rarity-ring ${window.ItemSystemUtils.rarityClass(rarity)}"><div class="item-icon" style="${iconStyle(item.iconIndex, 32)}"></div></div></div>`;
-                html += `<div class="weapon-preview-card weapon-preview-card--single"${skin}>${inner}</div>`;
+                const inner = `<div class="weapon-preview-icon-wrapper"><div class="weapon-preview-icon-circle rarity-ring ${window.ItemSystemUtils.rarityClass(rarity)}" style="${skin}"><div class="item-icon" style="${iconStyle(item.iconIndex, 32)}"></div></div></div>`;
+                html += `<div class="weapon-preview-card weapon-preview-card--single">${inner}</div>`;
             }
             return html + '</div>';
         }
@@ -2747,11 +2916,17 @@
         // never used up, so there is nothing to spend and nothing to gate.
         hasModelEditor() {
             const item = this._selectedItem;
-            return typeof THREE !== 'undefined' && !!item && DataManager.isWeapon(item);
+            return typeof THREE !== 'undefined' && !!item && DataManager.isWeapon(item)
+                && !isFixedPattern(item);
         }
 
         modelHTML(item) {
             if (typeof THREE === 'undefined' || !DataManager.isWeapon(item)) return '';
+            // A piece made to one pattern says so where its editor would have
+            // been, rather than leaving a hole the player reads as a bug.
+            if (isFixedPattern(item)) {
+                return `<p class="ui-prose forge-fixed-note">${escapeHtml(T('Blacksmith.fixedPattern'))}</p>`;
+            }
             const design = designFor(item);
             const fitted = (design && design.p) ? design.p.length : 0;
             const label = fitted ? T('Blacksmith.modelEditFitted', { n: fitted })
@@ -2788,9 +2963,14 @@
 
         openSculptor() {
             const item = this._selectedItem;
-            if (!this.hasModelEditor()) { SoundManager.playBuzzer(); return; }
+            // Two gates, not one: the button is not drawn for a fixed pattern,
+            // and the stand refuses it even if something else asks for it.
+            if (!this.hasModelEditor() || !Scene_WeaponSculptor.setup(
+                item, item && this.sculptBase(item), designFor(item))) {
+                SoundManager.playBuzzer();
+                return;
+            }
             _resumePiece = { id: item.id, kind: DataManager.isWeapon(item) ? 'w' : 'a' };
-            Scene_WeaponSculptor.setup(item, this.sculptBase(item), designFor(item));
             SoundManager.playOk();
             SceneManager.push(Scene_WeaponSculptor);
         }
@@ -2838,13 +3018,14 @@
             this._preview = state;
 
             const place = (m) => {
-                const box = new THREE.Box3().setFromObject(m);
-                const size = box.getSize(new THREE.Vector3());
-                const center = box.getCenter(new THREE.Vector3());
-                m.position.sub(center);
-                const fit = 1.85 / (Math.max(size.x, size.y, size.z) || 1);
-                m.scale.set(fit, fit, fit);
-                m.rotation.set(0.1, -0.4, 0.35);
+                // The shared framing of every stand in the game: posed to its
+                // presentation angle, then that silhouette fitted to this pane.
+                if (!(window.ItemModelSystem && window.ItemModelSystem.framePreview(m, {
+                    distance: camera.position.z, fov: camera.fov, aspect: camera.aspect
+                }))) {
+                    const box = new THREE.Box3().setFromObject(m);
+                    m.position.sub(box.getCenter(new THREE.Vector3()));
+                }
                 if (window.PSXShader) window.PSXShader.applyToObject(m);
                 scene.add(m);
                 state.model = m;
@@ -2858,27 +3039,34 @@
                 if (model) place(model);
             }
 
-            // Drag slides the view over the piece and the wheel leans in and
-            // out. The piece itself never turns: a finish is picked off a still
-            // object, and a swatch chosen against a spinning one is a guess.
-            let dragging = false;
+            // The same hands every other stand in the game is turned with: the
+            // left button turns the piece, the wheel button slides the view over
+            // it, and the wheel itself leans in and out.
+            let button = -1;
             let prev = { x: 0, y: 0 };
+            const ROTATE_SPEED = 0.01;
             const down = (e) => {
-                dragging = true;
+                if (e.button !== 0 && e.button !== 1) return;
+                button = e.button;
                 prev = { x: e.clientX || 0, y: e.clientY || 0 };
                 canvas.style.cursor = 'grabbing';
                 e.preventDefault();
             };
             const move = (e) => {
-                if (!dragging) return;
+                if (button === -1) return;
                 const dx = (e.clientX || 0) - prev.x;
                 const dy = (e.clientY || 0) - prev.y;
-                const pan = 0.0022 * camera.position.z;
-                camera.position.x -= dx * pan;
-                camera.position.y += dy * pan;
+                if (button === 1) {
+                    const pan = 0.0022 * camera.position.z;
+                    camera.position.x -= dx * pan;
+                    camera.position.y += dy * pan;
+                } else if (state.model) {
+                    state.model.rotation.y += dx * ROTATE_SPEED;
+                    state.model.rotation.x += dy * ROTATE_SPEED;
+                }
                 prev = { x: e.clientX || 0, y: e.clientY || 0 };
             };
-            const up = () => { dragging = false; canvas.style.cursor = ''; };
+            const up = () => { button = -1; canvas.style.cursor = ''; };
             const wheel = (e) => {
                 e.preventDefault();
                 camera.position.z = Math.max(0.35, Math.min(6, camera.position.z + e.deltaY * 0.0015));
@@ -3253,8 +3441,15 @@
                 return;
             }
 
-            if (e.target.closest('#forge-modal-back') || e.target.closest('#forge-modal-close')) {
+            if (e.target.closest('#forge-piece-back')) {
                 this.closePiece();
+                return;
+            }
+
+            if (e.target.closest('#forge-name-edit')) {
+                this._activeArea = 'name';
+                this._nameChip = 0;
+                this.openNameEditor();
                 return;
             }
 
@@ -3281,7 +3476,37 @@
             if (e.target.closest('#forge-smelt')) { this.breakSelected(); return; }
         }
 
+        // The piece's page, top to bottom: the model, the name, the finish,
+        // then the buttons. A piece with no model to sculpt and no name to
+        // roll is simply not on the chain, so the cursor never stops on a row
+        // that was never drawn.
+        pieceAreas() {
+            const out = [];
+            if (this.hasModelEditor()) out.push('model');
+            if (this.hasName()) out.push('name');
+            if (this.hasFinishes()) out.push('finish');
+            out.push(this.firstButtonArea());
+            return out;
+        }
+
+        areaStep(area, dir) {
+            const list = this.pieceAreas();
+            const at = list.indexOf(area);
+            if (at < 0) return '';
+            return list[at + dir] || '';
+        }
+
+        goArea(area) {
+            if (!area) return false;
+            this._activeArea = area;
+            SoundManager.playCursor();
+            this.refreshForge();
+            return true;
+        }
+
         updateForgeInput() {
+            // The letter sheet answers every press itself while it is up.
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
             if (this._overlayTimer > 0) {
                 if (Input.isTriggered('ok') || Input.isTriggered('cancel') || TouchInput.isTriggered()) {
                     this._overlayTimer = 0;
@@ -3391,9 +3616,33 @@
                 if (Input.isTriggered('ok')) {
                     this.openSculptor();
                 } else if (Input.isTriggered('down')) {
-                    this._activeArea = this.hasFinishes() ? 'finish' : this.firstButtonArea();
+                    this.goArea(this.areaStep('model', 1));
+                } else if (cancel) {
+                    this.closePiece();
+                }
+                return;
+            }
+
+            // The name row: the field beside it belongs to the keyboard, so
+            // the two buttons are what the cursor walks. Left and right step
+            // between writing the name and rolling another one.
+            if (this._activeArea === 'name') {
+                if (Input.isTriggered('ok')) {
+                    if (this._nameChip) {
+                        this.rerollName(this._selectedItem);
+                        SoundManager.playCursor();
+                        this.refreshForge();
+                    } else {
+                        this.openNameEditor();
+                    }
+                } else if (Input.isRepeated('right') || Input.isRepeated('left')) {
+                    this._nameChip = this._nameChip ? 0 : 1;
                     SoundManager.playCursor();
                     this.refreshForge();
+                } else if (Input.isTriggered('down')) {
+                    this.goArea(this.areaStep('name', 1));
+                } else if (Input.isTriggered('up')) {
+                    this.goArea(this.areaStep('name', -1));
                 } else if (cancel) {
                     this.closePiece();
                 }
@@ -3412,13 +3661,11 @@
                     SoundManager.playCursor();
                     this.refreshForge();
                 } else if (Input.isTriggered('ok') || Input.isTriggered('down')) {
-                    this._activeArea = this.firstButtonArea();
+                    this._activeArea = this.areaStep('finish', 1) || this.firstButtonArea();
                     SoundManager.playOk();
                     this.refreshForge();
-                } else if (Input.isTriggered('up') && this.hasModelEditor()) {
-                    this._activeArea = 'model';
-                    SoundManager.playCursor();
-                    this.refreshForge();
+                } else if (Input.isTriggered('up')) {
+                    this.goArea(this.areaStep('finish', -1));
                 } else if (cancel) {
                     this.closePiece();
                 }
@@ -3446,13 +3693,7 @@
                 if (Input.isTriggered('ok')) {
                     if (making) this.makeSelected(); else this.breakSelected();
                 } else if (Input.isTriggered('up')) {
-                    const above = this.hasFinishes() ? 'finish'
-                        : (this.hasModelEditor() ? 'model' : '');
-                    if (above) {
-                        this._activeArea = above;
-                        SoundManager.playCursor();
-                        this.refreshForge();
-                    }
+                    this.goArea(this.areaStep(this.firstButtonArea(), -1));
                 } else if (cancel) {
                     this.closePiece();
                 }
@@ -3553,10 +3794,15 @@
         // item: the entry the design belongs to. base: the same piece wearing
         // its finish and its seed but none of its fittings, which is what the
         // stand is built from. design: what it is sculpted as right now.
+        // The stand takes a piece, or refuses it. Refusing here is what makes
+        // the lock hold: whatever route asks for the editor, a piece made to
+        // one pattern never reaches it.
         static setup(item, base, design) {
+            if (!item || isFixedPattern(item)) return false;
             Scene_WeaponSculptor._item = item;
             Scene_WeaponSculptor._base = base || item;
             Scene_WeaponSculptor._design = cloneDesign(design);
+            return true;
         }
 
         create() {
@@ -3584,9 +3830,16 @@
             this.renderBands();
             this.renderShelf();
             this.render();
+            // The bench is a page of chips, swatches and cards, every one of
+            // them already marked .focusable: the shared ring walks all of
+            // them, so nothing here is the mouse's alone. The stage keeps the
+            // directions for itself until the ring is stepped into.
+            if (window.CCNav) window.CCNav.attach(this, this._root, { boards: false });
         }
 
         terminate() {
+            if (window.CCNav) window.CCNav.detach(this);
+            if (window.Controller && Controller.clearTips) Controller.clearTips();
             this.teardownStage();
             if (this._onPointerDown) this._root.removeEventListener('mousedown', this._onPointerDown);
             if (this._onPointerMove) window.removeEventListener('mousemove', this._onPointerMove);
@@ -4361,6 +4614,18 @@
 
         updateSculptInput() {
             if (this._eatCancel > 0) this._eatCancel--;
+            if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
+            this.renderSculptTips();
+            // The ring over the chips and the shelf gets the press first while
+            // it is stepped into; stepping off it hands the directions back to
+            // the stand.
+            if (window.CCNav && window.CCNav.update()) return;
+            if (window.CCScroll) window.CCScroll.update(this._root);
+            // Y steps onto the page of controls, which is the one move the
+            // stage cannot make for itself.
+            if (Input.isTriggered('menu') && window.CCNav) {
+                if (window.CCNav.tryEnterFromBoard('down')) return;
+            }
             if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 if (this._drag || this._eatCancel > 0) return;
                 this.leave();
@@ -4381,6 +4646,28 @@
             else if (Input.isRepeated('left')) nudge(ids[0], -1);
             else if (Input.isRepeated('up')) nudge(ids[1], 1);
             else if (Input.isRepeated('down')) nudge(ids[1], -1);
+            // A is the handle: which of the three it drives is stepped through
+            // without leaving the stand.
+            if (Input.isTriggered('ok')) this.cycleMode();
+        }
+
+        cycleMode() {
+            const at = SCULPT_MODES.indexOf(this._mode);
+            this._mode = SCULPT_MODES[(at + 1) % SCULPT_MODES.length];
+            SoundManager.playCursor();
+            this.renderPanel();
+        }
+
+        // What the pad does on the stand, and the one press that leaves it for
+        // the page of chips around it.
+        renderSculptTips() {
+            if (!window.Controller || !Controller.tips) return;
+            const tip = (face, key) => ({ face: face, label: T('Blacksmith.tips.' + key) });
+            const onRing = !!(window.CCNav && window.CCNav.active && window.CCNav.active());
+            Controller.tips(onRing
+                ? [tip('A', 'done'), tip('dpad', 'pick'), tip('B', 'leave')]
+                : [tip('dpad', 'sculpt'), tip('A', 'mode'), tip('L1', 'fitting'),
+                   tip('Y', 'pick'), tip('B', 'leave')]);
         }
     }
 

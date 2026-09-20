@@ -654,6 +654,14 @@
     return $gameSystem?._npcSociety?.[name] ?? null;
   }
 
+  // A creature holds no citizenship, no party and no vote. NPCCreature owns
+  // the boundary; this is just the one place the sim asks it, so every reader
+  // here gets the same answer.
+  function isNonSentientName(name) {
+    const NC = window.NPCCreature;
+    return !!(NC && NC.isNonSentientByName && NC.isNonSentientByName(name));
+  }
+
   function norm(s) {
     return String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
   }
@@ -2095,6 +2103,14 @@
   }
 
   function ensureIdentity(state, npcName, groupName, nowMinute) {
+    // Asked BEFORE the cache, and the cached answer is thrown away: a beast
+    // that already holds a citizenship, a party and a vote was written by a
+    // world folder from before the rule, and reading it back would keep a cat
+    // in the Nieuw-Vlaamse Verbond forever.
+    if (isNonSentientName(npcName)) {
+      if (state.identities[npcName]) delete state.identities[npcName];
+      return null;
+    }
     if (state.identities[npcName]) return state.identities[npcName];
     const rng = new PolRng(worldSeed() ^ nameHash("identity:" + npcName));
     const profile = getProfile(npcName);
@@ -2103,8 +2119,7 @@
     // walks the identities map, so an absent one simply never votes, never
     // stands, never radicalizes and never appears in a citizen roll, and
     // getIdentity() answers null the way it always did for a stranger.
-    const NC = window.NPCCreature;
-    if (NC && NC.isNonSentientByName(npcName)) return null;
+    if (isNonSentientName(npcName)) return null;
     // Somebody who is not from this world answers to the power that sent them,
     // not to whichever nation the town they are standing in belongs to. They
     // hold no citizenship here, so the country stays null.
@@ -2299,7 +2314,15 @@
     return Object.entries(population)
       .filter(([, g]) => g === groupName)
       .map(([name]) => name)
-      .filter(name => state.identities[name]);
+      // A beast standing in the square is not a resident who votes: an old
+      // world folder's stray identity is dropped here as well as at the gate
+      // (see ensureIdentity), so it never stands, votes or is counted.
+      .filter(name => {
+        if (!state.identities[name]) return false;
+        if (!isNonSentientName(name)) return true;
+        delete state.identities[name];
+        return false;
+      });
   }
 
   function resolveLocalElection(state, settlement, minute) {
@@ -2684,7 +2707,17 @@
     policiesFor,
     listPowers() { return Object.keys($gameSystem?._npcPolitics?.powers || {}); },
     getPower(name) { return $gameSystem?._npcPolitics?.powers?.[canonicalFaction(name)] ?? null; },
-    getIdentity(npcName) { return $gameSystem?._npcPolitics?.identities?.[npcName] ?? null; },
+    getIdentity(npcName) {
+      const identities = $gameSystem?._npcPolitics?.identities;
+      if (!identities) return null;
+      // The same repair the minting side makes (see ensureIdentity): a beast
+      // holds no allegiance, whatever an older world folder wrote down.
+      if (identities[npcName] && isNonSentientName(npcName)) {
+        delete identities[npcName];
+        return null;
+      }
+      return identities[npcName] ?? null;
+    },
     // Country name an NPC's home map-group belongs to, resolvable even before a
     // full political identity has been simulated for that NPC. Map-pool groups
     // match Countries.json by name; procedural "Proc:x,y" settlements resolve
@@ -2876,17 +2909,29 @@
   if (typeof PluginManager !== "undefined") {
     PluginManager.registerCommand(pluginName, "PoliticsReport", args => {
       const power = powerArgOrHere(args.power);
-      if (power) $gameMessage.add(buildPowerReport(power));
+      if (power) {
+        window.skipLocalization = true;
+        $gameMessage.add(buildPowerReport(power));
+        window.skipLocalization = false;
+      }
     });
 
     PluginManager.registerCommand(pluginName, "PoliticsElections", args => {
       const power = powerArgOrHere(args.power);
-      if (power) $gameMessage.add(buildElectionReport(power));
+      if (power) {
+        window.skipLocalization = true;
+        $gameMessage.add(buildElectionReport(power));
+        window.skipLocalization = false;
+      }
     });
 
     PluginManager.registerCommand(pluginName, "PoliticsNPC", args => {
       const name = String(args.eventName || "").trim();
-      if (name) $gameMessage.add(buildNPCProfile(name));
+      if (name) {
+        window.skipLocalization = true;
+        $gameMessage.add(buildNPCProfile(name));
+        window.skipLocalization = false;
+      }
     });
 
     PluginManager.registerCommand(pluginName, "PoliticsDebug", args => {

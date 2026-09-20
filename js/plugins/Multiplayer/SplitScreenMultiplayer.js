@@ -375,10 +375,19 @@
     // as split-screen companions. Mirrors NPCSystem's tag conventions (AI / local)
     // and the NPC-<class> note used by NPCSystemParty, while excluding system
     // events (map exits, the Player2 avatar, and graphic-less shop counters).
+    // An event still carrying its template name ("NPC", "NPC-3", "NPC 2") has
+    // never been given an identity by NPCSystem, so there is no person there to
+    // hand the second pad to. Those are skipped and the picker generates guests
+    // instead.
+    function isPlaceholderNPCName(name) {
+        return /^npc[\s_-]*\d*$/i.test(String(name || '').trim());
+    }
+
     function isNPCEvent(data) {
         if (!data || !data.name) return false;
         const name = data.name.trim();
         if (!name || name === P2_EVENT_NAME) return false;
+        if (isPlaceholderNPCName(name)) return false;
         if (/^(House|Transfer|Door|Teleport|Delivery|Room|Plant|Animal)/i.test(name)) return false;
         const note = data.note || "";
         if (/\bshop\b/i.test(note)) return false;
@@ -640,6 +649,8 @@
 
                 const name = data.name.trim();
                 const note = data.note || "";
+                // A sprite-less event is scenery, not somebody to play as.
+                if (!ev.characterName()) return;
 
                 // Honour an explicit NPC-<id>; otherwise hand out a random class.
                 let classId = null;

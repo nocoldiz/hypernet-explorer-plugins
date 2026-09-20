@@ -144,7 +144,10 @@
 
     _classPickerLeftHtml(stepData, activeIndex) {
       const choices = (stepData && stepData.choices) || [];
-      const query = (Scene_CharacterCreation._classSearchQuery || "").toLowerCase().trim();
+      // With a pad in hand there is no strip to type into, so the board filters
+      // on nothing and shows the whole roster (CCSearch).
+      const query = window.CCSearch.query(Scene_CharacterCreation._classSearchQuery)
+        .toLowerCase().trim();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const currentClassId = actor ? actor._classId : 0;
 
@@ -184,9 +187,12 @@
 
       return `
         <div class="cc-page cc-page-left cc-class-board cc-col">
-          <input type="text" class="cc-bio-select cc-class-search" value="${query.replace(/"/g, '&quot;')}"
-                 placeholder="${ccT('CharCreate.search')}"
-                 oninput="SceneManager._scene.onClassSearch(this.value)" />
+          ${window.CCSearch.html({
+            className: "cc-bio-select cc-class-search",
+            placeholder: ccT('CharCreate.search'),
+            value: query,
+            oninput: "SceneManager._scene.onClassSearch(this.value)",
+          })}
           <div class="cc-select-grid cc-compact cc-two-col cc-class-grid">
             ${cardsHtml || emptyHtml}
           </div>

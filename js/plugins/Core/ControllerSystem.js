@@ -79,6 +79,16 @@
  *       Controller.tips([{ face: 'R2', label: 'Zoom' }, { role: 'cancel', label: 'Leave' }]);
  *       Controller.clearTips();
  *
+ *   TYPING WITH NO KEYBOARD
+ *     A pad cannot type, so a screen that wants words asks for the letter
+ *     sheet instead of drawing a field nobody can reach:
+ *
+ *       Controller.textEntry({ title, value, max, onCommit });
+ *       Controller.textEntryOpen()   true while it has the frame
+ *
+ *     While it is up it answers every press itself, so the screen that opened
+ *     it stands down until onCommit (or nothing) comes back.
+ *
  *   THE CAMERA
  *     Every 3D minigame swings its camera with the RIGHT STICK, and they all
  *     do it through one object so the feel, the speed and the inverted Y are
@@ -670,6 +680,9 @@
             scrollUp: 'RS\u2191',
             scrollDown: 'RS\u2193',
             stick: 'L3',
+            // The four directions as one thing, for a tip strip that says what
+            // the pad's cross does rather than what one edge of it does.
+            dpad: 'D-Pad',
             select: 'Select',
             start: 'Start'
         },
@@ -1085,6 +1098,10 @@
                 Controller.setMode('menu');
                 this._tips = null;
             }
+            // The letter sheet is read before anything else and swallows the
+            // whole frame while it is up: the screen that opened it must not
+            // answer the same press.
+            if (PadText.isOpen()) PadText.update();
             const device = this.active();
             if (device !== this._lastDevice) {
                 this._lastDevice = device;
@@ -1110,6 +1127,226 @@
     Controller.clearTips = () => PadUI.clearTips();
     Controller.badge = (role) => PadUI.badge(role);
     Controller.glyph = (role) => PadUI.glyph(role);
+
+
+    //=========================================================================
+    // Typing with no keyboard: PadText
+    //=========================================================================
+    // A pad cannot type. Every screen that asks for words - the name a weapon
+    // comes off the fire wearing, the title of a grimorie, the description
+    // written over a spell - used to be a dead end the moment the keyboard was
+    // put down: the field could not be focused, and the sheet it sat in had no
+    // way out. So the letters are drawn instead, once, here, and every one of
+    // those screens opens THIS rather than growing a keyboard of its own.
+    //
+    //   Controller.textEntry({ title, value, max, multiline, onCommit })
+    //
+    // It reads RMMZ's own Input, so the arrow keys drive it exactly as the
+    // d-pad and the left stick do, and a player who still has a keyboard in
+    // front of them types into the field the screen already drew instead.
+    const PadText = {
+        ID: 'pad-text',
+        // i18n-ignore-start  the letters themselves are not prose
+        ROWS: [
+            '1234567890',
+            'qwertyuiop',
+            'asdfghjkl-',
+            'zxcvbnm,.!'
+        ],
+        SHIFTED: { '-': '_', ',': ';', '.': ':', '!': '?' },
+        // i18n-ignore-end
+
+        ACTIONS: ['shift', 'space', 'back', 'clear', 'done', 'cancel'],
+
+        open(opts) {
+            const o = opts || {};
+            this.close(true);
+            this._value = String(o.value || '');
+            this._max = Math.max(1, Number(o.max || o.maxLength || 40));
+            this._multiline = !!o.multiline;
+            this._title = String(o.title || '');
+            this._commit = typeof o.onCommit === 'function' ? o.onCommit : null;
+            this._abort = typeof o.onCancel === 'function' ? o.onCancel : null;
+            this._row = 1;
+            this._col = 0;
+            this._shift = false;
+            this._open = true;
+            // The strip says what the sheet's own buttons do, and the screen
+            // underneath gets its own back the moment the sheet is spent.
+            this._heldTips = PadUI._tips || null;
+            PadUI.tips(this.tips());
+            this.render();
+            if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+            return true;
+        },
+
+        isOpen() { return !!this._open; },
+
+        close(silent) {
+            const el = typeof document !== 'undefined' ? document.getElementById(this.ID) : null;
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+            if (!this._open) return;
+            this._open = false;
+            PadUI.tips(this._heldTips);
+            this._heldTips = null;
+            this._commit = null;
+            this._abort = null;
+            if (typeof Input !== 'undefined') Input.clear();
+            if (typeof TouchInput !== 'undefined') TouchInput.clear();
+            if (!silent && typeof SoundManager !== 'undefined') SoundManager.playCancel();
+        },
+
+        // The sheet as it stands: the letter rows, then the row of actions, so
+        // one pair of coordinates walks the whole of it.
+        grid() {
+            const rows = this.ROWS.map((row) => row.split('').map((ch) => this.faceOf(ch)));
+            rows.push(this.ACTIONS.slice());
+            return rows;
+        },
+
+        faceOf(ch) {
+            if (!this._shift) return ch;
+            return this.SHIFTED[ch] || ch.toUpperCase();
+        },
+
+        cell() {
+            const grid = this.grid();
+            const row = grid[Math.min(this._row, grid.length - 1)] || [];
+            return row[Math.min(this._col, row.length - 1)];
+        },
+
+        isActionRow() { return this._row === this.ROWS.length; },
+
+        type(ch) {
+            if (this._value.length >= this._max) {
+                if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+                return;
+            }
+            this._value += ch;
+            if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+            this.render();
+        },
+
+        backspace() {
+            if (!this._value.length) return;
+            this._value = this._value.slice(0, -1);
+            if (typeof SoundManager !== 'undefined') SoundManager.playCancel();
+            this.render();
+        },
+
+        commit() {
+            const fn = this._commit;
+            const value = this._value;
+            this._commit = null;
+            this._abort = null;
+            this.close(true);
+            if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+            if (fn) fn(value);
+        },
+
+        abort() {
+            const fn = this._abort;
+            this._commit = null;
+            this._abort = null;
+            this.close(true);
+            if (typeof SoundManager !== 'undefined') SoundManager.playCancel();
+            if (fn) fn();
+        },
+
+        press() {
+            if (!this.isActionRow()) { this.type(this.cell()); return; }
+            switch (this.cell()) {
+                case 'shift': this._shift = !this._shift; this.render(); break;
+                case 'space': this.type(' '); break;
+                case 'back': this.backspace(); break;
+                case 'clear': this._value = ''; this.render(); break;
+                case 'done': this.commit(); break;
+                default: this.abort(); break;
+            }
+        },
+
+        move(dr, dc) {
+            const grid = this.grid();
+            if (dr) {
+                this._row = (this._row + dr + grid.length) % grid.length;
+                this._col = Math.min(this._col, grid[this._row].length - 1);
+            }
+            if (dc) {
+                const width = grid[this._row].length;
+                this._col = (this._col + dc + width) % width;
+            }
+            if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+            this.render();
+        },
+
+        // Read once a frame, ahead of whatever screen opened the sheet: while
+        // it is up nothing else gets the press, and every press is answered,
+        // so no key falls through to the page underneath.
+        update() {
+            if (!this._open || typeof Input === 'undefined') return false;
+            const held = (dir) => Input.isTriggered(dir) || Input.isRepeated(dir);
+            if (Input.isTriggered('cancel')) { this.abort(); return true; }
+            if (Input.isTriggered('menu')) { this.commit(); return true; }
+            if (Input.isTriggered('shift')) { this.backspace(); return true; }
+            if (Input.isTriggered('ok')) { this.press(); return true; }
+            if (held('up')) { this.move(-1, 0); return true; }
+            if (held('down')) { this.move(1, 0); return true; }
+            if (held('left')) { this.move(0, -1); return true; }
+            if (held('right')) { this.move(0, 1); return true; }
+            return true;
+        },
+
+        label(action) { return TX('Controller.text.' + action); },
+
+        tips() {
+            return [
+                { role: 'confirm', label: TX('Controller.text.tipKey') },
+                { face: 'X', label: TX('Controller.text.back') },
+                { face: 'Y', label: TX('Controller.text.done') },
+                { role: 'cancel', label: TX('Controller.text.cancel') }
+            ];
+        },
+
+        render() {
+            if (typeof document === 'undefined' || !document.body) return;
+            let el = document.getElementById(this.ID);
+            if (!el) {
+                el = document.createElement('div');
+                el.id = this.ID;
+                // The focus rings of the DOM menus stand down for a modal
+                // rather than clicking whatever is still lit behind it.
+                el.setAttribute('data-nav-modal', '');
+                document.body.appendChild(el);
+            }
+            const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
+                ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const grid = this.grid();
+            let keys = '';
+            grid.forEach((row, r) => {
+                const action = r === this.ROWS.length;
+                const cells = row.map((cell, c) => {
+                    const on = (r === this._row && c === this._col) ? ' on' : '';
+                    const face = action ? esc(this.label(cell)) : esc(cell);
+                    return `<span class="pad-text-key${on}${action ? ' pad-text-key--act' : ''}" ` +
+                        `data-pad-key="${esc(cell)}">${face}</span>`;
+                }).join('');
+                keys += `<div class="pad-text-row">${cells}</div>`;
+            });
+            el.innerHTML = `
+                <div class="pad-text-sheet">
+                    <div class="pad-text-title">${esc(this._title)}</div>
+                    <div class="pad-text-value">${esc(this._value)}<span class="pad-text-caret">|</span></div>
+                    <div class="pad-text-count">${this._value.length} / ${this._max}</div>
+                    <div class="pad-text-keys">${keys}</div>
+                </div>`;
+        }
+    };
+
+    Controller.textEntry = (opts) => PadText.open(opts);
+    Controller.textEntryOpen = () => PadText.isOpen();
+    Controller.closeTextEntry = () => PadText.close();
+    Controller.Text = PadText;
+    window.PadText = PadText;
 
     window.Controller = Controller;
     // Every screen that already asks for window.PadUI is asking this.

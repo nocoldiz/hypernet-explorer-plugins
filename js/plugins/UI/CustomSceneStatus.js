@@ -1231,13 +1231,17 @@
                 : description;
 
             $gameSystem._characterDescriptions[actor.actorId()] = truncatedDescription;
-            window.skipLocalization = true;
-            $gameMessage.add(T("SceneStatus.descriptionSet", { name: actor.name() }));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T("SceneStatus.descriptionSet", { name: actor.name() }), {
+                severity: 'info'
+              });
+            }
         } else {
-            window.skipLocalization = true;
-            $gameMessage.add(T("SceneStatus.invalidIndex"));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T("SceneStatus.invalidIndex"), {
+                severity: 'warning'
+              });
+            }
         }
     });
 

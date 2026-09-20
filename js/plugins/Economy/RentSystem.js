@@ -508,10 +508,12 @@
             return;
         }
         if (room.isRented) {
-            window.skipLocalization = true;
             $gameSystem._rentHideBust = true;
-            $gameMessage.add(_ri18n('already_rented'));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(_ri18n('already_rented'), {
+                severity: 'warning'
+              });
+            }
             return;
         }
         if ($gameParty.gold() >= room.price) {
@@ -583,10 +585,12 @@
         const mapId = $gameMap.mapId();
 
         if (!eventId) {
-            window.skipLocalization = true;
             $gameSystem._rentHideBust = true;
-            $gameMessage.add(_ri18n('error_event_id'));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(_ri18n('error_event_id'), {
+                severity: 'warning'
+              });
+            }
 
             return;
         }
@@ -605,10 +609,12 @@
             // Free access granted based on direction
             const eventName = $dataMap.events[eventId]?.name || 'Location';  // i18n-ignore  event-name read, matched not shown
             processDirectionalAccess(mapId, eventId);
-            window.skipLocalization = true;
             $gameSystem._rentHideBust = true;
-            $gameMessage.add(`${_ri18n('free_access_granted')} ${eventName}!`);
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(`${_ri18n('free_access_granted')} ${eventName}!`, {
+                severity: 'good'
+              });
+            }
 
             return;
         }
@@ -635,7 +641,11 @@
     PluginManager.registerCommand(PLUGIN_NAME, "showRoomList", args => {
         const rooms = getRoomsOnCurrentMap();
         if (rooms.length === 0) {
-            $gameMessage.add(T('Rent.noRooms'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('Rent.noRooms'), {
+                severity: 'warning'
+              });
+            }
             return;
         }
 
@@ -737,7 +747,6 @@
         $gameMessage.setChoices(choices, choices.length - 1, choices.length - 1);
         $gameMessage.setChoiceCallback(n => {
             const action = actions[n];
-            window.skipLocalization = true;
 
             if (action === 'free') {
                 processDirectionalAccess(mapId, eventId);

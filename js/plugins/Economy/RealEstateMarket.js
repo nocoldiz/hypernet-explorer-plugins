@@ -2285,10 +2285,14 @@
         ensureRealEstateManager();
         const income = $realEstateManager.calculateDailyIncome();
         const goldIncome = Math.floor(income * 100);
-        window.skipLocalization = true;
-        $gameMessage.add(t('dailyIncomeMsg', { income: income, gold: goldIncome }));
-        $gameMessage.add(t('propertiesOwnedMsg', { count: $realEstateManager.ownedProperties.length }));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.report([
+            t('dailyIncomeMsg', { income: income, gold: goldIncome }),
+            t('propertiesOwnedMsg', { count: $realEstateManager.ownedProperties.length })
+          ], {
+            severity: 'info'
+          });
+        }
 
     });
 
@@ -2297,9 +2301,11 @@
     PluginManager.registerCommand(pluginName, 'forceMarketUpdate', args => {
         ensureRealEstateManager();
         $realEstateManager.processDailyUpdate();
-        window.skipLocalization = true;
-        $gameMessage.add(t('marketUpdatedMsg'));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(t('marketUpdatedMsg'), {
+            severity: 'info'
+          });
+        }
     });
 
     PluginManager.registerCommand(pluginName, 'registerDestination', args => {

@@ -346,58 +346,23 @@
         if (SceneManager._scene instanceof Scene_Map && 
             !$gameMap.isEventRunning()) {
             
-            // Check for weapon-based action (merged with kick mechanics)
+            // Shift only raises switch 101 on its first press. It no longer
+            // performs the kick / weapon action: Shift is the dash key.
             if (event.key.toUpperCase() === 'SHIFT') {
-                // Set switch 101 ON on first Shift press
                 if (!shiftPressedBefore) {
                     $gameSwitches.setValue(101, true);
                     shiftPressedBefore = true;
                 }
-
-                // Check cooldown
-                const currentTime = Date.now();
-                if (currentTime - lastActionTime < KICK_CONFIG.ACTION_COOLDOWN) {
-                    return; // Still in cooldown
-                }
-                lastActionTime = currentTime;
-
-                handleWeaponBasedAction();
                 return;
             }
             
    
         }
         
-        // Only process menu hotkeys if on the map or in the menu, and menu is enabled
-        if ((SceneManager._scene instanceof Scene_Map && !$gameMap.isEventRunning()) || 
-             SceneManager._scene instanceof Scene_Menu) {
-            
-            if ($gameSystem.isMenuEnabled()) {
-            
-                // Process our custom menu hotkeys
-                switch (event.key.toUpperCase()) {
-                    case 'W': // Open the Hypernet Explorer browser
-                        // The browser is an app of HypernetOS, not a scene of
-                        // its own: the desktop is pushed and told to open it.
-                        if (typeof Scene_HypernetOS !== 'undefined') {
-                            SoundManager.playOk();
-                            SceneManager.push(Scene_HypernetOS);
-                            SceneManager.prepareNextScene({ autoLaunch: 'app-hypernet-browser' });
-                        }
-                        break;
-                    /*
-                    case 'J': // Skills
-                        SceneManager.push(Scene_Skill);
-                        break;
-                    case 'O': // Equipment
-                        SceneManager.push(Scene_Equip);
-                        break;
-                    case 'P': // Status (first party member)
-                        SceneManager.push(Scene_Status);
-                        break;*/
-                }
-            }
-        }
+        // Menu keys are NOT handled here. Every letter that opens a screen is
+        // declared once in the HOTKEYS table of UI/CustomMainMenuLayout.js and
+        // polled from Scene_Map: a second list here is how W came to open the
+        // hyperdeck while W was also the key the party walks north with.
     };
     
     // Get actor1's equipped weapon type

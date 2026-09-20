@@ -390,6 +390,15 @@ const GameOptions = {
         this._options[symbol] = { name, getter, setter, category, type, statusTextFn, cursorRightFn, cursorLeftFn };
     },
 
+    // Extra HTML appended to the right page of one option, under the usual
+    // explanation. A plugin whose setting has more to say than a sentence (a
+    // catalogue, a folder path, a set of links) registers it here instead of
+    // the options scene having to know about that subject.
+    _inspectExtras: {},
+    registerInspectExtra: function (symbol, htmlFn) {
+        this._inspectExtras[symbol] = htmlFn;
+    },
+
     // Hardcoded order and categorization. Gameplay is first so it opens by default.
     // Each tab is a list of titled groups: the settings of one subject sit
     // together under their own heading instead of one long undivided column.
@@ -417,7 +426,7 @@ const GameOptions = {
             categories: ['video'],
             groups: [
                 { key: 'display', symbols: ['fullscreen', 'TDDP_pixelPerfectMode', 'TDDP_allowStretching', 'showFps'] },
-                { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'partyHud', 'worldMinimap', 'titleBackground'] },
+                { key: 'interface', symbols: ['uiScale', 'fontScale', 'activeTheme', 'worldMinimap', 'titleBackground'] },
                 { key: 'battleView', symbols: ['enemyBattlers', 'lowModelDetail', 'galaxyQuality'] }
             ]
         },
@@ -1344,7 +1353,6 @@ window.GameOptions = GameOptions;
         globalLighting:  { on: 'GlobalLightingON',  off: 'GlobalLightingOFF' },
         charBasedSprites: { on: 'CharSpritesON',    off: 'CharSpritesOFF' },
         showFps:         { on: 'ShowFpsON',         off: 'ShowFpsOFF' },
-        partyHud:        { on: 'PartyHudON',        off: 'PartyHudOFF' },
         activeTheme:     { img: 'ActiveTheme' },
         battleMusicName: { img: 'BattleMusic' },
         battleMusicRandom: { img: 'BattleMusic' },
@@ -1650,6 +1658,13 @@ window.GameOptions = GameOptions;
             const on = i === curValue;
             descLines.push(`<div class="inspect-bullet-item${on ? ' opt-state-on' : ''}">${line}</div>`);
         });
+        // Whatever the owning plugin wants to add under the explanation.
+        const extraFn = GameOptions._inspectExtras[symbol];
+        let extraHTML = '';
+        if (extraFn) {
+            try { extraHTML = extraFn(w.getConfigValue(symbol)) || ''; }
+            catch (e) { console.warn('GameOptions: inspect extra for ' + symbol + ' failed', e); }
+        }
         const descHTML = descLines.length
             ? `<div class="inspect-section-title">${T('GameOptions.howItWorks')}</div>${descLines.join('')}`
             : '';
@@ -1668,6 +1683,7 @@ window.GameOptions = GameOptions;
                 <div class="inspect-spec-row"><span class="inspect-spec-label">${cmd.name}</span><span class="inspect-spec-value">${valStr}</span></div>
                 ${noteHTML}
                 ${restartHTML}
+                ${extraHTML}
             </div>`;
     };
 

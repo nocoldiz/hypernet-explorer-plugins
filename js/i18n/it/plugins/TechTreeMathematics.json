@@ -1,6 +1,6 @@
 {
   "name": "Matematica",
-  "blurb": "Dimostrazione e calcolo, da un test di primalità deterministico alla geometrizzazione delle varietà tridimensionali fino a una disuguaglianza la cui verifica non si è mai chiusa. Qui un risultato sta o cade per mano di un referee, non di uno strumento.",
+  "blurb": "Dimostrazioni e calcolo, compresi risultati la cui verifica non si e mai chiusa.",
   "nodes": {
     "math_aks": {
       "name": "Test di Primalità AKS",

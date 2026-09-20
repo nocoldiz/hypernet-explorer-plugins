@@ -328,9 +328,13 @@
  * @text Make a Camp
  * @desc Pitches a camp and opens the rest menu. A night at a camp also washes, feeds and reunites the party.
  *
+ * @command Forage
+ * @text Forage
+ * @desc Opens the forage duration list. The party searches the square for food and materials, at the cost of sleep and hunger.
+ *
  * @command CryogenicSleep
  * @text Cryogenic Sleep
- * @desc Opens the cryogenic pod date picker. The party is frozen exactly as it went in while the world runs on (up to 1 Jan 2012).
+ * @desc Opens the cryogenic pod date picker. The party is frozen exactly as it went in while the world runs on (shut for December 2012).
  *
  * @command SimulateTime
  * @text Simulate Time
@@ -526,6 +530,29 @@
     $gameVariables.setValue(gameTimeVariable, Math.max(0, minutes));
   }
 
+  //===========================================================================
+  // Time skips and the journeys that run through them
+  //===========================================================================
+  // Hours the party skips (sleeping, waiting, foraging, a simulated jump) are
+  // hours a journey already under way spends travelling too. Anything that
+  // counts a trip down subscribes here and is told how many game minutes the
+  // skip covered, so this plugin never has to know what a trip is.
+  const timeSkipListeners = [];
+
+  function onTimeSkipped(fn) {
+    if (typeof fn === "function") timeSkipListeners.push(fn);
+  }
+
+  function notifyTimeSkipped(minutes) {
+    const m = Number(minutes) || 0;
+    if (m <= 0 || timeSkipListeners.length === 0) return;
+    for (const fn of timeSkipListeners) {
+      try { fn(m); } catch (e) {
+        console.error("TimeDateSystem: time-skip listener failed", e);
+      }
+    }
+  }
+
   // Advances game time by `totalMinutes`, stepping through it in bounded
   // chunks so window.NPCSim.tick() runs for every chunk in between, this is
   // what lets NPCs keep living their schedules (needs, jobs, routines, thoughts,
@@ -569,6 +596,7 @@
     }
 
     updateGameDateVariable();
+    notifyTimeSkipped(totalMinutes);
     return currentTime;
   }
 
@@ -661,11 +689,17 @@
   // Cryogenic sleep helpers
   //=============================================================================
 
-  // The pod's last stop: 00:00 on 1 January 2012. A date at or past it always
-  // resolves to that exact moment, and a clock already standing there or later
-  // can no longer use the pod at all, which is what keeps the whole of 2012 out
-  // of cryogenic reach.
-  const CRYO_END = { year: 2012, month: 0, day: 1 };
+  // The pod's last stop before the lockout: 00:00 on 1 December 2012. A date at
+  // or past it always resolves to that exact moment, which is what keeps the
+  // last month of 2012 out of cryogenic reach. From 1 December 2012 the pod is
+  // dead until the year is out; once 2013 opens it runs again with no calendar
+  // cap at all, only the purse and the picker's own span.
+  const CRYO_LOCK_START = { year: 2012, month: 11, day: 1 };
+  const CRYO_LOCK_END = { year: 2013, month: 0, day: 1 };
+  // How far ahead the picker will look once the cap is behind us. Years are a
+  // legitimate stay in the pod, so the window is a decade wide. While the cap
+  // is still ahead it is the cap that ends the window, however far off it is.
+  const CRYO_MAX_SPAN_DAYS = 3650;
   // What a night in the pod costs. Money is shown in euros everywhere in this
   // game (euros = gold / 100), so 3000 gold a day is 30 euros a day.
   const CRYO_GOLD_PER_DAY = 3000;
@@ -678,8 +712,26 @@
     return date;
   }
 
-  function cryoEndDate() {
-    return new Date(CRYO_END.year, CRYO_END.month, CRYO_END.day, 0, 0, 0);
+  function cryoLockStartDate() {
+    return new Date(CRYO_LOCK_START.year, CRYO_LOCK_START.month, CRYO_LOCK_START.day, 0, 0, 0);
+  }
+
+  function cryoLockEndDate() {
+    return new Date(CRYO_LOCK_END.year, CRYO_LOCK_END.month, CRYO_LOCK_END.day, 0, 0, 0);
+  }
+
+  // The wall the pod cannot sleep past from where the clock stands now: the
+  // lockout's first day while it is still ahead, and nothing at all once the
+  // year has turned and the pod runs again.
+  function cryoCapDate() {
+    const now = getCurrentDateObj();
+    return now.getTime() < cryoLockStartDate().getTime() ? cryoLockStartDate() : null;
+  }
+
+  // December 2012: the pod is shut, and no date can be picked until 2013.
+  function isCryoLocked() {
+    const t = getCurrentDateObj().getTime();
+    return t >= cryoLockStartDate().getTime() && t < cryoLockEndDate().getTime();
   }
 
   // Whole days a calendar date stands at, counted from a fixed origin so the
@@ -714,49 +766,54 @@
     return getCryoDays(year, month, day) * CRYO_GOLD_PER_DAY;
   }
 
-  // How many nights the purse covers. Gold is the only limit on the pod besides
-  // the calendar, so this is what decides how far ahead a date may be picked.
+  // How many nights the purse covers. The picker offers dates beyond it, so
+  // this is what the panel prices against and what the lid refuses on.
   function getCryoAffordableDays() {
     if (!window.$gameParty) return 0;
     return Math.floor($gameParty.gold() / CRYO_GOLD_PER_DAY);
   }
 
-  // The window of dates the pod will accept: from tomorrow to whichever comes
-  // first, 1 January 2012 or the last night the party can pay for. Null when
-  // the pod cannot be used at all, with `reason` saying which wall was hit
-  // ("era" past the calendar cap, "funds" short of a single night's fare).
+  // The window of dates the pod will accept: from tomorrow to the lockout's
+  // first day while that is still ahead, and to CRYO_MAX_SPAN_DAYS out once 2013 has
+  // opened. The purse does not narrow it: a fare that cannot be paid is refused
+  // at the lid rather than hidden from the picker, so a stay of several years
+  // can always be dialled up and priced. Null when the pod cannot be used at
+  // all (the December 2012 lockout, or its eve).
   function getCryoDateRange() {
+    if (isCryoLocked()) return null;
     const now = getCurrentDateObj();
-    const end = cryoEndDate();
-    if (now.getTime() >= end.getTime()) return null;
+    const cap = cryoCapDate();
     const min = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const affordable = getCryoAffordableDays();
-    let max = new Date(now.getFullYear(), now.getMonth(), now.getDate() + affordable);
-    if (cryoDayStampOf(max) > cryoDayStampOf(end)) max = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    const max = cap
+      ? new Date(cap.getFullYear(), cap.getMonth(), cap.getDate())
+      : new Date(now.getFullYear(), now.getMonth(), now.getDate() + CRYO_MAX_SPAN_DAYS);
     if (cryoDayStampOf(max) < cryoDayStampOf(min)) return null;
     return {
       min: cryoDateParts(min),
       max: cryoDateParts(max),
       goldPerDay: CRYO_GOLD_PER_DAY,
+      affordableDays: getCryoAffordableDays(),
     };
   }
 
   // Why the pod is closed, for the message shown in its place.
   function getCryoUnavailableReason() {
-    if (getCurrentDateObj().getTime() >= cryoEndDate().getTime()) return "era";
+    // The lockout is the only closed door left: the purse prices the stay, it
+    // no longer decides whether a date can be picked at all.
+    if (isCryoLocked() || !getCryoDateRange()) return "era";
     return "funds";
   }
 
   // Minutes the clock must advance to reach the chosen wake date. The pod opens
-  // at the same time of day it was closed at, except on the 2012 cap, which is
-  // always midnight sharp. Date arithmetic counts the true number of days in
+  // at the same time of day it was closed at, except on the December 2012 cap,
+  // which is always midnight sharp. Date arithmetic counts the true number of days in
   // between, so leap years (and a 29 February start rolling to 1 March) are
   // handled by the calendar rather than by a fixed 365.
   function getCryoAdvanceMinutesForDate(year, month, day) {
     const now = getCurrentDateObj();
-    const end = cryoEndDate();
+    const cap = cryoCapDate();
     let target = new Date(year, month, day, now.getHours(), now.getMinutes(), 0);
-    if (target.getTime() >= end.getTime()) target = end;
+    if (cap && target.getTime() >= cap.getTime()) target = cap;
     return Math.max(0, minutesForDate(target) - getGameTimeMinutes());
   }
 
@@ -1009,6 +1066,14 @@
     }
   });
 
+  // Searching the country the party is standing in (window.Forage). Its own
+  // page of the rest menu, since it is neither resting nor idling.
+  PluginManager.registerCommand(pluginName, "Forage", function (args) {
+    if (SceneManager._scene instanceof Scene_Map && SceneManager._scene.openForageMenu) {
+      SceneManager._scene.openForageMenu();
+    }
+  });
+
   PluginManager.registerCommand(pluginName, "CryogenicSleep", function (args) {
     if (SceneManager._scene instanceof Scene_Map) {
       SceneManager._scene.openCryogenicSleepMenu();
@@ -1174,17 +1239,8 @@
       }/${maxSleep} (${this.sleepPercent()}%)`
     );
 
-    // If sleep was at 0 and is now above 0, restore MP to max
-    if (wasAtZero && this._sleep > 0) {
-      const mpDifference = this.mmp - this.mp;
-      if (mpDifference > 0) {
-        this.setMp(this.mmp);
-        debug(`Actor ${this._actorId} MP fully restored to ${this.mmp}`);
-        $gameTemp.addHungerSleepNotification(
-          `${this.name()} ${getText("mpRestored")}`
-        );
-      }
-    }
+    // No full-MP refund on waking from an empty meter: nothing drains MP for
+    // being tired any more, so there is nothing to give back.
 
     // Check for state changes
     this.checkStateChange("sleep", oldState);
@@ -1751,21 +1807,9 @@
         }
       }
 
-      // Drain MP if sleep is at 0
-      if (actor.sleep() <= 0 && actor.mp > 0) {
-        const mpDrain = Math.ceil(actor.mmp * 0.01); // 1% of max MP per step
-        const newMp = Math.max(0, actor.mp - mpDrain);
-        actor.setMp(newMp);
-
-        debug(`Actor ${actor._actorId} MP drained: ${mpDrain} (${actor.mp}/${actor.mmp})`);
-
-        // Show notification when MP reaches 0
-        if (actor.mp === 0) {
-          const lang = getCurrentLanguage();
-          const message = T("TimeDate.needs.outOfMp", { name: actor.name() });
-          $gameTemp.addHungerSleepNotification(message);
-        }
-      }
+      // Sleeplessness no longer drains MP. Being tired now costs the party the
+      // magic it would have recovered while walking (MovementSystem's
+      // walkMpSleepFactor), rather than burning the pool it already holds.
     }
 
     // What the party does about its own needs, as opposed to what the player
@@ -3331,6 +3375,256 @@
   };
 
   //=============================================================================
+  // Forage - the hours spent going over the country
+  //=============================================================================
+  // Waiting is the party standing still while the clock runs. Foraging is the
+  // same hours spent WORKING: everybody scatters across the square, turns over
+  // the deadfall, strips the hedge and comes back with whatever that country
+  // had to give. So it costs what work costs - sleep and food go down faster
+  // than they do waiting - and it pays in three currencies:
+  //
+  //   * what was found. The tables belong to the one plugin that already knows
+  //     what grows where (ProceduralMap/ProceduralTerrainInteractions.js): the
+  //     <Forage:> food pools, the per-family raw materials, and the base larder
+  //     a country nobody can name still gives up.
+  //   * Knowledge. Going over a place carefully is how anybody learns anything
+  //     about it, so the hours pay KP ($gameSystem.addKnowledge) as well.
+  //   * company. This is the one need foraging can FILL: a party that gets on
+  //     spends the afternoon calling to each other across a wood, and a party
+  //     that does not at least spends it too busy to sulk. What it is worth is
+  //     read off how well they actually get on (cohesion, below).
+  //
+  // The activity runs on the live map as an accelerated timelapse, exactly the
+  // way waiting does, and is started through the same rest menu.
+  //=============================================================================
+  window.Forage = {
+    // Per simulated minute, as a share of a whole meter. Both are roughly
+    // double what an idle hour costs: this is a day's work, not a day off.
+    SLEEP_PER_MINUTE:  0.0009,
+    HUNGER_PER_MINUTE: 0.0007,
+    // Company, per simulated minute of a well-matched party, as a share of the
+    // meter. Small: an afternoon together is worth about a fifth of a bar.
+    SOCIAL_PER_MINUTE: 0.0004,
+    // Finds per hour before training, and the Knowledge an hour of it teaches.
+    FINDS_PER_HOUR: 1.6,
+    KNOWLEDGE_PER_HOUR: 2,
+    // How often a find is something edible rather than something to build with.
+    FOOD_SHARE: 0.55,
+    // A whole party covers more ground than one person, but four people do not
+    // search four times as well: the extra hands are worth a share each, and
+    // the whole thing is capped.
+    HELPER_SHARE: 0.35,
+    HELPER_CAP: 2.0,
+
+    // ----------------------------------------------------------------------
+    // Where the party is
+    // ----------------------------------------------------------------------
+    // The biome under their feet: the procedural generator's current square
+    // first, then a static map's <Biome: X> note, and finally - on the world
+    // map itself, where there is no square to stand on - the world column the
+    // party is walking over. An empty answer is not an error: it is the signal
+    // to fall through to the base larder.
+    currentBiome() {
+      try {
+        const pg = window.$gameSystem && $gameSystem._procGenData;
+        const fromProc = pg && (pg.currentBiome || pg.currentBiomeName);
+        if (fromProc) return String(fromProc);
+        const meta = window.$dataMap && $dataMap.meta && $dataMap.meta.Biome;
+        if (meta && typeof meta === "string") return meta.trim();
+        const U = window.ProcGenUtils;
+        if (this.onWorldMap() && U && U.classifyWorldColumn) {
+          const x = $gamePlayer.x, y = $gamePlayer.y;
+          const cls = U.classifyWorldColumn((z) => $gameMap.tileId(x, y, z));
+          if (cls && cls.biome) return String(cls.biome);
+        }
+      } catch (e) {
+        console.error("TimeDateSystem: the forage could not read the country", e);
+      }
+      return "";
+    },
+
+    // Out on the world map a square is a whole country rather than a place to
+    // walk about in, which changes both halves of the activity: the biome is
+    // read off the tile column, and nobody is scattered, because a single step
+    // out there crosses into the next country.
+    onWorldMap() {
+      if (!window.$gameMap || !window.$gamePlayer) return false;
+      const id = (window.WorldMapReturn && window.WorldMapReturn.worldMapId) || 315;
+      return $gameMap.mapId() === id;
+    },
+
+    // ----------------------------------------------------------------------
+    // How well the party gets on
+    // ----------------------------------------------------------------------
+    // -1 for a party that cannot stand each other, 0 for one that has no
+    // opinion either way, +1 for one that would rather be working together
+    // than not. Read off the SAME trait and creed compatibility every other
+    // relationship in the game is read off (NPCEmpathize._traitCompatBonus),
+    // asked once per pair. A party of one has nobody to get on with, so it
+    // answers 0 and forages in silence.
+    cohesion() {
+      if (!window.$gameParty) return 0;
+      const members = $gameParty.members().filter(Boolean);
+      if (members.length < 2) return 0;
+      const helpers = window.NPCEmpathize && window.NPCEmpathize._helpers;
+      const compat = helpers && helpers._traitCompatBonus;
+      const profileOf = (actor) => {
+        try {
+          return window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile
+            ? window.NPCSocietyRegistry.getProfile(actor.name()) : null;
+        } catch (e) { return null; }
+      };
+      let total = 0;
+      let pairs = 0;
+      for (let i = 0; i < members.length; i++) {
+        for (let j = i + 1; j < members.length; j++) {
+          pairs++;
+          if (!compat) continue;
+          // Felt both ways round: A's profile against B, and B's against A.
+          // A member with no profile of their own simply contributes nothing,
+          // which is what "no opinion" means.
+          let felt = 0;
+          try {
+            const pa = profileOf(members[i]);
+            const pb = profileOf(members[j]);
+            if (pa) felt += compat(pa, members[j]) || 0;
+            if (pb) felt += compat(pb, members[i]) || 0;
+          } catch (e) { felt = 0; }
+          total += felt / 2;
+        }
+      }
+      if (!pairs) return 0;
+      // 30 points of compatibility is as warm as it is read: past that the
+      // party is simply on good terms and the afternoon cannot get any better.
+      const avg = total / pairs;
+      return Math.max(-1, Math.min(1, avg / 30));
+    },
+
+    // One simulated minute of company while the party works. A well-matched
+    // party FILLS the meter; an evenly-matched one holds it exactly where it
+    // is (working side by side is company enough not to lose ground); a party
+    // at each other's throats still drains, but slower than a lone traveller
+    // would, because there is at least somebody there.
+    stepSocial(deltaMin, cohesion) {
+      if (!window.PartyNeeds || !(deltaMin > 0)) return 0;
+      const c = Math.max(-1, Math.min(1, Number(cohesion) || 0));
+      const delta = maxNeed * this.SOCIAL_PER_MINUTE * deltaMin * c;
+      if (delta) window.PartyNeeds.addSocialToAll(delta);
+      return delta;
+    },
+
+    // ----------------------------------------------------------------------
+    // What the hours turn up
+    // ----------------------------------------------------------------------
+    // How many finds `hours` of searching is worth. More time, more finds, in
+    // a straight line: the player asked for a longer afternoon and gets one.
+    // Training in Foraging and the number of hands doing the searching both
+    // multiply it.
+    findCount(hours) {
+      const h = Math.max(0, Number(hours) || 0);
+      if (h <= 0) return 0;
+      let rate = this.FINDS_PER_HOUR;
+      try {
+        if (window.SpecializationXP && window.SpecializationXP.multiplier) {
+          rate *= window.SpecializationXP.multiplier("Foraging");  // i18n-ignore  Specialization.json id
+        }
+      } catch (e) { /* an untrained party still finds things */ }
+      const hands = window.$gameParty ? $gameParty.members().filter(Boolean).length : 1;
+      rate *= 1 + Math.min(this.HELPER_CAP, Math.max(0, hands - 1) * this.HELPER_SHARE);
+      const exact = h * rate;
+      // The fractional find is a chance at one more, so half an hour is worth
+      // something rather than being rounded away.
+      const whole = Math.floor(exact);
+      return whole + (Math.random() < exact - whole ? 1 : 0);
+    },
+
+    // One find, as an item id: wild food where the country grows any, and the
+    // raw material lying about in a country of that kind otherwise. A biome no
+    // family recognises has no food pool at all, so every find on it comes off
+    // the base larder - which is the point of having one.
+    rollFind(biome) {
+      const TI = window.TerrainInteractions;
+      if (!TI) return 0;
+      if (Math.random() < this.FOOD_SHARE && TI.forageFoodFor) {
+        const food = TI.forageFoodFor(biome);
+        if (food) return food;
+      }
+      return TI.forageMaterialFor ? TI.forageMaterialFor(biome) : 0;
+    },
+
+    // The Knowledge an afternoon of it teaches. Shared like every other KP:
+    // it is the party's, not one member's.
+    knowledgeFor(hours) {
+      const h = Math.max(0, Number(hours) || 0);
+      return Math.round(h * this.KNOWLEDGE_PER_HOUR);
+    },
+
+    // ----------------------------------------------------------------------
+    // The payout
+    // ----------------------------------------------------------------------
+    // Called once, when the hours are already behind the party. Returns the
+    // report it announces, so a caller (and the test harness) can read what
+    // the afternoon was worth without watching the toasts.
+    resolve(hours, opts) {
+      const h = Math.max(0, Number(hours) || 0);
+      const biome = (opts && opts.biome) || this.currentBiome();
+      const report = { hours: h, biome: biome, found: [], knowledge: 0 };
+      if (h <= 0 || !window.$gameParty) return report;
+
+      const counts = new Map();
+      const wanted = this.findCount(h);
+      for (let i = 0; i < wanted; i++) {
+        const id = this.rollFind(biome);
+        if (id) counts.set(id, (counts.get(id) || 0) + 1);
+      }
+      for (const [id, qty] of counts) {
+        const item = (typeof $dataItems !== "undefined" && $dataItems) ? $dataItems[id] : null;
+        if (!item) continue;
+        $gameParty.gainItem(item, qty);
+        report.found.push({ id: id, qty: qty, name: item.name });
+      }
+
+      report.knowledge = this.knowledgeFor(h);
+      if (report.knowledge > 0 && window.$gameSystem && $gameSystem.addKnowledge) {
+        $gameSystem.addKnowledge(report.knowledge);
+      }
+
+      // Searching a place is how Foraging is learned, and everybody was out
+      // there doing it, so nobody is a mere onlooker.
+      try {
+        if (window.SpecializationXP && window.SpecializationXP.award) {
+          window.SpecializationXP.award("Foraging", Math.max(1, Math.round(h)), { shared: true });  // i18n-ignore  Specialization.json id
+        }
+      } catch (e) { /* the finds are still in the pack */ }
+
+      this.announce(report);
+      return report;
+    },
+
+    // What was found, and what was learned. Two lines at most: the pack is the
+    // real record, and a list of every berry would be noise.
+    announce(report) {
+      const toast = window.ParchmentToast;
+      if (!report || !toast) return;
+      if (report.found.length) {
+        const names = report.found.map((f) => {
+          const name = window.translateText ? window.translateText(f.name) : f.name;
+          return f.qty > 1 ? name + " x" + f.qty : name;
+        });
+        toast.show(T("TimeDate.forage.found", { items: names.join(", ") }),
+          { severity: "good", key: "forage-found" });  // i18n-ignore  dedupe key
+      } else {
+        toast.show(T("TimeDate.forage.nothing"),
+          { severity: "warning", key: "forage-nothing" });  // i18n-ignore  dedupe key
+      }
+      if (report.knowledge > 0) {
+        toast.show(T("TimeDate.forage.learned", { points: report.knowledge }),
+          { severity: "good", key: "forage-kp" });  // i18n-ignore  dedupe key
+      }
+    },
+  };
+
+  //=============================================================================
   // StateNeeds - a status effect that is also a need being met
   //=============================================================================
   // Two of the ailments a battle hands out are not only ailments. Somebody put
@@ -4398,6 +4692,33 @@
   }
 
 
+  // Sitting the hours out is not sleeping: no HP, no states cleared, no rest
+  // bank. What idling does give back is the two meters that refill themselves,
+  // stamina (AP) and magic, at WAIT_RECOVERY_FACTOR of what the same hours in a
+  // bed would be worth. Magic is scaled by how tired the member is, exactly as
+  // walking is (MovementSystem.walkMpSleepFactor): a sleepless party waits and
+  // gets its wind back, not its spells.
+  const WAIT_RECOVERY_FACTOR = 0.5;
+
+  function waitMpSleepFactor(actor) {
+    const MS = window.MovementSystem;
+    if (MS && MS.walkMpSleepFactor) return MS.walkMpSleepFactor(actor);
+    return 1;
+  }
+
+  function applyWaitRecovery(hours) {
+    if (!window.$gameParty) return;
+    const share = restShare(hours) * WAIT_RECOVERY_FACTOR;
+    if (share <= 0) return;
+    $gameParty.members().forEach((actor) => {
+      if (!actor || !actor.isAlive || !actor.isAlive()) return;
+      actor.gainTp(Math.round(100 * share));
+      const mp = Math.round(actor.mmp * share * waitMpSleepFactor(actor));
+      if (mp > 0) actor.gainMp(mp);
+    });
+  }
+
+
   // Bedding carried in the packs: any item tagged <FullSleep> (the Bedroll,
   // the Comfort Sleeping Bag) is a bed wherever it is unrolled, so a party
   // holding one never sleeps rough. Held, not spent: rolling it out and
@@ -4483,8 +4804,14 @@
   // Live on-map waiting: no fade to black, only a light dim over the map.
   // Time-of-day lighting,
   // NPCs, cars, enemies, and autonomous party members move and simulate at super speed.
-  Scene_Map.prototype.startWaitSequence = function (hours) {
+  //
+  // opts.forage runs the SAME timelapse as a working afternoon instead of an
+  // idle one (window.Forage): the party scatters across the map, sleep and food
+  // drain faster, company is kept rather than lost, and the hours pay out in
+  // finds and Knowledge at the end.
+  Scene_Map.prototype.startWaitSequence = function (hours, opts) {
     hours = clampRestHours(hours);
+    const foraging = !!(opts && opts.forage);
     if (this.closeSleepMenu) this.closeSleepMenu(true);
     // The timelapse is a flourish, not a wait: a whole day used to run for
     // 2160 frames (36 real seconds) of accelerated map updates, which reads as
@@ -4519,8 +4846,25 @@
       startTime: startTime,
       nextNpcTick: startTime + 60,
       sleepStart: sleepStart,
-      sleepTarget: leader ? Math.max(0, sleepStart - (maxSleep * 0.0004) * totalMinutes) : 0,
+      // An afternoon of work tires the party about twice as fast as an
+      // afternoon of standing about does (window.Forage.SLEEP_PER_MINUTE).
+      sleepTarget: leader
+        ? Math.max(0, sleepStart - maxSleep * (foraging ? window.Forage.SLEEP_PER_MINUTE : 0.0004) * totalMinutes)
+        : 0,
+      forage: foraging,
+      // The country is read once, at the start: the party does not cross a
+      // biome boundary in the middle of an afternoon spent on one square.
+      biome: foraging ? window.Forage.currentBiome() : "",
+      // And so is how well they get on, which cannot change while they work.
+      cohesion: foraging ? window.Forage.cohesion() : 0,
     };
+  };
+
+  // Foraging is waiting with the party working through it. Its own entry point
+  // so the menu, the plugin command and the world-map row all say what they
+  // mean rather than passing a flag around.
+  Scene_Map.prototype.startForageSequence = function (hours) {
+    this.startWaitSequence(hours, { forage: true });
   };
 
   Scene_Map.prototype.updateWaitSequence = function () {
@@ -4566,15 +4910,27 @@
     // bounded few per frame so a long wait can never stall on them.
     runNpcTicksUpTo(a, currentTime, 2);
 
-    // Party needs degradation
+    // Minutes lived through here are minutes a journey in progress flies
+    // through too (fast travel, a ship crossing to another system).
+    notifyTimeSkipped(deltaMin);
+
+    // Party needs degradation. Work costs more than idleness: foraging drains
+    // food faster, and company is the one meter it does not touch here, since
+    // window.Forage settles that below off how well the party gets on.
     const leader = $gameParty.leader();
     if (leader) {
-      leader.reduceHunger((maxHunger * 0.0003) * deltaMin);
+      leader.reduceHunger(maxHunger * (a.forage ? window.Forage.HUNGER_PER_MINUTE : 0.0003) * deltaMin);
       if (leader.reduceHygiene) leader.reduceHygiene((maxSleep * 0.0005) * deltaMin);
-      if (leader.reduceSocial)  leader.reduceSocial((maxSleep * 0.0003) * deltaMin);
+      if (!a.forage && leader.reduceSocial) leader.reduceSocial((maxSleep * 0.0003) * deltaMin);
       if (leader.reduceLeisure) leader.reduceLeisure((maxSleep * 0.0003) * deltaMin);
       const frac = a.totalMinutes > 0 ? a.doneMinutes / a.totalMinutes : 1;
       leader._sleep = a.sleepStart + (a.sleepTarget - a.sleepStart) * frac;
+    }
+
+    // Company, for the party that is out there working together.
+    if (a.forage) {
+      try { window.Forage.stepSocial(deltaMin, a.cohesion); } catch (e) { /* the hours still pass */ }
+      this._stepForageScramble();
     }
 
     if (window.AddictionSystem) {
@@ -4620,6 +4976,76 @@
     }
   };
 
+  // The party going over the ground. Everybody who is standing still is sent
+  // off in a random direction, the leader included: at timelapse speed that
+  // reads as the whole party scattering across the square and criss-crossing
+  // it, which is exactly what they are doing. Nobody is teleported and nobody
+  // is walked through a wall - each is an ordinary move request, refused by the
+  // map the ordinary way - so the party ends the afternoon somewhere it could
+  // have walked to.
+  Scene_Map.prototype._stepForageScramble = function () {
+    if (window.Forage.onWorldMap()) return;
+    beginForageScatter();
+    const scatter = (character) => {
+      if (!character || character.isMoving() || !character.canMove || !character.canMove()) return;
+      try { character.moveRandom(); } catch (e) { /* a blocked step is a step not taken */ }
+    };
+    try {
+      if ($gamePlayer && !$gamePlayer.isInVehicle()) scatter($gamePlayer);
+      const followers = $gamePlayer && $gamePlayer.followers();
+      if (followers && followers.visibleFollowers) {
+        for (const f of followers.visibleFollowers()) {
+          // The engine ships its followers through(true) so a column can be
+          // dragged over walls and water. A member searching the ground on
+          // their own walks it like anybody else.
+          if (f.isThrough && f.isThrough()) f.setThrough(false);
+          scatter(f);
+        }
+      }
+    } catch (e) {
+      console.error("TimeDateSystem: the forage scramble failed", e);
+    }
+  };
+
+  // While the party is out searching the square, the caterpillar is off: the
+  // engine's chase (Game_Followers.updateMove) walks every follower back onto
+  // the tile the person in front just left, which would undo each random step
+  // the moment it was taken and leave the party standing on the leader as if
+  // nobody had moved at all. The chase is suppressed for the duration, and the
+  // party is called back in when the hours are done.
+  //
+  // The guard is installed on first use rather than at load: the loose party
+  // layer (Core/AutoIdleExplorer.js) wraps the same method and loads after this
+  // file, so patching here at load time would put this check underneath a
+  // wrapper that can return before ever reaching it.
+  let forageScatterHooked = false;
+  const beginForageScatter = () => {
+    if ($gameTemp) $gameTemp._forageScatter = true;
+    if (forageScatterHooked) return;
+    forageScatterHooked = true;
+    const _updateMove = Game_Followers.prototype.updateMove;
+    Game_Followers.prototype.updateMove = function () {
+      if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._forageScatter) return;
+      _updateMove.call(this);
+    };
+  };
+
+  // The afternoon is over: the followers go back to walking behind the leader,
+  // and the through flag the engine expects them to carry goes back on. Nobody
+  // is teleported home - the loose party layer, where it is running, walks them
+  // in on its own; where it is not, the caterpillar picks them up again.
+  const endForageScatter = () => {
+    if ($gameTemp) $gameTemp._forageScatter = false;
+    try {
+      const followers = $gamePlayer && $gamePlayer.followers();
+      if (followers && followers.visibleFollowers) {
+        for (const f of followers.visibleFollowers()) {
+          if (f.setThrough) f.setThrough(true);
+        }
+      }
+    } catch (e) { /* the hours still ended */ }
+  };
+
   Scene_Map.prototype._finishWaitAdvance = function () {
     showWaitDim(false);
 
@@ -4633,6 +5059,7 @@
         const endTime = a.startTime + a.totalMinutes;
         setGameTimeMinutes(endTime);
         updateGameDateVariable();
+        notifyTimeSkipped(a.totalMinutes - (a.doneMinutes || 0));
         runNpcTicksUpTo(a, endTime, 12);
         if (window.NPCLifeSim?.catchUp) {
           try { window.NPCLifeSim.catchUp(endTime); } catch (_) {}
@@ -4649,10 +5076,23 @@
       $gameTemp._sleepMenuOpen = false;
     }
 
+    // The hours themselves pay out: AP, and the magic a rested mind takes back
+    // with it.
+    try { applyWaitRecovery(a ? a.hours : 0); } catch (e) {
+      console.error("TimeDateSystem: wait recovery failed", e);
+    }
+
     // Waiting out the hours at a pitched camp buys the same evening a night
     // there does (see window.CampRest).
     try { window.CampRest.resolve(a ? a.hours : 0); } catch (e) {
       console.error("TimeDateSystem: the camp watch failed", e);
+    }
+
+    // An afternoon spent searching pays out what it found (window.Forage).
+    if (a && a.forage) {
+      try { window.Forage.resolve(a.hours, { biome: a.biome }); } catch (e) {
+        console.error("TimeDateSystem: the forage payout failed", e);
+      }
     }
 
     // Weather and the day/night tint are part of the hours passing, so they are
@@ -4664,6 +5104,9 @@
         $gameWeather.updateTimeOfDayTint(true);
       } catch (_) {}
     }
+
+    // The scatter is over: the caterpillar takes the party back.
+    endForageScatter();
 
     // Gather loose followers back to leader
     if (window.AutoIdle && window.AutoIdle.loose) {
@@ -4782,6 +5225,10 @@
     // bounded few per frame so a long sleep never stalls on them.
     runNpcTicksUpTo(a, currentTime, 2);
 
+    // Minutes lived through here are minutes a journey in progress flies
+    // through too (fast travel, a ship crossing to another system).
+    notifyTimeSkipped(deltaMin);
+
     // The body keeps working while asleep: hunger and the social/hygiene/fun
     // meters wear down over the slept minutes while the sleep meter fills.
     const leader = $gameParty.leader();
@@ -4823,6 +5270,7 @@
         const endTime = a.startTime + a.totalMinutes;
         setGameTimeMinutes(endTime);
         updateGameDateVariable();
+        notifyTimeSkipped(a.totalMinutes - (a.doneMinutes || 0));
         runNpcTicksUpTo(a, endTime, 12);
         if (window.NPCLifeSim?.catchUp) {
           try { window.NPCLifeSim.catchUp(endTime); } catch (_) {}
@@ -5385,6 +5833,8 @@
   window.TimeDateSystem.setGameTimeMinutes = setGameTimeMinutes;
   // Hours spent on one occupation, simulated forward with their cost paid.
   window.TimeDateSystem.passTime = passTime;
+  window.TimeDateSystem.onTimeSkipped = onTimeSkipped;
+  window.TimeDateSystem.notifyTimeSkipped = notifyTimeSkipped;
   window.TimeDateSystem.updateGameDateVariable = updateGameDateVariable;
   // The cryogenic pod, read by the date picker in TimeDateSystemUI.
   window.TimeDateSystem.getCryoDateRange = getCryoDateRange;
@@ -5394,6 +5844,7 @@
   window.TimeDateSystem.getCryoCost = getCryoCost;
   window.TimeDateSystem.getCryoDaysInMonth = cryoDaysInMonth;
   window.TimeDateSystem.getCryoDayStamp = cryoDayStamp;
+  window.TimeDateSystem.isCryoLocked = isCryoLocked;
   window.TimeDateSystem.getCurrentDateObj = getCurrentDateObj;
   // The rest menu builds its duration list off these two, so the cap and the
   // rough-sleep share live in one place (Core/TimeDateSystemUI.js).

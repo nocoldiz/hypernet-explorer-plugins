@@ -14,7 +14,27 @@
     "faceDown": "[ face down ]",
     "unclearNumbered": "The meaning is unclear... ({n})",
     "chooseSpread": "CHOOSE A SPREAD",
-    "readingComplete": "READING COMPLETE"
+    "readingComplete": "READING COMPLETE",
+    "actionRead": "Read tarots",
+    "actionReadWho": "Read the tarots for whom?",
+    "actionPick": "Pick a card",
+    "actionSpread": "Free spread",
+    "pickTitle": "Pick a Card",
+    "sandboxTitle": "Free Spread",
+    "sandboxDeck": "DECK {count}",
+    "sandboxShuffle": "SHUFFLE",
+    "sandboxCut": "CUT",
+    "sandboxCastle": "CASTLE",
+    "sandboxScramble": "SCRAMBLE",
+    "sandboxGather": "GATHER",
+    "sandboxShuffled": "The deck is shuffled.",
+    "sandboxDrawn": "{name} comes off the top of the deck.",
+    "sandboxDeckEmpty": "There is nothing left in the deck.",
+    "sandboxScrambled": "{count} cards, face down, all over the cloth.",
+    "sandboxGathered": "Every card is back in the deck.",
+    "sandboxCastleFew": "Too few cards on the table to build anything.",
+    "sandboxCutDone": "The deck is cut and set back down.",
+    "sandboxCastleBuilt": "A house of {levels} storeys, {cards} cards."
   },
   "cards": {
     "The Fool": {
@@ -351,7 +371,7 @@
   "spreads": {
     "three": {
       "name": "THE THREE FATES",
-      "blurb": "Three cards. The shape of a life in one glance.",
+      "blurb": "Three cards: past, present and future.",
       "slots": {
         "0": "PAST",
         "1": "PRESENT",
@@ -360,7 +380,7 @@
     },
     "cross": {
       "name": "THE ELEMENTAL CROSS",
-      "blurb": "Five cards. What holds you, and what pulls.",
+      "blurb": "Five cards in a cross.",
       "slots": {
         "0": "THE HEART",
         "1": "WHAT IS BEHIND",
@@ -371,7 +391,7 @@
     },
     "horseshoe": {
       "name": "THE HORSESHOE",
-      "blurb": "Seven cards laid in an arc. The long answer.",
+      "blurb": "Seven cards laid in an arc.",
       "slots": {
         "0": "THE PAST",
         "1": "THE PRESENT",
@@ -384,7 +404,7 @@
     },
     "celtic": {
       "name": "THE CELTIC CROSS",
-      "blurb": "Ten cards. The full working. Do not ask it twice.",
+      "blurb": "Ten cards in a Celtic cross.",
       "slots": {
         "0": "THE SIGNIFICATOR",
         "1": "THE CROSSING",
@@ -396,6 +416,13 @@
         "7": "YOUR HOUSE",
         "8": "HOPES AND FEARS",
         "9": "THE OUTCOME"
+      }
+    },
+    "single": {
+      "name": "THE CARD",
+      "blurb": "One card off the top.",
+      "slots": {
+        "0": "THE CARD"
       }
     }
   },

@@ -666,7 +666,9 @@ UnlockingBlocks.version = 3.0;
     // open window.
     function offerToForge() {
         const item = lockpickItem();
+        window.skipLocalization = true;
         $gameMessage.add(t('craftOffer', { item: item.name, materials: recipeBill() }));
+        window.skipLocalization = false;
         $gameMessage.setChoices([t('craftYes'), t('craftNo')], 0, 1);
         $gameMessage.setChoiceCallback(choice => {
             if (choice !== 0) return;
@@ -694,7 +696,11 @@ UnlockingBlocks.version = 3.0;
 
             const skeleton = $dataItems[SKELETON_KEY_ID];
             if (skeleton && $gameParty.hasItem(skeleton)) {
-                $gameMessage.add(t('usedSkeletonKey'));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(t('usedSkeletonKey'), {
+                    severity: 'good'
+                  });
+                }
                 $gameParty.loseItem(skeleton, 1);
                 if (successSwitch > 0) $gameSwitches.setValue(successSwitch, true);
                 if (this.currentEventId > 0 && ['A', 'B', 'C', 'D'].includes(successSelfSwitch)) {
@@ -709,7 +715,12 @@ UnlockingBlocks.version = 3.0;
                 // No pick, but the steel for one: the party can bend a pick at
                 // the door rather than walk back to a workbench.
                 if (canForgeLockpick()) offerToForge();
-                else $gameMessage.add(t('noLockpicks'));
+                else if (window.ParchmentToast) {
+                    window.ParchmentToast.show(t('noLockpicks'), {
+                        severity: 'warning',
+                        key: 'lockpick:none'  // i18n-ignore  dedupe key
+                    });
+                }
                 return;
             }
 

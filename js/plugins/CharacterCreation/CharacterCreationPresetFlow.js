@@ -418,14 +418,19 @@
         }
       }
 
-      // Apply preset specializations
+      // Apply preset specializations. A dossier is written in the 1-to-5 scale
+      // the sheet reads in (1 = Untrained, 5 = Master); the board counts the
+      // same standing as a card rank one lower, so the two are not the same
+      // number and writing one into the other put every dossier a tier above
+      // what it says.
       if (preset.specializations && Array.isArray(preset.specializations)) {
         if (!actor._specTrained) actor._specTrained = {};
         preset.specializations.forEach((entry) => {
           if (entry && entry.id) {
-            actor._specTrained[entry.id] = entry.level;
+            const level = Math.max(1, Math.min(5, Number(entry.level) || 1));
+            actor._specTrained[entry.id] = level - 1;
             if (actor.setSpecializationTrainedLevel) {
-              actor.setSpecializationTrainedLevel(entry.id, entry.level);
+              actor.setSpecializationTrainedLevel(entry.id, level);
             }
           }
         });
@@ -547,7 +552,24 @@
         }
       }
 
-      if (actor._morality == null) actor._morality = 0;
+      if (preset.morality != null) actor._morality = Number(preset.morality);
+      else if (actor._morality == null) actor._morality = 0;
+      // The creed, the standing and the hometown a dossier states. Left unread,
+      // a saved dossier opened its Bio page on a fresh roll instead of on the
+      // answers it was filed with.
+      if (preset.ideologyId) {
+        actor._ideologyId = preset.ideologyId;
+        if (window.NPCSocietyRegistry && window.NPCSocietyRegistry.getActorProfile) {
+          const prof = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
+          if (prof) prof.ideologyId = preset.ideologyId;
+        }
+      }
+      if (preset.hormones != null && actor.setHormoneBalance) {
+        actor.setHormoneBalance(Number(preset.hormones));
+      }
+      // One town stands for the whole party, so a dossier only answers for it
+      // when nobody has already.
+      if (preset.hometown && !$gameSystem._ccHometown) $gameSystem._ccHometown = preset.hometown;
       if (preset.jobId !== undefined) {
         actor._jobId = Number(preset.jobId) || 0;
       } else if (!actor._jobId) {
@@ -574,7 +596,13 @@
         }
       }
 
-      if (!actor._ccBloodType && !actor._bloodType) {
+      if (preset.bloodType) {
+        actor._ccBloodType = preset.bloodType;
+        actor._bloodType = preset.bloodType;
+        if (window.BloodTypeService && window.BloodTypeService.setForActor) {
+          window.BloodTypeService.setForActor(actor, preset.bloodType);
+        }
+      } else if (!actor._ccBloodType && !actor._bloodType) {
         const bloods = (window.BloodTypeService && window.BloodTypeService.list && window.BloodTypeService.list()) || [];
         const common = bloods.filter((b) => b && b.rarityKey === "common");
         const pool = common.length ? common : bloods;

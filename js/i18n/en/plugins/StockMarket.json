@@ -53,11 +53,11 @@
   "assets": {
     "oil": {
       "name": "OIL",
-      "description": "The barrel the whole continent runs on. Every refinery, every tank of fuel and every shop mark-up is quoted off this line."
+      "description": "Crude oil, priced by the barrel. Fuel prices and many shop mark-ups follow this line."
     },
     "souls": {
       "name": "SOUL",
-      "description": "Crystallised essence, traded by weight. It drifts back to the resonance median no matter what the floor thinks it is worth."
+      "description": "Crystallised essence, traded by weight. The price drifts back toward the resonance median."
     }
   },
   "sectors": {

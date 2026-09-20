@@ -7,16 +7,16 @@
     "Books": "책",
     "Food": "음식",
     "Homeopathy": "동종요법",
-    "Jungle": "정글",
     "Lifestyle": "라이프스타일",
     "Magic": "마법",
     "Medical": "의료",
     "Monsters": "몬스터",
-    "Plants": "식물",
     "Recovery": "",
     "Survival": "생존",
     "Trash": "쓰레기",
-    "Misc": ""
+    "Misc": "",
+    "Vehicles": "차량",
+    "Fertility": "생식"
   },
   "ui": {
     "windowTitle": "",

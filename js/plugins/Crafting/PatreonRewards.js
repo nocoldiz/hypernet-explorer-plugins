@@ -149,6 +149,37 @@
   const PROC_MAP_ID = 636;
 
   // ==========================================================================
+  // The sealed surface
+  // ==========================================================================
+  // Switch 199 ("EarthDestroyed"), raised by GalaxySim_Core the day Nibiru
+  // strikes - 21 December 2012. A vault outlives the planet it was dug into:
+  // the cellars are still there and still reachable from orbit, but the world
+  // square over the hatch is not, so there is nothing left to climb out ONTO.
+  // From that day Floor -1's Upstairs refuses, and so does the plugin command
+  // that puts a party back on their own lid.
+  //
+  // The random-hatch fallback is deliberately NOT sealed: it is what a broken
+  // session uses to get out of a floor it should never have been on, and a
+  // party with nowhere to go is worse than a party on a square that is gone.
+  const SW_EARTH_LOST = 199;
+
+  function earthGone() {
+    try {
+      return !!(typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(SW_EARTH_LOST));
+    } catch (e) { return false; }
+  }
+
+  /** Is there still a surface over the hatch to climb out to? */
+  function surfaceSealed() { return earthGone(); }
+
+  /** Say so, once, in the voice the rest of the vault speaks in. */
+  function saySealed() {
+    if (window.ParchmentToast && window.ParchmentToast.show) {
+      window.ParchmentToast.show(T('Patron.vaultSealed'), { severity: 'warning' });
+    }
+  }
+
+  // ==========================================================================
   // The patrons
   // ==========================================================================
   // js/db/WorldGen/Patrons.json, written by tools/patrons/gen_patrons.js from
@@ -504,7 +535,7 @@
    * house system its own fallbacks.
    */
   function surfaceOnRandomHatch() {
-    return surfaceOnHatch(randomKnownHatch());
+    return placeOnHatch(randomKnownHatch());
   }
 
   /**
@@ -538,6 +569,13 @@
    * command. False where the square cannot be built.
    */
   function surfaceOnHatch(hatch) {
+    // The square this hatch is cut into does not exist any more.
+    if (surfaceSealed()) { saySealed(); return false; }
+    return placeOnHatch(hatch);
+  }
+
+  /** The move itself, with no question asked about whether it is allowed. */
+  function placeOnHatch(hatch) {
     if (!hatch) return false;
     if (typeof $gameSystem === "undefined" || !$gameSystem.generateOriginBiomeMap) return false;
     const built = $gameSystem.generateOriginBiomeMap({ worldX: hatch.x, worldY: hatch.y });
@@ -1038,6 +1076,12 @@
   function openHatch(tile) {
     const patron = patronOfHatchTile(tile);
     if (!patron) return false;
+    // Finding the lid IS the proof. Typing the coordinates at creation was
+    // never meant to be the only way in: a party that walks onto a patron's
+    // hatch has stood on the square, which is the same fact the crypt asks for,
+    // so the world is claimed here as well and the vessel goes out with it.
+    const at = squareOfMapTile(tile);
+    if (at) claimSquare(at.world.x, at.world.y);
     const PHS = window.ProceduralHouseSystem;
     if (!PHS || typeof PHS.enterTileStackAt !== "function") {
       warn("ProceduralHouseSystem is missing: the hatch cannot open");
@@ -1104,10 +1148,12 @@
   // the same floor of the same vault, and they are spread evenly over the nine
   // rather than crowding the one the party arrives on.
 
-  function floorIndexForName(name) {
-    let seed = 0;
-    for (const ch of String(name || "")) seed = ((seed * 31) + ch.charCodeAt(0)) >>> 0;
-    return seed % VAULT_FLOORS.length;
+  // Which floor somebody is on is no longer a fact about their name. A vault
+  // resident is somewhere in the vault, and where in it is rolled again on
+  // every descent, so nine floors are nine chances of running into them
+  // instead of one step they are always standing on.
+  function randomVaultFloor() {
+    return Math.floor(Math.random() * VAULT_FLOORS.length);
   }
 
   // A tile on this floor somebody can stand on, picked by name so they are
@@ -1132,9 +1178,14 @@
   }
 
   /**
-   * Put this floor's share of the world's idle companions on it. Answers how
-   * many were newly spawned; does nothing at all outside a vault, in a world
-   * whose coordinates nobody has proved, or where the roster is empty.
+   * Put this floor's share of the vault's residents on it. Answers how many
+   * were newly spawned; does nothing at all outside a vault, or in a world
+   * whose coordinates nobody has proved.
+   *
+   * WHO lives down here is the Dynamics board's business, not this plugin's:
+   * an idle companion is assigned to the vault there, the same way they are
+   * assigned to a house or to the ship, and window.PartyLodging is the one
+   * answer to where anybody lives. This is only the floor they are put on.
    */
   function populateVaultFloor() {
     if (typeof $gameMap === "undefined" || !$gameMap) return 0;
@@ -1142,15 +1193,16 @@
     if (floor < 0) return 0;
     // Locked, and nobody is down there: the vault is not part of this world yet.
     if (!claimedSquare()) return 0;
-    const roster = window.PartyRoster;
+    const LG = window.PartyLodging;
     const VP = window.PartyPresence;
-    if (!roster || typeof roster.worldInactive !== "function") return 0;
+    if (!LG || typeof LG.residents !== "function") return 0;
     if (!VP || typeof VP.spawnOne !== "function") return 0;
     if (!$dataMap) return 0;
     if (!$dataMap.events) $dataMap.events = [null];
     let spawned = 0;
-    for (const member of roster.worldInactive()) {
-      if (floorIndexForName(member.name) !== floor) continue;
+    for (const member of LG.residents()) {
+      if (member.lodging !== "vault") continue;   // i18n-ignore: place id
+      if (randomVaultFloor() !== floor) continue;
       const key = "vaultresident:" + member.name;  // i18n-ignore: event key
       if (VP.findEvent && VP.findEvent(key)) continue;
       const spot = vaultSpotForName(member.name);
@@ -1575,6 +1627,8 @@
     knownHatches,
     randomKnownHatch,
     surfaceOnRandomHatch,
+    surfaceSealed,
+    saySealed,
     ownHatch,
     surfaceOnHatch,
     goToOwnHatch,
@@ -1593,7 +1647,7 @@
     vaultPatron,
     vaultFloorPatron,
     populateVaultFloor,
-    floorIndexForName,
+    randomVaultFloor,
     lootRarityBonus,
     containerTierWeight,
     ensureSystems,

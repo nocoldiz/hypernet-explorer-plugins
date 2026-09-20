@@ -261,7 +261,7 @@
   "mail": {
     "title": "Posta Hypernet",
     "heading": "Posta in arrivo",
-    "hint": "Posta trattenuta per questo terminale. Non si può rispondere a nulla: il ripetitore va in una sola direzione dal passaggio al 2000.",
+    "hint": "Posta trattenuta per questo terminale. Non si puo rispondere: il ripetitore e a senso unico dal passaggio all'anno 2000.",
     "from": "Da",
     "subject": "Oggetto",
     "received": "Ricevuto",

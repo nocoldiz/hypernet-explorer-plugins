@@ -254,6 +254,9 @@
     { test: /taser|stun|shock|\bemp\b|neural|scrambler|paralyz/i,
       sounds: ["Taser1", "Taser2"],
       reload: "Reload" },
+    { test: /foam|electro-net|net launcher|microwave|denial/i,
+      sounds: ["AirGun1", "AirGun2", "AirGun3"],
+      reload: "Reload" },
     { test: /brainwave|mind|thought|psionic|telepath|headache|knowledge|adaptive combat|cyberarm|arsenal|projector/i,
       sounds: ["Psi1", "Psi2"],
       reload: "Reload" },
@@ -280,7 +283,7 @@
     { test: /shotgun|blunderbuss|riot gun|scattergun|\b12 gauge\b/i,
       sounds: ["Shotgun1", "Shotgun2", "Shotgun3", "Shotgun4", "Shotgun5", "Shotgun6", "Shotgun7", "Shotgun8"],
       reload: "Reload3" },
-    { test: /minigun|gatling|machine gun|\bhmg\b|\blmg\b|tommy|thompson|chain gun|volley|autocannon|repeater/i,
+    { test: /minigun|gatling|machine gun|\bhmg\b|\blmg\b|tommy|thompson|chain gun|volley|autocannon|repeater|rotary/i,
       sounds: ["MachineGun1", "MachineGun2", "MachineGun3", "UziAutomatic"],
       reload: "Reload5" },
     { test: /sniper|bolt-action|bolt action|\bdmr\b|marksman|anti-materi[ae]l/i,
@@ -1433,6 +1436,33 @@
     this.updateWeaponSprite();
   };
 
+  /**
+   * Whether the hands on screen belong to `actor`. With CPU party members the
+   * companions fight by themselves and the first person view stays the
+   * player's own, so a companion's turn never puts their weapon in frame: the
+   * blow is still swung, heard and drawn by WeaponHitFX, only the held 3D
+   * model is left out. The option is ignored in multiplayer, where the other
+   * slots hold other players rather than the auto battle AI (Core/GameOptions.js).
+   */
+  Spriteset_Battle.prototype.isCpuPartyCompanion = function (actor) {
+    if (!actor) return false;
+    const active = (typeof window.isCpuPartyMembersActive === "function")
+      ? window.isCpuPartyMembersActive()
+      : (typeof ConfigManager !== "undefined" && ConfigManager.cpuPartyMembers === true);
+    if (!active) return false;
+    return actor !== this.getWeaponOverlayOwner();
+  };
+
+  /** The party member whose hands the overlay draws: the player's character. */
+  Spriteset_Battle.prototype.getWeaponOverlayOwner = function () {
+    const members = $gameParty.battleMembers();
+    if (window.$gameSplitScreen && window.$gameSplitScreen.active) {
+      const activator = $gameMessage._eventActivator || "p1";
+      if (activator === "p2" && members.length >= 2) return members[1];
+    }
+    return members[0] || null;
+  };
+
   Spriteset_Battle.prototype.getCurrentBattleActor = function (
     allowFallback = true
   ) {
@@ -1513,6 +1543,15 @@
     const actor = this.getCurrentBattleActor(false);
     if (!actor) {
       this.clearWeaponModels();
+      return;
+    }
+
+    // A CPU companion's turn draws no weapon at all: the view keeps the
+    // player's own hands out of frame rather than handing them a companion's
+    // sword for the turn (isCpuPartyCompanion).
+    if (this.isCpuPartyCompanion(actor)) {
+      this.clearWeaponModels();
+      this._weaponActorId = actor.actorId();
       return;
     }
 
@@ -1749,6 +1788,10 @@
     if (this._weaponModelsExiting) return;
     const actor = this.getCurrentBattleActor();
     if (!actor) return;
+    // Nothing is held for a CPU companion, so there is no model to swing. The
+    // hit effect and the weapon's sounds are played by the action itself and
+    // are untouched by this.
+    if (this.isCpuPartyCompanion(actor)) return;
     if (window.WeaponSystemProcedural) WeaponSystemProcedural.patchSprite3DWeapon();
 
     const weapons = actor.weapons();

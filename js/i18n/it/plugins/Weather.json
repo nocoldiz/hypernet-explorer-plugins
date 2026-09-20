@@ -7,8 +7,7 @@
     "Unknown": "Sconosciuto"
   },
   "app": {
-    "appName": "Whether Channel",
-    "tagline": "Che piova o che non piova.",
+    "appName": "Whether Channel",
     "location": "Località",
     "here": "Dove sono",
     "updated": "Ultima osservazione: {date}",

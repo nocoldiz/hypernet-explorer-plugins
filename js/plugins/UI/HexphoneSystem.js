@@ -385,7 +385,9 @@
         if (window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
             window.ParchmentToast.show(text);
         } else if ($gameMessage && !$gameMessage.isBusy()) {
+            window.skipLocalization = true;
             $gameMessage.add(text);
+            window.skipLocalization = false;
         }
     }
 

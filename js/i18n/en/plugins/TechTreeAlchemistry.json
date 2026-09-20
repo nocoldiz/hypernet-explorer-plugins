@@ -1,6 +1,6 @@
 {
   "name": "Alchemistry",
-  "blurb": "Transmutation reduced to bench procedure, from chiral hydrogenation to the mapping of the receptors a cell tastes the world with. Filed alongside the preparations that never returned a positive assay.",
+  "blurb": "Chemistry and transmutation research, including the preparations that failed.",
   "nodes": {
     "chem_chiral": {
       "name": "Chiral Catalysis",

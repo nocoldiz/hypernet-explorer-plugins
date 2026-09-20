@@ -128,6 +128,10 @@
     "mapBattleLockedByHost": "Map Battle Mode is set by the host of this session.",
     "hostTurnedMapBattleOn": "The host turned Map Battle Mode on for everyone.",
     "hostTurnedMapBattleOff": "The host turned Map Battle Mode off for everyone.",
-    "joinedYourBattle": "{name} joined your battle."
-  }
+    "joinedYourBattle": "{name} joined your battle.",
+    "endSession": "End LAN Session",
+    "endSessionDesc": "You are in a LAN session. Close the link and go back to your own world."
+  },
+  "endSplitScreen": "End Split-Screen",
+  "endSplitScreenDesc": "A split-screen session is running. Hand the second pad back and play alone again."
 }

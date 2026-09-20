@@ -32,14 +32,32 @@
  *   Recentre  tap SHIFT (X/square) without moving the view
  *
  * Card art comes from img/arcana/0.png .. 21.png, meanings from
- * js/i18n/<lang>/tarot.json.
+ * js/i18n/<lang>/plugins/AnimatedTarotReading.json.
  *
  * Requires: Battler3D/PSXShader (loads earlier), js/libs/three.min.js.
  * Optional: Core/AnalogStickInput for stick and trigger camera control.
  *
+ * The deck is also an item. A tarot deck in the backpack draws its own
+ * buttons instead of Use, through <Actions: tarotRead, tarotPick,
+ * tarotSpread> and the ItemActions registry:
+ *   Read tarots   a three card reading for a chosen party member
+ *   Pick a card   one card off a shuffled deck, upright or reversed
+ *   Free spread   the deck loose on the table, under a physics solver:
+ *                 drag cards about, turn them over, shuffle, cut, deal to
+ *                 hand and lay them out, build a house of cards or
+ *                 scramble the lot face down
+ *
  * @command openTarot
  * @text Open Tarot Reading
  * @desc Opens the tarot card reading interface
+ *
+ * @command pickOneCard
+ * @text Pick a Card
+ * @desc Draws one card off a shuffled deck and reads what it means
+ *
+ * @command freeSpread
+ * @text Free Spread
+ * @desc Opens the deck on the table to be handled freely
  *
  * @command readTarotToNPC
  * @text Read Tarot to NPC
@@ -218,7 +236,12 @@
 
     // Centre each spread on the cloth and record how much table it occupies, so
     // the camera can frame a ten card working as readily as a three card one.
-    for (const spread of SPREADS) {
+    // The one card the pick turns over. It is never offered in the spread
+    // menu, so it stands beside the list rather than in it, and is given the
+    // same treatment by the loop below.
+    const SINGLE_SPREAD = { id: 'single', slots: [{ x: 0, z: 0 }] };
+
+    for (const spread of SPREADS.concat([SINGLE_SPREAD])) {
         let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
         for (const s of spread.slots) {
             minX = Math.min(minX, s.x); maxX = Math.max(maxX, s.x);
@@ -2340,6 +2363,1443 @@
     }
 
     //=========================================================================
+    // THE FREE SPREAD
+    //
+    // A sandbox rather than a reading: the whole deck is on the cloth and the
+    // player handles it. Cards are thin boxes in a small rigid body solver
+    // written for this table - there is no physics engine in the project, and
+    // a house of cards only stands if friction and resting contacts are
+    // answered properly, so this is a sequential impulse solver with Baumgarte
+    // correction, two substeps a frame, and bodies that fall asleep once they
+    // settle so a finished castle costs nothing to hold up.
+    //
+    // Units are the table's: a card is 0.62 x 1.04 and the cloth is at y=0.008.
+    //=========================================================================
+    const SAND_G = -9.4;             // gravity, table units per second squared
+    const SAND_SUB = 2;              // physics substeps per frame
+    const SAND_ITER = 8;             // solver iterations per substep
+    const SAND_FRICTION = 0.92;      // card on card: high, and what holds a castle up
+    const SAND_REST = 0.02;          // cards do not bounce
+    const SAND_SLOP = 0.0015;        // penetration tolerated before it is pushed out
+    const SAND_BAUM = 0.3;           // how hard penetration is corrected
+    const SAND_SLEEP_T = 0.5;       // how long it has to be still before it sleeps
+    const SAND_SLEEP_D = 0.0012;    // travel in a frame below which a card is still
+    // A card resting on the cloth still carries one substep of gravity in its
+    // velocity, because the contact that cancels it is found on the NEXT
+    // substep. Anything slower than twice that is standing still.
+    const SAND_SLEEP_V = Math.abs(SAND_G) / 60 / SAND_SUB * 2;
+    const SAND_SLEEP_W = 0.35;
+    const SAND_MARGIN = 0.004;      // cards are in contact a hair before they touch
+    const SAND_WAKE_V = 0.22;       // speed a card has to carry to disturb a sleeping one
+    const TABLE_Y = 0.008;           // the cloth
+    const SAND_RIM = TABLE_R - 0.18; // the rim that keeps cards on the table
+
+    // One card in the sandbox: a box body, with the mesh hung off it and told
+    // where to be once a frame.
+    class CardBody {
+        constructor(arcana) {
+            this.arcana = arcana;
+            this.p = new THREE.Vector3(0, TABLE_Y + CARD_T, 0);
+            this.q = new THREE.Quaternion();
+            this.v = new THREE.Vector3();
+            this.w = new THREE.Vector3();
+            this.half = new THREE.Vector3(CARD_W / 2, CARD_T / 2, CARD_H / 2);
+            // A card weighs next to nothing. The inertia is a box's, which is
+            // what makes one stood on its edge topple the way it should.
+            this.mass = 0.02;
+            this.invMass = 1 / this.mass;
+            const k = this.mass / 12;
+            const x2 = (2 * this.half.x) ** 2;
+            const y2 = (2 * this.half.y) ** 2;
+            const z2 = (2 * this.half.z) ** 2;
+            this.invI = new THREE.Vector3(
+                1 / (k * (y2 + z2)),
+                1 / (k * (x2 + z2)),
+                1 / (k * (x2 + y2))
+            );
+            this.asleep = false;
+            this.stillT = 0;
+            this.held = false;      // the player has it under the cursor
+            this.inDeck = false;    // stacked in the deck, out of the simulation
+            this.inHand = false;    // held in hand, off the table entirely
+            this.faceUp = false;
+            this.reversed = false;
+            this.mesh = null;
+            this.root = null;
+            this._m = new THREE.Matrix4();
+            this.markPose();
+        }
+
+        // The three axes of the box in world space.
+        axes() {
+            this._m.makeRotationFromQuaternion(this.q);
+            const e = this._m.elements;
+            return [
+                new THREE.Vector3(e[0], e[1], e[2]),
+                new THREE.Vector3(e[4], e[5], e[6]),
+                new THREE.Vector3(e[8], e[9], e[10])
+            ];
+        }
+
+        corners() {
+            const a = this.axes();
+            const out = [];
+            for (let sx = -1; sx <= 1; sx += 2) {
+                for (let sy = -1; sy <= 1; sy += 2) {
+                    for (let sz = -1; sz <= 1; sz += 2) {
+                        out.push(new THREE.Vector3().copy(this.p)
+                            .addScaledVector(a[0], sx * this.half.x)
+                            .addScaledVector(a[1], sy * this.half.y)
+                            .addScaledVector(a[2], sz * this.half.z));
+                    }
+                }
+            }
+            return out;
+        }
+
+        radius() { return this.half.length(); }
+
+        wake() { this.asleep = false; this.stillT = 0; }
+
+        // The pose at the end of the last frame, and how far this one moved
+        // from it: a length in table units, with the turn counted as the arc
+        // a corner of the card swept.
+        markPose() {
+            this._lastP = this._lastP || new THREE.Vector3();
+            this._lastQ = this._lastQ || new THREE.Quaternion();
+            this._lastP.copy(this.p);
+            this._lastQ.copy(this.q);
+        }
+
+        poseDelta() {
+            if (!this._lastP) return Infinity;
+            const moved = this.p.distanceTo(this._lastP);
+            const dot = Math.min(1, Math.abs(this.q.dot(this._lastQ)));
+            const turn = 2 * Math.acos(dot);
+            return moved + turn * this.radius();
+        }
+
+        simulated() { return !this.held && !this.inDeck && !this.inHand; }
+
+        // What the solver may push around. A sleeping card holds up the one
+        // resting on it exactly as the table does, which is what lets a
+        // finished castle cost nothing to stand.
+        movable() { return this.simulated() && !this.asleep; }
+
+        // Velocity of a point given as an offset from the centre.
+        pointVelocity(r) {
+            return new THREE.Vector3().copy(this.w).cross(r).add(this.v);
+        }
+
+        // An impulse at r. A held card is immovable, which is what lets the
+        // player press one card against another without the held one flying off.
+        applyImpulse(j, r) {
+            if (!this.movable()) return;
+            this.v.addScaledVector(j, this.invMass);
+            this.w.add(this.inverseInertiaTimes(new THREE.Vector3().copy(r).cross(j)));
+        }
+
+        // I^-1 * t, with the tensor taken in body space where it is diagonal.
+        inverseInertiaTimes(t) {
+            const inv = new THREE.Quaternion().copy(this.q).invert();
+            const local = t.clone().applyQuaternion(inv);
+            local.set(local.x * this.invI.x, local.y * this.invI.y, local.z * this.invI.z);
+            return local.applyQuaternion(this.q);
+        }
+    }
+
+    // The solver. Contacts are found by sampling the corners of each box
+    // against the faces of the other, which is enough for shapes as flat as
+    // these and keeps a leaning pair steady where a single point manifold
+    // would jitter it apart.
+    class CardPhysics {
+        constructor() {
+            this.bodies = [];
+            this.contacts = [];
+        }
+
+        add(body) { this.bodies.push(body); return body; }
+        clear() { this.bodies.length = 0; }
+
+        step(dt) {
+            const h = dt / SAND_SUB;
+            for (let s = 0; s < SAND_SUB; s++) {
+                this.integrate(h);
+                this.collide();
+                for (let i = 0; i < SAND_ITER; i++) this.solve(h);
+            }
+            this.separate();
+            this.sleepPass(dt);
+        }
+
+        integrate(h) {
+            for (const b of this.bodies) {
+                if (b.asleep || !b.simulated()) continue;
+                b.v.y += SAND_G * h;
+                b.v.multiplyScalar(0.998);
+                b.w.multiplyScalar(0.985);
+                b.p.addScaledVector(b.v, h);
+                // q += 0.5 * w * q, renormalised.
+                const wq = new THREE.Quaternion(b.w.x * h * 0.5, b.w.y * h * 0.5, b.w.z * h * 0.5, 0);
+                wq.multiply(b.q);
+                b.q.set(b.q.x + wq.x, b.q.y + wq.y, b.q.z + wq.z, b.q.w + wq.w).normalize();
+            }
+        }
+
+        collide() {
+            this.contacts.length = 0;
+            const live = this.bodies.filter(b => !b.inDeck && !b.inHand);
+            for (const b of live) this.collideTable(b);
+            for (let i = 0; i < live.length; i++) {
+                for (let j = i + 1; j < live.length; j++) {
+                    const a = live[i];
+                    const c = live[j];
+                    if (a.asleep && c.asleep) continue;
+                    if (a.p.distanceTo(c.p) > a.radius() + c.radius()) continue;
+                    this.collidePair(a, c);
+                }
+            }
+        }
+
+        // The cloth, and the rim that keeps the deck on a round table.
+        collideTable(b) {
+            const up = new THREE.Vector3(0, 1, 0);
+            for (const corner of b.corners()) {
+                // sep is the gap: positive is clear air, negative is overlap.
+                const sep = corner.y - TABLE_Y;
+                if (sep < SAND_MARGIN) {
+                    this.contacts.push({
+                        a: b, b: null, n: up, sep,
+                        ra: new THREE.Vector3().subVectors(corner, b.p), rb: null
+                    });
+                }
+                const radial = Math.hypot(corner.x, corner.z);
+                if (radial > SAND_RIM - SAND_MARGIN) {
+                    this.contacts.push({
+                        a: b, b: null,
+                        n: new THREE.Vector3(-corner.x, 0, -corner.z).normalize(),
+                        sep: SAND_RIM - radial,
+                        ra: new THREE.Vector3().subVectors(corner, b.p), rb: null
+                    });
+                }
+            }
+        }
+
+        // The shallowest face of `box` that `point` lies inside, as a normal
+        // pointing out of the box, or null when the point is outside it.
+        static faceOf(box, point) {
+            const rel = new THREE.Vector3().subVectors(point, box.p);
+            const axes = box.axes();
+            let best = null;
+            for (let i = 0; i < 3; i++) {
+                const d = rel.dot(axes[i]);
+                const h = box.half.getComponent(i);
+                if (Math.abs(d) > h) return null;
+                const depth = h - Math.abs(d);
+                if (!best || depth < best.depth) {
+                    best = { depth, n: axes[i].clone().multiplyScalar(d >= 0 ? 1 : -1) };
+                }
+            }
+            return best;
+        }
+
+        // Box against box, by separating axis. Fifteen axes are tried: the
+        // three faces of each card and the nine cross products of their edges.
+        // The shallowest one is the contact normal.
+        //
+        // Where a face wins, the manifold is the incident face of the other
+        // card clipped against the sides of the reference face, which gives up
+        // to four points: that is what makes a card lie flat on a stack, and
+        // what makes the ridge of a leaning card bear properly under the flat
+        // one laid across it. Where a cross product wins, the two cards meet
+        // edge to edge - the apex of a pair in a house of cards - and the
+        // contact is at the point the edges pass closest, laid twice along the
+        // ridge when the edges run parallel so the pair cannot rack sideways.
+        collidePair(a, c) {
+            const ax = a.axes();
+            const cx = c.axes();
+            const offset = new THREE.Vector3().subVectors(c.p, a.p);
+            const extent = (box, axes, n) =>
+                Math.abs(n.dot(axes[0])) * box.half.x +
+                Math.abs(n.dot(axes[1])) * box.half.y +
+                Math.abs(n.dot(axes[2])) * box.half.z;
+
+            let best = null;
+            const consider = (n, kind, i, j) => {
+                if (n.lengthSq() < 1e-10) return true;      // degenerate axis, skip it
+                n.normalize();
+                // The gap along this axis: positive is clear air between the
+                // two cards, negative is overlap. The axis that matters is the
+                // one where they are furthest apart (or least overlapped), and
+                // a face is preferred over a cross product of the same gap
+                // because a face manifold is the better behaved of the two.
+                const gap = Math.abs(offset.dot(n)) - extent(a, ax, n) - extent(c, cx, n);
+                if (gap > SAND_MARGIN) return false;        // far enough apart to ignore
+                const score = gap + (kind === 'edge' ? 0 : 1e-4);
+                if (!best || score > best.score) best = { score, gap, n: n.clone(), kind, i, j };
+                return true;
+            };
+
+            for (let i = 0; i < 3; i++) if (!consider(ax[i].clone(), 'a', i, -1)) return;
+            for (let j = 0; j < 3; j++) if (!consider(cx[j].clone(), 'c', -1, j)) return;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (!consider(new THREE.Vector3().crossVectors(ax[i], cx[j]), 'edge', i, j)) return;
+                }
+            }
+            if (!best) return;
+
+            // Every contact is written with the normal pointing the way the
+            // FIRST card has to move to get out: that is what the solver
+            // applies to a, and the reverse of what it applies to b, and it
+            // is the same convention the cloth and the rim are written in.
+            if (offset.dot(best.n) > 0) best.n.negate();
+
+            if (best.kind === 'edge') this.edgeContact(a, c, ax, cx, best);
+            else this.faceContact(a, c, ax, cx, best);
+        }
+
+        // The four corners of the face of `box` whose outward normal is
+        // closest to `n`, in order around the face.
+        static faceCorners(box, axes, n) {
+            let axis = 0;
+            let bestDot = -Infinity;
+            let sign = 1;
+            for (let i = 0; i < 3; i++) {
+                const d = axes[i].dot(n);
+                if (Math.abs(d) > bestDot) { bestDot = Math.abs(d); axis = i; sign = d >= 0 ? 1 : -1; }
+            }
+            const u = (axis + 1) % 3;
+            const v = (axis + 2) % 3;
+            const centre = box.p.clone().addScaledVector(axes[axis], sign * box.half.getComponent(axis));
+            const hu = box.half.getComponent(u);
+            const hv = box.half.getComponent(v);
+            return {
+                axis, sign,
+                normal: axes[axis].clone().multiplyScalar(sign),
+                points: [
+                    centre.clone().addScaledVector(axes[u], hu).addScaledVector(axes[v], hv),
+                    centre.clone().addScaledVector(axes[u], hu).addScaledVector(axes[v], -hv),
+                    centre.clone().addScaledVector(axes[u], -hu).addScaledVector(axes[v], -hv),
+                    centre.clone().addScaledVector(axes[u], -hu).addScaledVector(axes[v], hv)
+                ],
+                // Side planes of the face, each with its normal pointing OUT
+                // of the face: the clipper keeps what lies behind them.
+                sides: [
+                    { n: axes[u].clone(), o: centre.clone().addScaledVector(axes[u], hu) },
+                    { n: axes[u].clone().negate(), o: centre.clone().addScaledVector(axes[u], -hu) },
+                    { n: axes[v].clone(), o: centre.clone().addScaledVector(axes[v], hv) },
+                    { n: axes[v].clone().negate(), o: centre.clone().addScaledVector(axes[v], -hv) }
+                ]
+            };
+        }
+
+        // Sutherland-Hodgman: keep the part of the polygon on the inner side
+        // of the plane, cutting the edges that cross it.
+        static clipToPlane(points, planeN, planeO) {
+            const out = [];
+            for (let i = 0; i < points.length; i++) {
+                const cur = points[i];
+                const next = points[(i + 1) % points.length];
+                const dc = planeN.dot(new THREE.Vector3().subVectors(cur, planeO));
+                const dn = planeN.dot(new THREE.Vector3().subVectors(next, planeO));
+                if (dc <= 0) out.push(cur.clone());
+                if ((dc > 0) !== (dn > 0)) {
+                    const t = dc / (dc - dn);
+                    out.push(new THREE.Vector3().lerpVectors(cur, next, t));
+                }
+            }
+            return out;
+        }
+
+        faceContact(a, c, ax, cx, best) {
+            // The reference face belongs to whichever card owns the winning
+            // axis; the incident face is the other card's face that most
+            // directly opposes it.
+            const refIsA = best.kind === 'a';
+            const ref = refIsA ? a : c;
+            const inc = refIsA ? c : a;
+            const refAxes = refIsA ? ax : cx;
+            const incAxes = refIsA ? cx : ax;
+            // best.n is the way A has to move to get clear, so the face of the
+            // reference card that is doing the bearing is the one looking at
+            // the other card: away from A when A owns the axis, along it when
+            // C does.
+            const n = refIsA ? best.n.clone().negate() : best.n.clone();
+
+            const refFace = CardPhysics.faceCorners(ref, refAxes, n);
+            const incFace = CardPhysics.faceCorners(inc, incAxes, n.clone().negate());
+
+            let poly = incFace.points.map(p => p.clone());
+            for (const side of refFace.sides) {
+                poly = CardPhysics.clipToPlane(poly, side.n, side.o);
+                if (!poly.length) return;
+            }
+
+            const planeO = refFace.points[0];
+            for (const point of poly) {
+                // Each point carries its own gap to the reference face, so
+                // a card resting at a slight angle is answered corner by
+                // corner rather than by one averaged number.
+                const sep = refFace.normal.dot(new THREE.Vector3().subVectors(point, planeO));
+                if (sep > SAND_MARGIN) continue;
+                // A card is a plate, so a clipped point can come out the far
+                // side of it and read as an enormous penetration that no pair
+                // of touching cards ever has. The separating axis has already
+                // said how deep the two really are, and no point may claim to
+                // be deeper than that.
+                if (sep < best.gap - SAND_MARGIN) continue;
+                // The contact normal is always written from A toward C, so the
+                // solver never has to ask which card owned the reference face.
+                this.contacts.push({
+                    a, b: c,
+                    n: best.n.clone(),
+                    sep,
+                    ra: new THREE.Vector3().subVectors(point, a.p),
+                    rb: new THREE.Vector3().subVectors(point, c.p)
+                });
+            }
+        }
+
+        edgeContact(a, c, ax, cx, best) {
+            const n = best.n;
+            // Walk out to the edge of each box along the two axes that are not
+            // the edge's own direction.
+            const support = (box, axes, own, sign) => {
+                const point = box.p.clone();
+                for (let k = 0; k < 3; k++) {
+                    if (k === own) continue;
+                    const d = axes[k].dot(n) * sign;
+                    point.addScaledVector(axes[k], (d >= 0 ? 1 : -1) * box.half.getComponent(k));
+                }
+                return point;
+            };
+            const pa = support(a, ax, best.i, 1);
+            const pc = support(c, cx, best.j, -1);
+
+            // Closest points of the two edge lines.
+            const da = ax[best.i];
+            const dc = cx[best.j];
+            const r = new THREE.Vector3().subVectors(pa, pc);
+            const dotAA = da.dot(da), dotCC = dc.dot(dc), dotAC = da.dot(dc);
+            const denom = dotAA * dotCC - dotAC * dotAC;
+            if (Math.abs(denom) < 1e-9) return;
+            const ha = a.half.getComponent(best.i);
+            const hc = c.half.getComponent(best.j);
+            const ta = THREE.MathUtils.clamp((dotAC * dc.dot(r) - dotCC * da.dot(r)) / denom, -ha, ha);
+            const tc = THREE.MathUtils.clamp((dotAA * dc.dot(r) - dotAC * da.dot(r)) / denom, -hc, hc);
+            const point = pa.clone().addScaledVector(da, ta)
+                .add(pc.clone().addScaledVector(dc, tc)).multiplyScalar(0.5);
+
+            // Parallel ridges meet along a segment, not at a point. One contact
+            // there would let a leaning pair fold sideways, so the manifold is
+            // laid at both ends of the segment they share.
+            const ridge = da.clone().normalize();
+            const parallel = Math.abs(ridge.dot(dc.clone().normalize()));
+            const spread = parallel > 0.98 ? Math.min(ha, hc) * 0.8 : 0;
+            const points = spread > 0
+                ? [point.clone().addScaledVector(ridge, -spread), point.clone().addScaledVector(ridge, spread)]
+                : [point];
+
+            for (const at of points) {
+                this.contacts.push({
+                    a, b: c, n: n.clone(), sep: best.gap,
+                    ra: new THREE.Vector3().subVectors(at, a.p),
+                    rb: new THREE.Vector3().subVectors(at, c.p)
+                });
+            }
+        }
+
+        // The mass a contact sees along `n`: the textbook
+        // 1/m + (I^-1 (r x n)) x r . n, summed over both bodies.
+        effectiveMass(a, b, ra, rb, n) {
+            const part = (body, r) => {
+                if (!body || !body.movable()) return 0;
+                const rn = new THREE.Vector3().copy(r).cross(n);
+                const angular = body.inverseInertiaTimes(rn).cross(r).dot(n);
+                return body.invMass + angular;
+            };
+            return part(a, ra) + part(b, rb);
+        }
+
+        // Is this card doing something a sleeping neighbour should notice?
+        static disturbs(body) {
+            if (!body || body.asleep) return false;
+            if (body.held) return true;
+            if (!body.simulated()) return false;
+            return body.v.length() > SAND_WAKE_V || body.w.length() > SAND_WAKE_V * 4;
+        }
+
+        // Two directions across the contact, so friction can be accumulated
+        // along a fixed pair of axes instead of whichever way the card happened
+        // to be sliding on the iteration that looked.
+        static basis(n) {
+            const helper = Math.abs(n.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
+            const t1 = new THREE.Vector3().crossVectors(n, helper).normalize();
+            const t2 = new THREE.Vector3().crossVectors(n, t1).normalize();
+            return [t1, t2];
+        }
+
+        // Sequential impulses, with the impulse at each contact ACCUMULATED
+        // over the iterations. That accumulation is what makes friction mean
+        // anything: Coulomb's limit is a fraction of the total normal force at
+        // the contact, and an iteration's own small increment is nowhere near
+        // it. Without this a leaning pair slides its feet out and the whole
+        // castle sits down.
+        solve(h) {
+            for (const contact of this.contacts) {
+                const { a, b, n, ra, rb } = contact;
+                if (!contact.basis) {
+                    contact.basis = CardPhysics.basis(n);
+                    contact.jn = 0;
+                    contact.jt = [0, 0];
+                }
+                const va = a.pointVelocity(ra);
+                const vb = b ? b.pointVelocity(rb) : new THREE.Vector3();
+                const rel = new THREE.Vector3().subVectors(va, vb);
+                const vn = rel.dot(n);
+                const eff = this.effectiveMass(a, b, ra, rb, n);
+                if (eff <= 0) continue;
+                // Where the cards already overlap, the contact pushes them
+                // apart (gently, and only past the slop). Where they are a
+                // hair short of touching it is a speculative contact: it may
+                // take out exactly as much approach speed as would close the
+                // gap this step, and no more, so a card set down on a castle
+                // comes to rest against it instead of bouncing off thin air.
+                // Overlap is not pushed out here: a velocity solver that
+                // does that hands the stack energy it never had, and a
+                // castle levitates. It is taken out of the POSITIONS after
+                // the solve instead, which can only ever give ground back.
+                const sep = contact.sep;
+                const bias = sep > 0 ? -sep / h : 0;
+                const wanted = (-(1 + SAND_REST) * vn + bias) / eff;
+                const total = Math.max(0, contact.jn + wanted);
+                const applied = total - contact.jn;
+                contact.jn = total;
+                // A sleeping card is woken by something ARRIVING, not by what
+                // is already standing on it: a card thrown into a castle, or
+                // one the player has hold of, brings the storey down, while
+                // the weight of the storey above never does. A structure that
+                // has settled therefore stays exactly as it was built until
+                // it is disturbed, and the collapse spreads from card to card
+                // as each one it topples starts moving in its turn.
+                if (a.asleep && CardPhysics.disturbs(b)) a.wake();
+                if (b && b.asleep && CardPhysics.disturbs(a)) b.wake();
+                const impulse = new THREE.Vector3().copy(n).multiplyScalar(applied);
+                a.applyImpulse(impulse, ra);
+                if (b) b.applyImpulse(impulse.clone().negate(), rb);
+
+                // Coulomb friction, bounded by the normal impulse the contact
+                // has taken in total.
+                const max = contact.jn * SAND_FRICTION;
+                for (let k = 0; k < 2; k++) {
+                    const tangent = contact.basis[k];
+                    const effT = this.effectiveMass(a, b, ra, rb, tangent);
+                    if (effT <= 0) continue;
+                    const vt = new THREE.Vector3().subVectors(a.pointVelocity(ra),
+                        b ? b.pointVelocity(rb) : new THREE.Vector3()).dot(tangent);
+                    const wantT = -vt / effT;
+                    const totalT = Math.max(-max, Math.min(max, contact.jt[k] + wantT));
+                    const appliedT = totalT - contact.jt[k];
+                    contact.jt[k] = totalT;
+                    const friction = tangent.clone().multiplyScalar(appliedT);
+                    a.applyImpulse(friction, ra);
+                    if (b) b.applyImpulse(friction.clone().negate(), rb);
+                }
+            }
+        }
+
+        // Stillness is judged by how far a card actually travelled over the
+        // frame, not by the velocity left on it: a card resting on the cloth
+        // keeps one substep of gravity in v that the next contact cancels, so
+        // a velocity test would hold the whole table awake forever.
+        // What is left overlapping after the velocity solve is eased apart by
+        // moving the cards themselves, in proportion to how light they are.
+        // Nothing here touches a velocity, so the stack cannot gain energy.
+        separate() {
+            for (const contact of this.contacts) {
+                if (contact.sep >= -SAND_SLOP) continue;
+                const a = contact.a;
+                const b = contact.b;
+                const wa = a.movable() ? a.invMass : 0;
+                const wb = (b && b.movable()) ? b.invMass : 0;
+                const sum = wa + wb;
+                if (sum <= 0) continue;
+                const excess = Math.min(-contact.sep - SAND_SLOP, 0.02) * SAND_BAUM;
+                a.p.addScaledVector(contact.n, excess * (wa / sum));
+                if (b) b.p.addScaledVector(contact.n, -excess * (wb / sum));
+            }
+        }
+
+        sleepPass(dt) {
+            for (const b of this.bodies) {
+                // A sleeping card is only ever roused by wake(), never by
+                // this pass: a card that has just been PLACED - a castle
+                // built, a deck restacked - has moved a long way since the
+                // last frame without anything having happened to it.
+                if (b.asleep || !b.simulated()) { b.stillT = 0; b.markPose(); continue; }
+                const moved = b.poseDelta();
+                b.markPose();
+                // A card squeezed between two sleeping ones is shoved to
+                // and fro by the separation pass without ever going
+                // anywhere, so a slow enough card counts as still too.
+                const crawling = b.v.length() < SAND_SLEEP_V && b.w.length() < SAND_SLEEP_W;
+                if (moved < SAND_SLEEP_D || crawling) {
+                    b.stillT += dt;
+                    if (b.stillT > SAND_SLEEP_T) {
+                        b.asleep = true;
+                        b.v.set(0, 0, 0);
+                        b.w.set(0, 0, 0);
+                    }
+                } else {
+                    b.stillT = 0;
+                    b.asleep = false;
+                }
+            }
+        }
+
+        // Everything settled. The castle counts itself built once this is true.
+        atRest() { return this.bodies.every(b => b.asleep || !b.simulated()); }
+    }
+
+    // The sandbox stage: the parlour and the table of the reading, with the
+    // spread machinery left idle and a loose deck of bodies on the cloth
+    // instead. TarotTable3D animates this._cards toward their slots, so the
+    // free cards are kept in a list of its own and nothing fights over them.
+    class SandboxTable3D extends TarotTable3D {
+        constructor(width, height) {
+            super(width, height);
+            this.physics = new CardPhysics();
+            this.free = [];
+            this._buildFreeDeck();
+        }
+
+        _buildFreeDeck() {
+            for (let arcana = 0; arcana < tarotKeys.length; arcana++) {
+                const body = new CardBody(arcana);
+                body.reversed = this._rand() < 0.42;
+                const frontMat = this._mat({ map: this._loadArcana(arcana), color: 0xffffff });
+                const geo = this._geo(new THREE.BoxGeometry(CARD_W, CARD_T, CARD_H));
+                const mesh = new THREE.Mesh(geo, [
+                    this._edgeMat, this._edgeMat,
+                    frontMat,            // +Y, the face
+                    this._backMat,       // -Y, the back
+                    this._edgeMat, this._edgeMat
+                ]);
+                softPSX(() => {
+                    if (window.PSXShader) window.PSXShader.applyToObject(mesh);
+                });
+                const root = new THREE.Group();
+                root.add(mesh);
+                this.scene.add(root);
+                body.mesh = mesh;
+                body.root = root;
+                this.physics.add(body);
+                this.free.push(body);
+            }
+            this.gatherToDeck(true);
+        }
+
+        get deckCards() { return this.free.filter(b => b.inDeck); }
+        get handCards() { return this.free.filter(b => b.inHand); }
+        get tableCards() { return this.free.filter(b => !b.inDeck && !b.inHand); }
+
+        // Where the deck stands, and how high a given position in it sits.
+        deckAnchor() { return { x: this.deckHome.x, z: this.deckHome.z }; }
+
+        // Every card back in one square stack, face down. `instant` skips the
+        // settle and is what the table is first drawn with.
+        gatherToDeck(instant) {
+            const anchor = this.deckAnchor();
+            const deck = this.free.slice();
+            deck.forEach((body, i) => {
+                body.inDeck = true;
+                body.inHand = false;
+                body.held = false;
+                body.faceUp = false;
+                body.deckOrder = i;
+                body.v.set(0, 0, 0);
+                body.w.set(0, 0, 0);
+                body.p.set(anchor.x, TABLE_Y + CARD_T / 2 + i * CARD_T, anchor.z);
+                body.q.identity();
+                body.asleep = true;
+            });
+            if (instant) this.syncMeshes();
+        }
+
+        // Fisher-Yates over the deck order, which is the only thing a shuffle
+        // is: the stack looks the same, the order under it does not.
+        shuffleDeck() {
+            const deck = this.deckCards;
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(this._rand() * (i + 1));
+                const t = deck[i].deckOrder;
+                deck[i].deckOrder = deck[j].deckOrder;
+                deck[j].deckOrder = t;
+            }
+            this.restackDeck();
+            return deck.length;
+        }
+
+        // A cut: the top half lifted off and set down beside the bottom half,
+        // then dropped back on top, which is how the order actually changes.
+        cutDeck() {
+            const deck = this.deckCards.sort((a, b) => a.deckOrder - b.deckOrder);
+            if (deck.length < 2) return 0;
+            const at = Math.floor(deck.length * (0.35 + this._rand() * 0.3));
+            const bottom = deck.slice(0, at);
+            const top = deck.slice(at);
+            top.concat(bottom).forEach((body, i) => { body.deckOrder = i; });
+            this.restackDeck();
+            return at;
+        }
+
+        restackDeck() {
+            const anchor = this.deckAnchor();
+            this.deckCards.sort((a, b) => a.deckOrder - b.deckOrder).forEach((body, i) => {
+                body.p.set(anchor.x, TABLE_Y + CARD_T / 2 + i * CARD_T, anchor.z);
+                body.q.identity();
+                body.faceUp = false;
+                body.asleep = true;
+            });
+        }
+
+        // The top card of the deck, which is the one a click on the stack takes.
+        topOfDeck() {
+            const deck = this.deckCards;
+            if (!deck.length) return null;
+            return deck.reduce((best, b) => (!best || b.deckOrder > best.deckOrder ? b : best), null);
+        }
+
+        drawToHand() {
+            const card = this.topOfDeck();
+            if (!card) return null;
+            card.inDeck = false;
+            card.inHand = true;
+            card.faceUp = true;
+            return card;
+        }
+
+        // Laying a card from the hand onto the cloth at a point, face up and
+        // flat, with a little drop so it settles against whatever is there.
+        placeFromHand(card, x, z) {
+            if (!card || !card.inHand) return false;
+            card.inHand = false;
+            card.inDeck = false;
+            card.faceUp = true;
+            card.p.set(x, TABLE_Y + CARD_T * 3, z);
+            card.q.identity();
+            if (card.faceUp) card.q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0);
+            card.v.set(0, -0.2, 0);
+            card.w.set(0, 0, 0);
+            card.wake();
+            this.wakeAround(card);
+            return true;
+        }
+
+        // Anything near a card the player has just touched is roused, so
+        // pulling one out from under a castle brings the castle down instead
+        // of leaving it standing on nothing.
+        wakeAround(body, radius) {
+            if (!body) return 0;
+            const r = radius || CARD_H * 1.6;
+            let woken = 0;
+            for (const other of this.free) {
+                if (other === body || !other.simulated() || !other.asleep) continue;
+                if (other.p.distanceTo(body.p) > r) continue;
+                other.wake();
+                woken++;
+            }
+            return woken;
+        }
+
+        flipCard(card) {
+            if (!card || card.inDeck || card.inHand) return false;
+            card.faceUp = !card.faceUp;
+            const flip = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI);
+            card.q.multiply(flip);
+            card.p.y += CARD_T;
+            card.wake();
+            this.wakeAround(card);
+            return true;
+        }
+
+        // Every card out of the deck, face down, thrown about the cloth: the
+        // scramble. Positions are kept inside the rim and off the deck itself.
+        scramble() {
+            const cards = this.free.filter(b => !b.inHand);
+            cards.forEach((body) => {
+                body.inDeck = false;
+                body.held = false;
+                body.faceUp = false;
+                const angle = this._rand() * Math.PI * 2;
+                const radius = this._rand() * (SAND_RIM - CARD_H * 0.6);
+                body.p.set(Math.cos(angle) * radius, TABLE_Y + CARD_T / 2 + this._rand() * 0.5, Math.sin(angle) * radius);
+                // Face down: the back is -Y, so a half turn about Z presents it.
+                body.q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI);
+                body.q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), this._rand() * Math.PI * 2));
+                body.v.set((this._rand() - 0.5) * 0.4, 0, (this._rand() - 0.5) * 0.4);
+                body.w.set(0, (this._rand() - 0.5) * 2, 0);
+                body.wake();
+            });
+            return cards.length;
+        }
+
+        // A house of cards from everything on the table. Each storey is a row
+        // of leaning pairs with a flat card spanning every neighbouring pair;
+        // the storey above is one pair shorter. Cards are placed at rest and
+        // the solver holds them there, so it stands until something hits it.
+        buildCastle() {
+            const cards = this.free.filter(b => !b.inHand);
+            if (cards.length < 2) return { levels: 0, used: 0 };
+            cards.forEach(b => { b.inDeck = false; b.held = false; b.faceUp = this._rand() < 0.5; });
+
+            // A card stood on edge is turned about Z, so the side that ends up
+            // vertical is its WIDTH and its long side lies flat along Z: that
+            // is how a real house of cards is built, each pair a wide A facing
+            // the player. The apex of a pair is the card's width foreshortened
+            // by the lean.
+            const LEAN = 0.30;                            // radians off vertical
+            const storeyH = Math.cos(LEAN) * CARD_W;      // how tall one A stands
+            const footHalf = Math.sin(LEAN) * CARD_W / 2; // its centre, off the apex
+            // The two tops are set to just touch. The solver keeps a contact
+            // margin, so a card that touches is a card that bears.
+            const apexBite = 0.0;
+            // Pairs are pitched closer together than a card is long, so the
+            // flat span laid over two of them has a bearing at each end.
+            const pairW = CARD_H * 0.82;
+            const pool = cards.slice();
+            let used = 0;
+            let levels = 0;
+
+            // How many pairs the base can be: each storey costs its pairs plus
+            // the spans under the storey above, and the whole row has to fit
+            // between the rims.
+            let pairs = 1;
+            while (this.castleCost(pairs + 1) <= pool.length && (pairs + 1) * pairW < SAND_RIM * 1.7) pairs++;
+
+            let y = TABLE_Y;
+            for (let level = pairs; level >= 1; level--) {
+                const width = level * pairW;
+                const x0 = -width / 2 + pairW / 2;
+                for (let i = 0; i < level; i++) {
+                    const cx = x0 + i * pairW;
+                    for (const side of [-1, 1]) {
+                        const body = pool.pop();
+                        if (!body) return this.finishCastle(levels, used);
+                        // The card on the left leans right and the one on the
+                        // right leans left, so the two tops meet over cx.
+                        body.p.set(cx - side * (footHalf - apexBite), y + storeyH / 2, 0);
+                        body.q.setFromEuler(new THREE.Euler(0, 0, side * (Math.PI / 2 - LEAN)));
+                        body.v.set(0, 0, 0);
+                        body.w.set(0, 0, 0);
+                        body.asleep = true;
+                        used++;
+                    }
+                }
+                levels++;
+                // Every layer is set a hair into the one below it, for the
+                // same reason the two tops of a pair are.
+                y += storeyH - apexBite;
+                // The flat span the next storey stands on, one per gap.
+                if (level > 1) {
+                    for (let i = 0; i < level - 1; i++) {
+                        const body = pool.pop();
+                        if (!body) return this.finishCastle(levels, used);
+                        body.p.set(x0 + i * pairW + pairW / 2, y + CARD_T / 2, 0);
+                        body.q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+                        body.v.set(0, 0, 0);
+                        body.w.set(0, 0, 0);
+                        body.asleep = true;
+                        used++;
+                    }
+                    y += CARD_T - apexBite;
+                }
+            }
+            // Whatever is left over is laid flat out of the way rather than
+            // left standing wherever it happened to be.
+            pool.forEach((body, i) => {
+                const angle = (i / Math.max(1, pool.length)) * Math.PI * 2;
+                body.p.set(Math.cos(angle) * (SAND_RIM - CARD_H * 0.6), TABLE_Y + CARD_T / 2, Math.sin(angle) * (SAND_RIM - CARD_H * 0.6));
+                body.q.identity();
+                body.v.set(0, 0, 0);
+                body.w.set(0, 0, 0);
+                body.asleep = true;
+            });
+            return this.finishCastle(levels, used);
+        }
+
+        // Cards a castle of this many base pairs needs: two per pair on every
+        // storey, plus a span across each gap under the storey above.
+        castleCost(basePairs) {
+            let total = 0;
+            for (let level = basePairs; level >= 1; level--) {
+                total += level * 2;
+                if (level > 1) total += level - 1;
+            }
+            return total;
+        }
+
+        finishCastle(levels, used) { return { levels, used }; }
+
+        // The card under the cursor, deck included, or null.
+        pickBody(ndcX, ndcY) {
+            if (!THREE.Raycaster) return null;
+            this._ray = this._ray || new THREE.Raycaster();
+            this._ray.setFromCamera({ x: ndcX, y: ndcY }, this.camera);
+            const meshes = this.free.filter(b => !b.inHand).map(b => b.mesh);
+            const hits = this._ray.intersectObjects(meshes, false);
+            if (!hits.length) return null;
+            const body = this.free.find(b => b.mesh === hits[0].object);
+            return body ? { body, point: hits[0].point } : null;
+        }
+
+        // Where a ray through the cursor meets the cloth: where a card in hand
+        // is laid down, and where a held one is dragged to.
+        pickCloth(ndcX, ndcY, height) {
+            if (!THREE.Raycaster) return null;
+            this._ray = this._ray || new THREE.Raycaster();
+            this._ray.setFromCamera({ x: ndcX, y: ndcY }, this.camera);
+            const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -(height !== undefined ? height : TABLE_Y));
+            const hit = new THREE.Vector3();
+            if (!this._ray.ray.intersectPlane(plane, hit)) return null;
+            const radial = Math.hypot(hit.x, hit.z);
+            if (radial > SAND_RIM) {
+                hit.x *= SAND_RIM / radial;
+                hit.z *= SAND_RIM / radial;
+            }
+            return hit;
+        }
+
+        // The mesh follows the body, and a card in hand is parked out of sight
+        // under the table rather than being added and removed from the scene.
+        syncMeshes() {
+            for (const body of this.free) {
+                if (!body.root) continue;
+                if (body.inHand) {
+                    body.root.visible = false;
+                    continue;
+                }
+                body.root.visible = true;
+                body.root.position.copy(body.p);
+                body.root.quaternion.copy(body.q);
+            }
+        }
+
+        update(dt, focusIndex) {
+            super.update(dt, focusIndex);
+            this.physics.step(dt);
+            this.syncMeshes();
+        }
+    }
+
+    // The buttons across the foot of the free spread. Ids are matched in
+    // pressButton; the faces are translated.
+    // i18n-ignore-start  button ids, never printed
+    const SAND_BUTTONS = ['shuffle', 'cut', 'castle', 'scramble', 'gather'];
+    // i18n-ignore-end
+
+    class Scene_TarotSandbox extends Scene_TarotBase {
+        initialize() {
+            super.initialize();
+            this._buttonIndex = 0;
+            this._grab = null;
+            this._press = null;
+            this._handIndex = 0;
+            this._heldHand = null;
+            this._status = '';
+            this._statusT = 0;
+        }
+
+        create() {
+            super.create();
+            if (this._fatal) return;
+            // The spread machinery is idle here, but the camera still asks the
+            // spread how far back to stand.
+            this._spread = SPREADS[0];
+            this._table.setSpread(this._spread);
+            this._table.dist = 5.0;
+            this._table.homeDist = 5.0;
+            this.setBanner(uiText('sandboxTitle').toUpperCase(), 2.2);
+            playSe('Book1', 90, 60);
+        }
+
+        createTable() {
+            const scale = 0.88;
+            const w = Math.round(Graphics.width * scale);
+            const h = Math.round(Graphics.height * scale);
+            this._table = new SandboxTable3D(w, h);
+            // The decorative stack belongs to the reading; here the deck is
+            // made of real cards and the prop would sit inside them.
+            if (this._table._deckHalves) this._table._deckHalves.forEach(m => { m.visible = false; });
+
+            const texture = PIXI.Texture.from(this._table.domElement);
+            if (texture.baseTexture) texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+            this._tableSprite = new PIXI.Sprite(texture);
+            this._tableSprite.scale.set(Graphics.width / w, Graphics.height / h);
+            const idx = this._windowLayer ? this.getChildIndex(this._windowLayer) : this.children.length;
+            this.addChildAt(this._tableSprite, idx);
+        }
+
+        //--- input ------------------------------------------------------------
+
+        // The sandbox answers the pointer itself: a press on a card takes hold
+        // of it, a press anywhere else is the camera's to orbit.
+        updateCameraInput(dt) {
+            if (this._statusT > 0) this._statusT -= dt;
+            this.updateButtonInput();
+
+            if (this._grab) { this.updateGrab(); return; }
+
+            if (TouchInput.isTriggered()) {
+                const x = TouchInput.x;
+                const y = TouchInput.y;
+                if (this.hitButton(x, y)) return;
+                if (this.hitHand(x, y)) return;
+                const hit = this.pickAt(x, y);
+                if (hit) {
+                    this._press = { body: hit.body, x, y, t: 0, moved: false };
+                    return;
+                }
+            }
+            if (this._press) {
+                this._press.t += dt;
+                const moved = Math.abs(TouchInput.x - this._press.x) + Math.abs(TouchInput.y - this._press.y);
+                if (TouchInput.isPressed() && moved > 4) {
+                    this.beginGrab(this._press.body);
+                    this._press = null;
+                    return;
+                }
+                if (!TouchInput.isPressed()) {
+                    // A press that never travelled: the deck deals a card into
+                    // the hand, a card on the cloth turns over.
+                    const body = this._press.body;
+                    this._press = null;
+                    if (body.inDeck) this.drawCard();
+                    else { this._table.flipCard(body); playSe('Book2', 140, 45); }
+                    return;
+                }
+                return;
+            }
+            super.updateCameraInput(dt);
+        }
+
+        // The base class reads a click as a pick into the spread, which the
+        // sandbox has no use for.
+        onTableClick() { }
+
+        pickAt(x, y) {
+            const ndcX = (x / Graphics.width) * 2 - 1;
+            const ndcY = -((y / Graphics.height) * 2 - 1);
+            return this._table.pickBody(ndcX, ndcY);
+        }
+
+        clothAt(x, y, height) {
+            const ndcX = (x / Graphics.width) * 2 - 1;
+            const ndcY = -((y / Graphics.height) * 2 - 1);
+            return this._table.pickCloth(ndcX, ndcY, height);
+        }
+
+        beginGrab(body) {
+            if (!body) return;
+            if (body.inDeck) {
+                // Dragging off the stack takes the card with you.
+                body.inDeck = false;
+            }
+            body.held = true;
+            body.inHand = false;
+            body.wake();
+            const lift = TABLE_Y + CARD_H * 0.55;
+            this._table.wakeAround(body);
+            this._grab = { body, lift, last: body.p.clone(), vel: new THREE.Vector3() };
+            playSe('Book2', 150, 40);
+        }
+
+        updateGrab() {
+            const grab = this._grab;
+            const body = grab.body;
+            if (!TouchInput.isPressed()) {
+                body.held = false;
+                // Let go with the speed it was moving at, so a card can be
+                // thrown across the cloth or set down gently.
+                body.v.copy(grab.vel).multiplyScalar(0.6);
+                body.wake();
+                this._grab = null;
+                return;
+            }
+            const point = this.clothAt(TouchInput.x, TouchInput.y, grab.lift);
+            if (point) {
+                grab.vel.subVectors(point, grab.last).multiplyScalar(6);
+                grab.last.copy(point);
+                body.p.copy(point);
+                body.v.set(0, 0, 0);
+                body.w.set(0, 0, 0);
+            }
+        }
+
+        //--- buttons and hand -------------------------------------------------
+
+        // Button rectangles, in the HUD's virtual pixels.
+        buttonRects() {
+            const W = hudW();
+            const count = SAND_BUTTONS.length;
+            const margin = 6;
+            const gap = 2;
+            const w = Math.floor((W - margin * 2 - gap * (count - 1)) / count);
+            const h = 15;
+            const y = hudH() - h - 5;
+            return SAND_BUTTONS.map((id, i) => ({
+                id, x: margin + i * (w + gap), y, w, h
+            }));
+        }
+
+        handRects() {
+            const W = hudW();
+            const hand = this._table.handCards;
+            const w = 26;
+            const gap = 2;
+            const total = hand.length * w + Math.max(0, hand.length - 1) * gap;
+            const x0 = Math.floor((W - total) / 2);
+            return hand.map((body, i) => ({
+                body, x: x0 + i * (w + gap), y: hudH() - 15 - 5 - 26, w, h: 24
+            }));
+        }
+
+        // Screen pixels to the HUD's own coordinates.
+        toHud(x, y) {
+            return {
+                x: (x / Graphics.width) * hudW(),
+                y: (y / Graphics.height) * hudH()
+            };
+        }
+
+        inRect(p, r) { return p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h; }
+
+        hitButton(x, y) {
+            const p = this.toHud(x, y);
+            const rect = this.buttonRects().find(r => this.inRect(p, r));
+            if (!rect) return false;
+            this._buttonIndex = SAND_BUTTONS.indexOf(rect.id);
+            this.pressButton(rect.id);
+            return true;
+        }
+
+        // A card in hand is taken by clicking it, and laid down by clicking the
+        // cloth; clicking it again puts it back on the deck.
+        hitHand(x, y) {
+            const p = this.toHud(x, y);
+            const rect = this.handRects().find(r => this.inRect(p, r));
+            if (rect) {
+                this._heldHand = (this._heldHand === rect.body) ? null : rect.body;
+                SoundManager.playCursor();
+                return true;
+            }
+            if (this._heldHand) {
+                const point = this.clothAt(x, y);
+                if (point) {
+                    this._table.placeFromHand(this._heldHand, point.x, point.z);
+                    this._heldHand = null;
+                    playSe('Book2', 120, 55);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        updateButtonInput() {
+            if (Input.isRepeated('right')) {
+                this._buttonIndex = (this._buttonIndex + 1) % SAND_BUTTONS.length;
+                SoundManager.playCursor();
+            } else if (Input.isRepeated('left')) {
+                this._buttonIndex = (this._buttonIndex + SAND_BUTTONS.length - 1) % SAND_BUTTONS.length;
+                SoundManager.playCursor();
+            } else if (Input.isTriggered('ok')) {
+                this.pressButton(SAND_BUTTONS[this._buttonIndex]);
+            } else if (Input.isTriggered('cancel')) {
+                SoundManager.playCancel();
+                this.popScene();
+            }
+        }
+
+        drawCard() {
+            const card = this._table.drawToHand();
+            if (!card) { SoundManager.playBuzzer(); return; }
+            playSe('Book2', 160, 45);
+            this.say(uiText('sandboxDrawn'), { name: cardName(card.arcana) });
+        }
+
+        pressButton(id) {
+            const table = this._table;
+            switch (id) {
+                case 'shuffle': {
+                    const n = table.shuffleDeck();
+                    playSe('Book1', 100, 70);
+                    this.say(n ? uiText('sandboxShuffled') : uiText('sandboxDeckEmpty'));
+                    break;
+                }
+                case 'cut': {
+                    const at = table.cutDeck();
+                    playSe('Book2', 110, 60);
+                    this.say(at ? uiText('sandboxCutDone') : uiText('sandboxDeckEmpty'));
+                    break;
+                }
+                case 'castle': {
+                    const built = table.buildCastle();
+                    playSe('Book1', 130, 70);
+                    this.say(built.levels ? uiText('sandboxCastleBuilt') : uiText('sandboxCastleFew'),
+                        { levels: built.levels, cards: built.used });
+                    break;
+                }
+                case 'scramble': {
+                    const n = table.scramble();
+                    playSe('Book2', 90, 70);
+                    this.say(uiText('sandboxScrambled'), { count: n });
+                    break;
+                }
+                case 'gather': {
+                    table.gatherToDeck();
+                    this._heldHand = null;
+                    playSe('Book1', 90, 65);
+                    this.say(uiText('sandboxGathered'));
+                    break;
+                }
+            }
+        }
+
+        say(text, params) {
+            let out = String(text || '');
+            if (params) {
+                for (const key of Object.keys(params)) {
+                    out = out.split('{' + key + '}').join(String(params[key]));
+                }
+            }
+            this._status = out;
+            this._statusT = 3.2;
+        }
+
+        //--- frame ------------------------------------------------------------
+
+        updatePhase() { }
+
+        cameraTarget() { return { x: 0, y: 0.25, z: 0 }; }
+
+        paintHud(bmp) {
+            if (this._fatal) {
+                plate(bmp, 20, 100, hudW() - 40, 40, {});
+                hudText(bmp, this._fatal, 20, 116, hudW() - 40, 'center', RED, 8);
+                return;
+            }
+            const W = hudW();
+
+            // Title, deck count and what is in hand.
+            plate(bmp, 4, 4, W - 8, 16, { title: true });
+            hudText(bmp, uiText('sandboxTitle'), 8, 8, W - 16, 'left', INK, 8);
+            hudText(bmp, T('AnimatedTarotReading.ui.sandboxDeck', { count: this._table.deckCards.length }),
+                8, 8, W - 16, 'right', DIMINK, 8);
+
+            if (this._statusT > 0 && this._status) {
+                const lines = wrapLines(bmp, this._status, W - 24, 8);
+                const h = 8 + lines.length * 10;
+                plate(bmp, 8, 24, W - 16, h, {});
+                lines.forEach((line, i) => hudText(bmp, line, 12, 28 + i * 10, W - 24, 'left', GOLD_HI, 8));
+            }
+
+            // The hand, face up, above the buttons.
+            const hand = this.handRects();
+            for (const rect of hand) {
+                const selected = this._heldHand === rect.body;
+                plate(bmp, rect.x, rect.y, rect.w, rect.h, {});
+                brackets(bmp, rect.x, rect.y, rect.w, rect.h, selected ? GOLD_HI : GOLD_LO, 4);
+                hudText(bmp, ROMAN[rect.body.arcana], rect.x, rect.y + 8, rect.w, 'center',
+                    selected ? GOLD_HI : INK, 8);
+            }
+
+            // The buttons.
+            for (let i = 0; i < SAND_BUTTONS.length; i++) {
+                const rect = this.buttonRects()[i];
+                const focused = i === this._buttonIndex;
+                plate(bmp, rect.x, rect.y, rect.w, rect.h, {});
+                if (focused) brackets(bmp, rect.x, rect.y, rect.w, rect.h, GOLD_HI, 4);
+                hudText(bmp, uiText('sandbox' + rect.id.charAt(0).toUpperCase() + rect.id.slice(1)),
+                    rect.x, rect.y + 4, rect.w, 'center', focused ? GOLD_HI : DIMINK, 8);
+            }
+        }
+
+        drawAscii() {
+            const bmp = this._asciiSprite.bitmap;
+            bmp.clear();
+            bmp.drawText(uiText('sandboxTitle'), 16, 16, Graphics.width - 32, 24, 'left');
+            bmp.drawText(T('AnimatedTarotReading.ui.sandboxDeck', { count: this._table.deckCards.length }),
+                16, 48, Graphics.width - 32, 24, 'left');
+            if (this._status) bmp.drawText(this._status, 16, 80, Graphics.width - 32, 24, 'left');
+        }
+
+    }
+
+    //=========================================================================
+    // PICK A CARD
+    //
+    // One card off a shuffled deck, turned over where it lies: the arcana, the
+    // way up it fell, and one of the meanings that orientation carries.
+    //=========================================================================
+    class Scene_TarotPick extends Scene_TarotBase {
+        initialize() {
+            super.initialize();
+            this._phase = 'shuffle';
+            this._shuffleT = 0;
+            this._draw = null;
+            this._meaning = '';
+            this._revealT = 0;
+        }
+
+        create() {
+            super.create();
+            if (this._fatal) return;
+            this._spread = SPREADS[0];
+            this._table.setSpread(SINGLE_SPREAD);
+            this.setBanner(uiText('pickTitle').toUpperCase(), 1.8);
+            playSe('Book1', 90, 60);
+        }
+
+        updatePhase(dt) {
+            if (this._phase === 'shuffle') {
+                this._shuffleT += dt / 1.3;
+                this._table.setShuffle(clamp(this._shuffleT, 0, 1), 0);
+                if (this._shuffleT >= 1) {
+                    this._table.setShuffle(0, 0);
+                    this._draw = drawArcana(1)[0];
+                    this._table.createCards([this._draw]);
+                    this._table.beginDeal();
+                    this._phase = 'deal';
+                }
+                return;
+            }
+            if (this._phase === 'deal') {
+                if (this._table.isDealt()) {
+                    this._table.revealCard(0);
+                    this._meaning = cardMeaning(this._draw.arcana, this._draw.reversed);
+                    this.startTyping(this._meaning);
+                    playSe('Book2', 120, 70);
+                    this._phase = 'read';
+                }
+                return;
+            }
+            // The reading stands until it is dismissed; OK draws another.
+            this._revealT += dt;
+            if (this._revealT > 0.6 && Input.isTriggered('ok')) {
+                SoundManager.playOk();
+                this._phase = 'shuffle';
+                this._shuffleT = 0;
+                this._revealT = 0;
+                this._meaning = '';
+                this._table.clearCards();
+            } else if (Input.isTriggered('cancel')) {
+                SoundManager.playCancel();
+                this.popScene();
+            }
+        }
+
+        hoverIndex() { return this._phase === 'read' ? 0 : -1; }
+
+        paintHud(bmp) {
+            if (this._fatal) {
+                plate(bmp, 20, 100, hudW() - 40, 40, {});
+                hudText(bmp, this._fatal, 20, 116, hudW() - 40, 'center', RED, 8);
+                return;
+            }
+            const W = hudW();
+            plate(bmp, 4, 4, W - 8, 16, { title: true });
+            hudText(bmp, uiText('pickTitle'), 8, 8, W - 16, 'left', INK, 8);
+
+            if (this._phase !== 'read' || !this._draw) return;
+
+            const arcana = this._draw.arcana;
+            const reversed = this._draw.reversed;
+            plate(bmp, 8, hudH() - MEANING_H - 8, W - 16, MEANING_H, {});
+            const head = ROMAN[arcana] + '  ' + cardName(arcana).toUpperCase();
+            hudText(bmp, head, 12, hudH() - MEANING_H - 3, W - 24, 'left', GOLD_HI, 8);
+            hudText(bmp, reversed ? uiText('reversed') : uiText('upright'),
+                12, hudH() - MEANING_H - 3, W - 24, 'right', reversed ? RED : VIOLET, 8);
+            rule(bmp, 12, hudH() - MEANING_H + 9, W - 24, GOLD_LO);
+            const lines = wrapLines(bmp, this.typedText(), W - 24, 8);
+            lines.slice(0, 4).forEach((line, i) => {
+                hudText(bmp, line, 12, hudH() - MEANING_H + 14 + i * 10, W - 24, 'left', INK, 8);
+            });
+        }
+
+        drawAscii() {
+            const bmp = this._asciiSprite.bitmap;
+            bmp.clear();
+            bmp.drawText(uiText('pickTitle'), 16, 16, Graphics.width - 32, 24, 'left');
+            if (this._phase === 'read' && this._draw) {
+                bmp.drawText(cardName(this._draw.arcana) + ' - ' +
+                    (this._draw.reversed ? uiText('reversed') : uiText('upright')),
+                    16, 48, Graphics.width - 32, 24, 'left');
+                bmp.drawText(this._meaning, 16, 80, Graphics.width - 32, 24, 'left');
+            }
+        }
+
+    }
+
+    //=========================================================================
+    // The deck as an item
+    //
+    // A deck of tarot is not drunk, eaten or worn, so the backpack draws the
+    // three things it is actually for in place of Use. The buttons come from
+    // <Actions: tarotRead, tarotPick, tarotSpread> written on the item; the
+    // registry lives in ItemSystem, which loads first.
+    //=========================================================================
+
+    // A tarot scene cannot open over the backpack's own DOM overlay, so the
+    // table is asked for the way an item's common event asks for it: the
+    // backpack closes, the map comes back, and the scene opens on top of it.
+    function openFromMenu(sceneClass, data) {
+        $gameTemp._tarotPending = { scene: sceneClass, data: data || null };
+        const scene = SceneManager._scene;
+        if (scene && scene.popScene) scene.popScene();
+        SceneManager.goto(Scene_Map);
+    }
+
+    const _Scene_Map_start_tarot = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function () {
+        _Scene_Map_start_tarot.call(this);
+        const pending = $gameTemp ? $gameTemp._tarotPending : null;
+        if (!pending) return;
+        $gameTemp._tarotPending = null;
+        SceneManager.push(pending.scene);
+        if (pending.data) SceneManager.prepareNextScene(pending.data);
+    };
+
+    // The reading one member of the party gives another: the same three card
+    // quiz the reader gives an NPC, with the chosen companion in the chair.
+    function readingFor(actor) {
+        return {
+            name: actor ? actor.name() : T('AnimatedTarotReading.npc.name'),
+            perfectMessage: T('AnimatedTarotReading.npc.perfectLong'),
+            goodMessage: T('AnimatedTarotReading.npc.goodLong'),
+            averageMessage: T('AnimatedTarotReading.npc.averageLong'),
+            poorMessage: T('AnimatedTarotReading.npc.poorLong')
+        };
+    }
+
+    if (window.ItemActions) {
+        window.ItemActions.register('tarotRead', {
+            labelKey: 'AnimatedTarotReading.ui.actionRead',
+            titleKey: 'AnimatedTarotReading.ui.actionReadWho',
+            needsTarget: true,
+            handler: (item, actor) => openFromMenu(Scene_TarotNPC, readingFor(actor))
+        });
+        window.ItemActions.register('tarotPick', {
+            labelKey: 'AnimatedTarotReading.ui.actionPick',
+            handler: () => openFromMenu(Scene_TarotPick)
+        });
+        window.ItemActions.register('tarotSpread', {
+            labelKey: 'AnimatedTarotReading.ui.actionSpread',
+            handler: () => openFromMenu(Scene_TarotSandbox)
+        });
+    }
+
+    //=========================================================================
     // Plugin commands
     //=========================================================================
     PluginManager.registerCommand(pluginName, 'openTarot', () => {
@@ -2363,6 +3823,16 @@
 
     // Exposed for the title screen's minigame list and the split-screen
     // hot-seat registry, both of which look these up by name.
+    PluginManager.registerCommand(pluginName, 'pickOneCard', () => {
+        SceneManager.push(Scene_TarotPick);
+    });
+
+    PluginManager.registerCommand(pluginName, 'freeSpread', () => {
+        SceneManager.push(Scene_TarotSandbox);
+    });
+
     window.Scene_Tarot = Scene_Tarot;
     window.Scene_TarotNPC = Scene_TarotNPC;
+    window.Scene_TarotPick = Scene_TarotPick;
+    window.Scene_TarotSandbox = Scene_TarotSandbox;
 })();

@@ -644,17 +644,13 @@
                 const graph = window.SkillGraph;
                 const openers = graph ? graph.openers(skill.id, actor).map(s => s.name) : [];
                 const wanted = graph ? graph.stillWanted(skill.id, actor) : 1;
-                const lockLine = (graph && graph.isForbidden(skill.id))
-                    ? (function () {
-                        const isSpell = skill.stypeId === 1;
-                        const kind = typeof T === 'function'
-                            ? T(isSpell ? 'SkillMaster.graph.lockedKindSpells' : 'SkillMaster.graph.lockedKindSkills')
-                            : (isSpell ? 'spells' : 'skills');
-                        const missing = openers.length || wanted;
-                        return typeof T === 'function'
-                            ? T('SkillMaster.graph.lockedBySchool', { kind: kind, count: missing })
-                            : `You need to know the rest of the school first, missing ${kind}: ${missing}`;
-                    })()
+                // A forbidden skill asks for a level, not for the rest of its
+                // school: window.SkillArcana owns that floor.
+                const arcana = window.SkillArcana;
+                const lockLine = (arcana && arcana.requiredLevel(skill.id) > 0 && !arcana.meetsLevel(actor, skill.id))
+                    ? (typeof T === 'function'
+                        ? T(arcana.isForbidden(skill.id) ? 'SkillMaster.graph.lockedForbiddenLevel' : 'SkillMaster.graph.lockedEsotericLevel', { level: arcana.requiredLevel(skill.id) })
+                        : `Requires level ${arcana.requiredLevel(skill.id)}`)
                     : (openers.length
                         ? (wanted > 1
                             ? (typeof T === 'function' ? T('SkillMaster.graph.lockedByCount', { need: wanted, skills: openers.join(', ') }) : `Requires ${wanted} more of: ${openers.join(', ')}`)
@@ -691,9 +687,9 @@
         const isPreviewFocused = allowActionFocus && (this._selectedActionIndex === 1);
         const previewLabel = typeof T === 'function' ? T('SkillMaster.preview') : 'Preview';
         const previewBtnHTML = `
-            <div class="action-button preview-button ${isPreviewFocused ? 'focused' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})" style="flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; padding:10px 16px; background:${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--bg-card-translucent-5, rgba(20,20,20,0.5))'}; border:1px solid ${isPreviewFocused ? 'var(--text-secondary-active, #e5c07b)' : 'var(--border-secondary-hover-translucent-15, rgba(255,255,255,0.2))'}; border-radius:6px; cursor:pointer; font-family:var(--font-ui); transition:all 0.15s ease">
-                <span style="font-size:1.658rem; line-height:1">◈</span>
-                <span style="font-weight:bold; text-transform:uppercase; font-size:1.17rem; color:${isPreviewFocused ? 'var(--text-pure-black, #000)' : 'var(--text-secondary-active, #e5c07b)'}">${previewLabel}</span>
+            <div class="inspect-btn focusable ${isPreviewFocused ? 'selected focused' : ''}" onclick="SceneManager._scene.openSpellPreview(${skill.id})">
+                <span>◈</span>
+                <span>${previewLabel}</span>
             </div>`;
 
         const note = skill.note || '';
@@ -1028,9 +1024,9 @@
                 const magicSysLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.tabLabel') : 'Magical Systems Wheel';
 
                 const fuseBtn = `
-                    <div class="fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding:10px 14px; font-family:var(--font-ui); font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, var(--text-primary-hover)); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, var(--text-primary-hover)); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${fuseLabel}</div>`;
+                    <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${fuseLabel}</div>`;
                 const magicSystemsBtn = `
-                    <div class="magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()" style="position:relative; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px; padding:10px 14px; font-family:var(--font-ui); font-size:1.292rem; background:var(--bg-card-translucent-5, rgba(20,20,20,0.5)); color:var(--text-secondary-active, var(--text-primary-hover)); border-radius:6px; font-weight:bold; cursor:pointer; border:1.5px solid var(--text-secondary-active, var(--text-primary-hover)); text-transform:uppercase; letter-spacing:0.5px; user-select:none">${magicSysLabel}</div>`;
+                    <div class="inspect-btn magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()">${magicSysLabel}</div>`;
 
                 rightPageHTML = `
                     <div class="page-header-bar">
@@ -1197,14 +1193,14 @@
     Scene_SkillEncyclopedia.prototype.fusionActionsHTML = function (actor, skill) {
         if (!skill || !skill._customSpell || skill._ownerActorId !== actor.actorId()) return '';
         const btn = (label, handler, danger) => `
-            <div class="action-button focusable" onclick="${handler}" style="flex:1; display:flex; justify-content:center; align-items:center; padding:9px 12px; background:var(--accent-gray-2-translucent-0, rgba(20,20,20,0.5)); border:1px solid ${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--border-secondary-hover-translucent-15)'}; border-radius:6px; cursor:pointer; font-family:var(--font-ui); font-size:1.259rem; font-weight:bold; text-transform:uppercase; color:${danger ? 'var(--text-danger-hover, #ff4d4f)' : 'var(--text-secondary-active, #e5c07b)'}; transition:all 0.15s ease">
+            <div class="inspect-btn focusable ${danger ? 'inspect-btn--danger' : ''}" onclick="${handler}">
                 ${label}
             </div>
         `;
         const renameLabel = typeof T === 'function' ? T('SkillMaster.rename') : 'Rename';
         const dissolveLabel = typeof T === 'function' ? T('SkillMaster.dissolve') : 'Dissolve';
         return `
-            <div style="display:flex; gap:8px; margin-top:6px">
+            <div class="inspect-actions inspect-actions--row">
                 ${btn(renameLabel, `SceneManager._scene.renameFusedSpell(${skill.id})`, false)}
                 ${btn(dissolveLabel, `SceneManager._scene.dissolveFusedSpell(${skill.id})`, true)}
             </div>

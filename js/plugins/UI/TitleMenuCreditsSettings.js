@@ -119,6 +119,7 @@
             section: 'ui',
             entries: [
                 { name: 'Pixel UI & SFX Pack', by: 'jdsherbert', urls: ['jdsherbert.itch.io/pixel-ui-sfx-pack'] },
+                { name: 'Tango Icon Library (Public Domain)', by: 'Tango Desktop Project', urls: ['github.com/nigeltao/tango-icon-library-pngs'] },
                 { name: 'Effekseer Animation MZ', by: 'nowis-337', urls: ['nowis-337.itch.io/effekseer-animation-mz'] },
                 { name: 'RPG Maker MV UPP Windowskin Pack', by: 'theunpropro', urls: ['theunpropro.itch.io/rpg-maker-mv-upp-windowskin-pack'] }
             ]

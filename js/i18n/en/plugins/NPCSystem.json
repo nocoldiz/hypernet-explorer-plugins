@@ -78,6 +78,7 @@
     "cancel": "Cancel",
     "silent": "They look through you, somewhere else entirely.",
     "otherParty": "Travelling with {leader}'s party",
-    "readOnly": "They belong to another journey. You can talk, and nothing more."
+    "readOnly": "They belong to another journey. You can talk, and nothing more.",
+    "join": "Ask them along"
   }
 }

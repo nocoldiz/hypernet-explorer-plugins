@@ -1424,7 +1424,7 @@
 
     bindKeys() {
       this._wasdListener = (event) => {
-        if (!this._alive || document.activeElement === this._searchEl) return;
+        if (!this._alive || (this._searchEl && document.activeElement === this._searchEl)) return;
         const key = String(event.key || "").toLowerCase();
         // WASD only. Arrows and the pad are read through Input in update().
         const dir = { w: "up", s: "down", a: "left", d: "right" }[key];
@@ -1483,7 +1483,10 @@
               <button class="back-button cc-gal-back">${T("CharCreate.back")}</button>
               <div class="title">${T("CharCreate.selectABust")}</div>
             </div>
-            <input type="text" class="cc-species-search ui-input cc-gal-search" />
+            ${window.CCSearch.html({
+              className: "cc-species-search ui-input cc-gal-search",
+              placeholder: T("CharCreate.searchSpecies"),
+            })}
             <div class="cc-sprite-tab-bar cc-gal-tabs"></div>
             <div class="ui-panel-body cc-gal-board cc-gal-board--bust">
               <div class="cc-gal-canvas"></div>
@@ -1498,7 +1501,6 @@
       this._canvasEl = container.querySelector(".cc-gal-canvas");
       this._searchEl = container.querySelector(".cc-species-search");
       this._buttonsEl = container.querySelector(".cc-gal-actions");
-      this._searchEl.placeholder = T("CharCreate.searchSpecies");
 
       const backEl = container.querySelector(".cc-gal-back");
       if (backEl) backEl.addEventListener("click", () => this.onBustCancel());
@@ -1528,16 +1530,19 @@
       // The field owns the keyboard while it has focus, so neither RMMZ's
       // Input nor the WASD listener sees what is typed into it. Escape and
       // Enter hand it back, or there would be no way off the field on a
-      // keyboard.
-      for (const type of ["keydown", "keyup", "keypress"]) {
-        this._searchEl.addEventListener(type, (event) => {
-          event.stopPropagation();
-          if (type === "keydown" && (event.key === "Escape" || event.key === "Enter")) {
-            this._searchEl.blur();
-          }
-        });
+      // keyboard. With a pad in hand there is no field at all (CCSearch), so
+      // none of this is bound.
+      if (this._searchEl) {
+        for (const type of ["keydown", "keyup", "keypress"]) {
+          this._searchEl.addEventListener(type, (event) => {
+            event.stopPropagation();
+            if (type === "keydown" && (event.key === "Escape" || event.key === "Enter")) {
+              this._searchEl.blur();
+            }
+          });
+        }
+        this._searchEl.addEventListener("input", () => this.onCategorySearch(this._searchEl.value));
       }
-      this._searchEl.addEventListener("input", () => this.onCategorySearch(this._searchEl.value));
     }
 
     buildButtons() {
@@ -1837,7 +1842,7 @@
     }
 
     updateInput() {
-      if (document.activeElement === this._searchEl) return;
+      if ((this._searchEl && document.activeElement === this._searchEl)) return;
       // The ring owns the buttons under the board whenever it is up, and is
       // read first so one press never moves two cursors.
       if (window.CCNav && window.CCNav.update()) return;
@@ -2066,6 +2071,21 @@
   // Expose selectRandomSprite globally for use by other plugins
   window.selectRandomSpriteForActor = function (actorId) {
     return selectRandomSprite(actorId);
+  };
+
+  // The bust that belongs to the sheet an actor is ALREADY wearing. A seat that
+  // opens with a sprite but no portrait (data/Actors.json ships one, a dossier
+  // or an earlier pick leaves one) used to be handed a stranger's bust by the
+  // random roll; the sheet has always carried its own, so it is asked first and
+  // the roll only answers a sheet that has none.
+  window.selectBustForActorSprite = function (actorId) {
+    const actor = $gameActors.actor(actorId);
+    if (!actor || !actor.characterName || !actor.characterName()) return null;
+    const bust = bustForSprite(actor.characterName(), actor.characterIndex());
+    if (!bust) return null;
+    actor.setVnBust(bust);
+    if (actor.setPortraitMode) actor.setPortraitMode("bust");
+    return bust;
   };
 
   // The list a random pick draws from, resolved once. Randomizing a whole

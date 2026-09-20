@@ -77,20 +77,23 @@
           {
             "name": "Moon",
             "type": "sub_mercurian",
+            "haunted": true,
             "mass": 0.0123,
             "orbitRadius": 0.00257,
             "landingLocations": [
               {
                 "name": "Moon base",
-                "mapId": 100,
-                "x": 1,
-                "y": 1
+                "mapId": 173,
+                "x": 43,
+                "y": 54,
+                "cell": { "gx": 2, "gy": 1 }
               }
             ]
           },
           {
             "name": "Moon 2",
             "type": "sub_mercurian",
+            "haunted": true,
             "mass": 0.0074,
             "radius": 0.21,
             "orbitRadius": 0.0019,
@@ -100,6 +103,7 @@
           {
             "name": "Moon 3",
             "type": "sub_mercurian",
+            "haunted": true,
             "mass": 0.0041,
             "radius": 0.17,
             "orbitRadius": 0.0034,
@@ -2583,9 +2587,10 @@
         "landingLocations": [
           {
             "name": "Court of Nakub",
-            "mapId": 100,
-            "x": 1,
-            "y": 1
+            "mapId": 893,
+            "x": 31,
+            "y": 45,
+            "cell": { "gx": 3, "gy": 4 }
           }
         ]
       }
@@ -2948,9 +2953,10 @@
         "landingLocations": [
           {
             "name": "Monument to humanity",
-            "mapId": 100,
-            "x": 1,
-            "y": 1
+            "mapId": 353,
+            "x": 31,
+            "y": 44,
+            "cell": { "gx": 7, "gy": 2 }
           }
         ]
       }
@@ -3289,9 +3295,10 @@
         "landingLocations": [
           {
             "name": "Human embassy",
-            "mapId": 100,
-            "x": 1,
-            "y": 1
+            "mapId": 970,
+            "x": 17,
+            "y": 46,
+            "cell": { "gx": 8, "gy": 3 }
           }
         ],
         "moons": [

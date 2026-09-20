@@ -273,14 +273,24 @@
 
                 let model = null;
 
+                // Posing and framing is ItemModelSystem.framePreview: the piece
+                // is turned to its presentation angle FIRST and the silhouette
+                // that gives is fitted to this pane, so everything is centred,
+                // whole and about the same size whatever shape it is, and
+                // however tall or wide the canvas happens to be.
                 const setupModelPosition = (m) => {
-                    const box    = new THREE.Box3().setFromObject(m);
-                    const size   = box.getSize(new THREE.Vector3());
-                    const center = box.getCenter(new THREE.Vector3());
-                    m.position.sub(center);
-                    const scaleFactor = 1.85 / (Math.max(size.x, size.y, size.z) || 1);
-                    m.scale.set(scaleFactor, scaleFactor, scaleFactor);
-                    m.rotation.set(0.1, -0.4, 0.35);
+                    const framed = window.ItemModelSystem &&
+                        window.ItemModelSystem.framePreview(m, {
+                            distance: camera.position.z,
+                            fov: camera.fov,
+                            aspect: camera.aspect
+                        });
+                    if (!framed) {
+                        // Nothing to measure: centre it on the stand rather
+                        // than leaving it wherever the builder put it.
+                        const box = new THREE.Box3().setFromObject(m);
+                        m.position.sub(box.getCenter(new THREE.Vector3()));
+                    }
                     if (window.PSXShader) window.PSXShader.applyToObject(m);
                     scene.add(m);
                     model = m;
@@ -825,17 +835,6 @@
         return Array.from(map.values());
     };
 
-    Scene_Equip.prototype.getInventoryItemsForSlot = function (slotIndex) {
-        const slot = slotIndex !== undefined ? slotIndex : this._slotIndex;
-        if (this._actor && typeof this._actor.slotCandidates === 'function') {
-            const cands = this._actor.slotCandidates(slot);
-            if (cands && cands.length) return cands.filter(it => it && !it.isRemoveOption);
-        }
-        const allItems = this.getFilteredPartyEquipment();
-        if (slot < 0 || !this._actor) return allItems;
-        return allItems.filter(item => window.HandSlots ? window.HandSlots.slotFits(this._actor, slot, item) : true);
-    };
-
     // =============================================================================
     // Right Page: 3 Party Members Paperdolls (Triangle disposition) & 3D Detail
     // =============================================================================
@@ -893,11 +892,52 @@
             handSlotIndices.push(h);
         }
 
+        // What each pair of hands actually comes to. A two-handed weapon sits
+        // in one slot and ties up a second one, so the second is drawn as the
+        // other half of the same grip rather than as an empty hand the player
+        // can fill: holdsFor[slot] is the weapon a hand is lending itself to.
+        const HS = window.HandSlots;
+        const holdsFor = {};
+        if (HS && HS.isTwoHanded) {
+            const lent = [];
+            for (const h of handSlotIndices) {
+                if (lent.includes(h)) continue;
+                if (!equips[h] || !HS.isTwoHanded(equips[h])) continue;
+                const other = handSlotIndices.find(
+                    o => o !== h && !equips[o] && !lent.includes(o));
+                if (other === undefined) continue;
+                holdsFor[other] = equips[h];
+                lent.push(other);
+            }
+        }
+        // The warning the player has to see before they wonder why their
+        // damage dropped: a class that was never trained for a weapon in each
+        // hand is paying for the second one on both.
+        const dualPenalised = !!(HS && HS.isPenalisedDualWield && HS.isPenalisedDualWield(actor));
+        const penaltyPct = (HS && HS.UNTRAINED_DUAL_PENALTY)
+            ? Math.round((1 - HS.UNTRAINED_DUAL_PENALTY) * 100)
+            : 0;
+
         const isActorActive = (actor === this._actor);
 
         const renderSlotBox = (slotId) => {
             if (slotId < 0 || slotId >= equipSlots.length) return '';
             const slotName = actor.equipSlotName(slotId) || t.emptySlot;
+            const lentTo = holdsFor[slotId];
+            if (lentTo) {
+                return `
+                <div class="paperdoll-slot is-lent" data-member-idx="${memberIdx}" data-slot-idx="${slotId}" data-idx="${slotId}">
+                    <div class="slot-header">
+                        <span class="slot-title">${escapeHtml(slotName)}</span>
+                    </div>
+                    <div class="slot-body">
+                        <div class="slot-empty-content">
+                            <span class="slot-empty-glyph">⇄</span>
+                            <span class="slot-empty-text">${escapeHtml(t.slotTwoHandedHeld || '')}</span>
+                        </div>
+                    </div>
+                </div>`;
+            }
             const bodyPart = window.HandSlots && window.HandSlots.bodyPartName ? window.HandSlots.bodyPartName(actor, slotId) : '';
             const equipped = equips[slotId];
             const isFocused = (this._activeArea === 'paperdoll' && this._memberIndex === memberIdx && this._slotIndex === slotId);
@@ -933,10 +973,14 @@
                     </div>`;
             }
 
+            const penaltyBadge = (dualPenalised && equipped && equipped.wtypeId)
+                ? `<span class="slot-penalty-badge" title="${escapeHtml(t.dualPenaltyHint || '')}">-${penaltyPct}%</span>`
+                : '';
             return `
                 <div class="paperdoll-slot ${equipped ? 'has-item' : 'is-empty'} ${isFocused ? 'focused' : ''}" data-member-idx="${memberIdx}" data-slot-idx="${slotId}" data-idx="${slotId}">
                     <div class="slot-header">
                         <span class="slot-title">${escapeHtml(slotName)}</span>
+                        ${penaltyBadge}
                         ${bodyPart ? `<span class="slot-bodypart">${escapeHtml(bodyPart)}</span>` : ''}
                     </div>
                     <div class="slot-body">
@@ -997,6 +1041,7 @@
                         ${bodyBoxesHtml}
                     </div>
                 </div>
+                ${dualPenalised ? `<div class="paperdoll-dual-warning">${escapeHtml(t.dualPenaltyWarning ? t.dualPenaltyWarning.replace('{n}', penaltyPct) : '')}</div>` : ''}
                 ${totalStatsHtml}
             </div>`;
     };

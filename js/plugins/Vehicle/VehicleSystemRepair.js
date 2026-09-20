@@ -640,8 +640,6 @@
       super.initialize();
       this._vehicleType = vehicleType || "camper";
       this._tab = 'repair';   // 'repair' | 'upgrades'
-      this._flash = null;     // transient { text, ok } feedback line
-      this._flashTimer = 0;
     }
 
     create() {
@@ -735,7 +733,6 @@
 
       const isBroken = checkCriticalParts(vehicleType);
       const partsConfig = getPartsConfig(vehicleType);
-      const partNames = Object.keys(partsConfig);
 
       let vehicleName = "";
       let vehicleDesc = "";
@@ -756,29 +753,7 @@
         vehicleDesc =T('VehicleRepair.aLightPackableBoatFor');
       }
 
-      let partsListHTML = "";
-      partNames.forEach((part) => {
-        const partHealth = Math.round(health[part] || 0);
-        const isCritical = partsConfig[part].critical;
-
-        // One scale for every meter in the game (window.NeedGauge): the number
-        // and the bar fill take the same band class, so they never disagree.
-        const band = window.NeedGauge
-          ? window.NeedGauge.band(partHealth)
-          : (partHealth <= 20 ? 'gauge-band--bad' : partHealth <= 50 ? 'gauge-band--warn' : 'gauge-band--ok');
-
-        partsListHTML += `
-          <div class="item-slot item-slot--compact vrep-part">
-            <div class="item-slot-info">
-              <div class="item-slot-name">
-                ${window.VehicleParts.label(part)}${isCritical ? ` <span class="ui-chip vrep-critical-chip">${T('VehicleRepair.critical')}</span>` : ''}
-              </div>
-              <div class="vrep-track"><div class="vrep-fill gauge-fill ${band}" style="width:${partHealth}%"></div></div>
-            </div>
-            <span class="item-slot-count gauge-ink ${band}">${partHealth}%</span>
-          </div>
-        `;
-      });
+      const partsListHTML = this.renderPartsList();
 
       // The starship's hull is procedurally generated, so its portrait is a
       // live render of the actual model and its look can be re-rolled here.
@@ -804,7 +779,7 @@
         </div>
 
         <div class="vrep-portrait">
-          <canvas id="vehicle-sprite-canvas" width="150" height="150" style="image-rendering:${shipSpec ? 'auto' : 'pixelated'}"></canvas>
+          <canvas id="vehicle-sprite-canvas" width="320" height="320" style="image-rendering:${shipSpec ? 'auto' : 'pixelated'}"></canvas>
         </div>
         ${shipPlateHTML}
 
@@ -841,15 +816,8 @@
           ${this.renderUpgradesPage(useItalian)}
         </div>`;
 
-      // Transient feedback line.
-      let flashHTML = "";
-      if (this._flashTimer > 0 && this._flash) {
-        flashHTML = `<div class="vrep-flash gauge-ink ${this._flash.ok ? 'gauge-band--ok' : 'gauge-band--bad'}">${this._flash.text}</div>`;
-      }
-
       const rightPageHTML = `
         ${tabBarHTML}
-        ${flashHTML}
         ${bodyHTML}
       `;
 
@@ -867,6 +835,76 @@
       this.drawVehicleSprite();
     }
 
+    // What a repair or a purchase actually changed: the two panels on the right
+    // page and the condition line. Redrawing those in place leaves the left page
+    // and its live 3D preview alone, so the screen no longer blinks and nothing
+    // moves under the cursor.
+    refreshPanels() {
+      const c = this._dndContainer;
+      if (!c) return;
+      const useItalian = ConfigManager.language === 'it';
+
+      const repairPanel = c.querySelector('#maint-panel-repair');
+      if (repairPanel) {
+        const keep = repairPanel.querySelector('.maint-scroll');
+        const top = keep ? keep.scrollTop : 0;
+        repairPanel.innerHTML = this.renderRepairPage(useItalian, this.renderPartsList());
+        const box = repairPanel.querySelector('.maint-scroll');
+        if (box) box.scrollTop = top;
+      }
+
+      const upgradePanel = c.querySelector('#maint-panel-upgrades');
+      if (upgradePanel) {
+        const keep = upgradePanel.querySelector('.maint-scroll');
+        const top = keep ? keep.scrollTop : 0;
+        upgradePanel.innerHTML = this.renderUpgradesPage(useItalian);
+        const box = upgradePanel.querySelector('.maint-scroll');
+        if (box) box.scrollTop = top;
+      }
+
+      const status = c.querySelector('.vrep-status');
+      if (status) {
+        const isBroken = checkCriticalParts(this._vehicleType);
+        status.classList.toggle('gauge-band--bad', isBroken);
+        status.classList.toggle('gauge-band--ok', !isBroken);
+        status.textContent = isBroken ? T('VehicleRepair.statusBroken') : T('VehicleRepair.statusOperational');
+      }
+
+      if (window.CCNav && window.CCNav.paint) window.CCNav.paint();
+    }
+
+    // The registry rows on their own, so a repair can redraw just the list
+    // instead of rebuilding the whole spread (which re-made the 3D preview and
+    // made the screen blink on every press).
+    renderPartsList() {
+      const health = getVehicleHealth(this._vehicleType) || {};
+      const partsConfig = getPartsConfig(this._vehicleType);
+      let partsListHTML = "";
+      Object.keys(partsConfig).forEach((part) => {
+        const partHealth = Math.round(health[part] || 0);
+        const isCritical = partsConfig[part].critical;
+
+        // One scale for every meter in the game (window.NeedGauge): the number
+        // and the bar fill take the same band class, so they never disagree.
+        const band = window.NeedGauge
+          ? window.NeedGauge.band(partHealth)
+          : (partHealth <= 20 ? 'gauge-band--bad' : partHealth <= 50 ? 'gauge-band--warn' : 'gauge-band--ok');
+
+        partsListHTML += `
+          <div class="item-slot item-slot--compact vrep-part">
+            <div class="item-slot-info">
+              <div class="item-slot-name">
+                ${window.VehicleParts.label(part)}${isCritical ? ` <span class="ui-chip vrep-critical-chip">${T('VehicleRepair.critical')}</span>` : ''}
+              </div>
+              <div class="vrep-track"><div class="vrep-fill gauge-fill ${band}" style="width:${partHealth}%"></div></div>
+            </div>
+            <span class="item-slot-count gauge-ink ${band}">${partHealth}%</span>
+          </div>
+        `;
+      });
+      return partsListHTML;
+    }
+
     // ---- Right-page: Repair tab ----
     renderRepairPage(useItalian, partsListHTML) {
       const type = this._vehicleType;
@@ -1027,11 +1065,26 @@
         const scroll = panel && panel.querySelector('.maint-scroll');
         if (scroll) scroll.dataset.active = (t === id) ? '1' : '0';
       });
+      // The ring was left burning on the button of the tab that just closed,
+      // so the repair stamp kept its outline while the workshop was up. Put it
+      // back on the first control of the tab that is now open.
+      const nav = window.CCNav;
+      if (nav && nav.isAttached && nav.isAttached()) {
+        nav.clearRing();
+        nav._key = null;
+        nav._keyNth = 0;
+        if (nav._active) nav.enter("down");
+      }
     }
 
+    // Saying so used to be a line at the top of the right page, which pushed
+    // every reading down the moment it appeared and again when it faded. It is
+    // a toast now (Core/ParchmentToast.js), so the page never moves under the
+    // player's hand.
     setFlash(text, ok) {
-      this._flash = { text, ok };
-      this._flashTimer = 150;
+      if (window.ParchmentToast && window.ParchmentToast.show) {
+        window.ParchmentToast.show(text, { severity: ok ? "good" : "warning" });  // i18n-ignore  toast severity
+      }
     }
 
     doRepair(mode) {
@@ -1040,7 +1093,6 @@
       if (!canAfford(cost)) {
         SoundManager.playBuzzer();
         this.setFlash(T('VehicleRepair.notEnoughMaterials'), false);
-        this.refreshUIVehicleDOM();
         return;
       }
       const wasBroken = checkCriticalParts(type);
@@ -1052,7 +1104,7 @@
                                 : (T('VehicleRepair.vehicleRepaired'));
       if (wasBroken && !checkCriticalParts(type)) msg =T('VehicleRepair.vehicleIsOperationalAgain');
       this.setFlash(msg, true);
-      this.refreshUIVehicleDOM();
+      this.refreshPanels();
     }
 
     purchaseUpgrade(key) {
@@ -1067,7 +1119,6 @@
       if (!canAfford(cost)) {
         SoundManager.playBuzzer();
         this.setFlash(T('VehicleRepair.notEnoughMaterials'), false);
-        this.refreshUIVehicleDOM();
         return;
       }
       chargeCost(cost);
@@ -1077,8 +1128,8 @@
       SoundManager.playUseItem();
       const it = ConfigManager.language === 'it';
       const name = upgradeText(key, 'name');
-      this.setFlash((T('VehicleRepair.installed')) + name, true);
-      this.refreshUIVehicleDOM();
+      this.setFlash((T('VehicleRepair.installed')) + " " + name, true);
+      this.refreshPanels();
     }
 
     // Opens the procedural-hull editor over the pockets. The modal owns the
@@ -1194,12 +1245,6 @@
         return;
       }
 
-      // Fade the transient feedback line.
-      if (this._flashTimer > 0) {
-        this._flashTimer--;
-        if (this._flashTimer === 0) { this._flash = null; this.refreshUIVehicleDOM(); }
-      }
-
       if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
         this.exitMaintenance();
         return;
@@ -1301,9 +1346,12 @@
 
   PluginManager.registerCommand(pluginName, "camperMaintenance", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1316,9 +1364,12 @@
 
   PluginManager.registerCommand(pluginName, "carMaintenance", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1331,9 +1382,12 @@
 
   PluginManager.registerCommand(pluginName, "airshipMaintenance", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1346,9 +1400,12 @@
 
   PluginManager.registerCommand(pluginName, "bikeMaintenance", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1361,9 +1418,12 @@
 
   PluginManager.registerCommand(pluginName, "damageCamper", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1373,24 +1433,35 @@
 
     applyDamage("camper", damagePerHit);
 
-    // Show message if vehicle becomes broken
+    // Say so when the vehicle gives out under the damage
     if (window.brokenCamper) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.camper') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirstLong'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.camper') }),
+          T('VehicleRepair.repairCriticalFirstLong')
+        ], {
+          severity: 'danger',
+          key: 'vehicle:damage:camper'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.camper') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.camper') }), {
+          severity: 'warning',
+          key: 'vehicle:damage:camper'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "damageCar", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1400,24 +1471,35 @@
 
     applyDamage("car", damagePerHit);
 
-    // Show message if vehicle becomes broken
+    // Say so when the vehicle gives out under the damage
     if (window.brokenCar) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.car') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirstLong'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.car') }),
+          T('VehicleRepair.repairCriticalFirstLong')
+        ], {
+          severity: 'danger',
+          key: 'vehicle:damage:car'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.car') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.car') }), {
+          severity: 'warning',
+          key: 'vehicle:damage:car'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "damageAirship", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1427,24 +1509,35 @@
 
     applyDamage("airship", damagePerHit);
 
-    // Show message if vehicle becomes broken
+    // Say so when the vehicle gives out under the damage
     if (window.brokenAirship) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.starship') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirstLong'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.starship') }),
+          T('VehicleRepair.repairCriticalFirstLong')
+        ], {
+          severity: 'danger',
+          key: 'vehicle:damage:starship'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.starship') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.starship') }), {
+          severity: 'warning',
+          key: 'vehicle:damage:starship'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "damageBike", () => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1454,24 +1547,35 @@
 
     applyDamage("bike", damagePerHit);
 
-    // Show message if vehicle becomes broken
+    // Say so when the vehicle gives out under the damage
     if (window.brokenBike) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.bike') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirstLong'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.criticalDamage', { vehicle: T('VehicleRepair.vehicle.bike') }),
+          T('VehicleRepair.repairCriticalFirstLong')
+        ], {
+          severity: 'danger',
+          key: 'vehicle:damage:bike'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.bike') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.tookDamage', { vehicle: T('VehicleRepair.vehicle.bike') }), {
+          severity: 'warning',
+          key: 'vehicle:damage:bike'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "repairCamper", (args) => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1485,28 +1589,40 @@
     repairVehicle("camper", repairPercent);
 
     if (args.amount === "full") {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.camper') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.camper') }), {
+          severity: 'good',
+          key: 'vehicle:repaired:camper'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.camper'), percent: repairAmountPartial }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.camper'), percent: repairAmountPartial }), {
+          severity: 'good',
+          key: 'vehicle:repaired:camper'  // i18n-ignore  dedupe key
+        });
+      }
     }
 
     // Check if vehicle is now operational
     if (wasBroken && !window.brokenCamper) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.camper') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.camper') }), {
+          severity: 'good',
+          key: 'vehicle:operational:camper'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "repairCar", (args) => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1520,28 +1636,40 @@
     repairVehicle("car", repairPercent);
 
     if (args.amount === "full") {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.car') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.car') }), {
+          severity: 'good',
+          key: 'vehicle:repaired:car'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.car'), percent: repairAmountPartial }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.car'), percent: repairAmountPartial }), {
+          severity: 'good',
+          key: 'vehicle:repaired:car'  // i18n-ignore  dedupe key
+        });
+      }
     }
 
     // Check if vehicle is now operational
     if (wasBroken && !window.brokenCar) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.car') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.car') }), {
+          severity: 'good',
+          key: 'vehicle:operational:car'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "repairAirship", (args) => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1555,28 +1683,40 @@
     repairVehicle("airship", repairPercent);
 
     if (args.amount === "full") {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.starship') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.starship') }), {
+          severity: 'good',
+          key: 'vehicle:repaired:starship'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.starship'), percent: repairAmountPartial }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.starship'), percent: repairAmountPartial }), {
+          severity: 'good',
+          key: 'vehicle:repaired:starship'  // i18n-ignore  dedupe key
+        });
+      }
     }
 
     // Check if vehicle is now operational
     if (wasBroken && !window.brokenAirship) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.starship') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.starship') }), {
+          severity: 'good',
+          key: 'vehicle:operational:starship'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
   PluginManager.registerCommand(pluginName, "repairBike", (args) => {
     if (!ensureGameSystemExists()) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.systemNotReady'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.systemNotReady'), {
+          severity: 'warning',
+          key: 'vehicle:notready'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
 
@@ -1590,20 +1730,29 @@
     repairVehicle("bike", repairPercent);
 
     if (args.amount === "full") {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.bike') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.fullyRepaired', { vehicle: T('VehicleRepair.vehicle.bike') }), {
+          severity: 'good',
+          key: 'vehicle:repaired:bike'  // i18n-ignore  dedupe key
+        });
+      }
     } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.bike'), percent: repairAmountPartial }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.partiallyRepaired', { vehicle: T('VehicleRepair.vehicle.bike'), percent: repairAmountPartial }), {
+          severity: 'good',
+          key: 'vehicle:repaired:bike'  // i18n-ignore  dedupe key
+        });
+      }
     }
 
     // Check if vehicle is now operational
     if (wasBroken && !window.brokenBike) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.bike') }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VehicleRepair.nowOperational', { vehicle: T('VehicleRepair.vehicle.bike') }), {
+          severity: 'good',
+          key: 'vehicle:operational:bike'  // i18n-ignore  dedupe key
+        });
+      }
     }
   });
 
@@ -1636,38 +1785,63 @@
   const _Game_Vehicle_getOn = Game_Vehicle.prototype.getOn;
   Game_Vehicle.prototype.getOn = function () {
     if (this.isShip() && window.brokenCamper) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.camper') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirst'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.camper') }),
+          T('VehicleRepair.repairCriticalFirst')
+        ], {
+          severity: 'warning',
+          key: 'vehicle:broken:camper'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
     if (this.isBoat() && $gameSystem._boatType === 'bike' && window.brokenBike) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.bike') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirst'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.bike') }),
+          T('VehicleRepair.repairCriticalFirst')
+        ], {
+          severity: 'warning',
+          key: 'vehicle:broken:bike'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
     if (this.isBoat() && $gameSystem._boatType === 'car' && window.brokenCar) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.car') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirst'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.car') }),
+          T('VehicleRepair.repairCriticalFirst')
+        ], {
+          severity: 'warning',
+          key: 'vehicle:broken:car'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
     if (this.isBoat() && $gameSystem._boatType === 'boat' && window.brokenBoat) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.boat') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirst'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.boat') }),
+          T('VehicleRepair.repairCriticalFirst')
+        ], {
+          severity: 'warning',
+          key: 'vehicle:broken:boat'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
     if (this.isAirship() && window.brokenAirship) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.starship') }));
-      $gameMessage.add(T('VehicleRepair.repairCriticalFirst'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('VehicleRepair.brokenCannotUse', { vehicle: T('VehicleRepair.vehicle.starship') }),
+          T('VehicleRepair.repairCriticalFirst')
+        ], {
+          severity: 'warning',
+          key: 'vehicle:broken:starship'  // i18n-ignore  dedupe key
+        });
+      }
       return;
     }
     _Game_Vehicle_getOn.call(this);

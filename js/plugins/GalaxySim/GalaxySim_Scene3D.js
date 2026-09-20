@@ -1835,8 +1835,9 @@
         const sameSystem = !!(this._system && pick.system && pick.system.name === this._system.name);
         const orbitingThis = !isMoving && sameSystem &&
           ship && ship.currentPlanet === pick.data.name;
-        // A moon can't be orbited directly, so its landing sites unlock while the
-        // ship orbits the moon's parent planet.
+        // A moon IS its own orbit (the ship parks at the moon by name), but
+        // holding its parent planet is close enough to unlock the moon's
+        // landing sites.
         const orbitingParent = pick.kind === "moon" && !isMoving && sameSystem &&
           ship && pick.planet && ship.currentPlanet === pick.planet.name;
         // Strip mining and servicing are both "in orbit of this exact body"
@@ -1861,15 +1862,14 @@
           // (startTravelToPlanet re-plots from wherever the ship is now).
           // NOT offered for the body the ship is already parked at: flying to
           // where you already are resolved as an instant arrival, so the button
-          // sat there in orbit doing nothing (a moon counts as parked when the
-          // ship holds its parent, which is the only orbit a moon has).
+          // sat there in orbit doing nothing.
           canTravelTo: (pick.kind === "planet" || pick.kind === "moon") &&
-            sameSystem && !orbitingThis && !orbitingParent,
+            sameSystem && !orbitingThis,
           // Artificial objects (probes, the teapot, the monolith) have no
-          // surface to put a landing party on. A moon has no orbit of its
-          // own (see orbitingParent above), so its landing unlocks while the
-          // ship orbits the moon's parent planet instead.
-          canLand: !!(pick.kind === "moon" ? orbitingParent : orbitingThis) && !pick.data.noLanding,
+          // surface to put a landing party on. A moon lands from its own orbit
+          // or from its parent planet's.
+          canLand: !!(pick.kind === "moon" ? (orbitingThis || orbitingParent) : orbitingThis) &&
+            !pick.data.noLanding,
           canStripMine: !!orbitingThis && mineable && mineInfo.remaining > 0 && !this._mining,
           mining: mineInfo,
           canService: !!orbitingThis && isHubble,
@@ -1879,11 +1879,10 @@
           // Hand-authored landing-site list is offered when in orbit (of the body,
           // or its parent for a moon).
           canUseLocations: !!(orbitingThis || orbitingParent),
-          // Schrödinger-Bohr bridge: instant orbit of any planet (or a moon's
-          // parent planet) for 1 charge, shown while not already orbiting it
-          // and charges remain.
+          // Schrödinger-Bohr bridge: instant orbit of any planet or moon for
+          // 1 charge, shown while not already orbiting it and charges remain.
           canBohrBridge: (pick.kind === "planet" || pick.kind === "moon") &&
-            !isMoving && !orbitingThis && !orbitingParent && hasCharge,
+            !isMoving && !orbitingThis && hasCharge,
           // Planet-definition atmosphere/life. Only planets carry a type in
           // PlanetTypes; moons pass null so those rows are simply omitted.
           breathable: (pick.kind === "planet" && GS.planetBreathable)
@@ -1922,7 +1921,7 @@
       if (!ship || ship.isMoving || !ship.currentPlanet) return null;
       if (!this._system || ship.currentSystem !== this._system.name) return null;
       for (const p of (this._pickTargets || [])) {
-        if (!p || p.kind !== "planet" || !p.data) continue;
+        if (!p || !p.data || (p.kind !== "planet" && p.kind !== "moon")) continue;
         if (p.data.name === ship.currentPlanet) return p;
       }
       return null;
@@ -3449,9 +3448,8 @@
       if (!sysName) return buzz();
       // Bridging to a companion star of an N-ary system parks at that star.
       const starName = (isStar && pick.data._companionOf) ? pick.data.name : null;
-      // A moon bridges into orbit of its parent planet - moons have no
-      // independent ship-orbit state (see the `orbitingParent` convention).
-      const targetName = isStar ? null : (isMoon ? (pick.planet && pick.planet.name) : pick.data.name);
+      // A moon is bridged to by name: it is its own orbit target.
+      const targetName = isStar ? null : pick.data.name;
       if (!isStar && !targetName) return buzz();
       const ship = dm.playerShip;
       if (ship && ship.currentSystem === sysName) {
@@ -3754,11 +3752,9 @@
     _travelToPlanet(sel) {
       if (!sel || !sel.data) return;
       const sysName = (sel.system && sel.system.name) || this._system.name;
-      // A moon has no orbit of its own outside planet focus (the same rule
-      // the catalog's Spaceports list follows), so "Fly Here" on one really
-      // means orbiting the planet it belongs to - startTravelToPlanet only
-      // knows planet names.
-      const targetName = (sel.kind === "moon" && sel.planet) ? sel.planet.name : sel.data.name;
+      // A moon is its own destination: the ship parks at the moon by name and
+      // rides the parent's orbit from there (see resolveOrbitBody).
+      const targetName = sel.data.name;
       let departed = false;
       if (this.dataManager.startTravelToPlanet) {
         departed = this.dataManager.startTravelToPlanet(sysName, targetName) !== false;
@@ -3874,7 +3870,8 @@
       // though it were a planet skimming its star.
       let moonOf = null;
       if (sel && sel.kind === "moon" && sel.data && sel.planet &&
-          ship && !ship.isMoving && ship.currentPlanet === sel.planet.name) {
+          ship && !ship.isMoving &&
+          (ship.currentPlanet === sel.data.name || ship.currentPlanet === sel.planet.name)) {
         planet = sel.data;
         moonOf = sel.planet;
       } else {
@@ -3882,7 +3879,10 @@
         if (!planetName) return buzz();
         const system = dm.getSystem(ship.currentSystem);
         if (!system || !system.planets || !system.planets.length) return buzz();
-        planet = system.planets.find((p) => p.name === planetName);
+        // The ship may be parked at a moon, which lands on itself.
+        const rec = dm.resolveOrbitBody && dm.resolveOrbitBody(ship.currentSystem, planetName);
+        if (rec && rec.isMoon) { planet = rec.body; moonOf = rec.host; }
+        else planet = system.planets.find((p) => p.name === planetName);
       }
       if (!planet || !planet.type) return buzz();
       if (!this._overlayUI || !this._overlayUI.showLandingGrid) return buzz();
@@ -3907,6 +3907,20 @@
           if (mode === 'flyby') {
             if (!this._liminalFlybyOn(planet, gx, gy, moonOf)) return buzz();
             this._awardSpec("Spacecraft Piloting", 3);   // i18n-ignore: specialization id
+            if (window.SoundManager) SoundManager.playOk();
+            SceneManager.pop();
+            return;
+          }
+          // A SPACEPORT on the square: the pad is drawn by hand, so nothing is
+          // generated - the party either walks off onto it or brings the ship
+          // down on it. The landing is still the planet's (see landAtSpaceport).
+          if (mode === 'port-foot' || mode === 'port-ship') {
+            const port = GS.spaceportAtCell && GS.spaceportAtCell(planet, gx, gy);
+            if (!port || !GS.landAtSpaceport || !GS.landAtSpaceport(port.loc, {
+              planet, isMoon: !!moonOf, parentPlanet: moonOf,
+              withShip: mode === 'port-ship',
+            })) return buzz();
+            this._awardSpec("Spacecraft Piloting", 2);   // i18n-ignore: specialization id
             if (window.SoundManager) SoundManager.playOk();
             SceneManager.pop();
             return;
@@ -4020,6 +4034,9 @@
       // Slowly tops up Hyperflux while parked at a main-sequence star with
       // Refuel engaged; a no-op the rest of the time (see canRefuel).
       if (dm.tickRefuel) dm.tickRefuel(delta);
+      // The hull soaks up the star's heat for as long as the pumps run and
+      // sheds it afterwards; the ship interior reads it as a hot cabin.
+      if (dm.tickRefuelHeat) dm.tickRefuelHeat(delta);
       // An open Schrodingerite flyby runs on the same clock; completing it
       // (or breaking it off) changes what the panel may offer.
       if (dm.tickSchrodingeriteHarvest && dm.tickSchrodingeriteHarvest(delta)) {
@@ -5086,6 +5103,12 @@
       this._disposeLens();
       if (this._background && GS.Scene3DCosmos) {
         GS.Scene3DCosmos.disposeObject3D(this._background);
+      }
+      // The painted-surface and photo-copy canvases the offscreen Renderer3D
+      // memoised are CPU-side and outlive every GPU dispose above, so they are
+      // released with the rest of the view rather than kept for the session.
+      if (GS.Renderer3D && GS.Renderer3D.clearTextureCaches) {
+        GS.Renderer3D.clearTextureCaches();
       }
       if (this._renderer) {
         // dispose() leaves the WebGL context itself alive. The browser caps how

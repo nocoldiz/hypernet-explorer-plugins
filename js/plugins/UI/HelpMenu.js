@@ -340,7 +340,101 @@
 
         html += parsed.substring(lastIndex);
         if (openSpan) html += "</span>";
-        return html;
+        // Last, because the links are drawn as markup and must not be picked
+        // apart by the paragraph or colour passes that come before them.
+        return linksToHtml(html);
+    }
+
+    // =============================================================================
+    // Hypertext
+    // =============================================================================
+    // A page can point at another page: [brewery | Brewing system] prints
+    // "brewery" in gold and opens the Brewing page. The bar is what makes a
+    // link, so a bracket without one is printed as it stands ([REDACTED] is
+    // prose, not a page). The part after the bar is the TARGET and is never
+    // printed, so the prose reads as prose; the target is matched against a
+    // page's file key, its keyword, its synonyms and its printed title, in
+    // that order, which means a link survives both a retitling and a
+    // translation.
+    //
+    // A link to a world topic only opens once somebody in the party has been
+    // told about it. Until then it is still drawn in gold, dimmed, because a
+    // reader who cannot open it should still know there is something there:
+    // clicking says why instead of going nowhere.
+    const _linkIndex = { rows: null, lang: null, count: 0 };
+
+    // 'HelpTopics.craftBrewing.title' -> 'craftBrewing'. That middle segment is
+    // the name the page is filed under and the one a link is written with.
+    const _pageId = (row) => {
+        const key = String((row && row.title) || '');
+        const parts = key.split('.');
+        return parts.length >= 3 ? parts[1] : key;
+    };
+
+    const _indexLink = (map, name, row) => {
+        if (!name) return;
+        const k = String(name).trim().toLowerCase();
+        if (k && !map.has(k)) map.set(k, row);
+    };
+
+    const _linkRows = () => {
+        const lang = ConfigManager.language || HELP_I18N_FALLBACK;
+        const rows = getHelpTopics();
+        // Rebuilt when the language changes or when the banks finish loading
+        // (the titles are part of the index, so an index built before the prose
+        // arrived knows the keys and nothing else).
+        if (_linkIndex.rows && _linkIndex.lang === lang && _linkIndex.count === rows.length) {
+            return _linkIndex.rows;
+        }
+        const map = new Map();
+        rows.forEach((row) => {
+            if (!row || !row.title) return;
+            _indexLink(map, _pageId(row), row);
+            _indexLink(map, row.keyword, row);
+            (row.synonyms || []).forEach((syn) => _indexLink(map, syn, row));
+            _indexLink(map, getLocalizedTitle(row), row);
+        });
+        _linkIndex.rows = map;
+        _linkIndex.lang = lang;
+        _linkIndex.count = rows.length;
+        return map;
+    };
+
+    // A manual page is always open. A world topic is open once one of the party
+    // has heard it named, which is the same test the Topics shelf itself makes.
+    const _isPageOpen = (row) => {
+        if (!row || row.type !== 'topic') return true;
+        if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.members) return false;
+        const want = String(row.keyword || '').toLowerCase();
+        return $gameParty.members().some((actor) =>
+            (actor._keywords || []).some((word) => String(word).toLowerCase() === want));
+    };
+
+    const _attr = (text) => String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // [label | Target]. Nothing else: a bracket with no bar in it is text.
+    const LINK_PATTERN = /\[\s*([^\[\]|<>]+?)\s*\|\s*([^\[\]|<>]+?)\s*\]/g;
+
+    function linksToHtml(html) {
+        return String(html).replace(LINK_PATTERN, (match, first, second) => {
+            const label = String(first).trim();
+            const target = String(second).trim();
+            if (!label || !target) return match;
+            const row = _linkRows().get(target.toLowerCase());
+            // A target nobody has written is left exactly as it was typed: a
+            // mistyped link then reads as the mistake it is rather than as a
+            // dead one, and a page can still print a bracket it means
+            // literally, which several of them do.
+            if (!row) return match;
+            const open = _isPageOpen(row);
+            const cls = 'help-link' + (open ? '' : ' help-link--closed');
+            return '<span class="' + cls + '" role="link" tabindex="0"' +
+                ' data-help-name="' + _attr(getLocalizedTitle(row) || label) + '"' +
+                ' data-help-page="' + _attr(_pageId(row)) + '"' +
+                (open ? '' : ' data-help-closed="1"') +
+                '>' + label + '</span>';
+        });
     }
 
     // =============================================================================
@@ -947,6 +1041,18 @@
 
         if (detailChanged) detailPage.innerHTML = detailHTML;
 
+        // Every gold link on the page just built. A link is followed with the
+        // mouse or, when the reader has the page itself focused, with Enter on
+        // the link that has been tabbed to.
+        if (detailChanged) {
+            detailPage.querySelectorAll(".help-link").forEach((el) => {
+                el.addEventListener("click", (e) => { e.stopPropagation(); this.followLink(el); });
+                el.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.followLink(el); }
+                });
+            });
+        }
+
         const wikiButton = detailChanged ? detailPage.querySelector("#help-wiki-btn") : null;
         if (wikiButton) {
             wikiButton.addEventListener("click", () => {
@@ -1118,6 +1224,57 @@
                 }
             });
         }
+    };
+
+    // Follow a gold link. A page that exists and is open is turned to; one the
+    // party has not been told about, or one nobody has written, says so rather
+    // than doing nothing, because a link that silently refuses reads as a bug.
+    Scene_Help.prototype.followLink = function (el) {
+        if (!el) return;
+        const name = el.getAttribute("data-help-name") || "";
+        const page = el.getAttribute("data-help-page");
+        if (!page) return this.refuseLink(T("HelpMenu.linkMissing", { name }));
+        if (el.getAttribute("data-help-closed") === "1") {
+            return this.refuseLink(T("HelpMenu.linkLocked", { name }));
+        }
+        if (!this.openPage(page)) this.refuseLink(T("HelpMenu.linkMissing", { name }));
+    };
+
+    Scene_Help.prototype.refuseLink = function (text) {
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast && window.ParchmentToast.show) window.ParchmentToast.show(text);
+    };
+
+    // Turn to a page by the name it is filed under, wherever it lives. The shelves
+    // are walked in the order they are tabbed, so a world topic is found on the
+    // Topics shelf and a manual page in the manual. Whatever is typed in the
+    // search field is cleared first: a page reached by a link must not be hidden
+    // by a query aimed at another one.
+    Scene_Help.prototype.openPage = function (pageId) {
+        if (!pageId) return false;
+        if (this._helpBar && !this._helpBar.isEmpty()) {
+            this._helpBar.setQuery("");
+            this._searchCache = null;
+        }
+        const cats = this.categories();
+        for (let i = 0; i < cats.length; i++) {
+            const rows = this.visibleTopics(cats[i]);
+            const at = rows.findIndex((r) => _pageId(r) === pageId);
+            if (at < 0) continue;
+            this._tabIndex = i;
+            this._listIndex = at;
+            this._selectedTopic = rows[at];
+            this._activeArea = "content";
+            this._lastDetailKey = null;
+            SoundManager.playOk();
+            this.refreshUIHelp();
+            const scroll = document.getElementById("help-content-scroll");
+            if (scroll) scroll.scrollTop = 0;
+            const row = document.querySelector("#help-container .topic-item.focused");
+            if (row) row.scrollIntoView({ block: "nearest" });
+            return true;
+        }
+        return false;
     };
 
     // Put the reader at the head of a macrotopic: the cursor lands on its first

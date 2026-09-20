@@ -114,7 +114,11 @@
         if (validateAndCalc()) {
             SceneManager.push(Scene_TokenConverter);
         } else {
-            $gameMessage.add(T('GoldTokenConverter.msg.notConfigured'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('GoldTokenConverter.msg.notConfigured'), {
+                severity: 'warning'
+              });
+            }
         }
     });
     
@@ -388,7 +392,11 @@
             
             // Fail-safe: if scene is pushed via script call, validate first.
             if (!validateAndCalc()) {
-                $gameMessage.add(T('GoldTokenConverter.msg.error'));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('GoldTokenConverter.msg.error'), {
+                    severity: 'warning'
+                  });
+                }
                 this.popScene();
                 return;
             }
@@ -557,9 +565,11 @@
             amount = Math.min(wanted, Math.max(0, room));
             if (amount <= 0) {
                 SoundManager.playBuzzer();
-                window.skipLocalization = true;
-                $gameMessage.add(T('GoldTokenConverter.msg.pocketFull'));
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('GoldTokenConverter.msg.pocketFull'), {
+                    severity: 'warning'
+                  });
+                }
                 return;
             }
             const totalCost = amount * goldPerToken;
@@ -570,13 +580,19 @@
                 SoundManager.playShop();
                 
                 const totalEuros = amount * tokenPriceEuro;
-                $gameMessage.add(T('GoldTokenConverter.msg.bought', { amount, total: totalEuros.toFixed(2) }));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('GoldTokenConverter.msg.bought', { amount, total: totalEuros.toFixed(2) }), {
+                    severity: 'good'
+                  });
+                }
             } else {
                 SoundManager.playBuzzer();
                 const message =T('GoldTokenConverter.insufficientGold');
-                window.skipLocalization = true;
-                $gameMessage.add(message);
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(message, {
+                    severity: 'warning'
+                  });
+                }
             }
         }
         
@@ -594,13 +610,19 @@
                 SoundManager.playShop();
                 
                 const totalEuros = amount * tokenPriceEuro;
-                $gameMessage.add(T('GoldTokenConverter.msg.sold', { amount, total: totalEuros.toFixed(2) }));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('GoldTokenConverter.msg.sold', { amount, total: totalEuros.toFixed(2) }), {
+                    severity: 'good'
+                  });
+                }
             } else {
                 SoundManager.playBuzzer();
                 const message =T('GoldTokenConverter.insufficientTokens');
-                window.skipLocalization = true;
-                $gameMessage.add(message);
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(message, {
+                    severity: 'warning'
+                  });
+                }
             }
         }
         

@@ -76,6 +76,19 @@
 (() => {
     'use strict';
     //require('nw.gui').Window.get().showDevTools();
+    // The tool talks to whoever is holding the keyboard, so it says its piece
+    // in a toast rather than stopping the game in a message box. It also loads
+    // in configurations without the localization layer, so the key is the
+    // fallback when there is nothing to resolve it with.
+    function dmtNotice(key, args, severity) {
+        const text = window.T ? window.T(key, args || undefined) : key;
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(text, { severity: severity || 'info', duration: 300 });
+        } else {
+            console.log(text);
+        }
+    }
+
     const parameters = PluginManager.parameters('DebugMapTeleporter');
     const openKey = parameters['openKey'] || 'F6';
     
@@ -87,7 +100,7 @@
         if (SceneManager._scene instanceof Scene_Map) {
             SceneManager._scene.openDebugMapMenu();
         } else {
-            $gameMessage.add('Debug Map Menu can only be opened from the map scene.');
+            dmtNotice('DebugTeleport.mapSceneOnlyMenu');
         }
     });
     
@@ -106,7 +119,7 @@
                 SceneManager._scene.teleportToMap(mapId);
             }
         } else {
-            $gameMessage.add('Teleportation can only be used from the map scene.');
+            dmtNotice('DebugTeleport.mapSceneOnlyTeleport');
         }
     });
     
@@ -119,7 +132,7 @@
         console.log(`Total: ${mapInfos.length} maps found`);
         
         if (SceneManager._scene instanceof Scene_Map) {
-            $gameMessage.add(`Found ${mapInfos.length} maps. Check console for details.`);
+            dmtNotice('DebugTeleport.foundMaps', { count: mapInfos.length });
         }
     });
     
@@ -166,7 +179,7 @@
         debugWindow = window.open('', 'DebugMapMenu', windowFeatures);
         
         if (!debugWindow) {
-            $gameMessage.add('Failed to open debug window. Please allow popups.');
+            dmtNotice('DebugTeleport.popupBlocked', null, 'warning');
             return;
         }
         
@@ -506,16 +519,16 @@
 
                     console.log(`Teleporting to Map ${mapId} at center position (${teleportPos.x}, ${teleportPos.y})`);
                 } else {
-                    $gameMessage.add(`Failed to load map data for Map ${mapId}`);
+                    dmtNotice('DebugTeleport.loadFailed', { map: mapId }, 'warning');
                 }
             } catch (error) {
                 console.error('Teleportation error:', error);
-                $gameMessage.add(`Error teleporting to Map ${mapId}: ${error.message}`);
+                dmtNotice('DebugTeleport.teleportError', { map: mapId, message: error.message }, 'warning');
             }
         };
         xhr.onerror = () => {
             console.error('Teleportation error: failed to load', url);
-            $gameMessage.add(`Failed to load map data for Map ${mapId}`);
+            dmtNotice('DebugTeleport.loadFailed', { map: mapId }, 'warning');
         };
         xhr.send();
     };

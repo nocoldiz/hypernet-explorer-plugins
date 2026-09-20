@@ -1,6 +1,6 @@
 {
   "name": "Physics",
-  "blurb": "Matter, energy and spacetime under measurement, from slow-light condensates to a scalar resonance at 125 GeV. The precision is set by the apparatus, and the apparatus is built out of the bill of materials.",
+  "blurb": "Matter, energy and spacetime under measurement. Precision depends on the apparatus you can build.",
   "nodes": {
     "phys_attosecond": {
       "name": "Attosecond Light Pulses",

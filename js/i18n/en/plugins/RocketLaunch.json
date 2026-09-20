@@ -2,21 +2,39 @@
   "site": {
     "taranto": {
       "name": "Taranto",
-      "blurb": "The Ionian yard. Two seas, four stacks that never go out, and a barrel laid over the salt."
+      "blurb": "Coastal yard on the Ionian."
     },
     "greenwich": {
       "name": "Greenwich",
-      "blurb": "The meridian mast. Brick, river fog, and a green line thrown due north across the city."
+      "blurb": "Mast on the meridian."
+    },
+    "vault": {
+      "name": "{patron}'s Vault",
+      "blurb": "Shaft gun under the vault.",
+      "nameUnknown": "The Vault",
+      "blurbUnknown": "Shaft gun under a vault."
+    },
+    "omega": {
+      "name": "Omega Tower",
+      "blurb": "The tower is the gun."
+    },
+    "ship": {
+      "name": "Starship",
+      "blurb": "The ship's own rail."
     }
   },
   "mode": {
     "orbital": {
       "name": "Orbital",
-      "blurb": "Straight up, out through the belt, and a rendezvous with the starship. Three stages. You will not bring the armour back."
+      "blurb": "Three stages up. The armour stays in orbit."
     },
     "suborbital": {
       "name": "Suborbital",
-      "blurb": "The same gun used as transport. A parabola to the other pad, a flip at the top, and the fuel spent stopping. Two stages."
+      "blurb": "Two stages, pad to pad."
+    },
+    "deorbit": {
+      "name": "Deorbit",
+      "blurb": "Fired at the planet and left to fall."
     }
   },
   "phase": {
@@ -37,7 +55,8 @@
     "reentry": "Reentry",
     "terminal": "Terminal",
     "capture": "Magnetic capture",
-    "arrived": "Arrived"
+    "arrived": "Arrived",
+    "fall": "Falling"
   },
   "band": {
     "troposphere": "Troposphere",
@@ -62,7 +81,8 @@
     "caution": "Master caution - debris",
     "camHint": "Drag look  Wheel zoom  OK recenter  Hold X skip",
     "freeCam": "Free camera",
-    "noThree": "3D unavailable"
+    "noThree": "3D unavailable",
+    "speed": "Velocity"
   },
   "unit": {
     "m": "m",
@@ -72,9 +92,9 @@
   },
   "select": {
     "title": "Launch site",
-    "subtitle": "Where the shot leaves from",
+    "subtitle": "Choose the launch site",
     "modeTitle": "Flight plan",
-    "modeSubtitle": "The same gun, two very different flights",
+    "modeSubtitle": "Choose the flight type",
     "latitude": "Lat",
     "weather": "Weather",
     "light": "Light",
@@ -91,7 +111,10 @@
     "arrives": "Arrives",
     "starship": "Starship",
     "track": "Track",
-    "vertical": "Vertical"
+    "vertical": "Vertical",
+    "destTitle": "Destination",
+    "destSubtitle": "Choose where the hop comes down",
+    "choice": "Your choice"
   },
   "weather": {
     "none": "Clear",
@@ -139,6 +162,21 @@
     "hopCapture": "In the bore. Rings firing in reverse - it is a brake now.",
     "hopBraked": "Speed coming off hard. The banks are taking back what they spent.",
     "hopDocked": "Docked in the breech. Hull {pct}, every layer still on her.",
-    "hopArrived": "Arrived at {dest}. Same round, different sea."
+    "hopArrived": "Arrived at {dest}. Same round, different sea.",
+    "deorbitClear": "Bay clear. The rail has the round and the planet is where we left it.",
+    "deorbitCount": "Terminal count. Deorbit profile: nothing burns, we just fall.",
+    "deorbitAway": "Away, and pointed down. Nothing between us and the belt.",
+    "entryInterface": "Entry interface. Air ahead, and plenty of it.",
+    "entryPlasma": "Plasma. The shock is standing off the nose and the hull is a lamp.",
+    "entryBlackout": "Blackout. Nobody can hear us and nobody can help us.",
+    "entryOut": "Through it. Speed is coming off and the sky is blue again.",
+    "chuteOut": "Canopy out and full. Hanging under fabric.",
+    "landingMuzzle": "{dest} gun has us. Muzzle lit, bore charged, canopy away.",
+    "landed": "Down at {dest}. Hull {pct}, and the sea is on the right side of the window.",
+    "chute": "Drogue, then the main. That is the last of the speed.",
+    "stageSep": "Stage separation. Tanks dry, and it can go.",
+    "stageLost": "Stage is gone - something took the tanks off her. The burn was already made.",
+    "deorbitFall": "Thrown, and falling. Nothing is burning and nothing is going to.",
+    "deorbitFalling": "Still falling. The planet is doing all the work from here."
   }
 }

@@ -83,6 +83,7 @@
   "insight": "Il sogno risolve qualcosa: hai ottenuto {amount} KC",
   "youWokeUp": "Ti sei svegliato",
   "wokeWithInsight": "Hai portato {amount} Conoscenza fuori dal sogno (totale: {total}).",
+  "forming": "Il sogno sta ancora prendendo forma",
   "willNotForm": "Sogni, ma il mondo non prende forma...",
   "kp": "Hai ottenuto {amount} KC",
   "drifting": "Il {place} sta diventando un altro posto...",

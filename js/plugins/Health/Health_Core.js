@@ -1524,7 +1524,11 @@
       if ($gameParty.inBattle() && BattleManager._logWindow) {
         BattleManager._logWindow.push("addText", msg);
       } else {
-        $gameMessage.add(msg);
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(msg, {
+            severity: 'danger'
+          });
+        }
       }
       if ($gameParty.members().length === 0) {
         SceneManager.goto(Scene_Gameover);
@@ -1619,7 +1623,11 @@
     if ($gameParty.inBattle() && BattleManager._logWindow) {
       BattleManager._logWindow.push("addText", msg);
     } else {
-      $gameMessage.add(msg);
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, {
+          severity: 'danger'
+        });
+      }
     }
   }
 
@@ -1666,7 +1674,11 @@
             if ($gameParty.inBattle() && BattleManager._logWindow) {
               BattleManager._logWindow.push("addText", msg);
             } else {
-              $gameMessage.add(msg);
+              if (window.ParchmentToast) {
+                window.ParchmentToast.show(msg, {
+                  severity: 'danger'
+                });
+              }
             }
             if ($gameParty.members().length === 0) {
               if (window.SaveSystem && window.SaveSystem.triggerGameOver) {

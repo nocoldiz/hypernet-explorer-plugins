@@ -568,6 +568,415 @@
     Scene_Brewery._pendingEventId = null;
 
     //=========================================================================
+    // Grange: the holdings monitor, as a HypernetOS program
+    //=========================================================================
+    // Four systems keep the party's holdings and not one of them can be asked a
+    // question from anywhere but the tile it stands on: a barrel is read at the
+    // barrel, a hive at the hive, a plot at the plot. Grange is the telemetry
+    // page for all four at once - what is ready, what is about to spoil, what
+    // wants feeding - and it does none of the work. Bottling, harvesting,
+    // smoking a hive and collecting an egg still happen on the spot, which is
+    // the point: the console says whether the walk is worth making.
+    const GRANGE_APP_ID = 'app-grange';
+    const GRANGE_ICON = 288; // Leaf, per js/db/Sprites/Icons.json
+
+    const GR = {
+        app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+        header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+                "background:linear-gradient(to bottom,var(--xp-green-3),var(--xp-green-2)); color:var(--xp-white); " +
+                "border-bottom:2px solid var(--xp-green-7);",
+        nav: "width:150px; flex-shrink:0; background:var(--xp-face-6); border-right:1px solid var(--xp-face-shade); padding:8px 0;",
+        navItem: "padding:9px 12px; cursor:pointer; border-left:4px solid transparent; user-select:none;",
+        panel: "flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;",
+        status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+                "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+        card: "background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;",
+        h: "margin:0 0 8px; font-size:17px; font-weight:bold; color:var(--xp-green-2);",
+        note: "color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;",
+        tile: "flex:1; min-width:104px; background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:8px 10px;",
+        tileNum: "font-size:22px; font-weight:bold; line-height:1.2;",
+        tileLbl: "font-size:13px; color:var(--xp-ink-soft-2); text-transform:uppercase; letter-spacing:0.4px;",
+        table: "width:100%; border-collapse:collapse; font-size:14px;",
+        th: "text-align:left; padding:4px 6px; border-bottom:1px solid var(--xp-face-shade); color:var(--xp-green-2); font-weight:bold;",
+        td: "padding:4px 6px; border-bottom:1px solid #e6e3d8;",
+    };
+
+    const GRANGE_TABS = ['overview', 'cellar', 'apiary', 'fields', 'livestock'];
+
+    const grIcon = (index, size) => (window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : '');
+    const grEsc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // A bar that reads as a number as well as a length: the percentage is
+    // written on every row, so nothing here rests on the width alone.
+    function grBar(pct, colour) {
+        const p = Math.max(0, Math.min(100, Math.round(pct)));
+        return `<span style="display:inline-block; width:90px; height:9px; background:#e3e0d4; border:1px solid #c9c5b6;
+            border-radius:2px; vertical-align:middle; margin-right:6px">
+            <span style="display:block; width:${p}%; height:100%; background:${colour || '#4c8339'}"></span></span>${p}%`;
+    }
+
+    // Every barrel this world has going, wherever it stands. A barrel is a
+    // record under "<mapId>_<eventId>", so the console can name the place even
+    // though it has never loaded that map.
+    function listBarrels() {
+        const barrels = ($gameSystem && $gameSystem._brewingBarrels) || {};
+        const now = getGameTimeMinutes();
+        const out = [];
+        for (const key of Object.keys(barrels)) {
+            const saved = barrels[key];
+            if (!saved || !saved.recipeId) continue;
+            const state = computeBarrelState(saved, now);
+            if (!state) continue;   // recipes not loaded yet, or a recipe that went away
+            const mapId = Number(String(key).split('_')[0]) || 0;
+            out.push({
+                key, mapId,
+                where: (window.WorkSystem && window.WorkSystem.locationLabel)
+                    ? window.WorkSystem.locationLabel(mapId) : String(mapId),
+                recipe: state.recipe,
+                name: BrewingRecipeLoader.text(state.recipe.name),
+                icon: state.recipe.icon || 228,
+                stage: state.stage,
+                stageText: T('Brewing.stage.' + state.stage),
+                progress: state.progress,
+                pct: Math.min(100, Math.floor(state.progress * 100)),
+                remaining: state.remainingMinutes,
+                ready: state.stage === STAGES.READY,
+                preSeeded: !!saved.isPreSeeded,
+            });
+        }
+        out.sort((a, b) => b.progress - a.progress);
+        return out;
+    }
+
+    function grPlots() {
+        const PG = window.PlantGrowthSystem;
+        try { return (PG && PG.listPlots) ? PG.listPlots() : []; }
+        catch (e) { console.warn('[Grange] crops', e); return []; }
+    }
+
+    function grAnimals() {
+        const AG = window.AnimalGrowthSystem;
+        try { return (AG && AG.listOwnedAnimals) ? AG.listOwnedAnimals() : []; }
+        catch (e) { console.warn('[Grange] livestock', e); return []; }
+    }
+
+    // The hive is a single colony on $gameSystem, and its report is a pure read:
+    // the console never advances the simulation, so opening it cannot age bees.
+    function grHive() {
+        const complex = $gameSystem && $gameSystem.apiaryComplex;
+        if (!complex || typeof complex.generateReport !== 'function') return null;
+        try { return complex.generateReport(0); }
+        catch (e) { console.warn('[Grange] apiary', e); return null; }
+    }
+
+    window.Grange = {
+        win: null,
+        tab: 'overview',
+
+        launch() {
+            if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+            const win = window.HypernetOS.WindowManager.createWindow({
+                id: GRANGE_APP_ID,
+                title: T('Brewing.grange.appName'),
+                icon: GRANGE_ICON,
+                width: 840,
+                height: 560,
+                contentHTML: `
+                    <div style="${GR.app}">
+                        <div style="${GR.header}">
+                            <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${grIcon(GRANGE_ICON, 34)}</div>
+                            <div style="flex:1; min-width:0">
+                                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('Brewing.grange.appName')}</div>
+                                <div style="font-size:13px; opacity:0.82">${T('Brewing.grange.subtitle')}</div>
+                            </div>
+                            <div id="gr-alert" style="padding:4px 10px; border-radius:10px; font-size:14px; font-weight:bold"></div>
+                        </div>
+                        <div style="display:flex; flex:1; min-height:0">
+                            <div id="gr-nav" style="${GR.nav}"></div>
+                            <div id="gr-panel" style="${GR.panel}"></div>
+                        </div>
+                        <div style="${GR.status}">
+                            <span>${T('Brewing.grange.seasonLabel')} <b id="gr-season"></b></span>
+                            <span id="gr-note" style="margin-left:auto">${T('Brewing.grange.readOnly')}</span>
+                        </div>
+                    </div>`
+            });
+            this.win = win;
+            this.bind();
+            this.render();
+            // The recipe book is fetched, so a cellar opened on a cold start has
+            // nothing to name its barrels with until the file lands.
+            if (!BrewingRecipeLoader.get()) {
+                BrewingRecipeLoader.load().then(() => this.render()).catch(() => {});
+            }
+        },
+
+        bind() {
+            if (!this.win || this.win.dataset.grBound) return;
+            this.win.dataset.grBound = '1';
+            this.win.addEventListener('click', ev => {
+                const hit = ev.target.closest('[data-gr-tab]');
+                if (!hit) return;
+                ev.stopPropagation();
+                if (this.tab === hit.dataset.grTab) return;
+                this.tab = hit.dataset.grTab;
+                if (window.SoundManager) SoundManager.playCursor();
+                this.render();
+            });
+        },
+
+        counts() {
+            const barrels = listBarrels();
+            const plots = grPlots();
+            const animals = grAnimals();
+            const hive = grHive();
+            return {
+                barrels, plots, animals, hive,
+                barrelsReady: barrels.filter(b => b.ready).length,
+                cropsRipe: plots.filter(p => p.ripe).length,
+                cropsOutOfSeason: plots.filter(p => !p.inSeason && !p.ripe).length,
+                produceReady: animals.filter(a => a.hasReady).length,
+                honey: hive ? hive.resources.honey : 0,
+            };
+        },
+
+        render() {
+            if (!this.win || !this.win.isConnected) return;
+            const c = this.counts();
+            const nav = this.win.querySelector('#gr-nav');
+            if (nav) {
+                nav.innerHTML = GRANGE_TABS.map(tab => {
+                    const on = this.tab === tab;
+                    const n = tab === 'cellar' ? c.barrels.length
+                        : tab === 'fields' ? c.plots.length
+                        : tab === 'livestock' ? c.animals.length : null;
+                    return `<div class="focusable" tabindex="0" id="gr-tab-${tab}" data-gr-tab="${tab}"
+                        style="${GR.navItem}${on ? 'background:var(--xp-face-2); border-left-color:var(--xp-green-3); font-weight:bold;' : ''}">
+                        ${grEsc(T('Brewing.grange.tab.' + tab))}${n == null ? '' : ' (' + n + ')'}</div>`;
+                }).join('');
+            }
+            const panel = this.win.querySelector('#gr-panel');
+            if (panel) {
+                if (this.tab === 'overview') panel.innerHTML = this.overviewHTML(c);
+                else if (this.tab === 'cellar') panel.innerHTML = this.cellarHTML(c.barrels);
+                else if (this.tab === 'apiary') panel.innerHTML = this.apiaryHTML(c.hive);
+                else if (this.tab === 'fields') panel.innerHTML = this.fieldsHTML(c.plots);
+                else panel.innerHTML = this.livestockHTML(c.animals);
+            }
+            const waiting = c.barrelsReady + c.cropsRipe + c.produceReady;
+            const alert = this.win.querySelector('#gr-alert');
+            if (alert) {
+                alert.style.background = waiting ? '#b04a00' : '#2e7d32';
+                alert.style.color = '#fff';
+                alert.textContent = waiting
+                    ? T('Brewing.grange.waitingOnYou', { n: waiting })
+                    : T('Brewing.grange.nothingWaiting');
+            }
+            const season = this.win.querySelector('#gr-season');
+            if (season) season.textContent = T('Brewing.grange.season.' + this.season());
+        },
+
+        season() {
+            // PlantGrowthSystem decides what season it is for a crop; the console
+            // asks the same question the same way rather than inventing a second
+            // answer out of the date string.
+            if ($gameWeather && typeof $gameWeather.getSeason === 'function') {
+                return String($gameWeather.getSeason()).toLowerCase();
+            }
+            return 'spring';
+        },
+
+        tile(value, label, colour) {
+            return `<div style="${GR.tile}">
+                <div style="${GR.tileNum} color:${colour || 'var(--xp-ink)'}">${grEsc(value)}</div>
+                <div style="${GR.tileLbl}">${grEsc(label)}</div></div>`;
+        },
+
+        overviewHTML(c) {
+            const jobs = [];
+            for (const b of c.barrels) {
+                if (b.ready) jobs.push({ icon: b.icon, text: T('Brewing.grange.job.barrel', { name: b.name, where: b.where }) });
+            }
+            for (const p of c.plots) {
+                if (p.ripe) jobs.push({ icon: p.iconIndex, text: T('Brewing.grange.job.crop', { name: p.itemName, where: p.where }) });
+            }
+            for (const a of c.animals) {
+                if (a.hasReady) {
+                    const ready = a.produces.filter(pr => pr.ready).map(pr => pr.name).join(', ');
+                    jobs.push({ icon: 0, text: T('Brewing.grange.job.produce', { animal: a.animalId, where: a.mapName, what: ready }) });
+                }
+            }
+            if (c.hive && c.hive.colony.state && c.hive.colony.mood < 40) {
+                jobs.push({ icon: 340, text: T('Brewing.grange.job.hiveUnhappy', { mood: c.hive.colony.mood }) });
+            }
+            const spoiling = c.plots.filter(p => !p.inSeason && !p.ripe);
+            for (const p of spoiling) {
+                jobs.push({ icon: p.iconIndex, text: T('Brewing.grange.job.outOfSeason', { name: p.itemName, where: p.where }) });
+            }
+            return `
+                <h2 style="${GR.h}">${T('Brewing.grange.overviewTitle')}</h2>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
+                    ${this.tile(String(c.barrels.length), T('Brewing.grange.tile.barrels'))}
+                    ${this.tile(String(c.barrelsReady), T('Brewing.grange.tile.barrelsReady'), '#b04a00')}
+                    ${this.tile(String(c.plots.length), T('Brewing.grange.tile.plots'))}
+                    ${this.tile(String(c.cropsRipe), T('Brewing.grange.tile.cropsRipe'), '#2e7d32')}
+                    ${this.tile(String(c.animals.length), T('Brewing.grange.tile.animals'))}
+                    ${this.tile(String(Math.floor(c.honey)), T('Brewing.grange.tile.honey'), '#c8922a')}
+                </div>
+                <h3 style="${GR.h}">${T('Brewing.grange.needsYou')}</h3>
+                ${jobs.length ? `<div style="${GR.card}">${jobs.map(j =>
+                    `<div style="padding:3px 0">${grIcon(j.icon)} ${grEsc(j.text)}</div>`).join('')}</div>`
+                    : `<div style="${GR.card} ${GR.note}">${T('Brewing.grange.allQuiet')}</div>`}
+                <div style="${GR.note}">${T('Brewing.grange.projectionNote')}</div>`;
+        },
+
+        cellarHTML(barrels) {
+            if (!barrels.length) {
+                return `<h2 style="${GR.h}">${T('Brewing.grange.tab.cellar')}</h2>
+                    <div style="${GR.card} ${GR.note}">${T('Brewing.grange.noBarrels')}</div>`;
+            }
+            const rows = barrels.map(b => `<tr>
+                <td style="${GR.td}">${grIcon(b.icon)} ${grEsc(b.name)}</td>
+                <td style="${GR.td}">${grEsc(b.where)}</td>
+                <td style="${GR.td}" ${b.ready ? 'data-ready="1"' : ''}>
+                    <span style="color:${b.ready ? '#2e7d32' : 'var(--xp-ink-2)'}; font-weight:${b.ready ? 'bold' : 'normal'}">${grEsc(b.stageText)}</span></td>
+                <td style="${GR.td}">${grBar(b.pct, b.ready ? '#2e7d32' : '#8a6d3b')}</td>
+                <td style="${GR.td}">${b.ready ? T('Brewing.grange.now') : grEsc(formatTimeRemaining(b.remaining))}</td>
+            </tr>`).join('');
+            return `<h2 style="${GR.h}">${T('Brewing.grange.tab.cellar')}</h2>
+                <div style="${GR.card} padding:6px 8px"><table style="${GR.table}">
+                    <thead><tr>
+                        <th style="${GR.th}">${T('Brewing.grange.colBrew')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colWhere')}</th>
+                        <th style="${GR.th}">${T('Brewing.ui.stage')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colProgress')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colLeft')}</th>
+                    </tr></thead><tbody>${rows}</tbody></table></div>
+                <div style="${GR.note}">${T('Brewing.grange.cellarNote')}</div>`;
+        },
+
+        apiaryHTML(hive) {
+            if (!hive) {
+                return `<h2 style="${GR.h}">${T('Brewing.grange.tab.apiary')}</h2>
+                    <div style="${GR.card} ${GR.note}">${T('Brewing.grange.noHive')}</div>`;
+            }
+            const pop = hive.population;
+            const res = hive.resources;
+            const castes = [
+                [T('Apiary.caste.workers'), pop.adults.workers], [T('Apiary.caste.nurses'), pop.adults.nurses],
+                [T('Apiary.caste.guards'), pop.adults.guards], [T('Apiary.caste.foragers'), pop.adults.foragers],
+                [T('Apiary.caste.drones'), pop.adults.drones], [T('Apiary.caste.builders'), pop.adults.builders],
+                [T('Apiary.caste.scouts'), pop.adults.scouts],
+            ];
+            const stores = [
+                [T('Apiary.resource.honey'), res.honey], [T('Apiary.resource.pollen'), res.pollen],
+                [T('Apiary.resource.royalJelly'), res.royalJelly], [T('Apiary.resource.wax'), res.wax],
+                [T('Apiary.resource.propolis'), res.propolis], [T('Apiary.resource.water'), res.water],
+            ];
+            const row = ([label, value]) => `<tr><td style="${GR.td}">${grEsc(label)}</td>
+                <td style="${GR.td} text-align:right">${grEsc(String(value))}</td></tr>`;
+            return `<h2 style="${GR.h}">${T('Brewing.grange.tab.apiary')}</h2>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px">
+                    ${this.tile(String(pop.total), T('Brewing.grange.tile.bees'))}
+                    ${this.tile(String(hive.colony.mood), T('Brewing.grange.tile.mood'), hive.colony.mood < 40 ? '#c0392b' : '#2e7d32')}
+                    ${this.tile(hive.colony.efficiency + '%', T('Brewing.grange.tile.efficiency'))}
+                    ${this.tile(String(Math.floor(res.honey)), T('Brewing.grange.tile.honey'), '#c8922a')}
+                </div>
+                <div style="${GR.card}">
+                    <b>${T('Brewing.grange.queen')}</b>
+                    <div style="${GR.note}">${hive.queen.alive
+                        ? T('Brewing.grange.queenAlive', { health: hive.queen.health, eggs: hive.queen.eggsLaid })
+                        : T('Brewing.grange.queenDead')}</div>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap">
+                    <div style="${GR.card} flex:1; min-width:210px"><b>${T('Brewing.grange.castes')}</b>
+                        <table style="${GR.table}"><tbody>${castes.map(row).join('')}</tbody></table></div>
+                    <div style="${GR.card} flex:1; min-width:210px"><b>${T('Brewing.grange.stores')}</b>
+                        <table style="${GR.table}"><tbody>${stores.map(row).join('')}</tbody></table></div>
+                </div>
+                <div style="${GR.note}">${T('Brewing.grange.hiveNote')}</div>`;
+        },
+
+        fieldsHTML(plots) {
+            if (!plots.length) {
+                return `<h2 style="${GR.h}">${T('Brewing.grange.tab.fields')}</h2>
+                    <div style="${GR.card} ${GR.note}">${T('Brewing.grange.noPlots')}</div>`;
+            }
+            const rows = plots.map(p => `<tr>
+                <td style="${GR.td}">${grIcon(p.iconIndex)} ${grEsc(p.itemName)}</td>
+                <td style="${GR.td}">${grEsc(p.where)}</td>
+                <td style="${GR.td}">${grBar(p.pct, p.ripe ? '#2e7d32' : (p.inSeason ? '#4c8339' : '#9c8d5f'))}</td>
+                <td style="${GR.td}">${p.ripe ? `<b style="color:#2e7d32">${T('Brewing.grange.ripe')}</b>`
+                    : p.inSeason ? T('Brewing.grange.daysLeft', { n: p.daysLeft })
+                    : `<span style="color:#b04a00">${T('Brewing.grange.outOfSeason')}</span>`}</td>
+                <td style="${GR.td}">${grEsc(p.yieldMin + '-' + p.yieldMax)}</td>
+            </tr>`).join('');
+            return `<h2 style="${GR.h}">${T('Brewing.grange.tab.fields')}</h2>
+                <div style="${GR.card} padding:6px 8px"><table style="${GR.table}">
+                    <thead><tr>
+                        <th style="${GR.th}">${T('Brewing.grange.colCrop')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colWhere')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colProgress')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colLeft')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colYield')}</th>
+                    </tr></thead><tbody>${rows}</tbody></table></div>
+                <div style="${GR.note}">${T('Brewing.grange.fieldsNote')}</div>`;
+        },
+
+        livestockHTML(animals) {
+            if (!animals.length) {
+                return `<h2 style="${GR.h}">${T('Brewing.grange.tab.livestock')}</h2>
+                    <div style="${GR.card} ${GR.note}">${T('Brewing.grange.noAnimals')}</div>`;
+            }
+            const rows = animals.map(a => {
+                const produce = a.produces.length
+                    ? a.produces.map(pr => pr.ready
+                        ? `<b style="color:#2e7d32">${grEsc(pr.name)}</b>`
+                        : `${grEsc(pr.name)} <span style="${GR.note}">${T('Brewing.grange.daysLeft', { n: pr.daysLeft })}</span>`).join('<br>')
+                    : `<span style="${GR.note}">${T('Brewing.grange.noProduce')}</span>`;
+                return `<tr>
+                    <td style="${GR.td}">${grEsc(a.animalId)}<div style="${GR.note}">${grEsc(a.stageName)}</div></td>
+                    <td style="${GR.td}">${grEsc(a.mapName)}</td>
+                    <td style="${GR.td}">${a.stage === 'adult' ? T('Brewing.grange.grown')
+                        : grBar(a.growthPct) + `<div style="${GR.note}">${T('Brewing.grange.daysLeft', { n: a.daysToAdult })}</div>`}</td>
+                    <td style="${GR.td}">${produce}</td>
+                </tr>`;
+            }).join('');
+            return `<h2 style="${GR.h}">${T('Brewing.grange.tab.livestock')}</h2>
+                <div style="${GR.card} padding:6px 8px"><table style="${GR.table}">
+                    <thead><tr>
+                        <th style="${GR.th}">${T('Brewing.grange.colAnimal')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colWhere')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colGrowth')}</th>
+                        <th style="${GR.th}">${T('Brewing.grange.colProduce')}</th>
+                    </tr></thead><tbody>${rows}</tbody></table></div>
+                <div style="${GR.note}">${T('Brewing.grange.livestockNote')}</div>`;
+        },
+    };
+
+    // The holdings monitor is part of the brewery's own plugin, and it is what
+    // a console asks about barrels from away.
+    window.BrewingSystem = Object.assign(window.BrewingSystem || {}, {
+        listBarrels: () => listBarrels(),
+        barrelState: (saved, minutes) => computeBarrelState(saved, minutes == null ? getGameTimeMinutes() : minutes),
+        STAGES,
+    });
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: GRANGE_APP_ID,
+            name: T('Brewing.grange.appName'),
+            icon: GRANGE_ICON,
+            category: 'reference',
+            launchFn: function () { window.Grange.launch(); },
+            desktopShortcut: true,
+        });
+    }
+
+    //=========================================================================
     // Plugin Command
     //=========================================================================
 

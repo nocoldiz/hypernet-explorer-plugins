@@ -156,7 +156,7 @@
     "name": "Cacciatore-raccoglitore"
   },
   "53": {
-    "name": "Fisico"
+    "name": "Tecnomago"
   },
   "54": {
     "name": "Meccanico"
@@ -165,13 +165,13 @@
     "name": "Negoziante"
   },
   "56": {
-    "name": "Contadino"
+    "name": "Mago delle Piante"
   },
   "57": {
     "name": "Boscaiolo"
   },
   "58": {
-    "name": "Meteorologo"
+    "name": "Meteoarcanista"
   },
   "59": {
     "name": "Sacerdote"

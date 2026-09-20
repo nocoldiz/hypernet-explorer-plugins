@@ -133,6 +133,11 @@
     const airshipColor = '#FFFF00';
     const questMarkerColor = '#FFD76A'; // matches the quest board's focus gold
 
+    // Every word this plugin prints comes out of js/i18n/<lang>/plugins/WorldMap.json.
+    function T(key, params) {
+        return window.T ? window.T(key, params) : String(key);
+    }
+
     // Map States: 0 = Hidden, 1 = Normal (Mini Zoomed), 2 = Default (Mini Full), 3 = Fullscreen Interactive
     let currentMapState = permanentMinimap ? 1 : 0;
 
@@ -496,10 +501,26 @@
         // A town the party just founded is a new name over a tile: the sprites
         // standing on the map now know nothing about it.
         refreshLabels: () => {
+            destinationMarkersCache = null;
+            sheetInvalidate();
             if (SceneManager._scene instanceof Scene_Map) {
                 createCityLabelsContainer();
                 refreshCityLabelSprites();
             }
+        },
+        // Every named thing on the sheet, in world-tile space. Lent out so a
+        // caller does not have to rebuild the gazetteer to ask what is where.
+        pins: () => sheetPins().slice(),
+        // What the game knows about one world square, as label/value rows.
+        readSquare: (x, y) => squareReadout(x, y),
+        // The party's own marks. Setting an empty text takes the mark away.
+        notes: () => worldNotes().slice(),
+        setNote: (x, y, text) => { setNoteAt(x, y, text); sheetInvalidate(); },
+        // Which nation's territory is washed over, by Countries.json id.
+        highlightCountry: (id) => {
+            highlightCountryId = Number(id) || 0;
+            fsOverlayKey = null;
+            refreshWorldMapDisplay();
         },
     };
 
@@ -968,7 +989,9 @@
             const data = dest[key];
             const base = data && data.base;
             if (!base || !Number.isFinite(base.x) || !Number.isFinite(base.y)) continue;
-            out.push({ x: base.x, y: base.y, name: destinationLabel(key, data) });
+            // The key travels with the name: the readable label is what the
+            // sheet writes, but the travel overlay books by the gazetteer key.
+            out.push({ x: base.x, y: base.y, key: key, name: destinationLabel(key, data) });
         }
         destinationMarkersCache = out;
         return out;
@@ -1169,10 +1192,43 @@
     // The M key is the world map key: it opens the zoomable map and, pressed
     // again, closes it back to whatever the minimap was doing. It no longer
     // cycles the minimap on and off - that lives in the travel page selector.
+    // ONE KEY, ONE TOGGLE, PER FRAME.
+    //
+    // The M key is read in two places: here, and by the menu's field hotkey
+    // scan (UI/CustomMainMenuLayout.js, whose world_map action calls straight
+    // back into WorldMapView.toggle - "the same call the key makes, not a
+    // second way of opening it"). Input.isTriggered stays true for the whole
+    // frame, so BOTH of them fire on the press, and the chart was opened and
+    // shut again before a single frame was drawn.
+    //
+    // It used to survive that: the key cycled three states, so two calls landed
+    // on a different one and the double-fire read as a quirk. A strict two-state
+    // toggle lands exactly back where it started, and the key looked dead.
+    //
+    // Rather than pick which of the two readers to silence - and leave the next
+    // one to rediscover this - the toggle itself refuses to run twice in the
+    // same frame. Whichever reader gets there first wins.
+    let lastToggleFrame = -1;
+
     function toggleMapState() {
+        const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+        if (frame === lastToggleFrame) return;
+        lastToggleFrame = frame;
+
+        // Off Earth the world sheet is the wrong picture of the wrong planet.
+        // The key still means "show me where I am and where I could go", and
+        // out there that is the landing grid: the same squares the ship set
+        // down on, picked the same way. Orbiting Earth the sheet is right
+        // again, and opens as a sheet (sheetTravelTransport refuses to book
+        // anything from up there).
+        if (currentMapState !== 3 && spaceRoute() === 'landing' && openLandingGridInstead()) {
+            return;
+        }
+
         if (currentMapState === 3) {
             currentMapState = savedMinimapState();
             clearFullscreenCache();
+            destroyChrome();
             focusTileHint = null;
         } else {
             currentMapState = 3;
@@ -1901,7 +1957,9 @@
         return [
             Math.round(world.x * 4), Math.round(world.y * 4),
             questEdgeSignature(getQuestMarkerTiles()),
-            foundedTownPins().length,
+            sheetPinSignature(),
+            padSquare ? padSquare.x + ',' + padSquare.y : '',
+            highlightCountryId,
             $gameMap ? $gameMap.mapId() : 0
         ].join('|');
     }
@@ -1911,6 +1969,9 @@
         const bitmap = fsOverlay.bitmap;
         bitmap.clear();
         const ctx = bitmap.context;
+        // The picked nation's territory goes down first, under the grid and
+        // under every pin: it is the ground being coloured, not a mark on it.
+        drawCountryHighlight(ctx, FS_OVERLAY_PX, FS_OVERLAY_PX);
         ctx.save();
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
         ctx.lineWidth = 1;
@@ -1925,6 +1986,25 @@
         // sized in overlay pixels: the ratio keeps them the size on screen they
         // were when the whole sheet was one 12288px bitmap.
         drawEntitiesOnBitmap(bitmap, FS_OVERLAY_PX, FS_OVERLAY_PX, true, FS_OVERLAY_PX / WORLD_SHEET_PX);
+        drawPadCursor(ctx, FS_OVERLAY_PX);
+    }
+
+    // The controller's square, drawn over everything else on the sheet: it is
+    // where the player is looking, and it has to read over a pin and over the
+    // nation wash alike.
+    function drawPadCursor(ctx, size) {
+        if (!padSquare) return;
+        const step = size / WORLD_TILES;
+        const x = padSquare.x * step;
+        const y = padSquare.y * step;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+        ctx.lineWidth = Math.max(2, step * 0.5);
+        ctx.strokeRect(x, y, step, step);
+        ctx.strokeStyle = 'rgba(255, 215, 106, 0.95)';
+        ctx.lineWidth = Math.max(1, step * 0.25);
+        ctx.strokeRect(x, y, step, step);
+        ctx.restore();
     }
 
     // Render Logic for Fullscreen (8x8 grid of detailed tiles with async loading)
@@ -2025,12 +2105,48 @@
         // pile up on each other.
         const placeNames = [];
 
+        // 1. Every named thing the world knows about, from the one pin model
+        // (see THE WORLD SHEET below). This used to be read off the teleport
+        // EVENTS, which only exist on map 315: the chart opened from a cellar,
+        // a camper or a dungeon was a blank sheet with a dot on it. The
+        // gazetteer is on hand wherever the chart is opened, so the same places
+        // are named from everywhere.
+        //
+        // Map 315 is still read for its events, because a teleport standing
+        // somewhere the gazetteer does not list is a real door on real ground.
+        const drawn = new Set();
+        for (const pin of sheetPins()) {
+            const px = Math.floor((pin.x / WORLD_TILES) * targetW);
+            const py = Math.floor((pin.y / WORLD_TILES) * targetH);
+            drawn.add(pin.x + ',' + pin.y);
+            const color = SHEET_KIND_COLOR[pin.kind] || '#00FF00';
+            if (pin.kind === 'note') {
+                // The party's own hand: a diamond, so it never reads as a place
+                // somebody else put there.
+                drawDiamond(context, px, py, color, showLabels ? markerPx : 8 * scale);
+            } else if (pin.kind === 'vault') {
+                drawDot(context, px, py, color, showLabels ? markerPx * 0.6 : 4 * scale);
+            } else {
+                drawSquare(context, px, py, color, showLabels ? markerPx : 6 * scale);
+            }
+            if (showLabels && pin.name) {
+                // A town the party raised, a square they wrote down and a mark
+                // they left are named before any catalogued place, so a crowded
+                // coast never drops the party's own work.
+                const entry = { x: px, y: py, name: pin.name, color: color };
+                if (pin.kind === 'place') placeNames.push(entry);
+                else placeNames.unshift(entry);
+            }
+        }
+
+        // 1a. Teleport events standing on ground the gazetteer does not list.
         for (const ev of events) {
             if (!ev || ev._erased) continue;
             const name = ev.event().name || "";
             if (/^teleport/i.test(name)) {
                 const ex = Math.floor((ev.x / wTiles) * targetW);
                 const ey = Math.floor((ev.y / hTiles) * targetH);
+                if (drawn.has(ev.x + ',' + ev.y)) continue;
 
                 drawSquare(context, ex, ey, '#00FF00', showLabels ? markerPx : 6 * scale);
 
@@ -2041,18 +2157,6 @@
                     if (labelText) placeNames.push({ x: ex, y: ey, name: labelText });
                 }
             }
-        }
-
-        // 1a. Towns the party founded. They have no teleport event of their own
-        // (nothing on map 315 was ever placed for them), so they are drawn from
-        // the world folder's own register.
-        for (const town of foundedTownPins()) {
-            const tx = Math.floor((town.worldX / WORLD_TILES) * targetW);
-            const ty = Math.floor((town.worldY / WORLD_TILES) * targetH);
-            drawSquare(context, tx, ty, '#FFD27F', showLabels ? markerPx : 6 * scale);
-            // A town the party raised itself is named before any catalogued
-            // place, so a crowded coast never drops it.
-            if (showLabels) placeNames.unshift({ x: tx, y: ty, name: town.name, color: '#FFD27F' });
         }
 
         if (showLabels && placeNames.length) {
@@ -2303,6 +2407,1096 @@
     }
 
     // ------------------------------------------------------------------------
+    // THE WORLD SHEET
+    // ------------------------------------------------------------------------
+    // The fullscreen chart used to be a picture with a red dot on it. It is now
+    // the thing the party plans with, and everything below serves that one idea:
+    //
+    //   - every place the world knows about is PINNED and NAMED on it, read off
+    //     the gazetteer rather than off the teleport events, so the chart says
+    //     the same thing wherever it is opened from;
+    //   - a pin is a journey. Sitting in a vehicle, clicking a place books the
+    //     seat: the travel overlay opens already standing on it, with its own
+    //     fare, tank and refusals (Vehicle/FastTravelSystem.js openTo);
+    //   - the party writes on it. A square can be marked and a note kept there,
+    //     and the marks are saved with the game;
+    //   - hovering a square reads it out: where it is, what nation claims it,
+    //     what ground is there, whether a river or a road crosses it;
+    //   - a country can be picked out of the European roster and its whole
+    //     territory washed over, which is the only way to see a border at all;
+    //   - and the mouse gets a zoom bar, because a wheel is a poor way to cross
+    //     five orders of scale.
+    //
+    // Everything here is the WORLD sheet only. Bologna and the landing grid of
+    // another planet are other coordinate spaces and are left alone.
+
+    const SHEET_KIND_COLOR = {
+        place:  '#00FF00',
+        town:   '#FFD27F',
+        custom: '#8FD8FF',
+        vault:  '#C792EA',
+        note:   '#FF8FB1',
+    };
+
+    // -- What the party wrote on the chart -----------------------------------
+    //
+    // A mark and, optionally, a line of text kept with it. Saved on the game
+    // rather than in the world folder: the marks are one party's reading of the
+    // ground, not a fact about the world the way a founded town is.
+    function worldNotes() {
+        if (!$gameSystem) return [];
+        if (!Array.isArray($gameSystem._worldMapNotes)) $gameSystem._worldMapNotes = [];
+        return $gameSystem._worldMapNotes;
+    }
+
+    function noteAt(x, y) {
+        return worldNotes().find(n => n.x === x && n.y === y) || null;
+    }
+
+    function setNoteAt(x, y, text) {
+        const notes = worldNotes();
+        const trimmed = String(text || '').trim();
+        const idx = notes.findIndex(n => n.x === x && n.y === y);
+        if (!trimmed) {
+            if (idx >= 0) notes.splice(idx, 1);
+        } else if (idx >= 0) {
+            notes[idx].text = trimmed;
+        } else {
+            notes.push({ x: x, y: y, text: trimmed });
+        }
+        clearFullscreenCache();
+        refreshWorldMapDisplay();
+    }
+
+    // -- The squares the party wrote down as travel points --------------------
+    // The same list the travel overlay's "add a place" writes into, so a square
+    // written down there is a pin here without any further bookkeeping.
+    function customTravelPins() {
+        const points = $gameSystem && Array.isArray($gameSystem._customTravelPoints)
+            ? $gameSystem._customTravelPoints : [];
+        return points.filter(p => p && Number.isFinite(p.x) && Number.isFinite(p.y));
+    }
+
+    // -- Patron vaults --------------------------------------------------------
+    //
+    // A hatch this savegame has recognised, or the square this WORLD proved and
+    // unlocked, whichever the party knows about. An unmet vault is never drawn:
+    // the whole point of the roster is that the coordinates have to be earned.
+    function vaultPins() {
+        const PR = window.PatreonRewards;
+        if (!PR) return [];
+        const out = [];
+        const seen = new Set();
+        const add = (rec, unlocked) => {
+            if (!rec || !Number.isFinite(rec.x) || !Number.isFinite(rec.y)) return;
+            const key = rec.x + ',' + rec.y;
+            if (seen.has(key)) return;
+            seen.add(key);
+            const patron = (PR.patronById && rec.id != null) ? PR.patronById(rec.id) : null;
+            out.push({
+                x: rec.x, y: rec.y,
+                name: (patron && patron.name) ? patron.name : T('WorldMap.pin.vaultUnnamed'),
+                unlocked: !!unlocked,
+            });
+        };
+        try {
+            const claimed = PR.claimedSquare ? PR.claimedSquare() : null;
+            add(claimed, true);
+            const known = PR.knownHatches ? PR.knownHatches() : [];
+            for (const hatch of known) add(hatch, false);
+        } catch (e) { /* no world loaded */ }
+        return out;
+    }
+
+    // -- One pin model --------------------------------------------------------
+    //
+    // Every named thing on the sheet, in world-tile space (0-255), gathered
+    // once. The chart's drawing pass, its hover readout and its click handler
+    // all read this same list, so a pin can never be drawn somewhere it cannot
+    // be clicked (or the other way round).
+    //
+    // `destName` is the Destinations.json key a pin can be travelled to by;
+    // a pin without one is a place on the chart and nothing more.
+    let sheetPinCache = null;
+    let sheetPinKey = null;
+
+    function sheetPinSignature() {
+        return [
+            (window.WorkSystem && window.WorkSystem.Destinations) ? 'g' : '-',
+            foundedTownPins().length,
+            customTravelPins().length,
+            vaultPins().length,
+            worldNotes().length,
+            worldNotes().map(n => n.x + ',' + n.y).join(';'),
+        ].join('|');
+    }
+
+    function sheetPins() {
+        const key = sheetPinSignature();
+        if (sheetPinCache && sheetPinKey === key) return sheetPinCache;
+
+        const pins = [];
+        const taken = new Set();
+        const push = (pin) => {
+            const at = pin.x + ',' + pin.y;
+            if (taken.has(at) && pin.kind !== 'note') return;
+            taken.add(at);
+            pins.push(pin);
+        };
+
+        // Catalogued places. The gazetteer, not the teleport events: the events
+        // only exist on map 315, so a chart opened from a cellar used to be a
+        // blank sheet with a dot on it.
+        for (const place of getDestinationMarkers()) {
+            push({ x: place.x, y: place.y, kind: 'place', name: place.name, destName: place.key });
+        }
+        // Towns the party raised. Named over any catalogued place sharing the
+        // square, because the party's own work is what they are looking for.
+        for (const town of foundedTownPins()) {
+            const at = town.worldX + ',' + town.worldY;
+            const clash = pins.findIndex(p => (p.x + ',' + p.y) === at);
+            if (clash >= 0) pins.splice(clash, 1);
+            taken.delete(at);
+            push({ x: town.worldX, y: town.worldY, kind: 'town', name: town.name, destName: town.name });
+        }
+        // A square the party wrote down travels under the overlay's own id for
+        // it ("custom:x,y"), not under the name they gave it.
+        for (const point of customTravelPins()) {
+            push({
+                x: point.x, y: point.y, kind: 'custom', name: point.name,
+                destName: 'custom:' + point.x + ',' + point.y,   // i18n-ignore  internal id
+            });
+        }
+        for (const vault of vaultPins()) {
+            push({
+                x: vault.x, y: vault.y, kind: 'vault',
+                name: T(vault.unlocked ? 'WorldMap.pin.vaultOpen' : 'WorldMap.pin.vaultKnown',
+                        { patron: vault.name }),
+            });
+        }
+        for (const note of worldNotes()) {
+            push({ x: note.x, y: note.y, kind: 'note', name: note.text, note: note.text });
+        }
+
+        sheetPinCache = pins;
+        sheetPinKey = key;
+        return pins;
+    }
+
+    // The gazetteer reader hands back names; the travel overlay wants keys, so
+    // the key is carried alongside. Kept here rather than folded into
+    // getDestinationMarkers so the minimap's own name pass is untouched.
+    function sheetInvalidate() {
+        sheetPinCache = null;
+        sheetPinKey = null;
+        countryMaskCache = null;
+    }
+
+    // -- Reading a square out -------------------------------------------------
+    //
+    // Everything the game already knows about one world tile, in the order
+    // somebody pointing at it wants it: what stands there, who claims it, what
+    // ground it is, and what crosses it.
+    function squareReadout(x, y) {
+        const lines = [];
+        const pin = pinAtSquare(x, y);
+        if (pin) lines.push({ label: T('WorldMap.read.place'), value: pin.name });
+
+        const country = ($gameSystem && $gameSystem.getCountryFromWorldCoordinates)
+            ? $gameSystem.getCountryFromWorldCoordinates(x, y) : null;
+        lines.push({
+            label: T('WorldMap.read.nation'),
+            value: (country && country.country) ? country.country : T('WorldMap.read.unclaimed'),
+        });
+
+        let biome = null;
+        try {
+            if ($gameSystem && $gameSystem.getBiomeFromCache) biome = $gameSystem.getBiomeFromCache(x, y);
+        } catch (e) { biome = null; }
+        lines.push({
+            label: T('WorldMap.read.ground'),
+            value: biome
+                ? ((window.BiomeNames && window.BiomeNames.display) ? window.BiomeNames.display(biome) : biome)
+                : T('WorldMap.read.unsurveyed'),
+        });
+
+        const features = [];
+        const pg = $gameSystem && $gameSystem._procGenData;
+        if (pg && pg.riverCoordMap && pg.riverCoordMap[x + ',' + y]) features.push(T('WorldMap.read.river'));
+        if ($gameSystem && $gameSystem.getRoadDirectionFromCache && $gameMap && $gameMap.mapId() === 315) {
+            try {
+                if ($gameSystem.getRoadDirectionFromCache(x, y)) features.push(T('WorldMap.read.road'));
+            } catch (e) { /* not on the world map */ }
+        }
+        if (features.length) lines.push({ label: T('WorldMap.read.crossed'), value: features.join(', ') });
+
+        // What has been put up on this square, in any savegame of this world
+        // (Crafting/FurnitureSystem.js, THE BUILD REGISTER). A square somebody
+        // built on is the single most useful thing a chart of open country can
+        // say, because nothing else on it distinguishes one field from another.
+        const built = (window.BuildRegister && window.BuildRegister.at)
+            ? window.BuildRegister.at(x, y) : null;
+        if (built) {
+            lines.push({
+                label: T('WorldMap.read.built'),
+                value: built.names.length
+                    ? T('WorldMap.read.builtWhat', { count: built.count, what: built.names.join(', ') })
+                    : T('WorldMap.read.builtCount', { count: built.count }),
+            });
+        }
+
+        const note = noteAt(x, y);
+        if (note) lines.push({ label: T('WorldMap.read.note'), value: note.text });
+        return lines;
+    }
+
+    function pinAtSquare(x, y) {
+        return sheetPins().find(p => p.x === x && p.y === y) || null;
+    }
+
+    // -- Country territory ----------------------------------------------------
+    //
+    // A border is the one thing a photographed chart cannot show. The region
+    // plane painted under map 315 knows exactly which squares a nation holds,
+    // so a picked country is washed over square by square out of it.
+    //
+    // Europe only, per the roster: Countries.json carries a region for every
+    // entry and the chart is a chart of Europe.
+    let countryMaskCache = null;   // id -> [[x, y], ...]
+
+    function europeanCountries() {
+        const list = window.WorldGen && window.WorldGen.Countries;
+        if (!Array.isArray(list)) return [];
+        const seen = new Set();
+        return list.filter(c => {
+            if (!c || !c.id || c.region !== 'Europe') return false;   // i18n-ignore  data region id
+            if (seen.has(c.id)) return false;                          // duplicated ids resolve first-wins
+            seen.add(c.id);
+            return true;
+        }).sort((a, b) => String(a.country).localeCompare(String(b.country)));
+    }
+
+    // Every square painted with a region id, gathered in one sweep of the
+    // plane. 65536 lookups, done once and kept: doing it per redraw would cost
+    // it on every pan.
+    function countryMask() {
+        if (countryMaskCache) return countryMaskCache;
+        const mask = new Map();
+        if (!$gameSystem || !$gameSystem.getWorldRegionId) return mask;
+        for (let y = 0; y < WORLD_TILES; y++) {
+            for (let x = 0; x < WORLD_TILES; x++) {
+                let id = 0;
+                try { id = $gameSystem.getWorldRegionId(x, y) | 0; } catch (e) { return mask; }
+                if (!id) continue;
+                let cells = mask.get(id);
+                if (!cells) { cells = []; mask.set(id, cells); }
+                cells.push(x, y);
+            }
+        }
+        // Nothing painted at all (no snapshot loaded yet): answer without
+        // caching, so the sweep is tried again once the plane exists.
+        if (mask.size) countryMaskCache = mask;
+        return mask;
+    }
+
+    let highlightCountryId = 0;
+
+    function drawCountryHighlight(ctx, targetW, targetH) {
+        if (!highlightCountryId) return;
+        const cells = countryMask().get(highlightCountryId);
+        if (!cells || !cells.length) return;
+        const cw = targetW / WORLD_TILES;
+        const ch = targetH / WORLD_TILES;
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 215, 106, 0.32)';
+        for (let i = 0; i < cells.length; i += 2) {
+            ctx.fillRect(cells[i] * cw, cells[i + 1] * ch, Math.ceil(cw), Math.ceil(ch));
+        }
+        ctx.restore();
+    }
+
+    // -- Where the sheet can be travelled from --------------------------------
+    //
+    // A pin is a journey only when the party is sitting in something that makes
+    // journeys. Orbiting Earth the chart is a view through a window: the places
+    // are all named and none of them can be set off for.
+    function sheetTravelTransport() {
+        if (spaceRoute() === 'earth') return null;
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.transportHere !== 'function') return null;
+        return FT.transportHere();
+    }
+
+    // -- The sheet's own chrome ----------------------------------------------
+    //
+    // The zoom bar, the country picker and the readout are DOM: they are
+    // pointer furniture, and drawing them into the sheet bitmap would put them
+    // under the pan and the zoom that they exist to control.
+
+    const CHROME_ID = 'worldmap-chrome';
+    let chromeEl = null;
+    let noteModalEl = null;
+    let noteModalSquare = null;
+    let chromeZoomEl = null;
+    let chromeReadoutEl = null;
+    let chromeCountryEl = null;
+    let chromeSuppressZoom = false;
+    let chromePointerIn = false;   // the pointer is over the chrome, not the chart
+
+    // The zoom bar runs on a log scale: the chart spans 0.25x to 8x and a
+    // linear bar spends nine tenths of its travel in the last doubling.
+    function zoomToSlider(z) {
+        const t = (Math.log(z) - Math.log(MIN_ZOOM)) / (Math.log(MAX_ZOOM) - Math.log(MIN_ZOOM));
+        return Math.round(Math.max(0, Math.min(1, t)) * 1000);
+    }
+
+    function sliderToZoom(v) {
+        const t = Math.max(0, Math.min(1, Number(v) / 1000));
+        return Math.exp(Math.log(MIN_ZOOM) + t * (Math.log(MAX_ZOOM) - Math.log(MIN_ZOOM)));
+    }
+
+    function applyZoom(next) {
+        const oldScale = zoomScale;
+        zoomScale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, next));
+        if (!isLiveSprite(worldMapSprite) || zoomScale === oldScale) return;
+        const ratio = zoomScale / oldScale;
+        const cx = Graphics.width / 2;
+        const cy = Graphics.height / 2;
+        panX = cx - (cx - panX) * ratio;
+        panY = cy - (cy - panY) * ratio;
+        worldMapSprite.scale.x = zoomScale;
+        worldMapSprite.scale.y = zoomScale;
+        worldMapSprite.x = panX;
+        worldMapSprite.y = panY;
+    }
+
+    function chromeWanted() {
+        return currentMapState === 3 && !!$gameMap &&
+            $gameMap.mapId() !== BOLOGNA_MAP_ID && !isOffEarthView() &&
+            SceneManager._scene instanceof Scene_Map;
+    }
+
+    function buildChrome() {
+        if (chromeEl) return chromeEl;
+        const el = document.createElement('div');
+        el.id = CHROME_ID;
+
+        const countries = europeanCountries();
+        const options = ['<option value="0">' + escapeSheet(T('WorldMap.country.none')) + '</option>']
+            .concat(countries.map(c =>
+                `<option value="${c.id}">${escapeSheet(c.country)}</option>`)).join('');
+
+        el.innerHTML = `
+            <div class="wm-chrome-panel wm-country-box">
+                <div class="wm-chrome-title">${escapeSheet(T('WorldMap.country.title'))}</div>
+                <select id="wm-country" class="wm-country-select focusable" tabindex="0">${options}</select>
+            </div>
+            <div class="wm-chrome-panel wm-zoom-box">
+                <div class="wm-zoom-mark">+</div>
+                <input id="wm-zoom" class="wm-zoom-bar" type="range" min="0" max="1000" step="1"
+                       value="${zoomToSlider(zoomScale)}" orient="vertical">
+                <div class="wm-zoom-mark">&minus;</div>
+            </div>
+            <div class="wm-chrome-panel wm-readout" id="wm-readout"></div>
+            <div class="wm-chrome-panel wm-sheet-hint">${escapeSheet(T('WorldMap.hint.sheet'))}</div>`;
+
+        document.body.appendChild(el);
+        chromeEl = el;
+        chromeZoomEl = el.querySelector('#wm-zoom');
+        chromeReadoutEl = el.querySelector('#wm-readout');
+        chromeCountryEl = el.querySelector('#wm-country');
+
+        chromeZoomEl.addEventListener('input', () => {
+            chromeSuppressZoom = true;
+            applyZoom(sliderToZoom(chromeZoomEl.value));
+            chromeSuppressZoom = false;
+        });
+        // The bar owns the wheel while the pointer is on it, or the map's own
+        // wheel zoom would fight the thumb being dragged.
+        chromeZoomEl.addEventListener('wheel', ev => ev.stopPropagation());
+        chromeZoomEl.addEventListener('keydown', ev => ev.stopPropagation());
+
+        chromeCountryEl.addEventListener('change', () => {
+            highlightCountryId = Number(chromeCountryEl.value) || 0;
+            SoundManager.playCursor();
+            fsOverlayKey = null;      // the wash is part of the overlay
+            refreshWorldMapDisplay();
+        });
+        chromeCountryEl.addEventListener('keydown', ev => ev.stopPropagation());
+        chromeCountryEl.value = String(highlightCountryId || 0);
+
+        // Only the interactive panels claim the pointer: the readout is a label
+        // and must not swallow a click on the square it is describing.
+        for (const panel of el.querySelectorAll('.wm-zoom-box, .wm-country-box')) {
+            panel.addEventListener('pointerenter', () => { chromePointerIn = true; });
+            panel.addEventListener('pointerleave', () => { chromePointerIn = false; });
+        }
+        // ...with the one exception inside the readout: the Show map button IS
+        // a button. It is rewritten with every square the pointer crosses, so
+        // it is watched by delegation rather than bound each time.
+        el.addEventListener('pointerover', ev => {
+            if (ev.target.closest('.wm-show-map')) chromePointerIn = true;
+        });
+        el.addEventListener('pointerout', ev => {
+            if (ev.target.closest('.wm-show-map')) chromePointerIn = false;
+        });
+        el.addEventListener('click', ev => {
+            const hit = ev.target.closest('[data-wm-show]');
+            if (!hit) return;
+            ev.stopPropagation();
+            const parts = String(hit.dataset.wmShow).split(',');
+            openSquarePreview(Number(parts[0]), Number(parts[1]));
+        });
+        return el;
+    }
+
+    function destroyChrome() {
+        if (chromeEl) { chromeEl.remove(); chromeEl = null; }
+        chromeZoomEl = chromeReadoutEl = chromeCountryEl = null;
+        chromePointerIn = false;
+        readoutKey = null;
+        closeNoteModal();
+        destroyPreview();
+    }
+
+    function escapeSheet(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, c => (
+            { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // The readout follows the pointer's square, and says what can be done with
+    // it: travelled to, written on, or only looked at.
+    //
+    // Only rewritten when the square under the pointer actually changes. It is
+    // driven from the frame loop, and rebuilding its markup on every one of
+    // them would rewrite a dozen elements sixty times a second to say the same
+    // thing.
+    let readoutKey = null;
+
+    function refreshReadout(square) {
+        if (!chromeReadoutEl) { readoutKey = null; return; }
+        const key = square ? (square.x + ',' + square.y) : '';
+        if (key === readoutKey) return;
+        readoutKey = key;
+        if (!square) { chromeReadoutEl.style.display = 'none'; return; }
+        const rows = squareReadout(square.x, square.y).map(line =>
+            `<div class="wm-read-row"><span class="wm-read-label">${escapeSheet(line.label)}</span>` +
+            `<span class="wm-read-value">${escapeSheet(line.value)}</span></div>`).join('');
+        const pin = pinAtSquare(square.x, square.y);
+        const transport = sheetTravelTransport();
+        let action = '';
+        if (pin && pin.destName && transport) {
+            action = T('WorldMap.hint.travel', { place: pin.name });
+        } else if (pin && pin.destName) {
+            action = T('WorldMap.hint.needVehicle');
+        }
+        chromeReadoutEl.style.display = 'block';
+        chromeReadoutEl.innerHTML =
+            `<div class="wm-read-head">${escapeSheet(T('WorldMap.read.square', { x: square.x, y: square.y }))}</div>` +
+            rows + (action ? `<div class="wm-read-action">${escapeSheet(action)}</div>` : '') +
+            // Build the square and look at it before walking onto it. The
+            // square is built for the look and thrown away again, so the
+            // button is offered for any square, catalogued or bare ground.
+            `<div class="inspect-btn focusable wm-show-map" data-wm-show="${square.x},${square.y}">` +
+            `${escapeSheet(T('WorldMap.preview.showMap'))}</div>`;
+    }
+
+    function syncChrome() {
+        if (!chromeWanted()) { destroyChrome(); return; }
+        buildChrome();
+        if (chromeZoomEl && !chromeSuppressZoom) {
+            const want = String(zoomToSlider(zoomScale));
+            if (chromeZoomEl.value !== want) chromeZoomEl.value = want;
+        }
+    }
+
+    // -- Writing on the chart -------------------------------------------------
+
+    // While a box is open over the sheet, the sheet itself stops listening:
+    // the note being typed and the square being looked at both own the
+    // keyboard, the wheel and the drag for as long as they are up.
+    function isSheetTyping() {
+        return !!noteModalEl || previewIsOpen();
+    }
+
+    function openNoteModal(x, y) {
+        if (noteModalEl) return;
+        const existing = noteAt(x, y);
+        noteModalSquare = { x: x, y: y };
+        const el = document.createElement('div');
+        el.id = 'wm-note-modal';
+        el.innerHTML = `
+            <div class="ui-panel wm-note-box">
+                <div class="page-header-bar">
+                    <h2 class="title">${escapeSheet(T('WorldMap.note.title', { x: x, y: y }))}</h2>
+                </div>
+                <div class="wm-note-place">${escapeSheet(
+                    squareReadout(x, y).map(l => l.value).join(' - '))}</div>
+                <input id="wm-note-text" class="wm-note-input focusable" tabindex="0" maxlength="120"
+                       value="${escapeSheet(existing ? existing.text : '')}"
+                       placeholder="${escapeSheet(T('WorldMap.note.placeholder'))}">
+                <div class="inspect-actions wm-note-actions">
+                    <div class="inspect-btn focusable" data-wm-note="save">${escapeSheet(T('WorldMap.note.save'))}</div>
+                    ${existing ? `<div class="inspect-btn inspect-btn--danger focusable" data-wm-note="delete">${escapeSheet(T('WorldMap.note.delete'))}</div>` : ''}
+                    <div class="inspect-btn inspect-btn--secondary focusable" data-wm-note="cancel">${escapeSheet(T('WorldMap.note.cancel'))}</div>
+                </div>
+            </div>`;
+        document.body.appendChild(el);
+        noteModalEl = el;
+
+        const input = el.querySelector('#wm-note-text');
+        input.addEventListener('keydown', ev => {
+            if (ev.key === 'Enter') { ev.preventDefault(); commitNote(input.value); return; }
+            if (ev.key === 'Escape') { ev.preventDefault(); closeNoteModal(); return; }
+            ev.stopPropagation();
+        });
+        el.addEventListener('click', ev => {
+            const hit = ev.target.closest('[data-wm-note]');
+            if (!hit) return;
+            ev.stopPropagation();
+            const answer = hit.dataset.wmNote;
+            if (answer === 'save') commitNote(input.value);
+            else if (answer === 'delete') commitNote('');
+            else closeNoteModal();
+        });
+        setTimeout(() => { try { input.focus(); input.select(); } catch (e) { } }, 0);
+        SoundManager.playOk();
+    }
+
+    function commitNote(text) {
+        if (!noteModalSquare) { closeNoteModal(); return; }
+        const square = noteModalSquare;
+        closeNoteModal();
+        setNoteAt(square.x, square.y, text);
+        sheetInvalidate();
+        fsOverlayKey = null;
+        SoundManager.playOk();
+    }
+
+    function closeNoteModal() {
+        if (noteModalEl) { noteModalEl.remove(); noteModalEl = null; }
+        noteModalSquare = null;
+        TouchInput.clear();
+    }
+
+    // -- "Show map": looking at the ground before walking onto it ------------
+    //
+    // A square on the chart is one photographed pixel of Europe, and nothing
+    // about it says whether the ground there is a river bend, a crossroads or a
+    // wall of trees. The generator already knows: the square is built from the
+    // world seed and the biome snapshot, so it comes out the same whether it is
+    // built now for a look or in a minute for a walk.
+    //
+    // So the sheet builds it, renders it once, and shows the picture. The
+    // picture is NEVER kept: there is no cache, no file and no bitmap held
+    // between openings. Closing the preview destroys the texture, the canvas
+    // and the tilemap that drew it, and opening the same square again builds it
+    // from scratch.
+    //
+    // Building a square replaces $gameSystem._procGenData outright (that is what
+    // generateOriginBiomeMap is for), which is the record the party's OWN square
+    // is standing on. The whole thing is therefore bracketed by a snapshot and
+    // a restore, and the restore runs even when the generator throws.
+    const PREVIEW_TILE_PX = 48;
+    let previewEl = null;
+    let previewTilemap = null;
+    let previewCanvas = null;
+    let previewTexture = null;
+    let previewZoom = 1;
+    let previewPanX = 0;
+    let previewPanY = 0;
+    let previewBuilding = false;
+
+    function previewIsOpen() {
+        return !!previewEl;
+    }
+
+    // The map data for one world square, built and handed back without leaving
+    // a trace on the record the party is standing on. Null where the square
+    // cannot be built (open ocean, no snapshot loaded, no generator).
+    function buildSquareMapData(wx, wy) {
+        if (!$gameSystem || typeof $gameSystem.generateOriginBiomeMap !== 'function') return null;
+        const savedProcGen = $gameSystem._procGenData;
+        const savedX = $gameVariables ? $gameVariables.value(43) : 0;
+        const savedY = $gameVariables ? $gameVariables.value(44) : 0;
+        let built = null;
+        try {
+            if (!$gameSystem.generateOriginBiomeMap({ worldX: wx, worldY: wy })) return null;
+            const data = $gameSystem._procGenData && $gameSystem._procGenData.generatedMapData;
+            if (!data || !data.data || !data.width || !data.height) return null;
+            // Copied out before the record goes back: the object about to be
+            // restored is the one holding it.
+            built = {
+                width: data.width, height: data.height,
+                tilesetId: data.tilesetId, data: data.data.slice(),
+            };
+        } catch (e) {
+            console.error('[WorldMap] the square could not be built for a look.', e);
+            return null;
+        } finally {
+            // Always, whatever happened: the party's own square must be the one
+            // the record describes by the time this returns.
+            $gameSystem._procGenData = savedProcGen;
+            if ($gameVariables) {
+                $gameVariables.setValue(43, savedX);
+                $gameVariables.setValue(44, savedY);
+            }
+        }
+        return built;
+    }
+
+    // One offscreen tilemap holding the whole square, with no viewport: width
+    // and height are the map's full pixel size, so _addAllSpots lays down every
+    // tile rather than the window a scene would show.
+    function buildPreviewTilemap(mapData) {
+        const tileset = $dataTilesets && $dataTilesets[mapData.tilesetId];
+        if (!tileset) return null;
+        const tilemap = new Tilemap();
+        tilemap.tileWidth = PREVIEW_TILE_PX;
+        tilemap.tileHeight = PREVIEW_TILE_PX;
+        tilemap.setData(mapData.width, mapData.height, mapData.data);
+        tilemap.flags = tileset.flags;
+        // setBitmaps, not an assignment: it is what hangs the load listeners
+        // that make isReady() below mean anything (ImageManager.loadTileset
+        // answers an empty bitmap for an empty slot, as the spriteset relies on).
+        tilemap.setBitmaps(tileset.tilesetNames.map(name => ImageManager.loadTileset(name)));
+        tilemap.width = mapData.width * PREVIEW_TILE_PX;
+        tilemap.height = mapData.height * PREVIEW_TILE_PX;
+        tilemap.origin.x = 0;
+        tilemap.origin.y = 0;
+        return tilemap;
+    }
+
+    // Draw it, once, into a canvas of its own. PIXI's extract renders the
+    // display object through the live renderer, which is the only thing in the
+    // game that knows how to put an autotile together.
+    function renderPreviewCanvas(tilemap) {
+        const app = Graphics._app || (window.Graphics && Graphics.app);
+        const renderer = app && app.renderer;
+        if (!renderer || !renderer.extract) return null;
+        // The bitmaps have to have finished decoding, or the spots are laid
+        // down against empty textures and the picture comes out blank.
+        tilemap.update();
+        tilemap.updateTransform();
+        try {
+            return renderer.extract.canvas(tilemap);
+        } catch (e) {
+            console.error('[WorldMap] the square could not be drawn.', e);
+            return null;
+        }
+    }
+
+    function destroyPreview() {
+        if (previewEl) { previewEl.remove(); previewEl = null; }
+        if (previewTexture && previewTexture.destroy) {
+            try { previewTexture.destroy(true); } catch (e) { /* already gone */ }
+        }
+        previewTexture = null;
+        if (previewTilemap && previewTilemap.destroy) {
+            // The tileset bitmaps are ImageManager's and are shared with the
+            // running map, so only the tilemap's own layers are torn down.
+            try { previewTilemap.destroy({ children: true, texture: false, baseTexture: false }); }
+            catch (e) { /* already gone */ }
+        }
+        previewTilemap = null;
+        // The canvas is the picture. Dropping the last reference to it is what
+        // "the screenshot is not saved" means: nothing else ever held one.
+        if (previewCanvas) {
+            previewCanvas.width = previewCanvas.height = 0;
+            previewCanvas = null;
+        }
+        previewBuilding = false;
+        TouchInput.clear();
+    }
+
+    function applyPreviewTransform() {
+        if (!previewCanvas) return;
+        previewCanvas.style.transform =
+            `translate(${previewPanX}px, ${previewPanY}px) scale(${previewZoom})`;
+    }
+
+    function openSquarePreview(wx, wy) {
+        if (previewEl || previewBuilding) return;
+        previewBuilding = true;
+        SoundManager.playOk();
+
+        const mapData = buildSquareMapData(wx, wy);
+        if (!mapData) {
+            previewBuilding = false;
+            SoundManager.playBuzzer();
+            if (window.ParchmentToast && window.ParchmentToast.show) {
+                window.ParchmentToast.show(T('WorldMap.preview.unbuildable'));
+            }
+            return;
+        }
+
+        previewTilemap = buildPreviewTilemap(mapData);
+        if (!previewTilemap) { destroyPreview(); SoundManager.playBuzzer(); return; }
+
+        const el = document.createElement('div');
+        el.id = 'wm-square-preview';
+        el.innerHTML = `
+            <div class="wm-preview-stage" id="wm-preview-stage">
+                <div class="wm-preview-loading">${escapeSheet(T('WorldMap.preview.building'))}</div>
+            </div>
+            <div class="wm-preview-bar">
+                <span class="wm-preview-title">${escapeSheet(
+                    T('WorldMap.preview.title', { x: wx, y: wy }))}</span>
+                <span class="wm-preview-note">${escapeSheet(T('WorldMap.preview.notKept'))}</span>
+                <div class="inspect-btn inspect-btn--secondary focusable" data-wm-preview="close">${
+                    escapeSheet(T('WorldMap.preview.close'))}</div>
+            </div>`;
+        document.body.appendChild(el);
+        previewEl = el;
+
+        el.addEventListener('click', ev => {
+            if (ev.target.closest('[data-wm-preview="close"]')) {
+                ev.stopPropagation();
+                destroyPreview();
+            }
+        });
+        // Its own wheel and drag, so the chart underneath neither zooms nor pans
+        // while the picture over it is being read.
+        el.addEventListener('wheel', ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const step = ev.deltaY < 0 ? 1.15 : 1 / 1.15;
+            previewZoom = Math.max(0.1, Math.min(4, previewZoom * step));
+            applyPreviewTransform();
+        }, { passive: false });
+        let dragging = false, dragX = 0, dragY = 0;
+        el.addEventListener('pointerdown', ev => {
+            dragging = true; dragX = ev.clientX; dragY = ev.clientY;
+        });
+        el.addEventListener('pointermove', ev => {
+            if (!dragging) return;
+            previewPanX += ev.clientX - dragX;
+            previewPanY += ev.clientY - dragY;
+            dragX = ev.clientX; dragY = ev.clientY;
+            applyPreviewTransform();
+        });
+        el.addEventListener('pointerup', () => { dragging = false; });
+        el.addEventListener('pointerleave', () => { dragging = false; });
+
+        // The tileset images may still be decoding. The picture is drawn on the
+        // frame they are all ready, and not before.
+        const tilemap = previewTilemap;
+        const drawWhenReady = () => {
+            if (previewTilemap !== tilemap || !previewEl) return;  // closed while waiting
+            if (!tilemap.isReady()) { setTimeout(drawWhenReady, 50); return; }
+            const canvas = renderPreviewCanvas(tilemap);
+            if (previewTilemap !== tilemap || !previewEl) return;
+            const stage = previewEl.querySelector('#wm-preview-stage');
+            if (!canvas || !stage) { destroyPreview(); SoundManager.playBuzzer(); return; }
+            stage.innerHTML = '';
+            canvas.className = 'wm-preview-canvas';
+            stage.appendChild(canvas);
+            previewCanvas = canvas;
+            // Opens showing the whole square, however big the square is.
+            const fit = Math.min(
+                (window.innerWidth * 0.86) / canvas.width,
+                (window.innerHeight * 0.76) / canvas.height);
+            previewZoom = Math.max(0.05, Math.min(1, fit));
+            previewPanX = previewPanY = 0;
+            applyPreviewTransform();
+            previewBuilding = false;
+        };
+        drawWhenReady();
+    }
+
+    // -- The pointer over the sheet -------------------------------------------
+    //
+    // A press that does not move is a tap; a press that moves is the pan the
+    // map has always had. The same test the Bologna overlay uses, because it is
+    // the same gesture.
+    let sheetPressing = false;
+    let sheetPressX = 0, sheetPressY = 0, sheetPressMoved = false;
+
+    // Screen pixels -> world square (0-255), or null off the sheet.
+    function squareAtPointer() {
+        const dims = fullscreenMapDims();
+        if (!dims || !dims.w || !dims.h || !zoomScale) return null;
+        const bx = (TouchInput.x - panX) / zoomScale;
+        const by = (TouchInput.y - panY) / zoomScale;
+        const x = Math.floor((bx / dims.w) * WORLD_TILES);
+        const y = Math.floor((by / dims.h) * WORLD_TILES);
+        if (x < 0 || y < 0 || x >= WORLD_TILES || y >= WORLD_TILES) return null;
+        return { x: x, y: y };
+    }
+
+    // The pin under the cursor, allowing for the fact that a pin on a
+    // 12288px sheet zoomed right out is a couple of pixels across.
+    function pinAtPointer() {
+        const dims = fullscreenMapDims();
+        if (!dims || !dims.w || !zoomScale) return null;
+        const bx = (TouchInput.x - panX) / zoomScale;
+        const by = (TouchInput.y - panY) / zoomScale;
+        const radius = Math.max(24, 18 / zoomScale);
+        let best = null, bestD = Infinity;
+        for (const pin of sheetPins()) {
+            const px = (pin.x / WORLD_TILES) * dims.w;
+            const py = (pin.y / WORLD_TILES) * dims.h;
+            const d = Math.abs(px - bx) + Math.abs(py - by);
+            if (d <= radius * 2 && d < bestD) { bestD = d; best = pin; }
+        }
+        return best;
+    }
+
+    // -- The chart under a controller -----------------------------------------
+    //
+    // The sheet was built around a pointer: the square being read is whichever
+    // one the mouse is over, and everything the chart can do hangs off that.
+    // A pad has no pointer, so it is given a cursor of its own - one square,
+    // walked with the d-pad - and that square answers every question
+    // squareAtPointer() answers for a mouse. The stick keeps panning the sheet
+    // (updatePanControls), so the two never argue over the same input.
+    let padSquare = null;
+    let padSeenX = -1;
+    let padSeenY = -1;
+
+    // Whichever device was used last owns the readout, so the cursor is dropped
+    // the moment the mouse moves and the ring is never in two places at once.
+    function syncPadCursorToDevice() {
+        if (TouchInput.x === padSeenX && TouchInput.y === padSeenY) return;
+        padSeenX = TouchInput.x;
+        padSeenY = TouchInput.y;
+        clearPadCursor();
+    }
+
+    function clearPadCursor() {
+        if (!padSquare) return;
+        padSquare = null;
+        // The cursor is drawn into the overlay, and the overlay is cached on a
+        // signature, so moving it is a redraw and not a per-frame cost.
+        fsOverlayKey = null;
+        refreshWorldMapDisplay();
+    }
+
+    // The square the sheet is talking about: the pad's, when it has one, and
+    // the one under the mouse otherwise. Everything that used to ask
+    // squareAtPointer() directly asks this instead.
+    function activeSquare() {
+        return padSquare || squareAtPointer();
+    }
+
+    // The cursor starts where the party is, so the first press of a direction
+    // summons it somewhere the player already recognises.
+    function padCursorStart() {
+        const world = playerWorldPosition();
+        const x = Math.max(0, Math.min(WORLD_TILES - 1, Math.floor(world.x)));
+        const y = Math.max(0, Math.min(WORLD_TILES - 1, Math.floor(world.y)));
+        return { x: x, y: y };
+    }
+
+    // The sheet is bigger than the screen at any useful zoom, so the pan follows
+    // the cursor out rather than letting it walk off the edge. Only the axis
+    // that actually left the margin is moved.
+    function keepPadCursorInView() {
+        const dims = fullscreenMapDims();
+        if (!padSquare || !dims || !dims.w || !dims.h || !isLiveSprite(worldMapSprite)) return;
+        const cw = (dims.w / WORLD_TILES) * zoomScale;
+        const ch = (dims.h / WORLD_TILES) * zoomScale;
+        const sx = panX + (padSquare.x + 0.5) * cw;
+        const sy = panY + (padSquare.y + 0.5) * ch;
+        const mx = Math.max(cw, Graphics.width * 0.18);
+        const my = Math.max(ch, Graphics.height * 0.18);
+        if (sx < mx) panX += mx - sx;
+        else if (sx > Graphics.width - mx) panX -= sx - (Graphics.width - mx);
+        if (sy < my) panY += my - sy;
+        else if (sy > Graphics.height - my) panY -= sy - (Graphics.height - my);
+        worldMapSprite.x = panX;
+        worldMapSprite.y = panY;
+    }
+
+    function movePadCursor(dx, dy) {
+        if (!padSquare) {
+            // The first press only summons the cursor; it does not also step, so
+            // the square it appears on is the one the player expected.
+            padSquare = padCursorStart();
+        } else {
+            padSquare = {
+                x: Math.max(0, Math.min(WORLD_TILES - 1, padSquare.x + dx)),
+                y: Math.max(0, Math.min(WORLD_TILES - 1, padSquare.y + dy))
+            };
+        }
+        fsOverlayKey = null;
+        keepPadCursorInView();
+        refreshWorldMapDisplay();
+        SoundManager.playCursor();
+    }
+
+    // Every key the chart answers to while it is up. The mouse keeps its own
+    // handler (updateSheetPointer); this is the same set of actions reached
+    // without a pointer, so the two stay in step by calling the same functions.
+    function updateSheetKeys() {
+        // The note box owns the keyboard while it is open (its field stops key
+        // events reaching Input), so only a pad ever gets this far, and all it
+        // can do there is put the box away.
+        if (noteModalEl) {
+            if (Input.isTriggered('cancel')) closeNoteModal();
+            return;
+        }
+        if (previewIsOpen()) {
+            if (Input.isTriggered('cancel')) destroyPreview();
+            return;
+        }
+        if (Input.isTriggered('cancel')) {
+            // A pad has no M key to shut the chart with.
+            toggleMapState();
+            return;
+        }
+
+        let dx = 0, dy = 0;
+        if (Input.isRepeated('left')) dx = -1;
+        else if (Input.isRepeated('right')) dx = 1;
+        else if (Input.isRepeated('up')) dy = -1;
+        else if (Input.isRepeated('down')) dy = 1;
+        if (dx || dy) { movePadCursor(dx, dy); return; }
+
+        const square = activeSquare();
+        if (!square) return;
+
+        // The same two things a mouse can do to a square, on the two keys a pad
+        // always has: OK sets off for it (or looks at it, when there is nowhere
+        // to set off for) and the shoulder writes on it, as right-click does.
+        if (Input.isTriggered('ok')) {
+            const pin = pinAtSquare(square.x, square.y);
+            if (pin && pin.destName) bookPinTravel(pin);
+            else openSquarePreview(square.x, square.y);
+            return;
+        }
+        if (Input.isTriggered('shift')) {
+            openNoteModal(square.x, square.y);
+        }
+    }
+
+    function bookPinTravel(pin) {
+        const transport = sheetTravelTransport();
+        if (!pin || !pin.destName) return false;
+        if (!transport) {
+            SoundManager.playBuzzer();
+            if (window.ParchmentToast && window.ParchmentToast.show) {
+                window.ParchmentToast.show(T('WorldMap.hint.needVehicle'));
+            }
+            return false;
+        }
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.openTo !== 'function') return false;
+        // Shut the chart first: the travel overlay is the thing being looked at
+        // now, and a chart still up under it swallows the drag.
+        currentMapState = savedMinimapState();
+        clearFullscreenCache();
+        destroyChrome();
+        refreshWorldMapDisplay();
+        if (!FT.openTo(pin.destName, transport)) {
+            SoundManager.playBuzzer();
+            return false;
+        }
+        SoundManager.playOk();
+        TouchInput.clear();
+        return true;
+    }
+
+    function updateSheetPointer() {
+        if (!chromeWanted()) { sheetPressing = false; return; }
+        if (isSheetTyping()) { sheetPressing = false; return; }
+        syncPadCursorToDevice();
+        // The chrome takes its own clicks. Which side of it the pointer is on
+        // is answered by the chrome itself (pointerenter / pointerleave), not by
+        // mapping game pixels back onto the page: the canvas is letterboxed and
+        // scaled, and that arithmetic is exactly what ResolutionSwitcher owns.
+        if (chromePointerIn) return;
+
+        refreshReadout(activeSquare());
+
+        // Right-click writes on the square: a mark, or the note already there.
+        if (TouchInput.isCancelled()) {
+            const square = squareAtPointer();
+            if (square) {
+                openNoteModal(square.x, square.y);
+                TouchInput.clear();
+            }
+            return;
+        }
+
+        if (TouchInput.isTriggered()) {
+            sheetPressing = true;
+            sheetPressMoved = false;
+            sheetPressX = TouchInput.x;
+            sheetPressY = TouchInput.y;
+        } else if (sheetPressing && TouchInput.isPressed()) {
+            if (Math.abs(TouchInput.x - sheetPressX) > 8 || Math.abs(TouchInput.y - sheetPressY) > 8) {
+                sheetPressMoved = true;
+            }
+        } else if (sheetPressing && TouchInput.isReleased()) {
+            sheetPressing = false;
+            if (sheetPressMoved) return;
+            const pin = pinAtPointer();
+            if (pin && pin.destName) bookPinTravel(pin);
+        }
+    }
+
+    // -- In orbit, and on the ground of another world -------------------------
+    //
+    // The chart is a chart of Earth. Off Earth the same key has to mean the same
+    // thing - "show me where I am and where I could go" - which off Earth is the
+    // landing grid, not a photograph of Belgium. Orbiting Earth itself the chart
+    // is right again, but it is being looked at through a window: every place is
+    // named and none of them can be set off for from up there.
+    const SPACE_HOME_PLANET = 'Earth';   // i18n-ignore  planet id
+
+    function isInShipCabin() {
+        return !!($dataMap && $dataMap.note && /<Biome:\s*Space\s*>/i.test($dataMap.note));
+    }
+
+    // The planet the ship is in orbit around, as the star map's own record of
+    // it, or null when it is under way or parked in open space.
+    function orbitedPlanet() {
+        const dm = $gameSystem && $gameSystem.starMapData;
+        const ship = dm && dm.playerShip;
+        if (!ship || !ship.currentPlanet || !ship.currentSystem) return null;
+        if (!dm.getSystem) return { name: ship.currentPlanet };
+        const system = dm.getSystem(ship.currentSystem);
+        const planets = (system && system.planets) || [];
+        for (const planet of planets) {
+            if (planet && planet.name === ship.currentPlanet) return planet;
+            const moons = (planet && planet.moons) || [];
+            for (const moon of moons) {
+                if (moon && moon.name === ship.currentPlanet) return moon;
+            }
+        }
+        return { name: ship.currentPlanet };
+    }
+
+    // 'landing'  the landing grid belongs here, not the chart
+    // 'earth'    the chart, read-only, seen from orbit
+    // null       ordinary ground: the chart as it has always been
+    function spaceRoute() {
+        const GS = window.GalaxySim;
+        if (!GS) return null;
+        if (isAlienPlanetSurface()) return 'landing';
+        if (GS.isOffEarth && GS.isOffEarth()) return 'landing';
+        if (!isInShipCabin()) return null;
+        const planet = orbitedPlanet();
+        if (!planet) return null;
+        return planet.name === SPACE_HOME_PLANET ? 'earth' : 'landing';
+    }
+
+    // Answers true when the key has been dealt with somewhere else.
+    function openLandingGridInstead() {
+        const GS = window.GalaxySim;
+        if (!GS || typeof GS.openLandingGridPicker !== 'function') return false;
+        const planet = isAlienPlanetSurface()
+            ? null
+            : ((GS.getOffEarthPlanet && GS.getOffEarthPlanet()) || orbitedPlanet());
+        try {
+            if (GS.openLandingGridPicker(planet)) { SoundManager.playOk(); return true; }
+        } catch (e) { /* the renderer is not loaded */ }
+        return false;
+    }
+
+
+    // ------------------------------------------------------------------------
     // Input & Update Loops
     // ------------------------------------------------------------------------
 
@@ -2320,7 +3514,7 @@
 
         // Toggle Map. START button is reserved for the sleep wait menu on
         // controller, so the map toggle answers to 'world_map_toggle' (M key).
-        if (Input.isTriggered('world_map_toggle')) {
+        if (Input.isTriggered('world_map_toggle') && !isSheetTyping()) {
             // A manual toggle means the player took control; don't auto-hide later.
             autoOpenedForTravel = false;
             toggleMapState();
@@ -2329,8 +3523,18 @@
         // Interactive Controls (Only in Fullscreen Mode)
         if (currentMapState === 3 && isLiveSprite(worldMapSprite)) {
             updateQuestMarkerInteraction();
-            updateZoomControls();
-            updatePanControls();
+            // The sheet's own furniture and pointer: the zoom bar, the country
+            // picker, the square readout, the pins and the notes.
+            syncChrome();
+            updateSheetPointer();
+            // The pad's own reading of the same sheet. It runs even while a note
+            // box or a square preview is up, because closing those is the one
+            // thing a controller has to be able to do from in there.
+            updateSheetKeys();
+            if (!isSheetTyping()) {
+                updateZoomControls();
+                updatePanControls();
+            }
             // The visible segments change with every pan and zoom step, and the
             // check is cheap, so it rides the same frame rather than a redraw.
             updateFullscreenStreaming();
@@ -2338,6 +3542,10 @@
             if ($gameMap.mapId() === BOLOGNA_MAP_ID && isSandboxEnabled()) {
                 updateBolognaTeleportClick();
             }
+        } else if (chromeEl) {
+            // The chart is not up any more: its furniture goes with it, however
+            // the map was closed.
+            destroyChrome();
         }
 
         // Border arrows for objectives the current pan has pushed off-screen.
@@ -2515,6 +3723,15 @@
         }
     }
 
+    // Cancel is the sheet's own key while the sheet is up: right-clicking a
+    // square writes on it, and Escape shuts the note box. Neither of them may
+    // also open the party menu behind the chart.
+    const _Scene_Map_isMenuEnabled_WM = Scene_Map.prototype.isMenuEnabled;
+    Scene_Map.prototype.isMenuEnabled = function() {
+        if (currentMapState === 3) return false;
+        return _Scene_Map_isMenuEnabled_WM.call(this);
+    };
+
     // Block player movement when fullscreen map is open
     const _Game_Player_canMove = Game_Player.prototype.canMove;
     Game_Player.prototype.canMove = function() {
@@ -2560,6 +3777,7 @@
         removeQuestEdgeMarkers(); // sprites belong to the scene that is ending
         removeCityLabels();
         removeQuestTip(); // a DOM overlay must never outlive its scene
+        destroyChrome(); // and neither may the sheet's furniture
     };
 
     const _Scene_Map_start = Scene_Map.prototype.start;
@@ -2568,6 +3786,9 @@
 
         lastRenderedTileX = -1;
         lastRenderedTileY = -1;
+        // A new map may be a new world: the pins, and the region plane the
+        // country wash is read off, are both gathered again from scratch.
+        sheetInvalidate();
 
         const mapId = $gameMap.mapId();
 

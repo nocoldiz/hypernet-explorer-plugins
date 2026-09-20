@@ -622,6 +622,28 @@
     // per-character branches (screenZ / canPass / collision / passability) would
     // otherwise run on every character on every non-puzzle map. Result is
     // memoized per frame so the many per-character calls cost one scan at most.
+    // "Does this object hold anything" without Object.keys building a throwaway
+    // array. The puzzle gate below asks it of a dozen collections on every frame
+    // of every map in the game, puzzle map or not, so the allocation mattered.
+    function hasAnyKey(o) {
+        if (!o) return false;
+        for (const k in o) if (Object.prototype.hasOwnProperty.call(o, k)) return true;
+        return false;
+    }
+
+    // Signatures are rolling 32-bit hashes rather than concatenated strings: the
+    // callers only ever compare them against last frame's value, and building a
+    // string per frame allocated (and immediately discarded) a few hundred bytes
+    // on every puzzle map.
+    // A cheap avalanche (xor-multiply-xorshift), NOT the textbook h*31+n: with
+    // small coordinates that one degenerates into 31x+y, which collides all over
+    // an ordinary map, and a collided signature silently freezes a beam mid
+    // puzzle. This keeps 80x80 tile positions all distinct.
+    function sigMix(h, n) {
+        h = Math.imul(h ^ (n | 0), 0x9e3779b1);
+        return (h ^ (h >>> 15)) | 0;
+    }
+
     function mapHasPuzzleElements() {
         const pd = $gameSystem && $gameSystem._puzzleData;
         if (!pd) return false;
@@ -629,7 +651,7 @@
         let has = false;
         for (const k of VOLATILE_COLLECTION_KEYS) {
             const v = pd[k];
-            if (Array.isArray(v) ? v.length > 0 : (v && Object.keys(v).length > 0)) { has = true; break; }
+            if (Array.isArray(v) ? v.length > 0 : hasAnyKey(v)) { has = true; break; }
         }
         pd._mapHasPuzzleFrame = Graphics.frameCount;
         pd._mapHasPuzzleCached = has;
@@ -647,7 +669,7 @@
         }
     }
 
-    // Cheap signature of everything that can move onto/through puzzle tiles this
+    // Cheap hash of everything that can move onto/through puzzle tiles this
     // frame: puzzle actors, pushables, clones, and eye-statue facing/positions.
     // Memoized per frame so the plate/counterweight/statue/timed-plate scans can
     // be skipped while nothing has moved. Built lazily and only when needed.
@@ -655,23 +677,22 @@
         const pd = $gameSystem._puzzleData;
         if (!pd) return '';
         if (pd._moveSigFrame === Graphics.frameCount) return pd._moveSigCached;
-        let sig = '';
+        let sig = 0;
         const actors = getPuzzleActors();
-        for (let i = 0; i < actors.length; i++) sig += actors[i].x + ',' + actors[i].y + ';';
-        sig += '|';
-        for (const pid of Object.keys(pd.pushables)) {
+        for (let i = 0; i < actors.length; i++) {
+            sig = sigMix(sigMix(sig, actors[i].x), actors[i].y);
+        }
+        for (const pid in pd.pushables) {
             const e = getEvent(+pid);
-            if (e) sig += pid + ':' + e.x + ',' + e.y + ';';
+            if (e) sig = sigMix(sigMix(sigMix(sig, +pid), e.x), e.y);
         }
-        sig += '|';
-        for (const cid of Object.keys(pd.clones)) {
+        for (const cid in pd.clones) {
             const e = getEvent(+cid);
-            if (e) sig += cid + ':' + e.x + ',' + e.y + ';';
+            if (e) sig = sigMix(sigMix(sigMix(sig, +cid), e.x), e.y);
         }
-        sig += '|';
-        for (const sid of Object.keys(pd.eyeStatues)) {
+        for (const sid in pd.eyeStatues) {
             const e = getEvent(+sid);
-            if (e) sig += sid + ':' + e.x + ',' + e.y + ',' + e.direction() + ';';
+            if (e) sig = sigMix(sigMix(sigMix(sigMix(sig, +sid), e.x), e.y), e.direction());
         }
         pd._moveSigFrame = Graphics.frameCount;
         pd._moveSigCached = sig;
@@ -1838,20 +1859,33 @@
     // positions+orientations, receiver positions. Combined with the per-frame
     // movement signature to decide when a beam retrace is actually needed.
     function beamStaticSignature(pd) {
-        let sig = '';
-        for (const [emId, emitter] of Object.entries(pd.beamEmitters)) {
+        let sig = 0;
+        for (const emId in pd.beamEmitters) {
             const e = getEvent(+emId);
-            if (e) sig += 'e' + emId + ':' + e.x + ',' + e.y + ',' + emitter.direction + ';';
+            if (!e) continue;
+            sig = sigMix(sigMix(sigMix(sigMix(sig, 101 + (+emId)), e.x), e.y), dirToNum(pd.beamEmitters[emId].direction));
         }
-        for (const [mid, mirror] of Object.entries(pd.mirrors)) {
+        for (const mid in pd.mirrors) {
             const e = getEvent(+mid);
-            if (e) sig += 'm' + mid + ':' + e.x + ',' + e.y + ',' + mirror.orientation + ';';
+            if (!e) continue;
+            sig = sigMix(sigMix(sigMix(sigMix(sig, 211 + (+mid)), e.x), e.y), dirToNum(pd.mirrors[mid].orientation));
         }
-        for (const rid of Object.keys(pd.beamReceivers)) {
+        for (const rid in pd.beamReceivers) {
             const e = getEvent(+rid);
-            if (e) sig += 'r' + rid + ':' + e.x + ',' + e.y + ';';
+            if (!e) continue;
+            sig = sigMix(sigMix(sigMix(sig, 331 + (+rid)), e.x), e.y);
         }
         return sig;
+    }
+
+    // Emitter direction and mirror orientation are short strings, so they are
+    // folded into the hash by character rather than concatenated.
+    function dirToNum(v) {
+        if (typeof v === 'number') return v;
+        let h = 7;
+        const t = String(v == null ? '' : v);
+        for (let i = 0; i < t.length; i++) h = sigMix(h, t.charCodeAt(i));
+        return h;
     }
 
     function calculateBeam() {
@@ -2595,19 +2629,25 @@
         const pd = puzzleData();
         const x = this.x, y = this.y;
 
-        // Warp tiles ,  flag so the transfer doesn't trigger a puzzle reset
-        for (const [id, warp] of Object.entries(pd.warpTiles)) {
+        // Warp tiles ,  flag so the transfer doesn't trigger a puzzle reset.
+        // Both of these walk their table with a plain for-in rather than
+        // Object.entries: this runs on every idle frame the party spends on a
+        // puzzle map, and entries() raises an array of [key, value] pairs (one
+        // little array per entry) each time, for tables that are usually empty.
+        for (const id in pd.warpTiles) {
             const ev = getEvent(+id);
             if (!ev || ev.x !== x || ev.y !== y) continue;
+            const warp = pd.warpTiles[id];
             pd._skipNextReset = true;
             $gamePlayer.reserveTransfer($gameMap.mapId(), warp.targetX, warp.targetY, this.direction(), 0);
             break;
         }
 
         // Key grants (Player only)
-        for (const [id, kg] of Object.entries(pd.keyGrants)) {
+        for (const id in pd.keyGrants) {
             const ev = getEvent(+id);
             if (!ev || ev.x !== x || ev.y !== y) continue;
+            const kg = pd.keyGrants[id];
             if ($dataItems[kg.itemId]) $gameParty.gainItem($dataItems[kg.itemId], kg.quantity);
             ev.erase();
             delete pd.keyGrants[id];
@@ -2661,8 +2701,8 @@
         // Beams are expensive to trace (event scans per step); recompute only when
         // an emitter/mirror/receiver or any blocker (actor/pushable/clone) moved.
         // Sprite_PuzzleBeam still redraws every frame for the pulse animation.
-        if (Object.keys(pd.beamEmitters).length > 0 || Object.keys(pd.beamReceivers).length > 0) {
-            const beamSig = moveSig + '#' + beamStaticSignature(pd) + '#' + (pd._stateVersion || 0);
+        if (hasAnyKey(pd.beamEmitters) || hasAnyKey(pd.beamReceivers)) {
+            const beamSig = sigMix(sigMix(moveSig, beamStaticSignature(pd)), pd._stateVersion || 0);
             if (beamSig !== pd._beamSig) {
                 pd._beamSig = beamSig;
                 calculateBeam();
@@ -2702,6 +2742,14 @@
         if (!$gameSystem._puzzleData) return;
         pd.lastSafeX = $gamePlayer.x;
         pd.lastSafeY = $gamePlayer.y;
+
+        // Every interaction asks for a refresh, but arriving on a map is not an
+        // interaction: without this, a puzzle that is already solved (a lever
+        // left thrown, a plate under a pushed rock) would keep its old state
+        // tiles and unsolved group state until the next switch happened to
+        // change. The occupancy sweeps below already run on the first frame,
+        // since their movement baseline starts unset.
+        requestPuzzleRefresh();
     };
 
     // =========================================================================

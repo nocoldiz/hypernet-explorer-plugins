@@ -5,7 +5,7 @@
   "controlsHeading": "Comandi",
   "setting": {
     "label": "Descrizioni della mappa",
-    "desc": "Il foglio appuntato nell'angolo della mappa, che dice dove sta il gruppo.",
+    "desc": "Mostra una legenda nell'angolo della mappa con il nome del terreno su cui si trova il gruppo.",
     "mode": {
       "first": "La prima volta",
       "always": "Sempre",

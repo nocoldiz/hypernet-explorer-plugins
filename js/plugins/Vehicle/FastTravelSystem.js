@@ -267,6 +267,10 @@
     function destLevelInfo(dest) {
         if (!dest || dest.custom) return null;
         const entry = TRANSPORT_DESTINATIONS[dest.name] || dest;
+        // "fixedLevel" beats the nation band, same rule as the map banner: it
+        // is a statement about this stop, not a fallback for a missing band.
+        const fixed = Number(entry.fixedLevel);
+        if (fixed > 0) return { median: fixed, min: fixed, max: fixed, frozen: false };
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         let info = null;
         if (BSEH && typeof BSEH.describeNationLevels === 'function') {
@@ -288,24 +292,15 @@
     }
 
     // The level a row, a pin and the confirmation print, or "" where the place
-    // has nothing to say. The tooltip carries the window the median came out
-    // of, so the spread around it is one hover away without crowding the row.
+    // has nothing to say. One number, everywhere: the median of what roams
+    // there. The window it came out of used to ride along in the hover and in
+    // the confirmation row, and it only ever read as a second, wider, more
+    // frightening number for the same place - the party is choosing a ticket,
+    // not auditing the fauna table.
     function destLevelText(dest) {
         const info = destLevelInfo(dest);
         return info ? T('FastTravel.destLevel', { level: info.median }) : '';
     }
-
-    function destLevelTitle(dest) {
-        const info = destLevelInfo(dest);
-        if (!info) return '';
-        return T(info.frozen ? 'FastTravel.destLevelBandFrozen' : 'FastTravel.destLevelBand',
-            { min: info.min, max: info.max });
-    }
-
-    // Written straight into a title="..." attribute, where a translation that
-    // quotes something would otherwise close it early. The DOM property the
-    // confirmation panel sets takes the plain text instead.
-    const attr = (text) => String(text == null ? '' : text).replace(/"/g, '&quot;');
 
     // ------------------------------------------------------------------------
     // AFTER THE IMPACT
@@ -498,6 +493,8 @@
             timerRemainingTime: 0,
             timerDestination: '',
             timerTransport: 'walking',
+            // Game minutes this journey has already put on the clock itself.
+            timerAppliedMinutes: 0,
 
             // TimeDateSystem integration data
             travelStartGameTime: 0,
@@ -540,6 +537,7 @@
         data.travelStartGameTime = $gameVariables.value(114) || 0; // Variable 114 = gameTimeVariable
         data.totalTravelMinutes = totalGameMinutes;
         data.minutesPerSecond = minutesPerSecond;
+        data.timerAppliedMinutes = 0;
 
         // Start global interval timer
         if (globalTravelTimer) {
@@ -568,10 +566,18 @@
         // Time advancement is scaled by transport speed
         // - Faster transports advance time faster per second
         // - Slower transports advance time slower per second
+        // Written as a delta, never as an absolute: the party may have slept
+        // or waited part of the journey away, and that time is already on the
+        // clock. Setting it from travelStartGameTime would rub those hours out.
         if (data.timerDuration > 0 && data.minutesPerSecond) {
-            const minutesToAdd = elapsed * data.minutesPerSecond;
-            const newGameTime = data.travelStartGameTime + minutesToAdd;
-            $gameVariables.setValue(114, Math.floor(newGameTime)); // Variable 114 = gameTimeVariable
+            const target = elapsed * data.minutesPerSecond;
+            const applied = data.timerAppliedMinutes || 0;
+            const whole = Math.floor(target) - Math.floor(applied);
+            if (whole > 0) {
+                $gameVariables.setValue(114,
+                    ($gameVariables.value(114) || 0) + whole); // Variable 114 = gameTimeVariable
+            }
+            data.timerAppliedMinutes = target;
         }
 
         // The inspector's round. A journey boarded without paying is checked
@@ -588,6 +594,33 @@
             this.completeTravelTimer();
         }
 
+    };
+
+    // Hours the party sleeps, waits or forages away are hours the coach, the
+    // train or the camper keeps covering ground. The skipped game minutes are
+    // converted back into journey seconds at the journey's own rate and taken
+    // off the countdown; the clock is left alone, because the sequence that
+    // called this already put those minutes on it.
+    Game_System.prototype.skipTravelTimer = function (minutes) {
+        const data = this.getFastTravelData();
+        if (!data.timerActive || data.timerRemainingTime <= 0) return 0;
+        const mins = Math.max(0, Number(minutes) || 0);
+        if (mins <= 0) return 0;
+
+        const rate = data.minutesPerSecond > 0 ? data.minutesPerSecond : 1;
+        const seconds = Math.min(data.timerRemainingTime, Math.floor(mins / rate));
+        if (seconds <= 0) return 0;
+
+        data.timerStartTime -= seconds * 1000;
+        const elapsed = Math.floor((Date.now() - data.timerStartTime) / 1000);
+        data.timerRemainingTime = Math.max(0, data.timerDuration - elapsed);
+        // Absorb the skipped stretch: those minutes are already on the clock.
+        data.timerAppliedMinutes = elapsed * (data.minutesPerSecond || 0);
+        $gameVariables.setValue(45, data.timerRemainingTime);
+
+        this.updateAllTravelTimerWindows();
+        if (data.timerRemainingTime <= 0) this.completeTravelTimer();
+        return seconds;
     };
 
     Game_System.prototype.completeTravelTimer = function () {
@@ -669,6 +702,15 @@
             }
         }
     };
+
+    // Sleeping and waiting are the passenger's part of a journey: whatever
+    // the rest menu skips, the countdown skips with it.
+    if (window.TimeDateSystem && window.TimeDateSystem.onTimeSkipped) {
+        window.TimeDateSystem.onTimeSkipped(function (minutes) {
+            if (!$gameSystem || !$gameSystem.skipTravelTimer) return;
+            $gameSystem.skipTravelTimer(minutes);
+        });
+    }
 
     // Utility functions now use $gameSystem
     function getFastTravelData() {
@@ -858,6 +900,58 @@
     }
 
 
+    // The vault's own platform: Floor -9 of the patron vault, tile 10,33.
+    // Reached by train and free, and put together here rather than in
+    // Destinations.json because that file is also the hometown index and the
+    // work-system gazetteer, and the vault is neither of those.
+    const PATREON_STATION = 'Patreon Station';        // i18n-ignore  destination id
+    const PATREON_STATION_ARRIVAL = { mapId: 1135, x: 27, y: 29, direction: 2 };
+    // The middle of the 1232x1039 page, and the world square that draws there.
+    const PATREON_STATION_PIN = { x: '616', y: '520' };
+    const PATREON_STATION_BASE = { x: 128, y: 133 };
+
+    function patreonStationDest() {
+        const overrides = {
+            base: PATREON_STATION_BASE,
+            image: { x: PATREON_STATION_PIN.x, y: PATREON_STATION_PIN.y },
+            train: Object.assign({}, PATREON_STATION_ARRIVAL),
+        };
+        return {
+            name: PATREON_STATION,
+            fullName: 'Teleport - ' + PATREON_STATION,  // i18n-ignore  event name prefix
+            customName: T('FastTravel.patreonStation'),
+            type: 'village',   // i18n-ignore  Destinations.json id
+            mapId: PATREON_STATION_ARRIVAL.mapId,
+            x: PATREON_STATION_ARRIVAL.x,
+            y: PATREON_STATION_ARRIVAL.y,
+            eventId: 0,
+            patreonStation: true,
+            freeFare: true,
+            image: { x: PATREON_STATION_PIN.x, y: PATREON_STATION_PIN.y },
+            transportOverrides: overrides,
+        };
+    }
+
+    // Whether the stop is on the board at all. The vault is open once its
+    // coordinates have been proved - typed at creation, or walked onto as a
+    // hatch - and PatreonRewards owns that answer; the book never decides it
+    // for itself.
+    function patreonVaultOpen() {
+        const PR = window.PatreonRewards;
+        if (!PR) return false;
+        try {
+            // Standing in the vault already: the stop is off the board.
+            if (typeof $gameMap !== 'undefined' && $gameMap &&
+                $gameMap.mapId() === PATREON_STATION_ARRIVAL.mapId) return false;
+            if (PR.claimedSquare && PR.claimedSquare()) return true;
+        } catch (e) { /* no world loaded */ }
+        return false;
+    }
+
+    function isPatreonStation(dest) {
+        return !!(dest && dest.patreonStation);
+    }
+
     function initializeDestinationCache() {
         if (cacheInitialized && destinationCache !== null) {
             return destinationCache;
@@ -890,6 +984,16 @@
                 transportOverrides: transportData
             });
         }
+
+        // ── The patron station ──────────────────────────────────────────
+        // One stop that is not on the ordinary network at all: the platform at
+        // the bottom of a patron's vault, nine cellars down. It is listed only
+        // for a party whose vault is open (PatreonRewards), it is served by the
+        // train and by nothing else, and the fare is nothing - the line is the
+        // patron's own. Its pin sits at the middle of the page because a vault
+        // stands under whichever square its hatch was found on, and that square
+        // is not a thing the book may print.
+        destinations.push(patreonStationDest());
 
         // Towns the party founded themselves (Crafting/FurnitureSystem.js).
         // They belong to the world folder rather than to Destinations.json, so
@@ -1243,6 +1347,8 @@
     }
 
     function calculateTravelCost(destination, transportType) {
+        // A line somebody else pays for: the patron's own train asks nothing.
+        if (destination && destination.freeFare) return 0;
         if (transportType === 'carsharing' || transportType === 'camper') {
             return calculateFuelCost(destination, transportType);
         }
@@ -1347,6 +1453,15 @@
         // not: the train's restricted list, a plugin command naming a stop
         // outright, a journey saved before the place was sealed. Nothing that
         // reaches here departs for a sealed stop.
+        // Nothing departs for the vault that did not board the patron's own
+        // train, and nothing at all while the vault is shut: a plugin command
+        // or a journey saved before the coordinates were given back would
+        // otherwise put the party nine cellars under somebody else's ground.
+        if (isPatreonStation(destination) &&
+            (data.selectedTransport !== 'train' || !patreonVaultOpen())) {
+            return;
+        }
+
         if (isDestOffline(destination)) {
             const WMR = window.WorldMapReturn;
             if (WMR && WMR.showLockedNotice) {
@@ -2268,6 +2383,11 @@
             }
         }
 
+        // The patron platform is a train stop and nothing else, and it is on
+        // the board only while this party's vault is open.
+        filtered = filtered.filter(dest => !isPatreonStation(dest) ||
+            (transportType === 'train' && patreonVaultOpen()));
+
         // The party's own squares ride along with the network's stops, but only
         // for a vehicle: nothing else can be told to stop in open country. They
         // are rebuilt from the store on every open, so a renamed point reads as
@@ -2369,7 +2489,7 @@
             // one thing about a stop the calendar will never change.
             const levelInfo = destLevelInfo(dest);
             const levelHTML = levelInfo
-                ? `<span class="travel-dest-level${levelInfo.frozen ? ' is-frozen' : ''}" title="${attr(destLevelTitle(dest))}">${destLevelText(dest)}</span>`
+                ? `<span class="travel-dest-level${levelInfo.frozen ? ' is-frozen' : ''}">${destLevelText(dest)}</span>`
                 : "";
 
             return `
@@ -3101,9 +3221,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
             const levelInfo = destLevelInfo(dest);
             levelRow.style.display = levelInfo ? '' : 'none';
             if (levelInfo) {
-                levelVal.innerText = T('FastTravel.destLevelDetail',
-                    { level: levelInfo.median, min: levelInfo.min, max: levelInfo.max });
-                levelVal.title = destLevelTitle(dest);
+                levelVal.innerText = T('FastTravel.destLevel', { level: levelInfo.median });
                 levelVal.classList.toggle('is-frozen', !!levelInfo.frozen);
             }
         }
@@ -3952,8 +4070,313 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         'closeTravelUIOverlay'
     ];
 
+    //=========================================================================
+    // Wayfare: the fare book, as a HypernetOS program
+    //=========================================================================
+    // What every way of getting anywhere would cost, quoted from where the
+    // party is standing. It sells nothing and books nothing: a seat is still
+    // taken at the stop, from the event that runs the line. That is why the
+    // exotic half of the table is here at all - nobody operates a carpet out of
+    // Bologna, but the tariff for one is a matter of public record, and a book
+    // of fares that only listed the coach would be a worse book. Sealed towns
+    // keep their page too, with "Offline" where the fare used to be.
+    const WAY_APP_ID = 'app-wayfare';
+    const WAY_ICON = 193; // Scroll, per js/db/Sprites/Icons.json
+
+    // How a mode is come by, which is the one thing a fare does not say.
+    // i18n-ignore-start  transport ids
+    const WAY_ARRANGEMENT = {
+        walking: 'own', bicycle: 'own', horse: 'own', carsharing: 'own', camper: 'own',
+        bus: 'scheduled', train: 'scheduled', ferry: 'scheduled', cruise: 'scheduled',
+        zeppelin: 'scheduled', airplane_economy: 'scheduled', airplane_business: 'scheduled',
+        hypermetro: 'scheduled', maglev: 'scheduled', hyperloop: 'scheduled',
+        taxi: 'hired', limousine: 'hired', helicopter: 'hired', private_jet: 'hired',
+        boat: 'hired', balloon: 'hired', submarine: 'hired',
+        magic_carpet: 'quoted', dragon: 'quoted', teleport_circle: 'quoted',
+        starship: 'quoted', wormhole: 'quoted', quantum: 'quoted',
+        time_machine: 'quoted', dimensional: 'quoted',
+    };
+    // i18n-ignore-end
+
+    const WF = {
+        app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+        header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+                "background:linear-gradient(to bottom,#2f6b62,#20504a); color:var(--xp-white); border-bottom:2px solid #123430;",
+        nav: "width:196px; flex-shrink:0; overflow-y:auto; background:var(--xp-face-6); " +
+             "border-right:1px solid var(--xp-face-shade); padding:6px 0;",
+        navItem: "padding:7px 10px; cursor:pointer; border-left:4px solid transparent; user-select:none;",
+        panel: "flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;",
+        status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+                "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+        card: "background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;",
+        h: "margin:0 0 8px; font-size:17px; font-weight:bold; color:#20504a;",
+        note: "color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;",
+        table: "width:100%; border-collapse:collapse; font-size:14px;",
+        th: "text-align:left; padding:4px 6px; border-bottom:1px solid var(--xp-face-shade); color:#20504a; font-weight:bold;",
+        td: "padding:4px 6px; border-bottom:1px solid #e6e3d8;",
+        input: "font-family:'Tahoma',sans-serif; font-size:14px; padding:2px 4px; width:100%; " +
+               "border:1px solid var(--xp-face-4); background:var(--xp-white);",
+    };
+
+    const wfEsc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const wfIcon = (index, size) => (window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : '');
+
+    // Money is printed the way the rest of the machine prints it.
+    function wfMoney(gold) {
+        if (window.MoneyFormatter && window.MoneyFormatter.format) return window.MoneyFormatter.format(gold);
+        return (Math.round(gold) / 100).toFixed(2) + ' EUR';   // i18n-ignore  currency code
+    }
+
+    function wfMinutes(mins) {
+        const m = Math.max(0, Math.round(mins));
+        const h = Math.floor(m / 60);
+        return h > 0 ? T('FastTravel.book.hoursMinutes', { h: h, m: m % 60 }) : T('FastTravel.book.minutes', { m: m });
+    }
+
+    window.Wayfare = {
+        win: null,
+        destName: null,
+        query: '',
+
+        launch() {
+            if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+            const win = window.HypernetOS.WindowManager.createWindow({
+                id: WAY_APP_ID,
+                title: T('FastTravel.book.appName'),
+                icon: WAY_ICON,
+                width: 880,
+                height: 570,
+                contentHTML: `
+                    <div style="${WF.app}">
+                        <div style="${WF.header}">
+                            <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${wfIcon(WAY_ICON, 34)}</div>
+                            <div style="flex:1; min-width:0">
+                                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('FastTravel.book.appName')}</div>
+                                <div style="font-size:13px; opacity:0.82">${T('FastTravel.book.subtitle')}</div>
+                            </div>
+                            <div id="wf-from" style="font-size:14px; opacity:0.9"></div>
+                        </div>
+                        <div style="display:flex; flex:1; min-height:0">
+                            <div style="display:flex; flex-direction:column; width:196px; flex-shrink:0">
+                                <div style="padding:6px 8px; background:var(--xp-face-6); border-right:1px solid var(--xp-face-shade)">
+                                    <input id="wf-search" class="focusable" tabindex="0" style="${WF.input}"
+                                           placeholder="${T('FastTravel.book.search')}">
+                                </div>
+                                <div id="wf-nav" style="${WF.nav} flex:1"></div>
+                            </div>
+                            <div id="wf-panel" style="${WF.panel}"></div>
+                        </div>
+                        <div style="${WF.status}">
+                            <span>${T('FastTravel.book.quotesOnly')}</span>
+                        </div>
+                    </div>`
+            });
+            this.win = win;
+            this.bind();
+            this.render();
+        },
+
+        bind() {
+            if (!this.win || this.win.dataset.wfBound) return;
+            this.win.dataset.wfBound = '1';
+            this.win.addEventListener('click', ev => {
+                const hit = ev.target.closest('[data-wf-dest]');
+                if (!hit) return;
+                ev.stopPropagation();
+                this.destName = hit.dataset.wfDest;
+                if (window.SoundManager) SoundManager.playCursor();
+                this.render();
+            });
+            this.win.addEventListener('input', ev => {
+                const box = ev.target.closest('#wf-search');
+                if (!box) return;
+                this.query = box.value;
+                this.renderNav();
+            });
+        },
+
+        destinations() {
+            try {
+                const list = initializeDestinationCache() || [];
+                return list.slice().sort((a, b) => String(a.name).localeCompare(String(b.name)));
+            } catch (e) {
+                console.warn('[Wayfare]', e);
+                return [];
+            }
+        },
+
+        current() {
+            const all = this.destinations();
+            return all.find(d => d.name === this.destName) || all[0] || null;
+        },
+
+        render() {
+            if (!this.win || !this.win.isConnected) return;
+            this.renderNav();
+            this.renderPanel();
+            const from = this.win.querySelector('#wf-from');
+            if (from) {
+                const x = $gameVariables ? $gameVariables.value(playerXVar) : 0;
+                const y = $gameVariables ? $gameVariables.value(playerYVar) : 0;
+                from.textContent = T('FastTravel.book.departingFrom', { x: x, y: y });
+            }
+        },
+
+        renderNav() {
+            const nav = this.win && this.win.querySelector('#wf-nav');
+            if (!nav) return;
+            const q = String(this.query || '').trim().toLowerCase();
+            const rows = this.destinations().filter(d => !q || String(d.name).toLowerCase().includes(q));
+            const chosen = this.current();
+            if (!rows.length) {
+                nav.innerHTML = `<div style="padding:10px; ${WF.note}">${T('FastTravel.book.noMatch')}</div>`;
+                return;
+            }
+            nav.innerHTML = rows.map(dest => {
+                const on = chosen && dest.name === chosen.name;
+                const offline = isDestOffline(dest);
+                return `<div class="focusable" tabindex="0" id="wf-dest-${wfEsc(dest.name)}" data-wf-dest="${wfEsc(dest.name)}"
+                    style="${WF.navItem}${on ? 'background:var(--xp-face-2); border-left-color:#2f6b62; font-weight:bold;' : ''}">
+                    ${wfEsc(dest.name)}
+                    ${offline ? `<div style="${WF.note} color:#c0392b">${T('FastTravel.offline')}</div>` : ''}</div>`;
+            }).join('');
+        },
+
+        renderPanel() {
+            const panel = this.win && this.win.querySelector('#wf-panel');
+            if (!panel) return;
+            const dest = this.current();
+            if (!dest) {
+                panel.innerHTML = `<div style="${WF.card} ${WF.note}">${T('FastTravel.book.noDestinations')}</div>`;
+                return;
+            }
+            const offline = isDestOffline(dest);
+            const refusedTicket = typeof boardingRefusal === 'function' && !!boardingRefusal('bus');
+            const level = (typeof destLevelText === 'function') ? destLevelText(dest) : '';
+
+            const rows = TRANSPORT_KEYS.map(key => {
+                const arrangement = WAY_ARRANGEMENT[key] || 'hired';
+                let fare = null, time = null;
+                if (!offline) {
+                    try {
+                        fare = calculateTravelCost(dest, key);
+                        time = calculateTravelTime(dest, key);
+                    } catch (e) { fare = null; time = null; }
+                }
+                return { key, arrangement, fare, time, label: transportLabel(key) };
+            }).sort((a, b) => (a.fare == null ? Infinity : a.fare) - (b.fare == null ? Infinity : b.fare));
+
+            const noteFor = (row) => {
+                if (offline) return T('FastTravel.book.noteOffline');
+                if (row.arrangement === 'quoted') return T('FastTravel.book.noteQuoted');
+                if (row.arrangement === 'own') return T('FastTravel.book.noteOwn');
+                if (row.arrangement === 'scheduled') {
+                    return refusedTicket ? T('FastTravel.book.noteRefused') : T('FastTravel.book.noteScheduled');
+                }
+                return T('FastTravel.book.noteHired');
+            };
+
+            const body = rows.map(row => `<tr>
+                <td style="${WF.td}">${wfEsc(row.label)}</td>
+                <td style="${WF.td}">${wfEsc(T('FastTravel.book.arrangement.' + row.arrangement))}</td>
+                <td style="${WF.td} text-align:right">${offline || row.fare == null
+                    ? `<span style="color:#c0392b">${T('FastTravel.offline')}</span>`
+                    : (row.fare > 0 ? wfEsc(wfMoney(row.fare)) : T('FastTravel.book.free'))}</td>
+                <td style="${WF.td} text-align:right">${offline || row.time == null ? '&mdash;' : wfEsc(wfMinutes(row.time))}</td>
+                <td style="${WF.td} ${WF.note}">${wfEsc(noteFor(row))}</td>
+            </tr>`).join('');
+
+            panel.innerHTML = `
+                <h2 style="${WF.h}">${wfEsc(dest.name)}</h2>
+                <div style="${WF.note} margin-bottom:8px">
+                    ${wfEsc(T('FastTravel.book.headline', { type: dest.type || '', level: level || T('FastTravel.book.levelUnknown') }))}
+                </div>
+                ${offline ? `<div style="${WF.card}" ><b style="color:#c0392b">${T('FastTravel.offline')}</b>
+                    <div style="${WF.note}">${T('FastTravel.book.offlineBlurb')}</div></div>` : ''}
+                ${refusedTicket && !offline ? `<div style="${WF.card} ${WF.note}">${T('FastTravel.book.wantedBlurb')}</div>` : ''}
+                <div style="${WF.card} padding:6px 8px"><table style="${WF.table}">
+                    <thead><tr>
+                        <th style="${WF.th}">${T('FastTravel.book.colMode')}</th>
+                        <th style="${WF.th}">${T('FastTravel.book.colArranged')}</th>
+                        <th style="${WF.th} text-align:right">${T('FastTravel.book.colFare')}</th>
+                        <th style="${WF.th} text-align:right">${T('FastTravel.book.colTime')}</th>
+                        <th style="${WF.th}">${T('FastTravel.book.colNote')}</th>
+                    </tr></thead><tbody>${body}</tbody></table></div>
+                <div style="${WF.note}">${T('FastTravel.book.footer')}</div>`;
+        },
+    };
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: WAY_APP_ID,
+            name: T('FastTravel.book.appName'),
+            icon: WAY_ICON,
+            category: 'reference',
+            launchFn: function () { window.Wayfare.launch(); },
+            desktopShortcut: true,
+        });
+    }
+
     // A town founded mid-session is a new pin: the cache built before it was
     // signed for has to be dropped (Crafting/FurnitureSystem.js calls this).
+    //=========================================================================
+    // Booking a seat from somewhere that is not the travel overlay
+    //=========================================================================
+    // The world sheet (Map/WorldMap.js) draws every catalogued place as a pin,
+    // and a pin the party can reach is a place they can set off for. Rather
+    // than quoting fares and burning fuel a second time out there, the pin
+    // simply opens THIS overlay with that place already picked: the confirm
+    // panel that comes up is the one the travel menu would have shown, with the
+    // same fare, the same tank and the same refusals.
+
+    // Which of the party's own networks is available from where they stand:
+    // the vehicle they are sitting inside, or null on foot. The world sheet
+    // asks this to know whether a pin is a journey or only a name.
+    function transportHere() {
+        const MVS = window.MergedVehicleSystem;
+        if (!MVS || typeof MVS.travelTransportHere !== 'function') return null;
+        try { return MVS.travelTransportHere(); } catch (e) { return null; }
+    }
+    window.FastTravelSystem = window.FastTravelSystem || {};
+    window.FastTravelSystem.transportHere = transportHere;
+
+    /**
+     * Open the travel overlay already standing on one place.
+     *
+     *   destName       the Destinations.json name, exactly as a pin carries it
+     *   transportType  the network to quote, or omitted for whatever the party
+     *                  is sitting in
+     *
+     * Answers false when there is no such place, when the scene cannot show the
+     * overlay, or when the party is on foot and no network was named.
+     */
+    window.FastTravelSystem.openTo = function (destName, transportType) {
+        const scene = SceneManager._scene;
+        if (!scene || typeof scene.startFastTravel !== 'function') return false;
+        const transport = transportType || transportHere();
+        if (!transport) return false;
+        // A square the party wrote down is not in the network's own list: it is
+        // built onto it when the overlay opens (customDestinations), so it is
+        // checked against the store it comes from instead.
+        const known = destName.startsWith(CUSTOM_KEY_PREFIX)
+            ? customDestinations().some(d => d.name === destName)
+            : getTeleportDestinations().some(d => d && d.name === destName);
+        if (!known) return false;
+        scene.startFastTravel(transport);
+        // The overlay builds its list and its pins from the DOM up; selecting a
+        // row before it exists highlights nothing, so the pick rides the frame
+        // after the markup has been written.
+        setTimeout(() => {
+            if (SceneManager._scene === scene && scene.selectTravelDestination) {
+                scene.selectTravelDestination(destName);
+            }
+        }, 50);
+        return true;
+    };
+
     window.FastTravelSystem = window.FastTravelSystem || {};
     window.FastTravelSystem.refreshDestinations = refreshDestinationCache;
 

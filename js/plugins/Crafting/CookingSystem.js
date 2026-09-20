@@ -1092,14 +1092,19 @@
 
         this.clampCookingCursors();
 
+        // While the culinary d20 is in the air the kitchen is drawn but deaf:
+        // a cancel under the die would otherwise pop the scene out from under
+        // the dish that is still cooking.
+        const busy = !!this._cooking;
+
         if (wantAscii) {
-            this.updateAsciiCookingInput();
+            if (!busy) this.updateAsciiCookingInput();
             this.renderAsciiCooking();
             Scene_Base.prototype.update.call(this);
             return;
         }
 
-        this.updateUICookingInput();
+        if (!busy) this.updateUICookingInput();
         Scene_MenuBase.prototype.update.call(this);
     };
 
@@ -1179,15 +1184,6 @@
                     this._selectedConfirmIndex = 0;
                     SoundManager.playOk();
                 }
-            }
-            if (Input.isTriggered('shift')) {
-                // Eat the focused ingredient raw, splitting effects across the party
-                const eatItem = list[this._selectedIndex];
-                if (CookingSystem.eatSingleItem(eatItem)) {
-                    CookingSystem.clearSelectedItems();
-                    this.popScene();
-                }
-                return;
             }
             if (Input.isTriggered('cancel')) {
                 if (CookingSystem.getFirstItem()) {
@@ -1269,11 +1265,6 @@
         }
         ctx.fillText(helpText, canvas.width / 2, 70);
 
-        // Shift-to-eat hint
-        if (this._activeWindow === 'list') {
-            ctx.fillStyle = '#9ACD32';
-            ctx.fillText(`[Shift / X] ${_ci18n('ui.eatButton')}`, canvas.width / 2, 95);
-        }
 
         // List
         const list = this.getCachedFoodList();
@@ -1841,13 +1832,6 @@
                 this._confirmIndex = 0;
                 SoundManager.playCursor();
                 this.refreshUICooking();
-            } else if (Input.isTriggered('shift')) {
-                // Eat the focused ingredient raw, splitting effects across the party
-                const eatItem = itemsList[this._pantryIndex];
-                if (CookingSystem.eatSingleItem(eatItem)) {
-                    CookingSystem.clearSelectedItems();
-                    this.popScene();
-                }
             } else if (Input.isTriggered('ok')) {
                 const selectedItem = itemsList[this._pantryIndex];
                 const isEnabled = selectedItem &&
@@ -1901,8 +1885,15 @@
     };
 
     // The only way the kitchen cooks, whichever front end asked (parchment,
-    // ASCII, mouse). It pops the scene exactly once.
+    // ASCII, mouse). The kitchen stays open across the culinary d20 and the
+    // dish itself: the die is a DOM overlay drawn over this scene, so the
+    // player goes on cooking from the same pantry instead of being dropped
+    // back on the map after every meal.
     Scene_Cooking.prototype.onCookOk = function () {
+        // cookItems is a promise (it waits on the culinary d20). The flag keeps
+        // a second OK, from pad or mouse, from spending another pair of
+        // ingredients while the die is still in the air.
+        if (this._cooking) return;
         const item1 = CookingSystem.getFirstItem();
         const item2 = CookingSystem.getSecondItem();
         if (!CookingSystem.canCook(item1, item2)) {
@@ -1910,14 +1901,19 @@
             return;
         }
         SoundManager.playOk();
-        // cookItems is a promise (it waits on the culinary d20), so the scene is
-        // taken down first and the dish finishes over the map. A throw inside it
-        // must not leave the player standing in a kitchen that has already spent
-        // the ingredients.
-        Promise.resolve(CookingSystem.cookItems(item1, item2))
-            .catch(e => console.error('CookingSystem: cooking failed', e));
+        this._cooking = true;
         CookingSystem.clearSelectedItems();
-        this.popScene();
+        Promise.resolve(CookingSystem.cookItems(item1, item2))
+            .catch(e => console.error('CookingSystem: cooking failed', e))
+            .then(() => {
+                this._cooking = false;
+                // The kitchen may have been left while the dish finished.
+                if (SceneManager._scene !== this) return;
+                this.invalidateFoodList();
+                this._activeArea = "pantry";
+                this._confirmIndex = 0;
+                this.refreshUICooking();
+            });
     };
 
     //=============================================================================

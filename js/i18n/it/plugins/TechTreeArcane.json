@@ -1,6 +1,6 @@
 {
   "name": "Arcano",
-  "blurb": "Una disciplina perduta nel Collasso e ricostruita per rilevamento e misura: intensità di campo, tolleranze, varianza in funzione della distanza da una linea. Le piste false restano agli atti perché anch'esse sono state misurate.",
+  "blurb": "La magia misurata come campo: intensita, tolleranze e varianza con la distanza. Le linee di ricerca fallite restano registrate.",
   "nodes": {
     "arc_leyline": {
       "name": "Cartografia delle Leyline",

@@ -767,9 +767,12 @@
       deliverFarmProduce(item, qty);
       trainFarming(2);
       SoundManager.playShop();
-      window.skipLocalization = true;
-      $gameMessage.add(T('PlantGrowth.harvested', { icon: item.iconIndex, item: item.name, qty: qty }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('PlantGrowth.harvested', { item: item.name, qty: qty }), {
+          severity: 'good',
+          icon: item.iconIndex
+        });
+      }
       // The party's own record of what it did (Diary.js).
       if (window.Diary) window.Diary.onHarvested(item.name);
     }
@@ -990,9 +993,12 @@
       const qty = calcYield(def, rec.effectiveGrowthMinutes);
       deliverFarmProduce(item, qty);
       trainFarming(2);
-      window.skipLocalization = true;
-      $gameMessage.add(T('PlantGrowth.harvested', { icon: item.iconIndex, item: item.name, qty: qty }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('PlantGrowth.harvested', { item: item.name, qty: qty }), {
+          severity: 'good',
+          icon: item.iconIndex
+        });
+      }
       // The party's own record of what it did (Diary.js).
       if (window.Diary) window.Diary.onHarvested(item.name);
     }
@@ -1219,9 +1225,12 @@
         deliverFarmProduce(item, qty);
         trainFarming(2);
         SoundManager.playShop();
-        window.skipLocalization = true;
-        $gameMessage.add(T('PlantGrowth.harvested', { icon: item.iconIndex, item: item.name, qty: qty }));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('PlantGrowth.harvested', { item: item.name, qty: qty }), {
+            severity: 'good',
+            icon: item.iconIndex
+          });
+        }
         // The party's own record of what it did (Diary.js).
         if (window.Diary) window.Diary.onHarvested(item.name);
       }
@@ -1595,9 +1604,15 @@
       trainFarming(1);
       if (ev) applySprite(ev, newRec);
       SoundManager.playShop();
-      window.skipLocalization = true;
-      $gameMessage.add(T('PlantGrowth.planted', { plant: plantId }));
-      window.skipLocalization = false;
+      // Sowing already confirms itself on the tile, so it is told as a toast
+      // rather than stopping the player in a message box on the way out.
+      if (window.ParchmentToast) {
+        const seedItem = $dataItems[def.itemId];
+        window.ParchmentToast.show(
+          T('PlantGrowth.planted', { plant: def.name || plantId }),
+          { severity: "good", icon: seedItem ? seedItem.iconIndex : undefined }
+        );
+      }
       if (window.Diary) window.Diary.onSown((PLANT_DB[plantId] || {}).name || plantId);
       this.popScene();
     }
@@ -1726,6 +1741,83 @@
   }
 
   // Public API for NPCSimulationCore and other plugins
+  // ============================================================
+  //  THE WHOLE CROP, READ FROM AWAY
+  // ============================================================
+  // A plot only grows while somebody is standing near it: updateGrowth runs off
+  // the event. A console read from the other side of the continent therefore
+  // projects instead - it takes the record as it was last written and adds the
+  // time since, at the season's rate - and writes nothing back. The plot itself
+  // catches up the moment the party walks in on it.
+  function projectPlot(rec) {
+    const def = PLANT_DB[rec.plantId];
+    if (!def) return null;
+    const inSeason = def.seasons.includes(currentSeason());
+    const elapsed = Math.max(0, gameMinutes() - (rec.lastUpdateMinutes || 0));
+    // The projection cannot know which map the plot is on, so it assumes open
+    // ground and fair weather: a greenhouse crop comes in sooner than this says.
+    const mins = (rec.effectiveGrowthMinutes || 0) + (inSeason ? elapsed : 0);
+    const progress = calcProgress(mins, def.growthDays);
+    const left = Math.max(0, def.growthDays * MINUTES_PER_DAY - mins);
+    const item = $dataItems ? $dataItems[def.itemId] : null;
+    return {
+      plantId: rec.plantId,
+      itemId: def.itemId,
+      itemName: item ? item.name : rec.plantId,
+      iconIndex: item ? item.iconIndex : 0,
+      stage: calcStage(mins, def.growthDays),
+      progress,
+      pct: Math.floor(progress * 100),
+      ripe: progress >= 1,
+      inSeason,
+      seasons: def.seasons.slice(),
+      daysLeft: inSeason ? Math.ceil(left / MINUTES_PER_DAY) : null,
+      yieldMin: def.yieldMin, yieldMax: def.yieldMax,
+    };
+  }
+
+  // Every plot this world knows about: the ones planted on hand-made maps
+  // ($gameSystem) and the ones tilled out on the procedural map, which belong
+  // to the world folder and so are shared with every other savegame of it.
+  function listPlots() {
+    const out = [];
+    const data = ($gameSystem && $gameSystem._plantData) || {};
+    for (const key of Object.keys(data)) {
+      const rec = data[key];
+      if (!rec || rec.removed || !rec.plantId) continue;
+      const projected = projectPlot(rec);
+      if (!projected) continue;
+      const mapId = Number(String(key).split("_")[0]) || 0;
+      out.push(Object.assign({
+        key,
+        mapId,
+        where: (window.WorkSystem && window.WorkSystem.locationLabel)
+          ? window.WorkSystem.locationLabel(mapId) : String(mapId),
+        procedural: false,
+      }, projected));
+    }
+    const store = procStore();
+    if (store) {
+      for (const mapKey of Object.keys(store.plots || {})) {
+        const plots = store.plots[mapKey] || {};
+        for (const tile of Object.keys(plots)) {
+          const rec = plots[tile];
+          if (!rec || rec.removed || !rec.plantId) continue;
+          const projected = projectPlot(rec);
+          if (!projected) continue;
+          out.push(Object.assign({
+            key: mapKey + ":" + tile,
+            mapId: PROC_MAP_ID,
+            where: T('PlantGrowth.plotAt', { tile: tile }),
+            procedural: true,
+          }, projected));
+        }
+      }
+    }
+    out.sort((a, b) => (b.progress - a.progress) || String(a.itemName).localeCompare(String(b.itemName)));
+    return out;
+  }
+
   window.PlantGrowthSystem = {
     getRecord: (mapId, eventId) => getRecord(mapId, eventId),
     updateGrowth: (mapId, eventId) => updateGrowth(mapId, eventId),
@@ -1734,6 +1826,8 @@
     openProceduralPlot: (x, y) => openProceduralPlot(x, y),
     getProceduralPlot: (x, y) => procGetTile(`${x},${y}`),
     PLANT_DB,
+    // The whole crop as a console sees it, projected and read-only.
+    listPlots: () => listPlots(),
   };
 
 })();

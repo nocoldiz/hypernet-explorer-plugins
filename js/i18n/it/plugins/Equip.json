@@ -33,6 +33,9 @@
   "damageType": "Tipo di Danno",
   "weaponType": "Tipo di Arma",
   "slotMouth": "Bocca",
+  "slotTwoHandedHeld": "Impugnata a due mani",
+  "dualPenaltyWarning": "Senza addestramento a due armi: ogni arma impugnata colpisce il {n}% in meno.",
+  "dualPenaltyHint": "La tua classe non combatte con due armi, quindi entrambe sono indebolite.",
   "short": {
     "hp": "PV",
     "mp": "PM",

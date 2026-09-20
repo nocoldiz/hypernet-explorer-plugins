@@ -9,7 +9,7 @@
   "ui": {
     "beyondStat": "✧ Richiede {stat} {points}, ne ha {value}",
     "requires": "Richiede {stat} {points}",
-    "blurb": "Le pagine rivelano a tutti gli stessi cinque incantesimi. Scegli un lettore che possa reggerne uno, poi reclamalo.",
+    "blurb": "Le stesse cinque magie sono offerte a tutti. Scegli un lettore che possa impararne una, poi reclamala.",
     "alreadyKnown": "✧ Già conosciuto",
     "beyondReach": "✧ Oltre i PM di questo lettore",
     "partyReader": "Lettore del gruppo",
@@ -25,5 +25,10 @@
   "toast": {
     "title": "Incantesimo appreso",
     "learned": "{actor} ha ricopiato {skill} dal {book}."
+  },
+  "custom": {
+    "title": "Un Volume Scritto a Mano",
+    "blurb": "Ogni pagina di questo volume va letta prima che si chiuda. Ne restano {left} su {total}. Se esci adesso il volume torna intero nello zaino.",
+    "takenBy": "Letto a {actor}"
   }
 }

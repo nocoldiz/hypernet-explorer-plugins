@@ -112,10 +112,18 @@
         "Ne avevo bisogno più di quanto credessi.",
         "Non dite al gruppo quanto ho perso.",
         "Per un momento mi sono scordato la strada."
+      ],
+      "fish": [
+        "È stata l'acqua a parlare, più che altro.",
+        "Un'ora in riva si lascia una strada alle spalle.",
+        "Non ho pensato a niente per un'ora. Meraviglioso.",
+        "Dite quel che volete del tempo, ma i pesci abboccavano."
       ]
     },
     "toastRent": "{name} ha affittato una stanza per {price}",
     "toastEat": "{name} ha mangiato: {item}",
+    "toastFish": "{name} ha pescato: {item}",
+    "toastFishNothing": "{name} non ha preso nulla, e non se ne è dispiaciuto",
     "toastOpinion": "{npc} pensa di {name}: {delta}",
     "toastPartyTalk": "{name} e {other} hanno parlato ({other}: {delta}, {name}: {back})"
   },

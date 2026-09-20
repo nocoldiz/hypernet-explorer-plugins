@@ -1,0 +1,46 @@
+{
+  "pin": {
+    "vaultUnnamed": "an unnamed patron",
+    "vaultKnown": "{patron}'s vault (sealed)",
+    "vaultOpen": "{patron}'s vault (open)"
+  },
+  "read": {
+    "square": "Square {x}, {y}",
+    "place": "Here",
+    "nation": "Claimed by",
+    "unclaimed": "No nation",
+    "ground": "Ground",
+    "unsurveyed": "Unsurveyed",
+    "crossed": "Crossed by",
+    "river": "a river",
+    "road": "a road",
+    "note": "Your note",
+    "built": "Built on",
+    "builtWhat": "{count}: {what}",
+    "builtCount": "{count} pieces"
+  },
+  "country": {
+    "title": "Highlight a country",
+    "none": "No country"
+  },
+  "hint": {
+    "sheet": "Click a place to set off for it. Right-click a square to mark it.",
+    "travel": "Click to set off for {place}.",
+    "needVehicle": "You need to be aboard a vehicle to set off from the chart."
+  },
+  "note": {
+    "title": "Square {x}, {y}",
+    "placeholder": "Write something about this square",
+    "save": "Keep",
+    "delete": "Rub out",
+    "cancel": "Back"
+  },
+  "preview": {
+    "showMap": "Show map",
+    "title": "Square {x}, {y}",
+    "building": "Laying the ground out...",
+    "notKept": "Drawn for this look only, and kept nowhere.",
+    "close": "Close",
+    "unbuildable": "There is no ground to lay out on that square."
+  }
+}

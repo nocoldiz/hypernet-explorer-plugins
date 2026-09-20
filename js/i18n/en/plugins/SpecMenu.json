@@ -16,7 +16,10 @@
     "statLabel": "Governing stat",
     "category": "Category",
     "tier": "Tier {n}",
-    "notImplemented": "Not implemented"
+    "notImplemented": "Not implemented",
+    "purse": "Unspent points",
+    "spendPoint": "Spend a point: {level}",
+    "spendBlocked": "Nothing left to buy here"
   },
   "rankNames": [
     "Untrained",

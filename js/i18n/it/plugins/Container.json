@@ -50,5 +50,27 @@
     "examineTitle": "Esamina: {name}",
     "bury": "Seppellisci",
     "buried": "Seppellisci ciò che resta del {name}."
+  },
+  "holdall": {
+    "appName": "Holdall",
+    "subtitle": "Zaino, contenitore extradimensionale e stive del veicolo, affiancati.",
+    "hint": "Scegli un oggetto, poi spostalo. I forzieri nel mondo vanno aperti di persona.",
+    "pack": "Lo zaino che porti",
+    "extradimensional": "Contenitore extradimensionale",
+    "camper": "Vano del camper",
+    "car": "Bagagliaio dell'auto",
+    "empty": "Qui dentro non c'è niente.",
+    "noLimit": "Senza fondo.",
+    "onYou": "Addosso a te.",
+    "payload": "{used} di {max} kg",
+    "moveRightOne": "Sposta uno >",
+    "moveRightAll": "Sposta tutto >",
+    "moveLeftOne": "< Sposta uno",
+    "moveLeftAll": "< Sposta tutto",
+    "pickSomething": "Scegli prima qualcosa da quel lato.",
+    "gone": "Non ne è rimasto.",
+    "packFull": "Lo zaino non ne prende altri.",
+    "overloaded": "{hold} è al limite di carico.",
+    "moved": "{n}x {item} spostati in {to}."
   }
 }

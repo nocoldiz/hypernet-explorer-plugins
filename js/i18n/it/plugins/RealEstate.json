@@ -59,31 +59,31 @@
   },
   "company": {
     "lemoncorp": {
-      "description": "Il frizzante conglomerato di tecnologia di consumo dietro metà dei gadget d'Europa. Notoriamente sopravvalutato, notoriamente amato."
+      "description": "Conglomerato di elettronica di consumo. Grande, molto diffuso e sopravvalutato."
     },
     "limecorp": {
-      "description": "L'azienda nata dalla fuga di cervelli dalla LemonCorp, che si è portata via i tecnici migliori. Lancia ogni aggeggio con un anno di anticipo: metà funzionano, tutti vanno esauriti."
+      "description": "Startup di elettronica di consumo fondata da ex ingegneri LemonCorp. In rapida crescita e volatile."
     },
     "petrodyne": {
-      "description": "Petrolio, gas e tutto ciò che brucia. Estrae greggio dalla Petrocave e paga dividendi costanti e fuligginosi."
+      "description": "Produttore di petrolio e gas. Dividendi stabili, prezzo legato al mercato del petrolio."
     },
     "soulforge": {
-      "description": "Raffina e commercia cristalli d'anima. Volatile, eticamente dubbia, straordinariamente redditizia quando il velo è sottile."
+      "description": "Raffina e commercia cristalli d'anima. Molto volatile."
     },
     "hypernetsystems": {
-      "description": "La spina dorsale della Hypernet stessa. Possiede i cavi, le torri e gran parte dei tuoi dati."
+      "description": "Possiede l'infrastruttura della Hypernet: cavi, ripetitori e centri dati."
     },
     "ferrosteelworks": {
-      "description": "Travi, rotaie e lamiere per scafi. Noiosa, pesante e silenziosamente essenziale per chiunque costruisca qualcosa."
+      "description": "Produttore di acciaio. Travi, rotaie e lamiere per scafi. Bassa crescita, bassa volatilita."
     },
     "greenwitchorganics": {
-      "description": "Erbe, tinture e prodotti sospettosamente efficaci coltivati sotto la volta della GreenWitch."
+      "description": "Coltiva e vende erbe, tinture e prodotti agricoli."
     },
     "vaultbankholdings": {
-      "description": "Depositi, prestiti e i caveau che li custodiscono. Se hai un debito, probabilmente ce l'hai qui."
+      "description": "Banca. Depositi, prestiti e custodia in caveau."
     },
     "aetherlogistics": {
-      "description": "Treni, autobus, elicotteri e gli orari che li legano. Sposta persone e merci attraverso la mappa."
+      "description": "Operatore di trasporti. Treni, autobus ed elicotteri per passeggeri e merci."
     }
   },
   "sector": {

@@ -1936,6 +1936,17 @@
     .cgc-decklist {
         max-height: 120px;
     }
+    /* The two page buttons, the pager and the deck chips all lose their
+       generous padding: the handheld spread has no room to spend on chrome. */
+    .cgc-modes .cgc-mode,
+    .cgc-pager .cgc-pagebtn {
+        padding: 3px 8px;
+    }
+
+    .cgc-deckchip {
+        padding: 1px 8px;
+    }
+
 }
 
 
@@ -2480,10 +2491,10 @@
 
     /* The vehicle's portrait, which is decoration next to the readings. */
     .vrep-portrait {
-        width: 132px;
-        height: 132px;
-        max-height: 132px;
-        margin: 12px auto 8px;
+        width: 200px;
+        height: 200px;
+        max-height: 200px;
+        margin: 8px auto;
     }
 }
 

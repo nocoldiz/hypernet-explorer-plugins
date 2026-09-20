@@ -105,7 +105,8 @@
     "face": "LOWER HALF",
     "clear": "CLEAR",
     "chip": "CHIP",
-    "boot": "BOOT"
+    "boot": "BOOT",
+    "open": "OPEN"
   },
   "face": {
     "keyboard": "Keyboard",
@@ -203,7 +204,7 @@
     "bus": "Bus",
     "instr": "Instr",
     "presetHeading": "CANNED SCHEMATICS",
-    "presetHint": "Pick one and it is drawn where you are looking. Everything it puts down is ordinary tiles: pull it about, wire it into something bigger, or etch it as it stands.",
+    "presetHint": "Pick a preset and it is drawn where you are looking, as ordinary tiles. Move it, wire it into something bigger, or etch it as it is.",
     "placing": "{name} in hand. Click to place it, right button or Esc to put it back.",
     "app": {
       "name": "Circuit Board Editor",

@@ -1389,7 +1389,9 @@
     PluginManager.registerCommand(pluginName, "NPCLife", args => {
       const name = String(args.eventName || "").trim();
       if (!name) return;
+      window.skipLocalization = true;
       $gameMessage.add(buildBiography(name));
+      window.skipLocalization = false;
     });
 
     PluginManager.registerCommand(pluginName, "NPCLifeDebug", args => {

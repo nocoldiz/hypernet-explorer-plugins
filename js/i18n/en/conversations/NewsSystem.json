@@ -77,7 +77,15 @@
       "one": "{count} MATCH",
       "other": "{count} MATCHES"
     },
-    "noMatches": "Nothing in the archive answers to \"{query}\"."
+    "noMatches": "Nothing in the archive answers to \"{query}\".",
+    "tabChronicles": "CHRONICLES",
+    "tabHistory": "WORLD HISTORY",
+    "alertsOn": "ALERTS: ON",
+    "alertsOff": "ALERTS: OFF",
+    "alertsHint": "Show breaking news as a popup while you play",
+    "recordInDepth": "RECORD IN-DEPTH",
+    "noHistory": "This world has no written history yet.",
+    "historyFooter": "{count} entries in the world record"
   },
   "specialLocations": [
     "Vatican City",

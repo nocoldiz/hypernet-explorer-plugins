@@ -328,7 +328,7 @@
       name: "Margherita Hack",
       loreKey: "margheritaHack",
       characterType: "humanoid",
-      classId: 53, // Physicist (astrophysicist)
+      classId: 53, // Technomage (astrophysicist)
       sprite: "Skab/!$MargheritaHack",
       spriteIndex: 0,
       mapId: 708,
@@ -2053,6 +2053,26 @@
     return raw.filter(Boolean).slice(0, 2);
   }
 
+  // The sheet a dossier is written from. The creation board keeps what the
+  // player bought in _specTrained, as a card rank (0 = Untrained), and only
+  // commits it to _specLevels (1 to 5, the scale every dossier is written in)
+  // when the party leaves the wizard. Reading _specLevels alone therefore filed
+  // every dossier saved mid-build with an empty sheet, and the character came
+  // back knowing nothing but what their class and traits hand over. Both stores
+  // are read here, the more generous of the two winning.
+  function presetSpecializations(actor) {
+    const byId = {};
+    Object.keys((actor && actor._specLevels) || {}).forEach((id) => {
+      const level = Number(actor._specLevels[id]) || 0;
+      if (level > 1) byId[Number(id)] = level;
+    });
+    Object.keys((actor && actor._specTrained) || {}).forEach((id) => {
+      const level = (Number(actor._specTrained[id]) || 0) + 1;
+      if (level > 1 && level > (byId[Number(id)] || 0)) byId[Number(id)] = level;
+    });
+    return Object.keys(byId).map((id) => ({ id: Number(id), level: Math.min(5, byId[id]) }));
+  }
+
   function buildPlayerPreset(actor) {
     const equips = actor.equips().map((item) =>
       item ? { id: item.id, w: item.etypeId === 1 } : null);
@@ -2062,10 +2082,7 @@
       if (!item) return;
       (item.etypeId === 1 ? weapons : armors).push({ id: item.id, amount: 1 });
     });
-    const specializations = Object.keys(actor._specLevels || {}).map((id) => ({
-      id: Number(id),
-      level: actor._specLevels[id],
-    }));
+    const specializations = presetSpecializations(actor);
     const isCreature = !!(actor._isCreatureActor || isCreatureSlot(actor));
 
     let gender = (actor.gender && typeof actor.gender === "function") ? actor.gender() : 0;
@@ -2096,6 +2113,24 @@
       }
     }
 
+    // The rest of the Bio page, which nothing was writing: a dossier saved
+    // from the board used to come back with its creed, its standing, its blood
+    // and its body settled from its own id instead of from what the player
+    // answered, so those pages had to be filled in again every time.
+    const age = (actor._ccAge != null)
+      ? Number(actor._ccAge)
+      : (($gameSystem._ccBirthAge && memberIdx >= 0) ? Number($gameSystem._ccBirthAge[memberIdx]) : NaN);
+    let birthDate;
+    if (!isNaN(age) && age > 0) {
+      const nowYear = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
+        ? window.TimeDateSystem.getCurrentDateObj().getFullYear() : 2012;
+      birthDate = String(nowYear - age) + "-01-01"; // i18n-ignore: ISO date, read back by _initPresetBio
+    }
+    const CCU = window.CharacterCreationUtils;
+    const reproduction = (memberIdx >= 0 && CCU && CCU.getReproductionType)
+      ? CCU.getReproductionType(memberIdx) : undefined;
+    const hormones = actor.hormoneBalance ? actor.hormoneBalance() : null;
+
     return {
       id: getNextPlayerPresetId(),
       name: actor.name(),
@@ -2121,6 +2156,14 @@
       archetypes: isCreature ? creatureArchetypeKeys(actor) : undefined,
       gender,
       jobId,
+      birthDate,
+      reproduction,
+      hormones: (hormones === null || hormones === undefined) ? undefined : hormones,
+      socialClass: (actor._wealthTier != null) ? Number(actor._wealthTier) : undefined,
+      morality: (actor._morality != null) ? Number(actor._morality) : undefined,
+      ideologyId: actor._ideologyId || undefined,
+      bloodType: actor._ccBloodType || actor._bloodType || undefined,
+      hometown: $gameSystem._ccHometown || undefined,
       sexualOrientation: sexualOrientation || undefined,
       romanticOrientation: romanticOrientation || undefined,
       relStyle: relStyle || undefined,
@@ -2665,9 +2708,11 @@
   function saveCurrentCharacterAsPreset() {
     const actor = $gameParty.leader();
     if (!actor) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('CharPresets.noCharacterToSave'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('CharPresets.noCharacterToSave'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -2742,14 +2787,18 @@
 
     if (existingIndex >= 0) {
       currentPresets[existingIndex] = newPreset;
-      window.skipLocalization = true;
-      $gameMessage.add(T('CharPresets.presetUpdated', { name: newPreset.name }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('CharPresets.presetUpdated', { name: newPreset.name }), {
+          severity: 'good'
+        });
+      }
     } else {
       currentPresets.push(newPreset);
-      window.skipLocalization = true;
-      $gameMessage.add(T('CharPresets.presetSaved', { name: newPreset.name, id: presetId }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('CharPresets.presetSaved', { name: newPreset.name, id: presetId }), {
+          severity: 'good'
+        });
+      }
     }
 
     saveCharacterPresets(currentPresets);
@@ -2767,28 +2816,45 @@
     const position = parseInt(memberPosition) || 2;
     const targetActor = partyMembers[position - 1];
 
-    window.skipLocalization = true;
     if (!targetActor) {
-      $gameMessage.add(T('CharPresets.noMemberAtPosition', { position: position }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('CharPresets.noMemberAtPosition', { position: position }), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
     const result = retirePartyMember(targetActor.actorId());
     if (!result.ok) {
       if (result.reason === "lastMember") {
-        $gameMessage.add(T('CharPresets.partyCannotBeEmpty'));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('CharPresets.partyCannotBeEmpty'), {
+            severity: 'warning'
+          });
+        }
       } else if (result.reason === "isLeader") {
-        $gameMessage.add(T('CharPresets.leaderCannotLeave', { name: targetActor.name() }));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('CharPresets.leaderCannotLeave', { name: targetActor.name() }), {
+            severity: 'warning'
+          });
+        }
       } else {
-        $gameMessage.add(T('CharPresets.cannotLeaveNow', { name: targetActor.name() }));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('CharPresets.cannotLeaveNow', { name: targetActor.name() }), {
+            severity: 'warning'
+          });
+        }
       }
       window.skipLocalization = false;
       return;
     }
 
-    $gameMessage.add(T('CharPresets.memberRetired', { name: targetActor.name() }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('CharPresets.memberRetired', { name: targetActor.name() }), {
+        severity: 'good'
+      });
+    }
   }
 
   //=============================================================================
@@ -2859,10 +2925,7 @@
       (isWeapon ? weapons : armors).push({ id: item.id, amount: 1 });
     });
 
-    const specializations = Object.keys(actor._specLevels || {}).map((id) => ({
-      id: Number(id),
-      level: actor._specLevels[id],
-    }));
+    const specializations = presetSpecializations(actor);
 
     const className = actor.currentClass() ? actor.currentClass().name : "";
     const leaderName = $gameParty.leader() ? $gameParty.leader().name() : "";

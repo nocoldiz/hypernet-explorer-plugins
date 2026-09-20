@@ -3962,9 +3962,11 @@
 
     async run() {
       if (!this._pickDefendant()) {
-        window.skipLocalization = true;
-        $gameMessage.add(T('ErisTrial.line.noNpcsFoundInThe'));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('ErisTrial.line.noNpcsFoundInThe'), {
+            severity: 'warning'
+          });
+        }
         return;
       }
 
@@ -4042,9 +4044,11 @@
   PluginManager.registerCommand(pluginName, "openReverseTrial", (args) => {
     if (!($gameSystem && $gameSystem._isSandboxMode)) {
       const it = ConfigManager.language === "it";
-      window.skipLocalization = true;
-      $gameMessage.add(T('ErisTrial.line.onlyAvailableInSandboxMode'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ErisTrial.line.onlyAvailableInSandboxMode'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 

@@ -5,8 +5,8 @@
     "Growing",
     "Mature"
   ],
-  "harvested": "\\I[{icon}]Harvested \\c[14]{item}\\c[0] ×{qty}!",
-  "planted": "Planted \\c[14]{plant}\\c[0]!",
+  "harvested": "Harvested {item} ×{qty}",
+  "planted": "Planted {plant}",
   "fieldPlot": "Field plot at {x}, {y}",
   "mapPlot": "Map #{map}, Plot #{plot}",
   "itemNumbered": "Item #{id}",
@@ -62,7 +62,7 @@
   "yield": "Yield",
   "seeds": "Seeds",
   "pickSeedHint": "Pick a seed on the right to see its seasons and how long it takes to grow.",
-  "seedBlurb": "Plant seeds in the right season and they will grow. Inside a greenhouse they grow all year, and faster.",
+  "seedBlurb": "Seeds planted in the right season will grow. In a greenhouse they grow all year, and faster.",
   "seasonAbbr": {
     "SPRING": "Spr",
     "SUMMER": "Sum",
@@ -84,5 +84,6 @@
   },
   "toast": {
     "ripe": "{plant} is ripe for picking."
-  }
+  },
+  "plotAt": "Open ground, tile {tile}"
 }

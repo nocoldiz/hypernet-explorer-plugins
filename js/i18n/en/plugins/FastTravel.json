@@ -35,6 +35,7 @@
   "hubTitle": "Served by the transport network",
   "hubBadge": "Hub",
   "hubLabel": "{place}, transport hub",
+  "patreonStation": "Patron Station",
   "fuelRate": "Fuel Rate: {rate} L/tile",
   "rateMultiplier": "Rate Multiplier: {multiplier}x",
   "editing": "Editing",
@@ -47,9 +48,6 @@
   "destFuel": "{place} ({liters}L, {km} km)",
   "destCost": "{place} ({cost}€, {km} km)",
   "destLevel": "Lv. {level}",
-  "destLevelDetail": "Lv. {level} (band {min}-{max})",
-  "destLevelBand": "What roams there: levels {min} to {max}",
-  "destLevelBandFrozen": "What roams there: levels {min} to {max}, and the years never move them",
   "ui": {
     "back": "Back",
     "edit": "Edit",
@@ -101,5 +99,39 @@
     "visit": "Visit the {biome}",
     "worldMap": "Stay on the world map"
   },
-  "offline": "Offline"
+  "offline": "Offline",
+  "book": {
+    "appName": "Wayfare",
+    "subtitle": "Lists the price and travel time of every transport mode to each destination.",
+    "quotesOnly": "Prices only. Tickets are bought at the stop, not from this page.",
+    "search": "Find a place",
+    "noMatch": "No place by that name.",
+    "noDestinations": "The book has no pages yet.",
+    "departingFrom": "Quoted from {x}, {y}",
+    "headline": "{type}, ground pitched at {level}.",
+    "levelUnknown": "no stated level",
+    "colMode": "Way",
+    "colArranged": "Arranged",
+    "colFare": "Fare",
+    "colTime": "Journey",
+    "colNote": "Note",
+    "free": "No charge",
+    "minutes": "{m} min",
+    "hoursMinutes": "{h}h {m}m",
+    "arrangement": {
+      "own": "Under your own steam",
+      "scheduled": "Scheduled service",
+      "hired": "Hired at the stand",
+      "quoted": "Tariff only"
+    },
+    "noteOwn": "Costs time and fuel instead of a fare.",
+    "noteScheduled": "Board it where the line runs. Tickets are sold at the counter.",
+    "noteHired": "Available at a taxi rank, where there is one.",
+    "noteQuoted": "Not operated from here. The price is listed for reference.",
+    "noteRefused": "The counter will not sell to a wanted party.",
+    "noteOffline": "Nothing runs there.",
+    "offlineBlurb": "No transport line reaches this town.",
+    "wantedBlurb": "The party is wanted, so ticket counters refuse service. Private and exotic transport still works.",
+    "footer": "Prices are calculated from the party's current position and change as it moves. This page cannot book or refund anything."
+  }
 }

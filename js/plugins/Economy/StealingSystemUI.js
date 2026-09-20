@@ -164,9 +164,11 @@
       if (success) {
         $gameParty.gainItem(item, 1, false);
         SS().reduceStock(entry);
-        window.skipLocalization = true;
-        $gameMessage.add(`${SS().translate('stealSuccess')} ${item.name}!`);
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(`${SS().translate('stealSuccess')} ${item.name}!`, {
+            severity: 'good'
+          });
+        }
       } else {
         $gameTemp.reserveCommonEvent(125);
       }

@@ -363,9 +363,12 @@
                 $gameSystem._pendingThrowItem = null;
             }
         } else {
-            window.skipLocalization = true;
-            $gameMessage.add(T('Battle.throw.missingItem'));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('Battle.throw.missingItem'), {
+                severity: 'warning',
+                plainLog: true
+              });
+            }
         }
     });
     
@@ -423,9 +426,12 @@
                         }
                     }
                     
-                    window.skipLocalization = true;
-                    $gameMessage.add(T('Battle.throw.pickedUp', { item: item.name }));
-                    window.skipLocalization = false;
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.show(T('Battle.throw.pickedUp', { item: item.name }), {
+                        severity: 'good',
+                        plainLog: true
+                      });
+                    }
                     SoundManager.playOk();
                 }
             }
@@ -689,9 +695,12 @@
 
             // Check if final position should destroy item
             if ($gameMap.isDestroyTile(finalPos.x, finalPos.y)) {
-                window.skipLocalization = true;
-                $gameMessage.add(T('Battle.throw.destroyed'));
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('Battle.throw.destroyed'), {
+                    severity: 'warning',
+                    plainLog: true
+                  });
+                }
             } else {
                 // Place item on map
                 ThrownItemManager.addItem($gameMap.mapId(), finalPos.x, finalPos.y, itemData);

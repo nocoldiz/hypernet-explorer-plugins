@@ -162,9 +162,34 @@
         return Math.max(0, lo);
     }
 
+    // Lay the window out the way the container is styled right now: one row per
+    // line, or a grid that keeps the container's own tracks and gaps.
+    function applyLayout(st, layout) {
+        st.columns = layout.columns;
+        st.isGrid = !!layout.grid;
+        st.sizer.style.gridColumn = layout.grid ? '1 / -1' : '';
+        st.win.style.display = layout.grid ? 'grid' : '';
+        st.win.style.gridTemplateColumns = layout.grid
+            ? `repeat(${layout.columns}, minmax(0, 1fr))` : '';
+        st.win.style.columnGap = layout.grid ? layout.grid.columnGap : '';
+        st.win.style.rowGap = layout.grid ? layout.grid.rowGap : '';
+        st.win.style.alignContent = layout.grid ? 'start' : '';
+    }
+
     function ensure(container) {
         let st = container.__mvl;
-        if (st && st.sizer.parentNode === container) return st;
+        if (st && st.sizer.parentNode === container) {
+            // The same scroller can change shape under its host - a tab that
+            // reads one across becoming a catalogue that reads three across -
+            // so the tracks are read again rather than kept from mount time.
+            const now = readLayout(container);
+            if (now.columns !== st.columns || !!now.grid !== !!st.isGrid) {
+                applyLayout(st, now);
+                st.heights.length = 0;
+                st.key = null;      // measurements described the old shape
+            }
+            return st;
+        }
 
         const layout = readLayout(container);
 
@@ -183,24 +208,14 @@
         win.style.left = '0';
         win.style.right = '0';
 
-        if (layout.grid) {
-            // The sizer is the container's only child now, so it has to span
-            // every track; the window it carries becomes the actual grid.
-            sizer.style.gridColumn = '1 / -1';
-            win.style.display = 'grid';
-            win.style.gridTemplateColumns = `repeat(${layout.columns}, minmax(0, 1fr))`;
-            win.style.columnGap = layout.grid.columnGap;
-            win.style.rowGap = layout.grid.rowGap;
-            win.style.alignContent = 'start';
-        }
-
         sizer.appendChild(win);
         container.innerHTML = '';
         container.appendChild(sizer);
 
         st = {
             container, sizer, win,
-            columns: layout.columns,
+            columns: 1,
+            isGrid: false,
             lines: [],            // index one past each line's last row
             lineOf: [],           // row index -> line
             heights: [],          // per line, 0 until measured
@@ -213,6 +228,9 @@
             focus: null          // signature of the marks, when the host tracks them
         };
         container.__mvl = st;
+        // The sizer is the container's only child now, so in a grid it has to
+        // span every track; the window it carries becomes the actual grid.
+        applyLayout(st, layout);
 
         // The scroller drives the window; a menu that redraws on its own only
         // ever repaints what is already on screen.

@@ -72,7 +72,7 @@
   "notRecognized": "'{cmd}' non è riconosciuto come comando interno o esterno, programma eseguibile o file batch.",
   "colosseum": "Iper Colosseo",
   "colosseumBanner": "IPER COLOSSEO",
-  "colosseumTagline": "Gauntlet a gruppo casuale, scegli una fascia di livello",
+  "colosseumTagline": "Sfida a squadre casuale. Seleziona una fascia di livello.",
   "partyRestoredNote": "Il gruppo torna com'era<br>alla fine della prova.",
   "levelBrackets": "FASCE DI LIVELLO",
   "levelBracket": "Livello {range}",

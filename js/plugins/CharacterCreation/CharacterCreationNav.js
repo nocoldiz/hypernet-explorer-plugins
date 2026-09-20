@@ -169,6 +169,51 @@
       this._wasdMapped = true;
     },
 
+    // --------------------------------------------------------- which device --
+
+    // Is a pad the thing in the player's hands? MouseControls answers which
+    // device last did something; the ring adds what it saw itself, because a
+    // page redrawn between a press and the question would otherwise forget.
+    // This is the one place creation asks, and the answer decides two things:
+    // which button face a hint names, and whether a page draws a field there
+    // is no way to type into.
+    padInHand() {
+      if (typeof Input !== "undefined" && Input.lastInputDevice &&
+          Input.lastInputDevice() === "pad") return true;
+      return !!this._lastActionByPad;
+    },
+
+    // Remembered on every press the ring answers, so the answer above survives
+    // the redraw that press causes.
+    _notePress() {
+      this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice &&
+        Input.lastInputDevice() === "pad");
+    },
+
+    // A field with no keys behind it. On a pad there is no way to type into a
+    // text box and no Escape to leave it with, so focusing one is a trap: the
+    // caret swallows the arrows, RMMZ's Input stops being read, and Cancel
+    // reaches the scene instead of the field. Pages drop their search strips
+    // on a pad (CCPick._wantsSearch and the boards' own searchHtml), and this
+    // is the backstop for any field that is still drawn: the ring walks past
+    // it rather than into it.
+    //
+    // A field that opens a pad-driven editor instead of taking the keyboard
+    // (the name box, which pushes Scene_Name) says so with data-nav-pad, and
+    // stays reachable.
+    isPadTrap(el) {
+      if (!el || !el.tagName) return false;
+      if (!this.padInHand()) return false;
+      if (el.getAttribute && el.getAttribute("data-nav-pad") !== null) return false;
+      const tag = el.tagName.toUpperCase();
+      if (tag === "TEXTAREA") return true;
+      if (tag !== "INPUT") return false;
+      const type = ((el.getAttribute && el.getAttribute("type")) || "text").toLowerCase();
+      // A checkbox, a radio and a slider are all worked with the stick and the
+      // A button; only the ones that want letters are traps.
+      return ["text", "search", "email", "url", "tel", "password", "number"].includes(type);
+    },
+
     // ------------------------------------------------------------ tab rails --
 
     // Which way the shoulder buttons and the Tab key are asking a rail to
@@ -235,6 +280,8 @@
       if (el.closest && el.closest("[data-nav-skip]")) return false;
       if (this._boards !== false && el.matches && el.matches(BOARD_SELECTOR)) return false;
       if (el.getAttribute && el.getAttribute("aria-hidden") === "true") return false;
+      // A text field with a pad in hand: walked past, never into.
+      if (this.isPadTrap(el)) return false;
       // A control that has been laid out has to be big enough to aim at. A box
       // of four zeros carries no layout information at all - the page has not
       // been laid out yet, or nothing is measuring it - so the markup is taken
@@ -537,18 +584,18 @@
 
       if (Input.isTriggered("cancel") ||
           (typeof TouchInput !== "undefined" && TouchInput.isCancelled())) {
-        this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
+        this._notePress();
         this.leave(true);
         return true;
       }
       if (Input.isTriggered("ok")) {
-        this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
+        this._notePress();
         this.confirm();
         return true;
       }
       for (const dir of ["up", "down", "left", "right"]) {
         if (!pressed(dir)) continue;
-        this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
+        this._notePress();
         if (this.move(dir)) return true;
         // Off the top or the left of the layer: back to the board the page
         // was walking before, so the two layers are one loop and not a trap.
@@ -568,7 +615,7 @@
       if (!this.isAttached() || this._active) return false;
       if (this.modalUp() || this.typing()) return false;
       if (!this.targets().length) return false;
-      this._lastActionByPad = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad");
+      this._notePress();
       if (typeof SoundManager !== "undefined") SoundManager.playCursor();
       return this.enter(dir);
     },

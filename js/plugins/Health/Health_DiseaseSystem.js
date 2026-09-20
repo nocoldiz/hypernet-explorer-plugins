@@ -2768,10 +2768,13 @@
       const epidemic = window.EpidemicSystem.ignite(
         args.disease ? String(args.disease).trim() : null,
         args.place ? String(args.place).trim() : null);
-      if (epidemic && window.$gameMessage) $gameMessage.add(T('Epidemics.begins', { name: window.EpidemicSystem.nameOf(epidemic) }));
+      if (epidemic && window.ParchmentToast) {
+        window.ParchmentToast.show(T('Epidemics.begins', { name: window.EpidemicSystem.nameOf(epidemic) }), { severity: 'warning' });
+      }
     });
     PluginManager.registerCommand(PLUGIN, 'EpidemicReport', () => {
-      if (window.$gameMessage) $gameMessage.add(window.EpidemicSystem.report());
+      // The observatory report is several lines that only read together.
+      if (window.ParchmentToast) window.ParchmentToast.report(window.EpidemicSystem.report().split('\n'));
       else console.log(window.EpidemicSystem.report());
     });
   }

@@ -232,8 +232,9 @@
     // tiles (line of sight, walls).
     Grid.rangeTiles = function (cx, cy, range, minRange, keep) {
         const out = [];
-        for (let dx = -range; dx <= range; dx++) {
-            for (let dy = -range; dy <= range; dy++) {
+        const r = Math.min(range, 25);
+        for (let dx = -r; dx <= r; dx++) {
+            for (let dy = -r; dy <= r; dy++) {
                 if (dx === 0 && dy === 0) continue;
                 const d = Math.max(Math.abs(dx), Math.abs(dy));
                 if (d < (minRange || 0)) continue;
@@ -728,6 +729,13 @@
     // 8. Reach
     //=========================================================================
 
+    const UNLIMITED_RANGE = 99;
+    MBM.UNLIMITED_RANGE = UNLIMITED_RANGE;
+
+    MBM.isUnlimitedRange = function (range) {
+        return Number(range) >= UNLIMITED_RANGE;
+    };
+
     function metaNumber(obj, key) {
         const n = Number(obj && obj.meta && obj.meta[key]);
         return Number.isFinite(n) && n > 0 ? n : 0;
@@ -830,7 +838,9 @@
         const to = MBM.mapCharacterFor(target);
         if (!from || !to) return true;
         const d = MBM.distance(from.x, from.y, to.x, to.y);
-        if (d > range || d < (minRange || 0)) return false;
+        if (d < (minRange || 0)) return false;
+        if (MBM.isUnlimitedRange(range)) return true;
+        if (d > range) return false;
         return MBM.hasLineOfSight(from.x, from.y, to.x, to.y, MBM._sightBlockers(from, to));
     };
 
@@ -842,8 +852,34 @@
     };
 
     // The tiles an action covers from a given square, with a clear line.
-    MBM._coveredTiles = function (character, range, minRange) {
+    MBM._coveredTiles = function (character, range, minRange, skillOrItem) {
         if (!character || range <= 0) return [];
+        if (MBM.isUnlimitedRange(range)) {
+            const out = [];
+            const isForFriend = skillOrItem && [7, 8, 9, 10, 11].includes(skillOrItem.scope);
+            const pool = (typeof $gameTroop !== "undefined" && typeof $gameParty !== "undefined")
+                ? (isForFriend ? $gameParty.battleMembers() : $gameTroop.members())
+                : [];
+            for (const b of pool) {
+                if (!b) continue;
+                const wantsDead = skillOrItem && (skillOrItem.scope === 9 || skillOrItem.scope === 10);
+                if (wantsDead ? !b.isDead() : !b.isAlive()) continue;
+                const c = MBM.mapCharacterFor(b);
+                if (!c) continue;
+                const d = MBM.distance(character.x, character.y, c.x, c.y);
+                if (d < (minRange || 0)) continue;
+                out.push([c.x, c.y]);
+            }
+            if (out.length === 0 && !skillOrItem) {
+                for (const c of MBM._battlerCharacters()) {
+                    if (c && c !== character) {
+                        const d = MBM.distance(character.x, character.y, c.x, c.y);
+                        if (d >= (minRange || 0)) out.push([c.x, c.y]);
+                    }
+                }
+            }
+            return out;
+        }
         const blockers = MBM._sightBlockers(character, null);
         return Grid.rangeTiles(character.x, character.y, range, minRange,
             (x, y) => $gameMap.isValid(x, y) &&
@@ -1831,7 +1867,16 @@
     Scene_Map.prototype.processMapTouch = function () {
         _Scene_Map_processMapTouch_MBM.call(this);
         if (!$gameTemp || !$gameTemp.isDestinationValid()) return;
-        if (MBM.engageEnemyAtTile($gameTemp.destinationX(), $gameTemp.destinationY())) {
+        const tx = $gameTemp.destinationX();
+        const ty = $gameTemp.destinationY();
+        // Nobody walks to a clicked tile mid-fight, so the destination is
+        // always taken off the map: it is read as a cursor click instead.
+        if (MBM.isActive()) {
+            $gameTemp.clearDestination();
+            MBM.onMapTouch(tx, ty);
+            return;
+        }
+        if (MBM.engageEnemyAtTile(tx, ty)) {
             $gameTemp.clearDestination();
         }
     };
@@ -2307,6 +2352,9 @@
     // --- Range tails on the command rows -------------------------------------
     // Attack carries the weapon's reach, Move the squares left to walk.
     MBM.rangeTail = function (range) {
+        if (MBM.isUnlimitedRange(range)) {
+            return T('Battle.mbm.rangeUnlimited') || T('Battle.mbm.rangeTail', { range: '∞' });
+        }
         return T('Battle.mbm.rangeTail', { range: range });
     };
 
@@ -2343,10 +2391,10 @@
         MBM._previewSprites = MBM._paintTiles(coords, color, []);
     };
 
-    MBM._previewAction = function (actor, range, minRange, color) {
+    MBM._previewAction = function (actor, range, minRange, color, skillOrItem) {
         const character = MBM.mapCharacterFor(actor);
         if (!character) { MBM._clearPreview(); return; }
-        MBM._paintPreview(MBM._coveredTiles(character, range, minRange), color);
+        MBM._paintPreview(MBM._coveredTiles(character, range, minRange, skillOrItem), color);
     };
 
     MBM._previewMove = function (actor) {
@@ -2364,7 +2412,7 @@
         if (!actor) { MBM._clearPreview(); return; }
         const symbol = win.currentSymbol ? win.currentSymbol() : null;
         if (symbol === "attack") {
-            MBM._previewAction(actor, MBM.attackRange(actor), MBM.attackMinRange(actor), COLOR_PREVIEW_ATTACK);
+            MBM._previewAction(actor, MBM.attackRange(actor), MBM.attackMinRange(actor), COLOR_PREVIEW_ATTACK, null);
         } else if (symbol === "move" && MBM.canUseMoveCommand(actor)) {
             MBM._previewMove(actor);
         } else {
@@ -2377,7 +2425,7 @@
         const actor = BattleManager.actor();
         const item = win.item ? win.item() : null;
         if (!actor || !item) { MBM._clearPreview(); return; }
-        MBM._previewAction(actor, MBM.skillRange(item), MBM.skillMinRange(item), COLOR_PREVIEW_SKILL);
+        MBM._previewAction(actor, MBM.skillRange(item), MBM.skillMinRange(item), COLOR_PREVIEW_SKILL, item);
     };
 
     const _Window_ActorCommand_select_mbm = Window_ActorCommand.prototype.select;
@@ -2690,7 +2738,7 @@
         update() {
             super.update();
             this.x = tileCenterX(this._tx);
-            this.y = tileCenterY(this._ty) - $gameMap.tileHeight() / 2;
+            this.y = tileCenterY(this._ty);
         }
     }
 
@@ -3722,7 +3770,7 @@
             if (BattleManager.actor()) MBM._openCommandWindow(BattleManager.actor());
             return;
         }
-        if (candidates.length === 1) {
+        if (candidates.length === 1 || action.isForAll() || action.isForRandom()) {
             MBM._confirmTarget(action, candidates[0]);
             return;
         }
@@ -3743,7 +3791,7 @@
             return;
         }
 
-        if (subjectChar) MBM._paintTiles(MBM._coveredTiles(subjectChar, range, min), COLOR_RANGE);
+        if (subjectChar) MBM._paintTiles(MBM._coveredTiles(subjectChar, range, min, action.item()), COLOR_RANGE);
 
         // Nearest first, so the default pick is the one in your face.
         if (subjectChar) {
@@ -3999,6 +4047,58 @@
                 MBM._refreshTargetCursor();
             }
         }
+    };
+
+    // --- The mouse -----------------------------------------------------------
+    // A click on the field is read as the cursor: the square it lands on is
+    // the square the cursor moves to, and clicking the square the cursor is
+    // already on is the OK button. Without this a click during a fight only
+    // left $gameTemp holding a destination nobody would ever walk to, which
+    // the engine draws as a blinking square that never goes away.
+    MBM._cursorTileAt = function (entry) {
+        const ch = (entry instanceof Game_Event) ? entry : MBM.mapCharacterFor(entry);
+        return ch ? [ch.x, ch.y] : null;
+    };
+
+    MBM.onMapTouch = function (x, y) {
+        const st = MBM._cursorState;
+        if (!st || MBM._activeWalk) return false;
+        if (st.mode === "move" || st.mode === "throw") {
+            const key = keyOf(x, y);
+            const inRange = st.mode === "throw" ? st.squares.has(key) : st.reachable.has(key);
+            if (!inRange) return false;
+            if (x === st.x && y === st.y) {
+                if (st.mode === "move") MBM._confirmMove();
+                else MBM._confirmThrow();
+                return true;
+            }
+            st.x = x;
+            st.y = y;
+            if (st.cursorSprite) {
+                st.cursorSprite._tx = x;
+                st.cursorSprite._ty = y;
+            }
+            SoundManager.playCursor();
+            MBM._repaintPath();
+            return true;
+        }
+        if (st.mode === "target" || st.mode === "aim") {
+            const i = st.list.findIndex(entry => {
+                const tile = MBM._cursorTileAt(entry);
+                return tile && tile[0] === x && tile[1] === y;
+            });
+            if (i < 0) return false;
+            if (i === st.index) {
+                if (st.mode === "aim") MBM._confirmAim(st.list[st.index]);
+                else MBM._confirmTarget(st.action, st.list[st.index]);
+                return true;
+            }
+            st.index = i;
+            SoundManager.playCursor();
+            MBM._refreshTargetCursor();
+            return true;
+        }
+        return false;
     };
 
     //=========================================================================

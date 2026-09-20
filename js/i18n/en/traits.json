@@ -795,6 +795,54 @@
     "porphyria": {
       "name": "Porphyria",
       "description": "Inherited blood disorder, sun blisters"
+    },
+    "pack_hunter": {
+      "name": "Pack Hunter",
+      "description": "Brings down prey together with its own kind"
+    },
+    "lone_predator": {
+      "name": "Lone Predator",
+      "description": "Hunts alone and wants no company doing it"
+    },
+    "skittish": {
+      "name": "Skittish",
+      "description": "Bolts at a shadow, faster than anything chasing it"
+    },
+    "territorial": {
+      "name": "Territorial",
+      "description": "Drives off whatever crosses its ground"
+    },
+    "scavenger": {
+      "name": "Scavenger",
+      "description": "Eats what others leave behind and thrives on it"
+    },
+    "thick_hide": {
+      "name": "Thick Hide",
+      "description": "Skin that turns a blade and slows the body under it"
+    },
+    "keen_nose": {
+      "name": "Keen Nose",
+      "description": "Smells what is coming long before it arrives"
+    },
+    "venomous": {
+      "name": "Venomous",
+      "description": "Carries poison in its bite at the cost of its own vigour"
+    },
+    "imprinted": {
+      "name": "Imprinted",
+      "description": "Bonded to one person and calm beside them"
+    },
+    "rabid": {
+      "name": "Rabid",
+      "description": "Sick, furious, and past any reaching"
+    },
+    "burrower": {
+      "name": "Burrower",
+      "description": "Digs in and is hard to root out"
+    },
+    "hibernator": {
+      "name": "Hibernator",
+      "description": "Sleeps out the cold on a body built to store it"
     }
   }
 }

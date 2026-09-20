@@ -7,8 +7,7 @@
     "Unknown": "Unknown"
   },
   "app": {
-    "appName": "Whether Channel",
-    "tagline": "Whether it rains or whether it does not.",
+    "appName": "Whether Channel",
     "location": "Location",
     "here": "Where I am",
     "updated": "Last observation: {date}",

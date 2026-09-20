@@ -1,6 +1,6 @@
 {
   "name": "Fisica",
-  "blurb": "Materia, energia e spaziotempo sotto misura, dai condensati a luce lenta a una risonanza scalare a 125 GeV. La precisione la fissa l'apparato, e l'apparato si costruisce con la distinta dei materiali.",
+  "blurb": "Materia, energia e spaziotempo sotto misura. La precisione dipende dall'apparato che puoi costruire.",
   "nodes": {
     "phys_attosecond": {
       "name": "Impulsi di Luce ad Attosecondi",

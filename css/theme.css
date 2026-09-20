@@ -158,16 +158,12 @@
     display: none;
     align-items: center;
     justify-content: center;
-    background: var(--shadow-black-translucent-50);
+    background: var(--modal-scrim);
 }
 
 .ts-prompt-box {
     padding: 24px 32px;
     text-align: center;
-    background: var(--gradient-1);
-    border: 2px solid var(--border-primary-hover-translucent-15);
-    border-radius: 10px;
-    box-shadow: 0 12px 40px var(--shadow-black-translucent-50);
 }
 
 .ts-prompt-title {
@@ -2301,7 +2297,7 @@
     font-family: var(--font-ui);
     font-size: var(--fs-title);
     font-weight: bold;
-    color: var(--text-disabled);
+    color: var(--text-pure-white);
     line-height: 1.15;
 }
 
@@ -3014,7 +3010,13 @@
 .cc-badge-wrap.cc-badge-grid-3 .cc-element-badge {
     width: 100%;
     box-sizing: border-box;
-    text-align: center;
+    /* Read from the left edge of the cell, with no plate around them: the
+       three columns already line the names up, so a border only adds noise. */
+    text-align: left;
+    justify-content: flex-start;
+    border: none;
+    background: none;
+    padding-left: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3095,7 +3097,7 @@
     padding: 3px;
     border: none;
     border-radius: 4px;
-    background: var(--bg-primary-hover-translucent-35);
+    background: none;
 }
 
 .cc-picked-chip {
@@ -3151,7 +3153,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--shadow-black-translucent-55);
+    background: var(--modal-scrim);
 }
 
 .cc-modal {
@@ -3197,6 +3199,57 @@
     color: var(--text-text-alt-2);
 }
 
+/* The keypad a pad is given in place of the lines: a text box is a trap with
+   no keyboard behind it, so the pairs are punched in on buttons the nav ring
+   already walks. */
+.cc-modal-pad-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 6px 0;
+}
+
+.cc-modal-pad-line .cc-modal-label {
+    margin: 0;
+    flex: 1;
+}
+
+.cc-modal-pad-pair {
+    display: flex;
+    gap: 6px;
+}
+
+.cc-modal-slot {
+    min-width: 58px;
+    text-align: center;
+}
+
+.cc-modal-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 10px 0 12px 0;
+}
+
+/* Saved squares: every row is a button, and the one that would be started is
+   marked the way a chosen card is. */
+.cc-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 170px;
+    overflow-y: auto;
+    margin: 0 0 12px 0;
+}
+
+.cc-modal-row-picked {
+    outline: 2px solid var(--text-primary-hover);
+}
+
+.cc-modal-empty {
+    margin: 0 0 6px 0;
+}
+
 .cc-modal-error {
     margin: 0 0 12px 0;
     min-height: 1.2em;
@@ -3205,10 +3258,36 @@
 }
 
 
+/* Every press on a creation sheet is the same plate as the one on the action
+   bar behind it: same height, same padding, same measure. A modal button that
+   is shorter or tighter than the bar's reads as a different piece of
+   furniture, which is what the vault's coordinate sheet used to look like. */
+.cc-modal .cc-sidebar-btn {
+    font-size: var(--fs-body);
+    padding: 10px 22px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .cc-modal-actions .cc-sidebar-btn {
     min-width: 116px;
-    justify-content: center;
-    height: 36px;
+}
+
+/* A saved square is a row: it takes the whole width of the sheet, and its
+   label is read left to right like a line rather than centred like a press. */
+.cc-modal-row {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+/* The keypad's digits are square-ish, so they keep the height and lose the
+   measure the worded buttons need. */
+.cc-modal-key,
+.cc-modal-slot {
+    padding: 10px 8px;
 }
 
 /* The type chips are the one way out of a taken dossier (see
@@ -4594,6 +4673,20 @@
     font-size: var(--fs-heading);
 }
 
+/* The name, read rather than typed. With a pad in hand the identity card drops
+   the text field (there is no way to type into one, and no way out of one) and
+   prints the name on the same plate, with the Randomize die beside it doing the
+   work. Dimmer than a live field, so it reads as a line and not as a box that
+   has stopped answering. */
+.cc-name-read {
+    background: var(--bg-tertiary-focus-translucent-45);
+    color: var(--text-card-medium);
+    cursor: default;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* The host's own focus ring is not wanted on these plates, but the pad's is. A
    bare "outline: none" on the plate sits LATER in this file than .cc-nav-focus
    and carries the same weight, so it won: every pick trigger on the bio sheet
@@ -5197,9 +5290,12 @@
     content: none;
 }
 
+/* Only the picked scenario wears the gold: a gold border and a gold name.
+   Every other row is a plain white name with no plate behind it, so the list
+   reads as text and the choice is the one thing that stands out. */
 .cc-scenario-grid .cc-card-option.cc-scenario-card.selected {
     border-color: var(--text-primary-hover);
-    background: var(--bg-tertiary-focus-translucent-45);
+    background: none;
     box-shadow: none;
 }
 
@@ -5209,6 +5305,11 @@
     font-size: var(--fs-heading);
     font-weight: 600;
     line-height: 1.25;
+    color: var(--text-info);
+}
+
+.cc-scenario-grid .cc-scenario-card.selected .cc-option-title {
+    color: var(--text-primary-hover);
 }
 
 .cc-scenario-group-title {
@@ -5950,7 +6051,9 @@
     transition: 0.18s ease;
 }
 
-.right-tools-tab:hover {
+.right-tools-tab:hover,
+/* The pad cursor walks the tabs like any other tile, and wears the same ring. */
+.right-tools-tab.selected {
     color: var(--text-primary-hover);
     border: 1px solid var(--border-focus-hover);
 }
@@ -5958,7 +6061,7 @@
 .right-tools-tab.active {
     color: var(--text-success-active);
     border: 1px solid var(--border-focus-hover);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-subtle-translucent-5);
 }
 
 .right-tools-empty {
@@ -6643,7 +6746,7 @@
 }
 
 .sort-tag.active {
-    background: var(--chip-active-bg);
+    background: transparent;
     color: var(--chip-active-fg);
     border-color: var(--chip-active-fg);
 }
@@ -7043,12 +7146,8 @@
 
 /* Allied Target Selection Box Overlay */
 .target-overlay {
-    background: var(--border-primary-hover-translucent-15);
-    border: none;
-    border-radius: 5px;
     padding: 15px;
     text-align: center;
-    box-shadow: inset 0 0 12px var(--shadow-shadow-alt-1-hover-translucent-25);
     animation: targetPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-sizing: border-box;
 }
@@ -7651,13 +7750,31 @@
     to   { opacity: 1; }
 }
 
+/* The list of modes. It is the part of the page that gives when the page is
+   short, so it scrolls on its own instead of squeezing the rows inside it. */
+.mp-option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 900px;
+    margin: 18px 0 0;
+    overflow-y: auto;
+}
+
 /* Portal option rows (right page of type selection) */
 .mp-option-row {
     display: flex;
     flex-direction: column;
+    /* A row is as tall as its three lines. Never shorter: a flex row that is
+       allowed to shrink prints its description through its own bottom border. */
+    flex: 0 0 auto;
+    min-height: 0;
+    overflow: visible;
     padding: 12px 16px;
     border: 1px solid var(--border-primary-hover-translucent-15);
-    margin-bottom: 10px;
     cursor: pointer;
     background: var(--bg-primary-hover-translucent-35);
     transition: border-color 0.15s, background 0.15s;
@@ -7696,6 +7813,37 @@
     font-size: 0.87em;
     color: var(--text-text-alt-4);
     margin-top: 3px;
+}
+
+.mp-option-name,
+.mp-option-hint,
+.mp-option-desc {
+    display: block;
+    flex: 0 0 auto;
+}
+
+.mp-option-desc {
+    font-size: 0.95em;
+    line-height: 1.35;
+    color: var(--text-text-alt-4);
+    margin-top: 6px;
+}
+
+/* A mode that is running is ended from here, and reads as the way out. */
+.mp-option-row.danger .mp-option-name {
+    color: var(--text-danger, #c0564a);
+}
+
+/* The action button and the session badge share the last line of the page. */
+.mp-single-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+    flex: 0 0 auto;
+    margin-top: 18px;
 }
 
 /* Selected portal detail (left page of type selection) */
@@ -8044,7 +8192,6 @@
 }
 
 .tab-btn {
-    flex: 1;
     font-family: var(--font-ui);
     font-size: 0.964em;
     font-weight: bold;
@@ -8600,56 +8747,79 @@
     flex-shrink: 0;
 }
 
-/* A piece picked up off the grid is examined in a window over the board: the
-   spread stays where it was, and the choices about the piece are all in here. */
-#forge-modal {
-    display: none;
-}
-#forge-modal.open {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 20;
-}
-.forge-modal-backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-dark-overlay-78);
-}
-#blacksmith-container .forge-modal-card {
-    position: absolute;
-    top: 4%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 62%;
-    max-width: 900px;
-    height: 92%;
+/* A piece picked up off the grid is not examined in a window any more: the
+   book turns to a page of its own for it. The left page is the piece as it
+   will look, the right page is everything that is true about it, and the
+   counter and the two buttons sit at the foot of the right page. */
+.forge-piece-spread .left-page,
+.forge-piece-spread .right-page {
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
-    padding: 14px 22px;
-    background: var(--gradient-1);
-    border: 1px solid var(--border-secondary-hover-translucent-15);
-    border-radius: 4px;
+    min-height: 0;
+}
+.forge-piece-spread #forge-piece-left,
+.forge-piece-spread #forge-piece-right {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+/* The picture leads the left page at the width of the page itself, so a
+   weapon on the stand is looked at rather than glanced at. */
+.forge-piece-spread .weapon-previews-container {
+    margin-bottom: 10px;
+}
+.forge-piece-spread .weapon-preview-card--single {
+    width: 100%;
+}
+.forge-piece-spread #forge-preview-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+/* Every heading on the piece's pages is the same rule, so the two pages read
+   as one document instead of as a stack of unrelated blocks. */
+.forge-piece-spread .inspect-section-title {
+    margin: 14px 0 4px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
+}
+.forge-piece-spread #forge-piece-left > .inspect-section-title:first-child,
+.forge-piece-spread #forge-piece-right > .inspect-section-title:first-child {
+    margin-top: 0;
+}
+/* Facts are read in two columns on a page this wide: a bill of eight lines is
+   one glance rather than a scroll. */
+.forge-piece-spread .inspect-spec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+}
+.forge-piece-spread .ui-prose {
+    margin: 0 0 8px;
+}
+/* The foot of the right page: the counter over the buttons it governs, held
+   off the page edge by a hairline so it never floats over the facts. */
+.forge-piece-actions {
+    flex: 0 0 auto;
+    padding-top: 8px;
+    margin-top: 6px;
+    border-top: 1px solid var(--border-secondary-hover-translucent-15);
+}
+.forge-piece-spread .inspect-actions--row {
+    display: flex;
+    gap: 10px;
+}
+.forge-piece-spread .inspect-actions--row .inspect-btn {
+    flex: 1 1 0;
+    text-align: center;
+}
+/* The title takes its rarity colour from the piece, so the head of the spread
+   says what the card on the board said. */
+.forge-piece-spread .page-header-bar .title {
     overflow: hidden;
-}
-.forge-modal-x {
-    align-self: flex-end;
-    margin-bottom: 8px;
-    padding: 2px 10px;
-    cursor: pointer;
-    color: var(--text-secondary-active);
-    border: 1px solid var(--border-secondary-hover-translucent-15);
-    border-radius: 3px;
-}
-.forge-modal-x:hover {
-    border-color: var(--text-primary-hover);
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* How many at once. The counter sits directly above the buttons it governs, so
@@ -8766,6 +8936,22 @@
     padding: 0;
 }
 #blacksmith-container .weapon-preview-card canvas { cursor: grab; }
+
+/* A piece with no model of its own is shown as its icon on a disc of the finish
+   the smith picked, so turning the swatches turns the material the thing is
+   made of rather than the wallpaper behind it. The disc is big enough for the
+   grain to read, and the icon is centred: `.item-icon` carries a right margin
+   for the lists it usually lives in, which pushed it off the middle here. */
+#blacksmith-container .weapon-preview-icon-circle {
+    width: 200px;
+    height: 200px;
+    background-color: var(--text-highlight-active);
+}
+#blacksmith-container .weapon-preview-icon-circle .item-icon {
+    margin-right: 0;
+    transform: scale(3.2);
+    filter: drop-shadow(0 2px 3px var(--shadow-black-translucent-50));
+}
 
 /* The shop counter shows a weapon or a shield as its model rather than its
    icon (ItemSystem/ItemSystemShop.js), through the same viewer the forge and
@@ -9672,7 +9858,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--shadow-primary-hover-translucent-5);
+    background: var(--modal-scrim);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -9916,6 +10102,13 @@
     margin-top: 4px;
     font-size: 0.856em;
     opacity: 0.6;
+}
+
+/* A fare the purse cannot cover. The date stays pickable, the lid does not open. */
+.cryo-summary-row--short,
+.cryo-summary-note--short {
+    color: var(--text-danger-hover);
+    opacity: 1;
 }
 
 /* The travel board. Its own overlay, drawn over the faded-out map. */
@@ -10347,7 +10540,6 @@
 }
 
 .roster-tab {
-    flex: 1;
     font-family: var(--font-ui);
     font-size: 0.964em;
     font-weight: bold;
@@ -10457,6 +10649,7 @@
 #thinker-container > *,
 #travel-journal-container > *,
 #travel-overlay > *,
+#wm-note-modal > *,
 #world-manage-container > *,
 .army-dialog-overlay > * {
     zoom: var(--ui-zoom, 1);
@@ -11353,7 +11546,8 @@
 
 /* Extracted from TunableRadio.js */
 #skeuo-radio-frame {
-    width: 620px;
+    width: 680px;
+    max-width: 94vw;
     background: var(--bg-surface);
     border: 1px solid var(--text-primary-hover);
     border-radius: 4px;
@@ -11492,10 +11686,14 @@
     justify-content: center;
 }
 
+/* The deck holds two knobs, three band plates and five utility plates. It is
+   allowed to wrap rather than push the last plate out through the cabinet. */
 #radio-control-deck {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
     padding-top: 14px;
     margin-top: 14px;
 }
@@ -11505,7 +11703,8 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    width: 80px;
+    width: 66px;
+    flex: 0 0 auto;
 }
 
 .knob-label {
@@ -11524,6 +11723,13 @@
     border: 1px solid var(--text-primary-hover);
     position: relative;
     transition: transform 0.1s ease-out;
+    /* Both knobs are turned with the wheel or a drag, so they say so. */
+    cursor: ns-resize;
+}
+
+.knob-base:hover {
+    border-color: var(--accent-gold-pure);
+    box-shadow: 0 0 6px var(--shadow-gold-amber-50);
 }
 
 .knob-pointer {
@@ -11551,7 +11757,8 @@
     border-radius: 2px;
     color: var(--text-primary-hover);
     font-weight: bold;
-    padding: 4px 10px;
+    padding: 4px 8px;
+    white-space: nowrap;
     cursor: pointer;
     user-select: none;
     transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
@@ -11560,16 +11767,29 @@
 .band-btn:hover,
 .band-btn.active,
 .utility-btn:hover,
-.utility-btn.active,
-.utility-btn.gold-star {
+.utility-btn.active {
     color: var(--text-primary-hover);
     border-color: var(--text-primary-hover);
 }
 
+/* A favourite is lit, not merely outlined: the star was indistinguishable
+   from its own hover before. */
+.utility-btn.gold-star {
+    color: var(--accent-gold-pure);
+    border-color: var(--accent-gold-pure);
+    text-shadow: 0 0 6px var(--shadow-gold-amber-50);
+}
+
 #action-deck-buttons {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
 }
+
+#band-push-buttons { flex: 0 0 auto; }
 
 /* Paste-a-web-radio: a card over the cabinet's own face, not over the map. */
 .radio-modal {
@@ -11581,7 +11801,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--shadow-black-translucent-50);
+    background: var(--modal-scrim);
     border-radius: 16px;
     /* Over the dial needle, which sits at 100 inside the same cabinet. */
     z-index: 200;
@@ -11597,9 +11817,6 @@
     flex-direction: column;
     gap: 10px;
     padding: 18px 20px;
-    background: var(--bg-surface);
-    border: 1px solid var(--text-primary-hover);
-    border-radius: 4px;
 }
 
 .radio-modal-title {
@@ -11829,6 +12046,28 @@
 
 .help-list li {
     margin-bottom: 0.25em;
+}
+
+/* A link inside a manual page (UI/HelpMenu.js writes them from [label | Target]).
+   Gold, because gold is what the parchment menus use for a thing that can be
+   acted on. A link whose page the party has not been told about yet is still
+   gold but dimmed: there is something there, and it is not open. */
+.help-link {
+    color: var(--text-gold-dark);
+    cursor: pointer;
+    border-bottom: 1px dotted var(--text-gold-dark);
+}
+
+.help-link:hover,
+.help-link:focus {
+    filter: brightness(1.25);
+    outline: none;
+    border-bottom-style: solid;
+}
+
+.help-link--closed {
+    opacity: 0.6;
+    border-bottom-style: dashed;
 }
 
 .help-image {
@@ -13199,7 +13438,6 @@
     border: 2px solid var(--text-primary-hover);
     color: var(--text-primary-hover);
     padding: 7px 22px;
-    min-width: 96px;
     border-radius: 4px;
     cursor: pointer;
     box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
@@ -13606,6 +13844,37 @@
     filter: grayscale(1);
 }
 
+#equip-container .paperdoll-container:not(.active-actor) .paperdoll-stats-grid {
+    display: none;
+}
+
+#equip-container .paperdoll-container:not(.active-actor) .paperdoll-slot {
+    min-height: 40px;
+    padding: 3px 6px;
+}
+
+#equip-container .paperdoll-container:not(.active-actor) .slot-body {
+    min-height: 22px;
+}
+
+#equip-container .paperdoll-container:not(.active-actor) .slot-item-icon {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+}
+
+#equip-container .paperdoll-container:not(.active-actor) .slot-item-icon .item-icon {
+    transform: scale(0.7);
+}
+
+#equip-container .paperdoll-container:not(.active-actor) .slot-item-name {
+    font-size: 0.74rem;
+}
+
+#equip-container .paperdoll-container:not(.active-actor) .slot-header {
+    font-size: 0.64rem;
+}
+
 #equip-container .paperdoll-container:not(.active-actor):hover {
     opacity: 0.72;
     filter: grayscale(0.3);
@@ -13627,6 +13896,11 @@
 
 #equip-container.is-dragging-equip .paperdoll-slot {
     opacity: 1 !important;
+}
+
+#equip-container.is-dragging-equip .paperdoll-container:not(.active-actor) .paperdoll-slot {
+    min-height: 62px;
+    padding: 6px 9px;
 }
 
 #equip-container .right-page-header {
@@ -13727,23 +14001,53 @@
 #equip-container .paperdoll-slots-row--upper,
 #equip-container .paperdoll-body-slots {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 5px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
     width: 100%;
+}
+
+/* A two-handed weapon is one grip across two hands: the hand it borrowed
+   keeps its box and says what is holding it. */
+#equip-container .paperdoll-slot.is-lent {
+    opacity: 0.55;
+    border-style: dashed;
+    cursor: default;
+}
+
+#equip-container .slot-penalty-badge {
+    flex: 0 0 auto;
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-cost-bad, #ef4444);
+    background: rgba(239, 68, 68, 0.14);
+}
+
+#equip-container .paperdoll-dual-warning {
+    margin-top: 4px;
+    padding: 3px 7px;
+    border-left: 3px solid var(--text-cost-bad, #ef4444);
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 3px;
+    font-size: 0.72rem;
+    line-height: 1.25;
+    color: var(--text-card-medium);
 }
 
 #equip-container .paperdoll-slot {
     background: var(--bg-subtle-translucent-5);
     border: 1px solid var(--border-secondary-hover-translucent-15);
-    border-radius: 4px;
-    padding: 4px 6px;
+    border-radius: 5px;
+    padding: 6px 9px;
     box-sizing: border-box;
     width: 100%;
     cursor: pointer;
     transition: all 0.15s ease;
     user-select: none;
     position: relative;
-    min-height: 44px;
+    min-height: 62px;
 }
 
 #equip-container .paperdoll-slot:hover {
@@ -13783,7 +14087,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.68rem;
+    font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 700;
@@ -13808,15 +14112,15 @@
 #equip-container .slot-body {
     display: flex;
     align-items: center;
-    min-height: 24px;
+    min-height: 34px;
 }
 
 #equip-container .slot-empty-content {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     color: var(--text-card-medium);
-    font-size: 0.74rem;
+    font-size: 0.8rem;
     font-style: italic;
     opacity: 0.6;
 }
@@ -13834,13 +14138,13 @@
 }
 
 #equip-container .slot-item-icon {
-    flex: 0 0 24px;
-    width: 24px;
-    height: 24px;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
 }
 
 #equip-container .slot-item-icon .item-icon {
-    transform: scale(0.75);
+    transform: none;
     transform-origin: 0 0;
 }
 
@@ -13853,7 +14157,7 @@
 #equip-container .slot-item-name {
     font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.86rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -13862,7 +14166,7 @@
 }
 
 #equip-container .slot-item-stat {
-    font-size: 0.68rem;
+    font-size: 0.74rem;
     color: var(--text-cost-ok);
     line-height: 1.1;
     font-weight: bold;
@@ -13960,7 +14264,6 @@
 }
 
 #equip-container .equip-action-btn {
-    flex: 1;
     font-family: var(--font-ui);
     font-size: var(--fs-body, 0.88rem);
     font-weight: bold;
@@ -13988,27 +14291,19 @@
     box-shadow: 0 4px 8px var(--shadow-gold-amber-50, rgba(0,0,0,0.25));
 }
 
-#equip-container .equip-action-btn.equip-now-btn {
-    background: var(--text-primary-hover);
-    color: #1a1a1a;
-    border-color: var(--text-primary-hover);
-}
-
-#equip-container .equip-action-btn.equip-now-btn:hover,
-#equip-container .equip-action-btn.equip-now-btn.focused {
-    background: var(--bg-primary-hover, #ffd700);
-    color: #000;
-}
-
+/* Equip and Unequip are the one button; what they mean is said in their ink,
+   never in a second shape. Equip was an inverted gold plate and Unequip a
+   hardcoded red, which made the pair read as two different controls. */
 #equip-container .equip-action-btn.unequip-now-btn {
-    border-color: #ef4444;
-    color: #ef4444;
+    border-color: var(--border-danger-active);
+    color: var(--text-text-alt-10);
 }
 
 #equip-container .equip-action-btn.unequip-now-btn:hover,
 #equip-container .equip-action-btn.unequip-now-btn.focused {
-    background: #ef4444;
-    color: #fff;
+    background: var(--border-danger-active);
+    border-color: var(--border-danger-active);
+    color: var(--chip-active-fg);
 }
 
 /* Category & Type Tabs on right page */
@@ -14423,7 +14718,6 @@
 }
 
 .travel-confirm-actions .inspect-btn {
-    min-width: 180px;
     width: auto;
     padding-left: var(--sp-5);
     padding-right: var(--sp-5);
@@ -14890,7 +15184,6 @@
 }
 
 .shop-tab {
-    flex: 1;
     font-family: var(--font-ui);
     font-size: 0.964em;
     text-align: center;
@@ -15026,6 +15319,7 @@
 .sell-qty {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 6px;
     margin-top: 4px;
 }
@@ -15041,14 +15335,14 @@
     cursor: pointer;
     background: transparent;
     color: var(--text-primary-hover);
-    border: 1px solid var(--border-gold-amber-30);
+    border: none;
     box-sizing: border-box;
     transition: 0.15s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
 }
 
 .sell-qty-step:hover {
     background: var(--chip-active-bg);
-    border-color: var(--chip-active-fg);
+    color: var(--chip-active-fg);
 }
 
 .sell-qty-val {
@@ -15393,7 +15687,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--shadow-glow-active-translucent-40);
+    background: var(--modal-scrim);
     backdrop-filter: blur(1.5px);
     z-index: 1000;
     display: flex;
@@ -15951,6 +16245,18 @@
 
 #options-inspect .opt-note {
     font-weight: bold;
+}
+
+/* The GGUF model catalogue on the right page of the local model setting: each
+   row is a link out to that model's page, so it reads as one. */
+#options-inspect .llm-model-link {
+    cursor: pointer;
+}
+
+#options-inspect .llm-model-link:hover .inspect-spec-label,
+#options-inspect .llm-model-link:hover .inspect-spec-value {
+    color: var(--border-focus-hover);
+    text-decoration: underline;
 }
 
 #options-categories .backpack-tab {
@@ -20568,7 +20874,6 @@ padding: 2px 10px;
 }
 .bs-btn {
     flex: 0 1 auto;
-    min-width: 80px;
     padding: 8px 12px;
     border: 2px solid var(--border-subtle);
     border-radius: 5px;
@@ -21675,7 +21980,7 @@ padding: 2px 10px;
     transition: 0.18s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
     user-select: none;
 }
-.tt-project-btn:hover { background: rgba(255, 255, 255, 0.06); }
+.tt-project-btn:hover { background: var(--bg-subtle-translucent-5); }
 .tt-project-btn--active {
     color: var(--text-text-alt-11);
     border: 2px solid var(--text-text-alt-11);
@@ -25094,6 +25399,46 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   padding: var(--sp-5); text-align: center;
 }
 
+/* ---- the two pages ----
+   The bench and the catalogue, chosen with the same gold-on-black button the
+   rest of the kit uses, so the collection of every card that exists is one
+   click from the deck being built and never a mode the player has to guess at. */
+.cgc-modes {
+  flex: 0 0 auto; display: flex; gap: var(--sp-2); margin-bottom: var(--sp-2);
+}
+.cgc-modes .cgc-mode { margin-top: 0; padding: 4px var(--sp-4); }
+
+/* The shared filter strip (UI/MenuSearchBar.js) rides between the type tabs
+   and the shelf: the name field docks onto the header bar on its own, the
+   ordering and the rarity picker stay here. */
+.cgc-search { flex: 0 0 auto; }
+.cgc-search .msb { margin-bottom: var(--sp-2); }
+
+/* ---- turning the catalogue ----
+   Thousands of records are turned a page at a time rather than scrolled
+   forever, and the strip says where in the catalogue the player stands. */
+.cgc-pager {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  gap: var(--sp-3); padding-top: var(--sp-2);
+}
+.cgc-pager .cgc-pagebtn { margin-top: 0; padding: 4px var(--sp-3); font-size: var(--fs-label); }
+.cgc-pagecount { font-size: var(--fs-label); color: var(--text-text-alt-4); }
+
+/* A card the party has never held is still printed on the catalogue page: the
+   shape, the name and the figures are all there, only unlit, so the shelf
+   reads as a thing to fill rather than as a thing with holes in it. */
+.cgc-cell--locked { opacity: 0.42; filter: grayscale(1); }
+.cgc-cell--locked.selected { opacity: 0.75; filter: grayscale(0.55); }
+
+/* How many copies the working deck has already taken off this card, which is
+   the one number a deck builder is read for. */
+.cgc-indeck {
+  position: absolute; right: 0; top: 0; z-index: 3;
+  padding: 1px var(--sp-2); border-bottom-left-radius: 6px;
+  background: var(--plate-inset-soft); color: var(--text-primary-hover);
+  font-size: calc(var(--fs-caption) * 0.78); font-weight: bold;
+}
+
 /* ---- the dossier ----
    The right page is the shared detail card: the name and its kind line take
    the detail title and label tokens, the statistics and the deck are the one
@@ -25112,23 +25457,82 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cgc-art img, .cgc-art canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
 .cgc-art canvas { image-rendering: pixelated; }
 
-/* ---- the deck being built ---- */
+/* ---- the deck being built ----
+   The right page under the dossier is the deck list itself, kept in sight of
+   the shelf it is built from: the decks the party keeps as chips, the tally
+   against the ceiling, a meter that says at a glance how full the list is, and
+   one row per card, clicked to give it back. */
 .cgc-deck {
   flex: 0 0 auto; border-top: 1px solid var(--border-primary-hover-translucent-15);
   padding-top: var(--sp-3); color: var(--text-success-active);
+  display: flex; flex-direction: column; min-height: 0;
 }
-.cgc-decklist { max-height: 150px; overflow-y: auto; margin: var(--sp-2) 0; }
+.cgc-deck[hidden] { display: none; }
 
-/* A deck row is a spec row that can be clicked, so it takes the stat block's
-   type and inks and marks itself with the one gold hairline. */
+/* One chip per saved deck, plus the chip that starts a fresh one. */
+.cgc-deckchips {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-2);
+}
+.cgc-deckchip {
+  padding: 2px var(--sp-3); border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border-primary-hover-translucent-15);
+  background: var(--plate-inset); color: var(--text-detail-label);
+  font-family: inherit; font-size: var(--fs-label);
+}
+.cgc-deckchip:hover { border-color: var(--text-primary-hover); }
+.cgc-deckchip.active {
+  border-color: var(--text-primary-hover); color: var(--text-primary-hover);
+}
+
+.cgc-deckhead {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--sp-2);
+}
+.cgc-deckheading {
+  font-size: var(--fs-detail-body); color: var(--text-detail-label);
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.cgc-decktally { font-size: var(--fs-detail-title); font-weight: bold; }
+
+/* How full the list is, read without counting the rows. */
+.cgc-deckmeter {
+  height: 4px; border-radius: 2px; margin: var(--sp-2) 0;
+  background: var(--plate-inset-soft); overflow: hidden;
+}
+.cgc-deckmeter-fill {
+  height: 100%; width: var(--w, 0%);
+  background: var(--text-primary-hover);
+  transition: width .18s ease;
+}
+
+.cgc-decklist { flex: 1 1 auto; min-height: 0; max-height: 210px; overflow-y: auto; }
+
+/* A deck row reads left to right the way a deck list reads: the rarity gem,
+   the name, what it is worth on the board, how many copies are in. Clicking it
+   gives the copy back to the shelf. */
 .cgc-deckrow {
-  padding: 1px var(--sp-2); border-radius: 3px; cursor: pointer;
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: 2px var(--sp-2); border-radius: 3px; cursor: pointer;
   border: 1px solid transparent;
+  font-size: var(--fs-detail-body);
+  color: var(--text-success-active);
 }
 .cgc-deckrow:hover { border-color: var(--text-primary-hover); }
+.cgc-gem {
+  flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor;
+}
+.cgc-deckname {
+  flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--text-success-active);
+}
+.cgc-deckpower { flex: 0 0 auto; color: var(--text-detail-label); }
+.cgc-deckqty {
+  flex: 0 0 auto; min-width: 1.6em; text-align: center; font-weight: bold;
+  color: var(--text-primary-hover);
+}
 
-.cgc-legal--ok  { color: var(--text-success-active); }
-.cgc-legal--bad { color: var(--rarity-rare); }
+.cgc-deckstanding { margin-top: var(--sp-2); font-size: var(--fs-label); }
 
 /* ---- the button strip ---- */
 /* The shared gold-on-black button, laid out as a wrapping row rather than the
@@ -25414,10 +25818,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #qb-sub { font-size: 1.208rem; opacity: 0.85; }
 #qb-hint { margin-left: auto; font-size: 1.08rem; opacity: 0.72; }
 #qb-tabs { position: relative; z-index: 1; display: flex; gap: 10px; padding: 10px 34px 0; }
-.qb-tab { padding: 8px 30px 9px; font-size: 1.208rem; font-weight: bold; cursor: pointer;
-  color: #f5ebd0; background: #5d3a1c; border: 2px solid #2b1008; border-bottom: none;
-  border-radius: 10px 10px 0 0; box-shadow: 0 -2px 6px rgba(0,0,0,0.35); opacity: 0.75; }
-.qb-tab.active { background: #7a4d24; opacity: 1; transform: translateY(1px); }
+/* The rail and the buttons are the shared stamps at the foot of this file. */
 #qb-cards { position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; overflow-y: auto;
   display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center;
   gap: 30px 34px; padding: 34px 40px 44px;
@@ -25463,15 +25864,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .qb-status.claimable { color: #1f6b2f; }
 .qb-status.active { color: #1f4e79; }
 .qb-btnrow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-.qb-btn { padding: 6px 18px; font-size: 1.056rem; font-weight: bold; cursor: pointer;
-  background: #5d3a1c; color: #f5ebd0; border: 1px solid #2b1008; border-radius: 3px; }
-.qb-btn:hover { background: #7a4d24; }
-.qb-btn.claim { background: #2f6b3a; }
-.qb-btn.claim:hover { background: #3d8a4b; }
-.qb-btn.danger { background: var(--bg-danger-plate); }
-.qb-btn.danger:hover { background: #97303e; }
-.qb-btn.map { background: #1f4e79; }
-.qb-btn.map:hover { background: #2b6aa3; }
 /* The contract parchment is read, not glanced at, so it takes the whole screen:
    a full-bleed sheet with the text held in a centred reading column. */
 #qb-detail-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh;
@@ -25953,16 +26345,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.62);
+    background: var(--modal-scrim);
     z-index: 12;
 }
 #diary-container .diary-write {
     width: min(620px, 76%);
     padding: 20px 22px;
-    background: var(--bg-black-translucent-92);
-    border: 1px solid var(--border-gold-amber);
-    border-radius: 5px;
-    box-shadow: 0 18px 48px var(--shadow-heavy);
 }
 #diary-container .diary-write-title {
     margin-bottom: 12px;
@@ -26386,7 +26774,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #cs-mini .cs-title, #hv-mini .cs-title { font-size:29px; font-weight:700; color: var(--text-primary-hover);
     letter-spacing:0.3px; text-shadow:0 1px 2px rgba(0,0,0,0.6); }
 #cs-mini .cs-tabs { display:flex; gap:6px; padding:12px 15px 0; }
-#cs-mini .cs-tab { flex:1; text-align:center; padding:11px 0; font-size:23px; font-weight:600; cursor:pointer;
+#cs-mini .cs-tab { text-align:center; padding:11px 0; font-size:23px; font-weight:600; cursor:pointer;
     opacity:0.62; border-bottom:3px solid transparent; }
 #cs-mini .cs-tab:hover { opacity:0.92; }
 #cs-mini .cs-tab.active { opacity:1; border-bottom-color: var(--text-primary-hover); color: var(--text-primary-hover); }
@@ -26472,7 +26860,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #cs-mini .cs-qty-btn.selected { background: var(--chip-active-bg); color:var(--chip-active-fg); font-weight:700; }
 #hv-mini .cs-actbar { display:flex; gap:12px; padding:14px 17px; border-top:1px solid rgba(255,255,255,0.1);
     flex-wrap:wrap; }
-#hv-mini .cs-actbtn { flex:0 1 auto; min-width:144px; text-align:center; padding:12px 15px; font-size:23px;
+#hv-mini .cs-actbtn { flex:0 1 auto; text-align:center; padding:12px 15px; font-size:23px;
     font-weight:600; border-radius:8px; cursor:pointer; background:rgba(255,255,255,0.07); }
 #hv-mini .cs-actbtn:hover { background:rgba(255,255,255,0.12); }
 #hv-mini .cs-actbtn.selected { background: var(--chip-active-bg); color:var(--chip-active-fg); }
@@ -26980,7 +27368,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-bottom: 12px;
 }
 .re-tab {
-    flex: 1;
     text-align: center;
     padding: 7px 10px;
     font-family: var(--font-ui);
@@ -27019,7 +27406,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .save-modal-overlay {
     position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1200;
     display: flex; align-items: center; justify-content: center;
-    background: var(--shadow-black-translucent-55);
+    background: var(--modal-scrim);
     font-family: var(--font-ui);
     animation: saveModalFade 0.18s ease-out;
 }
@@ -27049,68 +27436,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-bottom: 22px;
 }
 .save-modal-buttons { display: flex; gap: 12px; justify-content: center; }
-.save-modal-btn { min-width: 110px; }
-/* --------------------------------------------------------------------------
-   THE ONE MODAL LOOK
-   Every confirmation window in the game wears this: the theme's panel ground,
-   no frame, one soft drop shadow, and the shared button strip. A modal that
-   paints its own border or its own browns reads as a different game, so none
-   of them do it any more.
-   -------------------------------------------------------------------------- */
-.save-modal,
-.cc-modal,
-.army-dialog,
-.quantity-box {
-    border: none;
-    border-radius: 6px;
-    background: var(--bg-panel);
-    box-shadow: 0 18px 50px var(--shadow-black-translucent-55);
-    color: var(--text-success-active);
-    font-family: var(--font-ui);
-}
+/* The one modal look lives at the foot of this file; nothing paints a modal
+   here any more. */
 
-/* One button, whatever the modal calls it. Matches .inspect-btn so a
-   confirmation reads as the same furniture as the card that opened it. */
-.save-modal-btn,
-.army-dialog-btn,
-.cc-modal-actions .cc-sidebar-btn {
-    font-family: var(--font-ui);
-    font-size: 1.048em;
-    font-weight: bold;
-    text-align: center;
-    padding: 8px 20px;
-    border-radius: 4px;
-    border: 2px solid var(--text-primary-hover);
-    background: var(--bg-secondary-hover);
-    color: var(--text-primary-hover);
-    cursor: pointer;
-    user-select: none;
-    box-sizing: border-box;
-    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
-}
-
-.save-modal-btn.danger {
-    border-color: var(--border-danger-active);
-    color: var(--text-text-alt-10);
-    background: var(--bg-secondary-hover);
-}
-
-.save-modal-btn:hover,
-.save-modal-btn.focused,
-.save-modal-btn.selected,
-.army-dialog-btn:hover,
-.army-dialog-btn.focused,
-.army-dialog-btn.selected,
-.cc-modal-actions .cc-sidebar-btn:hover,
-.cc-modal-actions .cc-sidebar-btn.focused,
-.cc-modal-actions .cc-sidebar-btn.selected {
-    background: var(--chip-active-bg);
-    color: var(--chip-active-fg);
-    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
-}
-
-
-/* ==========================================================================
+ ==========================================================================
    FORGOTTEN GRIMOIRE (ItemSystem/ForgottenGrimoire.js)
    --------------------------------------------------------------------------
    The spell-draw page, scoped to #menu-container. Was injected as
@@ -28202,6 +28531,44 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .news-search-label {
     width: 100%;
     text-align: center;
+}
+
+/* The two shelves of the archive, and the switch that decides whether the
+   news interrupts the game at all. */
+.news-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-family: var(--font-ui);
+    font-size: 1.125rem;
+    user-select: none;
+}
+
+.news-tab {
+    padding: 4px 10px;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    background: var(--bg-subtle-translucent-5);
+    letter-spacing: 1px;
+}
+
+.news-tab.selected {
+    background: var(--bg-subtle-translucent-10);
+    border-color: var(--text-primary-hover);
+}
+
+.news-alert-toggle {
+    margin-left: auto;
+    padding: 4px 10px;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.news-alert-toggle.off {
+    opacity: 0.65;
+    color: var(--text-card-medium);
 }
 
 /* Month navigator */
@@ -29495,23 +29862,37 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    ========================================================================== */
 
 .vrep-portrait {
-    width: 150px;
-    height: 150px;
-    margin: 18px auto 12px;
+    width: 300px;
+    height: 300px;
+    margin: 12px auto;
     border: 1px solid var(--border-primary-hover-translucent-15);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    flex: 1 1 auto;
-    max-height: 150px;
+    flex: 0 1 auto;
+    max-height: 300px;
+}
+
+.vrep-portrait canvas {
+    width: 100%;
+    height: 100%;
 }
 
 .vrep-desc {
     text-align: center;
     max-width: 68ch;
     margin: 0 auto 12px;
+    /* The lore plate belongs to the backpack's inspector; here the description
+       is one line of prose under the portrait, so it takes no frame and no
+       ground of its own and never grows to eat the page. */
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    flex: 0 0 auto;
+    overflow: visible;
 }
 
 /* Operational or broken, in the one gauge scale the rest of the game reads:
@@ -29533,16 +29914,26 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--text-card-medium);
 }
 
-.vrep-flash {
-    text-align: center;
-    font-weight: bold;
-    font-size: var(--fs-body);
-    padding: 4px 0;
-}
-
 .vrep-panel {
     flex-direction: column;
+    /* .ui-detail is a full-height column, which under the tab strip means a
+       full page starting below it: the action buttons then hung past the foot
+       of the leaf and sat on top of the last readings. The panel takes what
+       the strip leaves instead. */
+    flex: 1 1 auto;
+    height: auto;
     min-height: 0;
+    overflow: hidden;
+}
+
+/* The registry scrolls; the buttons under it keep their own room. */
+.vrep-panel .ui-list {
+    overflow-y: auto;
+}
+
+.vrep-panel .inspect-actions {
+    flex: 0 0 auto;
+    padding-top: 10px;
 }
 
 /* The condition meter under a component's name. Same trough and same band
@@ -29562,9 +29953,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     border-radius: 2px;
 }
 
+/* The chip says the part is one the vehicle cannot run without, not that
+   it is in a bad way: it takes the label ink, never the alarm red. */
 .vrep-critical-chip {
     margin-left: 6px;
-    color: var(--gauge-bad);
+    color: var(--text-detail-label);
 }
 
 .vrep-btn-label {
@@ -29684,7 +30077,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .ui-panel-actions .inspect-btn {
-    min-width: 180px;
 }
 
 /* The way out of the panel, set apart from the two real choices. */
@@ -31725,9 +32117,17 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .roster-past-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 12px;
     border-bottom: none;
     padding-bottom: 10px;
+}
+
+.roster-past-text {
+    flex: 1;
+    min-width: 0;
 }
 
 /* A former member's name: a heading, so no colour of its own. */
@@ -32467,6 +32867,37 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     gap: 4px 8px;
 }
 
+/* In the catalogue every entry is a card: the name and price on top, the
+   sockets it fits along the bottom. */
+.aug-grid .augment-09 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    border: 1px solid var(--border-subtle);
+}
+
+.aug-grid .augment-10 {
+    gap: 2px;
+}
+
+.aug-sockets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 3px;
+}
+
+.aug-socket-chip {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: var(--bg-primary-hover-translucent-35);
+    color: var(--text-success-active);
+    white-space: nowrap;
+}
+
 .augment-04 {
     display: flex;
     flex-direction: column;
@@ -32683,6 +33114,31 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--text-detail-label);
     margin-top: 3px;
 }
+/* The one button that empties the unspent-point purse, on the detail card. */
+.spec-spend-button {
+    display: block;
+    width: 100%;
+    margin-top: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    font-family: inherit;
+    font-size: var(--fs-detail-body);
+    color: var(--text-detail-heading);
+    background: var(--bg-primary-hover-translucent-35);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.spec-spend-button:hover:not(:disabled) {
+    color: var(--text-primary-hover);
+    background: var(--bg-primary-hover-translucent-10);
+}
+
+.spec-spend-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
 
 /* ==========================================================================
    Army recruitment (js/plugins/Army/ArmyManager.js)
@@ -33822,7 +34278,19 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    every other .army-dialog popup keeps its own styling.
    ========================================================================== */
 
+/* The rest popup is pinned to the viewport itself, so a list long enough to
+   run past the bottom of the screen still sits in the middle of it rather
+   than being pushed off to one side by the overlay own overflow. */
+#sleep-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
 #sleep-menu-overlay .army-dialog {
+    margin: auto;
     background: var(--text-danger-hover);
     background-image: radial-gradient(ellipse at center, transparent 40%, var(--bg-brown-vignette-10) 100%);
     border: 3px solid var(--border-subtle);
@@ -33866,9 +34334,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--accent-orange);
 }
 
+/* The picked hour is marked by its frame alone: no filled band behind the
+   row, so the list reads as ink on the same parchment all the way down. */
 #sleep-menu-overlay .army-dialog-btn.selected,
 #sleep-menu-overlay .army-dialog-btn:hover {
-    background: rgba(255, 204, 102, 0.12);
+    background: none;
     border-color: var(--accent-orange);
     color: var(--accent-orange);
     box-shadow: none;
@@ -34431,6 +34901,77 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    buttons beside them keep doing their own jobs. */
 .dyn-pick {
     cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   Where a reserve lives: the sheet the Dynamics board opens over itself. Every
+   place the party holds is a button on it, so a pad walks one column and the
+   mouse clicks the same rows. No inset shorthand: it collapses full-screen
+   overlays in the runtime.
+   --------------------------------------------------------------------------- */
+.lodging-modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1300;
+}
+
+.lodging-modal-sheet {
+    min-width: 320px;
+    max-width: 60%;
+    max-height: 70%;
+    overflow-y: auto;
+    padding: 16px 18px;
+    border: 1px solid var(--text-text-alt-4);
+    border-radius: 6px;
+    background: linear-gradient(180deg, var(--bg-panel), var(--bg-surface));
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+.lodging-modal-title {
+    font-family: var(--font-ui);
+    font-size: var(--fs-heading);
+    font-weight: bold;
+    color: var(--text-detail-heading);
+    margin: 0 0 10px;
+}
+
+.lodging-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lodging-option {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+}
+
+.lodging-option-note {
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-4);
+}
+
+/* Where they already live is read, not pressed. */
+.lodging-option.is-here {
+    color: var(--text-text-alt-4);
+    cursor: default;
+}
+
+.lodging-modal-close {
+    margin-top: 10px;
+    text-align: center;
 }
 
 /* ---------------------------------------------------------------------------
@@ -35019,6 +35560,21 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .sm-craft-entry .sm-skill-ident { cursor: pointer; }
 .sm-craft-discard { color: var(--text-danger-dark); }
 
+/* The pad walks the finished entries too: the row it is reading, and which of
+   the row's two chips the OK key would press. */
+.sm-craft-entry--cursor {
+    background: var(--bg-primary-hover-translucent-10);
+}
+
+.sm-craft-entry--cursor .sm-skill-badge.selected {
+    border: 1px solid var(--border-focus-hover);
+    color: var(--text-primary-hover);
+}
+
+.sm-craft-entry--cursor .sm-craft-discard.selected {
+    color: var(--text-danger-dark);
+}
+
 /* The field a name, a description or a piece of lore is typed into. It is a
    sheet over the whole book rather than part of a page, because every page of
    the bench is rebuilt on each keystroke and a re-rendered field loses focus. */
@@ -35033,7 +35589,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.62);
+    background: var(--modal-scrim);
     z-index: 40;
 }
 
@@ -35043,10 +35599,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     gap: var(--sp-2);
     width: min(60ch, 80%);
     padding: var(--sp-4);
-    background: var(--bg-black-translucent-92);
-    border: 1px solid var(--border-gold-amber);
-    border-radius: 6px;
-    font-family: var(--font-ui);
 }
 
 .sm-craft-write-title {
@@ -35110,6 +35662,23 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     overflow-y: auto;
     padding-right: var(--sp-2);
     min-height: 60px;
+}
+
+/* The enchanting bench: the rule it works under, and the piece it is working
+   on. Everything else on that spread wears the forge's own classes. */
+.sm-enchant-blurb {
+    font-size: var(--fs-caption);
+    font-style: italic;
+    opacity: 0.8;
+    margin-bottom: var(--sp-2);
+    line-height: 1.35;
+}
+
+.sm-enchant-target {
+    font-size: var(--fs-body);
+    margin-bottom: var(--sp-2);
+    padding-bottom: var(--sp-1);
+    border-bottom: 1px solid var(--ink-alt);
 }
 
 .sm-candidate-list,
@@ -36093,6 +36662,15 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc-badge-good { color: var(--text-forest-green); }
 .cc-badge-bad  { color: var(--accent-red-3); }
 
+/* Stat deltas read as plain coloured figures: the plate and the rule around
+   every one of them turned a row of numbers into a row of buttons. */
+.cc-element-badge.cc-badge-good,
+.cc-element-badge.cc-badge-bad {
+    border: none;
+    background: none;
+    box-shadow: none;
+}
+
 .cc-grant-note {
     font-size: var(--fs-caption);
     color: var(--text-text-alt-2);
@@ -36601,7 +37179,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     display: none;
     align-items: center;
     justify-content: center;
-    background: var(--shadow-black-translucent-55);
+    background: var(--modal-scrim);
 }
 
 .cc3d-modal.open { display: flex; }
@@ -36612,9 +37190,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     height: 78%;
     display: flex;
     flex-direction: column;
-    background: var(--gradient-1);
-    border: 2px solid var(--border-primary-hover-translucent-15);
-    border-radius: 10px;
     padding: 14px 16px;
     box-sizing: border-box;
 }
@@ -36900,7 +37475,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc-gal-actions .inspect-btn {
     flex: 0 0 auto;
     width: auto;
-    min-width: 180px;
 }
 
 .cc-gal-panel .page-header-bar {
@@ -38759,11 +39333,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 /* The dial: a row of frequency ticks under each band's name. */
+/* The row is inset past the band name on the left and kept off the cabinet's
+   right edge: the first and last figures are hung inwards so nothing on the
+   scale falls outside the glass. */
 .dial-tick-row {
     position: relative;
-    width: calc(100% - 30px);
+    width: calc(100% - 44px);
     height: 100%;
-    margin-left: 24px;
+    margin-left: 34px;
 }
 
 .dial-tick {
@@ -38771,8 +39348,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     left: var(--ui-at-x, 0);
     transform: translateX(-50%);
     font-size: var(--fs-caption);
+    font-family: monospace;
+    line-height: 1.2;
     color: var(--text-gold-dark);
+    white-space: nowrap;
 }
+
+.dial-tick:first-child { transform: none; }
+.dial-tick:last-child { transform: translateX(-100%); }
 
 .dial-scale-label--fm { color: var(--radio-fm); }
 .dial-scale-label--em { color: var(--radio-hiss); }
@@ -39207,9 +39790,6 @@ select option:hover {
     max-height: 80vh;
     display: flex;
     flex-direction: column;
-    background: var(--bg-panel);
-    border: 1px solid var(--text-primary-hover);
-    border-radius: 6px;
     text-align: left;
 }
 
@@ -39514,11 +40094,15 @@ select option:hover {
 .pgrow-val.bad, .pgrow-val.crop--dormant { color: var(--text-text-alt-25); }
 .pgrow-note { font-size: var(--fs-caption); color: var(--text-text-alt-4); }
 
-.pgrow-actions, .pgrow-seedlist { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-1); }
-.pgrow-btn { display: flex; align-items: center; gap: var(--sp-2); cursor: pointer;
-    padding: var(--sp-2) var(--sp-3); border: 1px solid transparent; border-radius: 4px;
-    font-size: var(--fs-body); font-weight: 600; color: var(--text-text-alt-4); }
-.pgrow-btn:hover, .pgrow-btn.selected { color: var(--text-primary-hover); border-color: var(--text-primary-hover); }
+.pgrow-seedlist { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-1); }
+.pgrow-actions { display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch; gap: var(--sp-2); }
+.pgrow-btn { display: flex; align-items: center; justify-content: center; gap: var(--sp-2); cursor: pointer;
+    font-family: var(--font-ui); font-size: 1.142em; font-weight: bold;
+    padding: 9px 14px; border: 1px solid var(--border-muted-focus); border-radius: 4px;
+    background: var(--bg-backdrop); color: var(--text-muted-hover); text-align: center;
+    transition: 0.2s ease; transition-property: background-color, border-color, color, box-shadow, opacity; }
+.pgrow-btn:hover, .pgrow-btn.selected { background: var(--bg-bg-alt-21-hover);
+    color: var(--text-primary-hover); border-color: var(--text-primary-hover); }
 .pgrow-btn.disabled { opacity: 0.45; pointer-events: none; }
 
 .pgrow-seed { display: flex; align-items: center; gap: var(--sp-2); cursor: pointer;
@@ -39668,6 +40252,88 @@ select option:hover {
 
 #pad-tips .pad-tip-label {
     letter-spacing: 0.02em;
+}
+
+/* The letter sheet: how a pad types. Drawn by the controller layer
+   (Core/ControllerSystem.js) over whatever screen asked for words, and the only
+   thing on screen while it is up. */
+#pad-text {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--modal-scrim);
+    z-index: 13000;
+}
+
+#pad-text .pad-text-sheet {
+    padding: var(--sp-4);
+    text-align: center;
+    font-family: var(--font-ui);
+    color: var(--modal-fg);
+    background: var(--modal-bg);
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+}
+
+#pad-text .pad-text-title {
+    margin-bottom: var(--sp-2);
+    text-transform: uppercase;
+    color: var(--text-primary-hover);
+}
+
+#pad-text .pad-text-value {
+    min-height: 1.6em;
+    min-width: 30ch;
+    padding: var(--sp-2);
+    word-break: break-word;
+    background: var(--shadow-primary-hover-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+}
+
+#pad-text .pad-text-caret {
+    opacity: 0.6;
+}
+
+#pad-text .pad-text-count {
+    margin: 4px 0 var(--sp-2);
+    font-size: var(--fs-caption);
+}
+
+#pad-text .pad-text-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+#pad-text .pad-text-key {
+    min-width: 34px;
+    padding: 6px 8px;
+    font-family: monospace;
+    font-size: var(--fs-body);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 3px;
+}
+
+#pad-text .pad-text-key--act {
+    min-width: 64px;
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+}
+
+/* The one under the cursor, which is the whole of the cursor: there is no
+   pointer on this sheet. */
+#pad-text .pad-text-key.on {
+    color: var(--text-primary-hover);
+    background: var(--bg-focus-hover-translucent-15);
+    border-color: var(--border-primary-hover-translucent-15);
 }
 
 /* The search field is a keyboard control: there is no way to type a query on a
@@ -40178,3 +40844,824 @@ body.pad-input .kb-only {
     padding: 12px 18px;
     flex-shrink: 0;
 }
+
+
+/* ==========================================================================
+   THE ONE BUTTON STAMP AND THE ONE TAB STAMP
+   --------------------------------------------------------------------------
+   The backpack's button (.inspect-btn) and the backpack's tab rail
+   (.backpack-tab) are the only two shapes a labelled control wears in the main
+   UI. Every screen that used to draw its own - the quest board in its browns,
+   the arena in its inverted plate, the five different ways back, the alchemy
+   bench, the tech tree, the bank, the radio, the mail room - is folded into
+   them here rather than at each of the fifty call sites, so the look is stated
+   once and the older rules above simply lose on source order.
+
+   Three rules hold, and they are the whole of it:
+
+     1. A button is the gold frame on the dark page: 2px border, radius 4,
+        bold UI face, the shared hover that fills the frame.
+     2. A button is exactly as wide as its words. No min-width, no flex:1, no
+        width:100% - it hugs its label and stops.
+     3. Buttons of a set sit side by side on one row, wrapping only when the
+        page runs out, never stacked into a column.
+
+   Icon-shaped controls are deliberately not in here: a quantity stepper, a
+   round close cross, the dice roll, the map's zoom pair and the paperdoll's
+   slot cross are marks, not labelled actions, and keep their own size.
+
+   Minigames, the card game, GalaxySim and everything inside HypernetOS are
+   out of scope by design: they wear their own skins and are styled from
+   hypernet.css and their own blocks.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. The stamp itself, worn by every labelled action in the main UI.
+   -------------------------------------------------------------------------- */
+.action-btn,
+#mp-container .action-btn,
+#mp-lan-container .action-btn,
+#mp-type-container .action-btn,
+.apiary-action-btn,
+.tt-research-btn,
+.tt-project-btn,
+.bs-btn,
+#arena-ui-container .arena-action-btn,
+.bank-tier-btn,
+.spellforge-button,
+.travel-edit-btn,
+.btn,
+#hardcore-gameover-container .hgo-button,
+.qb-btn,
+#cs-mini .cs-qty-btn,
+#hv-mini .cs-actbtn,
+.back-button,
+.back-btn,
+.inventory-back-btn,
+#equip-container .back-button,
+#equip-container .paperdoll-back-btn,
+#equip-container .equip-action-btn,
+.shop-back-btn,
+.calligraphy-btn,
+.transmute-btn,
+.sm-craft-write-btn,
+#diary-container .diary-write-btns button,
+.npc-dlg-send-btn,
+.npc-dlg-action-btn,
+.prison-timer-sleep-btn,
+.target-option {
+    font-family: var(--font-ui);
+    font-size: 1.048em;
+    font-weight: bold;
+    text-align: center;
+    text-transform: none;
+    letter-spacing: normal;
+    background: var(--bg-secondary-hover);
+    background-image: none;
+    border: 2px solid var(--text-primary-hover);
+    color: var(--text-primary-hover);
+    padding: 8px 20px;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
+    cursor: pointer;
+    box-sizing: border-box;
+    user-select: none;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
+}
+
+/* --------------------------------------------------------------------------
+   2. As wide as the words and no wider. The measures the old rules carried
+      (min-width:180px, flex:1, width:100%) are undone here for the shared
+      button as well, so a two-letter label is a two-letter button.
+   -------------------------------------------------------------------------- */
+.inspect-btn,
+.army-dialog-btn,
+.save-modal-btn,
+.cc-modal-actions .cc-sidebar-btn,
+.ui-panel-actions .inspect-btn,
+.travel-confirm-actions .inspect-btn,
+.cc-gal-actions .inspect-btn,
+.inspect-actions--row .inspect-btn,
+.action-btn,
+#mp-container .action-btn,
+#mp-lan-container .action-btn,
+#mp-type-container .action-btn,
+.apiary-action-btn,
+.tt-research-btn,
+.tt-project-btn,
+.bs-btn,
+#arena-ui-container .arena-action-btn,
+.bank-tier-btn,
+.spellforge-button,
+.travel-edit-btn,
+.btn,
+#hardcore-gameover-container .hgo-button,
+.qb-btn,
+#cs-mini .cs-qty-btn,
+#hv-mini .cs-actbtn,
+.back-button,
+.back-btn,
+.inventory-back-btn,
+#equip-container .back-button,
+#equip-container .paperdoll-back-btn,
+#equip-container .equip-action-btn,
+.shop-back-btn,
+.calligraphy-btn,
+.transmute-btn,
+.sm-craft-write-btn,
+#diary-container .diary-write-btns button,
+.npc-dlg-send-btn,
+.npc-dlg-action-btn,
+.prison-timer-sleep-btn,
+.target-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   3. Under the pointer, and under the pad's cursor: the frame fills. One
+      state for both, as everywhere else.
+   -------------------------------------------------------------------------- */
+.action-btn:hover,
+.action-btn.selected,
+.action-btn.active,
+.action-btn:focus-visible,
+#mp-container .action-btn:hover,
+#mp-lan-container .action-btn:hover,
+#mp-type-container .action-btn:hover,
+.apiary-action-btn:hover,
+.apiary-action-btn.selected,
+.tt-research-btn:hover,
+.tt-research-btn.selected,
+.tt-project-btn:hover,
+.tt-project-btn.selected,
+.tt-project-btn--active,
+.bs-btn:hover,
+.bs-btn.selected,
+#arena-ui-container .arena-action-btn:hover,
+#arena-ui-container .arena-action-btn.selected,
+.bank-tier-btn:hover,
+.bank-tier-btn.selected,
+.bank-tier-btn.active,
+.spellforge-button:hover,
+.spellforge-button.selected,
+.travel-edit-btn:hover,
+.travel-edit-btn.selected,
+.btn:hover,
+.btn.selected,
+#hardcore-gameover-container .hgo-button:hover,
+.qb-btn:hover,
+.qb-btn.selected,
+#cs-mini .cs-qty-btn:hover,
+#cs-mini .cs-qty-btn.selected,
+#hv-mini .cs-actbtn:hover,
+#hv-mini .cs-actbtn.selected,
+.back-button:hover,
+.back-button.selected,
+.back-btn:hover,
+.back-btn.selected,
+.inventory-back-btn:hover,
+.inventory-back-btn.selected,
+#equip-container .back-button:hover,
+#equip-container .paperdoll-back-btn:hover,
+#equip-container .equip-action-btn:hover,
+#equip-container .equip-action-btn.selected,
+.shop-back-btn:hover,
+.shop-back-btn.selected,
+.calligraphy-btn:hover,
+.calligraphy-btn.selected,
+.transmute-btn.enabled:hover,
+.sm-craft-write-btn:hover,
+#diary-container .diary-write-btns button:hover,
+.npc-dlg-send-btn:hover,
+.npc-dlg-action-btn:hover,
+.npc-dlg-action-btn.selected,
+.prison-timer-sleep-btn:hover,
+.target-option:hover,
+.target-option.selected {
+    background: var(--chip-active-bg);
+    background-image: none;
+    border-color: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+}
+
+/* --------------------------------------------------------------------------
+   4. What a button MEANS is said by its ink, never by a second shape. These
+      are the only three variants: the way out, the destructive one, and the
+      one that cannot be pressed.
+   -------------------------------------------------------------------------- */
+.action-btn.cancel,
+.qb-btn.map,
+.target-option--special {
+    border-color: var(--border-focus-hover);
+    color: var(--border-focus-hover);
+    background: var(--bg-secondary-hover);
+}
+
+.action-btn.danger,
+.qb-btn.danger,
+#hv-mini .cs-actbtn.danger {
+    border-color: var(--border-danger-active);
+    color: var(--text-text-alt-10);
+    background: var(--bg-secondary-hover);
+}
+
+.transmute-btn.disabled,
+.tt-research-btn:disabled,
+.btn:disabled,
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. Side by side, always. Every strip of buttons in the main UI is a row
+      that wraps; none of them is a column. .inspect-actions was the last
+      column left and it is the one the cooking bench, the alchemy bench and
+      the item card all hang their choices in.
+   -------------------------------------------------------------------------- */
+.inspect-actions,
+.inspect-actions--row,
+.army-dialog-buttons,
+.apiary-actions,
+.quantity-actions,
+.selection-actions,
+.detail-actions-row,
+#equip-container .detail-actions-row,
+.ui-panel-actions,
+.wm-list-actions,
+.sm-forge-actions,
+.sm-magic-actions,
+.sm-anim-actions,
+.sm-rewrite-actions,
+.travel-confirm-actions,
+.travel-arrival-options,
+.wm-modal-buttons,
+.cc-gal-actions,
+.cc-modal-actions,
+.inspect-medicine-info,
+.target-options,
+.target-overlay .target-options,
+#diary-container .diary-write-btns,
+.npc-dlg-actions,
+.tt-project-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-3, 8px);
+}
+
+/* A button in a row no longer needs the margin that held it off the one above
+   it when these were columns. */
+.inspect-actions > .inspect-btn,
+.inspect-actions > .action-btn,
+.army-dialog-buttons > .army-dialog-btn,
+.apiary-actions > .apiary-action-btn,
+.target-options > .target-option,
+.target-overlay .inspect-btn.target-cancel {
+    margin-top: 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. The tab rail. Every rail in the main UI is the backpack's rail: a word
+      on the page, framed in gold only when it is the chosen one, so nothing
+      shifts as the choice moves along the row.
+   -------------------------------------------------------------------------- */
+.tab-btn,
+.skill-tab,
+.tab-item,
+.category-tab,
+.category-tab-top,
+.roster-tab,
+.shop-tab,
+.right-tools-tab,
+.fbuild-toptab-opt,
+#equip-container .equip-type-tab,
+.npc-tab,
+.tt-tab,
+.re-tab,
+.mail-tab,
+.qb-tab,
+#gsv-root .gsv-tab,
+#cs-mini .cs-tab {
+    font-family: var(--font-ui);
+    font-size: 0.964em;
+    font-weight: bold;
+    color: var(--text-primary-hover);
+    background: transparent;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 4px 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: auto;
+    min-width: 0;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    box-shadow: none;
+    text-transform: none;
+    transition: 0.2s ease; transition-property: background-color, background-image, background-position, border-color, border-radius, border-width, box-shadow, color, filter, letter-spacing, opacity, outline-color, transform, width, height, max-height, min-height, padding, margin, top, left, right, bottom;
+}
+
+.tab-btn:hover,
+.skill-tab:hover,
+.tab-item:hover,
+.category-tab:hover,
+.category-tab-top:hover,
+.roster-tab:hover,
+.shop-tab:hover,
+.right-tools-tab:hover,
+.fbuild-toptab-opt:hover,
+#equip-container .equip-type-tab:hover,
+.npc-tab:hover,
+.tt-tab:hover,
+.re-tab:hover,
+.mail-tab:hover,
+.qb-tab:hover,
+#gsv-root .gsv-tab:hover,
+#cs-mini .cs-tab:hover {
+    color: var(--text-primary-hover);
+    background: transparent;
+}
+
+.tab-btn.active, .tab-btn.selected,
+.skill-tab.active, .skill-tab.selected,
+.tab-item.active, .tab-item.selected,
+.category-tab.active, .category-tab.selected,
+.category-tab-top.active, .category-tab-top.selected,
+.roster-tab.active, .roster-tab.selected,
+.shop-tab.active, .shop-tab.selected,
+.right-tools-tab.active, .right-tools-tab.selected,
+.fbuild-toptab-opt.active, .fbuild-toptab-opt.selected,
+#equip-container .equip-type-tab.active,
+#equip-container .equip-type-tab.selected,
+.npc-tab.active, .npc-tab.selected,
+.tt-tab.active, .tt-tab.selected,
+.re-tab--active, .re-tab.active, .re-tab.selected,
+.mail-tab.active, .mail-tab.selected,
+.qb-tab.active, .qb-tab.selected,
+#gsv-root .gsv-tab.gsv-active,
+#cs-mini .cs-tab.active, #cs-mini .cs-tab.selected {
+    background: transparent;
+    background-image: none;
+    color: var(--text-primary-hover) !important;
+    border-color: var(--text-primary-hover);
+}
+
+/* A rail is a row of words with air under it, never a column and never a
+   ruled-off band. */
+.tab-row,
+.tabs,
+.skill-tabs,
+.category-tabs,
+.category-tabs-top,
+.roster-tabs,
+.shop-tabs,
+.mail-tab-row,
+.npc-tab-bar,
+.tt-tabs,
+.re-tabs,
+#qb-tabs,
+#cs-mini .cs-tabs,
+#gsv-root .gsv-tabs,
+#equip-container .equip-type-tabs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    border-bottom: none;
+}
+
+
+/* ==========================================================================
+   THE ONE MODAL LOOK -- the whole authority
+   --------------------------------------------------------------------------
+   Every confirmation window, prompt, quantity box and write sheet in the game
+   is painted here and nowhere else: the theme ground, no frame, one soft drop
+   shadow, one scrim, one button. A family above may set its own size, place
+   and flow; it must not set its own ground, frame, radius or shadow.
+   Last in the file so it beats the family blocks, id-scoped ones included.
+   HypernetOS windows and the minigame carts are deliberately out of scope:
+   they wear their own chrome by design.
+   ========================================================================== */
+
+/* The scrim. One value, whether it covers the screen or just a spread. */
+#ts-prompt,
+.cc-modal-veil,
+.army-dialog-overlay,
+.radio-modal,
+.modal-overlay,
+.save-modal-overlay,
+.cc3d-modal,
+.ui-overlay.travel-custom-modal,
+#diary-container .diary-write-backdrop,
+.sm-craft-write-backdrop {
+    background: var(--modal-scrim);
+}
+
+/* The sheet. */
+.save-modal,
+.cc-modal,
+.army-dialog,
+.quantity-box,
+.ts-prompt-box,
+.radio-modal-panel,
+.cc3d-modal-card,
+.medicine-info-dialog,
+.ui-panel.travel-custom-box,
+.target-overlay,
+#world-manage-container .wm-modal,
+#world-manage-container .wm-create-modal,
+#diary-container .diary-write,
+.sm-craft-write {
+    border: var(--modal-border);
+    border-radius: var(--modal-radius);
+    background: var(--modal-bg);
+    box-shadow: var(--modal-shadow);
+    color: var(--modal-fg);
+    font-family: var(--font-ui);
+}
+
+/* The heading of the sheet. */
+.save-modal-title,
+.cc-modal-title,
+.army-dialog h3,
+.quantity-title,
+.ts-prompt-title,
+.radio-modal-title,
+.cc3d-modal-title,
+.target-title,
+#world-manage-container .wm-modal-title,
+#diary-container .diary-write-title,
+.sm-craft-write-title {
+    color: var(--text-primary-hover);
+    font-family: var(--font-ui);
+}
+
+/* The button strip. */
+.save-modal-buttons,
+.army-dialog-buttons,
+.cc-modal-actions,
+.radio-modal-buttons,
+#diary-container .diary-write-btns,
+.sm-craft-write-btns {
+    display: flex;
+    gap: var(--modal-gap);
+}
+
+/* One button, whatever the modal calls it. Matches .inspect-btn so a
+   confirmation reads as the same furniture as the card that opened it. */
+.save-modal-btn,
+.army-dialog-btn,
+.sm-craft-write-btn,
+.radio-modal-buttons .utility-btn,
+.cc-modal-actions .cc-sidebar-btn,
+#diary-container .diary-write-btns button {
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 22px;
+    min-height: 44px;
+    border-radius: 4px;
+    border: 2px solid var(--text-primary-hover);
+    background: var(--bg-secondary-hover);
+    color: var(--text-primary-hover);
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: normal;
+    text-transform: none;
+    box-sizing: border-box;
+    transition: 0.2s ease; transition-property: background-color, border-color, box-shadow, color, transform;
+}
+
+.save-modal-btn:hover,
+.save-modal-btn.focused,
+.save-modal-btn.selected,
+.army-dialog-btn:hover,
+.army-dialog-btn.focused,
+.army-dialog-btn.selected,
+.sm-craft-write-btn:hover,
+.sm-craft-write-btn.focused,
+.radio-modal-buttons .utility-btn:hover,
+.radio-modal-buttons .utility-btn.focused,
+.cc-modal-actions .cc-sidebar-btn:hover,
+.cc-modal-actions .cc-sidebar-btn.focused,
+.cc-modal-actions .cc-sidebar-btn.selected,
+#diary-container .diary-write-btns button:hover,
+#diary-container .diary-write-btns button.focused {
+    background: var(--chip-active-bg);
+    color: var(--chip-active-fg);
+    box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+}
+
+/* The one refusal: a press that destroys something wears the danger frame. */
+.save-modal-btn.danger,
+.army-dialog-btn.danger {
+    border-color: var(--border-danger-active);
+    color: var(--text-text-alt-10);
+    background: var(--bg-secondary-hover);
+}
+
+/* The save press of the grimorie sheet: the gold plate, the one affirmative. */
+#diary-container .diary-write-btns button.diary-write-save {
+    background: var(--chip-active-bg) !important;
+    border-color: var(--text-primary-hover) !important;
+    color: var(--chip-active-fg) !important;
+}
+
+
+/* ==========================================================================
+   THE WORLD SHEET (Map/WorldMap.js)
+   --------------------------------------------------------------------------
+   The furniture around the fullscreen chart: the zoom bar the mouse drags,
+   the country picker, the readout that follows the pointer's square, and the
+   box a note is written in. It floats OVER the canvas, so the chart itself
+   keeps its pan and its zoom while these stay put.
+
+   Only the interactive panels take the pointer. The readout and the hint are
+   labels, and a label that swallowed a click would eat the very square it was
+   describing.
+   ========================================================================== */
+
+#worldmap-chrome {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 80;
+    font-family: var(--font-ui);
+}
+
+#worldmap-chrome .wm-chrome-panel {
+    position: absolute;
+    box-sizing: border-box;
+    background: var(--bg-panel);
+    border: 2px solid var(--text-primary-hover);
+    border-radius: 6px;
+    box-shadow: 0 6px 20px var(--shadow-black-translucent-55);
+    color: var(--text-muted-hover);
+    padding: var(--sp-3) var(--sp-4);
+}
+
+#worldmap-chrome .wm-chrome-title {
+    color: var(--text-primary-hover);
+    font-size: var(--fs-caption);
+    margin-bottom: var(--sp-2);
+}
+
+/* -- The country picker, top left ---------------------------------------- */
+
+#worldmap-chrome .wm-country-box {
+    top: var(--sp-5);
+    left: var(--sp-5);
+    pointer-events: auto;
+}
+
+#worldmap-chrome .wm-country-select {
+    font-family: var(--font-ui);
+    font-size: var(--fs-label);
+    color: var(--text-muted-hover);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px;
+    padding: 2px var(--sp-2);
+    min-width: 200px;
+}
+
+/* -- The zoom bar, down the right edge ------------------------------------ */
+
+#worldmap-chrome .wm-zoom-box {
+    top: 50%;
+    right: var(--sp-5);
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    pointer-events: auto;
+}
+
+#worldmap-chrome .wm-zoom-mark {
+    color: var(--text-primary-hover);
+    font-size: var(--fs-label);
+    line-height: 1;
+}
+
+/* Vertical in both spellings: Chromium took the appearance keyword for years
+   and takes the writing mode now, and the game ships on whichever it has. */
+#worldmap-chrome .wm-zoom-bar {
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 18px;
+    height: 220px;
+    accent-color: var(--text-primary-hover);
+    background: transparent;
+}
+
+/* -- The readout, bottom right -------------------------------------------- */
+
+#worldmap-chrome .wm-readout {
+    right: calc(var(--sp-5) + 44px);
+    bottom: var(--sp-5);
+    width: 280px;
+    display: none;
+    text-align: left;
+    font-size: var(--fs-caption);
+}
+
+#worldmap-chrome .wm-read-head {
+    color: var(--text-primary-hover);
+    font-size: var(--fs-label);
+    margin-bottom: var(--sp-2);
+}
+
+#worldmap-chrome .wm-read-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    line-height: 1.5;
+}
+
+#worldmap-chrome .wm-read-label {
+    color: var(--text-text-alt-12);
+    flex: 0 0 auto;
+}
+
+#worldmap-chrome .wm-read-value {
+    text-align: right;
+    min-width: 0;
+}
+
+#worldmap-chrome .wm-read-action {
+    margin-top: var(--sp-2);
+    padding-top: var(--sp-2);
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-primary-hover);
+}
+
+/* -- The standing hint, bottom left --------------------------------------- */
+
+#worldmap-chrome .wm-sheet-hint {
+    left: var(--sp-5);
+    bottom: var(--sp-5);
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-12);
+}
+
+/* -- Writing on a square --------------------------------------------------- */
+
+#wm-note-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-1);
+    z-index: 1000;
+}
+
+.ui-panel.wm-note-box {
+    width: min(520px, 80vw);
+    text-align: center;
+}
+
+.wm-note-place {
+    margin: var(--sp-2) 0 var(--sp-4);
+    color: var(--text-text-alt-12);
+    font-size: var(--fs-caption);
+}
+
+.wm-note-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    color: var(--text-muted-hover);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px;
+    padding: var(--sp-2) var(--sp-3);
+}
+
+.wm-note-actions {
+    margin-top: var(--sp-4);
+}
+
+/* -- Looking at a square before walking onto it --------------------------- */
+/* The square is generated, drawn once and thrown away; this is only the frame
+   the picture is read in. The canvas is transformed rather than resized, so
+   zooming and panning it never touches the picture itself. */
+
+#wm-square-preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--gradient-1);
+    z-index: 1000;
+    font-family: var(--font-ui);
+}
+
+#wm-square-preview .wm-preview-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: grab;
+}
+
+#wm-square-preview .wm-preview-canvas {
+    transform-origin: center center;
+    image-rendering: pixelated;
+    will-change: transform;
+}
+
+#wm-square-preview .wm-preview-loading {
+    color: var(--text-primary-hover);
+    font-size: var(--fs-heading);
+}
+
+#wm-square-preview .wm-preview-bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-3) var(--sp-5);
+    background: var(--bg-panel);
+    border-top: 2px solid var(--text-primary-hover);
+}
+
+#wm-square-preview .wm-preview-title {
+    color: var(--text-primary-hover);
+    font-size: var(--fs-label);
+}
+
+#wm-square-preview .wm-preview-note {
+    flex: 1 1 auto;
+    color: var(--text-text-alt-12);
+    font-size: var(--fs-caption);
+}
+
+/* The one button in the readout. The panel it sits in lets the pointer
+   through, because it is a label; this does not. */
+#worldmap-chrome .wm-show-map {
+    margin-top: var(--sp-3);
+    pointer-events: auto;
+    text-align: center;
+}
+
+/* --- SkillMaster school picker: two equal leaves and one bench rail ------
+   SKILLS and MAGIC are the same subject read twice, so on this view the two
+   pages are the same width instead of 58/42, and the crease moves with them.
+   Every bench button (both pages' worth) hangs in one column down the right
+   edge of the sheet, so neither grid has a row of buttons under it. */
+#menu-container .book-spread.sm-cat-spread { --spine-x: calc((100% - var(--sm-rail-w, 230px)) / 2); }
+#menu-container .book-spread.sm-cat-spread > .left-page,
+#menu-container .book-spread.sm-cat-spread > .right-page {
+    width: calc((100% - var(--sm-rail-w, 230px)) / 2);
+}
+
+.sm-action-rail:empty { display: none; }
+
+.sm-action-rail {
+    width: var(--sm-rail-w, 230px);
+    height: 100%;
+    box-sizing: border-box;
+    padding: 35px 30px 35px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--sp-2);
+    overflow-y: auto;
+}
+
+.sm-action-rail .inspect-btn { width: 100%; text-align: center; }

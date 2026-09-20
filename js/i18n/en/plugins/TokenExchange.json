@@ -1,7 +1,7 @@
 {
   "title": "Token Exchange",
   "banner": "TOKEN EXCHANGE",
-  "tagline": "Arcade currency terminal, no commission",
+  "tagline": "Exchanges euros and arcade tokens without commission.",
   "rate": "1 token = €{price}",
   "atPar": "Buy and sell at par.",
   "wallet": "WALLET",

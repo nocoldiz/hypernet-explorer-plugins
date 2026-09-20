@@ -1,339 +1,1331 @@
 {
   "classSkillCategories": {
-    "1":  { "primary": ["Vocation","Roguery","Swordsmanship"], "secondary": ["MartialArts","Leadership","Bestial"] },
-    "2":  { "primary": ["Arcanism","Cryomancy","ForbiddenMagic"], "secondary": ["HolyMagic","Convokation","Illusion"] },
-    "3":  { "primary": ["HolyMagic","Healing","Alchemistry"], "secondary": ["Arcanism","MetaMagic","Idromancy"] },
-    "4":  { "primary": ["Swordsmanship","MartialArts","Tactical"], "secondary": ["Leadership","Alchemistry","Vocation"] },
-    "5":  { "primary": ["Convokation","ForbiddenMagic","VoidMagic"], "secondary": ["Arcanism","Necromancy","AstralMagic"] },
-    "6":  { "primary": ["Economy","Dominion","Leadership"], "secondary": ["Tactical","Firearms","Roguery"] },
-    "7":  { "primary": ["Bestial","ForbiddenMagic","MetaMagic"], "secondary": ["Convokation","Mutation","Cryomancy"] },
-    "8":  { "primary": ["ForbiddenMagic","Convokation","Necromancy"], "secondary": ["Roguery","MetaMagic","VoidMagic"] },
-    "9":  { "primary": ["Alchemistry","Firearms","Tactical"], "secondary": ["Leadership","Cooking","MartialArts"] },
-    "10": { "primary": ["Pyromancy","Arcanism","Performance"], "secondary": ["Geomancy","HolyMagic","ForbiddenMagic"] },
-    "11": { "primary": ["MartialArts","Vocation","Bestial"], "secondary": ["Swordsmanship","Performance","PsychicAbilities"] },
-    "12": { "primary": ["MetaMagic","Arcanism","StatusMagic"], "secondary": ["HolyMagic","Alchemistry","Illusion"] },
-    "13": { "primary": ["Bestial","MartialArts","Vocation"], "secondary": ["Swordsmanship","Cooking","Leadership"] },
-    "14": { "primary": ["MartialArts","Performance","Roguery"], "secondary": ["Bestial","Tactical","PsychicAbilities"] },
-    "15": { "primary": ["MartialArts","PsychicAbilities","Alchemistry"], "secondary": ["Cooking","Pastoral","Performance"] },
-    "16": { "primary": ["MartialArts","Bestial","Vocation"], "secondary": ["Leadership","Roguery","Performance"] },
-    "17": { "primary": ["MartialArts","Performance","Tactical"], "secondary": ["Leadership","Vocation","Roguery"] },
-    "18": { "primary": ["Performance","MartialArts","Vocation"], "secondary": ["Roguery","Tactical","Leadership"] },
-    "19": { "primary": ["Pyromancy","Arcanism","Performance"], "secondary": ["Convokation","MetaMagic","Geomancy"] },
-    "20": { "primary": ["Cryomancy","Arcanism","Chronomancy"], "secondary": ["StatusMagic","HolyMagic","PsychicAbilities"] },
-    "21": { "primary": ["Roguery","Swordsmanship","Firearms"], "secondary": ["Performance","MartialArts","Alchemistry"] },
-    "22": { "primary": ["HolyMagic","Swordsmanship","MetaMagic"], "secondary": ["Convokation","Leadership","Healing"] },
-    "23": { "primary": ["ForbiddenMagic","Convokation","Necromancy"], "secondary": ["MetaMagic","HolyMagic","VoidMagic"] },
-    "24": { "primary": ["Firearms","Hunting","Pastoral"], "secondary": ["Alchemistry","Tactical","Cooking"] },
-    "25": { "primary": ["HolyMagic","Healing","Alchemistry"], "secondary": ["MetaMagic","Leadership","Augury"] },
-    "26": { "primary": ["Swordsmanship","MartialArts","Vocation"], "secondary": ["Leadership","Firearms","Alchemistry"] },
-    "27": { "primary": ["MetaMagic","Pyromancy","Arcanism"], "secondary": ["Convokation","ForbiddenMagic","Chronomancy"] },
-    "28": { "primary": ["Roguery","Bestial","Pastoral"], "secondary": ["Firearms","Tactical","Cooking"] },
-    "29": { "primary": ["Augury","Oneiromancy","HolyMagic"], "secondary": ["PsychicAbilities","Convokation","MetaMagic"] },
-    "30": { "primary": ["MartialArts","Swordsmanship","Vocation"], "secondary": ["Bestial","Performance","Alchemistry"] },
-    "31": { "primary": ["Necromancy","Convokation","ForbiddenMagic"], "secondary": ["MetaMagic","Cryomancy","VoidMagic"] },
-    "32": { "primary": ["Leadership","Tactical","Dominion"], "secondary": ["Firearms","Cooking","MartialArts"] },
-    "33": { "primary": ["Swordsmanship","MetaMagic","HolyMagic"], "secondary": ["Tactical","Idromancy","StatusMagic"] },
-    "34": { "primary": ["Swordsmanship","MetaMagic","StatusMagic"], "secondary": ["Leadership","MartialArts","Alchemistry"] },
-    "35": { "primary": ["Performance","Leadership","PsychicAbilities"], "secondary": ["Roguery","Vocation","Cooking"] },
-    "36": { "primary": ["Illusion","PsychicAbilities","Arcanism"], "secondary": ["HolyMagic","Convokation","MetaMagic"] },
-    "37": { "primary": ["MartialArts","Pyromancy","Swordsmanship"], "secondary": ["Tactical","MetaMagic","Vocation"] },
-    "38": { "primary": ["Firearms","Tactical","Roguery"], "secondary": ["Leadership","MartialArts","Alchemistry"] },
-    "39": { "primary": ["Arcanism","HolyMagic","Augury"], "secondary": ["Pastoral","MetaMagic","Aeromancy"] },
-    "40": { "primary": ["Bestial","MartialArts","Swordsmanship"], "secondary": ["Cooking","Vocation","Leadership"] },
-    "41": { "primary": ["Healing","Alchemistry","Mutation"], "secondary": ["HolyMagic","MetaMagic","Leadership"] },
-    "42": { "primary": ["Technomagical","Alchemistry","Electromancy"], "secondary": ["Tactical","StatusMagic","MetaMagic"] },
-    "43": { "primary": ["Tactical","Alchemistry","Performance"], "secondary": ["Vocation","Leadership","MartialArts"] },
-    "44": { "primary": ["Tactical","Leadership","Firearms"], "secondary": ["Dominion","MartialArts","Roguery"] },
-    "45": { "primary": ["Cooking","Pastoral","Roguery"], "secondary": ["Alchemistry","Performance","Bestial"] },
-    "46": { "primary": ["Dominion","Roguery","Leadership"], "secondary": ["Performance","PsychicAbilities","Tactical"] },
-    "47": { "primary": ["Tactical","MartialArts","Vocation"], "secondary": ["Cooking","Alchemistry","Leadership"] },
-    "48": { "primary": ["MetaMagic","Augury","Chronomancy"], "secondary": ["Arcanism","ForbiddenMagic","Convokation"] },
-    "49": { "primary": ["PsychicAbilities","Oneiromancy","Illusion"], "secondary": ["HolyMagic","Leadership","Healing"] },
-    "50": { "primary": ["Augury","Pastoral","Geomancy"], "secondary": ["Electromancy","Bestial","Leadership"] },
-    "51": { "primary": ["Healing","Alchemistry","MetaMagic"], "secondary": ["Idromancy","Leadership","HolyMagic"] },
-    "52": { "primary": ["Hunting","Pastoral","Cooking"], "secondary": ["Bestial","Roguery","Performance"] },
-    "53": { "primary": ["Electromancy","Arcanism","Chronomancy"], "secondary": ["Alchemistry","Technomagical","Geomancy"] },
-    "54": { "primary": ["Tactical","Roguery","Firearms"], "secondary": ["Alchemistry","MartialArts","Vocation"] },
-    "55": { "primary": ["Economy","Leadership","Roguery"], "secondary": ["Alchemistry","Performance","Firearms"] },
-    "56": { "primary": ["Pastoral","Cooking","Alchemistry"], "secondary": ["Bestial","Performance","Vocation"] },
-    "57": { "primary": ["Pastoral","Bestial","Vocation"], "secondary": ["Swordsmanship","Tactical","Cooking"] },
-    "58": { "primary": ["Aeromancy","Augury","Performance"], "secondary": ["Leadership","HolyMagic","Chronomancy"] },
-    "59": { "primary": ["HolyMagic","Convokation","Healing"], "secondary": ["Leadership","MetaMagic","Augury"] },
-    "60": { "primary": ["Performance","Pastoral","Leadership"], "secondary": ["Roguery","Vocation","MartialArts"] },
-    "61": { "primary": ["ChaosMagic","HolyMagic","MetaMagic"], "secondary": ["ForbiddenMagic","Cryomancy","AstralMagic"] },
-    "62": { "primary": ["Bestial","Roguery","MartialArts"], "secondary": ["Firearms","Cooking","Pastoral"] },
-    "63": { "primary": ["Bestial","Pastoral","Hunting"], "secondary": ["Cooking","Roguery","MartialArts"] },
-    "64": { "primary": ["Mutation","Bestial","Aeromancy"], "secondary": ["ForbiddenMagic","Alchemistry","Illusion"] },
-    "65": { "primary": ["Bestial","Mutation","VoidMagic"], "secondary": ["Convokation","Pastoral","ForbiddenMagic"] },
-    "66": { "primary": ["Technomagical","MetaMagic","Swordsmanship"], "secondary": ["StatusMagic","Leadership","Pyromancy"] }
+    "1": {
+      "primary": [
+        "Vocation",
+        "Roguery",
+        "Swordsmanship"
+      ],
+      "secondary": [
+        "MartialArts",
+        "Leadership",
+        "Bestial"
+      ]
+    },
+    "2": {
+      "primary": [
+        "Arcanism",
+        "Cryomancy",
+        "ForbiddenMagic"
+      ],
+      "secondary": [
+        "HolyMagic",
+        "Convokation",
+        "Illusion"
+      ]
+    },
+    "3": {
+      "primary": [
+        "HolyMagic",
+        "Healing",
+        "Alchemistry"
+      ],
+      "secondary": [
+        "Arcanism",
+        "MetaMagic",
+        "Idromancy"
+      ]
+    },
+    "4": {
+      "primary": [
+        "Swordsmanship",
+        "MartialArts",
+        "Tactical"
+      ],
+      "secondary": [
+        "Leadership",
+        "Alchemistry",
+        "Vocation"
+      ]
+    },
+    "5": {
+      "primary": [
+        "Convokation",
+        "ForbiddenMagic",
+        "VoidMagic"
+      ],
+      "secondary": [
+        "Arcanism",
+        "Necromancy",
+        "AstralMagic"
+      ]
+    },
+    "6": {
+      "primary": [
+        "Economy",
+        "Dominion",
+        "Leadership"
+      ],
+      "secondary": [
+        "Tactical",
+        "Firearms",
+        "Roguery"
+      ]
+    },
+    "7": {
+      "primary": [
+        "Bestial",
+        "ForbiddenMagic",
+        "MetaMagic"
+      ],
+      "secondary": [
+        "Convokation",
+        "Mutation",
+        "Cryomancy"
+      ]
+    },
+    "8": {
+      "primary": [
+        "ForbiddenMagic",
+        "Convokation",
+        "Necromancy"
+      ],
+      "secondary": [
+        "Roguery",
+        "MetaMagic",
+        "VoidMagic"
+      ]
+    },
+    "9": {
+      "primary": [
+        "Alchemistry",
+        "Firearms",
+        "Tactical"
+      ],
+      "secondary": [
+        "Leadership",
+        "Cooking",
+        "MartialArts"
+      ]
+    },
+    "10": {
+      "primary": [
+        "Pyromancy",
+        "Arcanism",
+        "Performance"
+      ],
+      "secondary": [
+        "Geomancy",
+        "HolyMagic",
+        "ForbiddenMagic"
+      ]
+    },
+    "11": {
+      "primary": [
+        "MartialArts",
+        "Vocation",
+        "Bestial"
+      ],
+      "secondary": [
+        "Swordsmanship",
+        "Performance",
+        "PsychicAbilities"
+      ]
+    },
+    "12": {
+      "primary": [
+        "MetaMagic",
+        "Arcanism",
+        "StatusMagic"
+      ],
+      "secondary": [
+        "HolyMagic",
+        "Alchemistry",
+        "Illusion"
+      ]
+    },
+    "13": {
+      "primary": [
+        "Bestial",
+        "MartialArts",
+        "Vocation"
+      ],
+      "secondary": [
+        "Swordsmanship",
+        "Cooking",
+        "Leadership"
+      ]
+    },
+    "14": {
+      "primary": [
+        "MartialArts",
+        "Performance",
+        "Roguery"
+      ],
+      "secondary": [
+        "Bestial",
+        "Tactical",
+        "PsychicAbilities"
+      ]
+    },
+    "15": {
+      "primary": [
+        "MartialArts",
+        "PsychicAbilities",
+        "Alchemistry"
+      ],
+      "secondary": [
+        "Cooking",
+        "Pastoral",
+        "Performance"
+      ]
+    },
+    "16": {
+      "primary": [
+        "MartialArts",
+        "Bestial",
+        "Vocation"
+      ],
+      "secondary": [
+        "Leadership",
+        "Roguery",
+        "Performance"
+      ]
+    },
+    "17": {
+      "primary": [
+        "MartialArts",
+        "Performance",
+        "Tactical"
+      ],
+      "secondary": [
+        "Leadership",
+        "Vocation",
+        "Roguery"
+      ]
+    },
+    "18": {
+      "primary": [
+        "Performance",
+        "MartialArts",
+        "Vocation"
+      ],
+      "secondary": [
+        "Roguery",
+        "Tactical",
+        "Leadership"
+      ]
+    },
+    "19": {
+      "primary": [
+        "Pyromancy",
+        "Arcanism",
+        "Performance"
+      ],
+      "secondary": [
+        "Convokation",
+        "MetaMagic",
+        "Geomancy"
+      ]
+    },
+    "20": {
+      "primary": [
+        "Cryomancy",
+        "Arcanism",
+        "Chronomancy"
+      ],
+      "secondary": [
+        "StatusMagic",
+        "HolyMagic",
+        "PsychicAbilities"
+      ]
+    },
+    "21": {
+      "primary": [
+        "Roguery",
+        "Swordsmanship",
+        "Firearms"
+      ],
+      "secondary": [
+        "Performance",
+        "MartialArts",
+        "Alchemistry"
+      ]
+    },
+    "22": {
+      "primary": [
+        "HolyMagic",
+        "Swordsmanship",
+        "MetaMagic"
+      ],
+      "secondary": [
+        "Convokation",
+        "Leadership",
+        "Healing"
+      ]
+    },
+    "23": {
+      "primary": [
+        "ForbiddenMagic",
+        "Convokation",
+        "Necromancy"
+      ],
+      "secondary": [
+        "MetaMagic",
+        "HolyMagic",
+        "VoidMagic"
+      ]
+    },
+    "24": {
+      "primary": [
+        "Firearms",
+        "Hunting",
+        "Pastoral"
+      ],
+      "secondary": [
+        "Alchemistry",
+        "Tactical",
+        "Cooking"
+      ]
+    },
+    "25": {
+      "primary": [
+        "HolyMagic",
+        "Healing",
+        "Alchemistry"
+      ],
+      "secondary": [
+        "MetaMagic",
+        "Leadership",
+        "Augury"
+      ]
+    },
+    "26": {
+      "primary": [
+        "Swordsmanship",
+        "MartialArts",
+        "Vocation"
+      ],
+      "secondary": [
+        "Leadership",
+        "Firearms",
+        "Alchemistry"
+      ]
+    },
+    "27": {
+      "primary": [
+        "MetaMagic",
+        "Pyromancy",
+        "Arcanism"
+      ],
+      "secondary": [
+        "Convokation",
+        "ForbiddenMagic",
+        "Chronomancy"
+      ]
+    },
+    "28": {
+      "primary": [
+        "Roguery",
+        "Bestial",
+        "Pastoral"
+      ],
+      "secondary": [
+        "Firearms",
+        "Tactical",
+        "Cooking"
+      ]
+    },
+    "29": {
+      "primary": [
+        "Augury",
+        "Oneiromancy",
+        "HolyMagic"
+      ],
+      "secondary": [
+        "PsychicAbilities",
+        "Convokation",
+        "MetaMagic"
+      ]
+    },
+    "30": {
+      "primary": [
+        "MartialArts",
+        "Swordsmanship",
+        "Vocation"
+      ],
+      "secondary": [
+        "Bestial",
+        "Performance",
+        "Alchemistry"
+      ]
+    },
+    "31": {
+      "primary": [
+        "Necromancy",
+        "Convokation",
+        "ForbiddenMagic"
+      ],
+      "secondary": [
+        "MetaMagic",
+        "Cryomancy",
+        "VoidMagic"
+      ]
+    },
+    "32": {
+      "primary": [
+        "Leadership",
+        "Tactical",
+        "Dominion"
+      ],
+      "secondary": [
+        "Firearms",
+        "Cooking",
+        "MartialArts"
+      ]
+    },
+    "33": {
+      "primary": [
+        "Swordsmanship",
+        "MetaMagic",
+        "HolyMagic"
+      ],
+      "secondary": [
+        "Tactical",
+        "Idromancy",
+        "StatusMagic"
+      ]
+    },
+    "34": {
+      "primary": [
+        "Swordsmanship",
+        "MetaMagic",
+        "StatusMagic"
+      ],
+      "secondary": [
+        "Leadership",
+        "MartialArts",
+        "Alchemistry"
+      ]
+    },
+    "35": {
+      "primary": [
+        "Performance",
+        "Leadership",
+        "PsychicAbilities"
+      ],
+      "secondary": [
+        "Roguery",
+        "Vocation",
+        "Cooking"
+      ]
+    },
+    "36": {
+      "primary": [
+        "Illusion",
+        "PsychicAbilities",
+        "Arcanism"
+      ],
+      "secondary": [
+        "HolyMagic",
+        "Convokation",
+        "MetaMagic"
+      ]
+    },
+    "37": {
+      "primary": [
+        "MartialArts",
+        "Pyromancy",
+        "Swordsmanship"
+      ],
+      "secondary": [
+        "Tactical",
+        "MetaMagic",
+        "Vocation"
+      ]
+    },
+    "38": {
+      "primary": [
+        "Firearms",
+        "Tactical",
+        "Roguery"
+      ],
+      "secondary": [
+        "Leadership",
+        "MartialArts",
+        "Alchemistry"
+      ]
+    },
+    "39": {
+      "primary": [
+        "Arcanism",
+        "HolyMagic",
+        "Augury"
+      ],
+      "secondary": [
+        "Pastoral",
+        "MetaMagic",
+        "Aeromancy"
+      ]
+    },
+    "40": {
+      "primary": [
+        "Bestial",
+        "MartialArts",
+        "Swordsmanship"
+      ],
+      "secondary": [
+        "Cooking",
+        "Vocation",
+        "Leadership"
+      ]
+    },
+    "41": {
+      "primary": [
+        "Alchemistry",
+        "Cooking",
+        "Tactical"
+      ],
+      "secondary": [
+        "Pastoral",
+        "Leadership",
+        "Vocation"
+      ]
+    },
+    "42": {
+      "primary": [
+        "Technomagical",
+        "Alchemistry",
+        "Electromancy"
+      ],
+      "secondary": [
+        "Tactical",
+        "StatusMagic",
+        "MetaMagic"
+      ]
+    },
+    "43": {
+      "primary": [
+        "Tactical",
+        "Alchemistry",
+        "Performance"
+      ],
+      "secondary": [
+        "Vocation",
+        "Leadership",
+        "MartialArts"
+      ]
+    },
+    "44": {
+      "primary": [
+        "Tactical",
+        "Leadership",
+        "Firearms"
+      ],
+      "secondary": [
+        "Dominion",
+        "MartialArts",
+        "Roguery"
+      ]
+    },
+    "45": {
+      "primary": [
+        "Cooking",
+        "Pastoral",
+        "Roguery"
+      ],
+      "secondary": [
+        "Alchemistry",
+        "Performance",
+        "Bestial"
+      ]
+    },
+    "46": {
+      "primary": [
+        "Dominion",
+        "Roguery",
+        "Leadership"
+      ],
+      "secondary": [
+        "Performance",
+        "PsychicAbilities",
+        "Tactical"
+      ]
+    },
+    "47": {
+      "primary": [
+        "Tactical",
+        "MartialArts",
+        "Vocation"
+      ],
+      "secondary": [
+        "Cooking",
+        "Alchemistry",
+        "Leadership"
+      ]
+    },
+    "48": {
+      "primary": [
+        "MetaMagic",
+        "Augury",
+        "Chronomancy"
+      ],
+      "secondary": [
+        "Arcanism",
+        "ForbiddenMagic",
+        "Convokation"
+      ]
+    },
+    "49": {
+      "primary": [
+        "PsychicAbilities",
+        "Oneiromancy",
+        "Illusion"
+      ],
+      "secondary": [
+        "HolyMagic",
+        "Leadership",
+        "Healing"
+      ]
+    },
+    "50": {
+      "primary": [
+        "Augury",
+        "Pastoral",
+        "Geomancy"
+      ],
+      "secondary": [
+        "Electromancy",
+        "Bestial",
+        "Leadership"
+      ]
+    },
+    "51": {
+      "primary": [
+        "Alchemistry",
+        "Leadership",
+        "Cooking"
+      ],
+      "secondary": [
+        "Tactical",
+        "Pastoral",
+        "Performance"
+      ]
+    },
+    "52": {
+      "primary": [
+        "Hunting",
+        "Pastoral",
+        "Cooking"
+      ],
+      "secondary": [
+        "Bestial",
+        "Roguery",
+        "Performance"
+      ]
+    },
+    "53": {
+      "primary": [
+        "Technomagical",
+        "Electromancy",
+        "Tactical"
+      ],
+      "secondary": [
+        "Alchemistry",
+        "Chronomancy",
+        "Arcanism"
+      ]
+    },
+    "54": {
+      "primary": [
+        "Tactical",
+        "Roguery",
+        "Firearms"
+      ],
+      "secondary": [
+        "Alchemistry",
+        "MartialArts",
+        "Vocation"
+      ]
+    },
+    "55": {
+      "primary": [
+        "Economy",
+        "Leadership",
+        "Roguery"
+      ],
+      "secondary": [
+        "Alchemistry",
+        "Performance",
+        "Firearms"
+      ]
+    },
+    "56": {
+      "primary": [
+        "Pastoral",
+        "Geomancy",
+        "Convokation"
+      ],
+      "secondary": [
+        "Cooking",
+        "Alchemistry",
+        "Bestial"
+      ]
+    },
+    "57": {
+      "primary": [
+        "Pastoral",
+        "Bestial",
+        "Vocation"
+      ],
+      "secondary": [
+        "Swordsmanship",
+        "Tactical",
+        "Cooking"
+      ]
+    },
+    "58": {
+      "primary": [
+        "Aeromancy"
+      ],
+      "secondary": [
+        "Augury"
+      ]
+    },
+    "59": {
+      "primary": [
+        "HolyMagic",
+        "Convokation",
+        "Healing"
+      ],
+      "secondary": [
+        "Leadership",
+        "MetaMagic",
+        "Augury"
+      ]
+    },
+    "60": {
+      "primary": [
+        "Performance",
+        "Pastoral",
+        "Leadership"
+      ],
+      "secondary": [
+        "Roguery",
+        "Vocation",
+        "MartialArts"
+      ]
+    },
+    "61": {
+      "primary": [
+        "ChaosMagic",
+        "HolyMagic",
+        "MetaMagic"
+      ],
+      "secondary": [
+        "ForbiddenMagic",
+        "Cryomancy",
+        "AstralMagic"
+      ]
+    },
+    "62": {
+      "primary": [
+        "Bestial",
+        "Roguery",
+        "MartialArts"
+      ],
+      "secondary": [
+        "Firearms",
+        "Cooking",
+        "Pastoral"
+      ]
+    },
+    "63": {
+      "primary": [
+        "Bestial",
+        "Pastoral",
+        "Hunting"
+      ],
+      "secondary": [
+        "Cooking",
+        "Roguery",
+        "MartialArts"
+      ]
+    },
+    "64": {
+      "primary": [
+        "Mutation",
+        "Bestial",
+        "Aeromancy"
+      ],
+      "secondary": [
+        "ForbiddenMagic",
+        "Alchemistry",
+        "Illusion"
+      ]
+    },
+    "65": {
+      "primary": [
+        "Bestial",
+        "Mutation",
+        "VoidMagic"
+      ],
+      "secondary": [
+        "Convokation",
+        "Pastoral",
+        "ForbiddenMagic"
+      ]
+    },
+    "66": {
+      "primary": [
+        "Technomagical",
+        "MetaMagic",
+        "Swordsmanship"
+      ],
+      "secondary": [
+        "StatusMagic",
+        "Leadership",
+        "Pyromancy"
+      ]
+    }
   },
   "Arcanism": {
-    "name": { "en": "Arcanism", "it": "Arcanismo" },
-    "description": { "en": "Master pure arcane energy.\nChannel raw magical power.", "it": "Domina l'energia arcana pura.\nCanalizza il potere magico grezzo." },
+    "name": {
+      "en": "Arcanism",
+      "it": "Arcanismo"
+    },
+    "description": {
+      "en": "Master pure arcane energy.\nChannel raw magical power.",
+      "it": "Domina l'energia arcana pura.\nCanalizza il potere magico grezzo."
+    },
     "type": "Magic",
     "icon": 133
   },
   "Basic": {
-    "name": { "en": "Basic", "it": "Base" },
-    "description": { "en": "Fundamental combat techniques.\nCore abilities for any fighter.", "it": "Tecniche di combattimento fondamentali.\nAbilità essenziali per ogni combattente." },
+    "name": {
+      "en": "Basic",
+      "it": "Base"
+    },
+    "description": {
+      "en": "Fundamental combat techniques.\nCore abilities for any fighter.",
+      "it": "Tecniche di combattimento fondamentali.\nAbilità essenziali per ogni combattente."
+    },
     "type": "Skill",
     "icon": 96
   },
   "Bestial": {
-    "name": { "en": "Bestial", "it": "Bestiale" },
-    "description": { "en": "Channel primal animal instincts.\nFight with savage ferocity.", "it": "Canalizza gli istinti animali primordiali.\nCombatti con ferocia selvaggia." },
+    "name": {
+      "en": "Bestial",
+      "it": "Bestiale"
+    },
+    "description": {
+      "en": "Channel primal animal instincts.\nFight with savage ferocity.",
+      "it": "Canalizza gli istinti animali primordiali.\nCombatti con ferocia selvaggia."
+    },
     "type": "Skill",
     "icon": 293
   },
   "Alchemistry": {
-    "name": { "en": "Alchemistry", "it": "Alchimica" },
-    "description": { "en": "Brew, distil and transmute matter.\nTurn reagents into edge and poison.", "it": "Prepara, distilla e trasmuta la materia.\nTrasforma i reagenti in vantaggio e veleno." },
+    "name": {
+      "en": "Alchemistry",
+      "it": "Alchimica"
+    },
+    "description": {
+      "en": "Brew, distil and transmute matter.\nTurn reagents into edge and poison.",
+      "it": "Prepara, distilla e trasmuta la materia.\nTrasforma i reagenti in vantaggio e veleno."
+    },
     "type": "Skill",
     "icon": 180
   },
   "Convokation": {
-    "name": { "en": "Convokation", "it": "Convocazione" },
-    "description": { "en": "Summon creatures and entities.\nCall forth allies from other realms.", "it": "Evoca creature ed entità.\nRichiama alleati da altri reami." },
+    "name": {
+      "en": "Convokation",
+      "it": "Convocazione"
+    },
+    "description": {
+      "en": "Summon creatures and entities.\nCall forth allies from other realms.",
+      "it": "Evoca creature ed entità.\nRichiama alleati da altri reami."
+    },
     "type": "Magic",
     "icon": 79
   },
   "Cooking": {
-    "name": { "en": "Cooking", "it": "Cucina" },
-    "description": { "en": "Prepare restorative meals.\nCombine ingredients for beneficial effects.", "it": "Prepara pasti rigeneranti.\nCombina ingredienti per effetti benefici." },
+    "name": {
+      "en": "Cooking",
+      "it": "Cucina"
+    },
+    "description": {
+      "en": "Prepare restorative meals.\nCombine ingredients for beneficial effects.",
+      "it": "Prepara pasti rigeneranti.\nCombina ingredienti per effetti benefici."
+    },
     "type": "Skill",
     "icon": 219
   },
   "Pyromancy": {
-    "name": { "en": "Pyromancy", "it": "Piromanzia" },
-    "description": { "en": "Kindle, feed and unleash fire.\nBurn what will not move aside.", "it": "Accendi, alimenta e scatena il fuoco.\nBrucia ciò che non si scosta." },
+    "name": {
+      "en": "Pyromancy",
+      "it": "Piromanzia"
+    },
+    "description": {
+      "en": "Kindle, feed and unleash fire.\nBurn what will not move aside.",
+      "it": "Accendi, alimenta e scatena il fuoco.\nBrucia ciò che non si scosta."
+    },
     "type": "Magic",
     "icon": 64
   },
   "Cryomancy": {
-    "name": { "en": "Cryomancy", "it": "Criomanzia" },
-    "description": { "en": "Draw the heat out of the world.\nStill your enemies with cold.", "it": "Sottrai il calore al mondo.\nImmobilizza i nemici col gelo." },
+    "name": {
+      "en": "Cryomancy",
+      "it": "Criomanzia"
+    },
+    "description": {
+      "en": "Draw the heat out of the world.\nStill your enemies with cold.",
+      "it": "Sottrai il calore al mondo.\nImmobilizza i nemici col gelo."
+    },
     "type": "Magic",
     "icon": 65
   },
   "Electromancy": {
-    "name": { "en": "Electromancy", "it": "Elettromanzia" },
-    "description": { "en": "Gather charge and let it fall.\nStrike faster than the eye follows.", "it": "Raccogli la carica e falla cadere.\nColpisci più veloce dell occhio." },
+    "name": {
+      "en": "Electromancy",
+      "it": "Elettromanzia"
+    },
+    "description": {
+      "en": "Gather charge and let it fall.\nStrike faster than the eye follows.",
+      "it": "Raccogli la carica e falla cadere.\nColpisci più veloce dell occhio."
+    },
     "type": "Magic",
     "icon": 66
   },
   "Idromancy": {
-    "name": { "en": "Idromancy", "it": "Idromanzia" },
-    "description": { "en": "Command tide, rain and current.\nDrown, carry away or wash clean.", "it": "Comanda marea, pioggia e corrente.\nAnnega, travolgi o lava via." },
+    "name": {
+      "en": "Idromancy",
+      "it": "Idromanzia"
+    },
+    "description": {
+      "en": "Command tide, rain and current.\nDrown, carry away or wash clean.",
+      "it": "Comanda marea, pioggia e corrente.\nAnnega, travolgi o lava via."
+    },
     "type": "Magic",
     "icon": 67
   },
   "Aeromancy": {
-    "name": { "en": "Aeromancy", "it": "Aeromanzia" },
-    "description": { "en": "Turn wind, cloud and weather.\nMove the air and everything in it.", "it": "Governa vento, nube e tempo.\nMuovi l aria e tutto ciò che contiene." },
+    "name": {
+      "en": "Aeromancy",
+      "it": "Aeromanzia"
+    },
+    "description": {
+      "en": "Turn wind, cloud and weather.\nMove the air and everything in it.",
+      "it": "Governa vento, nube e tempo.\nMuovi l aria e tutto ciò che contiene."
+    },
     "type": "Magic",
     "icon": 69
   },
   "Necromancy": {
-    "name": { "en": "Necromancy", "it": "Necromancy" },
-    "description": { "en": "Harness the power of life itself.\n", "it": "Sfrutta il potere della vita" },
+    "name": {
+      "en": "Necromancy",
+      "it": "Necromancy"
+    },
+    "description": {
+      "en": "Harness the power of life itself.\n",
+      "it": "Sfrutta il potere della vita"
+    },
     "type": "Magic",
     "icon": 96
   },
   "Firearms": {
-    "name": { "en": "Firearms", "it": "Armi da Fuoco" },
-    "description": { "en": "Master modern ranged weapons.\nStrike from afar with deadly accuracy.", "it": "Domina le armi a distanza moderne.\nColpisci da lontano con precisione letale." },
+    "name": {
+      "en": "Firearms",
+      "it": "Armi da Fuoco"
+    },
+    "description": {
+      "en": "Master modern ranged weapons.\nStrike from afar with deadly accuracy.",
+      "it": "Domina le armi a distanza moderne.\nColpisci da lontano con precisione letale."
+    },
     "type": "Skill",
     "icon": 104
   },
   "ForbiddenMagic": {
-    "name": { "en": "ForbiddenMagic", "it": "Magia Proibita" },
-    "description": { "en": "Wield dark and dangerous spells.\nPower that comes at a terrible cost.", "it": "Brandisci incantesimi oscuri e pericolosi.\nPotere che ha un costo terribile." },
+    "name": {
+      "en": "ForbiddenMagic",
+      "it": "Magia Proibita"
+    },
+    "description": {
+      "en": "Wield dark and dangerous spells.\nPower that comes at a terrible cost.",
+      "it": "Brandisci incantesimi oscuri e pericolosi.\nPotere che ha un costo terribile."
+    },
     "type": "Magic",
     "icon": 191
   },
   "HolyMagic": {
-    "name": { "en": "HolyMagic", "it": "Magia Sacra" },
-    "description": { "en": "Purify with sacred light.\nSmite evil with righteous power.", "it": "Purifica con luce sacra.\nColpisci il male con potere giusto." },
+    "name": {
+      "en": "HolyMagic",
+      "it": "Magia Sacra"
+    },
+    "description": {
+      "en": "Purify with sacred light.\nSmite evil with righteous power.",
+      "it": "Purifica con luce sacra.\nColpisci il male con potere giusto."
+    },
     "type": "Magic",
     "icon": 70
   },
   "VoidMagic": {
-    "name": { "en": "VoidMagic", "it": "Magia del Vuoto" },
-    "description": { "en": "Purify with sacred light.\nSmite evil with righteous power.", "it": "Purifica con luce sacra.\nColpisci il male con potere giusto." },
+    "name": {
+      "en": "VoidMagic",
+      "it": "Magia del Vuoto"
+    },
+    "description": {
+      "en": "Purify with sacred light.\nSmite evil with righteous power.",
+      "it": "Purifica con luce sacra.\nColpisci il male con potere giusto."
+    },
     "type": "Magic",
     "icon": 70
   },
   "Leadership": {
-    "name": { "en": "Leadership", "it": "Leadership" },
-    "description": { "en": "Inspire and guide your team.\nRally allies to victory.", "it": "Ispira e guida la tua squadra.\nRaduna gli alleati verso la vittoria." },
+    "name": {
+      "en": "Leadership",
+      "it": "Leadership"
+    },
+    "description": {
+      "en": "Inspire and guide your team.\nRally allies to victory.",
+      "it": "Ispira e guida la tua squadra.\nRaduna gli alleati verso la vittoria."
+    },
     "type": "Skill",
     "icon": 246
   },
   "MartialArts": {
-    "name": { "en": "MartialArts", "it": "Arti Marziali" },
-    "description": { "en": "Master disciplined combat techniques.\nStrike with precision and form.", "it": "Domina le tecniche di combattimento disciplinate.\nColpisci con precisione e forma." },
+    "name": {
+      "en": "MartialArts",
+      "it": "Arti Marziali"
+    },
+    "description": {
+      "en": "Master disciplined combat techniques.\nStrike with precision and form.",
+      "it": "Domina le tecniche di combattimento disciplinate.\nColpisci con precisione e forma."
+    },
     "type": "Skill",
     "icon": 77
   },
   "MetaMagic": {
-    "name": { "en": "MetaMagic", "it": "Meta-Magia" },
-    "description": { "en": "Manipulate time, space, and magic.\nDistort reality and enhance attributes.", "it": "Manipola tempo, spazio e magia.\nDistingui la realtà e potenzia gli attributi." },
+    "name": {
+      "en": "MetaMagic",
+      "it": "Meta-Magia"
+    },
+    "description": {
+      "en": "Manipulate time, space, and magic.\nDistort reality and enhance attributes.",
+      "it": "Manipola tempo, spazio e magia.\nDistingui la realtà e potenzia gli attributi."
+    },
     "type": "Magic",
     "icon": 87
   },
   "Performance": {
-    "name": { "en": "Performance", "it": "Performance" },
-    "description": { "en": "Captivate and influence through art.\nInspire with music and expression.", "it": "Affascina e influenza attraverso l'arte.\nIspira con musica ed espressione." },
+    "name": {
+      "en": "Performance",
+      "it": "Performance"
+    },
+    "description": {
+      "en": "Captivate and influence through art.\nInspire with music and expression.",
+      "it": "Affascina e influenza attraverso l'arte.\nIspira con musica ed espressione."
+    },
     "type": "Skill",
     "icon": 199
   },
   "AstralMagic": {
-    "name": { "en": "Astral Magic", "it": "Magia Astrale" },
-    "description": { "en": "Wield the power of the starr", "it": "Brandisci il potere delle stelle." },
+    "name": {
+      "en": "Astral Magic",
+      "it": "Magia Astrale"
+    },
+    "description": {
+      "en": "Wield the power of the starr",
+      "it": "Brandisci il potere delle stelle."
+    },
     "type": "Magic",
     "icon": 191
   },
   "PsychicAbilities": {
-    "name": { "en": "PsychicAbilities", "it": "Abilità Psichiche" },
-    "description": { "en": "Manipulate minds and emotions.\nRead thoughts and bend wills.", "it": "Manipola menti ed emozioni.\nLeggi i pensieri e piega le volontà." },
+    "name": {
+      "en": "PsychicAbilities",
+      "it": "Abilità Psichiche"
+    },
+    "description": {
+      "en": "Manipulate minds and emotions.\nRead thoughts and bend wills.",
+      "it": "Manipola menti ed emozioni.\nLeggi i pensieri e piega le volontà."
+    },
     "type": "Skill",
     "icon": 408
   },
   "Roguery": {
-    "name": { "en": "Roguery", "it": "Furfanteria" },
-    "description": { "en": "Strike from shadows with cunning.\nDeceive, steal, and backstab.", "it": "Colpisci dalle ombre con astuzia.\nInganna, ruba e pugnala alle spalle." },
+    "name": {
+      "en": "Roguery",
+      "it": "Furfanteria"
+    },
+    "description": {
+      "en": "Strike from shadows with cunning.\nDeceive, steal, and backstab.",
+      "it": "Colpisci dalle ombre con astuzia.\nInganna, ruba e pugnala alle spalle."
+    },
     "type": "Skill",
     "icon": 195
   },
   "StatusMagic": {
-    "name": { "en": "StatusMagic", "it": "Magia di Status" },
-    "description": { "en": "Alter conditions and states.\nInflict or cure various ailments.", "it": "Altera condizioni e stati.\nInfliggi o cura vari disturbi." },
+    "name": {
+      "en": "StatusMagic",
+      "it": "Magia di Status"
+    },
+    "description": {
+      "en": "Alter conditions and states.\nInflict or cure various ailments.",
+      "it": "Altera condizioni e stati.\nInfliggi o cura vari disturbi."
+    },
     "type": "Magic",
     "icon": 80
   },
   "Swordsmanship": {
-    "name": { "en": "Swordsmanship", "it": "Arte della Spada" },
-    "description": { "en": "Master the way of the blade.\nStrike with refined sword techniques.", "it": "Domina la via della lama.\nColpisci con tecniche raffinate di spada." },
+    "name": {
+      "en": "Swordsmanship",
+      "it": "Arte della Spada"
+    },
+    "description": {
+      "en": "Master the way of the blade.\nStrike with refined sword techniques.",
+      "it": "Domina la via della lama.\nColpisci con tecniche raffinate di spada."
+    },
     "type": "Skill",
     "icon": 76
   },
   "Tactical": {
-    "name": { "en": "Tactical", "it": "Tattiche" },
-    "description": { "en": "Uphold justice and maintain order.\nEnforce the law with authority.", "it": "Sostieni la giustizia e mantieni l'ordine.\nFai rispettare la legge con autorità." },
+    "name": {
+      "en": "Tactical",
+      "it": "Tattiche"
+    },
+    "description": {
+      "en": "Uphold justice and maintain order.\nEnforce the law with authority.",
+      "it": "Sostieni la giustizia e mantieni l'ordine.\nFai rispettare la legge con autorità."
+    },
     "type": "Skill",
     "icon": 131
   },
   "Technomancy": {
-    "name": { "en": "Technomancy", "it": "Tecnomanzia" },
-    "description": { "en": "Blend magic with technology.\nControl machines through arcane means.", "it": "Unisci magia e tecnologia.\nControlla le macchine con mezzi arcani." },
+    "name": {
+      "en": "Technomancy",
+      "it": "Tecnomanzia"
+    },
+    "description": {
+      "en": "Blend magic with technology.\nControl machines through arcane means.",
+      "it": "Unisci magia e tecnologia.\nControlla le macchine con mezzi arcani."
+    },
     "type": "Magic",
     "icon": 83
   },
   "Augury": {
-    "name": { "en": "Augury", "it": "Augurio" },
-    "description": { "en": "Read omens and divine the future.\nPeer beyond the veil of fate.", "it": "Leggi i presagi e divina il futuro.\nGuarda oltre il velo del destino." },
+    "name": {
+      "en": "Augury",
+      "it": "Augurio"
+    },
+    "description": {
+      "en": "Read omens and divine the future.\nPeer beyond the veil of fate.",
+      "it": "Leggi i presagi e divina il futuro.\nGuarda oltre il velo del destino."
+    },
     "type": "Magic",
     "icon": 79
   },
   "Pastoral": {
-    "name": { "en": "Pastoral", "it": "Pastorale" },
-    "description": { "en": "Tame and command wild creatures.\nBind beasts to your will.", "it": "Doma e comanda creature selvagge.\nLega le bestie al tuo volere." },
+    "name": {
+      "en": "Pastoral",
+      "it": "Pastorale"
+    },
+    "description": {
+      "en": "Tame and command wild creatures.\nBind beasts to your will.",
+      "it": "Doma e comanda creature selvagge.\nLega le bestie al tuo volere."
+    },
     "type": "Skill",
     "icon": 90
   },
   "ChaosMagic": {
-    "name": { "en": "Chaos Magic", "it": "Magia del Caos" },
-    "description": { "en": "Absurd, fickle and unruly power.\nBend luck, glory and nonsense to your will.", "it": "Potere assurdo, volubile e indisciplinato.\nPiega fortuna, gloria e insensatezza al tuo volere." },
+    "name": {
+      "en": "Chaos Magic",
+      "it": "Magia del Caos"
+    },
+    "description": {
+      "en": "Absurd, fickle and unruly power.\nBend luck, glory and nonsense to your will.",
+      "it": "Potere assurdo, volubile e indisciplinato.\nPiega fortuna, gloria e insensatezza al tuo volere."
+    },
     "type": "Magic",
     "icon": 226
   },
   "Chronomancy": {
-    "name": { "en": "Chronomancy", "it": "Cronomanzia" },
-    "description": { "en": "Bend the flow of time.\nHasten allies and slow enemies.", "it": "Piega il flusso del tempo.\nAccelera gli alleati e rallenta i nemici." },
+    "name": {
+      "en": "Chronomancy",
+      "it": "Cronomanzia"
+    },
+    "description": {
+      "en": "Bend the flow of time.\nHasten allies and slow enemies.",
+      "it": "Piega il flusso del tempo.\nAccelera gli alleati e rallenta i nemici."
+    },
     "type": "Magic",
     "icon": 75
   },
   "Dominion": {
-    "name": { "en": "Dominion", "it": "Dominio" },
-    "description": { "en": "Command factions and politics.\nBend society to your influence.", "it": "Comanda fazioni e politica.\nPiega la società alla tua influenza." },
+    "name": {
+      "en": "Dominion",
+      "it": "Dominio"
+    },
+    "description": {
+      "en": "Command factions and politics.\nBend society to your influence.",
+      "it": "Comanda fazioni e politica.\nPiega la società alla tua influenza."
+    },
     "type": "Skill",
     "icon": 114
   },
   "Economy": {
-    "name": { "en": "Economy", "it": "Economia" },
-    "description": { "en": "Master markets and wealth.\nTurn gold into greater fortune.", "it": "Domina mercati e ricchezza.\nTrasforma l'oro in fortuna maggiore." },
+    "name": {
+      "en": "Economy",
+      "it": "Economia"
+    },
+    "description": {
+      "en": "Master markets and wealth.\nTurn gold into greater fortune.",
+      "it": "Domina mercati e ricchezza.\nTrasforma l'oro in fortuna maggiore."
+    },
     "type": "Skill",
     "icon": 262
   },
   "Geomancy": {
-    "name": { "en": "Geomancy", "it": "Geomanzia" },
-    "description": { "en": "Shape earth and stone.\nDraw power from the land itself.", "it": "Plasma terra e pietra.\nTrai potere dalla terra stessa." },
+    "name": {
+      "en": "Geomancy",
+      "it": "Geomanzia"
+    },
+    "description": {
+      "en": "Shape earth and stone.\nDraw power from the land itself.",
+      "it": "Plasma terra e pietra.\nTrai potere dalla terra stessa."
+    },
     "type": "Magic",
     "icon": 217
   },
   "Healing": {
-    "name": { "en": "Healing", "it": "Guarigione" },
-    "description": { "en": "Mend wounds and cure ailments.\nRestore vitality to the living.", "it": "Cura ferite e malanni.\nRistora la vitalità ai viventi." },
+    "name": {
+      "en": "Healing",
+      "it": "Guarigione"
+    },
+    "description": {
+      "en": "Mend wounds and cure ailments.\nRestore vitality to the living.",
+      "it": "Cura ferite e malanni.\nRistora la vitalità ai viventi."
+    },
     "type": "Magic",
     "icon": 72
   },
   "Illusion": {
-    "name": { "en": "Illusion", "it": "Illusione" },
-    "description": { "en": "Weave deceptive phantasms.\nFool the senses of your foes.", "it": "Tessi fantasmi ingannevoli.\nInganna i sensi dei tuoi nemici." },
+    "name": {
+      "en": "Illusion",
+      "it": "Illusione"
+    },
+    "description": {
+      "en": "Weave deceptive phantasms.\nFool the senses of your foes.",
+      "it": "Tessi fantasmi ingannevoli.\nInganna i sensi dei tuoi nemici."
+    },
     "type": "Magic",
     "icon": 81
   },
   "Mutation": {
-    "name": { "en": "Mutation", "it": "Mutazione" },
-    "description": { "en": "Reshape body and identity.\nTransform flesh at will.", "it": "Rimodella corpo e identità.\nTrasforma la carne a piacimento." },
+    "name": {
+      "en": "Mutation",
+      "it": "Mutazione"
+    },
+    "description": {
+      "en": "Reshape body and identity.\nTransform flesh at will.",
+      "it": "Rimodella corpo e identità.\nTrasforma la carne a piacimento."
+    },
     "type": "Magic",
     "icon": 16
   },
   "Oneiromancy": {
-    "name": { "en": "Oneiromancy", "it": "Oniromanzia" },
-    "description": { "en": "Walk and shape dreams.\nDraw power from the sleeping mind.", "it": "Cammina e plasma i sogni.\nTrai potere dalla mente dormiente." },
+    "name": {
+      "en": "Oneiromancy",
+      "it": "Oniromanzia"
+    },
+    "description": {
+      "en": "Walk and shape dreams.\nDraw power from the sleeping mind.",
+      "it": "Cammina e plasma i sogni.\nTrai potere dalla mente dormiente."
+    },
     "type": "Magic",
     "icon": 78
   },
   "Technomagical": {
-    "name": { "en": "Technomagical", "it": "Tecnomagia" },
-    "description": { "en": "Fuse arcane power with machines.\nWeaponize technology through magic.", "it": "Fondi potere arcano e macchine.\nArma la tecnologia con la magia." },
+    "name": {
+      "en": "Technomagical",
+      "it": "Tecnomagia"
+    },
+    "description": {
+      "en": "Fuse arcane power with machines.\nWeaponize technology through magic.",
+      "it": "Fondi potere arcano e macchine.\nArma la tecnologia con la magia."
+    },
     "type": "Magic",
     "icon": 189
   },
   "Vocation": {
-    "name": { "en": "Vocation", "it": "Vocazione" },
-    "description": { "en": "Apply battle and labor crafts.\nMaster the trades of daily life.", "it": "Applica arti da battaglia e da lavoro.\nDomina i mestieri della vita quotidiana." },
+    "name": {
+      "en": "Vocation",
+      "it": "Vocazione"
+    },
+    "description": {
+      "en": "Apply battle and labor crafts.\nMaster the trades of daily life.",
+      "it": "Applica arti da battaglia e da lavoro.\nDomina i mestieri della vita quotidiana."
+    },
     "type": "Skill",
     "icon": 96
   },
   "Hunting": {
-    "name": { "en": "Hunting", "it": "Caccia" },
-    "description": { "en": "Track and take down quarry.\nFight alongside a loyal beast.", "it": "Insegui e abbatti la preda.\nCombatti al fianco di una bestia fedele." },
+    "name": {
+      "en": "Hunting",
+      "it": "Caccia"
+    },
+    "description": {
+      "en": "Track and take down quarry.\nFight alongside a loyal beast.",
+      "it": "Insegui e abbatti la preda.\nCombatti al fianco di una bestia fedele."
+    },
     "type": "Skill",
     "icon": 103
   },
   "Fusion": {
-    "name": { "en": "Fusion", "it": "Fusione" },
-    "description": { "en": "The spells you forged yourself.\nEach one stands alone, answering to nobody.", "it": "Gli incantesimi che hai forgiato tu.\nOgnuno sta da solo, non risponde a nessuno." },
+    "name": {
+      "en": "Fusion",
+      "it": "Fusione"
+    },
+    "description": {
+      "en": "The spells you forged yourself.\nEach one stands alone, answering to nobody.",
+      "it": "Gli incantesimi che hai forgiato tu.\nOgnuno sta da solo, non risponde a nessuno."
+    },
     "type": "Magic",
     "icon": 101
   },
   "Crafted": {
-    "name": { "en": "Crafted", "it": "Creati" },
-    "description": { "en": "The spells you wrote yourself at the workbench.\nBought part by part, answering to nobody.", "it": "Gli incantesimi che hai scritto tu al banco.\nComprati pezzo per pezzo, non rispondono a nessuno." },
+    "name": {
+      "en": "Crafted",
+      "it": "Creati"
+    },
+    "description": {
+      "en": "The spells you wrote yourself at the workbench.\nBought part by part, answering to nobody.",
+      "it": "Gli incantesimi che hai scritto tu al banco.\nComprati pezzo per pezzo, non rispondono a nessuno."
+    },
     "type": "Magic",
     "icon": 101
   },
   "Devised": {
-    "name": { "en": "Devised", "it": "Ideate" },
-    "description": { "en": "The techniques you devised yourself at the workbench.\nBought part by part, answering to nobody.", "it": "Le tecniche che hai ideato tu al banco.\nComprate pezzo per pezzo, non rispondono a nessuno." },
+    "name": {
+      "en": "Devised",
+      "it": "Ideate"
+    },
+    "description": {
+      "en": "The techniques you devised yourself at the workbench.\nBought part by part, answering to nobody.",
+      "it": "Le tecniche che hai ideato tu al banco.\nComprate pezzo per pezzo, non rispondono a nessuno."
+    },
     "type": "Skill",
     "icon": 101
   },
   "Favourites": {
-    "name": { "en": "Favourites", "it": "Preferiti" },
-    "description": { "en": "Your favourite skills.", "it": "Le tue abilità preferite." },
+    "name": {
+      "en": "Favourites",
+      "it": "Preferiti"
+    },
+    "description": {
+      "en": "Your favourite skills.",
+      "it": "Le tue abilità preferite."
+    },
     "type": "Skill",
     "icon": 87
   }

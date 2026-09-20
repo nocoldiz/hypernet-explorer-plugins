@@ -59,31 +59,31 @@
   },
   "company": {
     "lemoncorp": {
-      "description": "The zesty consumer-tech conglomerate behind half the gadgets in Europe. Famously overvalued, famously beloved."
+      "description": "Consumer electronics conglomerate. Large, widely held and overvalued."
     },
     "limecorp": {
-      "description": "The upstart that walked out of LemonCorp and took the good engineers with it. Ships every gadget a year early, half of them working, all of them sold out."
+      "description": "Consumer electronics startup founded by former LemonCorp engineers. Fast growing and volatile."
     },
     "petrodyne": {
-      "description": "Oil, gas and everything that burns. Pumps crude from the Petrocave and pays steady, sooty dividends."
+      "description": "Oil and gas producer. Steady dividends, priced off the oil market."
     },
     "soulforge": {
-      "description": "Refines and trades soul-crystals. Volatile, ethically dubious, spectacularly profitable when the veil is thin."
+      "description": "Refines and trades soul crystals. Highly volatile."
     },
     "hypernetsystems": {
-      "description": "The backbone of the Hypernet itself. Owns the pipes, the towers and most of your data."
+      "description": "Owns the Hypernet infrastructure: cables, towers and data centres."
     },
     "ferrosteelworks": {
-      "description": "Girders, rails and hull plating. Boring, heavy, and quietly essential to everyone who builds anything."
+      "description": "Steel producer. Girders, rails and hull plating. Low growth, low volatility."
     },
     "greenwitchorganics": {
-      "description": "Herbs, tinctures and suspiciously effective produce grown under the GreenWitch canopy."
+      "description": "Grows and sells herbs, tinctures and produce."
     },
     "vaultbankholdings": {
-      "description": "Deposits, loans and the vaults that hold them. If you owe money, you probably owe it here."
+      "description": "Bank. Deposits, loans and vault storage."
     },
     "aetherlogistics": {
-      "description": "Trains, buses, helicopters and the timetables that bind them. Moves people and cargo across the map."
+      "description": "Transport operator. Trains, buses and helicopters carrying passengers and cargo."
     }
   },
   "sector": {

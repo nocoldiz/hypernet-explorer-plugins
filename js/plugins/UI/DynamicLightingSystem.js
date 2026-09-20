@@ -288,7 +288,7 @@
             this.blendMode = lightBlendMode;
             this._targetOpacity = flashlightOpacity;
             this._fadeSpeed = fadeSpeed;
-            this._lastDirection = $gamePlayer.direction();
+            this._lastDirection = null;
             this.initMembers();
         }
 
@@ -331,19 +331,31 @@
             if (direction !== this._lastDirection) {
                 this._lastDirection = direction;
 
-                // Set rotation based on direction
+                // Set rotation based on direction (flashlight texture points Up by default)
                 switch (direction) {
-                    case 2: // Down
+                    case 8: // Up
                         this.rotation = 0;
                         break;
-                    case 4: // Left  
-                        this.rotation = -Math.PI / 2;
+                    case 9: // Up-Right
+                        this.rotation = Math.PI / 4;
                         break;
                     case 6: // Right
                         this.rotation = Math.PI / 2;
                         break;
-                    case 8: // Up
+                    case 3: // Down-Right
+                        this.rotation = (3 * Math.PI) / 4;
+                        break;
+                    case 2: // Down
                         this.rotation = Math.PI;
+                        break;
+                    case 1: // Down-Left
+                        this.rotation = (-3 * Math.PI) / 4;
+                        break;
+                    case 4: // Left  
+                        this.rotation = -Math.PI / 2;
+                        break;
+                    case 7: // Up-Left
+                        this.rotation = -Math.PI / 4;
                         break;
                 }
 
@@ -1229,7 +1241,12 @@
         // i18n-ignore-start  biome ids, not labels
         darkContext() {
             if ($gamePlayer && $gamePlayer._isDiving) return 'seabed';
-            const data = $gameSystem && $gameSystem._procGenData;
+            // The procedural record keeps the last biome it generated forever,
+            // so it only says where the party IS while they are standing on the
+            // procedural map. Read anywhere else it dragged the sea floor's
+            // near-black over authored maps.
+            const onProcMap = !!($gameMap && $gameMap.mapId() === 636);
+            const data = onProcMap ? ($gameSystem && $gameSystem._procGenData) : null;
             const biome = ((data && data.currentBiome) || '').toLowerCase().replace(/[\s_-]+/g, '');
             if (biome === 'seabed') return 'seabed';
             if ($dataMap && $dataMap.note && /<Biome:\s*sea\s*bed\s*>/i.test($dataMap.note)) return 'seabed';
@@ -1253,7 +1270,13 @@
             if (window.DungeonFloors && typeof window.DungeonFloors.currentFloor === 'function' && window.DungeonFloors.currentFloor() < 0) {
                 return true;
             }
-            if ($gameVariables && typeof $gameVariables.value(1) === 'number' && $gameVariables.value(1) < 0) {
+            // The CurrentFloor variable is never cleared on the way out of the
+            // dungeon, so a party that once went below ground carried the dark
+            // with them for the rest of the game - at noon, in town, aboard the
+            // ship. It only answers for the dungeon's own maps.
+            if (window.DungeonFloors && typeof window.DungeonFloors.isDungeonMap === 'function' &&
+                window.DungeonFloors.isDungeonMap() &&
+                $gameVariables && typeof $gameVariables.value(1) === 'number' && $gameVariables.value(1) < 0) {
                 return true;
             }
             if ($gameMap && $gameMap.mapId() === 636) {

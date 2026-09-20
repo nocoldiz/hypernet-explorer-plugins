@@ -14,7 +14,27 @@
     "faceDown": "[ coperta ]",
     "unclearNumbered": "Il significato non è chiaro... ({n})",
     "chooseSpread": "SCEGLI UNA STESA",
-    "readingComplete": "LETTURA COMPLETATA"
+    "readingComplete": "LETTURA COMPLETATA",
+    "actionRead": "Leggi i tarocchi",
+    "actionReadWho": "A chi leggi i tarocchi?",
+    "actionPick": "Pesca una carta",
+    "actionSpread": "Stesa libera",
+    "pickTitle": "Pesca una Carta",
+    "sandboxTitle": "Stesa Libera",
+    "sandboxDeck": "MAZZO {count}",
+    "sandboxShuffle": "MESCOLA",
+    "sandboxCut": "TAGLIA",
+    "sandboxCastle": "CASTELLO",
+    "sandboxScramble": "SPARPAGLIA",
+    "sandboxGather": "RACCOGLI",
+    "sandboxShuffled": "Il mazzo è mescolato.",
+    "sandboxDrawn": "{name} esce dalla cima del mazzo.",
+    "sandboxDeckEmpty": "Nel mazzo non è rimasto nulla.",
+    "sandboxScrambled": "{count} carte, coperte, sparse sul panno.",
+    "sandboxGathered": "Ogni carta è tornata nel mazzo.",
+    "sandboxCastleFew": "Troppe poche carte sul tavolo per costruire qualcosa.",
+    "sandboxCutDone": "Il mazzo è tagliato e riposato sul panno.",
+    "sandboxCastleBuilt": "Un castello di {levels} piani, {cards} carte."
   },
   "cards": {
     "The Fool": {
@@ -351,7 +371,7 @@
   "spreads": {
     "three": {
       "name": "LE TRE PARCHE",
-      "blurb": "Tre carte. La forma di una vita in un solo sguardo.",
+      "blurb": "Tre carte: passato, presente e futuro.",
       "slots": {
         "0": "PASSATO",
         "1": "PRESENTE",
@@ -360,7 +380,7 @@
     },
     "cross": {
       "name": "LA CROCE ELEMENTALE",
-      "blurb": "Cinque carte. Ciò che ti trattiene e ciò che ti tira.",
+      "blurb": "Cinque carte a croce.",
       "slots": {
         "0": "IL CUORE",
         "1": "CIÒ CHE STA DIETRO",
@@ -371,7 +391,7 @@
     },
     "horseshoe": {
       "name": "IL FERRO DI CAVALLO",
-      "blurb": "Sette carte disposte in arco. La risposta lunga.",
+      "blurb": "Sette carte disposte ad arco.",
       "slots": {
         "0": "IL PASSATO",
         "1": "IL PRESENTE",
@@ -384,7 +404,7 @@
     },
     "celtic": {
       "name": "LA CROCE CELTICA",
-      "blurb": "Dieci carte. L'opera completa. Non chiederla due volte.",
+      "blurb": "Dieci carte a croce celtica.",
       "slots": {
         "0": "IL SIGNIFICATORE",
         "1": "L'INCROCIO",
@@ -396,6 +416,13 @@
         "7": "LA TUA CASA",
         "8": "SPERANZE E PAURE",
         "9": "L'ESITO"
+      }
+    },
+    "single": {
+      "name": "LA CARTA",
+      "blurb": "Una carta dalla cima.",
+      "slots": {
+        "0": "LA CARTA"
       }
     }
   },

@@ -16,7 +16,10 @@
     "statLabel": "Statistica di riferimento",
     "category": "Categoria",
     "tier": "Grado {n}",
-    "notImplemented": "Non implementate"
+    "notImplemented": "Non implementate",
+    "purse": "Punti non spesi",
+    "spendPoint": "Spendi un punto: {level}",
+    "spendBlocked": "Non c'è altro da comprare qui"
   },
   "rankNames": [
     "Non addestrato",

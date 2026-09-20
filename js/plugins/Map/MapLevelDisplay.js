@@ -80,44 +80,145 @@
         return _Game_Interpreter_command201.call(this, params);
     };
 
+    function isPlaceholderEncounterList(list) {
+        if (!list || list.length === 0) return true;
+        if (list.length > 1) return false;
+        const only = list[0];
+        return !!(only && (only.troopId === 106 || only.troopId === 113) && (only.weight === 5 || only.weight === 1));
+    }
+
+    function resolveDestinationLevel(dest) {
+        if (!dest) return null;
+        const destinations = (window.WorkSystem && window.WorkSystem.Destinations) || {};
+        const entry = destinations[dest.name] || dest;
+        // "fixedLevel" is a hand-written answer about one place and beats the
+        // nation band: Ghent and the Frozen Station are starter ground at Lv. 1
+        // whatever window Belgium and Scotland were dealt. "minLevel" below
+        // only stands in where no band exists at all.
+        const fixed = Number(entry.fixedLevel);
+        if (fixed > 0) return fixed;
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        let info = null;
+        if (BSEH && typeof BSEH.describeNationLevels === 'function') {
+            try {
+                if (entry.nationId && typeof BSEH.describeNationLevelsById === 'function') {
+                    info = BSEH.describeNationLevelsById(entry.nationId);
+                }
+                if ((!info || !info.median) && entry.country) {
+                    info = BSEH.describeNationLevels(entry.country);
+                }
+            } catch (e) {
+                info = null;
+            }
+        }
+        if (info && info.median) return info.median;
+        const min = Number(entry.minLevel);
+        if (min > 0) return min;
+        return null;
+    }
+
+    Game_Map.prototype.findDestinationEntry = function () {
+        const destinations = (window.WorkSystem && window.WorkSystem.Destinations) || {};
+
+        // 1. Procedural named world square (Paris, Milano, Rome, Amsterdam...)
+        if (isOnNamedWorldSquare(this) && window.WorldGen && window.WorldGen.HardcodedBiomeNames) {
+            const pg = $gameSystem && $gameSystem._procGenData;
+            const coordKey = pg ? `${pg.originX},${pg.originY}` : '';
+            const placeName = window.WorldGen.HardcodedBiomeNames[coordKey];
+            if (placeName) {
+                return destinations[placeName] || { name: placeName };
+            }
+        }
+
+        // 2. MapGroup note tag on hand-made maps (e.g. <MapGroup: Antwerpen>)
+        const groupMatch = ($dataMap && $dataMap.note) ? $dataMap.note.match(/<MapGroup:\s*([^>]+)>/i) : null;
+        if (groupMatch) {
+            const gName = groupMatch[1].trim();
+            if (destinations[gName]) return destinations[gName];
+        }
+
+        // 3. Display name or clean map name
+        const dispName = ($dataMap && $dataMap.displayName) ? $dataMap.displayName.trim() : '';
+        const cleanName = this.getCleanMapName();
+        if (dispName && destinations[dispName]) return destinations[dispName];
+        if (cleanName && destinations[cleanName]) return destinations[cleanName];
+
+        // 4. Coordinates matching in Destinations.json
+        const curMapId = this.mapId();
+        for (const key in destinations) {
+            const d = destinations[key];
+            if (d && Array.isArray(d.coords) && d.coords.some(c => c && c.id === curMapId)) {
+                return d;
+            }
+        }
+
+        return null;
+    };
+
     // Add a new method to Game_Map to perform the calculation.
     Game_Map.prototype.calculateMedianEncounterLevel = function () {
         this._medianEncounterLevel = null;
         const encounterList = this.encounterList();
+
+        // 1. If map has an authored encounter list, use the designer-placed encounters.
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        const isAuthored = BSEH && typeof BSEH.isAuthoredEncounterList === 'function'
+            ? BSEH.isAuthoredEncounterList(encounterList)
+            : (encounterList && encounterList.length > 0 && !isPlaceholderEncounterList(encounterList));
+
+        if (isAuthored) {
+            const troopLevels = [];
+            const levelRegex = /<Level:\s*(\d+)>/i;
+            const uniqueTroopIds = new Set(encounterList.map(encounter => encounter.troopId));
+
+            for (const troopId of uniqueTroopIds) {
+                const enemy = $dataEnemies[troopId];
+                if (enemy && enemy.note) {
+                    const match = enemy.note.match(levelRegex);
+                    if (match && match[1]) {
+                        troopLevels.push(parseInt(match[1], 10));
+                    }
+                }
+            }
+
+            if (troopLevels.length > 0) {
+                troopLevels.sort((a, b) => a - b);
+                const mid = Math.floor(troopLevels.length / 2);
+                this._medianEncounterLevel = (troopLevels.length % 2 === 0)
+                    ? Math.round((troopLevels[mid - 1] + troopLevels[mid]) / 2)
+                    : troopLevels[mid];
+                return;
+            }
+        }
+
+        // If the map has no encounters at all (e.g. empty interior), no level is shown
         if (!encounterList || encounterList.length === 0) {
             return;
         }
 
-        const troopLevels = [];
-        const levelRegex = /<Level:\s*(\d+)>/i;
-
-        // Use a Set to only process unique troop IDs, as the median should be
-        // based on the variety of troops, not encounter frequency.
-        const uniqueTroopIds = new Set(encounterList.map(encounter => encounter.troopId));
-
-        for (const troopId of uniqueTroopIds) {
-            // Per the request, check the enemy with the same ID as the troop.
-            const enemy = $dataEnemies[troopId];
-            if (enemy && enemy.note) {
-                const match = enemy.note.match(levelRegex);
-                if (match && match[1]) {
-                    troopLevels.push(parseInt(match[1], 10));
-                }
+        // 2. For unauthored / placeholder encounter lists (e.g. procedural map 636,
+        // hand-made towns like Antwerpen Map 397, Moonlit Station Map 398):
+        // Check if the location is a known town / destination.
+        const dest = this.findDestinationEntry();
+        if (dest) {
+            const lvl = resolveDestinationLevel(dest);
+            if (lvl !== null) {
+                this._medianEncounterLevel = lvl;
+                return;
             }
         }
 
-        if (troopLevels.length > 0) {
-            troopLevels.sort((a, b) => a - b);
-            const mid = Math.floor(troopLevels.length / 2);
-            let median;
-            if (troopLevels.length % 2 === 0) {
-                // Even number of levels: average the two middle ones and round.
-                median = Math.round((troopLevels[mid - 1] + troopLevels[mid]) / 2);
-            } else {
-                // Odd number of levels: take the middle one.
-                median = troopLevels[mid];
+        // 3. Check for country tag in map note or active nation band
+        if (BSEH && typeof BSEH.describeNationLevels === 'function') {
+            const countryMatch = ($dataMap && $dataMap.note) ? $dataMap.note.match(/<Country:\s*([^>]+)>/i) : null;
+            const countryName = countryMatch ? countryMatch[1].trim() : (typeof BSEH.getNationName === 'function' ? BSEH.getNationName() : null);
+            if (countryName) {
+                const info = BSEH.describeNationLevels(countryName);
+                if (info && info.median) {
+                    this._medianEncounterLevel = info.median;
+                    return;
+                }
             }
-            this._medianEncounterLevel = median;
         }
     };
 
@@ -189,6 +290,11 @@
             const coordKey = `${procGenData.originX},${procGenData.originY}`;
             if (window.WorldGen.HardcodedBiomeNames[coordKey]) {
                 mapName = window.WorldGen.HardcodedBiomeNames[coordKey];
+                const dest = (window.WorkSystem && window.WorkSystem.Destinations) ? window.WorkSystem.Destinations[mapName] : null;
+                const destLvl = resolveDestinationLevel(dest || { name: mapName });
+                if (destLvl !== null) {
+                    this._medianEncounterLevel = destLvl;
+                }
             }
         }
 
@@ -241,7 +347,7 @@
 
     const _Scene_Map_stop = Scene_Map.prototype.stop;
     Scene_Map.prototype.stop = function () {
-        if (!this._mapNameWindow) this._mapNameWindow = { close() {} };
+        if (!this._mapNameWindow) this._mapNameWindow = { close() {}, open() {}, hide() {}, show() {}, refresh() {}, update() {} };
         _Scene_Map_stop.call(this);
     };
 

@@ -128,6 +128,10 @@
     "mapBattleLockedByHost": "La Battaglia su Mappa la decide l'host di questa sessione.",
     "hostTurnedMapBattleOn": "L'host ha attivato la Battaglia su Mappa per tutti.",
     "hostTurnedMapBattleOff": "L'host ha disattivato la Battaglia su Mappa per tutti.",
-    "joinedYourBattle": "{name} si e' unito alla tua battaglia."
-  }
+    "joinedYourBattle": "{name} si e' unito alla tua battaglia.",
+    "endSession": "Chiudi la Sessione LAN",
+    "endSessionDesc": "Sei in una sessione LAN. Chiudi il collegamento e torna nel tuo mondo."
+  },
+  "endSplitScreen": "Chiudi lo Schermo Diviso",
+  "endSplitScreenDesc": "Una sessione a schermo diviso è in corso. Restituisci il secondo pad e torna a giocare da solo."
 }

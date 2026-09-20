@@ -289,6 +289,12 @@
     return `€${goldToEuros(goldAmount)}`;
   }
 
+  // Every refusal the shop commands hand back reads the same way, and there
+  // are enough of them to be worth one line each at the call site.
+  function warn(text) {
+    if (window.ParchmentToast) window.ParchmentToast.show(text, { severity: 'warning' });
+  }
+
   // Plugin Data Structure - Now supports multiple shops
   let shopData = {
     shops: {},
@@ -989,36 +995,46 @@
 
     // Turn on the switch
     $gameSwitches.setValue(switchId, true);
-    window.skipLocalization = true;
-    $gameMessage.add(T('ShopManagement.msg.initialized', { shop: shopId }));
-    $gameMessage.add(T('ShopManagement.msg.category', { category: category }));
-    $gameMessage.add(
-      T('ShopManagement.msg.stocked')
-    );
+    if (window.ParchmentToast) {
+      window.ParchmentToast.report([
+        T('ShopManagement.msg.initialized', { shop: shopId }),
+        T('ShopManagement.msg.category', { category: category }),
+        T('ShopManagement.msg.stocked')
+      ], {
+        severity: 'good'
+      });
+    }
 
     // Show information about added event items
     if (eventIds && eventIds.trim()) {
-      $gameMessage.add(
-        T('ShopManagement.msg.extraItems', { items: eventIds })
-      );
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.extraItems', { items: eventIds }), {
+          severity: 'info'
+        });
+      }
     }
-    window.skipLocalization = false;
 
   });
 
   PluginManager.registerCommand(pluginName, "setCurrentShop", (args) => {
     refreshEconomy(); // ADD THIS LINE
     const shopId = args.shopId;
-    window.skipLocalization = true;
 
     if (!shopData.shops[shopId]) {
-      $gameMessage.add(T('ShopManagement.msg.notFound', { shop: shopId }));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.notFound', { shop: shopId }), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
     shopData.currentShopId = shopId;
-    $gameMessage.add(T('ShopManagement.msg.currentShop', { shop: shopId }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.currentShop', { shop: shopId }), {
+        severity: 'info'
+      });
+    }
 
   });
 
@@ -1030,13 +1046,15 @@
     refreshEconomy(); // ADD THIS LINE
     const shopId = args.shopId;
     const shop = shopData.shops[shopId];
-    window.skipLocalization = true;
 
     if (!shop) {
-      $gameMessage.add(T('ShopManagement.msg.notFound', { shop: shopId }));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.notFound', { shop: shopId }), {
+          severity: 'warning'
+        });
+      }
       return;
     }
-    window.skipLocalization = false;
 
     // Turn off the switch
     $gameSwitches.setValue(shop.switchId, false);
@@ -1048,10 +1066,12 @@
     if (shopData.currentShopId === shopId) {
       shopData.currentShopId = null;
     }
-    window.skipLocalization = true;
 
-    $gameMessage.add(T('ShopManagement.msg.closed', { shop: shopId }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.closed', { shop: shopId }), {
+        severity: 'info'
+      });
+    }
 
   });
 
@@ -1059,7 +1079,11 @@
     refreshEconomy(); // ADD THIS LINE
     const shop = getCurrentShop();
     if (!shop) {
-      $gameMessage.add(T('ShopManagement.msg.noShopInit'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.noShopInit'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -1075,10 +1099,12 @@
 
     // Start NPC systems
     shop.npcProducingTimer = 0;
-    window.skipLocalization = true;
 
-    $gameMessage.add(T('ShopManagement.msg.nowOpen', { shop: shop.id }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.nowOpen', { shop: shop.id }), {
+        severity: 'good'
+      });
+    }
 
   });
 
@@ -1097,7 +1123,11 @@
     shop.npcProducingTimer = 0;
     shopData.globalData.currentDelivery = null;
 
-    $gameMessage.add(T('ShopManagement.msg.shiftEnded'));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.shiftEnded'), {
+        severity: 'info'
+      });
+    }
   });
 
   PluginManager.registerCommand(pluginName, "switchRole", (args) => {
@@ -1106,14 +1136,22 @@
     if (!shop) return;
 
     shop.currentRole = args.role;
-    $gameMessage.add(T('ShopManagement.msg.switchedRole', { role: args.role }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.switchedRole', { role: args.role }), {
+        severity: 'info'
+      });
+    }
   });
 
   PluginManager.registerCommand(pluginName, "newDelivery", (args) => {
     refreshEconomy(); // ADD THIS LINE
     const validMaps = findDeliveryMaps();
     if (validMaps.length === 0) {
-      $gameMessage.add(T('ShopManagement.msg.noLocations'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.noLocations'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -1168,22 +1206,30 @@
     // Get map name
     const mapName = getMapDisplayName(randomMap);
 
-    $gameMessage.add(T('ShopManagement.msg.newDelivery'));
-    $gameMessage.add(T('ShopManagement.msg.customer', { name: shopData.globalData.deliveryNPC.name }));
-    $gameMessage.add(T('ShopManagement.msg.location', { location: mapName }));
-    $gameMessage.add(
-      T('ShopManagement.msg.timeLimit', {
-        time: `${Math.floor(deliveryTimeLimit / 60)}:${(deliveryTimeLimit % 60)
-          .toString()
-          .padStart(2, "0")}`,
-      })
-    );
+    if (window.ParchmentToast) {
+      window.ParchmentToast.report([
+        T('ShopManagement.msg.customer', { name: shopData.globalData.deliveryNPC.name }),
+        T('ShopManagement.msg.location', { location: mapName }),
+        T('ShopManagement.msg.timeLimit', {
+          time: `${Math.floor(deliveryTimeLimit / 60)}:${(deliveryTimeLimit % 60)
+            .toString()
+            .padStart(2, "0")}`,
+        })
+      ], {
+        title: T('ShopManagement.msg.newDelivery'),
+        severity: 'info'
+      });
+    }
   });
 
   PluginManager.registerCommand(pluginName, "completeDelivery", (args) => {
     refreshEconomy(); // ADD THIS LINE
     if (!shopData.globalData.currentDelivery) {
-      $gameMessage.add(T('ShopManagement.msg.noDelivery'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.noDelivery'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -1205,13 +1251,25 @@
 
     if (!onTime) {
       gold = Math.floor(gold * 0.5);
-      $gameMessage.add(T('ShopManagement.msg.deliveryLate'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.deliveryLate'), {
+          severity: 'danger'
+        });
+      }
     } else {
-      $gameMessage.add(T('ShopManagement.msg.deliveryDone'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.deliveryDone'), {
+          severity: 'good'
+        });
+      }
     }
 
     $gameParty.gainGold(gold);
-    $gameMessage.add(T('ShopManagement.msg.earned', { amount: formatEuroPrice(gold) }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.earned', { amount: formatEuroPrice(gold) }), {
+        severity: 'good'
+      });
+    }
     // Running the route is what teaches the route (Shipping, 742).
     if (window.SpecializationXP) {
       window.SpecializationXP.awardCapped('Shipping', onTime ? 2 : 1);
@@ -1226,7 +1284,11 @@
     refreshEconomy(); // ADD THIS LINE
     const shop = getCurrentShop();
     if (!shop) {
-      $gameMessage.add(T('ShopManagement.msg.noShop'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.noShop'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -1234,7 +1296,11 @@
     const amount = Number(args.amount);
 
     if (itemId < materialStartId || itemId > materialEndId) {
-      $gameMessage.add(T('ShopManagement.msg.badMaterial'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.badMaterial'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -1242,13 +1308,21 @@
       (shop.warehouseInventory[itemId] || 0) + amount;
 
     const item = $dataItems[itemId];
-    $gameMessage.add(T('ShopManagement.msg.ordered', { count: amount, material: item.name }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.ordered', { count: amount, material: item.name }), {
+        severity: 'good'
+      });
+    }
   });
 
   PluginManager.registerCommand(pluginName, "showDeliveryInfo", (args) => {
     refreshEconomy(); // ADD THIS LINE
     if (!shopData.globalData.currentDelivery) {
-      $gameMessage.add(T('ShopManagement.msg.noDelivery'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.noDelivery'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
 
@@ -1257,23 +1331,33 @@
     );
     const npc = shopData.globalData.deliveryNPC;
 
-    $gameMessage.add(T('ShopManagement.msg.deliveryHeader'));
-    $gameMessage.add(T('ShopManagement.msg.customer', { name: npc.name }));
-    $gameMessage.add(
-      T('ShopManagement.msg.character', { sprite: npc.spriteName, index: npc.spriteIndex + 1 })
-    );
-    $gameMessage.add(T('ShopManagement.msg.location', { location: mapName }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.report([
+        T('ShopManagement.msg.customer', { name: npc.name }),
+        T('ShopManagement.msg.character', { sprite: npc.spriteName, index: npc.spriteIndex + 1 }),
+        T('ShopManagement.msg.location', { location: mapName })
+      ], {
+        title: T('ShopManagement.msg.deliveryHeader'),
+        severity: 'info'
+      });
+    }
 
     if ($gameTimer.isWorking()) {
       const seconds = Math.floor($gameTimer.seconds());
       const minutes = Math.floor(seconds / 60);
       const secs = seconds % 60;
-      $gameMessage.add(
-        T('ShopManagement.msg.timeLeft',
-          { minutes: minutes, seconds: secs.toString().padStart(2, "0") })
-      );
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.timeLeft',
+          { minutes: minutes, seconds: secs.toString().padStart(2, "0") }), {
+          severity: 'info'
+        });
+      }
     } else {
-      $gameMessage.add(T('ShopManagement.msg.timerOff'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.timerOff'), {
+          severity: 'info'
+        });
+      }
     }
   });
 
@@ -1960,6 +2044,294 @@
     checkDay:          checkShopDay,
   };
 
+  //===========================================================================
+  // Tillbook: the back office, as a HypernetOS program
+  //===========================================================================
+  // A shop with the party's name on the deed keeps trading while they are three
+  // countries away, and until now the only way to learn what it did was to walk
+  // in. Tillbook is the book kept at head office: the takings, what is left on
+  // the shelves, what the warehouse can still make and who is standing behind
+  // the counter for which eight hours. It writes nothing. Pricing, stocking and
+  // hiring are done at the shop, because they are the part of the business that
+  // is played rather than read.
+  const TILL_APP_ID = 'app-tillbook';
+  const TILL_ICON = 230; // Brown Book, per js/db/Sprites/Icons.json
+
+  const TB = {
+    app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+         "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+    header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+            "background:linear-gradient(to bottom,#6b5a8a,#514271); color:var(--xp-white); border-bottom:2px solid #2f2545;",
+    nav: "width:180px; flex-shrink:0; overflow-y:auto; background:var(--xp-face-6); " +
+         "border-right:1px solid var(--xp-face-shade); padding:8px 0;",
+    navItem: "padding:9px 12px; cursor:pointer; border-left:4px solid transparent; user-select:none;",
+    panel: "flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;",
+    status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+            "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+    card: "background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;",
+    h: "margin:0 0 8px; font-size:17px; font-weight:bold; color:#514271;",
+    note: "color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;",
+    tile: "flex:1; min-width:110px; background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:8px 10px;",
+    tileNum: "font-size:21px; font-weight:bold; line-height:1.2;",
+    tileLbl: "font-size:13px; color:var(--xp-ink-soft-2); text-transform:uppercase; letter-spacing:0.4px;",
+    table: "width:100%; border-collapse:collapse; font-size:14px;",
+    th: "text-align:left; padding:4px 6px; border-bottom:1px solid var(--xp-face-shade); color:#514271; font-weight:bold;",
+    td: "padding:4px 6px; border-bottom:1px solid #e6e3d8;",
+  };
+
+  const tbIcon = (index, size) => (window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : '');
+  const tbEsc = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+  // What the shop has on its seven shelves, as rows a table can print.
+  function tillShelves(shop) {
+    const out = [];
+    for (let slot = 1; slot <= 7; slot++) {
+      const entry = shop.stockInventory ? shop.stockInventory[slot] : null;
+      if (!entry || !entry.itemId) { out.push({ slot, empty: true }); continue; }
+      const item = $dataItems[entry.itemId];
+      if (!item) { out.push({ slot, empty: true }); continue; }
+      out.push({
+        slot, empty: false, item,
+        amount: Number(entry.amount) || 0,
+        price: shop.menuPrices ? (shop.menuPrices[entry.itemId] || 0) : 0,
+      });
+    }
+    return out;
+  }
+
+  // The warehouse holds the materials the bench eats. Anything the shop's own
+  // category can be made of is listed with what it would still take.
+  function tillWarehouse(shop) {
+    const held = shop.warehouseInventory || {};
+    return Object.keys(held)
+      .map(id => ({ item: $dataItems[Number(id)], amount: Number(held[id]) || 0 }))
+      .filter(row => row.item && row.amount > 0)
+      .sort((a, b) => b.amount - a.amount);
+  }
+
+  window.Tillbook = {
+    win: null,
+    shopId: null,
+
+    launch() {
+      if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+      const win = window.HypernetOS.WindowManager.createWindow({
+        id: TILL_APP_ID,
+        title: T('ShopManagement.till.appName'),
+        icon: TILL_ICON,
+        width: 860,
+        height: 560,
+        contentHTML: `
+          <div style="${TB.app}">
+            <div style="${TB.header}">
+              <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${tbIcon(TILL_ICON, 34)}</div>
+              <div style="flex:1; min-width:0">
+                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('ShopManagement.till.appName')}</div>
+                <div style="font-size:13px; opacity:0.82">${T('ShopManagement.till.subtitle')}</div>
+              </div>
+              <div id="tb-total" style="font-size:15px; font-weight:bold"></div>
+            </div>
+            <div style="display:flex; flex:1; min-height:0">
+              <div id="tb-nav" style="${TB.nav}"></div>
+              <div id="tb-panel" style="${TB.panel}"></div>
+            </div>
+            <div style="${TB.status}">
+              <span id="tb-note">${T('ShopManagement.till.readOnly')}</span>
+            </div>
+          </div>`
+      });
+      this.win = win;
+      this.bind();
+      // The books are brought up to date the same way walking in does it, so
+      // the figures on screen are the figures the shop would show on the spot.
+      try { if (window.ShopManagement && window.ShopManagement.refreshEconomy) window.ShopManagement.refreshEconomy(); }
+      catch (e) { console.warn('[Tillbook]', e); }
+      this.render();
+    },
+
+    bind() {
+      if (!this.win || this.win.dataset.tbBound) return;
+      this.win.dataset.tbBound = '1';
+      this.win.addEventListener('click', ev => {
+        const hit = ev.target.closest('[data-tb-shop]');
+        if (!hit) return;
+        ev.stopPropagation();
+        const id = hit.dataset.tbShop;
+        this.shopId = id === '*' ? null : id;
+        if (window.SoundManager) SoundManager.playCursor();
+        this.render();
+      });
+    },
+
+    shops() {
+      try { return ownedShops(); } catch (e) { console.warn('[Tillbook]', e); return []; }
+    },
+
+    render() {
+      if (!this.win || !this.win.isConnected) return;
+      const shops = this.shops();
+      const nav = this.win.querySelector('#tb-nav');
+      if (nav) {
+        const rows = [`<div class="focusable" tabindex="0" id="tb-shop-all" data-tb-shop="*"
+          style="${TB.navItem}${this.shopId == null ? 'background:var(--xp-face-2); border-left-color:#6b5a8a; font-weight:bold;' : ''}">
+          ${T('ShopManagement.till.allShops')}</div>`];
+        for (const shop of shops) {
+          const on = this.shopId === String(shop.id);
+          rows.push(`<div class="focusable" tabindex="0" id="tb-shop-${tbEsc(shop.id)}" data-tb-shop="${tbEsc(shop.id)}"
+            style="${TB.navItem}${on ? 'background:var(--xp-face-2); border-left-color:#6b5a8a; font-weight:bold;' : ''}">
+            ${tbEsc(shopDisplayName(shop))}
+            <div style="${TB.note}">${tbEsc(formatEuroPrice(shop.balance || 0))}</div></div>`);
+        }
+        nav.innerHTML = rows.join('');
+      }
+      const panel = this.win.querySelector('#tb-panel');
+      if (panel) {
+        const shop = this.shopId ? shops.find(s => String(s.id) === this.shopId) : null;
+        panel.innerHTML = shop ? this.shopHTML(shop) : this.summaryHTML(shops);
+      }
+      const total = this.win.querySelector('#tb-total');
+      if (total) {
+        const sum = shops.reduce((n, s) => n + (Number(s.balance) || 0), 0);
+        total.textContent = shops.length
+          ? T('ShopManagement.till.onTheBooks', { sum: formatEuroPrice(sum) })
+          : '';
+      }
+    },
+
+    tile(value, label, colour) {
+      return `<div style="${TB.tile}">
+        <div style="${TB.tileNum} color:${colour || 'var(--xp-ink)'}">${tbEsc(value)}</div>
+        <div style="${TB.tileLbl}">${tbEsc(label)}</div></div>`;
+    },
+
+    summaryHTML(shops) {
+      if (!shops.length) {
+        return `<h2 style="${TB.h}">${T('ShopManagement.till.appName')}</h2>
+          <div style="${TB.card} ${TB.note}">${T('ShopManagement.till.noShops')}</div>`;
+      }
+      // The day's takings are read where they lie: calling for them would wipe
+      // the running total the daily announcement is owed.
+      const rows = shops.map(shop => {
+        const cover = Math.round(staffCoverage(shop) * 100);
+        const shelves = tillShelves(shop).filter(r => !r.empty);
+        const held = shelves.reduce((n, r) => n + r.amount, 0);
+        return `<tr>
+          <td style="${TB.td}">${tbEsc(shopDisplayName(shop))}</td>
+          <td style="${TB.td}">${tbEsc(shop.category || '')}</td>
+          <td style="${TB.td} text-align:right">${tbEsc(formatEuroPrice(shop.balance || 0))}</td>
+          <td style="${TB.td} text-align:right">${tbEsc(formatEuroPrice(Number(shop.earnedToday) || 0))}</td>
+          <td style="${TB.td} text-align:right">${Number(shop.soldToday) || 0}</td>
+          <td style="${TB.td} text-align:right">${held}</td>
+          <td style="${TB.td} text-align:right; color:${cover ? 'inherit' : '#c0392b'}">${cover}%</td>
+        </tr>`;
+      }).join('');
+      const closed = shops.filter(s => staffCoverage(s) <= 0);
+      const bare = shops.filter(s => tillShelves(s).filter(r => !r.empty).length <= 2);
+      const warnings = []
+        .concat(closed.map(s => T('ShopManagement.till.warnClosed', { shop: shopDisplayName(s) })))
+        .concat(bare.map(s => T('ShopManagement.till.warnBare', { shop: shopDisplayName(s) })));
+      return `
+        <h2 style="${TB.h}">${T('ShopManagement.till.summaryTitle')}</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
+          ${this.tile(String(shops.length), T('ShopManagement.till.tileShops'))}
+          ${this.tile(formatEuroPrice(shops.reduce((n, s) => n + (Number(s.balance) || 0), 0)), T('ShopManagement.till.tileOnBooks'))}
+          ${this.tile(formatEuroPrice(shops.reduce((n, s) => n + (Number(s.earnedToday) || 0), 0)), T('ShopManagement.till.tileToday'), '#2e7d32')}
+          ${this.tile(String(shops.reduce((n, s) => n + (Number(s.soldToday) || 0), 0)), T('ShopManagement.till.tileSoldToday'))}
+        </div>
+        ${warnings.length ? `<div style="${TB.card}">
+          <b>${T('ShopManagement.till.attention')}</b>
+          ${warnings.map(w => `<div style="${TB.note}">${tbEsc(w)}</div>`).join('')}</div>` : ''}
+        <div style="${TB.card} padding:6px 8px"><table style="${TB.table}">
+          <thead><tr>
+            <th style="${TB.th}">${T('ShopManagement.till.colShop')}</th>
+            <th style="${TB.th}">${T('ShopManagement.till.colTrade')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colBalance')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colToday')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colSold')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colOnShelves')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colCover')}</th>
+          </tr></thead><tbody>${rows}</tbody></table></div>
+        <div style="${TB.note}">${T('ShopManagement.till.coverNote')}</div>`;
+    },
+
+    shopHTML(shop) {
+      const shelves = tillShelves(shop);
+      const shelfRows = shelves.map(row => row.empty
+        ? `<tr><td style="${TB.td}">${row.slot}</td><td style="${TB.td} ${TB.note}" colspan="3">${T('ShopManagement.emptySlot')}</td></tr>`
+        : `<tr>
+            <td style="${TB.td}">${row.slot}</td>
+            <td style="${TB.td}">${tbIcon(row.item.iconIndex)} ${tbEsc(row.item.name)}</td>
+            <td style="${TB.td} text-align:right; ${row.amount <= 1 ? 'color:#b04a00; font-weight:bold' : ''}">${row.amount}</td>
+            <td style="${TB.td} text-align:right">${tbEsc(formatEuroPrice(row.price))}</td>
+          </tr>`).join('');
+
+      const warehouse = tillWarehouse(shop);
+      const warehouseRows = warehouse.length
+        ? warehouse.map(row => `<tr>
+            <td style="${TB.td}">${tbIcon(row.item.iconIndex)} ${tbEsc(row.item.name)}</td>
+            <td style="${TB.td} text-align:right">${row.amount}</td>
+          </tr>`).join('')
+        : `<tr><td style="${TB.td} ${TB.note}" colspan="2">${T('ShopManagement.till.warehouseEmpty')}</td></tr>`;
+
+      const roster = staffRoster(shop);
+      const staffRows = roster.length
+        ? roster.map(entry => `<tr>
+            <td style="${TB.td}">${tbEsc(entry.name || T('ShopManagement.till.unnamedStaff'))}</td>
+            <td style="${TB.td}">${String(entry.shift.start).padStart(2, '0')}:00 - ${String(entry.shift.end).padStart(2, '0')}:00</td>
+          </tr>`).join('')
+        : `<tr><td style="${TB.td} ${TB.note}" colspan="2">${T('ShopManagement.till.noStaff')}</td></tr>`;
+
+      const queue = Array.isArray(shop.productionQueue) ? shop.productionQueue : [];
+      const cover = Math.round(staffCoverage(shop) * 100);
+
+      return `
+        <h2 style="${TB.h}">${tbEsc(shopDisplayName(shop))}</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px">
+          ${this.tile(formatEuroPrice(shop.balance || 0), T('ShopManagement.till.tileOnBooks'))}
+          ${this.tile(formatEuroPrice(Number(shop.earnedToday) || 0), T('ShopManagement.till.tileToday'), '#2e7d32')}
+          ${this.tile(String(Number(shop.soldToday) || 0), T('ShopManagement.till.tileSoldToday'))}
+          ${this.tile(cover + '%', T('ShopManagement.till.tileCover'), cover ? undefined : '#c0392b')}
+        </div>
+        <div style="${TB.card} padding:6px 8px">
+          <b>${T('ShopManagement.till.shelves')}</b>
+          <table style="${TB.table}"><thead><tr>
+            <th style="${TB.th}">${T('ShopManagement.till.colSlot')}</th>
+            <th style="${TB.th}">${T('ShopManagement.till.colItem')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colHeld')}</th>
+            <th style="${TB.th} text-align:right">${T('ShopManagement.till.colPrice')}</th>
+          </tr></thead><tbody>${shelfRows}</tbody></table>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <div style="${TB.card} flex:1; min-width:230px; padding:6px 8px">
+            <b>${T('ShopManagement.till.warehouse')}</b>
+            <table style="${TB.table}"><tbody>${warehouseRows}</tbody></table>
+          </div>
+          <div style="${TB.card} flex:1; min-width:230px; padding:6px 8px">
+            <b>${T('ShopManagement.till.counter')}</b>
+            <table style="${TB.table}"><tbody>${staffRows}</tbody></table>
+            <div style="${TB.note}">${cover ? T('ShopManagement.till.coverLine', { pct: cover })
+              : T('ShopManagement.till.coverNone')}</div>
+          </div>
+        </div>
+        ${queue.length ? `<div style="${TB.card}"><b>${T('ShopManagement.till.bench')}</b>
+          <div style="${TB.note}">${T('ShopManagement.till.benchLine', { n: queue.length })}</div></div>` : ''}
+        <div style="${TB.note}">${T('ShopManagement.till.shopNote')}</div>`;
+    },
+  };
+
+  if (window.HypernetOS && window.HypernetOS.registerApp) {
+    window.HypernetOS.registerApp({
+      id: TILL_APP_ID,
+      name: T('ShopManagement.till.appName'),
+      icon: TILL_ICON,
+      category: 'economy',
+      launchFn: function () { window.Tillbook.launch(); },
+      desktopShortcut: true,
+    });
+  }
+
   // Debug globals
   window.$shopData       = shopData;
   window.$addItemToShop  = addItemToShop;
@@ -1983,8 +2355,8 @@
 
   PluginManager.registerCommand(pluginName, 'startProducingMiniGame', () => {
     const shop = getCurrentShop();
-    if (!shop) { $gameMessage.add(T('ShopManagement.msg.noShop')); return; }
-    if (!shop.isWorking) { $gameMessage.add(T('ShopManagement.msg.mustBeOpen')); return; }
+    if (!shop) { warn(T('ShopManagement.msg.noShop')); return; }
+    if (!shop.isWorking) { warn(T('ShopManagement.msg.mustBeOpen')); return; }
     const categoryItems = $dataItems.filter(item => item && isItemInCategory(item, shop.category));
     if (categoryItems.length > 0) {
       const randomItem = categoryItems[Math.floor(Math.random() * categoryItems.length)];
@@ -1992,9 +2364,17 @@
       if (recipe && hasIngredients(recipe, shop)) {
         consumeIngredients(recipe, shop);
         addToStock(randomItem.id, 1, shop);
-        $gameMessage.add(T('ShopManagement.msg.produced', { item: randomItem.name }));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('ShopManagement.msg.produced', { item: randomItem.name }), {
+            severity: 'good'
+          });
+        }
       } else {
-        $gameMessage.add(T('ShopManagement.msg.notEnoughMats'));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('ShopManagement.msg.notEnoughMats'), {
+            severity: 'warning'
+          });
+        }
       }
     }
   });
@@ -2006,18 +2386,26 @@
   PluginManager.registerCommand(pluginName, 'setMenuPrice', (args) => {
     refreshEconomy();
     const shop = getCurrentShop();
-    if (!shop) { $gameMessage.add(T('ShopManagement.msg.noShop')); return; }
+    if (!shop) { warn(T('ShopManagement.msg.noShop')); return; }
     const itemId = Number(args.itemId);
     const price = Number(args.price);
     const item = $dataItems[itemId];
     if (!item || !Number.isFinite(price) || price < 1) {
-      $gameMessage.add(T('ShopManagement.msg.badMenuPrice'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.badMenuPrice'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
     shop.menuPrices[itemId] = Math.floor(price);
-    $gameMessage.add(T('ShopManagement.msg.menuPriceSet', {
-      item: item.name, price: formatEuroPrice(shop.menuPrices[itemId]),
-    }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.menuPriceSet', {
+        item: item.name, price: formatEuroPrice(shop.menuPrices[itemId]),
+            }), {
+        severity: 'good'
+      });
+    }
   });
 
   PluginManager.registerCommand(pluginName, 'produceItem', (args) => {
@@ -2025,17 +2413,25 @@
     // This one names its shop, rather than acting on whichever is current.
     const shopId = args.shopId;
     const shop = shopData.shops[shopId];
-    if (!shop) { $gameMessage.add(T('ShopManagement.msg.notFound', { shop: shopId })); return; }
+    if (!shop) { warn(T('ShopManagement.msg.notFound', { shop: shopId })); return; }
     const item = $dataItems[Number(args.itemId)];
-    if (!item) { $gameMessage.add(T('ShopManagement.msg.notEnoughMats')); return; }
+    if (!item) { warn(T('ShopManagement.msg.notEnoughMats')); return; }
     const recipe = getRecipe(item);
     // An item with no recipe costs nothing to make, the same rule simulateProduction follows.
     if (recipe && !hasIngredients(recipe, shop)) {
-      $gameMessage.add(T('ShopManagement.msg.notEnoughMats'));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ShopManagement.msg.notEnoughMats'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
     if (recipe) consumeIngredients(recipe, shop);
     addToStock(item.id, 1, shop);
-    $gameMessage.add(T('ShopManagement.msg.produced', { item: item.name }));
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('ShopManagement.msg.produced', { item: item.name }), {
+        severity: 'good'
+      });
+    }
   });
 })();

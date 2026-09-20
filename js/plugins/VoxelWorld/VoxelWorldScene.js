@@ -545,8 +545,31 @@
         return leader.hasSkill(FLY_SKILL_ID);
     }
 
+    // The scene being built RIGHT NOW, for as long as its constructor is
+    // running, and null the rest of the time.
+    //
+    // Building this world is a long job that reaches into half the game: the
+    // field, the settlements, the decor, the 3D battler families, the weapon
+    // overlay, the quick bar. Anything in there that throws takes the whole
+    // `new` expression with it and the caller is left holding nothing - while
+    // the overlay the constructor put on the page at its halfway point is
+    // still there, opaque, over the top of the game, with isActive() answering
+    // "no" so nothing will ever take it down again. That is not a crash the
+    // player can come back from: the game is still running, behind a black
+    // rectangle, with the mouse going nowhere.
+    //
+    // So the half-built scene publishes itself the moment it exists, and
+    // VoxelWorldSystem's build() disposes THIS one when the constructor never
+    // returned. dispose() is written to survive being handed a scene that
+    // barely started (see _disposeInner).
+    let BUILDING = null;
+    // Taken once, by build(), and cleared as it is taken: the next world to
+    // be raised must never be handed the wreck of the last one.
+    function buildingScene() { const half = BUILDING; BUILDING = null; return half; }
+
     class VoxelWorldScene {
         constructor(duration, destinationName, totalKm, fuelCost, opts) {
+            BUILDING = this;
             const options = opts || {};
             // Title mode: the drive runs as a silent background behind the title
             // screen. No HUD, no keyboard / mouse control, no engine audio and no
@@ -1195,6 +1218,8 @@
 
             this._loop = this._loop.bind(this);
             this._animId = requestAnimationFrame(this._loop);
+            // Built, whole, and about to be handed to the caller.
+            BUILDING = null;
         }
 
         _onWheel(e) {
@@ -1987,7 +2012,9 @@
                 T('CamperDrive.npc.leave')
             ];
             if ($gameMessage.setSpeakerName) $gameMessage.setSpeakerName(keeper.name);
+            window.skipLocalization = true;
             $gameMessage.add(T('CamperDrive.shop.greeting', { name: keeper.name, shop: label }));
+            window.skipLocalization = false;
             $gameMessage.setChoices(choices, 0, 2);
             $gameMessage.setChoiceCallback((idx) => {
                 if (idx === 0)      this._pendingShop = keeper;
@@ -2053,7 +2080,9 @@
                 T('CamperDrive.npc.leave')
             ];
             if ($gameMessage.setSpeakerName) $gameMessage.setSpeakerName(ped.name);
+            window.skipLocalization = true;
             $gameMessage.add(T('CamperDrive.npc.approach', { name: ped.name }));
+            window.skipLocalization = false;
             $gameMessage.setChoices(choices, 0, 2);
             $gameMessage.setChoiceCallback((idx) => {
                 try {
@@ -2688,7 +2717,9 @@
                 if (say) {
                     if (typeof $gameMessage !== 'undefined') {
                         if ($gameMessage.setSpeakerName) $gameMessage.setSpeakerName(say.name);
+                        window.skipLocalization = true;
                         $gameMessage.add(this._citizenLine(say));
+                        window.skipLocalization = false;
                     }
                     this._msgWatch = true;
                 } else {
@@ -6702,7 +6733,9 @@
         _offerPlaceVisit(place, dir) {
             if (this.isPaused()) return;
             if (typeof $gameMessage === 'undefined' || $gameMessage.isBusy()) return;
-            const door = window.WorldMapReturn.placeEntranceFor(place.entry, dir);
+            const WMR = window.WorldMapReturn;
+            if (!WMR || !WMR.placeEntranceFor) return;
+            const door = WMR.placeEntranceFor(place.entry, dir);
             if (!door) return;
             this._menuOpen = true;
             if (this._overlay) this._overlay.style.display = 'none';
@@ -7501,6 +7534,12 @@
             } catch (e) {
                 console.error('[VoxelWorld] dispose', e);
             } finally {
+                // Whatever else went wrong, the context goes. A renderer left
+                // alive is not a tidiness problem: the browser caps live WebGL
+                // contexts and force-loses the OLDEST one past the cap, which
+                // is the game's own canvas, and the picture then freezes for
+                // the rest of the session.
+                try { this._disposeRenderer(); } catch (e2) { /* already gone */ }
                 if (this._animId) { cancelAnimationFrame(this._animId); this._animId = null; }
                 try { releasePointerLock(); } catch (e) { /* nothing held it */ }
                 if (this._overlay && this._overlay.parentNode) {
@@ -7521,7 +7560,10 @@
             setAlienTerrain(null);
             setGravityScale(1);
             VoxelWorldState.setEnabled(true);
-            this._saveVoxelEdits();
+            // The dig log is written to the world folder, which is a file
+            // system: it can fail. It must not take the rest of the teardown
+            // with it.
+            try { this._saveVoxelEdits(); } catch (e) { console.error('[VoxelWorld] saveEdits', e); }
             if (this._tool) { this._tool.dispose(); this._tool = null; }
             if (this._caster) { this._caster.dispose(); this._caster = null; }
             if (this._spellFx) { this._spellFx.dispose(); this._spellFx = null; }
@@ -7597,10 +7639,22 @@
             }
             if (this._beamTex) { this._beamTex.dispose(); this._beamTex = null; }
 
-            this._fpc.dispose();
-            this._terrain.dispose();
-            this._van.dispose();
-            this._hud.dispose();
+            // Guarded rather than assumed: a scene whose constructor threw
+            // part way through is disposed exactly like a whole one (see
+            // BUILDING at the head of this file), and half of these do not
+            // exist yet when that happens.
+            if (this._fpc)     this._fpc.dispose();
+            if (this._terrain) this._terrain.dispose();
+            if (this._van)     this._van.dispose();
+            if (this._hud)     this._hud.dispose();
+            this._disposeRenderer();
+        }
+
+        // The GL context and the PIXI texture keyed to its canvas. Called from
+        // the foot of _disposeInner in the ordinary case, and again from
+        // dispose()'s finally when something above it threw: it is written to
+        // be safe to run twice.
+        _disposeRenderer() {
             if (this._renderer) {
                 // The PIXI texture a fight over this world was drawn on goes
                 // with the canvas it was keyed to; leaving it in PIXI's cache
@@ -7618,12 +7672,13 @@
                 try {
                     if (this._renderer.forceContextLoss) this._renderer.forceContextLoss();
                 } catch (e) { /* context already gone */ }
+                this._renderer = null;
             }
         }
     }
 
     // Handed to the rest of the suite.
     Object.assign(VW, {
-        VoxelWorldScene
+        VoxelWorldScene, buildingScene
     });
 })();

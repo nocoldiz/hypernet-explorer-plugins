@@ -172,6 +172,9 @@
     "landingSite": "Landing Site",
     "otherGalaxy": "Another galaxy: bridge only",
     "landingSiteCell": "Square {x}, {y}",
+    "landOnFoot": "Land on foot",
+    "landWithShip": "Land with the ship",
+    "spaceportAtCell": "{name} · Square {x}, {y}",
     "landHere": "Land Here",
     "liminalWalk": "Liminal walk",
     "cancel": "Cancel",
@@ -306,6 +309,8 @@
   },
   "core": {
     "noSpaceports": "No spaceports in this planet",
+    "portOnFoot": "{name} (on foot)",
+    "portWithShip": "{name} (with the ship)",
     "cancel": "Cancel",
     "theStar": "the star",
     "refuellingFrom": "Refuelling from {star}.",

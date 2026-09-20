@@ -908,7 +908,7 @@
                     <div id="radio-control-deck">
                         <div class="control-knob-container">
                             <div class="knob-label">${t('Radio.volume')}</div>
-                            <div class="knob-base" id="knob-volume"><div class="knob-pointer"></div></div>
+                            <div class="knob-base" id="knob-volume" title="${t('Radio.volumeHint')}"><div class="knob-pointer"></div></div>
                         </div>
                         <div id="band-push-buttons">
                             <div class="band-btn" id="btn-band-am">AM</div>
@@ -916,7 +916,7 @@
                             <div class="band-btn" id="btn-band-em">EM</div>
                         </div>
                         <div id="action-deck-buttons">
-                            <div class="utility-btn" id="btn-fav">&#9733;</div>
+                            <div class="utility-btn" id="btn-fav" title="${t('Radio.favoriteHint')}">&#9733;</div>
                             <div class="utility-btn" id="btn-scan">${t('Radio.scan')}</div>
                             <div class="utility-btn" id="btn-add" title="${t('Radio.addStationHint')}">${t('Radio.addStation')}</div>
                             <div class="utility-btn" id="btn-battle"></div>
@@ -924,7 +924,7 @@
                         </div>
                         <div class="control-knob-container">
                             <div class="knob-label">${t('Radio.tuning')}</div>
-                            <div class="knob-base" id="knob-tuning"><div class="knob-pointer"></div></div>
+                            <div class="knob-base" id="knob-tuning" title="${t('Radio.tuningHint')}"><div class="knob-pointer"></div></div>
                         </div>
                     </div>
                     <div id="radio-add-modal" class="radio-modal" hidden>
@@ -1020,11 +1020,41 @@
             if (urlField) urlField.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') { this.submitAddModal(); e.preventDefault(); }
             });
-            const tuner = this._root.querySelector('#knob-tuning');
-            if (tuner) tuner.addEventListener('wheel', (e) => {
-                tune(e.deltaY > 0 ? 1 : -1);
+            // Both knobs are turned the same way: the wheel over them, or the
+            // hand dragged up and down. The volume knob was a painted disc
+            // until now; it is a control like the tuner.
+            this.bindKnob('#knob-tuning', (n) => { while (n-- > 0) tune(1); },
+                (n) => { while (n-- > 0) tune(-1); }, 12);
+            this.bindKnob('#knob-volume', (n) => adjustVolume(-5 * n),
+                (n) => adjustVolume(5 * n), 6);
+        },
+
+        // One knob, two ways of turning it. down() is the way the knob goes
+        // when the wheel is rolled down or the hand is dragged down.
+        bindKnob(selector, down, up, pixelsPerStep) {
+            const knob = this._root && this._root.querySelector(selector);
+            if (!knob) return;
+            knob.addEventListener('wheel', (e) => {
+                (e.deltaY > 0 ? down : up)(1);
                 e.preventDefault();
             }, { passive: false });
+            knob.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                let anchor = e.clientY;
+                const move = (ev) => {
+                    const steps = Math.trunc((ev.clientY - anchor) / pixelsPerStep);
+                    if (!steps) return;
+                    anchor += steps * pixelsPerStep;
+                    (steps > 0 ? down : up)(Math.abs(steps));
+                };
+                const release = () => {
+                    document.removeEventListener('mousemove', move);
+                    document.removeEventListener('mouseup', release);
+                };
+                document.addEventListener('mousemove', move);
+                document.addEventListener('mouseup', release);
+            });
         },
 
         loop() {
@@ -1100,7 +1130,10 @@
             if (els.needle) {
                 const len = Math.max(bandSlots().length - 1, 1);
                 const pct = (radio.slot / len) * 100;
-                const left = `calc(32px + ${pct}% * 0.88)`;
+                // The tick row starts 46px into the glass face and is 68px
+                // shorter than it (see .dial-tick-row): the needle rides that
+                // same rail, or it points at the wrong frequency.
+                const left = `calc(46px + (100% - 68px) * ${(pct / 100).toFixed(4)})`;
                 if (last.needle !== left) {
                     els.needle.style.setProperty('--radio-needle', left);
                     last.needle = left;
@@ -1288,7 +1321,11 @@
         PluginManager.registerCommand(pluginName, 'scanStations', () => {
             initializeRadio();
             if (typeof $gameMessage !== 'undefined' && $gameMessage) {
-                $gameMessage.add(t('Radio.stationsUpdated'));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(t('Radio.stationsUpdated'), {
+                    severity: 'info'
+                  });
+                }
             }
         });
         PluginManager.registerCommand(pluginName, 'setVolume', args => {

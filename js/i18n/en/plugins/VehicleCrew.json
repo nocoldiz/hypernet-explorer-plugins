@@ -1,7 +1,7 @@
 {
   "drivingTag": "(Driving)",
   "tookWheel": "{name} takes the wheel.",
-  "allTired": "{name} is driving on fumes - nobody aboard is rested enough to take over.",
+  "allTired": "{name} is exhausted, and nobody aboard is rested enough to take over.",
   "woke": {
     "crash": "The crash throws everyone in the back awake."
   },

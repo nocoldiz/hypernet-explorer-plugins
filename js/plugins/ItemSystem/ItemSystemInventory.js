@@ -212,7 +212,9 @@
     if (window.ParchmentToast && window.ParchmentToast.show) {
       window.ParchmentToast.show(text, { severity: severity || 'info', title: T('Inventory.study.title') });
     } else if (typeof $gameMessage !== 'undefined' && $gameMessage && !$gameMessage.isBusy()) {
+      window.skipLocalization = true;
       $gameMessage.add(text);
+      window.skipLocalization = false;
     }
   }
 
@@ -267,6 +269,58 @@
   }
 
   window._InventorySpecialCommandsFor = specialCommandsFor;
+
+  // ---------------------------------------------------------------------
+  // Bespoke item actions.
+  //
+  // An item may answer for itself instead of being used. It declares the
+  // actions it offers as <Actions: id, id>, and the plugin that owns the
+  // subject registers each id here. Where an item carries them the backpack
+  // draws those buttons in place of Use, so the deck of tarot opens a reading
+  // rather than being drunk. Everything else about the item - equipping,
+  // throwing, discarding, favouriting - is untouched.
+  //
+  // A registration is { labelKey, handler, needsTarget, titleKey }:
+  //   labelKey    i18n key for the button face
+  //   handler     (item, actor, scene) - actor is null unless a target was asked
+  //   needsTarget the party card opens first and the chosen member is passed on
+  //   titleKey    i18n key for the heading of that party card
+  // ---------------------------------------------------------------------
+  const ITEM_ACTIONS = {};
+
+  window.ItemActions = {
+    register(id, config) {
+      if (!id || !config || typeof config.handler !== "function") return false;
+      ITEM_ACTIONS[String(id)] = config;
+      return true;
+    },
+    get(id) { return ITEM_ACTIONS[String(id)] || null; },
+    // The actions an item offers, in the order it writes them, skipping any
+    // whose owning plugin is not loaded.
+    forItem(item) {
+      if (!item || !item.note) return [];
+      const out = [];
+      const regex = /<Actions:\s*(.+?)>/gi;   // i18n-ignore: note tag
+      let match;
+      while ((match = regex.exec(item.note)) !== null) {
+        for (const raw of String(match[1]).split(",")) {
+          const id = raw.trim();
+          const config = ITEM_ACTIONS[id];
+          if (!id || !config || out.some(a => a.id === id)) continue;
+          out.push(Object.assign({ id: id }, config));
+        }
+      }
+      return out;
+    },
+    // The button face, falling back to the id so a missing translation is
+    // still clickable rather than blank.
+    label(action) {
+      if (!action) return "";
+      const key = action.labelKey;
+      return (key && T.has(key)) ? T(key) : String(action.id);
+    }
+  };
+
 
   // Map number keys 1-9
   Input.keyMapper[49] = "1";

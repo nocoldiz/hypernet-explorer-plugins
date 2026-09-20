@@ -89,5 +89,76 @@
       "description": "Un potente distillato fermentato da Frutto del Respiro di Drago e Stellafrutto del Vuoto. Alcol pericolosamente puro.",
       "outputPreview": "1-4x Etanolo"
     }
+  },
+  "grange": {
+    "appName": "Grange",
+    "subtitle": "Botti, arnie, campi e bestiame, consultabili da ovunque.",
+    "readOnly": "Sola lettura. Il lavoro si fa ancora sul posto.",
+    "seasonLabel": "Stagione:",
+    "season": {
+      "spring": "Primavera",
+      "summer": "Estate",
+      "autumn": "Autunno",
+      "winter": "Inverno"
+    },
+    "tab": {
+      "overview": "Quadro",
+      "cellar": "Cantina",
+      "apiary": "Apiario",
+      "fields": "Campi",
+      "livestock": "Bestiame"
+    },
+    "overviewTitle": "I possedimenti a colpo d'occhio",
+    "waitingOnYou": "{n} ASPETTANO TE",
+    "nothingWaiting": "NULLA IN ATTESA",
+    "needsYou": "Richiede la tua presenza",
+    "allQuiet": "Procede tutto. Oggi non serve mettersi in viaggio.",
+    "projectionNote": "Campi e botti sono stimati dall'ultima visita, con bel tempo in campo aperto. Le colture in serra maturano prima di quanto indicato.",
+    "tile": {
+      "barrels": "Botti in opera",
+      "barrelsReady": "Pronte da imbottigliare",
+      "plots": "Appezzamenti piantati",
+      "cropsRipe": "Maturi",
+      "animals": "Capi di bestiame",
+      "honey": "Miele in dispensa",
+      "bees": "Api",
+      "mood": "Umore della colonia",
+      "efficiency": "Efficienza"
+    },
+    "job": {
+      "barrel": "{name} ha finito a {where}.",
+      "crop": "{name} è maturo a {where}.",
+      "produce": "{animal} a {where} ha {what} da raccogliere.",
+      "hiveUnhappy": "La colonia è inquieta (umore {mood}).",
+      "outOfSeason": "{name} a {where} è fuori stagione e sta fermo."
+    },
+    "colBrew": "Fermentato",
+    "colWhere": "Dove",
+    "colProgress": "Avanzamento",
+    "colLeft": "Manca",
+    "colCrop": "Coltura",
+    "colYield": "Resa",
+    "colAnimal": "Bestia",
+    "colGrowth": "Crescita",
+    "colProduce": "Prodotto",
+    "now": "Adesso",
+    "ripe": "Maturo",
+    "outOfSeason": "Fuori stagione",
+    "daysLeft": "{n} giorni",
+    "grown": "Adulto",
+    "noProduce": "Non produce nulla",
+    "noBarrels": "Nessuna botte sta lavorando. Riempine una e comparirà qui.",
+    "noHive": "Nessuna colonia è stata fondata.",
+    "noPlots": "Non c'è nulla di piantato. Un appezzamento compare qui appena ci va un seme.",
+    "noAnimals": "La compagnia non possiede bestiame.",
+    "cellarNote": "L'imbottigliamento si fa alla botte. Una bevanda lasciata oltre il tempo non si rovina, ma non migliora.",
+    "hiveNote": "Affumicare, raccogliere e dividere una colonia si fanno all'arnia.",
+    "fieldsNote": "Un appezzamento fuori stagione non e morto, sta aspettando i suoi mesi di crescita.",
+    "livestockNote": "Nutrire, accarezzare e raccogliere si fanno sul campo.",
+    "queen": "La regina",
+    "queenAlive": "Viva, salute {health}, {eggs} uova deposte.",
+    "queenDead": "Nessuna regina. La colonia si sta spegnendo.",
+    "castes": "Caste",
+    "stores": "Dispensa"
   }
 }

@@ -5,5 +5,12 @@
   "joinsParty": "{name} si unisce al gruppo!",
   "residence": "Residenza",
   "joinedInactive": "{name} si unisce, ma non c'è posto sulla strada: attende tra le riserve.",
-  "benchedLore": "{name} ha accettato di viaggiare con il gruppo, e da allora attende un posto al suo interno."
+  "benchedLore": "{name} ha accettato di viaggiare con il gruppo, e da allora attende un posto al suo interno.",
+  "lodging": {
+    "halls": "la Sala delle Scale",
+    "house": "la casa a {place}",
+    "ship": "l’astronave",
+    "vault": "la cripta",
+    "cannotJoin": "{name} non può rimettersi in viaggio adesso."
+  }
 }

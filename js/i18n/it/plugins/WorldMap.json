@@ -1,0 +1,46 @@
+{
+  "pin": {
+    "vaultUnnamed": "un mecenate senza nome",
+    "vaultKnown": "cripta di {patron} (sigillata)",
+    "vaultOpen": "cripta di {patron} (aperta)"
+  },
+  "read": {
+    "square": "Riquadro {x}, {y}",
+    "place": "Qui",
+    "nation": "Rivendicato da",
+    "unclaimed": "Nessuna nazione",
+    "ground": "Terreno",
+    "unsurveyed": "Non rilevato",
+    "crossed": "Attraversato da",
+    "river": "un fiume",
+    "road": "una strada",
+    "note": "La tua nota",
+    "built": "Costruito qui",
+    "builtWhat": "{count}: {what}",
+    "builtCount": "{count} pezzi"
+  },
+  "country": {
+    "title": "Evidenzia una nazione",
+    "none": "Nessuna nazione"
+  },
+  "hint": {
+    "sheet": "Clicca un luogo per partire. Clic destro su un riquadro per segnarlo.",
+    "travel": "Clicca per partire verso {place}.",
+    "needVehicle": "Devi essere a bordo di un veicolo per partire dalla carta."
+  },
+  "note": {
+    "title": "Riquadro {x}, {y}",
+    "placeholder": "Scrivi qualcosa su questo riquadro",
+    "save": "Conserva",
+    "delete": "Cancella",
+    "cancel": "Indietro"
+  },
+  "preview": {
+    "showMap": "Mostra la mappa",
+    "title": "Riquadro {x}, {y}",
+    "building": "Disposizione del terreno...",
+    "notKept": "Disegnata solo per questa occhiata, e non conservata da nessuna parte.",
+    "close": "Chiudi",
+    "unbuildable": "Non c’è terreno da disporre su quel riquadro."
+  }
+}

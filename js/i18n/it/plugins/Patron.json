@@ -1,10 +1,11 @@
 {
   "vaultName": "Cripta di {patron}",
   "starLabel": "Stella {planet}",
-  "surveyNote": "Mappata, battezzata e lasciata in pace. La targa del rilevamento dice {patron}, patrono di questa realtà.",
+  "surveyNote": "Rilevato e nominato. Registrato a {patron}, patrono di questa realta.",
   "hatchReturn": "Di nuovo sulla botola di {patron}.",
   "hatchReturnUnknown": "Di nuovo sulla botola.",
   "vesselSender": "La Cripta",
   "vesselSubject": "La tua via verso il basso",
-  "vesselBody": "Le coordinate sono state pronunciate ad alta voce in questo mondo, e ora la cripta gli risponde. In allegato trovi il vascello che ti riporta giù alla botola di {patron}, ogni volta che lo vorrai."
+  "vesselBody": "Le coordinate sono state pronunciate ad alta voce in questo mondo, e ora la cripta gli risponde. In allegato trovi il vascello che ti riporta giù alla botola di {patron}, ogni volta che lo vorrai.",
+  "vaultSealed": "La botola non si apre: sopra non c'e' piu' terra."
 }

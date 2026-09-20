@@ -34,6 +34,51 @@
     "cost": 100000,
     "effects": {}
   },
+  "INTRAUTERINE_SPIRAL": {
+    "name_en": "Intrauterine Spiral",
+    "name_int": "prosthetics.intrauterine_spiral.name",
+    "name_it": "Spirale Intrauterina",
+    "type": "technological",
+    "effects": {},
+    "skill": null,
+    "cost": 8000
+  },
+  "VASECTOMY_CLIP": {
+    "name_en": "Vasectomy Clip",
+    "name_int": "prosthetics.vasectomy_clip.name",
+    "name_it": "Clip per Vasectomia",
+    "type": "technological",
+    "effects": {},
+    "skill": null,
+    "cost": 6000
+  },
+  "TUBAL_LIGATION_BAND": {
+    "name_en": "Tubal Ligation Band",
+    "name_int": "prosthetics.tubal_ligation_band.name",
+    "name_it": "Banda di Legatura Tubarica",
+    "type": "technological",
+    "effects": {},
+    "skill": null,
+    "cost": 7000
+  },
+  "SPORANGIAL_SUPPRESSOR": {
+    "name_en": "Sporangial Suppressor",
+    "name_int": "prosthetics.sporangial_suppressor.name",
+    "name_it": "Soppressore Sporangiale",
+    "type": "biological",
+    "effects": {},
+    "skill": null,
+    "cost": 7500
+  },
+  "MITOTIC_INHIBITOR": {
+    "name_en": "Mitotic Inhibitor",
+    "name_int": "prosthetics.mitotic_inhibitor.name",
+    "name_it": "Inibitore Mitotico",
+    "type": "technological",
+    "effects": {},
+    "skill": null,
+    "cost": 9000
+  },
   "ANDROGEN_GLAND": {
     "name_en": "Androgen Gland",
     "name_int": "prosthetics.androgen_gland.name",

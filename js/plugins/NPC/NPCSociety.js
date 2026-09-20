@@ -484,6 +484,15 @@
   function _generateEquipment(eventName, classId, wealthTierBase) {
     const worldSeed = window.NPCShared.worldSeed();
     const rng = new SeededRng(nameToSeed(eventName + "_equip") ^ (worldSeed >>> 0));
+    // A beast carries no gear. It has no hands to hold a blade with, no money
+    // to have bought one and nobody to have been issued one by: a dog on a
+    // street corner wearing a halberd and a cloak is the roll leaking through.
+    // The class alone answers it (NPCCreature owns the boundary), so this holds
+    // wherever the equipment is read from, the panel and the recruit alike.
+    const NC = window.NPCCreature;
+    if (NC && NC.isNonSentientClassId(classId) && !NC.isPlayerCharacterName(eventName)) {
+      return { weaponId: null, armorIds: [] };
+    }
     const hasClass = !!classId;
     // Nobody in a severed world owns an enchanted blade, and nobody in an
     // unbound one owns technology (window.MagicNature).
@@ -546,6 +555,14 @@
   // ==========================================================================
   // SECTION 4: PROFILE GENERATOR
   // ==========================================================================
+
+  // Every skill a class teaches, at any level: what a creature is allowed to
+  // know, since everything else on its sheet was rolled for somebody with a
+  // trade and a past (see the profile's skillIds below).
+  function _classLearningIds(classId) {
+    const cls = classId && $dataClasses ? $dataClasses[classId] : null;
+    return new Set((cls?.learnings || []).map(l => l.skillId));
+  }
 
   // Caches for filtered/pre-parsed data that is identical across all NPCs.
   // Built once on first generate() call; never rebuilt unless explicitly cleared.
@@ -1290,13 +1307,21 @@
       //    the budget could never pay for. Without that plugin the old flat
       //    four still applies.
       const points = window.TraitPoints;
+      // The trait book as it stands open in front of THIS one. A beast is
+      // dealt only what a body can be (and what only an animal is); a person is
+      // never dealt an animal's trait (Traits.json `mind`, owned by
+      // window.TraitPoints.allowsMind). Falling back to the whole book keeps a
+      // load order without TraitSelector working exactly as it did.
+      const traitBook = points && points.allowsMind
+        ? traits.filter(t => points.allowsMind(t, nonSentient))
+        : traits;
       const traitIds = [];
       const pickedTraits = [];
       const _full = () => points
         ? points.tally(pickedTraits).remaining <= 0
         : traitIds.length >= 4;
       const _compatible = (id) => {
-        const trait = traits.find(t => t.id === id);
+        const trait = traitBook.find(t => t.id === id);
         if (!trait) return false;
         if (points && !points.fits(trait, pickedTraits)) return false;
         return !traitIds.some(chosen => {
@@ -1306,7 +1331,7 @@
       };
       const _take = (id) => {
         traitIds.push(id);
-        pickedTraits.push(traits.find(t => t.id === id));
+        pickedTraits.push(traitBook.find(t => t.id === id));
       };
       const shuffledIdeo = seededShuffle([...ideologyTraitIds], rng);
       for (const id of shuffledIdeo) {
@@ -1314,14 +1339,14 @@
         if (_compatible(id)) _take(id);
       }
       const ideologySet = new Set(ideologyTraitIds);
-      const generalPool = seededShuffle(traits.filter(t => !ideologySet.has(t.id)).map(t => t.id), rng);
+      const generalPool = seededShuffle(traitBook.filter(t => !ideologySet.has(t.id)).map(t => t.id), rng);
       for (const id of generalPool) {
         if (_full()) break;
         if (_compatible(id)) _take(id);
       }
       if (!_full()) {
         const pickedSet = new Set(traitIds);
-        const fallback = seededShuffle(traits.map(t => t.id).filter(id => !pickedSet.has(id)), rng);
+        const fallback = seededShuffle(traitBook.map(t => t.id).filter(id => !pickedSet.has(id)), rng);
         for (const id of fallback) {
           if (_full()) break;
           if (_compatible(id)) _take(id);
@@ -1450,7 +1475,15 @@
         // A beast carries nothing in its pockets because it has none: the item
         // roll above still happened (the stream must not move) but what it
         // produced belongs to somebody who can own things.
-        personalityIndex, wealthTierBase, traitIds, skillIds,
+        personalityIndex, wealthTierBase, traitIds,
+        // A beast knows what its own body does and nothing else. The four
+        // rolled skills above are a person's training (Net and Trident,
+        // Accounting's cousins, a coffee break) and the trait grants are a
+        // person's history, so what is left for a creature is exactly what its
+        // own class teaches it: claws, a shriek, a bolt for cover.
+        skillIds: nonSentient
+          ? skillIds.filter(id => _classLearningIds(assignedClassId).has(id))
+          : skillIds,
         itemIds: nonSentient ? [] : itemIds,
         factionIndex:  nonSentient ? -1 : factionIndex,
         ideologyIndex: nonSentient ? -1 : ideologyIndex,
@@ -1621,6 +1654,35 @@
       if (nonSentient) {
         if (profile.money) { profile.money = 0; changed = true; }
         if (profile.itemIds && profile.itemIds.length) { profile.itemIds = []; changed = true; }
+        // A person's training and a person's history, stripped back to what the
+        // creature's own class teaches and what a body can be. Both are the
+        // same rules the generator now mints under; this is what repairs a
+        // world folder written before they existed, which is where the dog
+        // carrying a halberd and an accountancy qualification came from.
+        const learned = _classLearningIds(profile.assignedClassId);
+        if (Array.isArray(profile.skillIds)) {
+          const kept = profile.skillIds.filter(id => learned.has(id));
+          if (kept.length !== profile.skillIds.length) { profile.skillIds = kept; changed = true; }
+        }
+        if (profile.levelSkillBrackets) {
+          for (const key of Object.keys(profile.levelSkillBrackets)) {
+            const bracket = profile.levelSkillBrackets[key] || [];
+            const kept = bracket.filter(id => learned.has(id));
+            if (kept.length !== bracket.length) { profile.levelSkillBrackets[key] = kept; changed = true; }
+          }
+        }
+        const points = window.TraitPoints;
+        if (points && points.allowsMind && Array.isArray(profile.traitIds)) {
+          const book = DataLoader.traits || [];
+          const kept = profile.traitIds.filter(id => {
+            const trait = book.find(t => t.id === id);
+            return !trait || points.allowsMind(trait, true);
+          });
+          if (kept.length !== profile.traitIds.length) { profile.traitIds = kept; changed = true; }
+        }
+        // The specializations are rolled off the traits and cached; a repaired
+        // set of traits has to re-roll them rather than keep the old answer.
+        if (changed && profile._specCache) { delete profile._specCache; }
         if (profile.currentJobId) {
           profile.currentJobId = 0;
           profile.workMapId = null;
@@ -2194,6 +2256,47 @@
     return bank[((index % bank.length) + bank.length) % bank.length];
   }
 
+  // ---------------------------------------------------------------------------
+  // Class origins
+  // ---------------------------------------------------------------------------
+  // Every class answers the question the era templates never did: not when this
+  // person was born but how they came to be a Witch, a Lumberjack or a Zombie.
+  // The bank is NPCSociety.bio.classOrigin.<slug>, keyed on the class's own
+  // English database name reduced to letters and digits, which is the one
+  // spelling that survives a language switch.
+  const classSlug = (classId) => {
+    const entry = (typeof $dataClasses !== 'undefined' && $dataClasses)
+      ? $dataClasses[Number(classId) || 0] : null;
+    return entry && entry.name
+      ? String(entry.name).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+  };
+
+  // One origin out of that class's bank, or '' for a class the bank has no page
+  // for (a mod's class, a bio rolled before the bank existed).
+  function classOriginOf(classId, params, index) {
+    const slug = classSlug(classId);
+    if (!slug) return '';
+    const key = 'NPCSociety.bio.classOrigin.' + slug;
+    const bank = T.list(key, params);
+    if (!bank.length) return '';
+    return bank[((index % bank.length) + bank.length) % bank.length];
+  }
+
+  // Which side of the line a bio is written from. window.NPCCreature owns the
+  // boundary; nothing here compares an id.
+  const bioIsNonSentient = (classId) =>
+    !!(classId && window.NPCCreature && window.NPCCreature.isNonSentientClassId(classId));
+
+  // The one non-sentient class the world still reaches: a Drone holds no creed
+  // and no trade like every other beast, but it was BUILT with the world
+  // written into it as a set of conditions, so the timeline is exactly what it
+  // reacts to. Every other creature class is deaf to history and its bio says
+  // nothing about coups, wars or elections.
+  const EVENT_AWARE_CREATURE = new Set(['drone']); // i18n-ignore: Classes.json name slug
+  // And the two that were assembled rather than whelped, which are not "born in
+  // the wilds near" anywhere even when the creature builder made them.
+  const MANUFACTURED_CREATURE = new Set(['drone', 'manacyborg']); // i18n-ignore: Classes.json name slugs
+
   const BackstoryGenerator = {
 
     // `salt` re-rolls a bio that has already been written (rerollBackstory);
@@ -2304,6 +2407,18 @@
         varIdx:     rng.nextInt(0, 24),
         isCreature: !!profile.isCreature,
         moral:      profile.moralityScore ?? 0,
+        // The class the bio is written around. Every class carries its own
+        // bank of origins (NPCSociety.bio.classOrigin.<slug>), so the sentence
+        // says how this person or thing came to be what it is rather than only
+        // when it was born. Stored rather than read off the profile at draw
+        // time, because a bio is also drawn for somebody the registry no
+        // longer holds; the wizard re-rolls the bio whenever the class
+        // changes, so the two never drift.
+        classId:    profile.assignedClassId ?? null,
+        // Which origin of that class's bank, drawn separately from varIdx so
+        // two people of the same class born in the same era do not have to
+        // share a story.
+        originIdx:  rng.nextInt(0, 64),
       };
 
       return { birthYear, birthplace, formativeEvents, seed };
@@ -2316,7 +2431,24 @@
       const seed = backstory.seed;
       if (!seed) return backstory.narrative || '';
 
-      const pr  = pronounOf(seed.gender);
+      // What this character IS decides the shape of the whole sentence, down
+      // to the pronoun, so it is settled before a word is written:
+      //   , a beast (every creature class but the Drone) is deaf to history.
+      //     Its bio is its class origin and nothing else: no coup, no election
+      //     and no war ever reached it, so none is quoted at it.
+      //   , a Drone is the exception, because it was manufactured with the
+      //     world written into it as a list of conditions to answer.
+      //   , everybody else keeps the era template they always had, with the
+      //     class origin written in after it.
+      const slug = classSlug(seed.classId);
+      const beast = bioIsNonSentient(seed.classId);
+      const eventAware = !beast || EVENT_AWARE_CREATURE.has(slug);
+      const manufactured = MANUFACTURED_CREATURE.has(slug);
+
+      // A beast is an "it" throughout, closing line included. Written out of
+      // its own pronoun set rather than out of the gender it was rolled, or a
+      // bio would open on "It was assembled" and close on "he".
+      const pr  = beast ? T.obj('NPCSociety.pronoun.beast') : pronounOf(seed.gender);
       const adj = adjectiveAt(seed.adjIdx);
       // A backstory rolled before the wordings varied has no varIdx of its own,
       // so one is derived from what it does carry: the same person still reads
@@ -2348,7 +2480,7 @@
       // included, so a template only ever writes "{born} {placeIn}".
       let placeIn;
       let key;
-      if (seed.isCreature) {
+      if (seed.isCreature && !manufactured) {
         // Creatures aren't born into a nation, they come out of the wilds near
         // the city closest to their birthplace country.
         const city = CITY_BY_COUNTRY[backstory.birthplace] || birthplace;
@@ -2364,11 +2496,34 @@
         else key = 'modern';
       }
 
+      // A bio rolled before the origins existed carries no originIdx, so one is
+      // derived from what it does carry and the same character keeps reading
+      // the same way.
+      const oIdx = (seed.originIdx != null ? seed.originIdx | 0
+                                           : ((backstory.birthYear | 0) * 3 + vIdx)) >>> 0;
       const params = Object.assign({}, pr, {
         year: backstory.birthYear, place: birthplace, placeIn: placeIn, adj: adj,
         event: ev0, later: ev1, moral: moralLine,
       });
-      return wording('NPCSociety.bio.' + key, params, vIdx).replace(/  +/g, ' ').trim();
+      params.classOrigin = classOriginOf(seed.classId, params, oIdx);
+
+      if (beast) {
+        // The Drone's own template quotes the timeline; every other creature
+        // class uses the one that does not mention it at all.
+        const bank = eventAware ? 'NPCSociety.bio.drone' : 'NPCSociety.bio.beast';
+        // Without a class origin to hang it on, the beast template would read
+        // as a sentence with a hole in it, so an unbanked class falls back to
+        // the ordinary wording it has always had.
+        if (params.classOrigin) {
+          return wording(bank, params, vIdx).replace(/  +/g, ' ').trim();
+        }
+      }
+
+      const era = wording('NPCSociety.bio.' + key, params, vIdx);
+      // The class origin follows the era sentence rather than being written
+      // into all twenty era wordings: one line, one place to change it, and a
+      // bank that is still complete for a class the era templates never knew.
+      return `${era} ${params.classOrigin}`.replace(/  +/g, ' ').trim();
     },
   };
 

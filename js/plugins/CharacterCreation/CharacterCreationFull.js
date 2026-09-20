@@ -295,6 +295,14 @@
     profile.wealthTierChosen = 0;
     profile.wealthTierBase = 0;
     profile.money = 0;
+    // The rest of the list (the trade, the romance, the actor's own copies of
+    // all of it) is written once in CharacterCreationShared, which is what
+    // every class change already runs through. Called again here because the
+    // panel is rebuilt on every return and a sheet can arrive feral without a
+    // crossing having happened on this screen: a loaded preset, a creature
+    // built in the wizard, a member re-opened from the roster.
+    const CC = window.CreatureClasses;
+    if (CC && CC.stripPersonhood) CC.stripPersonhood(editedActor());
   }
 
   function model3DAvailable() {
@@ -339,11 +347,20 @@
     const switchId = CREATURE_SWITCHES[Session.memberIndex] || 77;
     if ($gameSwitches) $gameSwitches.setValue(switchId, creature);
     if (window.Scene_CharacterCreation) window.Scene_CharacterCreation._isCreatureMode = creature;
+    // Which side of the line the member's class sits on is the class's own
+    // <Sentient> / <NonSentient> tag, read through window.CreatureClasses: a
+    // creature that picked Feral or Ghost is already a creature and is left
+    // alone, and only a class from the other side is replaced. Crossing the
+    // line drops the traits the member picked on it (TraitSelector hangs that
+    // off changeClass), because the two sides do not hold the same book.
+    const nowBeast = !!(actor.currentClass() &&
+      window.CreatureClasses.isCreatureClass(actor.currentClass().id));
     if (creature) {
-      if (actor.currentClass() && actor.currentClass().id !== CREATURE_CLASS_ID) {
-        actor.changeClass(CREATURE_CLASS_ID, false);
-      }
+      if (!nowBeast) actor.changeClass(CREATURE_CLASS_ID, false);
     } else if (actor.currentClass() && actor.currentClass().id === CREATURE_CLASS_ID) {
+      // Only the creature branch's own fallback is taken back off: a Ghost, a
+      // Zombie or a Drone is a class a person may hold and the class board
+      // offers it to one, so it survives the body going back to humanoid.
       actor.changeClass(DEFAULT_CLASS_ID, false);
     }
     // The art style follows the kind: a person is drawn as a bust, a creature
@@ -811,7 +828,10 @@
     const actor = editedActor();
     if (!actor || !window.Specializations || !window.Specializations.ready) return;
     resetSpecPoints();
-    const pool = window.Specializations.list;
+    // Points are only ever spent on a discipline the game reads, the same rule
+    // the wizard's own Randomize keeps: a rolled character comes out able to do
+    // things rather than holding a sheet of unfinished lines.
+    const pool = window.Specializations.list.filter((spec) => window.Specializations.isImplemented(spec));
     if (!pool.length) return;
     // Each pass buys one level of a random specialization it can still afford.
     // The guard covers the case where nothing left in the pool fits the change.
@@ -886,8 +906,11 @@
       }
     }
     if (window.selectRandomSpriteForActor) window.selectRandomSpriteForActor(actor.actorId());
-    if (window.selectRandomBustForActor && actor.portraitMode() !== "model" && !actor.vnBust()) {
-      window.selectRandomBustForActor(actor.actorId());
+    if (actor.portraitMode() !== "model" && !actor.vnBust()) {
+      // The bust follows the sprite that was just rolled; the random gallery is
+      // only the fallback for a sheet that comes with no portrait of its own.
+      const paired = window.selectBustForActorSprite && window.selectBustForActorSprite(actor.actorId());
+      if (!paired && window.selectRandomBustForActor) window.selectRandomBustForActor(actor.actorId());
     }
     if (window.randomizeTraitsForActor) {
       window.randomizeTraitsForActor(actor.actorId());
@@ -931,11 +954,16 @@
     }
     const nations = nationList();
     if (profile && nations.length) profile._birthplaceOverride = pick(nations);
-    const bank = orientationBank();
-    const sexual = pick(bank.sexual || []);
-    const romantic = pick(bank.romantic || []);
-    if (sexual) applyOrientation("sexual", sexual.key);
-    if (romantic) applyOrientation("romantic", romantic.key);
+    // A beast is not rolled an orientation any more than it is rolled a creed:
+    // the row is not on its sheet, so a rolled answer would be unreachable as
+    // well as wrong.
+    if (!feral) {
+      const bank = orientationBank();
+      const sexual = pick(bank.sexual || []);
+      const romantic = pick(bank.romantic || []);
+      if (sexual) applyOrientation("sexual", sexual.key);
+      if (romantic) applyOrientation("romantic", romantic.key);
+    }
     rerollBackstory();
     rerollLife();
   }
@@ -1107,7 +1135,12 @@
     });
     sections.push({ title: T("detailed.section.society"), rows: societyRows });
 
-    sections.push({
+    // A beast is not asked who it loves, the same way it is not asked what it
+    // believes: NPCCreature says a creature class holds no romance, and the
+    // Empathize panel refuses the same rows. Reproduction is biology and would
+    // survive the cut, but it is the one row of the four, so the section goes
+    // and comes back whole when the class crosses back.
+    if (!feral) sections.push({
       title: T("detailed.section.romance"),
       rows: [
         {
@@ -1838,7 +1871,8 @@
       // answer, so it is squared with the class this member actually has
       // before the first row is drawn.
       if (actor && $gameSwitches) {
-        const isCreatureClass = !!(actor.currentClass() && actor.currentClass().id === CREATURE_CLASS_ID);
+        const isCreatureClass = !!(actor.currentClass() &&
+          window.CreatureClasses.isCreatureClass(actor.currentClass().id));
         $gameSwitches.setValue(CREATURE_SWITCHES[Session.memberIndex] || 77, isCreatureClass);
         if (window.Scene_CharacterCreation) window.Scene_CharacterCreation._isCreatureMode = isCreatureClass;
       }

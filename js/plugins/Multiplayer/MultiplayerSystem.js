@@ -2409,6 +2409,59 @@
     window.LanSession = LanSession;
     window.LanDiscovery = LanDiscovery;
 
+    // ----------------------------------------------------------------------------
+    // MultiplayerSessions: the one place a live session is ended
+    // ----------------------------------------------------------------------------
+    // Leaving for the title screen abandons the save the session was played in,
+    // so the session cannot outlive it: the socket is closed and the second pad
+    // is given up here, whatever route the player took out of the map.
+    const MultiplayerSessions = {
+        lanActive() {
+            return !!(window.LanSession && LanSession.active);
+        },
+
+        splitScreenActive() {
+            return !!(window.SplitScreenManager && window.SplitScreenManager.active);
+        },
+
+        anyActive() {
+            return this.lanActive() || this.splitScreenActive();
+        },
+
+        endLan() {
+            if (!this.lanActive()) return false;
+            try { LanSession.leave(); } catch (e) { console.error('[LAN] leave failed:', e && e.message); }
+            return true;
+        },
+
+        endSplitScreen() {
+            if (!this.splitScreenActive()) return false;
+            try { window.SplitScreenManager.stopSession(); } catch (e) { console.error('[SplitScreen] stop failed:', e && e.message); }
+            const scene = SceneManager._scene;
+            if (scene && scene._splitScreenActive && scene.deactivateSplitScreen) scene.deactivateSplitScreen();
+            return true;
+        },
+
+        endAll() {
+            const lan = this.endLan();
+            const split = this.splitScreenActive() && typeof $gameParty !== 'undefined' && $gameParty
+                ? this.endSplitScreen()
+                : false;
+            // A split-screen flag with no game objects left behind it is just
+            // cleared, or the next save would boot straight back into two pads.
+            if (window.SplitScreenManager) window.SplitScreenManager.active = false;
+            return lan || split;
+        }
+    };
+
+    window.MultiplayerSessions = MultiplayerSessions;
+
+    const _Scene_Title_start = Scene_Title.prototype.start;
+    Scene_Title.prototype.start = function () {
+        MultiplayerSessions.endAll();
+        _Scene_Title_start.call(this);
+    };
+
     // Remote players are other people's bodies: nothing local may talk to them,
     // walk them, recruit them into a fight or count them as scenery. Every
     // system that scans the map for something to do asks here (MapBattleMode,
@@ -2721,7 +2774,32 @@
 
         _typePortals(isIt, localActive) {
             const lanActive = window.LanSession && LanSession.active;
-            return [
+            // A session that is already running is the first thing the screen
+            // offers: coming back here with two pads on the map, or in a LAN
+            // game, the way out is a row of its own rather than a mode that has
+            // quietly turned into its own off switch.
+            const live = [];
+            if (localActive) {
+                live.push({
+                    id: 'end-local',
+                    name: T('Multiplayer.endSplitScreen'),
+                    hint: T('Multiplayer.sessionActive'),
+                    desc: T('Multiplayer.endSplitScreenDesc'),
+                    action: T('Multiplayer.disconnect'),
+                    danger: true,
+                });
+            }
+            if (lanActive) {
+                live.push({
+                    id: 'end-lan',
+                    name: T('Multiplayer.lan.endSession'),
+                    hint: LanSession.hosting ? T('Multiplayer.lan.hosting') : T('Multiplayer.lan.joined'),
+                    desc: T('Multiplayer.lan.endSessionDesc'),
+                    action: T('Multiplayer.disconnect'),
+                    danger: true,
+                });
+            }
+            return live.concat([
                 {
                     id: 'local',
                     name:T('Multiplayer.localMultiplayer'),
@@ -2773,7 +2851,7 @@
                     danger: false,
                     disabled: !NETWORK_PLAY_ENABLED,
                 }
-            ];
+            ]);
         }
 
         refreshUITypeSelection() {
@@ -2786,14 +2864,14 @@
             const sel = portals[this._selectedIndex];
 
             const optionsHTML = portals.map((p, i) => `
-                <div class="mp-option-row ${this._selectedIndex === i ? 'selected' : ''} ${p.disabled ? 'disabled' : ''}" data-idx="${i}">
+                <div class="mp-option-row ${this._selectedIndex === i ? 'selected' : ''} ${p.disabled ? 'disabled' : ''} ${p.danger ? 'danger' : ''}" data-idx="${i}">
                     <span class="mp-option-name">${p.name}</span>
                     <span class="mp-option-hint">${p.hint}</span>
                     <span class="mp-option-desc">${p.desc}</span>
                 </div>
             `).join('');
 
-            const localBadge = (this._selectedIndex === 0 && localActive)
+            const localBadge = (localActive && sel && (sel.id === 'local' || sel.id === 'end-local'))
                 ? `<span class="mp-local-badge">${T('Multiplayer.sessionActive')}</span>`
                 : '';
 
@@ -2853,7 +2931,7 @@
 
             if (nameEl)   nameEl.textContent  = sel.name;
             if (descEl)   descEl.textContent  = sel.desc;
-            if (badgeEl)  badgeEl.innerHTML   = (this._selectedIndex === 0 && localActive)
+            if (badgeEl)  badgeEl.innerHTML   = (localActive && sel && (sel.id === 'local' || sel.id === 'end-local'))
                 ? `<span class="mp-local-badge">${T('Multiplayer.sessionActive')}</span>`
                 : '';
             if (actionEl) {
@@ -2892,6 +2970,16 @@
             }
             SoundManager.playOk();
             switch (portal && portal.id) {
+                case 'end-local':
+                    this.commandDisconnectLocal();
+                    this._selectedIndex = 0;
+                    break;
+                case 'end-lan':
+                    MultiplayerSessions.endLan();
+                    this._selectedIndex = 0;
+                    this.refreshUITypeSelection();
+                    this._helpWindow.setText(T('Multiplayer.lan.left'));
+                    break;
                 case 'local': {
                     const localActive = window.SplitScreenManager && window.SplitScreenManager.active;
                     if (localActive) this.commandDisconnectLocal();
@@ -2948,7 +3036,7 @@
 
         commandDisconnectLocal() {
             if (window.SplitScreenManager) {
-                window.SplitScreenManager.stopSession();
+                MultiplayerSessions.endSplitScreen();
                 this.refreshUITypeSelection();
                 this._helpWindow.setText(T('Multiplayer.splitScreenTerminated'));
             }

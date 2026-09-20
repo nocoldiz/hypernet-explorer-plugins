@@ -1781,9 +1781,11 @@
     // it here so the no-scene auto-success path never strands the entry.
     if ($dataItems[740] && $gameParty.hasItem($dataItems[740])) {
       $gameParty.loseItem($dataItems[740], 1);
-      window.skipLocalization = true;
-      $gameMessage.add(T('ProceduralHouse.usedSkeletonKey'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ProceduralHouse.usedSkeletonKey'), {
+          severity: 'good'
+        });
+      }
       withDoorTile(tile || _procDoorTile, () => markDoorForcedOpen(useFacing));
       openDoorAndEnter(doEntry);
       return;
@@ -2002,6 +2004,15 @@
     // out by the hatch it was entered through.
     const descending = !!structure.descending;
     if (descending && direction === 'next' && current === 0) {
+        // Unless there is nothing to climb out TO. A patron's vault outlives
+        // the planet it was dug into, and once Earth is gone the world square
+        // over the hatch is not there any more. PatreonRewards owns that
+        // answer and says so itself; the stack simply refuses to open the lid.
+        const PR = window.PatreonRewards;
+        if (PR && typeof PR.surfaceSealed === "function" && PR.surfaceSealed()) {
+            if (typeof PR.saySealed === "function") PR.saySealed();
+            return;
+        }
         exitHouse();
         return;
     }
@@ -2164,12 +2175,56 @@
 
   // Human-friendly label for a floor index in the elevator picker.
   function elevatorFloorLabel(index) {
+    let label;
     // A descending stack counts down from the surface: index 0 is Floor -1.
     if (currentMultiBuilding && currentMultiBuilding.structure && currentMultiBuilding.structure.descending) {
-      return T('ProceduralHouse.floorNumbered', { n: -(index + 1) });
+      label = T('ProceduralHouse.floorNumbered', { n: -(index + 1) });
+    } else {
+      label = index === 0 ? T('ProceduralHouse.groundFloor')
+        : T('ProceduralHouse.floorNumbered', { n: index });
     }
-    return index === 0 ? T('ProceduralHouse.groundFloor')
-      : T('ProceduralHouse.floorNumbered', { n: index });
+    // A fixed stack (a patron's vault) is made of authored maps, so every floor
+    // has a display name of its own worth printing beside its number.
+    const named = fixedFloorName(index);
+    return named ? T('ProceduralHouse.floorNamed', { floor: label, name: named }) : label;
+  }
+
+  // The display name a fixed stack's floor carries in its own map file ("Reactor
+  // Halley FL -6"), minus the floor numbering the label already prints. Empty
+  // for a procedural stack, whose floors are rolled and share one name.
+  const _floorDisplayNames = {};
+  function fixedFloorName(index) {
+    const structure = currentMultiBuilding && currentMultiBuilding.structure;
+    if (!structure || !structure.fixed) return "";
+    const mapId = structure.floors[index];
+    if (!mapId) return "";
+    if (_floorDisplayNames[mapId] === undefined) {
+      _floorDisplayNames[mapId] = readMapDisplayName(mapId);
+    }
+    return _floorDisplayNames[mapId];
+  }
+
+  // Only the map the party stands on is in $dataMap, so a panel that names every
+  // floor has to read the others off disk. Nine small files, read once each.
+  function readMapDisplayName(mapId) {
+    // i18n-ignore-start  data/Map*.json display names, translated through maps.json
+    let raw = "";
+    if (typeof $gameMap !== "undefined" && $gameMap && $gameMap.mapId() === mapId
+        && typeof $dataMap !== "undefined" && $dataMap) {
+      raw = String($dataMap.displayName || "");
+    } else {
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'data/Map' + String(mapId).padStart(3, "0") + '.json', false);
+        xhr.send();
+        if (xhr.status === 200) raw = String(JSON.parse(xhr.responseText).displayName || "");
+      } catch (e) {
+        raw = "";
+      }
+    }
+    // Strip the floor marker the map name repeats ("Nerd Cave FL -2").
+    return raw.replace(/\s*FL\s*-?\d+\s*$/i, "").trim();
+    // i18n-ignore-end
   }
 
   // Show a choice list of every floor except the current one, then ride to the
@@ -2208,9 +2263,11 @@
   function openPoolPicker(poolName, useFacing, emptyKey, promptKey, missingKey) {
     const places = getPoolDirectory(poolName);
     if (places.length === 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T(emptyKey));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T(emptyKey), {
+          severity: 'warning'
+        });
+      }
       return;
     }
     const choices = places.map(shopChoiceLabel);
@@ -2233,9 +2290,11 @@
   function enterPoolMap(poolName, mapId, useFacing, missingKey) {
     const id = Number(mapId);
     if (!getHouseList(poolName, true).includes(id)) {
-      window.skipLocalization = true;
-      $gameMessage.add(T(missingKey));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T(missingKey), {
+          severity: 'warning'
+        });
+      }
       return;
     }
     visitHouse(poolName, useFacing, id, true);
@@ -2260,9 +2319,11 @@
   function openElevator() {
     if (!currentMultiBuilding) adoptFixedStack();
     if (!currentMultiBuilding || !currentMultiBuilding.structure) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('ProceduralHouse.noElevator'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ProceduralHouse.noElevator'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
     if (_elevatorTransit) return;
@@ -2305,7 +2366,10 @@
     const distance = Math.abs(targetFloorIndex - currentMultiBuilding.currentFloorIndex);
     const fadeFrames = 30;
     // Ride time scales with distance: fade + ~2/3 second per floor travelled.
-    const waitFrames = fadeFrames + distance * 40;
+    // A patron's vault is a short shaft the party rides constantly, so its
+    // fixed stack pays a fraction of that per floor.
+    const perFloor = currentMultiBuilding.structure.fixed ? 8 : 40;
+    const waitFrames = fadeFrames + distance * perFloor;
     $gameScreen.startFadeOut(fadeFrames);
     _elevatorTransit = { framesLeft: waitFrames, targetFloorIndex: targetFloorIndex };
   }
@@ -2897,9 +2961,9 @@
           <button class="room-selector-close" style="background:transparent;border:none;color:#aaa;font-size:22px;cursor:pointer;padding:4px 8px;line-height:1;">✕</button>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.15);gap:12px;flex-wrap:wrap;">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;" class="room-selector-tabs">
+          <div class="room-selector-tabs backpack-tabs">
             ${poolTabs.map(tab => `
-              <button class="room-selector-tab ${tab.key === currentFilter ? 'active' : ''}" data-tab="${tab.key}" style="background:${tab.key === currentFilter ? 'var(--accent-orange,#f39c12)' : 'rgba(255,255,255,0.08)'};color:${tab.key === currentFilter ? '#111' : '#ccc'};border:none;border-radius:4px;padding:5px 10px;font-size:12px;font-weight:bold;cursor:pointer;">${tab.label}</button>
+              <button class="room-selector-tab backpack-tab ${tab.key === currentFilter ? 'active' : ''}" data-tab="${tab.key}">${tab.label}</button>
             `).join('')}
           </div>
           <input type="text" class="room-selector-search" placeholder="${T('ProceduralHouse.searchPlaceholder')}" value="${searchQuery.replace(/"/g, '&quot;')}" style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.2);border-radius:4px;color:#fff;padding:5px 10px;font-size:12px;width:180px;outline:none;">

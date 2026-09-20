@@ -4510,6 +4510,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             this.list = this.root.querySelector('.hd-list');
             this.specBody = this.root.querySelector('.hd-spec-body');
             this.req = this.root.querySelector('.hd-req');
+            this.idle = this.root.querySelector('.hd-idle');
             this.picker = this.root.querySelector('.hd-picker');
             this.bios = this.root.querySelector('.hd-bios');
             this._bind();
@@ -4555,6 +4556,11 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
   color: ${deco('goldHi', '#fff2c6')}; }
 #${HUD_ID} .hd-btn.on { border-color: ${deco('goldHi', '#fff2c6')};
   background: ${deco('sel', '#2a2010')}; }
+#${HUD_ID} .hd-idle { border: 0; box-shadow: none; background: transparent; }
+#${HUD_ID} .hd-idle .hd-tools { border-top: 0; padding: 0; gap: 8px; }
+#${HUD_ID} .hd-idle .hd-btn { flex: 1 1 0; padding: 8px 2px; letter-spacing: 2px;
+  background: ${deco('black', '#08070b')}; border: 2px solid ${gold};
+  box-shadow: 0 0 0 2px var(--xp-black), 0 6px 22px rgba(0,0,0,0.75); }
 #${HUD_ID} .hd-spec { overflow: hidden; }
 #${HUD_ID} .hd-spec-scroll { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden;
   min-height: 0; }
@@ -4656,6 +4662,12 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
     <div class="hd-req"></div>
   </div>
 </div>
+<div class="hd-panel hd-idle">
+  <div class="hd-tools">
+    <div class="hd-btn" data-idle="boot">${esc(T('HyperDeck.tool.boot'))}</div>
+    <div class="hd-btn" data-idle="open">${esc(T('HyperDeck.tool.open'))}</div>
+  </div>
+</div>
 <div class="hd-picker"></div>
 <div class="hd-bios"></div>`;
         }
@@ -4697,6 +4709,13 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
                 width: Math.round(Math.min(430, r.width * 0.30)) + 'px',
                 maxHeight: Math.round(r.height * 0.62) + 'px'
             });
+            // The two idle buttons sit under the deck, centred on the canvas.
+            const idleW = Math.round(Math.max(220, Math.min(420, r.width * 0.26)));
+            Object.assign(this.idle.style, {
+                left: (r.left + Math.round((r.width - idleW) / 2)) + 'px',
+                top: (r.top + Math.round(r.height * 0.86)) + 'px',
+                width: idleW + 'px'
+            });
             Object.assign(this.bios.style, {
                 left: (r.left + Math.round(r.width * 0.08)) + 'px',
                 top: (r.top + Math.round(r.height * 0.07)) + 'px',
@@ -4713,7 +4732,8 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
                 const cs = e.target.closest('[data-case]');
                 const fc = e.target.closest('[data-face]');
                 const bi = e.target.closest('[data-bios]');
-                if (!row && !btn && !fin && !cs && !fc && !bi) return;
+                const id = e.target.closest('[data-idle]');
+                if (!row && !btn && !fin && !cs && !fc && !bi && !id) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.scene.claimClick();
@@ -4723,6 +4743,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
                 else if (cs) this.scene.onCasePicked(cs.dataset.case);
                 else if (fc) this.scene.onFacePicked(fc.dataset.face);
                 else if (bi) this.scene.onBiosAction(bi.dataset.bios);
+                else if (id) this.scene.onIdleButton(id.dataset.idle);
             }, true);
             this.root.addEventListener('wheel', e => e.stopPropagation(), true);
         }
@@ -4730,6 +4751,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
         show(mode) {
             this.parts.classList.toggle('on', mode === 'edit');
             this.spec.classList.toggle('on', mode === 'edit' || mode === 'idle');
+            this.idle.classList.toggle('on', mode === 'idle');
             if (mode !== 'edit') { this.closePicker(); this.closeBios(); }
         }
 
@@ -5456,6 +5478,14 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             this.refreshList();
             if (this._held) this.returnHeld();
             else this.takeFromList();
+        }
+
+        // The two buttons the idle view carries: one boots the machine, the
+        // other opens the lower half so its components can be changed.
+        onIdleButton(which) {
+            if (this._mode !== MODE.IDLE) return;
+            if (which === 'boot') this.powerOn();
+            else this.focusBoard();
         }
 
         onTool(tool) {

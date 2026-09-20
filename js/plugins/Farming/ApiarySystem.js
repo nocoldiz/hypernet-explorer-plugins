@@ -1649,11 +1649,15 @@
         }
         const hours = 24;
         const report = $gameSystem.apiaryComplex.simulateTimeStep(hours);
-        window.skipLocalization = true;
-        $gameMessage.add(T('Apiary.simulatedHours', { hours: hours }));
-        $gameMessage.add(T('Apiary.honeyProduced', { amount: Math.floor(report.statistics.honeyProduced) }));
-        $gameMessage.add(T('Apiary.currentPopulation', { total: report.population.total }));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.report([
+            T('Apiary.simulatedHours', { hours: hours }),
+            T('Apiary.honeyProduced', { amount: Math.floor(report.statistics.honeyProduced) }),
+            T('Apiary.currentPopulation', { total: report.population.total })
+          ], {
+            severity: 'info'
+          });
+        }
     };
 
     // Register under both names to handle file rename (ApiaryComplex.js → ApiarySystem.js)

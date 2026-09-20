@@ -1,0 +1,6 @@
+{
+  "alreadyExist": "Ogni schermata esiste già in {path}",
+  "debugSaved": "Schermate di debug complete salvate in {path}",
+  "saved": "Immagine della mappa salvata in {path}",
+  "starting": "Generazione di tutte le schermate di debug in corso."
+}

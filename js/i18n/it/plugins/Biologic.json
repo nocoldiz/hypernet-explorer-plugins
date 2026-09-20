@@ -715,6 +715,14 @@
  "estrogenShotDelivered": "{name}: l'autoiniettore di estrogeni ha somministrato la dose di oggi.",
  "androgenGlandOutput": "Pompa testosterone, mantenendo il sangue a {low}-{high} ng/dL",
  "estrogenAutoinjectorOutput": "Inietta {dose} pg/mL di estrogeni al giorno, senza mai scendere sotto {floor} pg/mL",
+ "intrauterineSpiralOutput": "Previene l'impianto uterino e blocca il concepimento mentre è installata.",
+ "vasectomyClipOutput": "Interrompe il transito degli spermatozoi, azzerando la conta dei gameti e la motilità.",
+ "tubalLigationBandOutput": "Costringe i canali di Falloppio e gli ovidotti, bloccando la fecondazione delle uova.",
+ "sporangialSuppressorOutput": "Sopprime la sporogenesi e arresta completamente la generazione di semi.",
+ "mitoticInhibitorOutput": "Inibitore di membrana citostatico che blocca la divisione mitotica cellulare.",
+ "augmentBlockedConception": "L'impianto {augment} di {actor} ha impedito il concepimento.",
+ "testResultAugmentFitted": "{actor} ha un impianto contraccettivo attivo ({augment}).",
+ "vasectomyBlockedMotility": "L'impianto {augment} di {actor} blocca il transito dei gameti: l'eiaculato rimane sterile.",
  "augmentGrantsSkill": "Concede l'abilità {skill}",
  "unit": {
   "breathsPerMinute": "{n} resp/min",
@@ -740,7 +748,7 @@
  "cure": {
   "rowLine": "{actor}: {disease}",
   "stockedTag": "Scorta pronta",
-  "empty": "Nessuno ha una malattia diagnosticata che valga una cura, per ora.",
+  "empty": "Nessuno ha una malattia diagnosticata che richieda medicine.",
   "tooExpensive": "Non abbastanza denaro per le medicine.",
   "bought": "Comprate {count}x {item} per {actor}."
  },
@@ -784,7 +792,7 @@
  "remote": {
   "title": "VirtuaHealer",
   "banner": "VIRTUAHEALER",
-  "tagline": "L'ambulatorio che risponde ovunque tu sia",
+  "tagline": "Chirurgia disponibile da qualsiasi luogo.",
   "hint": "Scegli un servizio per pagarlo.",
   "nothingToDo": "Oggi nel gruppo nessuno ha bisogno di niente.",
   "tooExpensive": "Non abbastanza denaro per questo servizio.",

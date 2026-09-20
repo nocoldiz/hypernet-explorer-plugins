@@ -72,7 +72,7 @@
   "notRecognized": "'{cmd}' is not recognized as an internal or external command, operable program or batch file.",
   "colosseum": "Hyper Colosseum",
   "colosseumBanner": "HYPER COLOSSEUM",
-  "colosseumTagline": "Random Party Gauntlet, Select a Level Bracket",
+  "colosseumTagline": "Random party gauntlet. Select a level bracket.",
   "partyRestoredNote": "Party restored<br>after run ends.",
   "levelBrackets": "LEVEL BRACKETS",
   "levelBracket": "Level {range}",

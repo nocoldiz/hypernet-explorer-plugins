@@ -189,6 +189,9 @@
     // Raw context drawing does not mark a Bitmap's texture stale on its own.
     const mark = (bitmap) => { if (bitmap && bitmap.baseTexture) bitmap.baseTexture.update(); };
 
+    // Cover cloths, kept per path: one Image per sheet for the whole session.
+    const COVER_CLOTH = {};
+
     // A small deterministic generator, so a book looks the same every time it
     // is opened and two books never look alike.
     function seedFrom(text) {
@@ -1788,11 +1791,59 @@
             mark(bitmap);
         }
 
+        /**
+         * The cover cloth of a written volume. `<BookTexture: file>` names one
+         * of the sheets in img/textures/ (the same bank the weapon bench draws
+         * its finishes from), and it is painted faintly under everything else
+         * the cover page draws so the title keeps its contrast.
+         *
+         * Any other book has no such tag and this does nothing at all.
+         */
+        drawCoverCloth(bitmap) {
+            const item = BookManager.lastReadItem();
+            const name = item && item.meta ? String(item.meta.BookTexture || '') : '';
+            if (!name) return;
+            const path = name.endsWith('.jpg')
+                ? 'img/textures/' + name
+                : 'effects/MAGICALxSPIRAL/Texture/' + name;
+            const paint = (img) => {
+                if (!bitmap || !bitmap.context || !img.width) return;
+                const ctx = bitmap.context;
+                ctx.save();
+                ctx.globalAlpha = 0.32;
+                // Tiled rather than stretched: these sheets are seamless and a
+                // cover stretched out of a 128px square reads as a smear.
+                const step = Math.max(64, Math.round(bitmap.width / 3));
+                for (let y = 0; y < bitmap.height; y += step) {
+                    for (let x = 0; x < bitmap.width; x += step) {
+                        ctx.drawImage(img, x, y, step, step);
+                    }
+                }
+                ctx.restore();
+                mark(bitmap);
+            };
+            let img = COVER_CLOTH[path];
+            if (img && img.complete && img.width) { paint(img); return; }
+            if (!img) {
+                img = new Image();
+                COVER_CLOTH[path] = img;
+                img.src = path;
+            }
+            // The sheet is still coming: paint it the moment it lands, which is
+            // what makes the cover appear rather than the book open blank.
+            img.addEventListener('load', () => paint(img), { once: true });
+        }
+
         drawCoverPage(bitmap, title, author) {
             const w = bitmap.width;
             const h = bitmap.height;
             const ctx = bitmap.context;
             const grade = this._grade;
+
+            // A volume the training menu wrote carries its own cover, named on
+            // the item as <BookTexture: file>. It is laid under the border, not
+            // over it, so the title still reads.
+            this.drawCoverCloth(bitmap);
 
             // Decorative double border, worn thin on an old book.
             const inset = 14;

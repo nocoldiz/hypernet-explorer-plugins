@@ -1,0 +1,8 @@
+{
+  "mapSceneOnlyMenu": "The debug map menu can only be opened from the map.",
+  "mapSceneOnlyTeleport": "Teleporting can only be used from the map.",
+  "foundMaps": "Found {count} maps. The console has the details.",
+  "popupBlocked": "Could not open the debug window. Allow popups and try again.",
+  "loadFailed": "Could not load the map data for map {map}.",
+  "teleportError": "Could not teleport to map {map}: {message}"
+}

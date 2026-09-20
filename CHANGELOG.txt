@@ -1,17 +1,121 @@
+0.6.29a
+
+Added:
+ - copypastable patron coordinate messages doc
+ - rocket system: patron vault, omega tower and starship launch pads
+ - Patron vault waiting at your secret coordinates
+ - Nudge, Homely, Chamber, Holdall, Lyceum, Grange, Tillbook, Wayfare and BeagleQuest apps on hypernet os
+ - enchanting and book writing benches in training menu
+ - tarot deck reads, picks a card and opens a free spread
+ - surfboard item, surf option when facing water
+ - added lower deck to spaceship
+ - forage option in the waiting menu and the travel options
+ - the Moon is now haunted
+
+Changed:
+ - deorbit flight from the starship down through the debris belt
+ - esoteric skills unlock at level 15, forbidden only at 80
+ - implant cap tied to COS bonus, warning when an implant adds nothing
+ - patron vault coordinates modal saves coordinates and adds a number pad
+ - waiting or sleeping passes time on travel timers
+ - patron vault floors show their map name, faster elevator
+ - patron vault arrival moved to 27,29 and hidden from its own hypertrain
+ - reworked enemy kits, every skill handpicked per enemy
+ - reworked enemy resistances, weaknesses, movesets, level balance, thematic elements and sacred damage on undead
+ - reworked class ladders, magical Physicist Farmer Meteorologist, sentient tag, non sentient classes and origins
+ - reworked character creation: scenario selector colours, trait alignment, unspent points, shared battle mode selector
+ - reworked dynamics menu: place assignment modal, inactive members assignable, bubba and em barred from home, former members shows only dead
+ - reworked spaceport maps from system json, landing picker modal, reload, alien ocean borders and faster star refuel
+ - reworked workshop and training menu benches for full controller support, no shift binding
+ - reworked party movement: followers keep closer, autoidleexplorer feels natural, foraging members wander
+ - reworked gear: armor descriptions, dual wielding equipment screen, item sanity check, reusable tools and kits
+ - reworked news app with alerts toggle and world history tab
+ - reworked skill effects that did not match their name
+ - reworked the worldmap plugin
+ - reworked help menu structure, with gold links between topics
+ - reworked free chat prompts per model, plus model download links
+ - reworked card system menu with a card collection button
+ - removed party hud, map tooltips and battle mode preview options
+ - Boot and Open buttons in the hyperdeck view
+ - battler models built under a frame budget
+ - cryogenic sleep spans multiple years, capped at 1 december 2012
+ - cpu party members no longer swap the drawn 3d weapon
+ - battle ends with no delay once the enemy sprite is gone
+ - swimming costs health only when the food bar is empty
+ - sleep menu cleanup, walking and waiting recover MP, sleepiness reduces it
+ - programs app shows only programs, utilities only utilities
+ - rumors picked 50% of the time when talking to npc
+ - transient messages moved to the parchment toast system
+ - loot quality from party median level, nation enemy level and current tower floor
+ - furniture can be placed from ordered stoc
+ - tile coordinates on the Return to Map menu row
+ - level for ghent and frozen station set at 1
+ - industrial cinematic bgm on all maps under Omega tower
+ - quests complete as soon objectives are done and deliver rewards via mail
+ - removed the AP consuming when running on map
+
+Fixed:
+ - patron modal buttons standard, coordinates accepted in any format
+ - right click in battle no longer skips the turn and buzzes
+ - strategic battle squares misplaced, mouse now aims the tile cursor
+ - shop tilesets for taco shop and ice cream shop
+ - character creation: controller bust from sprite, no search bars, no unimplemented specializations, random presets
+ - equip menu lists armors and clothes, fits artifact gear and refuses non weapons
+ - moon in ship map, planet local hour, alien skies, moon jumps, ship control tabs and golden button
+ - map and battle slowdown culprits, plugins eating ram or cpu, dreams no longer freeze while loading
+ - controller reaches the tools tabs, workbench entries and world sheet
+ - skills granting states that do not match what they do
+ - dodging formulas and permanent battle immunities
+ - infinite range skills freeze when selected in strategic battle
+ - party members and pets movement passing, tab party switching, bridge tiles, no vanishing followers
+ - map squares no longer keep a wrong tileset for their biome
+ - quest requested terrain features always placed in procedural map
+ - swimming on beach and island maps uses the ocean battleback
+ - loot rarity too high for the enemy tier that spawns
+ - fix multiplayer screen ui, lan now works
+ - no tooltip for events named just NPC
+ - removed the kick function on shift in the movement system
+ - fix error when opening folders in my computer
+ - cooking menu no longer closes when rolling dice and cooking
+ - double money tag now works with battle rewards
+ - fix all nationId based on countries.json
+ - throw button no longer appears on map 315 inventory menu
+ - voxel world crash left a dead overlay stuck over the game
+ - removed bugged NPC sprites
+ - pressing 1 on map uses the quickbar not the thinker menu
+ - darkness aura only in dark maps, dungeons and exteriors at night
+ - vehicle repair menu layout, overlaps and refresh
+ - radio panel layout, volume dial and favourite star
+ - archways xp at-risk balloon appears once, no hardware changes notificaons on public PCs
+ - status text shows as toast instead of leaking into dialogue
+ - thinker forge preview badge, finish and 3D rotation
+ - shop +/- buttons no longer shift with the total price
+ - flashlight follows player direction
+ - fixed town stated difficulty level in map name banner
+
+
+
+
 0.6.28a
 
 Added:
+ - cheap fertility blocking augments for genitals slot in augmentation menu
  - add RoomOverEdge spell for Convoker class
  - tabs for tools medical lifestyle books and favourites in main menu
  - add mind wiper tool to reset level and change class
  - randomized map 647 themed shop plugin commands to available ones
 
 Changed:
+ - quests complete as soon objectives are done and deliver rewards via mail
+ - removed the AP consuming when running on map
  - character creation controller navigation and trigger tab cycling
  - map tooltip displayed only in story mode as collapsed
  - atlas countries border zoom detail and default hyperpowers territory view
 
 Fixed:
+ - flashlight follows player direction
+ - fixed town stated difficulty level in map name banner
+ - fix autoidleexplorer movement passing and tab party controller switching
  - fixed scenario selector controller selecting skipping values and keyboard navigation
  - party members caterpillar movement and KO on world map 315
 

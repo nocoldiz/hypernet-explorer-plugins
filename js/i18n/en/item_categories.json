@@ -8,16 +8,16 @@
  "Crafting": "Crafting",
  "Diseases": "Diseases",
  "Farming": "Farming",
+ "Fertility": "Fertility",
  "Food": "Food",
  "Homeopathy": "Homeopathy",
- "Jungle": "Jungle",
  "Lifestyle": "Lifestyle",
  "Magic": "Magic",
  "Medical": "Medical",
  "Misc": "Miscellaneous",
  "Monsters": "Monsters",
- "Plants": "Plants",
  "Survival": "Survival",
  "Tools": "Tools",
- "Trash": "Trash"
+ "Trash": "Trash",
+ "Vehicles": "Vehicles"
 }

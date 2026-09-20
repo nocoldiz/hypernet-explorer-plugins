@@ -147,8 +147,16 @@
   /**
    * Calculate autotile index based on surrounding water tiles
    * Returns offset 0-15 for water autotile variant selection
+   *
+   * outsideIsWater(nx, ny) answers for a neighbour OFF this map, where nx/ny
+   * may be -1 or width/height. Without it every tile on the four edges reads as
+   * having dry land beyond it, and an ocean square - water from edge to edge -
+   * came out framed by a one-tile strip of shore autotiles on all four sides,
+   * with nothing on the other side of the border to justify it. A caller that
+   * knows what its neighbour holds (an alien ocean reads the planet's own
+   * field, which runs straight on across the seam) hands the answer in.
    */
-  function getWaterAutotileIndex(x, y, mapData, width, height, waterTileSet) {
+  function getWaterAutotileIndex(x, y, mapData, width, height, waterTileSet, outsideIsWater) {
     let pattern = 0;
     const neighbors = [
       { dx: 0, dy: -1 },  // N
@@ -169,6 +177,8 @@
         if (window.ProcGenUtils.isWaterTileId(mapData[idx], waterTileSet)) {
           pattern |= (1 << index);
         }
+      } else if (outsideIsWater && outsideIsWater(nx, ny)) {
+        pattern |= (1 << index);
       }
     });
 

@@ -1666,13 +1666,18 @@
             if (this._camperStarted) return;
             this._camperStarted = true;
             const sys = window.VoxelWorldSystem;
-            if (sys && sys.startStandalone) {
-                sys.startStandalone(() => {
+            // Null when the world could not be raised at all: without it this
+            // scene is an empty black screen whose only way out is the callback
+            // that is never going to come.
+            const drive = sys && sys.startStandalone
+                ? sys.startStandalone(() => {
                     if (this._exiting) return;
                     this._exiting = true;
                     this.popScene();
-                }, MinigameArcade.liminal() || {});
-            } else {
+                }, MinigameArcade.liminal() || {})
+                : null;
+            if (!drive) {
+                this._exiting = true;
                 this.popScene();
             }
         }

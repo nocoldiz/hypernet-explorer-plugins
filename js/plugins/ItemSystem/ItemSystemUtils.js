@@ -1649,6 +1649,98 @@
       this._modelCache.clear();
     },
 
+    // ------------------------------------------------------------------
+    // Preview framing
+    // ------------------------------------------------------------------
+    // The one answer to "how does a model sit in a preview pane". Every
+    // viewer used to centre on the UNROTATED bounds and scale the longest
+    // edge to a fixed number, which framed nothing: the pose was applied
+    // afterwards, so the piece drifted off centre, a long object shot past
+    // the edges of a short pane, and a flat one sat lost in the middle of
+    // it. Here the presentation pose is applied FIRST, the silhouette is
+    // measured through it, and that silhouette is fitted to the pane the
+    // camera actually sees. Items therefore all read at about the same
+    // size, centred, seen from above and off to one side so a face and two
+    // sides show at once.
+
+    // Seen from slightly above, turned off axis: the angle a thing is held
+    // at to be looked at, rather than photographed square on.
+    PREVIEW_POSE: { pitch: 0.36, yaw: 0.62 },
+
+    // Long things are laid along the pane's diagonal instead of hanging off
+    // its short edge, but only when they really are long.
+    PREVIEW_ELONGATION: 1.5,
+
+    // How much of the pane the silhouette is allowed to take.
+    PREVIEW_MARGIN: 0.84,
+
+    /**
+     * Poses, scales and centres `model` for a perspective preview camera
+     * looking down -Z from `distance`. Mutates the model's transform and
+     * returns { roll, scale, size, center }, or null when it has no bounds.
+     */
+    framePreview(model, opts) {
+      const THREE = window.THREE;
+      if (!THREE || !model) return null;
+      const o = opts || {};
+      const dist   = o.distance > 0 ? o.distance : 2.7;
+      const fov    = o.fov > 0 ? o.fov : 40;
+      const aspect = o.aspect > 0 ? o.aspect : 1;
+      const margin = o.margin > 0 ? o.margin : this.PREVIEW_MARGIN;
+      const pitch  = o.pitch !== undefined ? o.pitch : this.PREVIEW_POSE.pitch;
+      const yaw    = o.yaw   !== undefined ? o.yaw   : this.PREVIEW_POSE.yaw;
+      const tanHalf = Math.tan((fov * Math.PI) / 360);
+
+      model.position.set(0, 0, 0);
+      model.scale.set(1, 1, 1);
+      model.rotation.set(pitch, yaw, 0);
+      model.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(model);
+      if (box.isEmpty()) return null;
+      const size = box.getSize(new THREE.Vector3());
+
+      const long  = Math.max(size.x, size.y);
+      const short = Math.max(Math.min(size.x, size.y), 1e-6);
+      // atan(1 / aspect) is the angle of the pane's own diagonal.
+      const diagonal = Math.atan2(1, aspect);
+      const rolls = long / short >= this.PREVIEW_ELONGATION ? [0, diagonal, -diagonal] : [0];
+
+      // The near face of a deep object is magnified, so the fit is measured
+      // at the FRONT of the silhouette, not at its centre. The scale the front
+      // face allows depends on the scale itself, so it is solved rather than
+      // iterated: iterating overshot and undershot in turn and left whichever
+      // of the two the last pass happened to land on, which is how pieces were
+      // still being cut off by a frame that had supposedly been fitted.
+      //   s * span <= 2 * margin * tanHalf * k * (dist - s * depth / 2)
+      const fitScale = (s3) => {
+        const solve = (span, depth, k) => {
+          const denominator = Math.max(span, 1e-6) + margin * tanHalf * k * depth;
+          return (2 * margin * tanHalf * k * dist) / denominator;
+        };
+        return Math.min(solve(s3.y, s3.z, 1), solve(s3.x, s3.z, aspect));
+      };
+
+      let best = { roll: 0, scale: fitScale(size), center: box.getCenter(new THREE.Vector3()), size: size };
+      for (let i = 1; i < rolls.length; i++) {
+        model.rotation.set(pitch, yaw, rolls[i]);
+        model.updateMatrixWorld(true);
+        const b = new THREE.Box3().setFromObject(model);
+        const s3 = b.getSize(new THREE.Vector3());
+        const scale = fitScale(s3);
+        if (scale > best.scale) {
+          best = { roll: rolls[i], scale: scale, center: b.getCenter(new THREE.Vector3()), size: s3 };
+        }
+      }
+
+      model.rotation.set(pitch, yaw, best.roll);
+      model.scale.setScalar(best.scale);
+      // The silhouette was measured at unit scale, so its centre scales with
+      // the model before it is pulled back to the origin.
+      model.position.copy(best.center).multiplyScalar(-best.scale);
+      model.updateMatrixWorld(true);
+      return best;
+    },
+
     /**
      * A family calls this with:
      *   models     { methodName: fn }        builders, bound onto this object
@@ -1842,7 +1934,7 @@
   "use strict";
 
   const SkillArcana = {
-    ESOTERIC_LEVEL: 20,
+    ESOTERIC_LEVEL: 15,
     FORBIDDEN_LEVEL: 80,
     CULTIST_CLASS_ID: 8,
 
@@ -1891,10 +1983,15 @@
     },
 
     // Grimoires, skill books, and anything else that hands over written
-    // knowledge. Written knowledge has no level floor at all: anybody who
-    // holds the page can copy it. The floors only guard the Skill Master.
-    canLearnFromBook() {
-      return true;
+    // knowledge. An esoteric page has no level floor at all: anybody who holds
+    // it can copy it out. A forbidden page is the exception, because what is
+    // written there breaks the world's economy rather than a fight, so it
+    // keeps its level floor wherever it is read.
+    canLearnFromBook(actor, skill) {
+      if (this.isSandbox()) return true;
+      if (this.isCultist(actor)) return true;
+      if (!this.isForbidden(skill)) return true;
+      return this.meetsLevel(actor, skill);
     },
 
     // The Skill Master's tree. A Cultist learns nothing there at all.

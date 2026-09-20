@@ -239,7 +239,7 @@
   "allTrades": "All trades",
   "shortBy": "Missing {n}",
   "readyCount": "{n} ready",
-  "tradeHint": "{known} of {total} formulas readable by these hands",
+  "tradeHint": "{known} of {total} formulas known",
   "legend": {
     "title": "What the marks mean",
     "ready": "Ready: everything it takes is in the sack",
@@ -253,7 +253,7 @@
   "qtyMax": "Max",
   "batchCount": "x{n}",
   "autoSmith": "Auto",
-  "autoSmithHint": "Every piece goes to whoever in the party is best at it",
+  "autoSmithHint": "Each piece is crafted by the party member best at it",
   "modelEdit": "Edit model",
   "modelEditFitted": "Edit model ({n} fitted)",
   "sculpt": {
@@ -265,7 +265,7 @@
     "kept": "Kept",
     "removed": "Taken off",
     "remove": "Take this part off",
-    "pickHint": "Pick a fitted part, or take one off a weapon beside.",
+    "pickHint": "Pick a fitted part, or take one from another weapon shown alongside.",
     "search": "Search weapons",
     "noDonors": "No weapon matches",
     "undo": "Undo",
@@ -292,5 +292,25 @@
     "tilt": "Tilt",
     "roll": "Roll",
     "size": "Size"
+  },
+  "backToBoard": "BACK TO THE BOARD",
+  "appearanceHeader": "How it comes out",
+  "detailsHeader": "What it is",
+  "carrying": "carrying {n}",
+  "fixedPattern": "Made to one pattern: this frame is not a smith’s to re-cut.",
+  "nameEdit": "Write the name",
+  "tips": {
+    "pick": "Pick",
+    "page": "Open",
+    "batch": "How many",
+    "member": "Member",
+    "trade": "Trades",
+    "state": "State",
+    "leave": "Leave",
+    "reroll": "Roll again",
+    "sculpt": "Move part",
+    "mode": "Handle",
+    "fitting": "Fitting",
+    "done": "Done"
   }
 }

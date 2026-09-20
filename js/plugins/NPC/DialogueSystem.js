@@ -2347,7 +2347,7 @@ Imported.DialogueSystem = true;
 
     // How often talking to somebody is answered with the plain rumour rather
     // than a conversation. Everything else they could say is longer.
-    const RUMOR_CHANCE = 0.25;
+    const RUMOR_CHANCE = 0.50;
 
     function vary(text) {
         if (typeof text !== 'string' || text.indexOf('{') < 0) return text;

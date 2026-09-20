@@ -44,7 +44,8 @@
     "Survival": "Sopravvivenza",
     "Trash": "Rifiuti",
     "Vehicles": "Veicoli",
-    "Leisure": "Svago"
+    "Leisure": "Svago",
+    "Fertility": "Fertilita"
   },
   "itemType": {
     "standard": "Oggetto",
@@ -307,7 +308,7 @@
     "eatItem": "Mangia {item}",
     "cancel": "Annulla",
     "inspectionLog": "Registro di ispezione",
-    "inspectionPlaceholder": "Seleziona un oggetto dallo zaino a sinistra per esaminarne le proprietà naturali, la composizione chimica e i dettagli meccanici.",
+    "inspectionPlaceholder": "Seleziona un oggetto dallo zaino a sinistra per vederne proprieta, composizione e statistiche.",
     "useItem": "Usa oggetto",
     "equip": "Equipaggia",
     "favorite": "Preferito",

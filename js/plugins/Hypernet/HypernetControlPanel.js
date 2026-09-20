@@ -84,7 +84,7 @@
                         <!-- GENERAL TAB -->
                         <div class="cp-tab-pane hn-style-0056" id="pane-general" >
                             <div  class="hn-style-0057">
-                                <div  class="hn-style-0058">${window.HypernetOS.getIconHTML(234, 48)}</div>
+                                <div  class="hn-style-0058">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('categories-preferences-system'), 48)}</div>
                                 <div>
                                     <h3  class="hn-style-0059">${T('ControlPanel.systemProperties')}</h3>
                                     <div>${T('ControlPanel.environment')}</div>

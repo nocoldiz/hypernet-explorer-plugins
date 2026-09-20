@@ -540,9 +540,25 @@
   // picks are simply pre-rolled as already trained (level 2-4).
   function _getNpcSpecializations(profile, classId, dl, npcName) {
     if (!window.Specializations || !window.Specializations.ready) return [];
-    // The cache holds the rolled id -> level pairs, not the rendered rows.
-    if (profile && Array.isArray(profile._specCache?.levels))
-      return _specRows(new Map(profile._specCache.levels));
+    // A beast is trained in what a body does and in nothing that needs a
+    // mind: Specialization.json marks each entry `sentient`, and a creature
+    // class (NPCCreature owns the boundary) draws only from the rest. No cat
+    // has ever kept a set of books.
+    const nonSentient = !!(window.NPCCreature && npcName
+      ? window.NPCCreature.isNonSentientByName(npcName)
+      : window.NPCCreature?.isNonSentientClassId?.(classId));
+    const allowed = (spec) => !nonSentient || spec.sentient === false;
+
+    // The cache holds the rolled id -> level pairs, not the rendered rows. A
+    // set rolled before the rule existed is read through the same filter, so a
+    // cat's bookkeeping does not survive in an old world folder.
+    if (profile && Array.isArray(profile._specCache?.levels)) {
+      const cached = profile._specCache.levels.filter(([id]) => {
+        const spec = window.Specializations.byId.get(id);
+        return !spec || allowed(spec);
+      });
+      return _specRows(new Map(cached));
+    }
 
     const levelById = new Map();
     const className = (classId != null && $dataClasses?.[classId]) ? $dataClasses[classId].name : null;
@@ -554,6 +570,7 @@
     });
 
     window.Specializations.list.forEach((spec) => {
+      if (!allowed(spec)) return;
       let lvl = 0;
       if (className && spec.classStart?.[className]) lvl = Math.max(lvl, spec.classStart[className]);
       traitSlugs.forEach((slug) => {
@@ -564,7 +581,7 @@
 
     const rng = _seededRandom(`${npcName || 'npc'}:specializations`);
     const extraCount = 3 + Math.floor(rng() * 4); // 3..6
-    const pool = window.Specializations.list.filter((s) => !levelById.has(s.id));
+    const pool = window.Specializations.list.filter((s) => !levelById.has(s.id) && allowed(s));
     for (let i = 0; i < extraCount && pool.length > 0; i++) {
       const idx = Math.floor(rng() * pool.length);
       const spec = pool.splice(idx, 1)[0];
@@ -1637,10 +1654,13 @@
         this._chatActions = this._chatActions.filter(a => a.id !== 'join');
         if (!this._justJoined) {
           const odds = _animalJoinChance(animal, this._focusActor?.(), opinion);
+          // Out of the party's weight class is out of reach for an animal too
+          // (_joinLevelOk, measured on the party's median level): a beast far
+          // stronger than the party does not trot along behind it either.
           this._chatActions.push({
             id: 'animalJoin',
             label: `${animal.owned ? _TAroot('actionConvince') : _TAroot('actionJoinPet')} (~${odds}%)`,
-            disabled: _travellingPartyCount() >= 3,
+            disabled: _travellingPartyCount() >= 3 || !joinLevelOk,
           });
           // The other half of the same question: an animal can also be asked
           // to travel as one of the party rather than behind it, which is the
@@ -1648,7 +1668,7 @@
           this._chatActions.push({
             id: 'animalJoinParty',
             label: `${_TAroot('actionJoinPartyAnimal')} (~${odds}%)`,
-            disabled: !window.PetSystem?.hasFreeSlot?.(),
+            disabled: !window.PetSystem?.hasFreeSlot?.() || !joinLevelOk,
           });
         }
       }

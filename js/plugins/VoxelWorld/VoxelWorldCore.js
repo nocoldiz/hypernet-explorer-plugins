@@ -2001,7 +2001,10 @@
         for (const [n, c] of tally) { if (c > bestN) { best = n; bestN = c; } }
         const biome = (best || sampleBiomeAt(wx, wy).name);
         if (/^Road\s+/i.test(biome)) return T('CamperDrive.openRoad');
-        return window.BiomeNames.display(biome);
+        // The one way to print a biome name - but this runs on the readout
+        // every frame, and a readout is not worth losing the world for.
+        return (window.BiomeNames && window.BiomeNames.display)
+            ? window.BiomeNames.display(biome) : biome;
     }
 
     // A road number for the stretch of asphalt under the camper. Roads carry no

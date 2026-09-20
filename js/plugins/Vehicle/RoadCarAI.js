@@ -2109,8 +2109,9 @@
       self && self._isRoadCar && isStandingCar(self) ? self : parkedCarFacing();
     if (car) openCarTheftPrompt(car);
   };
+  // The basename alone: command357 strips the folder off params[0] before it
+  // looks the command up, so a folder-qualified key is never reached.
   PluginManager.registerCommand(PLUGIN_NAME, "StealParkedCar", stealParkedCar);
-  PluginManager.registerCommand("Vehicle/" + PLUGIN_NAME, "StealParkedCar", stealParkedCar);
 
   // ==========================================================================
   //  CORE UPDATE OVERRIDE

@@ -65,8 +65,11 @@
  *     every opinion moved is announced as a toast, because it happens while
  *     the player is looking somewhere else.
  *   • They walk through NOTHING. A member is a body on the map: they path
- *     round a wall, they cannot be dragged over a river, and the leader cannot
- *     walk through them either (lean on one and they step aside). The engine's
+ *     round a wall and they cannot be dragged over a river. They are a body to
+ *     each other, but never to the LEADER, who walks straight through them:
+ *     nobody the player can pass through has any reason to scramble out of the
+ *     way, so a member the leader walks into stays exactly where they are and
+ *     carries on with what they were doing. The engine's
  *     own through(true), which is how a vanilla column crosses everything, is
  *     put back on only while the party is being STOWED: a Gather Party,
  *     boarding a vehicle, and the side-view platformer where they replay the
@@ -79,7 +82,11 @@
  *     of the person in FRONT of them, never on the leader, so the party strings
  *     out into a line instead of piling onto the one they are all following.
  *     Whoever is already within a tile of that shoulder simply keeps the
- *     leader's pace. They hold it for as long as the sprint lasts
+ *     leader's pace, each of them a hair off it by their own fixed amount so
+ *     the file does not step as one body. Nobody notices the call on the same
+ *     frame as anybody else either: each member takes a moment of their own to
+ *     react, both when it starts and when it ends, so the party gathers and
+ *     scatters raggedly. They hold it for as long as the sprint lasts
  *     and come apart the moment it ends. Walking never calls them in at all,
  *     which is what makes Loose the party living its own life rather than a
  *     column with a longer rope. One member calls after the leader when it
@@ -95,6 +102,12 @@
  *     they would stroll in a village has walked into another country while
  *     still sitting comfortably on the screen: the party is drawn as one dot
  *     and everybody is held on the leader's tile.
+ *   • With nobody and nothing around them worth walking over to, a member
+ *     has no life of their own to live there, so they fall in with the leader
+ *     instead of wandering an empty field. What counts as somebody or
+ *     something is the same judgement the mouse hover makes (Core/MousePan.js):
+ *     an audio emitter, a transfer, an initialiser or a bare EV is machinery,
+ *     and machinery is neither company nor scenery.
  *   • They swim. A member cut off by water, or following a leader who has swum
  *     off, gets in and swims across it (region 99, or a water tile on the
  *     procedural map) and climbs out on the far bank. They never DIVE: going
@@ -366,13 +379,20 @@
     // -------------------------------------------------------------- the party
     const LOOSE_CHATTER = params.looseChatter !== "false";
     // The party keeps to itself unless the leader is really covering ground.
-    // A SPRINT calls them in, but not the instant it starts: two seconds of it
-    // (RECALL_RUN), so a hop over a puddle or a dash through a doorway is not a
-    // recall. They then hold the column for as long as the sprint lasts and let
-    // go the moment it ends, give or take the frame or two of RECALL_DROP that
+    // A SPRINT calls them in, but not the instant it starts: it has to have
+    // lasted MORE than two seconds (RECALL_RUN), so a hop over a puddle, a dash
+    // through a doorway or a short run down a corridor is not a recall. They
+    // then hold the column for as long as the sprint lasts and let go the
+    // moment it ends, give or take the frame or two of RECALL_DROP that
     // separate one dashed step from the next.
-    const RECALL_RUN  = 120;
+    const RECALL_RUN  = 120;   // 2 seconds, and the sprint has to beat it
     const RECALL_DROP = 20;
+    // Nobody in a real party breaks into a run on the same frame as everybody
+    // else. Each member notices the leader has gone in their own time, between
+    // these two figures, and lets go again just as unevenly, so the party
+    // gathers and scatters as a handful of people rather than as one animation.
+    const REACT_MIN  = 10;
+    const REACT_MAX  = 70;
     // How the column is shaped once they have been called in. A member within
     // this many tiles of the person in FRONT of them is already in the file and
     // is left entirely to the engine's own caterpillar chase, which walks them
@@ -380,21 +400,6 @@
     // same shoulder, not on the leader, so the party trails behind in a line
     // rather than piling onto the one they are all following.
     const COLUMN_GAP = 1;
-    // How long somebody the leader walked into stands still after stepping out
-    // of the way, so they do not drift back under the player's feet.
-    const NUDGE_HOLD = 45;
-    // Nobody steps aside for the first push. Walking into a member once only
-    // presses against them; they move on the SECOND separate attempt, so the
-    // party reads as bodies that have to be asked twice rather than doors.
-    // Nobody gives way the instant they are touched. Keep walking into them for
-    // this long and they step out of the way; keep at it this much longer and
-    // they stop being a body at all, so a member who has nowhere to step is
-    // never the reason the leader cannot get past.
-    const NUDGE_ASIDE_HOLD   = 24;   // 0.4s of pushing before they move
-    const NUDGE_THROUGH_HOLD = 48;   // 0.8s before the leader walks through them
-    // Frames of not pushing that end a push: a held direction key calls in
-    // every frame, so anything longer than this is a fresh shove.
-    const NUDGE_GAP = 2;
     // "Wait for me!" is for the moment they are left behind, not for every
     // sprint: one member says it, rarely, and not again for a good while.
     const RECALL_CRY_ODDS = 0.3;
@@ -402,11 +407,19 @@
     // Tagging along of their own accord: how often a member chooses it over an
     // errand, how long they stay at the leader's shoulder, and how close they
     // keep. Plus the odd turn of speed, whatever they are doing.
-    const FOLLOW_ODDS      = 0.3;
-    const FOLLOW_MIN       = 240;   // 4 seconds
+    const FOLLOW_ODDS      = 0.5;
+    const FOLLOW_MIN       = 360;   // 6 seconds
     const FOLLOW_MAX       = 1200;  // 20 seconds
-    const FOLLOW_NEAR      = 2;
+    const FOLLOW_NEAR      = 1;
     const FOLLOW_DASH_ODDS = 0.25;
+    // How near a goal has to be before a member simply steps at it rather than
+    // opening the engine's path search, and how deep that search may go when
+    // they do open it. Every loose goal is inside the leash or the screen, so
+    // the engine's own 12 only ever buys cost on a goal there is no way to.
+    const STEP_DIRECT_RANGE = 3;
+    const LOOSE_SEARCH_LIMIT = 8;
+    // How long an answer about what is standing around a member keeps.
+    const AROUND_COOLDOWN = 20;
     // What tells a member they have been left behind is the SCREEN, not a tile
     // count: somebody the player can see is not lost, however far across a wide
     // map they have wandered, and a leader walking about near them should never
@@ -445,9 +458,17 @@
     // place, NPCSim.InteractionScanner, so teaching the town teaches the party.
     const NEED_LOW    = 35;   // a meter at or under this sends a member looking
     const NEED_SCAN   = 14;   // tiles they will walk to attend to one
+    // How far past the edge of the screen a member on an errand may get before
+    // the errand is given up and they are put back. Generously past the snap
+    // margin, because going off to attend to something is the whole point, and
+    // nothing they can set out for is further off than the need scan anyway.
+    const ERRAND_SNAP_MARGIN = LOOSE_SNAP_MARGIN + NEED_SCAN;
     const NEED_TRIES  = 140;  // steps before an errand is written off
     const NEED_RETRY  = 300;  // frames before a fruitless search is tried again
     const REST_REGION = 102;  // the region NPCs sit and rest on
+    // How often an hour on the bank actually lands something. Nothing is still
+    // an hour well spent: the mood is filled either way.
+    const FISH_ODDS   = 55;
     // What one visit to the right place is worth. Deliberately partial: a bath
     // is not a spa day, and the meter has to be worth topping up again later.
     const NEED_FILL   = { hygiene: 45, leisure: 35, social: 18, sleep: 55, comfort: 25 };
@@ -646,10 +667,27 @@
         return false;
     }
 
+    // The four cardinals, hoisted: tilePassable is asked of hundreds of tiles
+    // in a single scan and a fresh array per tile was pure garbage.
+    const CARDINALS = [2, 4, 6, 8];
+    // The four tiles around a goal, and scratch space the step helpers rank
+    // their candidates in. Nothing here is ever held across a call, and the
+    // helpers that use it are never nested, so four fixed arrays do for all of
+    // them rather than a fresh list every frame somebody is wedged.
+    const BESIDE_DX = [1, -1, 0, 0];
+    const BESIDE_DY = [0, 0, 1, -1];
+    const SCRATCH_X = [0, 0, 0, 0];
+    const SCRATCH_Y = [0, 0, 0, 0];
+    const SCRATCH_D = [0, 0, 0, 0];
+    const SCRATCH_C = [0, 0, 0, 0];
+
     function tilePassable(x, y) {
         if (!$gameMap.isValid(x, y)) return false;
         if ($gameMap.regionId(x, y) === 10) return false;
-        return [2, 4, 6, 8].some((d) => $gameMap.isPassable(x, y, d));
+        for (let i = 0; i < 4; i++) {
+            if ($gameMap.isPassable(x, y, CARDINALS[i])) return true;
+        }
+        return false;
     }
 
     // Cardinal direction (2/4/6/8) from one tile toward another, 0 if same tile.
@@ -2001,10 +2039,33 @@
     // party uses, not someone it talks to.
     const NON_PERSON = /door|teleport|transfer|house|room|plant|animal|chest|sign|delivery|vehicle|player2|enemy/i;
 
+    // The machinery events: audio emitters, transfers, initialisers, the bare
+    // editor default and the rest of them. Core/MousePan.js already decides
+    // which events the cursor refuses to name, and that is exactly the same
+    // judgement: a member must never walk over to talk to, or stop to look at,
+    // something the player cannot even hover. The list is asked of MousePan so
+    // there is one answer, with a mirror of it here for the case where the
+    // hover plugin is switched off.
+    const HIDDEN_FALLBACK = /^(countryname|transfer|steal|exit|downstairs|upstairs|initialize|audio|acquire|door|puzzlesetup|debug)/i;
+
+    function isMachineryEvent(ev) {
+        const data = ev && ev.event ? ev.event() : null;
+        const name = (data && data.name) || "";
+        const filter = window.EventHoverFilter;
+        if (filter && typeof filter.shouldHide === "function") {
+            try { return !!filter.shouldHide(name); } catch (e) { /* fall through */ }
+        }
+        const trimmed = name.trim();
+        if (!trimmed) return true;
+        if (trimmed.startsWith("EV")) return true; // i18n-ignore: event name
+        return HIDDEN_FALLBACK.test(trimmed) || /^player[1-9]$/i.test(trimmed);
+    }
+
     function isPersonEvent(ev) {
         if (!ev || ev === $gamePlayer || ev._erased) return false;
         if (ev.isTransparent && ev.isTransparent()) return false;
         if (!ev.characterName || !ev.characterName()) return false; // a tile, not a body
+        if (isMachineryEvent(ev)) return false;
         const name = (ev.event() && ev.event().name) || "";
         if (NON_PERSON.test(name)) return false;
         return !isEnemyEvent(ev);
@@ -2016,6 +2077,7 @@
     function isSceneryEvent(ev) {
         if (!ev || ev === $gamePlayer || ev._erased) return false;
         if (ev.isTransparent && ev.isTransparent()) return false;
+        if (isMachineryEvent(ev)) return false;
         const name = (ev.event() && ev.event().name) || "";
         if (/teleport|transfer|door|fast\s*travel|player2/i.test(name)) return false;
         return !isPersonEvent(ev) && !isEnemyEvent(ev);
@@ -2200,7 +2262,7 @@
                     traits.some(t => /cyber|robot|synthetic|machine/i.test(t?.name || ''));
                 const isBotanic = ($gameVariables && $gameVariables.value(87) === 3) ||
                     /plant|flora|dryad|treant|fungus/i.test(cls);
-                const isNonSentient = (actor.currentClass && actor.currentClass()?.id >= 63) ||
+                const isNonSentient = (window.NPCCreature?.isNonSentientActor?.(actor) ?? false) ||
                     (window.NPCEmpathize?._helpers?._isNonSentientActor?.(actor) ?? false);
                 const charm = Math.max(-10, Math.min(14, Math.round(((actor.luk ?? 20) - 20) / 5) + Math.floor((actor.level ?? 1) / 8)));
                 const needs = window.PartyNeeds ? window.PartyNeeds.getMemberNeeds(actor) : null;
@@ -2227,7 +2289,8 @@
             const traitIds = profile?.traitIds || [];
             const isSynthetic = traitIds.some(id => /cyber|robot|synthetic/i.test(String(id)));
             const isBotanic = traitIds.some(id => /plant|flora|botanic/i.test(String(id)));
-            const isNonSentient = (profile?.classId >= 63) || (window.NPCEmpathize?._helpers?._isNonSentientNpc?.(profile) ?? false);
+            const isNonSentient = (window.NPCCreature?.isNonSentientProfile?.(profile) ?? false) ||
+                (window.NPCEmpathize?._helpers?._isNonSentientNpc?.(profile) ?? false);
             const charm = Math.max(-8, Math.min(10, Math.round(((profile?.psi ?? 20) - 20) / 6)));
             const hygiene = profile?.hygiene ?? 100;
             return {
@@ -2568,6 +2631,7 @@
                 s = this._states[i] = {
                     act: "idle", wait: 0, gx: null, gy: null, partner: null, beat: 0, tries: 0,
                     need: null, rent: false, until: 0, dash: false,
+                    fish: false, fishDir: 0, settleUntil: 0,
                     // The discussion in progress (PartyBanter beats) and the
                     // characters saying it, speaker-index aligned.
                     talk: null, talkChars: null,
@@ -2598,6 +2662,16 @@
             this._quietUntil = Graphics.frameCount + CHATTER_COOL;
         },
 
+        // On an errand: walking to the thing that answers a want, or having the
+        // minute over it that finishing one buys. This is the one state that
+        // outranks the screen and the leash, so it is asked in exactly one
+        // place and answered in exactly one place.
+        onErrand(s) {
+            if (!s) return false;
+            if (s.act === "need") return true;
+            return Graphics.frameCount < (s.settleUntil || 0);
+        },
+
         clearGoal(s) {
             s.act = "idle";
             s.gx = s.gy = null;
@@ -2608,6 +2682,8 @@
             s.tries = 0;
             s.need = null;
             s.rent = false;
+            s.fish = false;
+            s.fishDir = 0;
             s.until = 0;
             s.isRomance = undefined;
             s.romanceData = null;
@@ -2724,7 +2800,18 @@
         },
 
         // Standing inside a dark map or procedural interior (dungeon, crypt, sewer, cave, underground layer, negative dungeon floor, <Dark>).
+        // Answered once a frame at most. The question itself is a regex over
+        // the map note, a lowercasing and eight substring tests, and it is
+        // reached from leash() several times per member per frame.
         inProceduralInterior() {
+            const now = Graphics.frameCount;
+            if (this._interiorAt === now) return this._interior;
+            this._interiorAt = now;
+            this._interior = this.computeProceduralInterior();
+            return this._interior;
+        },
+
+        computeProceduralInterior() {
             if ($dataMap && $dataMap.note && /<Dark>/i.test($dataMap.note)) {
                 return true;
             }
@@ -2759,10 +2846,19 @@
         // to wander and explore without straying into pitch dark hallways.
         // During waiting fast-forward, members get a generous leash to satisfy needs.
         leash() {
-            if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._isWaitingFastForward) return 25;
-            if (this.onWorldMap()) return WORLD_LEASH;
-            if (this.inProceduralInterior()) return DUNGEON_LEASH;
-            return Infinity;
+            const now = Graphics.frameCount;
+            if (this._leashAt === now) return this._leash;
+            this._leashAt = now;
+            if (typeof $gameTemp !== "undefined" && $gameTemp && $gameTemp._isWaitingFastForward) {
+                this._leash = 25;
+            } else if (this.onWorldMap()) {
+                this._leash = WORLD_LEASH;
+            } else if (this.inProceduralInterior()) {
+                this._leash = DUNGEON_LEASH;
+            } else {
+                this._leash = Infinity;
+            }
+            return this._leash;
         },
 
         // Is this tile, or this character, inside the leash? Everywhere the
@@ -2962,15 +3058,16 @@
             if ($gamePlayer) {
                 // A sprint is the one thing that puts the rope back on, and it
                 // has to be a real one: the run is timed, and only once it has
-                // lasted RECALL_RUN frames does the party form up. Anything
+                // lasted longer than RECALL_RUN frames does the party form up. Anything
                 // slower than a sprint, walking included, leaves them to their
                 // own lives, which is the whole point of Loose.
                 const running = this.conditionsMet() && this.isLeaderRunning();
                 this._run = running ? (this._run || 0) + 1 : 0;
-                if (running && this._run >= RECALL_RUN) {
+                if (running && this._run > RECALL_RUN) {
                     if (!this._recall) {
                         Bubbles.clear();
                         this.cryForTheLeader();
+                        this.rollReactions();
                     }
                     this._recall = true;
                     this._still = 0;
@@ -2981,6 +3078,7 @@
                     if (this._still >= RECALL_DROP) {
                         this._recall = false;
                         this._still = 0;
+                        this.rollReactions();
                     }
                 } else if (running) {
                     this._still = 0;
@@ -2999,6 +3097,43 @@
             if (!f) return;
             this._cried = now;
             this.say(f, "AutoIdle.loose.recall");
+        },
+
+        // Give every member a fresh moment of their own in which to notice.
+        // Rolled once when the recall turns on and once when it turns off, so
+        // neither the forming up nor the breaking apart happens in lockstep.
+        rollReactions() {
+            this._reactAt = Graphics.frameCount;
+            this._react = [];
+            // Keyed by party slot, the same key their state is kept under: a
+            // follower's member index is 1-based, so counting the array off
+            // would leave the last of them with no delay at all.
+            const data = $gamePlayer ? $gamePlayer.followers().data() : [];
+            for (const f of data) {
+                const i = f && f._memberIndex ? f._memberIndex : 0;
+                this._react[i] = REACT_MIN + Math.floor(Math.random() * (REACT_MAX - REACT_MIN));
+            }
+        },
+
+        // How long this member takes to react to the recall turning on or off.
+        reactionOf(f) {
+            const i = f && f._memberIndex ? f._memberIndex : 0;
+            const r = this._react && this._react[i];
+            return r === undefined ? 0 : r;
+        },
+
+        // Has this member reacted yet? During their own beat they carry on with
+        // whatever they were doing, which is what makes the party string out
+        // when the leader breaks into a run instead of all setting off at once.
+        reacted(f) {
+            if (!this._reactAt) return true;
+            return Graphics.frameCount - this._reactAt >= this.reactionOf(f);
+        },
+
+        // The recall as this one member sees it: on only once they have noticed
+        // it is on, and off again only once they have noticed it is off.
+        recallingFor(f) {
+            return this.reacted(f) ? this.recalling() : !this.recalling();
         },
 
         // The only states in which a member may walk through the map: being
@@ -3074,7 +3209,7 @@
                 return;
             }
 
-            if (this.recalling()) {
+            if (this.recallingFor(f)) {
                 const gathering = $gamePlayer.areFollowersGathering();
                 // Called in, they walk home THEMSELVES rather than being handed
                 // to the engine's caterpillar: the caterpillar steps into the
@@ -3083,7 +3218,7 @@
                 // straight over a river. stepHome pathfinds instead, and swims
                 // what it cannot walk round.
                 if (!gathering && this.inColumn(f) && !this.strayed(f, false)) {
-                    f.setMoveSpeed($gamePlayer.realMoveSpeed());
+                    f.setMoveSpeed(this.paceFor(f));
                     this.updateSwim(f);
                     return;
                 }
@@ -3126,6 +3261,15 @@
             if (running) return base;
             if (s.act === "return" || s.act === "follow") return Math.max(3, base - 0.5);
             return Math.max(3, base - 1);
+        },
+
+        // The leader's pace as this member keeps it: a hair off it, by a fixed
+        // amount of their own, so a party walking home does not step as one
+        // body. Never above the leader, or the file piles onto itself.
+        paceFor(f) {
+            const base = $gamePlayer.realMoveSpeed();
+            const i = f && f._memberIndex ? f._memberIndex : 0;
+            return Math.max(3, base - ((i * 7) % 3) * 0.12);
         },
 
         // Has this member the breath left for a run? Asked before setting one
@@ -3234,11 +3378,29 @@
             // shoulder in front of them. Walking themselves every frame rather
             // than only on the leader's step is what closes the gap now, so the
             // extra notch bought nothing but the unnatural rush.
-            f.setMoveSpeed($gamePlayer.realMoveSpeed());
+            f.setMoveSpeed(this.paceFor(f));
             this.stepTo(f, head.x, head.y);
         },
 
         stepTo(f, x, y) {
+            // Almost every step the loose party takes is one tile toward
+            // somebody standing right next to them, and the engine's search is
+            // an A* that allocates a node per tile it looks at. If the plain
+            // cardinal step toward the goal is open, take it and never open the
+            // search at all: at the shoulder of the leader, which is where a
+            // follower spends most of its life, this is the whole cost.
+            const near = $gameMap.distance(f.x, f.y, x, y);
+            if (near > 0 && near <= STEP_DIRECT_RANGE && typeof f.canPass === "function") {
+                const straight = dirBetween(f.x, f.y, x, y);
+                if (straight > 0) {
+                    const nx = $gameMap.roundXWithDirection(f.x, straight);
+                    const ny = $gameMap.roundYWithDirection(f.y, straight);
+                    if ((nx !== x || ny !== y) && f.canPass(f.x, f.y, straight)) {
+                        f.moveStraight(straight);
+                        if (f.isMovementSucceeded()) return true;
+                    }
+                }
+            }
             const dir = f.findDirectionTo(x, y);
             if (dir > 0) {
                 f.moveStraight(dir);
@@ -3265,14 +3427,30 @@
         stepBeside(f, x, y) {
             if (!$gameMap) return false;
             if (f.x === x && f.y === y) return false;
-            const around = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
-                .filter(([nx, ny]) => $gameMap.isValid(nx, ny))
-                .filter(([nx, ny]) => nx !== f.x || ny !== f.y)
-                .sort((a, b) =>
-                    (Math.abs(a[0] - f.x) + Math.abs(a[1] - f.y)) -
-                    (Math.abs(b[0] - f.x) + Math.abs(b[1] - f.y)));
-            for (const [nx, ny] of around) {
-                const d = f.findDirectionTo(nx, ny);
+            // Four candidates, nearest first, ranked in place: this is taken
+            // every frame a goal tile is occupied, so it allocates nothing.
+            const ax = SCRATCH_X;
+            const ay = SCRATCH_Y;
+            const ad = SCRATCH_D;
+            let n = 0;
+            for (let i = 0; i < 4; i++) {
+                const nx = x + BESIDE_DX[i];
+                const ny = y + BESIDE_DY[i];
+                if (!$gameMap.isValid(nx, ny)) continue;
+                if (nx === f.x && ny === f.y) continue;
+                const cost = Math.abs(nx - f.x) + Math.abs(ny - f.y);
+                let j = n++;
+                for (; j > 0 && ad[j - 1] > cost; j--) {
+                    ax[j] = ax[j - 1];
+                    ay[j] = ay[j - 1];
+                    ad[j] = ad[j - 1];
+                }
+                ax[j] = nx;
+                ay[j] = ny;
+                ad[j] = cost;
+            }
+            for (let i = 0; i < n; i++) {
+                const d = f.findDirectionTo(ax[i], ay[i]);
                 if (d <= 0) continue;
                 f.moveStraight(d);
                 if (f.isMovementSucceeded()) return true;
@@ -3286,18 +3464,26 @@
         // pocket and back into open ground where the search works again.
         stepFree(f, x, y) {
             if (!$gameMap) return false;
-            const dirs = [2, 4, 6, 8]
-                .map((d) => ({
-                    d,
-                    nx: $gameMap.roundXWithDirection(f.x, d),
-                    ny: $gameMap.roundYWithDirection(f.y, d),
-                }))
-                .filter((o) => $gameMap.isValid(o.nx, o.ny) && f.canPass(f.x, f.y, o.d))
-                .sort((a, b) =>
-                    (Math.abs(a.nx - x) + Math.abs(a.ny - y)) -
-                    (Math.abs(b.nx - x) + Math.abs(b.ny - y)));
-            for (const o of dirs) {
-                f.moveStraight(o.d);
+            const ad = SCRATCH_D;
+            const ac = SCRATCH_C;
+            let n = 0;
+            for (let i = 0; i < 4; i++) {
+                const d = CARDINALS[i];
+                const nx = $gameMap.roundXWithDirection(f.x, d);
+                const ny = $gameMap.roundYWithDirection(f.y, d);
+                if (!$gameMap.isValid(nx, ny)) continue;
+                if (!f.canPass(f.x, f.y, d)) continue;
+                const cost = Math.abs(nx - x) + Math.abs(ny - y);
+                let j = n++;
+                for (; j > 0 && ac[j - 1] > cost; j--) {
+                    ad[j] = ad[j - 1];
+                    ac[j] = ac[j - 1];
+                }
+                ad[j] = d;
+                ac[j] = cost;
+            }
+            for (let i = 0; i < n; i++) {
+                f.moveStraight(ad[i]);
                 if (f.isMovementSucceeded()) return true;
             }
             return false;
@@ -3327,7 +3513,17 @@
             if (f.isMoving()) return;
 
             // Left so far behind that walking home is pointless: put back.
-            if (this.offScreen(f, LOOSE_SNAP_MARGIN)) {
+            // Left so far behind that walking home is pointless: put back. An
+            // errand buys a member room past the edge of the screen, but not
+            // room without end: at ERRAND_SNAP_MARGIN the want is given up and
+            // they are put back with the party, because a member who has to be
+            // teleported mid-errand would only walk straight back out again.
+            const errandMargin = this.onErrand(s)
+                ? ERRAND_SNAP_MARGIN
+                : LOOSE_SNAP_MARGIN;
+            if (this.offScreen(f, errandMargin)) {
+                this.clearGoal(s);
+                s.settleUntil = 0;
                 this.placeBeside(f);
                 return;
             }
@@ -3338,8 +3534,17 @@
             // sitting out. Once heading back they keep going until a little
             // inside the edge, so nobody stops dead on the rim and drifts
             // straight out of it again.
-            const gone = this.leavingView(f);
-            const strayed = this.strayed(f, s.act === "return");
+            //
+            // Nothing else EXCEPT an errand. Somebody who has decided they need
+            // the washroom goes to the washroom: that want outranks the screen,
+            // outranks the leash and outranks keeping the leader company, and
+            // it holds until the thing is done and they have had their minute
+            // over it. The errand is the one reason a member walks out of shot
+            // of their own accord, and the errand itself is what brings them
+            // back, because there is nothing after it but falling back in.
+            const errand = this.onErrand(s);
+            const gone = !errand && this.leavingView(f);
+            const strayed = !errand && this.strayed(f, s.act === "return");
             if (gone || strayed || (s.act === "return" && this.offScreen(f, -LOOSE_BACK_INSET))) {
                 s.wait = 0;
                 if (s.act !== "return") {
@@ -3387,9 +3592,16 @@
             const roll = Math.random();
             if (roll < 0.36 && this.beginVisit(f, s)) return;
             if (roll < 0.58 && this.beginLook(f, s)) return;
+            // Nothing within reach worth walking up to: no company, nothing to
+            // look at. Out on an empty road there is nothing for a companion to
+            // do but come along, so they fall in with the leader rather than
+            // wandering in circles in an empty field.
+            if (!this.hasAnythingAround(f)) {
+                if (this.beginFollow(f, s)) return;
+            }
             if (roll < 0.86 && this.beginWalk(f, s)) return;
             this.clearGoal(s);
-            s.wait = 60 + Math.floor(Math.random() * 150);
+            s.wait = 40 + Math.floor(Math.random() * 80);
             if (Math.random() < IDLE_TALK_ODDS) this.say(f, "AutoIdle.loose.thought");
         },
 
@@ -3406,10 +3618,40 @@
             return true;
         },
 
+        // Is there anything around this member worth walking over to? Only the
+        // map counts here: the rest of the party is always within arm's reach
+        // and would answer yes on an empty moor. So this asks whether there is
+        // a townsperson or a thing worth a look nearby, and a member with no
+        // for an answer has nowhere of their own to be.
+        hasAnythingAround(f) {
+            if (!$gameMap) return false;
+            const s = this.stateOf(f);
+            // An empty moor is still an empty moor twenty frames later, and
+            // this walks every event on the map asking each one where it is on
+            // the screen. Asked once a third of a second, not once a frame.
+            const now = Graphics.frameCount;
+            if (s.aroundAt !== undefined && now - s.aroundAt < AROUND_COOLDOWN) {
+                return s.around;
+            }
+            s.aroundAt = now;
+            s.around = false;
+            for (const ev of $gameMap.events()) {
+                // Distance first: it is arithmetic, where being in view is
+                // zoom and camera maths done per event.
+                if (this.dist(f, ev) > LOOSE_SCAN) continue;
+                if (this.stale(s, ev)) continue;
+                if (!isPersonEvent(ev) && !isSceneryEvent(ev)) continue;
+                if (!this.inLeashOf(ev) || !this.inViewOf(ev)) continue;
+                s.around = true;
+                break;
+            }
+            return s.around;
+        },
+
         stepFollow(f, s) {
             if (Graphics.frameCount >= (s.until || 0)) {
                 this.clearGoal(s);
-                s.wait = 30;
+                s.wait = 12;
                 return;
             }
             const d = this.dist(f, $gamePlayer);
@@ -3916,6 +4158,10 @@
             // path (which would hand out free sleep); it is its own errand.
             if (need === "sleep" && this.beginRent(f, s)) return true;
             if (need === "social" && this.beginVisit(f, s)) return true;
+            // Bored, with a rod in the party's pack and water in sight: there
+            // is no better way for a companion to spend an hour, so it is tried
+            // before anything the map was built with.
+            if (need === "leisure" && this.beginFish(f, s)) return true;
 
             const target = this.findForNeed(f, need);
             if (target) {
@@ -4028,6 +4274,90 @@
             return true;
         },
 
+        // Can anybody in this party fish? The rod is the party's, not the
+        // member's: Map/MovementInteractionSystem.js owns the whole answer
+        // (a plain rod in the pack, or one somebody has made a weapon of) and
+        // it is asked there rather than guessed at from an item id here.
+        canFish() {
+            const ms = window.MovementSystem;
+            if (!ms || typeof ms.hasFishingRod !== "function") return false;
+            if (typeof ms.isWaterTile !== "function") return false;
+            try {
+                return !!ms.hasFishingRod();
+            } catch (e) {
+                return false;
+            }
+        },
+
+        // An hour on the bank. A bored member with a rod in the party's pack
+        // goes and sits by the nearest water, which is worth more to their mood
+        // than a bench is and now and then comes back with supper. What they
+        // want is the BANK, never the water: they fish standing on dry ground,
+        // facing it.
+        beginFish(f, s) {
+            if (!$gameMap || !this.canFish()) return false;
+            const ms = window.MovementSystem;
+            let best = null;
+            let bestD = NEED_SCAN + 1;
+            for (let dy = -NEED_SCAN; dy <= NEED_SCAN; dy++) {
+                for (let dx = -NEED_SCAN; dx <= NEED_SCAN; dx++) {
+                    const d = Math.abs(dx) + Math.abs(dy);
+                    if (d >= bestD) continue;
+                    const x = $gameMap.roundX(f.x + dx);
+                    const y = $gameMap.roundY(f.y + dy);
+                    if (ms.isWaterTile(x, y)) continue;
+                    if (!tilePassable(x, y)) continue;
+                    if (!this.inLeash(x, y)) continue;
+                    let facing = 0;
+                    for (let i = 0; i < 4; i++) {
+                        const dir = CARDINALS[i];
+                        const wx = $gameMap.roundXWithDirection(x, dir);
+                        const wy = $gameMap.roundYWithDirection(y, dir);
+                        if ($gameMap.isValid(wx, wy) && ms.isWaterTile(wx, wy)) {
+                            facing = dir;
+                            break;
+                        }
+                    }
+                    if (!facing) continue;
+                    best = { x, y, facing };
+                    bestD = d;
+                }
+            }
+            if (!best) return false;
+            this.clearGoal(s);
+            s.act = "need";
+            s.need = "leisure";
+            s.fish = true;
+            s.fishDir = best.facing;
+            s.gx = best.x;
+            s.gy = best.y;
+            return true;
+        },
+
+        // What the bank gave them. A member fishing on their own time NEVER
+        // hooks anything that fights back: the troop side of
+        // Map/MovementInteractionSystem.js is the player's own business, and a
+        // companion wandering off for an hour may not start a battle with it.
+        // So this is the catch and nothing else, and the catch is a toast.
+        landCatch(f) {
+            const actor = this.actorOf(f);
+            const ms = window.MovementSystem;
+            const pool = (ms && ms.fishingItems) || [];
+            const name = actor ? actor.name() : "";
+            if (!pool.length || Math.random() * 100 >= FISH_ODDS) {
+                this.toast(T('AutoIdle.loose.toastFishNothing', { name: name }), "info");
+                return;
+            }
+            const id = pool[Math.floor(Math.random() * pool.length)];
+            const item = $dataItems && $dataItems[id];
+            if (!item) {
+                this.toast(T('AutoIdle.loose.toastFishNothing', { name: name }), "info");
+                return;
+            }
+            $gameParty.gainItem(item, 1);
+            this.toast(T('AutoIdle.loose.toastFish', { name: name, item: item.name }), "good");
+        },
+
         // Walk to it, and settle it on arrival. A tile errand (a seat) is done
         // by standing on it; an event errand by standing beside it.
         stepNeed(f, s) {
@@ -4057,6 +4387,7 @@
                     if (!this.stepTo(f, s.gx, s.gy)) s.tries += 6;
                     return;
                 }
+                if (s.fish && s.fishDir) f.setDirection(s.fishDir);
             }
             this.finishNeed(f, s);
         },
@@ -4064,16 +4395,24 @@
         finishNeed(f, s) {
             const need = s.need;
             const seat = !s.partner;
+            const fished = !!s.fish;
             if (s.rent && !this.payRent(f, s)) {
                 this.clearGoal(s);
                 s.wait = 90;
                 return;
             }
+            if (fished && s.fishDir) f.setDirection(s.fishDir);
             if (!s.rent) this.fillNeed(f, need, NEED_FILL[need] || 20);
-            this.say(f, seat ? "AutoIdle.loose.rest" : "AutoIdle.loose.need." + need);
+            if (fished) this.landCatch(f);
+            this.say(f, fished ? "AutoIdle.loose.need.fish"
+                : seat ? "AutoIdle.loose.rest" : "AutoIdle.loose.need." + need);
             this.clearGoal(s);
-            // Whatever they came for takes a while: a bath, a game, a nap.
-            s.wait = seat ? 300 : 180;
+            // Whatever they came for takes a while: a bath, a game, a nap. The
+            // errand is not over until that while is, which is why the screen
+            // cannot call them out of it any more than it could call them off
+            // the walk there.
+            s.wait = fished ? 420 : seat ? 300 : 180;
+            s.settleUntil = Graphics.frameCount + s.wait;
         },
 
         // Pay for the room and let the party in. A member who rents it rents it
@@ -4242,13 +4581,13 @@
             let bestD = LOOSE_SCAN + 1;
             const s = this.stateOf(f);
             const consider = (c) => {
-                if (!c || c === f || this.stale(s, c)) return;
-                if (!this.inLeashOf(c) || !this.inViewOf(c)) return;
+                if (!c || c === f) return;
                 const d = this.dist(f, c);
-                if (d <= LOOSE_SCAN && d < bestD) {
-                    best = c;
-                    bestD = d;
-                }
+                if (d > LOOSE_SCAN || d >= bestD) return;
+                if (this.stale(s, c)) return;
+                if (!this.inLeashOf(c) || !this.inViewOf(c)) return;
+                best = c;
+                bestD = d;
             };
             const ctrls =
                 $gameSystem && typeof $gameSystem.getActiveNPCControllers === "function"
@@ -4303,13 +4642,14 @@
             let best = null;
             let bestD = LOOSE_SCAN + 1;
             for (const ev of $gameMap.events()) {
+                // Distance first, and against the best so far: everything below
+                // it is a screen-space question asked per event.
+                const d = this.dist(f, ev);
+                if (d > LOOSE_SCAN || d >= bestD) continue;
                 if (!isSceneryEvent(ev) || this.stale(s, ev)) continue;
                 if (!this.inLeashOf(ev) || !this.inViewOf(ev)) continue;
-                const d = this.dist(f, ev);
-                if (d <= LOOSE_SCAN && d < bestD) {
-                    best = ev;
-                    bestD = d;
-                }
+                best = ev;
+                bestD = d;
             }
             return best;
         },
@@ -4388,10 +4728,27 @@
         // The loose member standing on this tile, if any. Somebody the engine
         // is carrying (being stowed into a vehicle, a map battle) is not a
         // body: their through(true) is what stacks them on the leader's tile.
-        followerAt(x, y, except) {
-            if (!$gamePlayer || !$gamePlayer.followers()) return null;
+        // Who is standing where, rebuilt once a frame. This is asked from
+        // inside the engine's path search, once per tile it looks at, for every
+        // member walking at once: scanning the party for each of those was the
+        // single biggest cost the loose formation carried.
+        // The members who are bodies this frame, worked out once. Position is
+        // NOT cached with them: a member moves inside the frame this list was
+        // built in, so where they are is asked of them live, and so is being
+        // through, which the frame itself toggles. What is cached is the
+        // expensive part: whether each one is a body at all.
+        // This is asked from inside the engine's path search, once per tile it
+        // looks at, for every member walking at once, so re-deciding it there
+        // was the single biggest cost the loose formation carried.
+        solidMembers() {
+            const now = Graphics.frameCount;
+            if (this._solidAt === now && this._solid) return this._solid;
+            const out = this._solid || (this._solid = []);
+            out.length = 0;
+            this._solidAt = now;
+            if (!$gamePlayer || !$gamePlayer.followers()) return out;
             for (const f of $gamePlayer.followers().data()) {
-                if (f === except) continue;
+                if (!f) continue;
                 // The companion at heel is walked through by everybody. It
                 // still obeys the map itself (it is not through), it simply is
                 // not a wall: a pet standing in a doorway must never be the
@@ -4400,98 +4757,38 @@
                 if (!f.isVisible() || f.isTransparent()) continue;
                 if (f.isThrough()) continue;
                 if (!this.activeFor(f)) continue;
+                out.push(f);
+            }
+            return out;
+        },
+
+        followerAt(x, y, except) {
+            const solid = this.solidMembers();
+            for (let i = 0; i < solid.length; i++) {
+                const f = solid[i];
+                if (f === except) continue;
+                if (f.isThrough()) continue;
                 if (f.pos(x, y)) return f;
             }
             return null;
         },
 
-        // Is the leader blocked by one of them? The party may never wall the
-        // player in: with no free tile left around them, everyone is walked
-        // through again rather than leaving the game stuck.
+        // The leader can always pass through party members and followers.
         blocksLeader(x, y) {
-            if (!this.active()) return false;
-            if ($gamePlayer.isInVehicle()) return false;
-            const at = this.followerAt(x, y);
-            if (!at) return false;
-            // Leant on long enough, they stop being a wall (see pushedThrough).
-            if (this.pushedThrough(at)) return false;
-            for (const d of [2, 4, 6, 8]) {
-                const nx = $gameMap.roundXWithDirection($gamePlayer.x, d);
-                const ny = $gameMap.roundYWithDirection($gamePlayer.y, d);
-                if (this.followerAt(nx, ny)) continue;
-                if (!$gamePlayer.isMapPassable($gamePlayer.x, $gamePlayer.y, d)) continue;
-                if ($gameMap.eventsXyNt(nx, ny).some((e) => e.isNormalPriority())) continue;
-                return true; // there is a way out, so this one may be blocked
-            }
             return false;
         },
 
-        // Walking into somebody. A member or the companion standing where the
-        // leader wants to go steps out of the way instead of being a wall:
-        // sideways first, so they clear the lane the leader is walking down,
-        // then on ahead, then back the way the leader came. Whatever they were
-        // doing is dropped, and they hold still for a beat afterwards so they
-        // do not wander straight back onto the tile. They are not a door,
-        // though: it takes a moment of pushing before they budge, unless the
-        // leader is running, and a moment more before they can be walked
-        // through (see holdAgainst).
-        nudgeAside(d) {
-            if (!this.active() || !d) return false;
-            if ($gamePlayer.isInVehicle()) return false;
-            const x = $gameMap.roundXWithDirection($gamePlayer.x, d);
-            const y = $gameMap.roundYWithDirection($gamePlayer.y, d);
-            const f = this.followerAt(x, y) || this.petAt(x, y);
-            if (!f || f.isMoving()) return false;
-            if (!this.holdAgainst(f)) return false;
-            const side = (d === 2 || d === 8) ? [4, 6] : [2, 8];
-            if (Math.random() < 0.5) side.reverse();
-            for (const nd of side.concat([d, 10 - d])) {
-                const nx = $gameMap.roundXWithDirection(f.x, nd);
-                const ny = $gameMap.roundYWithDirection(f.y, nd);
-                if (!$gameMap.isValid(nx, ny)) continue;
-                if (!f.canPass(f.x, f.y, nd)) continue;
-                f.moveStraight(nd);
-                if (!f.isMovementSucceeded()) continue;
-                // The companion keeps no errand of its own to drop.
-                const s = this.isPet(f) ? null : this.stateOf(f);
-                if (s) {
-                    this.clearGoal(s);
-                    s.wait = Math.max(s.wait || 0, NUDGE_HOLD);
-                }
-                return true;
-            }
-            return false;
-        },
-
-        // How long the leader has been leaning on one body. A held direction key
-        // calls in every frame; letting go, turning away or pushing somebody
-        // else starts the count over. Returns true once the push has lasted
-        // long enough for them to give way, which is at once at a run.
-        holdAgainst(f) {
-            const now = Graphics.frameCount;
-            if (this._bumpOn !== f || now - (this._bumpAt || 0) > NUDGE_GAP) {
-                this._bumpOn = f;
-                this._bumpHeld = 0;
-            } else {
-                this._bumpHeld = (this._bumpHeld || 0) + (now - this._bumpAt);
-            }
-            this._bumpAt = now;
-            if ($gamePlayer && $gamePlayer.isDashing && $gamePlayer.isDashing()) return true;
-            return this._bumpHeld >= NUDGE_ASIDE_HOLD;
-        },
-
-        // ...and once it has lasted twice as long, they are no longer a body at
-        // all. A member with nowhere to step aside to (a corridor, a doorway, a
-        // corner) must never pen the leader in, so keeping the key held walks
-        // straight through them.
+        // The leader walks THROUGH a member, so nothing is ever asked to get
+        // out of their way: a body the player can pass through that scrambled
+        // aside anyway would be flinching at somebody who was never going to
+        // touch them. Whoever the leader walks into stays where they are and
+        // carries on with what they were doing.
         pushedThrough(f) {
-            if (!f || this._bumpOn !== f) return false;
-            if (Graphics.frameCount - (this._bumpAt || 0) > NUDGE_GAP) return false;
-            return (this._bumpHeld || 0) >= NUDGE_THROUGH_HOLD;
+            return true;
         },
 
-        // The companion at heel, on one tile. It is walked through by everybody,
-        // so it is not a body, but it is still asked to get out of the way.
+        // The companion at heel, on one tile. It is walked through by
+        // everybody, so it is not a body at all.
         petAt(x, y) {
             if (!$gamePlayer || !$gamePlayer.followers()) return null;
             for (const f of $gamePlayer.followers().data()) {
@@ -4514,13 +4811,44 @@
         },
 
         // --------------------------------------------------------- talking to one
+        followersAtPos(x, y) {
+            if (!$gamePlayer || !$gamePlayer.followers()) return [];
+            if ($gamePlayer.isInVehicle()) return [];
+            if (this.onWorldMap()) return [];
+            if (this.inMapBattle()) return [];
+            const result = [];
+            for (const f of $gamePlayer.followers().data()) {
+                if (!f.isVisible() || f.isTransparent()) continue;
+                if (f.pos(x, y)) result.push(f);
+            }
+            return result;
+        },
+
+        followerAtPos(x, y) {
+            const all = this.followersAtPos(x, y);
+            return all.find(f => !this.isPet(f)) || all[0] || null;
+        },
+
+        interactAt(x, y) {
+            const list = this.followersAtPos(x, y);
+            list.sort((a, b) => (this.isPet(a) ? 1 : 0) - (this.isPet(b) ? 1 : 0));
+            for (const f of list) {
+                if (this.talkTo(f)) return true;
+            }
+            return false;
+        },
+
         // The member standing on the tile the leader is facing.
         facedFollower() {
-            if (!this.active()) return null;
+            if (!$gamePlayer || !$gamePlayer.followers()) return null;
+            if ($gamePlayer.isInVehicle()) return null;
+            if (this.onWorldMap()) return null;
+            if (this.inMapBattle()) return null;
             const d = $gamePlayer.direction();
             const fx = $gameMap.roundXWithDirection($gamePlayer.x, d);
             const fy = $gameMap.roundYWithDirection($gamePlayer.y, d);
             for (const f of $gamePlayer.followers().data()) {
+                if (this.isPet(f)) continue;
                 if (!f.isVisible() || f.isTransparent()) continue;
                 if (f.pos(fx, fy)) return f;
             }
@@ -4534,6 +4862,8 @@
         facedPet() {
             if (!$gamePlayer || !$gamePlayer.followers()) return null;
             if ($gamePlayer.isInVehicle()) return null;
+            if (this.onWorldMap()) return null;
+            if (this.inMapBattle()) return null;
             const d = $gamePlayer.direction();
             const fx = $gameMap.roundXWithDirection($gamePlayer.x, d);
             const fy = $gameMap.roundYWithDirection($gamePlayer.y, d);
@@ -4547,7 +4877,7 @@
 
         talkTo(f) {
             if (this.isPet(f)) return this.petMenu(f);
-            const actor = f && f.actor();
+            const actor = f && f.actor && f.actor();
             if (!actor) return false;
             return this.memberMenu(f, actor);
         },
@@ -4999,6 +5329,25 @@
         _dy: 0,
         _padDir: 0,
         _padHold: 0,
+        _bufferedDir: 0,
+        _bufferFrames: 0,
+        _seq: null,
+
+        // Logical sequence of actor IDs to cycle through. Preserves member join
+        // order across leader switches (since setLeader moves the active leader
+        // to index 0 of $gameParty.members()), so repeated cycles do not ping-pong
+        // between the first two members.
+        sequence() {
+            const members = ($gameParty && $gameParty.members()) || [];
+            const currentIds = members.map((m) => (m ? m.actorId() : null)).filter((id) => id != null);
+            if (!this._seq) this._seq = [];
+            const kept = this._seq.filter((id) => currentIds.includes(id));
+            for (const id of currentIds) {
+                if (!kept.includes(id)) kept.push(id);
+            }
+            this._seq = kept;
+            return this._seq.slice();
+        },
 
         // The party indices the lead may be handed to, in marching order. A
         // fallen member is skipped: nobody follows a corpse. The leader is
@@ -5036,8 +5385,8 @@
             return !!(ss && ss.active);
         },
 
-        // The states of the game in which the lead may change hands at all.
-        available() {
+        // The states of the game in which the lead may change hands once movement stops.
+        canSwitchWhenStopped() {
             if (!$gameParty || !$gamePlayer || !$gameMap || !$gameMessage) return false;
             // Whether the lead may change hands at all is one answer for every
             // end that asks (PartyRoster.canSwitchLeader), story mode included.
@@ -5055,30 +5404,52 @@
             if (SceneManager.isSceneChanging()) return false;
             if ($gameParty.inBattle() || Loose.inMapBattle()) return false;
             if ($gameMessage.isBusy() || $gameMap.isEventRunning()) return false;
-            if ($gamePlayer.isMoving() || $gamePlayer.isJumping()) return false;
-            if ($gamePlayer.isInVehicle()) return false;
+            if ($gamePlayer.isJumping && $gamePlayer.isJumping()) return false;
+            if ($gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) return false;
             if ($gamePlayer._vehicleGettingOn || $gamePlayer._vehicleGettingOff) return false;
-            if (!$gamePlayer.followers().isVisible()) return false;
-            if ($gamePlayer.areFollowersGathering()) return false;
+            if ($gamePlayer.followers && !$gamePlayer.followers().isVisible()) return false;
+            if ($gamePlayer.areFollowersGathering && $gamePlayer.areFollowersGathering()) return false;
             // The map modes that keep a cursor of their own and read Tab
             // themselves: laying out furniture (Crafting/FurnitureSystem.js) and
             // aiming a throw (BattleSystem/ThrowItemPlugin.js).
-            if (SceneManager._scene._fbActive) return false;
+            if (SceneManager._scene && SceneManager._scene._fbActive) return false;
             if ($gamePlayer._throwTargetingMode) return false;
             if (this.panning()) return false;
             return this.order().length > 1;
         },
 
+        // The states of the game in which the lead may change hands at all.
+        available() {
+            if ($gamePlayer && (($gamePlayer.isMoving && $gamePlayer.isMoving()) ||
+                ($gamePlayer.isJumping && $gamePlayer.isJumping()))) return false;
+            return this.canSwitchWhenStopped();
+        },
+
         // One step down the marching order (+1) or up it (-1).
         cycle(delta) {
-            const idx = this.order();
-            if (idx.length < 2) return false;
-            const at = Math.max(0, idx.indexOf(0));
-            const size = idx.length;
-            const target = idx[(((at + delta) % size) + size) % size];
-            if (!target) return false;
-            const actor = $gameParty.members()[target];
-            return actor ? this.switchTo(actor.actorId(), { pan: true }) : false;
+            const seq = this.sequence();
+            const members = ($gameParty && $gameParty.members()) || [];
+            if (members.length < 2) return false;
+
+            const eligible = [];
+            for (const actorId of seq) {
+                const idx = members.findIndex((m) => m && m.actorId() === actorId);
+                if (idx < 0) continue;
+                const actor = members[idx];
+                if (idx > 0 && actor.isDead && actor.isDead()) continue;
+                if (idx > 0 && this.heldByP2(actor)) continue;
+                eligible.push(actorId);
+            }
+            if (eligible.length < 2) return false;
+
+            const leader = $gameParty.leader();
+            const curId = leader ? leader.actorId() : eligible[0];
+            const at = eligible.indexOf(curId);
+            const fromIdx = at >= 0 ? at : 0;
+            const size = eligible.length;
+            const targetId = eligible[(((fromIdx + delta) % size) + size) % size];
+            if (targetId == null || targetId === curId) return false;
+            return this.switchTo(targetId, { pan: true });
         },
 
         // Hand the party to one named member. `pan` false cuts the camera
@@ -5299,7 +5670,7 @@
         // change hands (R2), or there is a legend to fold (L2). With neither,
         // the triggers are not read and are left whole to the camera.
         padWanted() {
-            if (this.available()) return true;
+            if (this.canSwitchWhenStopped()) return true;
             return !!(window.MapLegend && window.MapLegend.padFoldAvailable &&
                 window.MapLegend.padFoldAvailable());
         },
@@ -5332,8 +5703,29 @@
                 }
                 dir = tap;
             }
-            if (!dir || !this.available()) return;
-            if (this.cycle(dir)) SoundManager.playOk();
+            if (dir) {
+                if (this.canSwitchWhenStopped()) {
+                    this._bufferedDir = dir;
+                    this._bufferFrames = 30;
+                }
+            }
+            if (!this._bufferedDir) return;
+
+            if (!this.available()) {
+                if ($gamePlayer && $gamePlayer.isMoving && $gamePlayer.isMoving()) {
+                    this._bufferFrames--;
+                    if (this._bufferFrames <= 0) this._bufferedDir = 0;
+                } else {
+                    this._bufferedDir = 0;
+                    this._bufferFrames = 0;
+                }
+                return;
+            }
+
+            const toRun = this._bufferedDir;
+            this._bufferedDir = 0;
+            this._bufferFrames = 0;
+            if (this.cycle(toRun)) SoundManager.playOk();
         },
     };
 
@@ -5467,17 +5859,25 @@
         _Game_Player_updateScroll_lead.call(this, lastScrolledX, lastScrolledY);
     };
 
-    // 2c) Collisions. Loose members are solid: to the leader, to each other and
-    //     to nobody else (an NPC still walks through them, as it always has).
-    const _Game_Player_isCollidedWithCharacters_loose = Game_Player.prototype.isCollidedWithCharacters;
-    Game_Player.prototype.isCollidedWithCharacters = function (x, y) {
-        if (_Game_Player_isCollidedWithCharacters_loose &&
-            _Game_Player_isCollidedWithCharacters_loose.call(this, x, y)) return true;
+    // 2c) Collisions. Loose members are solid to each other and to nobody else:
+    //     the leader passes through them (and so nothing has to move for the
+    //     leader), and an NPC walks through them as it always has.
+    //     The leader is not hooked at all: blocksLeader is the constant no, so
+    //     wrapping the engine's own answer only to hand it straight back cost a
+    //     call on every tile the leader ever tests.
+
+    // A shorter path search while a member is living their own life. Every
+    // goal a loose member sets themselves is inside the leash or inside the
+    // screen, so the engine's twelve only ever spends nodes proving that
+    // somewhere they cannot reach is somewhere they cannot reach.
+    const _Game_Follower_searchLimit_loose = Game_Follower.prototype.searchLimit;
+    Game_Follower.prototype.searchLimit = function () {
         try {
-            return Loose.blocksLeader(x, y);
+            if (Loose.activeFor(this)) return LOOSE_SEARCH_LIMIT;
         } catch (e) {
-            return false;
+            // fall through to the engine's own answer
         }
+        return _Game_Follower_searchLimit_loose.call(this);
     };
 
     const _Game_Follower_isCollidedWithCharacters_loose = Game_Follower.prototype.isCollidedWithCharacters;
@@ -5491,28 +5891,50 @@
         }
     };
 
-    // 2d) ...but a body that can move is not a wall. Before the leader's own
-    //     step is resolved, whoever is standing on the tile they are walking
-    //     into is asked to step aside, so the party parts around the player
-    //     rather than penning them in.
-    const _Game_Player_executeMove_loose = Game_Player.prototype.executeMove;
-    Game_Player.prototype.executeMove = function (direction) {
-        try {
-            Loose.nudgeAside(direction);
-        } catch (e) { /* never block the leader's own step */ }
-        _Game_Player_executeMove_loose.call(this, direction);
-    };
-
-    // 3) OK on a member standing in front of the leader opens their Empathize
-    //    sheet, the same page the Dynamics roster opens. Checked before the
-    //    engine's own action button so the member is not walked through.
+    // 3) OK on a member or companion (faced or on the same tile) opens their
+    //    interaction menu. Checked before events when faced, and after events
+    //    when sharing the same tile.
     const _Game_Player_triggerButtonAction_loose = Game_Player.prototype.triggerButtonAction;
     Game_Player.prototype.triggerButtonAction = function () {
         if (Input.isTriggered("ok") && !this.isInVehicle()) {
             const f = Loose.facedFollower() || Loose.facedPet();
             if (f && Loose.talkTo(f)) return true;
         }
-        return _Game_Player_triggerButtonAction_loose.call(this);
+        if (_Game_Player_triggerButtonAction_loose &&
+            _Game_Player_triggerButtonAction_loose.call(this)) return true;
+        if (Input.isTriggered("ok") && !this.isInVehicle()) {
+            if (Loose.interactAt(this.x, this.y)) return true;
+        }
+        return false;
+    };
+
+    // 3b) Touch / mouse interaction with a party member or companion.
+    const _Game_Player_triggerTouchAction_loose = Game_Player.prototype.triggerTouchAction;
+    Game_Player.prototype.triggerTouchAction = function () {
+        if (_Game_Player_triggerTouchAction_loose &&
+            _Game_Player_triggerTouchAction_loose.call(this)) return true;
+        if ($gameTemp && $gameTemp.isDestinationValid() && !this.isInVehicle() && !Loose.onWorldMap()) {
+            const destX = $gameTemp.destinationX();
+            const destY = $gameTemp.destinationY();
+            const x1 = this.x;
+            const y1 = this.y;
+            const x2 = $gameMap.roundXWithDirection(x1, this.direction());
+            const y2 = $gameMap.roundYWithDirection(y1, this.direction());
+            if ((destX === x2 && destY === y2) || (destX === x1 && destY === y1)) {
+                if (Loose.interactAt(destX, destY)) {
+                    $gameTemp.clearDestination();
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    // 3c) While lead switch is buffered mid-step, hold off starting another step.
+    const _Game_Player_canMove_lead = Game_Player.prototype.canMove;
+    Game_Player.prototype.canMove = function () {
+        if (Lead._bufferedDir) return false;
+        return _Game_Player_canMove_lead ? _Game_Player_canMove_lead.call(this) : true;
     };
 
     // ========================================================================
@@ -6264,7 +6686,9 @@
                 handleCorpseBury(corpse);
             }
         });
+        window.skipLocalization = true;
         $gameMessage.add(T('AutoIdle.corpse.prompt', { name: corpse.name }));
+        window.skipLocalization = false;
     }
 
     function handleCorpseLoot(corpse) {
@@ -6288,10 +6712,18 @@
                 for (const item of corpse.equipped) {
                     if (item) $gameParty.gainItem(item, 1, false);
                 }
-                $gameMessage.add(T('AutoIdle.corpse.looted', { name: corpse.name }));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('AutoIdle.corpse.looted', { name: corpse.name }), {
+                    severity: 'info'
+                  });
+                }
                 corpse.equipped = [];
             } else {
-                $gameMessage.add(T('AutoIdle.corpse.nothingToLoot', { name: corpse.name }));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('AutoIdle.corpse.nothingToLoot', { name: corpse.name }), {
+                    severity: 'info'
+                  });
+                }
             }
         }
     }
@@ -6304,13 +6736,17 @@
 
         if (leader) {
             const leaderLine = getMemberCommemorateLine(leader, corpse.name);
+            window.skipLocalization = true;
             $gameMessage.add(`\\C[1]${leader.name()}:\\C[0] \"${leaderLine}\"`);
+            window.skipLocalization = false;
         }
 
         for (const f of livingFollowers) {
             const act = f.actor();
             const line = getMemberCommemorateLine(act, corpse.name);
+            window.skipLocalization = true;
             $gameMessage.add(`\\C[2]${act.name()}:\\C[0] \"${line}\"`);
+            window.skipLocalization = false;
         }
     }
 
@@ -6318,7 +6754,9 @@
         if (!corpse) return;
         const leader = $gameParty.leader();
         const prayer = getLeaderFuneralPrayer(leader, corpse.name);
+        window.skipLocalization = true;
         $gameMessage.add(`\\C[1]${leader ? leader.name() : "Leader"}:\\C[0] ${prayer}`);
+        window.skipLocalization = false;
     }
 
     function handleCorpseDissect(corpse) {
@@ -6338,7 +6776,11 @@
         } else if (typeof Scene_HealthStatus !== "undefined") {
             SceneManager.push(Scene_HealthStatus);
         } else {
-            $gameMessage.add(T('AutoIdle.corpse.examined'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('AutoIdle.corpse.examined'), {
+                severity: 'info'
+              });
+            }
         }
     }
 
@@ -6404,7 +6846,11 @@
             }
 
             $gameScreen.startFadeIn(24);
-            $gameMessage.add(T('AutoIdle.corpse.buried', { name: corpse.name }));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('AutoIdle.corpse.buried', { name: corpse.name }), {
+                severity: 'info'
+              });
+            }
         }, 500);
     }
 
@@ -6415,10 +6861,12 @@
         $gameMessage.onChoice(function (n) {
             if (n === 0) {
                 // Read
+                window.skipLocalization = true;
                 $gameMessage.add(T('AutoIdle.grave.epitaph', {
                     name: grave.name,
                     born: grave.birthDate || T('AutoIdle.grave.bornUnknown'),
                 }));
+                window.skipLocalization = false;
             } else if (n === 1) {
                 // Desecrate
                 handleGraveDesecrate(grave);
@@ -6427,7 +6875,9 @@
                 handleGraveDismantle(grave, onDismantle);
             }
         });
+        window.skipLocalization = true;
         $gameMessage.add(T('AutoIdle.grave.prompt', { name: grave.name }));
+        window.skipLocalization = false;
     }
 
     function handleGraveDesecrate(grave) {
@@ -6454,7 +6904,11 @@
         }
 
         grave.desecrated = true;
-        $gameMessage.add(T('AutoIdle.grave.desecrated', { name: grave.name }));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('AutoIdle.grave.desecrated', { name: grave.name }), {
+            severity: 'danger'
+          });
+        }
     }
 
     function handleGraveDismantle(grave, onDismantle) {
@@ -6475,7 +6929,11 @@
         if (typeof onDismantle === "function") {
             onDismantle();
         }
-        $gameMessage.add(T('AutoIdle.grave.dismantled', { name: grave.name }));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('AutoIdle.grave.dismantled', { name: grave.name }), {
+            severity: 'info'
+          });
+        }
     }
 
     // Intercept button trigger for party corpses and gravestones
@@ -6564,8 +7022,14 @@
                     $gamePlayer.refresh();
                     $gamePlayer.followers().refresh();
                     Loose.gatherNear();
-                    $gameMessage.add(T ? T('Battle.actorDied', { actor: deceasedName }) : `${deceasedName} has fallen.`);
-                    $gameMessage.add(T('AutoIdle.succession.takesCommand', { name: livingMembers[0].name() }));
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.report([
+                        T ? T('Battle.actorDied', { actor: deceasedName }) : `${deceasedName} has fallen.`,
+                        T('AutoIdle.succession.takesCommand', { name: livingMembers[0].name() })
+                      ], {
+                        severity: 'danger'
+                      });
+                    }
                     return;
                 }
             }

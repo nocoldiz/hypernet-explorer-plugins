@@ -3829,8 +3829,13 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
     // Is this name somebody else's party member rather than a citizen of the
     // world? Read by the Empathize panel, which strips itself down for them.
+    // This world's own idle companions answer the same way: they are met in
+    // the halls, the vault, the ship or a house the party owns, and what is on
+    // offer there is a conversation. Robbing, courting and infecting somebody
+    // the party could simply ask back onto the road is not.
     isVisitorName(name) {
       if (!name) return false;
+      if (window.PartyLodging?.isResidentName?.(name)) return true;
       for (const [slot, party] of Object.entries(this.parties())) {
         if (!party || this.isMine(slot, party)) continue;
         if ((party.members || []).some(m => m && m.name === name)) return true;
@@ -3882,22 +3887,43 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       return null;
     },
 
-    // Somewhere to stand: near where their party was last standing, on a tile
-    // that is actually walkable and unoccupied.
-    findSpot(party) {
-      const baseX = Number(party.location && party.location.x) || 1;
-      const baseY = Number(party.location && party.location.y) || 1;
-      for (let radius = 1; radius <= 6; radius++) {
-        for (let tries = 0; tries < 12; tries++) {
-          const x = baseX + Math.floor(Math.random() * (radius * 2 + 1)) - radius;
-          const y = baseY + Math.floor(Math.random() * (radius * 2 + 1)) - radius;
-          if (!$gameMap.isValid(x, y)) continue;
-          if (!$gameMap.isPassable(x, y, 2)) continue;
-          if ($gameMap.eventsXy(x, y).length) continue;
-          if ($gamePlayer.x === x && $gamePlayer.y === y) continue;
-          return { x, y };
+    // Regions nobody is ever put down on. 4 and 7 are the two the maps keep
+    // for ground the player passes over rather than stands about on, so a
+    // party found loitering on one reads as a bug rather than as a meeting.
+    FORBIDDEN_REGIONS: [4, 7],
+
+    // Whether somebody may be put down on this tile at all.
+    isStandable(x, y) {
+      if (!$gameMap || !$gameMap.isValid(x, y)) return false;
+      if (!$gameMap.isPassable(x, y, 2)) return false;
+      if (this.FORBIDDEN_REGIONS.includes($gameMap.regionId(x, y))) return false;
+      if ($gameMap.eventsXy(x, y).length) return false;
+      if ($gamePlayer && $gamePlayer.x === x && $gamePlayer.y === y) return false;
+      return true;
+    },
+
+    // Every tile of this map somebody could be standing on.
+    standableTiles() {
+      const out = [];
+      if (!$gameMap) return out;
+      for (let y = 0; y < $gameMap.height(); y++) {
+        for (let x = 0; x < $gameMap.width(); x++) {
+          if (this.isStandable(x, y)) out.push({ x, y });
         }
       }
+      return out;
+    },
+
+    // Somewhere to stand: ANY tile of the map that can be stood on, rather
+    // than the six squares around where their party happened to save. A party
+    // met in a town was in that town, not on that doorstep, and walking into
+    // them somewhere unexpected is the whole of meeting them. The tile their
+    // record names is only the fallback for a map that offers nothing else.
+    findSpot(party) {
+      const free = this.standableTiles();
+      if (free.length) return free[Math.floor(Math.random() * free.length)];
+      const baseX = Number(party && party.location && party.location.x) || 1;
+      const baseY = Number(party && party.location && party.location.y) || 1;
       return { x: baseX, y: baseY };
     },
 
@@ -6226,6 +6252,15 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       if (window.PlatformerMode && window.PlatformerMode.isActive()) return;
       GroupRegistry.ensureBuiltAsync(() => {
         if ($gameMap?.mapId() !== mapId) return;
+        // Whoever lives here comes first: the Stairs Hall and the tower are
+        // where this world's idle companions wait, and they have a better
+        // claim on the floor than the citizens passing over it
+        // (NPCSystemParty.js, PartyLodging).
+        try {
+          window.PartyLodging?.populateHere?.();
+        } catch (e) {
+          console.error("[NPC System] idle companion spawn failed", e);
+        }
         $gameMap.setupNPCControllers();
         window.NPCSim?.placeNPCsInActivities?.();
         // After the spawn pass, which clears the self switches of every slot it
@@ -6851,11 +6886,20 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     const found = VisitingParties.memberByKey(key);
     const name = (found && found.name) || "";
     if (!name) return;
-    $gameMessage.setChoices(
-      [T('NPCSystem.visitor.talk'), T('NPCSystem.visitor.empathize'), T('NPCSystem.visitor.cancel')],
-      0, 2
-    );
+    // One of this WORLD's own idle companions rather than another playthrough's
+    // traveller: they belong to nobody, so they can be asked along, and that is
+    // the only thing on offer here that a visitor is not also offered.
+    const LG = window.PartyLodging;
+    const canRecruit = !!(LG?.isResidentName?.(name) && LG.hasRoom());
+    const choices = [T('NPCSystem.visitor.talk'), T('NPCSystem.visitor.empathize')];
+    if (canRecruit) choices.push(T('NPCSystem.visitor.join'));
+    choices.push(T('NPCSystem.visitor.cancel'));
+    $gameMessage.setChoices(choices, 0, choices.length - 1);
     $gameMessage.setChoiceCallback(choice => {
+      if (canRecruit && choice === 2) {
+        PluginManager.callCommand($gameMap?._interpreter, "NPCSystemParty", "LodgerJoinParty", { name });  // i18n-ignore: plugin command id
+        return;
+      }
       if (choice === 0) {
         // A line of their own, in their own voice: the same Markov banks every
         // other NPC in the world speaks out of.
@@ -6865,7 +6909,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         } catch (e) { line = ""; }
         if (!line) line = T('NPCSystem.visitor.silent');
         $gameMessage.setSpeakerName(name);
+        window.skipLocalization = true;
         $gameMessage.add(line);
+        window.skipLocalization = false;
         try {
           window.NPCEmpathize?.recordNPCLine?.(name, line);
         } catch (e) { /* the line was still said */ }

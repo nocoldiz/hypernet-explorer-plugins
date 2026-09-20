@@ -1,2202 +1,2170 @@
 {
-  "1": {
-    "name": "Spada corta",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
   "2": {
-    "name": "Spada lunga",
-    "description": "Una lunga spada da battaglia dal taglio netto."
+    "name": "Coltello da lancio sbilanciato",
+    "description": "Coltello da lancio che oscilla in volo."
   },
   "3": {
-    "name": "Falcione",
-    "description": "Una spada larga con lama curva."
+    "name": "Coltello da quattro soldi",
+    "description": "Coltello scadente col manico che si allenta.\nPuo accecare."
   },
   "4": {
-    "name": "Spada di Mithril",
-    "description": "Una lunga spada forgiata con mithril."
+    "name": "Bottiglia rotta",
+    "description": "Bottiglia rotta avvolta in stracci.\nPuo infliggere Veleno."
   },
   "5": {
-    "name": "Lama del drago",
-    "description": "Una spada forgiata dalle zanne di un drago."
+    "name": "Riga affilata",
+    "description": "Riga di legno rinforzata e affilata.\nPuo infliggere Veleno."
   },
   "6": {
-    "name": "Pistola vettoriale",
-    "description": "Pistola forgiata dagli gnomi con controllo sui\nvettori, premi SHIFT per il salto da rinculo."
+    "name": "Coltello da cucina",
+    "description": "Coltello da bistecca col manico fasciato.\nPuo infliggere Veleno."
   },
   "7": {
-    "name": "Bastone di legno",
-    "description": "Un bastone poco costoso e ampiamente utilizzato."
+    "name": "Forbici da combattimento",
+    "description": "Forbici coi manici nastrati.\nPuo infliggere Veleno."
   },
   "8": {
-    "name": "Bacchetta magica",
-    "description": "Una bacchetta che aumenta leggermente i poteri magici del portatore."
+    "name": "Mannaia da cucina",
+    "description": "Mannaia col manico nastrato.\nPuo infliggere Veleno."
   },
   "9": {
-    "name": "Bacchetta della Forza",
-    "description": "Una bacchetta d'argento che aumenta i poteri magici del portatore."
+    "name": "Pugnale d'osso",
+    "description": "Osso animale affilato. Colpisce Maledetto."
   },
   "10": {
-    "name": "Verga di mithril",
-    "description": "Una verga di mithril che aumenta i poteri magici del portatore."
+    "name": "Paletto di legno",
+    "description": "Paletto di legno appuntito, per i non morti.\nPuo accecare."
   },
   "11": {
-    "name": "Bastone del drago",
-    "description": "Un bastone del drago che aumenta i poteri magici del portatore."
+    "name": "Coltello",
+    "description": "Un coltello comune. Puo accecare."
   },
   "12": {
-    "name": "Fucile da caccia di Bubba",
-    "description": "Un fucile a pompa a ripetizione con\nuna devastante potenza a corto raggio."
+    "name": "Pugnale seme",
+    "description": "Pugnale cresciuto da un seme di lama.\nPuo avvelenare."
   },
   "13": {
-    "name": "Flagello di pietra",
-    "description": "Un flagello con una testa di pietra\nattaccata al manico tramite una catena."
+    "name": "Nunchaku di legno",
+    "description": "Due bastoni di legno uniti da una corda."
   },
   "14": {
-    "name": "Flagello di bronzo",
-    "description": "Un flagello con una testa di bronzo\nattaccata al manico tramite una catena."
+    "name": "Daga navale",
+    "description": "Pugnale corto da marinaio.\nPuo accecare."
   },
   "15": {
-    "name": "Stella del mattino",
-    "description": "Un flagello rinforzato con acciaio."
+    "name": "Pugnale",
+    "description": "Lama corta per il corpo a corpo.\nPuo accecare."
   },
   "16": {
-    "name": "Flagello di mithril",
-    "description": "Un flagello rinforzato con mithril."
+    "name": "Katar",
+    "description": "Pugnale da spinta con impugnatura a T.\nPuo accecare."
   },
   "17": {
-    "name": "Flagello del drago",
-    "description": "Un flagello rinforzato utilizzando le zanne di un drago."
+    "name": "Coltello da combattimento",
+    "description": "Coltello compatto per il corpo a corpo."
   },
   "18": {
-    "name": "",
-    "description": ""
+    "name": "Kukri",
+    "description": "Kukri d'acciaio dalla lama ricurva."
   },
   "19": {
-    "name": "Ascia a mano",
-    "description": "Una piccola ascia usata per tagliare gli alberi."
+    "name": "Machete",
+    "description": "Lama pesante da taglio.\nPuo accecare."
   },
   "20": {
-    "name": "Ascia da battaglia",
-    "description": "Un'ascia a doppio taglio creata per la battaglia."
+    "name": "Sai gemelli",
+    "description": "Coppia di bastoni a tre punte da parata."
   },
   "21": {
-    "name": "Bardiche",
-    "description": "Un'ascia da battaglia con lama a forma di\r\nmezzaluna."
+    "name": "Pugnale di mithril",
+    "description": "Pugnale forgiato in mithril.\nPuo accecare."
   },
   "22": {
-    "name": "Ascia di Mithril",
-    "description": "Un'ascia da battaglia forgiata con mithril."
+    "name": "Mano a lama",
+    "description": "Stile che colpisce col taglio della mano.\nPuo accecare."
   },
   "23": {
-    "name": "Ascia del drago",
-    "description": "Un'ascia da battaglia forgiata con le zanne di un\r\ndrago."
+    "name": "Shuriken divisorio",
+    "description": "Lama da lancio che si divide in volo.\nPuo accecare."
   },
   "24": {
-    "name": "",
-    "description": ""
+    "name": "Kukri luminosi",
+    "description": "Due pugnali ricurvi incantati che lasciano\nscie di luce. Colpisce con Tuono."
   },
   "25": {
-    "name": "Lancia corta",
-    "description": "Una lancia corta specializzata nell'affondo."
+    "name": "Pugnale di drago",
+    "description": "Pugnale forgiato dalle zanne di un drago."
   },
   "26": {
-    "name": "Lancia lunga",
-    "description": "Una lancia con il manico più lungo possibile."
+    "name": "Ladro di memorie",
+    "description": "Pugnale che prende i ricordi di cio che\ntaglia. Ghiaccio, infligge Freddo."
   },
   "27": {
-    "name": "Alabarda",
-    "description": "Una lancia con un'ascia sulla punta."
+    "name": "Cercatore di sapere",
+    "description": "Pugnale da Gobekli Tepe che mostra cio che\ne nascosto. Ghiaccio, infligge Freddo."
   },
   "28": {
-    "name": "Lancia di mithril",
-    "description": "Una lancia forgiata con mithril."
+    "name": "Corona psichica",
+    "description": "Cerchietto che fa del pensiero un colpo\npsichico. Sacro, infligge Ispirato."
   },
   "29": {
-    "name": "Lancia del drago",
-    "description": "Una lancia forgiata con le zanne di un drago."
+    "name": "Dissolvicarne EHI",
+    "description": "Lama di olio iridescente. Passa le armature\ne divora la mano di chi la usa."
   },
   "30": {
-    "name": "",
-    "description": ""
+    "name": "Lame gemelle di Varlenia",
+    "description": "Due pugnali dorati di acciaio di Varlenia.\nColpisce con Ghiaccio."
   },
   "31": {
-    "name": "Cestus",
-    "description": "Un guanto da battaglia con punte attaccate alle nocche."
-  },
-  "32": {
-    "name": "Bagh Naka",
-    "description": "Un'arma da combattimento dotata di 4 artigli\r\ncorti."
-  },
-  "33": {
-    "name": "Artiglio di ferro",
-    "description": "Un'arma da combattimento dotata di artigli di\r\nferro."
-  },
-  "34": {
-    "name": "Artiglio di Mithril",
-    "description": "Un'arma da combattimento con artigli di mithril."
-  },
-  "35": {
-    "name": "Artiglio del drago",
-    "description": "Un'arma da combattimento con artigli di drago\r\nattaccati."
-  },
-  "36": {
-    "name": "",
-    "description": ""
-  },
-  "37": {
-    "name": "Arco corto",
-    "description": "Un arco corto pensato per la caccia."
-  },
-  "38": {
-    "name": "Arco lungo",
-    "description": "Un arco lungo per la battaglia con potenza\r\nsuperiore."
-  },
-  "39": {
-    "name": "Balestra",
-    "description": "Una balestra che scaglia dardi con potenti molle."
-  },
-  "40": {
-    "name": "Arco di mithril",
-    "description": "Una balestra che scaglia dardi di mithril con potenti molle."
-  },
-  "41": {
-    "name": "Arco del drago",
-    "description": "Un lungo arco da battaglia realizzato con baffi di\r\ndrago."
-  },
-  "42": {
-    "name": "",
-    "description": ""
+    "name": "Manipolatore del tempo",
+    "description": "Reperto di Gobekli Tepe che piega il tempo\ne affretta chi lo porta. Colpisce Acqua."
   },
   "43": {
-    "name": "Coltello",
-    "description": "Un coltello utilizzato per le attività quotidiane."
+    "name": "Spada di legno da gioco",
+    "description": "Spada di legno per i giochi dei bambini."
   },
   "44": {
-    "name": "Rugiada",
-    "description": "Una lama corta usata nel combattimento\r\nravvicinato."
+    "name": "Spada da allenamento",
+    "description": "Spada da allenamento consumata, smussata\ne scheggiata sull'impugnatura."
   },
   "45": {
-    "name": "Machete",
-    "description": "Un pugnale con una lama più spessa e robusta."
+    "name": "Spada decorativa",
+    "description": "Spada da cerimonia senza filo,\nfatta per essere esposta."
   },
   "46": {
-    "name": "Pugnale di mithril",
-    "description": "Un pugnale forgiato con mithril."
+    "name": "Spada scadente",
+    "description": "Spada forgiata male che si scheggia subito."
   },
   "47": {
-    "name": "Pugnale del drago",
-    "description": "Un pugnale forgiato con le zanne di un drago."
+    "name": "Punteruolo di ferraglia",
+    "description": "Ferraglia affilata nastrata a un tubo.\nPuo infliggere Veleno."
   },
   "48": {
-    "name": "",
-    "description": ""
+    "name": "Spada a lame di sega",
+    "description": "Lame di sega inchiodate a un asse.\nPuo infliggere Veleno."
   },
   "49": {
-    "name": "",
-    "description": ""
+    "name": "Mannaia da segnale",
+    "description": "Cartello stradale rotto su un manico.\nPuo infliggere Veleno."
   },
   "50": {
-    "name": "",
-    "description": ""
+    "name": "Machete a balestra",
+    "description": "Balestra d'auto molata a filo.\nPuo infliggere Oleoso."
   },
   "51": {
-    "name": "Spada dell'età del bronzo",
-    "description": "Un'antica spada di bronzo risalente alle prime\r\nciviltà."
+    "name": "Spada dell'eta del bronzo",
+    "description": "Antica spada di bronzo."
   },
   "52": {
-    "name": "Scimitarra",
-    "description": "Lama curva usata dai guerrieri del deserto."
+    "name": "Lama di ossidiana",
+    "description": "Ossidiana montata su manico di legno.\nColpisce con Pietra e puo paralizzare."
   },
   "53": {
-    "name": "Zweihander",
-    "description": "Un'enorme spada a due mani."
+    "name": "Spada corta",
+    "description": "Spada leggera dalla lama corta.\nPuo avvelenare."
   },
   "54": {
-    "name": "Stocco",
-    "description": "Una lama elegante con un equilibrio eccellente."
+    "name": "Spada seme",
+    "description": "Spada cresciuta da un seme di lama.\nPuo avvelenare."
   },
   "55": {
-    "name": "Katana",
-    "description": "Una spada tradizionale giapponese con un'eccezionale potenza di taglio."
+    "name": "Mazza seme",
+    "description": "Mazza cresciuta da un seme di lama."
   },
   "56": {
-    "name": "Lama runica",
-    "description": "Una lama infusa di antiche rune che brillano di potere."
+    "name": "Spada mesopotamica",
+    "description": "Spada di bronzo dell'antica Mesopotamia.\nPuo avvelenare."
   },
   "57": {
-    "name": "Spada d'acciaio ombra",
-    "description": "Una lama che assorbe la luce, diventando\nquasi invisibile quando viene sferzata."
+    "name": "Spada lunga",
+    "description": "Lunga spada da battaglia ben affilata.\nPuo avvelenare."
   },
   "58": {
-    "name": "Pistola",
-    "description": "Una pistola di base con potere d'arresto moderato."
+    "name": "Gladio",
+    "description": "Spada corta romana per colpire in formazione."
   },
   "59": {
-    "name": "Fucile a pompa",
-    "description": "Un fucile a pompa a ripetizione con\nuna devastante potenza a corto raggio."
+    "name": "Khopesh",
+    "description": "Spada falcata egizia ricurva."
   },
   "60": {
-    "name": "Fucile d'assalto",
-    "description": "Un fucile automatico di livello militare con un'eccellente precisione."
+    "name": "Scimitarra",
+    "description": "Lama ricurva dei guerrieri del deserto."
   },
   "61": {
-    "name": "Fucile da cecchino",
-    "description": "Un fucile ad alta potenza per una precisione estrema a lungo raggio."
+    "name": "Stocco",
+    "description": "Lama sottile da duello, ben bilanciata.\nPuo avvelenare."
   },
   "62": {
-    "name": "Smg",
-    "description": "Una mitraglietta compatta con elevata cadenza di\r\nfuoco."
+    "name": "Shamshir",
+    "description": "Sciabola persiana ricurva a un filo."
   },
   "63": {
-    "name": "Boomerang",
-    "description": "Un bastone da lancio curvo che ritorna al lanciatore."
+    "name": "Patag",
+    "description": "Spada tibetana dritta e a un solo filo.\nPuo avvelenare."
   },
   "64": {
-    "name": "Fionda",
-    "description": "Fionda usata per scagliare pietre con potenza\r\nletale."
+    "name": "Sciabola navale",
+    "description": "Sciabola ricurva per combattere a bordo.\nPuo avvelenare."
   },
   "65": {
-    "name": "Lancia Dorica",
-    "description": "Una lancia con punta in bronzo dell'antica grecia."
+    "name": "Falcione",
+    "description": "Spada larga e ricurva da taglio.\nPuo avvelenare."
   },
   "66": {
-    "name": "Mazza da guerra",
-    "description": "Una mazza di legno rinforzata con punte di bronzo."
+    "name": "Spadone europeo",
+    "description": "Spada a elsa crociata per due mani."
   },
   "67": {
-    "name": "Khopesh",
-    "description": "Un'arma egizia curva simile a una spada."
+    "name": "Shinai",
+    "description": "Spada di bambu da allenamento del kendo.\nPuo avvelenare."
   },
   "68": {
-    "name": "Martello da guerra",
-    "description": "Un pesante martello da guerra in grado di\r\ndistruggere le armature."
+    "name": "Estoc",
+    "description": "Spada rigida e stretta per infilare le\ngiunture. Puo avvelenare."
   },
   "69": {
-    "name": "Poleax",
-    "description": "Una lunga arma inastata con lama d'ascia e punta."
+    "name": "Urumi",
+    "description": "Spada indiana di nastri d'acciaio flessibili.\nPuo avvelenare."
   },
   "70": {
-    "name": "Flagello",
-    "description": "Una palla chiodata attaccata a una catena e a un\r\nmanico."
+    "name": "Bokken da kendo",
+    "description": "Lunga spada di legno cerchiata di metallo.\nPuo avvelenare."
   },
   "71": {
-    "name": "Rete del gladiatore",
-    "description": "Una rete usata per intrappolare gli avversari."
+    "name": "Claymore",
+    "description": "Spada scozzese a due fili con guardia\ninclinata. Puo avvelenare."
   },
   "72": {
-    "name": "Katar",
-    "description": "Un set di armi da taglio simili ai tonfa."
+    "name": "Katana",
+    "description": "Spada giapponese dal taglio affilatissimo.\nPuo avvelenare."
   },
   "73": {
-    "name": "Coltello da combattimento",
-    "description": "Un coltello tattico compatto per gli scontri\r\nravvicinati."
+    "name": "Spezzaspade",
+    "description": "Spada dentata fatta per bloccare e spezzare\nla lama avversaria."
   },
   "74": {
-    "name": "Arco composito",
-    "description": "Un arco composito in fibra di carbonio per le\r\nforze speciali."
+    "name": "Zweihander",
+    "description": "Enorme spadone impugnato a due mani.\nPuo avvelenare."
   },
   "75": {
-    "name": "Mitragliatrice pesante",
-    "description": "Una mitragliatrice calibro .50 di livello\r\nmilitare."
+    "name": "Spada d'argento benedetta",
+    "description": "Spada d'argento benedetta, fatta per i non\nmorti. Colpisce con Sacro."
   },
   "76": {
-    "name": "Rpg",
-    "description": "Un lanciarazzi portatile da spalla."
+    "name": "Lama aerodinamica",
+    "description": "Lama ricurva che non trova quasi aria."
   },
   "77": {
-    "name": "Tirapugni",
-    "description": "Un set di tirapugni in ottone per il combattimento\r\ncorpo a corpo."
+    "name": "Lama runica",
+    "description": "Lama incisa di rune lucenti. Colpisce\ncon Sacro e puo ispirare."
   },
   "78": {
-    "name": "Fucile al plasma",
-    "description": "Un'arma da fuoco a energia che spara proiettili al\r\nplasma."
+    "name": "Lama del canto di fiamma",
+    "description": "Spada corta che prende fuoco se sguainata.\nColpisce con Fuoco e puo bruciare."
   },
   "79": {
-    "name": "Lama energetica",
-    "description": "Una spada con una lama di energia in grado di tagliare quasi tutto."
+    "name": "Spada di ossidiana",
+    "description": "Lama di vetro vulcanico indurito.\nColpisce con Pietra e puo paralizzare."
   },
   "80": {
-    "name": "Guanto sonico",
-    "description": "Un guanto che genera onde d'urto soniche."
+    "name": "Spada di mithril",
+    "description": "Spada lunga forgiata in mithril.\nPuo avvelenare."
   },
   "81": {
-    "name": "Fucile laser",
-    "description": "Un fucile che spara fasci di luce concentrati."
+    "name": "Lama vibrante",
+    "description": "Spada la cui lama vibra a ultrasuoni."
   },
   "82": {
-    "name": "Gravity Crusher",
-    "description": "Un lanciatore che crea pozzi gravitazionali\nin miniatura per schiacciare i bersagli."
+    "name": "Sciabola astrale",
+    "description": "Lama ricurva accesa da una stella lontana.\nColpisce con Fuoco e puo bruciare."
   },
   "83": {
-    "name": "Lama del Canto di Fiamme",
-    "description": "Una spada corta che prende fuoco quando viene estratta."
+    "name": "Spada d'acciaio d'ombra",
+    "description": "Lama che beve la luce e sparisce a mezzo\ncolpo. Colpisce con Maledetto."
   },
   "84": {
-    "name": "Taglio del Vuoto",
-    "description": "Una spada massiccia scolpita da un singolo pezzo di ossidiana."
+    "name": "Spada di fiamma eterna",
+    "description": "Lama forgiata nel fuoco di drago e mai\nraffreddata. Colpisce con Fuoco."
   },
   "85": {
-    "name": "Bastone dell'Albero del Mondo",
-    "description": "Un bastone ricavato dall'Albero del Mondo, in risonanza con la natura."
+    "name": "Lama di scaglie di drago",
+    "description": "Spada seghettata con scaglie di drago.\nPuo avvelenare."
   },
   "86": {
-    "name": "Arco Eterico",
-    "description": "Un arco che forma frecce utilizzando pura energia\r\nmagica."
+    "name": "Lama mutevole",
+    "description": "Spada che cresce da pugnale a spadone\na comando. Colpisce con Maledetto."
   },
   "87": {
-    "name": "Frusta di spina",
-    "description": "Una frusta fatta di spine incantate che drenano la forza vitale."
+    "name": "Lama di metallo stellare",
+    "description": "Spada forgiata da metallo di stella caduta.\nMaledetto, infligge Veleno."
   },
   "88": {
-    "name": "Catena ad anello volante",
-    "description": "Una catena di anelli affilati come rasoi\nche può essere lanciata o usata come frusta."
+    "name": "Taglio del vuoto",
+    "description": "Lama dal filo cavo che inghiotte cio\nche taglia. Colpisce con Maledetto."
   },
   "89": {
-    "name": "Urumi",
-    "description": "Una spada flessibile composta da segmenti\r\ncollegati."
+    "name": "Taglio folgorante",
+    "description": "Vecchia spada avvolta di corrente.\nColpisce con Tuono."
   },
   "90": {
-    "name": "Bastone a tre sezioni",
-    "description": "Un bastone composto da tre sezioni collegate da\r\ncatene."
+    "name": "Eredita dell'eroe",
+    "description": "Spada che custodisce l'anima di un eroe,\nche consiglia. Colpisce con Fuoco."
   },
   "91": {
-    "name": "Coltelli in corno di cervo",
-    "description": "Un paio di lame a forma di mezzaluna con\r\nimpugnatura."
+    "name": "Lama di fase",
+    "description": "Spada per meta in un'altra dimensione.\nPassa le guardie. Colpisce con Acqua."
   },
   "92": {
-    "name": "Cerbottana velenosa",
-    "description": "Una cerbottana che spara dardi con punta\r\navvelenata."
+    "name": "Lama d'acciaio d'ombra",
+    "description": "Lama di ombra solida che ignora l'armatura.\nColpisce con Maledetto."
   },
   "93": {
-    "name": "Cannone impiantato",
-    "description": "Un cannone da braccio impiantato che spara raffiche di energia cinetica."
+    "name": "Lama spezzaincanti",
+    "description": "Spada di cristallo che beve gli incantesimi\nlanciati contro. Maledetto, avvelena."
   },
   "94": {
-    "name": "Artigli neurali",
-    "description": "Artigli retrattili in titanio incorporati in mani cibernetiche."
+    "name": "Taglio psionico",
+    "description": "Lama di cristallo che taglia mente e\narmatura. Colpisce con Sacro."
   },
   "95": {
-    "name": "Sistema griglia micro-missile",
-    "description": "Un sistema di puntamento montato a spalla che spara mini-razzi guidati."
+    "name": "Assetata di sangue",
+    "description": "Spada che si alleggerisce e affila a ogni\nuccisione. Colpisce con Maledetto."
   },
   "96": {
-    "name": "Arsenale polimorfico",
-    "description": "Un'arma a collegamento neurale che muta tra modalità lama e pistola."
+    "name": "Lama rompiprotezioni",
+    "description": "Spada incantata per tagliare le protezioni.\nTuono, infligge Statico."
   },
   "97": {
-    "name": "Sistema a fascio ottico",
-    "description": "Impianti oculari che emettono raggi energetici\r\nconcentrati."
+    "name": "Taglio succhiaincanti",
+    "description": "Lama nera che trasforma gli incantesimi\nin filo. Colpisce con Sacro."
   },
   "98": {
-    "name": "Staff di Thundercaller",
-    "description": "Un bastone che evoca e controlla i fulmini."
+    "name": "Lama simbiotica",
+    "description": "Arma viva che si lega a chi la porta\ne cresce con lui."
   },
   "99": {
-    "name": "Spada della Fiamma Eterna",
-    "description": "Una lama forgiata nel fuoco del drago che non si raffredda mai."
+    "name": "Taglio del crepuscolo",
+    "description": "Spada forgiata nel crepuscolo, tra luce\ne ombra."
   },
   "100": {
-    "name": "Arco Frostbite",
-    "description": "Un arco che scaglia frecce di puro ghiaccio che congelano all'impatto."
+    "name": "Lama di energia",
+    "description": "Spada il cui filo e energia pura.\nColpisce con Maledetto."
   },
   "101": {
-    "name": "Maglio scossore della terra",
-    "description": "Un martello infuso della potenza dei terremoti."
+    "name": "Punitrice divina",
+    "description": "Spada dorata che abbatte i non morti.\nColpisce con Sacro."
   },
   "102": {
-    "name": "Tridente della Tempesta",
-    "description": "Un tridente che comanda il potere di furiose tempeste."
+    "name": "Lama arcana",
+    "description": "Spada la cui lama e magia pura.\nColpisce con Fuoco."
   },
   "103": {
-    "name": "Excalibur",
-    "description": "La mitica spada di Re Artù, che brilla di potere sacro."
+    "name": "Lama dimensionale",
+    "description": "Spada che apre un taglio nella realta.\nColpisce con Sacro."
   },
   "104": {
-    "name": "Mjollnir",
-    "description": "Il potente martello del dio del tuono,\nche ritorna quando viene lanciato."
+    "name": "Lama del pilastro a T",
+    "description": "Lama di pietra da Gobekli Tepe incisa di\nsegni animali. Puo avvelenare."
   },
   "105": {
-    "name": "Taglierino transdimensionale",
-    "description": "Una lama misteriosa che si dice sia in grado di tagliare le dimensioni."
+    "name": "Tagliastelle",
+    "description": "Lama ricurva di Gobekli Tepe segnata da\ncostellazioni perdute. Puo avvelenare."
   },
   "106": {
-    "name": "Artigli divini",
-    "description": "Un paio di artigli dorati che si dice siano\nstati indossati da un dio della guerra."
+    "name": "Taglio di petrolio EHI",
+    "description": "Spada a motosega che gronda olio e divora\nl'armatura. Pietra, puo paralizzare."
   },
   "107": {
-    "name": "Bastone dell'eternità",
-    "description": "Un bastone che racchiude la saggezza dei\nsecoli e un potere magico illimitato."
+    "name": "Spadone di pietra celeste",
+    "description": "Enorme spadone di pietra di Gobekli Tepe\nche non pesa nulla. Vento, puo accecare."
   },
   "108": {
-    "name": "Volt Edge",
-    "description": "Un'antica spada costantemente circondata da elettricità scoppiettante."
+    "name": "Taglio dell'onniscienza EHI",
+    "description": "Lama di pagine d'enciclopedia compresse.\nTaglia le guardie e allaga la mente."
   },
   "109": {
-    "name": "Balestra esplosiva",
-    "description": "Una balestra che spara dardi con punte esplosive."
+    "name": "Lama dorata di Varlenia",
+    "description": "Spadone dorato di acciaio di Varlenia.\nFuoco, infligge Caldo."
   },
   "110": {
-    "name": "Kukri luminosi",
-    "description": "Un paio di pugnali ricurvi incantati che lasciano scie di luce."
+    "name": "Lama in sovrapposizione quantistica",
+    "description": "Spada tenuta in sovrapposizione. Colpisce\nogni bersaglio possibile. Ghiaccio."
   },
   "111": {
-    "name": "Lama di scaglie di drago",
-    "description": "Una spada con un bordo seghettato ricavato da scaglie di drago."
+    "name": "Excalibur",
+    "description": "La spada mitica di un re britanno, accesa\ndi potere sacro. Sacro, ispira."
   },
   "112": {
-    "name": "Paralizzatore",
-    "description": "Una pistola a dardi che scaglia aghi\nrivestiti di una tossina paralizzante."
+    "name": "Tagliatrice dimensionale",
+    "description": "Lama che si dice tagli tra le dimensioni.\nTuono, infligge Statico."
   },
   "113": {
-    "name": "Ramo di Yggdrasil",
-    "description": "Un bastone intagliato da un ramo dell'antico Albero del Mondo."
-  },
-  "114": {
-    "name": "Sciabola astrale",
-    "description": "Una lama curva che brilla della luce di una stella lontana."
-  },
-  "115": {
-    "name": "Pugni Adamantini",
-    "description": "Un paio di pesanti guanti d'acciaio rinforzati con adamantite."
-  },
-  "116": {
-    "name": "Shuriken a grappolo",
-    "description": "Una lama da lancio che si divide in più proiettili durante il volo."
-  },
-  "117": {
-    "name": "Tonfa di ferro",
-    "description": "Un paio di tonfa in ferro montati sul\nbraccio, usati in varie arti marziali."
-  },
-  "118": {
-    "name": "Nunchaku da allenamento",
-    "description": "Nunchaku da addestramento in legno collegati da una corta catena."
-  },
-  "119": {
-    "name": "Nunchaku d'acciaio",
-    "description": "Nunchaku in acciaio con maglie rinforzate e punte chiodate."
-  },
-  "120": {
-    "name": "Bastone a quattro sezioni",
-    "description": "Un bastone a quattro sezioni collegato da catene per tecniche complesse."
-  },
-  "121": {
-    "name": "Nocche di ferro",
-    "description": "Guanti da combattimento rinforzati con piastre di ferro sulle nocche."
-  },
-  "122": {
-    "name": "Guanti da attacco in mithril",
-    "description": "Guanti leggeri con superfici d'attacco potenziate dal mithril."
-  },
-  "123": {
-    "name": "Guanti del Maestro",
-    "description": "Antichi guanti che si dice siano stati\nindossati da un leggendario artista marziale."
-  },
-  "124": {
-    "name": "sedia in acciaio",
-    "description": "Una sedia pieghevole in acciaio usata come arma improvvisata."
+    "name": "Lama del drago",
+    "description": "Spada forgiata dalle zanne di un drago.\nSacro, infligge Ispirato."
   },
   "125": {
-    "name": "Tavolo pieghevole",
-    "description": "Un tavolo di legno che si rompe all'impatto\nper infliggere danni devastanti."
+    "name": "Baguette raffermo",
+    "description": "Pagnotta raffermata e dura come pietra.\nPuo stordire."
   },
   "126": {
-    "name": "Catena pesante",
-    "description": "Una lunghezza di catena usata per colpire e legare gli avversari."
+    "name": "Padella ammaccata",
+    "description": "Padella ammaccata, usata come clava."
   },
   "127": {
-    "name": "Anello campanello",
-    "description": "Un campanello da ring che crea un suono\ndisorientante quando viene colpito."
+    "name": "Clava scheggiata",
+    "description": "Clava di legno, spaccata e crepata.\nPuo stordire."
   },
   "128": {
-    "name": "Scala d’acciaio",
-    "description": "Una scala rinforzata che può essere scalata o usata come arma."
+    "name": "Flagello di legno",
+    "description": "Flagello dalla testa di legno leggera."
   },
   "129": {
-    "name": "Cintura del campione",
-    "description": "Una cintura da campionato che conferisce\nfiducia e potenza di combattimento."
+    "name": "Mazza di lega scadente",
+    "description": "Mazza dalla testa di metallo molle\nche si ammacca."
   },
   "130": {
-    "name": "Shinai",
-    "description": "Una spada da addestramento in bambù da kendo usata per colpi precisi."
+    "name": "Clava di legno",
+    "description": "Semplice clava di legno, la piu antica\ndelle armi. Puo stordire."
   },
   "131": {
-    "name": "Sai gemelli",
-    "description": "Un paio di sai - manganelli di metallo a tre punte per parare e colpire."
+    "name": "Martello ingestibile",
+    "description": "Gran martello su un manico troppo debole\nper reggerlo."
   },
   "132": {
-    "name": "Bastone flessibile",
-    "description": "Pali di bambù indurito legati insieme in un bastone flessibile."
+    "name": "Padella fidata",
+    "description": "Padella col manico fasciato di nastro.\nPuo infliggere Oleoso."
   },
   "133": {
-    "name": "Bracciali",
-    "description": "Fasce di metallo avvolte intorno agli avambracci per parare e colpire."
+    "name": "Asse chiodata",
+    "description": "Chiodi legati a una gamba di tavolo.\nPuo infliggere Veleno."
   },
   "134": {
-    "name": "Mano di coltello",
-    "description": "Uno stile di combattimento che usa il bordo della mano come arma."
+    "name": "Matterello incatenato",
+    "description": "Matterello avvolto di catena.\nPuo infliggere Oleoso."
   },
   "135": {
-    "name": "Calci volanti",
-    "description": "Un addestramento speciale che permette calci dalla potenza devastante."
+    "name": "Clava di tondino",
+    "description": "Tondino col cemento ancora attaccato.\nPuo infliggere Nausea."
   },
   "136": {
-    "name": "Maschera da kendo",
-    "description": "Una maschera da kendo in metallo che può essere usata in modo offensivo."
+    "name": "Mazza a chiave inglese",
+    "description": "Tubo con una valvola pesante in punta.\nPuo infliggere Oleoso."
   },
   "137": {
-    "name": "Bokken da Kendo",
-    "description": "Una lunga pagaia di legno rinforzata con metallo per colpire."
+    "name": "Flagello di catena da bici",
+    "description": "Catena da bici con un lucchetto in fondo.\nPuo infliggere Oleoso."
   },
   "138": {
-    "name": "Tekko-kagi",
-    "description": "Speciali artigli metallici che si\nestendono da una protezione per la mano."
+    "name": "Chiave modificata",
+    "description": "Chiave inglese con dadi saldati sopra.\nPuo infliggere Oleoso."
   },
   "139": {
-    "name": "Corda e gancio",
-    "description": "Una corda con un rampino che può trascinare i nemici più vicini."
+    "name": "Mazza chiodata",
+    "description": "Mazza avvolta di filo spinato e chiodi.\nPuo infliggere Veleno."
   },
   "140": {
-    "name": "Coperchio di un bidone",
-    "description": "Un coperchio di un bidone della spazzatura in\nacciaio usato sia come scudo che come arma."
+    "name": "Flagello a cassetta",
+    "description": "Cassetta degli attrezzi su una catena.\nPuo infliggere Oleoso."
   },
   "141": {
-    "name": "Pistola a pietra focaia",
-    "description": "Un'antica pistola a pietra focaia con incisioni elaborate."
+    "name": "Mazza di cemento",
+    "description": "Mazza con cemento colato sulla testa.\nColpisce Pietra e puo infliggere Nausea."
   },
   "142": {
-    "name": "Moschetto",
-    "description": "Un moschetto a colpo singolo con una\ncanna lunga per una migliore precisione."
+    "name": "Clava borchiata di pietra",
+    "description": "Lunga clava irta di pietre aguzze.\nColpisce con Pietra."
   },
   "143": {
-    "name": "Revolver a percussione",
-    "description": "Un revolver a capsula a percussione con tamburo rotante."
+    "name": "Manganello a piombo",
+    "description": "Bastone con un peso di piombo fasciato\ndi cuoio. Puo stordire."
   },
   "144": {
-    "name": "Fucile a leva",
-    "description": "Un fucile a leva in grado di sparare più colpi rapidamente."
+    "name": "Flagello di pietra",
+    "description": "Flagello con testa di pietra su catena.\nColpisce con Pietra."
   },
   "145": {
-    "name": "Fucile a doppia canna",
-    "description": "Un fucile a doppia canna che può\nsparare due colpi in rapida successione."
+    "name": "Clava da guerra",
+    "description": "Clava di legno irta di punte di bronzo."
   },
   "146": {
-    "name": "Mitragliatrice Gatling",
-    "description": "Una mitragliatrice Gatling con più canne rotanti per un fuoco sostenuto."
+    "name": "Clava a denti di squalo",
+    "description": "Clava polinesiana bordata di denti di\nsqualo. Puo stordire."
   },
   "147": {
-    "name": "Schioppo",
-    "description": "Uno schioppo vecchio stile con un'ampia apertura."
+    "name": "Cuscino sarcastico",
+    "description": "Cuscino che picchia molto piu forte del\ndovuto e borbotta insulti. Stordisce."
   },
   "148": {
-    "name": "Pistola da duello",
-    "description": "Un'elegante pistola da duello realizzata con precisione artigianale."
+    "name": "Flagello di bronzo",
+    "description": "Flagello con testa di bronzo su catena."
   },
   "149": {
-    "name": "Fucile a otturatore girevole-scorrevole",
-    "description": "Un fucile a otturatore noto per la sua affidabilità e precisione."
+    "name": "Paletta maestra",
+    "description": "Paletta che gira un nemico come una crepe\ne lo disorienta. Stordisce."
   },
   "150": {
-    "name": "Sei colpi",
-    "description": "Un classico revolver a sei colpi del vecchio west."
+    "name": "Clava mere",
+    "description": "Clava maori di legno o osso di balena.\nPuo stordire."
   },
   "151": {
-    "name": "Pistola 9mm",
-    "description": "Una pistola semiautomatica standard calibro 9 mm."
+    "name": "Tessen",
+    "description": "Ventaglio da guerra giapponese con stecche\ndi ferro."
   },
   "152": {
-    "name": "Mitragliatrice compatta",
-    "description": "Una pistola mitragliatrice compatta con calcio\r\npieghevole."
+    "name": "Coppia di martelli sonori",
+    "description": "Due martelli giocattolo. Schiacciati insieme\nlanciano un'onda d'urto. Puo stordire."
   },
   "153": {
-    "name": "Revolver magnum",
-    "description": "Un revolver di grosso calibro con un'enorme potenza di arresto."
+    "name": "Macuahuitl",
+    "description": "Clava azteca irta di lame di ossidiana.\nPuo stordire."
   },
   "154": {
-    "name": "Fucile da combattimento",
-    "description": "Un fucile a pompa tattico con un tamburo per una maggiore capacità."
+    "name": "Mano da tifoso",
+    "description": "Mano di gommapiuma che arriva come una mazza\ne strombazza. Stordisce."
   },
   "155": {
-    "name": "Fucile Bullpup",
-    "description": "Un fucile d'assalto con design bullpup per un equilibrio eccellente."
+    "name": "Martello meteora",
+    "description": "Testa appesantita fatta roteare su una\nlunga corda."
   },
   "156": {
-    "name": "Dmr",
-    "description": "Fucile da tiratore scelto con ottica migliorata."
+    "name": "Flagello medievale",
+    "description": "Sfera chiodata su catena e manico."
   },
   "157": {
-    "name": "Lmg",
-    "description": "Una mitragliatrice leggera progettata\nper un fuoco di soppressione sostenuto."
+    "name": "Flagello",
+    "description": "Sfera chiodata su catena corta.\nPuo stordire."
   },
   "158": {
-    "name": "Pdw",
-    "description": "Un'arma da difesa personale compatta\nche utilizza munizioni specializzate."
+    "name": "Mazza a flange",
+    "description": "Mazza europea a flange per rompere le\narmature. Puo stordire."
   },
   "159": {
-    "name": "Fucile antimateriale",
-    "description": "Un potente fucile anti-materiale in grado di penetrare le armature."
+    "name": "Martello di Lucerna",
+    "description": "Martello da guerra svizzero con punta per\nforare la piastra. Puo stordire."
   },
   "160": {
-    "name": "Razzo usa e getta",
-    "description": "Un lanciarazzi monouso a colpo singolo."
+    "name": "Martello da guerra",
+    "description": "Martello pesante che schiaccia l'armatura.\nPuo stordire."
   },
   "161": {
-    "name": "Pistola da tiratore",
-    "description": "Una pistola da tiratore personalizzata con canna\r\nestesa."
+    "name": "Mazza da guerra a flange",
+    "description": "Pesante mazza a flange fatta per schiacciare\nle armature."
   },
   "162": {
-    "name": "Lanciagranate intelligente",
-    "description": "Un lanciagranate ad alta tecnologia con detonazione programmabile."
+    "name": "Stella del mattino",
+    "description": "Testa chiodata su catena, cerchiata\nd'acciaio."
   },
   "163": {
-    "name": "Fucile tattico",
-    "description": "Un fucile a pompa bullpup compatto con\nuna devastante potenza a corto raggio."
+    "name": "Piccozza da guerra",
+    "description": "Martello da guerra con una punta sul retro\nper forare la piastra."
   },
   "164": {
-    "name": "Fucile di precisione MK 2",
-    "description": "Un fucile a otturatore di precisione con canna di alta qualità."
+    "name": "Nunchaku da allenamento",
+    "description": "Due bastoni di legno su catena corta.\nPuo stordire."
   },
   "165": {
-    "name": "Hmg",
-    "description": "Una mitragliatrice pesante montata su un bipiede per la stabilità."
+    "name": "Catena pesante",
+    "description": "Spezzone di catena, roteato e avvolto\naddosso al nemico. Puo stordire."
   },
   "166": {
-    "name": "Mitragliatrice",
-    "description": "Una mitragliatrice con più canne rotanti\nper una cadenza di fuoco estrema."
+    "name": "Scudo da battaglia chiodato",
+    "description": "Scudo chiodato dal bordo affilato, usato\ncome arma. Stordisce."
   },
   "167": {
-    "name": "Pistola a doppia canna",
-    "description": "Una pistola a doppia canna che spara\nda entrambe le canne simultaneamente."
+    "name": "Martello a catena variabile",
+    "description": "Martello meteora la cui catena si allunga\nquanto serve."
   },
   "168": {
-    "name": "Carabina tattica",
-    "description": "Un moderno fucile carabina con attacchi modulari."
+    "name": "Flagello di mithril",
+    "description": "Flagello cerchiato di mithril.\nPuo stordire."
   },
   "169": {
-    "name": "Cecchino pesante",
-    "description": "Un fucile da cecchino semiautomatico calibro .50."
+    "name": "Nunchaku d'acciaio",
+    "description": "Bastoni d'acciaio su maglie rinforzate,\nchiodati in punta. Puo stordire."
   },
   "170": {
-    "name": "Balestra tattica",
-    "description": "Una moderna balestra con mirino e flettenti in fibra di carbonio."
+    "name": "Spezzassedi",
+    "description": "Enorme mazza a due mani per abbattere\nle mura. Puo stordire."
   },
   "171": {
-    "name": "Ascia di pietra",
-    "description": "Una primitiva ascia di pietra fatta\ndi selce legata a un manico di legno."
+    "name": "Martello sismico",
+    "description": "Martello a due mani che lancia un'onda\nd'urto all'impatto."
   },
   "172": {
-    "name": "Mazza di legno",
-    "description": "Una semplice mazza di legno, la più antica delle armi umane."
+    "name": "Maglio scuotiterra",
+    "description": "Maglio che porta la forza di un terremoto."
   },
   "173": {
-    "name": "Pugnale d'osso",
-    "description": "Un osso animale affilato usato come primitiva arma da stoccata."
+    "name": "Flagello di drago",
+    "description": "Flagello cerchiato con zanne di drago.\nPuo stordire."
   },
   "174": {
-    "name": "Bastone da lancio",
-    "description": "Un primitivo bastone da lancio usato\nper la caccia dalle antiche culture."
+    "name": "Flagello succhia anime",
+    "description": "Flagello con testa di anima cristallizzata.\nMaledetto, infligge Veleno."
   },
   "175": {
-    "name": "Giavellotto",
-    "description": "Una semplice lancia da lancio usata\ndai primi esseri umani per la caccia."
+    "name": "Mazza scuotiterra",
+    "description": "Mazza ricavata da terra elementale. Scuote\nil suolo. Colpisce con Maledetto."
   },
   "176": {
-    "name": "Lama di ossidiana",
-    "description": "Una lama di ossidiana affilata attaccata a un manico di legno."
+    "name": "Maglio spezzaincanti",
+    "description": "Martello che frantuma protezioni e costrutti\nmagici. Fuoco, infligge Caldo."
   },
   "177": {
-    "name": "Retiarius",
-    "description": "Una rete pesata usata dagli antichi\ngladiatori per intrappolare gli avversari."
+    "name": "Schiacciapensieri",
+    "description": "Martello che rompe il corpo e il pensiero\ndietro di esso. Puo stordire."
   },
   "178": {
-    "name": "Spada mesopotamica",
-    "description": "Una spada di bronzo delle antiche civiltà mesopotamiche."
+    "name": "Martello celeste",
+    "description": "Martello forgiato da una stella caduta.\nSacro, infligge Ispirato."
   },
   "179": {
-    "name": "Lancia sumera",
-    "description": "Lancia sumera in rame con lama a forma di foglia."
+    "name": "Pendolo cosmico",
+    "description": "Flagello di Gobekli Tepe inciso di carte\nstellari. Piega lo spazio che attraversa."
   },
   "180": {
-    "name": "Ascia egizia",
-    "description": "Un'antica ascia egizia con una lama a forma di mezzaluna."
+    "name": "Martello di Chronos",
+    "description": "Martello che rallenta il tempo dove cade.\nColpisce con Acqua e puo bagnare."
   },
   "181": {
-    "name": "Dardo Atlatl",
-    "description": "Un leggero dardo da lancio scagliato\nda un atlatl per una maggiore distanza."
+    "name": "Attentatore EHI",
+    "description": "Flagello le cui teste contengono olio\nvolatile che esplode. Puo stordire."
   },
   "182": {
-    "name": "Fionda in fibra",
-    "description": "Una fionda primitiva fatta di fibre\nvegetali intrecciate per scagliare pietre."
+    "name": "Martello totem del cinghiale",
+    "description": "Gran martello di pietra di Gobekli Tepe\ninciso di cinghiali. Da forza. Ghiaccio."
   },
   "183": {
-    "name": "Club tempestato di pietre",
-    "description": "Una lunga mazza di legno tempestata di pietre\r\naffilate."
+    "name": "Ventaglio da guerra di Varlenia",
+    "description": "Ventaglio pieghevole di lame di Varlenia.\nColpisce con Acqua e puo bagnare."
   },
   "184": {
-    "name": "Club dei denti di squalo",
-    "description": "Una mazza da guerra polinesiana intagliata\nnel legno duro con bordi di denti di squalo."
+    "name": "Maglio a compressione EHI",
+    "description": "Maglio che contiene olio compresso. Lancia\nonde d'urto e rallenta chi lo porta."
   },
   "185": {
-    "name": "Macuahuitl",
-    "description": "Un macuahuitl azteco - una mazza di\nlegno incastonata con lame di ossidiana."
+    "name": "Mjolnir",
+    "description": "Il martello di un dio del tuono. Lanciato,\ntorna indietro. Ghiaccio, infligge Freddo."
   },
   "186": {
-    "name": "Bola",
-    "description": "Una bola fatta di pesi di pietra collegati da\nuna corda, usata per intrappolare la preda."
+    "name": "Acustica da strada",
+    "description": "Chitarra acustica malridotta con tre corde,\nimpugnata per il manico."
   },
   "187": {
-    "name": "Mazza Mere",
-    "description": "Una tradizionale mazza Māori intagliata nel legno o nell'osso di balena."
+    "name": "Sassofono presidenziale",
+    "description": "Sassofono tenore d'ottone, roteato per\nla campana."
   },
   "188": {
-    "name": "Gladio",
-    "description": "Un gladio romano - una spada corta progettata\nper l'affondo in formazione serrata."
+    "name": "Chitarra copia da banco dei pegni",
+    "description": "Copia di una copia, comprata usata e mai\naccordata. Puo stordire."
   },
   "189": {
-    "name": "Pilum",
-    "description": "Un pilum romano - un giavellotto pesante\nprogettato per piegarsi all'impatto."
+    "name": "Chitarra infernale",
+    "description": "Elettrica trapuntata cherry burst. Piu forte\ndella stanza, piu calda dell'ampli. Sacro."
   },
   "190": {
-    "name": "Shamshir",
-    "description": "Una scimitarra mediorientale curva con lama a filo singolo."
+    "name": "Chitarra a punta di freccia",
+    "description": "Chitarra a forma di cio per cui viene usata.\nPuo stordire."
   },
   "191": {
-    "name": "Arco ricurvo",
-    "description": "Un arco ricurvo delle steppe eurasiatiche usato dagli arcieri a cavallo."
+    "name": "Basso elettrico",
+    "description": "Quattro corde, un manico lungo e molta\nmassa. Stordisce."
   },
   "192": {
-    "name": "Flagello medievale",
-    "description": "Una palla chiodata attaccata a un manico tramite\r\nuna catena."
+    "name": "Cavallo da guerra a doppio manico",
+    "description": "Dodici corde sopra, sei sotto, su una\ntracolla che ha retto troppo."
   },
   "193": {
-    "name": "Blackjack",
-    "description": "Un bastone di legno con un peso di\npiombo avvolto nel cuoio all'estremità."
+    "name": "Cannone di feedback",
+    "description": "Chitarra ancora collegata a un impianto che\nnon c'e piu. Ulula lo stesso."
   },
   "194": {
-    "name": "Spada lunga a due mani",
-    "description": "Una spada lunga europea progettata per l'uso con due mani."
-  },
-  "195": {
-    "name": "Claymore",
-    "description": "Una claymore scozzese con lama a doppio\ntaglio e distintiva guardia a croce."
-  },
-  "196": {
-    "name": "Alabarda",
-    "description": "Un'arma inastata europea con lama d'ascia e punta."
+    "name": "Superstrat infernale",
+    "description": "Elettrica a manico passante, in fiamme dal\ngiorno in cui fu incordata. Fuoco."
   },
   "197": {
-    "name": "Lucerna",
-    "description": "Un martello da guerra svizzero con una punta per perforare le armature."
+    "name": "Ascia giocattolo di gommapiuma",
+    "description": "Ascia di plastica coi bordi di gommapiuma."
   },
   "198": {
-    "name": "Chu-Ko-Nu",
-    "description": "Una balestra a ripetizione cinese in grado di sparare rapidamente."
+    "name": "Falce arrugginita",
+    "description": "Falce da campo col manico lento e la lama\ncoperta di ruggine."
   },
   "199": {
-    "name": "Naginata",
-    "description": "Una naginata giapponese - un'arma inastata con una lama curva."
+    "name": "Ascia da allenamento",
+    "description": "Ascia di legno da allenamento, filo smussato.\nPuo stordire."
   },
   "200": {
-    "name": "Tirapugni",
-    "description": "Un tirapugni di ferro irto di punte per \npugni devastanti."
+    "name": "Ascia economica",
+    "description": "Ascia scadente la cui testa balla a ogni\ncolpo."
   },
   "201": {
-    "name": "Dardo a corda",
-    "description": "Un dardo a corda cinese - un dardo metallico pesato su una corda."
+    "name": "Ascia di pietra",
+    "description": "Selce legata a un manico di legno.\nColpisce con Pietra."
   },
   "202": {
-    "name": "Artigli di acciaio",
-    "description": "Un paio di artigli d'acciaio indossati\nsulle mani nelle arti marziali indiane."
+    "name": "Pala affilata",
+    "description": "Pala molata a filo.\nPuo infliggere Nausea."
   },
   "203": {
-    "name": "Estoc",
-    "description": "Un estoc europeo - una spada rigida e stretta\nprogettata per affondare nelle giunture delle armature."
+    "name": "Ascia a lama di rasaerba",
+    "description": "Lama di rasaerba imbullonata a un manico.\nPuo infliggere Oleoso."
   },
   "204": {
-    "name": "Mazza flangiata",
-    "description": "Una mazza europea con testa flangiata per frantumare le armature."
+    "name": "Ascia di coprimozzo",
+    "description": "Lamiera d'auto affilata su un manico.\nPuo infliggere Oleoso."
   },
   "205": {
-    "name": "Cerbottana di bambù",
-    "description": "Una primitiva cerbottana di bambù usata per sparare dardi avvelenati."
+    "name": "Ascia da pompiere affilata",
+    "description": "Ascia da pompiere con lamette nastrate.\nColpisce Fuoco e puo infliggere Veleno."
   },
   "206": {
-    "name": "Kukri",
-    "description": "Un coltello Kukri in acciaio con una lama curva verso l'interno."
+    "name": "Ascia seme",
+    "description": "Ascia cresciuta da un seme di lama."
   },
   "207": {
-    "name": "Iklwa",
-    "description": "Una lancia corta Zulu con una lama lunga,\nprogettata per il combattimento ravvicinato."
+    "name": "Ascetta",
+    "description": "Piccola ascia per abbattere alberi."
   },
   "208": {
-    "name": "Moschetto a miccia",
-    "description": "Un moschetto a miccia - una prima arma da\nfuoco con una miccia accesa per sparare."
+    "name": "Ascia egizia",
+    "description": "Antica ascia egizia dalla testa a mezzaluna."
   },
   "209": {
-    "name": "Pistola a ruota",
-    "description": "Una pistola a ruota - una prima arma da fuoco\nche usa una ruota girevole per creare scintille."
+    "name": "Francisca",
+    "description": "Ascia franca bilanciata per il lancio."
   },
   "210": {
-    "name": "Spada frusta Urumi",
-    "description": "Una spada flessibile indiana composta da segmenti di metallo collegati."
+    "name": "Ascia da battaglia",
+    "description": "Ascia a doppio filo fatta per la battaglia."
   },
   "211": {
-    "name": "Frusta da mandriano",
-    "description": "Una frusta fatta di strisce di cuoio intrecciate."
+    "name": "Sedia d'acciaio",
+    "description": "Sedia pieghevole d'acciaio, calata di piatto.\nPuo stordire."
   },
   "212": {
-    "name": "Patag",
-    "description": "Una spada tibetana con lama dritta a filo singolo."
+    "name": "Coperchio di bidone",
+    "description": "Coperchio d'acciaio, tenuto come scudo\ne clava. Puo stordire."
   },
   "213": {
-    "name": "Katar",
-    "description": "Un pugnale a spinta in metallo con impugnatura a T per colpire di pugno."
+    "name": "Bardiche",
+    "description": "Ascia lunga dalla lama a mezzaluna."
   },
   "214": {
-    "name": "Shongo",
-    "description": "Un lungo e pesante coltello da lancio africano con lame multiple."
+    "name": "Tavolo a rottura",
+    "description": "Tavolo di legno costruito per rompersi\nall'impatto."
   },
   "215": {
-    "name": "Cannone a mano",
-    "description": "Un antico cannone a mano cinese in ghisa."
+    "name": "Campana da ring",
+    "description": "Campana da ring che suona in testa a chi\ncolpisce."
   },
   "216": {
-    "name": "Granata di ferro",
-    "description": "Una primitiva granata fatta da un guscio\ndi ghisa riempito di polvere da sparo."
+    "name": "Scala d'acciaio",
+    "description": "Scala rinforzata, da salire o da roteare.\nPuo stordire."
   },
   "217": {
-    "name": "Schioppo a pietra focaia",
-    "description": "Uno schioppo con volata svasata per sparare pallini o rottami."
+    "name": "Ascia di mithril",
+    "description": "Ascia da battaglia forgiata in mithril.\nPuo stordire."
   },
   "218": {
-    "name": "Revolver Pepperbox",
-    "description": "Un revolver pepperbox con canne multiple rotanti."
+    "name": "Ascia dell'elementale vincolato",
+    "description": "Ascia che racchiude un elementale del fuoco,\nsempre accesa. Colpisce con Tuono."
   },
   "219": {
-    "name": "Baionetta da fucile",
-    "description": "Una baionetta attaccata a un fucile per il combattimento ravvicinato."
+    "name": "Grande ascia vulcanica",
+    "description": "Ascia forgiata in un vulcano e ancora\naccesa. Maledetto, infligge Veleno."
   },
   "220": {
-    "name": "Moschetto rigato",
-    "description": "Un moschetto rigato dell'era della Guerra\nCivile con una migliore precisione."
+    "name": "Schiacciatrice gravitazionale",
+    "description": "Ascia che apre un piccolo pozzo di gravita\ndove cade."
   },
   "221": {
-    "name": "Mitragliatrice Gatling",
-    "description": "Una prima mitragliatrice con funzionamento a manovella."
+    "name": "Fendianime",
+    "description": "Ascia cerimoniale di Gobekli Tepe che taglia\ncarne e spirito. Fuoco, infligge Caldo."
   },
   "222": {
-    "name": "Fucile a retrocarica",
-    "description": "Un fucile a retrocarica a colpo singolo della fine del 1800."
+    "name": "Ascia del drago",
+    "description": "Ascia da battaglia forgiata dalle zanne\ndi un drago."
   },
   "223": {
-    "name": "Fucile militare a otturatore",
-    "description": "Un fucile a otturatore dell'era della Prima\nGuerra Mondiale con caricamento a clip."
+    "name": "Divisore planare",
+    "description": "Ascia di Gobekli Tepe che taglia il muro\ntra i mondi. Colpisce con Ghiaccio."
   },
   "224": {
-    "name": "Tommy Gun",
-    "description": "Un fucile mitragliatore compatto in calibro pistola degli anni '20."
+    "name": "Petrocorruttore EHI",
+    "description": "Ascia col filo di olio compresso. Taglia\ntutto e marcisce chi la porta."
   },
   "225": {
-    "name": "M1 Garand",
-    "description": "Un fucile semiautomatico M1 Garand\ndell'era della Seconda Guerra Mondiale."
+    "name": "Mannaia di Varlenia",
+    "description": "Grande ascia dorata di acciaio di Varlenia.\nAcqua, infligge Bagnato."
   },
   "226": {
-    "name": "Lanciafiamme",
-    "description": "Un lanciafiamme portatile che spruzza carburante in fiamme."
-  },
-  "227": {
-    "name": "MP40",
-    "description": "Un fucile mitragliatore tedesco MP40 della Seconda Guerra Mondiale."
-  },
-  "228": {
-    "name": "Lanciagranate",
-    "description": "Un lanciagranate a colpo singolo che\nspara proiettili esplosivi da 40 mm."
-  },
-  "229": {
-    "name": "Fucile da battaglia M14",
-    "description": "Un fucile da battaglia dell'era del\nVietnam con capacità di fuoco selettivo."
-  },
-  "230": {
-    "name": "AKS-74U",
-    "description": "Un fucile d'assalto moderno e compatto con calcio\r\npieghevole."
-  },
-  "231": {
-    "name": "Fucile da tiratore scelto",
-    "description": "Un fucile di precisione semiautomatico\nprogettato per ingaggi a medio e lungo raggio."
-  },
-  "232": {
-    "name": "Fucile antimateriale",
-    "description": "Un fucile di grosso calibro progettato per\npenetrare corazze pesanti e bersagli corazzati."
-  },
-  "233": {
-    "name": "Manpads",
-    "description": "Un lanciatore portatile di missili terra-aria."
-  },
-  "234": {
-    "name": "Prototipo di cannone a rotaia",
-    "description": "Un prototipo di cannone elettromagnetico ad alta potenza."
-  },
-  "235": {
-    "name": "Pistola a bobina",
-    "description": "Un'arma elettromagnetica che utilizza bobine\nper accelerare i proiettili a velocità estreme."
-  },
-  "236": {
-    "name": "Sistema di negazione attiva",
-    "description": "Un'arma a energia diretta non letale che proietta un fascio di\nonde millimetriche per causare una sensazione di calore intenso."
-  },
-  "237": {
-    "name": "Sonic Staff",
-    "description": "Un bastone che crea potenti onde sonore per disorientare e danneggiare."
+    "name": "Mannaia dimensionale",
+    "description": "Ascia che fende piu mondi insieme.\nSacro, infligge Ispirato."
   },
   "238": {
-    "name": "Pistola ad aria compressa",
-    "description": "Una pistola che spara capsule di aria\ncompressa per abbattimenti non letali."
+    "name": "Scacciamosche",
+    "description": "Scacciamosche leggero di plastica.\nPuo provocare."
   },
   "239": {
-    "name": "Proiettore di schiuma",
-    "description": "Un'arma sperimentale che spara schiuma\nappiccicosa per immobilizzare i bersagli."
+    "name": "Frusta screpolata",
+    "description": "Frusta di cuoio conciato male che si spacca."
   },
   "240": {
-    "name": "Lanciatore di Electro-Net",
-    "description": "Un'arma che spara reti elettrificate per catturare i bersagli."
+    "name": "Cintura con fibbia pesante",
+    "description": "Cintura con la fibbia rinforzata.\nPuo infliggere Nausea."
   },
   "241": {
-    "name": "Lama dorata di Varlenia",
-    "description": "Una spada lunga dorata forgiata con il leggendario\nacciaio di Varlenia, che brilla di energia arcana."
+    "name": "Canna da pesca da combattimento",
+    "description": "Canna che lancia pesi chiodati.\nPuo infliggere Oleoso."
   },
   "242": {
-    "name": "Lame gemelle di Varlenia",
-    "description": "Doppi pugnali dorati in acciaio di Varlenia che\nlasciano tracce di luce arcana quando vengono sferzati."
+    "name": "Frusta di cavi",
+    "description": "Frusta intrecciata con cavi elettrici.\nPuo infliggere Oleoso."
   },
   "243": {
-    "name": "Bastone Arcano di Varlenia",
-    "description": "Un bastone dorato forgiato in acciaio di\nVarlenia che amplifica le energie magiche."
+    "name": "Frusta seme",
+    "description": "Frusta cresciuta da un seme di lama.\nPuo provocare."
   },
   "244": {
-    "name": "Arco energetico Varlenia",
-    "description": "Un arco dorato in acciaio flessibile di Varlenia\nche materializza frecce di pura energia."
+    "name": "Rete del retiario",
+    "description": "Rete appesantita da gladiatore, lanciata\nper irretire. Puo provocare."
   },
   "245": {
-    "name": "Pugno di Varlenia",
-    "description": "Guanti dorati in acciaio di Varlenia che\nincanalano il potere arcano in pugni devastanti."
+    "name": "Frusta da mandriano",
+    "description": "Frusta di cuoio intrecciato.\nPuo provocare."
   },
   "246": {
-    "name": "Lancia ritorno di Varlenia",
-    "description": "Una lancia dorata in acciaio di Varlenia che può\nessere lanciata e ritorna magicamente al suo portatore."
+    "name": "Rete del gladiatore",
+    "description": "Rete piu pesante, lanciata larga.\nPuo provocare."
   },
   "247": {
-    "name": "Mannaia di Varlenia",
-    "description": "Una massiccia ascia dorata forgiata in acciaio\ndi Varlenia che scoppietta di energia elementale."
+    "name": "Catena di anelli volanti",
+    "description": "Catena di anelli affilati, lanciata o\nfrustata. Puo provocare."
   },
   "248": {
-    "name": "Fucile a raggi di Varlenia",
-    "description": "Un fucile dorato in acciaio di Varlenia che\nspara raggi concentrati di energia arcana."
+    "name": "Corda e rampino",
+    "description": "Corda con rampino che trascina il nemico\npiu vicino."
   },
   "249": {
-    "name": "Frusta a catena di Varlenia",
-    "description": "Una frusta a catena fatta con maglie dorate in acciaio\ndi Varlenia che può estendersi a grandi distanze."
+    "name": "Frusta di cavo d'acciaio",
+    "description": "Frusta di cavo d'acciaio intrecciato che\ntaglia le armature."
   },
   "250": {
-    "name": "Ventaglio da guerra di Varlenia",
-    "description": "Un ventaglio da guerra pieghevole fatto di lame\ndi acciaio di Varlenia affilate come rasoi."
+    "name": "Urumi",
+    "description": "Spada flessibile di nastri d'acciaio uniti."
   },
   "251": {
-    "name": "Dardi di pietra",
-    "description": "Piccoli dardi di pietra affilata da lanciare ai nemici."
+    "name": "Frusta di gelo",
+    "description": "Frusta di ghiaccio che non si scioglie.\nColpisce con Ghiaccio e puo raffreddare."
   },
   "252": {
-    "name": "Nunchaku di legno",
-    "description": "Due bastoni di legno collegati da una corda, un'arma tradizionale."
+    "name": "Frusta di spine",
+    "description": "Frusta di spine incantate che beve la vita.\nSacro, infligge Ispirato."
   },
   "253": {
-    "name": "Bastone da caccia",
-    "description": "Un bastone con le estremità appesantite usato nelle arti marziali."
+    "name": "Sferza di energia",
+    "description": "Frusta di energia pura che si allunga\nquanto serve. Colpisce con Fuoco."
   },
   "254": {
-    "name": "Bastoni da Eskrima",
-    "description": "Un paio di bastoni di legno corti e\nresistenti per il combattimento rapido."
+    "name": "Lamento della banshee",
+    "description": "Frusta intrecciata con capelli di banshee.\nUrla. Colpisce con Ghiaccio."
   },
   "255": {
-    "name": "Chakram",
-    "description": "Un'arma da lancio circolare con il\nbordo esterno affilato come un rasoio."
+    "name": "Cintura del campione",
+    "description": "Cintura da campione, roteata per la fibbia."
   },
   "256": {
-    "name": "Martello meteorico",
-    "description": "Una pesante palla di metallo attaccata a una\nlunga catena per attacchi a lungo raggio."
+    "name": "Frusta mentale",
+    "description": "Frusta di pensiero addensato che sferza corpo\ne mente. Tuono, infligge Statico."
   },
   "257": {
-    "name": "Tessen",
-    "description": "Un ventaglio da guerra pieghevole con costole\ndi ferro, usato per l'offesa e la difesa."
+    "name": "Intestini di fenice",
+    "description": "Frusta ricavata dalle viscere di una fenice.\nColpisce con Acqua."
   },
   "258": {
-    "name": "Volley gun",
-    "description": "Un'arma da fuoco a canne multiple in grado\ndi sparare diversi colpi contemporaneamente."
+    "name": "Frusta dell'eco temporale",
+    "description": "Frusta presente in piu linee temporali.\nColpisce piu di una volta. Maledetto."
   },
   "259": {
-    "name": "Pistola antisommossa",
-    "description": "Un fucile a canna liscia progettato per il controllo\ndella folla e il combattimento ravvicinato."
+    "name": "Frusta di pietra liquida",
+    "description": "Frusta di Gobekli Tepe di anelli di pietra\nche scorre. Pietra, puo paralizzare."
   },
   "260": {
-    "name": "Lanciatore di gas",
-    "description": "Un lanciatore che spara gas lacrimogeni o granate fumogene."
+    "name": "Frusta a catena di Varlenia",
+    "description": "Frusta a catena di maglie dorate che si\nallunga molto. Tuono, puo dare statico."
   },
   "261": {
-    "name": "Paletto di legno",
-    "description": "Un paletto di legno appuntito, tradizionalmente usato contro i vampiri."
-  },
-  "262": {
-    "name": "Spada d'argento benedetta",
-    "description": "Una spada fatta d'argento puro e benedetta per combattere i non morti."
-  },
-  "263": {
-    "name": "Lancia di fuoco",
-    "description": "Una lancia con una punta infuocata che brucia all'impatto."
-  },
-  "264": {
-    "name": "Bastone del vento",
-    "description": "Un bastone incantato che controlla le\ncorrenti d'aria per respingere i nemici."
-  },
-  "265": {
-    "name": "Balestra a rete",
-    "description": "Una balestra modificata che lancia reti per immobilizzare i bersagli."
-  },
-  "266": {
-    "name": "Artigli velenosi",
-    "description": "Artigli di metallo intrisi di un potente veleno paralizzante."
-  },
-  "267": {
-    "name": "Bastone pietrificato",
-    "description": "Un bastone fatto di legno antico\npietrificato, estremamente duro e pesante."
-  },
-  "268": {
-    "name": "Lama aerodinamica",
-    "description": "Una spada progettata per la massima velocità e agilità in combattimento."
-  },
-  "269": {
-    "name": "Arco composto avanzato",
-    "description": "Un arco moderno con un sistema di pulegge\nper una maggiore potenza e precisione."
-  },
-  "270": {
-    "name": "Taglierino a getto d'acqua",
-    "description": "Uno strumento industriale che utilizza l'acqua\nad alta pressione per tagliare i materiali."
-  },
-  "271": {
-    "name": "Frusta di gelo",
-    "description": "Una frusta intrisa di energia magica\ndi ghiaccio che congela al contatto."
-  },
-  "272": {
-    "name": "Spada di ossidiana",
-    "description": "Una spada fatta di vetro vulcanico affilato come un rasoio, ma fragile."
+    "name": "Legatore onnisciente EHI",
+    "description": "Frusta di pagine vive. Lega i nemici\ne sussurra a chi la impugna."
   },
   "273": {
-    "name": "Fucile tranquillante",
-    "description": "Un fucile che spara dardi sedativi per addormentare i bersagli."
+    "name": "Bastone intagliato",
+    "description": "Bastone con intagli grezzi per sembrare\nun bordone. Colpisce con Fuoco."
   },
   "274": {
-    "name": "Martello sismico",
-    "description": "Un martello pesante che crea onde d'urto nel terreno all'impatto."
+    "name": "Bastone da passeggio",
+    "description": "Bastone da passeggio troppo flessibile.\nGhiaccio, infligge Freddo."
   },
   "275": {
-    "name": "Bastone folgorato",
-    "description": "Un bastone che emette scariche elettriche\nad alta tensione per stordire i nemici."
+    "name": "Bacchetta da novizio",
+    "description": "Bacchetta di legno scadente che conduce\nappena. Colpisce con Acqua."
   },
   "276": {
-    "name": "Lancia-dischi",
-    "description": "Un'arma che spara dischi rotanti affilati ad alta velocità."
+    "name": "Bordone da apprendista",
+    "description": "Bordone di legno verde che si piega sotto\nil colpo. Colpisce con Acqua."
   },
   "277": {
-    "name": "Lame vibranti",
-    "description": "Lame che vibrano ad alte frequenze per\ntagliare l'armatura più facilmente."
+    "name": "Ombrello appuntito",
+    "description": "Ombrello con le stecche affilate.\nColpisce Fuoco e puo infliggere Nausea."
   },
   "278": {
-    "name": "Raggio di calore",
-    "description": "Un'arma a energia diretta che spara un raggio di calore intenso."
+    "name": "Stampella chiodata",
+    "description": "Stampella con chiodi passanti in cima.\nColpisce Fuoco e puo infliggere Veleno."
   },
   "279": {
-    "name": "Guanti antiurto",
-    "description": "Guanti che rilasciano una potente scossa\nelettrica al momento dell'impatto."
+    "name": "Bordone di scopa chiodato",
+    "description": "Manico di mocio con chiodi in punta.\nColpisce Ghiaccio e puo infliggere Veleno."
   },
   "280": {
-    "name": "Lama di metallo stellare",
-    "description": "Una spada forgiata dal metallo di un\nmeteorite, che possiede proprietà insolite."
+    "name": "Mocio affilato",
+    "description": "Mocio avvolto di filo spinato.\nColpisce Ghiaccio e puo infliggere Veleno."
   },
   "281": {
-    "name": "Bastone dell'occhio",
-    "description": "Un bastone con un occhio che osserva sulla\npunta, che fornisce potenziamenti magici."
+    "name": "Mazza da hockey spinata",
+    "description": "Mazza da hockey con filo spinato.\nColpisce Acqua e puo infliggere Veleno."
   },
   "282": {
-    "name": "Arco di osso di drago",
-    "description": "Un arco potente fatto con le ossa intagliate di un antico drago."
+    "name": "Bastone da lancio",
+    "description": "Bastone da lancio sagomato, usato a caccia.\nColpisce con Ghiaccio."
   },
   "283": {
-    "name": "Lama d'acciaio ombra",
-    "description": "Una lama forgiata da un metallo oscuro che sembra assorbire la luce."
+    "name": "Bordone di legno",
+    "description": "Bordone semplice e comune.\nMaledetto, puo avvelenare."
   },
   "284": {
-    "name": "Ascia pesante del vulcano",
-    "description": "Una massiccia ascia che contiene il calore del nucleo della terra."
+    "name": "Bordone seme",
+    "description": "Bordone cresciuto da un seme di lama.\nColpisce con Sacro."
   },
   "285": {
-    "name": "Lancia-zanna del Leviatano",
-    "description": "Una lancia con la punta fatta dalla\nzanna di un leggendario mostro marino."
+    "name": "Bastone ferrato",
+    "description": "Bordone appesantito a entrambe le estremita.\nTuono, infligge Statico."
   },
   "286": {
-    "name": "Guanti della lucertola del tuono",
-    "description": "Guanti fatti con la pelle e le ossa di una creatura del tuono."
+    "name": "Bastoni escrima",
+    "description": "Coppia di bastoni corti di metallo.\nGhiaccio, infligge Freddo."
   },
   "287": {
-    "name": "Balestra Arcana",
-    "description": "Una balestra che spara dardi di pura energia magica."
+    "name": "Bacchetta magica",
+    "description": "Bacchetta che presta un po' di potere magico.\nMaledetto, puo avvelenare."
   },
   "288": {
-    "name": "Flagello di drenaggio dell'anima",
-    "description": "Un flagello che assorbe l'essenza vitale di coloro che colpisce."
+    "name": "Soffiabolle rimbalzante",
+    "description": "Bacchetta le cui bolle imprigionano e fanno\nrimbalzare. Tuono, infligge Statico."
   },
   "289": {
-    "name": "Lamamorfa",
-    "description": "Una lama che può cambiare forma e dimensioni durante il combattimento."
+    "name": "Scettro di menta",
+    "description": "Gigantesco bastoncino di zucchero che spara\nraggi di menta. Tuono, da statico."
   },
   "290": {
-    "name": "Lamento della Banshee",
-    "description": "Un bastone che emette un urlo terrificante quando viene brandito."
+    "name": "Bacchetta di forza",
+    "description": "Bacchetta d'argento che presta potere magico.\nFuoco, infligge Caldo."
   },
   "291": {
-    "name": "Martello celestiale",
-    "description": "Un martello forgiato da un frammento di una\nstella caduta, che brilla di energia celestiale."
+    "name": "Bordone flessibile",
+    "description": "Canne di bambu indurite legate in un solo\nbordone. Ghiaccio, infligge Freddo."
   },
   "292": {
-    "name": "Artigli del drago di gelo",
-    "description": "Artigli intagliati dai denti di un antico\ndrago di gelo, che emanano un freddo pungente."
+    "name": "Tonfa di ferro",
+    "description": "Coppia di bastoni di ferro portati lungo\nil braccio. Colpisce con Acqua."
   },
   "293": {
-    "name": "Ramo dell'albero del mondo",
-    "description": "Un bastone fatto da un ramo dell'Albero del\nMondo, contenente antica magia naturale."
+    "name": "Bordone del vento",
+    "description": "Bordone semplice che solleva raffiche dure.\nColpisce con Vento."
   },
   "294": {
-    "name": "Arco d'anima",
-    "description": "Un arco magico che forma frecce dalla forza vitale stessa del portatore."
+    "name": "Bastone a tre sezioni",
+    "description": "Tre sezioni di bordone unite da catene.\nGhiaccio, infligge Freddo."
   },
   "295": {
-    "name": "Eredità dell'eroe",
-    "description": "Una spada che contiene l'anima intrappolata di\nun antico eroe, conferendo saggezza in battaglia."
+    "name": "Bordone pietrificato",
+    "description": "Bordone di legno fossile.\nColpisce con Tuono."
   },
   "296": {
-    "name": "Sanguinaria",
-    "description": "Una spada che diventa più leggera e affilata\nad ogni uccisione, nutrendosi di sangue."
+    "name": "Verga di mithril",
+    "description": "Verga di mithril che presta potere magico.\nColpisce con Sacro."
   },
   "297": {
-    "name": "Mazza sismica",
-    "description": "Una mazza fatta da un pezzo di terra\nelementale, che causa tremori all'impatto."
+    "name": "Bastone a quattro sezioni",
+    "description": "Quattro sezioni di bordone unite da catene.\nGhiaccio, infligge Freddo."
   },
   "298": {
-    "name": "Lama dimensionale",
-    "description": "Una spada che può tagliare il tessuto della\nrealtà per creare portali dimensionali."
+    "name": "Bordone colpito dal fulmine",
+    "description": "Bordone ricavato da un albero fulminato.\nTuono, infligge Statico."
   },
   "299": {
-    "name": "Faretra infinita",
-    "description": "Una balestra magica che non ha mai bisogno di essere\nricaricata, materializzando i dardi dal nulla."
+    "name": "Ramo di Yggdrasil",
+    "description": "Bordone tagliato da un ramo dell'albero\ndel mondo. Colpisce con Fuoco."
   },
   "300": {
-    "name": "Pugni dell'elementale del fulmine",
-    "description": "Guanti fatti dall'essenza di un elementale del\nfulmine, che colpiscono con furia elettrica."
+    "name": "Bordone chiamatuoni",
+    "description": "Bordone che richiama il fulmine.\nColpisce con Tuono."
   },
   "301": {
-    "name": "Bastone del Cronomante",
-    "description": "Un bastone creato dal tempo cristallizzato, che\npermette al portatore di rallentare i nemici."
+    "name": "Bordone dell'occhio",
+    "description": "Bordone coronato da un occhio vivo che vede\ncio che e nascosto. Colpisce Acqua."
   },
   "302": {
-    "name": "Lama del Crepuscolo",
-    "description": "Una spada forgiata dall'essenza del\ncrepuscolo, esistente tra luce e ombra."
+    "name": "Bordone sonico",
+    "description": "Bordone che lancia onde sonore dure.\nColpisce con Acqua e puo bagnare."
   },
   "303": {
-    "name": "Arco al chiaro di luna",
-    "description": "Un arco intagliato dal chiaro di luna che\nscaglia frecce di pura energia lunare."
+    "name": "Bordone dell'albero del mondo",
+    "description": "Bordone di legno dell'albero del mondo che\nvibra col bosco. Acqua, puo bagnare."
   },
   "304": {
-    "name": "Ascia elementale vincolata",
-    "description": "Un'ascia che contiene un elementale del fuoco\nvincolato, costantemente in fiamme con fiamme magiche."
+    "name": "Ramo dell'albero del mondo",
+    "description": "Ramo vivo dell'albero del mondo, ancora\nin foglia. Colpisce con Fuoco."
   },
   "305": {
-    "name": "Intestini di Fenice",
-    "description": "Una frusta fatta con gli intestini di una\nfenice, che brucia con un fuoco eterno."
+    "name": "Bordone di corno di unicorno",
+    "description": "Bordone di corno di unicorno che rimargina\nle ferite. Tuono, infligge Statico."
   },
   "306": {
-    "name": "Guanti da incubo",
-    "description": "Guanti creati dall'essenza solidificata\ndegli incubi, che causano paura al contatto."
+    "name": "Assorbitore di incantesimi",
+    "description": "Bordone protetto che inghiotte gli incantesimi\ne li trattiene. Fuoco, infligge Caldo."
   },
   "307": {
-    "name": "Lama Spezzaincantesimi",
-    "description": "Una spada cristallina magica che assorbe gli\nincantesimi lanciati contro il suo portatore."
+    "name": "Bordone del drago",
+    "description": "Bordone a testa di drago che presta potere\nmagico. Colpisce con Sacro."
   },
   "308": {
-    "name": "Bastone di corno di unicorno",
-    "description": "Un bastone fatto dal corno di un leggendario\nunicorno, con una potente magia curativa."
+    "name": "Bordone del cronomante",
+    "description": "Bordone di tempo cristallizzato che rallenta\nil nemico. Fuoco, infligge Caldo."
   },
   "309": {
-    "name": "Lama del pilastro a T",
-    "description": "Una lama di pietra impossibilmente precisa proveniente\nda Göbekli Tepe, scolpita con pittogrammi di animali."
+    "name": "Bordone di barriera",
+    "description": "Bordone che alza barriere su chi lo porta\ne sugli alleati. Tuono, da statico."
   },
   "310": {
-    "name": "Bastone totemico dell'avvoltoio",
-    "description": "Un bastone sormontato dall'avvoltoio scolpito di Göbekli\nTepe, che permette la comunione con gli spiriti antichi."
+    "name": "Bordone di gravita",
+    "description": "Bordone che piega la gravita per schiacciare\no sollevare. Colpisce con Ghiaccio."
   },
   "311": {
-    "name": "Pugni dello Spirito della Volpe",
-    "description": "Guanti di pietra scolpiti con i simboli della volpe di Göbekli\nTepe, che conferiscono velocità e astuzia soprannaturali."
+    "name": "Bordone scudo mentale",
+    "description": "Bordone che protegge gli alleati e rimanda\nil danno PSI. Fuoco, infligge Caldo."
   },
   "312": {
-    "name": "Fionda Stellare",
-    "description": "Una misteriosa fionda di Göbekli Tepe che trasforma pietre\nordinarie in devastanti proiettili di energia stellare."
+    "name": "Sfera arcana",
+    "description": "Sfera che protegge chi la porta e lancia\ndardi arcani. Maledetto, puo avvelenare."
   },
   "313": {
-    "name": "Martello totemico del cinghiale",
-    "description": "Un massiccio martello di pietra scolpito con i simboli del\ncinghiale di Göbekli Tepe, che incanala la forza primordiale."
+    "name": "Bordone proiettore mentale",
+    "description": "Bordone che getta i pensieri di chi lo porta\nnella mente del nemico. Fuoco."
   },
   "314": {
-    "name": "Richiamo del serpente",
-    "description": "Una lancia con la punta in pietra scolpita di Göbekli\nTepe che evoca spiriti di serpenti quando viene lanciata."
+    "name": "Bordone della fortezza mentale",
+    "description": "Bordone che mura la mente.\nColpisce con Maledetto."
   },
   "315": {
-    "name": "Pendolo cosmico",
-    "description": "Un misterioso flagello di Göbekli Tepe con incisioni\nastronomiche che distorce lo spazio intorno ad esso."
+    "name": "Bordone del guardiano elementale",
+    "description": "Bordone protetto che blocca un elemento\nalla volta. Maledetto, puo avvelenare."
   },
   "316": {
-    "name": "Mannaia dell'anima",
-    "description": "Un'ascia cerimoniale di Göbekli Tepe che taglia\nsia la materia fisica che l'energia spirituale."
+    "name": "Bordone totem dell'avvoltoio",
+    "description": "Bordone sormontato dall'avvoltoio di Gobekli\nTepe. Tuono, infligge Statico."
   },
   "317": {
-    "name": "Artigli della gru",
-    "description": "Artigli rituali di Göbekli Tepe che permettono a\nchi li indossa di assumere aspetti della sacra gru."
+    "name": "Corona amplificatrice psichica",
+    "description": "Cerchietto che getta il pensiero come arma\ne protegge la mente. Ghiaccio."
   },
   "318": {
-    "name": "Arco totemico del toro",
-    "description": "Un arco intagliato in pietra impossibile,\nornato con le sculture di toro di Göbekli Tepe."
+    "name": "Verga dell'allineamento celeste",
+    "description": "Bordone di Gobekli Tepe coronato di sole\ne luna. Colpisce con Sacro."
   },
   "319": {
-    "name": "Tagliastelle",
-    "description": "Una lama curva di Göbekli Tepe con incisi\nschemi di costellazioni dimenticate."
+    "name": "Amplificatore tossico EHI",
+    "description": "Bordone di petrolio volatile. Amplifica la\nmagia e avvelena chi lo porta. Maledetto."
   },
   "320": {
-    "name": "Disco portale",
-    "description": "Una strana arma circolare di Göbekli Tepe che crea\nportali quando viene lanciata, tornando al portatore."
+    "name": "Bordone arcano di Varlenia",
+    "description": "Bordone dorato di acciaio di Varlenia che\namplifica la magia. Colpisce con Tuono."
   },
   "321": {
-    "name": "Cercatore di conoscenza",
-    "description": "Un misterioso pugnale di Göbekli Tepe che rivela\nconoscenze nascoste quando il sangue tocca la sua lama."
+    "name": "Codice proibito EHI",
+    "description": "Bordone che racchiude il sapere di ogni\nciviltà antica. Invecchia chi lo porta."
   },
   "322": {
-    "name": "Asta dell'allineamento celestiale",
-    "description": "Un bastone di Göbekli Tepe coronato da sculture del\nsole e della luna, che controlla le energie celestiali."
+    "name": "Bordone dell'eternita",
+    "description": "Bordone che racchiude la saggezza dei secoli\ne potere senza limite. Colpisce Sacro."
   },
   "323": {
-    "name": "Lancia a gravità",
-    "description": "Una lancia dall'aspetto primitivo ma tecnologicamente\navanzata di Göbekli Tepe in grado di controllare la gravità."
+    "name": "Onniscienza petrolifera EHI",
+    "description": "Bordone che racchiude tutto il sapere nato\ndal petrolio. Colpisce con Pietra."
   },
   "324": {
-    "name": "Spadone di pietra del cielo",
-    "description": "Una massiccia spada di pietra di Göbekli Tepe che è impossibilmente\nleggera, incisa con conoscenze astronomiche perdute."
+    "name": "Bordone della forza universale",
+    "description": "Bordone che incanala le forze fondamentali.\nColpisce con Sacro."
   },
   "325": {
-    "name": "Tocco di fasatura",
-    "description": "Guanti di Göbekli Tepe che passano attraverso la materia,\npermettendo a chi li indossa di raggiungere l'interno degli oggetti."
-  },
-  "326": {
-    "name": "Frusta di pietra liquida",
-    "description": "Una misteriosa frusta di Göbekli Tepe fatta di\nimpossibili maglie di pietra che si muove come un liquido."
-  },
-  "327": {
-    "name": "Divisore planare",
-    "description": "Un'ascia cerimoniale di Göbekli Tepe che\npuò tagliare le barriere tra i mondi."
-  },
-  "328": {
-    "name": "Proiettore di pensieri",
-    "description": "Un lanciatore scolpito nella pietra di Göbekli Tepe\nche spara dardi di energia alimentati dai pensieri."
-  },
-  "329": {
-    "name": "Manipolatore del flusso temporale",
-    "description": "Un bizzarro artefatto di Göbekli Tepe che deforma il\ntempo intorno al portatore, aumentandone la velocità."
-  },
-  "330": {
-    "name": "Proiettore di greggio EHI",
-    "description": "Un cannone industriale che spara petrolio greggio pressurizzato.\nDevastante ma estremamente instabile e può incendiare il portatore."
-  },
-  "331": {
-    "name": "Lama di petrolio EHI",
-    "description": "Una spada a motosega grondante olio che\ncorrode costantemente l'armatura del portatore."
-  },
-  "332": {
-    "name": "Amplificatore tossico EHI",
-    "description": "Un bastone contenente derivati volatili del petrolio che amplifica\nla magia ma danneggia la salute dell'utente con fumi tossici."
-  },
-  "333": {
-    "name": "Iniettori petrochimici EHI",
-    "description": "Guanti che iniettano potenziatori di prestazioni a base di olio,\naumentando notevolmente la forza ma causando gravi danni agli organi."
-  },
-  "334": {
-    "name": "Iniettore di conoscenza EHI",
-    "description": "Una balestra che spara dardi contenenti conoscenze enciclopediche."
-  },
-  "335": {
-    "name": "Maglio a compressione EHI",
-    "description": "Un massiccio martello contenente olio compresso che crea\nonde d'urto devastanti ma rallenta gravemente il portatore."
+    "name": "Bastone infernale",
+    "description": "Bastone da passeggio col pomo a teschio.\nIl fusto e un fodero. Ghiaccio, raffredda."
   },
   "336": {
-    "name": "Legatore onnisciente EHI",
-    "description": "Una frusta fatta di pagine di enciclopedia viventi che legano i nemici\ncon la conoscenza ma confondono il portatore con sussurri costanti."
+    "name": "Arco giocattolo",
+    "description": "Arco di plastica con elastico debole.\nPuo accecare."
   },
   "337": {
-    "name": "Fucile memetico EHI",
-    "description": "Un fucile che spara conoscenza cristallizzata in proiettili,\ndevastante per i nemici ma che causa perdita di memoria nell'utente."
+    "name": "Frecce deformate",
+    "description": "Fascio di frecce scadenti, aste storte\ne impennaggio mezzo staccato."
   },
   "338": {
-    "name": "Lama dell'onniscienza EHI",
-    "description": "Una spada con lama di pagine d'enciclopedia compresse alla durezza\ndel diamante. Taglia le difese ma fa impazzire chi la impugna."
+    "name": "Arco fragile",
+    "description": "Arco grezzo di legno nodoso che puo spezzarsi."
   },
   "339": {
-    "name": "Lancia a combustione EHI",
-    "description": "Una lancia con punta di olio cristallizzato che si accende\nall'impatto: esplosioni enormi, ma ustiona chi la usa."
+    "name": "Balestra a mano disallineata",
+    "description": "Balestra da pugno di legno debole che perde\nsempre la registrazione."
   },
   "340": {
-    "name": "Codice proibito EHI",
-    "description": "Un bastone contenente la conoscenza completa delle antiche civiltà, che\nconferisce un immenso potere magico ma invecchia rapidamente l'utente."
+    "name": "Balestra inaffidabile",
+    "description": "Balestra la cui noce spesso non scatta.\nPuo accecare."
   },
   "341": {
-    "name": "Artigli psicoattivi EHI",
-    "description": "Artigli infusi con una miscela di oli rari e conoscenze enciclopediche,\nche conferiscono una velocità innaturale ma causano allucinazioni."
+    "name": "Arco di asta da doccia",
+    "description": "Asta di tenda incordata con paracord.\nPuo infliggere Veleno."
   },
   "342": {
-    "name": "Cancellatore di identità EHI",
-    "description": "Un arco che spara frecce contenenti conoscenza concentrata, frantumando\nle menti ma facendo dimenticare all'utente la propria identità."
+    "name": "Arco in PVC",
+    "description": "Tubo di PVC incordato con vecchia corda.\nPuo infliggere Nausea."
   },
   "343": {
-    "name": "Petrocorruttore EHI",
-    "description": "Un'ascia con una lama di petrolio iper-compresso che taglia\nqualsiasi cosa ma corrompe lentamente il corpo del portatore."
+    "name": "Balestra di scarti",
+    "description": "Balestra artigianale di scarti e molle.\nPuo infliggere Veleno."
   },
   "344": {
-    "name": "Induttore di mal di testa EHI",
-    "description": "Una pistola che spara proiettili contenenti conoscenza enciclopedica\ncompressa, travolgendo i bersagli ma causando emicranie paralizzanti."
+    "name": "Arco seme",
+    "description": "Arco cresciuto da un seme di lama.\nPuo accecare."
   },
   "345": {
-    "name": "Attentatore suicida EHI",
-    "description": "Un flagello con teste contenenti petrolio volatile\nche esplode all'impatto, danneggiando tutti."
+    "name": "Arco corto",
+    "description": "Arco corto da caccia. Puo accecare."
   },
   "346": {
-    "name": "Dissolvi carne EHI",
-    "description": "Un pugnale con una lama fatta di olio luccicante che attraversa\nle armature ma dissolve lentamente la carne del portatore."
+    "name": "Arco lungo",
+    "description": "Lungo arco da guerra dalla trazione pesante."
   },
   "347": {
-    "name": "Emorragia cerebrale EHI",
-    "description": "Un lanciatore che spara proiettili con l'essenza distillata di un'intera\nbiblioteca. Travolge il nemico e gli fa sanguinare il cervello."
+    "name": "Arco composito",
+    "description": "Arco ricurvo delle steppe, tirato da cavallo.\nPuo accecare."
   },
   "348": {
-    "name": "Pugni dell'apocalisse EHI",
-    "description": "Guanti che contengono compresse tutte le riserve mondiali di petrolio.\nDanno una forza divina ma degenerano le cellule."
+    "name": "Chu-Ko-Nu",
+    "description": "Balestra a ripetizione cinese.\nPuo accecare."
   },
   "349": {
-    "name": "Onniscienza del petrolio EHI",
-    "description": "Un bastone contenente la completa conoscenza\ndell'universo basata sul petrolio."
+    "name": "Balestra a rete",
+    "description": "Balestra i cui dardi si aprono in reti."
   },
   "350": {
-    "name": "Bastone proiettore mentale",
-    "description": "Un bastone che amplifica le abilità psichiche, permettendo al portatore\ndi proiettare attacchi mentali direttamente nelle menti dei nemici."
+    "name": "Arco compound",
+    "description": "Arco compound in fibra di carbonio.\nPuo accecare."
   },
   "351": {
-    "name": "Guanti telecinetici",
-    "description": "Guanti d'arme che amplificano le capacità telecinetiche, \npermettendo di colpire i nemici a distanza con la forza psichica."
+    "name": "Balestra multidardo",
+    "description": "Balestra caricata con dardi speciali.\nColpisce con Tuono."
   },
   "352": {
-    "name": "Bordo psionico",
-    "description": "Una lama di cristallo che incanala energia psichica, \ntagliando difese mentali e armature fisiche allo stesso modo."
+    "name": "Arco compound avanzato",
+    "description": "Arco compound su un moderno sistema\ndi carrucole. Puo accecare."
   },
   "353": {
-    "name": "Arco freccia mentale",
-    "description": "Un arco che scocca frecce di pura energia mentale, \naggirando le difese fisiche per colpire la psiche del bersaglio."
+    "name": "Arco del gelo",
+    "description": "Arco che scocca frecce di ghiaccio.\nColpisce con Ghiaccio e puo raffreddare."
   },
   "354": {
-    "name": "Corona psichica",
-    "description": "Un bracciale che concentra l'energia mentale in \ndevastanti attacchi psichici contro tutti i nemici vicini."
+    "name": "Arco eterico",
+    "description": "Arco che forma le sue frecce dalla magia.\nColpisce con Tuono."
   },
   "355": {
-    "name": "Amplificatore di onde cerebrali",
-    "description": "Un dispositivo che amplifica e focalizza le onde cerebrali \nin raggi concentrati di energia mentale distruttiva."
+    "name": "Arco dalla faretra infinita",
+    "description": "Arco che trae frecce dall'aria e non si\nsvuota mai. Ghiaccio, puo raffreddare."
   },
   "356": {
-    "name": "Guanti Spaccacristalli",
-    "description": "Guanti incastonati di cristalli che incanalano la \nforza telecinetica per schiacciare gli avversari dall'interno."
+    "name": "Arco del drago",
+    "description": "Arco da guerra incordato con crine di drago."
   },
   "357": {
-    "name": "Ladro di memoria",
-    "description": "Un pugnale che assorbe i pensieri e i ricordi di\nchi ferisce, trasferendo il sapere a chi lo impugna."
+    "name": "Balestra a dardi infiniti",
+    "description": "Balestra che non va mai ricaricata.\nColpisce con Fuoco."
   },
   "358": {
-    "name": "Bastone Scudo Mentale",
-    "description": "Un bastone che crea potenti campi di forza per \nproteggere gli alleati riflettendo i danni PSI."
+    "name": "Balestra arcana",
+    "description": "Balestra che scocca dardi di magia pura.\nGhiaccio, infligge Freddo."
   },
   "359": {
-    "name": "Assorbitore di incantesimi",
-    "description": "Un bastone avvolto in sigilli magici che assorbe \ngli incantesimi ostili e ne immagazzina l'energia."
+    "name": "Arco d'osso di drago",
+    "description": "Arco intagliato in osso di drago antico.\nNon manca il bersaglio. Puo accecare."
   },
   "360": {
-    "name": "Lama Spezzaguardia",
-    "description": "Una spada forgiata con incantamenti concepiti \nappositamente per recidere protezioni e sigilli magici."
+    "name": "Arco di frecce mentali",
+    "description": "Arco che scocca frecce di pensiero oltre\nogni armatura. Tuono, da statico."
   },
   "361": {
-    "name": "Balestra Spezzaincantesimi",
-    "description": "Una balestra incantata che scaglia dardi capaci di sconvolgere \nl'energia magica, annullando per un po' i poteri del bersaglio."
+    "name": "Balestra spezzaincanti",
+    "description": "Balestra i cui dardi tagliano il bersaglio\nfuori dalla sua magia. Maledetto."
   },
   "362": {
-    "name": "Maglio schiacciaincantesimi",
-    "description": "Un martello intriso di proprietà antimagiche che \nfrantuma con facilità costrutti e barriere magiche."
+    "name": "Arco delle corde d'anima",
+    "description": "Arco che forma frecce dalla vita stessa\ndell'arciere. Fuoco, infligge Caldo."
   },
   "363": {
-    "name": "Bastone barriera",
-    "description": "Un bastone che erige potenti barriere di energia magica \nper proteggere dal male chi lo impugna e i suoi alleati."
+    "name": "Arco di luce lunare",
+    "description": "Arco tagliato nella luce della luna.\nMaledetto, puo avvelenare."
   },
   "364": {
-    "name": "Lama arcana",
-    "description": "Una spada con una lama di pura energia magica che \ninfligge devastanti danni arcani."
+    "name": "Arco cercaincanti",
+    "description": "Arco le cui frecce cercano il bersaglio.\nColpisce con Fuoco."
   },
   "365": {
-    "name": "Arco cercatore di incantesimi",
-    "description": "Un arco che scocca frecce di energia magica concentrata \nche inseguono e colpiscono i loro bersagli."
+    "name": "Arco totem del toro",
+    "description": "Arco di pietra inciso coi tori di Gobekli\nTepe. Colpisce con Fuoco."
   },
   "366": {
-    "name": "Guanti dello scudo arcano",
-    "description": "Guanti d'arme che creano scudi di pura energia magica \na difesa dagli attacchi fisici e magici."
+    "name": "Cancellatore d'identita EHI",
+    "description": "Arco le cui frecce portano sapere compresso.\nRompe le menti, anche quella dell'arciere."
   },
   "367": {
-    "name": "Bastone del guardiano elementale",
-    "description": "Un bastone imbevuto di magia protettiva capace di \nerigere barriere contro specifici attacchi elementali."
+    "name": "Arco di energia di Varlenia",
+    "description": "Arco dorato di acciaio di Varlenia flessibile.\nColpisce con Tuono."
   },
   "368": {
-    "name": "Disintegralama divina",
-    "description": "Una spada dorata che incanala la magia divina per abbattere\nil male e i non morti con potere sacro."
-  },
-  "369": {
-    "name": "Lancia protettiva",
-    "description": "Una lancia avvolta in incantamenti protettivi che \ncreano campi di magia difensiva attorno a chi la impugna."
-  },
-  "370": {
-    "name": "Sfera Arcana",
-    "description": "Una sfera magica che circonda chi la porta di \nenergia protettiva mentre scaglia attacchi arcani."
-  },
-  "371": {
-    "name": "Lama drena-incantesimi",
-    "description": "Una lama nera che assorbe gli attacchi magici e \nli converte in ulteriore potenza di taglio."
-  },
-  "372": {
-    "name": "Amplificatore psichico",
-    "description": "Un diadema che proietta i pensieri di chi lo indossa come \nattacchi psichici, fornendo al contempo scudi mentali."
-  },
-  "373": {
-    "name": "Perfora-mente",
-    "description": "Un fucile che spara proiettili di energia psichica\nconcentrata capaci di perforare le difese mentali."
-  },
-  "374": {
-    "name": "Artigli strappa-mente",
-    "description": "Artigli di cristallo che incanalano energia psichica per \nsquarciare tanto le armature quanto le barriere mentali."
-  },
-  "375": {
-    "name": "Frusta dei pensieri",
-    "description": "Una frusta di energia mentale concentrata che \nsferza tanto il corpo quanto la mente."
-  },
-  "376": {
-    "name": "Schiacciapensieri",
-    "description": "Un martello che frantuma non solo le forme fisiche ma\ni pensieri stessi dei suoi bersagli."
-  },
-  "377": {
-    "name": "Guanti della manipolazione mentale",
-    "description": "Guanti che permettono di penetrare direttamente \nnella mente dei nemici, estraendone o alterandone i pensieri."
-  },
-  "378": {
-    "name": "Disgregatore neurale",
-    "description": "Un'arma che scaglia dardi concentrati di energia mentale \ndirettamente nella mente del bersaglio."
-  },
-  "379": {
-    "name": "Bastone della fortezza mentale",
-    "description": "Un bastone che erige barriere impenetrabili di pura\nenergia mentale."
+    "name": "Emorragia cerebrale EHI",
+    "description": "Lanciatore che spara proiettili pieni di una\nbiblioteca. Fa sanguinare il cervello."
   },
   "380": {
-    "name": "Lama grezza di rottami",
-    "description": "Una lama rozza ricavata da rottami affilati legati a un tubo con del\nnastro isolante. Può infliggere Veleno."
+    "name": "Fionda sbilanciata",
+    "description": "Fionda artigianale dalla forcella storta.\nPuo accecare."
   },
   "381": {
-    "name": "Mazza da baseball chiodata",
-    "description": "Una mazza da baseball avvolta in filo spinato e chiodi arrugginiti per\nun danno maggiore. Può infliggere Veleno."
+    "name": "Fionda elastica",
+    "description": "Fionda di cuoio scadente che si allunga.\nPuo accecare."
   },
   "382": {
-    "name": "Mazza tubo",
-    "description": "Uno spezzone di tubo con una pesante valvola fissata a un'estremità, una\nmazza di fortuna. Può infliggere Oleoso."
+    "name": "Cerbottana forata",
+    "description": "Cerbottana di canna crepata che perde aria."
   },
   "383": {
-    "name": "Fionda spazzatura",
-    "description": "Una fionda artigianale fatta con un ramo biforcuto e gomma ritagliata da\nvecchi pneumatici. Può infliggere Oleoso."
+    "name": "Fionda di gruccia",
+    "description": "Una gruccia e degli elastici.\nPuo infliggere Oleoso."
   },
   "384": {
-    "name": "Lancia-scopa",
-    "description": "Una lancia grezza fatta con un manico di scopa e un coltello da cucina\nfissato in punta col nastro adesivo. Può infliggere Veleno."
+    "name": "Fionda di scarti",
+    "description": "Ramo biforcuto con gomma di copertone.\nPuo infliggere Oleoso."
   },
   "385": {
-    "name": "Ascia coprimozzo",
-    "description": "Un'ascia rozza ricavata da un pezzo d'auto affilato fissato a un manico\ndi legno. Può infliggere Oleoso."
+    "name": "Fionda di tubo",
+    "description": "Tubo biforcuto con camera d'aria.\nPuo infliggere Oleoso."
   },
   "386": {
-    "name": "Fiocco in PVC",
-    "description": "Un arco di fortuna costruito con un tubo in PVC e una corda ricavata da\nuna fune sfilacciata. Può infliggere Nausea."
+    "name": "Pistola a spiedini",
+    "description": "Pistola giocattolo che spara spiedini.\nPuo infliggere Veleno."
   },
   "387": {
-    "name": "Nocche di vetro",
-    "description": "Guanti irti di vetri rotti e frammenti metallici conficcati, per pugni\ndevastanti. Può infliggere Veleno."
+    "name": "Torcia a lacca",
+    "description": "Bomboletta di lacca con un accendino.\nColpisce Fuoco e puo infliggere Nausea."
   },
   "388": {
-    "name": "Bici-flagello",
-    "description": "Una catena fatta di pezzi di bicicletta con un lucchetto all'estremità,\nusata come flagello. Può infliggere Oleoso."
+    "name": "Sparachiodi a graffette",
+    "description": "Sparapunti che sputa schegge di metallo.\nPuo infliggere Veleno."
   },
   "389": {
-    "name": "Balestra di scarto",
-    "description": "Una balestra artigianale fatta di legname di recupero, molle e pezzi di\nmetallo. Può infliggere Veleno."
+    "name": "Dardi di pietra",
+    "description": "Dardi con la punta di pietra scheggiata.\nColpisce con Pietra."
   },
   "390": {
-    "name": "Martello di cemento",
-    "description": "Una mazza da fabbro con pezzi di cemento ancora attaccati alla testa,\nper un peso maggiore. Colpisce con Petro e può infliggere Nausea."
+    "name": "Fionda di fibra",
+    "description": "Fionda intrecciata con fibre vegetali."
   },
   "391": {
-    "name": "Artigli CD",
-    "description": "Lamette e schegge di CD rotti fissate a dei guanti senza dita, per\nattacchi laceranti. Può infliggere Veleno."
+    "name": "Dardo da propulsore",
+    "description": "Dardo leggero lanciato con un propulsore."
   },
   "392": {
-    "name": "Innaffiafiamme",
-    "description": "Un lanciafiamme rozzo fatto con una pompa da giardino, un accendino e\ndella benzina. Colpisce con Fuoco e può infliggere Nausea."
+    "name": "Grimorie seme",
+    "description": "Grimorie cresciuto da un seme di lama.\nGhiaccio, infligge Freddo."
   },
   "393": {
-    "name": "Mocio chiodato",
-    "description": "Un corto bastone ricavato da un vecchio manico di mocio con dei chiodi\npiantati in punta. Colpisce con Ghiaccio e può infliggere Veleno."
+    "name": "Bolas",
+    "description": "Pesi di pietra su corde, lanciati per\nirretire. Puo accecare."
   },
   "394": {
-    "name": "Pistola tubo",
-    "description": "Una pistola di fortuna assemblata con tubi, legno e molle, che spara\npiccoli rottami metallici. Può infliggere Oleoso."
+    "name": "Fionda",
+    "description": "Fionda che scaglia una pietra con forza.\nPuo accecare."
   },
   "395": {
-    "name": "Coltello per segnali di stop",
-    "description": "Una lama frastagliata ricavata da un segnale di stop rotto fissato a un\nmanico di legno. Può infliggere Veleno."
+    "name": "Boomerang",
+    "description": "Bastone da lancio ricurvo che torna indietro.\nPuo accecare."
   },
   "396": {
-    "name": "Frusta di cavi",
-    "description": "Una frusta fatta di cavi elettrici e prolunghe legati insieme. Può\ninfliggere Oleoso."
+    "name": "Dardo a corda",
+    "description": "Dardo cinese appesantito su una lunga corda.\nPuo accecare."
   },
   "397": {
-    "name": "Machete a balestra",
-    "description": "Una spada rozza ricavata dalla balestra di un'auto, affilata su un solo\nlato. Può infliggere Oleoso."
+    "name": "Chakram",
+    "description": "Anello da lancio col bordo affilato."
   },
   "398": {
-    "name": "Pistola a pressione",
-    "description": "Un fucile arpione artigianale fatto con un'idropulitrice, con barre di\nmetallo come munizioni. Può infliggere Oleoso."
+    "name": "Cannone al peperoncino",
+    "description": "Bomboletta che spruzza capsaicina concentrata.\nPuo accecare."
   },
   "399": {
-    "name": "Lancia macerie",
-    "description": "Un lanciatore di fortuna che scaglia pezzi di cemento con tubi elastici\nda uso chirurgico. Può infliggere Nausea."
+    "name": "Shongo",
+    "description": "Pesante coltello da lancio africano a piu\nlame. Puo accecare."
   },
   "400": {
-    "name": "Tavola chiodata",
-    "description": "Un fascio di chiodi arrugginiti fissati in cima a una gamba di tavolo\ncon fil di ferro e nastro adesivo. Può infliggere Veleno."
+    "name": "Disco che torna",
+    "description": "Disco affilato che torna dopo aver colpito."
   },
   "401": {
-    "name": "Artigli telaio",
-    "description": "Strisce di metallo dal telaio di un'auto, affilate e attaccate a guanti\nda giardinaggio. Può infliggere Oleoso."
+    "name": "Cerbottana avvelenata",
+    "description": "Cerbottana caricata con dardi avvelenati."
   },
   "402": {
-    "name": "Spada a lama di sega",
-    "description": "Una tavola di legno con lame di sega arrugginite attaccate per creare\nuna spada rudimentale. Può infliggere Veleno."
+    "name": "Granata di ghisa",
+    "description": "Guscio di ghisa pieno di polvere da sparo.\nPuo accecare."
   },
   "403": {
-    "name": "Pistola a pompa",
-    "description": "Una pistola ad aria fatta con tubi in PVC e una pompa da bicicletta.\nColpisce con Vento e può infliggere Oleoso."
+    "name": "Balestra",
+    "description": "Balestra che scocca dardi con archi robusti.\nPuo accecare."
   },
   "404": {
-    "name": "Club delle barre d'armatura",
-    "description": "Un pezzo di tondino con un pezzo di cemento ancora attaccato a\nun'estremità. Può infliggere Nausea."
+    "name": "Arco di mithril",
+    "description": "Arco che scocca frecce con punta di mithril."
   },
   "405": {
-    "name": "Pugno di frammento di specchio",
-    "description": "Frammenti di specchio attaccati a nastro adesivo avvolto intorno alle\nmani. Può infliggere Nausea."
+    "name": "Lanciadischi",
+    "description": "Lanciatore che scaglia dischi affilati."
   },
   "406": {
-    "name": "Chiave modificata",
-    "description": "Una grande chiave inglese con dadi e bulloni saldati per danni\naddizionali. Può infliggere Oleoso."
+    "name": "Balestra esplosiva",
+    "description": "Balestra i cui dardi portano una carica.\nPuo accecare."
   },
   "407": {
-    "name": "Ascia antincendio Razor",
-    "description": "Una vecchia ascia antincendio con lame di rasoio fissate al filo con\nnastro isolante. Colpisce con Fuoco e può infliggere Veleno."
+    "name": "Disgregatore EMP",
+    "description": "Impulso portatile che uccide elettronica\ne impianti. Acqua, infligge Bagnato."
   },
   "408": {
-    "name": "Fionda a tubo",
-    "description": "Una fionda elastica fatta da un tubo di metallo biforcuto e gomma di\ncamera d'aria. Può infliggere Oleoso."
+    "name": "Balestra tattica",
+    "description": "Balestra moderna con ottica e flettenti\nin carbonio. Puo accecare."
   },
   "409": {
-    "name": "Rasoio mocio",
-    "description": "Un mocio con filo spinato avvolto intorno alla testa per attacchi\nlaceranti. Colpisce con Ghiaccio e può infliggere Veleno."
+    "name": "Disturbatore neurale",
+    "description": "Emettitore di campo che scombina i nervi.\nColpisce con Tuono."
   },
   "410": {
-    "name": "Stocco antenna",
-    "description": "Un'antenna d'auto rinforzata con nastro e una punta affilata per rapidi\nattacchi di stoccata. Può infliggere Oleoso."
+    "name": "Lanciacariche a tempo",
+    "description": "Lanciatore per cariche a tempo, ritardo\nregolato a mano."
   },
   "411": {
-    "name": "Padella fedele",
-    "description": "Una padella con il manico rinforzato da nastro adesivo, semplice ma\nefficace. Può infliggere Oleoso."
+    "name": "Dispositivo di guerra cibernetica",
+    "description": "Dispositivo che rivolta i sistemi nemici\ncontro i loro. Colpisce con Fuoco."
   },
   "412": {
-    "name": "Sparachiodi modificata",
-    "description": "Una sparachiodi modificata che spara scarti metallici a una velocità\nsorprendente. Può infliggere Veleno."
+    "name": "Fionda stellare",
+    "description": "Fionda di Gobekli Tepe che fa di un sasso\nfuoco di stella. Puo accecare."
   },
   "413": {
-    "name": "Mazza da hockey con filo spinato",
-    "description": "Un bastone da hockey con la lama avvolta in filo spinato e scarti\nmetallici. Colpisce con Acqua e può infliggere Veleno."
+    "name": "Lanciatore di sciame di droni",
+    "description": "Rastrelliera da spalla che libera piccoli\ndroni d'attacco."
   },
   "414": {
-    "name": "Guanto da golf",
-    "description": "Un guanto da golf con tee da golf cuciti attraverso di esso, punte verso\nl'esterno, per colpire di pugno. Può infliggere Nausea."
+    "name": "Iniettore di sapere EHI",
+    "description": "Balestra i cui dardi portano biblioteche\nintere. Colpisce Acqua e puo bagnare."
   },
   "415": {
-    "name": "Sturalavandini mortale",
-    "description": "Uno stantuffo da bagno modificato con metallo affilato apposto alla\nventosa di gomma. Può infliggere Nausea."
-  },
-  "416": {
-    "name": "Torcia per lacca per capelli",
-    "description": "Una bomboletta di lacca per capelli con un accendino attaccato, che crea\nun piccolo lanciafiamme. Colpisce con Fuoco e può infliggere Nausea."
-  },
-  "417": {
-    "name": "Righello sovrano",
-    "description": "Un righello di legno rinforzato con strisce di metallo e affilato fino a\nuna punta. Può infliggere Veleno."
-  },
-  "418": {
-    "name": "Segnaletica stradale",
-    "description": "Un palo di segnale stradale sradicato dal terreno, ancora con il cemento\nalla base. Può infliggere Nausea."
-  },
-  "419": {
-    "name": "Tubo riempito di sabbia",
-    "description": "Un pezzo di tubo da giardino riempito di sabbia e sigillato ad entrambe\nle estremità. Può infliggere Nausea."
-  },
-  "420": {
-    "name": "Bottiglia rotta",
-    "description": "Una bottiglia rotta con l'estremità seghettata avvolta in un panno come\nimpugnatura. Può infliggere Veleno."
-  },
-  "421": {
-    "name": "Arco da doccia",
-    "description": "Un semplice arco fatto da una barra per tenda da doccia piegata e\nparacord. Può infliggere Veleno."
-  },
-  "422": {
-    "name": "Ascia tosaerba",
-    "description": "Una lama di tosaerba attaccata a un manico di legno con bulloni e filo\nmetallico. Può infliggere Oleoso."
-  },
-  "423": {
-    "name": "Chiavi adesive",
-    "description": "Chiavi incastrate tra le dita con nastro per fissarle in posizione. Può\ninfliggere Veleno."
-  },
-  "424": {
-    "name": "Fionda gruccia",
-    "description": "Una semplice fionda fatta da un appendiabiti in filo metallico e\nelastici. Può infliggere Oleoso."
-  },
-  "425": {
-    "name": "Mannaia da cucina",
-    "description": "Una mannaia da carne con il manico avvolto in nastro antiscivolo per un\nmigliore controllo. Può infliggere Veleno."
-  },
-  "426": {
-    "name": "Stampella chiodata",
-    "description": "Una stampella con chiodi conficcati nella parte superiore e rinforzata\ncon nastro adesivo. Colpisce con Fuoco e può infliggere Veleno."
+    "name": "Disco portale",
+    "description": "Disco di Gobekli Tepe che apre un portale\ndove cade. Tuono, puo dare statico."
   },
   "427": {
-    "name": "Ombrello a punta",
-    "description": "Un ombrello con estremità affilate sulle punte delle stecche. Colpisce\ncon Fuoco e può infliggere Nausea."
+    "name": "Pistola a dardi con ventose",
+    "description": "Pistola a dardi con ventose al posto\ndelle punte."
   },
   "428": {
-    "name": "Pistola a tappo modificata",
-    "description": "Una pistola giocattolo a innesco modificata per sparare piccoli\nproiettili metallici. Può infliggere Nausea."
+    "name": "Pistola inaffidabile",
+    "description": "Pistola di pezzi scadenti. Si inceppa\ne fa cilecca."
   },
   "429": {
-    "name": "Artigli da taglio da giardino",
-    "description": "Cesoie da giardinaggio attaccate a guanti per creare artigli\nimprovvisati. Può infliggere Veleno."
+    "name": "Fucile arrugginito",
+    "description": "Vecchio fucile, canna arrugginita e otturatore\nconsumato. Puo stordire."
   },
   "430": {
-    "name": "Pala affilata",
-    "description": "Una vanga affilata lungo il bordo per creare un rudimentale strumento di\ntaglio. Può infliggere Nausea."
+    "name": "Tubo pieno di sabbia",
+    "description": "Tubo da giardino riempito di sabbia.\nPuo infliggere Nausea."
   },
   "431": {
-    "name": "Pistola a dardi a spiedo",
-    "description": "Una pistola a dardi giocattolo rinforzata e modificata per sparare\nspiedini affilati. Può infliggere Veleno."
+    "name": "Pistola a salve modificata",
+    "description": "Pistola a salve rifatta per il metallo.\nPuo infliggere Nausea."
   },
   "432": {
-    "name": "Stecca da biliardo affilata",
-    "description": "Una stecca da biliardo con un'estremità affilata fino a una punta per\nattacchi di stoccata. Può infliggere Nausea."
+    "name": "Fucile ad aria a pompa da bici",
+    "description": "Tubo di PVC su una pompa da bici.\nColpisce Vento e puo infliggere Oleoso."
   },
   "433": {
-    "name": "Mattarello a catena",
-    "description": "Un mattarello di legno avvolto da catene per un maggiore danno\nd'impatto. Può infliggere Oleoso."
+    "name": "Cannone a patate",
+    "description": "Fucile di PVC che spara colpi duri.\nPuo infliggere Nausea."
   },
   "434": {
-    "name": "Canna da pesca da combattimento",
-    "description": "Una canna da pesca modificata per lanciare piccoli pesi chiodati come\narmi. Può infliggere Oleoso."
+    "name": "Fucile di tubo",
+    "description": "Tubo, legno e molle, spara ferraglia.\nPuo infliggere Oleoso."
   },
   "435": {
-    "name": "Forbici da combattimento",
-    "description": "Un paio di forbici con i manici avvolti in nastro per una migliore\npresa. Può infliggere Veleno."
+    "name": "Fucile a pressione",
+    "description": "Idropulitrice che spara barre d'acciaio.\nPuo infliggere Oleoso."
   },
   "436": {
-    "name": "Flagello della cassetta degli attrezzi",
-    "description": "Una vecchia cassetta degli attrezzi riempita di oggetti pesanti e\nattaccata a una catena. Può infliggere Oleoso."
+    "name": "Lanciafiamme da giardino",
+    "description": "Spruzzatore, accendino e benzina.\nColpisce Fuoco e puo infliggere Nausea."
   },
   "437": {
-    "name": "Coltello da cucina",
-    "description": "Un coltello da bistecca con il manico avvolto in strisce di stoffa per\nuna migliore presa. Può infliggere Veleno."
+    "name": "Lanciamacerie",
+    "description": "Tubo chirurgico che scaglia cemento.\nPuo infliggere Nausea."
   },
   "438": {
-    "name": "Cannone di patate",
-    "description": "Una pistola a patate costruita con tubi in PVC, capace di sparare\npiccoli proiettili duri. Può infliggere Nausea."
+    "name": "Pistola seme",
+    "description": "Pistola cresciuta da un seme di lama."
   },
   "439": {
-    "name": "Cintura con fibbia pesante",
-    "description": "Una cintura con la fibbia rinforzata per essere usata come una rapida\narma da percussione. Può infliggere Nausea."
+    "name": "Cerbottana di bambu",
+    "description": "Cerbottana di bambu per dardi avvelenati."
   },
   "440": {
-    "name": "Spada economica",
-    "description": "Una spada forgiata male con un bordo smussato\ne metallo debole che si scheggia facilmente."
+    "name": "Lanciapatate deluxe",
+    "description": "Cannone a patate caricato con patate\nselezionate per scoppiare all'impatto."
   },
   "441": {
-    "name": "Ascia di bilancio",
-    "description": "Un'ascia prodotta in serie con una testa allentata\nche traballa quando viene fatta oscillare."
+    "name": "Pistola a pietra focaia",
+    "description": "Pistola antica a pietra focaia, incisa.\nPuo stordire."
   },
   "442": {
-    "name": "Bastone apprendista",
-    "description": "Un bastone fragile fatto di legno verde che\nsi piega quando viene colpito con forza."
+    "name": "Pescatore da combattimento",
+    "description": "Canna da pesca che tira su creature marine\ne le aizza. Acqua, puo bagnare."
   },
   "443": {
-    "name": "Fiocco fragile",
-    "description": "Un arco rudimentale fatto di un legno debole e\nnodoso che potrebbe spezzarsi in qualsiasi momento."
+    "name": "Pistola a ruota",
+    "description": "Pistola antica accesa da una ruota che\nfa scintille. Puo stordire."
   },
   "444": {
-    "name": "Lancia grezza",
-    "description": "Una semplice lancia con una punta di\nferro smussata che si piega all'impatto."
+    "name": "Pistola",
+    "description": "Pistola comune dal discreto potere d'arresto.\nPuo stordire."
   },
   "445": {
-    "name": "Nocche scadenti",
-    "description": "Guanti di pelle conciata male con borchie\nmetalliche che si allentano facilmente."
+    "name": "Moschetto",
+    "description": "Moschetto a colpo singolo dalla canna lunga.\nPuo stordire."
   },
   "446": {
-    "name": "Coltello da occasioni",
-    "description": "Un coltello mal bilanciato con un manico che si stacca dalla lama."
+    "name": "Cannone spara magliette estremo",
+    "description": "Cannone spara magliette regolato per buttare\ngiu un muro. Puo stordire."
   },
   "447": {
-    "name": "Mazza di metallo",
-    "description": "Una mazza con una testa fatta di metallo\nvile debole che si ammacca facilmente."
+    "name": "Moschetto a miccia",
+    "description": "Moschetto antico acceso da una miccia.\nPuo stordire."
   },
   "448": {
-    "name": "Balestra inaffidabile",
-    "description": "Una balestra con un meccanismo di scatto debole\nche spesso non lancia correttamente i dardi."
+    "name": "Revolver pepperbox",
+    "description": "Revolver con un gruppo di canne rotanti.\nPuo stordire."
   },
   "449": {
-    "name": "Artigli smussati",
-    "description": "Artigli mal fabbricati fatti di metallo\ndebole che si smussa rapidamente."
+    "name": "Pistola da duello",
+    "description": "Pistola da duello di fattura pregiata.\nPuo stordire."
   },
   "450": {
-    "name": "Pistola inaffidabile",
-    "description": "Una pistola fatta di parti scadenti che\nsi inceppa e fa cilecca frequentemente."
+    "name": "Trombone a pietra focaia",
+    "description": "Arma a pietra focaia con bocca svasata,\nper pallini o ferraglia."
   },
   "451": {
-    "name": "Martello poco maneggevole",
-    "description": "Un martello gigante che è troppo pesante\nper il suo manico di scarsa fattura."
+    "name": "Fucile taser",
+    "description": "Fucile che spara dardi elettrici.\nFuoco, infligge Caldo."
   },
   "452": {
-    "name": "Frusta screpolata",
-    "description": "Una frusta fatta di pelle conciata male\nche si screpola e si spacca facilmente."
+    "name": "Cannone a mano",
+    "description": "Antico cannone a mano cinese di ghisa."
   },
   "453": {
-    "name": "Spada da allenamento",
-    "description": "Una spada da allenamento logora con un\nbordo smussato e un manico che si scheggia."
+    "name": "Moschetto rigato",
+    "description": "Moschetto rigato dell'epoca della guerra\ncivile. Puo stordire."
   },
   "454": {
-    "name": "Fucile arrugginito",
-    "description": "Un vecchio fucile con una canna arrugginita\ne un meccanismo di sparo usurato."
+    "name": "Revolver a percussione",
+    "description": "Revolver acceso da capsule a percussione."
   },
   "455": {
-    "name": "Padella ammaccata",
-    "description": "Una padella ammaccata messa in servizio come arma improvvisata."
+    "name": "Trombone",
+    "description": "Vecchio trombone dalla rosata larga.\nPuo stordire."
   },
   "456": {
-    "name": "Fionda elastica",
-    "description": "Una fionda fatta di pelle di scarsa qualità\nche si allunga in modo imprevedibile."
+    "name": "Pistola 9mm",
+    "description": "Pistola semiautomatica 9mm di ordinanza."
   },
   "457": {
-    "name": "Mazza scheggiata",
-    "description": "Una mazza di legno con spaccature e crepe che la attraversano."
+    "name": "Fucile antisommossa",
+    "description": "Fucile che spara proiettili di gomma.\nPuo stordire."
   },
   "458": {
-    "name": "Bastone da passeggio",
-    "description": "Un bastone da passeggio riutilizzato come\narma, con un fusto debole che si flette troppo."
+    "name": "Fucile a retrocarica",
+    "description": "Fucile a retrocarica a colpo singolo."
   },
   "459": {
-    "name": "Cerbottana che perde",
-    "description": "Un tubo per dardi da soffio fatto di una canna incrinata che perde aria."
+    "name": "Fucile di Bubba",
+    "description": "Fucile a pompa, canna segata.\nPuo stordire."
   },
   "460": {
-    "name": "Ascia da pratica",
-    "description": "Un'ascia da pratica in legno con un bordo\nsmussato per scopi di addestramento."
+    "name": "Fucile a pompa",
+    "description": "Fucile a pompa, devastante a distanza\nravvicinata."
   },
   "461": {
-    "name": "Frecce deformate",
-    "description": "Frecce economiche con fusti deformati e impennaggio fissato male."
+    "name": "Revolver a sei colpi",
+    "description": "Revolver a sei colpi del vecchio west."
   },
   "462": {
-    "name": "Guantoni da boxe improvvisati",
-    "description": "Sottili guanti di pelle con piccole pepite\ndi ferro cucite che cambiano posizione."
+    "name": "Fucile a leva",
+    "description": "Fucile a leva dal ciclo rapido."
   },
   "463": {
-    "name": "Spada decorativa",
-    "description": "Una spada cerimoniale prodotta in serie\nsenza filo, destinata solo all'esposizione."
+    "name": "Fucile militare a otturatore",
+    "description": "Fucile d'ordinanza a otturatore caricato\na piastrina."
   },
   "464": {
-    "name": "Lancia a punta libera",
-    "description": "Una lancia con una punta fissata da legacci\nallentati che potrebbero sciogliersi."
+    "name": "Lanciagas",
+    "description": "Lanciatore per gas lacrimogeno e fumogeni.\nPuo stordire."
   },
   "465": {
-    "name": "Artigli di latta",
-    "description": "Artigli di metallo ricavati da stagno economico\nche si piegano facilmente fuori forma."
+    "name": "Doppietta",
+    "description": "Fucile a due canne, sparate entrambe\nin un soffio."
   },
   "466": {
-    "name": "Bacchetta del novizio",
-    "description": "Una bacchetta fatta di legno di scarsa\nqualità con una conduttività magica minima."
+    "name": "Fucile tranquillante",
+    "description": "Fucile che spara dardi tranquillanti.\nPuo stordire."
   },
   "467": {
-    "name": "Fionda irregolare",
-    "description": "Una fionda fatta a mano con una forcella\nirregolare e un elastico debole."
+    "name": "Mitra",
+    "description": "Mitra compatto ad alta cadenza di fuoco.\nPuo stordire."
   },
   "468": {
-    "name": "Falce arrugginita",
-    "description": "Una falce agricola riutilizzata come arma,\ncon un manico allentato e ruggine a macchie."
+    "name": "Fucile a otturatore",
+    "description": "Fucile a otturatore affidabile e preciso.\nPuo stordire."
   },
   "469": {
-    "name": "Flagello di legno",
-    "description": "Un flagello con una testa di legno leggera che causa danni minimi."
+    "name": "Mitra a tamburo",
+    "description": "Mitra di calibro da pistola alimentato\na tamburo. Puo stordire."
   },
   "470": {
-    "name": "Balestra a mano disallineata",
-    "description": "Una balestra a pistola fatta di legno debole\nche ha spesso bisogno di riallineamento."
+    "name": "Pistola ad aria compressa",
+    "description": "Pistola che spara capsule ad aria compressa.\nColpisce con Vento."
   },
   "471": {
-    "name": "Coltello da lancio sbilanciato",
-    "description": "Un coltello da lancio mal bilanciato che oscilla in volo."
+    "name": "Fucile a salve multiple",
+    "description": "Arma a manovella le cui canne sparano tutte\ninsieme. Puo stordire."
   },
   "472": {
-    "name": "Bende per principianti",
-    "description": "Fragili bende di pelle per le mani con\npiccoli pezzi di metallo per colpire."
+    "name": "Arma da difesa personale",
+    "description": "Arma da difesa compatta con munizioni\nspeciali. Puo stordire."
   },
   "473": {
-    "name": "Arco giocattolo",
-    "description": "Un arco giocattolo fatto di plastica\nflessibile con una corda elastica debole."
+    "name": "Paralizzatore",
+    "description": "Pistola a dardi con aghi paralizzanti.\nPuo stordire."
   },
   "474": {
-    "name": "Spada giocattolo in legno",
-    "description": "Una spada di legno usata dai bambini per le battaglie durante il gioco."
+    "name": "Mitra compatto",
+    "description": "Mitra compatto con calcio pieghevole."
   },
   "475": {
-    "name": "Bastone intagliato",
-    "description": "Un bastone con intagli grezzi che\nintendono somigliare a un bastone magico."
+    "name": "Fucile semiautomatico d'ordinanza",
+    "description": "Fucile d'ordinanza semiautomatico del tempo\ndi guerra. Puo stordire."
   },
   "476": {
-    "name": "Pistola a dardi con ventosa",
-    "description": "Una pistola a dardi che usa ventose invece di punte acuminate."
+    "name": "Pistola a due canne",
+    "description": "Pistola che spara entrambe le canne insieme."
   },
   "477": {
-    "name": "Ascia giocattolo in gommapiuma",
-    "description": "Un'ascia giocattolo in plastica con bordi\nin gommapiuma per maggiore sicurezza."
+    "name": "Mitra di guerra",
+    "description": "Mitra in acciaio stampato degli anni di\nguerra. Puo stordire."
   },
   "478": {
-    "name": "Schiacciamosche",
-    "description": "Uno scacciamosche tipicamente usato per\ngli insetti, fatto di plastica leggera."
+    "name": "Fucile d'assalto",
+    "description": "Fucile automatico militare, preciso\nanche a distanza."
   },
   "479": {
-    "name": "Baguette rafferma",
-    "description": "Un pezzo di pane diventato raffermo e duro come una roccia."
+    "name": "Revolver magnum",
+    "description": "Revolver di grosso calibro dal forte potere\nd'arresto. Puo stordire."
   },
   "480": {
-    "name": "Cuscino sarcastico",
-    "description": "Un cuscino senziente che colpisce i nemici con una forza\nsorprendente e occasionalmente sussurra loro insulti."
+    "name": "Mitragliatrice a manovella",
+    "description": "Prima mitragliatrice azionata a manovella.\nPuo stordire."
   },
   "481": {
-    "name": "Lanciatore di patate deluxe",
-    "description": "Una pistola a patate che spara patate esplosive\ngeneticamente modificate che esplodono all'impatto."
+    "name": "Carabina compatta",
+    "description": "Carabina d'assalto corta con calcio\npieghevole."
   },
   "482": {
-    "name": "Guanti spettrali del solletico",
-    "description": "Guanti che evocano mani spettrali per solleticare i nemici\nfino alla sottomissione, causando risate incontrollabili."
+    "name": "Pistola da tiro",
+    "description": "Pistola da bersaglio dalla canna lunga."
   },
   "483": {
-    "name": "Fan numero uno",
-    "description": "Un dito di gommapiuma gigante che in qualche modo colpisce con\nla forza di un maglio mentre emette suoni da cartone animato."
+    "name": "Fucile da battaglia a fuoco selettivo",
+    "description": "Fucile da battaglia di calibro pieno che\npuo sparare a raffica."
   },
   "484": {
-    "name": "Cannone per magliette",
-    "description": "Un cannone per magliette modificato che spara magliette\ncosì forte da poter abbattere le mura di un castello."
+    "name": "Taglierina ad acqua",
+    "description": "Taglierina portatile che spara un getto\nd'acqua. Acqua, puo bagnare."
   },
   "485": {
-    "name": "Pescatore combattente",
-    "description": "Una canna da pesca che cattura e trasforma in armi\ncreature marine casuali che combattano per te."
+    "name": "Fucile da combattimento",
+    "description": "Fucile tattico alimentato a tamburo."
   },
   "486": {
-    "name": "Spatola del maestro",
-    "description": "Una spatola che gira i nemici facilmente come\npancake, invertendo temporaneamente i loro comandi."
+    "name": "Cannone rotante",
+    "description": "Arma rotante le cui canne girano per tenere\nuna cadenza continua."
   },
   "487": {
-    "name": "Scettro di menta piperita",
-    "description": "Un bastone fatto di un gigantesco bastoncino di zucchero che\nspara raggi alla menta e fa profumare i nemici in modo delizioso."
+    "name": "Fucile da combattimento modulare",
+    "description": "Fucile con canne e parti intercambiabili."
   },
   "488": {
-    "name": "Soffiatore di bolle rimbalzanti",
-    "description": "Una bacchetta per bolle che crea bolle indistruttibili che\nintrappolano i nemici e li fanno rimbalzare sul campo di battaglia."
+    "name": "Lanciagranate",
+    "description": "Lanciatore basculante per proiettili da 40mm.\nPuo stordire."
   },
   "489": {
-    "name": "Duo di mazze claxon",
-    "description": "Una coppia di martelli giocattolo cigolanti che creano\nonde d'urto quando vengono fatti suonare insieme."
+    "name": "Fucile di precisione",
+    "description": "Fucile ad alta potenza per il tiro a lunga\ndistanza."
   },
   "490": {
-    "name": "Disgregatore EMP",
-    "description": "Un dispositivo a impulsi elettromagnetici portatile che\ndisabilita i sistemi elettronici e gli impianti cibernetici."
+    "name": "Fucile bullpup",
+    "description": "Fucile d'assalto con l'azione dietro\nl'impugnatura."
   },
   "491": {
-    "name": "Cannone spray al peperoncino",
-    "description": "Un contenitore spray che spara capsaicina\nconcentrata per il controllo non letale della folla."
+    "name": "Lanciafiamme",
+    "description": "Lanciatore portatile che spruzza combustibile\nacceso. Colpisce con Fuoco."
   },
   "492": {
-    "name": "Fucile taser",
-    "description": "Un'arma che spara dardi a elettroshock per\nincapacitare i bersagli in modo non letale."
+    "name": "Fucile da tiratore scelto",
+    "description": "Fucile da tiratore con canna da competizione."
   },
   "493": {
-    "name": "Lanciatore di sciami di droni",
-    "description": "Un dispositivo montato a spalla che\nlancia piccoli droni da attacco autonomi."
+    "name": "Carabina tattica",
+    "description": "Carabina moderna con slitte di montaggio.\nPuo stordire."
   },
   "494": {
-    "name": "Scudo da battaglia chiodato",
-    "description": "Uno scudo rinforzato con punte e un bordo affilato\nche può essere usato per devastanti colpi di scudo."
+    "name": "Fucile a pompa tattico",
+    "description": "Fucile a pompa bullpup compatto, devastante\nda vicino."
   },
   "495": {
-    "name": "Piccone da guerra",
-    "description": "Un martello militare con un piccone sul\nlato opposto per penetrare le armature."
+    "name": "Raggio termico",
+    "description": "Emettitore che concentra un raggio caldo\nabbastanza da fondere il metallo. Acqua."
   },
   "496": {
-    "name": "Sciabola navale",
-    "description": "Una spada navale curva progettata per\nil combattimento ravvicinato sulle navi."
+    "name": "Fucile da tiratore designato",
+    "description": "Fucile da tiratore sotto ottiche pesanti."
   },
   "497": {
-    "name": "Picca da abbordaggio",
-    "description": "Una lunga picca progettata per respingere gli assalitori sulle navi."
+    "name": "Mitragliatrice pesante",
+    "description": "Mitragliatrice militare calibro .50."
   },
   "498": {
-    "name": "Dirk navale",
-    "description": "Un pugnale corto usato dai marinai per il\ncombattimento a bordo e i lavori di utilità."
+    "name": "Fucile laser",
+    "description": "Fucile che spara un raggio di luce\nconcentrato. Colpisce con Ghiaccio."
   },
   "499": {
-    "name": "Spaccaspada",
-    "description": "Una spada specializzata progettata per\ncatturare e spezzare le lame nemiche."
+    "name": "Fucile al plasma",
+    "description": "Fucile a energia che spara dardi di plasma.\nTuono, infligge Statico."
   },
   "500": {
-    "name": "Francesca",
-    "description": "Un'ascia da lancio franca progettata sia per il\ncorpo a corpo che per il combattimento a distanza."
+    "name": "Cannone da braccio cibernetico",
+    "description": "Cannone impiantato nel braccio che spara\nscariche d'urto. Colpisce con Fuoco."
   },
   "501": {
-    "name": "Falcione",
-    "description": "Un'arma inastata con una lama curva, efficace contro la cavalleria."
+    "name": "Fucile di precisione a otturatore",
+    "description": "Fucile a otturatore di precisione, canna\nda competizione."
   },
   "502": {
-    "name": "Mazza da guerra flangiata",
-    "description": "Una pesante mazza con testa flangiata\nprogettata per frantumare le armature."
+    "name": "Sistema a raggio ottico",
+    "description": "Impianti oculari che sparano raggi\nfocalizzati. Colpisce con Maledetto."
   },
   "503": {
-    "name": "Frusta in cavo d'acciaio",
-    "description": "Una frusta fatta di cavo d'acciaio\nintrecciato in grado di tagliare le armature."
+    "name": "Mitragliatrice leggera",
+    "description": "Mitragliatrice leggera per il fuoco\ndi soppressione. Puo stordire."
   },
   "504": {
-    "name": "Scrambler neurale",
-    "description": "Un dispositivo che genera un campo elettromagnetico\nlocalizzato per disturbare l'attività neurale."
+    "name": "Fucile anti-materiale",
+    "description": "Fucile di grosso calibro per il tiro\na lunga distanza sui mezzi."
   },
   "505": {
-    "name": "Lama di fase",
-    "description": "Una spada che esiste parzialmente in un'altra dimensione,\npermettendole di passare attraverso le difese."
+    "name": "Lanciarazzi",
+    "description": "Lanciarazzi da spalla.\nPuo stordire."
   },
   "506": {
-    "name": "Lama simbiotica",
-    "description": "Un'arma vivente che si lega al suo\nportatore, diventando più forte nel tempo."
+    "name": "Lanciagranate intelligente",
+    "description": "Lanciagranate con spolette programmabili.\nPuo stordire."
   },
   "507": {
-    "name": "Martello di Chronos",
-    "description": "Un'arma che rallenta il tempo intorno ai bersagli quando colpisce."
+    "name": "Rastrelliera di micromissili",
+    "description": "Rastrelliera da spalla di micromissili\nguidati. Colpisce con Ghiaccio."
   },
   "508": {
-    "name": "Guanti metamorfici",
-    "description": "Guanti che possono trasformarsi in varie forme di armi a piacimento."
+    "name": "Razzo monouso",
+    "description": "Lanciarazzi monocolpo, gettato dopo il tiro.\nColpisce con Pietra."
   },
   "509": {
-    "name": "Fucile da combattimento modulare",
-    "description": "Un fucile con canne intercambiabili e componenti\nmodulari per diverse situazioni di combattimento."
+    "name": "Fucile di precisione pesante",
+    "description": "Fucile di precisione semiautomatico calibro\n.50. Puo stordire."
   },
   "510": {
-    "name": "Balestra multi-dardo",
-    "description": "Una balestra che spara diversi tipi di\ndardi specializzati per vari effetti."
+    "name": "Mitragliatrice su bipiede",
+    "description": "Mitragliatrice pesante montata su bipiede.\nPuo stordire."
   },
   "511": {
-    "name": "Dispositivo di guerra informatica",
-    "description": "Un dispositivo che hacker i sistemi\nnemici e li rivolta contro i loro alleati."
+    "name": "Amplificatore di onde cerebrali",
+    "description": "Dispositivo che concentra le onde cerebrali\nin un raggio distruttivo. Sacro."
   },
   "512": {
-    "name": "Martello a catena variabile",
-    "description": "Un martello meteorico con lunghezza della catena\nestensibile per attacchi a raggio variabile."
+    "name": "Arsenale polimorfo",
+    "description": "Arma a controllo neurale che passa da lama\na fucile. Colpisce con Tuono."
   },
   "513": {
-    "name": "Arco a faretra infinita",
-    "description": "Un arco che crea frecce dall'energia\nambientale, senza mai esaurire le munizioni."
+    "name": "Missile terra-aria portatile",
+    "description": "Missile terra-aria lanciato da spalla."
   },
   "514": {
-    "name": "Disco di ritorno",
-    "description": "Un'arma a lama circolare che torna al\nlanciatore dopo aver colpito i bersagli."
+    "name": "Perforatore mentale",
+    "description": "Fucile che spara proiettili di forza psichica\noltre ogni difesa. Ghiaccio, raffredda."
   },
   "515": {
-    "name": "Frusta energetica",
-    "description": "Una frusta fatta di pura energia che può estendersi a grandi lunghezze."
+    "name": "Disgregatore neurale",
+    "description": "Arma che spara dardi di pensiero nella mente\ndel nemico. Tuono, da statico."
   },
   "516": {
-    "name": "Lanciatore di esplosivi a tempo",
-    "description": "Un lanciatore che spara cariche esplosive a\ntempo con ritardi di detonazione regolabili."
+    "name": "Cannone a bobine",
+    "description": "Cannone a bobine portatile mosso da\nelettromagneti. Acqua, infligge Bagnato."
   },
   "517": {
-    "name": "Spezza-assedio",
-    "description": "Una massiccia mazza a due mani progettata\nper frantumare le fortificazioni."
+    "name": "Fucile anti-materiale pesante",
+    "description": "Fucile pesante che buca la piastra\nd'armatura."
   },
   "518": {
-    "name": "Artigli drenavita",
-    "description": "Artigli che drenano la forza vitale dei\nbersagli e la trasferiscono al portatore."
+    "name": "Prototipo di railgun",
+    "description": "Prototipo di railgun elettromagnetico.\nColpisce con Tuono."
   },
   "519": {
-    "name": "Bastone per la manipolazione della gravità",
-    "description": "Un bastone che manipola i campi gravitazionali\nper schiacciare o sollevare i nemici."
+    "name": "Induttore di emicrania EHI",
+    "description": "Pistola che spara colpi di sapere compresso.\nLascia al bersaglio l'emicrania."
   },
   "520": {
-    "name": "Fucile a tracciamento intelligente",
-    "description": "Un fucile di precisione con munizioni intelligenti che\ntracciano e regolano la loro traiettoria a metà volo."
+    "name": "Proiettore di greggio EHI",
+    "description": "Cannone industriale che spara greggio in\npressione. Puo incendiare chi spara."
   },
   "521": {
-    "name": "Mannaia dimensionale",
-    "description": "Un'ascia che fende attraverso molteplici dimensioni,\ncolpendo i nemici nelle realtà parallele."
+    "name": "Minigun",
+    "description": "Arma rotante dalla cadenza di fuoco estrema.\nPuo stordire."
   },
   "522": {
-    "name": "Frusta di eco temporale",
-    "description": "Una frusta che esiste in più linee temporali\nsimultaneamente, colpendo lo stesso bersaglio più volte."
+    "name": "IA da combattimento adattiva",
+    "description": "Arma che impara lo scontro e cambia carica.\nMaledetto, puo avvelenare."
   },
   "523": {
-    "name": "IA di combattimento adattiva",
-    "description": "Un sistema d'arma che impara dal combattimento\ne adatta le sue tattiche e il tipo di munizioni."
+    "name": "Proiettore di pensiero",
+    "description": "Lanciatore di pietra di Gobekli Tepe che\nspara dardi di pensiero. Fuoco, scalda."
   },
   "524": {
-    "name": "Guanti manipolatori molecolari",
-    "description": "Guanti che permettono a chi li indossa di\nmanipolare la materia a livello molecolare."
+    "name": "Fucile memetico EHI",
+    "description": "Fucile che spara sapere cristallizzato.\nCosta a chi spara la sua memoria."
   },
   "525": {
-    "name": "Lama di sovrapposizione quantistica",
-    "description": "Una spada che esiste in uno stato di sovrapposizione quantistica,\ncolpendo contemporaneamente tutti i bersagli possibili."
+    "name": "Pistola vettoriale",
+    "description": "Pistola forgiata dai gnomi con presa sui\nvettori. Puo scagliarti in un salto."
   },
   "526": {
-    "name": "Bastone della forza universale",
-    "description": "Un bastone che incanala le forze fondamentali dell'universo stesso."
+    "name": "Fucile a raggi di Varlenia",
+    "description": "Fucile dorato di Varlenia che spara raggi\narcani. Colpisce con Fuoco."
   },
   "527": {
-    "name": "Cannone di distorsione della realtà",
-    "description": "Un'arma che deforma la realtà in grado di riscrivere\nle leggi della fisica in un'area localizzata."
+    "name": "Cannone di distorsione della realta",
+    "description": "Cannone che riscrive la fisica locale.\nGhiaccio, infligge Freddo."
   },
   "528": {
-    "name": "Sistema di combattimento omniadattivo",
-    "description": "L'espressione definitiva della tecnologia di\ncombattimento, capace di adattarsi a qualsiasi minaccia."
-  },
-  "529": {
-    "name": "Pugnale Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "530": {
-    "name": "Spada Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "531": {
-    "name": "Mazza Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "532": {
-    "name": "Ascia Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "533": {
-    "name": "Frusta Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "534": {
-    "name": "Bastone Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "535": {
-    "name": "Arco Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "536": {
-    "name": "Grimorio Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "537": {
-    "name": "Pistola Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "538": {
-    "name": "Artiglio Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
-  },
-  "539": {
-    "name": "Guanto Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
+    "name": "Fucile a inseguimento",
+    "description": "Fucile di precisione i cui colpi si correggono\nin volo. Colpisce con Maledetto."
   },
   "540": {
-    "name": "Lancia Seed",
-    "description": "Una spada a lama corta, leggera e facile da maneggiare."
+    "name": "Artigli di latta",
+    "description": "Artigli ricavati da latta scadente.\nSi piegano."
   },
   "541": {
-    "name": "Acustica da Strada",
-    "description": "Una dreadnought malconcia con tre corde rimaste,\nbrandita per il manico."
+    "name": "Artigli smussati",
+    "description": "Artigli di metallo molle che perdono subito\nil filo."
   },
   "542": {
-    "name": "Sassofono Presidenziale",
-    "description": "Un sax tenore in ottone, suonato in seconda serata\ne brandito quando le domande si fanno difficili."
+    "name": "Artigli di cesoie",
+    "description": "Cesoie da giardino legate a dei guanti.\nPuo infliggere Veleno."
   },
   "543": {
-    "name": "Stratocaster del Banco dei Pegni",
-    "description": "Una copia di una copia, comprata di seconda mano e\nmai del tutto accordata."
+    "name": "Artigli di lamiera",
+    "description": "Lamiera affilata su guanti da lavoro.\nPuo infliggere Oleoso."
   },
   "544": {
-    "name": "La chitarra infernale",
-    "description": "Una superstrat cherry burst, matelassé e con pinne da squalo.\nSuona più forte della sala e scotta più dell'amplificatore."
+    "name": "Artigli di lamette",
+    "description": "Lamette su guanti tagliati.\nPuo infliggere Veleno."
   },
   "545": {
-    "name": "Flying V",
-    "description": "Una chitarra a forma di ciò per cui viene usata.\nNon serve spiegarlo due volte."
+    "name": "Artiglio seme",
+    "description": "Artiglio cresciuto da un seme di lama.\nPuo avvelenare."
   },
   "546": {
-    "name": "Basso Elettrico",
-    "description": "Quattro corde, un manico lungo e parecchia massa.\nLe frequenze basse si sentono più che udirle."
+    "name": "Bagh Nakh",
+    "description": "Coppia di artigli d'acciaio portati sul palmo."
   },
   "547": {
-    "name": "Doppio Manico da Battaglia",
-    "description": "Dodici corde sopra, sei sotto, e una tracolla che ha\nretto più peso di quanto una tracolla dovrebbe."
+    "name": "Artigli d'acciaio da dita",
+    "description": "Quattro artigli corti fissati a una barra\nda impugnare."
   },
   "548": {
-    "name": "Cannone a Feedback",
-    "description": "Una chitarra collegata dritta a un impianto che non\nc'è più. Ulula lo stesso."
+    "name": "Tonfa con lame",
+    "description": "Coppia di bastoni da braccio con lame\nmontate lungo il corpo."
   },
   "549": {
-    "name": "Superstrat Infernale",
-    "description": "Il manico attraversa tutto il corpo e il corpo brucia\ndal giorno in cui è stato incordato."
+    "name": "Artiglio di ferro",
+    "description": "Artigli di ferro legati alla mano.\nPuo avvelenare."
   },
   "550": {
-    "name": "Il bastone infernale",
-    "description": "Un bastone da passeggio con impugnatura a teschio.\nL'asta è un fodero, e ciò che custodisce non è affatto educato."
+    "name": "Coltelli a corno di cervo",
+    "description": "Coppia di lame a mezzaluna su impugnature\ncorte. Puo avvelenare."
+  },
+  "551": {
+    "name": "Tekko-kagi",
+    "description": "Artigli di metallo che escono da una guardia\nper la mano."
+  },
+  "552": {
+    "name": "Artigli velenosi",
+    "description": "Artigli di metallo spalmati di veleno\nparalizzante. Maledetto, puo avvelenare."
+  },
+  "553": {
+    "name": "Artiglio di mithril",
+    "description": "Artigli di mithril legati alla mano."
+  },
+  "554": {
+    "name": "Artigli succhiavita",
+    "description": "Artigli che estraggono la vita da cio che\ntagliano. Puo avvelenare."
+  },
+  "555": {
+    "name": "Artigli neurali",
+    "description": "Artigli di titanio che escono da mani\ncibernetiche."
+  },
+  "556": {
+    "name": "Artigli di drago del gelo",
+    "description": "Artigli ricavati dai denti di un vecchio\ndrago del gelo. Colpisce con Ghiaccio."
+  },
+  "557": {
+    "name": "Artiglio di drago",
+    "description": "Artigli di drago legati alla mano."
+  },
+  "558": {
+    "name": "Artigli squarciamente",
+    "description": "Artigli di cristallo che lacerano armatura\ne mente insieme. Maledetto."
+  },
+  "559": {
+    "name": "Artigli della gru",
+    "description": "Artigli rituali di Gobekli Tepe che prestano\nla gru a chi li porta. Ghiaccio."
+  },
+  "560": {
+    "name": "Artigli psicoattivi EHI",
+    "description": "Artigli intrisi di oli rari e sapere.\nDanno velocita e allucinazioni."
+  },
+  "561": {
+    "name": "Artigli divini",
+    "description": "Artigli dorati che si dicono di un dio della\nguerra. Sacro, infligge Ispirato."
+  },
+  "573": {
+    "name": "Fasce da principiante",
+    "description": "Fasce di cuoio sottile con pezzetti di metallo\ncuciti dentro. Puo stordire."
+  },
+  "574": {
+    "name": "Guantoni da boxe improvvisati",
+    "description": "Guanti sottili con pepite di ferro che si\nspostano dentro. Puo stordire."
+  },
+  "575": {
+    "name": "Nocchiere scadenti",
+    "description": "Guanti di cuoio grezzo con borchie che si\nallentano. Puo stordire."
+  },
+  "576": {
+    "name": "Nocchiere di chiavi",
+    "description": "Chiavi nastrate tra le dita.\nPuo infliggere Veleno."
+  },
+  "577": {
+    "name": "Guanto da golf chiodato",
+    "description": "Guanto da golf cucito di tee.\nPuo infliggere Nausea."
+  },
+  "578": {
+    "name": "Pugno di specchio",
+    "description": "Schegge di specchio nastrate alle mani.\nPuo infliggere Nausea."
+  },
+  "579": {
+    "name": "Nocchiere di vetro",
+    "description": "Guanti infissi di vetro rotto.\nPuo infliggere Veleno."
+  },
+  "580": {
+    "name": "Guanto seme",
+    "description": "Guanto cresciuto da un seme di lama."
+  },
+  "581": {
+    "name": "Cesto",
+    "description": "Guanto da battaglia chiodato sulle nocche.\nPuo stordire."
+  },
+  "582": {
+    "name": "Nocchiere di ferro",
+    "description": "Nocchiere di ferro con le punte."
+  },
+  "583": {
+    "name": "Nocchiere d'ottone",
+    "description": "Un paio di nocchiere d'ottone.\nPuo stordire."
+  },
+  "584": {
+    "name": "Guanti del solletico spettrale",
+    "description": "Guanti che evocano mani spettrali che fanno\nil solletico fino alla resa. Sacro."
+  },
+  "585": {
+    "name": "Bracciali",
+    "description": "Bande di metallo portate sugli avambracci\nper parare e colpire."
+  },
+  "586": {
+    "name": "Nocchiere di ferro battuto",
+    "description": "Guanti da combattimento piastrati sulle\nnocche. Puo stordire."
+  },
+  "587": {
+    "name": "Maschera da kendo",
+    "description": "Maschera da kendo in acciaio, roteata per\nle stringhe. Puo stordire."
+  },
+  "588": {
+    "name": "Calci volanti",
+    "description": "Allenamento che mette tutto il peso del corpo\ndietro un calcio."
+  },
+  "589": {
+    "name": "Pugni di adamantio",
+    "description": "Pesanti guanti d'acciaio rivestiti\ndi adamantio."
+  },
+  "590": {
+    "name": "Guanti d'urto",
+    "description": "Guanti che scaricano una scossa all'impatto.\nTuono, infligge Statico."
+  },
+  "591": {
+    "name": "Guanti d'attacco di mithril",
+    "description": "Guanti leggeri rivestiti di mithril.\nPuo stordire."
+  },
+  "592": {
+    "name": "Guanto sonico",
+    "description": "Guanto che lancia un'onda d'urto sonora.\nPuo stordire."
+  },
+  "593": {
+    "name": "Guanti della lucertola del tuono",
+    "description": "Guanti squamati con la pelle di una vecchia\nlucertola del tuono. Colpisce con Tuono."
+  },
+  "594": {
+    "name": "Pugni dell'elementale del fulmine",
+    "description": "Guanti tratti da un elementale del fulmine.\nTuono, infligge Statico."
+  },
+  "595": {
+    "name": "Guanti di forza schiacciante",
+    "description": "Guanti infissi di cristalli che schiacciano\nda dentro. Tuono, da statico."
+  },
+  "596": {
+    "name": "Guanti dell'incubo",
+    "description": "Guanti ricavati da incubo solidificato.\nSpaventano al contatto."
+  },
+  "597": {
+    "name": "Guanti scudo arcano",
+    "description": "Guanti che alzano scudi contro lama\ne incantesimo. Acqua."
+  },
+  "598": {
+    "name": "Guanti metamorfici",
+    "description": "Guanti che si piegano in altre armi\na comando."
+  },
+  "599": {
+    "name": "Guanti del maestro",
+    "description": "Vecchi guanti che si dicono di un grande\nmaestro di arti marziali."
+  },
+  "600": {
+    "name": "Guanti telecinetici",
+    "description": "Guanti che amplificano la telecinesi\ne colpiscono a distanza."
+  },
+  "601": {
+    "name": "Pugni dello spirito volpe",
+    "description": "Guanti di pietra incisi con le volpi di\nGobekli Tepe. Danno velocita. Maledetto."
+  },
+  "602": {
+    "name": "Guanti manipolatori mentali",
+    "description": "Guanti che entrano in una mente e prendono\no cambiano cio che vi trovano."
+  },
+  "603": {
+    "name": "Iniettori petrolchimici EHI",
+    "description": "Guanti che iniettano stimolanti a base d'olio.\nGran forza, organi rovinati."
+  },
+  "604": {
+    "name": "Tocco di fase",
+    "description": "Guanti di Gobekli Tepe che attraversano\nla materia. Ghiaccio."
+  },
+  "605": {
+    "name": "Pugno di Varlenia",
+    "description": "Guanti dorati di Varlenia che mettono forza\narcana dietro un pugno. Tuono."
+  },
+  "606": {
+    "name": "Guanti manipolatori molecolari",
+    "description": "Guanti che riordinano la materia stessa.\nMaledetto, infligge Veleno."
+  },
+  "607": {
+    "name": "Pugni dell'apocalisse EHI",
+    "description": "Guanti che racchiudono il petrolio del mondo\ncompresso. Forza divina e cellule marce."
+  },
+  "608": {
+    "name": "Sistema di combattimento onniadattivo",
+    "description": "Sistema di combattimento che si adatta\na qualunque minaccia."
+  },
+  "620": {
+    "name": "Lancia dalla punta lenta",
+    "description": "Lancia con la punta legata male."
+  },
+  "621": {
+    "name": "Lancia grezza",
+    "description": "Lancia semplice con punta di ferro molle.\nPuo avvelenare."
+  },
+  "622": {
+    "name": "Sturalavandini letale",
+    "description": "Sturalavandini con metallo nella ventosa.\nPuo infliggere Nausea."
+  },
+  "623": {
+    "name": "Stecca da biliardo affilata",
+    "description": "Stecca da biliardo appuntita.\nPuo infliggere Nausea."
+  },
+  "624": {
+    "name": "Lancia di scopa",
+    "description": "Manico di scopa con un coltello nastrato.\nPuo infliggere Veleno."
+  },
+  "625": {
+    "name": "Stocco d'antenna",
+    "description": "Antenna d'auto irrigidita e affilata.\nPuo infliggere Oleoso."
+  },
+  "626": {
+    "name": "Palo segnaletico",
+    "description": "Palo di cartello divelto col cemento.\nPuo infliggere Nausea."
+  },
+  "627": {
+    "name": "Giavellotto",
+    "description": "Lancia leggera da lancio."
+  },
+  "628": {
+    "name": "Lancia seme",
+    "description": "Lancia cresciuta da un seme di lama.\nPuo avvelenare."
+  },
+  "629": {
+    "name": "Lancia corta",
+    "description": "Lancia corta fatta per l'affondo.\nPuo avvelenare."
+  },
+  "630": {
+    "name": "Lancia sumera",
+    "description": "Lancia sumera di rame con lama a foglia.\nPuo avvelenare."
+  },
+  "631": {
+    "name": "Pilum",
+    "description": "Giavellotto romano costruito per piegarsi\nall'impatto. Puo avvelenare."
+  },
+  "632": {
+    "name": "Lancia dory",
+    "description": "Lancia con punta di bronzo dell'antica Grecia."
+  },
+  "633": {
+    "name": "Picca d'arrembaggio",
+    "description": "Lunga picca per respingere gli arrembaggi."
+  },
+  "634": {
+    "name": "Lancia lunga",
+    "description": "Lancia sull'asta piu lunga che si possa\nancora portare."
+  },
+  "635": {
+    "name": "Iklwa",
+    "description": "Lancia corta zulu dalla lama lunga, fatta\nper il corpo a corpo."
+  },
+  "636": {
+    "name": "Baionetta su fucile",
+    "description": "Baionetta innestata su un fucile per\nil corpo a corpo."
+  },
+  "637": {
+    "name": "Naginata",
+    "description": "Arma inastata giapponese dalla lama ricurva."
+  },
+  "638": {
+    "name": "Alabarda",
+    "description": "Arma inastata europea con lama d'ascia\ne una punta."
+  },
+  "639": {
+    "name": "Azza",
+    "description": "Lunga arma inastata con lama d'ascia e punta.\nPuo avvelenare."
+  },
+  "640": {
+    "name": "Giavarina",
+    "description": "Arma inastata dalla lama ricurva, fatta\ncontro i cavalieri."
+  },
+  "641": {
+    "name": "Picca con testa d'ascia",
+    "description": "Picca con una testa d'ascia in punta.\nPuo avvelenare."
+  },
+  "642": {
+    "name": "Lancia di fuoco",
+    "description": "Antica lancia cinese con un tubo a razzo\nlegato. Colpisce con Fuoco."
+  },
+  "643": {
+    "name": "Lancia di mithril",
+    "description": "Lancia forgiata in mithril."
+  },
+  "644": {
+    "name": "Tridente della tempesta",
+    "description": "Tridente che richiama la tempesta.\nColpisce con Ghiaccio."
+  },
+  "645": {
+    "name": "Lancia del drago",
+    "description": "Lancia forgiata dalle zanne di un drago.\nPuo avvelenare."
+  },
+  "646": {
+    "name": "Lancia di protezione",
+    "description": "Lancia protetta che alza un campo attorno\na chi la porta. Fuoco."
+  },
+  "647": {
+    "name": "Lancia di zanna di leviatano",
+    "description": "Lancia con la punta di zanna di serpente\nmarino. Colpisce con Acqua."
+  },
+  "648": {
+    "name": "Chiamaserpenti",
+    "description": "Lancia con punta incisa di Gobekli Tepe che\nchiama i serpenti. Maledetto, avvelena."
+  },
+  "649": {
+    "name": "Lancia a combustione EHI",
+    "description": "Lancia con punta di olio cristallizzato che\nscoppia all'impatto e brucia chi la usa."
+  },
+  "650": {
+    "name": "Lancia gravitazionale",
+    "description": "Lancia di Gobekli Tepe dall'aria semplice\nche piega la gravita. Tuono."
+  },
+  "651": {
+    "name": "Lancia di Varlenia che torna",
+    "description": "Lancia dorata di Varlenia che torna quando\nviene lanciata. Maledetto, avvelena."
+  },
+  "663": {
+    "name": "Proiettore di schiuma",
+    "description": "Arma sperimentale che spara schiuma adesiva\nper bloccare. Puo avvelenare."
+  },
+  "664": {
+    "name": "Lanciatore di reti elettriche",
+    "description": "Arma che spara reti elettrificate."
+  },
+  "665": {
+    "name": "Emettitore a microonde",
+    "description": "Emettitore direzionale che lancia un raggio\ndi microonde. Puo avvelenare."
   }
 }

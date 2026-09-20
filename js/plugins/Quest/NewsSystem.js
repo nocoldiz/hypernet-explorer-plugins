@@ -441,6 +441,9 @@
         showNewsNotification(title) {
             const line = String(title || "").trim();
             if (!line) return;
+            // The reader can put the bulletins away for good; the news still
+            // happens and is still filed, it just stops interrupting.
+            if (!newsToastsOn()) return;
             if (!window.ParchmentToast) return;
             window.ParchmentToast.show(line, {
                 title: t('breakingNews'),
@@ -1029,6 +1032,21 @@
         }
     }
 
+    // --- Breaking news toasts -------------------------------------------
+    // A bulletin used to arrive whether or not anybody wanted it. The reader
+    // turns them off from the News program itself and the switch travels with
+    // the savegame, because it is a preference about this run of the world
+    // rather than about the machine it is played on.
+    function newsToastsOn() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return true;
+        return $gameSystem._newsToastsOff !== true;
+    }
+
+    function setNewsToasts(on) {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+        $gameSystem._newsToastsOff = !on;
+    }
+
     // Scene_NewsHistory
     // Scene_NewsHistory - Updated with modal navigation support
     // --- HypernetNewsApp ---
@@ -1203,6 +1221,7 @@
             this._newsWindow.activate();
             this._newsWindow.select(0);
 
+            if (!this._tab) this._tab = 'news';
             this.refreshUINewspaperDOM();
         }
 
@@ -1249,6 +1268,10 @@
 
         refreshUINewspaperDOM() {
             if (!this._dndContainer) return;
+            if (this._tab === 'history') {
+                this.refreshWorldHistoryDOM();
+                return;
+            }
 
             const monthNames = T.list('NewsSystem.months');
 
@@ -1414,6 +1437,8 @@
                                 </h2>
                             </div>
 
+                            ${this.newsTabsHTML(sref)}
+
                             <!-- The archive search. A query reaches every month,
                                  so the navigator gives way to a result count
                                  while one is running. -->
@@ -1482,7 +1507,9 @@
             const input = this._dndContainer.querySelector('#newspaper-search');
             if (!input) return;
 
-            input.addEventListener('input', () => this.onNewspaperSearch(input.value));
+            input.addEventListener('input', () => (this._tab === 'history'
+                ? this.onHistorySearch(input.value)
+                : this.onNewspaperSearch(input.value)));
             // The map, the scene and the desktop's focus ring all read the
             // keyboard: while the reader is typing a headline into the box,
             // none of them should hear it.
@@ -1531,6 +1558,262 @@
             }
         }
 
+        // ---- the two shelves, and the alert switch ----------------------
+        // The program is an archive with two shelves: the chronicles of the
+        // year being lived, which is what it always was, and the record of
+        // the world as it was written before the party ever walked in it.
+        setNewsTab(tab) {
+            const next = tab === 'history' ? 'history' : 'news';
+            if (this._tab === next) return;
+            this._tab = next;
+            this._searchFocused = false;
+            SoundManager.playCursor();
+            this.refreshUINewspaperDOM();
+        }
+
+        toggleNewsAlerts() {
+            setNewsToasts(!newsToastsOn());
+            SoundManager.playOk();
+            this.refreshUINewspaperDOM();
+        }
+
+        newsTabsHTML(sref) {
+            const on = newsToastsOn();
+            const tab = (which, label) => `
+                <div class="newspaper-nav-btn news-tab focusable${this._tab === which ? ' selected' : ''}"
+                     data-focus-key="news-tab-${which}" onclick="${sref}.setNewsTab('${which}')">${label}</div>`;
+            return `
+                <div class="news-tabs">
+                    ${tab('news', T('NewsSystem.ui.tabChronicles'))}
+                    ${tab('history', T('NewsSystem.ui.tabHistory'))}
+                    <div class="newspaper-nav-btn news-alert-toggle focusable ${on ? 'on' : 'off'}"
+                         data-focus-key="news-alerts" title="${T('NewsSystem.ui.alertsHint')}"
+                         onclick="${sref}.toggleNewsAlerts()">
+                        ${on ? T('NewsSystem.ui.alertsOn') : T('NewsSystem.ui.alertsOff')}
+                    </div>
+                </div>`;
+        }
+
+        // ---- the world's own record -------------------------------------
+        // Everything HistorySimulator wrote when this world was made, and
+        // everything it has written since: the whole list, never a shortlist
+        // of the famous parts. A day in a leader's life is an entry here
+        // exactly as a war is, which is the point of reading it.
+        worldHistoryEvents() {
+            if (this._historyCache) return this._historyCache;
+            let events = [];
+            try {
+                events = (window.HistoryManager && window.HistoryManager.getEvents)
+                    ? window.HistoryManager.getEvents() : [];
+            } catch (e) {
+                events = [];
+            }
+            this._historyCache = (events || [])
+                .filter(e => e && (e.description || e.text))
+                .slice()
+                .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+            return this._historyCache;
+        }
+
+        historyYears() {
+            if (this._historyYears) return this._historyYears;
+            const seen = [];
+            for (const event of this.worldHistoryEvents()) {
+                const year = String(event.date || '').slice(0, 4);
+                if (year && !seen.includes(year)) seen.push(year);
+            }
+            this._historyYears = seen;
+            return seen;
+        }
+
+        historyYear() {
+            const years = this.historyYears();
+            if (!years.length) return '';
+            if (!this._historyYear || !years.includes(this._historyYear)) this._historyYear = years[0];
+            return this._historyYear;
+        }
+
+        // A query reaches the whole record, the way it reaches the whole
+        // archive on the other shelf; without one, the year on the navigator
+        // is the list.
+        historyList() {
+            const query = String(this._historyQuery || '').trim().toLowerCase();
+            const all = this.worldHistoryEvents();
+            if (query) {
+                return all.filter(event =>
+                    String(event.description || event.text || '').toLowerCase().includes(query) ||
+                    String(event.date || '').toLowerCase().includes(query));
+            }
+            const year = this.historyYear();
+            return all.filter(event => String(event.date || '').slice(0, 4) === year);
+        }
+
+        changeHistoryYear(direction) {
+            const years = this.historyYears();
+            if (!years.length) return;
+            const at = years.indexOf(this.historyYear());
+            const next = Math.max(0, Math.min(years.length - 1, at + direction));
+            if (next === at) return;
+            this._historyYear = years[next];
+            this._historyIndex = 0;
+            SoundManager.playCursor();
+            this.refreshUINewspaperDOM();
+        }
+
+        selectHistoryItem(index) {
+            this._historyIndex = index;
+            this._searchFocused = false;
+            SoundManager.playOk();
+            this.refreshUINewspaperDOM();
+        }
+
+        onHistorySearch(value) {
+            const input = this._dndContainer && this._dndContainer.querySelector('#newspaper-search');
+            this._searchFocused = true;
+            this._searchCaret = input ? input.selectionStart : null;
+            if (String(this._historyQuery || '') === String(value || '')) return;
+            this._historyQuery = value;
+            this._historyIndex = 0;
+            this.refreshUINewspaperDOM();
+        }
+
+        clearHistorySearch() {
+            if (!this._historyQuery) return;
+            this._historyQuery = '';
+            this._historyIndex = 0;
+            this._searchFocused = false;
+            this._searchCaret = null;
+            SoundManager.playCancel();
+            this.refreshUINewspaperDOM();
+        }
+
+        // The category an entry belongs to, named the way the Historical
+        // Archive names it rather than printed as the raw id it is stored as.
+        historyCategoryLabel(kind) {
+            const id = String(kind || '').trim();
+            if (!id) return '';
+            const key = 'History.category.' + id;
+            if (window.T && T.has && T.has(key)) return T(key);
+            return id.replace(/_/g, ' ');
+        }
+
+        refreshWorldHistoryDOM() {
+            const sref = this._isAppMode ? 'window.HypernetNewsApp.appInstance' : 'SceneManager._scene';
+            const query = String(this._historyQuery || '');
+            const searching = !!query.trim();
+            const list = this.historyList();
+            const year = this.historyYear();
+            if (this._historyIndex == null || this._historyIndex >= list.length) this._historyIndex = 0;
+            const selected = list[this._historyIndex] || null;
+            const dateStr = $gameVariables.value(113) || '01 JAN 2001 08:00';
+            const displayDate = dateStr.split(' ').slice(0, 3).join(' ');
+
+            let entriesHTML = '';
+            if (!list.length) {
+                entriesHTML = `<div class="news-empty">${searching
+                    ? T('NewsSystem.ui.noMatches', { query: escapeNewsHTML(query) })
+                    : T('NewsSystem.ui.noHistory')}</div>`;
+            } else {
+                list.forEach((event, idx) => {
+                    entriesHTML += `
+                        <div class="newspaper-headline-item news-cat--chronicle focusable${idx === this._historyIndex ? ' selected' : ''}"
+                             data-focus-key="history-item-${idx}" onclick="${sref}.selectHistoryItem(${idx})">
+                            <div class="news-headline-meta">
+                                <span>${escapeNewsHTML(String(event.date || ''))}</span>
+                                <span class="news-headline-cat">${escapeNewsHTML(this.historyCategoryLabel(event.category || event.type))}</span>
+                            </div>
+                            <div class="news-headline-text">${escapeNewsHTML(String(event.description || event.text || ''))}</div>
+                        </div>`;
+                });
+            }
+
+            let recordHTML = `<div class="news-empty">${T('NewsSystem.ui.selectAnEntryTo')}</div>`;
+            if (selected) {
+                recordHTML = `
+                    <div class="news-article">
+                        <div class="news-article-title">${escapeNewsHTML(this.historyCategoryLabel(selected.category || selected.type))}</div>
+                        <div class="news-article-meta">
+                            <span>${T('History.ui.dateLbl')} ${escapeNewsHTML(String(selected.date || ''))}</span>
+                            ${selected.type ? `<span>${T('History.ui.typeLbl')} ${escapeNewsHTML(this.historyCategoryLabel(selected.type))}</span>` : ''}
+                        </div>
+                        <div class="news-article-body">${escapeNewsHTML(String(selected.description || selected.text || ''))}</div>
+                    </div>`;
+            }
+
+            this._dndContainer.innerHTML = `
+                <div class="cc-pockets-spread news-spread">
+                    <div class="newspaper-header">
+                        <div class="news-masthead-title">${T('NewsSystem.ui.mastheadTitle')}</div>
+                        <div class="news-masthead-rule">
+                            <span>${T('NewsSystem.ui.tabHistory')}</span>
+                            <span class="news-masthead-strap">${T('News.ui.masthead')}</span>
+                            <span>${displayDate}</span>
+                        </div>
+                    </div>
+
+                    <div class="news-body">
+                        <div class="cc-page cc-page-left news-page">
+                            <div class="page-header-bar">
+                                <div class="back-button focusable" onclick="${sref}.popScene()">
+                                    ${T('NewsSystem.ui.dismiss')}
+                                </div>
+                                <h2 class="title cc-subheader news-subheader">
+                                    ${T('NewsSystem.ui.tabHistory')}
+                                </h2>
+                            </div>
+
+                            ${this.newsTabsHTML(sref)}
+
+                            <div class="news-search-row kb-only">
+                                <input type="text" id="newspaper-search" class="news-search-input focusable"
+                                       placeholder="${T('NewsSystem.ui.searchPlaceholder')}"
+                                       aria-label="${T('NewsSystem.ui.searchPlaceholder')}"
+                                       value="${escapeNewsHTML(query)}">
+                                <div class="newspaper-nav-btn news-search-clear focusable${searching ? '' : ' disabled'}"
+                                     onclick="${sref}.clearHistorySearch()">${T('NewsSystem.ui.clearSearch')}</div>
+                            </div>
+
+                            <!-- The record runs backwards, newest year first,
+                                 so PREV walks towards the founding. -->
+                            <div class="news-month-nav">
+                                ${searching ? `
+                                <span class="news-month-label news-search-label">${T.n('NewsSystem.ui.searchResults', list.length, { count: list.length })}</span>
+                                ` : `
+                                <div class="newspaper-nav-btn focusable" onclick="${sref}.changeHistoryYear(1)">${T('News.ui.prev')}</div>
+                                <span class="news-month-label">${escapeNewsHTML(year)}</span>
+                                <div class="newspaper-nav-btn focusable" onclick="${sref}.changeHistoryYear(-1)">${T('News.ui.next')}</div>
+                                `}
+                            </div>
+
+                            <div id="newspaper-headlines-list" class="news-headline-list">
+                                ${entriesHTML}
+                            </div>
+                        </div>
+
+                        <div class="cc-page cc-page-right news-page">
+                            <div class="cc-subheader news-subheader">
+                                ${T('NewsSystem.ui.recordInDepth')}
+                            </div>
+
+                            ${recordHTML}
+
+                            <div class="news-footer">
+                                <span>${T('NewsSystem.ui.historyFooter', { count: this.worldHistoryEvents().length })}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+            this.bindNewspaperSearch();
+
+            setTimeout(() => {
+                if (!this._dndContainer) return;
+                const listEl = this._dndContainer.querySelector('#newspaper-headlines-list');
+                const selectedEl = listEl && listEl.querySelector('.selected');
+                if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest' });
+            }, 50);
+        }
+
         update() {
             // In OS app mode the Scene_HypernetOS focus ring drives keyboard/
             // controller navigation (headlines, PREV/NEXT and Dismiss are all
@@ -1539,6 +1822,11 @@
             if (this._isAppMode) return;
 
             super.update();
+
+            if (this._tab === 'history') {
+                this.updateWorldHistoryInput();
+                return;
+            }
 
             if (this._dndContainer) {
                 let moved = false;
@@ -1577,6 +1865,36 @@
                     this.refreshUINewspaperDOM();
                 }
             }
+        }
+
+        // The record answers the same keys the chronicles do: up and down walk
+        // the year, left and right change it.
+        updateWorldHistoryInput() {
+            if (!this._dndContainer) return;
+            const list = this.historyList();
+            let moved = false;
+
+            if (list.length && (Input.isTriggered('down') || Input.isRepeated('down'))) {
+                this._historyIndex = (this._historyIndex + 1) % list.length;
+                moved = true;
+            } else if (list.length && (Input.isTriggered('up') || Input.isRepeated('up'))) {
+                this._historyIndex = (this._historyIndex - 1 + list.length) % list.length;
+                moved = true;
+            }
+
+            if (Input.isTriggered('left')) {
+                this.changeHistoryYear(1);
+            } else if (Input.isTriggered('right')) {
+                this.changeHistoryYear(-1);
+            }
+
+            if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+                if (this._historyQuery) this.clearHistorySearch();
+                else this.setNewsTab('news');
+                return;
+            }
+
+            if (moved) this.refreshUINewspaperDOM();
         }
 
         onCancelAction() {

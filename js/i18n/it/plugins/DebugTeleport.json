@@ -1,0 +1,8 @@
+{
+  "mapSceneOnlyMenu": "Il menu mappe di debug si può aprire solo dalla mappa.",
+  "mapSceneOnlyTeleport": "Il teletrasporto si può usare solo dalla mappa.",
+  "foundMaps": "Trovate {count} mappe. I dettagli sono nella console.",
+  "popupBlocked": "Impossibile aprire la finestra di debug. Consenti i popup e riprova.",
+  "loadFailed": "Impossibile caricare i dati della mappa {map}.",
+  "teleportError": "Impossibile teletrasportarsi alla mappa {map}: {message}"
+}

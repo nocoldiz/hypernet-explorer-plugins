@@ -104,6 +104,10 @@
     if (!className || !window.Specializations || !window.Specializations.ready) return [];
     const rows = [];
     window.Specializations.list.forEach((spec) => {
+      // Only what the class actually hands over: an unfinished discipline is
+      // never granted (Game_Actor#specializationClassBonus), so the card must
+      // not promise one.
+      if (!window.Specializations.isImplemented(spec)) return;
       const lvl = spec.classStart && spec.classStart[className];
       if (lvl) rows.push({ name: window.Specializations.displayName(spec), levelName: window.Specializations.levelName(lvl) });
     });
@@ -139,12 +143,13 @@
     .split(",")
     .map((id) => Number(id.trim()));
 
-  // Classes 1-62 are the sentient roster a person is built from; Feral (63)
-  // and everything after it are the creature classes (Feral, Mimic, Monster,
-  // Mana Cyborg, Ghost, Zombie, Mutant, Drone), offered only to a creature
-  // whose archetypes list them. See the classes / creatureClasses rosters in
-  // Archetypes.json.
-  const SENTIENT_CLASS_MAX = window.CreatureClasses.sentientMax();
+  // Every class tagged <Sentient> in Classes.json is a roster a person is
+  // built from; the ones tagged <NonSentient> (Feral, Mimic, Monster, Mana
+  // Cyborg, Ghost, Zombie, Mutant, Drone) are offered only to a creature whose
+  // archetypes list them. See the classes / creatureClasses rosters in
+  // Archetypes.json. CreatureClasses reads the tag; nothing here compares ids.
+  const isCreatureClassId = (classId) =>
+    window.CreatureClasses.isCreatureClass(classId);
 
   //=============================================================================
   // Aliases for dependencies
@@ -175,9 +180,13 @@
     }
 
     makeClassList() {
-      // How many of the entries at the head of the list are creature classes,
-      // which is where the board draws its "Non Sentient" / "Sentient" heads.
+      // Where the board draws its second head, and which way round the two
+      // heads read. A creature opens on its own kind; a person opens on the
+      // civilised roster and the monstrous one follows it, because a person
+      // CAN be played as a Ghost, a Zombie or a Drone, it is simply not what
+      // the list is mostly for.
       this._creatureCount = 0;
+      this._groupHeads = ['nonSentient', 'sentient'];
 
       const known = (ids) => ids.filter((id) => id > 0 && $dataClasses[id]);
       const filter = window.$ccArchetypeClassFilter;
@@ -212,20 +221,42 @@
       // Everyone else browses the sentient roster. A caller may scope it to a
       // list of ids; a null/empty filter means the whole roster.
       let list = magicAllowed(known(availableClasses).filter(
-        (classId) => classId <= SENTIENT_CLASS_MAX
+        (classId) => !isCreatureClassId(classId)
       ));
       if (Array.isArray(filter) && filter.length > 0) {
         const allowed = new Set(filter);
         const scoped = list.filter((classId) => allowed.has(classId));
         if (scoped.length > 0) list = scoped;
+        // A caller that scoped the board to a handful of ids means exactly
+        // those ids, so the monstrous half is not bolted onto them.
+        if (scoped.length > 0) return list;
+      }
+
+      // A person is offered the creature classes too, under their own head.
+      // Being a Ghost, a Zombie or a Drone is a thing that HAPPENS to a body;
+      // no archetype gates it, and the wizard's creature flow is only the
+      // other way in. Picking one here crosses the sentience line, which drops
+      // the traits the member picked (TraitSelector hangs that off
+      // changeClass) and takes the creed, faction and wealth rows off the
+      // sheet, the same as if the member had been built as a creature.
+      const CC = window.CreatureClasses;
+      const creature = CC && CC.creatureRoster ? magicAllowed(known(CC.creatureRoster())) : [];
+      if (creature.length) {
+        this._creatureCount = list.length;
+        this._groupHeads = ['sentient', 'nonSentient'];
+        return list.concat(creature);
       }
       return list;
     }
 
-    // Index of the first sentient class, i.e. where the second group starts.
-    // -1 when the list is not grouped.
+    // Index where the second group starts, -1 when the list is not grouped.
     groupBreak() {
       return this._creatureCount > 0 ? this._creatureCount : -1;
+    }
+
+    // The two heads in the order this list puts them.
+    groupHeads() {
+      return this._groupHeads || ['nonSentient', 'sentient'];
     }
 
     maxItems() {
@@ -627,6 +658,8 @@
         // heads span the whole board and are not cards, so the card indices the
         // click handler and the partial update walk stay the flat list's.
         const groupBreak = this._classWindow.groupBreak();
+        const groupHeads = this._classWindow.groupHeads
+          ? this._classWindow.groupHeads() : ['nonSentient', 'sentient'];
         const sectionHead = (label) => `
             <h3 class="cc-roster-head">${label}</h3>
           `;
@@ -649,8 +682,8 @@
 
           let head = "";
           if (groupBreak > 0) {
-            if (index === 0) head = sectionHead(T('ClassSelect.ui.nonSentient'));
-            else if (index === groupBreak) head = sectionHead(T('ClassSelect.ui.sentient'));
+            if (index === 0) head = sectionHead(T('ClassSelect.ui.' + groupHeads[0]));
+            else if (index === groupBreak) head = sectionHead(T('ClassSelect.ui.' + groupHeads[1]));
           }
 
           return `

@@ -1,6 +1,6 @@
 {
   "name": "Tecnomagia",
-  "blurb": "La Esoteric Heavy Industries tratta un'opera come un artefatto con una build, una suite di test e una firma. Ogni nodo qui è specificato contro la calibrazione nelle piane morte, perché è l'unico banco su cui i numeri si ripetono.",
+  "blurb": "Magia ingegnerizzata come hardware: ogni nodo ha una costruzione, un test e una firma, calibrati sulle piane morte.",
   "nodes": {
     "tm_leyline_tap": {
       "name": "Il Rubinetto della Leyline",

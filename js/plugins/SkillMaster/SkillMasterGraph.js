@@ -277,10 +277,11 @@
             return entry;
         },
 
-        schoolMastered: function (actor, category) {
-            if (!actor || !category) return false;
-            const school = this.core(category).school;
-            return school.length > 0 && school.every(id => actor.isLearnedSkill(id));
+        // The level floor a skill's <Esoteric> / <Forbidden> tag asks for, 0
+        // when it asks for nothing. Mastering a whole school is no longer a
+        // condition of anything: window.SkillArcana is the one authority.
+        arcaneLevel: function (skillId) {
+            return window.SkillArcana ? window.SkillArcana.requiredLevel(skillId) : 0;
         },
 
         isEntry: function (skillId) {
@@ -292,11 +293,19 @@
         isOpen: function (actor, skillId) {
             if (!actor || actor.isLearnedSkill(skillId)) return false;
             if (SkillMaster.isWorkshopMode && SkillMaster.isWorkshopMode()) return true;
+            const arcana = window.SkillArcana;
+            if (arcana) {
+                if (arcana.isSandbox()) return true;
+                // A Cultist takes nothing from the tree, and nobody reads an
+                // esoteric or forbidden skill below its level floor.
+                if (!arcana.canLearnFromTree(actor, skillId)) return false;
+            }
             if (actor.actorId) SkillMaster.actorCategoryManager.setActor(actor.actorId());
             const node = this._nodeFor(skillId);
             if (!node) return true;
             const category = node.category;
-            if (node.forbidden) return this.schoolMastered(actor, category);
+            // Past the level floor a forbidden node stands open on its own.
+            if (node.forbidden) return true;
             const foreign = SkillMaster.actorCategoryManager.isForeign(category);
             if (!foreign && node.tier === 0) return true;
             if (!node.parents.length) return !foreign;
@@ -306,15 +315,9 @@
         },
 
         openers: function (skillId, actor) {
-            if (this.isForbidden(skillId)) {
-                const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skillId) : null;
-                const school = this.core(cat).school;
-                return school
-                    .filter(id => !(actor && actor.isLearnedSkill(id)))
-                    .map(id => $dataSkills[id])
-                    .filter(s => s && s.name)
-                    .slice(0, 8);
-            }
+            // A forbidden skill has no prerequisite skills any more, only a
+            // level floor, so there is nothing to list for one.
+            if (this.isForbidden(skillId)) return [];
             return this.requires(skillId)
                 .filter(id => !(actor && actor.isLearnedSkill(id)))
                 .map(id => $dataSkills[id])

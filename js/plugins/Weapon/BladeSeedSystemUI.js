@@ -309,8 +309,14 @@
         if (!actor.hasSkill(sk.skillId)) actor.learnSkill(sk.skillId);
       });
       SoundManager.playEquip();
-      $gameMessage.add(T('BladeSeed.bound', { weapon: this._wName }));
-      $gameMessage.add(T('BladeSeed.spiritElement', { element: BD.elementNames[sp.element] }));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.report([
+          T('BladeSeed.bound', { weapon: this._wName }),
+          T('BladeSeed.spiritElement', { element: BD.elementNames[sp.element] })
+        ], {
+          severity: 'good'
+        });
+      }
       SceneManager.pop();
     }
 
@@ -562,7 +568,11 @@
       if (idx >= 0 && spirit.canLearnSkill(idx)) {
         spirit.learnSkill(idx);
         SoundManager.playUseSkill();
-        $gameMessage.add(T('BladeSeed.learnedSkill', { skill: skill.name }));
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('BladeSeed.learnedSkill', { skill: skill.name }), {
+            severity: 'good'
+          });
+        }
         this._selIdx = Math.min(this._selIdx, Math.max(0, this._skillList().length - 1));
         this._render();
       } else {

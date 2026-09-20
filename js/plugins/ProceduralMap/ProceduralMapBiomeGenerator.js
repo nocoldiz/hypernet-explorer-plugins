@@ -3123,6 +3123,16 @@
       forest: grassTile, rock: rockTile, snow: snowTile,
     };
 
+    // The planet's own field at any tile of the grid, this square's or the
+    // next one's: longitude wraps, so a tile off the east edge is simply the
+    // west edge of the neighbour. This is what lets the shoreline autotiler
+    // ask what lies BEYOND the map instead of assuming dry land there.
+    const bandAt = (px, py) => {
+      const u = (worldCoords.x + px / width) / gridW;
+      const v = (worldCoords.y + py / height) / gridH;
+      return R3D.terrestrialElevation(planetSeed, u, v, isOcean).band;
+    };
+
     const bands = new Array(width * height);
     for (let y = 0; y < height; y++) {
       const v = (worldCoords.y + y / height) / gridH;
@@ -3140,11 +3150,18 @@
     // reads as a real shoreline instead of a flat block of the base tile.
     if (waterTile && BeachGen && BeachGen.getWaterAutotileIndex) {
       const waterSet = new Set([waterTile]);
+      // What lies off the four edges is the neighbouring square's ground, and
+      // the field already knows it. Left unanswered, every edge tile was drawn
+      // as a shore against land that is not there, which framed an ocean world
+      // - water from edge to edge - in a strip of coastline on all four sides.
+      const outsideIsWater = (px, py) => bandAt(px, py) === "water";
       for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
           if (bands[y * width + x] !== "water") continue;
           const idx = calculateIndex(x, y, 0, width, height);
-          const offset = BeachGen.getWaterAutotileIndex(x, y, mapData, width, height, waterSet);
+          const offset = BeachGen.getWaterAutotileIndex(
+            x, y, mapData, width, height, waterSet, outsideIsWater
+          );
           mapData[idx] = BeachGen.getWaterTileForAutotiling([waterTile], offset);
         }
       }
@@ -7320,16 +7337,38 @@
    * opens; regenerating over the top of it would be both wasted and, for a forced
    * or structure biome the resolver cannot reproduce, wrong.
    */
-  function adoptSquare(worldX, worldY, depth, mapData, resolvedOverride) {
+  function adoptSquare(worldX, worldY, depth, mapData, opts) {
     if (!mapData) return null;
+    opts = opts || {};
     const key = squareCacheKey(worldX, worldY, depth);
     const hit = squareCache.get(key);
     if (hit && hit.mapData === mapData) return hit;
-    const resolved = resolvedOverride || resolveSquare(worldX, worldY, { depth });
+    const resolved = opts.resolved || resolveSquare(worldX, worldY, { depth });
     if (!resolved) return null;
+    // The tiles have to BE this square's, and the caller is the only one that
+    // knows which biome it built them from. A forced biome, a structure and a
+    // tower floor all stamp their own ground onto a world square without the
+    // resolver ever naming it, and filing that ground under the square's
+    // canonical answer pairs one biome's tiles with another's tileset. The
+    // square is then drawn that way for as long as the pairing is cached --
+    // which the party sees as a square gone permanently wrong, usually the
+    // moment a window stitches it in as a NEIGHBOUR, long after they left the
+    // structure that poisoned it.
+    if (opts.biomeName && !sameBiomeIdentity(resolved.biomeName, opts.biomeName)) return null;
     const built = { key, resolved, mapData };
     rememberSquare(key, built);
     return built;
+  }
+
+  // Do these two names describe the same square? Only a special biome rolled per
+  // world seed ("SpiritWoods" for Forest) may be spelled two ways, so both sides
+  // are folded back to their parent before they are compared. Everything else --
+  // a forced biome, a structure, a tower floor -- honestly disagrees.
+  // (WorldMapReturn's sameSquareIdentity is the same rule, asked of the window.)
+  function sameBiomeIdentity(a, b) {
+    if (a === b) return true;
+    if (!a || !b) return false;
+    return unwrapSpecialBiome(a) === unwrapSpecialBiome(b);
   }
 
   window.ProcGenSquare = {

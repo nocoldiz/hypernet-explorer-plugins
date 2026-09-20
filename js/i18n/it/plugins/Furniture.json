@@ -37,7 +37,8 @@
     "features": "Elementi",
     "animals": "Animali",
     "prefabs": "Prefabbricati",
-    "town": "Citta"
+    "town": "Citta",
+    "stock": "Giacenza"
   },
   "empty": {
     "walls": "Questo tileset non ha tile da muro (A3/A4).",
@@ -49,7 +50,8 @@
     "cannotAfford": "Al momento non puoi permetterti alcun arredo.",
     "cannotBuild": "Con i materiali attuali non puoi costruire nulla.",
     "category": "Nessun arredo in questa categoria.",
-    "prefabs": "Nessun prefabbricato appartiene a questo bioma."
+    "prefabs": "Nessun prefabbricato appartiene a questo bioma.",
+    "stock": "Giacenza vuota. Ordina dal catalogo Homely sull'hyperdeck."
   },
   "tip": {
     "construct": "Spendi materiali da lavoro",
@@ -61,7 +63,8 @@
     "clearAll": "Elimina tutto quello che hai costruito su questa mappa e restituisce i materiali",
     "clearAllConfirm": "Clicca di nuovo per confermare",
     "cycleVariants": "Altre varianti di colore disponibili",
-    "backToCategories": "Torna all’elenco delle cartelle"
+    "backToCategories": "Torna all’elenco delle cartelle",
+    "stock": "Già ordinato e pagato. Posarlo ne consuma una."
   },
   "category": {
     "Ads": "Insegne",
@@ -209,5 +212,26 @@
     "idle": "Niente in mano."
   },
   "selection": "Selezione",
-  "backToCategories": "Torna alle cartelle"
+  "backToCategories": "Torna alle cartelle",
+  "homely": {
+    "appName": "Homely",
+    "subtitle": "Ordina mobili per posta. I pezzi consegnati sono pronti da piazzare.",
+    "hint": "I pezzi ordinati compaiono nella scheda Giacenza del pannello di costruzione.",
+    "search": "Cerca nel catalogo",
+    "yourStock": "La tua giacenza",
+    "stockBlurb": "Ogni pezzo ordinato puo essere piazzato {n} volte. Una volta rotto sparisce e va riordinato.",
+    "stockEmpty": "Niente in ordine. Scegli un reparto e compra qualcosa.",
+    "delivered": "consegnato",
+    "leftInStock": "{n} pose rimaste",
+    "order": "Ordinane uno",
+    "ordered": "{item} ordinato per {price}. {n} pose in giacenza.",
+    "cannotAfford": "La borsa non basta, consegna compresa.",
+    "unknownPiece": "Il catalogo non ha questo pezzo.",
+    "searchResults": "Tutto quel che si chiama \"{q}\"",
+    "nothingHere": "Niente in questo reparto.",
+    "pageOf": "Pagina {page} di {pages}",
+    "prev": "Pagina precedente",
+    "next": "Pagina successiva"
+  },
+  "stockLeft": "{n} rimaste"
 }

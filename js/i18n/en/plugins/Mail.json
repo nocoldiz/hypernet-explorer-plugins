@@ -101,7 +101,7 @@
     "postageLine": "Postage: {fee}. With what is enclosed, {total} leaves the purse.",
     "cannotAfford": "The purse is {short} short of what this would cost.",
     "subjectPlaceholder": "What is it about?",
-    "bodyPlaceholder": "Write freely. Whoever opens this will read it exactly as you leave it."
+    "bodyPlaceholder": "Type the message."
   },
   "toast": {
     "sent": "Sealed and sent.",
@@ -157,10 +157,52 @@
     "purse": "In the purse: {money}",
     "holdBack": "Held back before delivery",
     "clear": "Tear the sheet up",
-    "bookBlurb": "Every party that has left an address, in this world and in the ones beside it. Postage is quoted per dimension crossed.",
+    "bookBlurb": "Every party with a registered address, in this world and in others. Postage is charged per dimension crossed.",
     "colParty": "Party",
     "colMembers": "Members",
     "colSeen": "Last seen",
     "thisIsYou": "(you)"
+  },
+  "nudge": {
+    "appName": "Nudge",
+    "signedIn": "Signed in as {who}",
+    "signedOut": "Nobody is signed in.",
+    "groupParty": "Walking with you",
+    "groupWorld": "Elsewhere in this world",
+    "groupOthers": "Always on",
+    "withParty": "with {leader}",
+    "alwaysOn": "answers whoever asks",
+    "status": {
+      "online": "(online)",
+      "away": "(away)",
+      "busy": "(busy)",
+      "offline": "(offline)"
+    },
+    "pickSomebody": "Pick somebody on the left.",
+    "sayHello": "Nothing said to {who} yet.",
+    "typing": "{who} is typing...",
+    "placeholder": "Type a line and press Enter",
+    "send": "Send",
+    "nudge": "Nudge",
+    "you": "You",
+    "noAnswer": "...",
+    "situation": "A typed conversation over the hypernet, late at night, in a window with a blue title bar.",
+    "bioMember": "{who} walks with the party and is typing from a few feet away, which neither of you mentions.",
+    "bioStranger": "{who} walks with another party in this same world, the one {leader} leads. You have never met.",
+    "lore": {
+      "eris": {
+        "name": "Eris",
+        "bio": "Eris, the goddess of discord, keeping a human shape and a human sized life. She bends probability rather than breaking it, and she ruins Em's life out of jealousy over Bubba, who loves her back and cannot have her. Her own future self killed Maat in 2012 and dragged her onto the path to the throne, which she resents and cannot get off. She is charming, glib, allergic to a straight answer about herself, and she will change the subject the moment any of the above gets close."
+      },
+      "bubba": {
+        "name": "Bubba",
+        "bio": "Bubba, who loves Eris and always has, and who feels nothing for Em and has never had the nerve to say so plainly. Warm, slow, decent, easily embarrassed. He talks about ordinary things at length and about the two women in his life not at all, and he is the only one of the three who asks how you are and waits for the answer."
+      },
+      "em": {
+        "name": "Em",
+        "bio": "Em, whose life a goddess has been quietly wrecking for years out of jealousy, who half knows it and has no proof. She loves Bubba, who does not love her. Sharp, funny in a way that is mostly defence, tired, and quicker than anybody gives her credit for. She has a spear and she knows where the tower is."
+      }
+    },
+    "groupBenched": "Not travelling"
   }
 }

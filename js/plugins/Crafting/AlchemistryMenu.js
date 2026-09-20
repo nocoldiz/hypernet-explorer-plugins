@@ -127,7 +127,9 @@
         if (window.ParchmentToast) {
             window.ParchmentToast.show(text, { severity: severity || 'info', key: key });
         } else if (typeof $gameMessage !== 'undefined' && SceneManager._scene instanceof Scene_Map) {
+            window.skipLocalization = true;
             $gameMessage.add(text);
+            window.skipLocalization = false;
         }
     }
 

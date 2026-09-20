@@ -1086,10 +1086,6 @@ Scene_Army.prototype.refreshUIDOM = function () {
                 <div class="army-regiments-title">${T('ArmyManager.regimentalBreakdown')}</div>
                 <div class="army-regiments-chips">${regimentChips}</div>
             </div>
-
-            <div class="army-28">
-                ${T('ArmyManager.manualFooter')}
-            </div>
         </div>
 
         <!-- Right page: the dossier of the troop under the cursor -->

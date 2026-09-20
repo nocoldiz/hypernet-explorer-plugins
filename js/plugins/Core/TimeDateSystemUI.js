@@ -10,8 +10,10 @@
  * popup following the unified D&D pockets design language.
  *
  * Defines on Scene_Map:
- *   openSleepMenu(mode, opts) - "main" (default), "sleep", "wait", "post_sleep"
+ *   openSleepMenu(mode, opts) - "main" (default), "sleep", "wait", "forage",
+ *                               "post_sleep"
  *   openWaitMenu()           - the wait list, with a rough sleep offered
+ *   openForageMenu()         - the forage list, straight to the durations
  *   openCryogenicSleepMenu() - opens directly to cryo year selection
  *   closeSleepMenu(keepBlocking)
  *   execSleepMenuCommand(key)
@@ -53,6 +55,7 @@
       titleWait:  CP.emLabel("waitHowLong",  base.titleWait),
       sleep:      CP.emLabel("sleep",        base.sleep),
       wait:       CP.emLabel("wait",         base.wait),
+      forage:     CP.emLabel("forage",       base.forage),
       wakeup:     CP.emLabel("wakeup",       base.wakeup),
       dream:      CP.emLabel("dream",        base.dream),
     });
@@ -115,6 +118,16 @@
     return [0.5].concat(Array.from({ length: maxRestHours() }, (_, i) => i + 1));
   }
 
+  // The three pages that are a list of hours with a selector over it. They all
+  // share the same hour range, so the left/right selector simply cycles them.
+  const DURATION_MODES = ["sleep", "wait", "forage"];
+
+  // Which of them this entry point actually offers. Sleeping needs somewhere
+  // to lie down; waiting and foraging are always on the table.
+  function availableDurationModes(scene) {
+    return DURATION_MODES.filter((m) => m !== "sleep" || sleepAllowedFor(scene));
+  }
+
   function commandsForMode(mode, allowSleep) {
     const t = sleepLabels();
     if (mode === "sleep") {
@@ -135,6 +148,18 @@
         rightLabel: wakeTimeLabel(h),
       }));
       cmds.push({ key: "cancel_wait", label: t.cancel });
+      return cmds;
+    }
+    // The same hours as the wait list, spent working instead of standing
+    // about: the party goes over the square for food and materials, at the
+    // cost of sleep and food (window.Forage in TimeDateSystem.js).
+    if (mode === "forage") {
+      const cmds = restHours().map((h) => ({
+        key: "forage_" + h,
+        label: durationLabel(t, h),
+        rightLabel: wakeTimeLabel(h),
+      }));
+      cmds.push({ key: "cancel_forage", label: t.cancel });
       return cmds;
     }
     // Only shown after a long sleep that rolled a dream (see TimeDateSystem's
@@ -160,6 +185,7 @@
     const mainCommands = [];
     if (allowSleep) mainCommands.push({ key: "sleep", label: t.sleep });
     mainCommands.push({ key: "wait", label: t.wait });
+    mainCommands.push({ key: "forage", label: t.forage });
     mainCommands.push({ key: "save", label: t.save });
     // Hardcore (Permadeath) and Blood and Oil use terminal death, so there is
     // no respawn point to set; hide the option in those modes (Switch 9).
@@ -285,6 +311,7 @@
     // never mistaken for the full night a bed offers.
     if (mode === "sleep") return roughRestFor(scene) ? t.titleRoughSleep : t.titleSleep;
     if (mode === "wait") return t.titleWait;
+    if (mode === "forage") return t.titleForage;
     if (mode === "post_sleep") return t.titlePostSleep;
     if (mode === "cryo") return t.titleCryo;
     return t.titleMain;
@@ -384,16 +411,13 @@
       this._wasdInput.up = this._wasdInput.down = false;
 
       // Left/Right (arrow keys, A/D, or a gamepad d-pad/stick, all of which
-      // RPG Maker's Input class already maps to "left"/"right") flips the
-      // Sleep <-> Wait selector while a duration list is open.
+      // RPG Maker's Input class already maps to "left"/"right") steps the
+      // Sleep / Wait / Forage selector while a duration list is open.
       const isLeft = Input.isTriggered("left") || this._adInput.left;
       const isRight = Input.isTriggered("right") || this._adInput.right;
       this._adInput.left = this._adInput.right = false;
-      if (
-        (isLeft || isRight) &&
-        (scene._sleepMenuMode === "sleep" || scene._sleepMenuMode === "wait")
-      ) {
-        scene._toggleSleepMenuType();
+      if ((isLeft || isRight) && DURATION_MODES.indexOf(scene._sleepMenuMode) >= 0) {
+        scene._toggleSleepMenuType(isLeft ? -1 : 1);
         return;
       }
 
@@ -454,9 +478,11 @@
     if (alreadyOpen(this)) return;
     this._sleepMenuMode = mode || "main";
     this._sleepMenuIndex = 0;
-    // Remember whether the wait list is the entry point (R with no bed nearby)
-    // or a page under the rest menu, so Cancel goes back to the right place.
-    this._sleepMenuDirectWait = this._sleepMenuMode === "wait";
+    // Remember whether a duration list is itself the entry point (R with no bed
+    // nearby, the world-map Forage row) or a page under the rest menu, so
+    // Cancel goes back to the right place.
+    this._sleepMenuDirectWait =
+      this._sleepMenuMode === "wait" || this._sleepMenuMode === "forage";
     // A direct wait list may still lie down, but only as a rough sleep; every
     // other entry point was opened from a bed, a campfire, a tent or a camp
     // and rests the party in full.
@@ -490,6 +516,13 @@
       return;
     }
     this.openSleepMenu("wait", { roughRest: true });
+  };
+
+  // The world-map travel menu and the Forage plugin command: straight to the
+  // hour list for an afternoon spent searching the square. Sleeping is not on
+  // offer from here, so the selector cycles waiting and foraging only.
+  Scene_Map.prototype.openForageMenu = function () {
+    this.openSleepMenu("forage");
   };
 
   // Opens directly to cryogenic sleep year selection (bypassing the main menu)
@@ -534,7 +567,7 @@
         }">${inner}</div>`;
       })
       .join("");
-    const isDuration = mode === "sleep" || mode === "wait";
+    const isDuration = DURATION_MODES.indexOf(mode) >= 0;
     const typeSelectorHTML = isDuration ? this._sleepMenuTypeSelectorHTML() : "";
     const cryoHTML = mode === "cryo" ? this._cryoPickerHTML() : "";
     this._sleepMenuEl.innerHTML = `
@@ -562,7 +595,8 @@
     if (isDuration) {
       const arrows = this._sleepMenuEl.querySelectorAll(".army-dialog-type-arrow");
       arrows.forEach((arrow) => {
-        arrow.addEventListener("click", () => this._toggleSleepMenuType());
+        arrow.addEventListener("click", () =>
+          this._toggleSleepMenuType(arrow.dataset.dir === "left" ? -1 : 1));
       });
       // The list is rebuilt scrolled to the top, so a selection kept across a
       // Sleep <-> Wait flip has to be brought back under the cursor.
@@ -606,6 +640,7 @@
     const cost = api.getCryoCost ? api.getCryoCost(date.year, date.month, date.day) : 0;
     const gold = window.$gameParty ? $gameParty.gold() : 0;
 
+    const short = cost > gold;
     const values = [String(date.day), months[date.month], String(date.year)];
     const labels = [t.cryoFieldDay, t.cryoFieldMonth, t.cryoFieldYear];
     const fieldsHTML = CRYO_FIELDS.map((name, i) => `
@@ -621,9 +656,9 @@
       <div class="cryo-summary">
         <div class="cryo-summary-row"><span>${t.cryoSpanLabel}</span><span>${cryoSpanLabel(from, date)}</span></div>
         <div class="cryo-summary-row"><span>${t.cryoRate}</span><span>${t.cryoPerDay.format(cryoEuros(range.goldPerDay))}</span></div>
-        <div class="cryo-summary-row cryo-summary-row--total"><span>${t.cryoCost}</span><span>${cryoEuros(cost)}</span></div>
+        <div class="cryo-summary-row cryo-summary-row--total${short ? " cryo-summary-row--short" : ""}"><span>${t.cryoCost}</span><span>${cryoEuros(cost)}</span></div>
         <div class="cryo-summary-row cryo-summary-row--purse"><span>${t.cryoPurse}</span><span>${cryoEuros(gold)}</span></div>
-        <div class="cryo-summary-note">${t.cryoNights.format(days)}</div>
+        <div class="cryo-summary-note${short ? " cryo-summary-note--short" : ""}">${short ? t.cryoUnaffordable : t.cryoNights.format(days)}</div>
       </div>`;
   };
 
@@ -685,22 +720,20 @@
     this._refreshSleepMenuDOM();
   };
 
-  // Sleep <-> Wait toggle row shown above the duration list. Only offered
-  // when both choices are actually available (Sleep needs a place to rest);
-  // otherwise there is nothing to switch to and the row is omitted.
+  // Sleep / Wait / Forage selector row shown above the duration list. All
+  // three pages are the same hour range spent differently, so the arrows cycle
+  // between whichever of them are available here (Sleep needs a place to rest).
   Scene_Map.prototype._sleepMenuTypeSelectorHTML = function () {
     const t = sleepLabels();
-    if (!sleepAllowedFor(this)) return "";
-    const label = this._sleepMenuMode === "sleep" ? t.sleep : t.wait;
-    // The sleep page of a wait list says what it is worth right under the
-    // selector: what the bedding in the packs buys, or, with nothing to lie on,
-    // how little of a night sleeping rough is worth.
+    if (availableDurationModes(this).length < 2) return "";
+    const label = { sleep: t.sleep, wait: t.wait, forage: t.forage }[this._sleepMenuMode] || t.wait;
+    // The sleep page of a wait list says what a rough night is worth right
+    // under the selector. Bedding in the packs says nothing: the full rest it
+    // buys is the ordinary case and needs no notice of its own.
     let hint = "";
     if (this._sleepMenuMode === "sleep" && this._sleepMenuRoughRest) {
       const bedding = beddingItem();
-      if (bedding && t.beddingHint) {
-        hint = `<div class="army-dialog-type-hint">${t.beddingHint.format(bedding.name)}</div>`;
-      } else if (!bedding && t.roughHint) {
+      if (!bedding && t.roughHint) {
         hint = `<div class="army-dialog-type-hint">${t.roughHint.format(roughFactorPercent())}</div>`;
       }
     }
@@ -711,11 +744,15 @@
     </div>${hint}`;
   };
 
-  // Flips between the Sleep and Wait duration lists in place, keeping the
-  // same duration highlighted since both lists share the same hour range.
-  Scene_Map.prototype._toggleSleepMenuType = function () {
-    const target = this._sleepMenuMode === "sleep" ? "wait" : "sleep";
-    if (target === "sleep" && !sleepAllowedFor(this)) return;
+  // Steps to the next duration page in place, keeping the same duration
+  // highlighted since every list shares the same hour range. `direction` is
+  // -1 for the left arrow and +1 for the right; anything else steps forward.
+  Scene_Map.prototype._toggleSleepMenuType = function (direction) {
+    const modes = availableDurationModes(this);
+    if (modes.length < 2) return;
+    const at = modes.indexOf(this._sleepMenuMode);
+    const step = direction === -1 ? -1 : 1;
+    const target = modes[((at < 0 ? 0 : at) + step + modes.length) % modes.length];
     SoundManager.playCursor();
     this._sleepMenuMode = target;
     this._refreshSleepMenuDOM();
@@ -774,9 +811,9 @@
       // flipped from is itself the entry point, there is no rest menu behind.
       if (this._sleepMenuDirectWait) this.closeSleepMenu();
       else this._setSleepMenuMode("main");
-    } else if (this._sleepMenuMode === "wait") {
-      // Backing out returns to the rest menu when that is where waiting was
-      // picked from, and closes outright when T opened the wait list directly.
+    } else if (this._sleepMenuMode === "wait" || this._sleepMenuMode === "forage") {
+      // Backing out returns to the rest menu when that is where the page was
+      // picked from, and closes outright when the list was opened directly.
       if (this._sleepMenuDirectWait) {
         this.closeSleepMenu();
       } else {
@@ -823,6 +860,13 @@
       startSequence(() => this.startWaitSequence(hours));
       return;
     }
+    if (key.startsWith("forage_")) {
+      const hours = Number(key.slice(7));
+      SoundManager.playOk();
+      this.closeSleepMenu(true);
+      startSequence(() => this.startForageSequence(hours));
+      return;
+    }
     if (key === "cryo_confirm") {
       const api = TDS();
       const range = this._ensureCryoDate();
@@ -857,6 +901,10 @@
         SoundManager.playOk();
         this._setSleepMenuMode("wait");
         break;
+      case "forage":
+        SoundManager.playOk();
+        this._setSleepMenuMode("forage");
+        break;
       case "save":
         SoundManager.playOk();
         this.closeSleepMenu();
@@ -869,6 +917,7 @@
       case "cancel":
       case "cancel_sleep":
       case "cancel_wait":
+      case "cancel_forage":
         this.cancelSleepMenu();
         break;
       case "wakeup":

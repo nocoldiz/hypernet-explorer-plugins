@@ -61,6 +61,10 @@
     return T.list('Prosthetics.paramNames')[paramId] || T('Prosthetics.statFallback');
   }
 
+  // How many socket chips a catalogue card carries before the rest are
+  // counted off instead.
+  const SOCKET_CHIPS = 3;
+
   function skillIds(value) {
     if (window.HealthCore && window.HealthCore.normalizeSkillIds) {
       return window.HealthCore.normalizeSkillIds(value);
@@ -309,11 +313,28 @@
       const flag = this._tab === 0 && row.damaged
         ? `<span class="augment-07">${T('Augments.ui.damagedHost')}</span>`
         : `<span class="augment-08">${escapeHtml(priceLabel(row.prosthetic.cost))}</span>`;
+      // A catalogue card says where the augment can go without being opened:
+      // the sockets are the one thing a shopper reads every entry for. Long
+      // lists of sockets are cut short rather than wrapping the card open.
+      let socketsHTML = "";
+      if (this._tab === 1) {
+        const sockets = socketsFor(row.key);
+        const shown = sockets.slice(0, SOCKET_CHIPS);
+        const rest = sockets.length - shown.length;
+        socketsHTML = shown.length
+          ? `<span class="aug-sockets">` + shown.map((sock) =>
+              `<span class="aug-socket-chip">${escapeHtml(sock)}</span>`
+            ).join("") + (rest > 0
+              ? `<span class="aug-socket-chip">${escapeHtml(T('Augments.ui.moreSockets', { count: rest }))}</span>`
+              : "") + `</span>`
+          : `<span class="aug-sockets"><span class="aug-socket-chip">${escapeHtml(T('Augments.ui.noSocketShort'))}</span></span>`;
+      }
       return `
         <div class="aug-row focusable ${isSel ? 'selected ' : ''}${isFocused ? 'focused' : ''} augment-09" data-idx="${idx}">
           <span class="augment-10">
             <span class="augment-11">${escapeHtml(name)}</span>
             <span class="augment-08">${escapeHtml(sub)}</span>
+            ${socketsHTML}
           </span>
           ${flag}
         </div>`;
@@ -397,6 +418,13 @@
              <div class="inspect-section-title">${T('Augments.ui.fittedTo')}</div>
              <div class="inspect-spec-grid">
                ${specRow({ label: row.actor.name(), value: row.partName })}
+               ${window.ProstheticCapacity ? specRow({
+                 label: T('Augments.ui.capacity'),
+                 value: T('Augments.ui.capacityValue', {
+                   fitted: window.ProstheticCapacity.fitted(row.actor),
+                   max: window.ProstheticCapacity.capacity(row.actor)
+                 })
+               }) : ""}
              </div>
              ${row.damaged ? `<div class="aug-warning">${T('Augments.ui.damagedWarning')}</div>` : ""}
              <div class="ui-prose">${T('Augments.ui.severWarning')}</div>
@@ -470,19 +498,33 @@
         return;
       }
 
+      // The catalogue reads several across, so down walks a whole line of
+      // cards and left and right walk within one. How many across is read off
+      // the live grid rather than restated here (UI/MenuVirtualList.js).
+      const cols = window.MenuVirtualList.columnsOf("#aug-list-content", 1);
+      const step = (delta) => {
+        const next = this._selectedIndex + delta;
+        if (next < 0 || next >= this._rows.length) return false;
+        this._selectedIndex = next;
+        SoundManager.playCursor();
+        this.refreshAugmentDOM();
+        this.scrollSelectedIntoView();
+        return true;
+      };
+
       if (Input.isTriggered("down") || Input.isRepeated("down")) {
-        if (this._selectedIndex < this._rows.length - 1) {
-          this._selectedIndex++;
-          SoundManager.playCursor();
-          this.refreshAugmentDOM();
-          this.scrollSelectedIntoView();
+        // The last line is rarely full, so a jump past the end still lands on
+        // the last card rather than refusing to move.
+        if (!step(cols) && this._selectedIndex < this._rows.length - 1) {
+          step(this._rows.length - 1 - this._selectedIndex);
         }
+      } else if (Input.isTriggered("right") || Input.isRepeated("right")) {
+        if (cols > 1) step(1);
+      } else if (Input.isTriggered("left") || Input.isRepeated("left")) {
+        if (cols > 1) step(-1);
       } else if (Input.isTriggered("up") || Input.isRepeated("up")) {
-        if (this._selectedIndex > 0) {
-          this._selectedIndex--;
-          SoundManager.playCursor();
-          this.refreshAugmentDOM();
-          this.scrollSelectedIntoView();
+        if (this._selectedIndex >= cols) {
+          step(-cols);
         } else {
           this._activeArea = "tabs";
           SoundManager.playCursor();

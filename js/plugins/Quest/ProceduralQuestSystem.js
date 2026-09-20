@@ -1321,7 +1321,7 @@
       case "interview": return T('Quests.empathizeWithAnyCitizenOf') + s.dest;
       case "supply_items": {
         const it = supplyObject(s);
-        return T('Quests.handOver') + s.qty + "x " + (it ? it.name : "?") + T('Quests.atAnyQuestBoard');
+        return T('Quests.obtainGoods') + s.qty + "x " + (it ? it.name : "?");
       }
       case "wait_delivery": return T('Quests.waitForTheGoodsThenCollectAtAnyQuestBoard');
       case "arena_wins": return T('Quests.win') + s.count + T('Quests.arenaBattles');
@@ -2151,20 +2151,17 @@
     s.done = true;
     const nextIdx = firstUndoneIndex(q);
     if (nextIdx === -1) {
-      questBecomesClaimable(q, note);
+      completeQuest(q.qid, note);
     } else {
       kanbanUpdate(q.qid, (note || stepText(s) + " ✓") + "\n" + T('Quests.next') + stepText(q.steps[nextIdx]));
       if (q.stepMode === "seq") onStepActivated(q, q.steps[nextIdx]);
       toast(T('Quests.objectiveCompleteNext') + stepText(q.steps[nextIdx]));
+      kanbanProgress(q);
     }
-    kanbanProgress(q);
   }
 
   function questBecomesClaimable(q, note) {
-    if (q.status !== "active") return;
-    q.status = "claimable";
-    kanbanUpdate(q.qid, (note || T('Quests.objectivesComplete')) + " " + T('Quests.collectYourPayAtAnyQuestBoard'));
-    kanbanProgress(q);
+    completeQuest(q.qid, note);
   }
 
   // ==========================================================================
@@ -2239,9 +2236,11 @@
     kanbanProgress(q);
 
     if (!q.steps.length) {
-      // Donations and other receipt-quests are claimable immediately.
-      questBecomesClaimable(q, T('Quests.contributionRegistered'));
+      // Donations and other receipt-quests complete immediately.
+      completeQuest(q.qid, T('Quests.contributionRegistered'));
     }
+    checkSupplySteps();
+    checkPetSteps();
     return { ok: true, quest: q };
   }
 
@@ -2410,7 +2409,9 @@
       { focus: $gameParty.leader(), focusBonus: QUEST_SOCIAL_LEADER_BONUS });
   }
 
-  function grantRewards(q) {
+  // Deliver rewards: posts a letter to the party's mailbox via MailSystem.
+  // Falls back to direct inventory/purse grant if MailSystem is not available.
+  function deliverQuestReward(q) {
     const lines = [];
     fillQuestSocial(q);
     const kp = questKnowledge(q);
@@ -2418,77 +2419,113 @@
       $gameSystem.addKnowledge(kp);
       lines.push(knowledgeText(kp));
     }
+    let gold = 0;
     if (q.reward.gold > 0) {
       // A party that argues its own fee is paid better for the same work
       // (Negotiation, specialization 186), and learns by doing it.
       const bargained = window.SpecializationXP
         ? Math.round(q.reward.gold * window.SpecializationXP.multiplier("Negotiation", 0.08))
         : q.reward.gold;
-      $gameParty.gainGold(bargained);
+      gold = bargained;
       lines.push(euros(bargained));
       if (window.SpecializationXP) {
         window.SpecializationXP.awardForValue("Negotiation", bargained);
       }
     }
-    for (const m of q.reward.materials) {
+    const mailItems = [];
+    for (const m of (q.reward.materials || [])) {
       const it = $dataItems[m.id];
-      if (it) { $gameParty.gainItem(it, m.qty); lines.push(m.qty + "x " + it.name); }
+      if (it) {
+        mailItems.push({ kind: "item", id: m.id, count: m.qty });
+        lines.push(m.qty + "x " + it.name);
+      }
     }
     const gear = gearObject(q.reward.gear);
-    if (gear) { $gameParty.gainItem(gear, 1); lines.push(gear.name); }
+    if (gear) {
+      const g = q.reward.gear;
+      const kind = g.kind === "w" ? "weapon" : g.kind === "a" ? "armor" : "item";
+      mailItems.push({ kind, id: g.id, count: 1 });
+      lines.push(gear.name);
+    }
     for (const g of (q.reward.goods || [])) {
       const obj = gearObject(g);
       if (obj) {
-        $gameParty.gainItem(obj, g.qty);
+        const kind = g.kind === "w" ? "weapon" : g.kind === "a" ? "armor" : "item";
+        mailItems.push({ kind, id: g.id, count: g.qty });
         lines.push((g.qty > 1 ? g.qty + "x " : "") + obj.name);
       }
     }
-    if (q.reward.artifactLevel > 0 && typeof $gameSystem.generateArtifact === "function") {
+    if (q.reward.artifactLevel > 0 && typeof $gameSystem?.generateArtifact === "function") {
       const id = $gameSystem.generateArtifact(q.reward.artifactLevel);
       if (id > 0) {
-        $gameParty.gainItem($dataItems[id], 1);
-        lines.push($dataItems[id].name);
+        mailItems.push({ kind: "item", id, count: 1 });
+        if ($dataItems[id]) lines.push($dataItems[id].name);
         registerArtifactToParty(id, q);
       }
     }
-    return lines;
-  }
 
-  // Claim a claimable quest at a board. Supply steps consume their items here.
-  function claimQuest(qid) {
-    const st = state();
-    const q = st.active[qid];
-    if (!q || q.status !== "claimable") return { ok: false };
+    const MS = window.MailSystem;
+    const WM = window.WorldManager;
+    const world = (WM && WM.activeWorldName) || null;
+    const partyId = MS && typeof MS.partyId === "function" ? MS.partyId() : null;
+    let mailed = false;
 
-    // The objectives can all be met , the target really does spawn and really
-    // does die , but the hand-in cannot happen: whoever pinned the notice up is
-    // dead, and there is nobody at the board to collect from. The quest stays
-    // active and claimable for ever rather than failing, so the party keeps
-    // whatever they went and fetched.
-    // A contract another PARTY posted is the exception: they are as alive as
-    // this one, and the escrow behind it is already paid.
-    if (isEmptyWorld() && !q.posted) {
-      return { ok: false, reason: T('Quests.giverIsDead') };
-    }
-
-    for (const s of q.steps) {
-      if (s.kind === "supply_items") {
-        const it = supplyObject(s);
-        if (!it || $gameParty.numItems(it) < s.qty) {
-          return { ok: false, reason: T('Quests.youDoNotHaveTheGoods') };
+    if (MS && typeof MS.post === "function" && world && partyId) {
+      const sender = q.giverLabel || (q.giverFaction != null ? factionName(q.giverFaction) : null) || T('Quests.mailSenderDefault');
+      const subject = T('Quests.mailRewardSubject', { title: q.title || "" });
+      const body = T('Quests.mailRewardBody', { title: q.title || "", giver: sender });
+      const res = MS.post({
+        world,
+        partyId,
+        from: sender,
+        subject,
+        body,
+        gold,
+        items: mailItems,
+        once: "quest_reward_" + q.qid,
+      });
+      if (res && res.ok) {
+        mailed = true;
+        if (typeof MS.takeArrivals === "function") {
+          try {
+            const arrivals = MS.takeArrivals();
+            if (arrivals.length && window.ParchmentToast && window.ParchmentToast.show) {
+              const text = arrivals.length === 1
+                ? T("Mail.toast.arrivedOne", { subject: arrivals[0].subject })
+                : T.n("Mail.toast.arrivedMany", arrivals.length);
+              window.ParchmentToast.show(text, { duration: 300, severity: "good", category: "mail" });
+            }
+          } catch (e) { }
         }
       }
     }
-    // A tame creature must still be in the registry at hand-over time.
-    for (const s of q.steps) {
-      if (s.kind !== "adopt_pet") continue;
-      const pets = window.PetSystem?.getPets?.() || [];
-      if (!pets.some(p => p && p.enemyId === s.enemyId)) {
-        return {
-          ok: false,
-          reason: T('Quests.theCreatureIsNotWithYouAnyMore'),
-        };
+
+    if (!mailed) {
+      if (gold > 0) $gameParty.gainGold(gold);
+      for (const itemRef of mailItems) {
+        const db = itemRef.kind === "weapon" ? $dataWeapons
+          : itemRef.kind === "armor" ? $dataArmors
+          : $dataItems;
+        const obj = db && db[itemRef.id];
+        if (obj) $gameParty.gainItem(obj, itemRef.count, false);
       }
+    }
+
+    return { lines, mailed };
+  }
+
+  function grantRewards(q) {
+    return deliverQuestReward(q).lines;
+  }
+
+  // Complete a quest as soon as objectives are done and deliver the reward via mail.
+  function completeQuest(qid, note) {
+    const st = state();
+    const q = st.active[qid];
+    if (!q) return { ok: false };
+
+    if (isEmptyWorld() && !q.posted) {
+      return { ok: false, reason: T('Quests.giverIsDead') };
     }
 
     // What is handed over on a player-posted contract is not consumed: it goes
@@ -2514,9 +2551,8 @@
       }
     }
 
-    const lines = grantRewards(q);
-    // A posted contract has no faction behind it and nobody's disposition to
-    // move: the escrow paid out above is the whole of the settlement.
+    const { lines, mailed } = deliverQuestReward(q);
+
     const postedRec = q.posted ? postedById(q.qid) : null;
     if (postedRec) settlePostedClaim(postedRec, handedGoods);
     else {
@@ -2524,19 +2560,34 @@
       applyNpcOutcome(q, true);
     }
     st.claimedCount = (st.claimedCount || 0) + 1;
+    q.status = "completed";
     delete st.active[qid];
 
-    const secretNote = q.reward.secret ? T('Quests.theSealedRewardTurnsOutToBe') + lines.join(" + ") : "";
+    const secretNote = q.reward && q.reward.secret ? T('Quests.theSealedRewardTurnsOutToBe') + lines.join(" + ") : "";
     const petNote = handedOver.length
       ? T('Quests.handedOver') + handedOver.join(", ") + "."
       : "";
-    kanbanUpdate(qid, T('Quests.contractHonoredReceived') + (lines.join(" + ") || euros(0)) + secretNote + petNote);
+    const rewardSummary = lines.join(" + ") || euros(0);
+    const kanbanNote = (note ? (note + "\n") : "")
+      + (mailed ? T('Quests.contractHonoredMailed') : T('Quests.contractHonoredReceived'))
+      + rewardSummary + secretNote + petNote;
+    kanbanUpdate(qid, kanbanNote);
     kanbanComplete(qid); // auto-moves the note to Done
+
     if (handedOver.length) {
       toast(T('Quests.handedOverYourCompanion') + handedOver.join(", "), "warning", 240);
     }
-    toast(T('Quests.rewardCollected') + (lines.join(" + ") || euros(0)));
+    toast(T('Quests.contractCompleted', { title: q.title }), "good", 240);
+    if (mailed) {
+      toast(T('Quests.rewardSentToMail', { reward: rewardSummary }), "good", 240);
+    } else {
+      toast(T('Quests.rewardCollected') + rewardSummary);
+    }
     return { ok: true, lines };
+  }
+
+  function claimQuest(qid) {
+    return completeQuest(qid);
   }
 
   function failQuest(qid, reason) {
@@ -3022,7 +3073,8 @@
     dropKanbanNotice(rec);
     kanbanAdd(q);
     kanbanProgress(q);
-    if (!q.steps.length) questBecomesClaimable(q, T('Quests.post.readyToCollect'));
+    if (!q.steps.length) completeQuest(q.qid, T('Quests.post.readyToCollect'));
+    checkSupplySteps();
     return { ok: true, quest: q };
   }
 
@@ -3402,6 +3454,7 @@
     // Taming happens on the way back from a battle, which is not a map load, so
     // the pet registry is polled here too.
     checkPetSteps();
+    checkSupplySteps();
     // Walking onto a destination's tile on the world map is an arrival with no
     // map load behind it, so travel steps are polled as well.
     checkArrivalSteps();
@@ -3453,9 +3506,32 @@
     }
   }
 
+  function checkSupplySteps() {
+    for (const { q, s, i } of activeSteps()) {
+      if (s.kind === "supply_items" && !s.done) {
+        const it = supplyObject(s);
+        if (it && $gameParty.numItems(it) >= s.qty) {
+          completeStep(q, i, T('Quests.goodsReadyToHandOver'));
+        }
+      }
+    }
+  }
+
+  function checkClaimableMigration() {
+    const st = state();
+    for (const qid of Object.keys(st.active || {})) {
+      const q = st.active[qid];
+      if (q && (q.status === "claimable" || firstUndoneIndex(q) === -1)) {
+        completeQuest(qid);
+      }
+    }
+  }
+
   function onMapEntered(mapId) {
     checkArrivalSteps();
     checkPetSteps();
+    checkSupplySteps();
+    checkClaimableMigration();
   }
 
   // A pet contract is satisfied the moment the named creature is in the registry,
@@ -3481,15 +3557,11 @@
     // ever addressed to a board the party has stood in front of.
     rememberBoard(boardKey);
     checkPetSteps();
+    checkSupplySteps();
     for (const { q, s, i } of activeSteps()) {
       if (s.kind === "deliver_board" && (norm(s.dest) === bn || placeMatchesHere(s.dest))) {
         completeStep(q, i, T('Quests.deliveredTo') + s.dest + ".");
         toast(T('Quests.deliveryComplete') + s.dest);
-      } else if (s.kind === "supply_items") {
-        const it = supplyObject(s);
-        if (it && $gameParty.numItems(it) >= s.qty) {
-          completeStep(q, i, T('Quests.goodsReadyToHandOver'));
-        }
       }
     }
     tickDeadlines();
@@ -3567,30 +3639,42 @@
     return ev;
   }
 
-  // Stamp single-tile Statue/SignPost features around the anchor.
+  // What a scan step will accept, best first. A statue is a statue where the
+  // tileset draws one; where it does not, a broken column or a graveside stone
+  // is what stands in the fields instead, and the contract is written against
+  // whatever that square can actually put down.
+  // i18n-ignore-start: tileset feature ids, never labels
+  const SCAN_FEATURES = {
+    statues: ["Statue", "Column", "Grave", "Pillar"],
+    signs: ["SignPost", "Sign", "SignPostIce"],
+  };
+  // i18n-ignore-end
+
+  // The names THIS step is being judged on: what the site's tileset settled on
+  // the first time the party stood there, or the preference list until then.
+  function scanFeatureNames(s) {
+    if (s.featureNames && s.featureNames.length) return s.featureNames;
+    return SCAN_FEATURES[s.kind] || [];
+  }
+
+  // Make sure the site actually holds the things the notice asks to be scanned.
+  // The terrain system plants whatever is missing and writes it to the world
+  // folder, so the stones are there for every savegame of this world and are
+  // still there on the next visit; what the square already grew counts towards
+  // the count rather than being doubled up on.
   function stampScanFeatures(q, s, i) {
-    const U = window.ProcGenUtils;
-    if (!U || !$dataMap) return 0;
-    const featureName = s.kind === "signs" ? "SignPost" : "Statue"; // i18n-ignore: Features.json ids
-    const tilesetId = $dataMap.tilesetId;
-    const feats = U.Cache.getTilesetFeatures(tilesetId);
-    const variants = (feats && feats[featureName])
-      ? feats[featureName].filter(v => v.type === "single" && v.tileId) : [];
-    if (!variants.length) return 0;
-    const w = $dataMap.width, h = $dataMap.height;
-    const rng = mulberry32(hashStr(q.qid + ":" + i + ":scan"));
-    let stamped = 0;
-    for (let k = 0; k < s.count; k++) {
-      const spot = findSpawnTile(q.qid + ":" + i + ":sc:" + k, 6, 22);
-      const tileId = variants[Math.floor(rng() * variants.length)].tileId;
-      const idx3 = 3 * w * h + spot.y * w + spot.x;
-      if ($dataMap.data[idx3] === 0) {
-        $dataMap.data[idx3] = tileId;
-        stamped++;
-      }
-    }
-    if ($gameMap) $gameMap.requestRefresh();
-    return stamped;
+    const TI = window.TerrainInteractions;
+    if (!TI || typeof TI.plantFeatures !== "function" || !$dataMap) return 0;
+    const res = TI.plantFeatures(scanFeatureNames(s), s.count,
+      { seedKey: q.qid + ":" + i + ":scan" });
+    if (!res || !res.tiles.length) return 0;
+    // From here on the contract is about the thing that could be put down.
+    s.featureNames = [res.name];
+    // A square with room for two statues and no more asks for two: a step that
+    // cannot be finished is worse than a smaller one.
+    const standing = res.tiles.length;
+    if (standing < s.count) s.count = Math.max(1, standing);
+    return standing;
   }
 
   // Is the creature standing on this tile still the one-of-a-kind one? A rarity
@@ -3706,8 +3790,10 @@
           break;
         }
         case "clearing": {
-          // A site whose biome grows nothing clearable would trap the contract
-          // forever, so it degrades the same way a scan site without statues does.
+          // Bare ground gets what the contract asks to be cleared put down on it,
+          // the same way a scan site gets its stones; only a square whose tileset
+          // draws none of it at all still degrades to a survey.
+          plantClearables(q, s, i);
           if (!s.cleared && countClearableHere() === 0) {
             completeStep(q, i, T('Quests.nothingLeftToClearHereTheGroundIsAlreadyBare'));
             break;
@@ -3879,6 +3965,14 @@
   // ==========================================================================
   const CLEARING_FEATURES = ["Tree", "Rock", "Rubble", "Bush", "TreeIce", "RockIce"]; // i18n-ignore: Features.json ids
 
+  // Make sure there is something to clear here. What already grows counts, so a
+  // wooded square is left exactly as it grew.
+  function plantClearables(q, s, i) {
+    const TI = window.TerrainInteractions;
+    if (!TI || typeof TI.plantFeatures !== "function") return;
+    TI.plantFeatures(CLEARING_FEATURES, s.count, { seedKey: q.qid + ":" + i + ":clear" });
+  }
+
   // How many clearable features actually stand on this map. Used to detect a site
   // where a clearing contract could never be finished.
   function countClearableHere() {
@@ -3944,9 +4038,9 @@
     if (!pairs.length || !before || !before.name) return;
 
     for (const { q, s, i } of pairs) {
-      if (s.kind === "statues" && before.name === "Statue") { // i18n-ignore: Features.json id
+      if (s.kind === "statues" && scanFeatureNames(s).includes(before.name)) {
         recordScan(q, s, i, before, T('Quests.statueScanned'), T('Quests.allStatuesScannedAndCatalogued'));
-      } else if (s.kind === "signs" && (before.name === "SignPost" || before.name === "SignPostIce")) {
+      } else if (s.kind === "signs" && scanFeatureNames(s).includes(before.name)) {
         recordScan(q, s, i, before, T('Quests.signpostVerified'), T('Quests.everySignpostCheckedAgainstTheRegistry'));
       } else if (s.kind === "clearing" && CLEARING_FEATURES.includes(before.name)) {
         const tileKey = before.x + "," + before.y;
@@ -3990,8 +4084,26 @@
     }
   }
 
+  // The one key a feature answers under: the top-left tile of its footprint.
+  function scanKeyFor(before) {
+    const TI = window.TerrainInteractions;
+    if (TI && typeof TI.featureFootprintAt === "function") {
+      const foot = TI.featureFootprintAt(before.x, before.y);
+      if (foot && foot.tiles && foot.tiles.length) {
+        let best = foot.tiles[0];
+        for (const t of foot.tiles) {
+          if (t.y < best.y || (t.y === best.y && t.x < best.x)) best = t;
+        }
+        return best.x + "," + best.y;
+      }
+    }
+    return before.x + "," + before.y;
+  }
+
   function recordScan(q, s, i, before, progressLabel, doneNote) {
-    const key = before.x + "," + before.y;
+    // A statue is usually two tiles tall: the whole footprint answers under one
+    // key, so scanning its feet and then its head is one statue, not two.
+    const key = scanKeyFor(before);
     if (s.scanned[key]) return;
     s.scanned[key] = true;
     const n = Object.keys(s.scanned).length;
@@ -4180,6 +4292,16 @@
     }
   };
 
+  if (typeof Game_Party !== "undefined" && Game_Party.prototype) {
+    const _Game_Party_gainItem_pq = Game_Party.prototype.gainItem;
+    Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+      if (_Game_Party_gainItem_pq) _Game_Party_gainItem_pq.call(this, item, amount, includeEquip);
+      if (amount > 0) {
+        try { checkSupplySteps(); } catch (e) { }
+      }
+    };
+  }
+
   // ==========================================================================
   // Debug: generate + accept a random quest instantly (Sandbox button)
   // ==========================================================================
@@ -4227,8 +4349,8 @@
   window.ProceduralQuests = {
     // board side
     openQuestBoard, resolveBoardKey,
-    currentBoardKey, offersForBoard, acceptOffer, claimQuest, abandonQuest,
-    onBoardOpened, activeQuests, rewardText, termsLines, objectiveText,
+    currentBoardKey, offersForBoard, acceptOffer, claimQuest, completeQuest, abandonQuest,
+    onBoardOpened, checkSupplySteps, activeQuests, rewardText, termsLines, objectiveText,
     stepText, hoursLeftText, deadlineStamp, factionName, euros, medianLevel,
     nowMinutes, firstUndoneIndex,
     // world side

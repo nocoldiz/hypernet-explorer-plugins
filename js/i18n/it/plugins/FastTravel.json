@@ -35,6 +35,7 @@
   "hubTitle": "Servita dalla rete di trasporti",
   "hubBadge": "Nodo",
   "hubLabel": "{place}, nodo di trasporto",
+  "patreonStation": "Stazione del Mecenate",
   "fuelRate": "Consumo: {rate} L/tassello",
   "rateMultiplier": "Moltiplicatore: {multiplier}x",
   "editing": "In modifica",
@@ -47,9 +48,6 @@
   "destFuel": "{place} ({liters}L, {km} km)",
   "destCost": "{place} ({cost}€, {km} km)",
   "destLevel": "Lv. {level}",
-  "destLevelDetail": "Lv. {level} (fascia {min}-{max})",
-  "destLevelBand": "Cosa si aggira in zona: livelli da {min} a {max}",
-  "destLevelBandFrozen": "Cosa si aggira in zona: livelli da {min} a {max}, e gli anni non li muovono mai",
   "ui": {
     "back": "Indietro",
     "edit": "Modifica",
@@ -101,5 +99,39 @@
     "visit": "Visita {biome}",
     "worldMap": "Resta sulla mappa del mondo"
   },
-  "offline": "Offline"
+  "offline": "Offline",
+  "book": {
+    "appName": "Wayfare",
+    "subtitle": "Elenca prezzo e tempo di viaggio di ogni mezzo di trasporto per ogni destinazione.",
+    "quotesOnly": "Solo prezzi. I biglietti si comprano alla fermata, non da questa pagina.",
+    "search": "Cerca un luogo",
+    "noMatch": "Nessun luogo con quel nome.",
+    "noDestinations": "Il libro non ha ancora pagine.",
+    "departingFrom": "Quotato da {x}, {y}",
+    "headline": "{type}, terreno tarato su {level}.",
+    "levelUnknown": "nessun livello dichiarato",
+    "colMode": "Mezzo",
+    "colArranged": "Si ottiene",
+    "colFare": "Tariffa",
+    "colTime": "Viaggio",
+    "colNote": "Nota",
+    "free": "Gratis",
+    "minutes": "{m} min",
+    "hoursMinutes": "{h}h {m}m",
+    "arrangement": {
+      "own": "Con i tuoi mezzi",
+      "scheduled": "Servizio di linea",
+      "hired": "A noleggio sul posto",
+      "quoted": "Solo tariffa"
+    },
+    "noteOwn": "Costa tempo e carburante invece di un biglietto.",
+    "noteScheduled": "Si sale dove passa la linea. I biglietti si comprano allo sportello.",
+    "noteHired": "Disponibile a un posteggio taxi, dove ce n'e uno.",
+    "noteQuoted": "Non operato da qui. Il prezzo e indicato solo come riferimento.",
+    "noteRefused": "Lo sportello non vende a un gruppo ricercato.",
+    "noteOffline": "L'ì non arriva niente.",
+    "offlineBlurb": "Nessuna linea di trasporto raggiunge questa citta.",
+    "wantedBlurb": "Il gruppo e ricercato, quindi le biglietterie rifiutano il servizio. I trasporti privati ed esotici restano disponibili.",
+    "footer": "I prezzi sono calcolati dalla posizione attuale del gruppo e cambiano quando si sposta. Questa pagina non puo prenotare ne rimborsare nulla."
+  }
 }

@@ -3845,7 +3845,9 @@
     const name = String(args.eventName || "").trim();
     if (!name) return;
     const narrative = StoryLogger.generateNarrative(name);
+    window.skipLocalization = true;
     $gameMessage.add(narrative);
+    window.skipLocalization = false;
   });
 
   PluginManager.registerCommand(pluginName, "NPCDebug", args => {

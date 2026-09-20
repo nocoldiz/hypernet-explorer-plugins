@@ -69,6 +69,14 @@
     function worldMapReturnLabel() {
         if (window.GalaxySim?.isAlienSurface?.()) return T('MainMenu.cmd.chooseLandingSite');
         if (window.DungeonFloors?.insideTower?.()) return T('MainMenu.cmd.returnToElevator');
+        // The square the party lands on is worth naming before the press:
+        // WorldMapTransfer is the only answer to where a map stands
+        // (Map/WorldMapReturn.js). A map anchored to nothing keeps the plain
+        // label.
+        const at = window.WorldMapTransfer?.currentWorldCoords?.();
+        if (at && isFinite(at.x) && isFinite(at.y)) {
+            return T('MainMenu.cmd.returnToWorldMapAt', { x: at.x | 0, y: at.y | 0 });
+        }
         return T('MainMenu.cmd.returnToWorldMap');
     }
 
@@ -144,11 +152,15 @@
         { symbol: "build",       key: "B", code: 66 },
         { symbol: "help",        key: "H", code: 72 },
         { symbol: "training",    key: "N", code: 78 },
+        // The hyperdeck. W used to open it, which is a key the party walks with
+        // (WASD is bound to the four directions everywhere), so every step north
+        // raised the machine: it lives on P, out of the way of movement.
+        { symbol: "hypernet",    key: "P", code: 80 },
         // Digits stay the favourites hotbar on the map (ItemSystem/
         // ItemSystemInventory.js already maps 1-9 to it, Skyrim-style), so these
         // one only listens on the symbol that plugin defines and is reachable
         // by key from inside the menu, never from the field.
-        { symbol: "thinker",     key: "1", input: "1" },
+        { symbol: "thinker",     key: "1", input: "1", menuOnly: true },
     ];
 
     // Input symbol each hotkey listens on, and the badge lookup used by the
@@ -377,9 +389,24 @@
             this.cols = 2;
         }
 
-        static activate(cols = 2) {
-            this.activeElements = Array.from(this.container.querySelectorAll('.focusable'));
+        // A modal over the spread takes the whole focus ring: while one is up
+        // the navigator walks its buttons only, so a pad never reaches a row
+        // lying behind it. Null puts the ring back on the whole page.
+        static setScope(el) {
+            this.scope = el || null;
+        }
+
+        // `keep` is a CSS selector for the tile the cursor was reading before the
+        // page was rewritten under it (the tools tab just picked, say). The ring
+        // lands back on it instead of snapping to the top of the spread.
+        static activate(cols = 2, keep = null) {
+            const root = (this.scope && this.scope.isConnected) ? this.scope : this.container;
+            this.activeElements = Array.from(root.querySelectorAll('.focusable'));
             this.focusIndex = 0;
+            if (keep) {
+                const at = this.activeElements.indexOf(root.querySelector(keep));
+                if (at >= 0) this.focusIndex = at;
+            }
             this.cols = cols;
             this.active = true;
             this.buildRows();
@@ -826,8 +853,13 @@
     // without going through a full refreshUIMenuDOM (the search page patches
     // just its results list as the player types, see CustomMainMenuSearch.js).
     // Without this the navigator would keep walking DOM nodes that are gone.
+    // _dndRefocus is set by whatever is about to rewrite a page and knows where
+    // the ring should come back to. It is spent on the first rebind after that,
+    // so it can never leak into an unrelated redraw.
     Scene_Menu.prototype.rebindMenuFocus = function () {
-        UIMenuInputManager.activate(4);
+        const keep = this._dndRefocus;
+        this._dndRefocus = null;
+        UIMenuInputManager.activate(4, keep);
     };
 
     Scene_Menu.prototype.selectedActor = function () {
@@ -927,6 +959,10 @@
         if (this._rightToolsTab === tab) return;
         SoundManager.playCursor();
         this._rightToolsTab = tab;
+        // Walking the tabs on a pad rewrites the page under the cursor, so the
+        // ring is sent back to the tab that was picked rather than to the top of
+        // the spread.
+        this._dndRefocus = '.right-tools-tab.active';
         this.refreshUIMenuDOM(true);
     };
 
@@ -1007,7 +1043,7 @@
             this.drawAllVehicleSprites();
 
             // Re-bind focusable commands in new list immediately so keyboard/gamepad navigation finds them
-            UIMenuInputManager.activate(4);
+            this.rebindMenuFocus();
             if (window.MenuSearch) window.MenuSearch.afterRender(this);
 
             leftPageContainer.classList.remove("page-turn--out");
@@ -1027,6 +1063,10 @@
 
             // Render Canvases for portraits
             this.drawAllPartyPortraits();
+            // The right page carries focusable tiles of its own (the tools tabs
+            // and the tool grid), so the navigator has to be told the page it was
+            // walking has just been replaced.
+            this.rebindMenuFocus();
             if (window.MenuSearch) window.MenuSearch.afterRender(this);
 
             rightPageContainer.classList.remove("page-turn--out");
@@ -1039,6 +1079,9 @@
     // page absorbed the cancel; false means "nothing nested left, close the menu".
     // Each hideXPage() plays its own cancel SE, so callers must not play one too.
     Scene_Menu.prototype.backOutOneLevel = function () {
+        // The lodging sheet is drawn over everything else, so it is the first
+        // thing a cancel takes back.
+        if (this._lodgingModal && this.closeUILodgingModal()) return true;
         // A live search covers both pages, so it is the first thing a cancel
         // takes back (CustomMainMenuSearch.js).
         if (window.MenuSearch && window.MenuSearch.isActive()) {
@@ -1069,6 +1112,7 @@
     };
 
     Scene_Menu.prototype.hideDynamicsPage = function () {
+        this.closeUILodgingModal(true);
         SoundManager.playCancel();
         this._dynamicsDrag = null;
         this._isDynamicsPage = false;
@@ -1718,6 +1762,112 @@
         this.refreshUIMenuDOM(false);
     });
 
+    // Where a reserve lives. Nobody waits in a drawer: an inactive companion
+    // is somewhere in the world, and the party walks into them there. The
+    // halls (the Stairs Hall and the tower above and below it) are where
+    // anybody with nowhere else to be ends up; a house the party owns, the
+    // starship and the patron vault are offered as they are come by, so the
+    // list grows with what the party holds. Every place is read at once on a
+    // sheet drawn over the board, which the pad walks one column at a time and
+    // the cancel key takes back down: a cycling button hid the list behind a
+    // number of presses nobody could count.
+    // window.PartyLodging (NPCSystemParty.js) owns every answer here.
+    // Taken by dossier id rather than by name: a name goes into the row's
+    // onclick as text, and a companion called O'Neill would close the string
+    // it was written into.
+    Scene_Menu.prototype.openUIMemberLodging = guardedBoardAction(function (presetId) {
+        const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+        const name = (bench.find(entry => entry.id === presetId) || {}).name;
+        if (!name) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        const LG = window.PartyLodging;
+        if (LG?.isStoryFollower?.(name)) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.walksWithParty'),
+                { severity: 'warning', duration: 200 });
+            return;
+        }
+        const places = LG?.places?.() ?? [];
+        if (!LG || places.length < 2) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.noLodgings'),
+                { severity: 'warning', duration: 200 });
+            return;
+        }
+        if (!this._dndContainer) return;
+        this.closeUILodgingModal(true);
+
+        const current = LG.assignmentOf(name);
+        const rows = places.map(place => {
+            const here = place.id === current;
+            // The place ids carry a map key inside them (house:<key>), so they
+            // go through the row as an attribute rather than into a JavaScript
+            // string a quote could close.
+            return `<div class="lodging-option command-item${here ? ' is-here' : ' focusable'}" data-place="${escapeHtml(place.id)}"${here ? '' : ` onclick="SceneManager._scene?.setUIMemberLodging?.(${presetId}, this.dataset.place)"`}>
+                            <span class="lodging-option-name">${escapeHtml(place.name)}</span>
+                            <span class="lodging-option-note">${here ? T('MainMenu.dynamics.lodgingHere') : ''}</span>
+                        </div>`;
+        }).join('');
+
+        const modal = document.createElement('div');
+        modal.className = 'lodging-modal';
+        modal.id = 'dyn-lodging-modal';
+        modal.innerHTML = `
+                <div class="lodging-modal-sheet">
+                    <h3 class="lodging-modal-title">${T('MainMenu.dynamics.lodgingTitle', { name: escapeHtml(name) })}</h3>
+                    <div class="lodging-modal-list">${rows}</div>
+                    <div class="command-item focusable lodging-modal-close" onclick="SceneManager._scene?.closeUILodgingModal?.()">${T('MainMenu.dynamics.lodgingCancel')}</div>
+                </div>`;
+        // Clicking the parchment around the sheet backs out, the same as the
+        // cancel key: a click on the sheet itself must not.
+        modal.addEventListener('mousedown', event => {
+            if (event.target === modal) this.closeUILodgingModal();
+        });
+        this._dndContainer.appendChild(modal);
+        this._lodgingModal = modal;
+
+        // One column of buttons, and the ring may not wander off them while
+        // the sheet is up.
+        SoundManager.playOk();
+        UIMenuInputManager.setScope(modal);
+        UIMenuInputManager.activate(1);
+    });
+
+    // Sends them where the sheet says, takes it down and redraws the board.
+    Scene_Menu.prototype.setUIMemberLodging = guardedBoardAction(function (presetId, placeId) {
+        const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+        const name = (bench.find(entry => entry.id === presetId) || {}).name;
+        const LG = window.PartyLodging;
+        if (!name || !LG || !LG.assign(name, placeId)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        this.closeUILodgingModal(true);
+        SoundManager.playOk();
+        window.ParchmentToast?.show?.(
+            T('MainMenu.dynamics.nowLivesIn', { name, place: LG.placeName(placeId) }),
+            { severity: 'info', duration: 200 }
+        );
+        this.refreshUIMenuDOM(false);
+    });
+
+    // Takes the sheet down and hands the focus ring back to the whole page.
+    // Silent when another action is about to redraw the board anyway.
+    Scene_Menu.prototype.closeUILodgingModal = function (silent) {
+        const modal = this._lodgingModal;
+        this._lodgingModal = null;
+        UIMenuInputManager.setScope(null);
+        if (!modal) return false;
+        modal.remove();
+        if (!silent) {
+            SoundManager.playCancel();
+            this.rebindMenuFocus();
+        }
+        return true;
+    };
+
     // The board itself: one page, three lists. Active at the top (who is on the
     // road right now), Reserves under it (everyone this world has ever benched)
     // and the former members at the foot, read only. A member is moved between
@@ -1860,6 +2010,29 @@
                 ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
                 : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setActive')}</div>`;
 
+            // Where this one is living, and the button that opens the sheet
+            // of everywhere else. A world offering one place to live offers no
+            // choice, so the button is drawn dead rather than left out: the
+            // row keeps its shape whether or not the party owns anything yet.
+            // A story follower (Em, Bubba) lives nowhere: benched they still
+            // walk behind the party, so the row says so and the sheet of
+            // places is not offered at all (PartyLodging.isStoryFollower).
+            const lodging = window.PartyLodging;
+            const storyFollower = lodging?.isStoryFollower?.(preset.name) === true;
+            const livesIn = (lodging && !storyFollower)
+                ? lodging.placeName(lodging.assignmentOf(preset.name)) : '';
+            const canMove = !storyFollower && (lodging?.places?.() ?? []).length > 1;
+            const lodgingLine = storyFollower
+                ? `<div class="roster-since">${T('MainMenu.dynamics.walksWithParty')}</div>`
+                : livesIn
+                    ? `<div class="roster-since">${T('MainMenu.dynamics.livesIn', { place: escapeHtml(livesIn) })}</div>`
+                    : '';
+            const lodgingBtn = storyFollower
+                ? ''
+                : canMove
+                    ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.openUIMemberLodging?.(${preset.id})">${T('MainMenu.dynamics.moveLodging')}</div>`
+                    : `<div class="command-item roster-action is-disabled">${T('MainMenu.dynamics.moveLodging')}</div>`;
+
             const benchPicked = !!picked && picked.kind === 'bench' && picked.preset.id === preset.id;
             benchRows += `
                         <div class="npc-dynamics-member dyn-row roster-row${benchPicked ? ' dyn-row--picked' : ''}"${drag('bench', preset.id, hasRoom)}>
@@ -1872,7 +2045,8 @@
                                     <span class="roster-sub">${escapeHtml(className)} ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</span>
                                 </div>
                                 <div class="roster-since">${since}</div>
-                                <div class="roster-actions">${recallBtn}</div>
+                                ${lodgingLine}
+                                <div class="roster-actions">${recallBtn}${lodgingBtn}</div>
                             </div>
                         </div>`;
         });
@@ -1893,11 +2067,13 @@
             left:    { label: T('MainMenu.roster.departed'),   band: "roster--left" },
             died:    { label: T('MainMenu.roster.dead'),       band: "roster--died" },
         };
-        // Only the people who are no longer travelling: the two lists above
-        // already say everything about the ones who are.
-        const entries = (window.PartyRoster?.history?.() ?? []).filter(e => e.status !== 'active');
+        // Only the dead. Whoever is benched or walked off is still alive and
+        // already listed above (or can be met again out in the world), so this
+        // board is the memorial and nothing else.
+        const entries = (window.PartyRoster?.history?.() ?? []).filter(e => e.status === 'died');
         let pastRows = '';
-        entries.forEach(entry => {
+        this._dynamicsPastSprites = [];
+        entries.forEach((entry, pastIdx) => {
             const status = STATUS_LABELS[entry.status] || STATUS_LABELS.left;
             const dates = [];
             if (entry.joinedDate) dates.push(T('MainMenu.roster.joined', { date: escapeHtml(entry.joinedDate) }));
@@ -1906,16 +2082,31 @@
             else if (entry.status === 'left' && entry.leftDate) dates.push(T('MainMenu.roster.left', { date: escapeHtml(entry.leftDate) }));
             const dateLine = dates.length ? dates.join(' · ') : T('MainMenu.roster.dateUnrecorded');
 
+            // The sprite they died in. Painted after the page is in the DOM,
+            // the same way every other row on this board gets its portrait.
+            if (entry.characterName) {
+                this._dynamicsPastSprites.push({
+                    id: pastIdx,
+                    sheet: entry.characterName,
+                    at: entry.characterIndex || 0
+                });
+            }
+
             pastRows += `
                         <div class="npc-dynamics-member roster-past-row">
-                            <div class="roster-past-name">
-                                ${escapeHtml(entry.name)}${entry.status === 'died' ? ' <span class="roster-past-died">✝</span>' : ''}
-                                <span class="roster-past-status ${status.band}">${status.label}</span>
+                            <div class="portrait-frame">
+                                <canvas id="past-canvas-${pastIdx}" width="48" height="48"></canvas>
                             </div>
-                            <div class="roster-past-detail">
-                                ${escapeHtml(entry.className || '')}${entry.className ? ' · ' : ''}${T('MainMenu.roster.levelAbbr')}${entry.level}${entry.isLeader ? T('MainMenu.roster.partyLeader') : ''}
+                            <div class="roster-past-text">
+                                <div class="roster-past-name">
+                                    ${escapeHtml(entry.name)} <span class="roster-past-died">✝</span>
+                                    <span class="roster-past-status ${status.band}">${status.label}</span>
+                                </div>
+                                <div class="roster-past-detail">
+                                    ${escapeHtml(entry.className || '')}${entry.className ? ' · ' : ''}${T('MainMenu.roster.levelAbbr')}${entry.level}
+                                </div>
+                                <div class="roster-past-date">${dateLine}</div>
                             </div>
-                            <div class="roster-past-date">${dateLine}</div>
                         </div>`;
         });
         if (!pastRows) pastRows = `<div class="roster-empty">${T('MainMenu.roster.noRecords')}</div>`;
@@ -2761,11 +2952,11 @@
 
             <div class="right-tools">
                 <div class="right-tools-tabs">
-                    <button class="right-tools-tab${this._rightToolsTab === 'tools' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
-                    <button class="right-tools-tab${this._rightToolsTab === 'medical' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
-                    <button class="right-tools-tab${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
-                    <button class="right-tools-tab${this._rightToolsTab === 'books' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
-                    <button class="right-tools-tab${this._rightToolsTab === 'favourites' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'tools' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'medical' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'books' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'favourites' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
                 </div>
                 <div class="right-tools-grid">
                     ${this._rightToolsTab === 'tools' ? this.generateUIToolItemsListHTML() : ''}
@@ -2781,6 +2972,7 @@
                     <span class="clock-label">${T('MainMenu.label.timeDate')}</span>
                     <span class="clock-value">${dateTime.dateShort} | ${dateTime.time24}</span>
                 </div>
+                ${this.generateUILocalTimeRowHTML()}
                 <div class="clock-row">
                     <span class="clock-label">${T('MainMenu.label.weather')}</span>
                     <span class="clock-value">${weatherName} (${temperature}°C)</span>
@@ -3311,6 +3503,9 @@
 
     Scene_Menu.prototype.refreshUIMenuDOM = function (useTransitions = false) {
         if (!this._dndContainer) return;
+        // Nothing is redrawn under an open sheet: it goes first, so the focus
+        // ring is never scoped to a node the rebuild is about to orphan.
+        if (this._lodgingModal) this.closeUILodgingModal(true);
 
         const actor = this.selectedActor();
         if (!actor) return;
@@ -3349,7 +3544,7 @@
             this.drawAllVehicleSprites();
 
             // Re-bind input mappings
-            UIMenuInputManager.activate(4);
+            this.rebindMenuFocus();
             if (window.MenuSearch) window.MenuSearch.afterRender(this);
         } else {
             // Subsequent updates. The left page is only built when it is going
@@ -3383,7 +3578,7 @@
                 this.drawAllVehicleSprites();
 
                 // Re-bind input mappings
-                UIMenuInputManager.activate(4);
+                this.rebindMenuFocus();
                 if (window.MenuSearch) window.MenuSearch.afterRender(this);
             }
         }
@@ -3639,6 +3834,14 @@
                 characterName: () => preset.sprite || '',
                 characterIndex: () => preset.spriteIndex || 0
             }, `bench-canvas-${preset.id}`);
+        });
+        // The memorial rows carry no dossier at all, only the sheet the member
+        // was last seen wearing.
+        (this._dynamicsPastSprites ?? []).forEach(past => {
+            this.drawUIActorPortrait({
+                characterName: () => past.sheet,
+                characterIndex: () => past.at
+            }, `past-canvas-${past.id}`);
         });
         // The dossier on the right page falls back to the walking sprite when
         // whoever it is reading has no bust; the canvas only exists then.
@@ -3970,6 +4173,36 @@
     };
 
     // Helper: DateTime Parser
+    // The clock never leaves Earth: it runs the calendar, hunger, sleep and
+    // every schedule in the game, on another world as much as on this one.
+    // What DOES change off Earth is what the sky over the party is doing, so
+    // the party's own local solar time is shown beside it. It comes from where
+    // they are standing (the landing grid's columns are lines of longitude) and
+    // from how fast that world turns: quickly on a small rock, a fortnight to
+    // the hour on a moon, and not at all on a world locked to its star, which
+    // says so instead of pretending to keep time.
+    Scene_Menu.prototype.generateUILocalTimeRowHTML = function () {
+        const GS = window.GalaxySim;
+        if (!GS || !GS.localHourFor) return "";
+        const lp = (GS.getSurfacePlanet && GS.getSurfacePlanet()) ||
+            (GS.getOffEarthPlanet && GS.getOffEarthPlanet());
+        if (!lp || !lp.day) return "";
+        const total = ((typeof $gameVariables !== "undefined" && $gameVariables)
+            ? $gameVariables.value(114) : 0) + 600;
+        const lon = GS.surfaceColumnHour ? GS.surfaceColumnHour() : null;
+        const hour = GS.localHourFor(lp, total, lon);
+        if (hour == null || !isFinite(hour)) return "";
+        const hh = String(Math.floor(hour) % 24).padStart(2, "0");
+        const mm = String(Math.floor((hour % 1) * 60)).padStart(2, "0");
+        const locked = lp.day.frozen ? ` (${T('MainMenu.label.tidallyLocked')})` : "";
+        const world = lp.name ? ` ${lp.name}` : "";
+        return `
+                <div class="clock-row">
+                    <span class="clock-label">${T('MainMenu.label.localTime')}</span>
+                    <span class="clock-value">${hh}:${mm}${locked}${world}</span>
+                </div>`;
+    };
+
     Scene_Menu.prototype.getUIDateTime = function (minutes) {
         const date = new Date(2001, 0, 1, 10, 0, 0);
         date.setMinutes(date.getMinutes() + minutes);
@@ -4102,7 +4335,7 @@
     // What each hotkey does when pressed on the map. Commands with no entry
     // here are menu-only: World Map is handled by Map/WorldMap.js itself,
     // Pets opens a page inside Scene_Menu, and the digit commands
-    // (Thinker, Multiplayer, Hypernet) must not fire on the field because the
+    // (Thinker, Multiplayer) must not fire on the field because the
     // number row is the favourites hotbar there.
     // Keys live in HOTKEYS, actions live here.
     const MAP_HOTKEY_ACTIONS = {
@@ -4318,6 +4551,10 @@
         // the player had to close a menu they never asked for to get back to the
         // map. The first match wins and the rest of the frame is ignored.
         for (const h of HOTKEYS) {
+            // A digit belongs to the favourites hotbar out here (ItemSystem/
+            // ItemSystemHotbar.js): a menuOnly entry is reachable by key from
+            // inside the menu only, never from the field.
+            if (h.menuOnly) continue;
             const action = MAP_HOTKEY_ACTIONS[h.symbol];
             if (action && Input.isTriggered(h.input)) { action(this); return; }
         }

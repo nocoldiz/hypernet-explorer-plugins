@@ -35,6 +35,16 @@
  * Items (X Grimoire / Y Skill Book) are linked to common events that call these
  * commands; see docs/analysis/esoteric_skills_plan.md.
  *
+ * A FOURTH kind of book needs no command and no common event: a volume the
+ * training menu's writing bench filled in, which carries its own pages on
+ * itself as <GrimoireEntries: id,id,id>. Such a book is not a draw. Every page
+ * in it has to be read out to somebody before it closes, and a reader per page
+ * is picked from the same party list as always.
+ *
+ * Closing any of these books without taking anything costs nothing: the copy
+ * goes back in the pack, and on a written volume every page already taken in
+ * that sitting is given back too, so a cancel is a cancel.
+ *
  * @command openForbidden
  * @text Open Forbidden Grimoire
  * @desc Offer 5 random Forbidden spells to learn.
@@ -327,6 +337,19 @@
 
         this._itemId = p.itemId || 0;
         this._bookKey = GrimoireMemory.key(this._mode, this._category, this._itemId);
+        // A book is spent by RMMZ before this scene ever opens, so the only
+        // way to let a reading be cancelled is to hand the copy back on the
+        // way out. `_spent` is set the moment something is actually taken.
+        this._sourceItem = this._itemId && typeof $dataItems !== 'undefined'
+            ? ($dataItems[this._itemId] || null) : null;
+        this._spent = false;
+        this._refunded = false;
+        // A written volume names its own pages and is read out in full.
+        this._entries = (p.entries || []).slice();
+        this._custom = this._mode === 'custom' && this._entries.length > 0;
+        this._customTitle = p.title || "";
+        this._taken = {};      // skill id -> the actor who took it, this sitting
+        this._takenOrder = [];
 
         this._pool = this.buildPool();
         this._actor = $gameParty.members()[0] || $gameParty.leader();
@@ -354,6 +377,7 @@
     };
 
     Scene_ForgottenGrimoire.prototype.headerTitle = function () {
+        if (this._custom) return this._customTitle || T('Grimoire.custom.title');
         if (this._mode === "forbidden") return T('Grimoire.forbiddenTitle');
         if (this._mode === "skillbook") {
             return T('Grimoire.skillBookTitle', { school: prettify(this._category) });
@@ -366,6 +390,7 @@
     };
 
     Scene_ForgottenGrimoire.prototype.buildPool = function () {
+        if (this._custom) return this._entries.map(id => $dataSkills[id]).filter(isRealSkill);
         const all = $dataSkills.filter(isRealSkill);
         if (this._mode === "forbidden") {
             return all.filter(s => s.meta && s.meta.Esoteric && s.meta.Forbidden);
@@ -422,6 +447,13 @@
     // once when it opens against the whole party, so switching reader cannot
     // reroll them. A spell out of a given reader's reach is shown greyed.
     Scene_ForgottenGrimoire.prototype.rollOffers = function () {
+        // A written volume is not a draw. Its pages were chosen at the bench
+        // and they are all of it, whoever can or cannot read them yet.
+        if (this._custom) {
+            this._offered = this._entries.map(id => $dataSkills[id]).filter(isRealSkill);
+            if (this._spellIdx >= this._offered.length) this._spellIdx = 0;
+            return;
+        }
         const members = $gameParty.members();
         const affordable = this._pool.filter(s => members.some(a => this.canSurface(a, s)));
         // The same seed against the same shelf gives the same five pages back,
@@ -520,7 +552,9 @@
         const s = this._offered[i];
         if (!s || this._busy) { SoundManager.playBuzzer(); return; }
         if (this.blockedReason(this._actor, s)) { SoundManager.playBuzzer(); return; }
+        if (this._custom) { this.takePage(i, s); return; }
         this._busy = true;
+        this._spent = true;
         this._actor.learnSkill(s.id);
         SoundManager.playUseSkill();
         GrimoireMemory.learned(this._bookKey, s.id, this._actor.name());
@@ -573,7 +607,9 @@
               <h2 class="title" style="font-size:1.665em;">${this.headerTitle()}</h2>
             </div>
             <div style="font-family:var(--font-ui); font-style: normal; opacity:0.8; font-size:0.892em; margin-bottom:12px; color:var(--text-primary-hover,#58180D);">
-              ${T('Grimoire.ui.blurb')}
+              ${this._custom
+                ? T('Grimoire.custom.blurb', { left: this.pagesLeft(), total: this._offered.length })
+                : T('Grimoire.ui.blurb')}
             </div>
             <div style="font-family:var(--font-ui); font-weight:bold; font-size:0.928em; margin-bottom:6px; color:var(--text-primary-hover,#58180D);">${T('Grimoire.ui.partyReader')}</div>
             <div class="grim-list">${actorsHTML}</div>
@@ -618,6 +654,140 @@
           </div>`;
 
         this._dom.innerHTML = `<div class="book-spread">${leftHTML}${rightHTML}</div>`;
+    };
+
+    // ---------------------------------------------------------------------
+    // Written volumes, and cancelling a reading
+    //
+    // A book is spent by the engine before this scene ever opens, so the only
+    // honest way to offer a cancel is to hand the copy back on the way out.
+    // Every book therefore settles itself exactly once, when it closes:
+    // something was taken and it stays spent, or nothing was and it is given
+    // back whole. A written volume settles the other way round - it is never
+    // consumable, so it is spent by hand the moment its last page is read.
+    // ---------------------------------------------------------------------
+
+    const ENTRIES_TAG = /<GrimoireEntries:\s*([0-9,\s]+)>/i;  // i18n-ignore  note tag
+
+    /** The pages a written volume carries, or an empty list for any other book. */
+    function volumeEntries(item) {
+        if (!item) return [];
+        const raw = (item.meta && item.meta.GrimoireEntries) ||
+            ((item.note && ENTRIES_TAG.exec(item.note)) || [])[1] || "";
+        return String(raw).split(",")
+            .map(v => parseInt(v, 10))
+            .filter(v => v > 0);
+    }
+    window.GrimoireVolumes = { entriesOf: volumeEntries };
+
+    Scene_ForgottenGrimoire.prototype.takePage = function (i, s) {
+        if (!s || this._taken[s.id]) { SoundManager.playBuzzer(); return; }
+        this._actor.learnSkill(s.id);
+        this._taken[s.id] = this._actor.actorId();
+        this._takenOrder.push({ skillId: s.id, actorId: this._actor.actorId() });
+        SoundManager.playUseSkill();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(
+                T('Grimoire.toast.learned', {
+                    actor: this._actor.name(), skill: s.name, book: this.headerTitle()
+                }),
+                { severity: "good", icon: s.iconIndex, title: T('Grimoire.toast.title') }
+            );
+        }
+        this.redraw();
+        if (this.allPagesTaken()) {
+            this._busy = true;
+            this._spent = true;
+            this._learnedIdx = i;
+            setTimeout(() => this.popScene(), LEARN_HOLD_MS);
+        }
+    };
+
+    Scene_ForgottenGrimoire.prototype.allPagesTaken = function () {
+        return this._offered.length > 0 && this._offered.every(s => !!this._taken[s.id]);
+    };
+
+    Scene_ForgottenGrimoire.prototype.pagesLeft = function () {
+        return this._offered.filter(s => !this._taken[s.id]).length;
+    };
+
+    /** A cancelled reading is a cancelled reading: the pages go back too. */
+    Scene_ForgottenGrimoire.prototype.rollbackPages = function () {
+        for (const rec of (this._takenOrder || [])) {
+            const a = $gameActors.actor(rec.actorId);
+            if (a && a.forgetSkill) a.forgetSkill(rec.skillId);
+        }
+        this._takenOrder = [];
+        this._taken = {};
+    };
+
+    Scene_ForgottenGrimoire.prototype.settleBook = function () {
+        if (this._settled) return;
+        this._settled = true;
+        const item = this._sourceItem;
+        if (this._spent) {
+            // A written volume is never consumable, so nothing spent it on the
+            // way in and it is spent by hand here.
+            if (this._custom && item) $gameParty.loseItem(item, 1);
+            return;
+        }
+        if (this._custom) this.rollbackPages();
+        // Anything the engine consumed on the way in comes back.
+        if (item && item.consumable !== false) $gameParty.gainItem(item, 1);
+    };
+
+    const _Scene_ForgottenGrimoire_terminate = Scene_ForgottenGrimoire.prototype.terminate;
+    Scene_ForgottenGrimoire.prototype.terminate = function () {
+        try { this.settleBook(); } catch (e) { console.error('ForgottenGrimoire: could not settle the book', e); }
+        _Scene_ForgottenGrimoire_terminate.call(this);
+    };
+
+    // A page already read out this sitting is not on offer a second time.
+    const _Scene_ForgottenGrimoire_blockedReason = Scene_ForgottenGrimoire.prototype.blockedReason;
+    Scene_ForgottenGrimoire.prototype.blockedReason = function (actor, s) {
+        if (this._custom && s && this._taken && this._taken[s.id]) return "taken";
+        return _Scene_ForgottenGrimoire_blockedReason.call(this, actor, s);
+    };
+
+    const _Scene_ForgottenGrimoire_blockedLabel = Scene_ForgottenGrimoire.prototype.blockedLabel;
+    Scene_ForgottenGrimoire.prototype.blockedLabel = function (s) {
+        if (this._custom && s && this._taken && this._taken[s.id]) {
+            const who = $gameActors.actor(this._taken[s.id]);
+            return T('Grimoire.custom.takenBy', { actor: who ? who.name() : "" });
+        }
+        return _Scene_ForgottenGrimoire_blockedLabel.call(this, s);
+    };
+
+    // The volume is opened by what is written on it, so it needs no command
+    // and no common event of its own. The use is noticed here and the reader
+    // is opened on the map, which is where a used item always lands.
+    const _Game_Action_applyGlobal_volume = Game_Action.prototype.applyGlobal;
+    Game_Action.prototype.applyGlobal = function () {
+        const item = this.item();
+        if (item && DataManager.isItem(item)) {
+            const entries = volumeEntries(item);
+            if (entries.length) {
+                $gameTemp._grimoireCustomPending = {
+                    itemId: item.id, entries: entries, title: item.name
+                };
+            }
+        }
+        _Game_Action_applyGlobal_volume.call(this);
+    };
+
+    const _Scene_Map_update_volume = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function () {
+        _Scene_Map_update_volume.call(this);
+        const pending = $gameTemp && $gameTemp._grimoireCustomPending;
+        if (!pending) return;
+        if (SceneManager.isSceneChanging && SceneManager.isSceneChanging()) return;
+        if ($gameMap && $gameMap.isEventRunning && $gameMap.isEventRunning()) return;
+        $gameTemp._grimoireCustomPending = null;
+        $gameTemp._grimoireParams = {
+            mode: "custom", category: "", itemId: pending.itemId,
+            entries: pending.entries, title: pending.title
+        };
+        SceneManager.push(Scene_ForgottenGrimoire);
     };
 
     // ---------------------------------------------------------------------

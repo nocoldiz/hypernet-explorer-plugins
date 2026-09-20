@@ -884,13 +884,22 @@
     const BRACKET_MAX_WIDTH  = 25;  // widest
     const BRACKET_YEAR_STEP  = 5;   // levels every bracket climbs per year
 
-    // How much rarer a creature outside the bracket is. Below is the gentler
-    // slope with the higher floor (a country's small fry never leave it); above
-    // is the steeper one with the lower (something out of its depth is a
+    // How much rarer a creature outside the bracket is. Below is still the
+    // gentler slope; above is the steeper one (something out of its depth is a
     // surprise, and is meant to stay one).
-    const BRACKET_UNDER_WIDTH = 12;
+    //
+    // The floor under the bracket used to be wide and high enough that the
+    // strays outnumbered the residents: the troop table holds far more low
+    // creatures than high ones, so a 0.18 floor over six hundred of them beat
+    // the couple of hundred inside a high country's window, and the ground
+    // fielded small fry wherever it was read. That window is what the atlas,
+    // the travel book and the loot roll all print, so it has to be what
+    // actually turns up: the slope is tighter and the floor is the same as the
+    // one above the bracket, with the slope under still the gentler of the two.
+    // The small fry stay possible; they no longer own the country.
+    const BRACKET_UNDER_WIDTH = 9;
     const BRACKET_OVER_WIDTH  = 8;
-    const BRACKET_UNDER_FLOOR = 0.18;
+    const BRACKET_UNDER_FLOOR = 0.05;
     const BRACKET_OVER_FLOOR  = 0.05;
 
     // Deterministic 0..1 from the world seed, a nation's name and a salt, so a
@@ -2587,7 +2596,7 @@
         if (!list || !list.length) return false;
         if (list.length > 1) return true;
         const only = list[0];
-        return !(only && only.troopId === PLACEHOLDER_TROOP_ID &&
+        return !(only && (only.troopId === 106 || only.troopId === PLACEHOLDER_TROOP_ID) &&
                  only.weight === PLACEHOLDER_WEIGHT);
     };
 
@@ -4939,6 +4948,26 @@
     // personality decides what to do with them - prey drops everything and
     // runs, a hunter ignores the whole question, everyone else goes hunting
     // only when the party has given it nothing better to do.
+    // The live monsters on this map, answered ONCE a frame for everybody.
+    // scanEcologyAI runs per creature, and it used to walk $gameMap.events()
+    // itself - a freshly filtered copy of every event on the map, and an
+    // isLiveEnemyEvent test on each of them, once per creature. On a crowded
+    // map that is the whole event list re-walked a dozen times over inside a
+    // single frame, for a list that is the same list every time.
+    let _liveEnemyFrame = -1;
+    let _liveEnemyList = [];
+    function liveEnemiesThisFrame() {
+        if (_liveEnemyFrame === Graphics.frameCount) return _liveEnemyList;
+        _liveEnemyFrame = Graphics.frameCount;
+        _liveEnemyList = [];
+        const events = $gameMap ? $gameMap._events : null;
+        if (!events) return _liveEnemyList;
+        for (let i = 0; i < events.length; i++) {
+            if (isLiveEnemyEvent(events[i])) _liveEnemyList.push(events[i]);
+        }
+        return _liveEnemyList;
+    }
+
     Game_Event.prototype.scanEcologyAI = function() {
         this._aiPrey = null;
         this._aiThreat = null;
@@ -4947,8 +4976,12 @@
 
         const range = BSE.Data.ECOLOGY_AWARENESS;
         let preyDist = Infinity, threatDist = Infinity;
-        for (const ev of $gameMap.events()) {
-            if (ev === this || !isLiveEnemyEvent(ev)) continue;
+        const neighbours = liveEnemiesThisFrame();
+        for (let i = 0; i < neighbours.length; i++) {
+            const ev = neighbours[i];
+            // The list is a frame cache: something may have died since it was
+            // taken (a brawl resolving earlier in this same frame).
+            if (ev === this || ev._erased) continue;
             const dist = Math.abs(ev.x - this.x) + Math.abs(ev.y - this.y);
             if (dist > range) continue;
             const otherEco = BSE.Helpers.getEventEcology(ev);
@@ -5062,7 +5095,7 @@
         this._bseEcoPairTick = (this._bseEcoPairTick || 0) + 1;
         if (this._bseEcoPairTick >= ECO_PAIR_SCAN_INTERVAL) {
             this._bseEcoPairTick = 0;
-            const enemies = $gameMap.events().filter(isLiveEnemyEvent);
+            const enemies = liveEnemiesThisFrame();
             for (let i = 0; i < enemies.length; i++) {
                 for (let j = i + 1; j < enemies.length; j++) {
                     const a = enemies[i], b = enemies[j];
@@ -5266,7 +5299,55 @@
     function alienSurfaceState() {
         const GS = window.GalaxySim;
         if (!GS || typeof GS.isAlienSurface !== 'function' || !GS.isAlienSurface()) return null;
-        return { hasLife: !!(GS.currentAlienHasLife && GS.currentAlienHasLife()) };
+        return {
+            hasLife: !!(GS.currentAlienHasLife && GS.currentAlienHasLife()),
+            haunted: !!(GS.currentWorldIsHaunted && GS.currentWorldIsHaunted())
+        };
+    }
+
+    // ------------------------------------------------------------------
+    // Haunted worlds: the moons
+    // ------------------------------------------------------------------
+    // A world flagged haunted in Systems.json (Earth's three moons) is a
+    // hunting ground, not an ecology. Nothing was ever born there, so the
+    // biosignature roll and the world's own level have nothing to say about
+    // what walks the dust: every Ghost the database holds does, at whatever
+    // level it happens to carry, so the same crater can field the thing a
+    // level 5 party walks past and the thing that ends a level 90 one.
+    const _ghostTroopCache = {};   // enemyId -> troopId (valid for this session)
+    function ghostTroopId(enemyId) {
+        const cached = _ghostTroopCache[enemyId];
+        if (cached && $dataTroops[cached] && $dataTroops[cached]._hauntedEnemyId === enemyId) {
+            return cached;
+        }
+        const troopId = $dataTroops.length;
+        $dataTroops.push({
+            id: troopId,
+            members: [{ enemyId, x: 320, y: 300, hidden: false }],
+            name: $dataEnemies[enemyId] ? $dataEnemies[enemyId].name : '',
+            pages: [],
+            _hauntedEnemyId: enemyId
+        });
+        _ghostTroopCache[enemyId] = troopId;
+        return troopId;
+    }
+
+    // Every Ghost-archetype enemy in the database, one lone-member troop each.
+    let _hauntedListCache = null;
+    function hauntedEncounterList() {
+        if (_hauntedListCache && _hauntedListCache.length &&
+            $dataTroops[_hauntedListCache[0].troopId]) {
+            return _hauntedListCache;
+        }
+        const list = [];
+        for (let i = 1; i < $dataEnemies.length; i++) {
+            const data = $dataEnemies[i];
+            if (!data || !data.name) continue;
+            if (BSE.Helpers.getEnemyArchetype(data) !== 'Ghost') continue;
+            list.push({ troopId: ghostTroopId(i), weight: 1, regionId: 0 });
+        }
+        _hauntedListCache = list;
+        return list;
     }
 
     // The level an alien world spawns at: the world's own (GalaxySim.planetLevel),
@@ -5375,7 +5456,10 @@
     const _BSE_Game_Map_encounterList = Game_Map.prototype.encounterList;
     Game_Map.prototype.encounterList = function () {
         const st = alienSurfaceState();
-        if (st) return st.hasLife ? alienSpeciesEncounterList() : [];
+        if (st) {
+            if (st.haunted) return hauntedEncounterList();
+            return st.hasLife ? alienSpeciesEncounterList() : [];
+        }
         if (!$dataMap) return [];
         const list = _BSE_Game_Map_encounterList
             ? _BSE_Game_Map_encounterList.call(this)
@@ -6104,7 +6188,7 @@
         const st = alienSurfaceState();
         const WM = window.WorldManager;
         const deathWorld = !!(WM && typeof WM.isDeathWorld === "function" && WM.isDeathWorld());
-        if ((st && !st.hasLife) || deathWorld) {
+        if ((st && !st.hasLife && !st.haunted) || deathWorld) {
             $gameMap.events().forEach((ev) => {
                 const ed = ev.event();
                 if (ed && ed.name === 'Enemy') ev.erase();

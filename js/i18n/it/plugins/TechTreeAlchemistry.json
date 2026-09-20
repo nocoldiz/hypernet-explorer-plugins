@@ -1,6 +1,6 @@
 {
   "name": "Alchimica",
-  "blurb": "La trasmutazione ridotta a procedura di laboratorio, dall'idrogenazione chirale alla mappatura dei recettori con cui una cellula assaggia il mondo. In archivio accanto alle preparazioni che non hanno mai dato un saggio positivo.",
+  "blurb": "Ricerca su chimica e trasmutazione, comprese le preparazioni fallite.",
   "nodes": {
     "chem_chiral": {
       "name": "Catalisi Chirale",

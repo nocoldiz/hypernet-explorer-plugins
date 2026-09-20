@@ -107,6 +107,9 @@
     // given a shape the eye can take in at a glance.
     const LOG_MAX_W_RATIO = 0.32;
     const LOG_MAX_H_RATIO = 0.34;
+    // The share the box takes when it hangs from the ceiling of the right,
+    // where it grows down over the field: a smaller one, for fewer lines.
+    const LOG_MAX_H_RATIO_TOP = 0.20;
     // The clear air kept between the lowest line of the log and the top of the
     // command list standing against the same edge under it.
     const LOG_COMMAND_GAP = 20;
@@ -391,8 +394,16 @@
     // every battler card standing under it, which left a full party of three
     // and a summon reading a single line; the log keeps a corner of its own
     // now, never the one the cards are in (UI/PartyHud.js), so nothing stands
-    // in its way any more and every party reads the same five.
+    // in its way any more and every party reads the same five. Hung from the
+    // ceiling of the right the box grows DOWN over the field the fight is on,
+    // so in that corner it reads back fewer: a running commentary there is
+    // glanced at rather than read, and it keeps three.
     const MAX_VISIBLE_ENTRIES = 5;
+    const MAX_VISIBLE_ENTRIES_TOP = 3;
+
+    function maxVisibleEntries() {
+        return logOnTopRight() ? MAX_VISIBLE_ENTRIES_TOP : MAX_VISIBLE_ENTRIES;
+    }
     const ENTRY_EXIT_MS = 320;
 
     function isExitingEntry(el) {
@@ -428,7 +439,7 @@
         const root = log && log._htmlBattleLogRoot;
         if (!root) return 0;
         const live = liveEntries(root);
-        const maxEntries = MAX_VISIBLE_ENTRIES;
+        const maxEntries = maxVisibleEntries();
         const excess = live.length - maxEntries;
         if (excess > 0) {
             for (let i = 0; i < excess; i++) slideEntryOff(live[i]);
@@ -727,7 +738,7 @@
     Object.defineProperty(ConfigManager, 'battleLogPosition', {
         get: function() {
             return this._battleLogPosition !== undefined
-                ? this._battleLogPosition : LOG_POS_BOTTOM_LEFT;
+                ? this._battleLogPosition : LOG_POS_TOP_RIGHT;
         },
         set: function(value) {
             this._battleLogPosition = value;
@@ -762,7 +773,7 @@
         this.battleLogBgOpacity = config.battleLogBgOpacity !== undefined ? config.battleLogBgOpacity : CONFIG.battleLogBgOpacity;
         this.battleLogSkillNames = config.battleLogSkillNames !== undefined ? config.battleLogSkillNames : 0;
         this.battleLogPosition = config.battleLogPosition !== undefined
-            ? config.battleLogPosition : LOG_POS_BOTTOM_LEFT;
+            ? config.battleLogPosition : LOG_POS_TOP_RIGHT;
     };
 
     //-------------------------------------------------------------------------
@@ -1654,7 +1665,8 @@
             // cards over it instead, and the share is only the fallback for a
             // screen with no cards on it. Every edge is read live: the list
             // grows a row for every command the acting member carries.
-            const ratioRoom = Graphics.height * LOG_MAX_H_RATIO;
+            const ratioRoom = Graphics.height
+                * (onTopRight ? LOG_MAX_H_RATIO_TOP : LOG_MAX_H_RATIO);
             const cmdTop = (window.BattleCommandSide && window.BattleCommandSide.topY)
                 ? window.BattleCommandSide.topY() : null;
             const shared = (cmdTop === null || cmdTop === undefined)

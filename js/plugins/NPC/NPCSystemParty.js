@@ -70,6 +70,16 @@
  * @default 0
  * @desc Level they join at (0 = match the party leader)
  *
+ * @command LodgerJoinParty
+ * @text Inactive Member Joins
+ * @desc An inactive companion met where they live rejoins the party, if there is room for them (max 3)
+ *
+ * @arg name
+ * @text Name
+ * @type string
+ * @default
+ * @desc Name of the inactive companion (blank = the event this was called from)
+ *
  * @command SetArchetype
  * @desc Sets body archetype for the specified actor (must match Archetypes key)
  *
@@ -129,6 +139,20 @@
 
     PluginManager.registerCommand(pluginName, "PresetJoinParty", args => {
         presetJoinParty(String(args.presetName || "Bubba"), Number(args.level) || 0);
+    });
+
+    // Take one of the world's idle companions back onto the road, met
+    // wherever they live (window.PartyLodging). Nothing happens when the
+    // party is already three strong, or when the name is nobody the world is
+    // holding: the command is safe to call blind from any event.
+    PluginManager.registerCommand(pluginName, "LodgerJoinParty", args => {
+        let name = String(args.name || "");
+        if (!name) {
+            const eventId = $gameTemp?.lastPluginCommandEventId || $gameMap?._interpreter?._eventId;
+            const event = eventId ? $gameMap.event(eventId) : null;
+            name = event ? npcNameOf(event) : "";
+        }
+        lodgerJoinParty(name);
     });
 
     PluginManager.registerCommand(pluginName, "SetArchetype", args => {
@@ -347,6 +371,17 @@
         delete joinMinutes()[actorId];
         // And into the world, where every other savegame of it can meet them.
         rememberInWorld(snapshot);
+        // Somebody taken off the board does not blink out of existence: they
+        // are left standing where the party left them, and walk out of the
+        // world the moment it walks off the map. Only a benching, never a
+        // death and never a dismissal at the end of a story beat.
+        if (reason === "retired") {
+            try {
+                window.PartyLodging?.dropHere?.(snapshot);
+            } catch (e) {
+                console.error("[NPCSystemParty] the benched member could not be left on the map", e);
+            }
+        }
     }
 
     // i18n-ignore: actor names, matched at runtime
@@ -406,6 +441,8 @@
                 className: actor.currentClass()?.name || "",
                 level: actor.level,
                 status: "active",
+                characterName: actor.characterName(),
+                characterIndex: actor.characterIndex(),
                 isLeader: index === 0,
                 joinedAtMin: joinMinutes()[actor.actorId()] ?? null,
                 joinedDate: joinMinutes()[actor.actorId()] != null
@@ -422,6 +459,10 @@
                     className: entry.className || "",
                     level: entry.level || 1,
                     status: entry.reason || "left",
+                    // The sprite they were last seen in, so a roster row can
+                    // show a face instead of a bare name.
+                    characterName: entry.characterName || "",
+                    characterIndex: entry.characterIndex || 0,
                     isLeader: false,
                     joinedAtMin: entry.joinedAtMin ?? null,
                     joinedDate: entry.joinedDate || (entry.joinedAtMin != null ? rosterDateOf(entry.joinedAtMin) : ""),
@@ -480,6 +521,410 @@
 
         dateOf: rosterDateOf,
     };
+
+    // ========================================================================
+    // WHERE THE INACTIVE LIVE (window.PartyLodging)
+    // ========================================================================
+    // Benching a companion used to put them nowhere: they left the party and
+    // became a line on the Dynamics board. They live somewhere now, and the
+    // board is where the player says where.
+    //
+    //   the halls   , the default. The Stairs Hall and every floor of the
+    //                 Omega Tower above and below it: the one place in the
+    //                 world that belongs to nobody, so it is where anybody
+    //                 with nowhere else to be ends up. Up to NINE of them are
+    //                 met on any one floor, drawn again every time the party
+    //                 walks in, so the halls are never the same crowd twice.
+    //   a house     , any floor the party holds the deed to
+    //                 (ProceduralHouseSystem.listOwnedHouses)
+    //   the ship    , the starship interior, offered only to a party that
+    //                 owns a starship
+    //   the vault   , the patron vault, offered only in a world whose square
+    //                 has been claimed. A vault resident is found on ANY of
+    //                 its nine floors, rolled afresh on every descent.
+    //
+    // The assignment is a fact about the WORLD, like the bench it is made on,
+    // so it is written to the world folder and every savegame of that world
+    // finds them in the same place. Interaction with one of them is what it is
+    // with anybody else's party member: talk, read, and - the one thing that
+    // is not - take them back on (PartyPresence, NPCSystem.js).
+    // Nobody on the story road keeps a house. Em never leaves the party at all
+    // and Bubba, benched or not, walks behind it (Game_BubbaFollower), so
+    // neither of them is ever a resident anywhere: the Dynamics board offers
+    // them no home and PartyLodging refuses to give them one.
+    // i18n-ignore: actor names, matched at runtime
+    const STORY_LODGING_NAMES = ["Em", "Bubba"];
+
+    function isStoryLodgingFixed(name) {
+        if (!window.$gameSwitches || !$gameSwitches.value(100)) return false;
+        return STORY_LODGING_NAMES.includes(String(name || ""));
+    }
+
+    const LODGING_FIELD = "lodging";        // i18n-ignore  field in party.json
+    const LODGING_DEFAULT = "halls";        // i18n-ignore  place id
+    const STAIRS_HALL_MAP_ID = 635;
+    const STARSHIP_INTERIOR_MAP_ID = 721;
+    // The halls are wide and the reserves can be long; nine at a time is a
+    // crowd without being the whole bench standing in one room.
+    const HALLS_MAX_RESIDENTS = 9;
+    const LODGING_KEY_PREFIX = "inactive:";  // i18n-ignore  spawned event key
+
+    function lodgingStore() {
+        const WM = window.WorldManager;
+        if (!WM || typeof WM.getField !== "function") return null;
+        if (WM.hasActiveWorld && !WM.hasActiveWorld()) return null;
+        let held = null;
+        try { held = WM.getField(WORLD_FILE, LODGING_FIELD); } catch (e) { return null; }
+        if (!held || typeof held !== "object") {
+            held = {};
+            try { WM.setField(WORLD_FILE, LODGING_FIELD, held); } catch (e) { return null; }
+        }
+        return held;
+    }
+
+    // Everybody the world holds who travels with nobody, whichever register
+    // they are filed in: the reserve dossiers this world can call back
+    // (CharacterPresets, what the Dynamics board lists) and the departure
+    // snapshots every savegame of the world writes (worldInactive). The two
+    // overlap by name, and the dossier wins, because it is the one that can be
+    // taken back on.
+    function lodgingResidents() {
+        const out = [];
+        const seen = new Set();
+        const presets = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+        for (const preset of presets) {
+            if (!preset || !preset.name || seen.has(preset.name)) continue;
+            if (isStoryLodgingFixed(preset.name)) continue;
+            seen.add(preset.name);
+            out.push({
+                name: preset.name,
+                presetId: preset.id,
+                classId: preset.classId,
+                level: preset.level || 1,
+                characterName: preset.sprite || "",
+                characterIndex: preset.spriteIndex || 0,
+                equips: null,
+            });
+        }
+        for (const entry of window.PartyRoster.worldInactive()) {
+            if (!entry || !entry.name || seen.has(entry.name)) continue;
+            if (isStoryLodgingFixed(entry.name)) continue;
+            seen.add(entry.name);
+            out.push({
+                name: entry.name,
+                presetId: null,
+                classId: entry.classId,
+                level: entry.level || 1,
+                characterName: entry.characterName || "",
+                characterIndex: entry.characterIndex || 0,
+                equips: Array.isArray(entry.equips) ? entry.equips.slice() : null,
+            });
+        }
+        return out;
+    }
+
+    // Is the starship the party's own? Only an owned one has an interior to
+    // put anybody in; a ship seen through a window is somebody else's.
+    function ownsStarship() {
+        const VS = window.MergedVehicleSystem;
+        const owned = VS?.getOwnedVehicles?.() ?? [];
+        return owned.some(v => v && (v.key === "starship" || v.type === "airship"));  // i18n-ignore: vehicle keys
+    }
+
+    function vaultIsOpen() {
+        return !!window.PatreonRewards?.claimedSquare?.();
+    }
+
+    // The gear they left in, on the profile everything that inspects them
+    // reads (the Empathize panel, the wiki).
+    function dressLodgerProfile(person) {
+        if (!person || !Array.isArray(person.equips)) return;
+        try {
+            const profile = window.NPCSocietyRegistry?.getProfile?.(person.name);
+            if (profile) profile.equipment = person.equips.slice();
+        } catch (e) { /* they stand there dressed either way */ }
+    }
+
+    window.PartyLodging = {
+        DEFAULT: LODGING_DEFAULT,
+        MAX_ACTIVE: 3,
+        HALLS_MAX_RESIDENTS,
+        STAIRS_HALL_MAP_ID,
+        STARSHIP_INTERIOR_MAP_ID,
+        KEY_PREFIX: LODGING_KEY_PREFIX,
+
+        // Everybody with nowhere else to be, and where each of them is.
+        residents() {
+            return lodgingResidents().map(person =>
+                Object.assign({}, person, { lodging: this.assignmentOf(person.name) }));
+        },
+
+        // Every place the player may send somebody, the default first. A place
+        // the party does not hold is not on the list at all rather than listed
+        // and refused.
+        places() {
+            const out = [{ id: LODGING_DEFAULT, kind: "halls", name: T('NPCParty.lodging.halls') }];
+            const houses = window.ProceduralHouseSystem?.listOwnedHouses?.() ?? [];
+            for (const house of houses) {
+                if (!house || !house.key) continue;
+                out.push({
+                    id: "house:" + house.key,   // i18n-ignore: place id
+                    kind: "house",
+                    name: T('NPCParty.lodging.house', { place: house.mapName || "" }),
+                });
+            }
+            if (ownsStarship()) {
+                out.push({ id: "ship", kind: "ship", name: T('NPCParty.lodging.ship') });  // i18n-ignore: place id
+            }
+            if (vaultIsOpen()) {
+                out.push({ id: "vault", kind: "vault", name: T('NPCParty.lodging.vault') }); // i18n-ignore: place id
+            }
+            return out;
+        },
+
+        placeName(placeId) {
+            const found = this.places().find(place => place.id === placeId);
+            return found ? found.name : T('NPCParty.lodging.halls');
+        },
+
+        // Where this person lives. A place the party has since sold, sunk or
+        // never held falls back to the halls rather than leaving them nowhere.
+        // Em and Bubba keep no home on the story road: they are with the
+        // party, so the board reads them as living nowhere.
+        isStoryFollower(name) {
+            return isStoryLodgingFixed(name);
+        },
+
+        assignmentOf(name) {
+            if (isStoryLodgingFixed(name)) return LODGING_DEFAULT;
+            const store = lodgingStore();
+            const held = store && name ? store[name] : null;
+            if (!held) return LODGING_DEFAULT;
+            return this.places().some(place => place.id === held) ? held : LODGING_DEFAULT;
+        },
+
+        // Send somebody to live somewhere. The halls are written as an absence
+        // rather than as a value, so a world folder only ever carries the
+        // assignments that were actually made.
+        assign(name, placeId) {
+            if (isStoryLodgingFixed(name)) return false;
+            const store = lodgingStore();
+            if (!store || !name) return false;
+            if (!placeId || placeId === LODGING_DEFAULT) {
+                delete store[name];
+                return true;
+            }
+            if (!this.places().some(place => place.id === placeId)) return false;
+            store[name] = placeId;
+            return true;
+        },
+
+        // The place the party is standing in right now, or null for anywhere
+        // that is nobody's home.
+        currentPlaceId() {
+            if (typeof $gameMap === "undefined" || !$gameMap) return null;
+            const mapId = $gameMap.mapId();
+            if (mapId === STARSHIP_INTERIOR_MAP_ID && ownsStarship()) return "ship";  // i18n-ignore: place id
+            const vaultFloors = window.PatreonRewards?.VAULT_FLOORS ?? [];
+            if (vaultFloors.includes(mapId)) return vaultIsOpen() ? "vault" : null;   // i18n-ignore: place id
+            // The halls: the Stairs Hall itself and every floor of the tower
+            // reached from it. DungeonFloors is the one answer to what counts
+            // as the tower, the same one the Dynamics board asks before it
+            // lets the party be rearranged at all.
+            if (mapId === STAIRS_HALL_MAP_ID) return LODGING_DEFAULT;
+            if (window.DungeonFloors?.insideTower?.()) return LODGING_DEFAULT;
+            // A house answers for itself: which interior map a deed opens onto
+            // is decided when the door is walked through, so the only thing
+            // that knows this floor is the party's is the house system.
+            const PHS = window.ProceduralHouseSystem;
+            if (PHS?.isCurrentFloorOwned?.()) {
+                const key = PHS.getCurrentOwnershipKey?.();
+                const id = key ? "house:" + key : null;   // i18n-ignore: place id
+                if (id && this.places().some(place => place.id === id)) return id;
+                // A deed held under a spelling the board does not list (an
+                // inherited residence) is somebody's home but nobody is
+                // assigned to it, so nobody is put on this floor.
+                return null;
+            }
+            return null;
+        },
+
+        // How many of the residents of a place are met on one floor of it at
+        // once. A house holds everybody who lives in it; the halls and the
+        // vault are big enough to lose people in, so they hold a handful,
+        // drawn again on every arrival.
+        capacityFor(placeId) {
+            if (placeId === LODGING_DEFAULT) return HALLS_MAX_RESIDENTS;
+            if (placeId === "vault") {                                   // i18n-ignore: place id
+                // One floor's share of the nine, rounded up, so a vault
+                // resident is somewhere down there rather than on a fixed step.
+                const floors = (window.PatreonRewards?.VAULT_FLOORS ?? []).length || 1;
+                return Math.max(1, Math.ceil(HALLS_MAX_RESIDENTS / floors));
+            }
+            return Infinity;
+        },
+
+        // Draw who is met here this time. The roll is fresh on every arrival,
+        // which is what makes a hall feel like a place people pass through
+        // rather than a row of statues.
+        drawFor(placeId) {
+            const living = this.residents().filter(person => person.lodging === placeId);
+            const room = this.capacityFor(placeId);
+            if (!Number.isFinite(room) || living.length <= room) return living;
+            const pool = living.slice();
+            const out = [];
+            while (out.length < room && pool.length) {
+                out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+            }
+            return out;
+        },
+
+        // Put this place's share of them on the floor. Answers how many were
+        // spawned, and does nothing at all anywhere that is nobody's home.
+        populateHere() {
+            this.restoreDrops();
+            const placeId = this.currentPlaceId();
+            if (!placeId) return 0;
+            const VP = window.PartyPresence;
+            if (!VP || typeof VP.spawnOne !== "function") return 0;
+            if (typeof $dataMap === "undefined" || !$dataMap) return 0;
+            if (!$dataMap.events) $dataMap.events = [null];
+            // Nobody is met twice: somebody walking with THIS party is not
+            // also loitering in the hall, whatever the world folder says.
+            const here = new Set(($gameParty?.members() ?? []).map(a => a.name()));
+            let spawned = 0;
+            for (const person of this.drawFor(placeId)) {
+                if (here.has(person.name)) continue;
+                const key = LODGING_KEY_PREFIX + person.name;
+                if (VP.findEvent && VP.findEvent(key)) continue;
+                const record = {
+                    key,
+                    name: person.name,
+                    characterName: person.characterName,
+                    characterIndex: person.characterIndex,
+                    classId: person.classId,
+                    level: person.level,
+                };
+                if (!VP.spawnOne(record, { slot: null, location: null })) continue;
+                spawned++;
+                dressLodgerProfile(person);
+            }
+            return spawned;
+        },
+
+        // Whoever was benched on the map the party is standing on, put back.
+        // Benching happens in the menu, and Scene_Map.create reloads the map
+        // file on the way out of it, so the event injected at the moment of
+        // the benching is wiped before the player ever sees it: the drop is
+        // noted on $gameTemp and laid down again here, on the floor it was
+        // made on. It is noted nowhere that a savegame carries, which is what
+        // makes them gone on the next transfer without anything sweeping up.
+        restoreDrops() {
+            if (typeof $gameTemp === "undefined" || !$gameTemp || !$gameMap) return 0;
+            const drops = $gameTemp._lodgingDrops;
+            if (!Array.isArray(drops) || !drops.length) return 0;
+            const here = drops.filter(drop => drop && drop.mapId === $gameMap.mapId());
+            // Anything left on another map is left behind for good.
+            $gameTemp._lodgingDrops = here;
+            let put = 0;
+            for (const drop of here) {
+                if (this.dropHere(drop.snapshot, { remember: false })) put++;
+            }
+            return put;
+        },
+
+        // Somebody benched this minute. They do not vanish out of the world
+        // the moment they are taken off the board: they stand where the party
+        // left them until it walks off the map, and after that they are
+        // wherever they live.
+        dropHere(snapshot, opts) {
+            const VP = window.PartyPresence;
+            if (!VP || typeof VP.spawnOne !== "function") return false;
+            if (typeof $dataMap === "undefined" || !$dataMap || !$gameMap) return false;
+            if (!$dataMap.events) $dataMap.events = [null];
+            if (!snapshot || !snapshot.name) return false;
+            // A story follower is never left behind: benched, Bubba keeps
+            // walking with the party, so no body of him is put on the floor.
+            if (isStoryLodgingFixed(snapshot.name)) return false;
+            const key = LODGING_KEY_PREFIX + snapshot.name;
+            if (VP.findEvent && VP.findEvent(key)) return false;
+            // Where they were left, which is where the party is standing: the
+            // one spawn in the game that is not scattered over the map.
+            const spot = ($gamePlayer && typeof VP.isStandable === "function")
+                ? nearestStandableTile(VP, $gamePlayer.x, $gamePlayer.y)
+                : null;
+            const ok = !!VP.spawnOne({
+                key,
+                name: snapshot.name,
+                characterName: snapshot.characterName || "",
+                characterIndex: snapshot.characterIndex || 0,
+                classId: snapshot.classId,
+                level: snapshot.level,
+            }, { slot: null, location: spot });
+            if (!ok) return false;
+            dressLodgerProfile(snapshot);
+            // Noted so the map reload on the way out of the menu does not take
+            // them with it. Not noted when this IS that second laying down.
+            if (!opts || opts.remember !== false) {
+                if (typeof $gameTemp !== "undefined" && $gameTemp) {
+                    if (!Array.isArray($gameTemp._lodgingDrops)) $gameTemp._lodgingDrops = [];
+                    $gameTemp._lodgingDrops.push({ mapId: $gameMap.mapId(), snapshot });
+                }
+            }
+            return true;
+        },
+
+        // Whether this name is one of the world's idle companions rather than
+        // a citizen of it or somebody else's traveller. Read by the interact
+        // command, which offers them a place on the road only if it is.
+        isResidentName(name) {
+            if (!name) return false;
+            return lodgingResidents().some(person => person.name === name);
+        },
+
+        // Room on the road for one more.
+        hasRoom() {
+            return ($gameParty?.members()?.length ?? 0) < this.MAX_ACTIVE;
+        },
+
+        // Take one of them back on, met where they live. A reserve dossier is
+        // called back the way the Dynamics board calls it back; a departure
+        // snapshot with no dossier behind it cannot be rebuilt into an actor,
+        // so it is turned down rather than half-restored.
+        rejoin(name) {
+            if (!name) return { ok: false, reason: "notResident" };
+            if (!this.hasRoom()) return { ok: false, reason: "partyFull" };
+            const person = lodgingResidents().find(entry => entry.name === name);
+            if (!person) return { ok: false, reason: "notResident" };
+            if (person.presetId == null) return { ok: false, reason: "noDossier" };
+            const result = window.CharacterPresets?.unretirePartyMember?.(person.presetId);
+            if (!result || !result.ok) return result || { ok: false, reason: "notResident" };
+            // Off the floor: they walk with the party now, so the event
+            // standing in for them goes, and so does where they used to live.
+            try {
+                const ev = window.PartyPresence?.findEvent?.(LODGING_KEY_PREFIX + name);
+                if (ev && ev.erase) ev.erase();
+            } catch (e) { /* the event is gone on the next transfer either way */ }
+            const store = lodgingStore();
+            if (store) delete store[name];
+            return result;
+        },
+    };
+
+    // The nearest tile to (x,y) somebody may be left standing on, the tile
+    // itself included. Null when the whole map refuses them, which leaves the
+    // spawn to pick its own place.
+    function nearestStandableTile(VP, x, y) {
+        for (let radius = 0; radius <= 4; radius++) {
+            for (let dy = -radius; dy <= radius; dy++) {
+                for (let dx = -radius; dx <= radius; dx++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) continue;
+                    if (VP.isStandable(x + dx, y + dy)) return { x: x + dx, y: y + dy };
+                }
+            }
+        }
+        return null;
+    }
 
     function getLastJoinedActorId() {
         if (!$gameParty || !$gameParty.members) return 0;
@@ -819,6 +1264,32 @@
         return true;
     }
 
+    // Somebody met in the halls, the vault, the ship or a house the party
+    // owns, asked to come along. The Dynamics board calls the same thing a
+    // recall; out here it is a conversation, so it says how it went.
+    function lodgerJoinParty(name) {
+        const LG = window.PartyLodging;
+        if (!LG || !name) return false;
+        const result = LG.rejoin(name);
+        if (result && result.ok) {
+            AudioManager.playMe({ name: "Victory2", volume: 90, pitch: 100, pan: 0 });
+            window.skipLocalization = true;
+            $gameMessage.add(T('NPCParty.joinsParty', { name }));
+            window.skipLocalization = false;
+            if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
+            return true;
+        }
+        const reason = result ? result.reason : "";
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(reason === "partyFull"
+            ? T('NPCParty.partyFull')
+            : T('NPCParty.lodging.cannotJoin', { name }), {
+            severity: 'warning'
+          });
+        }
+        return false;
+    }
+
     // The scratch slot a bench recruit's sheet is built on: one of the map-battle
     // ally actors (BattleSystem/MapBattleMode.js), never in the party outside a
     // fight, and handed back blank the moment the dossier has been taken off it.
@@ -835,9 +1306,11 @@
         if (!bench || !scratch || $gameParty._actors.includes(BENCH_SCRATCH_ACTOR_ID)) {
             $gameTemp._npcJoinFailReason = 'partyFull'; // read by the Empathize panel
             if (!window._npcEmpathizeSilentJoin) {
-                window.skipLocalization = true;
-                $gameMessage.add(T('NPCParty.partyFull'));
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('NPCParty.partyFull'), {
+                    severity: 'warning'
+                  });
+                }
             }
             return false;
         }
@@ -873,9 +1346,11 @@
         // notice rather than claiming they are walking alongside the party.
         $gameTemp._npcJoinedInactive = true;
         if (!window._npcEmpathizeSilentJoin) {
-            window.skipLocalization = true;
-            $gameMessage.add(T('NPCParty.joinedInactive', { name: eventName }));
-            window.skipLocalization = false;
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('NPCParty.joinedInactive', { name: eventName }), {
+                severity: 'warning'
+              });
+            }
         }
         return true;
     }

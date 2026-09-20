@@ -231,9 +231,9 @@
                 </div>
                 <div style="text-align:center; font-size:1.234rem; color:var(--text-secondary-active, var(--text-primary-hover)); font-weight:bold">${animLabel}</div>
                 <div style="text-align:center; font-size:1.17rem; color:var(--text-card-medium, #aaa)">${typeof T === 'function' ? T('SkillMaster.dragToRotateScrollTo') : 'Drag to rotate · Scroll to zoom'}</div>
-                <div style="display:flex; gap:10px; margin-top:2px">
-                    <div class="focusable" onclick="SceneManager._scene.replaySpellPreview()" style="flex:1; text-align:center; padding:9px; background:var(--text-text-alt-3, var(--text-primary-hover)); color:#000; border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
-                    <div class="focusable" onclick="SceneManager._scene.closeSpellPreview()" style="flex:0 0 auto; text-align:center; padding:9px 18px; background:transparent; color:var(--text-primary-hover, var(--text-success-active)); border:1.5px solid var(--text-primary-hover, var(--text-success-active)); border-radius:6px; cursor:pointer; font-weight:bold; text-transform:uppercase">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
+                <div class="inspect-actions inspect-actions--row">
+                    <div class="inspect-btn focusable" onclick="SceneManager._scene.replaySpellPreview()">${typeof T === 'function' ? T('SkillMaster.replay') : 'Replay'}</div>
+                    <div class="inspect-btn inspect-btn--secondary focusable" onclick="SceneManager._scene.closeSpellPreview()">${typeof T === 'function' ? T('SkillMaster.close') : 'Close'}</div>
                 </div>
             </div>`;
         this._dndContainer.appendChild(ov);

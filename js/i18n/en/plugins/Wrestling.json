@@ -1,7 +1,7 @@
 {
   "appName": "Slamgrimorie",
-  "subtitle": "Two shows. One hour. Nobody is well.",
-  "tagline": "The continental wrestling desk, updated every night at the bell.",
+  "subtitle": "Two shows a week.",
+  "tagline": "Wrestling results, updated every night.",
   "oneDivision": "One division. Every gender in it. That has never once been the controversial part.",
   "fed": {
     "slam": {
@@ -577,7 +577,7 @@
   },
   "hexapedia": {
     "category": "Wrestlers",
-    "categoryIntro": "Every contracted wrestler of the two continental promotions, as filed. Both promotions run one open division and have never run any other kind.",
+    "categoryIntro": "Every contracted wrestler of the two continental promotions. Both run a single open division.",
     "infobox": {
       "ringName": "Ring name",
       "legalName": "Legal name",
@@ -611,7 +611,7 @@
   },
   "mundane": {
     "tag": "Mundane",
-    "note": "{w} has no arcana at all and has never pretended otherwise.",
+    "note": "{w} has no arcane abilities.",
     "wikiLine": "Registered mundane: no invocation, no hex, no licence. {w} wrestles with hands and weight and nothing else.",
     "promo": [
       "I do not have a hex. I have never had a hex. I have hands.",

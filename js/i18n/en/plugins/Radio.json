@@ -50,5 +50,8 @@
   "addStationBad": "That is not a stream address.",
   "battleOn": "BATTLE: ON",
   "battleOff": "BATTLE: OFF",
-  "onAirStream": "ON AIR • LIVE STREAM • {url}"
+  "onAirStream": "ON AIR • LIVE STREAM • {url}",
+  "favoriteHint": "Mark this station as a favourite. Shift + Left/Right jumps between the marked ones.",
+  "volumeHint": "Turn with the wheel or drag up and down",
+  "tuningHint": "Turn with the wheel or drag up and down"
 }

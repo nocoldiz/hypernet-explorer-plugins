@@ -27,6 +27,10 @@
     "Culinary": "Cucina"
   },
   "spec": {
+    "902": {
+      "name": "Incantamento",
+      "description": "Vincolare un incantesimo a un oggetto perché l’oggetto possa spenderlo, e tenere intero l’oggetto mentre lo fa."
+    },
     "490": {
       "name": "Modellazione e Stampa 3D",
       "description": "Costruire oggetti come mesh digitali e produrli su una stampante additiva."

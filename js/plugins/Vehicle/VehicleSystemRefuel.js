@@ -366,10 +366,20 @@
                 if (n === 0 && $gameParty.gold() >= cost) {
                     $gameParty.loseGold(cost);
                     vehSet(key, vehGet(key) + liters);
-                    $gameMessage.add(T('Refuel.completeHeader'));
-                    $gameMessage.add(T('Refuel.added', { liters: liters.toFixed(1), vehicle: vehicleName }));
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.report([
+                        T('Refuel.completeHeader'),
+                        T('Refuel.added', { liters: liters.toFixed(1), vehicle: vehicleName })
+                      ], {
+                        severity: 'good'
+                      });
+                    }
                 } else if (n === 0) {
-                    $gameMessage.add(T('Refuel.insufficientFunds'));
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.show(T('Refuel.insufficientFunds'), {
+                        severity: 'warning'
+                      });
+                    }
                 }
                 this._rfWaiting = false;
                 this._rfRebuild();

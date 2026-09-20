@@ -242,6 +242,11 @@
   // person carrying them. This list is the single answer to "can this party
   // fish": every water-side menu here asks it, and so does the boat's own options
   // menu (Vehicle/VehicleSystem.js) through MovementSystem.hasFishingRod.
+  // The board the party surfs on. Carrying it is the whole requirement: the
+  // item itself does nothing when used, every ride starts from the water-side
+  // menu here (and from the boat's own menu through MovementSystem.hasSurfboard).
+  const SURFBOARD_ITEM_ID = 2067;
+
   const FISHING_ROD_ITEM_IDS = [123];
   const FISHING_ROD_WEAPON_IDS = [241, 422];
 
@@ -499,6 +504,11 @@
     hasFishingRod() {
       if (Config.fishingRodItemIds.some(itemId => $gameParty.hasItem($dataItems[itemId]))) return true;
       return Config.fishingRodWeaponIds.some(weaponId => $gameParty.hasItem($dataWeapons[weaponId], true));
+    },
+
+    // The surfboard sits in the pack like any other possession; nobody equips it.
+    hasSurfboard() {
+      return $gameParty.hasItem($dataItems[SURFBOARD_ITEM_ID]);
     },
 
     getFrontTile(character) {
@@ -796,6 +806,21 @@
     rememberBridgeState(character) {
       if (!character || !$gameMap) return;
       character._bridgeStateKey = $gameMap.mapId() + "," + character.x + "," + character.y;
+    },
+
+    // The on/under decision for one landed step, shared by the player and by
+    // the followers: entering a deck from an access tile puts the walker on top,
+    // deck to deck keeps whatever state they already had, anything else passes
+    // underneath. Leaving the deck always clears the state.
+    updateBridgeLayerAfterStep(character, srcAccess, srcWasBridge) {
+      if (!character || !$gameMap) return;
+      if (Utils.isBridgeTile(character.x, character.y)) {
+        if (srcAccess) character._onBridge = true;
+        else if (!srcWasBridge) character._onBridge = false;
+      } else {
+        character._onBridge = false;
+      }
+      this.rememberBridgeState(character);
     },
 
     bridgeStateMatchesTile(character) {
@@ -1219,6 +1244,16 @@
       if (!MovementSystem.bridgeStateMatchesTile($gamePlayer)) {
         MovementSystem.applySpawnRegionState($gamePlayer);
       }
+      // The followers carry their own layer now, so a transfer has to establish
+      // theirs too or a party dropped onto a span would read as being under it.
+      const _misFollowers = $gamePlayer.followers && $gamePlayer.followers();
+      if (_misFollowers && _misFollowers.data) {
+        _misFollowers.data().forEach((f) => {
+          if (!MovementSystem.bridgeStateMatchesTile(f)) {
+            MovementSystem.applySpawnRegionState(f);
+          }
+        });
+      }
     }
     mapWASDKeys();
   };
@@ -1332,36 +1367,12 @@
       }
       reflection.setBlendColor(timeBlendColor);
 
-      // Apply a blue/azure pixel mask so only blue-toned parts of the reflection show
-      if (PIXI.Filter) {
-        const blueMaskFilter = new PIXI.Filter(null, `
-          varying vec2 vTextureCoord;
-          uniform sampler2D uSampler;
-
-          void main(void) {
-            vec4 color = texture2D(uSampler, vTextureCoord);
-            float r = color.r;
-            float g = color.g;
-            float b = color.b;
-
-            // All blue colors: keep any pixel where blue is the strongest channel
-            // and blue is at least somewhat visible (b > 0.05)
-            float blueDominant = step(r, b) * step(g, b) * step(0.05, b);
-
-            // Also keep near-gray pixels that have a slight blue tint
-            // (highlights, shading, white/light reflections on water)
-            float maxC = max(max(r, g), b);
-            float minC = min(min(r, g), b);
-            float isBlueTinted = step(max(r, g), b) * step(0.02, b - max(r, g));
-
-            float keep = max(blueDominant, isBlueTinted);
-
-            gl_FragColor = vec4(color.rgb, color.a * keep);
-          }
-        `);
-        blueMaskFilter.padding = 0;
-        reflection.filters = [blueMaskFilter];
-      }
+      // Apply a blue/azure pixel mask so only blue-toned parts of the reflection show.
+      // ONE filter instance for every reflection on the map: a PIXI filter holds
+      // no per-sprite state, and a fresh one per sprite meant a fresh uniform
+      // group and shader binding for each of them.
+      const mask = getBlueMaskFilter();
+      if (mask) reflection.filters = [mask];
 
       return reflection;
     },
@@ -1385,17 +1396,32 @@
       if (!reflectionContainer || !SceneManager._scene || !SceneManager._scene._spriteset) return;
 
       const spriteset = SceneManager._scene._spriteset;
-      const allCharacters = [];
 
-      if ($gameMap && $gameMap.events()) allCharacters.push(...$gameMap.events());
+      // Both of these are scratch space, refilled in place rather than raised
+      // fresh. The list used to be built by spreading $gameMap.events() into a
+      // new array - two allocations of every event on the map, plus a new Set,
+      // sixty times a second, on every map that has any water in it. Walking
+      // _events directly skips the filtered copy events() hands out as well.
+      const allCharacters = this._scratchCharacters || (this._scratchCharacters = []);
+      allCharacters.length = 0;
+
+      const mapEvents = $gameMap ? $gameMap._events : null;
+      if (mapEvents) {
+        for (let i = 0; i < mapEvents.length; i++) {
+          if (mapEvents[i]) allCharacters.push(mapEvents[i]);
+        }
+      }
       if ($gamePlayer) {
         allCharacters.push($gamePlayer);
-        if ($gamePlayer.followers && $gamePlayer.followers()._data) {
-          allCharacters.push(...$gamePlayer.followers()._data);
+        const followers = $gamePlayer.followers && $gamePlayer.followers()._data;
+        if (followers) {
+          for (let i = 0; i < followers.length; i++) allCharacters.push(followers[i]);
         }
       }
 
-      const charactersNeedingReflections = new Set();
+      const charactersNeedingReflections =
+        this._scratchNeeded || (this._scratchNeeded = new Set());
+      charactersNeedingReflections.clear();
 
       for (const character of allCharacters) {
         if (!character) continue;
@@ -1472,6 +1498,39 @@
       }
     }
   };
+
+  // The blue/azure mask every water reflection wears. Built once, on the first
+  // reflection that asks for it, and handed to all of them.
+  let _blueMaskFilter = null;
+  function getBlueMaskFilter() {
+    if (_blueMaskFilter) return _blueMaskFilter;
+    if (!PIXI.Filter) return null;
+    _blueMaskFilter = new PIXI.Filter(null, `
+      varying vec2 vTextureCoord;
+      uniform sampler2D uSampler;
+
+      void main(void) {
+        vec4 color = texture2D(uSampler, vTextureCoord);
+        float r = color.r;
+        float g = color.g;
+        float b = color.b;
+
+        // All blue colors: keep any pixel where blue is the strongest channel
+        // and blue is at least somewhat visible (b > 0.05)
+        float blueDominant = step(r, b) * step(g, b) * step(0.05, b);
+
+        // Also keep near-gray pixels that have a slight blue tint
+        // (highlights, shading, white/light reflections on water)
+        float isBlueTinted = step(max(r, g), b) * step(0.02, b - max(r, g));
+
+        float keep = max(blueDominant, isBlueTinted);
+
+        gl_FragColor = vec4(color.rgb, color.a * keep);
+      }
+    `);
+    _blueMaskFilter.padding = 0;
+    return _blueMaskFilter;
+  }
 
   // --- Mirror Reflection System ---
   // An event named "Mirror" reflects whoever stands on the tile in front of it
@@ -1765,10 +1824,14 @@
     if ($gameMap && this._priorityType === 1 && _misUnderStarTile(this)) {
       return STAR_OVERHEAD_Z;
     }
-    // Followers ride the same bridge layer as the player so the party does not
-    // split across the deck and the underside.
-    if ($gameMap && this instanceof Game_Follower &&
-        $gamePlayer && $gamePlayer._onBridge && Utils.isBridgeTile(this.x, this.y)) {
+    // A follower on its own bridge layer is drawn on the deck, exactly like the
+    // player, so a party strung out across a span does not split in half when
+    // the leader reaches the far bank.
+    // An event is on the deck unless it has walked underneath it, a follower
+    // only once it has actually stepped up onto it.
+    if ($gameMap && Utils.isBridgeTile(this.x, this.y) &&
+        (this instanceof Game_Follower ? this._onBridge === true
+          : this instanceof Game_Event && this._onBridge !== false)) {
       return 7;
     }
     return _Game_CharacterBase_screenZ.call(this);
@@ -1857,18 +1920,51 @@
     // or 5) or continuing along the bridge keeps the player on the deck; entering
     // from any other tile sends the player underneath (hidden by the bridge tile).
     if (this.isMovementSucceeded()) {
-      if (Utils.isBridgeTile(this.x, this.y)) {
-        if (bridgeSrcAccess) {
-          this._onBridge = true;
-        } else if (!bridgeSrcWasBridge) {
-          this._onBridge = false;
-        }
-        // bridge -> bridge: keep the current _onBridge state.
-      } else {
-        this._onBridge = false;
-      }
-      MovementSystem.rememberBridgeState(this);
+      MovementSystem.updateBridgeLayerAfterStep(this, bridgeSrcAccess, bridgeSrcWasBridge);
     }
+  };
+
+  // Followers keep a bridge layer of their OWN, decided by the same source-tile
+  // rule as the player's. Riding the player's flag instead used to blank the
+  // party the moment the leader stepped off the far end of a span: the walkers
+  // still on the deck were read as passing underneath it and hidden, although
+  // nobody had gone under anything.
+  const _followerStep = (follower, move, args) => {
+    const srcAccess = Utils.isBridgeAccessTile(follower.x, follower.y);
+    const srcWasBridge = Utils.isBridgeTile(follower.x, follower.y);
+    move.apply(follower, args);
+    if (follower.isMovementSucceeded()) {
+      MovementSystem.updateBridgeLayerAfterStep(follower, srcAccess, srcWasBridge);
+    }
+  };
+
+  const _Game_Follower_moveStraight = Game_Follower.prototype.moveStraight;
+  Game_Follower.prototype.moveStraight = function (d) {
+    _followerStep(this, _Game_Follower_moveStraight, [d]);
+  };
+
+  const _Game_Follower_moveDiagonally = Game_Follower.prototype.moveDiagonally;
+  Game_Follower.prototype.moveDiagonally = function (horz, vert) {
+    _followerStep(this, _Game_Follower_moveDiagonally, [horz, vert]);
+  };
+
+  // An event walks the same deck. Its layer starts as ON the deck, because an
+  // event placed on a span by the map or by a spawner belongs up there: only an
+  // event that actually walks in from a tile off the bridge network is sent
+  // underneath, so nothing that was visible before can be hidden by this.
+  const _eventStep = (event, move, args) => {
+    if (event._onBridge === undefined) event._onBridge = true;
+    _followerStep(event, move, args);
+  };
+
+  const _Game_Event_moveStraight = Game_Event.prototype.moveStraight;
+  Game_Event.prototype.moveStraight = function (d) {
+    _eventStep(this, _Game_Event_moveStraight, [d]);
+  };
+
+  const _Game_Event_moveDiagonally = Game_Event.prototype.moveDiagonally;
+  Game_Event.prototype.moveDiagonally = function (horz, vert) {
+    _eventStep(this, _Game_Event_moveDiagonally, [horz, vert]);
   };
 
   // Split-screen: Player 1 auto-starts swimming the instant they walk into a
@@ -2049,15 +2145,22 @@
   // buys SWIM_TILES_PER_LEVEL more. The budget is the party's best swimmer,
   // because the party crosses together and the strong one tows the rest.
   //
-  // Past it nothing is blocked, or a player would be stranded mid lake with no
-  // legal move: instead every further stroke costs the whole party HP and never
-  // takes anyone below 1, so the water pushes them to a shore rather than
-  // drowning them outright. Reaching land resets the count.
+  // The budget spans an open ocean square: a procedural sea is far wider than a
+  // river, so a short budget turned every crossing into a blood toll.
+  //
+  // Past it nothing is blocked and, on a fed party, nothing is taken either:
+  // the budget only marks the point where they are told they are out of breath.
+  // A starving member (food bar at zero) has nothing left to swim on, so those
+  // members alone pay a little HP per stroke, never below
+  // SWIM_EXHAUSTED_HP_FLOOR of their pool. Reaching land resets the count.
   const SWIM_SPEC = "Swimming";  // i18n-ignore  specialization id
-  const SWIM_BASE_TILES = 20;
-  const SWIM_TILES_PER_LEVEL = 15;
-  const SWIM_EXHAUSTED_HP_PCT = 0.05;
-  const SWIM_EXHAUSTED_HP_MIN = 3;
+  const SWIM_BASE_TILES = 160;
+  const SWIM_TILES_PER_LEVEL = 80;
+  const SWIM_EXHAUSTED_HP_PCT = 0.01;
+  const SWIM_EXHAUSTED_HP_MIN = 1;
+  // Under a quarter of the pool RPG Maker calls an actor dying: water must
+  // never put anybody there, however empty their stomach.
+  const SWIM_EXHAUSTED_HP_FLOOR = 0.3;
   // Swimming is how swimming is learnt: one point per this many tiles, to the
   // whole party, since everybody is in the water (award's `shared`).
   const SWIM_XP_PER_TILES = 8;
@@ -2079,7 +2182,15 @@
     character._swimExhaustedWarned = false;
   };
 
-  // One stroke: count it, teach it, and once the budget is gone, charge for it.
+  // Only an actor with an empty food bar tires in the water. No hunger meter at
+  // all (a creature, a summon) counts as fed.
+  const swimStarving = function (actor) {
+    if (!actor || typeof actor.hungerRate !== "function") return false;
+    const rate = actor.hungerRate();
+    return isFinite(rate) && rate <= 0;
+  };
+
+  // One stroke: count it, teach it, and once the budget is gone, say so.
   MovementSystem.spendSwimStroke = function () {
     const player = $gamePlayer;
     if (!player) return;
@@ -2103,11 +2214,57 @@
     const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
     for (const actor of members) {
       if (!actor || !actor.isAlive || !actor.isAlive()) continue;
+      if (!swimStarving(actor)) continue;
+      const floor = Math.max(1, Math.ceil(actor.mhp * SWIM_EXHAUSTED_HP_FLOOR));
+      if (actor.hp <= floor) continue;
       const cost = Math.max(SWIM_EXHAUSTED_HP_MIN,
         Math.ceil(actor.mhp * SWIM_EXHAUSTED_HP_PCT));
-      actor.setHp(Math.max(1, actor.hp - cost));
+      actor.setHp(Math.max(floor, actor.hp - cost));
     }
   };
+
+  // Walking mends magic. A march on foot is the party's only free source of MP
+  // outside resting: every WALK_MP_STEPS steps each living member takes back a
+  // slice of their pool. Swimming, climbing and riding are effort, not
+  // recovery, so they buy nothing.
+  //
+  // A tired mind mends less. The slice is scaled by the member's own sleep
+  // meter, tapering from the full amount at WALK_MP_RESTED down to nothing when
+  // they are running on empty: sleeplessness no longer BURNS magic (it used to
+  // drain MP per step), it simply stops giving any back.
+  const WALK_MP_STEPS = 12;
+  const WALK_MP_PCT = 0.02;
+  const WALK_MP_MIN = 1;
+  const WALK_MP_RESTED = 0.6;   // sleep rate at or above which regen is full
+
+  // 1 when rested, falling linearly to 0 as sleep runs out. An actor with no
+  // sleep meter at all (a creature, a summon) counts as rested.
+  MovementSystem.walkMpSleepFactor = function (actor) {
+    if (!actor || typeof actor.sleepRate !== "function") return 1;
+    const rate = actor.sleepRate();
+    if (!isFinite(rate)) return 1;
+    if (rate >= WALK_MP_RESTED) return 1;
+    return Math.max(0, rate / WALK_MP_RESTED);
+  };
+
+  MovementSystem.recoverWalkingMp = function () {
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    for (const actor of members) {
+      if (!actor || !actor.isAlive || !actor.isAlive()) continue;
+      if (actor.mp >= actor.mmp) continue;
+      const factor = MovementSystem.walkMpSleepFactor(actor);
+      if (factor <= 0) continue;
+      const gain = Math.max(WALK_MP_MIN,
+        Math.round(actor.mmp * WALK_MP_PCT * factor));
+      actor.setMp(Math.min(actor.mmp, actor.mp + gain));
+    }
+  };
+
+  function walkingRecoversMp(player) {
+    if (player._isSwimming || player._isClimbing) return false;
+    if (player.isInVehicle && player.isInVehicle()) return false;
+    return true;
+  }
 
   const _Game_Player_increaseSteps = Game_Player.prototype.increaseSteps;
   Game_Player.prototype.increaseSteps = function () {
@@ -2118,6 +2275,13 @@
         const before = partyHygiene();
         window.PartyNeeds.addNeedToAll("hygiene", SWIM_HYGIENE_PER_STEP);
         reportSwimHygiene(before, partyHygiene());
+      }
+    }
+    if (walkingRecoversMp(this)) {
+      this._walkMpSteps = (this._walkMpSteps || 0) + 1;
+      if (this._walkMpSteps >= WALK_MP_STEPS) {
+        this._walkMpSteps = 0;
+        MovementSystem.recoverWalkingMp();
       }
     }
   };
@@ -2610,9 +2774,11 @@
     const isMultiplayer = window.$gameSplitScreen && window.$gameSplitScreen.active;
     const canSwim = !isMultiplayer;
     const hasRod = Utils.hasFishingRod();
+    const hasBoard = Utils.hasSurfboard();
     const choices = [];
     if (canSwim) choices.push(T('Movement.swim'));
     if (hasRod) choices.push(T('Movement.fish'));
+    if (hasBoard) choices.push(T('Movement.surf'));
     if (hasDivingSuit) choices.push(T('Movement.dive'));
     if (canBoat) choices.push(T('Movement.useBoat'));
     choices.push(drinkLabel, T('Movement.cancel'));
@@ -2627,6 +2793,10 @@
       }
       if (hasRod && index === choices.indexOf(T('Movement.fish'))) {
         MovementSystem.performFishing(character);
+        return;
+      }
+      if (hasBoard && index === choices.indexOf(T('Movement.surf'))) {
+        startSurfing();
         return;
       }
       if (canBoat && index === choices.indexOf(T('Movement.useBoat'))) {
@@ -2798,6 +2968,17 @@
     window.MergedVehicleSystem.deployBoatAt(tile.x, tile.y, true);
   }
 
+  // Paddling out. The minigame reads the map itself for its venue (open coast,
+  // flooded cavern or a covered wave pool) and tints its sky from whatever world
+  // the party stands on, so an alien sea needs nothing extra from here.
+  function startSurfing() {
+    if (typeof window.startSurfingMiniGame === 'function') {
+      window.startSurfingMiniGame();
+    } else if (window.Scene_SurfingGame) {
+      SceneManager.push(window.Scene_SurfingGame);
+    }
+  }
+
   // Riding something that floats (the dinghy or a ship), as opposed to looking
   // at the water from the bank. The airship is not a boat, it only flies over.
   function isAfloat(character) {
@@ -2811,18 +2992,23 @@
   // jetty) is left to the engine's own disembark handling on the same press.
   Scene_Map.prototype.showBoatFishingOption = function (character) {
     if (!isAfloat(character)) return false;
-    if (!Utils.hasFishingRod()) return false;
+    if (!Utils.hasFishingRod() && !Utils.hasSurfboard()) return false;
     const tile = facedWaterTile(character);
     if (!Utils.isWaterTile(tile.x, tile.y)) return false;
     if (Utils.isBlockedWaterTile(tile.x, tile.y)) return false;
     if (Utils.hasEventOnTile(tile.x, tile.y)) return false;
 
-    const choices = [T('Movement.fish'), T('Movement.cancel')];
+    const choices = [];
+    if (Utils.hasFishingRod()) choices.push(T('Movement.fish'));
+    if (Utils.hasSurfboard()) choices.push(T('Movement.surf'));
+    choices.push(T('Movement.cancel'));
     $gameMessage._eventActivator = (character === $gamePlayer) ? "p1" : "p2";
     $gameMessage.setChoices(choices, 0, choices.length - 1);
     $gameMessage.setChoiceCallback((index) => {
-      if (index === choices.indexOf(T('Movement.fish'))) {
+      if (index === choices.indexOf(T('Movement.fish')) && Utils.hasFishingRod()) {
         MovementSystem.performFishing(character);
+      } else if (index === choices.indexOf(T('Movement.surf')) && Utils.hasSurfboard()) {
+        startSurfing();
       }
     });
     return true;
@@ -2848,6 +3034,7 @@
     if ($gameMap.mapId() === 315) {
       const choices = [];
       if (Utils.hasFishingRod()) choices.push(T('Movement.fish'));
+      if (Utils.hasSurfboard()) choices.push(T('Movement.surf'));
       if (canBoat) choices.push(T('Movement.useBoat'));
       choices.push(T('Movement.cancel'));
 
@@ -2864,6 +3051,8 @@
       $gameMessage.setChoiceCallback((index) => {
         if (index === choices.indexOf(T('Movement.fish')) && Utils.hasFishingRod()) {
           MovementSystem.performFishing(character);
+        } else if (index === choices.indexOf(T('Movement.surf')) && Utils.hasSurfboard()) {
+          startSurfing();
         } else if (canBoat && index === choices.indexOf(T('Movement.useBoat'))) {
           useBoatOn(character);
         }
@@ -2878,6 +3067,7 @@
     const choices = [];
     if (!isMultiplayer) choices.push(T('Movement.swim'));
     if (Utils.hasFishingRod()) choices.push(T('Movement.fish'));
+    if (Utils.hasSurfboard()) choices.push(T('Movement.surf'));
     if ((!isMultiplayer || $gameMap.mapId() !== 636) && $gameParty.hasItem($dataItems[DIVING_SUIT_ITEM_ID])) choices.push(T('Movement.dive'));
     choices.push(drinkLabel);
     if (canBoat) choices.push(T('Movement.useBoat'));
@@ -2894,6 +3084,8 @@
         MovementSystem.performDrinkWater(character);
       } else if (index === choices.indexOf(T('Movement.fish')) && Utils.hasFishingRod()) {
         MovementSystem.performFishing(character);
+      } else if (index === choices.indexOf(T('Movement.surf')) && Utils.hasSurfboard()) {
+        startSurfing();
       } else if (canBoat && index === choices.indexOf(T('Movement.useBoat'))) {
         useBoatOn(character);
       } else if (index === choices.indexOf(T('Movement.dive')) && $gameParty.hasItem($dataItems[DIVING_SUIT_ITEM_ID])) {
@@ -3487,12 +3679,14 @@
       // Layered bridges (region 12): a character passing UNDER the deck must be
       // hidden by it. The map's deck tiles are painted on the lower tile layer
       // (not "above character" ☆ tiles), so screenZ alone cannot occlude the
-      // sprite - hide it directly while underneath. The party rides the player's
-      // on/under state, matching the screenZ hooks above.
-      if (this.visible && this._character && $gamePlayer && !$gamePlayer._onBridge) {
+      // sprite - hide it directly while underneath. Each walker is judged on its
+      // OWN on/under state, matching the screenZ hooks above: a follower still on
+      // the deck stays visible after the leader has walked off the far end.
+      if (this.visible && this._character) {
           const c = this._character;
-          if ((c === $gamePlayer || c instanceof Game_Follower) &&
-              Utils.isBridgeTile(c.x, c.y)) {
+          const walksTheDeck = c === $gamePlayer || c instanceof Game_Follower ||
+              (c instanceof Game_Event && c._onBridge === false);
+          if (walksTheDeck && Utils.isUnderBridge(c)) {
               this.visible = false;
           }
       }
@@ -3521,7 +3715,7 @@
   // and a party stranded at walking pace mid-chase would be a worse game. The
   // rest of the party runs when the leader does, since they walk the column
   // behind them (Core/AutoIdleExplorer.js), so the meter costs them the same.
-  const SPRINT_DRAIN_PER_SEC = 5.0;  // running, per member doing the running
+  const SPRINT_DRAIN_PER_SEC = 0;    // running on map consumes no AP
   const SPRINT_WALK_REGEN = 1.5;     // on the move at walking pace
   const SPRINT_IDLE_REGEN = 4.0;     // standing still, which is a rest
 
@@ -3549,7 +3743,9 @@
 
     // One frame of running, charged to whoever is doing it.
     spend(actor) {
-      addAp(actor, -perFrame(SPRINT_DRAIN_PER_SEC));
+      if (SPRINT_DRAIN_PER_SEC > 0) {
+        addAp(actor, -perFrame(SPRINT_DRAIN_PER_SEC));
+      }
     },
 
     // One frame of the party going about the map. The leader pays for their own
@@ -3604,8 +3800,13 @@
     swimTileBudget: MovementSystem.swimTileBudget.bind(MovementSystem),
     swimTilesLeft: MovementSystem.swimTilesLeft.bind(MovementSystem),
     spendSwimStroke: MovementSystem.spendSwimStroke.bind(MovementSystem),
+    recoverWalkingMp: MovementSystem.recoverWalkingMp.bind(MovementSystem),
+    walkMpSleepFactor: MovementSystem.walkMpSleepFactor.bind(MovementSystem),
     resetSwimStamina: MovementSystem.resetSwimStamina.bind(MovementSystem),
     hasFishingRod: Utils.hasFishingRod.bind(Utils),
+    hasSurfboard: Utils.hasSurfboard.bind(Utils),
+    startSurfing: startSurfing,
+    surfboardItemId: SURFBOARD_ITEM_ID,
     fishingRodItemIds: Config.fishingRodItemIds,
     fishingRodWeaponIds: Config.fishingRodWeaponIds,
     fishingItems: Config.fishingItems,

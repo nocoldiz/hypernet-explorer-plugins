@@ -269,9 +269,12 @@
                 BattleManager.setGauntletMode(true);
                 SceneManager.push(Scene_Battle);
             } else {
-                window.skipLocalization = true;
-                $gameMessage.add(T('Arena.msg.noEnemiesInBracket'));
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('Arena.msg.noEnemiesInBracket'), {
+                    severity: 'warning',
+                    plainLog: true
+                  });
+                }
                 this.endGauntlet();
             }
         },
@@ -294,10 +297,15 @@
                 if (currentBracket < BRACKETS.length) {
                     $gameVariables.setValue(gauntletBracketVarId, currentBracket + 1);
                     const nextBracket = BRACKETS[currentBracket];
-                    window.skipLocalization = true;
-                    $gameMessage.add(T('Arena.congratulationsYouVeAdvancedTo'));
-                    $gameMessage.add(`${levelName} ${nextBracket.min}-${nextBracket.max === 9999 ? "+" : nextBracket.max}`);
-                    window.skipLocalization = false;
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.report([
+                        T('Arena.congratulationsYouVeAdvancedTo'),
+                        `${levelName} ${nextBracket.min}-${nextBracket.max === 9999 ? "+" : nextBracket.max}`
+                      ], {
+                        severity: 'good',
+                        plainLog: true
+                      });
+                    }
                 }
             }
 
@@ -417,9 +425,12 @@
             return;
         }
 
-        window.skipLocalization = true;
-        $gameMessage.add(T('Arena.gauntletHasEnded'));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('Arena.gauntletHasEnded'), {
+            severity: 'info',
+            plainLog: true
+          });
+        }
 
         if (SceneManager._scene && !(SceneManager._scene instanceof Scene_Map) && !SceneManager.isSceneChanging()) {
             SceneManager.goto(Scene_Map);
@@ -1215,9 +1226,12 @@
             return;
         }
 
-        window.skipLocalization = true;
-        $gameMessage.add(T('Arena.bossRushHasEnded'));
-        window.skipLocalization = false;
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('Arena.bossRushHasEnded'), {
+            severity: 'info',
+            plainLog: true
+          });
+        }
 
         if (SceneManager._scene && !(SceneManager._scene instanceof Scene_Map) && !SceneManager.isSceneChanging()) {
             SceneManager.goto(Scene_Map);

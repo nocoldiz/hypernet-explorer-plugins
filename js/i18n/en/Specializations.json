@@ -27,6 +27,10 @@
     "Culinary": "Culinary"
   },
   "spec": {
+    "902": {
+      "name": "Enchanting",
+      "description": "Binding a spell into an object so the object can spend it, and keeping the object whole while it does."
+    },
     "490": {
       "name": "3D Modeling and Printing",
       "description": "Building objects as digital meshes and producing them on an additive printer."

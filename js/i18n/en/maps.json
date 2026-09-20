@@ -2848,5 +2848,50 @@
     "val": "Dark Tower",
     "excluded": "",
     "name": ""
+  },
+  "Tavern FL -1": {
+    "val": "Tavern FL -1",
+    "excluded": "",
+    "name": ""
+  },
+  "Nerd Cave FL -2": {
+    "val": "Nerd Cave FL -2",
+    "excluded": "",
+    "name": ""
+  },
+  "Biolaboratory FL -3": {
+    "val": "Biolaboratory FL -3",
+    "excluded": "",
+    "name": ""
+  },
+  "Farming grounds FL -4": {
+    "val": "Farming grounds FL -4",
+    "excluded": "",
+    "name": ""
+  },
+  "Housing floor FL -5": {
+    "val": "Housing floor FL -5",
+    "excluded": "",
+    "name": ""
+  },
+  "Reactor Halley FL -6": {
+    "val": "Reactor Halley FL -6",
+    "excluded": "",
+    "name": ""
+  },
+  "Arcane library FL -7": {
+    "val": "Arcane library FL -7",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermarket FL -9": {
+    "val": "Hypermarket FL -9",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermetro station FL -9": {
+    "val": "Hypermetro station FL -9",
+    "excluded": "",
+    "name": ""
   }
 }

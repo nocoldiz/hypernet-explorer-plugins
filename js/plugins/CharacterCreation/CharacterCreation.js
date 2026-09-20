@@ -93,11 +93,14 @@
     startDiplomatOrigin,
     bunkerGoldPiles,
     startBunkerOrigin,
+    filterOrigins,
     patronVaultAvailable,
     patronVaultSquareAt,
     patronVaultSquare,
     patronVaultClaim,
     setPatronVaultSquare,
+    patronVaultRememberSquare,
+    patronVaultSavedSquares,
     startPatronVaultOrigin,
     startArtifactHeirOrigin,
     startCrashLandedOrigin,
@@ -1311,6 +1314,7 @@
         // Board modes: the whole sentient roster is listed on one step, with
         // the highlighted class's dossier on the right page.
         if (Scene_CharacterCreation.usesFullClassList()) {
+          const sentientTitle = T('ClassSelect.ui.sentient');
           getSentientClassList().forEach((c) => {
             // Show the class's signature passive skill as its description.
             const passiveDesc =
@@ -1322,11 +1326,38 @@
               symbol: "quick_class_" + c.id,
               description: passiveDesc,
               value: c.id,
+              group: "sentient",
+              groupTitle: sentientTitle,
             });
           });
           // The roster reads as an alphabet, and the roll that skips reading it
           // sits at the head of the board instead of at the end of a long list.
           baseChoices.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+          // The monstrous classes follow the civilised ones, under their own
+          // head. A person may be played as a Ghost, a Zombie or a Drone: it is
+          // something that happens to a body, not something only the creature
+          // flow can reach. Crossing that line drops the member's traits and
+          // takes the creed, faction and wealth rows off the sheet.
+          const creatureRoster = (window.CreatureClasses && window.CreatureClasses.creatureRoster)
+            ? window.CreatureClasses.creatureRoster() : [];
+          const nonSentientTitle = T('ClassSelect.ui.nonSentient');
+          creatureRoster
+            .map((id) => $dataClasses[id]).filter((c) => c && c.name)
+            .sort((a, b) => window.CCDbName(a).localeCompare(window.CCDbName(b)))
+            .forEach((c) => {
+              const passiveDesc =
+                (window.BattleSystemPassiveSkills &&
+                  window.BattleSystemPassiveSkills.getPassiveDescription(c.id)) ||
+                T('CharCreate.startAsClass', { name: window.CCDbName(c) });
+              baseChoices.push({
+                name: window.CCDbName(c),
+                symbol: "quick_class_" + c.id,
+                description: passiveDesc,
+                value: c.id,
+                group: "creature",
+                groupTitle: nonSentientTitle,
+              });
+            });
           baseChoices.unshift(
             getLocalizedChoice(T('CharCreate.choice.randomClass.name'), "random_class", T('CharCreate.choice.randomClass.desc'), 136)
           );
@@ -1647,7 +1678,11 @@
         return T('CharCreate.chooseYourOrigin');
       },
       get choices() {
-        return [
+        // A world begun after 21 December 2012 with Earth gone has almost
+        // nowhere left to begin: the surviving scenarios are the vault, the
+        // tower gate and the Hypernet Point, and CharacterCreationOrigins owns
+        // that list (filterOrigins).
+        return filterOrigins([
           getLocalizedChoice(T('CharCreate.choice.originTrain.name'), "origin_train", T('CharCreate.choice.originTrain.desc')),
           getLocalizedChoice(T('CharCreate.choice.originCamper.name'), "origin_camper", T('CharCreate.choice.originCamper.desc')),
           getLocalizedChoice(T('CharCreate.choice.originSpace.name'), "origin_space", T('CharCreate.choice.originSpace.desc')),
@@ -1680,7 +1715,7 @@
           getLocalizedChoice(T('CharCreate.choice.originPlague.name'), "origin_plague", T('CharCreate.choice.originPlague.desc')),
           getLocalizedChoice(T('CharCreate.choice.originDiplomat.name'), "origin_diplomat", T('CharCreate.choice.originDiplomat.desc')),
           getLocalizedChoice(T('CharCreate.choice.originHypernetExplorer.name'), "origin_hypernet_explorer", T('CharCreate.choice.originHypernetExplorer.desc')),
-        ];
+        ]);
       },
       handler: function (symbol) {
         // Before a single grant: the state this choice is about to rewrite, kept
@@ -2544,8 +2579,10 @@
         } else {
           Scene_CharacterCreation.assignRandomSpriteAndBust(actor);
         }
-      } else if (window.selectRandomBustForActor) {
-        window.selectRandomBustForActor(actor.actorId());
+      } else if (!(window.selectBustForActorSprite && window.selectBustForActorSprite(actor.actorId()))) {
+        // The sheet already on the seat carries its own portrait, so that one
+        // answers first; a stranger is rolled in only for a sheet with none.
+        if (window.selectRandomBustForActor) window.selectRandomBustForActor(actor.actorId());
       }
       actor._ccSpriteSeeded = true;
       return true;
@@ -3520,8 +3557,12 @@
         Scene_CharacterCreation._isCreatureMode = true;
         if (actor) {
           actor._isCreatureActor = true;
-          if (actor._classId < 63) {
-            actor.changeClass(65, false);
+          // Only a member still holding a person's class is moved onto the
+          // creature roster; one that already has a creature class keeps the
+          // one it picked. window.CreatureClasses reads each class's own
+          // <Sentient> / <NonSentient> tag, so no id range is compared here.
+          if (!window.CreatureClasses.isCreatureClass(actor._classId)) {
+            actor.changeClass(window.CreatureClasses.fallbackId(), false);
           }
           if (!actorArchetypeKey(actor)) {
             const archetypes = creatureArchetypeKeys().filter((k) => k !== "Humanoid"); // i18n-ignore: archetype id
@@ -3539,7 +3580,14 @@
         Scene_CharacterCreation._isCreatureMode = false;
         if (actor) {
           actor._isCreatureActor = false;
-          if (actor._classId >= 63) {
+          // The BODY goes back to being a person's; the class does not have to.
+          // A humanoid may be played as a Ghost, a Zombie or a Drone, and the
+          // class board offers exactly that, so a creature class the player
+          // chose survives the switch. The one exception is the fallback the
+          // creature branch hands out when nothing else fits (Monster): that is
+          // the wizard's own stand-in rather than an answer the player gave,
+          // and a person's body is given a person's class instead.
+          if (actor._classId === window.CreatureClasses.fallbackId()) {
             actor.changeClass(1, false);
           }
           if (actor.setPortraitMode) actor.setPortraitMode("bust");
@@ -4070,6 +4118,14 @@
           if (profile && profile.isCreature !== isCreature) {
             profile.isCreature = isCreature;
             profile.backstory = null;
+          }
+          // The bio is written around the class now (NPCSociety.bio.classOrigin
+          // says how this character became a Witch, a Lumberjack or a Zombie).
+          // The class change itself already tells the profile, but a profile
+          // minted AFTER the change was never told, so the two are squared up
+          // here as well, through the one function that owns it.
+          if (profile && window.CreatureClasses.syncProfileClass) {
+            window.CreatureClasses.syncProfileClass(actor);
           }
         }
         if (window.NPCHistSim) window.NPCHistSim.generateBackstoryNow(name);
@@ -4825,8 +4881,13 @@
     // square and the tile the hatch is stamped on, checked against the hatches
     // themselves. Two labelled lines and nothing else - there is no prose to
     // read here, and anybody who has the coordinates knows what they are for.
-    // Right ones run `next`; wrong ones say so and leave the sheet open, and
-    // backing out of it simply does not start the scenario.
+    //
+    // Right ones are WRITTEN DOWN rather than walked through: the sheet stays
+    // open with the square added to the list of the ones it knows, so a patron
+    // can punch in every pair they hold before anything starts. The scenario
+    // begins only once one of those saved squares has been picked and
+    // confirmed. Wrong ones say so and leave the sheet open, and backing out of
+    // it simply does not start the scenario.
     _askPatronVaultSquare(next) {
       // Coordinates already proved in this world come back written in: the
       // patron who typed them once should not have to remember them again for
@@ -4835,6 +4896,10 @@
       const known = patronVaultClaim();
       this._ccAsk({
         title: ccT('CharCreate.patronVaultAskTitle'),
+        // Four numbers and nothing else, so a pad is handed a keypad instead of
+        // two text boxes it has no way to type into.
+        numeric: true,
+        collect: true,
         fields: [
           {
             key: "world",
@@ -4849,13 +4914,27 @@
             value: known ? `${known.mapX}, ${known.mapY}` : "",
           },
         ],
-        validate: (values) => {
+        saveLabel: ccT('CharCreate.patronVaultSave'),
+        confirmLabel: ccT('CharCreate.patronVaultStart'),
+        emptyLabel: ccT('CharCreate.patronVaultNoneSaved'),
+        pickLabel: ccT('CharCreate.patronVaultPickSquare'),
+        onSave: (values) => {
           const square = patronVaultSquareAt(values.world, values.tile);
           if (!square) return ccT('CharCreate.patronVaultWrongSquare');
-          setPatronVaultSquare(square);
+          // Proved, so the world keeps it - but nothing is chosen yet.
+          patronVaultRememberSquare(square);
           return null;
         },
-      }, next);
+        entries: () => patronVaultSavedSquares().map((square) => ({
+          square,
+          label: ccTp('CharCreate.patronVaultSquareLine', {
+            x: square.x, y: square.y, tileX: square.hatchX, tileY: square.hatchY,
+          }),
+        })),
+      }, (entry) => {
+        setPatronVaultSquare(entry.square);
+        next();
+      });
     }
 
     // Re-render the current step's choices in place (same step, new option
@@ -4891,8 +4970,23 @@
     // builds a fresh set of game objects. The static flow state outlives the
     // scene, so it is reset here or the next New Game would resume this
     // abandoned wizard mid-step.
+    // Back on the first step leaves the wizard for good, so it asks first:
+    // the half-built party is dropped either way, and a stray Escape should
+    // not be the whole of that decision.
     exitToTitle() {
       SoundManager.playCancel();
+      if (this._ccConfirm) {
+        this._ccConfirm({
+          title: ccT("CharCreate.exitToTitleTitle"),
+          body: ccT("CharCreate.exitToTitleBody"),
+          acceptLabel: ccT("CharCreate.exitToTitleAccept"),
+        }, () => this._exitToTitleConfirmed());
+        return;
+      }
+      this._exitToTitleConfirmed();
+    }
+
+    _exitToTitleConfirmed() {
       Scene_CharacterCreation._interruptedStep = -1;
       Scene_CharacterCreation._startStep = 0;
       Scene_CharacterCreation.clearSubScreens();
@@ -5048,6 +5142,10 @@
     }
 
     updateUIInput() {
+      // A confirmation sheet is modal too, and is read first for the same
+      // reason: the OK that answers it must not also reach the board.
+      if (this._ccModalPollInput && this._ccModalPollInput()) return;
+
       // A pick sheet is modal. It is read before anything else on the page so
       // the press that walks its list never also moves the board behind it.
       if (window.CCPick && window.CCPick.pollInput()) return;

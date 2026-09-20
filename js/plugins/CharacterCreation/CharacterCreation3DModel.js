@@ -2029,8 +2029,12 @@
         >${T('CharCreate.cc3d.surprise')}</span></div>`;
     }
     return `<div class="cc-row-inline">
-        <input id="cc3d-search" class="cc3d-search" type="text" autocomplete="off"
-               placeholder="${T('CharCreate.search')}" value="${this._filter}" />
+        ${window.CCSearch.html({
+          className: "cc3d-search",
+          placeholder: T('CharCreate.search'),
+          value: this._filter,
+          attrs: 'id="cc3d-search"',
+        })}
         <span class="cc3d-chip" data-focus="1" data-hnav="partsbar"
               onclick="SceneManager._scene.surpriseGroup()">${T('CharCreate.cc3d.surprise')}</span>
       </div>
@@ -2061,7 +2065,9 @@
 
   Scene_CC3DModel.prototype._shelfOptions = function () {
     const all = optionsForSlot(this._slot);
-    const filter = (this._filter || "").toLowerCase();
+    // No strip to type into on a pad, so the shelf filters on nothing and
+    // shows every part (CCSearch).
+    const filter = window.CCSearch.query(this._filter).toLowerCase();
     if (!filter) return all;
     return all.filter((option) => option === "default"
       ? T('CharCreate.cc3d.bare').toLowerCase().includes(filter)
@@ -2880,8 +2886,12 @@
       <div class="cc3d-modal-card">
         <div class="cc3d-modal-head" data-nav-skip data-nav-owner="_updateModalInput">
           <h2 class="cc-header-gothic cc3d-modal-title">${this._modalTitle()}</h2>
-          ${modal.kind === "structure" ? `<input id="cc3d-modal-search" class="cc3d-modal-search" type="text"
-            placeholder="${T('CharCreate.search')}" value="${modal.filter}" />` : ``}
+          ${modal.kind === "structure" ? window.CCSearch.html({
+            className: "cc3d-modal-search",
+            placeholder: T('CharCreate.search'),
+            value: modal.filter,
+            attrs: 'id="cc3d-modal-search"',
+          }) : ``}
           <button class="cc-btn-treaty" onclick="SceneManager._scene.closeModal()"
             >${T('CharCreate.close')}</button>
         </div>

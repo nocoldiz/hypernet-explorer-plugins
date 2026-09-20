@@ -108,12 +108,12 @@
  * @value Diseases
  * @option Farming
  * @value Farming
+ * @option Fertility
+ * @value Fertility
  * @option Food
  * @value Food
  * @option Homeopathy
  * @value Homeopathy
- * @option Jungle
- * @value Jungle
  * @option Lifestyle
  * @value Lifestyle
  * @option Magic
@@ -124,8 +124,6 @@
  * @value Misc
  * @option Monsters
  * @value Monsters
- * @option Plants
- * @value Plants
  * @option Survival
  * @value Survival
  * @option Tools
@@ -175,12 +173,12 @@
  * @value Diseases
  * @option Farming
  * @value Farming
+ * @option Fertility
+ * @value Fertility
  * @option Food
  * @value Food
  * @option Homeopathy
  * @value Homeopathy
- * @option Jungle
- * @value Jungle
  * @option Lifestyle
  * @value Lifestyle
  * @option Magic
@@ -191,8 +189,6 @@
  * @value Misc
  * @option Monsters
  * @value Monsters
- * @option Plants
- * @value Plants
  * @option Survival
  * @value Survival
  * @option Tools
@@ -242,12 +238,12 @@
  * @value Diseases
  * @option Farming
  * @value Farming
+ * @option Fertility
+ * @value Fertility
  * @option Food
  * @value Food
  * @option Homeopathy
  * @value Homeopathy
- * @option Jungle
- * @value Jungle
  * @option Lifestyle
  * @value Lifestyle
  * @option Magic
@@ -258,8 +254,6 @@
  * @value Misc
  * @option Monsters
  * @value Monsters
- * @option Plants
- * @value Plants
  * @option Survival
  * @value Survival
  * @option Tools
@@ -932,6 +926,281 @@
         const containerId = ContainerManager.getContainerId(mapId, eventId);
         generateSeededContainer(containerId, args);
     });
+
+    //=========================================================================
+    // Holdall: the party's own stores, as a HypernetOS program
+    //=========================================================================
+    // Three bags the party already owns and could never see at once: the
+    // extradimensional container, which is addressed from anywhere by its
+    // nature, and the camper and car holds, which answer over the same link the
+    // vehicles' own instruments do. Moving something between them is what this
+    // page is for. Chests standing in the world are NOT here: a box in somebody
+    // else's cellar is opened by walking to it and lifting the lid, and reaching
+    // into one from a desk would quietly turn every theft in the game into a
+    // click.
+    const HOLD_APP_ID = 'app-holdall';
+    const HOLD_ICON = 209; // Sack, per js/db/Sprites/Icons.json
+
+    const HD = {
+        app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+        header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+                "background:linear-gradient(to bottom,#7a5a3a,#5c4229); color:var(--xp-white); border-bottom:2px solid #33220f;",
+        body: "display:flex; flex:1; min-height:0; gap:0;",
+        pane: "flex:1; min-width:0; display:flex; flex-direction:column; background:var(--xp-face-2);",
+        paneHead: "padding:6px 8px; background:var(--xp-face-6); border-bottom:1px solid var(--xp-face-shade); font-weight:bold;",
+        list: "flex:1; overflow-y:auto; background:var(--xp-white);",
+        row: "display:flex; gap:8px; align-items:center; padding:4px 8px; border-bottom:1px solid #eee; cursor:pointer;",
+        middle: "width:132px; flex-shrink:0; display:flex; flex-direction:column; justify-content:center; " +
+                "align-items:center; gap:6px; background:var(--xp-face-5); border-left:1px solid var(--xp-face-shade); " +
+                "border-right:1px solid var(--xp-face-shade); padding:6px;",
+        btn: "display:block; width:100%; text-align:center; padding:5px 8px; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); " +
+             "border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:14px; user-select:none;",
+        select: "width:100%; font-family:'Tahoma',sans-serif; font-size:14px; padding:2px 4px; " +
+                "border:1px solid var(--xp-face-4); background:var(--xp-white);",
+        status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+                "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+        note: "color:var(--xp-ink-soft-2); font-size:13px;",
+    };
+
+    const hdEsc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const hdIcon = (index, size) => (window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : '');
+
+    function hdWeight(item) {
+        return (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight)
+            ? window.ItemSystemUtils.getItemWeight(item) : 0;
+    }
+
+    // The stores this page may address: the pack the party is carrying, the
+    // extradimensional container, and the hold of every vehicle they own.
+    function hdStores() {
+        const stores = [{ id: 'party', kind: 'party', name: T('Container.holdall.pack'), limit: 0 }];
+        stores.push({ id: 'extra', kind: 'extra', name: T('Container.holdall.extradimensional'), limit: 0 });
+        const owns = (key) => {
+            const VS = window.VehicleSystem || window.MergedVehicleSystem;
+            if (VS && typeof VS.ownsVehicleKey === 'function') return !!VS.ownsVehicleKey(key);
+            if (window.VehiclePosition && window.VehiclePosition.owns) return !!window.VehiclePosition.owns(key);
+            return false;
+        };
+        if (owns('camper')) {
+            stores.push({ id: 'vehicle_camper', kind: 'container', name: T('Container.holdall.camper'), limit: CAMPER_WEIGHT_LIMIT });
+        }
+        if (owns('car')) {
+            stores.push({ id: 'vehicle_car', kind: 'container', name: T('Container.holdall.car'), limit: CAR_WEIGHT_LIMIT });
+        }
+        return stores;
+    }
+
+    function hdContents(store) {
+        const out = [];
+        if (store.kind === 'party') {
+            if (!window.$gameParty) return out;
+            for (const item of $gameParty.allItems()) {
+                const n = $gameParty.numItems(item);
+                if (n > 0) out.push({ key: ItemUtils.encodeKey(item), item, amount: n });
+            }
+        } else {
+            const bag = store.kind === 'extra'
+                ? ContainerManager.getExtradimensionalContainer()
+                : ContainerManager.getContainer(store.id);
+            for (const key of Object.keys(bag || {})) {
+                const amount = bag[key];
+                if (!(amount > 0)) continue;
+                const item = ItemUtils.decodeKey(key);
+                if (item) out.push({ key, item, amount });
+            }
+        }
+        out.sort((a, b) => String(a.item.name).localeCompare(String(b.item.name)));
+        return out;
+    }
+
+    function hdLoad(store) {
+        if (store.kind === 'party' || !store.limit) return 0;
+        return hdContents(store).reduce((sum, row) => sum + hdWeight(row.item) * row.amount, 0);
+    }
+
+    window.Holdall = {
+        win: null,
+        left: 'party',
+        right: 'extra',
+        picked: { left: null, right: null },
+        message: '',
+
+        launch() {
+            if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+            const win = window.HypernetOS.WindowManager.createWindow({
+                id: HOLD_APP_ID,
+                title: T('Container.holdall.appName'),
+                icon: HOLD_ICON,
+                width: 880,
+                height: 560,
+                contentHTML: `
+                    <div style="${HD.app}">
+                        <div style="${HD.header}">
+                            <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${hdIcon(HOLD_ICON, 34)}</div>
+                            <div style="flex:1; min-width:0">
+                                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('Container.holdall.appName')}</div>
+                                <div style="font-size:13px; opacity:0.82">${T('Container.holdall.subtitle')}</div>
+                            </div>
+                        </div>
+                        <div style="${HD.body}">
+                            <div id="hd-left" style="${HD.pane}"></div>
+                            <div id="hd-middle" style="${HD.middle}"></div>
+                            <div id="hd-right" style="${HD.pane}"></div>
+                        </div>
+                        <div style="${HD.status}"><span id="hd-msg">${T('Container.holdall.hint')}</span></div>
+                    </div>`
+            });
+            this.win = win;
+            this.bind();
+            this.render();
+        },
+
+        bind() {
+            if (!this.win || this.win.dataset.hdBound) return;
+            this.win.dataset.hdBound = '1';
+            this.win.addEventListener('change', ev => {
+                const sel = ev.target.closest('[data-hd-side]');
+                if (!sel) return;
+                const side = sel.dataset.hdSide;
+                this[side] = sel.value;
+                this.picked[side] = null;
+                this.render();
+            });
+            this.win.addEventListener('click', ev => {
+                const row = ev.target.closest('[data-hd-pick]');
+                if (row) {
+                    ev.stopPropagation();
+                    const [side, key] = row.dataset.hdPick.split('|');
+                    this.picked[side] = key;
+                    if (window.SoundManager) SoundManager.playCursor();
+                    this.render();
+                    return;
+                }
+                const move = ev.target.closest('[data-hd-move]');
+                if (move) {
+                    ev.stopPropagation();
+                    const [from, amount] = move.dataset.hdMove.split('|');
+                    this.move(from, amount === 'all' ? Infinity : Number(amount));
+                }
+            });
+        },
+
+        store(side) {
+            const stores = hdStores();
+            return stores.find(s => s.id === this[side]) || stores[0];
+        },
+
+        // One move, both directions, all four kinds of store. Everything that
+        // can refuse it refuses here rather than halfway through: a hold that
+        // would go over its payload, a pack that has no room, a stack that is
+        // not as deep as the page last drew it.
+        move(side, wanted) {
+            const from = this.store(side);
+            const to = this.store(side === 'left' ? 'right' : 'left');
+            if (!from || !to || from.id === to.id) return;
+            const key = this.picked[side];
+            if (!key) { this.say(T('Container.holdall.pickSomething'), true); return; }
+            const item = ItemUtils.decodeKey(key);
+            if (!item) return;
+
+            const held = from.kind === 'party'
+                ? $gameParty.numItems(item)
+                : ContainerManager.getItemAmount(from.id, key, from.kind === 'extra');
+            let amount = Math.min(held, wanted === Infinity ? held : Math.max(1, wanted));
+            if (amount <= 0) { this.say(T('Container.holdall.gone'), true); return; }
+
+            if (to.kind === 'party') {
+                const room = $gameParty.maxItems(item) - $gameParty.numItems(item);
+                amount = Math.min(amount, Math.max(0, room));
+                if (amount <= 0) { this.say(T('Container.holdall.packFull'), true); return; }
+            } else if (to.limit) {
+                const each = hdWeight(item);
+                const free = to.limit - hdLoad(to);
+                if (each > 0) amount = Math.min(amount, Math.floor(free / each));
+                if (amount <= 0) { this.say(T('Container.holdall.overloaded', { hold: to.name }), true); return; }
+            }
+
+            if (from.kind === 'party') $gameParty.loseItem(item, amount);
+            else ContainerManager.removeItem(from.id, key, amount, from.kind === 'extra');
+
+            if (to.kind === 'party') $gameParty.gainItem(item, amount);
+            else ContainerManager.addItem(to.id, key, amount, to.kind === 'extra');
+
+            if (window.SoundManager) SoundManager.playOk();
+            this.message = T('Container.holdall.moved', { n: amount, item: item.name, to: to.name });
+            this.render();
+        },
+
+        say(text, bad) {
+            this.message = text;
+            if (window.SoundManager) {
+                if (bad) SoundManager.playBuzzer(); else SoundManager.playOk();
+            }
+        },
+
+        render() {
+            if (!this.win || !this.win.isConnected) return;
+            const stores = hdStores();
+            // A vehicle sold or a container gone: fall back rather than draw a
+            // pane of nothing.
+            for (const side of ['left', 'right']) {
+                if (!stores.some(s => s.id === this[side])) this[side] = stores[0].id;
+            }
+            this.renderPane('left', stores);
+            this.renderPane('right', stores);
+            const middle = this.win.querySelector('#hd-middle');
+            if (middle) {
+                middle.innerHTML = `
+                    <span class="focusable" tabindex="0" data-hd-move="left|1" style="${HD.btn}">${T('Container.holdall.moveRightOne')}</span>
+                    <span class="focusable" tabindex="0" data-hd-move="left|all" style="${HD.btn}">${T('Container.holdall.moveRightAll')}</span>
+                    <span class="focusable" tabindex="0" data-hd-move="right|1" style="${HD.btn}">${T('Container.holdall.moveLeftOne')}</span>
+                    <span class="focusable" tabindex="0" data-hd-move="right|all" style="${HD.btn}">${T('Container.holdall.moveLeftAll')}</span>`;
+            }
+            const msg = this.win.querySelector('#hd-msg');
+            if (msg) msg.textContent = this.message || T('Container.holdall.hint');
+        },
+
+        renderPane(side, stores) {
+            const pane = this.win.querySelector('#hd-' + side);
+            if (!pane) return;
+            const store = this.store(side);
+            const rows = hdContents(store);
+            const load = store.limit ? hdLoad(store) : 0;
+            const options = stores.map(s =>
+                `<option value="${hdEsc(s.id)}"${s.id === store.id ? ' selected' : ''}>${hdEsc(s.name)}</option>`).join('');
+            const list = rows.length ? rows.map(row => {
+                const on = this.picked[side] === row.key;
+                return `<div class="focusable" tabindex="0" id="hd-${side}-${hdEsc(row.key)}" data-hd-pick="${side}|${hdEsc(row.key)}"
+                    style="${HD.row}${on ? 'background:#dce9f7;' : ''}">
+                    ${hdIcon(row.item.iconIndex)}
+                    <span style="flex:1; min-width:0">${hdEsc(row.item.name)}</span>
+                    <span>${row.amount}</span>
+                </div>`;
+            }).join('') : `<div style="padding:10px; ${HD.note}">${T('Container.holdall.empty')}</div>`;
+            pane.innerHTML = `
+                <div style="${HD.paneHead}">
+                    <select class="focusable" tabindex="0" data-hd-side="${side}" id="hd-sel-${side}" style="${HD.select}">${options}</select>
+                    <div style="${HD.note}">${store.limit
+                        ? T('Container.holdall.payload', { used: (load / 1000).toFixed(1), max: (store.limit / 1000).toFixed(0) })
+                        : (store.kind === 'extra' ? T('Container.holdall.noLimit') : T('Container.holdall.onYou'))}</div>
+                </div>
+                <div style="${HD.list}">${list}</div>`;
+        },
+    };
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: HOLD_APP_ID,
+            name: T('Container.holdall.appName'),
+            icon: HOLD_ICON,
+            category: 'accessories',
+            launchFn: function () { window.Holdall.launch(); },
+            desktopShortcut: true,
+        });
+    }
 
     //=============================================================================
     // DataManager hooks

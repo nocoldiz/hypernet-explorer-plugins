@@ -135,10 +135,38 @@
     // Shared Sky Renderer, exposed globally so other plugins (FishingMinigame, etc.)
     // can draw the same sky without duplicating logic.
     // =============================================================================
+    // Push one Earth sky colour (0xRRGGBB) toward the sky of the world the
+    // party is actually standing on: its own haze, the colour its star's light
+    // scatters to, and - where there is no air at all - almost nothing, because
+    // an airless sky is black at every hour. Returns the colour untouched on
+    // Earth, so every caller can run it unconditionally. Shared so the fishing
+    // hole, the surf break and the battle sky all come out the same colour.
+    function alienSkyColor(hex) {
+        const lp = battleSkyWorld();
+        if (!lp) return hex;
+        let r = (hex >> 16) & 255, g = (hex >> 8) & 255, b = hex & 255;
+        if (lp.skyBlend) {
+            const f = 0.32;
+            r = r * (1 - f) + lp.skyBlend[0] * f;
+            g = g * (1 - f) + lp.skyBlend[1] * f;
+            b = b * (1 - f) + lp.skyBlend[2] * f;
+        }
+        const rel = lp.star && lp.star.skyRel;
+        if (rel) { r *= rel[0]; g *= rel[1]; b *= rel[2]; }
+        if (lp.atmosphere === false) { r *= 0.12; g *= 0.12; b *= 0.14; }
+        const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
+        return (clamp(r) << 16) | (clamp(g) << 8) | clamp(b);
+    }
+
     window.SkyRenderer = {
         getCurrentTimeMode,
         getGameDate,
         isFriday,
+        // The world the party is standing on (null on Earth), the hour its own
+        // sky is at, and how it colours an Earth sky.
+        skyWorld: battleSkyWorld,
+        skyHourFloat,
+        alienSkyColor,
         calculateMoonPhase,
         getSkyColors,
         drawDitheredGradient,
@@ -175,25 +203,104 @@
     // their backgrounds nested under AlienPlanet/<Biome>/ rather than a flat
     // folder, so fall back to that location when the flat one is absent. Returns
     // a forward-slash relative path ("<Biome>" or "AlienPlanet/<Biome>").
-    function resolveBiomeBattlebackFolder(biomeName) {
+    // Coastal biomes: swimming away from one puts the party in open water.
+    const COASTAL_BIOMES = ['Beach', 'Island'];
+    function isCoastalBiome(biomeName) {
+        return COASTAL_BIOMES.indexOf(String(biomeName || '')) >= 0;
+    }
+
+    // ---------------------------------------------------------------------
+    // The battleback folders, read from disk ONCE
+    // ---------------------------------------------------------------------
+    // img/battlebacks1 holds 119 folders and some 2400 images, and none of it
+    // moves while the game is running. Every one of these answers used to be
+    // re-read with a synchronous existsSync + readdirSync on the frame the
+    // battle opened, on the main thread: warm that is a fraction of a
+    // millisecond, but the first ask of a session - or any ask on a machine
+    // where a virus scanner sits between the game and the disk - is not, and it
+    // lands exactly where a hitch is most visible. Read once, remembered for
+    // the session.
+    //
+    // What is NOT cached is the time-of-day filter: which files a folder offers
+    // at noon and at midnight differ, and the clock moves. That filter runs off
+    // the remembered listing, in memory, every time.
+    let _battlebackBase = null;
+    function battlebackBase() {
+        if (_battlebackBase === null) {
+            try {
+                _battlebackBase = require('path').join(
+                    require('path').dirname(process.mainModule.filename),
+                    'img', 'battlebacks1');
+            } catch (e) { _battlebackBase = ''; }
+        }
+        return _battlebackBase;
+    }
+
+    // Every image file in one battleback folder, or [] when the folder is not
+    // there. The empty answer is remembered too, so a biome with no art of its
+    // own does not go back to the disk for every fight it is asked about.
+    const _biomeFileCache = new Map();
+    function biomeImageFiles(folderRel) {
+        if (!folderRel) return [];
+        let files = _biomeFileCache.get(folderRel);
+        if (files) return files;
+        files = [];
         try {
             const fs = require('fs');
             const path = require('path');
-            const base = path.join(
-                path.dirname(process.mainModule.filename),
-                'img', 'battlebacks1'
-            );
-            if (fs.existsSync(path.join(base, biomeName))) return biomeName;
-            if (fs.existsSync(path.join(base, 'AlienPlanet', biomeName))) {
-                return 'AlienPlanet/' + biomeName;
+            const base = battlebackBase();
+            const dir = base ? path.join(base, folderRel) : '';
+            if (dir && fs.existsSync(dir)) {
+                files = fs.readdirSync(dir).filter(f => /\.(png|jpg|jpeg)$/i.test(f));
             }
-            // A directional variant is the same place seen from another angle:
-            // "Road cross" and "River vertical" are a road and a river, and
-            // they have never had folders of their own to look in.
-            const stem = biomeName.split(' ')[0];
-            if (stem !== biomeName && fs.existsSync(path.join(base, stem))) return stem;
-        } catch (e) { /* fall through */ }
-        return biomeName;
+        } catch (e) { files = []; }
+        _biomeFileCache.set(folderRel, files);
+        return files;
+    }
+
+    // The four call sites that pick a battleback all honoured the same
+    // time-of-day suffixes, in four copies of the same loop. One copy now: a
+    // _N / _D / _S file is only offered at the hour it was shot at, and a
+    // filter that would leave nothing at all is not applied.
+    function filterByTimeOfDay(imageFiles) {
+        const timeMode = getCurrentTimeMode();
+        const filtered = imageFiles.filter(file => {
+            const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
+            if (suffix === '_N') return timeMode === CONFIG.TIME_MODES.NIGHT;
+            if (suffix === '_D') return timeMode === CONFIG.TIME_MODES.DAY;
+            if (suffix === '_S') return timeMode === CONFIG.TIME_MODES.DUSK || timeMode === CONFIG.TIME_MODES.DAWN;
+            return true;
+        });
+        return filtered.length > 0 ? filtered : imageFiles;
+    }
+
+    // Which folder a biome's art actually lives in. Three existsSync calls in
+    // the worst case, so this is remembered per biome name as well.
+    const _folderResolveCache = new Map();
+    function resolveBiomeBattlebackFolder(biomeName) {
+        const cached = _folderResolveCache.get(biomeName);
+        if (cached !== undefined) return cached;
+        let resolved = biomeName;
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const base = battlebackBase();
+            if (base) {
+                if (fs.existsSync(path.join(base, biomeName))) {
+                    resolved = biomeName;
+                } else if (fs.existsSync(path.join(base, 'AlienPlanet', biomeName))) {
+                    resolved = 'AlienPlanet/' + biomeName;
+                } else {
+                    // A directional variant is the same place seen from another
+                    // angle: "Road cross" and "River vertical" are a road and a
+                    // river, and they have never had folders of their own.
+                    const stem = String(biomeName).split(' ')[0];
+                    if (stem !== biomeName && fs.existsSync(path.join(base, stem))) resolved = stem;
+                }
+            }
+        } catch (e) { /* fall through to the name itself */ }
+        _folderResolveCache.set(biomeName, resolved);
+        return resolved;
     }
 
     function getBackgroundIndexForCoordinates(x, y, biomeName) {
@@ -221,40 +328,15 @@
         const random = createSeededRandom(seed);
 
         // Get list of available backgrounds for this biome
-        const fs = require('fs');
-        const path = require('path');
 
         try {
             if (!process.mainModule) return null;
-            const biomePath = path.join(
-                path.dirname(process.mainModule.filename),
-                'img', 'battlebacks1', resolveBiomeBattlebackFolder(biomeName)
-            );
 
-            if (!fs.existsSync(biomePath)) {
-                return null;
-            }
-
-            let files = fs.readdirSync(biomePath);
-            let imageFiles = files.filter(f => /\.(png|jpg|jpeg)$/i.test(f));
-
+            let imageFiles = biomeImageFiles(resolveBiomeBattlebackFolder(biomeName));
             if (imageFiles.length === 0) {
                 return null;
             }
-
-            // Filter by time suffix
-            {
-                const timeMode = getCurrentTimeMode();
-                const filtered = imageFiles.filter(file => {
-                    const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
-                    if (suffix === '_N') return timeMode === CONFIG.TIME_MODES.NIGHT;
-                    if (suffix === '_D') return timeMode === CONFIG.TIME_MODES.DAY;
-                    if (suffix === '_S') return timeMode === CONFIG.TIME_MODES.DUSK || timeMode === CONFIG.TIME_MODES.DAWN;
-                    return true;
-                });
-
-                if (filtered.length > 0) imageFiles = filtered;
-            }
+            imageFiles = filterByTimeOfDay(imageFiles);
 
             // Use seeded random to pick consistent index for this grid square
             const index = Math.floor(random() * imageFiles.length);
@@ -267,45 +349,18 @@
     }
 
     function getBiomeBackgroundForCoordinates(x, y, biomeName) {
-        const fs = require('fs');
-        const path = require('path');
 
         if (!biomeName) return null;
 
         try {
             if (!process.mainModule) return null;
             const folderRel = resolveBiomeBattlebackFolder(biomeName);
-            const biomePath = path.join(
-                path.dirname(process.mainModule.filename),
-                'img', 'battlebacks1', folderRel
-            );
 
-            if (!fs.existsSync(biomePath)) {
-                //console.log('Biome folder not found:', biomePath);
-                return null;
-            }
-
-            let files = fs.readdirSync(biomePath);
-            let imageFiles = files.filter(f => /\.(png|jpg|jpeg)$/i.test(f));
-
+            let imageFiles = biomeImageFiles(folderRel);
             if (imageFiles.length === 0) {
-                //console.log('No images in biome folder:', biomePath);
                 return null;
             }
-
-            // Filter by time suffix
-            {
-                const timeMode = getCurrentTimeMode();
-                const filtered = imageFiles.filter(file => {
-                    const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
-                    if (suffix === '_N') return timeMode === CONFIG.TIME_MODES.NIGHT;
-                    if (suffix === '_D') return timeMode === CONFIG.TIME_MODES.DAY;
-                    if (suffix === '_S') return timeMode === CONFIG.TIME_MODES.DUSK || timeMode === CONFIG.TIME_MODES.DAWN;
-                    return true;
-                });
-
-                if (filtered.length > 0) imageFiles = filtered;
-            }
+            imageFiles = filterByTimeOfDay(imageFiles);
 
             // Get consistent background index for these coordinates
             const bgIndex = getBackgroundIndexForCoordinates(x, y, biomeName);
@@ -338,18 +393,7 @@
     // True if img/battlebacks1/<biomeName> exists and holds at least one image.
     function biomeFolderHasImages(biomeName) {
         if (!biomeName) return false;
-        try {
-            const fs = require('fs');
-            const path = require('path');
-            const biomePath = path.join(
-                path.dirname(process.mainModule.filename),
-                'img', 'battlebacks1', resolveBiomeBattlebackFolder(biomeName)
-            );
-            if (!fs.existsSync(biomePath)) return false;
-            return fs.readdirSync(biomePath).some(f => /\.(png|jpg|jpeg)$/i.test(f));
-        } catch (e) {
-            return false;
-        }
+        return biomeImageFiles(resolveBiomeBattlebackFolder(biomeName)).length > 0;
     }
 
     // Reads the <Biome: A, B, C> note from each enemy in the current troop and
@@ -385,30 +429,12 @@
     function pickRandomBiomeBackgroundFile(biomeName) {
         if (!biomeName) return null;
         try {
-            const fs = require('fs');
-            const path = require('path');
             const folderRel = resolveBiomeBattlebackFolder(biomeName);
-            const biomePath = path.join(
-                path.dirname(process.mainModule.filename),
-                'img', 'battlebacks1', folderRel
-            );
-            if (!fs.existsSync(biomePath)) return null;
-
-            let imageFiles = fs.readdirSync(biomePath).filter(f => /\.(png|jpg|jpeg)$/i.test(f));
-            if (imageFiles.length === 0) return null;
+            const listed = biomeImageFiles(folderRel);
+            if (listed.length === 0) return null;
 
             // Match the time-of-day suffix filtering used by the coordinate picker.
-            {
-                const timeMode = getCurrentTimeMode();
-                const filtered = imageFiles.filter(file => {
-                    const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
-                    if (suffix === '_N') return timeMode === CONFIG.TIME_MODES.NIGHT;
-                    if (suffix === '_D') return timeMode === CONFIG.TIME_MODES.DAY;
-                    if (suffix === '_S') return timeMode === CONFIG.TIME_MODES.DUSK || timeMode === CONFIG.TIME_MODES.DAWN;
-                    return true;
-                });
-                if (filtered.length > 0) imageFiles = filtered;
-            }
+            const imageFiles = filterByTimeOfDay(listed);
 
             const file = imageFiles[Math.floor(Math.random() * imageFiles.length)];
             return folderRel + '/' + file.replace(/\.[^/.]+$/, '');
@@ -451,15 +477,8 @@
     window.getBiomeBattlebackPreview = function (biomeName) {
         if (!biomeName) return null;
         try {
-            const fs = require('fs');
-            const path = require('path');
             const folderRel = resolveBiomeBattlebackFolder(biomeName);
-            const dir = path.join(
-                path.dirname(process.mainModule.filename),
-                'img', 'battlebacks1', folderRel
-            );
-            if (!fs.existsSync(dir)) return null;
-            const files = fs.readdirSync(dir).filter(f => /\.(png|jpg|jpeg)$/i.test(f));
+            const files = biomeImageFiles(folderRel);
             if (!files.length) return null;
             return 'img/battlebacks1/' + folderRel + '/' + files[0];
         } catch (e) {
@@ -486,20 +505,11 @@
                 'img', 'battlebacks1'
             );
 
-            const imagesIn = (dir) => {
-                if (!fs.existsSync(dir)) return [];
-                let files = fs.readdirSync(dir).filter(f => /\.(png|jpg|jpeg)$/i.test(f));
-                // A night view at noon reads as the wrong place, so the same
-                // time-of-day suffixes the battle itself honours are honoured here.
-                const timeMode = getCurrentTimeMode();
-                const timed = files.filter(file => {
-                    const suffix = file.replace(/\.[^/.]+$/, '').slice(-2);
-                    if (suffix === '_N') return timeMode === CONFIG.TIME_MODES.NIGHT;
-                    if (suffix === '_D') return timeMode === CONFIG.TIME_MODES.DAY;
-                    if (suffix === '_S') return timeMode === CONFIG.TIME_MODES.DUSK || timeMode === CONFIG.TIME_MODES.DAWN;
-                    return true;
-                });
-                return timed.length > 0 ? timed : files;
+            // A night view at noon reads as the wrong place, so the same
+            // time-of-day suffixes the battle itself honours are honoured here.
+            const imagesIn = (folderRel) => {
+                const files = biomeImageFiles(folderRel);
+                return files.length ? filterByTimeOfDay(files) : files;
             };
 
             const own = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.battleback1Name : '';
@@ -520,12 +530,12 @@
                 }
                 const rng = createSeededRandom(mapId + 1);
                 let folder = biome ? resolveBiomeBattlebackFolder(biome) : null;
-                let files = folder ? imagesIn(path.join(base, folder)) : [];
+                let files = folder ? imagesIn(folder) : [];
                 if (files.length === 0) {
                     const all = listBiomeBattlebackFolders();
                     if (all.length > 0) {
                         folder = resolveBiomeBattlebackFolder(all[Math.floor(rng() * all.length)]);
-                        files = imagesIn(path.join(base, folder));
+                        files = imagesIn(folder);
                     }
                 }
                 if (files.length > 0) {
@@ -632,8 +642,7 @@
 
         // On an alien planet surface, blend the whole sky toward that world's
         // palette so each planet reads with its own colour of sky.
-        const lp = (window.GalaxySim && window.GalaxySim.getSurfacePlanet)
-            ? window.GalaxySim.getSurfacePlanet() : null;
+        const lp = battleSkyWorld();
         if (lp && lp.skyBlend) {
             const f = 0.32;
             colors = colors.map(c => [
@@ -641,6 +650,28 @@
                 Math.round(c[1] * (1 - f) + lp.skyBlend[1] * f),
                 Math.round(c[2] * (1 - f) + lp.skyBlend[2] * f)
             ]);
+        }
+        if (lp) {
+            // The light that reaches this sky is the light its own star makes,
+            // so an ochre world under a red dwarf is not the same daylight as
+            // the same world under a blue giant. skyRel is written against a
+            // sun-like star, which multiplies by one and changes nothing.
+            const rel = lp.star && lp.star.skyRel;
+            if (rel) {
+                colors = colors.map(c => [
+                    Math.round(Math.max(0, Math.min(255, c[0] * rel[0]))),
+                    Math.round(Math.max(0, Math.min(255, c[1] * rel[1]))),
+                    Math.round(Math.max(0, Math.min(255, c[2] * rel[2])))
+                ]);
+            }
+            // No air, no sky. An airless world has nothing to scatter its
+            // star's light, so the sky over it stays black at every hour and
+            // the stars never go out - only the ground below is lit.
+            if (lp.atmosphere === false) {
+                colors = colors.map(c => [
+                    Math.round(c[0] * 0.12), Math.round(c[1] * 0.12), Math.round(c[2] * 0.14)
+                ]);
+            }
         }
 
         return colors;
@@ -766,6 +797,33 @@
         return { hours, minutes };
     }
 
+    // The world the fight is happening on, or null on Earth. A fight on an
+    // alien surface happens under that world's sky, not under Earth's: the
+    // descriptor carries the star, the air, the world's own moons and - on a
+    // moon - the planet it belongs to.
+    function battleSkyWorld() {
+        const GS = window.GalaxySim;
+        if (!GS) return null;
+        return (GS.getSurfacePlanet && GS.getSurfacePlanet()) ||
+            (GS.getOffEarthPlanet && GS.getOffEarthPlanet()) || null;
+    }
+
+    // The hour the SKY over the fight is at. On Earth that is the clock. Off it
+    // that is the world's own rotation and the party's own longitude, which is
+    // what puts a fight on a tidally locked world under a sun that never moves.
+    function skyHourFloat() {
+        const { hours, minutes } = getGameTimeHourAndMinute();
+        const earth = hours + minutes / 60;
+        const GS = window.GalaxySim;
+        const lp = battleSkyWorld();
+        if (!lp || !GS || !GS.localHourFor) return earth;
+        const total = ((typeof $gameVariables !== "undefined" && $gameVariables)
+            ? $gameVariables.value(114) : 0) + 600;
+        const lon = GS.surfaceColumnHour ? GS.surfaceColumnHour() : null;
+        const local = GS.localHourFor(lp, total, lon);
+        return (local == null || !isFinite(local)) ? earth : local;
+    }
+
     function getCurrentTimeMode() {
         const timeMode = $gameVariables.value(80);
 
@@ -774,8 +832,7 @@
         }
 
         // Use game time from TimeDateSystem instead of real time
-        const { hours, minutes } = getGameTimeHourAndMinute();
-        const timeValue = hours + minutes / 60;
+        const timeValue = skyHourFloat();
 
         if (timeValue >= 5 && timeValue < 7) return CONFIG.TIME_MODES.DAWN;
         if (timeValue >= 7 && timeValue < 17) return CONFIG.TIME_MODES.DAY;
@@ -1277,9 +1334,21 @@
         // Biome always takes priority over any hardcoded battleback1 set on the map
         let biome = $gameMap.getBiome();
 
+        // A swimming player on a coastal biome fights out at sea, so neither the
+        // shore biome nor the river override below applies.
+        const procBiome = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._procGenData)
+            ? ($gameSystem._procGenData.displayAsIsland ? 'Island'
+                : $gameSystem._procGenData.displayAsBeach ? 'Beach'
+                    : $gameSystem._procGenData.currentBiome)
+            : '';
+        const swimmingAtSea = !isBattleTest &&
+            typeof $gamePlayer !== 'undefined' && $gamePlayer &&
+            !!$gamePlayer._isSwimming &&
+            isCoastalBiome(biome || procBiome);
+
         // Region 99 (water) tiles force the RiverBank battleback when biome
         // backgrounds are active. Battle Test has no loaded player/map, so skip it there.
-        if (!isBattleTest &&
+        if (!isBattleTest && !swimmingAtSea &&
             typeof $gamePlayer !== 'undefined' && $gamePlayer &&
             $gamePlayer.regionId() === 99) {
             biome = 'RiverBank';
@@ -1293,6 +1362,11 @@
             } else if ($gameSystem._procGenData.displayAsBeach) {
                 biome = "Beach";
             }
+        }
+
+        // Swimming off a beach or an island: the fight happens in open water.
+        if (swimmingAtSea) {
+            biome = 'Ocean';
         }
 
         // Battle Test (editor "Battle Test..." button): the test map has no
@@ -1348,6 +1422,32 @@
         this.alignBattlebackBottom(this._back1Sprite);
     };
 
+    // A sprite that covers w x h in one flat colour.
+    //
+    // The bitmap behind it is a SINGLE PIXEL, scaled up to the size asked for.
+    // A flat fill holds nothing a full-size canvas could say and a one-pixel one
+    // could not, and the difference is a multi-megabyte canvas, a fillRect over
+    // most of a million pixels and a texture upload, all on the frame the battle
+    // opens. The pixel is cached per colour, so a second battle under the same
+    // sky allocates nothing at all.
+    const _flatOverlayBitmaps = new Map();
+    function flatOverlayPixel(cssColor) {
+        let bitmap = _flatOverlayBitmaps.get(cssColor);
+        if (bitmap) return bitmap;
+        bitmap = new Bitmap(1, 1);
+        bitmap.fillAll(cssColor);
+        _flatOverlayBitmaps.set(cssColor, bitmap);
+        return bitmap;
+    }
+    function flatOverlaySprite(cssColor, blendMode, w, h) {
+        const sprite = new Sprite();
+        sprite.bitmap = flatOverlayPixel(cssColor);
+        sprite.scale.x = w;
+        sprite.scale.y = h;
+        sprite.blendMode = blendMode;
+        return sprite;
+    }
+
     // NEW METHOD: Applies tint only to the background sprite using a color overlay
     Spriteset_Battle.prototype.applyTimeOfDayTintToBackground = function (sprite) {
         if (!sprite || !sprite.bitmap) return;
@@ -1366,17 +1466,13 @@
             // Only apply if there's a blend color
             if (!tintData.blendColor) return;
 
-            // Create an overlay sprite that matches the background size
-            sprite._tintOverlay = new Sprite();
-            sprite._tintOverlay.bitmap = new Bitmap(sprite.bitmap.width, sprite.bitmap.height);
-
-            // Fill with the tint color
-            const context = sprite._tintOverlay.bitmap._context;
-            context.fillStyle = tintData.blendColor;
-            context.fillRect(0, 0, sprite.bitmap.width, sprite.bitmap.height);
-
-            // Use additive blending for the tint overlay
-            sprite._tintOverlay.blendMode = 1; // Additive blend
+            // An overlay that is one flat colour is ONE pixel stretched over the
+            // background, not a second copy of the background's own canvas. A
+            // battleback is 1280x720: filling a bitmap that size costs a 3.5MB
+            // canvas, most of a million pixels of fillRect and a whole texture
+            // upload, every battle, to say one colour. See flatOverlaySprite.
+            sprite._tintOverlay = flatOverlaySprite(
+                tintData.blendColor, 1, sprite.bitmap.width, sprite.bitmap.height);
 
             // Add the overlay as a child of the background sprite
             // This ensures the tint only affects the background
@@ -1406,17 +1502,10 @@
                 sprite._darkeningOverlay = null;
             }
 
-            // Create a semi-transparent black overlay
-            sprite._darkeningOverlay = new Sprite();
-            sprite._darkeningOverlay.bitmap = new Bitmap(sprite.bitmap.width, sprite.bitmap.height);
-
-            // Fill with dark color (black with 40% opacity)
-            const context = sprite._darkeningOverlay.bitmap._context;
-            context.fillStyle = 'rgba(0, 0, 0, 0.4)';
-            context.fillRect(0, 0, sprite.bitmap.width, sprite.bitmap.height);
-
-            // Use multiply blending for natural darkening
-            sprite._darkeningOverlay.blendMode = 2; // Multiply blend
+            // One pixel stretched over the background, for the same reason the
+            // time-of-day tint is (see flatOverlaySprite).
+            sprite._darkeningOverlay = flatOverlaySprite(
+                'rgba(0, 0, 0, 0.4)', 2, sprite.bitmap.width, sprite.bitmap.height);
 
             // Add the overlay as a child of the background sprite
             sprite.addChild(sprite._darkeningOverlay);
@@ -1544,20 +1633,40 @@
         this._animatedBitmap.clear();
         const context = this._animatedBitmap._context;
 
-        // Night elements
-        if (timeMode === CONFIG.TIME_MODES.NIGHT) {
+        const world = battleSkyWorld();
+        // With no air to scatter it, the star lights the ground and nothing
+        // else: the sky over an airless world is black and full of stars at
+        // noon exactly as it is at midnight, and so is everything hanging in
+        // it. On a world with air the night is still the only time any of this
+        // shows.
+        const airless = !!(world && world.atmosphere === false);
+        if (timeMode === CONFIG.TIME_MODES.NIGHT || airless) {
             drawStars(context, w, h, this._starAnimationTime);
+
+            // Standing on a moon, the planet it belongs to is the thing in the
+            // sky: it hangs in one place, because the same face is always
+            // turned to it, and it is far bigger than any moon.
+            if (world && world.parent) {
+                const p = world.parent;
+                const pr = Math.max(40, Math.min(h * 0.42, 80 * (p.apparent || 1)));
+                drawMoon(context, w * 0.68, h * 0.24, pr, this._moonData, {
+                    color: p.color,
+                    seed: String(p.name || p.type || "p").length * 37,
+                    illumination: 0.7
+                });
+            }
 
             // On an alien planet surface, the sky shows that world's actual
             // satellites: one styled moon per satellite (capped), sized by the
             // moon's radius and tinted to its colour. A moonless world shows an
             // empty sky. Off-planet keeps the classic Earth moon (three on Friday).
-            const lp = (window.GalaxySim && window.GalaxySim.getSurfacePlanet)
-                ? window.GalaxySim.getSurfacePlanet() : null;
+            const lp = world;
             if (lp) {
                 const moons = lp.moons || [];
                 const n = Math.min(moons.length, 5);
-                const baseY = h * 0.22;
+                // A planet overhead already owns the top of the sky, so the
+                // world's own satellites hang lower rather than inside it.
+                const baseY = h * (world.parent ? 0.44 : 0.22);
                 for (let i = 0; i < n; i++) {
                     const m = moons[i];
                     const t = n === 1 ? 0.5 : i / (n - 1);

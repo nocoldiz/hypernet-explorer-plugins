@@ -107,6 +107,39 @@
  * @decimals 2
  * @default 1.60
  *
+ * @param levelAccuracyEnabled
+ * @text Level Gap: Accuracy
+ * @desc Whether the level gap closes the dodge as well as raising damage. Off leaves hit and evasion to the raw traits.
+ * @type boolean
+ * @default true
+ *
+ * @param levelAccuracySpan
+ * @text Level Gap: Accuracy Span
+ * @desc Levels past the fair gap over which the full accuracy shift arrives, instead of landing as a step.
+ * @type number
+ * @default 20
+ *
+ * @param levelAccuracyCap
+ * @text Level Gap: Accuracy Cap
+ * @desc Most of the miss chance the gap can ever close, so even a hopeless gap leaves a sliver of a dodge.
+ * @type number
+ * @decimals 2
+ * @default 0.85
+ *
+ * @param levelAccuracyUnderWeight
+ * @text Level Gap: Fumble Weight
+ * @desc How much of that shift applies in reverse when the attacker is the under-level one, swinging and missing.
+ * @type number
+ * @decimals 2
+ * @default 0.50
+ *
+ * @param enemyDefaultHit
+ * @text Monster Hit Rate Floor
+ * @desc Hit rate a monster authored with no HIT trait fights at. Without it those entries attack at 0 and can never land.
+ * @type number
+ * @decimals 2
+ * @default 0.90
+ *
  * @param invisibleHandChipFloorPercent
  * @text Invisible Hand: Chip Floor Percent
  * @desc Minimum HP damage an actor's hit against an enemy always deals, as a fraction of the enemy's max HP, even if the raw formula computes to 0 or less.
@@ -496,6 +529,11 @@
     BSE.Params.levelPressureCap         = Number(parameters['levelPressureCap'] || 15.00);
     BSE.Params.levelPressureHopeless    = Number(parameters['levelPressureHopeless'] || 0.15);
     BSE.Params.levelPressureOutnumber   = Number(parameters['levelPressureOutnumber'] || 1.60);
+    BSE.Params.levelAccuracyEnabled     = (parameters['levelAccuracyEnabled'] !== 'false');
+    BSE.Params.levelAccuracySpan        = Number(parameters['levelAccuracySpan'] || 20);
+    BSE.Params.levelAccuracyCap         = Number(parameters['levelAccuracyCap'] || 0.85);
+    BSE.Params.levelAccuracyUnderWeight = Number(parameters['levelAccuracyUnderWeight'] || 0.50);
+    BSE.Params.enemyDefaultHit          = Number(parameters['enemyDefaultHit'] || 0.90);
     BSE.Params.invisibleHandChipFloorPercent      = Number(parameters['invisibleHandChipFloorPercent'] || 0.0050);
     BSE.Params.invisibleHandEnabled               = (parameters['invisibleHandEnabled'] !== 'false');
     BSE.Params.invisibleHandLevelGapEnabled         = (parameters['invisibleHandLevelGapEnabled'] !== 'false');
@@ -1067,6 +1105,159 @@
                 lift * (1 + beyond * BSE.Params.levelPressureHopeless));
         }
         return lift;
+    };
+
+    // ------------------------------------------------------------------
+    // 4b-quater. ACCURACY, AND WHAT NOTHING MAY BE IMMUNE TO
+    //
+    //   Damage was the only half of the level gap that was ever wired up.
+    //   Whether a blow lands at all was left to the engine, which reads one
+    //   number off the attacker (HIT) and one off the defender (EVA) and
+    //   knows nothing about the fifty levels between them. Two things fell
+    //   out of that:
+    //
+    //   - A third of the monster roster carries no HIT trait at all. In MZ
+    //     an enemy's xparams are a plain sum over its traits, with no class
+    //     or actor default underneath, so those entries attack at hit 0 and
+    //     physically cannot land a plain attack on anyone, at any level.
+    //     enemyBaseHitRate is the floor they were authored to have.
+    //   - Even with a HIT trait, a level 1 party member with a 0.5 EVA
+    //     class and a dodge trinket dodges a level 60 monster exactly as
+    //     often as a level 60 one does. The gap is supposed to be the whole
+    //     difficulty curve, so it closes the dodge as well: past the fair
+    //     gap the attacker's accuracy is lifted toward certainty and the
+    //     defender's evasion is squeezed toward nothing, arriving over
+    //     levelAccuracySpan levels rather than as a step. Under the fair
+    //     gap, in either direction, a roll is a roll.
+    //
+    //   The under-level half is the mirror at half weight: fauna the party
+    //   has outgrown swings and misses rather than becoming unable to act.
+    // ------------------------------------------------------------------
+
+    /**
+     * A monster's authored hit rate, with the roster-wide floor underneath.
+     * Returns null for anything that is not an enemy.
+     */
+    const authoredHit = new Map();   // enemy id -> does the entry say so itself
+    BSE.Helpers.enemyBaseHitRate = function(enemy) {
+        if (!enemy || !enemy.isEnemy || !enemy.isEnemy()) return null;
+        const data = enemy.enemy ? enemy.enemy() : null;
+        if (!data) return null;
+        // xparam is read several times per action, so the answer is kept.
+        let authored = authoredHit.get(data.id);
+        if (authored === undefined) {
+            authored = (data.traits || []).some(t =>
+                t.code === Game_BattlerBase.TRAIT_XPARAM && t.dataId === 0);
+            authoredHit.set(data.id, authored);
+        }
+        return authored ? null : BSE.Params.enemyDefaultHit;
+    };
+
+    /**
+     * How far the level gap closes the dodge between two battlers: 0 inside
+     * the fair gap, rising toward levelAccuracyCap as the attacker outranks
+     * the defender, and negative (the attacker fumbling) when it is the
+     * defender who outranks the attacker.
+     */
+    BSE.Helpers.levelAccuracyShift = function(subject, target) {
+        if (!BSE.Params.levelAccuracyEnabled) return 0;
+        if (!subject || !target) return 0;
+        if (!levelGapRulesApply()) return 0;
+        const mixed = (subject.isActor && subject.isActor() && target.isEnemy && target.isEnemy()) ||
+            (subject.isEnemy && subject.isEnemy() && target.isActor && target.isActor());
+        if (!mixed) return 0;
+        const attacker = BSE.Helpers.getBattlerLevel(subject) || (subject.level || 0);
+        const defender = BSE.Helpers.getBattlerLevel(target) || (target.level || 0);
+        if (attacker <= 0 || defender <= 0) return 0;
+        const gap = attacker - defender;
+        const fair = BSE.Params.levelGapFair;
+        if (Math.abs(gap) <= fair) return 0;
+        const span = Math.max(1, BSE.Params.levelAccuracySpan);
+        const over = Math.abs(gap) - fair;
+        const shift = BSE.Params.levelAccuracyCap * Math.min(1, over / span);
+        return gap > 0 ? shift : -shift * BSE.Params.levelAccuracyUnderWeight;
+    };
+
+    const _Game_Action_itemHit_BSE = Game_Action.prototype.itemHit;
+    Game_Action.prototype.itemHit = function(target) {
+        let rate = _Game_Action_itemHit_BSE.call(this, target);
+        const subject = this.subject ? this.subject() : null;
+        const shift = BSE.Helpers.levelAccuracyShift(subject, target);
+        if (shift > 0) rate += (1 - rate) * shift;
+        else if (shift < 0) rate *= (1 + shift);
+        return Math.max(0, Math.min(1, rate));
+    };
+
+    const _Game_Action_itemEva_BSE = Game_Action.prototype.itemEva;
+    Game_Action.prototype.itemEva = function(target) {
+        let eva = _Game_Action_itemEva_BSE.call(this, target);
+        if (!(eva > 0)) return eva;
+        const shift = BSE.Helpers.levelAccuracyShift(this.subject ? this.subject() : null, target);
+        if (shift > 0) eva *= (1 - shift);
+        else if (shift < 0) eva += (1 - eva) * (-shift);
+        return Math.max(0, Math.min(1, eva));
+    };
+
+    // ------------------------------------------------------------------
+    //   The other half of the same authoring problem: an xparam is a plain
+    //   sum over traits, and a trait authored at 1.00 or above is not a
+    //   strong defence, it is an absolute one. A monster with EVA 2.00
+    //   cannot be hit by a weapon at all, one with MEV 1.20 cannot be hit
+    //   by a spell, one with HRG 1.30 heals its whole pool every turn and
+    //   cannot be killed by anything. It reads as a tuning number and
+    //   behaves as an invulnerability. Several classes are written the same
+    //   way, which makes a party member immune to magic for the whole game.
+    //
+    //   So the standing part of those xparams, what a class, a monster
+    //   entry and a piece of equipment add up to, is held under a ceiling.
+    //   A state is exempt and stacks on top of it: Invisible, Dodge, Magic
+    //   Reflection and Divine Shield are written as absolutes on purpose
+    //   and last a few turns, which is the difference.
+    // ------------------------------------------------------------------
+
+    /**
+     * Ceilings on the standing part of an xparam, by xparam id. Only the
+     * ones an absolute value makes unplayable are listed: evasion (1),
+     * critical evasion (3), magic evasion (4), magic reflection (5),
+     * counter (6), HP regeneration (7) and MP regeneration (8). Accuracy,
+     * critical rate and target rate are left alone, since none of them can
+     * make a battler untouchable.
+     */
+    BSE.Data.XPARAM_CEILINGS = { 1: 0.60, 3: 0.80, 4: 0.60, 5: 0.60, 6: 0.60, 7: 0.25, 8: 0.50 };
+
+    /**
+     * How much of an xparam comes from the states a battler is under right
+     * now, which is the part the ceiling does not apply to.
+     */
+    BSE.Helpers.stateXparamShare = function(battler, xparamId) {
+        if (!battler || !battler.states) return 0;
+        const states = battler.states() || [];
+        let sum = 0;
+        for (let i = 0; i < states.length; i++) {
+            const traits = states[i] && states[i].traits ? states[i].traits : [];
+            for (let j = 0; j < traits.length; j++) {
+                const t = traits[j];
+                if (t.code === Game_BattlerBase.TRAIT_XPARAM && t.dataId === xparamId) sum += t.value;
+            }
+        }
+        return sum;
+    };
+
+    const _Game_BattlerBase_xparam_BSE = Game_BattlerBase.prototype.xparam;
+    Game_BattlerBase.prototype.xparam = function(xparamId) {
+        let value = _Game_BattlerBase_xparam_BSE.call(this, xparamId);
+        // The floor belongs on the sheet rather than on the roll, so a Blind
+        // still subtracts from it and a monster under one still misses.
+        if (xparamId === 0) {
+            const floor = BSE.Helpers.enemyBaseHitRate(this);
+            if (floor !== null) value += floor;
+        }
+        const ceiling = BSE.Data.XPARAM_CEILINGS[xparamId];
+        if (ceiling === undefined || !(value > ceiling)) return value;
+        // Whatever a state is adding rides above the ceiling rather than
+        // being eaten by it, so a three-turn Invisible still means invisible.
+        const fromStates = Math.max(0, BSE.Helpers.stateXparamShare(this, xparamId));
+        return Math.min(value, ceiling + fromStates);
     };
 
     // ------------------------------------------------------------------
@@ -2331,28 +2522,47 @@
             const char = this._character;
             const hue = char && char._characterHue;
             if (hue) {
-                if (!this._hueFilter) {
-                    this._hueFilter = new PIXI.filters.ColorMatrixFilter();
+                const filter = hueFilterFor(hue);
+                if (this._hueFilter !== filter) {
                     // Appended, never assigned: something else may already be
                     // filtering this sprite (a map battle draws the monsters
                     // standing out of the fight in black and white) and a bare
                     // assignment would throw that away without a word.
-                    this.filters = (this.filters || []).concat(this._hueFilter);
-                    this._appliedHue = null;
-                }
-                // Rebuilding the ColorMatrix every frame is wasteful when the hue
-                // hasn't changed; only recompute when it actually differs.
-                if (this._appliedHue !== hue) {
-                    this._hueFilter.reset();
-                    this._hueFilter.hue(hue, false);
-                    this._appliedHue = hue;
+                    if (this._hueFilter) dropHueFilter(this);
+                    this._hueFilter = filter;
+                    this.filters = (this.filters || []).concat(filter);
                 }
             } else if (this._hueFilter) {
-                this.filters = null;
-                this._hueFilter = null;
-                this._appliedHue = null;
+                dropHueFilter(this);
             }
         };
+
+        // One ColorMatrixFilter per hue VALUE, shared by every sprite wearing
+        // it, instead of one per sprite. A hue is a pure function of the number
+        // - two creatures of the same colour need the same matrix, not two
+        // copies of it - and an enemy's battlerHue is a small integer, so the
+        // cache is bounded by the palette rather than by the crowd on the map.
+        const _hueFilters = new Map();
+        function hueFilterFor(hue) {
+            let filter = _hueFilters.get(hue);
+            if (!filter) {
+                filter = new PIXI.filters.ColorMatrixFilter();
+                filter.hue(hue, false);
+                _hueFilters.set(hue, filter);
+            }
+            return filter;
+        }
+
+        // Take the hue filter off THIS sprite without touching anything else
+        // that happens to be filtering it, and without disposing the filter
+        // itself: other sprites of the same colour are still wearing it.
+        function dropHueFilter(sprite) {
+            const filter = sprite._hueFilter;
+            sprite._hueFilter = null;
+            if (!filter || !sprite.filters) return;
+            const rest = sprite.filters.filter(f => f !== filter);
+            sprite.filters = rest.length ? rest : null;
+        }
     })();
 
     // ------------------------------------------------------------------

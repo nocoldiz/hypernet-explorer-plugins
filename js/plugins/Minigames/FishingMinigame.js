@@ -268,9 +268,32 @@
     const VENUE_CAVERN = 'cavern';   // procedural cave, crypt, sewer
     const VENUE_INDOOR = 'indoor';   // an <Interior> map: a building
 
+    // Under the open sky, that sky belongs to whatever world the party is
+    // standing on: its haze, the colour of its star's light, and a black sky
+    // full of stars where there is no air to scatter anything. On Earth every
+    // one of these gives the palette back exactly as it was written.
+    function alienise(pal) {
+        const SR = window.SkyRenderer;
+        const world = (SR && SR.skyWorld) ? SR.skyWorld() : null;
+        if (!world || !SR.alienSkyColor || pal.venue !== VENUE_OPEN) return pal;
+        pal.sky = SR.alienSkyColor(pal.sky);
+        pal.light = SR.alienSkyColor(pal.light);
+        // No air means the stars are out at noon as much as at midnight, and
+        // the water below has nothing but the star itself to light it.
+        if (world.atmosphere === false) {
+            pal.night = true;
+            pal.ambient = Math.min(pal.ambient, 0.22);
+        }
+        return pal;
+    }
+
+    function palette(venue) {
+        return alienise(earthPalette(venue));
+    }
+
     // Palette (sky, water, bed, light) for the venue, and for the hour when the
     // venue has an hour at all.
-    function palette(venue) {
+    function earthPalette(venue) {
         if (venue === VENUE_CAVERN) {
             return { sky: 0x100f14, water: 0x14303a, deep: 0x081418, bed: 0x2a2622,
                      bank: 0x35302a, light: 0x9fb0c0, lightI: 0.55, ambient: 0.30,

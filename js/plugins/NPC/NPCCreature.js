@@ -141,15 +141,16 @@
   // Nothing that survived the end of the world kept a trade.
   const NONSENTIENT_CHANCE_ZOMBIE  = 0.99;
 
-  // Everything from Feral (63) upward is a creature class. Kept in step with
-  // CreatureClasses.sentientMax(), which owns the number; this is the fallback
-  // for the load-order window before CharacterCreationShared has run.
+  // Which classes are creatures is written on the classes themselves: every
+  // entry in Classes.json carries <Sentient> or <NonSentient> in its note, and
+  // CreatureClasses.isCreatureClass() reads it. The two numbers below are only
+  // the fallback for the load-order window before CharacterCreationShared has
+  // run, and for a database that predates the tag.
   //
   // The eight ids 63-70 (Feral, Mimic, Monster, Mana Cyborg, Ghost, Zombie,
-  // Mutant, Drone) are non-sentient BY CONSTRUCTION and never answer otherwise,
-  // whatever sentientMax() happens to say: they are the roster the creature
-  // half of the wardrobe is dealt from, and the whole NPC suite hangs its
-  // "is this a person" question off the answer.
+  // Mutant, Drone) are the roster the creature half of the wardrobe is dealt
+  // from, and the whole NPC suite hangs its "is this a person" question off
+  // the answer given here.
   const NONSENTIENT_CLASS_MIN = 63;
   const NONSENTIENT_CLASS_MAX = 70;
 
@@ -447,8 +448,16 @@
   // ---------------------------------------------------------------------------
   function isNonSentientClassId(classId) {
     const id = Number(classId) || 0;
-    // The 63-70 block is non-sentient outright, so a load-order window or a
-    // future roster change can never quietly hand a beast a person's rights.
+    if (!id) return false;
+    // The class's own <NonSentient> tag is the answer whenever the database is
+    // loaded; nothing here re-derives the boundary from a literal.
+    const CC = window.CreatureClasses;
+    if (CC && typeof CC.isCreatureClass === "function" &&
+        typeof $dataClasses !== "undefined" && $dataClasses && $dataClasses[id]) {
+      return CC.isCreatureClass(id);
+    }
+    // Fallback for the load-order window: the 63-70 block is non-sentient
+    // outright, so nothing can quietly hand a beast a person's rights.
     if (id >= NONSENTIENT_CLASS_MIN && id <= NONSENTIENT_CLASS_MAX) return true;
     return id > sentientMax();
   }

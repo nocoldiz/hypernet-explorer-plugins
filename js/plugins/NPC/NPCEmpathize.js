@@ -274,6 +274,194 @@
     return bits.join(' ');
   }
 
+  // Context is worth a fact and never a failure: every builder below is called
+  // through this, so the answer survives a system that is not loaded in this
+  // save and a panel opened from somewhere with no map under it.
+  function _llmSafe(build) {
+    try { return build ? (build() || '') : ''; }
+    catch (e) { return ''; }
+  }
+
+  // ── What a language model is told beyond the two sheets ────────────────
+  // A sheet says what somebody IS. These say what they have lived through,
+  // who else they know, who the party in front of them are and what is going
+  // on in the world outside the two of them. All of it is built every time and
+  // handed over whole: how much of it actually reaches the model is the
+  // model's own business (window.MarkovLLM.promptProfile decides, by what was
+  // picked in Options > Experimental), so nothing here asks how big it is.
+
+  // The life the background simulation has dealt this person: where they were
+  // born, where they have lived, the trade they hold, and whether there is a
+  // price on their head. Its own prose is multi-line; it is flattened here
+  // because a prompt is one paragraph.
+  function _llmLifeStory(npcName, profile) {
+    const bits = [];
+    const life = window.NPCLifeSim;
+    if (life && npcName) {
+      let bio = '';
+      try { bio = life.buildBiography(npcName) || ''; } catch (e) { bio = ''; }
+      bio = String(bio).replace(/\s*\n+\s*/g, ' ').trim();
+      if (bio && !/^\s*$/.test(bio)) bits.push(bio);
+      let bounty = 0;
+      try { bounty = life.getBounty ? (life.getBounty(npcName) || 0) : 0; } catch (e) { bounty = 0; }
+      if (bounty > 0) bits.push(window.T('Empathize.llm.wanted', { bounty: bounty }));
+    }
+    // What is on their mind right now, as the life simulation last left it.
+    const thought = (profile?.thoughts || []).slice(-1)[0];
+    const thoughtText = thought && (thought.text || thought.message || thought);
+    if (typeof thoughtText === 'string' && thoughtText.trim()) {
+      bits.push(window.T('Empathize.llm.onMind', { thought: thoughtText.trim() }));
+    }
+    // The hours they work, which is why they are standing where they are.
+    if (profile && profile.workStart != null && profile.workEnd != null && profile.currentJobId) {
+      bits.push(window.T('Empathize.llm.shift', { from: profile.workStart, to: profile.workEnd }));
+    }
+    return bits.join(' ');
+  }
+
+  // The people this one already knows, and how they feel about them. Only the
+  // strongest few: a model handed a directory answers with a directory.
+  function _llmAcquaintances(profile) {
+    const T = _getT();
+    const L = T.llm || {};
+    const entries = Object.entries(profile?.relationships || {})
+      .filter(([name, rel]) => name && rel && typeof rel.opinion === 'number')
+      .sort((a, b) => Math.abs(b[1].opinion) - Math.abs(a[1].opinion))
+      .slice(0, 3);
+    if (!entries.length) return '';
+    const said = entries.map(([name, rel]) => {
+      const op = rel.opinion;
+      const band = op <= -60 ? L.bandHostile : op <= -20 ? L.bandCold
+                 : op < 20 ? L.bandNeutral : op < 60 ? L.bandWarm : L.bandDevoted;
+      return window.T('Empathize.llm.knows', { name: name, band: band || '' });
+    });
+    return said.join(' ');
+  }
+
+  // Who is travelling with the one doing the talking, and how the rest of them
+  // stand with this person: an answer is given in front of the whole party.
+  function _llmPartyLine(profile, speakerActor) {
+    const members = ($gameParty?.members?.() || []).filter(Boolean);
+    if (!members.length) return '';
+    const T = _getT();
+    const L = T.llm || {};
+    const others = members.filter(a => !speakerActor || a.actorId() !== speakerActor.actorId());
+    const bits = [];
+    if (others.length) {
+      bits.push(window.T('Empathize.llm.partyWith', {
+        names: others.map(a => a.name()).join(', '),
+        count: members.length,
+      }));
+    } else {
+      bits.push(window.T('Empathize.llm.partyAlone'));
+    }
+    // The standing the rest of them have earned in their own right, when it is
+    // strong enough to colour the room.
+    const strong = others
+      .map(a => [a, profile?.opinions?.[a.actorId()]])
+      .filter(([, op]) => typeof op === 'number' && Math.abs(op) >= 40)
+      .slice(0, 2);
+    for (const [actor, op] of strong) {
+      const band = op <= -60 ? L.bandHostile : op <= -20 ? L.bandCold
+                 : op < 20 ? L.bandNeutral : op < 60 ? L.bandWarm : L.bandDevoted;
+      bits.push(window.T('Empathize.llm.opinionOf', {
+        speaker: actor.name(), band: band || '', score: op,
+      }));
+    }
+    return bits.join(' ');
+  }
+
+  // The world the two of them are standing in: the place, the date and the
+  // hour, the weather over it, and whether the people in front of them are
+  // wanted by anybody.
+  function _llmWorldLine() {
+    const bits = [];
+    const place = $gameMap?.displayName?.() || '';
+    const biome = $gameMap?.mapId?.() != null && window.BiomeNames?.display
+      ? (window.WorldMapTransfer?.currentBiome?.() || '')
+      : '';
+    if (place || biome) {
+      bits.push(window.T('Empathize.llm.worldPlace', {
+        place: place || biome,
+        biome: biome && biome !== place ? window.BiomeNames.display(biome) : '',
+      }).replace(/\s*\(\s*\)\s*/, ' ').trim());
+    }
+    const TDS = window.TimeDateSystem;
+    if (TDS?.getCurrentDateObj) {
+      try {
+        const now = TDS.getCurrentDateObj();
+        bits.push(window.T('Empathize.llm.worldWhen', {
+          date: now.toDateString(),
+          hour: String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'),
+        }));
+      } catch (e) { /* no clock, no date */ }
+    }
+    const weather = window.$gameWeather;
+    if (weather) {
+      const name = weather.getWeatherName ? weather.getWeatherName() : '';
+      const season = weather.getSeason ? weather.getSeason() : '';
+      if (name || season) {
+        bits.push(window.T('Empathize.llm.worldWeather', {
+          weather: name || '', season: season || '',
+          temperature: Math.round(weather.currentTemperature ?? 20),
+        }));
+      }
+    }
+    // A party with a price on it is spoken to differently, whoever is speaking.
+    const heat = window.CrimeSystem?.getHeat?.() || 0;
+    if (heat > 0) bits.push(window.T('Empathize.llm.worldWanted'));
+    return bits.filter(Boolean).join(' ');
+  }
+
+  // What the party's own people have been through, for the times one of them
+  // is the one being talked to rather than a stranger in the street. The
+  // messenger (Nudge, in MailSystem.js) is the caller that needs it: the
+  // person on the other end of that window is a companion, travelling or
+  // benched, and what they have to say depends on where they are and on what
+  // they have lived through with the party.
+
+  // The last few lines of the party diary that name this person, as the diary
+  // itself would read them out. Their adventures, in other words, in the words
+  // they were already written in.
+  function _llmPastAdventures(name, limit) {
+    const diary = window.Diary;
+    if (!diary || typeof diary.entries !== 'function') return '';
+    let entries = [];
+    try { entries = diary.entries() || []; } catch (e) { return ''; }
+    const wanted = String(name || '').trim();
+    const lines = [];
+    for (let i = entries.length - 1; i >= 0 && lines.length < (limit || 4); i--) {
+      const entry = entries[i];
+      let text = '';
+      try { text = diary.describe(entry) || ''; } catch (e) { text = ''; }
+      if (!text) continue;
+      // Their own lines first; a party diary is written about all of them, so a
+      // line that names nobody is still something the two of them shared.
+      const mine = !wanted || entry.a === wanted || text.includes(wanted);
+      if (!mine) continue;
+      lines.push(entry.w ? window.T('Empathize.llm.adventureAt', { place: entry.w, line: text }) : text);
+    }
+    return lines.reverse().join(' ');
+  }
+
+  // Where somebody who is not standing here is: the lodging the player sent
+  // them to, the map it is on and the biome around it.
+  function _llmWhereabouts(name) {
+    const LG = window.PartyLodging;
+    if (!LG || !name) return '';
+    let place = '';
+    try { place = LG.placeName(LG.assignmentOf(name)) || ''; } catch (e) { place = ''; }
+    if (!place) return '';
+    let biome = '';
+    try {
+      const raw = window.WorldMapTransfer?.currentBiome?.() || '';
+      biome = raw && window.BiomeNames?.display ? window.BiomeNames.display(raw) : raw;
+    } catch (e) { biome = ''; }
+    return biome
+      ? window.T('Empathize.llm.stayingAtBiome', { place: place, biome: biome })
+      : window.T('Empathize.llm.stayingAt', { place: place });
+  }
+
   function _getProfile(npcName) {
     const profile = window.NPCSocietyRegistry?.getProfile(npcName) ?? null;
     // The society table is keyed by name and the profile itself does not carry
@@ -680,13 +868,26 @@
   }
 
   // A recruit still has to be in the party's weight class: nobody more than
-  // JOIN_LEVEL_MARGIN levels above the strongest member is willing to be led by
-  // them, so Join is not offered at all for someone that far out of reach.
+  // JOIN_LEVEL_MARGIN levels above the party (its median level) is willing to
+  // be led by them, so Join is not offered at all for someone out of reach.
   const JOIN_LEVEL_MARGIN = 3;
 
-  function _partyMaxLevel() {
-    return ($gameParty?.members?.() ?? [])
-      .reduce((max, member) => Math.max(max, member?.level ?? 1), 1);
+  // "The party" is its MEDIAN level, not its strongest member: a level 40
+  // veteran carrying two beginners does not make the beginners' outfit a fit
+  // home for a level 40 recruit, and the median is the number every other
+  // system measures the party by (BSE.Helpers.getMedianLevel). The rule covers
+  // every way of signing somebody on, a party slot, a follower and an animal
+  // taken as a pet alike: a creature far above the party's weight class does
+  // not trail after it either.
+  function _partyMedianLevel() {
+    const levels = ($gameParty?.members?.() ?? [])
+      .map(member => member?.level ?? 1)
+      .sort((a, b) => a - b);
+    if (!levels.length) return 1;
+    const mid = Math.floor(levels.length / 2);
+    return levels.length % 2
+      ? levels[mid]
+      : Math.floor((levels[mid - 1] + levels[mid]) / 2);
   }
 
   // The 3-member cap counts whoever is still standing: a companion who fell and
@@ -701,7 +902,7 @@
   function _joinLevelOk(npcLevel) {
     const level = Number(npcLevel);
     if (!Number.isFinite(level)) return true; // unknown level, never a blocker
-    return level <= _partyMaxLevel() + JOIN_LEVEL_MARGIN;
+    return level <= _partyMedianLevel() + JOIN_LEVEL_MARGIN;
   }
 
   function _extractClassId(ev) {
@@ -1465,21 +1666,23 @@
     return _rand(bank[live[Math.floor(Math.random() * live.length)]]);
   }
 
-  // ── Non-sentient party members (classes 63+) ────────────────────────────
+  // ── Non-sentient party members ──────────────────────────────────────────
   // A creature played as one of the creature classes , Feral, Mimic, Monster,
-  // Mana Cyborg, Ghost, Zombie, Mutant, Drone (ids 63-70, the creatureClasses
-  // rosters in js/db/Health/Archetypes.json) , holds no conversation. When
+  // Mana Cyborg, Ghost, Zombie, Mutant, Drone (every class tagged
+  // <NonSentient> in Classes.json) , holds no conversation. When
   // one of them is the party member doing the talking, the panel drops every
   // spoken action and offers what a beast can actually do: noises, contact and
   // teeth. Nobody talks BACK to it either; the NPC coos over it, backs away
   // from it or shoos it off depending on what they think of it. Copy lives in
   // js/i18n/<lang>/plugins/Empathize.json under the feral* keys.
-  const NONSENTIENT_CLASS_MIN = 63;
-
+  // NPCCreature owns the boundary and reads it off the class's own tag; the
+  // number is never re-derived here.
   function _isNonSentientActor(actor) {
     if (!actor) return false;
+    const NC = window.NPCCreature;
+    if (!NC || !NC.isNonSentientClassId) return false;
     const id = actor.currentClass?.()?.id ?? actor._classId ?? 0;
-    return id >= NONSENTIENT_CLASS_MIN;
+    return NC.isNonSentientClassId(id);
   }
 
   // The same question asked of the other side of the conversation: is the NPC
@@ -3836,6 +4039,24 @@
       return _llmRelationLine(profile, actor, this._focusOpinion(profile) ?? 0);
     }
 
+    // The life this person has lived and the people already in it. For one of
+    // the party's own it is the adventures the diary has them in instead: they
+    // have no simulated background life, they have the one that was played.
+    _llmLife() {
+      const name = this._targetName();
+      const profile = _getProfile(name);
+      const own = this._actorId != null
+        || ($gameParty?.members?.() || []).some(a => a && a.name() === name);
+      const bits = own
+        ? [_llmPastAdventures(name, 4), _llmWhereabouts(name)]
+        : [_llmLifeStory(name, profile), _llmAcquaintances(profile)];
+      return bits.filter(Boolean).join(' ');
+    }
+
+    _llmParty() {
+      return _llmPartyLine(_getProfile(this._targetName()), this._focusActor());
+    }
+
     // Ask the model for the line, told what has just happened and what the
     // bank would have had this person say about it. An empty answer is the
     // caller's signal that the bank's line is spoken as it stands.
@@ -4009,6 +4230,10 @@
       if (asMember) {
         if (!window.PetSystem?.hasFreeSlot?.()) { SoundManager.playBuzzer(); return; }
       } else if (_travellingPartyCount() >= 3) { SoundManager.playBuzzer(); return; }
+      // The weight class applies to an animal exactly as it does to a person
+      // (_joinLevelOk): a beast far above what the party can handle does not
+      // trot along behind them, as a pet or as a member.
+      if (!_joinLevelOk(profile?.level ?? status.level)) { SoundManager.playBuzzer(); return; }
 
       const chance = _animalJoinChance(status, actor);
       const wisMod = _wisMod(actor);
@@ -5412,6 +5637,17 @@
             speakerName: this._focusActor()?.name() || '',
             speakerSheet: this._llmSpeakerSheet(),
             relation: this._llmRelation(),
+            // The typed line is the one the player waits in front of, so it is
+            // the one handed the whole of what the game knows: the life this
+            // person has lived, who else they know, who else is standing here,
+            // and the world the two of them are talking in.
+            // Asked for, never demanded: everything below is colour on top of
+            // an answer that stands without it, so a builder that cannot
+            // answer (a system this save has never loaded, a panel opened
+            // outside the map) costs a fact and not the line.
+            npcLife: _llmSafe(() => this._llmLife()),
+            party: _llmSafe(() => this._llmParty()),
+            world: _llmSafe(_llmWorldLine),
             startText: phrase,
             history: this._chatHistory.slice(0, -1)
           });
@@ -6378,6 +6614,34 @@
         relation:     (profile && actor)
           ? _llmRelationLine(profile, actor, _npcEffectiveOpinion(profile, actor))
           : '',
+        npcLife:      [_llmLifeStory(npcName, profile), _llmAcquaintances(profile)]
+          .filter(Boolean).join(' '),
+        party:        _llmPartyLine(profile, actor),
+        world:        _llmWorldLine(),
+      };
+    },
+
+    // The same thing for one of the party's own, travelling or benched: who
+    // they are, what they have been through with the party, and where they
+    // are right now, which for a benched companion is somewhere else entirely.
+    // This is what the messenger window talks to.
+    companionContext(name, actorOrId) {
+      const who = String(name || '').trim();
+      if (!who) return null;
+      const actor = typeof actorOrId === 'number'
+        ? $gameActors?.actor(actorOrId)
+        : (actorOrId || ($gameParty?.members?.() || []).find(a => a && a.name() === who) || null);
+      if (actor && _isNonSentientActor(actor)) return null;
+      const profile = _getProfile(who);
+      const leader = $gameParty?.leader?.() || null;
+      return {
+        npcName:      who,
+        npcSheet:     _llmCharacterSheet(profile, actor),
+        speakerName:  leader ? leader.name() : '',
+        speakerSheet: leader ? _llmCharacterSheet(_getProfile(leader.name()), leader) : '',
+        npcLife:      _llmPastAdventures(who, 4),
+        whereabouts:  _llmWhereabouts(who),
+        world:        _llmWorldLine(),
       };
     },
     open(evNameOrId) {
@@ -6655,7 +6919,7 @@
       _eventCommentLines, _bustNameFromEvent, _presetFromEvent,
       _computePartyPredisposition, _medianScore, _generatePartyThoughts,
       _extractContacts, _countRecentInteractions, _lastInteractionDay,
-      _forceHighJoinChance, _joinChance, _joinLevelOk, _partyMaxLevel,
+      _forceHighJoinChance, _joinChance, _joinLevelOk, _partyMedianLevel,
       _travellingPartyCount, SPOKEN_LOG_MAX,
       // Infecting somebody out of a vial: what is in the pack and the odds of
       // not being seen doing it, both read by the UI layer's action row.

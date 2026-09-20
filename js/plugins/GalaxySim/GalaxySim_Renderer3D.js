@@ -1765,14 +1765,49 @@
     // opened, even revisiting the same system) redid the full per-pixel
     // synthesis from scratch. That synchronous cost is the star map's real
     // open-lag: this cache makes every visit after the first one free.
+    // ...but a session that browses a few hundred procedural bodies would then
+    // pin a few hundred MB of canvas backing store for good, so the cache is an
+    // LRU: a Map keeps insertion order, so re-inserting on a hit moves the entry
+    // to the young end and the oldest keys fall off the front once we are over
+    // budget. Entries are only dropped, never blanked, so a canvas a live
+    // texture still reads from stays valid and is collected when that texture
+    // is disposed.
+    PAINT_CACHE_LIMIT: 64,
+    SOL_CANVAS_CACHE_LIMIT: 8,
+
+    _lruTouch(map, key) {
+      const v = map.get(key);
+      map.delete(key);
+      map.set(key, v);
+      return v;
+    },
+
+    _lruTrim(map, limit) {
+      while (map.size > limit) {
+        const oldest = map.keys().next();
+        if (oldest.done) break;
+        map.delete(oldest.value);
+      }
+    },
+
     _paintCached(key, paintFn) {
       if (!this._planetTexCache) this._planetTexCache = new Map();
-      let tex = this._planetTexCache.get(key);
-      if (!tex) {
-        tex = paintFn();
-        this._planetTexCache.set(key, tex);
-      }
+      const cache = this._planetTexCache;
+      if (cache.has(key)) return this._lruTouch(cache, key);
+      const tex = paintFn();
+      cache.set(key, tex);
+      this._lruTrim(cache, this.PAINT_CACHE_LIMIT);
       return tex;
+    },
+
+    // Called when the star map tears down: the painted surfaces and photo
+    // copies are deterministic and cheap enough to rebuild, and holding them
+    // across a whole play session is what made the leak. Textures belonging to
+    // bodies that are still alive (the ship background keeps some) hold their
+    // own reference to the canvas, so forgetting the key here is safe.
+    clearTextureCaches() {
+      if (this._planetTexCache) this._planetTexCache.clear();
+      if (this._solTexCanvasCache) this._solTexCanvasCache.clear();
     },
 
     _seedFor(planet, fallback) {
@@ -1792,19 +1827,22 @@
       const img = tex && tex.image;
       if (!img || !img.width || !img.height || img.complete === false) return null;
       if (!this._solTexCanvasCache) this._solTexCanvasCache = new Map();
+      const cache = this._solTexCanvasCache;
       const key = (planet && planet.name) || "?";
-      let canvas = this._solTexCanvasCache.get(key);
-      if (!canvas) {
-        canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        try {
-          canvas.getContext("2d").drawImage(img, 0, 0);
-        } catch (e) {
-          return null;
-        }
-        this._solTexCanvasCache.set(key, canvas);
+      // One entry is a full-resolution copy of a NASA surface map (8 MB at
+      // 2048x1024), so this is capped too even though the key space is the
+      // finite set of named Solar System bodies.
+      if (cache.has(key)) return this._lruTouch(cache, key);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      try {
+        canvas.getContext("2d").drawImage(img, 0, 0);
+      } catch (e) {
+        return null;
       }
+      cache.set(key, canvas);
+      this._lruTrim(cache, this.SOL_CANVAS_CACHE_LIMIT);
       return canvas;
     },
 
@@ -1844,7 +1882,11 @@
     // destW x destH and overlaid with a gridW x gridH grid. Shared by the
     // GalaxySim landing picker and the on-foot WorldMap alien-surface view so
     // both render identically. `highlightCell`/`playerCell` are optional
-    // {gx, gy} cell indices to outline.
+    // {gx, gy} cell indices to outline, and `markCells` is a list of
+    // {gx, gy, name} the world's spaceports stand on (see
+    // GalaxySim.spaceportCells): each gets a landing pad drawn on its square and
+    // its name under it, so a port is a place on the chart rather than something
+    // only found by walking the cursor over it.
     drawPlanetGrid(ctx, opts) {
       opts = opts || {};
       const textureCanvas = opts.textureCanvas;
@@ -1885,6 +1927,38 @@
         ctx.lineWidth = width;
         ctx.strokeRect(gx * cellW + width / 2, gy * cellH + width / 2, cellW - width, cellH - width);
       };
+      // The pads, under the two cursors: whichever square is selected still
+      // reads as selected when a port happens to be on it.
+      const PORT_COLOR = "rgba(120, 231, 255, 0.95)";
+      const marks = Array.isArray(opts.markCells) ? opts.markCells : [];
+      for (const mark of marks) {
+        if (!mark) continue;
+        const gx = ((mark.gx % gridW) + gridW) % gridW;
+        const gy = ((mark.gy % gridH) + gridH) % gridH;
+        const cx = (gx + 0.5) * cellW;
+        const cy = (gy + 0.5) * cellH;
+        const r = Math.max(3, Math.min(cellW, cellH) * 0.2);
+        ctx.strokeStyle = PORT_COLOR;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(gx * cellW + 2, gy * cellH + 2, cellW - 4, cellH - 4);
+        ctx.fillStyle = PORT_COLOR;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - r);
+        ctx.lineTo(cx + r, cy);
+        ctx.lineTo(cx, cy + r);
+        ctx.lineTo(cx - r, cy);
+        ctx.closePath();
+        ctx.fill();
+        if (mark.name) {
+          ctx.font = `${Math.max(9, Math.round(cellH * 0.18))}px sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.85)";
+          ctx.strokeText(mark.name, cx, cy + r + 2);
+          ctx.fillText(mark.name, cx, cy + r + 2);
+        }
+      }
       strokeCell(opts.highlightCell, "rgba(255, 233, 168, 0.95)", 2);
       strokeCell(opts.playerCell, "#FF3B30", 2);
       ctx.restore();

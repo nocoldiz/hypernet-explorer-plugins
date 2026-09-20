@@ -399,6 +399,14 @@
     "topicFriday": {
       "title": "Venerdì",
       "description": "Il giorno della settimana che Em ha perso per mesi a causa di una fusione di incantesimi finita male, che è la prova permanente che una fusione toglie oltre a dare. Bubba all'epoca trovò l'intero episodio molto divertente."
+    },
+    "topicMahyem": {
+      "title": "Mahyem",
+      "description": "Una band black metal norvegese che le orde goblin Naguka venerano come dei veri e propri. La fede li tiene in vita: ogni governo del pianeta ha provato a ucciderli e nessuno c'e riuscito. La loro musica guida l'inconscio collettivo goblin, e le orde che scendono dalla Scandinavia verso l'Europa marciano al suo ritmo."
+    },
+    "topicEuronymous": {
+      "title": "Euronymous",
+      "description": "Il membro dei Mahyem sopravvissuto al coltello di Varg. Il trauma cranico gli ha lasciato una sindrome del savant acquisita e una delle menti psioniche piu potenti in circolazione. Ha lasciato il palco mentre il resto della band continuava a vivere da dio, e nessuno sa piu dove sia."
     }
   }
 }

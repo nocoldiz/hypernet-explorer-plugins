@@ -9,6 +9,7 @@
   "usedSkeletonKey": "Used Skeleton Key!",
   "groundFloor": "Ground Floor",
   "floorNumbered": "Floor {n}",
+  "floorNamed": "{floor}: {name}",
   "noElevator": "There is no elevator here.",
   "selectFloor": "Select a floor:",
   "doorHeld": "The reinforced door held firm against your shoulder.",

@@ -340,6 +340,12 @@
         `<div class="gx-actions gx-lg-choice-actions">` +
         // Set the ship down on the square, or walk the world at it.
         `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="land">${T('Galaxy.hud.landHere')}</span>` +
+        // ...or, on a square with a spaceport on it, into the pad itself: on
+        // foot, or with the ship set down beside the party. These two replace
+        // Land Here there, because a pad is drawn by hand and has nothing to
+        // generate (see GalaxySim.landAtSpaceport).
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="port-foot">${T('Galaxy.hud.landOnFoot')}</span>` +
+        `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="port-ship">${T('Galaxy.hud.landWithShip')}</span>` +
         `<span class="gx-btn gx-gold focusable" tabindex="0" data-action="landing-go" data-mode="walk">${T('Galaxy.hud.liminalWalk')}</span>` +
         // The third way down, and the only one that never touches the ground:
         // the ship itself is flown over the world (see startLiminalFlyby).
@@ -1276,15 +1282,26 @@
       // it reads lives on the planet's own biome record.
       const GS = window.GalaxySim;
       const surfaceless = !!(GS && GS.isSurfacelessWorld && GS.isSurfacelessWorld(lg.planet));
+      // The pad on the square just picked, if any: its two ways in take the
+      // place of Land Here, which has nothing to generate there.
+      const port = (GS && GS.spaceportAtCell)
+        ? GS.spaceportAtCell(lg.planet, lg.cursor.gx, lg.cursor.gy) : null;
       Array.prototype.slice.call(el.querySelectorAll('[data-action="landing-go"]'))
         .forEach((b) => {
-          const ground = b.getAttribute('data-mode') !== 'flyby';
-          b.style.display = (surfaceless && ground) ? 'none' : '';
+          const mode = b.getAttribute('data-mode');
+          const ground = mode !== 'flyby';
+          const isPort = mode === 'port-foot' || mode === 'port-ship';
+          let hide = surfaceless && ground;
+          if (isPort && !port) hide = true;
+          if (mode === 'land' && port) hide = true;
+          b.style.display = hide ? 'none' : '';
         });
       if (this.els.landingChoiceSub) {
         this.els.landingChoiceSub.textContent = surfaceless
           ? T('Galaxy.hud.noSolidSurface')
-          : T('Galaxy.hud.landingSiteCell', { x: lg.cursor.gx, y: lg.cursor.gy });
+          : (port
+            ? T('Galaxy.hud.spaceportAtCell', { name: port.name, x: lg.cursor.gx, y: lg.cursor.gy })
+            : T('Galaxy.hud.landingSiteCell', { x: lg.cursor.gx, y: lg.cursor.gy }));
       }
       window.UIPanel.open(el);
       this._landingChoiceIdx = 0;
@@ -1379,7 +1396,8 @@
       // it is checked rather than trusted. Anything unrecognised is the one
       // choice that is always on offer.
       let pick = mode;
-      if (mode !== 'land' && mode !== 'walk' && mode !== 'flyby') pick = 'land';
+      const MODES = ['land', 'walk', 'flyby', 'port-foot', 'port-ship'];
+      if (MODES.indexOf(mode) < 0) pick = 'land';
       // ...and on a world with no ground the two that touch it are not on
       // offer at all, whatever arrived here (see _openLandingChoice).
       const GS = window.GalaxySim;
@@ -1421,6 +1439,9 @@
           destW: canvas.width, destH: canvas.height,
           gridW: lg.w, gridH: lg.h,
           highlightCell: lg.cursor,
+          // Every spaceport on this world, on the square it stands on.
+          markCells: (window.GalaxySim.spaceportCells)
+            ? window.GalaxySim.spaceportCells(lg.planet) : [],
         });
       }
     }

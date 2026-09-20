@@ -1,6 +1,6 @@
 {
   "name": "Astronomy",
-  "blurb": "The sky measured and, where the delta-v allows, visited: acoustic peaks, transit depths and landing ellipses. Every figure below is quoted with the instrument that produced it.",
+  "blurb": "Observations and space missions, each figure quoted with the instrument behind it.",
   "nodes": {
     "astro_wmap": {
       "name": "WMAP Cosmic Age",

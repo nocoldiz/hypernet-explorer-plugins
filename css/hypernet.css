@@ -2390,6 +2390,26 @@
     background: var(--xp-link-hover);
     border-color: var(--xp-blue);
 }
+#news-history-content .news-tabs {
+    font-size: 13px;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+#news-history-content .news-tab,
+#news-history-content .news-alert-toggle {
+    background: var(--xp-border-light);
+    border: 1px solid var(--xp-border);
+    border-radius: 3px;
+    padding: 3px 8px;
+}
+#news-history-content .news-tab.selected {
+    background: var(--xp-link-hover);
+    border-color: var(--xp-blue);
+}
+#news-history-content .news-alert-toggle.off {
+    color: var(--xp-text-muted) !important;
+}
+
 #news-history-content .news-month-nav {
     font-size: 14px;
     background: rgba(0, 0, 0, 0.03);

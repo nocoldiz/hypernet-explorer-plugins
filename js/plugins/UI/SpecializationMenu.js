@@ -307,10 +307,25 @@
         }
     };
 
+    // A head start is only ever handed out in a discipline the game actually
+    // does something with. The classStart / traitStart tables were written for
+    // the whole roster, so an unfiltered grant sat a character down with a
+    // sheet full of free tiers in disciplines nothing reads, which is what the
+    // character creation board was showing as its default picks. The unfinished
+    // ones are still listed, still trainable and still spendable on; they are
+    // simply not given away.
+    function specGrantAllowed(spec) {
+        if (!spec) return false;
+        if (window.Specializations && typeof window.Specializations.isImplemented === 'function') {
+            return window.Specializations.isImplemented(spec);
+        }
+        return spec.implemented !== false;
+    }
+
     Game_Actor.prototype.specializationClassBonus = function (id) {
         const cls = this.currentClass();
         const spec = window.Specializations.byId.get(id);
-        if (!cls || !spec || !spec.classStart) return 1;
+        if (!cls || !spec || !spec.classStart || !specGrantAllowed(spec)) return 1;
         return spec.classStart[cls.name] || 1;
     };
 
@@ -321,7 +336,7 @@
     // traits name the same specialization, the most generous one counts.
     Game_Actor.prototype.specializationTraitBonus = function (id) {
         const spec = window.Specializations.byId.get(id);
-        if (!spec || !spec.traitStart || !this._selectedTraits) return 1;
+        if (!spec || !spec.traitStart || !this._selectedTraits || !specGrantAllowed(spec)) return 1;
         const bank = (window.Health && window.Health.Traits) || [];
         let best = 1;
         this._selectedTraits.forEach(entry => {
@@ -401,6 +416,49 @@
             return 0;
         }
         this._specExp[id] = 0;
+        this.setSpecializationTrainedLevel(id, level + 1);
+        this.refresh();
+        return level + 1;
+    };
+
+    // -------------------------------------------------------------------------
+    // The unspent purse
+    // -------------------------------------------------------------------------
+    // Points a character is holding rather than has already placed. Character
+    // creation banks whatever its budget still had when the party embarked
+    // (simple mode never spends a single one of them), and a point buys the
+    // next tier of one specialization outright, here on this menu, at any
+    // point in the game.
+
+    Game_Actor.prototype.specializationPoints = function () {
+        return this._specPoints || 0;
+    };
+
+    Game_Actor.prototype.gainSpecializationPoints = function (amount) {
+        const points = Math.floor(Number(amount) || 0);
+        if (points <= 0) return;
+        this._specPoints = this.specializationPoints() + points;
+    };
+
+    // A point only goes where there is a tier left to buy, and never into a
+    // discipline the game does nothing with yet: the same rule that keeps a
+    // class head start out of an unfinished one.
+    Game_Actor.prototype.canSpendSpecializationPoint = function (id) {
+        if (this.specializationPoints() <= 0) return false;
+        const spec = window.Specializations && window.Specializations.byId
+            ? window.Specializations.byId.get(id) : null;
+        if (!spec || !specGrantAllowed(spec)) return false;
+        return this.specializationLevel(id) < 5;
+    };
+
+    // Returns the new level when the point bought one, 0 otherwise. The
+    // part-earned progress towards that tier is cleared with it: the tier was
+    // paid for outright, so the counter starts the next one from nothing.
+    Game_Actor.prototype.spendSpecializationPoint = function (id) {
+        if (!this.canSpendSpecializationPoint(id)) return 0;
+        const level = this.specializationLevel(id);
+        this._specPoints = this.specializationPoints() - 1;
+        if (this._specExp) this._specExp[id] = 0;
         this.setSpecializationTrainedLevel(id, level + 1);
         this.refresh();
         return level + 1;
@@ -599,7 +657,9 @@
             } else if (typeof $gameMessage !== 'undefined' && $gameMessage && !$gameMessage.isBusy()) {
                 const name = (g.actor.name && g.actor.name()) || T('SpecializationMenu.someone');
                 const label = g.name || g.spec.name;
+                window.skipLocalization = true;
                 $gameMessage.add(`${name}: ${label} - ${window.Specializations.levelName(g.level)}`);
+                window.skipLocalization = false;
             }
             if (window.SoundManager && SoundManager.playLevelUp) SoundManager.playLevelUp();
             // A tier gained while the menu that taught it is still open should
@@ -1482,6 +1542,30 @@
             }
 
             document.getElementById('spec-detail-content').innerHTML = this.buildDetailHTML(actor, this._listOrder[this._selectedIndex]);
+            // Rebound on every redraw: the card is rewritten whole, so the
+            // button that was there a moment ago is a different element now.
+            const spendButton = document.getElementById('spec-spend-button');
+            if (spendButton) {
+                spendButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.spendPointOnSelected();
+                });
+            }
+        }
+
+
+        // Placing one of the unspent points on whatever the cursor is reading.
+        // The rule about where a point may go is the actor's, not this menu's.
+        spendPointOnSelected() {
+            const actor = this._actor;
+            const spec = this._listOrder ? this._listOrder[this._selectedIndex] : null;
+            if (!actor || !spec || !actor.canSpendSpecializationPoint(spec.id)) {
+                SoundManager.playBuzzer();
+                return;
+            }
+            actor.spendSpecializationPoint(spec.id);
+            SoundManager.playOk();
+            this.refreshSpecDOM();
         }
 
         buildDetailHTML(actor, spec) {
@@ -1519,6 +1603,26 @@
                     </div>`;
             } else {
                 progressHTML = `<div class="ui-section spec-progress-note">${T('SpecMenu.ui.mastered')}</div>`;
+            }
+
+            // The purse, and the one button that empties it. Drawn only while
+            // there is something in it, so a character who has placed every
+            // point reads the card exactly as it read before.
+            let pointsHTML = '';
+            const purse = actor.specializationPoints();
+            if (purse > 0) {
+                const canSpend = actor.canSpendSpecializationPoint(spec.id);
+                const buyLabel = canSpend
+                    ? T('SpecMenu.ui.spendPoint', { level: escapeHtml(window.Specializations.levelName(level + 1)) })
+                    : T('SpecMenu.ui.spendBlocked');
+                pointsHTML = `
+                    <div class="ui-section">
+                        <div class="spec-progress-head">
+                            <span>${T('SpecMenu.ui.purse')}</span>
+                            <span class="spec-progress-value">${purse}</span>
+                        </div>
+                        <button type="button" id="spec-spend-button" class="spec-spend-button focusable"${canSpend ? '' : ' disabled'}>${buyLabel}</button>
+                    </div>`;
             }
 
             // Weapon proficiencies drive the equip-screen stat scaling, so spell
@@ -1570,6 +1674,7 @@
                     ${facts}
                     ${spec.description ? `<div class="ui-prose">${escapeHtml(spec.description)}</div>` : ''}
                     ${progressHTML}
+                    ${pointsHTML}
                     ${weaponHTML}
                 </div>
             `;
@@ -1611,6 +1716,8 @@
             // cursor's own count has to match the stylesheet's track count or
             // Down lands on the wrong entry.
             if (!this._listOrder.length) return;
+
+            if (Input.isTriggered('ok')) { this.spendPointOnSelected(); return; }
 
             const last = this._listOrder.length - 1;
             const moveTo = (idx) => {

@@ -436,12 +436,15 @@
             if (!achievement) return;
 
             const achievementData = achievement;
-            
+
+            if (!showNotifications) return;
+
             this.notificationQueue.push({
                 name: achievementData.name || achievementId,
                 description: achievementData.description || T('SteamAchievements.unlocked'),
                 duration: notificationDuration
             });
+            scheduleAchievementDrain();
         }
 
         processPendingUnlocks() {
@@ -497,8 +500,28 @@
     // unlock looks like every other popup and shows up wherever it happens,
     // not only on the map and the battlefield. The queue below is drained on a
     // timer rather than by a window's update loop.
+    let drainTimer = null;
+
+    // Armed only while something is actually waiting, rather than a permanent
+    // 250 ms wakeup that outlived the title screen, every menu and every battle
+    // for the whole session whether or not achievements were ever unlocked.
+    function scheduleAchievementDrain() {
+        if (drainTimer !== null) return;
+        drainTimer = setTimeout(drainAchievementQueue, 250);
+    }
+
     function drainAchievementQueue() {
-        if (!showNotifications || !window.ParchmentToast) return;
+        drainTimer = null;
+        if (!showNotifications) {
+            SteamAchievements.notificationQueue.length = 0;
+            return;
+        }
+        // The toast service may not have loaded yet: keep the unlock and come
+        // back for it instead of spinning on a timer that never stops.
+        if (!window.ParchmentToast) {
+            if (SteamAchievements.notificationQueue.length) scheduleAchievementDrain();
+            return;
+        }
         const pending = SteamAchievements.notificationQueue.splice(0);
         if (!pending.length) return;
         window.ParchmentToast.group(pending.map(n => () => {
@@ -514,7 +537,6 @@
             );
         }));
     }
-    setInterval(drainAchievementQueue, 250);
 
     // Initialize on game start
     const _Scene_Boot_start = Scene_Boot.prototype.start;

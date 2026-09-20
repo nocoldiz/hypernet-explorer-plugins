@@ -186,7 +186,12 @@
         if (unknownSkills.length > 0) {
             const skillId = unknownSkills[Math.floor(Math.random() * unknownSkills.length)];
             actor.learnSkill(skillId);
-            $gameMessage.add(T('Battle.mimic.hasLearned', { actor: actor.name(), skill: $dataSkills[skillId].name }));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('Battle.mimic.hasLearned', { actor: actor.name(), skill: $dataSkills[skillId].name }), {
+                severity: 'good',
+                plainLog: true
+              });
+            }
         }
     }
 
@@ -897,12 +902,12 @@
         50: { kind: 'assembly', uses: 2 },                               // Archaeologist, Excavation
         51: { kind: 'heal', parts: true, states: [19] },                 // Nurse, Ward
         52: { kind: 'execute', mult: 2.2, threshold: 0.40 },             // Hunter-Gatherer, Harvest
-        53: { kind: 'barrage', stat: 'mat', mult: 3.0 },                 // Physicist, Singularity
+        53: { kind: 'barrage', stat: 'mat', mult: 3.0 },                 // Technomage, Singularity
         54: { kind: 'assembly', uses: 4 },                               // Mechanic, Assembly
         55: { kind: 'gold', mult: 1.4, perCoin: 300 },                   // Shopkeeper, Clearance
-        56: { kind: 'multi', mult: 1.2, hits: 5 },                       // Farmer, Reaping
+        56: { kind: 'multi', mult: 1.2, hits: 5 },                       // Plant Mage, Reaping
         57: { kind: 'strike', mult: 4.8 },                               // Lumberjack, Timber
-        58: { kind: 'barrage', stat: 'mat', mult: 2.6, element: 4 },     // Meteorologist, Storm Front
+        58: { kind: 'barrage', stat: 'mat', mult: 2.6, element: 4 },     // Meteoarcanist, Storm Front
         59: { kind: 'heal', cleanse: true, mp: true },                   // Priest, Absolution
         60: { kind: 'rally', states: [24, 34], healRatio: 0.4 },         // Entertainer, Encore
         61: { kind: 'strike', stat: 'best', mult: 7.0, element: 8 },     // Demigod, Apotheosis

@@ -464,17 +464,28 @@
     // whether anything is in it, and whether it can be written to. A window
     // asks through window.HypernetFileSystem.drives().
     // i18n-ignore-start  VFS path keys and file names, matched literally
+    // A drive wears the desktop's own icon theme, so the letters in My Computer
+    // look like the hardware they stand for. The theme belongs to HypernetOS,
+    // and a drive is described here before any of it is drawn, so the icon is
+    // resolved at the moment a window asks for it rather than at load.
+    function themed(name, spec) {
+        return Object.defineProperty(spec, 'icon', {
+            enumerable: true,
+            get: () => window.HypernetOS.Icons.path(name)
+        });
+    }
+
     const DRIVES = {
-        'A:': { kind: 'floppy', icon: 234, removable: true, readOnly: false, capacityKb: 1440 },
-        'C:': { kind: 'fixed', icon: 86, removable: false, readOnly: false, capacityKb: 20 * 1024 * 1024 },
-        'D:': { kind: 'cd', icon: 224, removable: true, readOnly: true, capacityKb: 650 * 1024 }
+        'A:': themed('devices-media-floppy', { kind: 'floppy', removable: true, readOnly: false, capacityKb: 1440 }),
+        'C:': themed('devices-drive-harddisk', { kind: 'fixed', removable: false, readOnly: false, capacityKb: 20 * 1024 * 1024 }),
+        'D:': themed('devices-media-optical', { kind: 'cd', removable: true, readOnly: true, capacityKb: 650 * 1024 })
     };
 
     // The two shell folders that were not drives and not ordinary folders
     // either: a place with nothing in it until something is put there.
     const SHELL_ROOTS = {
-        'Printers': { icon: 234 },
-        'Network': { icon: 188 }
+        'Printers': themed('devices-printer', {}),
+        'Network': themed('places-network-workgroup', {})
     };
     // i18n-ignore-end
 
@@ -550,6 +561,8 @@
             'Incanta 96': { files: [{ name: 'incanta.exe', app: 'app-bestiary-encarta' }, 'incanta.dat', 'bestiary.idx'] },
             'Whether Channel': { files: [{ name: 'whether.exe', app: 'app-weather' }, 'barometer.dll'] },
             'Pain': { files: [{ name: 'pain.exe', app: 'app-hypernet-paint' }, 'pain.hlp'] },
+            'VirtuaHealer': { files: [{ name: 'virtuahealer.exe', app: 'app-virtuahealer' }, 'vitals.dll', 'triage.dat'] },
+            'Virtua Surgeon': { files: [{ name: 'bistury.exe', app: 'app-remote-bistury' }, 'graft.dll', 'catalogue.idx'] },
             'Common Files': { files: ['mscrvt.dll', 'olé.dll'] },
             files: []
         },

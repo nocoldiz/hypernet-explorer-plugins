@@ -17,7 +17,7 @@
  * What a shopper can do
  * ============================================================================
  * - Browse by category, or search the whole catalogue at once.
- * - Read a full listing page: description, world-seeded lore, every statistic
+ * - Read a full listing page: description and every statistic
  *   the backpack would print, the crafting recipe, and (for a weapon or a
  *   shield) the piece itself turning in 3D, or (for a spell) its battle
  *   animation playing on a loop.
@@ -1423,7 +1423,6 @@
 #sb-root .inspect-bullet-item { font-size:11px; padding:1px 5px 1px 14px; position:relative; }
 #sb-root .inspect-bullet-item:before { content:'\\25AA'; position:absolute; left:4px; color:var(--xp-navy); }
 #sb-root .inspect-effect-label { color:var(--xp-navy); font-weight:bold; }
-#sb-root .inspect-lore { display:block; }
 #sb-root .recipe-mat-icon { display:inline-block; background-image:url('img/system/IconSet.png');
     vertical-align:middle; image-rendering:pixelated; }
 #sb-root .craft-block { font-size:11px; margin-top:4px; }
@@ -1559,7 +1558,7 @@
             <style>${SITE_CSS}</style>
             <div class="sb-masthead">
                 <div class="sb-logo">${logoHTML()}</div>
-                <div class="sb-tagline">${T('Stockbusters.ui.tagline')}<br>${escapeHtml(T('Stockbusters.ui.siteName'))}</div>
+                <div class="sb-tagline">${escapeHtml(T('Stockbusters.ui.siteName'))}</div>
                 <div class="sb-purse">
                     ${T('Stockbusters.text.gold')}<br><b id="sb-gold">0</b>
                 </div>
@@ -2405,10 +2404,6 @@
 
         // The backpack is not loaded: the short description is still owed.
         let html = `<div class="inspect-desc">${descriptionOf(entry) || T('Stockbusters.text.noDescription')}</div>`;
-        if (window.ItemSystemUtils && typeof window.ItemSystemUtils.loreFor === 'function') {
-            const lore = window.ItemSystemUtils.loreFor(entry);
-            if (lore) html += `<div class="inspect-flavour">${lore}</div>`;
-        }
         return html;
     };
 
@@ -2858,17 +2853,29 @@
         const delivered = DeliveryManager.retireDeliveredItems();
 
         if (delivered.length > 0) {
-            $gameMessage.add(T('Stockbusters.text.delivered', { count: delivered.length }));
-            $gameMessage.add(delivered.join(', '));
+            if (window.ParchmentToast) {
+                window.ParchmentToast.report([delivered.join(', ')], {
+                    title: T('Stockbusters.text.delivered', { count: delivered.length }),
+                    severity: 'good'
+                });
+            }
             SoundManager.playShop();
         } else {
             const pending = DeliveryManager.getOrderCount();
             if (pending > 0) {
                 const soonest = Math.min(...DeliveryManager.getOrderedItems()
                     .map(order => DeliveryManager.getMinutesLeft(order)));
-                $gameMessage.add(T('Stockbusters.text.nextDeliveryIn', { time: formatDelay(soonest) }));
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Stockbusters.text.nextDeliveryIn', { time: formatDelay(soonest) }), {
+                        severity: 'info'
+                    });
+                }
             } else {
-                $gameMessage.add(T('Stockbusters.text.noItemsReadyForDelivery'));
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Stockbusters.text.noItemsReadyForDelivery'), {
+                        severity: 'info'
+                    });
+                }
             }
         }
     });

@@ -104,6 +104,19 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
 (function ($) {
     "use strict";
 
+    // Where the picture landed is for whoever pressed the key, so it is a
+    // toast. The path is interpolated rather than translated, and the key
+    // stands in when the localization layer is not loaded.
+    function mapshotNotice(key, filePath) {
+        var args = filePath ? { path: filePath } : undefined;
+        var text = window.T ? window.T(key, args) : key;
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(text, { severity: 'info', duration: 300 });
+        } else {
+            console.log(text);
+        }
+    }
+
     var parameters = $plugins.filter(function (plugin) {
         return plugin.description.indexOf('<OrangeMapshotMZ>') >= 0;
     });
@@ -747,7 +760,7 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
 
                 if (coordinateSequence.length === 0) {
                     console.log('All coordinates already have screenshots. Nothing to capture.');
-                    $gameMessage.add('All screenshots already exist in\n' + path.replace(/\\/g, '\\\\'));
+                    mapshotNotice('Mapshot.alreadyExist', path);
                     _restoreOnMapLoaded();
                     return;
                 }
@@ -763,7 +776,7 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
                         console.log('All coordinates processed!');
                         var totalTime = (Date.now() - startTime) / 1000;
                         console.log('Full debug screenshot generation complete! Generated ' + screenshotsGenerated + ' screenshots in ' + totalTime + ' seconds');
-                        $gameMessage.add('Full debug screenshots saved to\n' + path.replace(/\\/g, '\\\\'));
+                        mapshotNotice('Mapshot.debugSaved', path);
                         _restoreOnMapLoaded();
                         return;
                     }
@@ -898,7 +911,7 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
                     exec('explorer ' + longPath);
                 }, 100);
             } else {
-                $gameMessage.add('Mapshot saved to \n' + longPath.replace(/\\/g, '\\\\').match(/.{1,40}/g).join('\n'));
+                mapshotNotice('Mapshot.saved', longPath);
             }
 
         } catch (error) {
@@ -1019,7 +1032,7 @@ var OrangeMapshotMZ = OrangeMapshotMZ || {};
             if (SceneManager._scene instanceof Scene_Map) {
                 // Check if full debug mode is enabled and we're on procedural map 636
                 if ($.Param.fullDebug && $gameMap._mapId === 636) {
-                    $gameMessage.add('Starting full debug screenshot generation...');
+                    mapshotNotice('Mapshot.starting');
                     $.saveFullDebugScreenshots();
                 } else {
                     $.saveMapshot();

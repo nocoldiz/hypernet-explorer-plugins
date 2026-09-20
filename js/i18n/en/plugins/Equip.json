@@ -33,6 +33,9 @@
   "damageType": "Damage Type",
   "weaponType": "Weapon Type",
   "slotMouth": "Mouth",
+  "slotTwoHandedHeld": "Both hands on it",
+  "dualPenaltyWarning": "Untrained with a weapon in each hand: every weapon carried hits for {n}% less.",
+  "dualPenaltyHint": "Your class does not dual wield, so both weapons are weakened.",
   "short": {
     "hp": "HP",
     "mp": "MP",

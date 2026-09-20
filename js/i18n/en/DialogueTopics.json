@@ -399,6 +399,14 @@
     "topicFriday": {
       "title": "Friday",
       "description": "The day of the week Em lost for months to a spell fusion that went wrong, which is the standing proof that a fusion takes something away as well as giving something back. Bubba found the whole episode very funny at the time."
+    },
+    "topicMahyem": {
+      "title": "Mahyem",
+      "description": "A black metal band out of Norway that the Naguka goblin hordes worship as literal gods. Belief keeps them alive: every government on the planet has tried to kill them and none has managed it. Their music steers the goblin collective unconscious, and the hordes marching down through Scandinavia into Europe march to it."
+    },
+    "topicEuronymous": {
+      "title": "Euronymous",
+      "description": "The member of Mahyem who survived Varg's knife. The brain trauma left him with acquired savant syndrome and one of the most powerful psionic minds alive. He walked away from the stage while the rest of the band went on living as gods, and nobody knows where he is now."
     }
   }
 }

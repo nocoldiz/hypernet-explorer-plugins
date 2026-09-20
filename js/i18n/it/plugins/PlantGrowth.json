@@ -5,8 +5,8 @@
     "In crescita",
     "Matura"
   ],
-  "harvested": "\\I[{icon}]Raccolto \\c[14]{item}\\c[0] ×{qty}!",
-  "planted": "Piantato \\c[14]{plant}\\c[0]!",
+  "harvested": "Raccolto {item} ×{qty}",
+  "planted": "Piantato {plant}",
   "fieldPlot": "Appezzamento a {x}, {y}",
   "mapPlot": "Mappa #{map}, appezzamento #{plot}",
   "itemNumbered": "Oggetto #{id}",
@@ -62,7 +62,7 @@
   "yield": "Resa",
   "seeds": "Semi",
   "pickSeedHint": "Scegli un seme a destra per vedere le sue stagioni e quanto ci mette a crescere.",
-  "seedBlurb": "Pianta i semi nella stagione giusta e cresceranno. In una serra crescono tutto l'anno, e più in fretta.",
+  "seedBlurb": "I semi piantati nella stagione giusta crescono. In serra crescono tutto l'anno, e piu in fretta.",
   "seasonAbbr": {
     "SPRING": "Pri",
     "SUMMER": "Est",
@@ -84,5 +84,6 @@
   },
   "toast": {
     "ripe": "{plant} è pronto per il raccolto."
-  }
+  },
+  "plotAt": "Campo aperto, riquadro {tile}"
 }

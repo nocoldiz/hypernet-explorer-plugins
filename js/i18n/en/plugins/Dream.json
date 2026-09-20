@@ -83,6 +83,7 @@
   "insight": "The dream works something out: you obtained {amount} KP",
   "youWokeUp": "You woke up",
   "wokeWithInsight": "You carried {amount} Knowledge out of the dream (total: {total}).",
+  "forming": "The dream is still taking shape",
   "willNotForm": "You dream, but the world will not form...",
   "kp": "You obtained {amount} KP",
   "drifting": "The {place} is turning into somewhere else...",

@@ -551,9 +551,12 @@
         initializeBladeSeedData();
         if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
             if (typeof window !== 'undefined') {
-                window.skipLocalization = true;
             }
-            $gameMessage.add(T('BladeSeed.alreadyBound'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('BladeSeed.alreadyBound'), {
+                severity: 'warning'
+              });
+            }
             if (typeof window !== 'undefined') {
                 window.skipLocalization = false;
             }

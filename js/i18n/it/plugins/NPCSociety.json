@@ -67,6 +67,23 @@
       "grewUp": "crebbero",
       "saw": "videro",
       "had": "avevano"
+    },
+    "beast": {
+      "sub": "essa",
+      "obj": "essa",
+      "cap": "Essa",
+      "pos": "sua",
+      "was": "fu",
+      "is": "è",
+      "tries": "cerca",
+      "has": "ha",
+      "answers": "risponde",
+      "born": "Nata",
+      "wasChild": "era piccola",
+      "remembers": "ricorda",
+      "grewUp": "crebbe",
+      "saw": "vide",
+      "had": "aveva"
     }
   },
   "adjective": [
@@ -156,6 +173,394 @@
       "{cap} {has} l'anima {adj} di fine secolo, venuta al mondo {placeIn} e segnata ancora dall'anno in cui {event}. {later} {moral}",
       "{born} {placeIn} nel {year}, tra schermi e disturbi di segnale: {sub} {saw} tutto in diretta quando {event}. {later} {moral}"
     ],
-    "bornMeta": "Nascita {year} · {place}"
+    "bornMeta": "Nascita {year} · {place}",
+    "classOrigin": {
+      "academic": [
+        "È rimasta dopo il dottorato perché nessuno le ha mai davvero proposto di andarsene.",
+        "Vent'anni, un dipartimento e una faida sopravvissuta a entrambi i contendenti originali.",
+        "Tiene lo stesso corso da così tanto che ha cominciato a dissentire dai propri appunti."
+      ],
+      "acrobat": [
+        "Cresciuta in un circo itinerante, camminava sulla fune prima di saper scrivere il proprio nome.",
+        "Ha imparato a cadere bene sui tetti di una città che non la voleva per strada.",
+        "Una caviglia rotta a quindici anni le ha insegnato tutto ciò che gli istruttori non dicevano."
+      ],
+      "archaeologist": [
+        "A diciannove anni ha dissotterrato in un campo qualcosa che nessun catalogo registra ancora.",
+        "Fondi, una cazzuola e un rifiuto testardo della cronologia accettata.",
+        "È stata bandita da due scavi e richiamata in uno."
+      ],
+      "archmage": [
+        "Quarant'anni di studio, due espulsioni e una tesi che tre accademie hanno rifiutato di pubblicare.",
+        "Era la più giovane della torre ed è l'unica rimasta a ricordarla in piedi.",
+        "Ha dimenticato più teoria di quanta se ne insegni alla maggior parte dei praticanti."
+      ],
+      "barbarian": [
+        "È scesa da un altopiano dove nessuno scrive niente e nessuno ne ha bisogno.",
+        "La città l'ha chiamata selvaggia, e così ha deciso di esserlo molto bene.",
+        "Non ha mai perso una discussione a cui fosse concesso diventare una rissa."
+      ],
+      "bard": [
+        "Cantava per monete in un sottopassaggio finché qualcuno non ha notato che le monete si muovevano da sole.",
+        "Tre accordi, buona memoria per i segreti altrui e una voce che apre le porte.",
+        "È stata cacciata da posti migliori di quelli in cui la gente viene invitata."
+      ],
+      "battlemage": [
+        "L'accademia fu requisita al secondo anno e il programma cambiò in una notte.",
+        "Ha imparato la teoria in aula e l'applicazione in trincea, a tre mesi di distanza.",
+        "Le vesti non fermano le schegge, ed è per questo che ci porta sopra la piastra."
+      ],
+      "berserker": [
+        "La prima volta che è calato il rosso si è svegliata illesa in una stanza dove non c'era più nessun altro.",
+        "Le hanno insegnato a lasciarlo uscire invece che ingoiarlo: le ha salvato la vita e ne ha tolte altre.",
+        "Scorre nel sangue, e ogni generazione della famiglia ha una storia in proposito."
+      ],
+      "boxer": [
+        "Una palestra sopra una lavanderia, quattro cinture dilettanti e una sera che ha chiuso i piani da professionista.",
+        "Combatteva per soldi a sedici anni perché l'alternativa pagava meno e faceva più male.",
+        "Ha un naso rotto da tre persone diverse, e le ha battute tutte e tre."
+      ],
+      "ceo": [
+        "Ha ereditato l'undici per cento di un'azienda e ha passato dieci anni a ricomprarsi il resto.",
+        "Un consiglio di amministrazione è un campo di battaglia con sedie migliori, e lo ha capito prima di imparare a guidare.",
+        "Ha cominciato con una bancarella, un foglio di calcolo e nessuno scrupolo degno di nota."
+      ],
+      "chef": [
+        "Ha cominciato a lavare i piatti a quattordici anni e a ventidue gestiva il passe.",
+        "Una nonna, un quaderno di ricette e un caratteraccio che si è rivelato professionalmente utile.",
+        "Si è bruciata le mani così spesso che non sente più i piatti caldi."
+      ],
+      "cleric": [
+        "Ha pregato su uno sconosciuto morente, lo sconosciuto si è alzato, e la parrocchia non l'ha più lasciata andare.",
+        "Un seminario, un anno di peste e una fede sopravvissuta a entrambi.",
+        "Ci sta per la gente più che per la teologia, e la teologia ci ha fatto pace."
+      ],
+      "combatmedic": [
+        "Si è diplomata infermiera e nello stesso pomeriggio le hanno messo in mano un fucile.",
+        "Due turni al fronte le hanno insegnato a suturare mentre le urlano addosso, cosa che nessun ospedale era riuscito a fare.",
+        "Ha continuato a tirare fuori gente dalla linea finché qualcuno non ne ha fatto il suo incarico ufficiale."
+      ],
+      "commander": [
+        "Ha preso il comando della compagnia il secondo giorno, perché l'ufficiale che doveva farlo era morto.",
+        "Scuola di stato maggiore, due incarichi noiosi e una settimana che le ha fatto il nome.",
+        "Non è mai stata la migliore combattente della stanza ed è sempre stata quella che tutti guardavano."
+      ],
+      "constructionworker": [
+        "È salita su un cantiere a diciassette anni per un'estate e non ne è più scesa.",
+        "Ha contribuito a tirare su quattro torri e non può permettersi un appartamento in nessuna.",
+        "Un mestiere imparato da uno zio che, a insegnarlo, ci ha rimesso due dita."
+      ],
+      "convoker": [
+        "Ha letto ad alta voce un nome che doveva restare sulla pagina, e dall'altra parte qualcosa ha letto lei.",
+        "Il cerchio era di gesso, la candela da poco, e ciò che è passato si è presentato comunque all'appuntamento.",
+        "Baratta favori con cose senza volto da quando aveva diciannove anni."
+      ],
+      "cultist": [
+        "Furono i primi a pronunciare il suo nome come se contasse; il prezzo è arrivato dopo.",
+        "Si è unita per i pasti gratis ed è rimasta per la rivelazione.",
+        "Un volantino, uno scantinato, un canto: tre passi e apparteneva a qualcun altro."
+      ],
+      "demigod": [
+        "Uno dei suoi genitori non è mai stato fotografato, non è mai invecchiato e non si è mai spiegato.",
+        "Ha scoperto cosa fosse a diciannove anni, nel modo peggiore e davanti a testimoni.",
+        "Il tempio che avrebbe dovuto reclamarla è bruciato un secolo prima che nascesse."
+      ],
+      "doctor": [
+        "Sei anni di medicina, due di specializzazione e una notte che le ha insegnato più di tutti e otto.",
+        "Ci è entrata per i soldi ed è rimasta per un motivo che non è mai riuscita a formulare.",
+        "Ha firmato più certificati di morte di quanti ne ricordi, e ogni nome è ancora archiviato da qualche parte."
+      ],
+      "drone": [
+        "È stata assemblata su specifica, caricata con un set di comportamenti e accesa rivolta verso il mondo.",
+        "I suoi operatori non ci sono più. Le istruzioni che hanno lasciato girano ancora.",
+        "È stata costruita per un compito, lo ha portato a termine e non gliene è mai stato assegnato un secondo.",
+        "Qualcuno le ha scritto il mondo in memoria come una lista di condizioni, e da allora le spunta.",
+        "Ha un notiziario che non può spegnere, e agisce in base a ciò che il notiziario dice.",
+        "Il firmware è stato scritto da un comitato poi dissoltosi in tre iperpotenze."
+      ],
+      "elementalist": [
+        "A sei anni ha incendiato una tenda senza toccarla, e la famiglia ha traslocato due volte.",
+        "Un vecchio maestro le ha insegnato che fuoco, acqua, terra e aria sono quattro domande con la stessa risposta.",
+        "Ha sempre sentito il tempo arrivare attraverso i denti."
+      ],
+      "enchanter": [
+        "Ha cominciato riparando un bollitore incrinato con una parola, e non ha più smesso di migliorare cose che funzionavano già.",
+        "Un apprendistato da gioielliere, un grimorie rubato, e all'improvviso gli anelli facevano più che brillare.",
+        "È convinta che ogni oggetto voglia essere migliore, e ha passato la vita a chiederglielo."
+      ],
+      "entertainer": [
+        "A undici anni ha scoperto che una sala perdona tutto, se ride.",
+        "Locali, matrimoni, una comparsata in televisione e un lungo silenzio dopo.",
+        "Ha calcato ogni tipo di palco e prima di ognuno le viene ancora da star male."
+      ],
+      "feral": [
+        "Non l'ha mai addomesticata nessuno. È nata in una siepe e si è cresciuta da sola con ciò che riusciva a rincorrere.",
+        "Un tempo apparteneva a qualcuno. Il collare è marcito anni fa e il nome se n'è andato con lui.",
+        "È scesa dalla brughiera in un inverno cattivo e semplicemente non è più risalita.",
+        "Cane di una fattoria sopravvissuto alla fattoria, e poi all'abitudine di aspettare davanti a una porta.",
+        "È nata selvatica, è rimasta selvatica e non ha mai avuto motivo di ripensarci.",
+        "La cucciolata da cui veniva si è dispersa nella prima stagione, e da allora è sola."
+      ],
+      "firefighter": [
+        "Una volta è entrata da passante in una tromba delle scale in fiamme, e la stessa settimana i vigili l'hanno arruolata.",
+        "Undici anni di turni e un palazzo che ancora si sogna.",
+        "È la persona più calma in una stanza che brucia e la più nervosa in una che non brucia."
+      ],
+      "firemage": [
+        "A otto anni ha bruciato un capanno e ha passato i vent'anni successivi a imparare a mirare.",
+        "Il fuoco era l'unica cosa che veniva quando chiamava, e ha continuato a chiamare.",
+        "Non sente davvero freddo dalla notte in cui è arrivato il dono."
+      ],
+      "freelancer": [
+        "Nessuna gilda {obj} ha mai voluto, e alla fine ha smesso di chiedere: prende il lavoro che la bacheca offre quella settimana.",
+        "Ha cominciato quattro mestieri e non ne ha finito nessuno, il che è diventato un mestiere.",
+        "Un contratto, una stretta di mano, un compenso: tutta qui l'istruzione che ha ricevuto."
+      ],
+      "ghost": [
+        "È morta in un posto con una porta che non è riuscita ad attraversare, e ci sta ancora lavorando.",
+        "Sul corpo nessuno ha detto le parole, e il resto è rimasto dov'era caduto.",
+        "È annegata, e l'acqua ha restituito tutto tranne la parte che se ne va.",
+        "Un debito, una promessa o un rancore l'hanno tenuta qui. Non ricorda più quale.",
+        "La casa è stata demolita quarant'anni fa e lei non ha accettato la notizia.",
+        "È stata sepolta come si deve, nella terra sbagliata, ed è tornata in quella giusta."
+      ],
+      "gladiator": [
+        "È stata venduta a un'arena a diciannove anni e si è ricomprata il contratto a ventisei.",
+        "Sabbia, folla e un cancello che si apre in un senso solo: tutta qui la sua istruzione.",
+        "È famosa in quattro città e ricercata in una."
+      ],
+      "guardian": [
+        "L'hanno messa a guardia di una porta a vent'anni e si è scoperta difficilissima da spostare.",
+        "Qualcuno che doveva proteggere è morto, e da allora esagera nella direzione opposta.",
+        "Lo scudo era del nonno, e così l'abitudine di mettersi davanti alla gente."
+      ],
+      "gunmancer": [
+        "Ha inciso un sigillo sull'impugnatura di una pistola per scommessa, e da allora la pistola ascolta.",
+        "Metà canna è acciaio e metà è qualcosa che non vuole nominare.",
+        "Un armaiolo le ha insegnato il meccanismo e una strega il resto."
+      ],
+      "huntergatherer": [
+        "È cresciuta dove i negozi erano a un giorno di cammino e il bosco no.",
+        "Da bambina in poi non ha mangiato nulla che non avesse preso, scavato o riconosciuto.",
+        "Una famiglia che non è mai entrata davvero nel secolo, e una figlia che non ne vedeva il motivo."
+      ],
+      "icemage": [
+        "L'hanno trovata viva in un cumulo di neve che avrebbe dovuto ucciderla, e qualcosa era cambiato.",
+        "Un inverno lungo quattordici mesi le ha insegnato la forma del freddo da dentro.",
+        "Ha preso questa strada perché era l'unica cosa che le rallentasse il carattere."
+      ],
+      "illusionist": [
+        "Ha cominciato con i trucchi da palco e verso il quarto anno ha smesso di aver bisogno degli oggetti.",
+        "Un'infanzia in cui nessuno le credeva le ha insegnato esattamente come funziona il credere.",
+        "Non è mai stata fotografata in un modo che non avesse approvato."
+      ],
+      "journalist": [
+        "Ha stampato una verità nel momento sbagliato e da allora lavora da freelance.",
+        "Un tesserino, un registratore e una rubrica che brucerebbe prima di consegnarla.",
+        "È stata querelata due volte, entrambe da gente che ha poi transatto in silenzio."
+      ],
+      "knight": [
+        "Una casata minore cercava una spada a buon prezzo: era giovane, ostinata e costava poco.",
+        "Ha portato lo scudo di un altro per sei anni prima che le lasciassero portare il proprio.",
+        "Il giuramento fu fatto a un signore morto un mese dopo, e lo ha mantenuto lo stesso."
+      ],
+      "lumberjack": [
+        "Ha preso la sega perché la segheria era l'unico datore di lavoro nel raggio di sessanta chilometri.",
+        "Quattordici stagioni nel legname, due unghie perse e una schiena che protesta col freddo.",
+        "Ha abbattuto alberi più vecchi di ogni edificio in cui abbia mai dormito."
+      ],
+      "manacyborg": [
+        "Un chirurgo ha sostituito ciò che l'incidente aveva portato via, e ha usato il metallo sbagliato di proposito.",
+        "Prima era un corpo. Le piastre le ha aggiunte qualcuno che voleva una batteria con le gambe.",
+        "Metà del suo sistema nervoso è rame, ed è il rame a sognare.",
+        "Un programma di guerra ne ha equipaggiate undici. Questa è quella che se n'è andata sulle proprie gambe.",
+        "I condotti dovevano portare corrente. Qualcos'altro ha cominciato a usarli.",
+        "Funziona con una carica che non sa spiegare e non le hanno mai lasciato esaurire."
+      ],
+      "martialartist": [
+        "L'hanno mandata al dojo per sfogare il carattere e ci ha trovato una disciplina.",
+        "Dodici anni sugli stessi quattro movimenti, finché hanno smesso di essere movimenti.",
+        "Ha perso il primo scontro abbastanza male da passare dieci anni a preparare il secondo."
+      ],
+      "mechanic": [
+        "Ha ricostruito il primo motore con due motori rotti e un manuale nella lingua sbagliata.",
+        "Un'officina, un padre che non spiegava niente e una figlia che capiva lo stesso.",
+        "Non ha mai incontrato una macchina che non riuscisse a convincere a ripartire."
+      ],
+      "mercenary": [
+        "Ha lasciato un esercito regolare per una compagnia che pagava quattro volte tanto e faceva metà delle domande.",
+        "Il primo contratto doveva essere l'unico, ed era undici contratti fa.",
+        "Ha combattuto sotto sei bandiere e non ne ha mai posseduta una."
+      ],
+      "meteoarcanist": [
+        "È sopravvissuta a una tempesta che nessuno aveva previsto e ha deciso che era inaccettabile.",
+        "Una stazione sul tetto, un decennio di rilevazioni e la notte in cui le rilevazioni hanno cominciato a obbedirle.",
+        "Ha avuto ragione sul tempo abbastanza spesso da far smettere alla gente di chiamarla fortuna."
+      ],
+      "mimic": [
+        "Ha imparato la forma dello scrigno perché è la forma che la gente apre senza pensarci.",
+        "Nessuno sa cosa fosse all'inizio. Ha indossato una porta, un armadio e un pozzo, e non risponde a nessuno dei tre.",
+        "È cresciuta in un caveau tra scrigni veri e li ha copiati come un pulcino copia la chioccia.",
+        "Qualcosa in una cantina le ha insegnato che la pazienza è un metodo di caccia.",
+        "È stata il mobile sbagliato in nove case diverse.",
+        "Non imita per ingannare. L'imitazione è semplicemente l'unica forma che abbia mai avuto."
+      ],
+      "monk": [
+        "Ha regalato tutto ciò che possedeva in un pomeriggio e non ha mai rimpianto quel conto.",
+        "Il monastero accoglieva chiunque portasse l'acqua, e lei l'ha portata per quattro anni.",
+        "Silenzio, pane e un'ora di violenza al giorno: si è rivelato adatto a lei."
+      ],
+      "monster": [
+        "Nessun bestiario ha una pagina per lei, e tre ci hanno provato.",
+        "È strisciata fuori da un posto che da allora è stato riempito e recintato.",
+        "Qualcuno l'ha fatta di proposito e poi l'ha persa di vista.",
+        "È l'ultima di qualunque cosa sia, e non sembra essersene accorta.",
+        "Due specie di cose si sono incontrate nel buio, ed è venuta fuori lei.",
+        "Era già vecchia quando hanno costruito la strada, e ha guardato costruire la strada."
+      ],
+      "mutant": [
+        "Sua madre lavorava in uno stabilimento chiuso l'anno in cui è nata, e le recinzioni sono ancora lì.",
+        "È stata qualcosa nell'acqua, nell'arco di due generazioni, in silenzio.",
+        "Era normale finché una febbre a nove anni non ne ha riscritto la forma.",
+        "Un poligono, un vento dominante e un paese che nessuno ha evacuato.",
+        "È cambiata una volta, male, e da allora cambia lentamente.",
+        "La stirpe da cui viene è sbagliata da molto tempo e peggiora."
+      ],
+      "necromancer": [
+        "Ha provato a riportare indietro una persona in particolare, ha fallito, e ha scoperto di aver imparato tutto il resto.",
+        "Un apprendistato da becchino è diventato una corrispondenza, e la corrispondenza una carriera.",
+        "Non è morbosa: semplicemente non ha mai accettato che i morti abbiano finito di parlare."
+      ],
+      "nun": [
+        "È entrata in convento per nascondersi da qualcosa ed è rimasta perché il silenzio le rispondeva.",
+        "L'ordine la accolse trovatella e non le diede mai un motivo per andarsene.",
+        "Un voto fatto a un capezzale è diventato un abito, e l'abito una vita."
+      ],
+      "nurse": [
+        "Si è formata in un ospedale a cui mancava tutto tranne i pazienti.",
+        "Notti, sempre notti, per sei anni, finché il reparto ha smesso di sembrare un edificio.",
+        "Ha tenuto per mano più gente alla fine di quanta ne abbia tenuta un prete."
+      ],
+      "oracle": [
+        "I sogni sono cominciati prima che avesse le parole per dirli, e non hanno mai sbagliato né consolato.",
+        "Una febbre a undici anni le ha lasciato il senso dell'odore del domani.",
+        "Ha smesso di avvisare la gente: non ascoltano finché non è il giorno."
+      ],
+      "paladin": [
+        "È stata ordinata su un campo di battaglia da un prete morto prima di finire la benedizione.",
+        "Prima è venuto il voto, e la fede lo ha raggiunto anni dopo, su una brutta strada.",
+        "Ha portato lo stesso giuramento attraverso tre guerre senza mai posarlo."
+      ],
+      "plantmage": [
+        "La terra è in famiglia da quattro generazioni, e la terza ha cominciato a farle domande.",
+        "È tornata alla fattoria dopo che la città non aveva funzionato, e il frutteto le ha risposto quando gli ha parlato.",
+        "Legge il cielo da così tanto che le radici hanno cominciato a leggere lei."
+      ],
+      "policeofficer": [
+        "È entrata credendo che la divisa significasse qualcosa, e non ha del tutto smesso di crederlo.",
+        "Otto anni di pattuglia le hanno insegnato quali leggi la città applichi davvero.",
+        "Ha preso il distintivo perché la famiglia se lo aspettava e lo ha tenuto per motivi suoi."
+      ],
+      "priest": [
+        "È stata ordinata in una parrocchia che in cinque anni aveva perso due preti, e non ha chiesto perché.",
+        "Una vocazione arrivata tardi, forte e in un momento scomodissimo.",
+        "Ha sepolto più fedeli di quanti ne abbia sposati."
+      ],
+      "prowrestler": [
+        "Quella stagione il pubblico voleva un cattivo, e ha scoperto di esserlo benissimo.",
+        "Ha imparato prima le cadute, poi i monologhi, e il mestiere da qualche parte nel mezzo.",
+        "Ogni cicatrice ha una data, una città e un incasso attaccati."
+      ],
+      "psyker": [
+        "A sette anni ha sentito pensare una stanza intera e per un anno non ha più dormito bene.",
+        "Un programma statale l'ha testata a nove anni, ha segnalato il fascicolo e si è dimenticato di chiuderlo.",
+        "Ha imparato a tenere la porta chiusa, più o meno, e ciò che passa basta e avanza."
+      ],
+      "ranger": [
+        "Ha passato tre stagioni da sola su un sentiero di confine ed è tornata parlando meno e colpendo meglio.",
+        "Il bracconaggio le ha insegnato il bosco; la guardia che l'ha presa le ha insegnato il resto.",
+        "Ha percorso più mappa di quanta la gente ne abbia letta."
+      ],
+      "rogue": [
+        "Era brava con le serrature prima che con qualunque altra cosa, e nessuno le ha offerto un'alternativa.",
+        "Un borseggiatore con la coscienza è solo un borseggiatore lento, e l'ha capito presto.",
+        "È stata arrestata due volte e incriminata mai: lo considera un curriculum."
+      ],
+      "sage": [
+        "Ha risposto correttamente alla domanda di uno sconosciuto, e ha passato i trent'anni successivi a riceverne altre.",
+        "Quarant'anni di letture in una lingua che parlano ancora in sei.",
+        "Non ha titolo, non ha cattedra e non ha dubbi su nessuna delle due cose."
+      ],
+      "samurai": [
+        "L'hanno messa in una scuola a sette anni e le hanno dato una lama vera a dodici.",
+        "La casata che serviva non esiste più, e per ostinazione ne ha conservato le forme.",
+        "Un duello vinto male le ha insegnato ciò che l'intero codice cercava di dirle."
+      ],
+      "scientist": [
+        "Ha pubblicato un risultato che nessuno è riuscito a replicare e ci convive da tutta la carriera.",
+        "Una borsa di studio, un laboratorio in cantina e uno strumento costruito con pezzi di recupero.",
+        "Ha sbagliato in pubblico quattro volte, quattro più di quante i colleghi ne ammettano."
+      ],
+      "scout": [
+        "A nove anni sapeva tornare a casa da qualunque posto, e prima o poi qualcuno l'ha pagata per questo.",
+        "Due anni a portare messaggi attraverso terre che nessun altro voleva attraversare.",
+        "È sempre la prima a varcare una porta, e ha i riflessi per permetterselo."
+      ],
+      "shopkeeper": [
+        "Ha ereditato un bancone, un debito e le opinioni di tutta la via sul proprietario precedente.",
+        "Vent'anni a sapere cosa compra ognuno nel quartiere senza dirlo mai.",
+        "Ha tenuto aperta la stessa bottega attraverso due recessioni e una sommossa."
+      ],
+      "spellblade": [
+        "La scuola di scherma l'ha cacciata perché borbottava, e l'accademia perché accoltellava.",
+        "Si è rifiutata di scegliere tra la spada e il libro, così li ha saldati insieme: prima male, poi bene.",
+        "Un maestro per il gioco di gambe, un altro per le sillabe, e una cicatrice tra i due."
+      ],
+      "technomage": [
+        "A sei anni ha smontato una radio e ci ha trovato un circuito che sullo schema non c'era.",
+        "Una laurea in ingegneria, un rito rubato e una lunga discussione su quale dei due stesse lavorando.",
+        "È convinta che un incantesimo sia solo una macchina che nessuno ha ancora disegnato, e ha gli schemi per sostenerlo."
+      ],
+      "vampire": [
+        "Il morso fu un incidente; i cent'anni che seguirono no.",
+        "Ha acconsentito, ed è la parte che nessuno crede.",
+        "Si è svegliata in una cantina con una sete che nessun bicchiere d'acqua ha più toccato."
+      ],
+      "warlock": [
+        "Il patto è stato firmato in un corridoio d'ospedale alle quattro del mattino e da allora frutta.",
+        "Qualcosa di antico le ha offerto una via d'uscita, e non ha letto oltre la prima clausola.",
+        "Ha un patrono che non ha mai visto e non ha ancora saltato un pagamento."
+      ],
+      "witch": [
+        "Una zia di cui nessuno parlava le ha lasciato un libro di ricette in cui solo metà degli ingredienti era cibo.",
+        "Ha imparato l'arte dalla donna che viveva oltre l'ultimo lampione, e ogni lezione se l'è pagata.",
+        "La prima maledizione ha funzionato, e dopo quella non si torna al lavoro onesto."
+      ],
+      "wretch": [
+        "Tutto ciò che aveva le è stato tolto in una stagione, e nessuno le ha mai offerto di restituirglielo.",
+        "Ha dormito in più portoni che letti e ha smesso di contare entrambi.",
+        "C'è stata una vita prima di questa, ma non ne parla."
+      ],
+      "zombie": [
+        "Una febbre ha attraversato il quartiere e questa si è rialzata tre giorni dopo aver smesso di respirare.",
+        "È stata rialzata di proposito, da qualcuno che cercava braccia e non badava a quali.",
+        "La maledizione era su una famiglia, non su una persona, ed è arrivata con quattro generazioni di ritardo.",
+        "Ha bevuto da un pozzo che una guerra aveva avvelenato, e il veleno non era del tutto chimico.",
+        "È stata morsa, è morta del morso, e poi il morso è andato avanti senza di lei.",
+        "Un rito che doveva riportare indietro una persona precisa ha riportato indietro questa."
+      ]
+    },
+    "beast": [
+      "Avvistata {placeIn}, e di più antico non c'è nulla. {classOrigin} {moral}",
+      "{classOrigin} Resta nelle terre {placeIn}, cosa {adj} che gli anni non hanno cambiato granché. {moral}",
+      "Nessun anno di nascita, nessun documento, nessuna nazione: solo un territorio, {placeIn}. {classOrigin} {moral}",
+      "{classOrigin} Sta {placeIn} da quando qualcuno si è preso la briga di accorgersene. {moral}"
+    ],
+    "drone": [
+      "{classOrigin} È stata attivata {placeIn} nel {year}, e le sue condizioni si sono verificate per la prima volta nella stagione in cui {event}. {later} {moral}",
+      "{classOrigin} Registrata {placeIn} nel {year}; il set di comportamenti è scattato la settimana in cui {event}. {later} {moral}",
+      "{classOrigin} Non ha infanzia, solo una data di costruzione: {year}, {placeIn}. Il registro si apre il giorno in cui {event}. {later} {moral}",
+      "{classOrigin} Di lei non si ricorda nulla e si registra tutto: dal {year}, {placeIn}, risponde ogni volta che {event}. {later} {moral}"
+    ]
   }
 }

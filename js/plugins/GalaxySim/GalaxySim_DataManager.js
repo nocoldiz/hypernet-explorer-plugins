@@ -135,6 +135,10 @@
     .filter((k) => PLANET_TYPES[k] && PLANET_TYPES[k].supportLife);
 
   const GALAXY_SYSTEM_COUNT = 220;   // travelable systems generated per procedural (non-Milky-Way) galaxy
+  // What a game minute slept or waited through is worth to a crossing already
+  // under way: one second of the route. A night's sleep therefore finishes
+  // most of them, which is the point of bunking down for the trip.
+  const TRAVEL_SECONDS_PER_GAME_MINUTE = 1;
   // A procedural galaxy's OWN lazy field. The Milky Way has streamed a dense
   // star cloud into the disk around the camera since the lazy chunks went in
   // (see generateLazyChunk); every other galaxy had nothing but the 220 named
@@ -163,17 +167,17 @@
   const HYPERFLUX_MAX = 92000;
   const SCHRODINGERITE_MAX = 92;
   // Real-time seconds a completely empty tank takes to fill while the pumps
-  // run. Refuelling is a deliberate two-minute stop the ship visibly flies in
-  // for (the star map eases the hull toward the star and back out again, see
-  // Scene3D's refuel approach), with an ETA counted down in the same window
-  // the travel countdown uses.
-  const REFUEL_FULL_SECONDS = 120;
+  // run. The stop is a brief one the ship visibly flies in for (the star map
+  // eases the hull toward the star and back out again, see Scene3D's refuel
+  // approach), with an ETA counted down in the same window the travel
+  // countdown uses.
+  const REFUEL_FULL_SECONDS = 24;
   // Hyperflux/second gained while parked in orbit of a main-sequence star and
   // actively refuelling.
   const REFUEL_RATE_PER_SEC = HYPERFLUX_MAX / REFUEL_FULL_SECONDS;
   // Drawing Schrodingerite off a black hole is a far shorter stop than a
   // stellar refuel: half a minute for an empty magazine of charges.
-  const SCHRODINGERITE_FULL_SECONDS = 30;
+  const SCHRODINGERITE_FULL_SECONDS = 6;
   const SCHRODINGERITE_REFUEL_RATE_PER_SEC = SCHRODINGERITE_MAX / SCHRODINGERITE_FULL_SECONDS;
   // Variable 95 ("fuel") is the classic RPG-world-map tank (see the header
   // note above); a Hyperflux refuel tops it up too, on the same real-time
@@ -181,6 +185,17 @@
   // instead of leaving the party stranded on the world map with a full ship.
   const MAP_FUEL_MAX = 10000;
   const MAP_FUEL_REFUEL_RATE_PER_SEC = MAP_FUEL_MAX / REFUEL_FULL_SECONDS;
+  // Drinking off a star cooks the hull: while the pumps run the heat soaking
+  // through the plating climbs the whole time, and the ship interior (map 721)
+  // reads that as a rising cabin temperature (see WeatherSystem's ship heat
+  // offset). Degrees Celsius added on top of whatever the interior would
+  // otherwise sit at, at a full soak.
+  const REFUEL_HEAT_MAX_C = 45;
+  // The climb is spread over one full tank, so a quick top-up leaves a warm
+  // cabin and a run from empty an uncomfortable one.
+  const REFUEL_HEAT_RISE_PER_SEC = REFUEL_HEAT_MAX_C / REFUEL_FULL_SECONDS;
+  // Radiating it back out takes noticeably longer than soaking it up.
+  const REFUEL_HEAT_COOL_PER_SEC = REFUEL_HEAT_MAX_C / 90;
   // The warp-speed slider (Variable 94) is calibrated for crossing light-years
   // between stars; applied unmodified to a hop between two planets a handful
   // of AU apart it made every intra-system trip read as instantaneous
@@ -546,6 +561,9 @@
         // True while parked at a main-sequence star and actively refuelling
         // (see startRefuel/stopRefuel/tickRefuel).
         isRefueling: false,
+        // Degrees Celsius of stellar heat currently soaked into the hull (see
+        // tickRefuelHeat / getRefuelHeat).
+        refuelHeatC: 0,
         // Open Schrodingerite flyby, if any: { name, elapsed } (see
         // beginSchrodingeriteHarvest / tickSchrodingeriteHarvest).
         harvestRun: null,
@@ -620,12 +638,35 @@
       return true;
     }
 
+    // A ship's orbit target is a planet OR one of its moons: `currentPlanet`
+    // holds whichever body the ship is actually at. This resolves that name to
+    // the body itself plus the PLANET whose orbit sets the ship's position in
+    // the system (a moon rides its parent's orbit at this scale).
+    resolveOrbitBody(systemName, bodyName) {
+      const sys = this.getSystem(systemName);
+      if (!sys || !bodyName) return null;
+      const planet = (sys.planets || []).find((p) => p.name === bodyName);
+      if (planet) return { system: sys, body: planet, host: planet, isMoon: false };
+      for (const p of sys.planets || []) {
+        const moon = (p.moons || []).find((m) => m.name === bodyName);
+        if (moon) return { system: sys, body: moon, host: p, isMoon: true };
+      }
+      return null;
+    }
+
+    // The planet whose orbit the ship rides while parked at `bodyName`.
+    getOrbitHostPlanet(systemName, bodyName) {
+      const rec = this.resolveOrbitBody(systemName, bodyName);
+      return rec ? rec.host : null;
+    }
+
     startTravelToPlanet(targetSystemName, targetPlanetName) {
       const targetSystem = this.getSystem(targetSystemName);
       if (!targetSystem) return false;
 
-      const planet = (targetSystem.planets || []).find((p) => p.name === targetPlanetName);
-      if (!planet) return false;
+      const rec = this.resolveOrbitBody(targetSystemName, targetPlanetName);
+      if (!rec) return false;
+      const planet = rec.host;
 
       this.playerShip.targetSystem = targetSystemName;
       this.playerShip.targetPlanet = targetPlanetName;
@@ -704,6 +745,28 @@
       const dz = s.position.z - origin.z;
       const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
       return Math.max(0, Math.min(1, d / span));
+    }
+
+    /**
+     * Hours the party sleeps or waits away aboard ship are hours the crossing
+     * keeps being flown. A skipped game minute is worth one second of the
+     * route (TRAVEL_SECONDS_PER_GAME_MINUTE), taken off by moving the
+     * departure stamp back; the Hyperflux for that stretch is burnt with it,
+     * because nobody wakes up at their destination with a full tank.
+     * @param {number} minutes game minutes skipped
+     * @returns {number} the seconds of flight the skip was worth
+     */
+    skipTravelTime(minutes) {
+      const ship = this.playerShip;
+      if (!ship || !ship.isMoving || !ship.departureTime) return 0;
+      const mins = Math.max(0, Number(minutes) || 0);
+      if (mins <= 0) return 0;
+
+      const seconds = mins * TRAVEL_SECONDS_PER_GAME_MINUTE;
+      ship.departureTime -= seconds * 1000;
+      if (ship.lastFuelTime) ship.lastFuelTime -= seconds * 1000;
+      this.updateShipPosition();
+      return seconds;
     }
 
     stopTravel(userStopped = true) {
@@ -864,8 +927,7 @@
     teleportToPlanetOrbit(systemName, planetName) {
       const sys = this.getSystem(systemName);
       if (!sys) return false;
-      const planet = (sys.planets || []).find((p) => p.name === planetName);
-      if (!planet) return false;
+      if (!this.resolveOrbitBody(systemName, planetName)) return false;
       this.stopTravel(false);
       this.playerShip.currentSystem = systemName;
       this.playerShip.currentPlanet = planetName;
@@ -977,6 +1039,29 @@
       if (this.getHyperflux() >= HYPERFLUX_MAX && this.getMapFuel() >= MAP_FUEL_MAX) {
         ship.isRefueling = false;
       }
+    }
+
+    // Advances the hull heat: rising the whole time the pumps run, bleeding
+    // away the rest of the time. Driven every frame by both the star map scene
+    // and the ship interior's backdrop, so the cabin keeps warming (and then
+    // cooling) with the star map closed. Returns the heat in degrees Celsius.
+    tickRefuelHeat(deltaSeconds) {
+      const ship = this.playerShip;
+      if (!ship) return 0;
+      const dt = Math.max(0, deltaSeconds || 0);
+      const cur = ship.refuelHeatC || 0;
+      const next = ship.isRefueling
+        ? Math.min(REFUEL_HEAT_MAX_C, cur + REFUEL_HEAT_RISE_PER_SEC * dt)
+        : Math.max(0, cur - REFUEL_HEAT_COOL_PER_SEC * dt);
+      ship.refuelHeatC = next;
+      return next;
+    }
+
+    // How much hotter than normal the interior is running right now, in degrees
+    // Celsius. The one answer WeatherSystem asks for.
+    getRefuelHeat() {
+      const ship = this.playerShip;
+      return (ship && ship.refuelHeatC) || 0;
     }
 
     // Real-time seconds left before the pumps top out, for the countdown the
@@ -1326,7 +1411,8 @@
       const currentSystem = this.getSystem(this.playerShip.currentSystem);
       if (!currentSystem) return;
 
-      const planet = currentSystem.planets.find((p) => p.name === this.playerShip.currentPlanet);
+      const planet = this.getOrbitHostPlanet(
+        this.playerShip.currentSystem, this.playerShip.currentPlanet);
       if (!planet || !planet.orbitRadius) {
         // If no planet found, center on star
         this.playerShip.position = {
@@ -1379,7 +1465,8 @@
       const orbitRadius = this.playerShip.orbitRadius;
 
       if (this.playerShip.currentPlanet) {
-        const planet = currentSystem.planets.find((p) => p.name === this.playerShip.currentPlanet);
+        const planet = this.getOrbitHostPlanet(
+          this.playerShip.currentSystem, this.playerShip.currentPlanet);
         if (planet && planet.orbitRadius) {
           const planetAngle = planet.phase || 0;
           const planetOrbitRadius = planet.orbitRadius || 1;
@@ -1503,6 +1590,10 @@
               hubble: !!planet.hubble,
               noLanding: !!planet.noLanding,
               debris: planet.debris || null,
+              // A world the dead never left: its surface fields ghosts instead
+              // of the seeded fauna, whatever its biosignature reads (see
+              // GalaxySim.currentWorldIsHaunted).
+              haunted: planet.haunted === true ? true : undefined,
               moons: [],
             };
 
@@ -1527,6 +1618,7 @@
                   // third): the calendar takes it out of this array and puts
                   // it back, see GalaxySim.FridayMoons in GalaxySim_Core.
                   friday: moon.friday === true ? true : undefined,
+                  haunted: moon.haunted === true ? true : undefined,
                 });
               });
             }
@@ -2608,6 +2700,8 @@
   StarMapDataManager.SCHRODINGERITE_FULL_SECONDS = SCHRODINGERITE_FULL_SECONDS;
   StarMapDataManager.SCHRODINGERITE_HARVEST_SECONDS = SCHRODINGERITE_HARVEST_SECONDS;
   StarMapDataManager.SCHRODINGERITE_HARVEST_AMOUNT = SCHRODINGERITE_HARVEST_AMOUNT;
+  // The cabin heat a full soak adds, exposed for the same reason.
+  StarMapDataManager.REFUEL_HEAT_MAX_C = REFUEL_HEAT_MAX_C;
   window.GalaxySim.NameGenerators = {
     generateProceduralGalaxyName,
     generateProceduralSuperclusterName,

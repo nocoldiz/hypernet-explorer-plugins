@@ -248,7 +248,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": true
     },
@@ -466,8 +466,8 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Physicist": 2,
-        "Meteorologist": 2,
+        "Technomage": 2,
+        "Meteoarcanist": 2,
         "Oracle": 2
       },
       "implemented": true
@@ -1658,7 +1658,7 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Meteorologist": 2
+        "Meteoarcanist": 2
       },
       "implemented": false
     },
@@ -1733,7 +1733,7 @@
         "Archmage": 2,
         "Sage": 2,
         "Academic": 3,
-        "Physicist": 2
+        "Technomage": 2
       },
       "traitStart": {
         "genius": 3
@@ -1748,7 +1748,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": false
     },
@@ -1967,7 +1967,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": false
     },
@@ -2102,7 +2102,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": false
     },
@@ -2136,7 +2136,7 @@
       "sentient": true,
       "classStart": {
         "Scientist": 2,
-        "Meteorologist": 2
+        "Meteoarcanist": 2
       },
       "traitStart": {
         "skeptic": 2
@@ -2785,7 +2785,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 3
+        "Plant Mage": 3
       },
       "traitStart": {
         "farmer": 3
@@ -3158,7 +3158,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": false
     },
@@ -3247,7 +3247,7 @@
       "sentient": true,
       "classStart": {
         "Ice Mage": 2,
-        "Meteorologist": 2
+        "Meteoarcanist": 2
       },
       "implemented": false
     },
@@ -3313,7 +3313,7 @@
         "Construction Worker": 3,
         "Hunter-Gatherer": 3,
         "Shopkeeper": 3,
-        "Meteorologist": 3,
+        "Meteoarcanist": 3,
         "Entertainer": 3,
         "Demigod": 3,
         "Wretch": 3,
@@ -3414,7 +3414,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": false
     },
@@ -3477,10 +3477,10 @@
         "Psyker": 3,
         "Archaeologist": 3,
         "Nurse": 3,
-        "Physicist": 3,
+        "Technomage": 3,
         "Mechanic": 3,
         "Shopkeeper": 3,
-        "Meteorologist": 3,
+        "Meteoarcanist": 3,
         "Entertainer": 3,
         "Demigod": 3,
         "Wretch": 3,
@@ -3657,7 +3657,7 @@
         "Sage": 3,
         "Construction Worker": 3,
         "Shopkeeper": 3,
-        "Farmer": 3,
+        "Plant Mage": 3,
         "Priest": 3,
         "Demigod": 3,
         "Wretch": 3,
@@ -3924,7 +3924,7 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Meteorologist": 2
+        "Meteoarcanist": 2
       },
       "implemented": false
     },
@@ -3936,7 +3936,7 @@
       "category": "Survival",
       "sentient": true,
       "classStart": {
-        "Farmer": 2
+        "Plant Mage": 2
       },
       "implemented": false
     },
@@ -5070,7 +5070,7 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Meteorologist": 3
+        "Meteoarcanist": 3
       },
       "implemented": false
     },
@@ -5384,7 +5384,7 @@
       "sentient": true,
       "classStart": {
         "Scientist": 2,
-        "Physicist": 2
+        "Technomage": 2
       },
       "implemented": true
     },
@@ -5839,7 +5839,7 @@
       "sentient": true,
       "classStart": {
         "Scientist": 2,
-        "Physicist": 3
+        "Technomage": 3
       },
       "implemented": true
     },
@@ -6378,7 +6378,7 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Physicist": 2
+        "Technomage": 2
       },
       "implemented": false
     },
@@ -6435,7 +6435,7 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Physicist": 2
+        "Technomage": 2
       },
       "implemented": true
     },
@@ -6899,8 +6899,8 @@
       "category": "Science",
       "sentient": true,
       "classStart": {
-        "Physicist": 2,
-        "Meteorologist": 2
+        "Technomage": 2,
+        "Meteoarcanist": 2
       },
       "implemented": false
     },
@@ -7517,7 +7517,7 @@
       "sentient": true,
       "classStart": {
         "Academic": 2,
-        "Meteorologist": 2
+        "Meteoarcanist": 2
       },
       "traitStart": {
         "skeptic": 2
@@ -8934,6 +8934,15 @@
       "category": "Science",
       "sentient": true,
       "implemented": false
+    },
+    {
+      "id": 902,
+      "name": "Enchanting",
+      "description": "Binding a spell into an object so the object can spend it, and keeping the object whole while it does.",
+      "stat": "INT",
+      "category": "Arcana",
+      "sentient": true,
+      "implemented": true
     }
   ]
 }

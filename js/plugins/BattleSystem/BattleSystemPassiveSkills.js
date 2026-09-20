@@ -595,10 +595,10 @@
     // Archaeologist
   });
   reg(53, {
-    // Physicist
+    // Technomage
   });
   reg(58, {
-    // Meteorologist
+    // Meteoarcanist
     // Weather they can read is weather they can work in: rain, a storm or snow
     // falling on them is worth 5% of their MP and 5 TP a turn. `weatherType()`
     // is the engine's own answer and the one every other plugin asks
@@ -641,7 +641,7 @@
     // Hunter-Gatherer
   });
   reg(56, {
-    // Farmer
+    // Plant Mage
   });
   reg(57, {
     // Lumberjack

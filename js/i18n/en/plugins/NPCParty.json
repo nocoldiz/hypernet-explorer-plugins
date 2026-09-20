@@ -5,5 +5,12 @@
   "joinsParty": "{name} joins the party!",
   "residence": "Residence",
   "joinedInactive": "{name} signs on, but there is no room on the road: they wait in the reserves.",
-  "benchedLore": "{name} agreed to travel with the party, and has been waiting for a place in it ever since."
+  "benchedLore": "{name} agreed to travel with the party, and has been waiting for a place in it ever since.",
+  "lodging": {
+    "halls": "the Stairs Hall",
+    "house": "the house in {place}",
+    "ship": "the starship",
+    "vault": "the vault",
+    "cannotJoin": "{name} cannot take the road again right now."
+  }
 }

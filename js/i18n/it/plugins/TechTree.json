@@ -286,5 +286,36 @@
   },
   "toast": {
     "title": "Scoperta"
+  },
+  "lyceum": {
+    "appName": "Lyceum",
+    "subtitle": "Il registro di ciò che questo mondo ha scoperto, e di ciò che resta aperto.",
+    "register": "Il registro",
+    "worldProgress": "{done} su {total} scoperte",
+    "benchNote": "Solo lettura e direzione. La ricerca vera si fa al banco.",
+    "project": "Progetto in corso",
+    "noProject": "Il laboratorio non ha un progetto. Assegnane uno e la squadra ci si mette.",
+    "makeProject": "Assegna come progetto",
+    "clearProject": "Annulla",
+    "currentProject": "Il laboratorio è su questo.",
+    "projectSet": "Il laboratorio ha i suoi ordini.",
+    "projectCleared": "Progetto annullato.",
+    "daysOfWork": "(a {n} giorni di lavoro)",
+    "noWorkforce": "(nessuno lo sta raccogliendo)",
+    "colField": "Campo",
+    "colAbout": "Di cosa tratta",
+    "colWorkedOut": "Scoperte",
+    "colWork": "Lavoro",
+    "colState": "Stato",
+    "colTakes": "Richiede",
+    "workedOut": "{done} su {total} scoperte in questo campo.",
+    "done": "Nota",
+    "ready": "Pronta da eseguire",
+    "open": "Aperta",
+    "locked": "Attende lavori precedenti",
+    "noMaterials": "Nulla, solo tempo",
+    "latest": "Di recente",
+    "nothingYet": "In questo mondo nessuno ha ancora messo nulla per iscritto.",
+    "by": "di {who}"
   }
 }

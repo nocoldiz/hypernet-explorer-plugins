@@ -592,9 +592,11 @@
   }
 
   function reportCompany(animalId) {
-    window.skipLocalization = true;
-    $gameMessage.add(T('AnimalGrowth.company', { animal: animalId }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('AnimalGrowth.company', { animal: animalId }), {
+        severity: 'info'
+      });
+    }
   }
 
   // Announces a collection through the message window, in the caller's voice.
@@ -602,9 +604,11 @@
     for (const r of items) {
       const item = $dataItems[r.itemId];
       if (!item) continue;
-      window.skipLocalization = true;
-      $gameMessage.add(T('AnimalGrowth.collected', { icon: item.iconIndex, item: item.name, qty: r.qty }));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('AnimalGrowth.collected', { icon: item.iconIndex, item: item.name, qty: r.qty }), {
+          severity: 'good'
+        });
+      }
     }
   }
 
@@ -1503,11 +1507,13 @@
       reportCollected(items);
       return;
     }
-    window.skipLocalization = true;
-    $gameMessage.add(isHungry(rec)
-      ? T('AnimalGrowth.tooHungryToProduce', { animal: rec.animalId })
-      : T('AnimalGrowth.nothingReady', { animal: rec.animalId }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(isHungry(rec)
+        ? T('AnimalGrowth.tooHungryToProduce', { animal: rec.animalId })
+        : T('AnimalGrowth.nothingReady', { animal: rec.animalId }), {
+        severity: 'warning'
+      });
+    }
   }
 
   // The menu itself. Built rather than authored, so an animal added to the
@@ -1568,9 +1574,11 @@
   function openAnimalsTab() {
     const fs = window.FurnitureSystem;
     if (fs && typeof fs.openBuildMenu === "function" && fs.openBuildMenu("animals")) return;
-    window.skipLocalization = true;
-    $gameMessage.add(T('AnimalGrowth.cannotKeep'));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('AnimalGrowth.cannotKeep'), {
+        severity: 'warning'
+      });
+    }
   }
 
   PluginManager.registerCommand(pluginName, "AnimalMenu", openAnimalsTab);
@@ -1582,18 +1590,22 @@
     updateGrowth(mapId, eventId);
     const rec = getRecord(mapId, eventId);
     if (!rec || !rec.animalId) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('AnimalGrowth.noAnimalToSell'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('AnimalGrowth.noAnimalToSell'), {
+          severity: 'warning'
+        });
+      }
       return;
     }
     const def = ANIMAL_DB[rec.animalId];
     const val = sellValueOf(rec, def);
     $gameParty.gainGold(val);
     SoundManager.playShop();
-    window.skipLocalization = true;
-    $gameMessage.add(T('AnimalGrowth.sold', { animal: rec.animalId, amount: (val / 100).toFixed(2) }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('AnimalGrowth.sold', { animal: rec.animalId, amount: (val / 100).toFixed(2) }), {
+        severity: 'good'
+      });
+    }
     deleteRecord(mapId, eventId);
     const ev = $gameMap.event(eventId);
     if (ev) applySprite(ev, null);
@@ -1613,9 +1625,11 @@
       SoundManager.playShop();
       reportCollected(items);
     } else if (!company) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('AnimalGrowth.nothingToCollect'));
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('AnimalGrowth.nothingToCollect'), {
+          severity: 'warning'
+        });
+      }
     }
     if (company) reportCompany(rec.animalId);
     // Saved either way: keepCompany stamps the record even when there was
@@ -1657,15 +1671,26 @@
       reportCompany(rec.animalId);
       return;
     }
-    window.skipLocalization = true;
     if (rec.stage === "baby") {
       const remaining = Math.max(0, def.growthDays * MINUTES_PER_DAY - (rec.effectiveGrowthMinutes || 0));
       const days = Math.ceil(remaining / MINUTES_PER_DAY);
-      $gameMessage.add(T.n('AnimalGrowth.youngAnimal', days, { animal: rec.animalId }));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T.n('AnimalGrowth.youngAnimal', days, { animal: rec.animalId }), {
+          severity: 'info'
+        });
+      }
     } else if ((def.produces || []).length === 0) {
-      $gameMessage.add(T('AnimalGrowth.pleased', { animal: rec.animalId }));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('AnimalGrowth.pleased', { animal: rec.animalId }), {
+          severity: 'info'
+        });
+      }
     } else {
-      $gameMessage.add(T('AnimalGrowth.nothingReady', { animal: rec.animalId }));
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('AnimalGrowth.nothingReady', { animal: rec.animalId }), {
+          severity: 'warning'
+        });
+      }
     }
     window.skipLocalization = false;
   });

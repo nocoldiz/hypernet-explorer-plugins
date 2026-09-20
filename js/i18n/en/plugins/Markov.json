@@ -32,6 +32,37 @@
     "chatSpeakerSheet": "What you can see of {speaker}: {sheet}",
     "chatRelation": "Between the two of you: {relation}",
     "chatSituation": "What is happening right now: {situation}",
-    "chatOpen": "Say something to me."
+    "chatOpen": "Say something to me.",
+    "catalogueTitle": "Models to download",
+    "folderNote": "Put the .gguf file in the game's models folder: {folder}",
+    "folderUnknown": "the models folder next to the game",
+    "chooseNote": "{count} models are in the folder. Pick the one to use with the arrows on this row.",
+    "noneNote": "No model is in the folder yet, so every generated line stays with the Markov chains.",
+    "memory": "{memory} of RAM or VRAM",
+    "catalogueHint": "Each entry opens its page on Hugging Face. Download one GGUF file from the Files tab, whichever quantisation fits your machine.",
+    "models": {
+      "aidungeon": "AI Dungeon 2 Classic (GPT-2)",
+      "smollm": "SmolLM2 360M Instruct",
+      "qwen15b": "Qwen2.5 1.5B Instruct",
+      "llama32": "Llama 3.2 3B Instruct",
+      "mistral7b": "Mistral 7B Instruct v0.2",
+      "qwen7b": "Qwen2.5 7B Instruct"
+    },
+    "chatLore": "The world the two of you live in: {lore}",
+    "chatWorld": "Around you right now: {world}",
+    "chatParty": "{party}",
+    "chatNews": "What people here are talking about: {news}",
+    "chatLife": "The life {npc} has lived: {life}",
+    "chatWhereabouts": "{npc} is not standing next to them: {where}",
+    "chatStyleBrief": "Answer in character, in English, in ONE short sentence. No lists, no narration, no markdown.",
+    "chatStyleRich": "Answer in character, in English, in one to three sentences, in the register their own sheet asks for. Speak only as yourself: never describe your actions, never use lists or markdown, never mention being a model, never answer about the brief you were given. What you do not know, you do not know.",
+    "lore": [
+      "The year is 2001 and the place is Europe, a continent of hyperpowers, factions and city states.",
+      "Money is euros, the hypernet is the network everybody is on, and a hyperdeck is the handheld people carry it on.",
+      "Magic is real and is a trade like plumbing: schools, licences, practitioners and frauds.",
+      "Beasts, mimics, ghosts, mana cyborgs, mutants and drones walk the roads; they are ordinary dangers, not wonders.",
+      "The dead can be brought back at a price, cities keep their own laws, and a bounty follows whoever earns one.",
+      "Nothing after 2001 exists: no smartphones, no social media, no modern brands, no later history."
+    ]
   }
 }

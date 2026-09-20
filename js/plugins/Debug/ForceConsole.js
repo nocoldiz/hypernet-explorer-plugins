@@ -216,6 +216,11 @@
             const stack = (event.error && event.error.stack) ||
                 `${event.message} (${event.filename}:${event.lineno}:${event.colno})`;
             logEntry('UNCAUGHT', [err && err.message ? err.message : event.message], stack);
+            // A fatal error stops the loop and the window is closed on it,
+            // which on this runtime does not always fire 'exit': the 2s flush
+            // timer never comes round and the one entry worth having is the
+            // one that never reaches the file. Fatals are written out at once.
+            flushLogBuffer(true);
         });
 
         // Unhandled promise rejections
@@ -223,6 +228,7 @@
             const reason = event.reason;
             const stack = (reason && reason.stack) || '';
             logEntry('REJECTION', [reason && reason.message ? reason.message : reason], stack);
+            flushLogBuffer(true);
         });
     }
 
@@ -250,17 +256,44 @@
         }
     }
 
+    // The message alone does not say where a crash came from, and a fatal is
+    // the one moment the game cannot be asked again: the engine's box prints
+    // the name and the message and drops the stack (rmmz_core's
+    // Graphics._makeErrorHtml ignores its third argument). The stack is put
+    // back under them, so a screenshot of the box is a bug report. No label is
+    // drawn over it: the trace is its own heading, and nothing here is prose.
+    if (typeof Graphics !== 'undefined' && Graphics._makeErrorHtml) {
+        const _makeErrorHtml = Graphics._makeErrorHtml;
+        Graphics._makeErrorHtml = function(name, message, error) {
+            let html = _makeErrorHtml.call(this, name, message, error);
+            const stack = error && (error.stack ||
+                (error.error && error.error.stack) ||
+                (error.filename ? `${error.filename}:${error.lineno}:${error.colno}` : ''));
+            if (stack) {
+                const div = document.createElement('div');
+                div.id = 'errorStack';
+                div.style.cssText = 'margin-top:12px;font-size:12px;line-height:1.4;' +
+                    'text-align:left;white-space:pre-wrap;word-break:break-all;' +
+                    'max-height:45vh;overflow:auto;opacity:0.85';
+                div.textContent = String(stack);
+                html += div.outerHTML;
+            }
+            return html;
+        };
+    }
     if (typeof SceneManager !== 'undefined') {
         const _catchException = SceneManager.catchException;
         SceneManager.catchException = function(e) {
             _catchException.call(this, e);
             try { uncoverErrorScreen(); } catch (err) { /* nothing left to do */ }
+            try { flushLogBuffer(true); } catch (err) { /* nothing left to do */ }
         };
 
         const _onError = SceneManager.onError;
         SceneManager.onError = function(event) {
             _onError.call(this, event);
             try { uncoverErrorScreen(); } catch (err) { /* nothing left to do */ }
+            try { flushLogBuffer(true); } catch (err) { /* nothing left to do */ }
         };
     }
 

@@ -19,7 +19,8 @@
     "stoneThrown": "Hai lanciato un sasso al nemico!",
     "petSuccess": "Al nemico sembra piacere essere accarezzato!",
     "petFail": "Il nemico non vuole essere accarezzato.",
-    "petRefuse": "Questa creatura non risponde alle carezze."
+    "petRefuse": "Questa creatura non risponde alle carezze.",
+    "outOfReach": "{name} ti squadra e si volta dall'altra parte.\nNon ha motivo di seguire un gruppo così inferiore."
   },
   "choices": [
     "Chiacchiera",

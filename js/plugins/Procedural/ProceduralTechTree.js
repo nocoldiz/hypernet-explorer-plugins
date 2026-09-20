@@ -917,7 +917,7 @@
         _builtSeed = null;
         buildAllTrees();
         reconcileBuffs();
-        if ($gameMessage) $gameMessage.add(T('TechTree.treeRegenerated'));
+        if (window.ParchmentToast) window.ParchmentToast.show(T('TechTree.treeRegenerated'), { severity: 'info' });
     });
 
     PluginManager.registerCommand(pluginName, 'resetProgress', () => {
@@ -927,7 +927,7 @@
         }
         if ($gameSystem) $gameSystem._techTreeState = { completed: {}, discoverers: {}, feed: [] };
         reconcileBuffs();
-        if ($gameMessage) $gameMessage.add(T('TechTree.progressCleared'));
+        if (window.ParchmentToast) window.ParchmentToast.show(T('TechTree.progressCleared'), { severity: 'info' });
     });
 
     // ------------------------------------------------------- main menu entry
@@ -986,6 +986,263 @@
     };
 
     // --------------------------------------------------------------- export
+    //=========================================================================
+    // Lyceum: the research register, as a HypernetOS program
+    //=========================================================================
+    // Discoveries belong to the world, not to the savegame, so the register is
+    // the one page in the machine that is worth reading in an idle hour: what
+    // this world has worked out, what is standing open, what the next piece of
+    // work would take and who got there first. The bench work itself is done at
+    // the bench. The one thing this page may do is name the project the lab is
+    // to run next, which is a directive rather than an act.
+    const LYC_APP_ID = 'app-lyceum';
+    const LYC_ICON = 229; // Gray Book, per js/db/Sprites/Icons.json
+
+    const LY = {
+        app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+        header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+                "background:linear-gradient(to bottom,#3d5a8a,#2b416b); color:var(--xp-white); border-bottom:2px solid #16233c;",
+        nav: "width:170px; flex-shrink:0; overflow-y:auto; background:var(--xp-face-6); " +
+             "border-right:1px solid var(--xp-face-shade); padding:8px 0;",
+        navItem: "padding:8px 12px; cursor:pointer; border-left:4px solid transparent; user-select:none;",
+        panel: "flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;",
+        status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+                "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+        card: "background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;",
+        h: "margin:0 0 8px; font-size:17px; font-weight:bold; color:#2b416b;",
+        note: "color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;",
+        btn: "display:inline-block; padding:4px 10px; margin:4px 6px 0 0; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); " +
+             "border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:14px; user-select:none;",
+        table: "width:100%; border-collapse:collapse; font-size:14px;",
+        th: "text-align:left; padding:4px 6px; border-bottom:1px solid var(--xp-face-shade); color:#2b416b; font-weight:bold;",
+        td: "padding:4px 6px; border-bottom:1px solid #e6e3d8; vertical-align:top;",
+    };
+
+    const lyEsc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const lyIcon = (index, size) => (window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : '');
+
+    window.Lyceum = {
+        win: null,
+        treeId: null,
+        message: '',
+
+        launch() {
+            if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+            const win = window.HypernetOS.WindowManager.createWindow({
+                id: LYC_APP_ID,
+                title: T('TechTree.lyceum.appName'),
+                icon: LYC_ICON,
+                width: 860,
+                height: 580,
+                contentHTML: `
+                    <div style="${LY.app}">
+                        <div style="${LY.header}">
+                            <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${lyIcon(LYC_ICON, 34)}</div>
+                            <div style="flex:1; min-width:0">
+                                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('TechTree.lyceum.appName')}</div>
+                                <div style="font-size:13px; opacity:0.82">${T('TechTree.lyceum.subtitle')}</div>
+                            </div>
+                            <div id="ly-count" style="font-size:14px; opacity:0.9"></div>
+                        </div>
+                        <div style="display:flex; flex:1; min-height:0">
+                            <div id="ly-nav" style="${LY.nav}"></div>
+                            <div id="ly-panel" style="${LY.panel}"></div>
+                        </div>
+                        <div style="${LY.status}">
+                            <span id="ly-msg" style="color:#2b416b">${T('TechTree.lyceum.benchNote')}</span>
+                        </div>
+                    </div>`
+            });
+            this.win = win;
+            this.bind();
+            this.render();
+        },
+
+        bind() {
+            if (!this.win || this.win.dataset.lyBound) return;
+            this.win.dataset.lyBound = '1';
+            this.win.addEventListener('click', ev => {
+                const tab = ev.target.closest('[data-ly-tab]');
+                if (tab) {
+                    ev.stopPropagation();
+                    this.treeId = tab.dataset.lyTab === '*' ? null : tab.dataset.lyTab;
+                    if (window.SoundManager) SoundManager.playCursor();
+                    this.render();
+                    return;
+                }
+                const set = ev.target.closest('[data-ly-project]');
+                if (set) {
+                    ev.stopPropagation();
+                    const [treeId, nodeId] = set.dataset.lyProject.split('|');
+                    if (nodeId) {
+                        setActiveProject(treeId, nodeId);
+                        this.message = T('TechTree.lyceum.projectSet');
+                    } else {
+                        clearActiveProject();
+                        this.message = T('TechTree.lyceum.projectCleared');
+                    }
+                    if (window.SoundManager) SoundManager.playOk();
+                    this.render();
+                }
+            });
+        },
+
+        render() {
+            if (!this.win || !this.win.isConnected) return;
+            let trees = [];
+            try { trees = buildAllTrees(); } catch (e) { console.warn('[Lyceum]', e); }
+            const nav = this.win.querySelector('#ly-nav');
+            if (nav) {
+                const rows = [`<div class="focusable" tabindex="0" id="ly-tab-all" data-ly-tab="*"
+                    style="${LY.navItem}${this.treeId == null ? 'background:var(--xp-face-2); border-left-color:#3d5a8a; font-weight:bold;' : ''}">
+                    ${T('TechTree.lyceum.register')}</div>`];
+                for (const tree of trees) {
+                    const counts = treeCounts(tree);
+                    const on = this.treeId === tree.id;
+                    rows.push(`<div class="focusable" tabindex="0" id="ly-tab-${lyEsc(tree.id)}" data-ly-tab="${lyEsc(tree.id)}"
+                        style="${LY.navItem}${on ? 'background:var(--xp-face-2); border-left-color:#3d5a8a; font-weight:bold;' : ''}">
+                        ${lyEsc(treeName(tree))}
+                        <div style="${LY.note}">${counts.done}/${counts.total}</div></div>`);
+                }
+                nav.innerHTML = rows.join('');
+            }
+            const panel = this.win.querySelector('#ly-panel');
+            if (panel) {
+                const tree = this.treeId ? trees.find(t => t.id === this.treeId) : null;
+                panel.innerHTML = tree ? this.treeHTML(tree) : this.registerHTML(trees);
+            }
+            const count = this.win.querySelector('#ly-count');
+            if (count) {
+                const done = trees.reduce((n, t) => n + treeCounts(t).done, 0);
+                const all = trees.reduce((n, t) => n + treeCounts(t).total, 0);
+                count.textContent = T('TechTree.lyceum.worldProgress', { done: done, total: all });
+            }
+            const msg = this.win.querySelector('#ly-msg');
+            if (msg) msg.textContent = this.message || T('TechTree.lyceum.benchNote');
+        },
+
+        projectHTML(trees) {
+            const active = getActiveProject();
+            if (!active) {
+                return `<div style="${LY.card} ${LY.note}">${T('TechTree.lyceum.noProject')}</div>`;
+            }
+            const tree = trees.find(t => t.id === active.treeId);
+            const node = tree && tree.byId[active.nodeId];
+            if (!node) return '';
+            const output = workforceDailyOutput(node) || [];
+            const lines = (node.materials || []).map(m => {
+                const item = $dataItems[m.id];
+                const have = item ? $gameParty.numItems(item) : 0;
+                const daily = (output.find(o => o.id === m.id) || {}).qty || 0;
+                const short = Math.max(0, m.qty - have);
+                return `<div style="${LY.note}">${lyIcon(item ? item.iconIndex : 0)} ${lyEsc(item ? item.name : m.id)}
+                    ${have}/${m.qty}${short && daily > 0
+                        ? ' ' + T('TechTree.lyceum.daysOfWork', { n: Math.ceil(short / daily) })
+                        : (short ? ' ' + T('TechTree.lyceum.noWorkforce') : '')}</div>`;
+            }).join('');
+            return `<div style="${LY.card}">
+                <b>${T('TechTree.lyceum.project')}: ${lyEsc(nodeName(node))}</b>
+                <div style="${LY.note}">${lyEsc(treeName(tree))}</div>
+                ${lines}
+                <span class="focusable" tabindex="0" data-ly-project="${lyEsc(active.treeId)}|" style="${LY.btn}">
+                    ${T('TechTree.lyceum.clearProject')}</span>
+            </div>`;
+        },
+
+        registerHTML(trees) {
+            const feed = (discoveryFeed() || []).slice(-12).reverse();
+            const rows = trees.map(tree => {
+                const counts = treeCounts(tree);
+                const pct = counts.total ? Math.round(counts.done / counts.total * 100) : 0;
+                return `<tr>
+                    <td style="${LY.td}">${lyEsc(treeName(tree))}</td>
+                    <td style="${LY.td} ${LY.note}">${lyEsc(treeBlurb(tree))}</td>
+                    <td style="${LY.td} text-align:right">${counts.done}/${counts.total} (${pct}%)</td>
+                </tr>`;
+            }).join('');
+            return `
+                <h2 style="${LY.h}">${T('TechTree.lyceum.register')}</h2>
+                ${this.projectHTML(trees)}
+                <div style="${LY.card} padding:6px 8px"><table style="${LY.table}">
+                    <thead><tr>
+                        <th style="${LY.th}">${T('TechTree.lyceum.colField')}</th>
+                        <th style="${LY.th}">${T('TechTree.lyceum.colAbout')}</th>
+                        <th style="${LY.th} text-align:right">${T('TechTree.lyceum.colWorkedOut')}</th>
+                    </tr></thead><tbody>${rows}</tbody></table></div>
+                <h3 style="${LY.h}">${T('TechTree.lyceum.latest')}</h3>
+                ${feed.length ? `<div style="${LY.card}">${feed.map(entry =>
+                    `<div style="${LY.note}">${lyEsc(this.feedLine(entry))}</div>`).join('')}</div>`
+                    : `<div style="${LY.card} ${LY.note}">${T('TechTree.lyceum.nothingYet')}</div>`}`;
+        },
+
+        // A feed entry is written by whoever made the discovery, in whatever
+        // shape that plugin kept; the register prints what it can find on it.
+        feedLine(entry) {
+            if (!entry) return '';
+            if (typeof entry === 'string') return entry;
+            const who = entry.who || entry.discoverer || '';
+            const what = entry.name || entry.node || entry.nodeId || '';
+            const when = entry.date || entry.when || '';
+            return [when, what, who ? T('TechTree.lyceum.by', { who: who }) : ''].filter(Boolean).join(' - ');
+        },
+
+        treeHTML(tree) {
+            const active = getActiveProject();
+            const rows = tree.nodes.map(node => {
+                const done = isCompleted(tree.id, node.id);
+                const open = !done && prereqsMet(tree, node);
+                const ready = open && materialsSatisfied(node);
+                const who = done ? discovererOf(tree.id, node.id) : null;
+                const mats = (node.materials || []).map(m => {
+                    const item = $dataItems[m.id];
+                    const have = item ? $gameParty.numItems(item) : 0;
+                    return `${lyEsc(item ? item.name : m.id)} ${have}/${m.qty}`;
+                }).join(', ');
+                const state = done ? `<b style="color:#2e7d32">${T('TechTree.lyceum.done')}</b>`
+                    : ready ? `<b style="color:#2b416b">${T('TechTree.lyceum.ready')}</b>`
+                    : open ? T('TechTree.lyceum.open')
+                    : `<span style="${LY.note}">${T('TechTree.lyceum.locked')}</span>`;
+                const isProject = active && active.treeId === tree.id && active.nodeId === node.id;
+                const pick = (!done && open && !isProject)
+                    ? `<span class="focusable" tabindex="0" data-ly-project="${lyEsc(tree.id)}|${lyEsc(node.id)}" style="${LY.btn}">
+                        ${T('TechTree.lyceum.makeProject')}</span>` : '';
+                return `<tr>
+                    <td style="${LY.td}"><b>${lyEsc(nodeName(node))}</b>
+                        <div style="${LY.note}">${lyEsc(nodeDesc(node))}</div>
+                        ${who ? `<div style="${LY.note}">${T('TechTree.lyceum.by', { who: who })}</div>` : ''}</td>
+                    <td style="${LY.td}">${state}${isProject ? `<div style="${LY.note}">${T('TechTree.lyceum.currentProject')}</div>` : ''}${pick}</td>
+                    <td style="${LY.td} ${LY.note}">${mats || T('TechTree.lyceum.noMaterials')}</td>
+                </tr>`;
+            }).join('');
+            const counts = treeCounts(tree);
+            return `
+                <h2 style="${LY.h}">${lyEsc(treeName(tree))}</h2>
+                <div style="${LY.note} margin-bottom:8px">${lyEsc(treeBlurb(tree))}</div>
+                <div style="${LY.note} margin-bottom:8px">${T('TechTree.lyceum.workedOut', { done: counts.done, total: counts.total })}</div>
+                <div style="${LY.card} padding:6px 8px"><table style="${LY.table}">
+                    <thead><tr>
+                        <th style="${LY.th}">${T('TechTree.lyceum.colWork')}</th>
+                        <th style="${LY.th}">${T('TechTree.lyceum.colState')}</th>
+                        <th style="${LY.th}">${T('TechTree.lyceum.colTakes')}</th>
+                    </tr></thead><tbody>${rows}</tbody></table></div>
+                <div style="${LY.note}">${T('TechTree.lyceum.benchNote')}</div>`;
+        },
+    };
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: LYC_APP_ID,
+            name: T('TechTree.lyceum.appName'),
+            icon: LYC_ICON,
+            category: 'reference',
+            launchFn: function () { window.Lyceum.launch(); },
+            desktopShortcut: true,
+        });
+    }
+
     window.ProceduralTechTree = {
         TREE_ORDER,
         STAT_BUFFS,

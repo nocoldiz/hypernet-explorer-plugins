@@ -671,7 +671,10 @@
       'position:fixed;display:none;z-index:350;pointer-events:none;' +
       'transform-origin:top left;';
 
-    // Right click anywhere on overlay cancels / backs out
+    // Right click closes whatever picker is open on top of the list (a target
+    // window, a sub menu) and does nothing at all on the bare command list:
+    // backing out of that one hands the turn around and buzzes, which is not
+    // what a stray right click on the battle screen should ever do.
     root.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -680,8 +683,6 @@
         if (typeof this._targetSession.activeWindow.processCancel === 'function') {
           this._targetSession.activeWindow.processCancel();
         }
-      } else if (this.active && this.isCancelEnabled()) {
-        this.processCancel();
       }
     });
 
@@ -751,8 +752,6 @@
             if (typeof this._targetSession.activeWindow.processCancel === 'function') {
               this._targetSession.activeWindow.processCancel();
             }
-          } else if (this.active && this.isCancelEnabled()) {
-            this.processCancel();
           }
           return;
         }
@@ -1604,23 +1603,19 @@
     TouchInput.clear();
   };
 
+  // A right click is not a cancel on the command list itself: only a key says
+  // "go back" there. The mouse keeps its cancel inside the pickers that open on
+  // top of the list (the enemy and ally windows), where backing out only closes
+  // what is open instead of passing the turn along with a buzzer.
   Window_ActorCommand.prototype.isCancelTriggered = function () {
     return (
       Input.isRepeated("cancel") ||
       Input.isTriggered("cancel") ||
-      Input.isTriggered("escape") ||
-      TouchInput.isCancelled()
+      Input.isTriggered("escape")
     );
   };
 
   Window_ActorCommand.prototype.processTouch = function () {
-    if (this.isOpenAndActive()) {
-      if (TouchInput.isCancelled()) {
-        if (this.isCancelEnabled()) {
-          this.processCancel();
-        }
-      }
-    }
   };
 
   Scene_Battle.prototype.commandCancel = function () {

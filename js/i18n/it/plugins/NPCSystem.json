@@ -78,6 +78,7 @@
     "cancel": "Annulla",
     "silent": "Ti guarda attraverso, con la mente altrove.",
     "otherParty": "In viaggio con il gruppo di {leader}",
-    "readOnly": "Appartiene a un altro viaggio. Puoi parlare, e nulla più."
+    "readOnly": "Appartiene a un altro viaggio. Puoi parlare, e nulla più.",
+    "join": "Chiedigli di unirsi"
   }
 }

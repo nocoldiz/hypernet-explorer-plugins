@@ -687,6 +687,41 @@
     };
 
     //=============================================================================
+    // Knowledge a character brings with them
+    //
+    // Everyone who joins the party arrives with a head full of what they
+    // already studied, and the pool is the party's, not theirs: a character
+    // made at creation and a character recruited off the road are worth the
+    // same. A party of two therefore starts on 500 KP.
+    //
+    // The grant is remembered by actor id, so a character who leaves and comes
+    // back is not a second payday.
+    //=============================================================================
+
+    const KP_PER_MEMBER = 250;
+    SkillMaster.KP_PER_MEMBER = KP_PER_MEMBER;
+
+    Game_System.prototype.grantJoinKnowledge = function (actorId) {
+        if (!actorId) return false;
+        if (!this._kpGrantedActors) this._kpGrantedActors = [];
+        if (this._kpGrantedActors.includes(actorId)) return false;
+        this._kpGrantedActors.push(actorId);
+        this.addKnowledge(KP_PER_MEMBER);
+        return true;
+    };
+
+    const _Game_Party_addActor_kp = Game_Party.prototype.addActor;
+    Game_Party.prototype.addActor = function (actorId) {
+        const had = this._actors.includes(actorId);
+        _Game_Party_addActor_kp.call(this, actorId);
+        if (!had && this._actors.includes(actorId) &&
+            typeof $gameSystem !== 'undefined' && $gameSystem &&
+            typeof $gameSystem.grantJoinKnowledge === 'function') {
+            $gameSystem.grantJoinKnowledge(actorId);
+        }
+    };
+
+    //=============================================================================
     // Skill power -> Knowledge cost
     //=============================================================================
 
@@ -1586,11 +1621,14 @@
         PluginManager.registerCommand(name, "increaseSkillProgress", args => {
             const amount = Number(args.amount || 1);
             $gameSystem.addKnowledge(amount);
-            window.skipLocalization = true;
             if (typeof T === 'function') {
-                $gameMessage.add(T('SkillMaster.knowledgeGained', {
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('SkillMaster.knowledgeGained', {
                     amount: amount, total: $gameSystem.getKnowledge(),
-                }));
+                                    }), {
+                    severity: 'good'
+                  });
+                }
             }
             window.skipLocalization = false;
         });
@@ -3496,18 +3534,25 @@
             this.invalidateLearnedSkillCaches();
             SoundManager.playRecovery();
 
-            window.skipLocalization = true;
             if (typeof T === 'function') {
                 if (rollRes.nat20) {
-                    $gameMessage.add(T('SkillMaster.fusionCritical', {
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.show(T('SkillMaster.fusionCritical', {
                         result: T('SkillMaster.fusedResult', {
                             name: fused.name, cost: cost, left: $gameSystem.getKnowledge(),
                         }),
-                    }));
+                                            }), {
+                        severity: 'good'
+                      });
+                    }
                 } else {
-                    $gameMessage.add(T('SkillMaster.fusedResult', {
+                    if (window.ParchmentToast) {
+                      window.ParchmentToast.show(T('SkillMaster.fusedResult', {
                         name: fused.name, cost: cost, left: $gameSystem.getKnowledge(),
-                    }));
+                                            }), {
+                        severity: 'good'
+                      });
+                    }
                 }
             }
             window.skipLocalization = false;
@@ -3516,11 +3561,14 @@
             this.invalidateLearnedSkillCaches();
             SoundManager.playBuzzer();
 
-            window.skipLocalization = true;
             if (typeof T === 'function') {
-                $gameMessage.add(T('SkillMaster.fusionFailed', {
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('SkillMaster.fusionFailed', {
                     dc: dc, components: components.map(c => c.name).join(' & '),
-                }));
+                                    }), {
+                    severity: 'good'
+                  });
+                }
             }
             window.skipLocalization = false;
         }
@@ -3542,9 +3590,12 @@
         this._editorFocus = FORGE_CREATE_IDX;
         SoundManager.playRecovery();
 
-        window.skipLocalization = true;
         if (typeof T === 'function') {
-            $gameMessage.add(T('SkillMaster.splitResult', { name: spell.name }));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('SkillMaster.splitResult', { name: spell.name }), {
+                severity: 'good'
+              });
+            }
         }
         window.skipLocalization = false;
 
@@ -4107,9 +4158,23 @@
     // two move together.
     const CATEGORY_PAGE_COLS = 3;
 
-    // The action buttons under the two school grids, in the order the ring
-    // walks them: the fusion forge, the spell bench, the skill bench.
-    const CATEGORY_ACTION_BTNS = ['.fuse-spells-btn', '.craft-spell-btn', '.craft-skill-btn'];
+    // The benches in the rail down the right edge of the sheet, in the order
+    // the cursor walks them down the column. The rail's markup is written in
+    // the same order, so the two can never drift apart.
+    const CATEGORY_ACTION_BTNS = ['.fuse-spells-btn', '.craft-spell-btn', '.magic-systems-btn',
+        '.craft-skill-btn', '.enchant-weapon-btn', '.enchant-armor-btn', '.enchant-book-btn',
+        '.write-skillbook-btn', '.write-grimorie-btn'];
+    const CATEGORY_ACTION_FNS = [
+        (sc) => sc.openSpellEditor(),
+        (sc) => sc.openCraftBench('spell'),
+        (sc) => sc.openMagicSystems(),
+        (sc) => sc.openCraftBench('skill'),
+        (sc) => sc.openEnchantBench('weapon'),
+        (sc) => sc.openEnchantBench('armor'),
+        (sc) => sc.openEnchantBench('book'),
+        (sc) => sc.openWriteBench('skillbook'),
+        (sc) => sc.openWriteBench('grimorie'),
+    ];
     const SKILL_GRID_COLS = 2;
     const ATLAS_ZOOM_DEFAULT = 1.0;
     const ATLAS_ZOOM_WHOLE = 0.65;
@@ -4254,6 +4319,7 @@
                     <div class="companion-switcher ui-switcher-row" id="skillmaster-companion-row"></div>
                     <div id="right-page-content" class="sm-page-body"></div>
                 </div>
+                <div id="sm-action-rail" class="sm-action-rail"></div>
             </div>
         `;
 
@@ -4881,7 +4947,7 @@
         const compRow = document.getElementById('skillmaster-companion-row');
         if (compRow) {
             const members = getSwitchableMembers();
-            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || members.length <= 1) {
+            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || this._viewMode === 'enchant' || this._viewMode === 'writebook' || members.length <= 1) {
                 compRow.classList.add('is-hidden');
                 compRow.innerHTML = '';
             } else {
@@ -4907,6 +4973,13 @@
         // The atlas takes the whole sheet: one class on the spread and the
         // stylesheet folds the right page and the spine away with it.
         if (spreadEl) spreadEl.classList.toggle('skill-fullpage', fullPageList);
+        // The school picker sets its two leaves to the same width and hangs
+        // every bench button in one rail down the right edge of the sheet.
+        if (spreadEl) spreadEl.classList.toggle('sm-cat-spread', this._viewMode === 'category');
+        if (this._viewMode !== 'category') {
+            const railOff = this._dndContainer.querySelector('#sm-action-rail');
+            if (railOff && railOff.innerHTML) railOff.innerHTML = '';
+        }
 
         if (compRow && !compRow.classList.contains('is-hidden')) {
             if (fullPageList && leftPageEl && compRow.parentNode !== leftPageEl) {
@@ -4919,6 +4992,7 @@
         }
 
         if (!graphSpread) this.closeSkillDetailPopup();
+        this.renderBenchPadTips();
 
         if (this._viewMode === 'spellEditor') {
             this.renderSpellEditor(useItalian, knowledge);
@@ -4927,6 +5001,16 @@
 
         if (this._viewMode === 'craft') {
             this.renderCraftBench(knowledge);
+            return;
+        }
+
+        if (this._viewMode === 'enchant') {
+            this.renderEnchantBench(knowledge);
+            return;
+        }
+
+        if (this._viewMode === 'writebook') {
+            this.renderWriteBench(knowledge);
             return;
         }
 
@@ -4978,6 +5062,11 @@
                 const skillsTitle = T('SkillMaster.skills');
 
                 const craftSkillLabel = T('SkillMaster.craft.buttonSkill');
+                const enchantWeaponLabel = T('SkillMaster.enchant.buttonWeapon');
+                const enchantArmorLabel = T('SkillMaster.enchant.buttonArmor');
+                const enchantBookLabel = T('SkillMaster.enchant.buttonBook');
+                const writeSkillBookLabel = T('SkillMaster.write.buttonSkillBook');
+                const writeGrimorieLabel = T('SkillMaster.write.buttonGrimorie');
                 leftPageHTML = `
                     <div class="page-header-bar">
                       <div class="back-button focusable" onclick="SceneManager._scene.categoryBack()">${backBtnText}</div>
@@ -4986,11 +5075,22 @@
                     <div id="category-scroll-box-left" class="skill-scroll-box sm-school-grid">
                         ${categoriesListHTML}
                     </div>
-                    <div class="inspect-actions sm-magic-actions">
-                        <div class="inspect-btn craft-skill-btn focusable" onclick="SceneManager._scene.openCraftBench('skill')">${craftSkillLabel}</div>
-                    </div>
+                `;
+                // The benches hang in the rail down the right edge of the
+                // sheet, not under the schools: one column for both pages.
+                this._railHTML = `
+                    <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${T('SkillMaster.fuseSpells')}</div>
+                    <div class="inspect-btn craft-spell-btn focusable" onclick="SceneManager._scene.openCraftBench('spell')">${T('SkillMaster.craft.buttonSpell')}</div>
+                    <div class="inspect-btn magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()">${T('SkillMaster.magicSystem.tabLabel')}</div>
+                    <div class="inspect-btn craft-skill-btn focusable" onclick="SceneManager._scene.openCraftBench('skill')">${craftSkillLabel}</div>
+                    <div class="inspect-btn enchant-weapon-btn focusable" onclick="SceneManager._scene.openEnchantBench('weapon')">${enchantWeaponLabel}</div>
+                    <div class="inspect-btn enchant-armor-btn focusable" onclick="SceneManager._scene.openEnchantBench('armor')">${enchantArmorLabel}</div>
+                    <div class="inspect-btn enchant-book-btn focusable" onclick="SceneManager._scene.openEnchantBench('book')">${enchantBookLabel}</div>
+                    <div class="inspect-btn write-skillbook-btn focusable" onclick="SceneManager._scene.openWriteBench('skillbook')">${writeSkillBookLabel}</div>
+                    <div class="inspect-btn write-grimorie-btn focusable" onclick="SceneManager._scene.openWriteBench('grimorie')">${writeGrimorieLabel}</div>
                 `;
             } else {
+                this._railHTML = '';
                 const returnBtnText = T('SkillMaster.back');
                 const onAtlas = this.usesGraphView();
                 const bodyHTML = onAtlas ? this.renderSkillAtlasHTML() : this.renderSkillListHTML();
@@ -5005,6 +5105,10 @@
             }
 
             leftPageBox.innerHTML = leftPageHTML;
+            // The rail only ever holds the school picker's benches; every
+            // other view leaves it empty and the sheet takes the width back.
+            const railBox = document.getElementById('sm-action-rail');
+            if (railBox) railBox.innerHTML = (this._viewMode === 'category') ? (this._railHTML || '') : '';
             this._lastLeftMode = leftMode;
             this._lastLeftCategory = this._selectedCategory;
         }
@@ -5075,26 +5179,12 @@
                 const magicListHTML = renderCategoryCardsHTML(split.Magic, 1);
                 const magicTitle = T('SkillMaster.magic');
                 const pupilLine = `<div class="sm-pupil-line">${T('SkillMaster.atlas.held', { knowledge: knowledge })}</div>`;
-                const fuseLabel = T('SkillMaster.fuseSpells');
-                const magicSysLabel = T('SkillMaster.magicSystem.tabLabel');
-
-                const craftSpellLabel = T('SkillMaster.craft.buttonSpell');
-                const fuseBtn = `
-                    <div class="inspect-btn fuse-spells-btn focusable" onclick="SceneManager._scene.openSpellEditor()">${fuseLabel}</div>
-                    <div class="inspect-btn craft-spell-btn focusable" onclick="SceneManager._scene.openCraftBench('spell')">${craftSpellLabel}</div>`;
-                const magicSystemsBtn = `
-                    <div class="inspect-btn magic-systems-btn focusable" onclick="SceneManager._scene.openMagicSystems()">${magicSysLabel}</div>`;
-
                 rightPageHTML = `
                     <div class="page-header-bar">
                       <h2 class="title">${magicTitle}</h2>
                     </div>
                     <div id="category-scroll-box-right" class="skill-scroll-box sm-school-grid">
                         ${magicListHTML}
-                    </div>
-                    <div class="inspect-actions sm-magic-actions">
-                        ${fuseBtn}
-                        ${magicSystemsBtn}
                     </div>
                     ${pupilLine}
                 `;
@@ -5396,11 +5486,14 @@
         // A field has focus somewhere on the sheet: every letter belongs to it
         // and nothing else on the page may read the keyboard.
         if (this._craftTyping) return;
+        // Same again for the letter sheet a pad types on: it answers every
+        // press itself until it is spent.
+        if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
 
         if (window.CCNav && window.CCNav.update()) return;
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
 
-        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'craft' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
+        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'craft' && this._viewMode !== 'enchant' && this._viewMode !== 'writebook' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
             if (Input.isTriggered('pagedown')) { this.cycleTeachActor(1); return; }
             if (Input.isTriggered('pageup')) { this.cycleTeachActor(-1); return; }
         }
@@ -5417,22 +5510,22 @@
             if (this._categoryFuseFocused) {
                 const act = this._categoryActionIndex || 0;
                 if (Input.isTriggered('ok')) {
-                    if (act === 1) this.openCraftBench('spell');
-                    else if (act === 2) this.openCraftBench('skill');
-                    else this.openSpellEditor();
+                    (CATEGORY_ACTION_FNS[act] || CATEGORY_ACTION_FNS[0])(this);
                     return;
                 }
                 if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
                     this.categoryBack();
                     return;
                 }
-                if (Input.isTriggered('right') || Input.isRepeated('right')) {
+                // The rail is a column now: down and up walk it, left steps
+                // back onto the schools.
+                if (Input.isTriggered('down') || Input.isRepeated('down')) {
                     this._categoryActionIndex = (act + 1) % CATEGORY_ACTION_BTNS.length;
                     SoundManager.playCursor();
                     this.refreshUISkillDOM();
                     return;
                 }
-                if (Input.isTriggered('left') || Input.isRepeated('left')) {
+                if (Input.isTriggered('up') || Input.isRepeated('up')) {
                     if (act > 0) {
                         this._categoryActionIndex = act - 1;
                         SoundManager.playCursor();
@@ -5440,7 +5533,8 @@
                         return;
                     }
                 }
-                if (Input.isTriggered('up') || Input.isRepeated('up') || Input.isTriggered('left') || Input.isRepeated('left')) {
+                if (Input.isTriggered('left') || Input.isRepeated('left') ||
+                    Input.isTriggered('up') || Input.isRepeated('up')) {
                     this._categoryFuseFocused = false;
                     this._categoryActionIndex = 0;
                     SoundManager.playCursor();
@@ -5449,10 +5543,7 @@
                 return;
             }
 
-            if (Input.isTriggered('shift')) {
-                this.openSpellEditor();
-                return;
-            } else if (Input.isTriggered('ok')) {
+            if (Input.isTriggered('ok')) {
                 this.selectCategory();
                 return;
             } else if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
@@ -5460,6 +5551,13 @@
                 return;
             } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
                 const col = idx % cols;
+                if (col === cols - 1 && pane === 1) {
+                    this._categoryFuseFocused = true;
+                    this._categoryActionIndex = 0;
+                    SoundManager.playCursor();
+                    this.refreshUISkillDOM();
+                    return;
+                }
                 if (col === cols - 1 && pane === 0 && lists[1].length > 0) {
                     const row = Math.floor(idx / cols);
                     pane = 1;
@@ -5479,7 +5577,7 @@
             } else if (Input.isTriggered('down') || Input.isRepeated('down')) {
                 if (idx + cols < curLen) {
                     idx += cols;
-                } else if (pane === 1 && idx === curLen - 1) {
+                } else if (pane === 1 && idx >= curLen - 1) {
                     this._categoryFuseFocused = true;
                     this._categoryActionIndex = 0;
                     SoundManager.playCursor();
@@ -5514,13 +5612,6 @@
                     this._viewMode = 'category';
                     SoundManager.playCancel();
                     this.refreshUISkillDOM();
-                    return;
-                }
-                if (Input.isTriggered('shift')) {
-                    const wide = this.wholeAtlasZoom();
-                    this.setAtlasZoom(this.atlasZoom() > wide + 0.01 ? wide : this.defaultAtlasZoom());
-                    this.scrollGraphToFocus();
-                    SoundManager.playCursor();
                     return;
                 }
                 let moved = false;
@@ -5624,6 +5715,10 @@
             this.updateSpellEditorInput();
         } else if (this._viewMode === 'craft') {
             this.updateCraftBenchInput();
+        } else if (this._viewMode === 'enchant') {
+            this.updateEnchantBenchInput();
+        } else if (this._viewMode === 'writebook') {
+            this.updateWriteBenchInput();
         } else if (this._viewMode === 'magicSystems') {
             if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
                 this.closeMagicSystems();
@@ -5720,9 +5815,13 @@
         const skillId = candidates[Math.floor(CW.roll(key) * candidates.length) % candidates.length];
         actor.learnSkill(skillId);
         if (typeof window.T === "function") {
-            $gameMessage.add(window.T("SkillMaster.chaosLevelSkill", {
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(window.T("SkillMaster.chaosLevelSkill", {
                 actor: actor.name(), skill: $dataSkills[skillId].name,
-            }));
+                            }), {
+                severity: 'good'
+              });
+            }
         }
     }
 
@@ -6220,6 +6319,7 @@
             this._craft = this.craftDefaultBuild(kind);
         }
         this._craftFocus = 0;
+        this._craftChip = 0;
         this._craftPicker = null;
         this._craftPickIndex = 0;
         this._craftTyping = false;
@@ -6241,6 +6341,23 @@
         this._lastRightKnowledge = null;
         SoundManager.playCancel();
         this.refreshUISkillDOM();
+    };
+
+    // The cursor's column on the bench is the form rows first and then one stop
+    // for every spell already written, so a pad reaches the two chips on a
+    // finished entry (open it again, or throw it away) the same way a mouse does.
+    Proto.craftFocusRows = function () {
+        const build = this._craft;
+        return CRAFT_ROWS.length + this.craftedEntries(build ? build.kind : null).length;
+    };
+
+    // Which finished entry the cursor is reading, or null while it is still up
+    // among the form rows.
+    Proto.craftFocusedEntry = function () {
+        const at = this._craftFocus - CRAFT_ROWS.length;
+        if (at < 0) return null;
+        const build = this._craft;
+        return this.craftedEntries(build ? build.kind : null)[at] || null;
     };
 
     Proto.craftedEntries = function (kind) {
@@ -6379,7 +6496,10 @@
     // opened over the book rather than inside a page the bench re-renders, and
     // a capture phase guard runs ahead of every always-on plugin so nothing
     // else can swallow a letter.
-    Proto.openCraftTextSheet = function (field, targetSkillId) {
+    // `commit` is the third way the sheet can be spent: the bench writes a
+    // build field, a skill id rewrites that skill, and a callback lets
+    // anything else (a written book being renamed) take the words instead.
+    Proto.openCraftTextSheet = function (field, targetSkillId, commit) {
         if (!this._dndContainer || this._craftTyping) return;
         const single = (field === 'name');
         const current = targetSkillId
@@ -6389,6 +6509,25 @@
         // sheet asks for an incantation there and for lore everywhere else.
         const writeField = (field === 'lore' && !targetSkillId && this._craft && this._craft.kind !== 'skill')
             ? 'incantation' : field;
+        // A pad cannot type into a field, and a sheet it cannot leave is a
+        // trap. So on a pad the letters are drawn instead: the controller
+        // layer's own sheet, spent through the same three ways as this one.
+        if (window.Controller && Controller.usingPad && Controller.usingPad()) {
+            const take = (value) => {
+                this._craftWriteField = field;
+                this._craftWriteTarget = targetSkillId || null;
+                this._craftWriteCommit = (typeof commit === 'function') ? commit : null;
+                this.commitCraftText(String(value));
+            };
+            Controller.textEntry({
+                title: tr('write.' + writeField),
+                value: current,
+                max: single ? 40 : 400,
+                multiline: !single,
+                onCommit: take
+            });
+            return;
+        }
         const sheet = document.createElement('div');
         sheet.className = 'sm-craft-write-backdrop';
         sheet.innerHTML = `
@@ -6407,6 +6546,7 @@
         this._craftWriteEl = sheet;
         this._craftWriteField = field;
         this._craftWriteTarget = targetSkillId || null;
+        this._craftWriteCommit = (typeof commit === 'function') ? commit : null;
         this._craftTyping = true;
 
         const el = sheet.querySelector('#sm-craft-write-input');
@@ -6458,19 +6598,32 @@
         }
         if (this._craftWriteEl && this._craftWriteEl.parentNode) this._craftWriteEl.remove();
         this._craftWriteEl = null;
-        if (!this._craftTyping) return;
-        this._craftTyping = false;
-        Input.clear();
-        TouchInput.clear();
+        this._craftWriteCommit = null;
+        // The letter sheet never set the typing flag - it is not a field - but
+        // the page still has to be drawn again over whatever it wrote.
+        if (this._craftTyping) {
+            this._craftTyping = false;
+            Input.clear();
+            TouchInput.clear();
+        }
         this.refreshUISkillDOM();
     };
 
     Proto.submitCraftText = function () {
         const el = this._craftWriteEl && this._craftWriteEl.querySelector('#sm-craft-write-input');
-        const value = el ? String(el.value) : '';
+        this.commitCraftText(el ? String(el.value) : '');
+    };
+
+    // What the words are spent on, whichever sheet took them: the field the
+    // keyboard types into, or the letter sheet a pad walks.
+    Proto.commitCraftText = function (value) {
         const field = this._craftWriteField;
         const target = this._craftWriteTarget;
-        if (target) {
+        const commit = this._craftWriteCommit;
+        this._craftWriteCommit = null;
+        if (commit) {
+            commit(value);
+        } else if (target) {
             const desc = field === 'description' ? value : this.craftOverrideText(target, 'description');
             const lore = field === 'lore' ? value : this.craftOverrideText(target, 'lore');
             $gameSystem.setSkillTextOverride(target, desc, lore);
@@ -6527,11 +6680,14 @@
         this._craftBaseQuote = verdict.quote;
         SoundManager.playRecovery();
 
-        window.skipLocalization = true;
         if (typeof T === 'function') {
-            $gameMessage.add(tr(existing ? 'rewrittenResult' : 'writtenResult', {
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(tr(existing ? 'rewrittenResult' : 'writtenResult', {
                 name: entry.name, cost: verdict.owed, left: $gameSystem.getKnowledge()
-            }));
+                            }), {
+                severity: 'good'
+              });
+            }
         }
         window.skipLocalization = false;
         this.refreshUISkillDOM();
@@ -6643,15 +6799,20 @@
             </div>`;
 
         let listHTML = '';
-        for (const s of this.craftedEntries(build.kind)) {
+        this.craftedEntries(build.kind).forEach((s, at) => {
             const on = this._craftEditingId === s.id;
+            // Two rings, and they mean different things: "focused" is the entry
+            // the cursor is on, "selected" is which of its two chips the OK key
+            // would press. Left and right walk between them.
+            const cursor = !picking && this._craftFocus === CRAFT_ROWS.length + at;
+            const chip = (which) => (cursor && this._craftChip === which) ? ' selected' : '';
             listHTML += `
-                <div class="sm-skill-row sm-craft-entry focusable ${on ? 'focused' : ''}">
+                <div class="sm-skill-row sm-craft-entry focusable ${on ? 'focused' : ''}${cursor ? ' sm-craft-entry--cursor' : ''}">
                     <span class="sm-skill-ident" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(s.name)}</span></span>
-                    <span class="ui-chip sm-skill-badge" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})">${esc(tr('edit'))}</span>
-                    <span class="ui-chip sm-skill-badge sm-craft-discard" onclick="SceneManager._scene.craftDiscard(${s.id})">${esc(tr('discard'))}</span>
+                    <span class="ui-chip sm-skill-badge${chip(0)}" onclick="SceneManager._scene.openCraftBench('${build.kind}', ${s.id})">${esc(tr('edit'))}</span>
+                    <span class="ui-chip sm-skill-badge sm-craft-discard${chip(1)}" onclick="SceneManager._scene.craftDiscard(${s.id})">${esc(tr('discard'))}</span>
                 </div>`;
-        }
+        });
         if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneYet'))}</div></div>`;
 
         leftBox.innerHTML = `
@@ -6815,6 +6976,12 @@
 
     Proto.craftActivateRow = function (idx) {
         this._craftFocus = idx;
+        const entry = this.craftFocusedEntry();
+        if (entry) {
+            if (this._craftChip === 1) this.craftDiscard(entry.id);
+            else this.openCraftBench(this._craft ? this._craft.kind : 'spell', entry.id);
+            return;
+        }
         const row = CRAFT_ROWS[idx];
         if (row === 'name' || row === 'description' || row === 'lore') this.openCraftTextSheet(row);
         else if (row === 'create') this.craftWrite();
@@ -6850,8 +7017,9 @@
             return;
         }
 
-        const max = CRAFT_ROWS.length;
+        const max = this.craftFocusRows();
         const prev = this._craftFocus;
+        const prevChip = this._craftChip || 0;
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
             this.closeCraftBench();
             return;
@@ -6862,11 +7030,19 @@
             this._craftFocus = (this._craftFocus + 1) % max;
         } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
             this._craftFocus = (this._craftFocus - 1 + max) % max;
+        } else if (this.craftFocusedEntry()
+            && (Input.isTriggered('right') || Input.isTriggered('left'))) {
+            // Only a finished entry has anything to step sideways to.
+            this._craftChip = this._craftChip ? 0 : 1;
         }
-        if (this._craftFocus !== prev) {
+        // Coming onto an entry row always offers the harmless chip first, so a
+        // held Down can never land the cursor on Discard.
+        if (this._craftFocus !== prev) this._craftChip = 0;
+        if (this._craftFocus !== prev || this._craftChip !== prevChip) {
             SoundManager.playCursor();
             this.refreshUISkillDOM();
-            this.scrollToActiveItem('craft-scroll-box', '.sm-craft-rows .focused');
+            this.scrollToActiveItem('craft-scroll-box',
+                '.sm-craft-rows .focused, .sm-craft-entry--cursor');
         }
     };
 
@@ -6881,6 +7057,1564 @@
                 <div class="inspect-btn focusable" onclick="SceneManager._scene.openCraftTextSheet('description', ${skill.id})">${esc(tr('rewriteDesc'))}</div>
                 <div class="inspect-btn focusable" onclick="SceneManager._scene.openCraftTextSheet('lore', ${skill.id})">${esc(tr('rewriteLore'))}</div>
             </div>`;
+    };
+
+})();
+
+
+//=============================================================================
+// Module: SkillMasterEnchant.js
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc v1.0.0 SkillMaster - the Enchanting bench: binding a spell into a weapon or a piece of equipment.
+ * @author Omni-Lex
+ *
+ * @help
+ * The Workbench writes a spell. The Enchanting bench spends one instead: a
+ * spell anybody in the party already knows is bound into a piece of gear, and
+ * what comes off the bench is a unique artifact nobody else in the world
+ * carries. The knowledge is paid once, in KP, and the price is the spell's,
+ * not the gear's.
+ *
+ * Two benches, and the rule that tells them apart is the spell's aim:
+ *
+ *   Enchant Weapon      offensive and status spells only, the ones that reach
+ *                       the enemy line. The spell is cast, free of MP, on
+ *                       EVERY critical hit the weapon lands.
+ *   Enchant Equipment   protective spells only, the ones that reach your own
+ *                       line. The spell answers a critical hit taken, free of
+ *                       MP, ONCE per battle per piece.
+ *
+ * A skill is never bindable. Only a spell is, which here means anything filed
+ * under a school Categories.json calls Magic. On the other side of the bench,
+ * the vector gun is never a base: VectorGunSystem rewrites that row's form,
+ * element and model at runtime and a binding would fight it for all three.
+ *
+ * Enchanting buys no damage and no stats. A bound weapon has exactly the
+ * numbers it had before. What it gains is the spell, the spell's element in
+ * place of its own, and the look that element wears: the bench stamps
+ * <ForgeTexture:> on the entry, chosen by element first and by school when
+ * the spell carries no element, and WeaponSystemProcedural draws the 3D model
+ * in it from then on.
+ *
+ * The forged entry lives on $gameSystem and is laid back over $dataWeapons /
+ * $dataArmors on every load, the same way a crafted spell is.
+ */
+
+(() => {
+    'use strict';
+
+    window.SkillMaster = window.SkillMaster || {};
+    const SkillMaster = window.SkillMaster;
+
+    const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.enchant.' + key, params) : key);
+
+    const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const tx = (s) => (typeof window.translateText === 'function' ? window.translateText(s) : s);
+
+    //=========================================================================
+    // What a binding costs
+    //
+    // The gear is free. The spell is not: the price is read off the same
+    // skillPower() the teaching desk charges by, so a cantrip is cheap to bind
+    // and an ultimate is not, and the two forbidden ranks cost what they cost
+    // everywhere else in the book.
+    //=========================================================================
+
+    const ENCH_BASE = 60;
+    const ENCH_EXP = 1.7;
+    const ENCH_MIN = 120;
+    const ENCH_MAX = 250000;
+    // A weapon fires its binding on every critical it ever lands; a piece of
+    // armour fires once a battle; a book fires whenever it is opened, for
+    // nothing, until the day it burns. The bench charges for the difference.
+    const ENCH_KIND_MULT = { weapon: 1.5, armor: 1.15, book: 1.35 };
+    const ENCH_ESOTERIC_MULT = 6;
+    const ENCH_FORBIDDEN_MULT = 40;
+
+    function arcanaMult(skill) {
+        const note = String((skill && skill.note) || '');
+        if (/<Forbidden>/i.test(note)) return ENCH_FORBIDDEN_MULT; // i18n-ignore: note tag
+        if (/<Esoteric>/i.test(note)) return ENCH_ESOTERIC_MULT; // i18n-ignore: note tag
+        return 1;
+    }
+
+    function enchantCost(skill, kind) {
+        if (!skill) return ENCH_MIN;
+        const power = (typeof SkillMaster.skillPower === 'function') ? SkillMaster.skillPower(skill) : 1;
+        const raw = ENCH_BASE * Math.pow(Math.max(0.1, power), ENCH_EXP) *
+            arcanaMult(skill) * (ENCH_KIND_MULT[kind] || 1);
+        return Math.max(ENCH_MIN, Math.min(ENCH_MAX, Math.round(raw)));
+    }
+
+    //=========================================================================
+    // Which spells reach which bench
+    //
+    // The scope is the whole of it: a spell aimed at the enemy line is a
+    // weapon's, a spell aimed at your own line is a piece of armour's. A
+    // spell that does nothing to whatever it reaches is neither, because
+    // binding it would give the gear an animation and no effect.
+    //=========================================================================
+
+    const DMG_HP = 1, DMG_MP = 2, DMG_HP_HEAL = 3, DMG_MP_HEAL = 4, DMG_HP_DRAIN = 5, DMG_MP_DRAIN = 6;
+    const EFFECT_RECOVER_HP = 11, EFFECT_RECOVER_MP = 12, EFFECT_GAIN_TP = 13;
+    const EFFECT_ADD_STATE = 21, EFFECT_REMOVE_STATE = 22;
+    const EFFECT_ADD_BUFF = 31, EFFECT_ADD_DEBUFF = 32;
+    const EFFECT_REMOVE_BUFF = 33, EFFECT_REMOVE_DEBUFF = 34;
+
+    function hasEffect(skill, ...codes) {
+        const list = (skill && skill.effects) || [];
+        return list.some(e => e && codes.indexOf(e.code) >= 0);
+    }
+
+    function damageType(skill) {
+        return (skill && skill.damage && skill.damage.type) || 0;
+    }
+
+    /** A spell is anything filed under a school Categories.json calls Magic. */
+    function isSpell(skill) {
+        if (!skill || !skill.id) return false;
+        if (skill.id === 1 || skill.id === 2) return false;
+        const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null;
+        if (!cat) return false;
+        return SkillMaster.getCategoryType(cat) === 'Magic'; // i18n-ignore: skill category id / type discriminator
+    }
+
+    /** Offensive or status: it damages, drains, or lands a state or a debuff. */
+    function isOffensiveOrStatus(skill) {
+        const scope = (skill && skill.scope) || 0;
+        if (scope < 1 || scope > 6) return false;
+        const d = damageType(skill);
+        if (d === DMG_HP || d === DMG_MP || d === DMG_HP_DRAIN || d === DMG_MP_DRAIN) return true;
+        return hasEffect(skill, EFFECT_ADD_STATE, EFFECT_ADD_DEBUFF, EFFECT_REMOVE_BUFF);
+    }
+
+    /** Protective: it mends, shields, cleanses or strengthens your own line. */
+    function isProtective(skill) {
+        const scope = (skill && skill.scope) || 0;
+        if (scope < 7 || scope > 11) return false;
+        const d = damageType(skill);
+        if (d === DMG_HP_HEAL || d === DMG_MP_HEAL) return true;
+        return hasEffect(skill, EFFECT_RECOVER_HP, EFFECT_RECOVER_MP, EFFECT_GAIN_TP,
+            EFFECT_ADD_STATE, EFFECT_REMOVE_STATE, EFFECT_ADD_BUFF, EFFECT_REMOVE_DEBUFF);
+    }
+
+    function bindableTo(skill, kind) {
+        if (!isSpell(skill)) return false;
+        // A book is not a blade and not a shield: it is simply read out, so
+        // the aim of what is written in it does not matter. Any spell binds.
+        if (kind === 'book') return true;
+        return kind === 'weapon' ? isOffensiveOrStatus(skill) : isProtective(skill);
+    }
+
+    //=========================================================================
+    // The look a binding wears
+    //
+    // Element first, school second. The assignments below are a choice, not a
+    // derivation: they only have to be stable, so a world that enchanted a
+    // blade with fire keeps handing back the same blade.
+    //=========================================================================
+
+    const SCHOOL_ELEMENT = {
+        Pyromancy: 2, Cryomancy: 3, Electromancy: 4, Technomancy: 4, Technomagical: 4,
+        Idromancy: 5, Geomancy: 6, Mutation: 6, Aeromancy: 7,
+        HolyMagic: 8, Healing: 8, AstralMagic: 8, Augury: 8, Oneiromancy: 8,
+        Necromancy: 9, ForbiddenMagic: 9, VoidMagic: 9, ChaosMagic: 9, Convokation: 9,
+        Arcanism: 1, MetaMagic: 1, StatusMagic: 1, Chronomancy: 1, Illusion: 1,
+        Fusion: 1, Crafted: 1
+    }; // i18n-ignore: skill category ids
+
+    const ELEMENT_TEXTURE = {
+        1: 'grey_marble.jpg', 2: 'fire.jpg', 3: 'blue_slate.jpg', 4: 'Thunder10.png',
+        5: 'teal_marble.jpg', 6: 'brown_stone.jpg', 7: 'sage_cloud_marble.jpg',
+        8: 'bright_gold.jpg', 9: 'dark_grey_smoke.jpg'
+    }; // i18n-ignore: texture filenames
+
+    const SCHOOL_TEXTURE = {
+        Pyromancy: 'burnt_orange_rock.jpg', Cryomancy: 'grey_teal_stone.jpg',
+        Electromancy: 'Thunder_Bold.png', Technomancy: 'iridescent_oil.jpg',
+        Technomagical: 'copper_patina.jpg', Idromancy: 'turquoise_verdigris.jpg',
+        Geomancy: 'cracked_earth.jpg', Aeromancy: 'grey_cloud_concrete.jpg',
+        HolyMagic: 'gold_parchment.jpg', Healing: 'sage_plaster.jpg',
+        AstralMagic: 'Aurora.png', Augury: 'amber_onyx_marble.jpg',
+        Oneiromancy: 'pink_rainbow_swirl.jpg', Illusion: 'psychedelic_marble.jpg',
+        Necromancy: 'charcoal_brown_stone.jpg', ForbiddenMagic: 'crimson_psychedelic.jpg',
+        VoidMagic: 'dark_grey_smoke.jpg', ChaosMagic: 'magenta_psychedelic.jpg',
+        Convokation: 'violet_psychedelic.jpg', Arcanism: 'MagicCircle1.png',
+        MetaMagic: 'malachite.jpg', StatusMagic: 'mauve_rock.jpg',
+        Chronomancy: 'dark_gold_swirl.jpg', Mutation: 'mossy_green_rock.jpg',
+        Fusion: 'Crystal001.png', Crafted: 'olive_parchment.jpg'
+    }; // i18n-ignore: texture filenames
+
+    function schoolOf(skill) {
+        return (SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null) || '';
+    }
+
+    /** The element a bound weapon strikes with. The spell's own comes first. */
+    function enchantElement(skill) {
+        const own = skill && skill.damage ? skill.damage.elementId : 0;
+        if (own > 0) return own;
+        return SCHOOL_ELEMENT[schoolOf(skill)] || 1;
+    }
+
+    /** The finish a bound weapon wears. Element first, school when it has none. */
+    function enchantTexture(skill) {
+        const own = skill && skill.damage ? skill.damage.elementId : 0;
+        if (own > 0 && ELEMENT_TEXTURE[own]) return ELEMENT_TEXTURE[own];
+        const bySchool = SCHOOL_TEXTURE[schoolOf(skill)];
+        if (bySchool) return bySchool;
+        return ELEMENT_TEXTURE[enchantElement(skill)] || ELEMENT_TEXTURE[1];
+    }
+
+    SkillMaster.Enchant = {
+        cost: enchantCost,
+        isSpell: isSpell,
+        bindableTo: bindableTo,
+        isOffensiveOrStatus: isOffensiveOrStatus,
+        isProtective: isProtective,
+        element: enchantElement,
+        texture: enchantTexture,
+        SCHOOL_ELEMENT: SCHOOL_ELEMENT,
+        ELEMENT_TEXTURE: ELEMENT_TEXTURE,
+        SCHOOL_TEXTURE: SCHOOL_TEXTURE
+    };
+
+    //=========================================================================
+    // Persistence
+    //
+    // A bound piece is a database entry the database never shipped, so it is
+    // kept on $gameSystem and laid back over $dataWeapons / $dataArmors on
+    // every load, exactly the way a crafted spell is.
+    //=========================================================================
+
+    // Clear of the artifact generator's reserved band (1501-1600) and of
+    // everything data/ ships.
+    const ENCH_ID_FLOOR = 2000;
+
+    function ensureSlot(arr, id) {
+        if (!arr) return;
+        while (arr.length <= id) arr.push(null);
+    }
+
+    Game_System.prototype.getEnchantedGear = function () {
+        if (!this._enchantedGear) this._enchantedGear = [];
+        return this._enchantedGear;
+    };
+
+    /**
+     * Which database a bound piece belongs in. A weapon and a piece of armour
+     * have a rack of their own; everything else the benches write - the
+     * enchanted book, the skill book, the grimorie - is an item.
+     */
+    function dbForKind(kind) {
+        if (kind === 'weapon') return (typeof $dataWeapons !== 'undefined') ? $dataWeapons : null;
+        if (kind === 'armor') return (typeof $dataArmors !== 'undefined') ? $dataArmors : null;
+        return (typeof $dataItems !== 'undefined') ? $dataItems : null;
+    }
+    Game_System.prototype.allocEnchantedGearId = function (kind) {
+        const key = kind === 'weapon' ? '_nextEnchantWeaponId'
+            : kind === 'armor' ? '_nextEnchantArmorId' : '_nextEnchantItemId';
+        if (!this[key]) {
+            const db = dbForKind(kind);
+            const len = db ? db.length : ENCH_ID_FLOOR;
+            this[key] = Math.max(ENCH_ID_FLOOR, len);
+        }
+        return this[key]++;
+    };
+
+    function injectOne(entry) {
+        if (!entry || !entry.id) return;
+        const db = dbForKind(entry._enchantKind);
+        if (!db) return;
+        ensureSlot(db, entry.id);
+        db[entry.id] = entry;
+    }
+
+    function injectAllEnchantedGear() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+        if (typeof $gameSystem.getEnchantedGear !== 'function') return;
+        for (const entry of $gameSystem.getEnchantedGear()) injectOne(entry);
+    }
+    SkillMaster.injectAllEnchantedGear = injectAllEnchantedGear;
+
+    const _DataManager_extractSaveContents_ench = DataManager.extractSaveContents;
+    DataManager.extractSaveContents = function (contents) {
+        _DataManager_extractSaveContents_ench.call(this, contents);
+        injectAllEnchantedGear();
+    };
+
+    //=========================================================================
+    // Forging
+    //=========================================================================
+
+    /**
+     * The unique entry a binding writes. Nothing here touches params or the
+     * traits that carry a number: enchanting buys the spell and the look, and
+     * never a point of damage.
+     */
+    function forgeEnchanted(base, kind, spell) {
+        const entry = JSON.parse(JSON.stringify(base));
+        entry.id = $gameSystem.allocEnchantedGearId(kind);
+        entry.name = tr(kind === 'weapon' ? 'weaponName' : 'armorName',
+            { base: tx(base.name), spell: tx(spell.name) });
+        entry.description = tr(kind === 'weapon' ? 'weaponDesc' : 'armorDesc',
+            { spell: tx(spell.name) });
+
+        let note = String(base.note || '')
+            .replace(/<ForgeTexture:[^>]*>\s*/gi, '') // i18n-ignore: note tag
+            .replace(/<EnchantSpell:[^>]*>\s*/gi, '') // i18n-ignore: note tag
+            .replace(/<Enchanted:[^>]*>\s*/gi, ''); // i18n-ignore: note tag
+        note += '\n<EnchantSpell: ' + spell.id + '>\n<Enchanted: ' + kind + '>'; // i18n-ignore: note tag
+        if (kind === 'weapon') note += '\n<ForgeTexture: ' + enchantTexture(spell) + '>'; // i18n-ignore: note tag
+        entry.note = note.trim();
+        entry.meta = Object.assign({}, base.meta);
+        entry.meta.EnchantSpell = String(spell.id);
+        entry.meta.Enchanted = kind;
+        if (kind === 'weapon') entry.meta.ForgeTexture = enchantTexture(spell);
+
+        if (kind === 'weapon') {
+            // The binding's element replaces the blade's, and is the only
+            // trait a binding ever writes.
+            entry.traits = (base.traits || []).filter(t => t && t.code !== 31);
+            entry.traits.push({ code: 31, dataId: enchantElement(spell), value: 1 });
+        }
+
+        entry._enchantKind = kind;
+        entry._enchantSpellId = spell.id;
+        entry._enchantBaseId = base.id;
+        entry._enchanted = true;
+        return entry;
+    }
+
+    //=========================================================================
+    // The enchanted book
+    //
+    // A weapon answers a critical and a piece of armour answers being hit. A
+    // book answers nothing: it is opened, and the spell written in it goes off
+    // for free, in a turn battle and on the strategic map alike. It does that
+    // by BEING the spell - the entry copies the spell's aim, its damage and
+    // its effects onto an item - so every battle mode that can already use an
+    // item can already use this, and no MP is ever asked for because an item
+    // has no MP cost to ask.
+    //
+    // What it costs instead is the book. Every reading may burn it, and how
+    // likely that is depends on the reader: their Enchanting, and how well
+    // they know the school the spell was written in.
+    //=========================================================================
+
+    // The covers a written book may wear. Named rather than rolled, because
+    // the whole point is that the player picks one.
+    const BOOK_TEXTURES = [
+        'golden_brown_leather.jpg', 'brown_leather_stone.jpg', 'dark_brown_marble.jpg',
+        'olive_leather_stone.jpg', 'amber_paper.jpg', 'gold_parchment.jpg',
+        'olive_parchment.jpg', 'dark_gold_foil.jpg', 'emerald_marble.jpg',
+        'red_marble.jpg', 'grey_smoke_marble.jpg', 'charcoal_brown_stone.jpg',
+        'copper_patina.jpg', 'malachite.jpg', 'iridescent_oil.jpg',
+        'crimson_psychedelic.jpg', 'violet_psychedelic.jpg', 'psychedelic_marble.jpg'
+    ]; // i18n-ignore: texture filenames
+    SkillMaster.Enchant.BOOK_TEXTURES = BOOK_TEXTURES;
+
+    /** A small deterministic generator, so one binding names one book. */
+    function seededRandom(seed) {
+        let a = seed >>> 0 || 1;
+        return function () {
+            a |= 0; a = (a + 0x6D2B79F5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function hashOf(text) {
+        let h = 2166136261;
+        const str = String(text);
+        for (let i = 0; i < str.length; i++) {
+            h ^= str.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+    }
+
+    /**
+     * The name a written book is given. RandomBookGenerator already owns every
+     * title in the world, so the bench borrows its grammar rather than growing
+     * one of its own; the seed makes the roll stable per entry, and the i18n
+     * pattern is the fallback for a world where that plugin is not up.
+     */
+    function rollBookName(spell, seed) {
+        const rng = seededRandom(seed);
+        const G = window.RandomBookGenerator;
+        if (G && typeof G.generateTitle === 'function') {
+            try {
+                const title = String(G.generateTitle(rng) || '').trim();
+                if (title) return title;
+            } catch (e) { /* fall through to the pattern */ }
+        }
+        return tr('bookFallbackName', { spell: tx(spell.name) });
+    }
+
+    /**
+     * The entry a book binding writes. It is the spell, as an item: the aim,
+     * the damage and the effects are copied across so every battle system
+     * already knows what to do with it.
+     */
+    function forgeEnchantedBook(base, spell) {
+        const entry = JSON.parse(JSON.stringify(base));
+        entry.id = $gameSystem.allocEnchantedGearId('book');
+        const seed = hashOf(entry.id + ':' + spell.id + ':' + base.id);
+        entry.name = rollBookName(spell, seed);
+        entry.description = tr('bookDesc', { spell: tx(spell.name) });
+        entry.itypeId = 1;
+        // Never spent by using it. The only thing that takes a written book out
+        // of the pack is a burning, and that is rolled in useItem.
+        entry.consumable = false;
+        entry.occasion = 0;
+        entry.scope = spell.scope;
+        entry.speed = 0;
+        entry.successRate = spell.successRate;
+        entry.repeats = spell.repeats;
+        entry.tpGain = 0;
+        entry.hitType = spell.hitType;
+        entry.animationId = spell.animationId;
+        entry.damage = JSON.parse(JSON.stringify(spell.damage || {}));
+        entry.effects = JSON.parse(JSON.stringify(spell.effects || []));
+
+        const texture = BOOK_TEXTURES[Math.floor(seededRandom(seed ^ 0x9E3779B9)() * BOOK_TEXTURES.length)];
+        let note = String(base.note || '')
+            .replace(/<EnchantSpell:[^>]*>\s*/gi, '') // i18n-ignore: note tag
+            .replace(/<Enchanted:[^>]*>\s*/gi, '') // i18n-ignore: note tag
+            .replace(/<BookTexture:[^>]*>\s*/gi, ''); // i18n-ignore: note tag
+        note += '\n<EnchantSpell: ' + spell.id + '>\n<Enchanted: book>\n<BookTexture: ' + texture + '>'; // i18n-ignore: note tag
+        entry.note = note.trim();
+        entry.meta = Object.assign({}, base.meta);
+        entry.meta.EnchantSpell = String(spell.id);
+        entry.meta.Enchanted = 'book';
+        entry.meta.BookTexture = texture;
+
+        entry._enchantKind = 'book';
+        entry._enchantSpellId = spell.id;
+        entry._enchantBaseId = base.id;
+        entry._enchanted = true;
+        return entry;
+    }
+    SkillMaster.Enchant.forgeBook = forgeEnchantedBook;
+
+    //--- burning -------------------------------------------------------------
+
+    // A book read by somebody who has never bound anything and does not know
+    // the school burns nearly half the time. At the top of both it almost
+    // never does.
+    const BURN_BASE = 0.45;
+    const BURN_PER_ENCHANTING = 0.06;   // per tier of Enchanting above Untrained
+    const BURN_PER_SCHOOL = 0.04;       // per tier of the spell's own school
+    const BURN_MIN = 0.05;
+    const BURN_MAX = 0.60;
+    const ENCHANTING_SPEC = 'Enchanting'; // i18n-ignore: Specialization.json lookup key
+
+    /** The Enchanting record, or null before Specialization.json is up. */
+    function enchantingSpec() {
+        const S = window.Specializations;
+        if (!S || !S.byName) return null;
+        return S.byName.get(ENCHANTING_SPEC) || null;
+    }
+    SkillMaster.Enchant.ENCHANTING_SPEC = ENCHANTING_SPEC;
+    SkillMaster.Enchant.enchantingSpec = enchantingSpec;
+
+    /** 1..5, Untrained to Master. 1 for anyone the menus do not cover. */
+    function tierOf(actor, specDef) {
+        if (!actor || !specDef || !actor.specializationLevel) return 1;
+        const n = actor.specializationLevel(specDef.id);
+        return Math.max(1, Math.min(5, n || 1));
+    }
+
+    /**
+     * How likely this reader is to burn this book. Two disciplines answer:
+     * Enchanting, which is the craft itself, and whatever specialization the
+     * spell's own school runs on (window.SkillSpecs owns that mapping, and is
+     * never re-derived here). An esoteric or forbidden page burns harder.
+     */
+    function burnChance(actor, book) {
+        const spell = boundSpellOf(book);
+        if (!spell) return 0;
+        const ench = tierOf(actor, enchantingSpec());
+        const SS = window.SkillSpecs;
+        const school = (SS && SS.levelFor) ? Math.max(1, Math.min(5, SS.levelFor(actor, spell))) : 1;
+        let chance = BURN_BASE
+            - BURN_PER_ENCHANTING * (ench - 1)
+            - BURN_PER_SCHOOL * (school - 1);
+        chance *= arcanaMult(spell) > 1 ? (arcanaMult(spell) >= ENCH_FORBIDDEN_MULT ? 1.8 : 1.3) : 1;
+        return Math.max(BURN_MIN, Math.min(BURN_MAX, chance));
+    }
+    SkillMaster.Enchant.burnChance = burnChance;
+
+    /** Whether an entry is one of the bench's written books. */
+    function isEnchantedBook(item) {
+        return !!(item && (item._enchantKind === 'book' ||
+            (item.meta && item.meta.Enchanted === 'book')));
+    }
+    SkillMaster.Enchant.isEnchantedBook = isEnchantedBook;
+
+    /** Rolls the burning and, on a burn, takes the book out of the world. */
+    function rollBurn(actor, book) {
+        if (!isEnchantedBook(book)) return false;
+        const chance = burnChance(actor, book);
+        if (Math.random() >= chance) return false;
+        $gameParty.loseItem(book, 1);
+        // The last copy is gone, so the bench stops listing it. The database
+        // row is deliberately LEFT standing: the action that is burning the
+        // book is still holding it, and Game_Item#object() re-reads $dataItems
+        // every time it is asked, so clearing the row mid-turn would hand the
+        // rest of that turn a null item.
+        if (!$gameParty.numItems(book)) {
+            const list = $gameSystem.getEnchantedGear();
+            const at = list.findIndex(e => e && e.id === book.id);
+            if (at >= 0) list.splice(at, 1);
+        }
+        const line = tr('log.burned', { book: book.name });
+        const log = BattleManager._logWindow;
+        if ($gameParty.inBattle() && log && typeof log.push === 'function') log.push('addText', line);
+        else if (window.ParchmentToast) window.ParchmentToast.show(line);
+        return true;
+    }
+    SkillMaster.Enchant.rollBurn = rollBurn;
+
+    // useItem is the one place every use passes through, in a turn battle, on
+    // the strategic map and in the menu alike.
+    const _Game_Battler_useItem_book = Game_Battler.prototype.useItem;
+    Game_Battler.prototype.useItem = function (item) {
+        _Game_Battler_useItem_book.call(this, item);
+        if (!isEnchantedBook(item)) return;
+        try { rollBurn(this, item); } catch (e) { console.error('SkillMaster: a book failed to burn', e); }
+    };
+
+    /**
+     * Binds `spell` into `slot`, which is either a piece sitting in the pack
+     * or one a character is wearing. The base piece is consumed.
+     * @param {object} slot - {kind, item, actorId, equipSlot} as enchantableGear() lists it
+     * @param {object} spell - the skill entry to bind
+     * @returns {object|null} the entry written, or null when nothing was
+     */
+    function bindSpell(slot, spell) {
+        if (!slot || !slot.item || !spell) return null;
+        if (!isBindableBase(slot.item)) return null;
+        if (!bindableTo(spell, slot.kind)) return null;
+        const kind = slot.kind;
+        const cost = enchantCost(spell, kind);
+        if ($gameSystem.getKnowledge() < cost) return null;
+
+        const entry = (kind === 'book')
+            ? forgeEnchantedBook(slot.item, spell)
+            : forgeEnchanted(slot.item, kind, spell);
+        injectOne(entry);
+        $gameSystem.getEnchantedGear().push(entry);
+        $gameParty.gainItem(entry, 1);
+
+        if (slot.actorId) {
+            const actor = $gameActors.actor(slot.actorId);
+            // changeEquip hands the base back to the pack, so it is lost after.
+            if (actor) actor.changeEquip(slot.equipSlot, entry);
+        }
+        $gameParty.loseItem(slot.item, 1);
+        $gameSystem.spendKnowledge(cost);
+        return entry;
+    }
+
+    /** Unmakes a binding: the piece goes, the knowledge does not come back. */
+    function unbind(entryId, kind) {
+        const list = $gameSystem.getEnchantedGear();
+        const idx = list.findIndex(e => e && e.id === entryId && e._enchantKind === kind);
+        if (idx < 0) return false;
+        const entry = list[idx];
+        if (kind === 'weapon' || kind === 'armor') {
+            for (const actor of $gameParty.allMembers()) {
+                actor.equips().forEach((eq, i) => {
+                    if (eq && eq.id === entry.id && !!eq.wtypeId === (kind === 'weapon')) actor.changeEquip(i, null);
+                });
+            }
+        }
+        $gameParty.loseItem(entry, $gameParty.numItems(entry));
+        list.splice(idx, 1);
+        const db = dbForKind(kind);
+        if (db && db[entryId]) db[entryId] = null;
+        return true;
+    }
+
+    /**
+     * The vector gun is one database row the whole of VectorGunSystem keeps
+     * rewriting: its form, its element and its model are decided at runtime
+     * and belong to that plugin. A binding would fight it for all three, and
+     * copying the row into an artifact would strand the copy outside
+     * everything that answers to its id. So the bench never touches it.
+     */
+    function isBindableBase(item) {
+        if (!item) return false;
+        // Anything either bench already wrote: a bound piece, and a volume the
+        // writing bench filled with pages. Neither is raw material again.
+        if (item._enchanted || (item.meta && (item.meta.EnchantSpell || item.meta.Enchanted))) return false;
+        const VG = window.VectorGun;
+        if (VG && typeof VG.isVectorGun === 'function' && VG.isVectorGun(item)) return false;
+        return true;
+    }
+    SkillMaster.Enchant.isBindableBase = isBindableBase;
+
+    /**
+     * Every piece the bench may work on: what is in the pack and what the
+     * party is wearing, minus anything already bound.
+     */
+    function enchantableGear(kind) {
+        const out = [];
+        const seen = new Set();
+        // The book bench reads the pack and nothing else: a book is carried,
+        // never worn, and window.BookLearning is the one answer to what is a
+        // book at all.
+        if (kind === 'book') {
+            const BL = window.BookLearning;
+            for (const item of $gameParty.items()) {
+                if (!isBindableBase(item)) continue;
+                if (!BL || !BL.isBook(item)) continue;
+                if (seen.has(item.id)) continue;
+                seen.add(item.id);
+                out.push({ kind: kind, item: item, actorId: 0, equipSlot: -1 });
+            }
+            return out;
+        }
+        const isWeapon = kind === 'weapon';
+        const pack = isWeapon ? $gameParty.weapons() : $gameParty.armors();
+        for (const item of pack) {
+            if (!isBindableBase(item)) continue;
+            const key = 'p' + item.id;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            out.push({ kind: kind, item: item, actorId: 0, equipSlot: -1 });
+        }
+        for (const actor of $gameParty.allMembers()) {
+            actor.equips().forEach((eq, i) => {
+                if (!isBindableBase(eq)) return;
+                const worn = isWeapon ? !!eq.wtypeId : !!eq.atypeId;
+                if (!worn) return;
+                const key = 'e' + actor.actorId() + ':' + i;
+                if (seen.has(key)) return;
+                seen.add(key);
+                out.push({ kind: kind, item: eq, actorId: actor.actorId(), equipSlot: i });
+            });
+        }
+        return out;
+    }
+
+    /** Every spell anybody in the party knows that this bench will take. */
+    function bindableSpells(kind) {
+        const seen = new Set();
+        const out = [];
+        for (const actor of $gameParty.allMembers()) {
+            for (const s of actor.skills()) {
+                if (!s || seen.has(s.id)) continue;
+                seen.add(s.id);
+                if (bindableTo(s, kind)) out.push(s);
+            }
+        }
+        const name = (s) => (SkillMaster.skillSortName ? SkillMaster.skillSortName(s) : s.name);
+        out.sort((a, b) => name(a).localeCompare(name(b)));
+        return out;
+    }
+
+    SkillMaster.Enchant.bindSpell = bindSpell;
+    SkillMaster.Enchant.unbind = unbind;
+    SkillMaster.Enchant.enchantableGear = enchantableGear;
+    SkillMaster.Enchant.bindableSpells = bindableSpells;
+    SkillMaster.Enchant.forge = forgeEnchanted;
+
+    //=========================================================================
+    // The bench
+    //=========================================================================
+
+    const Proto = window.Scene_SkillEncyclopedia.prototype;
+
+    Proto.openEnchantBench = function (kind) {
+        this._viewMode = 'enchant';
+        this._enchantKind = (kind === 'armor' || kind === 'book') ? kind : 'weapon';
+        this._enchantSlotIndex = 0;
+        this._enchantSpellIndex = 0;
+        this._enchantColumn = 0;
+        this._enchantChip = 0;
+        this._enchantChosen = null;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeEnchantBench = function () {
+        this._viewMode = 'category';
+        this._lastLeftMode = null;
+        this._lastLeftCategory = null;
+        this._lastRightMode = null;
+        this._lastRightSkillId = null;
+        this._lastRightKnowledge = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.enchantSlots = function () {
+        return enchantableGear(this._enchantKind || 'weapon');
+    };
+
+    Proto.enchantSpells = function () {
+        return bindableSpells(this._enchantKind || 'weapon');
+    };
+
+    // The left page in one list: the gear waiting for a spell, then the pieces
+    // already carrying one. They were two lists with a cursor on only the
+    // first, which left everything already made reachable by the mouse alone.
+    Proto.enchantBound = function () {
+        const kind = this._enchantKind || 'weapon';
+        return $gameSystem.getEnchantedGear().filter(e => e && e._enchantKind === kind);
+    };
+
+    // What can be done to a piece already bound. A written book may also be
+    // renamed and recovered, so its row carries three chips and a weapon one.
+    Proto.enchantChips = function () {
+        return (this._enchantKind === 'book')
+            ? ['rename', 'recover', 'unmake']
+            : ['unmake'];
+    };
+
+    Proto.enchantLeftRows = function () {
+        return this.enchantSlots().length + this.enchantBound().length;
+    };
+
+    Proto.enchantBoundAt = function (row) {
+        const gear = this.enchantSlots().length;
+        return row < gear ? null : (this.enchantBound()[row - gear] || null);
+    };
+
+    // The chip under the cursor, pressed.
+    Proto.enchantRunChip = function (entry) {
+        if (!entry) return;
+        const chip = this.enchantChips()[this._enchantChip || 0];
+        if (chip === 'rename') this.enchantRename(entry.id);
+        else if (chip === 'recover') this.enchantRecover(entry.id, 1);
+        else this.enchantUnbind(entry.id);
+    };
+
+    Proto.enchantSelectSlot = function (idx) {
+        const slots = this.enchantSlots();
+        if (!slots[idx]) return;
+        this._enchantSlotIndex = idx;
+        this._enchantChosen = slots[idx];
+        this._enchantColumn = 1;
+        this._enchantSpellIndex = 0;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.enchantBind = function (idx) {
+        const spells = this.enchantSpells();
+        const spell = spells[idx];
+        const slot = this._enchantChosen;
+        if (!spell || !slot) { SoundManager.playBuzzer(); return; }
+        if ($gameSystem.getKnowledge() < enchantCost(spell, this._enchantKind)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        const entry = bindSpell(slot, spell);
+        if (!entry) { SoundManager.playBuzzer(); return; }
+        SoundManager.playSave();
+        if (window.ParchmentToast) window.ParchmentToast.show(tr('bound', { item: entry.name }));
+        this._enchantChosen = null;
+        this._enchantColumn = 0;
+        this._enchantSlotIndex = 0;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.enchantUnbind = function (entryId) {
+        if (unbind(entryId, this._enchantKind || 'weapon')) {
+            SoundManager.playCancel();
+            this.refreshUISkillDOM();
+        }
+    };
+
+    //--- a written book is the player's to name and to bind ------------------
+
+    /** The stored entry behind an id, whatever kind it is. */
+    function entryById(entryId) {
+        return $gameSystem.getEnchantedGear().find(e => e && e.id === entryId) || null;
+    }
+    SkillMaster.Enchant.entryById = entryById;
+
+    /** Writes a change through to the entry, the database and the pack alike. */
+    function restampEntry(entry) {
+        if (!entry) return;
+        injectOne(entry);
+    }
+    SkillMaster.Enchant.restampEntry = restampEntry;
+
+    Proto.enchantRename = function (entryId) {
+        const entry = entryById(entryId);
+        if (!entry) return;
+        this.openCraftTextSheet('name', null, (value) => {
+            const name = String(value || '').trim().slice(0, 40);
+            if (!name) return;
+            entry.name = name;
+            restampEntry(entry);
+        });
+    };
+
+    /**
+     * The cover. One click walks to the next sheet in the bank rather than
+     * opening a picker of its own: the bank is short, every one of them is a
+     * real file, and the book redraws as it goes.
+     */
+    Proto.enchantRecover = function (entryId, step) {
+        const entry = entryById(entryId);
+        if (!entry) return;
+        const bank = BOOK_TEXTURES;
+        const at = bank.indexOf(String((entry.meta && entry.meta.BookTexture) || ''));
+        const next = bank[(at + (step || 1) + bank.length) % bank.length];
+        entry.meta = entry.meta || {};
+        entry.meta.BookTexture = next;
+        entry.note = String(entry.note || '').replace(/<BookTexture:[^>]*>/gi, '').trim() +
+            '\n<BookTexture: ' + next + '>'; // i18n-ignore: note tag
+        restampEntry(entry);
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.renderEnchantBench = function (knowledge) {
+        const leftBox = document.getElementById('left-page-content');
+        const rightBox = document.getElementById('right-page-content');
+        if (!leftBox || !rightBox) return;
+        const kind = this._enchantKind || 'weapon';
+        // Weapon / Armor / Book, the tail of every string key this page reads.
+        const kindWord = kind.charAt(0).toUpperCase() + kind.slice(1);
+        const slots = this.enchantSlots();
+        const chosen = this._enchantChosen;
+
+        let slotsHTML = '';
+        slots.forEach((slot, idx) => {
+            const on = this._enchantColumn === 0 && this._enchantSlotIndex === idx;
+            const worn = slot.actorId ? $gameActors.actor(slot.actorId) : null;
+            const wornTag = worn ? `<span class="ui-chip sm-skill-badge">${esc(worn.name())}</span>` : '';
+            slotsHTML += `
+                <div class="sm-skill-row focusable ${on ? 'focused' : ''}" onclick="SceneManager._scene.enchantSelectSlot(${idx})">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(slot.item.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(slot.item.name))}</span></span>
+                    ${wornTag}
+                </div>`;
+        });
+        if (!slotsHTML) slotsHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noGear'))}</div></div>`;
+
+        let boundHTML = '';
+        const chips = this.enchantChips();
+        this.enchantBound().forEach((entry, i) => {
+            const spell = $dataSkills[entry._enchantSpellId];
+            const row = slots.length + i;
+            const onRow = this._enchantColumn === 0 && this._enchantSlotIndex === row;
+            const chipHTML = chips.map((chip, ci) => {
+                const lit = onRow && (this._enchantChip || 0) === ci ? ' focused' : '';
+                const call = chip === 'rename' ? `enchantRename(${entry.id})`
+                    : chip === 'recover' ? `enchantRecover(${entry.id})`
+                        : `enchantUnbind(${entry.id})`;
+                return `<span class="ui-chip sm-skill-badge focusable${lit}${chip === 'unmake' ? ' sm-craft-discard' : ''}"
+                        onclick="SceneManager._scene.${call}">${esc(tr(chip))}</span>`;
+            }).join('');
+            boundHTML += `
+                <div class="sm-skill-row sm-craft-entry ${onRow ? 'sm-craft-entry--cursor' : ''}">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(entry.iconIndex)}"></span><span class="sm-skill-name">${esc(entry.name)}</span></span>
+                    <span class="ui-chip sm-skill-badge">${esc(spell ? tx(spell.name) : tr('lostSpell'))}</span>
+                    ${chipHTML}
+                </div>`;
+        });
+        if (!boundHTML) boundHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneBound'))}</div></div>`;
+
+        leftBox.innerHTML = `
+            <div class="page-header-bar">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeEnchantBench()">${esc(tr('back'))}</div>
+              <h2 class="title">${esc(tr('title' + kindWord))}</h2>
+            </div>
+            <div class="sm-enchant-blurb">${esc(tr('blurb' + kindWord))}</div>
+            <div class="ui-section">
+              <h4 class="inspect-section-title">${esc(tr('chooseGear'))}</h4>
+            </div>
+            <div id="enchant-gear-box" class="ui-list ui-scroll sm-forged-list">
+                ${slotsHTML}
+            </div>
+            <div class="ui-section">
+              <h4 class="inspect-section-title">${esc(tr('boundSoFar'))}</h4>
+            </div>
+            <div id="enchant-bound-box" class="ui-list ui-scroll sm-forged-list">
+                ${boundHTML}
+            </div>`;
+
+        const spells = this.enchantSpells();
+        let spellsHTML = '';
+        spells.forEach((spell, idx) => {
+            const cost = enchantCost(spell, kind);
+            const afford = knowledge >= cost;
+            const on = this._enchantColumn === 1 && this._enchantSpellIndex === idx;
+            const elName = ($dataSystem.elements || [])[enchantElement(spell)] || '';
+            spellsHTML += `
+                <div class="sm-skill-row focusable ${on ? 'focused' : ''} ${(afford && chosen) ? '' : 'unusable'}" onclick="SceneManager._scene.enchantBind(${idx})">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(spell.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(spell.name))}</span></span>
+                    ${kind === 'weapon' ? `<span class="ui-chip sm-skill-badge">${esc(tx(elName))}</span>` : ''}
+                    <span class="sm-forge-cost">${cost} KP</span>
+                </div>`;
+        });
+        if (!spellsHTML) spellsHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noSpells'))}</div></div>`;
+
+        const target = chosen
+            ? tr('bindingInto', { item: tx(chosen.item.name) })
+            : tr('pickGearFirst');
+
+        rightBox.innerHTML = `
+            <div class="page-header-bar">
+              <h2 class="title">${esc(tr('spellsTitle'))}</h2>
+            </div>
+            <div class="sm-enchant-target">${esc(target)}</div>
+            <div id="enchant-spell-box" class="ui-list ui-scroll sm-forged-list">
+                ${spellsHTML}
+            </div>
+            <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
+    };
+
+    Proto.updateEnchantBenchInput = function () {
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            if (this._enchantColumn === 1) {
+                this._enchantColumn = 0;
+                this._enchantChosen = null;
+                SoundManager.playCancel();
+                this.refreshUISkillDOM();
+            } else {
+                this.closeEnchantBench();
+            }
+            return;
+        }
+        const spells = this._enchantColumn === 1;
+        // Binding a spell or unmaking a piece shortens the list under the
+        // cursor; where it stands is answered against the list as it is now.
+        if (!spells) {
+            this._enchantSlotIndex = Math.max(0,
+                Math.min(this._enchantSlotIndex || 0, this.enchantLeftRows() - 1));
+        }
+        const length = spells ? this.enchantSpells().length : this.enchantLeftRows();
+        const key = spells ? '_enchantSpellIndex' : '_enchantSlotIndex';
+        const boxId = spells ? 'enchant-spell-box' : 'enchant-gear-box';
+        const entry = spells ? null : this.enchantBoundAt(this._enchantSlotIndex);
+        if (Input.isTriggered('ok')) {
+            if (spells) this.enchantBind(this[key]);
+            else if (entry) this.enchantRunChip(entry);
+            else this.enchantSelectSlot(this[key]);
+            return;
+        }
+        // On a piece already bound, left and right step its own chips; on a
+        // piece waiting for one they cross to the spell book and back.
+        const chips = this.enchantChips().length;
+        const prevChip = this._enchantChip || 0;
+        if (Input.isTriggered('right') || Input.isRepeated('right')) {
+            if (entry && prevChip < chips - 1) this._enchantChip = prevChip + 1;
+            else if (!spells && this._enchantChosen) this._enchantColumn = 1;
+            else return;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
+        if (Input.isTriggered('left') || Input.isRepeated('left')) {
+            if (entry && prevChip > 0) this._enchantChip = prevChip - 1;
+            else if (spells) this._enchantColumn = 0;
+            else return;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
+        if (!length) return;
+        const prev = this[key];
+        if (Input.isTriggered('down') || Input.isRepeated('down')) this[key] = (prev + 1) % length;
+        else if (Input.isTriggered('up') || Input.isRepeated('up')) this[key] = (prev - 1 + length) % length;
+        if (this[key] !== prev) {
+            // Coming onto a bound row always offers the harmless chip first, so
+            // a held Down can never land the cursor on Unmake.
+            this._enchantChip = 0;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            // Whichever of the two lists on the left page the cursor landed in.
+            const box = spells ? boxId
+                : (this.enchantBoundAt(this[key]) ? 'enchant-bound-box' : 'enchant-gear-box');
+            this.scrollToActiveItem(box, '#' + box + ' .focused, #' + box + ' .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
+        }
+    };
+
+    //=========================================================================
+    // What a binding does in battle
+    //
+    // One hook, on the moment a hit is resolved. A weapon answers every
+    // critical it lands; a piece of armour answers the first critical its
+    // wearer takes in a battle and then stays quiet until the next one.
+    // Neither ever pays MP, because neither goes through paySkillCost.
+    //=========================================================================
+
+    function boundSpellOf(item) {
+        if (!item) return null;
+        const id = Number((item.meta && item.meta.EnchantSpell) || item._enchantSpellId || 0);
+        if (!id) return null;
+        return (typeof $dataSkills !== 'undefined' && $dataSkills) ? ($dataSkills[id] || null) : null;
+    }
+    SkillMaster.Enchant.boundSpellOf = boundSpellOf;
+
+    // Which pieces have already spoken this battle, keyed battler:item. Kept
+    // here rather than on the battler so nothing transient is serialized.
+    let _firedThisBattle = new Set();
+    // Guards the recursion: a bound spell's own hit never triggers a binding.
+    let _resolving = false;
+
+    const _BattleManager_startBattle_ench = BattleManager.startBattle;
+    BattleManager.startBattle = function () {
+        _firedThisBattle = new Set();
+        _resolving = false;
+        _BattleManager_startBattle_ench.call(this);
+    };
+
+    function battlerKey(battler) {
+        if (!battler) return 'x';
+        if (battler.isActor && battler.isActor()) return 'a' + battler.actorId();
+        return 'e' + (battler.index ? battler.index() : 0);
+    }
+
+    function castBound(subject, spell, targets) {
+        if (!subject || !spell || !targets || !targets.length) return;
+        _resolving = true;
+        try {
+            const action = new Game_Action(subject);
+            action.setSkill(spell.id);
+            const log = BattleManager._logWindow;
+            const animId = spell.animationId < 0
+                ? (subject.attackAnimationId1 ? subject.attackAnimationId1() : 0)
+                : spell.animationId;
+            if (log && typeof log.push === 'function') {
+                log.push('addText', tr('log.fires', { spell: tx(spell.name) }));
+                if (animId > 0) log.push('showAnimation', subject, targets.slice(), animId);
+            }
+            for (const t of targets) {
+                if (!t) continue;
+                action.apply(t);
+                if (log && typeof log.push === 'function') log.push('displayActionResults', subject, t);
+            }
+            if (action.applyGlobal) action.applyGlobal();
+        } catch (e) {
+            console.error('SkillMaster: a bound spell failed to resolve', e);
+        } finally {
+            _resolving = false;
+        }
+    }
+
+    /** Every critical the weapon lands, on whatever it just hit. */
+    function onCriticalDealt(subject, target) {
+        if (!subject || !subject.weapons) return;
+        for (const weapon of subject.weapons()) {
+            const spell = boundSpellOf(weapon);
+            if (!spell) continue;
+            const action = new Game_Action(subject);
+            action.setSkill(spell.id);
+            const targets = action.isForAll()
+                ? subject.opponentsUnit().aliveMembers()
+                : [target].filter(t => t && t.isAlive());
+            castBound(subject, spell, targets);
+        }
+    }
+
+    /** The first critical the wearer takes in a battle, and no more. */
+    function onCriticalTaken(wearer) {
+        if (!wearer || !wearer.armors) return;
+        for (const armor of wearer.armors()) {
+            const spell = boundSpellOf(armor);
+            if (!spell) continue;
+            const key = battlerKey(wearer) + ':' + armor.id;
+            if (_firedThisBattle.has(key)) continue;
+            _firedThisBattle.add(key);
+            const action = new Game_Action(wearer);
+            action.setSkill(spell.id);
+            const targets = (action.isForAll() && !action.isForUser())
+                ? wearer.friendsUnit().aliveMembers()
+                : [wearer];
+            castBound(wearer, spell, targets);
+        }
+    }
+
+    SkillMaster.Enchant.onCriticalDealt = onCriticalDealt;
+    SkillMaster.Enchant.onCriticalTaken = onCriticalTaken;
+
+    const _Game_Action_apply_ench = Game_Action.prototype.apply;
+    Game_Action.prototype.apply = function (target) {
+        _Game_Action_apply_ench.call(this, target);
+        if (_resolving) return;
+        if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.inBattle()) return;
+        const result = target && target.result ? target.result() : null;
+        if (!result || !result.isHit() || !result.critical) return;
+        const subject = this.subject();
+        if (!subject) return;
+        onCriticalDealt(subject, target);
+        onCriticalTaken(target);
+    };
+
+})();
+
+
+//=============================================================================
+// Module: SkillMasterWrite.js
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc v1.0.0 SkillMaster - the writing bench: copying what the party knows into a skill book or a grimorie.
+ * @author Omni-Lex
+ *
+ * @help
+ * The enchanting bench spends a spell. This one copies one out. Pick anything
+ * the party already knows and the bench writes it down:
+ *
+ *   Write Skill Book   ordinary abilities, the ones no school claims
+ *   Write Grimorie     spells, and only spells
+ *
+ * What comes off it is a unique volume that opens in the grimoire reader, on
+ * the pages the writer chose rather than on five rolled at random. Its one
+ * rule is the one that makes it worth writing: it does not close until every
+ * entry in it has been read out to somebody. Pick a reader per page with the
+ * party list the reader already draws, or cancel - and a cancelled reading
+ * costs nothing at all, because the volume goes back in the pack and every
+ * page taken from it in that sitting is given back.
+ *
+ * That cancelling is the reader's now, not this bench's, so it covers the
+ * grimoires and skill books the world already ships as well.
+ *
+ * The knowledge is paid once, per page, at the moment the volume is written.
+ */
+
+(() => {
+    'use strict';
+
+    window.SkillMaster = window.SkillMaster || {};
+    const SkillMaster = window.SkillMaster;
+
+    const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.write.' + key, params) : key);
+
+    const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const tx = (s) => (typeof window.translateText === 'function' ? window.translateText(s) : s);
+
+    // How many pages one volume may hold. Five is what the reader draws.
+    const WRITE_MAX_ENTRIES = 5;
+    SkillMaster.WRITE_MAX_ENTRIES = WRITE_MAX_ENTRIES;
+
+    const E = () => SkillMaster.Enchant || {};
+
+    /** Everything anybody in the party knows that this bench will copy out. */
+    function writableEntries(kind) {
+        const wantSpell = kind === 'grimorie';
+        const seen = new Set();
+        const out = [];
+        const En = E();
+        for (const actor of $gameParty.allMembers()) {
+            for (const s of actor.skills()) {
+                if (!s || !s.id || seen.has(s.id)) continue;
+                seen.add(s.id);
+                if (s.id === 1 || s.id === 2) continue;
+                const magic = En.isSpell ? En.isSpell(s) : false;
+                if (magic !== wantSpell) continue;
+                out.push(s);
+            }
+        }
+        const name = (s) => (SkillMaster.skillSortName ? SkillMaster.skillSortName(s) : s.name);
+        out.sort((a, b) => name(a).localeCompare(name(b)));
+        return out;
+    }
+    SkillMaster.writableEntries = writableEntries;
+
+    /** What one page costs. The same measure the enchanting bench charges by. */
+    function pageCost(skill) {
+        const En = E();
+        return En.cost ? En.cost(skill, 'write') : 120;
+    }
+
+    function volumeCost(skills) {
+        return (skills || []).reduce((sum, s) => sum + pageCost(s), 0);
+    }
+    SkillMaster.Write = { pageCost: pageCost, volumeCost: volumeCost, writableEntries: writableEntries };
+
+    /**
+     * The volume itself. It carries its pages on itself, so the reader needs
+     * no common event and no row in data/ of its own: <GrimoireEntries:> is
+     * the whole of what the reader is told.
+     */
+    function forgeVolume(kind, skills) {
+        const En = E();
+        const ids = skills.map(s => s.id);
+        const entry = {
+            id: $gameSystem.allocEnchantedGearId(kind),
+            name: '',
+            iconIndex: skills[0] ? skills[0].iconIndex : 0,
+            description: '',
+            itypeId: 1,
+            price: 0,
+            consumable: false,
+            scope: 0,
+            occasion: 2,
+            speed: 0,
+            successRate: 100,
+            repeats: 1,
+            tpGain: 0,
+            hitType: 0,
+            animationId: 0,
+            damage: { type: 0, elementId: 0, formula: '0', variance: 0, critical: false },
+            // One effect, and it does nothing: an item with no effect at all is
+            // drawn greyed in the item list, and the reader is opened off the
+            // note tag rather than off a common event (id 0 retrieves nothing,
+            // which Game_Interpreter#setupReservedCommonEvent guards for).
+            effects: [{ code: 44, dataId: 0, value1: 0, value2: 0 }],
+            note: '',
+            meta: {}
+        };
+        const texture = (En.BOOK_TEXTURES && En.BOOK_TEXTURES.length)
+            ? En.BOOK_TEXTURES[Math.floor(Math.random() * En.BOOK_TEXTURES.length)]
+            : '';
+        entry.name = rollVolumeName(kind, skills, entry.id);
+        entry.description = tr(kind === 'grimorie' ? 'grimorieDesc' : 'skillBookDesc',
+            { count: ids.length });
+        entry.note = '<category:Books>\n<GrimoireEntries: ' + ids.join(',') + '>\n<Enchanted: ' + kind + '>' +
+            (texture ? '\n<BookTexture: ' + texture + '>' : ''); // i18n-ignore: note tag
+        entry.meta = {
+            category: 'Books', // i18n-ignore: note tag value
+            GrimoireEntries: ids.join(','),
+            Enchanted: kind
+        };
+        if (texture) entry.meta.BookTexture = texture;
+        entry._enchantKind = kind;
+        entry._enchantEntries = ids.slice();
+        entry._enchanted = true;
+        return entry;
+    }
+    SkillMaster.Write.forgeVolume = forgeVolume;
+
+    function rollVolumeName(kind, skills, salt) {
+        const G = window.RandomBookGenerator;
+        if (G && typeof G.generateTitle === 'function') {
+            let a = (salt >>> 0) || 1;
+            const rng = function () {
+                a |= 0; a = (a + 0x6D2B79F5) | 0;
+                let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+            try {
+                const title = String(G.generateTitle(rng) || '').trim();
+                if (title) return title;
+            } catch (e) { /* fall through to the pattern */ }
+        }
+        return tr(kind === 'grimorie' ? 'grimorieFallbackName' : 'skillBookFallbackName',
+            { first: tx(skills[0] ? skills[0].name : '') });
+    }
+
+    /** Writes the volume, spends the knowledge and puts it in the pack. */
+    function writeVolume(kind, skills) {
+        if (!skills || !skills.length) return null;
+        const cost = volumeCost(skills);
+        if ($gameSystem.getKnowledge() < cost) return null;
+        const entry = forgeVolume(kind, skills);
+        const En = E();
+        if (En.restampEntry) En.restampEntry(entry);
+        $gameSystem.getEnchantedGear().push(entry);
+        $gameParty.gainItem(entry, 1);
+        $gameSystem.spendKnowledge(cost);
+        return entry;
+    }
+    SkillMaster.Write.writeVolume = writeVolume;
+
+    //=========================================================================
+    // The bench
+    //=========================================================================
+
+    const Proto = window.Scene_SkillEncyclopedia.prototype;
+
+    Proto.openWriteBench = function (kind) {
+        this._viewMode = 'writebook';
+        this._writeKind = (kind === 'skillbook') ? 'skillbook' : 'grimorie';
+        this._writeChosen = [];
+        this._writeIndex = 0;
+        this._writeRow = 0;
+        this._writeChip = 0;
+        this._writeColumn = 1;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeWriteBench = function () {
+        this._viewMode = 'category';
+        this._lastLeftMode = null;
+        this._lastLeftCategory = null;
+        this._lastRightMode = null;
+        this._lastRightSkillId = null;
+        this._lastRightKnowledge = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeCandidates = function () {
+        return writableEntries(this._writeKind || 'grimorie');
+    };
+
+    Proto.writeChosenSkills = function () {
+        const ids = this._writeChosen || [];
+        return ids.map(id => $dataSkills[id]).filter(Boolean);
+    };
+
+    Proto.writeToggle = function (idx) {
+        const list = this.writeCandidates();
+        const skill = list[idx];
+        if (!skill) return;
+        if (!this._writeChosen) this._writeChosen = [];
+        const at = this._writeChosen.indexOf(skill.id);
+        if (at >= 0) {
+            this._writeChosen.splice(at, 1);
+            SoundManager.playCancel();
+        } else {
+            if (this._writeChosen.length >= WRITE_MAX_ENTRIES) { SoundManager.playBuzzer(); return; }
+            this._writeChosen.push(skill.id);
+            SoundManager.playOk();
+        }
+        this._writeIndex = idx;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeCommit = function () {
+        const skills = this.writeChosenSkills();
+        if (!skills.length) { SoundManager.playBuzzer(); return; }
+        if ($gameSystem.getKnowledge() < volumeCost(skills)) { SoundManager.playBuzzer(); return; }
+        const entry = writeVolume(this._writeKind, skills);
+        if (!entry) { SoundManager.playBuzzer(); return; }
+        SoundManager.playSave();
+        if (window.ParchmentToast) window.ParchmentToast.show(tr('written', { book: entry.name }));
+        this._writeChosen = [];
+        this._writeIndex = 0;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeUnmake = function (entryId) {
+        const En = E();
+        const kind = this._writeKind || 'grimorie';
+        if (En.unbind && En.unbind(entryId, kind)) {
+            SoundManager.playCancel();
+            this.refreshUISkillDOM();
+        }
+    };
+
+    // What the buttons do on the bench the cursor is standing at. The badges
+    // inside the buttons say the rest; this is for the moves that are not a
+    // button at all - crossing between the two pages, stepping the chips on a
+    // piece already made, walking the letter sheet onto a name.
+    Proto.renderBenchPadTips = function () {
+        if (!window.Controller || !Controller.tips) return;
+        if (Controller.textEntryOpen && Controller.textEntryOpen()) return;
+        const tip = (face, key) => ({ face: face, label: T('SkillMaster.tips.' + key) });
+        const BENCHES = ['craft', 'enchant', 'writebook'];
+        if (BENCHES.indexOf(this._viewMode) < 0) { Controller.clearTips(); return; }
+        Controller.tips([
+            tip('A', 'pick'),
+            tip('dpad', 'walk'),
+            tip('B', 'back')
+        ]);
+    };
+
+    // Every chip a written volume carries, in the order they stand on its row.
+    const WRITE_CHIPS = ['rename', 'recover', 'unmake'];
+
+    // The left page of the writing bench, as one list: the pages chosen for
+    // this volume, the button that writes it, and then every volume already
+    // written. Walked top to bottom, which is what put the pages and the
+    // finished books back within reach of a cursor.
+    Proto.writeMade = function () {
+        const kind = this._writeKind || 'grimorie';
+        return $gameSystem.getEnchantedGear().filter(e => e && e._enchantKind === kind);
+    };
+
+    Proto.writeLeftRows = function () {
+        return this.writeChosenSkills().length + 1 + this.writeMade().length;
+    };
+
+    Proto.writeCommitRow = function () {
+        return this.writeChosenSkills().length;
+    };
+
+    Proto.writeMadeAt = function (row) {
+        const at = row - this.writeCommitRow() - 1;
+        return at < 0 ? null : (this.writeMade()[at] || null);
+    };
+
+    Proto.writeRunChip = function (entry) {
+        if (!entry) return;
+        const chip = WRITE_CHIPS[this._writeChip || 0];
+        if (chip === 'rename') this.enchantRename(entry.id);
+        else if (chip === 'recover') this.enchantRecover(entry.id, 1);
+        else this.writeUnmake(entry.id);
+    };
+
+    Proto.renderWriteBench = function (knowledge) {
+        const leftBox = document.getElementById('left-page-content');
+        const rightBox = document.getElementById('right-page-content');
+        if (!leftBox || !rightBox) return;
+        const kind = this._writeKind || 'grimorie';
+        const word = kind === 'grimorie' ? 'Grimorie' : 'SkillBook';
+        const chosen = this.writeChosenSkills();
+        const cost = volumeCost(chosen);
+        const afford = knowledge >= cost && chosen.length > 0;
+
+        const leftRow = this._writeColumn === 0 ? (this._writeRow || 0) : -1;
+        let chosenHTML = '';
+        chosen.forEach((s, i) => {
+            const on = leftRow === i ? ' focused' : '';
+            chosenHTML += `
+                <div class="sm-skill-row focusable${on}" onclick="SceneManager._scene.writeDrop(${s.id})">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(s.name))}</span></span>
+                    <span class="sm-forge-cost">${pageCost(s)} KP</span>
+                </div>`;
+        });
+        if (!chosenHTML) chosenHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingChosen'))}</div></div>`;
+
+        let writtenHTML = '';
+        const chips = WRITE_CHIPS;
+        this.writeMade().forEach((entry, i) => {
+            const pages = (entry._enchantEntries || []).length;
+            const onRow = leftRow === chosen.length + 1 + i;
+            const chipHTML = chips.map((chip, ci) => {
+                const lit = onRow && (this._writeChip || 0) === ci ? ' focused' : '';
+                const call = chip === 'rename' ? `enchantRename(${entry.id})`
+                    : chip === 'recover' ? `enchantRecover(${entry.id})`
+                        : `writeUnmake(${entry.id})`;
+                return `<span class="ui-chip sm-skill-badge focusable${lit}${chip === 'unmake' ? ' sm-craft-discard' : ''}"
+                        onclick="SceneManager._scene.${call}">${esc(tr(chip))}</span>`;
+            }).join('');
+            writtenHTML += `
+                <div class="sm-skill-row sm-craft-entry ${onRow ? 'sm-craft-entry--cursor' : ''}">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(entry.iconIndex)}"></span><span class="sm-skill-name">${esc(entry.name)}</span></span>
+                    <span class="ui-chip sm-skill-badge">${esc(tr('pages', { count: pages }))}</span>
+                    ${chipHTML}
+                </div>`;
+        });
+        if (!writtenHTML) writtenHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneWritten'))}</div></div>`;
+
+        const writeFocused = leftRow === chosen.length;
+        leftBox.innerHTML = `
+            <div class="page-header-bar">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeWriteBench()">${esc(tr('back'))}</div>
+              <h2 class="title">${esc(tr('title' + word))}</h2>
+            </div>
+            <div class="sm-enchant-blurb">${esc(tr('blurb' + word))}</div>
+            <div class="ui-section">
+              <h4 class="inspect-section-title">${esc(tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}</h4>
+            </div>
+            <div id="write-chosen-box" class="ui-list ui-scroll sm-forged-list">
+                ${chosenHTML}
+            </div>
+            <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable ${writeFocused ? 'selected' : ''} ${afford ? '' : 'unusable'}" onclick="SceneManager._scene.writeCommit()">
+                    ${esc(tr('writeIt'))} <span class="sm-forge-cost">&middot; ${cost} KP</span>
+                </div>
+            </div>
+            <div class="ui-section">
+              <h4 class="inspect-section-title">${esc(tr('writtenSoFar'))}</h4>
+            </div>
+            <div id="write-made-box" class="ui-list ui-scroll sm-forged-list">
+                ${writtenHTML}
+            </div>`;
+
+        const list = this.writeCandidates();
+        let listHTML = '';
+        list.forEach((s, idx) => {
+            const on = this._writeColumn === 1 && this._writeIndex === idx;
+            const picked = (this._writeChosen || []).indexOf(s.id) >= 0;
+            listHTML += `
+                <div class="sm-skill-row focusable ${on ? 'focused' : ''} ${picked ? 'selected' : ''}" onclick="SceneManager._scene.writeToggle(${idx})">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(s.name))}</span></span>
+                    <span class="sm-forge-cost">${pageCost(s)} KP</span>
+                </div>`;
+        });
+        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToCopy'))}</div></div>`;
+
+        rightBox.innerHTML = `
+            <div class="page-header-bar">
+              <h2 class="title">${esc(tr('source' + word))}</h2>
+            </div>
+            <div id="write-source-box" class="ui-list ui-scroll sm-forged-list">
+                ${listHTML}
+            </div>
+            <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
+    };
+
+    Proto.writeDrop = function (skillId) {
+        if (!this._writeChosen) return;
+        const at = this._writeChosen.indexOf(skillId);
+        if (at < 0) return;
+        this._writeChosen.splice(at, 1);
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.updateWriteBenchInput = function () {
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            this.closeWriteBench();
+            return;
+        }
+        const left = this._writeColumn === 0;
+        // A page dropped or a volume written shortens the list under the
+        // cursor, so where it is standing is answered against the list as it
+        // is now rather than as it was.
+        this._writeRow = Math.max(0, Math.min(this._writeRow || 0, this.writeLeftRows() - 1));
+        const row = this._writeRow;
+        const made = left ? this.writeMadeAt(row) : null;
+        if (Input.isTriggered('ok')) {
+            if (!left) this.writeToggle(this._writeIndex);
+            else if (made) this.writeRunChip(made);
+            else if (row === this.writeCommitRow()) this.writeCommit();
+            else {
+                const page = this.writeChosenSkills()[row];
+                if (page) this.writeDrop(page.id);
+                else SoundManager.playBuzzer();
+            }
+            return;
+        }
+        // On a volume already written, left and right step its own chips;
+        // anywhere else on the page they cross between the two columns.
+        const prevChip = this._writeChip || 0;
+        if (Input.isTriggered('left') || Input.isRepeated('left')) {
+            if (made && prevChip > 0) this._writeChip = prevChip - 1;
+            else if (left) return;
+            else this._writeColumn = 0;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
+        if (Input.isTriggered('right') || Input.isRepeated('right')) {
+            if (made && prevChip < WRITE_CHIPS.length - 1) this._writeChip = prevChip + 1;
+            else if (!left) return;
+            else this._writeColumn = 1;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
+        const length = left ? this.writeLeftRows() : this.writeCandidates().length;
+        if (!length) return;
+        const key = left ? '_writeRow' : '_writeIndex';
+        const prev = this[key] || 0;
+        if (Input.isTriggered('down') || Input.isRepeated('down')) this[key] = (prev + 1) % length;
+        else if (Input.isTriggered('up') || Input.isRepeated('up')) this[key] = (prev - 1 + length) % length;
+        if (this[key] !== prev) {
+            // Coming onto a written volume always offers the harmless chip
+            // first, so a held Down can never land the cursor on Unmake.
+            this._writeChip = 0;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            const box = !left ? 'write-source-box'
+                : (this.writeMadeAt(this[key]) ? 'write-made-box' : 'write-chosen-box');
+            this.scrollToActiveItem(box, '#' + box + ' .focused, #' + box + ' .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
+        }
     };
 
 })();

@@ -53,11 +53,11 @@
   "assets": {
     "oil": {
       "name": "OIL",
-      "description": "Il barile su cui gira tutto il continente. Ogni raffineria, ogni pieno di carburante e ogni ricarico dei negozi si quota su questa linea."
+      "description": "Petrolio greggio, quotato al barile. I prezzi del carburante e molti rincari nei negozi seguono questa linea."
     },
     "souls": {
       "name": "SOUL",
-      "description": "Essenza cristallizzata, scambiata a peso. Torna sempre alla mediana di risonanza, qualunque cosa ne pensi il mercato."
+      "description": "Essenza cristallizzata, scambiata a peso. Il prezzo tende a tornare verso la mediana di risonanza."
     }
   },
   "sectors": {

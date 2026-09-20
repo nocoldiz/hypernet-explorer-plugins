@@ -254,8 +254,30 @@
         return SR.getCurrentTimeMode();
     }
 
-    // Sky, water and light for the hour, or the fluorescent tubes of a hall.
+    // Out in the open, the sky over the break belongs to whatever world the
+    // party is standing on: its haze, the colour of its star's light, and a
+    // black sky full of stars where there is no air to scatter anything. On
+    // Earth this gives the palette back exactly as it was written.
+    function alienise(pal) {
+        const SR = window.SkyRenderer;
+        const world = (SR && SR.skyWorld) ? SR.skyWorld() : null;
+        if (!world || !SR.alienSkyColor || pal.interior) return pal;
+        pal.sky = SR.alienSkyColor(pal.sky);
+        pal.haze = SR.alienSkyColor(pal.haze);
+        pal.light = SR.alienSkyColor(pal.light);
+        if (world.atmosphere === false) {
+            pal.night = true;
+            pal.ambient = Math.min(pal.ambient, 0.24);
+        }
+        return pal;
+    }
+
     function palette(interior) {
+        return alienise(earthPalette(interior));
+    }
+
+    // Sky, water and light for the hour, or the fluorescent tubes of a hall.
+    function earthPalette(interior) {
         if (interior) {
             return {
                 sky: 0x1c2634, haze: 0x27374a, deep: 0x0d5670, shallow: 0x33b0c8,

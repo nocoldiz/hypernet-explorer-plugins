@@ -91,7 +91,7 @@
   },
   "empty": {
     "title": "Codicillo del Grimorio",
-    "hint": "Scegli un'abilità dall'elenco a sinistra per esaminarne la scala elementale, il costo d'uso e le azioni alchemiche.",
+    "hint": "Seleziona un'abilita dalla lista a sinistra per vederne elemento, costo ed effetti.",
     "section": "[Vuoto]",
     "category": "[Vuoto]"
   },

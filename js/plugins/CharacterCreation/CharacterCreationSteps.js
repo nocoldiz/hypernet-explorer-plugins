@@ -118,13 +118,22 @@
 
     // The packages the simple board deals, or an empty list when the trait
     // plugin is too old to know about them.
+    // The shelf depends on who is standing at it: a beast is offered the beast
+    // packages and a person the person ones, so the cache is keyed on that and
+    // not held flat. Switching the member's class across the sentience line
+    // therefore re-deals the board on the next draw instead of showing a dog a
+    // merchant's kit.
     _traitPackages() {
       const api = window.TraitPoints;
       if (!api || typeof api.packages !== "function") return [];
-      if (!this._ccTraitPackageCache || !this._ccTraitPackageCache.length) {
-        this._ccTraitPackageCache = api.packages() || [];
+      const NC = window.NPCCreature;
+      const beast = !!(NC && NC.isNonSentientActor(Scene_CharacterCreation.getCurrentActor()));
+      const key = beast ? "beast" : "person";
+      if (!this._ccTraitPackageCache) this._ccTraitPackageCache = {};
+      if (!this._ccTraitPackageCache[key] || !this._ccTraitPackageCache[key].length) {
+        this._ccTraitPackageCache[key] = api.packages(beast) || [];
       }
-      return this._ccTraitPackageCache;
+      return this._ccTraitPackageCache[key];
     }
 
     // Which package the member is standing on: the one whose whole list they
@@ -749,9 +758,16 @@
 
     // The head start itself, as a card rank (0 to 4). When the class and more
     // than one trait name the same specialization, the most generous of them
-    // is the one that counts.
+    // is the one that counts. Nothing is granted in a discipline no mechanic
+    // reads yet: the same rule Game_Actor#specializationClassBonus keeps, said
+    // again here because the board works the whole catalogue out in one pass
+    // rather than asking the actor 800 times per redraw.
     _specGrantRankIn(ctx, spec) {
       if (!ctx || !spec) return 0;
+      const implemented = (window.Specializations && typeof window.Specializations.isImplemented === "function")
+        ? window.Specializations.isImplemented(spec)
+        : spec.implemented !== false;
+      if (!implemented) return 0;
       let best = 1;
       if (ctx.className && spec.classStart) {
         const lvl = spec.classStart[ctx.className] || 0;
@@ -798,7 +814,8 @@
     _filteredSpecs() {
       const catalog = this._specsCatalog();
       const activeCat = Scene_CharacterCreation._activeSpecCategory || "All"; // i18n-ignore: specialization category id
-      const q = (Scene_CharacterCreation._specSearchQuery || "").toLowerCase().trim();
+      // No strip on a pad, so no filter either (CCSearch).
+      const q = window.CCSearch.query(Scene_CharacterCreation._specSearchQuery).toLowerCase().trim();
       const S = window.Specializations || {};
       const nameOf = (sp) => (S.displayName ? S.displayName(sp) : sp.name) || "";
       const descOf = (sp) => (S.describe ? S.describe(sp) : sp.description) || "";
@@ -968,7 +985,12 @@
           </div>
           <div class="cc-spec-tab-row">${catTabsHtml}</div>
           <div class="cc-gap-below-tight">
-            <input type="text" class="cc-bio-select cc-search-field" placeholder="${T('SpecMenu.ui.searchPlaceholder')}" oninput="SceneManager._scene.onSpecSearch(this.value)" value="${Scene_CharacterCreation._specSearchQuery || ''}">
+            ${window.CCSearch.html({
+              className: "cc-bio-select cc-search-field",
+              placeholder: T('SpecMenu.ui.searchPlaceholder'),
+              value: Scene_CharacterCreation._specSearchQuery,
+              oninput: "SceneManager._scene.onSpecSearch(this.value)",
+            })}
           </div>`}
           <div class="cc-spec-grid cc-pad-below">
             ${this._specGridInnerHtml()}
@@ -1683,7 +1705,8 @@
       if (!window.CCPick) return;
       const options = this._pickOptions(kind, arg) || [];
       if (!options.length) { SoundManager.playBuzzer(); return; }
-      const fromController = (typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad") || (window.CCNav && window.CCNav._lastActionByPad);
+      // Which device opened the sheet, asked of the one place that answers it.
+      const fromController = !window.CCSearch.enabled();
       window.CCPick.open({
         title: this._pickTitle(kind),
         options,
@@ -1719,13 +1742,14 @@
       // What the spliced body can hold, asked of the one place that answers it.
       // Two different numbers: how many grips the body has at all (hands, plus
       // a mouth for the class that fights with a blade in its teeth) and how
-      // many of those may hold a WEAPON, which is half of them unless the class
-      // dual wields. Both are shown, for a person as much as for a creature,
+      // many weapons it swings at full strength, which is one unless the class
+      // dual wields. Every hand can still close round a weapon past that, at a
+      // penalty. Both are shown, for a person as much as for a creature,
       // because splicing on a second archetype is what changes them.
       const HS = window.HandSlots;
       const layout = (HS && HS.layout) ? HS.layout(actor) : null;
       const slots = layout ? layout.slots : 0;
-      const maxWeapons = (HS && HS.maxWeapons) ? HS.maxWeapons(actor) : 0;
+      const maxWeapons = (HS && HS.freeWeapons) ? HS.freeWeapons(actor) : 0;
       const slotsHtml = `<div class="cc-bio-note">` +
         `${ccTp('CharCreate.weaponSlotsHeld', { n: maxWeapons })}` +
         ` <span class="cc-bio-note-dim">${ccTp('CharCreate.handSlotsHeld', { n: slots })}</span>` +
@@ -1973,7 +1997,18 @@
       // page lock (see _presetLockFreeStep) is what keeps it from being edited.
       const isSimpleMode = Scene_CharacterCreation.isSimpleMode() && !isStoryEm;
 
-      const professionSectionHtml = `
+      // A character on a creature class is not a person and is not asked a
+      // person's questions: no trade, no creed, no political graph and no
+      // social standing. This is the class's own <NonSentient> tag read through
+      // window.NPCCreature, NOT the creature/humanoid pill: a humanoid body may
+      // be played as a Ghost or a Zombie, and a creature may hold a civilised
+      // trade, so the class is the only thing that answers. The rows are left
+      // off the sheet entirely rather than shown and quietly ignored, and they
+      // come back the moment the class crosses back over the line. The same
+      // rule the detailed panel and the Empathize panel play by.
+      const feral = !!(window.NPCCreature && window.NPCCreature.isNonSentientActor(actor));
+
+      const professionSectionHtml = feral ? '' : `
         <div class="cc-bio-section">
           <div class="cc-bio-section-title">${this._ccIconHtml(193, 16)} <span>${ccT('CharCreate.professionJob')}</span></div>
           ${this._pickTriggerHtml('job', this._pickLabel('job'))}
@@ -1997,10 +2032,11 @@
               </div>
               ${this._simpleSheetPickersHtml()}
               ${professionSectionHtml}
+              ${feral ? '' : `
               <div class="cc-bio-section cc-bio-section-flush">
                 <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
                 ${this._pickTriggerHtml('creed', this._pickLabel('creed'))}
-              </div>
+              </div>`}
             </div>
           </div>
         `;
@@ -2031,13 +2067,14 @@
             ${professionSectionHtml}
             <div class="cc-bio-section">
               <div class="cc-row-wide">
+                ${feral ? '' : `
                 <div class="cc-col-grow">
                   <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.creedIdeology')}</span></div>
                   <div class="cc-row-inline">
                     ${this._pickTriggerHtml('creed', this._pickLabel('creed'))}
                     <button type="button" class="cc-bio-chip" onclick="if(window.PoliticalGraph3D && SceneManager._scene){ SceneManager._scene.markReturnStep(); SceneManager._scene.closeStepUI(); window.PoliticalGraph3D.openModal({ focusId: SceneManager._scene._pickCurrent('creed'), onSelect: function(id) { Scene_CharacterCreation.applyIdeologySelection(id); } }); }" title="${ccT('CharCreate.openPoliticalGraph')}">${ccT('CharCreate.politicalGraph')}</button>
                   </div>
-                </div>
+                </div>`}
                 <div class="cc-col-grow">
                   <div class="cc-bio-section-title">${this._ccIconHtml(190, 16)} <span>${ccT('CharCreate.originCity')}</span></div>
                   ${this._pickTriggerHtml('hometown', this._pickLabel('hometown'))}
@@ -2052,10 +2089,11 @@
               <div class="cc-bio-section-title">${this._ccIconHtml(113, 16)} <span>${ccT('CharCreate.ageBand')}</span></div>
               <div class="cc-bio-chips-row">${ageChips}</div>
             </div>
+            ${feral ? '' : `
             <div class="cc-bio-section">
               <div class="cc-bio-section-title">${this._ccIconHtml(208, 16)} <span>${ccT('CharCreate.socialStanding')}</span></div>
               <div class="cc-bio-chips-row">${wealthChips}</div>
-            </div>
+            </div>`}
             <div class="cc-bio-section cc-bio-section-flush">
               <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.bloodType')}</span></div>
               <div class="cc-note-label cc-note-label-spaced">${ccT('CharCreate.bio.bloodStandard')}</div>
@@ -2439,8 +2477,21 @@
       this.refreshUIOverlayDOM();
     }
 
+    // Every question the quick flow never put to the player, answered at
+    // random rather than carried into the world as null: a member built in
+    // simple mode embarks with the same complete sheet the detailed panel
+    // would have written. Nothing already chosen is overwritten. The
+    // specialization purse is deliberately not spent here: what it still holds
+    // is banked at embarkation (_bankUnspentSpecPoints) and spent later from
+    // the specialization menu.
     _ensureSimpleModeStatsAndTraits(actor) {
       if (!actor) return;
+      const rand = (list) => (list && list.length ? list[Math.floor(Math.random() * list.length)] : null);
+      // A beast holds no trade, no creed, no purse and no romance. The
+      // boundary is window.NPCCreature's to answer, never a class id read here.
+      const feral = !!(window.NPCCreature && window.NPCCreature.isNonSentientActor &&
+        window.NPCCreature.isNonSentientActor(actor));
+
       // Auto-assign random traits if not yet selected
       if (!actor._selectedTraits || actor._selectedTraits.length === 0) {
         if (window.randomizeTraitsForActor) {
@@ -2449,22 +2500,15 @@
         } else if (window.Health && Array.isArray(window.Health.Traits)) {
           const nonGenetic = window.Health.Traits.filter(t => (t.category || "mental") !== "genetic");
           if (nonGenetic.length > 0) {
-            const pick = nonGenetic[Math.floor(Math.random() * nonGenetic.length)];
+            const pick = rand(nonGenetic);
             actor._selectedTraits = [pick.id];
           }
         }
       }
-      // Auto-assign specializations if not yet trained. The story mode never
-      // spends anything here: what its protagonist knows is what her dossier
-      // wrote down, and the board there only reads it back.
-      if (!Scene_CharacterCreation._storyMode &&
-          (!actor._specTrained || Object.keys(actor._specTrained).length === 0)) {
-        if (typeof this._applySuggestedSpecs === "function") {
-          this._applySuggestedSpecs(actor);
-        }
-      }
+
       // Ensure gender defaults for organs & hormones
       const memberIdx = ($gameParty && $gameParty.members) ? $gameParty.members().indexOf(actor) : 0;
+      const seat = memberIdx >= 0 ? memberIdx : 0;
       if (memberIdx >= 0) {
         const CCU = window.CharacterCreationUtils;
         const currentGender = $gameVariables.value(38 + memberIdx);
@@ -2476,36 +2520,95 @@
         }
       }
 
-      // Ensure Morality if unset
-      if (actor._morality == null) {
-        const moralityVals = [2, 1, 0, -1, -2];
-        actor._morality = moralityVals[Math.floor(Math.random() * moralityVals.length)];
+      // Morality, on the bio page's own five-step scale.
+      if (!feral && actor._morality == null) {
+        actor._morality = rand([2, 1, 0, -1, -2]);
       }
 
-      // Ensure Age if unset
-      if (!actor._ageBand) {
-        const ageVals = ["young", "adult", "middle", "elder"];
-        actor._ageBand = ageVals[Math.floor(Math.random() * ageVals.length)];
+      // Age, written where the bio page writes it: one birth age per seat.
+      if (!$gameSystem._ccBirthAge) $gameSystem._ccBirthAge = [];
+      if (!$gameSystem._ccBirthAge[seat]) {
+        $gameSystem._ccBirthAge[seat] = 18 + Math.floor(Math.random() * 52);
       }
 
-      // Ensure Wealth if unset
-      if (!actor._wealthTier) {
-        const wealthVals = ["destitute", "working", "middle", "wealthy"];
-        actor._wealthTier = wealthVals[Math.floor(Math.random() * wealthVals.length)];
+      // Wealth, as the tier index the bio page stores (0 to 3).
+      if (!feral && actor._wealthTier == null) {
+        actor._wealthTier = Math.floor(Math.random() * 4);
       }
 
-      // Ensure Blood if unset
-      if (!actor._bloodType && !actor._bloodTypeId) {
-        const bloods = ["O_POS", "A_POS", "B_POS", "AB_POS", "O_NEG", "A_NEG", "B_NEG", "AB_NEG"];
-        actor._bloodTypeId = bloods[Math.floor(Math.random() * bloods.length)];
-      }
-
-      // Ensure Hometown if unset
-      if (!actor._hometownId && typeof getAvailableHometowns === "function") {
-        const towns = getAvailableHometowns();
-        if (towns && towns.length > 0) {
-          actor._hometownId = towns[Math.floor(Math.random() * towns.length)].id;
+      // Blood, asked of the one service that owns the table.
+      if (!actor._ccBloodType && !actor._bloodType) {
+        const bloods = (window.BloodTypeService && window.BloodTypeService.list)
+          ? window.BloodTypeService.list() : [];
+        const blood = rand(bloods);
+        if (blood) {
+          actor._ccBloodType = blood.id;
+          actor._bloodType = blood.type || blood.id;
+          if (window.BloodTypeService.setForActor) {
+            window.BloodTypeService.setForActor(actor, blood.id);
+          }
         }
+      }
+
+      // One hometown for the whole party, the way the bio page writes it.
+      if (!$gameSystem._ccHometown) {
+        const towns = (window.WorkSystem && window.WorkSystem.Destinations)
+          ? Object.keys(window.WorkSystem.Destinations) : [];
+        const town = rand(towns);
+        if (town) $gameSystem._ccHometown = town;
+      }
+
+      // A trade. Only the id is written: the starting goods a job hands out
+      // belong to the player picking it on the bio page, not to a silent roll.
+      if (!feral && !actor._jobId) {
+        const job = rand((window.WorkSystem && window.WorkSystem.Jobs) || []);
+        if (job) actor._jobId = job.id;
+      }
+
+      // The society profile holds the creed and the personality; it is minted
+      // here if this member never reached a step that made one.
+      let profile = null;
+      if (window.NPCSocietyRegistry) {
+        try {
+          if (window.NPCSocietyRegistry.ensureProfile && actor.name()) {
+            const cls = actor.currentClass();
+            window.NPCSocietyRegistry.ensureProfile(actor.name(), cls ? cls.id : null);
+          }
+          if (window.NPCSocietyRegistry.getActorProfile) {
+            profile = window.NPCSocietyRegistry.getActorProfile(actor.actorId());
+          }
+        } catch (e) {
+          console.warn("[CharacterCreation] could not read the society profile", e);
+        }
+      }
+
+      // A creed, written by id and by slot both, the way NPCShared reads it.
+      if (!feral && !actor._ideologyId) {
+        const creeds = (window.NPCShared && window.NPCShared.ideologyList)
+          ? window.NPCShared.ideologyList() : [];
+        const creed = rand(creeds);
+        if (creed) {
+          actor._ideologyId = creed.id;
+          if (profile) {
+            profile.ideologyId = creed.id;
+            profile.ideologyIndex = creeds.indexOf(creed);
+          }
+        }
+      }
+
+      // A personality, which the whole NPC simulation reads a member's replies
+      // out of. A beast answers in its class voice, so it is not asked.
+      if (!feral && profile && (profile.personalityIndex == null || profile.personalityIndex < 0)) {
+        const data = window._NPCSocietyDataLoader;
+        const bank = (data && data.personalities) || [];
+        if (bank.length) profile.personalityIndex = Math.floor(Math.random() * bank.length);
+      }
+
+      // Orientation, Kinsey placement and the way this character is tied to
+      // somebody, rolled on the same weighted banks the world uses. Quiet: the
+      // romance page is not on screen when this runs.
+      if (!feral && !actor._ccRomance && typeof this._rollRomanceForActor === "function") {
+        this._rollRomanceForActor(actor, true);
       }
     }
 
@@ -2839,6 +2942,21 @@
     _romancePickerLeftHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-left"></div>`;
+      // An orientation, a Kinsey placement and a relationship style are a
+      // person's answers. A character on a creature class holds none of them
+      // (window.NPCCreature owns the boundary, and the Empathize panel refuses
+      // the same rows), so the page says so instead of offering a beast a
+      // choice of romantic style. Crossing back to a civilised class brings
+      // the whole page back with the answers it had.
+      if (window.NPCCreature && window.NPCCreature.isNonSentientActor(actor)) {
+        return `
+          <div class="cc-page cc-page-full ts-page cc-page-column">
+            <div class="cc-bio-container cc-step-scroll">
+              <div class="cc-note-label">${ccT("CharCreate.romance.nonSentient")}</div>
+            </div>
+          </div>
+        `;
+      }
 
       const state = this._romanceState(actor);
       const banks = this._romanceBanks();
@@ -2977,7 +3095,9 @@
     // Rolling one character's attachments, kept apart from the button so the
     // whole-member randomizer can roll them too: "Randomize Member" leaves
     // nothing on the sheet untouched.
-    _rollRomanceForActor(actor) {
+    // `quiet` rolls without repainting: the embarkation gate calls this with
+    // the romance page nowhere on screen.
+    _rollRomanceForActor(actor, quiet) {
       if (!actor) return;
       const banks = this._romanceBanks();
       const weighted = (list, key) => {
@@ -3006,7 +3126,7 @@
 
       actor._ccRomance = state;
       this._romanceMirrorToProfile(actor);
-      this._romanceRepaint();
+      if (!quiet) this._romanceRepaint();
     }
 
     onRandomizeBioForCurrentActor() {
@@ -3231,7 +3351,8 @@
 
     _petPickerLeftHtml() {
       const activeCat = Scene_CharacterCreation._activePetCategory || "all";
-      const searchQuery = (Scene_CharacterCreation._petSearchQuery || "").trim().toLowerCase();
+      // No strip on a pad, so no filter either (CCSearch).
+      const searchQuery = window.CCSearch.query(Scene_CharacterCreation._petSearchQuery).trim().toLowerCase();
       const categories = this._petCategories();
       const catalog = this._petCatalog();
       let filtered = activeCat === "all" ? catalog : catalog.filter((p) => p.kind === activeCat);
@@ -3264,10 +3385,12 @@
       return `
         <div class="cc-page cc-page-full ts-page cc-page-column">
           <div class="cc-row-controls">
-            <input type="text" class="backpack-search-input cc-rail-search"
-                   placeholder="${this._petWord('CharCreate.petSearchPlaceholder', 'CharCreate.petsSearchPlaceholder')}"
-                   value="${Scene_CharacterCreation._petSearchQuery || ''}"
-                   oninput="SceneManager._scene.onPetSearch(this.value)" />
+            ${window.CCSearch.html({
+              className: "backpack-search-input cc-rail-search",
+              placeholder: this._petWord('CharCreate.petSearchPlaceholder', 'CharCreate.petsSearchPlaceholder'),
+              value: Scene_CharacterCreation._petSearchQuery,
+              oninput: "SceneManager._scene.onPetSearch(this.value)",
+            })}
             <span class="cc-count-badge">${ccTp('CharCreate.petCount', { n: petCount })}</span>
           </div>
           <div class="ts-tab-row">${catTabsHtml}</div>
@@ -4102,37 +4225,15 @@
         console.warn("selectRandomSpriteForActor not available for total randomization");
       }
 
-      // Set bust based on SpritesAssociation for the selected sprite
-      if (selectedSprite && window.Sprites && window.Sprites.SpritesAssociation) {
-        const SpritesAssociation = window.Sprites.SpritesAssociation;
-        const spriteName = selectedSprite.name;
-        const spriteIndex = selectedSprite.index;
-
-        // Check if this sprite has an associated bust
-        if (SpritesAssociation[spriteName] && SpritesAssociation[spriteName][spriteIndex]) {
-          const associatedBust = SpritesAssociation[spriteName][spriteIndex];
-
-          // The bust is a bust for every member: it belongs in the actor's own
-          // bust field, not the monster-battler one.
-          if (randomActor) {
-            randomActor.setVnBust(associatedBust);
-            console.log(`Total Random: Set bust ${associatedBust} for actor ${targetActorId}`);
-          }
-        } else {
-          // No association found, fall back to random bust selection
-          console.log(`Total Random: No SpritesAssociation found for ${spriteName}[${spriteIndex}], selecting random bust`);
-          if (window.selectRandomBustForActor) {
-            const selectedBust = window.selectRandomBustForActor(targetActorId);
-            console.log(`Total Random: Selected random bust ${selectedBust} for actor ${targetActorId}`);
-          }
-        }
-      } else {
-        // SpritesAssociation not available, fall back to random bust selection
-        console.log(`Total Random: SpritesAssociation not available, selecting random bust`);
-        if (window.selectRandomBustForActor) {
-          const selectedBust = window.selectRandomBustForActor(targetActorId);
-          console.log(`Total Random: Selected random bust ${selectedBust} for actor ${targetActorId}`);
-        }
+      // The bust comes off the sheet that was just picked, asked of the one
+      // service that pairs them (it reads the sprite catalogue as well as the
+      // older SpritesAssociation table, and lends a single bust to every index).
+      // A stranger is rolled in only for a sheet that carries no portrait.
+      const pairedBust = window.selectBustForActorSprite
+        ? window.selectBustForActorSprite(targetActorId)
+        : null;
+      if (!pairedBust && window.selectRandomBustForActor) {
+        window.selectRandomBustForActor(targetActorId);
       }
 
       return true;

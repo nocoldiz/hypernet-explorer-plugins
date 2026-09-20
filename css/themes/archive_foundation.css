@@ -87,6 +87,20 @@
     --z-dialog: 9000;
     --z-toast: 12000;
     --z-cursor: 20000;
+
+    /* === THE ONE MODAL LOOK (see theme.css) ===
+       Every confirmation window, prompt and write sheet outside HypernetOS and
+       the minigames is painted from these values and nothing else. A modal that
+       mixes in its own ground or its own frame reads as a different game, so
+       none of them do it any more. */
+    --modal-scrim: rgba(0, 0, 0, 0.55);
+    --modal-bg: var(--bg-panel);
+    --modal-border: none;
+    --modal-radius: 6px;
+    --modal-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    --modal-pad: 20px 24px;
+    --modal-gap: 12px;
+    --modal-fg: var(--text-success-active);
 }
 
 :root {

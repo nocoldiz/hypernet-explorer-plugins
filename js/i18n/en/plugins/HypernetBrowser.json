@@ -261,7 +261,7 @@
   "mail": {
     "title": "Hypernet Mail",
     "heading": "Inbox",
-    "hint": "Mail held for this terminal. Nothing here can be replied to; the relay has been one-way since the Y2K rollover.",
+    "hint": "Mail held for this terminal. Replies are not possible: the relay has been one-way since the Y2K rollover.",
     "from": "From",
     "subject": "Subject",
     "received": "Received",

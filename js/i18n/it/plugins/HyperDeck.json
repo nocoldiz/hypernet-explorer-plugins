@@ -105,7 +105,8 @@
     "face": "META INFERIORE",
     "clear": "SVUOTA",
     "chip": "CHIP",
-    "boot": "AVVIA"
+    "boot": "AVVIA",
+    "open": "APRI"
   },
   "face": {
     "keyboard": "Tastiera",
@@ -203,7 +204,7 @@
     "bus": "Bus",
     "instr": "Istr",
     "presetHeading": "SCHEMI PRONTI",
-    "presetHint": "Scegline uno e viene disegnato dove stai guardando. Tutto cio che posa sono caselle ordinarie: spostale, collegale a qualcosa di piu grande, o incidile cosi come sono.",
+    "presetHint": "Scegli un preset e viene disegnato dove stai guardando, come normali caselle. Spostalo, collegalo a qualcosa di piu grande, o incidilo com'e.",
     "placing": "{name} in mano. Clicca per posarlo, tasto destro o Esc per rimetterlo giu.",
     "app": {
       "name": "Editor di circuiti",

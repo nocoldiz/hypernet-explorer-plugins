@@ -9,6 +9,7 @@
   "usedSkeletonKey": "Hai usato il Passepartout!",
   "groundFloor": "Piano terra",
   "floorNumbered": "Piano {n}",
+  "floorNamed": "{floor}: {name}",
   "noElevator": "Qui non c'è nessun ascensore.",
   "selectFloor": "Scegli un piano:",
   "doorHeld": "La porta rinforzata ha retto alla tua spallata.",

@@ -108,6 +108,71 @@
     // Helper Functions
     //-----------------------------------------------------------------------------
 
+    // Which classes a recruited monster may be given.
+    //
+    // A creature carrying <Talk> understood the party well enough to be argued
+    // round and to agree to travel with them, and that is the whole definition
+    // of a person: it joins on one of the SENTIENT classes (every class tagged
+    // <Sentient> in Classes.json), never on Feral or Ghost, whatever the table
+    // below happens to list for its archetype. A creature without the tag is
+    // exactly what it looks like and keeps its own roster.
+    //
+    // The pool is narrowed in three steps, each falling through to the next
+    // when it would leave nothing to pick from, so a talking dragon or ghost
+    // (whose table entry is a creature class and nothing else) still ends up
+    // with a trade rather than with no class at all:
+    //
+    //   1. the archetype's own table entry, minus its creature classes
+    //   2. the civilised roster its anatomy archetype supports
+    //      (Archetypes.json, read through window.CreatureClasses)
+    //   3. the whole sentient roster
+    //
+    // window.CreatureClasses reads each class's tag, so nothing here compares
+    // an id against a number.
+    function isCreatureClassId(classId) {
+        const CC = window.CreatureClasses;
+        return !!(CC && CC.isCreatureClass && CC.isCreatureClass(classId));
+    }
+
+    function recruitClassPool(archetype, anatomyKey, hasTalk) {
+        const acKey = archetype && Object.keys(archetypeClasses)
+            .find(k => k.toLowerCase() === String(archetype).toLowerCase());
+        const table = (acKey ? archetypeClasses[acKey] : archetypeClasses.Humanoid) || [];
+        if (!hasTalk) return table;
+
+        const CC = window.CreatureClasses;
+        const sentientOnly = table.filter(id => !isCreatureClassId(id));
+        if (sentientOnly.length) return sentientOnly;
+
+        if (CC && CC.civilisedFor) {
+            for (const key of [anatomyKey, archetype]) {
+                const roster = key ? CC.civilisedFor(key) : [];
+                if (roster && roster.length) return roster;
+            }
+        }
+        if (CC && CC.sentientRoster) {
+            const all = CC.sentientRoster();
+            if (all && all.length) return all;
+        }
+        return table;
+    }
+
+    // The build a recruit walks in with. A person's traits and a beast's are
+    // two different books (Traits.json `mind`), and the roll below opens the
+    // one that matches the class the recruit was just given: a monster talked
+    // round onto a civilised class is dealt a person's traits, a tamed one is
+    // dealt an animal's. Called after the class is set, never before, or the
+    // build would be rolled out of the wrong book and then dropped again by
+    // TraitSelector's own sentience guard.
+    function initRecruitTraits(actorId) {
+        if (!actorId || typeof window.randomizeTraitsForActor !== "function") return;
+        try {
+            window.randomizeTraitsForActor(actorId);
+        } catch (e) {
+            console.warn("[EnemyTalkSystem] could not roll recruit traits", e);
+        }
+    }
+
     function isItalian() {
         return ConfigManager.language === 'it';
     }
@@ -526,6 +591,34 @@
     }
     window.EnemyTalk.bestJoinStat = bestJoinStat;
 
+    // Nobody far above the party's weight class comes along, as a member or as
+    // a pet: a level 40 beast has no reason to trail after a party of level 3s.
+    // The party is measured by its MEDIAN level, the same number every other
+    // system measures it by (BSE.Helpers.getMedianLevel), so one veteran
+    // carrying two beginners does not open the whole bestiary to them.
+    const JOIN_LEVEL_MARGIN = 3;
+
+    function partyMedianLevel() {
+        const levels = ($gameParty?.members?.() ?? [])
+            .map(m => m?.level ?? 1)
+            .sort((a, b) => a - b);
+        if (!levels.length) return 1;
+        const mid = Math.floor(levels.length / 2);
+        return levels.length % 2
+            ? levels[mid]
+            : Math.floor((levels[mid - 1] + levels[mid]) / 2);
+    }
+
+    // An enemy whose level the battle system cannot name (0, an untagged one)
+    // is never blocked on it: an unknown level is not a reason to refuse.
+    function withinWeightClass(enemy) {
+        if (!enemy) return false;
+        const level = window.BattleSystemEnhanced?.Helpers?.getBattlerLevel?.(enemy) ?? 0;
+        if (!level || level <= 0) return true;
+        return level <= partyMedianLevel() + JOIN_LEVEL_MARGIN;
+    }
+    window.EnemyTalk.withinWeightClass = withinWeightClass;
+
     // Label for the "recruit as pet/follower" option. Cosmetic only: enemies
     // with the <Talk> tag become "followers", the rest become "pets".
     function getRecruitLabel(enemy) {
@@ -574,17 +667,34 @@
             ];
         }
 
+        // Out of the party's weight class, neither way in is on the table.
+        const inReach = withinWeightClass(enemy);
+
         const opts = [{ label: choices[0], key: 'chat', pct: talk }];
-        if (!partyFull) {
+        if (!partyFull && inReach) {
             opts.push({ label: choices[1], key: 'joinParty', pct: this.calculateJoinSuccessChance() });
         }
-        opts.push({ label: getRecruitLabel(enemy), key: 'joinPet', pct: this.calculatePetFollowerChance() });
+        if (inReach) {
+            opts.push({ label: getRecruitLabel(enemy), key: 'joinPet', pct: this.calculatePetFollowerChance() });
+        }
         opts.push({ label: choices[2], key: 'surrender',  pct: talk });
         opts.push({ label: choices[3], key: 'insult',     pct: canTalk ? 100 : 0 });
         opts.push({ label: choices[4], key: 'throwStone', pct: 100 });
         opts.push({ label: choices[5], key: 'pet',        pct: this.calculatePetSuccessChance() });
         opts.push({ label: choices[6], key: 'cancel',     pct: null });
         return opts;
+    };
+
+    // The other refusal: it would come along, but not with THIS party. Shares
+    // the shape of _refuseUnrecruitable so a handler can bail on it the same
+    // way.
+    Scene_Battle.prototype._refuseOutOfReach = function (enemy) {
+        if (!enemy || withinWeightClass(enemy)) return false;
+        window.skipLocalization = true;
+        $gameMessage.add(T('EnemyTalk.msg.outOfReach', { name: enemy.name() }));
+        window.skipLocalization = false;
+        this.closeTalkMenu();
+        return true;
     };
 
     // The one refusal every approach to an unrecruitable creature ends on.
@@ -601,6 +711,7 @@
     Scene_Battle.prototype.calculatePetFollowerChance = function () {
         const enemy = this._talkEnemy();
         if (!enemy || enemy.isUnrecruitable() || isArenaModeActive()) return 0;
+        if (!withinWeightClass(enemy)) return 0;
         // Pets/followers are easier to win over than a full party recruit:
         // disposition-based, with a flat bonus and a friendly floor.
         const base = this.calculateTalkSuccessChance();
@@ -642,6 +753,7 @@
     Scene_Battle.prototype.calculateJoinSuccessChance = function () {
         const enemy = this._talkEnemy();
         if (!enemy || enemy.isUnrecruitable() || isArenaModeActive()) return 0;
+        if (!withinWeightClass(enemy)) return 0;
 
         // Small percentage to recruit even under the disposition threshold
         const disposition = enemy.disposition();
@@ -1102,6 +1214,7 @@
         }
 
         if (this._refuseUnrecruitable(enemy)) return;
+        if (this._refuseOutOfReach(enemy)) return;
 
         if (isPartyFull()) {
             window.skipLocalization = true;
@@ -1172,16 +1285,14 @@
             // Set class from archetype (case-insensitive); fall back to a broad
             // humanoid class pool so every recruited enemy gets a class instead
             // of silently keeping the default Freelancer (#142).
-            if (archetype) {
-                const acKey = Object.keys(archetypeClasses)
-                    .find(k => k.toLowerCase() === String(archetype).toLowerCase());
-                const classes = acKey
-                    ? archetypeClasses[acKey]
-                    : archetypeClasses.Humanoid;
-                if (classes && classes.length) {
-                    const randomClassId = classes[Math.floor(Math.random() * classes.length)];
-                    newActor.changeClass(randomClassId, false);
-                }
+            // A <Talk> creature joins as a person: recruitClassPool() strips
+            // the creature classes out of its archetype's roster and falls back
+            // to the civilised roster its anatomy supports.
+            const classes = recruitClassPool(
+                archetype, enemy._archetypeName || archetype, hasTalk);
+            if (classes && classes.length) {
+                const randomClassId = classes[Math.floor(Math.random() * classes.length)];
+                newActor.changeClass(randomClassId, false);
             }
 
             // Same sprite resolution as the pet/follower path: the enemy's own
@@ -1208,6 +1319,9 @@
             // The body it walks in with: its own species' anatomy, minus
             // whatever the fight took off it.
             this.applyRecruitAnatomy(newActor, enemy);
+
+            // And the mind: a build rolled out of the book its new class opens.
+            initRecruitTraits(actorIdToAdd);
 
             // The slot may still hold the last recruit's ruin (dead, poisoned,
             // half a hit point). A monster that just agreed to travel with the
@@ -1275,6 +1389,7 @@
         }
 
         if (this._refuseUnrecruitable(enemy)) return;
+        if (this._refuseOutOfReach(enemy)) return;
 
         if (!window.PetSystem) {
             console.warn("EnemyTalkSystem: PetFollowerSystem.js not loaded, cannot recruit pet.");

@@ -2160,12 +2160,16 @@ Sprite_ArmyLabel.prototype.refresh = function () {
       T("ArmyEvents.campaign.choiceLeave"),
     ];
     $gameMessage.setBackground(0);
+    window.skipLocalization = true;
     $gameMessage.add(armyTitle(army));
     $gameMessage.add(T("ArmyEvents.campaign.strength", { count: army.troopCount }));
+    window.skipLocalization = false;
     if (foe) {
+      window.skipLocalization = true;
       $gameMessage.add(T("ArmyEvents.campaign.engagedWith", {
         leader: foe.leaderName, count: foe.troopCount,
       }));
+      window.skipLocalization = false;
       // Helping one side means taking the field against the other, with the
       // side you came for standing beside you.
       ids.splice(0, 0, "sideThis", "sideOther");   // i18n-ignore  record keys

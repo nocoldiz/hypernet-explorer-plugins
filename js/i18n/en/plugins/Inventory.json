@@ -44,7 +44,8 @@
     "Survival": "Survival",
     "Trash": "Trash",
     "Vehicles": "Vehicles",
-    "Leisure": "Leisure"
+    "Leisure": "Leisure",
+    "Fertility": "Fertility"
   },
   "itemType": {
     "standard": "Standard Item",
@@ -234,12 +235,12 @@
     "mythic": "Mythic"
   },
   "blurb": {
-    "remedy": "An antique alchemical extraction from licensed apothecaries: vital herbs suspended in purified spring water, rebuilding cell membranes and steadying the nerves.",
-    "provision": "A field nutrient packet cured with pure rock salt. Standard survival issue against exhaustion, calorie-dense without the risk of overeating.",
-    "armament": "Martial field equipment tempered in industrial geothermal hearths, etched with runic veins that feed Ley straight to the reflexes.",
-    "shield": "A protective composite weave layered with heavy shock-mitigation structures, spreading kinetic and thermal impacts across the body.",
-    "apparatus": "An explorer's utility apparatus of fine gears and lock-bypass systems, built for excavation and mechanical repair in rough weather.",
-    "specimen": "An exotic specimen recovered from deep sector ruins, catalogued for its stable ley-resonance and prized by alchemists and collectors alike."
+    "remedy": "Vital herbs in purified spring water, from a licensed apothecary. Mends flesh and steadies the nerves.",
+    "provision": "A salt-cured field ration. Survival issue against exhaustion, filling without overeating.",
+    "armament": "Field gear forged in geothermal hearths, veined with runes that feed Ley to the reflexes.",
+    "shield": "A layered composite weave that spreads impact and heat across the whole body.",
+    "apparatus": "An explorer's toolkit of fine gears and lock bypass, built for digging and repairs in bad weather.",
+    "specimen": "An exotic find from deep sector ruins, catalogued for its steady ley-resonance and prized by collectors."
   },
   "items": "Items",
   "weight": "Weight",
@@ -307,7 +308,7 @@
     "eatItem": "Eat {item}",
     "cancel": "Cancel",
     "inspectionLog": "Details",
-    "inspectionPlaceholder": "Select an item from the backpack on the left to inspect its natural properties, chemical composition, and mechanical details.",
+    "inspectionPlaceholder": "Select an item from the backpack on the left to see its properties, composition and stats.",
     "useItem": "Use Item",
     "equip": "Equip",
     "favorite": "Favourite",

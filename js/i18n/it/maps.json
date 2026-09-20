@@ -2848,5 +2848,50 @@
     "val": "Torre Oscura",
     "excluded": "",
     "name": ""
+  },
+  "Tavern FL -1": {
+    "val": "Taverna FL -1",
+    "excluded": "",
+    "name": ""
+  },
+  "Nerd Cave FL -2": {
+    "val": "Covo Nerd FL -2",
+    "excluded": "",
+    "name": ""
+  },
+  "Biolaboratory FL -3": {
+    "val": "Biolaboratorio FL -3",
+    "excluded": "",
+    "name": ""
+  },
+  "Farming grounds FL -4": {
+    "val": "Campi coltivati FL -4",
+    "excluded": "",
+    "name": ""
+  },
+  "Housing floor FL -5": {
+    "val": "Piano abitativo FL -5",
+    "excluded": "",
+    "name": ""
+  },
+  "Reactor Halley FL -6": {
+    "val": "Reattore Halley FL -6",
+    "excluded": "",
+    "name": ""
+  },
+  "Arcane library FL -7": {
+    "val": "Biblioteca arcana FL -7",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermarket FL -9": {
+    "val": "Ipermercato FL -9",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermetro station FL -9": {
+    "val": "Stazione ipermetro FL -9",
+    "excluded": "",
+    "name": ""
   }
 }

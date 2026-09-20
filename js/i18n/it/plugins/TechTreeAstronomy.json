@@ -1,6 +1,6 @@
 {
   "name": "Astronomia",
-  "blurb": "Il cielo misurato e, dove il delta-v lo consente, visitato: picchi acustici, profondità di transito ed ellissi di atterraggio. Ogni valore qui sotto è riportato con lo strumento che lo ha prodotto.",
+  "blurb": "Osservazioni e missioni spaziali, ogni dato riportato con lo strumento che lo ha prodotto.",
   "nodes": {
     "astro_wmap": {
       "name": "Età Cosmica di WMAP",

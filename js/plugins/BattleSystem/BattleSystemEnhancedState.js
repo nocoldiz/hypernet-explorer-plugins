@@ -256,6 +256,49 @@
         if (_battleTurnCount <= 1 && !escapeIsContested() && !troopHasBoss()) this._escapeRatio = 1.0;
     };
 
+    // ========================================================================
+    // 3b. Double spoils
+    // ------------------------------------------------------------------------
+    // The Double Money/Items state carries the two party abilities the engine
+    // reads for doubled gold and doubled drops, so on a PARTY MEMBER it already
+    // works and is left alone. On a CREATURE it did nothing at all: a party
+    // ability is never read off a creature, so the spells that mark a troop with
+    // it (InexorableCountdown) paid exactly what an unmarked troop paid. A marked
+    // creature is doubled here instead: its own purse and its own drop table,
+    // nobody else's.
+    // This touches the spoils of a won fight and nothing else. A chest opened by
+    // RandomLootSystem, a sale, a bounty or a quest purse is paid outside both of
+    // these hooks and is untouched.
+    // ========================================================================
+    const DOUBLE_SPOILS_STATE_ID = 30;
+
+    // Dying clears a creature's states, and the spoils are counted after it has
+    // died, so the mark is kept on the creature as it falls.
+    const _Game_Enemy_die_spoils = Game_Enemy.prototype.die;
+    Game_Enemy.prototype.die = function() {
+        if (this.isStateAffected(DOUBLE_SPOILS_STATE_ID)) this._bseDoubleSpoils = true;
+        _Game_Enemy_die_spoils.call(this);
+    };
+
+    function hasDoubleSpoils(enemy) {
+        if (!enemy) return false;
+        if (enemy._bseDoubleSpoils) return true;
+        return typeof enemy.isStateAffected === "function" &&
+            enemy.isStateAffected(DOUBLE_SPOILS_STATE_ID);
+    }
+
+    Game_Troop.prototype.goldTotal = function() {
+        const rate = this.goldRate();
+        return this.deadMembers().reduce(function(sum, enemy) {
+            return sum + enemy.gold() * (hasDoubleSpoils(enemy) ? 2 : 1);
+        }, 0) * rate;
+    };
+
+    const _Game_Enemy_dropItemRate = Game_Enemy.prototype.dropItemRate;
+    Game_Enemy.prototype.dropItemRate = function() {
+        return _Game_Enemy_dropItemRate.call(this) * (hasDoubleSpoils(this) ? 2 : 1);
+    };
+
     const _BattleManager_makeRewards = BattleManager.makeRewards;
     BattleManager.makeRewards = function() {
         _BattleManager_makeRewards.call(this);
@@ -379,9 +422,12 @@
         _BattleManager_endTurn.call(this);
     };
 
-    BattleManager.displayRewards = function() {
-        this.gainRewards();
-    };
+    // The engine's own processVictory() already calls gainRewards() right after
+    // this, so paying here as well handed the party every reward twice: double
+    // exp, double gold and a second copy of every drop, whatever the party was
+    // carrying, while the victory popup (built from makeRewards()) kept showing
+    // the single amount. Displaying is all this owes.
+    BattleManager.displayRewards = function() {};
 
     // ========================================================================
     // 5. BattleManager - Actor Death Detection
@@ -434,6 +480,43 @@
         if (actor1) actor1.recoverAll();
         this._escaped = true;
         this.updateBattleEnd();
+    };
+
+    // ========================================================================
+    // 5b. BattleManager - Ending a won fight the moment the last body is gone
+    // ------------------------------------------------------------------------
+    // The engine only asks checkBattleEnd() at the end of an action and at the
+    // end of the turn, so a fight that was already over sat through the rest of
+    // the battle log, the turn-end housekeeping of whoever was still standing
+    // and whatever else was queued before the screen finally faded. Nothing
+    // left to play can change the outcome once every enemy is down, so victory
+    // is taken on the very frame the spriteset stops being busy, which is the
+    // frame the last sprite is gone: the 2D collapse has finished fading or the
+    // 3D battler has finished its death pose. The scene's own fade out then
+    // starts immediately behind it.
+    // ========================================================================
+
+    BattleManager.isFastVictoryReady = function() {
+        if (!this._phase || this._phase === 'battleEnd') return false;
+        if (this._escaped) return false;
+        if (!$gameTroop || !$gameTroop.isAllDead()) return false;
+        if ($gameParty.isAllDead()) return false;
+        // A troop page still running owns the ending: let it finish.
+        if ($gameTroop.isEventRunning()) return false;
+        if ($gameMessage.isBusy()) return false;
+        // The one thing worth waiting for: the body still on screen.
+        if (this._spriteset && this._spriteset.isBusy()) return false;
+        return true;
+    };
+
+    const _BattleManager_update_fastVictory = BattleManager.update;
+    BattleManager.update = function(timeActive) {
+        if (this.isFastVictoryReady()) {
+            if (this._logWindow && this._logWindow.clear) this._logWindow.clear();
+            this.processVictory();
+            return;
+        }
+        _BattleManager_update_fastVictory.call(this, timeActive);
     };
 
     // ========================================================================

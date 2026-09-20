@@ -1,7 +1,7 @@
 {
   "appName": "",
-  "subtitle": "",
-  "tagline": "",
+  "subtitle": "Due spettacoli a settimana.",
+  "tagline": "Risultati di wrestling, aggiornati ogni notte.",
   "oneDivision": "",
   "fed": {
     "slam": {
@@ -577,7 +577,7 @@
   },
   "hexapedia": {
     "category": "",
-    "categoryIntro": "",
+    "categoryIntro": "Ogni lottatore sotto contratto delle due federazioni continentali. Entrambe hanno una sola divisione aperta.",
     "infobox": {
       "ringName": "",
       "legalName": "",
@@ -611,7 +611,7 @@
   },
   "mundane": {
     "tag": "",
-    "note": "",
+    "note": "{w} non ha alcuna abilita arcana.",
     "wikiLine": "",
     "promo": [
       "",

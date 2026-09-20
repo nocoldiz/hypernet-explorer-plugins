@@ -179,6 +179,7 @@
     _shipBgApproach: 0,
     _shipBgStateKey: null,
     _shipBgSpinAngle: null,
+    _shipBgHeatShown: 0,
   };
   Object.keys(_bgState).forEach(function (key) {
     Object.defineProperty(Spriteset_Map.prototype, key, {
@@ -227,6 +228,20 @@
     // engaged from inside (the Refuel plugin command) doesn't stall the moment
     // the star map is closed.
     if (ship.isRefueling && typeof dm.tickRefuel === "function") dm.tickRefuel(1 / 60);
+    // Unconditional: the cabin keeps heating while the pumps run and keeps
+    // cooling once they stop (see WeatherSystem's ship heat offset).
+    if (typeof dm.tickRefuelHeat === "function") {
+      const heat = dm.tickRefuelHeat(1 / 60);
+      // WeatherSystem only recomputes the cabin temperature on the hour, which
+      // is far too coarse for a stop this short: nudge it whenever the soak has
+      // moved a whole degree, so the reading climbs while the pumps run.
+      if (Math.round(heat) !== Math.round(this._shipBgHeatShown || 0)) {
+        this._shipBgHeatShown = heat;
+        if (window.$gameWeather && typeof $gameWeather.updateTemperature === "function") {
+          $gameWeather.updateTemperature();
+        }
+      }
+    }
     // The same goes for an open Schrodingerite flyby.
     if (ship.harvestRun && typeof dm.tickSchrodingeriteHarvest === "function") {
       dm.tickSchrodingeriteHarvest(1 / 60);
@@ -750,7 +765,15 @@
     const bodyY = h * 0.45;
 
     if (ship.currentPlanet) {
-      const planet = (system.planets || []).find((p) => p.name === ship.currentPlanet);
+      // The orbit target is a planet OR one of its moons: resolve it through
+      // the data manager so a moon is drawn as itself instead of falling
+      // through to the system's star.
+      const orbitRec = dm.resolveOrbitBody
+        ? dm.resolveOrbitBody(ship.currentSystem, ship.currentPlanet)
+        : null;
+      const planet = orbitRec
+        ? orbitRec.body
+        : (system.planets || []).find((p) => p.name === ship.currentPlanet);
       if (planet) {
         const radius = h * 0.34;
         if (has3D) {

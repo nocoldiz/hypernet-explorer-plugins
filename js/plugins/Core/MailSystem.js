@@ -696,6 +696,443 @@
     return fresh;
   }
 
+  //=========================================================================
+  // Nudge: the messenger, as a HypernetOS program
+  //=========================================================================
+  // The post carries parcels between parties and takes days doing it. This is
+  // the other half: the live window, named after the one feature everybody
+  // remembers. The contact list is the same address book the post reads - the
+  // parties of this world, which are its other savegames - plus everyone
+  // walking with you, plus the three names that answer whoever asks.
+  //
+  // What comes back is written by NPCEmpathize's own machinery: a language
+  // model when one is picked in Options, and the Markov chain when there is
+  // not, so the window works on any machine. The three named contacts carry a
+  // paragraph of who they are, which is handed to the model and to nothing
+  // else: the chain has no use for it.
+  const NUDGE_APP_ID = 'app-nudge';
+  const NUDGE_ICON = 246; // Talk, per js/db/Sprites/Icons.json
+
+  const NG = {
+    app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+         "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+    header: "display:flex; align-items:center; gap:12px; padding:8px 12px; " +
+            "background:linear-gradient(to bottom,#4a8fd4,#2f6cb0); color:var(--xp-white); border-bottom:2px solid #1b3f6b;",
+    list: "width:210px; flex-shrink:0; overflow-y:auto; background:var(--xp-white); " +
+          "border-right:1px solid var(--xp-face-shade);",
+    group: "padding:4px 8px; background:var(--xp-face-6); font-size:13px; font-weight:bold; color:#2f6cb0;",
+    contact: "display:flex; gap:6px; align-items:center; padding:5px 8px; cursor:pointer; border-bottom:1px solid #f0efe8;",
+    talk: "flex:1; min-width:0; display:flex; flex-direction:column; background:var(--xp-face-2);",
+    log: "flex:1; overflow-y:auto; padding:10px 12px; background:var(--xp-white);",
+    line: "margin-bottom:6px; line-height:1.45;",
+    who: "font-weight:bold;",
+    entry: "display:flex; gap:6px; padding:6px 8px; border-top:1px solid var(--xp-face-shade); background:var(--xp-face-5);",
+    input: "flex:1; font-family:'Tahoma',sans-serif; font-size:14px; padding:4px 6px; " +
+           "border:1px solid var(--xp-face-4); background:var(--xp-white);",
+    btn: "padding:4px 12px; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); " +
+         "border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:14px; user-select:none;",
+    note: "color:var(--xp-ink-soft-2); font-size:13px;",
+  };
+
+  const ngEsc = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const ngIcon = (index, size) => (window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : '');
+
+  // The three that answer whoever asks, and the paragraph each is handed to a
+  // model. Every word of it is the lore the rest of the plugins already run on
+  // (ErisDateSystem's own notes, docs/Lore.odt); the text itself is written in
+  // the i18n file so it reads in the player's language.
+  // i18n-ignore-start  contact ids
+  const NUDGE_LORE = [
+    { id: 'eris',  nameKey: 'Mail.nudge.lore.eris.name',  bioKey: 'Mail.nudge.lore.eris.bio',  status: 'busy' },
+    { id: 'bubba', nameKey: 'Mail.nudge.lore.bubba.name', bioKey: 'Mail.nudge.lore.bubba.bio', status: 'online' },
+    { id: 'em',    nameKey: 'Mail.nudge.lore.em.name',    bioKey: 'Mail.nudge.lore.em.bio',    status: 'away' },
+  ];
+  // i18n-ignore-end
+
+  const NUDGE_STATUS_COLOUR = { online: '#2e8b3f', away: '#d0a020', busy: '#c0392b', offline: '#8b8b8b' };
+
+  function nudgeChats() {
+    if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+    if (!$gameSystem._nudgeChats) $gameSystem._nudgeChats = {};
+    return $gameSystem._nudgeChats;
+  }
+
+  window.Nudge = {
+    win: null,
+    contactKey: null,
+    // Who is being waited on, keyed by contact: an answer belongs to the
+    // conversation it was asked in, not to whichever one is on screen when it
+    // finally lands.
+    typing: {},
+
+    launch() {
+      if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+      // The address book is only as good as the last time anybody wrote in it.
+      try { registerSelf(); } catch (e) { /* no world, no book */ }
+      const win = window.HypernetOS.WindowManager.createWindow({
+        id: NUDGE_APP_ID,
+        title: T('Mail.nudge.appName'),
+        icon: NUDGE_ICON,
+        width: 780,
+        height: 540,
+        contentHTML: `
+          <div style="${NG.app}">
+            <div style="${NG.header}">
+              <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${ngIcon(NUDGE_ICON, 28)}</div>
+              <div style="flex:1; min-width:0">
+                <div style="font-size:16px; font-weight:bold">${T('Mail.nudge.appName')}</div>
+                <div id="ng-me" style="font-size:13px; opacity:0.85"></div>
+              </div>
+            </div>
+            <div style="display:flex; flex:1; min-height:0">
+              <div id="ng-list" style="${NG.list}"></div>
+              <div id="ng-talk" style="${NG.talk}"></div>
+            </div>
+          </div>`
+      });
+      this.win = win;
+      this.bind();
+      // A model picked in Options is read off the disk the first time it is
+      // asked; the window says hello, so it starts warming now.
+      try { window.MarkovLLM?.warmUp?.(); } catch (e) { /* no model, no warm up */ }
+      this.render();
+    },
+
+    bind() {
+      if (!this.win || this.win.dataset.ngBound) return;
+      this.win.dataset.ngBound = '1';
+      this.win.addEventListener('click', ev => {
+        const contact = ev.target.closest('[data-ng-contact]');
+        if (contact) {
+          ev.stopPropagation();
+          this.contactKey = contact.dataset.ngContact;
+          if (window.SoundManager) SoundManager.playCursor();
+          this.render();
+          return;
+        }
+        if (ev.target.closest('[data-ng-send]')) {
+          ev.stopPropagation();
+          this.send();
+          return;
+        }
+        if (ev.target.closest('[data-ng-nudge]')) {
+          ev.stopPropagation();
+          this.shake();
+        }
+      });
+      // Enter sends, and the keystroke never reaches the game underneath.
+      this.win.addEventListener('keydown', ev => {
+        if (!ev.target.closest('#ng-input')) return;
+        ev.stopPropagation();
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+          this.send();
+        }
+      }, true);
+    },
+
+    // ---- who there is to talk to ----
+    contacts() {
+      const groups = [];
+      const members = (window.$gameParty && $gameParty.members) ? $gameParty.members() : [];
+      if (members.length) {
+        groups.push({
+          label: T('Mail.nudge.groupParty'),
+          rows: members.map(actor => ({
+            key: 'member:' + actor.actorId(),
+            name: actor.name(),
+            status: 'online',
+            sub: actor.currentClass ? (actor.currentClass() || {}).name : '',
+            actor,
+          })),
+        });
+      }
+      // The companions who are not walking with you. They are not in a
+      // drawer: each of them lives somewhere the player sent them (the halls,
+      // a house the party owns, the starship, the vault), and each of them is
+      // reachable from here, which is the whole point of a messenger.
+      const benched = (() => {
+        try { return window.CharacterPresets?.getAvailableRetiredPresets?.() ?? []; }
+        catch (e) { return []; }
+      })().filter(entry => entry && entry.name);
+      if (benched.length) {
+        groups.push({
+          label: T('Mail.nudge.groupBenched'),
+          rows: benched.map(entry => ({
+            key: 'benched:' + entry.id,
+            name: entry.name,
+            // Away, not offline: they are alive and somewhere, just not here.
+            status: 'away',
+            sub: (() => {
+              try {
+                const LG = window.PartyLodging;
+                return LG ? LG.placeName(LG.assignmentOf(entry.name)) : '';
+              } catch (e) { return ''; }
+            })(),
+            benched: entry,
+          })),
+        });
+      }
+      let others = [];
+      try {
+        const world = activeWorld();
+        const me = partyId();
+        others = world ? partiesIn(world).filter(card => card && card.id !== me) : [];
+      } catch (e) { others = []; }
+      if (others.length) {
+        const rows = [];
+        for (const card of others) {
+          for (const name of (card.members || [])) {
+            rows.push({
+              key: 'party:' + card.id + ':' + name,
+              name: name,
+              // A party last heard from days ago is away, which is exactly what
+              // the post already knows about it.
+              status: this.freshness(card),
+              sub: T('Mail.nudge.withParty', { leader: card.name }),
+              card,
+            });
+          }
+        }
+        if (rows.length) groups.push({ label: T('Mail.nudge.groupWorld'), rows });
+      }
+      groups.push({
+        label: T('Mail.nudge.groupOthers'),
+        rows: NUDGE_LORE.map(entry => ({
+          key: 'lore:' + entry.id,
+          name: T(entry.nameKey),
+          status: entry.status,
+          sub: T('Mail.nudge.alwaysOn'),
+          lore: entry,
+        })),
+      });
+      return groups;
+    },
+
+    freshness(card) {
+      try {
+        const now = worldClock(activeWorld());
+        const seen = Number(card.minute) || 0;
+        if (now - seen > 60 * 24 * 7) return 'offline';
+        if (now - seen > 60 * 24) return 'away';
+      } catch (e) { /* no clock, assume they are about */ }
+      return 'online';
+    },
+
+    contact() {
+      for (const group of this.contacts()) {
+        const hit = group.rows.find(row => row.key === this.contactKey);
+        if (hit) return hit;
+      }
+      return null;
+    },
+
+    history(key) {
+      const chats = nudgeChats();
+      const at = key || this.contactKey;
+      if (!at) return [];
+      if (!Array.isArray(chats[at])) chats[at] = [];
+      return chats[at];
+    },
+
+    // ---- drawing ----
+    render() {
+      if (!this.win || !this.win.isConnected) return;
+      const list = this.win.querySelector('#ng-list');
+      if (list) {
+        list.innerHTML = this.contacts().map(group => `
+          <div style="${NG.group}">${ngEsc(group.label)}</div>
+          ${group.rows.map(row => {
+            const on = row.key === this.contactKey;
+            return `<div class="focusable" tabindex="0" id="ng-c-${ngEsc(row.key)}" data-ng-contact="${ngEsc(row.key)}"
+              style="${NG.contact}${on ? 'background:#dce9f7;' : ''}">
+              <span style="width:9px; height:9px; border-radius:50%; flex-shrink:0;
+                    background:${NUDGE_STATUS_COLOUR[row.status] || NUDGE_STATUS_COLOUR.offline}"></span>
+              <span style="flex:1; min-width:0">
+                <span style="${NG.who}">${ngEsc(row.name)}</span>
+                <span style="${NG.note}"> ${ngEsc(this.statusWord(row.status))}</span>
+                ${row.sub ? `<div style="${NG.note}">${ngEsc(row.sub)}</div>` : ''}
+              </span>
+            </div>`;
+          }).join('')}`).join('');
+      }
+      const talk = this.win.querySelector('#ng-talk');
+      if (talk) {
+        const contact = this.contact();
+        if (!contact) {
+          talk.innerHTML = `<div style="${NG.log}"><div style="${NG.note}">${T('Mail.nudge.pickSomebody')}</div></div>`;
+        } else {
+          const me = (window.$gameParty && $gameParty.leader) ? $gameParty.leader().name() : T('Mail.nudge.you');
+          const lines = this.history().map(turn => `<div style="${NG.line}">
+            <span style="${NG.who} color:${turn.role === 'me' ? '#2f6cb0' : '#8b2f5a'}">${ngEsc(turn.role === 'me' ? me : contact.name)}:</span>
+            ${ngEsc(turn.text)}</div>`).join('')
+            || `<div style="${NG.note}">${T('Mail.nudge.sayHello', { who: contact.name })}</div>`;
+          talk.innerHTML = `
+            <div style="padding:6px 10px; background:var(--xp-face-6); border-bottom:1px solid var(--xp-face-shade)">
+              <b>${ngEsc(contact.name)}</b> <span style="${NG.note}">${ngEsc(contact.sub || '')}</span>
+            </div>
+            <div id="ng-log" style="${NG.log}">${lines}
+              ${this.typing[contact.key] ? `<div style="${NG.note}">${T('Mail.nudge.typing', { who: contact.name })}</div>` : ''}</div>
+            <div style="${NG.entry}">
+              <input id="ng-input" class="focusable" tabindex="0" style="${NG.input}"
+                     placeholder="${T('Mail.nudge.placeholder')}">
+              <span class="focusable" tabindex="0" data-ng-send="1" style="${NG.btn}">${T('Mail.nudge.send')}</span>
+              <span class="focusable" tabindex="0" data-ng-nudge="1" style="${NG.btn}">${T('Mail.nudge.nudge')}</span>
+            </div>`;
+          const log = talk.querySelector('#ng-log');
+          if (log) log.scrollTop = log.scrollHeight;
+        }
+      }
+      const me = this.win.querySelector('#ng-me');
+      if (me) {
+        const leader = (window.$gameParty && $gameParty.leader) ? $gameParty.leader() : null;
+        me.textContent = leader
+          ? T('Mail.nudge.signedIn', { who: leader.name() })
+          : T('Mail.nudge.signedOut');
+      }
+    },
+
+    statusWord(status) {
+      return T('Mail.nudge.status.' + (status || 'offline'));
+    },
+
+    // The window jumps, the way it always did. Nothing else happens, which was
+    // also true then.
+    shake() {
+      if (!this.win) return;
+      if (window.SoundManager) SoundManager.playBuzzer();
+      const start = Date.now();
+      const left = parseInt(this.win.style.left, 10) || 0;
+      const top = parseInt(this.win.style.top, 10) || 0;
+      const tick = () => {
+        if (!this.win || !this.win.isConnected) return;
+        const t = Date.now() - start;
+        if (t > 450) {
+            this.win.style.left = left + 'px';
+            this.win.style.top = top + 'px';
+            return;
+        }
+        this.win.style.left = (left + Math.round(Math.sin(t / 18) * 8)) + 'px';
+        this.win.style.top = (top + Math.round(Math.cos(t / 14) * 6)) + 'px';
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    },
+
+    // ---- saying something ----
+    send() {
+      const box = this.win && this.win.querySelector('#ng-input');
+      const contact = this.contact();
+      if (!box || !contact) return;
+      const text = String(box.value || '').trim();
+      if (!text) return;
+      box.value = '';
+      // The conversation this line was written in. Everything that follows is
+      // filed under it, however long the model takes and wherever the player
+      // clicks meanwhile.
+      const key = contact.key;
+      const history = this.history(key);
+      history.push({ role: 'me', text: text.slice(0, 280) });
+      while (history.length > 24) history.shift();
+      this.typing[key] = true;
+      this.render();
+      this.answer(contact, text, key);
+    },
+
+    // What the contact is, in the words a model understands. A party member has
+    // a sheet the game knows for certain; somebody else's party member is a
+    // name and the party they walk with; the three named contacts carry their
+    // own paragraph. The chain reads none of this and does not need to.
+    //
+    // A companion, travelling or benched, is the one the window knows most
+    // about: NPCEmpathize's companionContext hands back their sheet, the
+    // adventures the party diary has them in, and where they are answering
+    // from, which for somebody benched is a place on the other side of the
+    // world and a biome the party is not standing in. A window that did not
+    // say that had every companion answering as if they were in the next room.
+    contactContext(contact) {
+      if (!contact || contact.lore) return {};
+      const E = window.NPCEmpathize;
+      if (!E || typeof E.companionContext !== 'function') return {};
+      // Only the party's own: somebody else's party member is a name on a card
+      // and this world knows nothing else about them.
+      if (!contact.actor && !contact.benched) return {};
+      try {
+        return E.companionContext(contact.name, contact.actor || null) || {};
+      } catch (e) {
+        return {};
+      }
+    },
+
+    async answer(contact, said, key) {
+      const at = key || contact.key;
+      const history = this.history(at).slice(0, -1);
+      const leader = (window.$gameParty && $gameParty.leader) ? $gameParty.leader() : null;
+      let reply = '';
+      const llm = window.MarkovLLM;
+      if (llm && llm.isEnabled && llm.isEnabled() && typeof llm.reply === 'function') {
+        try {
+          reply = await llm.reply(Object.assign({
+            npcName: contact.name,
+            npcBio: contact.lore ? T(contact.lore.bioKey) : (contact.actor || contact.benched
+              ? T('Mail.nudge.bioMember', { who: contact.name })
+              : T('Mail.nudge.bioStranger', { who: contact.name, leader: contact.card ? contact.card.name : '' })),
+            speakerName: leader ? leader.name() : '',
+            situation: T('Mail.nudge.situation'),
+            startText: said,
+            history: history.map(turn => ({ role: turn.role === 'me' ? 'player' : 'npc', text: turn.text })),
+          }, this.contactContext(contact)));
+        } catch (e) { reply = ''; }
+      }
+      if (!reply && window.generateMarkovString) {
+        const seedLen = said.split(/\s+/).filter(Boolean).length;
+        try {
+          reply = window.generateMarkovString('all', {
+            chainOrder: 2, minLength: 6 + seedLen, maxLength: 26 + seedLen,
+            startText: said, npcName: contact.name,
+          });
+        } catch (e) { reply = ''; }
+      }
+      if (!reply || /^ERROR:/i.test(reply)) reply = T('Mail.nudge.noAnswer');
+      if (reply.length > 280) reply = reply.slice(0, 277) + '...';
+      const chat = this.history(at);
+      chat.push({ role: 'them', text: reply });
+      while (chat.length > 24) chat.shift();
+      delete this.typing[at];
+      // A reply that landed in a conversation the player has since left changes
+      // nothing on screen, and redrawing would take the line they are typing
+      // in this one with it.
+      if (this.contactKey === at) this.render();
+    },
+  };
+
+  // The post loads long before the desktop does, so the program cannot be
+  // registered on load the way a Hypernet/*.js one is: it is registered on the
+  // first boot, by when every plugin has had its turn.
+  function registerNudgeApp() {
+    if (!window.HypernetOS || !window.HypernetOS.registerApp) return;
+    if (window.HypernetOS._apps && window.HypernetOS._apps[NUDGE_APP_ID]) return;
+    window.HypernetOS.registerApp({
+      id: NUDGE_APP_ID,
+      name: T('Mail.nudge.appName'),
+      icon: NUDGE_ICON,
+      category: 'internet',
+      launchFn: function () { window.Nudge.launch(); },
+      desktopShortcut: true,
+    });
+  }
+
+  if (typeof Scene_Boot !== 'undefined') {
+    const _Scene_Boot_start_Nudge = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function () {
+      _Scene_Boot_start_Nudge.call(this);
+      registerNudgeApp();
+    };
+  }
+  registerNudgeApp();
+
   window.MailSystem = {
     partyId,
     selfCard,

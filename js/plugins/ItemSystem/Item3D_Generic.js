@@ -61,6 +61,8 @@
       Combat: 'createCombatItemModel',
       Survival: 'createSurvivalItemModel',
       Jungle: 'createJungleItemModel',
+      // Fertility is vials, tests and boosters: the medical glassware fits it.
+      Fertility: 'createMedicalItemModel',
       Farming: 'createFarmingItemModel',
       Plants: 'createPlantItemModel',
       Lifestyle: 'createLifestyleItemModel',

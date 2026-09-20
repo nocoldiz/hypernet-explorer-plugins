@@ -1090,6 +1090,672 @@
 
   window.Scene_QuestBoard = Scene_QuestBoard;
 
+
+  // ==========================================================================
+  // BeagleQuest: the same board as a HypernetOS program
+  // ==========================================================================
+  // The cork board read through a 2001 listings portal instead: the same
+  // engine, the same contracts and the same escrow, drawn as a directory of
+  // rows with a reading pane. It carries the work in progress as well, which
+  // the wooden board only shows once a contract is signed, and the whole
+  // composer, so a notice can go up without walking to a board.
+  const BQ_APP_ID = "app-beaglequest";
+  const BQ_ICON = 193; // Scroll, per js/db/Sprites/Icons.json
+
+  const BQS = {
+    app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+         "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+    header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+            "background:linear-gradient(to bottom,var(--xp-blue-3),var(--xp-blue-2)); color:var(--xp-white); " +
+            "border-bottom:2px solid var(--xp-blue-7);",
+    nav: "width:158px; flex-shrink:0; background:var(--xp-face-6); border-right:1px solid var(--xp-face-shade); padding:8px 0;",
+    navItem: "padding:9px 12px; cursor:pointer; border-left:4px solid transparent; user-select:none;",
+    list: "width:290px; flex-shrink:0; overflow-y:auto; background:var(--xp-white); border-right:1px solid var(--xp-face-shade);",
+    panel: "flex:1; overflow-y:auto; padding:14px 16px; background:var(--xp-face-2); min-width:0;",
+    status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+            "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+    row: "display:block; padding:8px 10px; border-bottom:1px solid #e6e3d8; cursor:pointer; user-select:none;",
+    rowOn: "background:#dce9f7; border-left:4px solid var(--xp-blue-3);",
+    card: "background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:10px 12px; margin-bottom:8px;",
+    btn: "display:inline-block; padding:5px 12px; margin:0 6px 6px 0; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); " +
+         "border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:15px; color:var(--xp-ink); user-select:none;",
+    btnGo: "background:linear-gradient(to bottom,#9fd18a,#6fae56); border-color:#4c8339; color:#12290b; font-weight:bold;",
+    btnBad: "background:linear-gradient(to bottom,#e7a3a3,#c96f6f); border-color:#9c4747; color:#3a0f0f;",
+    h: "margin:0 0 8px; font-size:17px; font-weight:bold; color:var(--xp-blue-2);",
+    note: "color:var(--xp-ink-soft-2); font-size:14px; line-height:1.5;",
+    field: "display:flex; align-items:center; gap:8px; padding:4px 0;",
+    label: "width:150px; flex-shrink:0; color:var(--xp-ink-soft-2);",
+    input: "font-family:'Tahoma',sans-serif; font-size:14px; padding:2px 4px; border:1px solid var(--xp-face-4); background:var(--xp-white);",
+    chip: "display:inline-block; padding:2px 7px; margin:0 4px 4px 0; border:1px solid var(--xp-face-4); " +
+          "border-radius:9px; background:var(--xp-white); cursor:pointer; font-size:13px;",
+  };
+
+  const BQ_TABS = ["offers", "progress", "posted", "compose"];
+
+  // Difficulty drawn as pips rather than a glyph, so it reads the same in
+  // whatever font the machine happens to be wearing.
+  function bqStars(n) {
+    let out = "";
+    for (let i = 0; i < 5; i++) {
+      out += `<span style="display:inline-block; width:8px; height:8px; margin-right:2px; border-radius:2px;
+        background:${i < n ? "#c8922a" : "#dad6c8"}"></span>`;
+    }
+    return out;
+  }
+
+  function bqIcon(index, size) {
+    return window.HypernetOS ? window.HypernetOS.getIconHTML(index, size || 16) : "";
+  }
+
+  window.BeagleQuest = {
+    win: null,
+    tab: "offers",
+    boardKey: null,
+    selected: null,       // qid of the offer / contract / notice being read
+    confirming: null,     // contract awaiting an abandon confirmation
+    composer: null,
+    picker: null,         // { which, query } while the shelf is open
+    message: "",
+
+    api() { return PQ(); },
+
+    launch() {
+      if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+      const api = this.api();
+      if (api) {
+        this.boardKey = api.resolveBoardKey ? api.resolveBoardKey(null) : api.currentBoardKey();
+        try { api.onBoardOpened(this.boardKey); } catch (e) { console.warn("[BeagleQuest]", e); }
+      }
+      this.selected = null;
+      this.confirming = null;
+      this.composer = null;
+      this.picker = null;
+      this.message = "";
+
+      const win = window.HypernetOS.WindowManager.createWindow({
+        id: BQ_APP_ID,
+        title: T('QuestBoard.bqAppName'),
+        icon: BQ_ICON,
+        width: 880,
+        height: 580,
+        contentHTML: `
+          <div style="${BQS.app}">
+            <div style="${BQS.header}">
+              <div style="filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5))">${bqIcon(BQ_ICON, 34)}</div>
+              <div style="flex:1; min-width:0">
+                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('QuestBoard.bqAppName')}</div>
+                <div style="font-size:13px; opacity:0.82">${T('QuestBoard.bqSubtitle')}</div>
+              </div>
+              <div id="bq-place" style="font-size:14px; opacity:0.9"></div>
+            </div>
+            <div style="display:flex; flex:1; min-height:0">
+              <div id="bq-nav" style="${BQS.nav}"></div>
+              <div id="bq-list" style="${BQS.list}"></div>
+              <div id="bq-panel" style="${BQS.panel}"></div>
+            </div>
+            <div style="${BQS.status}">
+              <span>${T('QuestBoard.bqPurseLabel')} <b id="bq-purse"></b></span>
+              <span id="bq-message" style="margin-left:auto; color:var(--xp-blue-2)"></span>
+            </div>
+          </div>`
+      });
+      this.win = win;
+      this.bind();
+      this.render();
+    },
+
+    close() {
+      if (this.win && window.HypernetOS && window.HypernetOS.WindowManager) {
+        window.HypernetOS.WindowManager.closeWindow(this.win);
+      }
+      this.win = null;
+    },
+
+    // One delegated listener for the whole program: every control is a
+    // data-bq-* attribute, so a redraw never has to rebind anything.
+    bind() {
+      // createWindow hands back a window that is already open, so the
+      // listeners go on once and survive every relaunch.
+      if (!this.win || this.win.dataset.bqBound) return;
+      this.win.dataset.bqBound = "1";
+      this.win.addEventListener("click", ev => {
+        const hit = ev.target.closest("[data-bq]");
+        if (!hit) return;
+        ev.stopPropagation();
+        const raw = String(hit.dataset.bq);
+        const at = raw.indexOf(":");
+        this.act(at < 0 ? raw : raw.slice(0, at), at < 0 ? "" : raw.slice(at + 1));
+      });
+      this.win.addEventListener("change", ev => {
+        const hit = ev.target.closest("[data-bq-set]");
+        if (!hit) return;
+        this.set(hit.dataset.bqSet, hit.value);
+      });
+      this.win.addEventListener("input", ev => {
+        const hit = ev.target.closest("[data-bq-search]");
+        if (!hit || !this.picker) return;
+        this.picker.query = hit.value;
+        this.renderPanel();
+        const box = this.win.querySelector("[data-bq-search]");
+        if (box) {
+          box.focus();
+          try { box.setSelectionRange(box.value.length, box.value.length); } catch (e) { /* not a text field */ }
+        }
+      });
+    },
+
+    say(text, bad) {
+      this.message = text || "";
+      if (window.SoundManager) {
+        if (bad) SoundManager.playBuzzer(); else SoundManager.playOk();
+      }
+    },
+
+    // ---- actions ----
+    act(action, arg) {
+      const api = this.api();
+      if (!api) return;
+      switch (action) {
+        case "tab":
+          if (this.tab === arg) return;
+          this.tab = arg;
+          this.selected = null;
+          this.confirming = null;
+          this.picker = null;
+          if (arg === "compose" && !this.composer) this.openComposer();
+          if (window.SoundManager) SoundManager.playCursor();
+          break;
+        case "pick":
+          this.selected = arg;
+          this.confirming = null;
+          if (window.SoundManager) SoundManager.playCursor();
+          break;
+        case "sign": {
+          const offer = this.offers().find(o => o.qid === arg);
+          if (!offer) return;
+          const res = api.acceptOffer(offer);
+          if (!res.ok) { this.say(res.reason || T('QuestBoard.bqRefused'), true); break; }
+          this.say(T('QuestBoard.bqSigned', { title: offer.title }));
+          this.tab = "progress";
+          this.selected = offer.qid;
+          break;
+        }
+        case "claim": {
+          const res = api.claimQuest(arg);
+          if (!res.ok) { this.say(res.reason || T('QuestBoard.bqRefused'), true); break; }
+          if (window.SoundManager) SoundManager.playShop();
+          this.message = T('QuestBoard.bqCollected');
+          this.selected = null;
+          break;
+        }
+        case "abandon":
+          this.confirming = arg;
+          if (window.SoundManager) SoundManager.playCursor();
+          break;
+        case "abandonYes":
+          api.abandonQuest(arg);
+          this.confirming = null;
+          this.selected = null;
+          this.say(T('QuestBoard.bqAbandoned'), true);
+          break;
+        case "abandonNo":
+          this.confirming = null;
+          break;
+        case "take": {
+          const res = api.acceptPostedQuest(arg);
+          if (!res.ok) { this.say(res.reason || T('QuestBoard.bqRefused'), true); break; }
+          this.say(T('QuestBoard.bqTaken'));
+          this.tab = "progress";
+          this.selected = null;
+          break;
+        }
+        case "withdraw": {
+          const res = api.withdrawPost(arg);
+          if (!res.ok) { this.say(res.reason || T('QuestBoard.bqRefused'), true); break; }
+          this.say(T('QuestBoard.bqWithdrawn'));
+          this.selected = null;
+          break;
+        }
+        case "collectPost": {
+          const res = api.collectPostedDelivery(arg);
+          if (!res.ok) { this.say(res.reason || T('QuestBoard.bqRefused'), true); break; }
+          if (window.SoundManager) SoundManager.playShop();
+          this.message = T('QuestBoard.bqCollected');
+          break;
+        }
+        // The site can point at a place, but only the world map can show it,
+        // so the machine is put down first.
+        case "map": {
+          const rec = this.current();
+          const loc = (rec && api.questLocation) ? api.questLocation(rec) : null;
+          if (!loc || !window.WorldMapView) { this.say(T('QuestBoard.bqNoMap'), true); break; }
+          window.WorldMapView.requestFocusAt(loc.wx, loc.wy);
+          // The map can only be drawn by Scene_Map, so the window closes here
+          // and the world opens as soon as the machine is put down.
+          this.close();
+          return;
+        }
+        case "openPicker":
+          this.picker = { which: arg, query: "" };
+          if (window.SoundManager) SoundManager.playCursor();
+          break;
+        case "closePicker":
+          this.picker = null;
+          if (window.SoundManager) SoundManager.playCancel();
+          break;
+        case "add": {
+          if (!this.picker || !this.composer) break;
+          const [kind, id] = arg.split("|");
+          const list = this.picker.which === "wanted" ? this.composer.wanted : this.composer.goods;
+          const hit = list.find(g => g.kind === kind && g.id === Number(id));
+          if (hit) hit.qty = Math.min(99, hit.qty + 1);
+          else list.push({ kind, id: Number(id), qty: 1 });
+          if (window.SoundManager) SoundManager.playOk();
+          break;
+        }
+        case "drop": {
+          if (!this.composer) break;
+          const [which, index] = arg.split("|");
+          const list = which === "wanted" ? this.composer.wanted : this.composer.goods;
+          const i = Number(index);
+          if (list[i]) { if (list[i].qty > 1) list[i].qty--; else list.splice(i, 1); }
+          if (window.SoundManager) SoundManager.playCancel();
+          break;
+        }
+        case "reword":
+          if (!this.composer) break;
+          this.composer.seed = 1 + (this.composer.seed * 7919 + 13) % 100000;
+          if (window.SoundManager) SoundManager.playCursor();
+          break;
+        case "post": {
+          if (!this.composer) break;
+          const res = api.postQuest(this.draft());
+          if (!res.ok) { this.say(res.reason || T('QuestBoard.bqRefused'), true); break; }
+          if (window.SoundManager) SoundManager.playShop();
+          this.message = T('QuestBoard.bqPosted');
+          this.composer = null;
+          this.picker = null;
+          this.tab = "posted";
+          this.selected = null;
+          break;
+        }
+        default: return;
+      }
+      this.render();
+    },
+
+    set(field, value) {
+      const api = this.api();
+      const c = this.composer;
+      if (!api || !c) return;
+      switch (field) {
+        case "type": c.type = value; break;
+        case "style": c.hyperpower = value || null; break;
+        case "diff": c.diff = Math.max(1, Math.min(5, Number(value) || 1)); break;
+        case "crew": c.minParty = Math.max(1, Math.min(api.POST_LIMITS.maxCrew, Number(value) || 1)); break;
+        case "days": c.days = Math.max(api.POST_LIMITS.minDays,
+          Math.min(api.POST_LIMITS.maxDays, Number(value) || api.POST_LIMITS.minDays)); break;
+        // The purse is typed in euros, which is how the rest of the machine
+        // prints money; the engine is paid in the game's own units.
+        case "gold": c.gold = Math.max(0, Math.min($gameParty.gold(),
+          Math.round((Number(value) || 0) * 100))); break;
+        default: return;
+      }
+      this.render();
+    },
+
+    // ---- data ----
+    offers() {
+      const api = this.api();
+      if (!api) return [];
+      if (!this._offers) this._offers = api.offersForBoard(this.boardKey);
+      return this._offers;
+    },
+    contracts() { const api = this.api(); return api ? api.activeQuests() : []; },
+    posted() { const api = this.api(); return api ? api.postedForBoard() : []; },
+
+    rows() {
+      if (this.tab === "offers") return this.offers().map(o => ({ key: o.qid, rec: o, kind: "offer" }));
+      if (this.tab === "progress") return this.contracts().map(q => ({ key: q.qid, rec: q, kind: "contract" }));
+      if (this.tab === "posted") return this.posted().map(p => ({ key: p.id, rec: p, kind: "post" }));
+      return [];
+    },
+
+    current() {
+      const row = this.rows().find(r => r.key === this.selected);
+      return row ? row.rec : null;
+    },
+    currentKind() {
+      const row = this.rows().find(r => r.key === this.selected);
+      return row ? row.kind : null;
+    },
+
+    // ---- rendering ----
+    render() {
+      if (!this.win || !this.win.isConnected) return;
+      this._offers = null;
+      const api = this.api();
+      if (api && api.tickPostedQuests) {
+        try { api.tickPostedQuests(); } catch (e) { /* the clock is not ours to fix */ }
+      }
+      this.renderNav();
+      this.renderList();
+      this.renderPanel();
+      const place = this.win.querySelector("#bq-place");
+      if (place) {
+        place.textContent = (this.boardKey && window.WorkSystem && window.WorkSystem.destinationName)
+          ? window.WorkSystem.destinationName(this.boardKey)
+          : (this.boardKey || "");
+      }
+      const purse = this.win.querySelector("#bq-purse");
+      if (purse && api) purse.textContent = api.euros($gameParty.gold());
+      const msg = this.win.querySelector("#bq-message");
+      if (msg) msg.textContent = this.message || "";
+    },
+
+    navLabel(tab) {
+      if (tab === "compose") return T('QuestBoard.bqTabCompose');
+      const label = tab === "offers" ? T('QuestBoard.bqTabOffers')
+        : tab === "progress" ? T('QuestBoard.bqTabProgress') : T('QuestBoard.bqTabPosted');
+      const count = tab === "offers" ? this.offers().length
+        : tab === "progress" ? this.contracts().length : this.posted().length;
+      return `${label} (${count})`;
+    },
+
+    renderNav() {
+      const nav = this.win.querySelector("#bq-nav");
+      if (!nav) return;
+      nav.innerHTML = BQ_TABS.map(tab => {
+        const on = this.tab === tab;
+        return `<div class="focusable" tabindex="0" id="bq-tab-${tab}" data-bq="tab:${tab}"
+          style="${BQS.navItem}${on ? "background:var(--xp-face-2); border-left-color:var(--xp-blue-3); font-weight:bold;" : ""}">
+          ${esc(this.navLabel(tab))}</div>`;
+      }).join("");
+    },
+
+    renderList() {
+      const list = this.win.querySelector("#bq-list");
+      if (!list) return;
+      if (this.tab === "compose") { list.style.display = "none"; return; }
+      list.style.display = "";
+      const api = this.api();
+      const rows = this.rows();
+      if (!api || !rows.length) {
+        list.innerHTML = `<div style="padding:14px; ${BQS.note}">${esc(this.emptyText())}</div>`;
+        return;
+      }
+      list.innerHTML = rows.map(r => {
+        const on = r.key === this.selected;
+        const rec = r.rec;
+        const sub = r.kind === "contract"
+          ? (rec.status === "claimable" ? T('QuestBoard.readyCollectYourReward')
+            : (rec.deadlineAt ? T('QuestBoard.timeLeft') + api.hoursLeftText(rec.deadlineAt) : T('QuestBoard.inProgress')))
+          : r.kind === "post" ? api.postedStatusLine(rec)
+          : T('QuestBoard.reward') + api.rewardText(rec, false);
+        const mine = r.kind === "post" && api.isOwnPost(rec);
+        return `<div class="focusable" tabindex="0" id="bq-row-${esc(r.key)}" data-bq="pick:${esc(r.key)}"
+          style="${BQS.row}${on ? BQS.rowOn : ""}">
+          <div style="font-weight:bold; color:var(--xp-ink)">${esc(rec.title)}
+            ${mine ? `<span style="font-size:11px; color:var(--xp-blue-2)">${T('QuestBoard.yourNotice')}</span>` : ""}</div>
+          <div style="${BQS.note}">${esc(rec.giverLabel || "")}</div>
+          <div style="${BQS.note}">${esc(sub)}</div>
+          <div style="margin-top:3px">${bqStars(rec.diff || 0)}</div>
+        </div>`;
+      }).join("");
+    },
+
+    emptyText() {
+      if (this.tab === "offers") return T('QuestBoard.nothingButRustyPinsAndOlderRegretsComeBackTo');
+      if (this.tab === "progress") return T('QuestBoard.bqNothingInProgress');
+      return T('QuestBoard.bqNothingPosted');
+    },
+
+    renderPanel() {
+      const panel = this.win.querySelector("#bq-panel");
+      if (!panel) return;
+      const api = this.api();
+      if (!api) { panel.innerHTML = `<div style="${BQS.card}">${T('QuestBoard.bqOffline')}</div>`; return; }
+      if (this.tab === "compose") { panel.innerHTML = this.composerHTML(); return; }
+      const rec = this.current();
+      if (!rec) {
+        panel.innerHTML = `<div style="${BQS.card} ${BQS.note}">${T('QuestBoard.selectANotice')}</div>`;
+        return;
+      }
+      const kind = this.currentKind();
+      const terms = (kind === "post" ? api.postedTerms(rec) : api.termsLines(rec))
+        .map(line => `<div style="${BQS.note}">${esc(line)}</div>`).join("");
+      const loc = api.questLocation ? api.questLocation(rec) : null;
+      const btns = [];
+      if (kind === "offer") {
+        btns.push(this.btn("sign:" + rec.qid, rec.payGold > 0
+          ? T('QuestBoard.signAndPay') + api.euros(rec.payGold)
+          : T('QuestBoard.signTheContract'), BQS.btnGo));
+      } else if (kind === "contract") {
+        const supplyShort = rec.status === "claimable" && rec.steps.some(s => s.kind === "supply_items"
+          && $gameParty.numItems($dataItems[s.itemId]) < s.qty);
+        if (rec.status === "claimable" && !supplyShort) {
+          btns.push(this.btn("claim:" + rec.qid, T('QuestBoard.collect') + " " + api.rewardText(rec, false), BQS.btnGo));
+        } else if (supplyShort) {
+          btns.push(`<div style="${BQS.note}">${T('QuestBoard.bringTheGoodsToCollect')}</div>`);
+        }
+        if (this.confirming === rec.qid) {
+          btns.push(this.btn("abandonYes:" + rec.qid, T('QuestBoard.confirmAbandonPenaltiesApply'), BQS.btnBad));
+          btns.push(this.btn("abandonNo:" + rec.qid, T('QuestBoard.back')));
+        } else {
+          btns.push(this.btn("abandon:" + rec.qid, T('QuestBoard.abandon'), BQS.btnBad));
+        }
+      } else if (kind === "post") {
+        const mine = api.isOwnPost(rec);
+        if (mine && rec.status === "open") {
+          btns.push(this.btn("withdraw:" + rec.id, T('QuestBoard.withdrawNotice'), BQS.btnBad));
+        }
+        if (mine && (rec.status === "done" || rec.status === "expired")) {
+          btns.push(this.btn("collectPost:" + rec.id, T('QuestBoard.collectNotice'), BQS.btnGo));
+        }
+        if (!mine && rec.status === "open") {
+          btns.push($gameParty.members().length < (rec.minParty || 1)
+            ? `<div style="${BQS.note}">${T('QuestBoard.needsCrew', { n: rec.minParty })}</div>`
+            : this.btn("take:" + rec.id, T('QuestBoard.takeNotice'), BQS.btnGo));
+        }
+      }
+      if (loc) btns.push(this.btn("map:1", T('QuestBoard.showOnMapAt', { x: loc.wx, y: loc.wy })));
+
+      panel.innerHTML = `
+        <h2 style="${BQS.h}">${esc(rec.title)}</h2>
+        <div style="${BQS.note} margin-bottom:8px">${T('QuestBoard.postedBy')}${esc(rec.giverLabel || "")}</div>
+        <div style="${BQS.card}">${esc(rec.body || "").replace(/\n/g, "<br>")}</div>
+        <div style="${BQS.card}"><b>${T('QuestBoard.objectives2')}</b>
+          <div style="${BQS.note}">${esc(api.objectiveText(rec)).replace(/\n/g, "<br>")}</div></div>
+        <div style="${BQS.card}"><b>${T('QuestBoard.terms')}</b>${terms}</div>
+        <div>${btns.join("")}</div>`;
+    },
+
+    btn(action, label, extra) {
+      return `<span class="focusable" tabindex="0" data-bq="${esc(action)}"
+        style="${BQS.btn}${extra || ""}">${esc(label)}</span>`;
+    },
+
+    // ---- the composer ----
+    openComposer() {
+      const api = this.api();
+      if (!api) return;
+      const styles = api.hyperpowerStyles();
+      const types = api.postableTypes();
+      this.composer = {
+        type: types[0] ? types[0].key : api.POST_LIMITS.requestType,
+        diff: 1,
+        hyperpower: styles.length ? styles[0].key : null,
+        minParty: 1,
+        days: 7,
+        gold: 0,
+        goods: [],
+        wanted: [],
+        seed: 1 + (hashStr(String(Date.now())) % 100000),
+      };
+    },
+
+    draft() {
+      const c = this.composer;
+      return {
+        type: c.type, diff: c.diff, hyperpower: c.hyperpower, minParty: c.minParty,
+        days: c.days, gold: c.gold, goods: c.goods, wanted: c.wanted, seed: c.seed,
+        boardKey: this.boardKey,
+      };
+    },
+
+    preview() {
+      const api = this.api();
+      const c = this.composer;
+      if (!api || !c) return null;
+      if (c.type === api.POST_LIMITS.requestType && !c.wanted.length) return null;
+      try {
+        return api.previewPost(this.draft());
+      } catch (e) {
+        console.error("[BeagleQuest] notice preview failed", e);
+        return null;
+      }
+    },
+
+    goodsHTML(list, which) {
+      if (!list.length) return `<span style="${BQS.note}">${T('QuestBoard.composeAddSomething')}</span>`;
+      return list.map((g, i) => {
+        const obj = g.kind === "w" ? $dataWeapons[g.id] : g.kind === "a" ? $dataArmors[g.id] : $dataItems[g.id];
+        if (!obj) return "";
+        return `<span class="focusable" tabindex="0" data-bq="drop:${which}|${i}" style="${BQS.chip}">
+          ${bqIcon(obj.iconIndex)} ${esc(obj.name)} <b>&times;${g.qty}</b></span>`;
+      }).join("");
+    },
+
+    // Anything the party could be asked for is anything with a price on it; a
+    // reward can only be something they actually have in the pack.
+    pickerHTML() {
+      const api = this.api();
+      const p = this.picker;
+      if (!p) return "";
+      const wanted = p.which === "wanted";
+      const query = String(p.query || "").trim().toLowerCase();
+      const out = [];
+      const push = (kind, db) => {
+        for (let id = 1; id < db.length; id++) {
+          const obj = db[id];
+          if (!obj || !obj.name) continue;
+          if (wanted) { if (!(obj.price > 0)) continue; }
+          else if ($gameParty.numItems(obj) <= 0) continue;
+          if (query && !obj.name.toLowerCase().includes(query)) continue;
+          out.push({ kind, id, obj });
+        }
+      };
+      push("i", $dataItems);
+      push("w", $dataWeapons);
+      push("a", $dataArmors);
+      out.sort((a, b) => (a.obj.price || 0) - (b.obj.price || 0));
+      const rows = out.slice(0, 60).map(e => {
+        const held = $gameParty.numItems(e.obj);
+        return `<div class="focusable" tabindex="0" data-bq="add:${e.kind}|${e.id}"
+          style="display:flex; gap:8px; align-items:center; padding:3px 6px; border-bottom:1px solid #eee; cursor:pointer">
+          ${bqIcon(e.obj.iconIndex)}<span style="flex:1">${esc(e.obj.name)}</span>
+          <span style="${BQS.note}">${esc(api.euros(e.obj.price || 0))}</span>
+          <span style="${BQS.note}">${held > 0 ? T('QuestBoard.composeHeld', { n: held }) : ""}</span>
+        </div>`;
+      }).join("") || `<div style="${BQS.note} padding:6px">${T('QuestBoard.composeNoMatch')}</div>`;
+      return `<div style="${BQS.card}">
+        <b>${wanted ? T('QuestBoard.composePickWanted') : T('QuestBoard.composePickGoods')}</b>
+        <div style="${BQS.field}">
+          <span style="${BQS.label}">${T('QuestBoard.composeSearch')}</span>
+          <input data-bq-search="1" class="focusable" tabindex="0" value="${esc(p.query)}" style="${BQS.input} flex:1">
+        </div>
+        <div style="max-height:190px; overflow-y:auto; background:var(--xp-white); border:1px solid var(--xp-face-3)">${rows}</div>
+        ${this.btn("closePicker:1", T('QuestBoard.back'))}
+      </div>`;
+    },
+
+    composerHTML() {
+      const api = this.api();
+      if (!this.composer) this.openComposer();
+      const c = this.composer;
+      if (!c) return `<div style="${BQS.card}">${T('QuestBoard.bqOffline')}</div>`;
+      const isRequest = c.type === api.POST_LIMITS.requestType;
+      const types = api.postableTypes();
+      const styles = api.hyperpowerStyles();
+      const diff = isRequest ? api.priceDifficulty(api.goodsValue(c.wanted)) : c.diff;
+      const rec = { diff, minParty: c.minParty, level: api.medianLevel(), reward: { gold: c.gold, goods: c.goods } };
+      const asking = api.askingRate(rec);
+      const offered = api.offeredValue(rec);
+      const gen = offered / Math.max(1, asking);
+      const preview = this.preview();
+
+      const field = (label, control) => `<div style="${BQS.field}">
+        <span style="${BQS.label}">${esc(label)}</span><span style="flex:1; min-width:0">${control}</span></div>`;
+      const select = (key, options, value) => `<select class="focusable" tabindex="0" data-bq-set="${key}" style="${BQS.input}">
+        ${options.map(o => `<option value="${esc(o.key)}"${String(o.key) === String(value) ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
+      </select>`;
+      const range = (key, from, to, value, fmt) => select(key,
+        Array.from({ length: to - from + 1 }, (_, i) => ({ key: from + i, label: fmt ? fmt(from + i) : String(from + i) })),
+        value);
+
+      const escrow = [T('QuestBoard.composeEscrowGold', { sum: api.euros(c.gold) })];
+      for (const g of c.goods) {
+        const obj = g.kind === "w" ? $dataWeapons[g.id] : g.kind === "a" ? $dataArmors[g.id] : $dataItems[g.id];
+        if (obj) escrow.push(`${g.qty}x ${obj.name}`);
+      }
+
+      return `
+        <h2 style="${BQS.h}">${T('QuestBoard.composeTitle')}</h2>
+        <div style="${BQS.note} margin-bottom:8px">${T('QuestBoard.composeIntro')}</div>
+        <div style="${BQS.card}">
+          ${field(T('QuestBoard.composeWhat'), select("type", types.map(t => ({ key: t.key, label: t.label })), c.type))}
+          ${isRequest
+            ? field(T('QuestBoard.composeWanted'),
+                this.goodsHTML(c.wanted, "wanted") + " " + this.btn("openPicker:wanted", T('QuestBoard.bqAdd')))
+            : field(T('QuestBoard.composeDifficulty'), range("diff", 1, 5, c.diff))}
+          ${field(T('QuestBoard.composeStyle'), select("style",
+            styles.length ? styles.map(s => ({ key: s.key, label: s.label }))
+                          : [{ key: "", label: T('QuestBoard.composeNoStyle') }], c.hyperpower))}
+          ${field(T('QuestBoard.composePurse'),
+            `<input class="focusable" tabindex="0" type="number" min="0" step="1" data-bq-set="gold"
+               value="${Math.round(c.gold / 100)}" style="${BQS.input} width:120px"> ${esc(api.euros(c.gold))}`)}
+          ${field(T('QuestBoard.composeGoods'),
+            this.goodsHTML(c.goods, "goods") + " " + this.btn("openPicker:goods", T('QuestBoard.bqAdd')))}
+          ${field(T('QuestBoard.composeCrew'), range("crew", 1, api.POST_LIMITS.maxCrew, c.minParty,
+            n => T('QuestBoard.crewOf', { n })))}
+          ${field(T('QuestBoard.composeExpiry'), range("days", api.POST_LIMITS.minDays, api.POST_LIMITS.maxDays, c.days,
+            n => T('QuestBoard.composeDays', { n })))}
+        </div>
+        ${this.pickerHTML()}
+        <div style="${BQS.card}">
+          <b>${T('QuestBoard.composeRate')}</b>
+          <div style="color:${gen >= 1 ? "#2e7d32" : gen >= 0.6 ? "#b04a00" : "#c0392b"}">
+            ${T('QuestBoard.composeRateLine', { offered: api.euros(offered), asking: api.euros(asking), pct: Math.round(gen * 100) })}
+          </div>
+          <div style="${BQS.note}">${T('QuestBoard.composeRateHint')}</div>
+          ${isRequest ? `<div style="${BQS.note}">${T('QuestBoard.composeDerivedDiff')} ${bqStars(diff)}</div>` : ""}
+        </div>
+        <div style="${BQS.card}"><b>${T('QuestBoard.composeEscrow')}</b>
+          <div style="${BQS.note}">${esc(escrow.join("  ·  "))}</div></div>
+        <div style="${BQS.card}"><b>${T('QuestBoard.composePreview')}</b>
+          ${preview ? `<div style="font-weight:bold; margin-top:4px">${esc(preview.title)}</div>
+            <div style="${BQS.note}">${esc(preview.giverLabel || "")}</div>
+            <div style="margin:4px 0">${esc(preview.body)}</div>
+            <div style="${BQS.note}">${esc(api.objectiveText(preview)).replace(/\n/g, "<br>")}</div>`
+            : `<div style="${BQS.note}">${T('QuestBoard.composeNothingYet')}</div>`}</div>
+        <div>
+          ${this.btn("reword:1", T('QuestBoard.composeReword'))}
+          ${this.btn("post:1", T('QuestBoard.composePost'), BQS.btnGo)}
+        </div>`;
+    },
+  };
+
+  if (window.HypernetOS && window.HypernetOS.registerApp) {
+    window.HypernetOS.registerApp({
+      id: BQ_APP_ID,
+      name: T('QuestBoard.bqAppName'),
+      icon: BQ_ICON,
+      category: "office",
+      launchFn: function () { window.BeagleQuest.launch(); },
+      desktopShortcut: true,
+    });
+  }
+
   // ==========================================================================
   // Plugin command
   // ==========================================================================

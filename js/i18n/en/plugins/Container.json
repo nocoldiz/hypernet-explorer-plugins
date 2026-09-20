@@ -50,5 +50,27 @@
     "examineTitle": "Examine: {name}",
     "bury": "Bury",
     "buried": "You bury what is left of the {name}."
+  },
+  "holdall": {
+    "appName": "Holdall",
+    "subtitle": "Backpack, extradimensional container and vehicle holds, side by side.",
+    "hint": "Pick an item, then move it. Chests out in the world must be opened in person.",
+    "pack": "The pack you are carrying",
+    "extradimensional": "Extradimensional container",
+    "camper": "Camper hold",
+    "car": "Car boot",
+    "empty": "Nothing in here.",
+    "noLimit": "Bottomless.",
+    "onYou": "Carried on you.",
+    "payload": "{used} of {max} kg",
+    "moveRightOne": "Move one >",
+    "moveRightAll": "Move all >",
+    "moveLeftOne": "< Move one",
+    "moveLeftAll": "< Move all",
+    "pickSomething": "Pick something on that side first.",
+    "gone": "There is none of that left.",
+    "packFull": "The pack will not take any more of those.",
+    "overloaded": "{hold} is at its payload.",
+    "moved": "{n}x {item} moved to {to}."
   }
 }

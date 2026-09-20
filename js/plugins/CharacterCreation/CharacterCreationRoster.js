@@ -99,20 +99,74 @@
       `;
 
       const close = () => {
-        document.removeEventListener("keydown", onKey, true);
+        this._ccModalState = null;
         veil.remove();
       };
-      const onKey = (e) => {
-        if (e.key === "Escape") { e.stopPropagation(); SoundManager.playCancel(); close(); }
-        else if (e.key === "Enter") { e.stopPropagation(); close(); onAccept(); }
-      };
+      // Enter and Escape are read as ok / cancel by _ccModalPollInput rather
+      // than by a keydown listener of the sheet’s own: a listener closes the
+      // veil before the frame’s press is polled, and the board behind it then
+      // answers the same Escape by stepping back a page.
       veil.addEventListener("click", (e) => { if (e.target === veil) { SoundManager.playCancel(); close(); } });
       veil.querySelector(".cc-modal-cancel").addEventListener("click", () => { SoundManager.playCancel(); close(); });
       veil.querySelector(".cc-modal-accept").addEventListener("click", () => { close(); onAccept(); });
-      document.addEventListener("keydown", onKey, true);
 
       container.appendChild(veil);
-      veil.querySelector(".cc-modal-accept").focus();
+      const buttons = [veil.querySelector(".cc-modal-cancel"), veil.querySelector(".cc-modal-accept")];
+      // A pad has no Escape key and no pointer: the sheet keeps its own small
+      // cursor, so left/right pick a button, OK presses it and Cancel closes
+      // it. Polled from updateUIInput before anything else on the page, so
+      // the press never also moves the board behind the veil.
+      this._ccModalState = {
+        veil,
+        buttons,
+        index: 1,
+        close,
+        accept: () => { close(); onAccept(); },
+      };
+      this._ccModalPaint();
+    }
+
+    // Lights the button the pad cursor is on with the same ring the rest of
+    // the spread uses, and puts the DOM focus there, so a keyboard Enter and
+    // a pad OK always mean the same button.
+    _ccModalPaint() {
+      const st = this._ccModalState;
+      if (!st) return;
+      st.buttons.forEach((b, i) => {
+        if (b) b.classList.toggle("cc-nav-focus", i === st.index);
+      });
+      const cur = st.buttons[st.index];
+      if (cur && cur.focus) cur.focus();
+    }
+
+    // True while a confirmation sheet is up: it has taken this frame’s press.
+    _ccModalPollInput() {
+      const st = this._ccModalState;
+      if (!st) return false;
+      if (!st.veil || !st.veil.isConnected) { this._ccModalState = null; return false; }
+      if (Input.isTriggered("cancel")) {
+        SoundManager.playCancel();
+        this._ccModalState = null;
+        st.close();
+        return true;
+      }
+      if (Input.isTriggered("ok")) {
+        this._ccModalState = null;
+        // Confirming is silent everywhere else in the wizard, so it is here.
+        if (st.index === 1) st.accept();
+        else { SoundManager.playCancel(); st.close(); }
+        return true;
+      }
+      let turn = 0;
+      if (Input.isRepeated("right") || Input.isRepeated("down")) turn = 1;
+      else if (Input.isRepeated("left") || Input.isRepeated("up")) turn = -1;
+      if (turn) {
+        const n = st.buttons.length;
+        st.index = (st.index + turn + n) % n;
+        SoundManager.playCursor();
+        this._ccModalPaint();
+      }
+      return true;
     }
 
     // The same sheet as _ccConfirm, with lines to type on: a question whose
@@ -124,6 +178,20 @@
     // { key, label, placeholder } - and validate is then handed an object of
     // what was typed, keyed by field, rather than a single string. A sheet
     // with fields carries no prose: the labels are the question.
+    //
+    // Two extras, both written for the vault's coordinate sheet:
+    //
+    //   opts.numeric  the lines hold nothing but numbers, so a pad is given a
+    //                 keypad in their place. A text box with a pad in hand is
+    //                 a trap (CCNav.isPadTrap): there are no keys to type on
+    //                 and the caret eats the stick. The keypad is ordinary
+    //                 buttons, so the ring walks it like any other control and
+    //                 the pairs are punched in one digit after another.
+    //   opts.collect  what is typed is SAVED rather than accepted: `onSave`
+    //                 checks it and writes it down, the sheet stays open, and
+    //                 `entries` is redrawn as the list of everything saved.
+    //                 Nothing is started until one of those is picked and
+    //                 confirmed, which is what onAccept is finally handed.
     _ccAsk(opts, onAccept) {
       const container = this._dndContainer || document.getElementById("character-creation-container");
       if (!container) return;
@@ -138,7 +206,41 @@
       const fields = Array.isArray(opts.fields) && opts.fields.length
         ? opts.fields
         : [{ key: "", label: "", placeholder: opts.placeholder, value: opts.value }];
-      const lines = fields.map((f) => `
+      const collect = !!opts.collect;
+      // A pad in hand and numbers to type: the keypad replaces the lines.
+      const nav = window.CCNav;
+      const padKeys = !!opts.numeric && !!(nav && nav.padInHand && nav.padInHand());
+
+      // Each numeric line is a PAIR, which is what the keypad punches into:
+      // two slots per field, filled and stepped through one at a time.
+      const slots = [];
+      if (padKeys) {
+        fields.forEach((f) => {
+          const pair = String(f.value == null ? "" : f.value).match(/-?\d+/g) || [];
+          slots.push({ field: f, digits: pair[0] ? String(pair[0]) : "" });
+          slots.push({ field: f, digits: pair[1] ? String(pair[1]) : "" });
+        });
+      }
+      let slotIndex = 0;
+
+      const lines = padKeys
+        ? `<div class="cc-modal-pad">
+            ${fields.map((f, n) => `
+              <div class="cc-modal-pad-line">
+                ${f.label ? `<span class="cc-modal-label">${esc(f.label)}</span>` : ""}
+                <span class="cc-modal-pad-pair">
+                  <button type="button" class="cc-sidebar-btn cc-modal-slot" data-slot="${n * 2}"></button>
+                  <button type="button" class="cc-sidebar-btn cc-modal-slot" data-slot="${n * 2 + 1}"></button>
+                </span>
+              </div>`).join("")}
+            <div class="cc-modal-keys">
+              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((d) => `
+                <button type="button" class="cc-sidebar-btn cc-modal-key" data-digit="${d}">${d}</button>`).join("")}
+              <button type="button" class="cc-sidebar-btn cc-modal-key" data-key="del">${esc(T('CharCreate.padDelete'))}</button>
+              <button type="button" class="cc-sidebar-btn cc-modal-key" data-key="next">${esc(T('CharCreate.padNext'))}</button>
+            </div>
+          </div>`
+        : fields.map((f) => `
           <label class="cc-modal-field">
             ${f.label ? `<span class="cc-modal-label">${esc(f.label)}</span>` : ""}
             <input type="text" class="cc-pick-search cc-modal-input" autocomplete="off"
@@ -155,10 +257,14 @@
           <h3 class="cc-modal-title">${esc(opts.title || "")}</h3>
           ${opts.body ? `<p class="cc-modal-body">${esc(opts.body)}</p>` : ""}
           ${lines}
+          ${collect ? `<div class="cc-modal-actions cc-modal-save-row">
+            <button class="cc-sidebar-btn cc-modal-save">${esc(opts.saveLabel || T('CharCreate.confirm'))}</button>
+          </div>` : ""}
           <p class="cc-modal-error"></p>
+          ${collect ? `<div class="cc-modal-list"></div>` : ""}
           <div class="cc-modal-actions">
             <button class="cc-sidebar-btn cc-modal-cancel">${esc(T('CharCreate.cancel'))}</button>
-            <button class="cc-sidebar-btn cc-modal-accept">${esc(T('CharCreate.confirm'))}</button>
+            <button class="cc-sidebar-btn cc-modal-accept">${esc(opts.confirmLabel || T('CharCreate.confirm'))}</button>
           </div>
         </div>
       `;
@@ -166,9 +272,31 @@
       const inputs = Array.from(veil.querySelectorAll(".cc-modal-input"));
       const input = inputs[0];
       const errorLine = veil.querySelector(".cc-modal-error");
+      const listBox = veil.querySelector(".cc-modal-list");
+      let picked = null;
+
+      // The keypad's own painting: the slot being filled wears the same ring
+      // the rest of the spread uses, and an empty slot shows as a blank box.
+      const slotButtons = Array.from(veil.querySelectorAll("button.cc-modal-slot"));
+      const paintSlots = () => {
+        slotButtons.forEach((b, i) => {
+          const slot = slots[i];
+          b.textContent = slot && slot.digits ? slot.digits : "-"; // i18n-ignore: an empty box
+          b.classList.toggle("cc-nav-focus", i === slotIndex);
+        });
+      };
+      if (padKeys) paintSlots();
+
       // One line answers with its own string; several answer with an object
       // keyed by field, which is what a multi-field validate is written for.
       const answer = () => {
+        if (padKeys) {
+          const out = {};
+          fields.forEach((f, n) => {
+            out[f.key || ""] = `${slots[n * 2].digits}, ${slots[n * 2 + 1].digits}`;
+          });
+          return (!Array.isArray(opts.fields) || !opts.fields.length) ? out[""] : out;
+        }
         if (!Array.isArray(opts.fields) || !opts.fields.length) {
           return input ? input.value : "";
         }
@@ -180,15 +308,54 @@
         document.removeEventListener("keydown", onKey, true);
         veil.remove();
       };
-      const accept = () => {
-        const value = answer();
-        const error = opts.validate ? opts.validate(value) : null;
-        if (error) {
-          SoundManager.playBuzzer();
-          if (errorLine) errorLine.textContent = error;
-          if (input && input.focus) input.focus();
+
+      // The saved list, redrawn from scratch every time something is written
+      // down. Picking a row is the whole choice the sheet is asking for, so a
+      // row is a button like any other and the ring reaches every one of them.
+      const paintList = () => {
+        if (!listBox) return;
+        const rows = (opts.entries ? opts.entries() : []) || [];
+        if (!rows.length) {
+          listBox.innerHTML = `<p class="cc-modal-body cc-modal-empty">${esc(opts.emptyLabel || "")}</p>`;
           return;
         }
+        listBox.innerHTML = rows.map((row, i) => `
+          <button type="button" class="cc-sidebar-btn cc-modal-row" data-row="${i}">${esc(row.label)}</button>`).join("");
+        Array.from(listBox.querySelectorAll("button.cc-modal-row")).forEach((btn, i) => {
+          if (picked && rows[i] && picked.label === rows[i].label) btn.classList.add("cc-modal-row-picked");
+          btn.addEventListener("click", () => {
+            picked = rows[i];
+            SoundManager.playCursor();
+            paintList();
+          });
+        });
+      };
+      paintList();
+
+      const fail = (error) => {
+        SoundManager.playBuzzer();
+        if (errorLine) errorLine.textContent = error;
+        if (!padKeys && input && input.focus) input.focus();
+      };
+      // Saving: checked, written down, and the sheet stays exactly where it is
+      // with the list one row longer.
+      const save = () => {
+        const error = opts.onSave ? opts.onSave(answer()) : null;
+        if (error) return fail(error);
+        if (errorLine) errorLine.textContent = "";
+        paintList();
+      };
+      const accept = () => {
+        if (collect) {
+          // Nothing is started by typing: a saved square has to be picked.
+          if (!picked) return fail(opts.pickLabel || "");
+          close();
+          if (onAccept) onAccept(picked);
+          return;
+        }
+        const value = answer();
+        const error = opts.validate ? opts.validate(value) : null;
+        if (error) return fail(error);
         close();
         if (onAccept) onAccept(value);
       };
@@ -199,13 +366,44 @@
       veil.addEventListener("click", (e) => { if (e.target === veil) { SoundManager.playCancel(); close(); } });
       veil.querySelector(".cc-modal-cancel").addEventListener("click", () => { SoundManager.playCancel(); close(); });
       veil.querySelector(".cc-modal-accept").addEventListener("click", accept);
+      const saveBtn = veil.querySelector("button.cc-modal-save");
+      if (saveBtn) saveBtn.addEventListener("click", save);
+
+      // The keypad's keys. A digit lands in the slot being filled, Next steps
+      // to the following one (the pairs are punched in one after another, and
+      // it wraps), and Del takes the last digit back.
+      if (padKeys) {
+        slotButtons.forEach((b, i) => b.addEventListener("click", () => {
+          slotIndex = i;
+          SoundManager.playCursor();
+          paintSlots();
+        }));
+        Array.from(veil.querySelectorAll("button.cc-modal-key")).forEach((b) => {
+          b.addEventListener("click", () => {
+            const digit = b.getAttribute("data-digit");
+            const slot = slots[slotIndex];
+            if (digit != null) {
+              if (slot && slot.digits.length < 4) slot.digits += digit;
+              SoundManager.playCursor();
+            } else if (b.getAttribute("data-key") === "del") {
+              if (slot) slot.digits = slot.digits.slice(0, -1);
+              SoundManager.playCancel();
+            } else {
+              slotIndex = (slotIndex + 1) % slots.length;
+              SoundManager.playCursor();
+            }
+            paintSlots();
+          });
+        });
+      }
+
       document.addEventListener("keydown", onKey, true);
 
       container.appendChild(veil);
-      if (input && input.focus) input.focus();
+      if (!padKeys && input && input.focus) input.focus();
       // A line that came prefilled is selected, not just filled: Confirm takes
       // it as it stands, and typing replaces it without having to clear it.
-      if (input && input.value && input.select) input.select();
+      if (!padKeys && input && input.value && input.select) input.select();
     }
 
     onRemovePartyMember(idx, event) {
@@ -313,7 +511,9 @@
     _commitSpecPoints() {
       const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
       members.forEach((actor) => {
-        if (!actor || !actor._specTrained || !actor.setSpecializationTrainedLevel) return;
+        if (!actor) return;
+        this._bankUnspentSpecPoints(actor);
+        if (!actor._specTrained || !actor.setSpecializationTrainedLevel) return;
         const ctx = this._specGrantContext(actor);
         const catalog = this._specsCatalog();
         Object.keys(actor._specTrained).forEach((key) => {
@@ -322,6 +522,25 @@
           if (rank > 0) actor.setSpecializationTrainedLevel(Number(key), rank + 1);
         });
       });
+    }
+
+    // Whatever the purse still holds when the party embarks is carried into the
+    // game rather than burnt. Simple mode never spends any of it, so a quick
+    // character walks out with the whole budget to place from the
+    // specialization menu once play has started; a detailed sheet carries
+    // whatever the player left over. Counted before the trained ranks are
+    // committed, while _specsRemaining still reads the board's own scratch
+    // field, and only once: a second pass would bank the same points twice.
+    // Story mode is left alone: what its protagonist knows is what her dossier
+    // wrote down, purse included.
+    _bankUnspentSpecPoints(actor) {
+      if (!actor || actor._specPointsBanked) return;
+      if (Scene_CharacterCreation._storyMode) return;
+      if (typeof actor.gainSpecializationPoints !== "function") return;
+      if (typeof this._specsRemaining !== "function") return;
+      const left = this._specsRemaining(actor);
+      actor._specPointsBanked = true;
+      if (left > 0) actor.gainSpecializationPoints(left);
     }
 
     onFinishPartyCreation() {

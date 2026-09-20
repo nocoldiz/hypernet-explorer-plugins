@@ -5,1615 +5,1615 @@
   },
   "2": {
     "name": "Asse di Porta Scheggiata",
-    "description": "Un'assicella di parete legata a un braccio."
+    "description": "Un'assicella di parete legata a un braccio.\nAttutisce i colpi fisici."
   },
   "3": {
     "name": "Gilet dei Coni Stradali",
-    "description": "Un gilet catarifrangente cucito con coni stradali."
+    "description": "Un gilet catarifrangente cucito con coni\nstradali. Aumenta gli HP e aumenta gli HP."
   },
   "4": {
     "name": "Cuffia dei Riflessi Nervosi",
-    "description": "Un berretto che sussulta prima di te."
+    "description": "Un berretto che sussulta prima di te. Blocca\nAcceca."
   },
   "5": {
     "name": "Elmo di Botola in Cemento",
-    "description": "Una botola da bunker portata come elmo."
+    "description": "Una botola da bunker portata come elmo.\nResiste a Pietra."
   },
   "6": {
     "name": "Diadema di Schermi Crepati",
-    "description": "Un cerchietto di display di telefono morti."
+    "description": "Un cerchietto di display di telefono morti.\nAttutisce i colpi fisici."
   },
   "7": {
     "name": "Zaino di Sopravvivenza Ammaccato",
-    "description": "Un kit malconcio di attrezzi storti."
+    "description": "Un kit malconcio di attrezzi storti. Resiste a\nFuoco."
   },
   "8": {
     "name": "Pronto Soccorso Spaiato",
-    "description": "Una borsa di bende scadute."
+    "description": "Una borsa di bende scadute. Devia i colpi\ncritici."
   },
   "9": {
     "name": "Coroncina di Stagnola",
-    "description": "Una corona piegata con la carta stagnola."
+    "description": "Una corona piegata con la carta stagnola.\nDevia i colpi critici."
   },
   "10": {
     "name": "Amuleto di Guardia Intermittente",
-    "description": "Un ciondolo che ronza quando c'è pericolo."
+    "description": "Un ciondolo che ronza quando c'è pericolo.\nResiste a Fisico."
   },
   "11": {
     "name": "Ciondoli di Glifi Sciolti",
-    "description": "Un sacchetto di rune mezze cariche."
+    "description": "Un sacchetto di rune mezze cariche. Blocca\nNausea."
   },
   "12": {
     "name": "Bracciale a Circuito Innestato",
-    "description": "Un guanto d'arme di fili e ossa."
+    "description": "Un guanto d'arme di fili e ossa. Recupera un\npo' di mana."
   },
   "13": {
     "name": "Sciarpa di Spazio Piegato",
-    "description": "Una sciarpa più lunga dentro che fuori."
+    "description": "Una sciarpa più lunga dentro che fuori.\nIrrigidisce la guardia."
   },
   "14": {
     "name": "Involucro di Rifiuti Dorati",
-    "description": "Un sacco della spazzatura dipinto d'oro."
+    "description": "Un sacco della spazzatura dipinto d'oro.\nRecupera un po' di salute."
   },
   "15": {
     "name": "Recupero da Compattatore",
-    "description": "Un mattone pressato di stoffa consunta."
+    "description": "Un mattone pressato di stoffa consunta. Devia\ni colpi critici."
   },
   "16": {
     "name": "Camicia di Lana Bucata",
-    "description": "Una camicia rosicchiata dalle tarme."
+    "description": "Una camicia rosicchiata dalle tarme. Blocca\nSanguinamento."
   },
   "17": {
     "name": "Berretto di Maglia Sfilacciato",
-    "description": "Un berretto che si disfa sulla cucitura."
+    "description": "Un berretto che si disfa sulla cucitura. Rende\npiu difficile colpirlo con la magia."
   },
   "18": {
     "name": "Camicia di Carta Fradicia",
-    "description": "Una camicia molliccia che beve la pioggia."
+    "description": "Una camicia molliccia che beve la pioggia.\nAttutisce la magia."
   },
   "19": {
     "name": "Gilet col Distintivo di Plastica",
-    "description": "Un gilet con un distintivo giocattolo."
+    "description": "Un gilet con un distintivo giocattolo. Resiste\na Acqua."
   },
   "20": {
     "name": "Elmo Teatrale di Gommapiuma",
-    "description": "Un elmo di scena in gommapiuma."
+    "description": "Un elmo di scena in gommapiuma. Blocca Guardia\nRotta."
   },
   "21": {
     "name": "Cappellino da Festa Afflosciato",
-    "description": "Un cono di cartone inzuppato."
+    "description": "Un cono di cartone inzuppato. Blocca Silenzio."
   },
   "22": {
     "name": "Cappellino col Logo Taroccato",
-    "description": "Un berretto con un marchio scritto male."
+    "description": "Un berretto con un marchio scritto male.\nBlocca Acceca."
   },
   "23": {
     "name": "Bracciale di Coperchio",
-    "description": "Un coperchio della pattumiera per braccio."
+    "description": "Un coperchio della pattumiera per braccio. A\nvolte contrattacca."
   },
   "24": {
     "name": "Spallaccio Premio Giocattolo",
-    "description": "Una spalla di plastica da set per bambini."
+    "description": "Una spalla di plastica da set per bambini.\nRinsalda il braccio."
   },
   "25": {
     "name": "Ciondolo Placebo",
-    "description": "Un ciondolo che non fa nulla."
+    "description": "Un ciondolo che non fa nulla. Blocca Stordire."
   },
   "26": {
     "name": "Onesta Spazzatura",
-    "description": "Un fagotto di vera immondizia."
+    "description": "Un fagotto di vera immondizia. Blocca Presa."
   },
   "27": {
     "name": "Camicia da Tavola Calda Macchiata",
-    "description": "Una camicia incrostata di unto vecchio."
+    "description": "Una camicia incrostata di unto vecchio.\nRecupera un po' di salute."
   },
   "28": {
     "name": "Corona del Trono di Rigagnolo",
-    "description": "Una corona di avanzi da cassonetto."
+    "description": "Una corona di avanzi da cassonetto. Blocca\nCommozione Cerebrale."
   },
   "29": {
     "name": "Fagotto del Vagabondo Urbano",
-    "description": "Un rotolo di stracci da sopravvivenza urbana."
+    "description": "Un rotolo di stracci da sopravvivenza urbana.\nA volte contrattacca."
   },
   "30": {
     "name": "Calotta di Cartone",
-    "description": "Un elmetto fragile di cartone pressato."
+    "description": "Un elmetto fragile di cartone pressato. Blocca\nSbilanciato."
   },
   "31": {
     "name": "Corredo da Sentiero",
-    "description": "Un semplice set da trekking."
+    "description": "Un semplice set da trekking. Rinsalda il\nbraccio."
   },
   "32": {
     "name": "Bretelle da Zaino Cascanti",
-    "description": "Un'imbracatura di cinghie consumate."
+    "description": "Un'imbracatura di cinghie consumate. Rinsalda\nil braccio."
   },
   "33": {
     "name": "Scarponi da Sentiero Crepati",
-    "description": "Un paio di scarponi da cammino spaccati."
+    "description": "Un paio di scarponi da cammino spaccati.\nBlocca In posizione."
   },
   "34": {
     "name": "Cintura del Kit di Panico",
-    "description": "Una cintura di cianfrusaglie d'emergenza."
+    "description": "Una cintura di cianfrusaglie d'emergenza.\nBlocca Sonno."
   },
   "35": {
     "name": "Imbrago da Scalata Sfilacciato",
-    "description": "Un'attrezzatura logora di corde e moschettoni."
+    "description": "Un'attrezzatura logora di corde e moschettoni.\nBlocca Sbilanciato."
   },
   "36": {
     "name": "Ciondolo Tutto Scintille",
-    "description": "Un ciondolo lucente e inutile."
+    "description": "Un ciondolo lucente e inutile. Devia i colpi\ncritici."
   },
   "37": {
     "name": "Cappello di Vanità",
-    "description": "Un cappello elegante senza imbottitura."
+    "description": "Un cappello elegante senza imbottitura.\nAttutisce i colpi fisici."
   },
   "38": {
     "name": "Fascia Multitasca",
-    "description": "Una fascia di piccole tasche piene."
+    "description": "Una fascia di piccole tasche piene.\nAffina l'istinto."
   },
   "39": {
     "name": "Cappotto Fuori Moda",
-    "description": "Un cappotto di un decennio perduto."
+    "description": "Un cappotto di un decennio perduto. Blocca\nPresa."
   },
   "40": {
     "name": "Scialle a Motivo Locale",
-    "description": "Uno scialle in tessitura regionale."
+    "description": "Uno scialle in tessitura regionale. Resiste a\nFisico."
   },
   "41": {
     "name": "Stola di Seta da Salotto",
-    "description": "Una stola vistosa fatta per stupire."
+    "description": "Una stola vistosa fatta per stupire. Aumenta\ngli HP."
   },
   "42": {
     "name": "Cappellino col Logo a Fumetti",
-    "description": "Un berretto con una mascotte sbiadita."
+    "description": "Un berretto con una mascotte sbiadita. Aumenta\ngli HP."
   },
   "43": {
     "name": "Set di Mollette di Plastica",
-    "description": "Una manciata di mollette colorate."
+    "description": "Una manciata di mollette colorate. Attutisce i\ncolpi fisici."
   },
   "44": {
     "name": "Maglietta del Tour Sbiadita",
-    "description": "Una maglietta consunta con la grafica di un gruppo."
+    "description": "Una maglietta consunta con la grafica di un\ngruppo. Aumenta gli HP."
   },
   "45": {
     "name": "Tunica dal Motivo Corrotto",
-    "description": "Una tunica con la stampa corrotta."
+    "description": "Una tunica con la stampa corrotta. Recupera un\npo' di salute."
   },
   "46": {
     "name": "Fascia Consapevole",
-    "description": "Una fascia che sembra osservarti."
+    "description": "Una fascia che sembra osservarti. Blocca\nSonno."
   },
   "47": {
     "name": "Corredo del Cavaliere Arrugginito",
-    "description": "Un fagotto di guarnizioni corrose."
+    "description": "Un fagotto di guarnizioni corrose. Aumenta gli\nHP."
   },
   "48": {
     "name": "Elmo di Ferro Butterato",
-    "description": "Un vecchio elmo semplice e ammaccato."
+    "description": "Un vecchio elmo semplice e ammaccato.\nRassicura la mente."
   },
   "49": {
     "name": "Scudo Rotondo Malconcio",
-    "description": "Un brocchiere di legno consunto."
+    "description": "Un brocchiere di legno consunto. Resiste a\nPietra."
   },
   "50": {
     "name": "Faretra Crepata",
-    "description": "Un supporto per frecce in cuoio spaccato."
+    "description": "Un supporto per frecce in cuoio spaccato.\nRinsalda il braccio."
   },
   "51": {
     "name": "Corazza Nobiliare Sbiadita",
-    "description": "Un pettorale decorativo annerito."
+    "description": "Un pettorale decorativo annerito. Resiste a\nPietra."
   },
   "52": {
     "name": "Maglia dell'Eroe Replica",
-    "description": "Una copia scadente di un'armatura famosa."
+    "description": "Una copia scadente di un'armatura famosa.\nDevia i colpi critici."
   },
   "53": {
     "name": "Tunica di Panno Casalingo",
-    "description": "Una semplice tunica da contadino."
+    "description": "Una semplice tunica da contadino. Blocca\nVeleno."
   },
   "54": {
     "name": "Elmo con Visiera Allacciata",
-    "description": "Un elmo con la visiera ribaltabile."
+    "description": "Un elmo con la visiera ribaltabile. Blocca\nAcceca."
   },
   "55": {
     "name": "Imbottitura Antisommossa",
-    "description": "Un'imbottitura da ordine pubblico consumata."
+    "description": "Un'imbottitura da ordine pubblico consumata.\nResiste a Pietra."
   },
   "56": {
     "name": "Borsa da Triage",
-    "description": "La borsa esaurita di un medico."
+    "description": "La borsa esaurita di un medico. Recupera un\npo' di mana."
   },
   "57": {
     "name": "Tuta Climatica Sottile",
-    "description": "Una tuta per ogni clima, e fragile."
+    "description": "Una tuta per ogni clima, e fragile. Blocca\nSbilanciato."
   },
   "58": {
     "name": "Gilet da Sub che Perde",
-    "description": "Un gilet da immersione rattoppato."
+    "description": "Un gilet da immersione rattoppato. Aumenta gli\nHP."
   },
   "59": {
     "name": "Tuta Galleggiante Sgonfia",
-    "description": "Una tuta a gravità zero afflosciata."
+    "description": "Una tuta a gravità zero afflosciata. Aumenta\ngli HP."
   },
   "60": {
     "name": "Piccone Scheggiato",
-    "description": "Il piccone consumato di un minatore."
+    "description": "Il piccone consumato di un minatore. Resiste a\nPietra."
   },
   "61": {
     "name": "Corredo con Elmetto Impolverato",
-    "description": "Un set di sicurezza da cantiere graffiato."
+    "description": "Un set di sicurezza da cantiere graffiato.\nAttutisce i colpi fisici."
   },
   "62": {
     "name": "Giacca da Pompiere Bruciacchiata",
-    "description": "La giacca bruciata di un vigile del fuoco."
+    "description": "La giacca bruciata di un vigile del fuoco.\nAffina l'istinto."
   },
   "63": {
     "name": "Cinturone di Pattuglia Dismesso",
-    "description": "Il cinturone consumato di un agente."
+    "description": "Il cinturone consumato di un agente. Rinsalda\nil braccio."
   },
   "64": {
     "name": "Protezioni Sportive Graffiate",
-    "description": "Un set di protezioni da asfalto."
+    "description": "Un set di protezioni da asfalto. Blocca Sonno."
   },
   "65": {
     "name": "Corazza di Bronzo Sgretolata",
-    "description": "Una corazza antica che si sfoglia."
+    "description": "Una corazza antica che si sfoglia. Aumenta gli\nHP."
   },
   "66": {
     "name": "Frac Preso in Prestito",
-    "description": "Un cappotto da cerimonia a nolo."
+    "description": "Un cappotto da cerimonia a nolo. A volte\ncontrattacca."
   },
   "67": {
     "name": "Abito Gessato da Combattimento",
-    "description": "Un abito tagliato per le guerre di consiglio."
+    "description": "Un abito tagliato per le guerre di consiglio.\nIrrigidisce la guardia."
   },
   "68": {
     "name": "Imbracatura di Tecnologia Morta",
-    "description": "Un'attrezzatura di vecchi apparecchi inerti."
+    "description": "Un'attrezzatura di vecchi apparecchi inerti.\nRende piu facile schivare."
   },
   "69": {
     "name": "Cintura dell'Archivista",
-    "description": "Una cintura di strumenti da catalogazione."
+    "description": "Una cintura di strumenti da catalogazione.\nResiste a Vento."
   },
   "70": {
     "name": "Gilet Tappezzato di Loghi",
-    "description": "Un gilet ricoperto di marchi."
+    "description": "Un gilet ricoperto di marchi. Blocca Paralisi."
   },
   "71": {
     "name": "Veste Semplice di Gilda",
-    "description": "Una veste da apprendista non tinta."
+    "description": "Una veste da apprendista non tinta. Attutisce\ni colpi fisici."
   },
   "72": {
     "name": "Brocchiere dell'Idolo di Latta",
-    "description": "Un piccolo scudo con l'effigie di un dio."
+    "description": "Un piccolo scudo con l'effigie di un dio.\nResiste a Pietra."
   },
   "73": {
     "name": "Fascia Oleosa",
-    "description": "Una fascia macchiata di nero lucido."
+    "description": "Una fascia macchiata di nero lucido. Rende piu\nfacile schivare."
   },
   "74": {
     "name": "Fascia Consumata dalla Strada",
-    "description": "Una fascia sbiancata dalla Strada."
+    "description": "Una fascia sbiancata dalla Strada. Resiste a\nFisico."
   },
   "75": {
     "name": "Mantello dalle Cuciture Storte",
-    "description": "Un mantello dai bordi sfocati."
+    "description": "Un mantello dai bordi sfocati. Resiste a\nAcqua."
   },
   "76": {
     "name": "Guanto Incrostato di Scoria",
-    "description": "Un guanto ricoperto di metallo secco."
+    "description": "Un guanto ricoperto di metallo secco. Affretta\nil passo."
   },
   "77": {
     "name": "Fascia del Contrabbandiere",
-    "description": "Una fascia con cuciture nascoste."
+    "description": "Una fascia con cuciture nascoste. Blocca\nSonno."
   },
   "78": {
     "name": "Amuleto dell'Orologio Fermo",
-    "description": "Un ciondolo bloccato a metà scatto."
+    "description": "Un ciondolo bloccato a metà scatto. Blocca\nFascino."
   },
   "79": {
     "name": "Stivalone di Riflusso",
-    "description": "Uno stivale incrostato di limo di fiume."
+    "description": "Uno stivale incrostato di limo di fiume. Rende\npiu facile schivare."
   },
   "80": {
     "name": "Bracciale di Macerie",
-    "description": "Un bracciale di muratura caduta."
+    "description": "Un bracciale di muratura caduta. Blocca\nNausea."
   },
   "81": {
     "name": "Zaino del Girovago",
-    "description": "Il fagotto ben consumato di un viaggiatore."
+    "description": "Il fagotto ben consumato di un viaggiatore.\nRinsalda il braccio."
   },
   "82": {
     "name": "Cintura di Rottami Goblin",
-    "description": "Una cintura di trofei rozzi."
+    "description": "Una cintura di trofei rozzi. Resiste a Vento."
   },
   "83": {
     "name": "Top da Festa Y2K",
-    "description": "Una camicia lucida di fine millennio."
+    "description": "Una camicia lucida di fine millennio. Blocca\nSanguinamento."
   },
   "84": {
     "name": "Imbracatura da Strada",
-    "description": "Un'imbracatura di cinghie e anelli."
+    "description": "Un'imbracatura di cinghie e anelli. Devia i\ncolpi critici."
   },
   "85": {
     "name": "Abito di Pizzo da Lutto",
-    "description": "Un abito scuro di pizzo pesante."
+    "description": "Un abito scuro di pizzo pesante. Resiste a\nFuoco."
   },
   "86": {
     "name": "Gilet del Camionista",
-    "description": "Un gilet sbiadito da lunga percorrenza."
+    "description": "Un gilet sbiadito da lunga percorrenza. Rende\npiu facile schivare."
   },
   "87": {
     "name": "Fascia di Carne Pulsante",
-    "description": "Una fascia calda e umida al tatto."
+    "description": "Una fascia calda e umida al tatto. Blocca\nSbilanciato."
   },
   "88": {
     "name": "Mantello Alieno Souvenir",
-    "description": "Un mantello pacchiano di finta xenotecnologia."
+    "description": "Un mantello pacchiano di finta xenotecnologia.\nIrrigidisce la guardia."
   },
   "89": {
     "name": "Corredo di Portafortuna",
-    "description": "Un sacchetto di gettoni inutili."
+    "description": "Un sacchetto di gettoni inutili. Blocca\nStordire."
   },
   "90": {
     "name": "Ciondolo d'Allarme Spento",
-    "description": "Un ciondolo medico ormai muto."
+    "description": "Un ciondolo medico ormai muto. Affretta il\npasso."
   },
   "91": {
     "name": "Corredo Leggero del Corriere",
-    "description": "Un set snello di attrezzatura da parkour."
+    "description": "Un set snello di attrezzatura da parkour.\nBlocca Nausea."
   },
   "92": {
     "name": "Cappello a Tesa Larga",
-    "description": "Un cappello largo che ripara gli occhi."
+    "description": "Un cappello largo che ripara gli occhi.\nResiste a Sacro."
   },
   "93": {
     "name": "Fascia da Corona Prestata",
-    "description": "Una fascia scadente che imita la nobiltà."
+    "description": "Una fascia scadente che imita la nobiltà.\nRecupera un po' di mana."
   },
   "94": {
     "name": "Bende Sfilacciate",
-    "description": "Bende da mani consumate che si sfaldano."
+    "description": "Bende da mani consumate che si sfaldano.\nAffretta il passo."
   },
   "95": {
     "name": "Orologio da Taschino Fermo",
-    "description": "Un orologino che forse ticchetta ancora."
+    "description": "Un orologino che forse ticchetta ancora.\nBlocca Fascino."
   },
   "96": {
     "name": "Tonico per la Pelle",
-    "description": "Un unguento in boccetta che tinge di verde."
+    "description": "Un unguento in boccetta che tinge di verde.\nBlocca In posizione."
   },
   "97": {
     "name": "Montatura Storta",
-    "description": "Occhiali piegati con le lenti deformate."
+    "description": "Occhiali piegati con le lenti deformate.\nBlocca Paralisi."
   },
   "98": {
     "name": "Cappotto di Pezze Recuperate",
-    "description": "Un cappotto cucito con stoffa da cassonetto."
+    "description": "Un cappotto cucito con stoffa da cassonetto.\nResiste a Ghiaccio."
   },
   "99": {
     "name": "Maglietta Grigia Sbiadita",
-    "description": "Una semplice maglietta di cotone consunta."
+    "description": "Una semplice maglietta di cotone consunta.\nResiste a Maledetto."
   },
   "100": {
     "name": "Sciarpa Filtrapolvere",
-    "description": "Una fascia che filtra la polvere della strada."
+    "description": "Una fascia che filtra la polvere della strada.\nBlocca Veleno."
   },
   "101": {
     "name": "Giacca Finta che si Sfoglia",
-    "description": "Una giacca di finta pelle, screpolata."
+    "description": "Una giacca di finta pelle, screpolata.\nRecupera un po' di salute."
   },
   "102": {
     "name": "Gilet Imbottito col Logo",
-    "description": "Un gilet da strada gonfio e marchiato."
+    "description": "Un gilet da strada gonfio e marchiato. Blocca\nSanguinamento."
   },
   "103": {
     "name": "Scarponi da Lavoro Rinforzati",
-    "description": "Solidi scarponi con punta d'acciaio."
+    "description": "Solidi scarponi con punta d'acciaio. Affretta\nil passo."
   },
   "104": {
     "name": "Giacca di Jeans Slavata",
-    "description": "Un guscio di denim blu sbiadito."
+    "description": "Un guscio di denim blu sbiadito. Attutisce i\ncolpi fisici."
   },
   "105": {
     "name": "Cerchietto di Latta",
-    "description": "Un fragile cerchietto ornamentale."
+    "description": "Un fragile cerchietto ornamentale. Resiste a\nPietra."
   },
   "106": {
     "name": "Scarpe con Suola Luminosa",
-    "description": "Scarpe scadenti con le lucine."
+    "description": "Scarpe scadenti con le lucine. Blocca\nParalisi."
   },
   "107": {
     "name": "Cuffia da Dirigente",
-    "description": "Una cuffia aziendale aderente."
+    "description": "Una cuffia aziendale aderente. Recupera un po'\ndi mana."
   },
   "108": {
     "name": "Berretto Imbottito",
-    "description": "Un berretto morbido con fodera sottile."
+    "description": "Un berretto morbido con fodera sottile. Blocca\nCommozione Cerebrale."
   },
   "109": {
     "name": "Giacca da Strada Screpolata",
-    "description": "Una giacca da moto in pelle segnata dal tempo."
+    "description": "Una giacca da moto in pelle segnata dal tempo.\nAttutisce i colpi fisici."
   },
   "110": {
     "name": "Telo ad Asciugatura Rapida",
-    "description": "Un indumento di stoffa che asciuga in fretta."
+    "description": "Un indumento di stoffa che asciuga in fretta.\nRende piu facile schivare."
   },
   "111": {
     "name": "Elmetto da Cantiere Dipinto",
-    "description": "Un elmetto ridipinto a colori vivaci."
+    "description": "Un elmetto ridipinto a colori vivaci. Resiste\na Sacro."
   },
   "112": {
     "name": "Cintura della Speranza Consunta",
-    "description": "Una cintura multiuso in cuoio graffiato."
+    "description": "Una cintura multiuso in cuoio graffiato.\nBlocca Sonno."
   },
   "113": {
     "name": "Imbracatura da Pattuglia",
-    "description": "Un'imbracatura pettorale a cinghie."
+    "description": "Un'imbracatura pettorale a cinghie. Blocca\nInfetto."
   },
   "114": {
     "name": "Cappello dell'Ampio Orizzonte",
-    "description": "Un cappello da viaggio a tesa larga."
+    "description": "Un cappello da viaggio a tesa larga. Rende piu\ndifficile colpirlo con la magia."
   },
   "115": {
     "name": "Cintura da Riparazioni",
-    "description": "Una cintura carica di piccoli attrezzi."
+    "description": "Una cintura carica di piccoli attrezzi. Blocca\nParalisi."
   },
   "116": {
     "name": "Berretto con Fascia",
-    "description": "Un berretto che assorbe il sudore."
+    "description": "Un berretto che assorbe il sudore. Blocca\nSilenzio."
   },
   "117": {
     "name": "Tuta da Lavoro Semplice",
-    "description": "Una tuta da lavoro intera."
+    "description": "Una tuta da lavoro intera. Resiste a Acqua."
   },
   "118": {
     "name": "Collare Imbottito",
-    "description": "Un collare rinforzato per il collo."
+    "description": "Un collare rinforzato per il collo. Blocca\nConfusione."
   },
   "119": {
     "name": "Portafortuna Conciato",
-    "description": "Un ciondolo di zampa di coniglio essiccata."
+    "description": "Un ciondolo di zampa di coniglio essiccata.\nResiste a Vento."
   },
   "120": {
     "name": "Scarpe da Passo Svelto",
-    "description": "Scarpe da corsa leggere."
+    "description": "Scarpe da corsa leggere. Blocca Nausea."
   },
   "121": {
     "name": "Velo Antinsetti",
-    "description": "Un velo a rete per il capo."
+    "description": "Un velo a rete per il capo. Resiste a Sacro."
   },
   "122": {
     "name": "Gi da Allenamento Consunto",
-    "description": "Una veste da pratica in cotone sbiadito."
+    "description": "Una veste da pratica in cotone sbiadito.\nIrrigidisce la guardia."
   },
   "123": {
     "name": "Clave da Pratica Fasciate",
-    "description": "Clave da sparring legate con filo."
+    "description": "Clave da sparring legate con filo. Resiste a\nPietra."
   },
   "124": {
     "name": "Maglia di Linguette",
-    "description": "Cotta intrecciata con linguette di lattina."
+    "description": "Cotta intrecciata con linguette di lattina.\nResiste a Ghiaccio."
   },
   "125": {
     "name": "Stola Semplice da Accolito",
-    "description": "Una semplice stola rituale di stoffa."
+    "description": "Una semplice stola rituale di stoffa. Rende\npiu facile schivare."
   },
   "126": {
     "name": "Gilet della Furia Stradale",
-    "description": "Un gilet imbottito da guida."
+    "description": "Un gilet imbottito da guida. Resiste a Acqua."
   },
   "127": {
     "name": "Guanto dei Riflessi",
-    "description": "Un guanto aderente per allenare la reazione."
+    "description": "Un guanto aderente per allenare la reazione.\nAffretta il passo."
   },
   "128": {
     "name": "Stivali da Strada Consunti",
-    "description": "Stivali da viaggio dalla suola pesante."
+    "description": "Stivali da viaggio dalla suola pesante. Blocca\nSonno."
   },
   "129": {
     "name": "Pantaloni da Sentiero",
-    "description": "Robusti pantaloni da escursione."
+    "description": "Robusti pantaloni da escursione. Blocca\nSanguinamento."
   },
   "130": {
     "name": "Scarponi Ramponati",
-    "description": "Scarponi da montagna dalla suola aggressiva."
+    "description": "Scarponi da montagna dalla suola aggressiva.\nConcentra la volonta."
   },
   "131": {
     "name": "Suole ad Alta Aderenza",
-    "description": "Scarpe con suole ad attrito elevato."
+    "description": "Scarpe con suole ad attrito elevato. Blocca In\nposizione."
   },
   "132": {
     "name": "Ginocchiere Ammortizzanti",
-    "description": "Ginocchiere che assorbono gli urti."
+    "description": "Ginocchiere che assorbono gli urti. Concentra\nla volonta."
   },
   "133": {
     "name": "Guscio Antitempesta",
-    "description": "Un guscio esterno impermeabilizzato."
+    "description": "Un guscio esterno impermeabilizzato. Resiste a\nTuono."
   },
   "134": {
     "name": "Scarponi da Ogni Terreno",
-    "description": "Robusti scarponi per qualsiasi suolo."
+    "description": "Robusti scarponi per qualsiasi suolo. Rende\npiu facile schivare."
   },
   "135": {
     "name": "Fascia Ricetrasmittente",
-    "description": "Un guanto con il telefono incorporato."
+    "description": "Un guanto con il telefono incorporato.\nAffina l'istinto."
   },
   "136": {
     "name": "Corredo di Sicurezza Stradale",
-    "description": "Una cintura di attrezzi da strada."
+    "description": "Una cintura di attrezzi da strada.\nAffina l'istinto."
   },
   "137": {
     "name": "Tunica Grezza da Contadino",
-    "description": "Una ruvida tunica di panno casalingo."
+    "description": "Una ruvida tunica di panno casalingo. Aumenta\ngli HP."
   },
   "138": {
     "name": "Cinghie da Combattimento Dismesse",
-    "description": "Un gilet tattico pieno di tasche."
+    "description": "Un gilet tattico pieno di tasche. Blocca\nFascino."
   },
   "139": {
     "name": "Bastone di Segnaletica",
-    "description": "Un bastone fatto di cartelli stradali."
+    "description": "Un bastone fatto di cartelli stradali. Aumenta\ngli HP."
   },
   "140": {
     "name": "Cappotto di Jeans Prelavato",
-    "description": "Un guscio di denim sbiadito in fabbrica."
+    "description": "Un guscio di denim sbiadito in fabbrica.\nResiste a Acqua."
   },
   "141": {
     "name": "Acciarino Sigillato",
-    "description": "Un accendifuoco a prova di intemperie."
+    "description": "Un accendifuoco a prova di intemperie. Resiste\na Acqua."
   },
   "142": {
     "name": "Gilet dei Trofei di Denti",
-    "description": "Un gilet infilato di denti vecchi."
+    "description": "Un gilet infilato di denti vecchi. Resiste a\nAcqua."
   },
   "143": {
     "name": "Fascia di Filo da Carrello",
-    "description": "Un gilet legato con filo di recupero."
+    "description": "Un gilet legato con filo di recupero. Resiste\na Ghiaccio."
   },
   "144": {
     "name": "Gilet da Esploratore",
-    "description": "Un gilet leggero da ricognizione."
+    "description": "Un gilet leggero da ricognizione. Blocca\nSanguinamento."
   },
   "145": {
     "name": "Imbracatura da Traino",
-    "description": "Un'imbracatura da scalata e traino."
+    "description": "Un'imbracatura da scalata e traino. Recupera\nun po' di mana."
   },
   "146": {
     "name": "Fascia da Finta Cerimonia",
-    "description": "Una fascia cerimoniale pacchiana."
+    "description": "Una fascia cerimoniale pacchiana. A volte\ncontrattacca."
   },
   "147": {
     "name": "Scarponi Testardi",
-    "description": "Scarponi duri a morire e dispettosi."
+    "description": "Scarponi duri a morire e dispettosi. Blocca\nNausea."
   },
   "148": {
     "name": "Piastre di Rottame Imbullonate",
-    "description": "Piastre di metallo di scarto da allacciare."
+    "description": "Piastre di metallo di scarto da allacciare.\nRinsalda il braccio."
   },
   "149": {
     "name": "Tuta Multitasca",
-    "description": "Una tuta coperta di tasche."
+    "description": "Una tuta coperta di tasche. Blocca\nSanguinamento."
   },
   "150": {
     "name": "Cappuccio Antiradiazioni",
-    "description": "Un cappuccio protettivo foderato di stagnola."
+    "description": "Un cappuccio protettivo foderato di stagnola.\nRende piu facile schivare."
   },
   "151": {
     "name": "Multiuso da Bosco",
-    "description": "Un attrezzo pieghevole da natura selvatica."
+    "description": "Un attrezzo pieghevole da natura selvatica.\nRinsalda il braccio."
   },
   "152": {
     "name": "Kit di Riparazione da Strada",
-    "description": "Un'accozzaglia di pezzi di ricambio."
+    "description": "Un'accozzaglia di pezzi di ricambio. Recupera\nun po' di mana."
   },
   "153": {
     "name": "Tuta Tenuta col Nastro",
-    "description": "Una tuta tenuta insieme dal nastro adesivo."
+    "description": "Una tuta tenuta insieme dal nastro adesivo.\nRecupera un po' di salute."
   },
   "154": {
     "name": "Bracciale Calcolaquote",
-    "description": "Un aiuto da polso per il gioco d'azzardo."
+    "description": "Un aiuto da polso per il gioco d'azzardo.\nBlocca Sonno."
   },
   "155": {
     "name": "Fischietto di Soccorso",
-    "description": "Un fischietto d'emergenza assordante."
+    "description": "Un fischietto d'emergenza assordante. Blocca\nParalisi."
   },
   "156": {
     "name": "Scarpe Eleganti Leggere",
-    "description": "Scarpe da cerimonia leggere."
+    "description": "Scarpe da cerimonia leggere. Rende piu facile\nschivare."
   },
   "157": {
     "name": "Fascia da Presa Salda",
-    "description": "Un polsino per rinforzare la presa."
+    "description": "Un polsino per rinforzare la presa. Concentra\nla volonta."
   },
   "158": {
     "name": "Pacco a Ricarica Solare",
-    "description": "Una batteria solare da indossare."
+    "description": "Una batteria solare da indossare.\nAffina l'istinto."
   },
   "159": {
     "name": "Calotta di Fodera",
-    "description": "Una cuffia sottile da mettere sotto l'elmo."
+    "description": "Una cuffia sottile da mettere sotto l'elmo.\nResiste a Tuono."
   },
   "160": {
     "name": "Jeans Cargo Pesanti",
-    "description": "Denim cargo rinforzato."
+    "description": "Denim cargo rinforzato.\nAffina l'istinto."
   },
   "161": {
     "name": "Faro di Segnalazione a Clip",
-    "description": "Una luce localizzatrice a mani libere."
+    "description": "Una luce localizzatrice a mani libere. Resiste\na Vento."
   },
   "162": {
     "name": "Kit da Trauma sul Campo",
-    "description": "Un kit medico da retroterra."
+    "description": "Un kit medico da retroterra. Blocca Paralisi."
   },
   "163": {
     "name": "Maschera Filtrante Universale",
-    "description": "Un filtro per l'aria a uso generale."
+    "description": "Un filtro per l'aria a uso generale. Blocca\nVeleno."
   },
   "164": {
     "name": "Fascia della Concentrazione",
-    "description": "Uno stimolatore di attenzione da polso."
+    "description": "Uno stimolatore di attenzione da polso.\nRinsalda il braccio."
   },
   "165": {
     "name": "Maglia da Squadra Larga",
-    "description": "Una maglia sportiva sformata."
+    "description": "Una maglia sportiva sformata. Blocca Veleno."
   },
   "166": {
     "name": "Bussola da Taschino",
-    "description": "Un piccolo navigatore pieghevole."
+    "description": "Un piccolo navigatore pieghevole. Blocca In\nposizione."
   },
   "167": {
     "name": "Bracciale dell'Arciere",
-    "description": "Una protezione in cuoio per l'avambraccio."
+    "description": "Una protezione in cuoio per l'avambraccio.\nRecupera un po' di mana."
   },
   "168": {
     "name": "Gilet dalla Logica Inversa",
-    "description": "Uno strano gilet con le cuciture al contrario."
+    "description": "Uno strano gilet con le cuciture al contrario.\nRende piu facile schivare."
   },
   "169": {
     "name": "Pantaloni a Zampa a Fiori",
-    "description": "Pantaloni larghi e svasati a fantasia."
+    "description": "Pantaloni larghi e svasati a fantasia.\nIrrigidisce la guardia."
   },
   "170": {
     "name": "Sandali Antiscivolo",
-    "description": "Sandali che fanno presa su ogni superficie."
+    "description": "Sandali che fanno presa su ogni superficie.\nAumenta gli HP."
   },
   "171": {
     "name": "Anello da Esercizio",
-    "description": "Un anello da dito per esercitare i muscoli."
+    "description": "Un anello da dito per esercitare i muscoli.\nRecupera un po' di salute."
   },
   "172": {
     "name": "Anello del Vigile",
-    "description": "Un bracciale per allenare l'attenzione."
+    "description": "Un bracciale per allenare l'attenzione. Blocca\nParalisi."
   },
   "173": {
     "name": "Gilet di Cuoio Borchiato",
-    "description": "Un gilet di cuoio ribattuto."
+    "description": "Un gilet di cuoio ribattuto. Blocca Veleno."
   },
   "174": {
     "name": "Corazza di Cuoio Bollito",
-    "description": "Un pettorale di cuoio indurito."
+    "description": "Un pettorale di cuoio indurito. Blocca\nBruciato."
   },
   "175": {
     "name": "Tuta dell'Agente Silenzioso",
-    "description": "Una tuta scura e poco appariscente."
+    "description": "Una tuta scura e poco appariscente. Blocca\nSilenzio."
   },
   "176": {
     "name": "Assetto da Combattimento",
-    "description": "Un'imbracatura tattica da campo."
+    "description": "Un'imbracatura tattica da campo. Blocca\nNausea."
   },
   "177": {
     "name": "Farsetto della Leva",
-    "description": "Un giaccone da guerra di stoffa trapuntata."
+    "description": "Un giaccone da guerra di stoffa trapuntata.\nAttutisce la magia."
   },
   "178": {
     "name": "Tuta da Bonifica",
-    "description": "Una tuta sigillata anticontaminazione."
+    "description": "Una tuta sigillata anticontaminazione. Rende\npiu facile schivare."
   },
   "179": {
     "name": "Gilet di Stracci Tribale",
-    "description": "Un gilet di stracci annodati."
+    "description": "Un gilet di stracci annodati. Resiste a\nMaledetto."
   },
   "180": {
     "name": "Pantaloni Cargo con Catene",
-    "description": "Pantaloni cargo carichi di catene."
+    "description": "Pantaloni cargo carichi di catene. Recupera un\npo' di salute."
   },
   "181": {
     "name": "Gilet da Sparring Imbottito",
-    "description": "Una leggera protezione da allenamento."
+    "description": "Una leggera protezione da allenamento. Aumenta\ngli HP."
   },
   "182": {
     "name": "Elmo dai Sensori Morti",
-    "description": "Un elmo con i sensori fuori uso."
+    "description": "Un elmo con i sensori fuori uso. Blocca\nCommozione Cerebrale."
   },
   "183": {
     "name": "Tunica di Servizio da Cerimonia",
-    "description": "Una rigida tunica da uniforme di gala."
+    "description": "Una rigida tunica da uniforme di gala. Resiste\na Acqua."
   },
   "184": {
     "name": "Tunica Foderata di Spore",
-    "description": "Una tuta umidiccia cresciuta dal fungo."
+    "description": "Una tuta umidiccia cresciuta dal fungo.\nResiste a Maledetto."
   },
   "185": {
     "name": "Benda dall'Occhio Iniettato",
-    "description": "Una benda adesiva portata su un occhio."
+    "description": "Una benda adesiva portata su un occhio. Rende\npiu facile schivare."
   },
   "186": {
     "name": "Nodo Raccogli-Corrente",
-    "description": "Una clip che accumula la corrente dispersa."
+    "description": "Una clip che accumula la corrente dispersa.\nRende piu facile schivare."
   },
   "187": {
     "name": "Borchie Amplificatrici",
-    "description": "Tappi cartilaginei che amplificano il suono."
+    "description": "Tappi cartilaginei che amplificano il suono.\nRende piu facile schivare."
   },
   "188": {
     "name": "Bracciale del Capocordata",
-    "description": "Un bracciale consunto da capo squadra."
+    "description": "Un bracciale consunto da capo squadra. Blocca\nNausea."
   },
   "189": {
     "name": "Guanti di Fase Stabile",
-    "description": "Guanti che tengono solide le mani."
+    "description": "Guanti che tengono solide le mani. Recupera un\npo' di mana."
   },
   "190": {
     "name": "Gilet del Portuale",
-    "description": "Un gilet impermeabilizzato da scaricatore."
+    "description": "Un gilet impermeabilizzato da scaricatore.\nResiste a Acqua."
   },
   "191": {
     "name": "Maschera Filtrante Pesante",
-    "description": "Un respiratore industriale ingombrante."
+    "description": "Un respiratore industriale ingombrante. Blocca\nVeleno."
   },
   "192": {
     "name": "Capi in Serie Limitata",
-    "description": "Un indumento scialbo con l'etichetta vistosa."
+    "description": "Un indumento scialbo con l'etichetta vistosa.\nBlocca Paralisi."
   },
   "193": {
     "name": "Occhiali da Città",
-    "description": "Occhiali semplici per le strade affollate."
+    "description": "Occhiali semplici per le strade affollate.\nRende piu facile schivare."
   },
   "194": {
     "name": "Camicia Tinta d'Umore",
-    "description": "Una camicia che cambia colore con l'umore."
+    "description": "Una camicia che cambia colore con l'umore.\nBlocca Veleno."
   },
   "195": {
     "name": "Tuta della Sorte Avversa",
-    "description": "Una tuta da lavoro che piega la fortuna."
+    "description": "Una tuta da lavoro che piega la fortuna.\nAumenta gli HP."
   },
   "196": {
     "name": "Filo di Perline Fragili",
-    "description": "Una collana di perline vitree e fragili."
+    "description": "Una collana di perline vitree e fragili.\nBlocca Confusione."
   },
   "197": {
     "name": "Fasce di Contenzione Foderate",
-    "description": "Cinghie imbottite per gli avambracci."
+    "description": "Cinghie imbottite per gli avambracci. Rende\npiu facile schivare."
   },
   "198": {
     "name": "Guanti Antiscivolo",
-    "description": "Guanti da lavoro puntinati di gomma."
+    "description": "Guanti da lavoro puntinati di gomma. Rende piu\nfacile schivare."
   },
   "199": {
     "name": "Biancheria con Serbatoio",
-    "description": "Biancheria con una sacca nascosta."
+    "description": "Biancheria con una sacca nascosta. Blocca\nVeleno."
   },
   "200": {
     "name": "Amuleto Mormorante",
-    "description": "Un ciondolo che ronza piano."
+    "description": "Un ciondolo che ronza piano. Raddoppia gli\noggetti lasciati."
   },
   "201": {
     "name": "Cuscinetto da Riposo",
-    "description": "Un cuscino da sedile da allacciare."
+    "description": "Un cuscino da sedile da allacciare. Rende piu\nfacile schivare."
   },
   "202": {
     "name": "Tuta a Lenti Depuranti",
-    "description": "Una tuta intessuta di lenti filtranti."
+    "description": "Una tuta intessuta di lenti filtranti. Blocca\nVeleno."
   },
   "203": {
     "name": "Vernice all'Olio Motore",
-    "description": "Pittura per il corpo mescolata a olio motore."
+    "description": "Pittura per il corpo mescolata a olio motore.\nBlocca Ira."
   },
   "204": {
     "name": "Cintura di Budella",
-    "description": "Una cintura di intestino conservato."
+    "description": "Una cintura di intestino conservato. Blocca\nVeleno."
   },
   "205": {
     "name": "Fascia dalla Trama Minacciosa",
-    "description": "Una fascia ruvida dal bordo frastagliato."
+    "description": "Una fascia ruvida dal bordo frastagliato. Mai\ncolti di sorpresa."
   },
   "206": {
     "name": "Zaino a Celle d'Eco",
-    "description": "Uno zaino che immagazzina i suoni deboli."
+    "description": "Uno zaino che immagazzina i suoni deboli.\nRende piu facile schivare."
   },
   "207": {
     "name": "Camicia di Seta da Poeta",
-    "description": "Una morbida camicia di seta da poeta."
+    "description": "Una morbida camicia di seta da poeta. Rende\npiu facile schivare."
   },
   "208": {
     "name": "Pantaloni a Trama Venosa",
-    "description": "Pantaloni venati come tessuto circolatorio."
+    "description": "Pantaloni venati come tessuto circolatorio.\nRende piu facile schivare."
   },
   "209": {
     "name": "Berretto dell'Occhio Acuto",
-    "description": "Un berretto aderente per la messa a fuoco."
+    "description": "Un berretto aderente per la messa a fuoco.\nRende piu facile schivare."
   },
   "210": {
     "name": "Fiala d'Innesco Adrenalinico",
-    "description": "Una fiala consunta di innesco surrenale."
+    "description": "Una fiala consunta di innesco surrenale. Rende\npiu facile schivare."
   },
   "211": {
     "name": "Bracciale della Parlantina",
-    "description": "Un bracciale sottile che scioglie la lingua."
+    "description": "Un bracciale sottile che scioglie la lingua.\nBlocca Sonno."
   },
   "212": {
     "name": "Fascia Ammorta-Volontà",
-    "description": "Una fascia che ottunde i nervi."
+    "description": "Una fascia che ottunde i nervi. Blocca\nFascino."
   },
   "213": {
     "name": "Cintura della Postura",
-    "description": "Una cintura stringente che raddrizza la schiena."
+    "description": "Una cintura stringente che raddrizza la\nschiena. Rende piu facile schivare."
   },
   "214": {
     "name": "Anello Nervoso Smaltato",
-    "description": "Un anello smaltato che formicola."
+    "description": "Un anello smaltato che formicola. Rende piu\nfacile schivare."
   },
   "215": {
     "name": "Occhiali da Riverbero",
-    "description": "Occhiali scuri per i lunghi viaggi."
+    "description": "Occhiali scuri per i lunghi viaggi. Rende piu\nfacile schivare."
   },
   "216": {
     "name": "Fasce del Passo Svelto",
-    "description": "Elastici per le caviglie."
+    "description": "Elastici per le caviglie. Rende piu facile\nschivare."
   },
   "217": {
     "name": "Corredo Base da Sub",
-    "description": "Un set essenziale da immersione."
+    "description": "Un set essenziale da immersione. Blocca\nBagnato."
   },
   "218": {
     "name": "Tuta da Camera Bianca",
-    "description": "Una tuta integrale sterile e sigillata."
+    "description": "Una tuta integrale sterile e sigillata. Blocca\nVeleno."
   },
   "219": {
     "name": "Calze Aderenti a Dita",
-    "description": "Calze antiscivolo con le dita separate."
+    "description": "Calze antiscivolo con le dita separate. Rende\npiu facile schivare."
   },
   "220": {
     "name": "Imbracatura del Tessifili",
-    "description": "Un'attrezzatura di cavi e prese di segnale."
+    "description": "Un'attrezzatura di cavi e prese di segnale.\nRecupera un po' di salute."
   },
   "221": {
     "name": "Fascia Spingi-Pensiero",
-    "description": "Una fascia che sprona la mente a forza."
+    "description": "Una fascia che sprona la mente a forza.\nRecupera un po' di mana."
   },
   "222": {
     "name": "Lenti da Tiratore Scelto",
-    "description": "Occhiali di precisione per il tiro."
+    "description": "Occhiali di precisione per il tiro. Rende piu\nfacile schivare."
   },
   "223": {
     "name": "Organizer da Turno",
-    "description": "Uno strumento a clip per contare le ore."
+    "description": "Uno strumento a clip per contare le ore. Rende\npiu facile schivare."
   },
   "224": {
     "name": "Nucleo di Resa Ordinata",
-    "description": "Un piccolo regolatore di efficienza."
+    "description": "Un piccolo regolatore di efficienza. Rende piu\nfacile schivare."
   },
   "225": {
     "name": "Cuffie Annerite",
-    "description": "Cuffie pesanti dal nero opaco."
+    "description": "Cuffie pesanti dal nero opaco. Blocca Ira."
   },
   "226": {
     "name": "Paradenti di Cuoio",
-    "description": "Un paradenti di cuoio bollito."
+    "description": "Un paradenti di cuoio bollito. Blocca\nConfusione."
   },
   "227": {
     "name": "Borraccia Senza Fondo",
-    "description": "Un thermos che resta caldo troppo a lungo."
+    "description": "Un thermos che resta caldo troppo a lungo.\nRende piu facile schivare."
   },
   "228": {
     "name": "Abito di Brina",
-    "description": "Un abito chiaro dal disegno di brina."
+    "description": "Un abito chiaro dal disegno di brina. Resiste\na Ghiaccio."
   },
   "229": {
     "name": "Top Corto Cromato",
-    "description": "Una maglia corta dal riflesso metallico."
+    "description": "Una maglia corta dal riflesso metallico.\nBlocca Confusione."
   },
   "230": {
     "name": "Visiera da Campo",
-    "description": "Una visiera tattica che nasconde gli occhi."
+    "description": "Una visiera tattica che nasconde gli occhi.\nRende piu facile schivare."
   },
   "231": {
     "name": "Nucleo Drenamana",
-    "description": "Un congegno che sorseggia la magia dell'aria."
+    "description": "Un congegno che sorseggia la magia dell'aria.\nGli incantesimi costano di piu."
   },
   "232": {
     "name": "Guanti da Rissa Ribattuti",
-    "description": "Guanti da combattimento in cuoio borchiato."
+    "description": "Guanti da combattimento in cuoio borchiato.\nRende piu facile schivare."
   },
   "233": {
     "name": "Auricolare da Convoglio",
-    "description": "Una cuffia radio a corto raggio."
+    "description": "Una cuffia radio a corto raggio. Rende piu\nfacile schivare."
   },
   "234": {
     "name": "Stivali dagli Speroni d'Osso",
-    "description": "Stivali rinforzati con osso cresciuto."
+    "description": "Stivali rinforzati con osso cresciuto. Rende\npiu facile schivare."
   },
   "235": {
     "name": "Monocolo del Tiratore",
-    "description": "Una singola lente di puntamento di precisione."
+    "description": "Una singola lente di puntamento di precisione.\nRende la mira piu ferma."
   },
   "236": {
     "name": "Schermo Oculare Fluttuante",
-    "description": "Una lente sospesa che protegge gli occhi."
+    "description": "Una lente sospesa che protegge gli occhi.\nBlocca Bagnato."
   },
   "237": {
     "name": "Veste della Tregua",
-    "description": "Una veste smorzata che placa gli animi."
+    "description": "Una veste smorzata che placa gli animi. Rende\npiu facile schivare."
   },
   "238": {
     "name": "Talismano Scacciaunto",
-    "description": "Un amuleto contro gli spiriti d'olio."
+    "description": "Un amuleto contro gli spiriti d'olio. Blocca\nUnto."
   },
   "239": {
     "name": "Cresta Ribattuta",
-    "description": "Una cresta industriale rigida."
+    "description": "Una cresta industriale rigida. Blocca Ira."
   },
   "240": {
     "name": "Lucidatura Speculare",
-    "description": "Uno strato ornamentale laccato."
+    "description": "Uno strato ornamentale laccato. Blocca Sonno."
   },
   "241": {
     "name": "Insegna di Carica",
-    "description": "Un distintivo che indica il grado."
+    "description": "Un distintivo che indica il grado. Blocca Ira."
   },
   "242": {
     "name": "Polsino d'Avvertimento",
-    "description": "Un bracciale di metallo irto di punte."
+    "description": "Un bracciale di metallo irto di punte. Blocca\nIra."
   },
   "243": {
     "name": "Cappuccio Polare",
-    "description": "Una fascia isolante per il capo."
+    "description": "Una fascia isolante per il capo. Blocca Freddo\ne Congelare."
   },
   "244": {
     "name": "Giaccone del Trasportatore",
-    "description": "Una giacca foderata da grande freddo."
+    "description": "Una giacca foderata da grande freddo. Resiste\na Ghiaccio."
   },
   "245": {
     "name": "Berretto da Camionista",
-    "description": "Un cappellino col logo dell'azienda."
+    "description": "Un cappellino col logo dell'azienda. Rende piu\nfacile schivare."
   },
   "246": {
     "name": "Abito d'Alta Moda Tremenda",
-    "description": "Un abito d'alta moda che incute soggezione."
+    "description": "Un abito d'alta moda che incute soggezione.\nResiste a Fisico."
   },
   "247": {
     "name": "Eleganza Ostinata",
-    "description": "Un cappotto da cerimonia rigido e inflessibile."
+    "description": "Un cappotto da cerimonia rigido e\ninflessibile. Blocca Fascino."
   },
   "248": {
     "name": "Catena Spinale",
-    "description": "Una catena portata lungo la schiena."
+    "description": "Una catena portata lungo la schiena. Rende piu\nfacile schivare."
   },
   "249": {
     "name": "Cerchietti Incantati",
-    "description": "Un paio di orecchini incantati."
+    "description": "Un paio di orecchini incantati. Rende piu\nfacile schivare."
   },
   "250": {
     "name": "Stivali Scaccia-Fango",
-    "description": "Stivali da cui il fango scivola via."
+    "description": "Stivali da cui il fango scivola via. Blocca\nBagnato."
   },
   "251": {
     "name": "Cappotto di Famiglia Glaciale",
-    "description": "Un vecchio cappotto dal disegno di gelo."
+    "description": "Un vecchio cappotto dal disegno di gelo.\nResiste a Ghiaccio."
   },
   "252": {
     "name": "Girocollo di Pizzo col Cammeo",
-    "description": "Una collana di pizzo con un ritratto."
+    "description": "Una collana di pizzo con un ritratto. Blocca\nConfusione."
   },
   "253": {
     "name": "Bandana del Viandante",
-    "description": "Un fazzoletto da capo macchiato di polvere."
+    "description": "Un fazzoletto da capo macchiato di polvere.\nResiste a Fuoco."
   },
   "254": {
     "name": "Occhiali Fumé",
-    "description": "Occhiali rettangolari dalle lenti scure."
+    "description": "Occhiali rettangolari dalle lenti scure. Rende\npiu facile schivare."
   },
   "255": {
     "name": "Occhiali da Divo",
-    "description": "Occhiali da sole vistosi e sovradimensionati."
+    "description": "Occhiali da sole vistosi e sovradimensionati.\nRende piu facile schivare."
   },
   "256": {
     "name": "Tuta Confondi-Odori",
-    "description": "Una tuta integrale che maschera i feromoni."
+    "description": "Una tuta integrale. Rende piu facile schivare."
   },
   "257": {
     "name": "Cravatta di Comando",
-    "description": "Una cravatta formale da alto ufficio."
+    "description": "Una cravatta formale da alto ufficio. Blocca\nIra."
   },
   "258": {
     "name": "Cosciali di Ferro",
-    "description": "Protezioni piastrate per le gambe."
+    "description": "Protezioni piastrate per le gambe. Blocca Ira."
   },
   "259": {
     "name": "Corona a Denti di Sega",
-    "description": "Un copricapo di metallo frastagliato."
+    "description": "Un copricapo di metallo frastagliato. Blocca\nIra."
   },
   "260": {
     "name": "Gilet Catarifrangente",
-    "description": "Un gilet da lavoro riflettente."
+    "description": "Un gilet da lavoro riflettente. Rende piu\nfacile schivare."
   },
   "261": {
     "name": "Blazer del Contegno",
-    "description": "Una giacca affilata che presta sicurezza."
+    "description": "Una giacca affilata che presta sicurezza.\nBlocca Confusione."
   },
   "262": {
     "name": "Bretelle del Manovale",
-    "description": "Bretelle da lavoro per carichi pesanti."
+    "description": "Bretelle da lavoro per carichi pesanti. Rende\npiu facile schivare."
   },
   "263": {
     "name": "Gilet a Placche Calcificate",
-    "description": "Un gilet incrostato di escrescenze ossee."
+    "description": "Un gilet incrostato di escrescenze ossee.\nRende piu facile schivare."
   },
   "264": {
     "name": "Paramenti del Rinnovo",
-    "description": "Vesti indossate alle seconde occasioni."
+    "description": "Vesti indossate alle seconde occasioni. Rende\npiu facile schivare."
   },
   "265": {
     "name": "Scarpe da Sentiero Sgargianti",
-    "description": "Scarpe pacchiane e multicolori."
+    "description": "Scarpe pacchiane e multicolori. Rende piu\nfacile schivare."
   },
   "266": {
     "name": "Camicia di Alto Rango",
-    "description": "Una camicia tagliata per mostrare il rango."
+    "description": "Una camicia tagliata per mostrare il rango.\nRende piu facile schivare."
   },
   "267": {
     "name": "Top a Spalline Luccicante",
-    "description": "Un top scintillante dalle spalline sottili."
+    "description": "Un top scintillante dalle spalline sottili.\nBlocca Confusione."
   },
   "268": {
     "name": "Polsini Riforgiati",
-    "description": "Polsini ricavati da vecchi ceppi."
+    "description": "Polsini ricavati da vecchi ceppi. Resiste a\nFisico."
   },
   "269": {
     "name": "Gilet di Fibra Muscolare",
-    "description": "Un gilet tessuto di fibra muscolare."
+    "description": "Un gilet tessuto di fibra muscolare. Rende piu\nfacile schivare."
   },
   "270": {
     "name": "Cappotto a Buccia d'Arancia",
-    "description": "Un cappotto dalla finitura ruvida e granulosa."
+    "description": "Un cappotto dalla finitura ruvida e granulosa.\nRende piu facile schivare."
   },
   "271": {
     "name": "Veste della Quiete",
-    "description": "Una veste meditativa di taglio orientale."
+    "description": "Una veste meditativa di taglio orientale.\nRende piu facile schivare."
   },
   "272": {
     "name": "Guanti dell'Estrazione Pulita",
-    "description": "Guanti aderenti per le mani veloci."
+    "description": "Guanti aderenti per le mani veloci. Rende piu\nfacile schivare."
   },
   "273": {
     "name": "Guanti Raffinati",
-    "description": "Eleganti guanti da cerimonia."
+    "description": "Eleganti guanti da cerimonia. Blocca Sonno."
   },
   "274": {
     "name": "Girocollo di Resina Borchiato",
-    "description": "Un collare di plastica irto di punte."
+    "description": "Un collare di plastica irto di punte. Blocca\nIra."
   },
   "275": {
     "name": "Borchie Risonanti",
-    "description": "Piccole borchie che affinano i suoni vicini."
+    "description": "Piccole borchie che affinano i suoni vicini.\nRende piu facile schivare."
   },
   "276": {
     "name": "Abbigliamento da Villeggiatura",
-    "description": "Una camicia tropicale leggera e chiassosa."
+    "description": "Una camicia tropicale leggera e chiassosa.\nResiste a Fuoco."
   },
   "277": {
     "name": "Ciocche Decolorate",
-    "description": "Un set di ciocche chiare da agganciare."
+    "description": "Un set di ciocche chiare da agganciare. Rende\npiu facile schivare."
   },
   "278": {
     "name": "Giacca da Frontiera",
-    "description": "Una robusta giacca da campo dalle tasche profonde."
+    "description": "Una robusta giacca da campo dalle tasche\nprofonde. Rende piu facile schivare."
   },
   "279": {
     "name": "Giacca con gli Slogan",
-    "description": "Una giacca urlante di slogan sbiaditi."
+    "description": "Una giacca urlante di slogan sbiaditi. Rende\npiu facile schivare."
   },
   "280": {
     "name": "Sciarpa Scaldagola",
-    "description": "Una morbida sciarpa avvolta attorno alla gola."
+    "description": "Una morbida sciarpa avvolta attorno alla gola.\nBlocca Ira."
   },
   "281": {
     "name": "Camiciotto del Raccolto",
-    "description": "Un camiciotto da contadino tinto coi colori dei campi."
+    "description": "Un camiciotto da contadino tinto coi colori\ndei campi. Rende piu facile schivare."
   },
   "282": {
     "name": "Scarpe dal Passo Autorevole",
-    "description": "Scarpe rigide che annunciano il tuo arrivo."
+    "description": "Scarpe rigide che annunciano il tuo arrivo.\nBlocca Ira."
   },
   "283": {
     "name": "Pendente a Croce in Velluto",
-    "description": "Un ciondolo su velluto di fede antica."
+    "description": "Un ciondolo su velluto di fede antica. Blocca\nIra."
   },
   "284": {
     "name": "Abito Cattura-Sguardi",
-    "description": "Un abito fluente fatto per attirare gli sguardi."
+    "description": "Un abito fluente fatto per attirare gli\nsguardi. Blocca Confusione."
   },
   "285": {
     "name": "Flanella della Vecchia Strada",
-    "description": "Una camicia di flanella consunta, morbida per gli anni."
+    "description": "Una camicia di flanella consunta, morbida per\ngli anni. Resiste a Ghiaccio."
   },
   "286": {
     "name": "Stivali di Fase Muta",
-    "description": "Stivali che attutiscono ogni passo."
+    "description": "Stivali che attutiscono ogni passo. Rende piu\nfacile schivare."
   },
   "287": {
     "name": "Papillon Protetto",
-    "description": "Un papillon ordinato con una debole protezione."
+    "description": "Un papillon ordinato con una debole\nprotezione. Rende piu facile schivare."
   },
   "288": {
     "name": "Tuta Antichimica Macchiata",
-    "description": "Una tuta antichimica rattoppata."
+    "description": "Una tuta antichimica rattoppata. Resiste a\nFisico."
   },
   "289": {
     "name": "Spille della Presenza",
-    "description": "Spille da bavero che piegano l'attenzione della stanza."
+    "description": "Spille da bavero che piegano l'attenzione\ndella stanza. Blocca Ira."
   },
   "290": {
     "name": "Gilet di Pericolo Stradale",
-    "description": "Un gilet da lavoro riflettente e vivace."
+    "description": "Un gilet da lavoro riflettente e vivace. Rende\npiu facile schivare."
   },
   "291": {
     "name": "Velo Vedovile",
-    "description": "Un lungo velo scuro da lutto."
+    "description": "Un lungo velo scuro da lutto. Blocca\nConfusione."
   },
   "292": {
     "name": "Set in Ciniglia con Strass",
-    "description": "Un completo a due pezzi di velluto pacchiano."
+    "description": "Un completo a due pezzi di velluto pacchiano.\nBlocca Sonno."
   },
   "293": {
     "name": "Gilet Borchiato Minaccioso",
-    "description": "Un gilet chiodato fatto per intimidire."
+    "description": "Un gilet chiodato fatto per intimidire. Blocca\nIra."
   },
   "294": {
     "name": "Sandali con Zeppa in Lucite",
-    "description": "Sandali trasparenti con la zeppa, tutta scena."
+    "description": "Sandali trasparenti con la zeppa, tutta scena.\nRende piu facile schivare."
   },
   "295": {
     "name": "Cappellino a Rete Ironico",
-    "description": "Un cappellino da camionista con la rete dietro."
+    "description": "Un cappellino da camionista con la rete\ndietro. Blocca Silenzio."
   },
   "296": {
     "name": "Ombretto Glitterato di Brina",
-    "description": "Un vasetto di ombretto gelido e scintillante."
+    "description": "Un vasetto di ombretto gelido e scintillante.\nBlocca Confusione."
   },
   "297": {
     "name": "Calze Idrorepellenti",
-    "description": "Calze da cui acqua e sporco scivolano via."
+    "description": "Calze da cui acqua e sporco scivolano via.\nResiste a Acqua."
   },
   "298": {
     "name": "Completo di Jeans con Strass",
-    "description": "Un completo di denim incrostato di gemme."
+    "description": "Un completo di denim incrostato di gemme.\nRende piu facile schivare."
   },
   "299": {
     "name": "Uniforme da Transito Marcata",
-    "description": "Un'uniforme marchiata per il transito a teletrasporto."
+    "description": "Un'uniforme marchiata per il transito a\nteletrasporto. Debole a Fisico."
   },
   "300": {
     "name": "Anello Termico dell'Umore",
-    "description": "Un anello che cambia con la temperatura."
+    "description": "Un anello che cambia con la temperatura.\nResiste a Fuoco."
   },
   "301": {
     "name": "Orologio Momento Perfetto",
-    "description": "Un orologio che segna sempre l'ora giusta."
+    "description": "Un orologio che segna sempre l'ora giusta.\nRende piu facile schivare."
   },
   "302": {
     "name": "Stivali del Rialzo Sociale",
-    "description": "Stivali alti che danno statura e lucentezza."
+    "description": "Stivali alti che danno statura e lucentezza.\nRende piu facile schivare."
   },
   "303": {
     "name": "Giacca di Toppe Souvenir",
-    "description": "Una giacca stratificata di toppe di viaggio."
+    "description": "Una giacca stratificata di toppe di viaggio.\nRende piu facile schivare."
   },
   "304": {
     "name": "Clip a Farfalla Brillanti",
-    "description": "Un set di allegre mollette a farfalla."
+    "description": "Un set di allegre mollette a farfalla. Blocca\nConfusione."
   },
   "305": {
     "name": "Corsetto in Pizzo Steccato",
-    "description": "Un corsetto allacciato con stecche rigide."
+    "description": "Un corsetto allacciato con stecche rigide.\nBlocca Confusione."
   },
   "306": {
     "name": "Berretto Ricamato di Glifi",
-    "description": "Un berretto stampato con una scrittura illeggibile."
+    "description": "Un berretto stampato con una scrittura\nilleggibile. Blocca Silenzio."
   },
   "307": {
     "name": "Maglia Sottoveste",
-    "description": "Una sottile maglia da sovrapporre."
+    "description": "Una sottile maglia da sovrapporre. Blocca\nConfusione."
   },
   "308": {
     "name": "Amuleto del Profeta di Cemento",
-    "description": "Un amuleto grigio di un oracolo di strada."
+    "description": "Un amuleto grigio di un oracolo di strada. Mai\ncolti di sorpresa."
   },
   "309": {
     "name": "Cintura Dimensione Tasca",
-    "description": "Una cintura con un piccolo spazio ripiegato."
+    "description": "Una cintura con un piccolo spazio ripiegato.\nRinsalda il braccio."
   },
   "310": {
     "name": "Completo da Canicola",
-    "description": "Un abito arioso per i giorni roventi."
+    "description": "Un abito arioso per i giorni roventi. Resiste\na Fuoco."
   },
   "311": {
     "name": "Abito Chiudi-Affari",
-    "description": "Un abito affilato tagliato per le trattative."
+    "description": "Un abito affilato tagliato per le trattative.\nRende piu facile schivare."
   },
   "312": {
     "name": "Cappotto del Caos Cromatico",
-    "description": "Un cappotto di colori discordi e mutevoli."
+    "description": "Un cappotto di colori discordi e mutevoli.\nBlocca Confusione."
   },
   "313": {
     "name": "Stivali della Strada Errante",
-    "description": "Stivali graffiati da un cammino senza fine."
+    "description": "Stivali graffiati da un cammino senza fine.\nRende piu facile schivare."
   },
   "314": {
     "name": "Choker Utility con Anello",
-    "description": "Un girocollo carico di piccoli attrezzi."
+    "description": "Un girocollo carico di piccoli attrezzi. Rende\npiu facile schivare."
   },
   "315": {
     "name": "Cipria Iridescente",
-    "description": "Una polvere fine che cattura la luce."
+    "description": "Una polvere fine che cattura la luce. Blocca\nConfusione."
   },
   "316": {
     "name": "Camicetta da Contadina Elastica",
-    "description": "Una blusa di stoffa larga e arricciata."
+    "description": "Una blusa di stoffa larga e arricciata. Blocca\nSonno."
   },
   "317": {
     "name": "Kit di Razzi da Strada",
-    "description": "Una borsa di razzi di segnalazione d'emergenza."
+    "description": "Una borsa di razzi di segnalazione\nd'emergenza. Rende piu facile schivare."
   },
   "318": {
     "name": "Stivali Controcorrente del Tempo",
-    "description": "Stivali che si dice remino contro il tempo."
+    "description": "Stivali che si dice remino contro il tempo.\nRende piu facile schivare."
   },
   "319": {
     "name": "Uniforme di Gala Decorata",
-    "description": "Un'uniforme da cerimonia carica di medaglie."
+    "description": "Un'uniforme da cerimonia carica di medaglie.\nBlocca Ira."
   },
   "320": {
     "name": "Misuratore di Flusso Temporale",
-    "description": "Un quadrante che segue la deriva del tempo."
+    "description": "Un quadrante che segue la deriva del tempo.\nRende piu facile schivare."
   },
   "321": {
     "name": "Tuxedo del Potere",
-    "description": "Uno smoking nero su misura che incute rispetto."
+    "description": "Uno smoking nero su misura che incute\nrispetto. Blocca Sonno."
   },
   "322": {
     "name": "Maschera di Cuoio Minacciosa",
-    "description": "Una rigida maschera di cuoio, senza volto."
+    "description": "Una rigida maschera di cuoio, senza volto.\nBlocca Confusione."
   },
   "323": {
     "name": "Abito del Mercante di Tempo",
-    "description": "Un abito foderato di minuscoli ingranaggi."
+    "description": "Un abito foderato di minuscoli ingranaggi.\nRende piu facile schivare."
   },
   "324": {
     "name": "Blazer in Velluto Ornato",
-    "description": "Un ricco blazer di velluto con la profilatura."
+    "description": "Un ricco blazer di velluto con la profilatura.\nRende piu facile schivare."
   },
   "325": {
     "name": "Tuta a Poligoni Corrotti",
-    "description": "Una tuta che sembra sfarfallare e saltare."
+    "description": "Una tuta che sembra sfarfallare e saltare.\nBlocca Ira."
   },
   "326": {
     "name": "Misuratore Anomalie Gravitazionali",
-    "description": "Un misuratore a clip per gli spostamenti di peso."
+    "description": "Un misuratore a clip per gli spostamenti di\npeso. Rende piu facile schivare."
   },
   "327": {
     "name": "Abito Bloccato in Stasi",
-    "description": "Vestiti che non sembrano invecchiare mai."
+    "description": "Vestiti che non sembrano invecchiare mai.\nAumenta gli HP."
   },
   "328": {
     "name": "Pantaloni Rinforzati Minacciosi",
-    "description": "Pantaloni pesanti con piastre nascoste."
+    "description": "Pantaloni pesanti con piastre nascoste. Rende\npiu facile schivare."
   },
   "329": {
     "name": "Calze di Pizzo Stracciate",
-    "description": "Calze di pizzo rovinate ad arte."
+    "description": "Calze di pizzo rovinate ad arte. Rende piu\nfacile schivare."
   },
   "330": {
     "name": "Cappuccio dell'Anonimato",
-    "description": "Un cappuccio profondo che nasconde il volto."
+    "description": "Un cappuccio profondo che nasconde il volto.\nBlocca Acceca."
   },
   "331": {
     "name": "Bussola dei Varchi",
-    "description": "Una bussola che punta ai luoghi sottili."
+    "description": "Una bussola che punta ai luoghi sottili. Rende\npiu facile schivare."
   },
   "332": {
     "name": "Unghie Artiglio Gotiche",
-    "description": "Lunghe unghie laccate ornamentali."
+    "description": "Lunghe unghie laccate ornamentali. Rende piu\nfacile schivare."
   },
   "333": {
     "name": "Guscio a Muta Mimetica",
-    "description": "Un guscio esterno che muta a comando."
+    "description": "Un guscio esterno che muta a comando. Rende\npiu facile schivare."
   },
   "334": {
     "name": "Abito Presenza Esecutiva",
-    "description": "Un abito da ufficio su misura, autorevole."
+    "description": "Un abito da ufficio su misura, autorevole.\nRende piu facile schivare."
   },
   "335": {
     "name": "Palette da Dramma d'Ombra",
-    "description": "Un kit di trucco teatrale scuro."
+    "description": "Un kit di trucco teatrale scuro. Blocca\nConfusione."
   },
   "336": {
     "name": "Stivali dal Passo Sussurrato",
-    "description": "Stivali morbidi che inghiottono i passi."
+    "description": "Stivali morbidi che inghiottono i passi. Rende\npiu facile schivare."
   },
   "337": {
     "name": "Bibita Misteriosa Senza Marca",
-    "description": "Una lattina ammaccata portata come strano amuleto."
+    "description": "Una lattina ammaccata portata come strano\namuleto. Rende piu facile schivare."
   },
   "338": {
     "name": "Borsone Senza Peso",
-    "description": "Uno zaino che contiene più di quanto dovrebbe."
+    "description": "Uno zaino che contiene più di quanto dovrebbe.\nBlocca In posizione."
   },
   "339": {
     "name": "Denim Reversibile",
-    "description": "Denim a doppio uso con la fodera nascosta."
+    "description": "Denim a doppio uso con la fodera nascosta.\nBlocca Veleno e schiva meglio."
   },
   "340": {
     "name": "Bralette in Mesh a Strati",
-    "description": "Un top a rete trasparente da indossare sotto."
+    "description": "Un top a rete trasparente da indossare sotto.\nBlocca Confusione."
   },
   "341": {
     "name": "Cornetta Infrangibile",
-    "description": "Un telefono morto troppo duro per rompersi."
+    "description": "Un telefono morto troppo duro. Blocca Paralisi\ne schiva meglio."
   },
   "342": {
     "name": "Micro Borsetta Inutile",
-    "description": "Una borsetta minuscola che non tiene quasi nulla."
+    "description": "Una borsetta minuscola che non tiene quasi\nnulla. Rende piu facile schivare."
   },
   "343": {
     "name": "Completo Firmato Intimidatorio",
-    "description": "Un completo griffato deciso e tagliente."
+    "description": "Un completo griffato deciso e tagliente.\nBlocca Ira."
   },
   "344": {
     "name": "Gemme da Discoteca",
-    "description": "Gemme adesive per il viso."
+    "description": "Gemme adesive per il viso. Blocca Confusione."
   },
   "345": {
     "name": "Anfibi con Zeppa e Catene",
-    "description": "Stivali pesanti drappeggiati di catene."
+    "description": "Stivali pesanti drappeggiati di catene. Blocca\nIra."
   },
   "346": {
     "name": "Guanti Sensonervo",
-    "description": "Guanti sottili che acuiscono il tatto."
+    "description": "Guanti sottili che acuiscono il tatto. Schiva\nmeglio."
   },
   "347": {
     "name": "Orologio dell'Efficienza",
-    "description": "Un orologio che ti assilla perché ti sbrighi."
+    "description": "Un orologio che ti assilla perché ti sbrighi.\nRende piu facile schivare."
   },
   "348": {
     "name": "Blazer Catalizzatore di Network",
-    "description": "Un blazer tagliato per aprire le porte."
+    "description": "Un blazer tagliato per aprire le porte. Rende\npiu facile schivare."
   },
   "349": {
     "name": "Tee Formula del Danno",
-    "description": "Una camicia stampata di matematica criptica."
+    "description": "Una camicia stampata di matematica criptica.\nRende piu facile schivare."
   },
   "350": {
     "name": "Orologio dell'Eterna Mezzanotte",
-    "description": "Un orologio fermo a mezzogiorno."
+    "description": "Un orologio fermo a mezzogiorno. Rende piu\nfacile schivare."
   },
   "351": {
     "name": "Orologio Molteplice",
-    "description": "Un orologio con troppe lancette."
+    "description": "Un orologio con troppe lancette. Blocca Sonno."
   },
   "352": {
     "name": "Top Annodato a Bandana",
-    "description": "Un semplice top annodato di stoffa."
+    "description": "Un semplice top annodato di stoffa. Rende piu\nfacile schivare."
   },
   "353": {
     "name": "Cappotto d'Ombra Vittoriano",
-    "description": "Un lungo cappotto scuro dal colletto alto."
+    "description": "Un lungo cappotto scuro dal colletto alto.\nBlocca Confusione."
   },
   "354": {
     "name": "Cappello Assalto Sonoro",
-    "description": "Un berretto attrezzato con altoparlanti minuscoli."
+    "description": "Un berretto attrezzato. Blocca Silenzio e\nschiva meglio."
   },
   "355": {
     "name": "Anelli dei Sigilli Occulti",
-    "description": "Un set di anelli incisi di simboli."
+    "description": "Un set di anelli incisi di simboli. Rende piu\nfacile schivare."
   },
   "356": {
     "name": "Visiera Falsacifra",
-    "description": "Una visiera che mostra numeri sbagliati."
+    "description": "Una visiera che mostra numeri sbagliati.\nBlocca Silenzio."
   },
   "357": {
     "name": "Corredo da Guerra Invernale",
-    "description": "Un set da campo isolato per il grande freddo."
+    "description": "Un set da campo isolato per il grande freddo.\nBlocca Freddo e Congelare."
   },
   "358": {
     "name": "Tuxedo Antiproiettile",
-    "description": "Un abito da cerimonia con la trama nascosta."
+    "description": "Un abito da cerimonia con la trama nascosta.\nBlocca Sonno."
   },
   "359": {
     "name": "Camicia della Produttività",
-    "description": "Una camicia inamidata per i turni lunghi."
+    "description": "Una camicia inamidata per i turni lunghi.\nRende piu facile schivare."
   },
   "360": {
     "name": "Ventiquattrore del Focus",
-    "description": "Una custodia sottile che rasserena la mente."
+    "description": "Una custodia sottile che rasserena la mente.\nRende piu facile schivare."
   },
   "361": {
     "name": "Guscio di Pelle Coltivata",
-    "description": "Uno strato esterno di pelle cresciuta."
+    "description": "Uno strato esterno di pelle cresciuta. Resiste\na Fuoco."
   },
   "362": {
     "name": "Cappello Piumato col Nastro",
-    "description": "Un cappello largo guarnito di piume."
+    "description": "Un cappello largo guarnito di piume. Blocca\nConfusione."
   },
   "363": {
     "name": "Fascia Estensione di Realtà",
-    "description": "Un polsino che si deforma appena."
+    "description": "Un polsino che si deforma appena. Schiva\nmeglio."
   },
   "364": {
     "name": "Pantaloni di Pizzo con Anelli",
-    "description": "Pantaloni di pizzo infilati di anelli."
+    "description": "Pantaloni di pizzo infilati di anelli. Rende\npiu facile schivare."
   },
   "365": {
     "name": "Tuta del Secondo Battito",
-    "description": "Una tuta che pulsa appena quando la indossi."
+    "description": "Una tuta che pulsa appena quando la indossi.\nRende piu facile schivare."
   },
   "366": {
     "name": "Cappellino del Girovago",
-    "description": "Un cappellino da baseball dal logo sbiadito."
+    "description": "Un cappellino da baseball dal logo sbiadito.\nBlocca Veleno."
   },
   "367": {
     "name": "Anello di Vetro Sentimentale",
-    "description": "Un anello che palpita col colore dell'umore."
+    "description": "Un anello che palpita col colore. Resiste a\nFuoco."
   },
   "368": {
     "name": "Giacca da Campo Termotessuta",
-    "description": "Una giacca climatica che si regola da sola."
+    "description": "Una giacca climatica che si regola da sola.\nBlocca Freddo e Congelare."
   },
   "369": {
     "name": "Manto del Rango",
-    "description": "Una cappa drappeggiata che segna il grado."
+    "description": "Una cappa drappeggiata che segna il grado.\nBlocca Paralisi."
   },
   "370": {
     "name": "Gi da Dojo",
-    "description": "Una semplice divisa marziale bianca."
+    "description": "Una semplice divisa marziale bianca. Blocca\nBruciato."
   },
   "371": {
     "name": "Guanti di Pizzo da Lutto",
-    "description": "Delicati guanti di pizzo senza dita."
+    "description": "Delicati guanti di pizzo senza dita. Rende piu\nfacile schivare."
   },
   "372": {
     "name": "Gilet Tonico per i Follicoli",
-    "description": "Un gilet tessuto di fibre che curano il capello."
+    "description": "Un gilet tessuto di fibre che curano. Resiste\na Fuoco."
   },
   "373": {
     "name": "Top a Rete",
-    "description": "Una maglia aperta a rete da portare sopra."
+    "description": "Una maglia aperta a rete da portare sopra.\nRende piu facile schivare."
   },
   "374": {
     "name": "Reliquiario del Deicida",
-    "description": "Una lancia carica di reliquie di deicidio."
+    "description": "Una lancia carica di reliquie di deicidio.\nAttutisce i colpi fisici."
   },
   "375": {
     "name": "Cintura dei Vuoti",
-    "description": "Una cintura con vuoti grandi come tasche."
+    "description": "Una cintura con vuoti grandi come tasche.\nBlocca In posizione."
   },
   "376": {
     "name": "Calotta di Schegge d'Osso",
-    "description": "Una calotta incastonata di frammenti di cranio."
+    "description": "Una calotta incastonata di frammenti. Blocca\nSilenzio."
   },
   "377": {
     "name": "Orologio dell'Ora in Ritardo",
-    "description": "Un orologio da polso che va un po' storto."
+    "description": "Un orologio da polso che va un po' storto.\nRende piu facile schivare."
   },
   "378": {
     "name": "Cappotto dell'Inviato",
-    "description": "Un cappotto diplomatico da cerimonia."
+    "description": "Un cappotto diplomatico da cerimonia. Blocca\nVeleno."
   },
   "379": {
     "name": "Bomber di Luce Fratta",
-    "description": "Un giubbotto bomber dalle tinte cangianti."
+    "description": "Un giubbotto bomber dalle tinte cangianti.\nBlocca Confusione."
   },
   "380": {
     "name": "Sigillo del Disordine",
-    "description": "Un piccolo distintivo smaltato e caotico."
+    "description": "Un piccolo distintivo smaltato. Schiva meglio."
   },
   "381": {
     "name": "Maschera Alveolare",
-    "description": "Una maschera filtrante per il respiro."
+    "description": "Una maschera filtrante per il respiro. Resiste\na Pietra e blocca Veleno."
   },
   "382": {
     "name": "Completo da Ribalta",
-    "description": "Un completo vistoso pronto per il palco."
+    "description": "Un completo vistoso pronto per il palco.\nBlocca Confusione."
   },
   "383": {
     "name": "Giacca a Toppe dello Scalatore",
-    "description": "Una giacca di toppe guadagnate una a una."
+    "description": "Una giacca di toppe guadagnate una a una.\nDebole a Fisico."
   },
   "384": {
     "name": "Lenti del Revisore",
-    "description": "Occhiali che affinano i dettagli."
+    "description": "Occhiali che affinano i dettagli. Rende piu\nfacile schivare."
   },
   "385": {
     "name": "Abito da Cocktail Altolocato",
-    "description": "Un elegante abito da sera."
+    "description": "Un elegante abito da sera. Blocca Confusione."
   },
   "386": {
     "name": "Corredo del Patrizio",
-    "description": "Un raffinato abbigliamento aristocratico."
+    "description": "Un raffinato abbigliamento aristocratico.\nBlocca Bruciato."
   },
   "387": {
     "name": "Catena di Ciondoli a Intervallo",
-    "description": "Una collana infilata di ciondoli inerti."
+    "description": "Una collana infilata di ciondoli inerti.\nSoggetto a Veleno."
   },
   "388": {
     "name": "Bracciale del Pozzo Sorgente",
-    "description": "Un bracciale inciso di vecchio codice."
+    "description": "Un bracciale inciso di vecchio codice. Rende\npiu facile schivare."
   },
   "389": {
     "name": "Maglia dalla Pelle Corrotta",
-    "description": "Una maglietta che sembra balbettare."
+    "description": "Una maglietta che sembra balbettare. Rende piu\nfacile schivare."
   },
   "390": {
     "name": "Cappello dell'Annotatore",
-    "description": "Un cappello largo scarabocchiato di appunti."
+    "description": "Un cappello largo scarabocchiato di appunti.\nBlocca Fascino."
   },
   "391": {
     "name": "Gonna a Pieghe Regolamentare",
-    "description": "Una gonna da uniforme a pieghe nette."
+    "description": "Una gonna da uniforme a pieghe nette. Rende\npiu facile schivare."
   },
   "392": {
     "name": "Bracciale dello Scambio",
-    "description": "Un braccialetto consumato dagli scambi."
+    "description": "Un braccialetto consumato. Rende piu facile\nschivare."
   },
   "393": {
     "name": "Corredo da Esploratore dei Boschi",
-    "description": "Un robusto completo da campo per il bosco."
+    "description": "Un robusto completo da campo per il bosco.\nAumenta gli HP."
   },
   "394": {
     "name": "Abito di Pizzo Funebre",
-    "description": "Un cupo abito gotico di pizzo."
+    "description": "Un cupo abito gotico di pizzo. Blocca\nConfusione."
   },
   "395": {
     "name": "Auricolare del Compagno",
-    "description": "Un auricolare da cui esce una vocina."
+    "description": "Un auricolare da cui esce una vocina. Blocca\nSilenzio."
   },
   "396": {
     "name": "Marsina di Broccato",
-    "description": "Una marsina da cerimonia ricamata."
+    "description": "Una marsina da cerimonia ricamata. Rende piu\nfacile schivare."
   },
   "397": {
     "name": "Maglia dello Spettro Infinito",
-    "description": "Una maglietta di colori arcobaleno inquieti."
+    "description": "Una maglietta di colori arcobaleno inquieti.\nBlocca Fascino e schiva meglio."
   },
   "398": {
     "name": "Guanti Sfasati",
-    "description": "Guanti dai bordi sfocati."
+    "description": "Guanti dai bordi sfocati. Blocca Veleno."
   },
   "399": {
     "name": "Ciondolo degli Sguardi Trattenuti",
-    "description": "Un ciondolo che attira l'occhio."
+    "description": "Un ciondolo che attira l'occhio. Blocca\nFascino."
   },
   "400": {
     "name": "Cappello a Decalcomanie",
-    "description": "Un cappello tappezzato di adesivi con facce."
+    "description": "Un cappello tappezzato di adesivi con facce.\nBlocca Ira."
   },
   "401": {
     "name": "Pantaloni Antigravità",
-    "description": "Pantaloni che pendono stranamente senza peso."
+    "description": "Pantaloni che pendono stranamente. Debole ad\nAcqua."
   },
   "402": {
     "name": "Collare di Comando Borchiato",
-    "description": "Un collare borchiato di alta carica."
+    "description": "Un collare borchiato di alta carica. Blocca\nIra."
   },
   "403": {
     "name": "Stivali a Rotelle",
-    "description": "Stivali muniti di piccole ruote."
+    "description": "Stivali muniti di piccole ruote. Rende piu\nfacile schivare."
   },
   "404": {
     "name": "Occhiali a Vista Variabile",
-    "description": "Occhiali dalla visione regolabile."
+    "description": "Occhiali dalla visione regolabile. Blocca\nConfusione e schiva meglio."
   },
   "405": {
     "name": "Strato del Comfort Eterno",
@@ -1621,159 +1621,159 @@
   },
   "406": {
     "name": "Occhiali a Contorno d'Inchiostro",
-    "description": "Occhiali che appiattiscono il mondo."
+    "description": "Occhiali che appiattiscono il mondo. Schiva\nmeglio."
   },
   "407": {
     "name": "Anello del Principiante",
-    "description": "Un anellino che si dice spinga la sorte."
+    "description": "Un anellino che si dice spinga la sorte. Rende\npiu facile schivare."
   },
   "408": {
     "name": "Abito da Trono Dirigenziale",
-    "description": "Un abito su misura che incute potere."
+    "description": "Un abito su misura che incute potere. Blocca\nSonno."
   },
   "409": {
     "name": "Valigetta Ripiegata",
-    "description": "Una valigetta più grande dentro."
+    "description": "Una valigetta più grande dentro. Rende piu\nfacile schivare."
   },
   "410": {
     "name": "Abito del Dominio",
-    "description": "Un abito affilato di taglio aziendale."
+    "description": "Un abito affilato di taglio aziendale. Rende\npiu facile schivare."
   },
   "411": {
     "name": "Lenti Trafiggivelo",
-    "description": "Occhiali che rivelano le cose nascoste."
+    "description": "Occhiali che rivelano le cose nascoste. Rende\npiu facile schivare."
   },
   "412": {
     "name": "Amuleto del Cercatombe",
-    "description": "Un amuleto che punta a ciò che è sepolto."
+    "description": "Un amuleto che punta a ciò che è sepolto.\nBlocca Freddo e Congelare."
   },
   "413": {
     "name": "Braccialetto Guardareliquie",
-    "description": "Un vecchio braccialetto che ronza appena."
+    "description": "Un vecchio braccialetto che ronza appena.\nBlocca Paralisi."
   },
   "414": {
     "name": "Gettone Intrigafato",
-    "description": "Un gettoncino che scombina le probabilità."
+    "description": "Blocca Vulnerabilita e Fascino."
   },
   "415": {
     "name": "Conduttore in Tensione",
-    "description": "Un attrezzo che incanala la corrente."
+    "description": "Un attrezzo che incanala la corrente. Rende\npiu facile schivare."
   },
   "416": {
     "name": "Giacca Spezzaricorsione",
-    "description": "Una giacca che si dice chiuda i cicli."
+    "description": "Una giacca che si dice chiuda i cicli. Rende\npiu facile schivare."
   },
   "417": {
     "name": "Cappa Foderata di Seta",
-    "description": "Una raffinata cappa foderata di seta."
+    "description": "Una raffinata cappa foderata di seta. Blocca\nConfusione."
   },
   "418": {
     "name": "Veste di Catene",
-    "description": "Un indumento minimo infilato di catene."
+    "description": "Un indumento minimo infilato di catene. Blocca\nConfusione."
   },
   "419": {
     "name": "Abito Protetto da Sigilli",
-    "description": "Un abito da sera cucito di protezioni."
+    "description": "Un abito da sera cucito di protezioni. Blocca\nConfusione."
   },
   "420": {
     "name": "Tenuta Formale del Mediatore",
-    "description": "Un abbigliamento raffinato da trattativa."
+    "description": "Un abbigliamento raffinato da trattativa.\nBlocca Sonno."
   },
   "421": {
     "name": "Carapace Camaleontico",
-    "description": "Un guscio che imita ciò che lo circonda."
+    "description": "Un guscio che imita ciò che lo circonda.\nResiste a Fuoco, Acqua, Pietra e Vento."
   },
   "422": {
     "name": "Amuleto di Riserva",
-    "description": "Un amuleto che trattiene una carica."
+    "description": "Un amuleto che trattiene una carica. Rende piu\nfacile schivare."
   },
   "423": {
     "name": "Guanti Canalizzamana",
-    "description": "Guanti che concentrano il flusso arcano."
+    "description": "Guanti che concentrano il flusso arcano. Rende\npiu facile schivare."
   },
   "424": {
     "name": "Mantello della Lucidità",
-    "description": "Una giacca leggera che affina la mente."
+    "description": "Una giacca leggera. Blocca Silenzio, Ira,\nFascino e Sonno."
   },
   "425": {
     "name": "Assetto di Confluenza Elementale",
-    "description": "Un indumento che fonde nuclei elementali."
+    "description": "Un indumento che fonde. Resiste a Pietra,\nSacro, Fuoco, Acqua, Tuono, Ghiaccio e Vento."
   },
   "426": {
     "name": "Insegne di Guerra del Re",
-    "description": "Una grande tenuta marziale di stato."
+    "description": "Una grande tenuta marziale di stato.\nIrrigidisce la guardia."
   },
   "427": {
     "name": "Diadema Sovrano",
-    "description": "Una corona regale riccamente ornata."
+    "description": "Una corona regale riccamente ornata. Blocca\nCommozione Cerebrale."
   },
   "428": {
     "name": "Completo Scaccimalefici",
-    "description": "Un abito protetto dalle maledizioni."
+    "description": "Un abito protetto dalle maledizioni. Resiste a\nAcqua."
   },
   "429": {
     "name": "Scarpe da Discoteca",
-    "description": "Scarpe da ballo vistose e luminose."
+    "description": "Scarpe da ballo vistose e luminose. Resiste a\nVento e schiva meglio."
   },
   "430": {
     "name": "Inchiostro dei Sigilli a Circuito",
-    "description": "Inchiostro conduttivo da tatuaggio, portato addosso."
+    "description": "Inchiostro conduttivo da tatuaggio, portato\naddosso. Blocca Sonno."
   },
   "431": {
     "name": "Tuta dell'Osservatore sul Campo",
-    "description": "Un abito discreto da studio."
+    "description": "Un abito discreto da studio. Resiste a Pietra."
   },
   "432": {
     "name": "Scheggia del Dio Morto",
-    "description": "Un frammento freddo di spoglie divine."
+    "description": "Un frammento freddo di spoglie divine. Blocca\nSilenzio."
   },
   "433": {
     "name": "Cronometro Tempoflusso",
-    "description": "Un orologio che piega l'ora."
+    "description": "Un orologio che piega l'ora. Concentra la\nvolonta."
   },
   "434": {
     "name": "Giacca Fredda del Paria",
-    "description": "Una giacca che allontana la compagnia."
+    "description": "Una giacca che allontana la compagnia. Rende\npiu facile schivare."
   },
   "435": {
     "name": "Paramento dell'Alveare",
-    "description": "Un indumento di pensiero condiviso."
+    "description": "Un indumento di pensiero condiviso. Blocca\nSanguinamento."
   },
   "436": {
     "name": "Cappello Piegaquote",
-    "description": "Un cappello che gioca con la probabilità."
+    "description": "Un cappello che gioca con la probabilità.\nRassicura la mente."
   },
   "437": {
     "name": "Egida del Firewall",
-    "description": "Accessori protetti di pura difesa."
+    "description": "Accessori protetti di pura difesa. Resiste a\nFuoco."
   },
   "438": {
     "name": "Sigillo dell'Inferno",
-    "description": "Un anello con sigillo avvolto di calore."
+    "description": "Un anello con sigillo avvolto di calore.\nBlocca Fascino."
   },
   "439": {
     "name": "Elmo della Marea degli Spiriti",
-    "description": "Un elmo coronato di luce spettrale."
+    "description": "Un elmo coronato di luce spettrale. Resiste a\nAcqua."
   },
   "440": {
     "name": "Occhialoni Vedivarchi",
-    "description": "Occhialoni che trapassano le dimensioni."
+    "description": "Occhialoni che trapassano le dimensioni.\nBlocca Acceca."
   },
   "441": {
     "name": "Corona della Regina della Discordia",
-    "description": "Una corona frastagliata di conflitto."
+    "description": "Una corona frastagliata di conflitto. Rende\npiu facile schivare."
   },
   "442": {
     "name": "Zuccotto della Trasmissione",
-    "description": "Un umile berretto di maglia leggendario."
+    "description": "Un umile berretto di maglia. Rende piu facile\nschivare."
   },
   "443": {
     "name": "Anello Frammento d'Altromondo",
-    "description": "Un anello incastonato di cristallo alieno."
+    "description": "Un anello incastonato di cristallo alieno.\nRecupera un po' di salute."
   },
   "444": {
     "name": "Stivali del Debugger",
-    "description": "Stivali che saltano attraverso lo spazio."
+    "description": "Stivali che saltano attraverso. Schiva meglio."
   },
   "455": {
     "name": "<-- Robe -->",
@@ -1781,247 +1781,247 @@
   },
   "456": {
     "name": "Tomo Farfugliante",
-    "description": "Un grimorio di incantesimi confusi."
+    "description": "Un grimorio di incantesimi confusi. A volte\ncontrattacca."
   },
   "457": {
     "name": "Kit Arcano da Tasca",
-    "description": "Una borsa da incantesimi moderna e scadente."
+    "description": "Una borsa da incantesimi moderna e scadente.\nRende piu facile schivare."
   },
   "458": {
     "name": "Vestaglia Cascante",
-    "description": "Una veste informe e troppo grande."
+    "description": "Una veste informe e troppo grande. Attutisce i\ncolpi fisici."
   },
   "459": {
     "name": "Tiara di Plastica",
-    "description": "Una fragile corona giocattolo."
+    "description": "Una fragile corona giocattolo. Rende piu\ndifficile colpirlo con la magia."
   },
   "460": {
     "name": "Braccialetto da Ciarlatano",
-    "description": "Un braccialetto di ciondoli senza valore."
+    "description": "Un braccialetto di ciondoli senza valore.\nConcentra la volonta."
   },
   "461": {
     "name": "Tavoletta Protettiva Crepata",
-    "description": "Una piastra protettiva dallo schermo rotto."
+    "description": "Una piastra protettiva dallo schermo rotto.\nDevia i colpi critici."
   },
   "462": {
     "name": "Cristallo Portafortuna d'Occasione",
-    "description": "Un finto cristallo curativo."
+    "description": "Un finto cristallo curativo. Concentra la\nvolonta."
   },
   "463": {
     "name": "Bacchetta Mistica Giocattolo",
-    "description": "Una bacchetta finta di plastica."
+    "description": "Una bacchetta finta di plastica. Rende piu\nfacile schivare."
   },
   "464": {
     "name": "Toga di Laurea Sgualcita",
-    "description": "Una veste cerimoniale spiegazzata."
+    "description": "Una veste cerimoniale spiegazzata. Resiste a\nFuoco."
   },
   "465": {
     "name": "Cuffia del Teorico di Stagnola",
-    "description": "Un rozzo cappuccio foderato di stagnola."
+    "description": "Un rozzo cappuccio foderato di stagnola.\nBlocca Confusione."
   },
   "466": {
     "name": "Visiera Sporca a Sovrapposizione",
-    "description": "Una visiera aumentata appannata."
+    "description": "Una visiera aumentata appannata. Blocca\nAcceca."
   },
   "467": {
     "name": "Veste da Mago Scontata",
-    "description": "Una veste scadente da svendita."
+    "description": "Una veste scadente da svendita. Aumenta gli\nHP."
   },
   "468": {
     "name": "Cappuccio del Compilatore",
-    "description": "Un cappuccio morbido con la fodera di feltro consunta."
+    "description": "Un cappuccio morbido con la fodera di feltro\nconsunta. Blocca Acceca."
   },
   "469": {
     "name": "Veste da Apprendista di Gilda",
-    "description": "Semplici vesti grigie da mago, un po' rattoppate."
+    "description": "Semplici vesti grigie da mago, un po'\nrattoppate. Blocca Infetto."
   },
   "470": {
     "name": "Involucro Sigillato di Sicurezza",
-    "description": "Una pesante tuta di contenimento gommata."
+    "description": "Una pesante tuta di contenimento gommata.\nResiste a Acqua."
   },
   "471": {
     "name": "Fascia Sinaptica",
-    "description": "Una fascia tesa di filo conduttivo."
+    "description": "Una fascia tesa di filo conduttivo. Resiste a\nTuono."
   },
   "472": {
     "name": "Diadema del Flusso di Dati",
-    "description": "Un cerchietto sottile di fibra ottica morta."
+    "description": "Un cerchietto sottile di fibra ottica morta.\nRecupera un po' di mana e insegna un'abilita."
   },
   "473": {
     "name": "Cappuccio da Quarantena",
-    "description": "Un elmo di stoffa sigillato con la visiera appannata."
+    "description": "Un elmo di stoffa sigillato con la visiera\nappannata. Resiste a Maledetto."
   },
   "474": {
     "name": "Girocollo PSI",
-    "description": "Un girocollo aderente intessuto di sigilli grigi."
+    "description": "Un girocollo aderente intessuto di sigilli\ngrigi. Insegna un'abilita."
   },
   "475": {
     "name": "Amuleto della Mente Quieta",
-    "description": "Un piccolo amuleto su un laccio sfilacciato."
+    "description": "Un piccolo amuleto su un laccio sfilacciato.\nRende piu facile schivare."
   },
   "476": {
     "name": "Fascia Antintrusione",
-    "description": "Una fascia avvolta di filo isolato."
+    "description": "Una fascia avvolta di filo isolato. Resiste a\nTuono e rimanda indietro gli incantesimi."
   },
   "477": {
     "name": "Scudo di Ghiaccio Personale",
-    "description": "Un emettitore di barriera grande come un palmo."
+    "description": "Un emettitore di barriera grande come un\npalmo. Resiste a Ghiaccio."
   },
   "478": {
     "name": "Braccialetto del Velo",
-    "description": "Un semplice braccialetto di perline spente."
+    "description": "Un semplice braccialetto di perline spente.\nRende piu difficile colpirlo con la magia."
   },
   "479": {
     "name": "Calamita Spettrale",
-    "description": "Una piccola bussola dall'ago inquieto."
+    "description": "Una piccola bussola dall'ago inquieto. Resiste\na Maledetto e accumula AP in battaglia."
   },
   "480": {
     "name": "Abito della Botta di Fortuna",
-    "description": "Un abito largo di stoffe spaiate."
+    "description": "Un abito largo di stoffe. Schiva meglio e\nraddoppia l'oro trovato."
   },
   "481": {
     "name": "Veste del Mago Guaritore",
-    "description": "Vesti morbide che sanno di erbe vecchie."
+    "description": "Vesti morbide che sanno. Schiva meglio."
   },
   "482": {
     "name": "Emettitore di Campo a Bolla",
-    "description": "Un generatore di scudo portatile."
+    "description": "Un generatore di scudo portatile. Para piu\nsaldamente."
   },
   "483": {
     "name": "Cerchietto della Concentrazione",
-    "description": "Un cerchietto sottile di stagno lucidato."
+    "description": "Un cerchietto sottile di stagno lucidato.\nBlocca Confusione."
   },
   "484": {
     "name": "Amuleto della Fermezza",
-    "description": "Un amuleto appesantito su un laccio di cuoio."
+    "description": "Un amuleto appesantito su un laccio di cuoio.\nRende piu facile schivare."
   },
   "485": {
     "name": "Coroncina della Musa",
-    "description": "Una delicata coroncina di ottone piegato."
+    "description": "Una delicata coroncina di ottone piegato.\nRende piu facile schivare."
   },
   "486": {
     "name": "Veste della Piuma",
-    "description": "Una veste tessuta di leggerezza impossibile."
+    "description": "Una veste tessuta di leggerezza impossibile.\nAttutisce i danni del terreno."
   },
   "487": {
     "name": "Cappello della Preveggenza",
-    "description": "Un largo cappello di stoffa dalla tesa cadente."
+    "description": "Un largo cappello di stoffa. Blocca Silenzio."
   },
   "488": {
     "name": "Abito dell'Erudito",
-    "description": "Un ordinato completo da studioso, macchiato d'inchiostro."
+    "description": "Un ordinato completo. Schiva meglio."
   },
   "489": {
     "name": "Giacca del Segnale Fantasma",
-    "description": "Una giacca consunta foderata di rete di stagnola."
+    "description": "Una giacca consunta foderata di rete di\nstagnola. Resiste a Tuono."
   },
   "490": {
     "name": "Cappotto del Custode di Dati",
-    "description": "Un lungo cappotto dalle molte piccole tasche."
+    "description": "Un lungo cappotto dalle molte piccole tasche.\nRaddoppia gli oggetti lasciati."
   },
   "491": {
     "name": "Corona del Trovavia",
-    "description": "Un semplice cerchietto inciso di frecce."
+    "description": "Un semplice cerchietto inciso di frecce. Meno\nbattaglie casuali."
   },
   "492": {
     "name": "Modulo del Velo di Fase",
-    "description": "Un piccolo congegno che ronza appena."
+    "description": "Un piccolo congegno che ronza appena. Rende\npiu difficile colpirlo con la magia."
   },
   "493": {
     "name": "Gilet del Guerriero dei Dati",
-    "description": "Un gilet imbottito dalle piastre crepate."
+    "description": "Un gilet imbottito dalle piastre crepate.\nRende piu facile schivare."
   },
   "494": {
     "name": "Visiera AR da Veterano",
-    "description": "Una visiera graffiata di vetro scuro."
+    "description": "Una visiera graffiata di vetro scuro. Rende la\nmira piu ferma."
   },
   "495": {
     "name": "Tuta Antiritorno",
-    "description": "Una tuta messa a terra di stoffa isolante."
+    "description": "Una tuta messa a terra di stoffa isolante.\nRimanda indietro gli incantesimi."
   },
   "496": {
     "name": "Tocco del Docente",
-    "description": "Un rigido tocco accademico, un po' sbiadito."
+    "description": "Un rigido tocco accademico, un po' sbiadito.\nImpara piu in fretta."
   },
   "497": {
     "name": "Aureola di Comando",
-    "description": "Un copricapo cerchiato di proiettori morti."
+    "description": "Un copricapo cerchiato di proiettori morti.\nAccumula AP piu in fretta."
   },
   "498": {
     "name": "Completo Sereno d'Alta Moda",
-    "description": "Un elegante abito minimalista."
+    "description": "Un elegante abito minimalista. Rende piu\nfacile schivare."
   },
   "499": {
     "name": "Cappello della Strega di Gilda",
-    "description": "Un alto cappello a punta di feltro scuro."
+    "description": "Un alto cappello a punta di feltro scuro. Gli\nincantesimi costano di piu."
   },
   "500": {
     "name": "Tuta a Trama Cromata",
-    "description": "Una tuta aderente intessuta di metallo."
+    "description": "Una tuta aderente intessuta di metallo.\nAttutisce i colpi fisici."
   },
   "501": {
     "name": "Visiera del Veggente",
-    "description": "Una visiera trasparente che non si appanna mai."
+    "description": "Una visiera trasparente che non si appanna\nmai. Rende piu facile schivare."
   },
   "502": {
     "name": "Tuta del Vincolo Selvatico",
-    "description": "Una tuta robusta cresciuta di muschio."
+    "description": "Una tuta robusta cresciuta di muschio.\nRecupera un po' di salute."
   },
   "503": {
     "name": "Guanti del Tocco Cifrato",
-    "description": "Guanti sottili dai polpastrelli che formicolano."
+    "description": "Guanti sottili dai polpastrelli. Schiva\nmeglio."
   },
   "504": {
     "name": "Veste da Pratica dell'Adepto",
-    "description": "Vesti solide consumate ai gomiti."
+    "description": "Vesti solide consumate ai gomiti. Impara piu\nin fretta."
   },
   "505": {
     "name": "Cerchietto dell'Ascensione",
-    "description": "Un cerchietto luminoso che pare senza peso."
+    "description": "Un cerchietto luminoso che pare senza. Resiste\na Sacro e recupera MP."
   },
   "506": {
     "name": "Veste del Telaio",
-    "description": "Una veste dalla trama fitta e ornamentale."
+    "description": "Una veste dalla trama fitta e ornamentale.\nSoggetto a Confusione."
   },
   "507": {
     "name": "Paramenti della Concordia",
-    "description": "Morbide vesti bianche dal bordo verde."
+    "description": "Morbide vesti bianche dal bordo verde. Rende\npiu facile schivare."
   },
   "508": {
     "name": "Veste a Cellule Verdeggianti",
-    "description": "Una veste viva venata di verde."
+    "description": "Una veste viva. Schiva meglio."
   },
   "509": {
     "name": "Veste della Memoria al Neon",
-    "description": "Una veste cucita di vecchie strisce luminose."
+    "description": "Una veste cucita di vecchie strisce. Blocca\nSilenzio e schiva meglio."
   },
   "510": {
     "name": "Talismano dell'Avvoltoio Statico",
-    "description": "Un amuleto frastagliato che crepita piano."
+    "description": "Un amuleto frastagliato che crepita piano.\nImmune a Tuono."
   },
   "511": {
     "name": "Vesti della Ferrea Convinzione",
-    "description": "Vesti rigide di un grigio severo."
+    "description": "Vesti rigide di un grigio severo. Rende piu\nfacile schivare."
   },
   "512": {
     "name": "Cappello Formaincanto",
-    "description": "Un cappello strutturato foderato di sigilli."
+    "description": "Un cappello strutturato foderato di sigilli.\nRende piu facile schivare."
   },
   "513": {
     "name": "Corona della Convergenza",
-    "description": "Una pesante corona di lenti focalizzanti."
+    "description": "Una pesante corona di lenti focalizzanti.\nRecupera un po' di mana."
   },
   "514": {
     "name": "Bomber Runico",
-    "description": "Un giubbotto da volo consunto, inciso a mano."
+    "description": "Un giubbotto da volo consunto, inciso a mano.\nIrrigidisce la guardia."
   },
   "515": {
     "name": "Paramento del Tecnomante",
-    "description": "Una veste cablata di fili ronzanti."
+    "description": "Una veste cablata di fili ronzanti. Blocca\nInfetto."
   },
   "516": {
     "name": "Manto del Caos Grezzo",
-    "description": "Una veste mutevole di stoffa inquieta."
+    "description": "Una veste mutevole di stoffa inquieta. Rende\npiu facile schivare."
   },
   "517": {
     "name": "Manto del Telaio di Tempesta",
@@ -2029,99 +2029,99 @@
   },
   "518": {
     "name": "Insegne del Tessitore d'Incanti",
-    "description": "Vesti ornate di seta a strati."
+    "description": "Vesti ornate di seta a strati. Blocca\nSanguinamento."
   },
   "519": {
     "name": "Paramenti dell'Alto Chierico",
-    "description": "Vesti bianche cerimoniali dorate."
+    "description": "Vesti bianche cerimoniali dorate.\nIrrigidisce la guardia."
   },
   "520": {
     "name": "Abbraccio di Zefiro",
-    "description": "Una veste così leggera da sembrare alla deriva."
+    "description": "Una veste così leggera da sembrare alla\nderiva. Blocca Bruciato."
   },
   "521": {
     "name": "Zuccotto dell'Occhio Interiore",
-    "description": "Un morbido berretto di maglia, stranamente caldo."
+    "description": "Un morbido berretto di maglia, stranamente\ncaldo. Blocca Fascino."
   },
   "522": {
     "name": "Ciondolo di Pietra Nulla",
-    "description": "Un ciondolo scuro che inghiotte la luce."
+    "description": "Un ciondolo scuro che inghiotte la luce.\nBlocca Guardia Rotta."
   },
   "523": {
     "name": "Sigillo della Pura Lucidità",
-    "description": "Una cuffia chiara segnata da una sola runa."
+    "description": "Una cuffia chiara segnata da una sola runa.\nRecupera un po' di mana."
   },
   "524": {
     "name": "Corona della Mente in Corsa",
-    "description": "Una corona che vibra contro il cranio."
+    "description": "Una corona che vibra contro il cranio. Blocca\nSilenzio."
   },
   "525": {
     "name": "Cerchietto della Sorgente",
-    "description": "Un cerchietto caldo di potere accumulato."
+    "description": "Un cerchietto caldo di potere accumulato.\nRende piu facile schivare."
   },
   "526": {
     "name": "Cappotto a Trama Matriciale",
-    "description": "Un cappotto di reticolo impossibilmente fine."
+    "description": "Un cappotto di reticolo impossibilmente fine.\nRecupera un po' di salute."
   },
   "527": {
     "name": "Camice della Luce Protettiva",
-    "description": "Un lungo camice inciso di glifi."
+    "description": "Un lungo camice inciso di glifi. Rende piu\nfacile schivare."
   },
   "528": {
     "name": "Cappuccio Bevivuoto",
-    "description": "Un cappuccio nero che beve il buio."
+    "description": "Un cappuccio nero che beve il buio. Resiste a\nMaledetto."
   },
   "529": {
     "name": "Cappello Reliquiario d'Incanti",
-    "description": "Un cappello profondo che contiene più del dovuto."
+    "description": "Un cappello profondo che contiene più del\ndovuto. Rende piu facile schivare."
   },
   "530": {
     "name": "Cappuccio della Piena Ley",
-    "description": "Un cappuccio che ronza sulle leyline."
+    "description": "Un cappuccio che ronza sulle leyline. Blocca\nAcceca."
   },
   "531": {
     "name": "Vesti della Grande Bestia",
-    "description": "Vesti cremisi cariche di simboli antichi."
+    "description": "Vesti cremisi cariche di simboli antichi.\nRende piu facile schivare."
   },
   "532": {
     "name": "Regalia dell'Arcimagister",
-    "description": "Vesti torreggianti di viola profondo."
+    "description": "Vesti torreggianti di viola profondo. Blocca\nBruciato."
   },
   "533": {
     "name": "Cerchietto Tessuto di Stelle",
-    "description": "Un cerchietto che brilla come il cielo notturno."
+    "description": "Un cerchietto che brilla come il cielo\nnotturno. Affina l'istinto."
   },
   "534": {
     "name": "Grimorio della Fine del Mondo",
-    "description": "Un libro di incantesimi malconcio, rilegato a mano."
+    "description": "Un libro di incantesimi malconcio, rilegato a\nmano. Affretta il passo."
   },
   "535": {
     "name": "Visiera delle Equazioni",
-    "description": "Una visiera che scorre di glifi deboli."
+    "description": "Una visiera che scorre di glifi deboli. Blocca\nAcceca."
   },
   "536": {
     "name": "Manto dell'Evocatempeste",
-    "description": "Un manto pesante che sa di pioggia."
+    "description": "Un manto pesante che sa di pioggia. Resiste a\nTuono."
   },
   "537": {
     "name": "Cappotto del Camminafasi",
-    "description": "Un cappotto che si sfoca ai bordi."
+    "description": "Un cappotto che si sfoca ai bordi. Aumenta gli\nHP."
   },
   "538": {
     "name": "Corona Amplificatrice Corticale",
-    "description": "Una corona cablata alle tempie."
+    "description": "Una corona cablata alle tempie. Rende piu\ndifficile colpirlo con la magia."
   },
   "539": {
     "name": "Vesti Olomatrice",
-    "description": "Vesti cangianti di luce proiettata."
+    "description": "Vesti cangianti di luce proiettata. Aumenta\ngli HP."
   },
   "540": {
     "name": "Vesti dell'Arcimago Cosmico",
-    "description": "Vesti immense cosparse di stelle."
+    "description": "Vesti immense cosparse di stelle. Rende piu\nfacile schivare."
   },
   "541": {
     "name": "Vesti Tessute di Circuiti",
-    "description": "Vesti intrecciate di filo vivo."
+    "description": "Vesti intrecciate di filo vivo. Resiste a\nAcqua."
   },
   "552": {
     "name": "<-- Light Armor -->",
@@ -2129,355 +2129,355 @@
   },
   "553": {
     "name": "Scarto da Sfruttamento",
-    "description": "Un fragile giubbetto di produzione in massa."
+    "description": "Un fragile giubbetto di produzione in massa.\nResiste a Fuoco."
   },
   "554": {
     "name": "Maglia da Squadra Taroccata",
-    "description": "Una maglia sbiadita dalla stampa che si stacca."
+    "description": "Una maglia sbiadita dalla stampa che si\nstacca. Blocca Infetto."
   },
   "555": {
     "name": "Calotta Ammaccata",
-    "description": "Una calotta d'acciaio scadente, piegata male."
+    "description": "Una calotta d'acciaio scadente, piegata male.\nBlocca Fascino."
   },
   "556": {
     "name": "Elmo del Soldatino",
-    "description": "Un elmo di plastica di dubbio valore."
+    "description": "Un elmo di plastica di dubbio valore.\nRassicura la mente."
   },
   "557": {
     "name": "Gilet di Recupero da Cantiere",
-    "description": "Un gilet catarifrangente lercio con piastre."
+    "description": "Un gilet catarifrangente lercio con piastre.\nRecupera un po' di salute."
   },
   "558": {
     "name": "Giubbotto di Pelle del Ribelle",
-    "description": "Un giubbotto di pelle graffiato."
+    "description": "Un giubbotto di pelle graffiato. Resiste a\nGhiaccio."
   },
   "559": {
     "name": "Armatura di Carta Pressata",
-    "description": "Carta di giornale a strati, sorprendentemente rigida."
+    "description": "Carta di giornale a strati, sorprendentemente\nrigida. Resiste a Maledetto."
   },
   "560": {
     "name": "Tuta Sportiva Elastica",
-    "description": "Una tuta atletica imbottita ed elastica."
+    "description": "Una tuta atletica imbottita ed elastica.\nAttutisce i colpi fisici."
   },
   "561": {
     "name": "Casco del Pendolare",
-    "description": "Un casco da bici graffiato."
+    "description": "Un casco da bici graffiato. Resiste a Sacro."
   },
   "562": {
     "name": "Smesso Macchiato",
-    "description": "Un gilet di origine incerta."
+    "description": "Un gilet di origine incerta. Attutisce i colpi\nfisici."
   },
   "563": {
     "name": "Blazer del Truffatore",
-    "description": "Un blazer consunto dalle tasche profonde."
+    "description": "Un blazer consunto dalle tasche profonde.\nIrrigidisce la guardia."
   },
   "564": {
     "name": "Manopole di Latta",
-    "description": "Rozze manopole di lattine martellate."
+    "description": "Rozze manopole di lattine martellate. Resiste\na Vento."
   },
   "565": {
     "name": "Gilet di Battistrada",
-    "description": "Un gilet di gomma di pneumatico tagliata."
+    "description": "Un gilet di gomma di pneumatico tagliata.\nIrrigidisce la guardia."
   },
   "566": {
     "name": "Elmo Colapasta Chiodato",
-    "description": "Uno scolapasta diventato elmo."
+    "description": "Uno scolapasta diventato elmo. Affina\nl'istinto."
   },
   "567": {
     "name": "Elmo Baciasfalto",
-    "description": "Un paracapo pesante e ottuso."
+    "description": "Un paracapo pesante e ottuso. Blocca Silenzio."
   },
   "568": {
     "name": "Elmo di Fusto",
-    "description": "Un elmo ritagliato da un fusto d'acciaio."
+    "description": "Un elmo ritagliato da un fusto d'acciaio.\nRende piu difficile colpirlo con la magia."
   },
   "569": {
     "name": "Stivali dal Battistrada",
-    "description": "Stivali suolati di grossa gomma di pneumatico."
+    "description": "Stivali suolati di grossa gomma di pneumatico.\nRecupera un po' di mana."
   },
   "570": {
     "name": "Cuffia da Impatto Imbottita",
-    "description": "Un casco d'urto foderato di gommapiuma."
+    "description": "Un casco d'urto foderato di gommapiuma. Rende\npiu difficile colpirlo con la magia."
   },
   "571": {
     "name": "Celata Aperta",
-    "description": "Una celata d'acciaio a viso scoperto."
+    "description": "Una celata d'acciaio a viso scoperto. Recupera\nun po' di mana."
   },
   "572": {
     "name": "Spallacci Consunti",
-    "description": "Un set di spalle di piastra arrugginite."
+    "description": "Un set di spalle di piastra arrugginite.\nBlocca Veleno."
   },
   "573": {
     "name": "Calotta del Pilota",
-    "description": "Una calotta leggera in lega."
+    "description": "Una calotta leggera in lega. Blocca Commozione\nCerebrale."
   },
   "574": {
     "name": "Elmo del Pattugliatore",
-    "description": "Un elmo da pattuglia urbana ammaccato."
+    "description": "Un elmo da pattuglia urbana ammaccato.\nRecupera un po' di mana."
   },
   "575": {
     "name": "Bracciali di Latta Appiattita",
-    "description": "Bracciali battuti da lattine di scarto."
+    "description": "Bracciali battuti da lattine di scarto. Blocca\nSonno."
   },
   "576": {
     "name": "Giubbotto di Volo in Carbonio",
-    "description": "Un bomber tessuto in carbonio."
+    "description": "Un bomber tessuto in carbonio. Attutisce i\ncolpi fisici."
   },
   "577": {
     "name": "Berretto del Capitano d'Asfalto",
-    "description": "Un berretto rinforzato da capo della strada."
+    "description": "Un berretto rinforzato da capo della strada.\nResiste a Sacro."
   },
   "578": {
     "name": "Imbracatura dello Scalatore",
-    "description": "Un'attrezzatura per l'arrampicata su parete."
+    "description": "Un'attrezzatura per l'arrampicata su parete.\nRende piu facile schivare."
   },
   "579": {
     "name": "Gilet degli Stimolanti",
-    "description": "Un gilet imbottito di stimolanti da combattimento."
+    "description": "Un gilet imbottito di stimolanti da\ncombattimento. Irrigidisce la guardia."
   },
   "580": {
     "name": "Assetto Stradale del Guardiano",
-    "description": "Un gilet tattico da strada a strati."
+    "description": "Un gilet tattico da strada a strati.\nIrrigidisce la guardia."
   },
   "581": {
     "name": "Corazza da Strada",
-    "description": "Un pettorale ribattuto e graffiato."
+    "description": "Un pettorale ribattuto e graffiato. Blocca\nBruciato."
   },
   "582": {
     "name": "Cappello di Ferro del Fante",
-    "description": "Un cappello di ferro da fanteria a tesa larga."
+    "description": "Un cappello di ferro da fanteria a tesa larga.\nBlocca Confusione."
   },
   "583": {
     "name": "Casco da Scalata",
-    "description": "Un casco da arrampicata traforato."
+    "description": "Un casco da arrampicata traforato. Blocca\nConfusione."
   },
   "584": {
     "name": "Gilet da Lavoro Galleggiante",
-    "description": "Un gilet da lavoro imbottito e galleggiante."
+    "description": "Un gilet da lavoro imbottito e galleggiante.\nResiste a Acqua."
   },
   "585": {
     "name": "Elmetto di Sicurezza Segnalatore",
-    "description": "Un elmetto di sicurezza ad alta visibilità."
+    "description": "Un elmetto di sicurezza ad alta visibilità.\nRassicura la mente."
   },
   "586": {
     "name": "Scarpe da Parkour",
-    "description": "Scarpe da corsa leggere e antiscivolo."
+    "description": "Scarpe da corsa leggere e antiscivolo. Rende\npiu facile schivare."
   },
   "587": {
     "name": "Cappello a Secchiello Bicolore",
-    "description": "Un cappello a secchiello di stoffa rinforzata."
+    "description": "Un cappello a secchiello di stoffa rinforzata.\nRende piu difficile colpirlo con la magia."
   },
   "588": {
     "name": "Cappotto Scacciapioggia",
-    "description": "Un cappotto a strati idrorepellente."
+    "description": "Un cappotto a strati idrorepellente. Resiste a\nAcqua."
   },
   "589": {
     "name": "Scarpe da Avvicinamento",
-    "description": "Scarpe irrigidite da sentiero e arrampicata."
+    "description": "Scarpe irrigidite da sentiero e arrampicata.\nRende piu facile schivare."
   },
   "590": {
     "name": "Cotta di Maglia Piastrata",
-    "description": "Cotta di maglia rinforzata con piastre d'acciaio."
+    "description": "Cotta di maglia rinforzata con piastre\nd'acciaio. Resiste a Ghiaccio."
   },
   "591": {
     "name": "Elmetto da Minatore con Lampada",
-    "description": "Un elmetto con la lampada montata."
+    "description": "Un elmetto con la lampada montata. Rassicura\nla mente."
   },
   "592": {
     "name": "Scarpe da Sprint su Sentiero",
-    "description": "Scarpe da sentiero leggere e ammortizzate."
+    "description": "Scarpe da sentiero leggere e ammortizzate.\nRecupera un po' di salute."
   },
   "593": {
     "name": "Corazza Oplitica di Bronzo",
-    "description": "Una corazza anatomica di bronzo."
+    "description": "Una corazza anatomica di bronzo. Resiste a\nMaledetto."
   },
   "594": {
     "name": "Lorica Segmentata",
-    "description": "Un'armatura del busto a fasce segmentate."
+    "description": "Un'armatura del busto a fasce segmentate.\nResiste a Ghiaccio."
   },
   "595": {
     "name": "Guscio da Rilevamento Polare",
-    "description": "Un guscio isolato da spedizione."
+    "description": "Un guscio isolato da spedizione. Resiste a\nMaledetto."
   },
   "596": {
     "name": "Gilet di Maglia Leggero",
-    "description": "Un gilet di maglia leggero e flessibile."
+    "description": "Un gilet di maglia leggero e flessibile.\nRecupera un po' di salute."
   },
   "597": {
     "name": "Cappotto Reattivo da Tempesta",
-    "description": "Un cappotto reattivo irrigidito."
+    "description": "Un cappotto reattivo irrigidito. Resiste a\nTuono."
   },
   "598": {
     "name": "Gilet Polimerico da Operatore",
-    "description": "Un gilet da combattimento in polimero stampato."
+    "description": "Un gilet da combattimento in polimero\nstampato. Attutisce la magia."
   },
   "599": {
     "name": "Corredo da Scalata del Cacciatore",
-    "description": "Una tuta con imbracatura da caccia verticale."
+    "description": "Una tuta con imbracatura da caccia verticale.\nResiste a Maledetto."
   },
   "600": {
     "name": "Maschera del Terrore da Bidone",
-    "description": "Una pesante maschera facciale intimidatoria."
+    "description": "Una pesante maschera facciale intimidatoria.\nBlocca Confusione."
   },
   "601": {
     "name": "Tuta da Campo di Resistenza",
-    "description": "Una tuta da campo traspirante per la tenacia."
+    "description": "Una tuta da campo traspirante per la tenacia.\nRende piu facile schivare."
   },
   "602": {
     "name": "Tuta da Speleologo",
-    "description": "Una tuta da grotta rinforzata."
+    "description": "Una tuta da grotta rinforzata. Resiste a\nMaledetto."
   },
   "603": {
     "name": "Assetto del Soccorritore",
-    "description": "Un assetto tattico da pronto intervento."
+    "description": "Un assetto tattico da pronto intervento. Rende\npiu facile schivare."
   },
   "604": {
     "name": "Casco d'Urto Scolpito",
-    "description": "Un casco d'impatto dal design curato."
+    "description": "Un casco d'impatto dal design curato. Resiste\na Sacro."
   },
   "605": {
     "name": "Imbracatura del Dominatore",
-    "description": "Un'imbracatura di cuoio borchiato."
+    "description": "Un'imbracatura di cuoio borchiato. Blocca Ira."
   },
   "606": {
     "name": "Manto dell'Occultamento",
-    "description": "Un mantello scuro che nasconde."
+    "description": "Un mantello scuro che nasconde. Rende piu\nfacile schivare."
   },
   "607": {
     "name": "Completo di Depistaggio",
-    "description": "Un abito a strati che inganna."
+    "description": "Un abito a strati che inganna. Rende piu\nfacile schivare."
   },
   "608": {
     "name": "Tuta di Prossimità al Magma",
-    "description": "Una tuta d'avvicinamento schermata dal calore."
+    "description": "Una tuta d'avvicinamento schermata dal calore.\nResiste a Fuoco."
   },
   "609": {
     "name": "Pelle del Cavaliere delle Onde",
-    "description": "Una tuta integrale idrodinamica e affusolata."
+    "description": "Una tuta integrale idrodinamica e affusolata.\nBlocca Bagnato."
   },
   "610": {
     "name": "Armatura da Rilevamento Artico",
-    "description": "Un'armatura da ricerca isolata."
+    "description": "Un'armatura da ricerca isolata. Resiste a\nGhiaccio."
   },
   "611": {
     "name": "Cappuccio di Cuoio del Bruto",
-    "description": "Un pesante cappuccio di cuoio intimidatorio."
+    "description": "Un pesante cappuccio di cuoio intimidatorio.\nBlocca Confusione."
   },
   "612": {
     "name": "Corsetto Rinforzato",
-    "description": "Un corsetto di cuoio rinforzato con stecche."
+    "description": "Un corsetto di cuoio rinforzato con stecche.\nBlocca Confusione."
   },
   "613": {
     "name": "Tuta da Pista in Pelle",
-    "description": "Una tuta da corsa in pelle imbottita."
+    "description": "Una tuta da corsa in pelle imbottita. Rende\npiu facile schivare."
   },
   "614": {
     "name": "Pelli del Tiratore",
-    "description": "Una morbida armatura di cuoio da arciere."
+    "description": "Una morbida armatura di cuoio da arciere.\nBlocca Veleno."
   },
   "615": {
     "name": "Corredo da Corsa",
-    "description": "Un corredo di armatura leggera da corsa."
+    "description": "Un corredo di armatura leggera da corsa.\nAttutisce la magia."
   },
   "616": {
     "name": "Gilet a Distorsione Corrotta",
-    "description": "Un gilet distorcente e cangiante."
+    "description": "Un gilet distorcente e cangiante. Blocca\nConfusione e schiva meglio."
   },
   "617": {
     "name": "Hazmat Petrodemone",
-    "description": "Una tuta antichimica sigillata antitossine."
+    "description": "Una tuta antichimica sigillata. Resiste a\nFisico e blocca Unto."
   },
   "618": {
     "name": "Visiera Antiriverbero",
-    "description": "Un casco con visiera scura da neve."
+    "description": "Un casco con visiera scura da neve. Blocca\nFreddo e Congelare."
   },
   "619": {
     "name": "Elmo Ruggente di Gommapiuma",
-    "description": "Un casco imbottito da tifoso."
+    "description": "Un casco imbottito da tifoso. Schiva meglio."
   },
   "620": {
     "name": "Elmo da Combattimento Notturno",
-    "description": "Un elmo opaco per le operazioni di notte."
+    "description": "Un elmo opaco per le operazioni di notte.\nBlocca Commozione Cerebrale."
   },
   "621": {
     "name": "Cuoio da Combattimento Completo",
-    "description": "Una tuta da combattimento in cuoio completa."
+    "description": "Una tuta da combattimento in cuoio completa.\nResiste a Fisico."
   },
   "622": {
     "name": "Pelle di Guerra Naguka",
-    "description": "Un'armatura tribale da guerra decorata."
+    "description": "Un'armatura tribale da guerra decorata. Blocca\nBruciato."
   },
   "623": {
     "name": "Drappo dello Spettro",
-    "description": "Un indumento drappeggiato, pallido e spettrale."
+    "description": "Un indumento drappeggiato, pallido e\nspettrale. Rende piu facile schivare."
   },
   "624": {
     "name": "Elmo del Guardiano di Tempesta",
-    "description": "Un elmo antitempesta impermeabile."
+    "description": "Un elmo antitempesta impermeabile. Blocca\nFreddo e Congelare."
   },
   "625": {
     "name": "Abbigliamento dal Passo Spezzato",
-    "description": "Una tuta da prestazione reattiva."
+    "description": "Una tuta da prestazione reattiva. Rende piu\nfacile schivare."
   },
   "626": {
     "name": "Cotta di Maglia Consacrata",
-    "description": "Cotta di maglia argentata e benedetta."
+    "description": "Cotta di maglia argentata e benedetta.\nAttutisce la magia."
   },
   "627": {
     "name": "Casco da Pista",
-    "description": "Un casco da pendio ad alto impatto."
+    "description": "Un casco da pendio ad alto impatto. Blocca\nFreddo e Congelare."
   },
   "628": {
     "name": "Cuoio dell'Ombra di Gilda",
-    "description": "Cuoio scuro e morbido da ombra."
+    "description": "Cuoio scuro e morbido da ombra. Attutisce la\nmagia."
   },
   "629": {
     "name": "Visiera a Vista Termica",
-    "description": "Una visiera da combattimento sensibile al calore."
+    "description": "Una visiera da combattimento sensibile. Rende\npiu facile schivare."
   },
   "630": {
     "name": "Tuta Confondincanti",
-    "description": "Una tuta integrale che scombina gli incantesimi."
+    "description": "Una tuta integrale che scombina gli\nincantesimi. Rende piu facile schivare."
   },
   "631": {
     "name": "Gilet Protetto dalle Afflizioni",
-    "description": "Un gilet protetto resistente alle tossine."
+    "description": "Un gilet protetto resistente alle tossine.\nBlocca Veleno."
   },
   "632": {
     "name": "Gilet dello Spirito Wyrm",
-    "description": "Un gilet squamato legato a uno spirito."
+    "description": "Un gilet squamato legato a uno spirito.\nRecupera un po' di salute."
   },
   "633": {
     "name": "Bastione d'Acque Profonde",
-    "description": "Un'armatura sigillata per le acque fredde."
+    "description": "Un'armatura sigillata per le acque fredde.\nBlocca Freddo e Congelare."
   },
   "634": {
     "name": "Tuta Firmata del Campione",
-    "description": "Un'armatura da prestazione di pregio."
+    "description": "Un'armatura da prestazione di pregio. Rende\npiu facile schivare."
   },
   "635": {
     "name": "Elmo del Tiranno della Tempesta",
-    "description": "Un elmo di tempesta coronato."
+    "description": "Un elmo di tempesta coronato. Resiste a Sacro."
   },
   "636": {
     "name": "Tuta da Guerra Aliplanante",
-    "description": "Una tuta da combattimento alata per planare."
+    "description": "Una tuta da combattimento alata per planare.\nRende piu facile schivare."
   },
   "637": {
     "name": "Abito del Cacciatore Silente",
-    "description": "L'abito ovattato di un assassino."
+    "description": "L'abito ovattato di un assassino. Rende piu\nfacile schivare."
   },
   "638": {
     "name": "Piastra di Fiamma Viva",
-    "description": "Piastra ardente forgiata nella brace."
+    "description": "Piastra ardente forgiata nella brace. Resiste\na Fuoco."
   },
   "639": {
     "name": "Piastra a Circuito d'Incanti",
-    "description": "Piastra conduttiva incisa di rune."
+    "description": "Piastra conduttiva incisa di rune.\nIrrigidisce la guardia."
   },
   "640": {
     "name": "Lunaria, la Trama di Luna",
-    "description": "Cangiante armatura elfica tessuta di luna."
+    "description": "Cangiante armatura elfica tessuta di luna.\nResiste a Fuoco."
   },
   "651": {
     "name": "<-- Heavy Armor -->",
@@ -2485,215 +2485,215 @@
   },
   "652": {
     "name": "Corazza da Costume",
-    "description": "Un fragile pettorale da travestimento."
+    "description": "Un fragile pettorale da travestimento. Blocca\nVeleno."
   },
   "653": {
     "name": "Piastra del Pellegrino",
-    "description": "Una semplice armatura devozionale."
+    "description": "Una semplice armatura devozionale. Attutisce\nla magia."
   },
   "654": {
     "name": "Armatura di Nastro e Speranza",
-    "description": "Piastre di scarto tenute col nastro adesivo."
+    "description": "Piastre di scarto tenute col nastro adesivo.\nResiste a Fuoco."
   },
   "655": {
     "name": "Corazza di Cartone",
-    "description": "Un pettorale di cartone dipinto."
+    "description": "Un pettorale di cartone dipinto. Attutisce i\ncolpi fisici."
   },
   "656": {
     "name": "Elmetto da Cantiere Standard",
-    "description": "Un normale elmetto da lavoro."
+    "description": "Un normale elmetto da lavoro. Resiste a Sacro."
   },
   "657": {
     "name": "Pentola da Commozione",
-    "description": "Un vecchio elmo da combattimento ammaccato."
+    "description": "Un vecchio elmo da combattimento ammaccato.\nResiste a Sacro."
   },
   "658": {
     "name": "Elmo a Cupola della Guardia",
-    "description": "Un elmo d'acciaio arrotondato da guardia."
+    "description": "Un elmo d'acciaio arrotondato da guardia.\nAffina l'istinto."
   },
   "659": {
     "name": "Elmo Antisommossa",
-    "description": "Un casco antisommossa con visiera."
+    "description": "Un casco antisommossa con visiera. Blocca\nCommozione Cerebrale."
   },
   "660": {
     "name": "Corazza della Guardia a Contratto",
-    "description": "Un pettorale base da sicurezza."
+    "description": "Un pettorale base da sicurezza. Attutisce la\nmagia."
   },
   "661": {
     "name": "Gilet Antisommossa Pesante",
-    "description": "Un pesante gilet antisommossa imbottito."
+    "description": "Un pesante gilet antisommossa imbottito.\nBlocca Bruciato."
   },
   "662": {
     "name": "Carapace Antisommossa Completo",
-    "description": "Un set completo di armatura antisommossa."
+    "description": "Un set completo di armatura antisommossa.\nBlocca Sanguinamento."
   },
   "663": {
     "name": "Guscio da Guerra Composito",
-    "description": "Una corazza composita a strati."
+    "description": "Una corazza composita a strati. Recupera un\npo' di salute."
   },
   "664": {
     "name": "Elmo della Sentinella",
-    "description": "Un pesante elmo da prima linea."
+    "description": "Un pesante elmo da prima linea. Resiste a\nTuono."
   },
   "665": {
     "name": "Elmo di Comando dell'Operatore",
-    "description": "Un elmo di comando rinforzato."
+    "description": "Un elmo di comando rinforzato. Rende piu\ndifficile colpirlo con la magia."
   },
   "666": {
     "name": "Assetto Ceramico da Trauma",
-    "description": "Un portapiastre in ceramica."
+    "description": "Un portapiastre in ceramica. Resiste a\nMaledetto."
   },
   "667": {
     "name": "Bacinetto del Cavaliere",
-    "description": "Un bacinetto d'acciaio a punta."
+    "description": "Un bacinetto d'acciaio a punta. Resiste a\nTuono."
   },
   "668": {
     "name": "Portapiastre da Trauma",
-    "description": "Un gilet piastrato antitrauma."
+    "description": "Un gilet piastrato antitrauma. Blocca Veleno."
   },
   "669": {
     "name": "Ramponi da Ghiaccio",
-    "description": "Pesanti ramponi da ghiaccio a punte."
+    "description": "Pesanti ramponi da ghiaccio a punte. Resiste a\nGhiaccio."
   },
   "670": {
     "name": "Stivali della Landa Gelata",
-    "description": "Pesanti stivali da guerra isolati."
+    "description": "Pesanti stivali da guerra isolati. Resiste a\nGhiaccio."
   },
   "671": {
     "name": "Tuta Protocollo Fortezza",
-    "description": "Una pesante tuta da difesa di bunker."
+    "description": "Una pesante tuta da difesa di bunker.\nAttutisce i colpi fisici."
   },
   "672": {
     "name": "Scarpe d'Arme del Rupestre",
-    "description": "Pesanti stivali di ferro per i sentieri di montagna."
+    "description": "Pesanti stivali di ferro per i sentieri di\nmontagna. Recupera un po' di salute."
   },
   "673": {
     "name": "Grande Elmo del Bastione",
-    "description": "Un grosso elmo da guerra d'acciaio."
+    "description": "Un grosso elmo da guerra d'acciaio. Blocca\nFascino."
   },
   "674": {
     "name": "Cotta ad Anelli Ribattuti",
-    "description": "Una cotta di anelli d'acciaio concatenati."
+    "description": "Una cotta di anelli d'acciaio concatenati.\nAttutisce i colpi fisici."
   },
   "675": {
     "name": "Stivali Denti di Ghiacciaio",
-    "description": "Stivali ramponati con punte di ferro."
+    "description": "Stivali ramponati con punte di ferro. Recupera\nun po' di salute."
   },
   "676": {
     "name": "Corazza da Clima Duro",
-    "description": "Un'armatura sigillata per i climi ostili."
+    "description": "Un'armatura sigillata per i climi ostili.\nBlocca Bruciato."
   },
   "677": {
     "name": "Mezza Armatura a Punte",
-    "description": "Mezza armatura d'acciaio di foggia gotica."
+    "description": "Mezza armatura d'acciaio di foggia gotica.\nResiste a Maledetto."
   },
   "678": {
     "name": "Elmo a Contrappeso",
-    "description": "Un elmo bilanciato con il paracollo."
+    "description": "Un elmo bilanciato con il paracollo. Recupera\nun po' di mana."
   },
   "679": {
     "name": "Imbracatura da Soccorso in Pendio",
-    "description": "Un'imbracatura da soccorso rinforzata con ganci."
+    "description": "Un'imbracatura da soccorso rinforzata con\nganci. Blocca Nausea."
   },
   "680": {
     "name": "Tuta Ignifuga",
-    "description": "Una piastra antincendio a tenuta termica."
+    "description": "Una piastra antincendio a tenuta termica.\nBlocca Sanguinamento."
   },
   "681": {
     "name": "Armatura Completa del Pellegrino",
-    "description": "Un'armatura completa da crociato."
+    "description": "Un'armatura completa da crociato. Attutisce la\nmagia."
   },
   "682": {
     "name": "Carapace Controfiamma",
-    "description": "Un guscio per il corpo resistente alle fiamme."
+    "description": "Un guscio per il corpo resistente alle fiamme.\nResiste a Fuoco."
   },
   "683": {
     "name": "Armatura Tessellata",
-    "description": "Armatura di piccole piastre quadrate d'acciaio."
+    "description": "Armatura di piccole piastre quadrate\nd'acciaio. Rende piu facile schivare."
   },
   "684": {
     "name": "Elmo Sfiatacenere",
-    "description": "Un elmo sigillato con i filtri per il fumo."
+    "description": "Un elmo sigillato con i filtri per il fumo.\nBlocca Veleno."
   },
   "685": {
     "name": "Tuta del Camminafornace",
-    "description": "Un'armatura a strati schermata dal calore."
+    "description": "Un'armatura a strati schermata dal calore.\nResiste a Fuoco."
   },
   "686": {
     "name": "Elmo delle Rapide",
-    "description": "Un elmo da combattimento sigillato e galleggiante."
+    "description": "Un elmo da combattimento sigillato e\ngalleggiante. Blocca Bagnato."
   },
   "687": {
     "name": "Armatura di Sostegno Vitale",
-    "description": "Un'armatura con il supporto vitale."
+    "description": "Un'armatura con il supporto vitale. Blocca\nBruciato."
   },
   "688": {
     "name": "Guscio da Alta Pressione",
-    "description": "Una corazza da immersione a tenuta di pressione."
+    "description": "Una corazza da immersione a tenuta di\npressione. Resiste a Pietra."
   },
   "689": {
     "name": "Telaio Antiurto",
-    "description": "Un'armatura a piastre che assorbe gli urti."
+    "description": "Un'armatura a piastre che assorbe gli urti.\nRecupera un po' di salute."
   },
   "690": {
     "name": "Assetto del Colosso Urbano",
-    "description": "Un ingombrante telaio da combattimento urbano."
+    "description": "Un ingombrante telaio da combattimento urbano.\nAttutisce la magia."
   },
   "691": {
     "name": "Assetto da Sonda Valanghe",
-    "description": "Un'imbracatura da soccorso con una sonda d'acciaio."
+    "description": "Un'imbracatura da soccorso con una sonda\nd'acciaio. Blocca Freddo e Congelare."
   },
   "692": {
     "name": "Gambali Termici da Pendio",
-    "description": "Gambali corazzati e isolati."
+    "description": "Gambali corazzati e isolati. Blocca Freddo e\nCongelare."
   },
   "693": {
     "name": "Assetto Spaccamacerie",
-    "description": "Un'imbracatura da scavo per i crolli."
+    "description": "Un'imbracatura da scavo per i crolli. Blocca\nFreddo e Congelare."
   },
   "694": {
     "name": "Elmo a Sella Corticale",
-    "description": "Un elmo da combattimento collegato ai nervi."
+    "description": "Un elmo da combattimento collegato ai nervi.\nBlocca Acceca."
   },
   "695": {
     "name": "Armatura dalla Vena d'Oro",
-    "description": "Piastra d'acciaio profilata d'oro."
+    "description": "Piastra d'acciaio profilata d'oro. Attutisce i\ncolpi fisici."
   },
   "696": {
     "name": "Elmo Radio da Vuoto",
-    "description": "Un elmo sigillato con il ripetitore vocale."
+    "description": "Un elmo sigillato con il ripetitore vocale.\nResiste a Pietra."
   },
   "697": {
     "name": "Elmo della Scheggia Caduta",
-    "description": "Un elmo incastonato di un frammento di stella caduta."
+    "description": "Un elmo incastonato di un frammento di stella\ncaduta. Resiste a Pietra."
   },
   "698": {
     "name": "Elmo da Battaglia Sovrapposto",
-    "description": "Un elmo con la visiera che si illumina."
+    "description": "Un elmo con la visiera che si illumina. Affina\nl'istinto."
   },
   "699": {
     "name": "Guscio della Frana",
-    "description": "Un guscio per il corpo rinforzato contro gli urti."
+    "description": "Un guscio per il corpo rinforzato contro gli\nurti. Blocca Freddo e Congelare."
   },
   "700": {
     "name": "Elmo del Dio della Guerra",
-    "description": "Un cupo elmo cerimoniale di divinità guerriera."
+    "description": "Un cupo elmo cerimoniale di divinità\nguerriera. Resiste a Tuono."
   },
   "701": {
     "name": "Tuta Vitale da Vuoto",
-    "description": "Una tuta pressurizzata a pieno supporto vitale."
+    "description": "Una tuta pressurizzata a pieno. Resiste a\nPietra e Fuoco."
   },
   "702": {
     "name": "Scafandro di Ferro",
-    "description": "Un'armatura meccanizzata da immersione profonda."
+    "description": "Un'armatura meccanizzata da immersione\nprofonda. Resiste a Ghiaccio."
   },
   "703": {
     "name": "Armatura Consacrata",
-    "description": "Sacra armatura da battaglia benedetta."
+    "description": "Sacra armatura da battaglia benedetta.\nRecupera un po' di salute."
   },
   "704": {
     "name": "Egida di Pelle di Wyrm",
-    "description": "Armatura forgiata da scaglie di drago."
+    "description": "Armatura forgiata da scaglie di drago. Resiste\na Fuoco."
   },
   "715": {
     "name": "<-- Equipment -->",
@@ -2701,99 +2701,99 @@
   },
   "716": {
     "name": "Coperchio Unto",
-    "description": "Un coperchio da cucina ammaccato usato come scudo."
+    "description": "Un coperchio da cucina ammaccato usato come\nscudo. Resiste a Pietra."
   },
   "717": {
     "name": "Ombrello dalle Stecche d'Osso",
-    "description": "Un ombrello scheletrico, stranamente solido."
+    "description": "Un ombrello scheletrico, stranamente solido.\nResiste a Maledetto."
   },
   "718": {
     "name": "Coperchio del Baule dei Giochi",
-    "description": "Il coperchio graffiato di una cassa di giocattoli."
+    "description": "Il coperchio graffiato di una cassa di\ngiocattoli. Rende piu facile schivare."
   },
   "719": {
     "name": "Cassa del Premio Misterioso",
-    "description": "Una scatola sigillata tenuta come riparo."
+    "description": "Una scatola sigillata tenuta come riparo.\nDevia i colpi critici."
   },
   "720": {
     "name": "Asse da Spazi Stretti",
-    "description": "Una corta asse da barricata per i vicoli."
+    "description": "Una corta asse da barricata per i vicoli.\nBlocca Presa."
   },
   "721": {
     "name": "Guardia da Vicolo",
-    "description": "Uno scudo da vicolo di metallo di scarto."
+    "description": "Uno scudo da vicolo di metallo di scarto.\nAttutisce i colpi fisici."
   },
   "722": {
     "name": "Baluardo di Assi Leggere",
-    "description": "Un'asse di legno leggera per ripararsi."
+    "description": "Un'asse di legno leggera per ripararsi. Devia\ni colpi critici."
   },
   "723": {
     "name": "Scudo Rotondo Bilanciato",
-    "description": "Un semplice scudo rotondo ben bilanciato."
+    "description": "Un semplice scudo rotondo ben bilanciato.\nBlocca Presa."
   },
   "724": {
     "name": "Telo Termoresistente",
-    "description": "Un foglio termico riflettente."
+    "description": "Un foglio termico riflettente. Resiste a\nVento."
   },
   "725": {
     "name": "Diffusore Cinetico",
-    "description": "Un'imbottitura che disperde la forza d'impatto."
+    "description": "Un'imbottitura che disperde la forza\nd'impatto. Blocca Sbilanciato."
   },
   "726": {
     "name": "Piastra Antistatica",
-    "description": "Uno scudo antiscarica messo a terra."
+    "description": "Uno scudo antiscarica messo a terra. Resiste a\nTuono."
   },
   "727": {
     "name": "Coperchio Chiodato",
-    "description": "Un coperchio della pattumiera irto di chiodi."
+    "description": "Un coperchio della pattumiera irto di chiodi.\nBlocca Sbilanciato."
   },
   "728": {
     "name": "Brocchiere di Coppa Ruota",
-    "description": "Un copriruota lucidato con la cinghia."
+    "description": "Un copriruota lucidato con la cinghia.\nAttutisce i colpi fisici."
   },
   "729": {
     "name": "Guardia di Risposta",
-    "description": "Uno scudo costruito per il contrattacco."
+    "description": "Uno scudo costruito per il contrattacco.\nResiste a Fisico."
   },
   "730": {
     "name": "Zaino da Gita",
-    "description": "Uno zaino leggero per le uscite brevi."
+    "description": "Uno zaino leggero per le uscite brevi.\nRecupera un po' di salute."
   },
   "731": {
     "name": "Bozzolo d'Emergenza",
-    "description": "Un guscio di sopravvivenza in cui avvolgersi."
+    "description": "Un guscio di sopravvivenza in cui avvolgersi.\nRecupera un po' di salute."
   },
   "732": {
     "name": "Randello di Cono Stradale",
-    "description": "Un pesante randello ricavato da un cono stradale."
+    "description": "Un pesante randello ricavato da un cono\nstradale. Blocca Guardia Rotta."
   },
   "733": {
     "name": "Clava Spergiura",
-    "description": "Una clava ottusa e molto usata."
+    "description": "Una clava ottusa e molto usata. Irrigidisce la\nguardia."
   },
   "734": {
     "name": "Teglia da Pizza Difensiva",
-    "description": "Una teglia rotonda d'acciaio usata come riparo."
+    "description": "Una teglia rotonda d'acciaio usata come\nriparo. A volte contrattacca."
   },
   "735": {
     "name": "Zaino del Vagabondo",
-    "description": "Uno zaino capiente da viaggio urbano."
+    "description": "Uno zaino capiente da viaggio urbano. Recupera\nun po' di mana."
   },
   "736": {
     "name": "Assetto di Sicurezza da Scalata",
-    "description": "Un'imbracatura anticaduta rinforzata."
+    "description": "Un'imbracatura anticaduta rinforzata. Resiste\na Fisico."
   },
   "737": {
     "name": "Accette di Tondino",
-    "description": "Due accette forgiate da ferri d'armatura."
+    "description": "Due accette forgiate da ferri d'armatura. A\nvolte contrattacca."
   },
   "738": {
     "name": "Brocchiere dello Schermidore",
-    "description": "Un piccolo brocchiere agile da maneggiare."
+    "description": "Un piccolo brocchiere agile da maneggiare.\nRende piu facile schivare."
   },
   "739": {
     "name": "Bracciale di Forza Protettiva",
-    "description": "Un bracciale intessuto di deboli protezioni."
+    "description": "Un bracciale intessuto di deboli protezioni.\nAumenta gli HP."
   },
   "740": {
     "name": "Egida Paravolt",
@@ -2801,35 +2801,35 @@
   },
   "741": {
     "name": "Difensore Sferzante",
-    "description": "Uno scudo-frusta flessibile."
+    "description": "Uno scudo-frusta flessibile. Rende piu facile\nschivare."
   },
   "742": {
     "name": "Ancora Dimensionale",
-    "description": "Un pesante amuleto che fissa chi lo porta."
+    "description": "Un pesante amuleto che fissa chi lo porta.\nAttutisce i colpi fisici."
   },
   "743": {
     "name": "Egida Radicante",
-    "description": "Uno scudo che radica chi lo impugna."
+    "description": "Uno scudo che radica chi lo impugna. Blocca\nStordire."
   },
   "744": {
     "name": "Manganello Trebbiatore",
-    "description": "Un correggiato da fattoria riadattato alla guerra."
+    "description": "Un correggiato da fattoria riadattato alla\nguerra. Blocca Ira."
   },
   "745": {
     "name": "Specchio della Sfortuna",
-    "description": "Un campo che devia la mala sorte."
+    "description": "Un campo che devia la mala sorte. Resiste a\nFisico."
   },
   "746": {
     "name": "Egida dello Spirito Sentinella",
-    "description": "Uno scudo legato a uno spirito guardiano."
+    "description": "Uno scudo legato a uno spirito guardiano.\nResiste a Fisico."
   },
   "747": {
     "name": "Egida della Vena Pura",
-    "description": "Un limpido scudo protettivo di cristallo."
+    "description": "Un limpido scudo protettivo di cristallo.\nBlocca Veleno, Paralisi e Stordire."
   },
   "748": {
     "name": "Il Codice Vivente",
-    "description": "Un grimorio fluttuante che si difende da solo."
+    "description": "Un grimorio fluttuante che si difende da solo.\nBlocca Sbilanciato."
   },
   "759": {
     "name": "<-- Shield -->",
@@ -2837,490 +2837,490 @@
   },
   "760": {
     "name": "Scudo Giocattolo di Plastica",
-    "description": "Uno scudo giocattolo di plastica sgargiante."
+    "description": "Uno scudo giocattolo di plastica sgargiante.\nRende piu facile schivare."
   },
   "761": {
     "name": "Scudo di Scena",
-    "description": "Un fragile scudo decorativo di scena."
+    "description": "Un fragile scudo decorativo di scena. Blocca\nPresa."
   },
   "762": {
     "name": "Scudo Standard da Pattuglia",
-    "description": "Un semplice scudo d'ordinanza da guardia."
+    "description": "Un semplice scudo d'ordinanza da guardia.\nBlocca Presa."
   },
   "763": {
     "name": "Scudo del Guardiano del Piazzale",
-    "description": "Uno scudo graffiato di lamiera."
+    "description": "Uno scudo graffiato di lamiera. Rende piu\nfacile schivare."
   },
   "764": {
     "name": "Barriera Trasparente",
-    "description": "Uno scudo antisommossa trasparente."
+    "description": "Uno scudo antisommossa trasparente. A volte\ncontrattacca."
   },
   "765": {
     "name": "Scudo con Feritoia",
-    "description": "Uno scudo balistico con la feritoia di mira."
+    "description": "Uno scudo balistico con la feritoia di mira.\nBlocca Sbilanciato."
   },
   "766": {
     "name": "Barriera Contieni-Folla",
-    "description": "Un largo scudo per trattenere la folla."
+    "description": "Un largo scudo per trattenere la folla.\nIrrigidisce la guardia."
   },
   "767": {
     "name": "Bastione Mutevole",
-    "description": "Uno scudo adattivo regolabile."
+    "description": "Uno scudo adattivo regolabile. Aumenta gli HP."
   },
   "768": {
     "name": "Scudo da Guerra a Mandorla",
-    "description": "Un classico scudo da guerra a mandorla."
+    "description": "Un classico scudo da guerra a mandorla.\nResiste a Fisico."
   },
   "769": {
     "name": "Egida del Passo Fantasma",
-    "description": "Uno scudo che sfarfalla quando è colpito."
+    "description": "Uno scudo che sfarfalla quando è colpito.\nBlocca Presa."
   },
   "770": {
     "name": "Scudo Torre della Roccaforte",
-    "description": "Un alto e pesante scudo torre."
+    "description": "Un alto e pesante scudo torre. Irrigidisce la\nguardia."
   },
   "771": {
     "name": "Scudo Torre Legionario",
-    "description": "Un largo scudo da guerra a incastro."
+    "description": "Un largo scudo da guerra a incastro. Blocca\nGuardia Rotta."
   },
   "772": {
     "name": "Baluardo del Convoglio",
-    "description": "Un robusto scudo torre da lunga percorrenza."
+    "description": "Un robusto scudo torre da lunga percorrenza.\nBlocca Presa."
   },
   "773": {
     "name": "Scudo del Sacro Sigillo",
-    "description": "Uno scudo segnato da un simbolo sacro."
+    "description": "Uno scudo segnato da un simbolo sacro. Resiste\na Sacro."
   },
   "774": {
     "name": "Scudo Sfasato",
-    "description": "Uno scudo che si dissolve a metà all'impatto."
+    "description": "Uno scudo che si dissolve a metà all'impatto.\nDebole a Fisico."
   },
   "775": {
     "name": "Scudo-Zaino Stagno",
-    "description": "Un ibrido scudo-zaino a tenuta d'acqua."
+    "description": "Un ibrido scudo-zaino a tenuta d'acqua. Blocca\nBagnato."
   },
   "776": {
     "name": "Scudo Protettivo Corticale",
-    "description": "Uno scudo legato alla mente di chi lo porta."
+    "description": "Uno scudo legato alla mente di chi lo porta.\nResiste a Fisico."
   },
   "777": {
     "name": "Barriera della Fucina di Mana",
-    "description": "Uno scudo che ronza di mana vincolato."
+    "description": "Uno scudo che ronza di mana vincolato. Blocca\nSbilanciato."
   },
   "778": {
     "name": "Scudo Impianto Audio",
-    "description": "Uno scudo attrezzato con vecchi altoparlanti."
+    "description": "Uno scudo attrezzato con vecchi altoparlanti.\nDebole a Fisico."
   },
   "779": {
     "name": "Scudo su Rotelle",
-    "description": "Uno scudo montato su ruote scorrevoli."
+    "description": "Uno scudo montato su ruote scorrevoli. Debole\na Fisico."
   },
   "780": {
     "name": "Egida Antica",
-    "description": "Un grande scudo antico e leggendario."
+    "description": "Un grande scudo antico e leggendario.\nIrrigidisce la guardia."
   },
   "781": {
     "name": "Il Codice del Guardiano",
-    "description": "Un grimorio vivente che protegge il suo custode."
+    "description": "Un grimorio vivente che protegge il suo\ncustode. Rende piu facile schivare."
   },
   "782": {
     "name": "Talismano di Vetro di Brace",
-    "description": "Una lente bruciacchiata su un anello d'ottone."
+    "description": "Una lente bruciacchiata su un anello d'ottone.\nResiste a Fuoco."
   },
   "783": {
     "name": "Talismano del Congelamento",
-    "description": "Un amuleto brinato di gelo perenne."
+    "description": "Un amuleto brinato di gelo perenne. Resiste a\nGhiaccio."
   },
   "784": {
     "name": "Ciondolo d'Ancora di Marea",
-    "description": "Un peso di piombo consunto su un laccio bagnato."
+    "description": "Un peso di piombo consunto su un laccio\nbagnato. Resiste a Acqua."
   },
   "785": {
     "name": "Spilla del Muro di Vento",
-    "description": "Una spilla a forma di ventaglio ripiegato."
+    "description": "Una spilla a forma di ventaglio ripiegato.\nResiste a Vento."
   },
   "786": {
     "name": "Distintivo Protettivo di Benzina",
-    "description": "Una spilla smaltata e unta."
+    "description": "Una spilla smaltata e unta. Resiste a Pietra."
   },
   "787": {
     "name": "Sigillo Santificato",
-    "description": "Un piccolo disco di osso lucidato."
+    "description": "Un piccolo disco di osso lucidato. Resiste a\nMaledetto."
   },
   "788": {
     "name": "Medaglione Spezzamalefici",
-    "description": "Un medaglione che non resta chiuso."
+    "description": "Un medaglione che non resta chiuso. Resiste a\nMaledetto e rimanda indietro gli incantesimi."
   },
   "789": {
     "name": "Camiciotto dei Trucchetti",
-    "description": "Una veste rattoppata da apprendista."
+    "description": "Una veste rattoppata. Rende piu facile\nschivare."
   },
   "790": {
     "name": "Scialle delle Leyline",
-    "description": "Uno scialle che ronza vicino ai tralicci."
+    "description": "Uno scialle che ronza vicino ai tralicci. Gli\nincantesimi costano di piu."
   },
   "791": {
     "name": "Cappuccio Conduttore",
-    "description": "Un cappuccio intessuto di capelli di rame."
+    "description": "Un cappuccio intessuto di capelli di rame.\nRecupera un po' di mana."
   },
   "792": {
     "name": "Gilet Serba-Incanti",
-    "description": "Un gilet dalle molte tasche ricucite."
+    "description": "Un gilet dalle molte tasche ricucite. Gli\nincantesimi costano di piu."
   },
   "793": {
     "name": "Manto dell'Augure",
-    "description": "Un manto ricamato di occhi chiusi."
+    "description": "Un manto ricamato di occhi chiusi. Gli\nincantesimi costano di piu."
   },
   "794": {
     "name": "Stola Necrotica",
-    "description": "Una stola fredda che sa di terra."
+    "description": "Una stola fredda che sa di terra. Resiste a\nMaledetto."
   },
   "795": {
     "name": "Cappuccio Filato di Sogno",
-    "description": "Un cappuccio che si sfoca ai bordi."
+    "description": "Un cappuccio che si sfoca ai. Schiva meglio."
   },
   "796": {
     "name": "Cintura del Geomante",
-    "description": "Una cintura pesante infilata di sassi di fiume."
+    "description": "Una cintura pesante infilata di. Attutisce i\ndanni del terreno e insegna un'abilita."
   },
   "797": {
     "name": "Insegne del Convocatore",
-    "description": "Vesti ornate coperte di segni d'evocazione."
+    "description": "Vesti ornate coperte di segni d'evocazione.\nGli incantesimi costano di piu."
   },
   "798": {
     "name": "Cappotto della Trama del Tempo",
-    "description": "Un cappotto in cui i fili non si posano mai."
+    "description": "Un cappotto in cui i fili non. Schiva meglio e\naccumula AP piu in fretta."
   },
   "799": {
     "name": "Grembiule da Triage",
-    "description": "Un grembiule macchiato dai molti lacci."
+    "description": "Un grembiule macchiato dai molti lacci. Cura\nmeglio e insegna un'abilita."
   },
   "800": {
     "name": "Fascia Risanante",
-    "description": "Un rotolo di benda che si annoda da solo."
+    "description": "Un rotolo di benda che si annoda da solo.\nRecupera un po' di salute e cura meglio."
   },
   "801": {
     "name": "Ciondolo del Seme di Vita",
-    "description": "Un baccello che non si secca mai del tutto."
+    "description": "Un baccello che non si secca mai del. Recupera\nun po' di salute e insegna un'abilita."
   },
   "802": {
     "name": "Borsa del Cerusico",
-    "description": "Una borsa di strumenti che tintinnano."
+    "description": "Una borsa di strumenti che tintinnano. Rende\ngli oggetti piu efficaci e insegna un'abilita."
   },
   "803": {
     "name": "Reliquiario della Panacea",
-    "description": "Un portafiale che ne tiene sempre una in più."
+    "description": "Un portafiale che ne tiene sempre una in più.\nCura meglio e insegna un'abilita."
   },
   "804": {
     "name": "Pantofole Felpate",
-    "description": "Scarpe morbide che non fanno rumore."
+    "description": "Scarpe morbide che non fanno rumore. Rende piu\nfacile schivare."
   },
   "805": {
     "name": "Cintura del Tagliaborse",
-    "description": "Una cintura foderata di ganci nascosti."
+    "description": "Una cintura foderata di ganci nascosti.\nRaddoppia l'oro trovato."
   },
   "806": {
     "name": "Gilet del Contrabbandiere",
-    "description": "Un gilet che nasconde più di quanto mostri."
+    "description": "Un gilet che nasconde più di quanto. Raddoppia\ngli oggetti lasciati e insegna un'abilita."
   },
   "807": {
     "name": "Guanti del Fabbro di Serrature",
-    "description": "Guanti sottili dai polpastrelli consumati."
+    "description": "Guanti sottili dai polpastrelli. Trova il\nvarco piu spesso e insegna un'abilita."
   },
   "808": {
     "name": "Mantello del Piede Fantasma",
-    "description": "Un mantello da cui l'occhio continua a scivolare."
+    "description": "Un mantello da cui l'occhio continua a\nscivolare. Rende piu facile schivare."
   },
   "809": {
     "name": "Fodera della Fortuna",
-    "description": "Un cappotto scialbo con la fodera rossa portafortuna."
+    "description": "Un cappotto scialbo con la fodera rossa.\nRaddoppia l'oro trovato."
   },
   "810": {
     "name": "Assetto del Cacciatore di Taglie",
-    "description": "Un'imbracatura pratica di cinghie e borse."
+    "description": "Un'imbracatura pratica di cinghie e borse.\nRende la mira piu ferma e insegna un'abilita."
   },
   "811": {
     "name": "Sudario dello Svanire",
-    "description": "Un velo di garza che sfarfalla nella luce."
+    "description": "Un velo di garza che sfarfalla nella luce.\nRende piu difficile colpirlo con la magia."
   },
   "812": {
     "name": "Gilet a Piastre di Baluardo",
-    "description": "Un gilet di piastre di scarto sovrapposte."
+    "description": "Un gilet di piastre di scarto. Attutisce i\ncolpi fisici e para piu saldamente."
   },
   "813": {
     "name": "Carapace Antisommossa",
-    "description": "Imbottitura pesante sotto un guscio duro."
+    "description": "Imbottitura pesante sotto un guscio duro.\nResiste a Fisico."
   },
   "814": {
     "name": "Bracciale di Contrapposizione",
-    "description": "Una protezione rinforzata per l'avambraccio."
+    "description": "Una protezione rinforzata per l'avambraccio. A\nvolte contrattacca."
   },
   "815": {
     "name": "Cintura del Campo Egida",
-    "description": "Una cintura dal bordo che luccica appena."
+    "description": "Una cintura dal bordo che luccica appena. Para\npiu saldamente."
   },
   "816": {
     "name": "Corazza Guardapietra",
-    "description": "Una corazza grigia fredda come una cantina."
+    "description": "Una corazza grigia fredda come una cantina.\nResiste a Pietra e attutisce i colpi fisici."
   },
   "817": {
     "name": "Imbracatura dell'Ultima Difesa",
-    "description": "Un'imbracatura malconcia retta da una vecchia fede."
+    "description": "Un'imbracatura malconcia retta da. Recupera un\npo' di salute e para piu saldamente."
   },
   "818": {
     "name": "Monocolo di Puntamento",
-    "description": "Una singola lente brulicante di indicatori."
+    "description": "Una singola lente brulicante di. Rende la mira\npiu ferma e trova il varco piu spesso."
   },
   "819": {
     "name": "Visiera Scansiona-Minacce",
-    "description": "Una visiera che dipinge la stanza di rosso."
+    "description": "Una visiera che dipinge la stanza di rosso.\nRende la mira piu ferma."
   },
   "820": {
     "name": "Collare Potenziariflessi",
-    "description": "Un collare che sussulta contro la pelle."
+    "description": "Un collare che sussulta contro la pelle. Rende\npiu facile schivare."
   },
   "821": {
     "name": "Tuta Smorzastatica",
-    "description": "Una tuta grigia che beve le scintille."
+    "description": "Una tuta grigia che beve le scintille. Resiste\na Tuono."
   },
   "822": {
     "name": "Giacca a Trama Refrigerante",
-    "description": "Una giacca venata di tubi gelidi."
+    "description": "Una giacca venata di tubi gelidi. Resiste a\nFuoco."
   },
   "823": {
     "name": "Cappuccio a Rete di Faraday",
-    "description": "Un cappuccio di metallo fine, un po' annerito."
+    "description": "Un cappuccio di metallo fine, un po'. Resiste\na Tuono e rimanda indietro gli incantesimi."
   },
   "824": {
     "name": "Corona Sovraccaricata",
-    "description": "Una corona calda al tatto."
+    "description": "Una corona calda al tatto. Accumula AP piu in\nfretta."
   },
   "825": {
     "name": "Cintura Stabilizzatrice di Fase",
-    "description": "Una cintura che ronza quando ti muovi in fretta."
+    "description": "Una cintura che ronza quando ti muovi in.\nRende piu difficile colpirlo con la magia."
   },
   "826": {
     "name": "Tunica di Muschio Intrecciato",
-    "description": "Una tunica che torna lentamente alla terra."
+    "description": "Una tunica che torna lentamente alla terra.\nRecupera un po' di salute."
   },
   "827": {
     "name": "Velo di Polline",
-    "description": "Un velo di garza spolverato d'oro."
+    "description": "Un velo di garza spolverato d'oro. Cura meglio\ne insegna un'abilita."
   },
   "828": {
     "name": "Manto di Rovi",
-    "description": "Un manto di liane spinose essiccate."
+    "description": "Un manto di liane spinose essiccate. Resiste a\nFisico."
   },
   "829": {
     "name": "Fascia della Pozza di Marea",
-    "description": "Una fascia umida che sa di sale."
+    "description": "Una fascia umida che sa di sale. Resiste a\nAcqua e recupera un po' di salute."
   },
   "830": {
     "name": "Pelliccia dell'Evocabestie",
-    "description": "Una pelliccia ruvida ancora tiepida."
+    "description": "Una pelliccia ruvida ancora tiepida. Insegna\nun'abilita."
   },
   "831": {
     "name": "Velo Palinsesto",
-    "description": "Un velo stampato di testo che sbiadisce."
+    "description": "Un velo stampato di testo che sbiadisce.\nInsegna un'abilita."
   },
   "832": {
     "name": "Berretto del Lettore di Presagi",
-    "description": "Un berretto cucito di campanellini."
+    "description": "Un berretto cucito di campanellini. Rende piu\nfacile schivare."
   },
   "833": {
     "name": "Fascia del Filo del Fato",
-    "description": "Una fascia rossa che tira da sola."
+    "description": "Una fascia rossa che tira da sola. Piu\nattacchi in apertura."
   },
   "834": {
     "name": "Medaglione dalle Tasche d'Anime",
-    "description": "Un medaglione greve di un peso invisibile."
+    "description": "Un medaglione greve di un peso invisibile.\nResiste a Maledetto e insegna un'abilita."
   },
   "835": {
     "name": "Visiera dell'Occhio Aggiornato",
-    "description": "Una visiera che scorre di vecchie notizie."
+    "description": "Una visiera che scorre di vecchie notizie.\nRende la mira piu ferma e insegna un'abilita."
   },
   "836": {
     "name": "Manto della Piccola Apocalisse",
-    "description": "Un manto carbonizzato che non si raffredda mai."
+    "description": "Un manto carbonizzato. Resiste a Fuoco."
   },
   "837": {
     "name": "Paramenti del Marciume Quieto",
-    "description": "Vesti morbide di una decomposizione paziente."
+    "description": "Resiste a Maledetto e recupera un po' di\nsalute."
   },
   "838": {
     "name": "Insegne della Mano Aperta",
-    "description": "Vesti semplici che paiono stranamente generose."
+    "description": "Gli incantesimi costano di piu."
   },
   "839": {
     "name": "Corona degli Anni in Prestito",
-    "description": "Una corona che invecchia chi la porta."
+    "description": "Una corona che invecchia chi. Recupera MP e\naccumula AP piu in fretta."
   },
   "840": {
     "name": "Sudario del Coro Invisibile",
-    "description": "Un sudario che sembra mormorare."
+    "description": "Un sudario che sembra mormorare. Resiste a\nSacro."
   },
   "841": {
     "name": "Cappotto dalle Mille Tasche",
-    "description": "Un cappotto che nasconde sempre qualcosa."
+    "description": "Un cappotto che nasconde. Raddoppia gli\noggetti lasciati."
   },
   "842": {
     "name": "Aureola del Decreto Finale",
-    "description": "Un anello di luce fredda e certa."
+    "description": "Un anello di luce fredda e certa. Attira piu\nattacchi e para piu saldamente."
   },
   "843": {
     "name": "Egida del Re Annegato",
-    "description": "Armatura incrostata di cirripedi, fredda come l'abisso."
+    "description": "Armatura incrostata di cirripedi, fredda come.\nResiste a Acqua."
   },
   "844": {
     "name": "Bracciale delle Mani Ferme",
-    "description": "Un bracciale aderente di cuoio cucito."
+    "description": "Un bracciale aderente di cuoio cucito. Rende\nla mira piu ferma e trova il varco piu spesso."
   },
   "845": {
     "name": "Cappotto Trapuntato di Frontiera",
-    "description": "Un cappotto spesso contro il freddo."
+    "description": "Un cappotto spesso contro il freddo. Resiste a\nGhiaccio e attutisce i danni del terreno."
   },
   "846": {
     "name": "Gorgiera del Cantore",
-    "description": "Una protezione per la gola di feltro morbido."
+    "description": "Una protezione per la gola di feltro morbido.\nGli incantesimi costano di piu."
   },
   "847": {
     "name": "Veste Semplice del Pellegrino",
-    "description": "Una semplice veste assottigliata dalle strade."
+    "description": "Una semplice veste assottigliata dalle strade.\nAttutisce i danni del terreno."
   },
   "848": {
     "name": "Cappotto dell'Acchiappatopi",
-    "description": "Un cappotto lercio che sa di catrame."
+    "description": "Un cappotto lercio che sa di catrame. Blocca\nFascino e insegna un'abilita."
   },
   "849": {
     "name": "Grembiule del Vetraio",
-    "description": "Un grembiule di cuoio bruciacchiato."
+    "description": "Un grembiule di cuoio bruciacchiato. Resiste a\nFuoco."
   },
   "850": {
     "name": "Imbracatura del Palombaro",
-    "description": "Un'imbracatura di cinghie e valvole d'ottone."
+    "description": "Un'imbracatura di cinghie e valvole d'ottone.\nResiste a Acqua."
   },
   "851": {
     "name": "Gilet del Geometra",
-    "description": "Un gilet carico di piccoli strumenti."
+    "description": "Un gilet carico di piccoli strumenti. Rende la\nmira piu ferma e insegna un'abilita."
   },
   "852": {
     "name": "Mantello della Ronda Notturna",
-    "description": "Un mantello scuro che sa di olio di lampada."
+    "description": "Un mantello scuro che sa di olio di lampada.\nBlocca Confusione."
   },
   "853": {
     "name": "Fasce del Monaco di Brace",
-    "description": "Fasciature grigio cenere, calde al tatto."
+    "description": "Fasciature grigio cenere. Resiste a Fuoco e\naccumula AP piu in fretta."
   },
   "854": {
     "name": "Maschera Specchio",
-    "description": "Una maschera lucidata che non mostra volto."
+    "description": "Una maschera lucidata che non mostra. Rimanda\nindietro gli incantesimi e insegna un'abilita."
   },
   "855": {
     "name": "Cavigliera del Cerchio di Sale",
-    "description": "Una cavigliera infilata di grani bianchi."
+    "description": "Una cavigliera infilata di grani bianchi.\nResiste a Maledetto e blocca Confusione."
   },
   "856": {
     "name": "Guanti di Limatura di Ferro",
-    "description": "Guanti spolverati di metallo che si attacca."
+    "description": "Guanti spolverati di metallo che si attacca.\nResiste a Tuono e trova il varco piu spesso."
   },
   "857": {
     "name": "Velo Intriso di Sole",
-    "description": "Un velo luminoso che trattiene il calore del giorno."
+    "description": "Un velo luminoso che trattiene il calore del\ngiorno. Resiste a Sacro."
   },
   "858": {
     "name": "Bandana Intrisa di Salamoia",
-    "description": "Una bandana rigida incrostata di sale."
+    "description": "Una bandana rigida incrostata di sale. Resiste\na Fuoco."
   },
   "859": {
     "name": "Sacchetto di Polvere di Tomba",
-    "description": "Un sacchetto di polvere grigio pallido."
+    "description": "Un sacchetto di polvere grigio pallido.\nResiste a Maledetto."
   },
   "860": {
     "name": "Ciondolo di Vetro di Tempesta",
-    "description": "Una fiala di liquido in cui infuria una tempesta."
+    "description": "Una fiala di liquido in cui infuria una\ntempesta. Resiste a Tuono."
   },
   "861": {
     "name": "Scialle Antibrace",
-    "description": "Un pesante scialle che non prende fuoco."
+    "description": "Un pesante scialle che non prende fuoco.\nResiste a Fuoco."
   },
   "862": {
     "name": "Abito del Giullare",
-    "description": "Un chiassoso patchwork di colori discordi."
+    "description": "Un chiassoso patchwork di colori discordi.\nRende piu facile schivare."
   },
   "863": {
     "name": "Tuta a Palloncino",
-    "description": "Una tuta imbottita assurdamente gonfia."
+    "description": "Una tuta imbottita. Resiste a Fisico e\nattutisce i danni del terreno."
   },
   "864": {
     "name": "Occhiali da Discoteca",
-    "description": "Occhiali a specchio che spargono la luce."
+    "description": "Occhiali a specchio che spargono la luce.\nInsegna un'abilita."
   },
   "865": {
     "name": "Occhialoni Brilli",
-    "description": "Occhialoni che deformano tutta la stanza."
+    "description": "Occhialoni che deformano tutta la stanza.\nBlocca Confusione e insegna un'abilita."
   },
   "866": {
     "name": "Fascia del Principe Mercante",
-    "description": "Una ricca fascia carica di monete."
+    "description": "Una ricca fascia carica di monete. Raddoppia\nl'oro trovato e insegna un'abilita."
   },
   "867": {
     "name": "Cappotto dell'Esattore",
-    "description": "Un cappotto severo dai bottoni d'ottone."
+    "description": "Un cappotto severo dai bottoni d'ottone.\nRaddoppia l'oro trovato e insegna un'abilita."
   },
   "868": {
     "name": "Anello con Sigillo di Gilda",
-    "description": "Un anello con sigillo d'oro consumato."
+    "description": "Un anello con sigillo d'oro consumato. Impara\npiu in fretta."
   },
   "869": {
     "name": "Distintivo Semplice del Cittadino",
-    "description": "Una modesta spilla di stagno pressato."
+    "description": "Una modesta spilla di stagno pressato. Meno\nbattaglie casuali."
   },
   "870": {
     "name": "Sudario della Crisalide",
-    "description": "Un sudario ceroso che pulsa appena."
+    "description": "Un sudario ceroso che pulsa appena. Recupera\nun po' di salute e insegna un'abilita."
   },
   "871": {
     "name": "Fascia della Seconda Pelle",
-    "description": "Una fascia che calza un po' troppo bene."
+    "description": "Una fascia che calza un po' troppo bene. Rende\npiu facile schivare."
   },
   "872": {
     "name": "Manto del Mutagenere",
-    "description": "Un manto cangiante dalla tinta mutevole."
+    "description": "Un manto cangiante dalla tinta mutevole.\nInsegna un'abilita."
   },
   "873": {
     "name": "Imbracatura del Protesista",
-    "description": "Un'imbracatura costellata di innesti."
+    "description": "Un'imbracatura costellata di innesti. Blocca\nBruciato."
   },
   "874": {
     "name": "Corazza di Carbone d'Ossa",
-    "description": "Armatura di osso annerito e fuso."
+    "description": "Armatura di osso annerito e fuso. Resiste a\nMaledetto."
   },
   "875": {
     "name": "Cappuccio di Seta Spettrale",
-    "description": "Un cappuccio tessuto di filo grigio e freddo."
+    "description": "Un cappuccio tessuto. Resiste a Maledetto."
   },
   "876": {
     "name": "Manopola Mieti-Anime",
-    "description": "Una manopola artigliata che beve il calore."
+    "description": "Una manopola artigliata che beve il calore. A\nvolte contrattacca."
   },
   "877": {
     "name": "Amuleto della Spoglia Immortale",
-    "description": "Un amuleto avvolto, caldo come un battito."
+    "description": "Un amuleto avvolto, caldo come un. Recupera un\npo' di salute e insegna un'abilita."
   },
   "878": {
     "name": "Diadema della Porta del Lich",
-    "description": "Un diadema tanto freddo da bruciare."
+    "description": "Un diadema tanto freddo da bruciare. Resiste a\nMaledetto e recupera un po' di mana."
   },
   "879": {
     "name": "Manto della Gran Carovana",
-    "description": "Un manto consumato dai viaggi in molte terre."
+    "description": "Un manto consumato dai. Meno battaglie\ncasuali."
   },
   "880": {
     "name": "Cintura del Sisma del Mondo",
-    "description": "Una cintura pesante che trema appena."
+    "description": "Una cintura pesante che trema appena. Resiste\na Pietra e insegna un'abilita."
   },
   "881": {
     "name": "Velo dell'Apoteosi",
-    "description": "Un velo di luce che non nasconde nulla."
+    "description": "Un velo di luce che non nasconde. Resiste a\nSacro e recupera un po' di mana."
   }
 }

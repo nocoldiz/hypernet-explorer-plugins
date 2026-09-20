@@ -1070,6 +1070,87 @@
         ConfigManager.save();
     }
 
+    //-------------------------------------------------------------------------
+    // Suggested models
+    //-------------------------------------------------------------------------
+    // Nothing here is bundled: the row can only list what is already on disk,
+    // so the right page of the setting doubles as a shopping list. Every entry
+    // is a GGUF repository on Hugging Face, with the memory the quantisation
+    // named in the entry actually wants while it runs. Clicking one opens its
+    // page in the player's own browser; the file downloaded from there goes in
+    // the models folder, whose path is printed alongside.
+    //
+    // The AI Dungeon 2 finetune is kept at the top: it is the model every
+    // prompt in this plugin was written against, and the smallest of the lot.
+    const LLM_CATALOGUE = [
+        { key: 'aidungeon', mem: '1 GB', tier: 'story', match: /aidungeon|gpt-?2/i,
+          url: 'https://huggingface.co/lukasstraub2/gpt2-aidungeon2-gguf' },
+        { key: 'smollm', mem: '1 GB', tier: 'tiny', match: /smollm/i,
+          url: 'https://huggingface.co/bartowski/SmolLM2-360M-Instruct-GGUF' },
+        { key: 'qwen15b', mem: '2 GB', tier: 'small', match: /qwen[\w.]*?[-_]?1[._]5b/i,
+          url: 'https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF' },
+        { key: 'llama32', mem: '3 GB', tier: 'small', match: /llama-?3\.?2/i,
+          url: 'https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF' },
+        { key: 'mistral7b', mem: '5 GB', tier: 'large', match: /mistral/i,
+          url: 'https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF' },
+        { key: 'qwen7b', mem: '5 GB', tier: 'large', match: /qwen[\w.]*?[-_]?7b/i,
+          url: 'https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF' }
+    ];
+
+    // A plain window.open under NW.js spawns a bare window with no address bar,
+    // so the link is handed to the browser the player actually uses. Every
+    // route is guarded: failing to open a page must never throw out of a click.
+    function openModelPage(url) {
+        if (!url) return;
+        try {
+            if (typeof nw !== 'undefined' && nw.Shell && nw.Shell.openExternal) {
+                nw.Shell.openExternal(url);
+                return;
+            }
+        } catch (e) { /* not running under NW.js */ }
+        try {
+            if (typeof require === 'function') {
+                const gui = require('nw.gui');
+                if (gui && gui.Shell && gui.Shell.openExternal) {
+                    gui.Shell.openExternal(url);
+                    return;
+                }
+            }
+        } catch (e) { /* no nw.gui either */ }
+        try { window.open(url, '_blank'); }
+        catch (e) { console.warn(`[${pluginName}] Could not open ${url}`, e); }
+    }
+    function escapeHtml(text) {
+        return String(text).replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
+    // The right page of the setting: where the files go, how many are there,
+    // and the catalogue to fetch one from.
+    function llmInspectExtra() {
+        const installed = listGgufModels();
+        const folder = NodeIO ? modelsDir() : T('Markov.llm.folderUnknown');
+        const lines = [
+            `<div class="inspect-bullet-item">${escapeHtml(T('Markov.llm.folderNote', { folder }))}</div>`
+        ];
+        // One model on disk is simply used. Several, and the row is a choice,
+        // so say so rather than leaving the player to discover the arrows.
+        if (installed.length > 1) {
+            lines.push(`<div class="inspect-bullet-item opt-note">${escapeHtml(T('Markov.llm.chooseNote', { count: installed.length }))}</div>`);
+        } else if (installed.length === 0) {
+            lines.push(`<div class="inspect-bullet-item">${escapeHtml(T('Markov.llm.noneNote'))}</div>`);
+        }
+        const rows = LLM_CATALOGUE.map(entry => `
+            <div class="inspect-spec-row llm-model-link" onclick="window.MarkovLLM.openModelPage('${entry.url}')">
+                <span class="inspect-spec-label">${escapeHtml(T('Markov.llm.models.' + entry.key))}</span>
+                <span class="inspect-spec-value">${escapeHtml(T('Markov.llm.memory', { memory: entry.mem }))}</span>
+            </div>`).join('');
+        return `<div class="inspect-section-title">${escapeHtml(T('Markov.llm.catalogueTitle'))}</div>`
+            + lines.join('') + rows
+            + `<div class="inspect-bullet-item">${escapeHtml(T('Markov.llm.catalogueHint'))}</div>`;
+    }
+
     if (window.GameOptions) {
         window.GameOptions.registerOption(LLM_SYMBOL,
             () => T('GameOptions.label.markovLlmModel'),
@@ -1080,6 +1161,10 @@
             function () { cycleLlmOption(1); },
             function () { cycleLlmOption(-1); }
         );
+    }
+
+    if (window.GameOptions && window.GameOptions.registerInspectExtra) {
+        window.GameOptions.registerInspectExtra(LLM_SYMBOL, llmInspectExtra);
     }
 
     //-------------------------------------------------------------------------
@@ -1582,19 +1667,157 @@
         return sentences.slice(start, start + count).join(' ');
     }
 
+    //-------------------------------------------------------------------------
+    // How much the picked model is told
+    //-------------------------------------------------------------------------
+    // The same conversation is worth a different prompt depending on what is
+    // answering it. A 7B instruct model holds a page of who-knows-what about a
+    // person, the place, the date and the weather and still answers in
+    // character; a 360M one handed the same page answers about the page. So the
+    // caller always builds the WHOLE context and this decides how much of it is
+    // actually sent, how long the sheets may run, and which register the style
+    // line asks for.
+    //
+    // A model named in the catalogue is recognised outright. Anything else is
+    // read off its file name (the parameter count publishers put there) and,
+    // failing that, off the size of the file on disk. A model nothing is known
+    // about gets the middle setting, which is the safe one.
+    const LLM_PROFILES = {
+        // A plain completion model: the whole context has to fit in a scenario
+        // it continues from, so it stays short whatever it is.
+        story:    { facts: 6,  sheet: 220, world: 200, style: 'chatStyle' },
+        tiny:     { facts: 4,  sheet: 120, world: 120, style: 'chatStyleBrief' },
+        standard: { facts: 8,  sheet: 260, world: 240, style: 'chatStyle' },
+        large:    { facts: 14, sheet: 600, world: 520, style: 'chatStyleRich' }
+    };
+    // 'small' is the published name of the middle band; it is the same setting.
+    LLM_PROFILES.small = LLM_PROFILES.standard;
+
+    // Parameter counts as the publishers write them: 360M, 1.5B, 7b, 8x7B.
+    function llmTierFromName(name) {
+        const match = /(\d+(?:[._]\d+)?)\s*([mb])\b/i.exec(String(name).replace(/[-_]/g, ' '));
+        if (!match) return '';
+        const count = parseFloat(match[1].replace('_', '.'));
+        const billions = match[2].toLowerCase() === 'b' ? count : count / 1000;
+        if (!isFinite(billions) || billions <= 0) return '';
+        return billions < 0.8 ? 'tiny' : billions < 5 ? 'small' : 'large';
+    }
+
+    function llmTierFromSize(name) {
+        if (!NodeIO) return '';
+        try {
+            const bytes = NodeIO.fs.statSync(NodeIO.path.join(modelsDir(), name)).size;
+            return bytes < 700e6 ? 'tiny' : bytes < 3.2e9 ? 'small' : 'large';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    const llmProfileCache = new Map();
+    // { key, tier, facts, sheet, world, style, chat } for a model file name.
+    // key is the catalogue entry it was recognised as, or '' for a stranger.
+    function llmModelProfile(name) {
+        const model = name || selectedGgufModel();
+        if (!model) return Object.assign({ key: '', tier: 'standard', chat: false }, LLM_PROFILES.standard);
+        if (llmProfileCache.has(model)) return llmProfileCache.get(model);
+        const known = LLM_CATALOGUE.find(entry => entry.match && entry.match.test(model));
+        const chat = modelIsChat(model);
+        // A completion model is prompted as a story whatever its size, so that
+        // shape wins over the bands read off the name.
+        const tier = !chat ? 'story'
+            : (known && known.tier !== 'story' ? known.tier : '')
+            || llmTierFromName(model)
+            || llmTierFromSize(model)
+            || 'standard';
+        const profile = Object.assign(
+            { key: known ? known.key : '', tier: tier, chat: chat },
+            LLM_PROFILES[tier] || LLM_PROFILES.standard);
+        llmProfileCache.set(model, profile);
+        return profile;
+    }
+
+    // The standing brief: what anybody alive in this world knows without being
+    // told, and what a model trained on our own one would otherwise get wrong
+    // (the year, the currency, the hypernet, that magic is a trade like any
+    // other). It goes into EVERY conversation, ahead of anything about the
+    // people in it, because a line spoken in the wrong century is wrong however
+    // well it is written.
+    //
+    // The lines live in the i18n bank so they are translated with everything
+    // else; how many of them are sent is the model's business, like the rest of
+    // the context: a small model handed the whole brief answers with the brief.
+    const LLM_LORE_LINES = { story: 3, tiny: 2, standard: 4, small: 4, large: 99 };
+
+    function llmWorldLore(profile) {
+        const lines = T.list ? (T.list('Markov.llm.lore') || []) : [];
+        if (!lines.length) return '';
+        return lines.slice(0, LLM_LORE_LINES[profile.tier] || 4).join(' ');
+    }
+
+    // One fact, cut to the room this model has for it. Cutting is done on a
+    // sentence boundary where there is one, so a sheet never ends mid word.
+    function llmTrim(text, limit) {
+        const line = String(text || '').trim();
+        if (!limit || line.length <= limit) return line;
+        const cut = line.slice(0, limit);
+        const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('; '));
+        return (stop > limit * 0.5 ? cut.slice(0, stop + 1) : cut.trim()) + '…';
+    }
+
+    // Everything known about a conversation, in the order it matters, each
+    // fact already cut to the room this model has for it. Both prompt shapes
+    // are built out of this one list: who is being played, who is in front of
+    // them, where the two stand, what has just happened, then the world around
+    // them. A model with a small budget simply gets the front of the list.
+    //
+    // Nothing here is gathered by this plugin: the caller (the Empathize panel,
+    // or window.NPCEmpathize.conversationContext for everybody else) knows the
+    // person, the party and the world, and hands them over as text.
+    function llmContextFacts(spec, profile) {
+        const npc = spec.npcName || T('Markov.unknownName');
+        const speaker = String(spec.speakerName || '').trim();
+        const facts = [
+            spec.npcBio ? T('Markov.llm.chatAbout', { bio: llmTrim(spec.npcBio, profile.sheet) }) : '',
+            spec.npcSheet ? T('Markov.llm.chatSheet', { npc: npc, sheet: llmTrim(spec.npcSheet, profile.sheet) }) : '',
+            speaker ? T('Markov.llm.chatSpeaker', { speaker: speaker }) : '',
+            spec.speakerSheet
+                ? T('Markov.llm.chatSpeakerSheet', {
+                    speaker: speaker || T('Markov.unknownName'),
+                    sheet: llmTrim(spec.speakerSheet, profile.sheet) })
+                : '',
+            spec.relation ? T('Markov.llm.chatRelation', { relation: llmTrim(spec.relation, profile.sheet) }) : '',
+            spec.situation ? T('Markov.llm.chatSituation', { situation: llmTrim(spec.situation, profile.sheet) }) : '',
+            // Where they are answering FROM. Usually here, in which case there
+            // is nothing to say; the messenger window is the case where there
+            // is, because the person on the other end of it is somewhere else
+            // in the world and the line has to sound like it.
+            spec.whereabouts
+                ? T('Markov.llm.chatWhereabouts', { npc: npc, where: llmTrim(spec.whereabouts, profile.world) })
+                : '',
+            // The life this person has lived, the company standing with them
+            // and the state of the world: the first things dropped when the
+            // model is small, because a line can be spoken without them.
+            spec.npcLife ? T('Markov.llm.chatLife', { npc: npc, life: llmTrim(spec.npcLife, profile.sheet) }) : '',
+            spec.party ? T('Markov.llm.chatParty', { party: llmTrim(spec.party, profile.world) }) : '',
+            spec.world ? T('Markov.llm.chatWorld', { world: llmTrim(spec.world, profile.world) }) : '',
+            spec.news ? T('Markov.llm.chatNews', { news: llmTrim(spec.news, profile.world) }) : ''
+        ].filter(Boolean);
+        return facts.slice(0, profile.facts);
+    }
+
     // Scenario, blank line, action line. The model continues from there.
     function llmBuildPrompt(spec) {
+        const profile = llmModelProfile();
         const lines = [];
         const place = $gameMap && $gameMap.displayName ? $gameMap.displayName() : '';
         if (place) lines.push(T('Markov.llm.place', { place: place }));
         if (spec.npcName) lines.push(T('Markov.llm.withNpc', { npc: spec.npcName }));
+        const lore = llmWorldLore(profile);
+        if (lore) lines.push(lore);
         // A completion model has no system turn to be told any of this in, so
-        // the two sheets go into the scenario itself, which is the only place
-        // it reads anything.
-        if (spec.npcSheet) lines.push(T('Markov.llm.chatSheet', { npc: spec.npcName || T('Markov.unknownName'), sheet: spec.npcSheet }));
-        if (spec.speakerSheet) lines.push(T('Markov.llm.chatSpeakerSheet', { speaker: spec.speakerName || T('Markov.unknownName'), sheet: spec.speakerSheet }));
-        if (spec.relation) lines.push(T('Markov.llm.chatRelation', { relation: spec.relation }));
-        if (spec.situation) lines.push(T('Markov.llm.chatSituation', { situation: spec.situation }));
+        // the facts go into the scenario itself, which is the only place it
+        // reads anything, and the scenario is kept short whatever it holds.
+        lines.push.apply(lines, llmContextFacts(spec, profile));
         const sample = llmSampleSentences(spec.dbText, 4);
         if (sample) lines.push(sample);
         const scenario = lines.join(' ').slice(0, LLM_SCENARIO_CHARS);
@@ -1670,29 +1893,33 @@
     function llmChatMessages(spec) {
         const npc = spec.npcName || T('Markov.unknownName');
         const place = $gameMap && $gameMap.displayName ? $gameMap.displayName() : '';
-        const sample = llmSampleSentences(spec.dbText, 3);
+        const profile = llmModelProfile();
+        // A small model is handed the sample of the game's own prose only when
+        // it has the room for it: it is flavour, and it is the first thing that
+        // crowds out the facts.
+        const sample = profile.facts > 4 ? llmSampleSentences(spec.dbText, 3) : '';
         // Who is standing in front of the model matters as much as who it is
         // playing: the answer is written TO that person, in the register their
         // own sheet asks for. Both sheets are the caller's, built out of
         // whatever the game knows for certain about each of the two.
-        const speaker = String(spec.speakerName || '').trim();
-        const system = [
-            T('Markov.llm.chatSystem', { npc: npc }),
-            spec.npcBio ? T('Markov.llm.chatAbout', { bio: spec.npcBio }) : '',
-            spec.npcSheet ? T('Markov.llm.chatSheet', { npc: npc, sheet: spec.npcSheet }) : '',
-            speaker ? T('Markov.llm.chatSpeaker', { speaker: speaker }) : '',
-            spec.speakerSheet
-                ? T('Markov.llm.chatSpeakerSheet', {
-                    speaker: speaker || T('Markov.unknownName'), sheet: spec.speakerSheet })
-                : '',
-            spec.relation ? T('Markov.llm.chatRelation', { relation: spec.relation }) : '',
-            spec.situation ? T('Markov.llm.chatSituation', { situation: spec.situation }) : '',
-            place ? T('Markov.llm.chatPlace', { place: place }) : '',
-            sample ? T('Markov.llm.chatFlavour', { text: sample }) : '',
-            T('Markov.llm.chatStyle')
-        ].filter(Boolean).join(' ');
+        const lore = llmWorldLore(profile);
+        const system = [T('Markov.llm.chatSystem', { npc: npc })]
+            .concat(lore ? [T('Markov.llm.chatLore', { lore: lore })] : [])
+            .concat(llmContextFacts(spec, profile))
+            .concat([
+                place ? T('Markov.llm.chatPlace', { place: place }) : '',
+                sample ? T('Markov.llm.chatFlavour', { text: sample }) : '',
+                // The register the answer is asked for in is the model's own: a
+                // small one is told to keep it to a sentence and nothing else,
+                // a large one is trusted with the whole brief.
+                T('Markov.llm.' + profile.style)
+            ])
+            .filter(Boolean).join(' ');
         const messages = [{ role: 'system', content: system }];
-        for (const turn of (spec.history || []).slice(-LLM_CHAT_HISTORY)) {
+        // A small model loses the thread of a long backlog, so it is handed
+        // fewer turns of it than a large one.
+        const depth = profile.facts > 4 ? LLM_CHAT_HISTORY : 2;
+        for (const turn of (spec.history || []).slice(-depth)) {
             const text = String((turn && turn.text) || '').trim();
             if (!text) continue;
             messages.push({ role: turn.role === 'npc' ? 'assistant' : 'user', content: text });
@@ -1948,6 +2175,14 @@
         warmUp: () => { if (llmEnabled()) LlamaServer.ensure(selectedGgufModel()); },
         listModels: listGgufModels,
         rescan: rescanGgufModels,
+        // The suggested models on the right page of the setting: the catalogue
+        // itself, the panel built from it, and the click that opens a page.
+        catalogue: LLM_CATALOGUE,
+        // How much the picked model is told, and what it was recognised as.
+        // Read by callers that would rather not build context nobody will see.
+        promptProfile: llmModelProfile,
+        inspectExtra: llmInspectExtra,
+        openModelPage,
         stopServer: () => LlamaServer.stop(),
         // Which llama.cpp server this machine would run, and which release
         // archive it would fetch if it had none. Read by the debug console
@@ -1997,8 +2232,14 @@
         } catch (error) {
 
             // Show an error message in-game
-            $gameMessage.add(T('Markov.error', { message: error.message.split('] ')[1] }));
-            $gameMessage.add(T('Markov.checkParams'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.report([
+                T('Markov.error', { message: error.message.split('] ')[1] }),
+                T('Markov.checkParams')
+              ], {
+                severity: 'warning'
+              });
+            }
             return;
         }
 
@@ -2156,7 +2397,11 @@
         const selectedDatabases = [];
         const dbs = getAllTextDatabases();
         if (dbs.length === 0) {
-            $gameMessage.add(T('Markov.noDatabases'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('Markov.noDatabases'), {
+                severity: 'warning'
+              });
+            }
             return;
         }
 
@@ -2254,7 +2499,11 @@
         try {
             generated = generateMarkovTextForNPC(npcName);
         } catch (error) {
-            $gameMessage.add(T('Markov.error', { message: error.message.split('] ')[1] || error.message }));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('Markov.error', { message: error.message.split('] ')[1] || error.message }), {
+                severity: 'warning'
+              });
+            }
             return;
         }
 
@@ -2299,8 +2548,14 @@
 
             // Show an error message in-game
             if (displayInMessage) {
-                $gameMessage.add(T('Markov.databaseMissing', { id: databaseId }));
-                $gameMessage.add(T('Markov.checkParams'));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.report([
+                    T('Markov.databaseMissing', { id: databaseId }),
+                    T('Markov.checkParams')
+                  ], {
+                    severity: 'warning'
+                  });
+                }
             }
             return;
         }
@@ -2346,7 +2601,9 @@
 
         // Display in message window if requested
         if (displayInMessage) {
+            window.skipLocalization = true;
             $gameMessage.add(generatedName);
+            window.skipLocalization = false;
         }
     });
 

@@ -2026,6 +2026,52 @@
   }
 
   // ==========================================================================
+  // The end of the world, and what a party can still be
+  // ==========================================================================
+  // Switch 199 ("EarthDestroyed"), raised the day Nibiru strikes - 21 December
+  // 2012. A world begun after that day has no Earth to begin ON: almost every
+  // scenario in the list starts the party somewhere that is not there any more
+  // - a train, a city, a lot, a camper parked in a street.
+  //
+  // Three survive it, and they are the only three offered from that day on:
+  //
+  //   origin_hypernet_explorer   a heap of parts and a terminal room, which is
+  //                              not on the surface of anything
+  //   origin_dungeon             the tower gate: the Omega Tower stands where
+  //                              Earth was and its stack goes on downwards
+  //   origin_patron_vault        nine cellars under a hatch, which outlived the
+  //                              square they were dug into
+  //
+  // This is the ONE place that list is written down. Anything that needs to
+  // know whether a scenario can still be begun asks survivingOrigins().
+  const SW_EARTH_LOST = 199;
+  const SURVIVING_ORIGINS = [
+    "origin_hypernet_explorer", "origin_dungeon", "origin_patron_vault",   // i18n-ignore  choice symbols
+  ];
+
+  function earthGone() {
+    try {
+      return !!(typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(SW_EARTH_LOST));
+    } catch (e) { return false; }
+  }
+
+  /** The scenario symbols that can still be begun, or null while all of them can. */
+  function survivingOrigins() {
+    return earthGone() ? SURVIVING_ORIGINS.slice() : null;
+  }
+
+  /** Cut a list of origin choices down to the ones that survive the impact. */
+  function filterOrigins(choices) {
+    const keep = survivingOrigins();
+    if (!keep) return choices;
+    const kept = (choices || []).filter((c) => c && keep.indexOf(c.symbol) >= 0);
+    // Never hand the wizard an empty board: a build with no patron roster and
+    // a world past the impact still has two scenarios, and if even those were
+    // ever filtered out the whole list is better than none.
+    return kept.length ? kept : choices;
+  }
+
+  // ==========================================================================
   // Patron Vault origin
   // ==========================================================================
   // The party wakes on Floor -1 of a patron's own vault, the nine hand-made
@@ -2057,11 +2103,33 @@
     }
   }
 
+  // Every number a line holds, in the order they were typed. A pair is written
+  // down a dozen different ways - "79,124", "79 124", "79-124", "79 / 124",
+  // "(79, 124)", "x79 y124", "79;124", a tab between them, full width digits
+  // pasted out of a chat window - and all of them are the same pair, so the
+  // separator is simply not read. A minus is a sign only where a number could
+  // start (nothing or a separator before it): "79-124" is two squares of the
+  // map, not minus one hundred and twenty four.
+  function parseCoordNumbers(text) {
+    const raw = String(text == null ? "" : text)
+      .replace(/[\uFF10-\uFF19]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+      .replace(/[\uFF0D\u2010-\u2015\u2212]/g, "-");
+    const out = [];
+    const re = /(-?)(\d+)/g;
+    let m;
+    while ((m = re.exec(raw))) {
+      const before = m.index > 0 ? raw[m.index - 1] : "";
+      const signed = !!m[1] && !/\d/.test(before);
+      out.push(Number((signed ? "-" : "") + m[2]));
+    }
+    return out;
+  }
+
   // "79,124", "79 124", "(79, 124)": whatever the player types, two numbers.
   function parseWorldSquare(text) {
-    const m = /(-?\d+)\D+(-?\d+)/.exec(String(text == null ? "" : text));
-    if (!m) return null;
-    return { x: Number(m[1]), y: Number(m[2]) };
+    const nums = parseCoordNumbers(text);
+    if (nums.length < 2) return null;
+    return { x: nums[0], y: nums[1] };
   }
 
   // The one answer to "are these the right coordinates": the square is right
@@ -2074,12 +2142,17 @@
   // `tileText` is optional: called without it, the square alone is checked,
   // which is what any caller that only wants to know whose square this is asks.
   function patronVaultSquareAt(text, tileText) {
+    const typed = parseCoordNumbers(text);
+    // All four numbers punched into the first line, which is how a patron who
+    // holds them written on one line types them: the last two are the tile.
+    const both = typed.length >= 4 && (tileText == null || String(tileText).trim() === "");
     const square = parseWorldSquare(text);
     if (!square || !patronVaultAvailable()) return null;
     const hatch = window.PatreonRewards.hatchTileAtWorld(square.x, square.y);
     if (!hatch) return null;
-    if (tileText != null && String(tileText).trim() !== "") {
-      const tile = parseWorldSquare(tileText);
+    const tileSource = both ? (typed[2] + "," + typed[3]) : tileText;
+    if (tileSource != null && String(tileSource).trim() !== "") {
+      const tile = parseWorldSquare(tileSource);
       if (!tile || tile.x !== hatch[0] || tile.y !== hatch[1]) return null;
     }
     return { x: square.x, y: square.y, hatchX: hatch[0], hatchY: hatch[1] };
@@ -2107,13 +2180,39 @@
 
   function setPatronVaultSquare(square) {
     if ($gameTemp) $gameTemp._ccPatronVaultSquare = square || null;
-    // Typing the coordinates is a fact about the WORLD, not about this party:
-    // the square is written into the world folder, every party that world ever
-    // raises is handed the vessel that opens the vault, and the parties already
-    // living there are posted one. Proving them once is proving them for good.
-    if (square && window.PatreonRewards && window.PatreonRewards.claimSquare) {
-      window.PatreonRewards.claimSquare(square.x, square.y);
-    }
+    patronVaultRememberSquare(square);
+  }
+
+  // Writing a proved square down WITHOUT choosing it. Typing the coordinates is
+  // a fact about the WORLD, not about this party: the square is written into
+  // the world folder, every party that world ever raises is handed the vessel
+  // that opens the vault, and the parties already living there are posted one.
+  // Proving them once is proving them for good - which is why the sheet saves
+  // here and starts nothing until a square has been picked out of the saved
+  // ones.
+  function patronVaultRememberSquare(square) {
+    if (!square || !window.PatreonRewards || !window.PatreonRewards.claimSquare) return;
+    window.PatreonRewards.claimSquare(square.x, square.y);
+  }
+
+  // Every square this game has already been shown, the ones just typed into the
+  // sheet included: what the vault sheet offers to start from. The world's own
+  // claim is always among them, even in a savegame that has met no hatch of its
+  // own yet.
+  function patronVaultSavedSquares() {
+    const PR = window.PatreonRewards;
+    const out = [];
+    const add = (rec) => {
+      if (!rec || !Number.isFinite(rec.x) || !Number.isFinite(rec.y)) return;
+      if (out.some((s) => s.x === rec.x && s.y === rec.y)) return;
+      out.push({ x: rec.x, y: rec.y, hatchX: rec.mapX, hatchY: rec.mapY });
+    };
+    try {
+      if (PR && PR.knownHatches) (PR.knownHatches() || []).forEach(add);
+    } catch (e) { /* nothing recognised yet */ }
+    const claim = patronVaultClaim();
+    if (claim) add(claim);
+    return out;
   }
 
   // What the vault is called on the travel map. The wizard's own i18n bank,
@@ -2462,11 +2561,16 @@
     startDiplomatOrigin,
     bunkerGoldPiles,
     startBunkerOrigin,
+    earthGone,
+    survivingOrigins,
+    filterOrigins,
     patronVaultAvailable,
     patronVaultSquareAt,
     patronVaultSquare,
     patronVaultClaim,
     setPatronVaultSquare,
+    patronVaultRememberSquare,
+    patronVaultSavedSquares,
     startPatronVaultOrigin,
     startArtifactHeirOrigin,
     startCrashLandedOrigin,

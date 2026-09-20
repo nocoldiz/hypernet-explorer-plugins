@@ -101,7 +101,7 @@
     "postageLine": "Affrancatura: {fee}. Con quel che è allegato, dalla borsa escono {total}.",
     "cannotAfford": "Alla borsa mancano {short} per coprire la spesa.",
     "subjectPlaceholder": "Di cosa si tratta?",
-    "bodyPlaceholder": "Scrivi liberamente. Chi aprirà la busta leggerà esattamente quel che lasci."
+    "bodyPlaceholder": "Scrivi il messaggio."
   },
   "toast": {
     "sent": "Sigillata e spedita.",
@@ -157,10 +157,52 @@
     "purse": "Nella borsa: {money}",
     "holdBack": "Trattenuta prima della consegna",
     "clear": "Straccia il foglio",
-    "bookBlurb": "Ogni gruppo che ha lasciato un recapito, in questo mondo e in quelli accanto. L'affrancatura è calcolata per dimensione attraversata.",
+    "bookBlurb": "Ogni gruppo con un indirizzo registrato, in questo mondo e negli altri. L'affrancatura si paga per dimensione attraversata.",
     "colParty": "Gruppo",
     "colMembers": "Membri",
     "colSeen": "Visto l'ultima volta",
     "thisIsYou": "(tu)"
+  },
+  "nudge": {
+    "appName": "Nudge",
+    "signedIn": "Connesso come {who}",
+    "signedOut": "Nessuno è connesso.",
+    "groupParty": "In viaggio con te",
+    "groupWorld": "Altrove in questo mondo",
+    "groupOthers": "Sempre connessi",
+    "withParty": "con {leader}",
+    "alwaysOn": "risponde a chiunque",
+    "status": {
+      "online": "(in linea)",
+      "away": "(assente)",
+      "busy": "(occupato)",
+      "offline": "(non in linea)"
+    },
+    "pickSomebody": "Scegli qualcuno a sinistra.",
+    "sayHello": "Non hai ancora detto niente a {who}.",
+    "typing": "{who} sta scrivendo...",
+    "placeholder": "Scrivi una riga e premi Invio",
+    "send": "Invia",
+    "nudge": "Trillo",
+    "you": "Tu",
+    "noAnswer": "...",
+    "situation": "Una conversazione scritta sull'hypernet, a notte fonda, in una finestra con la barra blu.",
+    "bioMember": "{who} viaggia con la compagnia e sta scrivendo da due passi di distanza, cosa che nessuno dei due nomina.",
+    "bioStranger": "{who} viaggia con un'altra compagnia di questo stesso mondo, quella guidata da {leader}. Non vi siete mai incontrati.",
+    "lore": {
+      "eris": {
+        "name": "Eris",
+        "bio": "Eris, la dea della discordia, che tiene forma umana e una vita di misura umana. Piega la probabilità invece di spezzarla, e rovina la vita di Em per gelosia a causa di Bubba, che la ricambia e non può averla. Il suo sé futuro ha ucciso Maat nel 2012 e l'ha trascinata sulla via del trono, cosa che detesta e da cui non riesce a scendere. È affascinante, svelta di lingua, allergica a una risposta diretta su di sé, e cambia discorso appena qualcosa di tutto questo si avvicina."
+      },
+      "bubba": {
+        "name": "Bubba",
+        "bio": "Bubba, che ama Eris da sempre, e che per Em non prova nulla senza aver mai avuto il coraggio di dirlo chiaramente. Caloroso, lento, per bene, facile all'imbarazzo. Parla a lungo di cose ordinarie e per niente delle due donne della sua vita, ed è l'unico dei tre che ti chiede come stai e aspetta la risposta."
+      },
+      "em": {
+        "name": "Em",
+        "bio": "Em, a cui una dea sta rovinando la vita da anni per gelosia, cosa che intuisce a metà e non può dimostrare. Ama Bubba, che non la ama. Tagliente, spiritosa per difesa, stanca, e molto più sveglia di quanto le riconoscano. Ha una lancia e sa dov' è la torre."
+      }
+    },
+    "groupBenched": "Non in viaggio"
   }
 }

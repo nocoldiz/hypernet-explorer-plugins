@@ -19,7 +19,8 @@
     "stoneThrown": "You threw a stone at the enemy!",
     "petSuccess": "The enemy seems to enjoy being petted!",
     "petFail": "The enemy doesn't want to be petted.",
-    "petRefuse": "This creature doesn't respond to petting."
+    "petRefuse": "This creature doesn't respond to petting.",
+    "outOfReach": "{name} looks you over and turns away.\nIt has no reason to follow a party this far beneath it."
   },
   "choices": [
     "Chat",

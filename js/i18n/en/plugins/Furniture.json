@@ -37,7 +37,8 @@
     "features": "Features",
     "animals": "Animals",
     "prefabs": "Prefabs",
-    "town": "Town"
+    "town": "Town",
+    "stock": "Stock"
   },
   "empty": {
     "walls": "This tileset has no wall (A3/A4) tiles.",
@@ -49,7 +50,8 @@
     "cannotAfford": "You cannot afford any furniture right now.",
     "cannotBuild": "You cannot build anything with your current materials.",
     "category": "No furniture in this category.",
-    "prefabs": "No prefabs are built in this biome."
+    "prefabs": "No prefabs are built in this biome.",
+    "stock": "Nothing in stock. Order from the Homely catalogue on the hyperdeck."
   },
   "tip": {
     "construct": "Spend crafting materials",
@@ -61,7 +63,8 @@
     "clearAll": "Delete everything built on this map and refund materials",
     "clearAllConfirm": "Click again to confirm",
     "cycleVariants": "Other colourways available",
-    "backToCategories": "Back to the folder list"
+    "backToCategories": "Back to the folder list",
+    "stock": "Already ordered and paid for. Setting it down spends one."
   },
   "category": {
     "Ads": "Ads",
@@ -209,5 +212,26 @@
     "idle": "Nothing in hand."
   },
   "selection": "Selection",
-  "backToCategories": "Back to the folders"
+  "backToCategories": "Back to the folders",
+  "homely": {
+    "appName": "Homely",
+    "subtitle": "Order furniture by mail. Delivered pieces are ready to place.",
+    "hint": "Ordered pieces show up in the build panel's Stock tab.",
+    "search": "Search the catalogue",
+    "yourStock": "Your stock",
+    "stockBlurb": "Each ordered piece can be placed {n} times. Once broken it is gone and must be reordered.",
+    "stockEmpty": "Nothing on order. Pick a department and buy something.",
+    "delivered": "delivered",
+    "leftInStock": "{n} settings-down left",
+    "order": "Order one",
+    "ordered": "{item} ordered for {price}. {n} settings-down waiting in stock.",
+    "cannotAfford": "The purse will not cover it, delivery included.",
+    "unknownPiece": "The catalogue has no such piece.",
+    "searchResults": "Anything called \"{q}\"",
+    "nothingHere": "Nothing in this department.",
+    "pageOf": "Page {page} of {pages}",
+    "prev": "Back a page",
+    "next": "On a page"
+  },
+  "stockLeft": "{n} left"
 }

@@ -454,7 +454,7 @@
   "tellAJoke": "Tell a Joke",
   "jokeFallback": "A funny thing happened.",
   "funShared": "You and {name} both enjoyed that.",
-  "funHint": "Lifts your mood and theirs, when it lands.",
+  "funHint": "Raises your mood and theirs if it succeeds.",
   "oldLegend": "an old legend",
   "bribeAccepted": "{name} accepts. +{op} ♥",
   "joinedParty": "{name} joined the party!",
@@ -757,7 +757,7 @@
   "beastJoinRefusedToast": "{name} stays where it is.",
   "beastJoinAccepted": "The {kind} falls in at your heel.",
   "beastJoinAcceptedToast": "{name} comes along with you.",
-  "beastPetNote": "A {kind} that decided to come along.",
+  "beastPetNote": "A {kind} travelling with the party.",
   "beastFedWell": [
     "The {item} is gone before you have finished lowering your hand.",
     "It eats the {item} the way a thing eats that has been hungry a while, then looks for more.",
@@ -878,6 +878,19 @@
     "situationGift": "{speaker} has just handed you {item} and you are keeping it.",
     "situationGiftRefused": "{speaker} has offered you {item} and you will not take it.",
     "situationJoinRefused": "{speaker} has asked you to travel with them and you are saying no.",
-    "rewrite": "{situation} Say this, in your own words: \"{line}\""
+    "rewrite": "{situation} Say this, in your own words: \"{line}\"",
+    "wanted": "There is a bounty of {bounty} on your head.",
+    "onMind": "What is on your mind: {thought}",
+    "shift": "You work from {from} to {to}.",
+    "knows": "You know {name} and are {band} them.",
+    "partyWith": "They are travelling with {names} ({count} of them in all).",
+    "partyAlone": "They are travelling alone.",
+    "worldPlace": "You are both in {place} {biome}.",
+    "worldWhen": "It is {date}, {hour}.",
+    "worldWeather": "The weather is {weather}, it is {season}, about {temperature} degrees.",
+    "worldWanted": "The law is looking for the people in front of you.",
+    "adventureAt": "At {place}: {line}",
+    "stayingAt": "You are staying at {place} while they travel.",
+    "stayingAtBiome": "You are staying at {place} while they travel, out in the {biome}."
   }
 }

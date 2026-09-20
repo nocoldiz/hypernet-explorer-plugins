@@ -36,6 +36,13 @@
  *       and the shop paint. The popup also stays up longer the more lines it
  *       carries, so a haul of six things is not gone before it is read.
  *
+ *   ParchmentToast.report(rows, { title, severity })
+ *       Several lines that only mean anything read together: a shift ledger,
+ *       a hive census, a scanner readout. Rows are "text", { text, value }
+ *       or { icon, text, qty }, and an empty or nullish row drops out, so a
+ *       caller passes the whole list rather than guarding each line. One
+ *       toast, one dismissal, paced like reward().
+ *
  *   ParchmentToast.need('leisure', +8, { note: '2 technophobes -8' })
  *       Reads the current party median from PartyNeeds, so every need change
  *       in the game reports identically ("Fun 62% up +8").
@@ -128,9 +135,12 @@
 
   // A find of one thing is read at a glance; a find of six is read line by
   // line, so the popup buys extra time for every line past the first.
-  const REWARD_BASE_FRAMES = 240;
-  const REWARD_LINE_FRAMES = 55;
-  const REWARD_MAX_FRAMES = 660;
+  // Spoils are read while the screen is still settling after the fight, so a
+  // reward popup stands twice as long as the rest.
+  const REWARD_DURATION_SCALE = 2;
+  const REWARD_BASE_FRAMES = 240 * REWARD_DURATION_SCALE;
+  const REWARD_LINE_FRAMES = 55 * REWARD_DURATION_SCALE;
+  const REWARD_MAX_FRAMES = 660 * REWARD_DURATION_SCALE;
   // Bulk reward items are chunked so a large container or chest find never
   // trails off the screen: each portion displays up to MAX_REWARD_ENTRIES,
   // lingers for reading, fades out, and yields to the next portion.
@@ -915,6 +925,55 @@
   }
 
   // --------------------------------------------------------------------------
+  // Multi-line reports
+  // --------------------------------------------------------------------------
+  // A shift ledger, a hive census, a scanner readout: several lines that only
+  // mean anything read together. They used to be several $gameMessage.add
+  // calls in a row, which stopped the player once per line. Shown as one toast
+  // they stay one thing to read, and empty rows drop out on their own, so the
+  // caller hands over the whole list instead of guarding each line with an if.
+  //
+  // report(rows, { title, severity, duration, key, onDismiss })
+  //   rows: "text" | { text, value } | { icon, text, qty } | null
+  function report(rows, opts = {}) {
+    const list = (Array.isArray(rows) ? rows : [rows]).filter((r) => {
+      if (!r) return false;
+      if (typeof r === "string") return r.trim() !== "";
+      return r.text != null && String(r.text).trim() !== "";
+    });
+    if (!list.length) return;
+
+    let html = opts.title ? `<div class="toast-title">${escapeHtml(opts.title)}</div>` : "";
+    for (const row of list) {
+      if (typeof row === "string") {
+        html += `<div class="toast-note">${escapeHtml(row)}</div>`;
+        continue;
+      }
+      let inner = row.icon != null ? icon(row.icon) : "";
+      inner += `<span>${escapeHtml(row.text)}</span>`;
+      if (row.qty != null) inner += `<span class="toast-qty">${escapeHtml(row.qty)}</span>`;
+      if (row.value != null) inner += `<span class="toast-value">${escapeHtml(row.value)}</span>`;
+      html += `<div class="toast-row">${inner}</div>`;
+    }
+
+    // Paced like a reward popup: every line asks to be read, and a long report
+    // is still capped so it cannot sit on the screen forever.
+    const lineCount = list.length + (opts.title ? 1 : 0);
+    const duration = opts.duration || Math.min(
+      REWARD_BASE_FRAMES + REWARD_LINE_FRAMES * Math.max(0, lineCount - 1),
+      REWARD_MAX_FRAMES
+    );
+
+    show(html, {
+      severity: opts.severity || "info",
+      duration,
+      html: true,
+      key: opts.key,
+      onDismiss: opts.onDismiss
+    });
+  }
+
+  // --------------------------------------------------------------------------
   // Needs (hunger / sleep / hygiene / social / leisure aka Fun)
   // --------------------------------------------------------------------------
   // PartyNeeds.LABELS already resolves through T.obj('TimeDate.needLabel'),
@@ -1314,6 +1373,7 @@
     reward,
     gold,
     need,
+    report,
     reputation,
     specUp,
     levelUp,

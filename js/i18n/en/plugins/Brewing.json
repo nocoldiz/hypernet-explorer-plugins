@@ -89,5 +89,76 @@
       "description": "A potent distillate fermented from Dragon's Breath Fruit and Void Starfruit. Dangerously pure alcohol.",
       "outputPreview": "1-4x Ethanol"
     }
+  },
+  "grange": {
+    "appName": "Grange",
+    "subtitle": "Barrels, hives, fields and livestock, viewable from anywhere.",
+    "readOnly": "Reading only. The work is still done on the spot.",
+    "seasonLabel": "Season:",
+    "season": {
+      "spring": "Spring",
+      "summer": "Summer",
+      "autumn": "Autumn",
+      "winter": "Winter"
+    },
+    "tab": {
+      "overview": "Overview",
+      "cellar": "Cellar",
+      "apiary": "Apiary",
+      "fields": "Fields",
+      "livestock": "Livestock"
+    },
+    "overviewTitle": "The holdings at a glance",
+    "waitingOnYou": "{n} WAITING ON YOU",
+    "nothingWaiting": "NOTHING WAITING",
+    "needsYou": "Wants you in person",
+    "allQuiet": "Everything is coming along. Nothing needs a journey today.",
+    "projectionNote": "Fields and barrels are projected from the last visit, assuming fair weather in open ground. Greenhouse crops finish sooner than shown.",
+    "tile": {
+      "barrels": "Barrels going",
+      "barrelsReady": "Ready to bottle",
+      "plots": "Plots planted",
+      "cropsRipe": "Ripe",
+      "animals": "Head of stock",
+      "honey": "Honey in store",
+      "bees": "Bees",
+      "mood": "Colony mood",
+      "efficiency": "Efficiency"
+    },
+    "job": {
+      "barrel": "{name} has finished at {where}.",
+      "crop": "{name} is ripe at {where}.",
+      "produce": "{animal} at {where} is holding {what}.",
+      "hiveUnhappy": "The colony is unsettled (mood {mood}).",
+      "outOfSeason": "{name} at {where} is out of season and standing still."
+    },
+    "colBrew": "Brew",
+    "colWhere": "Where",
+    "colProgress": "Progress",
+    "colLeft": "Left",
+    "colCrop": "Crop",
+    "colYield": "Yield",
+    "colAnimal": "Beast",
+    "colGrowth": "Growth",
+    "colProduce": "Produce",
+    "now": "Now",
+    "ripe": "Ripe",
+    "outOfSeason": "Out of season",
+    "daysLeft": "{n} days",
+    "grown": "Grown",
+    "noProduce": "Gives nothing",
+    "noBarrels": "No barrel anywhere is working. Fill one and it shows up here.",
+    "noHive": "No colony has been founded yet.",
+    "noPlots": "Nothing is planted. A tilled plot appears here the moment a seed goes in.",
+    "noAnimals": "The party owns no stock.",
+    "cellarNote": "Bottling is done at the barrel. A brew left past its time does not spoil, but does not improve either.",
+    "hiveNote": "Smoking, harvesting and splitting a colony are done at the hive.",
+    "fieldsNote": "A plot out of season is not dead, it is waiting for its growing months.",
+    "livestockNote": "Feeding, petting and collecting are done in the field.",
+    "queen": "The queen",
+    "queenAlive": "Alive, health {health}, {eggs} eggs laid.",
+    "queenDead": "No queen. The colony is running down.",
+    "castes": "Castes",
+    "stores": "Stores"
   }
 }

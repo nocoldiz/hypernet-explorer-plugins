@@ -38,10 +38,12 @@
  *   - a fusing star in this very system: it plots the short hop to it
  *   - otherwise: it plots the course to the nearest system that has one
  * Either way the pumps engage by themselves the moment the ship arrives.
- * A full tank is a two-minute stop: the ship eases in toward the star while
- * the pumps run and drifts back out once they stop, and the ETA is counted
- * down in the same window that counts down an arrival.
- * A black hole fills the Schrodingerite magazine instead, in half a minute,
+ * A full tank is a twenty-four-second stop: the ship eases in toward the star
+ * while the pumps run and drifts back out once they stop, and the ETA is
+ * counted down in the same window that counts down an arrival. The star cooks
+ * the hull all the while, and the cabin temperature climbs with it (see
+ * interiorHeatCelsius), cooling off once the ship pulls away.
+ * A black hole fills the Schrodingerite magazine instead, in six seconds,
  * and its once-a-week harvest is a thirty-second flyby of the disk.
  *
  * ============================================================================
@@ -183,6 +185,19 @@
   window.GalaxySim.pushStarMapScene = pushStarMapScene;
 
   // ============================================================================
+  // Sleeping and waiting through a crossing
+  // ============================================================================
+  // The rest menu is the one place the clock jumps, and a ship in flight has to
+  // hear about it: the countdown in the travel window runs on real time, so the
+  // skipped hours are handed to the data manager to spend on the route.
+  if (window.TimeDateSystem && window.TimeDateSystem.onTimeSkipped) {
+    window.TimeDateSystem.onTimeSkipped((minutes) => {
+      const dm = $gameSystem && $gameSystem.starMapData;
+      if (dm && dm.skipTravelTime) dm.skipTravelTime(minutes);
+    });
+  }
+
+  // ============================================================================
   // Plugin Commands
   // ============================================================================
 
@@ -226,20 +241,30 @@
       }
     }
     const locs = (planet && planet.landingLocations) || [];
-    if (!locs.length) {
-      // No authored spaceport: pick a square instead. With no planet resolved
-      // from the ship, the picker is asked for the world the party is already
-      // standing on before the command gives up.
+    // Offworld the pads are squares on the world's own grid, so there is no
+    // list to read: the picker is the list, with every pad marked on the
+    // picture and its two ways in offered once the square is chosen. Only
+    // Earth's own pads, which name no grid cell, are still asked for by name.
+    const offworldPads = locs.some((loc) => loc.cell);
+    if (!locs.length || offworldPads) {
+      // No authored spaceport, or pads that live on the grid: pick a square
+      // instead. With no planet resolved from the ship, the picker is asked for
+      // the world the party is already standing on before the command gives up.
       if (!openLandingGridPicker(planet, moonOf)) {
-        $gameMessage.add(T('Galaxy.core.noSpaceports'));
+        notify(T('Galaxy.core.noSpaceports'), 'warning');
       }
       return;
     }
-    $gameMessage.setChoices(locs.map((l) => l.name).concat(T('Galaxy.core.cancel')), 0, locs.length);
+    // Earth's own pads (Apulia, Greenwitch) name no grid cell and are offered
+    // by name, landing exactly as they always have.
+    const opts = locs.map((loc) => ({ loc, withShip: false, text: loc.name }));
+    $gameMessage.setChoices(opts.map((o) => o.text).concat(T('Galaxy.core.cancel')), 0, opts.length);
     $gameMessage.setChoiceCallback((n) => {
-      if (n >= 0 && n < locs.length && window.GalaxySim.teleportToLandingSite) {
-        window.GalaxySim.teleportToLandingSite(locs[n]);
-      }
+      if (n < 0 || n >= opts.length || !window.GalaxySim.landAtSpaceport) return;
+      const pick = opts[n];
+      window.GalaxySim.landAtSpaceport(pick.loc, {
+        planet, isMoon: !!moonOf, parentPlanet: moonOf, withShip: pick.withShip,
+      });
     });
   });
 
@@ -249,14 +274,6 @@
   PluginManager.registerCommand(pluginName, "ShipControls", () => {
     openShipControls();
   });
-  if (pluginName !== "GalaxySim/GalaxySim_Core") {
-    PluginManager.registerCommand("GalaxySim/GalaxySim_Core", "ship controls", () => {
-      openShipControls();
-    });
-    PluginManager.registerCommand("GalaxySim/GalaxySim_Core", "ShipControls", () => {
-      openShipControls();
-    });
-  }
 
   // ============================================================================
   // Refuel: engage the pumps where the ship is, or auto-plot the course to the
@@ -268,7 +285,9 @@
     if (window.ParchmentToast && window.ParchmentToast.show) {
       window.ParchmentToast.show(text, { severity: severity || "info", duration: 180 });
     } else if (typeof $gameMessage !== "undefined" && $gameMessage) {
+      window.skipLocalization = true;
       $gameMessage.add(text);
+      window.skipLocalization = false;
     }
   }
 
@@ -300,6 +319,21 @@
     return plan;
   }
   window.GalaxySim.autoRefuel = autoRefuel;
+
+  // How much hotter than normal the cabin is running, in degrees Celsius: the
+  // star's heat soaks into the hull for as long as the pumps draw from it and
+  // bleeds away afterwards (see DataManager.tickRefuelHeat). Zero anywhere the
+  // party is not aboard, so a planetside map is never warmed by a ship parked
+  // in some other system. WeatherSystem asks this and nothing else.
+  function interiorHeatCelsius() {
+    if (typeof $dataMap === "undefined" || !$dataMap) return 0;
+    const aboard = ($gameMap && $gameMap.mapId() === SHIP_INTERIOR_MAP) ||
+      ($dataMap.note && /<Biome:\s*Space\s*>/i.test($dataMap.note));
+    if (!aboard) return 0;
+    const dm = window.GalaxySim.getDataManager();
+    return (dm && dm.getRefuelHeat) ? dm.getRefuelHeat() : 0;
+  }
+  window.GalaxySim.interiorHeatCelsius = interiorHeatCelsius;
 
   PluginManager.registerCommand(pluginName, "Refuel", (args) => {
     const plan = autoRefuel();
@@ -583,9 +617,17 @@
   window.GalaxySim.bioTierLabel = bioTierLabel;
 
   // Alien surface = the procedural map (636) generated from an alien biome
-  // (biome names produced by AlienBiomes.json all start with "Alien").
+  // (biome names produced by AlienBiomes.json all start with "Alien"), OR the
+  // hand-authored pad of an offworld spaceport. Those pads are 64x64 and carry
+  // the biome of the world they stand on, so a pad is not a map somewhere else:
+  // it IS one square of that planet's landing grid, drawn by hand instead of
+  // generated (see spaceportSurfaceSite). Everything that asks this question -
+  // the sky, the minimap, the encounter tables, whether there is a world map to
+  // go back to - wants the same answer on the pad as one square over.
   function isAlienSurface() {
-    if (typeof $gameMap === "undefined" || !$gameMap || $gameMap.mapId() !== 636) return false;
+    if (typeof $gameMap === "undefined" || !$gameMap) return false;
+    if (spaceportSurfaceSite()) return true;
+    if ($gameMap.mapId() !== 636) return false;
     const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
     return !!(pg && /^Alien/.test(String(pg.currentBiome || "")));
   }
@@ -604,6 +646,14 @@
     const signs = currentAlienLifeSigns();
     return signs === LIFE.WEAK || signs === LIFE.STRONG;
   }
+  // A haunted world (Earth's moons): the dead are its only population, so the
+  // ordinary life roll has nothing to say about what walks there. The flag is
+  // authored on the body in Systems.json and travels with the landing.
+  function currentWorldIsHaunted() {
+    const landed = getSurfacePlanet();
+    return !!(landed && landed.haunted);
+  }
+  window.GalaxySim.currentWorldIsHaunted = currentWorldIsHaunted;
   window.GalaxySim.isAlienSurface = isAlienSurface;
   window.GalaxySim.currentAlienHasLife = currentAlienHasLife;
   window.GalaxySim.currentAlienLifeSigns = currentAlienLifeSigns;
@@ -827,28 +877,68 @@
   // hour day runs through four dawns while an Earth day passes; a world with a
   // thousand hour day sits in the same afternoon for a month and a half; a
   // frozen world never moves off its one hour at all.
-  function localHourFor(desc, totalEarthMinutes) {
+  // The second half of the answer is WHERE on the world this is. Longitude sets
+  // local solar time on any world that has a sun over it, not just a frozen one:
+  // walking east is walking into the evening, and all the way round is a whole
+  // day. The rotation only decides how fast that hour then moves on its own -
+  // fast on Earth, a fortnight to the hour on a moon, never at all on a world
+  // locked to its star.
+  function localHourFor(desc, totalEarthMinutes, lonHour) {
     const day = desc && desc.day;
     if (!day) return null;
-    if (day.frozen) return day.fixedHour;
+    // Where the party stands, as an hour of local solar time. The caller may
+    // hand in a live one (it changes as they walk); otherwise it is the hour
+    // the landing column was at.
+    const col = (typeof lonHour === "number" && isFinite(lonHour))
+      ? lonHour
+      : (typeof day.cellHour === "number" ? day.cellHour
+        : (day.frozen ? day.fixedHour : 12));
+    const wrap = (x) => ((x % 24) + 24) % 24;
+    // Locked to its star: the sun hangs wherever this longitude put it, forever.
+    if (day.frozen) return wrap(col);
     const dh = day.dayHours;
-    if (!(dh > 0)) return null;
-    if (Math.abs(dh - 24) < 1e-6) return null;   // an Earth-length day: no remapping at all
+    if (!(dh > 0)) return wrap(col);
     const h = (Number(totalEarthMinutes) || 0) / 60;
-    return (((h % dh) + dh) % dh) / dh * 24;
+    const drift = (((h % dh) + dh) % dh) / dh * 24;
+    // An Earth-length day at the reference longitude is Earth's own clock: say
+    // so, and nothing downstream remaps anything.
+    if (Math.abs(dh - 24) < 1e-6 && Math.abs(col - 12) < 1e-6) return null;
+    return wrap(drift + (col - 12));
   }
   window.GalaxySim.localHourFor = localHourFor;
 
-  // Where on a frozen world the party set down. The landing grid's columns are
-  // lines of longitude, so the column decides which side of the terminator this
-  // is: the sub-stellar point is eternal noon, the far side eternal midnight,
-  // and the ring between them an eternal sunrise or sunset that never finishes.
-  function frozenHourForCell(gx, w) {
+  // The hour of local solar time a column of the landing grid stands at. The
+  // grid's columns are lines of longitude, so the column decides which side of
+  // the terminator this is: the sub-stellar column is noon, the far side
+  // midnight, and the quarters between them dusk and dawn. `gx` may be
+  // fractional, which is how walking east across one square slides the light.
+  function hourForColumn(gx, w) {
     if (!(w > 0)) return 12;
     const f = (((Number(gx) || 0) % w) + w) % w / w;
     return (12 + f * 24) % 24;
   }
-  window.GalaxySim.frozenHourForCell = frozenHourForCell;
+  window.GalaxySim.hourForColumn = hourForColumn;
+  // Older name, kept because a frozen world is only the case where this hour
+  // never moves off the column.
+  const frozenHourForCell = hourForColumn;
+  window.GalaxySim.frozenHourForCell = hourForColumn;
+
+  // The live longitude of the party on an alien surface, as an hour, including
+  // where across the square itself they are standing: a square is one slice of
+  // the world's longitude, so walking from its west edge to its east edge walks
+  // 24/w hours of local time. Null when not standing on a landing grid.
+  function surfaceColumnHour() {
+    const grid = getAlienGridInfo();
+    if (!grid || !(grid.w > 0)) return null;
+    let gx = Number(grid.gx) || 0;
+    try {
+      if (typeof $gameMap !== "undefined" && $gameMap && $gamePlayer && $gameMap.width() > 0) {
+        gx += ($gamePlayer.x + 0.5) / $gameMap.width() - 0.5;
+      }
+    } catch (e) { /* not on a map yet */ }
+    return hourForColumn(gx, grid.w);
+  }
+  window.GalaxySim.surfaceColumnHour = surfaceColumnHour;
 
   // Which of the texture painter's families a world belongs to: "terrestrial"
   // (elevation-banded ocean, coast and mountain), "rocky" (crater fields), or
@@ -886,17 +976,44 @@
       ? Math.max(0.25, Math.min(14, system.radius / orbitAU))
       : 1;
     const day = worldRotation(planet, system, opts);
-    if (day.frozen) {
+    // Which column of the landing grid this is, as an hour of local solar time.
+    // Every world gets one, not only the frozen ones: longitude sets the clock
+    // on any world with a sun over it, and the rotation only decides how fast
+    // that hour then moves along by itself.
+    {
       const g = opts.gridCell || {};
       const gw = (opts.grid && opts.grid.w) || planetGridSize(planet).w;
-      day.fixedHour = frozenHourForCell(
+      day.cellHour = hourForColumn(
         (typeof g.gx === "number") ? g.gx : Math.floor(gw / 2), gw);
+      if (day.frozen) day.fixedHour = day.cellHour;
     }
     const moons = (planet.moons || []).map((m) => ({
       radius: (typeof m.radius === "number" && isFinite(m.radius)) ? m.radius : 0.3,
       color: m.color || "#cfd8e6",
       type: m.type || "rocky",
     }));
+    // Standing on a moon, the thing that dominates the sky is not a moon of its
+    // own: it is the planet it belongs to, hanging in one place because the
+    // moon keeps the same face turned to it. Everything that draws this world's
+    // sky needs it, so it travels with the descriptor.
+    let parentBody = null;
+    if (opts.isMoon && opts.parentPlanet) {
+      const pp = opts.parentPlanet;
+      const pRgb = intToRgbArr((PT[pp.type] || {}).color) || [150, 150, 160];
+      parentBody = {
+        name: pp.name || "",
+        type: pp.type || "",
+        color: pp.color || ("#" + pRgb.map((c) => c.toString(16).padStart(2, "0")).join("")),
+        radius: (typeof pp.radius === "number" && isFinite(pp.radius)) ? pp.radius : 1.0,
+        // How big it looks from here, against the Moon's own view of Earth:
+        // the planet's radius over the moon's orbit, normalised so Earth from
+        // the Moon comes out at 1.
+        apparent: (planet.orbitRadius > 0)
+          ? Math.max(0.35, Math.min(6,
+            ((typeof pp.radius === "number" ? pp.radius : 1) / planet.orbitRadius) / 389))
+          : 1,
+      };
+    }
     // Screen-tint offset that biases the world's daylight toward its palette
     // (kept gentle so day never goes fully monochrome), plus the colour of the
     // star's own light on top of it: an ochre world under a red dwarf is not
@@ -923,12 +1040,22 @@
       name: planet.name || "",
       type: planet.type || "",
       atmosphere,
+      // Haunted worlds carry the flag into the landing, because by the time
+      // the party is standing on one the body itself is out of reach.
+      haunted: !!planet.haunted,
       radius: (typeof planet.radius === "number" && isFinite(planet.radius)) ? planet.radius : 1.0,
+      // The world's spaceports travel with the descriptor: the on-foot picker
+      // asks the world the party is STANDING on, not the one in orbit, and
+      // without these the pads would vanish off the grid the moment the ship
+      // touched down (see spaceportCells).
+      landingLocations: planet.landingLocations || null,
       rgb,
       skyBlend,          // sky gradient blends toward this
       tintOffset,        // [dr, dg, db] added to the weather day-tint
       star,              // { type, rgb, temp, lightRel, skyRel }
-      day,               // { dayHours, locked, lockedTo, frozen, fixedHour }
+      day,               // { dayHours, locked, lockedTo, frozen, fixedHour, cellHour }
+      isMoon: !!opts.isMoon,
+      parent: parentBody,  // the planet overhead, when this is a moon
       gravity: surfaceGravity(planet),   // Earth gravities at the surface
       // The planet's own elevation field and the landing grid it was picked
       // from: enough for the 3D world to raise exactly the coastlines and
@@ -966,6 +1093,50 @@
     return { w, h };
   }
   window.GalaxySim.planetGridSize = planetGridSize;
+
+  // ============================================================================
+  // Spaceports on the landing grid
+  // ----------------------------------------------------------------------------
+  // A hand-authored landing site can name the square of its planet's landing
+  // grid that it stands on: `cell: { gx, gy }` in js/db/GalaxySim/Systems.json.
+  // The square is AUTHORED, never rolled - the pad is a fixed place on a fixed
+  // world - and the pair is wrapped into the grid here so a site can never
+  // address a square its own planet does not have (see planetGridSize).
+  //
+  // Everything downstream reads the port through these two: the pickers draw a
+  // marker on the square, and setting down on it opens the authored pad instead
+  // of generating a surface. Earth's own pads (Apulia, Greenwitch) name no cell
+  // and never appear on a grid: they are reached from the world map and land
+  // exactly as they always have.
+  // ============================================================================
+  function spaceportCells(planet) {
+    const locs = (planet && planet.landingLocations) || [];
+    if (!locs.length) return [];
+    const { w, h } = planetGridSize(planet);
+    const out = [];
+    for (const loc of locs) {
+      const cell = loc && loc.cell;
+      if (!cell || typeof cell.gx !== "number" || typeof cell.gy !== "number") continue;
+      if (!isFinite(cell.gx) || !isFinite(cell.gy)) continue;
+      out.push({
+        loc,
+        name: loc.name || "",
+        gx: ((Math.floor(cell.gx) % w) + w) % w,
+        gy: ((Math.floor(cell.gy) % h) + h) % h,
+      });
+    }
+    return out;
+  }
+  window.GalaxySim.spaceportCells = spaceportCells;
+
+  // The port standing on one square of a planet's landing grid, or null.
+  function spaceportAtCell(planet, gx, gy) {
+    const { w, h } = planetGridSize(planet);
+    const x = ((Math.floor(gx) % w) + w) % w;
+    const y = ((Math.floor(gy) % h) + h) % h;
+    return spaceportCells(planet).find((p) => p.gx === x && p.gy === y) || null;
+  }
+  window.GalaxySim.spaceportAtCell = spaceportAtCell;
 
   // Descriptor of the planet the party is currently standing on, or null when
   // not on an alien surface. Map 636 is ALSO reused for ordinary Earth biomes
@@ -1086,6 +1257,27 @@
     $gameSystem._offEarthPlanet = $gameSystem._landedPlanet;
     $gameVariables.setValue(43, gx);
     $gameVariables.setValue(44, gy);
+
+    // opts.site: this square of the grid is not generated, it is drawn by hand.
+    // Every line above still runs - the suits, the life roll, the grid cell, the
+    // landed descriptor - because the pad is a square of this planet like any
+    // other; only the map under the party's feet comes from the editor instead
+    // of the generator, so the generator is not asked at all.
+    //
+    // Nobody has to name it, either: a square that HOLDS a spaceport is that
+    // spaceport, whichever route asked for it - Land Here on the picker, a
+    // relanding, a crossing from the square next door, a jump straight to a set
+    // of coordinates. The pad was being generated over on every route but the
+    // one that named it, which is how a port already visited came back as open
+    // ground under the wrong map name.
+    const port = opts.site ? null : spaceportAtCell(planet, gx, gy);
+    const site = opts.site || ((port && port.loc && port.loc.mapId != null) ? port.loc : null);
+    if (site && site.mapId != null) {
+      if (!opts.site) $gameSystem._gxLandingSite = landingSiteRecord(site);
+      const dir = [2, 4, 6, 8].includes(site.dir) ? site.dir : 2;
+      $gamePlayer.reserveTransfer(site.mapId, site.x || 1, site.y || 1, dir, 0);
+      return true;
+    }
 
     const ok = $gameSystem.generateProceduralMap && $gameSystem.generateProceduralMap();
     if (!ok) return false;
@@ -1314,7 +1506,10 @@
       desc.terrain.grid = grid;
       desc.terrain.cell = { gx: cell.gx, gy: cell.gy };
     }
-    if (desc.day && desc.day.frozen) desc.day.fixedHour = frozenHourForCell(cell.gx, grid.w);
+    if (desc.day) {
+      desc.day.cellHour = hourForColumn(cell.gx, grid.w);
+      if (desc.day.frozen) desc.day.fixedHour = desc.day.cellHour;
+    }
     if (opts.flyby) {
       return !!VW.startAlienFlyby(biome, desc, species, { atHelm: !!opts.atHelm });
     }
@@ -1373,16 +1568,19 @@
   // the party is standing on marked in red, and confirming one sets the ship down
   // on it. Cancelling leaves the party exactly where they were.
   // ============================================================================
-  const LG_PAD = 40;      // page margin around the grid
-  const LG_TITLE_H = 52;  // strip above it
+  const LG_PAD = 40;      // page margin around the modal panel
+  const LG_TITLE_H = 52;  // strip above the grid, inside the panel
   const LG_HELP_H = 40;   // strip below it
+  const LG_MODE_H = 64;   // the row of ways down along the panel's foot
+  const LG_INSET = 24;    // panel border to grid
 
   // The grid is drawn as large as the page allows while keeping its own cell
   // aspect: the texture is equirectangular and planetGridSize keeps h at half of
   // w, so the picture is twice as wide as it is tall and the squares stay square.
   function landingGridDestSize(grid) {
-    const availW = Graphics.boxWidth - LG_PAD * 2;
-    const availH = Graphics.boxHeight - LG_PAD * 2 - LG_TITLE_H - LG_HELP_H;
+    const availW = Graphics.boxWidth - (LG_PAD + LG_INSET) * 2;
+    const availH = Graphics.boxHeight - (LG_PAD + LG_INSET) * 2 -
+      LG_TITLE_H - LG_HELP_H - LG_MODE_H;
     let w = availW;
     let h = Math.round((w * grid.h) / grid.w);
     if (h > availH) {
@@ -1390,6 +1588,19 @@
       w = Math.round((h * grid.w) / grid.h);
     }
     return { w: Math.max(1, w), h: Math.max(1, h) };
+  }
+
+  // The modal the grid sits in: a framed plate holding the title, the picture,
+  // the square under the cursor and the row of ways down, centred on a scrim so
+  // the map or the star field behind it never reads as part of the picker.
+  function landingPanelRect(size) {
+    const w = size.w + LG_INSET * 2;
+    const h = LG_TITLE_H + size.h + LG_HELP_H + LG_MODE_H + LG_INSET * 2;
+    return new Rectangle(
+      Math.floor((Graphics.boxWidth - w) / 2),
+      Math.floor((Graphics.boxHeight - h) / 2),
+      w, h
+    );
   }
 
   // The three ways down, asked once a square has been chosen - and asked ONLY
@@ -1413,6 +1624,15 @@
       Window_LandingMode._pending = null;
     }
 
+    // Which spaceport the square under the cursor holds, or null. The list is
+    // rebuilt around it, because a square with a pad on it is not landed on: the
+    // pad is walked or flown into, on foot or with the ship.
+    setSpaceport(port) {
+      if ((this._port || null) === (port || null)) return;
+      this._port = port || null;
+      this.refresh();
+    }
+
     makeCommandList() {
       // _planet is not assigned yet on the first build (super() runs the list
       // before the subclass body), so the pending planet answers for it.
@@ -1420,10 +1640,24 @@
       this._planet = planet;
       const surfaceless = isSurfacelessWorld(planet);
       if (!surfaceless) {
-        this.addCommand(T('Galaxy.hud.landHere'), "land");
+        // A square with a spaceport on it has nothing to generate: the pad is
+        // the map, so the two ways in replace Land Here rather than joining it.
+        if (this._port) {
+          this.addCommand(T('Galaxy.hud.landOnFoot'), "portFoot");
+          this.addCommand(T('Galaxy.hud.landWithShip'), "portShip");
+        } else {
+          this.addCommand(T('Galaxy.hud.landHere'), "land");
+        }
         this.addCommand(T('Galaxy.hud.liminalWalk'), "walk");
       }
       this.addCommand(T('Galaxy.hud.flyby'), "flyby");
+    }
+
+    // The ways down are a row along the foot of the modal, not a column: every
+    // command is on screen at once, so the walk and the two pad landings are
+    // read before a square is even chosen.
+    maxCols() {
+      return Math.max(1, this.maxItems());
     }
 
     itemHeight() {
@@ -1442,11 +1676,23 @@
       if (this.contents) this.refresh();
     }
 
+    // ...and follows the focus: the row stays on screen while the square is
+    // being chosen, drawn dim, and lights up once it is the row's turn.
+    activate() {
+      super.activate();
+      if (this.contents) this.refresh();
+    }
+
+    deactivate() {
+      super.deactivate();
+      if (this.contents) this.refresh();
+    }
+
     drawBackgroundRect(rect) {
       // The row backdrops live on the back layer, under the text the item
       // itself draws (MZ keeps contents and contentsBack apart).
       const ctx = this.contentsBack.context;
-      const on = this.index() === this._bgIndex;
+      const on = this.active && this.index() === this._bgIndex;
       ctx.save();
       ctx.fillStyle = on ? "rgba(46, 34, 8, 0.92)" : "rgba(10, 12, 20, 0.82)";
       ctx.strokeStyle = on ? LG_GOLD : LG_GOLD_DIM;
@@ -1474,7 +1720,8 @@
       const rect = this.itemLineRect(index);
       this.resetTextColor();
       this.changePaintOpacity(this.isCommandEnabled(index));
-      this.contents.textColor = this.index() === index ? LG_GOLD : LG_GOLD_DIM;
+      this.contents.textColor =
+        this.active && this.index() === index ? LG_GOLD : LG_GOLD_DIM;
       this.drawText(this.commandName(index), rect.x, rect.y, rect.width, "center");
       this.changePaintOpacity(true);
     }
@@ -1496,42 +1743,76 @@
       }
       this._cursor = { gx: this._grid.gx, gy: this._grid.gy };
       this._leaving = false;
+      this._size = landingGridDestSize(this._grid);
+      this._panel = landingPanelRect(this._size);
+      this.createBackdrop();
       this.createGridSprite();
       this.createTextSprite();
       this.createModeWindow();
       this.redrawAll();
     }
 
+    // The scrim and the plate: everything behind the picker is pushed back so
+    // the grid, the title and the ways down read as one modal rather than as
+    // loose pieces floating over whatever map the party left.
+    createBackdrop() {
+      const sprite = new Sprite(new Bitmap(Graphics.boxWidth, Graphics.boxHeight));
+      const ctx = sprite.bitmap.context;
+      const r = this._panel;
+      ctx.save();
+      ctx.fillStyle = "rgba(4, 6, 12, 0.82)";
+      ctx.fillRect(0, 0, Graphics.boxWidth, Graphics.boxHeight);
+      ctx.fillStyle = "rgba(10, 12, 20, 0.96)";
+      ctx.strokeStyle = LG_GOLD;
+      ctx.lineWidth = 2;
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(r.x, r.y, r.width, r.height, 10);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.fillRect(r.x, r.y, r.width, r.height);
+        ctx.strokeRect(r.x, r.y, r.width, r.height);
+      }
+      ctx.restore();
+      sprite.bitmap.baseTexture.update();
+      this._backdrop = sprite;
+      this.addChild(sprite);
+    }
+
     createModeWindow() {
-      const w = 320;
-      // One row on a world with no ground, three on one that can be landed on:
-      // the height follows the list rather than assuming it.
-      const rows = isSurfacelessWorld(this._planet) ? 1 : 3;
-      const h = this.calcWindowHeight(rows, true);
+      // One plate on a world with no ground, two or three on one that can be
+      // landed on: the row is as wide as the picture above it and the plates
+      // divide it between them (see layoutModeWindow, which divides it again
+      // every time the list is rebuilt around the square just picked).
+      const h = this.calcWindowHeight(1, true);
       const rect = new Rectangle(
-        Math.floor((Graphics.boxWidth - w) / 2),
-        Math.floor((Graphics.boxHeight - h) / 2),
-        w, h
+        this._panel.x + LG_INSET,
+        this._panel.y + this._panel.height - LG_INSET - LG_MODE_H +
+          Math.floor((LG_MODE_H - h) / 2),
+        this._size.w, h
       );
       const win = new Window_LandingMode(rect, this._planet);
       // No windowskin frame or back: the gold plates are the whole modal.
       win.opacity = 0;
       win.setHandler("land", this.commandLand.bind(this));
+      win.setHandler("portFoot", this.commandSpaceport.bind(this, false));
+      win.setHandler("portShip", this.commandSpaceport.bind(this, true));
       win.setHandler("walk", this.commandLiminalWalk.bind(this));
       win.setHandler("flyby", this.commandFlyby.bind(this));
       win.setHandler("cancel", this.commandModeCancel.bind(this));
-      win.hide();
+      // Shown from the start, drawn dim: the walk, the flyby and the two pad
+      // landings are all readable while the square is still being chosen.
       win.deactivate();
       this._modeWindow = win;
       this.addWindow(win);
     }
 
     createGridSprite() {
-      const size = landingGridDestSize(this._grid);
+      const size = this._size;
       const sprite = new Sprite(new Bitmap(size.w, size.h));
-      sprite.x = Math.floor((Graphics.boxWidth - size.w) / 2);
-      sprite.y = LG_PAD + LG_TITLE_H +
-        Math.floor((Graphics.boxHeight - LG_PAD * 2 - LG_TITLE_H - LG_HELP_H - size.h) / 2);
+      sprite.x = this._panel.x + LG_INSET;
+      sprite.y = this._panel.y + LG_INSET + LG_TITLE_H;
       this._gridSprite = sprite;
       this.addChild(sprite);
     }
@@ -1553,6 +1834,8 @@
           gridW: this._grid.w, gridH: this._grid.h,
           highlightCell: this._cursor,
           playerCell: isAlienSurface() ? { gx: this._grid.gx, gy: this._grid.gy } : null,
+          // Every spaceport on this world, on the square it stands on.
+          markCells: spaceportCells(this._planet),
         });
         bmp.baseTexture.update();
       }
@@ -1565,7 +1848,9 @@
 
     redrawText() {
       const bmp = this._textSprite.bitmap;
-      const width = bmp.width - LG_PAD * 2;
+      const panel = this._panel;
+      const textX = panel.x + LG_INSET;
+      const width = this._size.w;
       bmp.clear();
       bmp.fontFace = $gameSystem.mainFontFace();
       bmp.outlineColor = "rgba(0, 0, 0, 0.75)";
@@ -1575,25 +1860,43 @@
       const title = name
         ? `${T('Galaxy.hud.chooseLandingSite')} · ${name}`
         : T('Galaxy.hud.chooseLandingSite');
-      bmp.drawText(title, LG_PAD, LG_PAD, width, LG_TITLE_H, "left");
+      bmp.drawText(title, textX, panel.y + LG_INSET, width, LG_TITLE_H, "left");
 
       // The ways down are NOT drawn here any more: a square is picked first and
       // the gold modal (Window_LandingMode) asks what to do with it.
-      const helpY = Graphics.boxHeight - LG_PAD - LG_HELP_H;
+      const helpY = this._gridSprite.y + this._size.h;
       bmp.fontSize = 18;
       bmp.textColor = "#cfd8e6";
       // Why there is only one way down, said before the modal offers it, so a
       // world with two commands missing never reads as a fault.
       if (isSurfacelessWorld(this._planet)) {
-        bmp.drawText(T('Galaxy.hud.noSolidSurface'), LG_PAD, helpY, width, LG_HELP_H, "left");
+        bmp.drawText(T('Galaxy.hud.noSolidSurface'), textX, helpY, width, LG_HELP_H, "left");
+      } else {
+        // The square the cursor is on holds a pad: say whose, so the marker on
+        // the picture has a name before the modal offers the two ways in.
+        const port = this.portAtCursor();
+        if (port) {
+          bmp.textColor = "#78e7ff";
+          bmp.drawText(port.name, textX, helpY, width, LG_HELP_H, "left");
+          bmp.textColor = "#cfd8e6";
+        }
       }
-      bmp.drawText(`${this._cursor.gx}, ${this._cursor.gy}`, LG_PAD, helpY, width, LG_HELP_H, "right");
+      bmp.drawText(`${this._cursor.gx}, ${this._cursor.gy}`, textX, helpY, width, LG_HELP_H, "right");
+    }
+
+    // The spaceport standing on the square under the cursor, or null.
+    portAtCursor() {
+      return spaceportAtCell(this._planet, this._cursor.gx, this._cursor.gy);
     }
 
     moveCursor(dx, dy) {
       this._cursor.gx = ((this._cursor.gx + dx) % this._grid.w + this._grid.w) % this._grid.w;
       this._cursor.gy = ((this._cursor.gy + dy) % this._grid.h + this._grid.h) % this._grid.h;
       SoundManager.playCursor();
+      if (this._modeWindow) {
+        this._modeWindow.setSpaceport(this.portAtCursor());
+        this.layoutModeWindow();
+      }
       this.redrawAll();
     }
 
@@ -1610,16 +1913,45 @@
       };
     }
 
-    // A square has been chosen; now which of the two ways down.
+    // A square has been chosen; now which of the ways down. The list is built
+    // around THIS square: one with a spaceport on it offers the pad instead of a
+    // generated surface, so the modal is rebuilt and resized before it opens.
     confirm() {
       SoundManager.playOk();
+      this._modeWindow.setSpaceport(this.portAtCursor());
+      this.layoutModeWindow();
       this._modeWindow.select(0);
-      this._modeWindow.show();
       this._modeWindow.activate();
     }
 
+    // The row keeps its place and its width; only how many plates share it
+    // changes when the square under the cursor gains or loses a pad.
+    layoutModeWindow() {
+      this._modeWindow.refresh();
+    }
+
+    // Into the spaceport on the chosen square: on foot, or with the ship set
+    // down on the pad. Either way the landing itself is the planet's (the suits,
+    // the sky, the grid cell its neighbours stitch against), and only the map is
+    // the authored one - see landAtSpaceport.
+    commandSpaceport(withShip) {
+      const port = this.portAtCursor();
+      if (!port || !landAtSpaceport(port.loc, {
+        planet: this._planet,
+        isMoon: !!this._moonOf,
+        parentPlanet: this._moonOf || null,
+        withShip: !!withShip,
+      })) {
+        SoundManager.playBuzzer();
+        this.commandModeCancel();
+        this._modeWindow.activate();
+        return;
+      }
+      this._leaving = true;
+      SceneManager.goto(Scene_Map);
+    }
+
     commandModeCancel() {
-      this._modeWindow.hide();
       this._modeWindow.deactivate();
     }
 
@@ -1757,6 +2089,12 @@
     return {
       name: loc.name || "", mapId: loc.mapId, x: loc.x || 1, y: loc.y || 1,
       system, planet,
+      // The square of the planet's landing grid the pad stands on, when the site
+      // named one. Its presence is what tells the rest of the plugin that this
+      // authored map is a square of another world rather than a place on Earth
+      // (see spaceportSurfaceSite, isAlienSurface).
+      cell: (loc.cell && typeof loc.cell.gx === "number" && typeof loc.cell.gy === "number")
+        ? { gx: loc.cell.gx, gy: loc.cell.gy } : null,
       // Earth's own spaceports are landing sites too, and they are not alien
       // ground. Anything the ship reached from another system or another world
       // is: an unresolved system reads as home rather than guessing otherwise.
@@ -1773,8 +2111,17 @@
     const rec = landingSite();
     return (rec && rec.offworld) ? rec : null;
   }
+  // The authored pad of an offworld spaceport the party is standing on right
+  // now, or null. Only a site that named a grid cell answers here: that pair is
+  // what makes the pad a square of the planet instead of a map of its own, so
+  // Earth's own pads (no cell) are never this.
+  function spaceportSurfaceSite() {
+    const rec = offworldLandingSite();
+    return (rec && rec.cell) ? rec : null;
+  }
   window.GalaxySim.landingSite = landingSite;
   window.GalaxySim.offworldLandingSite = offworldLandingSite;
+  window.GalaxySim.spaceportSurfaceSite = spaceportSurfaceSite;
 
   // Teleport the party to a hand-authored landing site ({ name, mapId, x, y },
   // optionally `dir`: the direction the party is left facing, 2/4/6/8, down by
@@ -1783,7 +2130,12 @@
   // the Starship is parked one tile below the arrival point and the position is
   // persisted to VehiclePosition, mirroring FastTravelSystem's completeTravelAirship
   // so the ship is physically there and the player steps off it on foot.
-  function teleportToLandingSite(loc) {
+  //
+  // opts.withShip brings the Starship down onto the pad on any map, which is how
+  // an offworld port is landed at with the ship rather than on foot. Earth's own
+  // world-map pads always bring it, as they always did.
+  function teleportToLandingSite(loc, opts) {
+    opts = opts || {};
     if (!loc || loc.mapId == null) return false;
     if (typeof $gameSystem !== "undefined" && $gameSystem) {
       $gameSystem._awayFromShip = true;
@@ -1793,16 +2145,60 @@
     // so the previous landing ends here (see clearAlienSurfaceState).
     clearAlienSurfaceState();
     const x = loc.x || 1, y = loc.y || 1;
-    if (loc.mapId === 315 && window.VehiclePosition) {
-      const shipVehicle = $gameMap.vehicle && $gameMap.vehicle("airship");
-      if (shipVehicle) shipVehicle.setLocation(315, x, y + 1);
-      window.VehiclePosition.set("airship", 315, x, y + 1, x, y + 1);
-    }
+    if (loc.mapId === 315 || opts.withShip) parkShipAtSite(loc);
     const dir = [2, 4, 6, 8].includes(loc.dir) ? loc.dir : 2;
     $gamePlayer.reserveTransfer(loc.mapId, x, y, dir, 0);
     return true;
   }
   window.GalaxySim.teleportToLandingSite = teleportToLandingSite;
+
+  // Set the Starship down one tile below the arrival point and remember it
+  // there, mirroring FastTravelSystem's completeTravelAirship: the ship is
+  // physically on the pad and the party steps off it on foot.
+  function parkShipAtSite(loc) {
+    if (!window.VehiclePosition || !loc || loc.mapId == null) return;
+    const x = loc.x || 1, y = (loc.y || 1) + 1;
+    const shipVehicle = $gameMap.vehicle && $gameMap.vehicle("airship");
+    if (shipVehicle) shipVehicle.setLocation(loc.mapId, x, y);
+    window.VehiclePosition.set("airship", loc.mapId, x, y, x, y);
+  }
+
+  // ============================================================================
+  // Setting down at a spaceport
+  // ----------------------------------------------------------------------------
+  // The one route in, whichever picker asked: the plugin command's list, the
+  // star map's landing grid, and the on-foot picker all come here.
+  //
+  // A port that names a grid cell is a square of its planet (see spaceportCells),
+  // so the whole landing is set up exactly as a generated square would be - the
+  // EVA suits, the life signs, the landed descriptor, the grid cell the
+  // neighbours are stitched against - and only the map itself is the authored
+  // one. A port with no cell (Earth's Apulia and Greenwitch) is an ordinary
+  // authored map and lands the way it always has.
+  //
+  // opts.withShip: bring the Starship down onto the pad instead of arriving on
+  // foot. The choice is the player's at every offworld port and is not offered
+  // on Earth.
+  // ============================================================================
+  function landAtSpaceport(loc, opts) {
+    opts = opts || {};
+    if (!loc || loc.mapId == null) return false;
+    const planet = opts.planet || null;
+    if (!planet || !loc.cell) return teleportToLandingSite(loc, opts);
+    const ok = enterPlanetSurface(planet, {
+      gridCell: loc.cell,
+      isMoon: !!opts.isMoon,
+      parentPlanet: opts.parentPlanet || null,
+      site: loc,
+    });
+    if (!ok) return false;
+    if (typeof $gameSystem !== "undefined" && $gameSystem) {
+      $gameSystem._gxLandingSite = landingSiteRecord(loc);
+    }
+    if (opts.withShip) parkShipAtSite(loc);
+    return true;
+  }
+  window.GalaxySim.landAtSpaceport = landAtSpaceport;
 
   // The landing grid is what makes the procedural generator answer "this
   // planet's biome" for every square it is asked about (generateProceduralMap's
@@ -1840,7 +2236,13 @@
   Game_Map.prototype.setup = function (mapId) {
     _GS_Game_Map_setup.call(this, mapId);
     if (typeof $gameSystem === "undefined" || !$gameSystem) return;
-    if (mapId !== 636) {
+    // The pad of an offworld spaceport is a square of its planet too (see
+    // isAlienSurface), so it keeps the suits and the landed world: the Moon base
+    // pad is outdoors on an airless moon, and stripping the helmets on arrival
+    // there would be the wrong answer to the same question map 636 gets right.
+    const pad = $gameSystem._gxLandingSite;
+    const onPad = !!(pad && pad.mapId === mapId && pad.cell && pad.offworld);
+    if (mapId !== 636 && !onPad) {
       if ($gameSystem._evaSuitActive) removeEVASuits();
       $gameSystem._landedPlanet = null;
     }
@@ -2743,7 +3145,8 @@
     }
     const sys = dm.systems.get(ship.currentSystem);
     if (sys && ship.currentPlanet &&
-      !(sys.planets || []).some((p) => p.name === ship.currentPlanet)) {
+      !(sys.planets || []).some((p) => p.name === ship.currentPlanet ||
+        (p.moons || []).some((m) => m.name === ship.currentPlanet))) {
       ship.currentPlanet = null;
     }
   }
@@ -3076,6 +3479,11 @@
       }
       .gx-sc-tab-bar {
         display: flex;
+        /* Eight tabs plus the hint chip: they stay on ONE row whatever the shared
+           rail rule says, or the overflow row floats off the panel below. */
+        flex-wrap: nowrap !important;
+        align-items: flex-end !important;
+        min-width: 0;
         gap: 4px;
         padding: 0 16px;
         background: none;
@@ -3097,7 +3505,12 @@
         white-space: nowrap;
       }
       .gx-sc-tab {
-        padding: 7px 18px 8px;
+        padding: 7px 14px 8px;
+        min-width: 0;
+        flex-shrink: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         font-size: var(--fs-body, 14px);
         cursor: pointer;
         user-select: none;
@@ -4639,8 +5052,7 @@
     } else if (target.kind === "planet") {
       ok = dm.startTravelToPlanet(target.systemName, target.name);
     } else if (target.kind === "moon") {
-      const pName = target.parentPlanet || target.name;
-      ok = dm.startTravelToPlanet(target.systemName, pName);
+      ok = dm.startTravelToPlanet(target.systemName, target.name);
     } else {
       ok = dm.startTravelToSystem(target.systemName || target.name);
     }
@@ -4732,8 +5144,7 @@
     } else if (target.kind === "planet") {
       ok = dm.teleportToPlanetOrbit(target.systemName, target.name);
     } else if (target.kind === "moon") {
-      const pName = target.parentPlanet || target.name;
-      ok = dm.teleportToPlanetOrbit(target.systemName, pName);
+      ok = dm.teleportToPlanetOrbit(target.systemName, target.name);
     } else {
       ok = dm.teleportToSystem(target.systemName || target.name);
     }

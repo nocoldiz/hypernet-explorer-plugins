@@ -90,7 +90,7 @@
  },
  "empty": {
   "title": "Grimoire Codicil",
-  "hint": "Select a skill from the list on the left to inspect its elemental scale, use cost, and alchemical actions.",
+  "hint": "Select a skill from the list on the left to see its element, cost and effects.",
   "section": "[Empty]",
   "category": "[Empty]"
  },

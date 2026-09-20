@@ -674,4 +674,70 @@
         VG.onShotLanded(subject, target, action);
     };
 
+    // ========================================================================
+    // State messages on the map are toasts, not dialogue
+    // ========================================================================
+    // Game_Actor.showAddedStates / showRemovedStates push their line straight
+    // into $gameMessage. Off the battlefield nothing consumes that queue right
+    // away, so the lines sit there until the next event opens a window, where
+    // they are printed above (and duplicated into) whatever the NPC was about
+    // to say. They are status readouts, so they go through the one
+    // notification service instead. The text is still the state's own
+    // localized message, nothing is hardcoded here.
+
+    function showStateMessage(text, severity) {
+        const toast = window.ParchmentToast;
+        if (!toast || typeof toast.show !== 'function') return;
+        toast.show(text, { severity: severity, key: text });
+    }
+
+    Game_Actor.prototype.showAddedStates = function() {
+        for (const state of this.result().addedStateObjects()) {
+            if (state.message1) {
+                showStateMessage(state.message1.format(this._name), 'warning');
+            }
+        }
+    };
+
+    Game_Actor.prototype.showRemovedStates = function() {
+        for (const state of this.result().removedStateObjects()) {
+            if (state.message4) {
+                showStateMessage(state.message4.format(this._name), 'info');
+            }
+        }
+    };
+
+    // ========================================================================
+    // <SelfState: id[, chance]> - a mark the move leaves on its own user
+    // ========================================================================
+    // Some states only ever mean something on the battler that used the skill:
+    // Combo Ready is the opening the user has read, Double Money/Items is a
+    // party ability that does nothing at all sitting on an enemy. RMMZ effects
+    // always land on the target, so those skills were quietly handing the
+    // bonus to the wrong side. The note tag says it plainly instead. The roll
+    // happens once per action, not once per target, and only if the action
+    // connected with someone.
+
+    const SELF_STATE_TAG = /<SelfState:\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?>/i;
+
+    function selfStateOf(item) {
+        if (!item || !item.note) return null;
+        const m = item.note.match(SELF_STATE_TAG);
+        if (!m) return null;
+        const chance = m[2] === undefined ? 1 : Number(m[2]);
+        return { stateId: Number(m[1]), chance: isNaN(chance) ? 1 : chance };
+    }
+
+    const _Game_Action_apply_selfState = Game_Action.prototype.apply;
+    Game_Action.prototype.apply = function(target) {
+        _Game_Action_apply_selfState.call(this, target);
+        const mark = selfStateOf(this.item());
+        if (!mark || this._selfStateDone) return;
+        if (!target || !target.result().isHit()) return;
+        this._selfStateDone = true;
+        if (Math.random() >= mark.chance) return;
+        const subject = this.subject();
+        if (subject) subject.addState(mark.stateId);
+    };
+
 })();

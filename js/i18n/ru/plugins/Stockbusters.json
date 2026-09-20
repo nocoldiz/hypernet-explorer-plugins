@@ -7,16 +7,16 @@
     "Books": "Книги",
     "Food": "Еда",
     "Homeopathy": "Гомеопатия",
-    "Jungle": "Джунгли",
     "Lifestyle": "Образ жизни",
     "Magic": "Магия",
     "Medical": "Медицинские",
     "Monsters": "Монстры",
-    "Plants": "Растения",
     "Recovery": "",
     "Survival": "Выживание",
     "Trash": "Мусор",
-    "Misc": ""
+    "Misc": "",
+    "Vehicles": "Транспорт",
+    "Fertility": "Фертильность"
   },
   "ui": {
     "windowTitle": "",

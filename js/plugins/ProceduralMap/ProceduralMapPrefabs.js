@@ -428,6 +428,16 @@
   }
 
   /**
+   * Whether an authored prefab map is an inn, i.e. its map note carries the
+   * `<Inn>` tag. A village is built around exactly one of these, whichever
+   * village biome it is, so the tag is the single answer to "is this the inn"
+   * and the prefab ids themselves are never listed anywhere.
+   */
+  function prefabIsInn(prefabMap) {
+    return !!(prefabMap && typeof prefabMap.note === "string" && /<Inn>/i.test(prefabMap.note));
+  }
+
+  /**
    * Determine random prefab count based on biome type
    */
   function getPrefabCount(rng, biomeName) {
@@ -647,77 +657,106 @@
         (a, b) => (b.width * b.height) - (a.width * a.height)
       );
       const usedMapIds = new Set();
+      const usedHints = new Set();
+
+      // One lot, one candidate: centre it on the hint, and wiggle it a few
+      // tiles when the centred footprint is blocked. Shared by the inn pass
+      // and by the ordinary lot loop so the two can never drift apart.
+      const tryPlaceCandidate = (candidate, hint) => {
+        // A village hint carries the LOT it stands in, not just its centre
+        // point (the block plan in the structure generator hands over
+        // rectangles). A prefab that cannot fit that lot belongs on another
+        // one: without this a hint took the biggest prefab there was and
+        // spilled it across the street and its neighbours' gardens. Three
+        // tiles of tolerance, the same slack the city lots allow.
+        if (hint.w && hint.h &&
+          (candidate.width > hint.w + 3 || candidate.height > hint.h + 3)) return null;
+
+        // Keep the footprint on the map: lots sit as close as 2 tiles to the
+        // edge, and a large prefab centred on one would hang off it.
+        const centerX = Math.max(0, Math.min(
+          Math.floor(hint.x - candidate.width / 2), PROC_MAP_WIDTH - candidate.width));
+        const centerY = Math.max(0, Math.min(
+          Math.floor(hint.y - candidate.height / 2), PROC_MAP_HEIGHT - candidate.height));
+
+        if (canPlacePrefabAt(centerX, centerY, candidate.width, candidate.height, allPlacedRects, satData, SPACING, waterSatData)) {
+          return { x: centerX, y: centerY };
+        }
+
+        // Wiggle room (reduced radius to prevent erratic jumps)
+        const searchRadius = 3;
+        for (let dy = -searchRadius; dy <= searchRadius; dy++) {
+          for (let dx = -searchRadius; dx <= searchRadius; dx++) {
+            const tryX = centerX + dx;
+            const tryY = centerY + dy;
+            if (canPlacePrefabAt(tryX, tryY, candidate.width, candidate.height, allPlacedRects, satData, SPACING, waterSatData)) {
+              return { x: tryX, y: tryY };
+            }
+          }
+        }
+        return null;
+      };
+
+      // Every village map is built around exactly one inn: the pool selection
+      // in applyPrefabs guarantees a single <Inn> prefab, and it is placed
+      // before anything else, on the roomiest lot that takes it, so it is
+      // never squeezed out by the houses that happened to come first.
+      const inn = prefabSizes.find(p => p.isInn);
+      if (inn) {
+        const lotsByArea = placementHints
+          .map((h, i) => i)
+          .sort((a, b) => ((placementHints[b].w || 0) * (placementHints[b].h || 0)) -
+            ((placementHints[a].w || 0) * (placementHints[a].h || 0)));
+        for (let li = 0; li < lotsByArea.length; li++) {
+          const hi = lotsByArea[li];
+          const spot = tryPlaceCandidate(inn, placementHints[hi]);
+          if (!spot) continue;
+          positions.push({ x: spot.x, y: spot.y, width: inn.width, height: inn.height, mapId: inn.mapId });
+          allPlacedRects.push({ x: spot.x, y: spot.y, width: inn.width, height: inn.height });
+          usedMapIds.add(inn.mapId);
+          usedHints.add(hi);
+          break;
+        }
+      }
 
       for (let hintIndex = 0; hintIndex < placementHints.length && positions.length < prefabCount; hintIndex++) {
+        if (usedHints.has(hintIndex)) continue; // the inn already stands here
         const hint = placementHints[hintIndex];
 
-        let finalX = null;
-        let finalY = null;
+        let spot = null;
         let prefab = null;
 
         // Pass 0: prefabs not placed on this map yet. Pass 1: allow repeats.
-        for (let pass = 0; pass < 2 && finalX === null; pass++) {
-          for (let ci = 0; ci < byAreaDesc.length && finalX === null; ci++) {
+        for (let pass = 0; pass < 2 && spot === null; pass++) {
+          for (let ci = 0; ci < byAreaDesc.length && spot === null; ci++) {
             const candidate = byAreaDesc[ci];
+            if (candidate.isInn) continue; // one inn a village, placed above
             if (pass === 0 && usedMapIds.has(candidate.mapId)) continue;
             // The repeat pass fills leftover lots with prefabs already
             // standing, which would copy a landmark around the map and undo
             // the quota. Ordinary prefabs may repeat, landmarks never do.
             if (pass === 1 && candidate.isLandmark && usedMapIds.has(candidate.mapId)) continue;
 
-            // A village hint now carries the LOT it stands in, not just its
-            // centre point (the block plan in the structure generator hands
-            // over rectangles). A prefab that cannot fit that lot belongs on
-            // another one: without this a hint took the biggest prefab there
-            // was and spilled it across the street and its neighbours' gardens.
-            // Three tiles of tolerance, the same slack the city lots allow.
-            if (hint.w && hint.h &&
-              (candidate.width > hint.w + 3 || candidate.height > hint.h + 3)) continue;
-
-            // Keep the footprint on the map: lots sit as close as 2 tiles to the
-            // edge, and a large prefab centred on one would hang off it.
-            const centerX = Math.max(0, Math.min(
-              Math.floor(hint.x - candidate.width / 2), PROC_MAP_WIDTH - candidate.width));
-            const centerY = Math.max(0, Math.min(
-              Math.floor(hint.y - candidate.height / 2), PROC_MAP_HEIGHT - candidate.height));
-
-            if (canPlacePrefabAt(centerX, centerY, candidate.width, candidate.height, allPlacedRects, satData, SPACING, waterSatData)) {
+            const placed = tryPlaceCandidate(candidate, hint);
+            if (placed) {
               prefab = candidate;
-              finalX = centerX;
-              finalY = centerY;
-              break;
-            }
-
-            // Strategy 2: Wiggle room (Reduced radius to prevent erratic jumps)
-            const searchRadius = 3;
-            for (let dy = -searchRadius; dy <= searchRadius && finalX === null; dy++) {
-              for (let dx = -searchRadius; dx <= searchRadius; dx++) {
-                const tryX = centerX + dx;
-                const tryY = centerY + dy;
-
-                if (canPlacePrefabAt(tryX, tryY, candidate.width, candidate.height, allPlacedRects, satData, SPACING, waterSatData)) {
-                  prefab = candidate;
-                  finalX = tryX;
-                  finalY = tryY;
-                  break;
-                }
-              }
+              spot = placed;
             }
           }
         }
 
-        if (finalX !== null) {
+        if (spot !== null) {
           usedMapIds.add(prefab.mapId);
           positions.push({
-            x: finalX,
-            y: finalY,
+            x: spot.x,
+            y: spot.y,
             width: prefab.width,
             height: prefab.height,
             mapId: prefab.mapId
           });
           allPlacedRects.push({
-            x: finalX,
-            y: finalY,
+            x: spot.x,
+            y: spot.y,
             width: prefab.width,
             height: prefab.height
           });
@@ -1362,6 +1401,34 @@
     const baseTargetCount = allowReuse ? Math.min(availablePrefabs.length, 6) : prefabCount;
     const targetCount = landmarkOnlyBiome ? Math.min(baseTargetCount, landmarkQuota) : baseTargetCount;
 
+    // A village map, of whatever village biome, gets exactly one inn. The
+    // <Inn> prefabs sit in the ordinary pool, so the draw below could take
+    // none of them or several: instead one is chosen up front and every other
+    // inn is refused, which is what makes the count exact rather than likely.
+    const isVillageBiome = lowerBiome.includes("village");
+    if (isVillageBiome) {
+      const innIds = availablePrefabs.filter(id => prefabIsInn(loadPrefabSync(id)));
+      while (innIds.length > 0) {
+        const innId = randomChoice(innIds, rng);
+        const innMap = loadPrefabSync(innId);
+        if (innMap && innMap.width > 0 && innMap.height > 0 &&
+          innMap.width <= PROC_MAP_WIDTH && innMap.height <= PROC_MAP_HEIGHT) {
+          prefabsWithSizes.push({
+            mapId: innId,
+            width: innMap.width,
+            height: innMap.height,
+            data: innMap,
+            isGasStation: false,
+            isLandmark: false,
+            isInn: true
+          });
+          selectedMapIds.add(innId);
+          break;
+        }
+        innIds.splice(innIds.indexOf(innId), 1); // too big for the map: try another
+      }
+    }
+
     while (prefabsWithSizes.length < targetCount && attempts < maxAttempts) {
       attempts++;
       const prefabMapId = pickPrefabId();
@@ -1380,6 +1447,9 @@
             continue; // Road biomes only get a gas station some of the time, and never more than one
           }
           if (isGasStation) gasStationPlaced = true;
+
+          // One inn a village, and it was already chosen above.
+          if (isVillageBiome && prefabIsInn(prefabMap)) continue;
 
           const isLandmark = landmarkIds.has(prefabMapId);
           if (isLandmark) landmarksSelected++;
@@ -1716,6 +1786,7 @@
     getPrefabFootprints,
     getGasPumpTileIds,
     prefabHasGasPump,
+    prefabIsInn,
     tryPlaceRoadsidePair,
     rollLandmarkQuota,
     pickPrefabFromPools,

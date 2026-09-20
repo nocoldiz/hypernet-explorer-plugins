@@ -67,6 +67,23 @@
       "grewUp": "grew up",
       "saw": "saw",
       "had": "had"
+    },
+    "beast": {
+      "sub": "it",
+      "obj": "it",
+      "cap": "It",
+      "pos": "its",
+      "was": "was",
+      "is": "is",
+      "tries": "tries",
+      "has": "has",
+      "answers": "answers",
+      "born": "Born",
+      "wasChild": "was young",
+      "remembers": "remembers",
+      "grewUp": "grew up",
+      "saw": "saw",
+      "had": "had"
     }
   },
   "adjective": [
@@ -156,6 +173,394 @@
       "{cap} {is} a {adj} soul of the late century, born {placeIn} and still marked by the year when {event}. {later} {moral}",
       "{born} {placeIn} in {year}, into screens and static: {sub} {was} watching when {event}. {later} {moral}"
     ],
-    "bornMeta": "Born {year} · {place}"
+    "bornMeta": "Born {year} · {place}",
+    "classOrigin": {
+      "academic": [
+        "{cap} stayed on after {pos} doctorate because leaving was never actually proposed to {obj}.",
+        "Twenty years, one department, and a feud that outlived both original participants.",
+        "{cap} {has} taught the same course so long that {sub} {has} started disagreeing with {pos} own notes."
+      ],
+      "acrobat": [
+        "Raised in a travelling show, {sub} could walk a rope before {sub} could spell {pos} own name.",
+        "{cap} learned to fall properly on the roofs of a city that did not want {obj} on the ground.",
+        "A broken ankle at fifteen taught {obj} everything the trainers never said out loud."
+      ],
+      "archaeologist": [
+        "{cap} dug up something in a field at nineteen that is still not in any catalogue.",
+        "Funding, a trowel and a stubborn refusal to accept the accepted chronology.",
+        "{cap} {has} been banned from two dig sites and invited back to one."
+      ],
+      "archmage": [
+        "Forty years of study, two expulsions and one thesis that three academies refused to publish.",
+        "{cap} was the youngest in the tower and is now the only one left who remembers it standing.",
+        "{cap} {has} forgotten more theory than most practitioners are taught."
+      ],
+      "barbarian": [
+        "{cap} came down out of high country where nobody writes anything down and nobody needs to.",
+        "The city called {obj} a savage, so {sub} decided to be a very good one.",
+        "{cap} {has} never lost an argument that was allowed to become a fight."
+      ],
+      "bard": [
+        "{cap} sang for coins in a station underpass until somebody noticed the coins were moving on their own.",
+        "Three chords, a good memory for other people's secrets, and a voice that opens doors.",
+        "{cap} {has} been thrown out of better places than most people have been invited into."
+      ],
+      "battlemage": [
+        "The academy was requisitioned in {pos} second year and the curriculum changed overnight.",
+        "{cap} learned theory in a lecture hall and application in a trench, three months apart.",
+        "Robes do not stop shrapnel, which is why {sub} wears plate over them."
+      ],
+      "berserker": [
+        "The first time the red came down {sub} woke up unhurt in a room where nobody else was.",
+        "{cap} was taught to let it out rather than swallow it, which saved {pos} life and ended others.",
+        "It runs in the blood, and every generation of {pos} family has a story about it."
+      ],
+      "boxer": [
+        "A gym above a laundrette, four amateur belts, and one night that ended the professional plan.",
+        "{cap} fought for money at sixteen because the alternative paid less and hurt more.",
+        "{cap} {has} a nose that has been broken by three different people, all of whom {sub} beat."
+      ],
+      "ceo": [
+        "{cap} inherited eleven percent of a company and spent a decade buying the rest of it back.",
+        "A boardroom is a battlefield with better chairs, and {sub} learned that before {sub} learned to drive.",
+        "{cap} started with a stall, a spreadsheet and no scruples worth mentioning."
+      ],
+      "chef": [
+        "{cap} started washing dishes at fourteen and was running a pass by twenty-two.",
+        "A grandmother, a notebook of recipes, and a temper that turned out to be professionally useful.",
+        "{cap} {has} burned {pos} hands so often that {sub} {has} stopped noticing hot plates."
+      ],
+      "cleric": [
+        "{cap} prayed over a dying stranger, the stranger got up, and the parish never let {obj} leave.",
+        "A seminary, a plague year, and a faith that survived both.",
+        "{cap} {is} in it for the people rather than the theology, and the theology has made its peace with that."
+      ],
+      "combatmedic": [
+        "{cap} qualified as a nurse and was handed a rifle on the same afternoon.",
+        "Two tours taught {obj} to stitch a wound while being shouted at, which no hospital had managed.",
+        "{cap} kept dragging people out of the line until somebody made it {pos} official job."
+      ],
+      "commander": [
+        "{cap} took over a company on the second day, because the officer who should have was dead.",
+        "Staff college, two dull postings and one week that made {pos} name.",
+        "{cap} {has} never been the best fighter in a room and {has} always been the one people looked at."
+      ],
+      "constructionworker": [
+        "{cap} went onto a site at seventeen for one summer and never came back off it.",
+        "{cap} {has} helped raise four towers and cannot afford a flat in any of them.",
+        "A trade learned from an uncle who lost two fingers teaching it."
+      ],
+      "convoker": [
+        "{cap} read a name aloud that should have stayed on the page, and something on the other side read {obj} back.",
+        "The circle was chalk, the candle was cheap, and the thing that came through kept the appointment anyway.",
+        "{cap} {has} been trading favours with things that have no faces since {sub} was nineteen."
+      ],
+      "cultist": [
+        "They were the first people who ever said {pos} name like it mattered, and the price came later.",
+        "{cap} joined for the free meals and stayed for the revelation.",
+        "A pamphlet, a basement, a chant: three steps and {sub} was somebody else's."
+      ],
+      "demigod": [
+        "One of {pos} parents was never photographed, never aged and never explained.",
+        "{cap} found out what {sub} was at nineteen, in the worst possible way, in front of witnesses.",
+        "The temple that should have claimed {obj} burned down a century before {sub} was born."
+      ],
+      "doctor": [
+        "Six years of medicine, two of residency, and one night that taught {obj} more than all eight.",
+        "{cap} went in for the money and stayed for a reason {sub} {has} never been able to phrase.",
+        "{cap} {has} signed more death certificates than {sub} can remember and each name is still filed somewhere."
+      ],
+      "drone": [
+        "It was assembled to a specification, flashed with a behaviour set, and switched on facing the world.",
+        "Its operators are gone. The instructions they left are still running.",
+        "It was built for one task, completed it, and was never issued a second.",
+        "Somebody wrote the world into its memory as a list of conditions, and it has been checking them off since.",
+        "It ships with a news feed it cannot turn off, and it acts on what the feed says.",
+        "The firmware was written by a committee that has since dissolved into three hyperpowers."
+      ],
+      "elementalist": [
+        "{cap} set a curtain alight at six years old without touching it, and the family moved twice.",
+        "An old teacher taught {obj} that fire, water, earth and air are four arguments with the same answer.",
+        "{cap} {has} always been able to feel weather coming through {pos} teeth."
+      ],
+      "enchanter": [
+        "{cap} started by mending a cracked kettle with a word and never stopped improving things that worked fine.",
+        "A jeweller's apprenticeship, a stolen grimorie, and suddenly the rings did more than shine.",
+        "{cap} {is} convinced every object wants to be better, and {sub} {has} spent {pos} life asking them."
+      ],
+      "entertainer": [
+        "{cap} discovered at eleven that a room will forgive anything if it is laughing.",
+        "Clubs, weddings, one television spot and a long quiet stretch afterwards.",
+        "{cap} {has} worked every kind of stage there is and still gets sick before each one."
+      ],
+      "feral": [
+        "Nothing ever tamed it. It was whelped in a hedgerow and raised itself on what it could run down.",
+        "It belonged to somebody once. The collar rotted off years ago and the name went with it.",
+        "It came down off the moor in a bad winter and simply never went back up.",
+        "A farm dog that outlived the farm, and then outlived the habit of waiting at a door.",
+        "It was born wild, has stayed wild, and has never once had a reason to reconsider.",
+        "Whatever litter it came from scattered in its first season, and it has been alone since."
+      ],
+      "firefighter": [
+        "{cap} walked into a burning stairwell once as a bystander, and the brigade recruited {obj} the same week.",
+        "Eleven years of shifts and one building {sub} still dreams about.",
+        "{cap} {is} the calmest person in any room that is on fire, and the twitchiest in one that is not."
+      ],
+      "firemage": [
+        "{cap} burned down a shed at eight and spent the next twenty years learning to aim.",
+        "Fire was the only thing that ever came when {sub} called it, so {sub} kept calling.",
+        "{cap} {has} not felt properly cold since the night the gift arrived."
+      ],
+      "freelancer": [
+        "No guild ever wanted {obj} and {sub} stopped asking, taking whatever work the board offered that week.",
+        "{cap} trained for four trades and finished none of them, which turned out to be a trade of its own.",
+        "A contract, a handshake, a fee: that was the whole of the education {sub} ever got."
+      ],
+      "ghost": [
+        "It died somewhere with a door it never got through, and it is still working on the door.",
+        "Nobody said the words over the body, so the rest of it stayed where it fell.",
+        "It drowned, and the water gave back everything except the part that leaves.",
+        "A debt, a promise or a grudge kept it here. It no longer remembers which.",
+        "The house was demolished forty years ago and it has not accepted the news.",
+        "It was buried properly, in the wrong ground, and came back to the right one."
+      ],
+      "gladiator": [
+        "{cap} was sold to a pit at nineteen and bought {pos} own contract back at twenty-six.",
+        "Sand, a crowd and a gate that only opens one way: that was {pos} whole education.",
+        "{cap} {is} famous in four towns and wanted in one of them."
+      ],
+      "guardian": [
+        "{cap} was posted at a door at twenty and discovered that {sub} was extremely hard to move.",
+        "Somebody {sub} was supposed to protect died, and {sub} {has} been overcorrecting ever since.",
+        "The shield was {pos} grandfather's, and so was the habit of standing in front of people."
+      ],
+      "gunmancer": [
+        "{cap} carved a sigil into a pistol grip on a dare and the pistol has been listening ever since.",
+        "Half the barrel is steel and half is something {sub} will not name.",
+        "A smith taught {obj} the mechanism and a witch taught {obj} the rest."
+      ],
+      "huntergatherer": [
+        "{cap} grew up where the shops were a day away and the woods were not.",
+        "{cap} {has} eaten nothing {sub} did not catch, dig or recognise since {sub} was a child.",
+        "A family that never quite joined the century, and a child who saw no reason to."
+      ],
+      "icemage": [
+        "{cap} was found alive in a drift that should have killed {obj}, and something had changed.",
+        "A winter that lasted fourteen months taught {obj} the shape of the cold from the inside.",
+        "{cap} took up the discipline because it was the only thing that would slow {pos} temper down."
+      ],
+      "illusionist": [
+        "{cap} started with stage tricks and stopped needing the props somewhere around the fourth year.",
+        "A childhood of not being believed taught {obj} exactly how belief works.",
+        "{cap} {has} never once been photographed in a way {sub} did not approve of."
+      ],
+      "journalist": [
+        "{cap} printed something true at the wrong time and {has} been freelance ever since.",
+        "A press card, a tape recorder and an address book {sub} would burn before handing over.",
+        "{cap} {has} been sued twice, both times by people who settled quietly."
+      ],
+      "knight": [
+        "A minor house needed a sword it could afford and {sub} was cheap, young and stubborn.",
+        "{cap} carried another knight's shield for six years before anyone let {obj} carry {pos} own.",
+        "The oath was sworn to a lord who died a month later, and {sub} kept it anyway."
+      ],
+      "lumberjack": [
+        "{cap} took the saw because the mill was the only employer within forty miles.",
+        "Fourteen seasons in the timber, two lost fingernails and a back that complains in the cold.",
+        "{cap} {has} felled trees older than every building {sub} {has} ever slept in."
+      ],
+      "manacyborg": [
+        "A surgeon replaced what the accident took, and used the wrong kind of metal on purpose.",
+        "It was a body first. The plating was added by somebody who wanted a battery with legs.",
+        "Half its nervous system is copper and the copper is what dreams.",
+        "A wartime programme fitted eleven of these. This is the one that walked out.",
+        "The conduits were meant to carry current. Something else started using them.",
+        "It runs on a charge it cannot explain and has never once been allowed to run dry."
+      ],
+      "martialartist": [
+        "{cap} was sent to the dojo to burn off a temper and found a discipline instead.",
+        "Twelve years of the same four movements, until they stopped being movements at all.",
+        "{cap} lost the first fight badly enough to spend a decade making sure of the second."
+      ],
+      "mechanic": [
+        "{cap} rebuilt {pos} first engine out of two broken ones and a manual in the wrong language.",
+        "A garage, a father who did not explain things, and a daughter who worked them out anyway.",
+        "{cap} {has} never met a machine {sub} could not argue into running."
+      ],
+      "mercenary": [
+        "{cap} left a regular army for a company that paid four times as much and asked half as many questions.",
+        "The first contract was meant to be the only one, and that was eleven contracts ago.",
+        "{cap} {has} fought under six flags and {has} never once owned one."
+      ],
+      "meteoarcanist": [
+        "{cap} survived a storm nobody had predicted and decided that was unacceptable.",
+        "A rooftop station, a decade of readings and the night the readings started obeying {obj}.",
+        "{cap} {has} been right about the weather often enough that people stopped calling it luck."
+      ],
+      "mimic": [
+        "It learned the shape of a chest because that is the shape people open without thinking.",
+        "Nobody knows what it was first. It has worn a door, a wardrobe and a well, and answers to none of them.",
+        "It grew up in a vault among real chests and copied them the way a chick copies a hen.",
+        "Something in a cellar taught it that patience is a hunting method.",
+        "It has been the wrong piece of furniture in nine different houses.",
+        "It does not imitate to deceive. Imitation is simply the only shape it has ever had."
+      ],
+      "monk": [
+        "{cap} gave away everything {sub} owned in one afternoon and {has} never once regretted the arithmetic.",
+        "The monastery took in anyone who would carry water, and {sub} carried water for four years.",
+        "Silence, bread and one hour of violence a day: it turned out to suit {obj}."
+      ],
+      "monster": [
+        "No bestiary has a page for it, and three have tried.",
+        "It crawled out of a place that has since been filled in and fenced off.",
+        "Something made it on purpose and then lost track of it.",
+        "It is the last of whatever it is, and it does not appear to have noticed.",
+        "Two kinds of thing met in the dark and this is what came of it.",
+        "It was already old when the road was built, and it watched the road get built."
+      ],
+      "mutant": [
+        "Its mother worked at a plant that closed the year it was born, and the fences are still up.",
+        "Something in the water did it, over two generations, quietly.",
+        "It was ordinary until a fever at nine rewrote the shape of it.",
+        "A test range, a prevailing wind and a village nobody evacuated.",
+        "It changed once, badly, and has been changing slowly ever since.",
+        "The line it comes from has been wrong for a long time and is getting wronger."
+      ],
+      "necromancer": [
+        "{cap} tried to bring one specific person back, failed, and found {sub} had learned everything else instead.",
+        "A gravedigger's apprenticeship became a correspondence, and the correspondence became a career.",
+        "{cap} {is} not morbid; {sub} simply {has} never accepted that the dead are finished talking."
+      ],
+      "nun": [
+        "{cap} walked into the cloister to hide from something and stayed because the silence answered back.",
+        "The order took {obj} in as a foundling and never gave {obj} a reason to leave.",
+        "A vow made at a deathbed turned into a habit, and the habit turned into a life."
+      ],
+      "nurse": [
+        "{cap} trained in a hospital that was short of everything except patients.",
+        "Nights, always nights, for six years, until the ward stopped feeling like a building.",
+        "{cap} {has} held more hands at the end than most priests have."
+      ],
+      "oracle": [
+        "The dreams started before {sub} had words for them, and they have never once been wrong or kind.",
+        "A fever at eleven left {obj} with a sense of what tomorrow smells like.",
+        "{cap} {has} stopped warning people, because they never listen until it is the day."
+      ],
+      "paladin": [
+        "{cap} was ordained on a battlefield by a priest who died before the blessing finished.",
+        "The vow came first and the faith caught up with it, years later, on a bad road.",
+        "{cap} {has} carried the same oath through three wars and never once put it down."
+      ],
+      "plantmage": [
+        "The land has been in the family for four generations, and the third one started asking it questions.",
+        "{cap} came back to the farm after the city did not work out, and the orchard answered when {sub} spoke to it.",
+        "{cap} {has} read the sky for weather so long that the roots started reading {obj} back."
+      ],
+      "policeofficer": [
+        "{cap} joined believing the uniform meant something and {has} not entirely stopped believing it.",
+        "Eight years on a beat that taught {obj} which laws the city actually enforces.",
+        "{cap} took the badge because {pos} family expected it and kept it for reasons of {pos} own."
+      ],
+      "priest": [
+        "{cap} was ordained in a parish that had lost two priests in five years and did not ask why.",
+        "A calling that arrived late, loudly, and at a very inconvenient moment.",
+        "{cap} {has} buried more of {pos} congregation than {sub} {has} married."
+      ],
+      "prowrestler": [
+        "The crowd wanted a villain that season, and {sub} found out {sub} was very good at being one.",
+        "{cap} learned the falls first, the promos second, and the business somewhere in between.",
+        "Every scar has a date, a town and a gate receipt attached to it."
+      ],
+      "psyker": [
+        "{cap} heard a room full of people thinking at the age of seven and did not sleep properly for a year.",
+        "A state programme tested {obj} at nine, flagged the file, and forgot to close it.",
+        "{cap} {has} learned to keep the door shut, mostly, and what gets through is enough."
+      ],
+      "ranger": [
+        "{cap} spent three seasons alone on a border trail and came back speaking less and hitting more.",
+        "Poaching taught {obj} the woods; the warden who caught {obj} taught {obj} the rest.",
+        "{cap} {has} walked more of the map than most people have read about."
+      ],
+      "rogue": [
+        "{cap} was good at doors before {sub} was good at anything else, and nobody offered a second option.",
+        "A pickpocket with a conscience is just a slow pickpocket, and {sub} learned that early.",
+        "{cap} {has} been arrested twice and charged never, which {sub} considers a professional record."
+      ],
+      "sage": [
+        "{cap} answered a question for a stranger, correctly, and spent the next thirty years being asked more.",
+        "Forty years of reading in a language that only six people still speak.",
+        "{cap} {has} no title, no chair and no doubts about any of the three."
+      ],
+      "samurai": [
+        "{cap} was placed in a school at seven and handed a live blade at twelve.",
+        "The house {sub} served no longer exists, and {sub} {has} kept its forms out of stubbornness.",
+        "One duel, badly won, taught {obj} what the whole code had been trying to say."
+      ],
+      "scientist": [
+        "{cap} published one result nobody could replicate and {has} spent {pos} career living beside it.",
+        "A grant, a basement lab and an instrument {sub} built out of scrap.",
+        "{cap} {has} been wrong in public four times, which is four more than most of {pos} colleagues admit."
+      ],
+      "scout": [
+        "{cap} could find the way home from anywhere by the age of nine, and somebody eventually paid for it.",
+        "Two years running messages through country nobody else would cross.",
+        "{cap} {is} always the first one through a door and {has} the reflexes to justify it."
+      ],
+      "shopkeeper": [
+        "{cap} inherited a counter, a debt and a street's worth of opinions about the previous owner.",
+        "Twenty years of knowing what everyone in the district buys and never once saying so.",
+        "{cap} {has} kept the same shop open through two recessions and one riot."
+      ],
+      "spellblade": [
+        "The fencing school threw {obj} out for muttering, and the academy threw {obj} out for stabbing.",
+        "{cap} refused to choose between the sword and the book, so {sub} welded them together badly and then well.",
+        "One teacher for the footwork, another for the syllables, and a scar between the two."
+      ],
+      "technomage": [
+        "{cap} took a radio apart at six and found a circuit that did not appear in the diagram.",
+        "An engineering degree, a stolen rite and one long argument about which of the two was doing the work.",
+        "{cap} {is} convinced a spell is only a machine nobody has drawn yet, and {has} the schematics to argue it."
+      ],
+      "vampire": [
+        "The bite was an accident; the hundred years that followed were not.",
+        "{cap} agreed to it, which is the part nobody believes.",
+        "{cap} woke in a cellar with a thirst that no glass of water has touched since."
+      ],
+      "warlock": [
+        "The pact was signed in a hospital corridor at four in the morning and it has been paying out ever since.",
+        "Something old offered {obj} a way out, and {sub} did not read past the first clause.",
+        "{cap} {has} a patron {sub} {has} never seen and {has} not missed a payment yet."
+      ],
+      "witch": [
+        "An aunt nobody spoke of left {obj} a book of recipes in which only half the ingredients were food.",
+        "{cap} learned the craft from the woman who lived past the last streetlight, and paid for every lesson.",
+        "The first time {sub} cursed someone it worked, and after that there was no going back to ordinary work."
+      ],
+      "wretch": [
+        "Everything {sub} had was taken in one season, and nobody has offered any of it back.",
+        "{cap} {has} slept in more doorways than beds and {has} stopped counting either.",
+        "There was a life before this one; {sub} does not discuss it."
+      ],
+      "zombie": [
+        "A fever went through the district and this one got up three days after it stopped breathing.",
+        "It was raised on purpose, by somebody who needed labour and did not care whose.",
+        "The curse was laid on a family, not a person, and it arrived four generations late.",
+        "It drank from a well that a war had poisoned, and the poison was not entirely chemical.",
+        "It was bitten, it died of the bite, and then the bite went on without it.",
+        "A rite meant to bring back one specific person brought back this one instead."
+      ]
+    },
+    "beast": [
+      "Found {placeIn}, and no older account of it than that. {classOrigin} {moral}",
+      "{classOrigin} It keeps to the country {placeIn}, a {adj} thing the years have not much changed. {moral}",
+      "No birth year, no papers, no nation: only a range, {placeIn}. {classOrigin} {moral}",
+      "{classOrigin} It has been {placeIn} for as long as anyone has bothered to notice. {moral}"
+    ],
+    "drone": [
+      "{classOrigin} It was brought online {placeIn} in {year}, and its conditions were first met the season {event}. {later} {moral}",
+      "{classOrigin} Registered {placeIn} in {year}; its behaviour set fired the week {event}. {later} {moral}",
+      "{classOrigin} It has no childhood, only a build date: {year}, {placeIn}. Its log opens on the day {event}. {later} {moral}",
+      "{classOrigin} Nothing of it is remembered and all of it is recorded: since {year}, {placeIn}, it has answered every time {event}. {later} {moral}"
+    ]
   }
 }

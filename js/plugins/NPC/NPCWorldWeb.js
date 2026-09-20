@@ -947,7 +947,9 @@
       let group = String(args.group || "").trim();
       if (!group) group = currentPlayerGroup() || "";
       if (!group) return;
+      window.skipLocalization = true;
       $gameMessage.add(buildPulseReport(group));
+      window.skipLocalization = false;
     });
 
     PluginManager.registerCommand(pluginName, "WorldPulseDebug", () => {

@@ -3503,6 +3503,123 @@
     };
 
     //=============================================================================
+    // Shader warm-up: the first fight of a session stops paying for the compile
+    //=============================================================================
+    // A finished battle holds one material per distinct program back from
+    // disposal (keepMaterialAlive), so the SECOND fight of a session and every
+    // one after it finds its programs already compiled. The first one had
+    // nothing to find. It opened by handing the driver every program the
+    // battlers use, at once, on the frame the fight appears - and a shader
+    // compile blocks the driver outright.
+    //
+    // So compile them earlier, out on the map, where a lost frame is a lost
+    // frame and not the opening of a fight. What is compiled is not a battler:
+    // it is one tiny box per material shape the roster is built out of
+    // (standard / basic, textured / untextured, flat / smooth shaded, each
+    // through the retro patch if one is on), lit by the same rig a battle is
+    // lit by. That is what a program is keyed on; the geometry behind it is
+    // not, so a box does the job a monster would.
+    //
+    // This does NOT add a WebGL context. acquireBattleRenderer owns the one
+    // context the session's battles share and would have built it on that same
+    // opening frame; the warm-up only asks for it a few seconds sooner.
+    const WARM_UP_DELAY_FRAMES = 180;   // ~3s of map before the map is touched
+    let _shadersWarmed = false;
+
+    // Held for the life of the session so nothing can release their programs.
+    // Eight materials with no geometry behind them; a few hundred bytes.
+    const _warmUpMaterials = [];
+
+    function warmBattleShaders() {
+        if (_shadersWarmed) return false;
+        if (typeof THREE === 'undefined') return false;
+        // Sprite battlers compile none of this, so there is nothing to warm.
+        if (typeof ConfigManager !== 'undefined' &&
+            ConfigManager.enemyBattlers !== undefined &&
+            ConfigManager.enemyBattlers !== 1) return false;
+        _shadersWarmed = true;   // one attempt per session, successful or not
+
+        let renderer = null;
+        try { renderer = acquireBattleRenderer(); } catch (e) { return false; }
+        if (!renderer || typeof renderer.compile !== 'function') return false;
+
+        let rig = null;
+        const geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
+        let texture = null;
+        try {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+            camera.position.set(0, config.cameraHeight, config.cameraDistance);
+            camera.lookAt(0, CAMERA_AIM_Y, 0);
+
+            // The light count and whether there is an environment map are both
+            // part of what a program is keyed on, so the warm-up has to stand
+            // under the same sun a battle does.
+            if (config.dayNightLighting) {
+                rig = new DayNightRig(scene, renderer, {
+                    shadows: false,
+                    env: true,
+                    radius: ENEMY_SPREAD_HALF_SPAN + 2,
+                    groundY: DEFAULT_GROUND_Y,
+                });
+            } else {
+                scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+                const key = new THREE.DirectionalLight(0xffffff, 0.8);
+                key.position.set(1, 2, 1);
+                scene.add(key);
+            }
+
+            const pixel = document.createElement('canvas');
+            pixel.width = pixel.height = 1;
+            texture = new THREE.CanvasTexture(pixel);
+
+            const retro = window.RetroShader ? window.RetroShader.active() : window.PSXShader;
+            const types = [THREE.MeshStandardMaterial, THREE.MeshBasicMaterial];
+            for (const Type of types) {
+                if (typeof Type !== 'function') continue;
+                for (const map of [null, texture]) {
+                    for (const flatShading of [true, false]) {
+                        const material = new Type({ color: 0xffffff, map: map, flatShading: flatShading });
+                        if (retro && retro.applyToMaterial) retro.applyToMaterial(material);
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.position.set(0, DEFAULT_GROUND_Y, 0);
+                        scene.add(mesh);
+                        _warmUpMaterials.push(material);
+                    }
+                }
+            }
+
+            renderer.compile(scene, camera);
+            debugLog('shader warm-up compiled ' + _warmUpMaterials.length + ' materials');
+            return true;
+        } catch (e) {
+            debugLog('shader warm-up skipped: ' + e);
+            return false;
+        } finally {
+            // The materials stay; everything else was scaffolding. The rig is
+            // thrown away the way a finished battle throws its own away, which
+            // leaves the baked sky probe on the renderer for the fight to find.
+            try { if (rig && rig.dispose) rig.dispose(); } catch (e) { /* nothing to undo */ }
+            try { geometry.dispose(); } catch (e) { /* nothing to undo */ }
+            try { if (texture) texture.dispose(); } catch (e) { /* nothing to undo */ }
+        }
+    }
+
+    // Out on the map, once, a few seconds in: late enough that it is not
+    // competing with the map's own load, early enough to be long done before
+    // anything walks into a monster. A battle that starts first does not wait
+    // for it - the flag is set either way and the fight compiles what it needs.
+    const _Scene_Map_update_warmShaders = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update_warmShaders.call(this);
+        if (_shadersWarmed) return;
+        this._b3dWarmUpFrames = (this._b3dWarmUpFrames || 0) + 1;
+        if (this._b3dWarmUpFrames >= WARM_UP_DELAY_FRAMES && !this.isBusy()) {
+            warmBattleShaders();
+        }
+    };
+
+    //=============================================================================
     // Public API (registry + base class) for family plugins
     //=============================================================================
     window.Battler3D = window.Battler3D || {};
@@ -3511,6 +3628,8 @@
     window.Battler3D.registerNamed = registerNamed;
     // Exposed for the headless draw-call harness (test/test_battle_3d_perf.js).
     window.Battler3D.optimiseModel = optimiseBattlerModel;
+    // Exposed so the perf harness can assert the warm-up exists and runs once.
+    window.Battler3D.warmShaders = warmBattleShaders;
     window.Battler3D.flatShadeModel = flatShadeBattlerModel;
     // The floor under each segment count the budget governs, by slot name. A
     // type absent here is not on the budget at all (a box has no curvature to
@@ -4149,6 +4268,44 @@
         debugLog('3D sprite added to battle field');
     };
 
+    // A troop's bodies used to be built one after another on the single frame
+    // the fight opened on. A median body is under a millisecond, but eight of
+    // them, each with its material dedupe, static merge and retro patch, is a
+    // frame the player sees drop. They are spent under a budget instead: as
+    // many as fit in BUILD_BUDGET_MS are still built on the opening frame, so a
+    // small troop waits exactly as long as it always did, and only the surplus
+    // moves to the next frame. At least one a slice, so one slow body can never
+    // stall the field, and the scene is re-checked every slice because a fast
+    // scene change can tear it down mid-build.
+    const BUILD_BUDGET_MS = 6;
+
+    const _buildNow = () => (typeof performance !== 'undefined' && performance.now)
+        ? performance.now()
+        : Date.now();
+
+    function runStaggeredBuilds(jobs, isAlive) {
+        return new Promise((resolve) => {
+            const pending = [];
+            let next = 0;
+            const slice = () => {
+                if (!isAlive()) { resolve(pending); return; }
+                const start = _buildNow();
+                do {
+                    try {
+                        const p = jobs[next++]();
+                        if (p) pending.push(p);
+                    } catch (e) {
+                        console.error('3D battler build failed:', e);
+                    }
+                } while (next < jobs.length && _buildNow() - start < BUILD_BUDGET_MS);
+                if (next < jobs.length) requestAnimationFrame(slice);
+                else resolve(pending);
+            };
+            if (!jobs.length) resolve(pending);
+            else slice();   // the first slice is synchronous: nothing that fits is deferred
+        });
+    }
+
     const _Spriteset_Battle_createEnemies = Spriteset_Battle.prototype.createEnemies;
     Spriteset_Battle.prototype.createEnemies = function() {
         _Spriteset_Battle_createEnemies.call(this);
@@ -4206,7 +4363,7 @@
         debugLog('Creating 3D enemies');
 
         const enemies = $gameTroop.members();
-        const pending = [];
+        const jobs = [];
 
         // Pre-count procedural creatures so we can spread them across the field.
         // A crowd is drawn a little smaller than a lone monster (see
@@ -4235,38 +4392,12 @@
                 scale *= crowdScale;
                 const offsetY = Number(data['3d_offset_y'] || 0);
 
-                let battlerModel;
-                if (def) {
-                    debugLog(`Configuring procedural ${archetypeKey} enemy`);
-
-                    // Resolve weapon type: explicit meta wins; else the archetype
-                    // default (0 = none); else a random melee/ranged type.
-                    let weaponType;
-                    const weaponTypeMeta = data['weaponType'];
-                    if (weaponTypeMeta !== undefined) {
-                        weaponType = parseInt(String(weaponTypeMeta).trim());
-                        if (isNaN(weaponType)) weaponType = Math.floor(Math.random() * 12) + 1;
-                    } else if (def.weapon !== undefined) {
-                        weaponType = def.weapon;
-                    } else {
-                        weaponType = Math.floor(Math.random() * 12) + 1;
-                    }
-
-                    battlerModel = buildArchetypeModel(def, scale, offsetY, enemy, weaponType, archetypeKey);
-                    // A forced body is a forced colour too (see battleOverride):
-                    // the tint is applied once the model has built itself, in
-                    // Battle3DScene.addModel.
-                    const ov = battleOverride();
-                    if (battlerModel && ov && ov.tint != null) battlerModel._overrideTint = ov.tint;
-                } else {
-                    const filename = data['3d_model'];
-                    debugLog(`Configuring 3D enemy: ${filename}`);
-                    battlerModel = new BattlerModel3D(filename, scale, offsetY);
-                }
-
                 // MZ sorts _enemySprites by spriteId/screen-y, so it is NOT aligned
                 // with troop-member order (enemies[i]). Match the sprite by its
                 // battler so the correct 2D sprite is hidden / read for GLB fallback.
+                // Looked up before the body is built rather than after: a troop
+                // member with no sprite of its own is skipped, and skipping it
+                // before the work is queued is the work never done.
                 const sprite = this._enemySprites.find(s => s && (s._battler || s._enemy) === enemy);
                 if (!sprite) {
                     console.error(`Enemy sprite for troop index ${i} not found!`);
@@ -4303,19 +4434,59 @@
 
                 debugLog(`Enemy ${i} 3D pos: (${posX}, ${posY}, ${posZ})`);
 
-                pending.push(this._battle3DScene.addModel(`enemy_${i}`, battlerModel, posX, posY, posZ));
-
-                // Hide 2D sprite
+                // Hide the 2D sprite now rather than once the body stands. A
+                // staggered build can land a frame or two later, and a sprite
+                // left up until it did would read as the monster swapping
+                // bodies in front of the player; the authored GLB path has
+                // always hidden it this early, since its load() awaits.
                 sprite.hide();
                 debugLog(`Enemy sprite ${i} hidden`);
+
+                // Everything above is bookkeeping, and cheap. The body itself
+                // is the cost, so it is queued as a job for runStaggeredBuilds
+                // to spend its frame budget on.
+                jobs.push(() => {
+                    let battlerModel;
+                    if (def) {
+                        debugLog(`Configuring procedural ${archetypeKey} enemy`);
+
+                        // Resolve weapon type: explicit meta wins; else the archetype
+                        // default (0 = none); else a random melee/ranged type.
+                        let weaponType;
+                        const weaponTypeMeta = data['weaponType'];
+                        if (weaponTypeMeta !== undefined) {
+                            weaponType = parseInt(String(weaponTypeMeta).trim());
+                            if (isNaN(weaponType)) weaponType = Math.floor(Math.random() * 12) + 1;
+                        } else if (def.weapon !== undefined) {
+                            weaponType = def.weapon;
+                        } else {
+                            weaponType = Math.floor(Math.random() * 12) + 1;
+                        }
+
+                        battlerModel = buildArchetypeModel(def, scale, offsetY, enemy, weaponType, archetypeKey);
+                        // A forced body is a forced colour too (see battleOverride):
+                        // the tint is applied once the model has built itself, in
+                        // Battle3DScene.addModel.
+                        const ov = battleOverride();
+                        if (battlerModel && ov && ov.tint != null) battlerModel._overrideTint = ov.tint;
+                    } else {
+                        const filename = data['3d_model'];
+                        debugLog(`Configuring 3D enemy: ${filename}`);
+                        battlerModel = new BattlerModel3D(filename, scale, offsetY);
+                    }
+                    return this._battle3DScene.addModel(`enemy_${i}`, battlerModel, posX, posY, posZ);
+                });
             }
         }
 
-        // Models load asynchronously. After they all resolve, run the spread
-        // pass immediately (settles geometry-free/inline procedural models that
-        // are already in the scene), then once more on the next animation frame
-        // (so GLB-loaded geometry bounding boxes are fully measurable).
-        Promise.all(pending).then(() => {
+        // The bodies are built across as many frames as the budget needs, and
+        // they load asynchronously on top of that. After every one of them has
+        // resolved, run the spread pass immediately (settles geometry-free /
+        // inline procedural models that are already in the scene), then once
+        // more on the next animation frame (so GLB-loaded geometry bounding
+        // boxes are fully measurable).
+        runStaggeredBuilds(jobs, () => !!this._battle3DScene && !this._battle3DScene._disposed)
+            .then((pending) => Promise.all(pending)).then(() => {
             this.spreadEnemyModels();
             // Second pass on the next frame: some GLB models or procedural
             // sub-meshes only land in the scene graph after the first render tick,

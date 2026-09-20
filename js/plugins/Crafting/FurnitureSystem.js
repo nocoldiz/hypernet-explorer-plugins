@@ -337,7 +337,7 @@
         window.ParchmentToast.show(T('Furniture.illegal.warning'), {
             severity: 'warning',
             duration: 240,
-            key: 'furniture-illegal-build'
+            key: 'furniture-illegal-build'  // i18n-ignore  dedupe key
         });
     }
 
@@ -985,6 +985,9 @@
     function canObtainFurniture(furniture) {
         if (!furniture) return false;
         if (furniture.__placeKind === 'animal') return canPurchaseFurniture(furniture);
+        // A piece that is already in stock has been bought and delivered;
+        // setting it down spends a placement, not money.
+        if (stockPlacements(furniture.id) > 0) return true;
         return currentBuildMode() === 'purchase'
             ? canPurchaseFurniture(furniture)
             : canAffordFurniture(furniture);
@@ -993,6 +996,14 @@
     // Mode-aware payment when a piece is placed.
     function payForFurniture(furniture) {
         if (isFreeBuild()) return;
+        // Stock first, and remember it: a piece set down out of stock owes
+        // no materials, so tearing it down returns none (see the two refund
+        // paths). placeFurniture reads the flag on the very next line of the
+        // placement it belongs to.
+        if (furniture && spendStock(furniture.id)) {
+            _pendingStockPlacement = true;
+            return;
+        }
         if (currentBuildMode() === 'purchase') {
             if (typeof $gameParty !== 'undefined' && $gameParty) {
                 $gameParty.loseGold(getFurniturePrice(furniture));
@@ -1016,7 +1027,7 @@
         window.ParchmentToast.show(text, {
             severity: 'warning',
             duration: 180,
-            key: 'furniture-cannot-afford'
+            key: 'furniture-cannot-afford'  // i18n-ignore  dedupe key
         });
     }
 
@@ -1024,6 +1035,322 @@
     // stored in cents, so 12345 gold reads as 123.45€ (see MoneyFormatter.js).
     function formatEuros(gold) {
         return (Math.round(Number(gold) || 0) / 100).toFixed(2) + '€';
+    }
+
+    //=============================================================================
+    // Ordered stock, and Homely: the mail-order catalogue on HypernetOS
+    //=============================================================================
+    // A piece of furniture used to be conjured on the spot: pick it out of the
+    // panel, pay, and there it stands. Ordering separates the two halves. A
+    // piece is ORDERED from the catalogue, at which point it is paid for and
+    // arrives in stock, and stock is what the build panel's Stock tab shows.
+    // Every ordered piece is good for PLACEMENTS_PER_ORDER settings-down: enough
+    // to try it in the corner, hate it, and move it once. Break it, sell the
+    // house out from under it or clear the map, and it does not come back: a
+    // smashed wardrobe is a smashed wardrobe, and the catalogue is open again.
+    const PLACEMENTS_PER_ORDER = 2;
+    // Set by payForFurniture, read by the placeFurniture call that follows it.
+    let _pendingStockPlacement = false;
+    // Delivery, on top of the piece's own price. A van has to come out.
+    const DELIVERY_RATE = 0.10;
+
+    function furnitureStock() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+        if (!$gameSystem._furnitureStock) $gameSystem._furnitureStock = {};
+        return $gameSystem._furnitureStock;
+    }
+
+    // Settings-down left for a piece. Free build is not stock: it never runs out
+    // and it is not what the Stock tab is for.
+    function stockPlacements(furnitureId) {
+        const n = furnitureStock()[String(furnitureId)];
+        return Number(n) > 0 ? Number(n) : 0;
+    }
+
+    function addStock(furnitureId, placements) {
+        const stock = furnitureStock();
+        const key = String(furnitureId);
+        stock[key] = stockPlacements(key) + Math.max(0, Math.round(placements));
+    }
+
+    // One setting-down spent. The entry leaves the book at zero so the Stock tab
+    // never lists a piece that is used up.
+    function spendStock(furnitureId) {
+        const stock = furnitureStock();
+        const key = String(furnitureId);
+        const left = stockPlacements(key);
+        if (left <= 0) return false;
+        if (left === 1) delete stock[key]; else stock[key] = left - 1;
+        return true;
+    }
+
+    function orderPrice(furniture) {
+        const base = getFurniturePrice(furniture);
+        return Math.max(1, Math.round(base * (1 + DELIVERY_RATE)));
+    }
+
+    // Buy one piece into stock. Everything that could refuse it refuses here:
+    // an unknown piece, a purse that cannot cover the van.
+    function orderFurniture(furnitureId, units) {
+        const furniture = Furniture[furnitureId];
+        if (!furniture) return { ok: false, reason: T('Furniture.homely.unknownPiece') };
+        const n = Math.max(1, Math.round(Number(units) || 1));
+        const price = orderPrice(furniture) * n;
+        if (!isFreeBuild()) {
+            if (!$gameParty || $gameParty.gold() < price) {
+                return { ok: false, reason: T('Furniture.homely.cannotAfford') };
+            }
+            $gameParty.loseGold(price);
+        }
+        addStock(furnitureId, PLACEMENTS_PER_ORDER * n);
+        return { ok: true, price: price, placements: PLACEMENTS_PER_ORDER * n };
+    }
+
+    // Everything in stock, as rows a catalogue or the Stock tab can print.
+    function stockList() {
+        const out = [];
+        for (const [id, left] of Object.entries(furnitureStock())) {
+            const furniture = Furniture[id];
+            if (!furniture || !(left > 0)) continue;
+            out.push({ id, furniture, left: Number(left) });
+        }
+        out.sort((a, b) => furnitureName(a.id, a.furniture).localeCompare(furnitureName(b.id, b.furniture)));
+        return out;
+    }
+
+    window.FurnitureSystem = window.FurnitureSystem || {};
+    Object.assign(window.FurnitureSystem, {
+        PLACEMENTS_PER_ORDER,
+        stockList,
+        stockPlacements,
+        orderFurniture,
+        orderPrice: (id) => orderPrice(Furniture[id]),
+    });
+
+    //-------------------------------------------------------------------------
+    // Homely: the catalogue itself
+    //-------------------------------------------------------------------------
+    const HOME_APP_ID = 'app-homely';
+    const HOME_ICON = 210; // Chest, per js/db/Sprites/Icons.json
+
+    const HM = {
+        app: "display:flex; flex-direction:column; height:100%; background:var(--xp-face-5); " +
+             "font-family:'Tahoma',sans-serif; font-size:15px; color:var(--xp-ink-2);",
+        header: "display:flex; align-items:center; gap:12px; padding:10px 14px; " +
+                "background:linear-gradient(to bottom,#a8763f,#84592b); color:var(--xp-white); border-bottom:2px solid #4a2f12;",
+        bar: "display:flex; gap:8px; align-items:center; padding:6px 10px; background:var(--xp-face-6); " +
+             "border-bottom:1px solid var(--xp-face-shade);",
+        nav: "width:170px; flex-shrink:0; overflow-y:auto; background:var(--xp-face-6); " +
+             "border-right:1px solid var(--xp-face-shade); padding:6px 0;",
+        navItem: "padding:7px 10px; cursor:pointer; border-left:4px solid transparent; user-select:none;",
+        panel: "flex:1; overflow-y:auto; padding:12px 14px; background:var(--xp-face-2); min-width:0;",
+        grid: "display:flex; flex-wrap:wrap; gap:8px;",
+        card: "width:168px; background:var(--xp-white); border:1px solid var(--xp-face-3); border-radius:3px; padding:8px;",
+        thumb: "width:100%; height:84px; object-fit:contain; image-rendering:pixelated; background:#f3f1e8;",
+        btn: "display:inline-block; margin-top:6px; padding:4px 9px; background:linear-gradient(to bottom,var(--xp-paper),#dcd8cc); " +
+             "border:1px solid var(--xp-face-4); border-radius:3px; cursor:pointer; font-size:14px; user-select:none;",
+        status: "display:flex; gap:16px; align-items:center; border-top:1px solid var(--xp-face-shade); " +
+                "padding:4px 10px; background:var(--xp-face-5); font-size:14px; color:var(--xp-ink-4);",
+        note: "color:var(--xp-ink-soft-2); font-size:13px; line-height:1.4;",
+        input: "font-family:'Tahoma',sans-serif; font-size:14px; padding:2px 4px; flex:1; " +
+               "border:1px solid var(--xp-face-4); background:var(--xp-white);",
+    };
+
+    const hmEsc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    window.Homely = {
+        win: null,
+        category: null,   // null = the stock page
+        query: '',
+        message: '',
+        page: 0,
+
+        launch() {
+            if (!window.HypernetOS || !window.HypernetOS.WindowManager) return;
+            const win = window.HypernetOS.WindowManager.createWindow({
+                id: HOME_APP_ID,
+                title: T('Furniture.homely.appName'),
+                icon: HOME_ICON,
+                width: 900,
+                height: 580,
+                contentHTML: `
+                    <div style="${HM.app}">
+                        <div style="${HM.header}">
+                            <div style="flex:1; min-width:0">
+                                <div style="font-size:17px; font-weight:bold; letter-spacing:0.5px">${T('Furniture.homely.appName')}</div>
+                                <div style="font-size:13px; opacity:0.82">${T('Furniture.homely.subtitle')}</div>
+                            </div>
+                            <div id="hm-purse" style="font-size:15px; font-weight:bold"></div>
+                        </div>
+                        <div style="${HM.bar}">
+                            <input id="hm-search" class="focusable" tabindex="0" style="${HM.input}"
+                                   placeholder="${T('Furniture.homely.search')}">
+                        </div>
+                        <div style="display:flex; flex:1; min-height:0">
+                            <div id="hm-nav" style="${HM.nav}"></div>
+                            <div id="hm-panel" style="${HM.panel}"></div>
+                        </div>
+                        <div style="${HM.status}"><span id="hm-msg">${T('Furniture.homely.hint')}</span></div>
+                    </div>`
+            });
+            this.win = win;
+            this.bind();
+            this.render();
+        },
+
+        bind() {
+            if (!this.win || this.win.dataset.hmBound) return;
+            this.win.dataset.hmBound = '1';
+            this.win.addEventListener('click', ev => {
+                const cat = ev.target.closest('[data-hm-cat]');
+                if (cat) {
+                    ev.stopPropagation();
+                    this.category = cat.dataset.hmCat === '*' ? null : cat.dataset.hmCat;
+                    this.page = 0;
+                    if (window.SoundManager) SoundManager.playCursor();
+                    this.render();
+                    return;
+                }
+                const order = ev.target.closest('[data-hm-order]');
+                if (order) {
+                    ev.stopPropagation();
+                    const res = orderFurniture(order.dataset.hmOrder, 1);
+                    if (!res.ok) {
+                        this.message = res.reason;
+                        if (window.SoundManager) SoundManager.playBuzzer();
+                    } else {
+                        const f = Furniture[order.dataset.hmOrder];
+                        this.message = T('Furniture.homely.ordered', {
+                            item: furnitureName(order.dataset.hmOrder, f),
+                            price: formatEuros(res.price),
+                            n: res.placements,
+                        });
+                        if (window.SoundManager) SoundManager.playShop();
+                    }
+                    this.render();
+                    return;
+                }
+                const page = ev.target.closest('[data-hm-page]');
+                if (page) {
+                    ev.stopPropagation();
+                    this.page = Math.max(0, this.page + Number(page.dataset.hmPage));
+                    this.render();
+                }
+            });
+            this.win.addEventListener('input', ev => {
+                const box = ev.target.closest('#hm-search');
+                if (!box) return;
+                this.query = box.value;
+                this.page = 0;
+                this.renderPanel();
+            });
+        },
+
+        categories() {
+            const counts = {};
+            for (const f of Object.values(Furniture)) {
+                if (!f || !f.category) continue;
+                counts[f.category] = (counts[f.category] || 0) + 1;
+            }
+            return Object.keys(counts).sort().map(key => ({ key, count: counts[key] }));
+        },
+
+        render() {
+            if (!this.win || !this.win.isConnected) return;
+            const nav = this.win.querySelector('#hm-nav');
+            if (nav) {
+                const stock = stockList();
+                const rows = [`<div class="focusable" tabindex="0" id="hm-cat-stock" data-hm-cat="*"
+                    style="${HM.navItem}${this.category == null ? 'background:var(--xp-face-2); border-left-color:#a8763f; font-weight:bold;' : ''}">
+                    ${T('Furniture.homely.yourStock')} (${stock.length})</div>`];
+                for (const cat of this.categories()) {
+                    const on = this.category === cat.key;
+                    rows.push(`<div class="focusable" tabindex="0" id="hm-cat-${hmEsc(cat.key)}" data-hm-cat="${hmEsc(cat.key)}"
+                        style="${HM.navItem}${on ? 'background:var(--xp-face-2); border-left-color:#a8763f; font-weight:bold;' : ''}">
+                        ${hmEsc(titleCaseCategory(cat.key))}
+                        <span style="${HM.note}"> ${cat.count}</span></div>`);
+                }
+                nav.innerHTML = rows.join('');
+            }
+            this.renderPanel();
+            const purse = this.win.querySelector('#hm-purse');
+            if (purse && window.$gameParty) purse.textContent = formatEuros($gameParty.gold());
+            const msg = this.win.querySelector('#hm-msg');
+            if (msg) msg.textContent = this.message || T('Furniture.homely.hint');
+        },
+
+        cardHTML(id, furniture, left) {
+            const src = furnitureImageSrc(furniture.__imageId || id);
+            const price = orderPrice(furniture);
+            const afford = isFreeBuild() || (window.$gameParty && $gameParty.gold() >= price);
+            return `<div style="${HM.card}">
+                ${src ? `<img loading="lazy" src="${hmEsc(src)}" style="${HM.thumb}">`
+                      : `<div style="${HM.thumb}"></div>`}
+                <div style="font-weight:bold; margin-top:4px">${hmEsc(furnitureName(id, furniture))}</div>
+                <div style="${HM.note}">${hmEsc(titleCaseCategory(furniture.category || ''))} &middot; ${furniture.width}x${furniture.height}</div>
+                <div style="${HM.note}">${hmEsc(formatEuros(price))} ${T('Furniture.homely.delivered')}</div>
+                ${left ? `<div style="${HM.note}">${T('Furniture.homely.leftInStock', { n: left })}</div>` : ''}
+                <span class="focusable" tabindex="0" data-hm-order="${hmEsc(id)}"
+                      style="${HM.btn}${afford ? '' : ' opacity:0.55'}">${T('Furniture.homely.order')}</span>
+            </div>`;
+        },
+
+        renderPanel() {
+            const panel = this.win && this.win.querySelector('#hm-panel');
+            if (!panel) return;
+            const query = String(this.query || '').trim().toLowerCase();
+
+            if (this.category == null && !query) {
+                const stock = stockList();
+                panel.innerHTML = `
+                    <h2 style="margin:0 0 6px; font-size:17px; color:#84592b">${T('Furniture.homely.yourStock')}</h2>
+                    <div style="${HM.note} margin-bottom:8px">${T('Furniture.homely.stockBlurb', { n: PLACEMENTS_PER_ORDER })}</div>
+                    ${stock.length
+                        ? `<div style="${HM.grid}">${stock.map(row => this.cardHTML(row.id, row.furniture, row.left)).join('')}</div>`
+                        : `<div style="${HM.note}">${T('Furniture.homely.stockEmpty')}</div>`}`;
+                return;
+            }
+
+            const rows = [];
+            for (const [id, f] of Object.entries(Furniture)) {
+                if (!f) continue;
+                if (query) {
+                    if (!furnitureName(id, f).toLowerCase().includes(query)) continue;
+                } else if (f.category !== this.category) continue;
+                rows.push({ id, f });
+            }
+            rows.sort((a, b) => furnitureName(a.id, a.f).localeCompare(furnitureName(b.id, b.f)));
+            const PER = 48;
+            const pages = Math.max(1, Math.ceil(rows.length / PER));
+            this.page = Math.min(this.page, pages - 1);
+            const slice = rows.slice(this.page * PER, this.page * PER + PER);
+            panel.innerHTML = `
+                <h2 style="margin:0 0 6px; font-size:17px; color:#84592b">${hmEsc(query
+                    ? T('Furniture.homely.searchResults', { q: this.query })
+                    : titleCaseCategory(this.category || ''))}</h2>
+                <div style="${HM.note} margin-bottom:8px">${T('Furniture.homely.pageOf', { page: this.page + 1, pages: pages })}</div>
+                ${slice.length
+                    ? `<div style="${HM.grid}">${slice.map(row =>
+                        this.cardHTML(row.id, row.f, stockPlacements(row.id))).join('')}</div>`
+                    : `<div style="${HM.note}">${T('Furniture.homely.nothingHere')}</div>`}
+                <div style="margin-top:8px">
+                    <span class="focusable" tabindex="0" data-hm-page="-1" style="${HM.btn}">${T('Furniture.homely.prev')}</span>
+                    <span class="focusable" tabindex="0" data-hm-page="1" style="${HM.btn}">${T('Furniture.homely.next')}</span>
+                </div>`;
+        },
+    };
+
+    if (window.HypernetOS && window.HypernetOS.registerApp) {
+        window.HypernetOS.registerApp({
+            id: HOME_APP_ID,
+            name: T('Furniture.homely.appName'),
+            icon: HOME_ICON,
+            category: 'economy',
+            launchFn: function () { window.Homely.launch(); },
+            desktopShortcut: true,
+        });
     }
 
     //=============================================================================
@@ -1294,6 +1621,11 @@
             y: y,
             flipped: flipped
         };
+        // Ordered stock, spent a moment ago by payForFurniture.
+        if (_pendingStockPlacement) {
+            placedFurniture.fromStock = true;
+            _pendingStockPlacement = false;
+        }
 
         maps[mapId].push(placedFurniture);
         invalidateFurnitureMemo();
@@ -3238,6 +3570,7 @@
     // `key` is the id the panel switches on; the label is read when the tab row
     // is drawn, so it follows a language switch.
     const TOP_TABS = [
+        { key: 'stock', nameKey: 'Furniture.tab.stock' },
         { key: 'buildables', nameKey: 'Furniture.tab.buildables' },
         { key: 'walls', nameKey: 'Furniture.tab.walls' },
         { key: 'terrain', nameKey: 'Furniture.tab.terrain' },
@@ -3602,6 +3935,7 @@
 
             // Counts shown on the top-level tab buttons.
             const tabCounts = {
+                stock: stockList().length,
                 walls: wallAutotileKinds().length,
                 terrain: terrainAutotileKinds().length,
                 houses: Object.keys(getHouseCatalog()).length,
@@ -3612,7 +3946,14 @@
 
             const query = (this.search || '').trim().toLowerCase();
             let items = [];
-            if (topTab === 'buildables') {
+            if (topTab === 'stock') {
+                // Only what has been ordered and not yet used up, and the
+                // search still narrows it.
+                for (const row of stockList()) {
+                    if (query && !furnitureName(row.id, row.furniture).toLowerCase().includes(query)) continue;
+                    items.push(Object.assign({ id: row.id }, row.furniture));
+                }
+            } else if (topTab === 'buildables') {
                 // A non-empty search filters by name across EVERY category; an
                 // empty search falls back to the category selected in the
                 // dropdown. The Buildable pseudo-category shows only affordable
@@ -3760,7 +4101,8 @@
             const armedId = this.scene._fbArmedId;
             let cardsHTML = '';
             if (items.length === 0) {
-                const emptyMsg = topTab === 'walls' ? T('Furniture.empty.walls')
+                const emptyMsg = topTab === 'stock' ? T('Furniture.empty.stock')
+                    : topTab === 'walls' ? T('Furniture.empty.walls')
                     : topTab === 'terrain' ? T('Furniture.empty.terrain')
                     : topTab === 'houses' ? T('Furniture.empty.houses')
                     : topTab === 'features' ? T('Furniture.empty.features')
@@ -3781,7 +4123,10 @@
                     const cost = getFurnitureCost(item);
                     const affordable = affordFn(item);
                     let costHTML = '';
-                    if (free) {
+                    const stockLeft = stockPlacements(item.id);
+                    if (stockLeft > 0) {
+                        costHTML = `<span class="fbuild-cost ok" title="${T('Furniture.tip.stock')}">${T('Furniture.stockLeft', { n: stockLeft })}</span>`;
+                    } else if (free) {
                         costHTML = `<span class="fbuild-cost ok">${T('Furniture.freeBuild')}</span>`;
                     } else if (effectivePurchasing) {
                         const price = getFurniturePrice(item);
@@ -4572,6 +4917,122 @@
         play();
     }
 
+    //=========================================================================
+    // THE BUILD REGISTER
+    //=========================================================================
+    // What a party puts up on a procedural square is a change to the WORLD, not
+    // to one savegame's reading of it. Another party raised in the same world
+    // will walk onto that square and find the barn standing there, so the world
+    // folder is where the fact belongs, alongside the chests somebody else
+    // emptied (Crafting/ChestWorldState.js) and the towns somebody else
+    // founded.
+    //
+    // save/worlds/<name>/builds.json:
+    //   { squares: { "<x>,<y>": { count, names: [...], last } } }
+    //
+    // Plain objects, no Set/Map, so JsonEx serialises them on flush. Only what
+    // the PLAYER puts up is written: the seeded furnishing of a procedural
+    // interior goes through the same placement functions and is nobody's doing.
+    //
+    // The world sheet (Map/WorldMap.js) reads this to tell a hovered square
+    // that somebody has built on it, and what.
+    const BUILD_WORLD_FILE = 'builds';     // i18n-ignore: world data file key
+    const BUILD_PROC_MAP_ID = 636;
+    const BUILD_NAMES_KEPT = 6;            // enough to say what is there, not a manifest
+    const BUILD_FLUSH_DELAY = 1000;
+
+    let buildFlushTimer = null;
+
+    function buildWorldStore() {
+        const W = window.WorldManager;
+        // Never cached: setActiveWorld drops the whole file cache, so a held
+        // reference would go on writing into a world nobody is playing.
+        if (!W || typeof W.getFile !== 'function' || !W.hasActiveWorld || !W.hasActiveWorld()) return null;
+        const store = W.getFile(BUILD_WORLD_FILE);
+        if (!store.squares) store.squares = {};
+        return store;
+    }
+
+    // Writing the world folder costs far more than one fence post is worth, so
+    // the flush is coalesced. A savegame write flushes on its own, so nothing
+    // is ever left only in memory.
+    function requestBuildFlush() {
+        const W = window.WorldManager;
+        if (!W || typeof W.flush !== 'function' || buildFlushTimer) return;
+        buildFlushTimer = setTimeout(() => {
+            buildFlushTimer = null;
+            try { W.flush(); } catch (e) { /* non-fatal */ }
+        }, BUILD_FLUSH_DELAY);
+    }
+
+    // The world square being built on, or null when the party is not standing
+    // on procedural ground. WorldMapTransfer is the one answer to "where is
+    // this" (see its header); an authored interior or a town map is not a
+    // square of the world and is left out.
+    function buildWorldSquare() {
+        if (!$gameMap || $gameMap.mapId() !== BUILD_PROC_MAP_ID) return null;
+        const svc = window.WorldMapTransfer;
+        if (!svc || typeof svc.currentWorldCoords !== 'function') return null;
+        const wc = svc.currentWorldCoords();
+        if (!wc || !Number.isFinite(wc.x) || !Number.isFinite(wc.y)) return null;
+        return { x: wc.x | 0, y: wc.y | 0 };
+    }
+
+    /**
+     * Write down that the party put something up on the square they are
+     * standing on. Silently does nothing off procedural ground, or where no
+     * world is active (a playtest straight into a map).
+     */
+    function recordBuild(name) {
+        const square = buildWorldSquare();
+        if (!square) return;
+        const store = buildWorldStore();
+        if (!store) return;
+        const key = square.x + ',' + square.y;   // i18n-ignore  coordinate key
+        let rec = store.squares[key];
+        if (!rec) { rec = { count: 0, names: [] }; store.squares[key] = rec; }
+        rec.count++;
+        const label = String(name || '').trim();
+        if (label && !rec.names.includes(label)) {
+            rec.names.push(label);
+            // The newest names are the ones worth keeping: a square built on
+            // for a hundred hours should still read as what it is now.
+            if (rec.names.length > BUILD_NAMES_KEPT) rec.names.shift();
+        }
+        rec.last = ($gameSystem && $gameSystem.playtime) ? $gameSystem.playtime() : 0;
+        requestBuildFlush();
+    }
+
+    window.BuildRegister = {
+        // What has been put up on one world square, or null for untouched
+        // ground: { count, names: [...] }.
+        at(x, y) {
+            const store = buildWorldStore();
+            if (!store) return null;
+            const rec = store.squares[(x | 0) + ',' + (y | 0)];   // i18n-ignore  coordinate key
+            if (!rec || !rec.count) return null;
+            return { count: rec.count, names: (rec.names || []).slice() };
+        },
+        // Every square this world has been built on, as world tiles.
+        list() {
+            const store = buildWorldStore();
+            if (!store) return [];
+            return Object.keys(store.squares).map(key => {
+                const parts = key.split(',');
+                const rec = store.squares[key] || {};
+                return {
+                    x: Number(parts[0]), y: Number(parts[1]),
+                    count: rec.count || 0, names: (rec.names || []).slice(),
+                };
+            }).filter(r => r.count && Number.isFinite(r.x) && Number.isFinite(r.y));
+        },
+        // Called by every player-driven placement below. Lent out so the other
+        // things a party can raise on open ground (a founded town's charter,
+        // a dug-out shelter) can file themselves in the same register.
+        record: recordBuild,
+    };
+
+
     Scene_Map.prototype.placeArmedFurniture = function (x, y) {
         const id = this._fbArmedId;
         const info = resolvePlaceable(id);
@@ -4606,6 +5067,9 @@
         // PLAYER puts up: the seeded furnishing of a procedural interior goes
         // through placeFurniture too and is nobody's doing.
         if (window.Diary) window.Diary.onBuilt(furnitureName(id, f));
+        // And in the world's own register, so the square reads as built on for
+        // every party this world ever raises (see THE BUILD REGISTER above).
+        recordBuild(furnitureName(id, f));
         // Placed set + materials/gold changed: force the build-mode validity recompute.
         this._fbPlaceCacheKey = null;
         fbPlayBuildSound(() => SoundManager.playOk());
@@ -4654,6 +5118,7 @@
             if (!hasWallUnder(x, y)) placeCeilingFace(mapKey, rec, x, y, info.__autoKind);
             refreshAutotileBlendAround(x, y);
         }
+        recordBuild(info.name);
         this._fbPlaceCacheKey = null;
         fbPlayBuildSound(() => SoundManager.playOk());
         if (!canObtainFurniture(info)) {
@@ -4683,6 +5148,7 @@
         if (window.ProceduralHouseSystem && typeof window.ProceduralHouseSystem.markEntranceOwned === 'function') {
             window.ProceduralHouseSystem.markEntranceOwned($gameMap.mapId(), x, y);
         }
+        recordBuild(info.name);
         this.disarmFurniture();
         SoundManager.playOk();
         if (this._fbUI) this._fbUI.refresh();
@@ -4705,6 +5171,7 @@
         stampPrefabRecord(rec);
         if ($gameMap) $gameMap.requestRefresh();
         if (window.Diary) window.Diary.onBuilt(info.name);
+        recordBuild(info.name);
         this._fbPlaceCacheKey = null;
         this.disarmFurniture();
         SoundManager.playOk();
@@ -4725,6 +5192,7 @@
         const rec = ags.placeAnimal(info.__animalId, info.__animalStage, x, y);
         if (!rec) { SoundManager.playBuzzer(); return; }
         chargeIllegalBuild(info);
+        recordBuild(info.name);
         this._fbPlaceCacheKey = null;
         fbPlayBuildSound(() => SoundManager.playShop());
         // Out of money for another one: put the piece down.
@@ -4777,7 +5245,7 @@
             const f = Furniture[p.furnitureId];
             $gameSystem.removePlacedFurniture(mapKey, p.id);
             if (this._spriteset) this._spriteset.removeFurnitureSprite(p.id);
-            if (f) refundFurnitureMaterials(f, pool);
+            if (f && !p.fromStock) refundFurnitureMaterials(f, pool);
         }
 
         const tileList = $gameSystem.getMapTiles(mapKey).slice();
@@ -4820,7 +5288,7 @@
             if (tx >= p.x && tx < p.x + f.width && ty >= p.y && ty < p.y + f.height) {
                 $gameSystem.removePlacedFurniture(mapId, p.id);
                 if (this._spriteset) this._spriteset.removeFurnitureSprite(p.id);
-                refundFurnitureMaterials(f);
+                if (!p.fromStock) refundFurnitureMaterials(f);
                 if (window.Diary) window.Diary.onDismantled(furnitureName(p.furnitureId, f));
                 // Placed set + materials changed: force the validity recompute.
                 this._fbPlaceCacheKey = null;

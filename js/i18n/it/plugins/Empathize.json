@@ -454,7 +454,7 @@
   "tellAJoke": "Racconta una Barzelletta",
   "jokeFallback": "È successa una cosa buffa.",
   "funShared": "Vi siete divertiti entrambi, tu e {name}.",
-  "funHint": "Solleva il tuo umore e il loro, se funziona.",
+  "funHint": "Migliora il tuo umore e il loro se riesce.",
   "oldLegend": "una vecchia leggenda",
   "bribeAccepted": "{name} accetta. +{op} ♥",
   "joinedParty": "{name} si è unito al gruppo!",
@@ -757,7 +757,7 @@
   "beastJoinRefusedToast": "{name} resta dov'e.",
   "beastJoinAccepted": "Il {kind} si mette al tuo fianco.",
   "beastJoinAcceptedToast": "{name} viene con te.",
-  "beastPetNote": "Un {kind} che ha deciso di seguirti.",
+  "beastPetNote": "Un {kind} che viaggia con il gruppo.",
   "beastFedWell": [
     "{item} sparisce prima che tu abbia finito di abbassare la mano.",
     "Mangia {item} come mangia una cosa che ha avuto fame a lungo, poi ne cerca ancora.",
@@ -878,6 +878,19 @@
     "situationGift": "{speaker} ti ha appena dato {item} e lo tieni.",
     "situationGiftRefused": "{speaker} ti ha offerto {item} e non lo accetti.",
     "situationJoinRefused": "{speaker} ti ha chiesto di viaggiare insieme e stai rifiutando.",
-    "rewrite": "{situation} Di' questo, con parole tue: \"{line}\""
+    "rewrite": "{situation} Di' questo, con parole tue: \"{line}\"",
+    "wanted": "C'è una taglia di {bounty} sulla tua testa.",
+    "onMind": "Cosa ti passa per la testa: {thought}",
+    "shift": "Lavori dalle {from} alle {to}.",
+    "knows": "Conosci {name} e sei {band} lui.",
+    "partyWith": "Viaggiano con {names} ({count} in tutto).",
+    "partyAlone": "Viaggiano da soli.",
+    "worldPlace": "Siete tutti e due a {place} {biome}.",
+    "worldWhen": "È il {date}, sono le {hour}.",
+    "worldWeather": "Il tempo è {weather}, è {season}, circa {temperature} gradi.",
+    "worldWanted": "La legge sta cercando le persone che hai davanti.",
+    "adventureAt": "A {place}: {line}",
+    "stayingAt": "Stai a {place} mentre loro viaggiano.",
+    "stayingAtBiome": "Stai a {place} mentre loro viaggiano, fuori nel {biome}."
   }
 }

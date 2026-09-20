@@ -1,6 +1,6 @@
 {
   "name": "Technomagica",
-  "blurb": "Esoteric Heavy Industries treats a working as an artefact with a build, a test suite and a signature. Every node here is specified against the dead-flats calibration, because that is the only bench where the numbers repeat.",
+  "blurb": "Magic engineered as hardware: every node has a build, a test and a signature.",
   "nodes": {
     "tm_leyline_tap": {
       "name": "The Leyline Tap",

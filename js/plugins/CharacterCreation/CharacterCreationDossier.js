@@ -51,6 +51,19 @@
     loadoutEntryData,
     resolveOriginLoadout,
   } = window.CCOrigins || {};
+  // What ONE member brings into that purse. A beast brings nothing:
+  // giveStartingMoney drops all three contributions for a creature class (see
+  // CharacterCreationOrigins), so a card that added them up anyway would
+  // advertise money that never arrives. The base the party opens on is not any
+  // one member's and is added by the caller.
+  function memberStartingGold(actor) {
+    const NC = window.NPCCreature;
+    if (!actor || (NC && NC.isNonSentientActor(actor))) return 0;
+    return (typeof classStartingMoney === "function" ? classStartingMoney(actor._classId) : 0) +
+      (typeof traitStartingMoney === "function" ? traitStartingMoney(actor) : 0) +
+      (typeof wealthStartingMoney === "function" ? wealthStartingMoney(actor) : 0);
+  }
+
   const { getClassStartingItems } = window.StartingEquipment || {};
   const { applyTraitsToActor } = window.CharacterCreationUtils || {};
 
@@ -217,6 +230,23 @@
       window.CCPanel.hide(tooltip);
     }
 
+    // The name, on whatever the player is holding. A keyboard types it straight
+    // into the card. A pad has no letters and no Escape to leave a caret with,
+    // so a field there is a box you fall into and cannot climb out of: the card
+    // reads the name out instead and the Randomize die beside it, which the
+    // focus ring does reach, is how a controller settles on one. The engine's
+    // own letter grid is deliberately not an answer here - the wizard never
+    // opens it (test_character_creation.js 11c).
+    _nameFieldHtml(actor, isLocked) {
+      const shown = String(actor.name() || ccT('CharCreate.defaultName'))
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      if (window.CCNav && window.CCNav.padInHand && window.CCNav.padInHand()) {
+        return `<div class="cc-bio-select cc-name-input cc-name-read ${isLocked ? 'cc-locked' : ''}"
+                     title="${ccT('CharCreate.renameHint')}">${shown}</div>`;
+      }
+      return `<input type="text" class="cc-bio-select cc-name-input ${isLocked ? 'cc-locked' : ''}" value="${shown}" oninput="SceneManager._scene.onNameChange(this.value)" placeholder="${ccT('CharCreate.defaultName')}" ${isLocked ? 'readonly disabled' : ''} />`;
+    }
+
     // ── Top Folder Tabs (Party Tabs Left, Step Tabs Right) ──
 
     _formatGoldToEuros(gold) {
@@ -327,7 +357,7 @@
         ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(identityJob) : (identityJob.name || ccTp('CharCreate.jobNumber', { id: identityJob.id })))
         : ccT('CharCreate.bio.joblessShort');
 
-      const startingGold = CC_BASE_START_GOLD + (typeof classStartingMoney === 'function' ? classStartingMoney(actor._classId) : 0) + (typeof traitStartingMoney === 'function' ? traitStartingMoney(actor) : 0) + (typeof wealthStartingMoney === 'function' ? wealthStartingMoney(actor) : 0);
+      const startingGold = CC_BASE_START_GOLD + memberStartingGold(actor);
       const startingMoneyFormatted = this._formatGoldToEuros(startingGold);
 
       let avatarStyle = "";
@@ -346,7 +376,7 @@
             ` : ''}
             <div class="cc-col cc-col-gap-1 cc-col-grow">
               <div class="cc-row-inline cc-row-gap-tight">
-                <input type="text" class="cc-bio-select cc-name-input ${isLocked ? 'cc-locked' : ''}" value="${actor.name() || ccT('CharCreate.defaultName')}" oninput="SceneManager._scene.onNameChange(this.value)" placeholder="${ccT('CharCreate.defaultName')}" ${isLocked ? 'readonly disabled' : ''} />
+                ${this._nameFieldHtml(actor, isLocked)}
                 ${!isLocked ? `
                   <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizeNameClick()" title="${ccT('CharCreate.randomize')}">
                     ${this._ccIconHtml(83, 16)}
@@ -612,7 +642,7 @@
       const classData = $dataClasses[actor._classId];
       const className = classData ? window.CCDbName(classData) : "Class";
       const genderName = actor.genderName ? actor.genderName() : ($gameVariables.value(38 + (Scene_CharacterCreation._currentPartyMemberIndex || 0)) === 0 ? "Male ♂" : "Female ♀");
-      const startingGold = CC_BASE_START_GOLD + (typeof classStartingMoney === 'function' ? classStartingMoney(actor._classId) : 0) + (typeof traitStartingMoney === 'function' ? traitStartingMoney(actor) : 0) + (typeof wealthStartingMoney === 'function' ? wealthStartingMoney(actor) : 0);
+      const startingGold = CC_BASE_START_GOLD + memberStartingGold(actor);
       const startingMoneyFormatted = this._formatGoldToEuros(startingGold);
       const bustName = this._getActorBust(actor);
       const bustUrl = this._getBustUrl(bustName);

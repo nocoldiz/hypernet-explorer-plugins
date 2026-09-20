@@ -4028,19 +4028,66 @@
 
             this._createOverlay();
             this._initThree();
-            this._buildTerrain();
-            this._buildProps();
-            this._buildCelestials();
-            this._buildWeather();
 
+            // The listeners go on before anything is built, because a dream
+            // that is still being dealt is a black screen: the sleeper has to
+            // be able to walk out of one, and Escape is how.
+            this._onResize = this._onResize.bind(this);
+            window.addEventListener('resize', this._onResize);
+
+            // Esc -> wake prompt. Enter is the action button now (it swings the
+            // weapon, DreamWeapon.update), so shifting dreams is left to
+            // touching an entity, to a drift region and to the plugin command.
+            this._onKey = (e) => {
+                if (!dreamActive || this._menuOpen) return;
+                if (e.code === 'Escape') { e.preventDefault(); this._openWakePrompt(); }
+            };
+            document.addEventListener('keydown', this._onKey);
+
+            // ---- the world, one step a frame -------------------------------
+            // Dealing a dream is a second or more of solid arithmetic: a ground
+            // mesh of a hundred and seventy thousand vertices, every prototype
+            // in it flattened and instanced, and then a first frame in which the
+            // renderer compiles a shader for each one. Run in one go, as it used
+            // to be, the whole game stops dead behind an overlay that is still
+            // pure black, with no frame drawn, no input read and nothing said:
+            // indistinguishable from a hang, and on a slow machine long enough
+            // that a player would rather kill the process than wait it out.
+            //
+            // So it is dealt a step a frame instead, under a veil that says what
+            // is happening and fills as it goes. The engine keeps breathing, the
+            // wake key answers throughout, and nothing touches the scene until
+            // _ready says there is one.
+            this._arrival = arrival || null;
+            this._ready = false;
+            this._buildStep = 0;
+            this._buildSteps = this._terrainSteps().concat([
+                () => this._buildProps(),
+                () => { this._buildCelestials(); this._buildWeather(); },
+                () => this._placeSleeper(),
+                () => { this._spawnEnemies(); this._spawnGuests(); this._spawnApparitions(); }
+            ]);
+            this._showVeil();
+
+            this._loop = this._loop.bind(this);
+            this._animId = requestAnimationFrame(this._loop);
+        }
+
+        /**
+         * Where the sleeper opens their eyes, and the controller that walks them
+         * about once they have. It needs the ground and everything standing on
+         * it, so it is a build step of its own rather than part of the setup.
+         */
+        _placeSleeper() {
+            const arrival = this._arrival;
             this._controller = new DreamController(this._camera, this._scene);
             this._controller.getGroundY = (x, z) => this.heightAt(x, z);
             this._controller.getSolids = (x, z, out, y) => this._solidsNear(x, z, out, y);
             if (this._laws.lowGravity) this._controller.gravity = 78;
             else if (this._laws.heavy) this._controller.gravity = 420;
-            // Open the sleeper's eyes somewhere near the middle of the field,
-            // and on TOP of whatever is standing there rather than inside it.
-            // Never over a hole: a dream that begins with a fall is a cheat.
+            // Open the eyes somewhere near the middle of the field, and on TOP
+            // of whatever is standing there rather than inside it. Never over a
+            // hole: a dream that begins with a fall is a cheat.
             let sx = (this._w * 0.5) * CELL, sz = (this._h * 0.5) * CELL;
             for (let i = 0; i < 40 && this.regionAt(sx, sz).isVoid; i++) {
                 sx = (0.2 + this._rnd() * 0.6) * this._worldW;
@@ -4065,29 +4112,87 @@
             const alt = arrival && arrival.alt ? arrival.alt : 0;
             this._controller.setStart(sx, sy + this._controller.eye + alt, sz);
             if (arrival && arrival.flying) { this._controller.flying = true; this._controller.vy = 0; }
+        }
 
-            this._spawnEnemies();
-            this._spawnGuests();
-            this._spawnApparitions();
+        // ---- the veil over an unfinished dream -------------------------------
+        /** The line the sleeper reads while the world is still being dealt. */
+        _showVeil() {
+            if (!this._overlay || this._veil) return;
+            const el = document.createElement('div');
+            el.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;' +
+                // Over the THREE canvas (z 1) and under the wake prompt (z 5):
+                // Escape is answered during a build, and the prompt it opens has
+                // to be readable rather than veiled.
+                'z-index:4;background:#000;display:flex;flex-direction:column;' +
+                'align-items:center;justify-content:center;gap:18px;' +
+                'font-family:serif;color:#cfc6dd;letter-spacing:0.22em;text-transform:uppercase;';
+            const line = document.createElement('div');
+            line.style.cssText = 'font-size:15px;opacity:0.82;text-align:center;padding:0 24px;';
+            line.textContent = T('Dream.forming');
+            const track = document.createElement('div');
+            track.style.cssText = 'width:min(320px,52%);height:2px;background:rgba(207,198,221,0.18);';
+            const fill = document.createElement('div');
+            fill.style.cssText = 'width:0%;height:100%;background:#cfc6dd;transition:width 120ms linear;';
+            track.appendChild(fill);
+            el.appendChild(line);
+            el.appendChild(track);
+            this._overlay.appendChild(el);
+            this._veil = el;
+            this._veilFill = fill;
+        }
 
-            this._onResize = this._onResize.bind(this);
-            window.addEventListener('resize', this._onResize);
+        _veilProgress(done, total) {
+            if (!this._veilFill) return;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 100;
+            this._veilFill.style.width = pct + '%';
+        }
 
-            // Esc -> wake prompt. Enter is the action button now (it swings the
-            // weapon, DreamWeapon.update), so shifting dreams is left to
-            // touching an entity, to a drift region and to the plugin command.
-            this._onKey = (e) => {
-                if (!dreamActive || this._menuOpen) return;
-                if (e.code === 'Escape') { e.preventDefault(); this._openWakePrompt(); }
-            };
-            document.addEventListener('keydown', this._onKey);
+        _hideVeil() {
+            if (this._veil && this._veil.parentNode) this._veil.parentNode.removeChild(this._veil);
+            this._veil = null;
+            this._veilFill = null;
+        }
 
+        /**
+         * One step of the build, this frame. A step that throws is not
+         * survivable (there would be no ground under the sleeper), so the dream
+         * is ended rather than left half dealt.
+         */
+        _advanceBuild() {
+            const steps = this._buildSteps;
+            if (!steps) return;
+            // The veil is painted BEFORE the first step runs: the frame this
+            // scene was built on has not been drawn yet, and a progress bar
+            // nobody ever sees is worse than no progress bar at all.
+            if (this._buildStep === 0 && !this._veilPainted) {
+                this._veilPainted = true;
+                this._veilProgress(0, steps.length);
+                return;
+            }
+            try {
+                // A step that is too big for one frame on its own (the ground
+                // sheet, vertex band by vertex band) says 'again' and keeps the
+                // cursor where it is until it has finished.
+                const step = steps[this._buildStep];
+                if (!step || step() !== 'again') { this._buildStep++; this._buildFraction = 0; }
+            } catch (e) {
+                console.error('[DreamSystem] the dream would not form', e);
+                this._buildSteps = null;
+                this._hideVeil();
+                if (dreamActive) DreamSystem.stop();
+                return;
+            }
+            // A step part way through itself (a ground sheet still filling in)
+            // reports how far, so the bar keeps moving through the long one.
+            this._veilProgress(this._buildStep + (this._buildFraction || 0), steps.length);
+            if (this._buildStep < steps.length) return;
+
+            this._buildSteps = null;
+            this._hideVeil();
+            this._ready = true;
             // Where this is, said once and then let go of, since the standing
             // caption that used to say it is gone.
             this.showToast(this._dream.name);
-
-            this._loop = this._loop.bind(this);
-            this._animId = requestAnimationFrame(this._loop);
         }
 
         // ---- terrain access -------------------------------------------------
@@ -4241,61 +4346,133 @@
         // colour are all sampled from periodic functions, so the patch tiles
         // seamlessly and the player (kept wrapped into [0,worldW) each frame)
         // never sees an edge.
-        _buildTerrain() {
-            const worldW = this._worldW, worldH = this._worldH;
-            const fullW = worldW + MARGIN * 2, fullH = worldH + MARGIN * 2;
-            const segX = Math.max(1, Math.round(fullW / CELL));
-            const segZ = Math.max(1, Math.round(fullH / CELL));
-            const geo = new THREE.PlaneGeometry(fullW, fullH, segX, segZ);
-            geo.rotateX(-Math.PI / 2);
-            geo.translate(worldW * 0.5, 0, worldH * 0.5);
+        /**
+         * The ground, as a short list of steps the build queue drains a frame at
+         * a time: the sheet itself, then its vertices in bands, then the
+         * material and the water over it.
+         *
+         * It is by far the heaviest thing a dream does - a hundred and seventy
+         * thousand vertices at the shipped grid size, each of them a region
+         * lookup, a ground function and a tiling noise sample - and run in one go
+         * it was a second of dead game on its own. Nothing about what it builds
+         * is different for being spread out: the bands write into the same typed
+         * arrays, and the mesh is only handed to the scene once the last of them
+         * is in. The band step asks to be run again ('again') until the sheet is
+         * covered, so the count never has to be known in advance.
+         */
+        _terrainSteps() {
+            const st = { cursor: 0 };
+            const VERTS_PER_STEP = 12000;          // a band a frame, a few ms each
 
-            const pos = geo.attributes.position;
-            const uv = geo.attributes.uv;
-            const colArr = new Float32Array(pos.count * 3);
-            const c0 = new THREE.Color(), c1 = new THREE.Color(), col = new THREE.Color();
+            const sheet = () => {
+                const worldW = this._worldW, worldH = this._worldH;
+                st.fullW = worldW + MARGIN * 2;
+                st.fullH = worldH + MARGIN * 2;
+                const segX = Math.max(1, Math.round(st.fullW / CELL));
+                const segZ = Math.max(1, Math.round(st.fullH / CELL));
+                const geo = new THREE.PlaneGeometry(st.fullW, st.fullH, segX, segZ);
+                geo.rotateX(-Math.PI / 2);
+                geo.translate(worldW * 0.5, 0, worldH * 0.5);
+                st.geo = geo;
+                st.pos = geo.attributes.position;
+                st.uv = geo.attributes.uv;
+                st.count = st.pos.count;
+                st.colArr = new Float32Array(st.count * 3);
 
-            for (let i = 0; i < pos.count; i++) {
-                const wx = pos.getX(i), wz = pos.getZ(i);
-                const b = this.regionAt(wx, wz);
+                // Everything the band loop needs is lifted out of the objects
+                // first - the typed arrays themselves, and one ground function
+                // and one pair of unpacked colours per REGION rather than two
+                // THREE.Color objects per vertex - so all that is left inside it
+                // is arithmetic.
+                st.posArr = st.pos.array;
+                st.uvArr = st.uv ? st.uv.array : null;
+                const nRg = this._regions.length;
+                st.r0 = new Float32Array(nRg); st.g0 = new Float32Array(nRg); st.b0 = new Float32Array(nRg);
+                st.r1 = new Float32Array(nRg); st.g1 = new Float32Array(nRg); st.b1 = new Float32Array(nRg);
+                st.gFn = new Array(nRg); st.gSpec = new Array(nRg);
+                const tmp = new THREE.Color();
+                for (let i = 0; i < nRg; i++) {
+                    const rg = this._regions[i];
+                    tmp.setHex(rg.g0); st.r0[i] = tmp.r; st.g0[i] = tmp.g; st.b0[i] = tmp.b;
+                    tmp.setHex(rg.g1); st.r1[i] = tmp.r; st.g1[i] = tmp.g; st.b1[i] = tmp.b;
+                    st.gSpec[i] = rg.ground;
+                    st.gFn[i] = GROUNDS[rg.ground.kind] || GROUNDS.flat;
+                }
+            };
 
-                pos.setY(i, this.heightAt(wx, wz));
+            const band = () => {
+                const from = st.cursor;
+                const to = Math.min(st.count, from + VERTS_PER_STEP);
+                const posArr = st.posArr, colArr = st.colArr, uvArr = st.uvArr;
+                const grid = this._grid, gw = this._w, gh = this._h;
+                const gFn = st.gFn, gSpec = st.gSpec;
+                const r0 = st.r0, g0 = st.g0, b0 = st.b0, r1 = st.r1, g1 = st.g1, b1 = st.b1;
+                const worldW = this._worldW, worldH = this._worldH;
+                const nz = this._nz, breath = this._breathY, invCell = 1 / CELL;
 
-                c0.setHex(b.g0); c1.setHex(b.g1);
-                const mix = (this._tileNoise(wx, wz, 0.05) * 0.5 + 0.5);
-                col.copy(c0).lerp(c1, mix);
-                colArr[i * 3] = col.r; colArr[i * 3 + 1] = col.g; colArr[i * 3 + 2] = col.b;
-                // One texture tile per cell, in world space, so the printed
-                // floor does not stretch with the patch.
-                if (uv) uv.setXY(i, wx / CELL, wz / CELL);
-            }
-            geo.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
-            geo.computeVertexNormals();
+                for (let i = from; i < to; i++) {
+                    const ix = i * 3;
+                    const wx = posArr[ix], wz = posArr[ix + 2];
 
-            const floor = this._dream.floor;
-            const tex = floor.kind === 'plain' ? null : makeFloorTexture(floor.kind, dreamRng(floor.seed));
-            this._floorTex = tex;
-            const mat = new THREE.MeshLambertMaterial({ vertexColors: true, map: tex });
-            this._ground = new THREE.Mesh(geo, mat);
-            this._scene.add(this._ground);
+                    let cx = Math.floor(wx * invCell) % gw; if (cx < 0) cx += gw;
+                    let cy = Math.floor(wz * invCell) % gh; if (cy < 0) cy += gh;
+                    const tag = grid[cy * gw + cx];
 
-            // A shimmering sheet over the dips of any flooded region. It follows
-            // the sleeper (recentred each frame) so it exists everywhere in the loop.
-            let water = null;
-            for (const rg of this._regions) if (rg.water) { water = rg; break; }
-            if (water) {
-                const wgeo = new THREE.PlaneGeometry(fullW + 2000, fullH + 2000);
-                wgeo.rotateX(-Math.PI / 2);
-                const wmat = new THREE.MeshPhongMaterial({
-                    color: water.accent, transparent: true, opacity: 0.55,
-                    shininess: 120, specular: 0xbfd4ff
-                });
-                this._water = new THREE.Mesh(wgeo, wmat);
-                this._waterY = water.ground.baseY + 5;
-                this._water.position.y = this._waterY;
-                this._scene.add(this._water);
-            }
+                    posArr[ix + 1] = gFn[tag](gSpec[tag], wx, wz, nz, worldW, worldH) + breath;
+
+                    const mix = this._tileNoise(wx, wz, 0.05) * 0.5 + 0.5;
+                    colArr[ix] = r0[tag] + (r1[tag] - r0[tag]) * mix;
+                    colArr[ix + 1] = g0[tag] + (g1[tag] - g0[tag]) * mix;
+                    colArr[ix + 2] = b0[tag] + (b1[tag] - b0[tag]) * mix;
+                    // One texture tile per cell, in world space, so the printed
+                    // floor does not stretch with the patch.
+                    if (uvArr) {
+                        const iu = i * 2;
+                        uvArr[iu] = wx * invCell; uvArr[iu + 1] = wz * invCell;
+                    }
+                }
+                st.cursor = to;
+                // How full the sheet is, for the bar on the veil.
+                this._buildFraction = st.count > 0 ? to / st.count : 1;
+                return to < st.count ? 'again' : undefined;
+            };
+
+            const finish = () => {
+                const geo = st.geo;
+                st.pos.needsUpdate = true;
+                if (st.uv) st.uv.needsUpdate = true;
+                geo.setAttribute('color', new THREE.BufferAttribute(st.colArr, 3));
+                geo.computeVertexNormals();
+
+                const floor = this._dream.floor;
+                const tex = floor.kind === 'plain' ? null : makeFloorTexture(floor.kind, dreamRng(floor.seed));
+                this._floorTex = tex;
+                const mat = new THREE.MeshLambertMaterial({ vertexColors: true, map: tex });
+                this._ground = new THREE.Mesh(geo, mat);
+                this._scene.add(this._ground);
+
+                // A shimmering sheet over the dips of any flooded region. It
+                // follows the sleeper (recentred each frame) so it exists
+                // everywhere in the loop.
+                let water = null;
+                for (const rg of this._regions) if (rg.water) { water = rg; break; }
+                if (water) {
+                    const wgeo = new THREE.PlaneGeometry(st.fullW + 2000, st.fullH + 2000);
+                    wgeo.rotateX(-Math.PI / 2);
+                    const wmat = new THREE.MeshPhongMaterial({
+                        color: water.accent, transparent: true, opacity: 0.55,
+                        shininess: 120, specular: 0xbfd4ff
+                    });
+                    this._water = new THREE.Mesh(wgeo, wmat);
+                    this._waterY = water.ground.baseY + 5;
+                    this._water.position.y = this._waterY;
+                    this._scene.add(this._water);
+                }
+            };
+
+            return [sheet, band, finish];
         }
+
 
         // =====================================================================
         // Furnishing.
@@ -5863,6 +6040,11 @@
         // ---- main loop ------------------------------------------------------
         _loop(now) {
             this._animId = requestAnimationFrame(this._loop);
+            // Still being dealt: one step of the world a frame, and nothing
+            // below this line, which every one of them is a prerequisite for.
+            // _lastTime is left unset, so the first frame of the finished dream
+            // starts its clock rather than inheriting the whole build as delta.
+            if (!this._ready) { this._advanceBuild(); return; }
             if (this._lastTime === null) { this._lastTime = now; return; }
             let delta = Math.min((now - this._lastTime) / 1000, 0.1);
             this._lastTime = now;
@@ -6120,6 +6302,11 @@
             if (this._insightTimer) clearTimeout(this._insightTimer);
             window.removeEventListener('resize', this._onResize);
             document.removeEventListener('keydown', this._onKey);
+            // A dream can be walked out of while it is still being dealt, so the
+            // remaining steps are dropped and the veil comes off with it.
+            this._buildSteps = null;
+            this._ready = false;
+            this._hideVeil();
             if (this._controller) this._controller.dispose();
 
             // Tear down THREE resources, but ONLY objects the dream scene owns.
@@ -6407,9 +6594,11 @@
                 ], 60);
             }
             if (typeof $gameMessage !== 'undefined') {
-                window.skipLocalization = true;
-                $gameMessage.add(T('Dream.willNotForm'));
-                window.skipLocalization = false;
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('Dream.willNotForm'), {
+                    severity: 'warning'
+                  });
+                }
             }
         }
     };

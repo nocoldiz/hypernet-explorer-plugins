@@ -77,7 +77,15 @@
       "one": "{count} RISULTATO",
       "other": "{count} RISULTATI"
     },
-    "noMatches": "Nulla nell'archivio corrisponde a \"{query}\"."
+    "noMatches": "Nulla nell'archivio corrisponde a \"{query}\".",
+    "tabChronicles": "CRONACHE",
+    "tabHistory": "STORIA DEL MONDO",
+    "alertsOn": "AVVISI: SI",
+    "alertsOff": "AVVISI: NO",
+    "alertsHint": "Mostra le notizie dell’ultima ora come avviso durante il gioco",
+    "recordInDepth": "DETTAGLIO ANNALE",
+    "noHistory": "Questo mondo non ha ancora una storia scritta.",
+    "historyFooter": "{count} voci negli annali del mondo"
   },
   "specialLocations": [
     "Città del Vaticano",

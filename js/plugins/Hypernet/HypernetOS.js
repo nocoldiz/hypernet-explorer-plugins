@@ -41,11 +41,17 @@
     const pluginName = "HypernetOS";
 
     // --- Plugin Commands ---
+    // A machine reached through a plugin command is a public terminal: it is
+    // not the party's own hyperdeck, so it never reports parts as new.
+    const markPublicTerminal = () => { if (window.HypernetOS) window.HypernetOS._publicTerminal = true; };
+
     PluginManager.registerCommand(pluginName, "OpenHypernetOS", args => {
+        markPublicTerminal();
         SceneManager.push(Scene_HypernetOS);
     });
 
     PluginManager.registerCommand(pluginName, "OpenApp", args => {
+        markPublicTerminal();
         SceneManager.push(Scene_HypernetOS);
         SceneManager.prepareNextScene({ autoLaunch: args.appId });
     });
@@ -55,8 +61,10 @@
     Game_Interpreter.prototype.pluginCommand = function(command, args) {
         _Game_Interpreter_pluginCommand.call(this, command, args);
         if (command === "OpenHypernetOS") {
+            markPublicTerminal();
             SceneManager.push(Scene_HypernetOS);
         } else if (command === "OpenApp" && args[0]) {
+            markPublicTerminal();
             SceneManager.push(Scene_HypernetOS);
             SceneManager.prepareNextScene({ autoLaunch: args[0] });
         }
@@ -86,8 +94,11 @@
         },
 
         registerApp: function(options) {
-            const { id, name, icon, launchFn, desktopShortcut = true } = options;
+            const { id, name, launchFn, desktopShortcut = true } = options;
             const category = options.category || this.defaultCategory(id);
+            // The desktop theme answers first: a program keeps the icon it
+            // registered with only where the theme has nothing for it.
+            const icon = this.Icons.forApp(id) || options.icon;
             this._apps[id] = { id, name, icon, launchFn, desktopShortcut, category };
 
             // Every plugin registers on load, so a straight refresh here rebuilt
@@ -121,14 +132,14 @@
             'sys-task-mgr': 'system', 'sys-terminal': 'system', 'control-panel': 'system',
             'my-computer': 'system', 'my-documents': 'system', 'app-bios': 'system',
             'app-hypernet-browser': 'internet', 'app-hypernet-shop': 'internet', 'app-news-history': 'internet',
-            'app-hypermail': 'internet',
+            'app-hypermail': 'internet', 'app-nudge': 'internet',
             'tv-guide': 'media', 'app-hyperamp': 'media',
             'app-hypernet-notepad': 'accessories', 'app-hypernet-paint': 'accessories',
             'app-weather': 'reference', 'app-bestiary-encarta': 'reference', 'app-object-index': 'reference',
             'app-eurodemics': 'reference', 'app-artifact-analyzer': 'reference',
             'app-bank-system': 'economy', 'app-stock-market': 'economy', 'app-real-estate': 'economy',
             'app-token-exchange': 'economy', 'app-job-offers': 'economy',
-            'app-kanban-quest': 'office',
+            'app-kanban-quest': 'office', 'app-beaglequest': 'office',
             'app-colosseum': 'games', 'app-bobnzi': 'games',
             'app-minesweeper': 'games', 'app-solitaire': 'games',
             'app-folderopt': 'system', 'app-mouse': 'system', 'app-keyboard': 'system',
@@ -195,7 +206,7 @@
             'my-computer', 'my-documents',
             'app-hypernet-browser', 'app-hypernet-shop', 'app-stock-market',
             'app-neuropolice', 'app-card-arena', 'app-hexcel', 'app-hypernet-paint', 'app-hypermail',
-            'app-object-index', 'app-job-offers', 'app-colosseum',
+            'app-object-index', 'app-job-offers', 'app-colosseum', 'app-beaglequest', 'app-nudge',
             'app-news-history', 'app-real-estate', 'app-bank-system', 'app-bestiary-encarta'
         ],
         // Programs, Games and Utilities are the drawers every other shortcut
@@ -331,6 +342,110 @@
             }
         },
         
+        // --- Desktop icon theme -------------------------------------------------
+        // Every program on the desktop used to borrow an IconSet index, so the
+        // OS wore the game's fantasy icons: a sword for the terminal, a book
+        // for the encyclopedia. The desktop now wears the Tango icon theme
+        // (public domain, img/icons/tango), which is the icon grammar of a
+        // machine of the period: folders, drives, printers, mime types.
+        //
+        // One app id names one icon here, so nothing has to be rewired in the
+        // forty plugins that register a program; a program the theme has no
+        // entry for keeps whatever icon it registered with.
+        Icons: {
+            DIR: 'img/icons/tango/',
+
+            // i18n-ignore-start  app ids on the left, icon file names on the right
+            APPS: {
+                // Shell and system
+                'app-all-programs': 'categories-applications-other',
+                'app-games': 'categories-applications-games',
+                'app-utilities': 'categories-applications-accessories',
+                'sys-task-mgr': 'apps-utilities-system-monitor',
+                'sys-terminal': 'apps-utilities-terminal',
+                'control-panel': 'categories-preferences-system',
+                'my-computer': 'devices-computer',
+                'my-documents': 'places-folder',
+                'app-bios': 'categories-preferences-desktop-peripherals',
+                'app-recycle': 'places-user-trash',
+                'app-search': 'actions-system-search',
+                'app-help': 'apps-help-browser',
+                'app-chiplab': 'devices-audio-card',
+                // Control panel applets
+                'app-folderopt': 'apps-system-file-manager',
+                'app-mouse': 'devices-input-mouse',
+                'app-keyboard': 'devices-input-keyboard',
+                'app-useracc': 'apps-system-users',
+                'app-printers': 'devices-printer',
+                'app-netconn': 'devices-network-wired',
+                'app-access': 'apps-preferences-desktop-accessibility',
+                'app-fonts': 'apps-preferences-desktop-font',
+                'app-joy': 'devices-input-gaming',
+                'app-taskbar': 'apps-preferences-system-windows',
+                // Internet
+                'app-hypernet-browser': 'apps-internet-web-browser',
+                'app-hypernet-shop': 'mimetypes-package-x-generic',
+                'app-news-history': 'apps-internet-news-reader',
+                'app-hypermail': 'apps-internet-mail',
+                'app-nudge': 'apps-internet-group-chat',
+                'app-bobnzi': 'emotes-face-smile-big',
+                // Media
+                'tv-guide': 'devices-video-display',
+                'app-hyperamp': 'devices-multimedia-player',
+                // Accessories
+                'app-hypernet-notepad': 'apps-accessories-text-editor',
+                'app-hypernet-paint': 'categories-applications-graphics',
+                'app-wyrd': 'mimetypes-x-office-document',
+                'app-hexcel': 'mimetypes-x-office-spreadsheet',
+                // Reference
+                'app-weather': 'status-weather-few-clouds',
+                'app-bestiary-encarta': 'mimetypes-x-office-address-book',
+                'app-object-index': 'apps-accessories-character-map',
+                'app-eurodemics': 'status-dialog-warning',
+                'app-artifact-analyzer': 'devices-camera-photo',
+                'app-lyceum': 'categories-applications-development',
+                'app-virtuahealer': 'apps-preferences-desktop-assistive-technology',
+                'app-remote-bistury': 'apps-system-installer',
+                // Economy
+                'app-bank-system': 'apps-accessories-calculator',
+                'app-stock-market': 'mimetypes-x-office-presentation',
+                'app-real-estate': 'places-user-home',
+                'app-token-exchange': 'mimetypes-application-certificate',
+                'app-job-offers': 'actions-appointment-new',
+                'app-tillbook': 'categories-applications-office',
+                'app-holdall': 'mimetypes-package-x-generic',
+                'app-homely': 'apps-preferences-desktop-theme',
+                'app-grange': 'categories-applications-other',
+                'app-cadd-trader': 'emblems-emblem-photos',
+                // Office and civic
+                'app-kanban-quest': 'apps-office-calendar',
+                'app-beaglequest': 'mimetypes-text-x-generic',
+                'app-wayfare': 'actions-go-jump',
+                'app-chamber': 'places-network-workgroup',
+                'app-neuropolice': 'emblems-emblem-important',
+                // Games
+                'app-colosseum': 'categories-applications-games',
+                'app-card-arena': 'categories-applications-games',
+                'app-slamgrimorie': 'categories-applications-games',
+                'app-minesweeper': 'categories-applications-games',
+                'app-solitaire': 'categories-applications-games'
+            },
+            // i18n-ignore-end
+
+            // A theme icon by name, for anything that is not a registered app
+            // (a drive in My Computer, a folder in a file list).
+            path: function (name) {
+                return name ? this.DIR + name + '.png' : '';
+            },
+
+            // The icon a registered app should wear, or null when the theme has
+            // nothing for it and the app's own icon stands.
+            forApp: function (id) {
+                const name = id && this.APPS[id];
+                return name ? this.path(name) : null;
+            }
+        },
+
         getIconHTML: function(icon, size = 32) {
             if (typeof icon === 'number') {
                 const cols = 16;
@@ -1354,7 +1469,7 @@
         zIndexCounter: 100,
 
         createWindow: function(options) {
-            let { id, title, contentHTML, width = 800, height = 600, icon = '' } = options;
+            let { id, title, contentHTML, width = 800, height = 600, icon = '', anchor = '' } = options;
 
             // Make every OS app window slightly bigger, clamped to the viewport
             // (leave room for margins and the taskbar) so large windows never overflow.
@@ -1384,7 +1499,10 @@
                 window.HypernetOS.currentLaunchingPidAdopted = true;
             }
             
-            const iconHTML = window.HypernetOS.getIconHTML(icon, 16);
+            // A window opened by a program wears that program's themed icon, so
+            // the title bar and the taskbar button agree with the shortcut.
+            const themed = window.HypernetOS.Icons.forApp(window.HypernetOS.currentLaunchingApp);
+            const iconHTML = window.HypernetOS.getIconHTML(themed || icon, 16);
             win.dataset.iconHTML = iconHTML;
             
             // Initial positioning (center/cascade offset). The cascade is capped
@@ -1395,7 +1513,9 @@
             // back with it.
             const maxX = Math.max(10, window.innerWidth - width - 10);
             const maxY = Math.max(10, window.innerHeight - height - TASKBAR_H - 10);
-            const startX = Math.min(maxX,
+            // A drawer asks to open against the right edge so it never covers
+            // the desktop icons it exists to fill.
+            const startX = anchor === 'right' ? maxX : Math.min(maxX,
                 Math.max(10, (window.innerWidth - width) / 2 + (this.windows.length * 25)));
             const startY = Math.min(maxY,
                 Math.max(10, (window.innerHeight - height - 40) / 2 + (this.windows.length * 25)));
@@ -1860,7 +1980,7 @@
         if ($gameParty.leader()) {
             userName = $gameParty.leader().name();
             // Optional: Draw lead's RMMZ icon as avatar
-            userAvatarHTML = window.HypernetOS.getIconHTML(245, 28) || '';
+            userAvatarHTML = window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('apps-system-users'), 28) || '';
         }
 
         this._container.innerHTML = `
@@ -1880,38 +2000,38 @@
                     </div>
                     <div class="start-menu-right">
                         <div class="start-menu-link" id="link-my-computer">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(86, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('devices-computer'), 16)}</div>
                             <div>${T('HypernetOS.myComputer')}</div>
                         </div>
                         <div class="start-menu-link" id="link-my-documents">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(191, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('places-folder'), 16)}</div>
                             <div>${T('HypernetOS.myDocuments')}</div>
                         </div>
                         <div class="start-menu-link" id="link-recent-docs">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(190, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('mimetypes-x-office-document'), 16)}</div>
                             <div>${T('HypernetOS.xp.taskbar.recentDocs')}</div>
                             <span class="start-menu-flyout-arrow"></span>
                         </div>
                         <div class="start-menu-divider"></div>
                         <div class="start-menu-link" id="link-control-panel">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(234, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('categories-preferences-system'), 16)}</div>
                             <div>${T('HypernetOS.controlPanel')}</div>
                         </div>
                         <div class="start-menu-link" id="link-web-browser">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(188, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('apps-internet-web-browser'), 16)}</div>
                             <div>${T('HypernetOS.hypernetExplorer')}</div>
                         </div>
                         <div class="start-menu-divider"></div>
                         <div class="start-menu-link" id="link-help">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(190, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('apps-help-browser'), 16)}</div>
                             <div>${T('HypernetOS.xp.help.appName')}</div>
                         </div>
                         <div class="start-menu-link" id="link-search">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(190, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('actions-system-search'), 16)}</div>
                             <div>${T('HypernetOS.xp.search.appName')}</div>
                         </div>
                         <div class="start-menu-link" id="link-run">
-                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(234, 16)}</div>
+                            <div class="start-menu-link-icon">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('apps-utilities-terminal'), 16)}</div>
                             <div>${T('HypernetOS.xp.run.menu')}</div>
                         </div>
                     </div>
@@ -5127,7 +5247,7 @@
             this._el = el;
             // A balloon is a notification unless it is announcing a part the
             // machine has just found, which is its own event.
-            if (window.HypernetOS.XP) {
+            if (window.HypernetOS.XP && !opts.silent) {
                 window.HypernetOS.XP.playEvent(opts.event || 'systemNotification');   // i18n-ignore  event id
             }
             requestAnimationFrame(() => el.classList.add('open'));
@@ -5238,7 +5358,9 @@
             // Found New Hardware: a part the machine did not have last time.
             const p = window.HypernetOS.Host.profile();
             const sig = [p.cpu, p.gpu, p.sound, p.modem, p.ram, p.disk].join('|');
-            const last = this.reg('hwSignature', null);
+            const publicTerminal = !!window.HypernetOS._publicTerminal;
+            window.HypernetOS._publicTerminal = false;
+            const last = publicTerminal ? sig : this.reg('hwSignature', null);
             if (last !== sig) {
                 this.setReg('hwSignature', sig);
                 if (last !== null) {
@@ -5257,12 +5379,16 @@
                 }
             }
             // Security Center: three switches, all off on a fresh install.
+            // Security Center warns once, the first time this machine boots
+            // with a switch off, and it warns without a sound.
             const sec = this.security();
-            if (!sec.firewall || !sec.updates || !sec.antivirus) {
+            if ((!sec.firewall || !sec.updates || !sec.antivirus) && !this.reg('riskWarned', false)) {
+                this.setReg('riskWarned', true);
                 this.later(() => window.HypernetOS.Balloon.show({
                     title: T('HypernetOS.xp.balloon.riskTitle'),
                     text: T('HypernetOS.xp.balloon.riskText'),
                     icon: 'warning',
+                    silent: true,
                     onClick: () => window.HypernetOS.launchApp('app-wscui')
                 }), last === sig ? 3500 : 12000);
             }
@@ -5429,7 +5555,7 @@
                 wins.forEach(w => {
                     const cell = document.createElement('div');
                     cell.className = 'hypernet-alttab-cell';
-                    cell.innerHTML = w.dataset.iconHTML || window.HypernetOS.getIconHTML(234, 16);
+                    cell.innerHTML = w.dataset.iconHTML || window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('categories-applications-other'), 16);
                     row.appendChild(cell);
                 });
             }
@@ -5553,7 +5679,7 @@
             const current = this.userName();
             const tiles = names.map((n, i) => `
                 <div class="hypernet-welcome-user focusable" data-name="${n.replace(/"/g, '&quot;')}" tabindex="0">
-                    <div class="hypernet-welcome-avatar" style="background: hsl(${(xpHash(n) % 360)}, 55%, 55%)">${window.HypernetOS.getIconHTML(245, 28)}</div>
+                    <div class="hypernet-welcome-avatar" style="background: hsl(${(xpHash(n) % 360)}, 55%, 55%)">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('apps-system-users'), 28)}</div>
                     <div class="hypernet-welcome-name">${n}</div>
                     <div class="hypernet-welcome-note">${n === current ? (locked ? T(X + 'locked') : T(X + 'loggedOn')) : ''}</div>
                 </div>`).join('');
@@ -5968,7 +6094,8 @@
                     icon: icon,
                     width: size[0],
                     height: size[1],
-                    contentHTML: `<div class="xp-app xp-${key}"></div>`
+                    contentHTML: `<div class="xp-app xp-${key}"></div>`,
+                    anchor: (extra && extra.windowAnchor) || ''
                 });
                 const root = win.querySelector('.xp-app');
                 if (root && !root.dataset.built) {
@@ -5998,7 +6125,7 @@
         const history = XP.reg('runHistory', []) || [];
         root.innerHTML = `
             <div class="xp-run">
-                <div class="xp-run-head">${window.HypernetOS.getIconHTML(234, 32)}<div>${T_('body')}</div></div>
+                <div class="xp-run-head">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('apps-utilities-terminal'), 32)}<div>${T_('body')}</div></div>
                 <div class="xp-run-row"><label>${T_('open')}</label>
                     <input class="xp-input" id="run-input" list="run-history" value="${esc(history[0] || '')}">
                     <datalist id="run-history">${history.map(h => `<option value="${esc(h)}">`).join('')}</datalist>
@@ -6278,7 +6405,7 @@
     xpApp('app-cleanmgr', 'cleanmgr', 86, [480, 420], (win, root, T_) => {
         const fs = window.HypernetFileSystem;
         const p = window.HypernetOS.Host.profile();
-        root.innerHTML = `<div class="xp-cleanmgr"><div class="xp-cleanmgr-scan">${window.HypernetOS.getIconHTML(86, 32)}<div>${T_('scanning', { drive: 'C:' })}</div><div class="xp-progress"><i></i></div></div></div>`;   // i18n-ignore  drive
+        root.innerHTML = `<div class="xp-cleanmgr"><div class="xp-cleanmgr-scan">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('devices-drive-harddisk'), 32)}<div>${T_('scanning', { drive: 'C:' })}</div><div class="xp-progress"><i></i></div></div></div>`;   // i18n-ignore  drive
         const bar = q(root, '.xp-progress i');
         let pct = 0;
         const timer = setInterval(() => {
@@ -6628,7 +6755,7 @@
             <div class="xp-mmsys">
                 ${tabBar(T_, ['volume', 'sounds', 'audio', 'voice', 'hardware'])}
                 ${pane('volume', `
-                    <div class="xp-row">${window.HypernetOS.getIconHTML(111, 32)}<b>${esc(p.sound)}</b></div>
+                    <div class="xp-row">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('devices-audio-card'), 32)}<b>${esc(p.sound)}</b></div>
                     <div class="xp-group"><div class="xp-group-title">${T_('deviceVolume')}</div>
                         <div class="xp-row"><span>${T_('low')}</span><input type="range" min="0" max="100" value="${master}" id="mm-vol" class="xp-range"><span>${T_('high')}</span></div>
                         <label class="xp-check-row"><input type="checkbox" id="mm-mute" ${muted ? 'checked' : ''}> ${T_('mute')}</label>
@@ -6702,7 +6829,7 @@
                 ${tabBar(T_, ['general', 'name', 'hardware', 'advanced', 'restore', 'updates', 'remote'])}
                 ${pane('general', `
                     <div class="xp-sysdm-general">
-                        <div class="xp-sysdm-logo">${window.HypernetOS.getIconHTML(234, 64)}</div>
+                        <div class="xp-sysdm-logo">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('devices-computer'), 64)}</div>
                         <div>
                             <div class="xp-group-title">${T_('system')}</div>
                             <div class="xp-indent">${T_('osName')}</div><div class="xp-indent">${T_('osVersion')}</div><div class="xp-indent">${T_('servicePack')}</div>
@@ -7025,12 +7152,11 @@
             root.className = 'xp-allprograms xp-drawer-container';
             root.innerHTML = `
                 <div class="xp-drawer-tabs">
-                    <div class="xp-drawer-tab${currentSection === 'all' ? ' active' : ''}" data-sec="all">${esc(tSec('allprograms'))}</div>
                     <div class="xp-drawer-tab${currentSection === 'programs' ? ' active' : ''}" data-sec="programs">${esc(tSec('programs'))}</div>
                     <div class="xp-drawer-tab${currentSection === 'games' ? ' active' : ''}" data-sec="games">${esc(tSec('games'))}</div>
                     <div class="xp-drawer-tab${currentSection === 'utilities' ? ' active' : ''}" data-sec="utilities">${esc(tSec('utilities'))}</div>
                 </div>
-                <div class="xp-allprograms-hint">${esc(tHint(currentSection === 'all' ? 'allprograms' : currentSection))}</div>
+                <div class="xp-allprograms-hint">${esc(tHint(currentSection))}</div>
                 <div class="xp-allprograms-list"></div>`;
 
             root.querySelectorAll('.xp-drawer-tab').forEach(tab => {
@@ -7042,9 +7168,7 @@
             });
 
             const list = q(root, '.xp-allprograms-list');
-            const sectionsToRender = currentSection === 'all'
-                ? SECTIONS
-                : SECTIONS.filter(s => s.id === currentSection);
+            const sectionsToRender = SECTIONS.filter(s => s.id === currentSection);
 
             sectionsToRender.forEach(secInfo => {
                 const secBox = document.createElement('div');
@@ -7099,9 +7223,9 @@
         render();
     };
 
-    xpApp('app-all-programs', 'allprograms', 230, [640, 480], drawerBuilder('app-all-programs', 'allprograms', 'all'), { desktopShortcut: true, category: 'system' });   // i18n-ignore  category id
-    xpApp('app-games', 'games', 291, [640, 480], drawerBuilder('app-games', 'games', 'games'), { desktopShortcut: true, category: 'games' });   // i18n-ignore  category id
-    xpApp('app-utilities', 'utilities', 234, [640, 480], drawerBuilder('app-utilities', 'utilities', 'utilities'), { desktopShortcut: true, category: 'system' });   // i18n-ignore  category id
+    xpApp('app-all-programs', 'programs', 230, [640, 480], drawerBuilder('app-all-programs', 'programs', 'programs'), { desktopShortcut: true, category: 'system', windowAnchor: 'right' });   // i18n-ignore  category id
+    xpApp('app-games', 'games', 291, [640, 480], drawerBuilder('app-games', 'games', 'games'), { desktopShortcut: true, category: 'games', windowAnchor: 'right' });   // i18n-ignore  category id
+    xpApp('app-utilities', 'utilities', 234, [640, 480], drawerBuilder('app-utilities', 'utilities', 'utilities'), { desktopShortcut: true, category: 'system', windowAnchor: 'right' });   // i18n-ignore  category id
 
     // --- Search Companion ----------------------------------------------------------------------
     xpApp('app-search', 'search', 190, [600, 440], (win, root, T_) => {
@@ -7109,7 +7233,7 @@
         root.innerHTML = `
             <div class="xp-search">
                 <div class="xp-search-side">
-                    <div class="xp-search-dog">${window.HypernetOS.getIconHTML(190, 40)}</div>
+                    <div class="xp-search-dog">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('actions-system-search'), 40)}</div>
                     <div class="xp-note">${T_('intro')}</div>
                     <div class="xp-row"><label>${T_('name')}</label><input class="xp-input" id="se-name"></div>
                     <div class="xp-row"><label>${T_('contains')}</label><input class="xp-input" id="se-text"></div>
@@ -7215,7 +7339,7 @@
                 </div>`;
             root.innerHTML = `
                 <div class="xp-wscui">
-                    <div class="xp-wsc-banner">${window.HypernetOS.getIconHTML(233, 32)}<div><b>${T_('appName')}</b><div>${T_('intro')}</div></div></div>
+                    <div class="xp-wsc-banner">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('emblems-emblem-system'), 32)}<div><b>${T_('appName')}</b><div>${T_('intro')}</div></div></div>
                     <div class="xp-wsc-list">${row('firewall', sec.firewall)}${row('updates', sec.updates)}${row('antivirus', sec.antivirus)}</div>
                     <div class="xp-row-right">${btn('wsc-alerts', T_('alertSettings'))}</div>
                 </div>`;
@@ -7456,7 +7580,7 @@
                         <div class="xp-regedit-row"><span>${T_('speed')}</span><span>${speed}</span></div>
                     </div>
                     <div class="xp-group"><div class="xp-group-title">${T_('activity')}</div>
-                        <div class="xp-netstat-activity"><span>${T_('sent')}</span><span class="xp-netstat-pc">${window.HypernetOS.getIconHTML(86, 24)}</span><span class="xp-netstat-wire"></span><span class="xp-netstat-pc">${window.HypernetOS.getIconHTML(188, 24)}</span><span>${T_('received')}</span></div>
+                        <div class="xp-netstat-activity"><span>${T_('sent')}</span><span class="xp-netstat-pc">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('devices-computer'), 24)}</span><span class="xp-netstat-wire"></span><span class="xp-netstat-pc">${window.HypernetOS.getIconHTML(window.HypernetOS.Icons.path('places-network-server'), 24)}</span><span>${T_('received')}</span></div>
                         <div class="xp-regedit-row"><span>${T_('packets')}</span><span id="ns-sent">${sent}</span><span id="ns-recv">${recv}</span></div>
                     </div>
                     <div class="xp-row-right">${btn('ns-props', T_('properties'))}${btn('ns-disable', dialup ? T_('disconnect') : T_('disable'))}</div>`, true)}

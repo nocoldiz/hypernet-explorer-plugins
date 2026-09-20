@@ -2191,94 +2191,53 @@
 
   Scene_Map.prototype.displayWorkResult = function (actor, job, result) {
     const jobName = window.WorkSystem.jobName(job);
+    const euros = (cents) => (Math.abs(cents) / 100).toFixed(2);
 
-    // Work complete message
-    window.skipLocalization = true;
-    $gameMessage.add(T('WorkSystem.finishedWorking', { actor: actor.name(), job: jobName }));
-    window.skipLocalization = false;
+    // result.statuses holds raw status names (e.g. "Nausea") or numeric ids,
+    // mirroring applyWorkEffects. Resolve each to a state and use its display
+    // name, falling back to the raw label when it can't be mapped.
+    const stateNames = (result.statuses || []).map(status => {
+      const stateId = window.WorkSystem.resolveStatusId(status);
+      const state = stateId && $dataStates[stateId];
+      return (state && state.name) || String(status);
+    }).join(', ');
 
-    // Outcome message
-    window.skipLocalization = true;
-    $gameMessage.add(result.message);
-    window.skipLocalization = false;
+    // The whole shift reads as one report instead of a dozen message boxes,
+    // and the rows with nothing to say drop out on their own. The wardrobe and
+    // event lines sit outside the pay branch on purpose: a shift docked into
+    // the red still owes the player the reason.
+    const rows = [
+      result.message,
+      result.event ? T('WorkSystem.event.' + result.event.id, { actor: actor.name() }) : null,
+      result.pay > 0 ? T('WorkSystem.earned', { amount: euros(result.pay) })
+        : result.pay < 0 ? T('WorkSystem.lost', { amount: euros(result.pay) })
+          : T('WorkSystem.noPay'),
+      result.lookBonus > 0 ? T('WorkSystem.lookBonus', { amount: euros(result.lookBonus) }) : null,
+      result.eventPay > 0 ? T('WorkSystem.eventBonus', { amount: euros(result.eventPay) })
+        : result.eventPay < 0 ? T('WorkSystem.eventPenalty', { amount: euros(result.eventPay) })
+          : null,
+      result.hpDamage > 0 ? T('WorkSystem.hpDamage', { amount: result.hpDamage }) : null,
+      result.mpDamage > 0 ? T('WorkSystem.mpDamage', { amount: result.mpDamage }) : null,
+      stateNames ? T('WorkSystem.afflicted', { states: stateNames }) : null,
+      T('WorkSystem.hoursPassed', { hours: job.duration })
+    ];
 
-    // What made this shift worth talking about, if anything did.
-    if (result.event) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.event.' + result.event.id, { actor: actor.name() }));
-      window.skipLocalization = false;
-    }
-
-    // Pay information
-    if (result.pay > 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.earned', { amount: (result.pay / 100).toFixed(2) }));
-      window.skipLocalization = false;
-    } else if (result.pay < 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.lost', { amount: (Math.abs(result.pay) / 100).toFixed(2) }));
-      window.skipLocalization = false;
-    } else {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.noPay'));
-      window.skipLocalization = false;
-    }
-
-    // Break out what the wardrobe and the event were worth, so the player can
-    // see the aesthetic stats doing something rather than having to infer it.
-    // Outside the branch above on purpose: a shift docked into the red still
-    // owes the player the reason.
-    if (result.lookBonus > 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.lookBonus', { amount: (result.lookBonus / 100).toFixed(2) }));
-      window.skipLocalization = false;
-    }
-    if (result.eventPay > 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.eventBonus', { amount: (result.eventPay / 100).toFixed(2) }));
-      window.skipLocalization = false;
-    } else if (result.eventPay < 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.eventPenalty', { amount: (Math.abs(result.eventPay) / 100).toFixed(2) }));
-      window.skipLocalization = false;
-    }
-
-    // Damage information
-    if (result.hpDamage > 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.hpDamage', { amount: result.hpDamage }));
-      window.skipLocalization = false;
-    }
-    if (result.mpDamage > 0) {
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.mpDamage', { amount: result.mpDamage }));
-      window.skipLocalization = false;
-    }
-
-    // Status effects
-    if (result.statuses.length > 0) {
-      // result.statuses holds raw status names (e.g. "Nausea") or numeric ids,
-      // mirroring applyWorkEffects. Resolve each to a state and use its display
-      // name, falling back to the raw label when it can't be mapped.
-      const stateNames = result.statuses.map(status => {
-        const stateId = window.WorkSystem.resolveStatusId(status);
-        const state = stateId && $dataStates[stateId];
-        return (state && state.name) || String(status);
-      }).join(', ');
-      window.skipLocalization = true;
-      $gameMessage.add(T('WorkSystem.afflicted', { states: stateNames }));
-      window.skipLocalization = false;
-    }
-
-    // Time passed
-    window.skipLocalization = true;
-    $gameMessage.add(T('WorkSystem.hoursPassed', { hours: job.duration }));
-    window.skipLocalization = false;
-
-    // The fight comes after the shift is reported, once the player has read
-    // through: Scene_Map.update picks it up when the message window clears.
-    if (result.battle) {
+    // The fight used to wait on the message window clearing. A toast is not a
+    // window, and a starting battle tears one down unread, so the fight is
+    // queued when the report has been read instead of straight away.
+    const queueFight = () => {
+      if (!result.battle) return;
       $gameTemp._workPendingBattle = { troopId: result.battle.troopId, reward: result.battle.reward || 0 };
+    };
+
+    if (window.ParchmentToast) {
+      window.ParchmentToast.report(rows, {
+        title: T('WorkSystem.finishedWorking', { actor: actor.name(), job: jobName }),
+        severity: result.pay < 0 ? 'danger' : 'good',
+        onDismiss: queueFight
+      });
+    } else {
+      queueFight();
     }
   };
 

@@ -4153,10 +4153,10 @@
     const qtyHTML = isPicked
       ? `
                       <div class="sell-qty">
+                          <span class="sell-qty-total ${buying ? 'cost' : ''}">${money(pickedQty * price)} €</span>
                           <span class="sell-qty-step" data-idx="${idx}" data-mode="${mode}" data-step="-1" title="${esc(T('Shop.qtyStepHint'))}">－</span>
                           <span class="sell-qty-val">${pickedQty}</span>
                           <span class="sell-qty-step" data-idx="${idx}" data-mode="${mode}" data-step="1" title="${esc(T('Shop.qtyStepHint'))}">＋</span>
-                          <span class="sell-qty-total ${buying ? 'cost' : ''}">${money(pickedQty * price)} €</span>
                       </div>`
       : "";
 

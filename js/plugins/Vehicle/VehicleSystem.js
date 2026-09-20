@@ -4257,11 +4257,12 @@
       });
     }
 
+    // The basename alone: command357 looks a command up under
+    // Utils.extractFileName(params[0]), which strips the folder, so the
+    // folder-qualified twin that used to be registered here was dead weight
+    // no event page could ever reach.
     static _registerCommand(name, callback) {
       PluginManager.registerCommand(PLUGIN_NAME, name, callback);
-      if (PLUGIN_NAME !== 'Vehicle/' + PLUGIN_NAME) {
-        PluginManager.registerCommand('Vehicle/' + PLUGIN_NAME, name, callback);
-      }
     }
 
     /**
@@ -4749,6 +4750,24 @@
     // as from the airship itself.
     enterAirshipInterior(opts) {
       PluginCommands._saveAndTravel(VehicleConfig.AIRSHIP, opts);
+    },
+
+    // The fast-travel network the party can set off on from exactly where they
+    // are standing: the one belonging to the vehicle they are sitting inside,
+    // or the one they are at the wheel of. Null on foot, and null in space.
+    // The world sheet (Map/WorldMap.js) asks this to know whether a pin on the
+    // chart is a journey it can book or only a place name.
+    travelTransportHere() {
+      try {
+        if (typeof $gameMap === 'undefined' || !$gameMap) return null;
+        const ridden = isPlayerRidingCustomVehicle() ? $gamePlayer.vehicle() : null;
+        const config = ridden ? vehicleManager.getConfig(ridden)
+                              : getConfigByInteriorMapId($gameMap.mapId());
+        if (!config) return null;
+        return canFastTravel(config) ? getFastTravelType(config) : null;
+      } catch (e) {
+        return null;
+      }
     },
 
     // The maintenance key ('camper' | 'car' | 'bike' | 'boat' | 'broom' |

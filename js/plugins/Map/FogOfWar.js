@@ -267,6 +267,19 @@
         return !sessionDisabled && commandEnabled && ConfigManager.fogOfWar === true;
     }
 
+    // The one answer to "is the fog layer doing anything on this map at all".
+    // Every per-frame entry point asks this BEFORE it does any work, so a
+    // player who has the option switched off pays nothing but this test: no
+    // cone, no ray casting, no event-map rebuild, no chunk upload.
+    // Kept separate from fogEnabled(): a divider-only map (region 30) still
+    // renders fog to confine the view to one interior even when the option is
+    // off, and that case has to stay live.
+    function fogActive() {
+        if (window.dreamActive || !$gameMap) return false;
+        if ($gameMap.isDividerOnlyFog && $gameMap.isDividerOnlyFog()) return true;
+        return fogEnabled() && !$gameMap._fogOfWarDisabled;
+    }
+
     function requestFullRefresh(frames, reload) {
         pendingRefreshFrames = Math.max(pendingRefreshFrames, Math.max(1, frames | 0));
         if (reload) pendingRefreshReload = true;
@@ -1918,8 +1931,10 @@
     Game_Player.prototype.updateNonmoving = function (wasMoving, sceneActive) {
         _Game_Player_updateNonmoving.call(this, wasMoving, sceneActive);
         // A step just finished: refresh the cone now rather than waiting for the
-        // throttled call in Spriteset_Map.update.
-        if (wasMoving && sceneActive && $gameMap) {
+        // throttled call in Spriteset_Map.update. Skipped outright when the fog
+        // is not doing anything here, so a step costs nothing on a map (or an
+        // option setting) that has no fog to update.
+        if (wasMoving && sceneActive && $gameMap && fogActive()) {
             try {
                 $gameMap.updateFogOfWar();
             } catch (e) {
@@ -2007,9 +2022,7 @@
 
     // True when the fog layer should be drawn at all on this map.
     Spriteset_Map.prototype.isFogOfWarActive = function () {
-        if (window.dreamActive || !$gameMap) return false;
-        if ($gameMap.isDividerOnlyFog()) return true;
-        return fogEnabled() && !$gameMap._fogOfWarDisabled;
+        return fogActive();
     };
 
     const _Spriteset_Map_update = Spriteset_Map.prototype.update;

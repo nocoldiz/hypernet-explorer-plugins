@@ -173,6 +173,9 @@
     "landingSite": "Sito di atterraggio",
     "otherGalaxy": "Un'altra galassia: solo ponte",
     "landingSiteCell": "Riquadro {x}, {y}",
+    "landOnFoot": "Scendi a piedi",
+    "landWithShip": "Atterra con la nave",
+    "spaceportAtCell": "{name} · Riquadro {x}, {y}",
     "landHere": "Atterra qui",
     "liminalWalk": "Passeggiata liminale",
     "cancel": "Annulla",
@@ -307,6 +310,8 @@
   },
   "core": {
     "noSpaceports": "Nessuno spazioporto su questo pianeta",
+    "portOnFoot": "{name} (a piedi)",
+    "portWithShip": "{name} (con la nave)",
     "cancel": "Annulla",
     "theStar": "la stella",
     "refuellingFrom": "Rifornimento da {star}.",

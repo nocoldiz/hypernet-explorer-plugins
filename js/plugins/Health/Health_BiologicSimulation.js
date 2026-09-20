@@ -322,7 +322,32 @@
   const ESTROGEN_DOSE = 120;      // pg/mL of one daily shot
   const ESTROGEN_CEILING = 450;   // pg/mL
 
+  const INTRAUTERINE_SPIRAL = "INTRAUTERINE_SPIRAL";
+  const VASECTOMY_CLIP = "VASECTOMY_CLIP";
+  const TUBAL_LIGATION_BAND = "TUBAL_LIGATION_BAND";
+  const SPORANGIAL_SUPPRESSOR = "SPORANGIAL_SUPPRESSOR";
+  const MITOTIC_INHIBITOR = "MITOTIC_INHIBITOR";
+
+  const FERTILITY_BLOCKING_AUGMENTS = {
+    [INTRAUTERINE_SPIRAL]: [1],
+    [VASECTOMY_CLIP]: [0],
+    [TUBAL_LIGATION_BAND]: [1, 2],
+    [SPORANGIAL_SUPPRESSOR]: [3],
+    [MITOTIC_INHIBITOR]: [4]
+  };
+
   const getProstheticTypes = () => window.Health ? window.Health.ProstheticTypes : null;
+
+  function getAugmentDisplayName(key) {
+    const types = getProstheticTypes();
+    const entry = types && types[key];
+    if (entry) {
+      return (typeof ConfigManager !== 'undefined' && ConfigManager.language === 'it')
+        ? (entry.name_it || entry.name_en)
+        : (entry.name_en || entry.name_it);
+    }
+    return key;
+  }
 
   function hasImplant(actor, prostheticKey) {
     const installed = actor && actor._prosthetics;
@@ -332,6 +357,24 @@
     }
     return false;
   }
+
+  function getFertilityBlockingAugment(actor) {
+    if (!actor) return null;
+    const pType = getReproductionType(actor);
+    for (const key in FERTILITY_BLOCKING_AUGMENTS) {
+      if (hasImplant(actor, key)) {
+        const types = FERTILITY_BLOCKING_AUGMENTS[key];
+        if (types.includes(pType)) {
+          return key;
+        }
+      }
+    }
+    return null;
+  }
+
+  window.hasFertilityBlocker = function (actor) {
+    return !!getFertilityBlockingAugment(actor);
+  };
 
   // Which day of the world clock (variable 114, game minutes) we stand on.
   function currentGameDay() {
@@ -507,6 +550,21 @@
       }
       if (prostheticKey === ESTROGEN_AUTOINJECTOR) {
         return T('Biologic.estrogenAutoinjectorOutput', { dose: ESTROGEN_DOSE, floor: ESTROGEN_FLOOR });
+      }
+      if (prostheticKey === INTRAUTERINE_SPIRAL) {
+        return T('Biologic.intrauterineSpiralOutput');
+      }
+      if (prostheticKey === VASECTOMY_CLIP) {
+        return T('Biologic.vasectomyClipOutput');
+      }
+      if (prostheticKey === TUBAL_LIGATION_BAND) {
+        return T('Biologic.tubalLigationBandOutput');
+      }
+      if (prostheticKey === SPORANGIAL_SUPPRESSOR) {
+        return T('Biologic.sporangialSuppressorOutput');
+      }
+      if (prostheticKey === MITOTIC_INHIBITOR) {
+        return T('Biologic.mitoticInhibitorOutput');
       }
       return null;
     }
@@ -1932,15 +1990,16 @@
       // (spermMotility, spermMorphology, testosteroneProduction); the old
       // short names rendered "undefined%".
       const testes = actor.testesData || {};
-      const spermCount = num(testes.spermCount, 350000000);
-      const motility = num(testes.spermMotility, 65);
-      const morphology = num(testes.spermMorphology, 8);
+      const hasVasectomy = hasImplant(actor, VASECTOMY_CLIP);
+      const spermCount = hasVasectomy ? 0 : num(testes.spermCount, 350000000);
+      const motility = hasVasectomy ? 0 : num(testes.spermMotility, 65);
+      const morphology = hasVasectomy ? 0 : num(testes.spermMorphology, 8);
       const testosterone = num(testes.testosteroneProduction,
         num(actor._biologicData && actor._biologicData.hormones && actor._biologicData.hormones.testosterone, 650));
       // fertilityRate / dailySpermProduction are stored zeroed and nothing
       // ever fills them, so derive them here.
       const dailyProduction = Math.floor((testosterone / 500) * 100);
-      const fertility = (
+      const fertility = hasVasectomy ? 0 : (
         (motility / 80) * 100 +
         (morphology / 14) * 100 +
         Math.min(100, (spermCount / 500000000) * 100)
@@ -2885,7 +2944,9 @@
         this.infect(members[0], diseaseId);
         return;
       }
+      window.skipLocalization = true;
       $gameMessage.add(T("Biologic.infect.prompt", { disease: disease.name }));
+      window.skipLocalization = false;
       $gameMessage.setChoices(
         members.map((actor) => actor.name()).concat(T("Biologic.infect.cancel")),
         0,
@@ -4359,6 +4420,9 @@
         uterus.contraceptiveDate = null;
       }
     }
+    if (hasImplant(this._actor, INTRAUTERINE_SPIRAL) || hasImplant(this._actor, TUBAL_LIGATION_BAND)) {
+      isFertile = false;
+    }
     ovulation.fertile = isFertile;
   };
 
@@ -4370,9 +4434,9 @@
     if (!actor || !window.PetSystem || !window.PetSystem.birthChild) return null;
     var child = window.PetSystem.birthChild(actor);
     if (!child) return null;
-    window.skipLocalization = true;
-    $gameMessage.add(T('PetFollower.born', { name: child.name }));
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(T('PetFollower.born', { name: child.name }), { severity: 'good' });
+    }
     return child;
   }
 
@@ -4465,12 +4529,13 @@
     if (!actor || !window.PetSystem || !window.PetSystem.mitosisSplit) return null;
     var split = window.PetSystem.mitosisSplit(actor);
     if (!split) return null;
-    window.skipLocalization = true;
-    $gameMessage.add(
-      T(split.joined ? 'PetFollower.cloneJoined' : 'PetFollower.cloneFollows',
-        { parent: actor.name(), name: split.name })
-    );
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(
+        T(split.joined ? 'PetFollower.cloneJoined' : 'PetFollower.cloneFollows',
+          { parent: actor.name(), name: split.name }),
+        { severity: 'good' }
+      );
+    }
     return split;
   }
   // The three sex hormones a body is born with, rolled at the point on the
@@ -6449,9 +6514,9 @@
     // Check if reproduction is possible
     if (pregnancyType === 0) {
       var message = T('Biologic.noReproductiveSystemAvailableSetVariable87Fi');
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(message, { severity: 'info' });
+      }
       return;
     }
     // Initialize uterus data if it doesn't exist
@@ -6493,18 +6558,30 @@
     // Check contraceptive
     if (uterus.contraceptiveDays > 0 && uterus.contraceptiveDate && (currentGameDate - uterus.contraceptiveDate < uterus.contraceptiveDays)) {
       var blockMsg = T('Biologic.contraceptiveBlockedConception', { actor: actor.name() });
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(blockMsg);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(blockMsg, { severity: 'info' });
+      }
+      return;
+    }
+
+    // Check contraceptive augment
+    var blockerKey = getFertilityBlockingAugment(actor);
+    if (blockerKey) {
+      var augName = getAugmentDisplayName(blockerKey);
+      var blockMsg = T('Biologic.augmentBlockedConception', { actor: actor.name(), augment: augName });
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(blockMsg, { severity: 'info' });
+      }
+      pregToast(actor, blockMsg, { severity: 'info', duration: 260, key: 'augmentBlock' });
       return;
     }
 
     // Check if already pregnant
     if (uterus.isPregnant) {
       var message = T('Biologic.alreadyInReproductiveProcess');
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(message, { severity: 'info' });
+      }
       return;
     }
 
@@ -6549,9 +6626,9 @@
         break;
     }
 
-    window.skipLocalization = true;
-    if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(message, { severity: 'info' });
+    }
   };
 
   Window_BiologicSimulation.shortenPregnancy = function (targetActor) {
@@ -6563,9 +6640,9 @@
 
     if (!uterus.isPregnant) {
       var message = T('Biologic.notCurrentlyInReproductiveProcess');
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(message, { severity: 'info' });
+      }
       return;
     }
 
@@ -6631,9 +6708,9 @@
         break;
     }
 
-    window.skipLocalization = true;
-    if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(message, { severity: 'info' });
+    }
 
     if (shouldComplete) {
       var proxy = Object.create(Window_BiologicSimulation.prototype);
@@ -6654,17 +6731,17 @@
 
     if (pregnancyType !== 3) {
       var message = T('Biologic.thisCommandOnlyWorksForPlantTypeReproduction');
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(message, { severity: 'info' });
+      }
       return;
     }
 
     if (uterus.seedsReady <= 0) {
       var message = T('Biologic.noSeedsAvailableToPlant');
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(message, { severity: 'info' });
+      }
       return;
     }
 
@@ -6672,9 +6749,9 @@
     uterus.seedsReady -= 1;
 
     var message = T('Biologic.seedPlanted', { count: uterus.seedsReady });
-    window.skipLocalization = true;
-    if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(message);
-    window.skipLocalization = false;
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(message, { severity: 'info' });
+    }
     pregToast(actor, message, { severity: 'good', duration: 300, key: 'conceived' });
 
     registerOffspring(actor);
@@ -6692,9 +6769,16 @@
       var msg = "";
       var result = { actor: actor, type: pType, pregnant: false };
 
+      var blockerAugment = getFertilityBlockingAugment(actor);
+
       if (pType === 0) {
         msg = T('Biologic.testResultMale', { actor: actor.name() });
         result.testes = true;
+        if (blockerAugment) {
+          msg += " " + T('Biologic.testResultAugmentFitted', { actor: actor.name(), augment: getAugmentDisplayName(blockerAugment) });
+          result.contraceptive = true;
+          result.contraceptiveAugment = blockerAugment;
+        }
       } else if (pType === 1) {
         if (uterus && uterus.isPregnant) {
           result.pregnant = true;
@@ -6711,7 +6795,11 @@
         } else {
           msg = T('Biologic.testResultNegativeUterus', { actor: actor.name() });
           var now = convertGameDateToTimestamp(getGameDateFromVariable());
-          if (uterus && uterus.contraceptiveDays > 0 && uterus.contraceptiveDate && (now - uterus.contraceptiveDate < uterus.contraceptiveDays)) {
+          if (blockerAugment) {
+            msg += " " + T('Biologic.testResultAugmentFitted', { actor: actor.name(), augment: getAugmentDisplayName(blockerAugment) });
+            result.contraceptive = true;
+            result.contraceptiveAugment = blockerAugment;
+          } else if (uterus && uterus.contraceptiveDays > 0 && uterus.contraceptiveDate && (now - uterus.contraceptiveDate < uterus.contraceptiveDays)) {
             msg += " " + T('Biologic.testResultContraceptiveActive');
             result.contraceptive = true;
           } else if (uterus && uterus.ovulationCycle && uterus.ovulationCycle.fertile) {
@@ -6727,6 +6815,11 @@
           result.eggDevelopment = pct;
         } else {
           msg = T('Biologic.testResultNegativeOviparous', { actor: actor.name() });
+          if (blockerAugment) {
+            msg += " " + T('Biologic.testResultAugmentFitted', { actor: actor.name(), augment: getAugmentDisplayName(blockerAugment) });
+            result.contraceptive = true;
+            result.contraceptiveAugment = blockerAugment;
+          }
         }
       } else if (pType === 3) {
         if (uterus && uterus.isPregnant) {
@@ -6737,6 +6830,11 @@
         } else {
           msg = T('Biologic.testResultNegativePlant', { actor: actor.name(), seeds: (uterus && uterus.seedsReady) || 0 });
           result.seedsReady = (uterus && uterus.seedsReady) || 0;
+          if (blockerAugment) {
+            msg += " " + T('Biologic.testResultAugmentFitted', { actor: actor.name(), augment: getAugmentDisplayName(blockerAugment) });
+            result.contraceptive = true;
+            result.contraceptiveAugment = blockerAugment;
+          }
         }
       } else if (pType === 4) {
         if (uterus && uterus.isPregnant) {
@@ -6746,14 +6844,19 @@
           result.mitosisDevelopment = pct;
         } else {
           msg = T('Biologic.testResultNegativeMitosis', { actor: actor.name() });
+          if (blockerAugment) {
+            msg += " " + T('Biologic.testResultAugmentFitted', { actor: actor.name(), augment: getAugmentDisplayName(blockerAugment) });
+            result.contraceptive = true;
+            result.contraceptiveAugment = blockerAugment;
+          }
         }
       } else {
         msg = T('Biologic.noReproductiveSystemPresent');
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
       pregToast(actor, msg, { severity: result.pregnant ? 'good' : 'info', duration: 260, key: 'testResult' });
       return result;
     });
@@ -6817,9 +6920,9 @@
         msg = T('Biologic.contraceptiveSuppressed', { actor: actor.name(), days: 30 });
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
       pregToast(actor, msg, { severity: 'info', duration: 260, key: 'contraceptive' });
       return result;
     });
@@ -6878,9 +6981,9 @@
         msg = T('Biologic.fertilityGenericBoosted', { actor: actor.name() });
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
       pregToast(actor, msg, { severity: 'good', duration: 260, key: 'fertility' });
       return result;
     });
@@ -6915,9 +7018,9 @@
         result.success = false;
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
       pregToast(actor, msg, { severity: result.success ? 'good' : 'info', duration: 260, key: 'eggWarmer' });
       return result;
     });
@@ -6931,7 +7034,12 @@
       var result = { actor: actor, success: true };
 
       if (pType === 4) {
-        if (uterus && uterus.isPregnant) {
+        if (hasImplant(actor, MITOTIC_INHIBITOR)) {
+          var augName = getAugmentDisplayName(MITOTIC_INHIBITOR);
+          msg = T('Biologic.augmentBlockedConception', { actor: actor.name(), augment: augName });
+          result.success = false;
+          result.blockedByAugment = true;
+        } else if (uterus && uterus.isPregnant) {
           uterus.mitosisDevelopment = Math.min(100, (uterus.mitosisDevelopment || 0) + 50);
           result.mitosisDevelopment = uterus.mitosisDevelopment;
           if (uterus.mitosisDevelopment >= 100) {
@@ -6969,10 +7077,10 @@
         result.healed = true;
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
-      pregToast(actor, msg, { severity: 'good', duration: 260, key: 'mitosisAccel' });
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
+      pregToast(actor, msg, { severity: result.blockedByAugment ? 'info' : 'good', duration: 260, key: 'mitosisAccel' });
       return result;
     });
   };
@@ -6985,18 +7093,25 @@
       var result = { actor: actor, success: true };
 
       if (pType === 3) {
-        if (!uterus) {
-          var proxy = Object.create(Window_BiologicSimulation.prototype);
-          proxy._actor = actor;
-          proxy.initializeUterusData();
-          uterus = actor._uterusData;
+        if (hasImplant(actor, SPORANGIAL_SUPPRESSOR)) {
+          var augName = getAugmentDisplayName(SPORANGIAL_SUPPRESSOR);
+          msg = T('Biologic.augmentBlockedConception', { actor: actor.name(), augment: augName });
+          result.success = false;
+          result.blockedByAugment = true;
+        } else {
+          if (!uterus) {
+            var proxy = Object.create(Window_BiologicSimulation.prototype);
+            proxy._actor = actor;
+            proxy.initializeUterusData();
+            uterus = actor._uterusData;
+          }
+          uterus.seedsReady = (uterus.seedsReady || 0) + 1;
+          if (uterus.isPregnant) {
+            uterus.seedDevelopment = Math.min(100, (uterus.seedDevelopment || 0) + 50);
+          }
+          msg = T('Biologic.pollenCatalyzed', { actor: actor.name(), count: uterus.seedsReady });
+          result.seedsReady = uterus.seedsReady;
         }
-        uterus.seedsReady = (uterus.seedsReady || 0) + 1;
-        if (uterus.isPregnant) {
-          uterus.seedDevelopment = Math.min(100, (uterus.seedDevelopment || 0) + 50);
-        }
-        msg = T('Biologic.pollenCatalyzed', { actor: actor.name(), count: uterus.seedsReady });
-        result.seedsReady = uterus.seedsReady;
       } else {
         if (actor.mp !== undefined && actor.mmp !== undefined && actor.mp < actor.mmp) {
           if (typeof actor.gainMp === 'function') actor.gainMp(Math.floor(actor.mmp * 0.25));
@@ -7005,10 +7120,10 @@
         result.boostedMp = true;
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
-      pregToast(actor, msg, { severity: 'good', duration: 260, key: 'pollen' });
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
+      pregToast(actor, msg, { severity: result.blockedByAugment ? 'info' : 'good', duration: 260, key: 'pollen' });
       return result;
     });
   };
@@ -7020,31 +7135,53 @@
       var result = { actor: actor, success: true };
 
       if (pType === 0) {
-        if (!actor.testesData) {
-          var bio = actor._biologicData;
-          actor.testesData = {
-            spermCount: 300000000,
-            spermMotility: 60,
-            spermMorphology: 10,
-            testosteroneProduction: (bio && bio.hormones && bio.hormones.testosterone) || 500,
-            fertilityRate: 80,
-            dailySpermProduction: 100000000,
-            lastUpdate: convertGameDateToTimestamp(getGameDateFromVariable())
-          };
+        if (hasImplant(actor, VASECTOMY_CLIP)) {
+          if (!actor.testesData) {
+            var bio = actor._biologicData;
+            actor.testesData = {
+              spermCount: 0,
+              spermMotility: 0,
+              spermMorphology: 0,
+              testosteroneProduction: (bio && bio.hormones && bio.hormones.testosterone) || 500,
+              fertilityRate: 0,
+              dailySpermProduction: 0,
+              lastUpdate: convertGameDateToTimestamp(getGameDateFromVariable())
+            };
+          } else {
+            actor.testesData.spermMotility = 0;
+            actor.testesData.spermCount = 0;
+          }
+          var augName = getAugmentDisplayName(VASECTOMY_CLIP);
+          msg = T('Biologic.vasectomyBlockedMotility', { actor: actor.name(), augment: augName });
+          result.blockedByAugment = true;
+          result.spermMotility = 0;
+        } else {
+          if (!actor.testesData) {
+            var bio = actor._biologicData;
+            actor.testesData = {
+              spermCount: 300000000,
+              spermMotility: 60,
+              spermMorphology: 10,
+              testosteroneProduction: (bio && bio.hormones && bio.hormones.testosterone) || 500,
+              fertilityRate: 80,
+              dailySpermProduction: 100000000,
+              lastUpdate: convertGameDateToTimestamp(getGameDateFromVariable())
+            };
+          }
+          actor.testesData.spermMotility = Math.min(100, (actor.testesData.spermMotility || 50) + 25);
+          actor.testesData.spermCount = (actor.testesData.spermCount || 200000000) + 100000000;
+          msg = T('Biologic.motilityBoosted', { actor: actor.name(), motility: Math.round(actor.testesData.spermMotility) });
+          result.spermMotility = actor.testesData.spermMotility;
         }
-        actor.testesData.spermMotility = Math.min(100, (actor.testesData.spermMotility || 50) + 25);
-        actor.testesData.spermCount = (actor.testesData.spermCount || 200000000) + 100000000;
-        msg = T('Biologic.motilityBoosted', { actor: actor.name(), motility: Math.round(actor.testesData.spermMotility) });
-        result.spermMotility = actor.testesData.spermMotility;
       } else {
         if (typeof actor.gainTp === 'function') actor.gainTp(50);
         msg = T('Biologic.motilityNotTestes', { actor: actor.name() });
         result.boostedTp = true;
       }
 
-      window.skipLocalization = true;
-      if (typeof $gameMessage !== 'undefined' && $gameMessage) $gameMessage.add(msg);
-      window.skipLocalization = false;
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(msg, { severity: 'info' });
+      }
       pregToast(actor, msg, { severity: 'good', duration: 260, key: 'motility' });
       return result;
     });
@@ -7053,8 +7190,10 @@
   // Helper to register commands for MZ
   function registerReproCommand(name, fn) {
     if (typeof PluginManager !== 'undefined' && PluginManager.registerCommand) {
+      // The basename alone: command357 looks a command up under
+      // Utils.extractFileName(params[0]), which strips the folder, so a key
+      // with one in it can never be reached from an event page.
       PluginManager.registerCommand("Health_BiologicSimulation", name, fn);
-      PluginManager.registerCommand("Health/Health_BiologicSimulation", name, fn);
     }
   }
 

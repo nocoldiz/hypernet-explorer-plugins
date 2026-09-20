@@ -286,5 +286,36 @@
   },
   "toast": {
     "title": "Discovery"
+  },
+  "lyceum": {
+    "appName": "Lyceum",
+    "subtitle": "The register of what this world has worked out, and what is still open.",
+    "register": "The register",
+    "worldProgress": "{done} of {total} worked out",
+    "benchNote": "Reading and directing only. The research itself is done at the bench.",
+    "project": "Standing project",
+    "noProject": "The lab has no standing project. Name one and the workforce goes to it.",
+    "makeProject": "Set as the project",
+    "clearProject": "Call it off",
+    "currentProject": "The lab is on this.",
+    "projectSet": "The lab has its orders.",
+    "projectCleared": "The project is called off.",
+    "daysOfWork": "({n} days of work away)",
+    "noWorkforce": "(nobody is gathering it)",
+    "colField": "Field",
+    "colAbout": "About",
+    "colWorkedOut": "Worked out",
+    "colWork": "Work",
+    "colState": "State",
+    "colTakes": "Takes",
+    "workedOut": "{done} of {total} worked out in this field.",
+    "done": "Known",
+    "ready": "Ready to run",
+    "open": "Open",
+    "locked": "Waits on earlier work",
+    "noMaterials": "Nothing but time",
+    "latest": "Lately",
+    "nothingYet": "Nobody in this world has written anything down yet.",
+    "by": "by {who}"
   }
 }

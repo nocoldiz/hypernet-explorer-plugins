@@ -175,42 +175,9 @@
     //=========================================================================
     // ConfigManager
     //=========================================================================
-    // On by default: the party's health is the one thing a map screen should
-    // never make the player open a menu for.
+    // Always on, and no longer an option: the party's health is the one thing
+    // a map screen should never make the player open a menu for.
     ConfigManager.partyHud = true;
-
-    const _ConfigManager_makeData = ConfigManager.makeData;
-    ConfigManager.makeData = function () {
-        const config = _ConfigManager_makeData.call(this);
-        config.partyHud = this.partyHud;
-        config.partyHudDefaulted = true;
-        return config;
-    };
-
-    const _ConfigManager_applyData = ConfigManager.applyData;
-    ConfigManager.applyData = function (config) {
-        _ConfigManager_applyData.call(this, config);
-        // The HUD used to ship off, so every config written before this carries
-        // partyHud:false, which is a default rather than a choice. It is turned
-        // on once, and the marker below records that it has been.
-        if (!config.partyHudDefaulted) {
-            this.partyHud = true;
-            return;
-        }
-        this.partyHud = this.readFlag(config, 'partyHud', true);
-    };
-
-    if (window.GameOptions && typeof window.GameOptions.registerOption === 'function') {
-        // The label is registered as a function so it re-resolves whenever the
-        // options list is rebuilt, which is how it follows a language change.
-        window.GameOptions.registerOption('partyHud', () => T('PartyHud.optionName'),
-            () => ConfigManager.partyHud,
-            (value) => {
-                ConfigManager.partyHud = value;
-                ConfigManager.save();
-            },
-            'video', 'boolean');
-    }
 
     //=========================================================================
     // Urgent needs

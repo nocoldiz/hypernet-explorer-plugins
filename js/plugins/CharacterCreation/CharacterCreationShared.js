@@ -766,11 +766,33 @@
   // Offered when an archetype (or a hybrid) supports nothing else.
   const CREATURE_FALLBACK_CLASS_ID = 65; // Monster
 
-  // Highest id of the civilised roster. Everything above it, Feral (63) and
-  // every class after it, is a creature class and is only ever reached through
-  // an archetype's creatureClasses roster: a person is never built from one,
-  // nor rolled into one by any of the randomizers.
+  // Which half a class belongs to is written on the class itself: every entry
+  // in Classes.json carries either <Sentient> or <NonSentient> in its note,
+  // and that tag is the whole answer. A creature class is only ever reached
+  // through an archetype's creatureClasses roster: a person is never built
+  // from one, nor rolled into one by any of the randomizers.
+  //
+  // The id range below is the fallback for an entry that carries no tag at
+  // all, and for the load-order window before $dataClasses exists. Nothing
+  // outside this file should read it: ask isCreatureClass().
   const SENTIENT_CLASS_MAX = 62;
+
+  const SENTIENT_TAG = /<Sentient>/i;
+  const NONSENTIENT_TAG = /<NonSentient>/i;
+
+  // The tag on one class entry: true for a person, false for a beast, null
+  // when the entry carries neither and the caller must fall back.
+  function classSentienceTag(classId) {
+    const data = (typeof $dataClasses !== "undefined" && $dataClasses) || null;
+    const entry = data ? data[Number(classId)] : null;
+    const note = entry && entry.note;
+    if (!note) return null;
+    // NonSentient is tested first: it carries "Sentient" as a substring, and a
+    // loose test would read every beast in the database as a person.
+    if (NONSENTIENT_TAG.test(note)) return false;
+    if (SENTIENT_TAG.test(note)) return true;
+    return null;
+  }
 
   const CreatureClasses = {
     _data() {
@@ -807,9 +829,19 @@
       return SENTIENT_CLASS_MAX;
     },
 
-    // True when the id belongs to the monstrous roster (Feral upward).
+    // True when the class is one of the monstrous roster. Read off the class's
+    // own <NonSentient> tag; the id range answers only for an entry that
+    // carries no tag at all.
     isCreatureClass(classId) {
+      const tagged = classSentienceTag(classId);
+      if (tagged !== null) return !tagged;
       return Number(classId) > SENTIENT_CLASS_MAX;
+    },
+
+    // The same question put the other way round, for the readers that ask
+    // about people rather than about beasts.
+    isSentientClass(classId) {
+      return !this.isCreatureClass(classId);
     },
 
     // Which bodies are PEOPLE. A civilised trade is learned, taught and
@@ -835,7 +867,7 @@
     // humanoid randomizers draw on.
     sentientRoster() {
       const ids = ($dataClasses || [])
-        .filter((c) => c && c.id > 0 && c.id <= SENTIENT_CLASS_MAX && c.name)
+        .filter((c) => c && c.id > 0 && c.name && !this.isCreatureClass(c.id))
         .map((c) => c.id);
       return this._magicAllowed(ids);
     },
@@ -844,7 +876,7 @@
     // when the board offers the whole roster rather than one archetype's.
     creatureRoster() {
       const ids = ($dataClasses || [])
-        .filter((c) => c && c.id > SENTIENT_CLASS_MAX && c.name)
+        .filter((c) => c && c.id > 0 && c.name && this.isCreatureClass(c.id))
         .map((c) => c.id);
       return this._magicAllowed(ids);
     },
@@ -938,6 +970,109 @@
       return this.forArchetypes(parts[0], parts[1]);
     },
   };
+
+  //=============================================================================
+  // Crossing the sentience line
+  //=============================================================================
+  // A character's class can be changed from six different screens: the wizard's
+  // class board, the class browser, the detailed panel's class row, the
+  // creature toggle, a loaded preset and the member randomizer. All six end in
+  // Game_Actor.changeClass, so the clean-up hangs off that rather than off any
+  // one of them, and no screen can forget it.
+  //
+  // What a person holds and a beast does not is one list, written here once:
+  // a trade, a creed, a banner and the money the family had. It lives on the
+  // actor (what the wizard writes) and on the society profile that shadows the
+  // actor (what the simulation reads), so both are cleared. Traits are NOT in
+  // this list: TraitSelector drops those off the same crossing, because it owns
+  // the book they came out of.
+  //
+  // Only a CROSSING clears anything. Knight to Witch, or Feral to Zombie, is
+  // not one and leaves the sheet alone. The clear is one-directional by
+  // nature: coming back the other way there is nothing to take away, and the
+  // rows simply reappear empty for the player to answer again.
+  function stripPersonhood(actor) {
+    if (!actor) return;
+    actor._jobId = 0;
+    actor._ideologyId = null;
+    actor._wealthTier = 0;
+    // An orientation, a Kinsey placement, a relationship style and the bonds
+    // to the rest of the party: a beast is asked none of the four, so none of
+    // the four may survive on the sheet and print itself in a dossier.
+    actor._ccRomance = null;
+    // A tie was written on BOTH sides (CCSteps.onRomanceBondChange), so
+    // clearing only this sheet would leave every partner still pointing at a
+    // beast and printing the bond in their own dossier. The other half comes
+    // off with it.
+    const myId = actor.actorId && actor.actorId();
+    if (myId && typeof $gameActors !== "undefined" && $gameActors &&
+        typeof $gameParty !== "undefined" && $gameParty) {
+      for (const other of ($gameParty.allMembers ? $gameParty.allMembers() : $gameParty.members()) || []) {
+        if (!other || other === actor) continue;
+        const rom = other._ccRomance;
+        if (rom && rom.bonds) delete rom.bonds[myId];
+      }
+    }
+
+    const name = actor.name && actor.name();
+    const profile = (name && typeof $gameSystem !== "undefined" && $gameSystem &&
+      $gameSystem._npcSociety) ? $gameSystem._npcSociety[name] : null;
+    if (!profile) return;
+    // The "no creed" shape NPCShared.ideologyFor reads as none: index -1 and
+    // no id.
+    profile.ideologyIndex = -1;
+    profile.ideologyId = null;
+    profile.declaredPartyName = null;
+    profile.factionIndex = -1;
+    profile.wealthTierChosen = 0;
+    profile.wealthTierBase = 0;
+    // The purse is part of the standing: CharacterCreationFull.clearSocialTies
+    // zeroes it on the panel, and the crossing itself has to do the same or a
+    // beast keeps the family money the tier it no longer has paid for.
+    profile.money = 0;
+    profile.jobId = 0;
+    profile.currentJobId = 0;
+    profile._orientOverride = null;
+    profile._relStyleOverride = null;
+  }
+
+  // The other half of a class change, which applies whichever way it went: the
+  // society profile that shadows a party member stores the class it was minted
+  // with, and the bio is now written around that class (NPCSociety's
+  // bio.classOrigin says how this character became a Witch or a Zombie). So the
+  // profile is told, and a bio written for the class the character no longer
+  // has is thrown away for the generator to rewrite on demand. Idempotent: a
+  // bio that already agrees with the class is left where it is.
+  function syncProfileClass(actor) {
+    if (!actor) return;
+    const name = actor.name && actor.name();
+    const profile = (name && typeof $gameSystem !== "undefined" && $gameSystem &&
+      $gameSystem._npcSociety) ? $gameSystem._npcSociety[name] : null;
+    if (!profile) return;
+    profile.assignedClassId = actor._classId;
+    if (profile.backstory && profile.backstory.seed &&
+        profile.backstory.seed.classId !== actor._classId) {
+      profile.backstory = null;
+    }
+  }
+
+  // Guarded rather than assumed: this file also loads into the node harnesses,
+  // where Game_Actor is a stub that may not carry changeClass yet. Without the
+  // check the alias is undefined and the first class change in a test throws.
+  if (typeof Game_Actor !== "undefined" &&
+      typeof Game_Actor.prototype.changeClass === "function") {
+    const _CCShared_changeClass = Game_Actor.prototype.changeClass;
+    Game_Actor.prototype.changeClass = function (classId, keepExp) {
+      const wasBeast = CreatureClasses.isCreatureClass(this._classId);
+      _CCShared_changeClass.call(this, classId, keepExp);
+      const nowBeast = CreatureClasses.isCreatureClass(this._classId);
+      if (nowBeast && !wasBeast) stripPersonhood(this);
+      syncProfileClass(this);
+    };
+  }
+
+  CreatureClasses.stripPersonhood = stripPersonhood;
+  CreatureClasses.syncProfileClass = syncProfileClass;
 
   //=============================================================================
   // Attribute names
@@ -1185,9 +1320,11 @@
       CCPickState.opts = Object.assign({}, opts, { options });
       CCPickState.query = "";
       CCPickState.filtered = options.slice();
+      // Which device opened the sheet, asked of the one place that answers it
+      // (CCNav.padInHand); a caller that already knows says so instead.
       const fromController = opts.fromController !== undefined
         ? !!opts.fromController
-        : ((typeof Input !== "undefined" && Input.lastInputDevice && Input.lastInputDevice() === "pad") || (window.CCNav && window.CCNav._lastActionByPad));
+        : !CCSearch.enabled();
       CCPickState.fromController = !!fromController;
       // Open on what is already chosen, so Confirm with no movement is a no-op
       // rather than a silent change to whatever happened to be first.
@@ -1430,9 +1567,56 @@
     },
   };
 
+  //=============================================================================
+  // CCSearch - the search strip every board filters itself with
+  //=============================================================================
+  // A search strip is a field you type letters into, and a pad has no letters.
+  // Focusing one with a controller in hand is a trap rather than a feature: the
+  // caret eats the arrows, RMMZ's Input stops being read, and Cancel reaches
+  // the scene behind instead of the field. So every board asks here, and on a
+  // pad the strip is simply not drawn.
+  //
+  // Hiding it is only half the answer. A query typed on the keyboard and then
+  // left behind would go on narrowing the board with nothing on screen to say
+  // so and no way to clear it, so query() reads as empty whenever the strip is
+  // gone: what the board shows always matches what the page offers.
+  const CCSearch = {
+    // Is there a keyboard to type into a strip with? The ring holds the one
+    // answer to which device is in hand; without it, assume there is.
+    enabled() {
+      const nav = window.CCNav;
+      return !(nav && nav.padInHand && nav.padInHand());
+    },
+
+    // What a board should filter on, given what was last typed.
+    query(stored) {
+      return this.enabled() ? (stored || "") : "";
+    },
+
+    // The strip itself, or nothing at all. opts:
+    //   className    the board's own classes for the field
+    //   placeholder  already localized
+    //   value        what is in it
+    //   oninput      the inline handler, as the boards write it
+    //   attrs        anything else the field needs
+    html(opts) {
+      if (!this.enabled()) return "";
+      const o = opts || {};
+      const esc = (s) => String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+      return `<input type="text" class="${esc(o.className || "cc-bio-select")}"` +
+        ` autocomplete="off" spellcheck="false"` +
+        ` placeholder="${esc(o.placeholder || "")}" value="${esc(o.value || "")}"` +
+        (o.oninput ? ` oninput="${esc(o.oninput)}"` : "") +
+        (o.attrs ? " " + o.attrs : "") + " />";
+    },
+  };
+
   window.CCPanel = CCPanel;
   window.CCScroll = CCScroll;
   window.CCPick = CCPick;
+  window.CCSearch = CCSearch;
   window.CCButtons = CCButtons;
   window.CreatureClasses = CreatureClasses;
   // The attribute names every creation panel labels its stat boxes with.

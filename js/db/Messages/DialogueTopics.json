@@ -1122,5 +1122,25 @@
     "title": "DialogueTopics.topicFriday.title",
     "description": "DialogueTopics.topicFriday.description",
     "image": ""
+  },
+  "topicMahyem": {
+    "type": "topic",
+    "group": "topics",
+    "order": 17030,
+    "keyword": "Mahyem",
+    "synonyms": [],
+    "title": "DialogueTopics.topicMahyem.title",
+    "description": "DialogueTopics.topicMahyem.description",
+    "image": ""
+  },
+  "topicEuronymous": {
+    "type": "topic",
+    "group": "topics",
+    "order": 17040,
+    "keyword": "Euronymous",
+    "synonyms": [],
+    "title": "DialogueTopics.topicEuronymous.title",
+    "description": "DialogueTopics.topicEuronymous.description",
+    "image": ""
   }
 }

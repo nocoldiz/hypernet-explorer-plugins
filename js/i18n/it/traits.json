@@ -795,6 +795,54 @@
     "porphyria": {
       "name": "Porfiria",
       "description": "Disturbo del sangue ereditario, vesciche al sole"
+    },
+    "pack_hunter": {
+      "name": "Cacciatore di Branco",
+      "description": "Abbatte le prede insieme ai suoi simili"
+    },
+    "lone_predator": {
+      "name": "Predatore Solitario",
+      "description": "Caccia da solo e non vuole compagnia"
+    },
+    "skittish": {
+      "name": "Ombroso",
+      "description": "Scappa per un'ombra, più veloce di chi lo insegue"
+    },
+    "territorial": {
+      "name": "Territoriale",
+      "description": "Scaccia chiunque attraversi il suo territorio"
+    },
+    "scavenger": {
+      "name": "Spazzino",
+      "description": "Mangia gli avanzi degli altri e ci prospera"
+    },
+    "thick_hide": {
+      "name": "Pelle Spessa",
+      "description": "Una pelle che devia le lame e appesantisce il corpo"
+    },
+    "keen_nose": {
+      "name": "Fiuto Acuto",
+      "description": "Sente arrivare le cose molto prima che arrivino"
+    },
+    "venomous": {
+      "name": "Velenoso",
+      "description": "Porta il veleno nel morso a spese del proprio vigore"
+    },
+    "imprinted": {
+      "name": "Imprinting",
+      "description": "Legato a una sola persona e calmo al suo fianco"
+    },
+    "rabid": {
+      "name": "Rabbioso",
+      "description": "Malato, furioso e ormai irraggiungibile"
+    },
+    "burrower": {
+      "name": "Scavatore",
+      "description": "Si interra e diventa difficile da stanare"
+    },
+    "hibernator": {
+      "name": "Letargico",
+      "description": "Dorme via il freddo con un corpo fatto per conservarlo"
     }
   }
 }

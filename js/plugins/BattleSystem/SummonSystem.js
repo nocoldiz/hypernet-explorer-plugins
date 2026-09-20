@@ -798,7 +798,9 @@ window.Game_SummonFollower = Game_SummonFollower;
         } else if (window.MapBattleMode && window.MapBattleMode._logWindow) {
             window.MapBattleMode._logWindow.addText(text);
         } else {
+            window.skipLocalization = true;
             $gameMessage.add(text);
+            window.skipLocalization = false;
         }
     }
 
@@ -1026,12 +1028,12 @@ window.Game_SummonFollower = Game_SummonFollower;
         50: ['Skeleton', 'Gnome', 'Snail'],                  // Archaeologist
         51: ['Fairy', 'Bird', 'Slime'],                      // Nurse
         52: ['Beast', 'Bird', 'Rabbit'],                     // Hunter-Gatherer
-        53: ['CrystalEntity', 'Spherical', 'Elemental'],     // Physicist
+        53: ['CrystalEntity', 'Spherical', 'Elemental'],     // Technomage
         54: ['Robot', 'Drone', 'Spherical'],                 // Mechanic
         55: ['ChestMimic', 'Gnome', 'Slime'],                // Shopkeeper
-        56: ['Rabbit', 'Insectoid', 'Plant'],                // Farmer
+        56: ['Rabbit', 'Insectoid', 'Plant'],                // Plant Mage
         57: ['Beast', 'Tree', 'Insectoid'],                  // Lumberjack
-        58: ['StormElemental', 'ThunderElemental', 'Bird'],  // Meteorologist
+        58: ['StormElemental', 'ThunderElemental', 'Bird'],  // Meteoarcanist
         59: ['Angel', 'SacredElemental', 'Fairy'],           // Priest
         60: ['Fairy', 'Bird', 'Gnome'],                      // Entertainer
         61: ['Ophanim', 'Angel', 'Phoenix'],                 // Demigod

@@ -8,16 +8,16 @@
  "Crafting": "Fabbricazione",
  "Diseases": "Malattie",
  "Farming": "Agricoltura",
+ "Fertility": "Fertilita",
  "Food": "Cibo",
  "Homeopathy": "Omeopatia",
- "Jungle": "Giungla",
  "Lifestyle": "Stile di Vita",
  "Magic": "Magia",
  "Medical": "Medico",
  "Misc": "Varie",
  "Monsters": "Mostri",
- "Plants": "Piante",
  "Survival": "Sopravvivenza",
  "Tools": "Strumenti",
- "Trash": "Spazzatura"
+ "Trash": "Spazzatura",
+ "Vehicles": "Veicoli"
 }

@@ -628,6 +628,7 @@
     this._dndTargetingMode    = false;
     this._dndStudyPicking     = false;
     this._dndTargetingItem    = null;
+    this._dndTargetingAction  = null;
     this._dndActionsList      = [];
     this._discardModalOpen    = false;
     this._discardPendingItem  = null;
@@ -899,7 +900,17 @@
       const isUseable    = selectedItem.occasion === 0 || selectedItem.occasion === 2;
       const isEquippable = isWeapon || isArmor;
 
-      if (isUseable) {
+      // An item that answers for itself (a deck of tarot, say) draws the
+      // buttons it registered where Use would have stood.
+      const bespoke = window.ItemActions ? window.ItemActions.forItem(selectedItem) : [];
+      if (bespoke.length) {
+        for (const action of bespoke) {
+          const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
+          const key = 'action:' + action.id;
+          actionBtnsHTML += `<div class="inspect-btn ${isFocused}" data-pad="use" onclick="SceneManager._scene.triggerUIItemAction('${key}')">${window.ItemActions.label(action)}</div>`;
+          this._dndActionsList.push(key); btnIdx++;
+        }
+      } else if (isUseable) {
         const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
         actionBtnsHTML += `<div class="inspect-btn ${isFocused}" data-pad="use" onclick="SceneManager._scene.triggerUIItemAction('use')">${T('Inventory.ui.useItem')}</div>`;
         this._dndActionsList.push('use'); btnIdx++;
@@ -917,7 +928,7 @@
       // Key items and materials are never thrown: window.ThrowItem is the
       // one answer to what may leave a hand.
       const canThrow = !window.ThrowItem || window.ThrowItem.isThrowable(selectedItem);
-      if (window.Game_Map && Game_Map.prototype.isThrowBlocked && !isBoundGear && canThrow) {
+      if (this.canThrowHere() && !isBoundGear && canThrow) {
         const isThrowFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
         actionBtnsHTML += `<div class="inspect-btn ${isThrowFocused}" onclick="SceneManager._scene.triggerUIItemAction('throw')">${T('Inventory.ui.throw')}</div>`;
         this._dndActionsList.push('throw'); btnIdx++;
@@ -1291,6 +1302,11 @@
   Scene_EnhancedItem.prototype.targetModalRows = function () {
     const item      = this._dndTargetingItem;
     const studyPick = !!this._dndStudyPicking;
+    // A bespoke action asks for a party member and nothing else: no verbs and
+    // no whole-party row, because it is one person being read for.
+    if (this._dndTargetingAction) {
+      return window.ItemTargetCard.rows(item, { includeAll: false, special: [] });
+    }
     const special   = studyPick ? [] : this.parseSpecialCommands(item).map(cmd => ({
       command: cmd,
       label:   T('Inventory.ui.special', { command: this.translateSpecialCommand(cmd) }),
@@ -1330,9 +1346,12 @@
     const studyPick = !!this._dndStudyPicking;
     // Studying names its reader first: the hours are one member's, and the
     // knowledge is theirs, so the card is asking who sits down with it.
+    const action = this._dndTargetingAction;
     const title = studyPick
       ? T('Inventory.study.who', { item: item.name, duration: this.studyDurationLabel(item) })
-      : window.ItemTargetCard.title(item);
+      : (action && action.titleKey && T.has(action.titleKey))
+        ? T(action.titleKey, { item: item.name })
+        : window.ItemTargetCard.title(item);
     el.innerHTML = window.ItemTargetCard.html({
       title,
       rows:  this.targetModalRows(),
@@ -1349,6 +1368,16 @@
     const row  = rows[idx];
     if (!row) return;
     if (this._dndStudyPicking) { this.applyUIStudy(idx); return; }
+    if (this._dndTargetingAction) {
+      const actor = $gameParty.members()[idx];
+      if (!actor) { SoundManager.playBuzzer(); return; }
+      const config = this._dndTargetingAction;
+      const item   = this._dndTargetingItem;
+      SoundManager.playOk();
+      this._dndTargetingAction = null;
+      config.handler(item, actor, this);
+      return;
+    }
     if (row.kind === 'special') this.triggerUISpecialAction(row.command);
     else this.applyUITarget(idx);
   };
@@ -1357,6 +1386,7 @@
     this._dndTargetingMode  = false;
     this._dndTargetingItem  = null;
     this._dndStudyPicking   = false;
+    this._dndTargetingAction = null;
     this._dndActiveSection  = 'actions';
     this.refreshUIbackpack();
   };
@@ -1404,6 +1434,22 @@
   Scene_EnhancedItem.prototype.triggerUIItemAction = function (action) {
     const item = this._dndSelectedItem;
     if (!item) return;
+    // A button the item registered for itself. One that reads for somebody
+    // opens the party card first and is answered in applyUITargetRow.
+    if (String(action).indexOf('action:') === 0) {
+      const config = window.ItemActions ? window.ItemActions.get(String(action).slice(7)) : null;
+      if (!config) { SoundManager.playBuzzer(); return; }
+      SoundManager.playOk();
+      if (config.needsTarget) {
+        this._dndTargetingMode = true; this._dndTargetingItem = item;
+        this._dndTargetingAction = config;
+        this._dndActiveSection = 'targets'; this._selectedTargetIndex = 0;
+        this.refreshUIbackpack();
+      } else {
+        config.handler(item, null, this);
+      }
+      return;
+    }
     if (action === 'use') {
       const specialCommands = this.parseSpecialCommands(item);
       if (this.isItemTargetRequired(item) || specialCommands.length > 0) {
@@ -1445,10 +1491,20 @@
   // Throw, hands the item off to ThrowItemPlugin's map targeting flow
   // =========================================================================
 
+  // The world map is a picture of a continent, not a place with tiles to throw
+  // something onto: the throw verb is refused there. window.WorldMapTransfer is
+  // the one answer to where the party stands (Map/WorldMapReturn.js).
+  Scene_EnhancedItem.prototype.canThrowHere = function () {
+    if (!(window.Game_Map && Game_Map.prototype.isThrowBlocked)) return false;
+    const worldMapId = (window.WorldMapTransfer && window.WorldMapTransfer.worldMapId) || 315;
+    if (window.$gameMap && $gameMap.mapId() === worldMapId) return false;
+    return true;
+  };
+
   Scene_EnhancedItem.prototype.throwUIItem = function (item) {
     if (!item) return;
     if (window.VectorGun && window.VectorGun.isBound(item)) { SoundManager.playBuzzer(); return; }
-    if (!(window.Game_Map && Game_Map.prototype.isThrowBlocked)) { SoundManager.playBuzzer(); return; }
+    if (!this.canThrowHere()) { SoundManager.playBuzzer(); return; }
     if ($gameParty.numItems(item) <= 0) { SoundManager.playBuzzer(); return; }
 
     let itemType = 'item';

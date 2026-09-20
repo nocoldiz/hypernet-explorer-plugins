@@ -88,7 +88,6 @@
     "locked": "LOCKED",
     "lockedBy": "UNLOCKED BY: {skills}",
     "lockedHint": "NOTHIN' YOU KNOW BORDERS DIS SKILL YET!",
-    "lockedBySchool": "SEALED IN DA HEART OF DA CIRCLE. DA WHOLE SCHOOL MUST BE KNOWN FIRST; STILL MISSIN': {skills}",
     "lockedToast": "{skill} DOES NOT BORDER ANYTHIN' DIS PUPIL KNOWS!"
   },
   "atlas": {

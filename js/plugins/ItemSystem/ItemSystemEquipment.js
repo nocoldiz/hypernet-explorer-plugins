@@ -29,9 +29,15 @@
  * - Claw (Type 10): Intimidation 100%
  *
  * Hands:
- * - A class tagged <DualWield> may fill every hand with a weapon. Without it
- *   at most half the hands (rounded up) can hold weapons; the rest are shield
- *   slots.
+ * - Every hand may hold a weapon. A class that dual wields (the <DualWield>
+ *   note tag, or the stock Dual Wield trait) swings them all at no cost, and
+ *   Optimize fills its hands with weapons. A class that does not may still be
+ *   handed a second weapon, but then EVERY weapon it carries is cut to 65%
+ *   (HandSlots.UNTRAINED_DUAL_PENALTY); Optimize leaves those classes holding
+ *   one weapon and puts a shield in the other hand.
+ * - So a pair of hands comes to one of: two shields, a weapon and a shield,
+ *   one two-handed weapon across both, two one-handed weapons, one of either
+ *   on its own, or nothing at all.
  * - Every body part that declares canHoldWeapon in js/db/Health/Archetypes.json
  *   is a weapon slot, and a hand takes a weapon or a shield without distinction,
  *   so two shields are as legal as two swords.
@@ -140,6 +146,16 @@
     const MAX_WEAPON_SLOTS = 8;
     const MOUTH_SLOT_TAG = 'MouthSlot';
     const DUAL_WIELD_TAG = 'DualWield';
+    // Trait code 55 (Special Flag), dataId 1: the stock Dual Wield flag, which
+    // is how the classes in data/Classes.json that dual wield say so. The note
+    // tag is the other way of saying it, for a class or a spliced-on body that
+    // was never given the trait.
+    const TRAIT_SPECIAL_FLAG = 55;
+    const FLAG_DUAL_WIELD = 1;
+    // What a hand pays for a second weapon it was never trained to hold. Both
+    // weapons are cut, not just the off-hand one: fighting with a blade in
+    // each hand is worse than fighting with one unless the class knows how.
+    const UNTRAINED_DUAL_PENALTY = 0.65;
 
     // Part keys are matched a token at a time, so LEFT_HAND, CLAW_RIGHT,
     // WATER_ARMS and VOID_TENDRIL_1 all read as hands while PLATE_ARMOR (which
@@ -239,12 +255,45 @@
             return !!(cls && cls.meta && cls.meta[MOUTH_SLOT_TAG]);
         },
 
-        // Whether the class may fill every hand with a weapon. Without this tag
-        // at most half the hands (rounded up) can be weapons; the rest are
-        // shield slots.
+        UNTRAINED_DUAL_PENALTY,
+
+        // Whether this character was trained to fight with a weapon in each
+        // hand. Asked of the class note tag first and of the character's own
+        // traits second, so a flag handed out by a specialization, a piece of
+        // gear or a spliced-on body counts as well as the class itself.
         hasDualWield(actor) {
-            const cls = actor && actor.currentClass && actor.currentClass();
-            return !!(cls && cls.meta && cls.meta[DUAL_WIELD_TAG]);
+            if (!actor) return false;
+            const cls = actor.currentClass && actor.currentClass();
+            if (cls && cls.meta && cls.meta[DUAL_WIELD_TAG]) return true;
+            if (typeof actor.specialFlag === 'function') {
+                try { if (actor.specialFlag(FLAG_DUAL_WIELD)) return true; } catch (e) { /* no traits yet */ }
+            }
+            if (typeof actor.traits === 'function') {
+                try {
+                    return actor.traits(TRAIT_SPECIAL_FLAG)
+                        .some(tr => tr && tr.dataId === FLAG_DUAL_WIELD);
+                } catch (e) { /* no traits yet */ }
+            }
+            return false;
+        },
+
+        // How much of its listed strength each weapon delivers. A single
+        // weapon is always whole, and so is an armful in the hands of a class
+        // that dual wields. Anyone else pays UNTRAINED_DUAL_PENALTY on every
+        // weapon they hold, the moment a second one goes in.
+        dualPenalty(actor, weaponCount) {
+            if (!actor) return 1;
+            const count = weaponCount !== undefined
+                ? weaponCount
+                : (actor.equips ? actor.equips().filter(i => i && i.wtypeId).length : 0);
+            if (count < 2) return 1;
+            return this.hasDualWield(actor) ? 1 : UNTRAINED_DUAL_PENALTY;
+        },
+
+        // Is this character paying that penalty right now? What the equip
+        // screen puts its warning on.
+        isPenalisedDualWield(actor) {
+            return this.dualPenalty(actor) < 1;
         },
 
         // Count weapons already in hand slots, optionally ignoring one slot
@@ -260,11 +309,18 @@
             return count;
         },
 
-        // How many weapons this character's hands may carry at once.
-        // DualWield: all hands. Otherwise: ceil(hands / 2).
+        // How many weapons these hands can carry at once. Every hand counts:
+        // there is no cap any more, only a penalty for the classes that were
+        // never trained for it (dualPenalty, above).
         maxWeapons(actor) {
+            return this.layout(actor).hands;
+        },
+
+        // ...and how many of them are free of that penalty, which is what
+        // Optimize fills and what the character sheet quotes.
+        freeWeapons(actor) {
             const h = this.layout(actor).hands;
-            return this.hasDualWield(actor) ? h : Math.ceil(h / 2);
+            return this.hasDualWield(actor) ? h : Math.min(1, h);
         },
 
         // What the body can hold with. Anything without an anatomy on file (a
@@ -541,12 +597,8 @@
             if (!isHeldItem(item)) return false;
             // One hand is one weapon, and a small one at that.
             if (kind === 'hand' && isTwoHandedWeapon(item) && this.layout(actor).hands < 2) return false;
-            // Weapon cap: without DualWield at most ceil(hands/2) hand slots
-            // may carry weapons. Shields (armor with etypeId === ETYPE_OFFHAND)
-            // are unaffected.
-            if (kind === 'hand' && item.wtypeId) {
-                if (this.weaponCountInHands(actor, slotId) >= this.maxWeapons(actor)) return false;
-            }
+            // Any hand takes any weapon. A class that cannot dual wield is not
+            // refused the second one, it is charged for it (dualPenalty).
             return true;
         },
 
@@ -621,8 +673,9 @@
     /**
      * Hand back whatever no longer fits: the shield the two-handed sword just
      * displaced, or everything the arm that came off in Blood and Oil was
-     * holding. Also enforces the weapon cap (DualWield / non-DualWield).
-     * Empties from the last slot forward, so the piece just equipped
+     * holding. There is no weapon cap to enforce: a hand may always close
+     * round a weapon, and an untrained second one is paid for in damage
+     * rather than refused. Empties from the last slot forward, so the piece just equipped
      * (`_handKeepSlot`) is never the one taken away.
      */
     Game_Actor.prototype.reconcileHandSlots = function (forcing) {
@@ -644,20 +697,7 @@
                     continue;
                 }
             }
-            // Weapon cap: if holding more weapons than maxWeapons, drop from
-            // the last hand slot forward.
-            const maxWpn = HandSlots.maxWeapons(this);
-            let weaponDropped = -1;
-            for (let i = layout.hands - 1; i >= 0; i--) {
-                if (equips[i] && equips[i].wtypeId && i !== this._handKeepSlot) {
-                    weaponDropped = i; break;
-                }
-            }
-            if (weaponDropped < 0) break;
-            const wpnCount = HandSlots.weaponCountInHands(this, weaponDropped);
-            if (wpnCount < maxWpn) break;
-            if (forcing) this.forceChangeEquip(weaponDropped, null);
-            else this.changeEquip(weaponDropped, null);
+            break;
         }
     };
 
@@ -893,9 +933,14 @@
     // weapons and shields alike, which is the whole point of the hand model.
     Game_Actor.prototype.slotCandidates = function (slotId) {
         const kind = HandSlots.slotKind(this, slotId);
-        const pool = kind
+        // Only a hand (or the mouth) takes weapons. Every other slot is offered
+        // the party's armour and narrowed by slotFits, which is the one place
+        // that knows a Clothes slot from a Robe slot from an Armour slot: all
+        // three carry the same equip type and differ only by armour type.
+        const held = kind === 'hand' || kind === 'mouth';
+        const pool = held
             ? $gameParty.weapons().concat($gameParty.armors().filter(a => a.etypeId === ETYPE_OFFHAND))
-            : $gameParty.armors().filter(a => a.etypeId === this.equipSlots()[slotId]);
+            : $gameParty.armors();
         return pool.filter(item => this.canEquip(item) && HandSlots.slotFits(this, slotId, item));
     };
 
@@ -1027,6 +1072,16 @@
         return true;
     };
 
+    // ...and any armour type. Which slot a piece belongs in is decided by
+    // HandSlots.slotFits, which tells clothes from robe from armour by armour
+    // type, not by the class. Leaving the stock trait check in place meant 71
+    // of the 77 classes could wear nothing at all: they carry no armour-type
+    // trait, so the head, body and gear slots came up empty on the bench and
+    // an armour picked from the bag was refused without a word.
+    Game_BattlerBase.prototype.isEquipAtypeOk = function (/* atypeId */) {
+        return true;
+    };
+
     // How an armful of weapons adds up.
     //
     // One or two of them stack the way they always have. Past that the arsenal
@@ -1046,16 +1101,26 @@
 
     // Applied as a delta on top of the stock paramPlus sum so it stacks cleanly
     // with the other paramPlus wrappers (item modifiers, diseases).
+    //
+    // A second weapon in the hands of a class that was never trained for it
+    // costs both of them a third of their strength (HandSlots.dualPenalty):
+    // the whole point of the Dual Wield classes is that they do not pay it.
     Game_Actor.prototype.weaponParamDelta = function (paramId) {
         const equips = this.equips();
         let raw = 0;
         const scaled = [];
+        let carried = 0;
+        for (let i = 0; i < equips.length; i++) {
+            const item = equips[i];
+            if (item && item.wtypeId) carried++;
+        }
+        const penalty = HandSlots.dualPenalty(this, carried);
         for (let i = 0; i < equips.length; i++) {
             const item = equips[i];
             if (!item || !item.wtypeId || !item.params) continue;
             const base = item.params[paramId] || 0;
             raw += base;
-            scaled.push(Math.round(base * WeaponProficiency.multiplier(this, item)));
+            scaled.push(Math.round(base * WeaponProficiency.multiplier(this, item) * penalty));
         }
         if (!scaled.length) return 0;
         const total = scaled.length > 2
@@ -1101,7 +1166,25 @@
             return bestItem;
         }
 
-        const items = this.slotCandidates(slotId);
+        // Optimize never talks a character into a penalty. A class that dual
+        // wields gets a weapon in every hand; a class that does not is given
+        // one weapon and offered a shield for the rest, which is what the
+        // player would have to give up a third of their damage to change by
+        // hand.
+        let items = this.slotCandidates(slotId);
+        if (kind === 'hand' && !HandSlots.hasDualWield(this)) {
+            const elsewhere = HandSlots.weaponCountInHands(this, slotId);
+            if (elsewhere >= HandSlots.freeWeapons(this)) {
+                items = items.filter(item => !item.wtypeId);
+            }
+        } else if (kind === 'hand' && HandSlots.layout(this).hands >= 2) {
+            // A dual wielder ends up with a blade in each hand rather than one
+            // greatsword across both, so a two-handed weapon is only picked
+            // when there is nothing one-handed to pick.
+            const oneHanded = items.filter(item => !HandSlots.isTwoHanded(item));
+            if (oneHanded.length) items = oneHanded;
+        }
+        if (!items.length) return null;
         const trained = items.filter(item => !WeaponProficiency.isUntrained(this, item));
         // Nothing trained in the pack means the character has to make do, and
         // then the least unfamiliar weapon leads: Beginner before Untrained.

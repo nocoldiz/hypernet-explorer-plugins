@@ -8,10 +8,34 @@
     "tag": "port",
     "entrance": {},
     "coords": [
-      { "direction": "south", "id": 397, "x": 23, "y": 1, "mapCoord": "88,117" },
-      { "direction": "north", "id": 397, "x": 23, "y": 48, "mapCoord": "88,116" },
-      { "direction": "east", "id": 397, "x": 1, "y": 35, "mapCoord": "89,116" },
-      { "direction": "west", "id": 397, "x": 48, "y": 34, "mapCoord": "89,117" }
+      {
+        "direction": "south",
+        "id": 397,
+        "x": 23,
+        "y": 1,
+        "mapCoord": "88,117"
+      },
+      {
+        "direction": "north",
+        "id": 397,
+        "x": 23,
+        "y": 48,
+        "mapCoord": "88,116"
+      },
+      {
+        "direction": "east",
+        "id": 397,
+        "x": 1,
+        "y": 35,
+        "mapCoord": "89,116"
+      },
+      {
+        "direction": "west",
+        "id": 397,
+        "x": 48,
+        "y": 34,
+        "mapCoord": "89,117"
+      }
     ],
     "mapOffset": {
       "x": 387,
@@ -60,7 +84,8 @@
       "x": 46,
       "y": 49
     },
-    "minLevel": 1
+    "minLevel": 1,
+    "fixedLevel": 1
   },
   "GreenWitch": {
     "name": "Green Witch",
@@ -166,7 +191,8 @@
       "x": 53,
       "y": 55
     },
-    "minLevel": 1
+    "minLevel": 1,
+    "fixedLevel": 1
   },
   "Kola Superdeep Borehole": {
     "locked": true,
@@ -520,7 +546,7 @@
       "102,107"
     ]
   },
-    "Mont Blanc tunnel south": {
+  "Mont Blanc tunnel south": {
     "name": "Mont Blanc tunnel south",
     "type": "dungeon",
     "country": "Italy",
@@ -545,7 +571,7 @@
       "112,161"
     ]
   },
-   "Mont Blanc tunnel north": {
+  "Mont Blanc tunnel north": {
     "name": "Mont Blanc tunnel north",
     "type": "dungeon",
     "country": "France",
@@ -1109,10 +1135,34 @@
     "tag": "industrial",
     "entrance": {},
     "coords": [
-      { "direction": "north", "id": 722, "x": 27, "y": 28, "mapCoord": "88,131" },
-      { "direction": "south", "id": 722, "x": 13, "y": 1, "mapCoord": "88,131" },
-      { "direction": "east", "id": 722, "x": 1, "y": 50, "mapCoord": "88,131" },
-      { "direction": "west", "id": 722, "x": 78, "y": 51, "mapCoord": "88,131" }
+      {
+        "direction": "north",
+        "id": 722,
+        "x": 27,
+        "y": 28,
+        "mapCoord": "88,131"
+      },
+      {
+        "direction": "south",
+        "id": 722,
+        "x": 13,
+        "y": 1,
+        "mapCoord": "88,131"
+      },
+      {
+        "direction": "east",
+        "id": 722,
+        "x": 1,
+        "y": 50,
+        "mapCoord": "88,131"
+      },
+      {
+        "direction": "west",
+        "id": 722,
+        "x": 78,
+        "y": 51,
+        "mapCoord": "88,131"
+      }
     ],
     "mapOffset": {
       "x": 0,
@@ -1362,7 +1412,7 @@
       "73,111"
     ]
   },
-    "Trick Castle": {
+  "Trick Castle": {
     "name": "Trick Castle",
     "type": "dungeon",
     "country": "UK",
@@ -1473,10 +1523,34 @@
     "tag": "industrial",
     "entrance": {},
     "coords": [
-      { "direction": "north", "id": 401, "x": 17, "y": 39, "mapCoord": "81,129" },
-      { "direction": "south", "id": 401, "x": 13, "y": 1, "mapCoord": "81,129" },
-      { "direction": "east", "id": 401, "x": 1, "y": 19, "mapCoord": "81,129" },
-      { "direction": "west", "id": 401, "x": 33, "y": 21, "mapCoord": "81,129" }
+      {
+        "direction": "north",
+        "id": 401,
+        "x": 17,
+        "y": 39,
+        "mapCoord": "81,129"
+      },
+      {
+        "direction": "south",
+        "id": 401,
+        "x": 13,
+        "y": 1,
+        "mapCoord": "81,129"
+      },
+      {
+        "direction": "east",
+        "id": 401,
+        "x": 1,
+        "y": 19,
+        "mapCoord": "81,129"
+      },
+      {
+        "direction": "west",
+        "id": 401,
+        "x": 33,
+        "y": 21,
+        "mapCoord": "81,129"
+      }
     ],
     "mapOffset": {
       "x": 362,
@@ -1555,7 +1629,7 @@
     "picture": "destinations/Klasvik",
     "type": "village",
     "country": "Denmark",
-    "nationId": 0,
+    "nationId": 37,
     "procedural": true,
     "tag": "port",
     "mapOffset": {
@@ -1575,7 +1649,7 @@
     "picture": "destinations/Gasadalur",
     "type": "village",
     "country": "Denmark",
-    "nationId": 0,
+    "nationId": 37,
     "procedural": true,
     "tag": "rural",
     "mapOffset": {
@@ -1590,12 +1664,33 @@
       "71,42"
     ]
   },
+  "Northpoint": {
+    "name": "Northpoint",
+    "picture": "",
+    "locked": true,
+    "type": "village",
+    "country": "Sweden",
+    "nationId": 35,
+    "procedural": true,
+    "tag": "rural",
+    "mapOffset": {
+      "x": 448,
+      "y": 216
+    },
+    "base": {
+      "x": 151,
+      "y": 7
+    },
+    "reservedTiles": [
+      "151,7"
+    ]
+  },
   "Torshavn": {
     "name": "Torshavn",
     "picture": "destinations/Torshavn",
     "type": "village",
     "country": "Denmark",
-    "nationId": 0,
+    "nationId": 37,
     "procedural": true,
     "tag": "port",
     "mapOffset": {
@@ -1615,7 +1710,7 @@
     "picture": "destinations/Sandvik",
     "type": "village",
     "country": "Denmark",
-    "nationId": 0,
+    "nationId": 37,
     "procedural": true,
     "tag": "rural",
     "mapOffset": {
@@ -2297,8 +2392,8 @@
     "name": "Lampedusa",
     "picture": "destinations/Lampedusa",
     "type": "village",
-    "country": "Italy - Sicily",
-    "nationId": 166,
+    "country": "Italy - Lampedusa",
+    "nationId": 174,
     "procedural": true,
     "tag": "port",
     "mapOffset": {
@@ -2381,7 +2476,7 @@
     "picture": "destinations/Tunisi",
     "type": "city",
     "country": "Tunisia",
-    "nationId": 0,
+    "nationId": 42,
     "procedural": true,
     "tag": "business",
     "mapOffset": {
@@ -2404,7 +2499,7 @@
     "picture": "destinations/Biserta",
     "type": "village",
     "country": "Tunisia",
-    "nationId": 0,
+    "nationId": 42,
     "procedural": true,
     "tag": "port",
     "mapOffset": {
@@ -2424,7 +2519,7 @@
     "picture": "destinations/Tripoli",
     "type": "village",
     "country": "Libya",
-    "nationId": 0,
+    "nationId": 42,
     "procedural": true,
     "tag": "industrial",
     "mapOffset": {
@@ -2588,7 +2683,7 @@
     "picture": "destinations/Copenaghen",
     "type": "city",
     "country": "Denmark",
-    "nationId": 0,
+    "nationId": 8,
     "procedural": true,
     "tag": "business",
     "mapOffset": {
@@ -2830,7 +2925,7 @@
     "picture": "destinations/Liechtenstein",
     "type": "city",
     "country": "Liechtenstein",
-    "nationId": 0,
+    "nationId": 78,
     "procedural": true,
     "tag": "business",
     "mapOffset": {
@@ -2978,8 +3073,8 @@
     "name": "Saint Helier",
     "picture": "destinations/SaintHelier",
     "type": "village",
-    "country": "UK",
-    "nationId": 38,
+    "country": "UK - Channel Islands",
+    "nationId": 110,
     "procedural": true,
     "tag": "business",
     "mapOffset": {
@@ -2998,8 +3093,8 @@
     "name": "Jersey",
     "picture": "destinations/Jersey",
     "type": "village",
-    "country": "UK",
-    "nationId": 38,
+    "country": "UK - Channel Islands",
+    "nationId": 110,
     "procedural": true,
     "tag": "luxury",
     "mapOffset": {
@@ -3018,8 +3113,8 @@
     "name": "Guernsey",
     "picture": "destinations/Guernsey",
     "type": "village",
-    "country": "UK",
-    "nationId": 38,
+    "country": "UK - Channel Islands",
+    "nationId": 110,
     "procedural": true,
     "tag": "rural",
     "mapOffset": {
@@ -3038,8 +3133,8 @@
     "name": "Palma di Maiorca",
     "picture": "destinations/PalmadiMaiorca",
     "type": "village",
-    "country": "Spain",
-    "nationId": 69,
+    "country": "Spain - Balearics",
+    "nationId": 76,
     "procedural": true,
     "tag": "luxury",
     "mapOffset": {
@@ -3059,8 +3154,8 @@
     "name": "Ivissa",
     "picture": "destinations/Ivissa",
     "type": "village",
-    "country": "Spain",
-    "nationId": 69,
+    "country": "Spain - Balearics",
+    "nationId": 76,
     "procedural": true,
     "tag": "luxury",
     "mapOffset": {
@@ -3079,8 +3174,8 @@
     "name": "Minorca",
     "picture": "destinations/Minorca",
     "type": "village",
-    "country": "Spain",
-    "nationId": 69,
+    "country": "Spain - Balearics",
+    "nationId": 76,
     "procedural": true,
     "tag": "rural",
     "mapOffset": {
@@ -3317,7 +3412,7 @@
     "picture": "destinations/Sarajevo",
     "type": "city",
     "country": "Bosnia and Herzegovina",
-    "nationId": 0,
+    "nationId": 17,
     "procedural": true,
     "tag": "residential",
     "mapOffset": {
@@ -3430,7 +3525,7 @@
     "picture": "destinations/Bucarest",
     "type": "city",
     "country": "Romania",
-    "nationId": 0,
+    "nationId": 105,
     "procedural": true,
     "tag": "business",
     "mapOffset": {
@@ -3453,7 +3548,7 @@
     "picture": "destinations/Costanza",
     "type": "village",
     "country": "Romania",
-    "nationId": 0,
+    "nationId": 105,
     "procedural": true,
     "tag": "port",
     "mapOffset": {

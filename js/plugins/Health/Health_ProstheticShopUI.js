@@ -119,7 +119,10 @@
     // only thing that changes from step to step.
     row(item, idx) {
       const t = fmt();
-      const blocked = item.alreadyOwned || item.blockedReason || item.vital || item.isCurrentlyInstalled;
+      // A full body and an augment that would change nothing both read as
+      // unavailable: the row is greyed before the money is spent.
+      const blocked = item.alreadyOwned || item.blockedReason || item.vital ||
+        item.isCurrentlyInstalled || item.overCapacity || item.noNetGain;
       let meta = "";
       let value = "";
 
@@ -135,7 +138,10 @@
         meta = esc(item.currentProstheticName);
       } else if (item.isRemoveOption || item.isProsthetic) {
         meta = esc(item.note);
-        value = item.isRemoveOption ? "" : (item.isCurrentlyInstalled ? T('Prosthetics.installed') : t.price(item.cost));
+        value = item.isRemoveOption ? ""
+          : (item.isCurrentlyInstalled ? T('Prosthetics.installed')
+            : (item.overCapacity ? T('Prosthetics.noRoomBadge')
+              : (item.noNetGain ? T('Prosthetics.noGainBadge') : t.price(item.cost))));
       } else if (item.isRemoveBodypart) {
         meta = (item.statEffect && item.statBonus > 0)
           ? T('Prosthetics.loses', { p1: t.paramName(item.statEffect.param), p2: item.statBonus }) : "";

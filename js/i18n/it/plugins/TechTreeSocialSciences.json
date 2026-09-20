@@ -1,6 +1,6 @@
 {
   "name": "Scienze Sociali",
-  "blurb": "Persone, mercati e folle come oggetti di misura: strategie di identificazione, dimensioni dell'effetto e il campionamento che le ha prodotte. Qui sono archiviate anche le illusioni predilette dell'epoca, con i difetti di disegno che le hanno prodotte.",
+  "blurb": "Persone, mercati e folle come oggetti di misura, compresi gli studi errati dell'epoca.",
   "nodes": {
     "soc_asymmetric": {
       "name": "Mercati a Informazione Asimmetrica",

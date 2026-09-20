@@ -7,16 +7,16 @@
     "Books": "Livres",
     "Food": "Nourriture",
     "Homeopathy": "Homéopathie",
-    "Jungle": "",
     "Lifestyle": "Style de Vie",
     "Magic": "Magie",
     "Medical": "Médical",
     "Monsters": "Monstres",
-    "Plants": "Plantes",
     "Recovery": "",
     "Survival": "Survie",
     "Trash": "Déchets",
-    "Misc": ""
+    "Misc": "",
+    "Vehicles": "Vehicules",
+    "Fertility": "Fertilite"
   },
   "ui": {
     "windowTitle": "",

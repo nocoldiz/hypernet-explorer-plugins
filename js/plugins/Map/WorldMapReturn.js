@@ -2289,6 +2289,10 @@
             // stitchCentre when map 636 loads. Anything left over from the
             // session that loaded the save would be a window onto another world.
             $gameSystem._procGenData._stitchReanchor            = false;
+            // What the last session had on screen is not what this one is about
+            // to draw, and the hold below (tilesetSwapWouldShow) would hand it
+            // back as the answer for the square the save was made on.
+            _shownTileset = null;
             if (window.ProcStitch) {
                 const keep = $gameSystem._procGenData.stitchCentre;
                 window.ProcStitch.close();
@@ -2712,8 +2716,15 @@
         }
     };
 
+    // A spaceport pad is a square of its planet's landing grid like any other
+    // (see spaceportPadNow), so its four edges are crossings into the squares
+    // next door and are marked as such: without this the pad looked sealed and
+    // nothing said the planet carried on past it.
     Game_Player.prototype.updateProcGenBorderArrows = function() {
-        if ($gameMap.mapId() !== procMapId) { this.clearProcGenBorderArrows(); return; }
+        if ($gameMap.mapId() !== procMapId && !spaceportPadNow()) {
+            this.clearProcGenBorderArrows();
+            return;
+        }
         this.displayProcGenBorderArrows($gameMap.getProcGenBorderTiles(this.x, this.y));
     };
 
@@ -2922,8 +2933,11 @@
 
         if (SceneManager._scene instanceof Scene_Map) {
             if (needP1Rebuild) {
-                if ($gameMap.mapId() === procMapId) this.updateProcGenBorderArrows();
-                else this.clearProcGenBorderArrows();
+                if ($gameMap.mapId() === procMapId || spaceportPadNow()) {
+                    this.updateProcGenBorderArrows();
+                } else {
+                    this.clearProcGenBorderArrows();
+                }
                 this.updateTeleportEventArrows();
             }
             updatePartyDivingSprites();
@@ -3573,6 +3587,13 @@
         // coincidentally match a real Earth coordinate: none of Earth's markers
         // may be consulted for it (the same rule ProcGenSquare.resolve follows).
         const alien = procGen() && procGen().alienGrid;
+        // A square of a planet's landing grid that holds a spaceport is DRAWN,
+        // not generated. Stitching it into the window would lay procedural
+        // ground over the pad and lose the only way back onto it on foot, which
+        // is exactly what happened when the party walked a square off a pad and
+        // came back. It keeps the old crossing, and that crossing hands over the
+        // authored map (see _resolveAdjacentBiomeAndTransfer).
+        if (alien && spaceportAtGridCell(wx, wy)) return false;
         if (!alien && !depth && authoredDoorAt(wx, wy)) return false;
         // A sealed square is never laid alongside another one, whether or not
         // anybody drew a door onto it. Stitching it on would put its ground
@@ -3833,12 +3854,15 @@
             landed.terrain.cell.gx = gx;
             landed.terrain.cell.gy = gy;
         }
-        // The columns of the grid are lines of longitude, so on a tidally locked
-        // world walking east is walking around the terminator: the hour it is
-        // frozen at belongs to the column, not to the landing.
+        // The columns of the grid are lines of longitude, so walking east is
+        // walking into the evening on ANY world: the local hour belongs to the
+        // column, not to the landing. On a tidally locked one that is the whole
+        // of it - the hour it is frozen at is the column it is - and on a
+        // turning one the column sets where in its own day this longitude is.
         const GS = window.GalaxySim;
-        if (landed.day && landed.day.frozen && GS && GS.frozenHourForCell) {
-            landed.day.fixedHour = GS.frozenHourForCell(gx, grid.w);
+        if (landed.day && GS && GS.hourForColumn) {
+            landed.day.cellHour = GS.hourForColumn(gx, grid.w);
+            if (landed.day.frozen) landed.day.fixedHour = landed.day.cellHour;
         }
     }
 
@@ -3869,7 +3893,12 @@
         if (centreData) {
             const api = ProcGenSquareApi();
             const at = (opts && opts.adoptAt) || { x: cx, y: cy };
-            if (api && api.adopt) api.adopt(at.x, at.y, d, centreData);
+            // Say which biome the array was built from: the cache refuses it
+            // when that is not what the square resolves to, rather than filing
+            // a structure's ground under the open country it was cut into.
+            if (api && api.adopt) {
+                api.adopt(at.x, at.y, d, centreData, { biomeName: pg && pg.currentBiome });
+            }
         }
         const win = planWindow(cx, cy, d, (opts && opts.adoptAt) || null);
         if (!win) { closeWindow(); return null; }
@@ -4921,6 +4950,12 @@
             if ($gameMap.mapId() === worldMapId && $gameTemp && $gameTemp._lastWorldMapReturnOrigin) {
                 $gameTemp._lastWorldMapReturnOrigin = null;
             }
+            // A spaceport pad is a square of its planet's landing grid (see
+            // spaceportPadNow), so pushing outward at its edge is a crossing into
+            // the square next door, exactly as it is on map 636. Asked before the
+            // <Worldmap> tags, because a pad carries none: without this its borders
+            // were walls and the planet stopped at the edge of the pad.
+            if (spaceportPadNow() && this.padEdgeCrossing(d)) return;
             // Hand-made maps declare their exits with <Worldmap>: walking off a
             // walkable edge is handled by checkBorderTeleport, pushing against a
             // fenced one here.
@@ -4988,6 +5023,39 @@
 
         console.log(`[WorldMapReturn-Edge] Border touched, starting fade out`);
         scheduleProcEdgeTransition(exitDirection, x, y, d);
+    };
+
+    // Pushing outward at the edge of a spaceport pad. Returns true when the step
+    // was taken over by a crossing (or swallowed because one is already running),
+    // false when it is an ordinary step the pad should handle itself.
+    //
+    // The crossing is the SAME one a generated square schedules, and it works
+    // because the landing grid is already what variables 43/44 hold on any alien
+    // landing, pad or not: the neighbour is that square plus the direction walked.
+    // What is deliberately missing is the growing - a stitched window is laid over
+    // generated ground and there is none here, so the pad is never grown into and
+    // never grows.
+    Game_Player.prototype.padEdgeCrossing = function(d) {
+        const w = $gameMap.width(), h = $gameMap.height();
+        let exitDirection = 0;
+        switch (d) {
+            case 2: if (this.y + 1 >= h) exitDirection = 2; break;
+            case 4: if (this.x - 1 < 0)  exitDirection = 4; break;
+            case 6: if (this.x + 1 >= w) exitDirection = 6; break;
+            case 8: if (this.y - 1 < 0)  exitDirection = 8; break;
+        }
+        if (!exitDirection) return false;
+        // No landing grid, no neighbours: the pad is just a map and its edge is an
+        // edge. This is the honest answer if the landing state was ever cleared
+        // while the party was still standing on the pad.
+        const pg = procGen();
+        if (!pg || !pg.alienGrid) return false;
+        // Already on the way: swallow the step rather than re-arming the crossing
+        // every frame, the same guard the generated edge keeps.
+        if (this.isTransferring() || pg._edgeTransitionScheduled) return true;
+        console.log(`[WorldMapReturn-Edge] Spaceport pad edge touched, starting crossing`);
+        scheduleProcEdgeTransition(exitDirection, this.x, this.y, d);
+        return true;
     };
 
     const _orig_Player_moveDiagonally = Game_Player.prototype.moveDiagonally;
@@ -5183,9 +5251,17 @@
             // are ordinary borders and lead to the layer next door, never up
             // into a town (see surfaceDestinationFor for the way back out).
             const underground = !!(system._procGenData.biomeLayerStack || []).length;
+            // ...and only on EARTH. A planet's landing grid is planet-local and
+            // small, so its (gx, gy) can coincide with a real Earth square: reading
+            // Destinations.json out there would put a Belgian town door on the far
+            // side of a crater. The same rule crossingLeavesProcMap and
+            // ProcGenSquare.resolve already follow, stated here too because this is
+            // where the two lookups actually happen.
+            const offEarth = !!system._procGenData.alienGrid;
+            const noDoors = underground || offEarth;
 
             // Check non-procedural destination at current world coords
-            const nonProcCheck = underground
+            const nonProcCheck = noDoors
                 ? { exists: false, destination: null }
                 : getNonProceduralDestination(currentWorldX, currentWorldY, storedExitDir);
             if (nonProcCheck.exists && nonProcCheck.destination) {
@@ -5201,7 +5277,7 @@
             console.log(`[WorldMapReturn-Edge] Adjacent world coords: (${adjacentCoords.x},${adjacentCoords.y})`);
 
             // Check non-procedural destination at adjacent world coords
-            const nonProcCheckAdj = underground
+            const nonProcCheckAdj = noDoors
                 ? { exists: false, destination: null }
                 : getNonProceduralDestination(adjacentCoords.x, adjacentCoords.y, storedExitDir);
             if (nonProcCheckAdj.exists && nonProcCheckAdj.destination) {
@@ -5285,6 +5361,26 @@
                 return true;
             }
 
+            // --- Spaceport pad: the same crossing, from P2's own tile ---
+            // A pad is a square of its planet like any other (see spaceportPadNow),
+            // so P2 walking off its edge moves the party exactly as P1 does.
+            if (spaceportPadNow()) {
+                const mapWidth = $gameMap.width(), mapHeight = $gameMap.height();
+                let exitDirection = 0;
+                switch (dir) {
+                    case 2: if (ev.y + 1 >= mapHeight) exitDirection = 2; break;
+                    case 4: if (ev.x - 1 < 0)          exitDirection = 4; break;
+                    case 6: if (ev.x + 1 >= mapWidth)  exitDirection = 6; break;
+                    case 8: if (ev.y - 1 < 0)          exitDirection = 8; break;
+                }
+                if (!exitDirection) return false;
+                const pg = $gameSystem._procGenData;
+                if (!pg || !pg.alienGrid) return false;
+                if (pg._edgeTransitionScheduled) return true;
+                scheduleProcEdgeTransition(exitDirection, ev.x, ev.y, dir);
+                return true;
+            }
+
             // The world map uses Teleport events / the travel-decision window, not
             // border/Transfer transfers, so leave P2's world-map movement untouched.
             if (mapId === worldMapId) return false;
@@ -5355,6 +5451,23 @@
         if (alienGrid) {
             adjacentCoords.x = ((adjacentCoords.x % alienGrid.w) + alienGrid.w) % alienGrid.w;
             adjacentCoords.y = ((adjacentCoords.y % alienGrid.h) + alienGrid.h) % alienGrid.h;
+            // The square next door holds a spaceport: its ground is drawn, not
+            // generated, so the pad is what the party walks onto. Generating over
+            // it would put a field of rubble where the port stands and lose the way
+            // back to it on foot.
+            const GS = window.GalaxySim;
+            const port = spaceportAtGridCell(adjacentCoords.x, adjacentCoords.y);
+            const world = (GS && GS.getOffEarthPlanet) ? GS.getOffEarthPlanet() : null;
+            // Walked in over the perimeter, on foot: the ship stays wherever it was
+            // left, because arriving at a gate is not a landing. landAtSpaceport
+            // moves the grid cell and the two variables itself, so nothing here is
+            // touched until it has said yes.
+            if (port && world && GS.landAtSpaceport &&
+                GS.landAtSpaceport(port.loc, { planet: world })) {
+                $gamePlayer.clearProcGenBorderArrows();
+                console.log(`[WorldMapReturn-Edge] Crossing into the ${port.name} pad`);
+                return;
+            }
             window.ProcStitch.adoptAlienCell(adjacentCoords.x, adjacentCoords.y);
         }
 
@@ -5726,7 +5839,12 @@
         // every square after it generated underground.
         if ($gameMap.mapId() === worldMapId) {
             if (!system.generateProceduralMap()) {
-                $gameMessage.add(T('WorldMapReturn.cannotDigHere'));
+                if (window.ParchmentToast) {
+                  window.ParchmentToast.show(T('WorldMapReturn.cannotDigHere'), {
+                    severity: 'warning',
+                    key: 'terrain:nodig'  // i18n-ignore  dedupe key
+                  });
+                }
                 return;
             }
             // The square was just resolved off the world-map tile, so it is the
@@ -5738,13 +5856,18 @@
             procGenData.goDownEventX = Math.floor(PROC_MAP_WIDTH  / 2);
             procGenData.goDownEventY = Math.floor(PROC_MAP_HEIGHT / 2);
         } else if ($gameMap.mapId() !== procMapId) {
-            $gameMessage.add(T('WorldMapReturn.cannotDigHere'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('WorldMapReturn.cannotDigHere'), {
+                severity: 'warning',
+                key: 'terrain:nodig'  // i18n-ignore  dedupe key
+              });
+            }
             return;
         }
 
         if (procGenData && procGenData.currentBiome === 'Ocean') {  // i18n-ignore  biome id
             const item = $dataItems[DIVING_SUIT_ITEM_ID];
-            if (!$gameParty.hasItem(item)) { $gameMessage.add(T('WorldMapReturn.needDivingSuit')); return; }
+            if (!$gameParty.hasItem(item)) { noDivingSuit(); return; }
         }
         if (procGenData.biomeLayerStack && procGenData.biomeLayerStack.length > 0) {
             // A raised stack under a surface-only biome (Ocean, Fields, ...) is
@@ -5768,7 +5891,12 @@
             // Said out loud, not just logged: a Shovel used on solid rock (or on
             // any biome with nothing under it) has to answer for itself.
             logWarn(`GoDown: Biome "${procGenData.currentBiome}" has no lower layer`);
-            $gameMessage.add(T('WorldMapReturn.cannotDigHere'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('WorldMapReturn.cannotDigHere'), {
+                severity: 'warning',
+                key: 'terrain:nodig'  // i18n-ignore  dedupe key
+              });
+            }
             return;
         }
 
@@ -6240,10 +6368,21 @@
             ? window.PatreonRewards.hatchTileAtWorld(worldX, worldY)
             : null;
 
-        const surfaceName = Utils2.getBiomeFromCacheWithFallback
-            ? Utils2.getBiomeFromCacheWithFallback(pg.biomeCoordinateCache, worldX, worldY, $gameMap, worldMapId)
+        // The square is asked for through the resolver, the same way every other
+        // route onto map 636 asks: the raw cache name is not a biome the database
+        // holds. It still carries a road's direction in it ("Road east"), it has
+        // not been folded to the latitude ("Ice" where the world means Tundra),
+        // and a special rolled for another world's seed is still wrapped up in
+        // it. getBiomeByName answers null for all three, which dropped the party
+        // onto the world map instead of onto their own square; and where it did
+        // answer, it answered with a biome the rest of the game does not use for
+        // this square, so the ground was rebuilt -- and drawn -- as something the
+        // square is not.
+        const resolved = window.ProcGenSquare
+            ? window.ProcGenSquare.resolve(worldX, worldY, { depth: 0 })
             : null;
-        const surfaceBiome = surfaceName ? getBiomeByName(surfaceName) : null;
+        const surfaceName = resolved ? resolved.biomeName : null;
+        const surfaceBiome = resolved ? resolved.biome : null;
 
         if (!hatch || !surfaceBiome) {
             logWarn('exitStructure: no hatch on this square, leaving by the world map.');
@@ -6265,9 +6404,15 @@
         pg.lastLoadedProcMapY     = null;
         pg._stitchReanchor        = true;
         pg.currentBiome           = surfaceName;
-        pg.currentBiomeTileset    = surfaceBiome.tilesetId;
+        pg.currentBiomeTileset    = resolved.tilesetId;
         pg.biomeDayTemperature    = surfaceBiome.dayTemperature   || 20;
         pg.biomeNightTemperature  = surfaceBiome.nightTemperature || 10;
+        // The square's own road, crossing and verges, not the ones the structure
+        // was left holding: rebuildSurfaceFromSeed reads all three off here, and
+        // a stale road direction lays a road through a square that has none.
+        pg.currentRoadDirection   = resolved.roadDirection || null;
+        pg.currentBridgeDirection = resolved.bridgeDirection || null;
+        pg.currentUnderBiome      = resolved.underBiome || null;
         // The hatch is stamped back on by PatreonRewards.applyMapFeatures at the
         // end of generation, so the party lands on it and can go straight back
         // down; rebuildSurfaceFromSeed reproduces the rest of the square.
@@ -6352,7 +6497,7 @@
             }
             if (procGenData.currentBiome === 'Ocean') {  // i18n-ignore  biome id
                 const item = $dataItems[DIVING_SUIT_ITEM_ID];
-                if (!$gameParty.hasItem(item)) { $gameMessage.add(T('WorldMapReturn.needDivingSuit')); return; }
+                if (!$gameParty.hasItem(item)) { noDivingSuit(); return; }
             }
 
             // Keep the surface square before the lower layer overwrites it.
@@ -6364,10 +6509,24 @@
             let lowerBiomeName = currentBiome.lowerLayer;
             if (procGenData.displayAsBeach) lowerBiomeName = 'CaveFlooded';
 
-            const lowerBiome = getBiomeByName(lowerBiomeName);
+            let lowerBiome = getBiomeByName(lowerBiomeName);
             if (!lowerBiome) {
                 logWarn(`switchLayer: Lower biome "${lowerBiomeName}" not found`);
                 procGenData.biomeLayerStack.pop(); return;
+            }
+            // The same re-stamp goDown makes, and for the same reason: on an
+            // alien world the ten underground archetypes are cut out of the
+            // SURFACE square's own tileset, and the record they are filed under
+            // carries a placeholder (AlienEarthLike is drawn with 321, the
+            // AlienUnderBurrow record under it says 347). The resolver applies
+            // the rule, so every OTHER route onto that square -- a window, a
+            // crossing, a rebuild -- answers with the surface sheet. Descending
+            // by this command stored the placeholder instead, which is one
+            // square drawn two different ways depending on how it was reached.
+            // A no-op on Earth and for every Earth lower layer.
+            {
+                const AT = window.ProcGenAlienTerrain;
+                if (AT && AT.undergroundBiomeFor) lowerBiome = AT.undergroundBiomeFor(currentBiome, lowerBiome);
             }
 
             procGenData.currentBiome          = lowerBiomeName;
@@ -7024,6 +7183,29 @@
                   window.GalaxySim.isAlienSurface());
     }
 
+    // The hand-authored pad of an offworld spaceport, when the party is standing on
+    // one. A pad is 64x64 and carries its planet's own biome because it IS one
+    // square of that planet's landing grid, drawn in the editor instead of
+    // generated: its borders are therefore the same borders map 636's squares have,
+    // and lead to the neighbouring square rather than nowhere. GalaxySim owns the
+    // question (spaceportSurfaceSite); nothing here re-derives it from a map id.
+    function spaceportPadNow() {
+        const GS = window.GalaxySim;
+        return (GS && GS.spaceportSurfaceSite) ? GS.spaceportSurfaceSite() : null;
+    }
+
+    // The spaceport standing on one square of the landing grid the party is on, or
+    // null. This is what makes a pad reachable on foot: walk back into its square
+    // from the square next door and the crossing hands the party the pad, instead
+    // of generating ground over the top of it.
+    function spaceportAtGridCell(gx, gy) {
+        const GS = window.GalaxySim;
+        if (!GS || !GS.spaceportAtCell) return null;
+        const planet = (GS.getOffEarthPlanet && GS.getOffEarthPlanet()) ||
+            (GS.getSurfacePlanet && GS.getSurfacePlanet());
+        return planet ? GS.spaceportAtCell(planet, gx, gy) : null;
+    }
+
     // Standing on another planet there is no world map to go back to: map 315 is
     // Earth, and the saved square is the planet's own landing-grid cell, so the
     // return would drop the party onto whatever Earth tile happens to share those
@@ -7380,6 +7562,14 @@
                 run: () => { $gameTemp._pendingWorldMapCommand = 'freeWalk'; },
             });
         }
+        // Before settling in for the night: the hours spent going over the
+        // square for whatever grows or lies on it (window.Forage, in
+        // Core/TimeDateSystem.js). A world square is a whole country, so it
+        // forages off the biome painted on the column the party is standing on.
+        rows.push({
+            label: T('WorldMapReturn.forage'),
+            run: () => { $gameTemp._pendingWorldMapCommand = 'forage'; },
+        });
         rows.push({
             label: T('WorldMapReturn.makeCamp'),
             run: () => { $gameTemp._pendingWorldMapCommand = 'makeCamp'; },
@@ -7411,7 +7601,12 @@
         // A map that holds the party says so rather than swallowing the press:
         // silence reads as a broken key.
         if (isReturnDisabled()) {
-            $gameMessage.add(T('WorldMapReturn.returnDisabledHere'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('WorldMapReturn.returnDisabledHere'), {
+                severity: 'warning',
+                key: 'worldmap:noreturn'  // i18n-ignore  dedupe key
+              });
+            }
             Input.clear();
             return;
         }
@@ -7462,7 +7657,12 @@
         watchNationMusicChange();
         if ($gameTemp._icebushBlockedMessage && !this.isBusy()) {
             $gameTemp._icebushBlockedMessage = false;
-            $gameMessage.add(T('WorldMapReturn.icebushBlocked'));
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('WorldMapReturn.icebushBlocked'), {
+                severity: 'warning',
+                key: 'terrain:icebush'  // i18n-ignore  dedupe key
+              });
+            }
         }
         if ($gameTemp._pendingWorldMapCommand && !this.isBusy()) {
             const cmd = $gameTemp._pendingWorldMapCommand;
@@ -7475,6 +7675,10 @@
                 PluginManager.callCommand($gameMap._interpreter, PLUGIN_PMT, 'goDown', {});
             } else if (cmd === 'goUp') {
                 PluginManager.callCommand($gameMap._interpreter, PLUGIN_PMT, 'goUp', {});
+            } else if (cmd === 'forage') {
+                // The square searched rather than slept on: the same hour list
+                // the rest menu offers, opened straight onto its forage page.
+                PluginManager.callCommand($gameMap._interpreter, 'TimeDateSystem', 'Forage', {});
             } else if (cmd === 'makeCamp') {
                 // A camp, not a room: the rest menu opens the same way, but the
                 // night also washes, feeds and reunites the party (CampRest, in
@@ -7903,6 +8107,18 @@
     // One refusal, shown at most once every few seconds. The border and the dome
     // are both touched by a HELD key, so without a gate the message would be
     // queued on every frame the party leans on the wall.
+    // Diving into an ocean square without the suit is refused in both the
+    // dig and the descend path, and the player can hold the key down, so it
+    // is keyed and says its piece once.
+    function noDivingSuit() {
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('WorldMapReturn.needDivingSuit'), {
+                severity: 'warning',
+                key: 'terrain:nodivingsuit'  // i18n-ignore  dedupe key
+            });
+        }
+    }
+
     let lastLockedNoticeAt = 0;
     function showLockedNotice(text) {
         const now = Date.now();
@@ -7912,7 +8128,11 @@
         if (window.ParchmentToast && window.ParchmentToast.show) {
             window.ParchmentToast.show(text);
         } else if (typeof $gameMessage !== 'undefined' && !$gameMessage.isBusy()) {
-            $gameMessage.add(text);
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(text, {
+                severity: 'info'
+              });
+            }
         }
     }
 

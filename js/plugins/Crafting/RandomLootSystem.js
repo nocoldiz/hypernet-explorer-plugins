@@ -25,14 +25,18 @@
  * getWeapon              # Get a random weapon
  * * --- HOW RARITY IS CALCULATED ---
  * The plugin calculates a "Rarity Score" (0-100).
- * Formula: (Game Variable 2) + (Party Median Level)
+ * Formula: (Party Median Level, met halfway by the local difficulty)
+ *           + (current Omega Tower floor x 1.25)
  * * 1. Party Median Level:
  * As your party levels up, loot automatically improves.
- * * 2. Game Variable 2 (Modifier):
- * Use this variable to add "Map Difficulty" or "Luck".
- * - Set to 0: Loot is based purely on party level.
- * - Set to 20: Loot is equivalent to a party 20 levels higher.
- * - Set to -20: Loot is worse (good for low-level areas).
+ * * 2. Local difficulty (nation / biome spawn band on the procedural map):
+ * Hard ground pays better, but only up to the party's own level plus 15:
+ * a level 1 party in a level 60 country finds that country's crates, not
+ * its legends.
+ * * 3. Omega Tower floor:
+ * The floor the party is standing on RIGHT NOW, up or down the shaft, and
+ * it outweighs the party's own level. Not how deep they have ever been:
+ * leaving the tower or dying puts it back to 0 on its own.
  * * Score Benchmarks:
  * - 0-20: Almost all Common items
  * - 25-45: Mix of Common and Uncommon
@@ -106,20 +110,39 @@
         };
     }
 
-    // How far into the Omega Tower the party has been, counted in floors. The
-    // shaft runs both ways from the ground: a hundred floors climbed and
-    // ninety-two descended are the same kind of achievement, so the deepest
-    // lower floor reached (window.DungeonFloors) is added to the highest upper
-    // one and the pair feeds the rarity equation together.
-    function getMaxDungeonFloor() {
-        const climbed = (typeof $gameVariables !== 'undefined' && $gameVariables)
-            ? ($gameVariables.value(MAX_FLOOR_VARIABLE_ID) || 0)
-            : 0;
-        const descended = (window.DungeonFloors && typeof window.DungeonFloors.depthReached === 'function')
-            ? (window.DungeonFloors.depthReached() || 0)
-            : 0;
-        return climbed + descended;
+    // Which floor of the Omega Tower the party is standing on RIGHT NOW,
+    // counted in floors away from the ground. How deep they have ever been is
+    // not the question: a crate on floor 5 pays like floor 5 even to a party
+    // that has seen floor 90, and the count answers 0 the moment they are off
+    // the tower, so dying or walking out of it resets the skew by itself. The
+    // shaft runs both ways from the ground and the two halves count the same,
+    // so floor -60 is as deep as floor 60 is high.
+    function getCurrentTowerFloor() {
+        const DF = window.DungeonFloors;
+        if (DF) {
+            if (typeof DF.currentFloor === 'function') {
+                const lower = Math.abs(DF.currentFloor() || 0);
+                if (lower > 0) return lower;
+            }
+            if (typeof DF.currentAuthoredFloor === 'function') {
+                const upper = Math.abs(DF.currentAuthoredFloor() || 0);
+                if (upper > 0) return upper;
+            }
+        }
+        // Without the floor system the upper tower's own floor variable is the
+        // only answer left, and it only counts while the party is on a floor.
+        if (typeof $gameVariables !== 'undefined' && $gameVariables &&
+                DF && typeof DF.isDungeonMap === 'function' && DF.isDungeonMap()) {
+            return Math.abs($gameVariables.value(MAX_FLOOR_VARIABLE_ID) || 0);
+        }
+        return 0;
     }
+
+    // The tower is the one place that outweighs the party carrying the crate:
+    // a level 1 party on floor 60 is paid by the floor, not by its own level.
+    // Each floor is worth slightly more than a level of the party's own, which
+    // is what makes the climb the thing that decides the reward.
+    const TOWER_FLOOR_WEIGHT = 1.25;
 
     const START_YEAR_MIN = 2001;
     const START_YEAR_MAX_LOOT = 2012;
@@ -189,6 +212,11 @@
         return Math.max(getPartyMedianLevel(), getWorldStartingLevel());
     }
 
+    // How far above its own level a party may be paid by the ground it stands
+    // on. Beyond this the area's difficulty stops counting: the reward is the
+    // party's, not the map's.
+    const AREA_LEVEL_MARGIN = 15;
+
     // 10-level brackets: Lv 1-10 -> 0, 11-20 -> 1, ... Higher brackets unlock rarer tiers
     // AND reshuffle the loot pool, so the same spot yields a different/rarer item per bracket.
     function getLevelBracket() {
@@ -226,6 +254,28 @@
     }
     
     // WEIGHT CALCULATION
+    //
+    // The ladder in Rarity.json (50 / 30 / 15 / 4 / 1) is the shape of every
+    // roll: a rarer tier is always rarer than the one under it, at every level
+    // and in every country. Influence does not reorder that ladder, it only
+    // flattens it - each step up the tiers is multiplied by RARITY_LIFT at full
+    // influence, so an Epic that is 4 against 50 in a starting country is 32
+    // against 50 at the top of the world: reachable, never the usual find.
+    //
+    // The old curve crossed over instead: past an influence of 50 it weighted
+    // Legendary ABOVE Common, and since a country's window feeds the influence
+    // the moment the party stood in a middling nation the crates started paying
+    // in purple. One bracket must never be able to invert the ladder.
+    const RARITY_LIFT = 2.0;   // how much a tier step opens up at full influence
+
+    // The ladder weight of a tier, from Rarity.json where it says so and from
+    // the same geometric fall where a modded table leaves it out.
+    function tierBaseWeight(tierIndex) {
+        const declared = Number((RARITY_TIERS[tierIndex] || {}).weight);
+        if (Number.isFinite(declared) && declared > 0) return declared;
+        return 50 * Math.pow(0.35, tierIndex);
+    }
+
     function calculateItemWeight(itemPrice, rarityInfluence) {
         // Determine which tier this item belongs to
         let tierIndex = 0;
@@ -235,22 +285,12 @@
                 break;
             }
         }
-        
+
         // Normalize influence to 0-1 range
-        const influence = rarityInfluence / 100;
-        
-        // Calculate tier position (0 = Common, 1 = Legendary)
-        const tierPower = tierIndex / (RARITY_TIERS.length - 1);
-        
-        // Use smooth power curve for weight calculation
-        let weight = Math.pow(influence, tierPower * 3) * Math.pow(1 - influence, (1 - tierPower) * 3) * 1000;
-        
-        // Boost Uncommon items by 50% to make them more common
-        if (tierIndex === 1) {
-            weight *= 1.5;
-        }
-        
-        return Math.max(1, weight);
+        const influence = Math.max(0, Math.min(1, rarityInfluence / 100));
+
+        const lift = Math.pow(1 + (RARITY_LIFT - 1) * influence, tierIndex);
+        return Math.max(1, tierBaseWeight(tierIndex) * lift * 20);
     }
     
     // Get random item based on rarity influence.
@@ -286,7 +326,7 @@
         // Discrete level brackets (every 10 levels) plus the deepest dungeon floor reached.
         // Higher brackets/floors push the weighting toward rarer tiers.
         const levelBracket = getLevelBracket();
-        const maxFloor = getMaxDungeonFloor();
+        const towerFloor = Math.round(getCurrentTowerFloor() * TOWER_FLOOR_WEIGHT);
         // Cave chests are rare but carry rare loot: the procedural chest placer
         // sets $gameSystem._lootRarityBonus and it applies only on the proc map.
         const onProcMap = typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId() === 636;
@@ -312,12 +352,38 @@
                 typeof window.BSE.Helpers.getSpawnBand === 'function') {
             try {
                 const band = window.BSE.Helpers.getSpawnBand();
-                if (band && typeof band.center === 'number') {
-                    baseLootLevel = Math.max(baseLootLevel, Math.round(band.center));
+                let groundLevel = (band && typeof band.center === 'number')
+                    ? band.center : null;
+                // Under a country it is the MEDIAN of what actually roams there
+                // that pays, not the middle of the window it was dealt. The two
+                // are not the same number: the window is a promise about the
+                // roster and the median is what the roster turned out to hold,
+                // and paying on the window handed purple crates to ground that
+                // was still fielding its own small fry. The median is also the
+                // one number the atlas and the travel book print, so the crate
+                // and the card now agree.
+                if (band && band.nation &&
+                        typeof window.BSE.Helpers.getNationMedianLevel === 'function') {
+                    const med = window.BSE.Helpers.getNationMedianLevel(band.nation);
+                    if (med > 0) groundLevel = med;
+                }
+                if (groundLevel !== null) {
+                    // The ground can only pay so far above the party carrying
+                    // the crate home. A level 1 party that wanders into a level
+                    // 60 country finds that country's crates, never its
+                    // legends: the ground is first capped at the party's own
+                    // level plus AREA_LEVEL_MARGIN, then met halfway, so hard
+                    // ground still reads as a step up without handing the top
+                    // of the shelf to a party that cannot hold it.
+                    const partyLevel = getEffectiveLootLevel();
+                    const capped = Math.min(Math.round(groundLevel),
+                        partyLevel + AREA_LEVEL_MARGIN);
+                    const shared = Math.round((partyLevel + capped) / 2);
+                    baseLootLevel = Math.max(baseLootLevel, shared);
                 }
             } catch (e) { /* safe fallback to party level */ }
         }
-        let rarityInfluence = baseLootLevel + maxFloor + lootBonus + appraisal + yearBonus;
+        let rarityInfluence = baseLootLevel + towerFloor + lootBonus + appraisal + yearBonus;
         rarityInfluence = Math.max(0, Math.min(100, rarityInfluence));
         
         // Calculate weighted probability for each item

@@ -4,26 +4,134 @@
     "invertY": "Inverti asse Y telecamera"
   },
   "verbs": {
-    "confirm": ["conferma", "ok", "accetta", "applica", "fatto", "si", "avvia", "seleziona"],
-    "use": ["usa", "leggi", "mangia", "bevi", "indossa", "impara", "leggilo"],
-    "buy": ["compra", "acquista", "ordina", "assumi", "affitta"],
-    "sell": ["vendi", "scambia", "consegna"],
-    "equip": ["equipaggia", "impugna", "monta", "installa"],
-    "craft": ["crea", "cucina", "fermenta", "forgia", "costruisci", "produci", "ricerca"],
-    "continue": ["continua", "prosegui", "vai", "viaggia", "entra", "gioca", "distribuisci", "lancia"],
-    "cancel": ["annulla", "no", "ferma"],
-    "back": ["indietro", "torna", "ritorna"],
-    "close": ["chiudi", "congeda", "ok, chiudi"],
-    "exit": ["esci", "abbandona", "termina", "disconnetti", "riaggancia"],
-    "discard": ["scarta", "getta", "butta"],
-    "drop": ["lascia", "posa", "rilascia"],
-    "delete": ["elimina", "cancella", "azzera", "svuota"],
-    "remove": ["rimuovi", "disequipaggia", "togli", "espelli"],
-    "sort": ["ordina", "riordina", "disponi"],
-    "filter": ["filtra", "cerca", "trova"],
-    "favorite": ["preferito", "preferita", "fissa", "stella"],
-    "prev": ["precedente", "prec", "uno indietro", "prima"],
-    "next": ["successivo", "avanti", "dopo", "salta"]
+    "confirm": [
+      "conferma",
+      "ok",
+      "accetta",
+      "applica",
+      "fatto",
+      "si",
+      "avvia",
+      "seleziona"
+    ],
+    "use": [
+      "usa",
+      "leggi",
+      "mangia",
+      "bevi",
+      "indossa",
+      "impara",
+      "leggilo"
+    ],
+    "buy": [
+      "compra",
+      "acquista",
+      "ordina",
+      "assumi",
+      "affitta"
+    ],
+    "sell": [
+      "vendi",
+      "scambia",
+      "consegna"
+    ],
+    "equip": [
+      "equipaggia",
+      "impugna",
+      "monta",
+      "installa"
+    ],
+    "craft": [
+      "crea",
+      "cucina",
+      "fermenta",
+      "forgia",
+      "costruisci",
+      "produci",
+      "ricerca"
+    ],
+    "continue": [
+      "continua",
+      "prosegui",
+      "vai",
+      "viaggia",
+      "entra",
+      "gioca",
+      "distribuisci",
+      "lancia"
+    ],
+    "cancel": [
+      "annulla",
+      "no",
+      "ferma"
+    ],
+    "back": [
+      "indietro",
+      "torna",
+      "ritorna"
+    ],
+    "close": [
+      "chiudi",
+      "congeda",
+      "ok, chiudi"
+    ],
+    "exit": [
+      "esci",
+      "abbandona",
+      "termina",
+      "disconnetti",
+      "riaggancia"
+    ],
+    "discard": [
+      "scarta",
+      "getta",
+      "butta"
+    ],
+    "drop": [
+      "lascia",
+      "posa",
+      "rilascia"
+    ],
+    "delete": [
+      "elimina",
+      "cancella",
+      "azzera",
+      "svuota"
+    ],
+    "remove": [
+      "rimuovi",
+      "disequipaggia",
+      "togli",
+      "espelli"
+    ],
+    "sort": [
+      "ordina",
+      "riordina",
+      "disponi"
+    ],
+    "filter": [
+      "filtra",
+      "cerca",
+      "trova"
+    ],
+    "favorite": [
+      "preferito",
+      "preferita",
+      "fissa",
+      "stella"
+    ],
+    "prev": [
+      "precedente",
+      "prec",
+      "uno indietro",
+      "prima"
+    ],
+    "next": [
+      "successivo",
+      "avanti",
+      "dopo",
+      "salta"
+    ]
   },
   "tips": {
     "camera": "Telecamera",
@@ -32,5 +140,14 @@
     "leave": "Esci",
     "act": "Agisci",
     "view": "Vista"
+  },
+  "text": {
+    "shift": "Maiusc",
+    "space": "Spazio",
+    "back": "Cancella",
+    "clear": "Svuota",
+    "done": "Fatto",
+    "cancel": "Annulla",
+    "tipKey": "Tasto"
   }
 }

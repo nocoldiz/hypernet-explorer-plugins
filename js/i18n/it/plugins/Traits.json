@@ -35,7 +35,7 @@
   "pts": "pt",
   "refundWord": "rimborso",
   "searchPlaceholder": "Cerca tratti…",
-  "packsHint": "Un pacchetto \u00e8 un punto di partenza: passa alla modalit\u00e0 Dettagliata per aggiungere, togliere o sostituire i suoi tratti.",
+  "packsHint": "Un pacchetto è un punto di partenza: passa alla modalità Dettagliata per aggiungere, togliere o sostituire i suoi tratti.",
   "packs": {
     "soldier": {
       "name": "Vecchio Soldato",
@@ -47,7 +47,7 @@
     },
     "outlaw": {
       "name": "Fuorilegge",
-      "description": "Mani leggere, scrupoli ancora pi\u00f9 leggeri e un nome che qualcuno sta ancora cercando."
+      "description": "Mani leggere, scrupoli ancora più leggeri e un nome che qualcuno sta ancora cercando."
     },
     "healer": {
       "name": "Guaritore",
@@ -63,7 +63,7 @@
     },
     "noble": {
       "name": "Di Nobili Natali",
-      "description": "Una casata, un'eredit\u00e0 e modi che aprono le porte."
+      "description": "Una casata, un'eredità e modi che aprono le porte."
     },
     "wanderer": {
       "name": "Viandante",
@@ -92,6 +92,22 @@
     "tinkerer": {
       "name": "Artigiano",
       "description": "Forgia, banco da lavoro e una giornata che nessun altro reggerebbe."
+    },
+    "predator": {
+      "name": "Predatore solitario",
+      "description": "Caccia da solo, marca un territorio e non lo divide."
+    },
+    "packbeast": {
+      "name": "Bestia da branco",
+      "description": "Legge un branco come la gente legge una stanza, e ha già scelto chi comanda."
+    },
+    "scavenger": {
+      "name": "Spazzino",
+      "description": "Mangia gli avanzi, scava dove serve e scappa da quasi tutto."
+    },
+    "armoured": {
+      "name": "Cosa corazzata",
+      "description": "Pelle troppo spessa da tagliare, un morso da evitare e un lungo sonno invernale."
     }
   }
 }

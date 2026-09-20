@@ -56,11 +56,11 @@
     "Dicembre"
   ],
   "confirmDelete": "Eliminare il mondo \"{name}\" con tutta la sua storia, NPC e salvataggi? Non può essere annullato.",
-  "enemyFloor": "Lo Squishing va avanti da un po': la fascia di livello dei nemici di ogni nazione è salita di {level} livelli. Belgio e Regno Unito sono l'eccezione e restano dal livello 1 al 15.",
-  "enemyFloorOpen": "La fauna è fuori controllo: la fascia di livello dei nemici di ogni nazione è salita di {level} livelli, e fuori dalla Terra vaga qualunque cosa fino al livello {ceiling}. Belgio e Regno Unito restano dal livello 1 al 15.",
-  "enemyFloorCollapse": "Il paradosso si è compiuto: la fascia di livello dei nemici di ogni nazione è salita di {level} livelli, e fuori dalla Terra non resta nulla sotto il livello {floor}. Belgio e Regno Unito restano dal livello 1 al 15.",
+  "enemyFloor": "La fascia di livello dei nemici di ogni nazione e salita di {level} livelli. Belgio e Regno Unito restano ai livelli da 1 a 15.",
+  "enemyFloorOpen": "La fascia di livello dei nemici di ogni nazione e salita di {level} livelli, e fuori dalla Terra vaga qualsiasi cosa fino al livello {ceiling}. Belgio e Regno Unito restano ai livelli da 1 a 15.",
+  "enemyFloorCollapse": "La fascia di livello dei nemici di ogni nazione e salita di {level} livelli, e fuori dalla Terra non resta nulla sotto il livello {floor}. Belgio e Regno Unito restano ai livelli da 1 a 15.",
   "storyTutorialDisabled": "La modalità storia è scritta per l'anno 2001. Iniziare nel {year} disattiva il tutorial: la storia si apre direttamente sul suo punto di partenza, senza l'introduzione guidata.",
-  "earthLost": "Non c'è più la Terra. Nibiru l'ha colpita il 21 dicembre 2012 e la mappa del mondo se n'è andata con lei: nella sua orbita resta la Torre Omega, e tutto ciò che ti avrebbe portato in superficie ti porta lì.",
+  "earthLost": "Non c'e nessuna Terra. Nibiru l'ha colpita il 21 dicembre 2012 e la mappa del mondo e andata con lei. La Torre Omega sta nella sua orbita, e tutto cio che ti porterebbe in superficie ti porta li.",
   "startingLevel": "Livello iniziale",
   "lowerLevel": "Abbassa il livello",
   "raiseLevel": "Alza il livello",
@@ -77,13 +77,13 @@
     "death": "Mondo morto"
   },
   "populationNotes": {
-    "normal": "La storia com'è andata. Ognuno è chi è e il mondo è popolato come è stato scritto.",
-    "chaos": "Niente sta dove era stato messo. Ogni incontro e' pescato dall'intero bestiario, ogni volto nella folla e' quello di uno sconosciuto, ogni negozio ha merce e prezzi casuali, e un livello insegna quello che il mondo ha voglia di insegnare. Cosa sia una cosa non cambia mai: cambia solo quale incontri, e quanto costa.",
-    "goblin": "Sono tutti goblin. Esistono solo volti, busti e archetipi goblin, ogni personaggio che crei lo è, e i goblin sono di gran lunga la cosa più comune che si aggira sulla mappa.",
-    "monster": "Qui non cammina nulla di umano. Persone, elfi e goblin sono spariti dalla folla, dal guardaroba e dalla fauna; il mondo è popolato da ogni altro archetipo esistente.",
-    "empty": "Non è rimasto nessuno. Niente persone, niente negozianti, niente notizie, niente epidemie, niente legge e niente lavoro; la storia si ferma al 1 gennaio 2000, gli immobili non valgono nulla e le città stanno tornando verdi.",
-    "zombie": "I morti si sono alzati. Nove persone su dieci non sono più persone: dove ci sarebbe stato qualcuno c'è invece un non morto, ancora fermo dove stava lui.",
-    "death": "Non è rimasto nessuno, e non è rimasto niente. Tutto ciò che già manca in un mondo vuoto manca anche qui, e in più è sparita ogni creatura vagante: nessun mostro, nessuna bestia, nulla ad attendere in un dungeon, su una mappa procedurale o su una costruita a mano. Qualunque fauna ci fosse una volta, ora c'è solo silenzio."
+    "normal": "La storia com'e andata. Il mondo e popolato come scritto.",
+    "chaos": "Ogni incontro e estratto dall'intero bestiario, ogni PNG e uno sconosciuto casuale, ogni negozio ha scorte e prezzi casuali e un passaggio di livello insegna un'abilita casuale. Cosa sia ogni cosa non cambia mai, cambia solo quale incontri e quanto costa.",
+    "goblin": "Sono tutti goblin. Esistono solo volti, busti e archetipi goblin, ogni personaggio che crei e un goblin e i goblin sono la creatura piu comune sulla mappa.",
+    "monster": "Non compaiono umani, elfi o goblin, ne tra la folla, ne nel guardaroba, ne nella fauna. Il mondo e popolato da tutti gli altri archetipi.",
+    "empty": "Non e rimasto nessuno. Nessun negoziante, notizia, epidemia, legge o lavoro; la storia si ferma al 1 gennaio 2000 e le proprieta non valgono nulla.",
+    "zombie": "Nove persone su dieci sono sostituite da una creatura non morta che sta dove sarebbero state loro.",
+    "death": "Non resta nessuno e nulla. Manca tutto cio che gia manca in un mondo vuoto e non resta alcuna creatura vagante: nessun mostro, nessuna bestia, niente nei dungeon o su qualsiasi mappa."
   },
   "populationLocked": "Scelta una sola volta, alla creazione: un mondo non può essere ripopolato in seguito.",
   "magicalLevel": "Magia",
@@ -99,5 +99,5 @@
     "severed": "La magia è stata cancellata dal mondo. Incantesimi, oggetti incantati e creature magiche non compaiono più, e la barra MP è rimossa. Il gruppo mantiene solo ciò che riceve alla creazione.",
     "unbound": "La magia dilaga in tutto il mondo. Le armi sono incantate, le malattie sono maledizioni e le creature mutano per l'energia delle leyline. Negozi e bottini non contengono equipaggiamento ordinario."
   },
-  "magicalLocked": "Scelta una sola volta, alla creazione, e indipendente dalla linea temporale: qualsiasi combinazione delle due è un mondo che puoi creare."
+  "magicalLocked": "Si sceglie una volta sola alla creazione ed e indipendente dalla linea temporale. Si puo creare qualsiasi combinazione delle due."
 }

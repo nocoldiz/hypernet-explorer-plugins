@@ -373,6 +373,9 @@
     const labelKeys = voiceLabelKeys();
     const rows = [];
     for (const hotkey of table) {
+      // Menu-only keys (the digits, which are the item hotbar on the field)
+      // never fire out here, so the sheet must not advertise them.
+      if (hotkey.menuOnly) continue;
       const labelKey = labelKeys[hotkey.symbol] || MENU_HOTKEY_LABELS[hotkey.symbol];
       if (!labelKey) continue;
       const pad = hotkey.symbol === "sleep_menu" ? PAD.wait : PAD.quickMenu;

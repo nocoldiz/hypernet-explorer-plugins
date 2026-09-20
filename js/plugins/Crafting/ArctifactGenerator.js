@@ -60,6 +60,34 @@ const ARMOR_START_ID = 1501;
 const ARMOR_END_ID = 1550;
 const ARMOR_COUNT = ARMOR_END_ID - ARMOR_START_ID + 1;
 
+// The generator has a taxonomy of its own (the noun pools in the Artifacts
+// i18n file: sword, spear, axe, mace, bow, dagger, staff, gun, fist / helm,
+// cuirass, shield, gauntlet, greaves). It is NOT the database numbering, so
+// every rolled piece is translated into this project's own weapon type, equip
+// type and armour type before it is written to the row. Without this a rolled
+// dagger was filed as a staff and a pair of greaves took an equip type the
+// game does not have, so it fitted no slot at all.
+const ETYPE_WEAPON = 1, ETYPE_OFFHAND = 2, ETYPE_HEAD = 3, ETYPE_BODY = 4, ETYPE_GEAR = 5;
+const ATYPE_LIGHT = 3, ATYPE_EQUIPMENT = 5, ATYPE_SHIELD = 6;
+const WTYPE_OF_KIND = {
+    1: 2,  // sword  -> Sword
+    2: 12, // spear  -> Spear
+    3: 4,  // axe    -> Axe
+    4: 3,  // mace   -> Heavy
+    5: 7,  // bow    -> Bow
+    6: 1,  // dagger -> Light
+    7: 6,  // staff  -> Staff
+    8: 9,  // gun    -> Gun
+    9: 10  // fist   -> Claw
+};
+const ARMOR_SLOT_OF_KIND = {
+    1: { etypeId: ETYPE_HEAD, atypeId: ATYPE_LIGHT },      // helm
+    2: { etypeId: ETYPE_BODY, atypeId: ATYPE_LIGHT },      // cuirass
+    3: { etypeId: ETYPE_OFFHAND, atypeId: ATYPE_SHIELD },  // shield
+    4: { etypeId: ETYPE_GEAR, atypeId: ATYPE_EQUIPMENT },  // gauntlet
+    5: { etypeId: ETYPE_GEAR, atypeId: ATYPE_EQUIPMENT }   // greaves
+};
+
 // Name generation components with expanded bizarre naming conventions
 const artifactPrefixes = () => T.pool("Artifacts.artifact.prefix");
 
@@ -223,7 +251,7 @@ function initializeArmorTemplates() {
         $dataArmors[id].iconIndex = 128 + (i % 16); // Assign a generic armor icon
         $dataArmors[id].price = 0;
         $dataArmors[id].atypeId = 0;
-        $dataArmors[id].etypeId = 1; // Default to body armor
+        $dataArmors[id].etypeId = ETYPE_BODY; // an unfilled row is still a piece of armour
         $dataArmors[id].params = [0, 0, 0, 0, 0, 0, 0, 0]; // All stats at 0
         $dataArmors[id].traits = [];
         $dataArmors[id].isGenerated = false;
@@ -1086,7 +1114,7 @@ function generateWeapon(level, typeId) {
     $dataWeapons[id].price = price;
     $dataWeapons[id].params = params;
     $dataWeapons[id].traits = traits;
-    $dataWeapons[id].wtypeId = typeId;
+    $dataWeapons[id].wtypeId = WTYPE_OF_KIND[typeId] || WTYPE_OF_KIND[1];
     $dataWeapons[id].meta = {
         Category: "Procedural", // i18n-ignore: note-tag category id
         Procedural: true,
@@ -1116,13 +1144,7 @@ function generateArmor(level, typeId) {
     }
     
     // Set etypeId based on type
-    const etypeIdMap = {
-        1: 3, // Head
-        2: 4, // Body
-        3: 2, // Shield
-        4: 5, // Arms
-        5: 6  // Legs
-    };
+    const slot = ARMOR_SLOT_OF_KIND[typeId] || ARMOR_SLOT_OF_KIND[2];
     
     // Generate base stats based on level
     const baseDefense = Math.floor(3 + (level * 1.2));
@@ -1166,8 +1188,8 @@ function generateArmor(level, typeId) {
     $dataArmors[id].price = price;
     $dataArmors[id].params = params;
     $dataArmors[id].traits = traits;
-    $dataArmors[id].atypeId = 1; // Default to all armor types can equip
-    $dataArmors[id].etypeId = etypeIdMap[typeId];
+    $dataArmors[id].atypeId = slot.atypeId;
+    $dataArmors[id].etypeId = slot.etypeId;
     $dataArmors[id].meta = {
         Category: "Procedural", // i18n-ignore: note-tag category id
         Procedural: true,
