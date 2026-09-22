@@ -1,10 +1,62 @@
+0.6.32a
+
+Added:
+ - each omega tower floor is its own procedural world
+ - moon base, Titania and Zeta Reticuli as destination for the rocket launch
+ - hexapedia pages covering the most powerful spells in the game
+ - hexapedia pages for every lore topic, learned by visiting them
+ - off button in the radio
+ - adventurer parties of 1 to 3 roam and fight on omega tower floors
+ - PrevFloor and NextFloor events on every tower level map
+ - flip furniture sprites left to right when placing
+ - diary records enchanting, rocket launches and ten more systems
+ - crimes only charged when a witness reports them
+ - kick out of the party option in dynamics menu
+
+Changed:
+ - wrestling app on desktop by default, wrestling channels on the TV guide
+ - llm mode limited to in-game year, world facts and personality in prompts
+ - reworked all help topics
+ - smoother omega tower level banding above floor 10
+ - npcs walk their town, travel between towns, and crowd offworld spaceports
+ - autoidle explorer reworked to hold intentions and read the world
+ - stockbusters orders go straight to inventory on arrival
+ - party dynamics reworked with character export to JSON, card and QR
+ - world map reworked: white names, picked square, country highlight, wider zoom
+ - optimized the fog of war system
+ - sandbox mode unlocks all tower levels in the elevator
+ - autoidle explorer experimental mode reworked with map-wide knowledge and multimap routes
+ - boss enemy events do not respawn, defeat persists across the world
+ - update items weapons armours skills italian i18n
+ - origin text shows bracketed important words in gold
+ - omega tower floors 1 to 10 rebalanced to lower enemy levels
+ - bust name shown below the bust
+ - classes start in two thematic armour pieces, not the fate-tangle chip
+
+Fixed:
+ - autoidle no longer walks into a map and straight back out
+ - name tag going off the dialogue box
+ - made satellites not landable on
+ - ending a planet flyby with t no longer crashes
+ - preset and VIP busts never picked for anomaly map adventures
+ - party member not added properly over 3 members, now sent to reserves
+ - solomon ritual dates and rule of 80 lore made consistent
+ - party banter quotes prices in euros, not gold
+
+
+
 0.6.31a
 
 Changed:
- - build script and steam upload no longer include gguf models
+ - reworked omega tower floor pool, enemy levels and lift
+ - builds drop gguf models and keep the mac and linux launchers
  - patron coordinates frozen, never to move again
 
 Fixed:
+ - fix conflicts between plugins
+ - classes no longer sealed out of clothes, robe, armour and gear slots
+ - stairs no longer flash the wrong sprite when a floor loads
+ - desktop icons move on the first drag
  - materials no longer have weight
 
 0.6.30a

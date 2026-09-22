@@ -50,6 +50,7 @@
  * - window.CharacterPresets.getAvailableCharacterPresets()
  * - window.CharacterPresets.retirePartyMember(actorId)
  * - window.CharacterPresets.unretirePartyMember(presetId)
+ * - window.CharacterPresets.discardRetiredPreset(presetId)
  * - window.CharacterPresets.getAvailableRetiredPresets()
  * - window.CharacterPresets.getPlayerPresets()
  * - window.CharacterPresets.savePlayerPresetFromActor(actor)
@@ -3214,6 +3215,27 @@
     return { ok: true, actorId, preset };
   }
 
+  /**
+   * Take a reserve dossier off the bench for good without anybody joining the
+   * party: the Dynamics board dismisses an inactive companion back into the
+   * world they were recruited from (window.PartyReturn, NPCSystemParty.js), and
+   * a dossier left behind would let another savegame call a person the world is
+   * carrying again back onto the road. The id is filed as spent, exactly as a
+   * recall files it, so it is never dealt to a later retirement.
+   * @param {number} presetId - Reserve dossier to discard
+   * @returns {boolean} Whether a dossier was discarded
+   */
+  function discardRetiredPreset(presetId) {
+    if (!$gameSystem) return false;
+    const held = getRetiredPresets();
+    if (!held.some((entry) => entry.id === presetId)) return false;
+    // Both writes assign a new array: the fields are WorldManager getter/setter
+    // pairs backed by world.json.
+    $gameSystem._retiredCharacterPresets = held.filter((entry) => entry.id !== presetId);
+    $gameSystem._usedCharacterPresets = getUsedPresetIds().concat(presetId);
+    return true;
+  }
+
   //=============================================================================
   // Character Creation Tracking Functions
   //=============================================================================
@@ -3655,6 +3677,971 @@
   // Exports to Global Namespace
   //=============================================================================
 
+  //=============================================================================
+  // Taking a character out of the game, and bringing one back in
+  //=============================================================================
+  // A dossier is the game's own description of a person (buildRetiredPreset
+  // above builds one out of a live party member), so it is also the thing worth
+  // handing to somebody else. Three ways out, all of them the same payload:
+  //
+  //   characters/<name>.json  the dossier as text, the one to read and edit
+  //   characters/<name>.png   a card showing the person, with the same dossier
+  //                           written into the PNG itself (a tEXt chunk), so
+  //                           the picture IS the save file
+  //   characters/<name>.qr.png a QR code of the compact dossier, for a phone
+  //
+  // and one way back in: everything in that folder the game has not seen is
+  // offered as a dossier to play (window.CharacterExport.importAll).
+  //
+  // The folder is characters/ beside the game, next to save/ and mods/, so a
+  // character can be dropped in by hand.
+
+  const EXPORT_FORMAT = 1;
+  const EXPORT_DIR = "characters";
+
+  function exportFs() {
+    try {
+      if (!Utils.isNwjs || !Utils.isNwjs()) return null;
+      return { fs: require("fs"), path: require("path") };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * The characters folder beside the game, made if it is not there yet.
+   * @returns {string} Absolute path, or "" when there is no filesystem
+   */
+  function exportFolder() {
+    const io = exportFs();
+    if (!io) return "";
+    try {
+      const base = io.path.dirname(process.mainModule.filename);
+      const dir = io.path.join(base, EXPORT_DIR);
+      if (!io.fs.existsSync(dir)) io.fs.mkdirSync(dir, { recursive: true });
+      return dir;
+    } catch (e) {
+      console.error("CharacterExport: the characters folder could not be opened", e);
+      return "";
+    }
+  }
+
+  // A file name that survives every filesystem: letters, digits, dash and
+  // underscore, and never empty.
+  function exportSlug(name) {
+    const slug = String(name || "")
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .replace(/[^A-Za-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    return slug || "character"; // i18n-ignore: file name
+  }
+
+  // The name two exports of the same person share, so re-exporting overwrites
+  // rather than filling the folder with copies, and so an import can tell
+  // whether this world has already taken them in.
+  function exportUid(preset) {
+    const seed = [preset.name, preset.classId, preset.level, preset.sprite,
+      (preset.skills || []).length, (preset.traits || []).join("-")].join("|");
+    let hash = 2166136261;
+    for (let i = 0; i < seed.length; i++) {
+      hash ^= seed.charCodeAt(i);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return "hx" + hash.toString(36); // i18n-ignore: identifier
+  }
+
+  /**
+   * The dossier of a live party member, ready to be written out. Built by the
+   * same snapshotter the reserves are filled with, so an exported character and
+   * a benched one are the same description of the same person.
+   * @param {Game_Actor} actor - Party member to describe
+   * @returns {object} Export payload
+   */
+  function exportPayloadFromActor(actor) {
+    return exportPayload(buildRetiredPreset(actor));
+  }
+
+  /**
+   * Wrap a dossier as a file payload: the dossier itself plus what it takes to
+   * read it back (the format, who wrote it and when).
+   * @param {object} preset - Dossier
+   * @returns {object} Export payload
+   */
+  function exportPayload(preset) {
+    const dossier = JSON.parse(JSON.stringify(preset || {}));
+    // An imported dossier is given an id of this game's own when it lands, so
+    // the id it left with says nothing and is not carried.
+    delete dossier.id;
+    delete dossier.retired;
+    return {
+      format: EXPORT_FORMAT,
+      kind: "character", // i18n-ignore: payload tag
+      uid: exportUid(preset || {}),
+      game: "Hypernet Explorer", // i18n-ignore: payload tag
+      character: dossier
+    };
+  }
+
+  // The same dossier with everything a QR code cannot afford taken out: prose
+  // (the lore line), the date it was benched and the home coordinates, which
+  // mean nothing in another world anyway. What is left is ids and names, and
+  // that fits a QR with room to spare.
+  function exportCompactPayload(payload) {
+    const slim = Object.assign({}, payload.character);
+    delete slim.lore;
+    delete slim.retiredAtMin;
+    delete slim.retiredDate;
+    delete slim.switches;
+    delete slim.mapId;
+    delete slim.x;
+    delete slim.y;
+    return Object.assign({}, payload, { character: slim, compact: true });
+  }
+
+  //---------------------------------------------------------------------------
+  // QR codes
+  //---------------------------------------------------------------------------
+  // A complete encoder, byte mode, error correction level L, versions 1 to 40,
+  // so a whole dossier (about 1.1 KB of JSON) goes into one code: byte mode at
+  // level L holds 2953 bytes. The tables below are the ones from the standard
+  // and are checked by test/test_character_export.js, which re-derives the
+  // total codeword count of every version from the module geometry and reads
+  // back every block's Reed-Solomon syndromes.
+
+  // version -> [data codewords, EC codewords per block,
+  //             group 1 blocks, group 1 data codewords,
+  //             group 2 blocks, group 2 data codewords]
+  const QR_EC_L = [
+    null,
+    [19, 7, 1, 19, 0, 0], [34, 10, 1, 34, 0, 0], [55, 15, 1, 55, 0, 0],
+    [80, 20, 1, 80, 0, 0], [108, 26, 1, 108, 0, 0], [136, 18, 2, 68, 0, 0],
+    [156, 20, 2, 78, 0, 0], [194, 24, 2, 97, 0, 0], [232, 30, 2, 116, 0, 0],
+    [274, 18, 2, 68, 2, 69], [324, 20, 4, 81, 0, 0], [370, 24, 2, 92, 2, 93],
+    [428, 26, 4, 107, 0, 0], [461, 30, 3, 115, 1, 116], [523, 22, 5, 87, 1, 88],
+    [589, 24, 5, 98, 1, 99], [647, 28, 1, 107, 5, 108], [721, 30, 5, 120, 1, 121],
+    [795, 28, 3, 113, 4, 114], [861, 28, 3, 107, 5, 108], [932, 28, 4, 116, 4, 117],
+    [1006, 28, 2, 111, 7, 112], [1094, 30, 4, 121, 5, 122], [1174, 30, 6, 117, 4, 118],
+    [1276, 26, 8, 106, 4, 107], [1370, 28, 10, 114, 2, 115], [1468, 30, 8, 122, 4, 123],
+    [1531, 30, 3, 117, 10, 118], [1631, 30, 7, 116, 7, 117], [1735, 30, 5, 115, 10, 116],
+    [1843, 30, 13, 115, 3, 116], [1955, 30, 17, 115, 0, 0], [2071, 30, 17, 115, 1, 116],
+    [2191, 30, 13, 115, 6, 116], [2306, 30, 12, 121, 7, 122], [2434, 30, 6, 121, 14, 122],
+    [2566, 30, 17, 122, 4, 123], [2702, 30, 4, 122, 18, 123], [2812, 30, 20, 117, 4, 118],
+    [2956, 30, 19, 118, 6, 119]
+  ];
+
+  // Bits left over after the interleaved codewords, per version band.
+  function qrRemainderBits(version) {
+    if (version === 1) return 0;
+    if (version <= 6) return 7;
+    if (version <= 13) return 0;
+    if (version <= 20) return 3;
+    if (version <= 27) return 4;
+    if (version <= 34) return 3;
+    return 0;
+  }
+
+  // GF(256) with the QR primitive polynomial 0x11D.
+  const QR_EXP = new Uint8Array(512);
+  const QR_LOG = new Uint8Array(256);
+  (function buildGaloisField() {
+    let x = 1;
+    for (let i = 0; i < 255; i++) {
+      QR_EXP[i] = x;
+      QR_LOG[x] = i;
+      x <<= 1;
+      if (x & 0x100) x ^= 0x11d;
+    }
+    for (let i = 255; i < 512; i++) QR_EXP[i] = QR_EXP[i - 255];
+  })();
+
+  function qrMul(a, b) {
+    if (a === 0 || b === 0) return 0;
+    return QR_EXP[QR_LOG[a] + QR_LOG[b]];
+  }
+
+  // Generator polynomial for n error correction codewords.
+  function qrGenerator(n) {
+    let poly = [1];
+    for (let i = 0; i < n; i++) {
+      const next = new Array(poly.length + 1).fill(0);
+      for (let j = 0; j < poly.length; j++) {
+        next[j] ^= poly[j];
+        next[j + 1] ^= qrMul(poly[j], QR_EXP[i]);
+      }
+      poly = next;
+    }
+    return poly;
+  }
+
+  function qrErrorCodewords(data, count) {
+    const gen = qrGenerator(count);
+    const rest = new Array(count).fill(0);
+    for (let i = 0; i < data.length; i++) {
+      const factor = data[i] ^ rest[0];
+      rest.shift();
+      rest.push(0);
+      for (let j = 0; j < count; j++) rest[j] ^= qrMul(gen[j + 1], factor);
+    }
+    return rest;
+  }
+
+  /**
+   * Smallest version that holds this many bytes at level L, or 0 when nothing
+   * does (over 2953 bytes).
+   * @param {number} byteLength - Payload size
+   * @returns {number} Version 1 to 40, or 0
+   */
+  function qrVersionFor(byteLength) {
+    for (let version = 1; version <= 40; version++) {
+      const dataCw = QR_EC_L[version][0];
+      const countBits = version <= 9 ? 8 : 16;
+      const needBits = 4 + countBits + byteLength * 8;
+      if (needBits <= dataCw * 8) return version;
+    }
+    return 0;
+  }
+
+  // Centres of the alignment patterns, the same walk the reference encoders do:
+  // the last one sits 6 from the edge and the rest step back evenly from it.
+  function qrAlignmentCentres(version) {
+    if (version === 1) return [];
+    const count = Math.floor(version / 7) + 2;
+    const step = version === 32
+      ? 26
+      : Math.floor((version * 4 + count * 2 + 1) / (count * 2 - 2)) * 2;
+    const centres = [];
+    for (let pos = version * 4 + 10; centres.length < count - 1; pos -= step) centres.unshift(pos);
+    centres.unshift(6);
+    return centres;
+  }
+
+  // The 15 bit format sequence: level L (01) and the mask, BCH protected and
+  // XORed with the standard 0x5412 so it is never all zeroes.
+  function qrFormatBits(mask) {
+    const data = (0x01 << 3) | mask;
+    let rem = data;
+    for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+    return ((data << 10) | rem) ^ 0x5412;
+  }
+
+  // The 18 bit version sequence, on version 7 and up.
+  function qrVersionBits(version) {
+    let rem = version;
+    for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >>> 11) * 0x1f25);
+    return (version << 12) | rem;
+  }
+
+  function qrIsFunction(version, size, row, col) {
+    if (row === 6 || col === 6) return true;                       // timing
+    if (row < 9 && col < 9) return true;                           // finder + format
+    if (row < 9 && col >= size - 8) return true;
+    if (row >= size - 8 && col < 9) return true;
+    if (version >= 7) {
+      if (row < 6 && col >= size - 11) return true;                // version block
+      if (col < 6 && row >= size - 11) return true;
+    }
+    const centres = qrAlignmentCentres(version);
+    for (const cy of centres) {
+      for (const cx of centres) {
+        const corner = (cy === 6 && cx === 6)
+          || (cy === 6 && cx === size - 7)
+          || (cy === size - 7 && cx === 6);
+        if (corner) continue;
+        if (Math.abs(row - cy) <= 2 && Math.abs(col - cx) <= 2) return true;
+      }
+    }
+    return false;
+  }
+
+  function qrMaskBit(mask, row, col) {
+    switch (mask) {
+      case 0: return (row + col) % 2 === 0;
+      case 1: return row % 2 === 0;
+      case 2: return col % 3 === 0;
+      case 3: return (row + col) % 3 === 0;
+      case 4: return (Math.floor(row / 2) + Math.floor(col / 3)) % 2 === 0;
+      case 5: return ((row * col) % 2) + ((row * col) % 3) === 0;
+      case 6: return (((row * col) % 2) + ((row * col) % 3)) % 2 === 0;
+      default: return (((row + col) % 2) + ((row * col) % 3)) % 2 === 0;
+    }
+  }
+
+  // How ugly a masked code is, by the standard's four rules. The lowest score
+  // is the mask that gets used.
+  function qrPenalty(grid, size) {
+    let score = 0;
+    const run = (get) => {
+      for (let a = 0; a < size; a++) {
+        let last = -1;
+        let length = 0;
+        for (let b = 0; b < size; b++) {
+          const bit = get(a, b) ? 1 : 0;
+          if (bit === last) {
+            length++;
+            if (length === 5) score += 3;
+            else if (length > 5) score += 1;
+          } else {
+            last = bit;
+            length = 1;
+          }
+        }
+      }
+    };
+    run((a, b) => grid[a][b]);
+    run((a, b) => grid[b][a]);
+
+    for (let row = 0; row < size - 1; row++) {
+      for (let col = 0; col < size - 1; col++) {
+        const first = grid[row][col];
+        if (first === grid[row][col + 1] && first === grid[row + 1][col]
+          && first === grid[row + 1][col + 1]) score += 3;
+      }
+    }
+
+    const pattern = [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0];
+    const reverse = pattern.slice().reverse();
+    const matches = (cells) => {
+      const bits = cells.map((cell) => (cell ? 1 : 0));
+      const same = (needle) => needle.every((bit, i) => bit === bits[i]);
+      return same(pattern) || same(reverse);
+    };
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col + 11 <= size; col++) {
+        const across = [];
+        const down = [];
+        for (let i = 0; i < 11; i++) {
+          across.push(grid[row][col + i]);
+          down.push(grid[col + i][row]);
+        }
+        if (matches(across)) score += 40;
+        if (matches(down)) score += 40;
+      }
+    }
+
+    let dark = 0;
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) if (grid[row][col]) dark++;
+    }
+    const percent = (dark * 100) / (size * size);
+    score += Math.floor(Math.abs(percent - 50) / 5) * 10;
+    return score;
+  }
+
+  /**
+   * Encode bytes as a QR code at error correction level L.
+   * @param {array|Uint8Array} bytes - The payload
+   * @returns {object} { size, modules } where modules[row][col] is true for dark
+   */
+  function qrEncodeBytes(bytes) {
+    const data = Array.from(bytes);
+    const version = qrVersionFor(data.length);
+    if (!version) throw new Error("payload too large for one QR code"); // i18n-ignore: thrown to the console
+    const [dataCw, ecPerBlock, g1Blocks, g1Size, g2Blocks, g2Size] = QR_EC_L[version];
+    const size = version * 4 + 17;
+
+    // ---- the bit stream -------------------------------------------------
+    const bits = [];
+    const push = (value, length) => {
+      for (let i = length - 1; i >= 0; i--) bits.push((value >>> i) & 1);
+    };
+    push(0b0100, 4);
+    push(data.length, version <= 9 ? 8 : 16);
+    data.forEach((byte) => push(byte, 8));
+    const capacityBits = dataCw * 8;
+    for (let i = 0; i < 4 && bits.length < capacityBits; i++) bits.push(0);
+    while (bits.length % 8 !== 0) bits.push(0);
+    const codewords = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      let byte = 0;
+      for (let j = 0; j < 8; j++) byte = (byte << 1) | bits[i + j];
+      codewords.push(byte);
+    }
+    const padding = [0xec, 0x11];
+    for (let i = 0; codewords.length < dataCw; i++) codewords.push(padding[i % 2]);
+
+    // ---- blocks, error correction, interleaving -------------------------
+    const blocks = [];
+    let at = 0;
+    for (let i = 0; i < g1Blocks; i++) {
+      blocks.push(codewords.slice(at, at + g1Size));
+      at += g1Size;
+    }
+    for (let i = 0; i < g2Blocks; i++) {
+      blocks.push(codewords.slice(at, at + g2Size));
+      at += g2Size;
+    }
+    const ecBlocks = blocks.map((block) => qrErrorCodewords(block, ecPerBlock));
+    const stream = [];
+    const longest = Math.max(...blocks.map((block) => block.length));
+    for (let i = 0; i < longest; i++) {
+      blocks.forEach((block) => { if (i < block.length) stream.push(block[i]); });
+    }
+    for (let i = 0; i < ecPerBlock; i++) {
+      ecBlocks.forEach((block) => stream.push(block[i]));
+    }
+
+    // ---- the grid -------------------------------------------------------
+    const grid = [];
+    for (let row = 0; row < size; row++) grid.push(new Array(size).fill(false));
+    const set = (row, col, dark) => { grid[row][col] = !!dark; };
+
+    const finder = (top, left) => {
+      for (let row = -1; row <= 7; row++) {
+        for (let col = -1; col <= 7; col++) {
+          const y = top + row;
+          const x = left + col;
+          if (y < 0 || y >= size || x < 0 || x >= size) continue;
+          const ring = Math.max(Math.abs(row - 3), Math.abs(col - 3));
+          set(y, x, ring !== 2 && ring <= 4);
+        }
+      }
+    };
+    finder(0, 0);
+    finder(0, size - 7);
+    finder(size - 7, 0);
+
+    for (let i = 8; i < size - 8; i++) {
+      const dark = i % 2 === 0;
+      set(6, i, dark);
+      set(i, 6, dark);
+    }
+
+    const centres = qrAlignmentCentres(version);
+    centres.forEach((cy) => {
+      centres.forEach((cx) => {
+        const corner = (cy === 6 && cx === 6)
+          || (cy === 6 && cx === size - 7)
+          || (cy === size - 7 && cx === 6);
+        if (corner) return;
+        for (let row = -2; row <= 2; row++) {
+          for (let col = -2; col <= 2; col++) {
+            set(cy + row, cx + col, Math.max(Math.abs(row), Math.abs(col)) !== 1);
+          }
+        }
+      });
+    });
+
+    set(size - 8, 8, true); // the dark module
+
+    if (version >= 7) {
+      const bitsVersion = qrVersionBits(version);
+      for (let i = 0; i < 18; i++) {
+        const dark = ((bitsVersion >>> i) & 1) === 1;
+        const row = Math.floor(i / 3);
+        const col = size - 11 + (i % 3);
+        set(row, col, dark);
+        set(col, row, dark);
+      }
+    }
+
+    // ---- the payload, zigzagged up and down the free modules ------------
+    let bitAt = 0;
+    const total = stream.length * 8 + qrRemainderBits(version);
+    const nextBit = () => {
+      if (bitAt >= stream.length * 8) return 0;
+      const byte = stream[bitAt >> 3];
+      const bit = (byte >>> (7 - (bitAt & 7))) & 1;
+      bitAt++;
+      return bit;
+    };
+    let placed = 0;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let step = 0; step < size; step++) {
+        for (let i = 0; i < 2; i++) {
+          const col = right - i;
+          const upward = ((right + 1) & 2) === 0;
+          const row = upward ? size - 1 - step : step;
+          if (qrIsFunction(version, size, row, col)) continue;
+          if (placed >= total) continue;
+          set(row, col, nextBit() === 1);
+          placed++;
+        }
+      }
+    }
+
+    // ---- the mask, picked on the standard's own penalty score -----------
+    const isData = [];
+    for (let row = 0; row < size; row++) {
+      isData.push([]);
+      for (let col = 0; col < size; col++) {
+        isData[row].push(!qrIsFunction(version, size, row, col));
+      }
+    }
+    let best = null;
+    for (let mask = 0; mask < 8; mask++) {
+      const masked = grid.map((line, row) => line.map((dark, col) =>
+        (isData[row][col] && qrMaskBit(mask, row, col) ? !dark : dark)));
+      // The format bits belong to the code being scored, so they go on first.
+      const format = qrFormatBits(mask);
+      for (let i = 0; i < 15; i++) {
+        const dark = ((format >>> i) & 1) === 1;
+        if (i < 6) masked[i][8] = dark;
+        else if (i === 6) masked[7][8] = dark;
+        else if (i === 7) masked[8][8] = dark;
+        else if (i === 8) masked[8][7] = dark;
+        else masked[8][14 - i] = dark;
+
+        if (i < 8) masked[8][size - 1 - i] = dark;
+        else masked[size - 15 + i][8] = dark;
+      }
+      const score = qrPenalty(masked, size);
+      if (!best || score < best.score) best = { score, modules: masked, mask };
+    }
+    return { size, version, mask: best.mask, modules: best.modules };
+  }
+
+  /**
+   * Encode a string as a QR code, UTF-8.
+   * @param {string} text - The payload
+   * @returns {object} { size, modules }
+   */
+  function qrEncodeText(text) {
+    const bytes = [];
+    const utf8 = unescape(encodeURIComponent(String(text)));
+    for (let i = 0; i < utf8.length; i++) bytes.push(utf8.charCodeAt(i) & 0xff);
+    return qrEncodeBytes(bytes);
+  }
+
+  /**
+   * Draw a QR code onto a canvas, quiet zone included.
+   * @param {object} code - What qrEncodeBytes returned
+   * @param {number} [scale] - Pixels per module
+   * @returns {HTMLCanvasElement} The canvas
+   */
+  function qrCanvas(code, scale) {
+    const step = Math.max(1, Math.floor(scale || 4));
+    const quiet = 4;
+    const side = (code.size + quiet * 2) * step;
+    const canvas = document.createElement("canvas");
+    canvas.width = side;
+    canvas.height = side;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, side, side);
+    ctx.fillStyle = "#000000";
+    for (let row = 0; row < code.size; row++) {
+      for (let col = 0; col < code.size; col++) {
+        if (!code.modules[row][col]) continue;
+        ctx.fillRect((col + quiet) * step, (row + quiet) * step, step, step);
+      }
+    }
+    return canvas;
+  }
+
+  //---------------------------------------------------------------------------
+  // PNG: the card, and the dossier written inside it
+  //---------------------------------------------------------------------------
+  // A tEXt chunk carries the dossier, so the card is both the picture of a
+  // character and the file that rebuilds them. Any image viewer shows the
+  // card; this game reads the chunk.
+
+  const PNG_TEXT_KEYWORD = "hxCharacter"; // i18n-ignore: PNG chunk keyword
+
+  const PNG_CRC_TABLE = (function buildCrcTable() {
+    const table = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      table[i] = c >>> 0;
+    }
+    return table;
+  })();
+
+  function pngCrc32(bytes) {
+    let crc = 0xffffffff;
+    for (let i = 0; i < bytes.length; i++) crc = PNG_CRC_TABLE[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+
+  /**
+   * Splice a tEXt chunk holding the dossier into a PNG, just before its end.
+   * @param {Uint8Array} png - The image as written by the canvas
+   * @param {string} text - What to write into it
+   * @returns {Uint8Array} The image with the dossier inside it
+   */
+  function pngWithText(png, text) {
+    const body = [];
+    for (let i = 0; i < PNG_TEXT_KEYWORD.length; i++) body.push(PNG_TEXT_KEYWORD.charCodeAt(i) & 0xff);
+    body.push(0);
+    const utf8 = unescape(encodeURIComponent(String(text)));
+    for (let i = 0; i < utf8.length; i++) body.push(utf8.charCodeAt(i) & 0xff);
+
+    const type = [0x74, 0x45, 0x58, 0x74]; // tEXt
+    const chunk = [];
+    const length = body.length;
+    chunk.push((length >>> 24) & 0xff, (length >>> 16) & 0xff, (length >>> 8) & 0xff, length & 0xff);
+    const crcOver = type.concat(body);
+    chunk.push(...type, ...body);
+    const crc = pngCrc32(Uint8Array.from(crcOver));
+    chunk.push((crc >>> 24) & 0xff, (crc >>> 16) & 0xff, (crc >>> 8) & 0xff, crc & 0xff);
+
+    // IEND is the last 12 bytes of every PNG, so the chunk goes in front of it.
+    const head = png.subarray(0, png.length - 12);
+    const tail = png.subarray(png.length - 12);
+    const out = new Uint8Array(head.length + chunk.length + tail.length);
+    out.set(head, 0);
+    out.set(Uint8Array.from(chunk), head.length);
+    out.set(tail, head.length + chunk.length);
+    return out;
+  }
+
+  /**
+   * Read the dossier back out of a PNG card.
+   * @param {Uint8Array} png - The image
+   * @returns {string} The text, or "" when the image carries none
+   */
+  function pngReadText(png) {
+    let at = 8; // past the signature
+    while (at + 8 <= png.length) {
+      const length = (png[at] << 24 | png[at + 1] << 16 | png[at + 2] << 8 | png[at + 3]) >>> 0;
+      const type = String.fromCharCode(png[at + 4], png[at + 5], png[at + 6], png[at + 7]);
+      const start = at + 8;
+      if (type === "tEXt") { // i18n-ignore: PNG chunk type
+        let split = start;
+        while (split < start + length && png[split] !== 0) split++;
+        const keyword = String.fromCharCode.apply(null, Array.from(png.subarray(start, split)));
+        if (keyword === PNG_TEXT_KEYWORD) {
+          const raw = String.fromCharCode.apply(null, Array.from(png.subarray(split + 1, start + length)));
+          try {
+            return decodeURIComponent(escape(raw));
+          } catch (e) {
+            return raw;
+          }
+        }
+      }
+      if (type === "IEND") break; // i18n-ignore: PNG chunk type
+      at = start + length + 4;
+    }
+    return "";
+  }
+
+  function dataUrlToBytes(dataUrl) {
+    const base64 = String(dataUrl).split(",")[1] || "";
+    const binary = atob(base64);
+    const out = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i) & 0xff;
+    return out;
+  }
+
+  // The names of what a dossier is wearing, in slot order, for the card.
+  function exportEquipmentNames(preset) {
+    return (preset.equips || []).map((slot) => {
+      if (!slot || !slot.id) return null;
+      const item = slot.w ? $dataWeapons[slot.id] : $dataArmors[slot.id];
+      return item ? item.name : null;
+    }).filter(Boolean);
+  }
+
+  /**
+   * Draw the character card: who they are, what they are wearing, their sprite
+   * and their bust. The dossier itself is written into the file afterwards.
+   * @param {object} preset - Dossier
+   * @returns {Promise<HTMLCanvasElement>} The finished card
+   */
+  function exportCardCanvas(preset) {
+    const width = 420;
+    const height = 560;
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#12100c";
+    ctx.fillRect(0, 0, width, height);
+    ctx.strokeStyle = "#c9a227";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(6, 6, width - 12, height - 12);
+
+    const className = preset.retiredClassName
+      || ($dataClasses[preset.classId] ? $dataClasses[preset.classId].name : "");
+    ctx.fillStyle = "#f2e6c8";
+    ctx.font = "bold 28px serif"; // i18n-ignore: canvas font
+    ctx.fillText(String(preset.name || ""), 24, 48);
+    ctx.fillStyle = "#c9a227";
+    ctx.font = "18px serif"; // i18n-ignore: canvas font
+    ctx.fillText(`${className} · ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}`, 24, 76);
+
+    ctx.fillStyle = "#f2e6c8";
+    ctx.font = "16px serif"; // i18n-ignore: canvas font
+    const gear = exportEquipmentNames(preset);
+    ctx.fillText(T('CharPresets.exportCardEquipment'), 24, 430);
+    if (gear.length) {
+      gear.slice(0, 6).forEach((name, i) => ctx.fillText("· " + name, 24, 456 + i * 22));
+    } else {
+      ctx.fillText(T('CharPresets.exportCardNoEquipment'), 24, 456);
+    }
+
+    // The bust when they have one, and the walking sprite beside it: both are
+    // painted once they have loaded, so the card is a promise.
+    const bustName = preset.busts || "";
+    const bustUrl = window.BustPath?.exists?.(bustName) ? window.BustPath.url(bustName) : "";
+    const drawSprite = () => new Promise((resolve) => {
+      const sheet = preset.sprite || "";
+      if (!sheet) return resolve();
+      const bitmap = ImageManager.loadCharacter(sheet);
+      const paint = () => {
+        try {
+          if (!bitmap.width || !bitmap.height) return resolve();
+          const big = ImageManager.isBigCharacter(sheet);
+          const cols = big ? 3 : 12;
+          const rows = big ? 4 : 8;
+          const cw = bitmap.width / cols;
+          const ch = bitmap.height / rows;
+          const index = big ? 0 : (preset.spriteIndex || 0);
+          const sx = ((index % 4) * 3) * cw;
+          const sy = (Math.floor(index / 4) * 4) * ch;
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(bitmap.canvas || bitmap._canvas || bitmap._image,
+            sx, sy, cw, ch, 300, 300, cw * 2.2, ch * 2.2);
+        } catch (e) {
+          console.error("CharacterExport: the card sprite could not be drawn", e);
+        }
+        resolve();
+      };
+      if (bitmap.isReady()) paint();
+      else bitmap.addLoadListener(paint);
+    });
+    const drawBust = () => new Promise((resolve) => {
+      if (!bustUrl) return resolve();
+      const image = new Image();
+      image.onload = () => {
+        const boxW = 240;
+        const boxH = 300;
+        const scale = Math.min(boxW / image.width, boxH / image.height);
+        ctx.drawImage(image, 24, 96, image.width * scale, image.height * scale);
+        resolve();
+      };
+      image.onerror = () => resolve();
+      image.src = bustUrl;
+    });
+
+    return drawBust().then(drawSprite).then(() => canvas);
+  }
+
+  //---------------------------------------------------------------------------
+  // Writing and reading the folder
+  //---------------------------------------------------------------------------
+
+  function exportWrite(fileName, bytes) {
+    const io = exportFs();
+    const dir = exportFolder();
+    if (!io || !dir) return "";
+    const full = io.path.join(dir, fileName);
+    io.fs.writeFileSync(full, Buffer.from(bytes));
+    return full;
+  }
+
+  /**
+   * Write a dossier out as JSON.
+   * @param {object} preset - Dossier
+   * @returns {string} The file written, or "" when there is no filesystem
+   */
+  function exportToJson(preset) {
+    const payload = exportPayload(preset);
+    const text = JSON.stringify(payload, null, 2);
+    const bytes = [];
+    const utf8 = unescape(encodeURIComponent(text));
+    for (let i = 0; i < utf8.length; i++) bytes.push(utf8.charCodeAt(i) & 0xff);
+    return exportWrite(exportSlug(preset.name) + ".json", Uint8Array.from(bytes));
+  }
+
+  /**
+   * Write a dossier out as a card: a picture of them with the dossier inside.
+   * @param {object} preset - Dossier
+   * @returns {Promise<string>} The file written
+   */
+  function exportToCard(preset) {
+    return exportCardCanvas(preset).then((canvas) => {
+      const png = dataUrlToBytes(canvas.toDataURL("image/png"));
+      const withText = pngWithText(png, JSON.stringify(exportPayload(preset)));
+      return exportWrite(exportSlug(preset.name) + ".png", withText);
+    });
+  }
+
+  /**
+   * Write a dossier out as a QR code.
+   * @param {object} preset - Dossier
+   * @returns {string} The file written
+   */
+  function exportToQr(preset) {
+    const canvas = qrCanvas(exportQrCode(preset), 6);
+    const png = dataUrlToBytes(canvas.toDataURL("image/png"));
+    return exportWrite(exportSlug(preset.name) + ".qr.png", png);
+  }
+
+  /**
+   * The QR code of a dossier: the whole thing when it fits, and the compact
+   * dossier (no prose, no coordinates) when it does not.
+   * @param {object} preset - Dossier
+   * @returns {object} What qrEncodeBytes returned
+   */
+  function exportQrCode(preset) {
+    const full = JSON.stringify(exportPayload(preset));
+    const utf8 = (text) => unescape(encodeURIComponent(text));
+    if (qrVersionFor(utf8(full).length)) return qrEncodeText(full);
+    return qrEncodeText(JSON.stringify(exportCompactPayload(exportPayload(preset))));
+  }
+
+  /**
+   * Every character sitting in the folder, whether this game already holds them
+   * or not. A card and a JSON file of the same person count once.
+   * @returns {array} [{ file, payload, uid, known }]
+   */
+  // The board asks who is waiting every time it is redrawn, and a card is a
+  // whole PNG to read, so the answer is held for a moment rather than read off
+  // the disk on every frame of a menu.
+  let exportScanCache = null;
+  let exportScanAt = 0;
+  const EXPORT_SCAN_HOLD_MS = 4000;
+
+  function exportScanFolder(fresh) {
+    if (!fresh && exportScanCache && Date.now() - exportScanAt < EXPORT_SCAN_HOLD_MS) {
+      return exportScanCache;
+    }
+    const io = exportFs();
+    const dir = exportFolder();
+    if (!io || !dir) return [];
+    const seen = new Set();
+    const found = [];
+    let names = [];
+    try {
+      names = io.fs.readdirSync(dir);
+    } catch (e) {
+      return [];
+    }
+    names.forEach((file) => {
+      const lower = file.toLowerCase();
+      let text = "";
+      try {
+        if (lower.endsWith(".json")) {
+          text = io.fs.readFileSync(io.path.join(dir, file), "utf8");
+        } else if (lower.endsWith(".png")) {
+          text = pngReadText(new Uint8Array(io.fs.readFileSync(io.path.join(dir, file))));
+        }
+      } catch (e) {
+        text = "";
+      }
+      if (!text) return;
+      let payload = null;
+      try {
+        payload = JSON.parse(text);
+      } catch (e) {
+        return;
+      }
+      if (!payload || payload.kind !== "character" || !payload.character) return;
+      const uid = payload.uid || exportUid(payload.character);
+      if (seen.has(uid)) return;
+      seen.add(uid);
+      found.push({ file, payload, uid, known: exportIsKnown(uid, payload.character) });
+    });
+    exportScanCache = found;
+    exportScanAt = Date.now();
+    return found;
+  }
+
+  // Whether this game already holds the person in a file: the uid it was
+  // exported with is kept on the dossier it was imported into, and a dossier of
+  // the same name and class counts as the same person as well, so importing
+  // twice never doubles anybody.
+  function exportIsKnown(uid, character) {
+    const holds = (list) => (list || []).some((entry) => entry
+      && (entry.importedUid === uid
+        || (entry.name === character.name && entry.classId === character.classId)));
+    return holds(getPlayerPresets()) || holds(getRetiredPresets()) || holds(getBasePresets());
+  }
+
+  /**
+   * Take one character in: filed among the player's own dossiers, so they can
+   * be picked in character creation like any other.
+   * @param {object} payload - What the file held
+   * @returns {object} { ok: boolean, reason?: string, preset?: object }
+   */
+  function exportImport(payload) {
+    if (!payload || payload.kind !== "character" || !payload.character) {
+      return { ok: false, reason: "notACharacter" };
+    }
+    const character = payload.character;
+    const uid = payload.uid || exportUid(character);
+    if (exportIsKnown(uid, character)) return { ok: false, reason: "alreadyHere" };
+
+    const preset = Object.assign({}, character, {
+      id: getNextPlayerPresetId(),
+      importedUid: uid,
+      imported: true
+    });
+    // An imported dossier starts where this world starts people, not where the
+    // world it came from left them standing.
+    preset.mapId = preset.mapId || FALLBACK_HOME.mapId;
+    preset.x = preset.x || FALLBACK_HOME.x;
+    preset.y = preset.y || FALLBACK_HOME.y;
+    preset.switches = [];
+    savePlayerPresets(getPlayerPresets().concat(preset));
+    exportScanCache = null;
+    return { ok: true, preset };
+  }
+
+  /**
+   * Take in everything in the folder this game has not seen.
+   * @returns {object} { imported: number, skipped: number, names: array }
+   */
+  function exportImportAll() {
+    // Read the folder again rather than trusting the held scan: this is the
+    // moment somebody has just dropped a file in and pressed the button.
+    const found = exportScanFolder(true);
+    const names = [];
+    let skipped = 0;
+    found.forEach((entry) => {
+      if (entry.known) {
+        skipped++;
+        return;
+      }
+      const result = exportImport(entry.payload);
+      if (result.ok) names.push(result.preset.name);
+      else skipped++;
+    });
+    return { imported: names.length, skipped, names };
+  }
+
+  window.CharacterExport = {
+    folder: exportFolder,
+    payloadFromActor: exportPayloadFromActor,
+    payload: exportPayload,
+    compactPayload: exportCompactPayload,
+    uid: exportUid,
+    slug: exportSlug,
+    toJson: exportToJson,
+    toCard: exportToCard,
+    toQr: exportToQr,
+    qrCode: exportQrCode,
+    cardCanvas: exportCardCanvas,
+    equipmentNames: exportEquipmentNames,
+    scan: exportScanFolder,
+    isKnown: exportIsKnown,
+    importOne: exportImport,
+    importAll: exportImportAll,
+    // The encoder itself, for anything else that wants a code on screen.
+    qr: {
+      encodeBytes: qrEncodeBytes,
+      encodeText: qrEncodeText,
+      versionFor: qrVersionFor,
+      canvas: qrCanvas,
+      table: QR_EC_L,
+      alignmentCentres: qrAlignmentCentres,
+      remainderBits: qrRemainderBits,
+      generator: qrGenerator,
+      errorCodewords: qrErrorCodewords,
+      mul: qrMul
+    },
+    png: {
+      withText: pngWithText,
+      readText: pngReadText,
+      crc32: pngCrc32,
+      keyword: PNG_TEXT_KEYWORD
+    }
+  };
+
   window.CharacterPresets = {
     // Functions
     getCharacterPresets,
@@ -3667,6 +4654,7 @@
     retirePartyMember,
     benchActorAsPreset,
     unretirePartyMember,
+    discardRetiredPreset,
     freeCompanionActorId,
     getUsedPresetIds,
     isPresetUsed,

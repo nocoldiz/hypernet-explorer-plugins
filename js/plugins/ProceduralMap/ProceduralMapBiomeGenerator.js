@@ -6164,6 +6164,16 @@
   const SURFACE_CHEST_CHANCE = 0.03;
   const UNDERGROUND_CHEST_CHANCE = 0.30;
 
+  // What a BUILT place is worth over the ground above it. A square somebody
+  // dug out and stocked used to pay nothing at all here while an open field
+  // paid 25 and a cave 55, so a crypt was handing out worse crates than the
+  // graveyard standing on top of it. A strongroom type (one whose catalogue
+  // range tops 4 or more: dungeon, crypt, temple, sewer) is worth the most, a
+  // cellar rather less, and neither reaches the cave's 55 - a place with a door
+  // has been visited before.
+  const STRUCTURE_RARITY_BONUS = 15;
+  const SMALL_STRUCTURE_RARITY_BONUS = 10;
+
   /**
    * Top the map up to VAULT_CHEST_COUNT chest events by cloning the ones the
    * template carries. Idempotent: it counts what is already on the map, so the
@@ -6262,9 +6272,16 @@
       // The rare grand cellar is stocked like a dungeon rather than like the
       // cramped hole most cellars are.
       numChests = 4 + Math.floor(rng() * 4);
+      rarityBonus = STRUCTURE_RARITY_BONUS;
     } else if (isDungeonType) {
       const lo = struct.chests[0], hi = struct.chests[1];
       numChests = lo + Math.floor(rng() * (hi - lo + 1));
+      // A built place pays for having been built. The patron's vault is the
+      // exception: its push comes from PatreonRewards.lootRarityBonus and the
+      // two would stack.
+      if (!isPatronVault) {
+        rarityBonus = hi >= 4 ? STRUCTURE_RARITY_BONUS : SMALL_STRUCTURE_RARITY_BONUS;
+      }
     } else if (isCave) {
       numChests = rng() < 0.15 ? 1 : 0;      // very rare - most caves have none
       rarityBonus = 55;                      // but rare loot when present

@@ -65,5 +65,25 @@
     "people": "People: {population} known, {employed} working, {unemployed} idle, {imprisoned} in prison, {retired} retired, {criminals} of ill repute.",
     "rightNow": "Right now: {list}.",
     "quiet": "Quiet times, nothing remarkable underway."
+  },
+  "deed": {
+    "someone": "Someone",
+    "trade": "{actor} traded openly in {place}.",
+    "gift": "{actor} gave {target} away in {place}.",
+    "drop": "{actor} left {target} lying in {place}.",
+    "trespass": "{actor} was found where they had no business being in {place}.",
+    "vandalism": "{actor} broke something that was not theirs in {place}.",
+    "bribery": "{actor} put money in the wrong hand in {place}.",
+    "pickpocket": "{actor} lightened a pocket in {place}.",
+    "theft": "{actor} stole {target} in {place}.",
+    "burglary": "{actor} broke into a building in {place}.",
+    "assault": "{actor} beat {target} in the open in {place}.",
+    "arson": "Fire was set deliberately in {place}.",
+    "bodyFound": "A body was found in {place}.",
+    "killing": "{actor} killed {target} in {place}.",
+    "massacre": "A slaughter was done in {place}.",
+    "rescue": "{actor} pulled {target} out of trouble in {place}.",
+    "healing": "{actor} tended the hurt in {place}.",
+    "charity": "{actor} gave to those with nothing in {place}."
   }
 }

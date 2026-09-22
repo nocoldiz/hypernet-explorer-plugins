@@ -1299,12 +1299,11 @@
   // rebuilds the sentence instead of carrying frozen English prose.
   function recordInHistory(actor, delegation, sg, motion, votes, option, passed) {
     const hm = window.HistoryManager;
-    if (!hm || typeof hm.recordEvent !== "function") return;
     const counts = tally(votes);
     const eff = STANCE_EFFECT[option] || STANCE_EFFECT.abstain;
     const stance = eff.stance > 0 ? "for" : (eff.stance < 0 ? "against" : "abstained");
     try {
-      hm.recordEvent({
+      if (hm && typeof hm.recordEvent === "function") hm.recordEvent({
         date: historyDate(),
         category: "diplomatic",
         type: "assembly_motion",
@@ -1333,6 +1332,20 @@
         iconIndex: passed ? 237 : 190,
       });
     } catch (e) { console.warn("[ONUAssembly] history", e); }
+
+    // The Archive is the world's record; the diary is this party's, and a
+    // sitting they voted at belongs in both (Core/Diary.js).
+    try {
+      if (window.Diary && window.Diary.onAssemblyVote) {
+        window.Diary.onAssemblyVote({
+          power: sg ? T("ONUMenu.seatPhrase.chair")
+            : (delegation ? delegation.name : ""),
+          motion: motion.title,
+          stance,
+          passed,
+        });
+      }
+    } catch (e) { console.warn("[ONUAssembly] diary", e); }
   }
 
   // History dates are "YYYY-MM", read off the game clock rather than the wall

@@ -2,25 +2,37 @@
   "site": {
     "taranto": {
       "name": "Taranto",
-      "blurb": "Cantiere sullo Ionio."
+      "blurb": "Cantiere di lancio costiero sullo Ionio."
     },
     "greenwich": {
       "name": "Greenwich",
-      "blurb": "Torre sul meridiano."
+      "blurb": "Torre di lancio sul meridiano."
     },
     "vault": {
       "name": "Cripta di {patron}",
-      "blurb": "Cannone a pozzo sotto il caveau.",
+      "blurb": "Lanciatore a pozzo sotto il caveau.",
       "nameUnknown": "La Cripta",
-      "blurbUnknown": "Cannone a pozzo sotto un caveau."
+      "blurbUnknown": "Lanciatore a pozzo sotto un caveau."
     },
     "omega": {
       "name": "Torre Omega",
-      "blurb": "La torre è il cannone."
+      "blurb": "Sito di lancio alla Torre Omega."
     },
     "ship": {
       "name": "Astronave",
-      "blurb": "La rotaia della nave."
+      "blurb": "Rotaia di lancio a bordo della nave."
+    },
+    "moon": {
+      "name": "La Luna",
+      "blurb": "Spazioporto sulla Luna."
+    },
+    "zeta": {
+      "name": "Il Monumento",
+      "blurb": "Spazioporto su Zeta Reticuli B."
+    },
+    "titania": {
+      "name": "Titania",
+      "blurb": "Spazioporto su Titania, in Andromeda."
     }
   },
   "mode": {
@@ -35,6 +47,58 @@
     "deorbit": {
       "name": "Deorbita",
       "blurb": "Sparati verso il pianeta e lasciati cadere."
+    },
+    "lunar": {
+      "name": "Lunare",
+      "blurb": "Quattro stadi. Quello di mezzo non è un razzo."
+    },
+    "lunarOrbit": {
+      "name": "Lunare, diretto",
+      "blurb": "Niente aria, niente fascia, niente corazza. Solo il motore."
+    },
+    "moon": {
+      "name": "Lunare",
+      "blurb": "Quattro stadi. Quello di mezzo non è un razzo."
+    },
+    "moonAir": {
+      "name": "Lunare, senza fascia",
+      "blurb": "Una salita in un cielo che nessuno ha sporcato."
+    },
+    "moonOrbit": {
+      "name": "Lunare, diretto",
+      "blurb": "Niente aria, niente fascia, niente corazza. Solo il motore."
+    },
+    "zeta": {
+      "name": "Zeta Reticuli",
+      "blurb": "Trentanove anni luce su una pila di motori."
+    },
+    "zetaAir": {
+      "name": "Zeta, senza fascia",
+      "blurb": "La pila, da un mondo dal cielo pulito."
+    },
+    "zetaOrbit": {
+      "name": "Zeta, diretto",
+      "blurb": "Tre stadi liminali, gettati uno a uno."
+    },
+    "titania": {
+      "name": "Titania",
+      "blurb": "Giove, e poi un buco verso un'altra galassia."
+    },
+    "titaniaAir": {
+      "name": "Titania, senza fascia",
+      "blurb": "La fionda e il salto, cielo pulito."
+    },
+    "titaniaOrbit": {
+      "name": "Titania, diretto",
+      "blurb": "Fionda di uscita, salto SB, Andromeda."
+    },
+    "orbitalAir": {
+      "name": "Orbitale",
+      "blurb": "Su fino alla nave. Cielo vuoto quassù."
+    },
+    "orbitalOrbit": {
+      "name": "Orbitale, diretto",
+      "blurb": "Nessuna aria da attraversare. Solo il lancio."
     }
   },
   "phase": {
@@ -56,7 +120,27 @@
     "terminal": "Fase terminale",
     "capture": "Cattura magnetica",
     "arrived": "Arrivati",
-    "fall": "Caduta"
+    "fall": "Caduta",
+    "shroud": "Sgancio della guaina",
+    "drift": "Allontanamento",
+    "liminal": "Avvio liminale",
+    "transit": "Transito liminale",
+    "skim": "Radenza lunare",
+    "touchdown": "Contatto",
+    "flyby": "Orbita lunare",
+    "thewhite": "Il deserto bianco",
+    "emerge": "Emersione",
+    "cruise": "Crociera",
+    "jupiter": "Avvicinamento a Giove",
+    "assist": "Fionda gravitazionale",
+    "escape": "Fuga solare",
+    "sbspool": "Avvio del salto SB",
+    "wormhole": "Wormhole",
+    "throat": "La gola",
+    "hexspace": "Esaspazio",
+    "refuel": "Rifornimento dal guscio",
+    "transfer": "Accensione di trasferimento",
+    "solomon": "Porta di Salomone"
   },
   "band": {
     "troposphere": "Troposfera",
@@ -68,7 +152,26 @@
     "kessler": "Kessler",
     "rendezvous": "Appuntamento",
     "prograde": "Prograda",
-    "apogee": "Apogeo"
+    "apogee": "Apogeo",
+    "liminal": "Motore",
+    "skim": "Radenza",
+    "lunarArrive": "Avvicinamento lunare",
+    "transit": "TRANSITO",
+    "hexspace": "ESASPAZIO",
+    "thewhite": "DESERTO BIANCO",
+    "emerge": "EMERSIONE",
+    "refuel": "GUSCIO",
+    "transfer": "TRASFERIM.",
+    "cruise": "CROCIERA",
+    "jupiter": "GIOVE",
+    "assist": "FIONDA",
+    "escape": "FUGA",
+    "sbspool": "AVVIO SB",
+    "wormhole": "WORMHOLE",
+    "throat": "GOLA",
+    "flyby": "ORBITA",
+    "touchdown": "CONTATTO",
+    "solomon": "SALOMONE"
   },
   "hud": {
     "altitude": "Quota",
@@ -114,7 +217,10 @@
     "vertical": "Verticale",
     "destTitle": "Destinazione",
     "destSubtitle": "Scegli dove atterra il salto",
-    "choice": "A tua scelta"
+    "choice": "A tua scelta",
+    "fare": "Costo",
+    "free": "Gratis",
+    "cantAfford": "Fondi insufficienti"
   },
   "weather": {
     "none": "Sereno",
@@ -177,6 +283,233 @@
     "stageSep": "Separazione dello stadio. Serbatoi vuoti, può andarsene.",
     "stageLost": "Lo stadio è andato: qualcosa gli ha aperto i serbatoi. L'accensione era già fatta.",
     "deorbitFall": "Lanciati, e in caduta. Non brucia niente e niente brucerà.",
-    "deorbitFalling": "Ancora in caduta. Da qui in poi lavora solo il pianeta."
+    "deorbitFalling": "Ancora in caduta. Da qui in poi lavora solo il pianeta.",
+    "shroudBlow": "La fascia è alle vostre spalle. Sgancio della guaina del motore.",
+    "shroudGone": "Guaina via. Il motore è allo scoperto ed è intatto.",
+    "moonAhead": "Eccola. Dritta davanti, è ferma lì.",
+    "liminalSpool": "Motore liminale in avvio. Non guardate il nucleo.",
+    "liminalHot": "Le alette sono accese. Qui dentro tutto ha due ombre.",
+    "liminalGo": "Motore inserito. La distanza sta collassando: preparatevi al nulla.",
+    "transitDeep": "Non esiste un fuori. Esiste solo l'altro capo.",
+    "moonFills": "Distanza sessanta chilometri. Adesso è tutto il finestrino.",
+    "lunarSkim": "Sopra la regolite. Niente aria, quindi a frenarvi ci siete solo voi.",
+    "baseSighted": "La piazzola vi ha agganciato. Le luci del piazzale stanno convergendo.",
+    "lunarFinal": "Finale. Motore al minimo, e posala sulle luci.",
+    "lunarDown": "Contatto. Peso sulla piazzola.",
+    "lunarArrived": "A terra sulla Luna. Tute chiuse prima che quel portello si muova.",
+    "lunarPadClear": "Baia libera. La Luna è dove è sempre stata.",
+    "lunarCount": "Traversata lunare, diretta. Là fuori niente aria e nemmeno la fascia.",
+    "lunarDrift": "Ci allontaniamo dall'albero. Niente accensioni, non servono.",
+    "lunarCapture": "Cattura. Siete in orbita attorno alla Luna.",
+    "lunarOrbiting": "Stiamo girando. La faccia nascosta è come promesso: niente di niente.",
+    "lunarDeorbit": "Usciamo dal giro. Motore giù, muso sulla base.",
+    "cleanSky": "Cielo libero fino in fondo. Nessuno ha lasciato niente lassù.",
+    "cleanSkyCrew": "Niente fascia. Potrei abituarmici.",
+    "shroudClear": "Guaina via. Il motore non ha mai visto la luce prima d'ora.",
+    "driftClear": "Liberi dall'albero. Niente accensioni, non servono.",
+    "moonOrbiting": "Stiamo girando. La faccia nascosta è come promesso: niente di niente.",
+    "moonSkim": "Sopra la regolite. Niente aria, quindi a frenarvi ci siete solo voi.",
+    "moonArrived": "A terra sulla Luna. Tute chiuse prima che quel portello si muova.",
+    "stackSpool": "Pila liminale in avvio. Tutti e tre gli stadi rispondono.",
+    "stackHot": "Tre motori accesi e lo scafo canta con loro.",
+    "gateOpen": "Primo stadio inserito. Il corridoio è aperto: non contate le pareti.",
+    "gateSlabs": "È tutto colore. Lastre di colore, che passano come piani.",
+    "stageOne": "Primo stadio esaurito. Sganciatelo.",
+    "stageTwo": "Secondo stadio esaurito. Via.",
+    "whiteIn": "Terzo stadio. Qualunque cosa ci sia là fuori adesso, è bianca.",
+    "whiteSolids": "Forme. Ruotano in direzioni che non esistono.",
+    "whiteDeep": "Non è rimasto colore. Solo bianco, e i bordi neri delle cose.",
+    "stageThree": "Ultimo stadio esaurito. La pila è finita tutta.",
+    "zetaOut": "Fuori. Zeta Reticuli, entrambi i soli, dritti davanti.",
+    "dysonSighted": "Hanno costruito gusci attorno a tutti e due. Tutti e due.",
+    "zetaOrbiting": "Stiamo girando. Il Monumento è laggiù da qualche parte.",
+    "zetaSkim": "Sopra la piana. Aria densa là fuori, ed è respirabile.",
+    "zetaArrived": "A terra al Monumento. L'aria va bene. Togliete il casco.",
+    "jupiterAim": "Rotta su Giove. Non ci fermiamo.",
+    "jupiterAhead": "Giove davanti, ed è tutto il finestrino.",
+    "jupiterClose": "Ci andiamo addosso. Ditemi che non ci andiamo addosso.",
+    "assistIn": "Perigiovio. Adesso il pianeta è lui a comandare.",
+    "assistOut": "Usciti dall'altra parte con la velocità di Giove aggiunta alla vostra.",
+    "escapeSpeed": "Velocità di fuga e oltre. Adesso non vi trattiene più niente.",
+    "lastPlanet": "Quello era l'ultimo pianeta. Davanti a noi non c'è più nulla.",
+    "sbSpool": "Motore di salto SB in avvio. È stato peso morto dalla rampa.",
+    "sbHot": "Qualcosa tira. Non sullo scafo: sullo spazio in cui lo scafo sta.",
+    "holeOpen": "È aperto. Due milioni e mezzo di anni luce, ed è una sfera.",
+    "holeSphere": "È una SFERA. C'è un altro cielo avvolto sul davanti.",
+    "holeCommit": "Impegnati. Oltre questo punto non si torna, e non conviene volerlo.",
+    "throatIn": "Dentro. Gli strumenti non hanno niente di sensato da dire.",
+    "throatDeep": "Le stelle sono nei posti sbagliati e ci sono tutte lo stesso.",
+    "throatOut": "Bocca opposta in vista. Preparatevi a un cielo che non conoscete.",
+    "andromeda": "Andromeda. Là fuori c'è un'altra galassia.",
+    "theNeighbour": "E quello è il buco attorno a cui gira Titania. Lo chiamano il vicino.",
+    "titaniaOrbiting": "Stiamo girando. È tutto oceano ed è tutto acido.",
+    "titaniaSkim": "Bassi sull'oceano. Non aprite niente.",
+    "titaniaArrived": "A terra all'ambasciata. Qui le tute restano: quel mare mangia gli scafi.",
+    "capture": "Cattura. Siete in orbita.",
+    "deorbitBurn": "Usciamo dal giro. Motore giù, muso sulla base.",
+    "finalApproach": "Finale. Motore al minimo, e posala sulle luci.",
+    "contact": "Contatto. Peso sulla piazzola.",
+    "hexIn": "Secondo stadio. Il colore sta defluendo dal corridoio.",
+    "hexCompany": "C'è qualcosa là fuori che tiene il nostro passo.",
+    "zetaStar": "Fuori, accanto al sole. Quel guscio è tutto il finestrino.",
+    "refuelIn": "Hanno aperto un rubinetto per voi. Serbatoi in riempimento dal guscio.",
+    "refuelCrew": "Qualcuno ci sta offrendo una stella da bere.",
+    "refuelDone": "Serbatoi pieni. Non ci hanno chiesto niente.",
+    "transferBurn": "Accensione attraverso il sistema. Il Monumento è dall'altra parte.",
+    "transferCrew": "Un sistema intero da attraversare, ed è la tratta corta del viaggio."
+  },
+  "radio": {
+    "control": "CONTROLLO",
+    "line": "{who}: {text}",
+    "tourists": "I TURISTI",
+    "dargos": "AVVICINAMENTO DARGOS"
+  },
+  "crew": {
+    "rattled": {
+      "railExit": "Siamo fuori dalla rotaia. Siamo fuori, quello non era... era veloce.",
+      "maxQ": "Qualcosa sta urlando. Deve urlare?",
+      "beltDeep": "Continua a colpirci. {pct}. Continua a colpirci.",
+      "beltBare": "Non è rimasto niente di fuori. {pct}. Niente.",
+      "beltClear": "È finita? Ditemi che è finita.",
+      "moonAhead": "È molto grande e sta diventando più grande.",
+      "liminalHot": "Sento il motore attraverso la struttura. Lo sento nei denti.",
+      "transitDeep": "Non guardate fuori. Io ho guardato. Non guardate fuori.",
+      "moonFills": "È tutto il finestrino. È tutto il finestrino.",
+      "lunarArrived": "Terra. Terra vera. Vorrei sedermici sopra.",
+      "gateSlabs": "Le pareti passano e non riesco a contarle.",
+      "whiteSolids": "Ruotano dentro se stesse. Per favore smettete di guardare.",
+      "jupiterClose": "È troppo vicino. È decisamente troppo vicino.",
+      "holeSphere": "C'è un cielo dentro. C'è un altro cielo lì dentro.",
+      "throatDeep": "Vorrei essere in un posto qualsiasi che abbia un pavimento.",
+      "zetaArrived": "Aria. Aria vera. Mi ci siedo dentro.",
+      "titaniaArrived": "Non si toglie niente. Nessuno si tolga niente.",
+      "hexCompany": "C'è qualcosa là fuori. C'è qualcosa là fuori."
+    },
+    "steady": {
+      "railExit": "Uscita dalla rotaia, pulita. Due e quattro, e niente che brucia.",
+      "maxQ": "Max Q superata. La cellula tiene.",
+      "beltDeep": "Ancora nella fascia. Scafo {pct}. Niente di strutturale.",
+      "beltBare": "Scafo {pct}. Ridotti al telaio e ancora in volo.",
+      "beltClear": "La fascia e dietro di noi. I danni sono estetici, dove conta.",
+      "moonAhead": "Luna acquisita, dritta davanti. L'assetto tiene.",
+      "liminalHot": "Motore a regime. Tutte e tre le alette pari.",
+      "transitDeep": "Meta traversata. Gli strumenti sono fermi, ed è questa la parte strana.",
+      "moonFills": "Sessanta chilometri. Rientriamo sulla base.",
+      "lunarArrived": "A terra e al sicuro. Controllate le guarnizioni prima di muovervi.",
+      "gateSlabs": "Corridoio stabile. Carichi sullo scafo nominali, stranamente.",
+      "whiteSolids": "Quadridimensionali. Gli strumenti concordano, ed è questa la parte preoccupante.",
+      "jupiterClose": "Perigiovio sui numeri. Tiene.",
+      "holeSphere": "Bocca sferica. Il cielo opposto è rifratto su tutta la superficie.",
+      "throatDeep": "Strumenti fermi. Tutto quello che c'è fuori non lo è.",
+      "zetaArrived": "A terra e al sicuro. L'atmosfera risulta respirabile: confermate prima dei caschi.",
+      "titaniaArrived": "A terra. Nessuno rompe una guarnizione finché non lo dico io.",
+      "hexCompany": "Contatto di traverso. Mantiene la nostra posizione. Annotato."
+    },
+    "hot": {
+      "railExit": "QUELLO sì che è un cannone. Rifatelo.",
+      "maxQ": "Max Q! Lascia che urli, è fatto per urlare!",
+      "beltDeep": "E prenditelo, allora. {pct} e stiamo ancora salendo.",
+      "beltBare": "Strappate pure tutto, non mi importa. {pct}.",
+      "beltClear": "Passati! Avete visto cosa ci ha portato via?",
+      "moonAhead": "Eccola li. In mezzo al vetro.",
+      "liminalHot": "Accendilo. Accendilo tutto.",
+      "transitDeep": "Questa è la cosa più bella che qualcuno abbia mai costruito.",
+      "moonFills": "È enorme, è enorme, guardate che roba!",
+      "lunarArrived": "Siamo atterrati sulla Luna. Qualcuno lo scriva da qualche parte.",
+      "gateSlabs": "Guarda come VA. Guarda che colori!",
+      "whiteSolids": "Non ho idea di cosa siano e le adoro.",
+      "jupiterClose": "Più vicino! È tutto il senso di una fionda!",
+      "holeSphere": "Stiamo attraversando una palla per finire in un'altra galassia. Sì.",
+      "throatDeep": "Il miglior corridoio in cui qualcuno sia mai passato.",
+      "zetaArrived": "Trentanove anni luce. Qualcuno apra qualcosa.",
+      "titaniaArrived": "Oceano di acido! Non toccatelo! Io voglio toccarlo.",
+      "hexCompany": "Che ci provi, a starci dietro. Non ci starà dietro a lungo."
+    },
+    "warm": {
+      "railExit": "Tutti a posto? Bene. Quella era la parte peggiore.",
+      "maxQ": "Respirate. Fa più rumore di quanto faccia male.",
+      "beltDeep": "Scafo {pct}. Tenetevi stretti e passerà.",
+      "beltBare": "{pct}. Abbiamo perso la pelle, non le persone.",
+      "beltClear": "Siamo passati. Ci siamo tutti.",
+      "moonAhead": "Oh. Oh, da qui è bellissima.",
+      "liminalHot": "La luce è stupenda e non mi fido per niente.",
+      "transitDeep": "Guardatevi tra voi, non fuori dal finestrino. Solo per un momento.",
+      "moonFills": "Riempie tutto. Ha il colore dell'osso vecchio.",
+      "lunarArrived": "Siamo a terra. Bravi, tutti quanti.",
+      "gateSlabs": "È bellissimo. Qualunque altra cosa sia, è bellissimo.",
+      "whiteSolids": "Sono quasi gentili. Guarda con che lentezza ruotano.",
+      "jupiterClose": "Tenetevi a qualcosa. Sarà finita in un attimo.",
+      "holeSphere": "Qualcuno l'ha costruito. Qualcuno l'ha costruito per noi.",
+      "throatDeep": "Tutti a posto? Dite qualcosa, uno qualunque di voi.",
+      "zetaArrived": "Ci siamo. Tutti quanti, e l'aria è buona.",
+      "titaniaArrived": "I caschi restano. Lo so. Mi dispiace.",
+      "hexCompany": "Qualunque cosa sia là fuori, non ci ha fatto male. Che venga pure."
+    },
+    "dry": {
+      "railExit": "Quindi ecco quanto costa farsi sparare da un cannone. Annotato.",
+      "maxQ": "Max Q. Se ne va la vernice. La vernice era facoltativa.",
+      "beltDeep": "{pct}. Qualcuno quassu dovrebbe proprio fare ordine.",
+      "beltBare": "{pct}. Adesso siamo un proiettile con manie di grandezza.",
+      "beltClear": "Usciti dall'altra parte, e rovinati solo per la maggior parte.",
+      "moonAhead": "La Luna. Sempre li. Sempre grigia.",
+      "liminalHot": "Meraviglioso. La parte viola e accesa.",
+      "transitDeep": "Farò finta che il fuori sia uno screensaver.",
+      "moonFills": "È piuttosto vicina. È piuttosto vicina, in effetti.",
+      "lunarArrived": "La Luna. Mi era stata promessa una spiaggia.",
+      "gateSlabs": "Carta da parati. Carta da parati molto veloce.",
+      "whiteSolids": "Forme nel vuoto. Splendido. C'è del tè?",
+      "jupiterClose": "Enorme palla di gas, niente freni. Piano impeccabile.",
+      "holeSphere": "Un buco. Rotondo. Naturalmente.",
+      "throatDeep": "Ho smesso di avere opinioni sull'esterno.",
+      "zetaArrived": "Trentanove anni luce per una statua.",
+      "titaniaArrived": "Un oceano che ti scioglie. E qualcuno ci ha messo un'ambasciata.",
+      "hexCompany": "Ovvio che ci sia qualcosa qua fuori. C'è sempre."
+    },
+    "precise": {
+      "railExit": "Velocità alla volata come da progetto. Duemilaquattrocento, o poco meno.",
+      "maxQ": "Picco di pressione dinamica. L'ablazione segue la curva pubblicata.",
+      "beltDeep": "Scafo {pct}. Il decadimento è esponenziale, come diceva il modello.",
+      "beltBare": "{pct}. L'asintoto tiene. Non arriverà mai a zero.",
+      "beltClear": "Traversata completa. Perdite entro l'uno per cento della previsione.",
+      "moonAhead": "Trecentottantaquattromila chilometri. Ancora per quattro secondi circa.",
+      "liminalHot": "Il nucleo non irradia. Qualunque cosa stia facendo, non e calore.",
+      "transitDeep": "Niente là fuori si comporta bene. Sto registrando tutto.",
+      "moonFills": "Sessanta chilometri. La dimensione angolare è fuori scala.",
+      "lunarArrived": "Un sesto di gravità. Muovetevi piano e pensateci prima.",
+      "gateSlabs": "Slit-scan. Le bande sono discrete e la spaziatura è logaritmica.",
+      "whiteSolids": "Un tesseratto, un 16-celle e un 5-celle. Proiettati, non immaginati.",
+      "jupiterClose": "Perigiovio entro due raggi. Il delta-v vale ogni metro.",
+      "holeSphere": "Una sfera, non un imbuto. Tutti i film tranne uno sbagliano questo.",
+      "throatDeep": "Sto registrando tutto e non mi crederanno.",
+      "zetaArrived": "Gravità superficiale circa uno e mezzo. Attenti alle ginocchia.",
+      "titaniaArrived": "L'oceano ha pH zero e lo scafo si sta già corrodendo.",
+      "hexCompany": "Sta eguagliando la nostra velocità con precisione. Non è un oggetto naturale."
+    }
+  },
+  "station": {
+    "tourists": {
+      "zetaOut": "Siete venuti! Siete venuti davvero! Oh, siamo COSÌ contenti.",
+      "dysonSighted": "Avete notato i gusci! Li notano tutti. Non sono adorabili?",
+      "capture": "Siete in orbita! Bravissimi! Salutate tutti!",
+      "zetaOrbiting": "Quello è il nostro lato migliore. Abbiamo messo in ordine. Non dovevate guardare ma abbiamo messo in ordine.",
+      "deorbitBurn": "State scendendo! Piano, piano. Non troppo piano. State andando benissimo.",
+      "zetaSkim": "L'aria oggi è deliziosa. Respirabile! Per voi! Abbiamo controllato apposta.",
+      "baseSighted": "Vi vediamo! Siamo tutti fuori! Qualcuno ha fatto un cartello!",
+      "finalApproach": "Adagio adesso. Adagio. Oh, è il giorno più bello.",
+      "contact": "A TERRA! Siete a terra! Nessuno tocchi niente, sono a terra!",
+      "zetaArrived": "Benvenuti, benvenuti, benvenuti. Volete vedere il Monumento? Dite di sì."
+    },
+    "dargos": {
+      "andromeda": "Benvenuti in Andromeda. Mantenete la rotta attuale. Non mantenete la rotta attuale.",
+      "theNeighbour": "Quello è il vicino. Non guardatelo. Gli piace essere guardato.",
+      "capture": "Siete in orbita. Non siete in orbita. Entrambe le letture sono corrette e le confermiamo entrambe.",
+      "titaniaOrbiting": "Riducete la velocità. Aumentate la velocità. Qualunque cosa abbiate fatto, era l'altra.",
+      "deorbitBurn": "Iniziate subito la discesa. Non iniziate la discesa. Confermate una delle due.",
+      "titaniaSkim": "Siete troppo bassi. Anche troppo alti. Restate esattamente dove siete e insieme muovetevi.",
+      "baseSighted": "Vi abbiamo a vista. Non vi abbiamo mai visti. L'ambasciata è lieta di entrambe le cose.",
+      "finalApproach": "Atterrate sulla piazzola. La piazzola è un'esca. L'esca è la piazzola. Procedete.",
+      "contact": "Siete atterrati. Confermate di non essere atterrati.",
+      "titaniaArrived": "Benvenuti su Titania. Il mare non è pericoloso. Non avvicinatevi al mare."
+    }
   }
 }

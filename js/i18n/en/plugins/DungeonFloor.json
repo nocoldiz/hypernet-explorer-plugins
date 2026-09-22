@@ -1,3 +1,229 @@
 {
-  "demoLimit": " (Demo mode limit: {max})"
+  "demoLimit": " (Demo mode limit: {max})",
+  "bandFallbackName": "Climber",
+  "bandFell": "{name} fell on this floor.",
+  "bandLines": [
+    "We came up for the loot. So far the floor has taken more than it has given.",
+    "Keep to the walls. Whatever nests here does not hear stone.",
+    "Lost one of ours two floors down. We are not turning back for the body.",
+    "If you find the stair before we do, leave the door open behind you.",
+    "Three of us went in. Count us on your way out and see how many there are.",
+    "The lift answers, but not always to the floor you asked it for.",
+    "We hunt what the tower feeds. Do not get between us and it.",
+    "Rest if you like. Nothing up here rests with you.",
+    "Every floor is somebody's last one. Try not to make it this one.",
+    "You climb for the top, we climb for the pay. Same stairs."
+  ],
+  "nameGrammar": {
+    "machine": {
+      "onsets": [
+        "k",
+        "t",
+        "d",
+        "v",
+        "z",
+        "x",
+        "kr",
+        "tr",
+        "dr",
+        "vk",
+        "zt",
+        "qu",
+        "j",
+        "b",
+        "g"
+      ],
+      "nuclei": [
+        "a",
+        "o",
+        "u",
+        "i",
+        "e",
+        "aa",
+        "oo",
+        "ei",
+        "ou"
+      ],
+      "codas": [
+        "k",
+        "t",
+        "x",
+        "n",
+        "r",
+        "s",
+        "ks",
+        "nt",
+        "rk",
+        "-7",
+        "-9",
+        "-3",
+        "-12"
+      ],
+      "joiners": [
+        "-",
+        ".",
+        ""
+      ]
+    },
+    "alien": {
+      "onsets": [
+        "sh",
+        "th",
+        "zh",
+        "kl",
+        "sl",
+        "vr",
+        "xi",
+        "y",
+        "n",
+        "m",
+        "s",
+        "z",
+        "q",
+        "tl"
+      ],
+      "nuclei": [
+        "aa",
+        "ee",
+        "ii",
+        "oo",
+        "uu",
+        "ae",
+        "ia",
+        "ou",
+        "ei",
+        "au"
+      ],
+      "codas": [
+        "n",
+        "l",
+        "r",
+        "s",
+        "th",
+        "sh",
+        "x",
+        "ll",
+        "nn"
+      ],
+      "joiners": [
+        "'",
+        "-",
+        ""
+      ]
+    },
+    "eldritch": {
+      "onsets": [
+        "gh",
+        "zh",
+        "kth",
+        "ngh",
+        "xh",
+        "phth",
+        "vl",
+        "tzq",
+        "gl",
+        "rh",
+        "ts",
+        "hy",
+        "wr",
+        "yg"
+      ],
+      "nuclei": [
+        "o",
+        "u",
+        "aa",
+        "uu",
+        "yh",
+        "oa",
+        "ui",
+        "ae",
+        "ao"
+      ],
+      "codas": [
+        "th",
+        "gh",
+        "lth",
+        "rn",
+        "zg",
+        "mn",
+        "kh",
+        "ss",
+        "ll",
+        "rr"
+      ],
+      "joiners": [
+        "'",
+        "-",
+        "·",
+        ""
+      ]
+    }
+  },
+  "worldKind": {
+    "mixed": "Mixed world",
+    "earthling": "Earthling colony",
+    "goblin": "Goblin world",
+    "monster": "Monster world",
+    "beast": "World of beasts",
+    "zombie": "Risen world",
+    "fungoid": "Fungoid world",
+    "machine": "Machine world",
+    "alien": "Alien world",
+    "magical": "Magical world",
+    "undead": "World of the dead",
+    "mutant": "Mutant world",
+    "severed": "Severed world",
+    "ruin": "Ruined world",
+    "mimic": "Mimic world"
+  },
+  "worldKindBlurb": {
+    "mixed": "A world that took in whoever the shaft sent it, and made a people out of the mixture.",
+    "earthling": "Earth people who climbed in and never climbed back out. They still keep Earth's calendar.",
+    "goblin": "Goblins all the way down, loud about it, and organised into something they insist is a government.",
+    "monster": "Nothing here was ever tame, and what rules it rules by being the largest thing in the room.",
+    "beast": "Animals, and the weather that moves them. Nothing here builds or believes anything.",
+    "zombie": "The plague ran its course and the population stayed on afterwards.",
+    "fungoid": "One organism wearing a great many bodies, and disagreeing with itself in all of them.",
+    "machine": "The people died and the institutions did not. The elections are still held on schedule.",
+    "alien": "Nothing on Earth applies here, and its people are unbothered by that.",
+    "magical": "Magic was never bound here, so every trade is a school and every school is a faction.",
+    "undead": "A world that kept its dead in office.",
+    "mutant": "A world that changed faster than it could agree on what it was.",
+    "severed": "Magic does not reach here. What is left is machinery, paperwork and patience.",
+    "ruin": "Whatever lived here finished, and the buildings have not been told.",
+    "mimic": "Everything is furniture until it is not."
+  },
+  "world": {
+    "heading": "World",
+    "kind": "Kind",
+    "dominant": "Dominant people",
+    "dominantShare": "{name} ({percent}% of the population)",
+    "population": "Population",
+    "magic": "Magic",
+    "power": "Hyperpower",
+    "parties": "Parties",
+    "reachedFrom": "Reached from",
+    "reachedFloor": "Omega Tower, floor {floor}",
+    "band": "Typical level",
+    "bandRange": "around {median} (from {min} to {max})",
+    "noGovernment": "Holds no government.",
+    "earthSeat": "Keeps Earth's own nations and hyperpowers.",
+    "offworld": "Offworld. No place on the world map answers for it.",
+    "ofWorld": "of {world}",
+    "unknown": "Unrecorded"
+  },
+  "populationMode": {
+    "normal": "Settled",
+    "chaos": "Unstable",
+    "goblin": "Goblin",
+    "monster": "Monstrous",
+    "empty": "Deserted",
+    "zombie": "Risen",
+    "death": "Dead"
+  },
+  "magicalLevel": {
+    "normal": "Bound",
+    "severed": "Severed",
+    "unbound": "Unbound"
+  }
 }

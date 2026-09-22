@@ -64,7 +64,8 @@
     "clearAllConfirm": "Click again to confirm",
     "cycleVariants": "Other colourways available",
     "backToCategories": "Back to the folder list",
-    "stock": "Already ordered and paid for. Setting it down spends one."
+    "stock": "Already ordered and paid for. Setting it down spends one.",
+    "mirror": "Flip the piece left to right (not for doors, walls, roofs or terrain)"
   },
   "category": {
     "Ads": "Ads",
@@ -233,5 +234,6 @@
     "prev": "Back a page",
     "next": "On a page"
   },
-  "stockLeft": "{n} left"
+  "stockLeft": "{n} left",
+  "mirror": "Mirror"
 }

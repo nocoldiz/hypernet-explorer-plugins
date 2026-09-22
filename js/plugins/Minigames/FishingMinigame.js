@@ -2146,6 +2146,11 @@
 
         _grantCatch(ent) {
             if (ent.type === 'fish') {
+                // RESULT_VAR is off by default: it used to point at variable 95,
+                // which GalaxySim owns as the starship fuel tank, so every catch
+                // emptied or overfilled the ship. $gameSystem._lastCaughtFishId
+                // is the answer to "what was caught"; the variable stays as an
+                // opt-in for events, on a slot nobody else claims.
                 if (RESULT_VAR > 0) $gameVariables.setValue(RESULT_VAR, ent.data.id);
                 if ($gameSystem) $gameSystem._lastCaughtFishId = ent.data.id;
                 if (ent.data.itemId && $dataItems[ent.data.itemId]) {

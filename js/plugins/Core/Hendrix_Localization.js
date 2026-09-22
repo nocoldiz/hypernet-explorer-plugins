@@ -2579,7 +2579,14 @@ Imported.Hendrix_Localization = true;
     }
     //---------------------------------------------------------
 
+    // The chain is kept: this used to replace refresh outright, which threw away
+    // BattleSystemEnhancedHUD's hook (it loads earlier and marks its HTML help
+    // box stale here, so the battle help text could keep a description it had
+    // already left behind). The previous implementation runs first, then the text
+    // is redrawn translated.
+    const _Hendrix_Window_Help_refresh = Window_Help.prototype.refresh;
     Window_Help.prototype.refresh = function () {
+        if (_Hendrix_Window_Help_refresh) _Hendrix_Window_Help_refresh.call(this);
         this.contents.clear();
         if (this._text) {
             const translatedText = translateText(this._text);

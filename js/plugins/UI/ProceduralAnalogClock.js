@@ -606,8 +606,12 @@
 
         // ── UPDATE ───────────────────────────────────────────────────────────
         update() {
-            const ts   = $gameVariables.value(TIME_VAR) || Date.now();
-            const d    = new Date(ts);
+            // Variable 113 holds TimeDateSystem's formatted date, not an epoch,
+            // so reading it as a timestamp showed the wrong hour (or none).
+            // TimeDateSystem owns the in-world clock and answers with a Date.
+            const d = (window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj)
+                ? window.TimeDateSystem.getCurrentDateObj()
+                : new Date($gameVariables.value(TIME_VAR) || Date.now());
             const h24  = d.getHours();
             const h12  = h24 % 12;
             const min  = d.getMinutes();

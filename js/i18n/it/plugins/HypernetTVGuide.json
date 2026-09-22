@@ -41,10 +41,10 @@
       "name": "Mediahex"
     },
     "slamdrome": {
-      "name": ""
+      "name": "Slamdrome 2"
     },
     "circle": {
-      "name": ""
+      "name": "Circolo Sanzionato"
     }
   },
   "program": {
@@ -587,36 +587,36 @@
     },
     "slamdrome": {
       "slam_vigil": {
-        "title": ""
+        "title": "Veglia dello Slam"
       },
       "slam_aftershow": {
-        "title": ""
+        "title": "Dopo la Campana"
       },
       "slam_classics": {
-        "title": ""
+        "title": "Nastri che Nessuno ha Conservato"
       },
       "slam_contracts": {
-        "title": ""
+        "title": "Leggi il Contratto"
       },
       "slam_mundane_hour": {
-        "title": ""
+        "title": "Nessuna Mano Oltre Queste"
       }
     },
     "circle": {
       "sanctioned_hour": {
-        "title": ""
+        "title": "L'Ora Sanzionata"
       },
       "form_and_fall": {
-        "title": ""
+        "title": "Forma e Caduta"
       },
       "the_notariat": {
-        "title": ""
+        "title": "Il Notariato"
       },
       "open_division": {
-        "title": ""
+        "title": "Divisione Aperta"
       },
       "school_of_the_week": {
-        "title": ""
+        "title": "La Scuola della Settimana"
       }
     }
   }

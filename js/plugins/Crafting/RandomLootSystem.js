@@ -144,6 +144,56 @@
     // is what makes the climb the thing that decides the reward.
     const TOWER_FLOOR_WEIGHT = 1.25;
 
+    // ...but the influence is clamped at 100, and a party of any weight reaches
+    // that clamp around floor 40. Everything under it used to pay exactly the
+    // same, so the deepest half of the shaft - the half whose enemies are still
+    // climbing - was the half with no reward gradient at all. Past DEEP_FLOOR
+    // the depth therefore stops pushing the influence (it has nowhere left to
+    // push) and starts opening the tier ladder itself instead, which the clamp
+    // cannot flatten: the lift grows from RARITY_LIFT at DEEP_FLOOR to
+    // RARITY_LIFT + DEEP_TOWER_LIFT at the bottom of the tower.
+    const DEEP_FLOOR = 40;       // where the influence has already saturated
+    const DEEP_TOWER_FLOOR = 91; // the deepest floor that holds anything
+    const DEEP_TOWER_LIFT = 0.3; // how much further the ladder opens down there
+
+    // The extra tier lift the floor underfoot is worth, 0 anywhere above
+    // DEEP_FLOOR and at its full value on the last floor of the shaft.
+    function towerDepthLift() {
+        const floor = getCurrentTowerFloor();
+        if (floor <= DEEP_FLOOR) return 0;
+        const span = DEEP_TOWER_FLOOR - DEEP_FLOOR;
+        const t = Math.max(0, Math.min(1, (floor - DEEP_FLOOR) / span));
+        return DEEP_TOWER_LIFT * t;
+    }
+
+    // Which world the floor underfoot opens onto, and what its crates lean
+    // towards (DungeonFloorSystem.js, window.TowerWorlds). A floor of the
+    // Omega Tower is not a cellar under Italy: a machine world's crates are
+    // full of components and pay better, a ruined one's hold junk and pay
+    // worse. Null everywhere else, so every other call site is unchanged.
+    function towerWorldLoot() {
+        const TW = window.TowerWorlds;
+        if (!TW || typeof TW.lootProfile !== 'function') return null;
+        try { return TW.lootProfile(); } catch (e) { return null; }
+    }
+
+    // How hard a world leans. A favoured shelf is drawn from several times
+    // more often and a shunned one several times less, which is a lean and
+    // not a law: no world can empty its own pool, because nothing is ever
+    // filtered OUT, only weighted.
+    const WORLD_FAVOUR_WEIGHT = 4;
+    const WORLD_SHUN_WEIGHT = 0.25;
+
+    function worldCategoryFactor(item, profile) {
+        if (!profile || !item || !item.note) return 1;
+        const note = item.note;
+        const holds = (list) => list.some((cat) =>
+            new RegExp('<category:\\s*' + cat + '\\s*>', 'i').test(note));
+        if (profile.favour && profile.favour.length && holds(profile.favour)) return WORLD_FAVOUR_WEIGHT;
+        if (profile.shun && profile.shun.length && holds(profile.shun)) return WORLD_SHUN_WEIGHT;
+        return 1;
+    }
+
     const START_YEAR_MIN = 2001;
     const START_YEAR_MAX_LOOT = 2012;
 
@@ -276,7 +326,7 @@
         return 50 * Math.pow(0.35, tierIndex);
     }
 
-    function calculateItemWeight(itemPrice, rarityInfluence) {
+    function calculateItemWeight(itemPrice, rarityInfluence, extraLift) {
         // Determine which tier this item belongs to
         let tierIndex = 0;
         for (let i = 0; i < RARITY_TIERS.length; i++) {
@@ -289,7 +339,8 @@
         // Normalize influence to 0-1 range
         const influence = Math.max(0, Math.min(1, rarityInfluence / 100));
 
-        const lift = Math.pow(1 + (RARITY_LIFT - 1) * influence, tierIndex);
+        const ceiling = RARITY_LIFT + (extraLift || 0);
+        const lift = Math.pow(1 + (ceiling - 1) * influence, tierIndex);
         return Math.max(1, tierBaseWeight(tierIndex) * lift * 20);
     }
     
@@ -383,9 +434,17 @@
                 }
             } catch (e) { /* safe fallback to party level */ }
         }
-        let rarityInfluence = baseLootLevel + towerFloor + lootBonus + appraisal + yearBonus;
+        // The world the floor opens onto pays its own way: a rich world adds
+        // to the influence like a good year does, and opens the tier ladder
+        // a little further on top, which the clamp cannot flatten.
+        const worldLoot = towerWorldLoot();
+        const worldBonus = worldLoot ? (worldLoot.rarityBonus || 0) : 0;
+        let rarityInfluence = baseLootLevel + towerFloor + lootBonus + appraisal + yearBonus + worldBonus;
         rarityInfluence = Math.max(0, Math.min(100, rarityInfluence));
-        
+        // Past the deep floors the clamp above has nothing left to give, so the
+        // depth opens the tier ladder itself instead (towerDepthLift).
+        const depthLift = towerDepthLift() + (worldLoot ? (worldLoot.lift || 0) : 0);
+
         // Calculate weighted probability for each item
         let weightedItems = [];
         let totalWeight = 0;
@@ -395,13 +454,17 @@
             if (item.price === 0) continue;
             
             // Calculate weight using new algorithm
-            let weight = calculateItemWeight(item.price, rarityInfluence);
+            let weight = calculateItemWeight(item.price, rarityInfluence, depthLift);
 
             // A crate of keepsakes is not graded the way a crate of swords is:
             // half the weight is levelled flat across the shelf, so the top of
             // the price range is genuinely reachable at any party level and the
             // spread is wider than any weapon or armour roll.
             if (collectibles) weight = weight * 0.5 + COLLECTIBLE_FLAT_WEIGHT;
+
+            // What the world under the crate actually deals in. A lean, not a
+            // law: the shelf it shuns is still on the shelf.
+            weight *= worldCategoryFactor(item, worldLoot);
 
             // Add extreme rarity for artifacts
             if (item.id >= 1500 || (item.note && item.note.toLowerCase().includes('<category: artifact>'))) {

@@ -12,5 +12,9 @@
     "selfPardon": "Ti sei auto-perdonato questo crimine",
     "lawfulPardon": "{name} ha commesso {crime} in nome della legge."
   },
-  "nobodyLeftToJudgeYou": "Non è rimasto nessuno a giudicarti"
+  "nobodyLeftToJudgeYou": "Non è rimasto nessuno a giudicarti",
+  "nobodySaw": "Nessuno ha visto niente.",
+  "theShopkeeper": "il negoziante",
+  "vendorRefusesForever": "{keeper} non ti venderà mai più nulla.",
+  "vendorRefusesEntry": "{keeper} ti volta le spalle. A questo banco non sei il benvenuto."
 }

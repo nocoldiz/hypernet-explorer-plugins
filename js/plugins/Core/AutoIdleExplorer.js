@@ -190,10 +190,58 @@
  * menu (default OFF, persisted in the global config).
  *
  * When the option is ON and the player stands still on a normal map for more
- * than the configured number of seconds (default 5), the CPU takes over:
+ * than the configured number of seconds (default 3), the CPU takes over:
  *
  *   • It navigates the map with the engine's built-in A* pathfinding
  *     (the same routine the NPC system relies on for goal seeking).
+ *   • It sees the WHOLE MAP, not the tiles around its feet. Everything worth
+ *     walking to is ranked at once and distance is a cost on that ranking
+ *     rather than a wall, so the leader crosses a town for the market at the
+ *     far end of it instead of poking the three things in the corner they
+ *     woke up in. Ground already walked on is remembered, and wandering heads
+ *     for ground that is not.
+ *   • It KEEPS A BOOK. The first time the party stands on a map, that map is
+ *     written up: the ways off it and which map each of them leads to, the
+ *     counters and stalls standing on it, the food, the beds, the washrooms,
+ *     the amusements and the work, how dangerous it was and how many people
+ *     lived there. What answers a need is judged by the town's own capability
+ *     registry (NPC/NPCSimulationCore.js), so the party recognises a kitchen
+ *     or a washroom by the same rule its townspeople do. The book belongs to
+ *     the PARTY and is kept in the savegame: a market walked past a week ago
+ *     is still a market the party knows about from the other side of the
+ *     continent, and it is written up whether the player or the CPU was the
+ *     one doing the walking.
+ *   • It PLANS ACROSS MAPS. A destination is a map, not a tile: what the party
+ *     is short of, read against that book, and failing that the nearest map
+ *     nobody has ever stood on. The route is walked over the project's one
+ *     connection graph (Map/MapGraphs.js, published as window.MapConnections),
+ *     and at each step the CPU takes THE door whose transfer names the next
+ *     map on the route rather than any door at all.
+ *   • It DOES NOT PING-PONG. The party remembers the last handful of maps it
+ *     walked through, and the map it has just come from is the one place a
+ *     door is not worth taking while anywhere else is on offer.
+ *   • It TAKES THE BUS. A route of more than a few maps, from a bus stop, a
+ *     station or its own camper, is travelled through Vehicle/FastTravelSystem
+ *     rather than walked: the CPU opens the overlay the player opens, confirms
+ *     the row the player would have clicked, and picks the stop it has not
+ *     been carried to lately.
+ *   • It SOLVES WHAT IS IN FRONT OF IT. Levers, crystal switches and torches
+ *     are thrown and rocks are shoved toward their goal squares through
+ *     Map/MapPuzzleSystem itself, so every rule the player plays by is the
+ *     rule the CPU plays by. The leader walks round to the far side of a rock
+ *     to shove it the right way.
+ *   • It PLANS ITS LARDER. Meals and bandages are stocked up while a shelf is
+ *     standing there, rather than bought the moment they are missed, and a
+ *     meal is rationed: the smallest thing in the pack that covers the hole,
+ *     not the best thing in it.
+ *   • It CHANGES HANDS. A leader too hurt or too hungry to be walking in front
+ *     gives the party to whoever is fit for it, through the same one call Tab
+ *     and the Dynamics roster make.
+ *   • WHOEVER IS HOLDING THE REINS PLAYS THEIR OWN WAY. Morality, off the same
+ *     sheet the Empathize panel shows, tilts the ranking: a character with a
+ *     conscience walks toward the people on the map and leaves the shelves
+ *     alone, and one without walks toward the fights and the shelves and
+ *     thinks nothing of either.
  *   • It walks up to nearby events (NPCs, objects, doors) and interacts with
  *     them, preferring roaming enemy events so battles get started.
  *   • It LEAVES. A door, a staircase, a cave mouth or any event that transfers
@@ -351,7 +399,7 @@
  * @type number
  * @min 1
  * @max 60
- * @default 5
+ * @default 3
  *
  * @param healThreshold
  * @text Heal Threshold (%)
@@ -396,7 +444,7 @@
 
     const PLUGIN = "AutoIdleExplorer";
     const params = PluginManager.parameters(PLUGIN);
-    const IDLE_FRAMES = Math.max(1, Math.round((Number(params.idleSeconds) || 5) * 60));
+    const IDLE_FRAMES = Math.max(1, Math.round((Number(params.idleSeconds) || 3) * 60));
     const HEAL_RATE = (Number(params.healThreshold) || 50) / 100;
     const HUNGER_RATE = (Number(params.hungerThreshold) || 35) / 100;
     const SCAN_RADIUS = Number(params.scanRadius) || 12;
@@ -542,6 +590,16 @@
     // room it has nothing to do in does not hold it.
     const EXPLORED_GOALS = 6;
     const PORTAL_ODDS = 0.2;
+    // Having just walked through a door, the party does not walk through
+    // another one. A transfer puts them down BESIDE the way back, usually
+    // facing it, and every cooldown on this map is fresh because they have
+    // never been here, so without this the CPU took one step, saw a door and
+    // went back the way it came, over and over, seeing nothing.
+    //
+    // Ten seconds is long enough to be out of the doorway and into the room.
+    // It holds opportunistic doors only: a party on a JOURNEY it planned is
+    // going somewhere and is not stopped at every threshold.
+    const ARRIVAL_SETTLE = 600;
     // How many levels above the party an enemy may be before the CPU walks the
     // other way, and how beaten the party has to be before it runs.
     const LEVEL_MARGIN = 3;
@@ -557,6 +615,543 @@
     // below zero a leader's morality (NPC/NPCSociety.js) has to sit before
     // they help themselves, and the chance they leave the shelf alone anyway.
     const THIEF_MORALITY = -20;
+
+    // ========================================================================
+    // 2b. WHAT THE PARTY KNOWS
+    // ------------------------------------------------------------------------
+    // The autopilot is not a wandering NPC. An NPC looks at the tiles around
+    // its feet; the party carries a GAZETTEER, and the first time it stands on
+    // a map it writes that map down: the ways off it and where each of them
+    // leads, the counters and stalls standing on it, the food, the beds, the
+    // washrooms and the amusements, how dangerous it was and how many people
+    // lived there. That book belongs to the PARTY rather than to the session,
+    // so it is kept on $gameSystem and travels with the savegame: a party that
+    // once walked through a market remembers there is a market there a week
+    // later, from the other side of the continent, and can plan a journey back
+    // to it.
+    //
+    // Route planning on top of the book is Map/MapGraphs.js's business: the
+    // connection graph it builds for the compass is published as
+    // window.MapConnections, so "which door in this room takes me toward the
+    // market" has one answer for the whole project.
+    // ========================================================================
+    const GAZ_VERSION = 2;
+    // The needs the book records a map against, asked of the town's own
+    // capability registry (NPC/NPCSimulationCore.js) so the party recognises a
+    // kitchen, a bed or a washroom by exactly the rule its townspeople use.
+    const GAZ_NEEDS = ["hunger", "sleep", "hygiene", "leisure", "money", "comfort"];
+    // How many maps back the party remembers walking through. This is what
+    // stops the CPU stepping through a door and straight back out of it: the
+    // map it has just come from is the last one it wants to see again.
+    const TRAIL_MEMORY = 6;
+    // The longest chain of maps the CPU will plan across, and the point past
+    // which it would rather take a bus than walk.
+    const ROUTE_HOPS = 10;
+    const FAST_TRAVEL_HOPS = 4;
+    // Meals the party likes to have in the pack before it walks anywhere, and
+    // the healing it likes to have beside them.
+    const FOOD_STOCK = 3;
+    const HEAL_STOCK = 2;
+    // The lead changes hands below this: a leader this hurt, or this hungry,
+    // is not the one who should be walking in front.
+    const SWAP_HP = 0.34;
+    const SWAP_HUNGER = 0.18;
+    // How far above zero a conscience has to sit before the leader goes out of
+    // their way for the people on the map rather than for the things on it,
+    // and how far below before a fight is something they look for.
+    const SAINT_MORALITY = 20;
+    const BRUTE_MORALITY = -20;
+    // Frames the fast travel overlay is given to write its confirm panel
+    // before the CPU gives up on the journey and lets the overlay be closed.
+    const TRAVEL_WAIT = 180;
+
+    function gazetteer() {
+        if (!$gameSystem) return { v: GAZ_VERSION, maps: {}, trail: [], travel: {} };
+        const book = $gameSystem._aieGazetteer;
+        if (!book || book.v !== GAZ_VERSION) {
+            $gameSystem._aieGazetteer = { v: GAZ_VERSION, maps: {}, trail: [], travel: {} };
+        }
+        const g = $gameSystem._aieGazetteer;
+        if (!g.maps) g.maps = {};
+        if (!Array.isArray(g.trail)) g.trail = [];
+        if (!g.travel) g.travel = {};
+        return g;
+    }
+
+    function mapEntry(mapId, create) {
+        const book = gazetteer();
+        const key = String(mapId);
+        if (!book.maps[key] && create) {
+            book.maps[key] = {
+                tags: {}, exits: [], danger: 0, people: 0, puzzles: 0, visits: 0, surveyed: false,
+            };
+        }
+        return book.maps[key] || null;
+    }
+
+    // The maps the party has walked through most recently, oldest first. The
+    // last one on it is where they are standing.
+    function trail() {
+        return gazetteer().trail;
+    }
+
+    function recordArrival(mapId) {
+        const list = trail();
+        if (list[list.length - 1] === mapId) return;
+        // Somewhere new is the one thing that reliably cheers a party up.
+        Mind.feel(list.indexOf(mapId) >= 0 ? "deadEnd" : "arrived");
+        list.push(mapId);
+        while (list.length > TRAIL_MEMORY) list.shift();
+    }
+
+    // The map the party came in from, which is the one place a door is not
+    // worth taking while anywhere else is on offer.
+    function cameFrom() {
+        const list = trail();
+        return list.length >= 2 ? list[list.length - 2] : 0;
+    }
+
+    // Does anything on this map answer this need? The same question the loose
+    // party asks when it goes looking for a washroom, asked of the whole map
+    // rather than of the leash around the leader.
+    function needHere(need) {
+        const scanner = window.NPCSim && window.NPCSim.InteractionScanner;
+        if (!scanner || typeof scanner.findByNeed !== "function") return false;
+        try {
+            const matches = scanner.findByNeed(need, null) || [];
+            return matches.some((m) => m && m.event && !m.event._erased);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Everything worth writing down about the map the party is standing on.
+    // Run on arrival; the first survey of a map is announced, because reading a
+    // place is a thing the player would have done themselves.
+    function surveyMap() {
+        if (!$gameMap || !$gameSystem || !$dataMap) return null;
+        const mapId = $gameMap.mapId();
+        const entry = mapEntry(mapId, true);
+        if (!entry) return null;
+        const first = !entry.surveyed;
+        const info = window.$dataMapInfos && $dataMapInfos[mapId];
+        entry.name = (info && info.name) || entry.name || "";
+        entry.visits = (entry.visits || 0) + 1;
+        entry.exits = [];
+        entry.tags = entry.tags || {};
+        let danger = 0;
+        let people = 0;
+        let puzzles = 0;
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased) continue;
+            if (isPortalEvent(ev)) {
+                const to = window.MapConnections ? window.MapConnections.exitTarget(ev) : 0;
+                entry.exits.push({ x: ev.x, y: ev.y, to: to, id: ev.eventId() });
+            }
+            if (isEnemyEvent(ev)) danger = Math.max(danger, eventLevel(ev));
+            else if (isPersonEvent(ev)) people++;
+            if (puzzleRole(ev)) puzzles++;
+        }
+        entry.danger = danger;
+        entry.people = people;
+        entry.puzzles = puzzles;
+        entry.tags.shop = shopShelf().length > 0;
+        for (const need of GAZ_NEEDS) entry.tags[need] = needHere(need);
+        entry.surveyed = true;
+        if (first) {
+            announce("AutoIdle.auto.surveyed", {
+                map: entry.name || mapId,
+                notes: describeEntry(entry),
+            }, "info");
+        }
+        return entry;
+    }
+
+    // What the book says about a map, in the player's own language: the short
+    // list of things worth coming back for.
+    function describeEntry(entry) {
+        const notes = [];
+        if (entry && entry.tags) {
+            for (const tag of ["shop"].concat(GAZ_NEEDS)) {
+                if (entry.tags[tag]) notes.push(T("AutoIdle.auto.note." + tag));
+            }
+        }
+        if (entry && entry.puzzles) notes.push(T("AutoIdle.auto.note.puzzle"));
+        if (!notes.length) notes.push(T("AutoIdle.auto.note.nothing"));
+        return notes.join(", ");
+    }
+
+    // Which known map answers this tag, nearest by the connection graph. The
+    // map underfoot never counts: this is the question "where do we GO".
+    function nearestKnownWith(tag) {
+        const MC = window.MapConnections;
+        if (!MC || !$gameMap) return null;
+        const here = $gameMap.mapId();
+        const book = gazetteer().maps;
+        let best = null;
+        for (const key of Object.keys(book)) {
+            const id = Number(key);
+            const entry = book[key];
+            if (!id || id === here || !entry || !entry.tags || !entry.tags[tag]) continue;
+            const path = MC.path(here, id);
+            if (path.length < 2 || path.length - 1 > ROUTE_HOPS) continue;
+            if (!best || path.length < best.path.length) best = { mapId: id, path: path, entry: entry };
+        }
+        return best;
+    }
+
+    // The nearest map the party has never stood on, walked out from here over
+    // the connection graph. This is what map-wide knowledge buys: the CPU
+    // heads for the edge of what it knows instead of rattling around the rooms
+    // it has already emptied.
+    function frontierMap() {
+        const MC = window.MapConnections;
+        if (!MC || !$gameMap) return null;
+        const here = $gameMap.mapId();
+        const seen = new Set([here]);
+        const queue = [[here]];
+        const recent = trail();
+        let fallback = null;
+        // The continent is hundreds of maps wide and this runs on a frame the
+        // player is standing still in, so the walk has a budget as well as a
+        // depth: an answer a little short of the best one is worth more than a
+        // stutter.
+        let budget = 400;
+        while (queue.length && budget-- > 0) {
+            const path = queue.shift();
+            if (path.length - 1 > ROUTE_HOPS) continue;
+            const tail = path[path.length - 1];
+            if (tail !== here) {
+                const entry = mapEntry(tail, false);
+                const unknown = !entry || !entry.surveyed;
+                if (unknown && !recent.includes(tail)) return { mapId: tail, path: path };
+                if (unknown && !fallback) fallback = { mapId: tail, path: path };
+            }
+            for (const next of MC.neighbours(tail)) {
+                if (seen.has(next)) continue;
+                seen.add(next);
+                queue.push(path.concat([next]));
+            }
+        }
+        return fallback;
+    }
+
+    // The way off this map that leads to that one, or null. This is the whole
+    // point of the connection graph: the CPU does not take "a door", it takes
+    // THE door, the one whose transfer names the next map on the route.
+    function exitToward(mapId) {
+        if (!$gameMap || !mapId) return null;
+        const MC = window.MapConnections;
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased || !isInteractable(ev) || !isPortalEvent(ev)) continue;
+            const to = MC ? MC.exitTarget(ev) : 0;
+            if (to === mapId) return ev;
+        }
+        return null;
+    }
+
+    // ------------------------------------------------------------- the puzzle
+    // A puzzle is not scenery. MapPuzzleSystem keeps every lever, crystal,
+    // torch, plate and pushable rock it has registered on the map in one book
+    // ($gameSystem._puzzleData), so the CPU reads that book rather than
+    // guessing from event names, and works the pieces with the system's own
+    // hands.
+    function puzzleData() {
+        return ($gameSystem && $gameSystem._puzzleData) || null;
+    }
+
+    // What part does this event play in a puzzle, if any: something to throw,
+    // something to shove, or the square something has to end up on.
+    function puzzleRole(ev) {
+        const pd = puzzleData();
+        if (!pd || !ev || !ev.eventId) return "";
+        const id = ev.eventId();
+        if (pd.levers && pd.levers[id]) return "lever";
+        if (pd.crystalSwitches && pd.crystalSwitches[id]) return "lever";
+        if (pd.torches && pd.torches[id]) return "lever";
+        if (pd.pushables && pd.pushables[id]) return "push";
+        if (pd.goalEvents && pd.goalEvents[id]) return "goal";
+        return "";
+    }
+
+    // Throw every switch on the map that is standing in front of the leader,
+    // and shove the nearest rock one square toward the nearest goal. Both are
+    // done through MapPuzzleSystem itself, so every rule the player plays by
+    // (what a rock may be pushed onto, how many shoves it has left, what a
+    // lever opens) is the rule the CPU plays by.
+    function tryPuzzle() {
+        const MPS = window.MapPuzzleSystem;
+        const pd = puzzleData();
+        if (!MPS || !pd || !$gamePlayer || !$gameMap) return false;
+        // 1) A switch the leader is already facing is simply thrown.
+        const dir = $gamePlayer.direction();
+        const fx = $gamePlayer.x + (dir === 6 ? 1 : dir === 4 ? -1 : 0);
+        const fy = $gamePlayer.y + (dir === 2 ? 1 : dir === 8 ? -1 : 0);
+        for (const ev of $gameMap.eventsXy(fx, fy)) {
+            if (puzzleRole(ev) !== "lever") continue;
+            try { MPS.checkPuzzleInteractions($gamePlayer); } catch (e) { return false; }
+            announce("AutoIdle.auto.puzzle", { target: (ev.event() && ev.event().name) || "" }, "good");
+            return true;
+        }
+        // 2) Otherwise a rock is shoved one square closer to a goal square.
+        return pushTowardGoal();
+    }
+
+    // The rock worth shoving and the square it has to be shoved toward, as
+    // { rock, dx, dy, standX, standY }, or null when nothing on this map has
+    // anywhere to go. One answer, used both to push and to walk into position.
+    function pushPlan() {
+        const pd = puzzleData();
+        if (!pd || !pd.pushables || !$gameMap) return null;
+        const goals = [];
+        for (const key of Object.keys(pd.goalEvents || {})) {
+            const ev = $gameMap.event(Number(key));
+            if (ev && !ev._erased) goals.push(ev);
+        }
+        if (!goals.length) return null;
+        for (const key of Object.keys(pd.pushables)) {
+            const rock = $gameMap.event(Number(key));
+            if (!rock || rock._erased || rock.isMoving()) continue;
+            let goal = null;
+            let bestD = Infinity;
+            for (const g of goals) {
+                const d = Math.abs(g.x - rock.x) + Math.abs(g.y - rock.y);
+                if (d > 0 && d < bestD) { bestD = d; goal = g; }
+            }
+            if (!goal) continue;
+            const gx = goal.x - rock.x;
+            const gy = goal.y - rock.y;
+            const dx = gx !== 0 ? Math.sign(gx) : 0;
+            const dy = gx !== 0 ? 0 : Math.sign(gy);
+            if (!dx && !dy) continue;
+            // The leader has to be standing on the far side of the rock to
+            // shove it that way.
+            const standX = rock.x - dx;
+            const standY = rock.y - dy;
+            if (!tilePassable(standX, standY)) continue;
+            return { id: Number(key), rock: rock, dx: dx, dy: dy, standX: standX, standY: standY };
+        }
+        return null;
+    }
+
+    function pushTowardGoal() {
+        const MPS = window.MapPuzzleSystem;
+        if (!MPS || typeof MPS.tryPush !== "function") return false;
+        const plan = pushPlan();
+        if (!plan) return false;
+        if ($gamePlayer.x !== plan.standX || $gamePlayer.y !== plan.standY) return false;
+        $gamePlayer.setDirection(dirBetween($gamePlayer.x, $gamePlayer.y, plan.rock.x, plan.rock.y));
+        let pushed = false;
+        try { pushed = !!MPS.tryPush(plan.id, plan.dx, plan.dy); } catch (e) { return false; }
+        if (!pushed) return false;
+        announce("AutoIdle.auto.puzzle", {
+            target: (plan.rock.event() && plan.rock.event().name) || "",
+        }, "good");
+        return true;
+    }
+
+    // -------------------------------------------------------- the conscience
+    // Morality is not only about the till. A character the party hands the
+    // reins to plays the map their own way: somebody with a conscience walks
+    // toward the people on it and leaves the shelves alone, and somebody
+    // without one walks toward the fights and the shelves and thinks nothing
+    // of either. The number is the one the Empathize panel shows.
+    function moralityOf(actor) {
+        if (!actor) return 0;
+        try {
+            const profile = Loose.partyProfile(actor);
+            return profile ? Number(profile.moralityScore) || 0 : 0;
+        } catch (e) { return 0; }
+    }
+
+    function leaderMorality() {
+        return moralityOf(autoActor());
+    }
+
+    // How much this errand appeals to the character holding the reins. One
+    // multiplier on the ordinary ranking, so a saint and a brute walking the
+    // same street go different ways down it without either of them refusing
+    // to explore.
+    function moralAppeal(entry, morality) {
+        let weight = 1;
+        if (entry.enemy) {
+            weight *= morality <= BRUTE_MORALITY ? 1.5 : morality >= SAINT_MORALITY ? 0.7 : 1;
+        }
+        if (entry.person) {
+            weight *= morality >= SAINT_MORALITY ? 1.4 : morality <= BRUTE_MORALITY ? 0.8 : 1;
+        }
+        return weight;
+    }
+
+    // ----------------------------------------------------- the marching order
+    // The leader is whoever should be walking in front, which is not always
+    // whoever was. A leader on their last legs, or one who has not eaten,
+    // hands the party over to whoever is in better shape, through the same one
+    // call Tab and the Dynamics roster make.
+    function swapCandidate() {
+        const party = $gameParty;
+        const leader = party && party.leader();
+        if (!leader || party.size() < 2) return null;
+        const maxHunger = (window.TimeDateSystem && window.TimeDateSystem.maxHunger) || 100;
+        const hungerOf = (m) => (typeof m.hunger === "function" ? Number(m.hunger()) / maxHunger : 1);
+        const unfit = leader.hpRate() < SWAP_HP || hungerOf(leader) < SWAP_HUNGER;
+        if (!unfit) return null;
+        let best = null;
+        for (const m of party.battleMembers()) {
+            if (!m || m === leader || !m.isAlive()) continue;
+            if (m.hpRate() < SWAP_HP + 0.2) continue;
+            if (hungerOf(m) < SWAP_HUNGER + 0.15) continue;
+            if (!best || m.hpRate() > best.hpRate()) best = m;
+        }
+        return best;
+    }
+
+    function trySwapLeader() {
+        const pick = swapCandidate();
+        if (!pick) return false;
+        let swapped = false;
+        try { swapped = !!Lead.switchTo(pick.actorId(), { pan: false }); } catch (e) { return false; }
+        if (!swapped) return false;
+        announce("AutoIdle.auto.handsOver", { other: pick.name() }, "info");
+        return true;
+    }
+
+    // ------------------------------------------------------------ the larder
+    // A party that eats its last meal the moment it is hungry is a party that
+    // starves on the next map. The leader keeps a few meals and a couple of
+    // bandages in the pack, buys them off the shelf while there is a shelf to
+    // buy them off, and eats the SMALLEST thing that covers the hole rather
+    // than the best thing in the pack.
+    function foodStock() {
+        let count = 0;
+        for (const item of $gameParty.items()) {
+            const meta = item && item.meta;
+            if (!meta) continue;
+            if (meta.calories || (meta.Category && /food/i.test(String(meta.Category)))) {
+                count += $gameParty.numItems(item);
+            }
+        }
+        return count;
+    }
+
+    function healStock() {
+        let count = 0;
+        for (const item of $gameParty.items()) {
+            if (recoversHp(item) && menuUsable(item)) count += $gameParty.numItems(item);
+        }
+        return count;
+    }
+
+    function foodValue(item) {
+        const meta = (item && item.meta) || {};
+        const cal = Number(meta.calories) || 0;
+        const pro = Number(meta.protein) || 0;
+        const fat = Number(meta.fat) || 0;
+        return cal * 0.1 + pro * 2.0 + fat * 1.5 || 20;
+    }
+
+    // The smallest meal in the pack that still covers the hole, or the biggest
+    // one there is when nothing covers it.
+    function rationFor(deficit) {
+        let covers = null;
+        let biggest = null;
+        for (const item of $gameParty.items()) {
+            const meta = item && item.meta;
+            if (!meta) continue;
+            if (!meta.calories && !(meta.Category && /food/i.test(String(meta.Category)))) continue;
+            const value = foodValue(item);
+            if (!biggest || value > foodValue(biggest)) biggest = item;
+            if (value >= deficit && (!covers || value < foodValue(covers))) covers = item;
+        }
+        return covers || biggest;
+    }
+
+    // Stock up while the stall is here. What the party is short of is bought
+    // one piece at a time, and never down to an empty purse.
+    function tryStock() {
+        if (!sense(AutoIdle.frame).shopsOpen) return false;
+        const shelf = shopShelf();
+        if (!shelf.length) return false;
+        const wantFood = foodStock() < FOOD_STOCK;
+        const wantHeal = healStock() < HEAL_STOCK;
+        if (!wantFood && !wantHeal) return false;
+        const utils = window.ItemSystemUtils;
+        let pick = null;
+        for (const entry of shelf) {
+            const item = entry && entry.data;
+            if (!item || entry.type !== "item") continue;
+            const price = Number(item.price) || 0;
+            if (price <= 0 || $gameParty.gold() - price < PURSE_FLOOR) continue;
+            const isFood = utils && utils.isFoodItem
+                ? utils.isFoodItem(item)
+                : !!(item.meta && item.meta.calories);
+            const isHeal = recoversHp(item) && menuUsable(item);
+            if (!(wantFood && isFood) && !(wantHeal && isHeal)) continue;
+            if (!pick || price < pick.price) pick = { entry: entry, price: price };
+        }
+        if (!pick) return false;
+        $gameParty.loseGold(pick.price);
+        if (!takeOffShelf(pick.entry)) return false;
+        Mind.feel("bought");
+        announce("AutoIdle.auto.stocked", {
+            item: pick.entry.data.name,
+            price: window.MoneyFormatter && window.MoneyFormatter.format
+                ? window.MoneyFormatter.format(pick.price)
+                : pick.price,
+        }, "good");
+        return true;
+    }
+
+    // ------------------------------------------------------- the long journey
+    // A route of more than a few maps is not a walk, it is a journey, and a
+    // party standing on a bus stop, a station or beside its own camper takes
+    // the transport rather than the road. FastTravelSystem owns every network,
+    // every fare and every refusal, so the CPU opens the overlay the player
+    // opens and confirms the row the player would have clicked.
+    function transportHere() {
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.transportHere !== "function") return null;
+        try { return FT.transportHere(); } catch (e) { return null; }
+    }
+
+    function travelDestinations() {
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.destinations !== "function") return [];
+        try { return FT.destinations() || []; } catch (e) { return []; }
+    }
+
+    // Somewhere the party has not been carried lately. The book remembers when
+    // each place was last taken, so the network is not used to shuttle back
+    // and forth between the same two towns.
+    function pickTravelDestination() {
+        const list = travelDestinations();
+        if (!list.length) return null;
+        const seen = gazetteer().travel;
+        let best = null;
+        for (const dest of list) {
+            if (!dest || !dest.name) continue;
+            const when = Number(seen[dest.name]) || 0;
+            if (!best || when < best.when) best = { dest: dest, when: when };
+        }
+        return best ? best.dest : null;
+    }
+
+    function tryFastTravel() {
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.openTo !== "function") return false;
+        if (!(SceneManager._scene instanceof Scene_Map)) return false;
+        const transport = transportHere();
+        if (!transport) return false;
+        const dest = pickTravelDestination();
+        if (!dest) return false;
+        let opened = false;
+        try { opened = !!FT.openTo(dest.name, transport); } catch (e) { return false; }
+        if (!opened) return false;
+        gazetteer().travel[dest.name] = Date.now();
+        AutoIdle.travelling = dest.name;
+        announce("AutoIdle.auto.travels", { target: dest.name }, "info");
+        return true;
+    }
 
     // ========================================================================
     // Menu profiles, the autopilot's understanding of what each menu is FOR.
@@ -831,14 +1426,14 @@
         const hunger = typeof leader.hunger === "function" ? leader.hunger() : 0;
         const max = (window.TimeDateSystem && window.TimeDateSystem.maxHunger) || 100;
         if (hunger >= max * HUNGER_RATE) return false;
-        const item = foodItem();
+        // Rationed: the smallest thing in the pack that covers the hole, so a
+        // day of walking is not spent on one meal (see rationFor).
+        const item = rationFor(max - hunger) || foodItem();
         if (!item) return false;
-        const cal = Number(item.meta.calories) || 0;
-        const pro = Number(item.meta.protein) || 0;
-        const fat = Number(item.meta.fat) || 0;
-        const recovery = cal * 0.1 + pro * 2.0 + fat * 1.5 || 20;
-        leader.addHunger(recovery);
+        leader.addHunger(foodValue(item));
         $gameParty.consumeItem(item);
+        Mind.feel("fed");
+        announce("AutoIdle.auto.ate", { item: item.name }, "good");
         return true;
     }
 
@@ -1042,10 +1637,16 @@
     // Is the leader giving this tile a wide berth? Only while they are wanted,
     // and only around an officer: nothing else on the map pushes them about.
     function underOfficerEye(x, y) {
-        if (heat() < HEAT_SHY || !$gameMap) return false;
+        if (!$gameMap) return false;
+        const world = sense(AutoIdle.frame);
+        if (!layingLow(world)) return false;
+        // Unwelcome is one thing. Unwelcome AND wanted is another, and the
+        // leader walks the long way round.
+        const berth = world.shunned && world.heat >= HEAT_SHY
+            ? OFFICER_BERTH + 3 : OFFICER_BERTH;
         for (const ev of $gameMap.events()) {
             if (!ev || ev._erased || !isOfficer(ev)) continue;
-            if (Math.abs(ev.x - x) + Math.abs(ev.y - y) <= OFFICER_BERTH) return true;
+            if (Math.abs(ev.x - x) + Math.abs(ev.y - y) <= berth) return true;
         }
         return false;
     }
@@ -1088,18 +1689,6 @@
         return false;
     }
 
-    // The leader's own conscience, off the same sheet the Empathize panel
-    // shows (NPC/NPCSociety.js). No profile, no theft: a character the sim
-    // knows nothing about is given the benefit of the doubt.
-    function leaderMorality() {
-        const actor = autoActor();
-        if (!actor) return 0;
-        try {
-            const profile = Loose.partyProfile(actor);
-            return profile ? Number(profile.moralityScore) || 0 : 0;
-        } catch (e) { return 0; }
-    }
-
     function takeOffShelf(entry) {
         const SS = window.StealingSystem;
         try {
@@ -1111,6 +1700,7 @@
 
     // Paying for it.
     function tryBuy() {
+        if (!sense(AutoIdle.frame).shopsOpen) return false;
         const actor = autoActor();
         if (!actor) return false;
         const shelf = shopShelf();
@@ -1126,6 +1716,7 @@
         if (!pick) return false;
         $gameParty.loseGold(pick.price);
         if (!takeOffShelf(pick.entry)) return false;
+        Mind.feel("bought");
         announce("AutoIdle.auto.bought", {
             item: pick.entry.data.name,
             price: window.MoneyFormatter && window.MoneyFormatter.format
@@ -1141,6 +1732,9 @@
     function trySteal() {
         const SS = window.StealingSystem;
         if (!SS || typeof SS.calcChance !== "function") return false;
+        const world = sense(AutoIdle.frame);
+        // Already wanted, or already unwelcome here: the hand stays down.
+        if (layingLow(world)) return false;
         if (leaderMorality() > THIEF_MORALITY) return false;
         const actor = autoActor();
         if (!actor) return false;
@@ -1155,6 +1749,7 @@
             try {
                 if (CS && typeof CS.addPresetCrime === "function") CS.addPresetCrime("shoplifting");
             } catch (e) { /* the shame is enough */ }
+            Mind.feel("caught");
             announce("AutoIdle.auto.caught", { item: entry.data.name }, "bad");
             return true;
         }
@@ -1198,6 +1793,573 @@
         return true;
     }
 
+    // ========================================================================
+    // The mind: what the party WANTS, and how it feels about wanting it.
+    //
+    // Everything above this line answers one question per think tick and then
+    // forgets it, which is the one thing that reads as a machine: a body that
+    // rescores the whole map eight frames later and walks off mid-errand. A
+    // person keeps an intention for minutes at a time, gives up on it when
+    // they run out of patience rather than when something else scores higher,
+    // and carries the mood of the last hour into the next one.
+    //
+    // The purpose lives in the savegame beside the gazetteer, because coming
+    // back to a save should come back to a party that still wanted something.
+    // It names an event by id, never by reference: a Game_Event does not
+    // survive a save, and a purpose has to.
+    // ========================================================================
+    const MIND_VERSION = 1;
+    // How much better a fresh errand has to look before it is worth turning
+    // round for. Below this the party sees it, and keeps walking.
+    const SWITCH_MARGIN = 1.35;
+    // Patience is spent on being stuck, not on time passing.
+    const PATIENCE_DRAIN = 0.07;
+    const PATIENCE_FLOOR = 0.04;
+    // Every mood slides back toward the middle of itself while nothing is
+    // happening, so a bad afternoon does not last the rest of the world.
+    const MOOD_DRIFT = 0.006;
+    const INTENT_TTL = 3600;    // a minute, unless the purpose asks for longer
+    const ERRAND_TTL = 18000;   // five minutes: long enough to cross a county
+    const INTENT_LONG = 1800;   // a purpose held this long is worth writing down
+    const GRUDGE = 5400;        // how long a thing given up on in temper is left alone
+
+    const Mind = {
+        _loose: null,
+
+        _fresh() {
+            return {
+                v: MIND_VERSION,
+                purpose: null,
+                // valence: how the last while went. arousal: how much it wants
+                // a fight. patience: how long it will keep trying this.
+                // curiosity: how much unseen ground is worth.
+                mood: { valence: 0.5, arousal: 0.5, patience: 0.75, curiosity: 0.6 },
+                grudges: {},
+                kept: 0,
+            };
+        },
+
+        state() {
+            if (typeof $gameSystem === "undefined" || !$gameSystem) {
+                if (!this._loose) this._loose = this._fresh();
+                return this._loose;
+            }
+            let m = $gameSystem._aieMind;
+            if (!m || m.v !== MIND_VERSION) m = $gameSystem._aieMind = this._fresh();
+            if (!m.mood) m.mood = this._fresh().mood;
+            if (!m.grudges) m.grudges = {};
+            return m;
+        },
+
+        mood() { return this.state().mood; },
+        purpose() { return this.state().purpose; },
+
+        // ------------------------------------------------------------ moods
+        // One nudge, named by what happened rather than by which number moves,
+        // so the call sites read as events and not as arithmetic.
+        feel(what) {
+            const m = this.mood();
+            const bump = (k, d) => { m[k] = Math.max(0, Math.min(1, (m[k] || 0) + d)); };
+            switch (what) {
+                case "won": bump("valence", 0.12); bump("arousal", 0.08); bump("patience", 0.05); break;
+                case "hurt": bump("valence", -0.14); bump("arousal", 0.1); break;
+                case "fed": bump("valence", 0.08); bump("patience", 0.06); break;
+                case "bought": bump("valence", 0.06); bump("curiosity", 0.03); break;
+                case "caught": bump("valence", -0.2); bump("patience", -0.1); break;
+                case "stuck": bump("patience", -PATIENCE_DRAIN); bump("valence", -0.02); break;
+                case "arrived": bump("curiosity", 0.06); bump("valence", 0.05); bump("patience", 0.08); break;
+                case "deadEnd": bump("curiosity", -0.08); bump("valence", -0.05); break;
+                case "done": bump("valence", 0.07); bump("patience", 0.1); break;
+                default: break;
+            }
+        },
+
+        // Time alone is not an experience. Everything creeps home.
+        drift() {
+            const m = this.mood();
+            const home = this._fresh().mood;
+            for (const k of Object.keys(home)) {
+                const d = home[k] - (m[k] || 0);
+                if (Math.abs(d) > 0.001) m[k] = m[k] + Math.sign(d) * Math.min(Math.abs(d), MOOD_DRIFT);
+            }
+        },
+
+        // ---------------------------------------------------------- purpose
+        // kind: what sort of wanting this is ("errand", "quest", "work",
+        // "journey"). goal: a savegame-safe description of the thing.
+        commit(kind, goal, why, ttl, frame) {
+            const s = this.state();
+            s.purpose = {
+                kind,
+                goal: goal || null,
+                why: why || kind,
+                born: frame || 0,
+                dies: (frame || 0) + (ttl || INTENT_TTL),
+            };
+            announce("AutoIdle.mind.wants", {
+                why: T("AutoIdle.mind.why." + (why || kind)) || "",
+                target: (goal && goal.label) || "",
+            }, "info");
+            return true;
+        },
+
+        // Is the purpose still worth having? Patience runs out before the
+        // clock does, which is why a wall is what ends an errand rather than
+        // a better idea somewhere else.
+        holds(frame) {
+            const p = this.purpose();
+            if (!p) return false;
+            if (frame > p.dies) { this.release("expired", frame); return false; }
+            if (this.mood().patience <= PATIENCE_FLOOR) { this.release("fedup", frame); return false; }
+            return true;
+        },
+
+        // Given up on, and remembered as given up on.
+        release(how, frame) {
+            const s = this.state();
+            const p = s.purpose;
+            s.purpose = null;
+            if (!p) return;
+            if (how === "fedup") {
+                if (p.goal && p.goal.key) s.grudges[p.goal.key] = (frame || 0) + GRUDGE;
+                announce("AutoIdle.mind.givesUp", { target: (p.goal && p.goal.label) || "" }, "warning");
+                this.mood().patience = 0.45;
+                return;
+            }
+            if (how === "done") {
+                s.kept++;
+                this.feel("done");
+                // Only a long one is worth a line: the notebook is not a log.
+                if (frame - p.born >= INTENT_LONG) this.write(p);
+            }
+        },
+
+        // Somewhere between annoyance and giving up.
+        frustrate() { this.feel("stuck"); },
+
+        grudged(key, frame) {
+            const s = this.state();
+            const until = s.grudges[key];
+            if (!until) return false;
+            if (until <= frame) { delete s.grudges[key]; return false; }
+            return true;
+        },
+
+        // A purpose that held for minutes is a thing that happened to the
+        // party, so it goes in the party's own notebook rather than only into
+        // a toast nobody was watching.
+        write(p) {
+            try {
+                if (!window.Diary || typeof window.Diary.record !== "function") return;
+                const actor = autoActor();
+                window.Diary.record("autoIdlePurpose", {
+                    name: actor ? actor.name() : "",
+                    why: T("AutoIdle.mind.why." + p.why) || "",
+                    target: (p.goal && p.goal.label) || "",
+                }, { dedupe: "autoIdle:" + p.why });
+            } catch (e) { /* the notebook never stops the autopilot */ }
+        },
+    };
+
+    // ========================================================================
+    // The senses: the world as the party can actually feel it.
+    //
+    // The clock, the sky and the law were all readable and none of them was
+    // read, so the party shopped at three in the morning and crossed a moor
+    // in a blizzard. One snapshot, cached for a second, folded into the stats
+    // every profile already receives.
+    // ========================================================================
+    const SENSE_CACHE_FRAMES = 60;
+    const NIGHT_FROM = 21;
+    const NIGHT_UNTIL = 6;
+    const SHOPS_OPEN = 8;
+    const SHOPS_SHUT = 20;
+    const BED_HOUR = 22;
+    const ROUGH_WEATHER = /storm|rain|snow|blizzard|hail|sand|ash|thunder/i;
+
+    let _sense = null;
+    let _senseAt = -1;
+
+    function sense(frame) {
+        const now = Number(frame) || 0;
+        if (_sense && now - _senseAt < SENSE_CACHE_FRAMES && now >= _senseAt) return _sense;
+        const s = {
+            hour: 12, day: 1, night: false,
+            weather: "", rough: false, season: "",
+            standing: 0, shunned: false, heat: heat(),
+        };
+        try {
+            const TDS = window.TimeDateSystem;
+            if (TDS && typeof TDS.getCurrentDateObj === "function") {
+                const d = TDS.getCurrentDateObj();
+                if (d) { s.hour = d.getHours(); s.day = d.getDate(); }
+            }
+        } catch (e) { /* no clock, noon forever */ }
+        s.night = s.hour >= NIGHT_FROM || s.hour < NIGHT_UNTIL;
+        s.shopsOpen = s.hour >= SHOPS_OPEN && s.hour < SHOPS_SHUT;
+        s.bedtime = s.hour >= BED_HOUR || s.hour < NIGHT_UNTIL;
+        try {
+            if (typeof $gameWeather !== "undefined" && $gameWeather) {
+                if (typeof $gameWeather.getWeatherDisplayName === "function") {
+                    s.weather = String($gameWeather.getWeatherDisplayName() || "");
+                }
+                s.rough = ROUGH_WEATHER.test(s.weather) ||
+                    ROUGH_WEATHER.test(String($gameWeather.currentWeatherType || ""));
+                if (typeof $gameWeather.getSeason === "function") {
+                    s.season = String($gameWeather.getSeason() || "");
+                }
+            }
+        } catch (e) { /* a clear sky is the safe guess */ }
+        try {
+            const actor = autoActor();
+            if (typeof $gameFactions !== "undefined" && $gameFactions && actor) {
+                if (typeof $gameFactions.localStanding === "function") {
+                    s.standing = Number($gameFactions.localStanding(actor)) || 0;
+                }
+                if (typeof $gameFactions.standingRefusesService === "function") {
+                    s.shunned = !!$gameFactions.standingRefusesService(actor);
+                }
+            }
+        } catch (e) { /* nobody minds them either way */ }
+        // Is there a roof over them? A roof is what decides whether the
+        // weather is a reason to move at all.
+        s.indoors = indoorsHere();
+        _sense = s;
+        _senseAt = now;
+        return s;
+    }
+
+    function indoorsHere() {
+        try {
+            const meta = (typeof $dataMap !== "undefined" && $dataMap && $dataMap.meta) || null;
+            if (!meta) return false;
+            if (meta.Interior !== undefined || meta.Inside !== undefined) return true;
+            if (meta.Exterior !== undefined) return false;
+            const biome = String(meta.Biome || "");
+            return !!biome && window.ProceduralInteriors &&
+                typeof window.ProceduralInteriors.isRoofed === "function"
+                ? !!window.ProceduralInteriors.isRoofed(biome)
+                : false;
+        } catch (e) { return false; }
+    }
+
+    // Keeping the head down: wanted, or so badly thought of locally that the
+    // counter would refuse them anyway. Both shut the shelf and both widen the
+    // berth the party gives the law.
+    function layingLow(s) {
+        return !!s && (!!s.shunned || Number(s.heat) >= HEAT_SHY);
+    }
+
+    // ========================================================================
+    // The voice: which answer the party gives, and why.
+    //
+    // Every Show Choices used to be a coin flip, which is the loudest machine
+    // noise in the whole plugin: a party that agrees to a duel, a loan and a
+    // funeral with equal enthusiasm. The answer now comes off the person
+    // holding the reins, who the speaker is, what the party can afford and how
+    // the day has gone.
+    // ========================================================================
+    // Matched against the choice text the player would read, so the table is
+    // localized with everything else rather than compiled into the plugin.
+    const CHOICE_SHAPES = ["buy", "fight", "rude", "leave", "help", "ask", "yes", "no"];
+
+    function choiceShape(text) {
+        const t = String(text || "").toLowerCase();
+        if (!t) return "";
+        for (const shape of CHOICE_SHAPES) {
+            // A POOL, not a list: the words of the language being played,
+            // whole or not at all, so English never leaks into an Italian
+            // answer and false-matches somebody half a word.
+            let list = null;
+            try { list = T.pool ? T.pool("AutoIdle.voice.words." + shape) : null; } catch (e) { list = null; }
+            if (!list || !list.length) continue;
+            for (const word of list) {
+                const w = String(word || "").toLowerCase().trim();
+                if (w && t.indexOf(w) >= 0) return shape;
+            }
+        }
+        return "";
+    }
+
+    // Who is doing the talking to them. The society register knows every NPC
+    // the simulation has ever made; the name and graphic guesswork elsewhere
+    // in this file is the fallback, not the answer.
+    function speakerProfile(ev) {
+        try {
+            if (!ev || !window.NPCSim || typeof window.NPCSim.npcNameForEvent !== "function") return null;
+            const name = window.NPCSim.npcNameForEvent(ev);
+            if (!name) return null;
+            const reg = window.NPCSocietyRegistry;
+            if (!reg || typeof reg.getProfile !== "function") return null;
+            return reg.getProfile(name) || null;
+        } catch (e) { return null; }
+    }
+
+    // The event the party is currently in conversation with, which is the one
+    // it walked up to and started.
+    function speakingTo() {
+        try {
+            const id = $gameMap && $gameMap._interpreter ? $gameMap._interpreter.eventId() : 0;
+            return id ? $gameMap.event(id) : null;
+        } catch (e) { return null; }
+    }
+
+    function traitsOf(profile) {
+        if (!profile) return [];
+        const t = profile.traits;
+        if (!Array.isArray(t)) return [];
+        return t.map((x) => String(x && x.name ? x.name : x).toLowerCase());
+    }
+
+    // One score per answer. Nothing here is a hard rule except affordability
+    // and a fight the party is already losing: the rest tilts, so the same
+    // leader answers the same way most of the time without answering it every
+    // time.
+    function scoreChoice(text, ctx) {
+        const shape = choiceShape(text);
+        const mood = ctx.mood;
+        const traits = ctx.traits || [];
+        const has = (name) => traits.indexOf(name) >= 0;
+        let score = 1;
+        switch (shape) {
+            case "yes":
+                score += 1.2 + mood.valence * 1.4 + (ctx.morality >= SAINT_MORALITY ? 0.6 : 0);
+                if (has("suspicious") || has("cynical")) score -= 0.7;
+                break;
+            case "no":
+                score += 0.6 + (1 - mood.valence) * 1.2;
+                if (ctx.morality <= BRUTE_MORALITY) score += 0.4;
+                break;
+            case "help":
+                score += 0.9 + ctx.morality / 40 + mood.valence * 0.8;
+                break;
+            case "ask":
+                score += 0.8 + mood.curiosity * 1.6;
+                break;
+            case "buy":
+                // Never agree to a price the purse cannot take.
+                if (ctx.broke) return -Infinity;
+                score += 0.7 + (ctx.wants ? 1.1 : 0);
+                break;
+            case "fight":
+                // Never pick the fight the party is already losing.
+                if (ctx.losing) return -Infinity;
+                score += 0.4 + mood.arousal * 1.8 + (ctx.morality <= BRUTE_MORALITY ? 0.8 : -0.5);
+                break;
+            case "rude":
+                score += (ctx.morality <= BRUTE_MORALITY ? 1.1 : -0.8) + (1 - mood.valence);
+                if (ctx.liked > 20) score -= 0.8;
+                break;
+            case "leave":
+                // The way out gets better the less patience is left, which is
+                // what makes a bored party leave a conversation.
+                score += 0.4 + (1 - mood.patience) * 2.2;
+                break;
+            default:
+                score += 0.7 + mood.curiosity * 0.5;
+                break;
+        }
+        return Math.max(0.01, score);
+    }
+
+    // Consistent, not deterministic. A softmax over the scores gives the same
+    // leader the same answer most of the time and a different one now and
+    // then, which is the whole difference between a person and a table.
+    function softmaxPick(scores) {
+        let best = -Infinity;
+        for (const s of scores) if (s > best) best = s;
+        if (!isFinite(best)) return -1;
+        const weights = scores.map((s) => (isFinite(s) ? Math.exp((s - best) * 1.8) : 0));
+        let total = 0;
+        for (const w of weights) total += w;
+        if (total <= 0) return -1;
+        let roll = Math.random() * total;
+        for (let i = 0; i < weights.length; i++) {
+            roll -= weights[i];
+            if (roll <= 0) return i;
+        }
+        return weights.length - 1;
+    }
+
+    // The whole context one answer is given in, built once per prompt.
+    function voiceContext(frame) {
+        const actor = autoActor();
+        const ev = speakingTo();
+        const profile = speakerProfile(ev);
+        let liked = 0;
+        try {
+            if (profile && profile.opinions && actor) liked = Number(profile.opinions[actor.actorId()]) || 0;
+        } catch (e) { liked = 0; }
+        let mine = null;
+        try { mine = Loose.partyProfile ? Loose.partyProfile(actor) : null; } catch (e) { mine = null; }
+        const stats = gatherStats();
+        return {
+            mood: Mind.mood(),
+            morality: leaderMorality(),
+            traits: traitsOf(mine).concat(traitsOf(profile)),
+            liked,
+            broke: stats.broke,
+            wants: stats.shortOfFood || stats.shortOfHeal,
+            losing: false,
+            sense: sense(frame),
+        };
+    }
+
+    // A shift the party would botch is not an errand, it is a story about
+    // losing money.
+    const WORK_ODDS_FLOOR = 0.4;
+    // The kinds of wanting that are about somewhere else rather than about
+    // whatever happens to be standing on this map.
+    const ERRAND_KINDS = ["quest", "work", "mail"];
+    // Reading the quest board and the whole job catalogue is not free, so it
+    // happens on its own slow clock and not on the think tick.
+    const ERRAND_RETHINK = 600;
+
+    // ========================================================================
+    // The errands: the things the PARTY is actually on the hook for.
+    //
+    // Until now the autopilot could only browse: it had no notion of a quest,
+    // a shift or a letter, so it walked a world full of obligations as though
+    // it had none. These are ranked against each other and handed to the mind
+    // as a purpose with a long enough leash to be walked to.
+    // ========================================================================
+    function questErrands() {
+        const out = [];
+        try {
+            const PQ = window.ProceduralQuests;
+            if (!PQ || typeof PQ.activeQuests !== "function") return out;
+            for (const q of PQ.activeQuests() || []) {
+                if (!q) continue;
+                let where = null;
+                try { where = PQ.questLocation ? PQ.questLocation(q) : null; } catch (e) { where = null; }
+                if (!where || typeof where.wx !== "number") continue;
+                let text = q.title || "";
+                try {
+                    const i = PQ.firstUndoneIndex ? PQ.firstUndoneIndex(q) : 0;
+                    const step = q.steps && q.steps[i];
+                    if (step && PQ.stepText) text = PQ.stepText(step) || text;
+                } catch (e) { /* the title will do */ }
+                out.push({
+                    kind: "quest", why: "quest",
+                    key: "quest:" + q.qid,
+                    label: text,
+                    wx: where.wx, wy: where.wy, place: where.label || "",
+                    worth: 100,
+                });
+            }
+        } catch (e) { /* no quest board, no errands */ }
+        return out;
+    }
+
+    // The job board exposes no offer list of its own (the board builds it
+    // privately), so the catalogue is filtered here on the same two questions
+    // the board asks: can this party take it, and would they survive it.
+    function workErrands(stats) {
+        const out = [];
+        if (!stats || !stats.broke) return out;
+        try {
+            const WS = window.WorkSystem;
+            const actor = autoActor();
+            if (!WS || !Array.isArray(WS.Jobs) || !actor) return out;
+            for (const job of WS.Jobs) {
+                if (!job) continue;
+                try {
+                    if (typeof WS.meetsRequirements === "function" && !WS.meetsRequirements(actor, job)) continue;
+                } catch (e) { continue; }
+                let odds = 1;
+                try {
+                    if (typeof WS.calculateSuccessChance === "function") {
+                        odds = Number(WS.calculateSuccessChance(actor, job)) || 0;
+                        if (odds > 1) odds /= 100;
+                    }
+                } catch (e) { odds = 0.5; }
+                if (odds < WORK_ODDS_FLOOR) continue;
+                const pay = Number(job.pay || job.wage || job.reward) || 0;
+                let place = "";
+                try {
+                    if (typeof WS.locationLabel === "function" && job.mapId) place = WS.locationLabel(job.mapId) || "";
+                } catch (e) { place = ""; }
+                out.push({
+                    kind: "work", why: "work",
+                    key: "work:" + (job.id || job.name),
+                    label: (WS.jobName ? WS.jobName(job) : job.name) || "",
+                    mapId: job.mapId || 0, place,
+                    worth: 40 + (pay * odds) / 100,
+                });
+            }
+        } catch (e) { /* no board */ }
+        return out;
+    }
+
+    // Post is a nudge toward somewhere with people in it, not a destination:
+    // the mail system names no counter to walk to.
+    function mailErrand() {
+        try {
+            const MS = window.MailSystem;
+            if (!MS || typeof MS.unreadCount !== "function") return null;
+            const n = Number(MS.unreadCount()) || 0;
+            if (n <= 0) return null;
+            return { kind: "mail", why: "mail", key: "mail", label: "", count: n, worth: 25 };
+        } catch (e) { return null; }
+    }
+
+    // Everything owed, ranked. Distance is a cost the same way it is on the
+    // map ranking, and a party out of patience will not take on the long one.
+    function rankErrands(stats, frame) {
+        const list = questErrands().concat(workErrands(stats));
+        const post = mailErrand();
+        if (post) list.push(post);
+        const mood = Mind.mood();
+        const here = (typeof $gameMap !== "undefined" && $gameMap) ? $gameMap.mapId() : 0;
+        for (const e of list) {
+            let hops = 1;
+            if (e.mapId && window.MapConnections && typeof window.MapConnections.path === "function") {
+                try { hops = Math.max(1, (window.MapConnections.path(here, e.mapId) || []).length - 1); }
+                catch (err) { hops = 4; }
+            } else if (typeof e.wx === "number") {
+                hops = 3;
+            }
+            e.hops = hops;
+            e.score = Mind.grudged(e.key, frame)
+                ? 0
+                : e.worth / (1 + hops * (1.4 - mood.patience));
+        }
+        list.sort((a, b) => b.score - a.score);
+        return list.filter((e) => e.score > 0);
+    }
+
+    // Out of the weather. A storm is not a reason to stand in a field, so the
+    // nearest way off the map becomes the thing worth walking to, ranked the
+    // way anything else is rather than forced.
+    function trySheltering() {
+        if (!$gameMap || Loose.onWorldMap()) return false;
+        let best = null;
+        for (const ev of $gameMap.events()) {
+            if (!isInteractable(ev) || !isPortalEvent(ev)) continue;
+            const dist = Math.abs(ev.x - $gamePlayer.x) + Math.abs(ev.y - $gamePlayer.y);
+            if (!best || dist < best.dist) best = { ev, dist };
+        }
+        if (!best) return false;
+        announce("AutoIdle.auto.shelters", {
+            weather: sense(AutoIdle.frame).weather,
+        }, "warning");
+        AutoIdle.setTarget(best.ev, "AutoIdle.auto.heads");
+        return true;
+    }
+
+    // Turning in. Late, and nobody has slept: the party stops exploring and
+    // heads for the nearest place the book says there is a bed.
+    function tryTurningIn() {
+        if (AutoIdle.route) return false;
+        const goal = nearestKnownWith("sleep");
+        if (!goal || goal.mapId === AutoIdle.mapId) return false;
+        AutoIdle.route = {
+            dest: goal.mapId, why: "bed", hops: Math.max(1, goal.path.length - 1),
+        };
+        announce("AutoIdle.auto.turnsIn", {}, "info");
+        return true;
+    }
+
     // ------------------------------------------------------------- stats snapshot
     // One read of everything the needs system reasons about. Profiles receive
     // this so each menu's "do I need it?" check is a simple, declarative test.
@@ -1218,6 +2380,7 @@
         const hunger = (leader && typeof leader.hunger === "function") ? Number(leader.hunger()) || 0 : maxHunger;
         const canEat = !!leader && typeof leader.addHunger === "function";
         const gold = party ? party.gold() : 0;
+        const world = sense(AutoIdle.frame);
         return {
             injured,
             minHpRate,
@@ -1228,6 +2391,27 @@
             gold,
             broke: MONEY_FLOOR > 0 && gold < MONEY_FLOOR,
             bounty: $gameVariables ? Number($gameVariables.value(BOUNTY_VAR)) || 0 : 0,
+            // What the party is CARRYING, which is what it plans on. Being fed
+            // right now says nothing about whether it can afford to walk onto
+            // the next map.
+            foodStock: foodStock(),
+            healStock: healStock(),
+            shortOfFood: foodStock() < FOOD_STOCK,
+            shortOfHeal: healStock() < HEAL_STOCK,
+            // Who is holding the reins, and what kind of person they are.
+            morality: leaderMorality(),
+            unfitLeader: !!swapCandidate(),
+            // The clock, the sky and the law. Every profile below can ask what
+            // time it is rather than behaving the same at three in the morning
+            // as it does at noon.
+            sense: world,
+            night: world.night,
+            shopsOpen: world.shopsOpen,
+            bedtime: world.bedtime,
+            rough: world.rough,
+            indoors: world.indoors,
+            layingLow: layingLow(world),
+            mood: Mind.mood(),
         };
     }
 
@@ -1239,6 +2423,51 @@
     // i18n-ignore-start  label/purpose document the registerMenu contract;
     // nothing renders them, they are not display copy
     MENU_PROFILES.push(
+        {
+            id: "lead-swap",
+            label: "Hand over the lead",
+            purpose: "A leader too hurt or too hungry to walk in front gives the party to whoever is fit.",
+            priority: 120,
+            cooldown: 900,
+            need: (s) => s.unfitLeader,
+            act: () => trySwapLeader(),
+        },
+        {
+            id: "shelter",
+            label: "Get out of the weather",
+            purpose: "A storm on an open map is a reason to be somewhere else, and a roof is somewhere else.",
+            priority: 85,
+            cooldown: 900,
+            need: (s) => s.rough && !s.indoors,
+            act: () => trySheltering(),
+        },
+        {
+            id: "turn-in",
+            label: "Turn in for the night",
+            purpose: "Late, and nobody has slept: the party stops exploring and goes to find a bed.",
+            priority: 75,
+            cooldown: 1800,
+            need: (s) => s.bedtime && s.sleep < 40,
+            act: () => tryTurningIn(),
+        },
+        {
+            id: "puzzle",
+            label: "Work the puzzle",
+            purpose: "Throw the lever in front, or shove the rock one square toward its goal.",
+            priority: 55,
+            cooldown: 30,
+            need: () => !!puzzleData(),
+            act: () => tryPuzzle(),
+        },
+        {
+            id: "stock",
+            label: "Stock up",
+            purpose: "Buy the meals and bandages the party will want on the next map, while a shelf is here.",
+            priority: 66,
+            cooldown: 600,
+            need: (s) => s.shortOfFood || s.shortOfHeal,
+            act: () => tryStock(),
+        },
         {
             id: "heal-skill",
             label: "Healing spell",
@@ -1322,6 +2551,45 @@
         }
     );
 
+    // The fast travel overlay (Vehicle/FastTravelSystem.js) is the one screen
+    // the autopilot opens on purpose, so it is the one screen it drives: the
+    // destination is already selected by openTo, and this clicks the confirm
+    // the player would have clicked. An overlay the CPU did not open is left
+    // alone and dismissed the ordinary way.
+    MENU_PROFILES.push({
+        id: "fast-travel",
+        // i18n-ignore-start  registerMenu contract, never rendered
+        label: "Fast travel",
+        purpose: "Confirm the journey the CPU asked for.",
+        // i18n-ignore-end
+        isOpen: () => typeof document !== "undefined" && !!document.getElementById("panel-confirm"),
+        need: () => !!AutoIdle.travelling,
+        drive: () => {
+            if (!AutoIdle.travelling) return false;
+            const panel = document.getElementById("panel-confirm");
+            const button = document.getElementById("sidebar-confirm-action-btn");
+            if (!panel || panel.style.display === "none" || !button) {
+                // The overlay writes its markup a frame or two after it opens,
+                // and a destination it refuses never shows a confirm panel at
+                // all, so the wait has an end: give up and let the ordinary
+                // dismissal close it.
+                if (++AutoIdle._travelWait < TRAVEL_WAIT) return true;
+                AutoIdle.travelling = null;
+                AutoIdle._travelWait = 0;
+                return false;
+            }
+            AutoIdle.travelling = null;
+            AutoIdle._travelWait = 0;
+            try { button.click(); } catch (e) { /* the overlay closes on cancel instead */ }
+            return false;
+        },
+        close: () => {
+            AutoIdle.travelling = null;
+            const scene = SceneManager._scene;
+            if (scene && typeof scene.closeTravelUIOverlay === "function") scene.closeTravelUIOverlay(true);
+        },
+    });
+
     // ========================================================================
     // AutoIdle controller
     // ========================================================================
@@ -1348,6 +2616,14 @@
         driving: null,    // id of the menu profile currently being operated
         destStall: 0,     // frames a pending touch destination has sat unmoved
         goals: 0,         // errands run on this map, the cue to take a way out
+        been: {},         // "x,y" of every tile walked on this map, for wandering
+        route: null,      // { dest, why } the map being travelled to, across maps
+        travelling: null, // the fast travel destination being confirmed
+        _travelWait: 0,   // frames the travel overlay has been given to build
+        arrivedAt: -99999, // frame the party last set foot on a new map
+        arrivalDoor: 0,    // event id of the way they came in, on THIS map
+        _errandAt: 0,     // frame the quest board and job list were last read
+        _surveyed: 0,     // map id the book was last written up for
         _overlayIgnoreUntil: 0, // frame the DOM overlay heuristic wakes up again
 
         reset() {
@@ -1386,6 +2662,9 @@
             this.dismissTries = 0;
             this.dismissCool = 0;
             this.driving = null;
+            this.route = null;
+            this.travelling = null;
+            this._travelWait = 0;
             if ($gameTemp) $gameTemp.clearDestination();
             this.hideBadge();
         },
@@ -1401,6 +2680,24 @@
                 this.intent = null;
                 this.target = null;
                 this.goals = 0;
+                this.been = {};
+                this._surveyed = 0;
+                // Where they came in, and when. Every cooldown on this map is
+                // empty because they have never been here, so the one thing
+                // that stops them turning round is knowing which door is
+                // behind them (see returnDoor).
+                this.arrivedAt = this.frame;
+                this.arrivalDoor = this.doorBesideArrival();
+                recordArrival(this.mapId);
+                // Standing on the destination is the end of the journey.
+                if (this.route && this.route.dest === this.mapId) this.route = null;
+            }
+            // The book is written up once the map is quiet enough to be read,
+            // whether or not the CPU is the one walking: a party that passed
+            // through a market on the player's own feet remembers the market.
+            if (this._surveyed !== this.mapId && onDrivableMap() && !Loose.onWorldMap()) {
+                this._surveyed = this.mapId;
+                surveyMap();
             }
 
             if (!ConfigManager.autoIdle) {
@@ -1544,6 +2841,9 @@
             this.blocked = 0;
             this.dismissTries = 0;
             this.driving = null;
+            // Ground stood on is ground seen: this is what wander() heads away
+            // from when it looks for somewhere new.
+            if ($gamePlayer) this.been[$gamePlayer.x + "," + $gamePlayer.y] = true;
             this.drive();
         },
 
@@ -1720,6 +3020,8 @@
                         // can suppress, leaving P1 engaged but standing still.
                         if (this.destX !== null && this.stepToward(this.destX, this.destY)) {
                             this.sameCount = 0;
+                        } else {
+                            Mind.frustrate();
                         }
                         return;
                     } else {
@@ -1732,6 +3034,8 @@
                     } else if (++this.sameCount < 24) {
                         if (this.destX !== null && this.stepToward(this.destX, this.destY)) {
                             this.sameCount = 0;
+                        } else {
+                            Mind.frustrate();
                         }
                         return;
                     } else {
@@ -1745,6 +3049,9 @@
                 return;
             }
             this.think = 8;
+            // Nothing happening is not an experience: every mood creeps back
+            // toward the middle of itself while the party walks.
+            Mind.drift();
 
             if (this.tryNeeds()) return;
             this.pickGoal();
@@ -1812,12 +3119,15 @@
                 return true;
             }
 
-            // 1) Show Choices, pick a random valid option (cancel if empty).
+            // 1) Show Choices. The answer comes off the person holding the
+            // reins, who is speaking to them, what the purse can take and how
+            // the day has gone: a coin flip here is the loudest machine noise
+            // the autopilot can make.
             const choice = scene._choiceListWindow;
             if (choice && choice.active) {
                 const max = choice.maxItems ? choice.maxItems() : 0;
                 if (max > 0) {
-                    choice.select(Math.floor(Math.random() * max));
+                    choice.select(this.answerChoice(choice, max));
                     if (choice.processOk) choice.processOk();
                 } else if (choice.processCancel) {
                     choice.processCancel();
@@ -1826,19 +3136,21 @@
                 return true;
             }
 
-            // 2) Number input, accept the current value.
+            // 2) Number input. The default is whatever the event happened to
+            // put there; a person asks for a round number they can afford.
             const num = scene._numberInputWindow;
             if (num && num.active) {
+                this.answerNumber(num);
                 if (num.processOk) num.processOk();
                 this.msgDelay = 40;
                 return true;
             }
 
-            // 3) Select Item, take the first match, or cancel if none.
+            // 3) Select Item: the thing the party can most spare, not slot 0.
             const item = scene._eventItemWindow;
             if (item && item.active) {
                 if (item.maxItems && item.maxItems() > 0) {
-                    item.select(0);
+                    item.select(this.answerItem(item));
                     if (item.processOk) item.processOk();
                 } else if (item.processCancel) {
                     item.processCancel();
@@ -1866,6 +3178,57 @@
             return $gameMessage.isBusy();
         },
 
+        // Which answer, and why. Softmax over the scores rather than the best
+        // one outright: the same leader gives the same answer most of the time
+        // and a different one now and then, which is the whole difference
+        // between a person and a lookup table.
+        answerChoice(choice, max) {
+            try {
+                const ctx = voiceContext(this.frame);
+                ctx.losing = $gameParty && $gameParty.inBattle() ? this.losingFight() : false;
+                const scores = [];
+                for (let i = 0; i < max; i++) {
+                    let text = "";
+                    try { text = choice.commandName ? choice.commandName(i) : ""; } catch (e) { text = ""; }
+                    scores.push(scoreChoice(text, ctx));
+                }
+                const pick = softmaxPick(scores);
+                if (pick >= 0) return pick;
+            } catch (e) { /* fall back to the old coin flip */ }
+            return Math.floor(Math.random() * max);
+        },
+
+        // A number the party would actually name: a round one, inside what the
+        // purse can take once the floor is left standing.
+        answerNumber(num) {
+            try {
+                const digits = num._maxDigits || 2;
+                const ceiling = Math.pow(10, digits) - 1;
+                const purse = $gameParty ? $gameParty.gold() - PURSE_FLOOR : 0;
+                let want = Math.min(ceiling, Math.max(0, Math.floor(purse)));
+                // Round down to something a person says out loud.
+                const step = want > 1000 ? 100 : want > 100 ? 10 : 1;
+                want = Math.floor(want / step) * step;
+                if (want > 0 && num._number !== undefined) num._number = want;
+                if (num.refresh) num.refresh();
+            } catch (e) { /* the default stands */ }
+        },
+
+        // Handing something over: the least the party will miss, which is the
+        // cheapest thing on the list it is not short of.
+        answerItem(item) {
+            try {
+                const max = item.maxItems();
+                let best = 0, worst = Infinity;
+                for (let i = 0; i < max; i++) {
+                    const data = item.itemAt ? item.itemAt(i) : null;
+                    const price = Number(data && data.price) || 0;
+                    if (price < worst) { worst = price; best = i; }
+                }
+                return best;
+            } catch (e) { return 0; }
+        },
+
         adjacent(ev) {
             return Math.abs(ev.x - $gamePlayer.x) + Math.abs(ev.y - $gamePlayer.y) <= 1;
         },
@@ -1874,12 +3237,19 @@
         // door tile is the one directly in front of the player; if an event named
         // "Door" sits there we face it and start it. Returns true if one fired.
         tryDoorInFront() {
+            // A door taken this way is taken because it happened to be in
+            // front of them, and the one in front of somebody who has just
+            // arrived is the one they came out of.
+            if (this.justArrived()) return false;
             const dir = $gamePlayer.direction();
             const fx = $gamePlayer.x + (dir === 6 ? 1 : dir === 4 ? -1 : 0);
             const fy = $gamePlayer.y + (dir === 2 ? 1 : dir === 8 ? -1 : 0);
             for (const ev of $gameMap.eventsXy(fx, fy)) {
                 if (!isInteractable(ev)) continue;
                 if (!isPortalEvent(ev)) continue;
+                // Never straight back out, unless this room has been seen and
+                // there is nothing else left to take.
+                if (this.backtrack(ev) && !this.cornered()) continue;
                 $gamePlayer.setDirection(dir);
                 this.recent[this.recentKey(ev)] = this.frame;
                 announce("AutoIdle.auto.door", {
@@ -1922,6 +3292,9 @@
                 $gamePlayer.setDirection(dir);
             }
             this.recent[this.recentKey(ev)] = this.frame;
+            // Getting there is the end of the wanting, and a long wanting is
+            // worth a line in the party's own notebook.
+            if (this.holdsThis(ev)) Mind.release("done", this.frame);
             try {
                 ev.start();
             } catch (e) {
@@ -1946,29 +3319,74 @@
             if ($gameTemp) $gameTemp.clearDestination();
         },
 
+        // Where to go next, with the whole map and the whole book in hand.
+        // The order is: a journey already under way, then an errand here, then
+        // a puzzle that wants standing over, then a journey planned off the
+        // gazetteer, then a door, then plain wandering.
         pickGoal() {
+            if (this.pursueErrand()) return;
+            if (this.followRoute()) return;
             const candidates = this.scanEvents();
-            // Once this map has had its errands the CPU takes the first way out
-            // and carries the exploration onto the next one instead of circling
-            // the same room: a door, a staircase or any event that transfers the
-            // player is walked to and used.
-            const portal = candidates.find((c) => c.portal && !c.enemy);
-            if (portal && (this.goals >= EXPLORED_GOALS || Math.random() < PORTAL_ODDS)) {
+
+            // What the party already wanted comes first. A thing on the map
+            // only takes the purpose off it when it is CLEARLY better, not
+            // when it happens to score a point higher on this particular
+            // eight-frame tick: reconsidering everything every tick is the
+            // one habit no person has.
+            const held = this.heldCandidate(candidates);
+            if (held) {
+                const rival = candidates.find((c) => c !== held);
+                if (!rival || rival.score < held.score * SWITCH_MARGIN) {
+                    this.setTarget(held.ev, null, true);
+                    return;
+                }
+                Mind.release("outbid", this.frame);
+            }
+
+            const done = this.goals >= EXPLORED_GOALS;
+
+            if (candidates.length && !done && Math.random() < 0.85) {
+                // Weighted random among the best few, so two idle minutes on
+                // the same map do not walk the same line twice.
+                const pick = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
+                this.setTarget(pick.ev);
+                return;
+            }
+
+            // A rock that wants shoving is worth standing behind.
+            if (this.walkToPush()) return;
+
+            if (done || !candidates.length) {
+                if (this.planRoute() && this.followRoute()) return;
+                // Standing on the world map, the next square IS the next place.
+                if (Loose.onWorldMap() && tryEnterSquare()) {
+                    this.goals = 0;
+                    return;
+                }
+                // A map with no errands left and no door out is left by the T key.
+                if (!candidates.length && tryWorldMap()) {
+                    this.goals = 0;
+                    return;
+                }
+            }
+
+            // Any door will do at this point, except the one the party came in
+            // through: walking straight back out of a room is the one thing an
+            // explorer never does, and it is what the trail in the book is for.
+            //
+            // The way back used to be taken anyway whenever it was the ONLY
+            // door, which on a dead-end room is every arrival: the party went
+            // in and came out without looking at anything. It is now only
+            // taken once there is genuinely nothing else (cornered).
+            const portal = candidates.find((c) => c.portal && !c.enemy && !this.backtrack(c.ev)) ||
+                (this.cornered()
+                    ? candidates.find((c) => c.portal && !c.enemy)
+                    : null);
+            if (portal && !this.justArrived() && (done || Math.random() < PORTAL_ODDS)) {
                 this.setTarget(portal.ev);
                 return;
             }
-            // Standing on the world map, the next square IS the next place.
-            if (Loose.onWorldMap() && this.goals >= EXPLORED_GOALS && tryEnterSquare()) {
-                this.goals = 0;
-                return;
-            }
-            // A map with no errands left and no door out is left by the T key.
-            if (!candidates.length && this.goals >= EXPLORED_GOALS && tryWorldMap()) {
-                this.goals = 0;
-                return;
-            }
-            if (candidates.length && Math.random() < 0.85) {
-                // Weighted random among the nearest few, enemies first.
+            if (candidates.length) {
                 const pick = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
                 this.setTarget(pick.ev);
                 return;
@@ -1976,11 +3394,264 @@
             this.wander();
         },
 
-        // Walk up to this event and use it.
-        setTarget(ev) {
-            announce(isPortalEvent(ev) ? "AutoIdle.auto.heads" : "AutoIdle.auto.goesTo", {
-                target: (ev.event() && ev.event().name) || "",
+        // ------------------------------------------------------- the errands
+        // An errand is a thing the party is ON THE HOOK for: a quest step, a
+        // shift it cannot afford to turn down, a letter waiting somewhere. It
+        // outranks everything on the map because it is not about this map.
+        pursueErrand() {
+            if (!this.errandPurpose()) this.planErrand();
+            return this.followErrand();
+        },
+
+        errandPurpose() {
+            const p = Mind.purpose();
+            if (!p || !Mind.holds(this.frame)) return null;
+            return ERRAND_KINDS.indexOf(p.kind) >= 0 ? p : null;
+        },
+
+        // Reading the quest board and the job catalogue is not free, so it is
+        // done on its own slow clock rather than on the think tick.
+        planErrand() {
+            if (this._errandAt && this.frame - this._errandAt < ERRAND_RETHINK) return false;
+            this._errandAt = this.frame;
+            const pick = rankErrands(gatherStats(), this.frame)[0];
+            if (!pick) return false;
+            if (pick.kind === "quest") {
+                return Mind.commit("quest", {
+                    key: pick.key, label: pick.label, wx: pick.wx, wy: pick.wy,
+                }, "quest", ERRAND_TTL, this.frame);
+            }
+            if (pick.kind === "work" && pick.mapId && pick.mapId !== this.mapId) {
+                return Mind.commit("work", {
+                    key: pick.key, label: pick.label, mapId: pick.mapId,
+                }, "work", ERRAND_TTL, this.frame);
+            }
+            if (pick.kind === "mail") {
+                // The post names no counter to walk to, so it is a reason to
+                // be somewhere with people in it rather than a destination.
+                const goal = nearestKnownWith("shop");
+                if (!goal || goal.mapId === this.mapId) return false;
+                return Mind.commit("mail", {
+                    key: pick.key, label: pick.label, mapId: goal.mapId,
+                }, "mail", ERRAND_TTL, this.frame);
+            }
+            return false;
+        },
+
+        // Walking the errand. A quest step is a WORLD square, so the way there
+        // is out onto the world map and across it; a shift and a letter are
+        // ordinary maps, so they go on the route planner like anywhere else.
+        followErrand() {
+            const p = this.errandPurpose();
+            if (!p) return false;
+            const goal = p.goal;
+            if (!goal) return false;
+            if (typeof goal.wx === "number") {
+                if (!Loose.onWorldMap()) return tryWorldMap();
+                if ($gamePlayer.x === goal.wx && $gamePlayer.y === goal.wy) {
+                    Mind.release("done", this.frame);
+                    this.goals = 0;
+                    return tryEnterSquare();
+                }
+                if (!tilePassable(goal.wx, goal.wy)) {
+                    Mind.release("fedup", this.frame);
+                    return false;
+                }
+                this.intent = "wander";
+                this.destX = goal.wx;
+                this.destY = goal.wy;
+                this.sameCount = 0;
+                $gameTemp.setDestination(goal.wx, goal.wy);
+                return true;
+            }
+            if (!goal.mapId) return false;
+            if (goal.mapId === this.mapId) {
+                Mind.release("done", this.frame);
+                return false;
+            }
+            if (!this.route || this.route.dest !== goal.mapId) {
+                this.route = { dest: goal.mapId, why: p.why, hops: 1 };
+            }
+            return this.followRoute();
+        },
+
+        // The thing the party is already set on, if it is standing on this map
+        // and still worth walking to. The purpose names an event id, never an
+        // event: a Game_Event does not survive a savegame and a purpose does.
+        heldCandidate(candidates) {
+            const p = Mind.purpose();
+            if (!p || !Mind.holds(this.frame)) return null;
+            const goal = p.goal;
+            if (!goal || goal.mapId !== this.mapId || !goal.eventId) return null;
+            return candidates.find((c) => c.ev.eventId() === goal.eventId) || null;
+        },
+
+        // Is this event the one the party is set on right now?
+        holdsThis(ev) {
+            const p = Mind.purpose();
+            const goal = p && p.goal;
+            if (!goal || !ev || goal.mapId !== this.mapId) return false;
+            try { return goal.eventId === ev.eventId(); } catch (e) { return false; }
+        },
+
+        // Are they still in the doorway? Nothing opportunistic takes a door
+        // while this is true.
+        justArrived() {
+            return this.frame - this.arrivedAt < ARRIVAL_SETTLE;
+        },
+
+        // The way out the party materialised next to, which is the way they
+        // came in. Found by POSITION rather than by asking the connection
+        // graph, because the graph is built from transfers with a direct map
+        // id and the doors of a procedural house or a dungeon stair are driven
+        // by a variable: exitTarget answers 0 for exactly the doors the party
+        // bounces off most.
+        doorBesideArrival() {
+            if (!$gameMap || !$gamePlayer) return 0;
+            let best = 0, bestDist = 3;
+            for (const ev of $gameMap.events()) {
+                if (!ev || ev._erased || !isPortalEvent(ev)) continue;
+                const d = Math.abs(ev.x - $gamePlayer.x) + Math.abs(ev.y - $gamePlayer.y);
+                if (d < bestDist) { bestDist = d; best = ev.eventId(); }
+            }
+            return best;
+        },
+
+        // A room with one door in it. Once the party has run its errands here
+        // and had its settle, the way it came in is the only way on, and
+        // refusing it forever would strand them: that is when, and only when,
+        // turning round is allowed.
+        cornered() {
+            if (this.justArrived()) return false;
+            if (this.goals < EXPLORED_GOALS && this.frame - this.arrivedAt < ARRIVAL_SETTLE * 3) return false;
+            for (const ev of $gameMap.events()) {
+                if (!ev || ev._erased || !isInteractable(ev)) continue;
+                if (!isPortalEvent(ev)) continue;
+                if (!this.backtrack(ev)) return false;   // another way out exists
+            }
+            return true;
+        },
+
+        // Is this way out simply the way the party came in? Asked two ways,
+        // because either one alone misses half of them: the connection graph
+        // knows where an authored door leads, and the arrival spot knows which
+        // door the party was standing in when the map loaded.
+        backtrack(ev) {
+            if (!ev) return false;
+            try {
+                if (this.arrivalDoor && ev.eventId() === this.arrivalDoor) return true;
+            } catch (e) { /* an event that will not answer is not the way back */ }
+            const MC = window.MapConnections;
+            if (!MC) return false;
+            const to = MC.exitTarget(ev);
+            return !!to && to === cameFrom();
+        },
+
+        // ------------------------------------------------------- the journey
+        // A destination is a MAP, not a tile: what the party is short of, read
+        // against the book of every map it has ever walked through, and failing
+        // that the nearest map it has never seen. The route across the
+        // continent is Map/MapGraphs.js's connection graph.
+        planRoute() {
+            if (this.route) return true;
+            if (!window.MapConnections || Loose.onWorldMap()) return false;
+            const stats = gatherStats();
+            const here = mapEntry(this.mapId, false);
+            const tags = (here && here.tags) || {};
+            let want = null;
+            if (stats.shortOfFood && !tags.hunger && !tags.shop) want = "hunger";
+            else if ((stats.injured || stats.shortOfHeal) && !tags.shop) want = "shop";
+            else if (stats.broke && !tags.money) want = "money";
+            else if (stats.sleep < 30 && !tags.sleep) want = "sleep";
+            let goal = want ? nearestKnownWith(want) : null;
+            if (!goal) {
+                want = null;
+                goal = frontierMap();
+            }
+            if (!goal || goal.mapId === this.mapId) return false;
+            // A journey is allowed to cross a threshold the settle would hold,
+            // because it is going somewhere. It is not allowed to BE the
+            // bounce: setting off for the map they have this moment left is
+            // the same mistake with a plan attached.
+            if (this.justArrived() && goal.mapId === cameFrom()) return false;
+            this.route = { dest: goal.mapId, why: want, hops: Math.max(1, goal.path.length - 1) };
+            const entry = mapEntry(goal.mapId, false);
+            announce("AutoIdle.auto.routes", {
+                map: (entry && entry.name) || goal.mapId,
+                hops: this.route.hops,
+                why: T("AutoIdle.auto.why." + (want || "frontier")),
+            }, "info");
+            return true;
+        },
+
+        // Take the next step of the journey: the door on THIS map whose
+        // transfer names the next map on the route, or the bus if the walk is
+        // long enough to be worth a fare.
+        followRoute() {
+            if (!this.route) return false;
+            const MC = window.MapConnections;
+            if (!MC || !$gameMap) {
+                this.route = null;
+                return false;
+            }
+            const here = $gameMap.mapId();
+            if (here === this.route.dest) {
+                this.route = null;
+                return false;
+            }
+            const path = MC.path(here, this.route.dest);
+            if (path.length < 2) {
+                this.route = null;
+                return false;
+            }
+            if (path.length - 1 > FAST_TRAVEL_HOPS && tryFastTravel()) return true;
+            const door = exitToward(path[1]);
+            if (!door || !isInteractable(door)) {
+                this.route = null;
+                return false;
+            }
+            if (this.adjacent(door)) {
+                this.interact(door);
+                return true;
+            }
+            this.setTarget(door, "AutoIdle.auto.routeStep");
+            return true;
+        },
+
+        // Stand where the rock has to be shoved from. The push itself is the
+        // puzzle profile's business once the leader is on the square.
+        walkToPush() {
+            const plan = pushPlan();
+            if (!plan) return false;
+            if ($gamePlayer.x === plan.standX && $gamePlayer.y === plan.standY) return false;
+            if (!tilePassable(plan.standX, plan.standY)) return false;
+            announce("AutoIdle.auto.puzzleWalk", {
+                target: (plan.rock.event() && plan.rock.event().name) || "",
             });
+            this.intent = "wander";
+            this.destX = plan.standX;
+            this.destY = plan.standY;
+            this.sameCount = 0;
+            $gameTemp.setDestination(plan.standX, plan.standY);
+            return true;
+        },
+
+        // Walk up to this event and use it. `key` names the toast when the
+        // errand is a step of a journey rather than a thing worth seeing.
+        setTarget(ev, key, quiet) {
+            const label = (ev.event() && ev.event().name) || "";
+            // Walking back toward something already wanted is not news: only a
+            // fresh errand is announced, and only a fresh errand is committed.
+            if (!quiet) {
+                announce(key || (isPortalEvent(ev) ? "AutoIdle.auto.heads" : "AutoIdle.auto.goesTo"), {
+                    target: label,
+                });
+                if (!this.holdsThis(ev)) {
+                    Mind.commit("errand", {
+                        key: this.recentKey(ev), mapId: this.mapId, eventId: ev.eventId(), label,
+                    }, isPortalEvent(ev) ? "onward" : "errand", INTENT_TTL, this.frame);
+                }
+            }
             this.intent = "target";
             this.target = ev;
             this.destX = ev.x;
@@ -1990,16 +3661,33 @@
             $gameTemp.setDestination(ev.x, ev.y);
         },
 
+        // Everything on the map worth walking to, ranked. The whole map is in
+        // view: distance is a COST on the ranking rather than a wall, which is
+        // what keeps the CPU from poking the three things in the corner it
+        // woke up in while a market stands at the other end of the street. The
+        // character holding the reins tilts the ranking their own way
+        // (moralAppeal), so a saint and a brute walk the same town differently.
         scanEvents() {
             const px = $gamePlayer.x;
             const py = $gamePlayer.y;
+            const morality = leaderMorality();
+            const mood = Mind.mood();
             const out = [];
             for (const ev of $gameMap.events()) {
                 if (!isInteractable(ev)) continue;
-                const last = this.recent[this.recentKey(ev)];
+                const key = this.recentKey(ev);
+                const last = this.recent[key];
                 if (last && this.frame - last < 1800) continue; // 30s cooldown
+                // Something given up on in temper is left alone for a while,
+                // the way a person leaves the door that would not open.
+                if (Mind.grudged(key, this.frame)) continue;
                 // Wanted, and this is the law: the leader looks the other way.
                 if (isOfficer(ev) && heat() >= HEAT_SHY) continue;
+                // The way they came in is not an errand while they are still
+                // standing in it. Walking up to it and pressing it is the same
+                // bounce as taking it outright, so it is kept off the ranking
+                // rather than only out of the door-picking below.
+                if (this.justArrived() && isPortalEvent(ev) && this.backtrack(ev)) continue;
                 const enemy = isEnemyEvent(ev);
                 // A fight the party cannot win is not an errand. The level is
                 // the one on the plate over its head, so the CPU walks away
@@ -2016,34 +3704,56 @@
                 }
                 const dist = Math.abs(ev.x - px) + Math.abs(ev.y - py);
                 const portal = isPortalEvent(ev);
-                // A way off the map is worth crossing a room for, so it is seen
-                // at twice the range everything else is.
-                if (dist > (portal ? SCAN_RADIUS * 2 : SCAN_RADIUS)) continue;
-                out.push({ ev, dist, enemy, portal });
+                const person = !enemy && !portal && isPersonEvent(ev);
+                const puzzle = !!puzzleRole(ev);
+                // A way out is worth crossing a room for, so it is ranked as
+                // though it stood at half the distance everything else does.
+                const reach = portal ? SCAN_RADIUS * 2 : SCAN_RADIUS;
+                // How the party FEELS tilts what it wants, on top of who is
+                // holding the reins: spoiling for a fight, curious about the
+                // door at the end, or in too foul a mood to talk to anybody.
+                let score = 20 + (enemy ? 100 * (0.6 + mood.arousal * 0.8) : 0) +
+                    (puzzle ? 90 : 0) +
+                    (portal ? 40 * (0.6 + mood.curiosity * 0.8) : 0) +
+                    (person ? 30 * (0.5 + mood.valence) : 0);
+                score *= moralAppeal({ enemy: enemy, person: person }, morality);
+                score /= 1 + dist / reach;
+                out.push({ ev, dist, enemy, portal, person, puzzle, score });
             }
-            // Enemies first, then the ways out, then by distance.
-            out.sort((a, b) => (b.enemy - a.enemy) * 1000 + (b.portal - a.portal) * 100 + (a.dist - b.dist));
+            out.sort((a, b) => b.score - a.score);
             return out;
         },
 
+        // Wandering is not random walking: the leader heads for ground they
+        // have not stood on yet, which is the small-scale half of the same
+        // idea the route planner does across maps.
         wander() {
+            let best = null;
+            // A curious party casts further than a tired one: the radius is
+            // how far they feel like going, not a constant.
+            const mood = Mind.mood();
+            const reach = 3 + Math.round(mood.curiosity * 6);
             for (let i = 0; i < 16; i++) {
-                const dist = 5 + Math.floor(Math.random() * 6);
+                const dist = reach + Math.floor(Math.random() * 6);
                 const ang = Math.random() * Math.PI * 2;
                 const tx = Math.round($gamePlayer.x + Math.cos(ang) * dist);
                 const ty = Math.round($gamePlayer.y + Math.sin(ang) * dist);
-                if ((tx !== $gamePlayer.x || ty !== $gamePlayer.y) && tilePassable(tx, ty) &&
-                    !underOfficerEye(tx, ty)) {
-                    announce("AutoIdle.auto.wanders", {});
-                    this.intent = "wander";
-                    this.destX = tx;
-                    this.destY = ty;
-                    this.sameCount = 0;
-                    $gameTemp.setDestination(tx, ty);
-                    return;
-                }
+                if (tx === $gamePlayer.x && ty === $gamePlayer.y) continue;
+                if (!tilePassable(tx, ty) || underOfficerEye(tx, ty)) continue;
+                const fresh = !this.been[tx + "," + ty];
+                const score = (fresh ? 100 : 0) + dist;
+                if (!best || score > best.score) best = { x: tx, y: ty, score: score };
             }
-            this.intent = null;
+            if (!best) {
+                this.intent = null;
+                return;
+            }
+            announce("AutoIdle.auto.wanders", {});
+            this.intent = "wander";
+            this.destX = best.x;
+            this.destY = best.y;
+            this.sameCount = 0;
+            $gameTemp.setDestination(best.x, best.y);
         },
 
         // -------------------------------------------------------------- badge
@@ -2101,6 +3811,8 @@
         // Run for it, through whatever command window this battle system puts
         // the Escape row in (IndividualBattleTurns.js moves it onto the actor).
         fleeBattle(scene) {
+            // Running is not a neutral act: the party carries it.
+            Mind.feel("hurt");
             if (BattleManager.canEscape && !BattleManager.canEscape()) return false;
             for (const win of [scene._partyCommandWindow, scene._actorCommandWindow]) {
                 if (!win || !win.active || !win._list) continue;
@@ -2160,6 +3872,11 @@
 
     // Expose the live profile table for inspection / configuration.
     AutoIdle.menuProfiles = MENU_PROFILES;
+
+    // The party's own book, for the console: what it knows about every map it
+    // has stood on, the trail of maps behind it and the journey in hand.
+    AutoIdle.book = gazetteer;
+    AutoIdle.survey = surveyMap;
 
     // ========================================================================
     // Player 2 autopilot (SplitScreenMultiplayer integration)
@@ -2521,6 +4238,9 @@
         if (ev.isTransparent && ev.isTransparent()) return false;
         if (!ev.characterName || !ev.characterName()) return false; // a tile, not a body
         if (isMachineryEvent(ev)) return false;
+        // Somebody the simulation has written a life for is a person, and no
+        // regular expression below gets a say in it.
+        if (speakerProfile(ev)) return true;
         const name = (ev.event() && ev.event().name) || "";
         if (NON_PERSON.test(name)) return false;
         return !isEnemyEvent(ev);
@@ -6459,6 +8179,18 @@
         Lead._pan = 0;
         if (AutoIdle.engaged && ConfigManager.autoIdle) AutoIdle.showBadge();
         if (AutoIdle.p2.engaged && ConfigManager.autoIdle) AutoIdle.p2.showBadge();
+    };
+
+    const _BattleManager_processVictory = BattleManager.processVictory;
+    BattleManager.processVictory = function () {
+        if (AutoIdle.engaged || AutoIdle.p2.engaged) Mind.feel("won");
+        return _BattleManager_processVictory.apply(this, arguments);
+    };
+
+    const _BattleManager_processDefeat = BattleManager.processDefeat;
+    BattleManager.processDefeat = function () {
+        if (AutoIdle.engaged || AutoIdle.p2.engaged) Mind.feel("hurt");
+        return _BattleManager_processDefeat.apply(this, arguments);
     };
 
     const _SceneBattle_update = Scene_Battle.prototype.update;

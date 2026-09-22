@@ -82,7 +82,12 @@
             }
 
             const db = loadDB();
-            const channels = db.channels || [];
+            // Which channels are on the air is the generator's answer, not ours: it
+            // is what the dial itself tunes, so the wrestling channels are listed
+            // here exactly when a world still has a league to broadcast.
+            const channels = (window.TVStudio && window.TVStudio.channels)
+                ? window.TVStudio.channels()
+                : (db.channels || []);
 
             const id = 'app-hypernet-tv-guide';
             const contentHTML = `

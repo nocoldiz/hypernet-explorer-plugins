@@ -182,6 +182,8 @@
         'place.entered':      { icon: 205, cat: CAT.JOURNEY },
         'structure.entered':  { icon: 212, cat: CAT.JOURNEY },
         'floor.changed':      { icon: 83,  cat: CAT.JOURNEY },
+        'launch.rocket':      { icon: 82,  cat: CAT.JOURNEY },
+        'launch.rocketNoDest':{ icon: 82,  cat: CAT.JOURNEY },
 
         // Rest
         'rest.sleep':         { icon: 11,  cat: CAT.REST },
@@ -196,6 +198,8 @@
         'battle.lost':        { icon: 1,   cat: CAT.COMBAT },
         'battle.lostAnon':    { icon: 1,   cat: CAT.COMBAT },
         'battle.arena':       { icon: 352, cat: CAT.COMBAT },
+        'army.won':           { icon: 315, cat: CAT.COMBAT },
+        'army.lost':          { icon: 316, cat: CAT.COMBAT },
 
         // Party
         'party.join':         { icon: 87,  cat: CAT.PARTY },
@@ -211,6 +215,8 @@
         'birth.pregnant':     { icon: 268, cat: CAT.PARTY },
         'birth.born':         { icon: 267, cat: CAT.PARTY },
         'birth.mitosis':      { icon: 307, cat: CAT.PARTY },
+        'army.recruited':     { icon: 136, cat: CAT.PARTY },
+        'blade.evolved':      { icon: 96,  cat: CAT.PARTY },
 
         // People
         'npc.friend':         { icon: 84,  cat: CAT.PEOPLE },
@@ -219,6 +225,7 @@
         'eris.date':          { icon: 149, cat: CAT.PEOPLE },
         'eris.dateEnd':       { icon: 86,  cat: CAT.PEOPLE },
         'faction.standing':   { icon: 129, cat: CAT.PEOPLE },
+        'onu.vote':           { icon: 121, cat: CAT.PEOPLE },
 
         // Health
         'health.disease':     { icon: 177, cat: CAT.HEALTH },
@@ -246,6 +253,10 @@
         'stock.trade':        { icon: 206, cat: CAT.WEALTH },
         'mail.sent':          { icon: 192, cat: CAT.WEALTH },
         'mail.dimension':     { icon: 193, cat: CAT.WEALTH },
+        'shop.owned':         { icon: 194, cat: CAT.WEALTH },
+        'shop.hired':         { icon: 84,  cat: CAT.WEALTH },
+        'shop.dismissed':     { icon: 85,  cat: CAT.WEALTH },
+        'shop.delivery':      { icon: 211, cat: CAT.WEALTH },
         'mining.stripped':    { icon: 289, cat: CAT.WORK },
 
         // Law
@@ -253,9 +264,12 @@
         'crime.settled':      { icon: 247, cat: CAT.LAW },
         'steal.success':      { icon: 249, cat: CAT.LAW },
         'steal.caught':       { icon: 104, cat: CAT.LAW },
+        'shop.banned':        { icon: 104, cat: CAT.LAW },
         'law.trial':          { icon: 206, cat: CAT.LAW },
         'law.verdict':        { icon: 221, cat: CAT.LAW },
         'law.prison':         { icon: 111, cat: CAT.LAW },
+        'lock.picked':        { icon: 197, cat: CAT.LAW },
+        'lock.failed':        { icon: 198, cat: CAT.LAW },
 
         // Work and industry
         'work.shift':         { icon: 216, cat: CAT.WORK },
@@ -268,6 +282,9 @@
         'craft.cook':         { icon: 219, cat: CAT.WORK },
         'craft.alchemy':      { icon: 179, cat: CAT.WORK },
         'craft.brew':         { icon: 228, cat: CAT.WORK },
+        'craft.enchant':      { icon: 163, cat: CAT.WORK },
+        'craft.unmade':       { icon: 168, cat: CAT.WORK },
+        'craft.book':         { icon: 187, cat: CAT.WORK },
         'build.placed':       { icon: 217, cat: CAT.WORK },
         'build.dismantled':   { icon: 223, cat: CAT.WORK },
 
@@ -285,6 +302,13 @@
         'minigame.played':    { icon: 196, cat: CAT.LEISURE },
         'tv.watched':         { icon: 222, cat: CAT.LEISURE },
         'dream.had':          { icon: 307, cat: CAT.LEISURE },
+        'card.won':           { icon: 220, cat: CAT.LEISURE },
+        'card.lost':          { icon: 220, cat: CAT.LEISURE },
+        'card.drew':          { icon: 220, cat: CAT.LEISURE },
+        'card.champion':      { icon: 352, cat: CAT.LEISURE },
+        'card.knockedOut':    { icon: 221, cat: CAT.LEISURE },
+        'bet.won':            { icon: 314, cat: CAT.LEISURE },
+        'bet.lost':           { icon: 313, cat: CAT.LEISURE },
 
         // The player's own hand
         'note':               { icon: 225, cat: CAT.WRITTEN }
@@ -1091,6 +1115,29 @@
         } catch (e) { /* nothing */ }
     }
 
+    // A rocket ride. The flight leaves its record on $gameSystem for whoever
+    // wants it, and the scene that ends is the moment it is complete: the
+    // party is put down somewhere else immediately after.
+    whenReady(
+        () => window.RocketLaunch && window.RocketLaunch.Scene,
+        () => {
+            after(window.RocketLaunch.Scene.prototype, '_finish', function () {
+                const flight = $gameSystem && $gameSystem._rocketLaunch;
+                if (!flight || !flight.site) return;
+                const RL = window.RocketLaunch;
+                const nameOf = (id) => (id && typeof RL.siteName === 'function') ? RL.siteName(id) : "";
+                const mode = T('RocketLaunch.mode.' + (flight.mode || 'orbital') + '.name');
+                const dest = nameOf(flight.destination);
+                log(dest ? 'launch.rocket' : 'launch.rocketNoDest', {
+                    mode,
+                    site: nameOf(flight.site),
+                    dest,
+                    integrity: Math.round(Number(flight.integrity) || 0)
+                });
+            });
+        }
+    );
+
     //=========================================================================
     // 3. Combat
     //=========================================================================
@@ -1615,20 +1662,32 @@
                 this._diaryStealItem = (entry && entry.data && entry.data.name) || "";
                 this._diaryStealHeld = $gameParty ? $gameParty.numItems(entry && entry.data) : 0;
             });
-            after(window.Scene_Steal.prototype, '_doSteal', function () {
+            after(window.Scene_Steal.prototype, '_doSteal', function (result) {
                 const name = this._diaryStealItem;
                 if (!name) return;
-                // Nothing else tells the two apart from out here: the item is in
-                // the pack on a success and is not on a failure.
-                const entry = this._items && this._items[this._idx];
-                const held = entry && entry.data && $gameParty ? $gameParty.numItems(entry.data) : 0;
-                if (held > (this._diaryStealHeld || 0)) {
-                    log('steal.success', { item: name, place: mapNameNow() });
-                } else {
-                    log('steal.caught', { item: name, place: mapNameNow() });
+                // _doSteal is async: it hands back a promise at its first
+                // await, long before the die has landed and the item has
+                // moved. Reading the pack now would call every attempt a
+                // failure, so the line waits for the method to finish.
+                if (result && typeof result.then === 'function') {
+                    const self = this;
+                    result.then(() => { try { writeStealLine(self, name); } catch (e) {} });
+                    return;
                 }
+                writeStealLine(this, name);
             });
         });
+    // Nothing else tells the two apart from out here: the item is in the pack
+    // on a success and is not on a failure.
+    function writeStealLine(scene, name) {
+        const entry = scene._items && scene._items[scene._idx];
+        const held = entry && entry.data && $gameParty ? $gameParty.numItems(entry.data) : 0;
+        if (held > (scene._diaryStealHeld || 0)) {
+            log('steal.success', { item: name, place: mapNameNow() });
+        } else {
+            log('steal.caught', { item: name, place: mapNameNow() });
+        }
+    }
 
     whenReady(() => window.$realEstateManager && window.$realEstateManager.buyProperty,
         () => {
@@ -1833,6 +1892,45 @@
         log(key, { item: itemName || "", count: count || 1, place: placeNow() });
     };
 
+    // The enchanting bench. The binding is made by a closure inside
+    // SkillMaster, so the scene method that calls it is what gets wrapped: the
+    // new piece is whatever the stored list gained, which is also the only
+    // place a failed binding leaves nothing behind.
+    whenReady(
+        () => window.Scene_SkillEncyclopedia && window.Scene_SkillEncyclopedia.prototype.enchantBind,
+        () => {
+            const Proto = window.Scene_SkillEncyclopedia.prototype;
+            const gearList = () => {
+                try { return $gameSystem.getEnchantedGear() || []; } catch (e) { return []; }
+            };
+            const original = Proto.enchantBind;
+            Proto.enchantBind = function (idx) {
+                let had = 0;
+                let spellName = "";
+                try {
+                    had = gearList().length;
+                    const spell = (this.enchantSpells() || [])[idx];
+                    spellName = spell ? spell.name : "";
+                } catch (e) { /* the binding still goes ahead */ }
+                const result = original.apply(this, arguments);
+                try {
+                    const list = gearList();
+                    if (list.length > had) {
+                        const made = list[list.length - 1];
+                        log('craft.enchant', { spell: spellName, item: made ? made.name : "" });
+                    }
+                } catch (e) { console.error("[Diary] hook enchantBind", e); }
+                return result;
+            };
+
+            before(Proto, 'enchantUnbind', function (args) {
+                const id = args[0];
+                const entry = gearList().find(e => e && e.id === id);
+                if (entry) log('craft.unmade', { item: entry.name || "" });
+            });
+        }
+    );
+
     Diary.onBuilt = function (item) { log('build.placed', { item: item || "", place: placeNow() }); };
     Diary.onDismantled = function (item) { log('build.dismantled', { item: item || "", place: placeNow() }); };
 
@@ -2016,6 +2114,219 @@
                 log('dream.had', { dream: "" });
             });
         });
+
+    //=========================================================================
+    // 13. The rest of the table: cards, the company, the chamber, the counter
+    //=========================================================================
+
+    // Cards. A duel is written down whoever it was against, but a bracket round
+    // is not: a night at the arena is the bracket's own line, not three of them.
+    whenReady(
+        () => window.Scene_CardDuel && window.Scene_CardDuel.prototype.settle,
+        () => {
+            after(window.Scene_CardDuel.prototype, 'settle', function (result, args) {
+                try {
+                    const arena = window.CardArena && typeof window.CardArena.run === 'function'
+                        ? window.CardArena.run() : null;
+                    if (arena) return;
+                } catch (e) { /* no arena in this build */ }
+                const winner = args[0];
+                const rival = this._npcName ||
+                    (this._config && this._config.opponentName) || "";
+                log(winner === 0 ? 'card.won' : winner === 1 ? 'card.lost' : 'card.drew',
+                    { rival });
+            });
+        });
+
+    // The Hyper Card Arena bracket, written when the night ends: the title
+    // taken, or the round it ended at.
+    whenReady(
+        () => window.CardArena && window.CardArena.settleRound,
+        () => {
+            before(window.CardArena, 'settleRound', function (args) {
+                const run = this.run && this.run();
+                if (!run) return;
+                this._diaryRun = { level: run.level, round: run.round };
+            });
+            after(window.CardArena, 'settleRound', function (outcome) {
+                const was = this._diaryRun;
+                this._diaryRun = null;
+                if (!outcome || !was) return;
+                if (outcome.eliminated) {
+                    log('card.knockedOut', { round: this.roundName(was.round) });
+                } else if (outcome.done) {
+                    log('card.champion', {
+                        level: this.levelName(was.level),
+                        amount: money(outcome.prize)
+                    });
+                }
+            });
+        });
+
+    // The company. A troop signed on, and how a field battle went.
+    whenReady(
+        () => typeof Game_Army !== 'undefined' && Game_Army.prototype.addTroop,
+        () => {
+            after(Game_Army.prototype, 'addTroop', function (ok, args) {
+                if (ok === false) return;
+                const troop = args[1] || {};
+                let faction = "";
+                try {
+                    const list = window.$gameFactions && $gameFactions.getFaction
+                        ? $gameFactions.getFaction(args[0]) : null;
+                    faction = (list && list.name) || "";
+                } catch (e) { /* an independent troop has no banner */ }
+                log('army.recruited', { name: troop.name || "", faction });
+            });
+        });
+
+    whenReady(
+        () => window.Scene_ArmyBattle && window.Scene_ArmyBattle.prototype.endBattle,
+        () => {
+            before(window.Scene_ArmyBattle.prototype, 'endBattle', function () {
+                if (this._battleResult !== 'victory' && this._battleResult !== 'defeat') return;
+                let enemy = "";
+                try {
+                    const army = $gameTemp._battleEnemyArmy;
+                    enemy = (army && (army.getName ? army.getName() : army.name)) || "";
+                } catch (e) { /* a column with no name is still a column */ }
+                log(this._battleResult === 'victory' ? 'army.won' : 'army.lost', { enemy });
+            });
+        });
+
+    // A blade that turned. Levels come off every fight won and are no more a
+    // diary line than a point of experience is; an evolution is.
+    whenReady(
+        () => window.BladeSeed && window.BladeSeed.SpiritCompanion,
+        () => {
+            after(window.BladeSeed.SpiritCompanion.prototype, 'levelUp', function (evolved) {
+                if (!evolved) return;
+                log('blade.evolved', {
+                    name: this.name || "",
+                    stage: this.getEvolutionStage ? this.getEvolutionStage() : ""
+                });
+            });
+        });
+
+    // The counter the party owns: taking it on, who stands behind it, and the
+    // crates that reach its warehouse.
+    whenReady(
+        () => window.ShopManagement && window.ShopManagement.assignStaff,
+        () => {
+            const SM = window.ShopManagement;
+            const shopName = (id) => {
+                try { return SM.shopDisplayName(SM.getShop(id)) || String(id || ""); }
+                catch (e) { return String(id || ""); }
+            };
+            const names = (id) => {
+                try { return (SM.staffRoster(id) || []).map(e => e.name || ""); }
+                catch (e) { return []; }
+            };
+
+            after(SM, 'onPropertyBought', function (shop) {
+                if (!shop) return;
+                log('shop.owned', {
+                    shop: shop.displayName || shopName(shop.id),
+                    trade: shop.category || ""
+                });
+            });
+
+            // Neither call answers a NAME, and the roster is where the name
+            // lives, so the line is the difference the call made to it.
+            let _rosterBefore = [];
+            const watch = (name) => before(SM, name, function (args) {
+                _rosterBefore = names(args[0]);
+            });
+            const settle = (kind, removed) => function (outcome, args) {
+                if (!outcome || !outcome.ok) return;
+                const now = names(args[0]);
+                const [from, to] = removed ? [_rosterBefore, now] : [now, _rosterBefore];
+                const gone = to.slice();
+                let who = "";
+                for (const n of from) {
+                    const at = gone.indexOf(n);
+                    if (at < 0) { who = n; break; }
+                    gone.splice(at, 1);
+                }
+                log(kind, { name: who, shop: shopName(args[0]) });
+            };
+            watch('assignStaff');
+            after(SM, 'assignStaff', settle('shop.hired', false));
+            watch('dismissStaff');
+            after(SM, 'dismissStaff', settle('shop.dismissed', true));
+
+            after(SM, 'deliverProduce', function (result, args) {
+                if (!result || !result.toShop) return;
+                const item = args[0];
+                const name = (item && item.name) || "";
+                log('shop.delivery', {
+                    items: result.toShop > 1
+                        ? T('Diary.fmt.itemCount', { name, count: result.toShop }) : name,
+                    shop: shopName(result.shopId)
+                });
+            });
+        });
+
+    // A lock. Whether it opened is the whole of the line; the block puzzle
+    // behind it is not the party's business to record.
+    whenReady(
+        () => window.Scene_UnlockingBlocks && window.Scene_UnlockingBlocks.prototype.endGame,
+        () => {
+            before(window.Scene_UnlockingBlocks.prototype, 'endGame', function (args) {
+                if (this._diaryWritten) return;
+                this._diaryWritten = true;
+                log(args[0] ? 'lock.picked' : 'lock.failed', { place: placeNow() });
+            });
+        });
+
+    // The writing bench, the enchanting bench's twin: a volume filled with
+    // spells the party already knows.
+    whenReady(
+        () => window.Scene_SkillEncyclopedia && window.Scene_SkillEncyclopedia.prototype.writeCommit,
+        () => {
+            const Proto = window.Scene_SkillEncyclopedia.prototype;
+            const gear = () => {
+                try { return $gameSystem.getEnchantedGear() || []; } catch (e) { return []; }
+            };
+            const original = Proto.writeCommit;
+            Proto.writeCommit = function () {
+                let had = 0;
+                try { had = gear().length; } catch (e) { /* the volume still gets written */ }
+                const result = original.apply(this, arguments);
+                try {
+                    const list = gear();
+                    if (list.length > had) {
+                        const made = list[list.length - 1];
+                        log('craft.book', { item: made ? made.name : "" });
+                    }
+                } catch (e) { console.error("[Diary] hook writeCommit", e); }
+                return result;
+            };
+            before(Proto, 'writeUnmake', function (args) {
+                const entry = gear().find(e => e && e.id === args[0]);
+                if (entry) log('craft.unmade', { item: entry.name || "" });
+            });
+        });
+
+    // The chamber and the betting windows have no method worth wrapping from
+    // out here, so they call in. Both are given the words already made: the
+    // diary decides nothing but where the line goes.
+    Diary.onAssemblyVote = function (info) {
+        const i = info || {};
+        log('onu.vote', {
+            power: i.power || "",
+            motion: i.motion || "",
+            stance: T('Diary.onu.' + (i.stance || 'abstained')),
+            outcome: T('Diary.onu.' + (i.passed ? 'passed' : 'failed'))
+        });
+    };
+
+    Diary.onBet = function (won, amount, pick) {
+        log(won ? 'bet.won' : 'bet.lost', {
+            amount: String(amount == null ? "" : amount),
+            pick: pick || ""
+        });
+    };
 
     //=========================================================================
     // Polling: the handful of things that have no moment to hook

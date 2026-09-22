@@ -5037,12 +5037,32 @@
     // never grows.
     Game_Player.prototype.padEdgeCrossing = function(d) {
         const w = $gameMap.width(), h = $gameMap.height();
+        // How near the border the party has to be for a push to count. One ring
+        // in, because the outermost ring of an authored map is usually the
+        // scenery that stands in for the edge of the world.
+        const NEAR = 1;
         let exitDirection = 0;
+        // Off the map outright: the generated case, unchanged.
         switch (d) {
             case 2: if (this.y + 1 >= h) exitDirection = 2; break;
             case 4: if (this.x - 1 < 0)  exitDirection = 4; break;
             case 6: if (this.x + 1 >= w) exitDirection = 6; break;
             case 8: if (this.y - 1 < 0)  exitDirection = 8; break;
+        }
+        // Or pushing into the fence that stands where the edge of the map is.
+        if (!exitDirection) {
+            const nx = this.x + (d === 6 ? 1 : d === 4 ? -1 : 0);
+            const ny = this.y + (d === 2 ? 1 : d === 8 ? -1 : 0);
+            const nearEdge =
+                (d === 2 && this.y >= h - 1 - NEAR) || (d === 8 && this.y <= NEAR) ||
+                (d === 6 && this.x >= w - 1 - NEAR) || (d === 4 && this.x <= NEAR);
+            if (nearEdge && !this.canPass(this.x, this.y, d)) {
+                // Blocked by an EVENT rather than by the terrain is somebody
+                // standing in the way, not the edge of the world.
+                const blockedByEvent = $gameMap.eventsXyNt(nx, ny).some(
+                    (e) => e && e.isNormalPriority && e.isNormalPriority());
+                if (!blockedByEvent) exitDirection = d;
+            }
         }
         if (!exitDirection) return false;
         // No landing grid, no neighbours: the pad is just a map and its edge is an

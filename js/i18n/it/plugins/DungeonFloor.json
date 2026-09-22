@@ -1,3 +1,229 @@
 {
-  "demoLimit": " (limite modalità demo: {max})"
+  "demoLimit": " (limite modalità demo: {max})",
+  "bandFallbackName": "Scalatore",
+  "bandFell": "{name} è caduto su questo piano.",
+  "bandLines": [
+    "Siamo saliti per il bottino. Finora il piano ha preso più di quanto abbia dato.",
+    "Stai vicino ai muri. Quello che nidifica qui non sente la pietra.",
+    "Ne abbiamo perso uno due piani più in basso. Non torniamo indietro per il corpo.",
+    "Se trovi le scale prima di noi, lascia la porta aperta dietro di te.",
+    "Siamo entrati in tre. Contaci mentre esci e vedi quanti siamo.",
+    "L'ascensore risponde, ma non sempre al piano che gli hai chiesto.",
+    "Cacciamo ciò che la torre nutre. Non metterti tra noi e la preda.",
+    "Riposa pure. Quassù niente riposa con te.",
+    "Ogni piano è l'ultimo di qualcuno. Cerca di non farlo diventare questo.",
+    "Tu sali per la cima, noi saliamo per la paga. Stesse scale."
+  ],
+  "nameGrammar": {
+    "machine": {
+      "onsets": [
+        "k",
+        "t",
+        "d",
+        "v",
+        "z",
+        "x",
+        "kr",
+        "tr",
+        "dr",
+        "vk",
+        "zt",
+        "qu",
+        "j",
+        "b",
+        "g"
+      ],
+      "nuclei": [
+        "a",
+        "o",
+        "u",
+        "i",
+        "e",
+        "aa",
+        "oo",
+        "ei",
+        "ou"
+      ],
+      "codas": [
+        "k",
+        "t",
+        "x",
+        "n",
+        "r",
+        "s",
+        "ks",
+        "nt",
+        "rk",
+        "-7",
+        "-9",
+        "-3",
+        "-12"
+      ],
+      "joiners": [
+        "-",
+        ".",
+        ""
+      ]
+    },
+    "alien": {
+      "onsets": [
+        "sh",
+        "th",
+        "zh",
+        "kl",
+        "sl",
+        "vr",
+        "xi",
+        "y",
+        "n",
+        "m",
+        "s",
+        "z",
+        "q",
+        "tl"
+      ],
+      "nuclei": [
+        "aa",
+        "ee",
+        "ii",
+        "oo",
+        "uu",
+        "ae",
+        "ia",
+        "ou",
+        "ei",
+        "au"
+      ],
+      "codas": [
+        "n",
+        "l",
+        "r",
+        "s",
+        "th",
+        "sh",
+        "x",
+        "ll",
+        "nn"
+      ],
+      "joiners": [
+        "'",
+        "-",
+        ""
+      ]
+    },
+    "eldritch": {
+      "onsets": [
+        "gh",
+        "zh",
+        "kth",
+        "ngh",
+        "xh",
+        "phth",
+        "vl",
+        "tzq",
+        "gl",
+        "rh",
+        "ts",
+        "hy",
+        "wr",
+        "yg"
+      ],
+      "nuclei": [
+        "o",
+        "u",
+        "aa",
+        "uu",
+        "yh",
+        "oa",
+        "ui",
+        "ae",
+        "ao"
+      ],
+      "codas": [
+        "th",
+        "gh",
+        "lth",
+        "rn",
+        "zg",
+        "mn",
+        "kh",
+        "ss",
+        "ll",
+        "rr"
+      ],
+      "joiners": [
+        "'",
+        "-",
+        "·",
+        ""
+      ]
+    }
+  },
+  "worldKind": {
+    "mixed": "Mondo misto",
+    "earthling": "Colonia terrestre",
+    "goblin": "Mondo goblin",
+    "monster": "Mondo di mostri",
+    "beast": "Mondo di bestie",
+    "zombie": "Mondo risorto",
+    "fungoid": "Mondo fungoide",
+    "machine": "Mondo macchina",
+    "alien": "Mondo alieno",
+    "magical": "Mondo magico",
+    "undead": "Mondo dei morti",
+    "mutant": "Mondo mutante",
+    "severed": "Mondo reciso",
+    "ruin": "Mondo in rovina",
+    "mimic": "Mondo mimico"
+  },
+  "worldKindBlurb": {
+    "mixed": "Un mondo che ha accolto chiunque il pozzo gli mandasse, e da quella mescolanza ha ricavato un popolo.",
+    "earthling": "Gente della Terra che e' salita quaggiu' e non e' piu' tornata. Tengono ancora il calendario terrestre.",
+    "goblin": "Goblin fino in fondo, rumorosi al riguardo, organizzati in qualcosa che insistono sia un governo.",
+    "monster": "Qui nulla e' mai stato domato, e chi comanda comanda perche' e' la cosa piu' grossa nella stanza.",
+    "beast": "Niente citta', niente uffici, nessun credo. Animali, e il tempo che li muove.",
+    "zombie": "La peste ha fatto il suo corso e la popolazione e' rimasta al suo posto.",
+    "fungoid": "Un solo organismo che indossa moltissimi corpi, e che in tutti quanti litiga con se stesso.",
+    "machine": "La gente e' morta e le istituzioni no. Le elezioni si tengono ancora puntuali.",
+    "alien": "Nulla di terrestre vale qui, e la sua gente non se ne cura.",
+    "magical": "La magia non e' mai stata legata qui, cosi' ogni mestiere e' una scuola e ogni scuola una fazione.",
+    "undead": "Un mondo che ha tenuto i suoi morti in carica.",
+    "mutant": "Un mondo cambiato piu' in fretta di quanto riuscisse a decidere cosa fosse.",
+    "severed": "La magia non arriva fin qui. Restano macchinari, scartoffie e pazienza.",
+    "ruin": "Qualunque cosa vivesse qui ha finito, e agli edifici non e' stato detto.",
+    "mimic": "Tutto e' mobilio finche' non lo e' piu'."
+  },
+  "world": {
+    "heading": "Mondo",
+    "kind": "Tipo",
+    "dominant": "Popolo dominante",
+    "dominantShare": "{name} ({percent}% della popolazione)",
+    "population": "Popolazione",
+    "magic": "Magia",
+    "power": "Iperpotenza",
+    "parties": "Partiti",
+    "reachedFrom": "Si raggiunge da",
+    "reachedFloor": "Torre Omega, piano {floor}",
+    "band": "Livello tipico",
+    "bandRange": "intorno a {median} (da {min} a {max})",
+    "noGovernment": "Non ha alcun governo.",
+    "earthSeat": "Mantiene le nazioni e le iperpotenze della Terra.",
+    "offworld": "Fuori dal mondo. Nessun luogo sulla mappa risponde per esso.",
+    "ofWorld": "di {world}",
+    "unknown": "Non registrato"
+  },
+  "populationMode": {
+    "normal": "Stanziale",
+    "chaos": "Instabile",
+    "goblin": "Goblin",
+    "monster": "Mostruosa",
+    "empty": "Deserta",
+    "zombie": "Risorta",
+    "death": "Morta"
+  },
+  "magicalLevel": {
+    "normal": "Legata",
+    "severed": "Recisa",
+    "unbound": "Slegata"
+  }
 }

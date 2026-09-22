@@ -564,5 +564,7 @@
   },
   "dossierJoined": "{name} joins the party.",
   "dossierJoinedInactive": "{name} signs on, and waits with the members in reserves.",
-  "playerMadeLore": "A dossier you wrote yourself. Take it as often as you like, and change whatever you please."
+  "playerMadeLore": "A dossier you wrote yourself. Take it as often as you like, and change whatever you please.",
+  "exportCardEquipment": "Equipment",
+  "exportCardNoEquipment": "Nothing equipped"
 }

@@ -394,6 +394,7 @@
         // counter (staffHours below), which is why the shifts matter.
         if (this.owned) {
             this.simulateSales(hoursElapsed * staffCoverage(this));
+            this.payStaff(hoursElapsed);
         } else {
             this.simulateSales(hoursElapsed);
             this.simulateProduction(hoursElapsed);
@@ -405,6 +406,25 @@
         this.lastUpdateTime = Date.now();
     }
     
+    // What the roster costs for the hours just worked. An actor from the party
+    // works the counter for nothing - they are the family business - so only
+    // hired names draw a wage.
+    payStaff(hoursElapsed) {
+        if (!(hoursElapsed > 0)) return 0;
+        const hired = staffList(this).filter(entry => entry && entry.kind !== 'actor');
+        if (hired.length === 0) return 0;
+        // A shift is SHOP_SHIFT_HOURS long, and nobody is paid for hours the
+        // shop was shut, so the bill follows the same coverage the takings do.
+        const hoursWorked = Math.min(hoursElapsed, hoursElapsed * staffCoverage(this));
+        const wages = Math.floor(hired.length * hoursWorked * SHOP_STAFF_WAGE_PER_HOUR);
+        if (wages <= 0) return 0;
+        // The wage comes out of the till, and a till that cannot cover it goes
+        // into the red: an unpaid shop is a shop whose owner owes wages.
+        this.balance = (this.balance || 0) - wages;
+        this.wagesPaid = (this.wagesPaid || 0) + wages;
+        return wages;
+    }
+
     // NEW METHOD: Simulate sales over time
     simulateSales(hoursElapsed) {
         // A shop run by somebody who knows the trade moves more stock in the
@@ -698,9 +718,9 @@
             Math.random() * (randomQuantityMax - randomQuantityMin + 1)
           ) + randomQuantityMin;
 
-        // Add to stock inventory
-        this.stockInventory[itemId] =
-          (this.stockInventory[itemId] || 0) + randomQuantity;
+        // Onto the shelves in the shape the shelves use, through the one
+        // function that knows how to find a slot and cap it.
+        addToStock(itemId, randomQuantity, this);
 
         // Set default price if not already set
         if (!this.menuPrices[itemId]) {
@@ -861,6 +881,18 @@
         delete shop.warehouseInventory[itemId];
       }
     }
+  }
+
+  function stockSpaceFor(itemId, shop) {
+    if (!shop || !shop.stockInventory) return 0;
+    const cap = shop.maxItemsPerSlot;
+    let space = 0;
+    for (let slotIndex = 1; slotIndex <= 7; slotIndex++) {
+      const slot = shop.stockInventory[slotIndex];
+      if (!slot) space += cap;                              // an empty slot takes a full one
+      else if (slot.itemId === itemId) space += Math.max(0, cap - slot.amount);
+    }
+    return space;
   }
 
   function addToStock(itemId, amount = 1, shop, specificSlot = null) {
@@ -1447,8 +1479,10 @@
     if (!shop || !item || !isStockable(item)) return { ok: false, reason: 'notStockable' };
     let held = 0;
     try { held = $gameParty.numItems(item); } catch (err) { held = 0; }
-    const moving = Math.max(1, Math.min(Number(amount) || 1, held));
-    if (moving <= 0) return { ok: false, reason: 'noneHeld' };
+    // Same rule as buying: only as many as the shelves take leave the bag.
+    const room = stockSpaceFor(item.id, shop);
+    const moving = Math.max(0, Math.min(Number(amount) || 1, held, room));
+    if (moving <= 0) return { ok: false, reason: room <= 0 ? 'shelvesFull' : 'noneHeld' };
     if (!addToStock(item.id, moving, shop)) return { ok: false, reason: 'shelvesFull' };
     if (!shop.menuPrices[item.id]) {
       shop.menuPrices[item.id] = Math.floor(item.price * defaultPriceMultiplier);
@@ -1496,13 +1530,16 @@
     try { purse = $gameParty.gold(); } catch (err) { purse = 0; }
     const affordable = Math.min(wanted, Math.floor(purse / each));
     if (affordable <= 0) return { ok: false, reason: 'tooDear' };
-    if (!addToStock(item.id, affordable, shop)) return { ok: false, reason: 'shelvesFull' };
+    // Only buy what there is shelf room for: the rest was paid for and vanished.
+    const shelvable = Math.min(affordable, stockSpaceFor(item.id, shop));
+    if (shelvable <= 0) return { ok: false, reason: 'shelvesFull' };
+    if (!addToStock(item.id, shelvable, shop)) return { ok: false, reason: 'shelvesFull' };
     if (!shop.menuPrices[item.id]) {
       shop.menuPrices[item.id] = Math.floor(item.price * defaultPriceMultiplier);
     }
-    try { $gameParty.loseGold(each * affordable); } catch (err) { /* no purse */ }
+    try { $gameParty.loseGold(each * shelvable); } catch (err) { /* no purse */ }
     persistShops();
-    return { ok: true, amount: affordable, spent: each * affordable };
+    return { ok: true, amount: shelvable, spent: each * shelvable };
   }
 
   // -------------------------------------------------------------------------
@@ -1575,6 +1612,11 @@
   // shop only trades in the hours somebody is standing in it, so the roster is
   // what decides how much it can possibly sell (Shop.refreshEconomy).
   const SHOP_SHIFT_HOURS = 8;
+  // What a hired hand behind the counter costs per hour, in gold (so 1000 is
+  // 10.00 euros). Below the 25-to-100 euro band the job board quotes, because a
+  // shop shift is unskilled work, and low enough that a shop with stock on the
+  // shelves still turns a profit on the 0.6-in, 1.5-out spread.
+  const SHOP_STAFF_WAGE_PER_HOUR = 1000;
   const SHOP_MAX_STAFF   = 3;
 
   // An entry is an actor (somebody travelling) or a preset (somebody benched),
@@ -1940,6 +1982,9 @@
     if (shopData.shops[id]) return shopData.shops[id];
 
     const shop = new Shop(id, tradeForProperty(property), 0);
+    // The float belongs to a going concern that was already trading, not to a
+    // counter the party has just been handed the keys to.
+    shop.balance = 0;
     shop.owned = true;
     shop.propertyId = property.id;
     shop.displayName = property.name;

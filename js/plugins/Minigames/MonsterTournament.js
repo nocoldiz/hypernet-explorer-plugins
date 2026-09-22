@@ -1504,6 +1504,7 @@
                 const lost = this.currentBets[this.playerChoice] || 0;
                 this.setTitle(T('MonsterTournament.eliminated', { name: this.selectedMonsters[this.playerChoice].name }));
                 this.showBanner(T('MonsterTournament.youLost', { tokens: lost }), 'lose');
+                this.recordBet(false, lost);
             } else {
                 // Pari-mutuel odds: the payout multiplier is the field's total
                 // power over the chosen monster's power, times a house edge. A
@@ -1521,8 +1522,23 @@
                 $gameParty.gainItem($dataItems[bettingItemId], winnings);
                 this.setTitle(T('MonsterTournament.champion', { name: this.selectedMonsters[this.playerChoice].name }));
                 this.showBanner(T('MonsterTournament.youWon', { tokens: winnings }), 'win');
+                this.recordBet(true, winnings);
             }
             this._after(2600, () => this.popScene());
+        }
+
+        // What the night cost or paid, in the party's diary (Core/Diary.js).
+        // The stake here is tokens rather than money, so the count carries the
+        // token's own name with it.
+        recordBet(won, amount) {
+            try {
+                if (!window.Diary || !window.Diary.onBet) return;
+                const token = $dataItems[bettingItemId];
+                const monster = this.selectedMonsters[this.playerChoice];
+                window.Diary.onBet(won,
+                    amount + (token ? ' ' + token.name : ''),
+                    monster ? monster.name : '');
+            } catch (e) { console.warn('[MonsterTournament] diary', e); }
         }
 
         //--- teardown ----------------------------------------------------------
@@ -2602,6 +2618,12 @@
             bet.payout = payout;
             net += payout - bet.stake;
             if (payout && typeof $gameParty !== 'undefined' && $gameParty) $gameParty.gainGold(payout);
+            // One slip, one line in the party's diary (Core/Diary.js).
+            try {
+                if (window.Diary && window.Diary.onBet) {
+                    window.Diary.onBet(won, money(won ? payout : bet.stake), bet.label || '');
+                }
+            } catch (e) { console.warn('[WrestlingLeague] diary', e); }
         });
         if (net !== 0) {
             st.bank += net;

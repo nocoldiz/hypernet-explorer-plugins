@@ -6,7 +6,6 @@
   "linkLost": "Collegamento di trasmissione perso. Impossibile caricare la pagina Hypernet richiesta.",
   "linkStable": "COLLEGAMENTO DI TRASMISSIONE STABILE",
   "secureSsl": "SSL SICURO: MASSIMO",
-
   "menu": {
     "file": "File",
     "edit": "Modifica",
@@ -15,7 +14,6 @@
     "tools": "Strumenti",
     "help": "Guida"
   },
-
   "file": {
     "newTab": "Nuova scheda",
     "duplicateTab": "Duplica scheda",
@@ -28,7 +26,6 @@
     "closeTab": "Chiudi scheda",
     "exit": "Esci"
   },
-
   "edit": {
     "cut": "Taglia",
     "copy": "Copia",
@@ -36,7 +33,6 @@
     "selectAll": "Seleziona tutto",
     "find": "Trova in questa pagina..."
   },
-
   "view": {
     "toolbars": "Barre degli strumenti",
     "standardButtons": "Pulsanti standard",
@@ -60,7 +56,6 @@
     "source": "Origine",
     "fullScreen": "Schermo intero"
   },
-
   "textSize": {
     "largest": "Massima",
     "larger": "Grande",
@@ -68,14 +63,12 @@
     "smaller": "Piccola",
     "smallest": "Minima"
   },
-
   "encoding": {
     "western": "Europeo occidentale",
     "unicode": "Unicode (UTF-8)",
     "cyrillic": "Cirillico",
     "hexagram": "Glifico Hexagram"
   },
-
   "fav": {
     "add": "Aggiungi a Preferiti...",
     "organize": "Organizza Preferiti...",
@@ -100,7 +93,6 @@
     "moveDown": "Sposta giù",
     "folderPrompt": "Nome della nuova cartella:"
   },
-
   "tools": {
     "mail": "Posta e news",
     "readMail": "Leggi la posta",
@@ -114,14 +106,12 @@
     "connection": "Stato della connessione",
     "options": "Opzioni Hypernet..."
   },
-
   "help": {
     "topics": "Sommario della Guida",
     "support": "Assistenza in linea",
     "tip": "Suggerimento del giorno",
     "about": "Informazioni su Hypernet Explorer"
   },
-
   "toolbar": {
     "back": "Indietro",
     "forward": "Avanti",
@@ -139,7 +129,6 @@
     "newTab": "Nuova scheda",
     "closeTab": "Chiudi scheda"
   },
-
   "status": {
     "ready": "Pronto",
     "done": "Completato",
@@ -176,7 +165,6 @@
     "barShown": "{name} visibile.",
     "barHidden": "{name} nascosta."
   },
-
   "find": {
     "label": "Trova:",
     "next": "Successivo",
@@ -188,19 +176,16 @@
     "none": "Nessuna corrispondenza",
     "unreadable": "Questa pagina non si lascia leggere dal cercatore."
   },
-
   "address": {
     "placeholder": "Digita un indirizzo Hypernet, oppure una frase da cercare",
     "suggestHistory": "Cronologia",
     "suggestSite": "Hypernet",
     "suggestSearch": "Cerca \"{query}\" su Noodle"
   },
-
   "tab": {
     "untitled": "Nuova scheda",
     "loading": "Caricamento..."
   },
-
   "home": {
     "beta": "BETA",
     "searchButton": "Cerca con Noodle",
@@ -214,7 +199,6 @@
     "indexOffline": "L'indice Noodle non è raggiungibile. L'elenco qui sotto è letto direttamente dalla cache locale del gateway.",
     "suggestion": "Prova con un'altra frase, oppure sfoglia l'elenco qui sotto."
   },
-
   "error": {
     "title": "Impossibile visualizzare la pagina",
     "heading": "Impossibile visualizzare la pagina",
@@ -230,7 +214,6 @@
     "external": "Quell'indirizzo vive fuori dall'Hypernet. Questo terminale non ha alcuna rotta per raggiungerlo.",
     "friendlyOff": "GATEWAY 404. NESSUNA ROTTA. DOCUMENTO NON PRESENTE IN LOCALE."
   },
-
   "history": {
     "title": "Cronologia",
     "heading": "Cronologia",
@@ -242,7 +225,6 @@
     "visits": "{count} visite",
     "openIt": "Apri"
   },
-
   "downloads": {
     "title": "Download",
     "heading": "Download",
@@ -257,7 +239,6 @@
     "clear": "Svuota l'elenco",
     "open": "Apri"
   },
-
   "mail": {
     "title": "Posta Hypernet",
     "heading": "Posta in arrivo",
@@ -304,7 +285,6 @@
       }
     ]
   },
-
   "source": {
     "title": "Origine di {address}",
     "heading": "Origine del documento",
@@ -312,7 +292,6 @@
     "bytes": "{count} byte",
     "wrap": "A capo automatico"
   },
-
   "open": {
     "title": "Apri",
     "hint": "Digita l'indirizzo di un documento Hypernet, oppure scegline uno dalla lista.",
@@ -323,7 +302,6 @@
     "browse": "Elenco",
     "count": "{count} documenti"
   },
-
   "save": {
     "title": "Salva pagina web",
     "label": "Nome file:",
@@ -334,7 +312,6 @@
     "ok": "Salva",
     "cancel": "Annulla"
   },
-
   "pageSetup": {
     "title": "Imposta pagina",
     "paper": "Formato:",
@@ -348,7 +325,6 @@
     "cancel": "Annulla",
     "saved": "Impostazioni di pagina memorizzate."
   },
-
   "print": {
     "title": "Anteprima di stampa",
     "printer": "Stampante:",
@@ -360,7 +336,6 @@
     "cancel": "Annulla",
     "pageOf": "Pagina {page} di {total}"
   },
-
   "options": {
     "title": "Opzioni Hypernet",
     "tabGeneral": "Generale",
@@ -396,7 +371,6 @@
     "apply": "Applica",
     "saved": "Impostazioni applicate."
   },
-
   "sync": {
     "title": "Sincronizza",
     "hint": "Le pagine non in linea vengono copiate nella cache del gateway per poter essere lette a collegamento assente.",
@@ -405,7 +379,6 @@
     "working": "Sincronizzazione di {name}...",
     "done": "Sincronizzazione completata."
   },
-
   "connection": {
     "title": "Stato della connessione",
     "gateway": "Gateway",
@@ -421,7 +394,6 @@
     "uptime": "Sessione",
     "close": "Chiudi"
   },
-
   "about": {
     "title": "Informazioni su Hypernet Explorer",
     "product": "Hypernet Explorer",
@@ -433,7 +405,6 @@
     "notice": "Questo prodotto è concesso in licenza a chi detiene il terminale. La licenza non è trasferibile e, oltre un certo punto, non lo è nemmeno chi lo detiene.",
     "close": "OK"
   },
-
   "helpPage": {
     "title": "Guida di Hypernet Explorer",
     "heading": "Guida di Hypernet Explorer",
@@ -461,7 +432,6 @@
     "offlineBody": "Il gateway conserva una copia locale di ogni documento della zona Hypernet, perciò le pagine si aprono anche a linea caduta. Solo gli indirizzi fuori dalla zona avrebbero bisogno della linea, e non ce ne sono.",
     "close": "Chiudi"
   },
-
   "popup": {
     "blockedBar": "Popup bloccato. Per vederlo, fai clic qui.",
     "showIt": "Mostra il popup",
@@ -495,7 +465,6 @@
       }
     ]
   },
-
   "tip": {
     "title": "Suggerimento del giorno",
     "next": "Suggerimento successivo",
@@ -513,7 +482,6 @@
       "Tutto quello che salvi da una pagina finisce in C:\\Documents e compare in Risorse del computer."
     ]
   },
-
   "context": {
     "back": "Indietro",
     "forward": "Avanti",
@@ -525,7 +493,6 @@
     "openNewTab": "Apri in una nuova scheda",
     "properties": "Proprietà"
   },
-
   "properties": {
     "title": "Proprietà",
     "protocol": "Protocollo:",
@@ -537,5 +504,19 @@
     "size": "Dimensione:",
     "zone": "Zona:",
     "close": "OK"
+  },
+  "hexapedia": {
+    "appName": "Hexapedia",
+    "tooltip": "La libera enciclopedia del sapere post-Compressione",
+    "peopleTitle": "Persone viventi di rilievo",
+    "peopleIntro": "Questo server scrive di chiunque il mondo abbia sentito nominare. Un viaggiatore che raggiunge il livello {level} si guadagna una voce, conservata con il mondo e non con la squadra, cosicché gli sopravvive.",
+    "peopleEmpty": "Ancora nessuna voce. Nessuno in questo mondo ha raggiunto il livello {level}.",
+    "peopleLine": "livello {level} {cls}",
+    "personMeta": "{cls} di livello {level}, del mondo di {world}.",
+    "personDiary": "Dal registro",
+    "personNoDiary": "Il registro non contiene ancora nulla sotto questo nome.",
+    "personFooter": "Scritto dall'enciclopedia a partire dal diario di squadra. Conservato con il mondo, e leggibile da chi lo giocherà dopo.",
+    "backToPortal": "Portale Hexapedia",
+    "written": "Hexapedia ha scritto una voce su {name}"
   }
 }

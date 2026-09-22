@@ -2245,9 +2245,16 @@
     }
     static getStartingStep() {
       // The first genuinely interactive step: walk forward over every step
-      // setupStep() would auto-advance past.
+      // setupStep() would auto-advance past, and over every step that asks
+      // nothing of its own and opens another screen instead (the gender slot
+      // of a person, which only raises the sprite board and the name prompt).
+      // On a repeat playthrough the steps before it are all once-only and
+      // already answered, so without that second test the wizard's first step
+      // WAS the gender slot: Back walked down to it and the sprite board
+      // opened, again and again, instead of the wizard's own first page.
       let step = 0;
-      while (step < CharacterCreationData.length && this._stepAutoAdvances(step)) {
+      while (step < CharacterCreationData.length &&
+             (this._stepAutoAdvances(step) || this._stepHandsOverImmediately(step))) {
         step++;
       }
       return step;
@@ -2699,6 +2706,20 @@
       return str.replace(/\\C\[\d+\]/gi, "").replace(/\\C/gi, "");
     }
 
+    // Prose whose important words are written in square brackets, the way the
+    // map notices and the dialogue keywords are written: the brackets are
+    // markup, never printed, and what they hold is lit instead. One markup for
+    // every locale, so a translator only has to keep the brackets around the
+    // words that matter in their own sentence. The text is escaped first, so a
+    // localized string can never smuggle HTML into the page.
+    emphasizeText(str) {
+      const clean = this.cleanText(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      return clean.replace(/\[([^\[\]\n]+)\]/g, '<span class="cc-emph">$1</span>');
+    }
+
     // Current age of a preset dossier, computed against the live in-game
     // calendar (TimeDateSystem / Variable 114) rather than the real-world
     // clock, so it reflects the game's own timeline. Returns null when the
@@ -2952,7 +2973,7 @@
       return `<button class="cc-compact-btn cc-action-back focusable" tabindex="0"
               data-nav-key="cc-action-back"
               onclick="SceneManager._scene.onActionBarBack()">
-            <span>${ccT('CharCreate.back')}</span>
+            <span>${ccT(this._actionBarBackExits() ? 'CharCreate.exitWizard' : 'CharCreate.back')}</span>
           </button>`;
     }
 
@@ -3031,12 +3052,18 @@
     }
 
     // The left slot on an ordinary page: back one step, or out of the wizard
-    // when there is no page behind this one.
+    // when there is no page behind this one. It is the same answer Escape
+    // gives, so the button cannot walk anywhere Escape would not.
     onActionBarBack() {
       if (window.CCPick && window.CCPick.isOpen()) return;
       if (this._presetWindow) { this.onPresetCancel(); return; }
-      SoundManager.playCancel();
-      this.previousStep();
+      this.onCancel();
+    }
+
+    // True while the left slot is a way OUT of the wizard rather than a way
+    // back through it, which is the only time it is labelled Exit.
+    _actionBarBackExits() {
+      return this._step <= Scene_CharacterCreation.getStartingStep() && this.canExitToTitle();
     }
 
     // ── Helper methods for connected busts and currency ──
@@ -4280,7 +4307,7 @@
         const headerH2 = container.querySelector(".cc-class-header h2");
         const headerP = container.querySelector(".cc-class-header p");
         if (headerH2) headerH2.textContent = choice2.name || "";
-        if (headerP) headerP.textContent = this.cleanText(choice2.description || "");
+        if (headerP) headerP.innerHTML = this.emphasizeText(choice2.description || "");
 
         // Update sidebar
         const sidebar = container.querySelector(".cc-compact-sidebar");

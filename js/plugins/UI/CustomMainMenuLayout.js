@@ -1108,6 +1108,7 @@
         SoundManager.playOk();
         this._isDynamicsPage = true;
         this._dynamicsDrag = null;
+        this._dynamicsDismiss = null;
         this.refreshUIMenuDOM(true);
     };
 
@@ -1115,6 +1116,7 @@
         this.closeUILodgingModal(true);
         SoundManager.playCancel();
         this._dynamicsDrag = null;
+        this._dynamicsDismiss = null;
         this._isDynamicsPage = false;
         this.refreshUIMenuDOM(true);
     };
@@ -1742,6 +1744,84 @@
         this.refreshUIMenuDOM(false);
     });
 
+    // Sending somebody home: they stop being a companion and go back to being
+    // a person of this world, standing where the party first met them. Their
+    // event is unhidden and the record of their recruitment struck, so every
+    // savegame of the world meets them there again (window.PartyReturn,
+    // NPC/NPCSystemParty.js). Nothing they brought is taken back off the party.
+    //
+    // It cannot be undone from this page, so the row asks first, the same way
+    // the Pets page asks before a pet is let go: the buttons turn into a
+    // Confirm and a Cancel rather than opening a window over the board.
+    Scene_Menu.prototype.startUIDismiss = function (kind, id) {
+        SoundManager.playOk();
+        this._dynamicsDismiss = { kind, id };
+        this.refreshUIMenuDOM(false);
+    };
+
+    Scene_Menu.prototype.cancelUIDismiss = function () {
+        if (!this._dynamicsDismiss) return;
+        SoundManager.playCancel();
+        this._dynamicsDismiss = null;
+        this.refreshUIMenuDOM(false);
+    };
+
+    // Is this row the one waiting to be confirmed?
+    Scene_Menu.prototype.isUIDismissing = function (kind, id) {
+        const held = this._dynamicsDismiss;
+        return !!held && held.kind === kind && held.id === id;
+    };
+
+    Scene_Menu.prototype.dismissUIMember = guardedBoardAction(function (actorId) {
+        const actor = $gameActors.actor(actorId);
+        const name = actor ? actor.name() : '';
+        this._dynamicsDismiss = null;
+        if (this.dynamicsSwapLocked()) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.' + this.dynamicsSwapLocked()),
+                { severity: 'warning', duration: 200 });
+            return;
+        }
+        this.reportUIDismiss(window.PartyReturn?.dismiss?.(actorId), name);
+        // The roster shrank, so the right-page selection may point past the end.
+        this._selectedActorIndex = Math.min(this._selectedActorIndex, $gameParty.members().length - 1);
+        this.refreshUIMenuDOM(false);
+    });
+
+    // The same for a reserve, who is not on the road to be taken off it: their
+    // dossier is spent instead, and then they go home.
+    Scene_Menu.prototype.dismissUIReserve = guardedBoardAction(function (presetId) {
+        const preset = (window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [])
+            .find(entry => entry && entry.id === presetId);
+        this._dynamicsDismiss = null;
+        this.reportUIDismiss(window.PartyReturn?.dismissReserve?.(presetId), preset ? preset.name : '');
+        this.refreshUIMenuDOM(false);
+    });
+
+    // One wording for both, so a dismissal reads the same wherever it is made.
+    Scene_Menu.prototype.reportUIDismiss = function (result, name) {
+        const who = name || T('MainMenu.roster.thatMember');
+        if (!result || !result.ok) {
+            SoundManager.playBuzzer();
+            const reason = result ? result.reason : '';
+            const message = reason === 'lastMember'
+                ? T('MainMenu.dynamics.partyEmpty')
+                : reason === 'isLeader'
+                    ? T('MainMenu.dynamics.isLeader', { name: who })
+                    : reason === 'storyLocked'
+                        ? T('MainMenu.dynamics.storyLocked', { name: who })
+                        : reason === 'noOrigin'
+                            ? T('MainMenu.dynamics.noOrigin', { name: who })
+                            : T('MainMenu.dynamics.cannotSendHome', { name: who });
+            window.ParchmentToast?.show?.(message, { severity: 'warning', duration: 200 });
+            return false;
+        }
+        SoundManager.playOk();
+        window.ParchmentToast?.show?.(T('MainMenu.dynamics.sentHome', { name: who }),
+            { severity: 'info', duration: 220 });
+        return true;
+    };
+
     // Calls a member in reserves back into a free party slot. The bench is
     // world-scoped (world.json "retiredCharacters"), so it holds everyone every
     // savegame of this world has ever benched, and taking one clears them from
@@ -1922,9 +2002,13 @@
             const first    = turnIdx === 0;
             const last     = turnIdx === ordered.length - 1;
             const isPicked = !!picked && picked.kind === 'active' && picked.actor.actorId() === actorId;
+            // Up and down are a chevron apiece rather than a word: they move
+            // the row itself, and an arrow says that in less room than a label
+            // does. The label stays on the button as its tooltip, so nothing
+            // the board says stops being i18n text.
             const step = (delta, label, disabled) => (disabled
-                ? `<div class="command-item roster-action--fixed is-disabled">${label}</div>`
-                : `<div class="command-item focusable roster-action--fixed" onclick="SceneManager._scene?.moveUITurnOrder?.(${actorId}, ${delta})">${label}</div>`);
+                ? `<div class="inspect-btn roster-btn roster-chev inspect-btn--disabled" title="${label}"><span class="chev chev--${delta < 0 ? 'up' : 'down'}"></span></div>`
+                : `<div class="inspect-btn focusable roster-btn roster-chev" title="${label}" onclick="SceneManager._scene?.moveUITurnOrder?.(${actorId}, ${delta})"><span class="chev chev--${delta < 0 ? 'up' : 'down'}"></span></div>`);
 
             // Story mode keeps the party in one pair of hands, so the offer to
             // hand it over is not made (PartyRoster.canSwitchLeader).
@@ -1934,16 +2018,74 @@
             const canLead = window.PartyRoster?.canSwitchLeader?.() !== false
                 && !(mem.isDead && mem.isDead());
             const leaderBtn = isLeader
-                ? `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.leader')}</div>`
+                ? `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.roster.leader')}</div>`
                 : !canLead
-                    ? `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.makeLeader')}</div>`
-                    : `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.promoteUIPartyLeader?.(${actorId})">${T('MainMenu.roster.makeLeader')}</div>`;
+                    ? `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.roster.makeLeader')}</div>`
+                    : `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.promoteUIPartyLeader?.(${actorId})">${T('MainMenu.roster.makeLeader')}</div>`;
             // The leader stays: hand the party over first, then bench them. In
             // the story mode neither Em nor Bubba leaves the party at all.
             const storyLocked = window.PartyRoster?.isStoryLocked?.(actorId) === true;
             const benchBtn = (canBench && !isLeader && !storyLocked)
-                ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.retireUIMember?.(${actorId})">${T('MainMenu.roster.setInactive')}</div>`
-                : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setInactive')}</div>`;
+                ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.retireUIMember?.(${actorId})">${T('MainMenu.roster.setInactive')}</div>`
+                : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.roster.setInactive')}</div>`;
+
+            // Sending them home is offered only to somebody this world has a
+            // place for: a recruit it can put back. A made character has none,
+            // so the button is drawn dead rather than left out and the row
+            // keeps its shape whoever is standing in it.
+            const canSendHome = canBench && !isLeader && !storyLocked
+                && window.PartyReturn?.canReturn?.(mem.name()) === true;
+            const dismissBtn = canSendHome
+                ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.startUIDismiss?.('active', ${actorId})">${T('MainMenu.roster.sendHome')}</div>`
+                : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.roster.sendHome')}</div>`;
+            // Asked once before it is done: while this row is the one asking,
+            // its buttons are the answer to the question and nothing else.
+            const askingHome = this.isUIDismissing('active', actorId);
+            const activeButtons = askingHome
+                ? `<div class="roster-since">${T('MainMenu.dynamics.sendHomeAsk', { name: escapeHtml(mem.name()) })}</div>
+                                <div class="roster-actions">
+                                    <div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.dismissUIMember?.(${actorId})">${T('MainMenu.roster.confirm')}</div>
+                                    <div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.cancelUIDismiss?.()">${T('MainMenu.roster.cancel')}</div>
+                                </div>`
+                : `<div class="roster-actions">
+                                    ${leaderBtn}
+                                    ${benchBtn}
+                                    ${dismissBtn}
+                                    <div class="inspect-btn focusable roster-btn" onclick="window.NPCEmpathize?.openForActor(${actorId})" /* i18n-ignore: inline JavaScript */>${T('MainMenu.roster.empathize')}</div>
+                                    ${step(-1, T('MainMenu.dynamics.moveUp'), first)}
+                                    ${step(1, T('MainMenu.dynamics.moveDown'), last)}
+                                </div>`;
+
+            // What the row says about the person now, beyond their name: the
+            // three pools, what they hit with, what they hit for and whatever
+            // is wrong with them. The board used to print a class and a level
+            // and nothing else, which said nothing about whether the party
+            // walking out of here could fight.
+            const stat = (label, value, cls) =>
+                `<span class="dyn-stat"><span class="dyn-stat-lbl">${label}</span><span class="dyn-stat-val${cls ? ' ' + cls : ''}">${value}</span></span>`;
+            const hpPct = Math.floor(mem.hpRate() * 100);
+            const band = pct => (pct <= 25 ? 'gauge-band--bad' : pct <= 50 ? 'gauge-band--warn' : '');
+            const weapon = (mem.weapons?.() ?? [])[0];
+            const states = (mem.states?.() ?? []).map(st => st && st.name).filter(Boolean);
+            const statStrip = `
+                                <div class="dyn-stats">
+                                    ${stat(T('MainMenu.vital.hp'), `${mem.hp}/${mem.mhp}`, 'gauge-ink ' + band(hpPct))}
+                                    ${stat(T('MainMenu.vital.mp'), `${mem.mp}/${mem.mmp}`, 'gauge-ink')}
+                                    ${stat(escapeHtml(TextManager.param(2)), mem.param(2))}
+                                    ${stat(escapeHtml(TextManager.param(3)), mem.param(3))}
+                                    ${stat(escapeHtml(TextManager.param(4)), mem.param(4))}
+                                    ${stat(T('MainMenu.dynamics.statSkills'), mem.skills().length)}
+                                </div>
+                                <div class="roster-since">
+                                    ${T('MainMenu.dynamics.statWeapon', {
+                                        weapon: weapon ? escapeHtml(weapon.name) : T('MainMenu.dynamics.statUnarmed')
+                                    })}
+                                    · ${T('MainMenu.dynamics.statCondition', {
+                                        condition: states.length
+                                            ? escapeHtml(states.join(', '))
+                                            : T('MainMenu.dynamics.statHealthy')
+                                    })}
+                                </div>`;
 
             // Every travelling row can be picked up, the leader included: the
             // leader is dragged to change WHERE THEY ACT, and a leader dropped
@@ -1960,13 +2102,8 @@
                                     ${escapeHtml(mem.name())}
                                     <span class="roster-sub">${escapeHtml(mem.currentClass() ? mem.currentClass().name : '')} ${T('MainMenu.roster.levelAbbr')}${mem.level} · ${dexLabel} ${mem.agi}${isLeader ? ' · ' + T('MainMenu.roster.leader') : ''}</span>
                                 </div>
-                                <div class="roster-actions">
-                                    ${leaderBtn}
-                                    ${benchBtn}
-                                    <div class="command-item focusable roster-action" onclick="window.NPCEmpathize?.openForActor(${actorId})" /* i18n-ignore: inline JavaScript */>${T('MainMenu.roster.empathize')}</div>
-                                    ${step(-1, T('MainMenu.dynamics.moveUp'), first)}
-                                    ${step(1, T('MainMenu.dynamics.moveDown'), last)}
-                                </div>
+                                ${askingHome ? '' : statStrip}
+                                ${activeButtons}
                             </div>
                         </div>`;
         });
@@ -2018,8 +2155,8 @@
                 ? T('MainMenu.dynamics.inactiveSince', { date: escapeHtml(preset.retiredDate) })
                 : '';
             const recallBtn = hasRoom
-                ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
-                : `<div class="command-item roster-action is-disabled">${T('MainMenu.roster.setActive')}</div>`;
+                ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
+                : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.roster.setActive')}</div>`;
 
             // Where this one is living, and the button that opens the sheet
             // of everywhere else. A world offering one place to live offers no
@@ -2041,23 +2178,43 @@
             const lodgingBtn = storyFollower
                 ? ''
                 : canMove
-                    ? `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.openUIMemberLodging?.(${preset.id})">${T('MainMenu.dynamics.moveLodging')}</div>`
-                    : `<div class="command-item roster-action is-disabled">${T('MainMenu.dynamics.moveLodging')}</div>`;
+                    ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.openUIMemberLodging?.(${preset.id})">${T('MainMenu.dynamics.moveLodging')}</div>`
+                    : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.dynamics.moveLodging')}</div>`;
 
+            // A reserve who came out of this world can be sent back to it, the
+            // same offer the travelling rows carry.
+            const canSendHome = !storyFollower && window.PartyReturn?.canReturn?.(preset.name) === true;
+            const dismissBtn = canSendHome
+                ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.startUIDismiss?.('bench', ${preset.id})">${T('MainMenu.roster.sendHome')}</div>`
+                : '';
+            const askingHome = this.isUIDismissing('bench', preset.id);
+            const benchButtons = askingHome
+                ? `<div class="roster-since">${T('MainMenu.dynamics.sendHomeAsk', { name: escapeHtml(preset.name) })}</div>
+                                <div class="roster-actions">
+                                    <div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.dismissUIReserve?.(${preset.id})">${T('MainMenu.roster.confirm')}</div>
+                                    <div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.cancelUIDismiss?.()">${T('MainMenu.roster.cancel')}</div>
+                                </div>`
+                : `<div class="roster-actions">${recallBtn}${lodgingBtn}${dismissBtn}</div>`;
+
+            // A reserve is a card in a grid, not a row: the bench is browsed
+            // (who is there, what they are, what level they reached) far more
+            // often than it is acted on, and a card fits four to a shelf where
+            // a row fitted one. The card is still the thing that is dragged
+            // onto the travelling list, and it carries Set Active itself.
             const benchPicked = !!picked && picked.kind === 'bench' && picked.preset.id === preset.id;
             benchRows += `
-                        <div class="npc-dynamics-member dyn-row roster-row${benchPicked ? ' dyn-row--picked' : ''}"${drag('bench', preset.id, hasRoom)}>
+                        <div class="npc-dynamics-member dyn-row dyn-card${benchPicked ? ' dyn-row--picked' : ''}"${drag('bench', preset.id, hasRoom)}>
                             <div class="portrait-frame focusable dyn-pick" onclick="SceneManager._scene?.pickDynamicsMember?.('bench', ${preset.id})">
                                 <canvas id="bench-canvas-${preset.id}" width="48" height="48"></canvas>
                             </div>
-                            <div class="roster-action">
+                            <div class="dyn-card-body">
                                 <div class="roster-name dyn-pick" onclick="SceneManager._scene?.pickDynamicsMember?.('bench', ${preset.id})">
                                     ${escapeHtml(preset.name)}
-                                    <span class="roster-sub">${escapeHtml(className)} ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</span>
                                 </div>
+                                <div class="dyn-card-class">${escapeHtml(className)} · ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</div>
                                 <div class="roster-since">${since}</div>
                                 ${lodgingLine}
-                                <div class="roster-actions">${recallBtn}${lodgingBtn}</div>
+                                ${benchButtons}
                             </div>
                         </div>`;
         });
@@ -2066,7 +2223,7 @@
         // It stays up while somebody can still be dragged onto it.
         const benchSection = (benchRows || canBench)
             ? `<h3 class="dyn-section-title">${T('MainMenu.dynamics.inactiveTitle')}</h3>
-                        <div class="dyn-slot" id="dyn-zone-bench"${zone('bench')}>
+                        <div class="dyn-slot dyn-grid" id="dyn-zone-bench"${zone('bench')}>
                             ${benchRows}
                         </div>`
             : '';
@@ -2135,11 +2292,25 @@
                         </div>`
             : '';
 
+        // Anyone waiting in the characters folder who this game has never seen.
+        // The count is read here so the button says whether there is anything
+        // to take in before it is pressed.
+        const waiting = (window.CharacterExport?.scan?.() ?? []).filter(entry => !entry.known).length;
+        const importBtn = window.CharacterExport?.folder?.()
+            ? `<div class="command-item focusable dyn-import" onclick="SceneManager._scene?.importDynamicsCharacters?.()">
+                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.dynamicsRoster)}"></span>
+                            <span>${waiting
+                                ? T('MainMenu.dynamics.importWaiting', { count: waiting })
+                                : T('MainMenu.dynamics.import')}</span>
+                        </div>`
+            : '';
+
         return `
                 <div class="tools-pockets">
                     <div class="page-header-bar">
                         <div class="back-button" onclick="SceneManager._scene?.hideDynamicsPage?.()">${T('MainMenu.dynamics.back')}</div>
                         <h2 class="tools-title">${T('MainMenu.dynamics.title')}</h2>
+                        ${importBtn}
                         ${wikiBtn}
                     </div>
                     ${note}
@@ -2322,13 +2493,11 @@
         if (isActive) {
             const hpPct = Math.floor(actor.hpRate() * 100);
             const mpPct = actor.mmp > 0 ? Math.floor(actor.mpRate() * 100) : 100;
-            const tpPct = Math.floor(actor.tpRate() * 100);
             const band = pct => (pct <= 25 ? 'gauge-band--bad' : pct <= 50 ? 'gauge-band--warn' : '');
             vitalsHTML = `
                 <div class="bio-vitals dyn-dossier-vitals">
                     <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.hp')}</span><span class="bio-vital-val gauge-ink ${band(hpPct)}">${actor.hp}/${actor.mhp}</span></div>
                     <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.mp')}</span><span class="bio-vital-val gauge-ink ${band(mpPct)}">${actor.mp}/${actor.mmp}</span></div>
-                    <div class="bio-vital"><span class="bio-vital-lbl">${T('MainMenu.vital.ap')}</span><span class="bio-vital-val gauge-ink ${band(tpPct)}">${Math.floor(actor.tp)}</span></div>
                 </div>`;
             // The six fighting attributes, in the game's own labels: the two
             // pools above already say what MHP and MMP are.
@@ -2361,6 +2530,23 @@
             ? `<p class="dyn-dossier-lore">${escapeHtml(preset.lore)}</p>`
             : '';
 
+        // Taking this person out of the game: the dossier as text, as a card
+        // with the dossier written inside the picture, and as a QR code. Only
+        // the desktop build has a folder to write into, so on anything else the
+        // three buttons are drawn dead rather than left out.
+        const canWrite = !!window.CharacterExport?.folder?.();
+        const exportBtn = (label, call) => (canWrite
+            ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.${call}">${label}</div>`
+            : `<div class="inspect-btn roster-btn inspect-btn--disabled">${label}</div>`);
+        const exportHTML = window.CharacterExport
+            ? `<h3 class="dyn-section-title">${T('MainMenu.dynamics.exportTitle')}</h3>
+                <div class="roster-actions dyn-dossier-export">
+                    ${exportBtn(T('MainMenu.dynamics.exportJson'), 'exportDynamicsCharacter?.(\'json\')')}
+                    ${exportBtn(T('MainMenu.dynamics.exportCard'), 'exportDynamicsCharacter?.(\'card\')')}
+                    ${exportBtn(T('MainMenu.dynamics.exportQr'), 'exportDynamicsCharacter?.(\'qr\')')}
+                </div>`
+            : '';
+
         return `
             <div class="dyn-dossier">
                 <div class="right-tools-title">${T('MainMenu.dynamics.dossierTitle')}</div>
@@ -2381,8 +2567,113 @@
                 </div>
                 ${loreHTML}
                 ${paramsHTML}
+                ${exportHTML}
             </div>`;
     };
+
+    // ---- Taking a character out, and bringing one in -----------------------
+    // Every route funnels into window.CharacterExport (CharacterCreationPresets.js),
+    // which owns the folder, the file formats and the QR encoder. This page only
+    // says who is being written out and what happened.
+    Scene_Menu.prototype.dynamicsExportPreset = function () {
+        const entry = this.dynamicsSelectedEntry();
+        if (!entry) return null;
+        if (entry.kind === 'bench') return entry.preset;
+        // A travelling member is described the same way a benched one is (the
+        // snapshotter the reserves are filled with), so the file holds the same
+        // dossier either way.
+        return window.CharacterExport?.payloadFromActor?.(entry.actor)?.character ?? null;
+    };
+
+    Scene_Menu.prototype.exportDynamicsCharacter = guardedBoardAction(function (kind) {
+        const preset = this.dynamicsExportPreset();
+        const api = window.CharacterExport;
+        if (!preset || !api) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        if (!api.folder()) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.exportNoFolder'),
+                { severity: 'warning', duration: 220 });
+            return;
+        }
+        const told = (file) => {
+            SoundManager.playSave();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.exportDone', {
+                name: preset.name, file: String(file).split(/[\\/]/).pop()
+            }), { duration: 220 });
+        };
+        if (kind === 'qr') {
+            this.showDynamicsQr(preset);
+            return;
+        }
+        if (kind === 'card') {
+            api.toCard(preset).then(told).catch((e) => {
+                console.error("[Dynamics] the card could not be written", e);
+                SoundManager.playBuzzer();
+                window.ParchmentToast?.show?.(T('MainMenu.dynamics.exportFailed', { name: preset.name }),
+                    { severity: 'warning', duration: 220 });
+            });
+            return;
+        }
+        told(api.toJson(preset));
+    });
+
+    // The code itself on the page, and the same code written into the folder,
+    // so it can be scanned off the screen or sent on as a file.
+    Scene_Menu.prototype.showDynamicsQr = guardedBoardAction(function (preset) {
+        const api = window.CharacterExport;
+        const code = api.qrCode(preset);
+        const file = api.toQr(preset);
+        const host = document.getElementById('ui-menu-container') || document.body;
+        this.closeDynamicsQr();
+        const wrap = document.createElement('div');
+        wrap.className = 'lodging-modal dyn-qr-modal';
+        wrap.id = 'dyn-qr-modal';
+        wrap.innerHTML = `
+            <div class="lodging-modal-sheet">
+                <h3 class="lodging-modal-title">${T('MainMenu.dynamics.qrTitle', { name: escapeHtml(preset.name) })}</h3>
+                <div class="dyn-qr-holder"></div>
+                <div class="roster-since">${T('MainMenu.dynamics.exportDone', {
+                    name: escapeHtml(preset.name), file: escapeHtml(String(file).split(/[\\/]/).pop())
+                })}</div>
+                <div class="command-item focusable lodging-modal-close" onclick="SceneManager._scene?.closeDynamicsQr?.()">${T('MainMenu.dynamics.qrClose')}</div>
+            </div>`;
+        host.appendChild(wrap);
+        // The canvas is built by the encoder, so the modal never redraws it.
+        wrap.querySelector('.dyn-qr-holder')?.appendChild(api.qr.canvas(code, 4));
+        SoundManager.playOk();
+    });
+
+    Scene_Menu.prototype.closeDynamicsQr = function () {
+        document.getElementById('dyn-qr-modal')?.remove();
+    };
+
+    // Everything sitting in the characters folder that this game has never
+    // seen, taken in as dossiers to play. Run from the board's header, beside
+    // the wiki.
+    Scene_Menu.prototype.importDynamicsCharacters = guardedBoardAction(function () {
+        const api = window.CharacterExport;
+        if (!api || !api.folder()) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.exportNoFolder'),
+                { severity: 'warning', duration: 220 });
+            return;
+        }
+        const result = api.importAll();
+        if (!result.imported) {
+            SoundManager.playBuzzer();
+            window.ParchmentToast?.show?.(T('MainMenu.dynamics.importedNone'),
+                { duration: 220 });
+            return;
+        }
+        SoundManager.playSave();
+        window.ParchmentToast?.show?.(T('MainMenu.dynamics.importedSome', {
+            count: result.imported, names: result.names.join(', ')
+        }), { duration: 260 });
+        this.refreshUIMenuDOM(false);
+    });
 
     // The World Map pocket has no page of its own: it opens the zoomable map
     // straight away. The rows that page used to carry live in the pockets (the

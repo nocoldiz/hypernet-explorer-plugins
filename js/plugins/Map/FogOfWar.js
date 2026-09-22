@@ -226,6 +226,12 @@
     const BLOCK_WALL = 1;
     const BLOCK_ROOF = 2;
     const BLOCK_ALWAYS = 3;
+    // The block type occupies the low two bits of a _terrainCache byte; the
+    // bits above it carry flags, so a fog query is one typed array read instead
+    // of a multi layer regionId() lookup.
+    const BLOCK_MASK = 3;
+    const FLAG_EXEMPT = 4;
+    const FLAG_DIVIDER = 8;
 
     // Buffers rebuilt from scratch by initializeFogOfWar on every Game_Map.setup
     // (which also runs on load). They are made non-enumerable so JsonEx leaves
@@ -233,11 +239,12 @@
     // live Game_Event references, which JsonEx would serialize as a second copy
     // of every event on the map.
     const TRANSIENT_MAP_FIELDS = [
-        '_fogOfWarData', '_fogTransitionTimers', '_dirtyChunks', '_dirtyChunkScratch',
+        '_fogOfWarData', '_fogTransitionTimers', '_dirtyChunks', '_dirtyChunkScratch', '_dirtyChunkCount',
         '_activeTransitions', '_transitionDoneScratch', '_terrainCache', '_eventMap', '_eventMapOccupied', '_eventMapSig',
-        '_visibleIndices', '_lastVisibleIndices', '_currentFrameVisible',
+        '_visibleIndices', '_lastVisibleIndices', '_visibleIndicesSpare', '_currentFrameVisible',
         '_fogExemptIndices', '_fogPeekDividerIndices', '_eventVisionConeTiles',
-        '_fogDiveWater', '_fogDiveKey', '_wallBfsQueue', '_wallBfsVisitedStamp', '_wallBfsStamp'
+        '_fogDiveWater', '_fogDiveKey', '_wallBfsQueue', '_wallBfsVisitedStamp', '_wallBfsStamp',
+        '_dividerScratchA', '_dividerScratchB', '_interiorScratch', '_interiorStack'
     ];
 
     //=============================================================================
@@ -367,8 +374,12 @@
         return 255;
     }
 
+    // Reused: every caller consumes the list synchronously inside one pass.
+    const visionSourceScratch = [];
+
     function visionSources() {
-        const list = [];
+        const list = visionSourceScratch;
+        list.length = 0;
         if ($gamePlayer) list.push($gamePlayer);
         const split = window.$gameSplitScreen;
         if (split && split.active && split.p2Event) list.push(split.p2Event);
@@ -512,6 +523,43 @@
         if ($gamePlayer) $gameMap.updateFogOfWar();
     };
 
+    // The sidecar file used to hold one JSON number per tile, so a single
+    // visited 200x200 map cost 40 000 array entries and about 80 KB of text,
+    // built through an Array.from boxing pass. Base64 of the raw bytes is the
+    // same information at roughly a fiftieth of the size and no boxing.
+    //
+    // Version 2 is a clean break: an older sidecar is discarded rather than
+    // read, and those maps simply fog over again.
+    const FOG_SAVE_VERSION = 2;
+
+    function encodeFogStates(states) {
+        const u8 = states instanceof Uint8Array ? states : new Uint8Array(states);
+        let binary = '';
+        // String.fromCharCode is applied in slices: one call with 40 000
+        // arguments blows the argument limit.
+        const CHUNK = 0x8000;
+        for (let i = 0; i < u8.length; i += CHUNK) {
+            binary += String.fromCharCode.apply(null, u8.subarray(i, i + CHUNK));
+        }
+        if (typeof btoa === 'function') return btoa(binary);
+        if (typeof Buffer !== 'undefined') return Buffer.from(binary, 'binary').toString('base64');
+        return null;
+    }
+
+    function decodeFogStates(encoded) {
+        if (typeof encoded !== 'string' || encoded.length === 0) return null;
+        let binary;
+        if (typeof atob === 'function') binary = atob(encoded);
+        else if (typeof Buffer !== 'undefined') binary = Buffer.from(encoded, 'base64').toString('binary');
+        else return null;
+        const out = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i) & 0xFF;
+        return out;
+    }
+
+    // Exposed for the node tests, which cannot run the plugin's IIFE scope.
+    window.FogOfWarCodec = { encode: encodeFogStates, decode: decodeFogStates, VERSION: FOG_SAVE_VERSION };
+
     const _DataManager_saveGame = DataManager.saveGame;
     DataManager.saveGame = function (savefileId) {
         // Fog data is not serialized during play, so sync the current map's fog
@@ -519,21 +567,20 @@
         if ($gameSystem) $gameSystem.saveCurrentFogData();
         return _DataManager_saveGame.call(this, savefileId).then(contents => {
             if (window.$fogOfWarData) {
-                // Prepare a clean JSON-serializable object without saving redundant transition timers
-                const serializable = {};
+                const maps = {};
                 for (const mapKey of Object.keys(window.$fogOfWarData)) {
                     const entry = window.$fogOfWarData[mapKey];
-                    if (entry instanceof Uint8Array) {
-                        serializable[mapKey] = Array.from(entry);
-                    } else if (entry && entry.states) {
-                        serializable[mapKey] = Array.from(entry.states);
-                    } else if (Array.isArray(entry)) {
-                        serializable[mapKey] = entry;
-                    }
+                    let states = null;
+                    if (entry instanceof Uint8Array) states = entry;
+                    else if (entry && entry.states) states = entry.states;
+                    else if (Array.isArray(entry)) states = entry;
+                    if (!states || !states.length) continue;
+                    const encoded = encodeFogStates(states);
+                    if (encoded) maps[mapKey] = { n: states.length, d: encoded };
                 }
                 // Chain the fog write into the returned promise so the main save
                 // does not resolve until fog persistence completes (or fails).
-                return StorageManager.saveObject(`fog_${savefileId}`, serializable)
+                return StorageManager.saveObject(`fog_${savefileId}`, { v: FOG_SAVE_VERSION, maps })
                     .catch(e => console.error("FogOfWar: Failed to save fog data", e))
                     .then(() => contents);
             }
@@ -541,12 +588,25 @@
         });
     };
 
+    function parseFogSidecar(fogData) {
+        const out = {};
+        if (!fogData || fogData.v !== FOG_SAVE_VERSION || !fogData.maps) return out;
+        for (const mapKey of Object.keys(fogData.maps)) {
+            const entry = fogData.maps[mapKey];
+            if (!entry) continue;
+            const states = decodeFogStates(entry.d);
+            // A truncated or corrupted entry is dropped, not half applied.
+            if (states && (!entry.n || states.length === entry.n)) out[mapKey] = states;
+        }
+        return out;
+    }
+
     const _DataManager_loadGame = DataManager.loadGame;
     DataManager.loadGame = function (savefileId) {
         return _DataManager_loadGame.call(this, savefileId).then(success => {
             if (!success) return success;
             return StorageManager.loadObject(`fog_${savefileId}`).then(fogData => {
-                window.$fogOfWarData = fogData || {};
+                window.$fogOfWarData = parseFogSidecar(fogData);
                 return true;
             }).catch(e => {
                 console.log("FogOfWar: No fog data found or error loading it", e);
@@ -567,6 +627,7 @@
         this._fogOfWarData = null;
         this._fogTransitionTimers = null;
         this._dirtyChunks = null;
+        this._dirtyChunkCount = 0;
         this._activeTransitions = new Set();
         this._transitionDoneScratch = [];
         this._terrainCache = null;
@@ -765,6 +826,7 @@
         const chunksX = Math.ceil(this.width() / CHUNK_SIZE);
         const chunksY = Math.ceil(this.height() / CHUNK_SIZE);
         this._dirtyChunks = new Uint8Array(chunksX * chunksY).fill(1);
+        this._dirtyChunkCount = chunksX * chunksY;
 
         this.refreshEventMap();
 
@@ -823,6 +885,7 @@
         const chunkCount = Math.ceil(this.width() / CHUNK_SIZE) * Math.ceil(this.height() / CHUNK_SIZE);
         if (!this._dirtyChunks || typeof this._dirtyChunks.fill !== 'function' || this._dirtyChunks.length !== chunkCount) {
             this._dirtyChunks = new Uint8Array(chunkCount).fill(1);
+            this._dirtyChunkCount = chunkCount;
         }
         if (!this._terrainCache || typeof this._terrainCache.fill !== 'function' || this._terrainCache.length !== size) {
             this._terrainCache = new Uint8Array(size);
@@ -835,6 +898,19 @@
         if (this.isLoopHorizontal()) x = (x + this.width()) % this.width();
         if (this.isLoopVertical()) y = (y + this.height()) % this.height();
         return { x, y, isValid: x >= 0 && y >= 0 && x < this.width() && y < this.height() };
+    };
+
+    // The same answer as normalizePos without the object: the flat fog buffer
+    // index for a tile, or -1 when it falls outside the map. Every fog query
+    // runs through here, including the per screen tile ones ASCIIMode and
+    // MousePan make, so it must not allocate.
+    Game_Map.prototype.fogTileIndex = function (x, y) {
+        const width = this.width();
+        const height = this.height();
+        if (this.isLoopHorizontal()) x = (x + width) % width;
+        if (this.isLoopVertical()) y = (y + height) % height;
+        if (x < 0 || y < 0 || x >= width || y >= height) return -1;
+        return y * width + x;
     };
 
     //=============================================================================
@@ -946,11 +1022,41 @@
         const dividers = [];
         let hasDividers = false;
 
+        // Read the tile layers straight out of $dataMap.data instead of going
+        // through terrainTag()/regionId() per tile. terrainTag calls
+        // layeredTiles, which builds a four element array for EVERY tile, so
+        // the old loop allocated one array per tile (40 000 on a 200x200 map)
+        // and re-fetched the tileset flags each time. This runs on every full
+        // refresh, and a full refresh happens on every Scene_Map creation,
+        // menu closes included, so the constant factor here is felt.
+        const data = $dataMap && $dataMap.data;
+        const dw = $dataMap ? $dataMap.width : 0;
+        const dh = $dataMap ? $dataMap.height : 0;
+        const flags = this.tilesetFlags();
+        // Fall back to the core accessors if the map data is not the shape we
+        // expect: correctness first, speed second.
+        const fastTiles = !!data && dw === width && dh === height &&
+            data.length >= 6 * width * height && !!flags;
+        const regionRowBase = 5 * height;
+
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 const index = y * width + x;
-                const tag = this.terrainTag(x, y);
-                const region = this.regionId(x, y);
+                let tag;
+                let region;
+                if (fastTiles) {
+                    region = data[(regionRowBase + y) * width + x] || 0;
+                    tag = 0;
+                    // layeredTiles order: the topmost layer wins.
+                    for (let z = 3; z >= 0; z--) {
+                        const tile = data[(z * height + y) * width + x] || 0;
+                        const t = flags[tile] >> 12;
+                        if (t > 0) { tag = t; break; }
+                    }
+                } else {
+                    tag = this.terrainTag(x, y);
+                    region = this.regionId(x, y);
+                }
 
                 let blockType = BLOCK_NONE;
                 if (region === REGION_BLOCK) blockType = BLOCK_ALWAYS;
@@ -959,7 +1065,10 @@
                 else if (tag === TERRAIN_WALL) blockType = BLOCK_WALL;
                 else if (tag === TERRAIN_ROOF) blockType = BLOCK_ROOF;
 
-                this._terrainCache[index] = blockType;
+                let cacheByte = blockType;
+                if (region === REGION_FOG_EXEMPT) cacheByte |= FLAG_EXEMPT;
+                else if (region === REGION_DIVIDER) cacheByte |= FLAG_DIVIDER;
+                this._terrainCache[index] = cacheByte;
 
                 if (region === REGION_FOG_EXEMPT) exempt.push(index);
                 else if (region === REGION_DIVIDER) {
@@ -980,10 +1089,20 @@
         if (!dividers.length) return [];
         const width = this.width();
         const height = this.height();
-        const isDivider = new Uint8Array(width * height);
+        const size = width * height;
+        // Two reused scratch buffers: this is called from every terrain cache
+        // rebuild, so it must not allocate two map sized arrays each time.
+        let isDivider = this._dividerScratchA;
+        let taken = this._dividerScratchB;
+        if (!isDivider || isDivider.length !== size) {
+            isDivider = this._dividerScratchA = new Uint8Array(size);
+            taken = this._dividerScratchB = new Uint8Array(size);
+        } else {
+            isDivider.fill(0);
+            taken.fill(0);
+        }
         for (let i = 0; i < dividers.length; i++) isDivider[dividers[i]] = 1;
 
-        const taken = new Uint8Array(width * height);
         const peek = [];
         for (let i = 0; i < exempt.length; i++) {
             const x = exempt[i] % width;
@@ -1014,7 +1133,7 @@
         if (x < 0 || y < 0 || x >= width || y >= this.height()) return true;
         if (this._terrainCacheDirty) this.refreshTerrainCache();
 
-        const staticBlocks = this._terrainCache[y * width + x];
+        const staticBlocks = this._terrainCache[y * width + x] & BLOCK_MASK;
         if (playerOnRoof ? (staticBlocks === BLOCK_ALWAYS) : (staticBlocks > BLOCK_NONE)) return true;
 
         const events = this._eventMap ? this._eventMap[y * width + x] : null;
@@ -1101,11 +1220,19 @@
         // On divider maps the real fog data still matters even when fog is
         // globally off / disabled for the map, so we don't short-circuit here.
         if ((this._fogOfWarDisabled || !fogEnabled()) && (!this._hasVisionDividers || this._fogOfWarErrorFallback)) return STATE_VISIBLE;
-        const pos = this.normalizePos(x, y);
-        if (!pos.isValid) return STATE_UNSEEN;
-        if (this.regionId(pos.x, pos.y) === REGION_FOG_EXEMPT) return STATE_VISIBLE;
+        const index = this.fogTileIndex(x, y);
+        if (index < 0) return STATE_UNSEEN;
+        // The exempt answer lives in the terrain cache when it is built; only a
+        // stale cache pays for a regionId lookup, and a query never triggers a
+        // full map rebuild on its own.
+        const cache = this._terrainCache;
+        if (cache && !this._terrainCacheDirty && cache.length === this.width() * this.height()) {
+            if (cache[index] & FLAG_EXEMPT) return STATE_VISIBLE;
+        } else if (this.regionId(index % this.width(), (index / this.width()) | 0) === REGION_FOG_EXEMPT) {
+            return STATE_VISIBLE;
+        }
         if (!this._fogOfWarData) return STATE_VISIBLE;
-        return this._fogOfWarData[pos.y * this.width() + pos.x] || STATE_UNSEEN;
+        return this._fogOfWarData[index] || STATE_UNSEEN;
     };
 
     Game_Map.prototype.isPositionVisible = function (x, y) {
@@ -1113,15 +1240,15 @@
     };
 
     Game_Map.prototype.fogTransitionTimer = function (x, y) {
-        const pos = this.normalizePos(x, y);
-        if (!pos.isValid || !this._fogTransitionTimers) return 0;
-        return this._fogTransitionTimers[pos.y * this.width() + pos.x] || 0;
+        const index = this.fogTileIndex(x, y);
+        if (index < 0 || !this._fogTransitionTimers) return 0;
+        return this._fogTransitionTimers[index] || 0;
     };
 
     Game_Map.prototype.setFogOfWarState = function (x, y, state, force = false) {
-        const pos = this.normalizePos(x, y);
-        if (pos.isValid) {
-            this.setFogOfWarStateByIndex(pos.y * this.width() + pos.x, state, force);
+        const index = this.fogTileIndex(x, y);
+        if (index >= 0) {
+            this.setFogOfWarStateByIndex(index, state, force);
         }
     };
 
@@ -1150,6 +1277,8 @@
         }
     };
 
+    // _dirtyChunkCount tracks how many flags are set so the common
+    // "nothing changed this frame" case never scans the chunk grid at all.
     Game_Map.prototype.markChunkDirty = function (x, y) {
         if (!this._dirtyChunks) return;
         const chunkX = (x / CHUNK_SIZE) | 0;
@@ -1157,23 +1286,39 @@
         const chunksX = Math.ceil(this.width() / CHUNK_SIZE);
         const chunksY = Math.ceil(this.height() / CHUNK_SIZE);
         if (chunkX >= 0 && chunkY >= 0 && chunkX < chunksX && chunkY < chunksY) {
-            this._dirtyChunks[chunkY * chunksX + chunkX] = 1;
+            const i = chunkY * chunksX + chunkX;
+            if (!this._dirtyChunks[i]) {
+                this._dirtyChunks[i] = 1;
+                this._dirtyChunkCount = (this._dirtyChunkCount || 0) + 1;
+            }
         }
     };
 
     Game_Map.prototype.markAllChunksDirty = function () {
         const chunksX = Math.ceil(this.width() / CHUNK_SIZE);
         const chunksY = Math.ceil(this.height() / CHUNK_SIZE);
-        this._dirtyChunks = new Uint8Array(chunksX * chunksY).fill(1);
+        const total = chunksX * chunksY;
+        // Reuse the buffer: a full refresh runs on every Scene_Map creation,
+        // menu closes included, so this must not allocate.
+        if (!this._dirtyChunks || this._dirtyChunks.length !== total) {
+            this._dirtyChunks = new Uint8Array(total);
+        }
+        this._dirtyChunks.fill(1);
+        this._dirtyChunkCount = total;
     };
 
     Game_Map.prototype.getDirtyChunks = function () {
         // Reuse a scratch array; callers consume the result synchronously.
         const result = Array.isArray(this._dirtyChunkScratch) ? this._dirtyChunkScratch : (this._dirtyChunkScratch = []);
         result.length = 0;
-        if (!this._dirtyChunks) return result;
+        if (!this._dirtyChunks || !this._dirtyChunkCount) return result;
+        const wanted = this._dirtyChunkCount;
         for (let i = 0; i < this._dirtyChunks.length; i++) {
-            if (this._dirtyChunks[i]) result.push(i);
+            if (this._dirtyChunks[i]) {
+                result.push(i);
+                // Every set flag is accounted for; stop early.
+                if (result.length >= wanted) break;
+            }
         }
         return result;
     };
@@ -1182,6 +1327,7 @@
         if (this._dirtyChunks && typeof this._dirtyChunks.fill === 'function') {
             this._dirtyChunks.fill(0);
         }
+        this._dirtyChunkCount = 0;
     };
 
     Game_Map.prototype.updateTransitionTimers = function () {
@@ -1296,20 +1442,45 @@
     // Returns a Uint8Array mask (1 = visible), or null for "no enclosure" -
     // the player is standing on a divider or the area isn't walled off, in
     // which case the caller reveals everything (mirrors MousePan's semantics).
-    Game_Map.prototype.computeInteriorTiles = function (px, py) {
+    // slot picks which reusable mask buffer to fill: a split screen pass needs
+    // two interiors alive at once to union them, nothing needs three.
+    Game_Map.prototype.computeInteriorTiles = function (px, py, slot = 0) {
         const w = this.width();
         const h = this.height();
+        const size = w * h;
         if (px < 0 || py < 0 || px >= w || py >= h) return null;
-        if (this.regionId(px, py) === REGION_DIVIDER) return null;
 
-        const visited = new Uint8Array(w * h);
+        // The divider answer is cached in the terrain byte, so the fill below
+        // never calls regionId. It used to, four times per tile visited, and
+        // regionId is isValid() plus tileId() plus the layer arithmetic.
+        const cache = this._terrainCache;
+        const fastRegions = !!cache && !this._terrainCacheDirty && cache.length === size;
+        const isDividerAt = fastRegions
+            ? (idx) => (cache[idx] & FLAG_DIVIDER) !== 0
+            : (idx) => this.regionId(idx % w, (idx / w) | 0) === REGION_DIVIDER;
+
         const start = py * w + px;
-        const stack = [start];
+        if (isDividerAt(start)) return null;
+
+        if (!Array.isArray(this._interiorScratch)) this._interiorScratch = [];
+        let visited = this._interiorScratch[slot];
+        if (!visited || visited.length !== size) {
+            visited = this._interiorScratch[slot] = new Uint8Array(size);
+        } else {
+            visited.fill(0);
+        }
+        if (!this._interiorStack || this._interiorStack.length !== size) {
+            this._interiorStack = new Int32Array(size);
+        }
+        const stack = this._interiorStack;
+        let top = 0;
+
+        stack[top++] = start;
         visited[start] = 1;
         let hitDivider = false;
 
-        while (stack.length) {
-            const idx = stack.pop();
+        while (top > 0) {
+            const idx = stack[--top];
             const x = idx % w;
             const y = (idx / w) | 0;
             for (let n = 0; n < 4; n++) {
@@ -1319,12 +1490,12 @@
                 const nidx = ny * w + nx;
                 if (visited[nidx]) continue;
                 visited[nidx] = 1;
-                if (this.regionId(nx, ny) === REGION_DIVIDER) {
+                if (isDividerAt(nidx)) {
                     // Divider wall stays visible but vision does not cross it.
                     hitDivider = true;
                     continue;
                 }
-                stack.push(nidx);
+                stack[top++] = nidx;
             }
         }
 
@@ -1360,7 +1531,7 @@
         let revealAll = false;
         let mask = null;
         for (let i = 0; i < sources.length; i++) {
-            const tiles = this.computeInteriorTiles(Math.round(sources[i].x), Math.round(sources[i].y));
+            const tiles = this.computeInteriorTiles(Math.round(sources[i].x), Math.round(sources[i].y), i);
             if (!tiles) { revealAll = true; break; }
             if (!mask) {
                 mask = tiles;
@@ -1472,7 +1643,13 @@
             this._forceVisionUpdate = false;
             this.refreshDiveRestriction();
             this._currentFrameVisible.fill(0);
-            this._visibleIndices = [];
+            // Recycle the buffer retired two passes ago instead of allocating a
+            // fresh one here. _lastVisibleIndices is left alone: the demotion
+            // loop below still needs the previous pass, which after
+            // initializeFogOfWar is the set it seeded.
+            const reuse = Array.isArray(this._visibleIndicesSpare) ? this._visibleIndicesSpare : [];
+            reuse.length = 0;
+            this._visibleIndices = reuse;
             this.refreshEventMapIfNeeded();
 
             for (let i = 0; i < sources.length; i++) {
@@ -1514,6 +1691,8 @@
                     }
                 }
             }
+            // The set being retired becomes the spare the next pass writes into.
+            this._visibleIndicesSpare = this._lastVisibleIndices;
             this._lastVisibleIndices = this._visibleIndices;
         }
 
@@ -1525,8 +1704,10 @@
     // and castRay skip terrain when blind, leaving only the immediate 3x3
     // tile and whatever events fall inside the traced cone), which read
     // exactly like a stuck-black-screen bug. Always answer sighted.
+    const SIGHTED_EYES = Object.freeze({ left: true, right: true, blind: false });
+
     Game_Map.prototype.visionEyesFor = function (char) {
-        return { left: true, right: true, blind: false };
+        return SIGHTED_EYES;
     };
 
     Game_Map.prototype.calculateVision = function (centerX, centerY, direction, character) {
@@ -2016,6 +2197,7 @@
 
         this._fogPixels = null;
         this._fogImageData = null;
+        this._fogWrapSprites = [];
         this._wasFogOfWarActive = false;
         this.refreshFogOfWar(true);
     };
@@ -2023,6 +2205,54 @@
     // True when the fog layer should be drawn at all on this map.
     Spriteset_Map.prototype.isFogOfWarActive = function () {
         return fogActive();
+    };
+
+    // A looping map draws the tilemap wrapped around its seam, but the fog was
+    // a single map sized quad pinned at -displayX. Once the camera passed the
+    // seam that quad slid off screen and the wrapped columns rendered with no
+    // fog over them at all. Mirror the quad one map width and/or height along
+    // so the seam is covered. The copies share the one texture, so they cost
+    // no extra pixel work and no extra upload.
+    const fogWrapOffsetScratch = [];
+
+    Spriteset_Map.prototype.updateFogWrapSprites = function () {
+        if (!this._fogContainer || !this._fogSprite || !$gameMap) return;
+        if (!Array.isArray(this._fogWrapSprites)) this._fogWrapSprites = [];
+
+        const loopH = $gameMap.isLoopHorizontal();
+        const loopV = $gameMap.isLoopVertical();
+        const spanX = $gameMap.width() * $gameMap.tileWidth();
+        const spanY = $gameMap.height() * $gameMap.tileHeight();
+
+        // displayX/displayY stay inside the map on a looping map, so the copy
+        // is always needed one span forward, never backward.
+        const offsets = fogWrapOffsetScratch;
+        offsets.length = 0;
+        if (loopH) offsets.push(spanX, 0);
+        if (loopV) offsets.push(0, spanY);
+        if (loopH && loopV) offsets.push(spanX, spanY);
+
+        const wanted = offsets.length / 2;
+        const sprites = this._fogWrapSprites;
+        while (sprites.length < wanted) {
+            const extra = new PIXI.Sprite(this._fogSprite.texture);
+            this._fogContainer.addChild(extra);
+            sprites.push(extra);
+        }
+
+        for (let i = 0; i < sprites.length; i++) {
+            const s = sprites[i];
+            if (i >= wanted) {
+                s.visible = false;
+                continue;
+            }
+            s.visible = true;
+            // The texture is replaced whenever the canvas is resized.
+            if (s.texture !== this._fogSprite.texture) s.texture = this._fogSprite.texture;
+            s.scale.set(this._fogSprite.scale.x, this._fogSprite.scale.y);
+            s.x = offsets[i * 2];
+            s.y = offsets[i * 2 + 1];
+        }
     };
 
     const _Spriteset_Map_update = Spriteset_Map.prototype.update;
@@ -2052,6 +2282,7 @@
 
         this._fogContainer.x = -Math.round($gameMap.displayX() * $gameMap.tileWidth());
         this._fogContainer.y = -Math.round($gameMap.displayY() * $gameMap.tileHeight());
+        this.updateFogWrapSprites();
 
         try {
             if (pendingRefreshFrames > 0 && --pendingRefreshFrames === 0) {
@@ -2060,7 +2291,7 @@
                 if (reload && $gameSystem) $gameSystem.reloadFogOfWarLighting();
                 $gameMap._forceVisionUpdate = true;
                 this.refreshFogOfWar(true);
-                this.updateEventVisibility();
+                this.updateEventVisibility(true);
                 return;
             }
 
@@ -2149,6 +2380,7 @@
         this._fogTexture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
         this._fogSprite.texture = this._fogTexture;
         this._fogSprite.scale.set($gameMap.tileWidth(), $gameMap.tileHeight());
+        this.updateFogWrapSprites();
         if (previous && previous !== this._fogTexture) {
             try {
                 previous.destroy(true);
@@ -2265,6 +2497,156 @@
         }
     };
 
+    // Coalesce the dirty chunk list into a handful of tile space rectangles.
+    // A single bounding box degenerates to the whole map as soon as two distant
+    // corners are dirty, which is the common case while walking: the vision cone
+    // moves at one end of the map while transitions fade at the other. Runs are
+    // merged along a chunk row first, then identical run patterns are merged down
+    // adjacent rows into a band. Returns a flat [x, y, w, h, ...] scratch array.
+    const MAX_FOG_UPLOAD_RECTS = 8;
+    const fogRectScratch = [];
+    const fogRowRuns = [];
+    const fogBandRuns = [];
+
+    function fogRunsEqual(a, b) {
+        if (a.length !== b.length) return false;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+
+    function fogEmitBand(out, runs, y0, y1, mapWidth, mapHeight) {
+        const top = y0 * CHUNK_SIZE;
+        const bottom = Math.min((y1 + 1) * CHUNK_SIZE, mapHeight);
+        if (bottom <= top) return;
+        for (let i = 0; i < runs.length; i += 2) {
+            const left = runs[i] * CHUNK_SIZE;
+            const right = Math.min((runs[i + 1] + 1) * CHUNK_SIZE, mapWidth);
+            if (right <= left) continue;
+            out.push(left, top, right - left, bottom - top);
+        }
+    }
+
+    function coalesceDirtyRects(dirtyChunks, chunksX, chunksY, mapWidth, mapHeight) {
+        const out = fogRectScratch;
+        out.length = 0;
+        if (!dirtyChunks || dirtyChunks.length === 0 || chunksX <= 0) return out;
+
+        const rowRuns = fogRowRuns;
+        const bandRuns = fogBandRuns;
+        bandRuns.length = 0;
+        let bandY0 = -1;
+        let bandY1 = -1;
+
+        // getDirtyChunks walks the grid in order, so indices arrive ascending
+        // and every chunk of one row is contiguous in the list.
+        let i = 0;
+        while (i < dirtyChunks.length) {
+            const rowY = (dirtyChunks[i] / chunksX) | 0;
+            rowRuns.length = 0;
+            while (i < dirtyChunks.length && ((dirtyChunks[i] / chunksX) | 0) === rowY) {
+                const cx = dirtyChunks[i] % chunksX;
+                const n = rowRuns.length;
+                if (n > 0 && rowRuns[n - 1] === cx - 1) rowRuns[n - 1] = cx;
+                else rowRuns.push(cx, cx);
+                i++;
+            }
+            if (rowY >= chunksY || rowRuns.length === 0) continue;
+
+            if (bandY0 >= 0 && rowY === bandY1 + 1 && fogRunsEqual(rowRuns, bandRuns)) {
+                bandY1 = rowY;
+                continue;
+            }
+            if (bandY0 >= 0) fogEmitBand(out, bandRuns, bandY0, bandY1, mapWidth, mapHeight);
+            bandRuns.length = 0;
+            for (let k = 0; k < rowRuns.length; k++) bandRuns.push(rowRuns[k]);
+            bandY0 = rowY;
+            bandY1 = rowY;
+        }
+        if (bandY0 >= 0) fogEmitBand(out, bandRuns, bandY0, bandY1, mapWidth, mapHeight);
+
+        // Genuinely scattered dirt: one bounding box beats many small uploads.
+        if (out.length > MAX_FOG_UPLOAD_RECTS * 4) {
+            let minX = mapWidth;
+            let minY = mapHeight;
+            let maxX = 0;
+            let maxY = 0;
+            for (let r = 0; r < out.length; r += 4) {
+                if (out[r] < minX) minX = out[r];
+                if (out[r + 1] < minY) minY = out[r + 1];
+                if (out[r] + out[r + 2] > maxX) maxX = out[r] + out[r + 2];
+                if (out[r + 1] + out[r + 3] > maxY) maxY = out[r + 1] + out[r + 3];
+            }
+            out.length = 0;
+            if (maxX > minX && maxY > minY) out.push(minX, minY, maxX - minX, maxY - minY);
+        }
+        return out;
+    }
+
+    // Upload one tile space rectangle of the fog canvas to the GPU.
+    //
+    // PIXI's Texture.update() marks the whole base texture dirty, so the entire
+    // canvas is re-uploaded with texImage2D even when a single tile changed. On a
+    // 200x200 map that is 160 KB per frame for as long as the player keeps
+    // walking. WebGL2 can upload just the rectangle straight out of the pixel
+    // buffer instead, which is what the fast path below does. Anything that is
+    // not a live WebGL2 texture falls back to the original whole canvas update.
+    Spriteset_Map.prototype.uploadFogRegion = function (x, y, w, h) {
+        if (w <= 0 || h <= 0) return;
+        // Keep the canvas itself current either way: PIXI re-uploads it from
+        // scratch after a context loss or a texture rebind.
+        this._fogCtx.putImageData(this._fogImageData, 0, 0, x, y, w, h);
+
+        const texture = this._fogTexture;
+        if (!texture || !texture.baseTexture || !texture.baseTexture.resource) return;
+
+        if (this._fogUploadUnsupported) {
+            texture.update();
+            return;
+        }
+
+        try {
+            const app = Graphics.app || Graphics._app;
+            const renderer = app && app.renderer;
+            const gl = renderer && renderer.gl;
+            const base = texture.baseTexture;
+            const glTex = gl && base._glTextures && base._glTextures[renderer.CONTEXT_UID];
+            const isWebGL2 = !!gl && typeof WebGL2RenderingContext !== 'undefined' &&
+                gl instanceof WebGL2RenderingContext;
+
+            if (!glTex || !isWebGL2 || !renderer.texture) {
+                // Either no uploaded texture yet (the first frame after a resize)
+                // or a renderer that cannot do this. Let PIXI handle the frame.
+                texture.update();
+                if (gl && !isWebGL2) this._fogUploadUnsupported = true;
+                return;
+            }
+
+            renderer.texture.bind(base, 0);
+            const premultiply = base.alphaMode === PIXI.ALPHA_MODES.UNPACK;
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiply);
+            gl.pixelStorei(gl.UNPACK_ROW_LENGTH, this._fogCanvas.width);
+            gl.pixelStorei(gl.UNPACK_SKIP_PIXELS, x);
+            gl.pixelStorei(gl.UNPACK_SKIP_ROWS, y);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, this._fogPixels);
+            gl.pixelStorei(gl.UNPACK_ROW_LENGTH, 0);
+            gl.pixelStorei(gl.UNPACK_SKIP_PIXELS, 0);
+            gl.pixelStorei(gl.UNPACK_SKIP_ROWS, 0);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        } catch (e) {
+            // Never retry a path that threw: one warning, then the original
+            // whole canvas update for the rest of the session.
+            this._fogUploadUnsupported = true;
+            console.warn('FogOfWar: partial texture upload unavailable, using full updates', e);
+            try {
+                texture.update();
+            } catch (e2) {
+                fogError(e2);
+            }
+        }
+    };
+
     Spriteset_Map.prototype.updateDirtyChunks = function (dirtyChunks) {
         if (!dirtyChunks || dirtyChunks.length === 0 || !$gameMap) return;
         if (!this._fogPixels && !this.resizeFogCanvas()) return;
@@ -2286,11 +2668,6 @@
         const pixels32 = this._fogPixels32;
         const lut32 = this._colorLut32;
 
-        let minDirtyX = mapWidth;
-        let minDirtyY = mapHeight;
-        let maxDirtyX = 0;
-        let maxDirtyY = 0;
-
         for (let i = 0; i < dirtyChunks.length; i++) {
             const chunkIndex = dirtyChunks[i];
             const chunkX = chunkIndex % chunksX;
@@ -2302,11 +2679,6 @@
             const endX = Math.min(startX + CHUNK_SIZE, mapWidth);
             const endY = Math.min(startY + CHUNK_SIZE, mapHeight);
 
-            if (startX < minDirtyX) minDirtyX = startX;
-            if (startY < minDirtyY) minDirtyY = startY;
-            if (endX > maxDirtyX) maxDirtyX = endX;
-            if (endY > maxDirtyY) maxDirtyY = endY;
-
             for (let y = startY; y < endY; y++) {
                 const rowOffset = y * mapWidth;
                 for (let x = startX; x < endX; x++) {
@@ -2316,24 +2688,29 @@
             }
         }
 
-        if (maxDirtyX > minDirtyX && maxDirtyY > minDirtyY) {
-            const dirtyW = maxDirtyX - minDirtyX;
-            const dirtyH = maxDirtyY - minDirtyY;
-            this._fogCtx.putImageData(this._fogImageData, 0, 0, minDirtyX, minDirtyY, dirtyW, dirtyH);
-            if (this._fogTexture && this._fogTexture.baseTexture && this._fogTexture.baseTexture.resource) {
-                this._fogTexture.update();
-            }
+        const rects = coalesceDirtyRects(dirtyChunks, chunksX, chunksY, mapWidth, mapHeight);
+        for (let r = 0; r < rects.length; r += 4) {
+            this.uploadFogRegion(rects[r], rects[r + 1], rects[r + 2], rects[r + 3]);
         }
     };
 
-    Spriteset_Map.prototype.updateEventVisibility = function () {
+    Spriteset_Map.prototype.updateEventVisibility = function (force = false) {
         const sprites = this._characterSprites;
         if (!sprites) return;
+        // The grayscale answer can only change when Game_Map's own visibility
+        // pass runs, and that one is already throttled to every third call, so
+        // asking every sprite every frame was pure waste. Opacity stays per
+        // frame because it is a plain property read.
+        this._fogVisCounter = (this._fogVisCounter || 0) + 1;
+        const checkTone = force || this._fogVisCounter >= 3;
+        if (checkTone) this._fogVisCounter = 0;
+
         for (let i = 0; i < sprites.length; i++) {
             const sprite = sprites[i];
             if (!(sprite._character instanceof Game_Event)) continue;
             const event = sprite._character;
             sprite.opacity = event.opacity();
+            if (!checkTone) continue;
 
             const isGrayscale = event.isFogOfWarGrayscale() ||
                 (event.isFogOfWarTransitioning && event.isFogOfWarTransitioning());

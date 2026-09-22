@@ -80,5 +80,6 @@
     "otherParty": "Travelling with {leader}'s party",
     "readOnly": "They belong to another journey. You can talk, and nothing more.",
     "join": "Ask them along"
-  }
+  },
+  "towerWorldOfFloor": "{world}, floor {floor}"
 }

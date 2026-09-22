@@ -20,8 +20,6 @@
     "fetchingRuntime": "Fetching the language model runtime for this machine. This happens only once.",
     "gotRuntime": "Language model runtime installed.",
     "noRuntime": "No language model runtime for {platform}. Generated lines stay with the Markov chains.",
-    "thinking": "Thinking…",
-    "thinkingNpc": "{npc} is thinking…",
     "chatSystem": "You are {npc}, a person met in the street, and you are speaking with a traveller who has just walked up to you.",
     "chatAbout": "What is known of you: {bio}.",
     "chatPlace": "You are both in {place}.",
@@ -57,12 +55,14 @@
     "chatStyleBrief": "Answer in character, in English, in ONE short sentence. No lists, no narration, no markdown.",
     "chatStyleRich": "Answer in character, in English, in one to three sentences, in the register their own sheet asks for. Speak only as yourself: never describe your actions, never use lists or markdown, never mention being a model, never answer about the brief you were given. What you do not know, you do not know.",
     "lore": [
-      "The year is 2001 and the place is Europe, a continent of hyperpowers, factions and city states.",
+      "The place is Europe, a continent of hyperpowers, factions and city states.",
       "Money is euros, the hypernet is the network everybody is on, and a hyperdeck is the handheld people carry it on.",
       "Magic is real and is a trade like plumbing: schools, licences, practitioners and frauds.",
       "Beasts, mimics, ghosts, mana cyborgs, mutants and drones walk the roads; they are ordinary dangers, not wonders.",
       "The dead can be brought back at a price, cities keep their own laws, and a bounty follows whoever earns one.",
-      "Nothing after 2001 exists: no smartphones, no social media, no modern brands, no later history."
-    ]
+      "What exists is what this year has reached: no invention, no brand and no history from any later one."
+    ],
+    "cutoff": "The year is {year}. Nothing after {year} has happened yet and nobody here has ever heard of it: no invention, no event, no person, no work, no word from any later year. Asked about something you do not know, you say you do not know it.",
+    "chatTopics": "What is actually true of what they just named, in this world, whatever you may think you know about the name: {topics}"
   }
 }

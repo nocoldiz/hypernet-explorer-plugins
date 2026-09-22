@@ -2128,8 +2128,8 @@
             this.x = (this._placedData.x - $gameMap.displayX()) * tileWidth;
             this.y = (this._placedData.y + this._furnitureData.height - $gameMap.displayY()) * tileHeight;
 
-            // Apply vertical flip if rotatable and flipped
-            if (this._furnitureData.rotatable && this._flipped) {
+            // Apply the left-to-right mirror when this piece may be flipped
+            if (this._flipped && canFlipPlaceable(this._furnitureData)) {
                 this.scale.x = -1;
                 // Adjust x position to account for flip
                 this.x += this._furnitureData.width * tileWidth;
@@ -3178,6 +3178,25 @@
         return entries;
     }
 
+    // ── Mirroring ───────────────────────────────────────────────────────────
+    // A placed piece can be mirrored left-to-right so the same art can face
+    // either way. Only plain image sprites qualify: doors, walls, roofs and
+    // terrain features are tile/structure pieces whose art has a fixed side
+    // (a hinge, a seam with its neighbour, a slope) and would read wrong
+    // mirrored, so they are refused here rather than at each call site.
+    const NON_FLIPPABLE_CATEGORIES = ['Doors', 'Roofs', 'Terrain', 'Pavement'];   // i18n-ignore: category ids
+    const NON_FLIPPABLE_PLACE_KINDS = ['wall', 'terrain', 'feature', 'door', 'prefab', 'animal'];
+    function canFlipPlaceable(data) {
+        if (!data) return false;
+        if (data.rotatable) return true;
+        if (data.__placeKind && NON_FLIPPABLE_PLACE_KINDS.includes(data.__placeKind)) return false;
+        if (data.wall) return false;
+        if (NON_FLIPPABLE_CATEGORIES.includes(data.category)) return false;
+        return true;
+    }
+    window.FurnitureSystem = window.FurnitureSystem || {};
+    window.FurnitureSystem.canFlipPlaceable = canFlipPlaceable;
+
     // ── Unified placeable resolver ───────────────────────────────────────────
     // Everywhere the build UI/placement code used to read `Furniture[id]`
     // directly now goes through this instead, so furniture pieces AND the new
@@ -3591,7 +3610,8 @@
         demolish: 218, // Bomb         - clear everything built on this map
         warn: 281,     // "!" sign     - clear-all confirmation
         blocked: 282,  // No Entry     - piece the player cannot afford
-        missing: 196   // Puzzle       - placeholder when a piece has no image
+        missing: 196,  // Puzzle       - placeholder when a piece has no image
+        mirror: 222    // Mirror       - flip the piece in hand left-to-right
     };
 
     // Inline IconSet sprite. Icons are 32x32 in a 16-wide sheet, so scaling the
@@ -3774,10 +3794,20 @@
             return this._flipped;
         }
 
+        canFlip() {
+            return canFlipPlaceable(this._furnitureData);
+        }
+
         flip() {
-            if (this._furnitureData.rotatable) {
-                this._flipped = !this._flipped;
-            }
+            if (!this.canFlip()) return false;
+            this._flipped = !this._flipped;
+            this.updateScreen();
+            return true;
+        }
+
+        setFlipped(flipped) {
+            this._flipped = this.canFlip() ? !!flipped : false;
+            this.updateScreen();
         }
 
         updateScreen() {
@@ -3785,7 +3815,7 @@
             const th = $gameMap.tileHeight();
             this.x = (this._tileX - $gameMap.displayX()) * tw;
             this.y = (this._tileY + this._furnitureData.height - $gameMap.displayY()) * th;
-            if (this._furnitureData.rotatable && this._flipped) {
+            if (this._flipped && canFlipPlaceable(this._furnitureData)) {
                 this.scale.x = -1;
                 this.x += this._furnitureData.width * tw;
             } else {
@@ -4215,6 +4245,11 @@
                             </div>
                         </div>
                     </div>
+                    ${canFlipPlaceable(armed) ? `
+                    <button class="fbuild-armed-flip${this.scene._fbFlip ? ' active' : ''}" type="button"
+                        title="${T('Furniture.tip.mirror')}">
+                        ${iconHTML(UI_ICONS.mirror, 16)} ${T('Furniture.mirror')}
+                    </button>` : ''}
                 </div>`;
             } else {
                 asideHTML = `<div class="fbuild-armed-empty">${T('Furniture.status.idle')}</div>`;
@@ -4328,6 +4363,13 @@
                             this.render();
                         }, 4000);
                     }
+                });
+            }
+            const flipBtn = this.container.querySelector('.fbuild-armed-flip');
+            if (flipBtn) {
+                flipBtn.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    this.scene.toggleArmedFurnitureFlip();
                 });
             }
             // Construct / Purchase mode switch.
@@ -4661,11 +4703,24 @@
                             </div>
                         </div>
                     </div>
+                    ${canFlipPlaceable(armed) ? `
+                    <button class="fbuild-armed-flip${this.scene._fbFlip ? ' active' : ''}" type="button"
+                        title="${T('Furniture.tip.mirror')}">
+                        ${iconHTML(UI_ICONS.mirror, 16)} ${T('Furniture.mirror')}
+                    </button>` : ''}
                 </div>`;
             } else {
                 wrap.innerHTML = `<div class="fbuild-armed-empty">${T('Furniture.status.idle')}</div>`;
             }
-            old.replaceWith(wrap.firstElementChild);
+            const rebuilt = wrap.firstElementChild;
+            old.replaceWith(rebuilt);
+            const flipBtn = rebuilt.querySelector('.fbuild-armed-flip');
+            if (flipBtn) {
+                flipBtn.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    this.scene.toggleArmedFurnitureFlip();
+                });
+            }
         }
 
         setArmed() {
@@ -4792,6 +4847,10 @@
         this._fbArmedId = id;
         this._fbArmedKind = info.__placeKind || 'furniture';
         this._fbPreview = new Sprite_FurniturePlacement(id);
+        // The mirror is a standing choice, not a per-piece one: keep it on
+        // while the player swaps pieces (it falls away on anything unflippable).
+        this._fbPreview.setFlipped(this._fbFlip);
+        this._fbFlip = this._fbPreview.getFlipped();
         if (this._spriteset && this._spriteset._tilemap) {
             this._spriteset._tilemap.addChild(this._fbPreview);
         }
@@ -4805,6 +4864,21 @@
             this.scrollToFurnitureCursor();
         }
         if (this._fbUI) this._fbUI.setArmed();
+    };
+
+    // Mirrors the piece in hand left-to-right. Refused (with a buzzer) on
+    // doors, walls, roofs and terrain features: see canFlipPlaceable.
+    Scene_Map.prototype.toggleArmedFurnitureFlip = function () {
+        if (!this._fbPreview) return false;
+        if (!this._fbPreview.flip()) {
+            SoundManager.playBuzzer();
+            return false;
+        }
+        this._fbFlip = this._fbPreview.getFlipped();
+        this._fbPlaceCacheKey = null;
+        SoundManager.playCursor();
+        if (this._fbUI) this._fbUI.render();
+        return true;
     };
 
     Scene_Map.prototype.disarmFurniture = function () {
@@ -5508,7 +5582,7 @@
                 else if (wy > 0) this.cycleArmedFurniture(1);
             }
 
-            if (Input.isTriggered('shift')) this._fbPreview.flip();
+            if (Input.isTriggered('shift')) this.toggleArmedFurnitureFlip();
 
             let x, y;
             if (usePad && this._fbFocus === 'map') {

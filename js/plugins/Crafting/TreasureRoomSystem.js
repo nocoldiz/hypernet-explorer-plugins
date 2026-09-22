@@ -385,6 +385,10 @@
   const _DataManager_extractSaveContents = DataManager.extractSaveContents;
   DataManager.extractSaveContents = function (contents) {
     _DataManager_extractSaveContents.call(this, contents);
+    // Which rooms have been looted belongs to the savegame being loaded, not to
+    // the one loaded before it.
+    for (const k of Object.keys(visitedTreasureRooms)) delete visitedTreasureRooms[k];
+    treasureRoomReturnStack.length = 0;
     if (contents.treasureRoomSystem) {
         const system = contents.treasureRoomSystem;
         Object.assign(visitedTreasureRooms, system.visitedTreasureRooms || {});

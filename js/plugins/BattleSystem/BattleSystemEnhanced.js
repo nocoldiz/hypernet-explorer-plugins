@@ -2477,7 +2477,11 @@
     const _DataManager_extractSaveContents = DataManager.extractSaveContents;
     DataManager.extractSaveContents = function(contents) {
         _DataManager_extractSaveContents.call(this, contents);
+        // Which enemies are dead, and how hurt the rest are, is per savegame:
+        // merging left bosses killed in one playthrough dead in the next.
         const pData = BSE.State.persistentEnemyData;
+        for (const k of Object.keys(pData)) delete pData[k];
+        for (const k of Object.keys(BSE.Data._enemyCharSprites)) delete BSE.Data._enemyCharSprites[k];
         if (contents.persistentEnemyData) {
             Object.assign(pData, contents.persistentEnemyData);
         }

@@ -17,14 +17,15 @@
     "note": "Your note",
     "built": "Built on",
     "builtWhat": "{count}: {what}",
-    "builtCount": "{count} pieces"
+    "builtCount": "{count} pieces",
+    "power": "Held by"
   },
   "country": {
     "title": "Highlight a country",
     "none": "No country"
   },
   "hint": {
-    "sheet": "Click a place to set off for it. Right-click a square to mark it.",
+    "sheet": "Click a square to pick it. Right-click to put the chart away.",
     "travel": "Click to set off for {place}.",
     "needVehicle": "You need to be aboard a vehicle to set off from the chart."
   },
@@ -33,7 +34,8 @@
     "placeholder": "Write something about this square",
     "save": "Keep",
     "delete": "Rub out",
-    "cancel": "Back"
+    "cancel": "Back",
+    "write": "Write a note"
   },
   "preview": {
     "showMap": "Show map",

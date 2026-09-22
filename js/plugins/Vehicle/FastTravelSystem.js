@@ -4392,6 +4392,17 @@ Scene_Map.prototype.printTravelCoordinates = function () {
     window.FastTravelSystem.refreshDestinations = refreshDestinationCache;
 
     /**
+     * Every place on the network, as the overlay itself lists them. Published
+     * so anything that plans a journey without opening the page can read the
+     * same list the page is built from: the auto explorer
+     * (Core/AutoIdleExplorer.js) picks the stop it has not been carried to
+     * lately off this.
+     */
+    window.FastTravelSystem.destinations = function () {
+        try { return getTeleportDestinations() || []; } catch (e) { return []; }
+    };
+
+    /**
      * Write a square down on the party's behalf, for a place they were GIVEN
      * rather than one they drove past: the patron vault origin hands over the
      * hatch square the scenario began on, so the party can always go back to

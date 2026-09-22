@@ -4,7 +4,7 @@
   "cacheCleared": "Cache delle connessioni svuotata!",
   "mostConnected": "Più connessa: mappa {map} ({links} collegamenti)",
   "mode": "Modalità: analisi {mode}",
-  "modeHardcoded": "predefinita",
+  "modeHardcoded": "tabella inclusa",
   "modeRuntime": "a runtime",
   "noMapLoaded": "Impossibile mostrare la mappa. Nessuna mappa caricata.",
   "controls": "Mouse: trascina | Rotella: zoom | Clic: seleziona/deseleziona | Esc: esci",

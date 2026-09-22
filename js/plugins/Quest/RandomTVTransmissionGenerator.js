@@ -936,7 +936,7 @@
     //    above 80. Above 80 km/h death is permanent; the liminal engine is the
     //    only thing that lets a vehicle ignore all of it.
     //  - The Y2K Event killed two billion people on 31 Dec 1999 and opened the
-    //    Tower. The Solomon Ritual of 31 Dec 2001 killed the Father aspect of
+    //    Tower. The Solomon Ritual of 1 Jan 2001 killed the Father aspect of
     //    YHWH using 92% of Em's memories forged into the Memory Lance.
     const LORE = () => tvBank('TvLore');
 
@@ -2252,7 +2252,11 @@
             }
         },
         // Cancel/back during a broadcast: stop the transmission where it is.
-        abort() { tvAbortBroadcast(); }
+        abort() { tvAbortBroadcast(); },
+        // Every channel this world broadcasts, wrestling included, and the one
+        // answer anything outside this file (the TV Guide) should ask: a world
+        // with no league left on its feet loses both wrestling channels here too.
+        channels() { return tvActiveChannels(); }
     };
 
     // Cut a running broadcast short (player pressed cancel/back). Drops the

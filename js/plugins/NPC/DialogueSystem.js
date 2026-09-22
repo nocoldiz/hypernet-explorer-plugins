@@ -632,6 +632,28 @@ Imported.DialogueSystem = true;
         // same one the story cast stands on, whatever the box below is doing.
         getBustY() { return bustFloor(); }
 
+        // Where the name tag hangs: under the portrait of whoever is speaking,
+        // centred on it, so a face and its name read as one thing instead of
+        // the name sitting on the far end of the box. Game coordinates, or
+        // null when nobody is on stage and the tag falls back to an end of the
+        // message box.
+        nameAnchorX() {
+            if (this.storyMode) {
+                const slots = this.storySlots || [];
+                if (!slots.length) return null;
+                const layout = this.storyLayout();
+                const side   = (this.nameWindow && this.nameWindow._side === 'right') ? 'right' : 'left';
+                let idx = slots.findIndex(s => s.storySide === side);
+                if (idx < 0) idx = side === 'right' ? 1 : 0;
+                const end = idx === 0 ? 0 : 1;
+                return layout.x(end) + layout.width / 2;
+            }
+            if (!this.bustIsVisible || !this.characterBust) return null;
+            const target = typeof this.characterBust._targetX === 'number'
+                ? this.characterBust._targetX : this.characterBust.x;
+            return target + getBustWidth() / 2;
+        }
+
         setupBustPosition(sprite) { sprite.y = this.getBustY(); }
 
         // The portrait is measured against the screen alone, so the fit is redone
@@ -1748,19 +1770,22 @@ Imported.DialogueSystem = true;
         const baseFontSize = (typeof this.standardFontSize === 'function') ? this.standardFontSize() : 29;
         const centeredLeft = sc.ox + (sc.sx * gw / 2) - (this.width * sc.sx) / 2;
 
-        // Which end of the box the name tag hangs from: the end opposite the
-        // portrait, so the speaker's face and their name are never stacked on
-        // top of each other.
-        const nameAdapter = SceneManager._scene && SceneManager._scene._bustManager
-                          ? SceneManager._scene._bustManager.nameWindow : null;
+        // The name tag hangs under the portrait of whoever is speaking, centred
+        // on it. With nobody on stage there is nothing to hang it under, and it
+        // falls back to the end of the box opposite where a portrait would be.
+        const bustMgr     = SceneManager._scene ? SceneManager._scene._bustManager : null;
+        const nameAdapter = bustMgr ? bustMgr.nameWindow : null;
         const nameSide    = (nameAdapter && nameAdapter._side === 'right') ? 'right' : 'left';
+        const nameAnchorX = (bustMgr && typeof bustMgr.nameAnchorX === 'function')
+                          ? bustMgr.nameAnchorX() : null;
 
         // All the box/name geometry depends only on the scale + this.y/width/
         // height/padding/fontSize + the name side; skip the ~12 style writes
         // when none changed.
         const geomSig = sc.sx + ',' + sc.sy + ',' + sc.ox + ',' + sc.oy + ',' +
                         this.width + ',' + this.height + ',' + this.y + ',' + pad + ',' +
-                        baseFontSize + ',' + nameSide + ',' + winW;
+                        baseFontSize + ',' + nameSide + ',' + winW + ',' + nameAnchorX + ',' +
+                        (this._htmlMsgName ? this._htmlMsgName.textContent : '');
         if (geomSig !== this._htmlMsgGeomSig) {
             this._htmlMsgGeomSig = geomSig;
             const s       = this._htmlMsgRoot.style;
@@ -1782,12 +1807,30 @@ Imported.DialogueSystem = true;
             const nameH   = Math.round(28 * sc.sy);
             const nameIns = Math.round(16 * sc.sx);
             this._htmlMsgName.style.top = (sc.oy + this.y * sc.sy - nameH - Math.round(6 * sc.sy)) + 'px';
-            if (nameSide === 'right') {
-                this._htmlMsgName.style.left  = 'auto';
-                this._htmlMsgName.style.right = (winW - (centeredLeft + scaledW - nameIns)) + 'px';
+            if (nameAnchorX !== null && nameAnchorX !== undefined) {
+                // Under the portrait: the tag is centred on the middle of the
+                // bust, then pulled back so the whole of it still sits over the
+                // message box. A portrait standing at the edge of the screen
+                // would otherwise hang its name out in empty space or across
+                // its own face.
+                const edgeL = centeredLeft + nameIns;
+                const edgeR = centeredLeft + scaledW - nameIns;
+                const half  = (this._htmlMsgName.offsetWidth || 0) / 2;
+                let cx      = sc.ox + nameAnchorX * sc.sx;
+                cx = (edgeR - edgeL <= half * 2)
+                   ? (edgeL + edgeR) / 2
+                   : Math.max(edgeL + half, Math.min(edgeR - half, cx));
+                this._htmlMsgName.style.right     = 'auto';
+                this._htmlMsgName.style.left      = Math.round(cx) + 'px';
+                this._htmlMsgName.style.transform = 'translateX(-50%)';
+            } else if (nameSide === 'right') {
+                this._htmlMsgName.style.left      = 'auto';
+                this._htmlMsgName.style.right     = (winW - (centeredLeft + scaledW - nameIns)) + 'px';
+                this._htmlMsgName.style.transform = 'none';
             } else {
-                this._htmlMsgName.style.right = 'auto';
-                this._htmlMsgName.style.left  = (centeredLeft + nameIns) + 'px';
+                this._htmlMsgName.style.right     = 'auto';
+                this._htmlMsgName.style.left      = (centeredLeft + nameIns) + 'px';
+                this._htmlMsgName.style.transform = 'none';
             }
         }
 
@@ -2599,6 +2642,40 @@ Imported.DialogueSystem = true;
                 .split(NAME_CLOSE).join('</span>');
         },
         displayName: topicDisplayName,
+        // Teaching a topic without a line being spoken. Reading is not being
+        // told: an encyclopedia article in the browser teaches its subject the
+        // same way an NPC naming it does, and anything else that puts a written
+        // page in front of the party can do the same. Hands back true when the
+        // topic was new, and announces it the way a spoken line would.
+        learn(keyword) {
+            const word = String(keyword == null ? '' : keyword).trim();
+            if (!word) return false;
+            const isNew = teachKeyword(word);
+            if (isNew) announceKeywords([word]);
+            return isNew;
+        },
+        // The other half: a subject nobody has written a codex page for is
+        // filed on the Rumors shelf instead, so what was read is still on a
+        // shelf somewhere. Unlike a name overheard in the street this one is
+        // taken as given rather than checked against the world roster, because
+        // the caller has an actual document in hand.
+        remember(name) {
+            const word = String(name == null ? '' : name).trim();
+            if (!word || typeof $gameSystem === 'undefined' || !$gameSystem) return false;
+            if (!$gameSystem._helpRumors) $gameSystem._helpRumors = {};
+            if ($gameSystem._helpRumors[word]) return false;
+            $gameSystem._helpRumors[word] = true;
+            return true;
+        },
+        // Which codex page, if any, a written name belongs to: the same alias
+        // index a spoken line is read through, so a synonym answers for its
+        // page here too.
+        resolve(name) {
+            const word = String(name == null ? '' : name).trim().toLowerCase();
+            if (!word) return null;
+            topicIndex();
+            return (_topicAliases && _topicAliases.get(word)) || null;
+        },
         // What this party has heard named but has no page for.
         rumors() {
             try { return Object.keys($gameSystem._helpRumors || {}); } catch (e) { return []; }

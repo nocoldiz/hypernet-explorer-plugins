@@ -152,7 +152,11 @@
                 const rawKey = raw.ideology || raw.personality || '';
                 let ideology;
                 if (rawKey.startsWith('ideology.')) {
-                    ideology = ideologyI18n[rawKey] || rawKey.replace('ideology.', '').replace(/_/g, ' ');
+                    // The bank is keyed by bare id (the file itself IS the
+                    // "ideology" namespace), so the prefix is dropped first.
+                    ideology = ideologyI18n[rawKey.slice('ideology.'.length)] ||
+                               ideologyI18n[rawKey] ||
+                               rawKey.replace('ideology.', '').replace(/_/g, ' ');
                 } else if (rawKey.startsWith('personalities.')) {
                     const pKey = rawKey.split('.')[1];
                     ideology = (personalI18n.personality && personalI18n.personality[pKey] && personalI18n.personality[pKey].name) || rawKey.replace('personalities.', '').replace(/_/g, ' ');
@@ -2289,7 +2293,7 @@
                         for (let f in mgr._currentFactions) mgr._currentFactions[f].information *= 0.7;
                     }
                 },
-                '2001-12': {
+                '2001-01': {
                     type: 'occult',
                     callback: (mgr) => {
                         const hve = mgr._currentHyperpowers['Holy Vatican Empire'];

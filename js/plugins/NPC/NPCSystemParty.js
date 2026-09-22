@@ -370,7 +370,11 @@
         else past.push(snapshot);
         delete joinMinutes()[actorId];
         // And into the world, where every other savegame of it can meet them.
-        rememberInWorld(snapshot);
+        // Except somebody sent home ("returned"): they are not a companion the
+        // world is keeping for anybody, they are a citizen standing back where
+        // they were found, so no departure snapshot is filed and they never
+        // turn up in the halls (window.PartyReturn, below).
+        if (reason !== "returned") rememberInWorld(snapshot);
         // Somebody taken off the board does not blink out of existence: they
         // are left standing where the party left them, and walk out of the
         // world the moment it walks off the map. Only a benching, never a
@@ -395,13 +399,16 @@
         // handlePartyMemberDeath) removes a member who is dead on the way out,
         // while CharacterPresets.retirePartyMember flags the benching itself.
         const retiring = $gameTemp && $gameTemp._partyRetiringActorId === actorId;
+        // ...and window.PartyReturn flags a member sent back to the world.
+        const returning = $gameTemp && $gameTemp._partyReturningActorId === actorId;
         const died = !!(actor && actor.isDead());
         // Somebody away on a work shift (Work/WorkSystem.js) has not left the
         // party, they are out for the afternoon: no departure is written.
         const working = $gameTemp && $gameTemp._workShiftActorId === actorId;
         _Game_Party_removeActor.call(this, actorId);
         if (!wasInParty || actorId === 1 || isSummonProxy(actorId) || working) return;
-        recordDeparture(actor, retiring ? "retired" : (died ? "died" : "left"));
+        recordDeparture(actor, returning ? "returned"
+            : retiring ? "retired" : (died ? "died" : "left"));
     };
 
     // ========================================================================
@@ -520,6 +527,143 @@
         },
 
         dateOf: rosterDateOf,
+    };
+
+    // ========================================================================
+    // SENDING SOMEBODY BACK (window.PartyReturn)
+    // ========================================================================
+    // A recruit is taken off the world by flipping their event's self switch A
+    // and writing the loss down: an authored citizen into the world folder's
+    // gone register (NPCGone, NPCSystem.js), a procedural one into the recruit
+    // cache keyed by world tile. Dismissing them from the Dynamics board undoes
+    // exactly those two things, so the person stands where they were found
+    // again and every savegame of the world sees them there.
+    //
+    // The party actor slot remembers nothing about where its occupant came
+    // from, so the origin is looked up by NAME in the two registers, which is
+    // also what makes this work for anybody recruited before it existed.
+    //
+    // What they brought is not unwound: the money, the goods and the deeds they
+    // came with stay with the party.
+
+    // Their society profile is what the world reads them by. A procedural
+    // recruit had theirs snapshotted into the cache, so it goes back on if the
+    // registry has since forgotten them; an authored citizen never lost theirs.
+    function restoreSocietyProfile(name, snapshot) {
+        if (!name || !snapshot || !$gameSystem) return false;
+        if (!$gameSystem._npcSociety) $gameSystem._npcSociety = {};
+        if ($gameSystem._npcSociety[name]) return false;
+        try {
+            $gameSystem._npcSociety[name] = JsonEx.makeDeepCopy(snapshot);
+            return true;
+        } catch (e) { return false; }
+    }
+
+    window.PartyReturn = {
+        // Where this person was recruited, or null for somebody the world has
+        // no record of taking off it (a made character, a story companion, a
+        // recruit whose record has already been struck).
+        originOf(name) {
+            if (!name) return null;
+            const proc = window.NPCSystem?.findProceduralRecruit?.(name);
+            if (proc && proc.key) {
+                return {
+                    kind: "procedural",      // i18n-ignore: origin kind
+                    key: proc.key,
+                    eventId: proc.eventId,
+                    worldX: proc.worldX,
+                    worldY: proc.worldY,
+                    profile: proc.profile || null,
+                };
+            }
+            const gone = window.NPCGone?.findByName?.(name);
+            if (gone && gone.mapId && gone.eventId && gone.reason !== "killed") {
+                return {
+                    kind: "map",             // i18n-ignore: origin kind
+                    mapId: gone.mapId,
+                    eventId: gone.eventId,
+                    profile: null,
+                };
+            }
+            return null;
+        },
+
+        canReturn(name) {
+            return !!this.originOf(name);
+        },
+
+        // Put them back where they were found. Answers { ok, reason?, origin? }.
+        returnToWorld(name) {
+            const origin = this.originOf(name);
+            if (!origin) return { ok: false, reason: "noOrigin" };
+            restoreSocietyProfile(name, origin.profile);
+            if (origin.kind === "procedural") {
+                // The tile is generated afresh on every visit, so forgetting the
+                // recruit is the whole of putting them back: the next generation
+                // of that square places them exactly where it always did.
+                window.NPCSystem?.forgetProceduralRecruit?.(origin.key);
+            } else {
+                $gameSelfSwitches?.setValue?.([origin.mapId, origin.eventId, "A"], false);
+                window.NPCGone?.forget?.(origin.mapId, origin.eventId);
+                // Standing on that very map: the event is hidden behind its
+                // blank page this instant, so it is refreshed rather than left
+                // invisible until the next transfer.
+                if (typeof $gameMap !== "undefined" && $gameMap && $gameMap.mapId() === origin.mapId) {
+                    const ev = $gameMap.event(origin.eventId);
+                    if (ev) {
+                        ev._erased = false;
+                        ev.refresh();
+                    }
+                }
+            }
+            // They live in the world now, not in the reserves: no lodging, no
+            // departure snapshot, nothing for the halls to draw.
+            try { window.PartyLodging?.assign?.(name, LODGING_DEFAULT); } catch (e) { /* no world open */ }
+            forgetInWorld(name);
+            return { ok: true, origin };
+        },
+
+        // Dismiss a travelling member. The leader stays (hand the party over
+        // first), the party is never emptied, and the story pair never leaves:
+        // the same three rules benching plays by.
+        dismiss(actorId) {
+            if (!$gameParty || !$gameActors) return { ok: false, reason: "noParty" };
+            const actor = $gameParty.members().find(mem => mem.actorId() === actorId);
+            if (!actor) return { ok: false, reason: "notInParty" };
+            if ($gameParty.members().length <= 1) return { ok: false, reason: "lastMember" };
+            if ($gameParty.members()[0].actorId() === actorId) return { ok: false, reason: "isLeader" };
+            if (window.PartyRoster?.isStoryLocked?.(actorId)) return { ok: false, reason: "storyLocked" };
+            const name = actor.name();
+            if (!this.canReturn(name)) return { ok: false, reason: "noOrigin" };
+
+            if ($gameTemp) $gameTemp._partyReturningActorId = actorId;
+            $gameParty.removeActor(actorId);
+            if ($gameTemp) $gameTemp._partyReturningActorId = null;
+            if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
+
+            const back = this.returnToWorld(name);
+            if (!back.ok) return back;
+            return { ok: true, name, origin: back.origin };
+        },
+
+        // The same for somebody sitting in the reserves: their dossier is spent
+        // rather than left on the bench, so no savegame of this world can call
+        // them back, and then they go home like anybody else.
+        dismissReserve(presetId) {
+            const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
+            const preset = bench.find(entry => entry && entry.id === presetId);
+            if (!preset) return { ok: false, reason: "notRetired" };
+            if (window.PartyLodging?.isStoryFollower?.(preset.name)) {
+                return { ok: false, reason: "storyLocked" };
+            }
+            if (!this.canReturn(preset.name)) return { ok: false, reason: "noOrigin" };
+            if (!window.CharacterPresets?.discardRetiredPreset?.(presetId)) {
+                return { ok: false, reason: "notRetired" };
+            }
+            const back = this.returnToWorld(preset.name);
+            if (!back.ok) return back;
+            return { ok: true, name: preset.name, origin: back.origin };
+        },
     };
 
     // ========================================================================
@@ -1192,22 +1336,36 @@
         // Recruits fill the first free companion slot: Actor 2, then Actor 3.
         // Multiplayer (Switch 67) reserves Actor 3 for the remote guest, so a
         // recruit there always takes the Actor 3 slot (if still free).
+        //
+        // The ceiling is counted in PEOPLE, not in free slot ids. A party that
+        // already travels three strong takes nobody else, whichever actor ids
+        // those three happen to sit on: a recalled reserve, or a companion taken
+        // on down some other road, can leave Actor 2 or Actor 3 unoccupied, and
+        // handing a recruit that empty slot used to put a fourth person on the
+        // road who trailed the party while appearing on no roster, in no HUD and
+        // in no reserve list. Over the ceiling they sign on inactive instead,
+        // which is what benchRecruit below is for.
+        const maxActive  = window.PartyLodging?.MAX_ACTIVE ?? 3;
+        const travelling = ($gameParty._actors || []).filter(id => !isSummonProxy(id));
+        const slotFree   = id => !$gameParty._actors.includes(id);
         let actorId = 0;
-        if ($gameSwitches.value(67)) {
-            actorId = $gameParty._actors.includes(3) ? 0 : 3;
-        } else if (!$gameParty._actors.includes(2)) {
-            actorId = 2;
-        } else if (!$gameParty._actors.includes(3)) {
-            actorId = 3;
-        } else {
-            // Every companion slot is taken, but somebody who fell and was never
-            // brought back is not travelling any more. Their body is left where
-            // it is (the removal hook files them as a death in the roster
-            // history) and the recruit takes the slot, so a party that lost a
-            // member in a run without permadeath can still take someone on.
-            const fallen = [2, 3]
-                .map(id => $gameActors.actor(id))
-                .find(a => a && $gameParty._actors.includes(a.actorId()) && a.isDead());
+        if (travelling.length < maxActive) {
+            if ($gameSwitches.value(67)) {
+                actorId = slotFree(3) ? 3 : 0;
+            } else if (slotFree(2)) {
+                actorId = 2;
+            } else if (slotFree(3)) {
+                actorId = 3;
+            }
+        }
+        if (!actorId) {
+            // Every place is taken, but somebody who fell and was never brought
+            // back is not travelling any more. Their body is left where it is
+            // (the removal hook files them as a death in the roster history) and
+            // the recruit takes their place, so a party that lost a member in a
+            // run without permadeath can still take someone on.
+            const fallen = $gameParty.members().find(a =>
+                a && a.actorId() !== 1 && !isSummonProxy(a.actorId()) && a.isDead());
             if (fallen) {
                 $gameTemp._npcJoinDisplacedName = fallen.name();
                 actorId = fallen.actorId();

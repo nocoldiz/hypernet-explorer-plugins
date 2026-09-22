@@ -3,5 +3,9 @@
   "appName": "",
   "linkLost": "",
   "linkStable": "",
-  "secureSsl": ""
+  "secureSsl": "",
+  "hexapedia": {
+    "appName": "Hexapedia",
+    "tooltip": ""
+  }
 }

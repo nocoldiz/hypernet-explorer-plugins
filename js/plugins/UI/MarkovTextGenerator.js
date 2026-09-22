@@ -398,15 +398,15 @@
  * used as it stands and is left running, and an own build can be named with
  * the llama.cpp Server Path parameter or the HYPERNET_LLAMA_SERVER variable.
  *
- * Events wait for the model, and so does the free chat of the Empathize panel,
- * where the player writes the line themselves: that one waits out a cold start
- * too, so a picked model is who answers from the very first line rather than
- * from the second. Code that cannot wait (generateMarkovString) is served lines
- * the model wrote ahead of time for that database, and hears the chain until
- * the first one lands; generateMarkovStringAsync() is there for callers that
- * can wait, and window.MarkovLLM exposes the backend itself, including
- * isReady() and warmUp() for callers that want the chain rather than a cold
- * start, isChatModel(), and reply() for a typed line.
+ * A model answers where the player typed the line and is waiting in front of
+ * the answer: the free chat of the Empathize panel, and the messenger window
+ * on the hypernet desktop. Both wait out a cold start, so a picked model is
+ * who answers from the very first line rather than from the second. Nothing
+ * else in the game is written by one: generateMarkovString() and every message
+ * box are the Markov chains', as they were before a model was an option.
+ * window.MarkovLLM exposes the backend itself, including isReady() and
+ * warmUp() for a caller that would rather warm the weights than wait on them,
+ * isChatModel(), and reply() for a typed line.
  *
  * A completion model writes English. An instruction tuned one is asked to
  * answer in the language the game is running in.
@@ -849,10 +849,6 @@
     // speaker and a handful of sentences of the game's own text, short enough
     // that a 1024 token context still has room to answer in.
     const LLM_SCENARIO_CHARS = 900;
-    // Ready lines kept per database for the synchronous callers, and how many
-    // databases keep a queue at all.
-    const LLM_CACHE_LINES = 2;
-    const LLM_CACHE_KEYS = 24;
 
     const llmServerPath = String(parameters.llamaServerPath || '');
     const llmPort = Number(parameters.llamaPort || 8127);
@@ -1063,10 +1059,8 @@
         const current = Math.max(0, values.indexOf(ConfigManager[LLM_SYMBOL] || ''));
         const next = (current + step + values.length) % values.length;
         ConfigManager[LLM_SYMBOL] = values[next];
-        // A different model means the running server holds the wrong weights,
-        // and the lines already queued were written by the old voice.
+        // A different model means the running server holds the wrong weights.
         LlamaServer.stop();
-        llmLineCache.clear();
         ConfigManager.save();
     }
 
@@ -1748,10 +1742,37 @@
     // the context: a small model handed the whole brief answers with the brief.
     const LLM_LORE_LINES = { story: 3, tiny: 2, standard: 4, small: 4, large: 99 };
 
+    // The one line of the brief that is not optional and is not written down:
+    // the year. A model trained on our own world answers out of the year it
+    // was trained in, which is how somebody in a 2001 street ends up talking
+    // about a telephone that takes photographs. The date on the game's own
+    // clock is the last year anybody here has lived through, so it is stated,
+    // and stated as a limit: nothing after it has happened and nobody here has
+    // heard of it. Read off TimeDateSystem every time, because the calendar
+    // moves under the game (the cryo year alone carries the party from 2001
+    // into 2013) and a year baked into a prompt would be wrong the moment it
+    // did. A save with no clock in it simply gets the rest of the brief.
+    function llmWorldYear() {
+        try {
+            const now = window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj
+                ? window.TimeDateSystem.getCurrentDateObj() : null;
+            const year = now ? now.getFullYear() : 0;
+            return year > 1000 ? year : 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
     function llmWorldLore(profile) {
         const lines = T.list ? (T.list('Markov.llm.lore') || []) : [];
-        if (!lines.length) return '';
-        return lines.slice(0, LLM_LORE_LINES[profile.tier] || 4).join(' ');
+        const year = llmWorldYear();
+        // The cutoff comes first and is never one of the lines a small model
+        // has its brief cut down to: a line spoken in the wrong century is
+        // wrong however little room there was for the one that would have
+        // stopped it.
+        const cutoff = year ? T('Markov.llm.cutoff', { year: year }) : '';
+        const brief = lines.slice(0, LLM_LORE_LINES[profile.tier] || 4);
+        return [cutoff].concat(brief).filter(Boolean).join(' ');
     }
 
     // One fact, cut to the room this model has for it. Cutting is done on a
@@ -1787,6 +1808,12 @@
                 : '',
             spec.relation ? T('Markov.llm.chatRelation', { relation: llmTrim(spec.relation, profile.sheet) }) : '',
             spec.situation ? T('Markov.llm.chatSituation', { situation: llmTrim(spec.situation, profile.sheet) }) : '',
+            // What the line being answered actually named: a power, one of its
+            // leaders, a faction, as THIS world has them. It sits this high in
+            // the list because it is the correction that matters most: asked
+            // about somebody our own history also knows, a model with nothing
+            // in front of it answers about our one.
+            spec.topics ? T('Markov.llm.chatTopics', { topics: llmTrim(spec.topics, profile.sheet) }) : '',
             // Where they are answering FROM. Usually here, in which case there
             // is nothing to say; the messenger window is the case where there
             // is, because the person on the other end of it is somewhere else
@@ -2023,144 +2050,44 @@
     }
 
     //-------------------------------------------------------------------------
-    // Serving the synchronous callers
+    // Who a model is allowed to answer for
     //-------------------------------------------------------------------------
-    // generateMarkovString() has to answer on the spot, and a model does not.
-    // So every call takes a line written ahead of time for that database and
-    // orders the next one; until the first one lands the chain answers, which
-    // is also what happens whenever the model is too slow to keep the queue
-    // filled. A seeded call is not served this way: a reply that echoes the
-    // player's own words cannot be written before they type them.
-    const llmLineCache = new Map();
-    const llmInFlight = new Set();
-
-    function llmPrefetch(key, spec) {
-        if (!llmEnabled() || llmInFlight.has(key)) return;
-        llmInFlight.add(key);
-        llmAnswer(spec).then(text => {
-            if (!text) return;
-            const queue = llmLineCache.get(key) || [];
-            queue.push(text);
-            while (queue.length > LLM_CACHE_LINES) queue.shift();
-            llmLineCache.delete(key);
-            llmLineCache.set(key, queue);
-            while (llmLineCache.size > LLM_CACHE_KEYS) {
-                llmLineCache.delete(llmLineCache.keys().next().value);
-            }
-        }).catch(() => { /* the chain answers instead */ })
-          .then(() => { llmInFlight.delete(key); });
-    }
-
-    function llmTakeLine(key, spec) {
-        if (!llmEnabled()) return '';
-        const queue = llmLineCache.get(key);
-        const line = queue && queue.length ? queue.shift() : '';
-        llmPrefetch(key, spec);
-        return line;
-    }
+    // Two callers, and they have one thing in common: the player typed a line
+    // and is sitting in front of the answer. The Empathize panel's free chat
+    // is one, the messenger window on the hypernet desktop is the other, and
+    // both come through llmReply() below.
+    //
+    // Nothing else does. generateMarkovString() used to be served a sentence
+    // the model had written earlier for that database, which put generated
+    // prose into ambient chatter, signs, books and message boxes alike, none
+    // of which anybody asked a question of. Every one of those is the chain's
+    // again, which is what it was written to be.
 
     //-------------------------------------------------------------------------
     // Serving the message box
     //-------------------------------------------------------------------------
-    // An event can wait, so it does: the interpreter holds on a wait mode of
-    // its own until the model answers or the timeout runs out, and only then
-    // is the line put in the message box.
-    // The standing "thinking" notice, up only while a line is being written.
-    const LLM_THINKING_KEY = 'markov-llm-thinking';  // i18n-ignore  toast key
-    const LLM_THINKING_DELAY_MS = 500;
-
-    function llmSticky(npcName) {
-        const toast = window.ParchmentToast;
-        if (!toast || !toast.sticky) return;
-        toast.sticky(npcName ? T('Markov.llm.thinkingNpc', { npc: npcName }) : T('Markov.llm.thinking'),
-            { key: LLM_THINKING_KEY });
-    }
-
-    function llmStickyDown() {
-        const toast = window.ParchmentToast;
-        if (toast && toast.dismiss) toast.dismiss(LLM_THINKING_KEY);
-    }
-
     function addGeneratedMessage(text, refine) {
-        llmStickyDown();
         const line = (typeof refine === 'function' ? (refine(text) || text) : text);
         window.skipLocalization = true;
         $gameMessage.add(line);
         window.skipLocalization = false;
     }
 
-    // Who is talking to whom, filled in from the NPC suite before the request
-    // goes out. A line spoken in the message box is spoken BY somebody TO
-    // somebody, and the model writes a far better one when it has been told
-    // which two: the sheets are the same ones the Empathize panel hands it
-    // (window.NPCEmpathize.conversationContext), so a person answers the same
-    // way in the box as they do in the panel. Nothing is filled in for a
-    // non-sentient NPC, which is never handed to a model at all, and nothing
-    // the caller supplied itself is overwritten.
-    function llmFillContext(spec, interpreter) {
-        const opts = Object.assign({}, spec);
-        const EM = window.NPCEmpathize;
-        if (!EM || typeof EM.conversationContext !== 'function') return opts;
-        const target = opts.npcName || (interpreter && interpreter._eventId) || null;
-        if (!target) return opts;
-        let ctx = null;
-        try { ctx = EM.conversationContext(target); } catch (e) { ctx = null; }
-        if (!ctx) return opts;
-        if (!opts.npcName) opts.npcName = ctx.npcName;
-        if (!opts.npcSheet) opts.npcSheet = ctx.npcSheet;
-        if (!opts.speakerName) opts.speakerName = ctx.speakerName;
-        if (!opts.speakerSheet) opts.speakerSheet = ctx.speakerSheet;
-        if (!opts.relation) opts.relation = ctx.relation;
-        return opts;
-    }
-
+    // A model writes exactly two things in this game, and a message box is
+    // neither of them: the answer to a line the player typed in the Empathize
+    // panel, and the answer to one typed in the messenger window on the
+    // hypernet desktop. Both are conversations the player is sitting in front
+    // of and waiting on. An event's message box is not: it is spoken in the
+    // middle of a scene, on the chain's own timing, and holding the
+    // interpreter for seconds while a server reads weights off a disk turned
+    // every generated line in the game into a pause. So the box speaks the
+    // chain's line, as it did before a model was ever an option.
     function speakGenerated(interpreter, rawSpec, fallbackText, background, position) {
-        const spec = llmFillContext(rawSpec, interpreter);
         $gameMessage.setBackground(background);
         $gameMessage.setPositionType(position);
-        if (!llmEnabled()) {
-            addGeneratedMessage(fallbackText, spec.refine);
-            interpreter.setWaitMode('message');
-            return;
-        }
-        // Nobody waits on a model that is still reading itself off the disk:
-        // the first lines of a session are the chain's while the server warms
-        // up behind them, and the model takes over once it can answer.
-        if (!LlamaServer.isReadyFor(selectedGgufModel())) {
-            LlamaServer.ensure(selectedGgufModel());
-            addGeneratedMessage(fallbackText, spec.refine);
-            interpreter.setWaitMode('message');
-            return;
-        }
-        const state = { done: false, text: '' };
-        llmAnswer(spec)
-            .then(text => { state.text = text; })
-            .catch(() => { /* the chain answers instead */ })
-            .then(() => { state.done = true; });
-        // An event is never held past the request's own timeout.
-        setTimeout(() => { state.done = true; }, llmTimeoutMs);
-        // A line takes the model seconds, not frames, and a silent pause before
-        // a message box reads as a hang. Anything under half a second passes
-        // unremarked; past that the game says who is thinking.
-        setTimeout(() => {
-            if (!state.done) llmSticky(spec.npcName);
-        }, LLM_THINKING_DELAY_MS);
-        interpreter._markovLlmWait = { state: state, fallback: fallbackText, refine: spec.refine };
-        interpreter.setWaitMode('markovLlm');
+        addGeneratedMessage(fallbackText, rawSpec && rawSpec.refine);
+        interpreter.setWaitMode('message');
     }
-
-    const _Game_Interpreter_updateWaitMode_markovLlm = Game_Interpreter.prototype.updateWaitMode;
-    Game_Interpreter.prototype.updateWaitMode = function () {
-        if (this._waitMode === 'markovLlm') {
-            const pending = this._markovLlmWait;
-            if (pending && !pending.state.done) return true;
-            this._markovLlmWait = null;
-            if (pending) addGeneratedMessage(pending.state.text || pending.fallback, pending.refine);
-            this.setWaitMode('message');
-            return true;
-        }
-        return _Game_Interpreter_updateWaitMode_markovLlm.call(this);
-    };
 
     // Read by anything that wants to know whether the model is doing the
     // talking, and by the async callers that can afford to wait for it.
@@ -2641,43 +2568,7 @@
                 ? model.generateFrom(String(startText), minLength, maxLength)
                 : model.generateText(minLength, maxLength);
 
-            // A caller that wants an answer this instant gets a line the picked
-            // language model wrote earlier for this database, if one is waiting;
-            // the chain's line covers the wait for the first one. A seeded call
-            // has to be answered by the chain, since a reply echoing the
-            // player's own words cannot have been written before they typed it:
-            // generateMarkovStringAsync() is the way to have the model answer
-            // those, for callers that can wait.
-            if (!startText) {
-                const llmLine = llmTakeLine(`gen_${database.id}`, { dbText: selectedLanguage });
-                if (llmLine) return llmLine;
-            }
-
             return generatedText;
-        };
-    }
-
-    // The awaited form of the above: with a model picked it resolves to what
-    // the model writes, seed and all, and falls back to the chain whenever the
-    // model has nothing to say.
-    if (typeof window.generateMarkovStringAsync === 'undefined') {
-        window.generateMarkovStringAsync = async function (databaseId, options = {}) {
-            if (llmEnabled()) {
-                let database = null;
-                try { database = getTextDB(databaseId); } catch (error) { database = null; }
-                if (database) {
-                    const dbText = ConfigManager.language === 'it' ? database.it : database.en;
-                    const line = await llmAnswer({
-                        dbText: dbText,
-                        npcName: options.npcName,
-                        npcBio: options.npcBio,
-                        history: options.history,
-                        startText: options.startText
-                    });
-                    if (line) return line;
-                }
-            }
-            return window.generateMarkovString(databaseId, options);
         };
     }
 

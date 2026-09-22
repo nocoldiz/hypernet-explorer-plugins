@@ -225,8 +225,9 @@
     }
 
     /* Portrait scaled from 320px to 185px height to fit within 800px vertical bounds */
-    .cc-compact-bust-full {
-        height: 185px;
+    .cc-compact-portrait-card {
+        max-height: 185px;
+        min-height: 70px;
     }
 
     .cc-dossier-large-bust {
@@ -3552,6 +3553,13 @@
         line-height: 16px;
         margin-top: 3px;
         font-size: 14px;
+    }
+
+    .hotbar-desc {
+        height: 16px;
+        line-height: 16px;
+        margin-bottom: 3px;
+        font-size: 12px;
     }
 
     .hotbar-tooltip {

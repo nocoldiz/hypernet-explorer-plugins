@@ -289,14 +289,23 @@
     //=============================================================================
     // ** Battle Command: Switch
     //=============================================================================
+    // Whether the acting battler is offered the spirit switch, and under what
+    // name. This is the one answer: the vanilla command window below asks it,
+    // and so does the HTML command window in BattleSystemEnhanchedCommands.js,
+    // which builds its own rows from scratch and cannot inherit an addCommand.
+    window.SpiritBattle = window.SpiritBattle || {};
+    window.SpiritBattle.switchRow = function (actor) {
+        if (!actor || actor.actorId() !== DUMMY_ACTOR_ID) return null;
+        if (!$gameSystem.shouldUsespiritBattle()) return null;
+        const status = $gameParty._battlespiritstatus || [];
+        return { name: SWITCH_COMMAND_NAME(), enabled: status.filter(s => s).length > 1 };
+    };
+
     const _Window_ActorCommand_makeCommandList = Window_ActorCommand.prototype.makeCommandList;
     Window_ActorCommand.prototype.makeCommandList = function() {
         _Window_ActorCommand_makeCommandList.call(this);
-        // Only show switch command if spirit system is enabled AND has spirits in roster
-        if (this._actor && this._actor.actorId() === DUMMY_ACTOR_ID && $gameSystem.shouldUsespiritBattle()) {
-            const availableSwitches = $gameParty._battlespiritstatus.filter(s => s).length;
-            this.addCommand(SWITCH_COMMAND_NAME(), 'switchspirit', availableSwitches > 1);
-        }
+        const row = window.SpiritBattle.switchRow(this._actor);
+        if (row) this.addCommand(row.name, 'switchspirit', row.enabled);
     };
 
     const _Scene_Battle_createActorCommandWindow = Scene_Battle.prototype.createActorCommandWindow;

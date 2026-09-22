@@ -938,6 +938,17 @@
         return contents;
     };
 
+    // The party's bookings hang off $dataSystem, which is the DATABASE: it is
+    // loaded once per launch and is not reset between games, so a new game
+    // started after loading a save inherited that save's rooms and paid stays.
+    // The tables are emptied when a new game is set up.
+    const _DataManager_setupNewGame_rent = DataManager.setupNewGame;
+    DataManager.setupNewGame = function () {
+        _DataManager_setupNewGame_rent.call(this);
+        $dataSystem.rentals = {};
+        $dataSystem.rentalStartTimes = {};
+    };
+
     // Override DataManager.extractSaveContents to load rental data
     const _DataManager_extractSaveContents = DataManager.extractSaveContents;
     DataManager.extractSaveContents = function (contents) {

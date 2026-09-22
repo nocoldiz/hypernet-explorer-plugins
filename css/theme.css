@@ -478,11 +478,14 @@
     overflow: hidden;
 }
 
-/* Wider Left Column Sidebar (440px), room for a larger, fixed-size bust */
+/* The left column is the whole dossier at a glance, so it is wide enough to
+   read two columns of kit side by side and never has to be scrolled: what
+   grows are the lists, and the portrait above them gives up its own height
+   to pay for them (see .cc-compact-portrait-card). */
 .cc-compact-sidebar {
-    width: 440px;
-    min-width: 420px;
-    max-width: 460px;
+    width: 500px;
+    min-width: 470px;
+    max-width: 540px;
     height: 100%;
     background: linear-gradient(180deg, var(--bg-panel), var(--bg-surface)) !important;
     border-right: 1px solid var(--border-gold-amber-30);
@@ -586,32 +589,43 @@
     opacity: 0.9;
 }
 
-/* 2. Full-Width Portrait Showcase Card */
+/* 2. Portrait Showcase: the bust and nothing else. No plate, no frame and no
+   letterboxing around it, and it is the one part of the sidebar that gives
+   ground: the more a character carries, the smaller the picture, so the
+   column never has to scroll. */
 .cc-compact-portrait-card {
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-height: 90px;
+    max-height: 340px;
     width: 100%;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-gold-amber-30);
-    border-radius: 6px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 4px 14px var(--shadow-black-translucent-55);
+    box-shadow: none;
     box-sizing: border-box;
 }
 
-/* Fixed size regardless of content around it: never stretches or shrinks to
-   fill leftover sidebar space, so the portrait reads the same on every step. */
+/* Drawn at the bust art's own 883x1200 shape, so the box IS the picture:
+   there is no empty background to either side of it any more. It takes
+   whatever height the card was left with and its width follows from that. */
 .cc-compact-bust-full {
-    width: 100%;
-    height: 320px;
-    flex-shrink: 0;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    aspect-ratio: 883 / 1200;
+    flex: 0 1 auto;
+    margin: 0 auto;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center center;
     cursor: pointer;
     transition: filter 0.2s ease, transform 0.2s ease;
-    background-color: var(--bg-surface);
+    background-color: transparent;
 }
 
 /* The dossier's big portrait. It carries nothing but its background-image
@@ -738,6 +752,24 @@
     overflow-y: auto;
     max-height: 180px;
     padding: 2px 0;
+}
+
+/* In the sidebar a loadout is read across two columns: the column is wide
+   enough for it and it halves the height of every list down there, which is
+   what keeps the whole dossier on one screen with no scrollbar. */
+.cc-compact-sidebar .cc-compact-loadout-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px 12px;
+    align-content: start;
+}
+
+.cc-compact-sidebar .cc-compact-loadout-grid .cc-compact-loadout-item {
+    padding: 1px 2px;
+}
+
+.cc-compact-sidebar .cc-loadout-section-head {
+    padding-bottom: 1px;
 }
 
 /* The same list on a dossier page, where the page itself is what scrolls. */
@@ -4994,7 +5026,7 @@
    used to sit inside it are gone: HP and MP lead the stat grid as plain boxes
    now, which is what freed the height the portrait above grew into. */
 .cc-vitals-block {
-    padding: 2px 0;
+    padding: 0;
 }
 
 .cc-stat-mod {
@@ -5005,8 +5037,8 @@
 .cc-stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 2px 4px;
+    margin-bottom: 4px;
 }
 
 /* A stat reads as its own numbers, not as a plate: no fill and no outline
@@ -5015,7 +5047,7 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: 4px;
-    padding: 4px 6px;
+    padding: 1px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11757,6 +11789,19 @@
     border-color: var(--text-primary-hover);
 }
 
+/* The power cut: the one plate that stops the set, lit apart from the rest. */
+.utility-btn--off {
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.utility-btn--off:hover,
+.utility-btn--off.active {
+    color: var(--accent-red-3);
+    border-color: var(--accent-red-3);
+    text-shadow: 0 0 6px var(--accent-red-3);
+}
+
 /* A favourite is lit, not merely outlined: the star was indistinguishable
    from its own hover before. */
 .utility-btn.gold-star {
@@ -12053,6 +12098,14 @@
 .help-link--closed {
     opacity: 0.6;
     border-bottom-style: dashed;
+}
+
+/* A bracketed term inside a manual page: a key, a number, a stat or a menu
+   name that the sentence turns on. Highlighted, never clickable. */
+.help-key {
+    color: var(--text-gold-dark);
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 .help-image {
@@ -22779,6 +22832,33 @@ body, canvas {
     pointer-events: none;
     visibility: hidden;
 }
+/* The line centred over the quick bar: what the hovered or armed slot does,
+   read straight off the database description. Same ring of black as the name
+   line under the row, one size down and clipped to the bar's own width. */
+.hotbar-desc {
+    box-sizing: border-box;
+    height: 20px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    line-height: 20px;
+    color: var(--text-pure-white);
+    text-shadow: -2px -2px 0 var(--text-pure-black),  0   -2px 0 var(--text-pure-black),
+                  2px -2px 0 var(--text-pure-black), -2px  0   0 var(--text-pure-black),
+                  2px  0   0 var(--text-pure-black), -2px  2px 0 var(--text-pure-black),
+                  0    2px 0 var(--text-pure-black),  2px  2px 0 var(--text-pure-black),
+                 -1px -1px 0 var(--text-pure-black),  1px -1px 0 var(--text-pure-black),
+                 -1px  1px 0 var(--text-pure-black),  1px  1px 0 var(--text-pure-black),
+                  0    2px 6px var(--shadow-black-translucent-80);
+    pointer-events: none;
+    visibility: hidden;
+}
 .hotbar-slot {
     position: relative;
     box-sizing: border-box;
@@ -23313,6 +23393,12 @@ body, canvas {
 .fbuild-armed-sub { font-size: var(--fs-label); margin-top: 2px; }
 .fbuild-armed-sub.ok { color: var(--text-cost-ok); }
 .fbuild-armed-sub.bad { color: var(--text-cost-bad); }
+.fbuild-armed-flip { display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-3); font: inherit; font-size: var(--fs-label); cursor: pointer;
+    background: transparent; color: var(--text-text-alt-4);
+    border: 1px solid var(--text-primary-hover); border-radius: 3px; }
+.fbuild-armed-flip:hover { color: var(--text-primary-hover); }
+.fbuild-armed-flip.active { color: var(--text-cost-ok); border-color: var(--text-cost-ok); }
 .fbuild-armed-empty { font-size: var(--fs-label); color: var(--text-text-alt-4); max-width: 68ch; }
 
 .fbuild-materials { display: flex; flex-wrap: wrap; align-content: flex-start; gap: var(--sp-2);
@@ -37053,6 +37139,13 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-style: normal;
 }
 
+/* A word the origin or class prose wrote in brackets: the same lit ink the
+   dialogue keywords and the map notices use, so one token colours all three. */
+.cc-emph {
+    color: var(--text-primary-hover);
+    font-weight: bold;
+}
+
 .cc-text-desc--intro {
     margin: 0 0 var(--sp-3) 0;
     font-size: var(--fs-body);
@@ -41504,11 +41597,11 @@ body.pad-input .kb-only {
     margin-bottom: var(--sp-2);
 }
 
-/* -- The country picker, top left ---------------------------------------- */
+/* -- The country picker, top right --------------------------------------- */
 
 #worldmap-chrome .wm-country-box {
     top: var(--sp-5);
-    left: var(--sp-5);
+    right: var(--sp-5);
     pointer-events: auto;
 }
 
@@ -41587,6 +41680,11 @@ body.pad-input .kb-only {
 #worldmap-chrome .wm-read-value {
     text-align: right;
     min-width: 0;
+}
+
+#worldmap-chrome .wm-note-btn {
+    margin-top: var(--sp-2);
+    pointer-events: auto;
 }
 
 #worldmap-chrome .wm-read-action {
@@ -41741,3 +41839,160 @@ body.pad-input .kb-only {
 }
 
 .sm-action-rail .inspect-btn { width: 100%; text-align: center; }
+
+
+/* ==========================================================================
+   Party Dynamics: the rows' own buttons, the chevrons that reorder them and
+   the shelf of reserve cards (js/plugins/UI/CustomMainMenuLayout.js)
+
+   The board used to draw its buttons as .command-item, which is a line of the
+   pockets list and not a button: on this page they read as plain words with
+   nothing around them. They take the game's one button look (.inspect-btn)
+   here, sized down to sit inside a row.
+   ========================================================================== */
+.roster-btn {
+    margin-top: 0;
+    padding: 5px 12px;
+    font-size: var(--fs-detail-body);
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Up and down: a square holding one arrow, so the two of them take the room
+   one word used to. */
+.roster-chev {
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chev {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+}
+
+.chev--up { transform: rotate(-135deg) translate(-1px, -1px); }
+.chev--down { transform: rotate(45deg) translate(-1px, -1px); }
+
+/* What a travelling row says about the person: the three pools, three
+   attributes and what they know, one strip of label-and-value pairs. */
+.dyn-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 14px;
+    margin-bottom: 6px;
+    font-size: var(--fs-caption);
+}
+
+.dyn-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.dyn-stat-lbl {
+    color: var(--text-text-alt-4);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.dyn-stat-val {
+    font-weight: bold;
+    color: var(--text-success-active);
+}
+
+/* The reserves: a shelf of cards rather than a column of rows, browsed for who
+   is there and at what level. A card is still what is dragged up into the
+   travelling list, and Set Active sits on the card itself. */
+.dyn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+    align-items: start;
+}
+
+.dyn-card {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 0;
+    padding: 10px;
+    border: 1px solid var(--text-text-alt-4);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.dyn-card-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.dyn-card-class {
+    font-size: var(--fs-caption);
+    color: var(--text-text-alt-4);
+    margin-bottom: 4px;
+}
+
+.dyn-card .roster-actions {
+    margin-top: 6px;
+}
+
+/* A dossier value carried no ink of its own, so it inherited the page's and
+   went dark on a dark preset: the labels were readable and the numbers beside
+   them were not. */
+.dyn-dossier-line > span:last-child,
+.dyn-dossier-param-val {
+    color: var(--text-success-active);
+    font-weight: bold;
+}
+
+.dyn-dossier-line > .dyn-dossier-lbl {
+    color: var(--text-text-alt-4);
+    font-weight: normal;
+}
+
+
+/* ==========================================================================
+   Party Dynamics: taking a character out of the game and bringing one in
+   (js/plugins/UI/CustomMainMenuLayout.js, window.CharacterExport)
+   ========================================================================== */
+
+/* The way IN sits beside the wiki at the head of the board, in from the right
+   so the two never overlap. */
+.dyn-import {
+    position: absolute;
+    right: 140px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* The three ways OUT, at the foot of the dossier. */
+.dyn-dossier-export {
+    margin-top: 4px;
+}
+
+/* The code on the page: white quiet zone around it whatever the theme is, so a
+   phone reads it off a dark preset as easily as off parchment. */
+.dyn-qr-modal .lodging-modal-sheet {
+    text-align: center;
+}
+
+.dyn-qr-holder {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.dyn-qr-holder canvas {
+    background: #ffffff;
+    image-rendering: pixelated;
+    max-width: 100%;
+    height: auto;
+}

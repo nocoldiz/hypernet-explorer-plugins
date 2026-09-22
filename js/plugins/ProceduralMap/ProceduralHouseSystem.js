@@ -1119,6 +1119,12 @@
     return { upstairs, downstairs };
   }
 
+  function placeStairEvent(event, at) {
+    if (!event || !at) return;
+    if (typeof event.locateKeepingPose === 'function') event.locateKeepingPose(at.x, at.y);
+    else event.locate(at.x, at.y);
+  }
+
   function placeStairsAtSeededPosition(seed) {
     const { upstairs, downstairs } = getSeededStairPositions(seed);
     if (!upstairs) return;
@@ -1126,8 +1132,10 @@
     const upstairsEvent = findEventByName("Upstairs");
     const downstairsEvent = findEventByName("Downstairs");
     // i18n-ignore-end
-    if (upstairsEvent) upstairsEvent.locate(upstairs.x, upstairs.y);
-    if (downstairsEvent) downstairsEvent.locate(downstairs.x, downstairs.y);
+    // locateKeepingPose, never locate: straightening a staircase would show
+    // the wrong flight of the !Stairs sheet until the next event refresh.
+    if (upstairsEvent) placeStairEvent(upstairsEvent, upstairs);
+    if (downstairsEvent) placeStairEvent(downstairsEvent, downstairs);
   }
 
   function getMapDirection(tagName) {
@@ -1879,7 +1887,7 @@
     if (!success) {
       SoundManager.playBuzzer();
       if (window.ParchmentToast) {
-        window.ParchmentToast.show(T('ProceduralHouse.doorHeld'), { severity: "warn" });
+        window.ParchmentToast.show(T('ProceduralHouse.doorHeld'), { severity: "warning" });
       }
       return;
     }
@@ -2742,6 +2750,13 @@
   const _DataManager_extractSaveContents = DataManager.extractSaveContents;
   DataManager.extractSaveContents = function (contents) {
     _DataManager_extractSaveContents.call(this, contents);
+    // Start from nothing: whatever the previously loaded savegame put here is
+    // not this one's, and a save with no key of its own must read as empty.
+    for (const k of Object.keys(houseReturnPoints)) delete houseReturnPoints[k];
+    for (const k of Object.keys(multiBuildingStructures)) delete multiBuildingStructures[k];
+    currentHouseSessionId = null;
+    currentMultiBuilding = null;
+    setCurrentBuilding(null);
     if (contents.proceduralHouseSystem) {
         const system = contents.proceduralHouseSystem;
         Object.assign(houseReturnPoints, system.houseReturnPoints || {});

@@ -3635,7 +3635,8 @@
         case "travel":
           return {
             label: T('Galaxy.refuel.refuel'), enabled: true, active: false,
-            sub: plan.shortFuel ? T('Galaxy.refuel.mayBeOutOfRange') : T('Galaxy.refuel.nearest'),
+            sub: plan.shortFuel ? T('Galaxy.refuel.mayBeOutOfRange')
+              : (plan.keepCourse ? T('Galaxy.refuel.onCourse') : T('Galaxy.refuel.nearest')),
             hint: star + (ly ? " · " + ly : "") +
               (plan.estFuel ? " · ~" + Math.round(plan.estFuel).toLocaleString() + " L" : ""),
           };

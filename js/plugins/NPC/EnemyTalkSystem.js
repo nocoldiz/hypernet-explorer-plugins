@@ -574,6 +574,13 @@
     // standing in the 4th slot would otherwise throw off by one.
     function freeRecruitSlot() {
         const taken = $gameParty.members().map(m => m.actorId());
+        // Three on the road is the ceiling, counted in people rather than in
+        // free slot ids: a party of three sitting on unexpected actor ids would
+        // otherwise be handed a fourth member who walks along on no roster. A
+        // summon borrows the fourth seat for the length of the fight and is not
+        // one of the travellers, so it never counts against the ceiling.
+        const travelling = taken.filter(id => !window.SummonSystem?.isProxyActor?.(id));
+        if (travelling.length >= RECRUIT_ACTOR_IDS.length + 1) return 0;
         return RECRUIT_ACTOR_IDS.find(id => !taken.includes(id)) || 0;
     }
 

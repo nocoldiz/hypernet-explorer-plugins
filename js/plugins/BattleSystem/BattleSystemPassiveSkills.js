@@ -1480,10 +1480,20 @@
     return mult;
   };
 
+  // A collectible costs what it is worth, here and everywhere else: it is moved
+  // by no index, no Haggling, no standing and no record (see ItemSystemShop's
+  // buyUnitPrice), and a class passive is one more such factor. Left in, it
+  // bought keepsakes at 0.85 and sold them back at 1.25 across the same counter,
+  // which is 40% of the sticker per unit, unbounded.
+  const flatPriced = (item) => !!(item && window.ItemCollectibles
+    && typeof window.ItemCollectibles.isFixed === "function"
+    && window.ItemCollectibles.isFixed(item));
+
   if (typeof Window_ShopBuy !== "undefined" && Window_ShopBuy.prototype.price) {
     const _Window_ShopBuy_price = Window_ShopBuy.prototype.price;
     Window_ShopBuy.prototype.price = function (item) {
       const base = _Window_ShopBuy_price.call(this, item);
+      if (flatPriced(item)) return base;
       const mult = bestBuyMult();
       return mult !== 1 ? Math.max(0, Math.floor(base * mult)) : base;
     };
@@ -1492,6 +1502,7 @@
     const _Scene_Shop_sellingPrice = Scene_Shop.prototype.sellingPrice;
     Scene_Shop.prototype.sellingPrice = function () {
       const base = _Scene_Shop_sellingPrice.call(this);
+      if (flatPriced(this._item)) return base;
       const mult = bestSellMult();
       return mult !== 1 ? Math.floor(base * mult) : base;
     };

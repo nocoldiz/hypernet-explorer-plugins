@@ -251,6 +251,16 @@
     if ((profile?.hunger  ?? 100) < 40) push(T.hungerLabel,  L.needLow);
     if ((profile?.sleep   ?? 100) < 40) push(T.sleepLabel,   L.needLow);
     if ((profile?.hygiene ?? 100) < 40) push(T.hygieneLabel, L.needLow);
+    // What the body is carrying, which is a thing people are asked about and a
+    // thing that colours every answer given in one. Only an actor has an
+    // anatomy and a course of treatment; a passer-by adds nothing here.
+    push(L.bodyLbl, _llmSafe(() => _llmBodyLine(actor)));
+    // Not from here, and each caste is not from here in its own way.
+    const alienName = actor?.name?.() || profile?._npcName || '';
+    push(L.alienLbl, _llmSafe(() => _llmAlienLine(alienName)));
+    // Last, because it is the instruction the rest of the sheet is spoken in:
+    // the register this temperament actually talks in, rather than its label.
+    push(L.voiceLbl, _llmSafe(() => _llmVoiceLine(profile)));
     return bits.join('; ');
   }
 
@@ -321,6 +331,18 @@
 
   // The people this one already knows, and how they feel about them. Only the
   // strongest few: a model handed a directory answers with a directory.
+  // The whole of what somebody has lived through, as every caller wants it:
+  // the authored past first where there is one (Em and Bubba are written down
+  // and are never read as rolled people), then either the life the background
+  // simulation dealt them or, for one of the party's own, the adventures the
+  // diary has them in.
+  function _llmLifeFor(name, profile, own) {
+    const bits = [_llmSafe(() => _llmSignatureLine(name))];
+    if (own) bits.push(_llmPastAdventures(name, 4), _llmWhereabouts(name));
+    else bits.push(_llmLifeStory(name, profile), _llmAcquaintances(profile));
+    return bits.filter(Boolean).join(' ');
+  }
+
   function _llmAcquaintances(profile) {
     const T = _getT();
     const L = T.llm || {};
@@ -411,6 +433,379 @@
     const heat = window.CrimeSystem?.getHeat?.() || 0;
     if (heat > 0) bits.push(window.T('Empathize.llm.worldWanted'));
     return bits.filter(Boolean).join(' ');
+  }
+
+  // ── The year everybody in here is living in ─────────────────────────────
+  // A model trained on our own world answers out of it, which is how an NPC
+  // ends up talking about a telephone nobody has invented yet. The one fact
+  // that stops it is the date: whatever the clock says is the last year
+  // anybody in this world has lived through, and nothing after it has
+  // happened. Read straight off TimeDateSystem, because the calendar moves
+  // (the cryo year alone carries the party from 2001 into 2013) and a fixed
+  // year written into a prompt would be wrong the moment it did.
+  function _llmWorldYear() {
+    try {
+      const now = window.TimeDateSystem?.getCurrentDateObj?.();
+      const year = now ? now.getFullYear() : 0;
+      return year > 1000 ? year : 0;
+    } catch (e) { return 0; }
+  }
+
+  // ── What the body is carrying ───────────────────────────────────────────
+  // The wounds that never healed, what was fitted in their place, and what
+  // this person is ill with. All of it is the actor's: an NPC profile has no
+  // anatomy, so a passer-by contributes nothing here and a companion (or a
+  // leader read off their dossier) contributes the whole of it. It is the
+  // difference between an answer written by a body and one written by a
+  // sheet: somebody short an arm says so when they are asked to carry
+  // something, and somebody running a fever says so whatever they are asked.
+  function _llmBodyLine(actor) {
+    if (!actor) return '';
+    const T = _getT();
+    const L = T.llm || {};
+    const bits = [];
+    const HC = window.HealthCore;
+    const partName = key => {
+      try { return HC?.archetypePartName?.(actor, key) || key; }
+      catch (e) { return key; }
+    };
+    // Gone for good, then merely broken. A severed part is the louder fact and
+    // is never crowded out by a bruise.
+    const severed = Object.keys(actor._severedParts || {})
+      .filter(key => actor._severedParts[key]).map(partName).slice(0, 4);
+    if (severed.length) bits.push(window.T('Empathize.llm.bodyLost', { parts: severed.join(', ') }));
+    let broken = [];
+    try {
+      const states = HC?.partStates?.(actor) || {};
+      broken = Object.keys(states)
+        .filter(key => !(actor._severedParts || {})[key] && HC?.isPartBroken?.(actor, key))
+        .map(partName).slice(0, 4);
+    } catch (e) { broken = []; }
+    if (broken.length) bits.push(window.T('Empathize.llm.bodyBroken', { parts: broken.join(', ') }));
+    // What was fitted where something used to be: a prosthetic is a thing
+    // people ask about, and a thing its owner has an opinion on.
+    const implants = Object.values(actor._prosthetics || {})
+      .map(p => (p && (p.name || p.typeName)) || '').filter(Boolean).slice(0, 3);
+    if (implants.length) bits.push(window.T('Empathize.llm.bodyAugments', { augments: implants.join(', ') }));
+    // What they are ill with, what they live with, and what they came through.
+    const DS = window.DiseaseSystem;
+    const named = list => (list || []).map(entry => {
+      try { return DS?.resolve?.(entry)?.name || ''; } catch (e) { return ''; }
+    }).filter(Boolean);
+    // An illness still inside its window period has not been named yet, so its
+    // carrier cannot name it either: they know they feel wrong, nothing more.
+    const carried = DS?.actorEntries?.(actor) || [];
+    const known = carried.filter(e => e && e.diagnosed !== false);
+    const sickNames = named(known).slice(0, 3);
+    if (sickNames.length) bits.push(window.T('Empathize.llm.bodyIll', { diseases: sickNames.join(', ') }));
+    else if (carried.length > known.length && L.bodyUnwell) bits.push(L.bodyUnwell);
+    const conditions = named(DS?.actorConditions?.(actor)).slice(0, 3);
+    if (conditions.length) bits.push(window.T('Empathize.llm.bodyCondition', { conditions: conditions.join(', ') }));
+    const past = named(DS?.actorPast?.(actor)).slice(-2);
+    if (past.length) bits.push(window.T('Empathize.llm.bodySurvived', { diseases: past.join(', ') }));
+    return bits.filter(Boolean).join(' ');
+  }
+
+  // ── How this one talks ──────────────────────────────────────────────────
+  // The sheet already says which of the twenty-five temperaments in
+  // PersonalityData.json they were dealt, and which traits they carry. Those
+  // are labels, and a label is not a voice: a model handed "Personality:
+  // Grumpy" writes a polite person who has been told they are grumpy. These
+  // are the register itself, one line per temperament, so the answer is
+  // SPOKEN grumpily rather than described as it.
+  function _llmVoiceLine(profile) {
+    const persona = _personalityName(profile);
+    if (!persona) return '';
+    const key = 'Empathize.llm.voice.' + String(persona).toLowerCase();
+    const line = window.T?.has?.(key) ? window.T(key) : '';
+    return line && line !== key ? line : '';
+  }
+
+  // ── Who is not from here ────────────────────────────────────────────────
+  // An alien sheet is not a costume: the castes want different things out of a
+  // conversation, and a model told only that somebody is an alien writes the
+  // same wise visitor every time. Each caste gets the way it actually behaves
+  // (window.AlienOrigins owns which caste a sheet belongs to, here as
+  // everywhere), so a Dargos of Titania winds the party up and lies for sport
+  // while a Zeta Grey is delighted by them and understands nothing.
+  function _llmAlienLine(npcName) {
+    const AO = window.AlienOrigins;
+    if (!AO || !npcName) return '';
+    let identity = null;
+    try {
+      // The same sprite key the panel reads them by: the profile holds one
+      // once the society generator has cast them, and the NPC template is
+      // what answers for anybody it has not.
+      const profile = _getProfile(npcName);
+      const sprite = profile?.spriteKey
+        || window.NPCSystem?.findTemplateSprite?.(npcName)?.characterName || '';
+      identity = sprite ? AO.identify(sprite, npcName) : null;
+    } catch (e) { identity = null; }
+    if (!identity) return '';
+    const manner = 'Empathize.llm.alien.' + identity.caste;
+    const bits = [window.T('Empathize.llm.alienFrom', {
+      caste: identity.casteName || identity.caste,
+      origin: identity.originName || identity.origin,
+    })];
+    if (window.T?.has?.(manner)) bits.push(window.T(manner));
+    return bits.filter(Boolean).join(' ');
+  }
+
+  // ── The two who are written down ────────────────────────────────────────
+  // Em and Bubba are not generated people and never read as any: their pasts
+  // are authored (the emBackstory bank and Bubba's dossier lore, both in
+  // CharPresets.json), and a model handed a rolled sheet for either of them
+  // writes a stranger wearing the name. Whoever is doing the asking, when one
+  // of the two is the one being asked, the authored past and the authored
+  // voice go in ahead of anything the simulation would otherwise say.
+  function _llmSignatureLine(name) {
+    const who = String(name || '').trim().toLowerCase();
+    const isEm = who === EM_NAME.toLowerCase();
+    const isBubba = who === BUBBA_NAME.toLowerCase();
+    if (!isEm && !isBubba) return '';
+    const bits = [];
+    if (isEm) {
+      const story = window.T?.list?.('CharPresets.emBackstory') || [];
+      if (story.length) bits.push(story.join(' '));
+    } else if (window.T?.has?.('CharPresets.lore.bubba')) {
+      bits.push(window.T('CharPresets.lore.bubba'));
+    }
+    const voice = 'Empathize.llm.signature.' + (isEm ? 'em' : 'bubba');
+    if (window.T?.has?.(voice)) bits.push(window.T(voice));
+    return bits.filter(Boolean).join(' ');
+  }
+
+  // ── Being asked about somebody the world knows ──────────────────────────
+  // Name a hyperpower's leader at a passer-by and, with nothing said about
+  // them, the model answers out of OUR history: the wrong office, the wrong
+  // decade, the wrong country. Everything this world actually says about the
+  // people and powers in it is already written down (Leaders.json, the powers
+  // the simulation has seated, the factions the party has standing with), so
+  // the typed line is read for those names and whatever it named is handed
+  // over as fact before the answer is written.
+  //
+  // Nothing is handed over that the year has not reached: a leader whose term
+  // opens after the date on the clock has not happened yet, and a person in
+  // the street has never heard of them.
+
+  // Every name worth spotting, built once and kept: the powers, the book of
+  // leaders and the factions. Names only; the fact behind one is read fresh
+  // every time, because who governs what changes under it.
+  let _llmTopicIndex = null;
+  function _llmTopicNames() {
+    if (_llmTopicIndex) return _llmTopicIndex;
+    const index = [];
+    const add = (name, kind, key) => {
+      const text = String(name || '').trim();
+      if (text.length < 4) return;
+      index.push({ name: text, lower: text.toLowerCase(), kind: kind, key: key ?? text });
+    };
+    try {
+      const powers = window.HistoryManager?.getHyperpowers?.() || {};
+      for (const power of Object.keys(powers)) add(power, 'power', power);
+    } catch (e) { /* no simulation in this save */ }
+    try {
+      const book = window.WorldGen?.Leaders || {};
+      for (const id of Object.keys(book)) add(book[id]?.name, 'leader', book[id]?.name);
+    } catch (e) { /* no book of leaders */ }
+    try {
+      const dl = window._NPCSocietyDataLoader;
+      for (const faction of (dl?.factions || [])) {
+        add(dl.getFactionName?.(faction) || String(faction?.name || '').split('.')[1],
+            'faction', faction?.id);
+      }
+    } catch (e) { /* no factions loaded */ }
+    _llmTopicIndex = index;
+    return index;
+  }
+
+  // A surname on its own is how people are actually named in a sentence, so a
+  // leader is matched on their last word too, but only where that word belongs
+  // to exactly one of them: half the book would answer to "Pope" otherwise.
+  let _llmSurnameIndex = null;
+  function _llmTopicSurnames() {
+    if (_llmSurnameIndex) return _llmSurnameIndex;
+    const counts = new Map();
+    const leaders = _llmTopicNames().filter(entry => entry.kind === 'leader');
+    for (const entry of leaders) {
+      const last = entry.lower.split(/\s+/).pop();
+      if (!last || last.length < 5) continue;
+      counts.set(last, (counts.get(last) || 0) + 1);
+    }
+    const unique = new Map();
+    for (const entry of leaders) {
+      const last = entry.lower.split(/\s+/).pop();
+      if (counts.get(last) === 1) unique.set(last, entry);
+    }
+    _llmSurnameIndex = unique;
+    return unique;
+  }
+
+  // What this world says about one leader, cut to what the year has reached.
+  function _llmLeaderFact(name, year) {
+    const record = window.LeaderPersona?.recordFor?.(name)
+      || window.HistoryManager?.getLeaderRecord?.(name) || null;
+    if (!record) return '';
+    const years = Array.isArray(record.years) ? record.years.map(Number) : [];
+    const from = years[0];
+    const to = years[1];
+    // Not yet: nobody has heard of somebody whose office opens after today.
+    if (year && Number.isFinite(from) && from > year) return '';
+    const ideology = record.ideology
+      ? (window.DataService?.t?.(record.ideology)
+        || String(record.ideology).split('.').pop().split('_').join(' '))
+      : '';
+    // Whether they are the one governing right now, which is the difference
+    // between a name in a newspaper and a name in a history book.
+    let seated = '';
+    try {
+      const current = window.HistoryManager?.getCurrentLeaders?.() || {};
+      for (const power of Object.keys(current)) {
+        if (current[power] && current[power].name === record.name) { seated = power; break; }
+      }
+    } catch (e) { seated = ''; }
+    // A term that has not ended by this year is not written down as ended.
+    const span = !Number.isFinite(from) ? ''
+      : (!Number.isFinite(to) || (year && to > year)) ? String(from)
+      : from + '-' + to;
+    return _llmTidy(window.T('Empathize.llm.topicLeader', {
+      name: record.name,
+      country: record.country || '',
+      ideology: ideology,
+      years: span,
+      seat: seated ? window.T('Empathize.llm.topicSeated', { power: seated }) : '',
+    }));
+  }
+
+  // What this world says about one hyperpower: who governs it, where it sits
+  // and how big it actually is in people (realFigures reads the bare indices
+  // as a yearbook would print them).
+  function _llmPowerFact(power) {
+    const HM = window.HistoryManager;
+    if (!HM) return '';
+    const hist = (HM.getHyperpowers?.() || {})[power];
+    if (!hist) return '';
+    let leader = null;
+    try { leader = HM.politicalLeaderOf?.(power) || null; } catch (e) { leader = null; }
+    let figures = null;
+    try { figures = HM.realFigures?.(hist) || null; } catch (e) { figures = null; }
+    return _llmTidy(window.T('Empathize.llm.topicPower', {
+      power: power,
+      nation: hist.homeNation || hist.region || '',
+      leader: leader?.name || '',
+      people: figures?.population != null ? figures.population : '',
+    }));
+  }
+
+  // What this world says about one faction: what it is, and where the party
+  // stands with it, which is the half of the answer the NPC actually cares
+  // about.
+  function _llmFactionFact(factionId) {
+    const dl = window._NPCSocietyDataLoader;
+    const faction = (dl?.factions || []).find(f => f && f.id === factionId);
+    if (!faction) return '';
+    const name = dl.getFactionName?.(faction) || String(faction.name || '').split('.')[1] || '';
+    const about = faction.description ? (window.DataService?.t?.(faction.description) || '') : '';
+    let standing = '';
+    try { standing = window.$gameFactions?.getReputationLevel?.(faction.id) || ''; } catch (e) { standing = ''; }
+    return _llmTidy(window.T('Empathize.llm.topicFaction', {
+      faction: name, about: about, standing: standing,
+    }));
+  }
+
+  // A template filled from a record always has holes in it: a leader with no
+  // country, a power whose figures did not come back. This closes the gaps the
+  // missing halves leave behind so the fact reads as a sentence.
+  function _llmTidy(text) {
+    return String(text || '')
+      .replace(/\(\s*\)/g, '')
+      .replace(/\s+([,.;])/g, '$1')
+      .replace(/([,;])\s*([,.;])/g, '$2')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+
+  // The whole answer for one typed line: whatever it named, as this world has
+  // it. At most three, because a sentence naming four things is a sentence
+  // about none of them, and a model handed four dossiers answers with a
+  // dossier.
+  function _llmTopicsLine(phrase) {
+    const said = String(phrase || '').toLowerCase();
+    if (said.length < 4) return '';
+    const year = _llmWorldYear();
+    const hits = [];
+    const seen = new Set();
+    const take = entry => {
+      const id = entry.kind + ':' + entry.key;
+      if (seen.has(id) || hits.length >= 3) return;
+      seen.add(id);
+      hits.push(entry);
+    };
+    for (const entry of _llmTopicNames()) {
+      if (hits.length >= 3) break;
+      if (said.includes(entry.lower)) take(entry);
+    }
+    if (hits.length < 3) {
+      for (const [surname, entry] of _llmTopicSurnames()) {
+        if (hits.length >= 3) break;
+        if (new RegExp('\\b' + surname + '\\b').test(said)) take(entry);
+      }
+    }
+    const facts = hits.map(entry =>
+        entry.kind === 'leader'  ? _llmSafe(() => _llmLeaderFact(entry.key, year))
+      : entry.kind === 'power'   ? _llmSafe(() => _llmPowerFact(entry.key))
+      : entry.kind === 'faction' ? _llmSafe(() => _llmFactionFact(entry.key))
+      : '').filter(Boolean);
+    return facts.join(' ');
+  }
+
+  // ── What a typed line costs, or earns ───────────────────────────────────
+  // Every other way of talking to somebody in this panel moves their opinion,
+  // because every one of them is an action with a band and a roll behind it.
+  // Typing at them was the one that did not: the player could say anything at
+  // all and walk away with the standing they arrived with. This reads the line
+  // for what it is, on the word banks in the i18n file (so it reads the
+  // language it was typed in), and hands back a tone and the standing it is
+  // worth. Small on purpose: a conversation is a drip, not a favour.
+  const CHAT_OPINION_STEP = { warm: 2, cold: -2, insult: -6, praise: 4 };
+  const CHAT_OPINION_CAP = 12;   // per conversation, either way
+
+  function _chatToneOf(phrase) {
+    const said = ' ' + String(phrase || '').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ')
+      .replace(/\s+/g, ' ') + ' ';
+    if (said.trim().length < 2) return null;
+    const hit = bank => (window.T?.list?.('Empathize.llm.tone.' + bank) || [])
+      .some(word => word && said.includes(' ' + String(word).toLowerCase() + ' '));
+    // The loudest reading wins, and an insult is always the loudest: somebody
+    // who was complimented and then sworn at was sworn at.
+    if (hit('insult')) return 'insult';
+    if (hit('cold'))   return 'cold';
+    if (hit('praise')) return 'praise';
+    if (hit('warm'))   return 'warm';
+    return null;
+  }
+
+  // Move the standing this line earned, once, and say by how much. The
+  // temperament in front of it decides how hard it lands, on the same social
+  // modifiers every other action in the panel is scaled by, and the whole
+  // conversation is capped so nobody is talked into devotion.
+  function _chatOpinionShift(profile, actor, phrase, spent) {
+    if (!profile || !actor) return 0;
+    const tone = _chatToneOf(phrase);
+    if (!tone) return 0;
+    const base = CHAT_OPINION_STEP[tone] || 0;
+    if (!base) return 0;
+    const mult = _personalitySocialMult(profile, base > 0 ? 'positive' : 'negative');
+    let delta = Math.round(base * mult) || (base > 0 ? 1 : -1);
+    // The room left in this conversation, in the direction the line pushes.
+    const used = spent || 0;
+    const room = base > 0 ? CHAT_OPINION_CAP - Math.max(0, used)
+                          : -CHAT_OPINION_CAP - Math.min(0, used);
+    if (base > 0) delta = Math.min(delta, Math.max(0, room));
+    else delta = Math.max(delta, Math.min(0, room));
+    if (!delta) return 0;
+    _addNpcOpinion(profile, actor.actorId(), delta);
+    return delta;
   }
 
   // What the party's own people have been through, for the times one of them
@@ -1876,11 +2271,6 @@
   // going wrong.
   const PET_OPINION = 5;
 
-  // How long the panel waits on the language model before speaking the line
-  // the bank had written for it. The model has a timeout of its own on every
-  // request; this is the panel's own patience on top of it, so a server that
-  // stops answering altogether can never leave a typing indicator standing.
-  const LLM_PANEL_TIMEOUT_MS = 25000;
 
   // Feeding is judged by what is in the bowl. Cooked food does the animal good
   // in proportion to its calories, raw meat is swallowed without thanks, and a
@@ -3145,7 +3535,7 @@
       this._activeTab  = 'chat';
       this._menuIndex  = 0;
       const said = this._pushChat('player', fill(beat.player));
-      this._replyNpc(fill(beat.reply), window.T('Empathize.llm.situationBicker'), said);
+      this._replyNpc(fill(beat.reply));
       // Winding each other up is time spent together and nothing else: a point
       // of standing, never a loss, whichever way the jab went.
       _addPairBond(1 + Math.floor(Math.random() * 3));
@@ -3927,7 +4317,7 @@
       // A person answering a beast is answering in words, so a model picked in
       // Options gets to write them. A beast answering a beast never reaches
       // here as prose, and _replyNpc keeps it out of the model's hands anyway.
-      if (reply) this._replyNpc(reply, this._llmSituation(_getT()['feralLabel' + id.charAt(0).toUpperCase() + id.slice(1)] || id, delta), '');
+      if (reply) this._replyNpc(reply);
       else { this._render(); this._scrollChatToBottom(); }
     }
 
@@ -3996,20 +4386,19 @@
     }
 
     // ── The language model as the panel's voice ────────────────────────────
-    // Every reply in this panel is written ahead of time in a line bank. With
-    // a .gguf model picked in Options > Experimental those banks stop being
-    // what is spoken and become the FALLBACK: the bank's line still decides
-    // WHAT the answer is (it was rolled against the opinion maths and it moved
-    // the reputation), and the model is asked to say that same thing in this
-    // particular person's own words, having been told who they are, who is
-    // standing in front of them, where the two of them stand with each other
-    // and what has just happened between them. With no model picked, or one
-    // that fails or runs out of time, the bank's line is spoken exactly as it
-    // was before.
+    // A model writes ONE thing in this game: the answer to a line the player
+    // typed themselves, here and in the messenger window. Everything else an
+    // NPC says is written ahead of time in a line bank, and a bank's line was
+    // rolled against the opinion maths and moved the reputation before it was
+    // spoken: handing it to a model to say again in its own words bought
+    // nothing, cost seconds of waiting on every button in the panel, and put
+    // generated prose where authored prose was. Every action below speaks its
+    // bank line as it stands, exactly as it did before a model was an option.
     //
-    // The one thing never handed to a model is a beast: a non-sentient subject
-    // answers in the voice of its class and holds no prose at all, whoever is
-    // doing the writing (window.NPCCreature owns that boundary).
+    // The one thing never handed to a model even in free chat is a beast: a
+    // non-sentient subject answers in the voice of its class and holds no
+    // prose at all, whoever is doing the writing (window.NPCCreature owns that
+    // boundary).
     _llmOn() {
       const llm = window.MarkovLLM;
       if (!llm?.isEnabled?.() || typeof llm.reply !== 'function') return false;
@@ -4047,77 +4436,27 @@
       const profile = _getProfile(name);
       const own = this._actorId != null
         || ($gameParty?.members?.() || []).some(a => a && a.name() === name);
-      const bits = own
-        ? [_llmPastAdventures(name, 4), _llmWhereabouts(name)]
-        : [_llmLifeStory(name, profile), _llmAcquaintances(profile)];
-      return bits.filter(Boolean).join(' ');
+      return _llmLifeFor(name, profile, own);
     }
 
     _llmParty() {
       return _llmPartyLine(_getProfile(this._targetName()), this._focusActor());
     }
 
-    // Ask the model for the line, told what has just happened and what the
-    // bank would have had this person say about it. An empty answer is the
-    // caller's signal that the bank's line is spoken as it stands.
-    async _llmSay(fallback, situation, playerLine) {
-      if (!this._llmOn()) return '';
-      // The player's own line is already on the log; it is the line being
-      // answered, not part of the backlog leading up to it.
-      const history = this._chatHistory
-        .filter(t => !(t && t.role === 'player' && t.text === playerLine))
-        .slice(-8);
-      try {
-        return await window.MarkovLLM.reply({
-          npcName:      this._targetName() || '',
-          npcBio:       this._llmBio(),
-          npcSheet:     this._llmNpcSheet(),
-          speakerName:  this._focusActor()?.name() || '',
-          speakerSheet: this._llmSpeakerSheet(),
-          relation:     this._llmRelation(),
-          situation:    window.T('Empathize.llm.rewrite', {
-            situation: String(situation || ''), line: String(fallback || ''),
-          }),
-          startText:    playerLine || '',
-          history:      history,
-        }) || '';
-      } catch (e) {
-        return '';
-      }
-    }
-
-    // What has just happened, in one sentence, for the model to answer to.
-    _llmSituation(actionLabel, delta) {
-      const T = _getT();
-      const L = T.llm || {};
-      const actor = this._focusActor();
-      const mood = (delta || 0) > 0 ? L.moodBetter : (delta || 0) < 0 ? L.moodWorse : L.moodSame;
-      return window.T('Empathize.llm.situationAction', {
-        speaker: actor ? actor.name() : '', action: String(actionLabel || ''), mood: mood || '',
-      });
-    }
-
     // The panel's one way of speaking an NPC's answer: the typing indicator,
-    // the line, the trim and the scroll, in one place. Without a model this is
-    // the same 350ms beat every one of these actions used to run on its own.
-    _replyNpc(fallbackLine, situation, playerLine) {
+    // the line, the trim and the scroll, in one place, on the same 350ms beat
+    // every one of these actions used to run on its own.
+    _replyNpc(bankLine) {
       this._isTyping = true;
       this._render();
       this._scrollChatToBottom();
-      const land = (text) => {
+      setTimeout(() => {
         if (SceneManager._scene !== this) return;
         this._isTyping = false;
-        this._pushChat('npc', text || fallbackLine);
+        this._pushChat('npc', bankLine);
         this._render();
         this._scrollChatToBottom();
-      };
-      if (!this._llmOn()) { setTimeout(() => land(''), 350); return; }
-      let settled = false;
-      const once = (text) => { if (!settled) { settled = true; land(text); } };
-      this._llmSay(fallbackLine, situation, playerLine).then(once).catch(() => once(''));
-      // The panel is never held past its own patience, whatever the server is
-      // doing: past this the bank's line is spoken and a late answer is dropped.
-      setTimeout(() => once(''), LLM_PANEL_TIMEOUT_MS);
+      }, 350);
     }
 
     // A hand laid on the animal. No band and no roll: this is the one action in
@@ -4608,7 +4947,7 @@
       // The bank's line is what this person means; with a model picked it is
       // said in their own words instead (_replyNpc).
       const label = (this._socialCatalog?.() || []).find(a => a && a.id === id)?.label || id;
-      this._replyNpc(npcLine, this._llmSituation(label, delta), said);
+      this._replyNpc(npcLine);
     }
 
     // Buy the procedural-house floor the player is currently standing in from
@@ -4686,8 +5025,7 @@
         const refusal = _rand(T.giftRefusalLines || []);
         if (refusal) {
           this._replyNpc(
-            String(refusal).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName),
-            window.T('Empathize.llm.situationGiftRefused', { item: item.name }), '');
+            String(refusal).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName));
         }
         if (profile) {
           (profile.eventLog ??= []).push({
@@ -4732,8 +5070,7 @@
       this._feedMode    = false;
       if (line) {
         this._replyNpc(
-          String(line).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName),
-          window.T('Empathize.llm.situationGift', { item: item.name }), '');
+          String(line).replace(/\{item\}/g, item.name).replace(/\{name\}/g, npcName));
       } else {
         this._render();
         this._scrollChatToBottom();
@@ -5323,8 +5660,7 @@
         SoundManager.playBuzzer();
         const line = _rand(emCtx.data.refuseJoin);
         if (line) {
-          this._replyNpc(String(line).replace(/\{name\}/g, npcName),
-            window.T('Empathize.llm.situationJoinRefused'), '');
+          this._replyNpc(String(line).replace(/\{name\}/g, npcName));
         }
         return;
       }
@@ -5367,7 +5703,7 @@
         }
         const phrases = T.joinRefusalPhrases;
         const refusal = phrases[Math.floor(Math.random() * phrases.length)];
-        this._replyNpc(refusal, window.T('Empathize.llm.situationJoinRefused'), '');
+        this._replyNpc(refusal);
         return;
       }
 
@@ -5608,6 +5944,22 @@
     // times out, and with the model off nothing changes: the chain answers on
     // its own, at the same pace as before.
     async _answerAsk(phrase, speaker) {
+      // Talking to somebody is a thing done TO them, so it lands before the
+      // answer does: warmth, coldness and an insult all move where the two of
+      // them stand, capped over the conversation so nobody is talked into
+      // devotion. Their own doing, not the model's; the standing moves the
+      // same way with the model off.
+      this._chatOpinionSpent = this._chatOpinionSpent || 0;
+      const moved = _llmSafe(() => _chatOpinionShift(
+        _getProfile(this._targetName()), this._focusActor(), phrase, this._chatOpinionSpent));
+      if (moved) {
+        this._chatOpinionSpent += moved;
+        try {
+          window.ParchmentToast?.show?.(window.T('Empathize.llm.toneMoved', {
+            name: this._targetName(), sign: moved > 0 ? '+' : '', amount: moved,
+          }), { severity: moved > 0 ? 'info' : 'warning', duration: 240 });
+        } catch (e) { /* a popup never breaks a conversation */ }
+      }
       // Draw from ALL text databases combined, seeded with the player's own
       // words so the reply riffs on what was just said. The generator opens
       // with the seed itself, so the lengths are asked for on top of it and
@@ -5648,6 +6000,11 @@
             npcLife: _llmSafe(() => this._llmLife()),
             party: _llmSafe(() => this._llmParty()),
             world: _llmSafe(_llmWorldLine),
+            // And whatever the line itself named: a hyperpower, one of its
+            // leaders, a faction. Without this the model answers about
+            // Margaret Thatcher out of OUR history rather than out of the
+            // book this world seated her from.
+            topics: _llmSafe(() => _llmTopicsLine(phrase)),
             startText: phrase,
             history: this._chatHistory.slice(0, -1)
           });
@@ -6303,6 +6660,33 @@
       return { type: 'ideology', id: ideo.id, name: label, ideo, parties };
     },
 
+    // One of the worlds the Omega Tower's floors open onto
+    // (DungeonFloorSystem.js, window.TowerWorlds). Deliberately NOT listed
+    // anywhere: there is no listWorlds and no card on the wiki's front page,
+    // because those shelves are Earth's. A floor world is read by clicking the
+    // person standing on it, or the world's name where it is written out, and
+    // no other way.
+    getWorld(id) {
+      const TW = window.TowerWorlds;
+      if (!TW?.byId) return null;
+      let world = null;
+      try { world = TW.byId(id) || TW.worldOfName?.(id) || null; } catch (e) { return null; }
+      if (!world) return null;
+      // Its government, where it seats one. An Earthling colony keeps Earth's,
+      // so it is looked up by the nation its people vote in instead.
+      const power = world.earthborn ? null
+        : (window.NPCPolitics?.getPower?.(world.powerName) || null);
+      const parties = power
+        ? (world.parties || []).map(p => window.NPCPolitics?.getPartyOf?.(world.powerName, p.id) || p)
+        : (world.parties || []).slice();
+      return {
+        type: 'world', id: world.id, name: world.name,
+        world, power, parties,
+        // The one place it can be reached from.
+        floor: world.floor,
+      };
+    },
+
     get(type, id) {
       // Old faction names may now be hyperpowers - redirect if not found as faction
       if (type === 'faction') {
@@ -6319,6 +6703,8 @@
         case 'artifact': return this.getArtifact(id);
         case 'party':    return this.getParty(id);
         case 'ideology': return this.getIdeology(id);
+        // Unlisted on purpose: reachable only by a link.
+        case 'world':    return this.getWorld(id);
       }
       return null;
     },
@@ -6652,12 +7038,16 @@
         relation:     (profile && actor)
           ? _llmRelationLine(profile, actor, _npcEffectiveOpinion(profile, actor))
           : '',
-        npcLife:      [_llmLifeStory(npcName, profile), _llmAcquaintances(profile)]
-          .filter(Boolean).join(' '),
+        npcLife:      _llmLifeFor(npcName, profile, false),
         party:        _llmPartyLine(profile, actor),
         world:        _llmWorldLine(),
       };
     },
+
+    // Whatever a typed line named, as this world has it rather than as our own
+    // history does. Read by the messenger window, which is the other place in
+    // the game somebody types a sentence at a person.
+    worldTopics(phrase) { return _llmSafe(() => _llmTopicsLine(phrase)); },
 
     // The same thing for one of the party's own, travelling or benched: who
     // they are, what they have been through with the party, and where they
@@ -6677,7 +7067,7 @@
         npcSheet:     _llmCharacterSheet(profile, actor),
         speakerName:  leader ? leader.name() : '',
         speakerSheet: leader ? _llmCharacterSheet(_getProfile(leader.name()), leader) : '',
-        npcLife:      _llmPastAdventures(who, 4),
+        npcLife:      _llmLifeFor(who, profile, true),
         whereabouts:  _llmWhereabouts(who),
         world:        _llmWorldLine(),
       };

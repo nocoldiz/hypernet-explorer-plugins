@@ -3,5 +3,9 @@
   "appName": "하이퍼넷 익스플로러",
   "linkLost": "",
   "linkStable": "",
-  "secureSsl": ""
+  "secureSsl": "",
+  "hexapedia": {
+    "appName": "Hexapedia",
+    "tooltip": ""
+  }
 }

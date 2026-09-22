@@ -4,7 +4,7 @@
   "cacheCleared": "Connection cache cleared!",
   "mostConnected": "Most connected: Map {map} ({links} links)",
   "mode": "Mode: {mode} analysis",
-  "modeHardcoded": "Hardcoded",
+  "modeHardcoded": "Shipped table",
   "modeRuntime": "Runtime",
   "noMapLoaded": "Cannot display map. No map is currently loaded.",
   "controls": "Mouse: Pan | Wheel: Zoom | Click: Select/Deselect | Esc: Exit",

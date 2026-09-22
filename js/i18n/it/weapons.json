@@ -1,4 +1,8 @@
 {
+  "1": {
+    "name": "<-- Light -->",
+    "description": ""
+  },
   "2": {
     "name": "Coltello da lancio sbilanciato",
     "description": "Coltello da lancio che oscilla in volo."
@@ -118,6 +122,10 @@
   "31": {
     "name": "Manipolatore del tempo",
     "description": "Reperto di Gobekli Tepe che piega il tempo\ne affretta chi lo porta. Colpisce Acqua."
+  },
+  "42": {
+    "name": "<-- Sword -->",
+    "description": ""
   },
   "43": {
     "name": "Spada di legno da gioco",
@@ -403,6 +411,10 @@
     "name": "Lama del drago",
     "description": "Spada forgiata dalle zanne di un drago.\nSacro, infligge Ispirato."
   },
+  "124": {
+    "name": "<-- Heavy -->",
+    "description": ""
+  },
   "125": {
     "name": "Baguette raffermo",
     "description": "Pagnotta raffermata e dura come pietra.\nPuo stordire."
@@ -683,6 +695,10 @@
     "name": "Superstrat infernale",
     "description": "Elettrica a manico passante, in fiamme dal\ngiorno in cui fu incordata. Fuoco."
   },
+  "196": {
+    "name": "<-- Axe -->",
+    "description": ""
+  },
   "197": {
     "name": "Ascia giocattolo di gommapiuma",
     "description": "Ascia di plastica coi bordi di gommapiuma."
@@ -803,6 +819,10 @@
     "name": "Mannaia dimensionale",
     "description": "Ascia che fende piu mondi insieme.\nSacro, infligge Ispirato."
   },
+  "237": {
+    "name": "<-- Whip -->",
+    "description": ""
+  },
   "238": {
     "name": "Scacciamosche",
     "description": "Scacciamosche leggero di plastica.\nPuo provocare."
@@ -898,6 +918,10 @@
   "261": {
     "name": "Legatore onnisciente EHI",
     "description": "Frusta di pagine vive. Lega i nemici\ne sussurra a chi la impugna."
+  },
+  "272": {
+    "name": "<-- Staff -->",
+    "description": ""
   },
   "273": {
     "name": "Bastone intagliato",
@@ -1111,6 +1135,10 @@
     "name": "Bastone infernale",
     "description": "Bastone da passeggio col pomo a teschio.\nIl fusto e un fodero. Ghiaccio, raffredda."
   },
+  "335": {
+    "name": "<-- Bow -->",
+    "description": ""
+  },
   "336": {
     "name": "Arco giocattolo",
     "description": "Arco di plastica con elastico debole.\nPuo accecare."
@@ -1242,6 +1270,10 @@
   "368": {
     "name": "Emorragia cerebrale EHI",
     "description": "Lanciatore che spara proiettili pieni di una\nbiblioteca. Fa sanguinare il cervello."
+  },
+  "379": {
+    "name": "<-- Projectile -->",
+    "description": ""
   },
   "380": {
     "name": "Fionda sbilanciata",
@@ -1386,6 +1418,10 @@
   "415": {
     "name": "Disco portale",
     "description": "Disco di Gobekli Tepe che apre un portale\ndove cade. Tuono, puo dare statico."
+  },
+  "426": {
+    "name": "<-- Gun -->",
+    "description": ""
   },
   "427": {
     "name": "Pistola a dardi con ventose",
@@ -1795,6 +1831,10 @@
     "name": "Fucile a inseguimento",
     "description": "Fucile di precisione i cui colpi si correggono\nin volo. Colpisce con Maledetto."
   },
+  "539": {
+    "name": "<-- Claw -->",
+    "description": ""
+  },
   "540": {
     "name": "Artigli di latta",
     "description": "Artigli ricavati da latta scadente.\nSi piegano."
@@ -1882,6 +1922,10 @@
   "561": {
     "name": "Artigli divini",
     "description": "Artigli dorati che si dicono di un dio della\nguerra. Sacro, infligge Ispirato."
+  },
+  "572": {
+    "name": "<-- Glove -->",
+    "description": ""
   },
   "573": {
     "name": "Fasce da principiante",
@@ -2027,6 +2071,10 @@
     "name": "Sistema di combattimento onniadattivo",
     "description": "Sistema di combattimento che si adatta\na qualunque minaccia."
   },
+  "619": {
+    "name": "<-- Spear -->",
+    "description": ""
+  },
   "620": {
     "name": "Lancia dalla punta lenta",
     "description": "Lancia con la punta legata male."
@@ -2154,6 +2202,10 @@
   "651": {
     "name": "Lancia di Varlenia che torna",
     "description": "Lancia dorata di Varlenia che torna quando\nviene lanciata. Maledetto, avvelena."
+  },
+  "662": {
+    "name": "<-- Other -->",
+    "description": ""
   },
   "663": {
     "name": "Proiettore di schiuma",

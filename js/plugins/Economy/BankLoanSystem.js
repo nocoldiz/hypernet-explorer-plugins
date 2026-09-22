@@ -230,9 +230,23 @@
         this._daysSinceInterest = (this._daysSinceInterest || 0) + 1;
         let penalized = false;
 
-        // Apply bank interest
+        // Apply bank interest. A loan accrues on the same clock: the window
+        // already quotes a loan rate, but it used to be charged ONLY once the
+        // loan was overdue, so a loan held to the day before it matured cost
+        // nothing at all - borrow the ceiling, deposit it, collect the deposit
+        // interest, repay the principal, and the difference was money made out
+        // of nothing every interval.
         if (this._daysSinceInterest >= interestInterval) {
             this._bankBalance = (this._bankBalance || 0) + Math.floor((this._bankBalance || 0) * interestRate);
+            if ((this._loanBalance || 0) > 0) {
+                // The same relief a careful reader of the small print negotiates
+                // on the overdue penalty applies to the ordinary interest.
+                const relief = window.SpecializationXP
+                    ? window.SpecializationXP.discount('Accounting', 0.08, 0.6) : 1;
+                const cap = Math.floor((this._loanPrincipal || this._loanBalance || 0) * 3);
+                const grown = this._loanBalance + Math.floor(this._loanBalance * loanInterestRate * relief);
+                this._loanBalance = Math.min(grown, cap);
+            }
             this._daysSinceInterest = 0;
         }
 

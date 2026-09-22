@@ -1693,8 +1693,16 @@
     // Check if on map 315 (world map) for special time/depletion rules
     const isOnWorldMap = $gameMap && $gameMap.mapId() === 315;
 
-    const hungerRate = isOnWorldMap ? (maxHunger * 0.003) : hungerDecreaseRate;
-    const sleepRate = isOnWorldMap ? (maxSleep * 0.006) : sleepDecreaseRate;
+    // The needs drain once per STEP while the clock advances once per
+    // STEPS_PER_MINUTE steps, so a map where a step buys less time has to cost
+    // the body proportionally less per step. Inside a procedural square a step
+    // is a sixth of the game time it is anywhere else (PROC_STEPS_PER_MINUTE),
+    // and without this the party went hungry six times as fast per game minute
+    // in there as on any other map.
+    const paceFactor = (!isOnWorldMap && mapId === PROC_MAP_ID)
+      ? (STEPS_PER_MINUTE / PROC_STEPS_PER_MINUTE) : 1;
+    const hungerRate = (isOnWorldMap ? (maxHunger * 0.003) : hungerDecreaseRate) * paceFactor;
+    const sleepRate = (isOnWorldMap ? (maxSleep * 0.006) : sleepDecreaseRate) * paceFactor;
 
     // Update game time based on map
     const currentTime = getGameTimeMinutes();
@@ -1870,17 +1878,23 @@
   Game_Player.prototype.update = function (sceneActive) {
     _Game_Player_update.call(this, sceneActive);
 
-    // Handle seat sleep recovery (0.5% per second = 0.5% per 60 frames)
+    // Sitting down to rest. A second in the chair is a minute of the day: the
+    // clock is moved along with the recovery, because this used to hand out
+    // 0.5% of a night's sleep per real-world second with the game clock frozen,
+    // so a couple of hundred seconds in a seat was a full rest that cost the
+    // party nothing at all. The rest goes to the LEADER, not to actor 1, who is
+    // not necessarily the one sitting.
     if (this._isSeat) {
       this._seatFrameCounter++;
       if (this._seatFrameCounter >= 60) {
         this._seatFrameCounter = 0;
-        // Recover 0.5% of sleep for actor 1 only
-        const sleepRecovery = maxSleep * 0.005; // 0.5% of max sleep
-        const actor = $gameActors.actor(1);
-        if (actor) {
-          actor.addSleep(sleepRecovery);
-          debug(`Sleep recovery applied: ${sleepRecovery.toFixed(2)} for actor 1`);
+        setGameTimeMinutes(getGameTimeMinutes() + 1);
+        updateGameDateVariable();
+        const leader = $gameParty ? $gameParty.leader() : null;
+        if (leader) {
+          const sleepRecovery = maxSleep * 0.005; // 0.5% of max sleep per minute
+          leader.addSleep(sleepRecovery);
+          debug(`Sleep recovery applied: ${sleepRecovery.toFixed(2)} to the leader`);
         }
       }
     }

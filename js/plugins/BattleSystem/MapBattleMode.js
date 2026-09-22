@@ -3417,6 +3417,9 @@
             if (wiped) {
                 if (entry.battlers.some(b => b && b.isDead())) MBM._recordCorpse(entry, mapId);
                 delete pData[entry.persistentId];
+                if (BSE.Functions.recordBossDefeat) {
+                    BSE.Functions.recordBossDefeat(mapId, entry.eventId, entry.event);
+                }
                 $gameMap.eraseEvent(entry.eventId);
                 if (mapId === 636) {
                     if (!$gameSystem._procGenDefeatedEnemies) $gameSystem._procGenDefeatedEnemies = [];

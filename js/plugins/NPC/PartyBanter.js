@@ -230,6 +230,17 @@
         return Array.isArray(list) ? list : [];
     }
 
+    // Every amount the party says out loud is money, and money in this game is
+    // euros (100 gold = 1.00 euro). The banks are written with the token bare,
+    // so the conversion happens here, once, on the way into the context.
+    function money(gold) {
+        const n = Number(gold) || 0;
+        if (window.NPCShared && window.NPCShared.formatMoney) {
+            try { return window.NPCShared.formatMoney(n); } catch (e) { /* fall through */ }
+        }
+        return (n / 100).toFixed(2) + "€";
+    }
+
     function has(path) {
         return pool(path).length > 0;
     }
@@ -614,7 +625,7 @@
             leader: leader ? leader.name() : '',
             biome: biomeLabel(id),
             place: placeLabel(),
-            gold: $gameParty ? String($gameParty.gold()) : '',
+            gold: $gameParty ? money($gameParty.gold()) : '',
         };
     }
 
@@ -1301,7 +1312,7 @@
         noteShopBuy(item, price, place) {
             noteEvent('shop', {
                 item: item || '',
-                price: price || '',
+                price: price === '' || price == null ? '' : money(price),
                 shop: place || placeLabel(),
             });
         },
@@ -1372,7 +1383,7 @@
         const original = window.Diary.onOrderPlaced;
         window.Diary.onOrderPlaced = function (item, price, delivered) {
             original.call(this, item, price, delivered);
-            PartyBanter.noteShopBuy(item, String(price || ''), '');
+            PartyBanter.noteShopBuy(item, price, '');
         };
     };
     // Anything the party did in a menu or a minigame scene: the diary already

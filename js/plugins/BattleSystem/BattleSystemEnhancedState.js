@@ -169,6 +169,111 @@
     Game_System.prototype.clearDeathData = function() { this._deathData = null; };
 
     // ========================================================================
+    // 2b. A BOSS IS SLAIN ONCE, FOR THE WORLD
+    // ========================================================================
+    // An ordinary roamer is ambient fauna: the spawn pass deals it again on the
+    // next visit and nobody notices it is not the same creature. A written
+    // encounter is not fauna. An event carrying <Boss> in its NOTE (the event's
+    // own note box, not the enemy's) is a one-off: once the party has put it
+    // down it never stands there again, in this savegame or in any other
+    // savegame of the same world, which is where the record is kept.
+    //
+    // The record lives in save/worlds/<name>/bosses.json, the same place the
+    // chests keep which of them stand open, so a second party walking the world
+    // finds the fight already finished. Without an active world (a title-screen
+    // arena, a test map) it falls back to $gameSystem, which at least keeps the
+    // boss down for the savegame that felled it.
+    //
+    // Map 636 is ONE map reused for every world square, so an event id alone is
+    // not an address there: the key carries the procedural region with it, and a
+    // boss put down on one square says nothing about the next.
+
+    const BOSS_WORLD_FILE = 'bosses';                     // i18n-ignore: world data file key
+
+    // Never cache the file object: setActiveWorld drops the whole cache, and a
+    // held reference would go on writing into a world nobody is playing.
+    function bossRecord() {
+        const W = window.WorldManager;
+        if (W && typeof W.getFile === 'function' && W.hasActiveWorld && W.hasActiveWorld()) {
+            const store = W.getFile(BOSS_WORLD_FILE);
+            if (!store.slain) store.slain = {};
+            return store.slain;
+        }
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+        if (!$gameSystem._bossesSlain) $gameSystem._bossesSlain = {};
+        return $gameSystem._bossesSlain;
+    }
+
+    // Writing the world folder costs far more than one death is worth on its
+    // own, so the flush is coalesced; a savegame write flushes anyway.
+    const BOSS_FLUSH_DELAY = 1000;
+    let bossFlushTimer = null;
+    function requestBossFlush() {
+        const W = window.WorldManager;
+        if (!W || typeof W.flush !== 'function' || bossFlushTimer) return;
+        bossFlushTimer = setTimeout(() => {
+            bossFlushTimer = null;
+            try { W.flush(); } catch (e) { /* non-fatal */ }
+        }, BOSS_FLUSH_DELAY);
+    }
+
+    // The event's own note box. Read through the event data so a boss keeps its
+    // own name on the map ("Enemy" is the roamers' name, not a boss's).
+    BSE.Helpers.isBossEvent = function(ev) {
+        const data = ev && ev.event && ev.event();
+        return !!(data && /<Boss>/i.test(data.note || ''));
+    };
+
+    BSE.Helpers.bossEventKey = function(mapId, eventId) {
+        if (mapId === PROC_MAP_ID) {
+            const region = _procRegionKey();
+            if (region) return `636:${region}:${eventId}`;
+        }
+        return `${mapId}:${eventId}`;
+    };
+
+    BSE.Functions.isBossSlain = function(mapId, eventId) {
+        const record = bossRecord();
+        return !!(record && record[BSE.Helpers.bossEventKey(mapId, eventId)]);
+    };
+
+    // Called wherever a map monster's event is settled as gone. Anything that is
+    // not a boss event is left alone: ordinary fauna comes back, and that is the
+    // whole difference. The event has to be readable to be judged, so the caller
+    // records it while its map is still the one being played.
+    BSE.Functions.recordBossDefeat = function(mapId, eventId, event) {
+        if (!eventId) return false;
+        const ev = event || (($gameMap && $gameMap.mapId() === mapId) ? $gameMap.event(eventId) : null);
+        if (!BSE.Helpers.isBossEvent(ev)) return false;
+        const record = bossRecord();
+        if (!record) return false;
+        record[BSE.Helpers.bossEventKey(mapId, eventId)] = 1;
+        requestBossFlush();
+        return true;
+    };
+
+    // Take every boss already felled back off the map. Erasure is not saved with
+    // the map - Game_Map builds its events again from the map file on every
+    // setup - so this runs on each setup, and again before each procedural
+    // re-stock, which un-erases what it is about to deal again.
+    BSE.Functions.eraseSlainBossEvents = function() {
+        if (typeof $gameMap === 'undefined' || !$gameMap || !$gameMap.events) return;
+        const mapId = $gameMap.mapId();
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased) continue;
+            if (!BSE.Helpers.isBossEvent(ev)) continue;
+            if (!BSE.Functions.isBossSlain(mapId, ev.eventId())) continue;
+            $gameMap.eraseEvent(ev.eventId());
+        }
+    };
+
+    const _BSE_Game_Map_setupEvents = Game_Map.prototype.setupEvents;
+    Game_Map.prototype.setupEvents = function() {
+        _BSE_Game_Map_setupEvents.call(this);
+        BSE.Functions.eraseSlainBossEvents();
+    };
+
+    // ========================================================================
     // 3. BattleManager - Setup & Start
     // ========================================================================
 
@@ -570,6 +675,9 @@
         const clearJoinedEvent = j => {
             delete pData[j.persistentId];
             $gameSystem.setEventToDelete(j.mapId, j.eventId);
+            // A joined boss is settled the way the trigger is: down for good,
+            // for every savegame of this world.
+            BSE.Functions.recordBossDefeat(j.mapId, j.eventId);
             if ($gameMap.mapId() === 636) {
                 if (!$gameSystem._procGenDefeatedEnemies) $gameSystem._procGenDefeatedEnemies = [];
                 if (!$gameSystem._procGenDefeatedEnemies.includes(j.eventId)) {
@@ -624,6 +732,7 @@
             if (eventCleared(baseIndexes)) {
                 delete pData[bId];
                 $gameSystem.setEventToDelete(mId, eId);
+                BSE.Functions.recordBossDefeat(mId, eId);
                 if ($gameMap.mapId() === 636) {
                     if (!$gameSystem._procGenDefeatedEnemies) $gameSystem._procGenDefeatedEnemies = [];
                     if (!$gameSystem._procGenDefeatedEnemies.includes(eId)) {
@@ -670,6 +779,7 @@
 
             if (pData[bId]) delete pData[bId];
             $gameSystem.setEventToDelete(mId, eId);
+            BSE.Functions.recordBossDefeat(mId, eId);
             if ($gameMap.mapId() === 636) {
                 if (!$gameSystem._procGenDefeatedEnemies) $gameSystem._procGenDefeatedEnemies = [];
                 if (!$gameSystem._procGenDefeatedEnemies.includes(eId)) {

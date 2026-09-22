@@ -371,7 +371,7 @@
                 SoundManager.playBuzzer();
                 if (window.ParchmentToast) {
                     window.ParchmentToast.show(_ci18n('messages.cannotCombine'), {
-                        severity: "warn",
+                        severity: "warning",
                         duration: 180
                     });
                 }

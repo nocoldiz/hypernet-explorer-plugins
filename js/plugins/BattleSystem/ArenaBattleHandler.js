@@ -7,19 +7,19 @@
 * @text Arena Wins Variable
 * @type variable
 * @desc Variable ID to store the player's number of arena wins.
-* @default 1
+* @default 22
 *
 * @param GauntletWinsVariable
 * @text Gauntlet Wins Variable
 * @type variable
 * @desc Variable ID to store the player's number of gauntlet wins.
-* @default 2
+* @default 30
 *
 * @param GauntletBracketVariable
 * @text Gauntlet Bracket Variable
 * @type variable
 * @desc Variable ID to store the player's current gauntlet bracket.
-* @default 3
+* @default 31
 *
 * @command StartArenaBattle
 * @text Start Arena Battle
@@ -58,9 +58,13 @@
     const pluginName = "ArenaBattleHandler";
 
     const parameters = PluginManager.parameters(pluginName);
-    const arenaWinsVarId = Number(parameters['ArenaWinsVariable'] || 1);
-    const gauntletWinsVarId = Number(parameters['GauntletWinsVariable'] || 2);
-    const gauntletBracketVarId = Number(parameters['GauntletBracketVariable'] || 3);
+    // The fallbacks are the arena's OWN slots, not variables 1-3: those belong
+    // to the dungeon floor counter, the world-shared deepest floor and
+    // NextBattle, and an unset parameter used to write the gauntlet score into
+    // them.
+    const arenaWinsVarId = Number(parameters['ArenaWinsVariable'] || 22);
+    const gauntletWinsVarId = Number(parameters['GauntletWinsVariable'] || 30);
+    const gauntletBracketVarId = Number(parameters['GauntletBracketVariable'] || 31);
 
     // Single source of truth for the level brackets (was duplicated ~6 times).
     const BRACKETS = [

@@ -142,7 +142,7 @@
     let currentMapState = permanentMinimap ? 1 : 0;
 
     // Interactive Zoom Variables
-    let zoomScale = 0.25; // MIN_ZOOM: the map always opens fully zoomed out
+    let zoomScale = 0.06; // MIN_ZOOM: the map always opens fully zoomed out
     let panX = 0;
     let panY = 0;
     let isDragging = false;
@@ -436,7 +436,7 @@
 
     // Zoom bounds for the fullscreen map. The map opens fully zoomed out, so the
     // whole world is on screen before the player zooms in on anything.
-    const MIN_ZOOM = 0.25;
+    const MIN_ZOOM = 0.06;   // low enough that the whole sheet fits one screen
     const MAX_ZOOM = 8.0;
 
     function resetZoom() {
@@ -1868,6 +1868,7 @@
     function clearFullscreenCache() {
         fullscreenBitmap = null;
         destroyFullscreenLayer();
+        removeSheetLayer();
     }
 
     function ensureFullscreenLayer() {
@@ -1972,22 +1973,16 @@
         // The picked nation's territory goes down first, under the grid and
         // under every pin: it is the ground being coloured, not a mark on it.
         drawCountryHighlight(ctx, FS_OVERLAY_PX, FS_OVERLAY_PX);
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.lineWidth = 1;
-        const step = FS_OVERLAY_PX / FS_GRID;
-        for (let i = 1; i < FS_GRID; i++) {
-            const pos = i * step;
-            ctx.beginPath(); ctx.moveTo(pos, 0); ctx.lineTo(pos, FS_OVERLAY_PX); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0, pos); ctx.lineTo(FS_OVERLAY_PX, pos); ctx.stroke();
-        }
-        ctx.restore();
         // The overlay is drawn small and scaled up, so its markers and labels are
         // sized in overlay pixels: the ratio keeps them the size on screen they
         // were when the whole sheet was one 12288px bitmap.
+        fsNameCollect = [];
         drawEntitiesOnBitmap(bitmap, FS_OVERLAY_PX, FS_OVERLAY_PX, true, FS_OVERLAY_PX / WORLD_SHEET_PX);
+        setSheetNameEntries(fsNameCollect);
+        fsNameCollect = null;
         drawPadCursor(ctx, FS_OVERLAY_PX);
     }
+
 
     // The controller's square, drawn over everything else on the sheet: it is
     // where the player is looking, and it has to read over a pin and over the
@@ -2011,11 +2006,13 @@
     function renderFullscreenMap() {
         if ($gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID) {
             if (fsLayer) destroyFullscreenLayer();
+            setSheetNameEntries([]);
             renderBolognaFullscreen();
             return;
         }
         if (isOffEarthView()) {
             if (fsLayer) destroyFullscreenLayer();
+            setSheetNameEntries([]);
             renderAlienPlanetFullscreen();
             return;
         }
@@ -2133,7 +2130,7 @@
                 // A town the party raised, a square they wrote down and a mark
                 // they left are named before any catalogued place, so a crowded
                 // coast never drops the party's own work.
-                const entry = { x: px, y: py, name: pin.name, color: color };
+                const entry = { x: px, y: py, wx: pin.x, wy: pin.y, name: pin.name };
                 if (pin.kind === 'place') placeNames.push(entry);
                 else placeNames.unshift(entry);
             }
@@ -2154,13 +2151,18 @@
                     // The event carries the Destinations.json key; the sheet
                     // shows that entry's readable name.
                     const labelText = teleportEventLabel(name);
-                    if (labelText) placeNames.push({ x: ex, y: ey, name: labelText });
+                    if (labelText) placeNames.push({ x: ex, y: ey, wx: ev.x, wy: ev.y, name: labelText });
                 }
             }
         }
 
         if (showLabels && placeNames.length) {
-            drawMinimapNames(context, placeNames, targetW, targetH, namePx / MINIMAP_NAME_FONT);
+            // On the fullscreen sheet the names are not painted here at all:
+            // this bitmap is upscaled four times and then zoomed, which is what
+            // made every town name a smear. They are handed to the screen-space
+            // label layer, which draws them at screen resolution.
+            if (fsNameCollect) fsNameCollect.push(...placeNames);
+            else drawMinimapNames(context, placeNames, targetW, targetH, namePx / MINIMAP_NAME_FONT);
         }
 
         // 1b. Active quest objectives. Always in world-tile space (0-255), which
@@ -2172,7 +2174,10 @@
             drawQuestTileDiamonds(context, qx, qy, qt, showLabels ? markerPx : 8 * scale);
             if (showLabels) {
                 for (let i = 0; i < qt.labels.length; i++) {
-                    drawLabel(context, qx, qy + i * (namePx + 4 * scale), qt.labels[i], qt.colors[i] || questMarkerColor, namePx);
+                    const text = qt.labels[i];
+                    const color = qt.colors[i] || questMarkerColor;
+                    if (fsNameCollect) fsNameCollect.push({ wx: qt.x, wy: qt.y, name: text, color: color, line: i });
+                    else drawLabel(context, qx, qy + i * (namePx + 4 * scale), text, color, namePx);
                 }
             }
         }
@@ -2409,6 +2414,200 @@
     // ------------------------------------------------------------------------
     // THE WORLD SHEET
     // ------------------------------------------------------------------------
+    // -- THE SHEET'S SCREEN LAYER ---------------------------------------------
+    //
+    // Everything on the chart that has to stay LEGIBLE lives here rather than in
+    // the overlay bitmap. That bitmap is 3072px for a 12288px sheet and is then
+    // zoomed on top of that, so anything drawn into it is upscaled by up to
+    // thirty-two and reads as a smear. This layer is a sibling of the map sprite
+    // in screen space: its text is drawn once at screen resolution and only
+    // moved as the sheet pans, so a town name is as sharp zoomed right in as it
+    // is zoomed right out.
+    let sheetLayer = null;
+    let sheetGfx = null;
+    let sheetNameSprites = [];
+    let sheetNameEntries = [];
+    let sheetNameKey = null;
+    let sheetGfxKey = null;
+    let fsNameCollect = null;           // set only while the overlay is redrawing
+
+    const SHEET_NAME_PX = 15;
+
+    function setSheetNameEntries(list) {
+        sheetNameEntries = list || [];
+        const key = sheetNameEntries.map(e => e.wx + ',' + e.wy + ':' + e.name).join(';');
+        if (key === sheetNameKey) return;
+        sheetNameKey = key;
+        destroySheetNames();
+    }
+
+    function destroySheetNames() {
+        for (const sprite of sheetNameSprites) {
+            if (sprite.parent) sprite.parent.removeChild(sprite);
+            if (sprite.bitmap && sprite.bitmap.destroy) sprite.bitmap.destroy();
+        }
+        sheetNameSprites = [];
+    }
+
+    function sheetNameSprite(entry) {
+        const probe = new Bitmap(8, 8);
+        probe.fontFace = 'GameFont, sans-serif';
+        probe.fontSize = SHEET_NAME_PX;
+        probe.fontBold = true;
+        const w = Math.ceil(probe.measureTextWidth(entry.name)) + 16;
+        if (probe.destroy) probe.destroy();
+        const h = SHEET_NAME_PX + 10;
+        const bmp = new Bitmap(w, h);
+        bmp.fontFace = 'GameFont, sans-serif';
+        bmp.fontSize = SHEET_NAME_PX;
+        bmp.fontBold = true;
+        bmp.outlineWidth = 4;
+        bmp.outlineColor = 'black';
+        bmp.textColor = entry.color || MINIMAP_NAME_COLOR;
+        bmp.drawText(entry.name, 0, 0, w, h, 'center');
+        const sprite = new Sprite(bmp);
+        sprite.anchor.x = 0.5;
+        sprite.anchor.y = 0;
+        sprite._entry = entry;
+        return sprite;
+    }
+
+    function ensureSheetLayer() {
+        if (!isLiveSprite(worldMapSprite) || !worldMapSprite.parent) return null;
+        const parent = worldMapSprite.parent;
+        if (sheetLayer && !isLiveSprite(sheetLayer)) {
+            sheetLayer = null; sheetGfx = null;
+            sheetNameSprites = []; sheetNameKey = null; sheetGfxKey = null;
+        }
+        if (!sheetLayer) {
+            sheetLayer = new Sprite();
+            sheetGfx = new PIXI.Graphics();
+            sheetLayer.addChild(sheetGfx);
+        }
+        if (sheetLayer.parent !== parent) {
+            if (sheetLayer.parent) sheetLayer.parent.removeChild(sheetLayer);
+            parent.addChildAt(sheetLayer, parent.children.indexOf(worldMapSprite) + 1);
+        }
+        return sheetLayer;
+    }
+
+    function removeSheetLayer() {
+        destroySheetNames();
+        if (isLiveSprite(sheetLayer) && sheetLayer.parent) {
+            sheetLayer.parent.removeChild(sheetLayer);
+        }
+        sheetLayer = null;
+        sheetGfx = null;
+        sheetNameKey = null;
+        sheetGfxKey = null;
+    }
+
+    // Screen rect of one world square, or null when the sheet is not up.
+    function squareScreenRect(x, y) {
+        const dims = fullscreenMapDims();
+        if (!dims || !dims.w || !dims.h || !zoomScale) return null;
+        const cw = (dims.w / WORLD_TILES) * zoomScale;
+        const ch = (dims.h / WORLD_TILES) * zoomScale;
+        return { x: panX + x * cw, y: panY + y * ch, w: cw, h: ch };
+    }
+
+    // The ruled square under the pointer, its eight neighbours, and the square
+    // the player has actually picked. The whole sheet is never ruled: a grid
+    // over 65536 squares is noise, and the only square anybody is reading is
+    // the one they are pointing at.
+    function drawSheetGrid(hover, selected) {
+        if (!sheetGfx) return;
+        const key = (hover ? hover.x + ',' + hover.y : '') + '|' +
+                    (selected ? selected.x + ',' + selected.y : '') + '|' +
+                    Math.round(panX) + ',' + Math.round(panY) + ',' + zoomScale.toFixed(4);
+        if (key === sheetGfxKey) return;
+        sheetGfxKey = key;
+        sheetGfx.clear();
+        if (hover) {
+            const cell = squareScreenRect(hover.x, hover.y);
+            if (cell && cell.w >= 3) {
+                sheetGfx.lineStyle(1, 0xFFFFFF, 0.45);
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (hover.x + dx < 0 || hover.y + dy < 0) continue;
+                        if (hover.x + dx >= WORLD_TILES || hover.y + dy >= WORLD_TILES) continue;
+                        sheetGfx.drawRect(cell.x + dx * cell.w, cell.y + dy * cell.h, cell.w, cell.h);
+                    }
+                }
+                sheetGfx.lineStyle(2, 0xFFFFFF, 0.9);
+                sheetGfx.drawRect(cell.x, cell.y, cell.w, cell.h);
+            }
+        }
+        if (selected) {
+            const cell = squareScreenRect(selected.x, selected.y);
+            if (cell) {
+                const w = Math.max(cell.w, 10);
+                const h = Math.max(cell.h, 10);
+                const cx = cell.x + cell.w / 2 - w / 2;
+                const cy = cell.y + cell.h / 2 - h / 2;
+                sheetGfx.lineStyle(4, 0x000000, 0.8);
+                sheetGfx.drawRect(cx, cy, w, h);
+                sheetGfx.lineStyle(2, 0xFFD76A, 1);
+                sheetGfx.beginFill(0xFFD76A, 0.22);
+                sheetGfx.drawRect(cx, cy, w, h);
+                sheetGfx.endFill();
+            }
+        }
+    }
+
+    // One pass over the names: built on first sight, then only moved. A name
+    // that would land on one already placed is dropped, exactly as the corner
+    // chart drops them, because a crowded coast reads as nothing otherwise.
+    function refreshSheetNames() {
+        if (!sheetLayer) return;
+        if (sheetNameSprites.length !== sheetNameEntries.length) {
+            destroySheetNames();
+            for (const entry of sheetNameEntries) {
+                const sprite = sheetNameSprite(entry);
+                sprite.visible = false;
+                sheetLayer.addChild(sprite);
+                sheetNameSprites.push(sprite);
+            }
+        }
+        const taken = [];
+        for (const sprite of sheetNameSprites) {
+            const entry = sprite._entry;
+            const cell = squareScreenRect(entry.wx, entry.wy);
+            if (!cell) { sprite.visible = false; continue; }
+            const cx = cell.x + cell.w / 2;
+            const cy = cell.y + cell.h / 2 + Math.max(6, cell.h * 0.5) +
+                       (entry.line || 0) * (SHEET_NAME_PX + 4);
+            const halfW = sprite.bitmap.width / 2;
+            if (cx + halfW < 0 || cx - halfW > Graphics.width ||
+                cy + sprite.bitmap.height < 0 || cy > Graphics.height) {
+                sprite.visible = false;
+                continue;
+            }
+            const box = { l: cx - halfW, r: cx + halfW, t: cy, b: cy + sprite.bitmap.height };
+            if (taken.some(o => box.l < o.r && box.r > o.l && box.t < o.b && box.b > o.t)) {
+                sprite.visible = false;
+                continue;
+            }
+            taken.push(box);
+            sprite.x = Math.round(cx);
+            sprite.y = Math.round(cy);
+            sprite.visible = true;
+        }
+    }
+
+    // Driven once a frame while the chart is up.
+    function refreshSheetLayer() {
+        if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) || !worldMapSprite.visible) {
+            if (sheetLayer) sheetLayer.visible = false;
+            return;
+        }
+        if (!ensureSheetLayer()) return;
+        sheetLayer.visible = true;
+        drawSheetGrid(padSquare || squareAtPointer(), selectedSquare);
+        refreshSheetNames();
+    }
+
+
     // The fullscreen chart used to be a picture with a red dot on it. It is now
     // the thing the party plans with, and everything below serves that one idea:
     //
@@ -2609,6 +2808,11 @@
             value: (country && country.country) ? country.country : T('WorldMap.read.unclaimed'),
         });
 
+        // A nation is held by a hyperpower, and on this chart the bloc matters
+        // more than the flag: it is who the party answers to on that ground.
+        const power = hyperpowerOfCountry(country);
+        if (power) lines.push({ label: T('WorldMap.read.power'), value: power });
+
         let biome = null;
         try {
             if ($gameSystem && $gameSystem.getBiomeFromCache) biome = $gameSystem.getBiomeFromCache(x, y);
@@ -2648,6 +2852,20 @@
         const note = noteAt(x, y);
         if (note) lines.push({ label: T('WorldMap.read.note'), value: note.text });
         return lines;
+    }
+
+    // The bloc holding a nation, as the political simulation reads it now, and
+    // as the country table wrote it down otherwise. Neutral ground has none.
+    function hyperpowerOfCountry(country) {
+        const name = country && country.country;
+        if (!name) return '';
+        const sim = window.HistoryManager && window.HistoryManager.getNationState
+            ? window.HistoryManager.getNationState(name) : null;
+        let holder = (sim && sim.controller) || '';
+        if (!holder || holder === 'Neutral') holder = country.controller || '';
+        if (!holder || holder === 'Neutral') holder = country.faction || '';
+        if (!holder || holder === 'Neutral') return '';
+        return holder;
     }
 
     function pinAtSquare(x, y) {
@@ -2708,9 +2926,16 @@
         const cw = targetW / WORLD_TILES;
         const ch = targetH / WORLD_TILES;
         ctx.save();
-        ctx.fillStyle = 'rgba(255, 215, 106, 0.32)';
+        ctx.fillStyle = 'rgba(255, 199, 64, 0.62)';
         for (let i = 0; i < cells.length; i += 2) {
             ctx.fillRect(cells[i] * cw, cells[i + 1] * ch, Math.ceil(cw), Math.ceil(ch));
+        }
+        // An outline around every washed square: the wash alone disappears over
+        // a bright coast, and the picked nation has to be unmistakable.
+        ctx.strokeStyle = 'rgba(96, 40, 0, 0.85)';
+        ctx.lineWidth = Math.max(1, cw * 0.14);
+        for (let i = 0; i < cells.length; i += 2) {
+            ctx.strokeRect(cells[i] * cw, cells[i + 1] * ch, Math.ceil(cw), Math.ceil(ch));
         }
         ctx.restore();
     }
@@ -2835,12 +3060,19 @@
         // a button. It is rewritten with every square the pointer crosses, so
         // it is watched by delegation rather than bound each time.
         el.addEventListener('pointerover', ev => {
-            if (ev.target.closest('.wm-show-map')) chromePointerIn = true;
+            if (ev.target.closest('.wm-show-map, .wm-note-btn')) chromePointerIn = true;
         });
         el.addEventListener('pointerout', ev => {
-            if (ev.target.closest('.wm-show-map')) chromePointerIn = false;
+            if (ev.target.closest('.wm-show-map, .wm-note-btn')) chromePointerIn = false;
         });
         el.addEventListener('click', ev => {
+            const note = ev.target.closest('[data-wm-note-at]');
+            if (note) {
+                ev.stopPropagation();
+                const at = String(note.dataset.wmNoteAt).split(',');
+                openNoteModal(Number(at[0]), Number(at[1]));
+                return;
+            }
             const hit = ev.target.closest('[data-wm-show]');
             if (!hit) return;
             ev.stopPropagation();
@@ -2875,7 +3107,9 @@
 
     function refreshReadout(square) {
         if (!chromeReadoutEl) { readoutKey = null; return; }
-        const key = square ? (square.x + ',' + square.y) : '';
+        const picked = !!(square && selectedSquare &&
+            selectedSquare.x === square.x && selectedSquare.y === square.y);
+        const key = square ? (square.x + ',' + square.y + (picked ? ':p' : '')) : '';
         if (key === readoutKey) return;
         readoutKey = key;
         if (!square) { chromeReadoutEl.style.display = 'none'; return; }
@@ -2894,6 +3128,12 @@
         chromeReadoutEl.innerHTML =
             `<div class="wm-read-head">${escapeSheet(T('WorldMap.read.square', { x: square.x, y: square.y }))}</div>` +
             rows + (action ? `<div class="wm-read-action">${escapeSheet(action)}</div>` : '') +
+            // Writing on a square is deliberate: it is offered on the square
+            // that has been picked, and nowhere else.
+            (picked
+                ? `<div class="inspect-btn focusable wm-note-btn" data-wm-note-at="${square.x},${square.y}">` +
+                  `${escapeSheet(T('WorldMap.note.write'))}</div>`
+                : '') +
             // Build the square and look at it before walking onto it. The
             // square is built for the look and thrown away again, so the
             // button is offered for any square, catalogued or bare ground.
@@ -3251,6 +3491,10 @@
     // squareAtPointer() answers for a mouse. The stick keeps panning the sheet
     // (updatePanControls), so the two never argue over the same input.
     let padSquare = null;
+    // THE PICKED SQUARE. A click pins the readout to one square: it stays there
+    // while the pointer wanders off, until another square is picked or the same
+    // one is clicked again. Only a picked square can be written on.
+    let selectedSquare = null;
     let padSeenX = -1;
     let padSeenY = -1;
 
@@ -3276,7 +3520,27 @@
     // the one under the mouse otherwise. Everything that used to ask
     // squareAtPointer() directly asks this instead.
     function activeSquare() {
-        return padSquare || squareAtPointer();
+        return padSquare || selectedSquare || squareAtPointer();
+    }
+
+    // Clicking the square already picked puts it down again.
+    function selectSquare(square) {
+        if (selectedSquare && square &&
+            selectedSquare.x === square.x && selectedSquare.y === square.y) {
+            selectedSquare = null;
+        } else {
+            selectedSquare = square ? { x: square.x, y: square.y } : null;
+        }
+        readoutKey = null;
+        sheetGfxKey = null;
+        SoundManager.playCursor();
+    }
+
+    function clearSelectedSquare() {
+        if (!selectedSquare) return;
+        selectedSquare = null;
+        readoutKey = null;
+        sheetGfxKey = null;
     }
 
     // The cursor starts where the party is, so the first press of a direction
@@ -3320,6 +3584,11 @@
             };
         }
         fsOverlayKey = null;
+        // Walking the cursor puts down whatever square was picked before: the
+        // cursor IS the pad's pick, and two picks would fight over the readout.
+        selectedSquare = null;
+        readoutKey = null;
+        sheetGfxKey = null;
         keepPadCursorInView();
         refreshWorldMapDisplay();
         SoundManager.playCursor();
@@ -3361,12 +3630,8 @@
         // to set off for) and the shoulder writes on it, as right-click does.
         if (Input.isTriggered('ok')) {
             const pin = pinAtSquare(square.x, square.y);
-            if (pin && pin.destName) bookPinTravel(pin);
-            else openSquarePreview(square.x, square.y);
-            return;
-        }
-        if (Input.isTriggered('shift')) {
-            openNoteModal(square.x, square.y);
+            if (pin && pin.destName && sheetTravelTransport()) bookPinTravel(pin);
+            else selectSquare(square);
         }
     }
 
@@ -3409,13 +3674,12 @@
 
         refreshReadout(activeSquare());
 
-        // Right-click writes on the square: a mark, or the note already there.
+        // Right-click puts the chart away, the way every other overlay in the
+        // game closes on a cancel. Writing on a square is the note button on
+        // the readout of a picked square.
         if (TouchInput.isCancelled()) {
-            const square = squareAtPointer();
-            if (square) {
-                openNoteModal(square.x, square.y);
-                TouchInput.clear();
-            }
+            TouchInput.clear();
+            toggleMapState();
             return;
         }
 
@@ -3432,7 +3696,14 @@
             sheetPressing = false;
             if (sheetPressMoved) return;
             const pin = pinAtPointer();
-            if (pin && pin.destName) bookPinTravel(pin);
+            if (pin && pin.destName && sheetTravelTransport()) { bookPinTravel(pin); return; }
+            // Anything else is a square being picked: the readout stops
+            // following the pointer and stays on it.
+            const square = squareAtPointer();
+            if (square) {
+                clearPadCursor();
+                selectSquare(square);
+            }
         }
     }
 
@@ -3546,7 +3817,12 @@
             // The chart is not up any more: its furniture goes with it, however
             // the map was closed.
             destroyChrome();
+            clearSelectedSquare();
         }
+
+        // The chart's own screen-space layer: the town names, the ruled square
+        // under the pointer and the square that has been picked.
+        refreshSheetLayer();
 
         // Border arrows for objectives the current pan has pushed off-screen.
         // Called outside the fullscreen branch so closing the map also clears them.

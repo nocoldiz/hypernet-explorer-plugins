@@ -426,7 +426,18 @@
                     border: 1px solid transparent;
                     border-radius: 3px;
                     pointer-events: auto;
+                    /* The grab is a pointer-capture drag: the browser must not
+                       turn it into an image drag or a pan of its own, and the
+                       label and picture inside must not take the press away
+                       from the shortcut that owns the gesture. */
+                    -webkit-user-drag: none;
+                    touch-action: none;
                     transition: background 0.15s, border-color 0.15s, left 0.12s ease, top 0.12s ease;
+                }
+
+                .desktop-icon * {
+                    pointer-events: none;
+                    -webkit-user-drag: none;
                 }
 
                 /* Applied by the grid when cells had to shrink to fit the desktop */

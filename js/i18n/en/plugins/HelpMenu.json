@@ -18,12 +18,12 @@
   "topics": "Topics",
   "searchPlaceholder": "Search the manual...",
   "topicKnownBy": "Known by {names}.",
-  "topicExplainer": "A topic is something the party has been told. Once one of them has heard it, it can be raised with anybody: conversation options that need a topic stay out of sight until somebody in the party knows it.",
+  "topicExplainer": "A topic is something the party has been told. Once one member has heard it, any of them can raise it. Conversation options that need a topic stay hidden until then.",
   "noTopicsLearnedYet": "Nobody has told the party anything worth writing down yet.",
   "noHistoryThisYear": "No notable events were recorded this year.",
   "rumors": "Rumors",
   "openWiki": "Open article",
-  "rumorExplainer": "A name the party has heard said out loud, with no page written for it. Where it turns out to be a nation, a hyperpower, a faction, a party or one of the people who lead them, the article on it can be opened from here.",
+  "rumorExplainer": "A name the party has heard but has no page for. If it turns out to be a nation, a hyperpower, a faction, a party or one of their leaders, its article opens from here.",
   "linkLocked": "Nobody in the party has been told about {name} yet.",
   "linkMissing": "There is no page on {name} in the manual."
 }

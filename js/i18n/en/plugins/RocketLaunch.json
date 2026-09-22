@@ -2,25 +2,37 @@
   "site": {
     "taranto": {
       "name": "Taranto",
-      "blurb": "Coastal yard on the Ionian."
+      "blurb": "Coastal launch yard on the Ionian."
     },
     "greenwich": {
       "name": "Greenwich",
-      "blurb": "Mast on the meridian."
+      "blurb": "Launch mast on the meridian."
     },
     "vault": {
       "name": "{patron}'s Vault",
-      "blurb": "Shaft gun under the vault.",
+      "blurb": "Shaft launcher under the vault.",
       "nameUnknown": "The Vault",
-      "blurbUnknown": "Shaft gun under a vault."
+      "blurbUnknown": "Shaft launcher under a vault."
     },
     "omega": {
       "name": "Omega Tower",
-      "blurb": "The tower is the gun."
+      "blurb": "Launch site at the Omega Tower."
     },
     "ship": {
       "name": "Starship",
-      "blurb": "The ship's own rail."
+      "blurb": "Launch rail aboard the starship."
+    },
+    "moon": {
+      "name": "The Moon",
+      "blurb": "Spaceport on the Moon."
+    },
+    "zeta": {
+      "name": "The Monument",
+      "blurb": "Spaceport on Zeta Reticuli B."
+    },
+    "titania": {
+      "name": "Titania",
+      "blurb": "Spaceport on Titania, in Andromeda."
     }
   },
   "mode": {
@@ -35,6 +47,58 @@
     "deorbit": {
       "name": "Deorbit",
       "blurb": "Fired at the planet and left to fall."
+    },
+    "lunar": {
+      "name": "Lunar",
+      "blurb": "Four stages. The middle one is not a rocket."
+    },
+    "lunarOrbit": {
+      "name": "Lunar, direct",
+      "blurb": "Nothing overhead and nothing to cross. Just the drive."
+    },
+    "moon": {
+      "name": "Lunar",
+      "blurb": "Four stages. The middle one is not a rocket."
+    },
+    "moonAir": {
+      "name": "Lunar, no belt",
+      "blurb": "A climb through weather nobody has littered."
+    },
+    "moonOrbit": {
+      "name": "Lunar, direct",
+      "blurb": "Nothing overhead and nothing to cross. Just the drive."
+    },
+    "zeta": {
+      "name": "Zeta Reticuli",
+      "blurb": "Thirty-nine light years on a stack of drives."
+    },
+    "zetaAir": {
+      "name": "Zeta, no belt",
+      "blurb": "The stack, off a world with a clean sky."
+    },
+    "zetaOrbit": {
+      "name": "Zeta, direct",
+      "blurb": "Three liminal stages, thrown away one by one."
+    },
+    "titania": {
+      "name": "Titania",
+      "blurb": "Jupiter, then a hole to another galaxy."
+    },
+    "titaniaAir": {
+      "name": "Titania, no belt",
+      "blurb": "The slingshot and the jump, clean sky."
+    },
+    "titaniaOrbit": {
+      "name": "Titania, direct",
+      "blurb": "Slingshot out, SB jump, Andromeda."
+    },
+    "orbitalAir": {
+      "name": "Orbital",
+      "blurb": "Up to the ship. Nothing in this sky."
+    },
+    "orbitalOrbit": {
+      "name": "Orbital, direct",
+      "blurb": "No air to climb through. Just the throw."
     }
   },
   "phase": {
@@ -56,7 +120,27 @@
     "terminal": "Terminal",
     "capture": "Magnetic capture",
     "arrived": "Arrived",
-    "fall": "Falling"
+    "fall": "Falling",
+    "shroud": "Shroud release",
+    "drift": "Drifting clear",
+    "liminal": "Liminal spool",
+    "transit": "Liminal transit",
+    "skim": "Lunar skim",
+    "touchdown": "Touchdown",
+    "flyby": "Lunar orbit",
+    "thewhite": "The white desert",
+    "emerge": "Emergence",
+    "cruise": "Cruise",
+    "jupiter": "Jupiter approach",
+    "assist": "Gravity assist",
+    "escape": "Solar escape",
+    "sbspool": "SB jump spool",
+    "wormhole": "Wormhole",
+    "throat": "The throat",
+    "hexspace": "Hexspace",
+    "refuel": "Shell refuel",
+    "transfer": "Transfer burn",
+    "solomon": "Gate of Solomon"
   },
   "band": {
     "troposphere": "Troposphere",
@@ -68,7 +152,26 @@
     "kessler": "Kessler",
     "rendezvous": "Rendezvous",
     "prograde": "Prograde",
-    "apogee": "Apogee"
+    "apogee": "Apogee",
+    "liminal": "Drive",
+    "skim": "Skim",
+    "lunarArrive": "Lunar approach",
+    "transit": "TRANSIT",
+    "hexspace": "HEXSPACE",
+    "thewhite": "WHITE DESERT",
+    "emerge": "EMERGE",
+    "refuel": "SHELL TAP",
+    "transfer": "TRANSFER",
+    "cruise": "CRUISE",
+    "jupiter": "JUPITER",
+    "assist": "ASSIST",
+    "escape": "ESCAPE",
+    "sbspool": "SB SPOOL",
+    "wormhole": "WORMHOLE",
+    "throat": "THROAT",
+    "flyby": "ORBIT",
+    "touchdown": "TOUCHDOWN",
+    "solomon": "SOLOMON"
   },
   "hud": {
     "altitude": "Alt",
@@ -114,7 +217,10 @@
     "vertical": "Vertical",
     "destTitle": "Destination",
     "destSubtitle": "Choose where the hop comes down",
-    "choice": "Your choice"
+    "choice": "Your choice",
+    "fare": "Fare",
+    "free": "Free",
+    "cantAfford": "Cannot afford"
   },
   "weather": {
     "none": "Clear",
@@ -177,6 +283,233 @@
     "stageSep": "Stage separation. Tanks dry, and it can go.",
     "stageLost": "Stage is gone - something took the tanks off her. The burn was already made.",
     "deorbitFall": "Thrown, and falling. Nothing is burning and nothing is going to.",
-    "deorbitFalling": "Still falling. The planet is doing all the work from here."
+    "deorbitFalling": "Still falling. The planet is doing all the work from here.",
+    "shroudBlow": "Belt is behind you. Blowing the drive shroud.",
+    "shroudGone": "Shroud away. The engine is in the open and it is clean.",
+    "moonAhead": "There it is. Dead ahead and holding.",
+    "liminalSpool": "Liminal drive spooling. Do not look at the core.",
+    "liminalHot": "The vanes are lit. Everything in here has two shadows.",
+    "liminalGo": "Drive is in. Range is collapsing - stand by for nothing at all.",
+    "transitDeep": "There is no outside. There is only the far end of it.",
+    "moonFills": "Range sixty kilometres. It is the whole window now.",
+    "lunarSkim": "Over the regolith. No air, so nothing slows you but you.",
+    "baseSighted": "The pad has you. Apron lamps are walking in.",
+    "lunarFinal": "Final. Drive to a crawl, and set her on the lamps.",
+    "lunarDown": "Contact. Weight on the pad.",
+    "lunarArrived": "Down on the Moon. Suits on before that hatch moves.",
+    "lunarPadClear": "Bay is clear. The Moon is where it always is.",
+    "lunarCount": "Lunar crossing, direct. No air out there and no belt either.",
+    "lunarDrift": "Drifting clear of the mast. Nothing burning, nothing needs to.",
+    "lunarCapture": "Capture. You are in orbit around the Moon.",
+    "lunarOrbiting": "Going round. The far side is as advertised: nothing at all.",
+    "lunarDeorbit": "Coming off the circuit. Drive down, nose on the base.",
+    "cleanSky": "Sky is clear all the way out. Nobody has left anything up there.",
+    "cleanSkyCrew": "No belt. I could get used to that.",
+    "shroudClear": "Sleeve is off. The drive has never seen daylight before.",
+    "driftClear": "Clear of the mast. Nothing burning, nothing needs to.",
+    "moonOrbiting": "Going round. The far side is as advertised: nothing at all.",
+    "moonSkim": "Over the regolith. No air, so nothing slows you but you.",
+    "moonArrived": "Down on the Moon. Suits on before that hatch moves.",
+    "stackSpool": "Liminal stack spooling. All three stages answering.",
+    "stackHot": "Three drives lit and the hull is singing with them.",
+    "gateOpen": "First stage in. Corridor is open - do not count the walls.",
+    "gateSlabs": "It is all colour. Slabs of it, going past like floors.",
+    "stageOne": "Stage one dry. Cut it loose.",
+    "stageTwo": "Stage two dry. Gone.",
+    "whiteIn": "Third stage. Whatever is out there now, it is white.",
+    "whiteSolids": "Shapes. They turn in directions that are not there.",
+    "whiteDeep": "No colour left. Just white, and the black edges of things.",
+    "stageThree": "Last stage dry. That is the whole stack gone.",
+    "zetaOut": "Out. Zeta Reticuli, both suns, dead ahead.",
+    "dysonSighted": "They built shells around both of them. Both.",
+    "zetaOrbiting": "Going round. The Monument is down there somewhere.",
+    "zetaSkim": "Over the plain. Thick air out there, and it is breathable.",
+    "zetaArrived": "Down at the Monument. The air is fine. Take the helmet off.",
+    "jupiterAim": "Course is Jupiter. We are not stopping there.",
+    "jupiterAhead": "Jupiter ahead and it is the whole window.",
+    "jupiterClose": "We are going to hit it. Tell me we are not going to hit it.",
+    "assistIn": "Periapsis. The planet has you now.",
+    "assistOut": "Out the far side with Jupiter's own speed added to yours.",
+    "escapeSpeed": "Escape velocity and then some. Nothing can hold you now.",
+    "lastPlanet": "That was the last planet. There is nothing ahead of us at all.",
+    "sbSpool": "SB jump drive spooling. It has been dead weight since the pad.",
+    "sbHot": "Something is pulling. Not on the hull - on the space the hull is in.",
+    "holeOpen": "It is open. Two and a half million light years, and it is a ball.",
+    "holeSphere": "It is a SPHERE. There is another sky wrapped round the front of it.",
+    "holeCommit": "Committed. No abort past this point and no point wanting one.",
+    "throatIn": "Inside. Instruments have nothing sensible to say.",
+    "throatDeep": "The stars are in the wrong places and they are all still here.",
+    "throatOut": "Far mouth ahead. Stand by for a sky you do not know.",
+    "andromeda": "Andromeda. That is a different galaxy out there.",
+    "theNeighbour": "And that is the hole Titania goes round. They call it the neighbour.",
+    "titaniaOrbiting": "Going round. All of it is ocean and all of it is acid.",
+    "titaniaSkim": "Low over the ocean. Do not open anything.",
+    "titaniaArrived": "Down at the embassy. Suits stay on out here - that sea eats hulls.",
+    "capture": "Capture. You are in orbit.",
+    "deorbitBurn": "Coming off the circuit. Drive down, nose on the base.",
+    "finalApproach": "Final. Drive to a crawl, and set her on the lamps.",
+    "contact": "Contact. Weight on the pad.",
+    "hexIn": "Second stage. Colour is draining out of the corridor.",
+    "hexCompany": "There is something out there keeping pace with us.",
+    "zetaStar": "Out beside the sun. That shell is the whole window.",
+    "refuelIn": "They have opened a tap for you. Tanks filling off the shell.",
+    "refuelCrew": "Somebody is giving us a star to drink.",
+    "refuelDone": "Tanks full. Nobody charged us anything.",
+    "transferBurn": "Burning across the system. The Monument is on the far side of it.",
+    "transferCrew": "A whole system to cross, and it is the short leg of this trip."
+  },
+  "radio": {
+    "control": "CONTROL",
+    "line": "{who}: {text}",
+    "tourists": "TOURISTS",
+    "dargos": "DARGOS APPROACH"
+  },
+  "crew": {
+    "rattled": {
+      "railExit": "We are off the rail. We are off the rail, that was not - that was fast.",
+      "maxQ": "Something is screaming. Is it meant to scream?",
+      "beltDeep": "It keeps hitting us. {pct}. It keeps hitting us.",
+      "beltBare": "There is nothing left on the outside. {pct}. Nothing.",
+      "beltClear": "Is that it? Tell me that is it.",
+      "moonAhead": "It is very big and it is getting bigger.",
+      "liminalHot": "I can hear the drive through the frame. I can hear it in my teeth.",
+      "transitDeep": "Do not look out. I looked out. Do not look out.",
+      "moonFills": "That is the whole window. That is the whole window.",
+      "lunarArrived": "Ground. Actual ground. I would like to sit down on it.",
+      "gateSlabs": "The walls are going past and I cannot count them.",
+      "whiteSolids": "They are turning inside themselves. Please stop looking.",
+      "jupiterClose": "That is too close. That is far too close.",
+      "holeSphere": "There is a sky inside it. There is another sky inside it.",
+      "throatDeep": "I want to be anywhere that has a floor.",
+      "zetaArrived": "Air. Real air. I am going to sit down in it.",
+      "titaniaArrived": "Nothing comes off. Nobody take anything off.",
+      "hexCompany": "Something is out there. Something is out there."
+    },
+    "steady": {
+      "railExit": "Rail exit, clean. Two point four and nothing burning.",
+      "maxQ": "Through max Q. Airframe is holding.",
+      "beltDeep": "Still in the belt. Hull {pct}. Nothing structural yet.",
+      "beltBare": "Hull {pct}. Down to the frame and still flying.",
+      "beltClear": "Belt is behind us. Damage is cosmetic where it counts.",
+      "moonAhead": "Moon acquired, dead ahead. Attitude is holding.",
+      "liminalHot": "Drive at power. All three vanes even.",
+      "transitDeep": "Mid-crossing. Instruments are steady, which is the odd part.",
+      "moonFills": "Sixty kilometres. Coming in on the base.",
+      "lunarArrived": "Down and safe. Check seals before anybody moves.",
+      "gateSlabs": "Corridor is stable. Hull loads are nominal, oddly enough.",
+      "whiteSolids": "Four-dimensional. The instruments agree, which is the worrying part.",
+      "jupiterClose": "Periapsis on the numbers. She holds.",
+      "holeSphere": "Spherical mouth. The far sky is refracted round the whole of it.",
+      "throatDeep": "Instruments steady. Everything outside them is not.",
+      "zetaArrived": "Down and safe. Atmosphere reads breathable - confirm before helmets.",
+      "titaniaArrived": "Down. Nobody breaks a seal until I say so.",
+      "hexCompany": "Contact off the beam. Holding station with us. Noted."
+    },
+    "hot": {
+      "railExit": "THAT is a gun. Do it again.",
+      "maxQ": "Max Q! Let it scream, it is meant to!",
+      "beltDeep": "Take it, then. {pct} and we are still going up.",
+      "beltBare": "Strip the whole thing off, see if I care. {pct}.",
+      "beltClear": "Through! Did you see what it took off us?",
+      "moonAhead": "There she is. Right in the middle of the glass.",
+      "liminalHot": "Light it. Light the whole thing.",
+      "transitDeep": "This is the best thing anyone has ever built.",
+      "moonFills": "It is enormous, it is enormous, look at the size of it!",
+      "lunarArrived": "We landed on the Moon. Somebody write that down.",
+      "gateSlabs": "Look at it GO. Look at the colours on it!",
+      "whiteSolids": "I have no idea what those are and I love them.",
+      "jupiterClose": "Closer! That is the whole point of a slingshot!",
+      "holeSphere": "We are going through a ball into another galaxy. Yes.",
+      "throatDeep": "Best corridor anybody has ever been down.",
+      "zetaArrived": "Thirty-nine light years. Somebody open something.",
+      "titaniaArrived": "Acid ocean! Do not touch it! I want to touch it.",
+      "hexCompany": "Let it keep up. It will not keep up for long."
+    },
+    "warm": {
+      "railExit": "Everyone all right? Good. That was the worst part.",
+      "maxQ": "Breathe out. It sounds worse than it is.",
+      "beltDeep": "Hull {pct}. Hold on to each other and it will pass.",
+      "beltBare": "{pct}. We have lost the skin, not the people.",
+      "beltClear": "We are through. Everybody is here.",
+      "moonAhead": "Oh. Oh, it is lovely from here.",
+      "liminalHot": "The light is beautiful and I do not trust it at all.",
+      "transitDeep": "Look at each other, not out of the window. Just for a moment.",
+      "moonFills": "It fills everything. It is the colour of old bone.",
+      "lunarArrived": "We are down. Well done, all of you.",
+      "gateSlabs": "It is beautiful. Whatever else it is, it is beautiful.",
+      "whiteSolids": "They are almost gentle. Look how slowly they turn.",
+      "jupiterClose": "Hold on to something. It will be over in a moment.",
+      "holeSphere": "Somebody built that. Somebody built that for us.",
+      "throatDeep": "Everyone all right? Say something, any of you.",
+      "zetaArrived": "We are here. All of us, and the air is good.",
+      "titaniaArrived": "Helmets stay on. I know. I am sorry.",
+      "hexCompany": "Whatever is out there, it has not hurt us. Let it come."
+    },
+    "dry": {
+      "railExit": "So that is what being fired out of a cannon costs. Noted.",
+      "maxQ": "Max Q. The paint is going. The paint was optional.",
+      "beltDeep": "{pct}. Somebody up here really ought to tidy up.",
+      "beltBare": "{pct}. We are a bullet with delusions now.",
+      "beltClear": "Out the other side, and only mostly ruined.",
+      "moonAhead": "The Moon. Still there. Still grey.",
+      "liminalHot": "Wonderful. The purple bit is on.",
+      "transitDeep": "I am going to pretend the outside is a screensaver.",
+      "moonFills": "That is quite close. That is quite close, actually.",
+      "lunarArrived": "The Moon. I was promised a beach.",
+      "gateSlabs": "Wallpaper. Very fast wallpaper.",
+      "whiteSolids": "Shapes in the void. Lovely. Is there tea?",
+      "jupiterClose": "Enormous ball of gas, no brakes. Cannot fault the plan.",
+      "holeSphere": "A hole. A round one. Naturally.",
+      "throatDeep": "I have stopped having opinions about the outside.",
+      "zetaArrived": "Thirty-nine light years for a statue.",
+      "titaniaArrived": "An ocean that dissolves you. Somebody put an embassy on it.",
+      "hexCompany": "Of course there is something out here. There always is."
+    },
+    "precise": {
+      "railExit": "Muzzle velocity as advertised. Two thousand four hundred, near enough.",
+      "maxQ": "Dynamic pressure peaking. Ablation is on the published curve.",
+      "beltDeep": "Hull {pct}. Decay is exponential, as the model said it would be.",
+      "beltBare": "{pct}. The asymptote is holding. It will not reach zero.",
+      "beltClear": "Traversal complete. Losses within one per cent of prediction.",
+      "moonAhead": "Three hundred and eighty-four thousand kilometres. For about four more seconds.",
+      "liminalHot": "The core is not radiating. Whatever it is doing, it is not heat.",
+      "transitDeep": "Nothing out there is behaving. I am recording all of it.",
+      "moonFills": "Sixty kilometres. Angular size is off the top of the instrument.",
+      "lunarArrived": "One sixth gravity. Move slowly and think about it first.",
+      "gateSlabs": "Slit-scan. The bands are discrete and the spacing is logarithmic.",
+      "whiteSolids": "A tesseract, a 16-cell and a 5-cell. Projected, not imagined.",
+      "jupiterClose": "Periapsis inside two radii. The delta-v is worth every metre.",
+      "holeSphere": "A sphere, not a funnel. Every film but one gets that wrong.",
+      "throatDeep": "I am recording all of it and I will not be believed.",
+      "zetaArrived": "Surface gravity is about one and a half. Mind your knees.",
+      "titaniaArrived": "The ocean is pH zero and the hull is already etching.",
+      "hexCompany": "It is matching our velocity exactly. That is not a natural object."
+    }
+  },
+  "station": {
+    "tourists": {
+      "zetaOut": "You came! You actually came! Oh, we are SO pleased.",
+      "dysonSighted": "You noticed the shells! Everyone notices the shells. Aren't they lovely?",
+      "capture": "You are in orbit! Well done! Everybody wave!",
+      "zetaOrbiting": "That is our best side. We tidied. You did not have to look but we tidied.",
+      "deorbitBurn": "Coming down! Careful, careful. Not too careful. You are doing wonderfully.",
+      "zetaSkim": "The air is lovely today. Breathable! For you! We checked specially.",
+      "baseSighted": "We can see you! We are all outside! Some of us have made a sign!",
+      "finalApproach": "Gently now. Gently. Oh, this is the best day.",
+      "contact": "DOWN! You are down! Nobody touch anything, they are down!",
+      "zetaArrived": "Welcome, welcome, welcome. Would you like to see the Monument? Say yes."
+    },
+    "dargos": {
+      "andromeda": "Welcome to Andromeda. Please maintain your current heading. Do not maintain your current heading.",
+      "theNeighbour": "That is the neighbour. Do not look at it. It likes being looked at.",
+      "capture": "You are in orbit. You are not in orbit. Both readings are correct and we stand by both.",
+      "titaniaOrbiting": "Reduce speed. Increase speed. Whichever you did, that was the other one.",
+      "deorbitBurn": "Begin your descent immediately. Do not begin your descent. Acknowledge one of those.",
+      "titaniaSkim": "You are too low. Also too high. Hold exactly where you are and also move.",
+      "baseSighted": "We have you visually. We have never seen you. The embassy is delighted by both.",
+      "finalApproach": "Land on the pad. The pad is a decoy. The decoy is the pad. Proceed.",
+      "contact": "You have landed. Please confirm you have not landed.",
+      "titaniaArrived": "Welcome to Titania. The sea is not dangerous. Do not go near the sea."
+    }
   }
 }

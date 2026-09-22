@@ -2664,6 +2664,16 @@
 
         _loop(now) {
             this._animId = requestAnimationFrame(this._loop);
+            // The world can be torn down from INSIDE a frame: a key handled by
+            // the update below (leaving a flyby, stepping back onto the map)
+            // runs dispose() synchronously, which cancels the frame just booked
+            // and frees the renderer - and then hands control back to the rest
+            // of this method, which would go on to draw a world that is no
+            // longer there. Every path through the loop asks this first.
+            if (this._disposed || !this._renderer) {
+                if (this._animId) { cancelAnimationFrame(this._animId); this._animId = null; }
+                return;
+            }
             if (this._lastTime === null) { this._lastTime = now; return; }
             const delta = Math.min((now - this._lastTime) / 1000, 0.1);
             this._lastTime = now;
@@ -3164,6 +3174,8 @@
         // renders into whatever target it is handed, so the retro blit lands in
         // the lens's offscreen frame and the lens then bends that onto the canvas.
         _renderFrame(tsec) {
+            // Torn down mid-frame (see _loop): there is nothing left to draw with.
+            if (this._disposed || !this._renderer) return;
             // The shadow map, on its own clock (see the renderer above).
             if (this._renderer.shadowMap &&
                 (++this._shadowTick % SHADOW_EVERY) === 0) {
@@ -7529,6 +7541,9 @@
         // walk still under the player's control. The page is cleared in the
         // finally, so a failed step costs that step and nothing else.
         dispose() {
+            // Raised FIRST: dispose is reachable from inside a frame, and the
+            // rest of that frame must stop drawing the moment it is called.
+            this._disposed = true;
             try {
                 this._disposeInner();
             } catch (e) {

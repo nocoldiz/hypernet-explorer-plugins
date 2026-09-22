@@ -2511,6 +2511,11 @@
     if ($gameVariables) {
       var reproductionValue = archetype.reproduction !== undefined ? archetype.reproduction : 0;
       var actorId = actor.actorId();
+      // The reproduction type lives on the actor now, so it travels with the
+      // character and every party member has one, not just the first three.
+      // The old variables are still written because one event page branches on
+      // them, but nothing in the plugins reads them any more.
+      if (actor.setReproductionType) actor.setReproductionType(reproductionValue);
       if (actorId === 1) {
         $gameVariables.setValue(87, reproductionValue);
       } else if (actorId === 2) {
@@ -2631,6 +2636,11 @@
     if ($gameVariables) {
       var reproductionValue = dominantArchetype.reproduction !== undefined ? dominantArchetype.reproduction : 0;
       var actorId = actor.actorId();
+      // The reproduction type lives on the actor now, so it travels with the
+      // character and every party member has one, not just the first three.
+      // The old variables are still written because one event page branches on
+      // them, but nothing in the plugins reads them any more.
+      if (actor.setReproductionType) actor.setReproductionType(reproductionValue);
       if (actorId === 1) {
         $gameVariables.setValue(87, reproductionValue);
       } else if (actorId === 2) {

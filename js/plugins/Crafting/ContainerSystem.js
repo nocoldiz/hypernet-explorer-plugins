@@ -536,14 +536,39 @@
         // those cabins (furniture the party placed, the crates the interior is
         // drawn with), and it also settles a house session left over from
         // whatever building they walked out of before climbing aboard.
-        const V = window.VehicleSystem || window.MergedVehicleSystem;
-        if (V && typeof V.isVehicleInteriorMap === 'function' && V.isVehicleInteriorMap()) {
-            return false;
-        }
         const H = window.ProceduralHouseSystem;
         if (!H || typeof H.isInsideHouse !== 'function') return false;
-        return H.isInsideHouse() && !H.isCurrentFloorOwned();
+        // Inside a building the party does not own. Ownership is one answer
+        // now (partyOwnsHere), so the camper cabins and the bought floors are
+        // excluded by the same rule rather than by two.
+        return H.isInsideHouse() && !partyOwnsHere();
     }
+
+    // ======================================================================
+    // WHOSE PLACE IS THIS
+    // ======================================================================
+    // One answer to "does the party own the room it is standing in", because
+    // more than one system needs it and they must not disagree: emptying a
+    // cupboard is theft or it is not, and the same question decides whether a
+    // witness has anything to report.
+    //
+    // Buying a place is what buys its containers. The deed is held elsewhere
+    // (ProceduralHouseSystem owns procedural floors, VehicleSystem owns the
+    // cabins); this only puts the answers together, so a new kind of deed is
+    // added by teaching this function about it and nothing else changes.
+    function partyOwnsHere() {
+        const V = window.VehicleSystem || window.MergedVehicleSystem;
+        if (V && typeof V.isVehicleInteriorMap === 'function' && V.isVehicleInteriorMap()) return true;
+        const H = window.ProceduralHouseSystem;
+        if (H && typeof H.isInsideHouse === 'function' && H.isInsideHouse()) {
+            return !!(H.isCurrentFloorOwned && H.isCurrentFloorOwned());
+        }
+        // Anywhere that is not somebody's house is not somebody's house: the
+        // open world, a dungeon, a cave. Nothing there is owned, and nothing
+        // there is stolen either.
+        return false;
+    }
+    window.PropertyOwnership = { ownsHere: partyOwnsHere };
 
     function theftTier(value) {
         return THEFT_TIERS.find(t => value < t.maxValue) || THEFT_TIERS[THEFT_TIERS.length - 1];

@@ -221,7 +221,8 @@
     "bookmark": "Bookmark",
     "harvestRunning": "Harvest flyby under way",
     "flyby": "Flyby",
-    "noSolidSurface": "No solid surface: this world can only be flown over."
+    "noSolidSurface": "No solid surface: this world can only be flown over.",
+    "noLandingSite": "Nothing to set down on: this object can only be flown past."
   },
   "hubblePart": {
     "DF-224 Computer": {
@@ -319,7 +320,8 @@
     "mayRunOut": "Hyperflux may run out before arrival.",
     "alreadyRefuelling": "Already refuelling from {star}.",
     "tankFull": "Hyperflux tank is already full.",
-    "noStarInRange": "No star able to refuel the ship within range."
+    "noStarInRange": "No star able to refuel the ship within range.",
+    "courseKept": "{star} is already on the current course{distance}. Refuelling on arrival."
   },
   "service": {
     "hubbleName": "Hubble Space Telescope",
@@ -415,7 +417,8 @@
     "noneInRange": "No fusing star in range",
     "harvesting": "Harvesting the disk",
     "eta": "{time} remaining",
-    "harvested": "{amount} Schrödingerite charges drawn from the disk"
+    "harvested": "{amount} Schrödingerite charges drawn from the disk",
+    "onCourse": "Fuel star on the current course"
   },
   "bio": {
     "weak": "Weak",

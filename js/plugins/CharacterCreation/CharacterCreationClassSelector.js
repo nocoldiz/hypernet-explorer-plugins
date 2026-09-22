@@ -27,12 +27,6 @@
  * @type string
  * @default 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62
  *
- * @param classNameVariable
- * @text Class Name Variable
- * @desc Variable ID to store the selected class name
- * @type variable
- * @default 1
- *
  * @help
  * This plugin provides a comprehensive class selection UI system:
  * - Window_ClassSelection (class list with levels)
@@ -1332,13 +1326,12 @@
       // money at the end of creation, so it covers the quick-mode, random and
       // creature class paths too and cannot be wiped by the preset step.
 
-      // Store class name in variable (only for party member 1)
-      if (currentMemberIndex === 0) {
-        const variableId = Number(parameters["classNameVariable"] || 0);
-        if (variableId > 0) {
-          $gameVariables.setValue(variableId, className);
-        }
-      }
+      // The class name is not copied into a game variable any more. It used to
+      // land in variable 1, which DungeonFloorSystem owns as the current floor
+      // NUMBER, so creating a character left a string there and every plugin
+      // that tests that floor behind a typeof guard went quietly inert. Nothing
+      // ever read the copy: the name is always available from the actor itself
+      // as actor.currentClass().name.
 
       if (markFirstCreationComplete) {
         markFirstCreationComplete();

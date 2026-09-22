@@ -342,7 +342,17 @@
         if (openSpan) html += "</span>";
         // Last, because the links are drawn as markup and must not be picked
         // apart by the paragraph or colour passes that come before them.
-        return linksToHtml(html);
+        return keysToHtml(linksToHtml(html));
+    }
+
+    // A bare [term] is a highlight, not a link: the manual brackets the thing
+    // that matters in a sentence (a key, a number, a stat, a menu name) so it
+    // can be found without reading the paragraph. Run AFTER the links, which
+    // are brackets with a bar in them and are already markup by then.
+    const KEY_PATTERN = /\[([^\[\]|<>\n]{1,40})\]/g;
+    function keysToHtml(html) {
+        return String(html).replace(KEY_PATTERN, (m, inner) =>
+            '<span class="help-key">' + inner + '</span>');
     }
 
     // =============================================================================

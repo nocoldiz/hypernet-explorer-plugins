@@ -569,10 +569,28 @@
     }
   }
 
+  // Only four plates are painted in the stylesheet, so a caller asking for a
+  // name that is not one of them used to get a toast with no colour rule at
+  // all: the frame's dark ink on dark parchment, unreadable. Common aliases
+  // fold onto the plate they meant, and anything unknown falls back to info.
+  const SEVERITY_ALIASES = {  // i18n-ignore  css class keys
+    bad: "danger", error: "danger", critical: "danger", fail: "danger",
+    warn: "warning", caution: "warning",
+    success: "good", positive: "good",
+    neutral: "info", notice: "info"
+  };
+  function normalizeSeverity(severity) {
+    const name = String(severity || "info").toLowerCase();
+    if (SEVERITY_CLASSES.indexOf(name) >= 0) return name;
+    return SEVERITY_ALIASES[name] || "info";
+  }
+
   function classNameFor(severity, persist) {
-    return `html-parchment-overlay html-toast html-toast--${severity}` +
+    return `html-parchment-overlay html-toast html-toast--${normalizeSeverity(severity)}` +
       (persist ? " html-toast--sticky" : "");
   }
+
+  const SEVERITY_CLASSES = ["info", "warning", "danger", "good"];  // i18n-ignore  css classes
 
   const PRIORITY_STICKY = 5;
   const PRIORITY_ITEM = 10;

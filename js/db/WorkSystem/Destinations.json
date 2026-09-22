@@ -736,6 +736,7 @@
   },
   "MAXGauntlet": {
     "name": "MAX Gauntlet",
+    "locked": true,
     "type": "dungeon",
     "country": "Italy",
     "nationId": 78,
@@ -777,6 +778,7 @@
   "MAXTavern": {
     "name": "MAX Tavern",
     "picture": "destinations/MAXTavern",
+    "locked": true,
     "type": "village",
     "country": "Italy",
     "nationId": 78,
@@ -2103,6 +2105,7 @@
     ]
   },
   "Verona": {
+    "locked": true,
     "name": "Verona",
     "picture": "destinations/Verona",
     "type": "village",
@@ -2124,6 +2127,8 @@
   },
   "Venezia": {
     "name": "Venezia",
+        "locked": true,
+
     "picture": "destinations/Venezia",
     "type": "city",
     "country": "Italy",
@@ -2147,6 +2152,7 @@
   },
   "Torino": {
     "name": "Torino",
+    
     "picture": "destinations/Torino",
     "type": "city",
     "country": "Italy",
@@ -2190,6 +2196,8 @@
   },
   "Firenze": {
     "name": "Firenze",
+        "locked": true,
+
     "picture": "destinations/Firenze",
     "type": "village",
     "country": "Italy",
@@ -2210,6 +2218,8 @@
   },
   "L'Aquila": {
     "name": "L'Aquila",
+        "locked": true,
+
     "picture": "destinations/LAquila",
     "type": "village",
     "country": "Italy",
@@ -2857,6 +2867,8 @@
     ]
   },
   "Ginevra": {
+        "locked": true,
+
     "name": "Ginevra",
     "picture": "destinations/Ginevra",
     "type": "city",
@@ -3192,6 +3204,8 @@
   },
   "Barcellona": {
     "name": "Barcellona",
+        "locked": true,
+
     "picture": "destinations/Barcellona",
     "type": "city",
     "country": "Spain",

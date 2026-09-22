@@ -971,7 +971,7 @@
               <h2 class="cc-header-gothic">${originChoice.name || ""}</h2>
               <div class="cc-money-badge">${this._ccIconHtml(208, 16)} <span>${this._formatGoldToEuros(totalGold)}</span></div>
             </div>
-            <p class="cc-class-quote">${this.cleanText(originChoice.description || "")}</p>
+            <p class="cc-class-quote">${this.emphasizeText(originChoice.description || "")}</p>
 
             <div class="cc-scenario-brief-body">
               <div class="cc-dossier-card cc-class-section">

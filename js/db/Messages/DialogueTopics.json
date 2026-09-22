@@ -45,7 +45,10 @@
     "order": 16050,
     "keyword": "Rule of 80",
     "synonyms": [
-      "Rule of Eighty"
+      "Rule of Eighty",
+      "Localized Time Loop Bubbles",
+      "time loop bubble",
+      "time loop bubbles"
     ],
     "title": "DialogueTopics.ruleOf80.title",
     "description": "DialogueTopics.ruleOf80.description",
@@ -93,7 +96,9 @@
     "group": "topics",
     "order": 16090,
     "keyword": "Memory Witch",
-    "synonyms": [],
+    "synonyms": [
+      "Em the Witch"
+    ],
     "title": "DialogueTopics.emTheMemoryWitch.title",
     "description": "DialogueTopics.emTheMemoryWitch.description",
     "image": ""
@@ -105,7 +110,8 @@
     "keyword": "CamelCase",
     "synonyms": [
       "Law of CamelCase",
-      "CamelCase magic"
+      "CamelCase magic",
+      "CamelCase Law"
     ],
     "title": "DialogueTopics.camelcaseMagic.title",
     "description": "DialogueTopics.camelcaseMagic.description",
@@ -168,7 +174,10 @@
     "group": "topics",
     "order": 16160,
     "keyword": "Scraps of Creation",
-    "synonyms": [],
+    "synonyms": [
+      "Dimensional Scraps",
+      "Fragments of Creation"
+    ],
     "title": "DialogueTopics.scrapsOfCreation.title",
     "description": "DialogueTopics.scrapsOfCreation.description",
     "image": ""
@@ -320,7 +329,9 @@
     "group": "topics",
     "order": 16300,
     "keyword": "Okeanus",
-    "synonyms": [],
+    "synonyms": [
+      "Okeanus Spell"
+    ],
     "title": "DialogueTopics.okeanus.title",
     "description": "DialogueTopics.okeanus.description",
     "image": ""
@@ -1071,7 +1082,8 @@
       "Millennium bug",
       "Millenium bug",
       "Y2K",
-      "Y2K bug"
+      "Y2K bug",
+      "Y2K Collapse"
     ],
     "title": "DialogueTopics.topicY2KEvent.title",
     "description": "DialogueTopics.topicY2KEvent.description",
@@ -1084,7 +1096,8 @@
     "keyword": "YHWH",
     "synonyms": [
       "Yahweh",
-      "Jehovah"
+      "Jehovah",
+      "Demiurge"
     ],
     "title": "DialogueTopics.topicYHWH.title",
     "description": "DialogueTopics.topicYHWH.description",

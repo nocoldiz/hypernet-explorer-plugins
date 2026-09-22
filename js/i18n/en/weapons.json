@@ -1,4 +1,8 @@
 {
+  "1": {
+    "name": "<-- Light -->",
+    "description": ""
+  },
   "2": {
     "name": "Unbalanced Throwing Knife",
     "description": "A throwing knife that wobbles in flight."
@@ -118,6 +122,10 @@
   "31": {
     "name": "Timeflow Manipulator",
     "description": "A Gobekli Tepe artifact that bends time\nand hastens its bearer. Strikes Water."
+  },
+  "42": {
+    "name": "<-- Sword -->",
+    "description": ""
   },
   "43": {
     "name": "Wooden Play Sword",
@@ -403,6 +411,10 @@
     "name": "Dragon Blade",
     "description": "A sword forged from a dragon's fangs.\nSacred, inflicts Inspired."
   },
+  "124": {
+    "name": "<-- Heavy -->",
+    "description": ""
+  },
   "125": {
     "name": "Stale Baguette",
     "description": "A loaf gone stale and hard as a stone.\nCan stun on hit."
@@ -683,6 +695,10 @@
     "name": "Hellfire Superstrat",
     "description": "A neck-through electric that has been on\nfire since it was strung. Fire."
   },
+  "196": {
+    "name": "<-- Axe -->",
+    "description": ""
+  },
   "197": {
     "name": "Foam Toy Axe",
     "description": "A plastic toy axe with soft foam edges."
@@ -803,6 +819,10 @@
     "name": "Dimensional Cleaver",
     "description": "An axe that cleaves several worlds at once.\nSacred, inflicts Inspired."
   },
+  "237": {
+    "name": "<-- Whip -->",
+    "description": ""
+  },
   "238": {
     "name": "Fly Swatter",
     "description": "A light plastic swatter.\nCan provoke on hit."
@@ -898,6 +918,10 @@
   "261": {
     "name": "EHI Omniscient Binder",
     "description": "A whip of living book pages. It binds foes\nand whispers at its bearer."
+  },
+  "272": {
+    "name": "<-- Staff -->",
+    "description": ""
   },
   "273": {
     "name": "Carved Stick",
@@ -1111,6 +1135,10 @@
     "name": "Infernal Cane",
     "description": "A gentleman's cane with a skull grip.\nThe shaft is a scabbard. Ice, can chill."
   },
+  "335": {
+    "name": "<-- Bow -->",
+    "description": ""
+  },
   "336": {
     "name": "Toy Bow",
     "description": "A plastic toy bow on weak elastic.\nCan blind on hit."
@@ -1242,6 +1270,10 @@
   "368": {
     "name": "EHI Brain Hemorrhager",
     "description": "A launcher firing shells packed with a whole\nlibrary. It bleeds the shooter's brain."
+  },
+  "379": {
+    "name": "<-- Projectile -->",
+    "description": ""
   },
   "380": {
     "name": "Uneven Slingshot",
@@ -1386,6 +1418,10 @@
   "415": {
     "name": "Portal Disc",
     "description": "A Gobekli Tepe disc that opens a portal\nwhere it lands. Thunder, can static."
+  },
+  "426": {
+    "name": "<-- Gun -->",
+    "description": ""
   },
   "427": {
     "name": "Suction Cup Dart Gun",
@@ -1795,6 +1831,10 @@
     "name": "Smart Tracking Rifle",
     "description": "A sniper rifle whose rounds steer themselves\nin flight. Strikes with Cursed."
   },
+  "539": {
+    "name": "<-- Claw -->",
+    "description": ""
+  },
   "540": {
     "name": "Tin Claws",
     "description": "Claws cut from cheap tin. They bend."
@@ -1882,6 +1922,10 @@
   "561": {
     "name": "Divine Talons",
     "description": "Golden claws said to be a war god's.\nSacred, inflicts Inspired."
+  },
+  "572": {
+    "name": "<-- Glove -->",
+    "description": ""
   },
   "573": {
     "name": "Beginner's Hand Wraps",
@@ -2027,6 +2071,10 @@
     "name": "Omniadaptive Combat System",
     "description": "A combat system that adapts to any threat\nput in front of it."
   },
+  "619": {
+    "name": "<-- Spear -->",
+    "description": ""
+  },
   "620": {
     "name": "Loose-headed Spear",
     "description": "A spear whose head is bound on loosely."
@@ -2154,6 +2202,10 @@
   "651": {
     "name": "Varlenia Returning Spear",
     "description": "A golden Varlenia spear that comes back\nwhen thrown. Cursed, can poison."
+  },
+  "662": {
+    "name": "<-- Other -->",
+    "description": ""
   },
   "663": {
     "name": "Foam Projector",

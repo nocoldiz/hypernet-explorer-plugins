@@ -1833,8 +1833,8 @@
         <div class="book-spread">
           <div class="left-page page-top">
             <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.theTrial')}</h2></div>
-            <div class="eris-dialogue-log" id="eris-log">${logHTML}</div>
-            <div class="eris-choices-panel" id="eris-choices"></div>
+            <div class="eris-dialogue-log" id="eris-trial-log">${logHTML}</div>
+            <div class="eris-choices-panel" id="eris-trial-choices"></div>
           </div>
           <div class="right-page page-top">
             <div class="page-header-bar"><h2 class="title">Eris</h2></div>
@@ -1864,7 +1864,7 @@
             </div>
           </div>
         </div>`;
-      const log = document.getElementById('eris-log');
+      const log = document.getElementById('eris-trial-log');
       if (log) log.scrollTop = log.scrollHeight;
     }
 
@@ -1893,7 +1893,7 @@
       const who = isPlayer === 'narrator' ? 'narrator' : (isPlayer ? 'player' : 'eris');
       const clean = vary(String(text)).replace(/\\C\[\d+\]/g, '');
       this._dialogueLog.push({ who, text: clean });
-      const log = document.getElementById('eris-log');
+      const log = document.getElementById('eris-trial-log');
       if (log) {
         const entry = document.createElement('div');
         entry.className = `eris-dialogue-entry ${who}`;
@@ -1911,12 +1911,12 @@
     // page away underneath the hearing, draw it again from the log rather than
     // play the rest of the trial out to nobody.
     _ensureBook() {
-      let log = document.getElementById('eris-log');
+      let log = document.getElementById('eris-trial-log');
       if (log) return log;
       if (!this._container) return null;
       if (!this._container.parentNode) document.body.appendChild(this._container);
       this._renderBook();
-      return document.getElementById('eris-log');
+      return document.getElementById('eris-trial-log');
     }
 
     // Shows one message at a time and blocks until the player presses on, or
@@ -1933,10 +1933,10 @@
       this._autoPlay = false;
       return new Promise(resolve => {
         // A question with nowhere to draw its answers used to answer itself.
-        let panel = document.getElementById('eris-choices');
+        let panel = document.getElementById('eris-trial-choices');
         if (!panel) {
           this._ensureBook();
-          panel = document.getElementById('eris-choices');
+          panel = document.getElementById('eris-trial-choices');
         }
         if (!panel) { resolve(0); return; }
         panel.innerHTML = '';
@@ -3606,8 +3606,8 @@
         <div class="book-spread">
           <div class="left-page page-top">
             <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.erisSCourt')}</h2></div>
-            <div class="eris-dialogue-log" id="eris-log">${logHTML}</div>
-            <div class="eris-choices-panel" id="eris-choices"></div>
+            <div class="eris-dialogue-log" id="eris-trial-log">${logHTML}</div>
+            <div class="eris-choices-panel" id="eris-trial-choices"></div>
           </div>
           <div class="right-page page-top">
             <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.defendant')}</h2></div>
@@ -3628,7 +3628,7 @@
             </div>
           </div>
         </div>`;
-      const log = document.getElementById('eris-log');
+      const log = document.getElementById('eris-trial-log');
       if (log) log.scrollTop = log.scrollHeight;
     }
 
@@ -3658,7 +3658,7 @@
       const role = who === true ? 'eris' : (who || 'defendant');
       const clean = text.replace(/\\C\[\d+\]/g, '');
       this._dialogueLog.push({ who: role, text: clean });
-      const log = document.getElementById('eris-log');
+      const log = document.getElementById('eris-trial-log');
       if (log) {
         const entry = document.createElement('div');
         entry.className = `eris-dialogue-entry ${this._entryClass(role)}`;
@@ -3673,12 +3673,12 @@
     // The transcript is the record, not the screen: if something has taken the
     // page away underneath the hearing, draw it again from the log.
     _ensureBook() {
-      let log = document.getElementById('eris-log');
+      let log = document.getElementById('eris-trial-log');
       if (log) return log;
       if (!this._container) return null;
       if (!this._container.parentNode) document.body.appendChild(this._container);
       this._renderBook();
-      return document.getElementById('eris-log');
+      return document.getElementById('eris-trial-log');
     }
 
     // Shows one message at a time and blocks until the player presses on, or
@@ -3694,10 +3694,10 @@
       this._autoPlay = false;
       return new Promise(resolve => {
         // A question with nowhere to draw its answers used to answer itself.
-        let panel = document.getElementById('eris-choices');
+        let panel = document.getElementById('eris-trial-choices');
         if (!panel) {
           this._ensureBook();
-          panel = document.getElementById('eris-choices');
+          panel = document.getElementById('eris-trial-choices');
         }
         if (!panel) { resolve(0); return; }
         panel.innerHTML = '';

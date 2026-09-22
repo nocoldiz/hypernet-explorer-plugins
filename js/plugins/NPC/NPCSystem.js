@@ -1716,6 +1716,13 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
       const npcPool = SpawnManager.getNPCPool(groupName);
       if (!npcPool.length) return;
 
+      // Last hour's answer, kept so an arrival can be brought in through the
+      // door they would have walked from rather than dropped in the middle.
+      const previous = {};
+      for (const [mId, list] of Object.entries($gameSystem._npcGroupAssignments || {})) {
+        for (const o of list || []) if (o?.name) previous[o.name] = Number(mId);
+      }
+      $gameSystem._npcPrevAssignment = previous;
       $gameSystem._npcGroupAssignments = {};
 
       const allMaps = group.maps;
@@ -1740,6 +1747,11 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
         const name = npc.eventData?.name;
         if (!name || name === "NPC" || assignedNames.has(name)) continue;
         assignedNames.add(name);
+
+        // Out of town. Somebody on a trip is on no map of the town they left:
+        // the empty place they leave behind is the whole point of them having
+        // gone (NPC/NPCLifeSimulator.js, resolveTravel).
+        if (window.NPCLifeSim?.isAwayFromTown?.(name)) continue;
 
         let mId = resolver ? resolver(name, groupName, hour) : null;
         if (!mId || !mapAssignments[mId]) {
@@ -1802,13 +1814,29 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
 
       const stayingNames = new Set();
       const freedEvents = [];
+      // Only while somebody is here to watch, and only on a map whose town has
+      // a street plan the graph can read.
+      const watched = SceneManager._scene instanceof Scene_Map &&
+        !SpawnManager.ungraphedGroup(groupName);
+      let walkingOut = SpawnManager.commutingOut().length;
 
       for (const ctrl of managed) {
         if (wantNames.has(ctrl.eventName)) {
           stayingNames.add(ctrl.eventName);
-          const t = nextTile();
-          if (t) ctrl.event.locate(t.x, t.y);
+          // Somebody who is staying STAYS. Relocating them every hour made the
+          // whole street jump on the hour for no reason anybody could see.
+          if (!SpawnManager.stillStanding(ctrl.event)) {
+            const t = nextTile();
+            if (t) ctrl.event.locate(t.x, t.y);
+          }
           ctrl.decideNextGoal();
+        } else if (watched && walkingOut < SpawnManager.COMMUTE_MAX &&
+                   SpawnManager.walkOut(
+                     ctrl,
+                     SpawnManager.doorToward(SpawnManager.assignedMapOf(ctrl.eventName), group))) {
+          // On their way out on foot. Their event is theirs until they reach
+          // the door, so it is not offered to anybody arriving this hour.
+          walkingOut++;
         } else {
           freedEvents.push(ctrl.event);
         }
@@ -1830,7 +1858,12 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
         if (!data?.eventData) continue;
         const ev = freedEvents[idx++];
         if (!SpawnManager.transplantData(ev, data.eventData, idx)) { ev.erase(); continue; }
-        const t = nextTile();
+        // In through the door from wherever they spent the last hour, when
+        // that is a real door on this map, otherwise the usual spread tile.
+        const cameFrom = $gameSystem._npcPrevAssignment?.[obj.name];
+        const door = watched && cameFrom && cameFrom !== mapId
+          ? SpawnManager.doorToward(cameFrom, group) : null;
+        const t = door ? { x: door.x, y: door.y } : nextTile();
         if (t) ev.locate(t.x, t.y); else { ev.erase(); continue; }
         SpawnManager.injectBrain(ev, ev.event());
       }
@@ -1880,6 +1913,212 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
       return { x: mem.x, y: mem.y };
     },
 
+    // ── the commute ─────────────────────────────────────────────────────────
+    //
+    // Which map an NPC spends an hour on is already decided by their own
+    // routine: initializeGroupNPCs asks NPCSim.scheduledMapForNPC and writes
+    // the answer into _npcGroupAssignments. What was missing is the bit in
+    // between. On the hour everybody simply teleported: the ones staying were
+    // relocated to a fresh spawn tile, the ones leaving blinked out, and the
+    // ones arriving blinked in somewhere random.
+    //
+    // So the decision is left exactly where it was and only its PRESENTATION
+    // changes, and only while somebody is here to see it:
+    //
+    //   staying   stay where they are and keep walking
+    //   leaving   walk to the door that leads their way, and go through it
+    //   arriving  come IN through that door rather than appear in the middle
+    //
+    // None of it may hold anything up. A walk is capped, it times out, and
+    // when it is not wanted the old teleport is still exactly what happens.
+    // Shop counter personas are not roster spawns at all, so a shift change
+    // never waits on any of this.
+    COMMUTE_MAX: 4,        // at most this many walking out of a map at once
+    COMMUTE_TIMEOUT: 6000, // ms before a walk is given up on and just resolved
+
+    // The door on THIS map that leads the way to another one: the next hop
+    // toward it on the town's own graph, then the event whose transfer names
+    // that map. The map is loaded (that is the only time this is asked), so
+    // the doors can be read straight off it.
+    doorToward: (targetMapId, group) => {
+      const MC = window.MapConnections;
+      if (!MC || !$gameMap || !targetMapId) return null;
+      const here = $gameMap.mapId();
+      if (here === targetMapId) return null;
+      let hop = targetMapId;
+      if (typeof MC.nextHop === "function" && Array.isArray(group?.maps)) {
+        hop = MC.nextHop(here, targetMapId, {
+          within: group.maps, avoid: SpawnManager.VISITOR_AVOID,
+        }) || 0;
+      }
+      if (!hop) return null;
+      for (const ev of $gameMap.events()) {
+        if (!ev || ev._erased) continue;
+        let to = 0;
+        try { to = MC.exitTarget(ev); } catch (e) { to = 0; }
+        if (to === hop) return ev;
+      }
+      return null;
+    },
+
+    // Send somebody out through it. Returns true when the walk was started, so
+    // the caller knows to leave their event alone for now.
+    walkOut: (ctrl, door) => {
+      if (!ctrl?.event || !door) return false;
+      try {
+        ctrl.goToTile(door.x, door.y, "commuting", SpawnManager.COMMUTE_TIMEOUT);  // i18n-ignore: goal id
+      } catch (e) {
+        return false;
+      }
+      ctrl.event._npcCommute = { x: door.x, y: door.y, until: performance.now() + SpawnManager.COMMUTE_TIMEOUT };
+      return true;
+    },
+
+    // Driven from the ordinary per-frame controller pass. Somebody who has
+    // reached their door has left the map; somebody still short of it when the
+    // clock runs out has left too, they simply were not watched all the way.
+    updateCommutes: () => {
+      const list = $gameSystem?.npcControllers;
+      if (!list || !list.length) return;
+      const now = performance.now();
+      for (const ctrl of list) {
+        const ev = ctrl?.event;
+        const walk = ev && ev._npcCommute;
+        if (!walk || ev._erased) continue;
+        const there = Math.abs(ev.x - walk.x) + Math.abs(ev.y - walk.y) <= 1;
+        if (!there && now < walk.until) continue;
+        ev._npcCommute = null;
+        ev.erase();
+      }
+    },
+
+    // Which map this hour's roster puts somebody on. Read back off the table
+    // initializeGroupNPCs has just written, so the walk and the assignment can
+    // never disagree about where anybody is going.
+    assignedMapOf: (name) => {
+      const table = $gameSystem?._npcGroupAssignments;
+      if (!table || !name) return 0;
+      for (const mId of Object.keys(table)) {
+        for (const o of table[mId] || []) if (o?.name === name) return Number(mId);
+      }
+      return 0;
+    },
+
+    // Is somebody still on a tile they could plausibly be standing on? The
+    // hourly pass used to move everybody whether they needed it or not, which
+    // made a whole street jump on the hour.
+    stillStanding: (ev) => {
+      if (!ev || !$gameMap) return false;
+      if (!$gameMap.isValid(ev.x, ev.y)) return false;
+      try { return !!$gameMap.isPassable(ev.x, ev.y, 2); } catch (e) { return true; }
+    },
+
+    // Anyone currently on their way out, so the turnover does not hand their
+    // event to somebody else while they are still standing in the street.
+    commutingOut: () => {
+      return ($gameSystem?.npcControllers || []).filter(
+        (c) => c?.event && !c.event._erased && c.event._npcCommute);
+    },
+
+    // ── who is in town today ────────────────────────────────────────────────
+    //
+    // A hub used to top itself up by shuffling every other map in the group
+    // together, so the face in a square was as likely to live on the far side
+    // of the city as next door, and all four of Ghent's squares drew the same
+    // uniform crowd. A square should look like the streets around it.
+    //
+    // The weight is one over the number of doors between the two maps, worked
+    // out on the town's OWN graph: the route may not leave the group and may
+    // not cross the world map, because a hop onto the world map is a hop to
+    // another country and would make every district look adjacent.
+    //
+    // Everything about this is display only. It never touches
+    // _npcGroupAssignments, and where the graph has nothing to say it hands
+    // back to the plain shuffle rather than emptying the square.
+    VISITOR_AVOID: [315],
+
+    // The groups the map graph has nothing useful to say about, named ONCE so
+    // every part of the walking simulation asks the same question.
+    //
+    //   - The Omega Tower is a stack of a hundred floors reached by
+    //     variable-driven transfers, which tools/build/gen_map_connections.js
+    //     cannot see and deliberately drops. Its real shape is the stair list
+    //     in $gameSystem._stairLocations (Map/DungeonFloorSystem.js), a linear
+    //     stack where "the next floor" is arithmetic, not a search. Nothing
+    //     here should pretend otherwise.
+    //   - A procedural settlement is one square invented when the party walked
+    //     onto it. It has no street plan to be near anything on, and its
+    //     people stay in it.
+    UNGRAPHED_GROUPS: ["OmegaTower", "PublicTransport"],  // i18n-ignore: map group keys
+
+    ungraphedGroup: (groupName) => {
+      if (!groupName) return true;
+      if (Config.isProceduralGroup?.(groupName)) return true;
+      return SpawnManager.UNGRAPHED_GROUPS.includes(groupName);
+    },
+
+    visitorWeights: (visitors, mapId, group) => {
+      const MC = window.MapConnections;
+      if (!MC || typeof MC.distance !== "function") return null;
+      const within = group?.maps;
+      if (!Array.isArray(within) || !within.length) return null;
+      const opts = { within, avoid: SpawnManager.VISITOR_AVOID };
+      // One sweep per source map, not one per resident: a street with eight
+      // people on it is asked about once.
+      const byMap = new Map();
+      let any = false;
+      const weights = visitors.map((v) => {
+        if (!byMap.has(v.fromMapId)) {
+          let d = Infinity;
+          try { d = MC.distance(v.fromMapId, mapId, opts); } catch (e) { d = Infinity; }
+          byMap.set(v.fromMapId, d);
+        }
+        const d = byMap.get(v.fromMapId);
+        if (!isFinite(d)) return 0;
+        any = true;
+        return 1 / (1 + d);
+      });
+      return any ? weights : null;
+    },
+
+    drawVisitors: (visitors, need, mapId, group, groupName, curHour) => {
+      const plain = () => Utils.shuffle(visitors.slice(0, visitors.length)).slice(0, need).map(v => v.obj);
+      // The tower is a stack of floors the graph cannot see, and a procedural
+      // settlement is one square that was invented on arrival: neither has a
+      // street plan to be near anything on.
+      if (SpawnManager.ungraphedGroup(groupName)) return plain();
+      const weights = SpawnManager.visitorWeights(visitors, mapId, group);
+      if (!weights) {
+        // Nobody is reachable on the town's own graph. That is a town whose
+        // doors were never scanned, not a town with nobody in it.
+        Utils.debug(`visitor draw for map ${mapId} has no graph distances, falling back to a shuffle`);
+        return plain();
+      }
+      // Seeded on the place and the hour, because this is asked once on entry
+      // and again at every hour boundary: a fresh roll each time would make
+      // the square flicker between two different crowds.
+      const seed = (Utils.nameHash(`visitors:${groupName}:${mapId}:${curHour}`) ^
+        (window.NPCShared?.worldSeed?.() ?? 0)) >>> 0;
+      const pool = visitors.slice();
+      const w = weights.slice();
+      const out = [];
+      for (let pick = 0; pick < need && pool.length; pick++) {
+        let total = 0;
+        for (const x of w) total += x;
+        if (total <= 0) break;
+        let roll = Utils.seededRandom((seed + pick * 2654435761) >>> 0) * total;
+        let idx = w.length - 1;
+        for (let i = 0; i < w.length; i++) {
+          roll -= w[i];
+          if (roll <= 0) { idx = i; break; }
+        }
+        out.push(pool[idx].obj);
+        pool.splice(idx, 1);
+        w.splice(idx, 1);
+      }
+      return out;
+    },
+
     // Resolves the final list of NPCs to *display* on a map: its scheduled
     // roster (_npcGroupAssignments[mapId]) minus anyone reserved as a <Shop>
     // counter persona, then, on main/hub maps only, topped up with NPCs
@@ -1909,13 +2148,15 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
           for (const obj of $gameSystem._npcGroupAssignments[mId] || []) {
             if (usedNames.has(obj.name) || reservedForShop.has(obj.name) || isAtHome(obj.name)) continue;
             usedNames.add(obj.name);
-            visitors.push(obj);
+            // Where they came FROM is what decides how likely they are to be
+            // standing here, so it is carried alongside them.
+            visitors.push({ obj, fromMapId: mId });
           }
         }
-        visitors = Utils.shuffle(visitors);
         const need = Math.min(slotCount, poolLen) - assigned.length;
         if (need > 0 && visitors.length) {
-          assigned = assigned.concat(visitors.slice(0, need).map(o => ({ name: o.name, visiting: true })));
+          const drawn = SpawnManager.drawVisitors(visitors, need, mapId, group, groupName, curHour);
+          assigned = assigned.concat(drawn.map(o => ({ name: o.name, visiting: true })));
         }
       }
       return assigned;
@@ -2571,9 +2812,19 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // shares map id 636 with that square. The usual "an event with no
       // graphic is never an NPC" rule cannot do this job here, procedural slots
       // are authored graphic-less and only get a face when they are staffed.
-      if (window.ProceduralInteriors?.isCurrent?.()) {
-        ProceduralManager.clearProceduralNPCs();
-        return;
+      // ...unless it is a floor of the Omega Tower. A floor is generated as a
+      // structure and so reads as an interior, but it is not a cellar under
+      // anywhere: it is a world of its own, and it has people on it
+      // (DungeonFloorSystem.js, window.TowerWorlds).
+      const towerFloor = window.TowerWorlds?.currentFloor?.() || 0;
+      const towerWorld = towerFloor ? window.TowerWorlds.get(towerFloor) : null;
+      // A world with nobody left on it stays empty, and so does every other
+      // procedural interior.
+      if (!towerWorld || towerWorld.empty) {
+        if (window.ProceduralInteriors?.isCurrent?.()) {
+          ProceduralManager.clearProceduralNPCs();
+          return;
+        }
       }
 
       const worldX = $gameVariables.value(43) || 1;
@@ -2581,8 +2832,12 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // Mix the world (history) seed into NPC placement/identity so each world
       // seed populates the same tile with different NPCs, deterministically.
       const procWorldSeed = window.ProcGenUtils?.getWorldSeed?.() ?? 19002001;
-      const baseSeed = window.ProcGenUtils?.hashCoords?.(procWorldSeed, worldX, worldY)
+      let baseSeed = window.ProcGenUtils?.hashCoords?.(procWorldSeed, worldX, worldY)
         ?? ((worldX * 73856093) ^ (worldY * 19349663));
+      // Every floor of the lower tower is generated from the one world square
+      // the tower stands on, so the square alone would hand all ninety of them
+      // the same crowd. The floor is what tells them apart.
+      if (towerFloor) baseSeed = (baseSeed ^ (towerFloor * 2654435761)) >>> 0;
 
       const p2Active = window.$gameSplitScreen && window.$gameSplitScreen.active;
       const p2Name = p2Active ? window.$gameSplitScreen.p2EventName : null;
@@ -2638,7 +2893,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // Register the synthetic per-tile settlement so every NPC placed below is
       // a first-class citizen of the simulation (society, life record, world-web
       // pulse, politics, jobs all key off this group name).
-      const settlementGroup = ProceduralManager.ensureProcSettlement(worldX, worldY, biomeName);
+      const settlementGroup = towerWorld
+        ? ProceduralManager.ensureTowerSettlement(towerFloor)
+        : ProceduralManager.ensureProcSettlement(worldX, worldY, biomeName);
 
       let activeEvents = npcEvents;
 
@@ -2948,6 +3205,221 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       return true;
     },
 
+    // ── the crowd of an offworld spaceport ──────────────────────────────────
+    //
+    // A landing pad on another world is a authored map with no population pass
+    // of its own: maps 173, 353, 893 and 970 carry player slots, transfers and
+    // a missile silo, and not one NPC slot between them, so the busiest place
+    // on the planet stood empty.
+    //
+    // Whose pads these are is not decided here. GalaxySim.spaceportSurfaceSite
+    // answers it off js/db/GalaxySim/Systems.json: a landing location with a
+    // grid cell on a world that is not Earth. Earth's own pads (Apulia,
+    // Greenwitch) name no cell, are not offworld, and are populated by the
+    // ordinary map-group machinery like any other Earth map.
+    //
+    // Who is standing there is not decided here either. SpriteCatalog.pickNpcKey
+    // already deals nine faces in ten off the alien half of the wardrobe at an
+    // offworld site (ALIEN_SHARE_OFFWORLD), so the share is read from the one
+    // place that owns it rather than written down a second time.
+    //
+    // The tenth face is a human, and a human on another world got there
+    // somehow: where somebody authored is away on a trip (NPCLifeSimulator's
+    // resolveTravel) that traveller is who it is, by name and by their own
+    // sheet. Otherwise it is a procedural spacer like everybody else.
+    SPACEPORT_MIN: 4,
+    SPACEPORT_MAX: 11,
+
+    // The Talk / Empathize / Cancel page every AI slot on a procedural map
+    // carries, so somebody put down on a pad answers the button exactly the
+    // way somebody put down in a village does.
+    _spacerPageList: () => ([
+      { code: 102, indent: 0, parameters: [["Talk", "Empathize", "Cancel"], 3, 0, 2, 0] },  // i18n-ignore: choice labels are localized by the engine's own pass
+      { code: 402, indent: 0, parameters: [0, "Talk"] },
+      { code: 357, indent: 1, parameters: ["NPC/DialogueSystem", "Rumors", "Rumors", {}] },
+      { code: 0, indent: 1, parameters: [] },
+      { code: 402, indent: 0, parameters: [1, "Empathize"] },
+      { code: 357, indent: 1, parameters: ["NPC/NPCEmpathize", "Open", "Open", { eventName: "" }] },
+      { code: 0, indent: 1, parameters: [] },
+      { code: 402, indent: 0, parameters: [2, "Cancel"] },
+      { code: 0, indent: 1, parameters: [] },
+      { code: 404, indent: 0, parameters: [] },
+      { code: 0, indent: 0, parameters: [] },
+    ]),
+
+    // One person on the pad. A fresh $dataMap event, because these maps carry
+    // no slots to dress: the same way a wild creature is put down
+    // (_spawnWildCreature), and just as volatile, since $dataMap is re-read
+    // from disk on every Scene_Map rebuild.
+    _spawnSpacer: (spot, spriteKey, visitor, seed, site) => {
+      if (!$dataMap.events) $dataMap.events = [null];
+      const eventId = $dataMap.events.length;
+      // A traveller is a particular person who got here: they wear their own
+      // face, not whichever human sheet the draw happened to turn up.
+      const sheet = visitor ? visitor.spriteKey : spriteKey;
+      const sheetIndex = visitor ? (visitor.bustIndex || 0) : 0;
+
+      let name = visitor ? visitor.name : "";
+      if (!name && window.generateSeededMarkovName) {
+        const dbId = Config.NAME_DATABASES[Math.abs(seed) % Config.NAME_DATABASES.length];
+        try {
+          name = window.generateSeededMarkovName(
+            seed & 0xffff, (seed >>> 16) & 0xffff, eventId, dbId, 2, 4, 12);
+        } catch (e) { /* refused below */ }
+      }
+      if (!name || name === "Unknown") return false;  // i18n-ignore: Markov generator sentinel
+      // A traveller is already in the society register under this name, and is
+      // meant to be. Anybody else must not collide with somebody who is.
+      if (!visitor && $gameSystem?._npcSociety?.[name]) return false;
+
+      const blankPage = {
+        conditions: {
+          actorId: 1, actorValid: false, itemId: 1, itemValid: false,
+          selfSwitchCh: "A", selfSwitchValid: true,
+          switch1Id: 1, switch1Valid: false, switch2Id: 1, switch2Valid: false,
+          variableId: 1, variableValid: false,
+        },
+        directionFix: false,
+        image: { tileId: 0, characterName: "", characterIndex: 0, direction: 2, pattern: 1 },
+        list: [{ code: 0, indent: 0, parameters: [] }],
+        moveFrequency: 3, moveRoute: { list: [{ code: 0 }], repeat: true, skippable: false, wait: false },
+        moveSpeed: 3, moveType: 0, priorityType: 0, stepAnime: false, through: true,
+        trigger: 0, walkAnime: false,
+      };
+
+      $dataMap.events[eventId] = {
+        id: eventId, name, note: "AI",  // i18n-ignore: event notetag
+        x: spot.x, y: spot.y,
+        pages: [{
+          conditions: {
+            actorId: 1, actorValid: false, itemId: 1, itemValid: false,
+            selfSwitchCh: "A", selfSwitchValid: false,
+            switch1Id: 1, switch1Valid: false, switch2Id: 1, switch2Valid: false,
+            variableId: 1, variableValid: false,
+          },
+          directionFix: false,
+          image: {
+            tileId: 0, characterName: sheet,
+            characterIndex: sheetIndex, direction: 2, pattern: 1,
+          },
+          list: ProceduralManager._spacerPageList(),
+          moveFrequency: 3,
+          moveRoute: { list: [{ code: 0 }], repeat: true, skippable: false, wait: false },
+          moveSpeed: 3, moveType: 1, priorityType: 1, stepAnime: true,
+          through: false, trigger: 0, walkAnime: true,
+        }, blankPage],
+      };
+
+      if (!$gameMap._events) $gameMap._events = [];
+      const ev = new Game_Event($gameMap.mapId(), eventId);
+      ev.setImage(sheet, sheetIndex);
+      ev._spaceportSpawn = true;
+      $gameMap._events[eventId] = ev;
+      SpawnManager.snapshotSpawn(ev);
+
+      // A traveller keeps the life they already have. Only a spacer minted
+      // here needs one, and theirs belongs to the pad rather than to any town
+      // on Earth.
+      if (!visitor) {
+        const group = ProceduralManager.ensureSpaceportSettlement(site);
+        const profile = ProceduralManager.registerProcCitizen(
+          name, ev, group, ProceduralManager.seededClassId(seed ^ 0x51ed270b),
+          { spriteKey: sheet, bustIndex: sheetIndex });
+        if (profile) {
+          profile.spriteKey = sheet;
+          profile.bustIndex = 0;
+          window.NPCSocietyRegistry?.reconcileToSprite?.(name, profile);
+        }
+      }
+      SpawnManager.injectBrain(ev, ev.event());
+      return true;
+    },
+
+    // The pad as a settlement of its own, so the people minted on it are
+    // citizens of somewhere rather than of a town they have never seen. Named
+    // after the site, so two pads on two worlds are two different places.
+    ensureSpaceportSettlement: (site) => {
+      if (!$gameSystem) return null;
+      const groupName = "Port:" + (site?.planet || "?") + ":" + (site?.name || "?");  // i18n-ignore: settlement key
+      const groups = $gameSystem._npcMapGroups || ($gameSystem._npcMapGroups = {});
+      if (!groups[groupName]) {
+        groups[groupName] = {
+          maps: [$gameMap ? $gameMap.mapId() : 0],
+          mainMaps: [], residentialBuildings: [], jobs: {}, _spaceport: true,
+        };
+      }
+      return groupName;
+    },
+
+    spaceportSiteNow: () => {
+      const GS = window.GalaxySim;
+      if (!GS || typeof GS.spaceportSurfaceSite !== "function") return null;
+      try { return GS.spaceportSurfaceSite(); } catch (e) { return null; }
+    },
+
+    // The authored people who are off on a journey right now, so one of them
+    // can be the human at the far end of it.
+    travellersAbroad: () => {
+      const records = $gameSystem?._npcLifeRecords;
+      if (!records) return [];
+      const out = [];
+      for (const name of Object.keys(records)) {
+        if (!records[name]?.trip) continue;
+        const profile = $gameSystem?._npcSociety?.[name];
+        if (profile?.spriteKey) out.push({ name, spriteKey: profile.spriteKey, bustIndex: profile.bustIndex || 0 });
+      }
+      return out;
+    },
+
+    populateSpaceport: () => {
+      const site = ProceduralManager.spaceportSiteNow();
+      if (!site || !$gameMap || !$dataMap) return 0;
+      // Once per visit. A pad already peopled is left exactly as it stands.
+      if ($gameMap._spaceportCrowd) return 0;
+      $gameMap._spaceportCrowd = true;
+
+      const mapId = $gameMap.mapId();
+      // Seeded on the pad and the world, so the same landing meets the same
+      // faces and a different world meets different ones.
+      const seed = ((Utils.nameHash(String(site.planet || "") + ":" + String(site.name || "")) >>> 0) ^
+        ((window.NPCShared?.worldSeed?.() ?? 0) >>> 0) ^ (mapId * 2654435761)) >>> 0;
+
+      const tiles = MapManager.findPassableTerrainTiles();
+      if (!tiles.length) return 0;
+      for (let i = tiles.length - 1; i > 0; i--) {
+        const j = Math.floor(Utils.seededRandom(seed ^ (i * 54321)) * (i + 1));
+        const tmp = tiles[i]; tiles[i] = tiles[j]; tiles[j] = tmp;
+      }
+
+      const span = ProceduralManager.SPACEPORT_MAX - ProceduralManager.SPACEPORT_MIN + 1;
+      const want = Math.min(tiles.length,
+        ProceduralManager.SPACEPORT_MIN + Math.floor(Utils.seededRandom(seed) * span));
+      const travellers = ProceduralManager.travellersAbroad();
+      let used = 0, made = 0;
+
+      for (let i = 0; i < want; i++) {
+        const spot = tiles[i];
+        if (!spot) break;
+        const roll = Utils.seededRandom((seed + i * 2654435761) >>> 0);
+        // The mapId is handed over so the share is the PAD's share, not
+        // whatever map happens to be loaded when this is asked.
+        let spriteKey = null;
+        try {
+          spriteKey = window.SpriteCatalog?.pickNpcKey?.(roll, { mapId });
+        } catch (e) { spriteKey = null; }
+        if (!spriteKey) continue;
+
+        // A human here is somebody who travelled, where anybody has.
+        let visitor = null;
+        if (!window.AlienOrigins?.isAlienSprite?.(spriteKey) && used < travellers.length) {
+          visitor = travellers[used++];
+        }
+        if (ProceduralManager._spawnSpacer(spot, spriteKey, visitor, seed ^ (i * 83492791), site)) made++;
+      }
+      Utils.debug(`spaceport ${site.name || mapId}: ${made} on the pad, ${used} of them travellers`);
+      return made;
+    },
+
     // Pet / Empathize / Cancel. A beast is not talked to: the rumour mill is a
     // thing people pass to each other, and running one through the growl bank
     // only ever produced a townsman's sentence with the words knocked out of
@@ -2976,8 +3448,17 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     dressProcCitizen: (ev, baseSeed, settlementGroup, worldX, worldY, procWorldSeed) => {
       {
         const graphicSeed = baseSeed ^ (ev.eventId() * 83492791);
+        // Who this person is depends first on WHERE they are. On a floor of
+        // the Omega Tower that is a world of its own, with its own people:
+        // the sprite comes out of that world's wardrobe rather than out of
+        // Earth's, which is also what decides their class, because the sheet
+        // is the authority on that everywhere (NPCSociety reconcileToSprite).
+        const towerWorld  = window.TowerWorlds?.worldOfGroup?.(settlementGroup) || null;
         const charPool    = buildNPCCharacterPool();
-        const charName    = pickNPCCharacter(Utils.seededRandom(graphicSeed), charPool);
+        const towerSprite = towerWorld
+          ? ProceduralManager.towerCitizenSprite(towerWorld, graphicSeed) : null;
+        const charName    = towerSprite
+          || pickNPCCharacter(Utils.seededRandom(graphicSeed), charPool);
         // A wardrobe with nothing in it at all (no NPCs.json, a magic level that
         // filtered everything out) leaves the event in whatever face it was
         // authored with rather than throwing on the way past.
@@ -3006,7 +3487,18 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         const spriteGender = npcEntry && npcEntry.Gender != null ? npcEntry.Gender : null;
 
         let genName = "NPC";
-        if (window.generateSeededMarkovName) {
+        // A fungoid world does not name its people Marco. Every world is
+        // written in one register and its people are named in it
+        // (window.TowerWorlds.nameIn).
+        if (towerWorld && window.TowerWorlds?.nameIn) {
+          let ns = (graphicSeed >>> 0) || 1;
+          const nrng = () => { ns = (ns * 9301 + 49297) % 233280; return ns / 233280; };
+          try {
+            const made = window.TowerWorlds.nameIn(towerWorld.register, nrng);
+            if (made && made.length >= 2) genName = made;
+          } catch (e) { /* fall through to the ordinary banks */ }
+        }
+        if (genName === "NPC" && window.generateSeededMarkovName) {   // i18n-ignore: event-name prefix
           const dbId = Config.NAME_DATABASES[Math.floor(Utils.seededRandom(graphicSeed) * Config.NAME_DATABASES.length)];
           try { genName = window.generateSeededMarkovName(worldX ^ (procWorldSeed & 0xffff), worldY ^ ((procWorldSeed >>> 16) & 0xffff), ev.eventId(), dbId, 2, 4, 12); } catch (e) { }
         }
@@ -3061,6 +3553,21 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
           // 2=Non-binary, see ClassSelector gender map), so the identity matches
           // the world sprite the player sees rather than a random roll.
           if (spriteGender != null) profile.gender = spriteGender;
+
+          // How heavy they are is decided by the floor, not by the party:
+          // most of a floor's people stand at its own level and a rare one
+          // stands well above or below it. Pinned, because the local-NPC
+          // peg would otherwise drag every one of them back to whatever the
+          // party has reached at home (NPCSociety _syncLocalLevel).
+          if (towerWorld && window.TowerWorlds?.levelRoll) {
+            let ls = ((graphicSeed >>> 0) ^ 0x9e3779b9) || 1;
+            const lrng = () => { ls = (ls * 9301 + 49297) % 233280; return ls / 233280; };
+            const level = window.TowerWorlds.levelRoll(towerWorld.floor, lrng);
+            if (level > 0) {
+              profile.level = level;
+              profile._levelPinned = true;
+            }
+          }
         }
 
         const controller = new NPCController(genName);
@@ -3187,6 +3694,81 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // procedural world tile and marks it as the live settlement so
     // findGroupByMap(636) and the world-web pulse resolve to it. Returns the
     // group name.
+    // The settlement a floor of the Omega Tower holds. Deliberately NOT a
+    // Proc:x,y group: a floor is not a square of the world map, and the
+    // group carries no coordinate and no nation id, so nothing downstream
+    // can mistake its people for Earth's. NPCPolitics answers it from the
+    // world instead (resolveGroupPolity).
+    ensureTowerSettlement: (floor) => {
+      const TW = window.TowerWorlds;
+      if (!$gameSystem || !TW || !floor) return null;
+      const world = TW.get(floor);
+      if (!world) return null;
+      const groupName = TW.groupName(floor);
+      const groups = $gameSystem._npcMapGroups || ($gameSystem._npcMapGroups = {});
+
+      if (!groups[groupName]) {
+        const group = {
+          maps: [636],
+          mainMaps: [636],
+          residentialBuildings: _scanMapForResidentialBuildings(636, $dataMap) || [],
+          _tower: true,
+          offworld: true,
+          floor: floor,
+          towerWorld: world.id,
+          biome: null,
+        };
+        _populateGroupJobs({ [groupName]: group });
+        groups[groupName] = group;
+        if (GroupRegistry._cache && GroupRegistry._cache !== groups) {
+          GroupRegistry._cache[groupName] = group;
+        }
+      }
+
+      // Refreshed each visit, which also backfills a group saved before the
+      // world it belongs to had a name.
+      const grp = groups[groupName];
+      grp.towerWorld = world.id;
+      grp.floor = floor;
+      grp.displayName = T('NPCSystem.towerWorldOfFloor', { world: world.name, floor: floor });
+
+      $gameSystem._currentProcGroup = groupName;
+      MapManager.setCurrentMapGroup(groupName);
+      return groupName;
+    },
+
+    // The sheets a world's people wear. A world with a dominant race draws it
+    // at that world's own share and something else the rest of the time: that
+    // is what makes it a world OF goblins rather than a world with some in
+    // it. Built once per world and kept, because the wardrobe scan is not
+    // cheap and every citizen on the floor asks for it.
+    _towerWardrobes: {},
+    towerCitizenSprite: (world, seed) => {
+      if (!world || !world.dominant) return null;
+      const cache = ProceduralManager._towerWardrobes;
+      if (!cache[world.id]) {
+        const wardrobe = window.NPCCreature?.creatureWardrobe?.(true) || [];
+        const data = window.WorldGen?.NPCs || {};
+        const wanted = world.dominant.classId;
+        const sprite = world.dominant.sprite;
+        cache[world.id] = wardrobe.filter((entry) => {
+          if (!entry || !entry.spriteKey) return false;
+          // A world named after a people rather than after a class (the
+          // goblin worlds) matches on the sheet itself.
+          if (sprite) return entry.spriteKey.toLowerCase().includes(sprite);
+          if (!wanted) return false;
+          const classes = data[entry.spriteKey]?.classes;
+          return Array.isArray(classes) && classes.includes(wanted);
+        }).map((entry) => entry.spriteKey);
+      }
+      const pool = cache[world.id];
+      if (!pool.length) return null;
+      // The share is the world's own, jittered by nothing: a citizen either
+      // belongs to the dominant people or does not.
+      if (Utils.seededRandom((seed ^ 0x5bf03635) >>> 0) >= (world.dominant.share || 0.8)) return null;
+      return pool[Math.floor(Utils.seededRandom((seed ^ 0x27d4eb2f) >>> 0) * pool.length)] || null;
+    },
+
     ensureProcSettlement: (worldX, worldY, biomeName) => {
       if (!$gameSystem) return null;
       const groupName = ProceduralManager.procGroupName(worldX, worldY);
@@ -3380,6 +3962,31 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       $gameMap.eraseEvent(eventId);
     },
 
+    // The record written for a named recruit, wherever on the world it was
+    // made. A dismissal (window.PartyReturn, NPCSystemParty.js) has only a
+    // name to go on: the party actor slot says nothing about the tile the
+    // person was taken off. Answers { key, ...record } or null.
+    findProceduralRecruit: (name) => {
+      const store = $gameSystem?._npcRecruitedProcCitizens;
+      if (!store || !name) return null;
+      for (const key of Object.keys(store)) {
+        const rec = store[key];
+        if (rec && rec.name === name) return Object.assign({ key }, rec);
+      }
+      return null;
+    },
+
+    // Undo a recruitment: the tile forgets that this citizen ever left it, so
+    // the next regeneration of the square puts them back where they stood.
+    forgetProceduralRecruit: (key) => {
+      const store = $gameSystem?._npcRecruitedProcCitizens;
+      if (!store || !key || !(key in store)) return false;
+      delete store[key];
+      // Reassigning the accessor-backed field re-persists it through WorldManager.
+      $gameSystem._npcRecruitedProcCitizens = store;
+      return true;
+    },
+
     // Event ids of citizens recruited on the given world tile, so the spawn pass
     // can skip (and erase) them when the procedural map is regenerated.
     getRecruitedEventIds: (worldX, worldY) => {
@@ -3455,6 +4062,31 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // Reassigning the accessor-backed field re-persists it through WorldManager.
       $gameSystem._npcGoneCitizens = store;
       this._names = null;
+    },
+
+    // The record written for a named citizen, so a dismissal can find the
+    // event slot they were taken off with nothing but their name.
+    findByName(name) {
+      const store = this.store(false);
+      if (!store || !name) return null;
+      for (const rec of Object.values(store)) {
+        if (rec && rec.name === name) return Object.assign({}, rec);
+      }
+      return null;
+    },
+
+    // Strike a record: this person is not lost to the world any more, so the
+    // map load stops putting them back behind their blank page.
+    forget(mapId, eventId) {
+      const store = this.store(false);
+      if (!store) return false;
+      const key = this.key(Number(mapId) || 0, Number(eventId) || 0);
+      if (!(key in store)) return false;
+      delete store[key];
+      // Reassigning the accessor-backed field re-persists it through WorldManager.
+      $gameSystem._npcGoneCitizens = store;
+      this._names = null;
+      return true;
     },
 
     isGone(mapId, eventId, name) {
@@ -6297,6 +6929,13 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         } catch (e) {
           console.error("[NPC System] visiting party spawn failed", e);
         }
+        // A landing pad on another world has no roster of its own: its crowd is
+        // dealt here, nine faces in ten off the alien half of the wardrobe.
+        try {
+          ProceduralManager.populateSpaceport();
+        } catch (e) {
+          console.error("[NPC System] spaceport crowd failed", e);
+        }
       });
     }
   };
@@ -6619,6 +7258,8 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       $gameSystem.npcControllers?.forEach(c => c.updateTacticalStep?.());
     } else if (drivesMap) {
       $gameSystem.npcControllers?.forEach(c => c.update());
+      // Somebody who has reached their door has gone through it.
+      SpawnManager.updateCommutes();
     }
     // Needs tick: every 10 game minutes, decay hunger/sleep for all loaded NPCs.
     // FALLBACK ONLY. When NPCSimulationCore (window.NPCSim) is loaded it owns the
@@ -6847,7 +7488,13 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // from the world-wide pool instead of minting a citizen of this square.
     // Used by RoadCarAI for the drivers who pull over and get out.
     spawnRoadsideNPC: ProceduralManager.spawnRoadsideNPC,
+    populateSpaceport: () => ProceduralManager.populateSpaceport(),
+    spaceportSiteNow: () => ProceduralManager.spaceportSiteNow(),
     getRecruitedProcEventIds: ProceduralManager.getRecruitedEventIds,
+    // ...and the two halves of undoing one, for a member dismissed back into
+    // the world from the Dynamics board.
+    findProceduralRecruit: ProceduralManager.findProceduralRecruit,
+    forgetProceduralRecruit: ProceduralManager.forgetProceduralRecruit,
     // --- Map Battle Mode stepping (MapBattleMode.js) -------------------------
     // Bank N tiles of movement for every live NPC on the map. Called once per
     // round, at the world step, so the frozen town lurches one tile forward

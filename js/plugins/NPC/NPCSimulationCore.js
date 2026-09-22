@@ -3738,6 +3738,10 @@
     isNPCAtHome(name, profile, hour) {
       if (!profile && name && $gameSystem?._npcSociety) profile = $gameSystem._npcSociety[name];
       if (!profile) return false;
+      // Somebody away on a trip is not at home, whatever the hour says: their
+      // house is in another town. They are in an inn, and answering "at home"
+      // here would quietly delete them from every roster after dark.
+      if (window.NPCLifeSim?.isAwayFromTown?.(name)) return false;
       if (profile.isHomeless || !profile.homeBuilding) return false;
 
       if (hour == null) hour = $gameVariables?.value(23) ?? 12;

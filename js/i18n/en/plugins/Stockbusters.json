@@ -59,7 +59,7 @@
   "ui": {
     "windowTitle": "Stockbusters - Hypercapitalism",
     "appName": "Stockbusters",
-    "siteName": "hypercapitalisemporium.eu",
+    "siteName": "hypercapitalisemporium.eu",
     "copyright": "(c) Stockbusters Hypercapital. All lots sold as described.",
     "catalogCategories": "Categories",
     "totalCost": "Total",
@@ -144,15 +144,12 @@
     "cancel2": "CANCEL",
     "myOrders": "My orders",
     "activeOrders": "Orders in transit",
-    "parcelsPending": "{count} parcel(s) on the way, {ready} ready to collect.",
+    "parcelsPending": "{count} parcel(s) on the way.",
     "noActiveDeliveriesInTransit": "Nothing is on its way.",
-    "readyForPickup": "Arrived - ready to collect",
+    "beingHandedOver": "Arrived - being handed over",
     "arrivesIn": "Arrives in {time}",
-    "collect": "Collect",
-    "collectAll": "Collect all ({count})",
     "collected": "Collected: {items}",
     "dispatchPlaced": "{count} unit(s) dispatched. Arriving in {time}.",
-    "orderArrived": "{item} has arrived and is waiting to be collected.",
     "nextDeliveryIn": "Nothing has arrived yet. The next parcel is {time} away.",
     "delivered": "{count} item(s) have been delivered!",
     "noItemsReadyForDelivery": "No items ready for delivery.",
@@ -186,6 +183,7 @@
     "searchResultsFor": "Search: \"{query}\" ({count})",
     "noSearchResults": "Nothing in the catalogue matches \"{query}\".",
     "searchTruncated": "Showing the first {count} matches. Refine the search to see more.",
-    "leisure": "Leisure"
+    "leisure": "Leisure",
+    "orderDelivered": "Delivered to your backpack: {items}."
   }
 }

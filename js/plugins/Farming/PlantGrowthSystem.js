@@ -265,6 +265,26 @@
     return "WINTER";
   }
 
+  function seasonOfMonth(m) {
+    if (m >= 2 && m <= 4) return "SPRING";
+    if (m >= 5 && m <= 7) return "SUMMER";
+    if (m >= 8 && m <= 10) return "AUTUMN";
+    return "WINTER";
+  }
+
+  // The season a given game minute fell in. TimeDateSystem owns the calendar, so
+  // it is asked; without it, the only answer available is today's season.
+  function seasonAtMinute(minute) {
+    const T2 = window.TimeDateSystem;
+    if (T2 && T2.getDateTimeFromMinutes) {
+      const dt = T2.getDateTimeFromMinutes(minute);
+      const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const idx = MONTHS.indexOf(String(dt && dt.month).toUpperCase());
+      if (idx >= 0) return seasonOfMonth(idx);
+    }
+    return currentSeason();
+  }
+
   function currentWeather() {
     return ($gameWeather && $gameWeather.currentWeatherType) || "none";
   }
@@ -726,11 +746,37 @@
     }
 
     const greenhouse = isGreenhouse();
-    const inSeason = greenhouse || def.seasons.includes(currentSeason());
-
     const wasRipe = isRipe(rec);
-    if (inSeason) {
-      rec.effectiveGrowthMinutes += elapsed * growthMult(greenhouse);
+
+    // A plant is only looked at while the party stands on its map, so the elapsed span
+    // can be months. It used to be credited (or refused) in one lump against the
+    // CURRENT season and the CURRENT weather: a watermelon visited only in
+    // winter never grew however many summers had passed, and a spring sowing
+    // returned to on a rainy day in summer had six months multiplied by the rain
+    // bonus. The span is walked a day at a time instead, each day judged by the
+    // season it actually fell in. Only the day in hand gets today's weather;
+    // weather that has already passed is not on record, so it counts as fair.
+    const DAY = MINUTES_PER_DAY;
+    const MAX_DAYS = 4000;                 // a decade of catch-up is plenty
+    let from = rec.lastUpdateMinutes;
+    if (now - from > MAX_DAYS * DAY) from = now - MAX_DAYS * DAY;
+    let credited = 0;
+    if (greenhouse) {
+      // Under glass every day counts, and the glass is the multiplier.
+      credited = (now - from) * growthMult(true);
+    } else {
+      let cursor = from;
+      while (cursor < now) {
+        const next = Math.min(cursor + DAY, now);
+        if (def.seasons.includes(seasonAtMinute(cursor))) {
+          const isToday = next >= now;
+          credited += (next - cursor) * (isToday ? growthMult(false) : 1.0);
+        }
+        cursor = next;
+      }
+    }
+    if (credited > 0) {
+      rec.effectiveGrowthMinutes += credited;
     }
     rec.lastUpdateMinutes = now;
     rec.stage = calcStage(rec.effectiveGrowthMinutes, def.growthDays);

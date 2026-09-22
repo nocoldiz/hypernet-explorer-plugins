@@ -65,5 +65,25 @@
     "people": "Persone: {population} note, {employed} al lavoro, {unemployed} senza impiego, {imprisoned} in prigione, {retired} in pensione, {criminals} di malaffare.",
     "rightNow": "In questo momento: {list}.",
     "quiet": "Tempi tranquilli, nulla di notevole in corso."
+  },
+  "deed": {
+    "someone": "Qualcuno",
+    "trade": "{actor} ha commerciato alla luce del sole a {place}.",
+    "gift": "{actor} ha regalato {target} a {place}.",
+    "drop": "{actor} ha lasciato {target} per terra a {place}.",
+    "trespass": "{actor} è stato trovato dove non doveva essere, a {place}.",
+    "vandalism": "{actor} ha rotto qualcosa che non gli apparteneva, a {place}.",
+    "bribery": "{actor} ha messo denaro nella mano sbagliata a {place}.",
+    "pickpocket": "{actor} ha alleggerito una tasca a {place}.",
+    "theft": "{actor} ha rubato {target} a {place}.",
+    "burglary": "{actor} è entrato con la forza in un edificio a {place}.",
+    "assault": "{actor} ha picchiato {target} in pubblico a {place}.",
+    "arson": "Un incendio è stato appiccato di proposito a {place}.",
+    "bodyFound": "È stato trovato un cadavere a {place}.",
+    "killing": "{actor} ha ucciso {target} a {place}.",
+    "massacre": "A {place} è stato compiuto un massacro.",
+    "rescue": "{actor} ha tirato fuori {target} dai guai a {place}.",
+    "healing": "{actor} ha curato i feriti a {place}.",
+    "charity": "{actor} ha dato a chi non aveva nulla, a {place}."
   }
 }

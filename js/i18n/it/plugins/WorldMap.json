@@ -17,14 +17,15 @@
     "note": "La tua nota",
     "built": "Costruito qui",
     "builtWhat": "{count}: {what}",
-    "builtCount": "{count} pezzi"
+    "builtCount": "{count} pezzi",
+    "power": "Tenuto da"
   },
   "country": {
     "title": "Evidenzia una nazione",
     "none": "Nessuna nazione"
   },
   "hint": {
-    "sheet": "Clicca un luogo per partire. Clic destro su un riquadro per segnarlo.",
+    "sheet": "Clicca un riquadro per selezionarlo. Clic destro per chiudere la mappa.",
     "travel": "Clicca per partire verso {place}.",
     "needVehicle": "Devi essere a bordo di un veicolo per partire dalla carta."
   },
@@ -33,7 +34,8 @@
     "placeholder": "Scrivi qualcosa su questo riquadro",
     "save": "Conserva",
     "delete": "Cancella",
-    "cancel": "Indietro"
+    "cancel": "Indietro",
+    "write": "Scrivi una nota"
   },
   "preview": {
     "showMap": "Mostra la mappa",

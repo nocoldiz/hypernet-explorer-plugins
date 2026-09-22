@@ -206,6 +206,125 @@
     "avoided": "{name} sta alla larga da {target}, livello {level}",
     "flees": "{name} fugge dallo scontro",
     "worldMap": "{name} esce sulla mappa del mondo",
-    "travelled": "{name} scende in {x}, {y}"
+    "travelled": "{name} scende in {x}, {y}",
+    "ate": "{name} mangia {item}",
+    "stocked": "{name} fa scorta di {item} per {price}",
+    "handsOver": "{name} affida il gruppo a {other}",
+    "surveyed": "{name} annota {map}: {notes}",
+    "routes": "{name} parte per {map}, a {hops} mappe di distanza: {why}",
+    "routeStep": "{name} prende il passaggio verso {target}",
+    "travels": "{name} prende la rete per {target}",
+    "puzzle": "{name} manovra {target}",
+    "puzzleWalk": "{name} si mette dietro {target}",
+    "note": {
+      "shop": "un banco",
+      "hunger": "cibo",
+      "sleep": "un letto",
+      "hygiene": "acqua pulita",
+      "leisure": "qualcosa da fare",
+      "money": "lavoro",
+      "comfort": "un posto dove sedersi",
+      "puzzle": "un enigma",
+      "nothing": "niente per cui tornare"
+    },
+    "why": {
+      "hunger": "lo zaino è vuoto",
+      "shop": "al gruppo serve un banco",
+      "money": "la borsa è vuota",
+      "sleep": "nessuno ha dormito",
+      "frontier": "nessuno ci è mai stato",
+      "work": "c'è una giornata di paga",
+      "mail": "c'è posta che aspetta",
+      "bed": "nessuno ha dormito"
+    },
+    "shelters": "{name} cerca un tetto, al riparo da {weather}",
+    "turnsIn": "{name} chiude la giornata e va in cerca di un letto"
+  },
+  "mind": {
+    "wants": "{name} si fissa su {why}",
+    "givesUp": "{name} rinuncia a {target}",
+    "why": {
+      "errand": "qualcosa che vale la pena vedere",
+      "onward": "la via da seguire",
+      "quest": "l'incarico che ha accettato",
+      "work": "una giornata di paga",
+      "mail": "la posta che la aspetta",
+      "bed": "un letto"
+    }
+  },
+  "voice": {
+    "words": {
+      "yes": [
+        "sì",
+        "certo",
+        "accetto",
+        "va bene",
+        "d'accordo",
+        "ci sto",
+        "lo farò",
+        "affare fatto"
+      ],
+      "no": [
+        "no",
+        "rifiuto",
+        "mai",
+        "non mi interessa",
+        "non posso",
+        "un'altra volta"
+      ],
+      "leave": [
+        "vado",
+        "addio",
+        "arrivederci",
+        "niente",
+        "lascia perdere",
+        "scordatelo",
+        "annulla"
+      ],
+      "fight": [
+        "combatti",
+        "attacca",
+        "duello",
+        "sfida",
+        "uccidi",
+        "colpisci"
+      ],
+      "buy": [
+        "compra",
+        "acquista",
+        "paga",
+        "assumi",
+        "commercia",
+        "quanto costa",
+        "il prezzo"
+      ],
+      "ask": [
+        "chiedi",
+        "chi",
+        "cosa",
+        "dove",
+        "perché",
+        "dimmi",
+        "ancora",
+        "riguardo"
+      ],
+      "help": [
+        "aiuta",
+        "dai",
+        "dividi",
+        "cura",
+        "salva",
+        "lascia che"
+      ],
+      "rude": [
+        "taci",
+        "idiota",
+        "sciocco",
+        "minaccia",
+        "deruba",
+        "sparisci",
+        "fatti gli affari tuoi"
+      ]
+    }
   }
 }

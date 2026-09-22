@@ -88,6 +88,22 @@
     defRawField("vnBust", "setVnBust", "_pvBust");
     defRawField("portraitMode", "setPortraitMode", "_pvPortraitMode");
 
+    // How this body reproduces: 0 testes, 1 uterus, 2 oviparous, 3 plant,
+    // 4 mitosis. It used to live in variables 87/115/116, which the writers
+    // picked by ACTOR ID and the reader picked by PARTY INDEX - so reordering
+    // the party handed a character somebody else's reproductive system, and a
+    // pregnancy whose type read back as 0 gestated for ever without a birth.
+    // null means nobody has said, which is what lets an old save migrate off
+    // the variables once.
+    Game_Actor.prototype.reproductionType = function () {
+        const v = this._pvReproductionType;
+        return (v === undefined || v === null) ? null : v;
+    };
+    Game_Actor.prototype.setReproductionType = function (value) {
+        this._pvReproductionType = (value === null || value === undefined)
+            ? null : Math.floor(Number(value) || 0);
+    };
+
     defNumField("pvArcane", "setPvArcane", "_pvArcane");
     defNumField("pvSubstance", "setPvSubstance", "_pvSubstance");
     defNumField("pvStealth", "setPvStealth", "_pvStealth");

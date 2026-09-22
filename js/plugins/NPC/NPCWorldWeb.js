@@ -269,6 +269,12 @@
     return byGroup;
   }
 
+  function crimeRatePerCapitaDay(census, days) {
+    if (!census || !census.population) return 0;
+    const span = Math.max(1, days || 1);
+    return census.recentCrimes / census.population / span;
+  }
+
   function guardCaptainHonesty(group) {
     const captain = window.NPCPolitics?.getSettlement?.(group)?.offices?.guardCaptain;
     if (!captain) return 50;
@@ -321,7 +327,7 @@
   function updateEpisodes(state, pulse, rng, last, now, days, census) {
     const ep = pulse.episodes;
     const minute = () => last + rng.int(0, Math.max(0, Math.floor(now - last)));
-    const perCapitaCrime = census.population ? census.recentCrimes / census.population : 0;
+    const perCapitaCrime = crimeRatePerCapitaDay(census, days);
 
     // ---- crime wave --------------------------------------------------------
     if (!ep.crimeWave) {
@@ -412,6 +418,12 @@
     // packed town - which now ASKS for a real one rather than making one up.
     // The invented kind survives only as the fallback for a world with the
     // disease plugin switched off.
+    // ...and it ends the ones it started, too. An outbreak stamped
+    // source !== 'eurodemics' is one this block invented as a fallback, so
+    // this is the only thing that can end it. A real one is ended by the
+    // disease engine through NPCWorldWeb.endEpidemic when its curve burns out,
+    // and expiring it from here would take a live epidemic off a town the
+    // disease system still has sickening.
     if (ep.epidemic && ep.epidemic.source !== 'eurodemics' && ep.epidemic.untilMinute <= now) {
       endEpisode(state, pulse, "epidemic", ep.epidemic.untilMinute,
         "WorldWeb.episode.epidemicEnd", { disease: epidemicName(ep.epidemic.name), place: pulse.group },
@@ -736,7 +748,7 @@
         // ---- targets -------------------------------------------------------
         const workforce = census.employed + census.unemployed;
         const employmentRate = workforce ? census.employed / workforce : 0.6;
-        const perCapitaCrime = census.population ? census.recentCrimes / census.population : 0;
+        const perCapitaCrime = crimeRatePerCapitaDay(census, days);
         const guardHonesty = guardCaptainHonesty(pulse.group);
         const bustleBonus = clamp((_bustle[pulse.group] || 0) / 20, 0, 4);
         _bustle[pulse.group] = 0;
@@ -802,6 +814,255 @@
   }
 
   // ==========================================================================
+  // WORLD EVENTS, the one record of what was actually DONE in this world
+  // ==========================================================================
+  // The pulse above is a statistical portrait: how a town is doing, averaged.
+  // This is the opposite, and the two need each other. A deed is a single
+  // thing somebody did, at a tile, at a minute, in front of whoever happened
+  // to be looking, and it is kept verbatim.
+  //
+  // Before this existed every system that cared about the party's conduct
+  // inferred it separately: CrimeSystem read its own bounty, NewsSystem read
+  // the press ledger, the Diary read the scene it was in, NPCConversation read
+  // a notoriety scalar. Four systems, four private answers, none of which could
+  // say WHERE a thing was done or WHO saw it, so none of them could be wrong
+  // about it in an interesting way. A deed can: it is witnessed or it is not,
+  // and a witness reports it or keeps it to themselves.
+  //
+  //   WorldEvents.record({ verb, actor, target, severity })
+  //     stamps the minute, the date, the settlement and the tile, resolves the
+  //     witnesses standing around it, files it in the world folder and hands it
+  //     to every subscriber. Returns the stored deed.
+  //   WorldEvents.on(verb | "*", fn)     subscribe; returns an unsubscriber
+  //   WorldEvents.recent(filter)         query the record
+  //   WorldEvents.knownTo(npcName)       what this person actually saw
+  //
+  // Storage rides on the world-web state, which WorldManager already maps to
+  // the "worldWeb" section of npcs.json, so a deed is shared by every savegame
+  // of the world exactly like the pulse and the politics are. Subscribers are
+  // functions and live only in memory.
+
+  const DEED_LOG_CAP = 120;
+
+  // What a deed is worth, 0..100, when the caller does not price it itself.
+  // Only a rough register: the systems that care about exact numbers (crime
+  // bounties, faction standing) keep their own and pass severity alongside.
+  const DEED_SEVERITY = {
+    trade: 2, gift: 4, drop: 2, trespass: 8, vandalism: 14, bribery: 18,
+    pickpocket: 20, theft: 24, burglary: 34, assault: 44, arson: 58,
+    bodyFound: 62, killing: 78, massacre: 95,
+    rescue: 20, healing: 12, charity: 14,
+  };
+
+  // Deeds nobody can shrug off: witnessed or not, these move the town. A body
+  // in the street is found whether or not the killing itself was seen.
+  const DEED_ALWAYS_FELT = new Set(["bodyFound", "arson", "massacre"]);
+
+  // Kindness repairs a town more slowly than cruelty breaks it, which is both
+  // true and the only thing that keeps the meters from oscillating.
+  const DEED_GOOD_VERBS = new Set(["rescue", "healing", "charity", "gift"]);
+
+  const _deedListeners = { "*": [] };
+  let _deedSeq = 0;
+
+  function deedStore(state) {
+    if (!state) return null;
+    if (!Array.isArray(state.deeds)) state.deeds = [];
+    return state.deeds;
+  }
+
+  // Who was looking. CrimeSystem owns the sight maths (range, facing arc, and
+  // a wall between them), because it already had to answer it for constables;
+  // this asks the same question of everybody on the map rather than of the
+  // police alone. Without that plugin loaded a deed simply has no witnesses,
+  // which is the honest answer for a headless test.
+  function witnessesFor(x, y) {
+    const C = window.CrimeSystem;
+    if (!C || typeof C.witnessesAt !== "function") return [];
+    try {
+      return (C.witnessesAt(x, y) || []).map(w => (typeof w === "string" ? w : w && w.name)).filter(Boolean);
+    } catch (e) { return []; }
+  }
+
+  function currentTile() {
+    if (typeof $gamePlayer === "undefined" || !$gamePlayer) return { x: null, y: null, mapId: null };
+    return {
+      x: $gamePlayer.x, y: $gamePlayer.y,
+      mapId: (typeof $gameMap !== "undefined" && $gameMap) ? $gameMap.mapId() : null,
+    };
+  }
+
+  function normaliseDeed(raw) {
+    const d = raw || {};
+    const verb = String(d.verb || "unknown");
+    const tile = (d.x == null || d.y == null) ? currentTile() : { x: d.x, y: d.y, mapId: d.mapId ?? null };
+    const minute = Number.isFinite(d.minute)
+      ? d.minute
+      : ((typeof $gameVariables !== "undefined" && $gameVariables) ? ($gameVariables.value(114) || 0) : 0);
+    // A caller that already knows who saw it (a theft resolved inside a shop,
+    // where the keeper is the victim rather than a bystander) says so;
+    // everybody else gets the sweep.
+    const witnesses = Array.isArray(d.witnesses) ? d.witnesses.slice() : witnessesFor(tile.x, tile.y);
+    const severity = Number.isFinite(d.severity)
+      ? clamp(d.severity, 0, 100)
+      : (DEED_SEVERITY[verb] ?? 10);
+    return {
+      id: "d" + (++_deedSeq) + ":" + minute,
+      minute,
+      date: dateStrOf(minute),
+      verb,
+      actor: d.actor ?? "player",          // "player", or an NPC's name
+      target: d.target ?? null,            // a name, an item, a place: whatever the verb takes
+      place: d.place ?? currentPlayerGroup() ?? null,
+      mapId: tile.mapId,
+      x: tile.x, y: tile.y,
+      witnesses,
+      seen: witnesses.length > 0,
+      severity,
+      params: d.params ?? {},
+      // Did it reach the authorities? Set by whoever files it, so a deed can be
+      // known to a witness long before, or instead of, being known to the town.
+      reported: !!d.reported,
+    };
+  }
+
+  // A deed's sentence, resolved the way the two logs resolve theirs.
+  function deedText(deed) {
+    if (!deed) return "";
+    const key = "WorldWeb.deed." + deed.verb;
+    if (!T.has(key)) return deed.verb;
+    const place = deed.place && window.WorkSystem?.destinationName
+      ? window.WorkSystem.destinationName(deed.place)
+      : (deed.place || "");
+    return T(key, Object.assign({
+      actor: deed.actor === "player" ? T('WorldWeb.deed.someone') : deed.actor,
+      target: deed.target || "",
+      place,
+      witness: deed.witnesses[0] || "",
+    }, deed.params));
+  }
+
+  // The world web's own reading of a deed: a witnessed (or undeniable) crime
+  // costs the settlement security, a kindness buys a little back, and anything
+  // the town would talk about goes in the pulse log.
+  function feelDeed(deed) {
+    const state = $gameSystem && $gameSystem._npcWorldWeb;
+    if (!state || !deed.place) return;
+    if (!deed.seen && !DEED_ALWAYS_FELT.has(deed.verb)) return;
+    const pulse = state.settlements[deed.place];
+    if (!pulse) return;
+    const good = DEED_GOOD_VERBS.has(deed.verb);
+    // Scaled so a single killing is felt (about four points) without undoing a
+    // town, and a pickpocketing is barely a scratch.
+    const swing = (deed.severity / 20) * (good ? 0.5 : -1);
+    pulse.security = clamp(pulse.security + swing, 0, 100);
+    if (deed.severity >= 30) {
+      pushPulseEvent(pulse, deed.minute, "deed", "WorldWeb.deed." + deed.verb, {
+        actor: deed.actor === "player" ? T('WorldWeb.deed.someone') : deed.actor,
+        target: deed.target || "", place: deed.place,
+        witness: deed.witnesses[0] || "",
+      });
+    }
+    // Loud enough for the wire. Unwitnessed arson and bodies still make it:
+    // the smoke and the corpse are their own reporters.
+    if (deed.severity >= 55) {
+      queueNews({
+        text: deedText(deed),
+        location: deed.place,
+        category: good ? "positive" : "negative",
+        priceEffect: good ? 1 : 0.98,
+        occupancyEffect: good ? 1 : 0.95,
+        minute: deed.minute,
+      });
+      publishQueuedNews();
+    }
+  }
+
+  function notifyDeed(deed) {
+    const lists = [_deedListeners[deed.verb], _deedListeners["*"]];
+    for (const list of lists) {
+      if (!list) continue;
+      for (const fn of list.slice()) {
+        try { fn(deed); } catch (e) {
+          console.error("[WorldEvents] listener for " + deed.verb + " failed:", e);
+        }
+      }
+    }
+  }
+
+  function recordDeed(raw) {
+    const deed = normaliseDeed(raw);
+    // getState() rather than a read: a deed done before the web has resolved
+    // its first minute is still a thing that happened, and dropping it would
+    // make the record silently depend on how early in a session it was.
+    const state = getState();
+    const log = deedStore(state);
+    if (log) {
+      log.unshift(deed);
+      if (log.length > DEED_LOG_CAP) log.pop();
+    }
+    // The web reacts first, so a listener that reads the pulse reads it with
+    // this deed already on it.
+    try { feelDeed(deed); } catch (e) { console.error("[WorldEvents] feel failed:", e); }
+    notifyDeed(deed);
+    return deed;
+  }
+
+  function onDeed(verb, fn) {
+    if (typeof fn !== "function") return () => {};
+    const key = verb || "*";
+    if (!_deedListeners[key]) _deedListeners[key] = [];
+    _deedListeners[key].push(fn);
+    return () => {
+      const list = _deedListeners[key];
+      const i = list ? list.indexOf(fn) : -1;
+      if (i >= 0) list.splice(i, 1);
+    };
+  }
+
+  function recentDeeds(filter) {
+    const f = filter || {};
+    const log = $gameSystem?._npcWorldWeb?.deeds;
+    if (!Array.isArray(log)) return [];
+    const verbs = f.verb ? (Array.isArray(f.verb) ? f.verb : [f.verb]) : null;
+    const out = [];
+    for (const d of log) {
+      if (verbs && !verbs.includes(d.verb)) continue;
+      if (f.place && d.place !== f.place) continue;
+      if (f.actor && d.actor !== f.actor) continue;
+      if (f.seen === true && !d.seen) continue;
+      if (f.seen === false && d.seen) continue;
+      if (Number.isFinite(f.sinceMinute) && d.minute < f.sinceMinute) continue;
+      if (Number.isFinite(f.minSeverity) && d.severity < f.minSeverity) continue;
+      out.push(d);
+      if (f.limit && out.length >= f.limit) break;
+    }
+    return out;
+  }
+
+  // What this person saw with their own eyes, newest first. Keeping witnesses
+  // by name is the whole point: an NPC who was not there does not know,
+  // however loudly the rest of the town is talking.
+  function deedsKnownTo(npcName) {
+    const log = $gameSystem?._npcWorldWeb?.deeds;
+    if (!Array.isArray(log) || !npcName) return [];
+    return log.filter(d => Array.isArray(d.witnesses) && d.witnesses.includes(npcName));
+  }
+
+  window.WorldEvents = {
+    record: recordDeed,
+    on: onDeed,
+    recent: recentDeeds,
+    knownTo: deedsKnownTo,
+    textOf: deedText,
+    severityOf(verb) { return DEED_SEVERITY[verb] ?? 10; },
+    // The whole record, newest first. Read-only by convention.
+    all() { return $gameSystem?._npcWorldWeb?.deeds ?? []; },
+    _internals: { DEED_SEVERITY, DEED_ALWAYS_FELT, DEED_GOOD_VERBS, normaliseDeed, feelDeed,
+      get listeners() { return _deedListeners; } },
+  };
+
+  // ==========================================================================
   // CONVERSATION CONTEXT, gossip fodder for NPCConversation's WorldProvider
   // ==========================================================================
 
@@ -827,6 +1088,10 @@
       headline: state.log.find(e => e.group === pulse.group)?.desc ?? state.log[0]?.desc ?? null,
       marketMood: state.marketSentiment > 0.25 ? "bullish" : state.marketSentiment < -0.25 ? "bearish" : null,
       playerNotorious: playerNotoriety() > 0.3,
+      // What this person saw for themselves, rather than what the town is
+      // averaging. A witness talks about the thing they watched happen;
+      // everybody else can only gossip about the headline.
+      witnessed: (window.WorldEvents?.knownTo(npcName) ?? [])[0] ?? null,
       // Switch 199 ("EarthDestroyed"): Nibiru struck Earth, the tower is all
       // that is left. $gameSystem._gxNibiruOutcome === "saturn" (GalaxySim_Core)
       // is only ever set once the impact date has actually passed with switch
@@ -883,6 +1148,23 @@
   window.NPCWorldWeb = {
     catchUp,
     getPulse(group) { return $gameSystem?._npcWorldWeb?.settlements?.[group] ?? null; },
+    // The disease system owns the epidemic slot, so it is the one that knows an
+    // outbreak has burned out. It used to clear the slot by assignment, which
+    // skipped the pulse log, the world log and the "the sickness has passed"
+    // news item: the end of a real epidemic was silent.
+    endEpidemic(group, minute) {
+      const state = $gameSystem && $gameSystem._npcWorldWeb;
+      const pulse = state && state.settlements ? state.settlements[group] : null;
+      if (!pulse || !pulse.episodes || !pulse.episodes.epidemic) return false;
+      const name = epidemicName(pulse.episodes.epidemic.name);
+      endEpisode(state, pulse, "epidemic", minute,
+        "WorldWeb.episode.epidemicEnd", { disease: name, place: group },
+        { text: T('WorldWeb.news.epidemicEnd', { disease: name }),
+          location: group, category: "positive",
+          priceEffect: 1.02, occupancyEffect: 1.15, minute });
+      publishQueuedNews();
+      return true;
+    },
     listGroups() { return Object.keys($gameSystem?._npcWorldWeb?.settlements || {}); },
     getWorldLog() { return $gameSystem?._npcWorldWeb?.log ?? []; },
     // Resolve a { key, params } pocket from either log.
@@ -895,11 +1177,12 @@
     marketSentiment() { return $gameSystem?._npcWorldWeb?.marketSentiment ?? 0; },
     economyIndex() { return $gameSystem?._npcWorldWeb?.economyIndex ?? 1; },
     playerNotoriety,
+    recordDeed, onDeed, recentDeeds, deedsKnownTo, deedText,
     getConversationContext,
     buildPulseReport,
     // test/inspection hooks
     _internals: {
-      WebRng, nameHash, sampleCount, clamp, dateStrOf, takeCensus,
+      WebRng, nameHash, sampleCount, clamp, dateStrOf, takeCensus, crimeRatePerCapitaDay,
       computeModifiers, updateEpisodes, EP, RATES, queueNews, publishQueuedNews,
       get newsQueue() { return _newsQueue; },
     },

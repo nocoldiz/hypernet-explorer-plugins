@@ -1081,6 +1081,11 @@
               : T('Mail.nudge.bioStranger', { who: contact.name, leader: contact.card ? contact.card.name : '' })),
             speakerName: leader ? leader.name() : '',
             situation: T('Mail.nudge.situation'),
+            // Whatever the line named, as this world has it: a hyperpower, one
+            // of its leaders, a faction. Without it a model asked about
+            // somebody our own history also knows answers about our one.
+            topics: (window.NPCEmpathize && window.NPCEmpathize.worldTopics)
+              ? window.NPCEmpathize.worldTopics(said) : '',
             startText: said,
             history: history.map(turn => ({ role: turn.role === 'me' ? 'player' : 'npc', text: turn.text })),
           }, this.contactContext(contact)));

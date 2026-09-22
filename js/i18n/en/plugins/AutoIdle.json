@@ -182,6 +182,128 @@
     "avoided": "{name} keeps away from {target}, level {level}",
     "flees": "{name} runs from the fight",
     "worldMap": "{name} steps out onto the world map",
-    "travelled": "{name} travels down into {x}, {y}"
+    "travelled": "{name} travels down into {x}, {y}",
+    "ate": "{name} eats {item}",
+    "stocked": "{name} stocks up on {item} for {price}",
+    "handsOver": "{name} hands the party to {other}",
+    "surveyed": "{name} reads {map}: {notes}",
+    "routes": "{name} sets off for {map}, {hops} maps away: {why}",
+    "routeStep": "{name} takes the way toward {target}",
+    "travels": "{name} takes the network to {target}",
+    "puzzle": "{name} works {target}",
+    "puzzleWalk": "{name} gets in behind {target}",
+    "note": {
+      "shop": "a counter",
+      "hunger": "food",
+      "sleep": "a bed",
+      "hygiene": "clean water",
+      "leisure": "something to do",
+      "money": "work",
+      "comfort": "somewhere to sit",
+      "puzzle": "a puzzle",
+      "nothing": "nothing worth coming back for"
+    },
+    "why": {
+      "hunger": "the pack is empty",
+      "shop": "the party needs a counter",
+      "money": "the purse is empty",
+      "sleep": "nobody has slept",
+      "frontier": "nobody has been there",
+      "work": "there is a day's pay in it",
+      "mail": "there is post waiting",
+      "bed": "nobody has slept"
+    },
+    "shelters": "{name} looks for a roof, out of the {weather}",
+    "turnsIn": "{name} calls it a night and goes looking for a bed"
+  },
+  "mind": {
+    "wants": "{name} sets their mind on {why}",
+    "givesUp": "{name} gives up on {target}",
+    "why": {
+      "errand": "something worth seeing",
+      "onward": "the way onward",
+      "quest": "the job they took",
+      "work": "a day's pay",
+      "mail": "the post waiting for them",
+      "bed": "a bed"
+    }
+  },
+  "voice": {
+    "words": {
+      "yes": [
+        "yes",
+        "sure",
+        "agree",
+        "accept",
+        "of course",
+        "very well",
+        "all right",
+        "i will",
+        "deal"
+      ],
+      "no": [
+        "no",
+        "refuse",
+        "decline",
+        "never",
+        "not interested",
+        "i cannot",
+        "another time"
+      ],
+      "leave": [
+        "leave",
+        "goodbye",
+        "farewell",
+        "nothing",
+        "never mind",
+        "forget it",
+        "walk away",
+        "cancel"
+      ],
+      "fight": [
+        "fight",
+        "attack",
+        "duel",
+        "challenge",
+        "kill",
+        "strike"
+      ],
+      "buy": [
+        "buy",
+        "purchase",
+        "pay",
+        "hire",
+        "trade",
+        "how much",
+        "the price"
+      ],
+      "ask": [
+        "ask",
+        "who",
+        "what",
+        "where",
+        "why",
+        "tell me",
+        "more",
+        "about"
+      ],
+      "help": [
+        "help",
+        "give",
+        "share",
+        "heal",
+        "save",
+        "let me"
+      ],
+      "rude": [
+        "shut",
+        "idiot",
+        "fool",
+        "threaten",
+        "rob",
+        "get lost",
+        "mind your own"
+      ]
+    }
   }
 }

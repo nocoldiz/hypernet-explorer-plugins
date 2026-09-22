@@ -45,19 +45,25 @@
     // game's money is printed by DOM and parchment panels that have no window to call it on.
     // Those had no way to reach this and each wrote the conversion out again.
     function formatMoneyValue(value) {
-        const valueStr = String(value);
+        // The sign and any fraction are taken off the number BEFORE it is split
+        // into euros and cents. Slicing the string straight was what printed a
+        // negative wage as "-.50" and -5 as "0.-5", and 12.5 as "12..5": the
+        // minus sign and the decimal point were being counted as digits.
+        const cents = Math.round(Math.abs(Number(value) || 0));
+        const sign = (Number(value) || 0) < 0 ? "-" : "";
+        const valueStr = String(cents);
 
-        // If value has 2 or fewer digits, pad with zeros and add 0.
+        // Under a euro: no whole part to print, so the cents carry it.
         if (valueStr.length <= 2) {
             const result = "0." + valueStr.padStart(2, '0');
-            return result.endsWith(".00") ? "0" : result;
+            return result.endsWith(".00") ? "0" : sign + result;
         }
 
         // Insert dot before last two digits
         const mainPart = valueStr.slice(0, -2);
         const decimalPart = valueStr.slice(-2);
         const result = mainPart + "." + decimalPart;
-        return result.endsWith(".00") ? mainPart : result;
+        return sign + (result.endsWith(".00") ? mainPart : result);
     }
 
     Window_Base.prototype.formatMoneyValue = function(value) {

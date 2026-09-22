@@ -73,14 +73,25 @@
   // shoves the row it belongs to upwards. Mirrors `.hotbar-label` in theme.css.
   const LABEL_BLOCK_PX = 24;
 
+  // Height the description line costs the bar. It sits above the row and is
+  // reserved whether or not a slot is speaking, so an appearing description
+  // never shoves the row. Mirrors `.hotbar-desc` in theme.css. A description
+  // centred over the bar is what says what the armed thing does, rather than a
+  // card anchored off the side of one slot.
+  const DESC_BLOCK_PX = 24;
+
   /**
    * A row of numbered slots.
    *
    * Entries passed to render() are either null (empty slot) or:
-   *   { iconIndex, enabled, count, tooltip, label, swatch, detail }
+   *   { iconIndex, enabled, count, tooltip, label, description, swatch, detail }
    *
    * `label` is what the name line under the row says for that slot; it falls
    * back to `tooltip` when a caller has only the one string.
+   *
+   * `description` is what the line centred above the row says for that slot:
+   * the database description of the skill or item behind it. A bar carrying
+   * descriptions puts up no hover card.
    *
    * `detail` is the reading card the slot puts up while the pointer is on it
    * or while the keys have it armed: `{ title, cost, body }`, all optional
@@ -99,6 +110,7 @@
    *   zIndex        stacking order of the root
    *   inline        true to let the caller mount the root itself
    *   emptyClickable  true when empty slots are meaningful targets too
+   *   showDescription true to carry the description line centred over the row
    *   showLabel     true to carry the name line under the row (and to let it
    *                 take the hover tooltip's job, rather than say the same
    *                 thing twice in two places)
@@ -130,6 +142,10 @@
       // slots looking inert; an assignment bar wants every slot to invite a click.
       this.emptyClickable = !!o.emptyClickable;
       this.showLabel = !!o.showLabel;
+      // Only a bar that asks for it carries the description line: the line
+      // costs height whether or not a slot is speaking, and a bar that never
+      // fills it would just stand that much further off the canvas edge.
+      this.showDescription = !!o.showDescription;
       this.onSlotClick = o.onSlotClick || null;
       this.onSlotContext = o.onSlotContext || null;
       this.onSlotDrop = o.onSlotDrop || null;
@@ -141,6 +157,7 @@
       this.onPageNext = o.onPageNext || null;
       this._root = null;
       this._labelEl = null;
+      this._descEl = null;
       this._slotEls = [];
       this._entries = [];
       this._state = {};
@@ -154,7 +171,8 @@
 
     /** Total height of the widget, name line included, in canvas pixels. */
     height() {
-      return this.slotPx + (this.showLabel ? LABEL_BLOCK_PX : 0);
+      return this.slotPx + (this.showLabel ? LABEL_BLOCK_PX : 0) +
+        (this.showDescription ? DESC_BLOCK_PX : 0);
     }
 
     root() {
@@ -257,7 +275,9 @@
       const entry = index >= 0 ? entries[index] : null;
       const slot = index >= 0 && this._slotEls ? this._slotEls[index] : null;
       if (!entry || !slot || st.inert) { hideTooltip(); return; }
-      if (entry.detail) { this.showDetail(entry.detail, slot); return; }
+      // A bar that prints a description over the row has already said what the
+      // slot does, centred, and stacks no anchored card on top of it.
+      if (entry.detail && !this._descEl) { this.showDetail(entry.detail, slot); return; }
       if (hovered && !this.showLabel && entry.tooltip) {
         this.showTooltip(entry.tooltip, slot);
         return;
@@ -295,6 +315,27 @@
       return entry ? (entry.label || entry.tooltip || '') : '';
     }
 
+    /** The description the line over the row should be showing, '' for none. */
+    _descText(entries, state) {
+      const st = state || {};
+      // A bar standing down says nothing, the same way its card goes.
+      if (st.inert) return '';
+      const index = this._hoverIndex >= 0 ? this._hoverIndex
+        : (st.active && st.selected != null ? st.selected : -1);
+      const entry = index >= 0 ? entries[index] : null;
+      return entry ? (entry.description || '') : '';
+    }
+
+    _syncDesc() {
+      const el = this._descEl;
+      if (!el) return;
+      const text = this._descText(this._entries, this._state);
+      if (el.dataset.text === text) return;
+      el.dataset.text = text;
+      el.textContent = text;
+      el.style.visibility = text ? 'visible' : 'hidden';
+    }
+
     _syncLabel() {
       const el = this._labelEl;
       if (!el) return;
@@ -310,6 +351,7 @@
       const root = this.root();
       root.innerHTML = '';
       this._labelEl = null;
+      this._descEl = null;
       // The slots the pointer was over are about to be thrown away, and a
       // discarded element never sends its mouseleave: forget the hover rather
       // than leave a name up for a slot that no longer exists. The next mouse
@@ -320,6 +362,17 @@
       this._slotEls = [];
       // Not `row`: the icon blitting below already uses that name for the
       // icon sheet's row.
+      if (this.showDescription) {
+        const desc = document.createElement('div');
+        desc.className = 'hotbar-desc';
+        // Pinned to the row's own width so a long description wraps inside the
+        // bar rather than widening the column and dragging the slots off-centre.
+        desc.style.width = this.width() + 'px';
+        desc.style.visibility = 'hidden';
+        root.appendChild(desc);
+        this._descEl = desc;
+      }
+
       const rowEl = document.createElement('div');
       rowEl.className = 'hotbar-slots';
       rowEl.style.gap = this.gapPx + 'px';
@@ -374,11 +427,13 @@
         slot.addEventListener('mouseenter', () => {
           this._hoverIndex = i;
           this._syncLabel();
+          this._syncDesc();
           this._syncDetail();
         });
         slot.addEventListener('mouseleave', () => {
           if (this._hoverIndex === i) this._hoverIndex = -1;
           this._syncLabel();
+          this._syncDesc();
           this._syncDetail();
         });
         slot.addEventListener('pointerup', (e) => {
@@ -387,6 +442,7 @@
           // asking; it comes back if the pointer leaves and returns.
           this._hoverIndex = -1;
           this._syncLabel();
+          this._syncDesc();
           this._syncDetail();
           if (this.onSlotClick) this.onSlotClick(i, this._entries[i] || null, e);
         });
@@ -464,6 +520,7 @@
         root.appendChild(label);
         this._labelEl = label;
         this._syncLabel();
+        this._syncDesc();
       }
     }
 
@@ -518,6 +575,7 @@
         this._build(list, st);
       }
       this._syncLabel();
+      this._syncDesc();
       // Set outside the cached rebuild: the same row of slots is shown live
       // one frame and inert the next, and nothing about it needs redrawing.
       const inert = !!st.inert;
@@ -538,6 +596,7 @@
       this._hoverIndex = -1;
       this._state = {};
       this._syncLabel();
+      this._syncDesc();
       hideTooltip();
     }
 
@@ -547,6 +606,7 @@
       if (root && root.parentNode) root.parentNode.removeChild(root);
       this._root = null;
       this._labelEl = null;
+      this._descEl = null;
       this._entries = [];
       this._state = {};
       this._hoverIndex = -1;

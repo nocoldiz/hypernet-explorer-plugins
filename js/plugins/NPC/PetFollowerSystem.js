@@ -265,6 +265,11 @@ window.Game_PetFollower = Game_PetFollower;
     // clone there can only take Actor 3 when nobody is in it.
     function _freeCompanionSlot() {
         if (!$gameParty || !$gameParty._actors) return 0;
+        // Counted in people, not in free slot ids: three already travelling
+        // leaves no place however the actor ids fell. A battle summon borrows a
+        // seat for the fight and is not one of them.
+        const travelling = $gameParty._actors.filter(id => !window.SummonSystem?.isProxyActor?.(id));
+        if (travelling.length >= 3) return 0;
         if ($gameSwitches && $gameSwitches.value(67)) {
             return $gameParty._actors.includes(3) ? 0 : 3;
         }

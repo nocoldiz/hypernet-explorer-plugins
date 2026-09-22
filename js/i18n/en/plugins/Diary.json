@@ -158,7 +158,12 @@
     "shop": {
       "buy": "Bought {items} from {place}, {total}.",
       "sell": "Sold {items} at {place} for {total}.",
-      "order": "Ordered {items} off the Hypernet, {total}."
+      "order": "Ordered {items} off the Hypernet, {total}.",
+      "banned": "{keeper} at {place} will never serve us again.",
+      "owned": "Took the keys of {shop}, a {trade}.",
+      "hired": "Put {name} behind the counter at {shop}.",
+      "dismissed": "Let {name} go from {shop}.",
+      "delivery": "Sent {items} to the warehouse at {shop}."
     },
     "property": {
       "bought": "Bought {property} at {place}.",
@@ -203,7 +208,10 @@
       "forge": "Forged {item} x{count} at {place}.",
       "cook": "Cooked {item} x{count} at {place}.",
       "alchemy": "Brewed {item} x{count} at the bench.",
-      "brew": "Set {item} x{count} to ferment at {place}."
+      "brew": "Set {item} x{count} to ferment at {place}.",
+      "enchant": "Bound {spell} into {item}.",
+      "unmade": "Unmade the binding on {item}.",
+      "book": "Wrote out {item}."
     },
     "build": {
       "placed": "Put up {item} at {place}.",
@@ -247,7 +255,38 @@
     },
     "adventure": {
       "done": "Answered {adventure} at {place}. {reward}"
-    }
+    },
+    "launch": {
+      "rocket": "Rode the {mode} from {site} to {dest}, hull at {integrity} per cent.",
+      "rocketNoDest": "Rode the {mode} up from {site}, hull at {integrity} per cent."
+    },
+    "card": {
+      "won": "Beat {rival} at cards.",
+      "lost": "Lost to {rival} at cards.",
+      "drew": "Drew with {rival} at cards.",
+      "champion": "Took the {level} card bracket, {amount} the richer.",
+      "knockedOut": "Knocked out of the card bracket at the {round}."
+    },
+    "army": {
+      "recruited": "Signed {name} of {faction} into the company.",
+      "won": "The company held the field against {enemy}.",
+      "lost": "The company was broken by {enemy}."
+    },
+    "onu": {
+      "vote": "Spoke for {power} and voted {stance} on {motion}; it {outcome}."
+    },
+    "blade": {
+      "evolved": "{name} turned, and is a {stage} blade now."
+    },
+    "bet": {
+      "won": "Won {amount} on {pick}.",
+      "lost": "Lost {amount} betting on {pick}."
+    },
+    "lock": {
+      "picked": "Picked the lock at {place}.",
+      "failed": "The lock at {place} beat us."
+    },
+    "autoIdlePurpose": "{name} spent a good while on {why}: {target}."
   },
   "game": {
     "arcade": "the arcade",
@@ -319,5 +358,12 @@
     "placeholder": "What is worth remembering?",
     "save": "Write it",
     "cancel": "Never mind"
+  },
+  "onu": {
+    "for": "in favour",
+    "against": "against",
+    "abstained": "to abstain",
+    "passed": "carried",
+    "failed": "fell"
   }
 }

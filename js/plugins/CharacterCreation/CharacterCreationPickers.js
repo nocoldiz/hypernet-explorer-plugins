@@ -82,7 +82,7 @@
         `;
       }).join("");
 
-      const description = this.cleanText(choice.description || "");
+      const description = this.emphasizeText(choice.description || "");
 
       return `
         <div class="cc-page cc-page-full cc-col cc-page-roomy">
@@ -226,7 +226,7 @@
         return `
           <div class="cc-page cc-page-right cc-class-detail cc-col cc-col-centered">
             <h2 class="cc-header-gothic cc-text-centered">${choice.name || ""}</h2>
-            <p class="cc-class-quote">${this.cleanText(choice.description || "")}</p>
+            <p class="cc-class-quote">${this.emphasizeText(choice.description || "")}</p>
           </div>
         `;
       }
@@ -805,7 +805,7 @@
         <div class="cc-page cc-page-right cc-col">
           <h2 class="cc-header-gothic">${choice.name || ""}</h2>
           <p class="cc-lede cc-lede--page">
-            ${this.cleanText(choice.description || "")}
+            ${this.emphasizeText(choice.description || "")}
           </p>
 
           <div class="cc-scroll-pane">
@@ -876,7 +876,7 @@
         <div class="cc-page cc-page-right cc-col">
           <h2 class="cc-header-gothic">${choice.name || ""}</h2>
           <p class="cc-lede cc-lede--page">
-            ${this.cleanText(choice.description || "")}
+            ${this.emphasizeText(choice.description || "")}
           </p>
 
           <div class="cc-scroll-pane">

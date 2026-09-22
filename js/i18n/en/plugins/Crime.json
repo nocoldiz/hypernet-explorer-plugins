@@ -12,5 +12,9 @@
     "selfPardon": "You self pardon this crime",
     "lawfulPardon": "{name} committed {crime} in the name of the law."
   },
-  "nobodyLeftToJudgeYou": "Nobody left to judge you"
+  "nobodyLeftToJudgeYou": "Nobody left to judge you",
+  "nobodySaw": "Nobody saw a thing.",
+  "theShopkeeper": "the shopkeeper",
+  "vendorRefusesForever": "{keeper} will never sell to you again.",
+  "vendorRefusesEntry": "{keeper} turns away. You are not welcome at this counter."
 }

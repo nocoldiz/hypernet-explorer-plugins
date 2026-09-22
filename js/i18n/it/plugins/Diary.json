@@ -158,7 +158,12 @@
     "shop": {
       "buy": "Comprato {items} da {place}, {total}.",
       "sell": "Venduto {items} a {place} per {total}.",
-      "order": "Ordinato {items} sull'Ipernet, {total}."
+      "order": "Ordinato {items} sull'Ipernet, {total}.",
+      "banned": "{keeper} a {place} non ci servirà mai più.",
+      "owned": "Prese le chiavi di {shop}, {trade}.",
+      "hired": "Messo {name} dietro il banco di {shop}.",
+      "dismissed": "Licenziato {name} da {shop}.",
+      "delivery": "Mandato {items} al magazzino di {shop}."
     },
     "property": {
       "bought": "Comprato {property} a {place}.",
@@ -203,7 +208,10 @@
       "forge": "Forgiato {item} x{count} a {place}.",
       "cook": "Cucinato {item} x{count} a {place}.",
       "alchemy": "Preparato {item} x{count} al banco.",
-      "brew": "Messo {item} x{count} a fermentare a {place}."
+      "brew": "Messo {item} x{count} a fermentare a {place}.",
+      "enchant": "Legato {spell} in {item}.",
+      "unmade": "Disfatto il legame su {item}.",
+      "book": "Scritto {item}."
     },
     "build": {
       "placed": "Montato {item} a {place}.",
@@ -247,7 +255,38 @@
     },
     "adventure": {
       "done": "Risolto {adventure} a {place}. {reward}"
-    }
+    },
+    "launch": {
+      "rocket": "Viaggiato sul {mode} da {site} a {dest}, scafo al {integrity} per cento.",
+      "rocketNoDest": "Viaggiato sul {mode} da {site}, scafo al {integrity} per cento."
+    },
+    "card": {
+      "won": "Battuto {rival} a carte.",
+      "lost": "Perso contro {rival} a carte.",
+      "drew": "Pareggiato con {rival} a carte.",
+      "champion": "Vinto il torneo di carte {level}, {amount} in piu.",
+      "knockedOut": "Eliminati dal torneo di carte ai {round}."
+    },
+    "army": {
+      "recruited": "Arruolato {name} di {faction} nella compagnia.",
+      "won": "La compagnia ha tenuto il campo contro {enemy}.",
+      "lost": "La compagnia e stata spezzata da {enemy}."
+    },
+    "onu": {
+      "vote": "Parlato per {power} e votato {stance} su {motion}; la mozione {outcome}."
+    },
+    "blade": {
+      "evolved": "{name} e mutata, ora e una lama {stage}."
+    },
+    "bet": {
+      "won": "Vinto {amount} su {pick}.",
+      "lost": "Perso {amount} puntando su {pick}."
+    },
+    "lock": {
+      "picked": "Forzata la serratura a {place}.",
+      "failed": "La serratura a {place} ci ha battuti."
+    },
+    "autoIdlePurpose": "{name} ha passato parecchio tempo su {why}: {target}."
   },
   "game": {
     "arcade": "la sala giochi",
@@ -319,5 +358,12 @@
     "placeholder": "Cosa vale la pena ricordare?",
     "save": "Scrivilo",
     "cancel": "Lascia stare"
+  },
+  "onu": {
+    "for": "a favore",
+    "against": "contro",
+    "abstained": "di astenersi",
+    "passed": "e passata",
+    "failed": "e caduta"
   }
 }

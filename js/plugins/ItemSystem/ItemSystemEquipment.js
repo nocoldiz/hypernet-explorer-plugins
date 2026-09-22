@@ -151,6 +151,8 @@
     // tag is the other way of saying it, for a class or a spliced-on body that
     // was never given the trait.
     const TRAIT_SPECIAL_FLAG = 55;
+    // The stock "this character may not use that equip slot" trait.
+    const TRAIT_EQUIP_TYPE_SEAL = 54;
     const FLAG_DUAL_WIELD = 1;
     // What a hand pays for a second weapon it was never trained to hold. Both
     // weapons are cut, not just the off-hand one: fighting with a blade in
@@ -1080,6 +1082,29 @@
     // an armour picked from the bag was refused without a word.
     Game_BattlerBase.prototype.isEquipAtypeOk = function (/* atypeId */) {
         return true;
+    };
+
+    // ...and no class seals a slot shut either. The stock "seal equip type"
+    // trait is the same kind of class lock: Berserker sealed the body, so a
+    // berserker could wear no clothes, no robe and no armour at all, Wretch
+    // sealed head, body and gear alike, and four more classes sealed the old
+    // off-hand type, which is a hand now, so their shields were refused
+    // without a word. A class no longer decides what may be worn. A state or
+    // a cursed piece still can, so only the seals the class and the actor
+    // themselves carry are passed over.
+    Game_BattlerBase.prototype.isEquipTypeSealed = function (etypeId) {
+        const skip = [];
+        if (typeof this.actor === 'function') {
+            const data = this.actor();
+            if (data) skip.push(data);
+        }
+        if (typeof this.currentClass === 'function') {
+            const cls = this.currentClass();
+            if (cls) skip.push(cls);
+        }
+        const objects = (typeof this.traitObjects === 'function') ? this.traitObjects() : [];
+        return objects.some(obj => obj && skip.indexOf(obj) < 0 &&
+            (obj.traits || []).some(t => t && t.code === TRAIT_EQUIP_TYPE_SEAL && t.dataId === etypeId));
     };
 
     // How an armful of weapons adds up.

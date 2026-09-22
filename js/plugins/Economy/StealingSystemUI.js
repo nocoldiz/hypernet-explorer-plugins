@@ -170,6 +170,27 @@
           });
         }
       } else {
+        // Caught. The keeper is the victim, so they report it whatever they
+        // thought of the party a moment ago, and they shut their counter to
+        // this party for good, whoever is standing in it later.
+        // The window lists every shelf within reach, which is usually several
+        // shops at once. The grudge belongs to the ONE counter this row came
+        // off, never to the others standing next to it, so it is keyed off the
+        // row's own source and off nothing else. A row with no counter behind
+        // it (a pickpocketed passer-by) has nobody to hold a grudge, so the
+        // charge is filed without one.
+        const C = window.CrimeSystem;
+        if (C) {
+          const mapId = entry.sourceMapId ?? null;
+          const eventId = entry.sourceEventId ?? null;
+          const ev = eventId != null ? $gameMap.event(eventId) : null;
+          const keeper = ev && ev.event() ? ev.event().name : null;
+          if (mapId != null && eventId != null && typeof C.caughtStealingFrom === 'function') {
+            C.caughtStealingFrom(mapId, eventId, keeper, { itemName: item.name });
+          } else if (typeof C.commit === 'function') {
+            C.commit({ crimeId: 'shoplifting', verb: 'theft', victim: keeper, target: item.name, file: false });
+          }
+        }
         $gameTemp.reserveCommonEvent(125);
       }
 

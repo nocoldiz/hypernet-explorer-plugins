@@ -920,6 +920,7 @@
                             <div class="utility-btn" id="btn-scan">${t('Radio.scan')}</div>
                             <div class="utility-btn" id="btn-add" title="${t('Radio.addStationHint')}">${t('Radio.addStation')}</div>
                             <div class="utility-btn" id="btn-battle"></div>
+                            <div class="utility-btn utility-btn--off" id="btn-off" title="${t('Radio.power')}">${t('Radio.off')}</div>
                             <div class="utility-btn" id="btn-close">${t('Radio.close')}</div>
                         </div>
                         <div class="control-knob-container">
@@ -1001,6 +1002,7 @@
             // The power switch stops the broadcast; the CLOSE plate only puts
             // the panel away, and the station carries on playing behind it.
             on('power-toggle', () => { powerOff(); this.close(); });
+            on('btn-off', () => { powerOff(); this.close(); });
             on('btn-close', () => this.close());
             on('btn-band-am', () => setBand(0));
             on('btn-band-fm', () => setBand(1));

@@ -6409,6 +6409,17 @@
         isActive() { return !!this._scene; },
         isSandbox() { return !!this._sandbox; },
 
+        /**
+         * Every piece of monster card art a dream can put in front of the
+         * sleeper, as filenames under img/enemies. Handed out so anything else
+         * that wants to look like a dream can draw from the same bag rather
+         * than keep a list of its own.
+         */
+        faces() { return DREAM_FACES.slice(); },
+
+        /** One of those files as a three.js texture, cached for the session. */
+        faceTexture(file) { return faceTexture(file); },
+
         /** The party's own life, or null for a dream that belongs to nobody. */
         memory() { return this._memory; },
 

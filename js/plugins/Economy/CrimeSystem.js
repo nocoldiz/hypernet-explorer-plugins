@@ -484,6 +484,143 @@
         return false;
     }
 
+    // ======================================================================
+    // WITNESSES: who was looking, and which of them will talk
+    // ======================================================================
+    // The officer sweep above answers "is a constable looking at us". This is
+    // the same question asked of everybody on the map, because an immersive
+    // world's law does not run on an invisible omniscient bookkeeper: a deed
+    // reaches the record only if a person saw it and chose to say so.
+    //
+    // Three people never report the party:
+    //   - a party member (they were in on it)
+    //   - anybody who thinks well enough of the party (playerOpinion at or
+    //     above WITNESS_LOYAL_OPINION); a friend looks the other way
+    //   - nobody at all, when nobody was there
+    // One person always reports, whatever they think of you: the victim. Rob a
+    // shopkeeper to their face and they go to the police however warmly they
+    // greeted you a minute earlier, because it was done to THEM.
+    //
+    // Bounty and heat stay exactly what they were: one party-wide sheet. A
+    // witness decides WHETHER the party is charged, never who in it is.
+    const WITNESS_RANGE = 6;
+    const WITNESS_CONE = 140;
+    const WITNESS_TOUCH = 1;
+    // A friend at or above this looks the other way. Deliberately high: liking
+    // the party is not enough, they have to be on the party's side.
+    const WITNESS_LOYAL_OPINION = 60;
+
+    // The name a map event answers to in the NPC sim. Procedural citizens and
+    // hand-placed ones are both keyed by event name, so that is the key.
+    function npcNameOfEvent(ev) {
+        const data = ev && ev.event && ev.event();
+        const name = data && data.name ? String(data.name).trim() : "";
+        return name || null;
+    }
+
+    function isPartyMemberName(name) {
+        if (!name || typeof $gameParty === "undefined" || !$gameParty) return false;
+        return $gameParty.members().some(a => a && a.name && a.name() === name);
+    }
+
+    // What this person thinks of the party as a whole. Per-member standings
+    // exist (NPCEmpathize), but who a witness protects is a party-wide
+    // question, in the same way the bounty is a party-wide answer.
+    function opinionOfParty(name) {
+        const R = window.NPCSocietyRegistry;
+        if (!R || typeof R.getProfile !== "function" || !name) return 0;
+        const p = R.getProfile(name);
+        return p ? (p.playerOpinion ?? 0) : 0;
+    }
+
+    // Everybody who can actually see the given tile. Sight, not proximity:
+    // inside range, inside the arc they face, with nothing in the way, exactly
+    // as the constable sweep reads it. Darkness shortens and narrows it the
+    // same way, so a night job really is quieter.
+    function witnessesAt(x, y) {
+        if (typeof $gameMap === "undefined" || !$gameMap) return [];
+        const scene = (typeof SceneManager !== "undefined") ? SceneManager._scene : null;
+        if (scene && typeof Scene_Map !== "undefined" && !(scene instanceof Scene_Map)) return [];
+        const dark = isDarkOrNightCrimeEnvironment();
+        const range = dark ? Math.max(2, WITNESS_RANGE - 2) : WITNESS_RANGE;
+        const cone = dark ? 90 : WITNESS_CONE;
+        const out = [];
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased) continue;
+            const dx = Math.abs($gameMap.deltaX(ev.x, x));
+            const dy = Math.abs($gameMap.deltaY(ev.y, y));
+            if (dx > range || dy > range) continue;
+            const distance = dx + dy;
+            if (distance > range) continue;
+            const name = npcNameOfEvent(ev);
+            if (!name) continue;
+            if (distance > WITNESS_TOUCH) {
+                if (!inSightCone(ev, x, y, cone)) continue;
+                if (!hasSightLine(ev.x, ev.y, x, y)) continue;
+            }
+            out.push({
+                name,
+                eventId: ev.eventId ? ev.eventId() : null,
+                officer: isOfficerEvent(ev),
+                opinion: opinionOfParty(name),
+                party: isPartyMemberName(name),
+            });
+        }
+        return out;
+    }
+
+    // Of the people who saw it, the ones who will go to the police. A victim
+    // passed in by the caller is always among them.
+    function reportersAmong(witnesses, victimName) {
+        const list = [];
+        for (const w of witnesses || []) {
+            const name = typeof w === "string" ? w : w && w.name;
+            if (!name) continue;
+            const rec = typeof w === "string"
+                ? { name, officer: false, opinion: opinionOfParty(name), party: isPartyMemberName(name) }
+                : w;
+            if (victimName && name === victimName) { list.push(rec); continue; }
+            if (rec.party) continue;                              // one of ours
+            if (!rec.officer && rec.opinion >= WITNESS_LOYAL_OPINION) continue; // a friend
+            list.push(rec);
+        }
+        if (victimName && !list.some(r => r.name === victimName)) {
+            list.push({
+                name: victimName, officer: false, victim: true,
+                opinion: opinionOfParty(victimName), party: isPartyMemberName(victimName),
+            });
+        }
+        return list;
+    }
+
+    // ======================================================================
+    // THE SHOPKEEPER'S GRUDGE
+    // ======================================================================
+    // Caught with your hand in somebody's stock and that somebody never sells
+    // to you again. Not to the thief: to the PARTY, and to any party that ever
+    // wears this savegame's colours, whoever is standing in it. It does not
+    // expire, it is not bought off with the bounty, and swapping the roster
+    // does not launder it, because the keeper remembers a group of people who
+    // robbed them, not a face.
+    //
+    // Keyed the way containers are keyed, so the same counter in the same
+    // procedural interior instance is the same shop from one visit to the next.
+    // The same interior-instance prefix the container ledger uses, so one
+    // counter in one procedural building is one shop across visits.
+    function vendorInstanceKey() {
+        const H = window.ProceduralHouseSystem;
+        if (H && typeof H.getContainerInstanceKey === 'function') {
+            const k = H.getContainerInstanceKey();
+            if (k) return 'H' + k;
+        }
+        return '';
+    }
+
+    function vendorKey(mapId, eventId) {
+        const instance = vendorInstanceKey();
+        return instance ? `${instance}:${mapId}_${eventId}` : `${mapId}_${eventId}`;
+    }
+
     // Language check
     const useTranslation = ConfigManager.language === 'it';
     const PresetCrimes = (window.Messages && window.Messages.PresetCrimes) || {};
@@ -1044,6 +1181,18 @@
                 this.raiseHeat(this.getHeat() + Math.max(1, heatForBounty(bountyAmount)));
             }
 
+            // Every charge also lands on the world record, so the systems that
+            // read deeds (gossip, news, the diary) see a charge filed the old
+            // way exactly as they see one that went through commit(). A charge
+            // that came THROUGH commit() is already on it, hence the guard.
+            if (window.WorldEvents && !CrimeSystem._deedFiled) {
+                window.WorldEvents.record({
+                    verb: crimeId || "unknown", actor: "player", target: null,
+                    severity: Math.min(100, Math.round(20 * Math.log10(1 + (bountyAmount || 0) / 25))),
+                    reported: true,
+                });
+            }
+
             // What the papers will make of it, if the day adds up to enough.
             this.recordForPress(crimeName, bountyAmount);
 
@@ -1055,6 +1204,148 @@
             } else {
                 this.showCrimeNotification(crimeName, bountyAmount);
             }
+        }
+
+        // ==================================================================
+        // COMMIT: a deed first, a charge only if somebody talks
+        // ==================================================================
+        // addCrime() above is unchanged and stays the way every existing event
+        // and plugin command files a charge: it is called BECAUSE the party was
+        // caught, so sweeping for witnesses there would quietly delete charges
+        // the game already knows landed.
+        //
+        // commit() is the witness-aware door. The caller describes the act; this
+        // decides whether the world found out. Either way the act is recorded on
+        // the world's deed log (window.WorldEvents), because an unreported crime
+        // still happened: a witness who kept quiet still saw it, and the town
+        // still lost the thing that was taken.
+        //
+        //   spec.crimeId    a key in PresetCrimes, or null with an explicit name
+        //   spec.name       display name, when no crimeId
+        //   spec.bounty     what it is worth; defaults to the preset's bounty
+        //   spec.verb       the deed verb (theft, burglary, killing...)
+        //   spec.victim     the name of whoever it was done to; they always talk
+        //   spec.target     what was taken / who was hurt, for the deed sentence
+        //   spec.witnesses  pass an explicit list to skip the sight sweep
+        //
+        // Returns { deed, reported, reporters }.
+        static commit(spec = {}) {
+            this.initialize();
+            const witnesses = Array.isArray(spec.witnesses)
+                ? spec.witnesses
+                : witnessesAt($gamePlayer ? $gamePlayer.x : 0, $gamePlayer ? $gamePlayer.y : 0);
+            const reporters = reportersAmong(witnesses, spec.victim || null);
+            const reported = reporters.length > 0;
+
+            const verb = spec.verb || spec.crimeId || "unknown";
+            const deed = window.WorldEvents ? window.WorldEvents.record({
+                verb,
+                actor: "player",
+                target: spec.target ?? null,
+                witnesses: witnesses.map(w => (typeof w === "string" ? w : w && w.name)).filter(Boolean),
+                severity: spec.severity,
+                reported,
+            }) : null;
+
+            // spec.file === false means somebody else files the charge for this
+            // act and this call is only here for the deed, the witnesses and
+            // whatever the reporting rule decides. Shoplifting is the case:
+            // common event 125 (StealCaught) has always filed the Theft charge
+            // off the price variable, and filing a second one here would charge
+            // the party twice for one lifted apple.
+            if (reported && spec.file !== false) {
+                const name = spec.name || this.presetCrimeName(spec.crimeId) || verb;
+                const bounty = Number.isFinite(spec.bounty)
+                    ? spec.bounty
+                    : ((PresetCrimes[spec.crimeId] || {}).bounty || 0);
+                // The one charge sheet, exactly as before: party-wide bounty,
+                // party-wide heat. Who reported it never changes that.
+                CrimeSystem._deedFiled = true;
+                try { this.addCrime(name, bounty, spec.crimeId || null); }
+                finally { CrimeSystem._deedFiled = false; }
+            } else if (!reported && window.ParchmentToast) {
+                // Only when nobody is going to talk. A charge filed elsewhere
+                // (file: false) was very much seen, so it says nothing.
+                window.ParchmentToast.show(T('Crime.nobodySaw'), { severity: 'good' });
+            }
+
+            return { deed, reported, reporters };
+        }
+
+        // The sight sweep and the reporting rule, for anybody who needs to ask
+        // before acting (the stealing menu prices its risk off this).
+        static witnessesAt(x, y) { return witnessesAt(x, y); }
+        static reportersAmong(witnesses, victimName) { return reportersAmong(witnesses, victimName); }
+        static vendorKey(mapId, eventId) { return vendorKey(mapId, eventId); }
+
+        // ==================================================================
+        // THE SHOPKEEPER'S GRUDGE
+        // ==================================================================
+        // Filed in the savegame beside the charge sheet, not in the world
+        // folder: it is THIS party's history with that counter, and a different
+        // playthrough of the same world has not wronged anybody yet.
+        static grudgeLedger() {
+            this.initialize();
+            const data = $gameSystem._crimeData;
+            if (!data.refusedVendors) data.refusedVendors = {};
+            return data.refusedVendors;
+        }
+
+        // Permanent, and party-wide whoever is standing in the party.
+        //
+        // It belongs to THIS SAVEGAME and travels nowhere. Not to the world
+        // folder, so another playthrough of the same world walks into that shop
+        // welcome; and not onto any party member, so a companion benched here
+        // and picked up by another savegame's party carries no grudge with
+        // them. The keeper remembers the group that robbed them, and a group is
+        // a playthrough, not a roster and not a world. That is why it is filed
+        // on _crimeData, which WorldManager maps to nothing.
+        static refuseVendor(key, keeperName) {
+            if (!key) return false;
+            const ledger = this.grudgeLedger();
+            if (ledger[key]) return false;
+            ledger[key] = { since: getGameDateTimeString(), keeper: keeperName || null };
+            // The party writes down which doors are shut to them.
+            if (window.Diary && typeof window.Diary.record === 'function') {
+                window.Diary.record('shop.banned', {
+                    keeper: keeperName || T('Crime.theShopkeeper'),
+                    place: ($gameMap && $gameMap.displayName && $gameMap.displayName()) || '',
+                }, { dedupe: key });
+            }
+            return true;
+        }
+
+        static vendorRefuses(key) {
+            if (!key) return false;
+            return !!this.grudgeLedger()[key];
+        }
+
+        static vendorRefusesHere(mapId, eventId) {
+            return this.vendorRefuses(vendorKey(mapId, eventId));
+        }
+
+        // Caught lifting from a counter: the keeper is the victim, so they go to
+        // the police whatever they thought of the party, and they close their
+        // door to it for good.
+        static caughtStealingFrom(mapId, eventId, keeperName, spec = {}) {
+            const key = vendorKey(mapId, eventId);
+            this.refuseVendor(key, keeperName);
+            // The charge itself is common event 125's job, so only the deed and
+            // the grudge are settled here.
+            const result = this.commit(Object.assign({
+                crimeId: 'shoplifting',
+                verb: 'theft',
+                victim: keeperName || null,
+                target: spec.itemName || null,
+                file: false,
+            }, spec));
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(
+                    T('Crime.vendorRefusesForever', { keeper: keeperName || T('Crime.theShopkeeper') }),
+                    { severity: 'danger' }
+                );
+            }
+            return result;
         }
 
         // ==================================================================
@@ -1487,6 +1778,56 @@
     // rather than matching a name of its own.
     CrimeSystem.isOfficerEvent = isOfficerEvent;
     window.PresetCrimes = PresetCrimes;
+
+    // ======================================================================
+    // THE CLOSED DOOR
+    // ======================================================================
+    // A keeper who caught this party stealing does not serve it again. The
+    // refusal is enforced where a shop is OPENED rather than inside any one
+    // shop plugin, so it covers the authored counters (Shop Processing), the
+    // daily themed shops, the seeded bazaar and the vending machines alike
+    // without any of them having to know the grudge exists.
+    //
+    // The party in the room is irrelevant: the ledger is keyed by counter, and
+    // the keeper remembers the group, not the faces in it.
+    const SHOP_OPENING_COMMANDS = new Set([
+        'openThemedShop', 'OpenLimitedShop', 'openVendingMachine', 'OpenShop', 'openShop',
+    ]);
+
+    function refuseIfGrudged(interpreter) {
+        if (!interpreter || typeof interpreter.eventId !== 'function') return false;
+        const eventId = interpreter.eventId();
+        if (!eventId || typeof $gameMap === 'undefined' || !$gameMap) return false;
+        if (!CrimeSystem.vendorRefusesHere($gameMap.mapId(), eventId)) return false;
+        const ev = $gameMap.event(eventId);
+        const keeper = (ev && ev.event && ev.event().name) || T('Crime.theShopkeeper');
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('Crime.vendorRefusesEntry', { keeper }), { severity: 'danger' });
+        }
+        return true;
+    }
+
+    if (typeof Game_Interpreter !== 'undefined') {
+        // Shop Processing (authored counters).
+        const _command302 = Game_Interpreter.prototype.command302;
+        Game_Interpreter.prototype.command302 = function (params) {
+            if (refuseIfGrudged(this)) {
+                // Swallow the goods list that follows the command, or the shop
+                // would open on the next Add-Goods line instead.
+                while (this.nextEventCode() === 605) this._index++;
+                return true;
+            }
+            return _command302.call(this, params);
+        };
+
+        // Plugin Command, for the shops that are opened by one.
+        const _command357 = Game_Interpreter.prototype.command357;
+        Game_Interpreter.prototype.command357 = function (params) {
+            const commandName = params && params[1];
+            if (SHOP_OPENING_COMMANDS.has(commandName) && refuseIfGrudged(this)) return true;
+            return _command357.call(this, params);
+        };
+    }
 
     // Initialize on new game or load game
     const _DataManager_createGameObjects = DataManager.createGameObjects;

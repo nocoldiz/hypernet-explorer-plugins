@@ -1054,7 +1054,13 @@
           source: 'eurodemics',
         };
       } else if (current && current.source === 'eurodemics') {
-        pulse.episodes.epidemic = null;
+        // Announce it: an outbreak that has burned out is news, and clearing the
+        // slot by hand skipped the logs and the notice entirely.
+        if (window.NPCWorldWeb && window.NPCWorldWeb.endEpidemic) {
+          window.NPCWorldWeb.endEpidemic(group, minute);
+        } else {
+          pulse.episodes.epidemic = null;
+        }
       }
     }
   }

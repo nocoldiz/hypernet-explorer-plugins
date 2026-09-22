@@ -59,7 +59,7 @@
   "ui": {
     "windowTitle": "Stockbusters - Ipercapitalismo",
     "appName": "Stockbusters",
-    "siteName": "hypercapitalisemporium.eu",
+    "siteName": "hypercapitalisemporium.eu",
     "copyright": "(c) Stockbusters Ipercapitale. Ogni lotto è venduto come descritto.",
     "catalogCategories": "Categorie",
     "totalCost": "Totale",
@@ -144,15 +144,12 @@
     "cancel2": "ANNULLA",
     "myOrders": "I miei ordini",
     "activeOrders": "Ordini in viaggio",
-    "parcelsPending": "{count} pacco/pacchi in arrivo, {ready} da ritirare.",
+    "parcelsPending": "{count} pacco/pacchi in arrivo.",
     "noActiveDeliveriesInTransit": "Non c'è nulla in viaggio.",
-    "readyForPickup": "Arrivato - da ritirare",
+    "beingHandedOver": "Arrivato - in consegna",
     "arrivesIn": "Arriva tra {time}",
-    "collect": "Ritira",
-    "collectAll": "Ritira tutto ({count})",
     "collected": "Ritirato: {items}",
     "dispatchPlaced": "{count} unità spedite. Arrivo tra {time}.",
-    "orderArrived": "{item} è arrivato e aspetta di essere ritirato.",
     "nextDeliveryIn": "Non è ancora arrivato nulla. Il prossimo pacco è a {time} da qui.",
     "delivered": "{count} oggetto/i sono stati consegnati!",
     "noItemsReadyForDelivery": "Nessun oggetto pronto per la consegna.",
@@ -186,6 +183,7 @@
     "searchResultsFor": "Ricerca: \"{query}\" ({count})",
     "noSearchResults": "Niente nel catalogo corrisponde a \"{query}\".",
     "searchTruncated": "Mostro i primi {count} risultati. Affina la ricerca per vederne altri.",
-    "leisure": "Svago"
+    "leisure": "Svago",
+    "orderDelivered": "Consegnato nello zaino: {items}."
   }
 }

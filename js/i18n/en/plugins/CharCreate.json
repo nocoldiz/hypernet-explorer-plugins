@@ -82,6 +82,7 @@
   "equipment": "Equipment",
   "presetCharacters": "PRESET CHARACTERS",
   "back": "Back",
+  "exitWizard": "Exit",
   "returnToTitle": "Main Menu",
   "pendingSense": "PENDING SENSE...",
   "none": "None",
@@ -252,75 +253,75 @@
     },
     "originDeserter": {
       "name": "Deserter",
-      "desc": "Choose a faction you deserted from: begin with 40 of its troops, but hated by it (and its parent faction)."
+      "desc": "Choose a faction you deserted from: begin with [40 of its troops], but [hated] by it (and its parent faction)."
     },
     "originAugmented": {
       "name": "Augmented",
-      "desc": "You all walked out of the same clinic with the hardware still settling: everyone starts with two or three augments, fitted to whatever anatomy they have."
+      "desc": "You all walked out of the same clinic with the hardware still settling: everyone starts with [two or three augments], fitted to whatever anatomy they have."
     },
     "originFactionLeader": {
       "name": "Faction Leader",
-      "desc": "Choose a faction and begin in command of 40 of its troops, in good standing with it (and its parent faction), with two weeks of upkeep money."
+      "desc": "Choose a faction and begin in command of [40 of its troops], in [good standing] with it (and its parent faction), with [two weeks of upkeep money]."
     },
     "originWarlord": {
       "name": "Independent Warlord",
-      "desc": "Begin in command of 40 troops drawn from random factions, loyal to no one, with enough gold to cover two weeks of their upkeep."
+      "desc": "Begin in command of [40 troops] drawn from random factions, loyal to no one, with enough money to cover [two weeks of their upkeep]."
     },
     "originCrash": {
       "name": "Crash Landed",
-      "desc": "Begin stranded on a random planet in an uncharted galaxy, ship damaged, nearly out of fuel and with no jump charges left."
+      "desc": "Begin [stranded on a random planet] in an uncharted galaxy, ship [damaged], nearly out of fuel and with [no jump charges] left."
     },
     "originArtifact": {
       "name": "Artifact Heir",
-      "desc": "Inherit one of the world's ancient artifacts, chosen at random, along with its history."
+      "desc": "Inherit one of the world's [ancient artifacts], chosen at random, along with its history."
     },
     "originCeo": {
       "name": "CEO",
-      "desc": "Start rich: €1,000,000 in cash and an 80% controlling stake in LimeCorp, at its headquarters."
+      "desc": "Start rich: [€1,000,000] in cash and an [80% controlling stake in LimeCorp], at its headquarters."
     },
     "originBunker": {
       "name": "Bunker",
-      "desc": "Wake up in a stocked loot cellar under a random overland biome. Its gold is yours, and the hatch you climb out of stays open forever."
+      "desc": "Wake up in a [stocked loot cellar] under a random overland biome. Its money is yours, and the [hatch] you climb out of stays open forever."
     },
     "originStranded": {
       "name": "Stranded",
-      "desc": "Begin on foot at a random remote spot, far from anywhere anyone would look."
+      "desc": "Begin [on foot] at a random remote spot, far from anywhere anyone would look."
     },
     "originCriminal": {
       "name": "Criminal",
-      "desc": "Same camper start as the camper origin, but your party begins already wanted with a 10,000€ bounty."
+      "desc": "Same camper start as the camper origin, but your party begins already [wanted] with a [10,000€ bounty]."
     },
     "originMayor": {
       "name": "Mayor",
-      "desc": "Pick a city, then begin there with 50 of every crafting material."
+      "desc": "Pick a [city], then begin there with [50 of every crafting material]."
     },
     "originDungeon": {
       "name": "Dungeon entrance",
-      "desc": "Start at the tower gate with a delve kit: extra potions, the tower routes map, a flashlight and a climbing rope."
+      "desc": "Start at the [tower gate] with a delve kit: [extra potions], the [tower routes map], a [flashlight] and a [climbing rope]."
     },
     "originLot": {
       "name": "Full automation",
-      "desc": "Build your utopia: every party member starts with advanced crafting specializations, and the workshop is already fully stocked. The machines will do the rest - all you need is the vision."
+      "desc": "Build your utopia: every party member starts with [advanced crafting specializations], and the [workshop] is already fully stocked. The machines will do the rest - all you need is the vision."
     },
     "originBike": {
       "name": "Start on bike",
-      "desc": "Begin out in the country with a bike parked beside you."
+      "desc": "Begin out in the country with a [bike] parked beside you."
     },
     "originCar": {
       "name": "Start in car",
-      "desc": "Wake up out in the country beside your car, keys in hand. Where you drive it is up to you."
+      "desc": "Wake up out in the country beside your [car], keys in hand. Where you drive it is up to you."
     },
     "originCamper": {
       "name": "Start in camper",
-      "desc": "Wake up out in the country beside your camper, keys in hand. Where you drive it is up to you."
+      "desc": "Wake up out in the country beside your [camper], keys in hand. Where you drive it is up to you."
     },
     "originSpace": {
       "name": "Start in space",
-      "desc": "Skip the map selection and begin your journey out in space."
+      "desc": "Skip the map selection and begin your journey out in [space]."
     },
     "originTrain": {
       "name": "Start in train",
-      "desc": "Board the train and pick your destination on the map (default)."
+      "desc": "Board the [train] and pick your destination on the map (default)."
     },
     "rerollCharacter": {
       "name": "Reroll character",
@@ -436,39 +437,39 @@
     },
     "originCardCollector": {
       "name": "Card Collector",
-      "desc": "You came off the circuit with a shelf of monster cards and a deck already sleeved. Everyone you meet is somebody who might sit down for a game."
+      "desc": "You came off the circuit with a shelf of [monster cards] and a [deck] already sleeved. Everyone you meet is somebody who might sit down for a game."
     },
     "originArcanist": {
       "name": "Arcanist",
-      "desc": "You left the college with four esoteric spells apiece, a shelf of school primers, a beginner's grimoire and robes that still smell of chalk. Pick where the coach sets you down."
+      "desc": "You left the college with [four esoteric spells] apiece, a shelf of [school primers], a [beginner's grimoire] and robes that still smell of chalk. Pick where the coach sets you down."
     },
     "originMercenary": {
       "name": "Mercenary",
-      "desc": "The last contract paid in kit rather than coin: a ranged weapon each, a field vest, a medic's bag and whatever survival gear was left in the truck. Pick where the work takes you."
+      "desc": "The last contract paid in kit rather than coin: a [ranged weapon] each, a [field vest], a [medic's bag] and whatever survival gear was left in the truck. Pick where the work takes you."
     },
     "originLostConvoker": {
       "name": "Lost Convoker",
-      "desc": "The rite worked. It just did not say where. You come to in a field, a forest or a mountainside nobody chose, with eight summoning rites apiece, a staff, a robe and no idea which country this is."
+      "desc": "The rite worked. It just did not say where. You come to in a field, a forest or a mountainside nobody chose, with [eight summoning rites] apiece, a [staff], a [robe] and no idea which country this is."
     },
     "originSkeletonKey": {
       "name": "Skeleton Key Holder",
-      "desc": "You own one thing, and it opens any mundane lock ever cut. No rations, no bedroll, no lamp: whatever you need is already behind somebody's door. Pick the place on the map where you start trying them."
+      "desc": "You own one thing, and it opens [any mundane lock] ever cut. You carry nothing else, because whatever you need is already behind somebody's door. Pick the place on the map where you start trying them."
     },
     "originPlague": {
       "name": "Plague Spreader",
-      "desc": "You escaped a biolab with a case full of sealed vials holding the worst pathogens that ever existed."
+      "desc": "You escaped a biolab with a case full of [sealed vials] holding the [worst pathogens] that ever existed."
     },
     "originDiplomat": {
       "name": "Diplomat",
-      "desc": "Begin in Brussels with an ONU Terminal, remote access into the assembly. No rations, no rope: a seat at the table is the only thing you brought."
+      "desc": "Begin in [Brussels] with an [ONU Terminal], remote access into the assembly. No rations, no rope: a seat at the table is the only thing you brought."
     },
     "originHypernetExplorer": {
       "name": "Hypernet Explorer",
-      "desc": "You come round at a terminal in the Hypernet Point with a bag of components, an energy drink and no memory of paying for the hour. The deck is half built. The rest of it is out there somewhere, in shops, in skips, and in other people's houses."
+      "desc": "You come round at a terminal in the [Hypernet Point] with a bag of [components], an energy drink and no memory of paying for the hour. The [deck is half built]. The rest of it is out there somewhere, in shops, in skips, and in other people's houses."
     },
     "originPatronVault": {
       "name": "Patron Vault",
-      "desc": "You wake on Floor -1 of a vault nobody else can reach, nine cellars deep under a hatch in open country. The way out is the patron's own hatch, and the way in was knowing where it is."
+      "desc": "You wake on [Floor -1] of a vault nobody else can reach, nine cellars deep under a [hatch in open country]. The way out is the patron's own hatch, and the way in was knowing where it is."
     }
   },
   "hairStyle": {

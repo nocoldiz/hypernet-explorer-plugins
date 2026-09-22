@@ -60,6 +60,9 @@
 
     const APP_ID = 'app-hypernet-browser';
     const APP_ICON = 188;              // Globe, per js/db/Sprites/Icons.json
+    const HEXAPEDIA_APP_ID = 'app-hexapedia';
+    const HEXAPEDIA_ICON = 230;        // Book, per js/db/Sprites/Icons.json
+    const HEXAPEDIA_HOME = 'www.hexapedia.com';
     const SITE_DIR = 'hypernet';
     const SITE_DB_SCRIPT = 'hypernet-explorer.js';
     const DEFAULT_HOME = 'about:home';
@@ -552,6 +555,304 @@
             }) || null;
         }
     };
+
+    // ── Reading teaches ─────────────────────────────────────────────────────
+    // An encyclopedia article is somebody telling the party about its subject,
+    // so opening one teaches its topic exactly as a spoken line naming it does:
+    // the page turns up in the Archive under Topics, and a conversation option
+    // gated on that topic opens. Nothing on that shelf is written in advance,
+    // which is the whole point of it, and an article is the one written source
+    // the party can go and read on their own.
+    //
+    // Which topic a page is about is answered in this order:
+    //
+    //   1. <meta name="hexapedia-topic" content="Omega Tower"> in the document.
+    //      Any page on any site may carry one; it is the only way to be sure,
+    //      since a file name is a slug and a title is prose.
+    //   2. The page title and the file's own slug, read through the same alias
+    //      index a spoken line is read through, so a page filed under a name
+    //      the codex knows as a synonym still finds its page.
+    //   3. Nothing, on a hexapedia article: the subject is filed as a rumour
+    //      under the page's title, which is what that shelf is for. A page
+    //      outside hexapedia that declares no topic teaches nothing at all, so
+    //      a liquidation ad never lands in the Archive.
+    const Learn = {
+        // A hexapedia article, as opposed to any other document in the archive.
+        // Held to the one folder rather than to a guess about content: the
+        // encyclopedia is a folder, everything else is a site.
+        isArticle(address) {
+            const norm = Addr.normalize(address).toLowerCase();
+            return /^hexapedia(\.com)?\/[^/]+$/.test(norm) && !/\/index(\.html?)?$/.test(norm);
+        },
+
+        // The <meta> a document declares its subject in, or ''.
+        metaTopic(doc) {
+            if (!doc || typeof doc.querySelector !== 'function') return '';
+            let el = null;
+            try { el = doc.querySelector('meta[name="hexapedia-topic"]'); } catch (e) { el = null; }
+            return el ? String(el.getAttribute('content') || '').trim() : '';
+        },
+
+        // The title without the site's own name hung off the end of it, which
+        // is how every article in the folder is titled.
+        subject(address, title) {
+            const clean = String(title || '').replace(/\s*[-|–]\s*Hexapedia\s*$/i, '').trim();
+            if (clean) return clean;
+            const norm = Addr.normalize(address);
+            const slug = norm.split('/').pop().replace(/\.html?$/i, '');
+            return slug.replace(/[-_]+/g, ' ').trim();
+        },
+
+        // Every name a page answers to, best first.
+        aliases(address, title) {
+            const norm = Addr.normalize(address);
+            const slug = norm.split('/').pop().replace(/\.html?$/i, '').replace(/[-_]+/g, ' ');
+            const subject = this.subject(address, title);
+            const out = [];
+            [subject, subject.replace(/^the\s+/i, ''), slug, slug.replace(/^the\s+/i, '')]
+                .forEach((name) => {
+                    const word = String(name || '').trim();
+                    if (word && out.indexOf(word) === -1) out.push(word);
+                });
+            return out;
+        },
+
+        // Read the page. Returns what was filed, for the tests and for anything
+        // else that wants to know: { topic } , { rumor } or null.
+        read(address, title, doc) {
+            const api = window.DialogueTopics;
+            if (!api || typeof api.learn !== 'function') return null;
+            if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.size()) return null;
+            if (!address || Addr.isInternal(address)) return null;
+
+            const declared = this.metaTopic(doc);
+            const article = this.isArticle(address);
+            if (!declared && !article) return null;
+
+            let keyword = declared ? (api.resolve(declared) || declared) : null;
+            if (!keyword) {
+                const names = this.aliases(address, title);
+                for (let i = 0; i < names.length && !keyword; i++) keyword = api.resolve(names[i]);
+            }
+            if (keyword) {
+                api.learn(keyword);
+                return { topic: keyword };
+            }
+            if (!article) return null;
+            const heard = this.subject(address, title);
+            if (!heard) return null;
+            api.remember(heard);
+            return { rumor: heard };
+        },
+    };
+
+    // ── Hexapedia: the party's own articles ─────────────────────────────────
+    // A character who reaches level 15 is somebody the world has heard of, and
+    // the encyclopedia writes them up: name, class, level, their portrait and
+    // what the diary has on them. The article is WORLD data, not savegame data
+    // (save/worlds/<name>/hexapedia.json), for the same reason a chest that
+    // stands open is: the encyclopedia belongs to the world all its parties
+    // share, so the next party to play this world can look up the veterans of
+    // the last one.
+    //
+    // The pages are live documents rather than files, because nothing about
+    // them can be written before the world exists.
+
+    const People = {
+        FILE: 'hexapedia',
+        MIN_LEVEL: 15,
+        DIARY_LINES: 6,
+
+        // Never held on to: setActiveWorld drops the world's file cache, and a
+        // kept reference would go on writing into a world nobody is playing.
+        store() {
+            const W = window.WorldManager;
+            if (!W || typeof W.getFile !== 'function' || !W.hasActiveWorld || !W.hasActiveWorld()) return null;
+            const store = W.getFile(this.FILE);
+            if (!store.people) store.people = {};
+            return store;
+        },
+
+        slugFor(name) {
+            return String(name || '').toLowerCase()
+                .replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        },
+
+        // Everybody the encyclopedia holds an article on, newest first.
+        all() {
+            const store = this.store();
+            if (!store) return [];
+            return Object.keys(store.people)
+                .map((slug) => Object.assign({ slug }, store.people[slug]))
+                .sort((a, b) => (b.writtenAt || 0) - (a.writtenAt || 0));
+        },
+
+        get(slug) {
+            const store = this.store();
+            const row = store && store.people[String(slug || '').toLowerCase()];
+            return row ? Object.assign({ slug }, row) : null;
+        },
+
+        // The portrait the rest of the game shows for this character. Stored as
+        // a path, so an article outlives the party that earned it.
+        bustOf(actor) {
+            const H = window.NPCEmpathize && window.NPCEmpathize._helpers;
+            try {
+                if (H && H._resolveBustForActor) return H._resolveBustForActor(actor);
+            } catch (e) { /* fall through to the house bust */ }
+            return 'img/busts/7.png';
+        },
+
+        // What the diary has to say about this character: the lines that name
+        // them, newest last, as the diary itself would print them.
+        diaryLines(name) {
+            const Diary = window.Diary;
+            if (!Diary || typeof Diary.entries !== 'function' || !name) return [];
+            let rows = [];
+            try { rows = Diary.entries() || []; } catch (e) { return []; }
+            const wanted = String(name).toLowerCase();
+            const out = [];
+            rows.forEach((entry) => {
+                let line = '';
+                try { line = Diary.describe(entry) || ''; } catch (e) { line = ''; }
+                if (line && line.toLowerCase().indexOf(wanted) !== -1) out.push(line);
+            });
+            return out.slice(-this.DIARY_LINES);
+        },
+
+        // Write the article, or bring an existing one up to date: a character
+        // goes on levelling after 15, and the page should say so. The date the
+        // article was first written never moves.
+        record(actor) {
+            const store = this.store();
+            if (!store || !actor) return null;
+            // A level that is not a number is not a level: an actor stub without one
+            // has earned nothing.
+            if (!(Number(actor.level) >= this.MIN_LEVEL)) return null;
+            const name = actor.name();
+            const slug = this.slugFor(name);
+            if (!slug) return null;
+            const before = store.people[slug] || null;
+            const cls = (actor.currentClass && actor.currentClass()) ? actor.currentClass().name : '';
+            const row = {
+                name,
+                level: actor.level,
+                cls,
+                bust: this.bustOf(actor),
+                profile: actor.profile ? String(actor.profile()).replace(/\s+/g, ' ').trim() : '',
+                diary: this.diaryLines(name),
+                world: (window.WorldManager && window.WorldManager.activeWorldName) || '',
+                firstWritten: before ? before.firstWritten : Date.now(),
+                writtenAt: Date.now(),
+            };
+            store.people[slug] = row;
+            try { if (window.WorldManager.flush) window.WorldManager.flush(); } catch (e) { /* flushed with the save */ }
+            return { slug, row, isNew: !before };
+        },
+
+        // Everybody in the party who has earned an article and has none yet.
+        catchUp() {
+            if (typeof $gameParty === 'undefined' || !$gameParty) return [];
+            const written = [];
+            $gameParty.members().forEach((actor) => {
+                if (!actor || !(Number(actor.level) >= this.MIN_LEVEL)) return;
+                const result = this.record(actor);
+                if (result && result.isNew) written.push(result);
+            });
+            return written;
+        },
+
+        // --- the documents ---------------------------------------------------
+
+        indexHTML() {
+            const rows = this.all();
+            if (!rows.length) {
+                return '<div class="hnb-doc"><h1>' + esc(t('hexapedia.peopleTitle')) + '</h1><p>' +
+                    esc(t('hexapedia.peopleEmpty', { level: this.MIN_LEVEL })) + '</p></div>';
+            }
+            const list = rows.map((row) =>
+                '<li><a data-go="' + esc(HEXAPEDIA_HOME + '/people/' + row.slug) + '">' + esc(row.name) + '</a>' +
+                ' <span class="hnb-dim">' + esc(t('hexapedia.peopleLine', { level: row.level, cls: row.cls })) +
+                '</span></li>').join('');
+            return '<div class="hnb-doc">' +
+                '<h1>' + esc(t('hexapedia.peopleTitle')) + '</h1>' +
+                '<p class="hnb-dim">' + esc(t('hexapedia.peopleIntro', { level: this.MIN_LEVEL })) + '</p>' +
+                '<ul>' + list + '</ul>' +
+                '<p><a data-go="' + esc(HEXAPEDIA_HOME) + '">' + esc(t('hexapedia.backToPortal')) + '</a></p>' +
+                '</div>';
+        },
+
+        personHTML(slug) {
+            const row = this.get(slug);
+            if (!row) return null;
+            const diary = (row.diary || []).map((line) => '<li>' + esc(line) + '</li>').join('');
+            return '<div class="hnb-doc">' +
+                '<h1>' + esc(row.name) + '</h1>' +
+                '<p class="hnb-dim">' + esc(t('hexapedia.personMeta', {
+                    level: row.level, cls: row.cls, world: row.world })) + '</p>' +
+                '<img src="' + esc(row.bust) + '" alt="' + esc(row.name) + '" ' +
+                    'style="float:right;max-width:180px;margin:0 0 12px 16px;border:1px solid #a2a9b1">' +
+                (row.profile ? '<p>' + esc(row.profile) + '</p>' : '') +
+                '<h2>' + esc(t('hexapedia.personDiary')) + '</h2>' +
+                (diary ? '<ul>' + diary + '</ul>'
+                       : '<p class="hnb-dim">' + esc(t('hexapedia.personNoDiary')) + '</p>') +
+                '<p class="hnb-dim">' + esc(t('hexapedia.personFooter')) + '</p>' +
+                '<p><a data-go="' + esc(HEXAPEDIA_HOME + '/people') + '">' + esc(t('hexapedia.peopleTitle')) + '</a>' +
+                ' &middot; <a data-go="' + esc(HEXAPEDIA_HOME) + '">' + esc(t('hexapedia.backToPortal')) + '</a></p>' +
+                '</div>';
+        },
+    };
+
+    // A character crosses the threshold and the encyclopedia notices. The watch
+    // is on the level itself rather than on the level-up event, so somebody who
+    // joins the party already past it is written up as well.
+    // Both ways a character's level can move: the experience they earn
+    // (changeExp calls levelUp, one level at a time) and a level set outright
+    // by an event or by the sandbox. Watching only one of the two would write
+    // nobody up for the ordinary business of fighting.
+    function noticeLevel(actor) {
+        try {
+            if (!(Number(actor.level) >= People.MIN_LEVEL)) return;
+            const written = People.record(actor);
+            if (written && written.isNew && window.ParchmentToast) {
+                window.ParchmentToast.show(t('hexapedia.written', { name: actor.name() }),
+                    { severity: 'good', duration: 600, key: 'hexapedia:' + written.slug });
+            }
+        } catch (e) { /* an article is never worth a crash */ }
+    }
+
+    const _Game_Actor_levelUp = Game_Actor.prototype.levelUp;
+    Game_Actor.prototype.levelUp = function () {
+        _Game_Actor_levelUp.call(this);
+        noticeLevel(this);
+    };
+
+    const _Game_Actor_changeLevel = Game_Actor.prototype.changeLevel;
+    Game_Actor.prototype.changeLevel = function (level, show) {
+        _Game_Actor_changeLevel.call(this, level, show);
+        noticeLevel(this);
+    };
+
+    // The party's own pages, and the shelf they stand on. Registered under the
+    // normalised address (no "www."), which is what Live.resolve matches on.
+    // Both spellings: the portal is a file on disk and links to people.html the
+    // way it links to every other article.
+    ['hexapedia.com/people', 'hexapedia.com/people.html'].forEach((address) => {
+        Live.register(address, () => {
+            // Anybody already past the threshold when the shelf is opened is
+            // written up on the spot: a character who was levelled before the
+            // encyclopedia started keeping these, or who joined the party
+            // already a veteran, has earned the article just as much.
+            try { People.catchUp(); } catch (e) { /* an article is never worth a crash */ }
+            return { title: t('hexapedia.peopleTitle'), html: People.indexHTML() };
+        });
+    });
+    Live.register(/^hexapedia(\.com)?\/people\/[a-z0-9-]+$/, (_match, address) => {
+        const slug = String(address).split('/').pop();
+        const row = People.get(slug);
+        const html = row ? People.personHTML(slug) : null;
+        return html ? { title: row.name, html } : null;
+    });
 
     // ── Stored preferences ──────────────────────────────────────────────────
     // Kept in the HypernetOS registry so they ride inside the savegame; a
@@ -1388,7 +1689,9 @@
 
         this.setTitle(tab.title);
         this.renderTabs();
-        this.recordVisit(tab.address, tab.title);
+        // The document itself is handed over: a page that declares its own
+        // subject in a <meta> is read off that rather than off its file name.
+        this.recordVisit(tab.address, tab.title, doc);
         this.status(t('status.done'));
         this.maybePopup(tab.address);
     };
@@ -1513,8 +1816,12 @@
         if (el) el.textContent = text;
     };
 
-    Browser.prototype.recordVisit = function (address, title) {
+    // Every way a document can arrive (the archive, a generated page, an
+    // internal one) ends here, which is why the reading is done here and not in
+    // navigate: one visit, one entry in the history, one topic learned.
+    Browser.prototype.recordVisit = function (address, title, doc) {
         if (!address || address === 'about:blank') return;
+        try { Learn.read(address, title, doc || null); } catch (e) { /* reading never breaks a page */ }
         const list = Store.history();
         const now = Date.now();
         const found = list.findIndex((h) => h.address === address);
@@ -2928,7 +3235,23 @@
         // returning { title, html }. See the Live block above.
         registerLive: (pattern, handler) => Live.register(pattern, handler),
         liveDocument: (address) => Live.resolve(address),
-        hasLive: (address) => Live.has(address)
+        hasLive: (address) => Live.has(address),
+        // Reading a page teaches its subject. Published so anything else that
+        // puts an archive document in front of the party (a quest handing over
+        // a printout, a terminal) files it the same way the browser does.
+        readPage: (address, title, doc) => Learn.read(address, title, doc || null),
+        topicOfPage: (address, title, doc) => {
+            const api = window.DialogueTopics;
+            if (!api || typeof api.resolve !== 'function') return null;
+            const declared = Learn.metaTopic(doc);
+            if (declared) return api.resolve(declared) || declared;
+            const names = Learn.aliases(address, title);
+            for (let i = 0; i < names.length; i++) {
+                const hit = api.resolve(names[i]);
+                if (hit) return hit;
+            }
+            return null;
+        }
     };
 
     if (window.HypernetOS) {
@@ -2937,6 +3260,24 @@
             name: t('appName'),
             icon: APP_ICON,
             launchFn: function () { window.HypernetBrowserApp.launch(); },
+            desktopShortcut: true
+        });
+
+        // The encyclopedia is a site, not a program, but it is the one site the
+        // party has a reason to open cold rather than by following a link, so
+        // the desktop carries a shortcut that opens the browser straight onto
+        // its portal. It is the browser wearing another icon: one window, one
+        // process, so opening the encyclopedia while the browser is already
+        // open moves that window rather than fighting it for the id.
+        window.HypernetOS.registerApp({
+            id: HEXAPEDIA_APP_ID,
+            name: t('hexapedia.appName'),
+            icon: HEXAPEDIA_ICON,
+            category: 'reference',
+            launchFn: function () {
+                try { People.catchUp(); } catch (e) { /* the portal opens regardless */ }
+                window.HypernetBrowserApp.open(HEXAPEDIA_HOME);
+            },
             desktopShortcut: true
         });
     }

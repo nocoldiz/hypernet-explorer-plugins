@@ -1298,7 +1298,7 @@
         });
       if (this.els.landingChoiceSub) {
         this.els.landingChoiceSub.textContent = surfaceless
-          ? T('Galaxy.hud.noSolidSurface')
+          ? ((GS && GS.surfacelessReason) ? GS.surfacelessReason(lg.planet) : T('Galaxy.hud.noSolidSurface'))
           : (port
             ? T('Galaxy.hud.spaceportAtCell', { name: port.name, x: lg.cursor.gx, y: lg.cursor.gy })
             : T('Galaxy.hud.landingSiteCell', { x: lg.cursor.gx, y: lg.cursor.gy }));

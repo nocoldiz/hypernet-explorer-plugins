@@ -2519,14 +2519,24 @@
     this.contentsOpacity = 0;
   };
 
+  // WASD for target selection. Only the four codes are touched, and only the
+  // ones that were not already bound: this used to snapshot the whole of
+  // Input.keyMapper and assign the snapshot back on hide, which threw away every
+  // key any other plugin had registered after the snapshot was taken - the world
+  // map's M/Q/E, the teleporter's F6, WorldMapReturn's T, SaveSystem's F9/F10 and
+  // the split-screen second player's numpad. Closing target selection silently
+  // disabled all of them for the rest of the session.
+  const WASD_TARGETING = { 87: "up", 83: "down", 65: "left", 68: "right" };
+
   const _Window_BattleActor_show = Window_BattleActor.prototype.show;
   Window_BattleActor.prototype.show = function() {
-    // Temporarily map WASD to standard directional controls for smooth targeting
-    this._originalKeyMapper = Object.assign({}, Input.keyMapper);
-    Input.keyMapper[87] = "up";     // W
-    Input.keyMapper[83] = "down";   // S
-    Input.keyMapper[65] = "left";   // A
-    Input.keyMapper[68] = "right";  // D
+    this._wasdKeysAdded = [];
+    for (const code of Object.keys(WASD_TARGETING)) {
+      if (Input.keyMapper[code] === undefined) {
+        Input.keyMapper[code] = WASD_TARGETING[code];
+        this._wasdKeysAdded.push(code);
+      }
+    }
     
     _Window_BattleActor_show.call(this);
     this.opacity = 0;
@@ -2536,10 +2546,11 @@
   const _Window_BattleActor_hide = Window_BattleActor.prototype.hide;
   Window_BattleActor.prototype.hide = function() {
     _Window_BattleActor_hide.call(this);
-    // Restore original key mappings when targeting is finished
-    if (this._originalKeyMapper) {
-      Input.keyMapper = this._originalKeyMapper;
-      this._originalKeyMapper = null;
+    // Give back only what this window itself added, so no other plugin's keys
+    // are collateral damage.
+    if (this._wasdKeysAdded) {
+      for (const code of this._wasdKeysAdded) delete Input.keyMapper[code];
+      this._wasdKeysAdded = null;
     }
   };
 
@@ -2671,6 +2682,7 @@
     marginBottom: HOTBAR_MARGIN_BOTTOM,
     zIndex: 352,
     showLabel: true,
+    showDescription: true,
     onSlotClick: (i) => {
       const actor = BattleManager.actor();
       const page = _hotbarPageSkills(_hotbarSkills(actor));
@@ -2793,19 +2805,13 @@
       : String(text);
   }
 
-  // The reading card a slot puts up while the pointer is on it or while the
-  // keys have it armed. The name line under the row only has room for the name
-  // and its cost; a player reaching for a spell mid-fight is asking what it
-  // does, and this is the answer they would otherwise have to open the skill
-  // menu for.
-  function _hotbarDetail(actor, skill) {
-    const cost = _hotbarCostText(actor, skill);
-    const note = _hotbarWeaponNote(actor, skill);
-    return {
-      title: _hotbarDbText(skill.name),
-      cost: note ? (cost ? `${cost} - ${note}` : note) : cost,
-      body: _hotbarDbText(skill.description)
-    };
+  // What the hovered or armed slot says it does. The name line under the row
+  // has room for the name and its cost only; a player reaching for a spell
+  // mid-fight is asking what it does, and the database description is the same
+  // answer the categorised skill menu gives, printed centred over the bar
+  // rather than in a card pinned to the side of one slot.
+  function _hotbarDescription(actor, skill) {
+    return _hotbarDbText(skill.description);
   }
 
   // The row is rebuilt only when something it draws has moved. It used to build
@@ -2845,7 +2851,7 @@
         iconIndex: skill.iconIndex,
         enabled: actor.canUse(skill),
         tooltip: _hotbarTooltipText(actor, skill),
-        detail: _hotbarDetail(actor, skill)
+        description: _hotbarDescription(actor, skill)
       } : null);
     }
     _hotbarEntriesKey = stamp;

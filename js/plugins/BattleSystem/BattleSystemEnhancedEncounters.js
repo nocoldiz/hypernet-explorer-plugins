@@ -2754,6 +2754,9 @@
             if (!ev || !ev._erased) continue;
             const data = ev.event();
             if (!data || data.name !== "Enemy") continue;
+            // A slain boss is not re-stocked: it was taken off the map for the
+            // world, not for this pass (section 2b of the state module).
+            if (BSE.Helpers.isBossEvent && BSE.Helpers.isBossEvent(ev)) continue;
             ev._erased = false;
             ev.refresh();
         }
@@ -2771,6 +2774,9 @@
         }
         $gameSystem._procGenEnemiesFromTemplate = false;
         BSE.Functions.restoreErasedEnemyEvents();
+        // The stitched window walks into the next square without a transfer, so
+        // the sweep Game_Map#setupEvents runs never happens there.
+        if (BSE.Functions.eraseSlainBossEvents) BSE.Functions.eraseSlainBossEvents();
 
         // Whose rules apply here.
         //
@@ -2801,7 +2807,10 @@
 
         const allEnemyEvents = $gameMap.events().filter(ev => {
             const eventData = ev.event();
-            return eventData && eventData.name === "Enemy";
+            if (!eventData || eventData.name !== "Enemy") return false;
+            // A <Boss> event is a written encounter, never ambient fauna: the
+            // pass neither deals it a troop nor brings it back once it is down.
+            return !(BSE.Helpers.isBossEvent && BSE.Helpers.isBossEvent(ev));
         });
 
         let enemyEvents = allEnemyEvents;
@@ -5239,6 +5248,10 @@
         // by the next spawn pass - leaving the ledger behind would hand its
         // successor a dead creature's wounds.
         delete BSE.State.persistentEnemyData[`${$gameMap.mapId()}_${ev.eventId()}`];
+        // Felled on the map rather than in a battle: a boss is still a boss.
+        if (BSE.Functions.recordBossDefeat) {
+            BSE.Functions.recordBossDefeat($gameMap.mapId(), ev.eventId(), ev);
+        }
         $gameMap.eraseEvent(ev.eventId());
     };
 

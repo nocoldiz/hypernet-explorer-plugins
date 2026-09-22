@@ -64,7 +64,8 @@
     "clearAllConfirm": "Clicca di nuovo per confermare",
     "cycleVariants": "Altre varianti di colore disponibili",
     "backToCategories": "Torna all’elenco delle cartelle",
-    "stock": "Già ordinato e pagato. Posarlo ne consuma una."
+    "stock": "Già ordinato e pagato. Posarlo ne consuma una.",
+    "mirror": "Ribalta il pezzo da sinistra a destra (non per porte, muri, tetti o terreno)"
   },
   "category": {
     "Ads": "Insegne",
@@ -233,5 +234,6 @@
     "prev": "Pagina precedente",
     "next": "Pagina successiva"
   },
-  "stockLeft": "{n} rimaste"
+  "stockLeft": "{n} rimaste",
+  "mirror": "Specchia"
 }

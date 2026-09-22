@@ -818,6 +818,9 @@
       const amount = Math.floor(shop.balance);
       shop.balance -= amount;
       $gameParty.gainGold(amount);
+      // Write it down: the shop record is world state, so an unpersisted
+      // withdrawal came back on the next load and could be taken again.
+      SM.persist?.();
       SoundManager.playShop();
       window.ParchmentToast?.show?.(
         T('ShopManagement.ui.tookTakings', { amount: SM.formatEuroPrice(amount) }),

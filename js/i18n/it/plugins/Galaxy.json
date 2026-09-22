@@ -222,7 +222,8 @@
     "bookmark": "Segnalibro",
     "harvestRunning": "Sorvolo di raccolta in corso",
     "flyby": "Sorvolo",
-    "noSolidSurface": "Nessuna superficie solida: questo mondo puo solo essere sorvolato."
+    "noSolidSurface": "Nessuna superficie solida: questo mondo puo solo essere sorvolato.",
+    "noLandingSite": "Niente su cui posarsi: questo oggetto puo solo essere sorvolato."
   },
   "hubblePart": {
     "DF-224 Computer": {
@@ -320,7 +321,8 @@
     "mayRunOut": "L'iperflusso potrebbe esaurirsi prima dell'arrivo.",
     "alreadyRefuelling": "Rifornimento da {star} già in corso.",
     "tankFull": "Il serbatoio di iperflusso è già pieno.",
-    "noStarInRange": "Nessuna stella in grado di rifornire la nave a portata."
+    "noStarInRange": "Nessuna stella in grado di rifornire la nave a portata.",
+    "courseKept": "{star} è già sulla rotta attuale{distance}. Rifornimento all'arrivo."
   },
   "service": {
     "hubbleName": "Telescopio Spaziale Hubble",
@@ -422,7 +424,8 @@
     "noneInRange": "Nessuna stella in fusione a portata",
     "harvesting": "Raccolta dal disco",
     "eta": "{time} rimanenti",
-    "harvested": "{amount} cariche di Schrödingerite estratte dal disco"
+    "harvested": "{amount} cariche di Schrödingerite estratte dal disco",
+    "onCourse": "Stella di rifornimento sulla rotta attuale"
   },
   "bodyNote": {
     "2060chiron": "Cometa o asteroide, dipende da che anno lo si chiede. Sviluppò una chioma nel 1988, dopo un decennio classificato come pianeta minore, e da allora la disputa non si è chiusa.",

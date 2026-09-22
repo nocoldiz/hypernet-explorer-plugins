@@ -450,16 +450,9 @@
         }
       });
 
-      // Store class name in variable
-      const classParams = PluginManager.parameters("CharacterCreationClassSelector");
-      const variableId = Number(classParams["classNameVariable"] || 0);
-      if (variableId > 0) {
-        const cls = $dataClasses[preset.classId];
-        $gameVariables.setValue(
-          variableId,
-          cls ? cls.name : ""
-        );
-      }
+      // No class-name variable here either: see CharacterCreationClassSelector,
+      // the slot it used belongs to the dungeon floor counter. Read the name
+      // off the actor (actor.currentClass().name) where it is needed.
 
       if (look.busts) {
         actor.setVnBust(look.busts);

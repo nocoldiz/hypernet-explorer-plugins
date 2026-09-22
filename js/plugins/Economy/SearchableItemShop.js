@@ -31,8 +31,9 @@
  *   at all, and the reader travels with the courier's order.
  * - Volume pricing: the more units of one lot, the cheaper each unit gets, and
  *   a basket of several different lots earns a further combined-dispatch cut.
- * - Watch the couriers on the Orders page and collect what has landed, here or
- *   at any mailbox (the RetireDeliveredItems plugin command).
+ * - Watch the couriers on the Orders page. Nothing is collected by hand: a
+ *   parcel goes into the backpack by itself the moment it lands, even if it
+ *   landed while the savegame was closed and the world clock moved on.
  *
  * ============================================================================
  * Daily rarities
@@ -64,7 +65,7 @@
  * @command OpenLimitedShop
  * @desc Opens the coordinate-seeded local bazaar.
  * @command RetireDeliveredItems
- * @desc Collects every arrived parcel and adds it to the inventory.
+ * @desc Legacy hook. Parcels hand themselves over on arrival; this forces a sweep.
  */
 
 (() => {
@@ -1120,6 +1121,18 @@
             return Math.min(...mine.map(order => this.getMinutesLeft(order)));
         },
 
+        // Puts every order back on the clock this savegame is actually
+        // reading. Only ever moves an order that was booked in the future.
+        rebaseToClock: function () {
+            const now = currentGameMinutes();
+            for (const order of this.getOrderedItems()) {
+                if (!order || order.orderedAt === undefined || now >= order.orderedAt) continue;
+                const owed = Math.max(0, (order.arriveAt || 0) - order.orderedAt);
+                order.orderedAt = now;
+                order.arriveAt = now + owed;
+            }
+        },
+
         isOrderReady: function (order) {
             return !!order && currentGameMinutes() >= order.arriveAt;
         },
@@ -1173,8 +1186,6 @@
                 if (this.isOrderReady(order) && mine) delivered.push(order);
                 else remaining.push(order);
             }
-            $gameSystem._deliveryOrders = remaining;
-
             const handed = [];
             for (const order of delivered) {
                 const result = this.deliverOrder(order);
@@ -1182,35 +1193,61 @@
                     handed.push(result.qty > 1
                         ? T('Stockbusters.text.unitsOf', { item: itemNameOf(result.entry), count: result.qty })
                         : itemNameOf(result.entry));
+                } else {
+                    // Could not be handed over: it stays in transit so it can be
+                    // collected later rather than being paid for and lost.
+                    remaining.push(order);
                 }
             }
+            $gameSystem._deliveryOrders = remaining;
             return handed;
         }
     };
 
-    // An arrival announces itself once while the party is out walking, so the
-    // player knows there is something waiting to be collected.
-    function announceArrivals() {
+    // A parcel is not kept anywhere to be picked up later: the courier puts it
+    // straight into the backpack the moment it lands and only says so.
+    //
+    // The clock (variable 114) is shared by every savegame of a world, so time
+    // spent in another save moves this one's couriers too. The sweep runs on
+    // the first frames after a load, which hands over everything that landed
+    // while this save was closed.
+    function sweepArrivals() {
         if (typeof $gameSystem === "undefined" || !$gameSystem || !$gameParty) return;
 
-        for (const order of DeliveryManager.getOrderedItems()) {
-            if (order.notified || !DeliveryManager.isOrderReady(order)) continue;
-            order.notified = true;
+        const orders = DeliveryManager.getOrderedItems();
+        if (!orders.length) return;
+        DeliveryManager.rebaseToClock();
 
+        const landed = orders.filter(order => DeliveryManager.isOrderReady(order));
+        if (!landed.length) return;
+
+        let icon = 0;
+        for (const order of landed) {
             const entry = DeliveryManager.dataOf(order);
-            if (!entry || !window.ParchmentToast) continue;
-            window.ParchmentToast.show(T('Stockbusters.text.orderArrived', { item: itemNameOf(entry) }), {
-                severity: "info",
-                icon: entry.iconIndex,
-                key: `stockbusters:${order.kind}:${order.id}` // i18n-ignore  dedupe key
-            });
+            if (entry) { icon = entry.iconIndex; break; }
         }
+
+        const handed = DeliveryManager.retireDeliveredItems();
+        if (!handed.length || !window.ParchmentToast) return;
+        window.ParchmentToast.show(T('Stockbusters.text.orderDelivered', { items: handed.join(', ') }), {
+            severity: "good",
+            icon: icon
+        });
     }
 
     const _Scene_Map_update_stockbusters = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {
         _Scene_Map_update_stockbusters.call(this);
-        if (Graphics.frameCount % 60 === 0) announceArrivals();
+        if (Graphics.frameCount % 60 === 0) sweepArrivals();
+    };
+
+    // A save loaded into a world whose clock stands earlier than the one an
+    // order was booked under would strand that courier forever, so the parcel
+    // keeps the time it still owed and counts it off the clock it finds.
+    const _DataManager_extractSaveContents_stockbusters = DataManager.extractSaveContents;
+    DataManager.extractSaveContents = function (contents) {
+        _DataManager_extractSaveContents_stockbusters.call(this, contents);
+        DeliveryManager.rebaseToClock();
     };
 
     // Read by the Mailbox event and anything else that wants to know whether a
@@ -1700,12 +1737,6 @@
                 this._confirm = null;
                 this.render();
                 break;
-            case 'collect':
-                this.collectDispatch(arg);
-                break;
-            case 'collectall':
-                this.collectAll();
-                break;
             case 'back':
                 SoundManager.playCancel();
                 this.goBack();
@@ -1959,32 +1990,15 @@
         this.render();
     };
 
-    // ---- deliveries --------------------------------------------------------
-
-    Scene_SearchableShop.prototype.collectDispatch = function (lot) {
-        const delivered = DeliveryManager.retireDeliveredItems(lot);
-        this.announceCollection(delivered);
-    };
-
-    Scene_SearchableShop.prototype.collectAll = function () {
-        this.announceCollection(DeliveryManager.retireDeliveredItems());
-    };
-
-    Scene_SearchableShop.prototype.announceCollection = function (delivered) {
-        if (!delivered.length) { SoundManager.playBuzzer(); return; }
-        SoundManager.playShop();
-        if (window.ParchmentToast) {
-            window.ParchmentToast.show(T('Stockbusters.text.collected', { items: delivered.join(', ') }),
-                { severity: "info" });
-        }
-        this.render();
-    };
-
     //=========================================================================
     // Rendering
     //=========================================================================
 
     Scene_SearchableShop.prototype.render = function () {
+        // A parcel that lands while the site is open is handed over there and
+        // then, so the Orders page never shows something already in the pack.
+        sweepArrivals();
+
         if (!this._root) return;
 
         const gold = document.getElementById('sb-gold');
@@ -2003,12 +2017,12 @@
         if (!host) return;
 
         const units = this._basket.units();
-        const ready = DeliveryManager.readyCount();
+        const inTransit = DeliveryManager.getOrderCount();
         const tabs = [
             { id: 'home', label: T('Stockbusters.ui.tab.home') },
             { id: 'list', label: T('Stockbusters.ui.tab.browse') },
             { id: 'cart', label: T('Stockbusters.ui.tab.cart'), pill: units || 0 },
-            { id: 'orders', label: T('Stockbusters.ui.tab.orders'), pill: ready || 0 }
+            { id: 'orders', label: T('Stockbusters.ui.tab.orders'), pill: inTransit || 0 }
         ];
         if (this._isLimited) tabs.splice(3, 1);
 
@@ -2077,7 +2091,6 @@
 
     Scene_SearchableShop.prototype.homeHTML = function () {
         const rarities = this._isLimited ? [] : DailyLots.entries();
-        const ready = DeliveryManager.readyCount();
         const pending = DeliveryManager.getOrderCount();
 
         let html = `<div class="sb-h1">${this._isLimited
@@ -2109,7 +2122,7 @@
             if (!pending) {
                 html += `<div style="color:var(--xp-ink-soft);">${T('Stockbusters.text.noActiveDeliveriesInTransit')}</div>`;
             } else {
-                html += `<div>${T('Stockbusters.text.parcelsPending', { count: pending, ready: ready })}</div>` +
+                html += `<div>${T('Stockbusters.text.parcelsPending', { count: pending })}</div>` +
                     `<div style="margin-top:5px;"><button class="sb-btn" data-act="page:orders" data-nav>${T('Stockbusters.ui.tab.orders')}</button></div>`;
             }
             html += `</div></div>`;
@@ -2537,7 +2550,6 @@
 
     Scene_SearchableShop.prototype.ordersHTML = function () {
         const dispatches = DeliveryManager.dispatches();
-        const ready = DeliveryManager.readyCount();
 
         let html = `<div class="sb-h1">${T('Stockbusters.text.myOrders')}</div>`;
         if (!dispatches.length) {
@@ -2545,16 +2557,11 @@
             return html;
         }
 
-        if (ready > 1) {
-            html += `<div style="margin-bottom:6px;"><button class="sb-btn cta" data-act="collectall" data-nav>` +
-                `${T('Stockbusters.text.collectAll', { count: ready })}</button></div>`;
-        }
-
         for (const dispatch of dispatches) {
             const left = Math.max(0, dispatch.arriveAt - currentGameMinutes());
             const arrived = left <= 0;
             html += `<div class="sb-panel"><div class="sb-panel-hd">` +
-                `${arrived ? T('Stockbusters.text.readyForPickup') : T('Stockbusters.text.arrivesIn', { time: formatDelay(left) })}` +
+                `${arrived ? T('Stockbusters.text.beingHandedOver') : T('Stockbusters.text.arrivesIn', { time: formatDelay(left) })}` +
                 `</div><div class="sb-panel-bd">`;
             html += `<table class="sb-list">`;
             for (const order of dispatch.orders) {
@@ -2565,12 +2572,7 @@
                     `<td style="width:70px;">x${order.qty || 1}</td>` +
                     `<td style="width:100px;" class="sb-price">${formatPrice(order.price || 0)}</td></tr>`;
             }
-            html += `</table>`;
-            if (arrived) {
-                html += `<div style="margin-top:5px;"><button class="sb-btn cta" data-act="collect:${dispatch.lot}" data-nav>` +
-                    `${T('Stockbusters.text.collect')}</button></div>`;
-            }
-            html += `</div></div>`;
+            html += `</table></div></div>`;
         }
         return html;
     };

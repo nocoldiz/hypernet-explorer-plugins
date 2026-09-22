@@ -1745,17 +1745,23 @@
     }, opts || {}));
   };
 
-  // Add helper method to find enemy sprite
-  Spriteset_Battle.prototype.findTargetSprite = function (target) {
-    if (!this._enemySprites) return null;
+  // Helper to find the sprite a hit landed on. MouseControls.js defines this
+  // too, and its version answers for ACTORS as well as enemies, which is what
+  // clicking a party member in battle depends on. This file loads long after it,
+  // so replacing the method outright left mouse targeting pointing at nothing.
+  // Only fill the gap when nobody has answered it yet.
+  if (!Spriteset_Battle.prototype.findTargetSprite) {
+    Spriteset_Battle.prototype.findTargetSprite = function (target) {
+      if (!this._enemySprites) return null;
 
-    for (const sprite of this._enemySprites) {
-      if (sprite._battler === target) {
-        return sprite;
+      for (const sprite of this._enemySprites) {
+        if (sprite._battler === target) {
+          return sprite;
+        }
       }
-    }
-    return null;
-  };
+      return null;
+    };
+  }
 
   /**
    * The next entry of a weapon's <Movement:> list. A weapon that authored six

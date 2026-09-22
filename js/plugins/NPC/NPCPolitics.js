@@ -390,8 +390,35 @@
         _nationalPartiesLoaded = true;
       }
     }
+    // A floor world of the Omega Tower is not in Parties.json and never will
+    // be: it was rolled from the world seed, and so was its bench. The names
+    // come back in the world's own naming register, so a goblin world's
+    // parties read as goblin clans and a machine world's as directorates.
+    const towerWorld = towerWorldByCountry(country);
+    if (towerWorld) return towerPartyEntries(towerWorld);
     return (country && NATIONAL_PARTIES[country]) || [];
   }
+
+  // A floor world's bench, in the shape nationalParties answers in. The creed
+  // each party carries is drawn from the same book Earth's parties use, so
+  // the platform math, the ballots and the wiki all work unchanged; only the
+  // alien creeds are held back from a world whose people are not.
+  const _towerPartyCache = {};
+  function towerPartyEntries(world) {
+    if (_towerPartyCache[world.id]) return _towerPartyCache[world.id];
+    const creeds = (window.NPCShared.ideologyList() || [])
+      .filter((i) => i && !!i.alien === !!world.alien);
+    const rng = new PolRng(worldSeed() ^ nameHash("towerparties:" + world.id));  // i18n-ignore: seed string
+    const entries = world.parties.map((party) => ({
+      name: party.name,
+      country: world.name,
+      ideologyId: creeds.length ? creeds[rng.int(0, creeds.length - 1)].id : null,
+      founded: null,
+    }));
+    _towerPartyCache[world.id] = entries;
+    return entries;
+  }
+
 
   // The nation an NPC votes in: the country their HOMETOWN stands in, whatever
   // town they happen to be standing in today (Destinations.json `country`).
@@ -431,6 +458,102 @@
     "The Dargos":   ["Titania"],
   };
   // i18n-ignore-end
+
+  // The Omega Tower's floors are not cellars: each one opens onto its own
+  // world, and each of those worlds holds its own hyperpower, with its own
+  // bench and its own elections (DungeonFloorSystem.js, window.TowerWorlds).
+  // They are registered exactly as the offworld powers above are - a power
+  // whose single member country is the world itself - so everything built
+  // for Britannia is built for them without a line of it knowing about the
+  // tower. They are NOT in OFFWORLD_POWERS, because that table is authored
+  // and these are rolled from the world seed.
+  function towerWorlds() {
+    const TW = window.TowerWorlds;
+    if (!TW || typeof TW.all !== "function") return [];
+    try { return TW.all() || []; } catch (e) { return []; }
+  }
+
+  function towerWorldByPower(powerName) {
+    if (!powerName) return null;
+    const list = towerWorlds();
+    for (const w of list) if (w.powerName === powerName) return w;
+    return null;
+  }
+
+  function towerWorldByCountry(country) {
+    if (!country) return null;
+    const list = towerWorlds();
+    for (const w of list) if (w.name === country) return w;
+    return null;
+  }
+
+  function isTowerPower(powerName) {
+    return !!towerWorldByPower(powerName);
+  }
+
+  // One government per KIND of world, not per world: a goblin world is a
+  // warband wherever in the shaft it is, and there are only so many ways a
+  // people organises itself. A world whose kind is not here falls through
+  // to FALLBACK_ARCHETYPE like any unknown power, so nothing breaks.
+  const TOWER_GOV_ARCHETYPES = {
+    // i18n-ignore-start: institution names are proper nouns, stored on the
+    // record and never translated, exactly as the Earth archetypes above.
+    republic: {
+      govType: "republic", system: "parliamentary", headTitle: "First Speaker",
+      legislature: "General Assembly", partyKind: "party", seats: 180, termDays: 1460,
+      baseline: { econ: 0, auth: 0, trad: 0, mil: 0, myst: 0 },
+      rigging: 0.05, coupSusceptibility: 0.4, scandalSensitivity: 1.1,
+      nameFlavor: "generic",
+    },
+    warband: {
+      govType: "warband", system: "tournament", headTitle: "Warchief",
+      legislature: "Moot", partyKind: "clan", seats: 40, termDays: 730,
+      baseline: { econ: -20, auth: 45, trad: 30, mil: 80, myst: 10 },
+      rigging: 0.5, coupSusceptibility: 1.5, scandalSensitivity: 0.3,
+      nameFlavor: "goblin",
+    },
+    tyranny: {
+      govType: "tyranny", system: "succession", headTitle: "Sovereign",
+      legislature: "Court", partyKind: "court faction", seats: 24, termDays: 3650,
+      baseline: { econ: -30, auth: 90, trad: 50, mil: 70, myst: 40 },
+      rigging: 0.9, coupSusceptibility: 1.3, scandalSensitivity: 0.2,
+      nameFlavor: "ottoman",
+    },
+    conclave: {
+      govType: "conclave", system: "conclave", headTitle: "First Voice",
+      legislature: "Convocation", partyKind: "circle", seats: 90, termDays: 2190,
+      baseline: { econ: 5, auth: 30, trad: 20, mil: -20, myst: 85 },
+      rigging: 0.25, coupSusceptibility: 0.5, scandalSensitivity: 0.9,
+      nameFlavor: "divine",
+    },
+    directorate: {
+      govType: "directorate", system: "shareholder", headTitle: "Director",
+      legislature: "Board", partyKind: "bloc", seats: 64, termDays: 1825,
+      baseline: { econ: 60, auth: 50, trad: -40, mil: 10, myst: -70 },
+      rigging: 0.4, coupSusceptibility: 0.3, scandalSensitivity: 0.6,
+      nameFlavor: "archivist",
+    },
+    // i18n-ignore-end
+  };
+
+  // A world of ferals or of the risen holds no government at all: nobody on
+  // it can hold an office, so there is nothing to build (window.NPCCreature
+  // owns that boundary and this is the political end of it).
+  function towerArchetypeFor(powerName) {
+    const world = towerWorldByPower(powerName);
+    if (!world) return null;
+    if (world.govArchetypeKey === "none") return null;
+    return TOWER_GOV_ARCHETYPES[world.govArchetypeKey] || null;
+  }
+
+  // The worlds that seat a government. A world of beasts is skipped whole.
+  // A world of beasts seats nobody, and a colony of Earth people seats nothing
+  // NEW: they climbed in from here and kept Earth's nations and Earth's
+  // hyperpowers, which is the whole of what makes a colony a colony.
+  function governedTowerWorlds() {
+    return towerWorlds().filter((w) => w.govArchetypeKey !== "none" && !w.earthborn);
+  }
+
 
   // ==========================================================================
   // NAME BANKS, politicians per flavor
@@ -957,6 +1080,8 @@
       }
     }
     for (const name of Object.keys(OFFWORLD_POWERS)) found.add(name);
+    // Every floor world that seats a government seats it here.
+    for (const world of governedTowerWorlds()) found.add(world.powerName);
     return [...found].sort();
   }
 
@@ -989,6 +1114,9 @@
     // An offworld power's "countries" are its worlds, and no conquest on Earth
     // moves them, so they are answered before the map is consulted at all.
     if (OFFWORLD_POWERS[powerName]) return OFFWORLD_POWERS[powerName].slice();
+    // A floor world holds exactly itself, and no conquest anywhere reaches it.
+    const towerWorld = towerWorldByPower(powerName);
+    if (towerWorld) return [towerWorld.name];
     // Prefer the history simulation's final map: conquests/liberations during
     // world generation reassign nations between hyperpowers.
     const simStates = window.HistoryManager?.getNationsState?.() || null;
@@ -1069,7 +1197,7 @@
   }
 
   function bootstrapPower(state, powerName, nowMinute) {
-    const arch = ARCHETYPES[powerName] || FALLBACK_ARCHETYPE;
+    const arch = ARCHETYPES[powerName] || towerArchetypeFor(powerName) || FALLBACK_ARCHETYPE;
     const power = buildPolity(state, powerName, arch, nowMinute, {
       kind: "power",
       seedWord: "power:",
@@ -1328,6 +1456,8 @@
       // most seats rather than the most votes: a provincial landslide inside a
       // three-tenths pool does not take a capital's assembly.
       record.results.sort((a, b) => (b.seats - a.seats) || (b.share - a.share));
+      // No party returned a seat: nothing to install, and [0] would throw.
+      if (!record.results.length) return null;
       const winner = record.results[0];
       const winnerParty = partyById(power, winner.partyId);
       power.coalition = [winner.partyId];
@@ -1365,17 +1495,25 @@
         const outsider = rng.pick(electors);
         if (!candidates.includes(outsider)) candidates = candidates.concat([outsider]);
       }
-      const support = {};
+      // Nobody left standing: no leader alive in any party and no outsider drawn.
+      // Every engine below indexes the sorted list, so this has to stop here
+      // rather than throw inside the world catch-up and repeat every frame.
+      if (!candidates.length || !electors.length) return null;
+
+      let support = {};
       for (const c of candidates) support[c.id] = 0;
       let ballotCount = 0, winnerPol = null;
       for (ballotCount = 1; ballotCount <= 7; ballotCount++) {
+        // The bandwagon reads the LAST ballot's tally, not the one being cast.
+        const previous = support;
+        support = {};
         for (const c of candidates) support[c.id] = 0;
         for (const elector of electors) {
           let best = null, bestS = -Infinity;
           for (const c of candidates) {
             const s = -ideologyDistance(elector.ideology, c.ideology)
               + c.cunning * 0.3 + c.ambition * 0.1
-              + ballotCount * (support[c.id] || 0) * 0.4   // bandwagon over ballots
+              + ballotCount * (previous[c.id] || 0) * 0.4   // bandwagon over ballots
               + rng.next() * 14;
             if (s > bestS) { bestS = s; best = c; }
           }
@@ -1385,6 +1523,7 @@
         if (support[sorted[0].id] >= Math.ceil(electors.length * 2 / 3)) { winnerPol = sorted[0]; break; }
         winnerPol = sorted[0]; // plurality fallback if no supermajority by ballot 7
       }
+      if (!winnerPol) return null;
       record.notes.push({
         key: "Politics.note.conclaveBallots",
         count: Math.min(ballotCount, 7),
@@ -1455,6 +1594,7 @@
       record.turnout = clamp(rng.int(55, 90), 0, 100);
       record.npcVoters = voters;
       record.notes.push({ key: "Politics.note.oneCreditOneVote" });
+      if (!record.results.length) return null;
       const winnerParty = partyById(power, record.results[0].partyId);
       winnerParty.funds += Math.round(power.state.treasury * 0.05);
       this._installWinner(power, minute, winnerParty, record);
@@ -1469,6 +1609,8 @@
       const scored = champions
         .map(c => ({ c, s: c.strength * 1.2 + c.cunning * 0.6 + rng.next() * 30 }))
         .sort((a, b) => b.s - a.s);
+      // Nobody to elect: an empty list would be indexed at [0] below. See conclave.
+      if (!scored.length) return null;
       const total = scored.reduce((a, x) => a + x.s, 0) || 1;
       record.results = scored.map(x => ({ candidateId: x.c.id, name: x.c.name, partyId: x.c.partyId, share: +(100 * x.s / total).toFixed(1) }));
       const winner = scored[0].c;
@@ -1491,6 +1633,8 @@
       const scored = aspirants
         .map(c => ({ c, s: c.divinity * 1.3 + c.charisma * 0.5 + rng.next() * 25 }))
         .sort((a, b) => b.s - a.s);
+      // Nobody to elect: an empty list would be indexed at [0] below. See conclave.
+      if (!scored.length) return null;
       const total = scored.reduce((a, x) => a + x.s, 0) || 1;
       record.results = scored.map(x => ({ candidateId: x.c.id, name: x.c.name, partyId: x.c.partyId, share: +(100 * x.s / total).toFixed(1) }));
       record.notes.push({ key: "Politics.note.ascension" });
@@ -1510,6 +1654,8 @@
       const scored = heirs
         .map(c => ({ c, s: c.cunning * 1.1 + c.ambition * 0.6 + c.charisma * 0.4 + rng.next() * 25 }))
         .sort((a, b) => b.s - a.s);
+      // Nobody to elect: an empty list would be indexed at [0] below. See conclave.
+      if (!scored.length) return null;
       const total = scored.reduce((a, x) => a + x.s, 0) || 1;
       record.results = scored.map(x => ({ candidateId: x.c.id, name: x.c.name, partyId: x.c.partyId, share: +(100 * x.s / total).toFixed(1) }));
       if (power.state.stability < 40) {
@@ -1533,6 +1679,8 @@
       const scored = candidates
         .map(c => ({ c, s: c.intellect * 1.5 + c.integrity * 0.5 + rng.next() * 10 }))
         .sort((a, b) => b.s - a.s);
+      // Nobody to elect: an empty list would be indexed at [0] below. See conclave.
+      if (!scored.length) return null;
       const total = scored.reduce((a, x) => a + x.s, 0) || 1;
       record.results = scored.map(x => ({ candidateId: x.c.id, name: x.c.name, partyId: x.c.partyId, share: +(100 * x.s / total).toFixed(1) }));
       record.notes.push({ key: "Politics.note.examinationScore", params: { score: Math.round(scored[0].s) } });
@@ -2003,6 +2151,19 @@
     // on (NPCSystem ensureProcSettlement). Anchor them to that real nation
     // instead of a random one so every procedural citizen belongs to the nation
     // of their home map.
+    // A tower floor is somewhere else entirely. Its group carries no
+    // coordinate and no nation id on purpose (window.TowerWorlds), so it is
+    // answered here, before anything tries to find it a place on Earth.
+    const towerWorld = window.TowerWorlds?.worldOfGroup?.(groupName) || null;
+    // A colony of Earth people is the exception: they are still Italians and
+    // Britons down there, they simply live up a shaft, so they fall through to
+    // the ordinary Earth path below and vote where their grandparents did.
+    if (towerWorld && !towerWorld.earthborn) {
+      return {
+        country: towerWorld.name,
+        power: state.powers[towerWorld.powerName] ? towerWorld.powerName : "Neutral",
+      };
+    }
     if (!country) {
       const nationId = $gameSystem?._npcMapGroups?.[groupName]?.nationId;
       if (nationId != null) country = countries.find(c => c.id === nationId) || null;
@@ -2031,7 +2192,7 @@
   // Sympathy allegiance, drawn from the powers of this world only: nobody
   // living in a neutral country drifts into a caste on another star.
   function sympathyPower(powers, rng) {
-    const earthly = powers.filter(n => !OFFWORLD_POWERS[n]);
+    const earthly = powers.filter(n => !OFFWORLD_POWERS[n] && !isTowerPower(n));
     const pool = earthly.length ? earthly : powers;
     return pool.length ? pool[rng.int(0, pool.length - 1)] : "Neutral";
   }

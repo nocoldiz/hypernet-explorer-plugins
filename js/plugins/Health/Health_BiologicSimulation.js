@@ -102,50 +102,10 @@
   // gamepad is connected, or a single TAB hint otherwise. Also installs a Tab
   // keyboard shortcut that cycles characters only while no controller is
   // connected (the bumpers / pageup-pagedown handle it when one is).
-  if (!window.CharSwitcher) {
-    window.CharSwitcher = {
-      isControllerConnected() {
-        const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-        for (let i = 0; i < pads.length; i++) {
-          if (pads[i] && pads[i].connected) return true;
-        }
-        return false;
-      },
-      parts(memberCount) {
-        if (!memberCount || memberCount <= 1) return { left: '', right: '' };
-        if (this.isControllerConnected()) {
-          return {
-            left: '<span class="char-switch-hint">L</span>',
-            right: '<span class="char-switch-hint">R</span>'
-          };
-        }
-        return { left: '', right: '<span class="char-switch-hint">TAB</span>' };
-      },
-      inner(tabsRowHTML, memberCount) {
-        const p = this.parts(memberCount);
-        return p.left + tabsRowHTML + p.right;
-      },
-      wrap(tabsRowHTML, memberCount) {
-        return `<div class="companion-switcher">${this.inner(tabsRowHTML, memberCount)}</div>`;
-      },
-      installTabKey(scene, onCycle) {
-        if (scene._charSwitchTabListener) return;
-        scene._charSwitchTabListener = (e) => {
-          if (e.key !== 'Tab') return;
-          e.preventDefault();
-          if (this.isControllerConnected()) return;
-          onCycle(e.shiftKey ? -1 : 1);
-        };
-        window.addEventListener('keydown', scene._charSwitchTabListener);
-      },
-      removeTabKey(scene) {
-        if (scene._charSwitchTabListener) {
-          window.removeEventListener('keydown', scene._charSwitchTabListener);
-          scene._charSwitchTabListener = null;
-        }
-      }
-    };
-  }
+  // The companion tab strip is drawn by window.CharSwitcher, which UI/CustomSceneStatus.js
+    // owns. This file used to carry its own copy of it behind an
+    // `if (!window.CharSwitcher)` guard, along with six other plugins: only the
+    // first one loaded ever ran, so a fix made in any of the others did nothing.
 
   // Biologic Simulation Scene
   function Scene_BiologicSimulation() {
@@ -224,33 +184,50 @@
     return { day, month, year, hours, minutes };
   }
 
+  // Days since 1 January 2001, counted on the SAME calendar the game clock
+  // runs on. This used to be hand-rolled with 365-day years and a 28-day
+  // February, while TimeDateSystem's clock is a real Date with leap days: the
+  // two agreed on 28 February 2004 and again on 1 March, so every 29 February
+  // gestation and the day-to-day status checks froze for a whole day, and the
+  // biologic clock fell a further day behind the world clock every leap year.
+  // Date.UTC does the arithmetic, so leap days and month lengths come for free.
   function convertGameDateToTimestamp(dateObj) {
-    const baseYear = 2001;
-    let days = (dateObj.year - baseYear) * 365;
-
-    const daysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    for (let i = 0; i < dateObj.month; i++) {
-      days += daysPerMonth[i];
-    }
-
-    days += dateObj.day;
-    days += (dateObj.hours * 60 + dateObj.minutes) / (24 * 60);
-
-    return days;
+    const EPOCH = Date.UTC(2001, 0, 1);
+    const at = Date.UTC(dateObj.year, dateObj.month, dateObj.day);
+    const days = (at - EPOCH) / 86400000;
+    return days + (dateObj.hours * 60 + dateObj.minutes) / (24 * 60);
   }
 
   // Reproduction type is stored per party member: var 87 (member 1),
   // var 115 (member 2), var 116 (member 3). Select by party index so
   // actors 2/3 do not inherit actor 1's reproductive data.
-  function getReproductionVarId(actor) {
-    var idx = actor ? $gameParty.members().indexOf(actor) : 0;
-    if (idx === 1) return 115;
-    if (idx === 2) return 116;
-    return 87;
+  // LEGACY ONLY. The old home of the reproduction type, read once per actor so
+  // a save made before the field existed can migrate. It is keyed by ACTOR ID,
+  // which is how every writer always keyed it; the reader used to key it by
+  // party index instead, which is the bug this replaces.
+  function legacyReproductionVarId(actor) {
+    var id = actor ? actor.actorId() : 1;
+    if (id === 2) return 115;
+    if (id === 3) return 116;
+    if (id === 1) return 87;
+    return 0;
   }
 
   function getReproductionType(actor) {
-    var v = $gameVariables.value(getReproductionVarId(actor));
+    if (!actor) return 0;
+    if (actor.reproductionType) {
+      var own = actor.reproductionType();
+      if (own !== null) return own;
+      var varId = legacyReproductionVarId(actor);
+      var legacy = varId > 0 ? $gameVariables.value(varId) : null;
+      var resolved = (legacy === undefined || legacy === null) ? 0 : legacy;
+      actor.setReproductionType(resolved);
+      return resolved;
+    }
+    // ActorCharacterFields.js absent (a stripped build): fall back to the
+    // variable rather than refusing to answer.
+    var vid = legacyReproductionVarId(actor);
+    var v = vid > 0 ? $gameVariables.value(vid) : 0;
     return (v === undefined || v === null) ? 0 : v;
   }
 
@@ -1182,8 +1159,7 @@
     const personality = actor._biologicData.personality;
     const pName = _personalityText(personality.name, 'name');
     const classLabel = actor.currentClass() ? actor.currentClass().name : T('Biologic.classFallback');
-    const repVarId = getReproductionVarId(actor);
-    const repTypeNum = $gameVariables.value(repVarId) !== undefined ? $gameVariables.value(repVarId) : -1;
+    const repTypeNum = getReproductionType(actor);
 
     const repLabels = T.list('Biologic.reproductionType');
     let repText = T('Biologic.none');
@@ -1970,7 +1946,7 @@
   };
 
   Scene_BiologicSimulation.prototype.renderChapterReproduction = function (actor, useTranslation) {
-    const repType = $gameVariables.value(getReproductionVarId(actor));
+    const repType = getReproductionType(actor);
     const uterus = actor._uterusData;
 
     if (repType === -1) {
@@ -4176,6 +4152,18 @@
           }
           noteDevelopment(this._actor, uterus, 'mitosis', uterus.mitosisDevelopment);
           this.applyMitosisEffects();
+          break;
+
+        default:
+          // Type 0 (testes) or anything unrecognised. Something started this
+          // pregnancy, so it is carried to term the ordinary way instead of
+          // falling through the switch and gestating for ever.
+          if (uterus.gestationalAge >= term) {
+            this.giveBirth();
+            return;
+          }
+          this.updateFetusData();
+          this.applyPregnancyEffects();
           break;
       }
 

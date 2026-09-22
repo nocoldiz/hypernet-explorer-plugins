@@ -543,6 +543,14 @@
       const reg = key && shareRegister();
       if (!reg || typeof reg.setCompanyPrice !== "function") return;
       const euros = Math.max(1, Math.round(priceCents / 100));
+      // The register keeps whole euros and the terminal keeps cents. Rounding
+      // one into the other left the two venues quoting the SAME share up to
+      // fifty cents apart, and both of them trade one inventory: buy on the
+      // cheap screen, sell on the dear one, repeat. A listed company is priced
+      // in whole euros on both sides, so there is no gap left to trade.
+      const snapped = euros * 100;
+      const stock = this._stocks && this._stocks[stockId];
+      if (stock && stock.currentPrice !== snapped) stock.currentPrice = snapped;
       if (this._lastQuotedEuros[stockId] === euros) return;
       try {
         reg.setCompanyPrice(key, euros);
@@ -759,8 +767,10 @@
         if (owed < 0) this._lastDividendDay = day;
         return 0;
       }
-      this._lastDividendDay = day;
       const days = Math.min(owed, DIVIDEND_MAX_CATCHUP_DAYS);
+      // Only the days actually paid for are struck off; the rest stay owed and
+      // are paid on the following passes.
+      this._lastDividendDay += days;
       const paid = Math.floor(this.dailyDividend() * days);
       if (paid <= 0) return 0;
       if (typeof $gameParty !== 'undefined' && $gameParty) $gameParty.gainGold(paid);

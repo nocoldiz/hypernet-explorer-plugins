@@ -1221,6 +1221,34 @@
         };
       }
 
+      // A ship already flying somewhere that can fill it up keeps its course.
+      // The nearest refuel star in a straight line from mid-flight is very
+      // often NOT the one the party is on their way to - fly home to Sol from
+      // far enough out and some anonymous field star sits closer than the Sun
+      // does - and replotting onto it threw the whole journey away without
+      // asking. The destination wins whenever it can do the job.
+      if (ship.isMoving && ship.targetSystem) {
+        const dest = this.getSystem(ship.targetSystem);
+        const destStar = dest && dest.position && this.refuelStarsInSystem(dest)[0];
+        if (destStar) {
+          const pos = ship.position || { x: 0, y: 0, z: 0 };
+          const ddx = dest.position.x - pos.x;
+          const ddy = dest.position.y - pos.y;
+          const ddz = (dest.position.z || 0) - (pos.z || 0);
+          const dleft = Math.sqrt(ddx * ddx + ddy * ddy + ddz * ddz);
+          const spd = ($gameVariables && $gameVariables.value(94)) || 1;
+          const est = dleft * spd * 0.01;
+          return {
+            status: "travel", keepCourse: true,
+            starName: destStar.star || dest.name,
+            starType: destStar.rec.type,
+            systemName: dest.name,
+            distance: dleft, estFuel: est,
+            shortFuel: est > this.getHyperflux(),
+          };
+        }
+      }
+
       // The star of the system the ship is already in wins over any neighbour.
       const here = this.getSystem(ship.currentSystem);
       const local = this.refuelStarsInSystem(here)[0];
@@ -1263,6 +1291,17 @@
       plan.plotted = false;
       if (plan.status === "here") {
         plan.started = this.startRefuel();
+        return plan;
+      }
+      if (plan.keepCourse) {
+        // Nothing is replotted: the leg already being flown ends at a star
+        // that can refuel, so only the arrival changes. It parks at that star
+        // rather than at whatever body of the same system the course was aimed
+        // at, because the pumps only run in a star's orbit (see startRefuel).
+        this.playerShip.targetPlanet = null;
+        this.playerShip.targetStar = plan.starName || this.playerShip.targetStar;
+        this.playerShip.autoRefuelOnArrival = true;
+        plan.plotted = true;
         return plan;
       }
       if (plan.status === "local" || plan.status === "travel") {

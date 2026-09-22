@@ -32,6 +32,7 @@
   "volumeSet": "Radio volume set to {volume}%",
   "receiver": "RADIO RECEIVER",
   "power": "Switch the set off",
+  "off": "OFF",
   "close": "CLOSE",
   "closeRadio": "Close Radio",
   "magicEye": "MAGIC EYE",

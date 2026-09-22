@@ -192,6 +192,10 @@
  * @command teleportToDownstairs
  * @text Teleport to Downstairs
  * @desc Teleports the player to the downstairs on the current floor
+ *
+ * @command bandTalk
+ * @text Talk to an Adventurer
+ * @desc Internal: a word with one of the adventuring bands climbing the tower
  */
 
 (() => {
@@ -227,25 +231,21 @@
     // pool deals. Ids that are not in the folder are ignored.
     floorGroups: [
       [12, 139], [15, 140, 348, 406, 546, 543], [16, 429], [19, 332, 697, 698],
-      [20, 344, 407], [21, 334, 336, 335], [22, 446], [23, 346], [24, 71],
+      [20, 344, 407], [21, 334, 336, 335], [22, 446], [23, 346],
       [99, 329, 330], [31, 164, 425, 426], [34, 328], [32, 345, 428],
-      [30, 316], [693, 693, 695], [63, 622, 623, 629, 624, 626, 627, 628]
+      [30, 316]
     ],
     elevatorMaps: [112,113,114,115,116,117,118,119],
     demoMode: String(parameters.demoMode) === "true",
     demoMaxFloor: 10,
     demoFinalMapId: 112,
-    // Maps kept out of the demo's random floors (2 to 9). A listed map takes
-    // its descendants with it: the maps hanging off it in the MapInfos tree
-    // (interiors reached from that floor) and the whole multi-map group it
-    // belongs to.
-    demoExcludedMaps: [33, 733, 732, 735, 736, 737, 29, 691],
     // MapInfos folder holding every dungeon floor. The whole tower, demo and
     // full run alike, draws from the maps sitting in it.
     dungeonFolderId: 166,
-    // The floors still sitting in the old per-level folders count as part of
-    // the same single pool, so nothing is lost until they are moved under 166.
-    dungeonFolderIds: [166, 167, 168, 169, 170, 171, 172, 173, 174, 175],
+    // Only the maps sitting directly in folder 166 are floors. The old
+    // per-level folders hold work in progress and unfinished maps, so they
+    // are NOT part of the pool: move a map under 166 to make it a floor.
+    dungeonFolderIds: [166],
     townMapId: parseInt(parameters.townMapId || 1),
     arenaMapId: parseInt(parameters.arenaMapId || 2),
     arenaMapX: parseInt(parameters.arenaMapX || 5),
@@ -369,7 +369,7 @@ Game_System.prototype.generateTreasureRoomPosition = function(mapId, floor) {
 
   // Store a randomly chosen Region 14 tile (or null if none exist)
   if (region14Tiles.length > 0) {
-      const randomIndex = Math.floor(this._seededRandom() * region14Tiles.length);
+      const randomIndex = Math.floor(this.dungeonRandom() * region14Tiles.length);
       this._treasureRoomPositions[key] = region14Tiles[randomIndex];
   } else {
       this._treasureRoomPositions[key] = null;
@@ -418,27 +418,6 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       return hasRegion;
   };
 
-  // The excluded demo maps plus every map that hangs off one of them in the
-  // MapInfos tree, so an interior can never be dealt as a floor either.
-  Game_System.prototype.demoExcludedMapIds = function () {
-    const excluded = new Set(params.demoExcludedMaps);
-    const infos = window.$dataMapInfos;
-    if (Array.isArray(infos)) {
-      let grew = true;
-      while (grew) {
-        grew = false;
-        for (let id = 0; id < infos.length; id++) {
-          const info = infos[id];
-          if (info && !excluded.has(id) && excluded.has(info.parentId)) {
-            excluded.add(id);
-            grew = true;
-          }
-        }
-      }
-    }
-    return excluded;
-  };
-
   // The one pool every floor is dealt from: the maps sitting directly in the
   // dungeon folder, each expanded into its room group when it has one. There
   // are no per-level pools any more, so a map is as likely on floor 3 as on
@@ -468,27 +447,16 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     return this.validateMapPool(pool);
   };
 
-  // The demo draws from the same single pool, minus the excluded maps. An
-  // excluded map is never put into the pool, so no later step can hand it out.
+  // The demo draws from the same single pool as the full run.
   Game_System.prototype.demoFloorPool = function () {
-    const excluded = this.demoExcludedMapIds();
-    return this.dungeonMapPool().filter(
-      (entry) =>
-        !(Array.isArray(entry) ? entry : [entry]).some((id) => excluded.has(id))
-    );
+    return this.dungeonMapPool();
   };
 
-  // True when a stored demo layout still holds maps the exclusions now forbid,
-  // or floors past the demo limit. Old saves generated under the previous rules
-  // are rebuilt instead of being played as they are.
+  // True when a stored demo layout holds floors past the demo limit or has
+  // lost its final map. Old saves generated under the previous rules are
+  // rebuilt instead of being played as they are.
   Game_System.prototype.isDemoLayoutStale = function () {
     if (!params.demoMode || !this._dungeonGenerated) return false;
-    const excluded = this.demoExcludedMapIds();
-    for (let floor = 2; floor < params.demoMaxFloor; floor++) {
-      const entry = this._dungeonFloors[floor];
-      const ids = Array.isArray(entry) ? entry : [entry];
-      if (ids.some((id) => excluded.has(id))) return true;
-    }
     if (this._dungeonFloors[params.demoMaxFloor] !== params.demoFinalMapId) return true;
     for (let floor = params.demoMaxFloor + 1; floor <= 100; floor++) {
       if (this._dungeonFloors[floor]) return true;
@@ -527,6 +495,19 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     return 19002001;
   }
 
+  // The tower's random draws. The generator used to be stored on $gameSystem
+  // as a CLOSURE, and JSON.stringify drops function-valued properties, so it
+  // was gone after any save: every draw outside generateDungeon would have
+  // thrown, and the one call site that guarded against it silently returned
+  // its tiles unshuffled instead, moving the chests. It is rebuilt from the
+  // world seed on demand, so the sequence is the same one the world always had.
+  Game_System.prototype.dungeonRandom = function () {
+    if (typeof this._seededRandom !== "function") {
+      this._seededRandom = createSeededRandom(String(dungeonWorldSeed()));
+    }
+    return this._seededRandom();
+  };
+
   Game_System.prototype.generateDungeon = function () {
     const historySeed = dungeonWorldSeed();
     this._seededRandom = createSeededRandom(String(historySeed));
@@ -547,7 +528,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
         const uniqueNeeded = lastFloor - 2;
         for (let floor = 2; floor < lastFloor; floor++) {
             if (demoPool.length > 0) {
-                const index = Math.floor(this._seededRandom() * demoPool.length);
+                const index = Math.floor(this.dungeonRandom() * demoPool.length);
                 this._dungeonFloors[floor] = demoPool[index];
                 if (demoPool.length >= uniqueNeeded) {
                     demoPool.splice(index, 1); // Remove to avoid duplicates if enough maps
@@ -579,7 +560,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     const dealFloor = () => {
       if (pool.length === 0) return null;
       if (bag.length === 0) bag = [...pool];
-      const index = Math.floor(this._seededRandom() * bag.length);
+      const index = Math.floor(this.dungeonRandom() * bag.length);
       return bag.splice(index, 1)[0];
     };
 
@@ -697,7 +678,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       // MULTI-MAP LOGIC (Receives pre-validated list)
       const shuffledMapIds = [...mapIdList];
       for (let i = shuffledMapIds.length - 1; i > 0; i--) {
-        const j = Math.floor(this._seededRandom() * (i + 1));
+        const j = Math.floor(this.dungeonRandom() * (i + 1));
         [shuffledMapIds[i], shuffledMapIds[j]] = [
           shuffledMapIds[j],
           shuffledMapIds[i],
@@ -711,7 +692,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       let { regionTiles: startRegion } = getTilesForMap(startRoomMapId);
       if (startRegion.length > 0) {
         const loc =
-          startRegion[Math.floor(this._seededRandom() * startRegion.length)];
+          startRegion[Math.floor(this.dungeonRandom() * startRegion.length)];
         this._stairLocations[floor].downstairs = { ...loc, mapId: startRoomMapId };
       } else {
         this._stairLocations[floor].downstairs = {
@@ -734,7 +715,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
           }
         }
         const loc =
-          endRegion[Math.floor(this._seededRandom() * endRegion.length)];
+          endRegion[Math.floor(this.dungeonRandom() * endRegion.length)];
         this._stairLocations[floor].upstairs = { ...loc, mapId: endRoomMapId };
       } else {
         this._stairLocations[floor].upstairs = {
@@ -749,7 +730,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
 
       if (regionTiles.length >= 2) {
         for (let i = regionTiles.length - 1; i > 0; i--) {
-          const j = Math.floor(this._seededRandom() * (i + 1));
+          const j = Math.floor(this.dungeonRandom() * (i + 1));
           [regionTiles[i], regionTiles[j]] = [regionTiles[j], regionTiles[i]];
         }
         this._stairLocations[floor].upstairs = { ...regionTiles[0], mapId };
@@ -757,7 +738,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       } else if (regionTiles.length === 1) {
           this._stairLocations[floor].upstairs = { ...regionTiles[0], mapId };
           if(passableTiles.length > 0){
-               const loc = passableTiles[Math.floor(this._seededRandom() * passableTiles.length)];
+               const loc = passableTiles[Math.floor(this.dungeonRandom() * passableTiles.length)];
                this._stairLocations[floor].downstairs = { ...loc, mapId };
           } else {
                this._stairLocations[floor].downstairs = { ...defaultSpawn(), mapId };
@@ -766,7 +747,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       else { // 0 region tiles (should be rare now, but kept as fallback)
         if (passableTiles.length >= 2) {
              for (let i = passableTiles.length - 1; i > 0; i--) {
-                const j = Math.floor(this._seededRandom() * (i + 1));
+                const j = Math.floor(this.dungeonRandom() * (i + 1));
                 [passableTiles[i], passableTiles[j]] = [passableTiles[j], passableTiles[i]];
             }
             this._stairLocations[floor].upstairs = { ...passableTiles[0], mapId };
@@ -829,7 +810,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
 
     if (passableTiles.length > 50) {
       for (let i = passableTiles.length - 1; i > 0; i--) {
-        const j = Math.floor(this._seededRandom() * (i + 1));
+        const j = Math.floor(this.dungeonRandom() * (i + 1));
         [passableTiles[i], passableTiles[j]] = [
           passableTiles[j],
           passableTiles[i],
@@ -892,9 +873,9 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     }
   
     // Shuffle using seeded random to ensure consistency
-    if (passableTiles.length > 1 && this._seededRandom) {
+    if (passableTiles.length > 1) {
       for (let i = passableTiles.length - 1; i > 0; i--) {
-        const j = Math.floor(this._seededRandom() * (i + 1));
+        const j = Math.floor(this.dungeonRandom() * (i + 1));
         [passableTiles[i], passableTiles[j]] = [passableTiles[j], passableTiles[i]];
       }
     }
@@ -1160,8 +1141,15 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // What a creature standing on the first lower floor weighs, and what one
     // standing on the last generated floor (-91) does. Everything in between is
     // a straight climb over the 90 floors that hold enemies at all.
+    //
+    // The last rung is the top of the bestiary, not a number picked for how
+    // deep it sounds. Nothing in Enemies.json is built above level 100, so the
+    // old 222 meant every floor from about -31 down was asking for creatures
+    // that do not exist and got handed the same top-of-the-table roster: sixty
+    // floors of descent with no ladder left in them. Spread over the 90 floors
+    // that hold enemies, the climb is now real the whole way down.
     FIRST_LEVEL: 40,
-    LAST_LEVEL: 222,
+    LAST_LEVEL: 100,
     // Folded into the procedural seed so no two floors share a layout, and into
     // the terrain/furniture record key so nothing carried out of one is still
     // standing in another.
@@ -1548,9 +1536,30 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     return found;
   }
 
+  // Game_Character.locate() straightens the character, which forces pattern 1
+  // and drops the page's own frame. A staircase, a door or a chest picks which
+  // sprite of its sheet to show by that pattern (the !Stairs sheet holds the
+  // down flight at pattern 0 and the up flight at pattern 2), so a plain
+  // locate() shows the wrong one until the next event refresh puts it back.
+  // Anything that MOVES a standing prop goes through this instead: it is a
+  // Game_Character method rather than a local so the house system's Upstairs /
+  // Downstairs and every other stair mover share the one answer.
+  Game_Character.prototype.locateKeepingPose = function (x, y) {
+    const pattern = this._originalPattern;
+    const direction = this.direction();
+    this.locate(x, y);
+    if (pattern !== undefined && pattern !== null) this.setPattern(pattern);
+    this.setDirection(direction);
+  };
+
+  function placeEventKeepingPose(event, x, y) {
+    if (!event) return;
+    event.locateKeepingPose(x, y);
+  }
+
   function towerShowEvent(event, at) {
     if (!event || !at) return;
-    event.locate(at.x, at.y);
+    placeEventKeepingPose(event, at.x, at.y);
     event.setOpacity(255);
     event.setThrough(false);
   }
@@ -1765,11 +1774,16 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
     const floor = $gameVariables.value(params.currentFloorVariable);
     if (!(floor >= 1 && floor <= 100)) return false;
-    // Riding a lift out is not the same as having climbed to the hall it stands
-    // in: the deepest floor actually reached stays where it was, or bailing out
-    // of floor 3 would unlock everything down to floor 10.
+    // Stepping into the lift is not the same as having climbed to the hall it
+    // stands in: the party rides out from their own floor, so that floor stays
+    // the current one and the deepest floor reached never moves. The lift car
+    // is the hall map for their stretch of the tower, entered at its own spot.
     const reached = $gameVariables.value(params.maxFloorVariable) || 0;
     moveToFloor(elevatorFloorFor(floor), "elevator");
+    // moveToFloor books the hall as the floor the party stands on. They are in
+    // the lift, not on floor 10: put their own floor back on the panel.
+    $gameVariables.setValue(params.currentFloorVariable, floor);
+    $gameVariables.setValue(params.elevatorFloorVariable, floor);
     if (($gameVariables.value(params.maxFloorVariable) || 0) > reached) {
       $gameVariables.setValue(params.maxFloorVariable, reached);
     }
@@ -1782,25 +1796,48 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // What lives on an authored floor. A floor of the upper tower is a rung, and
   // the rung says which levels stand on it, whichever map was dealt to it:
   //
-  //   floors 1-10   ->  enemy levels 1-20      floors 51-60  ->  60-70
-  //   floors 11-20  ->  20-30                  floors 61-70  ->  70-80
-  //   floors 21-30  ->  30-40                  floors 71-80  ->  80-90
-  //   floors 31-40  ->  40-50                  floors 81-90  ->  90-100
-  //   floors 41-50  ->  50-60                  floors 91-99  ->  100 and up
+  //   floors 1-3    ->  enemy levels 1-5
+  //   floors 4-6    ->  5-10
+  //   floors 7-10   ->  10-20
   //
-  // and floor 100, the throne at the top, holds the one thing built for it.
+  // Above the tenth the rung is halved, so the ceiling creeps up five levels
+  // at a time instead of ten: a decade keeps its own floor throughout and it
+  // is the upper half of it that opens the ceiling.
+  //
+  //   floors 11-15  ->  20-25                  floors 51-55  ->  60-65
+  //   floors 16-20  ->  20-30                  floors 56-60  ->  60-70
+  //   floors 21-25  ->  30-35                  floors 61-65  ->  70-75
+  //   floors 26-30  ->  30-40                  floors 66-70  ->  70-80
+  //   floors 31-35  ->  40-45                  floors 71-75  ->  80-85
+  //   floors 36-40  ->  40-50                  floors 76-80  ->  80-90
+  //   floors 41-45  ->  50-55                  floors 81-85  ->  90-95
+  //   floors 46-50  ->  50-60                  floors 86-100 ->  90-100
+  //
+  // The top of the tower is the top of the bestiary and no further. Nothing in
+  // the enemy data is built above level 100, so a rung written over it holds
+  // NOBODY: the old open-ended 91-99 rung and a throne at 140-160 were both
+  // asking for creatures that do not exist, and the cull fell back to whatever
+  // the map declared underneath. 90-100 is the last rung the roster can
+  // actually fill, so every rung from 86 up is that one.
   // The party's own level, how far from home the map lies and the enemy spawn
   // option in the menu all have no say inside the tower: the floor decides.
   // ---------------------------------------------------------------------------
-  const THRONE_BAND = { min: 140, max: 160 };
+  const ENEMY_LEVEL_CEILING = 100;   // the highest <Level:> in Enemies.json
+  const THRONE_BAND = { min: 90, max: ENEMY_LEVEL_CEILING };
 
   function upperFloorEnemyBand(floor) {
     if (!Number.isFinite(floor) || floor < 1 || floor > 100) return null;
     if (floor === 100) return { min: THRONE_BAND.min, max: THRONE_BAND.max };
-    if (floor >= 91) return { min: 100, max: Infinity };
-    if (floor <= 10) return { min: 1, max: 20 };
+    if (floor >= 91) return { min: 90, max: ENEMY_LEVEL_CEILING };
+    if (floor <= 3) return { min: 1, max: 5 };
+    if (floor <= 6) return { min: 5, max: 10 };
+    if (floor <= 10) return { min: 10, max: 20 };
     const decade = Math.ceil(floor / 10);
-    return { min: decade * 10, max: decade * 10 + 10 };
+    const min = Math.min(decade * 10, ENEMY_LEVEL_CEILING - 10);
+    // The lower half of a decade stops halfway up the rung, the upper half
+    // takes the whole of it.
+    const reach = (floor - (decade - 1) * 10) <= 5 ? 5 : 10;
+    return { min: min, max: Math.min(min + reach, ENEMY_LEVEL_CEILING) };
   }
 
   // The authored floor the party is standing on, 0 when they are not on one.
@@ -1828,6 +1865,934 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     }
     return 0;
   }
+
+
+  //===========================================================================
+  // ADVENTURING BANDS ON THE FLOORS
+  //===========================================================================
+  // The tower is not the party's private dungeon: other people climb it too.
+  // Every floor that holds creatures also holds nobody to three bands of
+  // adventurers, one to three of them apiece, who walk it together and fight
+  // what they meet. A band is a leader and its followers: the leader picks
+  // where to go (the nearest monster it can see, otherwise wherever), the
+  // followers keep to its heels, and whoever ends up beside a creature trades
+  // blows with it until one side is down.
+  //
+  // The fight is resolved on the same terms as the wildlife's own brawls (see
+  // Enemy vs Enemy Combat in BattleSystemEnhancedEncounters.js): the monster's
+  // map HP is worn down, the wound is written to the record a real battle would
+  // restore from, and a felled creature leaves the same harvestable corpse the
+  // ecology leaves. A band that wins walks on; an adventurer who loses is taken
+  // off the floor.
+  //
+  // Bands are session things, not world things. They are rolled when a floor is
+  // walked onto and forgotten when it is left, so the tower is never the same
+  // climb twice. What has to survive is the round trip through a menu, which
+  // reloads $dataMap from disk and throws away every injected slot with it:
+  // each member carries its own event data on itself (_towerBandData) and the
+  // slot is written back before the scene reads it.
+  const BAND_MAX_SIZE = 3;          // one to three adventurers to a band
+  const BAND_MAX_COUNT = 3;         // and at most this many bands to a floor
+  const BAND_STEP_INTERVAL = 12;    // frames between one step and the next
+  const BAND_FIGHT_INTERVAL = 60;   // frames between one exchange of blows and the next
+  const BAND_SIGHT = 14;            // how far a leader looks for something to kill
+  // The name banks the adventurers are drawn from. Data ids, not prose: these
+  // are Markov chain databases (see MarkovTextGenerator.js), and what they
+  // produce is a made-up name rather than anything written here.
+  const BAND_NAME_DBS = ["dungeon_explorer", "wannabe_wizard", "inmate", "thug", "guide", "scribe"];  // i18n-ignore: Markov database ids
+  let bandTick = 0;
+
+  // The floor the bands are for, and the level they are built around. Null on
+  // any map that is not a floor holding creatures: the elevator halls, the
+  // accursed market, the Secret Stairway and the Tip of the Spear all answer
+  // no, and so does everywhere outside the tower.
+  function bandFloorHere() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return null;
+    const lower = currentTowerFloor();
+    if (lower) {
+      const level = towerEnemyLevel(lower);
+      return level > 0 ? { floor: lower, level } : null;
+    }
+    const upper = currentAuthoredFloor();
+    if (!upper) return null;
+    const band = upperFloorEnemyBand(upper);
+    if (!band) return null;
+    return { floor: upper, level: Math.round((band.min + band.max) / 2) };
+  }
+
+  // Ground somebody may be put down on. Deliberately stricter than the walk
+  // check: a tile a staircase, a lift or another event has a claim on is never
+  // a place to stand a stranger, and neither is the square the party arrived on.
+  function bandStandable(x, y, reserved) {
+    if (!$gameMap.isValid(x, y)) return false;
+    if (!$gameMap.isPassable(x, y, 2) || !$gameMap.isPassable(x, y, 8)) return false;
+    if ($gameMap.eventsXy(x, y).length) return false;
+    if ($gamePlayer && Math.abs($gamePlayer.x - x) + Math.abs($gamePlayer.y - y) < 4) return false;
+    if (reserved && reserved.has(x + "," + y)) return false;
+    return true;
+  }
+
+  // The staircases, the lift and the tile beside each of them. A band standing
+  // on a landing is a band standing in the only way off the floor.
+  function bandReservedKeys() {
+    const keys = new Set();
+    for (const tile of towerReservedTiles()) {
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) keys.add((tile.x + dx) + "," + (tile.y + dy));
+      }
+    }
+    return keys;
+  }
+
+  function bandMembers() {
+    const out = [];
+    if (typeof $gameMap === "undefined" || !$gameMap) return out;
+    for (const ev of $gameMap.events()) {
+      if (ev && ev._towerBand && !ev._erased) out.push(ev);
+    }
+    return out;
+  }
+
+  // A live, battle-ready creature, asked of the encounter plugin wherever it
+  // answers so the two never disagree about what counts as one.
+  function bandLiveEnemy(ev) {
+    if (!ev || ev._erased || ev._mbmCombatant) return false;
+    if (!(ev._fixedTroopId > 0)) return false;
+    const helpers = window.BSE && window.BSE.Helpers;
+    if (helpers && helpers.isMonsterEvent) return helpers.isMonsterEvent(ev);
+    const data = ev.event && ev.event();
+    return !!(data && data.name === "Enemy");  // i18n-ignore: event name matched at runtime
+  }
+
+  function bandEnemyLevel(ev) {
+    const read = window.getEnemyLevelFromEvent;
+    return (read ? read(ev) : 0) || 1;
+  }
+
+  // Where a climber came from. NOT the floor they are met on: the shaft is
+  // climbed from both ends and by everybody, so a band on floor 12 can be an
+  // Earth woman, a goblin out of floor +44 and something fungal from -61,
+  // walking together because the tower is the one thing they have in common.
+  // Earth is weighted as heavily as the whole rest of the shaft put together:
+  // it is the only world with a door onto the tower at ground level.
+  const BAND_EARTH_SHARE = 0.5;
+
+  function bandOriginWorld(rng) {
+    if (rng() < BAND_EARTH_SHARE) return null;          // from Earth
+    const worlds = allTowerWorlds();
+    if (!worlds.length) return null;
+    // Nobody is from a world with nobody left on it.
+    const peopled = worlds.filter((w) => !w.empty);
+    const pool = peopled.length ? peopled : worlds;
+    return pool[Math.floor(rng() * pool.length)] || null;
+  }
+
+  // Named in their own world's voice, or in Earth's when that is where they
+  // are from.
+  function bandNameFrom(world, rng, index) {
+    if (world) {
+      try {
+        const made = towerRegisterName(world.register, rng);
+        if (made && made.length >= 2) return made;
+      } catch (e) { /* fall through to the Earth banks */ }
+    }
+    return bandName(rng, index);
+  }
+
+  function bandName(rng, index) {
+    const mint = window.generateSeededMarkovName;
+    if (mint) {
+      const dbId = BAND_NAME_DBS[Math.floor(rng() * BAND_NAME_DBS.length)];
+      try {
+        const name = mint(Math.floor(rng() * 0xffff), Math.floor(rng() * 0xffff),
+          index + 1, dbId, 2, 4, 12);
+        if (name && name !== "Unknown") return name;  // i18n-ignore: Markov generator sentinel
+      } catch (e) { /* fall through to the plain title below */ }
+    }
+    return T("DungeonFloor.bandFallbackName");
+  }
+
+  function bandSprite(rng) {
+    if (window.SpriteCatalog && window.SpriteCatalog.pickNpcKey) {
+      const key = window.SpriteCatalog.pickNpcKey(rng());
+      if (key) return key;
+    }
+    const catalogue = window.WorldGen && window.WorldGen.NPCs;
+    if (!catalogue) return "";
+    const pool = Object.keys(catalogue).filter((k) => {
+      const e = catalogue[k];
+      return !!(e && e.npc === true && e.beta !== true && e.vip !== true &&
+        e.aliens !== true && e.creature !== true && e.animal !== true);
+    });
+    return pool.length ? pool[Math.floor(rng() * pool.length)] : "";
+  }
+
+  // The event an adventurer is: an ordinary action-button event whose one
+  // command hands the press back to this plugin, so the whole of what they are
+  // lives here rather than in a page nobody authored.
+  function bandEventData(id, member, x, y) {
+    return {
+      id, name: member.name, note: "",
+      x, y,
+      pages: [{
+        conditions: {
+          actorId: 1, actorValid: false, itemId: 1, itemValid: false,
+          selfSwitchCh: "A", selfSwitchValid: false,
+          switch1Id: 1, switch1Valid: false, switch2Id: 1, switch2Valid: false,
+          variableId: 1, variableValid: false
+        },
+        directionFix: false,
+        image: {
+          tileId: 0, characterName: member.characterName,
+          characterIndex: member.characterIndex, direction: 2, pattern: 1
+        },
+        list: [
+          { code: 357, indent: 0, parameters: [pluginName, "bandTalk", "bandTalk", {}] },  // i18n-ignore: plugin command id
+          { code: 0, indent: 0, parameters: [] }
+        ],
+        moveFrequency: 3,
+        moveRoute: { list: [{ code: 0 }], repeat: true, skippable: false, wait: false },
+        moveSpeed: 4, moveType: 0, priorityType: 1, stepAnime: true,
+        through: false, trigger: 0, walkAnime: true
+      }]
+    };
+  }
+
+  // A member put down after the spriteset was built has to be handed its
+  // sprite by hand: nothing else will come back for it.
+  function bandAddSprite(event) {
+    const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+    if (!spriteset || !spriteset._characterSprites || !spriteset._tilemap) return;
+    const sprite = new Sprite_Character(event);
+    spriteset._characterSprites.push(sprite);
+    spriteset._tilemap.addChild(sprite);
+  }
+
+  function bandSpawnMember(member, x, y, bandId, isLeader) {
+    if (!$dataMap.events) $dataMap.events = [null];
+    const id = $dataMap.events.length;
+    const data = bandEventData(id, member, x, y);
+    $dataMap.events[id] = data;
+    if (!$gameMap._events) $gameMap._events = [];
+    const ev = new Game_Event($gameMap.mapId(), id);
+    ev._towerBandData = data;
+    ev._towerBand = {
+      band: bandId, leader: !!isLeader, name: member.name,
+      // Null means Earth (window.TowerWorlds).
+      originWorld: member.originWorld || null,
+      level: member.level, hp: member.hp, maxHp: member.hp
+    };
+    $gameMap._events[id] = ev;
+    bandAddSprite(ev);
+    return ev;
+  }
+
+  // Roll and put down this floor's bands. Runs once per arrival: a floor that
+  // already has somebody on it (a menu closed, a save loaded) is left alone.
+  function bandSpawnFloor() {
+    const here = bandFloorHere();
+    if (!here) return 0;
+    if (typeof $dataMap === "undefined" || !$dataMap) return 0;
+    if (bandMembers().length) return 0;
+    const rng = createSeededRandom(
+      "towerBands:" + dungeonWorldSeed() + ":" + here.floor + ":" + Graphics.frameCount);  // i18n-ignore: seed string
+    // An empty floor is always on the cards: the tower is climbed, not queued
+    // for, and meeting nobody on a landing is half of what makes meeting
+    // somebody on the next one worth anything.
+    const bands = Math.floor(rng() * (BAND_MAX_COUNT + 1));
+    if (bands <= 0) return 0;
+    const reserved = bandReservedKeys();
+    let spawned = 0;
+    for (let band = 0; band < bands; band++) {
+      const size = 1 + Math.floor(rng() * BAND_MAX_SIZE);
+      const anchor = bandFindAnchor(rng, reserved, size);
+      if (!anchor) continue;
+      const spots = bandSpotsAround(anchor, size, reserved);
+      const bandId = here.floor + ":" + band + ":" + Graphics.frameCount;  // i18n-ignore: internal key
+      for (let i = 0; i < spots.length; i++) {
+        // Each of them separately: a band is who fell in together on the way
+        // up, not a delegation from one place.
+        const origin = bandOriginWorld(rng);
+        const characterName = bandSprite(rng);
+        if (!characterName) continue;
+        // How heavy they are is the floor's business, not their homeworld's:
+        // whoever is still climbing at this height is built for this height.
+        // A floor that is no world of its own (the Accursed Market, a lift
+        // hall) has no band to draw from, so it keeps the old flat spread.
+        const level = isTowerWorldFloor(here.floor)
+          ? towerFloorLevelRoll(here.floor, rng)
+          : Math.max(1, here.level + Math.floor(rng() * 5) - 2);
+        const member = {
+          name: bandNameFrom(origin, rng, spawned),
+          characterName,
+          characterIndex: characterName.includes("!$") ? 0 : Math.floor(rng() * 8),  // i18n-ignore: sprite-sheet prefix
+          level,
+          originWorld: origin ? origin.id : null,
+          hp: 30 + level * 6,
+        };
+        if (bandSpawnMember(member, spots[i].x, spots[i].y, bandId, i === 0)) spawned++;
+      }
+    }
+    return spawned;
+  }
+
+  function bandFindAnchor(rng, reserved, size) {
+    const w = $gameMap.width(), h = $gameMap.height();
+    for (let tries = 0; tries < 200; tries++) {
+      const x = Math.floor(rng() * w), y = Math.floor(rng() * h);
+      if (!bandStandable(x, y, reserved)) continue;
+      if (size === 1) return { x, y };
+      if (bandSpotsAround({ x, y }, size, reserved).length >= 2) return { x, y };
+    }
+    return null;
+  }
+
+  // The squares a band of this size stands on: the anchor first (that is the
+  // leader's) and then whatever is free around it, so a band arrives already
+  // together rather than scattered over the floor and walking into formation.
+  function bandSpotsAround(anchor, size, reserved) {
+    const out = [{ x: anchor.x, y: anchor.y }];
+    const taken = new Set([anchor.x + "," + anchor.y]);
+    for (let r = 1; r <= 2 && out.length < size; r++) {
+      for (let dy = -r; dy <= r && out.length < size; dy++) {
+        for (let dx = -r; dx <= r && out.length < size; dx++) {
+          const x = anchor.x + dx, y = anchor.y + dy;
+          const key = x + "," + y;
+          if (taken.has(key) || !bandStandable(x, y, reserved)) continue;
+          taken.add(key);
+          out.push({ x, y });
+        }
+      }
+    }
+    return out;
+  }
+
+  // A menu, the status screen or anything else that rebuilds Scene_Map reloads
+  // $dataMap from disk, and the injected slots go with it while the Game_Event
+  // objects live on. Write them back from the copy each member is carrying.
+  function bandRestoreEventData() {
+    if (typeof $dataMap === "undefined" || !$dataMap) return;
+    if (typeof $gameMap === "undefined" || !$gameMap) return;
+    for (const ev of ($gameMap._events || [])) {
+      if (!ev || !ev._towerBandData || ev._erased) continue;
+      if (!$dataMap.events) $dataMap.events = [null];
+      const id = ev.eventId();
+      if ($dataMap.events[id]) continue;
+      $dataMap.events[id] = ev._towerBandData;
+    }
+  }
+
+  function bandStep(ev, tx, ty) {
+    if (!ev || ev._erased || ev.isMoving()) return;
+    const dx = tx - ev.x, dy = ty - ev.y;
+    if (!dx && !dy) return;
+    const horz = dx > 0 ? 6 : 4;
+    const vert = dy > 0 ? 2 : 8;
+    if (Math.abs(dx) >= Math.abs(dy)) {
+      if (dx) ev.moveStraight(horz);
+      if (dy && !ev.isMovementSucceeded()) ev.moveStraight(vert);
+    } else {
+      if (dy) ev.moveStraight(vert);
+      if (dx && !ev.isMovementSucceeded()) ev.moveStraight(horz);
+    }
+  }
+
+  function bandNearestEnemy(ev, range) {
+    let best = null, bestD = Infinity;
+    for (const other of $gameMap.events()) {
+      if (!bandLiveEnemy(other)) continue;
+      const d = Math.max(Math.abs(other.x - ev.x), Math.abs(other.y - ev.y));
+      if (d <= range && d < bestD) { bestD = d; best = other; }
+    }
+    return best;
+  }
+
+  function bandLeaderOf(bandId, members) {
+    for (const ev of members) {
+      if (ev._towerBand.band === bandId && ev._towerBand.leader) return ev;
+    }
+    return null;
+  }
+
+  // One step of the whole floor's traffic. The leader hunts, the rest follow;
+  // nobody already toe to toe with a creature moves at all, so a band that has
+  // caught something stands and fights it instead of walking on through it.
+  // A band whose leader has fallen does not stand about: every one of them
+  // hunts for itself from then on.
+  function bandUpdateMovement() {
+    const members = bandMembers();
+    if (!members.length) return;
+    for (const ev of members) {
+      const state = ev._towerBand;
+      if (bandNearestEnemy(ev, 1)) continue;
+      const leader = state.leader ? ev : bandLeaderOf(state.band, members);
+      if (state.leader || !leader || leader._erased) {
+        const prey = bandNearestEnemy(ev, BAND_SIGHT);
+        if (prey) bandStep(ev, prey.x, prey.y);
+        else if (Math.random() < 0.4) {
+          ev.moveStraight([2, 4, 6, 8][Math.floor(Math.random() * 4)]);
+        }
+        continue;
+      }
+      const d = Math.max(Math.abs(leader.x - ev.x), Math.abs(leader.y - ev.y));
+      if (d > 1) bandStep(ev, leader.x, leader.y);
+    }
+  }
+
+  function bandFlash(ev, color) {
+    const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+    if (!spriteset || !spriteset._characterSprites) return;
+    const sprite = spriteset._characterSprites.find((s) => s._character === ev);
+    if (!sprite) return;
+    sprite.setBlendColor(color);
+    sprite._flashDuration = 12;
+  }
+
+  function bandFell(ev) {
+    const name = ev._towerBand && ev._towerBand.name;
+    const seen = ev.isNearTheScreen ? ev.isNearTheScreen() : false;
+    ev._towerBand = null;
+    ev._towerBandData = null;
+    $gameMap.eraseEvent(ev.eventId());
+    if (name && seen && window.ParchmentToast && window.ParchmentToast.show) {
+      window.ParchmentToast.show(T("DungeonFloor.bandFell", { name }), { severity: "warning" });  // i18n-ignore: severity id
+    }
+  }
+
+  // One exchange of blows per band member standing next to a creature. The
+  // creature's map HP is what is worn down, and the wound is written to the
+  // record a real battle restores from, so a monster the party walks in on
+  // afterwards is as hurt as the band left it.
+  function bandUpdateCombat() {
+    for (const ev of bandMembers()) {
+      const state = ev._towerBand;
+      const foe = bandNearestEnemy(ev, 1);
+      if (!foe) continue;
+      if (foe.enemyHp === undefined) {
+        foe.enemyHp = foe.getMaxHpForEvent ? foe.getMaxHpForEvent() : 100;
+      }
+      const damage = 4 + Math.floor(state.level / 2) + Math.floor(Math.random() * 6);
+      foe.enemyHp -= damage;
+      const BSEF = window.BSE && window.BSE.Functions;
+      if (BSEF && BSEF.recordMapEnemyDamage) BSEF.recordMapEnemyDamage(foe, damage);
+      bandFlash(foe, [255, 64, 64, 160]);
+      if (foe.enemyHp <= 0) {
+        if (BSEF && BSEF.killEnemyEventLeaveCorpse) BSEF.killEnemyEventLeaveCorpse(foe, state.level);
+        else $gameMap.eraseEvent(foe.eventId());
+        continue;
+      }
+      const bite = 3 + Math.floor(bandEnemyLevel(foe) / 2) + Math.floor(Math.random() * 6);
+      state.hp -= bite;
+      bandFlash(ev, [255, 64, 64, 160]);
+      if (state.hp <= 0) bandFell(ev);
+    }
+  }
+
+  function bandUpdate() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return;
+    if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return;
+    if (window.MapBattleMode && window.MapBattleMode.isActive()) return;
+    if (!bandMembers().length) return;
+    bandTick++;
+    if (bandTick % BAND_STEP_INTERVAL === 0) bandUpdateMovement();
+    if (bandTick % BAND_FIGHT_INTERVAL === 0) bandUpdateCombat();
+  }
+
+  // Talking to one of them. They are climbing the same tower and have nothing
+  // to sell: what is on offer is a word about the floor.
+  PluginManager.registerCommand(pluginName, "bandTalk", function () {
+    const ev = $gameMap.event(this.eventId ? this.eventId() : 0);
+    const state = ev && ev._towerBand;
+    const lines = T.pool("DungeonFloor.bandLines");
+    if (!lines.length) return;
+    $gameMessage.setSpeakerName(state ? state.name : "");
+    $gameMessage.add(lines[Math.floor(Math.random() * lines.length)]);
+  });
+
+  //===========================================================================
+  // THE FLOOR WORLDS
+  //===========================================================================
+  // A floor of the Omega Tower is not a cellar under Italy: it is somewhere
+  // else entirely, and the somewhere else is its own world. Every floor that
+  // holds people holds a DIFFERENT one - a world of goblins, a world gone to
+  // fungus, a world of machines still running their own elections, a colony of
+  // Earth people who came up the shaft and stayed - with its own population,
+  // its own hyperpower, its own parties and creeds, and its own idea of what a
+  // crate is worth.
+  //
+  // A world is a pure function of (world seed, floor number), rolled the same
+  // way the floor's structure is (towerFloorBiome), so it never moves for a
+  // given world however often it is asked for. It is cached in the world folder
+  // all the same, because the politics layer keys off the names and a world
+  // whose file is missing has to rebuild to the same names, not to new ones.
+  //
+  // Which floors get one: every floor that is generated and holds creatures.
+  // The lift halls are the tower's own architecture, and the Accursed Market
+  // and the throne room are still Earth (world square 79,124), so none of those
+  // is a world and none of them is listed here.
+  //
+  // Tower floors carry NO world coordinates. Everywhere else in the game a
+  // settlement is a place on the world map and answers with a nation id; a
+  // floor answers with a world, which is the whole point of it, and the
+  // coordinate the map happens to be GENERATED from (79,124, where the tower
+  // stands) is a fact about the layout and never about the people.
+  const TOWER_WORLD_ELEVATOR_FLOORS = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+
+  // The kinds of world, and what each one is made of. Weighted: a mixed world
+  // is the commonest thing in the shaft and a world of pure mimicry the rarest.
+  //
+  //   population / magic  the vocabularies WorldManager already uses for a
+  //                       world the player makes (POPULATION_MODES,
+  //                       MAGICAL_LEVELS), so a floor is describable in the
+  //                       same terms as a save.
+  //   dominant            the class ids the population is drawn from, and how
+  //                       hard. A creature world picks ONE of the ids 63-70 as
+  //                       its dominant race and draws it at `share`; a sentient
+  //                       world leaves it null and draws ordinary folk.
+  //   registers           the name registers the world may be written in, with
+  //                       weights. Two goblin worlds can read differently.
+  //   gov                 which government archetype the politics layer builds
+  //                       for its hyperpower.
+  //   loot                what its crates lean towards, and how rich they are.
+  const TOWER_WORLD_KINDS = [
+    { key: "mixed",     weight: 16, population: "normal", magic: "normal",
+      dominant: null,
+      registers: { earthly: 3, archaic: 2, fae: 1, alien: 1 },
+      gov: "republic",
+      loot: { rarity: 0, lift: 0, favour: [], shun: [] } },
+
+    { key: "earthling", weight: 11, population: "normal", magic: "normal",
+      dominant: null, earthborn: true,
+      registers: { earthly: 6, archaic: 1 },
+      gov: "republic",
+      loot: { rarity: 4, lift: 0, favour: ["Food", "Tools", "Medical"], shun: ["Magic"] } },
+
+    { key: "goblin",    weight: 10, population: "goblin", magic: "normal",
+      dominant: { classIds: [], share: 0.85, sprite: "goblin" },
+      registers: { feral: 5, brutish: 3, earthly: 1 },
+      gov: "warband",
+      loot: { rarity: -6, lift: 0, favour: ["Tools", "Trash"], shun: ["Magic"] } },
+
+    { key: "monster",   weight: 9,  population: "monster", magic: "normal",
+      dominant: { classIds: [65], share: 0.80 },
+      registers: { brutish: 4, eldritch: 2, feral: 2 },
+      gov: "tyranny",
+      loot: { rarity: 6, lift: 0.05, favour: ["Monsters", "Combat"], shun: ["Food"] } },
+
+    { key: "beast",     weight: 8,  population: "normal", magic: "normal",
+      dominant: { classIds: [63], share: 0.90, animal: true },
+      registers: { feral: 5, earthly: 2 },
+      gov: "none",
+      loot: { rarity: -8, lift: 0, favour: ["Food", "Survival"], shun: ["Component", "Magic"] } },
+
+    { key: "zombie",    weight: 8,  population: "zombie", magic: "normal",
+      dominant: { classIds: [68], share: 0.88 },
+      registers: { earthly: 3, eldritch: 2 },
+      gov: "none",
+      loot: { rarity: -4, lift: 0, favour: ["Medical", "Trash"], shun: ["Food"] } },
+
+    { key: "fungoid",   weight: 8,  population: "chaos", magic: "unbound",
+      dominant: { classIds: [69], share: 0.75 },
+      registers: { eldritch: 5, fae: 2 },
+      gov: "conclave",
+      loot: { rarity: 2, lift: 0.05, favour: ["Magic", "Food"], shun: ["Component"] } },
+
+    { key: "machine",   weight: 8,  population: "normal", magic: "severed",
+      dominant: { classIds: [66, 70], share: 0.85 },
+      registers: { machine: 6, alien: 1 },
+      gov: "directorate",
+      loot: { rarity: 10, lift: 0.10, favour: ["Component", "Tools"], shun: ["Food", "Magic"] } },
+
+    { key: "alien",     weight: 7,  population: "normal", magic: "unbound",
+      dominant: null, alien: true,
+      registers: { alien: 6, eldritch: 2, machine: 1 },
+      gov: "conclave",
+      loot: { rarity: 8, lift: 0.08, favour: ["Component", "Magic"], shun: ["Food"] } },
+
+    { key: "magical",   weight: 7,  population: "normal", magic: "unbound",
+      dominant: null,
+      registers: { fae: 5, archaic: 3, eldritch: 1 },
+      gov: "conclave",
+      loot: { rarity: 8, lift: 0.08, favour: ["Magic", "Books"], shun: ["Component"] } },
+
+    { key: "undead",    weight: 6,  population: "death", magic: "unbound",
+      dominant: { classIds: [67], share: 0.85 },
+      registers: { archaic: 3, eldritch: 4 },
+      gov: "tyranny",
+      loot: { rarity: 6, lift: 0.05, favour: ["Magic", "Books"], shun: ["Food", "Medical"] } },
+
+    { key: "mutant",    weight: 6,  population: "chaos", magic: "normal",
+      dominant: { classIds: [69], share: 0.80 },
+      registers: { brutish: 3, eldritch: 3, earthly: 1 },
+      gov: "warband",
+      loot: { rarity: 0, lift: 0.03, favour: ["Medical", "Monsters"], shun: [] } },
+
+    { key: "severed",   weight: 5,  population: "normal", magic: "severed",
+      dominant: null,
+      registers: { earthly: 3, archaic: 3 },
+      gov: "directorate",
+      loot: { rarity: -2, lift: 0, favour: ["Tools", "Component"], shun: ["Magic", "Books"] } },
+
+    { key: "ruin",      weight: 5,  population: "empty", magic: "severed",
+      dominant: null, empty: true,
+      registers: { archaic: 2, eldritch: 3 },
+      gov: "none",
+      loot: { rarity: -12, lift: -0.05, favour: ["Trash", "Survival"], shun: ["Food", "Medical"] } },
+
+    { key: "mimic",     weight: 3,  population: "monster", magic: "unbound",
+      dominant: { classIds: [64], share: 0.92 },
+      registers: { eldritch: 4, earthly: 2 },
+      gov: "none",
+      loot: { rarity: 12, lift: 0.12, favour: ["Collectibles", "Misc"], shun: [] } },
+  ];
+
+  function towerWorldKind(key) {
+    for (let i = 0; i < TOWER_WORLD_KINDS.length; i++) {
+      if (TOWER_WORLD_KINDS[i].key === key) return TOWER_WORLD_KINDS[i];
+    }
+    return TOWER_WORLD_KINDS[0];
+  }
+
+  // The name registers. A register is HOW a world is written, and the same one
+  // names the world, the people on it, its hyperpower and its parties, so a
+  // floor reads of a piece from the wiki article down to the person standing in
+  // front of you. Two sorts:
+  //
+  //   corpus        the Markov banks in js/db/TextGen. They are all written in
+  //                 an Earth voice, which is exactly what is wanted for a
+  //                 colony and exactly what is not wanted for a fungus god, so
+  //                 they only carry the registers that should sound human.
+  //   phonotactic   a syllable grammar instead, because no corpus in the game
+  //                 sounds like something that was never a person. The phoneme
+  //                 sets live in the i18n data (DungeonFloor.nameGrammar), so
+  //                 what an eldritch name is made of can be tuned per language.
+  const TOWER_NAME_REGISTERS = {
+    // i18n-ignore-start  Markov database ids, not prose
+    earthly:  { corpus: ["names", "npc", "npc1", "npc2", "npc3", "salaryman", "farmer", "guard", "commuter"] },
+    archaic:  { corpus: ["medieval", "scribe", "priest", "nun", "decadent_noble", "elven_ambassador"] },
+    feral:    { corpus: ["caveman", "semiwild_goblin", "gobbo_receptionist"] },
+    brutish:  { corpus: ["thug", "rage", "goblin_metalhead", "pirate"] },
+    fae:      { corpus: ["fae_queen", "illusionist", "wizard", "fortune_teller"] },
+    // i18n-ignore-end
+    machine:  { phono: true },
+    alien:    { phono: true },
+    eldritch: { phono: true },
+  };
+
+  const TOWER_REGISTER_KEYS = Object.keys(TOWER_NAME_REGISTERS);
+
+  // A weighted pick out of a {key: weight} table.
+  function towerWeightedPick(table, rng) {
+    const keys = Object.keys(table);
+    let total = 0;
+    for (let i = 0; i < keys.length; i++) total += table[keys[i]];
+    if (total <= 0) return keys[0];
+    let roll = rng() * total;
+    for (let i = 0; i < keys.length; i++) {
+      roll -= table[keys[i]];
+      if (roll <= 0) return keys[i];
+    }
+    return keys[keys.length - 1];
+  }
+
+  function towerGrammar(register, part) {
+    if (typeof T !== "function" || typeof T.list !== "function") return null;
+    const list = T.list("DungeonFloor.nameGrammar." + register + "." + part);
+    return (list && list.length) ? list : null;
+  }
+
+  function towerPick(list, rng) {
+    return list[Math.floor(rng() * list.length)] || list[0];
+  }
+
+  // A name built out of syllables rather than out of anybody's speech. The
+  // length curve is deliberately long-tailed: most names run to two or three
+  // syllables and a rare one runs away with itself, which is what makes a
+  // roster of them read as a language instead of as noise.
+  function towerPhonoName(register, rng) {
+    const onsets = towerGrammar(register, "onsets");
+    const nuclei = towerGrammar(register, "nuclei");
+    const codas = towerGrammar(register, "codas");
+    if (!onsets || !nuclei) return "";
+    const joiners = towerGrammar(register, "joiners") || [""];
+    const roll = rng();
+    const syllables = roll < 0.35 ? 2 : roll < 0.80 ? 3 : roll < 0.95 ? 4 : 5;
+    let out = "";
+    for (let i = 0; i < syllables; i++) {
+      if (i > 0 && rng() < 0.18) out += towerPick(joiners, rng);
+      out += towerPick(onsets, rng) + towerPick(nuclei, rng);
+      if (codas && codas.length && rng() < (i === syllables - 1 ? 0.7 : 0.3)) {
+        out += towerPick(codas, rng);
+      }
+    }
+    out = out.charAt(0).toUpperCase() + out.slice(1);
+    return out.length >= 2 ? out : out + towerPick(nuclei, rng);
+  }
+
+  // A name in a register. Corpus registers go through the Markov layer the rest
+  // of the game names people with; phonotactic ones go through the grammar. A
+  // corpus that fails to answer falls back to the grammar rather than to
+  // nothing, so a world is never full of blanks.
+  function towerRegisterName(register, rng) {
+    const reg = TOWER_NAME_REGISTERS[register] || TOWER_NAME_REGISTERS.earthly;
+    if (reg.corpus && typeof window.generateSeededMarkovName === "function") {
+      const db = towerPick(reg.corpus, rng);
+      const a = Math.floor(rng() * 0xffff);
+      const b = Math.floor(rng() * 0xffff);
+      const c = Math.floor(rng() * 0x7fff) || 1;
+      try {
+        const made = window.generateSeededMarkovName(a, b, c, db, 2, 4, 12);
+        if (made && String(made).length >= 2) return String(made);
+      } catch (e) { /* fall through to the grammar */ }
+    }
+    return towerPhonoName(reg.phono ? register : "eldritch", rng) ||
+      towerPhonoName("eldritch", rng);
+  }
+
+  // Which floors are worlds at all.
+  function isTowerWorldFloor(floor) {
+    if (!Number.isFinite(floor)) return false;
+    if (floor < 0) return isGeneratedLowerFloor(floor);
+    if (floor <= 1 || floor >= 100) return false;          // market and throne stay Earth
+    return TOWER_WORLD_ELEVATOR_FLOORS.indexOf(floor) < 0; // lift halls are architecture
+  }
+
+  function towerWorldId(floor) {
+    return "tower:" + (floor > 0 ? "+" : "") + floor;      // i18n-ignore  record key
+  }
+
+  function towerWorldFloors() {
+    const out = [];
+    for (let f = TOWER.DEEPEST; f <= 100; f++) {
+      if (f !== 0 && isTowerWorldFloor(f)) out.push(f);
+    }
+    return out;
+  }
+
+  // The level band the people of a floor are built around: the same band its
+  // creatures are, because a world is as heavy as the floor it is reached on.
+  function towerWorldBand(floor) {
+    if (floor < 0) {
+      const level = towerEnemyLevel(floor);
+      if (!level) return null;
+      const reach = Math.max(3, Math.round(level * 0.1));
+      return { min: Math.max(1, level - reach), max: Math.min(ENEMY_LEVEL_CEILING, level + reach), median: level };
+    }
+    const band = upperFloorEnemyBand(floor);
+    if (!band) return null;
+    return { min: band.min, max: band.max, median: Math.round((band.min + band.max) / 2) };
+  }
+
+  // What ONE person on that floor weighs. Most of them stand at the floor's own
+  // level; a few stand well above or below it, and the further from the median
+  // the rarer, which is what a triangular draw over a widened window gives. The
+  // band itself is the promise about the CREATURES, so the people are allowed
+  // outside it: a level 8 straggler on a level 40 floor is a story, not a bug.
+  const TOWER_LEVEL_SPREAD = 0.4;   // how far past the median a person may stand
+
+  function towerFloorLevelRoll(floor, rng) {
+    const band = towerWorldBand(floor);
+    if (!band) return 1;
+    const roll = typeof rng === "function" ? rng : Math.random;
+    const reach = Math.max(2, Math.round(band.median * TOWER_LEVEL_SPREAD));
+    // Two flat draws averaged is a triangle: the middle is common, the edges
+    // are not, and nothing needs a table.
+    const offset = Math.round(((roll() + roll()) / 2 - 0.5) * 2 * reach);
+    return Math.max(1, Math.min(ENEMY_LEVEL_CEILING, band.median + offset));
+  }
+
+  // Rolling one world. Everything on it comes out of the one seeded stream, in
+  // a fixed order, so adding a field at the END is safe and inserting one in
+  // the middle rerolls every world after it.
+  function buildTowerWorld(floor) {
+    const rng = createSeededRandom("towerworld:" + dungeonWorldSeed() + ":" + floor);  // i18n-ignore  seed string
+    const weights = {};
+    for (let i = 0; i < TOWER_WORLD_KINDS.length; i++) {
+      weights[TOWER_WORLD_KINDS[i].key] = TOWER_WORLD_KINDS[i].weight;
+    }
+    const kindKey = towerWeightedPick(weights, rng);
+    const kind = towerWorldKind(kindKey);
+    const register = towerWeightedPick(kind.registers, rng);
+    const band = towerWorldBand(floor) || { min: 1, max: 5, median: 3 };
+
+    const name = towerRegisterName(register, rng);
+    const demonym = towerRegisterName(register, rng);
+    const powerName = towerRegisterName(register, rng);
+
+    // The dominant race. A creature world picks one id out of the ones its kind
+    // allows and sticks to it: that is what makes it a world OF goblins rather
+    // than a world with some in it.
+    let dominant = null;
+    if (kind.dominant) {
+      const ids = kind.dominant.classIds || [];
+      const classId = ids.length ? ids[Math.floor(rng() * ids.length)] : 0;
+      const share = Math.min(0.95, Math.max(0.55,
+        (kind.dominant.share || 0.8) + (rng() - 0.5) * 0.12));
+      dominant = {
+        classId: classId,
+        share: Math.round(share * 100) / 100,
+        animal: !!kind.dominant.animal,
+        sprite: kind.dominant.sprite || null,
+      };
+    }
+
+    // Its bench. Three to six of them, named in the world's own register.
+    const partyCount = 3 + Math.floor(rng() * 4);
+    const parties = [];
+    for (let i = 0; i < partyCount; i++) {
+      parties.push({
+        id: towerWorldId(floor) + ":party:" + i,   // i18n-ignore  record key
+        name: towerRegisterName(register, rng),
+      });
+    }
+
+    return {
+      id: towerWorldId(floor),
+      floor: floor,
+      half: floor < 0 ? "lower" : "upper",   // i18n-ignore  record value
+      kind: kindKey,
+      register: register,
+      name: name,
+      demonym: demonym,
+      populationMode: kind.population,
+      magicalLevel: kind.magic,
+      earthborn: !!kind.earthborn,
+      alien: !!kind.alien,
+      empty: !!kind.empty,
+      dominant: dominant,
+      powerName: powerName,
+      govArchetypeKey: kind.gov,
+      parties: parties,
+      band: band,
+      loot: {
+        rarityBonus: kind.loot.rarity,
+        lift: kind.loot.lift,
+        favour: kind.loot.favour.slice(),
+        shun: kind.loot.shun.slice(),
+      },
+    };
+  }
+
+  // The built worlds, kept on $gameSystem so WorldManager files them in the
+  // world folder and every savegame of that world meets the same people.
+  function towerWorldStore() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return null;
+    if (!$gameSystem._towerWorlds || typeof $gameSystem._towerWorlds !== "object") {
+      $gameSystem._towerWorlds = {};
+    }
+    return $gameSystem._towerWorlds;
+  }
+
+  function towerFloorWorld(floor) {
+    if (!isTowerWorldFloor(floor)) return null;
+    const store = towerWorldStore();
+    const id = towerWorldId(floor);
+    if (store && store[id]) return store[id];
+    const world = buildTowerWorld(floor);
+    if (store) store[id] = world;
+    return world;
+  }
+
+  function towerWorldById(id) {
+    if (!id) return null;
+    const store = towerWorldStore();
+    if (store && store[id]) return store[id];
+    const floor = parseInt(String(id).replace("tower:", ""), 10);   // i18n-ignore  record key
+    return Number.isFinite(floor) ? towerFloorWorld(floor) : null;
+  }
+
+  function allTowerWorlds() {
+    return towerWorldFloors().map(towerFloorWorld).filter(Boolean);
+  }
+
+  // Building every world at once, at world creation, so the politics layer can
+  // discover the hyperpowers before it builds its governments.
+  function initTowerWorlds() {
+    const floors = towerWorldFloors();
+    for (let i = 0; i < floors.length; i++) towerFloorWorld(floors[i]);
+    return true;
+  }
+
+  if (window.WorldManager && typeof window.WorldManager.registerWorldInitializer === "function") {
+    // After "dungeon" (40), which decides which floors exist, and before
+    // "politics" (50), which has to find the worlds' powers already standing.
+    window.WorldManager.registerWorldInitializer("towerWorlds", 45, initTowerWorlds);   // i18n-ignore  step key
+  }
+
+  // The floor the party is standing on, whichever half of the shaft it is in.
+  function currentWorldFloor() {
+    const lower = currentTowerFloor();
+    if (lower && isTowerWorldFloor(lower)) return lower;
+    const upper = currentAuthoredFloor();
+    if (upper && isTowerWorldFloor(upper)) return upper;
+    return 0;
+  }
+
+  function currentTowerWorld() {
+    const floor = currentWorldFloor();
+    return floor ? towerFloorWorld(floor) : null;
+  }
+
+  // The settlement group a floor's people belong to. Deliberately NOT a
+  // Proc:x,y group: a floor is not a square of the world map and must never be
+  // labelled as one.
+  const TOWER_GROUP_PREFIX = "Tower";   // i18n-ignore  group key
+
+  function towerGroupName(floor) {
+    return TOWER_GROUP_PREFIX + ":" + (floor > 0 ? "+" : "") + floor;   // i18n-ignore  group key
+  }
+
+  function towerGroupFloor(groupName) {
+    if (!groupName || String(groupName).indexOf(TOWER_GROUP_PREFIX + ":") !== 0) return 0;
+    const floor = parseInt(String(groupName).slice(TOWER_GROUP_PREFIX.length + 1), 10);
+    return Number.isFinite(floor) && isTowerWorldFloor(floor) ? floor : 0;
+  }
+
+  function towerWorldOfGroup(groupName) {
+    const floor = towerGroupFloor(groupName);
+    return floor ? towerFloorWorld(floor) : null;
+  }
+
+  // What the crates on this floor lean towards. Null off the tower, so every
+  // call site that does not care is unchanged.
+  function towerLootProfile() {
+    const world = currentTowerWorld();
+    return world ? world.loot : null;
+  }
+
+  window.TowerWorlds = {
+    // Whether a floor is a world at all, and the world itself.
+    isWorldFloor: isTowerWorldFloor,
+    get: towerFloorWorld,
+    byId: towerWorldById,
+    all: allTowerWorlds,
+    floors: towerWorldFloors,
+    kinds: () => TOWER_WORLD_KINDS.map((k) => k.key),
+    registers: () => TOWER_REGISTER_KEYS.slice(),
+    // Where the party is.
+    currentFloor: currentWorldFloor,
+    current: currentTowerWorld,
+    // The settlement side: a floor's group name carries no coordinates.
+    groupPrefix: TOWER_GROUP_PREFIX,
+    groupName: towerGroupName,
+    groupFloor: towerGroupFloor,
+    isTowerGroup: (name) => towerGroupFloor(name) > 0,
+    worldOfGroup: towerWorldOfGroup,
+    // The politics layer asks for these by name.
+    powerNames: () => allTowerWorlds().map((w) => w.powerName),
+    worldOfPower: (power) => allTowerWorlds().filter((w) => w.powerName === power)[0] || null,
+    worldOfName: (name) => allTowerWorlds().filter((w) => w.name === name)[0] || null,
+    partiesFor: (id) => { const w = towerWorldById(id); return w ? w.parties.slice() : []; },
+    // How heavy one of its people is.
+    levelRoll: towerFloorLevelRoll,
+    band: towerWorldBand,
+    // What its crates pay.
+    lootProfile: towerLootProfile,
+    // Naming, exposed so the NPC layer dresses a citizen in its world's voice.
+    nameIn: towerRegisterName,
+    // Building them all, for the world initializer and for the tests.
+    buildAll: initTowerWorlds,
+  };
 
   window.DungeonFloors = {
     deepestFloor: TOWER.DEEPEST,
@@ -1868,6 +2833,14 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // asks for these first, so a lift never opens onto a hazard and a way down
     // is never buried under a chest.
     reservedTiles: towerReservedTiles,
+    // The other climbers: which floor holds bands at all, who is on this one,
+    // and the two passes that move them and fight their fights. Exposed so a
+    // test drives them a step at a time rather than waiting on frames.
+    bandFloor: bandFloorHere,
+    bandMembers,
+    spawnBands: bandSpawnFloor,
+    stepBands: bandUpdateMovement,
+    fightBands: bandUpdateCombat,
   };
 
   function moveToFloor(floor, spawnMode) {
@@ -2115,7 +3088,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
                 event.locate(-1, -1);
                 event.setOpacity(0);
             } else if (upstairsLoc.mapId === currentMapId) {
-                event.locate(upstairsLoc.x, upstairsLoc.y);
+                placeEventKeepingPose(event, upstairsLoc.x, upstairsLoc.y);
                 event.setOpacity(255);
                 event.setThrough(false);
             } else {
@@ -2124,7 +3097,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
             }
         } else if (eventName === "PrevFloor") {
             if (downstairsLoc.mapId === currentMapId) {
-                event.locate(downstairsLoc.x, downstairsLoc.y);
+                placeEventKeepingPose(event, downstairsLoc.x, downstairsLoc.y);
                 event.setOpacity(255);
                 event.setThrough(false);
             } else {
@@ -2133,7 +3106,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
             }
         } else if (eventName === "TreasureRoom") {
             if (treasureRoomPosition) {
-                event.locate(treasureRoomPosition.x, treasureRoomPosition.y);
+                placeEventKeepingPose(event, treasureRoomPosition.x, treasureRoomPosition.y);
                 event.setOpacity(255);
                 event.setThrough(false);
             } else {
@@ -2143,12 +3116,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
         } else if (randomEventNames.includes(eventName)) {
             if (passableTiles.length > passableTileIndex) {
                 const tile = passableTiles[passableTileIndex];
-                event.locate(tile.x, tile.y);
+                placeEventKeepingPose(event, tile.x, tile.y);
                 event.setOpacity(255);
                 event.setThrough(false);
                 passableTileIndex++;
             } else {
-                event.locate(params.playerSpawnX + passableTileIndex, params.playerSpawnY);
+                placeEventKeepingPose(event, params.playerSpawnX + passableTileIndex, params.playerSpawnY);
                 event.setOpacity(255);
                 event.setThrough(false);
                 passableTileIndex++;
@@ -2183,6 +3156,11 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
   const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
   Scene_Map.prototype.onMapLoaded = function () {
+    // Before anything reads the map: a scene rebuilt without a transfer (a
+    // menu, the status screen) has just reloaded $dataMap from disk, and every
+    // band member standing on the floor would be an event with no data behind
+    // it. A transfer is the other case, and it rebuilds the events anyway.
+    if (!($gamePlayer && $gamePlayer.isTransferring())) bandRestoreEventData();
     _Scene_Map_onMapLoaded.call(this);
     // The procedural map answers to the lower tower's rules, never to the
     // hand-made floors': its NextFloor / PrevFloor / Elevator events belong to
@@ -2201,7 +3179,23 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       $gameSystem.enableSave();
     }
 
+    // The other climbers are dealt once the floor is standing: the spriteset
+    // exists by now, so each of them is handed its sprite as it is put down.
+    try {
+      bandSpawnFloor();
+    } catch (e) {
+      console.error("[DungeonFloorSystem] could not put this floor's bands down", e);
+    }
+
     $gameScreen.startFadeIn(15);
+  };
+
+  // The bands walk and fight on the map's own frames, never in a battle, a
+  // message or a menu (see bandUpdate).
+  const _Scene_Map_update_bands = Scene_Map.prototype.update;
+  Scene_Map.prototype.update = function () {
+    _Scene_Map_update_bands.call(this);
+    if (this.isActive()) bandUpdate();
   };
 
 

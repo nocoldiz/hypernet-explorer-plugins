@@ -191,6 +191,231 @@
         console.log("DataService: merged " + added + " alien biomes into WorldGen.Biomes.");
     }
 
+    // ── window.MapConnections, over js/db/WorldGen/MapConnections.json ───────
+    //
+    // Which map every door, staircase, hatch and cave mouth leads to. The table
+    // is built at BUILD time by tools/build/gen_map_connections.js off the map
+    // files themselves and shipped as data, so nothing at runtime ever reads six
+    // hundred map files to find out what lies next door: Map/MapGraphs.js drew
+    // its graph that way (over a synchronous XHR per map, on the first frame
+    // that wanted it) or off a table pasted into the middle of the plugin by
+    // hand that no build step refreshed.
+    //
+    // The service lives here rather than in MapGraphs because the minimap
+    // plugin is not always switched on and the answer is wanted whether it is:
+    // the auto explorer (Core/AutoIdleExplorer.js) plans its journeys across the
+    // continent on it. DataService is load slot 2, so it is always the one
+    // answer, and the db file behind it is read on first use like every other.
+    //
+    //   MapConnections.neighbours(id)   every map with a door to this one
+    //   MapConnections.path(from, to)   the shortest chain of maps, ends included
+    //   MapConnections.distance(a, b)   how many doors apart, or Infinity
+    //   MapConnections.nextHop(a, b)    the first map on the way, or 0
+    //   MapConnections.all()           the whole graph, as { id: [ids] }
+    //   MapConnections.visited()       the maps the party has stood on
+    //   MapConnections.exitTarget(ev)  the map THIS event leads to, or 0
+    //
+    // path, distance and nextHop take an options object: `within` confines the
+    // answer to a set of maps (a town's own streets, say) and `avoid` bars maps
+    // the route may not cross. Both matter because a HOP IS NOT A DISTANCE:
+    // nearly every town on the continent is two hops from every other, and the
+    // hop in the middle is the world map. A caller that means "walkable" has to
+    // say so, or it will be told a different country is next door.
+    //
+    // The shipped table is DIRECTED (the door is on one side), the graph served
+    // here is not: a way through is a way back. Two maps the project keeps apart
+    // on purpose stay apart, which is the one exception below.
+    (function () {
+        // Map 3 is the tower interior and 315 is the world map; the project
+        // deliberately does not treat the transfer between them as a walkable
+        // link, and neither did the graph MapGraphs built.
+        const SEVERED = [[3, 315]];
+        let graph = null;
+        // One breadth-first sweep per (source, restriction), kept so a caller
+        // asking about a whole population pays for the sweep once rather than
+        // once per person. Cleared with the graph.
+        let sweeps = null;
+
+        function table() {
+            const data = window.WorldGen && window.WorldGen.MapConnections;
+            if (!data) return null;
+            return data.maps || data;
+        }
+
+        function severed(a, b) {
+            return SEVERED.some(function (pair) {
+                return (pair[0] === a && pair[1] === b) || (pair[0] === b && pair[1] === a);
+            });
+        }
+
+        function build() {
+            if (graph) return graph;
+            graph = new Map();
+            const links = table();
+            if (!links) return graph;
+            const add = function (from, to) {
+                if (!from || !to || from === to || severed(from, to)) return;
+                if (!graph.has(from)) graph.set(from, new Set());
+                graph.get(from).add(to);
+            };
+            for (const key of Object.keys(links)) {
+                const from = Number(key);
+                const targets = links[key];
+                if (!from || !Array.isArray(targets)) continue;
+                for (const raw of targets) {
+                    const to = Number(raw);
+                    add(from, to);
+                    add(to, from);
+                }
+            }
+            return graph;
+        }
+
+        // The restriction an answer was worked out under, as a cache key. Two
+        // callers asking the same question of the same town share a sweep.
+        function sweepKey(from, opts) {
+            if (!opts) return String(from);
+            const within = opts.within
+                ? Array.from(opts.within).map(Number).sort(function (a, b) { return a - b; }).join(",")
+                : "";
+            const avoid = opts.avoid
+                ? Array.from(opts.avoid).map(Number).sort(function (a, b) { return a - b; }).join(",")
+                : "";
+            return from + "|" + within + "|" + avoid;
+        }
+
+        // One breadth-first sweep of the whole graph from a single map, giving
+        // how far away everything is and which way it was reached. Walks the
+        // queue on a read index and keeps only a parent per map, so nothing is
+        // copied per step: the old version rebuilt the whole trail for every
+        // map it looked at, which is affordable for one autopilot and not for
+        // a town full of people.
+        function sweep(fromId, opts) {
+            const from = Number(fromId);
+            if (!from) return null;
+            const key = sweepKey(from, opts);
+            if (!sweeps) sweeps = new Map();
+            const memo = sweeps.get(key);
+            if (memo) return memo;
+
+            const g = build();
+            const within = opts && opts.within
+                ? (opts.within instanceof Set ? opts.within : new Set(Array.from(opts.within).map(Number)))
+                : null;
+            const avoid = opts && opts.avoid
+                ? (opts.avoid instanceof Set ? opts.avoid : new Set(Array.from(opts.avoid).map(Number)))
+                : null;
+            // The source itself is where the walk starts, so it is never barred
+            // by the restriction: a party standing on the world map may still
+            // be asked to leave it.
+            const allowed = function (id) {
+                if (avoid && avoid.has(id)) return false;
+                if (within && !within.has(id)) return false;
+                return true;
+            };
+
+            const dist = new Map([[from, 0]]);
+            const parent = new Map([[from, 0]]);
+            const queue = [from];
+            for (let head = 0; head < queue.length; head++) {
+                const at = queue[head];
+                const next = g.get(at);
+                if (!next) continue;
+                const step = dist.get(at) + 1;
+                for (const to of next) {
+                    if (dist.has(to) || !allowed(to)) continue;
+                    dist.set(to, step);
+                    parent.set(to, at);
+                    queue.push(to);
+                }
+            }
+            const result = { dist: dist, parent: parent };
+            sweeps.set(key, result);
+            return result;
+        }
+
+        window.MapConnections = {
+            // Forget the built graph, for a project that rewrites the table.
+            // The sweeps were worked out over that graph, so they go with it.
+            clearCache: function () { graph = null; sweeps = null; },
+
+            neighbours: function (mapId) {
+                const set = build().get(Number(mapId));
+                return set ? Array.from(set) : [];
+            },
+
+            path: function (fromId, toId, opts) {
+                const from = Number(fromId);
+                const to = Number(toId);
+                if (!from || !to) return [];
+                if (from === to) return [from];
+                const found = sweep(from, opts);
+                if (!found || !found.dist.has(to)) return [];
+                const trail = [];
+                for (let at = to; at; at = found.parent.get(at)) trail.unshift(at);
+                return trail;
+            },
+
+            // How many doors apart, under the same restrictions. Infinity for
+            // "no way there", never -1: callers weigh a place by 1/(1+d) and
+            // want out of reach to fall to nothing on its own.
+            distance: function (fromId, toId, opts) {
+                const from = Number(fromId);
+                const to = Number(toId);
+                if (!from || !to) return Infinity;
+                if (from === to) return 0;
+                const found = sweep(from, opts);
+                if (!found || !found.dist.has(to)) return Infinity;
+                return found.dist.get(to);
+            },
+
+            // The first map on the way there, for a walker who only needs to
+            // know which door to take next.
+            nextHop: function (fromId, toId, opts) {
+                const trail = this.path(fromId, toId, opts);
+                return trail.length >= 2 ? trail[1] : 0;
+            },
+
+            all: function () {
+                const out = {};
+                for (const [mapId, links] of build()) out[mapId] = Array.from(links);
+                return out;
+            },
+
+            // The maps the party has actually stood on. The same list the
+            // minimap greys the rest of the world out against.
+            visited: function () {
+                return Array.isArray(window.$gameSystem && $gameSystem._visitedMaps)
+                    ? $gameSystem._visitedMaps.slice()
+                    : [];
+            },
+
+            hasVisited: function (mapId) {
+                return this.visited().includes(Number(mapId));
+            },
+
+            // Where does THIS event lead? The map id of the first Transfer
+            // Player its active page runs, or 0 for an event that goes nowhere.
+            // Read off the live event rather than off the table, because the
+            // table says which maps are joined and this says by which door.
+            exitTarget: function (ev) {
+                try {
+                    const page = ev && ev.page && ev.page();
+                    const list = page && page.list;
+                    if (!list) return 0;
+                    for (const cmd of list) {
+                        if (cmd && cmd.code === 201 && cmd.parameters && cmd.parameters[0] === 0) {
+                            return Number(cmd.parameters[1]) || 0;
+                        }
+                    }
+                } catch (e) {
+                    /* an event that will not be read leads nowhere */
+                }
+                return 0;
+            },
+        };
+    })();
+
     // ── window.WorldGen.HardcodedBiomeNames, derived from Destinations.json ──
     // The old js/db/WorldGen/HardcodedBiomeNames.json ("x,y" -> place name) was
     // a hand-maintained duplicate of the footprint every named place already

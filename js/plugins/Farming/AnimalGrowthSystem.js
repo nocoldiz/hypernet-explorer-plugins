@@ -515,15 +515,29 @@
       }
       const needed = prod.interval * MINUTES_PER_DAY;
       if (!(needed > 0)) continue;
-      const elapsed = now - rec.produceTimers[key];
-      const batches = Math.floor(elapsed / needed);
+      // An animal is nourished from its last feeding until that food runs out,
+      // and it produces over THAT window only - not over the whole span since
+      // the timer was last read. Clamping only the far end was not enough: a
+      // feeding on arrival after ten years away moved fedFrom to today and the
+      // entire decade still counted.
+      const fedFrom = (rec.fedAt != null) ? rec.fedAt : (rec.boughtAt || 0);
+      const windowStart = Math.max(rec.produceTimers[key], fedFrom);
+      const windowEnd = Math.min(now, fedFrom + NUTRITION_DAYS * MINUTES_PER_DAY);
+      const elapsed = windowEnd - windowStart;
+      const batches = elapsed > 0 ? Math.floor(elapsed / needed) : 0;
       if (batches >= 1) {
         let qty = 0;
         for (let b = 0; b < batches; b++) {
           qty += prod.yieldMin + Math.floor(Math.random() * (prod.yieldMax - prod.yieldMin + 1));
         }
         ready.push({ itemId: prod.itemId, qty, prodIndex: i, batches });
-        if (commit) rec.produceTimers[key] += batches * needed; // keep remainder
+        // The clock resumes inside the fed window, so an unfed stretch before it
+        // is neither paid for now nor banked for later.
+        if (commit) rec.produceTimers[key] = windowStart + batches * needed; // keep remainder
+      } else if (commit && rec.produceTimers[key] < fedFrom) {
+        // Nothing was produced across the hungry stretch, and that stretch is
+        // not credited later either: the clock restarts at the feed.
+        rec.produceTimers[key] = fedFrom;
       }
     }
     return ready;

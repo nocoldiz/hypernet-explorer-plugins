@@ -479,6 +479,15 @@
             _eventPositions: "eventPositions",
             _treasureRoomPositions: "treasureRoomPositions"
         },
+        // The worlds the Omega Tower's floors open onto, keyed
+        // "tower:<floor>" (DungeonFloorSystem.js, window.TowerWorlds). Rolled
+        // once from the world seed and kept here rather than rebuilt per save,
+        // because the politics layer registers each world's hyperpower by NAME
+        // and a world that rebuilt differently would leave those governments
+        // standing for nobody.
+        towerworlds: {
+            _towerWorlds: "worlds"
+        },
         conversations: {
             _npcConversations: "log"
         },
@@ -615,7 +624,18 @@
         }
     };
 
-    const DATA_FILE_KEYS = ["world", "history", "artifacts", "npcs", "dungeon", "state", "variables", "market", "conversations", "terrain", "plants", "containers", "chests", "mail", "rentals", "techtree", "bestiary", "shops", "animals", "furniture", "galaxy", "production", "apiary", "party", "playerquests"];
+    const DATA_FILE_KEYS = ["world", "history", "artifacts", "npcs", "dungeon", "towerworlds", "state", "variables", "market", "conversations", "terrain", "plants", "containers", "chests", "mail", "rentals", "techtree", "bestiary", "shops", "animals", "furniture", "galaxy", "production", "apiary", "party", "playerquests",
+        // Written by plugins that own their own corner of the world: the graves
+        // the idle explorer digs (AutoIdleExplorer.js), the seeded libraries
+        // (RandomBookGenerator.js), what has been built (FurnitureSystem.js) and
+        // what has been forged (ThinkerMenu.js). They are on the registry so a
+        // deleted world takes them with it and a peer is sent them.
+        "world_graves", "libraries", "builds", "forgedGear",
+        // Who the encyclopedia has written an article about (HypernetBrowser.js).
+        // A party member who reaches the threshold is written up once and stays
+        // written up: the article belongs to the world, so the next party to
+        // play it can look the last one's veterans up.
+        "hexapedia"];
 
     //=========================================================================
     // Storage backend (NW.js filesystem, localStorage fallback for browser)

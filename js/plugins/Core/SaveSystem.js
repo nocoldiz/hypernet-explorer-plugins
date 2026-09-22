@@ -275,9 +275,16 @@
         // is standing (636 is the whole world), so the square itself is recorded
         // with the tile. Null anywhere else, and inside a structure entered off
         // the procedural map.
-        const proc = (window.WorldMapReturn && window.WorldMapReturn.snapshotProcRespawn)
+        const transferring = typeof $gamePlayer.isTransferring === "function" && $gamePlayer.isTransferring();
+        const proc = (!transferring && window.WorldMapReturn && window.WorldMapReturn.snapshotProcRespawn)
             ? window.WorldMapReturn.snapshotProcRespawn() : null;
-        const loc = { mapId, x: $gamePlayer.x, y: $gamePlayer.y, dir: $gamePlayer.direction(), proc };
+        // Mid-transfer the party is already on its way: the square the old map
+        // would report belongs to where they left, not to where this save opens.
+        const loc = transferring
+            ? { mapId: $gamePlayer.newMapId(), x: $gamePlayer.newX(), y: $gamePlayer.newY(),
+                dir: $gamePlayer.newDirection ? $gamePlayer.newDirection() : $gamePlayer.direction(), proc }
+            : { mapId, x: $gamePlayer.x, y: $gamePlayer.y, dir: $gamePlayer.direction(), proc };
+        if (!(loc.mapId > 0)) return;
         $gameSystem._lastSaveLocation = loc;
         if (!$gameSystem._creationStartLocation) {
             $gameSystem._creationStartLocation = { mapId: loc.mapId, x: loc.x, y: loc.y, dir: loc.dir, proc };
@@ -438,6 +445,9 @@
 
     Scene_Map.prototype._checkAutosaveOnTransition = function () {
         if (!ConfigManager.autosaveEnabled) return;
+        // Where saving is deliberately forbidden (every tower floor disables it)
+        // the autosave keeps out too, the way the quicksave already does.
+        if ($gameSystem.isSaveEnabled && !$gameSystem.isSaveEnabled()) return;
         if (autosaveSlotFor(runKind()) < 0) return; // the sandbox is never autosaved
         if ($gameSystem._lastAutosaveFrame === undefined) {
             $gameSystem._lastAutosaveFrame = Graphics.frameCount;

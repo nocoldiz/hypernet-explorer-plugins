@@ -96,9 +96,9 @@
  * @type number
  * @default 315
  *
- * @param useHardcodedConnections
- * @text Use Hardcoded Connections
- * @desc Use pre-generated connection data instead of runtime analysis
+ * @param forceRuntimeConnections
+ * @text Force Runtime Connections
+ * @desc Ignore the shipped connection table (js/db/WorldGen/MapConnections.json) and scan every map file instead. Slow.
  * @type boolean
  * @default false
  *
@@ -154,324 +154,23 @@
     .map(Number)
     .filter((id) => id > 0);
   const teleportHubId = Number(parameters["teleportHubId"]) || 0;
-  const useHardcodedConnections =
-    parameters["useHardcodedConnections"] === "true";
+  // The shipped table is the source; this forces the old runtime scan instead,
+  // for anybody debugging a map they have edited without rebuilding.
+  const forceRuntimeConnections =
+    parameters["forceRuntimeConnections"] === "true";
 
-  // Add this hardcoded connections data structure (replace with your generated JSON):
-  const HARDCODED_CONNECTIONS = {
-    1: [1, 7, 101, 102, 138, 141, 303, 315, 532],
-    3: [7, 102, 300],
-    4: [103],
-    7: [1, 3, 7, 102, 136, 303, 314, 349, 497],
-    9: [3],
-    12: [3, 139, 477, 634, 635],
-    13: [3, 347, 437],
-    14: [3, 337, 431, 432],
-    15: [3, 140, 348, 543, 546],
-    16: [3, 16, 429, 476, 550, 552],
-    17: [3],
-    18: [3, 339, 433, 479, 555],
-    19: [3, 332, 408],
-    20: [3, 344],
-    21: [3, 21, 334, 335, 336, 440, 482],
-    22: [3, 333, 436, 696],
-    23: [3, 346, 350],
-    24: [3, 76],
-    25: [3],
-    26: [3, 340],
-    27: [3, 326],
-    28: [3],
-    29: [3, 443],
-    30: [3, 316],
-    31: [3, 164, 425, 426],
-    32: [3, 345, 428],
-    33: [3, 299],
-    34: [3, 328, 674, 683],
-    35: [3, 35],
-    36: [3],
-    37: [3],
-    38: [3],
-    39: [3],
-    40: [3],
-    41: [3],
-    42: [3],
-    43: [3],
-    44: [3],
-    45: [3],
-    46: [3],
-    47: [3],
-    48: [3],
-    49: [3],
-    50: [3],
-    51: [3],
-    52: [3],
-    53: [3],
-    54: [3],
-    55: [3],
-    56: [3, 56, 351],
-    57: [3],
-    58: [3],
-    59: [3],
-    60: [3],
-    63: [622, 626],
-    76: [24],
-    99: [3, 99, 329, 330, 478],
-    101: [3, 324, 325, 404, 405],
-    102: [1, 3, 7, 102, 506, 508, 558, 566, 567, 568, 569, 570, 572],
-    111: [3],
-    112: [3],
-    113: [3],
-    114: [3],
-    115: [3],
-    116: [3],
-    117: [3],
-    118: [3],
-    119: [3],
-    120: [3],
-    121: [3],
-    122: [3],
-    123: [3],
-    124: [3],
-    125: [3],
-    136: [7, 315],
-    137: [141],
-    138: [1, 300, 304, 319, 320, 321, 322, 323],
-    139: [12],
-    140: [15, 348],
-    141: [1, 141, 313, 314, 498, 503, 563],
-    143: [301],
-    148: [148],
-    155: [155],
-    164: [31],
-    299: [33],
-    300: [3, 138],
-    301: [143],
-    302: [7, 138],
-    303: [1, 7, 305, 307, 308, 309, 310, 311, 312, 635],
-    304: [138],
-    305: [303],
-    306: [3],
-    307: [303, 501, 502],
-    308: [303],
-    309: [303],
-    310: [303],
-    311: [303],
-    312: [303],
-    313: [141],
-    314: [7, 141],
-    315: [
-      1, 136, 300, 302, 303, 352, 397, 619, 689, 704, 715, 722, 727, 1023, 1036,
-    ],
-    316: [30],
-    317: [102, 352],
-    319: [138],
-    320: [138, 320],
-    321: [138],
-    322: [138],
-    323: [138],
-    324: [101],
-    325: [101],
-    326: [27],
-    328: [34],
-    329: [99],
-    330: [99],
-    331: [12],
-    332: [19, 697],
-    333: [22],
-    334: [21, 334],
-    335: [21],
-    336: [21, 481],
-    337: [14],
-    339: [18],
-    340: [26, 445],
-    344: [20, 407],
-    345: [32, 345],
-    346: [23],
-    347: [13],
-    348: [15, 140, 406, 543, 548],
-    349: [7, 631, 632],
-    350: [23],
-    351: [56],
-    356: [357, 359],
-    357: [356],
-    359: [356],
-    397: [1044],
-    402: [3, 138, 315],
-    404: [101],
-    405: [101],
-    406: [348, 406],
-    407: [344],
-    408: [19],
-    421: [3],
-    425: [31],
-    426: [31, 427],
-    427: [426, 685],
-    428: [32],
-    429: [16, 429],
-    431: [14],
-    432: [14],
-    433: [18],
-    436: [22, 436],
-    437: [13],
-    440: [21],
-    443: [29],
-    445: [340, 690],
-    474: [548],
-    476: [16],
-    477: [12],
-    478: [99],
-    479: [18, 480],
-    480: [479],
-    481: [336],
-    482: [21],
-    483: [23],
-    497: [7, 531, 532],
-    498: [141],
-    501: [307],
-    502: [307],
-    503: [141, 504, 505, 541],
-    504: [503, 538],
-    505: [503, 505, 539],
-    506: [102, 569, 575, 577, 584],
-    508: [102],
-    529: [532],
-    531: [7, 497],
-    532: [1, 497, 533],
-    533: [532, 535],
-    535: [533],
-    538: [504],
-    539: [505],
-    540: [563, 635],
-    541: [503],
-    543: [15, 348],
-    546: [15, 546, 547],
-    547: [546, 547],
-    548: [348, 474],
-    550: [16],
-    551: [16],
-    552: [16],
-    553: [16, 552, 554],
-    554: [553],
-    555: [18, 556],
-    556: [555],
-    557: [708],
-    558: [102, 559, 560, 561, 562, 563, 564],
-    559: [558],
-    560: [558],
-    561: [558],
-    562: [558],
-    563: [141, 540, 558, 563, 630],
-    564: [558],
-    566: [102, 315, 571, 572, 573],
-    567: [102],
-    568: [102, 675, 677],
-    569: [102, 506, 576],
-    570: [102],
-    571: [566],
-    572: [102, 566],
-    573: [566],
-    574: [3, 352],
-    575: [506],
-    576: [569],
-    577: [506],
-    578: [3, 4, 7, 9, 10],
-    579: [7],
-    580: [7],
-    581: [7],
-    583: [4],
-    584: [506, 585],
-    585: [584, 586],
-    586: [585],
-    620: [621],
-    621: [620],
-    622: [623, 629],
-    623: [622],
-    624: [63, 624],
-    625: [141, 558, 563],
-    626: [63],
-    629: [622],
-    630: [563, 631, 679],
-    631: [349, 630, 635],
-    632: [349],
-    634: [12],
-    635: [303, 540, 631],
-    674: [34, 674],
-    675: [568, 676],
-    676: [675],
-    677: [568],
-    679: [630, 680, 681],
-    680: [679],
-    681: [679, 680],
-    683: [34],
-    685: [427],
-    688: [621],
-    689: [
-      315, 700, 701, 702, 703, 704, 705, 711, 712, 714, 715, 716, 724, 725, 726,
-      991, 1003, 1006, 1011, 1023, 1035, 1036,
-    ],
-    690: [445],
-    693: [694],
-    694: [693],
-    696: [22],
-    697: [332, 698],
-    698: [697],
-    700: [689],
-    701: [689],
-    702: [689],
-    703: [689, 1009],
-    704: [689, 704, 708, 715, 723, 1010, 1023, 1033, 1035, 1036, 1040],
-    705: [689, 706],
-    706: [705],
-    708: [704, 709, 710, 1022, 1034],
-    709: [708, 1022],
-    710: [708, 1040],
-    711: [689, 712, 713],
-    712: [689, 711],
-    713: [711],
-    714: [689, 715],
-    715: [164, 689, 714, 992, 995],
-    716: [689],
-    722: [722, 728, 988],
-    723: [704, 723],
-    724: [689],
-    725: [689],
-    726: [689],
-    728: [722],
-    988: [722],
-    989: [722],
-    990: [722],
-    991: [689],
-    992: [715, 992],
-    993: [715],
-    994: [715],
-    995: [715],
-    996: [715],
-    1003: [689],
-    1006: [689],
-    1009: [703],
-    1010: [704],
-    1011: [689],
-    1022: [708, 709, 1022],
-    1023: [689, 704, 715, 1035, 1036],
-    1033: [704, 1035, 1051, 1058],
-    1034: [708, 1039, 1045],
-    1035: [689, 704, 715, 1023, 1033, 1036, 1041, 1042],
-    1036: [689, 1023, 1050, 1053, 1055],
-    1037: [1035],
-    1038: [1035],
-    1039: [1034, 1040],
-    1040: [704, 710, 1039],
-    1041: [1035],
-    1042: [1035],
-    1043: [1044],
-    1044: [397, 1043],
-    1045: [1034],
-    1050: [1036],
-    1051: [1033, 1058],
-    1053: [1036],
-    1055: [1036],
-    1058: [1033, 1051],
-  };
+  // The connection table. Built at BUILD time by
+  // tools/build/gen_map_connections.js off the map files themselves and shipped
+  // as js/db/WorldGen/MapConnections.json, served through window.MapConnections
+  // (Core/DataService.js). What used to stand here was three hundred lines of
+  // that same table pasted in by hand, refreshed by nobody, describing whatever
+  // the maps looked like on the day it was pasted.
+  function shippedConnections() {
+    const data = window.WorldGen && window.WorldGen.MapConnections;
+    if (!data) return null;
+    const links = data.maps || data;
+    return links && Object.keys(links).length ? links : null;
+  }
   // ============================================================================
   // NEW: Enhanced Game System for Compass Optimization
   // ============================================================================
@@ -485,7 +184,7 @@
     }
     this._worldMapDestinationId = this._worldMapDestinationId || null;
 
-    // Clear cached graph when switching between hardcoded/runtime modes
+    // Clear cached graph when switching between the shipped table and a scan
     this._mapConnectionGraph = null;
 
     // NEW: Compass optimization data
@@ -596,19 +295,23 @@
     return connections;
   }
 
-  // UPDATED: Enhanced buildCompleteConnectionGraph to use hardcoded data
+  // The graph the compass and the visualiser walk. Its source is the shipped
+  // table (js/db/WorldGen/MapConnections.json, built by
+  // tools/build/gen_map_connections.js): reading every map file over a
+  // synchronous request is the FALLBACK now, for a project whose table has not
+  // been generated yet, not the ordinary path. Setting Use Hardcoded
+  // Connections false forces that scan for anybody debugging a map they have
+  // just edited without rebuilding.
   function buildCompleteConnectionGraph() {
     if ($gameSystem._mapConnectionGraph) {
       return $gameSystem._mapConnectionGraph;
     }
-  
+
     dlog("Building connection graph...");
-  
-    let sourceConnections;
-  
-    if (useHardcodedConnections && HARDCODED_CONNECTIONS) {
-      dlog("Using hardcoded connection data");
-      sourceConnections = HARDCODED_CONNECTIONS;
+
+    let sourceConnections = forceRuntimeConnections ? null : shippedConnections();
+    if (sourceConnections) {
+      dlog("Using the shipped connection table");
     } else {
       dlog("Generating connections at runtime (slower)");
       sourceConnections = generateCompleteConnectionsJSON();
@@ -655,7 +358,7 @@
     dlog("Built connection graph:", finalGraph);
     dlog(
       `Performance: Using ${
-        useHardcodedConnections ? "hardcoded" : "runtime"
+        forceRuntimeConnections ? "runtime" : "shipped"
       } connection analysis`
     );
   
@@ -837,7 +540,7 @@
 
     const allConnections = generateCompleteConnectionsJSON();
 
-    dlog("=== COPY THIS JSON TO HARDCODED_CONNECTIONS ===");
+    dlog("=== THE SHIPPED TABLE IS BUILT BY tools/build/gen_map_connections.js ===");
     dlog(JSON.stringify(allConnections, null, 2));
     dlog("=== END OF JSON DATA ===");
 
@@ -852,6 +555,11 @@
   });
   registerMapGraphCommand("clearConnectionCache", () => {
     $gameSystem._mapConnectionGraph = null;
+    // The service the rest of the project asks holds its own copy of the
+    // shipped table, so it is forgotten with this one.
+    if (window.MapConnections && window.MapConnections.clearCache) {
+      window.MapConnections.clearCache();
+    }
     dlog(
       "Connection cache cleared. Next map analysis will rebuild from source."
     );
@@ -892,7 +600,7 @@
       `Most connected map: ${maxConnectionsMap} (${maxConnections} connections)`
     );
     dlog(
-      `Using ${useHardcodedConnections ? "hardcoded" : "runtime"} analysis`
+      `Using ${forceRuntimeConnections ? "runtime" : "shipped"} analysis`
     );
 
     if (window.ParchmentToast) {
@@ -901,8 +609,8 @@
         maps: totalMaps, links: Math.floor(totalConnections / 2),
             }),
         T('MapGraphs.mostConnected', { map: maxConnectionsMap, links: maxConnections }),
-        T('MapGraphs.mode', { mode: useHardcodedConnections
-        ? T('MapGraphs.modeHardcoded') : T('MapGraphs.modeRuntime') })
+        T('MapGraphs.mode', { mode: forceRuntimeConnections
+        ? T('MapGraphs.modeRuntime') : T('MapGraphs.modeHardcoded') })
       ], {
         severity: 'info'
       });
@@ -1108,7 +816,7 @@ if (enableMenuCommand) {
         `Map analysis completed in ${(endTime - startTime).toFixed(
           2
         )}ms using ${
-          useHardcodedConnections ? "hardcoded" : "runtime"
+          forceRuntimeConnections ? "runtime" : "shipped"
         } connections`
       );
     }

@@ -85,6 +85,12 @@
             return T('FloorList.' + key);
         },
 
+        // In sandbox mode the shaft has no locked buttons: every floor of the
+        // tower, above and below ground, is named and reachable from the lift.
+        sandbox() {
+            return !!(typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._isSandboxMode);
+        },
+
         // The shaft is listed the way it stands: the floors above ground first,
         // the deepest at the bottom, and the ground itself in between. The
         // cursor opens on it (see initialIndex), so the list is entered at the
@@ -93,11 +99,13 @@
             const data = [];
             const generated = $gameSystem.isDungeonGenerated();
 
+            const sandbox = this.sandbox();
+
             if (generated) {
                 const maxFloor = $gameVariables.value(MAX_FLOOR_VAR) || 0;
                 const floors   = $gameSystem._dungeonFloors || [];
                 for (let i = floors.length - 1; i >= 1; i--) {
-                    if (i <= maxFloor) {
+                    if (sandbox || i <= maxFloor) {
                         const mapId = floors[i];
                         const actualMapId = getFirstMapId(mapId);
                         const info  = $dataMapInfos[actualMapId] || {};
@@ -121,7 +129,7 @@
                     if (f === tower.deepestFloor) continue;
                     data.push({
                         floor: f,
-                        label: tower.isLowerFloorUnlocked(f)
+                        label: sandbox || tower.isLowerFloorUnlocked(f)
                             ? tower.lowerFloorLabel(f)
                             : this.text("unknown"),
                     });
@@ -152,7 +160,8 @@
             const floors = $gameSystem._dungeonFloors || [];
             const maxFloor = $gameVariables.value(MAX_FLOOR_VAR) || 0;
             const toLoad = [];
-            for (let i = 1; i < floors.length && i <= maxFloor; i++) {
+            const sandbox = this.sandbox();
+            for (let i = 1; i < floors.length && (sandbox || i <= maxFloor); i++) {
                 toLoad.push(i);
             }
             if (toLoad.length === 0) {
@@ -181,6 +190,7 @@
             if (!item) return false;
             if (item.floor === null) return true;
             if (item.floor === 0) return true;
+            if (this.sandbox()) return true;
             if (item.floor < 0) {
                 const tower = window.DungeonFloors;
                 return tower ? tower.isLowerFloorUnlocked(item.floor) : false;

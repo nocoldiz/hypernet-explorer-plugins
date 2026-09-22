@@ -2716,6 +2716,13 @@
       : null;
   }
 
+  // A bust filed under a subfolder of img/busts is not an anonymous stranger:
+  // presets/ holds the premade dossiers and the real people of the VIP set, and
+  // nobody there may be cast as the face of a procedural encounter.
+  function stageBustIsNamed(bust) {
+    return typeof bust === "string" && bust.indexOf("/") >= 0;
+  }
+
   // The busts the sprite database knows, split into the aliens (flagged) and
   // everybody else who is a person rather than a creature. Built once.
   let _stagePools = null;
@@ -2726,7 +2733,8 @@
     Object.keys(db).forEach((sheet) => {
       const e = db[sheet];
       if (!e || typeof e !== "object") return;
-      const busts = (Array.isArray(e.busts) ? e.busts : []).filter((b) => b && b !== "7");
+      const busts = (Array.isArray(e.busts) ? e.busts : [])
+        .filter((b) => b && b !== "7" && !stageBustIsNamed(b));
       if (!busts.length) return;
       if (e.aliens || e.alien) { alien.push.apply(alien, busts); return; }
       if (e.creature || e.animal || e.zombie) return;

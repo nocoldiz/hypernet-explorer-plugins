@@ -305,7 +305,11 @@
       notify(T('Galaxy.core.refuellingFrom', { star: star }));
     } else if (plan.plotted) {
       const dist = plan.distance ? T('Galaxy.core.distanceLy', { ly: plan.distance.toFixed(1) }) : "";
-      notify(T('Galaxy.core.coursePlotted', { star: star, distance: dist }));
+      // A course that was kept rather than replotted says so: "plotted" over a
+      // journey the party set themselves reads as a diversion they did not ask
+      // for (see DataManager.planRefuel's keepCourse).
+      notify(T(plan.keepCourse ? 'Galaxy.core.courseKept' : 'Galaxy.core.coursePlotted',
+        { star: star, distance: dist }));
       if (plan.shortFuel) {
         notify(T('Galaxy.core.mayRunOut'), "warning");
       }
@@ -1204,10 +1208,27 @@
 
   // True when nothing on this world could be stood on. A flyby is the only way
   // down, and Land Here / Liminal walk are not offered at all.
+  //
+  // Two different bodies answer yes. A gas giant has no surface under it at
+  // all. Anything carrying noLanding is an object rather than a world - a
+  // telescope, a probe, the teapot, the monolith, a tower with one door - and
+  // has no ground to generate a square of either: the only way onto one of
+  // those is a hand-authored landing site (see landingLocations).
   function isSurfacelessWorld(planet) {
+    if (!planet) return false;
+    if (planet.noLanding) return true;
     return !!(planetBiomeRecord(planet) || {}).gasGiant;
   }
   window.GalaxySim.isSurfacelessWorld = isSurfacelessWorld;
+
+  // Why the ground was refused, so the missing commands never read as a fault:
+  // a gas giant says it has no surface, an artificial object says there is
+  // nothing down there to set down on.
+  function surfacelessReason(planet) {
+    const gas = !!(planetBiomeRecord(planet) || {}).gasGiant;
+    return T(gas ? 'Galaxy.hud.noSolidSurface' : 'Galaxy.hud.noLandingSite');
+  }
+  window.GalaxySim.surfacelessReason = surfacelessReason;
 
   function enterPlanetSurface(planet, opts) {
     if (!planet || !planet.type) return false;
@@ -1886,7 +1907,7 @@
       // Why there is only one way down, said before the modal offers it, so a
       // world with two commands missing never reads as a fault.
       if (isSurfacelessWorld(this._planet)) {
-        bmp.drawText(T('Galaxy.hud.noSolidSurface'), textX, helpY, width, LG_HELP_H, "left");
+        bmp.drawText(surfacelessReason(this._planet), textX, helpY, width, LG_HELP_H, "left");
       } else {
         // The square the cursor is on holds a pad: say whose, so the marker on
         // the picture has a name before the modal offers the two ways in.
@@ -2097,11 +2118,11 @@
   // it who is likely to be walking about, see SpriteCatalog.alienShare).
   const HOME_SYSTEM = "Sol";     // i18n-ignore: system id
   const HOME_PLANET = "Earth";   // i18n-ignore: planet id
-  function landingSiteRecord(loc) {
+  function landingSiteRecord(loc, ctx) {
     const dm = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem.starMapData : null;
     const ship = dm && dm.playerShip;
-    const system = (ship && ship.currentSystem) || null;
-    const planet = (ship && ship.currentPlanet) || null;
+    const system = (ctx && ctx.system) || (ship && ship.currentSystem) || null;
+    const planet = (ctx && ctx.planet) || (ship && ship.currentPlanet) || null;
     return {
       name: loc.name || "", mapId: loc.mapId, x: loc.x || 1, y: loc.y || 1,
       system, planet,
@@ -2209,12 +2230,38 @@
     });
     if (!ok) return false;
     if (typeof $gameSystem !== "undefined" && $gameSystem) {
-      $gameSystem._gxLandingSite = landingSiteRecord(loc);
+      // The body this landing was MADE against, so the pad is filed under the
+      // world it stands on however the party got there - see landingSiteRecord.
+      $gameSystem._gxLandingSite = landingSiteRecord(loc, {
+        system: opts.system || systemNameOf(planet) || null,
+        planet: planet.name || null,
+      });
     }
     if (opts.withShip) parkShipAtSite(loc);
     return true;
   }
   window.GalaxySim.landAtSpaceport = landAtSpaceport;
+
+  // Which system a body is in, found by looking for it. Only asked when the
+  // caller did not say, which is the case for every route that had nothing but
+  // the ship to ask before.
+  function systemNameOf(body) {
+    if (!body || !body.name) return null;
+    try {
+      const dm = window.GalaxySim.getDataManager();
+      // this.systems is a Map of the systems that have been materialised, which
+      // is every hand-authored one - and every body with a spaceport on it is
+      // hand-authored, because somebody drew the pad.
+      const systems = (dm && dm.systems) ? Array.from(dm.systems.values()) : [];
+      for (const sys of systems) {
+        for (const p of (sys.planets || [])) {
+          if (p.name === body.name) return sys.name;
+          for (const m of (p.moons || [])) if (m.name === body.name) return sys.name;
+        }
+      }
+    } catch (e) { /* unresolved reads as home, which is what it always did */ }
+    return null;
+  }
 
   // The landing grid is what makes the procedural generator answer "this
   // planet's biome" for every square it is asked about (generateProceduralMap's

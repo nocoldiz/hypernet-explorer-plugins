@@ -564,5 +564,7 @@
   },
   "dossierJoined": "{name} si unisce al gruppo.",
   "dossierJoinedInactive": "{name} si arruola e attende tra i membri in riserva.",
-  "playerMadeLore": "Un dossier scritto da te. Prendilo quante volte vuoi e cambia ciò che preferisci."
+  "playerMadeLore": "Un dossier scritto da te. Prendilo quante volte vuoi e cambia ciò che preferisci.",
+  "exportCardEquipment": "Equipaggiamento",
+  "exportCardNoEquipment": "Nessun equipaggiamento"
 }

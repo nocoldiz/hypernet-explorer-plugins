@@ -774,6 +774,14 @@
     return encodeURIComponent(String(value)).replace(/'/g, '%27');
   }
 
+  // The tower keeps its own strings (DungeonFloor.json): the proxy above is
+  // bound to the Empathize namespace, so a world's labels are read straight.
+  function T2(key, fallback, params) {
+    if (typeof window.T !== 'function') return fallback != null ? fallback : key;
+    const out = window.T(key, params);
+    return (out === key && fallback != null) ? fallback : out;
+  }
+
   function _wikiLink(type, id, label) {
     const safeId = _encId(id);
     let text = label;
@@ -2945,6 +2953,15 @@
       const homeGroup = nonSentient ? null : profile?._homeGroupName;
       const homeTown = _homeTownLabel(homeGroup);
       if (homeTown) citizenParts.push(`<span>${_escapeHtml(homeTown)}</span>`);
+      // Somebody from a floor of the Omega Tower is from a world, and the
+      // world stands where the nation would. An Earthling colony is the one
+      // exception and keeps Earth's own rows below, because its people are
+      // still from here (window.TowerWorlds, NPCPolitics resolveGroupPolity).
+      const homeWorld = homeGroup
+        ? (window.TowerWorlds?.worldOfGroup?.(homeGroup) || null) : null;
+      if (homeWorld && !homeWorld.earthborn) {
+        citizenParts.push(_wikiLink('world', homeWorld.id, homeWorld.name));
+      }
       const groupPolity = (identity?.country && identity?.power)
         ? null : window.NPCPolitics?.polityOfGroup?.(homeGroup);
       const homeNation = identity?.country || groupPolity?.country || null;
@@ -5027,7 +5044,7 @@
     // The directions themselves are the panel's answer and never the model's:
     // the bearing and the distance are facts. What a model changes is only the
     // wording they are given in, which is why the line is handed over whole.
-    this._replyNpc(answer, T('Empathize.llm.situationDirections', { target: entry.label }), said);
+    this._replyNpc(answer);
   };
 
   // ============================================================================
@@ -5156,6 +5173,14 @@
       { id: 'members',  label: T.membersTab },
       { id: 'events',   label: T.eventsTab },
     ],
+    // One of the worlds the Omega Tower opens onto. It has a full article
+    // like any nation, and no card on the wiki's front page: those shelves
+    // list Earth, and a floor world is not on Earth. It is reached by
+    // clicking somebody who is from one (NPCEmpathize.getWorld).
+    world:    T => [
+      { id: 'overview', label: T.overview },
+      { id: 'people',   label: T.worldPeopleTab },
+    ],
   };
 
   // ============================================================================
@@ -5227,6 +5252,9 @@
         : this._buildFactionOverviewHTML(view, T);
     } else if (view.type === 'party') {
       rightHTML = this._buildPartyOverviewHTML(view, T);
+    } else if (view.type === 'world') {
+      rightHTML = tab === 'people' ? this._buildWorldPeopleHTML(view, T)
+        : this._buildWorldOverviewHTML(view, T);
     } else if (view.type === 'ideology') {
       rightHTML = this._buildIdeologyOverviewHTML(view, T);
     } else {
@@ -6047,6 +6075,89 @@
   };
 
   // ── Political party ─────────────────────────────────────────────────────────
+
+  // A world of the Omega Tower. What it is, who lives on it, how heavy they
+  // are and what it is governed by - or that it is governed by nothing,
+  // which is the honest answer for a world of beasts.
+  Scene_NPCEmpathize.prototype._buildWorldOverviewHTML = function (view, T) {
+    const w = view.world;
+    const kindLabel = T2('DungeonFloor.worldKind.' + w.kind, w.kind);
+    let html = `<div class="npc-profile-name">${_escapeHtml(view.name)}</div>`;
+    html += `<div class="npc-profile-sub">${_escapeHtml(kindLabel)}</div>`;
+
+    const blurb = T2('DungeonFloor.worldKindBlurb.' + w.kind, '');
+    if (blurb) html += `<div class="npc-policy-desc">${_escapeHtml(blurb)}</div>`;
+
+    html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${T.overview}</div>`;
+    html += _kvRow(97, T2('DungeonFloor.world.reachedFrom'),
+      T2('DungeonFloor.world.reachedFloor', '', { floor: w.floor }));
+    // It is nowhere on the world map, and saying so is the point.
+    html += `<div class="npc-ident-row npc-sub">${_escapeHtml(T2('DungeonFloor.world.offworld'))}</div>`;
+    html += _kvRow(158, T2('DungeonFloor.world.population'),
+      T2('DungeonFloor.populationMode.' + w.populationMode, w.populationMode));
+    html += _kvRow(79, T2('DungeonFloor.world.magic'),
+      T2('DungeonFloor.magicalLevel.' + w.magicalLevel, w.magicalLevel));
+
+    // The dominant people, where there is one. A world of beasts is a world
+    // of one animal far more often than it is a menagerie.
+    if (w.dominant) {
+      const raceName = w.dominant.classId && typeof $dataClasses !== 'undefined'
+        ? ($dataClasses[w.dominant.classId]?.name || '') : '';
+      const label = raceName || _escapeHtml(w.demonym);
+      html += _kvRow(187, T2('DungeonFloor.world.dominant'),
+        T2('DungeonFloor.world.dominantShare', '',
+          { name: label, percent: Math.round(w.dominant.share * 100) }));
+    }
+
+    html += _kvRow(83, T2('DungeonFloor.world.band'),
+      T2('DungeonFloor.world.bandRange', '',
+        { median: w.band.median, min: w.band.min, max: w.band.max }));
+
+    // Who runs it.
+    html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(T2('DungeonFloor.world.power'))}</div>`;
+    if (w.earthborn) {
+      html += `<div class="npc-ident-row npc-sub">${_escapeHtml(T2('DungeonFloor.world.earthSeat'))}</div>`;
+    } else if (view.power) {
+      html += `<div class="npc-ident-row">${_iconSpan(215, 17)}${_wikiLink('power', w.powerName)}</div>`;
+    } else {
+      html += `<div class="npc-ident-row npc-sub">${_escapeHtml(T2('DungeonFloor.world.noGovernment'))}</div>`;
+    }
+    return html;
+  };
+
+  // Its bench, and the people on it the party has actually met.
+  Scene_NPCEmpathize.prototype._buildWorldPeopleHTML = function (view, T) {
+    const w = view.world;
+    let html = `<div class="npc-sec-hdr">${_escapeHtml(T2('DungeonFloor.world.parties'))}</div>`;
+    if (w.earthborn) {
+      html += `<p class="npc-empty">${_escapeHtml(T2('DungeonFloor.world.earthSeat'))}</p>`;
+    } else if (view.power && view.parties.length) {
+      for (const party of view.parties) {
+        html += `<div class="npc-ident-row">${_iconSpan(187, 17)}` +
+          (party.id && view.power.parties?.[party.id]
+            ? _wikiLink('party', party.id, party.name)
+            : `<span>${_escapeHtml(party.name)}</span>`) + `</div>`;
+      }
+    } else {
+      html += `<p class="npc-empty">${_escapeHtml(T2('DungeonFloor.world.noGovernment'))}</p>`;
+    }
+
+    // Everybody from this world the simulation has minted so far.
+    const group = window.TowerWorlds?.groupName?.(w.floor) || null;
+    const society = (typeof $gameSystem !== 'undefined' && $gameSystem?._npcSociety) || {};
+    const locals = Object.entries(society)
+      .filter(([, prof]) => prof && prof._homeGroupName === group)
+      .map(([name]) => name).sort();
+    html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(T2('DungeonFloor.world.heading'))}</div>`;
+    if (!locals.length) {
+      html += `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
+    } else {
+      for (const name of locals.slice(0, 60)) {
+        html += `<div class="npc-ident-row">${_iconSpan(97, 17)}${_wikiLink('npc', name)}</div>`;
+      }
+    }
+    return html;
+  };
 
   Scene_NPCEmpathize.prototype._buildPartyOverviewHTML = function (view, T) {
     const p = view.party;

@@ -553,7 +553,7 @@
     "beast": [
       "Found {placeIn}, and no older account of it than that. {classOrigin} {moral}",
       "{classOrigin} It keeps to the country {placeIn}, a {adj} thing the years have not much changed. {moral}",
-      "No birth year, no papers, no nation: only a range, {placeIn}. {classOrigin} {moral}",
+      "Born to no year and no country anybody wrote down: only a range, {placeIn}. {classOrigin} {moral}",
       "{classOrigin} It has been {placeIn} for as long as anyone has bothered to notice. {moral}"
     ],
     "drone": [

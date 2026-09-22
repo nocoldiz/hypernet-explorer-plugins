@@ -6,7 +6,7 @@
  * @param Variable ID
  * @desc ID of the variable to store the selected skill ID
  * @type variable
- * @default 1
+ * @default 24
  *
  * @param Encyclopedia Command
  * @desc Command name for the skill system in the menu
@@ -84,7 +84,7 @@
  * @param Variable ID
  * @desc ID of the variable to store the selected skill ID
  * @type variable
- * @default 1
+ * @default 24
  *
  * @param Encyclopedia Command
  * @desc Command name for the skill system in the menu
@@ -131,55 +131,15 @@
     window.SkillMaster = window.SkillMaster || {};
 
     // ── Shared character-switcher hint helper (idempotent across plugins) ──────
-    if (!window.CharSwitcher) {
-        window.CharSwitcher = {
-            isControllerConnected() {
-                const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-                for (let i = 0; i < pads.length; i++) {
-                    if (pads[i] && pads[i].connected) return true;
-                }
-                return false;
-            },
-            parts(memberCount) {
-                if (!memberCount || memberCount <= 1) return { left: '', right: '' };
-                if (this.isControllerConnected()) {
-                    return {
-                        left: '<span class="char-switch-hint">L</span>',
-                        right: '<span class="char-switch-hint">R</span>'
-                    };
-                }
-                return { left: '', right: '<span class="char-switch-hint">TAB</span>' };
-            },
-            inner(tabsRowHTML, memberCount) {
-                const p = this.parts(memberCount);
-                return p.left + tabsRowHTML + p.right;
-            },
-            wrap(tabsRowHTML, memberCount) {
-                return `<div class="companion-switcher">${this.inner(tabsRowHTML, memberCount)}</div>`;
-            },
-            installTabKey(scene, onCycle) {
-                if (scene._charSwitchTabListener) return;
-                scene._charSwitchTabListener = (e) => {
-                    if (e.key !== 'Tab') return;
-                    e.preventDefault();
-                    if (this.isControllerConnected()) return;
-                    onCycle(e.shiftKey ? -1 : 1);
-                };
-                window.addEventListener('keydown', scene._charSwitchTabListener);
-            },
-            removeTabKey(scene) {
-                if (scene._charSwitchTabListener) {
-                    window.removeEventListener('keydown', scene._charSwitchTabListener);
-                    scene._charSwitchTabListener = null;
-                }
-            }
-        };
-    }
+    // The companion tab strip is drawn by window.CharSwitcher, which UI/CustomSceneStatus.js
+    // owns. This file used to carry its own copy of it behind an
+    // `if (!window.CharSwitcher)` guard, along with six other plugins: only the
+    // first one loaded ever ran, so a fix made in any of the others did nothing.
 
     const pluginName = "SkillMasterCore";
     const oldPluginName = "SkillMaster";
     const parameters = PluginManager.parameters(pluginName) || PluginManager.parameters(oldPluginName) || {};
-    const variableId = Number(parameters['Variable ID'] || 1);
+    const variableId = Number(parameters['Variable ID'] || 24);
     const encyclopediaCommand = String(parameters['Encyclopedia Command'] || 'Skill Master');
     const addToMenu = parameters['Add to Menu'] !== 'false';
     const battleProgressPoints = Number(parameters['Battle Progress Points'] || 3);

@@ -99,6 +99,14 @@
   };
 
   const PROFILE_ITEMIDS_CAP = 40;             // bound offscreen-purchase inventory growth
+  const CRIMINAL_RECORD_CAP = 40;             // rolling per-NPC conviction log
+  // How long a conviction goes on holding somebody's standing down. Nothing ever
+  // removed an entry from criminalRecord, so five convictions pinned an NPC's
+  // baseline at the floor of 5 for the rest of their life, with no path back:
+  // that in turn kept their divorce rate doubled for ever and dragged the
+  // world's average standing monotonically down. A sentence is served and, in
+  // time, lived past.
+  const CONVICTION_MEMORY_DAYS = 365 * 4;
 
   const COURTSHIP_MIN_DAYS = 90;              // can't marry before this much dating
 
@@ -551,6 +559,9 @@
       served: false,
     };
     record.criminalRecord.push(entry);
+    // Bounded like the life-event log: a long catch-up samples a crime per
+    // dishonest NPC per day, and the array was push-only and uncapped.
+    if (record.criminalRecord.length > CRIMINAL_RECORD_CAP) record.criminalRecord.shift();
     if (convicted) {
       record.socialStanding = Math.max(0, record.socialStanding - (5 + severityTier(crime.bounty) * 10));
     } else if (caught) {
@@ -638,7 +649,12 @@
 
   function baselineStanding(record, profile) {
     const wealth = profile?.wealthTierBase ?? 2;
-    return Math.max(5, Math.min(95, 50 + wealth * 8 - record.criminalRecord.filter(c => c.convicted).length * 10));
+    const now = record._nowMinute ?? 0;
+    const window = CONVICTION_MEMORY_DAYS * MINUTES_PER_DAY;
+    // Only what the town still remembers counts against them.
+    const recent = record.criminalRecord.filter(c =>
+      c.convicted && (c.minute == null || now - c.minute <= window)).length;
+    return Math.max(5, Math.min(95, 50 + wealth * 8 - recent * 10));
   }
 
   // A record restored from an older world folder (or one whose birth year came
@@ -1103,6 +1119,204 @@
     }
   }
 
+  // ==========================================================================
+  // TRAVELLING
+  // ==========================================================================
+  // An NPC's location history used to be pure backstory: rollLocationHistory
+  // invented a past at record-mint time and currentPlace was never written
+  // again. Nobody ever went anywhere while the world was running.
+  //
+  // Now an authored citizen takes a trip. They are away for a while, they turn
+  // up somewhere else, they pay for the journey, they sleep in an inn while
+  // they are there, and they come home. Because a destination may be a
+  // procedural square that does not exist until the party walks onto it, a
+  // trip is a RECORD first and a body only if somebody goes and looks.
+  //
+  // Who never travels:
+  //   - anyone from a procedural settlement. Their village is where they are
+  //     from and where they stay; they may still receive visitors.
+  //   - anyone non-sentient. A beast keeps no money and buys no ticket.
+  //   - anyone in prison, or already away.
+  //
+  // Where they may go: any Destinations.json entry that is not locked,
+  // procedural ones included, which is the whole point. A Ghent citizen turning
+  // up in a procedural village is the thing worth seeing.
+
+  const TRAVEL_DAY_CHANCE = 0.012;   // per eligible NPC per day, so a trip is an event
+  const TRAVEL_AWAY_CAP = 3;         // at most this many from one town away at once
+  const TRAVEL_STAY_MIN_DAYS = 1;
+  const TRAVEL_STAY_MAX_DAYS = 6;
+  const FARE_PER_TILE = 10;          // FastTravelSystem's own baseDistancePrice
+
+  // The ways an NPC may go, drawn from FastTravelSystem's fare and speed
+  // tables and its own own/scheduled/hired taxonomy. Deliberately NOT the
+  // whole list of 28: a mode is only here if a destination can actually carry
+  // a block for it. hypermetro is absent on purpose, because no destination in
+  // the game has a hypermetro station and offering one would be a fiction.
+  const TRAVEL_MODES = [
+    { id: "train", arrangement: "scheduled", fare: 1.2, speed: 3.33, station: "train" },
+    { id: "bus", arrangement: "scheduled", fare: 0.8, speed: 2.0, station: "bus" },
+    { id: "carsharing", arrangement: "own", fare: 0.35, speed: 3.5, station: null },
+    { id: "taxi", arrangement: "hired", fare: 2.5, speed: 3.33, station: null },
+  ];
+
+  // Which kinds of journey somebody of this means would consider. A destitute
+  // NPC queues for a fare; a wealthy one is driven.
+  function arrangementsForTier(tier) {
+    if (tier >= 4) return ["hired", "own", "scheduled"];
+    if (tier >= 2) return ["own", "scheduled"];
+    return ["scheduled"];
+  }
+
+  function destinationTable() {
+    const dest = window.WorkSystem?.Destinations;
+    return (dest && typeof dest === "object") ? dest : null;
+  }
+
+  // Everywhere an NPC may actually go. Locked places are sealed off for the
+  // party and are no more open to anybody else.
+  function openDestinations() {
+    const table = destinationTable();
+    if (!table) return [];
+    return Object.keys(table).filter((k) => table[k] && !table[k].locked);
+  }
+
+  // How far apart two named places are, in world-map tiles, off the same
+  // "base" pin FastTravelSystem measures its own fares from. Worked out here
+  // rather than by calling calculateTravelCost, which reads the PLAYER's
+  // position out of the game variables and would price every NPC's journey as
+  // though they set off from wherever the party is standing.
+  function placeDistance(fromName, toName) {
+    const table = destinationTable();
+    const a = table?.[fromName]?.base;
+    const b = table?.[toName]?.base;
+    if (!a || !b) return null;
+    return Math.round(Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)));
+  }
+
+  // The cheapest way this person could make this journey, or null if they
+  // cannot make it at all. A mode with a station type is only on offer where
+  // the destination actually has that station.
+  function travelOffer(fromName, toName, tier, purse) {
+    const table = destinationTable();
+    const to = table?.[toName];
+    if (!to) return null;
+    const tiles = placeDistance(fromName, toName);
+    if (tiles === null || tiles <= 0) return null;
+    const allowed = arrangementsForTier(tier);
+    let best = null;
+    for (const mode of TRAVEL_MODES) {
+      if (!allowed.includes(mode.arrangement)) continue;
+      if (mode.station && !to[mode.station]) continue;
+      const cost = Math.floor(tiles * FARE_PER_TILE * mode.fare);
+      if (cost > purse) continue;
+      if (!best || cost < best.cost) {
+        best = { mode: mode.id, arrangement: mode.arrangement, cost, tiles,
+                 minutes: Math.max(60, Math.round((tiles / mode.speed) * 60)) };
+      }
+    }
+    return best;
+  }
+
+  // Who is allowed to go anywhere at all.
+  function mayTravel(record, profile) {
+    if (!record || record.nonSentient) return false;
+    if (record.inPrisonUntilMinute != null) return false;
+    const group = record.homeGroup;
+    if (!group) return false;
+    // A procedural settlement's people belong to their square. They stay.
+    if (window.NPCSystem?.isProceduralGroup?.(group)) return false;
+    if (window.NPCCreature?.isNonSentientProfile?.(profile)) return false;
+    return true;
+  }
+
+  // Somewhere to sleep while they are away. RentSystem already keeps NPC
+  // tenancies, keyed mapId_eventId, but it can only list the rooms of the map
+  // that happens to be loaded, so a room is BOOKED here as an intention and
+  // only matched to an actual door when somebody is standing in that town.
+  function takeLodging(record, profile, place) {
+    record.lodging = { place, roomKey: null };
+    try {
+      const RS = window.RentSystem;
+      const free = RS?.freeRooms?.();
+      if (!free || !free.length) return;
+      // Only when the town they arrived in is the one under our feet.
+      const room = free[0];
+      const price = Number(room.price) || 0;
+      if (profile && Number(profile.money) >= price) {
+        profile.money -= price;
+        record.lodging.roomKey = room.mapId + "_" + room.eventId;  // i18n-ignore: record key
+        record.lodging.paid = price;
+      }
+    } catch (e) { /* no inn to be had; they are away all the same */ }
+  }
+
+  // One day of being, or not being, a traveller.
+  function resolveTravel(record, profile, rng, lastMinute, nowMinute, deltaDays, awayByGroup) {
+    if (!record) return;
+
+    // Already away: are they home yet?
+    if (record.trip) {
+      if (nowMinute >= record.trip.homeByMinute) {
+        record.currentPlace = record.trip.from;
+        beginStay(record, record.trip.from, nowMinute, "followingFamily");  // i18n-ignore: MOVE_REASONS id
+        record.trip = null;
+        record.lodging = null;
+      }
+      return;
+    }
+
+    if (!mayTravel(record, profile)) return;
+    const home = destinationForGroup(record.homeGroup);
+    if (!home) return;
+    // A town only lets so many of its people be elsewhere at once, or a place
+    // the party walks into could be standing empty.
+    const away = awayByGroup[record.homeGroup] || 0;
+    if (away >= TRAVEL_AWAY_CAP) return;
+    // The chance is per day, so a long skip is more likely to have contained a
+    // trip than a short one, without ever becoming a certainty.
+    if (rng.next() > 1 - Math.pow(1 - TRAVEL_DAY_CHANCE, Math.min(deltaDays, 30))) return;
+
+    const options = openDestinations().filter((d) => d !== home);
+    if (!options.length) return;
+    const to = rng.pick(options);
+    const purse = Math.max(0, Number(profile?.money) || 0);
+    const tier = Number(profile?.wealthTierBase) || 0;
+    const offer = travelOffer(home, to, tier, purse);
+    // Somebody who cannot afford the cheapest way there does not go. That
+    // refusal is the point: a journey is a thing you have to be able to pay for.
+    if (!offer) return;
+
+    if (profile) profile.money = purse - offer.cost;
+    const stayDays = rng.int(TRAVEL_STAY_MIN_DAYS, TRAVEL_STAY_MAX_DAYS);
+    record.trip = {
+      from: home, to,
+      mode: offer.mode, arrangement: offer.arrangement,
+      fare: offer.cost, tiles: offer.tiles,
+      leftAtMinute: nowMinute,
+      arrivesAtMinute: nowMinute + offer.minutes,
+      homeByMinute: nowMinute + offer.minutes * 2 + stayDays * MINUTES_PER_DAY,
+    };
+    record.currentPlace = to;
+    beginStay(record, to, nowMinute, "changeOfAir");  // i18n-ignore: MOVE_REASONS id
+    takeLodging(record, profile, to);
+    awayByGroup[record.homeGroup] = away + 1;
+  }
+
+  // The location history is a list of stays: one open stay at the end, every
+  // earlier one closed off with the year it ended. Going somewhere and coming
+  // back are the same operation, so there is one of these and not two, and the
+  // reason is drawn from the vocabulary the rest of the record already speaks.
+  function beginStay(record, place, minute, reason) {
+    if (!Array.isArray(record.locationHistory)) return;
+    const year = yearOf(minute);
+    const open = record.locationHistory[record.locationHistory.length - 1];
+    if (open && open.toYear === null) open.toYear = year;
+    record.locationHistory.push({
+      place, wild: null, fromYear: year, toYear: null, reason,
+    });
+  }
+
   function resolveStanding(record, deltaDays, profile) {
     // Standing slowly recovers toward the NPC's baseline once sentences are
     // served, paid debts fade from public memory.
@@ -1174,6 +1388,15 @@
 
       // 4. Resolve each NPC's interval, deterministically per (name, interval).
       const seed = worldSeed();
+      // How many of each town's people are already elsewhere, so the cap is
+      // counted against the world as it stands rather than per NPC.
+      const awayByGroup = {};
+      for (const record of Object.values(records)) {
+        if (record.trip && record.homeGroup) {
+          awayByGroup[record.homeGroup] = (awayByGroup[record.homeGroup] || 0) + 1;
+        }
+      }
+
       for (const record of Object.values(records)) {
         const rng = new LifeRng((nameHash(record.name + "_delta") ^ seed ^ (last >>> 0)) >>> 0);
         const profile = getProfile(record.name);
@@ -1184,6 +1407,7 @@
         syncLiveCrimeLog(record, last);
         resolveDailyLife(record, profile, rng, last, nowMinute, deltaDays);
         resolveStanding(record, deltaDays, profile);
+        resolveTravel(record, profile, rng, last, nowMinute, deltaDays, awayByGroup);
       }
 
       // 5. A real time skip immediately persists the world's npcs.json.
@@ -1299,7 +1523,27 @@
   // PUBLIC API
   // ==========================================================================
 
+  // Is this person out of town, and what are they doing there? The one answer,
+  // so nothing has to go digging in the record for it.
+  function travelStatus(name) {
+    const record = $gameSystem?._npcLifeRecords?.[name];
+    const trip = record?.trip;
+    if (!trip) return null;
+    return {
+      from: trip.from, to: trip.to, mode: trip.mode,
+      arrangement: trip.arrangement, fare: trip.fare,
+      lodging: record.lodging?.place || null,
+      roomKey: record.lodging?.roomKey || null,
+    };
+  }
+
+  function isAwayFromTown(name) {
+    return !!$gameSystem?._npcLifeRecords?.[name]?.trip;
+  }
+
   window.NPCLifeSim = {
+    travelStatus,
+    isAwayFromTown,
     catchUp,
     ensureLifeRecord,
     getRecord(name) { return getRecords()?.[name] ?? null; },

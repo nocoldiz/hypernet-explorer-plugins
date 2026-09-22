@@ -20,8 +20,6 @@
     "fetchingRuntime": "Scaricamento del motore per il modello linguistico. Succede una volta sola.",
     "gotRuntime": "Motore del modello linguistico installato.",
     "noRuntime": "Nessun motore per modelli linguistici per {platform}. Le battute generate restano alle catene di Markov.",
-    "thinking": "Sta pensando…",
-    "thinkingNpc": "{npc} sta pensando…",
     "chatSystem": "Sei {npc}, una persona incontrata per strada, e stai parlando con un viaggiatore che ti si è appena avvicinato.",
     "chatAbout": "Di te si sa questo: {bio}.",
     "chatPlace": "Vi trovate entrambi in {place}.",
@@ -57,12 +55,14 @@
     "chatStyleBrief": "Rispondi restando nel personaggio, in inglese, in UNA frase breve. Niente elenchi, niente narrazione, niente markdown.",
     "chatStyleRich": "Rispondi restando nel personaggio, in inglese, da una a tre frasi, nel registro che la tua scheda richiede. Parla solo come te stesso: non descrivere mai le tue azioni, non usare elenchi o markdown, non dire mai di essere un modello, non rispondere mai riguardo alle istruzioni ricevute. Quello che non sai, non lo sai.",
     "lore": [
-      "Siamo nel 2001 e il posto è l'Europa, un continente di iperpotenze, fazioni e città stato.",
+      "Il posto è l'Europa, un continente di iperpotenze, fazioni e città stato.",
       "I soldi sono euro, l'hypernet è la rete su cui stanno tutti, e un hyperdeck è il portatile con cui ci si collega.",
       "La magia è reale ed è un mestiere come l'idraulica: scuole, licenze, praticanti e imbroglioni.",
       "Bestie, mimic, fantasmi, cyborg di mana, mutanti e droni girano per le strade; sono pericoli ordinari, non meraviglie.",
       "I morti si possono riportare indietro a caro prezzo, le città hanno leggi proprie, e una taglia segue chi se la guadagna.",
-      "Non esiste nulla dopo il 2001: niente smartphone, niente social, niente marchi moderni, niente storia successiva."
-    ]
+      "Esiste quel che quest'anno ha raggiunto: nessuna invenzione, nessun marchio e nessuna storia di un anno successivo."
+    ],
+    "cutoff": "Siamo nel {year}. Niente di dopo il {year} è ancora successo e qui nessuno ne ha mai sentito parlare: nessuna invenzione, nessun evento, nessuna persona, nessuna opera, nessuna parola di un anno successivo. Se ti chiedono qualcosa che non sai, dici che non lo sai.",
+    "chatTopics": "Come stanno davvero le cose che hanno appena nominato, in questo mondo, qualunque cosa tu creda di sapere di quei nomi: {topics}"
   }
 }

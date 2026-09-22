@@ -6,7 +6,6 @@
   "linkLost": "Transmission link lost. The requested Hypernet page could not be loaded.",
   "linkStable": "TRANSMISSION LINK STABLE",
   "secureSsl": "SECURE SSL: MAXIMUM",
-
   "menu": {
     "file": "File",
     "edit": "Edit",
@@ -15,7 +14,6 @@
     "tools": "Tools",
     "help": "Help"
   },
-
   "file": {
     "newTab": "New Tab",
     "duplicateTab": "Duplicate Tab",
@@ -28,7 +26,6 @@
     "closeTab": "Close Tab",
     "exit": "Exit"
   },
-
   "edit": {
     "cut": "Cut",
     "copy": "Copy",
@@ -36,7 +33,6 @@
     "selectAll": "Select All",
     "find": "Find on This Page..."
   },
-
   "view": {
     "toolbars": "Toolbars",
     "standardButtons": "Standard Buttons",
@@ -60,7 +56,6 @@
     "source": "Source",
     "fullScreen": "Full Screen"
   },
-
   "textSize": {
     "largest": "Largest",
     "larger": "Larger",
@@ -68,14 +63,12 @@
     "smaller": "Smaller",
     "smallest": "Smallest"
   },
-
   "encoding": {
     "western": "Western European",
     "unicode": "Unicode (UTF-8)",
     "cyrillic": "Cyrillic",
     "hexagram": "Hexagram Glyphic"
   },
-
   "fav": {
     "add": "Add to Favorites...",
     "organize": "Organize Favorites...",
@@ -100,7 +93,6 @@
     "moveDown": "Move Down",
     "folderPrompt": "Name of the new folder:"
   },
-
   "tools": {
     "mail": "Mail and News",
     "readMail": "Read Mail",
@@ -114,14 +106,12 @@
     "connection": "Connection Status",
     "options": "Hypernet Options..."
   },
-
   "help": {
     "topics": "Help Topics",
     "support": "Online Support",
     "tip": "Tip of the Day",
     "about": "About Hypernet Explorer"
   },
-
   "toolbar": {
     "back": "Back",
     "forward": "Forward",
@@ -139,7 +129,6 @@
     "newTab": "New Tab",
     "closeTab": "Close Tab"
   },
-
   "status": {
     "ready": "Ready",
     "done": "Done",
@@ -176,7 +165,6 @@
     "barShown": "{name} shown.",
     "barHidden": "{name} hidden."
   },
-
   "find": {
     "label": "Find:",
     "next": "Next",
@@ -188,19 +176,16 @@
     "none": "No matches",
     "unreadable": "This page will not let the finder read it."
   },
-
   "address": {
     "placeholder": "Type a Hypernet address, or a phrase to search for",
     "suggestHistory": "History",
     "suggestSite": "Hypernet",
     "suggestSearch": "Search Noodle for \"{query}\""
   },
-
   "tab": {
     "untitled": "New Tab",
     "loading": "Loading..."
   },
-
   "home": {
     "beta": "BETA",
     "searchButton": "Noodle Search",
@@ -214,7 +199,6 @@
     "indexOffline": "The Noodle index is unreachable. The directory below is read straight off the local gateway cache.",
     "suggestion": "Try a different phrase, or browse the directory below."
   },
-
   "error": {
     "title": "The page cannot be displayed",
     "heading": "The page cannot be displayed",
@@ -230,7 +214,6 @@
     "external": "That address lives outside the Hypernet. This terminal holds no route to it.",
     "friendlyOff": "GATEWAY 404. NO ROUTE. DOCUMENT NOT HELD LOCALLY."
   },
-
   "history": {
     "title": "History",
     "heading": "History",
@@ -242,7 +225,6 @@
     "visits": "{count} visits",
     "openIt": "Open"
   },
-
   "downloads": {
     "title": "Downloads",
     "heading": "Downloads",
@@ -257,7 +239,6 @@
     "clear": "Clear List",
     "open": "Open"
   },
-
   "mail": {
     "title": "Hypernet Mail",
     "heading": "Inbox",
@@ -304,7 +285,6 @@
       }
     ]
   },
-
   "source": {
     "title": "Source of {address}",
     "heading": "Document source",
@@ -312,7 +292,6 @@
     "bytes": "{count} bytes",
     "wrap": "Wrap lines"
   },
-
   "open": {
     "title": "Open",
     "hint": "Type the address of a Hypernet document, or pick one from the list.",
@@ -323,7 +302,6 @@
     "browse": "Directory",
     "count": "{count} documents"
   },
-
   "save": {
     "title": "Save Web Page",
     "label": "File name:",
@@ -334,7 +312,6 @@
     "ok": "Save",
     "cancel": "Cancel"
   },
-
   "pageSetup": {
     "title": "Page Setup",
     "paper": "Paper size:",
@@ -348,7 +325,6 @@
     "cancel": "Cancel",
     "saved": "Page setup stored."
   },
-
   "print": {
     "title": "Print Preview",
     "printer": "Printer:",
@@ -360,7 +336,6 @@
     "cancel": "Cancel",
     "pageOf": "Page {page} of {total}"
   },
-
   "options": {
     "title": "Hypernet Options",
     "tabGeneral": "General",
@@ -396,7 +371,6 @@
     "apply": "Apply",
     "saved": "Settings applied."
   },
-
   "sync": {
     "title": "Synchronize",
     "hint": "Offline pages are copied into the gateway cache so they can be read with the link down.",
@@ -405,7 +379,6 @@
     "working": "Synchronizing {name}...",
     "done": "Synchronization complete."
   },
-
   "connection": {
     "title": "Connection Status",
     "gateway": "Gateway",
@@ -421,7 +394,6 @@
     "uptime": "Session",
     "close": "Close"
   },
-
   "about": {
     "title": "About Hypernet Explorer",
     "product": "Hypernet Explorer",
@@ -433,7 +405,6 @@
     "notice": "This product is licensed to the bearer of the terminal. The licence is not transferable, and neither, past a certain point, is the bearer.",
     "close": "OK"
   },
-
   "helpPage": {
     "title": "Hypernet Explorer Help",
     "heading": "Hypernet Explorer Help",
@@ -461,7 +432,6 @@
     "offlineBody": "The gateway holds a local copy of every document in the Hypernet Zone, so pages open with the line down. Only addresses outside the Zone need the line, and there are none.",
     "close": "Close"
   },
-
   "popup": {
     "blockedBar": "Pop-up blocked. To see this pop-up, click here.",
     "showIt": "Show pop-up",
@@ -495,7 +465,6 @@
       }
     ]
   },
-
   "tip": {
     "title": "Tip of the Day",
     "next": "Next Tip",
@@ -513,7 +482,6 @@
       "Anything saved off a page lands in C:\\Documents and shows up in My Computer."
     ]
   },
-
   "context": {
     "back": "Back",
     "forward": "Forward",
@@ -525,7 +493,6 @@
     "openNewTab": "Open in New Tab",
     "properties": "Properties"
   },
-
   "properties": {
     "title": "Properties",
     "protocol": "Protocol:",
@@ -537,5 +504,19 @@
     "size": "Size:",
     "zone": "Zone:",
     "close": "OK"
+  },
+  "hexapedia": {
+    "appName": "Hexapedia",
+    "tooltip": "The free encyclopedia of post-Squishing knowledge",
+    "peopleTitle": "Living persons of note",
+    "peopleIntro": "This server writes up anybody the world has heard of. A traveller who reaches level {level} earns an article, and it is kept with the world rather than with the party, so it outlives them.",
+    "peopleEmpty": "No article yet. Nobody in this world has reached level {level}.",
+    "peopleLine": "level {level} {cls}",
+    "personMeta": "Level {level} {cls}, of the world of {world}.",
+    "personDiary": "From the record",
+    "personNoDiary": "The record holds nothing under this name yet.",
+    "personFooter": "Written by the encyclopedia from the party diary. Kept with the world, and readable by whoever plays it next.",
+    "backToPortal": "Hexapedia portal",
+    "written": "Hexapedia has written up {name}"
   }
 }

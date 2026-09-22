@@ -1180,6 +1180,23 @@
       "founded": 1971
     }
   ],
+  "Italy - Lampedusa": [
+    {
+      "name": "Lista Pelagica per l'Autonomia",
+      "ideologyId": "regionalist_separatist",
+      "founded": 1952
+    },
+    {
+      "name": "Democrazia Isolana",
+      "ideologyId": "christian_democratic",
+      "founded": 1946
+    },
+    {
+      "name": "Fronte del Mare",
+      "ideologyId": "democratic_socialist",
+      "founded": 1974
+    }
+  ],
   "Italy - Sardinia": [
     {
       "name": "Partito Sardo dell'Autonomia",
@@ -2162,6 +2179,23 @@
       "founded": 1970
     }
   ],
+  "Spain - Balearics": [
+    {
+      "name": "Partit Balear per l'Autonomia",
+      "ideologyId": "regionalist_separatist",
+      "founded": 1978
+    },
+    {
+      "name": "Unió Popular de les Illes",
+      "ideologyId": "liberal_conservative",
+      "founded": 1977
+    },
+    {
+      "name": "Esquerra Illenca",
+      "ideologyId": "democratic_socialist",
+      "founded": 1984
+    }
+  ],
   "Spain": [
     {
       "name": "Partido del Pueblo",
@@ -2419,6 +2453,23 @@
       "name": "Agrarian Circle of the Karakum",
       "ideologyId": "agrarian_centrist",
       "founded": 1991
+    }
+  ],
+  "UK - Channel Islands": [
+    {
+      "name": "Bailiwick Independents",
+      "ideologyId": "constitutionalist",
+      "founded": 1948
+    },
+    {
+      "name": "States Reform Association",
+      "ideologyId": "liberal_conservative",
+      "founded": 1996
+    },
+    {
+      "name": "Island Workers' League",
+      "ideologyId": "new_labour",
+      "founded": 1919
     }
   ],
   "UK": [

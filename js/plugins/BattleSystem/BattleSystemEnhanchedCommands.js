@@ -447,6 +447,15 @@
       }
     }
 
+    // The spirit switch (SpiritBattlerManager.js): swapping the spirit riding
+    // the dummy actor. This list is built from scratch rather than added to, so
+    // the row has to be asked for here - its owner cannot push it in.
+    const spiritRow = window.SpiritBattle && window.SpiritBattle.switchRow
+      ? window.SpiritBattle.switchRow(this._actor) : null;
+    if (spiritRow) {
+      this.addCommandWithIcon(spiritRow.name, "switchspirit", spiritRow.enabled, null, 73);
+    }
+
     // Backpack/Item: disabled (greyed + buzzer) when the party holds no
     // battle-usable item. Mirrors Window_BattleItem.includes ($gameParty.canUse).
     const hasUsableItem = $gameParty.allItems().some(item => $gameParty.canUse(item));
@@ -1024,7 +1033,8 @@
     return boxOffsetY + win.y;
   };
 
-  // 0 = left, 1 = right (default: the battle log takes the left side).
+  // 0 = left, 1 = right (default: right, with the battle log in the top-right
+  // corner above it - Core/MPP_SmoothBattleLog2.js).
   Object.defineProperty(ConfigManager, 'battleCommandPosition', {
     get: function () {
       return this._battleCommandPosition !== undefined ? this._battleCommandPosition : 1;
@@ -1565,6 +1575,11 @@
     }
   };
 
+  // This replaces the method rather than chaining, because the party command
+  // window is not part of this battle system's flow. What it must not drop is
+  // WeaponSystem.js's side effect: that file loads earlier and refreshes the
+  // first-person weapon sprite from here, so replacing the method left the
+  // weapon in hand stale whenever the input window changed.
   Scene_Battle.prototype.changeInputWindow = function () {
     this.hideSubInputWindows();
     if (BattleManager.isInputting()) {
@@ -1573,6 +1588,9 @@
       }
     } else {
       this.endCommandSelection();
+    }
+    if (this._spriteset && this._spriteset.updateWeaponSprite) {
+      this._spriteset.updateWeaponSprite();
     }
   };
 

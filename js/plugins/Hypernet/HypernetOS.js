@@ -207,7 +207,8 @@
             'app-hypernet-browser', 'app-hypernet-shop', 'app-stock-market',
             'app-neuropolice', 'app-card-arena', 'app-hexcel', 'app-hypernet-paint', 'app-hypermail',
             'app-object-index', 'app-job-offers', 'app-colosseum', 'app-beaglequest', 'app-nudge',
-            'app-news-history', 'app-real-estate', 'app-bank-system', 'app-bestiary-encarta'
+            'app-news-history', 'app-real-estate', 'app-bank-system', 'app-bestiary-encarta',
+            'app-slamgrimorie'
         ],
         // Programs, Games and Utilities are the drawers every other shortcut
         // comes out of, so they cannot be taken off the desktop.
@@ -651,8 +652,15 @@
                 if (this._ghost) this._ghost.style.display = 'none';
             },
 
+            // Pointer capture, not loose document listeners: once a shortcut is
+            // grabbed every move and the release belong to it, whatever the
+            // pointer passes over. Dragged with mouse events the gesture died
+            // the moment it crossed an iframe window or left the game window,
+            // and the icon stayed stuck to the cursor until it was grabbed a
+            // second time, which is why a shortcut used to take two tries to
+            // move.
             attachDrag: function(el) {
-                el.addEventListener('mousedown', (e) => {
+                el.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0) return;
                     const entry = this.icons.find(i => i.el === el);
                     if (!entry || !entry.cell) return;
@@ -667,15 +675,37 @@
                     const offY = startY - rect.top;
                     const origin = { c: entry.cell.c, r: entry.cell.r };
                     let dragging = false;
+                    let done = false;
                     let target = origin;
                     let targetLegal = true;
 
+                    const setDragState = (on) => {
+                        const WM = window.HypernetOS.WindowManager;
+                        if (WM && WM.setDragState) WM.setDragState(on);
+                    };
+
+                    const detach = () => {
+                        el.removeEventListener('pointermove', onMove);
+                        el.removeEventListener('pointerup', onUp);
+                        el.removeEventListener('pointercancel', onCancel);
+                        el.removeEventListener('lostpointercapture', onCancel);
+                        try { el.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+                        setDragState(false);
+                    };
+
                     const onMove = (ev) => {
+                        if (ev.pointerId !== e.pointerId) return;
                         if (!dragging) {
                             if (Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) < 6) return;
                             dragging = true;
                             el.classList.add('dragging');
+                            // Iframe windows stop taking the pointer for as long
+                            // as the gesture runs, the way a window drag does.
+                            setDragState(true);
                         }
+                        // Keeps the browser from turning the grab into its own
+                        // image drag or a text selection halfway through.
+                        if (ev.cancelable) ev.preventDefault();
                         const cr = container.getBoundingClientRect();
                         const left = ev.clientX - offX - cr.left;
                         const top = ev.clientY - offY - cr.top;
@@ -688,15 +718,42 @@
                         this.showGhost(target, targetLegal, m);
                     };
 
+                    // The pointer was taken away mid-gesture (the game lost
+                    // focus, another layer claimed the capture): the shortcut
+                    // goes back where it was rather than staying glued to the
+                    // cursor for the next click to find.
+                    const onCancel = () => {
+                        if (done) return;
+                        done = true;
+                        detach();
+                        if (!dragging) return;
+                        el.classList.remove('dragging');
+                        this.hideGhost();
+                        el._hnDragged = true;
+                        setTimeout(() => { el._hnDragged = false; }, 0);
+                        this.layout();
+                    };
+
                     const onUp = (ev) => {
-                        document.removeEventListener('mousemove', onMove, true);
-                        document.removeEventListener('mouseup', onUp, true);
+                        if (ev.pointerId !== e.pointerId || done) return;
+                        done = true;
+                        detach();
                         if (!dragging) return;
 
                         // Dropped on the Recycle Bin, or back in the All
                         // Programs window: the shortcut goes, and the program
-                        // is listed in All Programs again.
-                        if (ev && window.HypernetOS.isUnpinDropTarget(ev, entry.app.id)) {
+                        // is listed in All Programs again. The dragged icon sits
+                        // under the pointer itself and would shadow whatever it
+                        // was let go on, so it stands aside for the hit test.
+                        const pe = el.style.pointerEvents;
+                        el.style.pointerEvents = 'none';
+                        let unpin = false;
+                        try {
+                            unpin = !!(ev && window.HypernetOS.isUnpinDropTarget(ev, entry.app.id));
+                        } finally {
+                            el.style.pointerEvents = pe;
+                        }
+                        if (unpin) {
                             el.classList.remove('dragging');
                             this.hideGhost();
                             el._hnDragged = true;
@@ -711,7 +768,7 @@
 
                         el.classList.remove('dragging');
                         this.hideGhost();
-                        // Suppress the click this mouseup is about to fire, so
+                        // Suppress the click this release is about to fire, so
                         // dropping an icon never also launches its app. Cleared on
                         // the next tick in case the drop landed outside the icon
                         // and no click follows at all.
@@ -736,8 +793,11 @@
                         this.layout();
                     };
 
-                    document.addEventListener('mousemove', onMove, true);
-                    document.addEventListener('mouseup', onUp, true);
+                    try { el.setPointerCapture(e.pointerId); } catch (err) { /* no capture available: the listeners still run */ }
+                    el.addEventListener('pointermove', onMove);
+                    el.addEventListener('pointerup', onUp);
+                    el.addEventListener('pointercancel', onCancel);
+                    el.addEventListener('lostpointercapture', onCancel);
                 });
             }
         },
@@ -2086,7 +2146,7 @@
         const aCursor = document.createElement('div');
         aCursor.id = 'hypernet-os-analog-cursor';
         aCursor.style.cssText = 'position:fixed; left:0; top:0; width:20px; height:20px; ' +
-            'pointer-events:none; z-index:2147483647; display:none;';
+            'pointer-events:none; z-index:2147483645; display:none;';
         aCursor.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20">' +
             '<path d="M2,2 L2,16 L6,12 L9,18 L11,17 L8,11 L14,11 Z" ' +  // i18n-ignore  svg path data
             'fill="#ffffff" stroke="#000000" stroke-width="1.2"/></svg>';  // i18n-ignore  svg attributes
@@ -2103,7 +2163,7 @@
         const navHl = document.createElement('div');
         navHl.id = 'hypernet-os-nav-highlight';
         navHl.style.cssText = 'position:fixed; left:0; top:0; width:0; height:0; ' +
-            'pointer-events:none; z-index:2147483646; display:none; box-sizing:border-box; ' +
+            'pointer-events:none; z-index:2147483644; display:none; box-sizing:border-box; ' +
             'border:2px solid #ffd54a; border-radius:4px; ' +
             'box-shadow:0 0 0 2px rgba(0,0,0,0.55), 0 0 10px 2px rgba(255,213,74,0.85); ' +
             'transition:left 0.07s ease, top 0.07s ease, width 0.07s ease, height 0.07s ease;';

@@ -355,6 +355,17 @@
                 return items;
             }
 
+            // A keeper who caught this party stealing does not turn their back
+            // on it again. They already refuse to sell (CrimeSystem, the
+            // grudge); refusing the shelf as well is the same decision, and
+            // without it the counter that closed its till was still the
+            // easiest one in town to rob. Their shelves simply do not appear.
+            const C = window.CrimeSystem;
+            if (C && typeof C.vendorRefusesHere === 'function' &&
+                C.vendorRefusesHere($gameMap.mapId(), event.eventId())) {
+                return items;
+            }
+
             const sourceMapId = $gameMap.mapId();
             const sourceEventId = event.eventId();
             const push = (list) => {
