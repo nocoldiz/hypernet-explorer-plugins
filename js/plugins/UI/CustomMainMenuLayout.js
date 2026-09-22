@@ -3341,23 +3341,6 @@
 
 
         return `
-            <div class="party-bio-list">
-                ${partyBioHTML}
-            </div>
-
-            <div class="right-tools">
-                <div class="right-tools-tabs">
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'tools' ? ' active' : ''}" data-tools-tab="tools" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'medical' ? ' active' : ''}" data-tools-tab="medical" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" data-tools-tab="lifestyle" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'books' ? ' active' : ''}" data-tools-tab="books" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'favourites' ? ' active' : ''}" data-tools-tab="favourites" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
-                </div>
-                <div class="right-tools-grid">
-                    ${this.generateUIToolsTabGridHTML()}
-                </div>
-            </div>
-
             <div class="pockets-clock">
                 <div class="clock-row">
                     <span class="clock-label">${T('MainMenu.label.timeDate')}</span>
@@ -3377,6 +3360,24 @@
                     <span class="clock-value bounty-highlight">${formattedBounty}${wantedHTML}</span>
                 </div>
             </div>
+
+            <div class="party-bio-list">
+                ${partyBioHTML}
+            </div>
+
+            <div class="right-tools">
+                <div class="right-tools-tabs">
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'tools' ? ' active' : ''}" data-tools-tab="tools" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'medical' ? ' active' : ''}" data-tools-tab="medical" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" data-tools-tab="lifestyle" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'books' ? ' active' : ''}" data-tools-tab="books" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'favourites' ? ' active' : ''}" data-tools-tab="favourites" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
+                </div>
+                <div class="right-tools-grid">
+                    ${this.generateUIToolsTabGridHTML()}
+                </div>
+            </div>
+
         `;
     };
 

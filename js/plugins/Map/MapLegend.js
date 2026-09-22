@@ -5,7 +5,7 @@
  *
  * @help MapLegend.js
  *
- * The one sheet of paper the map screen pins in its top right corner. It used
+ * The one sheet of paper the map screen pins at its top middle. It used
  * to live inside CharacterCreation.js as a black Window_Base panel listing the
  * story mode's controls; it is its own plugin now and it is drawn as
  * parchment. It carries two things: the notices, and the controls list.
@@ -898,7 +898,7 @@
   // The rules themselves live in css/theme.css under "The map legend"; nothing
   // here builds a stylesheet at runtime.
 
-  // Two panels, not one sheet: what the place says stands in the top right
+  // Two panels, not one sheet: what the place says stands at the top middle
   // corner where the party reads it, and the controls list is its own
   // window down the left edge, which is where a list that long can stand
   // without covering the map the notice is about.
@@ -912,7 +912,7 @@
     if (!canvas || typeof Graphics === "undefined" || !Graphics.width) return null;
     const r = canvas.getBoundingClientRect();
     if (!r.width || !r.height) return null;
-    return { ox: r.left, oy: r.top, right: r.right,
+    return { ox: r.left, oy: r.top, right: r.right, cx: (r.left + r.right) / 2,
              sx: r.width / Graphics.width, sy: r.height / Graphics.height };
   }
 
@@ -1109,9 +1109,9 @@
       }
     }
 
-    // Pinned by its right edge rather than its left, so a folded sheet no
-    // wider than its own title still sits in the corner instead of floating
-    // in from it.
+    // The notice is centred on the canvas and hung from its top edge, so a
+    // folded sheet no wider than its own title still sits under the middle of
+    // the screen; the list stays pinned by its left edge.
     // Where the canvas actually sits on the page is measured, not styled, so
     // the four numbers are handed to the stylesheet as custom properties and
     // the rule in theme.css does the drawing.
@@ -1122,12 +1122,13 @@
       const m = canvasMetrics();
       if (!m) return;
       this._needsPosition = false;
-      // The notice hangs off the canvas's right edge, the list off its
-      // left one and off the floor: the party HUD owns the top left corner,
-      // and a list this long has to grow upwards to stay clear of it.
+      // The notice hangs off the canvas's middle, the list off its left edge
+      // and off the floor: the party HUD owns the top left corner, and a list
+      // this long has to grow upwards to stay clear of it.
       for (const el of [this._el, this._ctl]) {
         if (!el) continue;
         el.style.setProperty("--mlg-right", (window.innerWidth - m.right + SHEET_MARGIN * m.sx) + "px");
+        el.style.setProperty("--mlg-center", m.cx + "px");
         el.style.setProperty("--mlg-top", (m.oy + SHEET_MARGIN * m.sy) + "px");
         el.style.setProperty("--mlg-left", (m.ox + SHEET_MARGIN * m.sx) + "px");
         el.style.setProperty("--mlg-bottom",

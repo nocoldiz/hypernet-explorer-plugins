@@ -761,6 +761,12 @@
             actorSnapshots[id] = {
                 level: actor._level,
                 exp: Object.assign({}, actor._exp),
+                // Levelling a fighter up to the bracket teaches every class
+                // skill on the way, and dropping the level back down does not
+                // unteach them: without this the grinder walked out of the
+                // arena keeping the whole high level kit. Learned skills are
+                // part of the snapshot.
+                skills: actor._skills ? actor._skills.slice() : [],
                 equips: actor._equips.map(e => ({ dc: e._dataClass, id: e._itemId }))
             };
         });
@@ -904,6 +910,7 @@
             if (!actor) return;
             actor._level = snap.level;
             actor._exp = Object.assign({}, snap.exp);
+            if (snap.skills) actor._skills = snap.skills.slice();
             actor._equips.forEach((slot, i) => {
                 const s = snap.equips[i];
                 if (s && s.id > 0) slot.setEquip(s.dc === 'weapon', s.id);
@@ -917,6 +924,43 @@
 
         _savedPartyData = null;
         _randomPartyMode = false;
+    };
+
+    // True while a rescaled party is still waiting to be put back.
+    ArenaBattleHandler.hasPendingRestore = function () {
+        return !!_savedPartyData;
+    };
+
+    // Safety net. A run is unwound by endGauntlet / endBiomeTrial /
+    // endBossRush, but a bout can also finish by a route that never reaches
+    // them (the mode flag cleared on Scene_Battle.terminate, a scene pushed
+    // over the arena, another plugin ending the battle its own way). Any of
+    // those left the player walking the world at the bracket level in arena
+    // gear. Whenever the map or the title comes up with no arena session still
+    // running, the party is put back.
+    ArenaBattleHandler.restoreIfSessionOver = function () {
+        if (!_savedPartyData) return;
+        const bm = BattleManager;
+        const running =
+            (bm.isGauntletMode && bm.isGauntletMode()) ||
+            (bm.isBiomeTrialMode && bm.isBiomeTrialMode()) ||
+            (bm.isBossRushMode && bm.isBossRushMode()) ||
+            (bm.isArenaMode && bm.isArenaMode()) ||
+            SceneManager._scene instanceof Scene_Battle ||
+            (window.Scene_ArenaStage && SceneManager._scene instanceof window.Scene_ArenaStage);
+        if (!running) this.restoreParty();
+    };
+
+    const _Scene_Map_start_arenaRestore = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function () {
+        _Scene_Map_start_arenaRestore.call(this);
+        ArenaBattleHandler.restoreIfSessionOver();
+    };
+
+    const _Scene_Title_start_arenaRestore = Scene_Title.prototype.start;
+    Scene_Title.prototype.start = function () {
+        _Scene_Title_start_arenaRestore.call(this);
+        ArenaBattleHandler.restoreIfSessionOver();
     };
 
     // One-shot API for external callers (e.g. HypernetOS Colosseum app). Always
@@ -1027,6 +1071,17 @@
         if (!roster.length) { SoundManager.playBuzzer(); return false; }
         const leader = $gameParty.leader();
         const startLevel = Math.max(1, leader ? leader.level : 1);
+        // The climb re-levels the live party, so it has to be undoable like
+        // every other run. Levels, skills and gear are snapshotted before the
+        // first rescale; no roster swap and no loadout are handed out here.
+        if (!_savedPartyData) {
+            _savedPartyData = {
+                actorIds: [...$gameParty._actors],
+                actorSnapshots: this._snapshotParty([...$gameParty._actors]),
+                itemsGiven: []
+            };
+            _randomPartyMode = true;
+        }
         _biomeTrial = { active: true, biome, roster, partyLevel: startLevel, wins: 0, fromTitle: !!fromTitle };
         $gameSystem._forcedBattleBiome = biome;
         this._launchBiomeTrial(fromTitle);

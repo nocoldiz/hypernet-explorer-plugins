@@ -385,7 +385,7 @@
     "noPanel": "That panel needs {what}, which is switched off."
   },
   "value": {
-    "wantedLevel": "wanted {pct}%"
+    "wantedLevel": "Wanted {pct}%"
   },
   "group": {
     "party": "Party",

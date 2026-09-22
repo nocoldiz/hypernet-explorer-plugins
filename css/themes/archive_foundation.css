@@ -2117,6 +2117,12 @@
 .cash-highlight { color: #1f5c2a; }
 .bounty-highlight { color: var(--text-primary-hover); }
 
+/* --- The wanted level now stands as bare ink beside the bounty rather than on
+       a plate, so the badge amber and the bad red have to be inked down to
+       hold on the cream sheet. */
+.wanted-chip { color: #8a5a00; }
+.wanted-chip--chased { color: #a01a12; }
+
 /* --- Skill atlas. The figure now hangs in a dark sky of its own inside the
        spread (#skill-atlas-box), so the names and the banner written over that
        canvas keep the shared sheet's white ink and its halo. Only the legend

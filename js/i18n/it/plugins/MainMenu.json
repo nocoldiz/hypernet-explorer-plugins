@@ -385,7 +385,7 @@
     "noPanel": "Quel pannello richiede {what}, che è disattivato."
   },
   "value": {
-    "wantedLevel": "ricercati {pct}%"
+    "wantedLevel": "Ricercati {pct}%"
   },
   "group": {
     "party": "Gruppo",

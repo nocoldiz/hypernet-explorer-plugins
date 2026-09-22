@@ -1,3 +1,15 @@
+0.6.35a  
+
+Changed:
+ - bubba map infos now appear at the top middle of the screen
+ - time and date moved to the top of the main menu right page
+ - rumors no longer show a description line before them
+
+Fixed:
+ - camper spawn for story mode
+ - arena no longer leaves the party levelled and re-equipped after a bout
+
+
 0.6.34a
  Added: 
  - thematic troops for Ghent maps missing them

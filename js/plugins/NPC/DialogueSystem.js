@@ -3634,7 +3634,10 @@ Imported.DialogueSystem = true;
         // A non-sentient creature has no words, only a noise as long as the line
         // it would have spoken.
         if (line && npcName && EM?.isNonSentientNPC?.(npcName)) line = EM.growlFor(line, npcName) || line;
-        const said = [hello, line].filter(Boolean).join(' ');
+        // The written rumour is the whole beat when there is one: the greeting
+        // is what they say when they have no gossip to pass on, never a
+        // preamble in front of it.
+        const said = line || hello;
         if (npcName) EM?.recordNPCLine?.(npcName, said, 'npc');
         payCompany(ev, npcName);
         return [npcStep(ev, npcName, said)];
@@ -4587,7 +4590,7 @@ Imported.DialogueSystem = true;
             ? vary(String(layerGreetingLine(bareLayer)).replace(/\{name\}/g, npcName || ''))
             : '';
         let line = (bareLayer && bareLayer.pair) ? '' : pickRumor();
-        line = [bareHello, line].filter(Boolean).join(' ');
+        line = line || bareHello;
         // Nothing at all to say: the caller is told so, since an older event
         // that came in through the Markov command still has its own line to
         // fall back on.

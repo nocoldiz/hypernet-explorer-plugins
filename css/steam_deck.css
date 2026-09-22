@@ -1353,8 +1353,8 @@
 
     /* The standing facts rule under the roster. */
     .pockets-clock {
-        padding-top: 6px;
-        margin-top: 8px;
+        padding-bottom: 6px;
+        margin-bottom: 8px;
     }
 
     /* The key letter on the right of each row. It gives up its padding rather

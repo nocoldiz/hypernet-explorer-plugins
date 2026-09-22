@@ -1869,7 +1869,7 @@
   // showed the starship.
   const STORY_MODE_VEHICLES = {
     vehicle_car: { key: "car", type: "boat", boatType: "car", switchId: 64, itemId: 164, sprite: "Vehicles/!$Car" },
-    vehicle_camper: { key: "camper", type: "ship", switchId: 51, itemId: 111, sprite: "Vehicles/!$RV" },
+    vehicle_camper: { key: "camper", type: "ship", switchId: 51, itemId: 111, park: STORY_MODE_VEHICLE_PARK, fixedPark: true, sprite: "Vehicles/!$RV" },
     vehicle_boat: { key: "boat", type: "boat", boatType: "boat", switchId: 0, itemId: 167, park: STORY_MODE_BOAT_PARK, sprite: "Vehicles/!$Boat" },
     vehicle_bike: { key: "bike", type: "boat", boatType: "bike", switchId: 0, itemId: 131, sprite: "Vehicles/!$Bike" },
     vehicle_starship: { key: "airship", type: "airship", switchId: 0, itemId: 166, sprite: "Vehicles/!$Airship" },
@@ -1886,7 +1886,11 @@
     const base = spec.park || STORY_MODE_VEHICLE_PARK;
     // A party may set out with a whole garage, so each one parks a couple of
     // tiles along from the last rather than every one of them on one square.
-    const park = { x: base.x + (Number(slot) || 0) * 2, y: base.y };
+    // A vehicle with a fixed berth always stands on it, whatever else the
+    // party set out with.
+    const park = spec.fixedPark
+      ? { x: base.x, y: base.y }
+      : { x: base.x + (Number(slot) || 0) * 2, y: base.y };
 
     // window.VehiclePosition is the single source of truth VehicleSystem
     // re-places every Game_Vehicle from on map load, so the pick shows up both
