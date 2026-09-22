@@ -17,7 +17,28 @@
   },
   "disableDashing": false,
   "displayName": "Office",
-  "encounterList": [],
+  "encounterList": [
+    {
+      "troopId": 118,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 104,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 114,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 87,
+      "weight": 5,
+      "regionSet": []
+    }
+  ],
   "encounterStep": 30,
   "height": 13,
   "note": "\n<Interior>><Country: Belgium>\n<Coords 79 125>\n\n<Biome: Snow>\n<MapGroup Ghent>\n<BuildRights: Free>",

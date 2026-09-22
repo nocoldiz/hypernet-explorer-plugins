@@ -864,9 +864,23 @@ ArmyUnitSprite.prototype.initialize = function (troop, role, color) {
   this.addChild(ring);
 };
 
+// Every sheet under img/characters/Skab is a single-character `!$` sheet, so a
+// roster row that names one without the prefix points at a file that is not on
+// disk. A missing character bitmap is fatal in MZ: ImageManager.isReady throws
+// a LoadError the moment the scene starts, which took the whole army battle
+// down. Normalise the name instead of trusting the data.
+ArmyUnitSprite.normalizeSheet = function (name) {
+  const full = String(name || "");
+  const cut = full.lastIndexOf("/");
+  const dir = cut >= 0 ? full.slice(0, cut + 1) : "";
+  const file = cut >= 0 ? full.slice(cut + 1) : full;
+  if (!file || file.charAt(0) === "!" || file.charAt(0) === "$") return full;
+  return dir + "!$" + file;  // i18n-ignore  asset path
+};
+
 ArmyUnitSprite.resolveSheet = function (troop, role) {
   const named = troop && troop.spritename;
-  if (named) return named;
+  if (named) return ArmyUnitSprite.normalizeSheet(named);
   const r = String(role || "");  // i18n-ignore  troop db id
   if (r.includes("ranged")) return ArmyUnitSprite.FALLBACK.ranged;  // i18n-ignore  troop db id
   if (r.includes("support")) return ArmyUnitSprite.FALLBACK.support;  // i18n-ignore  troop db id

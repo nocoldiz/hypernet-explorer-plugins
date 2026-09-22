@@ -105,6 +105,21 @@ var Imported = Imported || {};
 Imported.ArmyEventsManager = true;
 
 var ArmyEventsManager = ArmyEventsManager || {};
+
+// A leader's sheet comes off the same roster row the battlefield reads, so a
+// row that named a sheet without its "!$" prefix pointed at a file that is not
+// on disk and crashed the world map as well as the battle. ArmyUnitSprite owns
+// the one answer; fall back to its rule if the battle view has not loaded yet.
+function leaderSheet(name) {
+  if (typeof ArmyUnitSprite !== "undefined" && ArmyUnitSprite.normalizeSheet) {
+    return ArmyUnitSprite.normalizeSheet(name);
+  }
+  const full = String(name || "");
+  const cut = full.lastIndexOf("/");
+  const file = cut >= 0 ? full.slice(cut + 1) : full;
+  if (!file || file.charAt(0) === "!" || file.charAt(0) === "$") return full;
+  return (cut >= 0 ? full.slice(0, cut + 1) : "") + "!$" + file;  // i18n-ignore  asset path
+}
 ArmyEventsManager.Params = PluginManager.parameters("ArmyEventsManager");
 
 ArmyEventsManager.Params.worldMapId = Number(ArmyEventsManager.Params.worldMapId || 315);
@@ -555,7 +570,7 @@ Game_AIArmies.prototype.initializeArmies = function () {
     // Set event graphic based on leader
     const leader = army.getLeader();
     if (leader) {
-      event.setImage(leader.spritename, leader.spriteindex);
+      event.setImage(leaderSheet(leader.spritename), leader.spriteindex);
     }
 
     // Find random passable position or use current position in debug mode
@@ -711,7 +726,7 @@ Game_AIArmies.prototype._restoreAndRegenerateArmies = function (armyEvents) {
 
     // Set event graphic
     if (army._leader) {
-      event.setImage(army._leader.spritename, army._leader.spriteindex);
+      event.setImage(leaderSheet(army._leader.spritename), army._leader.spriteindex);
     }
 
     // Restore position

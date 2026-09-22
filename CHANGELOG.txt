@@ -1,3 +1,16 @@
+0.6.34a
+ Added: 
+ - thematic troops for Ghent maps missing them
+ - New bosses around the world
+
+ Changed:
+ - random loot influenced by current biome
+ - bosses sprite level display shows a !!! warning after the level
+ - six level 10 enemies promoted to bosses
+
+Fixed:
+ - army battles no longer crash on a missing troop sprite
+
 0.6.33a
 
 Dungeon levels:
@@ -21,7 +34,7 @@ Changed:
  - switched equip screen pages, profiles stacked with stats beside
  - reworked em base disposition, randomized per npc, local npcs neutral
  - swim or dive into any liquid tile, even stuck in one, underwater battleback
- - adventure and anomaly lines read less gpt like
+ - adventure and anomaly lines rework
  - map battle running greyed out only for members near an enemy
  - reworked how enemy weaknesses are displayed
  - voxel mode right stick obeys the camera invert and speed options
@@ -49,7 +62,7 @@ Fixed:
  - wrong busts picked for hardcoded npcs
  - dual wielded left weapon never attacked in battle
  - join party and join as follower missing in empathize menu
- - dialogue topics written [[like this]] no longer keep a stray bracket
+ - dialogue topics written [like this] no longer keep a stray bracket
  - right click closes battle menus, talk moved under backpack
  - pet interactions now answer with grunts
  - em starts story mode with fixed magical kit and an editable sheet

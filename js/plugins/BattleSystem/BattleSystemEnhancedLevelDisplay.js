@@ -72,6 +72,34 @@
     // Expose for other modules (used in enemy-vs-enemy combat)
     window.getEnemyLevelFromEvent = getEnemyLevelFromEvent;
 
+    // A boss is stamped <Boss> in the enemy database, and a troop fielding one
+    // is a fight the plate has to warn about before the party walks into it.
+    // Read once per troop and remembered, like the level beside it.
+    const troopBossCache = new Map();
+
+    function isBossEvent(event) {
+        if (!event || !event._fixedTroopId) return false;
+        const cached = troopBossCache.get(event._fixedTroopId);
+        if (cached !== undefined) return cached;
+        const troop = $dataTroops[event._fixedTroopId];
+        let boss = false;
+        if (troop && troop.members) {
+            for (const member of troop.members) {
+                const enemyData = $dataEnemies[member.enemyId];
+                if (enemyData && enemyData.meta && enemyData.meta.Boss) {
+                    boss = true;
+                    break;
+                }
+            }
+        }
+        troopBossCache.set(event._fixedTroopId, boss);
+        return boss;
+    }
+
+    // Read by the map sprite and by anything else that has to know a plate is
+    // about to carry the boss mark.
+    BSE.Helpers.isBossEvent = isBossEvent;
+
     // ========================================================================
     // 2. Sprite_Character - Override update for enemy level labels
     // ========================================================================
@@ -168,7 +196,7 @@
                 this.removeEnemyLevelLabel();
 
                 if (enemyLevel > 0) {
-                    this.createEnemyLevelLabel(enemyLevel, band);
+                    this.createEnemyLevelLabel(enemyLevel, band, isBossEvent(event));
                 }
             }
         }
@@ -301,7 +329,13 @@
         return levelGapTierFor(level);
     }
 
-    Sprite_Character.prototype.createEnemyLevelLabel = function(level, band) {
+    // What a boss wears after its level. Not prose: a mark on the plate, the
+    // same three strokes in every language.
+    const BOSS_PLATE_MARK = '!!!';
+
+    // The plate is keyed on (troop, band) and the mark rides on the troop, so
+    // it never needs a cache entry of its own.
+    Sprite_Character.prototype.createEnemyLevelLabel = function(level, band, boss) {
         const tier = band != null && band >= 0 ? band : levelGapTierFor(level);
         const color = tier === RARITY_TIER
             ? LEVEL_PLATE_RARITY
@@ -311,7 +345,7 @@
         this._enemyLevelLabel._plateOwner = this;
         this._enemyLevelLabel._plateFrame = plateFrame();
         livePlates.add(this._enemyLevelLabel);
-        this._enemyLevelLabel.bitmap = new Bitmap(80, 30);
+        this._enemyLevelLabel.bitmap = new Bitmap(110, 30);
         this._enemyLevelLabel.anchor.x = 0.5;
         this._enemyLevelLabel.anchor.y = 1;
 
@@ -322,7 +356,8 @@
         bitmap.outlineColor = 'rgba(0, 0, 0, 0.8)';
         bitmap.outlineWidth = 4;
 
-        bitmap.drawText(`L. ${level}`, 0, 0, 80, 30, 'center');
+        const text = boss ? `L. ${level} ${BOSS_PLATE_MARK}` : `L. ${level}`;
+        bitmap.drawText(text, 0, 0, 110, 30, 'center');
 
         // Above the balloons rather than inside the character sprite. The
         // tilemap sorts its children on z first, so this reads over anything

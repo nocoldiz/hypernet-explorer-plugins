@@ -17,7 +17,38 @@
   },
   "disableDashing": false,
   "displayName": "Closed Shop",
-  "encounterList": [],
+  "encounterList": [
+    {
+      "troopId": 43,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 123,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 105,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 118,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 82,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 114,
+      "weight": 5,
+      "regionSet": []
+    }
+  ],
   "encounterStep": 30,
   "height": 13,
   "note": "\n<Interior>\n\n<Country: Belgium>\n\n<Coords 79 125>\n\n<Biome: City>\n<MapGroup Ghent>\n<BuildRights: Free>",

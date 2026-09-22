@@ -17,7 +17,28 @@
   },
   "disableDashing": false,
   "displayName": "Dimensional fracture",
-  "encounterList": [],
+  "encounterList": [
+    {
+      "troopId": 84,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 79,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 3,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 102,
+      "weight": 5,
+      "regionSet": []
+    }
+  ],
   "encounterStep": 30,
   "height": 30,
   "note": "\n<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<MapGroup Ghent>\n<BuildRights: Free>\n<Biome: City>",

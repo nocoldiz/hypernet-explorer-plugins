@@ -1980,7 +1980,7 @@
         "luk": 55,
         "hiringCost": 182000,
         "weeklyCost": 36400,
-        "spritename": "Skab/49",
+        "spritename": "Skab/!$49",
         "spriteindex": 0,
         "role": "roles.ranged"
       },
@@ -5824,7 +5824,7 @@
         "luk": 45,
         "hiringCost": 22400,
         "weeklyCost": 4480,
-        "spritename": "Skab/emtest2",
+        "spritename": "Skab/!$emtest2",
         "spriteindex": 0,
         "role": "roles.support"
       },
@@ -7510,7 +7510,7 @@
         "luk": 30,
         "hiringCost": 98000,
         "weeklyCost": 19600,
-        "spritename": "Skab/49",
+        "spritename": "Skab/!$49",
         "spriteindex": 0,
         "role": "roles.closequarters"
       }

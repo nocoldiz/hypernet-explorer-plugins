@@ -33,6 +33,12 @@
  * Hard ground pays better, but only up to the party's own level plus 15:
  * a level 1 party in a level 60 country finds that country's crates, not
  * its legends.
+ * * 3. The biome underfoot:
+ * Where a crate is opened leans WHICH item comes out, not how good it is.
+ * Every biome favours a few <category:> shelves and shuns a few others
+ * (a laboratory pays in components and medicine, a farm in food and seed,
+ * a crypt in charms). It is only a lean: nothing is ever filtered out, so
+ * any item is still reachable anywhere.
  * * 3. Omega Tower floor:
  * The floor the party is standing on RIGHT NOW, up or down the shaft, and
  * it outweighs the party's own level. Not how deep they have ever been:
@@ -191,6 +197,98 @@
             new RegExp('<category:\\s*' + cat + '\\s*>', 'i').test(note));
         if (profile.favour && profile.favour.length && holds(profile.favour)) return WORLD_FAVOUR_WEIGHT;
         if (profile.shun && profile.shun.length && holds(profile.shun)) return WORLD_SHUN_WEIGHT;
+        return 1;
+    }
+
+    // --- What the ground underfoot deals in -------------------------------
+    // Where a crate is opened says something about what is inside it: a
+    // laboratory holds components and medicine, a farm holds food and seed,
+    // a crypt holds charms and the things that were buried with them. The
+    // biome only LEANS the draw the way a tower world does (favour / shun
+    // weights, nothing filtered out), so every shelf is still reachable
+    // anywhere.
+    const BIOME_FAVOUR_WEIGHT = 2.5;
+    const BIOME_SHUN_WEIGHT = 0.4;
+
+    // Each group lists the biome names it covers (matched case-insensitively,
+    // exactly first and then as a substring so River vertical, VillageIce and
+    // the Alien* family all land in the right group).
+    const BIOME_CATEGORY_GROUPS = [
+        { names: ['Laboratory', 'Factory', 'FactoryInside', 'Spacecenter', 'Digital', 'Space',
+                  'Train', 'SaltWorks', 'BuriedLab', 'ColdWarBunker', 'Metro', 'MetroStation', 'Office'],
+          favour: ['Component', 'Tools', 'Medical'], shun: ['Food', 'Farming', 'Monsters'] },
+        { names: ['TempleInside', 'TempleShinto', 'Temple', 'ChurchInside', 'Heaven', 'ProfaneShrine',
+                  'SunkenLibrary', 'Fairy', 'SpiritWoods'],
+          favour: ['Magic', 'Books', 'Collectibles'], shun: ['Vehicles', 'Component'] },
+        { names: ['Graveyard', 'Crypt', 'Catacombs', 'Barrow', 'Hell', 'Eldritch', 'Limbo', 'Lair',
+                  'Dreamscape', 'Abstract'],
+          favour: ['Magic', 'Monsters', 'Collectibles'], shun: ['Food', 'Farming', 'Vehicles'] },
+        { names: ['Ruins', 'AbandonedInside', 'Abandoned', 'Landfill', 'Oubliette', 'SmugglerTunnel',
+                  'Sewer', 'Cistern'],
+          favour: ['Trash', 'Misc', 'Tools'], shun: ['Food', 'Lifestyle'] },
+        { names: ['CaveFlooded', 'CaveIce', 'CaveFrozen', 'CaveDen', 'Cave', 'Mineshaft', 'Mines',
+                  'Underdark', 'CrystalCavern', 'Crystals', 'LavaTube', 'SeaGrotto', 'FungalWarren',
+                  'UnderForge', 'Mushroom'],
+          favour: ['Tools', 'Component', 'Misc'], shun: ['Food', 'Books', 'Lifestyle'] },
+        { names: ['Farm', 'Fields', 'Meadows', 'Highlands', 'VillageIce', 'VillageMountain',
+                  'VillageDesert', 'VillageRiver', 'VillageSea', 'Village'],
+          favour: ['Farming', 'Food', 'Fertility'], shun: ['Component', 'Magic'] },
+        { names: ['CityDesert', 'CityIce', 'City', 'BurgDesert', 'BurgIce', 'Burg', 'HousesInside',
+                  'Houses', 'Villa', 'Park', 'Docks', 'Highway', 'Road', 'Bridge'],
+          favour: ['Lifestyle', 'Food', 'Misc'], shun: ['Monsters', 'Survival'] },
+        { names: ['CastleInside', 'Castle', 'Arena', 'Dungeon', 'LootCellar', 'PatronVault', 'OmegaTower'],
+          favour: ['Combat', 'Collectibles'], shun: ['Farming', 'Lifestyle'] },
+        { names: ['Ocean', 'SeaBed', 'Beach', 'Lake', 'RiverBank', 'River', 'Swamp', 'Mangrove'],
+          favour: ['Food', 'Survival'], shun: ['Vehicles', 'Component'] },
+        { names: ['MountainIce', 'Ice', 'Snow', 'Permafrost', 'Tundra', 'Taiga'],
+          favour: ['Survival', 'Medical'], shun: ['Farming', 'Food'] },
+        { names: ['MountainDesert', 'Desert', 'SaltFlats', 'Badlands', 'Steppe', 'Savannah'],
+          favour: ['Survival', 'Tools'], shun: ['Food', 'Farming'] },
+        { names: ['ForestTropical', 'ForestIce', 'Forest', 'Jungle', 'Bamboo'],
+          favour: ['Food', 'Survival', 'Farming'], shun: ['Component', 'Vehicles'] },
+        { names: ['Mountain', 'Canyon', 'Volcano'],
+          favour: ['Tools', 'Survival', 'Monsters'], shun: ['Lifestyle', 'Books'] },
+        { names: ['Alien'],
+          favour: ['Monsters', 'Component', 'Magic'], shun: ['Food', 'Lifestyle', 'Vehicles'] }
+    ];
+
+    // Where the party is standing, as a biome name. The procedural map keeps
+    // it on $gameSystem; every other map declares it with a <Biome: X> note.
+    function currentLootBiome() {
+        try {
+            if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap.mapId() === 636 &&
+                    typeof $gameSystem !== 'undefined' && $gameSystem &&
+                    $gameSystem._procGenData && $gameSystem._procGenData.currentBiome) {
+                return String($gameSystem._procGenData.currentBiome);
+            }
+            if (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.meta && $dataMap.meta.Biome) {
+                return String($dataMap.meta.Biome).trim();
+            }
+        } catch (e) { /* no map yet */ }
+        return null;
+    }
+
+    // The favour / shun profile of a biome name, or null when nothing covers
+    // it (an unlisted biome simply leans nowhere).
+    function biomeLootProfile(biomeName) {
+        if (!biomeName) return null;
+        const key = String(biomeName).toLowerCase().trim();
+        for (const group of BIOME_CATEGORY_GROUPS) {
+            if (group.names.some(n => n.toLowerCase() === key)) return group;
+        }
+        for (const group of BIOME_CATEGORY_GROUPS) {
+            if (group.names.some(n => key.indexOf(n.toLowerCase()) >= 0)) return group;
+        }
+        return null;
+    }
+
+    function biomeCategoryFactor(item, profile) {
+        if (!profile || !item || !item.note) return 1;
+        const note = item.note;
+        const holds = (list) => list.some((cat) =>
+            new RegExp('<category:\\s*' + cat + '\\s*>', 'i').test(note));
+        if (profile.favour && holds(profile.favour)) return BIOME_FAVOUR_WEIGHT;
+        if (profile.shun && holds(profile.shun)) return BIOME_SHUN_WEIGHT;
         return 1;
     }
 
@@ -445,6 +543,9 @@
         // depth opens the tier ladder itself instead (towerDepthLift).
         const depthLift = towerDepthLift() + (worldLoot ? (worldLoot.lift || 0) : 0);
 
+        // The biome the crate stands in leans the shelves the same way.
+        const biomeLoot = biomeLootProfile(currentLootBiome());
+
         // Calculate weighted probability for each item
         let weightedItems = [];
         let totalWeight = 0;
@@ -465,6 +566,10 @@
             // What the world under the crate actually deals in. A lean, not a
             // law: the shelf it shuns is still on the shelf.
             weight *= worldCategoryFactor(item, worldLoot);
+
+            // And what the ground underfoot deals in. Same kind of lean, read
+            // off the biome the crate was opened in.
+            weight *= biomeCategoryFactor(item, biomeLoot);
 
             // Add extreme rarity for artifacts
             if (item.id >= 1500 || (item.note && item.note.toLowerCase().includes('<category: artifact>'))) {

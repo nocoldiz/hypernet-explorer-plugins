@@ -17,7 +17,28 @@
   },
   "disableDashing": false,
   "displayName": "Energy station",
-  "encounterList": [],
+  "encounterList": [
+    {
+      "troopId": 39,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 31,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 11,
+      "weight": 5,
+      "regionSet": []
+    },
+    {
+      "troopId": 114,
+      "weight": 5,
+      "regionSet": []
+    }
+  ],
   "encounterStep": 30,
   "height": 25,
   "note": "\n<Interior>\n\n<Country: Belgium>\n<Coords 79 125>\n<MapGroup Ghent>\n<BuildRights: Free>\n<Biome: Metro>",
