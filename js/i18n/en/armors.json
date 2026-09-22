@@ -3322,5 +3322,69 @@
   "881": {
     "name": "Apotheosis Veil",
     "description": "A veil of light that hides nothing. Resists\nSacred and mends a little mana."
+  },
+  "882": {
+    "name": "Starlit Silk Hood",
+    "description": "Silk woven under one night of stars. Lends the\nwearer Foresight."
+  },
+  "883": {
+    "name": "Archon's Iron Circlet",
+    "description": "Cold iron, warm at the temples. Lends the\nwearer Divine Insight."
+  },
+  "884": {
+    "name": "Empyrean Sigil Robe",
+    "description": "Sigils that mend whoever stands near. Lends\nthe wearer Heal Party."
+  },
+  "885": {
+    "name": "Runed Leather Jerkin",
+    "description": "Runes cut along every seam. Lends the wearer\nSwift Aura."
+  },
+  "886": {
+    "name": "Sanctum Plate Hauberk",
+    "description": "Consecrated plate, unbothered by harm. Lends\nthe wearer Absolute Barrier."
+  },
+  "887": {
+    "name": "Warding Moon Shield",
+    "description": "A pale disc that answers before you do. Lends\nthe wearer Divine Shield."
+  },
+  "888": {
+    "name": "Astral Focus Orb",
+    "description": "Weather turns inside the glass. Lends the\nwearer Cataclysmic Storm."
+  },
+  "889": {
+    "name": "Ley Line Signet Ring",
+    "description": "Warm wherever the old lines cross. Lends the\nwearer Great Heal."
+  },
+  "890": {
+    "name": "Technomantic Alloy Visor",
+    "description": "Reads a fight faster than you can. Lends the\nwearer Combat Analysis."
+  },
+  "891": {
+    "name": "Hexcoded Sensor Bandana",
+    "description": "Hexcode printed on plain cotton. Lends the\nwearer Precision Focus."
+  },
+  "892": {
+    "name": "Circuit Mesh Vest",
+    "description": "Mesh that leans before the blow lands. Lends\nthe wearer Dodge."
+  },
+  "893": {
+    "name": "Servo Plate Vest",
+    "description": "Motors in the shoulders do the shoving. Lends\nthe wearer Guard Breaker."
+  },
+  "894": {
+    "name": "Hex Router Cloak",
+    "description": "Carries a voice further than lungs do. Lends\nthe wearer Rallying Cry."
+  },
+  "895": {
+    "name": "Deflector Field Shield",
+    "description": "A field that stands where you stand. Lends the\nwearer Counter Stance."
+  },
+  "896": {
+    "name": "Spellsocket Lantern",
+    "description": "Lights the work and does half of it. Lends the\nwearer Field Repair."
+  },
+  "897": {
+    "name": "Daemon Thread Gloves",
+    "description": "Threads that remember every lock. Lends the\nwearer Lockpicking."
   }
 }

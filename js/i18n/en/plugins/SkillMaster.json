@@ -271,7 +271,8 @@
       "scope": "Shape",
       "riders": "Riders",
       "refines": "Refinements",
-      "create": "Write"
+      "create": "Write",
+      "randomize": "Roll"
     },
     "pick": {
       "core": "Choose a Core",
@@ -629,6 +630,13 @@
           "desc": "Gives the user AP back on use."
         }
       }
+    },
+    "randomize": "Roll it",
+    "camel": {
+      "title": "That is not a spell name",
+      "body": "A spell is named as one word in CamelCase, with no spaces: FireBolt, not fire bolt. {name} is kept as written if you want it.",
+      "rename": "Name it again",
+      "keep": "Keep it"
     }
   },
   "fusionRollAction": "Arcane Fusion: {parts}",
@@ -695,9 +703,28 @@
     "skillBookFallbackName": "Notebook of {first}",
     "grimorieFallbackName": "Grimorie of {first}"
   },
+  "hexorcize": {
+    "button": "Hexorcize",
+    "title": "Hexorcizing",
+    "detailTitle": "The Piece",
+    "blurb": "A magical weapon or piece of equipment is taken apart and what was worked into it comes back as knowledge. Only what the party is carrying: take a piece off before unmaking it.",
+    "back": "Back",
+    "one": "Unmake",
+    "all": "Unmake All",
+    "worth": "Worth",
+    "held": "Carried",
+    "bindingHeld": "Binding",
+    "knowledge": "Knowledge",
+    "pickPiece": "Choose a piece on the left.",
+    "totalHere": "Everything here is worth {kp} KP.",
+    "nothing": "Nothing magical is being carried.",
+    "unmade": "{item} is unmade for {kp} KP."
+  },
   "tips": {
     "pick": "Pick",
     "walk": "Walk",
     "back": "Back"
-  }
+  },
+  "lent": "LENT",
+  "lentBy": "Lent by {item}"
 }

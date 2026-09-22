@@ -664,18 +664,141 @@
   window.GalaxySim.currentAlienGrowsBiosigns = currentAlienGrowsBiosigns;
 
   // ============================================================================
-  // EVA suits: on a planet with a non-breathable atmosphere the whole party
-  // wears the vac-suit sprite; the originals are restored when they leave the
-  // surface (any transfer off map 636).
+  // EVA suits: who has to wear one, what they are drawn on, and what they look
+  // like from the front
+  // ----------------------------------------------------------------------------
+  // On a planet with a non-breathable atmosphere the whole party wears the
+  // vac-suit sprite; the originals are restored when they leave the surface
+  // (any transfer off map 636).
+  //
+  // A body in a sealed suit is also PORTRAYED in it. The dialogue box and the
+  // Empathize panel used to show the face behind the visor, which is a face
+  // nobody out there can see, so the portrait is answered here too: one sealed
+  // helmet for everybody wearing one, party and crowd alike.
+  //
+  // And it is not only the party who is dressed. Anybody met out on an airless
+  // surface is drawn in a suit for as long as they are out in it, read off the
+  // ground every frame rather than written onto them, the same way Em's
+  // wardrobe is read off where she is standing (CharacterPresets.emSheet), so
+  // it comes off them the moment they step indoors or the party leaves.
+  //
+  // Nobody who breathes the place unaided is handed one: a sheet flagged
+  // `aliens` in js/db/WorldGen/NPCs.json is somebody from out there and needs
+  // no air of ours, and the animals and the creatures are not issued the
+  // party's spare suits either.
   // ============================================================================
   const EVA_SPRITE = "Skab/Originals/!$MargheritaHackEVA";
+  // Every sheet that IS a sealed suit, the party's spare and Em's own alike.
+  // A body already standing in one is portrayed in one wherever it is, indoors
+  // or out, because the suit is what is being looked at.
+  const EVA_SHEETS = [EVA_SPRITE, "Skab/!$MargheritaHackEVA", "Em/!$EmEVA"];
+  // The face a sealed visor shows: none. One bust for everybody in a suit.
+  const EVA_BUST = "Biosuit";   // i18n-ignore: img/busts file name
+
+  const evaSheetBase = (sheet) =>
+    String(sheet || "").split("/").pop().replace(/^[!$]+/, "").toLowerCase();
+  const EVA_SHEET_BASES = new Set(EVA_SHEETS.map(evaSheetBase));
+  function isEVASheet(sheet) {
+    return !!sheet && EVA_SHEET_BASES.has(evaSheetBase(sheet));
+  }
+
+  // The wardrobe entry of a sheet. Keyed by the full path in NPCs.json, but a
+  // sheet reaches us off an event page or an actor, where the same face can be
+  // written in a different folder, so the bare name answers as a fallback.
+  let _evaWardrobeByBase = null;
+  function evaWardrobeEntry(sheet) {
+    const db = (window.WorldGen && window.WorldGen.NPCs) || null;
+    if (!db || !sheet) return null;
+    if (db[sheet]) return db[sheet];
+    if (!_evaWardrobeByBase) {
+      _evaWardrobeByBase = Object.create(null);
+      Object.keys(db).forEach((k) => {
+        const base = evaSheetBase(k);
+        if (!_evaWardrobeByBase[base]) _evaWardrobeByBase[base] = db[k];
+      });
+    }
+    return _evaWardrobeByBase[evaSheetBase(sheet)] || null;
+  }
+
+  // Does this body breathe whatever is out there on its own? Aliens do, and so
+  // does anything that is not a person of this world.
+  function breathesUnaided(sheet) {
+    if (!sheet) return true;
+    const AO = window.AlienOrigins;
+    if (AO && typeof AO.isAlienSprite === "function" && AO.isAlienSprite(sheet)) return true;
+    const entry = evaWardrobeEntry(sheet);
+    if (!entry) return false;
+    return entry.aliens === true || entry.animal === true || entry.creature === true;
+  }
+
+  // Is the ground underfoot airless? Asked of the landing rather than of the
+  // map, because standing on a world is a fact about the ground.
+  function evaSuitRequired() {
+    const planet = getOffEarthPlanet() ||
+      ((typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._landedPlanet : null);
+    if (!planet) return false;
+    return !planetBreathable(planet);
+  }
+
+  // Out in it, rather than under a roof. The crowd is dressed by this; the
+  // party keeps whatever it walked in wearing.
+  function evaOutdoors() {
+    if (typeof $gameMap === "undefined" || !$gameMap) return true;
+    return typeof $gameMap.isInterior === "function" ? !$gameMap.isInterior() : true;
+  }
+
+  // Is the ground here airless AND open to it? Asked once per event per frame
+  // by the sprite override below, so the answer is kept for as long as the two
+  // things it is made of - the world underfoot and the map standing on it -
+  // have not changed.
+  // The loaded map is keyed on rather than its id: $dataMap is reloaded from
+  // the file on every scene rebuild, so an id alone would hold an answer worked
+  // out before the map it is about was there to read.
+  let _evaGround = { planet: undefined, map: undefined, answer: false };
+  function evaSuitGroundHere() {
+    const planet = getOffEarthPlanet() ||
+      ((typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._landedPlanet : null);
+    const map = (typeof $dataMap !== "undefined") ? $dataMap : null;
+    if (_evaGround.planet !== planet || _evaGround.map !== map) {
+      _evaGround = {
+        planet,
+        map,
+        answer: !!planet && !planetBreathable(planet) && evaOutdoors()
+      };
+    }
+    return _evaGround.answer;
+  }
+
+  // The sheet somebody met out there is DRAWN on, or null for anybody who keeps
+  // their own: only catalogued people of this world are issued a suit.
+  function evaSheetFor(sheet) {
+    if (!sheet || isEVASheet(sheet)) return null;
+    if (!evaSuitGroundHere()) return null;
+    if (breathesUnaided(sheet)) return null;
+    const entry = evaWardrobeEntry(sheet);
+    if (!entry || entry.npc !== true) return null;
+    return EVA_SPRITE;
+  }
+
+  // The portrait that goes with it, or null for a face that is not behind a
+  // visor. A body already in a suit answers first, so the party keeps the
+  // sealed portrait indoors exactly as it keeps the sealed sprite.
+  function evaBustForSheet(sheet) {
+    if (isEVASheet(sheet)) return EVA_BUST;
+    return evaSheetFor(sheet) ? EVA_BUST : null;
+  }
+
   // Em is not handed one of the party's spare suits: she has a sealed sheet of
   // her own and a wardrobe that already reads the ground she is standing on
   // (CharacterPresets.emSheet), so writing the shared suit over her would put
   // the party's vac-suit in the savegame where her dossier's face belongs.
+  // Neither is anybody who breathes out there on their own.
   function wearsPartyEVASuit(actor) {
+    if (!actor) return false;
     const CP = window.CharacterPresets;
-    return !(actor && CP && CP.isEmActor && CP.isEmActor(actor));
+    if (CP && CP.isEmActor && CP.isEmActor(actor)) return false;
+    const sheet = typeof actor.characterName === "function" ? actor.characterName() : null;
+    return !breathesUnaided(sheet);
   }
   function applyEVASuits() {
     if (typeof $gameParty === "undefined" || !$gameParty || !$gameSystem) return;
@@ -702,6 +825,39 @@
   }
   window.GalaxySim.applyEVASuits = applyEVASuits;
   window.GalaxySim.removeEVASuits = removeEVASuits;
+
+  // The one answer to "is this body in a suit, and what does it look like in
+  // one". Every portrait front end (DialogueSystem, the Empathize panel) asks
+  // here rather than deriving a suit from a sheet name of its own.
+  window.GalaxySim.EVA = {
+    SPRITE: EVA_SPRITE,
+    BUST: EVA_BUST,
+    isSuitSheet: isEVASheet,
+    breathesUnaided,
+    required: evaSuitRequired,
+    sheetFor: evaSheetFor,
+    bustForSheet: evaBustForSheet,
+    bustForActor(actor) {
+      const sheet = (actor && typeof actor.characterName === "function")
+        ? actor.characterName() : null;
+      return sheet ? evaBustForSheet(sheet) : null;
+    }
+  };
+
+  // The crowd, dressed where it stands. An event carries its own sheet in the
+  // map file; what is DRAWN is that sheet unless the ground asks for a suit
+  // over it, and nothing is written back, so the map file is untouched.
+  if (typeof Game_Event !== "undefined") {
+    const _GE_characterName = Game_Event.prototype.characterName;
+    Game_Event.prototype.characterName = function () {
+      const own = _GE_characterName.call(this);
+      return evaSheetFor(own) || own;
+    };
+    const _GE_characterIndex = Game_Event.prototype.characterIndex;
+    Game_Event.prototype.characterIndex = function () {
+      return evaSheetFor(_GE_characterName.call(this)) ? 0 : _GE_characterIndex.call(this);
+    };
+  }
 
   // ============================================================================
   // Landing on a planet surface (proc map 636). Shared by the star map's Land
@@ -937,7 +1093,13 @@
     let gx = Number(grid.gx) || 0;
     try {
       if (typeof $gameMap !== "undefined" && $gameMap && $gamePlayer && $gameMap.width() > 0) {
-        gx += ($gamePlayer.x + 0.5) / $gameMap.width() - 0.5;
+        // _realX, not x: the tile index jumps a whole tile at a time, while
+        // the real position slides across it over the frames the step takes.
+        // The light is read off the sliding one, so walking west or east eases
+        // the sky instead of clicking it one tile at a time.
+        const px = (typeof $gamePlayer._realX === "number" && isFinite($gamePlayer._realX))
+          ? $gamePlayer._realX : $gamePlayer.x;
+        gx += (px + 0.5) / $gameMap.width() - 0.5;
       }
     } catch (e) { /* not on a map yet */ }
     return hourForColumn(gx, grid.w);
@@ -1265,6 +1427,7 @@
     const gx = (typeof cell.gx === "number" && isFinite(cell.gx)) ? ((Math.floor(cell.gx) % w) + w) % w : Math.floor(w / 2);
     const gy = (typeof cell.gy === "number" && isFinite(cell.gy)) ? ((Math.floor(cell.gy) % h) + h) % h : Math.floor(h / 2);
     $gameSystem._procGenData.alienGrid = { w, h, gx, gy, biome: biomeName };
+    resetSkyEase();
     // Built here rather than above, because which column of the landing grid
     // this is decides what o'clock it is forever on a tidally locked world.
     $gameSystem._landedPlanet = makeLandedDescriptor(planet, {
@@ -1605,7 +1768,6 @@
   // the party is standing on marked in red, and confirming one sets the ship down
   // on it. Cancelling leaves the party exactly where they were.
   // ============================================================================
-  const LG_PAD = 40;      // page margin around the modal panel
   const LG_TITLE_H = 52;  // strip above the grid, inside the panel
   const LG_HELP_H = 40;   // strip below it
   const LG_MODE_H = 64;   // the row of ways down along the panel's foot
@@ -1615,8 +1777,8 @@
   // aspect: the texture is equirectangular and planetGridSize keeps h at half of
   // w, so the picture is twice as wide as it is tall and the squares stay square.
   function landingGridDestSize(grid) {
-    const availW = Graphics.boxWidth - (LG_PAD + LG_INSET) * 2;
-    const availH = Graphics.boxHeight - (LG_PAD + LG_INSET) * 2 -
+    const availW = Graphics.boxWidth - LG_INSET * 2;
+    const availH = Graphics.boxHeight - LG_INSET * 2 -
       LG_TITLE_H - LG_HELP_H - LG_MODE_H;
     let w = availW;
     let h = Math.round((w * grid.h) / grid.w);
@@ -1627,9 +1789,9 @@
     return { w: Math.max(1, w), h: Math.max(1, h) };
   }
 
-  // The modal the grid sits in: a framed plate holding the title, the picture,
-  // the square under the cursor and the row of ways down, centred on a scrim so
-  // the map or the star field behind it never reads as part of the picker.
+  // Where the picker's pieces sit: no plate and no frame, the same minimal
+  // treatment the world map wears. The block of title, picture, cursor readout
+  // and ways down is simply centred on a dark page.
   function landingPanelRect(size) {
     const w = size.w + LG_INSET * 2;
     const h = LG_TITLE_H + size.h + LG_HELP_H + LG_MODE_H + LG_INSET * 2;
@@ -1789,30 +1951,11 @@
       this.redrawAll();
     }
 
-    // The scrim and the plate: everything behind the picker is pushed back so
-    // the grid, the title and the ways down read as one modal rather than as
-    // loose pieces floating over whatever map the party left.
+    // A plain dark page, like the world map: no plate, no gold frame, nothing
+    // between the party and the picture they are choosing a square on.
     createBackdrop() {
       const sprite = new Sprite(new Bitmap(Graphics.boxWidth, Graphics.boxHeight));
-      const ctx = sprite.bitmap.context;
-      const r = this._panel;
-      ctx.save();
-      ctx.fillStyle = "rgba(4, 6, 12, 0.82)";
-      ctx.fillRect(0, 0, Graphics.boxWidth, Graphics.boxHeight);
-      ctx.fillStyle = "rgba(10, 12, 20, 0.96)";
-      ctx.strokeStyle = LG_GOLD;
-      ctx.lineWidth = 2;
-      if (ctx.roundRect) {
-        ctx.beginPath();
-        ctx.roundRect(r.x, r.y, r.width, r.height, 10);
-        ctx.fill();
-        ctx.stroke();
-      } else {
-        ctx.fillRect(r.x, r.y, r.width, r.height);
-        ctx.strokeRect(r.x, r.y, r.width, r.height);
-      }
-      ctx.restore();
-      sprite.bitmap.baseTexture.update();
+      sprite.bitmap.fillAll("rgba(4, 6, 12, 0.94)");
       this._backdrop = sprite;
       this.addChild(sprite);
     }
@@ -2270,6 +2413,17 @@
   // world state that outlives the trip, so leaving the planet has to strike
   // them out: otherwise every Earth square entered afterwards still generates
   // as the surface of the last planet visited.
+  // The eased alien sky hour has nothing to ease from across a landing or a
+  // departure: the light is simply at whatever the new place is at.
+  function resetSkyEase() {
+    try {
+      if (typeof $gameWeather !== "undefined" && $gameWeather && $gameWeather.resetSkyHourEase) {
+        $gameWeather.resetSkyHourEase();
+      }
+    } catch (e) { /* no weather system yet */ }
+  }
+  window.GalaxySim.resetSkyEase = resetSkyEase;
+
   function clearAlienSurfaceState() {
     if (typeof $gameSystem === "undefined" || !$gameSystem) return;
     const pg = $gameSystem._procGenData;

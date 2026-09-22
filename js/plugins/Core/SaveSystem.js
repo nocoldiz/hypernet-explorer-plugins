@@ -129,6 +129,29 @@
     window.SaveSystem.hasStoryMainSave = function () {
         return !!DataManager.savefileInfo(STORY_SLOT);
     };
+    // Wipes the story band, both slots, and lets go of the binding if the
+    // live session was holding one of them. The only way to begin the story
+    // over from outside the save screen: the playtest boot (Titlescreen.js)
+    // starts every run of the story on an empty band.
+    window.SaveSystem.eraseStoryBand = function () {
+        const removals = [STORY_SLOT, STORY_AUTO_SLOT].map((id) => {
+            let removal;
+            try {
+                removal = Promise.resolve(StorageManager.remove(DataManager.makeSavename(id)));
+            } catch (e) {
+                removal = Promise.resolve();
+            }
+            return removal.catch(() => {}).then(() => {
+                if (DataManager._globalInfo) DataManager._globalInfo[id] = null;
+                if (window.$gameSystem && typeof $gameSystem.savefileId === "function" &&
+                    $gameSystem.savefileId() === id) {
+                    $gameSystem._savefileId = 0;
+                }
+            });
+        });
+        return Promise.all(removals).then(() => { DataManager.saveGlobalInfo(); });
+    };
+
     window.SaveSystem.latestStorySlot = function () {
         let best = -1;
         let bestTime = -1;
@@ -281,8 +304,10 @@
         // Mid-transfer the party is already on its way: the square the old map
         // would report belongs to where they left, not to where this save opens.
         const loc = transferring
-            ? { mapId: $gamePlayer.newMapId(), x: $gamePlayer.newX(), y: $gamePlayer.newY(),
-                dir: $gamePlayer.newDirection ? $gamePlayer.newDirection() : $gamePlayer.direction(), proc }
+            // MZ keeps the reserved destination on private fields; it has no
+            // newX() / newY() accessors (those are MV).
+            ? { mapId: $gamePlayer._newMapId, x: $gamePlayer._newX, y: $gamePlayer._newY,
+                dir: $gamePlayer._newDirection || $gamePlayer.direction(), proc }
             : { mapId, x: $gamePlayer.x, y: $gamePlayer.y, dir: $gamePlayer.direction(), proc };
         if (!(loc.mapId > 0)) return;
         $gameSystem._lastSaveLocation = loc;
@@ -1798,6 +1823,36 @@
         SceneManager.goto(Scene_HardcoreGameOver);
     };
 
+    // How many diary lines the gravestone carries. Enough to read as a life,
+    // few enough that the screen never has to scroll.
+    const HGO_DIARY_LINES = 7;
+
+    // A diary line is written in the same escape codes the message window uses;
+    // the gravestone is plain DOM, so they come out before it is shown.
+    function stripCodes(text) {
+        return String(text == null ? "" : text)
+            .replace(/\\[CIVNPG]\[[^\]]*\]/gi, "")
+            .replace(/\\[.]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    // "14 March 2001, 06:20", in the world's own calendar, through the diary's
+    // own clock so the two can never disagree.
+    function hgoStamp(minutes) {
+        const D = window.Diary;
+        if (!D) return "";
+        const dt = (typeof D.stampAt === 'function') ? D.stampAt(minutes) : null;
+        const clock = (typeof D.clockAt === 'function') ? D.clockAt(minutes) : "";
+        if (!dt) return clock || "";
+        const date = T('Diary.date.heading', {
+            day: dt.day,
+            month: T('Diary.month.' + String(dt.month).toLowerCase()),
+            year: dt.year
+        });
+        return clock ? T('SaveSystem.diaryStamp', { date, time: clock }) : date;
+    }
+
     class Scene_HardcoreGameOver extends Scene_Base {
         create() {
             super.create();
@@ -1825,6 +1880,47 @@
             }
             // Hold input briefly so the screen is read before it can be dismissed.
             this._inputTimer = setTimeout(() => { this._inputReady = true; }, 900);
+        }
+
+        // The lines this run will be remembered by. The diary already knows
+        // which of its thousands those are (Core/Diary.js highlights), so this
+        // only lays them out: when it happened, what happened, and where. A
+        // party that never wrote a line gets no page rather than an empty one.
+        diaryHTML() {
+            const D = window.Diary;
+            if (!D || typeof D.highlights !== 'function') return "";
+            let picks = [];
+            try {
+                if (typeof D.isActive === 'function' && !D.isActive()) return "";
+                picks = D.highlights(HGO_DIARY_LINES) || [];
+            } catch (e) {
+                console.error("[SaveSystem] the diary could not be read for the gravestone", e);
+                return "";
+            }
+            if (!picks.length) return "";
+
+            const rows = picks.map(entry => {
+                let text = "";
+                try { text = D.describe(entry); } catch (e) { text = ""; }
+                if (!text) return "";
+                const when = escapeHtml(hgoStamp(entry.t));
+                const where = entry.w
+                    ? `<span class="hgo-diary-where">${escapeHtml(String(entry.w))}</span>`
+                    : "";
+                return `
+                    <li class="hgo-diary-line">
+                        <span class="hgo-diary-when">${when}</span>
+                        <span class="hgo-diary-text">${escapeHtml(stripCodes(text))}</span>
+                        ${where}
+                    </li>`;
+            }).filter(Boolean).join("");
+            if (!rows) return "";
+
+            return `
+                <div class="hgo-diary">
+                    <div class="hgo-diary-head">${T('SaveSystem.rememberedFor')}</div>
+                    <ul class="hgo-diary-lines">${rows}</ul>
+                </div>`;
         }
 
         createUIDOM() {
@@ -1883,6 +1979,7 @@
                     <h1 class="hgo-title">${titleText}</h1>
                     <div class="hgo-epitaph">${epitaph}</div>
                     ${emHTML}
+                    ${this.diaryHTML()}
                     ${statsHTML ? `<div class="hgo-stats">${statsHTML}</div>` : ""}
                     <div class="hgo-button" onclick="SceneManager._scene && SceneManager._scene.returnToTitle()">${btnText}</div>
                 </div>`;
@@ -2225,4 +2322,13 @@
             this.refresh();
         }
     };
+
+    //=========================================================================
+    // Load sound
+    //-------------------------------------------------------------------------
+    // Loading a game plays no sound. Every call site (this plugin, the title
+    // screen, the options menu, the OS and the core Scene_Load) goes through
+    // SoundManager.playLoad, so silencing it here covers all of them.
+    //=========================================================================
+    SoundManager.playLoad = function() {};
 })();

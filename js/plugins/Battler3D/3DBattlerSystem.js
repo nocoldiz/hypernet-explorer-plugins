@@ -3343,22 +3343,58 @@
             return true;
         }
 
-        async addModel(key, battlerModel, x, y, z) {
+        // Splitting the build from the finish is what keeps the opening frame
+        // honest. Every procedural family's load() builds its geometry in a
+        // straight synchronous body (not one of them awaits anything); only an
+        // authored GLB actually goes to disk. This used to be one `async`
+        // method that awaited load() regardless, so on a procedural creature
+        // the await had nothing to wait for and still pushed the whole tail -
+        // optimiseBattlerModel, the retro pass, the tint, the fades - into a
+        // microtask. Microtasks drain at the end of the same task, so that work
+        // landed on the frame anyway, but AFTER runStaggeredBuilds had stopped
+        // counting: the budget saw a build it had metered and none of the two
+        // to six milliseconds of finishing that followed it, once per model in
+        // the slice. That unmetered pile is the hitch as the bodies appear.
+        //
+        // So when load() has already finished by the time it returns, finish on
+        // the spot, inside the caller's slice, where the budget can see it. A
+        // GLB still chains off its promise the way it always did.
+        addModel(key, battlerModel, x, y, z) {
             debugLog(`Adding model: ${key} at position (${x}, ${y}, ${z})`);
-
+            if (this._disposed || !this.scene) return; // scene torn down before this ran
+            const actualY = y + battlerModel.offsetY / 100;
             try {
-                if (this._disposed || !this.scene) return; // scene torn down before this ran
-                const actualY = y + battlerModel.offsetY / 100;
-                if (!battlerModel.loaded) {
-                    await battlerModel.load(this.physicsWorld, x, actualY, z);
+                if (battlerModel.loaded) {
+                    this._finishModel(key, battlerModel, x, actualY, z);
+                    return;
                 }
-                // load() awaits: the scene may have been disposed meanwhile.
+                const loading = battlerModel.load(this.physicsWorld, x, actualY, z);
+                // Synchronous body: it is already built, so nothing is gained by
+                // yielding and a frame's worth of budget is lost by it.
+                if (battlerModel.loaded) {
+                    this._finishModel(key, battlerModel, x, actualY, z);
+                    return;
+                }
+                return Promise.resolve(loading).then(() => {
+                    this._finishModel(key, battlerModel, x, actualY, z);
+                }).catch((error) => {
+                    console.error(`Failed to add model ${key}:`, error);
+                });
+            } catch (error) {
+                console.error(`Failed to add model ${key}:`, error);
+            }
+        }
+
+        _finishModel(key, battlerModel, x, actualY, z) {
+            try {
+                // load() may have awaited: the scene may have been disposed meanwhile.
                 if (this._disposed || !this.scene) return;
+                if (!battlerModel.model) return;
 
                 // Non-bipedal models face slightly left: reparent their content
                 // into a yawed wrapper so the family's own animations (which run
                 // in local space) are unaffected.
-                if (battlerModel.facingYaw && battlerModel.model && !battlerModel._facingApplied) {
+                if (battlerModel.facingYaw && !battlerModel._facingApplied) {
                     battlerModel._facingApplied = true;
                     const inner = new THREE.Group();
                     inner.rotation.y = battlerModel.facingYaw;

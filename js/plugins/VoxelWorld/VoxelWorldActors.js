@@ -281,10 +281,15 @@
                 this.crouching = !!src.crouch;
                 if (src.jump && !this._srcJumpHeld) this.requestJump();
                 this._srcJumpHeld = !!src.jump;
-                if (src.turnX) this.yaw.rotation.y -= src.turnX * PAD_LOOK_X * delta;
+                // The Options camera speed and the Invert Y switch are the
+                // whole game's, so the second player's stick obeys them too.
+                const C = window.Controller;
+                const camGain = (C && C.cameraSpeed) ? C.cameraSpeed() : 1;
+                const camInv = (C && C.invertCameraY && C.invertCameraY()) ? -1 : 1;
+                if (src.turnX) this.yaw.rotation.y -= src.turnX * camGain * PAD_LOOK_X * delta;
                 if (src.turnY) {
                     this.pitch.rotation.x = Math.max(-1.2, Math.min(1.2,
-                        this.pitch.rotation.x - src.turnY * PAD_LOOK_Y * delta));
+                        this.pitch.rotation.x - src.turnY * camInv * camGain * PAD_LOOK_Y * delta));
                 }
             } else {
                 fwd   = this.move.forward  || (Input.isPressed('up') && !dpadY);

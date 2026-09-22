@@ -123,6 +123,10 @@
     // Direct key listening
     const _Input_onKeyDown = Input._onKeyDown;
     Input._onKeyDown = function(event) {
+        // A key typed into an HTML field belongs to that field (see
+        // window.InputTyping in Core/Hotkeys.js): Page Up/Down inside the
+        // radio's station name box is not an auto-scan.
+        if (window.InputTyping && window.InputTyping.isTyping()) return;
         _Input_onKeyDown.call(this, event);
         
         // Handle debug keys directly
@@ -140,6 +144,10 @@
     
     const _Input_onKeyUp = Input._onKeyUp;
     Input._onKeyUp = function(event) {
+        // A key typed into an HTML field belongs to that field (see
+        // window.InputTyping in Core/Hotkeys.js): Page Up/Down inside the
+        // radio's station name box is not an auto-scan.
+        if (window.InputTyping && window.InputTyping.isTyping()) return;
         _Input_onKeyUp.call(this, event);
         
         // Handle key releases

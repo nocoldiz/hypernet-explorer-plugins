@@ -831,8 +831,8 @@
   // them a hearing; Diplomacy buys them the room.
   function persuasion(actor, delegation, sg) {
     let p = 0.16;
-    if (window.Specializations && typeof window.Specializations.levelOf === "function") {
-      p += 0.055 * (window.Specializations.levelOf(actor, DIPLOMACY_SPEC) - 1);
+    if (window.SpecializationXP && typeof window.SpecializationXP.levelOf === "function") {
+      p += 0.055 * (window.SpecializationXP.levelOf(actor, DIPLOMACY_SPEC) - 1);
     }
     if (delegation) p += 0.004 * Math.max(0, standingFor(actor, delegation));
     // The chair speaks for nobody, which is exactly why it is listened to.

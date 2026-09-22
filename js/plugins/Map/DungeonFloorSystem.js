@@ -1796,9 +1796,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // What lives on an authored floor. A floor of the upper tower is a rung, and
   // the rung says which levels stand on it, whichever map was dealt to it:
   //
-  //   floors 1-3    ->  enemy levels 1-5
-  //   floors 4-6    ->  5-10
-  //   floors 7-10   ->  10-20
+  //   floors 1-5    ->  enemy levels 1-10
+  //   floors 6-10   ->  1-20
+  //
+  // The first ten floors keep their floor at 1: the tower a newcomer walks in
+  // on is a spread of everything weak, not a ladder, and it is the ceiling
+  // alone that opens as they climb.
   //
   // Above the tenth the rung is halved, so the ceiling creeps up five levels
   // at a time instead of ten: a decade keeps its own floor throughout and it
@@ -1829,9 +1832,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if (!Number.isFinite(floor) || floor < 1 || floor > 100) return null;
     if (floor === 100) return { min: THRONE_BAND.min, max: THRONE_BAND.max };
     if (floor >= 91) return { min: 90, max: ENEMY_LEVEL_CEILING };
-    if (floor <= 3) return { min: 1, max: 5 };
-    if (floor <= 6) return { min: 5, max: 10 };
-    if (floor <= 10) return { min: 10, max: 20 };
+    if (floor <= 5) return { min: 1, max: 10 };
+    if (floor <= 10) return { min: 1, max: 20 };
     const decade = Math.ceil(floor / 10);
     const min = Math.min(decade * 10, ENEMY_LEVEL_CEILING - 10);
     // The lower half of a decade stops halfway up the rung, the upper half

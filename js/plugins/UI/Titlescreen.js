@@ -1126,6 +1126,10 @@
             { name: T('Titlescreen.minigame.arcadeManpac'),          avail: () => hasCmd('ArcadeCabinetManager', 'playGame'), run: s => launchArcade(s, 'Manpac') }, // i18n-ignore: arcade cabinet game id
             { name: T('Titlescreen.minigame.arcadeAsteroids'),       avail: () => hasCmd('ArcadeCabinetManager', 'playGame'), run: s => launchArcade(s, 'AsciiAsteroids') },
             { name: T('Titlescreen.minigame.arcadeCentipede'),       avail: () => hasCmd('ArcadeCabinetManager', 'playGame'), run: s => launchArcade(s, 'AsciiCentipede') },
+            // The coilgun cinematic, flown for its own sake: free play takes no
+            // fare and comes down nowhere, so the arrival pops back to this list
+            // instead of transferring a party that is standing on no map.
+            { name: T('Titlescreen.minigame.rocketLaunch'),           avail: () => !!(window.RocketLaunch && window.RocketLaunch.start), run: s => window.RocketLaunch.start({ site: 'ask', mode: 'ask', dest: 'ask', freePlay: true }) },
             { name: T('Titlescreen.minigame.piano'),                   avail: () => !!(window.VisualPiano && window.VisualPiano.open), run: s => launchPiano(s) }
         ];
         // A catalogue this long is only findable in one order, and it is not the
@@ -1856,6 +1860,58 @@
         // The train is the one landing with an event of its own to run the
         // wizard; every other landing asks for it on arrival.
         usesTutorialMap() { return storyModeLanding().mapId === STORY_TRAIN_START.mapId; }
+    };
+
+    // --- Playtesting the story ----------------------------------------------
+    //
+    // The project's own start position is the story's canon landing (map 169),
+    // so the editor's Play button drops straight onto the map the story opens
+    // on. It used to land there as an ordinary new party, which is the one
+    // thing that map is never played as. In a playtest build that boot is now
+    // read as "play the story": the story band is wiped, the run begins as
+    // story mode, and a fresh story savegame is written before the map is
+    // handed over, so the session is playing the story's own save from its
+    // first frame rather than an unbound run that would claim a party slot.
+    // A deployed build never reaches any of this.
+    function isStoryPlaytestBoot() {
+        if (!Utils.isOptionValid('test')) return false;
+        if (DataManager.isBattleTest() || DataManager.isEventTest()) return false;
+        return !!$dataSystem && $dataSystem.startMapId === STORY_CANON_START.mapId;
+    }
+
+    function beginStoryPlaytest() {
+        const SS = window.SaveSystem;
+        const erase = (SS && SS.eraseStoryBand) ? SS.eraseStoryBand() : Promise.resolve();
+        const WM = window.WorldManager;
+        const world = (WM && WM.hasActiveWorld && WM.hasActiveWorld())
+            ? Promise.resolve()
+            : createDefaultWorld();
+        return erase.then(() => world).then(() => {
+            DataManager.setupNewGame();
+            beginStoryRunTransfer();
+            // The band was just emptied, so this claims the story's main slot
+            // outright and binds the session to it.
+            const slot = (SS && SS.storySlots) ? SS.storySlots()[0] : 110;
+            $gameSystem.setSavefileId(slot);
+            return Promise.resolve(DataManager.saveGame(slot)).catch((e) => {
+                console.error('[Titlescreen] story playtest save failed', e);
+            });
+        }).then(() => {
+            SceneManager.goto(Scene_Map);
+        }).catch((e) => {
+            console.error('[Titlescreen] story playtest boot failed', e);
+            SceneManager.goto(Scene_Title);
+        });
+    }
+
+    // The boot runs whole first, so every other plugin hooked onto it still
+    // gets its turn, and the story run is begun on top of whatever screen that
+    // boot settled on: wiping and writing the band is asynchronous, so the
+    // scene it lands on is replaced a few frames later either way.
+    const _Scene_Boot_start_storyPlaytest = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function () {
+        _Scene_Boot_start_storyPlaytest.call(this);
+        if (isStoryPlaytestBoot()) beginStoryPlaytest();
     };
 
     // Builds the canon world (2001, ordinary population, ordinary magic: the
@@ -3093,12 +3149,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             };
             if (kind === 'weapon') {
                 obj.wtypeId = 1 + Math.floor(sRand() * 12);
-                obj.params = [0, 0, 150 + Math.floor(sRand() * 100), 0, 150 + Math.floor(sRand() * 100), 0, 0, 0];
+                obj.params = [0, 0, 8 + Math.floor(sRand() * 9), 0, 4 + Math.floor(sRand() * 5), 0, 0, 0];
                 obj.traits = [];
             } else if (kind === 'armor') {
                 obj.atypeId = 1 + Math.floor(sRand() * 5);
                 obj.etypeId = 2 + Math.floor(sRand() * 3);
-                obj.params = [0, 0, 0, 150 + Math.floor(sRand() * 100), 0, 150 + Math.floor(sRand() * 100), 0, 0];
+                obj.params = [0, 0, 0, 16 + Math.floor(sRand() * 17), 0, 4 + Math.floor(sRand() * 5), 0, 0];
                 obj.traits = [];
             }
             return obj;

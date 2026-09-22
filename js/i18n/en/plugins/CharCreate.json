@@ -779,6 +779,7 @@
   "backgroundSummary": "Background Profile",
   "narrativeHistory": "Backstory",
   "randomize": "Randomize",
+  "randomizeCompanion": "Randomize companion",
   "suggestSpecs": "Suggested",
   "resetSpecs": "Reset",
   "applyToMember": "Apply to Current Member",
@@ -1082,5 +1083,18 @@
   "theSecretCoordinates": "The secret coordinates of the hatch",
   "exitToTitleTitle": "Return to Main Menu",
   "exitToTitleBody": "Creation will be abandoned and this party discarded.",
-  "exitToTitleAccept": "Return"
+  "exitToTitleAccept": "Return",
+  "partyPresets": "Party Presets",
+  "partyPresetsTitle": "Party Dossiers",
+  "loadPartyPreset": "Take This Party",
+  "savePartyPreset": "Save Current Party",
+  "savePartyPresetBody": "File the party as it stands ({name}) as a party dossier of your own?",
+  "partyPresetSaved": "{name} filed as one of your parties.",
+  "partyPresetResaved": "{name} rewritten.",
+  "partyPresetLoaded": "{name} took the seats.",
+  "deletePartyPreset": "Delete Party",
+  "deletePartyPresetBody": "Delete the party dossier of {name}? This cannot be undone.",
+  "exportPreset": "Export Dossier",
+  "presetExported": "{name} written to the characters folder.",
+  "presetExportFailed": "The characters folder could not be written to."
 }

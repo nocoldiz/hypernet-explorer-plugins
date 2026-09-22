@@ -1312,7 +1312,13 @@
             if (!v) continue;
             const drift = quality * (0.92 + Math.random() * 0.16);
             const rolled = Math.round(v * drift) + (v > 0 ? grade : -grade);
-            out[i] = rolled || (v > 0 ? 1 : -1);
+            // A forged piece is a better version of the piece, not a find: the
+            // flat grade alone handed a one-point sheet a sevenfold masterwork
+            // and put a knife above everything an artifact could ever be. Twice
+            // the entry it was bought from is the whole of what an anvil buys,
+            // which leaves the two-to-four-times band to artifacts.
+            const cap = Math.max(Math.abs(v) + 1, Math.round(Math.abs(v) * 2));
+            out[i] = Math.max(-cap, Math.min(cap, rolled)) || (v > 0 ? 1 : -1);
         }
         return out;
     }
@@ -2016,7 +2022,6 @@
                             </div>
                             <div class="left-header"><span class="category-name">${escapeHtml(T('Blacksmith.methods'))}</span></div>
                             <div class="list-viewport" id="forge-trades"></div>
-                            <div id="forge-legend" class="forge-legend"></div>
                         </div>
                         <div class="right-page">
                             <div id="forge-companion-row" class="companion-switcher companion-switcher--header"></div>
@@ -2053,7 +2058,6 @@
 
             this.renderSwitcher();
             this.renderTrades();
-            this.renderLegend();
             this.renderFilters();
             this.renderContext();
             this.renderList();
@@ -2157,26 +2161,6 @@
 
             const focus = el.querySelector('.forge-trade-row.focused');
             if (focus) focus.scrollIntoView({ block: 'nearest' });
-        }
-
-        // The key to the marks the cards carry, at the foot of the left page.
-        // Every mark on the board is one of these four, and reading the board
-        // used to mean guessing which; the legend says it outright, in the same
-        // glyph and the same colour the card itself uses.
-        renderLegend() {
-            const el = document.getElementById('forge-legend');
-            if (!el) return;
-            const line = (mark, cls, key) =>
-                `<div class="forge-legend-row">
-                    <span class="forge-legend-mark ${cls}">${mark}</span>
-                    <span class="forge-legend-text">${escapeHtml(T('Blacksmith.legend.' + key))}</span>
-                </div>`;
-            el.innerHTML =
-                `<div class="forge-legend-title">${escapeHtml(T('Blacksmith.legend.title'))}</div>` +
-                line('&#10004;', 'forge-mat-state ok', 'ready') +
-                line('&#10006;', 'forge-mat-state short', 'short') +
-                line('&#x1F512;', 'forge-tier-need', 'locked') +
-                line('&#9670;', 'forge-quality-mark', 'forged');
         }
 
         // One line over the grid saying, in words, exactly what is under the

@@ -1265,7 +1265,7 @@
   // A recruit still has to be in the party's weight class: nobody more than
   // JOIN_LEVEL_MARGIN levels above the party (its median level) is willing to
   // be led by them, so Join is not offered at all for someone out of reach.
-  const JOIN_LEVEL_MARGIN = 3;
+  const JOIN_LEVEL_MARGIN = 4;
 
   // "The party" is its MEDIAN level, not its strongest member: a level 40
   // veteran carrying two beginners does not make the beginners' outfit a fit
@@ -1333,6 +1333,27 @@
     return pages.some(p => p?.conditions?.selfSwitchValid && p.conditions.selfSwitchCh === 'A');
   }
 
+  // Taking a recruit off the map. The usual way is self-switch A, which swaps
+  // the event onto a page with nothing on it. An authored event that never got
+  // such a page (most hand-written NPCs have two ordinary pages and no blank
+  // one) has nothing to fall through to, so it is erased instead: either way
+  // the recruit stops standing there as a twin of the party member. This is
+  // why recruiting is NOT gated on the event having a self-switch A page any
+  // more, that gate silently hid Join and Follow on people who were perfectly
+  // recruitable.
+  function _vanishRecruitedEvent(eventId) {
+    if (eventId == null || !$gameMap) return;
+    const name = _getNPCName(eventId);
+    $gameSelfSwitches.setValue([$gameMap.mapId(), eventId, 'A'], true);
+    const ev = $gameMap.event(eventId);
+    ev?.refresh();
+    if (!_hasSelfSwitchAPage(eventId)) ev?.erase();
+    // The world loses this citizen, not just this savegame: recorded in the
+    // world folder so no other playthrough can recruit them again
+    // (NPCSystem.js, GoneRegistry).
+    window.NPCGone?.record($gameMap.mapId(), eventId, name, 'joined');
+  }
+
   function _hasJoinPartyCommand(eventId) {
     const ev = $gameMap?.event(eventId);
     if (!ev) return false;
@@ -1357,6 +1378,11 @@
 
   function _resolveBustForActor(actor) {
     if (!actor) return 'img/busts/7.png';
+    // A sealed suit is what is being looked at, not the face inside it: on an
+    // airless world the visor answers for everybody wearing one, and the EVA
+    // authority (GalaxySim_Core) is the only thing that says who is.
+    const suited = window.GalaxySim?.EVA?.bustForActor?.(actor);
+    if (suited) return _bustUrl(suited);
     // The bust the rest of the game shows for this actor (set by character
     // creation, the sprite selector, or a preset dossier) wins over anything
     // derived from the walking sprite. ActorCharacterFields stores 0 when unset.
@@ -1461,6 +1487,18 @@
   }
 
   function _resolveBustPath(npcName, event) {
+    // Somebody met out on an airless surface is behind a visor, and the visor
+    // outranks every face below: the sheet they are standing in is handed to
+    // the EVA authority (GalaxySim_Core), which answers for anybody the ground
+    // makes wear one and for nobody who breathes out there on their own.
+    const EVA = window.GalaxySim?.EVA;
+    if (EVA?.bustForSheet) {
+      const sheet = event?.event()?.characterName
+        ?? event?.event()?.pages?.[0]?.image?.characterName
+        ?? _getProfile(npcName)?.spriteKey ?? null;
+      const suited = sheet ? EVA.bustForSheet(sheet) : null;
+      if (suited) return _bustUrl(suited);
+    }
     // A bust named in the event's comments wins, exactly as in the message box.
     const commentBust = _bustNameFromEvent(event);
     if (commentBust && commentBust !== '7') return _bustUrl(commentBust);
@@ -1477,16 +1515,14 @@
     // show the same person.
     const leaderBust = window.HistoryManager?.leaderBust?.(npcName);
     if (leaderBust) return leaderBust;
-    if (window.NPCSim?.getBustForNPC) {
-      const b = window.NPCSim.getBustForNPC(npcName);
-      if (b && b !== '7') return _bustUrl(b);
-    }
-    // A creature or an animal wears a sheet out of the NPCs.json wardrobe, and
-    // that entry names the faces it comes with. Those are ITS busts and are
-    // read straight off the profile the wardrobe wrote, rather than hunted for
-    // through the sprite-to-bust table, which knows only about people.
-    const creatureBust = _creatureBustPath(npcName);
-    if (creatureBust) return creatureBust;
+    // Nothing above having spoken, the face is the one that belongs to the
+    // SHEET this person is standing in, read out of NPCs.json. That sheet is
+    // what the player is looking at, so it outranks anything the society sim
+    // has cached: a profile is keyed by event name alone, and several authored
+    // events share a name while wearing different sheets, so the cached bust
+    // is whichever same-named event was pinned last. Only an explicitly
+    // written bust (the comment and `bust:` lines handled above) overrides the
+    // sprite; a cached one never does.
     let charName  = event?.event()?.characterName  ?? event?.event()?.pages?.[0]?.image?.characterName;
     let charIndex = event?.event()?.characterIndex ?? event?.event()?.pages?.[0]?.image?.characterIndex ?? 0;
     // Remote NPC (no on-map event, opened from the wiki, web graph, or a
@@ -1499,6 +1535,18 @@
       const sa   = window.Sprites.SpritesAssociation;
       const bust = sa[charName.split('.')[0]]?.[charIndex];
       if (bust && bust !== '7') return _bustUrl(bust);
+    }
+    // A creature or an animal wears a sheet out of the NPCs.json wardrobe, and
+    // that entry names the faces it comes with. Those are ITS busts and are
+    // read straight off the profile the wardrobe wrote, rather than hunted for
+    // through the sprite-to-bust table, which knows only about people.
+    const creatureBust = _creatureBustPath(npcName);
+    if (creatureBust) return creatureBust;
+    // Last of all the society sim's own record, for somebody with no sheet to
+    // read at all: no event on this map and no template in the pools.
+    if (window.NPCSim?.getBustForNPC) {
+      const b = window.NPCSim.getBustForNPC(npcName);
+      if (b && b !== '7') return _bustUrl(b);
     }
     return 'img/busts/7.png';
   }
@@ -1812,12 +1860,61 @@
 
   function _emDb() { return _socialLines().em || {}; }
 
+  // "Local" on the event's Note box: this person is anchored to the map they
+  // were authored on. NPCSystem owns the tag, never a literal here.
+  function _isEmLocalNpc(event) {
+    const note = event?.event?.()?.note ?? event?.note ?? '';
+    return !!window.NPCSystem?.hasLocalTag?.(note);
+  }
+
+  // The spread on a stranger's first impression of her. Her stance says which
+  // way a person leans; this says how far, so two gawkers are not the same
+  // person. Seeded off the name with a different salt from the stance roll, so
+  // it is stable per NPC and does not merely echo which stance they drew.
+  const EM_FIRST_IMPRESSION_SPREAD = 22;
+
+  function _emOpinionJitter(npcName) {
+    const roll = _emHash('disposition:' + String(npcName || ''));
+    return (roll % (EM_FIRST_IMPRESSION_SPREAD * 2 + 1)) - EM_FIRST_IMPRESSION_SPREAD;
+  }
+
+  // ── Em's own voice, whoever she is talking to ───────────────────────────
+  // The stance blocks above are what the WORLD says back to her. The
+  // em.player block is what SHE says, and it is not the party leader's
+  // register: she is twenty-something, British, missing most of her life and
+  // refuses to treat any of it with the gravity everybody else does, so a
+  // line drawn from the house banks sounds like nobody at all. The tone
+  // pools (positive / neutral / negative) cover the Socialize buttons; the
+  // named pools cover every other line the panel puts in her mouth: the joke
+  // she tells, the tale, the poem, the pass she makes, the proposal she puts
+  // and the directions she asks for. Anybody she is standing in front of
+  // hears this, not only the people written down: Bubba is the one exception,
+  // because the em.bubba block owns that conversation outright.
+  // The kind is a pool name ('joke', 'story', 'poem', 'romance', 'propose',
+  // 'directions') or a tone, and a named pool may itself be keyed by tone.
+  function _emVoiceLine(actor, kind, tone) {
+    if (!_isEmActor(actor)) return '';
+    const pool = (_emDb().player || {})[kind];
+    if (!pool) return '';
+    const lines = Array.isArray(pool)
+      ? pool
+      : (pool[tone] || pool.neutral || pool.positive || []);
+    return _rand(lines) || '';
+  }
+
   // Which reaction this NPC has to Em. Stable per NPC (hashed from the name),
   // and stamped onto the profile the first time it is resolved so the rest of
   // the panel, and later visits, agree with what was said the first time.
   function _emStanceKey(profile, npcName, event) {
     if (_isBubbaNpc(npcName, event)) return 'bubba';
     if (profile?._emStance) return profile._emStance;
+    // Somebody who belongs to the map she is standing on has seen her about,
+    // and none of the story that follows her reached their street: they meet
+    // her as a person, neither hostile nor starstruck.
+    if (_isEmLocalNpc(event)) {
+      if (profile) profile._emStance = 'gawker';
+      return 'gawker';
+    }
 
     const roll = _emHash(npcName || '');
     let key;
@@ -1871,9 +1968,18 @@
     const data = _emStanceData(key);
     if (!data) return;
     // Bubba's 90 is who he is to her, not a modifier on how the world feels.
-    const base = key === 'bubba'
-      ? data.opinion
-      : (profile.playerOpinion ?? 0) + (data.opinion ?? 0);
+    // A Local starts level: their own opinion of the party and nothing else.
+    // Everybody else gets their stance plus a per-person spread, so the world
+    // is not one flat grudge and a stranger can already be on her side.
+    let base;
+    if (key === 'bubba') {
+      base = data.opinion;
+    } else if (_isEmLocalNpc(event)) {
+      base = (profile.playerOpinion ?? 0);
+    } else {
+      base = (profile.playerOpinion ?? 0) + (data.opinion ?? 0)
+           + _emOpinionJitter(npcName);
+    }
     _setNpcBaseOpinion(profile, actorId, base);
   }
 
@@ -2707,10 +2813,27 @@
     // The card table is handed over the same way the shop is: the panel closes
     // first and the duel opens from the map, so the overlay is never left
     // hanging behind a scene it does not own.
+    // The Ask / Tell board is handed back the same way: the panel is gone by
+    // the time the choices are put up, so the grid has the screen to itself.
+    if ($gameTemp._NPCEmpathizeOpenStoryAsk) {
+      const speaker = $gameTemp._NPCEmpathizeOpenStoryAsk;
+      $gameTemp._NPCEmpathizeOpenStoryAsk = null;
+      try { window.StoryDialogue?.ask?.($gameMap?.mapId?.(), speaker); }
+      catch (e) { console.error('[NPCEmpathize] open story ask failed', e); }
+    }
     if ($gameTemp._NPCEmpathizeOpenCardDuel) {
       const config = $gameTemp._NPCEmpathizeOpenCardDuel;
       $gameTemp._NPCEmpathizeOpenCardDuel = null;
       if (window.CardDuel) window.CardDuel.start(config);
+    }
+    // And the Ask / Tell board, which is a choice window and so belongs to the
+    // map rather than to an overlay that is on its way out. What is carried
+    // across is who was doing the talking: the panel is opened on whoever the
+    // switcher has focused, and that is rarely the party leader.
+    if ($gameTemp._NPCEmpathizeOpenStoryAsk) {
+      const speaker = $gameTemp._NPCEmpathizeOpenStoryAsk;
+      $gameTemp._NPCEmpathizeOpenStoryAsk = null;
+      window.StoryDialogue?.ask?.($gameMap?.mapId?.(), speaker);
     }
     if ($gameTemp._NPCEmpathizeStartBattle != null) {
       const troopId = $gameTemp._NPCEmpathizeStartBattle;
@@ -3505,6 +3628,39 @@
       );
     }
 
+    // ── The topics board, from inside the panel ─────────────────────────────
+    // Everything the two of them have to raise with each other lives on the Ask
+    // board (DialogueSystem.js), which until now could only be reached by
+    // turning round to Bubba while he walked in the column. It belongs to the
+    // pair, not to the marching order, so the panel offers it too: Em asks, and
+    // Bubba, who is the one who remembers, tells. It is offered whether he is
+    // walking with the party or benched behind it, and whether he is standing
+    // there as a map NPC or is being opened off the roster.
+    _storyAskSpeaker() {
+      if (!this._pairCtx?.()) return null;
+      const name = this._focusActor()?.name?.();
+      return name ? String(name).trim() : null;
+    }
+
+    _canStoryAsk() {
+      const speaker = this._storyAskSpeaker();
+      if (!speaker) return false;
+      return !!window.StoryDialogue?.canAsk?.(this._targetName(), undefined, speaker);
+    }
+
+    // The board draws itself out of $gameMessage, which the panel is standing
+    // on top of, so the panel closes first and the map opens it: the same
+    // hand-over the shop and the card table make.
+    _storyAsk() {
+      const speaker = this._storyAskSpeaker();
+      if (!speaker) return;
+      SoundManager.playOk();
+      this._removeOverlay();
+      this._releaseEventLock();
+      SceneManager.pop();
+      $gameTemp._NPCEmpathizeOpenStoryAsk = speaker;
+    }
+
     // How the other one greets them: a line about the weather, the place or the
     // hour when one fits, otherwise the plain hello. One shot per panel.
     _sayPairGreeting() {
@@ -3517,6 +3673,34 @@
       const npcName = this._targetName();
       this._chatHistory.push({ role: 'npc', text: vary(String(line).replace(/\{name\}/g, npcName)) });
       if (this._chatHistory.length > 16) this._chatHistory = this._chatHistory.slice(-16);
+    }
+
+    // ── The Ask / Tell board, from the panel ───────────────────────────────
+    // The topics the two of them have between them (NPC/DialogueSystem.js) are
+    // offered here as well as on the road, so the board is reachable from the
+    // sheet the roster opens rather than only by turning round on a map.
+    // Who is talking: the focused member, and only while this is the pair
+    // facing each other. Anybody else opening anybody else's panel has no
+    // board to open.
+    _storyAskSpeaker() {
+      if (!this._pairCtx?.()) return '';
+      return this._focusActor()?.name?.() || '';
+    }
+
+    _canStoryAsk() {
+      const speaker = this._storyAskSpeaker();
+      if (!speaker) return false;
+      return !!window.StoryDialogue?.canAsk?.(this._targetName(), undefined, speaker);
+    }
+
+    // The board is a choice window, so the panel gets out of its way first and
+    // the map opens it, exactly as the shop counter and the card table are
+    // handed over.
+    _storyAsk() {
+      const speaker = this._storyAskSpeaker();
+      if (!speaker) return;
+      SceneManager.pop();
+      $gameTemp._NPCEmpathizeOpenStoryAsk = speaker;
     }
 
     // Bicker: the action the two of them have and nobody else does. One of them
@@ -3659,6 +3843,16 @@
         const first = this._contentItems().findIndex(el => !el.classList.contains('npc-back-btn'));
         if (first > 0) { this._contentIndex = first; this._updateSelectionHighlight(); }
       }
+    }
+
+    // The star on an article, and on the person panel's own header. The page
+    // is redrawn in place so the star fills or empties where it stands.
+    _toggleWikiFavourite(type, id, name) {
+      try { id = decodeURIComponent(id); } catch (_) {}
+      try { name = decodeURIComponent(name); } catch (_) {}
+      SoundManager.playCursor();
+      Wiki.toggleFavourite(type, id, name);
+      this._render();
     }
 
     _moreAction(id) {
@@ -3909,6 +4103,7 @@
         case 'bite':       this._beginTransmit('bite');     break;
         case 'socialize':  this._socialize();   break;
         case 'bicker':     this._bicker();      break;
+        case 'askTopics':  this._storyAsk();    break;
         case 'romance':    this._romance();     break;
         case 'directions': this._askDirections(); break;
         case 'cardDuel':   this._cardDuel();    break;
@@ -4866,6 +5061,13 @@
         const tone = emTone || (delta >= 0 ? 'positive' : 'negative');
         const said = _rand(pairCtx.data.player?.[tone] || pairCtx.data.player);
         if (said && id !== 'joke' && id !== 'story' && id !== 'poem') playerLine = fill(said);
+        // The pair bank has no jokes in it, so the entertainment falls back to
+        // her own pool rather than to the house grammar: the material is hers
+        // whoever is standing in front of her.
+        if (id === 'joke' || id === 'story' || id === 'poem') {
+          const own = _emVoiceLine(actor, id, tone);
+          if (own) playerLine = fill(own);
+        }
         const back = _rand(pairCtx.data[tone]);
         if (back) npcLine = fill(back);
         delta = Math.round(Math.abs(delta) * _stanceToneMult(pairCtx, tone));
@@ -4883,13 +5085,14 @@
         if (emLine) npcLine = fill(emLine);
         delta = Math.round(delta * _stanceToneMult(emCtx, emTone));
         // She does not speak like the party leader she is standing in for: the
-        // "player" pool of the em block is her own voice, keyed by tone. A joke
-        // or a performance is content she chose, so those keep the line they
-        // generated; everything else is answered in her words.
-        if (id !== 'joke' && id !== 'story' && id !== 'poem') {
-          const emSaid = _rand(_emDb().player?.[emTone]);
-          if (emSaid) playerLine = fill(emSaid);
-        }
+        // "player" pool of the em block is her own voice. Every move she makes
+        // is said in it, the entertainment included: a joke she tells is one of
+        // HER jokes rather than a line off the house grammar, and the tale and
+        // the poem are hers to introduce. Only when her own pool has nothing
+        // for a move does the generic line stand.
+        const emKind = (id === 'joke' || id === 'story' || id === 'poem') ? id : emTone;
+        const emSaid = _emVoiceLine(actor, emKind, emTone);
+        if (emSaid) playerLine = fill(emSaid);
       }
 
       // Bubba (Switch 49): he does not perform, he deflects. Whatever the move
@@ -5643,8 +5846,7 @@
       // ShopShiftManager.isShopEvent). No Switch 67 or name-matching.
       // A full party is NOT a gate any more: the fourth person to say yes signs
       // on into the reserves and waits on the Dynamics board (NPCSystemParty.joinParty).
-      if (!_hasSelfSwitchAPage(evId)
-          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
+      if (window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
           || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))
           || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
         SoundManager.playBuzzer();
@@ -5766,15 +5968,7 @@
       // panel was actually opened from, which can differ after wiki navigation
       // or when a shop-shift stand-in supplied the profile, and refresh so the
       // page swap lands immediately instead of on the next map update.
-      const swEvId = evId ?? this._launchEventId;
-      if (swEvId != null && $gameMap) {
-        $gameSelfSwitches.setValue([$gameMap.mapId(), swEvId, 'A'], true);
-        $gameMap.event(swEvId)?.refresh();
-        // The world loses this citizen, not just this savegame: recorded in the
-        // world folder so no other playthrough can recruit them again
-        // (NPCSystem.js, GoneRegistry).
-        window.NPCGone?.record($gameMap.mapId(), swEvId, npcName, 'joined');
-      }
+      _vanishRecruitedEvent(evId ?? this._launchEventId);
 
       // Somebody joining is the end of the conversation, not a line in it: the
       // panel closes and the news is a toast, so the player is left standing on
@@ -5813,9 +6007,9 @@
       const profile = _getProfile(npcName);
       const T       = _getT();
 
-      if (!_hasSelfSwitchAPage(evId)
-          || window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
-          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
+      if (window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId))
+          || window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))
+          || !_joinLevelOk(_presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level)) {
         SoundManager.playBuzzer();
         return;
       }
@@ -5863,12 +6057,7 @@
 
       // They stop standing on the map, and the world knows they left with the
       // party, exactly as a full recruit does.
-      const swEvId = evId ?? this._launchEventId;
-      if (swEvId != null && $gameMap) {
-        $gameSelfSwitches.setValue([$gameMap.mapId(), swEvId, 'A'], true);
-        $gameMap.event(swEvId)?.refresh();
-        window.NPCGone?.record($gameMap.mapId(), swEvId, npcName, 'joined');
-      }
+      _vanishRecruitedEvent(evId ?? this._launchEventId);
 
       window.ParchmentToast?.show?.(T('Empathize.joinedFollower', { name: npcName }),
         { severity: 'info', duration: 260 });
@@ -6709,6 +6898,49 @@
       return null;
     },
 
+    // ── favourites ───────────────────────────────────────────────────────────
+    // A reading list the player keeps: any article can be starred, and the
+    // stars sit on the savegame rather than on the world, because what one
+    // party wanted to remember is not what the next one does. An entry is the
+    // same (type, id) pair every other wiki route uses, with the name it was
+    // starred under kept beside it so the shelf can be drawn without resolving
+    // every article first - which matters for the worlds the Omega Tower's
+    // floors open onto, since those are rolled per world and are listed
+    // nowhere else.
+    _favList() {
+      if (typeof $gameSystem === 'undefined' || !$gameSystem) return [];
+      if (!Array.isArray($gameSystem._npcWikiFavourites)) $gameSystem._npcWikiFavourites = [];
+      return $gameSystem._npcWikiFavourites;
+    },
+
+    isFavourite(type, id) {
+      const sid = String(id);
+      return this._favList().some(f => f && f.type === type && String(f.id) === sid);
+    },
+
+    // Returns the new state: true when it has just been starred.
+    toggleFavourite(type, id, name) {
+      const list = this._favList();
+      const sid  = String(id);
+      const at   = list.findIndex(f => f && f.type === type && String(f.id) === sid);
+      if (at >= 0) { list.splice(at, 1); return false; }
+      list.push({ type, id: sid, name: String(name || id) });
+      return true;
+    },
+
+    // The shelf itself, newest star first, with each name refreshed off the
+    // article where the article still exists.
+    listFavourites() {
+      return this._favList().slice().reverse().map(f => {
+        let name = f.name;
+        try {
+          const view = f.type === 'npc' ? null : this.get(f.type, f.id);
+          if (view?.name) name = view.name;
+        } catch (_) {}
+        return { type: f.type, id: f.id, name: name || f.id };
+      });
+    },
+
     // ── index listings (Wiki tab grids) ──────────────────────────────────────
 
     // Every known NPC: society profiles (anyone ever met/simulated) plus the
@@ -7141,9 +7373,12 @@
     // Open the panel straight on the Wiki index tab (optionally on a specific
     // category, e.g. 'party'), used by the main menu's Dynamics command.
     // Anchored to the party leader's actor profile so the left panel is valid.
-    openWiki(category = null) {
+    // A wiki opened off a party member is anchored to THAT member, so the
+    // left panel is reading whoever the page was opened about rather than
+    // always the leader; nothing passed falls back to the leader as before.
+    openWiki(category = null, actorId = null) {
       Scene_NPCEmpathize._eventId = null;
-      Scene_NPCEmpathize._actorId = $gameParty?.leader()?.actorId() ?? 1;
+      Scene_NPCEmpathize._actorId = actorId ?? $gameParty?.leader()?.actorId() ?? 1;
       Scene_NPCEmpathize._entity  = null;
       Scene_NPCEmpathize._initialTab = 'wiki';
       Scene_NPCEmpathize._initialWikiCategory = category;
@@ -7375,6 +7610,9 @@
       // Em (Switch 48): stance resolution, shared with the UI layer so it can
       // hide what she is not allowed to do and label what she is walking into.
       _emPlaythrough, _isEmActor, _isBubbaNpc, _emContext, _emStanceKey, _emStanceData,
+      _isEmLocalNpc, _emOpinionJitter,
+      // Every line Em herself speaks in the panel comes out of here.
+      _emVoiceLine,
       // Bubba (Switch 49): the same for the man who built the Liminal Engine,
       // so the UI can hide what he refuses to do and label what he walks into.
       _bubbaPlaythrough, _isBubbaActor, _bubbaContext, _bubbaDb,
@@ -7391,6 +7629,10 @@
       _animalJoinChance, _wisMod, _recruitAnimalAsPet, _recruitAnimalAsMember,
       _isNonSentientActor, _feralKind, _feralBand, _feralCanGift, FERAL_ACTIONS,
       _feralGrowlFor, _feralNoise, _isNonSentientNpc,
+      // Which class voice a beast answers in, so anything staging a creature's
+      // reply outside the panel (Farming/AnimalGrowthSystem's petting exchange)
+      // draws its noise from the same bank the panel does.
+      _creatureClassOfNpc, _creatureClassOfActor,
       // Petting and feeding: the UI layer builds the beast action row and the
       // feeding tray out of these.
       _feedKind, _feedCalories, _feedOpinion, _feedItemsInPack, PET_OPINION,

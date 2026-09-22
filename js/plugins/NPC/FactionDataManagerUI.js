@@ -214,7 +214,6 @@ Scene_FactionStatus.prototype.getFactionList = function () {
       faction: null,
       standingKey: $gameFactions.hyperpowerStandingKey(hp.id),
       name: this.hyperpowerLabel(hp),
-      iconIndex: $gameFactions.hyperpowerIcon(hp.id),
       children: [],
     };
     power.children = $gameFactions.getHyperpowerFactions(hp.id)
@@ -225,7 +224,6 @@ Scene_FactionStatus.prototype.getFactionList = function () {
         hyperpower: hp,
         standingKey: String(child.id),
         name: FactionDataManager.instance.t(child.name),
-        iconIndex: child.iconIndex,
       }));
     // A banner sworn to this power is listed under it like any other branch.
     if (playerRow && playerRow.hyperpower && playerRow.hyperpower.id === hp.id) {
@@ -241,7 +239,6 @@ Scene_FactionStatus.prototype.getFactionList = function () {
       faction: faction,
       standingKey: String(faction.id),
       name: FactionDataManager.instance.t(faction.name),
-      iconIndex: faction.iconIndex,
       children: [],
     });
   });
@@ -365,11 +362,6 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
       <div class="faction-row ${isFocused} ${isSub}" data-idx="${idx}" onclick="SceneManager._scene.selectUIFaction(${idx})">
         ${fold}
         ${subMarker}
-        ${!item.isSub && item.iconIndex ? `
-          <div class="faction-icon-frame">
-            <canvas class="fac-row-emblem" id="fac-canvas-${idx}" width="32" height="32"></canvas>
-          </div>
-        ` : ""}
         <div class="faction-info">
           <span class="faction-name">${FRS.escapeText(item.name)}</span>
           ${foldable && !isOpen ? `<span class="faction-branch-count">${(item.children || []).length}</span>` : ""}
@@ -479,8 +471,9 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
         const key = (raw && raw.name) ? raw.name : raw;
         const looked = FactionDataManager.instance.t(key);
         const text = (looked && looked !== key) ? looked : String(key || "");
-        if (!/[_.]/.test(text)) return text;
-        return text.split(/[_.]/).filter(Boolean)
+        // A slug is broken on its separators, and a name the roster holds
+        // in lower case ("zeus") is titled too: a leader is printed as a name.
+        return text.split(/[_.s]+/).filter(Boolean)
           .map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
       };
       // A reign that runs past the world's own present is still running: it is
@@ -606,6 +599,61 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
           : T("Factions.noArmies"), true);
     }
 
+    // The power's own numbers, straight off Hyperpowers.json: where it sits,
+    // the nation it is run from and the five strengths the simulation weighs it
+    // by. They were held in the data and never printed anywhere.
+    let profileHTML = "";
+    if (isPower && hp.data) {
+      const d = hp.data;
+      const nation = (n) => (window.WorldNames ? window.WorldNames.any(n) : n);
+      const rows = [];
+      if (d.region) rows.push(fact(T("Factions.regionLbl"), FRS.escapeText(String(d.region))));
+      if (d.homeNation) rows.push(fact(T("Factions.homeNationLbl"), FRS.escapeText(String(nation(d.homeNation)))));
+      // A strength is a raw score with no ceiling written down anywhere, so it
+      // is printed as the number plus the band it falls in rather than as a bar
+      // against a maximum nobody declared.
+      const bandOf = (v) => T(v >= 120 ? "Factions.bandDominant"
+        : v >= 80 ? "Factions.bandStrong"
+        : v >= 40 ? "Factions.bandModest" : "Factions.bandWeak");
+      const strength = (key, labelKey) => {
+        const v = Number(d[key]);
+        if (!Number.isFinite(v)) return;
+        rows.push(fact(T(labelKey), T("Factions.strengthLine", { value: v, band: bandOf(v) })));
+      };
+      strength("military", "Factions.militaryLbl");
+      strength("economy", "Factions.economyLbl");
+      strength("population", "Factions.populationLbl");
+      strength("information", "Factions.informationLbl");
+      strength("arcane", "Factions.arcaneLbl");
+      if (rows.length) profileHTML = rows.join("");
+    }
+
+    // A branch answers to somebody, and it can put men in the field of its own.
+    // Both are on the faction record and neither reached the page before.
+    let branchProfileHTML = "";
+    if (!isPower && faction && !isPlayerFaction) {
+      const rows = [];
+      if (faction.parentHyperpower) {
+        rows.push(fact(T("Factions.answersToLbl"),
+          FRS.escapeText(FactionDataManager.instance.t(faction.parentHyperpower))));
+      }
+      const troops = faction.troops || [];
+      if (troops.length) {
+        const cheapest = troops.reduce((a, b) =>
+          (Number(b.hiringCost) || Infinity) < (Number(a.hiringCost) || Infinity) ? b : a);
+        rows.push(fact(T("Factions.troopTypesLbl", { count: troops.length }),
+          troops.map(t => FactionDataManager.instance.t(t.name)).join(", "), true));
+        if (window.MoneyFormatter && Number.isFinite(Number(cheapest.hiringCost))) {
+          rows.push(fact(T("Factions.cheapestTroopLbl"),
+            T("Factions.cheapestTroopLine", {
+              name: FactionDataManager.instance.t(cheapest.name),
+              price: window.MoneyFormatter.format(Number(cheapest.hiringCost)),
+            }), true));
+        }
+      }
+      if (rows.length) branchProfileHTML = rows.join("");
+    }
+
     // What the party's own banner holds: who has joined it, who it answers to,
     // and the way back into the screen where both are changed.
     let ownFactionHTML = "";
@@ -679,9 +727,6 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
         <div class="ui-detail">
 
           <div class="ui-detail-head">
-            <div class="heraldry-emblem-box">
-              <canvas class="fac-emblem" id="heraldry-canvas" width="32" height="32"></canvas>
-            </div>
             <div class="ui-detail-titles">
               <h3 class="heraldry-title">${factionNameHTML}</h3>
               <div class="heraldry-subtitle">${T(isPower ? "Factions.kindPower" : "Factions.kindFaction")}</div>
@@ -701,6 +746,13 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
                 ${leadersHTML}
               </div>` : ""}
 
+            ${profileHTML || branchProfileHTML ? `
+              <div class="inspect-section-title">${T("Factions.profileTitle")}</div>
+              <div class="ui-fact-grid">
+                ${profileHTML}
+                ${branchProfileHTML}
+              </div>` : ""}
+
             ${branchesHTML || countriesHTML || ownFactionHTML || armiesHTML ? `
               <div class="inspect-section-title">${T("Factions.holdingsTitle")}</div>
               <div class="ui-fact-grid">
@@ -717,6 +769,8 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
           </div>
 
           <div class="inspect-actions">
+            ${this._selectMode && selectedRecord.faction && !isPlayerFaction ? `<div class="inspect-btn focusable"
+              onclick="SceneManager._scene.confirmUIFactionPick()">${T("Factions.confirmPick")}</div>` : ""}
             ${isPlayerFaction ? `<div class="inspect-btn focusable"
               onclick="SceneManager._scene.openPlayerFaction()">${T("Factions.player.manageButton")}</div>` : ""}
             ${wikiHTML}
@@ -729,9 +783,10 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
 
   if (!leftPageContainer || this._dndLastLeftPageKey !== leftPageKey) {
     this._dndLastLeftPageKey = leftPageKey;
-    // Draw double page spread
+    // Draw double page spread. The register's own split: the roll is a column
+    // of names and needs less of the paper than the dossier beside it does.
     this._dndContainer.innerHTML = `
-      <div class="book-spread">
+      <div class="book-spread factions-spread">
         ${leftPageHTML}
         ${rightPageHTML}
       </div>
@@ -753,53 +808,41 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
       key: leftPageKey,
       count: factionList.length,
       renderItem: (idx) => factionRowHTML(factionList[idx], idx),
-      // Walking the roll moves one mark. Every standing and every emblem on
-      // screen already reads right, so the window is left as it is rather than
-      // rebuilt and its emblems redrawn a canvas at a time.
-      focus: { index: this._dndSelectedIndex, selector: '.faction-row', className: 'selected' },
-      onWindow: (win, from, to) => {
-        for (let idx = from; idx < to; idx++) {
-          const item = factionList[idx];
-          if (item && !item.isSub && item.iconIndex) {
-            this.drawUIFactionEmblem(item.iconIndex, `fac-canvas-${idx}`);
-          }
-        }
-      }
+      // Walking the roll moves one mark. Every standing on screen already
+      // reads right, so the window is left as it is rather than rebuilt.
+      focus: { index: this._dndSelectedIndex, selector: '.faction-row', className: 'selected' }
     });
     // Scroll active item into view, by index: the row is only in the DOM once
     // the window reaches it.
     window.MenuVirtualList.scrollToIndex(grid, this._dndSelectedIndex);
   }
 
-  if (selectedRecord && selectedRecord.iconIndex) {
-    this.drawUIFactionEmblem(selectedRecord.iconIndex, "heraldry-canvas");
-  }
 };
 
-Scene_FactionStatus.prototype.drawUIFactionEmblem = function (iconIndex, canvasId) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const bitmap = ImageManager.loadSystem("IconSet");
-
-  const drawIcon = () => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, 32, 32);
-    ctx.imageSmoothingEnabled = false;
-
-    const pw = 32;
-    const ph = 32;
-    const sx = (iconIndex % 16) * pw;
-    const sy = Math.floor(iconIndex / 16) * ph;
-
-    ctx.drawImage(bitmap.canvas, sx, sy, pw, ph, 0, 0, 32, 32);
-  };
-
-  if (bitmap.isReady()) {
-    drawIcon();
-  } else {
-    bitmap.addLoadListener(drawIcon);
+// Hands the highlighted faction back to whoever opened the register in
+// selection mode. The one answer for both the button on the page and the
+// Confirm key, so a pick made with the mouse and one made with the stick run
+// the same code. Returns true when a faction was actually handed back.
+Scene_FactionStatus.prototype.confirmUIFactionPick = function () {
+  if (!this._selectMode) return false;
+  const list = this.getFactionList();
+  const entry = list[this._dndSelectedIndex];
+  // Five hyperpowers have no faction of their own, so there is no id to hand
+  // back: a caller asking for a faction cannot be given one of those. Nor can
+  // it be given the party's own banner, which is world state and has no entry
+  // in Factions.json for the caller to look up afterwards.
+  if (!entry || !entry.faction || entry.isPlayer) {
+    SoundManager.playBuzzer();
+    return false;
   }
+  SoundManager.playOk();
+  if (this._onConfirm) {
+    const callback = this._onConfirm;
+    this._onConfirm = null;
+    callback(entry.faction.id);
+  }
+  this.popScene();
+  return true;
 };
 
 Scene_FactionStatus.prototype.selectUIFaction = function (idx) {
@@ -928,23 +971,7 @@ const UIFactionsInputManager = {
   handleOk: function () {
     const scene = this._scene;
     if (scene && scene._selectMode) {
-      const list = scene.getFactionList();
-      const entry = list[scene._dndSelectedIndex];
-      // Five hyperpowers have no faction of their own, so there is no id to
-      // hand back: a caller asking for a faction cannot be given one of those.
-      // Nor can it be given the party's own banner, which is world state and
-      // has no entry in Factions.json for the caller to look up afterwards.
-      if (!entry || !entry.faction || entry.isPlayer) {
-        SoundManager.playBuzzer();
-        return;
-      }
-      SoundManager.playOk();
-      if (scene._onConfirm) {
-        const callback = scene._onConfirm;
-        scene._onConfirm = null;
-        callback(entry.faction.id);
-      }
-      scene.popScene();
+      scene.confirmUIFactionPick();
       return;
     }
     // Not picking a faction for somebody else: Confirm opens the long dossier
@@ -1475,76 +1502,16 @@ Window_FactionStatus.prototype.drawItem = function (index) {
 
     const reputationColor = $gameFactions.getReputationColor(faction.id);
 
-
-
-
-
-
-
-    const iconWidth = ImageManager.iconWidth;
-
-
-
-    const baseTextIndent = iconWidth + 4; // Space for icon + padding
-
-
-
-    const subFactionIndent = 32; // Additional indent for subfactions
-
-
-
-
-
-
+    const subFactionIndent = 32; // Indent for subfactions
 
     let currentTextX = rect.x;
 
-
-
-
-
-
-
-    // Draw icon for main factions
-
-
-
-    if (!item.isSub && faction.iconIndex) {
-
-
-
-      this.drawIcon(faction.iconIndex, currentTextX, rect.y);
-
-
-
-    }
-
-
-
-
-
-
-
-    // Adjust textX based on whether it's a subfaction or main faction
+    // Subfactions sit in from the main factions
 
 
 
     if (item.isSub) {
-
-
-
-      currentTextX += baseTextIndent + subFactionIndent; // Subfactions get icon space + additional indent
-
-
-
-    } else {
-
-
-
-      currentTextX += baseTextIndent; // Main factions just get icon space
-
-
-
+      currentTextX += subFactionIndent;
     }
 
 

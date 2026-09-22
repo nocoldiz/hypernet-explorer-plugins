@@ -1729,6 +1729,82 @@
     window.SkillShapes = SkillShapes;
     SkillMaster.SkillShapes = SkillShapes;
 
+    //=============================================================================
+    // EquipSkills
+    //
+    // A piece of gear that grants a skill lends it, it does not teach it. The
+    // skill is the wearer's for as long as the piece is worn: it is theirs to
+    // cast without spending a loadout slot on it, and while they carry it the
+    // skill tree treats it as held, so the branches behind it stand open and
+    // anything learned off those branches is learned for good. Take the piece
+    // off and the lent skill goes with it; what was paid for out of it stays.
+    //
+    // The grant itself is the stock Add Skill trait (code 43) on the equipped
+    // item, so nothing is written onto the character and nothing has to be
+    // cleaned up on unequip. window.EquipSkills is the one answer to "is this
+    // skill lent, and by what?": never re-derive it from a trait code.
+    //=============================================================================
+
+    const T_ADD_SKILL = 43;
+    const _lentCache = new WeakMap();
+
+    const EquipSkills = {
+        // Every skill id the character's worn gear is lending them, as a Map
+        // of id -> the piece lending it. Asked once per frame per character:
+        // the equip screen walks the whole tree while the player scrolls.
+        lent: function (actor) {
+            if (!actor || typeof actor.equips !== 'function') return new Map();
+            const frame = (typeof Graphics !== 'undefined' && Graphics.frameCount) || 0;
+            const equips = actor.equips() || [];
+            // The signature is part of the key, not just the frame: a piece
+            // can come off and go on inside a single frame, and the answer
+            // must change with it or a skill outlives the gear lending it.
+            const sig = equips.map(i => i ? (i.etypeId ? 'a' : 'w') + i.id : '-').join(',');
+            const hit = _lentCache.get(actor);
+            if (hit && hit.frame === frame && hit.sig === sig) return hit.map;
+            const map = new Map();
+            for (const item of equips) {
+                if (!item || !Array.isArray(item.traits)) continue;
+                for (const trait of item.traits) {
+                    if (trait && trait.code === T_ADD_SKILL && trait.dataId > 0 && !map.has(trait.dataId)) {
+                        map.set(trait.dataId, item);
+                    }
+                }
+            }
+            _lentCache.set(actor, { frame, sig, map });
+            return map;
+        },
+
+        ids: function (actor) {
+            return Array.from(this.lent(actor).keys());
+        },
+
+        // Lent and not owned. A skill the character has learned for themselves
+        // is theirs whatever they are wearing, so it is never "lent".
+        grants: function (actor, skillId) {
+            if (!actor || !skillId) return false;
+            if (actor.isLearnedSkill && actor.isLearnedSkill(skillId)) return false;
+            return this.lent(actor).has(skillId);
+        },
+
+        // The piece doing the lending, for the line that says so.
+        source: function (actor, skillId) {
+            if (!this.grants(actor, skillId)) return null;
+            return this.lent(actor).get(skillId) || null;
+        },
+
+        // The one question the skill tree asks: does this character have this
+        // skill in hand right now, learned or lent?
+        holds: function (actor, skillId) {
+            if (!actor || !skillId) return false;
+            if (actor.isLearnedSkill && actor.isLearnedSkill(skillId)) return true;
+            return this.lent(actor).has(skillId);
+        }
+    };
+
+    window.EquipSkills = EquipSkills;
+    SkillMaster.EquipSkills = EquipSkills;
+
     const SkillGraph = {
         _trees: null,
         _index: null,
@@ -1947,7 +2023,9 @@
             if (!foreign && node.tier === 0) return true;
             if (!node.parents.length) return !foreign;
             let held = 0;
-            for (const id of node.parents) if (actor.isLearnedSkill(id)) held++;
+            // A lent skill opens what stands behind it: while the gear is worn the
+            // branch is walkable, and what is bought off it is bought for good.
+            for (const id of node.parents) if (EquipSkills.holds(actor, id)) held++;
             return held >= Math.max(1, node.need);
         },
 
@@ -1956,7 +2034,7 @@
             // level floor, which the lock line states by itself.
             if (this.isForbidden(skillId)) return [];
             return this.requires(skillId)
-                .filter(id => !(actor && actor.isLearnedSkill(id)))
+                .filter(id => !(actor && EquipSkills.holds(actor, id)))
                 .map(id => $dataSkills[id])
                 .filter(s => s && s.name);
         },
@@ -1965,7 +2043,7 @@
             const node = this._nodeFor(skillId);
             if (!node || node.forbidden || !node.parents.length) return 0;
             let held = 0;
-            for (const id of node.parents) if (actor && actor.isLearnedSkill(id)) held++;
+            for (const id of node.parents) if (EquipSkills.holds(actor, id)) held++;
             return Math.max(0, Math.max(1, node.need) - held);
         },
 
@@ -2421,14 +2499,18 @@
             const graph = window.SkillGraph;
             st.nodes.forEach((node, i) => {
                 const learned = actor ? actor.isLearnedSkill(node.id) : false;
+                // Lent by worn gear: in hand, and holding its branch open, but
+                // not owned. It reads as held rather than as merely open.
+                const lent = !learned && window.EquipSkills && window.EquipSkills.grants(actor, node.id);
                 const open = !learned && graph && graph.isOpen(actor, node.id);
-                node.state = learned ? 2 : (open ? 1 : 0);
+                node.state = (learned || lent) ? 2 : (open ? 1 : 0);
 
                 const el = st.labelEls[i];
                 if (el) {
                     el.classList.toggle('sg3-learned', learned);
+                    el.classList.toggle('sg3-lent', !!lent);
                     el.classList.toggle('sg3-open', open);
-                    el.classList.toggle('sg3-locked', !learned && !open);
+                    el.classList.toggle('sg3-locked', !learned && !lent && !open);
                     el.classList.toggle('sg3-focus', node.id === focusId);
 
                     const cost = el.querySelector('.sg2d-label-cost');
@@ -2715,12 +2797,10 @@
                     ctx.shadowBlur = 12;
                     ctx.strokeStyle = `hsla(${hue}, 90%, 65%, 1)`;
                     ctx.lineWidth = 3;
-                } else if (isOpen) {
-                    ctx.shadowColor = `hsla(${hue}, 80%, 50%, ${0.5 + st.pulse * 0.4})`;
-                    ctx.shadowBlur = 8 + st.pulse * 6;
-                    ctx.strokeStyle = `hsla(${hue}, 80%, 55%, 0.95)`;
-                    ctx.lineWidth = 2.5;
                 } else {
+                    // An open skill is announced by the lines that reach it and
+                    // never by its own circle, so the ring of a teachable node
+                    // stays as quiet as a locked one.
                     ctx.shadowBlur = 0;
                     ctx.strokeStyle = 'rgba(70, 75, 85, 0.7)';
                     ctx.lineWidth = 1.8;
@@ -2731,9 +2811,6 @@
                 if (isLearned) {
                     bgGrad.addColorStop(0, `hsla(${hue}, 70%, 35%, 1)`);
                     bgGrad.addColorStop(1, `hsla(${hue}, 80%, 15%, 1)`);
-                } else if (isOpen) {
-                    bgGrad.addColorStop(0, `hsla(${hue}, 50%, 25%, 1)`);
-                    bgGrad.addColorStop(1, `hsla(${hue}, 60%, 10%, 1)`);
                 } else {
                     bgGrad.addColorStop(0, 'rgba(30, 34, 40, 1)');
                     bgGrad.addColorStop(1, 'rgba(15, 17, 20, 1)');
@@ -4123,7 +4200,7 @@
     // the same order, so the two can never drift apart.
     const CATEGORY_ACTION_BTNS = ['.fuse-spells-btn', '.craft-spell-btn', '.magic-systems-btn',
         '.craft-skill-btn', '.enchant-weapon-btn', '.enchant-armor-btn', '.enchant-book-btn',
-        '.write-skillbook-btn', '.write-grimorie-btn'];
+        '.write-skillbook-btn', '.write-grimorie-btn', '.hexorcize-btn'];
     const CATEGORY_ACTION_FNS = [
         (sc) => sc.openSpellEditor(),
         (sc) => sc.openCraftBench('spell'),
@@ -4134,6 +4211,7 @@
         (sc) => sc.openEnchantBench('book'),
         (sc) => sc.openWriteBench('skillbook'),
         (sc) => sc.openWriteBench('grimorie'),
+        (sc) => sc.openHexorcizeBench(),
     ];
     const SKILL_GRID_COLS = 2;
     const ATLAS_ZOOM_DEFAULT = 1.0;
@@ -4608,13 +4686,15 @@
         skills.forEach((skill, idx) => {
             const isFocused = (this._selectedSkillIndex === idx);
             const isLearned = teachActor ? teachActor.isLearnedSkill(skill.id) : false;
+            const isLent = !isLearned && window.EquipSkills && window.EquipSkills.grants(teachActor, skill.id);
             const isOpen = window.SkillGraph ? window.SkillGraph.isOpen(teachActor, skill.id) : true;
             const badge = isLearned
                 ? `<span class="ui-chip sm-skill-badge sm-skill-badge--learned">${T('SkillMaster.mastered')}</span>`
-                : (!isOpen ? `<span class="ui-chip sm-skill-badge sm-skill-badge--locked">${T('SkillMaster.graph.locked')}</span>` : '');
+                : (isLent ? `<span class="ui-chip sm-skill-badge sm-skill-badge--lent">${T('SkillMaster.lent')}</span>`
+                : (!isOpen ? `<span class="ui-chip sm-skill-badge sm-skill-badge--locked">${T('SkillMaster.graph.locked')}</span>` : ''));
 
             skillsListHTML += `
-                <div class="sm-skill-row focusable ${isFocused ? 'focused' : ''} ${isLearned || isOpen ? '' : 'is-shut'}" onclick="SceneManager._scene.selectSkill(${idx})">
+                <div class="sm-skill-row focusable ${isFocused ? 'focused' : ''} ${isLearned || isLent || isOpen ? '' : 'is-shut'}" onclick="SceneManager._scene.selectSkill(${idx})">
                     <span class="sm-skill-ident">
                         <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span>
                         <span class="sm-skill-name">${skill.name}</span>
@@ -4724,6 +4804,19 @@
             const isActionFocused = allowActionFocus && (this._selectedActionIndex === 0);
             const isOpen = window.SkillGraph ? window.SkillGraph.isOpen(actor, skill.id) : true;
 
+            // Lent by worn gear: the character can cast it now, it costs them
+            // no carried slot, and it stops being theirs the moment the piece
+            // comes off. Learning it properly is still offered underneath.
+            const lender = window.EquipSkills ? window.EquipSkills.source(actor, skill.id) : null;
+            if (lender) {
+                actionsListHTML += `
+                    <div class="sm-state-row sm-state-row--lent">
+                        <span class="sm-state-title">${actor.name()}</span>
+                        <span class="sm-state-mark">${T('SkillMaster.lentBy', { item: lender.name })}</span>
+                    </div>
+                `;
+            }
+
             if (hasSkill) {
                 const learnedLabel = T('SkillMaster.learned');
                 actionsListHTML += `
@@ -4773,28 +4866,6 @@
             }
         }
 
-        // The words the spell is said over, drawn from the same service the
-        // skills menu reads them from (window.SkillDetails, CategorizedBattleSkills.js).
-        // On a tree panel they are printed under the name, where the branch is
-        // being read, rather than at the foot of the numbers; the block below
-        // therefore asks build() not to print them a second time.
-        const incantation = (window.SkillDetails && window.SkillDetails.incantationOf)
-            ? window.SkillDetails.incantationOf(skill) : '';
-        const escText = (str) => String(str == null ? '' : str)
-            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const incantationLabel = T('SkillsMenu.section.incantation');
-        const incantationHTML = incantation
-            ? `<div class="ui-section sm-detail-incantation">
-                   <h4 class="inspect-section-title">${escText(incantationLabel)}</h4>
-                   <div class="inspect-flavour">${escText(incantation)}</div>
-               </div>`
-            : '';
-        const detailedInfoHTML = window.SkillDetails
-            ? window.SkillDetails.build(skill, actor, { skipLore: !!incantation }) : '';
-
-        let descriptionText = skill.description || (T('SkillMaster.noDescriptionAvailable'));
-        if (window.translateText) descriptionText = window.translateText(descriptionText);
-
         const isPreviewFocused = allowActionFocus && (this._selectedActionIndex === 1);
         const previewLabel = T('SkillMaster.preview');
         const previewBtnHTML = `
@@ -4817,40 +4888,44 @@
         const teachLabel = T('SkillMaster.teach');
         const heldLabel = T('SkillMaster.atlas.held', { knowledge: knowledge });
 
+        // The card itself is window.SkillDetails.card, the very page the skills
+        // menu reads a skill on (CategorizedBattleSkills.js), so a spell read on
+        // the atlas and the same spell read in the menu can never drift apart.
+        // This scene only supplies what belongs to it: the teaching strip.
+        const teachHTML = `
+            <div class="sm-teach-section">
+                <h4 class="inspect-section-title sm-teach-heading">
+                    ${teachLabel}
+                    <span class="sm-teach-held">&middot; ${heldLabel}</span>
+                    ${occultBadge}
+                </h4>
+                <div class="sm-teach-actions">
+                    ${actionsListHTML}
+                    ${previewBtnHTML}
+                </div>
+            </div>`;
+
+        const cardHTML = (window.SkillDetails && actor)
+            ? window.SkillDetails.card(skill, actor, {
+                canvasId: SM_DETAIL_CANVAS_ID,
+                actionsHTML: teachHTML
+            })
+            : '';
+
         return `
-            <div class="ui-detail sm-skill-detail ${rootClass}">
-                <div class="ui-detail-head">
-                    <span class="sm-detail-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span>
-                    <div class="ui-detail-titles">
-                        <h3 class="sm-detail-name">${skill.name}</h3>
-                        <div class="sm-detail-meta">
-                            <span>MP ${skill.mpCost || 0}</span>
-                            <span>&middot;</span>
-                            <span>AP ${skill.tpCost || 0}</span>
-                            ${occultBadge}
-                        </div>
-                    </div>
-                    ${closeBtnHTML}
-                </div>
-
-                <div class="ui-detail-scroll ui-scroll sm-detail-body">
-                    <div class="ui-prose sm-detail-desc">${descriptionText}</div>
-                    ${incantationHTML}
-                    ${detailedInfoHTML}
-                </div>
-
-                <div class="ui-section sm-teach-section">
-                    <h4 class="inspect-section-title sm-teach-heading">
-                        ${teachLabel}
-                        <span class="sm-teach-held">&middot; ${heldLabel}</span>
-                    </h4>
-                    <div class="inspect-actions sm-teach-actions">
-                        ${actionsListHTML}
-                        ${previewBtnHTML}
-                    </div>
-                </div>
+            <div class="sm-skill-detail ${rootClass}">
+                ${closeBtnHTML}
+                ${cardHTML}
             </div>
         `;
+    };
+
+    // The skill icon on that card is painted onto a canvas, the way the backpack
+    // paints an item's, so every redraw of the panel repaints it.
+    const SM_DETAIL_CANVAS_ID = 'sm-skill-inspect-canvas';
+    Scene_SkillEncyclopedia.prototype.paintSkillDetailIcon = function (skill) {
+        if (!skill || !window.ItemInspect || !window.ItemInspect.drawIcon) return;
+        window.ItemInspect.drawIcon(skill.iconIndex, SM_DETAIL_CANVAS_ID);
     };
 
     Scene_SkillEncyclopedia.prototype.skillPopupKey = function (skill, knowledge) {
@@ -4890,6 +4965,7 @@
             <div id="skill-detail-bar" class="ui-panel sm-detail-bar" onclick="event.stopPropagation()">
                 ${cardHTML}
             </div>`;
+        this.paintSkillDetailIcon(skill);
         this._lastPopupKey = key;
     };
 
@@ -4907,7 +4983,7 @@
         const compRow = document.getElementById('skillmaster-companion-row');
         if (compRow) {
             const members = getSwitchableMembers();
-            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || this._viewMode === 'enchant' || this._viewMode === 'writebook' || members.length <= 1) {
+            if (this._viewMode === 'spellEditor' || this._viewMode === 'craft' || this._viewMode === 'enchant' || this._viewMode === 'writebook' || this._viewMode === 'hexorcize' || members.length <= 1) {
                 compRow.classList.add('is-hidden');
                 compRow.innerHTML = '';
             } else {
@@ -4971,6 +5047,11 @@
 
         if (this._viewMode === 'writebook') {
             this.renderWriteBench(knowledge);
+            return;
+        }
+
+        if (this._viewMode === 'hexorcize') {
+            this.renderHexorcizeBench(knowledge);
             return;
         }
 
@@ -5048,6 +5129,7 @@
                     <div class="inspect-btn enchant-book-btn focusable" onclick="SceneManager._scene.openEnchantBench('book')">${enchantBookLabel}</div>
                     <div class="inspect-btn write-skillbook-btn focusable" onclick="SceneManager._scene.openWriteBench('skillbook')">${writeSkillBookLabel}</div>
                     <div class="inspect-btn write-grimorie-btn focusable" onclick="SceneManager._scene.openWriteBench('grimorie')">${writeGrimorieLabel}</div>
+                    <div class="inspect-btn hexorcize-btn focusable" onclick="SceneManager._scene.openHexorcizeBench()">${T('SkillMaster.hexorcize.button')}</div>
                 `;
             } else {
                 this._railHTML = '';
@@ -5163,6 +5245,7 @@
             }
 
             rightPageBox.innerHTML = rightPageHTML;
+            if (skill && (this._viewMode === 'list' || this._viewMode === 'detail')) this.paintSkillDetailIcon(skill);
             this._lastRightMode = this._viewMode;
             this._lastRightSkillId = skillId;
             this._lastRightActionIndex = this._selectedActionIndex;
@@ -5453,7 +5536,7 @@
         if (window.CCNav && window.CCNav.update()) return;
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
 
-        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'craft' && this._viewMode !== 'enchant' && this._viewMode !== 'writebook' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
+        if (this._viewMode !== 'spellEditor' && this._viewMode !== 'craft' && this._viewMode !== 'enchant' && this._viewMode !== 'writebook' && this._viewMode !== 'hexorcize' && this._viewMode !== 'preview' && getSwitchableMembers().length > 1) {
             if (Input.isTriggered('pagedown')) { this.cycleTeachActor(1); return; }
             if (Input.isTriggered('pageup')) { this.cycleTeachActor(-1); return; }
         }
@@ -5679,6 +5762,8 @@
             this.updateEnchantBenchInput();
         } else if (this._viewMode === 'writebook') {
             this.updateWriteBenchInput();
+        } else if (this._viewMode === 'hexorcize') {
+            this.updateHexorcizeBenchInput();
         } else if (this._viewMode === 'magicSystems') {
             if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
                 this.closeMagicSystems();
@@ -6241,7 +6326,7 @@
 
     // The rows of the bench, in the order they are drawn and walked.
     const CRAFT_ROWS = ['name', 'description', 'lore', 'icon', 'animation',
-        'core', 'power', 'scope', 'riders', 'refines', 'create'];
+        'core', 'power', 'scope', 'riders', 'refines', 'randomize', 'create'];
     SkillMaster.CRAFT_ROWS = CRAFT_ROWS;
 
     Proto.craftDefaultBuild = function (kind) {
@@ -6596,8 +6681,109 @@
         } else if (field && this._craft) {
             this._craft[field] = field === 'name' ? value.slice(0, 40) : value;
         }
+        // Only the bench's own spell name is warned about: a skill may be
+        // called anything, and a book being renamed is not a spell at all.
+        const warnName = (!commit && !target && field === 'name' && this._craft && this._craft.kind !== 'skill'
+            && this._craft.name && !isSpellCamelCase(this._craft.name));
         SoundManager.playSave();
         this.closeCraftTextSheet();
+        if (warnName) this.openCraftNameWarning();
+    };
+
+    //--- naming, and rolling a whole build -----------------------------------
+
+    // A spell's name is one CamelCase word, the convention every shipped
+    // spell follows. A skill's name is free: it may be anything the writer
+    // types. The bench only warns about a spell, and never refuses one.
+    const CAMEL_RE = /^[A-ZÀ-Þ][A-Za-zÀ-ɏ]*$/;
+    const isSpellCamelCase = (name) => CAMEL_RE.test(String(name == null ? '' : name).trim());
+    SkillMaster.isSpellCamelCase = isSpellCamelCase;
+
+    const camelJoin = (words) => words
+        .map(w => String(w).replace(/[^A-Za-zÀ-ɏ]/g, ''))
+        .filter(Boolean)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('');
+
+    // A rolled name is read off the parts the roll bought, so it says what the
+    // entry does in whatever language the bench is drawn in.
+    Proto.craftRolledName = function (build) {
+        const parts = [];
+        if (build.power && build.power !== 'plain') parts.push(componentName('power', build.power));
+        parts.push(componentName('core', build.core));
+        if (build.riders.length) parts.push(componentName('riders', build.riders[0]));
+        else if (build.refines.length) parts.push(componentName('refines', build.refines[0]));
+        const name = build.kind === 'skill'
+            ? parts.join(' ').replace(/\s+/g, ' ').trim()
+            : camelJoin(parts);
+        return name.slice(0, 40);
+    };
+
+    // Rolls every row of the form at once, the name with them. The roll only
+    // ever builds something the bench would accept: the shape matches the
+    // core's line, and no rider is bought for a line the shape cannot reach.
+    // What it costs is not part of the roll, so an unaffordable build is still
+    // rolled and simply refused at the Write button like any other.
+    Proto.craftRandomize = function () {
+        const build = this._craft;
+        if (!build) return;
+        const roll = (n) => Math.floor(Math.random() * n);
+        const pick = (list) => list[roll(list.length)];
+        const some = (list, cap) => {
+            const pool = list.slice();
+            const out = [];
+            const want = roll(Math.min(cap, pool.length) + 1);
+            while (out.length < want) out.push(pool.splice(roll(pool.length), 1)[0]);
+            return out;
+        };
+
+        const core = pick(CORES.filter(c => c.use === build.kind));
+        build.core = core.key;
+        const heals = (core.dmg === 3 || core.dmg === 4);
+        const shapes = SCOPES.filter(sc => core.dmg === 0 || (heals ? sc.side !== 'enemy' : sc.side !== 'ally'));
+        build.scope = pick(shapes.length ? shapes : SCOPES).key;
+        build.power = pick(POWERS).key;
+        build.riders = some(RIDERS.filter(r => riderAllowed(build, r)), CRAFT_MAX_RIDERS).map(r => r.key);
+        build.refines = some(REFINES, CRAFT_MAX_REFINES).map(r => r.key);
+
+        const icons = this.craftIconChoices();
+        if (icons.length) build.iconIndex = pick(icons).iconIndex;
+        const anims = this.getAvailableAnimations();
+        if (anims.length) build.animationId = pick(anims).id;
+
+        build.name = this.craftRolledName(build);
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    // The warning a spell name that is not one CamelCase word earns. It is a
+    // warning and nothing more: the name is already written, and Keep simply
+    // walks away from the sheet.
+    Proto.openCraftNameWarning = function () {
+        if (!this._dndContainer || this._craftWarnEl) return;
+        const sheet = document.createElement('div');
+        sheet.className = 'sm-craft-write-backdrop';
+        sheet.innerHTML = `
+            <div class="sm-craft-write sm-craft-warn">
+                <div class="sm-craft-write-title">${esc(tr('camel.title'))}</div>
+                <div class="sm-craft-write-hint">${esc(tr('camel.body', { name: (this._craft && this._craft.name) || '' }))}</div>
+                <div class="sm-craft-write-btns">
+                    <button type="button" class="sm-craft-write-btn focusable" onclick="SceneManager._scene.closeCraftNameWarning(true)">${esc(tr('camel.rename'))}</button>
+                    <button type="button" class="sm-craft-write-btn focusable" onclick="SceneManager._scene.closeCraftNameWarning(false)">${esc(tr('camel.keep'))}</button>
+                </div>
+            </div>`;
+        this._dndContainer.appendChild(sheet);
+        this._craftWarnEl = sheet;
+        SoundManager.playBuzzer();
+    };
+
+    Proto.closeCraftNameWarning = function (rename) {
+        if (this._craftWarnEl && this._craftWarnEl.parentNode) this._craftWarnEl.remove();
+        this._craftWarnEl = null;
+        Input.clear();
+        TouchInput.clear();
+        if (rename) this.openCraftTextSheet('name');
+        else this.refreshUISkillDOM();
     };
 
     //--- writing the entry ---------------------------------------------------
@@ -6710,7 +6896,7 @@
 
         let rowsHTML = '';
         CRAFT_ROWS.forEach((row, idx) => {
-            if (row === 'create') return;
+            if (row === 'create' || row === 'randomize') return;
             let value = '', hint = '';
             if (row === 'name') {
                 value = plain(build.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName'), !build.name);
@@ -6741,6 +6927,7 @@
 
         const createIdx = CRAFT_ROWS.indexOf('create');
         const createFocused = !picking && this._craftFocus === createIdx;
+        const randomFocused = !picking && this._craftFocus === CRAFT_ROWS.indexOf('randomize');
         const owed = verdict.owed !== undefined ? verdict.owed : quote.price;
         const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
         const blockText = verdict.ok ? '' : tr('blocked.' + verdict.reason, {
@@ -6749,6 +6936,7 @@
         });
         const createHTML = `
             <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable ${randomFocused ? 'selected' : ''}" onclick="SceneManager._scene.craftRandomize()">${esc(tr('randomize'))}</div>
                 <div class="inspect-btn focusable ${createFocused ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
                     ${esc(this._craftEditingId ? tr('rewrite') : tr('writeIt'))} <span class="sm-forge-cost">· ${owed} KP</span>
                 </div>
@@ -6944,12 +7132,21 @@
         }
         const row = CRAFT_ROWS[idx];
         if (row === 'name' || row === 'description' || row === 'lore') this.openCraftTextSheet(row);
+        else if (row === 'randomize') this.craftRandomize();
         else if (row === 'create') this.craftWrite();
         else this.openCraftPicker(row);
     };
 
     Proto.updateCraftBenchInput = function () {
         if (this._craftTyping) return;
+
+        // The name warning is a sheet of its own: OK keeps the name, Cancel
+        // goes back to the field. Nothing else on the bench answers while it is up.
+        if (this._craftWarnEl) {
+            if (Input.isTriggered('ok')) this.closeCraftNameWarning(false);
+            else if (Input.isTriggered('cancel') || Input.isTriggered('escape')) this.closeCraftNameWarning(true);
+            return;
+        }
 
         if (this._craftPicker) {
             const rows = this.craftPickerRows(this._craftPicker);
@@ -8374,7 +8571,7 @@
         if (!window.Controller || !Controller.tips) return;
         if (Controller.textEntryOpen && Controller.textEntryOpen()) return;
         const tip = (face, key) => ({ face: face, label: T('SkillMaster.tips.' + key) });
-        const BENCHES = ['craft', 'enchant', 'writebook'];
+        const BENCHES = ['craft', 'enchant', 'writebook', 'hexorcize'];
         if (BENCHES.indexOf(this._viewMode) < 0) { Controller.clearTips(); return; }
         Controller.tips([
             tip('A', 'pick'),
@@ -8574,6 +8771,275 @@
             const box = !left ? 'write-source-box'
                 : (this.writeMadeAt(this[key]) ? 'write-made-box' : 'write-chosen-box');
             this.scrollToActiveItem(box, '#' + box + ' .focused, #' + box + ' .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
+        }
+    };
+
+})();
+
+
+//=============================================================================
+// Module: SkillMasterHexorcize.js
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc v1.0.0 SkillMaster - the Hexorcizing bench: unmaking magical gear back into knowledge.
+ * @author Omni-Lex
+ *
+ * @help
+ * The Enchanting bench spends knowledge to put a spell into a piece of gear.
+ * This one runs the other way: a weapon or a piece of equipment whose notebox
+ * says `<Nature: Magical>` is taken apart, and what was worked into it comes
+ * back out as KP.
+ *
+ * Only what the party is CARRYING is on the bench. Anything worn stays worn:
+ * a piece has to be taken off before it can be unmade, so nobody hexorcizes
+ * the armour off their own back by walking the cursor down a list.
+ *
+ * What a piece is worth is read off what it is: its price, the stats it
+ * carries, and a half again on top when it is a bound artifact, because a
+ * binding put knowledge into it that the bench can take back.
+ */
+
+(() => {
+    'use strict';
+
+    window.SkillMaster = window.SkillMaster || {};
+    const SkillMaster = window.SkillMaster;
+    SkillMaster.Hexorcize = SkillMaster.Hexorcize || {};
+
+    const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.hexorcize.' + key, params) : key);
+
+    const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const tx = (s) => (typeof window.translateText === 'function' ? window.translateText(s) : s);
+
+    //=========================================================================
+    // What a piece gives back
+    //=========================================================================
+
+    const HEX_BASE = 10;        // every piece is worth opening at all
+    const HEX_PRICE_DIV = 25;   // what the market thought it was worth
+    const HEX_PARAM = 4;        // per point of stat worked into it
+    const HEX_BOUND_MULT = 1.5; // a bound artifact holds a spell's knowledge
+    const HEX_MIN = 15;
+    const HEX_MAX = 20000;
+
+    function hexValue(item) {
+        if (!item) return 0;
+        const price = Math.max(0, item.price || 0);
+        const params = (item.params || []).reduce((a, b) => a + Math.abs(b || 0), 0);
+        const bound = (item._enchanted || (item.meta && item.meta.EnchantSpell)) ? HEX_BOUND_MULT : 1;
+        const raw = (HEX_BASE + price / HEX_PRICE_DIV + params * HEX_PARAM) * bound;
+        return Math.max(HEX_MIN, Math.min(HEX_MAX, Math.round(raw)));
+    }
+    SkillMaster.Hexorcize.value = hexValue;
+
+    /** True when the notebox says this thing works by magic. */
+    function isMagicalGear(item) {
+        const MN = window.MagicNature;
+        if (MN && typeof MN.isMagicalData === 'function') return MN.isMagicalData(item);
+        return /<Nature:\s*Magical\s*>/i.test((item && item.note) || '');
+    }
+    SkillMaster.Hexorcize.isMagicalGear = isMagicalGear;
+
+    /**
+     * Everything the bench will take: the magical weapons and armours in the
+     * pack. $gameParty.weapons() and .armors() hold what is CARRIED and never
+     * what is worn, so a piece on somebody's back is out of reach by the same
+     * rule that keeps it equipped.
+     */
+    function hexorcizableGear() {
+        const out = [];
+        if (!window.$gameParty) return out;
+        const push = (item) => {
+            if (!item || !isMagicalGear(item)) return;
+            const count = $gameParty.numItems(item);
+            if (count <= 0) return;
+            out.push({ item: item, count: count, kp: hexValue(item) });
+        };
+        $gameParty.weapons().forEach(push);
+        $gameParty.armors().forEach(push);
+        const name = (row) => tx(row.item.name) || '';
+        out.sort((a, b) => name(a).localeCompare(name(b)));
+        return out;
+    }
+    SkillMaster.Hexorcize.gear = hexorcizableGear;
+
+    /** Unmakes `count` of a piece and pays the knowledge out. Returns the KP. */
+    function hexorcize(item, count) {
+        if (!item) return 0;
+        const have = $gameParty.numItems(item);
+        const take = Math.max(0, Math.min(count || 1, have));
+        if (take <= 0) return 0;
+        const gain = hexValue(item) * take;
+        $gameParty.loseItem(item, take);
+        $gameSystem.addKnowledge(gain);
+        return gain;
+    }
+    SkillMaster.Hexorcize.run = hexorcize;
+
+    //=========================================================================
+    // The bench
+    //=========================================================================
+
+    const Proto = window.Scene_SkillEncyclopedia.prototype;
+
+    // One row, two chips: unmake one of them, or unmake the whole stack.
+    const HEX_CHIPS = ['one', 'all'];
+
+    Proto.openHexorcizeBench = function () {
+        this._viewMode = 'hexorcize';
+        this._hexIndex = 0;
+        this._hexChip = 0;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeHexorcizeBench = function () {
+        this._viewMode = 'category';
+        this._lastLeftMode = null;
+        this._lastLeftCategory = null;
+        this._lastRightMode = null;
+        this._lastRightSkillId = null;
+        this._lastRightKnowledge = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.hexorcizeRows = function () {
+        return hexorcizableGear();
+    };
+
+    Proto.hexorcizeAt = function (idx) {
+        return this.hexorcizeRows()[idx] || null;
+    };
+
+    Proto.hexorcizeTake = function (idx, all) {
+        const row = this.hexorcizeAt(idx);
+        if (!row) { SoundManager.playBuzzer(); return; }
+        const gain = hexorcize(row.item, all ? row.count : 1);
+        if (!gain) { SoundManager.playBuzzer(); return; }
+        SoundManager.playSave();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(tr('unmade', { item: tx(row.item.name), kp: gain }), { severity: 'good' });
+        }
+        const rows = this.hexorcizeRows().length;
+        this._hexIndex = Math.max(0, Math.min(this._hexIndex || 0, rows - 1));
+        this._lastRightKnowledge = null;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.hexorcizeRunChip = function (idx) {
+        this.hexorcizeTake(idx, HEX_CHIPS[this._hexChip || 0] === 'all');
+    };
+
+    Proto.renderHexorcizeBench = function (knowledge) {
+        const leftBox = document.getElementById('left-page-content');
+        const rightBox = document.getElementById('right-page-content');
+        if (!leftBox || !rightBox) return;
+
+        const rows = this.hexorcizeRows();
+        this._hexIndex = Math.max(0, Math.min(this._hexIndex || 0, rows.length - 1));
+
+        let listHTML = '';
+        rows.forEach((row, idx) => {
+            const on = (this._hexIndex || 0) === idx;
+            const stack = row.count > 1 ? `<span class="ui-chip sm-skill-badge">&times;${row.count}</span>` : '';
+            const chipHTML = HEX_CHIPS.map((chip, ci) => {
+                if (chip === 'all' && row.count <= 1) return '';
+                const lit = on && (this._hexChip || 0) === ci ? ' focused' : '';
+                return `<span class="ui-chip sm-skill-badge focusable sm-craft-discard${lit}"
+                        onclick="SceneManager._scene.hexorcizeTake(${idx}, ${chip === 'all'})">${esc(tr(chip))}</span>`;
+            }).join('');
+            listHTML += `
+                <div class="sm-skill-row sm-craft-entry ${on ? 'sm-craft-entry--cursor' : ''}">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.item.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(row.item.name))}</span></span>
+                    ${stack}
+                    <span class="sm-forge-cost">+${row.kp} KP</span>
+                    ${chipHTML}
+                </div>`;
+        });
+        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothing'))}</div></div>`;
+
+        leftBox.innerHTML = `
+            <div class="page-header-bar">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeHexorcizeBench()">${esc(tr('back'))}</div>
+              <h2 class="title">${esc(tr('title'))}</h2>
+            </div>
+            <div class="sm-enchant-blurb">${esc(tr('blurb'))}</div>
+            <div id="hexorcize-gear-box" class="ui-list ui-scroll sm-forged-list">
+                ${listHTML}
+            </div>`;
+
+        const focused = this.hexorcizeAt(this._hexIndex || 0);
+        const total = rows.reduce((a, r) => a + r.kp * r.count, 0);
+        let detailHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('pickPiece'))}</div></div>`;
+        if (focused) {
+            const item = focused.item;
+            const spell = item.meta && item.meta.EnchantSpell ? $dataSkills[Number(item.meta.EnchantSpell)] : null;
+            const params = ($dataSystem.terms && $dataSystem.terms.params) || [];
+            const statRows = (item.params || []).map((v, i) => (v ? `
+                <div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tx(params[i] || ''))}</span><span class="inspect-spec-value">${v > 0 ? '+' : ''}${v}</span></div>` : '')).join('');
+            detailHTML = `
+                <div class="ui-section">
+                  <h4 class="inspect-section-title">${esc(tx(item.name))}</h4>
+                </div>
+                <div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tr('worth'))}</span><span class="inspect-spec-value">${focused.kp} KP</span></div>
+                <div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tr('held'))}</span><span class="inspect-spec-value">${focused.count}</span></div>
+                ${spell ? `<div class="inspect-spec-row"><span class="inspect-spec-label">${esc(tr('bindingHeld'))}</span><span class="inspect-spec-value">${esc(tx(spell.name))}</span></div>` : ''}
+                ${statRows}`;
+        }
+
+        rightBox.innerHTML = `
+            <div class="page-header-bar">
+              <h2 class="title">${esc(tr('detailTitle'))}</h2>
+            </div>
+            ${detailHTML}
+            <div class="sm-enchant-target">${esc(tr('totalHere', { kp: total }))}</div>
+            <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
+    };
+
+    Proto.updateHexorcizeBenchInput = function () {
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            this.closeHexorcizeBench();
+            return;
+        }
+        const rows = this.hexorcizeRows();
+        if (!rows.length) return;
+        this._hexIndex = Math.max(0, Math.min(this._hexIndex || 0, rows.length - 1));
+
+        // How many chips the row under the cursor actually draws: a single
+        // piece has no whole-stack chip to step onto.
+        const chips = (rows[this._hexIndex].count > 1) ? HEX_CHIPS.length : 1;
+        this._hexChip = Math.min(this._hexChip || 0, chips - 1);
+
+        let moved = false;
+        if (Input.isTriggered('down') || Input.isRepeated('down')) {
+            this._hexIndex = (this._hexIndex + 1) % rows.length;
+            moved = true;
+        } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+            this._hexIndex = (this._hexIndex - 1 + rows.length) % rows.length;
+            moved = true;
+        } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
+            this._hexChip = (this._hexChip + 1) % chips;
+            moved = true;
+        } else if (Input.isTriggered('left') || Input.isRepeated('left')) {
+            this._hexChip = (this._hexChip - 1 + chips) % chips;
+            moved = true;
+        }
+        if (moved) {
+            this._hexChip = Math.min(this._hexChip, (this.hexorcizeAt(this._hexIndex).count > 1 ? HEX_CHIPS.length : 1) - 1);
+            SoundManager.playCursor();
+            this._lastRightKnowledge = null;
+            this.refreshUISkillDOM();
+            this.scrollToActiveItem('hexorcize-gear-box',
+                '#hexorcize-gear-box .focused, #hexorcize-gear-box .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
+            return;
+        }
+        if (Input.isTriggered('ok') || Input.isTriggered('enter')) {
+            this.hexorcizeRunChip(this._hexIndex);
         }
     };
 

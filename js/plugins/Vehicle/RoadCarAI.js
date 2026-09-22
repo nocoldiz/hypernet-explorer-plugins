@@ -263,9 +263,36 @@
   let laneCursor = 0;            // round-robin lane assignment counter
 
   // Traffic handedness. true = drive on the right (a car keeps the dashed centre
-  // line on its LEFT). Flip to false for left-hand traffic; every lane in the
-  // table below is derived from this, so nothing else needs changing.
-  const DRIVE_ON_RIGHT = true;
+  // line on its LEFT), false = left-hand traffic. Every lane in the table below
+  // is derived from this, so nothing else needs changing.
+  //
+  // The continent drives on the right; the nations below drive on the left, and
+  // the answer is taken off the country the party is standing in (Variable 86,
+  // the Countries.json id, the same identity the atlas and Destinations.json
+  // use). The name is only the fallback for a session whose country table has
+  // not loaded yet, or for an entry sharing the catch-all id 0.
+  // i18n-ignore-start  Countries.json ids and names, never shown as written here
+  const LEFT_HAND_NATION_IDS = [38];
+  const LEFT_HAND_NATION_NAMES = ['UK'];
+  // i18n-ignore-end
+
+  const VAR_NATION_ID = 86;
+
+  function currentNationName() {
+    const id = ($gameVariables ? $gameVariables.value(VAR_NATION_ID) : 0) | 0;
+    const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+    const hit = countries.find(c => c && (c.id | 0) === id);
+    return { id, name: hit ? String(hit.country || '') : '' };
+  }
+
+  // Which side this map's country drives on. Read fresh whenever the lanes are
+  // rebuilt, so crossing a border flips the traffic on the next road square.
+  function driveOnRight() {
+    const { id, name } = currentNationName();
+    if (id && LEFT_HAND_NATION_IDS.includes(id)) return false;
+    if (name && LEFT_HAND_NATION_NAMES.includes(name)) return false;
+    return true;
+  }
 
   // ==========================================================================
   //  TIME / DENSITY
@@ -541,8 +568,9 @@
     const { TY, BY, LX, RX, MX, MY } = g;
 
     // Lane offsets inside a carriageway, flipped for left-hand traffic.
-    const near = DRIVE_ON_RIGHT ? 1 : 5; // westbound / southbound
-    const far = DRIVE_ON_RIGHT ? 5 : 1;  // eastbound / northbound
+    const onRight = driveOnRight();
+    const near = onRight ? 1 : 5; // westbound / southbound
+    const far = onRight ? 5 : 1;  // eastbound / northbound
 
     const TOP_W = TY + near, TOP_E = TY + far;   // top carriageway lanes
     const BOT_W = BY + near, BOT_E = BY + far;   // bottom carriageway lanes

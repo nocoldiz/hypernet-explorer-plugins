@@ -2060,15 +2060,39 @@
     return earthGone() ? SURVIVING_ORIGINS.slice() : null;
   }
 
+  // The scenarios the board puts up first, in the order they are written here.
+  // This is the ONE place that block is listed: the dossier reads it to draw
+  // its two headings rather than keeping a second copy.
+  const SUGGESTED_ORIGINS = [
+    "origin_train", "origin_camper", "origin_space", "origin_stranded",     // i18n-ignore  choice symbols
+    "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault",    // i18n-ignore  choice symbols
+  ];
+
+  /**
+   * The board's reading order: the suggested block as authored, then every
+   * other scenario by name, so a long list can be scanned alphabetically. The
+   * cursor walks the same array the cards are drawn from, so both agree.
+   */
+  function orderOrigins(choices) {
+    const suggested = [];
+    const others = [];
+    (choices || []).forEach((c) => {
+      (c && SUGGESTED_ORIGINS.indexOf(c.symbol) >= 0 ? suggested : others).push(c);
+    });
+    suggested.sort((a, b) => SUGGESTED_ORIGINS.indexOf(a.symbol) - SUGGESTED_ORIGINS.indexOf(b.symbol));
+    others.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    return suggested.concat(others);
+  }
+
   /** Cut a list of origin choices down to the ones that survive the impact. */
   function filterOrigins(choices) {
     const keep = survivingOrigins();
-    if (!keep) return choices;
+    if (!keep) return orderOrigins(choices);
     const kept = (choices || []).filter((c) => c && keep.indexOf(c.symbol) >= 0);
     // Never hand the wizard an empty board: a build with no patron roster and
     // a world past the impact still has two scenarios, and if even those were
     // ever filtered out the whole list is better than none.
-    return kept.length ? kept : choices;
+    return orderOrigins(kept.length ? kept : choices);
   }
 
   // ==========================================================================
@@ -2577,6 +2601,7 @@
     startWarlordOrigin,
     finishFactionOrigin,
     startFactionPickerOrigin,
+    SUGGESTED_ORIGINS,
   };
 
   // The map every new game / permadeath reset lands on. Read here because

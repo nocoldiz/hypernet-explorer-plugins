@@ -484,7 +484,18 @@
             const presetBust = this.getPresetBustForSprite(spritesheetName, characterIndex);
             if (presetBust) return `busts/${presetBust}`;
 
-            // NPCSim priority: use seed-randomized bust stored in profile._bustName
+            // The sprite names the face: NPCs.json pairs every sheet with the
+            // bust that belongs to it, and that pairing is what the player is
+            // looking at. It is asked before the society sim's cached bust,
+            // which is keyed by event NAME and so holds whichever same-named
+            // event was pinned last. Only a bust written out on the event
+            // (handled above) may override the sprite.
+            if (SpritesAssociation[spritesheetName] && SpritesAssociation[spritesheetName][characterIndex]) {
+                const bustName = window.BustPath.resolve(SpritesAssociation[spritesheetName][characterIndex]);
+                if (bustName) return `busts/${bustName}`;
+            }
+
+            // Last of all the sim's own record, for a sheet in no catalogue.
             if (window.NPCSim?.getBustForNPC) {
                 try {
                     const interp = $gameMap?._interpreter;
@@ -495,11 +506,6 @@
                         if (npcBust) return `busts/${npcBust}`;
                     }
                 } catch (_) {}
-            }
-
-            if (SpritesAssociation[spritesheetName] && SpritesAssociation[spritesheetName][characterIndex]) {
-                const bustName = window.BustPath.resolve(SpritesAssociation[spritesheetName][characterIndex]);
-                if (bustName) return `busts/${bustName}`;
             }
             return `busts/7`;
 

@@ -620,7 +620,12 @@
                 translateFormula,
                 combatSpecsOf,
                 damageSpecsOf,
-                effectsOf
+                effectsOf,
+                // What this move would actually land, as a number. The
+                // equipment panel asks the same question of a basic attack to
+                // print a weapon's damage, so the two screens cannot disagree
+                // about what a hit is worth.
+                damageFor: medianDamageFor
             };
         })();
     }
@@ -1395,6 +1400,11 @@
             if (!win.active) return;
             const i = rowIdxFromEvent(e);
             if (i < 0) return;
+            // Swallow the trailing native 'mouseup' too: without it the very
+            // release that picked this row reached TouchInput a frame later
+            // and confirmed again inside whatever opened on top of the list.
+            const h = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+            if (h && h.consumeDomClick) h.consumeDomClick(); else TouchInput.clear();
             if (typeof win.select === 'function') win.select(i);
             if (typeof win.processOk === 'function') win.processOk();
         });

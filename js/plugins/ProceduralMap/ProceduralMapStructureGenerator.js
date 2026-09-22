@@ -2859,7 +2859,12 @@
     // the prefab pass has to work with, so the plan hands it as many as the
     // grid can hold rather than spending the room on more carriageway.
     const layout = planSettlementBlocks(GRID, GRID, rng, {
-      buildingChance: 0.5,
+      // Every 2x2 of open blocks that can be one becomes one: the village
+      // prefabs on disk are 16 tiles square and only a 2x2 block holds one,
+      // so a plan that turned half of them down was a plan for an empty
+      // village. The single-block lots left over are what the small prefabs
+      // and the yards get.
+      buildingChance: 1,
       houseChance: 0.95,
       extraRoads: rng() < 0.5 ? 1 : 0,
     });
@@ -2965,20 +2970,30 @@
 
 
     // --- STEP 3: the lots, and the prefabs that stand on them ----------------
-    // One lot per house block, one per 2x2 building block. Each is inset by a
-    // tile so a building never sits flush against the kerb, and each is handed
-    // over as a rectangle, not just a point, so the placement pass can pick a
+    // One lot per house block, one per 2x2 building block, and one per open
+    // block left over, so no block of the plan is wasted. A lot is the WHOLE
+    // block: the kerb ring the pavement pass would otherwise claim belongs to
+    // the building standing on it, because a prefab is laid before the
+    // pavement is and the pavement never paints over one. Each is handed over
+    // as a rectangle, not just a point, so the placement pass can pick a
     // prefab that actually fits it.
     const villageLots = [];
     const lotFor = (c, r, wCells, hCells) => ({
-      x: ox + c * CELL + 1,
-      y: oy + r * CELL + 1,
-      w: wCells * CELL - 2,
-      h: hCells * CELL - 2,
+      x: ox + c * CELL,
+      y: oy + r * CELL,
+      // One tile short of the block, which is the gap the placement pass
+      // insists on between two prefabs: a lot the full 9 tiles wide would let
+      // neighbouring buildings touch, and the collision check would then
+      // refuse the second one and leave that block empty.
+      w: wCells * CELL - 1,
+      h: hCells * CELL - 1,
     });
+    // Judged on the block's inner ground, not on its kerb: the ring now
+    // belongs to the lot, and a lot beside the high street always has kerb on
+    // it, which would otherwise reject every block the village is built on.
     const lotClearOfBorderRoad = (lot) => {
-      for (let y = lot.y; y < lot.y + lot.h; y++) {
-        for (let x = lot.x; x < lot.x + lot.w; x++) {
+      for (let y = lot.y + 1; y < lot.y + lot.h - 1; y++) {
+        for (let x = lot.x + 1; x < lot.x + lot.w - 1; x++) {
           if (x < 0 || y < 0 || x >= width || y >= height) return false;
           if (borderRoadOccupied[y * width + x]) return false;
         }
@@ -2992,6 +3007,16 @@
     for (let r = 0; r < GRID; r++) {
       for (let c = 0; c < GRID; c++) {
         if (layout.at(c, r) !== "H") continue;
+        const lot = lotFor(c, r, 1, 1);
+        if (lotClearOfBorderRoad(lot)) villageLots.push(lot);
+      }
+    }
+    // The blocks nothing was planned on: a village used to leave them as bare
+    // green, which is most of the back of the grid. They take a prefab too,
+    // after every planned lot has had its turn.
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        if (layout.at(c, r) !== "O") continue;
         const lot = lotFor(c, r, 1, 1);
         if (lotClearOfBorderRoad(lot)) villageLots.push(lot);
       }
@@ -3027,41 +3052,9 @@
       }
     }
 
-    // --- Footpaths from each lot to its street ------------------------------
-    // A short spur of Path from the middle of a lot out to the nearest
-    // carriageway, laid only over ground nothing else has claimed, so a prefab
-    // is never cut into.
-    function layFootpath(x, y) {
-      if (x < 1 || y < 1 || x >= width - 1 || y >= height - 1) return false;
-      if (borderRoadOccupied[y * width + x]) return false;
-      const idx = calculateIndex(x, y, 0, width, height);
-      const current = mapData[idx];
-      if (current === streetTile || current === pathTile) return true;
-      if (current !== baseTile && current !== 0) return false;
-      mapData[idx] = pathTile;
-      roadSet.add(`${x},${y}`);
-      return true;
-    }
-    for (const lot of villageLots) {
-      const fx = lot.x + Math.floor(lot.w / 2);
-      const fy = lot.y + Math.floor(lot.h / 2);
-      let best = null;
-      for (const [dx, dy] of NEIGHBOURS) {
-        for (let step = 1; step <= CELL; step++) {
-          const x = fx + dx * step;
-          const y = fy + dy * step;
-          if (x < 0 || y < 0 || x >= width || y >= height) break;
-          if (roadSet.has(`${x},${y}`)) {
-            if (!best || step < best.step) best = { dx, dy, step };
-            break;
-          }
-        }
-      }
-      if (!best) continue;
-      for (let step = 1; step < best.step; step++) {
-        if (!layFootpath(fx + best.dx * step, fy + best.dy * step)) break;
-      }
-    }
+    // No footpath spurs: a village lot fronts its street directly. The short
+    // stubs of Path that used to run from the middle of each lot out to the
+    // carriageway read as walkways going nowhere wherever the lot stood empty.
 
     yield;
 
@@ -4165,19 +4158,22 @@
   }
 
   // ---- block dressing: parks, car parks, plazas, vacant lots ---------------
-  // Repaints a block's ground. The marking layer goes with it: a block is laid
+  // Lays a block's ground. ONE tile for the whole block, drawn once: rolling a
+  // variant per tile turned every open block into a speckled chequerboard of
+  // grass, dirt and sand, which is what a block nobody built on used to look
+  // like from the road. The marking layer is cleared with it: a block is laid
   // over whatever the border-road pass ran through first, and a dashed centre
   // line left behind on a park or a vacant lot is a road marking with no road
   // under it - a line sitting at random in the grass. This runs before each
   // dresser lays its own markings (parking bays), so nothing wanted is lost.
   function cityPaintGround(ctx, rect, tileIds) {
     if (!tileIds || !tileIds.length) return;
+    const tile = tileIds[Math.floor(ctx.rng() * tileIds.length)];
     for (let y = rect.y; y < rect.y + rect.h; y++) {
       for (let x = rect.x; x < rect.x + rect.w; x++) {
         if (x < 1 || y < 1 || x >= ctx.width - 1 || y >= ctx.height - 1) continue;
         if (ctx.isOccupied(x, y)) continue;
-        ctx.mapData[calculateIndex(x, y, 0, ctx.width, ctx.height)] =
-          tileIds[Math.floor(ctx.rng() * tileIds.length)];
+        ctx.mapData[calculateIndex(x, y, 0, ctx.width, ctx.height)] = tile;
         ctx.mapData[calculateIndex(x, y, CITY_LAYER_MARK, ctx.width, ctx.height)] = 0;
       }
     }
@@ -4732,13 +4728,32 @@
       }
     }
 
+    // A block zoned park, car park, plaza or vacant is not a reason to leave a
+    // hole in the city. Every one of them is offered to the prefab pass as a lot
+    // of its own, alongside the blocks zoned for building, so the pass fills the
+    // grid as far as its pool reaches instead of the generator painting a
+    // speckled rectangle of ground where a building could have stood. What comes
+    // back unbuilt is what the dressing pass gets.
+    const openLots = [];
+    for (const b of openBlocks) {
+      if (b.rect.w < 4 || b.rect.h < 4) continue;
+      openLots.push({ x: b.rect.x, y: b.rect.y, w: b.rect.w, h: b.rect.h, open: true });
+      for (let y = b.rect.y; y < b.rect.y + b.rect.h; y++) {
+        for (let x = b.rect.x; x < b.rect.x + b.rect.w; x++) {
+          if (x < 0 || y < 0 || x >= width || y >= height) continue;
+          occupiedMap[y * width + x] = 2;
+        }
+      }
+    }
+    const prefabLots = buildingLots.concat(openLots);
+
     yield;
 
 
-    // --- STEP 3: prefabs, one per built lot ---------------------------------
-    if (biome && biome.prefabs && biome.prefabs.length > 0 && buildingLots.length) {
+    // --- STEP 3: prefabs, one per lot, built blocks and open blocks alike ----
+    if (biome && biome.prefabs && biome.prefabs.length > 0 && prefabLots.length) {
       const worldCoords = allOtherData?.worldCoords || { x: 0, y: 0 };
-      allOtherData.blockHints = buildingLots;
+      allOtherData.blockHints = prefabLots;
       allOtherData.singlePrefabPerBlock = true;
       allOtherData.strictNoRoadOverlap = true;
 
@@ -4757,7 +4772,7 @@
     // did not paint gives those tiles back to the pavement and dressing passes,
     // so a block reads as a building with a yard rather than as a building
     // sitting in a fenced-off rectangle of untouched grass.
-    for (const lot of buildingLots) {
+    for (const lot of prefabLots) {
       for (let y = lot.y; y < lot.y + lot.h; y++) {
         for (let x = lot.x; x < lot.x + lot.w; x++) {
           if (mapData[calculateIndex(x, y, 0, width, height)] !== baseTile) continue;
@@ -4820,8 +4835,21 @@
     ctx.openBase.add(baseTile);
 
     // Blocks that are not built on are dressed after the buildings.
+    // An open block the prefab pass built on is a building now, not a park: the
+    // release step above gave back every tile the prefab did not paint, so a
+    // tile still marked occupied inside the block is the building itself.
+    const blockWasBuiltOn = (rect) => {
+      for (let y = rect.y; y < rect.y + rect.h; y++) {
+        for (let x = rect.x; x < rect.x + rect.w; x++) {
+          if (x < 0 || y < 0 || x >= width || y >= height) continue;
+          if (occupiedMap[y * width + x] === 2) return true;
+        }
+      }
+      return false;
+    };
     for (const b of openBlocks) {
       if (b.rect.w < 2 || b.rect.h < 2) continue;
+      if (blockWasBuiltOn(b.rect)) continue;
       if (b.kind === "park") cityDressPark(ctx, b.rect);
       else if (b.kind === "parking") cityDressCarPark(ctx, b.rect);
       else if (b.kind === "plaza") cityDressPlaza(ctx, b.rect);

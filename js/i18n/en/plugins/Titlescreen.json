@@ -65,7 +65,8 @@
     "arcadeAsteroids": "Arcade: Meteoroids",
     "arcadeCentipede": "Arcade: Crawler",
     "piano": "Piano",
-    "hyperdeck": "Build a Hyperdeck"
+    "hyperdeck": "Build a Hyperdeck",
+    "rocketLaunch": "Rocket Launch"
   },
   "minigameSetup": {
     "venueTitle": "Where",
@@ -139,7 +140,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.32a"
+    "text": "0.6.33a"
   },
   "language": {
     "label": "✦ LANG"

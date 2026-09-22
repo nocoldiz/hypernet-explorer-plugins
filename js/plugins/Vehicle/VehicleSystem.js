@@ -1323,6 +1323,16 @@
    * Mirrors the project's two water markers: terrain tag 3 and region 99.
    * Region 10 (blocked water) is deliberately excluded.
    */
+  /**
+   * True when the camper has the Amphibious Conversion fitted (upgrade
+   * 'aquatic', or the legacy float/dive unlock). Without it the camper is a
+   * road vehicle: open water is a wall, not a shortcut.
+   */
+  function camperIsAmphibious() {
+    const up = window.VehicleUpgrades;
+    return !!(up && typeof up.camperCan === 'function' && up.camperCan('float'));
+  }
+
   function isWaterTileForVehicle(x, y) {
     if ($gameMap.regionId(x, y) === 10) return false;
     if ($gameMap.regionId(x, y) === 99) return true;
@@ -2343,9 +2353,12 @@
       // (Car, Bike, Camper) is refused, whatever else the tile would allow.
       if (isWorldRiverTile(x2, y2)) return false;
 
-      // Camper enters aquatic mode automatically: open water is passable for it
-      // (region 10 stays blocked, handled inside isWaterTileForVehicle).
-      if (this.isShip() && isWaterTileForVehicle(x2, y2)) return true;
+      // Camper enters aquatic mode automatically, but ONLY once the Amphibious
+      // Conversion is fitted: open water is passable for it then (region 10
+      // stays blocked, handled inside isWaterTileForVehicle). Unconverted, the
+      // water's edge stops it outright - the tile is refused here rather than
+      // left to the rules below, which let world-map water through.
+      if (this.isShip() && isWaterTileForVehicle(x2, y2)) return camperIsAmphibious();
 
       if (isVehicleBlockedTile(x2, y2, $gameMap.mapId())) return false;
 
@@ -5700,16 +5713,16 @@
   // session, so an interior entered without one (a loaded save, a debug
   // teleport) simply falls back to the old black.
 
-  const INTERIOR_BACKDROP_ZOOM = 2.6;
-  // The world map is drawn one square per tile, so a still of it needs far more
-  // magnification than a still of a walkable map before the parked vehicle reads
-  // as a vehicle rather than as a speck.
-  const INTERIOR_BACKDROP_ZOOM_WORLD = 5.2;
-  // Where the parked vehicle sits on the screen behind the interior: on the
-  // right, so the floor of the cabin (which the map itself keeps centred) is not
-  // painted straight over the hull.
-  const INTERIOR_BACKDROP_ANCHOR_X = 0.74;
-  const INTERIOR_BACKDROP_ANCHOR_Y = 0.42;
+  const INTERIOR_BACKDROP_ZOOM = 1.7;
+  // The world map is drawn one square per tile, so a still of it needs more
+  // magnification than a still of a walkable map before the ground under the
+  // vehicle reads as ground rather than as a speck.
+  const INTERIOR_BACKDROP_ZOOM_WORLD = 3.2;
+  // Where the spot the party boarded at sits on the screen behind the interior:
+  // in the middle, so the still is framed around the cabin instead of hanging
+  // off one of its corners.
+  const INTERIOR_BACKDROP_ANCHOR_X = 0.5;
+  const INTERIOR_BACKDROP_ANCHOR_Y = 0.5;
   // How much the still slides against the interior's own scrolling, so the
   // outside world is not painted on perfectly rigid glass.
   const INTERIOR_BACKDROP_DRIFT = 0.12;
@@ -5717,6 +5730,65 @@
 
   // { bitmap, focusX, focusY, mapId } for the last capture, or null.
   let interiorBackdrop = null;
+
+  // A journey has no square to photograph: the vehicle is not parked anywhere
+  // while the clock runs, so the outside of the cabin becomes a road running
+  // past instead of a still of the place the party boarded at.
+  const INTERIOR_ROAD_W = 512;
+  const INTERIOR_ROAD_H = 256;
+  const INTERIOR_ROAD_SPEED = 7;    // pixels a frame the tarmac runs by
+  const INTERIOR_ROAD_DRIFT = 0.25; // how much it slides with the cabin's scroll
+  let interiorRoadBitmap = null;
+
+  function travelUnderway() {
+    try {
+      const data = $gameSystem && $gameSystem.getFastTravelData
+        ? $gameSystem.getFastTravelData() : null;
+      return !!(data && data.timerActive && !data.travelCompleted &&
+        data.timerRemainingTime > 0);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // One seamless tile of road: verge, tarmac, edge lines and centre dashes. It
+  // is drawn once and kept, since every interior scrolls the same strip.
+  function roadBitmap() {
+    if (interiorRoadBitmap) return interiorRoadBitmap;
+    if (typeof Bitmap !== 'function') return null;
+    let bitmap;
+    try {
+      bitmap = new Bitmap(INTERIOR_ROAD_W, INTERIOR_ROAD_H);
+    } catch (e) {
+      return null;
+    }
+    if (!bitmap || typeof bitmap.fillRect !== 'function') return null;
+    const w = INTERIOR_ROAD_W, h = INTERIOR_ROAD_H;
+    const roadX = Math.round(w * 0.12);
+    const roadW = w - roadX * 2;
+    bitmap.fillRect(0, 0, w, h, '#2c4227');                       // i18n-ignore  colour
+    bitmap.fillRect(roadX - 10, 0, 10, h, '#5a5346');             // i18n-ignore  colour
+    bitmap.fillRect(roadX + roadW, 0, 10, h, '#5a5346');          // i18n-ignore  colour
+    bitmap.fillRect(roadX, 0, roadW, h, '#3b3b41');               // i18n-ignore  colour
+    bitmap.fillRect(roadX + 4, 0, 4, h, '#b9b4a0');               // i18n-ignore  colour
+    bitmap.fillRect(roadX + roadW - 8, 0, 4, h, '#b9b4a0');       // i18n-ignore  colour
+    // Tarmac grain: a fixed pattern, so the strip never shimmers between runs.
+    let seed = 20261;
+    const rand = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+    for (let i = 0; i < 260; i++) {
+      const x = roadX + Math.floor(rand() * roadW);
+      const y = Math.floor(rand() * h);
+      bitmap.fillRect(x, y, 2, 2, rand() < 0.5 ? '#454550' : '#333339');  // i18n-ignore  colour
+    }
+    // Centre dashes, sized so the tile joins itself top to bottom.
+    const period = h / 4;
+    for (let i = 0; i < 4; i++) {
+      bitmap.fillRect(Math.round(w / 2) - 4, Math.round(i * period), 8,
+        Math.round(period * 0.45), '#c9c4a8');                    // i18n-ignore  colour
+    }
+    interiorRoadBitmap = bitmap;
+    return bitmap;
+  }
 
   function backdropZoom() {
     return (interiorBackdrop && interiorBackdrop.worldMap)
@@ -5746,15 +5818,18 @@
     return $gamePlayer;
   }
 
-  // Bitmap.snap of the spriteset with the player and the followers taken out of
-  // it, then put back exactly as they were.
+  // Bitmap.snap of the spriteset with the player, the followers and the vehicles
+  // themselves taken out of it, then put back exactly as they were. The party is
+  // about to be inside the hull, so neither they nor the hull belong in the
+  // picture of the outside.
   function snapWithoutParty(spriteset) {
     const hidden = [];
     const characters = (spriteset._characterSprites || []);
     for (const sprite of characters) {
       const character = sprite._character;
       if (!character) continue;
-      if (character === $gamePlayer || character instanceof Game_Follower) {
+      if (character === $gamePlayer || character instanceof Game_Follower ||
+          character instanceof Game_Vehicle) {
         hidden.push([sprite, sprite.visible]);
         sprite.visible = false;
       }
@@ -5808,10 +5883,14 @@
 
   Spriteset_Map.prototype.createVehicleInteriorBackdrop = function () {
     this._vehicleBackdropSprite = null;
-    if (!interiorBackdrop || !interiorBackdrop.bitmap) return;
-    if (interiorBackdrop.mapId !== $gameMap.mapId()) return;
+    this._vehicleRoadSprite = null;
+    this._vehicleBackdropTravelling = travelUnderway();
     // A map that already dresses its own outside is left alone.
     if ($dataMap && $dataMap.parallaxName) return;
+    // Under way: the road, whether or not a still was ever taken.
+    if (this._vehicleBackdropTravelling && this.createVehicleInteriorRoad()) return;
+    if (!interiorBackdrop || !interiorBackdrop.bitmap) return;
+    if (interiorBackdrop.mapId !== $gameMap.mapId()) return;
     const sprite = new Sprite(interiorBackdrop.bitmap);
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
@@ -5826,7 +5905,41 @@
     this.updateVehicleInteriorBackdrop();
   };
 
+  // The road strip, laid over the whole screen and pulled past the cabin.
+  Spriteset_Map.prototype.createVehicleInteriorRoad = function () {
+    const mapId = $gameMap.mapId();
+    const isInterior = !!interiorConfigForMap(mapId) ||
+      !!(interiorBackdrop && interiorBackdrop.mapId === mapId);
+    if (!isInterior) return false;
+    if (typeof TilingSprite !== 'function') return false;
+    const bitmap = roadBitmap();
+    if (!bitmap) return false;
+    const sprite = new TilingSprite(bitmap);
+    sprite.move(0, 0, Graphics.width, Graphics.height);
+    if (sprite.setColorTone) sprite.setColorTone(INTERIOR_BACKDROP_TONE);
+    this._vehicleRoadSprite = sprite;
+    this._baseSprite.addChild(sprite);
+    return true;
+  };
+
+  Spriteset_Map.prototype.updateVehicleInteriorRoad = function () {
+    const sprite = this._vehicleRoadSprite;
+    if (!sprite || !sprite.origin) return;
+    sprite.origin.y -= INTERIOR_ROAD_SPEED;
+    sprite.origin.x = $gameMap.displayX() * $gameMap.tileWidth() * INTERIOR_ROAD_DRIFT;
+  };
+
   Spriteset_Map.prototype.updateVehicleInteriorBackdrop = function () {
+    // Setting off, or arriving, swaps the road for the still and back.
+    if (this._vehicleBackdropTravelling !== undefined &&
+        this._vehicleBackdropTravelling !== travelUnderway()) {
+      for (const old of [this._vehicleBackdropSprite, this._vehicleRoadSprite]) {
+        if (old && this._baseSprite.removeChild) this._baseSprite.removeChild(old);
+      }
+      this.createVehicleInteriorBackdrop();
+      return;
+    }
+    this.updateVehicleInteriorRoad();
     const sprite = this._vehicleBackdropSprite;
     if (!sprite || !interiorBackdrop) return;
     const bitmap = interiorBackdrop.bitmap;

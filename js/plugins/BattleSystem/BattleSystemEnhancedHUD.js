@@ -498,7 +498,13 @@
     return _elementNames;
   }
 
-  function elementChipsFor(battler) {
+  // Which IconSet cell stands for an element. The same nine cells the
+  // character sheet and the class picker name an element with
+  // (UI/CustomSceneStatus.js, CharacterCreation/CharacterCreationPickers.js),
+  // so a weakness wears the symbol the player already reads elsewhere.
+  const ELEMENT_ICONS = [0, 96, 64, 65, 66, 67, 68, 69, 70, 71];
+
+  function elementWeaknessesFor(battler) {
     if (!battler || typeof battler.elementRate !== "function") return [];
     const source = elementNames();
     const found = [];
@@ -512,21 +518,15 @@
         continue;
       }
       if (!isFinite(rate) || rate <= 1 + ELEMENT_CHIP_EPSILON) continue;
-      found.push({ name, rate });
+      found.push({ id, name, rate });
     }
     found.sort((a, b) => b.rate - a.rate);
     return found.slice(0, MAX_ELEMENT_CHIPS).map((el) => ({
+      icon: ELEMENT_ICONS[el.id] || 0,
+      name: el.name,
       text: window.T
-        ? window.T("Battle.hud.elementChip", {
-            element: el.name,
-            rate: Number(el.rate.toFixed(1)),
-          })
-        : el.name,
-      // The same green the party cards paint a favourable stat multiplier in
-      // (css/game.css .phud-stat): on a monster, a weakness is good news.
-      color: "#7dff9a",
-      background: "linear-gradient(180deg, rgba(20,58,30,0.92), rgba(10,32,16,0.92))",
-      edge: "rgba(125,255,154,0.6)",
+        ? window.T("Battle.hud.elementRate", { rate: Number(el.rate.toFixed(1)) })
+        : Number(el.rate.toFixed(1)) + "x",
     }));
   }
 
@@ -924,12 +924,18 @@
     root.className = 'bse-slide-panel bse-item-panel';
     root._bseOwner = this;
     
-    // Right click to cancel / back out
+    // Right click backs out of the list, exactly as the cancel key and the
+    // pad's B do: one step, and only while the list is the one taking input
+    // and has somewhere to go back to (an unhandled cancel would deactivate
+    // the panel and leave the turn with nothing listening).
     root.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        if (this.active && typeof this.processCancel === 'function') {
-            this.processCancel();
-        }
+        e.stopPropagation();
+        if (typeof TouchInput !== 'undefined' && TouchInput.clear) TouchInput.clear();
+        if (!this.active || typeof this.processCancel !== 'function') return;
+        if (this.isCancelEnabled && !this.isCancelEnabled() &&
+            !(this.isCategorized() && !this._categoryMode)) return;
+        this.processCancel();
     });
 
     root.addEventListener("wheel", (e) => {
@@ -1681,12 +1687,42 @@
         addBarLabel(Math.floor(b.mp) + "/" + Math.floor(b.mmp), MINI.mpY);
       }
 
-      // The chip row: what the monster is soft to, then what is currently
-      // wrong with it. Both read as the party cards' own chips do, and both
-      // share the one row under the gauges, so a monster that picks up four
-      // ailments mid-fight never grows a second row and never grows a taller
-      // bar than the creature under it has air for.
-      const chips = elementChipsFor(b).concat(stateChipsFor(b));
+      // What the monster is soft to, stacked down the right of the bar:
+      // the element's symbol and the multiplier, nothing else. No tag, no
+      // name, no colour of its own, so three weaknesses cost the row under
+      // the gauges nothing and never crowd the ailments off it.
+      const weaknesses = window.CCArt ? elementWeaknessesFor(b) : [];
+      if (weaknesses.length > 0) {
+        const weakFont = 12;
+        const weakRowH = 17;
+        const weakIconPx = 16;
+        const weakX = Math.round(geo.x + geo.w + 6);
+        let weakY = MINI.hpY;
+        for (const weak of weaknesses) {
+          const el = this._htmlOverlay.addText(
+            `<span class="cc-rpg-icon bse-weak-icon" style="${window.CCArt.icon(weak.icon, weakIconPx)}"></span>${weak.text}`,
+            weakX,
+            weakY,
+            0,
+            "left",
+            weakFont,
+            "#ffffff",
+            true,
+            "black",
+            2,
+            "Bitter, serif",
+            weakRowH
+          );
+          if (el) el.classList.add("bse-hud-weak");
+          weakY += weakRowH;
+        }
+      }
+
+      // The chip row: what is currently wrong with the monster. One row only,
+      // so a monster that picks up four ailments mid-fight never grows a
+      // second row and never grows a taller bar than the creature under it
+      // has air for.
+      const chips = stateChipsFor(b);
       if (chips.length > 0) {
         const chipFont = 11;
         const chipPadX = 6;
@@ -2682,7 +2718,11 @@
     marginBottom: HOTBAR_MARGIN_BOTTOM,
     zIndex: 352,
     showLabel: true,
-    showDescription: true,
+    // The bar draws no description line of its own: a fight already has ONE
+    // description box, the panel over the quick bar (.bse-help-panel), and two
+    // of them said the same thing twice, one clipped to a single line. The
+    // hovered or armed slot writes into that panel instead (_hotbarSyncHelp).
+    showDescription: false,
     onSlotClick: (i) => {
       const actor = BattleManager.actor();
       const page = _hotbarPageSkills(_hotbarSkills(actor));
@@ -2850,8 +2890,7 @@
       entries.push(skill ? {
         iconIndex: skill.iconIndex,
         enabled: actor.canUse(skill),
-        tooltip: _hotbarTooltipText(actor, skill),
-        description: _hotbarDescription(actor, skill)
+        tooltip: _hotbarTooltipText(actor, skill)
       } : null);
     }
     _hotbarEntriesKey = stamp;
@@ -2920,6 +2959,47 @@
     return true;
   }
 
+  // The one description box a fight has is the panel over the quick bar, the
+  // same one the command list writes into (Window_Help, drawn as
+  // .bse-help-panel). The slot under the pointer, or the one the keys have
+  // armed, speaks through THAT rather than through a second line of its own:
+  // two boxes saying the same thing, one of them clipped, is what this
+  // replaces. Whatever the panel was saying before the bar spoke is put back
+  // the moment it stops.
+  let _hotbarHelpText = null;   // what this bar last wrote there, null for nothing
+  let _hotbarHelpPrev = '';     // what the panel said before the bar took it over
+
+  function _hotbarHelpWindow() {
+    const scene = SceneManager._scene;
+    return (scene && scene._helpWindow) || null;
+  }
+
+  function _hotbarSyncHelp(actor, skills) {
+    const help = _hotbarHelpWindow();
+    if (!help) return;
+    const index = _hotbarBar.spokenIndex();
+    const skill = index >= 0 ? _hotbarPageSkills(skills)[index] : null;
+    const text = skill ? _hotbarDescription(actor, skill) : '';
+    if (text) {
+      if (_hotbarHelpText === null) _hotbarHelpPrev = help._text || '';
+      if (help._text !== text) help.setText(text);
+      _hotbarHelpText = text;
+      if (!help.visible) help.show();
+      return;
+    }
+    _hotbarClearHelp(help);
+  }
+
+  function _hotbarClearHelp(helpWindow) {
+    if (_hotbarHelpText === null) return;
+    const help = helpWindow || _hotbarHelpWindow();
+    // Only put the old reading back if the bar's is still the one standing:
+    // anything else that has written there since owns the box now.
+    if (help && help._text === _hotbarHelpText) help.setText(_hotbarHelpPrev || '');
+    _hotbarHelpText = null;
+    _hotbarHelpPrev = '';
+  }
+
   // The bar is centred on the whole screen, not just the (off-center) log
   // column, and held well clear of the log above it (see HOTBAR_LOG_GAP).
   function _updateHotbarPosition(actor, skills) {
@@ -2933,6 +3013,8 @@
       pages: _hotbarPageCount(skills)
     });
 
+    _hotbarSyncHelp(actor, skills);
+
     // Dim the command list while the bar holds direction focus, so it never
     // reads as two things arguing over which is selected.
     const cmdRoot = document.getElementById('html-actorcmd-overlay');
@@ -2940,6 +3022,7 @@
   }
 
   function _hideHotbar() {
+    _hotbarClearHelp();
     _hotbarBar.hide();
     const cmdRoot = document.getElementById('html-actorcmd-overlay');
     if (cmdRoot) cmdRoot.classList.remove('bse-dimmed');

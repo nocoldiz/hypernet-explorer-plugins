@@ -713,10 +713,14 @@
     // in Core/MouseControls.js - the same walk that answers the wheel there.
     // It asks a scene for ccScrollTarget() and ccScrollStep() exactly as this
     // did, so the creation screens keep the panes they name; this stands down
-    // when it is present rather than scrolling the same pane a second time.
+    // when that poll is actually driving the stick rather than scrolling the
+    // same pane twice. That poll is off by default (STICK_SCROLL_ENABLED), and
+    // standing down for a poll that scrolls nothing left this spread with a
+    // dead stick, so the test is the flag and not the plugin being loaded.
     // The body below is what a build without that plugin falls back on.
     update(container) {
-      if (window.UIScroll && typeof window.UIScroll.updateScroll === "function") return;
+      if (window.UIScroll && window.UIScroll.STICK_SCROLL_ENABLED === true &&
+        typeof window.UIScroll.updateScroll === "function") return;
       // Hidden either way: the class CCPanel writes, or a display of its own
       // (the overlay is not always ours to have opened).
       if (!container || CCPanel.isHidden(container)) return;
@@ -739,7 +743,14 @@
         if (fires && scene.ccScrollStep(amount > 0 ? 1 : -1)) return;
       }
       const pane = this.target(container);
-      if (pane) pane.scrollTop += amount;
+      if (!pane) return;
+      // Through UIScroll when it is there, so the pad rails hung on the pane
+      // grey out their end on the same frame the stick reaches it.
+      if (window.UIScroll && typeof window.UIScroll.scrollPane === "function") {
+        window.UIScroll.scrollPane(pane, amount);
+      } else {
+        pane.scrollTop += amount;
+      }
     }
   };
 
@@ -1173,14 +1184,22 @@
       const baseName = String(spriteName).replace(/^.*[/\\]/, "");
       if (ImageManager.isBigCharacter(baseName)) {
         // A $ sheet is always 3x4, but the frame is not square in every pack,
-        // so the box is measured off the bitmap instead of assumed.
+        // so the box is measured off the bitmap instead of assumed. The box is
+        // never squared off either: a 48x72 frame pushed into a 48x48 box is
+        // the squashed sprite the sidebar and the party dossiers were drawing,
+        // so `size` gives the WIDTH and the height follows the frame. The
+        // sheet is usually still loading on the first paint, so a box built
+        // before the bitmap arrives is stamped with the sheet it is waiting
+        // for and fixSpriteBoxes() re-measures it once it is ready.
         const bitmap = ImageManager.loadCharacter(spriteName);
-        const frameW = (bitmap.width || 144) / 3;
-        const frameH = (bitmap.height || 192) / 4;
+        const ready = !!(bitmap && bitmap.width);
+        const frameW = (ready ? bitmap.width : 144) / 3;
+        const frameH = (ready ? bitmap.height : 288) / 4;
         const w = size || 48;
-        const h = size ? size : Math.round(w * (frameH / frameW));
+        const h = Math.round(w * (frameH / frameW));
         return `--cc-sprite-url:${this.url(url)}; --cc-sprite-x:50%; --cc-sprite-y:0%; ` +
-               `--cc-sprite-zoom:300% 400%; --cc-sprite-w:${w}px; --cc-sprite-h:${h}px;`;
+               `--cc-sprite-zoom:300% 400%; --cc-sprite-w:${w}px; --cc-sprite-h:${h}px;` +
+               (ready ? "" : ` --cc-sprite-pending:'${spriteName}';`);
       }
       const col = spriteIndex % 4;
       const row = Math.floor(spriteIndex / 4);
@@ -1189,6 +1208,60 @@
       const box = size || 48;
       return `--cc-sprite-url:${this.url(url)}; --cc-sprite-x:${pctX}%; --cc-sprite-y:${pctY}%; ` +
              `--cc-sprite-zoom:1200% 800%; --cc-sprite-w:${box}px; --cc-sprite-h:${box}px;`;
+    },
+
+    // The three walking frames of a sheet, as the background-position-x each
+    // one sits at. A still sprite is a character standing to attention; the
+    // companion the player has picked is meant to look alive, so the box it
+    // stands in is handed its frames and stepped through them.
+    walkFrames(spriteName, spriteIndex) {
+      if (!spriteName) return [];
+      const baseName = String(spriteName).replace(/^.*[/\\]/, "");
+      if (ImageManager.isBigCharacter(baseName)) return [0, 50, 100];
+      const col = (spriteIndex || 0) % 4;
+      return [0, 1, 2].map((f) => ((col * 3 + f) / 11) * 100);
+    },
+
+    // The attribute a box wears to join the walk, read by tickWalk below.
+    walkAttr(spriteName, spriteIndex) {
+      const frames = this.walkFrames(spriteName, spriteIndex);
+      if (!frames.length) return "";
+      return `data-cc-walk="${frames.join("|")}"`;
+    },
+
+    // Called once a frame by the scene: every box wearing the attribute takes
+    // the next step of the 1-2-1-3 cadence the engine itself walks in.
+    tickWalk(container) {
+      if (!container) return;
+      const step = Math.floor(Graphics.frameCount / 15) % 4;
+      const order = [1, 0, 1, 2];
+      const boxes = container.querySelectorAll("[data-cc-walk]");
+      for (const box of boxes) {
+        const frames = String(box.dataset.ccWalk || "").split("|");
+        const x = frames[order[step]];
+        if (x !== undefined) box.style.setProperty("--cc-sprite-x", x + "%");
+      }
+      this.fixSpriteBoxes(container);
+    },
+
+    // A sprite box built while its sheet was still downloading guessed the
+    // frame's shape. Once the bitmap is in, the box is measured for real and
+    // the mark is taken off, so nobody is drawn squashed for more than the
+    // frames it takes the sheet to land.
+    fixSpriteBoxes(container) {
+      if (!container) return;
+      const boxes = container.querySelectorAll('[style*="--cc-sprite-pending"]');
+      for (const box of boxes) {
+        const name = String(box.style.getPropertyValue("--cc-sprite-pending") || "")
+          .trim().replace(/^['"]|['"]$/g, "");
+        if (!name) { box.style.removeProperty("--cc-sprite-pending"); continue; }
+        const bitmap = ImageManager.loadCharacter(name);
+        if (!bitmap || !bitmap.width) continue;
+        const w = parseFloat(box.style.getPropertyValue("--cc-sprite-w")) || 48;
+        const h = Math.round(w * ((bitmap.height / 4) / (bitmap.width / 3)));
+        box.style.setProperty("--cc-sprite-h", h + "px");
+        box.style.removeProperty("--cc-sprite-pending");
+      }
     }
   };
 

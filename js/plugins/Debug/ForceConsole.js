@@ -399,10 +399,45 @@
     // Drop the playtest half of the condition and keep the rest of the base
     // behaviour: passability, event collision and random encounters all already
     // consult isDebugThrough().
+    // The plugin parameter only says whether the option exists at all; the
+    // player's own switch in Options > Experimental is what turns it on and
+    // off, and it starts on.
+    const NOCLIP_SYMBOL = 'ctrlNoclip';
+
+    ConfigManager[NOCLIP_SYMBOL] = true;
+
+    const _ConfigManager_makeData_noclip = ConfigManager.makeData;
+    ConfigManager.makeData = function() {
+        const config = _ConfigManager_makeData_noclip.call(this);
+        config[NOCLIP_SYMBOL] = this[NOCLIP_SYMBOL];
+        return config;
+    };
+
+    const _ConfigManager_applyData_noclip = ConfigManager.applyData;
+    ConfigManager.applyData = function(config) {
+        _ConfigManager_applyData_noclip.call(this, config);
+        this[NOCLIP_SYMBOL] = config[NOCLIP_SYMBOL] !== undefined
+            ? config[NOCLIP_SYMBOL] === true
+            : true;
+    };
+
     if (debugThrough) {
         Game_Player.prototype.isDebugThrough = function() {
-            return Input.isPressed("control");
+            return ConfigManager[NOCLIP_SYMBOL] !== false && Input.isPressed("control");
         };
+
+        if (window.GameOptions && typeof GameOptions.registerOption === 'function') {
+            GameOptions.registerOption(
+                NOCLIP_SYMBOL,
+                () => T('GameOptions.label.ctrlNoclip'),
+                () => ConfigManager[NOCLIP_SYMBOL],
+                (value) => { ConfigManager[NOCLIP_SYMBOL] = value; ConfigManager.save(); },
+                'experimental',
+                'boolean'
+            );
+            const tab = GameOptions.tabs.find(t => t.id === 'experimental');
+            if (tab && !tab.symbols.includes(NOCLIP_SYMBOL)) tab.symbols.push(NOCLIP_SYMBOL);
+        }
     }
 
     // NOTE: We intentionally do NOT override Utils.isNwjs here. Forcing it to always

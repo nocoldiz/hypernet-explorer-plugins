@@ -487,7 +487,11 @@
     const FOLLOW_ODDS      = 0.5;
     const FOLLOW_MIN       = 360;   // 6 seconds
     const FOLLOW_MAX       = 1200;  // 20 seconds
-    const FOLLOW_NEAR      = 1;
+    const FOLLOW_NEAR      = 2;   // a tile of air between them and the leader
+    // Only a member standing UNDER the leader gives ground. Walking up to
+    // somebody to talk to them must never push them out of reach, so the tile
+    // the leader faces is theirs to stand on.
+    const FOLLOW_YIELD     = 0;   // give ground only when sharing the tile
     const FOLLOW_DASH_ODDS = 0.25;
     // How near a goal has to be before a member simply steps at it rather than
     // opening the engine's path search, and how deep that search may go when
@@ -758,27 +762,10 @@
         entry.tags.shop = shopShelf().length > 0;
         for (const need of GAZ_NEEDS) entry.tags[need] = needHere(need);
         entry.surveyed = true;
-        if (first) {
-            announce("AutoIdle.auto.surveyed", {
-                map: entry.name || mapId,
-                notes: describeEntry(entry),
-            }, "info");
-        }
+        // The gazetteer is written up silently: the survey line told the player
+        // nothing they could act on, so the book keeps it and the screen stays clear.
+        void first;
         return entry;
-    }
-
-    // What the book says about a map, in the player's own language: the short
-    // list of things worth coming back for.
-    function describeEntry(entry) {
-        const notes = [];
-        if (entry && entry.tags) {
-            for (const tag of ["shop"].concat(GAZ_NEEDS)) {
-                if (entry.tags[tag]) notes.push(T("AutoIdle.auto.note." + tag));
-            }
-        }
-        if (entry && entry.puzzles) notes.push(T("AutoIdle.auto.note.puzzle"));
-        if (!notes.length) notes.push(T("AutoIdle.auto.note.nothing"));
-        return notes.join(", ");
     }
 
     // Which known map answers this tag, nearest by the connection graph. The
@@ -5408,7 +5395,38 @@
             // each one is put back on the pace their own errand deserves.
             f.setMoveSpeed(this.gaitFor(f));
             this.updateSwim(f);
+            // Nobody comes to rest INSIDE the leader. A member standing still
+            // is walked over sooner or later, since the leader passes through
+            // the party, and a person hidden under the player cannot be turned
+            // to and spoken to. Whoever shares that tile takes one step off it
+            // before doing anything else, so there is always a tile between the
+            // player and the companion they want to talk to.
+            if (this.stepOffLeader(f)) return;
             this.think(f);
+        },
+
+        // One step out from under the leader. Tried away from the way the
+        // leader is facing first, so the member ends up behind them rather than
+        // in the tile they are about to walk into; any free neighbour will do,
+        // and a boxed-in member is put beside them outright.
+        stepOffLeader(f) {
+            if (!$gamePlayer || !$gameMap) return false;
+            if (f.isMoving()) return false;
+            if (f.x !== $gamePlayer.x || f.y !== $gamePlayer.y) return false;
+            const facing = $gamePlayer.direction();
+            const side = (facing === 2 || facing === 8) ? [4, 6] : [8, 2];
+            const order = [10 - facing, side[0], side[1], facing];
+            for (const dir of order) {
+                if (!dir || dir === 5) continue;
+                const nx = $gameMap.roundXWithDirection(f.x, dir);
+                const ny = $gameMap.roundYWithDirection(f.y, dir);
+                if (!$gameMap.isValid(nx, ny)) continue;
+                if ($gameMap.eventsXyNt(nx, ny).some((e) => e.isNormalPriority())) continue;
+                if (typeof f.canPass === "function" && !f.canPass(f.x, f.y, dir)) continue;
+                f.moveStraight(dir);
+                if (f.isMovementSucceeded()) return true;
+            }
+            return this.placeBeside(f);
         },
 
         // How fast this member is moving right now. Mostly an amble a notch
@@ -5555,6 +5573,26 @@
             // extra notch bought nothing but the unnatural rush.
             f.setMoveSpeed(this.paceFor(f));
             this.stepTo(f, head.x, head.y);
+        },
+
+        // One step directly away from somebody, used when a member has ended
+        // up on the leader's shoulder. Straight back first, then to either
+        // side, and never onto a tile that is still too close.
+        stepAwayFrom(f, who) {
+            if (!$gameMap || !who) return false;
+            const toward = dirBetween(f.x, f.y, who.x, who.y);
+            const back = toward > 0 ? 10 - toward : 0;
+            const sides = (back === 2 || back === 8) ? [4, 6] : [2, 8];
+            const tries = back > 0 ? [back, sides[0], sides[1]] : [2, 4, 6, 8];
+            for (const dir of tries) {
+                if (typeof f.canPass === "function" && !f.canPass(f.x, f.y, dir)) continue;
+                const nx = $gameMap.roundXWithDirection(f.x, dir);
+                const ny = $gameMap.roundYWithDirection(f.y, dir);
+                if ($gameMap.distance(nx, ny, who.x, who.y) <= FOLLOW_YIELD) continue;
+                f.moveStraight(dir);
+                if (f.isMovementSucceeded()) return true;
+            }
+            return false;
         },
 
         stepTo(f, x, y) {
@@ -5830,6 +5868,15 @@
                 return;
             }
             const d = this.dist(f, $gamePlayer);
+            if (d <= FOLLOW_YIELD) {
+                // Only when the leader is standing ON them. A member the
+                // leader has simply walked up to stays put and can be talked
+                // to; one buried under the player steps off so they are
+                // visible and faceable again.
+                if (this.stepAwayFrom(f, $gamePlayer)) return;
+                if (!$gamePlayer.isMoving()) f.setDirection($gamePlayer.direction());
+                return;
+            }
             if (d <= FOLLOW_NEAR) {
                 // Close enough: face the way the leader is looking and wait for
                 // them to move off again.
@@ -6322,8 +6369,29 @@
                 s.needTried = Graphics.frameCount;
                 return false;
             }
-            // Each want is tried at the thing that really answers it first, and
-            // then at whatever the map can offer instead.
+            return this.startNeed(f, s, need);
+        },
+
+        // A member walks to a washroom the map really has rather than seeing to
+        // it in the abstract, so Core/TimeDateSystem.js asks here first and only
+        // announces the abstract version when this says no. Same errand, same
+        // toast on arrival: the only difference is who named the want.
+        sendOnErrand(actor, need) {
+            if (!actor || !need || !this.active() || this.onWorldMap()) return false;
+            if (!$gamePlayer || !$gameMap) return false;
+            const f = $gamePlayer.followers().data().find(
+                (m) => m && m.isVisible() && this.activeFor(m) && this.actorOf(m) === actor);
+            if (!f) return false;
+            const s = this.stateOf(f);
+            // Already out on one: they are seeing to themselves either way.
+            if (this.onErrand(s)) return true;
+            return this.startNeed(f, s, need);
+        },
+
+        // The errand itself, once the want is named. Each one is tried at the
+        // thing that really answers it first, and then at whatever the map can
+        // offer instead.
+        startNeed(f, s, need) {
             const gaveUp = () => {
                 s.needTried = Graphics.frameCount;
                 return false;
@@ -7069,21 +7137,60 @@
             this.clearGoal(this.stateOf(f));
             Bubbles.clear();
 
-            const ids = ["talk", "empathize", "reserves", "cancel"];
-            const labels = [
-                T("AutoIdle.member.actionTalk"),
-                T("AutoIdle.member.actionEmpathize"),
-                T("AutoIdle.member.actionReserves"),
-                T("AutoIdle.member.actionCancel"),
-            ];
+            // The menu is built up rather than fixed, because not everybody
+            // walking at the leader's shoulder is offered the same things.
+            const ids = ["talk"];
+            const labels = [T("AutoIdle.member.actionTalk")];
+
+            // Em and Bubba have one more thing to say to each other than
+            // anybody else on the road does: she Asks him, he Tells her. The
+            // topics get an entry of their own rather than hiding behind the
+            // sheet, and the word on it is the speaker's
+            // (NPC/DialogueSystem.js owns both).
+            const SD = window.StoryDialogue;
+            const speaker = (() => {
+                try { return $gameParty.leader()?.name?.() || ""; }
+                catch (err) { return ""; }
+            })();
+            if (SD?.canAsk?.(actor.name(), undefined, speaker)) {
+                ids.push("ask");
+                labels.push(SD.askVerb(speaker));
+            }
+
+            ids.push("empathize");
+            labels.push(T("AutoIdle.member.actionEmpathize"));
+
+            // Somebody holding a seat can be told to fall back; somebody
+            // already off the roll , a benched companion walking behind the
+            // party of their own accord , is offered the way back onto it
+            // instead. The question is the seat, never the name: Bubba walks
+            // with the party whether or not he is counted in it.
+            const inParty = (() => {
+                try {
+                    return !!$gameParty && $gameParty.members().some(
+                        m => m && m.actorId() === actor.actorId());
+                } catch (err) { return false; }
+            })();
+            if (inParty) {
+                ids.push("reserves");
+                labels.push(T("AutoIdle.member.actionReserves"));
+            } else if (this.memberCanRejoin(actor)) {
+                ids.push("join");
+                labels.push(T("AutoIdle.member.actionJoin"));
+            }
+
+            ids.push("cancel");
+            labels.push(T("AutoIdle.member.actionCancel"));
             $gameMessage.setChoices(labels, 0, ids.length - 1);
             $gameMessage.setChoiceBackground(0);
             $gameMessage.setChoicePositionType(2);
             $gameMessage.setChoiceCallback((n) => {
                 switch (ids[n]) {
                     case "talk": this.memberTalk(f, actor); break;
+                    case "ask": this.memberAsk(actor); break;
                     case "empathize": this.memberEmpathize(f, actor); break;
                     case "reserves": this.memberToReserves(actor); break;
+                    case "join": this.memberRejoin(actor); break;
                     default: break;
                 }
             });
@@ -7156,13 +7263,57 @@
         // his sheet side by side rather than one or the other (DialogueSystem
         // owns that menu and the gate on it).
         memberEmpathize(f, actor) {
-            const SD = window.StoryDialogue;
-            if (SD?.canAsk?.(actor.name())) {
-                if (SD.askMenu?.(actor.actorId())) return true;
-                if (SD.ask()) return true;
-            }
+            // Their sheet and nothing else. The topics are their own choice on
+            // the menu above, so opening this one no longer swallows them.
             if (!window.NPCEmpathize || typeof window.NPCEmpathize.openForActor !== "function") return false;
             window.NPCEmpathize.openForActor(actor.actorId());
+            return true;
+        },
+
+        // The topics themselves. The board is a choice window and the menu it
+        // is picked from is still closing, so it opens a tick later, named for
+        // whoever is doing the talking.
+        memberAsk(actor) {
+            const SD = window.StoryDialogue;
+            if (!SD?.ask) return false;
+            const speaker = (() => {
+                try { return $gameParty.leader()?.name?.() || ""; }
+                catch (err) { return ""; }
+            })();
+            setTimeout(() => { SD.ask($gameMap?.mapId?.(), speaker); }, 0);
+            return true;
+        },
+
+        // Whether there is any point offering somebody a seat: one has to be
+        // free, and the reserves have to be holding their dossier. The ceiling
+        // is the party's own (window.PartyLodging), never a literal.
+        memberCanRejoin(actor) {
+            const CP = window.CharacterPresets;
+            if (!CP?.unretirePartyMember || !CP.getAvailableRetiredPresets) return false;
+            const max = window.PartyLodging?.MAX_ACTIVE ?? 3;
+            try {
+                if ($gameParty.members().length >= max) return false;
+            } catch (err) { return false; }
+            return CP.getAvailableRetiredPresets().some(pr => pr && pr.name === actor.name());
+        },
+
+        // Taken back on, through the same call the Dynamics board makes, so a
+        // refusal reads the same way in both places.
+        memberRejoin(actor) {
+            const CP = window.CharacterPresets;
+            const name = actor.name();
+            const preset = CP?.getAvailableRetiredPresets?.().find(pr => pr && pr.name === name);
+            const result = preset ? CP.unretirePartyMember(preset.id) : null;
+            if (!result || !result.ok) {
+                SoundManager.playBuzzer();
+                this.toast(result && result.reason === "partyFull"
+                    ? T("MainMenu.dynamics.inactiveFull")
+                    : T("MainMenu.dynamics.cannotRejoin", { name }), "warning");
+                return false;
+            }
+            SoundManager.playOk();
+            this.toast(T("AutoIdle.member.rejoined", { name }), "info");
+            this.gatherNear();
             return true;
         },
 

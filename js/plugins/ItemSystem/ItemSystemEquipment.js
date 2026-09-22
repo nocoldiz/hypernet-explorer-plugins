@@ -143,6 +143,11 @@
     const ETYPE_OFFHAND = 2;
     const ETYPE_HEAD    = 3;
     const ETYPE_BODY    = 4;
+    const ETYPE_GEAR    = 5;
+    // A trinket is small, and one trinket was never a kit. Everybody carries
+    // three gear slots, so a belt, a ring and a pair of boots can be worn at
+    // the same time instead of arguing over the one socket.
+    const GEAR_SLOTS = 3;
     const MAX_WEAPON_SLOTS = 8;
     const MOUTH_SLOT_TAG = 'MouthSlot';
     const DUAL_WIELD_TAG = 'DualWield';
@@ -492,7 +497,7 @@
                 if (kind === 'robe') return T('Equip.slotRobe');
                 if (kind === 'armor') return T('Equip.slotArmor');
                 if (etype === ETYPE_BODY) return T('Equip.slotBody');
-                if (etype === 5) return T('Equip.slotGear');
+                if (etype === ETYPE_GEAR) return this.gearSlotName(actor, slotId);
             }
             return '';
         },
@@ -524,6 +529,16 @@
             actor.refresh();
         },
 
+        // Three gear slots read as one row, so they are numbered the way the
+        // hands are rather than printing the same word three times.
+        gearSlotName(actor, slotId) {
+            if (GEAR_SLOTS <= 1) return T('Equip.slotGear');
+            const slots = (actor && typeof actor.equipSlots === 'function') ? actor.equipSlots() : [];
+            let n = 0;
+            for (let i = 0; i <= slotId && i < slots.length; i++) if (slots[i] === ETYPE_GEAR) n++;
+            return T('Equip.slotGearN', { n: Math.max(1, n) });
+        },
+
         // 'hand', 'mouth', 'clothes', 'robe', 'armor', 'head', 'gear'
         slotKind(actor, slotId) {
             if (slotId < 0 || !actor) return null;
@@ -541,7 +556,8 @@
                 if (slotId === cur + 2) return 'armor';
                 cur += 3;
             }
-            if (slotId === cur) return 'gear';
+            if (slotId >= cur && slotId < cur + GEAR_SLOTS) return 'gear';
+            cur += GEAR_SLOTS;
             if (typeof actor.equipSlots === 'function') {
                 const slots = actor.equipSlots();
                 if (slotId >= slots.length) return null;
@@ -725,6 +741,8 @@
                 if (layout.body) {
                     rest.push(ETYPE_BODY, ETYPE_BODY, ETYPE_BODY);
                 }
+            } else if (i === ETYPE_GEAR) {
+                for (let g = 0; g < GEAR_SLOTS; g++) rest.push(ETYPE_GEAR);
             } else {
                 rest.push(i);
             }
@@ -748,6 +766,7 @@
         if (kind === 'clothes') return T('Equip.slotClothes');
         if (kind === 'robe') return T('Equip.slotRobe');
         if (kind === 'armor') return T('Equip.slotArmor');
+        if (kind === 'gear') return HandSlots.gearSlotName(this, slotId);
         return $dataSystem.equipTypes[this.equipSlots()[slotId]] || '';
     };
 
@@ -1313,6 +1332,58 @@
         const active = this.activeWeapons();
         return objects.filter(object => !(object && object.wtypeId) || active.includes(object));
     };
+
+    // =============================================================================
+    // Both hands swing
+    // =============================================================================
+    //
+    // A plain Attack is one blow in the stock engine, however many weapons are
+    // held: a second weapon only ever added its numbers to the first one's
+    // swing, so the off hand was never seen to move and never landed anything
+    // of its own. Every weapon in hand this turn now gets a swing of its own:
+    // an armful of two strikes twice, and when there are more it is the pair
+    // drawn for the turn that swings (activeWeapons, above).
+    //
+    // It is the same blow shared out, not a free doubling. The weapons already
+    // pool their strength into the character's attack (weaponParamDelta), so
+    // each swing carries its share of it and the turn comes to what it always
+    // came to, dealt one hand at a time. A burst from a firearm keeps its own
+    // repeats and is shared out the same way.
+
+    function handSwingsFor(action) {
+        if (!action || !action.isAttack || !action.isAttack()) return 1;
+        const subject = action.subject && action.subject();
+        if (!subject || !subject.isActor || !subject.isActor()) return 1;
+        if (typeof subject.activeWeapons !== 'function') return 1;
+        return Math.max(1, subject.activeWeapons().length);
+    }
+
+    const _Game_Action_numRepeats_hands = (typeof Game_Action !== 'undefined')
+        ? Game_Action.prototype.numRepeats
+        : null;
+    if (typeof _Game_Action_numRepeats_hands === 'function') {
+        Game_Action.prototype.numRepeats = function () {
+            const base = _Game_Action_numRepeats_hands.call(this);
+            return base + (handSwingsFor(this) - 1);
+        };
+
+        // What one of those swings is worth: the whole blow divided among the
+        // hands delivering it.
+        Game_Action.prototype.handSwingShare = function () {
+            const swings = handSwingsFor(this);
+            if (swings <= 1) return 1;
+            const base = _Game_Action_numRepeats_hands.call(this);
+            if (!(base > 0)) return 1;
+            return base / (base + swings - 1);
+        };
+
+        const _Game_Action_makeDamageValue_hands = Game_Action.prototype.makeDamageValue;
+        Game_Action.prototype.makeDamageValue = function (target, critical) {
+            const value = _Game_Action_makeDamageValue_hands.call(this, target, critical);
+            const share = this.handSwingShare();
+            return share === 1 ? value : Math.round(value * share);
+        };
+    }
 
     // =============================================================================
     // Training the weapons in hand

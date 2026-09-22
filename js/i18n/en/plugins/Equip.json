@@ -4,6 +4,8 @@
   "stealth": "Stealth",
   "intimidation": "Intimidation",
   "scale": "Scaling",
+  "basePower": "Base Damage",
+  "damage": "Damage",
   "random": "Random",
   "clear": "Clear",
   "equip": "Equip",
@@ -34,7 +36,7 @@
   "weaponType": "Weapon Type",
   "slotMouth": "Mouth",
   "slotTwoHandedHeld": "Both hands on it",
-  "dualPenaltyWarning": "Untrained with a weapon in each hand: every weapon carried hits for {n}% less.",
+  "dualPenaltyWarning": "Dual wielding untrained: {name} deals {n}% less damage with BOTH weapons. Unequip one to remove the penalty.",
   "dualPenaltyHint": "Your class does not dual wield, so both weapons are weakened.",
   "short": {
     "hp": "HP",
@@ -91,5 +93,6 @@
     "4": "Heavy Armor",
     "5": "Equipment",
     "6": "Shield"
-  }
+  },
+  "slotGearN": "Gear {n}"
 }

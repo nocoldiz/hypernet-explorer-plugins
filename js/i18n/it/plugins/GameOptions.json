@@ -68,7 +68,8 @@
     "asciiMode": "Modalita ASCII",
     "asciiHud": "HUD ASCII",
     "themeAscii": "ASCII",
-    "galaxyQuality": "Qualita mappa stellare"
+    "galaxyQuality": "Qualita mappa stellare",
+    "ctrlNoclip": "Noclip con CTRL"
   },
   "warn": {
     "language": "⚠ In lavorazione: solo l'inglese è tradotto per intero. Le altre lingue hanno ancora parti del gioco non tradotte.",
@@ -108,6 +109,7 @@
   "languageProgress": "{name} tradotto all'1%",
   "settingsInSection": "{count} impostazioni in questa sezione.",
   "desc": {
+    "ctrlNoclip": "Tenendo premuto CTRL il gruppo attraversa muri, eventi e incontri. Disattivalo se preferisci che CTRL non faccia nulla sulla mappa.",
     "mapBattleMode": "Presentazione della battaglia. Battaglia a Turni combatte nella classica scena a turni. Battaglia Strategica combatte battaglie tattiche sulla griglia della mappa.",
     "battleMode": "Presentazione della battaglia. Battaglia a Turni combatte nella classica scena a turni. Battaglia Strategica combatte battaglie tattiche sulla griglia della mappa.",
     "mapStreaming": "Unisce i quadranti procedurali adiacenti in una sola mappa continua da attraversare senza interruzioni. Se disattivato carica un quadrante alla volta e scorre lo schermo verso il successivo quando raggiungi un bordo.",
@@ -182,6 +184,7 @@
     "snapVertex": "Snap Vertex",
     "pixelArt": "Pixel Art",
     "autoExplore": "Esplorazione automatica",
+    "noclip": "Noclip",
     "ascii": "ASCII",
     "other": "Altro"
   },

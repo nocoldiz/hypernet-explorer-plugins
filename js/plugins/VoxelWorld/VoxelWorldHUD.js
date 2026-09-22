@@ -134,8 +134,8 @@
         flight:   ['F',             'fly:land',     'CamperDrive.hud.cmdFlight'],
         pitch:    ['MOUSE',         'R-STICK',      'CamperDrive.hud.cmdPitch'],
         thrust:   ['W / S',         'fly:thrust',   'CamperDrive.hud.cmdThrust'],
-        climb:    ['C',             'fly:climb',    'CamperDrive.hud.cmdClimb'],
-        descend:  ['SPACE',         'fly:descend',  'CamperDrive.hud.cmdDescend'],
+        climb:    ['SPACE',         'fly:climb',    'CamperDrive.hud.cmdClimb'],
+        descend:  ['C',             'fly:descend',  'CamperDrive.hud.cmdDescend'],
         flyView:  ['TAB',           'fly:view',     'CamperDrive.hud.cmdView'],
 
         map:      ['M',             'walk:map',     'CamperDrive.hud.cmdMap'],
@@ -1246,15 +1246,23 @@
             const sig = (pad ? 'p|' : 'k|') + ids.join(',') + '|' + note;
             if (this._cmdSig === sig) return;
             this._cmdSig = sig;
-            this._cmdList.innerHTML = ids.map((id) => {
+            // Written the way the map legend writes its checklist: a heading,
+            // then the label of the control with its badge chipped off to the
+            // right of it, two rows across. The two lists are the same list in
+            // two worlds, so they are read the same way (see MapLegend.js's
+            // _controlsHtml and theme.css "The map legend").
+            const rows = ids.map((id) => {
                 const row = LEGEND_ROWS[id];
                 if (!row) return '';
                 return `
                 <div class="cds-cmd-row">
-                    <span class="cds-key">${legendBadge(row, pad)}</span>
-                    <span class="cds-label">${T(row[2])}</span>
+                    <span class="cds-cmd-label">${T(row[2])}</span>
+                    <span class="cds-cmd-binds"><span class="ui-chip cds-key">${legendBadge(row, pad)}</span></span>
                 </div>`;
             }).join('');
+            this._cmdList.innerHTML =
+                `<div class="cds-cmd-heading">${T('MapLegend.controlsHeading')}</div>` +
+                `<div class="cds-cmd-rows">${rows}</div>`;
             const el = (this._els || {}).controllerHint;
             if (el) {
                 el.textContent = note ? T(note) : '';
@@ -1272,7 +1280,9 @@
             const row = LEGEND_ROWS.help || null;
             const badge = row ? legendBadge(row, pad) : '';
             const text = T('CamperDrive.hud.cmdHelp');
-            this._cmdHint.textContent = badge ? badge + '  ' + text : text;
+            this._cmdHint.innerHTML = badge
+                ? `<span class="ui-chip cds-key">${badge}</span><span>${text}</span>`
+                : `<span>${text}</span>`;
         }
 
         // Take the whole readout off the screen without tearing it down: a

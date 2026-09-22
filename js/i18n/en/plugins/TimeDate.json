@@ -87,8 +87,7 @@
     "weatherClear": "Clear",
     "awake": "Awake",
     "enemies": "Enemies",
-    "level": "Lv. {level}",
-    "levelBand": "Lv. {level} ({min}-{max})"
+    "level": "Lv. {level}"
   },
   "needLabel": {
     "hunger": "Hunger",

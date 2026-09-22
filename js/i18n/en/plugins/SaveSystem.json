@@ -63,5 +63,7 @@
     "noQuicksaveFound": "No Quicksave Found",
     "gameLoaded": "Game Loaded",
     "quicksaveLoaded": "Quicksave {n} loaded"
-  }
+  },
+  "rememberedFor": "What will be remembered",
+  "diaryStamp": "{date}, {time}"
 }

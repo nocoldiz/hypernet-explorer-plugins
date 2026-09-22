@@ -168,6 +168,17 @@
   const noteKeyNav = () => { lastKeyNavAt = performance.now(); };
   const pointerLeadsInput = () => lastPointerMoveAt > lastKeyNavAt;
 
+  // A DOM row confirms on 'pointerup', which fires before the browser's own
+  // 'mouseup'; TouchInput only hears the latter, so the release of the click
+  // that opened a menu used to arrive a frame later as isClicked() and the
+  // window standing under the pointer took it as a second confirm. The guard
+  // in BattleSystemEnhanced.js swallows that trailing release.
+  const consumeDomClick = () => {
+    const h = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+    if (h && h.consumeDomClick) h.consumeDomClick();
+    else TouchInput.clear();
+  };
+
   //=============================================================================
   // Scale helper (same pattern as MPP_SmoothBattleLog2)
   //=============================================================================
@@ -243,9 +254,9 @@
       if (window.Wrestling && window.Wrestling.canCommand) {
         push("wrestle", "commandWrestle", window.Wrestling.canCommand(actor), 106);
       }
-      if (typeof Scene_Battle.prototype.openTalkMenu === "function") {
-        push("talk", "commandTalk", canActorTalk(actor), 246);
-      }
+      // Talk is NOT one of these. Speaking to what is in front of you is not a
+      // thing the Actions page holds: it stands in the actor's own list, under
+      // the backpack (see makeCommandList).
       return out;
     },
 
@@ -421,9 +432,9 @@
     this.addCommandWithIcon("", "skill", listed.length > 0, 0, 76,
       !this.hasCastableSkill(listed));
 
-    // Actions: the engine's fallback kit and the four things a body does that
+    // Actions: the engine's fallback kit and the three things a body does that
     // are not skills at all. Those are always carried and never crowd a
-    // loadout, and Aim, Throw, Wrestle and Talk used to stand as four rows of
+    // loadout, and Aim, Throw and Wrestle used to stand as rows of
     // their own between the Skills row and the backpack, which was most of the
     // list for commands that are pressed once a fight. They are one row now
     // (window.BattleActionRows fills it, CategorizedBattleSkills.js draws it),
@@ -432,7 +443,7 @@
       .filter(skill => isUsableSkill(skill) && getSkillCategory(skill) === "Basic"); // i18n-ignore: <category:Basic> note tag
     // On the map the Actions row is not this menu's to fill: the fight there
     // opens the Basic kit in a skill window of MapBattleMode's own
-    // (MapBattleMode.js), which holds skills and nothing else, so the four rows
+    // (MapBattleMode.js), which holds skills and nothing else, so those rows
     // stay standing in the list itself the way they always did.
     const actionRows = BattleActionRows.rows(this._actor);
     const railInPage = !mbmActive;
@@ -460,6 +471,14 @@
     // battle-usable item. Mirrors Window_BattleItem.includes ($gameParty.canUse).
     const hasUsableItem = $gameParty.allItems().some(item => $gameParty.canUse(item));
     this.addCommandWithIcon("", "item",  hasUsableItem,          null, 209);
+
+    // Talk (EnemyTalkSystem.js) stands here, right under the backpack, and not
+    // on the Actions page: it is the one row of the four that is not a way of
+    // hitting somebody, and it is reached often enough that burying it behind
+    // a page cost it a press every time.
+    if (typeof Scene_Battle.prototype.openTalkMenu === "function") {
+      this.addCommandWithIcon("", "talk", canActorTalk(this._actor), null, 246);
+    }
     // Note: the standalone Guard command is intentionally omitted, it duplicates
     // the Defense command (both cast skill 2). The sole escape option is "Run" below.
 
@@ -670,6 +689,44 @@
     this._initCmdHtml();
   };
 
+  // Right click closes whatever page is open on top of the actor's own list: a
+  // target picker, or the skills / actions page the list is taken over by. It
+  // does nothing at all on the bare command list, because backing out of that
+  // one hands the turn around and buzzes, which is not what a stray right
+  // click on the battle screen should ever do.
+  // Is another list standing where the actor's own commands were? The skills
+  // and Actions page, the wrestling plan and every step of it, the limb list
+  // and the conversation all REPLACE the rows for as long as they are up
+  // (see makeCommandList). Each one owns a cancel handler that walks back one
+  // step, so this is the one answer to 'may the mouse back out of here'.
+  Window_ActorCommand.prototype.isPageOverList = function () {
+    const open = (owner) => !!(owner && owner.isMenuOpen && owner.isMenuOpen(this));
+    return !!(this._skillSession || open(window.BattleSkillMenu) ||
+      this._wrestleSession || open(window.Wrestling) ||
+      this._aimSession || open(window.Aiming) ||
+      this._talkSession || open(window.TalkMenu));
+  };
+
+  Window_ActorCommand.prototype.rightClickBack = function () {
+    // One right click is one step back. The button raises a contextmenu AND a
+    // pointerup, so without this the two would walk out of two pages at once.
+    const now = Date.now();
+    if (now - (this._rightBackAt || 0) < 250) return;
+    this._rightBackAt = now;
+    const picker = this._targetSession && this._targetSession.activeWindow;
+    if (picker && picker.active) {
+      if (typeof picker.processCancel === 'function') picker.processCancel();
+      return;
+    }
+    // A page standing over the list answers the same way the cancel key does:
+    // through its own cancel handler, which closes the page and gives back
+    // whatever it was opened from - a step of the wrestling plan, the limb
+    // list, the conversation, or the actor's own commands.
+    if (this.isPageOverList() && this.active && this.isCancelEnabled()) {
+      this.processCancel();
+    }
+  };
+
   Window_ActorCommand.prototype._initCmdHtml = function () {
     const old = document.getElementById('html-actorcmd-overlay');
     if (old) old.remove();
@@ -680,19 +737,11 @@
       'position:fixed;display:none;z-index:350;pointer-events:none;' +
       'transform-origin:top left;';
 
-    // Right click closes whatever picker is open on top of the list (a target
-    // window, a sub menu) and does nothing at all on the bare command list:
-    // backing out of that one hands the turn around and buzzes, which is not
-    // what a stray right click on the battle screen should ever do.
     root.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
       TouchInput.clear();
-      if (this._targetSession && this._targetSession.activeWindow && this._targetSession.activeWindow.active) {
-        if (typeof this._targetSession.activeWindow.processCancel === 'function') {
-          this._targetSession.activeWindow.processCancel();
-        }
-      }
+      this.rightClickBack();
     });
 
     document.body.appendChild(root);
@@ -756,16 +805,12 @@
         e.stopPropagation();
         e.preventDefault();
         if (e.button === 2) {
-          TouchInput.clear();
-          if (this._targetSession && this._targetSession.activeWindow && this._targetSession.activeWindow.active) {
-            if (typeof this._targetSession.activeWindow.processCancel === 'function') {
-              this._targetSession.activeWindow.processCancel();
-            }
-          }
+          consumeDomClick();
+          this.rightClickBack();
           return;
         }
         if (e.button !== undefined && e.button !== 0) return;
-        TouchInput.clear();
+        consumeDomClick();
         if (this._targetSession && this._targetSession.activeWindow && this._targetSession.activeWindow.active) {
           this._targetSession.activeWindow.select(i);
           this._targetSession.activeWindow.processOk();
@@ -874,7 +919,7 @@
           e.stopPropagation();
           e.preventDefault();
           if (e.button !== undefined && e.button !== 0) return;
-          TouchInput.clear();
+          consumeDomClick();
           if (typeof pager.turn === 'function') pager.turn(dir === 'prev' ? -1 : 1);
         });
         return el;

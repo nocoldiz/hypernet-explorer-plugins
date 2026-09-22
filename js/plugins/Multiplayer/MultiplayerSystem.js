@@ -41,10 +41,12 @@
  *
  * --- SETUP ---
  * 1. Choose your "Network Mode" in the plugin parameters.
- * 2. Create events named "Player1" through "Player8" on your maps. That is a
- *    rendering cap: a 64-player server session still only draws the nearest 8
- *    other players on any single map (party members first). Steam lobbies are
- *    capped at 8 players, so 8 slots always cover them.
+ * 2. Create events named "Player1", "Player2" and so on upwards on your maps.
+ *    The slots are read off the map itself, so a map may carry as many or as
+ *    few as its author drew. They are a rendering cap: a 64-player server
+ *    session still only draws the nearest few other players on any single map
+ *    (party members first). Steam lobbies are capped at 8 players, so 8 slots
+ *    always cover them.
  * 3. For Steamworks mode, the js/libs/steamworks folder MUST be a full steamworks.js
  *    build that exposes the matchmaking, networking and callback modules. The plugin
  *    logs a warning and disables Steam multiplayer if those modules are missing.
@@ -155,10 +157,19 @@
     // Steam P2P lobbies are hard-capped at 8 players here; the custom WebSocket server's
     // limit (up to 64) is enforced server-side by server.js.
     const STEAM_MAX_PLAYERS = 8;
-    // How many remote players can be drawn on one map at once. Maps only carry
-    // "Player1".."Player8" events, so this is a rendering cap, not a session cap:
-    // a 64-player server session shows the nearest 8 others per map.
-    const MAX_MAP_PLAYER_SLOTS = 8;
+    // How many remote players can be drawn on one map at once. This is a
+    // rendering cap, not a session cap: a 64-player server session shows the
+    // nearest few others per map. The slots themselves are whatever "PlayerNN"
+    // events the map actually carries (see setupPlayerEvents), which is not the
+    // same number everywhere: the older maps stop at Player8, the newer ones
+    // carry a Player9 as well, and the lobby map runs far past both.
+    const MAX_MAP_PLAYER_SLOTS = 9;
+    // A map's remote-player slots, named "Player1", "Player2" and so on. The
+    // one definition of what a slot event is: NPCSystem reads it back through
+    // window.MultiplayerPlayerSlotRe so a session's slots are never dealt out
+    // as NPC spawn placeholders.
+    const PLAYER_SLOT_RE = /^Player\d+$/;  // i18n-ignore: event names matched at runtime
+    window.MultiplayerPlayerSlotRe = PLAYER_SLOT_RE;
     // WebSocket() only accepts ws:// and wss://, so normalise whatever the player typed
     // (http(s):// pasted from a browser, or a bare "1.2.3.4:8080" host) into a real
     // socket URL. Bare hosts are assumed plaintext, which is what a fresh VPS serves.
@@ -2630,7 +2641,6 @@
 
         setupPlayerEvents() {
             const MAX_MAP_SLOTS = NetworkMode === 'Steamworks' ? STEAM_MAX_PLAYERS : MAX_MAP_PLAYER_SLOTS;
-            const playerEventNames = Array.from({ length: MAX_MAP_SLOTS }, (_, i) => `Player${i + 1}`);  // i18n-ignore  event names
             this.playerEvents.clear();
             this.eventPlayerMap.clear();
             this.playerMovementQueue.clear();
@@ -2643,14 +2653,18 @@
             const availableSlots = [];
 
             for (const event of $dataMap.events) {
-                if (event && playerEventNames.includes(event.name)) {
+                // Read the slots off the map rather than off a generated name
+                // list: a map carries as many "PlayerNN" events as its author
+                // drew, and the count differs from map to map.
+                if (event && PLAYER_SLOT_RE.test(event.name || '')) {
                     availableSlots.push(event);
                     const mapEvent = $gameMap.event(event.id);
                     if (mapEvent) { mapEvent.setOpacity(0); mapEvent._characterName = ''; }
                 }
             }
 
-            availableSlots.sort((a, b) => parseInt(a.name.replace('Player', '')) - parseInt(b.name.replace('Player', '')));  // i18n-ignore  event names
+            availableSlots.sort((a, b) => parseInt(a.name.replace('Player', ''), 10) - parseInt(b.name.replace('Player', ''), 10));  // i18n-ignore  event names
+            availableSlots.length = Math.min(availableSlots.length, MAX_MAP_SLOTS);
 
             const partyMembers = nm.isInParty() ? nm.party.members : [];
             const partyPlayersOnMap = [];

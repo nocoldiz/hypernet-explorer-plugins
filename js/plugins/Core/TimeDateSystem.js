@@ -522,6 +522,9 @@
 
   // Get current game time in minutes (Variable 114 stores total minutes elapsed)
   function getGameTimeMinutes() {
+    // The clock is asked for before a game exists (title screen, character
+    // board): with no variables yet, the moment is the epoch.
+    if (!window.$gameVariables) return 0;
     return $gameVariables.value(gameTimeVariable) || 0;
   }
 
@@ -1464,6 +1467,19 @@
       return null;
     },
 
+    // Hand the want to the loose party, which owns walking anywhere. False
+    // whenever the party is not walking loose (a vehicle, a cutscene, the world
+    // map) or the map has nothing that answers it.
+    walkTo(actor, key) {
+      const loose = window.AutoIdleExplorer && window.AutoIdleExplorer.loose;
+      if (!loose || typeof loose.sendOnErrand !== "function") return false;
+      try {
+        return !!loose.sendOnErrand(actor, key);
+      } catch (e) {
+        return false;
+      }
+    },
+
     // One member, at most, per pass: the party is a group of people, not a
     // queue of announcements. The clock the interval is measured on is the
     // world's, so a member who saw to themselves an hour ago is left alone
@@ -1474,6 +1490,15 @@
         if (actor._lastNeedAct != null && now - actor._lastNeedAct < ACT_INTERVAL_MIN) continue;
         const key = this.pressingNeed(actor);
         if (!key) continue;
+        // If the map they are standing on has somewhere that answers it, they
+        // go there on their own two feet instead: they leave the leader's side,
+        // walk to the washroom or the table, and the loose party announces it
+        // when they arrive (Core/AutoIdleExplorer.js). Only a want the map
+        // cannot answer is seen to in the abstract, here.
+        if (this.walkTo(actor, key)) {
+          actor._lastNeedAct = now;
+          return true;
+        }
         const line = this.act(actor, key);
         if (!line) continue;
         actor._lastNeedAct = now;
@@ -4339,11 +4364,10 @@
   // for reads cool, what is well over their heads reads hot, on the same scale
   // the temperature row uses.
   //
-  // Where the party is standing in a nation that was dealt a level bracket
-  // (BattleSystemEnhancedEncounters, section 3c) the window itself is printed
-  // beside the median, because in that case the median is not a property of
-  // this square but of the whole country: the same figure the atlas prints, and
-  // the thing to read before crossing a border rather than after.
+  // Only the median is printed. The nation's own bracket used to ride along
+  // beside it, and it only ever read as a second, wider number for the same
+  // square: the reader is judging what stands in front of them, not auditing
+  // the country's fauna table.
   MapInfoHUD.prototype._enemyLevel = function () {
     const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
     if (!BSEH || !BSEH.getPlaceEncounterMedianLevel) return '';
@@ -4359,13 +4383,7 @@
     else if (over <= -3) cls = 'mih-temp-cool';
     else if (over >= 15) cls = 'mih-temp-hot';
     else if (over >= 5) cls = 'mih-temp-warm';
-    let band = null;
-    if (typeof BSEH.getActiveNationBand === 'function') {
-      try { band = BSEH.getActiveNationBand(); } catch (e) { band = null; }
-    }
-    const text = band
-      ? T("TimeDate.hud.levelBand", { level: level, min: band.min, max: band.max })
-      : T("TimeDate.hud.level", { level: level });
+    const text = T("TimeDate.hud.level", { level: level });
     return `<div class="mih-region mih-danger">` +
       `<span class="mih-region-lbl">${T("TimeDate.hud.enemies")}</span>` +
       `<span class="mih-region-val ${cls}">${text}</span>` +

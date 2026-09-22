@@ -108,8 +108,14 @@
     const LOG_MAX_W_RATIO = 0.32;
     const LOG_MAX_H_RATIO = 0.34;
     // The share the box takes when it hangs from the ceiling of the right,
-    // where it grows down over the field: a smaller one, for fewer lines.
-    const LOG_MAX_H_RATIO_TOP = 0.20;
+    // where it grows down over the field. It reads back as far as the box on
+    // the floor does: the field under it is empty, and a commentary cut to a
+    // couple of lines loses the action that led to the one being read.
+    const LOG_MAX_H_RATIO_TOP = 0.34;
+    // Hung from the ceiling the box does not sit ON it: it is dropped clear of
+    // the top edge, where the bars over the monsters' heads are, so the first
+    // line is read against the field rather than against the frame.
+    const LOG_TOP_DROP = 56;
     // The clear air kept between the lowest line of the log and the top of the
     // command list standing against the same edge under it.
     const LOG_COMMAND_GAP = 20;
@@ -396,10 +402,9 @@
     // now, never the one the cards are in (UI/PartyHud.js), so nothing stands
     // in its way any more and every party reads the same five. Hung from the
     // ceiling of the right the box grows DOWN over the field the fight is on,
-    // so in that corner it reads back fewer: a running commentary there is
-    // glanced at rather than read, and it keeps three.
+    // which is empty, so it reads back just as far there.
     const MAX_VISIBLE_ENTRIES = 5;
-    const MAX_VISIBLE_ENTRIES_TOP = 3;
+    const MAX_VISIBLE_ENTRIES_TOP = 5;
 
     function maxVisibleEntries() {
         return logOnTopRight() ? MAX_VISIBLE_ENTRIES_TOP : MAX_VISIBLE_ENTRIES;
@@ -432,6 +437,49 @@
         setTimeout(drop, ENTRY_EXIT_MS + 120);
     }
 
+    // What one entry costs the column, its own box and the air it keeps over
+    // and under it. Read off the laid-out element, so a wrapped line of three
+    // rows is priced as three.
+    function entryHeight(el) {
+        if (!el || !el.offsetHeight) return 0;
+        let margins = 0;
+        const view = el.ownerDocument && el.ownerDocument.defaultView;
+        if (view && view.getComputedStyle) {
+            const cs = view.getComputedStyle(el);
+            margins = (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
+        }
+        return el.offsetHeight + margins;
+    }
+
+    // The room inside the box, its own padding taken off.
+    function innerRoom(root) {
+        const h = root.clientHeight || root.offsetHeight || 0;
+        if (!h) return 0;
+        const view = root.ownerDocument && root.ownerDocument.defaultView;
+        if (!view || !view.getComputedStyle) return h;
+        const cs = view.getComputedStyle(root);
+        return h - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
+    }
+
+    // How many of the oldest entries have to go for the rest to FIT. The box is
+    // capped in height, and a column packed at its end that overflows it is cut
+    // through the middle of its topmost line: half a sentence hanging off the
+    // ceiling reads as a rendering fault, not as an entry scrolling away. The
+    // count the board keeps is a ceiling, not a promise: a run of long wrapped
+    // actions is held to however many of them actually fit.
+    function overflowingCount(root, live) {
+        const room = innerRoom(root);
+        if (!room || live.length <= 1) return 0;
+        const heights = live.map(entryHeight);
+        let total = heights.reduce((a, b) => a + b, 0);
+        let drop = 0;
+        while (drop < live.length - 1 && total > room + 1) {
+            total -= heights[drop];
+            drop++;
+        }
+        return drop;
+    }
+
     // Keeps the DOM and the line arrays in step: an entry that slides off is
     // dropped from _lines in the same breath, so index i means the same entry in
     // both. Returns how many entries left.
@@ -440,7 +488,7 @@
         if (!root) return 0;
         const live = liveEntries(root);
         const maxEntries = maxVisibleEntries();
-        const excess = live.length - maxEntries;
+        const excess = Math.max(live.length - maxEntries, overflowingCount(root, live));
         if (excess > 0) {
             for (let i = 0; i < excess; i++) slideEntryOff(live[i]);
             if (log._lines) log._lines.splice(0, excess);
@@ -1501,7 +1549,8 @@
 
             this._htmlBattleLogRoot.appendChild(el);
 
-            // Only the action that just happened and the two before it stay.
+            // Only the last few actions stay, and only as many of those as fit
+            // the box whole: nothing is ever shown cut through.
             pruneEntries(this);
 
             this.scrollToBottom();
@@ -1676,11 +1725,12 @@
             let topPx;
             if (onTopRight) {
                 // Hung from the ceiling: the room is everything above the list.
+                const drop = margin + LOG_TOP_DROP;
                 const clearRoom = shared === null
                     ? ratioRoom
-                    : shared - margin - LOG_COMMAND_GAP;
+                    : shared - drop - LOG_COMMAND_GAP;
                 room = Math.max(60, Math.min(ratioRoom, clearRoom) * sc.sy);
-                topPx = sc.oy + margin * sc.sy;
+                topPx = sc.oy + drop * sc.sy;
                 // The box hugs its lines and hangs from its top edge.
                 _setStyleIfChanged(root, 'height', 'auto');
             } else {

@@ -403,7 +403,6 @@
         const isPrimary = key === primary;
         const isSecondary = key === secondary;
         const entry = table[key] || null;
-        const partCount = entry && entry.parts ? Object.keys(entry.parts).length : 0;
         const role = isPrimary
           ? `<span class="cc-role-badge primary">${ccT('CharCreate.primary')}</span>`
           : (isSecondary ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary')}</span>` : "");
@@ -416,7 +415,6 @@
         return `
           <div class="cc-card-option cc-archetype-card ${isPrimary ? 'selected' : ''} ${isSecondary ? 'is-secondary' : ''}" onclick="SceneManager._scene.onSelectArchetypeCard('${key}')">
             <div class="cc-option-title cc-option-title--tight">${archetypeDisplayName(key)}</div>
-            <div class="cc-archetype-card-meta">${partCount} ${ccT('CharCreate.bodyParts')}</div>
             ${role}
             ${secondBtn}
           </div>
@@ -526,10 +524,6 @@
               ${classNames.length ? classNames.join(", ") : ccT('CharCreate.onlyWhatYourArchetypesSupport')}
             </p>
           </div>
-
-          <button class="cc-sidebar-btn primary cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onOpenCreature3DStudio()">
-            <span>${ccT('CharCreate.custom3dModel')}</span>
-          </button>
         </div>
       `;
     }

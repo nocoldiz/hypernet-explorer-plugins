@@ -5773,9 +5773,12 @@
     if (Number.isFinite(originX) && Number.isFinite(originY)) {
       // A named square: whatever the snapshot says is there. An origin must
       // never anchor on water, so a square that turns out to be sea is refused
-      // and the caller rolls somewhere else.
+      // and the caller rolls somewhere else. A caller that only wants to LOOK
+      // at the square (the chart's Show map) passes allowWater, because a sea
+      // square is a perfectly good thing to be shown.
       const named = this.getBiomeFromCache(originX, originY);
-      if (!named || isWaterBiome(named) || named === "Ocean") return null;
+      if (!named) return null;
+      if (!opts.allowWater && (isWaterBiome(named) || named === "Ocean")) return null;
     } else {
       const pick = pickOverlandWorldCoord(opts.rng || Math.random, this._procGenData);
       if (!pick) return null;
@@ -7291,15 +7294,23 @@
     );
     if (mapData && window.ProceduralMapPrefabs) {
       yield;
-      let hints = (pg && pg.structureHints) || undefined;
-      if (mapData.rooms && mapData.rooms.length) {
-        hints = Object.assign({}, hints, { roomHints: mapData.rooms });
+      // A city, burg or village square places its own lot-aligned buildings as
+      // the last step of laying out its streets, and says so. Running the pass
+      // again here is a second, hint-blind round of prefabs stamped on top of
+      // the ones already standing on the lots, which is how a village came out
+      // with one house driven through the middle of another.
+      const P = window.ProceduralMapPrefabs;
+      if (!(P.isPrefabbed && P.isPrefabbed(mapData))) {
+        let hints = (pg && pg.structureHints) || undefined;
+        if (mapData.rooms && mapData.rooms.length) {
+          hints = Object.assign({}, hints, { roomHints: mapData.rooms });
+        }
+        yield* P.applyPrefabsToMapSteps(
+          mapData, resolved.biomeName, { x: worldX, y: worldY }, hints
+        );
+        yield;
       }
-      yield* window.ProceduralMapPrefabs.applyPrefabsToMapSteps(
-        mapData, resolved.biomeName, { x: worldX, y: worldY }, hints
-      );
-      yield;
-      window.ProceduralMapPrefabs.markPrefabbed(mapData);
+      P.markPrefabbed(mapData);
     }
     // The hints the structure generator leaves behind describe THIS square and
     // travel with it, so a stitched cell can still be asked where its stairs

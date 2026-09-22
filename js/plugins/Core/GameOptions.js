@@ -458,7 +458,8 @@ const GameOptions = {
             categories: ['experimental'],
             groups: [
                 { key: 'autoExplore', symbols: ['autoIdle'] },
-                { key: 'ascii', symbols: ['asciiModeEnabled', 'asciiHudEnabled'] }
+                { key: 'ascii', symbols: ['asciiModeEnabled', 'asciiHudEnabled'] },
+                { key: 'noclip', symbols: ['ctrlNoclip'] }
             ]
         }
     ]

@@ -1174,6 +1174,48 @@
     // (window.HealthCore.partStates). Parts that were merely wrecked, and every
     // part on a body nothing was severed from, come across whole: joining the
     // party is a fresh start for everything but what is physically gone.
+    // What the recruit's body IS, as opposed to what is still attached to it.
+    // Neither of these is cleared by taking a new occupant into an actor slot,
+    // so a monster talked round used to read as male (an actor nobody has told
+    // answers gender 0) and to inherit the reproductive system of whoever held
+    // the seat before it. Both are rolled off the creature itself, so the same
+    // monster is the same person however many times the fight is replayed.
+    Scene_Battle.prototype.applyRecruitBody = function (actor, enemy) {
+        if (!actor) return;
+        const Shared = window.NPCShared;
+        const key = actor.name() + "_recruitbody" + (enemy ? enemy.enemyId() : 0);
+        const rng = Shared ? new Shared.Rng(Shared.nameHash(key) ^ Shared.worldSeed()) : null;
+        const next = () => (rng ? rng.next() : Math.random());
+        const gender = Math.floor(next() * 2);
+        const codes = [-1, 0, 1, 2, 3, 4];
+        const matched = gender === 1 ? 1 : 0;
+        const body = next() < 0.8 ? matched : codes[Math.floor(next() * codes.length)];
+        if (actor.setGender) actor.setGender(gender);
+        if (actor.setReproductionType) actor.setReproductionType(body);
+        const BTS = window.BloodTypeService;
+        if (BTS && BTS.forNpc && !actor._ccBloodType) {
+            const blood = BTS.forNpc(key);
+            const bloodId = blood && (blood.id || blood.key);
+            if (bloodId && BTS.get && BTS.get(bloodId)) actor._ccBloodType = bloodId;
+        }
+    };
+
+    // The reproduction variable belongs to a SEAT (87 / 115 / 116 by party
+    // index), so it can only be written once the recruit is sitting in one.
+    Scene_Battle.prototype.syncRecruitSeatBody = function (actor) {
+        if (!actor || !$gameParty || !$gameVariables) return;
+        const code = actor.reproductionType ? actor.reproductionType() : null;
+        if (code == null) return;
+        const members = $gameParty.allMembers ? $gameParty.allMembers() : [];
+        const index = members.indexOf(actor);
+        if (index < 0 || index > 2) return;
+        const CCU = window.CharacterCreationUtils;
+        const varId = (CCU && CCU.getReproductiveVariableId)
+            ? CCU.getReproductiveVariableId(index)
+            : (index === 1 ? 115 : index === 2 ? 116 : 87);
+        $gameVariables.setValue(varId, code);
+    };
+
     Scene_Battle.prototype.applyRecruitAnatomy = function (actor, enemy) {
         const HC = window.HealthCore;
         if (!actor || !enemy || !HC || !window.initializeBodyParts) return;
@@ -1327,6 +1369,9 @@
             // whatever the fight took off it.
             this.applyRecruitAnatomy(newActor, enemy);
 
+            // ...and what that body is, which the slot never cleared.
+            this.applyRecruitBody(newActor, enemy);
+
             // And the mind: a build rolled out of the book its new class opens.
             initRecruitTraits(actorIdToAdd);
 
@@ -1341,6 +1386,7 @@
             // would stand in the party with no turn, no actions and no bars),
             // and the field is refreshed so their sprite and gauges appear.
             $gameParty.addActor(actorIdToAdd);
+            this.syncRecruitSeatBody(newActor);   // seat-owned, so only now
             if ($gameParty.inBattle()) {
                 newActor.onBattleStart();
                 newActor.clearActions();

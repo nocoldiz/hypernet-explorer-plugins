@@ -511,6 +511,36 @@
     BSE.State     = BSE.State     || {};
 
     // ------------------------------------------------------------------
+    // 1b. DOM CLICK GUARD
+    // ------------------------------------------------------------------
+    // Every battle overlay row (the command list, the skill list, the
+    // pickers) confirms on 'pointerup', which the browser fires BEFORE its
+    // own 'mouseup'. TouchInput listens for that 'mouseup' on document, so
+    // the release of the very click that opened a menu still reached the
+    // engine a frame later as TouchInput.isClicked(), and the window that had
+    // just opened under the pointer read it as a confirm on whatever row the
+    // mouse happened to be sitting over. A row calls this instead of
+    // TouchInput.clear(): the guard sits on window, so it runs after
+    // TouchInput's own document handler and wipes the release it just filed.
+    let _domClickGuardCancel = null;
+    BSE.Helpers.consumeDomClick = function () {
+        if (typeof TouchInput === 'undefined') return;
+        TouchInput.clear();
+        if (_domClickGuardCancel) _domClickGuardCancel();
+        const done = () => {
+            window.removeEventListener('mouseup', onUp);
+            clearTimeout(timer);
+            if (_domClickGuardCancel === done) _domClickGuardCancel = null;
+        };
+        const onUp = () => { TouchInput.clear(); done(); };
+        // The release can go missing (pointer capture, a window losing focus
+        // mid-click), so the guard never outlives the gesture for long.
+        const timer = setTimeout(done, 1000);
+        window.addEventListener('mouseup', onUp);
+        _domClickGuardCancel = done;
+    };
+
+    // ------------------------------------------------------------------
     // 2. PLUGIN PARAMETERS
     // ------------------------------------------------------------------
     const parameters = PluginManager.parameters(pluginName);

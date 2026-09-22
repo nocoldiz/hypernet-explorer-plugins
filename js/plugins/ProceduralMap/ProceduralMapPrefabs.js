@@ -206,6 +206,15 @@
     prefabbedMapData.add(mapData);
   }
 
+  // The other half of that bargain: anyone about to run the prefab pass over a
+  // tile array has to ask first. A city, burg or village square comes out of
+  // its own generator already built on, lot by lot, and a second pass over it
+  // stamps a building straight through the walls of the one already standing
+  // there.
+  function isPrefabbed(mapData) {
+    return prefabbedMapData.has(mapData);
+  }
+
   // A dungeon-family square is CARVED, and the room rectangles it was carved
   // from are attached to its tile array as a plain property (mapData.rooms, see
   // the enclosed-structure generator). JSON.stringify drops an array's
@@ -449,7 +458,9 @@
     } else if (lower.includes("village")) {
       // One prefab per planned lot, near enough: a village is a grid of blocks
       // now (see planSettlementBlocks) and it has room for every one of these.
-      return 14 + Math.floor(rng() * 8);
+      // The plan also hands over its leftover open blocks, so the budget has
+      // to cover the whole grid or the back of the village stays empty green.
+      return 24 + Math.floor(rng() * 11);
     } else if (lower.includes("ocean")) {
       // Islands should be rare, not a landmark on every ocean tile: most ocean
       // maps get none at all, and the ones that do only get a small handful.
@@ -667,10 +678,13 @@
         // point (the block plan in the structure generator hands over
         // rectangles). A prefab that cannot fit that lot belongs on another
         // one: without this a hint took the biggest prefab there was and
-        // spilled it across the street and its neighbours' gardens. Three
-        // tiles of tolerance, the same slack the city lots allow.
+        // spilled it across the street and its neighbours' gardens, and the
+        // spacing check then refused every lot it had spilled onto - which is
+        // how a village of two dozen lots came out with three buildings on it.
+        // A village lot is a whole block now, so the footprint has to fit
+        // inside it, with no tolerance to spend on the neighbours.
         if (hint.w && hint.h &&
-          (candidate.width > hint.w + 3 || candidate.height > hint.h + 3)) return null;
+          (candidate.width > hint.w || candidate.height > hint.h)) return null;
 
         // Keep the footprint on the map: lots sit as close as 2 tiles to the
         // edge, and a large prefab centred on one would hang off it.
@@ -1567,6 +1581,29 @@
         }
       } catch (e) { }
 
+      // The biome's OWN ground is never water, whatever the tileset happens to
+      // call it. A desert city is laid on the Beach feature (tile 3584 of
+      // tileset 303), and "beach" counts as water above, so every square of
+      // CityDesert read as open sea and refused every prefab it was handed:
+      // the whole biome came out as bare sand with nothing built on it.
+      for (const f of (biome.features || [])) {
+        if (!f || !f.terrain) continue;
+        for (const tilesetId of tilesetIds) {
+          try {
+            const Cache = window.ProcGenUtils && window.ProcGenUtils.Cache;
+            const features = Cache && Cache.getTilesetFeatures(tilesetId);
+            const variants = features && features[f.name];
+            if (!Array.isArray(variants)) continue;
+            for (const v of variants) {
+              if (v.type === "single") waterTileIds.delete(v.tileId);
+              else if (v.type === "multi" && v.tiles) {
+                v.tiles.forEach(row => row.forEach(id => waterTileIds.delete(id)));
+              }
+            }
+          } catch (e) { }
+        }
+      }
+
       // OPTIMIZED WATER SCANNING LOOP
       const layerSize = PROC_MAP_WIDTH * PROC_MAP_HEIGHT;
       for (let i = 0; i < layerSize; i++) {
@@ -1774,6 +1811,7 @@
     applyPrefabsToMap,
     applyPrefabsToMapSteps,
     markPrefabbed,
+    isPrefabbed,
     loadPrefabSync,
     canPlacePrefabAt,
     loadMapDataSync: loadPrefabSync, // Alias for backward compatibility

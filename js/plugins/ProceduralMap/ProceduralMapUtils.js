@@ -943,7 +943,7 @@
       if (entrance) {
         return {
           exists: true,
-          destination: { mapId: entrance.id, x: entrance.x, y: entrance.y },
+          destination: { mapId: entrance.id, x: entrance.x, y: entrance.y, direction: Number(entrance.direction) || 0 },
         };
       }
       if (here.length || coords.length) {

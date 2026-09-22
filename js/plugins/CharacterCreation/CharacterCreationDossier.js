@@ -377,11 +377,6 @@
             <div class="cc-col cc-col-gap-1 cc-col-grow">
               <div class="cc-row-inline cc-row-gap-tight">
                 ${this._nameFieldHtml(actor, isLocked)}
-                ${!isLocked ? `
-                  <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizeNameClick()" title="${ccT('CharCreate.randomize')}">
-                    ${this._ccIconHtml(83, 16)}
-                  </button>
-                ` : ''}
               </div>
               <div class="cc-row-inline cc-identity-line">
                 <span class="cc-identity-name">${jobName} ${className}</span>
@@ -415,7 +410,10 @@
           profileBoxHtml = `
             <div class="cc-compact-portrait-card cc-col cc-col-gap-2">
               <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${modelLabel}" onclick="SceneManager._scene.onOpenCreature3DStudio()">
-                <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center"></div>
+                <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
+                  ${this._ccIconHtml(224, 28)}
+                  <span class="cc-portrait-caption">${modelLabel}</span>
+                </div>
               </div>
             </div>
           `;
@@ -434,7 +432,10 @@
           profileBoxHtml = `
             <div class="cc-compact-portrait-card">
               ${bustUrl ? `
-                <div class="cc-compact-bust-full ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}" style="--cc-bust:${window.CCArt.url(bustUrl)}"></div>
+                <div class="cc-compact-bust-full ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
+                  <img class="cc-compact-bust-img" src="${bustUrl}" alt=""
+                       onerror="this.onerror=null; this.src='img/busts/7.png';">
+                </div>
               ` : `
                 <div class="cc-compact-bust-full empty ${isLocked ? 'locked' : ''}" title="${bustTitle}" onclick="${bustClick}">
                   <div class="cc-col cc-col-gap-2 cc-fill-center">
@@ -552,11 +553,14 @@
       }
       this._ccPushJobItems(actor, itemsList);
 
+      // The coin already says what the row is, and the name column is narrow
+      // enough that the label only ever arrived as "Starting ...". The sum is
+      // the whole of it.
       const moneyRowHtml = this._ccLoadoutRowHtml(
         208,
-        ccT('CharCreate.startingFunds'),
         startingMoneyFormatted,
-        { nameColor: 'var(--text-primary-hover)', valueColor: 'var(--text-cost-ok)' }
+        '',
+        { nameColor: 'var(--text-cost-ok)' }
       );
 
       const loadoutItemsHtml = itemsList.map((it) => this._ccLoadoutRowHtml(
@@ -712,11 +716,14 @@
         </div>
       `).join("") || `<span class="cc-note-faint">${ccT('CharCreate.noPersonalEquipment')}</span>`;
 
-      // Traits badges
+      // Traits badges. They read as the scenario sheet's do: named down a
+      // column with no plate around them, in the order a list is read in.
       const traitsBadges = selectedTraitObjects(actor).map(tr => {
         const name = (tr.name && resolveTraitName(tr.name, tr.id)) || tr.id;
-        return `<span class="cc-element-badge cc-element-badge--tight" ${this._ccHoverAttrs("trait", tr.id)}>${name}</span>`;
-      }).join(" ");
+        return { name, id: tr.id };
+      }).sort((a, b) => String(a.name).localeCompare(String(b.name)))
+        .map((tr) => `<span class="cc-element-badge" ${this._ccHoverAttrs("trait", tr.id)}>${tr.name}</span>`)
+        .join("");
 
       return `
         <div class="cc-page cc-page-right cc-col">
@@ -754,7 +761,7 @@
           ${traitsBadges ? `
             <div class="cc-gap-above-hair">
               <span class="cc-dossier-label cc-section-label">${ccT('CharCreate.traits')}</span>
-              <div class="cc-chip-row">${traitsBadges}</div>
+              <div class="cc-badge-wrap cc-badge-grid-3">${traitsBadges}</div>
             </div>
           ` : ''}
         </div>
@@ -918,7 +925,11 @@
       });
 
       // Scenarios are divided into suggested scenarios and other scenarios
-      const suggestedSymbols = ["origin_train", "origin_camper", "origin_space", "origin_stranded", "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault"];
+      // CharacterCreationOrigins owns both the suggested block and the reading
+      // order of the rest (alphabetical), so the cards below are drawn in the
+      // order the choices already arrive in.
+      const suggestedSymbols = (window.CCOrigins && window.CCOrigins.SUGGESTED_ORIGINS)
+        || ["origin_train", "origin_camper", "origin_space", "origin_stranded", "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault"];
       const allChoices = stepData.choices || [];
       const suggestedEntries = [];
       const otherEntries = [];
@@ -1145,4 +1156,23 @@
       Object.getOwnPropertyDescriptor(CCDossierPages.prototype, key)
     );
   }
+
+  // The same hover card, for everybody else. The wizard raises these plates
+  // through SceneManager._scene, which only answers while the wizard is the
+  // scene on screen; any other panel that lists a skill, a trait or a piece of
+  // gear (the wiki's character sheets) wants the very same card, so the three
+  // handlers are published on a host of their own. Nothing in them reads the
+  // wizard's state: they resolve the record and write the plate.
+  const _host = Object.create(Scene_CharacterCreation.prototype);
+  window.CCTooltip = {
+    // type: "weapon" | "armor" | "skill" | "item" | "trait"
+    showItem(event, type, id, qty) { _host.onItemHover(event, type, id, qty); },
+    showStat(event, statKey) { _host.onStatHover(event, statKey); },
+    hide() { _host.onItemLeave(); },
+    // The attributes a tag wears to raise and drop the card.
+    attrs(type, id, qty) {
+      return `onmouseenter="window.CCTooltip&&window.CCTooltip.showItem(event,'${type}',${Number(id)},${qty == null ? 1 : Number(qty)})"` +
+        ` onmouseleave="window.CCTooltip&&window.CCTooltip.hide()"`;
+    },
+  };
 })();

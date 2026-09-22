@@ -313,6 +313,15 @@
     }
   };
 
+  let i18nLang = null;
+  function ensureI18nData() {
+    const lang = ConfigManager.language || "en";
+    if (i18nData && i18nLang === lang) return;
+    i18nLang = lang;
+    loadI18nData();
+  }
+  ensureI18nData();
+
   const resolveI18nPath = (path, obj) => {
     if (!path || !obj) return null;
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
@@ -334,6 +343,7 @@
   // Helper function to get translated trait property
   const getTraitText = (trait, type) => {
     if (!trait) return "";
+    ensureI18nData();
     const intKey = trait[type];
     if (intKey && i18nData) {
       const localized = resolveI18nPath(intKey, i18nData);
@@ -344,8 +354,21 @@
     if (typeof value === "object" && value !== null) {
       return useTranslation ? value.it : value.en;
     }
+    if (typeof value === "string" && /^traits\./.test(value)) {
+      const slug = value.split(".")[1] || "";
+      return slug.split("_").filter(Boolean)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    }
     return value || (trait[type] || "");
   };
+
+  // Every menu outside the wizard (the Dynamics dossier, Empathize) holds raw
+  // trait objects whose name and description are i18n paths, so the one
+  // resolver the wizard reads them with is published rather than copied.
+  window.TraitText = (trait, type) => getTraitText(trait, type || "name");
+  // The IconSet index the wizard draws beside the trait, so a dossier can draw
+  // the same sprite rather than picking one of its own.
+  window.TraitIcon = (trait) => (trait && Number.isFinite(trait.icon) ? trait.icon : -1);
 
   // The engine's own param names (ATT, M.DEF, LUCK) are not what this game
   // calls its attributes: a trait's stat line reads STR, WIS and PSI like the
@@ -1761,6 +1784,26 @@
     { id: "merchant", icon: 208, traits: [133, 87, 16, 85] },
     { id: "hexed", icon: 165, traits: [99, 193, 192, 118] },
     { id: "tinkerer", icon: 223, traits: [35, 141, 40] },
+
+    // The odd shelf. The fourteen above are the shapes a person is expected to
+    // come in; these are the ones the simple board had no way of asking for at
+    // all, and a build nobody would assemble by hand is exactly what a package
+    // is for. Same rules as the rest: compatible inside itself and inside the
+    // ten point budget.
+    { id: "beastkin", icon: 190, traits: [189, 186, 187] },
+    { id: "hermit", icon: 194, traits: [50, 83, 28] },
+    { id: "nightborn", icon: 165, traits: [20, 31, 145] },
+    { id: "oracle", icon: 79, traits: [122, 196, 52] },
+    { id: "firebug", icon: 76, traits: [26, 24, 174] },
+    { id: "savant", icon: 121, traits: [75, 77, 57, 200] },
+    { id: "giant", icon: 128, traits: [62, 148, 197] },
+    { id: "smallfolk", icon: 163, traits: [63, 66, 43] },
+    { id: "shadow", icon: 142, traits: [156, 175, 32] },
+    { id: "monk", icon: 176, traits: [121, 50, 168] },
+    { id: "silent", icon: 80, traits: [199, 201, 145] },
+    { id: "doomsayer", icon: 208, traits: [162, 166, 108] },
+    { id: "caveborn", icon: 137, traits: [184, 61, 107] },
+    { id: "gambler", icon: 137, traits: [103, 8, 29] },
   ];
 
   // The same idea for a body with no mind in it. The fourteen packages above

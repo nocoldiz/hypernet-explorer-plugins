@@ -91,6 +91,7 @@
   "controlledCountries": "Controlla:",
   "holdsNothing": "nessuna nazione su questa mappa",
   "openWiki": "Leggi il dossier completo",
+  "confirmPick": "Conferma fazione",
   "moralGuide": "Guida morale:",
   "politicalLeader": "Guida politica:",
   "player": {
@@ -195,5 +196,22 @@
   },
   "armiesLbl": "Eserciti in campo ({count})",
   "armyLine": "{leader}, {count} ({status})",
-  "noArmies": "Oggi nulla in campo"
+  "noArmies": "Oggi nulla in campo",
+  "profileTitle": "Profilo",
+  "regionLbl": "Regione:",
+  "homeNationLbl": "Sede del potere:",
+  "militaryLbl": "Militare:",
+  "economyLbl": "Economia:",
+  "populationLbl": "Popolazione:",
+  "informationLbl": "Informazione:",
+  "arcaneLbl": "Arcano:",
+  "strengthLine": "{value} ({band})",
+  "bandDominant": "dominante",
+  "bandStrong": "forte",
+  "bandModest": "modesto",
+  "bandWeak": "debole",
+  "answersToLbl": "Risponde a:",
+  "troopTypesLbl": "Tipi di truppa ({count}):",
+  "cheapestTroopLbl": "Leva più economica:",
+  "cheapestTroopLine": "{name}, {price}"
 }

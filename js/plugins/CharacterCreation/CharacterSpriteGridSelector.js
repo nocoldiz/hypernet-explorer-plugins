@@ -284,6 +284,11 @@
     if (entry && entry.vip === true) return false;
     const SC = window.SpriteCatalog;
     if (!SC) return true;
+    // Varlenia has not turned up yet. Until the calendar reaches the year that
+    // unlocks it, its faces are off the board entirely, and the rail they sit
+    // on drops with them (an empty tab is never drawn).
+    if (entry && entry.varlenian === true && SC.isVarlenianUnlocked &&
+        !SC.isVarlenianUnlocked()) return false;
     if (SC.allowedInMagic && !SC.allowedInMagic(name, entry)) return false;
     if (SC.allowedInPopulation && !SC.allowedInPopulation(name, entry)) return false;
     return true;
@@ -685,6 +690,7 @@
     terminate() {
       super.terminate();
       this._alive = false;
+      this._unbindLeaveGestures();
       // A narrowed board is narrowed for the one character it was opened for.
       Scene_SpriteGridSelector._restrictToSheets = null;
       if (window.CCNav) window.CCNav.detach(this);
@@ -777,11 +783,58 @@
         this._gridDirty = true;
       });
 
+      // Escape and the right mouse button leave the board, bound on the page
+      // itself rather than left to Input alone: the gallery is a DOM overlay,
+      // so a press that lands on it (a focused card, a tab button, the search
+      // strip) never reaches the engine's own reader, and the board looked as
+      // though it had simply redrawn.
+      this._bindLeaveGestures(container);
+
       // The buttons under the board are not cards, so the grid cursor cannot
       // reach them. The focus ring can. See CharacterCreationNav.js.
       if (window.CCNav) window.CCNav.attach(this, this._overlay);
 
       if (window.CCTransitionVeil) window.CCTransitionVeil.hide();
+    }
+
+    // ESC and right click, on the page. Both are the same gesture the pad's B
+    // button is, so both end in the one answer: leave without picking.
+    _bindLeaveGestures(container) {
+      if (this._leaveKeyListener) {
+        document.removeEventListener("keydown", this._leaveKeyListener, true);
+      }
+      if (this._leaveMenuListener && this._leaveMenuTarget) {
+        this._leaveMenuTarget.removeEventListener("contextmenu", this._leaveMenuListener, true);
+      }
+      this._leaveKeyListener = (event) => {
+        if (!this._alive || event.key !== "Escape") return;
+        event.stopPropagation();
+        if (event.preventDefault) event.preventDefault();
+        SoundManager.playCancel();
+        this.leaveWithoutPicking();
+      };
+      this._leaveMenuListener = (event) => {
+        if (!this._alive) return;
+        event.stopPropagation();
+        if (event.preventDefault) event.preventDefault();
+        SoundManager.playCancel();
+        this.leaveWithoutPicking();
+      };
+      this._leaveMenuTarget = container;
+      document.addEventListener("keydown", this._leaveKeyListener, true);
+      container.addEventListener("contextmenu", this._leaveMenuListener, true);
+    }
+
+    _unbindLeaveGestures() {
+      if (this._leaveKeyListener) {
+        document.removeEventListener("keydown", this._leaveKeyListener, true);
+        this._leaveKeyListener = null;
+      }
+      if (this._leaveMenuListener && this._leaveMenuTarget) {
+        this._leaveMenuTarget.removeEventListener("contextmenu", this._leaveMenuListener, true);
+      }
+      this._leaveMenuListener = null;
+      this._leaveMenuTarget = null;
     }
 
     // The ring hands the board back when it walks off its own top or left edge.

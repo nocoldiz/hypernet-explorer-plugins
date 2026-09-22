@@ -334,11 +334,42 @@
         return true; // All events at target are "Below Characters"
     }
     
+    // ─── Typing in an HTML field is not playing the game ────────────────
+    // Input listens on the document, so every key typed into a panel another
+    // plugin overlays on the map (the radio's station name and url, terminals,
+    // search strips, chat) also reached Input and the hotkeys polled off it:
+    // naming a station opened the backpack, the status screen and the world map
+    // on the way. While a text field holds the focus the keyboard belongs to
+    // that field alone and Input is left untouched.
+    // window.InputTyping.isTyping() is the one answer to "is the player
+    // typing?": never re-derive it from a tagName test.
+    function typingInHtmlField() {
+        if (typeof document === 'undefined') return false;
+        const el = document.activeElement;
+        if (!el || el === document.body) return false;
+        if (el.isContentEditable) return true;
+        const tag = String(el.tagName || '').toUpperCase();
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    }
+
+    window.InputTyping = { isTyping: typingInHtmlField };
+
+    // A key typed into a field is that field's, not the party's. Anything held
+    // down when the field took the focus is released, so no key stays stuck
+    // once the panel closes.
+    const _Input_onKeyUp = Input._onKeyUp;
+    Input._onKeyUp = function(event) {
+        if (typingInHtmlField()) return;
+        _Input_onKeyUp.call(this, event);
+    };
+
     // Store original Input._onKeyDown method
     const _Input_onKeyDown = Input._onKeyDown;
     
     // Override Input._onKeyDown to handle our custom hotkeys
     Input._onKeyDown = function(event) {
+        if (typingInHtmlField()) { this.clear(); return; }
+
         // Call original method first
         _Input_onKeyDown.call(this, event);
         

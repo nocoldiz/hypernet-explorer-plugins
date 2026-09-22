@@ -373,15 +373,16 @@
             // has is reachable from the pad as well.
             //
             // `thrust` is deliberately not on 'ok': on a keyboard 'ok' is
-            // Space, and Space is the descend trim. The face/key split is
-            // exactly what lets A be thrust on the pad while Space stays trim.
+            // Space, and Space is the CLIMB trim - the same key that climbs on
+            // foot, in the water and in the air. The face/key split is exactly
+            // what lets A be thrust on the pad while Space stays trim.
             fly: {
                 thrust: { face: 'A', key: 'up' },
                 brake: { face: 'B', key: 'down' },
                 boost: { face: 'X', key: 'shift' },
                 view: { face: 'Y' },
-                descend: { face: 'L1', key: 'ok' },
-                climb: { face: 'R1', key: 'pageup' },
+                descend: { face: 'L1', key: 'pageup' },
+                climb: { face: 'R1', key: 'ok' },
                 zoomOut: { face: 'L2' },
                 zoomIn: { face: 'R2' },
                 land: { face: 'R3' },

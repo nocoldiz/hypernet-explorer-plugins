@@ -287,6 +287,15 @@
         setCurrentBuilding(null);
       },
       interiorMapIdFor(poolName, x, y, mapId) { return interiorMapIdFor(poolName, x, y, mapId); },
+      // The way out of the building the party is standing in: which map the
+      // door was on, and the square it stands on there. Asked by anything that
+      // has to answer "where is the party really" from inside an interior -
+      // the chart, which draws the city the door opens onto rather than the
+      // world sheet. Null when the party is not inside a building.
+      houseReturnPoint() {
+        const rp = currentHouseSessionId ? houseReturnPoints[currentHouseSessionId] : null;
+        return rp ? { mapId: rp.mapId, x: rp.eventX, y: rp.eventY } : null;
+      },
       // ── Doors that name their own trade (tileset 303) ──────────────────────
       // Which interiors a trade door may open onto, and which one THIS door
       // does. Read them here rather than keeping a second copy of the table:
@@ -1056,6 +1065,17 @@
     return { x: 0, y: 0 };
   }
 
+  // A tile the party can actually stand on: inside the map, walkable in at
+  // least one direction, not a blocked decorative region and not covered by a
+  // solid event (the stair itself, furniture, an NPC).
+  function isUsableLandingTile(x, y, blockedRegions) {
+    if (!$dataMap || x < 0 || y < 0 || x >= $dataMap.width || y >= $dataMap.height) return false;
+    if (blockedRegions && blockedRegions.has($gameMap.regionId(x, y))) return false;
+    if (!$gameMap.checkPassage(x, y, 0x0f)) return false;
+    if ($gameMap.eventsXyNt(x, y).some(ev => ev && !ev._erased && ev.isNormalPriority())) return false;
+    return true;
+  }
+
   // BFS from (cx, cy): return the nearest tile that is passable (from the south)
   // and carries neither region 7 nor region 4. Those regions are used for
   // impassable/blocked decorative areas in house interiors and on stairs, so
@@ -1079,10 +1099,7 @@
     while (head < queue.length) {
       const x = queue[head++];
       const y = queue[head++];
-      const rid = $gameMap.regionId(x, y);
-      if (!BLOCKED_REGIONS.has(rid) && $gameMap.isPassable(x, y, 2)) {
-        return { x, y };
-      }
+      if (isUsableLandingTile(x, y, BLOCKED_REGIONS)) return { x, y };
       const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
       for (const [dx, dy] of dirs) {
         const nx = x + dx;
@@ -1095,6 +1112,18 @@
       }
     }
     return { x: sx, y: sy };
+  }
+
+  // The one way the party lands after a stair, elevator or floor change: the
+  // nearest usable tile to the requested spot, followers dragged along with the
+  // player so nobody is left standing inside a wall.
+  function locatePartyAtLanding(x, y, direction) {
+    const spot = findNearestPassableStairLanding(x, y);
+    $gamePlayer.locate(spot.x, spot.y);
+    if (direction) $gamePlayer.setDirection(direction);
+    const followers = $gamePlayer.followers && $gamePlayer.followers();
+    if (followers) followers.synchronize(spot.x, spot.y, $gamePlayer.direction());
+    return spot;
   }
 
   function findAllPositionsWithRegionId(regionId) {
@@ -2629,8 +2658,7 @@
               case 'multiBuildingEnter':
                   const pos = findPositionWithRegionId(actions.spawnRegionId);
                   const mapDir = getMapDirection('houseDirection');
-                  $gamePlayer.locate(pos.x, pos.y);
-                  $gamePlayer.setDirection(mapDir !== null ? mapDir : actions.originalDirection);
+                  locatePartyAtLanding(pos.x, pos.y, mapDir !== null ? mapDir : actions.originalDirection);
                   if (actions.type === 'house') {
                     // i18n-ignore-start  event names
                     const upstairsEvent = findEventByName("Upstairs");
@@ -2668,14 +2696,12 @@
                   const downstairsEvent = findEventByName("Downstairs");
                   // i18n-ignore-end
                   if (elevatorEvent) {
-                      $gamePlayer.locate(elevatorEvent.x, elevatorEvent.y + 1);
-                      $gamePlayer.setDirection(2);
+                      locatePartyAtLanding(elevatorEvent.x, elevatorEvent.y + 1, 2);
                   } else if (downstairsEvent) {
-                      $gamePlayer.locate(downstairsEvent.x, downstairsEvent.y + 1);
-                      $gamePlayer.setDirection(2);
+                      locatePartyAtLanding(downstairsEvent.x, downstairsEvent.y + 1, 2);
                   } else {
                       const pos = findPositionWithRegionId(Number(parameters["spawnRegionId"] || 13));
-                      $gamePlayer.locate(pos.x, pos.y);
+                      locatePartyAtLanding(pos.x, pos.y, 0);
                   }
                   updateStairVisibility();
                   // Furniture-system decoration disabled for now.
@@ -2694,7 +2720,7 @@
                   const hasRegion14 = stairPos.upstairs !== null;
                   if (hasRegion14) {
                       const landingPos = actions.direction === 'next' ? stairPos.downstairs : stairPos.upstairs;
-                      $gamePlayer.locate(landingPos.x, landingPos.y);
+                      locatePartyAtLanding(landingPos.x, landingPos.y, 0);
                   } else {
                       const eventName = actions.direction === 'next' ? "Downstairs" : "Upstairs";  // i18n-ignore  event names
                       const event = findEventByName(eventName);
@@ -2702,8 +2728,7 @@
                       // party arrives one tile south of it, facing down, off the
                       // flight they just came off.
                       if (event) {
-                          $gamePlayer.locate(event.x, event.y + 1);
-                          $gamePlayer.setDirection(2);
+                          locatePartyAtLanding(event.x, event.y + 1, 2);
                       }
                   }
                   updateStairVisibility();
@@ -3039,20 +3064,17 @@
         </div>
       `;
 
-      // Event handlers
+      // Event handlers. Every one of them runs the action the keys and the pad
+      // run below, so a press is the same press whichever device made it.
       panel.querySelector('.room-selector-close').addEventListener('pointerdown', (e) => {
         e.stopPropagation();
-        SoundManager.playCancel();
-        closeRoomSelector();
+        cancelSelection(true);
       });
 
       panel.querySelectorAll('.room-selector-tab').forEach(btn => {
         btn.addEventListener('pointerdown', (e) => {
           e.stopPropagation();
-          currentFilter = btn.dataset.tab;
-          selectedIndex = 0;
-          SoundManager.playCursor();
-          render();
+          setFilter(btn.dataset.tab);
         });
       });
 
@@ -3069,37 +3091,22 @@
       panel.querySelectorAll('.room-selector-card').forEach(card => {
         card.addEventListener('pointerdown', (e) => {
           e.stopPropagation();
-          const idx = Number(card.dataset.idx);
-          const item = filtered[idx];
-          if (item) {
-            setRoomOverEdgeReserved(item);
-            SoundManager.playOk();
-            if (window.ParchmentToast) {
-              window.ParchmentToast.show(T('ProceduralHouse.reservedSuccess', { name: item.name }), { severity: 'good' });
-            }
-            closeRoomSelector();
-          }
+          selectedIndex = Number(card.dataset.idx);
+          confirmSelection();
         });
       });
     }
 
     render();
 
-    // Keyboard navigation
-    const keyHandler = (e) => {
-      if (!_activeRoomSelectorEl) {
-        window.removeEventListener('keydown', keyHandler, true);
-        return;
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        SoundManager.playCancel();
-        closeRoomSelector();
-        window.removeEventListener('keydown', keyHandler, true);
-        return;
-      }
-      const filtered = interiors.filter(item => {
+    // ── Walking it without a mouse ───────────────────────────────────────
+    // The picker is a DOM panel, so the browser's own arrow keys reach it, but
+    // a pad never speaks in key events: the d-pad and the left stick arrive as
+    // RMMZ's Input and nothing else. Both devices are answered here, through
+    // the same four actions, so the card under the frame is the same one
+    // whichever hand is on it.
+    function filteredRooms() {
+      return interiors.filter(item => {
         if (currentFilter !== 'all' && item.poolName !== currentFilter) return false;
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
@@ -3107,54 +3114,82 @@
         }
         return true;
       });
-      if (e.key === 'ArrowRight' || e.key === 'Right') {
-        e.preventDefault();
-        e.stopPropagation();
-        if (selectedIndex < filtered.length - 1) {
-          selectedIndex++;
-          SoundManager.playCursor();
-          render();
-        }
-      } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
-        e.preventDefault();
-        e.stopPropagation();
-        if (selectedIndex > 0) {
-          selectedIndex--;
-          SoundManager.playCursor();
-          render();
-        }
-      } else if (e.key === 'ArrowDown' || e.key === 'Down') {
-        e.preventDefault();
-        e.stopPropagation();
-        if (selectedIndex + 3 < filtered.length) {
-          selectedIndex += 3;
-          SoundManager.playCursor();
-          render();
-        }
-      } else if (e.key === 'ArrowUp' || e.key === 'Up') {
-        e.preventDefault();
-        e.stopPropagation();
-        if (selectedIndex - 3 >= 0) {
-          selectedIndex -= 3;
-          SoundManager.playCursor();
-          render();
-        }
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        e.stopPropagation();
-        const item = filtered[selectedIndex];
-        if (item) {
-          setRoomOverEdgeReserved(item);
-          SoundManager.playOk();
-          if (window.ParchmentToast) {
-            window.ParchmentToast.show(T('ProceduralHouse.reservedSuccess', { name: item.name }), { severity: 'good' });
-          }
-          closeRoomSelector();
-          window.removeEventListener('keydown', keyHandler, true);
-        }
+    }
+
+    function stepSelection(delta) {
+      const filtered = filteredRooms();
+      const next = selectedIndex + delta;
+      if (next < 0 || next > filtered.length - 1) return;
+      selectedIndex = next;
+      SoundManager.playCursor();
+      render();
+    }
+
+    function setFilter(key) {
+      currentFilter = key;
+      selectedIndex = 0;
+      SoundManager.playCursor();
+      render();
+    }
+
+    // The pool one step on from the one showing. The shoulders turn the tabs
+    // with it, which on a pad are otherwise a row of words nothing can reach.
+    function poolAt(dir) {
+      const at = poolTabs.findIndex(tab => tab.key === currentFilter);
+      return poolTabs[(at + dir + poolTabs.length) % poolTabs.length].key;
+    }
+
+    function confirmSelection() {
+      const item = filteredRooms()[selectedIndex];
+      if (!item) return;
+      setRoomOverEdgeReserved(item);
+      SoundManager.playOk();
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('ProceduralHouse.reservedSuccess', { name: item.name }), { severity: 'good' });
       }
+      cancelSelection(false);
+    }
+
+    function cancelSelection(playSound) {
+      if (playSound) SoundManager.playCancel();
+      closeRoomSelector();
+      window.removeEventListener('keydown', keyHandler, true);
+    }
+
+    const keyHandler = (e) => {
+      if (!_activeRoomSelectorEl) {
+        window.removeEventListener('keydown', keyHandler, true);
+        return;
+      }
+      const take = () => { e.preventDefault(); e.stopPropagation(); };
+      if (e.key === 'Escape') { take(); cancelSelection(true); return; }
+      if (e.key === 'ArrowRight' || e.key === 'Right') { take(); stepSelection(1); return; }
+      if (e.key === 'ArrowLeft' || e.key === 'Left') { take(); stepSelection(-1); return; }
+      if (e.key === 'ArrowDown' || e.key === 'Down') { take(); stepSelection(3); return; }
+      if (e.key === 'ArrowUp' || e.key === 'Up') { take(); stepSelection(-3); return; }
+      if (e.key === 'Enter') { take(); confirmSelection(); return; }
+      if (e.key === 'PageUp') { take(); setFilter(poolAt(-1)); return; }
+      if (e.key === 'PageDown' || e.key === 'Tab') { take(); setFilter(poolAt(1)); return; }
     };
     window.addEventListener('keydown', keyHandler, true);
+
+    // The pad's own turn, once a frame for as long as the panel is up. Input is
+    // read rather than the raw keyboard, so the d-pad, the left stick and the
+    // arrow keys all arrive here as the same four directions.
+    const padPoll = () => {
+      if (!_activeRoomSelectorEl) return;
+      requestAnimationFrame(padPoll);
+      if (typeof Input === 'undefined') return;
+      if (Input.isTriggered('cancel')) { cancelSelection(true); return; }
+      if (Input.isTriggered('ok')) { confirmSelection(); return; }
+      if (Input.isTriggered('pageup')) { setFilter(poolAt(-1)); return; }
+      if (Input.isTriggered('pagedown')) { setFilter(poolAt(1)); return; }
+      if (Input.isRepeated('right')) { stepSelection(1); return; }
+      if (Input.isRepeated('left')) { stepSelection(-1); return; }
+      if (Input.isRepeated('down')) { stepSelection(3); return; }
+      if (Input.isRepeated('up')) { stepSelection(-3); return; }
+    };
+    requestAnimationFrame(padPoll);
   }
 
   // ── Battle Action Hook ───────────────────────────────────────────────────

@@ -35,7 +35,6 @@
   "purseLeft": "Remaining",
   "pts": "pts",
   "refundWord": "refund",
-  "packsHint": "A package is a starting point: switch to Detailed mode to add, remove or replace any of its traits.",
   "packs": {
     "soldier": {
       "name": "Old Soldier",
@@ -92,6 +91,62 @@
     "tinkerer": {
       "name": "Tinkerer",
       "description": "Forge, workbench and a working day nobody else would keep."
+    },
+    "beastkin": {
+      "name": "Beastkin",
+      "description": "Raised by something with four legs, and it still shows in the walk."
+    },
+    "hermit": {
+      "name": "Hermit",
+      "description": "Owns three things, speaks to nobody, and wants it kept that way."
+    },
+    "nightborn": {
+      "name": "Nightborn",
+      "description": "Something old in the blood, a taste for pain, and scars that came with both."
+    },
+    "oracle": {
+      "name": "Oracle",
+      "description": "Sees what has not happened, hears colour, and is believed too late."
+    },
+    "firebug": {
+      "name": "Firebug",
+      "description": "Lights it, watches it, and is known in three towns for exactly that."
+    },
+    "savant": {
+      "name": "Savant",
+      "description": "Cannot sit still, forgets nothing read, and answers in four languages."
+    },
+    "giant": {
+      "name": "Giant",
+      "description": "Too big for the door, strong enough not to mind, and heard from the next street."
+    },
+    "smallfolk": {
+      "name": "Smallfolk",
+      "description": "Small, folded in ways a body should not fold, and handy with either hand."
+    },
+    "shadow": {
+      "name": "Shadow",
+      "description": "Trained to end things quietly, remembered by nobody, moved by nothing."
+    },
+    "monk": {
+      "name": "Monk",
+      "description": "Years in a cold cloister, one bowl, and no grudge worth keeping."
+    },
+    "silent": {
+      "name": "Silent One",
+      "description": "Has not spoken in years, sees faces wrong, and wears the reason."
+    },
+    "doomsayer": {
+      "name": "Doomsayer",
+      "description": "Believes in nothing, expects the worst, and is terrified of the end anyway."
+    },
+    "caveborn": {
+      "name": "Caveborn",
+      "description": "Born under the rock, white as the stone, and afraid of the dark all the same."
+    },
+    "gambler": {
+      "name": "Gambler",
+      "description": "Cannot walk past a table, wins more than they should, and lies about both."
     },
     "predator": {
       "name": "Lone Predator",

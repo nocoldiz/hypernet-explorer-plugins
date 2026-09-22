@@ -579,6 +579,7 @@
         // ever dealt one by accident.
         const VARLENIA_GROUP = "Varlenia";   // i18n-ignore: MapGroups.json key
         const PROC_MAP_ID = 636;             // the one map id every procedural square reuses
+        const VARLENIA_UNLOCK_YEAR = 2013;   // before this year the Varlenians are not in the world at all
 
         function db() {
             return (window.WorldGen && window.WorldGen.NPCs) || {};
@@ -1053,9 +1054,10 @@
                 // off the two creature halves instead (see pickNpcKey).
                 if (mode === "monster") return [];
                 const magic = (window.MagicNature && window.MagicNature.level()) || "normal";
-                const varlenia = (options && options.varlenia !== undefined)
-                    ? !!options.varlenia
-                    : this.isVarlenianPlace(options && options.mapId);
+                const varlenia = this.isVarlenianUnlocked() && (
+                    (options && options.varlenia !== undefined)
+                        ? !!options.varlenia
+                        : this.isVarlenianPlace(options && options.mapId));
                 // Ground the Goblin Horde holds is a pool of its own the same
                 // way a world is: the goblins come off goblinKeys on a share of
                 // the draw, so the people pool there is everybody else.
@@ -1311,7 +1313,22 @@
             // the Omega Tower is not, and neither is any map borrowed by every
             // group at once, a vehicle interior or a train carriage among them:
             // a shared template belongs to no group, so it is never this one.
+            // Varlenia is not in the world yet. Nobody from there is dealt a
+            // face, offered on the character board or stood behind a counter
+            // until the calendar says 2013, whatever else has happened to
+            // Earth by then: the unlock is the DATE and nothing else. Before
+            // that the whole people is simply absent, so the year is read in
+            // one place and every other answer hangs off this one.
+            isVarlenianUnlocked() {
+                const TD = window.TimeDateSystem;
+                const year = (TD && typeof TD.getCurrentDateObj === "function")
+                    ? TD.getCurrentDateObj().getFullYear()
+                    : VARLENIA_UNLOCK_YEAR - 1;
+                return Number(year) >= VARLENIA_UNLOCK_YEAR;
+            },
+
             isVarlenianPlace(mapId) {
+                if (!this.isVarlenianUnlocked()) return false;
                 const id = (mapId !== undefined && mapId !== null)
                     ? Number(mapId)
                     : (window.$gameMap && $gameMap.mapId ? $gameMap.mapId() : NaN);

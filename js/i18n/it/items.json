@@ -5743,10 +5743,6 @@
     "name": "Opuscolo: Compulsione della stazione dei numeri",
     "description": "Un opuscolo sigillato di Compulsione della stazione dei\nnumeri. Aprirlo trasmette la malattia a qualcuno nel gruppo."
   },
-  "1656": {
-    "name": "Fiala di Coltura: AIDS",
-    "description": "Una fiala di coltura sigillata di AIDS.\nAprirla trasmette la malattia a qualcuno nel gruppo."
-  },
   "1657": {
     "name": "Fiala di Coltura: Sifilide Terziaria",
     "description": "Una fiala di coltura sigillata di Sifilide Terziaria.\nAprirla trasmette la malattia a qualcuno nel gruppo."
@@ -7369,6 +7365,6 @@
   },
   "2067": {
     "name": "Tavola da surf",
-    "description": "Tavola {incerata | in vetroresina}.\n{Cavalca l'onda lunga | Prendi un frangente} su qualsiasi specchio d'acqua."
+    "description": "Tavola {incerata | in vetroresina}.\n{Cavalca l'onda | Prendi la cresta} in acqua."
   }
 }

@@ -15,6 +15,7 @@
     "rarity": "Rarity"
   },
   "category": {
+    "New": "New",
     "All": "All",
     "Favorites": "Favorites",
     "Food": "Food",

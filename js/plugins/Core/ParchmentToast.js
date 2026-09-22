@@ -553,7 +553,55 @@
   // Draws the caller's content into an element. A title or a leading icon
   // promotes the toast to HTML; the caller's own text is escaped unless it
   // explicitly asked for HTML.
+  // A caller handing over a line written for the message box brings the box's
+  // own control escapes with it (\c[14] for the gold highlight, \I[3] for an
+  // icon). A toast paints its own HTML and used to print those characters
+  // literally, so "the \c[14]Dog\c[0]" read as "the 14Dog0". They are read
+  // here instead: a colour escape becomes the toast's own highlight span and
+  // an icon escape becomes the IconSet cell it names.
+  const ESCAPE_RE = /\\[cC]\[(\d+)\]|\\[iI]\[(\d+)\]/;
+
+  function hasControlEscapes(text) {
+    return ESCAPE_RE.test(String(text));
+  }
+
+  // `escaped` is already HTML-safe, so only the escapes themselves are turned
+  // into markup. A \c[0] closes the highlight a non-zero \c[n] opened.
+  function renderControlEscapes(escaped) {
+    let open = false;
+    let out = String(escaped).replace(
+      /\\[cC]\[(\d+)\]|\\[iI]\[(\d+)\]/g,
+      (_m, colour, iconIndex) => {
+        if (iconIndex !== undefined) return icon(iconIndex);
+        if (Number(colour) === 0) {
+          if (!open) return "";
+          open = false;
+          return "</span>";
+        }
+        const prefix = open ? "</span>" : "";
+        open = true;
+        return `${prefix}<span class="toast-value">`;  // i18n-ignore  css class
+      }
+    );
+    if (open) out += "</span>";
+    return out;
+  }
+
   function renderInto(el, text, opts) {
+    if (!opts.html && hasControlEscapes(text)) {
+      const marked = renderControlEscapes(escapeHtml(String(text)));
+      if (opts.title || opts.icon != null) {
+        let inner = "";
+        if (opts.title) inner += `<div class="toast-title">${escapeHtml(opts.title)}</div>`;
+        inner += opts.icon != null
+          ? `<div class="toast-row">${icon(opts.icon)}<span>${marked}</span></div>`
+          : marked;
+        el.innerHTML = inner;
+      } else {
+        el.innerHTML = marked;
+      }
+      return;
+    }
     const body = opts.html ? String(text) : escapeHtml(String(text));
     if (opts.title || opts.icon != null) {
       let inner = "";

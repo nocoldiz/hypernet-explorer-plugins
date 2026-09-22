@@ -1400,7 +1400,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -1548,7 +1548,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -1696,7 +1696,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -1895,7 +1895,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -2043,7 +2043,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -2191,7 +2191,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -2339,7 +2339,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -2487,7 +2487,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -2635,7 +2635,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -2783,7 +2783,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3042,7 +3042,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3190,7 +3190,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3338,7 +3338,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3486,7 +3486,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3634,7 +3634,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3782,7 +3782,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -3930,7 +3930,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -4078,7 +4078,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -4226,7 +4226,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -4374,7 +4374,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -4522,7 +4522,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -4735,7 +4735,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -5152,7 +5152,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -5315,7 +5315,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -5514,7 +5514,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -5713,7 +5713,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -6037,7 +6037,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -6318,7 +6318,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -6571,7 +6571,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -6920,7 +6920,7 @@
       "x": 4,
       "y": 5
     },
-    {"id":37,"name":"NPC","note":"AI 0","pages":[{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":true,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"tileId":0,"characterName":"Skab/!$PirateHacker","direction":2,"pattern":1,"characterIndex":0},"list":[{"code":102,"indent":0,"parameters":[["Talk","Empathize","Cancel"],3,0,2,0]},{"code":402,"indent":0,"parameters":[0,"Talk"]},{"code":357,"indent":1,"parameters":["NPC/DialogueSystem","Rumors","Rumors",{}]},{"code":0,"indent":1,"parameters":[]},{"code":402,"indent":0,"parameters":[1,"Empathize"]},{"code":357,"indent":1,"parameters":["NPC/NPCEmpathize","Open","Open",{"eventName":""}]},{"code":657,"indent":1,"parameters":["NPC Event Name = "]},{"code":0,"indent":1,"parameters":[]},{"code":402,"indent":0,"parameters":[2,"Cancel"]},{"code":0,"indent":1,"parameters":[]},{"code":404,"indent":0,"parameters":[]},{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":3,"moveType":0,"priorityType":1,"stepAnime":false,"through":false,"trigger":0,"walkAnime":true},{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":true,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"characterIndex":0,"characterName":"","direction":2,"pattern":0,"tileId":0},"list":[{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":3,"moveType":0,"priorityType":0,"stepAnime":false,"through":false,"trigger":0,"walkAnime":true}],"x":5,"y":6},
+    {"id":37,"name":"NPC","note":"AI 0","pages":[{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":true,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"tileId":0,"characterName":"Skab/!$PirateHacker","direction":2,"pattern":1,"characterIndex":0},"list":[{"code":102,"indent":0,"parameters":[["Talk","Empathize","Cancel"],2,0,2,0]},{"code":402,"indent":0,"parameters":[0,"Talk"]},{"code":357,"indent":1,"parameters":["NPC/DialogueSystem","Rumors","Rumors",{}]},{"code":0,"indent":1,"parameters":[]},{"code":402,"indent":0,"parameters":[1,"Empathize"]},{"code":357,"indent":1,"parameters":["NPC/NPCEmpathize","Open","Open",{"eventName":""}]},{"code":657,"indent":1,"parameters":["NPC Event Name = "]},{"code":0,"indent":1,"parameters":[]},{"code":402,"indent":0,"parameters":[2,"Cancel"]},{"code":0,"indent":1,"parameters":[]},{"code":404,"indent":0,"parameters":[]},{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":3,"moveType":0,"priorityType":1,"stepAnime":false,"through":false,"trigger":0,"walkAnime":true},{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":true,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"characterIndex":0,"characterName":"","direction":2,"pattern":0,"tileId":0},"list":[{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":3,"moveType":0,"priorityType":0,"stepAnime":false,"through":false,"trigger":0,"walkAnime":true}],"x":5,"y":6},
     {
       "id": 38,
       "name": "NPC",
@@ -6970,7 +6970,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -7147,7 +7147,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -7303,7 +7303,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -7451,7 +7451,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -7690,7 +7690,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -7838,7 +7838,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -7986,7 +7986,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -8135,7 +8135,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                -2,
+                3,
                 0,
                 2,
                 0
@@ -8241,19 +8241,6 @@
               "parameters": []
             },
             {
-              "code": 403,
-              "indent": 0,
-              "parameters": [
-                6,
-                null
-              ]
-            },
-            {
-              "code": 0,
-              "indent": 1,
-              "parameters": []
-            },
-            {
               "code": 404,
               "indent": 0,
               "parameters": []
@@ -8327,7 +8314,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -8475,7 +8462,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -8674,7 +8661,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -8822,7 +8809,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -9021,7 +9008,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -9169,7 +9156,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -9368,7 +9355,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -9516,7 +9503,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -9664,7 +9651,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0
@@ -9863,7 +9850,7 @@
                   "Empathize",
                   "Cancel"
                 ],
-                3,
+                2,
                 0,
                 2,
                 0

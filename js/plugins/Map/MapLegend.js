@@ -18,13 +18,15 @@
  * table (window.MenuHotkeys) rather than copied here, so a rebinding there
  * moves the list too. It is a list and nothing more: no row is watched for
  * being used and nothing on the sheet lights up, and no input is polled for
- * it a frame. Every row writes its keys out and hangs its pad buttons off the
- * end of them while a pad is plugged in, rather than the sheet guessing which
- * device is in the player's hands.
+ * it a frame. It is written for one device at a time: with no pad plugged in
+ * every row writes its keys and its mouse out, and with a pad plugged in the
+ * sheet is the pad's alone, every row wearing its button and its pad name,
+ * and a row no button reaches dropped off the list. The rows run two across.
  *
  * It is not the story mode's and it is not a setting: it hangs on every map,
- * world map and generated ground alike, and H is the only thing that folds it
- * away or brings it back.
+ * world map and generated ground alike wherever switch 49 is on, and H is the
+ * only thing that folds it away or brings it back. With switch 49 off there is
+ * no sheet and no fold key: H is the help menu again.
  *
  * The notices beside it answer to their own setting, ConfigManager.showMapNotices,
  * which has three states: "first" reads a tip once and never again, "always"
@@ -44,6 +46,8 @@
  * When the sheet exists at all
  * ---------------------------------------------------------------------------
  * The notices are displayed only in story mode as collapsed with key to open,
+ * and that press opens the NOTICE alone: the command list keeps its own fold,
+ * so the button that reads a zone never pins the whole sheet up as well,
  * written in Bubba's voice. Outside story mode, map tooltips are not displayed.
  *
  * ---------------------------------------------------------------------------
@@ -69,8 +73,8 @@
  * ---------------------------------------------------------------------------
  * H folds the sheet and unfolds it, on every map, whether or not Bubba is
  * along: the fold is the list's, not the notices'. On a pad it is L2, on
- * every map alike. The fold line writes the key out and hangs L2 off the
- * end of it while a pad is plugged in, the way every row does. Whether it
+ * every map alike. The fold line names L2 alone while a pad is plugged in
+ * and H alone otherwise, the way every row does. Whether it
  * is folded is remembered on $gameSystem and it starts folded.
  *
  * Folded means two different things depending on where the party stands. In
@@ -263,7 +267,7 @@
     { id: "menu", labelKey: "MapLegend.controls.menu", key: "Esc", pad: PAD.menu },
     {
       id: "hotbar",
-      labelKey: "MapLegend.controls.hotbarUse", key: "1 / 2 / 3",
+      labelKey: "MapLegend.controls.hotbarUse", key: "1 - 9",
       padLabelKey: "MapLegend.controls.hotbarCycle", pad: PAD.hotbarStep,
     },
     // Never named on the sheet on either device, which for the pad meant a
@@ -419,11 +423,12 @@
   //===========================================================================
   // Whether the list is up, and what is on it
   //===========================================================================
-  // Nothing switches it: the list is always there, folded or unfolded, and H
-  // is the only thing that moves it.
+  // Switch 49 is the master gate of the whole sheet: with it off there is no
+  // list, no notice and no fold key at all. With it on the list is always
+  // there, folded or unfolded, and H is the only thing that moves it.
 
   function controlsShown() {
-    return true;
+    return legendEnabled();
   }
 
   // The notices are the other half of the sheet, and they answer to their own
@@ -560,16 +565,27 @@
     return String(entry.pad).split("/").map((s) => s.trim()).filter(Boolean);
   }
 
-  // The label and the two key columns for one row. Nothing watches what the
-  // player is holding: the row writes its keys out and hangs the pad chips off
-  // the end of them while a pad is plugged in, and a row that is a different
-  // control on the two devices names both.
+  // The label and the key column for one row, written for the device in the
+  // player's hands and for that one alone. With a pad plugged in the sheet is
+  // the pad's sheet: the keys and the mouse are dropped, and a row that is a
+  // different control over there wears that name instead of both.
   function rowFace(entry, hasPad) {
     const pad = hasPad === undefined ? padConnected() : !!hasPad;
-    const label = entry.padLabelKey && pad
-      ? T(entry.labelKey) + " / " + T(entry.padLabelKey)
-      : T(entry.labelKey);
-    return { label, keys: rowKeys(entry), pads: pad ? padTokens(entry) : [] };
+    if (pad) {
+      return {
+        label: entry.padLabelKey ? T(entry.padLabelKey) : T(entry.labelKey),
+        keys: "",
+        pads: padTokens(entry),
+      };
+    }
+    return { label: T(entry.labelKey), keys: rowKeys(entry), pads: [] };
+  }
+
+  // The rows the device in the player's hands actually answers to. On a pad a
+  // row no button reaches is not on the list at all.
+  function deviceRows(rows, hasPad) {
+    const pad = hasPad === undefined ? padConnected() : !!hasPad;
+    return pad ? rows.filter((entry) => padTokens(entry).length > 0) : rows;
   }
 
   //===========================================================================
@@ -700,8 +716,11 @@
     return storyMode();
   }
 
+  // The one answer to "is the map legend running at all": switch 49. Nothing
+  // else is read for it, story mode and the tutorial maps included, and with
+  // it off H goes back to being the help menu everywhere.
   function legendEnabled() {
-    return true;
+    return !!($gameSwitches && $gameSwitches.value(LEGEND_SWITCH_ID));
   }
 
   // The tutorial map and everything filed under it in the editor tree keep
@@ -776,15 +795,33 @@
     return $gameSystem._mapLegendFolded !== false;
   }
 
+  // The notice has its own fold, kept apart from the list's. Standing on a
+  // zone, the info button opens what the place says and NOTHING else: opening
+  // the controls list off the same press would make the button that reads a
+  // notice in the story mode the button that pins up the whole command sheet
+  // everywhere else. A notice opens collapsed, as its title alone.
+  function isNoticeFolded() {
+    if (!$gameSystem) return true;
+    return $gameSystem._mapLegendNoticeFolded !== false;
+  }
+
+  // Which of the two the fold button is holding right now: the notice while
+  // there is one on the paper, the list otherwise. Written by updateLegend.
+  let noticeOnScreen = false;
+
   function toggleFold() {
     if (!$gameSystem) return;
-    $gameSystem._mapLegendFolded = !isFolded();
+    if (noticeOnScreen) {
+      $gameSystem._mapLegendNoticeFolded = !isNoticeFolded();
+    } else {
+      $gameSystem._mapLegendFolded = !isFolded();
+    }
     SoundManager.playCursor();
   }
 
-  // The fold key always has the list to bring up.
+  // The fold key has a list to bring up only while the sheet is switched on.
   function foldable() {
-    return true;
+    return legendEnabled();
   }
 
   // The pad's fold button: a TAP of L2, on every map including the world map.
@@ -957,15 +994,16 @@
       // to say the panel is off the screen rather than standing empty.
       // A plain string rather than JSON.stringify: this runs every frame the
       // party is walking, and the notice is four fields.
+      const noticeFolded = state.noticeFolded === undefined ? folded : !!state.noticeFolded;
       const noticeSig = (notice ? notice.key + "" + notice.title + "" + notice.text : "-") +
-        "" + (folded ? 1 : 0) + (state.foldable ? 1 : 0) + "" + (state.foldChip || "");
+        "" + (noticeFolded ? 1 : 0) + (state.foldable ? 1 : 0) + "" + (state.foldChip || "");
       if (notice) {
         const el = this.element();
         if (noticeSig !== this._signature) {
           this._signature = noticeSig;
           this._needsPosition = true;
           el.innerHTML = this._noticeHtml(notice, state);
-          el.classList.toggle("mlg-folded", folded);
+          el.classList.toggle("mlg-folded", noticeFolded);
         }
         this._show(el, "_el");
       } else {
@@ -999,19 +1037,20 @@
     // The fold line: the key that puts the panels away, and what pressing it
     // does next.
     _foldHtml(hint, state) {
-      const pad = state.foldPad
-        ? `<span class="ui-chip mlg-chip">${escapeHtml(state.foldPad)}</span>` : "";
+      // One chip, the one the device in the player's hands wears: with a pad
+      // plugged in the trigger is the whole answer and the H chip is not drawn.
+      const chip = state.foldPad || state.foldChip || FOLD_KEY_LABEL;
       return '<div class="mlg-fold">' +
-        `<span class="ui-chip mlg-chip">${escapeHtml(state.foldChip || FOLD_KEY_LABEL)}</span>` +
-        pad +
+        `<span class="ui-chip mlg-chip">${escapeHtml(chip)}</span>` +
         `<span>${escapeHtml(hint)}</span></div>`;
     }
 
     // Folded, the notice is its title and nothing else, and only the [H] chip
     // says the rest is still there.
     _noticeHtml(notice, state) {
+      const nFolded = state.noticeFolded === undefined ? !!state.folded : !!state.noticeFolded;
       const parts = [`<div class="mlg-title">${noticeHtml(notice.title)}</div>`];
-      if (!state.folded && notice.text) {
+      if (!nFolded && notice.text) {
         // Bubba's reading of the place is signed with his name; the place's
         // own sign is not signed at all, it just says what it says.
         const speaker = notice.voice === VOICE_GENERIC ? "" :
@@ -1020,7 +1059,7 @@
       }
       if (state.foldable) {
         parts.push(this._foldHtml(
-          T(state.folded ? "MapLegend.unfoldHint" : "MapLegend.foldHint"), state));
+          T(nFolded ? "MapLegend.unfoldHint" : "MapLegend.foldHint"), state));
       }
       return parts.join("");
     }
@@ -1032,9 +1071,13 @@
       // A panel folded over nothing but the list says everything it has
       // to say on the fold line itself, so it grows no heading of its own.
       const bareFold = !!state.folded;
-      if (!state.folded && rows.length) {
+      const shown = deviceRows(rows, state.hasPad);
+      if (!state.folded && shown.length) {
         parts.push(`<div class="mlg-heading">${escapeHtml(T("MapLegend.controlsHeading"))}</div>`);
-        for (const entry of rows) {
+        // Two columns: one column of this list runs off the bottom of the
+        // screen on the world map. The grid itself belongs to the stylesheet.
+        parts.push('<div class="mlg-rows">');
+        for (const entry of shown) {
           const face = rowFace(entry, state.hasPad);
           const binds = [];
           if (face.keys) binds.push(`<span class="mlg-keys">${escapeHtml(face.keys)}</span>`);
@@ -1048,6 +1091,7 @@
             `</div>`
           );
         }
+        parts.push('</div>');
       }
       if (state.foldable && !hasNotice) {
         const hint = bareFold
@@ -1153,9 +1197,8 @@
   // the 3D world takes it off the screen rather than leaving it floating over
   // something it was never drawn against.
   function sheetAllowed() {
-    // The notices answer to their setting and the list to nothing at all, so
-    // either one on its own is reason enough to pin the paper up.
-    if (!legendEnabled() && !controlsShown()) return false;
+    // Switch 49 off is the whole sheet off, notices and list alike.
+    if (!legendEnabled()) return false;
     if (!(SceneManager._scene instanceof Scene_Map)) return false;
     if (SceneManager.isSceneChanging && SceneManager.isSceneChanging()) return false;
     if (!$gameMap || !$gamePlayer || !$gameSystem) return false;
@@ -1171,12 +1214,13 @@
     updateTooltipWatch();
     readFoldKey();
     const notice = noticesShown() ? allowedNotice(resolveNotice()) : null;
+    noticeOnScreen = !!notice;
     const folded = isFolded();
     const rows = folded ? [] : visibleRows();
     // Folded, the sheet stays up as a strip only where it is pinned: the
     // story mode and the tutorial maps. Anywhere else folded is off the
     // screen, and the same key brings it back.
-    if (folded && !pinnedContext()) {
+    if (folded && !notice && !pinnedContext()) {
       sheet.hide();
       return;
     }
@@ -1185,7 +1229,8 @@
       return;
     }
     sheet.draw(notice, rows, {
-      folded, foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
+      folded, noticeFolded: isNoticeFolded(),
+      foldable: foldable(), hasPad: padConnected(), foldChip: foldChipLabel(),
       foldPad: foldPadChip(),
     });
     sheet.setBehindBusts(bustOnScreen());
@@ -1268,6 +1313,7 @@
     noticesShown,
     setNoticesShown,
     toggleNotices,
+    isNoticeFolded,
     noticeWatch,
     noticeSeen,
     markNoticeSeen,
@@ -1276,6 +1322,7 @@
     visibleRows,
     rowKeys,
     rowFace,
+    deviceRows,
 
     // Whether a pad is plugged in, exposed so a test can ask without one in
     // its hands. Which device was last touched is nobody's question any more.

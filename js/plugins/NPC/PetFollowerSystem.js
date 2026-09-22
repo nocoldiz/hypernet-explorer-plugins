@@ -306,9 +306,18 @@ window.Game_PetFollower = Game_PetFollower;
         if ($gameSwitches && CREATURE_SWITCHES[sourceId] && CREATURE_SWITCHES[actorId]) {
             $gameSwitches.setValue(CREATURE_SWITCHES[actorId], $gameSwitches.value(CREATURE_SWITCHES[sourceId]));
         }
-        if ($gameVariables && REPRODUCTION_VARS[sourceId] && REPRODUCTION_VARS[actorId]) {
-            $gameVariables.setValue(REPRODUCTION_VARS[actorId], $gameVariables.value(REPRODUCTION_VARS[sourceId]));
+        // A copy of a body is that body, blood included. Where the original
+        // holds no seat of its own (a reserve, the scratch slot) the actor
+        // still answers, and it answers before the seat the copy takes is left
+        // reading whatever the previous occupant put in it.
+        if ($gameVariables && REPRODUCTION_VARS[actorId]) {
+            const inherited = (REPRODUCTION_VARS[sourceId] != null)
+                ? $gameVariables.value(REPRODUCTION_VARS[sourceId])
+                : (source.reproductionType ? source.reproductionType() : null);
+            $gameVariables.setValue(REPRODUCTION_VARS[actorId], inherited == null ? 0 : inherited);
+            if (clone.setReproductionType && inherited != null) clone.setReproductionType(inherited);
         }
+        if (source._ccBloodType) clone._ccBloodType = source._ccBloodType;
         clone.recoverAll();
         $gameParty.addActor(actorId);
         if ($gameVariables) $gameVariables.setValue(29, $gameParty.members().length);
@@ -418,6 +427,32 @@ window.Game_PetFollower = Game_PetFollower;
         };
     }
 
+    // A companion's body, decided ONCE when it is taken on and kept on its
+    // record. The seat a graduate later takes (REPRODUCTION_VARS) holds
+    // whatever the last occupant left in it, and an actor nobody has told
+    // answers gender 0 (Male), so a tamed animal used to arrive in the party
+    // wearing the body of the companion before it. A creature is not a person,
+    // so no roll is weighted towards a human shape: the archetype decides
+    // (window.NPCCreature owns what counts as one) and everything non-Humanoid
+    // is read off the whole spread the same way a stranger's body is.
+    const BODY_CODES = [-1, 0, 1, 2, 3, 4];
+    function _rollBody(name, id) {
+        const Shared = window.NPCShared;
+        const seed = Shared
+            ? (Shared.nameHash(String(name || "") + "_pet" + id) ^ Shared.worldSeed())
+            : id;
+        const rng = Shared ? new Shared.Rng(seed) : null;
+        const next = () => (rng ? rng.next() : ((seed % 97) / 97));
+        const gender = Math.floor(next() * 2);   // creatures read as male or female
+        // Same reading the panel takes of a stranger: the body usually matches
+        // the gender, and the rest of the time it is any of the six.
+        const matched = gender === 1 ? 1 : 0;
+        const reproduction = next() < 0.8
+            ? matched
+            : BODY_CODES[Math.floor(next() * BODY_CODES.length)];
+        return { gender, reproduction };
+    }
+
     function _isCreatureClass(classId) {
         const CC = window.CreatureClasses;
         if (CC && CC.isCreatureClass) return CC.isCreatureClass(classId);
@@ -517,6 +552,24 @@ window.Game_PetFollower = Game_PetFollower;
         // that asks does so through this slot's switch.
         if ($gameSwitches && CREATURE_SWITCHES[actorId]) {
             $gameSwitches.setValue(CREATURE_SWITCHES[actorId], _isCreatureClass(wearClass));
+        }
+        // The body it was taken on with, not the one the seat still held from
+        // whoever sat there before (see _rollBody). actor.setup() leaves both
+        // of these alone, so an unwritten seat is a leak rather than a blank.
+        if (actor.setGender) actor.setGender(pet.gender || 0);
+        if (actor.setReproductionType && pet.reproduction != null) {
+            actor.setReproductionType(pet.reproduction);
+        }
+        if ($gameVariables && REPRODUCTION_VARS[actorId] && pet.reproduction != null) {
+            $gameVariables.setValue(REPRODUCTION_VARS[actorId], pet.reproduction);
+        }
+        // Its own blood, rather than a re-roll off whatever name it graduated
+        // under (BloodTypeService keys an actor by name alone).
+        const BTS = window.BloodTypeService;
+        if (BTS && BTS.forNpc) {
+            const blood = BTS.forNpc(pet.name + "#" + pet.id);
+            const bloodId = blood && (blood.id || blood.key);
+            if (bloodId && BTS.get && BTS.get(bloodId)) actor._ccBloodType = bloodId;
         }
         actor.recoverAll();
         $gameParty.addActor(actorId);
@@ -623,6 +676,12 @@ window.Game_PetFollower = Game_PetFollower;
                 ridable: false,
                 attrs: _petAttrs(sentient, magical, geneticFreak),
             };
+            // Decided here and never again, so it reads the same on the
+            // Followers page, on the leash and in the party (_petIntoActor).
+            const body = _rollBody(pet.name, pet.id);
+            pet.gender = record.gender != null ? Number(record.gender) : body.gender;
+            pet.reproduction = record.reproduction != null
+                ? Number(record.reproduction) : body.reproduction;
             pet.ridable = _isRidableRecord(Object.assign({}, record, {
                 characterName: pet.characterName, note: pet.note, enemyId: pet.enemyId
             }));

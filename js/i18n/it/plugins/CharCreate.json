@@ -779,6 +779,7 @@
   "backgroundSummary": "Profilo di Background",
   "narrativeHistory": "Biografia e Storia",
   "randomize": "Randomizza",
+  "randomizeCompanion": "Randomizza compagno",
   "suggestSpecs": "Suggerito",
   "resetSpecs": "Azzera",
   "applyToMember": "Applica al membro corrente",
@@ -1082,5 +1083,18 @@
   "theSecretCoordinates": "Le coordinate segrete della botola",
   "exitToTitleTitle": "Torna al Menu Principale",
   "exitToTitleBody": "La creazione sarà abbandonata e questo gruppo verrà scartato.",
-  "exitToTitleAccept": "Torna"
+  "exitToTitleAccept": "Torna",
+  "partyPresets": "Gruppi Predefiniti",
+  "partyPresetsTitle": "Dossier di Gruppo",
+  "loadPartyPreset": "Prendi Questo Gruppo",
+  "savePartyPreset": "Salva il Gruppo Attuale",
+  "savePartyPresetBody": "Archiviare il gruppo così com'è ({name}) come dossier di gruppo tuo?",
+  "partyPresetSaved": "{name} archiviato tra i tuoi gruppi.",
+  "partyPresetResaved": "{name} riscritto.",
+  "partyPresetLoaded": "{name} ha preso i posti.",
+  "deletePartyPreset": "Elimina Gruppo",
+  "deletePartyPresetBody": "Eliminare il dossier di gruppo di {name}? L'operazione è irreversibile.",
+  "exportPreset": "Esporta Dossier",
+  "presetExported": "{name} scritto nella cartella characters.",
+  "presetExportFailed": "Non è stato possibile scrivere nella cartella characters."
 }

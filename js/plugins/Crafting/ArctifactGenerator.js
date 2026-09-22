@@ -88,6 +88,85 @@ const ARMOR_SLOT_OF_KIND = {
     5: { etypeId: ETYPE_GEAR, atypeId: ATYPE_EQUIPMENT }   // greaves
 };
 
+//=============================================================================
+// Where an artifact sits on the curve
+//=============================================================================
+// A generated artifact used to be written on a scale of its own: a level 50
+// weapon was handed 80 ATK and a level 50 breastplate 63 DEF, against a
+// hand-authored catalogue whose best weapon anywhere is 4 ATK and whose best
+// armour is 8 DEF. The bonus roll was worse, adding up to level/2 points to a
+// random parameter, so a single find could carry +37 INT. Every artifact was
+// therefore strictly better than everything the player could buy, forge or be
+// given, and finding one ended the equipment game.
+//
+// So an artifact is placed on the same curve the catalogue is placed on, by the
+// same tables tools/items/gen_armor_identity.js authors armour DEF with, and
+// then given a premium for being an artifact. It is the best thing in its slot
+// and level band, which is what a legendary find should be, and not a different
+// order of magnitude.
+
+// An artifact is a legendary find, so it is worth two to four times the best
+// ordinary piece of its kind: twice it at level 1, four times it at level 99.
+// Anything larger stops being a good item and becomes the only item.
+const ARTIFACT_MIN_MULT = 2;
+const ARTIFACT_MAX_MULT = 4;
+
+// What the hand-authored catalogue actually tops out at, in each kind.
+const CATALOGUE_BEST_ATK = 4;
+const CATALOGUE_BEST_DEF = 8;
+
+// The catalogue's own defensive profile: material class, then how much of the
+// body the slot covers. Kept identical to the generator that writes the
+// hand-authored armours so the two tables cannot drift apart.
+const ARTIFACT_BULK = { 1: 0.40, 2: 0.55, 3: 1.30, 4: 2.60, 5: 0.35, 6: 2.00 };
+const ARTIFACT_COVERAGE = { 2: 0.95, 3: 0.60, 4: 1.00, 5: 0.40 };
+const ARTIFACT_MAX_SHAPE = 2.60; // the heaviest bulk over the fullest coverage
+const artifactTier = level => 0.65 + 0.95 * ((Math.max(1, Math.min(99, level)) - 1) / 98);
+
+// Twice the catalogue at level 1, four times it at level 99.
+function artifactMultiplier(level) {
+    const L = Math.max(1, Math.min(99, level));
+    return ARTIFACT_MIN_MULT +
+        (ARTIFACT_MAX_MULT - ARTIFACT_MIN_MULT) * ((L - 1) / 98);
+}
+
+// The whole weapon catalogue sits inside a narrow sidegrade band that barely
+// moves with level (2.1 ATK at level 1, 2.3 at level 99, 4 at the very top):
+// a weapon is meant to decide HOW a character fights, while the character's own
+// growth decides how hard. An artifact clears the top of that band and stops.
+function artifactWeaponPower(level) {
+    return Math.max(1, Math.round(CATALOGUE_BEST_ATK * artifactMultiplier(level)));
+}
+
+// The same band, shared out by how much armour the slot actually is: a full
+// artifact cuirass reaches the top of it, an artifact hat does not.
+function artifactArmorDefense(level, slot) {
+    const shape = (ARTIFACT_BULK[slot.atypeId] || 0.4) *
+        (ARTIFACT_COVERAGE[slot.etypeId] || 0.4) / ARTIFACT_MAX_SHAPE;
+    return Math.max(1, Math.round(CATALOGUE_BEST_DEF * artifactMultiplier(level) * shape));
+}
+
+// The bonus roll, in the units the parameter is actually counted in. HP and MP
+// are counted in hundreds and the other six are counted in ability-modifier
+// points, where two points is one modifier: rolling one number for all eight
+// was the bug, not the size of the number.
+const P_MHP = 0, P_MMP = 1, P_AGI = 6;
+function artifactBonus(paramIndex, level, rand) {
+    const roll = 0.5 + rand();
+    if (paramIndex === P_MHP) return Math.floor(level * 1.2 * roll);
+    if (paramIndex === P_MMP) return Math.floor(level * 0.35 * roll);
+    return Math.max(1, Math.round((0.6 + level / 45) * roll));
+}
+
+// Heavy protection costs footwork here too, for the same reason it does in the
+// catalogue: an artifact that is the best in its slot should still be a choice.
+function artifactArmorDrag(level, slot) {
+    const DRAG = { 1: 0, 2: 0, 3: 0.25, 4: 1.60, 5: 0, 6: 1.00 };
+    const drag = (DRAG[slot.atypeId] || 0) *
+        (ARTIFACT_COVERAGE[slot.etypeId] || 0.4) * artifactTier(level);
+    return Math.round(0.85 * drag);
+}
+
 // Name generation components with expanded bizarre naming conventions
 const artifactPrefixes = () => T.pool("Artifacts.artifact.prefix");
 
@@ -1068,16 +1147,16 @@ function generateWeapon(level, typeId) {
         typeId = Math.floor(Math.random() * 9) + 1; // Random weapon type 1-9
     }
     
-    // Generate base stats based on level
-    const baseDamage = Math.floor(5 + (level * 1.5));
+    // On the catalogue's curve, at the top of the band (artifactWeaponPower).
+    const baseDamage = artifactWeaponPower(level);
     const params = [0, 0, baseDamage, 0, 0, 0, 0, 0]; // Set attack stat
     
-    // Add random bonus stats
+    // Add random bonus stats, each in the unit its own parameter is counted in
     const statCount = Math.floor(level / 20) + 1; // 1-5 bonus stats based on level
     for (let i = 0; i < statCount; i++) {
         const statIndex = Math.floor(Math.random() * 8);
         if (statIndex !== 2) { // Skip attack stat since we already set it
-            params[statIndex] += Math.floor(level * 0.5 * (0.5 + Math.random()));
+            params[statIndex] += artifactBonus(statIndex, level, Math.random);
         }
     }
     
@@ -1146,16 +1225,18 @@ function generateArmor(level, typeId) {
     // Set etypeId based on type
     const slot = ARMOR_SLOT_OF_KIND[typeId] || ARMOR_SLOT_OF_KIND[2];
     
-    // Generate base stats based on level
-    const baseDefense = Math.floor(3 + (level * 1.2));
+    // On the catalogue's curve, at the top of the band, and paying the same
+    // price in DEX that heavy armour pays there.
+    const baseDefense = artifactArmorDefense(level, slot);
     const params = [0, 0, 0, baseDefense, 0, 0, 0, 0]; // Set defense stat
+    params[P_AGI] = -artifactArmorDrag(level, slot);
     
-    // Add random bonus stats
+    // Add random bonus stats, each in the unit its own parameter is counted in
     const statCount = Math.floor(level / 20) + 1; // 1-5 bonus stats based on level
     for (let i = 0; i < statCount; i++) {
         const statIndex = Math.floor(Math.random() * 8);
         if (statIndex !== 3) { // Skip defense stat since we already set it
-            params[statIndex] += Math.floor(level * 0.5 * (0.5 + Math.random()));
+            params[statIndex] += artifactBonus(statIndex, level, Math.random);
         }
     }
     

@@ -619,7 +619,11 @@
     window.addEventListener('keyup',   this._wasdUpListener);
 
     // DOM state
-    this._activeUICategory    = 'All'; // i18n-ignore: category id
+    // The backpack opens on what was picked up last: the thing a player has
+    // just been handed is the thing they came in to look at. A save from
+    // before the shelf existed has nothing written down yet, and an empty page
+    // is no way to open: that one falls back to All until the first find.
+    this._activeUICategory    = this.hasNewUIItems() ? 'New' : 'All'; // i18n-ignore: category ids
     this._activeCategoryIndex = 0;
     this._dndSelectedIndex    = 0;
     this._dndActiveSection    = 'items';

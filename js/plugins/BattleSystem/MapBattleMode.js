@@ -1536,7 +1536,7 @@
     };
 
     // Another player's body on the map (Multiplayer/MultiplayerSystem.js draws
-    // them as the Player1..Player8 events). It is walked by their packets, so
+    // them as the PlayerNN events). It is walked by their packets, so
     // the tactical layer never gives it steps, never recruits it as an ally and
     // never counts it as an NPC.
     MBM.isRemotePlayerEvent = function (event) {
@@ -2368,10 +2368,11 @@
             else if (cmd.symbol === "move") cmd.cost = T('Battle.mbm.moveTail', { n: MBM.moveRange(this._actor) });
         }
         // Running is only offered when there is somewhere to run to: with a
-        // monster right up against the party the row is greyed out rather than
-        // refusing after the fact.
+        // monster right up against THIS member the row is greyed out rather
+        // than refusing after the fact. A comrade with room still gets to try,
+        // and takes the whole party with them.
         for (const cmd of this._list) {
-            if (cmd && cmd.symbol === "escape" && MBM._escapeBlockers().length > 0) cmd.enabled = false;
+            if (cmd && cmd.symbol === "escape" && MBM._escapeBlockers(this._actor).length > 0) cmd.enabled = false;
         }
     };
 
@@ -2613,15 +2614,20 @@
         if (MBM._cmdWindow) MBM._cmdWindow.activate();
     };
 
-    // Breaking away is a matter of distance: no one runs while a monster is
-    // still within ESCAPE_BLOCK_RANGE of any of the party's own combatants.
-    MBM._escapeBlockers = function () {
+    // Breaking away is a matter of distance, and it is the runner's own ground
+    // that decides whether they may try: the member taking the turn cannot run
+    // with a monster within ESCAPE_BLOCK_RANGE of them, but a comrade standing
+    // clear still can, and a success pulls the whole party out. Called without
+    // a member it falls back to the whole band.
+    MBM._escapeBlockers = function (actor) {
         const party = [];
-        for (const actor of $gameParty.battleMembers()) {
-            if (MBM.isAllyActor && MBM.isAllyActor(actor)) continue;
-            const c = MBM.mapCharacterFor(actor);
-            if (c && !(actor.isDead && actor.isDead())) party.push(c);
+        const members = actor ? [actor] : $gameParty.battleMembers();
+        for (const member of members) {
+            if (MBM.isAllyActor && MBM.isAllyActor(member)) continue;
+            const c = MBM.mapCharacterFor(member);
+            if (c && !(member.isDead && member.isDead())) party.push(c);
         }
+        if (party.length === 0) return [];
         const blockers = [];
         for (const entry of MBM._combatEnemyEvents) {
             const event = entry.event;
@@ -2680,9 +2686,12 @@
     };
 
     MBM._commandEscape = function () {
-        if (MBM._escapeBlockers().length > 0) {
+        const runner = BattleManager.actor ? BattleManager.actor() : null;
+        if (MBM._escapeBlockers(runner).length > 0) {
             SoundManager.playBuzzer();
-            const text = T('Battle.escape.tooClose', { range: ESCAPE_BLOCK_RANGE });
+            const text = runner
+                ? T('Battle.escape.tooCloseMember', { name: runner.name(), range: ESCAPE_BLOCK_RANGE })
+                : T('Battle.escape.tooClose', { range: ESCAPE_BLOCK_RANGE });
             if (window.ParchmentToast) {
                 window.ParchmentToast.show(text, { severity: "warning", duration: 120 });
             } else if (MBM._logWindow) {
@@ -2693,7 +2702,9 @@
         }
         // Distance is the whole of it here: the vanilla AGI ratio is replaced
         // by how much open ground the party as a whole has put between itself
-        // and the monsters still standing.
+        // and the monsters still standing. Every member's distance to the
+        // nearest live monster counts, so one body pinned while the rest stand
+        // clear leaves good odds, never certain ones.
         BattleManager.makeEscapeRatio();
         // A free getaway already granted elsewhere (the open world's first
         // turn) is never taken back by the distance rule.

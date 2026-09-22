@@ -1369,6 +1369,14 @@
             biome = 'Ocean';
         }
 
+        // Under the surface: the fight is on the sea floor, whatever the map
+        // above says. Wins over the shore biome, the RiverBank water override
+        // and the open-water one, since a diver is in none of those places.
+        const moveSys = (typeof window !== 'undefined' && window) ? window.MovementSystem : null;
+        if (!isBattleTest && moveSys && moveSys.isPartyDiving && moveSys.isPartyDiving()) {
+            biome = 'Seabed';
+        }
+
         // Battle Test (editor "Battle Test..." button): the test map has no
         // <Biome> tag, so pull the biome straight from the troop's enemy notes.
         if (!biome && isBattleTest) {

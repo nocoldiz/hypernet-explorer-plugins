@@ -68,7 +68,8 @@
     "asciiMode": "ASCII Mode",
     "asciiHud": "ASCII HUD",
     "themeAscii": "ASCII",
-    "galaxyQuality": "Star Map Quality"
+    "galaxyQuality": "Star Map Quality",
+    "ctrlNoclip": "CTRL Noclip"
   },
   "warn": {
     "language": "⚠ Work in progress: only English is fully translated. Any other language leaves large parts of the game untranslated.",
@@ -108,6 +109,7 @@
   "languageProgress": "{name} 1% done",
   "settingsInSection": "{count} settings in this section.",
   "desc": {
+    "ctrlNoclip": "Holding CTRL walks the party straight through walls, events and encounters. Turn it off if you would rather CTRL did nothing on the map.",
     "mapBattleMode": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
     "battleMode": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
     "mapStreaming": "Stitches neighbouring procedural squares into one seamless map you can walk straight across. Off loads one square at a time and pans the screen to the next when you reach a border.",
@@ -182,6 +184,7 @@
     "snapVertex": "Snap Vertex",
     "pixelArt": "Pixel Art",
     "autoExplore": "Auto Explore",
+    "noclip": "Noclip",
     "ascii": "ASCII",
     "other": "Other"
   },

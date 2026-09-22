@@ -489,6 +489,7 @@
   // that are not categories at all.
   const ALL_CATEGORY = "All";              // i18n-ignore  item-category id
   const FAVORITES_CATEGORY = "Favorites";  // i18n-ignore  item-category id
+  const NEW_CATEGORY = "New";              // i18n-ignore  item-category id
   const MISC_CATEGORY = "Misc";            // i18n-ignore  item-category id
 
   // i18n-ignore-start  item-category ids; the caption is Inventory.category.<id>
@@ -504,10 +505,70 @@
 
   // The shelves, in the order the row reads them.
   const UI_CATEGORIES = [
-    ALL_CATEGORY, FAVORITES_CATEGORY, MEDICAL_CATEGORY, FOOD_CATEGORY,
+    NEW_CATEGORY, ALL_CATEGORY, FAVORITES_CATEGORY, MEDICAL_CATEGORY, FOOD_CATEGORY,
     USABLE_CATEGORY, COMBAT_CATEGORY, BOOKS_CATEGORY, LEISURE_CATEGORY,
     MISC_CATEGORY, WEAPONS_CATEGORY, ARMOR_CATEGORY
   ];
+
+  //=============================================================================
+  // The acquisition grimorie (the New shelf)
+  //=============================================================================
+
+  // What the party picked up last, newest first. Only the identity of a thing
+  // is kept, never the entry itself: a procedural artifact rewrites the
+  // database row its id points at, and a remembered object would hold the old
+  // one alive. Picking the same thing up again moves it back to the front
+  // rather than filing it twice, so the shelf reads as a history of finds.
+  const ACQUISITION_LOG_MAX = 50;
+
+  const acquisitionKind = (item) =>
+    DataManager.isWeapon(item) ? 'w' : DataManager.isArmor(item) ? 'a' : 'i';  // i18n-ignore  container ids
+
+  window.ItemAcquisitionLog = {
+    MAX: ACQUISITION_LOG_MAX,
+
+    entries() {
+      if (!window.$gameSystem) return [];
+      if (!Array.isArray($gameSystem._itemAcquisitionLog)) $gameSystem._itemAcquisitionLog = [];
+      return $gameSystem._itemAcquisitionLog;
+    },
+
+    // Bumped on every write, so the pockets' caches can tell a reordered shelf
+    // from an unchanged one without walking the whole roll.
+    revision() {
+      return $gameSystem && $gameSystem._itemAcquisitionSeq || 0;
+    },
+
+    record(item) {
+      if (!item || !window.$gameSystem) return;
+      const key = acquisitionKind(item) + item.id;
+      const log = this.entries();
+      const at = log.indexOf(key);
+      if (at === 0) return;
+      if (at > 0) log.splice(at, 1);
+      log.unshift(key);
+      if (log.length > ACQUISITION_LOG_MAX) log.length = ACQUISITION_LOG_MAX;
+      $gameSystem._itemAcquisitionSeq = ($gameSystem._itemAcquisitionSeq || 0) + 1;
+    },
+
+    // Where a thing stands on the shelf, or -1 for something never logged.
+    rankOf(item) {
+      if (!item) return -1;
+      return this.entries().indexOf(acquisitionKind(item) + item.id);
+    },
+
+    has(item) {
+      return this.rankOf(item) >= 0;
+    }
+  };
+
+  // Every route into the pockets ends here, so this is the one place a find is
+  // written down: loot, a shop, a quest reward, a plugin command.
+  const _Game_Party_gainItem = Game_Party.prototype.gainItem;
+  Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+    _Game_Party_gainItem.call(this, item, amount, includeEquip);
+    if (item && amount > 0) window.ItemAcquisitionLog.record(item);
+  };
 
   const rawCategoryFromNote = (item) => {
     const utils = window.ItemSystemUtils;
@@ -617,6 +678,9 @@
     stamp += '|';
     const slots = window.ItemHotbar ? window.ItemHotbar.SLOTS : 0;
     for (let i = 0; i < slots; i++) stamp += ($gameSystem.getFavoriteItem(String(i + 1)) || 0) + ',';
+    // The New shelf is an order, not a set: the same pockets can read a
+    // different roll once something has been picked up again.
+    stamp += '|' + window.ItemAcquisitionLog.revision();
     return stamp;
   };
 
@@ -644,6 +708,9 @@
   function matchesUICategory(item, category) {
     if (!item) return false;
     if (category === ALL_CATEGORY) return true;
+    if (category === NEW_CATEGORY) {
+      return window.ItemAcquisitionLog.has(item);
+    }
     if (category === FAVORITES_CATEGORY) {
       return !!window.ItemHotbar && window.ItemHotbar.isFavorited(item);
     }
@@ -662,7 +729,7 @@
     const present = new Set();
     for (const item of $gameParty.allItems()) { if (item) present.add(uiCategoryOf(item)); }
     const value = UI_CATEGORIES.filter((cat) =>
-      cat === ALL_CATEGORY || cat === FAVORITES_CATEGORY || present.has(cat));
+      cat === ALL_CATEGORY || cat === FAVORITES_CATEGORY || cat === NEW_CATEGORY || present.has(cat));
     // Then every <category:> shelf the pockets hold that the fixed row has no
     // place for: a tab exists only while something is standing on it.
     const extra = Array.from(present).filter((cat) => !UI_CATEGORIES.includes(cat));
@@ -670,6 +737,12 @@
     value.push(...extra);
     this._uiCategoriesMemo = { stamp, value };
     return value;
+  };
+
+  // Whether the New shelf has anything standing on it: a find is only on it
+  // while the party still carries the thing that was found.
+  Scene_EnhancedItem.prototype.hasNewUIItems = function () {
+    return $gameParty.allItems().some((item) => item && window.ItemAcquisitionLog.has(item));
   };
 
   // The caption a tab or a heading is printed under. Inventory.category is the
@@ -715,6 +788,16 @@
     const query = (this._searchText || "").trim().toLowerCase();
     if (query) {
       items = items.filter(item => item.name.toLowerCase().includes(query));
+    }
+
+    // The New shelf is the one roll the sort row does not touch: it is a
+    // history, and reordering it by name or by weight would throw away the
+    // only thing it says. Newest find first, which is the top left slot.
+    if (category === NEW_CATEGORY) {
+      const log = window.ItemAcquisitionLog;
+      items.sort((a, b) => log.rankOf(a) - log.rankOf(b));
+      this._uiItemsMemo = { key: memoKey, value: items };
+      return items;
     }
 
     const sortKey = this._dndSortKey || "name";

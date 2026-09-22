@@ -24,13 +24,14 @@
     _resolveBustForActor, _resolveBustPath, _bustUrl, _presetFromEvent,
     _computePartyPredisposition, _medianScore, _generatePartyThoughts,
     _extractContacts, _countRecentInteractions, _lastInteractionDay,
-    _joinChance, _joinLevelOk, _travellingPartyCount, _hasSelfSwitchAPage,
+    _joinChance, _joinLevelOk, _travellingPartyCount,
     _animalJoinChance, _wisMod,
     _diseaseVialItems, _diseaseVialId, _infectChance,
     _socialLines, _rand, _vary, _addNpcOpinion, _personalitySocialMult,
     _hygienePenalty, _hygieneReadout,
     _addNpcAttraction, _npcEffectiveAttraction, _computePartyAttraction,
     _emPlaythrough, _isEmActor, _isBubbaNpc, _emContext, _emStanceKey, _emStanceData,
+    _emVoiceLine,
     _bubbaPlaythrough, _isBubbaActor, _bubbaContext,
     _pairSide, _pairContext, _pairBond, _addPairBond,
     _isNonSentientActor, _isNonSentientNpc, FERAL_ACTIONS, FUN_ACTIONS,
@@ -383,6 +384,14 @@
       `<span class="npc-icon" style="--npc-icon-size:${size}px">` +
       `<span class="npc-icon-cell" style="--npc-icon-scale:${scale}; --npc-icon-x:-${col * 32}px; --npc-icon-y:-${row * 32}px"></span></span>`
     );
+  }
+
+  // A skill, a trait or a piece of gear listed here raises the very same hover
+  // card the character creator raises for it (window.CCTooltip, published by
+  // CharacterCreationDossier): one description of a spell in the game, not one
+  // per panel. Without the wizard loaded the tag is simply a tag.
+  function _ccHover(type, id, qty) {
+    return window.CCTooltip ? window.CCTooltip.attrs(type, id, qty) : '';
   }
 
   function _vitalRow(label, value, lowThreshold) {
@@ -1463,16 +1472,16 @@
     // NPCSystemParty.joinParty).
     const partyFull = this._justJoined === true;
 
-    // Recruiting flips the event's self-switch A so the NPC leaves the map. An
-    // event with no page gated on self-switch A has nothing to fall through to,
-    // so it would keep standing there as a twin of the party member - don't
-    // offer Join at all for those.
-    // A shop-shift-covered counter also happens to have such a page (a leftover
-    // template artifact, never meant for this), but the face on display is a
-    // rotating persona borrowed cosmetically, not someone actually free to
-    // travel: flipping the counter's own self-switch A would strand it on its
+    // The one thing that takes Join and Follow off the board for somebody who
+    // is otherwise recruitable: a shop-shift-covered counter, where the face on
+    // display is a rotating persona borrowed cosmetically rather than someone
+    // free to travel, and flipping the counter's own self-switch A would strand
+    // it on its shift. The event NOT having a self-switch A page is no longer a
+    // gate: an authored NPC with two ordinary pages and no blank one is erased
+    // on recruitment instead (_vanishRecruitedEvent), which is what silently
+    // hid both offers on hand-written characters like Sister Renna.
     const isShopEvent = !!shiftInfo || !!window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId));
-    const canVanishOnJoin = !isShopEvent && _hasSelfSwitchAPage(evId);
+    const canVanishOnJoin = !isShopEvent;
 
     // A fallen companion is left behind when a recruit signs on, so the count
     // is of the travellers still standing (see _travellingPartyCount).
@@ -1594,6 +1603,25 @@
       }
       const at = this._chatActions.findIndex(a => a.id === 'socialize');
       this._chatActions.splice(at < 0 ? 0 : at + 1, 0, { id: 'bicker', label: T.bickerLabel });
+      // Ask (as Em) / Tell (as Bubba): the topics board, offered right here
+      // rather than only to whoever turns round to him in the column. The verb
+      // comes from the board itself, so the two directions are never mislabelled.
+      if (this._canStoryAsk?.()) {
+        const SD = window.StoryDialogue;
+        this._chatActions.splice(at < 0 ? 0 : at + 1, 0, {
+          id: 'askTopics', label: SD.askVerb(this._focusActor()?.name?.()),
+        });
+      }
+    }
+
+    // The story topics, in the word of whoever is raising them: Em asks, Bubba
+    // tells. Offered on the sheet as well as on the road, and never hidden the
+    // way the hostile actions are , there is nothing hostile about it.
+    if (this._canStoryAsk?.()) {
+      const SD = window.StoryDialogue;
+      const at = this._chatActions.findIndex(a => a.id === 'bicker');
+      this._chatActions.splice(at < 0 ? 0 : at + 1, 0,
+        { id: 'askTopics', label: SD.askVerb(this._focusActor()?.name?.()) });
     }
 
     // A non-sentient member (a creature class, 63+) has no conversation to
@@ -2196,6 +2224,8 @@
       identHTML =
         `<div class="npc-left-ident">` +
           (ident.name ? `<div class="npc-left-name">${_escapeHtml(ident.name)}</div>` : '') +
+          // A person can be kept on the reading list like any article.
+          (ident.name ? _wikiFavStarHTML('npc', ident.name, ident.name, T) : '') +
           (metaBits.length ? `<div class="npc-left-meta">${_escapeHtml(metaBits.join(' · '))}</div>` : '') +
         `</div>`;
     }
@@ -2777,7 +2807,7 @@
       const tags = preset.traits.map(id => {
         const trait = traitBank.find(t => t.id === id);
         return trait
-          ? `<span class="npc-tag">${_iconSpan(trait.icon || TRAIT_ICON, 15)}${_escapeHtml(_traitDisplayName(trait))}</span>`
+          ? `<span class="npc-tag" ${_ccHover('trait', trait.id)}>${_iconSpan(trait.icon || TRAIT_ICON, 15)}${_escapeHtml(_traitDisplayName(trait))}</span>`
           : '';
       }).filter(Boolean).join('');
       if (tags) traitsHTML = `<div class="npc-sec-hdr npc-mt-2">${_iconSpan(TRAIT_ICON, 15)} ${_escapeHtml(T.traits)}</div><div class="npc-tag-wrap">${tags}</div>`;
@@ -2797,7 +2827,7 @@
     if (!omitLists && preset.skills?.length && $dataSkills) {
       const tags = preset.skills.map(id => {
         const sk = $dataSkills[id];
-        return sk ? `<span class="npc-tag">${_iconSpan(sk.iconIndex || SKILL_ICON, 15)}${_escapeHtml(sk.name)}</span>` : '';
+        return sk ? `<span class="npc-tag" ${_ccHover('skill', sk.id)}>${_iconSpan(sk.iconIndex || SKILL_ICON, 15)}${_escapeHtml(sk.name)}</span>` : '';
       }).filter(Boolean).join('');
       if (tags) skillsHTML = `<div class="npc-sec-hdr npc-mt-2">${_iconSpan(SKILL_ICON, 15)} ${_escapeHtml(T.skills)}</div><div class="npc-tag-wrap">${tags}</div>`;
     }
@@ -3020,7 +3050,7 @@
       traitsHTML = `<hr class="npc-r-sep"><div class="npc-sec-hdr">${T.traits}</div><div class="npc-tag-wrap">`;
       for (const id of profile.traitIds) {
         const trait = dl?.traits?.find(t => t.id === id);
-        if (trait) traitsHTML += `<span class="npc-tag">${_iconSpan(trait.icon || 0, 15)}${_escapeHtml(_traitDisplayName(trait))}</span>`;
+        if (trait) traitsHTML += `<span class="npc-tag" ${_ccHover('trait', trait.id)}>${_iconSpan(trait.icon || 0, 15)}${_escapeHtml(_traitDisplayName(trait))}</span>`;
       }
       traitsHTML += '</div>';
     }
@@ -3048,7 +3078,10 @@
       }
       if (equipItems.length) {
         equipHTML = `<hr class="npc-r-sep"><div class="npc-sec-hdr">${T.equipment}</div><div class="npc-tag-wrap">`;
-        for (const e of equipItems) equipHTML += `<span class="npc-tag">${_iconSpan(e.iconIndex || 0, 15)}${_escapeHtml(e.name)}</span>`;
+        for (const e of equipItems) {
+          const kind = (e.wtypeId != null) ? 'weapon' : 'armor';
+          equipHTML += `<span class="npc-tag" ${_ccHover(kind, e.id)}>${_iconSpan(e.iconIndex || 0, 15)}${_escapeHtml(e.name)}</span>`;
+        }
         equipHTML += '</div>';
       }
     }
@@ -3083,9 +3116,9 @@
           const traitName = _traitDisplayName(srcTrait);
           // Skills that come from a trait rather than the class are marked with
           // the trait's own colour, the tags carry no frame to outline any more.
-          tags += `<span class="npc-tag npc-gold" title="${_escapeHtml(`${T.traits}: ${traitName}`)}">${_iconSpan(sk.iconIndex || 0, 15)}${_escapeHtml(sk.name)}</span>`;
+          tags += `<span class="npc-tag npc-gold" title="${_escapeHtml(`${T.traits}: ${traitName}`)}" ${_ccHover('skill', sk.id)}>${_iconSpan(sk.iconIndex || 0, 15)}${_escapeHtml(sk.name)}</span>`;
         } else {
-          tags += `<span class="npc-tag">${_iconSpan(sk.iconIndex || 0, 15)}${_escapeHtml(sk.name)}</span>`;
+          tags += `<span class="npc-tag" ${_ccHover('skill', sk.id)}>${_iconSpan(sk.iconIndex || 0, 15)}${_escapeHtml(sk.name)}</span>`;
         }
       }
       if (tags) {
@@ -4013,6 +4046,12 @@
     return rng.next() < 0.8 ? matched : pick(_GENITAL_ALL.filter(c => c !== matched));
   }
 
+  // The body a stranger was rolled with, asked for before they hold a seat of
+  // their own. Recruiting somebody has to write that roll into their seat's
+  // reproduction variable, or the seat answers 0 (Testes) and the person the
+  // player was talking to changes shape on joining (NPCSystemParty.js).
+  window.NPCRolledGenitalCode = (npcName, profile) => _npcGenitalCode(npcName, profile);
+
   // A bubbaromantic NPC (Orientations.json: 8% of the population, romantically
   // attached to Bubba Wilson and to nobody else) is the one person Bubba is
   // offered the Court option with at all.
@@ -4728,7 +4767,8 @@
     const priorAttraction = this._focusAttraction(profile);
     const reason = _proposeBlockReason(profile, npcName, actor, priorAttraction);
     const bank   = (_socialLines().romance || {}).propose || {};
-    const playerLine = fill(_rand(bank.player));
+    // Em puts a proposal the way she puts everything: sideways.
+    const playerLine = fill(_emVoiceLine(actor, 'propose', styleKey) || _rand(bank.player));
     let npcLine, delta, landed = false;
 
     if (reason) {
@@ -4816,7 +4856,10 @@
     // distance for years: every move on her lands, no roll needed.
     const guaranteed = _bubbaGuaranteedLand(npcName, profile, actor);
     const reason = guaranteed ? null : _romanceBlockReason(profile, npcName, actor, def);
-    const playerLine = fill(_rand(def.player));
+    // A pass made by Em is made in her register, not in the house one: she
+    // does not serenade anybody, she says something flat and British about it
+    // and waits. Falls straight back to the shared bank for anybody else.
+    const playerLine = fill(_emVoiceLine(actor, 'romance', def.id) || _rand(def.player));
     let npcLine, delta, landed = false;
 
     if (reason) {
@@ -5025,7 +5068,11 @@
     if (!entry) return;
     const T = _getT();
 
-    const ask = T('Empathize.directionsIntro', { target: entry.label });
+    // Even asking the way is asked in her voice when it is Em asking.
+    const emAsk = _emVoiceLine(this._focusActor(), 'directions');
+    const ask = emAsk
+      ? vary(String(emAsk).replace(/{target}/g, entry.label).replace(/{name}/g, this._targetName() || ''))
+      : T('Empathize.directionsIntro', { target: entry.label });
     // A folded row stands for several of the same place, so the answer says
     // which one it is pointing at.
     const key = entry.dist <= _DIR_HERE_RADIUS ? 'directionsHere'
@@ -5273,7 +5320,6 @@
       party: T.wikiPoliticalParty, ideology: T.wikiIdeology,
     };
     const kicker = kickerMap[view.type] || emblem.kicker;
-    const initials = String(view.name || '?').split(/\s+/).map(w => w[0]).filter(Boolean).slice(0, 2).join('');
 
     let sideHTML = '';
     if (view.type === 'power') {
@@ -5385,28 +5431,25 @@
       deadHTML = `<div class="npc-dead-badge">✝ ${_escapeHtml(T.deceased)}${when}</div>`;
     }
 
-    // A leader has a face. Every other article is an emblem of initials, but a
-    // leader is a person, and the portrait here is the same picture the panel
+    // A leader is a person, and the portrait here is the same picture the panel
     // that opens on them shows (both ask HistoryManager.leaderBust), so
     // stepping from the article into the person never changes who you are
-    // looking at. Where the book has no picture for them, the initials stand.
-    const emblemHTML = (hidden) =>
-      `<div class="npc-entity-emblem npc-emblem-${view.type}"${hidden ? ' hidden' : ''} title="${_escapeHtml(_viewName(view))}">${initials ? _escapeHtml(initials) : emblem.glyph}</div>`;
-    // A named portrait that has no file behind it is not replaced by the house
-    // bust here: a main player nobody drew keeps their initials rather than
-    // wearing a stranger's face, so the failed image steps aside for the emblem.
+    // looking at. Where the book has no picture for them the article is headed
+    // by nothing at all: no emblem of initials stands in for a face, and a
+    // named portrait with no file behind it leaves the head empty.
     const bustPath = view.type === 'leader' ? _leaderBustPath(view) : null;
     const headHTML = bustPath
       ? `<div class="npc-portrait-wrap">
            <img src="${_escapeHtml(bustPath)}" alt=""
-                onerror="this.parentElement.hidden=true;this.parentElement.nextElementSibling.hidden=false">
-         </div>${emblemHTML(true)}`
-      : emblemHTML(false);
+                onerror="this.parentElement.hidden=true">
+         </div>`
+      : '';
 
     return `
       ${headHTML}
       <div class="npc-entity-kicker">${_escapeHtml(kicker)}</div>
       <div class="npc-entity-title">${_escapeHtml(_viewName(view))}</div>
+      ${_wikiFavStarHTML(view.type, view.id ?? view.name, _viewName(view), T)}
       ${deadHTML}
       ${view.type === 'leader' ? _leaderEmpathizeButtonHTML(view, T) : ''}
       <div class="npc-vitals-footer">${sideHTML}</div>`;
@@ -5415,14 +5458,13 @@
   // The portrait a leader's article is headed with. The dossier carries it
   // (LeaderPersona resolves the book's own `bust` first, then the bust their
   // walk sheet already has); a procedural politician the book never named has
-  // none and keeps the emblem.
+  // none, and their article is simply headed by their name.
   function _leaderBustPath(view) {
     const stored = view?.dossier?.bustPath;
     if (!stored || stored === '7' || stored === 0 || stored === '0') return null;
     // The book can name a portrait that was never drawn (a dossier edited by
     // hand, a look that never got its art). No house bust stands in for it:
-    // an unresolvable or missing name means no portrait, and the article is
-    // headed by the initials emblem instead.
+    // an unresolvable or missing name means no portrait at all.
     return _bustUrl(stored, null);
   }
 
@@ -5879,10 +5921,10 @@
     if (eq && (eq.weaponId || eq.armorIds?.length)) {
       const tags = [];
       const w = eq.weaponId && $dataWeapons ? $dataWeapons[eq.weaponId] : null;
-      if (w) tags.push(`<span class="npc-tag">${_iconSpan(w.iconIndex || 0, 15)}${_escapeHtml(w.name)}</span>`);
+      if (w) tags.push(`<span class="npc-tag" ${_ccHover('weapon', w.id)}>${_iconSpan(w.iconIndex || 0, 15)}${_escapeHtml(w.name)}</span>`);
       for (const id of (eq.armorIds || [])) {
         const a = $dataArmors ? $dataArmors[id] : null;
-        if (a) tags.push(`<span class="npc-tag">${_iconSpan(a.iconIndex || 0, 15)}${_escapeHtml(a.name)}</span>`);
+        if (a) tags.push(`<span class="npc-tag" ${_ccHover('armor', a.id)}>${_iconSpan(a.iconIndex || 0, 15)}${_escapeHtml(a.name)}</span>`);
       }
       if (tags.length) {
         html += `<div class="npc-sec-hdr npc-mt-2">${_iconSpan(EQUIP_ICON, 15)} ${_escapeHtml(T.equipment)}</div>` +
@@ -5895,7 +5937,7 @@
       const tags = sheet.traits.map(id => {
         const trait = traitBank.find(t => t.id === id);
         return trait
-          ? `<span class="npc-tag">${_iconSpan(trait.icon || TRAIT_ICON, 15)}${_escapeHtml(_traitDisplayName(trait))}</span>`
+          ? `<span class="npc-tag" ${_ccHover('trait', trait.id)}>${_iconSpan(trait.icon || TRAIT_ICON, 15)}${_escapeHtml(_traitDisplayName(trait))}</span>`
           : '';
       }).filter(Boolean).join('');
       if (tags) {
@@ -5920,7 +5962,7 @@
     if (sheet.skills?.length && $dataSkills) {
       const tags = sheet.skills.map(id => {
         const sk = $dataSkills[id];
-        return sk ? `<span class="npc-tag">${_iconSpan(sk.iconIndex || SKILL_ICON, 15)}${_escapeHtml(sk.name)}</span>` : '';
+        return sk ? `<span class="npc-tag" ${_ccHover('skill', sk.id)}>${_iconSpan(sk.iconIndex || SKILL_ICON, 15)}${_escapeHtml(sk.name)}</span>` : '';
       }).filter(Boolean).join('');
       if (tags) {
         html += `<div class="npc-sec-hdr npc-mt-2">${_iconSpan(SKILL_ICON, 15)} ${_escapeHtml(T.skills)}</div>` +
@@ -6249,6 +6291,7 @@
   // ============================================================================
 
   const WIKI_CATEGORIES = [
+    { id: 'favourites',       glyph: '☆', labelKey: 'wikiFavourites' },
     { id: 'party',            glyph: '', labelKey: 'wikiParty' },
     { id: 'people',           glyph: '☺', labelKey: 'wikiPeople' },
     { id: 'mainPlayers',      glyph: '★', labelKey: 'wikiMainPlayers' },
@@ -6268,6 +6311,32 @@
   function _pastPartyMembers() {
     const currentNames = new Set(($gameParty?.members() ?? []).map(a => a.name()));
     return ($gameSystem?._npcPastPartyMembers ?? []).filter(p => p?.name && !currentNames.has(p.name));
+  }
+
+  // What kind of thing a starred entry is, printed under its name on the
+  // favourites shelf, where a nation, a creed and a tower world sit together.
+  function _favKindLabel(type, T) {
+    return {
+      nation: T.wikiNation, power: T.wikiHyperpower, leader: T.wikiLeader,
+      artifact: T.wikiArtifact, faction: T.wikiFaction,
+      party: T.wikiPoliticalParty, ideology: T.wikiIdeology,
+      world: T.wikiWorld, npc: T.wikiPerson,
+    }[type] || '';
+  }
+
+  // The star itself. Filled when the article is on the reading list, hollow
+  // when it is not; the same chip heads a person's panel and a thing's
+  // article, so anything the wiki can open can be kept.
+  function _wikiFavStarHTML(type, id, name, T) {
+    if (!id) return '';
+    const on = Wiki.isFavourite(type, id);
+    return `
+      <div class="npc-wiki-fav${on ? ' npc-wiki-fav--on' : ''}"
+           title="${_escapeHtml(on ? T.wikiUnstar : T.wikiStar)}"
+           onmousedown="event.stopPropagation();SceneManager._scene._toggleWikiFavourite('${type}','${_encId(id)}','${_encId(name || id)}')">
+        <span class="npc-wiki-fav-glyph">${on ? '★' : '☆'}</span>
+        <span class="npc-wiki-fav-label">${_escapeHtml(on ? T.wikiUnstar : T.wikiStar)}</span>
+      </div>`;
   }
 
   function _wikiEntryTile(type, id, labelHTML, subHTML) {
@@ -6402,7 +6471,8 @@
   Scene_NPCEmpathize.prototype._buildWikiTabHTML = function (T) {
     const pets = window.PetSystem ? window.PetSystem.getPets() : [];
     const counts = {
-      party:     ($gameParty?.members()?.length ?? 0) + _pastPartyMembers().length + pets.length,
+      favourites: Wiki.listFavourites().length,
+      party:   ($gameParty?.members()?.length ?? 0) + _pastPartyMembers().length + pets.length,
       people:    Wiki.listPeople().length,
       mainPlayers: Wiki.listMainPlayers().length,
       leaders:   Wiki.listLeaders().length,
@@ -6447,6 +6517,18 @@
 
     let tiles = '';
     switch (cat.id) {
+      // Everything the player has starred, whatever shelf it came off, and
+      // including the articles no shelf holds at all: a world behind one of
+      // the Omega Tower's floors is reachable from its star and from nowhere
+      // else on this page.
+      case 'favourites': {
+        const favs = Wiki.listFavourites();
+        tiles = favs.length
+          ? favs.map(f => _wikiEntryTile(f.type, f.id, _escapeHtml(f.name),
+              _escapeHtml(_favKindLabel(f.type, T)))).join('')
+          : `<p class="npc-empty">${_escapeHtml(T.wikiNoFavourites)}</p>`;
+        break;
+      }
       case 'party': {
         // Current members open in actor mode, full profile *and* the chat
         // tab, always available while they travel with you. Past members

@@ -1061,11 +1061,14 @@
       }
     },
 
-    // Whether an event dictates any part of the identity, which is what tells
-    // the sprite reconciler to leave this NPC's face and class alone.
+    // Whether an event dictates the LOOK of this NPC, which is what tells the
+    // sprite reconciler to leave the face alone. Only the lines that name a
+    // face count: a spec overrides the fields it writes and nothing else, so
+    // `class:` or `gender:` on their own say who this person is and still let
+    // the simulation deal them a sprite and a bust like anybody else.
     pinsIdentity(spec) {
-      return !!spec && (spec.class != null || spec.sprite != null || spec.bust != null ||
-        spec.gender != null || spec.archetype != null || spec.creature != null);
+      return !!spec && (spec.sprite != null || spec.bust != null ||
+        spec.bustIndex != null || spec.archetype != null || spec.creature != null);
     },
   };
   window.NPCInitSpec = NPCInitSpec;
@@ -1978,7 +1981,15 @@
 
     const entry = spriteKey ? DataLoader.npcData?.[spriteKey] : null;
     if (!entry && !isCreature) {
+      // The sheet they wear is in no catalogue (an authored event on a
+      // Monsters/ or Originals/ sheet), so there is no face to read off it.
+      // A bust cached under this event's NAME is dropped rather than kept: the
+      // society table is keyed by name alone and several authored events share
+      // one, so anything left here is the last same-named event's face and
+      // would be shown for somebody it does not belong to.
+      if (!initSpec?.bust) profile._bustName = null;
       if (initSpec) NPCInitSpec.applyIdentity(profile, initSpec);
+      if (initSpec?.bust) profile._bustName = initSpec.bust;
       return;
     }
 

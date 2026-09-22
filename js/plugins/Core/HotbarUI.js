@@ -78,7 +78,7 @@
   // never shoves the row. Mirrors `.hotbar-desc` in theme.css. A description
   // centred over the bar is what says what the armed thing does, rather than a
   // card anchored off the side of one slot.
-  const DESC_BLOCK_PX = 24;
+  const DESC_BLOCK_PX = 38;
 
   /**
    * A row of numbered slots.
@@ -313,6 +313,19 @@
         : (st.active && st.selected != null ? st.selected : -1);
       const entry = index >= 0 ? entries[index] : null;
       return entry ? (entry.label || entry.tooltip || '') : '';
+    }
+
+    /**
+     * Which slot is speaking right now: the one under the pointer first, else
+     * the one the keys have armed, else -1. A bar whose reading is printed
+     * somewhere else of its own (the battle description box) asks here rather
+     * than reaching into the widget's own fields.
+     */
+    spokenIndex() {
+      const st = this._state || {};
+      if (st.inert) return -1;
+      if (this._hoverIndex >= 0) return this._hoverIndex;
+      return (st.active && st.selected != null) ? st.selected : -1;
     }
 
     /** The description the line over the row should be showing, '' for none. */

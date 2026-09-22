@@ -519,6 +519,30 @@ Imported.DialogueSystem = true;
             this.slideStoryCastOut();
         }
 
+        // Swaps the portrait standing on one end of the stage for another one,
+        // in place. The slot keeps its mark, so nobody walks off and back on
+        // when the turn passes between two people who share a side (Em and
+        // Bubba answering each other in front of the same NPC).
+        replaceStorySlot(side, key, imageName) {
+            const want = side === 'right' ? 'right' : 'left';
+            const slot = (this.storySlots || []).find(s => s.storySide === want);
+            if (!slot) return false;
+            if (slot.storyKey === key) return true;
+            slot.storyKey           = key;
+            slot._bustFallbackTried = false;
+            const path = this.resolveBustPath(imageName);
+            try {
+                const bitmap = ImageManager.loadBitmap('img/', path);
+                slot.bitmap = bitmap;
+                bitmap.addLoadListener(() => this.layoutStoryCast());
+            } catch (err) {
+                console.warn('Failed to load story bust:', path, err);
+                slot.bitmap = this._loadFallback();
+            }
+            this.layoutStoryCast();
+            return true;
+        }
+
         // The cast stands beside the box, not over it: one portrait against the
         // left edge of the screen and one against the right, staged exactly as
         // a single speaker is (bustFloor / getBustHeight above), so a story
@@ -778,6 +802,11 @@ Imported.DialogueSystem = true;
 
         getBustImageForCharacter(characterName, characterIndex) {
             if (!characterName) return null;
+            // On a world with no air the sealed visor is the face: the EVA
+            // authority (GalaxySim_Core) says who is wearing one, party and
+            // crowd alike, and nobody who breathes out there is handed it.
+            const suited = window.GalaxySim?.EVA?.bustForSheet?.(characterName);
+            if (suited) return `busts/${suited}`;
             if (characterName.startsWith("$") || characterName.startsWith("!") || characterName.startsWith("Objects")) {
                 return "busts/7";
             }
@@ -797,6 +826,20 @@ Imported.DialogueSystem = true;
             const presetBust = this.getPresetBustForSprite(spritesheetName, characterIndex);
             if (presetBust) return `busts/${presetBust}`;
 
+            // The sheet this person is standing in names their face, and
+            // NPCs.json is where that pairing is written. It outranks the
+            // society sim's cached bust below: profiles are keyed by event
+            // name alone, several authored events share a name while wearing
+            // different sheets, and the cache therefore holds whichever
+            // same-named event was pinned last. Only a bust written out on the
+            // event (handled above) may override the sprite.
+            if (SpritesAssociation[spritesheetName]?.[characterIndex]) {
+                const b = window.BustPath.resolve(SpritesAssociation[spritesheetName][characterIndex]);
+                if (b) return `busts/${b}`;
+            }
+
+            // Last of all the sim's own record, for a sheet that is in no
+            // catalogue at all.
             if (window.NPCSim?.getBustForNPC) {
                 try {
                     const evId    = $gameMap?._interpreter?._eventId;
@@ -806,11 +849,6 @@ Imported.DialogueSystem = true;
                         if (b) return `busts/${b}`;
                     }
                 } catch (_) {}
-            }
-
-            if (SpritesAssociation[spritesheetName]?.[characterIndex]) {
-                const b = window.BustPath.resolve(SpritesAssociation[spritesheetName][characterIndex]);
-                if (b) return `busts/${b}`;
             }
 
             return `busts/7`;
@@ -1553,6 +1591,162 @@ Imported.DialogueSystem = true;
 
     window.DialogueVoice = DialogueVoice;
 
+    // -------------------------------------------------------------------------
+    // Speaker prefixes in an ordinary event box (story mode)
+    // -------------------------------------------------------------------------
+    // A story-mode event can hand a line to one of the party by writing their
+    // name in front of it ("Bubba: Friends are forever!"). The prefix is an
+    // author's stage direction, not something anybody reads: it is taken off
+    // the text, the party member it names is stood on the LEFT of the box with
+    // the name tag over them, and whoever the party is talking to keeps the
+    // RIGHT-hand slot for the whole exchange, the way a written scene is
+    // staged. A line with no prefix is the NPC answering, so the light simply
+    // crosses back to their side instead of the stage being rebuilt.
+    //
+    // Outside story mode (switch 100) nothing here runs and a box carrying a
+    // colon is left exactly as it was written.
+    const STORY_PREFIX_SWITCH = 100;
+
+    // The head of the first line, up to the first colon. Only a short token is
+    // considered, and it only counts once it turns out to name an actor, so
+    // prose ("Remember kiddo: ...") is never cut in half.
+    const SPEAKER_PREFIX_RE = /^[ \t]*([^\s:][^:\n]{0,23}?)[ \t]*:[ \t]*/;
+
+    // The stage raised by the last prefixed line, or null. Kept so the NPC's
+    // own answer lands on the cast already standing there.
+    let _prefixStage = null;
+
+    function storyPrefixMode() {
+        return !!(window.$gameSwitches && $gameSwitches.value(STORY_PREFIX_SWITCH));
+    }
+
+    // The actor a prefix names, party member or not: Bubba speaks in scenes he
+    // is only walking through. Matched on the name as it is printed, so a
+    // translated roster answers to its own names.
+    function actorNamedForPrefix(name) {
+        const wanted = String(name || '').trim();
+        if (!wanted) return null;
+        try {
+            const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
+            const inParty = members.find(a => a && a.name && a.name().trim() === wanted);
+            if (inParty) return inParty;
+            const data = (window.$dataActors || []).find(a => a && String(a.name).trim() === wanted);
+            if (data && window.$gameActors) return $gameActors.actor(data.id);
+        } catch (err) { /* no party or database yet */ }
+        return null;
+    }
+
+    // The portrait file an actor speaks behind, named the way showCustomBust
+    // files it (no folder, no extension).
+    function actorBustName(actor) {
+        const H    = window.NPCEmpathize?._helpers;
+        const full = H?._resolveBustForActor ? H._resolveBustForActor(actor) : 'img/busts/7.png';
+        return String(full || 'img/busts/7.png').replace(/^img\/busts\//, '').replace(/\.png$/, '');
+    }
+
+    // The portrait of the event the party is talking to, or null when it has
+    // none (a signpost, a faceless trigger): then the speaker stands alone.
+    function prefixNpcBust(bm) {
+        if (!bm.shouldShowBustAndName()) return null;
+        const info = bm.getCurrentEventCharacterInfo();
+        if (!info) return null;
+        const path = bm.getBustImageForCharacter(info.characterName, info.characterIndex);
+        return path ? String(path).replace(/^busts\//, '') : null;
+    }
+
+    function unstageSpeakerPrefix(bm) {
+        if (!_prefixStage) return;
+        _prefixStage = null;
+        const stage = bm || (SceneManager._scene && SceneManager._scene._bustManager);
+        if (stage) stage.setStoryMode(false);
+    }
+
+    // The stage goes down with the portraits it was raised for, so an event
+    // that ends between two lines never leaves a cast standing there.
+    const _BM_hideBusts = BustManager.prototype.hideBusts;
+    BustManager.prototype.hideBusts = function () {
+        if (_prefixStage) { _prefixStage = null; this.setStoryMode(false); }
+        _BM_hideBusts.call(this);
+    };
+
+    // Puts the two of them up (or lights the one already up) and hands the name
+    // tag to whoever is speaking. Returns true once the stage is ours, so the
+    // single-portrait path is left alone for the rest of the box.
+    function stageSpeakerPrefix(bm, actor, displayName) {
+        const leftImage = actorBustName(actor);
+        const leftKey   = `custom_${leftImage}`;
+        const npcImage  = prefixNpcBust(bm);
+        const npcKey    = npcImage ? `custom_${npcImage}` : null;
+        const eventId   = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
+
+        bm.setStoryMode(true);
+        const sameStage = _prefixStage && _prefixStage.eventId === eventId
+            && _prefixStage.rightKey === npcKey && (bm.storySlots || []).length;
+        if (!sameStage) {
+            const cast = [{ key: leftKey, imageName: leftImage, side: 'left' }];
+            if (npcKey) cast.push({ key: npcKey, imageName: npcImage, side: 'right' });
+            bm.setStoryCast(cast);
+        } else if (_prefixStage.leftKey !== leftKey) {
+            // The other half of the party takes the turn: only their portrait
+            // is swapped, so the NPC opposite is not walked off and back on
+            // every time Em and Bubba answer each other.
+            bm.replaceStorySlot('left', leftKey, leftImage);
+        }
+        _prefixStage = { eventId, leftKey, rightKey: npcKey };
+
+        bm.setStoryActive(leftKey);
+        if (bm.nameWindow) {
+            bm.nameWindow.setCharacterName(displayName);
+            bm.nameWindow.showName();
+            bm.nameIsVisible = true;
+        }
+        bm.activeEventId    = eventId;
+        bm.lastKnownEventId = eventId;
+        bm.bustIsVisible    = true;
+        bm.hideScheduled    = false;
+        return true;
+    }
+
+    // The NPC's own line inside an exchange a prefix opened: the light and the
+    // name tag cross back to the right-hand slot, nothing else moves.
+    function lightPrefixNpc(bm) {
+        if (!_prefixStage || !_prefixStage.rightKey) return false;
+        const eventId = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
+        if (eventId !== _prefixStage.eventId) return false;
+        bm.setStoryActive(_prefixStage.rightKey);
+        if (bm.nameWindow) {
+            bm.nameWindow.setCharacterName(bm.getCharacterDisplayName(eventId));
+            bm.nameWindow.showName();
+            bm.nameIsVisible = true;
+        }
+        bm.bustIsVisible = true;
+        bm.hideScheduled = false;
+        return true;
+    }
+
+    // Reads the prefix off the box about to be shown, takes it out of the text
+    // and stages it. Called before the engine builds its text state, since the
+    // prefix must never reach the typewriter. Returns true when this owns the
+    // portraits for this box.
+    function applySpeakerPrefix() {
+        const bm = SceneManager._scene && SceneManager._scene._bustManager;
+        if (!bm || bm.exchangeMode || !storyPrefixMode()) { unstageSpeakerPrefix(bm); return false; }
+        const texts = ($gameMessage && $gameMessage._texts) || [];
+        if (!texts.length) return _prefixStage ? lightPrefixNpc(bm) : false;
+
+        const match = SPEAKER_PREFIX_RE.exec(texts[0]);
+        const actor = match ? actorNamedForPrefix(match[1]) : null;
+        if (!actor) {
+            // No prefix: the NPC answering inside an exchange already staged,
+            // or an ordinary box that has nothing to do with one.
+            if (_prefixStage && lightPrefixNpc(bm)) return true;
+            unstageSpeakerPrefix(bm);
+            return false;
+        }
+        texts[0] = texts[0].slice(match[0].length);
+        return stageSpeakerPrefix(bm, actor, actor.name());
+    }
+
     const _WM_initialize = Window_Message.prototype.initialize;
     Window_Message.prototype.initialize = function (rect) {
         _WM_initialize.call(this, rect);
@@ -1586,6 +1780,9 @@ Imported.DialogueSystem = true;
 
     const _WM_startMessage = Window_Message.prototype.startMessage;
     Window_Message.prototype.startMessage = function () {
+        // The prefix is read and cut out BEFORE the engine builds its text
+        // state: "Bubba:" is a stage direction and must never be typed out.
+        const prefixStaged = applySpeakerPrefix();
         _WM_startMessage.call(this);
         this._htmlMsgTurbo      = false;
         this._htmlMsgTurboCount = 0;
@@ -1600,7 +1797,7 @@ Imported.DialogueSystem = true;
             // so there's no blank flash between consecutive dialogue boxes.
         }
         const scene = SceneManager._scene;
-        if (scene && scene._bustManager && !scene._bustManager.exchangeMode &&
+        if (!prefixStaged && scene && scene._bustManager && !scene._bustManager.exchangeMode &&
             !facelessIsRunning()) scene._bustManager.showBusts();
     };
 
@@ -2165,7 +2362,7 @@ Imported.DialogueSystem = true;
                     if (keywords) {
                         let allKnown = true;
                         keywords.forEach(k => {
-                            const kw = splitKeyword(k.slice(1, -1)).topic;
+                            const kw = splitKeyword(keywordInner(k)).topic;
                             if (!$gameParty.members().some(a => a._keywords && a._keywords.includes(kw))) allKnown = false;
                         });
                         if (!allKnown) { enabled = false; cmd.hidden = true; }
@@ -2205,9 +2402,20 @@ Imported.DialogueSystem = true;
     // A topic can be written [Tribunal | Judicial Dimension]: what the line
     // says is the left half, what the party actually learns is the right half.
     // With no pipe the two are the same thing.
-    const KEYWORD_SOURCE = /\[([^\]]+)\]/.source;
+    // A bracket that belongs to a control escape (\v[7], \n[2], \c[14]) is the
+    // engine's, not a topic: the lookbehind keeps the party from being taught
+    // about "7" and "2".
+    // Wiki style [[Topic]] is written as often as [Topic], so one match eats
+    // both pairs of brackets: taking only the inner pair left the outer ones
+    // stranded in the message box and in the popup.
+    const KEYWORD_SOURCE = /(?<!\\[a-zA-Z])\[\[?([^\[\]]+)\]\]?/.source;
 
     function keywordRe() { return new RegExp(KEYWORD_SOURCE, 'g'); }
+
+    // The text a whole match wraps, with either bracket style peeled off.
+    function keywordInner(match) {
+        return String(match).replace(/^\[+/, '').replace(/\]+$/, '');
+    }
 
     function splitKeyword(inner) {
         const pipe = inner.indexOf('|');
@@ -2591,8 +2799,22 @@ Imported.DialogueSystem = true;
     // Anything added straight to $gameMessage (a rumour, an exchange step, a
     // story line) goes through here, since only the messageBuffer path is read
     // by processMessageBuffer.
+    // A control escape written for the message box's own renderer (\c[14],
+    // \i[3], \}, ...) means nothing to a panel that paints its own HTML: it
+    // prints its own digits, and its brackets read as a [Keyword], so a line
+    // saying "\c[14]Dog\c[0]" taught the party about "14" and about "0". They
+    // are cut before anything else is read off the line.
+    // Only the purely decorative ones are cut. An escape that carries CONTENT
+    // (\v[7], \n[2], \p[1]) is left for the message box to resolve, since
+    // dropping it would drop the words it stands for.
+    const CONTROL_ESCAPE_RE = /\\[cCiI]\[[^\]]*\]/g;
+
+    function stripControlEscapes(text) {
+        return String(text == null ? '' : text).replace(CONTROL_ESCAPE_RE, '');
+    }
+
     function markKeywords(text) {
-        const line = String(text == null ? '' : text);
+        const line = stripControlEscapes(text);
         if (!line) return line;
         if (line.indexOf('[') < 0) return markNamedTopics(line);
         announceKeywords(learnKeywords(line));
@@ -3849,6 +4071,9 @@ Imported.DialogueSystem = true;
     // one being asked, never when he is the one asking Em.
     function storyAskLessons() {
         if (storyAskPartner() !== STORY_ASK_BUBBA) return [];
+        try {
+            if (!$gameSwitches || !$gameSwitches.value(COMBAT_TUTORIAL_SWITCH)) return [];
+        } catch (err) { return []; }
         return [{
             name:   COMBAT_TUTORIAL_TOPIC,
             title:  T('Dialogue.askCombat'),
@@ -3873,8 +4098,31 @@ Imported.DialogueSystem = true;
         return groups;
     }
 
+    // Who is doing the talking. The party leader by default, because the board
+    // is normally opened by turning round on the road, but a caller who knows
+    // better says so: the Empathize panel is opened on whoever the switcher has
+    // focused, and that member may be the second or third in the column. The
+    // override is the one thing the pair is read off while it is set, so the
+    // verb, the partner and the topics all agree about who is speaking.
+    let storyAskSpeakerOverride = '';
+
+    function setStoryAskSpeaker(name) {
+        storyAskSpeakerOverride = String(name || '').trim();
+    }
+
+    // The same, for the length of one call: whatever was set is put back
+    // afterwards, so a question asked about a named speaker never leaves the
+    // board pointing at somebody who has stopped talking.
+    function withStoryAskSpeaker(name, fn) {
+        const had = storyAskSpeakerOverride;
+        if (name != null) setStoryAskSpeaker(name);
+        try { return fn(); }
+        finally { storyAskSpeakerOverride = had; }
+    }
+
     // Who is walking at the head of the party, by name.
     function storyAskLeaderName() {
+        if (storyAskSpeakerOverride) return storyAskSpeakerOverride;
         try {
             const leader = $gameParty && $gameParty.leader();
             return leader && leader.name ? leader.name().trim() : '';
@@ -3891,23 +4139,29 @@ Imported.DialogueSystem = true;
     }
 
     // Asking is Em's word for it; Bubba, who is the one who remembers, tells.
-    function storyAskVerb() {
-        return storyAskLeaderName() === STORY_ASK_BUBBA
+    // Named for whoever is speaking, so the word on the button is theirs and
+    // not the leader's.
+    function storyAskVerb(speakerName) {
+        const who = speakerName == null ? storyAskLeaderName() : String(speakerName).trim();
+        return who === STORY_ASK_BUBBA
             ? T('Dialogue.askTell') : T('Dialogue.askAsk');
     }
 
-    // Only in a story-mode playthrough, and only with Em or Bubba leading.
-    function isStoryAsker() {
+    // Only in a story-mode playthrough, and only with Em or Bubba doing the
+    // talking.
+    function isStoryAsker(speakerName) {
         try {
             if (!$gameSwitches || !$gameSwitches.value(STORY_ASK_SWITCH)) return false;
-            return !!storyAskPartner();
+            return !!storyAskPartner(speakerName);
         } catch (err) { return false; }
     }
 
-    function canAskStory(name, mapId) {
-        if (!isStoryAsker()) return false;
-        if (String(name || '').trim() !== storyAskPartner()) return false;
-        return storyAskGroups(mapId).some(g => g.scenes.length > 0);
+    function canAskStory(name, mapId, speakerName) {
+        return withStoryAskSpeaker(speakerName, () => {
+            if (!isStoryAsker()) return false;
+            if (String(name || '').trim() !== storyAskPartner()) return false;
+            return storyAskGroups(mapId).some(g => g.scenes.length > 0);
+        });
     }
 
     // The two of them are on stage while the topics are up, the same pair a
@@ -3925,8 +4179,10 @@ Imported.DialogueSystem = true;
         bm.showCustomBust(partner, partner, 'right');
     }
 
-    // Nothing was asked after all: the cast walks off the way it came on.
+    // Nothing was asked after all: the cast walks off the way it came on, and
+    // the named speaker goes with them, so the next board reads the leader again.
     function storyAskUnstage() {
+        setStoryAskSpeaker('');
         const bm = SceneManager._scene && SceneManager._scene._bustManager;
         if (!bm) return;
         bm.setStoryMode(false);
@@ -3938,20 +4194,24 @@ Imported.DialogueSystem = true;
     // is redrawn saying what it now stands on. The old window has to be all the
     // way shut first: opening over a message that is still closing leaves the
     // two boards drawn on top of each other.
-    function reopenStoryAsk(mapId) {
+    function reopenStoryAsk(mapId, speakerName) {
         const tick = () => {
             const busy = typeof $gameMessage !== 'undefined' && $gameMessage &&
                 (($gameMessage.isBusy && $gameMessage.isBusy()) ||
                  ($gameMessage.isChoice && $gameMessage.isChoice()));
             if (busy) { setTimeout(tick, 16); return; }
-            openStoryAsk(mapId);
+            openStoryAsk(mapId, speakerName);
         };
         setTimeout(tick, 16);
     }
 
     // The grid itself: the fixed topics under their heading, this place's
     // under theirs, Cancel on its own line at the end.
-    function openStoryAsk(mapId) {
+    function openStoryAsk(mapId, speakerName) {
+        // Set for the whole life of the board, not only for the call that
+        // builds it: the callback below runs long after this returns, and the
+        // topics it plays belong to the same speaker. storyAskUnstage clears it.
+        if (speakerName != null) setStoryAskSpeaker(speakerName);
         const groups = storyAskGroups(mapId);
         if (!groups.length) return false;
         const scenes  = groups.reduce((all, g) => all.concat(g.scenes), []);
@@ -3972,9 +4232,10 @@ Imported.DialogueSystem = true;
                 try { picked.run(); } catch (err) { /* no legend */ }
                 // A switch brings the board back so the next one can be set;
                 // an entry that answers out loud (reopen: false) does not.
-                if (picked.reopen !== false) reopenStoryAsk(mapId);
+                if (picked.reopen !== false) reopenStoryAsk(mapId, storyAskLeaderName());
                 return;
             }
+            setStoryAskSpeaker('');
             playStoryScript(picked.file, picked.name);
         });
         return true;
@@ -4040,11 +4301,13 @@ Imported.DialogueSystem = true;
     // is the only playthrough canAskStory answers for.
     // Opening either one is deferred a tick: the choice window is still
     // closing while the callback runs.
-    function openStoryAskMenu(actorId, mapId) {
+    function openStoryAskMenu(actorId, mapId, speakerName) {
+        if (speakerName != null) setStoryAskSpeaker(speakerName);
+        const speaker = storyAskLeaderName();
         if (!storyAskGroups(mapId).some(g => g.scenes.length > 0)) return false;
         const choices = [
             T('Dialogue.askTalk'),
-            storyAskVerb(),
+            storyAskVerb(speaker),
             T('Dialogue.askEmpathize'),
             T('Dialogue.askCancel'),
         ];
@@ -4054,7 +4317,7 @@ Imported.DialogueSystem = true;
             // Talk is played where it stands; if the party has nothing to say
             // the cast walks off rather than leaving two portraits waiting.
             if (choice === 0) setTimeout(() => { if (!storyAskTalk()) storyAskUnstage(); }, 0);
-            else if (choice === 1) setTimeout(() => openStoryAsk(mapId), 0);
+            else if (choice === 1) setTimeout(() => openStoryAsk(mapId, speaker), 0);
             else if (choice === 2) {
                 storyAskUnstage();
                 setTimeout(() => window.NPCEmpathize?.openForActor?.(actorId), 0);
@@ -4086,7 +4349,12 @@ Imported.DialogueSystem = true;
         askCols:    storyAskCols,
         askVerb:    storyAskVerb,
         askPartner: storyAskPartner,
+        // Who the board reads the pair off, for a caller who is not the leader.
+        askSpeaker: setStoryAskSpeaker,
         canAsk:     canAskStory,
+        // Who the board reads as the one talking, when that is not the leader
+        // (the Empathize panel asks for the member its switcher has focused).
+        askSpeaker: setStoryAskSpeaker,
         // The one switch the board answers to, so nothing has to guess at it.
         askSwitch:  STORY_ASK_SWITCH,
         ask:        openStoryAsk,
@@ -4118,6 +4386,9 @@ Imported.DialogueSystem = true;
     // whole lesson is faceless boxes with his name inline, the same way Eris
     // talks mid-fight.
     const COMBAT_TUTORIAL_TOPIC = 'combat';  // i18n-ignore: the entry's own name
+    // The lesson is gated on its own switch as well as story mode: nothing is
+    // offered, on the Ask board or in a fight, until this one is on.
+    const COMBAT_TUTORIAL_SWITCH = 49;
 
     function combatTutorialWalksWithBubba() {
         try {
@@ -4146,6 +4417,7 @@ Imported.DialogueSystem = true;
     function shouldOfferCombatTutorial() {
         try {
             if (!$gameSwitches || !$gameSwitches.value(STORY_ASK_SWITCH)) return false;
+            if (!$gameSwitches.value(COMBAT_TUTORIAL_SWITCH)) return false;
         } catch (err) { return false; }
         if (!combatTutorialWalksWithBubba()) return false;
         return isCombatTutorialArmed() || !wasCombatTutorialSeen();
@@ -4201,6 +4473,7 @@ Imported.DialogueSystem = true;
         rearm:       rearmCombatTutorial,
         isArmed:     isCombatTutorialArmed,
         wasSeen:     wasCombatTutorialSeen,
+        gateSwitch:  COMBAT_TUTORIAL_SWITCH,
     };
 
     // -------------------------------------------------------------------------

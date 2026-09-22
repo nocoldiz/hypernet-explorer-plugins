@@ -675,6 +675,24 @@
     // At most this many machines ride beside the leader's.
     const ALONGSIDE_MAX = 2;
 
+    // Where the DRIVER's eye goes in each vehicle, in that vehicle's own frame
+    // (forward = +Z, +X is the driver's left, four units to the metre). Every
+    // vehicle can be looked out of from the saddle or the seat as well as
+    // watched from behind, so every vehicle needs one of these: the camper has
+    // its cockpit, the ship its helm, and a car, a boat, a bicycle and a broom
+    // each have a point a head sits at. Heights are eye heights, not seat
+    // heights - a cyclist's eyes are a metre and a half up whatever the saddle
+    // is doing - and the z puts the head where the controls are, which is
+    // forward in a car and a boat and right over the middle of a two-wheeler.
+    const PILOT_SEATS = {
+        camper:   DRIVER_SEAT,
+        starship: SHIP_HELM_SEAT,
+        car:      { x: 1.3, y: 5.0, z: 1.4 },
+        boat:     { x: 0.0, y: 5.2, z: 2.6 },
+        bike:     { x: 0.0, y: 6.0, z: 0.2 },
+        broom:    { x: 0.0, y: 6.2, z: -0.2 }
+    };
+
 
     // On-foot exploration (player detached from the parked camper). Speeds are in
     // world units/sec. There is no tether: the player can walk as far from the
@@ -2379,7 +2397,7 @@
         SHIP_BRIDGE_BOUNDS, SHIP_HELM_SEAT, SHIP_BRIDGE_SEATS,
         SHIP_LAND_KMH, SHIP_LAND_CLEAR, SHIP_FLY_MIN, SHIP_FLY_MAX, SHIP_CLIMB_RATE,
         ALONGSIDE_MAX, CharacterBillboard, VehicleBillboard, DOOR_AUTO_OPEN_RANGE, DRAG_K, DRIVER_SEAT,
-        RIDER_SEATS, RIDE_ALONGSIDE,
+        RIDER_SEATS, RIDE_ALONGSIDE, PILOT_SEATS,
         CAVE_SKY, ENGINE_ACCEL, FOG_CAVE, FOG_DAY, FOG_FREE, FOG_UNDERWATER, FOOT_BODY_R,
         loadVoxelTex, VOXEL_TEX_SIZE,
         Blocks, blockMaterial, blockSpan, disposeBlockMaterials,

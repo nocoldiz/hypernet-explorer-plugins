@@ -4726,6 +4726,9 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
 
         _bind() {
             this.root.addEventListener('mousedown', e => {
+                // The right button is the way out of the deck, never a press on
+                // a row or a tool.
+                if (e.button !== 0) return;
                 const row = e.target.closest('[data-row]');
                 const btn = e.target.closest('[data-tool]');
                 const fin = e.target.closest('[data-finish]');
@@ -5065,6 +5068,12 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
         // the 3D scene underneath it.
         claimClick() { this._domClaim = 3; }
 
+        // The right button backs out of wherever we are, exactly as the cancel
+        // key does. TouchInput reads it over the whole canvas, HUD included.
+        cancelTriggered() {
+            return Input.isTriggered('cancel') || TouchInput.isCancelled();
+        }
+
         //--- the middle button -----------------------------------------------
         // The middle button handler in TouchInput is empty, and holding it is
         // what pans here, so the scene watches the mouse itself. Movement is
@@ -5136,7 +5145,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
         update() {
             super.update();
             if (!this._threeReady) {
-                if (Input.isTriggered('cancel') || Input.isTriggered('ok')) this.popScene();
+                if (this.cancelTriggered() || Input.isTriggered('ok')) this.popScene();
                 return;
             }
             const dt = 1 / 60;
@@ -5163,6 +5172,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             switch (this._mode) {
                 case MODE.OPENING:
                     this._view.applyCamera('idle', dt * 2.2);
+                    if (this.cancelTriggered()) { SoundManager.playCancel(); this.popScene(); }
                     break;
                 case MODE.IDLE:
                     this._view.applyPose(this._view.orbitPose(), dt * 18);
@@ -5178,7 +5188,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
                     break;
                 case MODE.FAIL:
                     this._view.applyCamera('boot', dt * 3.4);
-                    if (Input.isTriggered('ok') || Input.isTriggered('cancel')
+                    if (Input.isTriggered('ok') || this.cancelTriggered()
                         || (TouchInput.isTriggered() && !this._domClaim)) {
                         SoundManager.playCancel();
                         this.setMode(MODE.IDLE);
@@ -5189,7 +5199,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
 
         //--- the free look ---------------------------------------------------
         updateIdleInput() {
-            if (Input.isTriggered('cancel')) { SoundManager.playCancel(); this.popScene(); return; }
+            if (this.cancelTriggered()) { SoundManager.playCancel(); this.popScene(); return; }
             if (Input.isTriggered('shift')) { this.focusBoard(); return; }
             if (Input.isTriggered('ok')) { this.powerOn(); return; }
 
@@ -5273,7 +5283,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
         //--- editing ---------------------------------------------------------
         updateEditInput() {
             if (this._hud.open === 'bios') {
-                if (Input.isTriggered('cancel')) this.onBiosAction('exit');
+                if (this.cancelTriggered()) this.onBiosAction('exit');
                 else if (Input.isTriggered('ok')) this.onBiosAction('boot');
                 else if (Input.isRepeated('left') || Input.isRepeated('right')) {
                     this.onBiosAction(this._biosTab === 'health' ? 'main' : 'health');
@@ -5281,13 +5291,13 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
                 return;
             }
             if (this._hud.open) {
-                if (Input.isTriggered('cancel')) {
+                if (this.cancelTriggered()) {
                     SoundManager.playCancel();
                     this._hud.closePicker();
                 }
                 return;
             }
-            if (Input.isTriggered('cancel')) {
+            if (this.cancelTriggered()) {
                 if (this._held) this.returnHeld();
                 else { SoundManager.playCancel(); this.setMode(MODE.IDLE); }
                 return;

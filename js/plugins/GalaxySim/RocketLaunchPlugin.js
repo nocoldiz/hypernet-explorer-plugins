@@ -607,7 +607,7 @@
       // going, because there is nothing in this sky that anybody left there.
       return {
         phases: ORBITAL_PHASES.slice(0, 6).concat([
-          { key: "clear", dur: 6.0, from: KESSLER_IN_M, to: DOCK_M, ease: "decel" },
+          { key: "cleanSky", dur: 6.0, from: KESSLER_IN_M, to: DOCK_M, ease: "decel" },
         ]),
         top: DOCK_M,
         belt: false,
@@ -738,6 +738,11 @@
   // Out past the last of the planets, where there is nothing left to be
   // inside of and the jump drive can be lit.
   const DEEP_SPACE_M = JUPITER_R_M * 600;
+  // How far off Jupiter is DRAWN, in far-scene units, at the far end of the
+  // cruise and at the near end of it. Both are inside the far camera's plane
+  // and both are well outside the sphere itself, which is 672 units across.
+  const JUPITER_FAR_D = 17500;
+  const JUPITER_NEAR_D = 11000;
 
   function titaniaTail(top) {
     return [
@@ -825,19 +830,215 @@
     // Not one of them is written out by hand: see CROSSINGS.
   };
 
-  // THE CROSSINGS. One per world per departure, assembled from a head and a
-  // tail rather than written out - six tables that cannot drift apart because
-  // there is only one copy of the part they share.
+  // The four worlds anything can be flown between.
+  const BODIES = ["earth", "moon", "zeta", "titania"];   // i18n-ignore  world ids
+
+  // WHICH ENGINE CROSSES THE GAP.
   //
-  // stages: the rail, and then whatever the crossing carries. The Moon takes
-  // one liminal engine; Zeta takes a stack of three and throws them away one
-  // after another; Titania takes one plus the SB jump drive, which is dead
-  // weight from the pad until the moment there is nothing left to be inside of.
+  //   liminal    one drive, one collapse of the range. Earth and its Moon.
+  //   corridor   a stack of three, down the Gate of Solomon, hexspace and the
+  //              white desert. Anything involving Zeta Reticuli.
+  //   sbcharge   a Schrodinger-Bohr charge. Anything involving Titania,
+  //              because Andromeda is not a distance a drive shortens.
+  function linkFor(from, to) {
+    if (from === "titania" || to === "titania") return "sbcharge";   // i18n-ignore  link ids
+    if (from === "zeta" || to === "zeta") return "corridor";
+    return "liminal";
+  }
+
+  // ---- the links -----------------------------------------------------------
+
+  // Earth to its own Moon, and back. One engine, one collapse.
+  function linkLiminal(top) {
+    return {
+      phases: [
+        { key: "liminal", dur: 3.0, from: top, to: top, ease: "linear" },
+        { key: "transit", dur: 9.0, from: top, to: LINK_OUT_M, ease: "linear", geo: true },
+      ],
+      out: LINK_OUT_M, stages: 1, hyper: false, jump: false, assist: false,
+    };
+  }
+
+  // The corridor. Three drives, thrown away one at a time, and the three
+  // readings of the shaft between them.
+  function linkCorridor(top) {
+    return {
+      phases: [
+        { key: "liminal", dur: 4.0, from: top, to: top, ease: "linear" },
+        { key: "solomon", dur: 13.0, from: top, to: top * 0.72, ease: "linear" },
+        { key: "hexspace", dur: 13.0, from: top * 0.72, to: top * 0.44, ease: "linear" },
+        { key: "thewhite", dur: 14.0, from: top * 0.44, to: LINK_OUT_M, ease: "linear" },
+      ],
+      out: LINK_OUT_M, stages: ZETA_STAGES, hyper: true, jump: false, assist: false,
+    };
+  }
+
+  // THE SCHRODINGER-BOHR CHARGE.
+  //
+  // Not a drive at all. The round carries a PELLET, and at the bottom of a
+  // gravity assist - where it is already travelling faster than it will ever
+  // travel again under its own power - it drops it and gets out of the way.
+  // What the pellet does is not an explosion in the ordinary sense: it is a
+  // charge that has not decided whether it went off, and the round rides the
+  // part of it that did.
+  //
+  // That throws it out past Pluto in seconds, and then past what anything is
+  // supposed to be able to do, and the far side of THAT is somewhere with no
+  // stars in it at all - gold, and briefly, and nobody aboard talks about it
+  // afterwards. Then the Milky Way is behind and Andromeda is ahead.
+  //
+  // The assist it is dropped at is whatever mass is nearest: JUPITER on the way
+  // out of the solar system, and Titania's own red moon on the way back.
+  function linkCharge(top, from) {
+    const fromTitania = from === "titania";   // i18n-ignore  world id
+    const run = fromTitania
+      ? [
+        // No Jupiter out here. What there is, is a small red moon the colour
+        // of the inside of a mouth, and it is enough.
+        { key: "redmoon", dur: 11.0, from: top, to: REDMOON_CLOSE_M, ease: "linear", geo: true },
+        { key: "charge", dur: 5.0, from: REDMOON_CLOSE_M, to: REDMOON_CLOSE_M, ease: "linear" },
+        { key: "blast", dur: 6.0, from: REDMOON_CLOSE_M, to: JUPITER_AWAY_M, ease: "linear", geo: true },
+      ]
+      : [
+        { key: "cruise", dur: 9.0, from: top, to: JUPITER_FAR_M, ease: "linear", geo: true },
+        { key: "jupiter", dur: 13.0, from: JUPITER_FAR_M, to: JUPITER_CLOSE_M, ease: "linear", geo: true },
+        // The pellet goes here, at the bottom of the well.
+        { key: "charge", dur: 5.0, from: JUPITER_CLOSE_M, to: JUPITER_CLOSE_M, ease: "linear" },
+        { key: "blast", dur: 6.0, from: JUPITER_CLOSE_M, to: JUPITER_AWAY_M, ease: "linear", geo: true },
+        // Out past the last thing in the system with a name.
+        { key: "pluto", dur: 9.0, from: JUPITER_AWAY_M, to: PLUTO_M, ease: "linear", geo: true },
+      ];
+    const tail = [
+      // Faster than anything is meant to go, until the thing being travelled
+      // through gives way.
+      { key: "breach", dur: 7.0, from: fromTitania ? JUPITER_AWAY_M : PLUTO_M, to: DEEP_SPACE_M, ease: "linear", geo: true },
+      // And the other side of it, which is gold.
+      { key: "gods", dur: 8.0, from: DEEP_SPACE_M, to: DEEP_SPACE_M, ease: "linear" },
+      // Then one galaxy behind and one ahead.
+      { key: "crossing", dur: 11.0, from: DEEP_SPACE_M, to: LINK_OUT_M, ease: "linear", geo: true },
+    ];
+    return {
+      phases: run.concat(tail),
+      out: LINK_OUT_M, stages: 1, hyper: false, jump: true, assist: !fromTitania,
+    };
+  }
+
+  const LINKS = { liminal: linkLiminal, corridor: linkCorridor, sbcharge: linkCharge };   // i18n-ignore  link ids
+
+  // ---- the landings --------------------------------------------------------
+
+  function landingMoon(top) {
+    return [
+      { key: "approach", dur: 6.0, from: top, to: MOON_ARRIVE_M, ease: "linear", geo: true },
+      { key: "flyby", dur: 8.0, from: MOON_ARRIVE_M, to: MOON_FLYBY_M, ease: "linear" },
+      { key: "skim", dur: 4.0, from: MOON_FLYBY_M, to: MOON_SKIM_M, ease: "decel" },
+      { key: "touchdown", dur: 3.5, from: MOON_SKIM_M, to: 0, ease: "decel" },
+      { key: "arrived", dur: 3.0, from: 0, to: 0, ease: "linear" },
+    ];
+  }
+
+  // Zeta: out beside the star, tanks off the shell, then across the system.
+  function landingZeta(top) {
+    return [
+      { key: "emerge", dur: 8.0, from: top, to: ZETA_STAR_M, ease: "linear", geo: true },
+      { key: "refuel", dur: 7.0, from: ZETA_STAR_M, to: ZETA_STAR_M, ease: "linear" },
+      { key: "transfer", dur: 10.0, from: ZETA_STAR_M, to: ZETA_ARRIVE_M, ease: "linear", geo: true },
+      { key: "flyby", dur: 9.0, from: ZETA_ARRIVE_M, to: ZETA_FLYBY_M, ease: "linear" },
+      { key: "skim", dur: 4.5, from: ZETA_FLYBY_M, to: ZETA_SKIM_M, ease: "decel" },
+      { key: "touchdown", dur: 3.5, from: ZETA_SKIM_M, to: 0, ease: "decel" },
+      { key: "arrived", dur: 3.0, from: 0, to: 0, ease: "linear" },
+    ];
+  }
+
+  // Titania: out into Andromeda, and then the PLANET, which has to be come up
+  // on properly rather than simply be underneath on the next beat.
+  function landingTitania(top) {
+    return [
+      { key: "emerge", dur: 8.0, from: top, to: TITANIA_FAR_M, ease: "linear", geo: true },
+      // The world itself, closing from a bright point to the whole window.
+      { key: "approach", dur: 10.0, from: TITANIA_FAR_M, to: TITANIA_ARRIVE_M, ease: "linear", geo: true },
+      { key: "flyby", dur: 9.0, from: TITANIA_ARRIVE_M, to: TITANIA_FLYBY_M, ease: "linear" },
+      { key: "skim", dur: 4.5, from: TITANIA_FLYBY_M, to: TITANIA_SKIM_M, ease: "decel" },
+      { key: "touchdown", dur: 3.5, from: TITANIA_SKIM_M, to: 0, ease: "decel" },
+      { key: "arrived", dur: 3.0, from: 0, to: 0, ease: "linear" },
+    ];
+  }
+
+  // EARTH, and coming home is not the reverse of leaving.
+  //
+  // A round arriving from another star arrives with a speed nothing on Earth
+  // can catch, so it does not try: it goes round the MOON first and leaves the
+  // worst of that speed there. A lunar braking pass is free - the Moon does
+  // not care - and it is the only reason anything survives the arrival.
+  function landingEarth(top) {
+    return [
+      { key: "emerge", dur: 7.0, from: top, to: EARTH_FAR_M, ease: "linear", geo: true },
+      // Round the back of the Moon, shedding the speed of a crossing.
+      { key: "moonbrake", dur: 10.0, from: EARTH_FAR_M, to: DOCK_M, ease: "linear", geo: true },
+      // And then it is an ordinary way down, which the plugin already knows.
+      { key: "fall", dur: 7.0, from: DOCK_M, to: KESSLER_OUT_M, ease: "accel" },
+      { key: "kessler", dur: 14.0, from: KESSLER_OUT_M, to: KESSLER_IN_M, ease: "linear" },
+      { key: "clear", dur: 5.0, from: KESSLER_IN_M, to: 120000, ease: "decel" },
+      { key: "reentry", dur: 9.0, from: 120000, to: 24000, ease: "accel" },
+      { key: "terminal", dur: 6.0, from: 24000, to: RAIL_LEN_M, ease: "decel" },
+      { key: "capture", dur: 5.0, from: RAIL_LEN_M, to: 0, ease: "brake" },
+      { key: "arrived", dur: 3.0, from: 0, to: 0, ease: "linear" },
+    ];
+  }
+
+  // Home, but to something already in orbit. The braking pass round the Moon
+  // still happens - a crossing arrives far too fast to be caught by anything,
+  // the ship included - and then it is the rendezvous the orbital flight ends
+  // with, because that is what arriving at the ship IS.
+  function landingEarthDock(top) {
+    return [
+      { key: "emerge", dur: 7.0, from: top, to: EARTH_FAR_M, ease: "linear", geo: true },
+      { key: "moonbrake", dur: 10.0, from: EARTH_FAR_M, to: DOCK_M, ease: "linear", geo: true },
+    ].concat(orbitalTail(DOCK_M));
+  }
+
+  const LANDINGS = {
+    // i18n-ignore-start  world ids
+    earth: landingEarth, moon: landingMoon, zeta: landingZeta, titania: landingTitania,
+    // i18n-ignore-end
+  };
+
+  // The same table for a destination that is in orbit rather than on the
+  // ground. Only Earth has both kinds of pad.
+  const LANDINGS_DOCK = { earth: landingEarthDock };   // i18n-ignore  world id
+
+  // Is this pad something a round docks with rather than lands on?
+  //
+  // A WORLD BASE IS NOT ONE, whatever else is true of it. The Moon carries the
+  // orbital flag because there is no air and no belt over it - which is all
+  // that flag has ever meant to the flight model - but a round aimed at it
+  // SETS DOWN, on the lit apron at the base, and there is no earth2moonDock
+  // table because there is nothing up there to dock with. Reading the flag as
+  // "in orbit" asked for a crossing that does not exist, got nothing back and
+  // quietly flew a plain climb to the starship instead: every flight to the
+  // Moon, from every pad, lost its liminal drive, its circuit and its landing
+  // while the card that offered it went on promising all three. A pad with a
+  // world under it lands. Only a pad with no world under it docks.
+  function padInOrbit(site) {
+    return !!(site && (site.orbital || site.noGround) && !site.body);
+  }
+
+  // Where every link hands the flight over to its landing. One number, so a
+  // link and a landing can never disagree about where they meet.
+  const LINK_OUT_M = DOCK_M * 0.3;
+  // Pluto's orbit, near enough, and the red moon of Titania at its closest.
+  const PLUTO_M = JUPITER_R_M * 1400;
+  const REDMOON_CLOSE_M = JUPITER_R_M * 1.2;
+  const TITANIA_FAR_M = 2600000;
+  const EARTH_FAR_M = 2200000;
+
+  // How much of the vehicle each link throws away, and what it needs built.
   const CROSSINGS = {
     // i18n-ignore-start  world ids
-    moon: { tail: lunarTail, stages: 1, liminalStages: 1, tapeTop: 1400000 },
-    zeta: { tail: zetaTail, stages: 3, liminalStages: ZETA_STAGES, tapeTop: 1400000, hyper: true },
-    titania: { tail: titaniaTail, stages: 2, liminalStages: 1, tapeTop: DEEP_SPACE_M * 1.1, jump: true, assist: true },
+    moon: { tapeTop: 1400000 },
+    zeta: { tapeTop: 1400000 },
+    titania: { tapeTop: DEEP_SPACE_M * 1.1 },
+    earth: { tapeTop: 1400000 },
     // i18n-ignore-end
   };
 
@@ -846,51 +1047,89 @@
   const KIND_SUFFIX = { earth: "", air: "Air", vacuum: "Orbit" };
   // i18n-ignore-end
 
+  function kindsFor(body) {
+    // i18n-ignore-start  world and pad-kind ids
+    if (body === "earth") return ["earth", "vacuum"];
+    if (body === "moon") return ["vacuum"];
+    return ["air", "vacuum"];
+    // i18n-ignore-end
+  }
+
   function buildCrossings() {
-    Object.keys(CROSSINGS).forEach((world) => {
-      const c = CROSSINGS[world];
-      PAD_KINDS.forEach((kind) => {
-        const id = crossingId(world, kind);
-        const head = crossingHead(kind);
-        const phases = head.phases.concat(c.tail(head.top));
-        const vacuum = kind === "vacuum";   // i18n-ignore  pad-kind id
-        PROFILES[id] = {
-          id: id,
-          world: world,
-          kind: kind,
-          phases: phases,
-          start: startTable(phases),
-          // From the ground the round also carries the rail's boost stage,
-          // and off Earth the sleeve over the drive as well.
-          stages: c.stages + (vacuum ? 1 : (head.belt ? 3 : 2)),
-          liminalStages: c.liminalStages,
-          belt: head.belt,
-          shedsArmour: head.belt,
-          tapeTop: c.tapeTop,
-          apogee: head.top,
-          downrange: false,
-          liminal: true,
-          // Only a drive that has a belt to cross needs a sleeve to cross it.
-          shroud: head.belt,
-          lunar: true,
-          fromOrbit: vacuum,
-          hyper: !!c.hyper,
-          jump: !!c.jump,
-          assist: !!c.assist,
-        };
+    BODIES.forEach((from) => {
+      BODIES.forEach((to) => {
+        if (from === to) return;
+        const c = CROSSINGS[to];
+        const link = LINKS[linkFor(from, to)];
+        // A destination world with pads of both kinds needs a crossing for
+        // each: see landingEarthDock.
+        const arrivals = LANDINGS_DOCK[to] ? [false, true] : [false];
+        arrivals.forEach((toOrbit) => {
+        kindsFor(from).forEach((kind) => {
+          // A pad in orbit over Earth and a pad on the ground at Apulia are
+          // both on Earth; which sky the round is thrown through is the pad's
+          // and which engine crosses the gap is the pair's.
+          const head = crossingHead(kind);
+          const mid = link(head.top, from);
+          const landing = (toOrbit ? LANDINGS_DOCK[to] : LANDINGS[to])(mid.out);
+          const phases = head.phases.concat(mid.phases, landing);
+          const id = crossingId(from, to, kind, toOrbit);
+          const vacuum = kind === "vacuum";   // i18n-ignore  pad-kind id
+          PROFILES[id] = {
+            id: id,
+            world: to,
+            fromWorld: from,
+            link: linkFor(from, to),
+            kind: kind,
+            phases: phases,
+            start: startTable(phases),
+            // The rail's boost stage, the sleeve where there is a belt to
+            // cross, and whatever the link itself throws away.
+            stages: mid.stages + (vacuum ? 1 : (head.belt ? 3 : 2)),
+            liminalStages: mid.stages,
+            belt: head.belt,
+            shedsArmour: head.belt,
+            tapeTop: c.tapeTop,
+            apogee: head.top,
+            downrange: false,
+            liminal: true,
+            // Only a drive that has a belt to cross needs a sleeve to cross it.
+            shroud: head.belt,
+            lunar: true,
+            fromOrbit: vacuum,
+            hyper: !!mid.hyper,
+            jump: !!mid.jump,
+            assist: !!mid.assist,
+            toOrbit: toOrbit,
+          };
+        });
+        });
       });
     });
   }
 
-  // "moon" / "moonAir" / "moonOrbit", "zeta" / "zetaAir" / "zetaOrbit", ...
-  function crossingId(world, kind) {
-    return world + (KIND_SUFFIX[kind] || "");   // i18n-ignore  profile id
+  // "earth2moon", "zeta2earthOrbit", "titania2zetaAir", ...
+  function crossingId(from, to, kind, toOrbit) {
+    // i18n-ignore-next-line  profile id
+    return from + "2" + to + (toOrbit ? "Dock" : "") + (KIND_SUFFIX[kind] || "");
   }
 
   buildCrossings();
 
-  // The two hand-written lunar entries above are what buildCrossings replaces:
-  // the Moon is a crossing like the other two and is built like them.
+  // The names the rest of the file and the tests know these by: the crossing
+  // to a world off an Earth pad is what "moon", "zeta" and "titania" meant.
+  ["moon", "zeta", "titania"].forEach((w) => {                    // i18n-ignore  world ids
+    PAD_KINDS.forEach((kind) => {
+      // "moonAir" and friends are the crossing to that world off a world with
+      // weather and no belt - which is any of the offworld bases, so the alias
+      // points at the one leaving the Monument. Earth has no "air" pad.
+      const src = PROFILES[crossingId("earth", w, kind)] ||
+        PROFILES[crossingId("zeta", w, kind)] ||
+        PROFILES[crossingId("titania", w, kind)] ||
+        PROFILES[crossingId("moon", w, kind)];
+      if (src) PROFILES[w + (KIND_SUFFIX[kind] || "")] = src;
+    });
+  });
   PROFILES.lunar = PROFILES.moon;
   PROFILES.lunarOrbit = PROFILES.moonOrbit;
 
@@ -942,6 +1181,16 @@
   const PROFILE_ORDER = ["orbital", "suborbital"];   // i18n-ignore  profile ids
 
   function profileOf(id) { return PROFILES[id] || PROFILES.orbital; }
+
+  // The i18n key a plan is named under. A crossing is named for the world it
+  // is aimed at, because that is the choice the player made; everything else
+  // is named for itself.
+  function modeKey(profile) {
+    return (profile && (profile.world || profile.id)) || "orbital";   // i18n-ignore  profile id
+  }
+
+  function modeName(profile) { return t("mode." + modeKey(profile) + ".name"); }
+  function modeBlurb(profile) { return t("mode." + modeKey(profile) + ".blurb"); }
 
   function phaseAt(time, profile) {
     const prof = profile || PROFILES.orbital;
@@ -1102,7 +1351,8 @@
     // The two long crossings, which are past everything that could damage them
     // from the moment the drive is in.
     "solomon", "hexspace", "thewhite", "emerge", "refuel", "transfer",
-    "cruise", "jupiter", "assist", "escape", "sbspool", "wormhole", "throat",
+    "cruise", "jupiter", "approach", "cleanSky", "moonbrake",
+    "charge", "blast", "pluto", "breach", "gods", "crossing", "redmoon",
   ];
   // i18n-ignore-end
 
@@ -1110,15 +1360,33 @@
   // is what the scene and the HUD read; integrityAt stays the pure altitude
   // curve underneath it, because that is what the belt is actually a function
   // of and what the plate thresholds are spread against.
+  // The beats of a landing on Earth, which is the one landing that is flown
+  // through something that can hurt the round.
+  const EARTH_LANDING_KEYS = ["fall", "kessler", "clear", "reentry", "terminal", "capture"];   // i18n-ignore  phase keys
+
   function integrityAtTime(time, severity, profile, progress) {
     const prof = profile || PROFILES.orbital;
     if (!prof.lunar) return integrityAt(altitudeAt(time, prof), severity, prof, progress);
     const ph = phaseAt(time, prof);
+    // COMING DOWN ON EARTH the belt is ahead of the round, not behind it, so
+    // the descent curve is read off the real altitude exactly as a deorbit
+    // reads it - and what it takes is taken off what the crossing arrived with.
+    if (prof.world === "earth" && EARTH_LANDING_KEYS.indexOf(ph.key) >= 0) {   // i18n-ignore  world id
+      const arrived = integrityAt(prof.apogee, severity, prof, progress);
+      const down = integrityAt(altitudeAt(time, prof), severity, DESCENT_CURVE, progress);
+      // Whatever it had on arrival, scaled by what the way down leaves of it.
+      return INTEGRITY_FLOOR + (arrived - INTEGRITY_FLOOR) *
+        ((down - INTEGRITY_FLOOR) / (INTEGRITY_START - INTEGRITY_FLOOR));
+    }
     // Past the belt the altimeter has changed what it is measuring, so the
     // curve is pinned at the top of the climb and the damage stops there.
     const alt = LUNAR_TAIL_KEYS.indexOf(ph.key) >= 0 ? prof.apogee : altitudeAt(time, prof);
     return integrityAt(alt, severity, prof, progress);
   }
+
+  // Just the SHAPE of a descent, for anything that needs to ask what falling
+  // through the belt and the air costs without being a descent itself.
+  const DESCENT_CURVE = { belt: true, descent: true };
 
   // Weather and darkness make the traversal worse, never better than nominal
   // by much: the belt does not care, but the tracking does.
@@ -1260,8 +1528,14 @@
       // and it has to READ as one. A tenth of the tower, a sixth of its
       // section, no foundation, no capacitor halls, no gantry - and the round
       // is loaded a few metres up the bore rather than sixty.
-      railScale: 0.038,
-      mounted: true, mountScale: 0.16, loadY: 20,
+      // A SPINAL RAIL, and the numbers say so. The hull is about a hundred
+      // and twenty units long and ten to twenty through, and the gun is a
+      // thirty-six unit rail a dozen across that lies ALONG it: something the
+      // ship carries, not something the ship is parked next to. The bore is
+      // still four units clear of a bullet three across, which is all the
+      // clearance a round in a cradle has ever had.
+      railScale: 0.030,
+      mounted: true, mountScale: 0.12, loadY: 12,
       orbital: true,
       noGround: true, noSea: true, noTown: true,
     },
@@ -1518,14 +1792,18 @@
   // with a lit hatch in it. Those fly bare, and there is nothing up there to
   // make them fly otherwise.
   function crossingProfile(site, dest) {
-    const body = dest && dest.body;
-    if (!body || !CROSSINGS[body]) return null;
-    return PROFILES[crossingId(body, padKind(site))] || null;
+    if (!site || !dest) return null;
+    const from = bodyOf(site), to = bodyOf(dest);
+    // Two pads on the same world are not a crossing, they are a hop or a
+    // climb - and Earth's five pads are all on the same world.
+    if (from === to) return null;
+    return PROFILES[crossingId(from, to, padKind(site), padInOrbit(dest))] || null;
   }
 
   // Kept as the older name, which only ever asked about the Moon.
   function lunarProfileFrom(site) {
-    return PROFILES[crossingId("moon", padKind(site))];   // i18n-ignore  world id
+    return PROFILES[crossingId(bodyOf(site), "moon", padKind(site))] ||   // i18n-ignore  world id
+      PROFILES[crossingId("earth", "moon", padKind(site))];               // i18n-ignore  world ids
   }
 
   // Is this crossing a way DOWN? A flight that leaves a pad in orbit and is
@@ -1980,6 +2258,8 @@
     zeta: { id: "tourists", from: "emerge" },
     titania: { id: "dargos", from: "emerge" },
   };
+  // The beat a world with no station of its own takes its flights back on.
+  const HANDOVER_BEAT = "emerge";
   // The beats no signal gets into or out of. Inside one of these the ground
   // has no contact with the round at all and everything said is said aboard.
   const NO_CONTACT = [
@@ -1988,12 +2268,46 @@
   ];
   // i18n-ignore-end
 
+  // The beats a crew answers the ground on. Not all of them: a flight where
+  // every call is acknowledged is a flight nobody can read, and half of these
+  // beats are spoken from aboard already. These are the ones somebody strapped
+  // into a round would actually say something back to.
+  // i18n-ignore-start  phase keys
+  const ANSWERED = [
+    "ready", "release", "ballistic", "ignition", "beltEntry", "impact",
+    "shipSighted", "softDock", "hardDock", "landed", "entryOut", "capture",
+    "moonAhead", "lunarDown", "jupiterClose", "breachGive", "zetaArrived",
+    "titaniaArrived", "lunarArrived", "arrived", "hopCapture", "refuelDone",
+  ];
+  // i18n-ignore-end
+  // And how long the ground has to be left alone between answers. A reply on
+  // top of a reply is two people talking over each other.
+  const REPLY_GAP = 6.5;
+
+  // The beats a round is in the EARTH'S sky on, whatever it left from: the
+  // braking pass round the Moon and everything after it. See _updateMoon.
+  // i18n-ignore-start  phase keys
+  const HOME_SKY = [
+    "moonbrake", "fall", "kessler", "clear", "reentry", "terminal", "capture",
+    "muzzle", "rendezvous", "dock", "aboard", "arrived",
+  ];
+  // i18n-ignore-end
+
+  // How long the camera takes to travel from one beat's setup to the next.
+  // Long enough to read as a move and short enough that the new shot is the
+  // new shot well before the beat it belongs to is over.
+  const RIG_BLEND = 1.1;
+
   const Radio = {
     _turn: 0,
     _station: null,
     _blackout: false,
+    // Who said the last line: the room on Earth, a station at the far end, or
+    // somebody aboard. The log draws the three apart, so it has to be able to
+    // ask, and every line the radio hands out sets it.
+    lastWho: "control",   // i18n-ignore  speaker id
 
-    reset() { this._turn = 0; this._station = null; this._blackout = false; },
+    reset() { this._turn = 0; this._station = null; this._handed = null; this._blackout = false; this.lastWho = "control"; },   // i18n-ignore  speaker id
 
     // Called as each beat starts. Once the round is in the far system the
     // local station has the flight, and it keeps it: there is no handing back.
@@ -2001,13 +2315,29 @@
       // Signal, or the lack of it. Not sticky: it comes back the moment the
       // round is somewhere a signal can reach.
       this._blackout = NO_CONTACT.indexOf(phaseKey) >= 0;
-      if (this._station) return;
-      const s = profile && STATIONS[profile.world];
-      if (!s) return;
+      if (!profile) return;
+      // WHO RUNS A LAUNCH IS WHOEVER IS STANDING AT THE PAD. A round leaving
+      // the embassy on Titania is counted down by Dargos and a round leaving
+      // the Monument by the tourists who keep it; a room on Earth thirty-nine
+      // light years behind them is not reading out that countdown. So the
+      // station at the world the flight LEAVES has the flight from the first
+      // beat, and the one at the world it is going to takes it over at the
+      // handover beat - which is the only handover there is.
+      const home = STATIONS[profile.fromWorld];
+      if (this._handed !== profile) {
+        this._handed = profile;
+        this._station = home ? home.id : null;
+      }
+      const s = STATIONS[profile.world];
+      const toId = s ? s.id : null;
+      if (this._station === toId) return;
       const beats = profile.phases.map((p) => p.key);
-      const at = beats.indexOf(s.from);
+      // A world with nobody on it - Earth, the Moon - still takes its own
+      // flights back at the same point in the crossing, and mission control
+      // is who that is.
+      const at = beats.indexOf(s ? s.from : HANDOVER_BEAT);
       const now = beats.indexOf(phaseKey);
-      if (at >= 0 && now >= at) this._station = s.id;
+      if (at >= 0 && now >= at) this._station = toId;
     },
 
     stationId() { return this._station; },
@@ -2057,6 +2387,7 @@
     // allowed to keep the neutral wording rather than fall silent.
     fromControl(key, params) {
       if (this._blackout && this._crew().length) return this.fromCrew(key, params);
+      this.lastWho = this._station ? "station" : "control";   // i18n-ignore  speaker ids
       let text = null;
       if (this._station) text = tOrNull("station." + this._station + "." + key, params);
       if (text == null) text = t("telemetry." + key, params);
@@ -2077,11 +2408,58 @@
       let text = tOrNull("crew." + voice + "." + key, params);
       if (text == null) text = tOrNull("crew.any." + key, params);
       if (text == null) text = t("telemetry." + key, params);
+      this.lastWho = "crew";   // i18n-ignore  speaker id
+      return t("radio.line", { who: this._nameOf(who), text: text });
+    },
+
+    // The name over a line from aboard. A member with no name of their own -
+    // which is what a stub actor is - is still not the ground, and must not be
+    // labelled as it: they are the crew, and the log says so.
+    _nameOf(actor) {
       let name = "";
-      try { name = who.name(); } catch (e) { name = ""; }
-      return t("radio.line", { who: name || this.control(), text: text });
+      try { name = actor && actor.name ? actor.name() : ""; } catch (e) { name = ""; }
+      return name || t("radio.crew");
+    },
+
+    // THE ANSWER FROM ABOARD.
+    //
+    // Mission control reads instruments at a round full of people, and until
+    // now the round never said anything back: the log was a monologue with the
+    // crew's own beats dropped into it. So the beats worth answering get an
+    // answer, from the next member down the party, in their own register - a
+    // short one, because a reply is an acknowledgement and not a speech.
+    //
+    // The bank is allowed to be thin: a register with nothing written for this
+    // beat falls back to its own acknowledgements, which every register has,
+    // and a party with nobody in it to speak simply does not reply.
+    replyTo(key, params) {
+      if (this._blackout) return null;
+      if (ANSWERED.indexOf(key) < 0) return null;
+      const crew = this._crew();
+      if (!crew.length) return null;
+      const who = crew[this._turn % crew.length];
+      this._turn++;
+      const voice = this.voiceOf(who);
+      let text = tOrNull("reply." + voice + "." + key, params);
+      // The acknowledgements, which are the floor under the whole bank. Which
+      // one is used rotates with the speaker, so a long flight does not hear
+      // the same four words from the same person twice running.
+      if (text == null) {
+        for (let i = 0; i < REPLY_ACKS; i++) {
+          const n = ((this._turn + i) % REPLY_ACKS) + 1;
+          text = tOrNull("reply." + voice + ".ack" + n, params);
+          if (text != null) break;
+        }
+      }
+      if (text == null) text = tOrNull("reply.any." + key, params);
+      if (text == null) return null;
+      this.lastWho = "crew";   // i18n-ignore  speaker id
+      return t("radio.line", { who: this._nameOf(who), text: text });
     },
   };
+
+  // How many acknowledgements each register is written with.
+  const REPLY_ACKS = 4;
 
   // T() answers with the key itself when a bank has nothing under it, which is
   // how a missing string is meant to show up on screen - but a FALLBACK CHAIN
@@ -2131,10 +2509,26 @@
   // the pad's recession into vertical and downrange - see _updatePad. Nothing
   // else in the pad code knows or has to.
   const HOP_ELEVATION = 0.38;   // radians off vertical, about 22 degrees
+  // The seconds that have to pass before the same reactive line may be said
+  // again. The two the belt generates are the reason this exists: see _maySay.
+  // i18n-ignore-start  telemetry keys
+  const SAY_GAP = { impact: 7, proximity: 9, stageLost: 0, stageSep: 0, shroudGone: 0, chute: 0 };
+  // i18n-ignore-end
+  const SAY_GAP_DEFAULT = 3;
   // The Moon to the same scale as the Earth beside it: 0.273 of an Earth
   // radius across, and sixty of them away. Both numbers are real, which is why
   // the disc comes out the size the sky says it is.
   const MOON_VIS_R = EARTH_VIS_R * 0.273;
+  // The render layer the Moon and nothing else is on. See _initThree.
+  const MOON_LAYER = 1;
+  const onLayer = (o, n) => { if (o && o.layers && o.layers.set) o.layers.set(n); };
+  const seeLayer = (o, n) => { if (o && o.layers && o.layers.enable) o.layers.enable(n); };
+  // Never further out than this, in far-scene units: past it the planet is
+  // behind the far camera's 20000-unit plane and simply stops being drawn,
+  // which is what emptied the window on the long crossings. Beyond this range
+  // the whole far scene is scaled down instead of moved away, so the angular
+  // size on screen is still the honest one. See _updateCamera.
+  const FAR_CAM_MAX_D = 12000;
   // How far off the camera's own bearing the Moon is held. See _buildMoon.
   const MOON_BEARING = 0.42;
   // The hyperspace corridor: how wide the square shaft is and how far down it
@@ -2145,6 +2539,11 @@
   // and would be the entire sky from anywhere useful; this is the size that
   // puts it in the window WITH the planet it is being approached over.
   const DYSON_VIS_R = 420;
+  // The string of Schrodinger-Bohr pellets: how many, and how long one ring
+  // takes to open. They are staggered across the blast beat, so a longer
+  // string is a longer staircase rather than a bigger bang.
+  const CHARGE_COUNT = 5;
+  const RING_LIFE = 1.9;
 
   // THE LIMINAL ENGINE.
   //
@@ -2164,20 +2563,59 @@
 
   // i18n-ignore-start  phase keys
   // The beats a drive is at full power for.
-  const LIMINAL_LIT = ["transit", "solomon", "hexspace", "thewhite", "wormhole", "throat", "emerge", "transfer"];
+  const LIMINAL_LIT = ["transit", "solomon", "hexspace", "thewhite", "emerge", "transfer", "approach", "moonbrake"];
+  // THE BEATS THE BLUE FLAME IS ACTUALLY LIT ON, which is not the same list.
+  //
+  // The drive's glow - the vanes, the core, the halo - is the engine being up,
+  // and it is up wherever the round is under it. The FLAME is the engine
+  // PUSHING, and there are two things it pushes the round through:
+  //
+  //   A CROSSING BETWEEN TWO WORLDS. One drive, lit for as long as the range
+  //   takes to collapse: Earth to its Moon, the burn across the Zeta system,
+  //   the braking pass on the way home.
+  //
+  //   THE SHAFT TO ZETA RETICULI, which is the SAME ENGINE TAKEN TO THE MAX.
+  //   The Gate of Solomon, hexspace and the white desert are not another
+  //   drive and not another physics: they are a stack of three liminal
+  //   engines, lit one after another and thrown away as each one is spent,
+  //   holding a collapse no single drive could hold. So the flame is lit down
+  //   the whole length of it, and out the far mouth with it.
+  //
+  // The spool that comes before either one is the flame coming in.
+  //
+  // It is lit on nothing else, and the SCHRODINGER-BOHR JUMP is the reason
+  // this list exists. That one is not a drive shortening a distance at all:
+  // it is a string of pellets that have not decided where they are yet, and
+  // the round crosses between GALAXIES on the answer. Nothing burns. A jet
+  // hanging under the round while it happens says the opposite of what the
+  // beat is. And a landing is the round being SET DOWN on a pad: it comes in
+  // on the drive's glow and the pad's lights, not on a torch.
+  const LIMINAL_FLAME = [
+    "liminal", "transit", "solomon", "hexspace", "thewhite",
+    "emerge", "transfer", "approach", "moonbrake",
+    // And the run out to the assist, which is a burn like any other.
+    "cruise",
+  ];
   // And the beats the lens is bending the frame on. The liminal lens is the
   // CORRIDOR's look and nothing else's: it is worn down the shaft to Zeta and
   // never on the jump to Titania, which is not a drive shortening a distance
   // but a distance being removed, and must not read as the same crossing. The
   // hole does its own bending, with the sky wrapped round the mouth.
-  const LENS_BEATS = ["transit", "solomon", "hexspace", "thewhite"];
+  const LENS_BEATS = ["transit", "solomon", "hexspace", "thewhite", "breach", "crossing"];
   // Where each drive of a stack is dropped: the end of the beat it was lit for.
   const STACK_DROPS = ["solomon", "hexspace", "thewhite"];
   // The beats where the round is flying ALONG the track rather than up it, and
   // therefore has to be laid over onto it. See the note in _updateVehicle.
   const TRACK_BEATS = [
-    "transit", "solomon", "hexspace", "thewhite", "emerge", "transfer",
-    "wormhole", "throat", "cruise", "jupiter", "assist", "escape", "sbspool",
+    "transit", "solomon", "hexspace", "thewhite", "emerge", "transfer", "approach",
+    "cruise", "jupiter", "charge", "blast", "pluto", "breach", "gods", "crossing",
+    "redmoon", "moonbrake",
+    // A round is pointed at where it is GOING, and these are the rest of the
+    // beats it is flown sideways on: round the back of a planet, out the far
+    // side of an assist, along a circuit and in onto a hull. The beats that
+    // really are flown nose-up - the climb off a pad, the last hundred metres
+    // of a powered landing - are deliberately not in the list.
+    "assist", "escape", "flyby", "refuel", "cleanSky", "rendezvous", "dock",
   ];
   // i18n-ignore-end
 
@@ -2422,16 +2860,34 @@
         // With Earth gone it has been gone for years: nothing is being put up
         // there any more and what was up there came down with the impact.
         if (this.profile.belt && !earthGone()) this._defer("belt", () => this._buildBelt());
-        if (!this.profile.downrange && !this.profile.lunar) this._defer("ship", () => this._buildShip());
+        // The hull is built for the flight that ENDS at it, and also for the
+        // flight that begins on one: the ship's gun is a mast bolted to a
+        // hull, and a launch off it with nothing under the mast read as a
+        // barrel floating in the dark.
+        if (!this.profile.downrange && (!this.profile.lunar || site.mounted)) {
+          this._defer("ship", () => this._buildShip());
+        }
         // The Moon base, and the regolith it stands on. Four beats away at the
         // earliest and the most expensive thing a lunar flight builds, so it
         // goes on the queue like everything else and is asked for on the way
         // in - see _updateMoonGround.
         if (this.profile.lunar) this._defer("moonGround", () => this._buildMoonGround());
+        // And the world the crossing is AIMED at, for the two worlds that had
+        // no body of their own - see WORLD_BALL. Minutes away, like the rest
+        // of the queue.
+        this._defer("targetWorld", () => this._buildTargetWorld());
         // Jupiter, the hole and the corridor: one of them per crossing at
         // most, and each of them a minute of flight away when it is wanted.
         if (this.profile.assist) this._defer("jupiter", () => this._buildJupiter());
-        if (this.profile.jump) this._defer("wormhole", () => this._buildWormhole());
+        if (this.profile.jump) {
+          this._defer("charges", () => this._buildCharges());
+          this._defer("gods", () => this._buildGods());
+          // Only a flight LEAVING Andromeda drops its charge against the red
+          // moon; everything else drops it against Jupiter.
+          if (this.profile.fromWorld === "titania") {                  // i18n-ignore  world id
+            this._defer("redMoon", () => this._buildRedMoon());
+          }
+        }
         // The two galaxies trading places, which is the only thing that shows
         // an intergalactic jump IS one.
         if (this.profile.jump) this._defer("galaxies", () => this._buildGalaxies());
@@ -2498,6 +2954,27 @@
       this.farSun = new THREE.DirectionalLight(0xfff4e2, 1.35);
       this.farAmbient = new THREE.AmbientLight(0x4a5a78, 0.55);
       this.far.add(this.farSun, this.farAmbient);
+
+      // THE MOON IS LIT BY A LIGHT OF ITS OWN, AND IT HAS TO BE.
+      //
+      // The far key is deliberately dishonest: it is dragged round toward the
+      // camera so the hemisphere of Earth under the vehicle is never a black
+      // disc (see _updateSun). A Moon lit by that key is FULL at every hour of
+      // every night, which is the one thing about the Moon everybody can check
+      // out of a window. So the Moon is put on its own render layer and given
+      // its own key, aimed from the true phase angle of the date the game is
+      // on, and the far key is told to leave that layer alone.
+      onLayer(this.farSun, 0);
+      onLayer(this.farAmbient, 0);
+      seeLayer(this.farCamera, MOON_LAYER);
+      this.moonSun = new THREE.DirectionalLight(0xfff6ea, 2.4);
+      onLayer(this.moonSun, MOON_LAYER);
+      this.far.add(this.moonSun);
+      // Earthshine, and nothing more: the dark limb of the Moon is not black,
+      // it is the Earth reflected back onto it.
+      this.moonAmbient = new THREE.AmbientLight(0x2c3a58, 0.34);
+      onLayer(this.moonAmbient, MOON_LAYER);
+      this.far.add(this.moonAmbient);
 
       // The vehicle's own lights: the plume when it burns, and the strobe that
       // comes on the moment the belt starts hitting it.
@@ -2585,453 +3062,22 @@
 
     // --- the far scene: Earth, sun, stars ---------------------------------
 
-    _buildFar() {
-      // The Earth is GalaxySim's own body wherever that plugin is loaded: the
-      // same NASA-mapped sphere the star map shows, so the planet the party
-      // leaves is the planet the party can later fly back to.
-      //
-      // That map DECODES ASYNCHRONOUSLY, and an unloaded texture samples black
-      // in WebGL - GalaxySim says so itself in _realPlanetTexture. A launch is
-      // twenty seconds from the pad to orbit, so "the planet is a black ball
-      // for the first few seconds" is most of the shot. A painted stand-in is
-      // therefore ALWAYS built and shown until the real map has landed, and
-      // the swap uses GalaxySim's own _solTexPending counter.
-      const holder = new THREE.Group();
-      this.earthPivot = holder;
-      this.far.add(holder);
 
-      const R3D = window.GalaxySim && window.GalaxySim.Renderer3D;
-      this._r3d = R3D || null;
-      // GalaxySim's real body is the single most expensive object in the
-      // scene, and the painted stand-in below covers for it until it lands -
-      // which is exactly what it is there for while the map decodes. So it is
-      // queued rather than built, and the swap happens when it is ready.
-      this._defer("earthBody", () => {
-        if (!R3D || typeof R3D.buildPlanetGroup !== "function") return;
-        let body = null;
-        try {
-          body = R3D.buildPlanetGroup(this._earthData(), 1);
-        } catch (e) { body = null; }
-        if (!body) return;
-        this.earthBody = body;
-        body.scale.setScalar(EARTH_VIS_R);
-        body.visible = false;
-        this._brighten(body);
-        holder.add(body);
-      });
 
-      const geo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R, 64, 48));
-      const mat = this._phong({ map: this._paintEarth(), shininess: 14, specular: 0x223344 });
-      this.earthFallback = new THREE.Mesh(geo, mat);
-      this._brighten(this.earthFallback);
-      holder.add(this.earthFallback);
 
-      // THE CITY LIGHTS.
-      //
-      // A shell a hair above the surface, painted with the grid of everything
-      // anybody ever wired up, drawn additively so it only ever adds glow. It
-      // is not masked per pixel and does not need to be: a sphere only shows
-      // the hemisphere facing the camera, and the camera is always over the
-      // launch site, so when that site is in darkness the hemisphere on screen
-      // IS the night side. The opacity is driven by the site's own local hour
-      // and the lights simply fade up as the pad goes dark.
-      // A megapixel of painted grid, and nothing above the pad can see it
-      // until the vehicle is high enough for the planet to be a ball. Queued.
-      this._defer("cityLights", () => {
-        const lightGeo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 1.002, 48, 32));
-        this.cityLights = new THREE.Mesh(lightGeo, this._mat(new THREE.MeshBasicMaterial({
-          map: this._paintCityLights(),
-          transparent: true, opacity: 0,
-          blending: THREE.AdditiveBlending, depthWrite: false,
-        })));
-        holder.add(this.cityLights);
-      });
 
-      // The limb: a thin shell of atmosphere seen edge-on from outside, which
-      // is the single thing that sells an orbital shot.
-      const limbGeo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 1.022, 48, 32));
-      this.limb = new THREE.Mesh(limbGeo, this._basic({
-        color: 0x5aa8ff, transparent: true, opacity: 0.0,
-        side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
-      }));
-      holder.add(this.limb);
 
-      // The site is a lit speck on the surface, so the player can watch the
-      // pad they just left go over the horizon. Brighter in the dark, because
-      // at night a launch site is the brightest thing for fifty kilometres.
-      const markGeo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R * 0.008, 6, 5));
-      this.siteMark = new THREE.Mesh(markGeo, this._basic({ color: (this.geoSite || this.site).coil }));
-      this.siteMark.position.set(0, EARTH_VIS_R * 1.004, 0);
-      holder.add(this.siteMark);
 
-      // Nothing above the pad is a star until the air has thinned out, which
-      // is twenty seconds up.
-      this._defer("stars", () => { this.far.add(this._buildStarfield()); });
 
-      // THE MOON, AND IT IS IN EVERY FLIGHT.
-      //
-      // Not a lunar prop: the Moon is up there during the hop, during the
-      // climb to the starship, during the way home and during a launch off a
-      // chunk of rock with no planet left under it, because it is up there.
-      // Built to scale off the Earth - sixty Earth radii out and a hair over a
-      // quarter of one across - so the disc is the size the sky says it is.
-      this._defer("moon", () => this._buildMoon());
 
-      // THE BELT, SEEN FROM OUTSIDE IT.
-      //
-      // The near scene's belt is the shell the vehicle is inside, and it only
-      // exists for the minute the vehicle is in it. This is the same junk seen
-      // the way everybody else sees it: a flat band standing off the planet in
-      // the far scene, there from the first frame of the flight, so the thing
-      // that is going to strip the hull is visible long before it is met - and
-      // still there behind the vehicle once it is through. With Earth gone
-      // there is nothing in orbit to see, and nothing put it there.
-      if (!earthGone()) {
-        this._defer("farBelt", () => {
-          const R3D2 = window.GalaxySim && window.GalaxySim.Renderer3D;
-          if (!R3D2 || typeof R3D2.makeDebrisMesh !== "function") return;
-          let built = null;
-          try {
-            built = R3D2.makeDebrisMesh({
-              count: 1600,
-              rMin: EARTH_VIS_R * 1.09, rMax: EARTH_VIS_R * 1.20,
-              flat: 0.16, sizeMin: 0.12, sizeMax: 0.4, seed: 0x4e55,
-            });
-          } catch (e) { built = null; }
-          const ring = built && built.mesh;
-          if (!ring || !ring.isObject3D) return;
-          if (ring.material) { ring.material.transparent = true; ring.material.opacity = 0.75; }
-          this._disposables.push(built.geo, built.mat);
-          this.farBelt = ring;
-          holder.add(ring);
-        });
-      }
 
-      // And after 21 December 2012, if the strike happened, there is no planet
-      // down there to climb away from: the sphere, its lights and its limb all
-      // come off and what is under the vehicle is the same stars that are over
-      // it. The pad the flight left is a chunk of rock or a tower, and that is
-      // built in the near scene like any other pad.
-      if (earthGone()) {
-        holder.visible = false;
-        this.earthLost = true;
-      }
-    }
 
-    // The Moon, and the pivot that carries it.
-    //
-    // WHERE IT IS HUNG IS A CHEAT, and it is a deliberate one. The far camera
-    // swings wherever the player drags it, and a Moon nailed to one bearing in
-    // a fixed sky spends most of every flight off the back of the frame - and
-    // a Moon nobody can see is no use to a plugin whose third flight plan is
-    // aimed at it. So the pivot is turned each frame to hold the Moon at a
-    // constant BEARING off the camera rather than at a constant place in the
-    // sky: a little over twenty degrees to one side, which keeps it in shot at
-    // every yaw. Its height, its phase and its size are all honest; only the
-    // compass bearing is not, and nothing in the flight model reads it.
-    //
-    // During a liminal crossing that bearing eases to ZERO, and the Moon comes
-    // round to dead ahead as the round turns onto it. See _updateMoon.
-    _buildMoon() {
-      const pivot = new THREE.Group();
-      this.moonPivot = pivot;
-      this.far.add(pivot);
 
-      const g = new THREE.Group();
-      this.moonGroup = g;
-      pivot.add(g);
 
-      const body = new THREE.Mesh(
-        this._geo(new THREE.SphereGeometry(MOON_VIS_R, 40, 28)),
-        this._phong({ map: this._paintMoon(), shininess: 2, specular: 0x111111 })
-      );
-      // A body this far from the one light in the scene is modelled by it and
-      // nothing else, which is what gives the disc its phase. But a new Moon
-      // is a hole in the sky, and the plugin needs it VISIBLE, so a little of
-      // the surface map is hung on as emissive: the terminator still runs
-      // across it and the dark limb is earthshine rather than nothing.
-      if (body.material.emissive) {
-        body.material.emissiveMap = body.material.map;
-        body.material.emissive.setHex(0x3c4048);
-        if ("emissiveIntensity" in body.material) body.material.emissiveIntensity = 0.5;
-        body.material.needsUpdate = true;
-      }
-      g.add(body);
-      this.moonBody = body;
 
-      // The halo a full Moon wears in anything resembling an atmosphere. Off
-      // by the time the sky is, which is where it stops being true.
-      this.moonHalo = new THREE.Mesh(
-        this._geo(new THREE.SphereGeometry(MOON_VIS_R * 1.45, 16, 12)),
-        this._basic({
-          color: 0xdfe8ff, transparent: true, opacity: 0,
-          blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide,
-        })
-      );
-      g.add(this.moonHalo);
-    }
 
-    _paintMoon() {
-      return this._tex(512, 256, (ctx, w, h) => {
-        ctx.fillStyle = "#9a958c";
-        ctx.fillRect(0, 0, w, h);
-        const r = makeRng(0x3f0a11);
-        // The maria: a handful of big dark floods, which is the whole of what
-        // anybody actually recognises about the Moon.
-        for (let i = 0; i < 9; i++) {
-          const cx = r() * w, cy = h * 0.22 + r() * h * 0.5;
-          const rad = 16 + r() * 46;
-          ctx.fillStyle = "rgba(78,76,80,0.85)";
-          ctx.beginPath();
-          ctx.ellipse(cx, cy, rad, rad * (0.55 + r() * 0.5), r() * Math.PI, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        // And the craters, which are everything else.
-        for (let i = 0; i < 620; i++) {
-          const cx = r() * w, cy = r() * h;
-          const rad = 1 + r() * 9;
-          ctx.fillStyle = "rgba(60,58,58," + (0.18 + r() * 0.3).toFixed(2) + ")";
-          ctx.beginPath();
-          ctx.arc(cx, cy, rad, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = "rgba(226,222,214," + (0.12 + r() * 0.25).toFixed(2) + ")";
-          ctx.beginPath();
-          ctx.arc(cx - rad * 0.28, cy - rad * 0.28, rad * 0.72, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        // The rays off the young ones, which is what makes a full Moon read as
-        // the Moon and not as a grey ball with pits in it.
-        for (let i = 0; i < 5; i++) {
-          const cx = r() * w, cy = r() * h;
-          for (let k = 0; k < 16; k++) {
-            const a = r() * Math.PI * 2;
-            const len = 20 + r() * 70;
-            ctx.strokeStyle = "rgba(232,228,220,0.16)";
-            ctx.lineWidth = 1 + r() * 2;
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cx + Math.cos(a) * len, cy + Math.sin(a) * len);
-            ctx.stroke();
-          }
-        }
-      });
-    }
 
-    // Whatever GalaxySim hands back is lit for the star map, where the camera
-    // carries its own light with it. Here the planet is the backdrop of a
-    // launch and it has to READ at every hour of the day, so every surface map
-    // is also hung on its material as an emissive map: the sun still models
-    // the sphere and the terminator still runs across it, but the night side
-    // is a dim photograph of the Earth instead of a black disc.
-    _brighten(root) {
-      if (!root || typeof root.traverse !== "function") return;
-      root.traverse((o) => {
-        if (!o || !o.material) return;
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        mats.forEach((m) => {
-          if (!m || !m.map || m.emissiveMap || !m.emissive) return;
-          m.emissiveMap = m.map;
-          try { m.emissive.setHex(0x9aa6b6); } catch (e) { /* a stub colour */ }
-          if ("emissiveIntensity" in m) m.emissiveIntensity = 0.62;
-          m.needsUpdate = true;
-        });
-      });
-    }
 
-    // Is GalaxySim's photograph of the Earth decoded yet? Until it is, the
-    // painted stand-in stands in.
-    _earthMapReady() {
-      if (!this.earthBody) return false;
-      const r = this._r3d;
-      if (!r) return true;
-      return !(r._solTexPending > 0);
-    }
-
-    // The planet record GalaxySim's renderer wants. Named Earth so the real
-    // surface map is the one that gets picked up.
-    _earthData() {
-      const sol = this._solSystem();
-      const earth = sol && (sol.planets || []).find((p) => p.name === "Earth");   // i18n-ignore  body id
-      if (earth) return earth;
-      return { name: "Earth", type: "terrestrial", color: "#3b6fa8", radius: 1, atmosphere: true };   // i18n-ignore  body id / type
-    }
-
-    // The world this crossing is aimed at, as GalaxySim's own record, or null
-    // where the flight is not aimed at one.
-    _targetBody() {
-      const id = this.profile && this.profile.world;
-      return id ? worldRecord(id) : null;
-    }
-
-    _solSystem() {
-      try {
-        const dm = window.GalaxySim && window.GalaxySim.getDataManager && window.GalaxySim.getDataManager();
-        return dm && dm.getSystem("Sol");   // i18n-ignore  system id
-      } catch (e) { return null; }
-    }
-
-    _paintEarth() {
-      return this._tex(512, 256, (ctx, w, h) => {
-        const g = ctx.createLinearGradient(0, 0, 0, h);
-        g.addColorStop(0, "#dfe9f2");
-        g.addColorStop(0.18, "#1d4d7a");
-        g.addColorStop(0.5, "#14608e");
-        g.addColorStop(0.84, "#1d4d7a");
-        g.addColorStop(1, "#e4edf4");
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, w, h);
-        // Continents as blobs. Nobody reads a coastline from orbit at this
-        // resolution, but the eye wants land where the light is.
-        const r = makeRng(0x3a71);
-        for (let i = 0; i < 46; i++) {
-          const cx = r() * w, cy = h * 0.2 + r() * h * 0.6;
-          const rad = 8 + r() * 42;
-          ctx.fillStyle = r() > 0.6 ? "#4c6b3a" : "#3c5a30";
-          ctx.beginPath();
-          ctx.ellipse(cx, cy, rad, rad * (0.4 + r() * 0.6), r() * Math.PI, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        for (let i = 0; i < 120; i++) {
-          ctx.fillStyle = "rgba(255,255,255," + (0.08 + r() * 0.2).toFixed(2) + ")";
-          ctx.beginPath();
-          ctx.ellipse(r() * w, r() * h, 6 + r() * 30, 3 + r() * 9, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-    }
-
-    // Every settlement anybody ever wired up, from six hundred kilometres.
-    // Not a map of Earth - the pivot spins and the geography under the camera
-    // is not the geography under the pad - but the DISTRIBUTION is right, and
-    // from orbit that is all the eye reads: dense temperate bands, strings
-    // along the coasts and the rivers, nothing in the deep ocean or the ice.
-    _paintCityLights() {
-      return this._tex(1024, 512, (ctx, w, h) => {
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, 0, w, h);
-        const r = makeRng(0x0c17a1);
-
-        // Latitude weighting. v runs 0 at the north pole to 1 at the south, so
-        // the two temperate bands are where almost everyone actually lives and
-        // the poles and the deep tropics are nearly empty.
-        const habit = (v) => {
-          const lat = (0.5 - v) * 180;
-          const north = Math.exp(-Math.pow((lat - 45) / 17, 2));
-          const tropic = Math.exp(-Math.pow((lat - 10) / 20, 2)) * 0.55;
-          const south = Math.exp(-Math.pow((lat + 30) / 16, 2)) * 0.4;
-          return Math.min(1, north + tropic + south);
-        };
-
-        // Land. Big soft blobs of it, and lights only go on inside them: an
-        // even scatter over the whole sphere reads as static, not as a planet.
-        const land = [];
-        for (let i = 0; i < 34; i++) {
-          const v = r();
-          if (r() > 0.25 + habit(v) * 0.75) continue;
-          land.push({ x: r() * w, y: v * h, rx: 30 + r() * 150, ry: 20 + r() * 70 });
-        }
-
-        const inLand = (x, y) => {
-          for (let i = 0; i < land.length; i++) {
-            const L = land[i];
-            // Wrap in longitude, because the texture meets itself.
-            let dx = Math.abs(x - L.x);
-            if (dx > w / 2) dx = w - dx;
-            const k = Math.pow(dx / L.rx, 2) + Math.pow((y - L.y) / L.ry, 2);
-            if (k < 1) return 1 - k;
-          }
-          return 0;
-        };
-
-        const dot = (x, y, rad, alpha, warm) => {
-          const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
-          const c = warm ? "255,214,150" : "200,222,255";
-          g.addColorStop(0, "rgba(" + c + "," + alpha.toFixed(3) + ")");
-          g.addColorStop(0.45, "rgba(" + c + "," + (alpha * 0.35).toFixed(3) + ")");
-          g.addColorStop(1, "rgba(" + c + ",0)");
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(x, y, rad, 0, Math.PI * 2);
-          ctx.fill();
-        };
-
-        // Conurbations: a few dozen genuinely large ones, each a bright core
-        // with a halo of suburb.
-        for (let i = 0; i < 260; i++) {
-          const x = r() * w, y = r() * h;
-          const depth = inLand(x, y);
-          if (depth <= 0) continue;
-          if (r() > habit(y / h) * depth + 0.06) continue;
-          const big = r() > 0.88;
-          dot(x, y, big ? 16 + r() * 18 : 4 + r() * 8, big ? 0.85 : 0.5, r() > 0.35);
-        }
-
-        // Ribbon development: the roads, the rivers and the coasts, which from
-        // orbit are strings of light between the cities and are most of what
-        // makes a night side look inhabited rather than speckled.
-        for (let i = 0; i < 90; i++) {
-          let x = r() * w, y = r() * h;
-          if (inLand(x, y) <= 0) continue;
-          const steps = 8 + Math.floor(r() * 26);
-          let a = r() * Math.PI * 2;
-          for (let k = 0; k < steps; k++) {
-            a += (r() - 0.5) * 0.7;
-            x += Math.cos(a) * (5 + r() * 9);
-            y += Math.sin(a) * (3 + r() * 5);
-            if (x < 0) x += w; else if (x > w) x -= w;
-            if (y < 4 || y > h - 4) break;
-            if (inLand(x, y) <= 0) break;
-            dot(x, y, 2 + r() * 4, 0.22 + r() * 0.3, r() > 0.4);
-          }
-        }
-
-        // And the single pixels: everywhere with a streetlamp and a name.
-        for (let i = 0; i < 5200; i++) {
-          const x = Math.floor(r() * w), y = Math.floor(r() * h);
-          if (inLand(x, y) <= 0) continue;
-          if (r() > habit(y / h)) continue;
-          ctx.fillStyle = r() > 0.4 ? "rgba(255,226,170,0.85)" : "rgba(205,226,255,0.7)";
-          ctx.fillRect(x, y, 1, 1);
-        }
-
-        // Gas flares: a handful of points brighter than any city, burning in
-        // the middle of nothing. They are the give-away that this is a real
-        // night side and not a star field pasted on a ball.
-        for (let i = 0; i < 9; i++) {
-          const x = r() * w, y = h * 0.3 + r() * h * 0.4;
-          dot(x, y, 7 + r() * 6, 0.95, true);
-        }
-      });
-    }
-
-    _buildStarfield() {
-      const n = 1400;
-      const pos = new Float32Array(n * 3);
-      const col = new Float32Array(n * 3);
-      const r = this.rng;
-      for (let i = 0; i < n; i++) {
-        const u = r() * 2 - 1;
-        const th = r() * Math.PI * 2;
-        const s = Math.sqrt(Math.max(0, 1 - u * u));
-        const R = 9000;
-        pos[i * 3] = Math.cos(th) * s * R;
-        pos[i * 3 + 1] = u * R;
-        pos[i * 3 + 2] = Math.sin(th) * s * R;
-        // A real colour spread: most stars are orange, the bright ones blue.
-        const warm = r();
-        const c = new THREE.Color().setHSL(warm > 0.82 ? 0.58 : 0.09 + warm * 0.05, 0.35, 0.55 + r() * 0.45);
-        col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
-      }
-      const geo = this._geo(new THREE.BufferGeometry());
-      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
-      this.starMat = this._mat(new THREE.PointsMaterial({
-        size: 26, sizeAttenuation: true, vertexColors: true,
-        transparent: true, opacity: 0, depthWrite: false,
-      }));
-      this.stars = new THREE.Points(geo, this.starMat);
-      return this.stars;
-    }
 
     // --- the sky ----------------------------------------------------------
 
@@ -3132,543 +3178,17 @@
 
     // --- the pad ----------------------------------------------------------
 
-    _buildPad(forSite, opts) {
-      const s = forSite || this.site;
-      const o = opts || {};
-      const e = this.env;
-      const g = new THREE.Group();
-      if (!o.arrival) {
-        this.pad = g;
-        // A gun that fires DOWNWARD is the same gun turned over. Flipping the
-        // whole installation once here is what lets the ring wave, the banks
-        // and the gantry be driven by the launching code untouched.
-        if (this.descent) g.rotation.x = Math.PI;
-      }
-      this.near.add(g);
 
-      const lightK = e.night ? 0.22 : e.storm ? 0.55 : e.wet ? 0.7 : 1;
-      const tint = (hex) => new THREE.Color(hex).multiplyScalar(lightK).getHex();
 
-      // A VAULT's gun is not a tower: it is a shaft. The bore runs the nine
-      // floors down under the hatch, so nothing about the gun changes - the
-      // GROUND is raised instead, to the height of the muzzle, and everything
-      // that belongs to the surface goes up with it. The round therefore starts
-      // the count nine floors underground, in the dark, looking up at the lid.
-      const railTop = 86 + RAIL_LEN_M * (s.railScale || 1) - 40;
-      const groundY = s.shaft ? railTop : 0;
 
-      // Ground: a big disc rather than a plane, so the edge of the world is a
-      // horizon and not a visible seam when the camera swings.
-      // A pad in orbit has no ground at all. A vault hanging in the dark after
-      // the impact has a CHUNK: a few hundred metres of rock with the shaft
-      // through the middle of it and a torn edge, and the void underneath.
-      if (!s.noGround) {
-        const radius = s.chunk ? 900 : 24000;
-        const ground = new THREE.Mesh(
-          this._geo(new THREE.CircleGeometry(radius, s.chunk ? 13 : 48)),
-          this._phong({ map: this._paintGround(s), color: tint(0xffffff), shininess: 2 })
-        );
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.y = groundY - 0.5;
-        g.add(ground);
-        if (s.chunk) {
-          // The underside: what a piece of a planet looks like from below when
-          // the rest of the planet is not there any more.
-          const keel = new THREE.Mesh(
-            this._geo(new THREE.ConeGeometry(radius, radius * 1.5, 13)),
-            this._phong({ color: tint(s.groundLo), shininess: 2, flatShading: true })
-          );
-          keel.rotation.x = Math.PI;
-          keel.position.y = groundY - radius * 0.75 - 1;
-          g.add(keel);
-        }
-      }
 
-      // The sea, on one side only: both pads are coastal and the water is
-      // half of what tells them apart from the air.
-      const sea = s.noSea ? null : new THREE.Mesh(
-        this._geo(new THREE.PlaneGeometry(48000, 24000, 1, 1)),
-        this._phong({
-          color: tint(s.sea), shininess: 90, specular: 0x6f9ec0,
-          transparent: true, opacity: 0.93,
-        })
-      );
-      if (sea) {
-        sea.rotation.x = -Math.PI / 2;
-        sea.position.set(0, groundY - 0.2, -13000);
-        this.sea = sea;
-        g.add(sea);
-      }
 
-      // BOTH ends of a hop are the same installation. The far pad is not a
-      // landing strip with a cradle on it: it is the other coilgun, and the
-      // round is caught by running it in reverse. So the same barrel is built
-      // either way and only the approach lighting differs.
-      const rail = this._buildRail(g, s, o.arrival);
-      if (o.arrival) this.railB = rail; else this.railA = rail;
-      if (!s.noTown) this._buildTown(g, s, groundY);
-      this._buildFloodlights(g, groundY);
-      if (s.meridian) this._buildMeridian(g);
-      if (s.lid) this._buildHatch(g, groundY, o.arrival);
-      return g;
-    }
 
-    // The approach lighting on a receiving gun: an apron of scorched concrete
-    // and a ring of lamps round the MUZZLE, a kilometre up, which is the only
-    // part of it the arriving round needs to be able to find.
-    _buildApproach(g, top) {
-      const concrete = this._phong({ color: 0x7e7c74, shininess: 4 });
-      const scorch = new THREE.Mesh(
-        this._geo(new THREE.CircleGeometry(150, 24)),
-        this._basic({ color: 0x14100e })
-      );
-      scorch.rotation.x = -Math.PI / 2;
-      scorch.position.y = 0.4;
-      g.add(scorch);
-      const apron = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(168, 180, 8, 20)), concrete);
-      apron.position.y = -4;
-      g.add(apron);
 
-      this.approachLights = [];
-      const lampGeo = this._geo(new THREE.SphereGeometry(5.2, 7, 6));
-      for (let i = 0; i < 10; i++) {
-        const a = (i / 10) * Math.PI * 2;
-        const lamp = new THREE.Mesh(lampGeo, this._mat(new THREE.MeshBasicMaterial({ color: 0x0d2a18 })));
-        lamp.position.set(Math.cos(a) * 52, top + 26, Math.sin(a) * 52);
-        lamp.userData.order = i;
-        g.add(lamp);
-        this.approachLights.push(lamp);
-      }
-      this.approachGlow = new THREE.PointLight(0x4fe0a0, 0, 900, 2);
-      this.approachGlow.position.set(0, top + 20, 0);
-      g.add(this.approachGlow);
-    }
 
-    _buildArrivalPad() {
-      this.padB = this._buildPad(this.destSite, { arrival: true });
-      this.padB.visible = false;
-    }
 
-    _paintGround(forSite) {
-      const s = forSite || this.site;
-      const base = "#" + s.ground.toString(16).padStart(6, "0");
-      const lo = "#" + s.groundLo.toString(16).padStart(6, "0");
-      return this._tex(128, 128, (ctx, w, h) => {
-        ctx.fillStyle = base;
-        ctx.fillRect(0, 0, w, h);
-        const r = makeRng(0x4413);
-        for (let i = 0; i < 900; i++) {
-          ctx.fillStyle = r() > 0.5 ? lo : "rgba(255,255,255,0.05)";
-          ctx.fillRect(Math.floor(r() * w), Math.floor(r() * h), 1 + Math.floor(r() * 3), 1);
-        }
-        // Service roads out to the rail, in the pale of poured concrete.
-        ctx.strokeStyle = "rgba(210,205,190,0.5)";
-        ctx.lineWidth = 2;
-        for (let i = 0; i < 5; i++) {
-          ctx.beginPath();
-          ctx.moveTo(w / 2, h / 2);
-          const a = r() * Math.PI * 2;
-          ctx.lineTo(w / 2 + Math.cos(a) * w, h / 2 + Math.sin(a) * h);
-          ctx.stroke();
-        }
-      }, 40, 40);
-    }
 
-    // The rail: the whole point of the pad, and the reason the vehicle is a
-    // bullet rather than a rocket.
-    //
-    // SCALE IS THE POINT. The bore is eleven times the width of the thing it
-    // throws and the tower is fifty times its length; the vehicle sits in the
-    // breech of it like a round in a barrel, which is exactly what it is. All
-    // the mass the flight needs is in the ground installation - the capacitor
-    // halls, the buttresses, the cable trunks - and none of it leaves. That is
-    // why the thing that does leave can be solid armour.
-    //
-    // The rings charge bottom to top during the count and then fire in a wave
-    // that TRACKS THE BULLET: each one lights as the round reaches it and
-    // dies behind it, so the launch is legible as a single pulse running the
-    // length of the tower.
-    // The angle this particular barrel is laid at. A hop is a ballistic throw
-    // and has to leave at an elevation; everything else in the plugin is fired
-    // straight up or straight down. The RECEIVING gun at the far end of a hop
-    // is laid over the other way, so its muzzle is looking back up the track
-    // at the round coming in rather than at the sky above it.
-    _railTilt(arrival) {
-      if (!this.profile.downrange) return 0;
-      return arrival ? -HOP_ELEVATION : HOP_ELEVATION;
-    }
 
-    _buildRail(into, forSite, arrival) {
-      const s = forSite || this.site;
-      const g = new THREE.Group();
-      (into || this.pad).add(g);
-      // Trunnioned at the foot. The bore axis is the group's own +Y, so one
-      // rotation here lays the entire installation over and every ring, bank,
-      // yoke and gantry below goes on being written straight up the barrel.
-      // The ground, the sea and the town are NOT in this group and stay level,
-      // which is what makes the gun read as a gun on a mounting rather than as
-      // a tipped-over world.
-      g.rotation.x = this._railTilt(arrival);
-      this._railGroups = this._railGroups || {};
-      this._railGroups[arrival ? "b" : "a"] = g;
-
-      // How much gun there is. The Omega Tower is the gun - all of it, bored
-      // and wound end to end - and the starship's rail is a stub by comparison.
-      const H = RAIL_LEN_M * (s.railScale || 1);
-      // A gun bolted to a hull is built to the hull's scale, not to the
-      // ground's: everything structural comes down by the same factor, and
-      // the things that only make sense poured into a continent - the
-      // foundation, the capacitor halls, the service gantry, the obstruction
-      // strobes - are not built at all.
-      const F = s.mountScale || 1;
-      const mounted = !!s.mounted;
-      const BORE = 34 * F;      // ring inner radius: the bullet is 3
-      const LEG = 46 * F;       // corner legs, well outboard of the bore
-      const mastMat = this._phong({ color: s.rail, shininess: 20, specular: 0x555a63 });
-      const concrete = this._phong({ color: 0x8d8b82, shininess: 4 });
-      const darkMat = this._phong({ color: 0x33373d, shininess: 14, specular: 0x555a63 });
-
-      // --- the foundation: a poured block a hundred and thirty metres across
-      if (!mounted) {
-      const base = new THREE.Mesh(
-        this._geo(new THREE.CylinderGeometry(112, 148, 92, 16)),
-        concrete
-      );
-      base.position.y = 46;
-      g.add(base);
-      // Buttresses, because something has to take the recoil of the shot.
-      const butGeo = this._geo(new THREE.BoxGeometry(30, 108, 96));
-      for (let i = 0; i < 8; i++) {
-        const a = (i / 8) * Math.PI * 2;
-        const b = new THREE.Mesh(butGeo, concrete);
-        b.position.set(Math.cos(a) * 118, 54, Math.sin(a) * 118);
-        b.rotation.y = -a;
-        g.add(b);
-      }
-      }
-
-      // --- the capacitor halls. Twelve of them, ringing the foot, and they
-      // are where the energy for the shot has been accumulating all night.
-      const capacitors = [];
-      const capGeo = this._geo(new THREE.CylinderGeometry(19, 22, 76, 12));
-      const trunkGeo = this._geo(new THREE.CylinderGeometry(3.4, 3.4, 240, 6));
-      for (let i = 0; i < (mounted ? 0 : 12); i++) {
-        const a = (i / 12) * Math.PI * 2 + 0.26;
-        const d = 210;
-        const c = new THREE.Mesh(capGeo, darkMat);
-        c.position.set(Math.cos(a) * d, 38, Math.sin(a) * d);
-        g.add(c);
-        // The band round the top lights as the bank comes up to charge.
-        const band = new THREE.Mesh(
-          this._geo(new THREE.TorusGeometry(20, 2.6, 6, 14)),
-          this._mat(new THREE.MeshPhongMaterial({
-            color: 0x1b2028, emissive: new THREE.Color(s.coil), emissiveIntensity: 0, shininess: 50,
-          }))
-        );
-        band.rotation.x = Math.PI / 2;
-        band.position.set(c.position.x, 70, c.position.z);
-        g.add(band);
-        capacitors.push(band);
-        // The trunk carrying it up to the mast, slung at an angle.
-        const trunk = new THREE.Mesh(trunkGeo, darkMat);
-        trunk.position.set(Math.cos(a) * d * 0.62, 150, Math.sin(a) * d * 0.62);
-        trunk.rotation.z = Math.cos(a) * 0.5;
-        trunk.rotation.x = -Math.sin(a) * 0.5;
-        g.add(trunk);
-      }
-
-      // --- the tower. Four legs of real section, X-braced the whole way up.
-      const foot = 80 * F;
-      const legGeo = this._geo(new THREE.CylinderGeometry(6.5 * F, 9.5 * F, H, 8));
-      [[-LEG, -LEG], [LEG, -LEG], [-LEG, LEG], [LEG, LEG]].forEach(([x, z]) => {
-        const leg = new THREE.Mesh(legGeo, mastMat);
-        leg.position.set(x, H / 2 + foot, z);
-        g.add(leg);
-      });
-      const bayH = 52 * F;
-      const braceGeo = this._geo(new THREE.BoxGeometry(LEG * 2, 3.2 * F, 3.2 * F));
-      const diagGeo = this._geo(new THREE.BoxGeometry(Math.hypot(LEG * 2, bayH), 2.4 * F, 2.4 * F));
-      for (let y = foot; y < H + foot; y += bayH) {
-        for (let face = 0; face < 4; face++) {
-          const a = (face / 4) * Math.PI * 2;
-          const ring = new THREE.Mesh(braceGeo, mastMat);
-          ring.position.set(Math.cos(a) * LEG, y, Math.sin(a) * LEG);
-          ring.rotation.y = -a + Math.PI / 2;
-          g.add(ring);
-          const dia = new THREE.Mesh(diagGeo, mastMat);
-          dia.position.set(Math.cos(a) * LEG, y + bayH / 2, Math.sin(a) * LEG);
-          dia.rotation.y = -a + Math.PI / 2;
-          dia.rotation.z = (Math.round(y / bayH) % 2 ? 1 : -1) * Math.atan2(bayH, LEG * 2);
-          g.add(dia);
-        }
-      }
-
-      // --- the rings. Fifty of them up the bore, each a slab of laminated
-      // iron the size of a house with the coil wound inside it.
-      const coilRings = [];
-      const RINGS = 50;
-      const ringGeo = this._geo(new THREE.TorusGeometry(BORE, 7.2 * F, 8, 22));
-      const yokeGeo = this._geo(new THREE.BoxGeometry(BORE * 2.5, 5 * F, 5 * F));
-      for (let i = 0; i < RINGS; i++) {
-        const y = 86 * F + (i / (RINGS - 1)) * (H - 40 * F);
-        const mat = this._mat(new THREE.MeshPhongMaterial({
-          color: 0x2a3240, emissive: new THREE.Color(s.coil), emissiveIntensity: 0,
-          shininess: 60, specular: 0x8899aa,
-        }));
-        const ring = new THREE.Mesh(ringGeo, mat);
-        ring.position.y = y;
-        ring.rotation.x = Math.PI / 2;
-        // Height in metres, which is how the firing wave finds it.
-        ring.userData.y = y;
-        ring.userData.k = i / (RINGS - 1);
-        g.add(ring);
-        coilRings.push(ring);
-        // Every fourth ring is tied back to the legs.
-        if (i % 4 === 0) {
-          for (let f = 0; f < 2; f++) {
-            const yoke = new THREE.Mesh(yokeGeo, mastMat);
-            yoke.position.y = y;
-            yoke.rotation.y = f * Math.PI / 2;
-            g.add(yoke);
-          }
-        }
-      }
-      // --- the breech. A block of steel the bullet is loaded into, sunk into
-      // the foundation, with the barrel throat opening out of the top of it.
-      const breech = new THREE.Mesh(
-        this._geo(new THREE.CylinderGeometry(52 * F, 68 * F, 96 * F, 14)),
-        darkMat
-      );
-      breech.position.y = 44 * F;
-      g.add(breech);
-      const throat = new THREE.Mesh(
-        this._geo(new THREE.CylinderGeometry(BORE * 0.55, BORE * 0.9, 60 * F, 16, 1, true)),
-        this._mat(new THREE.MeshPhongMaterial({ color: 0x14171c, side: THREE.DoubleSide, shininess: 30 }))
-      );
-      throat.position.y = 62 * F;
-      g.add(throat);
-
-      // Obstruction strobes, up the whole tower. On at night and in the murk,
-      // and they are what gives the thing its height at a glance.
-      const strobes = [];
-      const strobeGeo = this._geo(new THREE.SphereGeometry(3.4, 6, 5));
-      for (let i = 0; i < (mounted ? 0 : 9); i++) {
-        const y = 140 + i * ((H - 140) / 8);
-        for (let f = 0; f < 2; f++) {
-          const m = new THREE.Mesh(strobeGeo, this._mat(new THREE.MeshBasicMaterial({ color: 0x3a0806 })));
-          m.position.set(f ? LEG : -LEG, y, f ? LEG : -LEG);
-          m.userData.phase = i * 0.24 + f * 0.5;
-          g.add(m);
-          strobes.push(m);
-        }
-      }
-
-      // The service gantry that swings clear at T-0, scaled to the tower it
-      // hangs off rather than to the round it services.
-      const gantryMat = this._phong({ color: 0x8a5a2e, shininess: 8 });
-      const gantry = new THREE.Group();
-      if (!mounted) {
-        const tower = new THREE.Mesh(this._geo(new THREE.BoxGeometry(26, 460, 26)), gantryMat);
-        tower.position.set(128, 310, 0);
-        gantry.add(tower);
-        const armGeo = this._geo(new THREE.BoxGeometry(96, 9, 22));
-        [140, 260, 400, 520].forEach((y) => {
-          const arm = new THREE.Mesh(armGeo, gantryMat);
-          arm.position.set(80, y, 0);
-          gantry.add(arm);
-        });
-      }
-      // A gun that is expecting a round rather than sending one has its gantry
-      // already parked clear, and wears the approach lighting instead.
-      if (arrival) { gantry.rotation.y = 1.4; gantry.position.x = 90; }
-      g.add(gantry);
-
-      const top = 86 * F + (H - 40 * F);
-      if (arrival) this._buildApproach(g, top);
-
-      return { group: g, rings: coilRings, capacitors, gantry, strobes, top };
-    }
-
-    // The skyline: a low sprawl of lit boxes, plus whatever each pad is known
-    // for standing next to.
-    _buildTown(into, forSite, groundY) {
-      const s = forSite || this.site;
-      const e = this.env;
-      const g = new THREE.Group();
-      this.town = g;
-      // A town stands on the surface, which on a shaft pad is up at the muzzle.
-      g.position.y = groundY || 0;
-      (into || this.pad).add(g);
-
-      const wallMat = this._phong({ color: s.town, shininess: 4 });
-      const litMat = this._basic({ color: s.townLit });
-      const r = this.rng;
-      const boxGeo = this._geo(new THREE.BoxGeometry(1, 1, 1));
-      for (let i = 0; i < 150; i++) {
-        const a = r() * Math.PI * 2;
-        const d = 1400 + r() * 6200;
-        const w = 30 + r() * 90;
-        const h = 18 + r() * (r() > 0.9 ? 180 : 60);
-        const b = new THREE.Mesh(boxGeo, wallMat);
-        b.position.set(Math.cos(a) * d, h / 2, Math.sin(a) * d);
-        b.scale.set(w, h, w * (0.6 + r() * 0.8));
-        b.rotation.y = r() * Math.PI;
-        g.add(b);
-        // Windows: one emissive slab per building, at night or in the murk.
-        if ((e.night || e.storm) && r() > 0.35) {
-          const win = new THREE.Mesh(boxGeo, litMat);
-          win.position.copy(b.position);
-          win.position.y = h * 0.62;
-          win.scale.set(w * 1.02, h * 0.1, w * 0.62);
-          win.rotation.y = b.rotation.y;
-          g.add(win);
-        }
-      }
-
-      // Taranto's stacks: tall, capped, and burning a flare all night.
-      for (let i = 0; i < s.stacks; i++) {
-        const a = -0.9 + i * 0.32;
-        const d = 2600 + i * 240;
-        const h = s.stackHeight * (0.8 + this.rng() * 0.4);
-        const st = new THREE.Mesh(
-          this._geo(new THREE.CylinderGeometry(9, 14, h, 8)),
-          this._phong({ color: 0xb8493a, shininess: 6 })
-        );
-        st.position.set(Math.cos(a) * d, h / 2, Math.sin(a) * d);
-        g.add(st);
-        const flare = new THREE.Mesh(
-          this._geo(new THREE.ConeGeometry(7, 26, 6)),
-          this._basic({ color: 0xffa23a, transparent: true, opacity: 0.85 })
-        );
-        flare.position.set(st.position.x, h + 12, st.position.z);
-        g.add(flare);
-        (this.flares = this.flares || []).push(flare);
-      }
-
-      // Greenwich's domes: the observatory, white and shuttered.
-      for (let i = 0; i < s.domes; i++) {
-        const a = 2.2 + i * 0.4;
-        const d = 1700 + i * 400;
-        const dome = new THREE.Mesh(
-          this._geo(new THREE.SphereGeometry(34, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2)),
-          this._phong({ color: 0xd8d2c4, shininess: 30, specular: 0x666666 })
-        );
-        dome.position.set(Math.cos(a) * d, 26, Math.sin(a) * d);
-        g.add(dome);
-        const drum = new THREE.Mesh(
-          this._geo(new THREE.CylinderGeometry(34, 34, 52, 12)),
-          this._phong({ color: 0x8a4a3c, shininess: 4 })
-        );
-        drum.position.set(dome.position.x, 26, dome.position.z);
-        g.add(drum);
-      }
-    }
-
-    // The floods. On in the dark and in bad weather, and they are what makes
-    // the vehicle readable on the pad before anything has happened.
-    _buildFloodlights(into, groundY) {
-      const host = into || this.pad;
-      const on = this.env.night || this.env.storm || this.env.wet;
-      this.floods = this.floods || [];
-      if (!on) return;
-      const baseY = groundY || 0;
-      const mastMat = this._phong({ color: 0x4a4f57, shininess: 8 });
-      const lampMat = this._basic({ color: 0xfff2cf });
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2 + 0.4;
-        const d = 330;
-        const h = 120;
-        const mast = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(2.6, 4.4, h, 6)), mastMat);
-        mast.position.set(Math.cos(a) * d, baseY + h / 2, Math.sin(a) * d);
-        host.add(mast);
-        const lamp = new THREE.Mesh(this._geo(new THREE.BoxGeometry(16, 7, 5)), lampMat);
-        lamp.position.set(mast.position.x, baseY + h, mast.position.z);
-        lamp.lookAt(0, baseY + 120, 0);
-        host.add(lamp);
-        const L = new THREE.PointLight(0xffe9bf, 1.7, 1400, 2);
-        L.position.set(mast.position.x, baseY + h, mast.position.z);
-        host.add(L);
-        this.floods.push(L);
-      }
-    }
-
-    // The hatch. Two leaves of iron flush with the ground over the muzzle of a
-    // vault's gun, with the spoil ring round them and the lamps set into it.
-    // They are shut for the whole count and swing open on the release, which
-    // is the only warning anybody standing on that square ever gets.
-    _buildHatch(into, groundY, arrival) {
-      const host = into || this.pad;
-      const g = new THREE.Group();
-      g.position.y = groundY || 0;
-      host.add(g);
-
-      const iron = this._phong({ color: 0x4a4f58, shininess: 26, specular: 0x777c85 });
-      const rim = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(96, 116, 10, 20)), this._phong({
-        color: 0x6b6357, shininess: 4,
-      }));
-      rim.position.y = -4;
-      g.add(rim);
-
-      const leaves = [];
-      const leafGeo = this._geo(new THREE.BoxGeometry(84, 7, 168));
-      for (let i = 0; i < 2; i++) {
-        // Hinged at the rim, so a leaf swings up and outward rather than
-        // sliding: the pivot is the group, the slab hangs off it.
-        const pivot = new THREE.Group();
-        pivot.position.set(i ? 84 : -84, 0, 0);
-        const leaf = new THREE.Mesh(leafGeo, iron);
-        leaf.position.set(i ? -42 : 42, 0, 0);
-        pivot.add(leaf);
-        g.add(pivot);
-        pivot.userData.side = i ? 1 : -1;
-        leaves.push(pivot);
-      }
-      const lamps = [];
-      const lampGeo = this._geo(new THREE.SphereGeometry(4.2, 6, 5));
-      for (let i = 0; i < 8; i++) {
-        const a = (i / 8) * Math.PI * 2;
-        const L = new THREE.Mesh(lampGeo, this._mat(new THREE.MeshBasicMaterial({ color: 0x33140a })));
-        L.position.set(Math.cos(a) * 108, 2, Math.sin(a) * 108);
-        L.userData.order = i;
-        g.add(L);
-        lamps.push(L);
-      }
-      const hatch = { group: g, leaves: leaves, lamps: lamps, open: 0 };
-      if (arrival) this.hatchB = hatch; else this.hatchA = hatch;
-      return hatch;
-    }
-
-    // The lid: shut through the count, thrown open on the release, and left
-    // open afterwards. `open` is 0..1 and the leaves take it straight to angle.
-    _updateHatch(hatch, open, live) {
-      if (!hatch) return;
-      hatch.open = open;
-      hatch.leaves.forEach((pivot) => {
-        pivot.rotation.z = pivot.userData.side * open * 1.5;
-      });
-      hatch.lamps.forEach((L) => {
-        const on = open > 0.02 ? true : (Math.floor(this._time * 2) + L.userData.order) % 8 < 2;
-        L.material.color.setHex(live && on ? 0xff8a34 : 0x33140a);
-      });
-    }
-
-    // The meridian. A laser due north from the observatory, which at this pad
-    // is also the range-safety line the vehicle is supposed to fly up.
-    _buildMeridian(into) {
-      const geo = this._geo(new THREE.CylinderGeometry(1.2, 1.2, 9000, 5, 1, true));
-      const mat = this._mat(new THREE.MeshBasicMaterial({
-        color: 0x63ff9b, transparent: true, opacity: 0.55,
-        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
-      }));
-      const beam = new THREE.Mesh(geo, mat);
-      // Laid along the ground toward the north, tilted a few degrees up, the
-      // way the real one is thrown across London.
-      beam.rotation.z = Math.PI / 2 - 0.16;
-      beam.position.set(0, 220, -4400);
-      beam.rotation.y = Math.PI / 2;
-      this.meridian = beam;
-      (into || this.pad).add(beam);
-    }
 
     // --- the vehicle ------------------------------------------------------
 
@@ -3758,6 +3278,7 @@
 
       this._buildArmour(BODY_R, BODY_L);
       this._buildFins(BODY_R, BODY_L);
+      this._buildNavLights(BODY_R, BODY_L);
       this._buildPlume(BODY_R, BODY_L);
       this._buildPlasma(BODY_R, BODY_L);
       // THE MIDDLE STAGE. Only a flight aimed at the Moon carries one, and it
@@ -4098,6 +3619,85 @@
       g.add(this.plasmaLight);
     }
 
+    // THE LIGHTS ON THE OUTSIDE OF IT.
+    //
+    // Every round the gun throws is lit, and it was not: the hull was a dark
+    // shape against a dark sky on every beat that was not a burn, which is
+    // most of a crossing. So it wears what anything crewed wears - red to
+    // port, green to starboard, a white anticollision strobe on the collar
+    // and a row of small white deck lamps down the flank - and they are lit
+    // from the moment it leaves the rail to the moment it is set down.
+    //
+    // They are emissive plates rather than lights: a dozen point lights on a
+    // vehicle that is already carrying a plume, a strobe and a drive is a
+    // dozen more shadow passes for something the size of a coin on screen.
+    _buildNavLights(BODY_R, BODY_L) {
+      const g = new THREE.Group();
+      this.navLights = g;
+      this.vehicle.add(g);
+      this._navLamps = [];
+
+      const lamp = (color, x, y, z, size, kind) => {
+        const m = new THREE.Mesh(
+          this._geo(new THREE.SphereGeometry(size, 8, 6)),
+          this._mat(new THREE.MeshBasicMaterial({
+            color: color, transparent: true, opacity: 0.9,
+            depthWrite: false, blending: THREE.AdditiveBlending,
+          }))
+        );
+        m.position.set(x, y, z);
+        m.userData.kind = kind;
+        m.userData.base = size;
+        g.add(m);
+        this._navLamps.push(m);
+        return m;
+      };
+
+      const R = BODY_R * 1.04;
+      // Port and starboard, on the shoulders where they can be seen from
+      // either side and from ahead.
+      lamp(0xff2a22, -R, BODY_L * 0.22, 0, 0.30, "port");
+      lamp(0x22ff5a, R, BODY_L * 0.22, 0, 0.30, "starboard");
+      // The anticollision strobe, on the collar under the nose.
+      lamp(0xffffff, 0, BODY_L * 0.46, R, 0.34, "strobe");
+      lamp(0xffffff, 0, BODY_L * 0.46, -R, 0.34, "strobe");
+      // And the deck lamps: a row down each flank, so the length of the thing
+      // reads as a length even with nothing burning under it.
+      for (let i = 0; i < 5; i++) {
+        const y = BODY_L * (0.30 - i * 0.14);
+        lamp(0xffe7bc, -R * 0.72, y, R * 0.72, 0.16, "deck");
+        lamp(0xffe7bc, R * 0.72, y, -R * 0.72, 0.16, "deck");
+      }
+      // One light that is a light, because a hull with nothing shining ON it
+      // reads as a painted shape. It is dim, and it is the only one.
+      this.navGlow = new THREE.PointLight(0xcfe2ff, 0.45, 60, 2);
+      this.navGlow.position.set(0, BODY_L * 0.3, 0);
+      this.vehicle.add(this.navGlow);
+    }
+
+    // Lit from the rail to the pad, and the strobe beats twice a second the
+    // way a real anticollision light does: two quick flashes and a rest.
+    _updateNavLights(dt) {
+      if (!this._navLamps) return;
+      const on = this.phase && this.phase.key !== "arrived";
+      this.navLights.visible = !!on;
+      if (this.navGlow) this.navGlow.intensity = on ? 0.45 : 0;
+      if (!on) return;
+      const cyc = (this._time % 1.4) / 1.4;
+      const flash = (cyc < 0.06 || (cyc > 0.14 && cyc < 0.20)) ? 1 : 0.02;
+      const breathe = 0.78 + Math.sin(this._time * 2.1) * 0.06;
+      for (let i = 0; i < this._navLamps.length; i++) {
+        const m = this._navLamps[i];
+        if (m.userData.kind === "strobe") {
+          m.material.opacity = flash;
+          m.scale.setScalar(0.7 + flash * 1.1);
+        } else {
+          m.material.opacity = breathe;
+          m.scale.setScalar(1);
+        }
+      }
+    }
+
     _buildArmour(R, L) {
       this.plates = [];
       const BELTS = 7;
@@ -4253,402 +3853,103 @@
 
     // --- the Moon, underneath -----------------------------------------------
 
-    // THE SURFACE, and there is no gun on it.
-    //
-    // Every other arrival in this plugin is a second coilgun that catches the
-    // round out of the air. The Moon has no air to catch anything out of and
-    // nothing to build a receiving barrel with: what is down there is a
-    // regolith plain, a scatter of boulders, a pad lit by a ring of lamps and
-    // two pressure domes beside it. The round comes down onto it on its own
-    // drive, which is the only landing in the plugin the vehicle makes itself.
-    _buildMoonGround() {
-      const g = new THREE.Group();
-      this.moonGround = g;
-      g.visible = false;
-      this.near.add(g);
 
-      const dust = this._phong({ map: this._paintRegolith(), shininess: 1, color: 0xbdb8ae });
-      const plain = new THREE.Mesh(this._geo(new THREE.CircleGeometry(26000, 48)), dust);
-      plain.rotation.x = -Math.PI / 2;
-      g.add(plain);
 
-      // Craters, as rims rather than holes: a ring of low cone is all the eye
-      // reads from above, and it costs nothing.
-      const rimGeo = this._geo(new THREE.TorusGeometry(1, 0.22, 4, 14));
-      const rimMat = this._phong({ color: 0x8e8a82, shininess: 1, flatShading: true });
-      for (let i = 0; i < 46; i++) {
-        const a = this.rng() * Math.PI * 2;
-        const d = 400 + this.rng() * 18000;
-        const rad = 120 + this.rng() * 900;
-        const rim = new THREE.Mesh(rimGeo, rimMat);
-        rim.position.set(Math.cos(a) * d, 2, Math.sin(a) * d);
-        rim.rotation.x = Math.PI / 2;
-        rim.scale.setScalar(rad);
-        g.add(rim);
-      }
-
-      // Boulders, close in, so the skim has something to be low over.
-      const rockGeo = this._geo(new THREE.IcosahedronGeometry(1, 0));
-      const rockMat = this._phong({ color: 0x77736c, shininess: 2, flatShading: true });
-      for (let i = 0; i < 90; i++) {
-        const a = this.rng() * Math.PI * 2;
-        const d = 260 + this.rng() * 5200;
-        const rock = new THREE.Mesh(rockGeo, rockMat);
-        rock.position.set(Math.cos(a) * d, 0, Math.sin(a) * d);
-        rock.scale.set(6 + this.rng() * 26, 4 + this.rng() * 18, 6 + this.rng() * 26);
-        rock.rotation.set(this.rng(), this.rng(), this.rng());
-        g.add(rock);
-      }
-
-      // THE BASE. Two domes, a mast and a lit landing ring, and the ring is
-      // what the round is coming down inside.
-      const base = new THREE.Group();
-      base.position.set(0, 0, 0);
-      g.add(base);
-
-      const shell = this._phong({ color: 0xc6c9cf, shininess: 26, specular: 0x9aa2ad });
-      [[-64, -40, 34], [58, -66, 24]].forEach(([x, z, rad]) => {
-        const dome = new THREE.Mesh(
-          this._geo(new THREE.SphereGeometry(rad, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2)),
-          shell
-        );
-        dome.position.set(x, 0, z);
-        base.add(dome);
-      });
-      const tube = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(9, 9, 120, 10)), shell);
-      tube.rotation.z = Math.PI / 2;
-      tube.position.set(-3, 12, -53);
-      base.add(tube);
-      const mast = new THREE.Mesh(this._geo(new THREE.CylinderGeometry(1.6, 2.6, 160, 6)), shell);
-      mast.position.set(96, 80, 30);
-      base.add(mast);
-
-      // The apron, and the ring of lamps round it.
-      const apron = new THREE.Mesh(
-        this._geo(new THREE.CircleGeometry(78, 28)),
-        this._phong({ color: 0x4a4e57, shininess: 14, specular: 0x8d949e })
-      );
-      apron.rotation.x = -Math.PI / 2;
-      apron.position.y = 0.6;
-      base.add(apron);
-
-      this.padLamps = [];
-      const lampGeo = this._geo(new THREE.SphereGeometry(2.6, 6, 5));
-      for (let i = 0; i < 16; i++) {
-        const a = (i / 16) * Math.PI * 2;
-        const L = new THREE.Mesh(lampGeo, this._mat(new THREE.MeshBasicMaterial({ color: 0x0d2a18 })));
-        L.position.set(Math.cos(a) * 84, 3, Math.sin(a) * 84);
-        L.userData.order = i;
-        base.add(L);
-        this.padLamps.push(L);
-      }
-      this.padGlow = new THREE.PointLight(0x8affc4, 0, 700, 2);
-      this.padGlow.position.set(0, 30, 0);
-      base.add(this.padGlow);
-    }
-
-    _paintRegolith() {
-      return this._tex(128, 128, (ctx, w, h) => {
-        ctx.fillStyle = "#a09b92";
-        ctx.fillRect(0, 0, w, h);
-        const r = makeRng(0x71ee);
-        for (let i = 0; i < 2600; i++) {
-          const g2 = r();
-          ctx.fillStyle = g2 > 0.5
-            ? "rgba(214,209,200," + (0.1 + r() * 0.3).toFixed(2) + ")"
-            : "rgba(72,69,66," + (0.1 + r() * 0.35).toFixed(2) + ")";
-          ctx.fillRect(Math.floor(r() * w), Math.floor(r() * h), 1 + Math.floor(r() * 2), 1);
-        }
-      }, 60, 60);
-    }
-
-    // The ground comes up under the round exactly the way a pad drops away
-    // from one: the vehicle never moves, so this is the whole landing.
-    _updateMoonGround(dt, ph) {
-      if (!this.profile.lunar) return;
-      const near = ph.key === "transit" || ph.key === "flyby" || ph.key === "skim" ||
-        ph.key === "touchdown" || ph.key === "arrived";
-      if (near && this.alt < 140000) this._ensure("moonGround");
-      const g = this.moonGround;
-      if (!g) return;
-      const show = near && this.alt < 90000;
-      g.visible = show;
-      if (!show) return;
-      // Eleven metres of vehicle, so the tail sits on the apron rather than
-      // in it when the altimeter reads zero.
-      g.position.y = -(this.alt + 11);
-      // THE CIRCUIT, seen from inside it. The round never moves, so the ground
-      // runs: it streams past on the heading this pass was rolled onto, turns
-      // under the vehicle as the orbit carries it round, and only over the
-      // last beat does the base slide up out of it and everything come to
-      // rest. A retrograde pass streams the other way, which is the whole
-      // point of rolling a direction.
-      const o = this.orbit;
-      const heading = o.entry + o.dir * this._orbitPhase(ph) * Math.PI * 2 * o.revs;
-      g.rotation.y = heading;
-      if (ph.key === "flyby") {
-        // Running flat out, a full circuit's worth of ground per revolution.
-        const span = 26000;
-        const run = (this._orbitPhase(ph) * o.revs) % 1;
-        g.position.x = Math.sin(heading) * span * (1 - run);
-        g.position.z = -Math.cos(heading) * span * (1 - run);
-      } else if (ph.key === "skim") {
-        // The last of the run, closing on the base until it is underneath.
-        const k = smooth(ph.progress);
-        g.position.x = Math.sin(heading) * lerp(9000, 0, k);
-        g.position.z = -Math.cos(heading) * lerp(9000, 0, k);
-      } else {
-        g.position.x = 0;
-        g.position.z = 0;
-      }
-
-      if (this.padLamps) {
-        const k = clamp01(1 - this.alt / 12000);
-        this.padLamps.forEach((L) => {
-          const on = ph.key === "arrived"
-            ? true
-            : ((Math.floor(this._time * (2 + k * 10)) + L.userData.order) % 8) < 3;
-          L.material.color.setHex(on ? 0x8affc4 : 0x0d2a18);
-        });
-        if (this.padGlow) this.padGlow.intensity = 0.4 + k * 3.2;
-      }
-    }
 
     // --- Jupiter, the hole, and the corridor --------------------------------
 
-    // JUPITER, and it is only ever seen on the way to Andromeda.
-    //
-    // The round is thrown at it, falls around the back of it and comes out the
-    // far side with the planet's own orbital speed added to its own. That is
-    // the only reason it is in the flight at all: the SB jump drive cannot be
-    // lit from a standing start inside a gravity well, and the assist is what
-    // buys the speed to be out of one.
-    _buildJupiter() {
+
+
+
+    // The pellets, and the rings they leave.
+    _buildCharges() {
       const g = new THREE.Group();
-      this.jupiter = g;
+      this.charges = g;
       g.visible = false;
-      this.far.add(g);
+      this.near.add(g);
 
-      const R = EARTH_VIS_R * 11.2;   // it really is eleven Earths across
-      const body = new THREE.Mesh(
-        this._geo(new THREE.SphereGeometry(R, 48, 32)),
-        this._phong({ map: this._paintJupiter(), shininess: 6, specular: 0x241c14 })
-      );
-      if (body.material.emissive) {
-        body.material.emissiveMap = body.material.map;
-        body.material.emissive.setHex(0x3a3028);
-        if ("emissiveIntensity" in body.material) body.material.emissiveIntensity = 0.45;
-        body.material.needsUpdate = true;
+      this.pellets = [];
+      this.blastRings = [];
+      const pelletGeo = this._geo(new THREE.SphereGeometry(0.85, 10, 8));
+      const ringGeo = this._geo(new THREE.RingGeometry(0.82, 1, 48, 1));
+      // AND THE BALL. A charge that has gone off is a volume of violet with a
+      // white centre, not a hoop: the ring alone read as a smoke ring blown
+      // past the window. The shell is what the round rides, the ring is the
+      // edge of it seen side-on, and both are the same event.
+      const ballGeo = this._geo(new THREE.SphereGeometry(1, 24, 16));
+      for (let i = 0; i < CHARGE_COUNT; i++) {
+        // The pellet. Violet, and lit from inside: there is nothing out here
+        // to light it from outside.
+        const p = new THREE.Mesh(pelletGeo, this._mat(new THREE.MeshBasicMaterial({
+          color: 0xb46cff, transparent: true, opacity: 0, depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })));
+        p.visible = false;
+        g.add(p);
+        this.pellets.push(p);
+
+        // And the ring it becomes. Flat, because the thing that goes off is a
+        // decision rather than a chemical, and a decision has no volume.
+        const r = new THREE.Mesh(ringGeo, this._mat(new THREE.MeshBasicMaterial({
+          color: 0xe6d0ff, transparent: true, opacity: 0, side: THREE.DoubleSide,
+          depthWrite: false, blending: THREE.AdditiveBlending,
+        })));
+        r.visible = false;
+        // No two of them are the same size. That is the whole point of the
+        // string: each one is a different amount of having happened.
+        r.userData.radius = 90 + this.rng() * 260;
+        r.userData.core = new THREE.Mesh(ringGeo, this._mat(new THREE.MeshBasicMaterial({
+          color: 0xffffff, transparent: true, opacity: 0, side: THREE.DoubleSide,
+          depthWrite: false, blending: THREE.AdditiveBlending,
+        })));
+        r.userData.core.visible = false;
+        // The violet shell, and the white it is lit from inside by.
+        const ball = new THREE.Mesh(ballGeo, this._mat(new THREE.MeshBasicMaterial({
+          color: 0x9a4cff, transparent: true, opacity: 0, depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })));
+        ball.visible = false;
+        const heart = new THREE.Mesh(ballGeo, this._mat(new THREE.MeshBasicMaterial({
+          color: 0xf2e4ff, transparent: true, opacity: 0, depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })));
+        heart.visible = false;
+        r.userData.ball = ball;
+        r.userData.heart = heart;
+        g.add(r, r.userData.core, ball, heart);
+        this.blastRings.push(r);
       }
-      g.add(body);
-      this.jupiterBody = body;
+      this.chargeLight = new THREE.PointLight(0xd8b4ff, 0, 2600, 2);
+      this.chargeLight.visible = false;
+      g.add(this.chargeLight);
+    }
 
-      // The ring. Faint, dark and edge-on to almost everything, which is why
-      // nobody knew it was there until 1979.
-      const ring = new THREE.Mesh(
-        this._geo(new THREE.RingGeometry(R * 1.45, R * 1.82, 64, 1)),
+    // THE GOLD.
+    //
+    // The far side of going faster than the thing you are going through can
+    // take. There are no stars in it. Nobody aboard talks about it afterwards
+    // and the plugin does not explain it either: it is a shell, it is gold,
+    // and it is over in eight seconds.
+    _buildGods() {
+      const g = new THREE.Mesh(
+        this._geo(new THREE.SphereGeometry(CORRIDOR_LEN * 1.2, 24, 18)),
         this._basic({
-          color: 0x6a5c4a, transparent: true, opacity: 0.16,
-          side: THREE.DoubleSide, depthWrite: false,
+          color: 0xffc85a, side: THREE.BackSide, depthWrite: false,
+          transparent: true, opacity: 0,
         })
       );
-      ring.rotation.x = Math.PI / 2 - 0.06;
-      g.add(ring);
-    }
-
-    _paintJupiter() {
-      return this._tex(512, 256, (ctx, w, h) => {
-        // The belts and zones, which is the whole of what Jupiter looks like.
-        const bands = [
-          [0.00, 0.06, "#d9cdb6"], [0.06, 0.14, "#b8916a"],
-          [0.14, 0.24, "#e6dcc6"], [0.24, 0.32, "#a8784f"],
-          [0.32, 0.42, "#efe6d2"], [0.42, 0.50, "#8f5c3a"],
-          [0.50, 0.58, "#e8dcc2"], [0.58, 0.66, "#b5794a"],
-          [0.66, 0.76, "#e2d6bc"], [0.76, 0.86, "#a9805a"],
-          [0.86, 1.00, "#cfc3ab"],
-        ];
-        bands.forEach(([a, b, c]) => {
-          ctx.fillStyle = c;
-          ctx.fillRect(0, a * h, w, (b - a) * h + 1);
-        });
-        // Turbulence along every boundary: a band edge on Jupiter is never a
-        // line, it is a row of curls.
-        const r = makeRng(0x5107e5);
-        for (let i = 0; i < 900; i++) {
-          const y = r() * h;
-          ctx.fillStyle = r() > 0.5 ? "rgba(255,248,232,0.16)" : "rgba(90,58,36,0.18)";
-          ctx.beginPath();
-          ctx.ellipse(r() * w, y, 6 + r() * 34, 1 + r() * 3, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        // The Spot. Two Earths across and three hundred years old.
-        ctx.fillStyle = "#b4523a";
-        ctx.beginPath();
-        ctx.ellipse(w * 0.66, h * 0.62, 44, 20, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "rgba(226,140,110,0.5)";
-        ctx.beginPath();
-        ctx.ellipse(w * 0.66, h * 0.62, 30, 13, 0, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    // THE SHELL. Both Zeta Reticuli suns carry one - Systems.json says
-    // "dyson": "active" against each of them - and it is built by the same
-    // routine the star map builds it with, off the same record, so the thing
-    // in the window on the way in is the thing the star map shows.
-    _buildDyson() {
-      const sys = worldSystem(this.profile.world);
-      if (!sys || !sys.dyson) return;
-      const Cosmos = window.GalaxySim && window.GalaxySim.Scene3DCosmos;
-      if (!Cosmos || typeof Cosmos.buildDysonSphere !== "function") return;
-      let built = null;
-      try {
-        built = Cosmos.buildDysonSphere({
-          radius: DYSON_VIS_R,
-          mode: sys.dyson === "abandoned" ? "abandoned" : "active",   // i18n-ignore  data value
-          seed: hashOf(sys.name) & 0x7fffffff,
-        });
-      } catch (e) { built = null; }
-      const group = built && (built.group || built);
-      if (!group || !group.isObject3D) return;
-      this.dyson = built;
-      this.dysonGroup = group;
-      group.visible = false;
-      this.far.add(group);
-    }
-
-    // THE WORMHOLE, AND IT IS A SPHERE.
-    //
-    // Every film but one draws this as a funnel, or a whirlpool, or a ring of
-    // fire with a flat disc in it - and a hole in three-dimensional space seen
-    // from three-dimensional space is a BALL, with the far sky wrapped round
-    // the front of it. That is the one thing Interstellar got right, and it is
-    // what this is: a sphere carrying the destination sky, rimmed with the
-    // light of everything behind the round being dragged round the edge of it.
-    // The galaxy being left, and the one being arrived at.
-    _buildGalaxies() {
-      const g = new THREE.Group();
-      this.galaxies = g;
+      this.gods = g;
       g.visible = false;
-      this.far.add(g);
-
-      const mk = (tex, size) => {
-        const m = new THREE.Mesh(
-          this._geo(new THREE.PlaneGeometry(size, size)),
-          this._basic({
-            map: tex, transparent: true, opacity: 0,
-            blending: THREE.AdditiveBlending, depthWrite: false,
-            side: THREE.DoubleSide,
-          })
-        );
-        g.add(m);
-        return m;
-      };
-      // Home, seen from outside it. Tilted well over, because the one thing
-      // everybody knows about our galaxy is what it looks like flat on and
-      // nobody has ever seen it that way.
-      this.milkyWay = mk(this._paintGalaxy(0x9fb6ff, 0x3a5a9a), 2600);
-      this.milkyWay.rotation.z = 0.5;
-      // And the destination, which from here is the brighter of the two.
-      this.andromeda = mk(this._paintGalaxy(0xffe6c0, 0x8a6a48), 2600);
-      this.andromeda.rotation.z = -0.9;
+      this.near.add(g);
+      this.godsLight = new THREE.PointLight(0xffd76a, 0, 5000, 2);
+      this.godsLight.visible = false;
+      this.near.add(this.godsLight);
     }
 
-    _paintGalaxy(core, arm) {
-      const hexOf = (c) => "#" + ("000000" + c.toString(16)).slice(-6);
-      return this._tex(256, 256, (ctx, w, h) => {
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, 0, w, h);
-        const cx = w / 2, cy = h / 2;
-        const r = makeRng(0x9a1c ^ core);
-        // The arms: four of them, logarithmic, each a trail of stars getting
-        // looser the further out it winds.
-        for (let a = 0; a < 4; a++) {
-          const off = (a / 4) * Math.PI * 2;
-          for (let i = 0; i < 900; i++) {
-            const t = i / 900;
-            const th = off + t * 5.2;
-            const rad = 8 + t * (w * 0.46);
-            const jitter = (r() - 0.5) * rad * 0.22;
-            const x = cx + Math.cos(th) * rad + jitter;
-            const y = cy + Math.sin(th) * rad * 0.9 + (r() - 0.5) * rad * 0.16;
-            const al = (1 - t) * 0.5 + 0.06;
-            ctx.fillStyle = "rgba(" + ((arm >> 16) & 255) + "," + ((arm >> 8) & 255) +
-              "," + (arm & 255) + "," + al.toFixed(3) + ")";
-            ctx.fillRect(x, y, 1, 1);
-          }
-        }
-        // The bulge, which is most of the light.
-        const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, w * 0.30);
-        gr.addColorStop(0, hexOf(core));
-        gr.addColorStop(0.18, "rgba(" + ((core >> 16) & 255) + "," + ((core >> 8) & 255) +
-          "," + (core & 255) + ",0.55)");
-        gr.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = gr;
-        ctx.beginPath();
-        ctx.arc(cx, cy, w * 0.30, 0, Math.PI * 2);
-        ctx.fill();
-        // The dust lane across the disc, which is what makes it read as a
-        // galaxy rather than as a smudge.
-        ctx.globalCompositeOperation = "destination-out";
-        for (let i = 0; i < 260; i++) {
-          const th = r() * Math.PI * 2;
-          const rad = w * 0.12 + r() * w * 0.32;
-          ctx.fillStyle = "rgba(0,0,0," + (0.1 + r() * 0.3).toFixed(2) + ")";
-          ctx.beginPath();
-          ctx.ellipse(cx + Math.cos(th) * rad, cy + Math.sin(th) * rad * 0.9,
-            6 + r() * 20, 1 + r() * 3, th, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.globalCompositeOperation = "source-over";
-      });
-    }
 
-    // They trade places across the jump: home going away astern, the
-    // destination growing ahead, crossing over inside the throat.
-    _updateGalaxies(dt, ph) {
-      const on = ph.key === "sbspool" || ph.key === "wormhole" ||
-        ph.key === "throat" || ph.key === "emerge";
-      if (on) this._ensure("galaxies");
-      if (!this.galaxies) return;
-      this.galaxies.visible = on;
-      if (!on) return;
 
-      // How far through the crossing between them this beat is, 0 to 1.
-      const k = ph.key === "sbspool" ? 0
-        : ph.key === "wormhole" ? smooth(ph.progress) * 0.35
-          : ph.key === "throat" ? 0.35 + smooth(ph.progress) * 0.55
-            : 0.9 + smooth(ph.progress) * 0.1;
 
-      // HOME, ASTERN. It starts as the sky the round has been inside all its
-      // life and ends as a smudge behind it.
-      const mwD = lerp(1500, 9000, k);
-      this._placeFar(this.milkyWay, Math.PI + 0.22, 0.1, mwD);
-      this.milkyWay.quaternion.copy((this._farAim || this.farCamera).quaternion);
-      this.milkyWay.rotateZ(0.5);
-      this.milkyWay.material.opacity = lerp(0.85, 0.12, k);
-      this.milkyWay.scale.setScalar(lerp(1.35, 0.45, k));
 
-      // AND ANDROMEDA, AHEAD, AND IT IS THE WHOLE POINT OF THIS CROSSING.
-      //
-      // The corridor to Zeta is a tunnel with walls rushing past. This is not
-      // a tunnel and must not read as one: there is no corridor, there is a
-      // galaxy coming at the round. So the plate does not merely brighten, it
-      // CLOSES - from a smudge nine thousand out to something the camera is
-      // nearly inside of by the time the throat lets go - and it goes on
-      // closing through emerge, which is the beat it fills the frame on.
-      const anD = ph.key === "emerge"
-        ? lerp(700, 260, smooth(ph.progress))
-        : lerp(9000, 700, k / 0.9);
-      this._placeFar(this.andromeda, -0.10, 0.06, anD);
-      this.andromeda.quaternion.copy((this._farAim || this.farCamera).quaternion);
-      this.andromeda.rotateZ(-0.9);
-      this.andromeda.material.opacity = lerp(0.10, 0.95, k);
-      // Its apparent size is the range closing, so the scale only has to keep
-      // the plate from outrunning its own texture as it arrives.
-      this.andromeda.scale.setScalar(lerp(0.4, 1.1, k));
-    }
 
     _buildWormhole() {
       const g = new THREE.Group();
@@ -5047,13 +4348,22 @@
       // Local Z on a hull that is turned to face the round, so the collar ends
       // up BETWEEN the ship and the bullet rather than out behind it.
       this.dockZ = -58;
+      // And the same measurement answers the other question about a
+      // procedural hull: how far out its skin is, which is where a gun
+      // mounted along it has to sit. Half the beam plus the width of the
+      // gun's own frame, or a sane guess on a hull that cannot be measured.
+      this.shipHalfW = 13;
       const hull = this.shipModel && this.shipModel.group;
       if (hull && THREE.Box3) {
         try {
           const box = new THREE.Box3().setFromObject(hull);
           const zf = box.max && box.max.z;
           if (isFinite(zf) && Math.abs(zf) > 0.5) this.dockZ = -(Math.abs(zf) + 3);
-        } catch (e) { /* an unmeasurable hull keeps the default */ }
+          const w = Math.max(Math.abs(box.max.x || 0), Math.abs(box.min.x || 0));
+          const h = Math.max(Math.abs(box.max.y || 0), Math.abs(box.min.y || 0));
+          const beam = Math.max(w, h);
+          if (isFinite(beam) && beam > 0.5) this.shipHalfW = beam;
+        } catch (e) { /* an unmeasurable hull keeps the defaults */ }
       }
       this.dockCollar = new THREE.Group();
       const collar = new THREE.Mesh(
@@ -5334,8 +4644,58 @@
       }
     }
 
-    _updateCamera(time, dt) {
+    // NO CUTS. Every beat writes its own rig and the two rarely agree, so the
+    // frame used to JUMP at each boundary - a different yaw, a different
+    // distance and a different lens, all changed between one frame and the
+    // next. This is one continuous camera move from the pad to the pad: when
+    // the beat changes, where the camera WAS is remembered and the new rig is
+    // eased into over BLEND seconds, so the shot travels to the next setup
+    // instead of cutting to it. Inside a beat the blend is over and the rig is
+    // followed exactly, which is what keeps every scripted move intact.
+    //
+    // Yaw is blended the short way round: without that, a swing from just
+    // under pi to just over it takes the camera the whole way round the
+    // vehicle, which is a worse artefact than the cut it replaced.
+    _rigSmooth(time, dt) {
       const rig = this._rig(time);
+      const now = {
+        tx: rig.target.x, ty: rig.target.y, tz: rig.target.z,
+        yaw: rig.yaw, pitch: rig.pitch, dist: rig.dist, fov: rig.fov,
+      };
+      const key = (this.phase && this.phase.key) || "";
+      if (this._rigKey !== key) {
+        // The first beat of a flight has nothing to come from, so it starts
+        // where it is meant to start rather than travelling in from nowhere.
+        if (this._rigWas) { this._rigFrom = this._rigWas; this._rigBlend = 0; }
+        this._rigKey = key;
+      }
+      if (this._rigFrom && this._rigBlend < 1) {
+        this._rigBlend = clamp01(this._rigBlend + dt / RIG_BLEND);
+        const u = smooth(this._rigBlend);
+        const a = this._rigFrom;
+        let dy = now.yaw - a.yaw;
+        while (dy > Math.PI) dy -= Math.PI * 2;
+        while (dy < -Math.PI) dy += Math.PI * 2;
+        now.yaw = a.yaw + dy * u;
+        now.pitch = lerp(a.pitch, now.pitch, u);
+        now.fov = lerp(a.fov, now.fov, u);
+        // Distance is eased geometrically: a camera going from thirty units to
+        // two thousand has to cover that as a zoom out, not as a straight
+        // line that spends most of the blend already far away.
+        now.dist = a.dist * Math.pow(Math.max(1e-3, now.dist) / Math.max(1e-3, a.dist), u);
+        now.tx = lerp(a.tx, now.tx, u);
+        now.ty = lerp(a.ty, now.ty, u);
+        now.tz = lerp(a.tz, now.tz, u);
+        if (this._rigBlend >= 1) this._rigFrom = null;
+      }
+      this._rigWas = now;
+      rig.target.set(now.tx, now.ty, now.tz);
+      rig.yaw = now.yaw; rig.pitch = now.pitch; rig.dist = now.dist; rig.fov = now.fov;
+      return rig;
+    }
+
+    _updateCamera(time, dt) {
+      const rig = this._rigSmooth(time, dt || 0);
       const u = this._camUser();
       this._rigDist = rig.dist;
 
@@ -5389,17 +4749,36 @@
       // third where it belongs. The near camera is untouched - the vehicle
       // stays framed where the director put it.
       const d = EARTH_VIS_R * (1 + this.alt / EARTH_R_M);
+      // AND IT IS NOT ALLOWED TO GO PAST THE FAR PLANE. A crossing is flown at
+      // two million kilometres and more, which puts the camera hundreds of
+      // thousands of units off a planet the renderer stops drawing at twenty
+      // thousand - so the Earth, the belt and the stars all blinked out
+      // together somewhere out past the Moon and the window went black. Past
+      // that range the SCENE is scaled down instead of the camera being pushed
+      // further out: what the angular size on screen is made of is the RATIO
+      // of the two, so a shrinking Earth at a fixed distance is the same
+      // picture as a fixed Earth at a growing one - and this one is still
+      // inside the plane.
+      const shrink = d > FAR_CAM_MAX_D ? FAR_CAM_MAX_D / d : 1;
+      const dCam = d * shrink;
+      this.earthPivot.scale.setScalar(shrink);
       this.farCamera.fov = rig.fov;
       // Never further out than the height it is flying at: the planet cannot
       // be clipped by a plane that is always underneath the camera.
-      const clear = Math.max(0, d - EARTH_VIS_R);
+      const clear = Math.max(0, dCam - EARTH_VIS_R * shrink);
       this.farCamera.near = clamp(clear * 0.04, 0.01, 6);
       this.farCamera.updateProjectionMatrix();
       this.farCamera.quaternion.copy(this.camera.quaternion);
       this.farCamera.rotateX(-FAR_TILT * (this.orbitalK || 0));
-      this.farCamera.position.set(0, d, 0);
+      this.farCamera.position.set(0, dCam, 0);
       // And the shake-free copy of that same aim, which is what the far scene's
       // bodies are hung off.
+      // The star cloud is a sphere nine thousand units across with the origin
+      // at its centre, and the far camera climbs. Left where it was built, a
+      // flight far enough out ended up OUTSIDE it, with the whole sky bunched
+      // into a patch ahead. Stars are infinitely far away, so the cloud rides
+      // with the camera and is a backdrop at every altitude.
+      if (this.stars) this.stars.position.set(0, dCam, 0);
       this._farAim = this._farAim || new THREE.Object3D();
       this._farAim.quaternion.copy(clean.quaternion);
       this._farAim.rotateX(-FAR_TILT * (this.orbitalK || 0));
@@ -5423,9 +4802,41 @@
     // than to the room on the ground, so it is spoken by one of them, in
     // their own register, over their own name. See Radio.
     _say(key, params, opts) {
-      const text = (opts && opts.crew) ? Radio.fromCrew(key, params) : Radio.fromControl(key, params);
-      (this.log = this.log || []).push({ text: text, at: this._time });
+      if (!this._maySay(key)) return false;
+      const crew = !!(opts && opts.crew);
+      const text = crew ? Radio.fromCrew(key, params) : Radio.fromControl(key, params);
+      // AND NEVER THE SAME WORDS TWICE RUNNING. Two calls far enough apart to
+      // clear the gap above still read as a stuck tape when nothing was said
+      // in between them, which is exactly what the belt does with its one
+      // near-miss line. Said once, it waits for somebody to say anything else.
+      if (this._lastText === text) return false;
+      this._lastText = text;
+      (this.log = this.log || []).push({
+        text: text, at: this._time, key: key, who: Radio.lastWho,
+      });
       if (this.log.length > 40) this.log.shift();
+      return true;
+    }
+
+    // HOW OFTEN THE SAME THING MAY BE SAID.
+    //
+    // A traversal of the belt is a hit every few tenths of a second and a
+    // quarter of them are heavy, and every heavy one used to put "Impact. Hull
+    // 61." into the log - so the whole crossing read as one line repeated
+    // twenty times while the near-miss call went in on top of it. Nothing the
+    // ground says is worth saying twice inside a few seconds, and the two
+    // lines the belt generates are worth saying least often of all: they are
+    // reporting a thing the player is already watching happen.
+    //
+    // This is a floor under the REACTIVE lines only. The scripted cues are
+    // written on a beat each and cannot repeat by construction.
+    _maySay(key) {
+      const gap = SAY_GAP[key] == null ? SAY_GAP_DEFAULT : SAY_GAP[key];
+      const said = (this._saidAt = this._saidAt || {});
+      const last = said[key];
+      if (last != null && this._time - last < gap) return false;
+      said[key] = this._time;
+      return true;
     }
 
     update(dt, time) {
@@ -5462,6 +4873,7 @@
       this._updateLiminal(dt, ph);
       this._updateCrossing(dt, ph);
       this._updateMoonGround(dt, ph);
+      this._updateTargetWorld(dt, ph);
       this._updateShip(dt, ph);
       this._updateMotes(dt);
       this._updateCamera(time, dt);
@@ -5504,11 +4916,25 @@
       // is throttled back over the last few hundred metres of the landing.
       let k = 0;
       if (ph.key === "liminal" || ph.key === "sbspool") k = smooth(ph.progress);
+      // THE RUN OUT TO JUPITER IS FLOWN UNDER POWER, and it was the one leg of
+      // a jump flight with nothing lit under it: the round left the belt behind
+      // and then crossed seven hundred million kilometres on an engine that was
+      // not burning. Jupiter does the work at the BOTTOM of the well, but
+      // getting to the well is the drive - so it comes up over the first fifth
+      // of the cruise and is throttled off over the last fifth of it, before the
+      // round is handed to the planet.
+      else if (ph.key === "cruise") {
+        k = smooth(clamp01(ph.progress / 0.2)) *
+          (1 - smooth(clamp01((ph.progress - 0.8) / 0.2)));
+      }
       else if (LIMINAL_LIT.indexOf(ph.key) >= 0) k = 1;
       else if (ph.key === "skim") k = 1 - smooth(ph.progress) * 0.6;
       else if (ph.key === "touchdown") k = 0.4 * (1 - smooth(ph.progress));
       else if (ph.key === "flyby") k = 0.45;
       this.liminalK = k;
+      // HOW MUCH OF THE DRIVE IS ACTUALLY BURNING, which is not the same as
+      // how much of it is powered. See LIMINAL_FLAME.
+      const fk = LIMINAL_FLAME.indexOf(ph.key) >= 0 ? k : 0;
 
       // THE STACK. A crossing to Zeta carries three drives and throws them
       // away one at a time, each at the end of the beat it was lit for - which
@@ -5533,20 +4959,30 @@
         this.liminalCore.scale.setScalar(1 + k * (0.7 + Math.sin(this._time * 6) * 0.18));
       }
       if (this.liminalHalo) {
-        this.liminalHalo.material.opacity = k * 0.55 * flick;
-        this.liminalHalo.scale.setScalar(1 + k * 1.4);
-        this.liminalHalo.rotation.z += dt * (0.6 + k * 5.0);
+        // THE RING IS PART OF THE FLAME AND NOT PART OF THE DRUM. Hung off the
+        // drive's power instead, it stood round the vehicle on every beat the
+        // drive was merely up - the descent included - so a round sitting on a
+        // pad with nothing burning under it wore a blue hoop on the ground. It
+        // is what the jet throws, so it is lit by the jet and by nothing else.
+        this.liminalHalo.visible = fk > 0.01;
+        this.liminalHalo.material.opacity = fk * 0.55 * flick;
+        this.liminalHalo.scale.setScalar(1 + fk * 1.4);
+        this.liminalHalo.rotation.z += dt * (0.6 + fk * 5.0);
       }
-      if (this.liminalLight) this.liminalLight.intensity = k * 4.6;
+      if (this.liminalLight) this.liminalLight.intensity = fk * 4.6;
       if (this.liminalFlame) {
-        this.liminalFlame.visible = k > 0.01;
-        const j = k * flick;
+        // How much FLAME there is, which is the drive's own level everywhere
+        // it is burning and nothing at all everywhere it is not. See
+        // LIMINAL_FLAME: the jump and the landing are both lit by the glow
+        // above and by neither of the jets below.
+        this.liminalFlame.visible = fk > 0.01;
+        const j = fk * flick;
         this.liminalJetCore.material.opacity = j * 0.98;
         this.liminalJetBody.material.opacity = j * 0.6;
         this.liminalJetHalo.material.opacity = j * 0.28;
         // It stretches as the drive comes up and stands almost still once it
         // is in: there is nothing for it to push against out here.
-        this.liminalFlame.scale.set(1 + j * 0.25, 0.45 + k * 1.25, 1 + j * 0.25);
+        this.liminalFlame.scale.set(1 + j * 0.25, 0.45 + fk * 1.25, 1 + j * 0.25);
       }
       // A drive that is bending the space round the round is felt through the
       // hull, and the shot says so.
@@ -5566,61 +5002,117 @@
       // size it is drawn at is simply that range - which is why it fills the
       // window at periapsis without anything having to be keyframed.
       if (prof.assist) {
-        const near = ph.key === "cruise" || ph.key === "jupiter" || ph.key === "assist";
+        // EVERY BEAT THE PLANET IS THERE FOR, and it is not only the three the
+        // gravity assist is written in. A jump flight drops its pellet AT
+        // periapsis and rides the blast out past Pluto, and those beats had no
+        // Jupiter in them at all: the planet grew into the window over the
+        // approach and then blinked out at the exact second the charge went off
+        // against it. It stays until the round is past Pluto and out of the
+        // system.
+        const near = ph.key === "cruise" || ph.key === "jupiter" || ph.key === "assist" ||
+          ph.key === "charge" || ph.key === "blast" || ph.key === "pluto";
         if (near) this._ensure("jupiter");
         if (this.jupiter) {
           this.jupiter.visible = near;
           if (near) {
             // Eleven Earth radii across, at the range the column reads.
-            const d = EARTH_VIS_R * 11.2 * (1 + this.alt / JUPITER_R_M);
+            //
+            // EXCEPT ON THE CRUISE, where the column is still the height above
+            // Earth and reads a few hundred kilometres - which, taken as a
+            // range to Jupiter, put the camera nine units off a body six
+            // hundred and seventy-two across. The planet was not missing on
+            // that beat: the shot was INSIDE it, looking at the unlit back of
+            // its own far wall. The cruise is flown at a distance of its own
+            // and the range only takes over once the approach starts, and the
+            // whole thing is clamped so the sphere can be neither entered nor
+            // pushed past the far camera's 20000-unit plane.
+            const dRaw = EARTH_VIS_R * 11.2 * (1 + this.alt / JUPITER_R_M);
+            const d = ph.key === "cruise"
+              ? lerp(JUPITER_FAR_D, JUPITER_NEAR_D, smooth(k))
+              : clamp(dRaw, EARTH_VIS_R * 11.2 * 1.6, JUPITER_NEAR_D);
             // Off to the side it is being swung around, and swinging: on the
             // way in it is ahead, at periapsis it is hard over, on the way out
             // it is behind. That arc IS the assist.
-            const swing = ph.key === "cruise" ? -0.5
-              : ph.key === "jupiter" ? lerp(-0.5, -1.25, smooth(k))
-                : lerp(-1.25, -2.5, smooth(k));
-            const el = ph.key === "assist" ? -0.12 * smooth(k) : -0.05;
-            this._placeFar(this.jupiter, swing, el, Math.min(d, 7200));
+            // AND THE ARC HAS TO STAY IN THE WINDOW. A bearing is measured
+            // off the way the camera is LOOKING, and half a frame is about
+            // 0.78 radians: the old arc swung the planet to 1.25 and then to
+            // 2.7, which is behind the player's head, so Jupiter grew for a
+            // few seconds on the cruise and was off the side of the frame for
+            // every beat it was actually close on. It crosses the frame
+            // instead, and only leaves it once the round is past and going
+            // away - which is the one beat it is meant to be astern on.
+            const swing = ph.key === "cruise" ? -0.30
+              : ph.key === "jupiter" ? lerp(-0.30, -0.52, smooth(k))
+                // The pellet is dropped with the planet hard over and holding:
+                // the round is at the bottom of the well and going nowhere else
+                // for five seconds.
+                : ph.key === "charge" ? lerp(-0.52, -0.60, smooth(k))
+                  : ph.key === "blast" ? lerp(-0.60, -1.5, smooth(k))
+                    : ph.key === "pluto" ? lerp(-1.5, -2.6, smooth(k))
+                      : lerp(-0.52, -2.2, smooth(k));
+            const el = ph.key === "assist" || ph.key === "blast" ? -0.12 * smooth(k)
+              : ph.key === "pluto" ? -0.12 : -0.05;
+            this._placeFar(this.jupiter, swing, el, d);
             this.jupiterBody.rotation.y = this._time * 0.03;
           }
         }
       }
 
-      // ---- THE HOLE ------------------------------------------------------
-      if (prof.jump) {
-        const open = ph.key === "wormhole" ? smooth(clamp01(k / 0.35))
-          : (ph.key === "throat" ? 1 : 0);
-        if (open > 0.001 || ph.key === "sbspool") this._ensure("wormhole");
-        if (this.wormhole) {
-          this.wormhole.visible = open > 0.001;
-          if (this.wormhole.visible) {
-            // It grows from nothing to filling the frame, dead ahead, and
-            // then the round goes INTO it: past the halfway point of the
-            // throat the mouth is behind the camera and what is on screen is
-            // the far sky it was carrying.
-            const grow = ph.key === "wormhole" ? open : 1;
-            const inside = ph.key === "throat" ? smooth(k) : 0;
-            const d = lerp(3400, 190, grow) * (1 - inside * 0.92);
-            this._placeFar(this.wormhole, 0, 0.02, Math.max(30, d));
-            this.wormhole.scale.setScalar(lerp(0.35, 1, grow));
-            this.holeRim.material.opacity = 0.35 + 0.35 * Math.sin(this._time * 2.1) * grow;
-            this.holeGlow.intensity = 2.5 * grow;
-            // AND THEN IT GETS OUT OF THE WAY. Past the first third of the
-            // throat the mouth fades off, because what should be on screen
-            // from there on is the real Andromeda plate closing on the round,
-            // not a painted sky on the inside of a sphere. A sphere the
-            // camera sits inside of for eleven seconds is a tunnel, and the
-            // tunnel belongs to Zeta.
-            const shed = ph.key === "throat" ? smooth(clamp01((k - 0.3) / 0.5)) : 0;
-            this.holeMouth.material.transparent = true;
-            this.holeMouth.material.depthWrite = shed < 0.5;
-            this.holeMouth.material.opacity = 1 - shed;
-            this.holeMouth.material.color.setRGB(1, 1, 1);
+      // ---- THE CHARGES ---------------------------------------------------
+      if (prof.jump) this._updateCharges(dt, ph);
+
+      // ---- THE RED MOON --------------------------------------------------
+      // The mass the charge is dropped against on the way out of Andromeda,
+      // there being no Jupiter within two and a half million light years.
+      // AND IT IS IN TITANIA'S SKY FROM THE PAD, not only at the assist.
+      // Luna is no longer drawn over a world in another galaxy - see
+      // _updateMoon - so a launch off the embassy climbed away under an empty
+      // sky. The moon that world actually has is up there, and it is the same
+      // one the charge is dropped against an hour later.
+      if (prof.fromWorld === "titania" || this._homeId === "titania") {  // i18n-ignore  world id
+        const nearRed = ph.key === "redmoon" || ph.key === "charge" || ph.key === "blast";
+        const overhead = !nearRed && this._homeId === "titania" &&
+          HOME_SKY.indexOf(ph.key) < 0;                                 // i18n-ignore  world id
+        if (nearRed || overhead) this._ensure("redMoon");
+        if (this.redMoon) {
+          this.redMoon.visible = nearRed || overhead;
+          if (overhead) {
+            // Hung the way the Moon is hung over Earth: a fixed bearing off
+            // the camera, so it is in shot at every yaw, and far enough out to
+            // be a disc in a sky rather than a thing being flown at.
+            this._placeFar(this.redMoon, MOON_BEARING * 0.8, 0.2, 3400);
+            this.redMoonBody.rotation.y = this._time * 0.02;
+          } else if (nearRed) {
+            // Closed on, swung round the back of and left behind: the same arc
+            // Jupiter is flown at the other end of the crossing.
+            const rd = MOON_VIS_R * 1.4 * (1 + this.alt / (MOON_R_M * 0.6));
+            // Kept inside the frame while it is close, for the reason the
+            // swing at Jupiter is: a bearing past about 0.78 radians is off
+            // the side of the window and a bearing past 1.6 is behind it.
+            const swing = ph.key === "redmoon" ? lerp(-0.26, -0.55, smooth(k))
+              : ph.key === "charge" ? -0.55 : lerp(-0.55, -2.2, smooth(k));
+            this._placeFar(this.redMoon, swing, -0.08, clamp(rd, MOON_VIS_R * 4, 7000));
+            this.redMoonBody.rotation.y = this._time * 0.04;
           }
         }
-        // A hole being opened is felt through the hull long before it is seen.
-        if (ph.key === "sbspool") this.shake = Math.max(this.shake, 0.3 + smooth(k) * 1.2);
-        if (ph.key === "throat") this.shake = Math.max(this.shake, 0.6);
+      }
+
+      // ---- THE BREACH, AND THE GOLD --------------------------------------
+      if (prof.jump) {
+        const gold = ph.key === "gods"
+          ? smooth(clamp01(k / 0.14)) * (1 - smooth(clamp01((k - 0.82) / 0.18)))
+          : (ph.key === "breach" ? smooth(clamp01((k - 0.7) / 0.3)) * 0.45 : 0);
+        if (gold > 0.001) this._ensure("gods");
+        if (this.gods) {
+          this.gods.visible = gold > 0.001;
+          this.gods.material.opacity = gold;
+          this.godsLight.visible = this.gods.visible;
+          this.godsLight.intensity = gold * 4.5;
+        }
+        // Going through something faster than it can be gone through is felt
+        // the whole way, and hardest just before it gives.
+        if (ph.key === "breach") this.shake = Math.max(this.shake, 0.4 + smooth(k) * 2.2);
+        // The gold is the quietest place in the plugin. Nothing shakes in it.
       }
 
       // ---- THE TWO GALAXIES ----------------------------------------------
@@ -5669,18 +5161,107 @@
       }
     }
 
-    // Put something in the far scene at a bearing off the way the camera is
-    // looking, the same way the Moon is placed and for the same reason: the
-    // far camera swings wherever the player drags it, and a thing the flight
-    // is ABOUT may not be off the back of the frame.
-    _placeFar(obj, az, el, dist) {
-      const aim = this._farAim || this.farCamera;
-      const dir = this._farDir || (this._farDir = new THREE.Vector3());
-      const ce = Math.cos(el);
-      dir.set(Math.sin(az) * ce, Math.sin(el), -Math.cos(az) * ce)
-        .applyQuaternion(aim.quaternion);
-      obj.position.copy(aim.position).addScaledVector(dir, dist);
+    // THE STRING OF CHARGES, dropped and then gone off one after another.
+    //
+    // The pellets go out on the charge beat, one every few tenths of a second,
+    // and each one sits there being undecided. On the blast beat they resolve
+    // in the same order they were dropped, each ring opening to its own radius
+    // over RING_LIFE seconds - so what the round rides is a staircase of five
+    // shoves rather than one, which is what the beat's altitude curve is doing
+    // underneath.
+    _updateCharges(dt, ph) {
+      const dropping = ph.key === "charge";
+      const going = ph.key === "blast";
+      const on = dropping || going;
+      if (on) this._ensure("charges");
+      const g = this.charges;
+      if (!g) return;
+      g.visible = on;
+      if (!on) {
+        if (this.chargeLight) this.chargeLight.visible = false;
+        this._chargeT = 0;
+        return;
+      }
+      this._chargeT = (this._chargeT || 0) + dt;
+
+      let lit = 0;
+      this.pellets.forEach((p, i) => {
+        // One every fifth of the drop, so they leave as a string.
+        const out = clamp01((ph.progress - i / (CHARGE_COUNT * 1.25)) * 6);
+        if (dropping) {
+          p.visible = out > 0.01;
+          p.material.opacity = out;
+          // Dropped out of the tail and left behind, so the string trails.
+          p.position.set(
+            (this.rng() - 0.5) * 0.4,
+            -14 - i * 2.0,
+            -out * (40 + i * 26)
+          );
+          p.scale.setScalar(1 + Math.sin(this._time * 9 + i) * 0.14);
+        } else {
+          p.visible = false;
+        }
+      });
+
+      this.blastRings.forEach((r, i) => {
+        const core = r.userData.core;
+        const ball = r.userData.ball, heart = r.userData.heart;
+        if (!going) {
+          r.visible = false; core.visible = false;
+          if (ball) ball.visible = false;
+          if (heart) heart.visible = false;
+          return;
+        }
+        // Each one resolves a step behind the last. The stagger spans most of
+        // the beat, so the final ring is still opening as it ends.
+        const start = (i / CHARGE_COUNT) * 0.62;
+        const u = clamp01((ph.progress - start) / (RING_LIFE / 6));
+        const show = u > 0.001 && u < 1;
+        r.visible = show; core.visible = show;
+        if (ball) ball.visible = show;
+        if (heart) heart.visible = show;
+        if (!show) return;
+        lit++;
+        // Out from where the pellet was, to its own radius, thinning as it
+        // goes: a ring of light with nothing inside it.
+        const rad = r.userData.radius * u;
+        const z = -(40 + i * 26);
+        r.position.set(0, -14 - i * 2.0, z);
+        core.position.copy(r.position);
+        r.scale.setScalar(rad);
+        core.scale.setScalar(rad * 0.94);
+        // Edge-on to the round, so it is a ring rather than a disc.
+        r.rotation.set(0, 0, this._time * 0.4 + i);
+        core.rotation.copy(r.rotation);
+        const fade = Math.sin(clamp01(u) * Math.PI);
+        r.material.opacity = fade * 0.85;
+        core.material.opacity = fade * 0.5;
+        // The shell goes out with the ring and thins as it goes, because what
+        // is expanding is the same amount of having happened over a larger and
+        // larger surface. The heart of it stays small and stays white.
+        if (ball) {
+          ball.position.copy(r.position);
+          ball.scale.setScalar(rad * 0.78);
+          ball.material.opacity = fade * (1 - u * 0.55) * 0.5;
+        }
+        if (heart) {
+          heart.position.copy(r.position);
+          heart.scale.setScalar(rad * (0.10 + u * 0.18));
+          heart.material.opacity = fade * 0.9;
+        }
+        // And the round is shoved by each one as it passes.
+        this.shake = Math.max(this.shake, 2.2 * Math.pow(fade, 3));
+        this.impactFlash = Math.max(this.impactFlash, 0.5 * Math.pow(fade, 6));
+      });
+
+      if (this.chargeLight) {
+        this.chargeLight.visible = true;
+        this.chargeLight.intensity = dropping ? 0.5 : 1.2 + lit * 1.6;
+        this.chargeLight.position.set(0, -16, -60);
+      }
+      if (dropping) this.shake = Math.max(this.shake, 0.25);
     }
+
 
     // The room the shaft becomes in hexspace. Built with the corridor, because
     // it IS the corridor for a third of its length.
@@ -6062,111 +5643,8 @@
       return 1;
     }
 
-    // How far away the Moon is, in metres, right now.
-    //
-    // Everywhere but a liminal crossing it is the real distance, because it is
-    // the real Moon. During the crossing the altitude column IS the range to
-    // the Moon - that is what the column means from the transit on - and the
-    // spool beat is where the two swap over: the drive takes the three hundred
-    // and eighty-four thousand kilometres out in three seconds, which is the
-    // one thing in this plugin that is not a speed.
-    _moonRange(ph) {
-      if (!this.profile.lunar) return MOON_DIST_M;
-      if (ph.key === "liminal") {
-        // Geometric, not linear: the range falls by a constant factor per
-        // second, so the disc grows at a constant rate rather than arriving
-        // all at once at the end of the beat.
-        const to = Math.max(1, this.alt);
-        return MOON_DIST_M * Math.pow(to / MOON_DIST_M, smooth(ph.progress));
-      }
-      if (ph.key === "transit" || ph.key === "skim" ||
-        ph.key === "touchdown" || ph.key === "arrived") return this.alt;
-      return MOON_DIST_M;
-    }
 
-    _updateMoon(dt, ph) {
-      const range = this._moonRange(ph);
-      this.moonRangeM = range;
-      // Queued like everything else, and asked for on the first frame: it is
-      // one sphere and it is meant to be in the sky of every flight.
-      this._ensure("moon");
-      if (!this.moonPivot) return;
 
-      const prof = this.profile;
-      const lunar = !!prof.lunar;
-      // Where the Moon sits relative to the way the camera is looking.
-      //
-      //   the default     a little over twenty degrees to one side and up,
-      //                   which keeps it in shot at every yaw and every tilt
-      //   aiming          eased to dead ahead as the round turns onto it
-      //   the circuit     swung out and DOWN, because that is where a world
-      //                   is when you are going round it
-      let az = MOON_BEARING, el = 0.16;
-      if (lunar) {
-        const aiming = ph.key === "shroud" ? smooth(ph.progress)
-          : (["liminal", "transit", "flyby", "skim", "touchdown", "arrived"].indexOf(ph.key) >= 0 ? 1 : 0);
-        az = MOON_BEARING * (1 - aiming);
-        el = 0.16 * (1 - aiming);
-        if (ph.key === "flyby" || ph.key === "skim") {
-          // IN ORBIT. The Moon is no longer a thing ahead: it is the thing
-          // underneath, off to whichever side this pass was rolled onto, and
-          // it slides as the round goes round. k is the fraction of the whole
-          // circuit completed, so a three-revolution pass slides three times
-          // as fast as a one.
-          const into = ph.key === "flyby" ? smooth(clamp01(ph.progress / 0.3)) : 1;
-          const o = this.orbit;
-          az = lerp(0, o.side * 0.46, into);
-          el = lerp(0, -o.drop, into);
-          // A little weave off the circuit, so the round is visibly going
-          // ROUND something rather than hanging beside it.
-          const k = this._orbitPhase(ph);
-          az += o.side * 0.10 * Math.sin(k * Math.PI * 2) * into;
-          el += 0.07 * Math.cos(k * Math.PI * 2) * into;
-        }
-      }
-
-      // The direction, in camera space, turned into a world one - off the
-      // SHAKE-FREE aim, or the Moon swims about whenever the hull is hit.
-      const aim = this._farAim || this.farCamera;
-      const dir = this._moonDir || (this._moonDir = new THREE.Vector3());
-      const ce = Math.cos(el);
-      dir.set(Math.sin(az) * ce, Math.sin(el), -Math.cos(az) * ce).applyQuaternion(aim.quaternion);
-
-      // Sixty Earth radii out, and every metre of that closed by the drive.
-      // Capped inside the starfield: a Moon further out than the stars is a
-      // Moon with stars painted over it, because the star cloud writes no
-      // depth of its own.
-      const d = Math.min(MOON_VIS_R * (1 + range / MOON_R_M), 6000);
-      this.moonGroup.position.copy(aim.position).addScaledVector(dir, d);
-      this.moonPivot.rotation.set(0, 0, 0);
-
-      // Under the belt the sky is still a sky and the Moon wears a halo in it;
-      // above it there is nothing for a halo to be made of.
-      if (this.moonHalo) {
-        this.moonHalo.material.opacity = 0.28 * (1 - smooth(ramp(this.alt, 20000, 90000)));
-      }
-      // Close enough to be a place rather than a light, the disc is handed
-      // over to the ground in the near scene and taken off the far one.
-      this.moonGroup.visible = !(lunar && this.alt < 12000 &&
-        (ph.key === "skim" || ph.key === "touchdown" || ph.key === "arrived"));
-
-      // The surface streams past as the circuit is flown, about the axis this
-      // pass was rolled with: a polar orbit and an equatorial one over the same
-      // world do not look remotely alike, and the axis is what makes that so.
-      const o = this.orbit;
-      this.moonBody.rotation.z = o.incl;
-      this.moonBody.rotation.y = (lunar && (ph.key === "flyby" || ph.key === "skim"))
-        ? o.entry + o.dir * this._orbitPhase(ph) * Math.PI * 2 * o.revs
-        : this._time * 0.01;
-    }
-
-    // How far round the circuit the round is, 0 to 1. The skim is the last of
-    // it: the descent is flown on the same track, not on a new one.
-    _orbitPhase(ph) {
-      if (ph.key === "flyby") return ph.progress * 0.86;
-      if (ph.key === "skim") return 0.86 + ph.progress * 0.14;
-      return 0;
-    }
 
     _updateSun() {
       const e = this.env;
@@ -6287,203 +5765,11 @@
       this.bolt.intensity = Math.max(0, this.bolt.intensity - dt * 22);
     }
 
-    _updatePad(dt, ph) {
-      // The whole installation rides down as one: the ground drops away under
-      // a stationary vehicle. RAIL_LOAD_Y puts the round in the throat at T-0
-      // and keeps the barrel aligned on it all the way up. Culled once it is a
-      // speck, which is well before the far Earth fades in to replace it.
-      //
-      // COMING DOWN it is the same installation seen the other way up: the
-      // ship's rail hangs ABOVE the vehicle with its muzzle pointed at the
-      // planet, and what it recedes by is not the altitude but how far the
-      // round has already fallen away from it. The barrel is flipped once at
-      // build time, which puts its local axis back along the way the round is
-      // travelling and lets every ring, bank and gantry below read unchanged.
-      const away = Math.max(0, this.descent
-        ? this.startAlt - this.alt
-        : this.alt - this.startAlt);
-      const gone = away > 60000;
-      this.pad.visible = !gone;
-      // The far gun is asked for while it is still under the horizon.
-      if (this.destSite && (this.descent ? this.alt < 90000 : this.downrange > 0.4)) this._ensure("padB");
-      if (this.padB) this._updateArrivalPad(dt, ph);
-      if (gone) return;
-      const loadA = loadYOf(this.site);
-      // HOW FAR UP THE BORE THE ROUND IS. The vehicle never moves, so the pad
-      // recedes by this much - and on a gun that is laid over, it recedes
-      // along the BARREL and not along the vertical: the round is inside a
-      // tube, and the tube is at an angle. Resolved into the two axes the pad
-      // is moved in, which keeps the bullet exactly on the bore all the way up
-      // a diagonal launch the same way it sits on it up a vertical one.
-      const bore = this.descent ? (away + loadA) : (this.alt + loadA);
-      const tilt = this._railTilt(false);
-      const ct = Math.cos(tilt), st = Math.sin(tilt);
-      this.pad.position.y = this.descent ? bore : -bore * ct;
-      this.pad.position.z = (this.downrangeZ || 0) + (this.descent ? 0 : bore * st);
 
-      // The rings.
-      //
-      // COUNT: they charge bottom to top, one bank at a time, and hold.
-      // SHOT:  they fire in a wave that tracks the round itself. Each ring is
-      //        white as the bullet passes it, amber for a moment behind, and
-      //        dead after - so the discharge reads as one pulse a kilometre
-      //        long chasing something already gone.
-      const charging = ph.key === "countdown" ? ph.progress : (ph.index > 1 ? 1 : 0);
-      const firing = ph.key === "coil";
-      const bulletY = away + loadA;
-
-      // The lid over a vault's muzzle. Shut for the whole count, thrown open
-      // in the last second of it, and left open behind the shot.
-      if (this.hatchA) {
-        const open = ph.key === "countdown" ? smooth(ramp(ph.progress, 0.88, 1))
-          : (ph.index > 1 ? 1 : 0);
-        this._updateHatch(this.hatchA, open, true);
-      }
-      this.railA.rings.forEach((ring, i) => {
-        const k = ring.userData.k;
-        let e = 0;
-        if (charging > 0) e = k <= charging ? 0.3 + 0.18 * Math.sin(this._time * 8 + i * 0.7) : 0;
-        if (firing) {
-          // Metres between this ring and the round. Ahead of it the coil is
-          // already pulling; behind it, it is collapsing.
-          const d = ring.userData.y - bulletY;
-          const ahead = d > 0 ? clamp01(1 - d / 120) : 0;
-          const behind = d <= 0 ? clamp01(1 + d / 220) : 0;
-          e = Math.max(e * 0.25, ahead * 6.5 + behind * 2.6);
-        } else if (ph.index > 2) {
-          e = 0;
-        }
-        ring.material.emissiveIntensity = e;
-      });
-
-      // The banks come up during the count in the same order, and dump on the
-      // shot.
-      if (this.railA.capacitors) {
-        this.railA.capacitors.forEach((band, i) => {
-          const k = (i + 0.5) / this.railA.capacitors.length;
-          let e = charging > 0 && k <= charging ? 0.5 + 0.35 * Math.sin(this._time * 6 + i) : 0;
-          if (firing) e = 3.2 * (1 - ph.progress);
-          band.material.emissiveIntensity = e;
-        });
-      }
-
-      // Obstruction strobes, out of phase up the tower.
-      if (this.railA.strobes) {
-        const lit = this.env.night || this.env.storm || this.env.wet;
-        this.railA.strobes.forEach((m) => {
-          const on = lit && ((this._time * 0.9 + m.userData.phase) % 1) < 0.14;
-          m.material.color.setHex(on ? 0xff6a4a : 0x3a0806);
-        });
-      }
-
-      // The gantry swings clear in the last two seconds of the count.
-      if (ph.key === "countdown") {
-        const swing = smooth(ramp(ph.progress, 0.78, 0.97));
-        this.railA.gantry.rotation.y = swing * 1.4;
-        this.railA.gantry.position.x = swing * 90;
-      } else if (ph.index > 1) {
-        this.railA.gantry.rotation.y = 1.4;
-        this.railA.gantry.position.x = 90;
-      }
-
-      if (this.flares) {
-        this.flares.forEach((f, i) => {
-          f.scale.y = 0.7 + Math.sin(this._time * 5 + i * 2) * 0.3;
-        });
-      }
-      if (this.meridian) this.meridian.material.opacity = this.env.night ? 0.62 : 0.2;
-    }
-
-    // The receiving gun.
-    //
-    // It comes up out of the haze ahead, and in the last beat the round is
-    // INSIDE it: the pad is offset by the same RAIL_LOAD_Y the launching one
-    // used, so the barrel axis runs exactly through the stationary vehicle and
-    // the muzzle swallows it at the top of the capture. The rings then fire in
-    // reverse and take the speed back out magnetically - a mass driver run
-    // backwards is a brake, and the energy goes back into the capacitor halls
-    // it came out of at the other end.
-    _updateArrivalPad(dt, ph) {
-      const b = this.padB;
-      const rail = this.railB;
-      const capturing = ph.key === "capture" || ph.key === "arrived";
-      // A hop closes on the far gun along the ground track. A descent closes
-      // on it straight down, so "how far there is to go" is the altimeter and
-      // the gun is directly under the vehicle from the moment it can be seen.
-      const closing = this.descent ? clamp01(1 - this.alt / 60000) : this.downrange;
-      const show = this.alt < 60000 && closing > 0.55;
-      b.visible = show;
-      if (!show) return;
-
-      const ahead = this.descent ? 0 : (1 - this.downrange) * DOWNRANGE_VIS_M;
-      // The same decomposition the launching pad uses, mirrored: the far gun
-      // is laid over toward the incoming round, so the round runs down ITS
-      // bore at the same angle it left the other one at.
-      const boreB = this.alt + loadYOf(this.destSite);
-      const tiltB = this._railTilt(true);
-      b.position.y = -boreB * Math.cos(tiltB);
-      b.position.z = -ahead + boreB * Math.sin(tiltB);
-
-      // A vault expecting a round has the lid open long before it gets there.
-      if (this.hatchB) {
-        this._updateHatch(this.hatchB, smooth(clamp01((closing - 0.6) / 0.2)), true);
-      }
-
-      // Approach lights: a ladder walking inward round the muzzle, faster the
-      // closer it gets, solid once the round is committed to the bore.
-      if (this.approachLights) {
-        const k = clamp01((closing - 0.94) / 0.06);
-        this.approachLights.forEach((L) => {
-          const on = capturing
-            ? true
-            : ((Math.floor(this._time * (2 + k * 10)) + L.userData.order) % 10) < 3;
-          L.material.color.setHex(on ? 0x8affc4 : 0x0d2a18);
-        });
-        if (this.approachGlow) this.approachGlow.intensity = 0.3 + k * 3.4;
-      }
-
-      if (!rail) return;
-      const bulletY = this.alt + loadYOf(this.destSite);   // the receiving bore, and the round is falling down it
-
-      // The braking wave. The coil the round is passing is the one doing the
-      // work, and the ones it has already cleared hold it on the axis, so the
-      // bright band sits AT the round and the afterglow trails upward behind
-      // it - the launching gun's wave, running the other way.
-      rail.rings.forEach((ring, i) => {
-        let e = 0;
-        if (capturing) {
-          const d = ring.userData.y - bulletY;
-          const at = clamp01(1 - Math.abs(d) / 110);
-          const behind = d > 0 ? clamp01(1 - d / 260) : 0;
-          e = at * 6.0 + behind * 1.6;
-        } else if (closing > 0.7) {
-          // Standing by: a slow breathing charge all the way up the bore, so
-          // the gun visibly knows something is coming.
-          e = 0.22 + 0.16 * Math.sin(this._time * 3 - i * 0.28);
-        }
-        ring.material.emissiveIntensity = e;
-      });
-
-      // The banks FILL as the round is braked: the shot is being paid back.
-      if (rail.capacitors) {
-        const soak = capturing ? smooth(ph.key === "arrived" ? 1 : ph.progress) : 0;
-        rail.capacitors.forEach((band, i) => {
-          const k = (i + 0.5) / rail.capacitors.length;
-          band.material.emissiveIntensity = k <= soak ? 1.4 + 0.5 * Math.sin(this._time * 7 + i) : 0;
-        });
-      }
-
-      if (rail.strobes) {
-        const lit = this.env.night || this.env.storm || this.env.wet;
-        rail.strobes.forEach((m) => {
-          const on = lit && ((this._time * 0.9 + m.userData.phase) % 1) < 0.14;
-          m.material.color.setHex(on ? 0xff6a4a : 0x3a0806);
-        });
-      }
-    }
 
     _updateVehicle(dt, ph) {
       const alt = this.alt;
+      this._updateNavLights(dt);
 
       // The nose heats where the air and the speed overlap and nowhere else,
       // so it lights on the way up through max-Q and goes out above it.
@@ -6828,7 +6114,15 @@
       this._pendingSe.push(heavy
         ? { name: SE.hitHeavy, volume: 48, pitch: 70 + Math.random() * 25 }
         : { name: SE.hitLight, volume: 30, pitch: 95 + Math.random() * 45 });
-      if (heavy) this._say("impact", { pct: Math.max(1, Math.round(this.integrity)) });
+      if (heavy) {
+        // A hull report is worth making when the number has actually moved.
+        // Every heavy hit takes a sliver; the crew calls it out when a tenth
+        // of the round has gone since the last time anybody mentioned it.
+        const pct = Math.max(1, Math.round(this.integrity));
+        if (this._lastImpactPct == null || this._lastImpactPct - pct >= 8) {
+          if (this._say("impact", { pct: pct })) this._lastImpactPct = pct;
+        }
+      }
 
       // A heavy one that finds the stage instead of the hull opens the tanks.
       // It is the loudest thing that happens on the flight and it costs the
@@ -6856,6 +6150,29 @@
       if (!any) this.sparkMat.opacity = Math.max(0, this.sparkMat.opacity - dt * 2);
     }
 
+    // WHERE A MOUNTED HULL SITS RELATIVE TO ITS OWN GUN.
+    //
+    // The rail occupies the bore from the breech to the muzzle - upward off a
+    // launching gun, downward off one firing at a planet - and the ship lies
+    // alongside it: nose along the bore, so the recoil runs up the keel, and
+    // out to one side by half its beam plus the gun's frame, so the rail is on
+    // the skin rather than through the middle of the hold. Centred on the
+    // middle of the rail, because that is where anybody would bolt it.
+    //
+    // baseY is the breech in world Y, and down says which way the bore runs.
+    _seatHull(baseY, down) {
+      const H = RAIL_LEN_M * (this.site.railScale || 1);
+      const off = (this.shipHalfW || 13) + 6;
+      this.shipGroup.position.set(-off, baseY + (down ? -H * 0.5 : H * 0.5), 0);
+      // Nose up the bore: the model is built looking down its own +Z, and a
+      // quarter turn about X stands that axis on the one the round travels.
+      this.shipGroup.rotation.x = down ? Math.PI / 2 : -Math.PI / 2;
+      this.shipGroup.rotation.y = Math.sin(this._time * 0.2) * 0.02;
+      // And it turns slowly about its own keel, which after that quarter turn
+      // is local Z. Nothing on a ship this size is ever quite still.
+      this.shipGroup.rotation.z = this._time * 0.05;
+    }
+
     _updateShip(dt, ph) {
       // COMING DOWN, the ship is not the thing at the end of the flight: it is
       // the thing the flight leaves. It hangs over the rail for the count and
@@ -6867,19 +6184,17 @@
         if (!this.shipGroup) return;
         this.shipGroup.visible = away < 26000;
         if (!this.shipGroup.visible) return;
-        // THE GUN IS MOUNTED ON THE SHIP, so the ship is drawn where the gun
-        // is: the hull sits directly on the breech - which, with the whole
-        // installation turned over to fire downward, is its topmost point -
-        // and the mast hangs off it pointing at the planet. It goes away
-        // upward with the rail, as one object, because that is what it is.
-        const padY = away + loadYOf(this.site);
-        const seat = Math.max(20, Math.abs(this.dockZ) * 0.34);
-        this.shipGroup.position.set(0, padY + seat, 0);
-        this.shipGroup.rotation.y = Math.PI / 2 + this._time * 0.03;
-        this.shipGroup.rotation.z = Math.sin(this._time * 0.2) * 0.02;
+        // THE GUN RUNS ALONG THE SHIP. It is a rail seated on the hull's
+        // flank and a third of its length, not a tower the hull is moored to,
+        // so the ship is drawn lying ALONG the bore with the rail beside it -
+        // and the round leaves down the ship's own axis, which is the only
+        // direction a hull can take that kind of push from. Coming down the
+        // whole installation is upside down, so the hull straddles the rail
+        // above the round and goes away upward with it, as one object.
+        this._seatHull(away + loadYOf(this.site), true);
         if (this.dockCollar) {
           // The collar the round was sitting in, opening under the hull.
-          this.dockCollar.position.set(0, -seat * 0.8, 0);
+          this.dockCollar.position.set(this.shipHalfW || 13, 0, 0);
           this.dockGlow.intensity = away < 400 ? 2.2 : 0.4;
           this.dockLights.forEach((L, i) => {
             const on = ((Math.floor(this._time * 4) + i) % 8) < 3;
@@ -6888,6 +6203,23 @@
         }
         return;
       }
+      // GOING UP OFF A HULL, which is the same picture the other way round:
+      // the ship lies along the rail, the rail rides down under a climbing
+      // round with the rest of the installation, and both are culled together.
+      if (this.site.mounted && !this.destSite) {
+        const gone = (this.alt - this.startAlt) > 60000;
+        if (!gone) this._ensure("ship");
+        if (!this.shipGroup) return;
+        this.shipGroup.visible = !gone;
+        if (gone) return;
+        this._seatHull(this.pad.position.y, false);
+        if (this.dockCollar) {
+          this.dockCollar.position.set(this.shipHalfW || 13, 0, 0);
+          this.dockGlow.intensity = (this.alt - this.startAlt) < 400 ? 2.2 : 0.4;
+        }
+        return;
+      }
+
       if (!this.shipGroup) {
         // Queued with the scene: asked for as the belt is cleared, which is a
         // whole phase before it has to be on screen.
@@ -7081,9 +6413,10 @@
   // colour. Not every beat: a tape with eighteen labels on it is a wall.
   // i18n-ignore-start  phase keys
   const TAPE_MARKS = {
-    moon: ["liminal", "transit", "flyby", "skim", "touchdown"],
+    moon: ["liminal", "transit", "approach", "flyby", "skim", "touchdown"],
     zeta: ["solomon", "hexspace", "thewhite", "emerge", "refuel", "transfer", "skim"],
-    titania: ["cruise", "jupiter", "assist", "escape", "sbspool", "wormhole", "throat", "emerge", "skim"],
+    titania: ["cruise", "jupiter", "charge", "blast", "pluto", "breach", "gods", "crossing", "emerge", "approach", "skim"],
+    earth: ["emerge", "moonbrake", "kessler", "reentry", "capture"],
   };
   // i18n-ignore-end
 
@@ -7096,8 +6429,9 @@
     TAPE_COLOURS = {
       liminal: P.amber, transit: P.amber, solomon: P.amber, hexspace: P.cyan,
       thewhite: P.ink || "#e8f0f8", emerge: P.green, refuel: P.cyan, transfer: P.amber,
-      cruise: P.dim, jupiter: P.amber, assist: P.amber, escape: P.dim,
-      sbspool: P.red, wormhole: P.red, throat: P.red,
+      cruise: P.dim, jupiter: P.amber, approach: P.cyan, moonbrake: P.green,
+      charge: P.magenta, blast: P.red, pluto: P.dim, breach: P.red,
+      gods: P.amber, crossing: P.cyan, redmoon: P.red, cleanSky: P.dim,
       flyby: P.green, skim: P.green, touchdown: P.green,
     };
     // i18n-ignore-end
@@ -7154,213 +6488,15 @@
     ];
   }
 
-  class LaunchHud {
-    constructor(profile) {
-      this.profile = profile || PROFILES.orbital;
-      const layer = hudReady() ? HUD.layer(HUD_BASE_W()) : null;
-      this.layer = layer;
-      this.sprite = layer ? layer.sprite : new Sprite(new Bitmap(8, 8));
-      this.bmp = layer ? layer.bitmap : this.sprite.bitmap;
-      this.w = layer ? layer.w : 320;
-      this.h = layer ? layer.h : 180;
-      this.bands = tapeBands(this.profile);
-      this.lines = [];
-      this.caution = 0;
-      this.glitch = 0;
-    }
-
-    push(text) {
-      this.lines.push(text);
-      while (this.lines.length > 5) this.lines.shift();
-    }
-
-    // st: { time, phase, alt, vspeed, integrity, plates, site, env, free }
-    draw(st) {
-      if (!hudReady()) return;
-      const b = this.bmp;
-      const P = HUD.PAL;
-      b.clear();
-
-      this._drawTape(st, P);
-      this._drawBlock(st, P);
-      this._drawClock(st, P);
-      this._drawLog(st, P);
-      this._drawCaution(st, P);
-      this._drawHints(st, P);
-      if (b._baseTexture && b._baseTexture.update) b._baseTexture.update();
-    }
-
-    // --- the altimeter tape ------------------------------------------------
-
-    _drawTape(st, P) {
-      const b = this.bmp;
-      const x = this.w - 52;
-      const y0 = 18;
-      const H = this.h - 44;
-      const yOf = (alt) => y0 + Math.round((1 - tapeFraction(alt, this.profile)) * H);
-
-      HUD.panel(b, x, y0 - 8, 46, H + 16, { fill: "#0a1220", dither: true });
-
-      // THE TICKS ARE ALWAYS DRAWN; THE LABELS ARE NOT.
-      //
-      // A tape with eighteen beats on it puts several of them within a couple
-      // of pixels of each other, and two eight-pixel labels two pixels apart
-      // are one unreadable smear. So a label is only drawn where there is room
-      // for it since the last one, and the tick - which is what actually says
-      // where the beat is - is drawn either way.
-      const LABEL_H = 9;
-      let lastLabel = null;
-      // Top of the tape downward, which is the order the beats happen in on
-      // every plan that climbs, so a dropped label is always the later of two.
-      const ordered = this.bands.slice().sort((p, q) => yOf(p.from) - yOf(q.from));
-      ordered.forEach((band) => {
-        const yb = yOf(band.from);
-        const yt = band.to == null ? yb : yOf(band.to);
-        const h = band.to == null ? 1 : Math.max(1, yb - yt);
-        if (band.to == null) b.fillRect(x + 2, yb, 22, 1, band.color);
-        else b.fillRect(x + 2, yt, 4, h, band.color);
-
-        const ly = band.to == null ? yb - LABEL_H : yt + Math.max(0, h / 2 - 5);
-        if (lastLabel !== null && Math.abs(ly - lastLabel) < LABEL_H) return;
-        lastLabel = ly;
-        HUD.text(b, t("band." + band.key), x + (band.to == null ? 2 : 8), ly,
-          band.to == null ? 42 : 38, "left", band.color, 8, { shadow: true });
-      });
-
-      // The mark. A wedge, the altitude beside it, and a trail showing where
-      // it has already been.
-      const my = clamp(yOf(st.alt), y0, y0 + H);
-      b.fillRect(x + 2, my, 4, y0 + H - my, "#1d4d7a");
-      b.fillRect(x - 6, my - 1, 10, 3, P.ink);
-      b.fillRect(x - 8, my, 2, 1, P.ink);
-      HUD.text(b, altText(st.alt), x - 64, my - 5, 56, "right", P.ink, 8);
-
-      HUD.text(b, t("hud.altitude"), x, y0 - 18, 40, "left", P.dim, 8);
-      // A ground-track bar under the tape, for the hop only: the parabola is
-      // as much a distance as it is a height.
-      if (this.profile.downrange) {
-        const gy = this.h - 30;
-        HUD.bar(b, 6, gy, this.w - 60, 5, clamp01(st.downrange), {
-          seg: 2, gap: 1, color: P.amber,
-        });
-        HUD.text(b, siteName(st.fromSite), 6, gy - 9, 60, "left", P.dim, 8);
-        HUD.text(b, siteName(st.toSite), this.w - 120, gy - 9, 60, "right", P.dim, 8);
-      }
-    }
-
-    // --- the numbers -------------------------------------------------------
-
-    _drawBlock(st, P) {
-      const b = this.bmp;
-      const x = 6, y = 18, w = 116;
-      HUD.panel(b, x, y, w, 74, { fill: "#0a1220", dither: true });
-
-      // SPEED first, because it is what a gun is for: the whole velocity over
-      // the ground, with the rate of climb under it.
-      HUD.text(b, t("hud.speed"), x + 4, y + 3, w - 8, "left", P.dim, 8);
-      HUD.text(b, speedText(st.speed), x + 4, y + 12, w - 8, "right", P.amber, 16);
-      HUD.text(b, t("hud.velocity"), x + 4, y + 30, w - 8, "left", P.dim, 8);
-      HUD.text(b, speedText(st.vspeed), x + 4, y + 30, w - 8, "right", P.cyan, 8);
-
-      // On a hop the second line is the distance still to run; on the orbital
-      // flight there is nowhere to run to, so it is the air outside instead.
-      if (this.profile.downrange) {
-        HUD.text(b, t("hud.downrange"), x + 4, y + 42, w - 8, "left", P.dim, 8);
-        HUD.text(b, altText(Math.max(0, st.trackM - st.downrangeM)), x + 4, y + 42, w - 8, "right", P.amber, 8);
-      } else {
-        HUD.text(b, t("hud.density"), x + 4, y + 42, w - 8, "left", P.dim, 8);
-        HUD.text(b, pctText(st.density * 100), x + 4, y + 42, w - 8, "right", P.dim, 8);
-      }
-
-      HUD.text(b, t("hud.plates", { n: st.plates }), x + 4, y + 54, w - 8, "left", P.dim, 8);
-      HUD.text(b, t("hud.stages", { n: this.profile.stages }), x + 4, y + 54, w - 8, "right", P.dim, 8);
-
-      // Hull integrity. The bar runs green to red and the number is never
-      // allowed to read zero, because it never is zero.
-      const iy = y + 78;
-      HUD.panel(b, x, iy, w, 26, { fill: "#0a1220", dither: true });
-      const frac = clamp01(st.integrity / 100);
-      const crit = st.integrity < 25;
-      const blink = crit && (Math.floor(st.time * 6) % 2 === 0);
-      HUD.text(b, t("hud.integrity"), x + 4, iy + 2, w - 8, "left", crit ? P.red : P.dim, 8);
-      HUD.text(b, pctText(st.integrity), x + 4, iy + 2, w - 8, "right",
-        blink ? P.ink : (crit ? P.red : P.green), 8);
-      HUD.bar(b, x + 4, iy + 13, w - 8, 9, frac, {
-        seg: 2, gap: 1,
-        colorAt: (k) => (k < 0.25 ? P.red : k < 0.55 ? P.amber : P.green),
-      });
-    }
-
-    // --- the clock ---------------------------------------------------------
-
-    _drawClock(st, P) {
-      const b = this.bmp;
-      const cx = Math.round(this.w / 2) - 44;
-      const inCount = st.phase.key === "countdown" || st.phase.key === "hold";
-      const zero = this.profile.start.coil;
-      const tMinus = inCount ? (zero - st.time) : (st.time - zero);
-
-      HUD.panel(b, cx, 3, 88, 22, { fill: "#0a1220", dither: true });
-      const big = (inCount ? "T-" : "T+") + clockText(Math.abs(tMinus));   // i18n-ignore  T-minus notation
-      const urgent = inCount && tMinus <= 5;
-      HUD.text(b, big, cx + 3, 5, 82, "center",
-        urgent && Math.floor(st.time * 4) % 2 === 0 ? P.red : P.ink, 16);
-
-      HUD.text(b, t("phase." + st.phase.key), cx + 3, 26, 82, "center",
-        st.phase.key === "kessler" ? P.red : P.cyan, 8);
-    }
-
-    // THE RADIO LOG, and where it is allowed to sit.
-    //
-    // It grows UPWARD from the bottom of the frame, which is the right way for
-    // a log to grow and the wrong way for this one: five lines put its top
-    // straight through the hull integrity bar in the block above it, and the
-    // one number on the HUD that matters was being covered by chatter about
-    // the weather. So it is lifted clear of the camera hint and the caution
-    // strip below it, and then CLAMPED off the bottom of the number block: if
-    // there is not room for every line, the oldest ones are simply not drawn
-    // rather than painted over the bar.
-    _drawLog(st, P) {
-      const b = this.bmp;
-      const LINE = 9;
-      // Clear of the hint line and the master caution strip at the foot.
-      const bottom = this.h - 32;
-      // The number block ends at y 18 + 74 + 4 + 26; nothing may go above it.
-      const top = 18 + 104 + 4;
-      const room = Math.max(1, Math.floor((bottom - top) / LINE));
-      const shown = this.lines.slice(Math.max(0, this.lines.length - room));
-      const y = bottom - shown.length * LINE;
-      shown.forEach((line, i) => {
-        HUD.text(b, line, 6, y + i * LINE, this.w - 60, "left",
-          i === shown.length - 1 ? P.ink : P.dim, 8);
-      });
-    }
-
-    // Master caution. During the belt the whole frame gets a red border and a
-    // strip of warning text that beats with the strobe on the hull.
-    _drawCaution(st, P) {
-      if (st.phase.key !== "kessler") return;   // the hop never has one
-      const b = this.bmp;
-      const beat = Math.floor(st.time * 5) % 2 === 0;
-      const col = beat ? P.red : "#5a0f0a";
-      b.fillRect(0, 0, this.w, 2, col);
-      b.fillRect(0, this.h - 2, this.w, 2, col);
-      b.fillRect(0, 0, 2, this.h, col);
-      b.fillRect(this.w - 2, 0, 2, this.h, col);
-      const cx = Math.round(this.w / 2) - 52;
-      HUD.panel(b, cx, this.h - 20, 104, 13, { fill: beat ? "#3a0d08" : "#180608" });
-      HUD.text(b, t("hud.caution"), cx + 2, this.h - 19, 100, "center", beat ? P.ink : P.red, 8);
-    }
-
-    _drawHints(st, P) {
-      const b = this.bmp;
-      HUD.text(b, t("hud.camHint"), 6, this.h - 11, this.w - 70, "left", P.dim, 8);
-      if (st.free) HUD.text(b, t("hud.freeCam"), 6, 6, 80, "left", P.amber, 8);
-    }
-  }
 
   // Readouts. Metres below a kilometre, kilometres above, and a speed that
   // switches to km/s where m/s stops being a number anyone can read.
+  // THE HUD AND THE PICKER LIVE IN RocketLaunchHUD.js, and the two holders
+  // below are what that file fills in. Nothing reads either of them until a
+  // launch is actually started, which is long after every plugin has loaded.
+  let LaunchHud = null;
+  let SiteCard = null;
+
   function altText(m) {
     if (m < 1000) return Math.round(m) + " " + t("unit.m");
     if (m < 100000) return (m / 1000).toFixed(1) + " " + t("unit.km");
@@ -7400,319 +6536,6 @@
   ];
   // i18n-ignore-end
 
-  class SiteCard {
-    // `lockSite` is a pad the command named. The card then never asks which
-    // pad this is - asking would let the player answer something the command
-    // did not mean, and a flight that was told to leave the ship would go up
-    // off a coast in Apulia instead - and the flight plans it offers are the
-    // ones THAT pad can fly.
-    constructor(env, forcedProfile, lockSite, destOnly) {
-      const layer = hudReady() ? HUD.layer(HUD_BASE_W()) : null;
-      this.layer = layer;
-      this.sprite = layer ? layer.sprite : new Sprite(new Bitmap(8, 8));
-      this.bmp = layer ? layer.bitmap : this.sprite.bitmap;
-      this.w = layer ? layer.w : 320;
-      this.h = layer ? layer.h : 180;
-      this.env = env;
-      // The vault pad is resolved once, here: from now until the flight ends
-      // the set of pads is fixed, whatever the world does underneath.
-      refreshVaultSite();
-      this.sites = availableSites();
-      this.profiles = availableProfiles(lockSite || null);
-      this.index = Math.max(0, this.sites.indexOf(nearestSite()));
-      this.destIndex = 0;
-      this.profileIndex = Math.max(0, this.profiles.indexOf(forcedProfile || "orbital"));   // i18n-ignore  profile id
-      // With one flight plan left there is nothing to ask about: the mode page
-      // is skipped the same way a plugin command that names one skips it.
-      if (this.profiles.length < 2) forcedProfile = forcedProfile || this.profiles[0];
-      // The pad the command named, if it named one. It is not a default the
-      // player can move off: the pad page is not shown at all.
-      this.lock = lockSite && SITES[lockSite] ? lockSite : null;
-      if (this.lock) this.index = Math.max(0, this.sites.indexOf(this.lock));
-      // A forced profile skips straight to the pad; otherwise the mode is the
-      // first thing asked, because it changes what the pad even means. With
-      // the pad named too, the only question left is where this comes down.
-      this.page = forcedProfile ? (this.lock ? "dest" : "site") : "mode";   // i18n-ignore  page ids
-      // A plugin command that names the flight plan is not offering a choice,
-      // so backing out of the pad page leaves the scene instead of revealing
-      // the page that was deliberately skipped.
-      this.hasModePage = !forcedProfile;
-      this.destOnly = !!(this.lock && forcedProfile) || !!destOnly;
-      this._t = 0;
-    }
-
-    get siteId() { return this.sites[this.index] || this.sites[0]; }
-    get profileId() { return this.profiles[this.profileIndex] || this.profiles[0]; }
-    get profile() { return PROFILES[this.profileId]; }
-
-    // Where this flight may come down. One entry and the page is never shown;
-    // the single destination is simply printed on the pad card instead.
-    get destIds() { return destinationsFor(this.siteId, this.profile); }
-    get destId() { return this.destIds[Math.min(this.destIndex, this.destIds.length - 1)]; }
-    get needsDest() { return this.destIds.length > 1; }
-
-    get ids() {
-      if (this.page === "mode") return this.profiles;
-      if (this.page === "dest") return this.destIds;   // i18n-ignore  page id
-      return this.sites;
-    }
-    get count() { return this.ids.length; }
-    get cursor() {
-      if (this.page === "mode") return this.profileIndex;
-      if (this.page === "dest") return Math.min(this.destIndex, this.count - 1);   // i18n-ignore  page id
-      return this.index;
-    }
-    set cursor(v) {
-      if (this.page === "mode") this.profileIndex = v;
-      else if (this.page === "dest") this.destIndex = v;   // i18n-ignore  page id
-      else this.index = v;
-    }
-
-    move(d) {
-      this.cursor = (this.cursor + d + this.count) % this.count;
-      se(SE.cursor, 70);
-    }
-
-    // Returns true when the card is finished and the flight can start.
-    confirm() {
-      se(SE.select, 85);
-      // i18n-ignore-start  page ids
-      if (this.page === "mode") {
-        // With the pad already named there is nothing to ask on the pad page,
-        // so the plan leads straight to where this is coming down - or, with
-        // one destination, straight to the flight.
-        if (this.lock) {
-          if (!this.needsDest) return true;
-          this.destIndex = 0;
-          this.page = "dest";
-          return false;
-        }
-        this.page = "site";
-        return false;
-      }
-      if (this.page === "site" && this.needsDest) {
-        this.destIndex = 0;
-        this.page = "dest";
-        return false;
-      }
-      // i18n-ignore-end
-      return true;
-    }
-
-    // Returns true when there is nothing left to back out of.
-    back() {
-      se(SE.back, 80);
-      // i18n-ignore-start  page ids
-      if (this.page === "dest" && this.lock && this.hasModePage) { this.page = "mode"; return false; }
-      if (this.page === "dest" && !this.destOnly && !this.lock) { this.page = "site"; return false; }
-      if (this.page === "site" && this.hasModePage) { this.page = "mode"; return false; }
-      // i18n-ignore-end
-      return true;
-    }
-
-    // The screen rectangle of a card, so a click can be resolved against it.
-    rectOf(i) {
-      const n = this.count;
-      const cw = Math.floor((this.w - 10 * (n + 1)) / n);
-      return { x: 10 + i * (cw + 10), y: 34, w: cw, h: this.h - 72 };
-    }
-
-    hitTest(px, py) {
-      const sx = px / (Graphics.width / this.w);
-      const sy = py / (Graphics.height / this.h);
-      for (let i = 0; i < this.count; i++) {
-        const r = this.rectOf(i);
-        if (sx >= r.x && sx <= r.x + r.w && sy >= r.y && sy <= r.y + r.h) return i;
-      }
-      return -1;
-    }
-
-    update(dt) { this._t += dt; this.draw(); }
-
-    draw() {
-      if (!hudReady()) return;
-      const b = this.bmp;
-      const P = HUD.PAL;
-      b.clear();
-      b.fillRect(0, 0, this.w, this.h, "#04070e");
-      const mode = this.page === "mode";
-      const dest = this.page === "dest";   // i18n-ignore  page id
-      const title = mode ? t("select.modeTitle") : dest ? t("select.destTitle") : t("select.title");
-      const sub = mode ? t("select.modeSubtitle") : dest ? t("select.destSubtitle") : t("select.subtitle");
-      // The 16px title needs its own line: at y 10 with the subtitle at 26 the
-      // two were drawn through each other.
-      HUD.text(b, title, 0, 4, this.w, "center", P.cyan, 16);
-      HUD.text(b, sub, 0, 22, this.w, "center", P.dim, 8);
-
-      const ids = this.ids;
-      ids.forEach((id, i) => {
-        const r = this.rectOf(i);
-        const on = i === this.cursor;
-        const blink = on && Math.floor(this._t * 3) % 2 === 0;
-        HUD.panel(b, r.x, r.y, r.w, r.h, {
-          fill: on ? "#132238" : "#0a1220",
-          hi: on ? P.cyan : P.edgeHi,
-          dither: !on,
-        });
-        const cardTitle = mode ? t("mode." + id + ".name") : siteName(id);
-        const blurb = mode ? t("mode." + id + ".blurb") : siteBlurb(id);
-        HUD.text(b, cardTitle, r.x + 4, r.y + 4, r.w - 8, "center", on ? P.ink : P.dim, 16);
-        HUD.text(b, blurb, r.x + 4, r.y + 23, r.w - 8, "left", P.dim, 8, { lineHeight: 9 });
-
-        const rows = mode ? this._modeRows(id) : dest ? this._destRows(id) : this._siteRows(id);
-        // The flight itself, in the space the rows do not want. On the plan
-        // page it is the plan this card IS; on the pad and destination pages
-        // it is the plan the flight is already committed to, drawn from the
-        // pad or to the pad this card names.
-        const shape = mode ? PROFILES[id]
-          : (dest ? this._profileTo(id) : this._profileFrom(id));
-        this._drawTrace(b, P, {
-          x: r.x + 5, y: r.y + 34, w: r.w - 10,
-          h: r.h - 44 - rows.length * 10,
-        }, shape, on);
-        rows.forEach(([k, v], n) => {
-          const ry = r.y + r.h - 10 - (rows.length - n) * 10;
-          HUD.text(b, k, r.x + 5, ry, r.w - 10, "left", P.dim, 8);
-          HUD.text(b, v, r.x + 5, ry, r.w - 10, "right", on ? P.amber : P.dim, 8);
-        });
-        if (blink) b.fillRect(r.x, r.y + r.h - 2, r.w, 2, P.cyan);
-      });
-
-      HUD.text(b, t("select.confirm"), 0, this.h - 14, this.w, "center", P.ink, 8);
-    }
-
-    // The plan a flight leaving THIS pad would fly, and the plan a flight
-    // arriving at THIS pad would fly. Both are the answers the scene itself
-    // works out at launch, asked early so the card can draw them.
-    _profileFrom(id) {
-      const from = SITES[id], to = SITES[this.destId];
-      if (to && to.lunar && id !== MOON_SITE_ID) return lunarProfileFrom(from);
-      if (descentFrom(from, to)) return PROFILES.deorbit;
-      return this.profile;
-    }
-
-    _profileTo(id) {
-      const from = SITES[this.siteId], to = SITES[id];
-      if (to && to.lunar && this.siteId !== MOON_SITE_ID) return lunarProfileFrom(from);
-      if (descentFrom(from, to)) return PROFILES.deorbit;
-      return this.profile;
-    }
-
-    // THE SHAPE OF A FLIGHT.
-    //
-    // Altitude against time, on the same logarithmic tape the altimeter flies,
-    // so the first two kilometres of a launch are as readable as the last
-    // thousand. Drawn as a filled column chart rather than a line: at this
-    // resolution a one-pixel line through a log scale is a dotted mess, and a
-    // filled profile reads as a climb at a glance.
-    _drawTrace(b, P, box, prof, on) {
-      if (!prof || box.h < 24 || box.w < 40) return;
-      const total = prof.start._total;
-      if (!(total > 0)) return;
-      const BASE = box.y + box.h - 11;      // the ground line
-      const TOP = box.y + 8;                // the top of the plot
-      const H = BASE - TOP;
-      if (H < 12) return;
-
-      HUD.panel(b, box.x, box.y, box.w, box.h, { fill: "#07101c", dither: !on });
-
-      const yOf = (alt) => BASE - Math.round(tapeFraction(alt, prof) * H);
-
-      // THE BELT, where it is crossed: the one band on the chart that is a
-      // hazard rather than a height, so it is the one drawn in red.
-      if (prof.belt) {
-        const yIn = yOf(KESSLER_IN_M), yOut = yOf(KESSLER_OUT_M);
-        for (let y = yOut; y <= yIn; y++) {
-          if ((y & 1) === 0) b.fillRect(box.x + 1, y, box.w - 2, 1, "#3a0d08");
-        }
-        b.fillRect(box.x + 1, yOut, box.w - 2, 1, P.red);
-        b.fillRect(box.x + 1, yIn, box.w - 2, 1, P.red);
-      }
-      // The Karman line, on every plan that reaches it: the one height on the
-      // chart everybody already knows the meaning of.
-      if (prof.tapeTop > KARMAN_M) {
-        const yk = yOf(KARMAN_M);
-        for (let x = box.x + 1; x < box.x + box.w - 1; x += 3) b.fillRect(x, yk, 1, 1, P.cyan);
-      }
-
-      // The profile.
-      const x0 = box.x + 2, plotW = box.w - 4;
-      let prevKey = null;
-      for (let i = 0; i < plotW; i++) {
-        const t2 = (i / (plotW - 1)) * total;
-        const y = yOf(altitudeAt(t2, prof));
-        const ph = phaseAt(t2, prof);
-        // The powered beats are the bright ones. What is lit tells the shape
-        // of the plan as much as the height does: a hop is a parabola with a
-        // burn on the way down, a lunar crossing is a climb and then a cliff.
-        const hot = LIT_BEATS.indexOf(ph.key) >= 0;
-        const col = hot ? (on ? P.amber : "#7a5d22") : (on ? P.cyan : "#2a5a66");
-        b.fillRect(x0 + i, y, 1, BASE - y, hot ? (on ? "#3a2f14" : "#1a160c") : (on ? "#0d2733" : "#08161d"));
-        b.fillRect(x0 + i, y, 1, 1, col);
-        // A tick and a name at every beat boundary.
-        if (ph.key !== prevKey) {
-          if (prevKey !== null) b.fillRect(x0 + i, TOP, 1, BASE - TOP, on ? "#1d3550" : "#12202f");
-          prevKey = ph.key;
-        }
-      }
-      b.fillRect(box.x + 1, BASE, box.w - 2, 1, P.dim);
-
-      // The beats, written out under the chart. Too many to name one by one at
-      // this width, so it is the count and the two ends of the flight, which
-      // is what the player is choosing between.
-      const first = prof.phases[2] ? prof.phases[2].key : prof.phases[0].key;
-      const last = prof.phases[prof.phases.length - 1].key;
-      HUD.text(b, t("phase." + first), box.x + 2, BASE + 3, box.w - 4, "left", P.dim, 8);
-      HUD.text(b, t("phase." + last), box.x + 2, BASE + 3, box.w - 4, "right", on ? P.ink : P.dim, 8);
-    }
-
-    _modeRows(id) {
-      const prof = PROFILES[id];
-      const a = SITES[this.siteId];
-      const dests = destinationsFor(this.siteId, prof);
-      const bSite = SITES[dests.length === 1 ? dests[0] : otherSite(a.id).id];
-      const oneDest = dests.length === 1;
-      return [
-        [t("select.fare"), fareText(this._profileFrom(this.siteId), prof, this.destId)],
-        [t("select.stages"), String(prof.stages)],
-        [t("select.apogee"), altText(prof.apogee)],
-        [t("select.armour"), prof.shedsArmour ? t("select.armourLost") : t("select.armourKept")],
-        [t("select.arrives"), oneDest ? siteName(bSite.id) : t("select.choice")],
-        [t("select.track"), prof.downrange ? altText(greatCircleM(a, bSite)) : t("select.vertical")],
-      ];
-    }
-
-    _siteRows(id) {
-      const st = SITES[id];
-      const prof = this.profile;
-      const rows = [
-        [t("select.latitude"), st.lat.toFixed(2) + "\u00b0"],                    // i18n-ignore  degree sign
-        [t("select.weather"), weatherLabel(this.env.weather)],
-        [t("select.light"), this.env.night ? t("select.night") : this.env.golden ? t("select.golden") : t("select.day")],
-      ];
-      const dests = destinationsFor(id, prof);
-      if (dests.length === 1) {
-        rows.push([t("select.arrives"), siteName(dests[0])]);
-      } else if (!prof.downrange) {
-        rows.push([t("select.hazard"), pctText(100 - integrityAt(KESSLER_OUT_M, hazardSeverity(this.env), prof))]);
-      }
-      return rows;
-    }
-
-    // The destination page: the same pad readout, with the track from the pad
-    // the flight is actually leaving from, because that is the only number
-    // that differs between the cards on this page.
-    _destRows(id) {
-      const st = SITES[id];
-      const from = SITES[this.siteId];
-      return [
-        [t("select.fare"), fareText(this._profileTo(id), this.profile, id)],
-        [t("select.latitude"), st.lat.toFixed(2) + "°"],                    // i18n-ignore  degree sign
-        [t("select.weather"), weatherLabel(this.env.weather)],
-        [t("select.track"), altText(greatCircleM(from, st))],
-      ];
-    }
-  }
 
   // What a flight costs, as the card prints it. Money is stated in euros
   // everywhere in this game and the party carries hundredths of one, so the
@@ -7910,7 +6733,7 @@
       // and the crew have been told stories about the one where it is not.
       return air.concat([
         { at: ["burn", 0.75], key: "cleanSky", se: SE.computer, vol: 55 },
-        { at: ["clear", 0.1], key: "cleanSkyCrew", se: null, crew: true },
+        { at: ["cleanSky", 0.1], key: "cleanSkyCrew", se: null, crew: true },
       ]);
     }
     return air.concat([
@@ -7924,9 +6747,36 @@
     ]);
   }
 
+  // Coming home: the braking pass round the Moon and the way down after it.
+  const EARTH_ARRIVAL_CUES = [
+    // i18n-ignore-start  phase keys
+    { at: ["emerge", 0.05], key: "earthAhead", se: SE.aboard, vol: 70, crew: true },
+    { at: ["moonbrake", 0.08], key: "brakeIn", se: SE.computer, vol: 55 },
+    { at: ["moonbrake", 0.55], key: "brakeCrew", se: null, crew: true },
+    { at: ["moonbrake", 0.9], key: "brakeDone", se: SE.power, vol: 70 },
+    { at: ["fall", 0.1], key: "deorbitFall", se: SE.gale, vol: 60 },
+    { at: ["kessler", 0.0], key: "beltEntry", se: SE.alarm, vol: 85, music: "belt" },
+    { at: ["kessler", 0.5], key: "beltDeep", se: null, crew: true },
+    { at: ["clear", 0.05], key: "beltClear", se: SE.aboard, vol: 65, crew: true, music: "arrival" },
+    { at: ["reentry", 0.08], key: "entryPlasma", se: SE.gale, vol: 85 },
+    { at: ["reentry", 0.55], key: "entryBlackout", se: SE.rumble, vol: 80, crew: true },
+    { at: ["terminal", 0.8], key: "landingMuzzle", se: SE.charge, vol: 75 },
+    { at: ["capture", 0.05], key: "hopCapture", se: SE.coilRing, vol: 85 },
+    { at: ["capture", 0.95], key: "hopDocked", se: SE.clamp, vol: 90 },
+    { at: ["arrived", 0.2], key: "landed", se: SE.airlock, vol: 80, crew: true },
+    // And the version that ends alongside the ship rather than on the ground.
+    { at: ["rendezvous", 0.05], key: "shipSighted", se: SE.radio, vol: 70, crew: true },
+    { at: ["dock", 0.55], key: "softDock", se: SE.clamp, vol: 90 },
+    { at: ["dock", 0.9], key: "hardDock", se: SE.airlock, vol: 85 },
+    { at: ["aboard", 0.2], key: "aboard", se: SE.aboard, vol: 80, crew: true },
+    // i18n-ignore-end
+  ];
+
   // The last beats of every crossing: round the world and down onto the pad.
   function arrivalCues(world) {
+    if (world === "earth") return EARTH_ARRIVAL_CUES;   // i18n-ignore  world id
     return [
+      { at: ["approach", 0.15], key: world + "Ahead", se: SE.radio, vol: 70 },
       { at: ["flyby", 0.05], key: "capture", se: SE.computer, vol: 55 },
       { at: ["flyby", 0.4], key: world + "Orbiting", se: SE.radio, vol: 70, crew: true },
       { at: ["flyby", 0.82], key: "deorbitBurn", se: SE.charge, vol: 70 },
@@ -7974,20 +6824,31 @@
       { at: ["cruise", 0.05], key: "jupiterAim", se: SE.computer, vol: 55, music: "arrival" },
       { at: ["jupiter", 0.1], key: "jupiterAhead", se: SE.radio, vol: 70 },
       { at: ["jupiter", 0.6], key: "jupiterClose", se: SE.rumble, vol: 75, crew: true },
-      { at: ["assist", 0.1], key: "assistIn", se: SE.burn, vol: 80 },
-      { at: ["assist", 0.7], key: "assistOut", se: SE.power, vol: 70, crew: true },
-      { at: ["escape", 0.1], key: "escapeSpeed", se: SE.computer, vol: 55 },
-      { at: ["escape", 0.7], key: "lastPlanet", se: null, crew: true },
-      { at: ["sbspool", 0.05], key: "sbSpool", se: SE.charge, vol: 90 },
-      { at: ["sbspool", 0.6], key: "sbHot", se: SE.power, vol: 80, crew: true },
-      { at: ["wormhole", 0.02], key: "holeOpen", se: SE.flash, vol: 100 },
-      { at: ["wormhole", 0.4], key: "holeSphere", se: null, crew: true },
-      { at: ["wormhole", 0.85], key: "holeCommit", se: SE.rumble, vol: 80 },
-      { at: ["throat", 0.05], key: "throatIn", se: SE.alarm, vol: 75 },
-      { at: ["throat", 0.45], key: "throatDeep", se: null, crew: true },
-      { at: ["throat", 0.85], key: "throatOut", se: SE.computer, vol: 55 },
+      // The red moon, on the way OUT of Andromeda - the other end of the same
+      // crossing, where there is no Jupiter to drop anything against.
+      { at: ["redmoon", 0.08], key: "redMoonAhead", se: SE.radio, vol: 70, music: "arrival" },
+      { at: ["redmoon", 0.6], key: "redMoonClose", se: SE.rumble, vol: 75, crew: true },
+      // The string of pellets.
+      { at: ["charge", 0.05], key: "chargeArm", se: SE.charge, vol: 85 },
+      { at: ["charge", 0.45], key: "chargeOut", se: SE.power, vol: 70 },
+      { at: ["charge", 0.85], key: "chargeCrew", se: null, crew: true },
+      { at: ["blast", 0.05], key: "blastFirst", se: SE.flash, vol: 100 },
+      { at: ["blast", 0.45], key: "blastRiding", se: SE.burn, vol: 85, crew: true },
+      { at: ["blast", 0.88], key: "blastLast", se: SE.rumble, vol: 85 },
+      { at: ["pluto", 0.15], key: "plutoPast", se: SE.computer, vol: 55 },
+      { at: ["pluto", 0.7], key: "plutoCrew", se: null, crew: true },
+      { at: ["breach", 0.05], key: "breachIn", se: SE.alarm, vol: 80 },
+      { at: ["breach", 0.6], key: "breachCrew", se: null, crew: true },
+      { at: ["breach", 0.92], key: "breachGive", se: SE.rumble, vol: 90 },
+      { at: ["gods", 0.05], key: "goldIn", se: SE.flash, vol: 70 },
+      { at: ["gods", 0.4], key: "goldCrew", se: null, crew: true },
+      { at: ["gods", 0.85], key: "goldOut", se: null, crew: true },
+      { at: ["crossing", 0.05], key: "crossOut", se: SE.aboard, vol: 70 },
+      { at: ["crossing", 0.5], key: "crossHome", se: null, crew: true },
       { at: ["emerge", 0.05], key: "andromeda", se: SE.aboard, vol: 75, crew: true },
       { at: ["emerge", 0.55], key: "theNeighbour", se: SE.radio, vol: 70 },
+      { at: ["approach", 0.15], key: "titaniaAhead", se: SE.radio, vol: 70 },
+      { at: ["approach", 0.7], key: "titaniaFills", se: SE.computer, vol: 55, crew: true },
     ],
     // i18n-ignore-end
   };
@@ -8023,6 +6884,12 @@
       // An explicit destination from a plugin command wins over both arrival
       // tables; otherwise the profile decides where the party ends up.
       this._destination = o.destination || null;
+      // FREE PLAY: the cinematic opened from the minigame arcade, where there
+      // is no map to come down on and no vehicle to spend. The flight is flown
+      // exactly as it always is; only its consequences are dropped - no fare is
+      // taken, nothing is written to the game system, and the arrival pops back
+      // to the picker instead of transferring the party.
+      this._freePlay = !!o.freePlay;
       this._threeReady = typeof THREE !== "undefined";
     }
 
@@ -8110,9 +6977,7 @@
       // crossings it flies is decided by the world it is aimed at and the kind
       // of pad it is leaving, and by nothing the player picked: see
       // crossingProfile.
-      const cross = (site.body && site.body === this._destSite.body)
-        ? null
-        : crossingProfile(site, this._destSite);
+      const cross = crossingProfile(site, this._destSite);
       if (cross) { prof = cross; this._profile = prof; }
       // AND A PLAIN CROSSING STILL HAS A SKY OVER IT. Off a world with no belt
       // there is no belt to fly through on the way to the ship either, so the
@@ -8164,13 +7029,15 @@
       // selection has bought nothing.
       const destForFare = this._destSite ? this._destSite.id : null;
       this._fare = fareOf(this._profile, destForFare);
-      chargeFare(this._profile, destForFare);
+      if (!this._freePlay) chargeFare(this._profile, destForFare);
 
       this._time = 0;
       Radio.reset();
-      this._hud.push(Radio.fromControl("ready", {
+      this._replies = [];
+      this._lastReply = -99;
+      this._radio("ready", Radio.fromControl("ready", {
         site: siteName(site.id),
-        mode: t("mode." + this._profile.id + ".name"),
+        mode: modeName(this._profile),
       }));
       se(SE.radio, 70);
     }
@@ -8205,6 +7072,25 @@
       if (this._time >= this._profile.start._total) this._finish();
     }
 
+    // M, the same key that opens every other map in this game. Read here
+    // rather than in the HUD because the HUD draws what it is handed and does
+    // not own any state of its own.
+    _updateChart() {
+      // M is bound to the name "map" at load (see the note by the keyMapper
+      // line), so it is asked for by that name like any other button. There is
+      // no raw-keycode path: Input._currentState is never populated for
+      // letters, so reading it would be a branch that can never be true.
+      let pressed = false;
+      try {
+        pressed = !!(typeof Input !== "undefined" && Input.isTriggered &&
+          Input.isTriggered(MAP_BUTTON));
+      } catch (e) { /* no input, no chart */ }
+      if (pressed) {
+        this._chart = !this._chart;
+        se(this._chart ? SE.computer : SE.back, 60);
+      }
+    }
+
     _state() {
       const st = this._stage;
       return {
@@ -8220,6 +7106,7 @@
         downrange: st ? st.downrange : 0,
         downrangeM: st ? st.downrangeM : 0,
         trackM: st ? st.trackM : 0,
+        chart: !!this._chart,
         fromSite: this._site ? this._site.id : SITE_ORDER[0],
         toSite: this._destSite ? this._destSite.id : "ship",   // i18n-ignore  site id
         env: this._env,
@@ -8296,6 +7183,40 @@
 
     // --- cues, sound and the log -------------------------------------------
 
+    // EVERY LINE THE FLIGHT PRINTS GOES THROUGH HERE, and two things happen
+    // to it: the log is told WHO said it, so it can draw the ground and the
+    // people in the round in different colours instead of running them
+    // together, and a line from the ground on a beat worth answering has an
+    // answer from aboard queued a beat behind it.
+    _radio(key, text) {
+      this._hud.push(text, Radio.lastWho);
+      if (Radio.lastWho === "crew") return;   // i18n-ignore  speaker id
+      if (this._time - this._lastReply < REPLY_GAP) return;
+      const reply = Radio.replyTo(key, {
+        site: siteName(this._site.id),
+        dest: siteName(this._arrivalId()),
+        alt: this._stage ? altText(this._stage.alt) : "",
+        pct: this._stage ? pctText(this._stage.integrity) : "",
+      });
+      if (!reply) return;
+      this._lastReply = this._time;
+      // A beat and a bit later: long enough to read as somebody pressing a
+      // key and answering, short enough to still be about the same thing.
+      (this._replies = this._replies || []).push({
+        at: this._time + 1.1 + Math.random() * 0.7, text: reply,
+      });
+    }
+
+    // The answers, let out when their moment comes.
+    _drainReplies() {
+      const q = this._replies;
+      if (!q || !q.length) return;
+      while (q.length && q[0].at <= this._time) {
+        this._hud.push(q.shift().text, "crew");   // i18n-ignore  speaker id
+        se(SE.radio, 45);
+      }
+    }
+
     _fireCues() {
       const prof = this._profile;
       if (this._stage && this._stage.phase) Radio.atPhase(prof, this._stage.phase.key);
@@ -8315,7 +7236,7 @@
             alt: altText(this._stage.alt),
             pct: pctText(this._stage.integrity),
           };
-          this._hud.push(cue.crew
+          this._radio(cue.key, cue.crew
             ? Radio.fromCrew(cue.key, params)
             : Radio.fromControl(cue.key, params));
         }
@@ -8325,8 +7246,10 @@
     }
 
     _drainStage() {
+      this._updateChart();
       this._stage.drainSe().forEach((c) => se(c.name, c.volume, c.pitch, c.pan));
-      this._stage.drainLog().forEach((l) => this._hud.push(l.text));
+      this._stage.drainLog().forEach((l) => this._radio(l.key, l.text));
+      this._drainReplies();
     }
 
     _updateFlash(dt) {
@@ -8371,6 +7294,7 @@
       // kept: the ship's log, the diary and anything else that wants to know
       // how bad the crossing was can read it off the game system.
       try {
+        if (this._freePlay) throw 0;
         $gameSystem._rocketLaunch = {
           site: this._site ? this._site.id : null,
           mode: this._profile ? this._profile.id : null,
@@ -8439,6 +7363,8 @@
     _boardMoon() { return this._boardWorld("moon"); }   // i18n-ignore  world id
 
     _board() {
+      // Nothing arrives anywhere in free play: the round is watched, not flown.
+      if (this._freePlay) { this._leave(); return; }
       const explicit = this._destination;
       const dest = this._destSite;
       if (!explicit && dest && dest.body && WORLDS[dest.body]) {
@@ -8494,6 +7420,7 @@
       if (this._left) return;
       this._left = true;
       this._releaseAudio();
+      if (this._freePlay) { SceneManager.pop(); return; }
       SceneManager.goto(Scene_Map);
     }
 
@@ -8571,9 +7498,16 @@
     // nothing.
     if (destId === VAULT_SITE_ID) return 0;
     if (!profile) return 0;
-    // A crossing is priced by the world it is aimed at: every plan to a given
-    // world carries the same stages and throws the same ones away.
-    if (profile.world && FARES[profile.world] != null) return FARES[profile.world];
+    // A crossing is priced by the FURTHER of its two ends. Going out and
+    // coming back are the same journey and throw away the same stages, so
+    // Titania to Earth costs what Earth to Titania costs; "earth" itself is
+    // not a fare, it is where the other end is measured from.
+    if (profile.world) {
+      const there = FARES[profile.world];
+      const back = FARES[profile.fromWorld];
+      const far = Math.max(there != null ? there : -1, back != null ? back : -1);
+      if (far >= 0) return far;
+    }
     // Everything else by its plan, with the pad-kind suffix taken off:
     // "orbitalAir" and "orbitalOrbit" are the same crossing as "orbital",
     // flown out from under a different sky.
@@ -8635,6 +7569,19 @@
   // be invisible - an orbital flight off an Earth pad had exactly one place to
   // go, so the window never had two entries to show - and adding the Moon is
   // what brought it on screen. It is not brought on screen.
+  // M IS NOT BOUND BY DEFAULT in RMMZ, so the launch scene binds it - once,
+  // and only to a name of its own, so nothing else in the game that reads the
+  // keyboard is disturbed by it. But something else HAS already claimed the
+  // key: WorldMap.js binds 77 to a toggle of its own, so the name the launch
+  // scene asked for was never the name the key was carrying and the chart
+  // never opened. Whatever name is on the key IS the name the chart listens
+  // for, and one is put there only if the key is still free.
+  const MAP_BUTTON = (() => {
+    if (typeof Input === "undefined" || !Input.keyMapper) return "map";   // i18n-ignore  input name
+    if (!Input.keyMapper[77]) Input.keyMapper[77] = "map";                // i18n-ignore  input name
+    return Input.keyMapper[77];
+  })();
+
   PluginManager.registerCommand("RocketLaunchPlugin", "launch", (args) => {
     // i18n-ignore-start  arg values
     start({ site: args.site || "ask", mode: "ask", dest: "ask" });
@@ -8653,6 +7600,99 @@
       },
     });
   });
+
+  window.Scene_RocketLaunch = Scene_RocketLaunch;
+
+  // ==========================================================================
+  // THE FLOOR THE SPLIT-OUT PARTS STAND ON
+  // ==========================================================================
+  //
+  // The cinematic is four files: this one (the flight model, the vehicle, the
+  // camera, the scene and the plugin commands), RocketLaunchSpaceports.js (the
+  // guns and the ground), RocketLaunchBodies.js (the planets) and
+  // RocketLaunchHUD.js (the instruments and the picker). They are parts of ONE
+  // plugin and not plugins of their own: each either attaches to the stage
+  // class or hands back a window class, and none of them does anything alone.
+  //
+  // Everything they need out of this file is handed over here, BY NAME, so
+  // what crosses the seam is a list somebody can read rather than a scattering
+  // of globals.
+  const PARTS = {
+    Stage: LaunchStage,
+    registerUI(hud, card) {
+      LaunchHud = hud;
+      SiteCard = card;
+      window.RocketLaunch.Hud = hud;
+      window.RocketLaunch.Card = card;
+    },
+    K: {
+      DOWNRANGE_VIS_M,
+      DYSON_VIS_R,
+      EARTH_VIS_R,
+      HOP_ELEVATION,
+      // Live, not captured: PSXHud may not be on window yet when this is built.
+      get HUD() { return hudReady(); },
+      HUD_BASE_W,
+      KARMAN_M,
+      KESSLER_IN_M,
+      KESSLER_OUT_M,
+      LIT_BEATS,
+      MOON_BEARING,
+      MOON_DIST_M,
+      MOON_LAYER,
+      MOON_R_M,
+      MOON_SITE_ID,
+      MOON_VIS_R,
+      PROFILES,
+      RAIL_LEN_M,
+      RAIL_LOAD_Y,
+      SE,
+      SITES,
+      altText,
+      altitudeAt,
+      availableProfiles,
+      availableSites,
+      clamp,
+      clamp01,
+      clockText,
+      crossing,
+      descentFrom,
+      destinationsFor,
+      earthGone,
+      fareText,
+      greatCircleM,
+      hashOf,
+      hazardSeverity,
+      hudReady,
+      integrityAt,
+      lerp,
+      loadYOf,
+      lunarProfileFrom,
+      makeRng,
+      modeBlurb,
+      modeName,
+      nearestSite,
+      onLayer,
+      otherSite,
+      pctText,
+      phaseAt,
+      ramp,
+      refreshVaultSite,
+      se,
+      siteBlurb,
+      siteName,
+      smooth,
+      speedText,
+      start,
+      t,
+      tapeBands,
+      tapeFraction,
+      weatherLabel,
+      HOME_SKY,
+      worldRecord,
+      worldSystem,
+    },
+  };
 
   window.RocketLaunch = {
     name: PLUGIN_FILE,
@@ -8707,8 +7747,9 @@
     // suite can build them against a headless THREE and step a whole flight
     // without a GPU.
     Stage: LaunchStage,
-    Hud: LaunchHud,
-    Card: SiteCard,
+    Hud: null,        // filled in by RocketLaunchHUD.js
+    Card: null,       // filled in by RocketLaunchHUD.js
+    parts: PARTS,
     sampleEnvironment,
     nearestSite,
     // The scene keeps what the last flight cost; the ship's own systems read

@@ -271,7 +271,8 @@
       "scope": "Forma",
       "riders": "Innesti",
       "refines": "Rifiniture",
-      "create": "Scrivi"
+      "create": "Scrivi",
+      "randomize": "Tira"
     },
     "pick": {
       "core": "Scegli un nucleo",
@@ -629,6 +630,13 @@
           "desc": "Restituisce PA a chi lo usa."
         }
       }
+    },
+    "randomize": "Tira a caso",
+    "camel": {
+      "title": "Non è un nome da incantesimo",
+      "body": "Un incantesimo si chiama con una sola parola in CamelCase, senza spazi: FireBolt, non fire bolt. {name} resta come lo hai scritto, se lo vuoi.",
+      "rename": "Rinominalo",
+      "keep": "Tienilo"
     }
   },
   "fusionRollAction": "Fusione Arcana: {parts}",
@@ -695,9 +703,28 @@
     "skillBookFallbackName": "Quaderno di {first}",
     "grimorieFallbackName": "Grimorie di {first}"
   },
+  "hexorcize": {
+    "button": "Esorcizza",
+    "title": "Esorcismo",
+    "detailTitle": "Il Pezzo",
+    "blurb": "Un'arma o un pezzo di equipaggiamento magico viene smontato e ciò che vi era stato lavorato torna come conoscenza. Solo ciò che il gruppo trasporta: togliti un pezzo di dosso prima di disfarlo.",
+    "back": "Indietro",
+    "one": "Disfa",
+    "all": "Disfa Tutti",
+    "worth": "Valore",
+    "held": "Trasportati",
+    "bindingHeld": "Vincolo",
+    "knowledge": "Conoscenza",
+    "pickPiece": "Scegli un pezzo a sinistra.",
+    "totalHere": "Tutto quello che c'è qui vale {kp} KP.",
+    "nothing": "Non si trasporta nulla di magico.",
+    "unmade": "{item} è disfatto per {kp} KP."
+  },
   "tips": {
     "pick": "Scegli",
     "walk": "Sposta",
     "back": "Indietro"
-  }
+  },
+  "lent": "PRESTATA",
+  "lentBy": "Prestata da {item}"
 }

@@ -224,10 +224,25 @@
         font-size: 0.881rem;
     }
 
-    /* Portrait scaled from 320px to 185px height to fit within 800px vertical bounds */
+    /* Portrait scaled from 320px to 185px height to fit within 800px vertical
+       bounds. It is a FIXED block here, not a flexible one: the sidebar body
+       is a scrolling column, and on a 320px-wide sidebar everything under the
+       portrait (stats, traits, skills, starting items) overflows it, so a
+       `flex: 1 1 auto` portrait was shrunk to its floor and the picture inside
+       it -- width auto off an 883/1200 aspect ratio -- came out a sliver wide
+       or nothing at all. The column scrolls instead; the face always shows,
+       and with it the button that opens the bust gallery. */
     .cc-compact-portrait-card {
+        flex: 0 0 auto;
+        height: 185px;
         max-height: 185px;
-        min-height: 70px;
+        min-height: 185px;
+    }
+
+    .cc-compact-bust-full {
+        height: 100%;
+        min-height: 150px;
+        min-width: 110px;
     }
 
     .cc-dossier-large-bust {
@@ -1675,7 +1690,7 @@
 @media (max-width: 1366px) and (max-height: 860px) {
 
     .tt-rail {
-        width: clamp(126px, 12vw, 170px);
+        width: clamp(164px, 14vw, 210px);
     }
 
     .tt-tree {
@@ -1716,7 +1731,6 @@
     }
 
     #help-container .help-group-chips {
-        max-height: 3.4em;
         margin-bottom: 6px;
         padding-bottom: 4px;
     }
@@ -1846,7 +1860,7 @@
        twice this wide; asking for the same on the panel put six thumbnails
        across a strip where four are already small. */
     .fbuild-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(96px, max-content));
         padding: 8px;
         gap: 8px;
     }
@@ -2711,7 +2725,7 @@
 
     .pas-adv-panel {
         width: 880px;
-        max-height: 74vh;
+        height: 74vh;
         padding: 16px 26px 14px;
     }
 
@@ -5074,7 +5088,7 @@
            (NPC/NPCPolitics.js). The desk fits five 110px cells across the
            panel a Deck has room for three of. */
     .npc-param-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(96px, max-content));
     }
 
     /* --- Hypernet OS. The wallpaper swatches, picked off a picture

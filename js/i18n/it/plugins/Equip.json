@@ -4,6 +4,8 @@
   "stealth": "Furtività",
   "intimidation": "Intimidazione",
   "scale": "Scalamento",
+  "basePower": "Danno Base",
+  "damage": "Danno",
   "random": "Casuale",
   "clear": "Rimuovi",
   "equip": "Equipaggia",
@@ -34,7 +36,7 @@
   "weaponType": "Tipo di Arma",
   "slotMouth": "Bocca",
   "slotTwoHandedHeld": "Impugnata a due mani",
-  "dualPenaltyWarning": "Senza addestramento a due armi: ogni arma impugnata colpisce il {n}% in meno.",
+  "dualPenaltyWarning": "Doppia arma senza addestramento: {name} infligge il {n}% di danno in meno con ENTRAMBE le armi. Rimuovine una per togliere la penalita.",
   "dualPenaltyHint": "La tua classe non combatte con due armi, quindi entrambe sono indebolite.",
   "short": {
     "hp": "PV",
@@ -91,5 +93,6 @@
     "4": "Armatura Pesante",
     "5": "Equipaggiamento",
     "6": "Scudo"
-  }
+  },
+  "slotGearN": "Accessori {n}"
 }

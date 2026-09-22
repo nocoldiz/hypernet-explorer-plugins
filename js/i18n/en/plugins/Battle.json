@@ -565,10 +565,11 @@
   "escape": {
     "failed": "You fail to break away!",
     "boss": "This foe will not let you go!",
-    "tooClose": "They are too close to break away!"
+    "tooClose": "They are too close to break away!",
+    "tooCloseMember": "{name} is too close to break away! Another of the party may still try."
   },
   "hud": {
-    "elementChip": "{element} {rate}x"
+    "elementRate": "{rate}x"
   },
   "statReq": {
     "fumble": "{actor} loses the thread of {skill}: not enough base {stat}!"

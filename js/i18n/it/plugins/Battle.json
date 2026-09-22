@@ -565,10 +565,11 @@
   "escape": {
     "failed": "Non riesci a svincolarti!",
     "boss": "Questo nemico non ti lascia andare!",
-    "tooClose": "Sono troppo vicini per svincolarsi!"
+    "tooClose": "Sono troppo vicini per svincolarsi!",
+    "tooCloseMember": "{name} è troppo vicino per svincolarsi! Un altro del gruppo può ancora provarci."
   },
   "hud": {
-    "elementChip": "{element} {rate}x"
+    "elementRate": "{rate}x"
   },
   "statReq": {
     "fumble": "{actor} perde il filo di {skill}: {stat} base insufficiente!"

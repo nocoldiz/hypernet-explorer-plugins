@@ -998,26 +998,33 @@
     color: #ffffff !important;
 }
 
-.cc-bio-chip.selected {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
+/* A picked control is ink and a hairline, with nothing behind it. */
+.cc-bio-chip.selected,
+.cc-pick-row.selected {
+    background: transparent !important;
+    background-image: none !important;
     border-color: #c9ad6a !important;
     color: #fff8eb !important;
 }
 
+/* A card on the pet and garage boards carries no plate, no frame and no glow:
+   the sprite and its name are the card. Only the chosen one is outlined. */
 .cc-pet-card {
-    background: rgba(30, 22, 14, 0.85) !important;
-    border-color: rgba(201, 173, 106, 0.25) !important;
+    background: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .cc-pet-card:hover {
-    background: rgba(139, 90, 43, 0.35) !important;
-    border-color: #c9ad6a !important;
+    background: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .cc-pet-card.selected {
-    background: linear-gradient(180deg, rgba(139, 90, 43, 0.6), rgba(92, 65, 40, 0.4)) !important;
+    background: none !important;
     border-color: #f7e6cd !important;
-    box-shadow: 0 0 12px rgba(201, 173, 106, 0.35) !important;
+    box-shadow: none !important;
 }
 
 .cc-sidebar-btn {
@@ -1116,7 +1123,7 @@
 }
 .cc-categories-list .cc-card-option.selected {
     border-color: #8b5a2b !important;
-    background-color: rgba(160, 120, 50, 0.22) !important;
+    background-color: transparent !important;
 }
 
 /* ==========================================================================

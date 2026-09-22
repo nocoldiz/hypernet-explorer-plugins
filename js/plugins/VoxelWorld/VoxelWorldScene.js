@@ -48,7 +48,7 @@
         faceBillboards, PERSON_H,
         setBiomeOverride, getBiomeOverride, setAlienTerrain, buildOmegaTower,
         OMEGA_HEIGHT, OMEGA_PROXY_D, OMEGA_SIGHT, OMEGA_SPAN, OMEGA_TILE, VIEW_FAR,
-        ALONGSIDE_MAX, RIDER_SEATS, RIDE_ALONGSIDE, VEHICLE_DRIVE, SHIP_ATMOSPHERE_Y,
+        ALONGSIDE_MAX, RIDER_SEATS, RIDE_ALONGSIDE, PILOT_SEATS, VEHICLE_DRIVE, SHIP_ATMOSPHERE_Y,
         SHIP_BRIDGE_BOUNDS, SHIP_HELM_SEAT, SHIP_LAND_KMH, SHIP_LAND_CLEAR,
         SHIP_FLY_MIN, SHIP_FLY_MAX, SHIP_CLIMB_RATE,
         STEER_EASE, STEER_FALLOFF, STEP_SOUNDS, SURFACES, SkyFx, SolomonRitualFx, SpeedWarpFx, TALK_RANGE,
@@ -1312,6 +1312,10 @@
         }
 
         _setMode(mode) {
+            // The cabin walk belongs to the two vehicles that have a room in
+            // them. On anything else the same request means standing on the
+            // ground beside it.
+            if (mode === 'fp' && !this._footOnly && !this._hasCabin()) mode = 'foot';
             const prev = this._viewMode;
             if (prev === mode) return;
             this._viewMode = mode;
@@ -1684,7 +1688,8 @@
             // ends a drive.
             if (this._viewMode === 'car' || this._viewMode === 'fpdrive') {
                 if (typeof SoundManager !== 'undefined') SoundManager.playOk();
-                this._setMode(this._viewMode === 'car' ? 'foot' : 'fp');
+                this._setMode(this._viewMode === 'car' ? 'foot'
+                    : (this._hasCabin() ? 'fp' : 'foot'));
                 return;
             }
             // A body at your feet, then somebody standing right there, then the
@@ -1793,7 +1798,7 @@
             this._flyY = null;
 
             // The old body goes; _buildDrivenModel puts the new one up.
-            if (this._drivenModel) { this._drivenModel.dispose(); this._drivenModel = null; }
+            if (this._drivenModel) { this._detachDrivenModel(); }
             if (this._bridge) { this._bridge.dispose(); this._bridge = null; }
             if (this._driven2d) {
                 this._scene.remove(this._driven2d.mesh);
@@ -2216,6 +2221,28 @@
             return getRenderType(sampleBiomeAt(tx, ty).name) === 'water';
         }
 
+        // Open water is a WALL for a camper with no Amphibious Conversion: it is
+        // a road vehicle, and the shoreline is where the road ends. Only an
+        // ENTRY is refused, by putting the rig back where it was a step ago and
+        // killing its momentum - a camper that is already afloat (loaded there,
+        // washed ashore mid-water, dropped by a rescue) can still drive its way
+        // back out. Flying over the sea is the flight upgrade's business, and
+        // the title background drive answers to nobody's save.
+        _blockWaterEntry(prevX, prevZ) {
+            if (this._footOnly || this._titleMode) return;
+            if (this._flying && this._canFly()) return;
+            if (camperCan('float')) return;
+            if (!this._overWater()) return;
+            const ptx = Math.floor(prevX / WORLD_TILE_SIZE);
+            const pty = Math.floor(prevZ / WORLD_TILE_SIZE);
+            if (getRenderType(sampleBiomeAt(ptx, pty).name) === 'water') return;
+            this._vanX = prevX;
+            this._vanZ = prevZ;
+            this._velX = 0; this._velZ = 0;
+            this._fwdSpeed = 0; this._latSpeed = 0;
+            this._speedKmh = 0; this._speedUnitsSigned = 0;
+        }
+
         // True when the camper is (near-)stopped on a city / village tile, which
         // carry a fuel station (see ProceduralDecorator._decorateGasStation). The
         // drive options menu offers a refuel here.
@@ -2362,10 +2389,10 @@
             if (this._flying && this._canFly()) {
                 env = 'air';        targetY = flyY;
             } else if (overWater) {
-                // Water crossing is always allowed WHILE in the drive mode, even
-                // without the Amphibious upgrade - the penalty comes when the mode
-                // ends over water (see _endDriveToWorldMap: the camper splashes down
-                // if the player lacks the float upgrade). Diving still needs 'dive'.
+                // Afloat. Reached only with the Amphibious Conversion fitted, or
+                // by a camper that was already in the water when it got here:
+                // _blockWaterEntry refuses the shoreline to an unconverted rig.
+                // Diving still needs 'dive' on top.
                 // The camper is 1x and floats on the 1x sea surface (the water plane
                 // sits at y≈-0.6), so these ride heights stay at their real scale
                 // even though the seabed basin is dug WORLD_SCALE times deeper.
@@ -2948,8 +2975,15 @@
                 this._updateDoorAutoOpen();
                 this._van.update(delta);
             }
-            if (this._drivenModel && this._drivenModel.update) {
-                this._drivenModel.update(this._fxTime || 0);
+            if (this._drivenModel) {
+                // The body of a sprite vehicle belongs to first person alone:
+                // shown at the saddle, and put away the moment the camera
+                // pulls back behind the sprite that stands in for it.
+                if (this._drivenModelFpOnly) {
+                    this._drivenModel.group.visible =
+                        (this._viewMode === 'fpdrive' || this._viewMode === 'fp');
+                }
+                if (this._drivenModel.update) this._drivenModel.update(this._fxTime || 0);
             }
             if (this._driven2d) {
                 const fpdrive = this._viewMode === 'fpdrive';
@@ -3703,8 +3737,9 @@
                 this._viewMode !== 'foot' && this._viewMode !== 'free';
             this._padPitch = 0;
             if (window.AnalogStickInput && flightPad) {
-                const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
-                const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
+                const look = this._padLook();
+                const ry = look.y;
+                const rx = look.x;
                 this._padPitch = ry;
                 // The stick's X still looks around the chase camera, so a pilot
                 // can see what is off the beam without changing course.
@@ -3718,8 +3753,9 @@
             // has always said it was.
             if (window.AnalogStickInput && !flightPad &&
                 (this._viewMode === 'car' || this._viewMode === 'free')) {
-                const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
-                const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
+                const look = this._padLook();
+                const rx = look.x;
+                const ry = look.y;
                 if (rx) this._freeCamYaw -= rx * PAD_LOOK_X * 0.03;
                 if (ry) {
                     this._freeCamPitch = Math.max(0.1, Math.min(Math.PI / 2 - 0.1,
@@ -3747,8 +3783,9 @@
             // In first person / on foot, the right stick looks around (mouse parity).
             if (window.AnalogStickInput && !flightPad &&
                 (this._viewMode === 'fp' || this._viewMode === 'foot' || this._viewMode === 'fpdrive')) {
-                const rx = AnalogStickInput.rightX ? AnalogStickInput.rightX() : 0;
-                const ry = AnalogStickInput.rightY ? AnalogStickInput.rightY() : 0;
+                const look = this._padLook();
+                const rx = look.x;
+                const ry = look.y;
                 if (rx) this._fpc.yaw.rotation.y   -= rx * 0.05;
                 if (ry) {
                     this._fpc.pitch.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2,
@@ -3762,6 +3799,24 @@
         _chordHeld() {
             const C = window.Controller;
             return !!(C && C.chordHeld && C.chordHeld());
+        }
+
+        // THE RIGHT STICK IS THE GAME'S RIGHT STICK. Every 3D camera in the
+        // game swings through Controller, whose Orbit reads the Options camera
+        // speed and the Invert Y switch; the world read the stick raw instead,
+        // so a player who had inverted the camera everywhere else found it the
+        // other way round out here and nothing in Options moved it. One
+        // reading, one feel: the speed scales it and the switch flips Y, for
+        // the chase camera, first person, the walk and the nose alike.
+        _padLook() {
+            const A = window.AnalogStickInput;
+            if (!A) return { x: 0, y: 0 };
+            const C = window.Controller;
+            const gain = (C && C.cameraSpeed) ? C.cameraSpeed() : 1;
+            const inv = (C && C.invertCameraY && C.invertCameraY()) ? -1 : 1;
+            const x = A.rightX ? A.rightX() : 0;
+            const y = A.rightY ? A.rightY() : 0;
+            return { x: x * gain, y: y * gain * inv };
         }
 
         // The pad's second layer, held on L2. The mode decides what the faces
@@ -4720,7 +4775,16 @@
         /** Where the pilot's eye goes: the helm on a bridge, the driver's seat
          *  in anything with a windscreen. */
         _pilotSeat() {
-            return this._hasBridge() ? SHIP_HELM_SEAT : DRIVER_SEAT;
+            if (this._hasBridge()) return SHIP_HELM_SEAT;
+            return PILOT_SEATS[this._vehicleKey()] || DRIVER_SEAT;
+        }
+
+        /** True while what is being driven has a room in it to get up and walk
+         *  about: the camper's cabin and the ship's bridge, and nothing else. A
+         *  bicycle has a saddle and no inside, so letting go of the handlebars
+         *  puts the rider on the ground rather than in a cabin nobody drew. */
+        _hasCabin() {
+            return this._vehicleKey() === 'camper' || this._hasBridge();
         }
 
         // ---------------------------------------------------------------------
@@ -4800,8 +4864,8 @@
             // --- the trim ----------------------------------------------------
             let dir = 0;
             if (typeof Input !== 'undefined') {
-                if (this._freeMoveKeys.has('Space') || Input.isPressed('ok')) dir -= 1;
-                if (this._freeMoveKeys.has('KeyC') || Input.isPressed('pageup')) dir += 1;
+                if (this._freeMoveKeys.has('Space') || Input.isPressed('ok')) dir += 1;
+                if (this._freeMoveKeys.has('KeyC') || Input.isPressed('pageup')) dir -= 1;
             }
             // The pad's shoulder buttons do the same, so a controller can hold
             // an altitude without holding an attitude (see Controller's 'fly').
@@ -5643,6 +5707,19 @@
             }
         }
 
+        // Put the driven body away: off the vehicle it was riding on and out
+        // of memory. Both teardown paths go through here so the model is never
+        // left hanging on the camper's group after the party has changed
+        // vehicle.
+        _detachDrivenModel() {
+            const m = this._drivenModel;
+            if (!m) return;
+            if (m.group && m.group.parent) m.group.parent.remove(m.group);
+            if (m.dispose) m.dispose();
+            this._drivenModel = null;
+            this._drivenModelFpOnly = false;
+        }
+
         _clearAlongside() {
             if (!this._alongside) return;
             for (const m of this._alongside) {
@@ -5653,10 +5730,20 @@
             this._alongsideKey = null;
         }
 
-        // The body of whatever is being driven. The camper and the starship have
-        // 3D models; all other vehicles (car, bike, boat, broom) are represented
-        // with 2D counterpart billboards so the camper model is never drawn.
+        // The body of whatever is being driven, and there are two of them,
+        // because every vehicle is both looked out of and watched from behind.
+        //
+        //   THIRD PERSON  the camper and the starship are their own 3D models;
+        //                 a car, a bike, a boat and a broom are 2D sprites, so
+        //                 the camper's body is never what a cyclist is riding.
+        //   FIRST PERSON  always the real 3D model, whichever vehicle it is: a
+        //                 sprite has no inside to look out of, and a rider with
+        //                 nothing in front of them is riding on nothing.
+        //
+        // So a sprite vehicle builds BOTH, and _drivenModelFpOnly marks the
+        // body as the one the view switches on and off.
         _buildDrivenModel() {
+            this._drivenModelFpOnly = false;
             if (this._footOnly) {
                 if (this._van && this._van.setVisible) this._van.setVisible(false);
                 return;
@@ -5680,6 +5767,7 @@
                 this._van.group.add(m.group);
                 this._van.group.visible = true;
                 this._drivenModel = m;
+                this._drivenModelFpOnly = false;
                 // ...and the room inside it. Built at true size in the ship's
                 // own frame (it is not scaled with the hull: the hull's own
                 // model is drawn at whatever size read best, the bridge is a
@@ -5709,6 +5797,25 @@
                 const bb = new VehicleBillboard(cfg.sheet, cfg.length);
                 this._scene.add(bb.mesh);
                 this._driven2d = bb;
+            }
+
+            // ...and its real body, for the view from the saddle. A card seen
+            // from its own edge is nothing at all, so a rider in first person
+            // used to look out over empty air: no bonnet, no handlebars, no
+            // gunwale. The garage has a model of every one of these, so the
+            // model is what first person draws, riding in the vehicle's own
+            // frame exactly as the ship's hull does. Third person never sees
+            // it - that is the sprite's job - so the two are never both on.
+            if (VM && VM.has(this._vehicleId)) {
+                const m = VM.build(this._vehicleId);
+                if (m) {
+                    m.group.scale.multiplyScalar(VM.worldScale(this._vehicleId, m));
+                    this._van.group.add(m.group);
+                    this._van.group.visible = true;
+                    this._drivenModel = m;
+                    this._drivenModelFpOnly = true;
+                    m.group.visible = false;
+                }
             }
         }
 
@@ -6917,11 +7024,10 @@
                 return;
             }
 
-            // Water crossing is always allowed while driving (the camper floats over
-            // water even without the Amphibious upgrade); the consequence for having
-            // no float upgrade is deferred to when the drive mode ends over water
-            // (_endDriveToWorldMap splashes the camper down). So there is no longer a
-            // "stranded in water" freeze here.
+            // Driving onto water needs the Amphibious Conversion; without it the
+            // shoreline stops the camper dead (_blockWaterEntry, applied straight
+            // after the physics step). A camper that somehow ends a drive afloat
+            // is still washed ashore by _endDriveToWorldMap.
 
             // Clear the stuck flag (wedge / flip checks
             // below may re-raise it after the physics step).
@@ -6947,6 +7053,10 @@
             // Autopilot (title background): plans the route and works the wheel /
             // pedals, which _stepVehiclePhysics then reads instead of the keys.
             if (this._autopilot) this._autopilot.update(delta);
+
+            // Where the rig stood before this step, so an unconverted camper can
+            // be put back on dry land if the step took it into the sea.
+            const prevX = this._vanX, prevZ = this._vanZ;
 
             // Resolve environment (road / air / water / underwater) and ease the
             // rig toward the matching ride height (snappier while grounded so the
@@ -6996,6 +7106,8 @@
                 // so a parked camper still rolls, slides and settles naturally.
                 const driving = (this._viewMode === 'car' || this._viewMode === 'fpdrive');
                 this._stepVehiclePhysics(delta, driving && !fuelEmpty, driving);
+                // Water's edge: refused outright without the Amphibious Conversion.
+                this._blockWaterEntry(prevX, prevZ);
                 this._updateRideHeight(delta, targetY, grounded);
             }
 
@@ -7017,21 +7129,13 @@
                 this._steerSmooth *= Math.max(0, 1 - delta * 6);
             }
 
-            // The bumper as a plough, and ONLY under the liminal boost.
-            //
-            // Any camper with its foot down used to take a voxel bank apart just
-            // by meeting it, so an ordinary drive across country left a trench
-            // behind it: ground that came out in cubes and stayed out, nowhere
-            // near anything the driver meant to dig. Holding Shift is the game
-            // being asked - it is what already brings a tree down at speed, and
-            // it is what turns the bumper back into a plough. Off the boost a
-            // bank is a wall: the camper is stopped by it and backs out or goes
-            // round, and the world is still standing behind it.
+            // NO VEHICLE TAKES THE GROUND APART, at any speed, boosting or not.
+            // A bank of voxels is a wall: the camper is stopped by it and backs
+            // out or goes round, and the world is still standing behind it. The
+            // digging tools on foot are the only thing out here that breaks a
+            // block (the bumper used to break banks under the liminal boost, which
+            // left trenches across country nobody meant to dig).
             const drivingNow = (this._viewMode === 'car' || this._viewMode === 'fpdrive');
-            if (drivingNow && this._boostActive && !ftActive && !fuelEmpty &&
-                this._throttle01 > 0.3) {
-                this._ploughAhead(delta);
-            }
 
             // Wedged: throttling hard but not moving (jammed against terrain).
             if (drivingNow && !ftActive && !fuelEmpty && this._throttle01 > 0.6 && this._speedKmh < 2) {
@@ -7239,40 +7343,10 @@
             camperFuelConsume(burn);
         }
 
-        // How much of a step a vehicle drives UP rather than through. Two voxels
-        // - ten world units, two and a half metres - because two blocks is what
-        // a player builds: a step, a kerb, a ramp up onto a wall, a staircase
-        // laid a block at a time. Anything up to that the suspension rides and
-        // the body tilts onto, exactly as it rides a bank of earth; only a wall
-        // that is genuinely taller than the vehicle's own nose is ploughed.
-        // (The ride height itself is a spring on the terrain under the wheels,
-        // so nothing extra is needed to climb it - it only has to not be
-        // destroyed first, which is what this number decides.)
-        // Cubes taken out by the front of the camper when it is driven into a
-        // bank. Only ever what is directly ahead and only when the ground there
-        // actually stands proud of the ground under the wheels, so a hill climb
-        // is still a hill climb and not a tunnel.
-        _ploughAhead(delta) {
-            if (!this._tool || this._footOnly) return;
-            this._ploughCd = (this._ploughCd || 0) - delta;
-            if (this._ploughCd > 0) return;
-            const ts    = WORLD_TILE_SIZE;
-            const sin   = Math.sin(this._driveAngle), cos = Math.cos(this._driveAngle);
-            const reach = FOOT_VAN_HALF_LEN * 2.4;
-            const nx    = this._vanX + sin * reach;
-            const nz    = this._vanZ + cos * reach;
-            const here  = this._terrain.getTerrainHeight(this._vanX / ts, this._vanZ / ts);
-            const there = this._terrain.getTerrainHeight(nx / ts, nz / ts);
-            // A step the suspension could ride is not a bank. Two blocks of it
-            // is a ramp somebody built to be driven up, and it is left standing.
-            if (there - here < VOX.SIZE * (VEHICLE_STEP_UP + 0.4)) return;
-            const n = this._tool.plough(nx, here + VOX.SIZE * 1.3, nz, VOX.SIZE * 2.4);
-            if (!n) return;
-            this._ploughCd = 0.11;
-            const bleed = Math.max(0.55, 1 - n * 0.018);
-            this._velX *= bleed;
-            this._velZ *= bleed;
-        }
+        // A vehicle rides the ground, it never breaks it: a step, a kerb, a
+        // ramp up onto a wall or a staircase laid a block at a time is climbed
+        // by the suspension spring on the terrain under the wheels, and
+        // anything taller simply stops the vehicle.
 
         // ---------------------------------------------------------------------
         // Digging
@@ -7639,7 +7713,7 @@
             if (this._interiors)    this._interiors.dispose();
             if (this._followers)    this._followers.dispose();
             this._clearAlongside();
-            if (this._drivenModel)  { this._drivenModel.dispose(); this._drivenModel = null; }
+            if (this._drivenModel)  { this._detachDrivenModel(); }
             if (this._bridge)       { this._bridge.dispose(); this._bridge = null; }
             if (this._driven2d)     { this._scene.remove(this._driven2d.mesh); this._driven2d.dispose(); this._driven2d = null; }
             if (this._engine)       this._engine.dispose();

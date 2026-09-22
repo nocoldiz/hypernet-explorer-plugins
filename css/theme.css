@@ -391,7 +391,7 @@
     overflow: hidden;
     border-radius: 4px;
     border: 1px solid var(--border-gold-amber-30);
-    background: var(--shadow-black-translucent-80);
+    background: transparent;
     flex-shrink: 0;
     position: relative;
 }
@@ -512,39 +512,45 @@
     gap: 8px;
 }
 
-/* 1. Identity Box (Sprite Left of Name + Stats) */
+/* 1. Identity Box (Sprite Left of Name + Stats)
+   No frame of its own: the name field inside it already draws one, and a box
+   around a box read as two. The same goes for the sprite beside it, which is a
+   picture and not a button: it is shown whole, with nothing cropping it. */
 .cc-compact-identity-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-gold-amber-30);
-    border-radius: 6px;
-    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 4px 0;
     display: flex;
     flex-direction: column;
     gap: 6px;
     box-sizing: border-box;
-    box-shadow: 0 2px 8px var(--shadow-black-translucent-55);
+    box-shadow: none;
 }
 
 .cc-compact-avatar-wrap {
     position: relative;
-    width: 52px;
-    height: 52px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-gold-amber-30);
+    width: 48px;
+    /* A walking frame is taller than it is wide on most sheets, so the frame
+       around it is measured by the sprite rather than squared off: a fixed
+       48px box was what squashed the sidebar portrait. */
+    height: auto;
+    min-height: 48px;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px var(--shadow-black-translucent-55);
+    box-shadow: none;
     flex-shrink: 0;
     cursor: pointer;
-    transition: transform 0.15s ease, border-color 0.15s ease;
+    transition: transform 0.15s ease;
 }
 
 .cc-compact-avatar-wrap:hover {
     transform: scale(1.05);
-    border-color: var(--text-primary-hover);
 }
 
 /* The same frame where nothing opens behind it: the companion board already
@@ -556,12 +562,11 @@
 
 .cc-compact-avatar-wrap--static:hover {
     transform: none;
-    border-color: var(--border-gold-amber-30);
 }
 
 .cc-compact-avatar {
-    width: 48px;
-    height: 48px;
+    width: var(--cc-sprite-w, 48px);
+    height: var(--cc-sprite-h, 48px);
     background-repeat: no-repeat;
     image-rendering: pixelated;
     display: inline-block;
@@ -615,10 +620,12 @@
    whatever height the card was left with and its width follows from that. */
 .cc-compact-bust-full {
     width: auto;
-    height: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: 100%;
     max-width: 100%;
     aspect-ratio: 883 / 1200;
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     margin: 0 auto;
     background-repeat: no-repeat;
     background-size: contain;
@@ -858,6 +865,20 @@
     padding-top: 6px;
 }
 
+/* Two actions that belong to the same object (take this dossier, throw it
+   away) stand beside each other and share the width, rather than stacking as
+   two differently shaped plates. */
+.cc-actions-row {
+    flex-direction: row !important;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.cc-actions-row > .cc-compact-btn {
+    flex: 1;
+}
+
+
 /* The sheet's buttons speak the backpack's button language (.back-button):
    an outlined plate that inverts under the cursor, and a filled one for the
    single action that closes the screen. They used to be brass gradients with
@@ -1051,6 +1072,16 @@
     pointer-events: none;
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* ...with the exception of the few fields a locked sheet still leaves open:
+   the story mode's Em is played as written except for what she believes, what
+   she does for a living and the body she was born in. Those controls carry
+   .cc-open-edit (see _storyOpenClass) and are live like any other. */
+.cc-preset-locked .cc-open-edit {
+    pointer-events: auto;
+    opacity: 1;
+    cursor: pointer;
 }
 
 .cc-content-pane .cc-pockets-spread {
@@ -1904,8 +1935,8 @@
 }
 
 .cc-wanted-sprite {
-    width: 48px;
-    height: 48px;
+    width: var(--cc-sprite-w, 48px);
+    height: var(--cc-sprite-h, 48px);
     margin: 14px 0 16px;
     background-size: cover;
     image-rendering: pixelated;
@@ -4694,8 +4725,13 @@
     opacity: 0.7;
 }
 
+/* Every field on the bio sheet is as wide as its column and no wider: with
+   the padding and the hairline counted outside the width, the sheet ran off
+   its own right edge and the page grew a sideways scrollbar. */
 .cc-bio-select {
     width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
     padding: 5px 10px;
     background: transparent;
     border: 1px solid var(--border-gold-amber-30);
@@ -4828,17 +4864,19 @@
     box-sizing: border-box;
 }
 
+/* Hovering lifts the card; it does not draw one. The only card on these boards
+   that carries an outline is the one that is chosen. */
 .cc-pet-card:hover {
-    background: var(--bg-primary-hover-translucent-35);
-    border-color: var(--text-primary-hover);
+    background: none;
+    border-color: transparent;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px var(--shadow-black-translucent-45);
+    box-shadow: none;
 }
 
 .cc-pet-card.selected {
     border-color: var(--text-primary-hover);
-    background: var(--bg-tertiary-focus-translucent-45);
-    box-shadow: 0 0 14px var(--shadow-gold-amber-50);
+    background: none;
+    box-shadow: none;
 }
 
 /* ── The garage board ──
@@ -4853,19 +4891,25 @@
     transform: none;
 }
 
-.cc-pet-card.cc-vehicle-card {
-    border-color: var(--border-gold-amber-30);
+.cc-pet-card.cc-vehicle-card,
+.cc-pet-card.cc-vehicle-card:hover {
+    border-color: transparent;
 }
 
-.cc-pet-card.cc-vehicle-card:hover,
 .cc-pet-card.cc-vehicle-card.selected {
     border-color: var(--text-primary-hover);
 }
 
+/* A car is the point of the card, so it is drawn at a size worth looking at
+   rather than as a thumbnail with a name under it. */
 .cc-vehicle-card .cc-pet-avatar {
-    width: 104px;
-    height: 104px;
+    width: 140px;
+    height: 140px;
     overflow: visible;
+}
+
+.cc-vehicle-card .cc-pet-avatar .cc-sprite {
+    transform: scale(2.4);
 }
 
 /* The sidebar preview of the hovered vehicle: the sprite at full size on the
@@ -5082,9 +5126,17 @@
     padding: 5px 12px;
 }
 
-/* The dice button beside the name field: a square plate, not a labelled one. */.cc-rail-search {
+/* The search strip of a board inside the wizard: a line to type on, with no
+   plate behind it. */
+.cc-rail-search {
     flex: 1;
     height: 32px;
+}
+
+.cc-row-controls .cc-rail-search,
+.cc-row-controls .cc-rail-search:focus {
+    background: none;
+    box-shadow: none;
 }
 
 /* How many entries the open filter leaves. The backpack prints the same count
@@ -5549,15 +5601,17 @@
     font-size: var(--fs-heading) !important;
 }.cc-scenario-dossier .cc-loadout-empty {
     font-size: var(--fs-heading) !important;
-}.cc-dossier-photo-frame {
+}/* The dossier's picture is the picture: no frame around it and no plate under
+   it, the same as every other portrait on the right page. */
+.cc-dossier-photo-frame {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 8px;
     background: transparent;
-    border: 1px solid var(--border-gold-amber-30);
-    border-radius: 6px;
-    box-shadow: inset 0 0 10px var(--shadow-black-translucent-55);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
     margin-bottom: 10px;
 }
 
@@ -7311,19 +7365,6 @@
     font-weight: bold;
 }
 
-.faction-icon-frame {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: var(--border-primary-hover-translucent-15);
-    border: 1px solid var(--border-border-alt-1);
-    border-radius: 4px;
-    margin-right: 12px;
-    padding: 2px;
-    box-shadow: inset 0 1px 3px var(--shadow-primary-hover-translucent-5);
-}
 
 .faction-info {
     flex-grow: 1;
@@ -7358,18 +7399,6 @@
     height: 100%;
 }
 
-.heraldry-emblem-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 15px auto;
-    width: 64px;
-    height: 64px;
-    background: transparent;
-    border: 1px solid var(--border-primary-hover-translucent-15);
-    border-radius: 50%;
-    box-shadow: none;
-}
 
 .heraldry-header {
     text-align: center;
@@ -7808,14 +7837,13 @@
     padding: 12px 16px;
     border: 1px solid var(--border-primary-hover-translucent-15);
     cursor: pointer;
-    background: var(--bg-primary-hover-translucent-35);
-    transition: border-color 0.15s, background 0.15s;
+    background: transparent;
+    transition: border-color 0.15s;
 }
 
 .mp-option-row:hover,
 .mp-option-row.selected {
     border-color: var(--border-focus-hover);
-    background: rgba(139, 90, 43, 0.07);
 }
 
 /* Unavailable modes stay selectable (so their notice can be read) but read as inert */
@@ -7826,12 +7854,10 @@
 
 .mp-option-row.disabled:hover {
     border-color: var(--border-primary-hover-translucent-15);
-    background: var(--bg-primary-hover-translucent-35);
 }
 
 .mp-option-row.disabled.selected {
     border-color: var(--border-focus-hover);
-    background: rgba(139, 90, 43, 0.07);
 }
 
 .mp-option-name {
@@ -8673,38 +8699,6 @@
     color: var(--text-success-active);
     white-space: nowrap;
     margin-right: 8px;
-}
-
-/* The key to the four marks a card can carry, at the foot of the left page.
-   It is kept off the scrolling shelf above it so it never scrolls away. */
-.forge-legend {
-    flex: 0 0 auto;
-    border-top: 1px solid var(--border-secondary-hover-translucent-15);
-    padding-top: 6px;
-    margin-top: 6px;
-}
-.forge-legend-title {
-    font-family: var(--font-ui);
-    font-size: var(--fs-label);
-    color: var(--text-text-alt-10);
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-}
-.forge-legend-row {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    line-height: 1.25;
-    margin-bottom: 2px;
-}
-.forge-legend-mark {
-    flex: 0 0 auto;
-    min-width: 1.2em;
-}
-.forge-legend-text {
-    font-size: var(--fs-caption);
-    color: var(--text-card-medium);
-    overflow-wrap: anywhere;
 }
 
 /* What the grid under it is actually showing, in words: trade, state, count,
@@ -10854,19 +10848,21 @@
 
 .stats-medallions-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 6px 8px;
     margin-bottom: 14px;
 }
 
+/* Read the same way the character creation dossier reads a stat: the name over
+   the number, the modifier in plain parentheses beside it, no plate and no
+   fixed medallion box. */
 .stat-medallion {
     background: transparent;
-    border: none;
-    border-radius: 50%;
+    border: 1px solid transparent;
+    border-radius: 4px;
     width: 100%;
-    max-width: 120px;
-    height: 80px;
-    margin: 0 auto;
+    padding: 2px 4px;
+    margin: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -10885,7 +10881,7 @@
 
 .stat-medallion-lbl {
     font-family: var(--font-ui);
-    font-size: 0.928em;
+    font-size: 1.05em;
     color: var(--text-primary-hover);
     font-weight: bold;
     margin-top: 1px;
@@ -10893,7 +10889,7 @@
 
 .stat-medallion-val {
     font-family: var(--font-ui);
-    font-size: 1.19em;
+    font-size: 1.45em;
     font-weight: bold;
     color: var(--text-muted-hover);
 }
@@ -10946,14 +10942,15 @@
 
 .stat-medallion-mod {
     position: static;
-    background: var(--text-primary-hover);
-    color: var(--bg-secondary-hover);
+    background: transparent;
+    color: var(--text-muted-hover);
     font-family: var(--font-ui);
-    font-size: 0.82em;
+    font-size: 1.05em;
     font-weight: bold;
-    padding: 1px 5px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px var(--shadow-primary-hover-translucent-5);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    opacity: 0.85;
 }
 
 /* The alignment box is what is left on the attributes tab under the medallions,
@@ -11064,7 +11061,8 @@
 
 .status-bio-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    align-items: start;
     gap: 6px 14px;
     font-size: 0.88em;
     padding: 4px 2px;
@@ -11079,9 +11077,10 @@
    bright value ink on the right (.item-slot / .inspect-spec-* in the backpack). */
 .status-bio-item {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 8px;
+    gap: 2px 8px;
     padding: 4px 9px;
     background: transparent;
     border: 1px solid var(--border-primary-hover-translucent-15);
@@ -11137,7 +11136,7 @@
     color: var(--text-card-medium);
     padding: 3px 4px;
     border-radius: 4px;
-    background: var(--border-primary-hover-translucent-5);
+    background: transparent;
 }
 
 .status-bio-event-date {
@@ -11959,8 +11958,17 @@
 }
 
 /* The contents column. It scrolls inside itself, never pushing the header, the
-   rail or the footer off the page. */
-.topic-list-container {
+   rail or the footer off the page. The leaf packs its parts from the top: left
+   to space-between the header, the strip and the rail were spread down the
+   page and the list ran off the bottom of the book instead of scrolling. */
+#help-container .left-page {
+    justify-content: flex-start;
+}
+
+#help-container .topic-list-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     padding-right: var(--sp-3);
 }
 
@@ -11989,10 +11997,13 @@
 
 /* The macrotopic rail. Same chips the backpack files its pockets with, kept
    short so a long manual does not push the list off the page. */
+/* The rail wraps to as many rows as it needs. Capped, it was cut through the
+   middle of a row of chips and read as a broken strip; the list below it takes
+   whatever height is left and scrolls. */
 #help-container .help-group-chips {
     flex: 0 0 auto;
-    max-height: 4.6em;
-    overflow-y: auto;
+    flex-wrap: wrap;
+    overflow: visible;
     gap: 4px;
     margin-bottom: 10px;
     padding-bottom: 6px;
@@ -13665,9 +13676,9 @@
     padding: 10px 14px;
 }
 
-/* The equip bench turns the spread around: the slot list is the short page and
-   the bench itself the wide one, so the pieces are shown as large as the screen
-   allows. The crease moves with them. */
+/* The equip bench turns the spread around: the bench of loose pieces is the
+   left page and the slots of the three party members the right one, laid out
+   as one column each. The crease moves with them. */
 #equip-container .left-page {
     width: 42%;
 }
@@ -13676,8 +13687,8 @@
     --spine-x: 42%;
 }
 
-/* Right page layout. The content area takes what is left rather than the full
-   page height, which used to push the weapon preview under the tabs. */
+/* The bench area takes what is left rather than the full page height, which
+   used to push the weapon preview under the tabs. */
 #equip-container .right-content-area {
     flex: 1 1 auto;
     display: flex;
@@ -13691,6 +13702,23 @@
     width: 58%;
     justify-content: flex-start;
 }
+
+/* The three member columns scroll on their own, so the page around them
+   does not scroll as well. */
+#equip-container .right-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#equip-container .left-content-area.equip-main-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding-right: 0;
+}
+
+
 
 .equip-left-content {
     display: flex;
@@ -13855,13 +13883,60 @@
     min-height: 0;
     overflow-y: auto;
     padding-right: 4px;
-    gap: 12px;
+    gap: 10px;
     box-sizing: border-box;
 }
 
+/* One profile per row, stacked down the page, each ruled off from the next. */
 #equip-container .party-paperdolls-stacked .paperdoll-row-item {
     width: 100%;
     flex: 0 0 auto;
+    min-width: 0;
+    padding-bottom: 8px;
+}
+
+#equip-container .party-paperdolls-stacked .paperdoll-row-item:not(:last-child) {
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
+}
+
+/* A profile reads across: the name bar over the whole row, the slots on the
+   left and the numbers in a column of their own on the right. */
+#equip-container .party-paperdolls-stacked .paperdoll-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px;
+    grid-template-areas:
+        "bar   bar"
+        "slots stats"
+        "warn  warn";
+    column-gap: 12px;
+    row-gap: 2px;
+    align-items: start;
+}
+
+#equip-container .party-paperdolls-stacked .paperdoll-actor-bar { grid-area: bar; }
+#equip-container .party-paperdolls-stacked .paperdoll-slots-grid { grid-area: slots; }
+#equip-container .party-paperdolls-stacked .paperdoll-stats-grid { grid-area: stats; }
+#equip-container .party-paperdolls-stacked .paperdoll-dual-warning { grid-area: warn; }
+
+/* In its own narrow column the numbers line up on a fixed grid rather than
+   wrapping wherever the flex run happens to break. */
+#equip-container .party-paperdolls-stacked .paperdoll-stats-grid {
+    margin-top: 0;
+    padding: 0;
+}
+
+#equip-container .party-paperdolls-stacked .paperdoll-stats-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px 6px;
+}
+
+#equip-container .party-paperdolls-stacked .paperdoll-stats-strip--vitals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#equip-container .party-paperdolls-stacked .paperdoll-stats-strip--derived {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 #equip-container .paperdoll-container {
@@ -13883,7 +13958,8 @@
 }
 
 #equip-container .paperdoll-container:not(.active-actor) .paperdoll-stats-grid {
-    display: none;
+    margin-top: 4px;
+    padding-top: 4px;
 }
 
 #equip-container .paperdoll-container:not(.active-actor) .paperdoll-slot {
@@ -13936,11 +14012,6 @@
     opacity: 1 !important;
 }
 
-#equip-container.is-dragging-equip .paperdoll-container:not(.active-actor) .paperdoll-slot {
-    min-height: 62px;
-    padding: 6px 9px;
-}
-
 #equip-container .right-page-header {
     display: flex;
     justify-content: flex-end;
@@ -13978,44 +14049,53 @@
 }
 
 #equip-container .paperdoll-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 10px;
-    row-gap: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     width: 100%;
-    margin-top: 4px;
+    margin-top: 6px;
     padding: 2px 4px;
     background: transparent;
     border-radius: 4px;
     box-sizing: border-box;
 }
 
-#equip-container .paperdoll-stats-grid .inspect-spec-row {
+/* Label over value, one column per stat: a row of stats reads left to right
+   instead of as label/value pairs. */
+#equip-container .paperdoll-stats-strip {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 4px 18px;
+    width: 100%;
+}
+
+#equip-container .paperdoll-stat-col {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 0 2px;
-    border-radius: 2px;
-    font-size: 0.95rem;
+    min-width: 0;
     line-height: 1.15;
-    transition: background 0.15s ease;
 }
 
-#equip-container .paperdoll-stats-grid .inspect-spec-row:hover {
-    background: var(--bg-subtle-translucent-10);
+#equip-container .paperdoll-stats-strip--derived {
+    gap: 4px 22px;
 }
 
-#equip-container .paperdoll-stats-grid .inspect-spec-label {
+#equip-container .paperdoll-stats-grid .stat-label {
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--text-card-medium);
     text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
 }
 
 #equip-container .paperdoll-stats-grid .stat-val {
     font-size: 1rem;
     font-weight: bold;
     color: var(--text-card-dark);
+    white-space: nowrap;
 }
 
 #equip-container .paperdoll-stats-grid .equip-stat-mod {
@@ -14076,6 +14156,7 @@
 
 #equip-container .paperdoll-slot {
     background: transparent;
+    min-height: 74px;
     border: 1px solid var(--border-secondary-hover-translucent-15);
     border-radius: 5px;
     padding: 6px 9px;
@@ -14099,26 +14180,25 @@
 }
 
 #equip-container .paperdoll-slot.drag-target-valid {
-    border-color: #4ade80 !important;
-    background: rgba(74, 222, 128, 0.08) !important;
-    box-shadow: 0 0 8px rgba(74, 222, 128, 0.35);
+    border-color: var(--border-gold-amber) !important;
+    background: var(--bg-gold-panel-92) !important;
+    box-shadow: 0 0 8px var(--shadow-gold-amber-30);
     animation: pulse-valid 1.2s infinite ease-in-out;
 }
 
+/* Invalid targets keep their normal look: no colour change, no resize */
 #equip-container .paperdoll-slot.drag-target-invalid {
-    opacity: 0.35;
-    border-color: #ef4444;
+    opacity: 1;
 }
 
 #equip-container .paperdoll-slot.drag-over {
-    border-color: #22c55e !important;
-    background: rgba(34, 197, 94, 0.2) !important;
-    transform: scale(1.02);
+    border-color: var(--text-primary-hover) !important;
+    background: var(--bg-gold-panel-95) !important;
 }
 
 @keyframes pulse-valid {
-    0%, 100% { box-shadow: 0 0 4px rgba(74, 222, 128, 0.2); }
-    50% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
+    0%, 100% { box-shadow: 0 0 4px var(--shadow-gold-amber-30); }
+    50% { box-shadow: 0 0 10px var(--shadow-gold-amber-50); }
 }
 
 #equip-container .slot-header {
@@ -14196,9 +14276,9 @@
     font-family: var(--font-ui);
     font-weight: 600;
     font-size: 0.86rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow: visible;
     color: var(--text-card-dark);
     line-height: 1.2;
 }
@@ -14280,8 +14360,8 @@
 
 #equip-container .detail-preview-box {
     width: 100%;
-    height: 200px;
-    flex: 0 0 200px;
+    height: 330px;
+    flex: 0 0 330px;
     position: relative;
     border-radius: 6px;
     overflow: hidden;
@@ -14296,12 +14376,14 @@
 }
 
 #equip-container .detail-preview-row .detail-preview-box {
-    flex: 0 0 220px;
-    width: 220px;
+    flex: 0 0 360px;
+    width: 360px;
+    height: 330px;
 }
 
 #equip-container .detail-stats-side {
     flex: 1 1 auto;
+    margin-left: auto;
     min-width: 0;
     column-gap: 14px;
     row-gap: 0;
@@ -14315,14 +14397,13 @@
 
 #equip-container .equip-group-header {
     grid-column: 1 / -1;
-    font-size: 0.8rem;
+    font-size: 0.964em;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-card-medium);
     opacity: 0.85;
     padding: 6px 2px 2px;
-    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
 }
 
 #equip-container .detail-preview-box canvas {
@@ -14442,15 +14523,16 @@
 
 #equip-container .equip-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
 }
 
 #equip-container .equip-card {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 8px;
+    min-height: 62px;
+    padding: 6px 9px;
     background: transparent;
     border: 1px solid var(--border-secondary-hover-translucent-15);
     border-radius: 4px;
@@ -14485,28 +14567,29 @@
 #equip-container .equip-card-info {
     flex: 1 1 auto;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 #equip-container .equip-card-name-row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     gap: 4px;
+    flex-wrap: wrap;
 }
 
 #equip-container .equip-card-name {
     font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 0.84rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 1.1em;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow: visible;
     color: var(--text-card-dark);
 }
 
 #equip-container .equip-card-qty {
-    font-size: 0.72rem;
+    font-size: 0.87em;
     color: var(--text-card-medium);
     opacity: 0.8;
 }
@@ -14514,9 +14597,11 @@
 #equip-container .equip-card-meta {
     display: flex;
     align-items: center;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 2px 6px;
     margin-top: 2px;
-    font-size: 0.72rem;
+    font-size: 1.0em;
+    overflow-wrap: anywhere;
 }
 
 #equip-container .equip-card-stat {
@@ -17210,6 +17295,11 @@
 #blacksmith-container .forge-tier-need,
 #blacksmith-container .forge-quality-mark { font-size: var(--fs-chip); }
 
+/* The way out reads in the same type as the page it leaves: the shared button
+   stamp sizes every action in em, which lands a step under this screen's token
+   scale, so Back alone came out smaller than the titles beside it. */
+#blacksmith-container .back-button { font-size: var(--fs-body); }
+
 /* ==========================================================================
    Eris: the court and the date
    (Economy/ErisTrial.js, Economy/ErisDateSystem.js)
@@ -19775,12 +19865,12 @@ padding: 2px 8px; font-size: var(--fs-heading);
     /* The eight parameters on a leader's sheet, laid out the way the status
        screen lays them out rather than as eight more bars. */
     .npc-param-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      gap: 2px 14px; margin: 4px 0 6px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, max-content));
+      gap: 2px 10px; margin: 4px 0 6px; justify-content: start;
     }
     .npc-param-cell {
-      display: flex; justify-content: space-between; align-items: baseline;
-      gap: 8px; font-size: var(--fs-body); color: var(--text-primary-hover);
+      display: flex; justify-content: flex-start; align-items: baseline;
+      gap: 4px; font-size: var(--fs-body); color: var(--text-primary-hover);
     }
     /* The sentence under a platform's policy: what that position means. */
     .npc-policy-desc {
@@ -20043,6 +20133,18 @@ padding: 2px 8px; font-size: var(--fs-heading);
       padding: 0 12px 6px;
       color: var(--text-primary-hover);
     }
+    /* The star that keeps an article on the wiki's favourites shelf. Hollow
+       while it is only being read, filled once it is kept. */
+    .npc-wiki-fav {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: fit-content; margin: 0 auto 8px; padding: 2px 10px;
+      border: 1px solid var(--border-primary-hover-translucent-15);
+      border-radius: 10px; cursor: pointer;
+      font-size: var(--fs-label); color: var(--text-text-alt-4);
+    }
+    .npc-wiki-fav:hover { border-color: var(--border-focus-hover); color: var(--text-primary-hover); }
+    .npc-wiki-fav--on   { color: var(--text-primary-hover); border-color: var(--border-focus-hover); }
+    .npc-wiki-fav-glyph { font-size: var(--fs-body); }
     .npc-dead-badge {
       display: block; margin: 4px auto 6px; width: fit-content;
       background: var(--bg-crime-dark-10);
@@ -21251,6 +21353,9 @@ padding: 2px 10px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    /* without this the flex item refuses to shrink under its content and the
+       list spills past the window instead of scrolling inside it */
+    min-height: 0;
     scrollbar-width: thin;
 }
 
@@ -21634,7 +21739,7 @@ padding: 2px 10px;
 .tt-rail {
     position: relative;
     flex: 0 0 auto;
-    width: clamp(146px, 13vw, 232px);
+    width: clamp(190px, 16vw, 280px);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -21714,6 +21819,7 @@ padding: 2px 10px;
 }
 .tt-tab-count {
     flex: 0 0 auto;
+    margin-left: auto;
     font-family: monospace;
     font-size: 0.892em;
     padding: 1px 6px;
@@ -22835,27 +22941,34 @@ body, canvas {
 /* The line centred over the quick bar: what the hovered or armed slot does,
    read straight off the database description. Same ring of black as the name
    line under the row, one size down and clipped to the bar's own width. */
+/* The line over the quick bar that says what the armed thing does. It is the
+   same reading the battle description box gives (.bse-help-panel), so it wears
+   the same clothes: a boxed panel in the parchment chrome, not bare white text
+   laid over whatever the field happens to be showing behind it. It keeps a
+   fixed block of height whether or not a slot is speaking, so an appearing
+   description never shoves the row. */
 .hotbar-desc {
     box-sizing: border-box;
-    height: 20px;
-    margin-bottom: 4px;
+    width: max-content;
+    max-width: 100%;
+    height: 34px;
+    margin: 0 auto 4px;
+    padding: 4px 12px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     text-align: center;
     font-family: var(--font-ui);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: bold;
     letter-spacing: 0.2px;
     line-height: 20px;
-    color: var(--text-pure-white);
-    text-shadow: -2px -2px 0 var(--text-pure-black),  0   -2px 0 var(--text-pure-black),
-                  2px -2px 0 var(--text-pure-black), -2px  0   0 var(--text-pure-black),
-                  2px  0   0 var(--text-pure-black), -2px  2px 0 var(--text-pure-black),
-                  0    2px 0 var(--text-pure-black),  2px  2px 0 var(--text-pure-black),
-                 -1px -1px 0 var(--text-pure-black),  1px -1px 0 var(--text-pure-black),
-                 -1px  1px 0 var(--text-pure-black),  1px  1px 0 var(--text-pure-black),
-                  0    2px 6px var(--shadow-black-translucent-80);
+    color: var(--text-primary-hover);
+    background: var(--text-danger-hover);
+    background-image: radial-gradient(ellipse at center,
+        transparent 40%, var(--bg-brown-vignette-10) 100%);
+    border: 3px solid var(--border-subtle);
+    border-radius: 6px;
     pointer-events: none;
     visibility: hidden;
 }
@@ -24802,24 +24915,49 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #camper-drive-hud .cds-map-coords {
     text-align: right; margin-top: 4px;
 }
+/* The control legend is the map legend's checklist, in the 3D world: the same
+   heading, the same two columns, the same label-then-chip row (see "The map
+   legend" below and MapLegend.js). It wears this HUD's own panel rather than
+   the parchment sheet, because it is mounted inside the mode panel. */
 #camper-drive-hud .cds-cmd-list {
-    margin-top: 8px; display: none; flex-direction: column; gap: 5px;
+    margin-top: 8px; display: none; flex-direction: column;
+    min-width: 236px; max-width: 460px;
+}
+#camper-drive-hud .cds-cmd-heading {
+    font-size: var(--fs-chip); font-weight: bold;
+    text-transform: uppercase; letter-spacing: 0.10em;
+    color: var(--accent-amber-glow);
+    margin-bottom: var(--sp-2);
+}
+#camper-drive-hud .cds-cmd-rows {
+    display: grid; grid-template-columns: 1fr 1fr;
+    column-gap: var(--sp-4);
 }
 #camper-drive-hud .cds-cmd-row {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--sp-4);
+    font-size: var(--fs-caption); line-height: 1.5;
+    color: var(--text-text-alt-12);
+}
+#camper-drive-hud .cds-cmd-label { font-weight: normal; }
+#camper-drive-hud .cds-cmd-binds {
+    display: flex; align-items: baseline; justify-content: flex-end;
+    gap: var(--sp-2); white-space: nowrap;
 }
 #camper-drive-hud .cds-key {
-    min-width: 36px; text-align: center;
-    background: var(--bg-tertiary-focus-translucent-45);
-    border: 1px solid var(--border-gold-amber-30);
-    border-radius: 4px; padding: 2px 6px;
+    display: inline-block; min-width: 15px; text-align: center;
+    padding: 1px var(--sp-2);
     font-family: var(--font-ui);
-    font-size: var(--fs-caption); font-weight: bold;
-    color: var(--accent-amber-glow);
+    font-size: var(--fs-chip); line-height: 1.25; font-weight: bold;
     letter-spacing: 0.5px;
 }
+/* The folded line: the chip that opens the list, and what it does, held to the
+   right the way the legend holds its fold line. */
 #camper-drive-hud .cds-cmd-hint {
-    margin-top: 6px; font-size: var(--fs-caption); color: var(--accent-amber-light);
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3); font-size: var(--fs-caption);
+    color: var(--accent-amber-light);
 }
 #camper-drive-hud .cds-controller-hint {
     margin-top: 8px; font-size: var(--fs-caption); color: var(--text-text-alt-16);
@@ -26682,6 +26820,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     text-shadow: 0 1px 3px var(--shadow-black-translucent-75);
 }
 .sg3-label.sg3-learned .sg3-label-name { font-weight: bold; color: var(--text-forest-complete); }
+/* Lent by worn gear: in hand like a learned skill, but on loan, so it is
+   marked out rather than inked as owned. */
+.sg3-label.sg3-lent .sg3-label-name { font-style: italic; color: var(--text-secondary-active); }
 .sg3-label.sg3-open .sg3-label-name { color: var(--text-secondary-active); }
 .sg3-label.sg3-locked .sg3-label-name { color: var(--text-card-medium); }
 .sg3-label.sg3-focus .sg3-label-name {
@@ -28315,8 +28456,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     padding: 24px 40px 22px;
     width: 1060px;
     max-width: 88vw;
-    /* Centred in the picture, so it may take the height it needs. */
-    max-height: 76vh;
+    /* The card keeps ONE height whatever the node writes, so the page never grows or shrinks between beats: the prose scrolls inside it instead. */
+    height: 76vh;
     margin-top: 0;
     display: flex;
     flex-direction: column;
@@ -30441,19 +30582,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    The faction register (js/plugins/NPC/FactionDataManagerUI.js)
 
    On the shared kit above. What is left here is only what is peculiar to this
-   screen: the emblems, the standing badge and the accord chips.
+   screen: the standing badge and the accord chips.
    ========================================================================== */
 
-.fac-row-emblem {
-    width: 24px;
-    height: 24px;
-}
 
-.fac-emblem {
-    width: 36px;
-    height: 36px;
-    image-rendering: pixelated;
-}
 
 /* A seat at the assembly, when the holder has one. */
 .fac-post {
@@ -30535,12 +30667,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    the dossier was read. It is a badge beside the name now. The ONU assembly
    still draws the tall version of this card, so the compaction is scoped to
    the head rather than written onto the shared classes. */
-.ui-detail-head .heraldry-emblem-box {
-    flex: 0 0 auto;
-    width: 44px;
-    height: 44px;
-    margin: 0;
-}
 
 .ui-detail-head .heraldry-title {
     font-size: var(--fs-detail-title);
@@ -32196,6 +32322,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-family: var(--font-ui);
     font-size: var(--fs-heading);
     font-weight: bold;
+    color: var(--text-detail-heading);
     margin-bottom: 6px;
 }
 
@@ -33879,6 +34006,66 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     50%      { opacity: 1; }
 }
 
+/* The page of the diary the gravestone carries: the handful of lines the run
+   is remembered by, ruled like the book they were written in. The list is
+   allowed to scroll rather than to push the button off the screen. */
+#hardcore-gameover-container .hgo-diary {
+    width: 100%;
+    max-width: min(760px, 80vw);
+    margin: 0 auto clamp(16px, 4vh, 36px) auto;
+    text-align: left;
+}
+
+#hardcore-gameover-container .hgo-diary-head {
+    font-size: clamp(13px, 2vmin, 19px);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--hgo-ink-muted);
+    text-align: center;
+    margin-bottom: clamp(6px, 1.4vh, 14px);
+}
+
+#hardcore-gameover-container .hgo-diary-lines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: min(42vh, 420px);
+    overflow-y: auto;
+}
+
+#hardcore-gameover-container .hgo-diary-line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: clamp(13px, 2vmin, 20px);
+    line-height: 1.5;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--hgo-rule);
+}
+
+#hardcore-gameover-container .hgo-diary-line:last-child { border-bottom: none; }
+
+#hardcore-gameover-container .hgo-diary-when {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--hgo-ink-muted);
+    font-size: 0.82em;
+}
+
+#hardcore-gameover-container .hgo-diary-text {
+    flex: 1 1 auto;
+    color: var(--hgo-ink-strong);
+}
+
+#hardcore-gameover-container .hgo-diary-where {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    color: var(--hgo-ink-muted);
+    font-size: 0.82em;
+    font-style: italic;
+}
+
 #hardcore-gameover-container .hgo-stats {
     border-top: 1px solid var(--hgo-rule);
     border-bottom: 1px solid var(--hgo-rule);
@@ -35212,8 +35399,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .dyn-dossier-params {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2px 12px;
+    grid-template-columns: repeat(2, minmax(0, 170px));
+    justify-content: start;
+    gap: 2px 28px;
 }
 
 .dyn-dossier-param {
@@ -35225,6 +35413,49 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .dyn-dossier-param-lbl {
     color: var(--text-text-alt-4);
+}
+
+.dyn-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-bottom: 4px;
+}
+
+.dyn-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--fs-caption);
+    line-height: 1.5;
+}
+
+.dyn-chip-icon {
+    --icon-size: 18px;
+}
+
+.dyn-chip-name {
+    color: var(--text-text-alt-7);
+}
+
+.dyn-chip-note {
+    color: var(--text-text-alt-4);
+}
+
+/* The reserve card's two buttons stand beside it rather than under it: the
+   card is a short column of facts and a column of things to do with them. */
+.dyn-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 0 0 auto;
+    align-items: stretch;
+}
+
+.dyn-card-actions .roster-actions {
+    flex-direction: column;
+    margin-top: 0;
+    gap: 6px;
 }
 
 .dyn-row[draggable="true"]:active {
@@ -35463,6 +35694,12 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--bg-secondary-hover);
 }
 
+.sm-skill-badge--lent {
+    background: transparent;
+    border: 1px dashed var(--border-forest-green);
+    color: var(--text-secondary-active);
+}
+
 .sm-skill-badge--locked {
     background: transparent;
     border: 1px solid var(--border-primary-hover-translucent-15);
@@ -35581,6 +35818,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     border-color: var(--border-forest-green);
 }
 
+.sm-state-row--lent {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-style: dashed;
+    border-color: var(--border-forest-green);
+}
+
 .sm-state-mark {
     font-size: var(--fs-chip);
     font-weight: bold;
@@ -35602,9 +35847,11 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     font-family: var(--font-ui);
 }
 
+/* As wide as the skills menu's own right page (.right-page, 42% of the
+   spread), so the same card is read at the same measure on both pages. */
 .sm-detail-bar {
     pointer-events: auto;
-    width: min(30vw, 460px);
+    width: 42%;
     min-width: 340px;
     max-width: none;
     height: 100%;
@@ -35616,6 +35863,42 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 .sm-skill-detail--popup { flex: 1 1 auto; min-height: 0; }
+
+/* The atlas card is the skills menu's own inspect page, so it is given the
+   same room: the panel fills the dock and the card fills the panel. */
+.sm-skill-detail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.sm-skill-detail .item-inspect {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.sm-skill-detail .sm-detail-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    margin-left: 0;
+}
+
+.sm-skill-detail .sm-teach-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    width: 100%;
+}
+
+.sm-skill-detail .sm-teach-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+}
 
 /* --- Spell Fusion ------------------------------------------------------ */
 /* Three label/value rows, not three stacked plates: this is the defect the
@@ -36367,6 +36650,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-bottom: var(--sp-2);
 }
 
+/* The checklist runs two across: one column of it ran off the bottom of the
+   screen on the world map, where the sheet carries its own rows as well. */
+.mlg-sheet .mlg-rows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--sp-4);
+}
+
 .mlg-sheet .mlg-row {
     display: flex;
     align-items: baseline;
@@ -36441,7 +36732,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     width: auto;
     padding: var(--sp-2) var(--sp-3);
     min-width: 196px;
-    max-width: 256px;
+    max-width: 480px;
     max-height: 78vh;
     overflow: hidden;
 }
@@ -36449,6 +36740,10 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #map-legend-controls .mlg-heading {
     font-size: var(--fs-chip);
     margin-bottom: var(--sp-1);
+}
+
+#map-legend-controls .mlg-rows {
+    column-gap: var(--sp-4);
 }
 
 #map-legend-controls .mlg-row {
@@ -36787,6 +37082,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc-wanted-sprite,
 .cc-option-sprite,
 .cc-sprite-portrait-sprite,
+.cc-tab-portrait-sprite,
 .cc-scenario-sheet-sprite {
     background-image: var(--cc-sprite-url, none);
     background-repeat: no-repeat;
@@ -37185,7 +37481,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--text-text-alt-4);
 }
 
-.cc-identity-line { font-size: var(--fs-body); padding: 0 2px; }
+/* The job reads as the line under the name, so it starts where the name's own
+   text starts: the field's padding plus its hairline. */
+.cc-identity-line { font-size: var(--fs-body); padding: 0 2px 0 11px; }
 .cc-identity-name { font-weight: 700; color: var(--text-primary-hover); }
 
 .cc-portrait-caption {
@@ -37760,6 +38058,26 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .cc-gal-board .cc-gal-cell.selected .cc-gal-cell-name {
     color: var(--text-secondary-active);
+}
+
+/* A bust card reserves a band at its foot for the name, so the caption reads
+   UNDER the portrait instead of over its chin. The art stops where the band
+   begins. */
+.cc-gal-board .cc-bust-card {
+    --cc-gal-name-h: 16px;
+}
+
+.cc-gal-board .cc-bust-card .cc-gal-art--bust {
+    right: 0;
+    bottom: var(--cc-gal-name-h);
+    width: auto;
+    height: auto;
+}
+
+.cc-gal-board .cc-bust-card .cc-gal-cell-name {
+    height: var(--cc-gal-name-h);
+    line-height: var(--cc-gal-name-h);
+    bottom: 0;
 }/* The animation a recycled card must not replay, and the one label state the
    skill map toggles a hundred times a frame. */
 .cc-no-anim { animation: none; }
@@ -38598,7 +38916,18 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .bse-bar-label { padding-right: 10px; box-sizing: border-box; }
 
-/* A weakness or a state, as a chip under the gauges. Its height comes off the
+/* A soft spot, beside the monster: the element's symbol and the multiplier in
+   white. No tag and no plate, so it reads as a mark on the creature rather
+   than a second row of chips. */
+.bse-hud-weak {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.bse-weak-icon { margin: 0; }
+
+/* A state, as a chip under the gauges. Its height comes off the
    card's own metrics and its two inks off the chip's meaning. */
 .bse-hud-chip {
     box-sizing: border-box;
@@ -39923,6 +40252,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc-sidebar-btn.primary:hover,
 .cc-step-tab.active,
 .cc-bio-chip.selected,
+.cc-pick-row.selected,
 .cc-spec-card.selected,
 .cc-trait-grid .cc-card-option.selected,
 .cc-presets-board .cc-wanted-card.cc-card-flat.selected {
@@ -40934,8 +41264,10 @@ body.pad-input .kb-only {
     max-width: 46%;
 }
 
+/* The cursor's row in a pick sheet is gold ink inside a gold hairline, like
+   every other chosen thing in the wizard: no plate behind it. */
 .cc-pick-row.selected {
-    background: var(--bg-tertiary-focus-translucent-45);
+    background: none;
     border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
 }
@@ -41682,8 +42014,20 @@ body.pad-input .kb-only {
     min-width: 0;
 }
 
+/* Write a note and Show map stand side by side: one row, equal halves. */
+#worldmap-chrome .wm-read-buttons {
+    display: flex;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3);
+}
+
+#worldmap-chrome .wm-read-buttons > .inspect-btn {
+    flex: 1 1 0;
+    margin-top: 0;
+    min-width: 0;
+}
+
 #worldmap-chrome .wm-note-btn {
-    margin-top: var(--sp-2);
     pointer-events: auto;
 }
 
@@ -41808,7 +42152,6 @@ body.pad-input .kb-only {
 /* The one button in the readout. The panel it sits in lets the pointer
    through, because it is a label; this does not. */
 #worldmap-chrome .wm-show-map {
-    margin-top: var(--sp-3);
     pointer-events: auto;
     text-align: center;
 }
@@ -41910,8 +42253,8 @@ body.pad-input .kb-only {
    travelling list, and Set Active sits on the card itself. */
 .dyn-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 6px 14px;
     align-items: start;
 }
 
@@ -41920,15 +42263,17 @@ body.pad-input .kb-only {
     gap: 10px;
     align-items: flex-start;
     margin-bottom: 0;
-    padding: 10px;
-    border: 1px solid var(--text-text-alt-4);
+    padding: 8px 10px;
+    border: 1px solid transparent;
     border-radius: 5px;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .dyn-card-body {
     flex: 1 1 auto;
-    min-width: 0;
+    min-width: 8em;
+    overflow-wrap: anywhere;
 }
 
 .dyn-card-class {
@@ -41995,4 +42340,213 @@ body.pad-input .kb-only {
     image-rendering: pixelated;
     max-width: 100%;
     height: auto;
+}
+
+/* ==========================================================================
+   Character creation: the last three controls that drew their own look
+   -------------------------------------------------------------------------- */
+
+/* The archetype board is seventy-eight cards long. At title size each name was
+   a headline and four of them filled the page, so the card reads at list size
+   and the grid takes four across. */
+.cc-select-grid.cc-archetype-grid.cc-three-col,
+.cc-select-grid.cc-compact.cc-three-col.cc-archetype-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.cc-select-grid.cc-archetype-grid .cc-card-option {
+    padding: 5px 4px;
+    min-height: 40px;
+}
+
+.cc-select-grid.cc-compact.cc-archetype-grid .cc-option-title,
+.cc-select-grid.cc-compact.cc-three-col.cc-archetype-grid .cc-option-title {
+    font-size: var(--fs-body);
+    line-height: 1.15;
+}
+
+/* A page's own name is not a section heading: it carries no rule under it. */
+.cc-header-gothic.cc-title-display {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Creation's "primary" button was the one filled gold plate left in the main
+   UI. A button is the gold frame on the dark page and nothing else, so the
+   filled state is undone here the way the hover state already was. */
+.cc-compact-btn.primary,
+.cc-sidebar-btn.primary {
+    background: var(--bg-secondary-hover);
+    background-image: none;
+    color: var(--text-primary-hover);
+    border-color: var(--text-primary-hover);
+    box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
+}
+
+/* The sidebar portrait is a real image rather than a CSS background: a
+   background has no onerror, so a name that resolved to no file left a black
+   void where the face should be, with nothing to say so. The frame is now only
+   the box; the picture inside it sizes itself and falls back to the house
+   bust. */
+.cc-compact-bust-full {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.cc-compact-bust-img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* ── The scenario brief ────────────────────────────────────────────────────
+   A scenario's own name is a title, not a section heading, so it carries no
+   rule under it; the purse beside it is a figure, not a chip, so it loses its
+   frame; and the two headings under them are headings, in the heading's own
+   gold rather than the disabled grey they had drifted into. */
+.cc-scenario-brief-head .cc-header-gothic {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.cc-scenario-brief-head .cc-money-badge,
+.cc-scenario-dossier .cc-money-badge {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.cc-scenario-brief .cc-subheader,
+.cc-scenario-dossier .cc-subheader {
+    color: var(--text-detail-heading);
+}
+
+/* The tab rail wore a light line inside its top edge, which read as a glow
+   sitting on the tab rather than as part of it. A tab is its frame and its
+   fill and nothing else. */
+.cc-folder-tab,
+.cc-step-tab {
+    box-shadow: none;
+}
+
+.cc-folder-tab.active,
+.cc-step-tab.active {
+    box-shadow: 0 -2px 10px var(--shadow-gold-amber-30);
+}
+
+/* The register's own split. The roll on the left is a column of names and a
+   standing badge, and it was taking 58% of the paper while the dossier beside
+   it ellipsised its own accords. The names fit in 40, and the crease moves
+   with them. */
+.book-spread.factions-spread { --spine-x: 40%; }
+.book-spread.factions-spread > .left-page  { width: 40%; padding-left: 38px; padding-right: 30px; }
+.book-spread.factions-spread > .right-page { width: 60%; padding-left: 34px; }
+
+/* An accord names a power, and half those names are longer than a chip. On the
+   wider page there is room to set them in full: the name wraps onto a second
+   line rather than being cut to "Holy Vatican..." with the standing beside it
+   doing all the reading. */
+.book-spread.factions-spread .fac-accord {
+    align-items: flex-start;
+}
+
+.book-spread.factions-spread .fac-accord-name {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+}
+
+/* --- Party dossiers --- */
+/* A party card is three people, so it takes the whole width of the dossier
+   board rather than one of its three columns, and the three faces sit in a
+   row inside it. */
+.cc-party-preset-card {
+    grid-column: 1 / -1;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 14px 16px 16px;
+    min-height: 0;
+}
+
+/* Taking a crew is one short plate, not a rule drawn across the whole card:
+   the action row on a party card sits at the left and each button is only as
+   wide as its own label. */
+.cc-party-preset-card .cc-actions-row {
+    justify-content: flex-start;
+}
+
+.cc-party-preset-card .cc-actions-row > .cc-compact-btn {
+    flex: 0 0 auto;
+}
+
+/* The three of them stand together rather than one to a third of the card:
+   a crew reads as a crew, and the room the columns were spending goes to the
+   kit each one is carrying. */
+.cc-party-preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    margin: 6px 0;
+}
+
+.cc-party-preset-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.cc-party-preset-member .cc-wanted-sprite {
+    margin: 2px 0 2px;
+}
+
+/* What the member is carrying, under their name: one short line per piece,
+   so a written crew is read by its kit as much as by its classes. */
+.cc-party-preset-kit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.cc-party-preset-kit-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    font-size: var(--fs-small);
+    color: var(--text-card-medium);
+}
+
+.cc-party-preset-kit-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The creature's own body, which is its portrait. The frame carries nothing
+   but a canvas the scene drops in later, so without a box of its own it
+   collapsed to no height at all and the sculpted model was never drawn. */
+.cc-compact-bust-full.cc3d-live-portrait {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+    aspect-ratio: 883 / 1200;
+    position: relative;
 }

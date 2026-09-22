@@ -242,7 +242,7 @@
         if (!dest || dest.custom || dest.founded) return false;
         const WMR = window.WorldMapReturn;
         if (!WMR || !WMR.isLockedPlaceEntry) return false;
-        return WMR.isLockedPlaceEntry(TRANSPORT_DESTINATIONS[dest.name]);
+        return WMR.isLockedPlaceEntry(destEntry(dest));
     }
 
     // ------------------------------------------------------------------------
@@ -264,9 +264,20 @@
     // the party wrote down themselves, a session with no fauna table loaded -
     // the entry's own "minLevel" stands in, and a stop with neither prints no
     // level at all rather than a "Lv. 0".
+    // The Destinations.json entry behind a row. The index is read LIVE, not
+    // off the copy taken when the plugin loaded, because DataService may hand
+    // window.WorkSystem its tables after this file has run; a stop built by
+    // initializeDestinationCache also carries its whole entry along as
+    // "transportOverrides", which answers even when the index does not.
+    function destEntry(dest) {
+        if (!dest) return null;
+        const index = (window.WorkSystem && window.WorkSystem.Destinations) || TRANSPORT_DESTINATIONS;
+        return index[dest.name] || dest.transportOverrides || dest;
+    }
+
     function destLevelInfo(dest) {
         if (!dest || dest.custom) return null;
-        const entry = TRANSPORT_DESTINATIONS[dest.name] || dest;
+        const entry = destEntry(dest);
         // "fixedLevel" beats the nation band, same rule as the map banner: it
         // is a statement about this stop, not a fallback for a missing band.
         const fixed = Number(entry.fixedLevel);
@@ -1298,7 +1309,7 @@
         // A transport with its own station/stop/pad in the entry arrives there.
         if (TRANSPORT_KEYS.includes(transportType) && overrides[transportType]) {
             const override = overrides[transportType];
-            return withWorldPosition(destination, { mapId: override.mapId, x: override.x, y: override.y, name: destination.name });
+            return withWorldPosition(destination, { mapId: override.mapId, x: override.x, y: override.y, direction: override.direction, name: destination.name });
         }
 
         // A named place with a door of its own is walked through it, rather
@@ -2297,10 +2308,10 @@
         this.checkForActiveTimer();
     };
 
-    // Character creation train origin: the starting train only runs to the three
+    // Character creation train origin: the starting train only runs to the few
     // beginner stations, so the origin picker is whitelisted to them instead of
     // offering the whole rail network.
-    const CC_TRAIN_START_DESTINATIONS = ['Ghent', 'Frozen Station', 'Omega Tower'];  // i18n-ignore  destination ids
+    const CC_TRAIN_START_DESTINATIONS = ['Ghent', 'Frozen Station', 'Omega Tower', 'Bologna'];  // i18n-ignore  destination ids
 
     Scene_Map.prototype.startFastTravel = function (transportType) {
         const data = getFastTravelData();

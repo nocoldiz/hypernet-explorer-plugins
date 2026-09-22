@@ -165,6 +165,8 @@
     "actionTalk": "Talk",
     "actionEmpathize": "Empathize",
     "actionReserves": "Send to Reserves",
+    "actionJoin": "Come back with us",
+    "rejoined": "{name} takes a place on the road again.",
     "actionCancel": "Never mind"
   },
   "auto": {

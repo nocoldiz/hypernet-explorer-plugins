@@ -2629,6 +2629,15 @@
       if (typeof $gameSystem === "undefined" || !$gameSystem) return false;
       if (!Earth.isPendingAt(x, y)) return false;
       const key = earthKey(x, y);
+      // Her heart square is not a story to read: it is the evening itself. The
+      // marker hands the party straight to the date, and the square is spent.
+      const heart = Earth.markerAt(x, y);
+      if (heart && heart.eris && window.ErisDateSystem) {
+        if (window.ErisDateSystem.isActive()) return false;
+        if (!window.ErisDateSystem.start(null, null)) return false;
+        anomalyStore()[key] = { done: true, date: true };
+        return true;
+      }
       const live = Anomaly.session();
       if (live && live.key === key) { MapPlay.start(live); return true; }
       const marker = Earth.markerAt(x, y) || {};
@@ -3275,7 +3284,7 @@
           chip.style.marginLeft = "10px";
           chip.style.padding = "1px 8px";
           chip.style.border = "1px solid currentColor";
-          chip.style.borderRadius = "9px";
+          chip.style.borderRadius = "0";
           chip.style.fontSize = "0.8em";
           chip.style.opacity = "0.85";
           chip.style.whiteSpace = "nowrap";
@@ -3304,8 +3313,11 @@
       this._index = i;
       if (!this._rowsEl) return;
       const els = this._rowsEl.children;
+      // A single row is the only way on: there is nothing to pick between, so
+      // it is left unpainted rather than shown as a standing choice.
+      const paint = n > 1;
       for (let k = 0; k < els.length; k++) {
-        els[k].classList.toggle("pas-adv-row-sel", k === i);   // i18n-ignore: DOM class
+        els[k].classList.toggle("pas-adv-row-sel", paint && k === i);   // i18n-ignore: DOM class
       }
     },
 

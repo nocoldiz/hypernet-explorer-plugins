@@ -261,7 +261,8 @@
       "x": 31,
       "y": 48
     },
-    "minLevel": 8
+    "minLevel": 8,
+    "fixedLevel": 10
   },
   "Luxembourg": {
     "locked": true,
@@ -669,16 +670,29 @@
     "type": "city",
     "country": "Italy",
     "nationId": 78,
-    "procedural": true,
+    "procedural": false,
     "tag": "business",
     "mapOffset": {
       "x": 496,
       "y": 639
     },
+    "entrance": {
+      "id": 352,
+      "x": 35,
+      "y": 17,
+      "direction": 6
+    },
     "train": {
       "mapId": 352,
-      "x": 33,
-      "y": 18
+      "x": 35,
+      "y": 17,
+      "direction": 6
+    },
+    "bus": {
+      "mapId": 352,
+      "x": 35,
+      "y": 17,
+      "direction": 6
     },
     "base": {
       "x": 124,

@@ -1402,13 +1402,22 @@
         bend.position.set(0, -0.016, -0.04);
         bend.rotation.set(0, Math.PI / 2, 0);
         group.add(bend);
-        // The tape is wound round the bend that serves as a grip; stepped
-        // further down it left the last wraps hanging under the hose.
+        // The loose end hangs off the bend and down past the hand. Without it
+        // the whole thing measured barely half a pistol tall across X and Y,
+        // and the overlay fits a weapon to its height: it was drawn enormous.
+        const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.019, 0.017, 0.13, this.seg(11, 7)), hose);
+        tail.position.set(0, -0.082, -0.068);
+        tail.rotation.x = 0.12;
+        group.add(tail);
+        const cut = new THREE.Mesh(new THREE.CylinderGeometry(0.017, 0.017, 0.006, this.seg(11, 7)), sand);
+        cut.position.set(0, -0.147, -0.076);
+        group.add(cut);
+        // The tape is wound round the top of that tail, which is where it is
+        // actually held; stepped down it follows the hose rather than the air.
         for (let i = 0; i < 4; i++) {
           const wrap = new THREE.Mesh(new THREE.TorusGeometry(0.021, 0.005, this.seg(4, 3), this.seg(10, 6)), tape);
-          wrap.position.set(0, -0.038 - i * 0.009, -0.04);
+          wrap.position.set(0, -0.038 - i * 0.014, -0.06 - i * 0.002);
           wrap.rotation.x = Math.PI / 2;
-          wrap.scale.z = 0.6;
           group.add(wrap);
         }
         this._gunTrigger(group, brass, 0, -0.03, -0.008, { guard: false });

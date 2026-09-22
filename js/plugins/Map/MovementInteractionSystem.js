@@ -303,20 +303,28 @@
 
   // --- State ---
   let companionsVisible = true;
+  // One stroke sound per this many tiles swum.
+  const SWIM_STROKE_TILES = 4;
   let lastSwimSoundFrame = 0;
   // Entering and leaving the water is heard once, however many swimmers cross
   // at the same moment: the player, the followers and a split-screen partner
   // all enter on the same frame, and playing one splash each stacked them into
   // a wall of noise. One splash per sound per short window, at a volume that
   // sits under the stroke loop rather than over it.
+  // Followers reach the bank one after another, so they trail into the water
+  // over far more than a frame or two: the window has to cover a whole party
+  // filing in, and a follower never asks for the splash in the first place.
+  const SWIM_SPLASH_FRAMES = 90;
   const swimSplashFrames = {};
-  function playSwimSplash(name) {
+  function playSwimSplash(name, character) {
     if (!name) return;
+    if (character && typeof Game_Follower !== "undefined" &&
+        character instanceof Game_Follower) return;
     const frame = Graphics.frameCount;
     if (swimSplashFrames[name] !== undefined &&
-        frame - swimSplashFrames[name] < 20) return;
+        frame - swimSplashFrames[name] < SWIM_SPLASH_FRAMES) return;
     swimSplashFrames[name] = frame;
-    AudioManager.playSe({ name: name, volume: 25, pitch: 100, pan: 0 });
+    AudioManager.playSe({ name: name, volume: 12, pitch: 100, pan: 0 });
   }
   let lastClimbSoundFrame = 0;
   let reflectionSprites = new Map();
@@ -328,8 +336,28 @@
   // --- Helper Functions ---
 
   const Utils = {
+    // An animated A1 autotile (water, sea, swamp, alien liquid) that the walker
+    // cannot stand on. The generators only paint region 99 over the features
+    // literally named Water / Ocean / Beach, so every other liquid a biome
+    // pours - the alien seas above all - used to read as plain blocked ground:
+    // the swim / dive prompt never opened and the party stood on the shore with
+    // nothing to do. The tile itself is the answer instead of the region, so
+    // any liquid deep enough to block a walker can be swum.
+    isLiquidTile(x, y) {
+      if (!$gameMap || !$dataMap) return false;
+      if (typeof Tilemap === "undefined" || !Tilemap.isWaterTile) return false;
+      // Layer 1 first: a liquid painted over ground sits on the upper layer. A
+      // tile drawn over the liquid (a rock, a shore edge) means the top of the
+      // stack is not liquid, so it is never read through.
+      const upper = $gameMap.tileId(x, y, 1);
+      if (upper) return Tilemap.isWaterTile(upper);
+      const base = $gameMap.tileId(x, y, 0);
+      return !!base && Tilemap.isWaterTile(base);
+    },
+
     isWaterTile(x, y) {
       if (Config.waterRegions.includes($gameMap.regionId(x, y))) return true;
+      if (this.isLiquidTile(x, y)) return true;
 
       // Procedural map (636): every terrain-tag-3 tile counts as water, so
       // swim/fish/dive options appear on ocean and beach biome water regardless
@@ -675,7 +703,7 @@
       // canPass must not hold them on the bridge as they push off into it.
       character._onBridge = false;
 
-      playSwimSplash(Config.sounds.startSwim);
+      playSwimSplash(Config.sounds.startSwim, character);
 
       // Issue #153: swimming washes the swimmer clean. Cleanliness is the
       // hygiene need (TimeDateSystem), and it comes off a stroke at a time now
@@ -871,8 +899,10 @@
       // Back on land the lungs fill again: the tile count starts from zero on
       // the next crossing.
       this.resetSwimStamina(character);
+      character._swimStrokeTile = undefined;
+      character._swimStrokeTiles = 0;
 
-      playSwimSplash(Config.sounds.stopSwim);
+      playSwimSplash(Config.sounds.stopSwim, character);
 
       this.restoreOriginalAppearance(character);
 
@@ -923,6 +953,7 @@
         $gameScreen.startFlash([255, 255, 255, 128], 30);
         
         // Reset Fog of War
+        if ($gameMap && $gameMap.endDiveMask) $gameMap.endDiveMask();
         if ($gameMap && $gameMap.initializeFogOfWar) {
           $gameMap.initializeFogOfWar();
           if (SceneManager._scene instanceof Scene_Map) {
@@ -1377,16 +1408,27 @@
       return reflection;
     },
 
+    // Every reflection currently hanging in the water, taken back down.
+    clearSprites() {
+      if (reflectionSprites.size === 0) return;
+      for (const reflection of reflectionSprites.values()) {
+        if (reflection.parent) reflection.parent.removeChild(reflection);
+      }
+      reflectionSprites.clear();
+    },
+
     update() {
+      // Under the surface there is no surface: a diver's reflection used to
+      // hang in the water beside them.
+      if (isPartyDiving()) {
+        this.clearSprites();
+        return;
+      }
+
       // Cheap early-out on maps with no reflective water (region 99).
       if (this._hasReflectiveWater === null) this.scanReflectiveWater();
       if (!this._hasReflectiveWater) {
-        if (reflectionSprites.size > 0) {
-          for (const reflection of reflectionSprites.values()) {
-            if (reflection.parent) reflection.parent.removeChild(reflection);
-          }
-          reflectionSprites.clear();
-        }
+        this.clearSprites();
         return;
       }
 
@@ -2050,14 +2092,22 @@
         MovementSystem.exitDiveMode(this);
       }
 
-      // The stroke is heard for every tile swum, the ones under a bridge deck
-      // included: the swimmer is still in the water down there, so the sound
-      // must not fall silent for the length of the span.
-      if (Config.sounds.swimMove && this.isMoving()) {
-        const currentFrame = Graphics.frameCount;
-        if (currentFrame - lastSwimSoundFrame >= Config.sounds.swimInterval) {
-          AudioManager.playSe({ name: Config.sounds.swimMove, volume: 16, pitch: 100, pan: 0 });
-          lastSwimSoundFrame = currentFrame;
+      // The stroke is heard once every SWIM_STROKE_TILES tiles swum, the ones
+      // under a bridge deck included: the swimmer is still in the water down
+      // there, so the sound must not fall silent for the length of the span.
+      // Counting tiles rather than frames ties the pace of the stroke to how
+      // far the swimmer actually travels.
+      if (Config.sounds.swimMove) {
+        const tileKey = this.x + "," + this.y;
+        if (this._swimStrokeTile !== tileKey) {
+          if (this._swimStrokeTile !== undefined) {
+            this._swimStrokeTiles = (this._swimStrokeTiles || 0) + 1;
+            if (this._swimStrokeTiles >= SWIM_STROKE_TILES) {
+              this._swimStrokeTiles = 0;
+              AudioManager.playSe({ name: Config.sounds.swimMove, volume: 8, pitch: 100, pan: 0 });
+            }
+          }
+          this._swimStrokeTile = tileKey;
         }
       }
 
@@ -2892,20 +2942,19 @@
         // Switch tileset to 201
         $gameMap.changeTileset(201);
 
-        // Hide non-water tiles using Fog of War
-        if ($gameMap && $gameMap._fogOfWarData) {
-          for (let x = 0; x < $gameMap.width(); x++) {
-            for (let y = 0; y < $gameMap.height(); y++) {
-              const width = $gameMap.width();
-              const index = y * width + x;
-              const isWater = $gameMap._underwaterWaterTiles.has(index);
-              if (!isWater) {
-                $gameMap.setFogOfWarState(x, y, 0); // 0 = Hidden
-              }
-            }
-          }
-          $gameMap._forceVisionUpdate = true;
-          $gameMap.markAllChunksDirty();
+        // Black out every tile that is not water. The fog layer owns that,
+        // and a dive turns it on for itself even when the player has fog
+        // switched off: beginDiveMask paints the mask once and costs nothing
+        // per frame. On a map already running real fog it declines and the
+        // ordinary dive restriction keeps the land dark instead.
+        if ($gameMap && $gameMap.beginDiveMask) {
+          $gameMap.beginDiveMask($gameMap._underwaterWaterTiles);
+        }
+        $gameMap._forceVisionUpdate = true;
+        if ($gameMap.markAllChunksDirty) $gameMap.markAllChunksDirty();
+        if (SceneManager._scene instanceof Scene_Map && SceneManager._scene._spriteset
+            && SceneManager._scene._spriteset.refreshFogOfWar) {
+          SceneManager._scene._spriteset.refreshFogOfWar(true);
         }
 
         character._isDiving = true;
@@ -3244,6 +3293,36 @@
   };
   window.RegionRules = RegionRules;
 
+  // Getting out of a tile nobody can stand in.
+  //
+  // Vanilla asks that the tile UNDER the walker be passable in the direction of
+  // travel as well as the one they are stepping onto, so a party that ends up
+  // inside a blocked tile - dropped there by a transfer, a procedural rock
+  // grown around them, a shore the water ate - is walled in on all four sides
+  // and every command, Swim included, silently does nothing. When the tile they
+  // stand on lets them out nowhere at all, only the destination decides.
+  const _isStuckInTile = (character, x, y) => {
+    for (const dir of [2, 4, 6, 8]) {
+      if ($gameMap.isPassable(x, y, dir)) return false;
+    }
+    return true;
+  };
+
+  const _Game_CharacterBase_isMapPassable = Game_CharacterBase.prototype.isMapPassable;
+  Game_CharacterBase.prototype.isMapPassable = function (x, y, d) {
+    const prevChecking = window._currentlyCheckingCharacter;
+    window._currentlyCheckingCharacter = this;
+    try {
+      if (_Game_CharacterBase_isMapPassable.call(this, x, y, d)) return true;
+      if (!_isStuckInTile(this, x, y)) return false;
+      const x2 = $gameMap.roundXWithDirection(x, d);
+      const y2 = $gameMap.roundYWithDirection(y, d);
+      return $gameMap.isPassable(x2, y2, this.reverseDir(d));
+    } finally {
+      window._currentlyCheckingCharacter = prevChecking;
+    }
+  };
+
   const _Game_CharacterBase_canPass = Game_CharacterBase.prototype.canPass;
   Game_CharacterBase.prototype.canPass = function (x, y, d) {
     // Region ID 11 directional passability:
@@ -3410,6 +3489,15 @@
       return baseResult;
     }
 
+    // Any other blocked liquid (an alien sea, a swamp, a pool the generator
+    // never marked): blocked on foot, open to a swimmer or a water enemy, the
+    // same deal region 99 gets. Shallow, walkable liquid is left alone.
+    if (charIsSwimming || charIsWaterEnemy) {
+      const baseResult = _Game_Map_isPassable.call(this, x, y, d);
+      if (!baseResult) return Utils.isLiquidTile(x, y);
+      return baseResult;
+    }
+
     if (character instanceof Game_Event && character.isAquaticEnemy && character.isAquaticEnemy() &&
         !(character.isAmphibiousEnemy && character.isAmphibiousEnemy())) {
       return false;
@@ -3472,6 +3560,13 @@
     if (terrainTag === 3 && this.mapId() === 636) {
       const baseBit = _Game_Map_checkPassage.call(this, x, y, bit);
       if (baseBit !== 0) return (charIsSwimming || charIsWaterEnemy) ? 0 : baseBit;
+      return baseBit;
+    }
+
+    // Unmarked liquid, see Game_Map.isPassable above.
+    if (charIsSwimming || charIsWaterEnemy) {
+      const baseBit = _Game_Map_checkPassage.call(this, x, y, bit);
+      if (baseBit !== 0 && Utils.isLiquidTile(x, y)) return 0;
       return baseBit;
     }
 
@@ -3562,6 +3657,9 @@
           if (r === 4 || r === 5 || r === NO_GO_REGION || r === 10 || r === 12 || r === 13 || r === 99) { special = true; break; }
           const t = this.terrainTag(x, y);
           if (t === 4 || t === 7 || (is636 && t === 3)) { special = true; break; }
+          // Unmarked liquid still needs the swim rules, so a map holding any of
+          // it is never allowed onto the fast path.
+          if (Utils.isLiquidTile(x, y)) { special = true; break; }
         }
       }
     }
@@ -3715,7 +3813,7 @@
   // and a party stranded at walking pace mid-chase would be a worse game. The
   // rest of the party runs when the leader does, since they walk the column
   // behind them (Core/AutoIdleExplorer.js), so the meter costs them the same.
-  const SPRINT_DRAIN_PER_SEC = 0;    // running on map consumes no AP
+  const SPRINT_DRAIN_PER_SEC = 5.0;  // a full meter is about twenty seconds of running
   const SPRINT_WALK_REGEN = 1.5;     // on the move at walking pace
   const SPRINT_IDLE_REGEN = 4.0;     // standing still, which is a rest
 
@@ -3748,20 +3846,19 @@
       }
     },
 
-    // One frame of the party going about the map. The leader pays for their own
-    // sprint; everybody who is not running gets a little of it back, faster
-    // while the party is standing still than while it is walking.
+    // One frame of the party going about the map. Everybody running pays for
+    // it, the leader and the column behind them alike; everybody who is not
+    // running gets a little of it back, faster while the party is standing
+    // still than while it is walking.
     tick() {
       if (!$gameParty || !$gamePlayer) return;
       const members = $gameParty.members();
       if (members.length === 0) return;
-      const leader = members[0];
       const moving = $gamePlayer.isMoving();
       const leaderSprinting = moving && $gamePlayer.isDashing();
       const regen = perFrame(moving ? SPRINT_WALK_REGEN : SPRINT_IDLE_REGEN);
       for (const actor of members) {
-        const running = actor._sprintRunningThisFrame ||
-          (actor === leader && leaderSprinting);
+        const running = actor._sprintRunningThisFrame || leaderSprinting;
         if (running) this.spend(actor);
         else addAp(actor, regen);
         actor._sprintRunningThisFrame = false;
@@ -3788,8 +3885,18 @@
   Game_Actor.prototype.performMapDamage = function() {};
 
   // Export
+  // The one answer to "is the party under the surface", asked by anything
+  // outside this plugin that has to dress the scene for it (the battlebacks
+  // above all): the dive suit AND the procedural seabed count.
+  function isPartyDiving() {
+    if (typeof $gamePlayer === 'undefined' || !$gamePlayer) return false;
+    return !!$gamePlayer._isDiving || _isProcDivingGlobal();
+  }
+
   window.MovementSystem = {
     isWaterTile: Utils.isWaterTile.bind(Utils),
+    isLiquidTile: Utils.isLiquidTile.bind(Utils),
+    isPartyDiving: isPartyDiving,
     isClimbableAndAccessible: Utils.isClimbableAndAccessible.bind(Utils),
     canClimbInDirection: Utils.canClimbInDirection.bind(Utils),
     enterSwimMode: MovementSystem.enterSwimMode.bind(MovementSystem),

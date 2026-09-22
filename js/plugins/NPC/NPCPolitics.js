@@ -403,9 +403,13 @@
   // each party carries is drawn from the same book Earth's parties use, so
   // the platform math, the ballots and the wiki all work unchanged; only the
   // alien creeds are held back from a world whose people are not.
+  // Keyed by the WORLD SEED as well as the floor: "tower:-5" names a different
+  // world in every save, and a cache that only knew the floor would hand the
+  // second world the first one's bench.
   const _towerPartyCache = {};
   function towerPartyEntries(world) {
-    if (_towerPartyCache[world.id]) return _towerPartyCache[world.id];
+    const key = worldSeed() + "|" + world.id + "|" + world.name;   // i18n-ignore: cache key
+    if (_towerPartyCache[key]) return _towerPartyCache[key];
     const creeds = (window.NPCShared.ideologyList() || [])
       .filter((i) => i && !!i.alien === !!world.alien);
     const rng = new PolRng(worldSeed() ^ nameHash("towerparties:" + world.id));  // i18n-ignore: seed string
@@ -415,7 +419,7 @@
       ideologyId: creeds.length ? creeds[rng.int(0, creeds.length - 1)].id : null,
       founded: null,
     }));
-    _towerPartyCache[world.id] = entries;
+    _towerPartyCache[key] = entries;
     return entries;
   }
 

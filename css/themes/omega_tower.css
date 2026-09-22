@@ -1049,20 +1049,24 @@
     color: #ffffff !important;
 }
 
+/* A card on the pet and garage boards carries no plate, no frame and no glow:
+   the sprite and its name are the card. Only the chosen one is outlined. */
 .cc-pet-card {
-    background: rgba(20, 18, 14, 0.85) !important;
-    border-color: rgba(90, 74, 42, 0.5) !important;
+    background: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .cc-pet-card:hover {
-    background: rgba(45, 38, 25, 0.95) !important;
-    border-color: #ffcc66 !important;
+    background: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .cc-pet-card.selected {
-    background: linear-gradient(180deg, rgba(80, 60, 20, 0.9), rgba(40, 30, 15, 0.9)) !important;
+    background: none !important;
     border-color: #ffd700 !important;
-    box-shadow: 0 0 14px rgba(255, 204, 102, 0.4) !important;
+    box-shadow: none !important;
 }
 
 .cc-sidebar-btn {
@@ -2299,6 +2303,7 @@ body #fbuild-panel .fbuild-folder.fbcursor { color: var(--accent-amber-glow); bo
    the warm gradient plate this used to wear is the one thing every other
    picked row in the tower has already given up. */
 .cc-bio-chip.selected,
+.cc-pick-row.selected,
 .cc-choice-btn.selected,
 .cc-btn-treaty.selected,
 .cc-compact-btn.selected {

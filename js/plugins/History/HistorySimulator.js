@@ -977,12 +977,12 @@
                 };
                 if (isWeapon) {
                     obj.wtypeId = 1 + Math.floor(sRand() * 12);
-                    obj.params = [0, 0, 150 + Math.floor(sRand()*100), 0, 150 + Math.floor(sRand()*100), 0, 0, 0];
+                    obj.params = [0, 0, 8 + Math.floor(sRand() * 9), 0, 4 + Math.floor(sRand() * 5), 0, 0, 0];
                     obj.traits = [];
                 } else if (isArmor) {
                     obj.atypeId = 1 + Math.floor(sRand() * 5);
                     obj.etypeId = 2 + Math.floor(sRand() * 3); // 2: shield, 3: head, 4: body
-                    obj.params = [0, 0, 0, 150 + Math.floor(sRand()*100), 0, 150 + Math.floor(sRand()*100), 0, 0];
+                    obj.params = [0, 0, 0, 16 + Math.floor(sRand() * 17), 0, 4 + Math.floor(sRand() * 5), 0, 0];
                     obj.traits = [];
                 } else {
                     obj.itypeId = 1;

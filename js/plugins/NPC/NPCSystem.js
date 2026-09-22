@@ -34,7 +34,7 @@
     // ship, the 3D camper). They still carry <MapGroup: PublicTransport> so
     // their authored events keep feeding the world pool, but nobody is ever
     // spawned inside them: the only people riding the player's vehicle are the
-    // party. The Player1-8 slots on those maps stay untouched, they are the
+    // party. The PlayerNN slots on those maps stay untouched, they are the
     // MultiplayerSystem avatar slots and carry no graphic of their own.
     NPC_FREE_MAP_IDS: [327, 720, 721, 1094, 1412],
 
@@ -284,6 +284,22 @@
     // Matches "AI" as its own word (e.g. "AI NPC-61 Local", "NPC-62 AI 0"),
     // a plain substring check also fires on unrelated notes like "<link:paint1>".
     hasAITag: (note) => /\bai\b/i.test(note || ""),
+    // "NPC" is the identity tag: it says this event is a person the simulation
+    // owns (profile, schedule, Empathize, rosters). It does NOT make them walk:
+    // an NPC only moves under its own steam when the note also carries "AI"
+    // (see setupNPCControllers and SpawnManager.injectBrain). Matches the bare
+    // word and the "NPC-<classId>" form alike.
+    hasNPCTag: (note) => /\bnpc\b/i.test(note || ""),
+    // "Player1", "Player2", ... up to however many the map's author drew: the
+    // maps carry a different number of them (the newer ones have a Player9 the
+    // older ones do not), so the slots are always matched by shape, never by a
+    // list of names. MultiplayerSystem owns the pattern when it is loaded.
+    isPlayerSlotName: (name) => (window.MultiplayerPlayerSlotRe || /^Player\d+$/).test(name || ""), // i18n-ignore: event names matched at runtime
+
+    // The one answer to "is this event a person?". "AI" and "Local" still count
+    // as identity tags of their own so maps authored before the "NPC" tag
+    // existed keep their crowd.
+    isNPCEvent: (note) => Utils.hasNPCTag(note) || Utils.hasAITag(note) || Utils.hasLocalTag(note),
     // "Local" NPCs are anchored to the map they're defined on (always spawn
     // there) but their template can still travel, see buildNPCPool.
     hasLocalTag: (note) => /local/i.test(note || ""),
@@ -1051,7 +1067,7 @@
     // dealt onto another map's roster (see Utils.hasStoryTag).
     buildNPCPool: (mapData, mapId) => {
       return (mapData?.events || []).filter(ev => {
-        if (!ev || (!Utils.hasAITag(ev.note) && !Utils.hasLocalTag(ev.note)) || Utils.hasStoryTag(ev.note)) return false;
+        if (!ev || !Utils.isNPCEvent(ev.note) || Utils.hasStoryTag(ev.note)) return false;
         if (!ev.pages?.length || !ev.pages.some(p => p?.list?.length > 1)) return false;
         const imgName = (ev.pages || []).map(p => p?.image?.characterName).find(Boolean);
         if (imgName && isBetaSprite(imgName)) return false;
@@ -1292,13 +1308,17 @@
     getPlaceholders: (includePlayers = false) => {
       const p2Active = window.$gameSplitScreen && window.$gameSplitScreen.active;
       const p2Name = p2Active ? window.$gameSplitScreen.p2EventName : null;
+      // In a live session every player slot on the map belongs to the session,
+      // whether or not somebody is standing in it this second: a remote player
+      // walking in gets that event, so an NPC must never be spawned onto one.
+      const netActive = !!window.NetworkManager?.instance?.isMultiplayer?.();
 
       return $gameMap.events()
         .filter(e => {
           const name = e?.event()?.name;
           if (!name) return false;
           if (p2Active && name === p2Name) return false;
-          if (!includePlayers && name.match(/^Player\d+$/)) return false; // Ignore player events unless explicitly included
+          if ((!includePlayers || netActive) && Utils.isPlayerSlotName(name)) return false; // Ignore player events unless explicitly included, and always in a live session
           const note = e?.event()?.note || "";
           if (note.toLowerCase().includes("local")) return false; // Ignore local events from being placeholders!
           // A written character is a person, not a slot: never hand their event
@@ -1314,7 +1334,7 @@
           // never hand it out as a roster placeholder, or transplantData would
           // paint a living NPC's face straight over the sheet it rose in.
           if (e._npcZombieSheet) return false;
-          return name.startsWith("NPC") || name.startsWith("Placeholder") || (includePlayers && name.match(/^Player\d+$/)); // i18n-ignore: event-name prefixes
+          return name.startsWith("NPC") || name.startsWith("Placeholder") || (includePlayers && Utils.isPlayerSlotName(name)); // i18n-ignore: event-name prefixes
         })
         .map(ev => ({ event: ev, originalX: ev.x, originalY: ev.y }));
     },
@@ -2229,7 +2249,7 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
 
 randomizeOmegaTowerMap: (mapId, groupName) => {
       const npcPool = SpawnManager.getNPCPool(groupName);
-      const allPlaceholders = SpawnManager.getPlaceholders(true); // Include Player1-Player8 as placeholders
+      const allPlaceholders = SpawnManager.getPlaceholders(true); // Include the map's PlayerNN slots as placeholders
       if (!npcPool.length || !allPlaceholders.length) return;
 
       // Build valid tiles, anywhere passable on the map
@@ -2340,7 +2360,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // like a procedural settlement's own people (see makeSocietyTemplate).
       const donor = worldPool
         .map(t => t.eventData)
-        .find(ev => Utils.hasAITag(ev?.note) && ev.pages?.some(p => (p?.list?.length ?? 0) > 1))
+        .find(ev => Utils.isNPCEvent(ev?.note) && ev.pages?.some(p => (p?.list?.length ?? 0) > 1))
         || worldPool[0]?.eventData
         || null;
       // No donor means no pool at all, which means no city, leave the slots dark
@@ -2550,7 +2570,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // the normal wandering AI, exactly like any other global-group NPC.
     randomizePublicTransportMap: (mapId, groupName) => {
       const npcPool = SpawnManager.getNPCPool(groupName);
-      const allPlaceholders = SpawnManager.getPlaceholders(true); // Include Player1-Player8 as placeholders
+      const allPlaceholders = SpawnManager.getPlaceholders(true); // Include the map's PlayerNN slots as placeholders
       if (!npcPool.length || !allPlaceholders.length) return;
 
       const seatTiles  = MapManager.getSeatTiles();
@@ -2852,7 +2872,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         const name = e?.event()?.name;
         if (!name) return false;
         if (p2Active && name === p2Name) return false;
-        if (name.match(/^Player\d+$/)) return false; // Ignore players!
+        if (Utils.isPlayerSlotName(name)) return false; // Ignore players!
         if (recruitedIds && recruitedIds.has(e.eventId())) {
           $gameMap.eraseEvent(e.eventId());
           return false;
@@ -3455,9 +3475,23 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         // is the authority on that everywhere (NPCSociety reconcileToSprite).
         const towerWorld  = window.TowerWorlds?.worldOfGroup?.(settlementGroup) || null;
         const charPool    = buildNPCCharacterPool();
-        const towerSprite = towerWorld
+        // A slot that was AUTHORED with a face keeps it. The procedural slots on
+        // map 636 are drawn graphic-less on purpose and only get a face when
+        // they are staffed, so they take the world's; an event somebody sat down
+        // and gave a sprite to is a decision, and a decision outranks a roll.
+        // Either way the person is a citizen of this floor's world: the face is
+        // the only thing the author is deciding, not where they are from.
+        const authored = (() => {
+          const data = ev.event();
+          const page = data?.pages?.[0];
+          const named = data?.characterName || page?.image?.characterName || "";
+          if (!named) return null;
+          return { name: named, index: (page?.image?.characterIndex ?? data?.characterIndex ?? 0) };
+        })();
+        const towerSprite = (towerWorld && !authored)
           ? ProceduralManager.towerCitizenSprite(towerWorld, graphicSeed) : null;
-        const charName    = towerSprite
+        const charName    = (authored && towerWorld ? authored.name : null)
+          || towerSprite
           || pickNPCCharacter(Utils.seededRandom(graphicSeed), charPool);
         // A wardrobe with nothing in it at all (no NPCs.json, a magic level that
         // filtered everything out) leaves the event in whatever face it was
@@ -3465,7 +3499,8 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         if (!charName) return;
         // Big-character sprites (!$) have one slot; normal multi-character sheets use 0-7
         const isBigSprite = charName.includes('!$');
-        const charIdx     = isBigSprite ? 0 : Math.floor(Utils.seededRandom(graphicSeed * 2) * 8);
+        const charIdx     = (authored && towerWorld) ? (isBigSprite ? 0 : authored.index)
+          : isBigSprite ? 0 : Math.floor(Utils.seededRandom(graphicSeed * 2) * 8);
 
         const evData = ev.event();
         evData.pages?.forEach(p => { if (p) { p.image = p.image || {}; p.image.characterName = charName; p.image.characterIndex = charIdx; } });
@@ -4118,9 +4153,19 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         const name = ev.event() ? ev.event().name : null;
         if (rec.name && name && rec.name !== name) continue;
         const key = [mapId, eventId, "A"];
-        if ($gameSelfSwitches.value(key)) continue;
-        $gameSelfSwitches.setValue(key, true);
-        ev.refresh();
+        if (!$gameSelfSwitches.value(key)) {
+          $gameSelfSwitches.setValue(key, true);
+          ev.refresh();
+        }
+        // An authored event with no blank page to fall through to keeps
+        // standing there however the self switch is set, so the citizen who
+        // left with a party has to be erased outright instead. Repeated on
+        // every map load because erasure is a runtime state, not a saved one.
+        const pages = ev.event() ? ev.event().pages : null;
+        const hasBlankPage = Array.isArray(pages) && pages.some(
+          pg => pg && pg.conditions && pg.conditions.selfSwitchValid && pg.conditions.selfSwitchCh === "A"
+        );
+        if (!hasBlankPage) ev.erase();
       }
     }
   };
@@ -6227,7 +6272,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // stealable), but stripped of whatever graphic/movement it carries.
       if (Utils.hasShopTag(note)) { blankShopCounter(ev, data); continue; }
       const isRosterSlot = String(data.name || "").startsWith("NPC"); // i18n-ignore: event name matched at runtime
-      if (isRosterSlot || Utils.hasAITag(note) || Utils.hasLocalTag(note)) ev.erase();
+      if (isRosterSlot || Utils.isNPCEvent(note)) ev.erase();
     }
   }
 
@@ -6317,7 +6362,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       if (Utils.hasShopTag(note)) continue;      // a till is not a person
       if (Utils.hasStoryTag(note)) continue;     // and a written one does not rise
       const isRosterSlot = String(data.name || "").startsWith("NPC"); // i18n-ignore: event name matched at runtime
-      if (!isRosterSlot && !Utils.hasAITag(note) && !Utils.hasLocalTag(note)) continue;
+      if (!isRosterSlot && !Utils.isNPCEvent(note)) continue;
       if (ev._npcZombieDecided) continue;
       ev._npcZombieDecided = true;
       const sheet = zombieSheetFor(ev);
@@ -6682,7 +6727,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       if (Utils.hasShopTag(note)) continue;
       if (Utils.hasStoryTag(note)) continue;
       const isRosterSlot = String(data.name || "").startsWith("NPC"); // i18n-ignore: event name matched at runtime
-      if (!isRosterSlot && !Utils.hasAITag(note) && !Utils.hasLocalTag(note)) continue;
+      if (!isRosterSlot && !Utils.isNPCEvent(note)) continue;
       if (ev._npcGoblinDecided) continue;
       ev._npcGoblinDecided = true;
       // Already a goblin (the catalogue dealt them one): nothing to re-skin.
@@ -6714,7 +6759,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // persona is painted onto, and a <Story> counter is never on the rota, so
     // walking one would set an invisible body wandering the map.
     const storyEvents = $gameMap.events().filter(e =>
-      Utils.hasStoryTag(e?.event()?.note) && Utils.isControllableEvent(e) &&
+      Utils.hasStoryTag(e?.event()?.note) && Utils.hasAITag(e?.event()?.note) && Utils.isControllableEvent(e) &&
       Utils.hasOwnGraphic(e?.event()));
     for (const npc of storyEvents) {
       if (window.$gameSplitScreen?.active && window.$gameSplitScreen.p2Event === npc) continue;
@@ -7202,7 +7247,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
     // Setup LOCAL NPCs on the map (always spawn here regardless of group rosters,
     // their template can still travel to other maps' rosters, see buildNPCPool)
-    const localEvents = $gameMap.events().filter(e => Utils.hasLocalTag(e?.event()?.note) && Utils.isControllableEvent(e));
+    // A <Local> NPC walks only when the author also asked for it with "AI": the
+    // tag says where they belong, not that they wander off it.
+    const localEvents = $gameMap.events().filter(e => Utils.hasLocalTag(e?.event()?.note) && Utils.hasAITag(e?.event()?.note) && Utils.isControllableEvent(e));
     localEvents.forEach(npc => {
       // Never relocate or claim the active Player 2 avatar.
       if (window.$gameSplitScreen?.active && window.$gameSplitScreen.p2Event === npc) return;
@@ -7448,6 +7495,12 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     // Residents of a hand-made map, see NPCSociety's local-level sync: their
     // level follows the party's median instead of a one-time roll.
     hasLocalTag: Utils.hasLocalTag,
+    hasNPCTag: Utils.hasNPCTag,
+    isPlayerSlotName: Utils.isPlayerSlotName,
+    // The events on this map that may be dealt a spawned NPC. Player slots are
+    // only among them when asked for, and never while a session is live.
+    getPlaceholders: SpawnManager.getPlaceholders,
+    isNPCEvent: Utils.isNPCEvent,
     // A written character: never travels, always on their own map, never fought
     // or infected, and one person behind their till rather than a shift rota.
     // See Utils.hasStoryTag for the whole of what the tag means.

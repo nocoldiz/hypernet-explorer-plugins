@@ -240,13 +240,6 @@
   "shortBy": "Mancanti {n}",
   "readyCount": "{n} pronti",
   "tradeHint": "{known} di {total} formule conosciute",
-  "legend": {
-    "title": "Cosa significano i segni",
-    "ready": "Pronto: tutto il necessario è nella sacca",
-    "short": "Mancanti: quante voci della distinta sono scoperte",
-    "locked": "Non addestrato: il livello nel mestiere richiesto",
-    "forged": "Forgiato: già battuto, e com'è venuto"
-  },
   "pieceCount": "{n} pezzi",
   "pickHint": "Scegli un pezzo per vedere cosa serve a farlo.",
   "smelt": "Fondi",

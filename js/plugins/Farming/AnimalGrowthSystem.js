@@ -1466,9 +1466,25 @@
     return String(line).split('{animal}').join(rec.animalId);
   }
 
-  // The animal's own half: the company it is worth, and a word about how it is
-  // doing if there is nothing else to say.
-  function pettingReply(rec, def) {
+  // The animal's own half. A hen has no prose in her: whatever the company was
+  // worth and whatever the record says about her keep, what comes back is the
+  // noise of her class, drawn from the same bank the Empathize panel answers a
+  // beast in (window.NPCCreature owns the sentience boundary; an animal is
+  // always the far side of it). The company is still paid, and how the animal
+  // is doing is still said, only as a popup rather than out of its mouth.
+  function pettingReply(rec, event) {
+    const H = window.NPCEmpathize && window.NPCEmpathize._helpers;
+    if (!H || typeof H._feralNoise !== "function") return "";
+    const name = event ? eventNpcName(event) : "";
+    const classId = (name && typeof H._creatureClassOfNpc === "function"
+      ? H._creatureClassOfNpc(name) : 0)
+      || window.NPCCreature?.FERAL_CLASS_ID || 63;
+    return H._feralNoise(2, classId);
+  }
+
+  // What the popup says about the animal once the fuss is over: the company it
+  // was worth, or how far off grown it is, or simply that it is pleased.
+  function pettingStatus(rec, def) {
     const company = keepCompany(rec, def);
     if (company) return T('AnimalGrowth.company', { animal: rec.animalId });
     if (getStage(rec, def) === "baby") {
@@ -1499,18 +1515,26 @@
     }
   }
 
-  // Making a fuss of an animal.
+  // Making a fuss of an animal. The party speaks, the animal grunts, and what
+  // the fuss was actually worth is reported over the top of the exchange the
+  // way every other transient note in the game is.
   function petAnimal(rec, def, event) {
     updateRecordGrowth(rec);
-    const reply = pettingReply(rec, def);
-    const mine  = pettingLine(rec);
-    if (sayTogether(event, mine, reply)) return;
-    // Nowhere to stage it (no bust manager, no event behind the animal): the
-    // bare lines, the way it always read.
-    window.skipLocalization = true;
-    if (mine) $gameMessage.add(mine);
-    $gameMessage.add(reply);
-    window.skipLocalization = false;
+    const status = pettingStatus(rec, def);
+    const reply  = pettingReply(rec, event);
+    const mine   = pettingLine(rec);
+    const staged = sayTogether(event, mine, reply);
+    if (!staged) {
+      // Nowhere to stage it (no bust manager, no event behind the animal): the
+      // bare lines, the way it always read.
+      window.skipLocalization = true;
+      if (mine) $gameMessage.add(mine);
+      if (reply) $gameMessage.add(reply);
+      window.skipLocalization = false;
+    }
+    if (status && window.ParchmentToast) {
+      window.ParchmentToast.show(status, { severity: 'info' });
+    }
   }
 
   function collectFromAnimal(rec, def) {

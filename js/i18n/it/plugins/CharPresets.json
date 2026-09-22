@@ -566,5 +566,43 @@
   "dossierJoinedInactive": "{name} si arruola e attende tra i membri in riserva.",
   "playerMadeLore": "Un dossier scritto da te. Prendilo quante volte vuoi e cambia ciò che preferisci.",
   "exportCardEquipment": "Equipaggiamento",
-  "exportCardNoEquipment": "Nessun equipaggiamento"
+  "exportCardNoEquipment": "Nessun equipaggiamento",
+  "party": {
+    "oldguard": {
+      "name": "La Vecchia Guardia",
+      "desc": "Un cavaliere, una chierica e un ranger che battono le stesse strade da anni e non hanno più bisogno di mettersi d'accordo ad alta voce."
+    },
+    "circle": {
+      "name": "Il Circolo Arcano",
+      "desc": "Tre maghe cresciute sotto lo stesso tetto che da allora competono in silenzio."
+    },
+    "nightcrew": {
+      "name": "La Squadra Notturna",
+      "desc": "Una ladra, un meccanico e un pistolomante, messi insieme per un colpo solo che non è mai finito del tutto."
+    },
+    "triage": {
+      "name": "L'Unità di Triage",
+      "desc": "Due persone che tengono in vita i feriti e una che sta tra loro e ciò che le ferite le ha causate."
+    },
+    "salvage": {
+      "name": "Il Recupero",
+      "desc": "Una scienziata, un tecnomante e un'esploratrice che rivendono tutto ciò che l'orbita restituisce."
+    },
+    "convoy": {
+      "name": "Il Convoglio",
+      "desc": "Un mercenario, una cacciatrice e una musicista che hanno attraversato più confini di quanti ne ammetteranno mai."
+    },
+    "inquiry": {
+      "name": "L'Indagine Silenziosa",
+      "desc": "Una giornalista, uno psionico e una negromante, tutti con la stessa domanda posta da tre direzioni sbagliate."
+    },
+    "kennel": {
+      "name": "Il Canile",
+      "desc": "Un battitore, un'infermiera e il pastore tedesco che trova ciò che loro non vedono."
+    },
+    "caravan": {
+      "name": "La Carovana",
+      "desc": "Una cartomante, il suo autista e la capra che è sopravvissuta a tre delle sue previsioni."
+    }
+  }
 }

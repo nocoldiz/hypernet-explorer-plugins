@@ -57,6 +57,7 @@
       this._pageRailFocused = false;
       Scene_CharacterCreation._isPetMode = false;
       Scene_CharacterCreation._isVehicleMode = false;
+      Scene_CharacterCreation._isPartyPresetMode = false;
       Scene_CharacterCreation._isScenarioMode = false;
       if (memberIndex >= $gameParty.size()) return;
       Scene_CharacterCreation._currentPartyMemberIndex = memberIndex;
@@ -482,6 +483,7 @@
       Scene_CharacterCreation._isScenarioMode = false;
       Scene_CharacterCreation._isPetMode = false;
       Scene_CharacterCreation._isVehicleMode = false;
+      Scene_CharacterCreation._isPartyPresetMode = false;
       // A new recruit opens on Bio, the page that names it and gives it a face,
       // rather than on whatever page the member before it was left on.
       this._step = STEP.BIO;

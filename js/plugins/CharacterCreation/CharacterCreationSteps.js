@@ -68,6 +68,16 @@
   } = window.StartingEquipment || {};
   const { markStepCompleted } = window.CharacterPresets || {};
 
+  // What the story mode leaves Em to answer for herself on the bio page. Her
+  // dossier is locked like any other authored one, so these are named here and
+  // let past that lock rather than by unlocking the whole page: what she
+  // believes, what she does for a living and the body she was born in are the
+  // player's, while her name, her face, her class and her gender are the
+  // story's (see _storyModeEmLocksField).
+  const STORY_EM_OPEN_FIELDS = ["ideology", "job", "reproduction"];
+  // The same three, named as the pick kinds the sheet draws them with.
+  const STORY_EM_OPEN_PICKS = { creed: "ideology", job: "job" };
+
   // The companion board's own "nobody" card. Not a monster and never in the
   // catalogue: picking it is picking to travel alone.
   const PET_NONE_ID = "none";
@@ -178,7 +188,6 @@
           <div class="cc-select-grid cc-trait-grid">
             ${cardsHtml || emptyHtml}
           </div>
-          <div class="cc-note-faint ts-pack-note">${ccT('Traits.packsHint')}</div>
         </div>
       `;
     }
@@ -199,7 +208,7 @@
         const isActive = activeCategory === cat.id;
         return `
           <div class="ts-tab ${isActive ? 'active' : ''} ${isActive && railFocused ? 'selected' : ''}" onclick="SceneManager._scene.onTraitCategorySelect('${cat.id}')">
-            ${this._ccIconHtml(cat.icon, 16)} <span>${cat.label}</span>
+            <span>${cat.label}</span>
           </div>
         `;
       }).join("");
@@ -212,7 +221,15 @@
           ? traitBank.filter((t) => !!t.diseaseId)
           : traitBank.filter((t) => !t.diseaseId && t.category === activeCategory);
 
-      const cardsHtml = filtered.map((trait) => {
+      // The board is hunted through by name, so it is ordered by name rather
+      // than by whatever order the bank happens to hold.
+      const ordered = filtered.slice().sort((a, b) => {
+        const an = (a.name && resolveTraitName(a.name, a.id)) || a.id;
+        const bn = (b.name && resolveTraitName(b.name, b.id)) || b.id;
+        return String(an).localeCompare(String(bn));
+      });
+
+      const cardsHtml = ordered.map((trait) => {
         const isSelected = selectedTraits.some((id) => String(id) === String(trait.id));
         const name = (trait.name && resolveTraitName(trait.name, trait.id)) || trait.id;
         // An illness costs nothing, so it carries no price tag.
@@ -1484,13 +1501,25 @@
     // synthesised click is exactly what a mouse does to it. That is the whole
     // reason the dropdowns went: a click on a native <select> opens a list the
     // host browser draws in its own chrome, which no pad can walk.
+    // The dossier lock kills the pointer on every control of a locked sheet
+    // (.cc-preset-locked in theme.css). The handful of fields the story mode
+    // leaves Em (STORY_EM_OPEN_FIELDS) have to come back out from under it, or
+    // the handler that would allow the change is never reached by a mouse.
+    _storyOpenClass(field) {
+      if (!field) return "";
+      const CP = window.CharacterPresets;
+      const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm());
+      return (isStoryEm && STORY_EM_OPEN_FIELDS.includes(field)) ? " cc-open-edit" : "";
+    }
+
     _pickTriggerHtml(kind, label, arg) {
+      const openClass = this._storyOpenClass(STORY_EM_OPEN_PICKS[kind]);
       const text = (label == null || label === "") ? ccT('CharCreate.none') : label;
       const safe = String(text)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       const hasArg = arg !== undefined && arg !== null;
       const at = hasArg ? `, ${JSON.stringify(arg)}` : "";
-      return `<div class="cc-bio-select cc-pick-trigger focusable" tabindex="0"
+      return `<div class="cc-bio-select cc-pick-trigger focusable${openClass}" tabindex="0"
            data-nav-key="pick-${kind}${hasArg ? '-' + arg : ''}"
            data-pick-kind="${kind}"
            onclick="SceneManager._scene.onOpenPick('${kind}'${at})">
@@ -1518,10 +1547,6 @@
     }
 
     _creedPickOptions() {
-      const CP = window.CharacterPresets;
-      const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm());
-      const emCreedChoices = (isStoryEm && CP && CP.storyModeEmIdeologyChoices)
-        ? CP.storyModeEmIdeologyChoices() : [];
       const all = (window.NPCShared && window.NPCShared.ideologyList &&
         window.NPCShared.ideologyList()) || [];
       // The fallback is still needed for the case where no ideology bank loaded.
@@ -1532,12 +1557,11 @@
       ];
       const rows = (all.length > 0 ? all : coreQuickPicks)
         .map((item) => ({ value: item.id || item, label: this._formatIdeologyName(item) }))
-        .filter((entry) => !isStoryEm || emCreedChoices.includes(entry.value))
         .sort((a, b) => a.label.localeCompare(b.label));
       // A creed held is a creed chosen: the list opens on nobody's. The story
-      // mode's Em is the exception - she already holds one, and is offered the
-      // short shelf that fits her, so there is no None on it.
-      return isStoryEm ? rows : [{ value: "", label: ccT('CharCreate.none') }].concat(rows);
+      // mode's Em is offered the whole bank like anybody else - what she
+      // believes after the Ritual took everything else is the player's to say.
+      return [{ value: "", label: ccT('CharCreate.none') }].concat(rows);
     }
 
     _hometownPickOptions() {
@@ -1805,17 +1829,16 @@
       // Reproductive organs: the gender pick writes a default in here, and this
       // is where the player overrides it.
       const currentRepro = this._currentReproductionType();
+      const reproOpenClass = this._storyOpenClass("reproduction");
       const reproChipsHtml = ccReproChoices().map((r) => {
         const isSelected = currentRepro === r.val;
-        return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onBioOptionChange('reproduction', ${r.val})">${r.label}</button>`;
+        return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''}${reproOpenClass}" onclick="SceneManager._scene.onBioOptionChange('reproduction', ${r.val})">${r.label}</button>`;
       }).join("");
 
       // And the endocrine balance the body runs at.
       const hormoneBalance = this._currentHormoneBalance();
 
       // Ideologies
-      const emCreedChoices = (isStoryEm && CP && CP.storyModeEmIdeologyChoices)
-        ? CP.storyModeEmIdeologyChoices() : [];
       const allIdeologies = (window.NPCShared && window.NPCShared.ideologyList && window.NPCShared.ideologyList()) || [];
 
       // A handful of creeds used to sit above the list as chips, which said that
@@ -2042,8 +2065,10 @@
         `;
       }
 
+      // Detailed mode asks every bio question on this one sheet and has no
+      // facing board to put beside it, so the page takes the whole spread.
       return `
-        <div class="cc-page cc-page-left ts-page cc-page-column">
+        <div class="cc-page cc-page-left cc-page-full ts-page cc-page-column">
           <div class="cc-bio-container cc-step-scroll">
             ${typePillsHtml}
             ${archetypeBioHtml}
@@ -2415,7 +2440,6 @@
         <div class="cc-bio-section">
           <div class="cc-bio-section-title">${this._ccIconHtml(87, 16)} <span>${ccT('CharCreate.traits')}</span></div>
           ${this._pickTriggerHtml('traitpack', packLabel)}
-          <div class="cc-note-faint ts-pack-note cc-gap-above-tight">${ccT('Traits.packsHint')}</div>
         </div>
       `;
     }
@@ -2503,6 +2527,20 @@
             const pick = rand(nonGenetic);
             actor._selectedTraits = [pick.id];
           }
+        }
+      }
+
+      // The specialization purse, spent for them. Simple mode never opens the
+      // board, so a sheet that leaves it here arrives with nothing trained;
+      // the same roll the Randomize button makes is made quietly instead.
+      // Em is the exception: the story mode deals her board and it is read
+      // only, so nothing may be spent behind it either.
+      if (!Scene_CharacterCreation._storyMode &&
+          (!actor._specTrained || Object.keys(actor._specTrained).length === 0)) {
+        const catalog = this._specsCatalog ? this._specsCatalog() : [];
+        if (Array.isArray(catalog) && catalog.length) {
+          actor._specTrained = {};
+          this._randomSpendSpecs(actor, this._specGrantContext(actor), catalog, CC_SPEC_BUDGET);
         }
       }
 
@@ -2619,19 +2657,21 @@
     _storyModeEmLocksField(field) {
       const CP = window.CharacterPresets;
       if (!CP || !CP.isStoryModeEm || !CP.isStoryModeEm()) return false;
-      // The creed is not here: it is the one field of hers the player writes,
-      // and onBioOptionChange judges it by the value rather than by the field.
-      return field === "class" || field === "gender" || field === "job";
+      // Only what the story itself settles. Her creed, her trade and the body
+      // she was born in are the player's (see STORY_EM_OPEN_FIELDS): the
+      // Ritual left her a will, a living to make and a body, and none of the
+      // three is written down anywhere the story depends on.
+      return field === "class" || field === "gender";
     }
 
     onBioOptionChange(field, value) {
       const CP = window.CharacterPresets;
       const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm());
-      // Her creed is the one line of Em's sheet the story mode leaves open, and
-      // only as far as the shelf of creeds that fits her goes.
-      if (isStoryEm && field === "ideology") {
-        const allowed = (CP.storyModeEmIdeologyChoices && CP.storyModeEmIdeologyChoices()) || [];
-        if (!allowed.includes(String(value))) { SoundManager.playBuzzer(); return; }
+      // The lines of Em's sheet the story mode leaves open. Her dossier is
+      // otherwise locked (the bio page is not a lock-free step), so these three
+      // are let past the dossier lock by name rather than by opening the page.
+      if (isStoryEm && STORY_EM_OPEN_FIELDS.includes(field)) {
+        // nothing to refuse: these are hers to change
       } else {
         if (this._refusePresetEdit()) return;
         if (this._storyModeEmLocksField(field)) { SoundManager.playBuzzer(); return; }
@@ -2741,14 +2781,40 @@
       if (container) {
         const sidebarSlot = container.querySelector(".cc-sidebar-slot");
         if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
-        const leftPage = container.querySelector(".cc-page-left");
-        if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
-        const rightPage = container.querySelector(".cc-page-right");
-        if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+        // Most of these fields are a row of chips and nothing else: which one
+        // is marked is the only thing that changed, so the mark is moved and
+        // the page is left standing. Rebuilding it threw the reader back up
+        // the sheet on every pick.
+        if (!this._ccMarkBioChip(container, field, value)) {
+          const leftPage = container.querySelector(".cc-page-left");
+          if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+          const rightPage = container.querySelector(".cc-page-right");
+          if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
+        }
         this._refreshTopFolderTabs();
         return;
       }
       this.refreshUIOverlayDOM();
+    }
+
+    // Moves the mark inside one row of bio chips, and answers whether it could.
+    // A field whose pick rewrites a label, an option list or a readout is not
+    // one of these and gets the full rebuild instead.
+    _ccMarkBioChip(container, field, value) {
+      const CHIP_ONLY = ["morality", "age", "wealth", "blood", "reproduction"];
+      if (!CHIP_ONLY.includes(field) || !container.querySelectorAll) return false;
+      const call = "onBioOptionChange('" + field + "'";
+      const chips = Array.from(container.querySelectorAll(".cc-bio-chip"))
+        .filter((el) => String(el.getAttribute("onclick") || "").indexOf(call) >= 0);
+      if (!chips.length) return false;
+      const wanted = call + ", " + (field === "blood" ? "'" + value + "'" : String(Number(value))) + ")";
+      let marked = false;
+      chips.forEach((el) => {
+        const hit = String(el.getAttribute("onclick") || "").indexOf(wanted) >= 0;
+        el.classList.toggle("selected", hit);
+        if (hit) marked = true;
+      });
+      return marked;
     }
 
     // Live feedback while the handle is being dragged. A full re-render on
@@ -3391,7 +3457,6 @@
               value: Scene_CharacterCreation._petSearchQuery,
               oninput: "SceneManager._scene.onPetSearch(this.value)",
             })}
-            <span class="cc-count-badge">${ccTp('CharCreate.petCount', { n: petCount })}</span>
           </div>
           <div class="ts-tab-row">${catTabsHtml}</div>
           <div class="cc-pet-grid" id="cc-pet-grid-virt">
@@ -3537,12 +3602,32 @@
     // its nature. This used to be the right half of the spread, which cost the
     // roster half its width and said nothing the sidebar could not.
     _petSidebarHtml() {
-      const catalog = this._petCatalog();
+      // The none card leads the board, so it leads the sidebar too: a party
+      // that has taken no companion was being read back the first monster in
+      // the catalogue, which said it had one.
+      const catalog = [this._petNoneCard()].concat(this._petCatalog());
       const selectedPet = $gameSystem._partyPet;
-      const hoveredId = Scene_CharacterCreation._hoveredPetId || (selectedPet ? selectedPet.id : (catalog[0] && catalog[0].id));
+      const hoveredId = Scene_CharacterCreation._hoveredPetId || (selectedPet ? selectedPet.id : PET_NONE_ID);
       const pet = catalog.find((p) => p.id === hoveredId) || catalog[0];
       if (!pet) return `<div class="cc-compact-sidebar"></div>`;
       const isChosen = selectedPet && selectedPet.id === pet.id;
+      // Travelling alone has no sprite, no stat line and no traits to spend:
+      // the sidebar says what it means and offers the reroll, nothing else.
+      if (pet.id === PET_NONE_ID) {
+        return `
+          <div class="cc-compact-sidebar cc-pet-sidebar">
+            <div class="cc-compact-sidebar-body">
+              <div class="cc-compact-identity-card">
+                <span class="cc-pet-sidebar-name">${pet.name}</span>
+              </div>
+              <p class="cc-text-desc cc-text-desc--body">${pet.desc}</p>
+            </div>
+            <div class="cc-compact-actions cc-stack">
+              <button class="cc-compact-btn primary" onclick="SceneManager._scene.onRandomizePet()">${ccT('CharCreate.randomizeCompanion')}</button>
+            </div>
+          </div>
+        `;
+      }
       const traits = this._petTraits();
       const attrs = (window.PetSystem && window.PetSystem.previewAttrs)
         ? window.PetSystem.previewAttrs(traits.sentient, traits.magical, traits.geneticFreak)
@@ -3595,14 +3680,11 @@
             <div class="cc-compact-identity-card">
               <div class="cc-row-inline cc-row-gap-wide">
                 <div class="cc-compact-avatar-wrap cc-compact-avatar-wrap--static" title="${pet.species}">
-                  <div class="cc-compact-avatar" style="${spriteStyle}"></div>
+                  <div class="cc-compact-avatar" ${window.CCArt.walkAttr(pet.sprite, pet.spriteIndex || 0)} style="${spriteStyle}"></div>
                 </div>
                 <div class="cc-col cc-col-gap-1 cc-col-grow">
                   <div class="cc-row-spread">
                     <span class="cc-pet-sidebar-name">${pet.name}</span>
-                    <button class="cc-profile-open-btn cc-profile-open-btn--icon" onclick="SceneManager._scene.onRandomizePet()" title="${ccT('CharCreate.randomize')}">
-                      ${this._ccIconHtml(83, 16)}
-                    </button>
                   </div>
                 </div>
               </div>
@@ -3610,21 +3692,19 @@
 
             ${statsHtml}
 
-            ${this._ccLoadoutSectionHtml(
-              ccT('CharCreate.petTraitsTitle'),
-              `<div class="cc-row-inline cc-gap-below">
-                 <button class="cc-bio-chip ${traits.sentient ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('sentient')">${ccT('CharCreate.petTraitSentient')}</button>
-                 <button class="cc-bio-chip ${traits.magical ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('magical')">${ccT('CharCreate.petTraitMagical')}</button>
-                 <button class="cc-bio-chip ${traits.geneticFreak ? 'active' : ''}" onclick="SceneManager._scene.onTogglePetTrait('geneticFreak')">${ccT('CharCreate.petTraitGeneticFreak')}</button>
-               </div>`,
-              "",
-              true
-            )}
+            <div class="cc-bio-section">
+              <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.petTraitsTitle')}</span></div>
+              <div class="cc-bio-chips-row">
+                <button class="cc-bio-chip ${traits.sentient ? 'selected' : ''}" onclick="SceneManager._scene.onTogglePetTrait('sentient')">${ccT('CharCreate.petTraitSentient')}</button>
+                <button class="cc-bio-chip ${traits.magical ? 'selected' : ''}" onclick="SceneManager._scene.onTogglePetTrait('magical')">${ccT('CharCreate.petTraitMagical')}</button>
+                <button class="cc-bio-chip ${traits.geneticFreak ? 'selected' : ''}" onclick="SceneManager._scene.onTogglePetTrait('geneticFreak')">${ccT('CharCreate.petTraitGeneticFreak')}</button>
+              </div>
+            </div>
 
           </div>
 
           <div class="cc-compact-actions cc-stack">
-            <button class="cc-compact-btn ${isChosen ? '' : 'primary'}" onclick="SceneManager._scene.onPetCardSelect('${pet.id}')">${isChosen ? ccT('CharCreate.selectedCompanion') : this._petWord('CharCreate.chooseAsCompanion', 'CharCreate.petsChoose')}</button>
+            <button class="cc-compact-btn primary" onclick="SceneManager._scene.onRandomizePet()">${ccT('CharCreate.randomizeCompanion')}</button>
           </div>
         </div>
       `;
@@ -3635,6 +3715,7 @@
       Scene_CharacterCreation._railFocus = null;
       Scene_CharacterCreation._isPetMode = true;
       Scene_CharacterCreation._isVehicleMode = false;
+      Scene_CharacterCreation._isPartyPresetMode = false;
       if (this._presetWindow) this.onPresetCancel();
       SoundManager.playCursor();
       this._lastStep = -1;
@@ -3726,7 +3807,7 @@
         });
         const tabDot = this._dndContainer && this._dndContainer.querySelector(".cc-pet-tab .cc-tab-dot");
         if (tabDot) tabDot.classList.add("done");
-        const petTabLabel = this._dndContainer && this._dndContainer.querySelector(".cc-pet-tab span:nth-child(2)");
+        const petTabLabel = this._dndContainer && this._dndContainer.querySelector(".cc-pet-tab span");
         if (petTabLabel) petTabLabel.textContent = pet.name;
       } else {
         this._lastStep = -1;
@@ -3805,7 +3886,6 @@
         <div class="cc-page cc-page-full ts-page cc-page-column">
           <div class="cc-row-controls">
             <h3 class="cc-subheader cc-subheader--flush">${T('CharCreate.chooseYourVehicle')}</h3>
-            <span class="cc-count-badge">${ccTp('CharCreate.vehicleCount', { n: chosen.length })}</span>
           </div>
           <div class="cc-pet-grid">
             ${cards}
@@ -3815,6 +3895,10 @@
     }
 
     _vehicleSidebarHtml() {
+      // The garage is read off its own cards now, so the column beside them is
+      // left empty rather than repeating what a card already says.
+      return "";
+      /* eslint-disable no-unreachable */
       const catalog = this._vehicleCatalog();
       if (catalog.length === 0) return `<div class="cc-compact-sidebar"></div>`;
       const chosen = this._selectedVehicleSymbols();
@@ -3845,6 +3929,7 @@
           </div>
         </div>
       `;
+      /* eslint-enable no-unreachable */
     }
 
     onVehicleTabClick() {
@@ -3855,6 +3940,7 @@
       Scene_CharacterCreation._railFocus = null;
       Scene_CharacterCreation._isPetMode = false;
       Scene_CharacterCreation._isVehicleMode = true;
+      Scene_CharacterCreation._isPartyPresetMode = false;
       if (this._presetWindow) this.onPresetCancel();
       SoundManager.playCursor();
       this._lastStep = -1;

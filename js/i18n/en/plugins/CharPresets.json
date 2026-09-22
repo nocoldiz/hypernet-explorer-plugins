@@ -566,5 +566,43 @@
   "dossierJoinedInactive": "{name} signs on, and waits with the members in reserves.",
   "playerMadeLore": "A dossier you wrote yourself. Take it as often as you like, and change whatever you please.",
   "exportCardEquipment": "Equipment",
-  "exportCardNoEquipment": "Nothing equipped"
+  "exportCardNoEquipment": "Nothing equipped",
+  "party": {
+    "oldguard": {
+      "name": "The Old Guard",
+      "desc": "A knight, a cleric and a ranger who have worked the same roads for years and no longer need to agree out loud."
+    },
+    "circle": {
+      "name": "The Arcane Circle",
+      "desc": "Three magicians who trained under the same roof and have been quietly competing ever since."
+    },
+    "nightcrew": {
+      "name": "The Night Crew",
+      "desc": "A thief, a mechanic and a gunmancer, put together for one job that never quite ended."
+    },
+    "triage": {
+      "name": "The Triage Unit",
+      "desc": "Two people who keep the wounded alive and one who stands between them and whatever caused the wounds."
+    },
+    "salvage": {
+      "name": "The Salvage Run",
+      "desc": "A scientist, a technomage and a scout who sell whatever the orbit gives back."
+    },
+    "convoy": {
+      "name": "The Convoy",
+      "desc": "A mercenary, a tracker and a musician who have crossed more borders than any of them will admit to."
+    },
+    "inquiry": {
+      "name": "The Quiet Inquiry",
+      "desc": "A journalist, a psyker and a necromancer, all asking the same question from three unsuitable directions."
+    },
+    "kennel": {
+      "name": "The Kennel",
+      "desc": "A tracker, a nurse and the shepherd dog that finds what neither of them can."
+    },
+    "caravan": {
+      "name": "The Caravan",
+      "desc": "A fortune teller, her driver and the goat that has outlived three of her predictions."
+    }
+  }
 }

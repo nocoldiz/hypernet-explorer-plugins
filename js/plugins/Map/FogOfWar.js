@@ -243,7 +243,7 @@
         '_activeTransitions', '_transitionDoneScratch', '_terrainCache', '_eventMap', '_eventMapOccupied', '_eventMapSig',
         '_visibleIndices', '_lastVisibleIndices', '_visibleIndicesSpare', '_currentFrameVisible',
         '_fogExemptIndices', '_fogPeekDividerIndices', '_eventVisionConeTiles',
-        '_fogDiveWater', '_fogDiveKey', '_wallBfsQueue', '_wallBfsVisitedStamp', '_wallBfsStamp',
+        '_fogDiveWater', '_fogDiveKey', '_diveMaskWater', '_wallBfsQueue', '_wallBfsVisitedStamp', '_wallBfsStamp',
         '_dividerScratchA', '_dividerScratchB', '_interiorScratch', '_interiorStack'
     ];
 
@@ -284,6 +284,7 @@
     function fogActive() {
         if (window.dreamActive || !$gameMap) return false;
         if ($gameMap.isDividerOnlyFog && $gameMap.isDividerOnlyFog()) return true;
+        if ($gameMap.isDiveMaskFog && $gameMap.isDiveMaskFog()) return true;
         return fogEnabled() && !$gameMap._fogOfWarDisabled;
     }
 
@@ -725,6 +726,8 @@
         }
 
         this._fogOfWarDisabled = false;
+        this._diveMaskActive = false;
+        this._diveMaskApplied = false;
         this._fogOfWarErrorFallback = false;
         this._visibleFogOfWar = false;
         this._isExteriorMap = false;
@@ -1212,6 +1215,89 @@
     };
 
     //=============================================================================
+    // Game_Map - the dive mask
+    //
+    // Diving on an authored (non procedural) map switches the tileset for the
+    // seabed one, and every dry tile of the map above is still sitting there
+    // under it. The full fog handles that through its dive restriction, but a
+    // player with fog switched off saw the whole village drawn on the sea
+    // floor. So a dive turns the layer on by itself, in the cheapest form
+    // there is: ONE static pass that paints water visible and everything else
+    // black, then nothing per frame but the fade timers. No vision cone, no
+    // ray casting, no event-map rebuild, and no exempt tiles punching holes in
+    // the dark. It ends when the diver surfaces.
+    //=============================================================================
+
+    Game_Map.prototype.isDiveMaskFog = function () {
+        return !!this._diveMaskActive && !this._fogOfWarErrorFallback && !window.dreamActive;
+    };
+
+    // Returns false when the mask is not needed or not possible: real fog is
+    // already running on this map (its dive restriction does the same job), or
+    // there is no water answer to build a mask from.
+    Game_Map.prototype.beginDiveMask = function (waterSet) {
+        if (fogEnabled() && !this._fogOfWarDisabled && !this._fogOfWarForceOff) return false;
+        const water = (waterSet && typeof waterSet.has === 'function' && waterSet.size > 0)
+            ? waterSet
+            : this.buildDiveWaterSet();
+        if (!water || water.size === 0) return false;
+        this._diveMaskWater = water;
+        this._diveMaskActive = true;
+        this._diveMaskApplied = false;
+        if (!this.ensureFogBuffers()) {
+            this._diveMaskActive = false;
+            return false;
+        }
+        this.applyDiveMask();
+        return true;
+    };
+
+    Game_Map.prototype.endDiveMask = function () {
+        if (!this._diveMaskActive) return;
+        this._diveMaskActive = false;
+        this._diveMaskApplied = false;
+        this._diveMaskWater = null;
+        this.markAllChunksDirty();
+    };
+
+    // The single pass. Water visible, everything else unseen, the tiles the
+    // party stands on visible whatever they are, alpha snapped so the mask is
+    // there the instant the dive starts.
+    Game_Map.prototype.applyDiveMask = function () {
+        if (!this.ensureFogBuffers()) return;
+        const water = this._diveMaskWater;
+        if (!water || typeof water.has !== 'function') {
+            this._diveMaskActive = false;
+            return;
+        }
+        const size = this.width() * this.height();
+        for (let i = 0; i < size; i++) {
+            this.setFogOfWarStateByIndex(i, water.has(i) ? STATE_VISIBLE : STATE_UNSEEN, true);
+        }
+        const sources = visionSources();
+        for (let i = 0; i < sources.length; i++) {
+            this.setFogOfWarState(Math.round(sources[i].x), Math.round(sources[i].y), STATE_VISIBLE, true);
+        }
+        const timers = this._fogTransitionTimers;
+        const data = this._fogOfWarData;
+        for (let i = 0; i < size; i++) timers[i] = timerTargetFor(data[i]);
+        if (this._activeTransitions instanceof Set) this._activeTransitions.clear();
+        this.markAllChunksDirty();
+        this._diveMaskApplied = true;
+        this._forceVisionUpdate = false;
+    };
+
+    // Per frame while the mask is up: repaint only when something asked for it.
+    Game_Map.prototype.updateDiveMask = function () {
+        if (!this._diveMaskApplied || this._forceVisionUpdate) {
+            this.applyDiveMask();
+            if (!this._diveMaskActive) return;
+        }
+        this.updateTransitionTimers();
+        this.updateEventVisibility(false);
+    };
+
+    //=============================================================================
     // Game_Map - fog state
     //=============================================================================
 
@@ -1219,7 +1305,7 @@
         if (window.dreamActive) return STATE_VISIBLE;
         // On divider maps the real fog data still matters even when fog is
         // globally off / disabled for the map, so we don't short-circuit here.
-        if ((this._fogOfWarDisabled || !fogEnabled()) && (!this._hasVisionDividers || this._fogOfWarErrorFallback)) return STATE_VISIBLE;
+        if ((this._fogOfWarDisabled || !fogEnabled()) && (!this._hasVisionDividers || this._fogOfWarErrorFallback) && !this.isDiveMaskFog()) return STATE_VISIBLE;
         const index = this.fogTileIndex(x, y);
         if (index < 0) return STATE_UNSEEN;
         // The exempt answer lives in the terrain cache when it is built; only a
@@ -1574,6 +1660,12 @@
 
     Game_Map.prototype.updateFogOfWar = function () {
         if (window.dreamActive) return;
+
+        // A dive on an authored map: the static water mask, nothing else.
+        if (this.isDiveMaskFog()) {
+            this.updateDiveMask();
+            return;
+        }
 
         // Divider maps with fog otherwise inactive: render only the interior
         // walls, so the player cannot see across region-30 dividers.

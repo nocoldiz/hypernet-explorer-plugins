@@ -3322,5 +3322,69 @@
   "881": {
     "name": "Velo dell'Apoteosi",
     "description": "Un velo di luce che non nasconde. Resiste a\nSacro e recupera un po' di mana."
+  },
+  "882": {
+    "name": "Starlit Silk Hood",
+    "description": "Seta tessuta sotto una notte di stelle.\nPresta a chi la indossa Preveggenza."
+  },
+  "883": {
+    "name": "Archon's Iron Circlet",
+    "description": "Ferro freddo, caldo sulle tempie.\nPresta a chi lo indossa Intuito Divino."
+  },
+  "884": {
+    "name": "Empyrean Sigil Robe",
+    "description": "Sigilli che curano chi sta vicino.\nPresta a chi la indossa Cura Gruppo."
+  },
+  "885": {
+    "name": "Runed Leather Jerkin",
+    "description": "Rune incise lungo ogni cucitura.\nPresta a chi lo indossa Aura Rapida."
+  },
+  "886": {
+    "name": "Sanctum Plate Hauberk",
+    "description": "Piastre consacrate, indifferenti al danno.\nPresta a chi lo indossa Barriera Assoluta."
+  },
+  "887": {
+    "name": "Warding Moon Shield",
+    "description": "Un disco pallido che risponde per primo.\nPresta a chi lo impugna Scudo Divino."
+  },
+  "888": {
+    "name": "Astral Focus Orb",
+    "description": "Dentro il vetro gira il maltempo.\nPresta a chi lo impugna Tempesta Cataclismica."
+  },
+  "889": {
+    "name": "Ley Line Signet Ring",
+    "description": "Caldo dove le vecchie linee si incrociano.\nPresta a chi lo indossa Grande Cura."
+  },
+  "890": {
+    "name": "Technomantic Alloy Visor",
+    "description": "Legge uno scontro prima di te.\nPresta Analisi di Combattimento."
+  },
+  "891": {
+    "name": "Hexcoded Sensor Bandana",
+    "description": "Esacodice stampato su cotone semplice.\nPresta a chi la indossa Focus di Precisione."
+  },
+  "892": {
+    "name": "Circuit Mesh Vest",
+    "description": "Maglia che si piega prima del colpo.\nPresta a chi lo indossa Schivata."
+  },
+  "893": {
+    "name": "Servo Plate Vest",
+    "description": "I motori nelle spalle fanno la spinta.\nPresta a chi lo indossa Spezzaguardia."
+  },
+  "894": {
+    "name": "Hex Router Cloak",
+    "description": "Porta la voce piu lontano dei polmoni.\nPresta a chi lo indossa Grido di Raduno."
+  },
+  "895": {
+    "name": "Deflector Field Shield",
+    "description": "Un campo che sta dove stai tu.\nPresta Posizione di Contrattacco."
+  },
+  "896": {
+    "name": "Spellsocket Lantern",
+    "description": "Illumina il lavoro e ne fa la meta.\nPresta a chi la impugna Riparazione sul Campo."
+  },
+  "897": {
+    "name": "Daemon Thread Gloves",
+    "description": "Fili che ricordano ogni serratura.\nPresta a chi li indossa Scasso."
   }
 }

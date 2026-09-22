@@ -125,6 +125,10 @@
         this._activeTab         = 'all';
         this._inspectedItem     = null;
         this._inspectedSlotIdx  = -1;
+        // Clicking an empty slot does not open a blank detail page: it narrows
+        // the bench on the right to the pieces that actually fit there. -1 is
+        // "no slot asked", any slot id is the filter in force.
+        this._slotFilterIdx     = -1;
         this._draggedItem       = null;
         this._dragSource        = null;
 
@@ -739,9 +743,15 @@
         return tabs;
     };
 
-    const equipCategoryOf = (item) => {
+    const equipCategoryOf = (item, merged = false) => {
         if (!item) return '';
         if (DataManager.isWeapon(item)) {
+            // In the All view every weapon type sits under one header.
+            if (merged) {
+                const wlang = ConfigManager.language || 'en';
+                const wt = i18n[wlang] || i18n['en'];
+                return wt.tabWeapons || 'Weapons';
+            }
             return getWeaponTypeName(item.wtypeId) || (($dataSystem.weaponTypes || [])[item.wtypeId] || '');
         }
         const lang = ConfigManager.language || 'en';
@@ -795,6 +805,12 @@
             list = weapons.concat(armors);
         }
 
+        // An empty slot was asked about: keep only what that slot accepts.
+        if (this._slotFilterIdx >= 0 && this._actor && typeof this._actor.slotCandidates === 'function') {
+            const allowed = new Set((this._actor.slotCandidates(this._slotFilterIdx) || []).filter(Boolean));
+            list = list.filter(it => allowed.has(it));
+        }
+
         const map = new Map();
         list.forEach(item => {
             if (!item) return;
@@ -807,10 +823,10 @@
         if (tab === 'all') {
             const order = new Map();
             result.forEach(it => {
-                const cat = equipCategoryOf(it);
+                const cat = equipCategoryOf(it, true);
                 if (!order.has(cat)) order.set(cat, order.size);
             });
-            result.sort((a, b) => order.get(equipCategoryOf(a)) - order.get(equipCategoryOf(b)));
+            result.sort((a, b) => order.get(equipCategoryOf(a, true)) - order.get(equipCategoryOf(b, true)));
         }
         return result;
     };
@@ -978,34 +994,52 @@
 
         const className = actor.currentClass ? actor.currentClass().name : '';
 
+        // The totals read as a column strip: the label sits over its number, so
+        // a whole row of stats is scanned at a glance instead of eight
+        // label-then-value pairs. The four derived stats keep their full names,
+        // which is why they get a strip of their own underneath.
         const sT = (k, def) => (t.short && t.short[k]) || def;
+        const vitalsList = [
+            { key: 'HP', label: sT('hp', 'HP'), val: actor.mhp, isBase: false },
+            { key: 'MP', label: sT('mp', 'MP'), val: actor.mmp, isBase: false }
+        ];
         const totalStatsList = [
-            { key: 'HP',  label: sT('hp', 'HP'),   val: actor.mhp, isBase: false },
-            { key: 'MP',  label: sT('mp', 'MP'),   val: actor.mmp, isBase: false },
             { key: 'STR', label: sT('str', 'STR'), val: actor.atk, isBase: true },
             { key: 'CON', label: sT('con', 'CON'), val: actor.def, isBase: true },
+            { key: 'DEX', label: sT('dex', 'DEX'), val: actor.agi, isBase: true },
             { key: 'INT', label: sT('int', 'INT'), val: actor.mat, isBase: true },
             { key: 'WIS', label: sT('wis', 'WIS'), val: actor.mdf, isBase: true },
-            { key: 'DEX', label: sT('dex', 'DEX'), val: actor.agi, isBase: true },
             { key: 'PSI', label: sT('psi', 'PSI'), val: actor.luk, isBase: true }
         ];
-        let totalStatsHtml = '<div class="inspect-spec-grid stats-grid stats-grid--4col paperdoll-stats-grid">';
-        totalStatsList.forEach(st => {
+        const custom = (typeof actor.calculateCustomStats === 'function') ? actor.calculateCustomStats() : null;
+        const derivedList = custom ? [
+            { key: 'ARCANE',       label: t.arcane,       val: custom.arcane },
+            { key: 'SUBSTANCE',    label: t.substance,    val: custom.substance },
+            { key: 'STEALTH',      label: t.stealth,      val: custom.stealth },
+            { key: 'INTIMIDATION', label: t.intimidation, val: custom.intimidation }
+        ] : [];
+
+        const statColumn = (st, unit) => {
             let modHtml = '';
             if (st.isBase) {
                 const mod = Math.floor((st.val - 10) / 2);
                 const modStr = mod >= 0 ? '+' + mod : String(mod);
                 modHtml = ` <span class="equip-stat-mod">(${modStr})</span>`;
             }
-            totalStatsHtml += `
-                <div class="inspect-spec-row stat-row" data-stat="${st.key}">
-                    <span class="inspect-spec-label stat-label">${escapeHtml(st.label)}</span>
-                    <span class="inspect-spec-value stat-val-container">
-                        <span class="stat-val">${st.val}${modHtml}</span>
-                    </span>
+            return `
+                <div class="paperdoll-stat-col" data-stat="${st.key}">
+                    <span class="stat-label">${escapeHtml(String(st.label))}</span>
+                    <span class="stat-val">${st.val}${unit || ''}${modHtml}</span>
                 </div>`;
-        });
-        totalStatsHtml += '</div>';
+        };
+
+        let totalStatsHtml =
+            `<div class="paperdoll-stats-strip paperdoll-stats-strip--vitals">${vitalsList.map(s => statColumn(s)).join('')}</div>` +
+            `<div class="paperdoll-stats-strip">${totalStatsList.map(s => statColumn(s)).join('')}</div>`;
+        if (derivedList.length) {
+            totalStatsHtml += `<div class="paperdoll-stats-strip paperdoll-stats-strip--derived">${derivedList.map(s => statColumn(s, '%')).join('')}</div>`;
+        }
+        totalStatsHtml = `<div class="paperdoll-stats-grid">${totalStatsHtml}</div>`;
 
         return `
             <div class="paperdoll-container member-equip-container ${isActorActive ? 'active-actor' : ''}" data-member-idx="${memberIdx}">
@@ -1137,19 +1171,19 @@
         const gridStats = [
             { label: S('hp', t.hp),  code: null,  key: 'HP',  percent: false, valBefore: actor.mhp, valAfter: tempActor ? tempActor.mhp : actor.mhp },
             { label: S('mp', t.mp),  code: null,  key: 'MP',  percent: false, valBefore: actor.mmp, valAfter: tempActor ? tempActor.mmp : actor.mmp },
-            { label: S('arcane', t.arcane), code: null, key: 'ARCANE', percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
+            { label: t.arcane, code: null, key: 'ARCANE', percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
 
             { label: S('str', t.str), code: 'STR', key: 'STR', percent: false, valBefore: actor.atk, valAfter: tempActor ? tempActor.atk : actor.atk },
             { label: S('con', t.con), code: 'CON', key: 'CON', percent: false, valBefore: actor.def, valAfter: tempActor ? tempActor.def : actor.def },
-            { label: S('substance', t.substance), code: null, key: 'SUBSTANCE', percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
+            { label: t.substance, code: null, key: 'SUBSTANCE', percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
 
             { label: S('int', t.int), code: 'INT', key: 'INT', percent: false, valBefore: actor.mat, valAfter: tempActor ? tempActor.mat : actor.mat },
             { label: S('wis', t.wis), code: 'WIS', key: 'WIS', percent: false, valBefore: actor.mdf, valAfter: tempActor ? tempActor.mdf : actor.mdf },
-            { label: S('stealth', t.stealth), code: null, key: 'STEALTH', percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
+            { label: t.stealth, code: null, key: 'STEALTH', percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
 
             { label: S('dex', t.dex), code: 'DEX', key: 'DEX', percent: false, valBefore: actor.agi, valAfter: tempActor ? tempActor.agi : actor.agi },
             { label: S('psi', t.psi), code: 'PSI', key: 'PSI', percent: false, valBefore: actor.luk, valAfter: tempActor ? tempActor.luk : actor.luk },
-            { label: S('intimidation', t.intimidation), code: null, key: 'INTIMIDATION', percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
+            { label: t.intimidation, code: null, key: 'INTIMIDATION', percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
         ];
 
         let statsGridHTML = '';
@@ -1190,6 +1224,63 @@
                         ${stat.code ? modBonusHtml : diffHtml}
                     </span>
                 </div>`;
+        }
+
+        // What the piece is worth in damage, under the grid.
+        //
+        // The grid answers "what happens to my stats", which for a weapon is not
+        // the question anyone is asking: the catalogue's ATK column runs from 0 to
+        // 4 and the scaling grade above it is a letter, so two swords could read
+        // identically and hit for very different numbers. These two rows say it
+        // outright. BASE is the weapon's own attack power, and next to it what it
+        // is actually worth in these hands once proficiency has multiplied it
+        // (WeaponProficiency), which is the whole reason an untrained weapon
+        // disappoints. DAMAGE is what a basic attack with it would land, taken
+        // from window.SkillDetails so it is the same number the skill cards print
+        // and is directly comparable with them.
+        let dmgHtml = '';
+        const details = window.SkillDetails;
+        const attackSkill = (typeof $dataSkills !== 'undefined' && $dataSkills)
+            ? $dataSkills[actor.attackSkillId ? actor.attackSkillId() : 1] : null;
+        const dmgRow = (label, valueHtml) => `
+                <div class="inspect-spec-row stat-row">
+                    <span class="inspect-spec-label stat-label">${label}</span>
+                    <span class="inspect-spec-value stat-val-container">${valueHtml}</span>
+                </div>`;
+
+        if (DataManager.isWeapon(item)) {
+            // params index 2 is ATK, the engine's own order.
+            const basePower = (item.params && item.params[2]) || 0;
+            const mult = (weaponProf && typeof weaponProf.multiplier === 'function')
+                ? weaponProf.multiplier(actor, item) : 1;
+            const inHand = Math.round(basePower * mult);
+            let powerHtml = `<span class="stat-val">${basePower}</span>`;
+            if (inHand !== basePower) {
+                const cls = inHand > basePower ? 'positive' : 'negative';
+                powerHtml += ` ➔ <span class="stat-val-new ${cls}">${inHand}</span>`;
+            }
+            dmgHtml += dmgRow(T('Equip.basePower'), powerHtml);
+        }
+
+        // Armour has no attack of its own, so a damage figure under it only
+        // repeats what the character already hits for. Weapons only.
+        if (DataManager.isWeapon(item) && details && typeof details.damageFor === 'function' && attackSkill) {
+            const dmgBefore = details.damageFor(attackSkill, actor);
+            const dmgAfter = tempActor ? details.damageFor(attackSkill, tempActor) : dmgBefore;
+            if (dmgBefore !== null || dmgAfter !== null) {
+                const shown = dmgAfter !== null ? dmgAfter : dmgBefore;
+                let valueHtml = `<span class="stat-val">${dmgBefore !== null ? dmgBefore : shown}</span>`;
+                if (dmgBefore !== null && dmgAfter !== null && dmgAfter !== dmgBefore) {
+                    const cls = dmgAfter > dmgBefore ? 'positive' : 'negative';
+                    const delta = dmgAfter - dmgBefore;
+                    valueHtml += ` ➔ <span class="stat-val-new">${dmgAfter}</span>` +
+                        ` <span class="stat-diff ${cls}">${delta > 0 ? '+' + delta : delta}</span>`;
+                }
+                dmgHtml += dmgRow(T('Equip.damage'), valueHtml);
+            }
+        }
+        if (dmgHtml) {
+            dmgHtml = `<div class="inspect-spec-grid stats-grid equip-damage-block">${dmgHtml}</div>`;
         }
 
         let dtHtml = '';
@@ -1233,6 +1324,7 @@
                     <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col detail-stats-side">${statsGridHTML}</div>
                 </div>
                 <div class="bottom-stats-block">
+                    ${dmgHtml}
                     ${dtHtml}
                     <div class="equip-lore-col">
                         ${descHtml}
@@ -1274,7 +1366,7 @@
             let lastCat = null;
             items.forEach((item, idx) => {
                 if (grouped) {
-                    const cat = equipCategoryOf(item);
+                    const cat = equipCategoryOf(item, true);
                     if (cat !== lastCat) {
                         lastCat = cat;
                         cardsHtml += `<div class="equip-group-header">${escapeHtml(cat)}</div>`;
@@ -1369,14 +1461,14 @@
                             <div class="back-button focusable">${T('Equip.back')}</div>
                             <h2 class="title">${t.equip}</h2>
                         </div>
-                        <div class="left-commands-area"></div>
-                        <div class="left-content-area equip-main-content"></div>
+                        <div class="right-content-area"></div>
                     </div>
                     <div class="right-page">
                         <div class="right-page-header">
                             <div class="companion-switcher" id="equip-companion-switcher"></div>
                         </div>
-                        <div class="right-content-area"></div>
+                        <div class="left-commands-area"></div>
+                        <div class="left-content-area equip-main-content"></div>
                     </div>
                 </div>`;
             spread = container.querySelector('.book-spread');
@@ -1616,6 +1708,18 @@
                 /* silent equip menu */
                 this._actor = actor;
                 this._memberIndex = memberIdx;
+                this._slotIndex = slotId;
+                if (!equipped) {
+                    // Nothing to inspect: offer what fits here instead.
+                    this._slotFilterIdx = slotId;
+                    this._inspectedItem = null;
+                    this._inspectedSlotIdx = -1;
+                    this._gridIndex = 0;
+                    this._viewMode = 'paperdoll';
+                    this._refreshRightPage();
+                    return;
+                }
+                this._slotFilterIdx = -1;
                 this._inspectedItem = equipped;
                 this._inspectedSlotIdx = slotId;
                 this._viewMode = 'detail';
@@ -1676,6 +1780,7 @@
                     if (targetSlot >= 0 && this._inspectedItem && this._actor) {
                         /* silent equip menu */
                         this._actor.changeEquip(targetSlot, this._inspectedItem);
+                        this._slotFilterIdx = -1;
                         this._viewMode = 'paperdoll';
                         this.cleanup3DWeaponPreview();
                         this._refreshDOM();
@@ -1702,9 +1807,10 @@
             container.querySelectorAll('.equip-type-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabId = tab.getAttribute('data-tab-id');
-                    if (this._activeTab !== tabId) {
+                    if (this._activeTab !== tabId || this._slotFilterIdx >= 0) {
                         if (typeof SoundManager !== 'undefined' && SoundManager.playCursor) SoundManager.playCursor();
                         this._activeTab = tabId;
+                        this._slotFilterIdx = -1;
                         this._gridIndex = 0;
                         this._refreshRightPage();
                     }

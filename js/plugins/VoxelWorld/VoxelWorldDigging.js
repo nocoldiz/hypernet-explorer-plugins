@@ -994,23 +994,6 @@
             }
         }
 
-        // The bumper as a plough: a camper shoving into a bank at speed takes
-        // cubes out of it instead of stopping dead against a wall of ground.
-        // Returns how many went, so the caller can bleed the speed that cost.
-        plough(x, y, z, radius) {
-            const res = this._terrain.carve(x, y, z, radius);
-            if (res.count) {
-                const def = MATERIALS[res.mat] || MATERIALS[MAT.ROCK];
-                const c = def.biome
-                    ? this._terrain.field.genColumn(Math.floor(x / VOX.SIZE), Math.floor(z / VOX.SIZE), {})
-                    : def.rgb;
-                this._chips.burst(x, y, z, c.r, c.g, c.b, Math.min(24, res.count * 2));
-                this._playSe('Earth1', 70, 60);
-                matVoice(res.mat, 100);
-            }
-            return res.count;
-        }
-
         _notifyOnce(tag, text) {
             if (this._lastNote === tag && (this._noteAt || 0) > Date.now() - 2500) return;
             this._lastNote = tag;

@@ -559,6 +559,34 @@
         } catch (e) { return false; }
     }
 
+    // Being sent home is a thing the party did to somebody, and they remember
+    // it: their standing with everybody still travelling falls, hardest with
+    // the leader, who is the one who told them to go. The numbers live in the
+    // Empathize ledger like every other opinion, so the next time the party
+    // walks past them in the world they are met by somebody who is colder than
+    // they were. Nobody's standing is moved through the company path, since
+    // this is not time spent together.
+    const DISMISS_RESENTMENT_LEADER = -30;
+    const DISMISS_RESENTMENT_OTHERS = -15;
+
+    function resentDismissal(name) {
+        const help = window.NPCEmpathize?._helpers;
+        if (!name || !help?._getProfile || !help._setNpcBaseOpinion) return false;
+        let profile = null;
+        try { profile = help._getProfile(name); } catch (e) { return false; }
+        if (!profile) return false;
+        const members = $gameParty?.members() ?? [];
+        members.forEach((actor, index) => {
+            const actorId = actor.actorId();
+            const drop = index === 0 ? DISMISS_RESENTMENT_LEADER : DISMISS_RESENTMENT_OTHERS;
+            try {
+                help._setNpcBaseOpinion(profile, actorId,
+                    help._npcBaseOpinion(profile, actorId) + drop);
+            } catch (e) { /* a grudge never breaks a dismissal */ }
+        });
+        return members.length > 0;
+    }
+
     window.PartyReturn = {
         // Where this person was recruited, or null for somebody the world has
         // no record of taking off it (a made character, a story companion, a
@@ -643,6 +671,7 @@
 
             const back = this.returnToWorld(name);
             if (!back.ok) return back;
+            resentDismissal(name);
             return { ok: true, name, origin: back.origin };
         },
 
@@ -662,8 +691,11 @@
             }
             const back = this.returnToWorld(preset.name);
             if (!back.ok) return back;
+            resentDismissal(preset.name);
             return { ok: true, name: preset.name, origin: back.origin };
         },
+
+        resentDismissal(name) { return resentDismissal(name); },
     };
 
     // ========================================================================
@@ -1390,8 +1422,13 @@
         showJoinMessage();
         transformActor(actorId);                           // name, class, level, graphics, skills
         transferNPCNeeds(actorId, eventName);
-        $gameVariables.setValue(actorId === 2 ? 39 : 40, gender);
+        // The profile is the record of who they are; the note only answers for
+        // an NPC nobody ever wrote a profile for (carryIdentityToActor).
+        const joinedActor = $gameActors.actor(actorId);
+        const joinGender = joinedActor?.gender ? joinedActor.gender() : gender;
+        $gameVariables.setValue(actorId === 2 ? 39 : 40, joinGender);
         $gameParty.addActor(actorId);                      // adds to party (Wiki party tab reads members())
+        syncSeatReproductionVar(joinedActor);              // seat-owned, so only now
         grantNPCPossessions(eventName);                    // money on hand + owned items -> party
         equipNPCActor(actorId, eventName);
         callThoughtsMenuMarkov(actorId, markovString);
@@ -1513,6 +1550,61 @@
         return true;
     }
 
+    // A recruit's identity, copied out of their NPC profile and onto the actor
+    // they now are. Every one of these fields has an actor-side reader that
+    // answers with a default when nobody ever told it, so leaving them unset
+    // silently rewrote the person (see the call site in transformActor).
+    function carryIdentityToActor(actor, eventName, profile, event) {
+        if (!actor) return;
+
+        // Gender. The society profile is the record; the event note is what the
+        // map was built with, and only answers when there is no profile.
+        const noteGender = parseGenderFromNote(event?.event?.().note);
+        const gender = profile?.gender ?? noteGender;
+        if (actor.setGender) actor.setGender(gender);
+
+        // The body they were rolled with, so the Bio page keeps showing the one
+        // the player read on the map. The seat variable itself is written once
+        // they hold a seat (syncSeatReproductionVar, after addActor).
+        const code = window.NPCRolledGenitalCode?.(eventName, profile);
+        if (code != null && actor.setReproductionType) actor.setReproductionType(code);
+
+        // Blood type is rolled per NPC name AND world seed for a stranger, but
+        // off a plain name hash for an actor: two different answers for one
+        // person unless the stranger's is written down on the way in.
+        const BTS = window.BloodTypeService;
+        if (BTS && !actor._ccBloodType) {
+            const blood = BTS.forNpc(eventName);
+            const id = blood && (blood.id || blood.key);
+            if (id && BTS.get?.(id)) actor._ccBloodType = id;
+        }
+
+        // Their means. A traveller spends out of the party purse, so the purse
+        // is what their band is read from afterwards (NPCSociety), and a party
+        // with nothing in it reported everybody they ever took on as destitute.
+        // Recording the band they arrived with keeps it as the floor the same
+        // way a band picked at character creation is kept.
+        if (profile && profile.wealthTierChosen == null && profile.wealthTierBase != null) {
+            profile.wealthTierChosen = profile.wealthTierBase;
+        }
+    }
+
+    // The reproduction variable belongs to a SEAT (87 / 115 / 116 by party
+    // index), so it can only be written once the recruit is sitting in one.
+    function syncSeatReproductionVar(actor) {
+        if (!actor || !$gameParty || !$gameVariables) return;
+        const code = actor.reproductionType ? actor.reproductionType() : null;
+        if (code == null) return;
+        const members = $gameParty.allMembers ? $gameParty.allMembers() : [];
+        const index = members.indexOf(actor);
+        if (index < 0 || index > 2) return;
+        const CCU = window.CharacterCreationUtils;
+        const varId = CCU?.getReproductiveVariableId
+            ? CCU.getReproductiveVariableId(index)
+            : (index === 1 ? 115 : index === 2 ? 116 : 87);
+        $gameVariables.setValue(varId, code);
+    }
+
     function transformActor(actorId) {
         if (!$gameParty || !$gameMap || !$gameTemp) return;
         
@@ -1618,6 +1710,15 @@
                 try { window.initializeBodyParts(targetActor); } catch (e) { /* anatomy layer not up */ }
             }
         }
+
+        // Who this person IS travels with them. Everything below used to be
+        // read off the actor by the panels, the status sheet and the biologic
+        // simulation, and an actor that had never been told answered with its
+        // default: gender 0 (Male), reproduction 0 (Testes), a blood type
+        // re-rolled off a different seed than the stranger's, and a wealth band
+        // read out of an empty purse. So the person the player had been talking
+        // to was partly overwritten the moment they signed on.
+        carryIdentityToActor(targetActor, eventName, _npcProfile, event);
 
         // Refresh actor to apply changes
         targetActor.refresh();
@@ -1737,9 +1838,18 @@
         return !!($gameParty && $gameParty.members && $gameParty.members().some(m => m && m.name && m.name() === 'Bubba'));
     };
 
+    // He only walks behind the party once he has actually travelled with it and
+    // been benched. A story run that has never taken him on has no Bubba in it
+    // at all, so nobody trails Em out of the opening.
+    Game_BubbaFollower.prototype.hasTravelled = function() {
+        // i18n-ignore: actor name, matched at runtime
+        return pastPartyList().some(entry => entry && entry.name === 'Bubba');
+    };
+
     Game_BubbaFollower.prototype.isVisible = function() {
         if (!this.isStoryMode()) return false;
         if (this.isBubbaInParty()) return false;
+        if (!this.hasTravelled()) return false;
         return !!($gamePlayer && $gamePlayer.followers && $gamePlayer.followers().isVisible());
     };
 

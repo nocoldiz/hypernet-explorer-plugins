@@ -142,7 +142,7 @@
     let currentMapState = permanentMinimap ? 1 : 0;
 
     // Interactive Zoom Variables
-    let zoomScale = 0.06; // MIN_ZOOM: the map always opens fully zoomed out
+    let zoomScale = 0.06; // minZoom() replaces it on open: the sheet opens fully zoomed out
     let panX = 0;
     let panY = 0;
     let isDragging = false;
@@ -293,6 +293,34 @@
     const BOLOGNA_CELL_PX = 256; // pixels per cell in the assembled fullscreen bitmap
     const BOLOGNA_MAP_TILES = 256; // each Bologna cell map is 256x256 tiles
 
+    // Bologna is a city, not a map id: a party inside one of its buildings is
+    // still in Bologna, and the chart they open there has to be the city they
+    // walked in from rather than the world sheet. The way out of the building
+    // says which map the door stood on, so an interior entered from a Bologna
+    // street reads as Bologna and the dot is drawn on that door.
+    function bolognaDoorReturn() {
+        const PHS = window.ProceduralHouseSystem;
+        if (!PHS || typeof PHS.houseReturnPoint !== 'function') return null;
+        const rp = PHS.houseReturnPoint();
+        return (rp && rp.mapId === BOLOGNA_MAP_ID) ? rp : null;
+    }
+
+    // True wherever the Bologna chart is the right picture of where the party is.
+    function isBolognaView() {
+        if (!$gameMap) return false;
+        if ($gameMap.mapId() === BOLOGNA_MAP_ID) return true;
+        return !!bolognaDoorReturn();
+    }
+
+    // Where the party stands inside the current Bologna cell, in its own
+    // 256-tile space: their own square on the street, or the door they went in
+    // through while they are inside a building.
+    function bolognaPlayerTile() {
+        const rp = bolognaDoorReturn();
+        if (rp) return { x: rp.x, y: rp.y };
+        return { x: $gamePlayer.x, y: $gamePlayer.y };
+    }
+
     // GalaxySim alien-planet surface (map 636, Alien* biome): pixels per
     // landing-grid cell in the fullscreen bitmap. The minimap draws the same
     // grid scaled down to mapWidth/mapHeight instead.
@@ -425,6 +453,12 @@
             if (focusTileHint) {
                 focusOverride = { x: focusTileHint.x, y: focusTileHint.y };
                 resetZoom();
+            } else if (isBolognaView() || isOffEarthView()) {
+                // The world picture is not the sheet on screen here: centring on
+                // its 12288px frame pushes the Bologna grid or a landing grid
+                // clean off the screen, and a scene rebuild re-runs this. Those
+                // sheets are centred and scaled by their own view instead.
+                resetZoom();
             } else {
                 // Center the map initially for fullscreen mode
                 panX = (Graphics.width - worldMapBitmap.width) / 2;
@@ -436,11 +470,47 @@
 
     // Zoom bounds for the fullscreen map. The map opens fully zoomed out, so the
     // whole world is on screen before the player zooms in on anything.
-    const MIN_ZOOM = 0.06;   // low enough that the whole sheet fits one screen
+    // The floor is not one number: the world sheet is 12288px square, the
+    // Bologna grid is 2304x3584 and an alien landing grid is smaller again, so
+    // a floor tuned to the world sheet draws the other two as a stamp in the
+    // middle of the screen with no room left to enlarge them. Every sheet gets
+    // the scale that fits IT on screen, which is also the scale it opens at.
+    const WORLD_MIN_ZOOM = 0.06;   // low enough that the whole world sheet fits
     const MAX_ZOOM = 8.0;
 
+    // The pixel size of whichever sheet the fullscreen view is drawing, or null
+    // for the streamed world sheet, which keeps its own tuned floor.
+    function fullscreenSheetSize() {
+        if (isBolognaView()) {
+            return {
+                w: (BOLOGNA_COL_MAX - BOLOGNA_COL_MIN + 1) * BOLOGNA_CELL_PX,
+                h: (BOLOGNA_ROW_MAX - BOLOGNA_ROW_MIN + 1) * BOLOGNA_CELL_PX
+            };
+        }
+        if (isOffEarthView()) {
+            const grid = alienGridInfo();
+            if (grid) {
+                return {
+                    w: Math.max(1, grid.w) * ALIEN_GRID_CELL_PX,
+                    h: Math.max(1, grid.h) * ALIEN_GRID_CELL_PX
+                };
+            }
+        }
+        return null;
+    }
+
+    // The smallest the current sheet may be drawn: the scale at which it just
+    // fits the screen, so zooming out ends with the whole thing in view rather
+    // than with a stamp nobody can enlarge.
+    function minZoom() {
+        const size = fullscreenSheetSize();
+        if (!size || !size.w || !size.h) return WORLD_MIN_ZOOM;
+        const fit = Math.min(Graphics.width / size.w, Graphics.height / size.h);
+        return Math.min(MAX_ZOOM, Math.max(WORLD_MIN_ZOOM, fit));
+    }
+
     function resetZoom() {
-        zoomScale = MIN_ZOOM;
+        zoomScale = minZoom();
         centerOnCurrentCoordinates();
     }
 
@@ -538,11 +608,12 @@
 
     function centerOnCurrentCoordinates() {
         // Bologna fullscreen: center on player position within the assembled cell grid
-        if ($gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID) {
+        if (isBolognaView()) {
             const bState = $gameSystem._bologna;
             if (bState) {
-                const px = (bState.col - BOLOGNA_COL_MIN) * BOLOGNA_CELL_PX + ($gamePlayer.x / 256) * BOLOGNA_CELL_PX;
-                const py = (bState.row - BOLOGNA_ROW_MIN) * BOLOGNA_CELL_PX + ($gamePlayer.y / 256) * BOLOGNA_CELL_PX;
+                const tile = bolognaPlayerTile();
+                const px = (bState.col - BOLOGNA_COL_MIN) * BOLOGNA_CELL_PX + (tile.x / 256) * BOLOGNA_CELL_PX;
+                const py = (bState.row - BOLOGNA_ROW_MIN) * BOLOGNA_CELL_PX + (tile.y / 256) * BOLOGNA_CELL_PX;
                 panX = Graphics.width / 2 - (px * zoomScale);
                 panY = Graphics.height / 2 - (py * zoomScale);
             }
@@ -902,7 +973,7 @@
         // Only the world sheet paints quest diamonds; the Bologna and alien-planet
         // fullscreens are other coordinate spaces entirely.
         if (currentMapState !== 3 || !isLiveSprite(worldMapSprite) ||
-            !$gameMap || $gameMap.mapId() === BOLOGNA_MAP_ID || isOffEarthView()) {
+            !$gameMap || isBolognaView() || isOffEarthView()) {
             hideQuestEdgeMarkers();
             return;
         }
@@ -1276,10 +1347,37 @@
                   window.GalaxySim.isAlienSurface());
     }
 
+    // A chart of the world is worth nothing under a roof: inside a building,
+    // inside a dungeon, a crypt, a sewer or any other procedural interior the
+    // corner map is folded away whatever the mode says. Underground is the one
+    // exception: the layers below the surface and the caves keep it, because
+    // down there it is the only thing telling the party where they are.
+    function isRoofedPlace() {
+        // A procedural structure: dungeon, crypt, sewer, loot cellar, temple
+        // inside, cave den, patron vault. currentStructureBiome answers "" on
+        // the layers below the surface, so underground keeps its chart.
+        if (window.ProceduralInteriors &&
+            typeof window.ProceduralInteriors.currentStructureBiome === 'function' &&
+            window.ProceduralInteriors.currentStructureBiome()) return true;
+        // A hand-authored room: the <Interior> note every other plugin reads.
+        const note = ($dataMap && $dataMap.note) || '';
+        if (/<Interior>/i.test(note)) return true;
+        // A hand-authored map wearing a structure biome of its own.
+        const tag = /<Biome:\s*([^>]+)>/i.exec(note);
+        if (tag && window.ProceduralInteriors &&
+            typeof window.ProceduralInteriors.isStructureBiome === 'function' &&
+            window.ProceduralInteriors.isStructureBiome(tag[1].trim())) return true;
+        // A floor of the multi-floor dungeon.
+        return !!(window.DungeonFloorSystem &&
+                  typeof window.DungeonFloorSystem.isDungeonMap === 'function' &&
+                  window.DungeonFloorSystem.isDungeonMap());
+    }
+
     // Does the current mode let the corner minimap be drawn here at all?
     function modeAllowsMinimap() {
         const mode = minimapMode();
         if (mode === 'off') return false;
+        if (isRoofedPlace()) return false;
         if (mode === 'always') return true;
         return isExploringContext();
     }
@@ -1382,7 +1480,7 @@
 
         // We only hard-check worldMapBitmap for Fullscreen or Map 315.
         // If we are in Detail Mode (Map != 315), we load dynamic images.
-        const isBologna = $gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID;
+        const isBologna = isBolognaView();
         const isAlienPlanet = isOffEarthView();
         if (currentMapState === 3 && !isBologna && !isAlienPlanet && (!worldMapBitmap || !worldMapBitmap.isReady())) return;
 
@@ -2004,7 +2102,7 @@
 
     // Render Logic for Fullscreen (8x8 grid of detailed tiles with async loading)
     function renderFullscreenMap() {
-        if ($gameMap && $gameMap.mapId() === BOLOGNA_MAP_ID) {
+        if (isBolognaView()) {
             if (fsLayer) destroyFullscreenLayer();
             setSheetNameEntries([]);
             renderBolognaFullscreen();
@@ -2057,8 +2155,9 @@
                                     const ctx2 = target.context;
                                     const cellPx = (bState.col - BOLOGNA_COL_MIN) * BOLOGNA_CELL_PX;
                                     const cellPy = (bState.row - BOLOGNA_ROW_MIN) * BOLOGNA_CELL_PX;
-                                    const ppx = cellPx + ($gamePlayer.x / 256) * BOLOGNA_CELL_PX;
-                                    const ppy = cellPy + ($gamePlayer.y / 256) * BOLOGNA_CELL_PX;
+                                    const tile = bolognaPlayerTile();
+                                    const ppx = cellPx + (tile.x / 256) * BOLOGNA_CELL_PX;
+                                    const ppy = cellPy + (tile.y / 256) * BOLOGNA_CELL_PX;
                                     drawDot(ctx2, ppx, ppy, playerColor, 8);
                                     target.baseTexture.update();
                                 }
@@ -2511,10 +2610,10 @@
         return { x: panX + x * cw, y: panY + y * ch, w: cw, h: ch };
     }
 
-    // The ruled square under the pointer, its eight neighbours, and the square
-    // the player has actually picked. The whole sheet is never ruled: a grid
-    // over 65536 squares is noise, and the only square anybody is reading is
-    // the one they are pointing at.
+    // The ruled square under the pointer and the square the player has actually
+    // picked. The whole sheet is never ruled: a grid over 65536 squares is
+    // noise, and the only square anybody is reading is the one they are
+    // pointing at, so only that one square is drawn.
     function drawSheetGrid(hover, selected) {
         if (!sheetGfx) return;
         const key = (hover ? hover.x + ',' + hover.y : '') + '|' +
@@ -2526,14 +2625,6 @@
         if (hover) {
             const cell = squareScreenRect(hover.x, hover.y);
             if (cell && cell.w >= 3) {
-                sheetGfx.lineStyle(1, 0xFFFFFF, 0.45);
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        if (hover.x + dx < 0 || hover.y + dy < 0) continue;
-                        if (hover.x + dx >= WORLD_TILES || hover.y + dy >= WORLD_TILES) continue;
-                        sheetGfx.drawRect(cell.x + dx * cell.w, cell.y + dy * cell.h, cell.w, cell.h);
-                    }
-                }
                 sheetGfx.lineStyle(2, 0xFFFFFF, 0.9);
                 sheetGfx.drawRect(cell.x, cell.y, cell.w, cell.h);
             }
@@ -2574,8 +2665,12 @@
             const entry = sprite._entry;
             const cell = squareScreenRect(entry.wx, entry.wy);
             if (!cell) { sprite.visible = false; continue; }
-            const cx = cell.x + cell.w / 2;
-            const cy = cell.y + cell.h / 2 + Math.max(6, cell.h * 0.5) +
+            // The marker is drawn ON the square's corner, not in its middle, so
+            // the name is hung off that same point: it sits directly above its
+            // green square at any zoom instead of drifting half a square away.
+            const marker = Math.max(6, Math.min(cell.w * 0.6, 14));
+            const cx = cell.x;
+            const cy = cell.y - marker - sprite.bitmap.height - 2 -
                        (entry.line || 0) * (SHEET_NAME_PX + 4);
             const halfW = sprite.bitmap.width / 2;
             if (cx + halfW < 0 || cx - halfW > Graphics.width ||
@@ -2971,18 +3066,18 @@
     // The zoom bar runs on a log scale: the chart spans 0.25x to 8x and a
     // linear bar spends nine tenths of its travel in the last doubling.
     function zoomToSlider(z) {
-        const t = (Math.log(z) - Math.log(MIN_ZOOM)) / (Math.log(MAX_ZOOM) - Math.log(MIN_ZOOM));
+        const t = (Math.log(z) - Math.log(minZoom())) / (Math.log(MAX_ZOOM) - Math.log(minZoom()));
         return Math.round(Math.max(0, Math.min(1, t)) * 1000);
     }
 
     function sliderToZoom(v) {
         const t = Math.max(0, Math.min(1, Number(v) / 1000));
-        return Math.exp(Math.log(MIN_ZOOM) + t * (Math.log(MAX_ZOOM) - Math.log(MIN_ZOOM)));
+        return Math.exp(Math.log(minZoom()) + t * (Math.log(MAX_ZOOM) - Math.log(minZoom())));
     }
 
     function applyZoom(next) {
         const oldScale = zoomScale;
-        zoomScale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, next));
+        zoomScale = Math.max(minZoom(), Math.min(MAX_ZOOM, next));
         if (!isLiveSprite(worldMapSprite) || zoomScale === oldScale) return;
         const ratio = zoomScale / oldScale;
         const cx = Graphics.width / 2;
@@ -2995,9 +3090,22 @@
         worldMapSprite.y = panY;
     }
 
+    // The country wash as an action rather than as a dropdown: the same list
+    // the <select> is built from, walked one entry on from whatever is washed
+    // now, with "no country" as its first stop.
+    function stepHighlightCountry(dir) {
+        const ids = [0].concat(europeanCountries().map(c => c.id));
+        const at = Math.max(0, ids.indexOf(highlightCountryId || 0));
+        highlightCountryId = ids[(at + dir + ids.length) % ids.length];
+        if (chromeCountryEl) chromeCountryEl.value = String(highlightCountryId || 0);
+        SoundManager.playCursor();
+        fsOverlayKey = null;      // the wash is part of the overlay
+        refreshWorldMapDisplay();
+    }
+
     function chromeWanted() {
         return currentMapState === 3 && !!$gameMap &&
-            $gameMap.mapId() !== BOLOGNA_MAP_ID && !isOffEarthView() &&
+            !isBolognaView() && !isOffEarthView() &&
             SceneManager._scene instanceof Scene_Map;
     }
 
@@ -3128,6 +3236,9 @@
         chromeReadoutEl.innerHTML =
             `<div class="wm-read-head">${escapeSheet(T('WorldMap.read.square', { x: square.x, y: square.y }))}</div>` +
             rows + (action ? `<div class="wm-read-action">${escapeSheet(action)}</div>` : '') +
+            // The two buttons share one row: they are the same kind of thing
+            // done to the same square, so they read as a pair and not a stack.
+            '<div class="wm-read-buttons">' +
             // Writing on a square is deliberate: it is offered on the square
             // that has been picked, and nowhere else.
             (picked
@@ -3138,7 +3249,8 @@
             // square is built for the look and thrown away again, so the
             // button is offered for any square, catalogued or bare ground.
             `<div class="inspect-btn focusable wm-show-map" data-wm-show="${square.x},${square.y}">` +
-            `${escapeSheet(T('WorldMap.preview.showMap'))}</div>`;
+            `${escapeSheet(T('WorldMap.preview.showMap'))}</div>` +
+            '</div>';
     }
 
     function syncChrome() {
@@ -3163,6 +3275,21 @@
         if (noteModalEl) return;
         const existing = noteAt(x, y);
         noteModalSquare = { x: x, y: y };
+        // A pad cannot type into a field, so it is handed the game's letter
+        // sheet instead of a box it could only look at. Clearing the line and
+        // committing it is how a note is rubbed out there, which is the same
+        // answer the Delete button gives the mouse.
+        if (window.Controller && Controller.usingPad && Controller.usingPad() &&
+            typeof Controller.textEntry === 'function') {
+            Controller.textEntry({
+                title: T('WorldMap.note.title', { x: x, y: y }),
+                value: existing ? existing.text : '',
+                max: 120,
+                onCommit: (value) => commitNote(String(value || '')),
+                onCancel: () => { noteModalSquare = null; }
+            });
+            return;
+        }
         const el = document.createElement('div');
         el.id = 'wm-note-modal';
         el.innerHTML = `
@@ -3261,7 +3388,9 @@
         const savedY = $gameVariables ? $gameVariables.value(44) : 0;
         let built = null;
         try {
-            if (!$gameSystem.generateOriginBiomeMap({ worldX: wx, worldY: wy })) return null;
+            // allowWater: this is a look, not a landing, so the sea is built
+            // and shown like any other square.
+            if (!$gameSystem.generateOriginBiomeMap({ worldX: wx, worldY: wy, allowWater: true })) return null;
             const data = $gameSystem._procGenData && $gameSystem._procGenData.generatedMapData;
             if (!data || !data.data || !data.width || !data.height) return null;
             // Copied out before the record goes back: the object about to be
@@ -3632,7 +3761,18 @@
             const pin = pinAtSquare(square.x, square.y);
             if (pin && pin.destName && sheetTravelTransport()) bookPinTravel(pin);
             else selectSquare(square);
+            return;
         }
+        // Writing on a square is right-click on a mouse, and the right shoulder
+        // on a pad: there is no other press left on the chart, and a note button
+        // the pointer has to be hovering to see is not one a pad can ever find.
+        if (Input.isTriggered('pagedown')) {
+            openNoteModal(square.x, square.y);
+            return;
+        }
+        // The left shoulder turns the country wash, which is a dropdown and so
+        // the one panel of the chrome no pad could otherwise open.
+        if (Input.isTriggered('pageup')) stepHighlightCountry(1);
     }
 
     function bookPinTravel(pin) {
@@ -3880,7 +4020,10 @@
     }
 
     function updateZoomControls() {
-        const zoomSpeed = 0.08;
+        // A step of the zoom, as a share of where the zoom already is. An
+        // absolute step is tuned to one sheet's floor and either crawls or
+        // jumps on any other; a proportional one reads the same on all of them.
+        const zoomSpeed = 0.04;
         let zoomChange = 0;
 
         // Keyboard Zoom
@@ -3890,7 +4033,7 @@
         // Mouse Wheel Zoom
         if (TouchInput.wheelY !== 0) {
             // wheelY is usually +/- 100 or 120. Normalize it.
-            zoomChange -= (TouchInput.wheelY / 1000);
+            zoomChange -= (TouchInput.wheelY / 600);
         }
 
         // Right analog stick Y zooms (the controller has no zoom button otherwise)
@@ -3901,7 +4044,7 @@
 
         if (zoomChange !== 0) {
             const oldScale = zoomScale;
-            zoomScale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomScale + zoomChange));
+            zoomScale = Math.max(minZoom(), Math.min(MAX_ZOOM, zoomScale * Math.exp(zoomChange)));
 
             // Calculate zoom towards center of screen
             const ratio = zoomScale / oldScale;

@@ -1,48 +1,142 @@
+0.6.33a
+
+Dungeon levels:
+ - New look for Shadowed meadows and new secret crypt area
+ - Reworked shopkeepers of alien bazaar
+ 
+Added:
+ - randomize button in skill and spell workbench
+ - restored ask and tell options when bubba and em talk to each other
+ - party presets board and character export in character creation
+ - new inventory tab showing the last 50 obtained items
+ - ctrl noclip is now an experimental option, on by default
+ - gear that lends skills, three gear slots, armour slots fixed
+ - random item, weapon and armour chests on tower level maps
+
+Changed:
+ - party preset equipment aligned left, shorter take this party button
+ - one skill description box in battle, the bigger one
+ - running on the map consumes AP again, whole party
+ - battlelog on top right starts lower, shows more lines, never cut
+ - switched equip screen pages, profiles stacked with stats beside
+ - reworked em base disposition, randomized per npc, local npcs neutral
+ - swim or dive into any liquid tile, even stuck in one, underwater battleback
+ - adventure and anomaly lines read less gpt like
+ - map battle running greyed out only for members near an enemy
+ - reworked how enemy weaknesses are displayed
+ - voxel mode right stick obeys the camera invert and speed options
+ - reworked equip screen stats, full names and longer cards
+ - reworked dialogue system, em and bubba prefixes speak in story mode
+ - em backstory now redacted
+ - party presets are full builds with kit, traits and a beast seat
+ - map zone notes only active when Bubba is in party
+ - party members only step aside when you walk onto their tile
+ - cancel choice now tied to the back button
+ - smaller model for sand filled hose
+ - reworked em voice, she speaks it to every npc not only Bubba
+ - npc comment spec overrides only its own fields, never the bust
+ - battle tutorial in story mode only activates when Bubba is in party
+ - map legend info box no longer opens the commands list
+ - omega tower floors 1-5 are level 1-10, floors 6-10 level 1-20
+ - training renamed Spellcraft, alchemistry needs its kit
+ - voxel controls look like the map legend and vehicles break no blocks
+
+Fixed:
+ - bologna map opened tiny and could not be zoomed or panned
+ - stairs in procedural houses no longer land the party on impassable tiles
+ - train destinations not showing their nation level
+ - fix battle commands clicking through to the opened skill menu
+ - wrong busts picked for hardcoded npcs
+ - dual wielded left weapon never attacked in battle
+ - join party and join as follower missing in empathize menu
+ - dialogue topics written [[like this]] no longer keep a stray bracket
+ - right click closes battle menus, talk moved under backpack
+ - pet interactions now answer with grunts
+ - em starts story mode with fixed magical kit and an editable sheet
+
+
+
 0.6.32a
 
 Added:
+ - hexorcize button in training destroys magical gear for KP
+ - bologna destination to train start
+ - star things in the wiki, favourites category
+ - rocket launch sequence as a minigame in the minigames menu
  - each omega tower floor is its own procedural world
  - moon base, Titania and Zeta Reticuli as destination for the rocket launch
  - hexapedia pages covering the most powerful spells in the game
  - hexapedia pages for every lore topic, learned by visiting them
  - off button in the radio
  - adventurer parties of 1 to 3 roam and fight on omega tower floors
- - PrevFloor and NextFloor events on every tower level map
  - flip furniture sprites left to right when placing
  - diary records enchanting, rocket launches and ten more systems
+ - omega tower world backstory generator for each floor
  - crimes only charged when a witness reports them
  - kick out of the party option in dynamics menu
 
 Changed:
+ - skill tree panel reuses the skills menu card, teachable circles unlit
+ - minimap hidden in interiors and dungeons, kept underground
+ - scrolling road behind the camper cabin while fast travelling
+ - camper cannot drive on water without amphibious conversion
+ - reduce sound of swimming
+ - rocket launch fixes: flame, jupiter, galaxy, lights, dialogue
+ - minimal planet landing map, bologna map opens with M
+ - wiki shows busts only, tags use character creation tooltips
+ - remove from factions the icons
+ - scenarios in alphabetic order except suggested ones
+ - balanced psi blast
+ - more prefabs built on village lots
+ - travel window shows median enemy level only, no band
+ - heart events on world map now go straight to the eris date
+ - every vehicle now has first person and third person views
+ - alien daylight smooths with player X instead of snapping per square
+ - varied armour def with a dex cost, artifacts nerfed to 2x to 4x normal gear
+ - world map reworked: single tile, white names over markers, country highlight, wider zoom
+ - reworked all help topics, merged into one tab split by headers
+ - replaced gravestone events in all maps with graphicless Player9 events
+ - npc events need the NPC tag, and only walk with the AI tag
+ - reworked factions: narrower list page, fuller dossier
+ - idle party members walk to the washroom instead of only announcing it
+ - varlenians hidden from character creation and npcs until 2013
+ - reworked the bio and attributes status pages
+ - remove loading game sound
+ - reworked the gameover screen to show the diary highlights
+ - party members end a tile off the player instead of on their tile
  - wrestling app on desktop by default, wrestling channels on the TV guide
- - llm mode limited to in-game year, world facts and personality in prompts
- - reworked all help topics
- - smoother omega tower level banding above floor 10
+ - omega tower rebalanced: lower levels on floors 1 to 10, smoother above 10
  - npcs walk their town, travel between towns, and crowd offworld spaceports
- - autoidle explorer reworked to hold intentions and read the world
+ - autoidle explorer reworked to hold intentions, read the world and route across maps
  - stockbusters orders go straight to inventory on arrival
- - party dynamics reworked with character export to JSON, card and QR
- - world map reworked: white names, picked square, country highlight, wider zoom
+ - reworked the dynamics screen with character export to JSON, card and QR
  - optimized the fog of war system
  - sandbox mode unlocks all tower levels in the elevator
- - autoidle explorer experimental mode reworked with map-wide knowledge and multimap routes
  - boss enemy events do not respawn, defeat persists across the world
  - update items weapons armours skills italian i18n
- - origin text shows bracketed important words in gold
- - omega tower floors 1 to 10 rebalanced to lower enemy levels
- - bust name shown below the bust
  - classes start in two thematic armour pieces, not the fate-tangle chip
 
 Fixed:
+ - hotkeys no longer trigger when typing a custom radio station name
+ - story mode no longer starts with a second member following
+ - character creation bust not shown on steam deck
+ - rocket launch ship, railgun, Jupiter and destination planet not visible
+ - empty city blocks and overlapping village prefabs
+ - slight freeze when 3d models appear in battle
+ - rocket launch crash, debug planets, destination pairs, flight control and destination screen
+ - never show the archivist map survey message
+ - full controller support for the room picker, world map modals, steal menu and character creation
+ - npc joining the party no longer rerolls gender, body and status
+ - busts fixed in char creation, spacesuit wearers and anomaly map adventures
+ - fix autosave crash on map transition
+ - sprite grid crash reading the clock before a game is loaded
+ - dynamics dossier names, reserve cards and Specializations.levelOf crash
  - autoidle no longer walks into a map and straight back out
- - name tag going off the dialogue box
  - made satellites not landable on
  - ending a planet flyby with t no longer crashes
- - preset and VIP busts never picked for anomaly map adventures
  - party member not added properly over 3 members, now sent to reserves
  - solomon ritual dates and rule of 80 lore made consistent
  - party banter quotes prices in euros, not gold
-
 
 
 0.6.31a

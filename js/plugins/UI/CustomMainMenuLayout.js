@@ -23,7 +23,7 @@
  *     M    Map (minimap toggle)         R  Rest (Wait / Sleep)
  *     B    Build                        V  Vehicles
  *     H    Help (Codex)                 F  Factions
- *     K    Cooking                      N  Training
+ *     K    Cooking                      N  Spellcraft
  *     Y    Bestiary                     G  Sandbox (tester only)
  *     1-9  Favourite items (on the map)
  *     1/2/3 Thinker / Multiplayer / Hypernet (inside the menu only)
@@ -51,6 +51,14 @@
         return String(str ?? "").replace(/[&<>"']/g, c => HTML_ESCAPES[c]);
     }
 
+    // A place is written in the world as "the Stairs Hall", which reads as a
+    // sentence in a line but as a mistake on a button or in a sheet of
+    // choices, so the first letter is raised where the name stands alone.
+    function capitaliseFirst(str) {
+        const text = String(str ?? "");
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+    }
+
     // While Em travels with the party the needs cards and the workforce tile
     // answer to her register instead of the clinical one
     // (CharacterCreationPresets.emLabel). Every other pockets tile keeps its
@@ -69,14 +77,6 @@
     function worldMapReturnLabel() {
         if (window.GalaxySim?.isAlienSurface?.()) return T('MainMenu.cmd.chooseLandingSite');
         if (window.DungeonFloors?.insideTower?.()) return T('MainMenu.cmd.returnToElevator');
-        // The square the party lands on is worth naming before the press:
-        // WorldMapTransfer is the only answer to where a map stands
-        // (Map/WorldMapReturn.js). A map anchored to nothing keeps the plain
-        // label.
-        const at = window.WorldMapTransfer?.currentWorldCoords?.();
-        if (at && isFinite(at.x) && isFinite(at.y)) {
-            return T('MainMenu.cmd.returnToWorldMapAt', { x: at.x | 0, y: at.y | 0 });
-        }
         return T('MainMenu.cmd.returnToWorldMap');
     }
 
@@ -963,7 +963,33 @@
         // ring is sent back to the tab that was picked rather than to the top of
         // the spread.
         this._dndRefocus = '.right-tools-tab.active';
-        this.refreshUIMenuDOM(true);
+        // Only the tab strip and the list under it change, so they are patched
+        // in place: fading and rebuilding the whole spread for a tab pick made
+        // the clock, the bio cards and the turntable flash on every click.
+        const tools = this._dndContainer ? this._dndContainer.querySelector('.right-tools') : null;
+        const strip = tools ? tools.querySelector('.right-tools-tabs') : null;
+        const grid = tools ? tools.querySelector('.right-tools-grid') : null;
+        if (!strip || !grid) {
+            this.refreshUIMenuDOM(true);
+            return;
+        }
+        strip.querySelectorAll('.right-tools-tab').forEach((el) => {
+            el.classList.toggle('active', el.dataset.toolsTab === tab);
+        });
+        grid.innerHTML = this.generateUIToolsTabGridHTML();
+        this.rebindMenuFocus();
+    };
+
+    // The list under the tab strip, kept apart from the strip itself so a tab
+    // pick can redraw just this much.
+    Scene_Menu.prototype.generateUIToolsTabGridHTML = function () {
+        switch (this._rightToolsTab) {
+            case 'medical': return this.generateUIMedicalItemsListHTML();
+            case 'lifestyle': return this.generateUILifestyleItemsListHTML();
+            case 'books': return this.generateUIBooksItemsListHTML();
+            case 'favourites': return this.generateUIFavouritesItemsListHTML();
+            default: return this.generateUIToolItemsListHTML();
+        }
     };
 
     Scene_Menu.prototype.addMenuEventListeners = function () {
@@ -1106,6 +1132,7 @@
 
     Scene_Menu.prototype.showDynamicsPage = function () {
         SoundManager.playOk();
+        this.importDynamicsCharacters(true);
         this._isDynamicsPage = true;
         this._dynamicsDrag = null;
         this._dynamicsDismiss = null;
@@ -1668,10 +1695,15 @@
         return '';
     };
 
+    // The wiki is read about somebody, not about the board, so it opens on the
+    // person the right page is holding: a travelling member is an actor the
+    // panel can anchor itself to, and a reserve or a name on the memorial has
+    // none, so those fall back to the party index.
     Scene_Menu.prototype.openDynamicsWiki = function () {
         if (!window.NPCEmpathize?.openWiki) return;
+        const entry = this.dynamicsSelectedEntry();
         SoundManager.playOk();
-        window.NPCEmpathize.openWiki('party');
+        window.NPCEmpathize.openWiki('party', entry?.actor?.actorId?.() ?? null);
     };
 
     Scene_Menu.prototype.promoteUIPartyLeader = guardedBoardAction(function (actorId) {
@@ -1897,7 +1929,7 @@
             // go through the row as an attribute rather than into a JavaScript
             // string a quote could close.
             return `<div class="lodging-option command-item${here ? ' is-here' : ' focusable'}" data-place="${escapeHtml(place.id)}"${here ? '' : ` onclick="SceneManager._scene?.setUIMemberLodging?.(${presetId}, this.dataset.place)"`}>
-                            <span class="lodging-option-name">${escapeHtml(place.name)}</span>
+                            <span class="lodging-option-name">${escapeHtml(capitaliseFirst(place.name))}</span>
                             <span class="lodging-option-note">${here ? T('MainMenu.dynamics.lodgingHere') : ''}</span>
                         </div>`;
         }).join('');
@@ -1970,7 +2002,6 @@
         const locked  = this.dynamicsSwapLocked();
         const canBench  = !locked && members.length > 1;
         const hasRoom   = !locked && members.length < DYNAMICS_MAX_ACTIVE;
-        const wikiEnabled = !!window.NPCEmpathize?.openWiki;
         const order = window.BattleTurnOrder?.members?.() ?? [];
         const dexLabel = escapeHtml(TextManager.param(6));
 
@@ -2151,12 +2182,9 @@
         bench.forEach(preset => {
             const className = preset.retiredClassName
                 || ($dataClasses[preset.classId] ? $dataClasses[preset.classId].name : '');
-            const since = preset.retiredDate
-                ? T('MainMenu.dynamics.inactiveSince', { date: escapeHtml(preset.retiredDate) })
-                : '';
             const recallBtn = hasRoom
-                ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.roster.setActive')}</div>`
-                : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.roster.setActive')}</div>`;
+                ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.reactivateUIMember?.(${preset.id})">${T('MainMenu.dynamics.join')}</div>`
+                : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.dynamics.join')}</div>`;
 
             // Where this one is living, and the button that opens the sheet
             // of everywhere else. A world offering one place to live offers no
@@ -2173,13 +2201,13 @@
             const lodgingLine = storyFollower
                 ? `<div class="roster-since">${T('MainMenu.dynamics.walksWithParty')}</div>`
                 : livesIn
-                    ? `<div class="roster-since">${T('MainMenu.dynamics.livesIn', { place: escapeHtml(livesIn) })}</div>`
+                    ? `<div class="roster-since">${T('MainMenu.dynamics.stayingIn', { place: escapeHtml(capitaliseFirst(livesIn)) })}</div>`
                     : '';
             const lodgingBtn = storyFollower
                 ? ''
                 : canMove
-                    ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.openUIMemberLodging?.(${preset.id})">${T('MainMenu.dynamics.moveLodging')}</div>`
-                    : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.dynamics.moveLodging')}</div>`;
+                    ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.openUIMemberLodging?.(${preset.id})">${T('MainMenu.dynamics.moveLodgingShort')}</div>`
+                    : `<div class="inspect-btn roster-btn inspect-btn--disabled">${T('MainMenu.dynamics.moveLodgingShort')}</div>`;
 
             // A reserve who came out of this world can be sent back to it, the
             // same offer the travelling rows carry.
@@ -2212,10 +2240,9 @@
                                     ${escapeHtml(preset.name)}
                                 </div>
                                 <div class="dyn-card-class">${escapeHtml(className)} · ${T('MainMenu.roster.levelAbbr')}${preset.level || 1}</div>
-                                <div class="roster-since">${since}</div>
                                 ${lodgingLine}
-                                ${benchButtons}
                             </div>
+                            <div class="dyn-card-actions">${benchButtons}</div>
                         </div>`;
         });
         // An empty bench is the normal state of a world, so the section is not
@@ -2235,10 +2262,7 @@
             left:    { label: T('MainMenu.roster.departed'),   band: "roster--left" },
             died:    { label: T('MainMenu.roster.dead'),       band: "roster--died" },
         };
-        // Only the dead. Whoever is benched or walked off is still alive and
-        // already listed above (or can be met again out in the world), so this
-        // board is the memorial and nothing else.
-        const entries = (window.PartyRoster?.history?.() ?? []).filter(e => e.status === 'died');
+        const entries = this.dynamicsPastEntries();
         let pastRows = '';
         this._dynamicsPastSprites = [];
         entries.forEach((entry, pastIdx) => {
@@ -2260,20 +2284,19 @@
                 });
             }
 
+            const pastPicked = !!picked && picked.kind === 'past' && picked.index === pastIdx;
             pastRows += `
-                        <div class="npc-dynamics-member roster-past-row">
+                        <div class="npc-dynamics-member dyn-row dyn-card dyn-pick focusable${pastPicked ? ' dyn-row--picked' : ''}" onclick="SceneManager._scene?.pickDynamicsMember?.('past', ${pastIdx})">
                             <div class="portrait-frame">
                                 <canvas id="past-canvas-${pastIdx}" width="48" height="48"></canvas>
                             </div>
-                            <div class="roster-past-text">
-                                <div class="roster-past-name">
-                                    ${escapeHtml(entry.name)} <span class="roster-past-died">✝</span>
+                            <div class="dyn-card-body">
+                                <div class="roster-name">
+                                    ${escapeHtml(entry.name)}
                                     <span class="roster-past-status ${status.band}">${status.label}</span>
                                 </div>
-                                <div class="roster-past-detail">
-                                    ${escapeHtml(entry.className || '')}${entry.className ? ' · ' : ''}${T('MainMenu.roster.levelAbbr')}${entry.level}
-                                </div>
-                                <div class="roster-past-date">${dateLine}</div>
+                                <div class="dyn-card-class">${escapeHtml(entry.className || '')}${entry.className ? ' · ' : ''}${T('MainMenu.roster.levelAbbr')}${entry.level}</div>
+                                <div class="roster-since">${dateLine}</div>
                             </div>
                         </div>`;
         });
@@ -2285,33 +2308,11 @@
             ? `<div class="dyn-lock">${T('MainMenu.dynamics.' + locked)}</div>`
             : '';
 
-        const wikiBtn = wikiEnabled
-            ? `<div class="command-item focusable dyn-wiki" onclick="SceneManager._scene?.openDynamicsWiki?.()">
-                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.dynamicsWiki)}"></span>
-                            <span>${T('MainMenu.dynamics.wiki')}</span>
-                        </div>`
-            : '';
-
-        // Anyone waiting in the characters folder who this game has never seen.
-        // The count is read here so the button says whether there is anything
-        // to take in before it is pressed.
-        const waiting = (window.CharacterExport?.scan?.() ?? []).filter(entry => !entry.known).length;
-        const importBtn = window.CharacterExport?.folder?.()
-            ? `<div class="command-item focusable dyn-import" onclick="SceneManager._scene?.importDynamicsCharacters?.()">
-                            <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.dynamicsRoster)}"></span>
-                            <span>${waiting
-                                ? T('MainMenu.dynamics.importWaiting', { count: waiting })
-                                : T('MainMenu.dynamics.import')}</span>
-                        </div>`
-            : '';
-
         return `
                 <div class="tools-pockets">
                     <div class="page-header-bar">
                         <div class="back-button" onclick="SceneManager._scene?.hideDynamicsPage?.()">${T('MainMenu.dynamics.back')}</div>
                         <h2 class="tools-title">${T('MainMenu.dynamics.title')}</h2>
-                        ${importBtn}
-                        ${wikiBtn}
                     </div>
                     ${note}
                     <div class="dyn-board">
@@ -2322,7 +2323,7 @@
                         ${busySection}
                         ${benchSection}
                         <h3 class="dyn-section-title">${T('MainMenu.dynamics.pastTitle')}</h3>
-                        <div class="dyn-past">
+                        <div class="dyn-past dyn-grid">
                             ${pastRows}
                         </div>
                     </div>
@@ -2413,8 +2414,19 @@
     // class and level, what they are carrying in HP and MP and where they act.
     // It reads the same for somebody travelling and for somebody in the
     // reserves, so a reserve dossier can be read before deciding to call them up.
+    // Everyone gone from the party: the dead, and whoever was sent home or
+    // left of their own accord. A reserve is not gone, so the bench names are
+    // taken out rather than printed twice.
+    Scene_Menu.prototype.dynamicsPastEntries = function () {
+        const benched = new Set((window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [])
+            .map(preset => preset.name));
+        return (window.PartyRoster?.history?.() ?? [])
+            .filter(entry => entry.status !== 'active' && !benched.has(entry.name));
+    };
+
     Scene_Menu.prototype.pickDynamicsMember = function (kind, id) {
-        const pick = { kind: kind === 'bench' ? 'bench' : 'active', id: Number(id) };
+        const KINDS = ['active', 'bench', 'past'];
+        const pick = { kind: KINDS.includes(kind) ? kind : 'active', id: Number(id) };
         const same = this._dynamicsSelection
             && this._dynamicsSelection.kind === pick.kind
             && this._dynamicsSelection.id === pick.id;
@@ -2441,6 +2453,12 @@
             const mem = members.find(entry => entry.actorId() === pick.id);
             if (mem) return { kind: 'active', actor: mem };
         }
+        // A name on the memorial is not a dossier and not an actor: it is the
+        // roster's own record, held by where it sits on the board.
+        if (pick && pick.kind === 'past') {
+            const rec = this.dynamicsPastEntries()[pick.id];
+            if (rec) return { kind: 'past', record: rec, index: pick.id };
+        }
         return members.length ? { kind: 'active', actor: members[0] } : null;
     };
 
@@ -2453,8 +2471,21 @@
         if (!entry) return `<div class="roster-empty">${T('MainMenu.dynamics.noMembers')}</div>`;
 
         const actor  = entry.actor;
-        const preset = entry.preset;
+        const record = entry.record;
+        // A memorial record carries the same three things a dossier does, so it
+        // is read through one shape rather than branching the whole page.
+        const preset = entry.preset || (record ? {
+            name: record.name,
+            retiredClassName: record.className,
+            level: record.level,
+            sprite: record.characterName,
+            spriteIndex: record.characterIndex || 0,
+            skills: [],
+            retiredDate: record.deathDate || record.leftDate || ''
+        } : null);
         const isActive = entry.kind === 'active';
+        const isPast = entry.kind === 'past';
+        const isDead = isPast && record.status === 'died';
         const name = escapeHtml(actor ? actor.name() : preset.name);
         const className = escapeHtml(actor
             ? (actor.currentClass() ? actor.currentClass().name : T('MainMenu.roster.classless'))
@@ -2472,8 +2503,14 @@
             ? `<img class="dyn-dossier-bust" src="${escapeHtml(bustUrl)}" alt="${name}">`
             : `<canvas id="dyn-dossier-canvas" class="dyn-dossier-sprite" width="96" height="96"></canvas>`;
 
-        const statusLabel = isActive ? T('MainMenu.roster.travelling') : T('MainMenu.roster.inactive');
-        const statusBand  = isActive ? 'roster--active' : 'roster--retired';
+        const statusLabel = isActive
+            ? T('MainMenu.roster.travelling')
+            : isPast
+                ? (isDead ? T('MainMenu.roster.dead') : T('MainMenu.roster.departed'))
+                : T('MainMenu.roster.inactive');
+        const statusBand  = isActive
+            ? 'roster--active'
+            : isPast ? (isDead ? 'roster--died' : 'roster--left') : 'roster--retired';
 
         // Where they act, said in words: the same number the row carries, but
         // the right page is read on its own and a bare digit says nothing.
@@ -2512,19 +2549,72 @@
                 </div>`;
         }
 
-        // What they know and what they are like. A reserve dossier keeps ids
-        // rather than objects, so what it knows is counted instead of listed.
-        const skillCount = actor ? actor.skills().length : (preset.skills || []).length;
-        const traitNames = actor
-            ? (actor._selectedTraits || []).map(trait => trait && trait.name).filter(Boolean)
+        // What they know, what they can do and what they are carrying, each of
+        // them a shelf of chips with the game's own IconSet sprite on it rather
+        // than a number or a line of bare names. One chip builder for all of
+        // them, so the shelves cannot drift apart; an entry with no icon of its
+        // own is drawn as the name alone rather than as an empty box.
+        const chip = (icon, label, note) => `<span class="dyn-chip">${
+            Number.isFinite(icon) && icon > 0
+                ? `<span class="icon menu-icon dyn-chip-icon" style="${iconStyle(icon)}"></span>`
+                : ''
+        }<span class="dyn-chip-name">${escapeHtml(label)}</span>${
+            note ? `<span class="dyn-chip-note">${escapeHtml(note)}</span>` : ''
+        }</span>`;
+        const shelf = (title, chips) => (chips.length
+            ? `<h3 class="dyn-section-title">${title}</h3>
+                <div class="dyn-chips">${chips.join('')}</div>`
+            : '');
+
+        // A reserve or a memorial record keeps skill IDS rather than objects, so
+        // the database is what turns them back into something to read.
+        const skillList = actor
+            ? actor.skills()
+            : (preset.skills || []).map(id => $dataSkills[id]).filter(Boolean);
+        // Magic and skills are told apart the way the whole game tells them
+        // apart: the skill type the entry was filed under (stypeId 1 is magic,
+        // 2 is everything hands do), never by reading the name.
+        const magicChips = skillList.filter(sk => sk.stypeId === 1)
+            .map(sk => chip(sk.iconIndex, sk.name));
+        const skillChips = skillList.filter(sk => sk.stypeId !== 1)
+            .map(sk => chip(sk.iconIndex, sk.name));
+
+        // Every discipline this one has actually trained: level 1 is what
+        // everybody is born at, so only what was raised above it is a thing
+        // they know. The tier is named, not numbered.
+        const specChips = [];
+        if (actor?.specializationLevel && window.Specializations?.ready) {
+            (window.Specializations.list || []).forEach(spec => {
+                const level = actor.specializationLevel(spec.id);
+                if (!(level > 1)) return;
+                specChips.push(chip(-1, window.Specializations.displayName(spec),
+                    window.Specializations.levelName(level)));
+            });
+        }
+
+        const gearChips = actor
+            ? (actor.equips() || []).filter(Boolean).map(item => chip(item.iconIndex, item.name))
             : [];
-        const traitsHTML = traitNames.length
-            ? `<div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${T('MainMenu.dynamics.dossierTraits')}</span><span>${escapeHtml(traitNames.join(', '))}</span></div>`
-            : '';
+
+        const traitChips = actor
+            ? (actor._selectedTraits || []).map(trait => {
+                const label = window.TraitText ? window.TraitText(trait, 'name') : (trait && trait.name);
+                if (!label) return '';
+                return chip(window.TraitIcon ? window.TraitIcon(trait) : -1, label);
+            }).filter(Boolean)
+            : [];
+
+        const knowledgeHTML = [
+            shelf(T('MainMenu.dynamics.dossierMagic'), magicChips),
+            shelf(T('MainMenu.dynamics.dossierSkills'), skillChips),
+            shelf(T('MainMenu.dynamics.dossierSpecs'), specChips),
+            shelf(T('MainMenu.dynamics.dossierGear'), gearChips),
+            shelf(T('MainMenu.dynamics.dossierTraits'), traitChips)
+        ].join('');
 
         // Only a reserve has a date and a note about how they came to be one.
         const sinceHTML = (!isActive && preset.retiredDate)
-            ? `<div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${T('MainMenu.roster.inactive')}</span><span>${escapeHtml(preset.retiredDate)}</span></div>`
+            ? `<div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${isPast ? (isDead ? T('MainMenu.roster.dead') : T('MainMenu.roster.departed')) : T('MainMenu.roster.inactive')}</span><span>${escapeHtml(preset.retiredDate)}</span></div>`
             : '';
         const loreHTML = (!isActive && preset.lore)
             ? `<p class="dyn-dossier-lore">${escapeHtml(preset.lore)}</p>`
@@ -2534,18 +2624,22 @@
         // with the dossier written inside the picture, and as a QR code. Only
         // the desktop build has a folder to write into, so on anything else the
         // three buttons are drawn dead rather than left out.
-        const canWrite = !!window.CharacterExport?.folder?.();
+        const canWrite = !isPast && !!window.CharacterExport?.folder?.();
         const exportBtn = (label, call) => (canWrite
             ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.${call}">${label}</div>`
             : `<div class="inspect-btn roster-btn inspect-btn--disabled">${label}</div>`);
-        const exportHTML = window.CharacterExport
+        const wikiHTML = window.NPCEmpathize?.openWiki
+            ? `<div class="inspect-btn focusable roster-btn" onclick="SceneManager._scene?.openDynamicsWiki?.()">${T('MainMenu.dynamics.wiki')}</div>`
+            : '';
+        const exportHTML = (!isPast && window.CharacterExport)
             ? `<h3 class="dyn-section-title">${T('MainMenu.dynamics.exportTitle')}</h3>
                 <div class="roster-actions dyn-dossier-export">
                     ${exportBtn(T('MainMenu.dynamics.exportJson'), 'exportDynamicsCharacter?.(\'json\')')}
                     ${exportBtn(T('MainMenu.dynamics.exportCard'), 'exportDynamicsCharacter?.(\'card\')')}
                     ${exportBtn(T('MainMenu.dynamics.exportQr'), 'exportDynamicsCharacter?.(\'qr\')')}
+                    ${wikiHTML}
                 </div>`
-            : '';
+            : (wikiHTML ? `<div class="roster-actions dyn-dossier-export">${wikiHTML}</div>` : '');
 
         return `
             <div class="dyn-dossier">
@@ -2560,13 +2654,10 @@
                     </div>
                 </div>
                 ${vitalsHTML}
-                <div class="dyn-dossier-lines">
-                    <div class="dyn-dossier-line"><span class="dyn-dossier-lbl">${T('MainMenu.dynamics.dossierSkills')}</span><span>${skillCount}</span></div>
-                    ${traitsHTML}
-                    ${sinceHTML}
-                </div>
+                ${sinceHTML ? `<div class="dyn-dossier-lines">${sinceHTML}</div>` : ''}
                 ${loreHTML}
                 ${paramsHTML}
+                ${knowledgeHTML}
                 ${exportHTML}
             </div>`;
     };
@@ -2653,9 +2744,10 @@
     // Everything sitting in the characters folder that this game has never
     // seen, taken in as dossiers to play. Run from the board's header, beside
     // the wiki.
-    Scene_Menu.prototype.importDynamicsCharacters = guardedBoardAction(function () {
+    Scene_Menu.prototype.importDynamicsCharacters = guardedBoardAction(function (quiet) {
         const api = window.CharacterExport;
         if (!api || !api.folder()) {
+            if (quiet) return;
             SoundManager.playBuzzer();
             window.ParchmentToast?.show?.(T('MainMenu.dynamics.exportNoFolder'),
                 { severity: 'warning', duration: 220 });
@@ -2663,16 +2755,17 @@
         }
         const result = api.importAll();
         if (!result.imported) {
+            if (quiet) return;
             SoundManager.playBuzzer();
             window.ParchmentToast?.show?.(T('MainMenu.dynamics.importedNone'),
                 { duration: 220 });
             return;
         }
-        SoundManager.playSave();
+        if (!quiet) SoundManager.playSave();
         window.ParchmentToast?.show?.(T('MainMenu.dynamics.importedSome', {
             count: result.imported, names: result.names.join(', ')
         }), { duration: 260 });
-        this.refreshUIMenuDOM(false);
+        if (!quiet) this.refreshUIMenuDOM(false);
     });
 
     // The World Map pocket has no page of its own: it opens the zoomable map
@@ -3254,18 +3347,14 @@
 
             <div class="right-tools">
                 <div class="right-tools-tabs">
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'tools' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'medical' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'books' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
-                    <button class="right-tools-tab focusable${this._rightToolsTab === 'favourites' ? ' active' : ''}" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'tools' ? ' active' : ''}" data-tools-tab="tools" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('tools')">${T('MainMenu.toolsTab.tools')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'medical' ? ' active' : ''}" data-tools-tab="medical" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('medical')">${T('MainMenu.toolsTab.medical')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'lifestyle' ? ' active' : ''}" data-tools-tab="lifestyle" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('lifestyle')">${T('MainMenu.toolsTab.lifestyle')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'books' ? ' active' : ''}" data-tools-tab="books" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('books')">${T('MainMenu.toolsTab.books')}</button>
+                    <button class="right-tools-tab focusable${this._rightToolsTab === 'favourites' ? ' active' : ''}" data-tools-tab="favourites" onclick="if(SceneManager._scene && typeof SceneManager._scene.setRightToolsTab === 'function') SceneManager._scene.setRightToolsTab('favourites')">${T('MainMenu.toolsTab.favourites')}</button>
                 </div>
                 <div class="right-tools-grid">
-                    ${this._rightToolsTab === 'tools' ? this.generateUIToolItemsListHTML() : ''}
-                    ${this._rightToolsTab === 'medical' ? this.generateUIMedicalItemsListHTML() : ''}
-                    ${this._rightToolsTab === 'lifestyle' ? this.generateUILifestyleItemsListHTML() : ''}
-                    ${this._rightToolsTab === 'books' ? this.generateUIBooksItemsListHTML() : ''}
-                    ${this._rightToolsTab === 'favourites' ? this.generateUIFavouritesItemsListHTML() : ''}
+                    ${this.generateUIToolsTabGridHTML()}
                 </div>
             </div>
 
@@ -3726,7 +3815,7 @@
                     ],
                     // Activities: things you do in the world
                     [
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.cooking'), "cooking"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.thinker'), "thinker"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.alchemistry'), "alchemistry"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.build'), "build"),
@@ -3754,7 +3843,7 @@
                     [
                         this.generateUICommandItemHTML(T('MainMenu.cmd.assets'), "assets"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.pets'), "pets"),
-                        this.generateUICommandItemHTML(T('MainMenu.cmd.training'), "training"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.cooking'), "cooking"),
                         this.generateUICommandItemHTML(emLabel("menuWorkforce", T('MainMenu.cmd.workforce')), "army"),
                     ],
                     // System: meta / out-of-world
@@ -4149,8 +4238,13 @@
         // whoever it is reading has no bust; the canvas only exists then.
         const picked = this.dynamicsSelectedEntry();
         if (picked && document.getElementById('dyn-dossier-canvas')) {
-            const sheet = picked.actor ? picked.actor.characterName() : (picked.preset.sprite || '');
-            const at = picked.actor ? picked.actor.characterIndex() : (picked.preset.spriteIndex || 0);
+            const held = picked.preset || picked.record || {};
+            const sheet = picked.actor
+                ? picked.actor.characterName()
+                : (held.sprite || held.characterName || '');
+            const at = picked.actor
+                ? picked.actor.characterIndex()
+                : (held.spriteIndex ?? held.characterIndex ?? 0);
             if (sheet) {
                 this.drawUIActorPortrait({
                     characterName: () => sheet,
@@ -4207,6 +4301,11 @@
     };
 
     Scene_Menu.prototype.triggerUICommand = function (symbol) {
+        // A greyed out tile is inert: the click handler sits on the div whether
+        // the pocket can be opened or not, so the one enabled answer
+        // (MainMenuVoices.enabled) is asked here too. Without it the Alchemistry
+        // tile opened the bench with no portable kit carried.
+        if (window.MainMenuVoices && !window.MainMenuVoices.enabled(symbol)) return;
         // Prepare active actor index for skills/equips/status page mapping
         const personalSymbols = ["skill", "equip", "status1", "thinker", "specializations"];
         if (personalSymbols.includes(symbol)) {

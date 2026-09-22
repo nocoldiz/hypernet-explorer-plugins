@@ -35,7 +35,6 @@
   "pts": "pt",
   "refundWord": "rimborso",
   "searchPlaceholder": "Cerca tratti…",
-  "packsHint": "Un pacchetto è un punto di partenza: passa alla modalità Dettagliata per aggiungere, togliere o sostituire i suoi tratti.",
   "packs": {
     "soldier": {
       "name": "Vecchio Soldato",
@@ -92,6 +91,62 @@
     "tinkerer": {
       "name": "Artigiano",
       "description": "Forgia, banco da lavoro e una giornata che nessun altro reggerebbe."
+    },
+    "beastkin": {
+      "name": "Figlio delle Bestie",
+      "description": "Cresciuto da qualcosa a quattro zampe, e si vede ancora nel passo."
+    },
+    "hermit": {
+      "name": "Eremita",
+      "description": "Possiede tre cose, non parla con nessuno, e vuole che resti così."
+    },
+    "nightborn": {
+      "name": "Nato di Notte",
+      "description": "Qualcosa di antico nel sangue, il gusto del dolore, e le cicatrici di entrambi."
+    },
+    "oracle": {
+      "name": "Oracolo",
+      "description": "Vede ciò che non è accaduto, ascolta i colori, e gli si crede troppo tardi."
+    },
+    "firebug": {
+      "name": "Piromane",
+      "description": "Accende, guarda, ed è noto in tre città esattamente per questo."
+    },
+    "savant": {
+      "name": "Savant",
+      "description": "Non sta fermo, non dimentica una riga letta, e risponde in quattro lingue."
+    },
+    "giant": {
+      "name": "Gigante",
+      "description": "Troppo grande per la porta, abbastanza forte da non curarsene, si sente dalla via accanto."
+    },
+    "smallfolk": {
+      "name": "Piccola Gente",
+      "description": "Minuto, si piega come un corpo non dovrebbe, e abile con entrambe le mani."
+    },
+    "shadow": {
+      "name": "Ombra",
+      "description": "Addestrato a chiudere le cose in silenzio, ricordato da nessuno, mosso da nulla."
+    },
+    "monk": {
+      "name": "Monaco",
+      "description": "Anni in un chiostro freddo, una sola ciotola, e nessun rancore che valga."
+    },
+    "silent": {
+      "name": "Il Silenzioso",
+      "description": "Non parla da anni, vede i volti sbagliati, e ne porta il motivo addosso."
+    },
+    "doomsayer": {
+      "name": "Profeta di Sventura",
+      "description": "Non crede in niente, si aspetta il peggio, e teme comunque la fine."
+    },
+    "caveborn": {
+      "name": "Nato in Grotta",
+      "description": "Nato sotto la roccia, bianco come la pietra, e comunque spaventato dal buio."
+    },
+    "gambler": {
+      "name": "Giocatore",
+      "description": "Non passa accanto a un tavolo, vince più del dovuto, e mente su entrambe le cose."
     },
     "predator": {
       "name": "Predatore solitario",

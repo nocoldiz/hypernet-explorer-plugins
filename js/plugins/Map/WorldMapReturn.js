@@ -5289,7 +5289,7 @@
                 console.log(`[WorldMapReturn-Edge] Non-proc dest at current coords: map ${dest.mapId} (${dest.x},${dest.y})`);
                 $gamePlayer.clearProcGenBorderArrows();
                 system.clearProcGenData();
-                $gamePlayer.reserveTransfer(dest.mapId, dest.x, dest.y, d, 0);
+                $gamePlayer.reserveTransfer(dest.mapId, dest.x, dest.y, dest.direction || d, 0);
                 return;
             }
 
@@ -5305,7 +5305,7 @@
                 console.log(`[WorldMapReturn-Edge] Non-proc dest at adjacent coords: map ${dest.mapId} (${dest.x},${dest.y})`);
                 $gamePlayer.clearProcGenBorderArrows();
                 system.clearProcGenData();
-                $gamePlayer.reserveTransfer(dest.mapId, dest.x, dest.y, d, 0);
+                $gamePlayer.reserveTransfer(dest.mapId, dest.x, dest.y, dest.direction || d, 0);
                 return;
             }
 
@@ -6606,17 +6606,11 @@
 
         console.log('[WMR] Checking position:', currentX, currentY);
 
-        // Bologna is authored as a dedicated OSM tile grid (BolognaMapSystem),
-        // not a procedural biome. Stopping on a Bologna world-map tile hands off
-        // to that system's centre cell (r7 c6) instead of generating proc terrain.
-        const hardcodedName = window.WorldGen && window.WorldGen.HardcodedBiomeNames
-            ? window.WorldGen.HardcodedBiomeNames[`${currentX},${currentY}`]
-            : null;
-        if (hardcodedName === 'Bologna' && window.BolognaMapSystem) {  // i18n-ignore  HardcodedBiomeNames entry
-            if (camperDriving) window.VoxelWorldSystem.stop();
-            window.BolognaMapSystem.teleportToCell(7, 6);
-            return;
-        }
+        // Bologna is not a procedural town and is never generated: every way in
+        // (world square, fast travel, the 3D world) lands at the city's authored
+        // entrance, the Central Station, through the ordinary named-place path
+        // below. The OSM tile grid (BolognaMapSystem, map 353) is reached from
+        // inside the station, not from the world square.
 
         // `coords` (a door per side of the town's footprint) takes priority;
         // any other square inside the town's `reservedTiles` falls back to
@@ -6662,7 +6656,7 @@
 
             console.log('[WMR] Transferring to map', destination.id, 'at', destination.x, destination.y);
             if (camperDriving) window.VoxelWorldSystem.stop();
-            $gamePlayer.reserveTransfer(destination.id, destination.x, destination.y, 0, 0);
+            $gamePlayer.reserveTransfer(destination.id, destination.x, destination.y, Number(destination.direction) || 0, 0);
             return;
         }
 

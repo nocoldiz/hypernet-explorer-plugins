@@ -192,6 +192,9 @@
       // not a wage, so the sheet reads her standing rather than her coins.
       socialClass: 0, // 0=Destitute 1=Working 2=Middle 3=Wealthy
       reproduction: 1, // REPRODUCTION_TYPES.UTERUS
+      // A rare blood, which is its own small problem on a road with no
+      // hospitals on it. Written as the BloodTypes.json id, not the label.
+      bloodType: "AB_NEG",
       sexualOrientation: "asexual", // key into js/db/NPC/Orientations.json (sexual)
       romanticOrientation: "aromantic", // key into js/db/NPC/Orientations.json (romantic)
       money: 20000,
@@ -219,10 +222,20 @@
       // the hand the vector gun sits in. Cheap, thematic and level one: the two
       // late-game jackets she used to start in are gone.
       armors: [
+        { id: 468, amount: 1 }, // Compiler's Cowl
+        { id: 45, amount: 1 },  // Glitched Pattern Tunic
         { id: 467, amount: 1 }, // Discount Wizard Robe
+        { id: 726, amount: 1 }, // Static Ward Plate
         { id: 127, amount: 1 }, // Reflex Trigger Glove
+        { id: 457, amount: 1 }, // Pocket Arcane Kit
+        { id: 10, amount: 1 },  // Flickering Ward Charm
       ],
-      equips: [525, null, null, 467, 127],
+      // One weapon and a full set of cheap occult gear, written out in the slot
+      // order a two-handed body with a head and a torso comes to: main hand,
+      // off hand, head, clothes, robe, armour, then the three gear slots. The
+      // story mode enforces the same loadout through applyStoryModeEmEquipment,
+      // which reads the slots off the body instead of trusting these positions.
+      equips: [525, null, 468, 45, 467, 726, 127, 457, 10],
       skills: [],
       // What the Ritual left her with: the potential that grew instead of
       // shrinking, the mark it burned in, the scarring of the spell that took
@@ -817,6 +830,19 @@
     return storyModeSpritePool(poolKey) || [];
   }
 
+  // A dossier's looks, minus anybody from Varlenia while that people is still
+  // locked. The unfiltered list stands if the filter would empty it, so a
+  // dossier always has something to wear.
+  function withoutLockedVarlenians(list) {
+    const SC = window.SpriteCatalog;
+    if (!Array.isArray(list) || !SC || !SC.isVarlenianUnlocked || SC.isVarlenianUnlocked()) {
+      return list;
+    }
+    const db = (window.WorldGen && window.WorldGen.NPCs) || {};
+    const kept = list.filter((key) => !(db[key] && db[key].varlenian === true));
+    return kept.length > 0 ? kept : list;
+  }
+
   function storyModeSpritePool(poolKey) {
     if (poolKey === "slime") return STORY_MODE_SLIME_SPRITES;
     // A goblin is a humanoid with a goblin's face, not an archetype of its own,
@@ -824,7 +850,7 @@
     if (poolKey === "goblin") return storyModeCatalogPool("Humanoid") // i18n-ignore: catalogue archetype id
       .filter((key) => /goblin/i.test(key));
     if (poolKey === "witch") return storyModeWitchSpritePool();
-    return STORY_MODE_SPRITE_LISTS[poolKey] || null;
+    return withoutLockedVarlenians(STORY_MODE_SPRITE_LISTS[poolKey]) || null;
   }
 
   const STORY_MODE_PRESETS = [
@@ -1373,15 +1399,51 @@
     return $gameSystem._emDimensionSeed;
   }
 
+  // How much of what is left of her history the archive takes, and in how long
+  // a stretch at a time: the marker never falls on one word here and one word
+  // there, it swallows a clause.
+  const EM_REDACTION_RATE = 0.42;
+  const EM_REDACTION_RUN_MIN = 3;
+  const EM_REDACTION_RUN_MAX = 9;
+
+  // Words that only ever wear a capital because a sentence started on them:
+  // everything else that is capitalised is a place, an event or a person, and
+  // the archive never blacks one of those out.
+  const EM_SENTENCE_OPENERS = new Set([
+    "a", "after", "and", "as", "at", "but", "by", "every", "for", "from",
+    "he", "her", "here", "his", "how", "if", "in", "it", "its", "no",
+    "nobody", "not", "of", "on", "one", "or", "she", "so", "some",
+    "something", "the", "their", "them", "then", "there", "these", "they",
+    "this", "to", "was", "were", "what", "when", "where", "which", "while",
+    "who", "with", "you", "your",
+  ]);
+
+  /**
+   * Whether the archive is allowed to take this word. Names of places, events
+   * and people are what is left readable in a redacted file, so anything
+   * carrying a capital of its own survives; a capital that is only there
+   * because a sentence opened on the word does not count as one.
+   * @param {string} word - A single word token
+   * @param {boolean} sentenceStart - Whether it opens a sentence
+   * @returns {boolean} True when the word may be blacked out
+   */
+  function emWordIsRedactable(word, sentenceStart) {
+    if (!/[A-Za-z]/.test(word)) return false;
+    if (!/^[A-Z]/.test(word)) return true;
+    return sentenceStart && EM_SENTENCE_OPENERS.has(word.toLowerCase());
+  }
+
   /**
    * Ninety-two percent of Em's memories were spent on the spear, and her own
-   * history reads that way: a share of the longer words in every paragraph
-   * goes under the archive marker. Which words go is seeded off the world seed
-   * and the paragraph index, so one world always blacks out the same words and
-   * the page does not flicker as it is re-rendered.
+   * history reads the way an archive file does: whole stretches of it go under
+   * the marker at once, and what is left standing in the gaps are the names of
+   * the places, the events and the people, plus the century of a date with its
+   * year blacked out (19██). Where the batches fall is seeded off the world
+   * seed and the paragraph index, so one world always blacks out the same
+   * stretches and the page does not flicker as it is re-rendered.
    * @param {string} text - One backstory paragraph
    * @param {number} index - Paragraph index, part of the seed
-   * @returns {string} The paragraph with some words redacted
+   * @returns {string} The paragraph with batches of it redacted
    */
   function redactEmMemories(text, index) {
     const worldSeed = window.HistoryManager && window.HistoryManager.getSeed
@@ -1392,8 +1454,37 @@
       state = mix32(state);
       return state / 0x100000000;
     };
-    return String(text || "").replace(/[A-Za-z']{5,}/g, (word) =>
-      next() < 0.3 ? "█".repeat(Math.min(9, word.length)) : word);
+    // A date keeps the century it happened in and loses the year itself.
+    const dated = String(text || "").replace(/\b(1[0-9]|20)(\d{2})\b/g,
+      (all, century, year) => century + "█".repeat(year.length));
+    // Tokens alternate word, gap, word, gap: only the words are ever taken, so
+    // the punctuation and the spacing of the paragraph survive the pass and it
+    // still reads as a file somebody blacked out by hand.
+    const tokens = dated.split(/([A-Za-z█][A-Za-z'█-]*)/);
+    let sentenceStart = true;
+    let runLeft = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (i % 2 === 0) {
+        if (/[.!?]/.test(token)) sentenceStart = true;
+        continue;
+      }
+      const opensSentence = sentenceStart;
+      sentenceStart = false;
+      if (!emWordIsRedactable(token, opensSentence)) {
+        // A name inside a batch is left readable and does not end the batch:
+        // the marker picks up again on the far side of it.
+        continue;
+      }
+      if (runLeft <= 0) {
+        if (next() >= EM_REDACTION_RATE) continue;
+        runLeft = EM_REDACTION_RUN_MIN
+          + Math.floor(next() * (EM_REDACTION_RUN_MAX - EM_REDACTION_RUN_MIN + 1));
+      }
+      runLeft--;
+      tokens[i] = "█".repeat(token.length);
+    }
+    return tokens.join("");
   }
 
   /**
@@ -1579,18 +1670,20 @@
   const EM_NAME = "Em";
 
   // Story mode is Em's story, so the wizard is not a wizard while it is running:
-  // she is who she is. Her name, her face, her body, her class, her creed and
-  // her (absent) job are all settled before the player ever sees the sheet, and
-  // every control that would edit one of them answers to this predicate rather
-  // than re-deriving "is this Em" from a literal of its own.
+  // she is who she is. Her name, her face, her body, her class and her gender
+  // are all settled before the player ever sees the sheet, and every control
+  // that would edit one of them answers to this predicate rather than
+  // re-deriving "is this Em" from a literal of its own. What she believes, what
+  // she does for a living and the organs she was born with are not on that
+  // list: the sheet opens on hers and the player may write all three.
   const EM_PRESET_ID = 2;
   const EM_STORY_CLASS_ID = 16;      // Gunmancer
   const EM_STORY_GENDER = 1;         // Female
   // What she wakes up believing: Thelema, the creed of a witch who was left
-  // with her will and nothing else. It is the one part of her sheet the player
-  // is allowed a say in, and only within this shelf: a handful of creeds a
-  // memory-wiped, gun-casting anarchist witch could plausibly hold. Everything
-  // outside it is somebody else's Em.
+  // with her will and nothing else: the creed her sheet opens on. The list under it is the shelf her dossier was written against,
+  // a handful of creeds a memory-wiped, gun-casting anarchist witch plausibly
+  // holds: a default and a reading order, not a fence. Every creed in the bank
+  // is offered on her sheet.
   const EM_STORY_IDEOLOGY = "thelemic_magus";
   const EM_STORY_IDEOLOGY_CHOICES = [
     "thelemic_magus",
@@ -1601,7 +1694,90 @@
     "individualist_egoist",
     "anarcho_syndicalist",
   ];
-  const EM_STORY_JOB_ID = 0;         // No profession, and no way to pick one
+  const EM_STORY_JOB_ID = 0;         // The trade she opens on: none yet
+
+  // What Em walks out of the story mode's opening wearing, slot by slot rather
+  // than as an index into an equips array: her body decides how many slots she
+  // has (window.HandSlots), so a fixed array of positions was writing her robe
+  // into the clothes slot and her glove into the robe slot, where both were
+  // refused, and left her standing in nothing but the gun. She carries ONE
+  // weapon, the vector gun, and every other slot is filled with the cheap
+  // occult kit a broke witch owns: nothing here is above her level and nothing
+  // is a second thing to shoot with.
+  const EM_STORY_LOADOUT = {
+    weapon: 525,          // Vector Gun, the one thing in her hands
+    head: 468,            // Compiler's Cowl
+    clothes: 45,          // Glitched Pattern Tunic
+    robe: 467,            // Discount Wizard Robe
+    armor: 726,           // Static Ward Plate
+    gear: [127, 457, 10], // Reflex Trigger Glove, Pocket Arcane Kit, Flickering Ward Charm
+  };
+
+  /**
+   * The equipment Em should be wearing, one entry per slot her body actually
+   * has. Every hand past the first stays empty: the story opens with the gun
+   * and nothing else in them.
+   * @param {object} actor - Em's actor
+   * @returns {Array<object|null>} One database entry (or null) per equip slot
+   */
+  function storyModeEmEquipment(actor) {
+    const slots = actor.equipSlots();
+    const HS = window.HandSlots;
+    const gear = EM_STORY_LOADOUT.gear.slice();
+    const armor = (id) => (id && $dataArmors[id] && $dataArmors[id].name ? $dataArmors[id] : null);
+    const wanted = new Array(slots.length).fill(null);
+    let armed = false;
+    for (let i = 0; i < slots.length; i++) {
+      const kind = HS && HS.slotKind ? HS.slotKind(actor, i) : null;
+      if (kind === "hand" || kind === "mouth") {
+        if (!armed && kind === "hand") {
+          const gun = $dataWeapons[EM_STORY_LOADOUT.weapon];
+          if (gun && gun.name) { wanted[i] = gun; armed = true; }
+        }
+        continue;
+      }
+      if (kind === "head") wanted[i] = armor(EM_STORY_LOADOUT.head);
+      else if (kind === "clothes") wanted[i] = armor(EM_STORY_LOADOUT.clothes);
+      else if (kind === "robe") wanted[i] = armor(EM_STORY_LOADOUT.robe);
+      else if (kind === "armor") wanted[i] = armor(EM_STORY_LOADOUT.armor);
+      else if (kind === "gear") wanted[i] = armor(gear.shift());
+    }
+    return wanted;
+  }
+
+  /**
+   * Dresses Em in the story mode's loadout: the vector gun in one hand, empty
+   * hands beside it and every other slot filled. Idempotent, so it can be
+   * called from the locks on every render of her sheet, and it is what takes
+   * back a second weapon handed to her by anything else on the way in.
+   * @param {object} actor - Em's actor
+   */
+  function applyStoryModeEmEquipment(actor) {
+    if (!actor || typeof actor.equipSlots !== "function") return;
+    if (typeof $dataWeapons === "undefined" || typeof $gameParty === "undefined" || !$gameParty) return;
+    let wanted;
+    try {
+      wanted = storyModeEmEquipment(actor);
+    } catch (e) {
+      console.error("CharacterCreation: could not read Em's story mode slots", e);
+      return;
+    }
+    const worn = actor.equips();
+    if (wanted.every((item, i) => (worn[i] || null) === (item || null))) return;
+    // Everything wrong comes off first: a piece put on before the slot it
+    // belongs in is emptied is refused, and a stray weapon left in the off
+    // hand would survive the pass.
+    for (let i = 0; i < wanted.length; i++) {
+      if ((worn[i] || null) !== (wanted[i] || null) && worn[i]) actor.changeEquip(i, null);
+    }
+    for (let i = 0; i < wanted.length; i++) {
+      const item = wanted[i];
+      if (!item) continue;
+      if ($gameParty.numItems(item) <= 0) $gameParty.gainItem(item, 1);
+      actor.changeEquip(i, item);
+    }
+    actor.refresh();
+  }
 
   // The lines Em is already drawn on when the story opens. She is a witch of
   // the Guild in everything but paperwork, and the Empire keeps a file on her:
@@ -1712,12 +1888,12 @@
       const idx = (typeof Scene_CharacterCreation !== "undefined" && Scene_CharacterCreation._currentPartyMemberIndex) || 0;
       $gameVariables.setValue(38 + idx, locks.gender);
     }
-    // The creed is a default, not a lock: whatever the player picked off the
-    // shelf stands, and only a creed from outside it is written back.
-    if (!EM_STORY_IDEOLOGY_CHOICES.includes(String(actor._ideologyId || ""))) {
-      actor._ideologyId = locks.ideologyId;
-    }
-    actor._jobId = locks.jobId;
+    // The creed and the trade are defaults, not locks: the Ritual left her a
+    // will and a living to make, and both are the player's to write. Only an
+    // Em who has answered neither is given the ones she opens on.
+    if (!actor._ideologyId) actor._ideologyId = locks.ideologyId;
+    if (actor._jobId == null) actor._jobId = locks.jobId;
+    applyStoryModeEmEquipment(actor);
     // Her file with the powers belongs to the dossier, not to play: it is
     // written every time the sheet is touched, so a detailed-mode visit can
     // never leave her standing somewhere the story does not put her.
@@ -2229,7 +2405,10 @@
     const base = getBasePresets();
     const retired = getRetiredPresets();
     const player = getPlayerPresets();
-    const all = base.concat(retired, player);
+    // Whatever is sitting in characters/ is on the board too, as itself: a file
+    // nobody has imported is still a character somebody wrote (getFolderPresets).
+    const folder = getFolderPresets();
+    const all = base.concat(retired, player, folder);
     // Endless dossiers (Em) head the board: they are the only ones always
     // there, whatever the world has already spent. Sorted rather than kept
     // first in the array literal, so presets restored from an older save
@@ -4604,6 +4783,512 @@
     return { imported: names.length, skipped, names };
   }
 
+  //=============================================================================
+  // Dossiers waiting in the characters folder
+  //=============================================================================
+  // Anything sitting in characters/ that this game has not taken in yet is
+  // still somebody a player wrote, so the dossier board offers it where it
+  // stands rather than asking for an import first. The record is built off the
+  // file itself every time the board asks (exportScanFolder holds the read for
+  // a few seconds, so this costs nothing on a redraw), and it is never spent:
+  // a character in the folder is a template, exactly like a dossier the player
+  // saved off the board.
+  //
+  // Its id is derived from the export uid, so one file is one id in every
+  // session, and it sits in its own 3000+ band above the player's own.
+  const FOLDER_PRESET_ID_BASE = 3000;
+  const FOLDER_PRESET_ID_SPAN = 900000;
+
+  function folderPresetId(uid) {
+    let hash = 2166136261;
+    const text = String(uid || "");
+    for (let i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return FOLDER_PRESET_ID_BASE + (Math.abs(hash) % FOLDER_PRESET_ID_SPAN);
+  }
+
+  /**
+   * The characters waiting in the folder, as dossiers the board can offer.
+   * A file this game has already taken in is left out: it is on the board
+   * already, as one of the player's own.
+   * @returns {array} Preset objects, empty outside NW.js
+   */
+  function getFolderPresets() {
+    const api = window.CharacterExport;
+    if (!api || typeof api.scan !== "function") return [];
+    let found = [];
+    try {
+      found = api.scan() || [];
+    } catch (e) {
+      return [];
+    }
+    return found
+      .filter((entry) => entry && !entry.known && entry.payload && entry.payload.character)
+      .map((entry) => {
+        const preset = Object.assign({}, entry.payload.character, {
+          id: folderPresetId(entry.uid),
+          importedUid: entry.uid,
+          playerMade: true,
+          fromFolder: true,
+          folderFile: entry.file,
+          endless: true,
+          hidden: false,
+          switches: []
+        });
+        // A template says who somebody is, not where a party sets out from:
+        // the landing the file was written with belongs to the world it left.
+        delete preset.mapId;
+        delete preset.x;
+        delete preset.y;
+        return preset;
+      });
+  }
+
+  /**
+   * Whether a dossier is a file in the characters folder rather than a record
+   * the game holds.
+   * @param {object} preset - Preset record
+   * @returns {boolean} True for a folder dossier
+   */
+  function isFolderPreset(preset) {
+    return !!(preset && preset.fromFolder);
+  }
+
+  //=============================================================================
+  // Party dossiers
+  //=============================================================================
+  // A party dossier is three character dossiers filed under one name: a whole
+  // crew, taken in one press instead of three. Seven of them are written here
+  // and they are always the same three people - one face, one bust and one 3D
+  // model each, stated rather than rolled - so a party picked off this board
+  // looks the same in every world. They are still only a starting point: every
+  // member can be edited afterwards exactly like a character built by hand.
+  //
+  // A party the player saves is the same shape (three dossiers snapshotted off
+  // the seats, see buildPlayerPreset) and is kept beside the ones they save
+  // singly, in localStorage rather than in a savegame or a world folder.
+  const PARTY_PRESET_STORAGE_KEY = "HypernetExplorer.partyPresets";
+  const PARTY_PRESET_ID_BASE = 500;
+
+  // The kit a written member is carrying. A dossier states its gear as the
+  // pieces themselves rather than as slot numbers, and the slot each one goes
+  // in follows the equip type it was authored under: weapon, shield, head,
+  // body, accessory.
+  const partyKit = (kit) => {
+    const equips = [];
+    const weapons = [];
+    const armors = [];
+    const put = (slot, id, isWeapon) => {
+      if (!id) return;
+      equips[slot] = { id, w: !!isWeapon };
+      (isWeapon ? weapons : armors).push({ id, amount: 1 });
+    };
+    put(0, kit.weapon, true);
+    put(1, kit.shield, false);
+    put(2, kit.head, false);
+    put(3, kit.body, false);
+    put(4, kit.acc, false);
+    for (let i = 0; i < 5; i++) if (equips[i] === undefined) equips[i] = null;
+    return { equips, weapons, armors };
+  };
+
+  // Everything a written member is besides their face: the trade they hold,
+  // the traits they were built with, what they are trained in, who they love
+  // and what they are carrying. A party off this board used to arrive as three
+  // names and three classes with every one of those pages still blank.
+  const partyBuild = (member, build) => {
+    const b = build || {};
+    const kit = partyKit(b.kit || {});
+    return Object.assign(member, {
+      level: b.level || 1,
+      jobId: b.jobId || 0,
+      traits: (b.traits || []).slice(),
+      specializations: (b.specs || []).map((s) => ({ id: s[0], level: s[1] })),
+      weapons: kit.weapons,
+      armors: kit.armors,
+      equips: kit.equips,
+      items: [],
+      money: 0,
+      sexualOrientation: b.sexual || undefined,
+      romanticOrientation: b.romantic || undefined,
+      relStyle: b.relStyle || undefined
+    });
+  };
+
+  // A member of a written party: a face, a bust and a body, and nothing rolled.
+  // i18n-ignore-start: proper names and asset ids. Each party's name and brief
+  // lives in CharPresets.party.<key>.
+  const partyMember = (name, classId, asset, bust, gender, model3d, build) =>
+    partyBuild({
+      name,
+      classId,
+      characterType: "humanoid",
+      sprite: "NPCs/!$" + asset,
+      spriteIndex: 0,
+      busts: bust,
+      gender,
+      model3d,
+      switches: []
+    }, build);
+
+  // The animal a crew travels with, written the same way its people are. A
+  // beast is portrayed by the body it is sculpted from and never by a bust, so
+  // it states its archetypes and asks for the model instead.
+  const partyCreature = (name, classId, spritePath, archetypes, gender, model3d, build) =>
+    partyBuild({
+      name,
+      classId,
+      characterType: "creature",
+      isCreature: true,
+      archetypes: archetypes.slice(),
+      sprite: spritePath,
+      spriteIndex: 0,
+      busts: "",
+      portraitMode: "model",
+      gender,
+      model3d,
+      switches: []
+    }, build);
+
+  const PARTY_PRESETS = [
+    {
+      id: 501,
+      key: "oldguard",
+      members: [
+        partyMember("Halvard", 4, "ValiantKnight1", "ValiantKnight", 0,
+          { base: "humanoid", height: 1.08, bulk: 1.15, hairStyle: "crop", hairColor: "ash", hue: 0.07, sat: 0.40, lit: 0.52, seed: 11 },
+          { jobId: 9, traits: [6, 11], specs: [[889, 3], [620, 2], [140, 2]],
+            kit: { weapon: 57, head: 48, body: 144, acc: 147 },
+            sexual: "heterosexual", romantic: "heteroromantic", relStyle: "monogamous" }),
+        partyMember("Tessane", 25, "Nun2", "Nun", 1,
+          { base: "humanoid", height: 0.97, bulk: 0.94, hairStyle: "bob", hairColor: "darkbrown", hue: 0.06, sat: 0.42, lit: 0.55, seed: 12 },
+          { jobId: 19, traits: [33, 50], specs: [[277, 3], [110, 3], [134, 2]],
+            kit: { weapon: 129, body: 71, acc: 33 },
+            sexual: "asexual", romantic: "demiromantic", relStyle: "companionate" }),
+        partyMember("Rook", 24, "Ranger1", "Ranger", 0,
+          { base: "humanoid", height: 1.00, bulk: 1.00, hairStyle: "ponytail", hairColor: "chestnut", hue: 0.07, sat: 0.45, lit: 0.48, seed: 13 },
+          { jobId: 11, traits: [12, 8], specs: [[894, 3], [281, 3], [266, 2]],
+            kit: { weapon: 345, head: 17, body: 98, acc: 33 },
+            sexual: "bisexual", romantic: "biromantic", relStyle: "open_relationship" })
+      ]
+    },
+    {
+      id: 502,
+      key: "circle",
+      members: [
+        partyMember("Ysolde", 27, "Mage1", "Mage", 1,
+          { base: "humanoid", height: 1.00, bulk: 0.90, hairStyle: "long", hairColor: "white", hue: 0.06, sat: 0.35, lit: 0.60, seed: 21 },
+          { jobId: 19, traits: [7, 41], specs: [[165, 4], [22, 2], [309, 2]],
+            kit: { weapon: 283, body: 71, acc: 33 },
+            sexual: "homosexual", romantic: "homoromantic", relStyle: "monogamous" }),
+        partyMember("Mirabel", 2, "Witch11", "Witch1", 1,
+          { base: "humanoid", height: 0.96, bulk: 0.92, hairStyle: "braids", hairColor: "black", hue: 0.07, sat: 0.44, lit: 0.50, seed: 22 },
+          { jobId: 7, traits: [36, 52], specs: [[309, 3], [134, 3], [165, 2]],
+            kit: { weapon: 287, head: 17, body: 71 },
+            sexual: "pansexual", romantic: "panromantic", relStyle: "polyamorous" }),
+        partyMember("Lisenne", 36, "TarotWitch1", "TarotWitch", 1,
+          { base: "humanoid", height: 0.99, bulk: 0.90, hairStyle: "bob", hairColor: "wine", hue: 0.07, sat: 0.40, lit: 0.54, seed: 23 },
+          { jobId: 19, traits: [36, 16], specs: [[632, 3], [84, 3], [22, 2]],
+            kit: { weapon: 275, body: 66, acc: 33 },
+            sexual: "queer", romantic: "sapioromantic", relStyle: "situationship" })
+      ]
+    },
+    {
+      id: 503,
+      key: "nightcrew",
+      members: [
+        partyMember("Dice", 21, "Hitman1", "Hitman", 0,
+          { base: "humanoid", height: 1.00, bulk: 0.98, hairStyle: "crop", hairColor: "black", hue: 0.07, sat: 0.46, lit: 0.46, seed: 31 },
+          { jobId: 14, traits: [43, 24], specs: [[245, 3], [161, 3], [84, 2]],
+            kit: { weapon: 15, body: 101, acc: 128 },
+            sexual: "heterosexual", romantic: "aromantic", relStyle: "friends_with_benefits" }),
+        partyMember("Sprocket", 54, "WastelandThinkerer1", "WastelandThinkerer", 2,
+          { base: "humanoid", height: 0.94, bulk: 1.06, hairStyle: "spiky", hairColor: "ginger", hue: 0.07, sat: 0.48, lit: 0.53, seed: 32 },
+          { jobId: 15, traits: [35, 40], specs: [[173, 4], [98, 3], [161, 2]],
+            kit: { weapon: 138, head: 111, body: 104, acc: 103 },
+            sexual: "digisexual", romantic: "demiromantic", relStyle: "single_content" }),
+        partyMember("Cassian", 16, "Gunman1", "Gunman", 0,
+          { base: "humanoid", height: 1.04, bulk: 1.02, hairStyle: "short", hairColor: "brown", hue: 0.07, sat: 0.44, lit: 0.50, seed: 33 },
+          { jobId: 102, traits: [12, 53], specs: [[616, 3], [140, 2], [245, 2]],
+            kit: { weapon: 444, body: 101, acc: 128 },
+            sexual: "bisexual", romantic: "biromantic", relStyle: "serial_monogamy" })
+      ]
+    },
+    {
+      id: 504,
+      key: "triage",
+      members: [
+        partyMember("Wren", 9, "Nurse21", "Nurse2", 1,
+          { base: "humanoid", height: 0.98, bulk: 0.96, hairStyle: "ponytail", hairColor: "blond", hue: 0.06, sat: 0.38, lit: 0.58, seed: 41 },
+          { jobId: 104, traits: [33, 30], specs: [[110, 4], [265, 2], [61, 2]],
+            kit: { weapon: 11, body: 19, acc: 33 },
+            sexual: "heterosexual", romantic: "heteroromantic", relStyle: "long_distance" }),
+        partyMember("Ambrose", 41, "Medic1", "Medic", 0,
+          { base: "humanoid", height: 1.02, bulk: 1.00, hairStyle: "short", hairColor: "grey", hue: 0.07, sat: 0.40, lit: 0.52, seed: 42 },
+          { jobId: 104, traits: [41, 40], specs: [[265, 4], [110, 3], [134, 2]],
+            kit: { weapon: 15, head: 150, body: 62, acc: 103 },
+            sexual: "homosexual", romantic: "homoromantic", relStyle: "civil_union" }),
+        partyMember("Ivo", 22, "NobleGuard3", "NobleGuard", 0,
+          { base: "humanoid", height: 1.07, bulk: 1.12, hairStyle: "helmet", hairColor: "darkbrown", hue: 0.07, sat: 0.45, lit: 0.49, seed: 43 },
+          { jobId: 9, traits: [6, 95], specs: [[889, 2], [620, 3], [24, 2]],
+            kit: { weapon: 61, head: 48, body: 144, acc: 147 },
+            sexual: "heterosexual", romantic: "heteroromantic", relStyle: "arranged_marriage" })
+      ]
+    },
+    {
+      id: 505,
+      key: "salvage",
+      members: [
+        partyMember("Petrova", 42, "Scientist1", "Scientist", 1,
+          { base: "humanoid", height: 0.99, bulk: 0.95, hairStyle: "bob", hairColor: "ash", hue: 0.06, sat: 0.36, lit: 0.57, seed: 51 },
+          { jobId: 104, traits: [7, 37], specs: [[61, 4], [23, 2], [98, 2]],
+            kit: { weapon: 11, head: 150, body: 39, acc: 103 },
+            sexual: "demisexual", romantic: "demiromantic", relStyle: "monogamous" }),
+        partyMember("Solan", 53, "SpacerMonk1", "SpacerMonk", 0,
+          { base: "humanoid", height: 1.01, bulk: 1.00, hairStyle: "bald", hairColor: "black", hue: 0.08, sat: 0.42, lit: 0.44, seed: 52 },
+          { jobId: 10, traits: [50, 95], specs: [[286, 4], [277, 2], [24, 2]],
+            kit: { weapon: 285, body: 71 },
+            sexual: "asexual", romantic: "aromantic", relStyle: "aromantic_solo" }),
+        partyMember("Kite", 28, "Spacer1", "Spacer", 2,
+          { base: "humanoid", height: 0.97, bulk: 0.93, hairStyle: "mohawk", hairColor: "teal", hue: 0.07, sat: 0.43, lit: 0.51, seed: 53 },
+          { jobId: 103, traits: [35, 24], specs: [[901, 3], [98, 3], [185, 1]],
+            kit: { weapon: 444, head: 150, body: 98, acc: 128 },
+            sexual: "queer", romantic: "biromantic", relStyle: "polyamorous" })
+      ]
+    },
+    {
+      id: 506,
+      key: "convoy",
+      members: [
+        partyMember("Marsh", 38, "Guerrilla2", "Guerrilla", 0,
+          { base: "humanoid", height: 1.05, bulk: 1.10, hairStyle: "crop", hairColor: "black", hue: 0.08, sat: 0.47, lit: 0.42, seed: 61 },
+          { jobId: 102, traits: [6, 53], specs: [[616, 3], [266, 3], [140, 2]],
+            kit: { weapon: 462, head: 17, body: 144, acc: 147 },
+            sexual: "heterosexual", romantic: "heteroromantic", relStyle: "long_distance" }),
+        partyMember("Ilka", 52, "Tracker1", "Tracker", 1,
+          { base: "humanoid", height: 1.00, bulk: 1.02, hairStyle: "dreads", hairColor: "brown", hue: 0.07, sat: 0.45, lit: 0.47, seed: 62 },
+          { jobId: 11, traits: [8, 185], specs: [[281, 4], [628, 3], [266, 2]],
+            kit: { weapon: 19, body: 98, acc: 33 },
+            sexual: "homosexual", romantic: "homoromantic", relStyle: "monogamous" }),
+        partyMember("Poppy", 35, "HippieMusician1", "HippieMusician", 1,
+          { base: "humanoid", height: 0.95, bulk: 0.94, hairStyle: "afro", hairColor: "auburn", hue: 0.07, sat: 0.44, lit: 0.55, seed: 63 },
+          { jobId: 4, traits: [16, 52], specs: [[183, 4], [88, 2], [732, 2]],
+            kit: { weapon: 394, body: 104, acc: 128 },
+            sexual: "pansexual", romantic: "panromantic", relStyle: "portland_polycule" })
+      ]
+    },
+    {
+      id: 507,
+      key: "inquiry",
+      members: [
+        partyMember("Delia", 46, "Journalist1", "Journalist", 1,
+          { base: "humanoid", height: 1.00, bulk: 0.96, hairStyle: "bob", hairColor: "chestnut", hue: 0.06, sat: 0.40, lit: 0.56, seed: 71 },
+          { jobId: 105, traits: [41, 16], specs: [[142, 4], [339, 2], [88, 2]],
+            kit: { weapon: 11, head: 107, body: 66, acc: 128 },
+            sexual: "bisexual", romantic: "biromantic", relStyle: "open_relationship" }),
+        partyMember("Orson", 49, "ConspiracyTheorist1", "ConspiracyTheorist", 0,
+          { base: "humanoid", height: 0.98, bulk: 1.08, hairStyle: "spiky", hairColor: "sandy", hue: 0.07, sat: 0.43, lit: 0.50, seed: 72 },
+          { jobId: 104, traits: [36, 5], specs: [[339, 3], [98, 2], [22, 2]],
+            kit: { weapon: 460, head: 150, body: 39, acc: 103 },
+            sexual: "heterosexual", romantic: "aromantic", relStyle: "single_content" }),
+        partyMember("Sable", 31, "SunCultist1", "SunCultist", 1,
+          { base: "humanoid", height: 1.01, bulk: 0.93, hairStyle: "long", hairColor: "ink", hue: 0.07, sat: 0.40, lit: 0.45, seed: 73 },
+          { jobId: 19, traits: [36, 33], specs: [[277, 3], [165, 3], [84, 2]],
+            kit: { weapon: 275, body: 71, acc: 33 },
+            sexual: "demisexual", romantic: "sapioromantic", relStyle: "queerplatonic" })
+      ]
+    },
+    {
+      // Two people and the dog that works with them. The dog is a creature
+      // character in its own seat, built from the Beast archetype and drawn
+      // from its own sculpted body rather than from a portrait.
+      id: 508,
+      key: "kennel",
+      members: [
+        partyMember("Brannoc", 52, "ElvenScout1", "ElvenScout", 0,
+          { base: "humanoid", height: 1.03, bulk: 1.06, hairStyle: "crop", hairColor: "sandy", hue: 0.07, sat: 0.44, lit: 0.50, seed: 81 },
+          { jobId: 11, traits: [185, 8], specs: [[281, 4], [628, 3], [894, 2]],
+            kit: { weapon: 345, head: 17, body: 144, acc: 147 },
+            sexual: "heterosexual", romantic: "heteroromantic", relStyle: "monogamous" }),
+        partyMember("Nessa", 9, "Botanist1", "Botanist", 1,
+          { base: "humanoid", height: 0.98, bulk: 0.97, hairStyle: "ponytail", hairColor: "chestnut", hue: 0.06, sat: 0.40, lit: 0.55, seed: 82 },
+          { jobId: 104, traits: [33, 39], specs: [[110, 3], [801, 3], [134, 2]],
+            kit: { weapon: 466, body: 19, acc: 33 },
+            sexual: "bisexual", romantic: "biromantic", relStyle: "companionate" }),
+        partyCreature("Cinder", 63, "Animals/!$MV_Dog_German_Shepherd", ["Beast"], 0,
+          null,
+          { traits: [6, 8], specs: [[281, 3], [24, 2]], kit: {} })
+      ]
+    },
+    {
+      // A fortune teller, her driver and the goat that has outlived three of
+      // her predictions.
+      id: 509,
+      key: "caravan",
+      members: [
+        partyMember("Vasilka", 36, "Astrologist2", "Astrologist", 1,
+          { base: "humanoid", height: 0.99, bulk: 0.95, hairStyle: "long", hairColor: "wine", hue: 0.07, sat: 0.42, lit: 0.52, seed: 91 },
+          { jobId: 19, traits: [36, 16], specs: [[22, 4], [84, 3], [183, 2]],
+            kit: { weapon: 287, body: 66, acc: 33 },
+            sexual: "pansexual", romantic: "panromantic", relStyle: "throuple" }),
+        partyMember("Oleg", 54, "Trader1", "Trader", 0,
+          { base: "humanoid", height: 1.05, bulk: 1.12, hairStyle: "short", hairColor: "grey", hue: 0.07, sat: 0.45, lit: 0.47, seed: 92 },
+          { jobId: 112, traits: [35, 95], specs: [[732, 4], [173, 3], [56, 2]],
+            kit: { weapon: 138, head: 111, body: 104, acc: 103 },
+            sexual: "heterosexual", romantic: "heteroromantic", relStyle: "monogamous" }),
+        partyCreature("Tansy", 63, "Animals/!$MV_Goat_2", ["Beast"], 1,
+          null,
+          { traits: [8, 95], specs: [[266, 2], [24, 2]], kit: {} })
+      ]
+    }
+  ];
+  // i18n-ignore-end
+
+  let partyPresetCache = null;
+
+  /**
+   * The party dossiers the player saved, read once and then kept in memory.
+   * @returns {array} Array of party records (live reference)
+   */
+  function getPlayerPartyPresets() {
+    if (partyPresetCache) return partyPresetCache;
+    let parsed = [];
+    try {
+      const raw = localStorage.getItem(PARTY_PRESET_STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data)) {
+          parsed = data.filter((entry) => entry && Array.isArray(entry.members) && entry.members.length);
+        }
+      }
+    } catch (e) {
+      console.error("CharacterPresets: the saved party dossiers could not be read", e);
+      parsed = [];
+    }
+    partyPresetCache = parsed;
+    return partyPresetCache;
+  }
+
+  /**
+   * Write the player's own party dossiers back out.
+   * @param {array} parties - The whole list, as it should stand
+   */
+  function savePlayerPartyPresets(parties) {
+    partyPresetCache = Array.isArray(parties) ? parties : [];
+    try {
+      localStorage.setItem(PARTY_PRESET_STORAGE_KEY, JSON.stringify(partyPresetCache));
+    } catch (e) {
+      console.error("CharacterPresets: the party dossiers could not be written", e);
+    }
+  }
+
+  /**
+   * Every party the board offers: the seven written ones, then the player's.
+   * @returns {array} Array of party records
+   */
+  function getPartyPresets() {
+    return PARTY_PRESETS.concat(getPlayerPartyPresets());
+  }
+
+  /**
+   * The name a party reads by: a written party names itself through i18n, a
+   * saved one carries the name it was filed under.
+   * @param {object} party - Party record
+   * @returns {string} Display name
+   */
+  function getPartyPresetName(party) {
+    if (!party) return "";
+    if (party.playerMade) return String(party.name || "");
+    const key = "CharPresets.party." + party.key + ".name";
+    return T.has(key) ? T(key) : String(party.key || "");
+  }
+
+  /**
+   * What a written party is, in one line. A saved party has no brief.
+   * @param {object} party - Party record
+   * @returns {string} Description, or ""
+   */
+  function getPartyPresetLore(party) {
+    if (!party || party.playerMade) return "";
+    const key = "CharPresets.party." + party.key + ".desc";
+    return T.has(key) ? T(key) : "";
+  }
+
+  /**
+   * Whether a party record is one the player saved rather than one written here.
+   * @param {object} party - Party record
+   * @returns {boolean} True for a saved party
+   */
+  function isPlayerPartyPreset(party) {
+    return !!(party && party.playerMade);
+  }
+
+  function getNextPartyPresetId() {
+    const ids = getPlayerPartyPresets().map((entry) => Number(entry.id) || 0);
+    return Math.max(PARTY_PRESET_ID_BASE + PARTY_PRESETS.length, ...ids) + 1;
+  }
+
+  /**
+   * File the party as it stands as a party dossier of the player's own. Saving
+   * twice under one name rewrites that party rather than filling the board with
+   * copies of one crew.
+   * @param {string} name - What to file it under
+   * @returns {object} { ok: boolean, reason?: string, party?: object, replaced?: boolean }
+   */
+  function savePartyPresetFromParty(name) {
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    if (!members.length) return { ok: false, reason: "noParty" };
+    let written;
+    try {
+      written = members.map((actor) => {
+        const member = buildPlayerPreset(actor);
+        // A party keeps the face AND the body: the sculpted model is part of
+        // who somebody is, and without it a saved crew came back wearing the
+        // default humanoid.
+        const cfg = (window.CC3DModel && window.CC3DModel.getConfig)
+          ? window.CC3DModel.getConfig(actor.actorId()) : null;
+        if (cfg) member.model3d = JSON.parse(JSON.stringify(cfg));
+        delete member.id;
+        return member;
+      });
+    } catch (e) {
+      console.error("CharacterPresets: the party could not be filed as a dossier", e);
+      return { ok: false, reason: "buildFailed" };
+    }
+    const label = String(name || "").trim() || written.map((m) => m.name).join(", ");
+    const list = getPlayerPartyPresets();
+    const existing = list.findIndex((entry) => entry.name === label);
+    const party = {
+      id: existing >= 0 ? list[existing].id : getNextPartyPresetId(),
+      name: label,
+      playerMade: true,
+      members: written
+    };
+    if (existing >= 0) {
+      list[existing] = party;
+      savePlayerPartyPresets(list.slice());
+    } else {
+      savePlayerPartyPresets(list.concat(party));
+    }
+    return { ok: true, party, replaced: existing >= 0 };
+  }
+
+  /**
+   * Throw one of the player's own party dossiers away. A written party is the
+   * game's and is refused.
+   * @param {number} partyId - Party ID
+   * @returns {boolean} Success status
+   */
+  function removePartyPreset(partyId) {
+    const id = Number(partyId);
+    const list = getPlayerPartyPresets();
+    if (!list.some((entry) => Number(entry.id) === id)) return false;
+    savePlayerPartyPresets(list.filter((entry) => Number(entry.id) !== id));
+    return true;
+  }
+
   window.CharacterExport = {
     folder: exportFolder,
     payloadFromActor: exportPayloadFromActor,
@@ -4682,6 +5367,7 @@
     storyModeEmIdeologyChoices,
     storyModeEmFactionStandings,
     applyStoryModeEmLocks,
+    applyStoryModeEmEquipment,
     isBeastCrew,
     emLabel,
     getEmRestlessLine,
@@ -4696,7 +5382,17 @@
     getPlayerPresets,
     savePlayerPresets,
     savePlayerPresetFromActor,
+    buildPlayerPreset,
     removePlayerPreset,
+    getFolderPresets,
+    isFolderPreset,
+    getPartyPresets,
+    getPlayerPartyPresets,
+    getPartyPresetName,
+    getPartyPresetLore,
+    isPlayerPartyPreset,
+    savePartyPresetFromParty,
+    removePartyPreset,
     isPlayerPreset,
     getNextPlayerPresetId,
     savePartyMemberAsPreset,

@@ -63,5 +63,7 @@
     "noQuicksaveFound": "Nessun salvataggio rapido",
     "gameLoaded": "Partita caricata",
     "quicksaveLoaded": "Salvataggio rapido {n} caricato"
-  }
+  },
+  "rememberedFor": "Cosa verrà ricordato",
+  "diaryStamp": "{date}, {time}"
 }

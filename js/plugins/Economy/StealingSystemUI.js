@@ -139,9 +139,35 @@
 
     _updateHighlight() {
       if (!this._el) return;
+      let current = null;
       this._el.querySelectorAll('.steal-choice').forEach((el, i) => {
-        el.classList.toggle('selected', i === this._idx);
+        const on = i === this._idx;
+        el.classList.toggle('selected', on);
+        if (on) current = el;
       });
+      this._scrollIntoView(current);
+    }
+
+    // The shelf is longer than the page it is printed on, so the cursor
+    // walking down has to drag the page with it. scrollIntoView is not used:
+    // it would also scroll the game canvas sitting behind the overlay.
+    _scrollIntoView(el) {
+      if (!el) return;
+      let box = el.parentElement;
+      while (box && box !== document.body) {
+        const style = window.getComputedStyle(box);
+        if (/(auto|scroll|overlay)/.test(style.overflowY) &&
+            box.scrollHeight > box.clientHeight + 1) break;
+        box = box.parentElement;
+      }
+      if (!box || box === document.body) return;
+      const top = el.getBoundingClientRect().top
+                - box.getBoundingClientRect().top + box.scrollTop;
+      const bottom = top + el.offsetHeight;
+      if (top < box.scrollTop) box.scrollTop = top;
+      else if (bottom > box.scrollTop + box.clientHeight) {
+        box.scrollTop = bottom - box.clientHeight;
+      }
     }
 
     // ── Steal action ──────────────────────────────────────────

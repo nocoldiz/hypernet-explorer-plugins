@@ -377,6 +377,12 @@
   const INITIAL_PUDDLE_COUNT = 5;
   const PUDDLE_SPAWN_INTERVAL = 10000; // 10 seconds
 
+  // How much of the distance to the longitude's own hour the sky closes every
+  // frame off Earth. Small enough that a whole square's worth of local time
+  // takes a couple of seconds of walking to arrive, large enough that standing
+  // still never leaves the light behind where the party are.
+  const SKY_HOUR_EASE = 0.04;
+
   // Cache for puddle template
   let cachedPuddleTemplate = null;
 
@@ -1456,7 +1462,40 @@
       // landing column the descriptor remembers stands in for it.
       const lon = GS.surfaceColumnHour ? GS.surfaceColumnHour() : null;
       const local = GS.localHourFor(lp, total, lon);
-      return (local == null) ? earthHour : local;
+      if (local == null) return earthHour;
+      return this._easeSkyHour(local);
+    }
+
+    // The sky hour the screen is actually shown at, eased toward the one the
+    // party's longitude asks for. A landing square is a whole slice of the
+    // world's longitude, so crossing from one to the next is hours of local
+    // time at once: taken raw the screen went from afternoon to dusk in a
+    // single frame. The hour is walked toward its target instead, the short way
+    // round the clock, so the daylight slides into night while the party keep
+    // walking west and back into day when they turn around.
+    _easeSkyHour(target) {
+      const wrap = (x) => ((x % 24) + 24) % 24;
+      const prev = this._skyHourEased;
+      if (typeof prev !== "number" || !isFinite(prev) || this._skyHourEaseReset) {
+        this._skyHourEaseReset = false;
+        this._skyHourEased = wrap(target);
+        return this._skyHourEased;
+      }
+      // Shortest signed distance on a 24 hour circle, in [-12, 12).
+      let delta = ((wrap(target) - prev + 36) % 24) - 12;
+      if (Math.abs(delta) < 0.001) {
+        this._skyHourEased = wrap(target);
+        return this._skyHourEased;
+      }
+      this._skyHourEased = wrap(prev + delta * SKY_HOUR_EASE);
+      return this._skyHourEased;
+    }
+
+    // A landing, a load or a fresh descriptor has no previous hour to ease from:
+    // the sky is simply at whatever the new place is at.
+    resetSkyHourEase() {
+      this._skyHourEased = null;
+      this._skyHourEaseReset = true;
     }
 
     // --- MODIFICATION START ---
@@ -2033,17 +2072,22 @@
       // STANDING (longitude is local solar time), so a step east or west has to
       // move the light even when the clock has not ticked. One integer compare
       // per frame, and only while off Earth.
+      // The eased hour is still closing on its target for as long as the two
+      // differ, so off Earth the tint is recomputed every frame rather than
+      // only on the step that moved the party: that is what turns a square's
+      // worth of longitude into a slide instead of a snap.
       let walkedLongitude = false;
       const GS = window.GalaxySim;
       if (GS && GS.getAlienGridInfo && GS.getAlienGridInfo() && $gamePlayer) {
-        if (this._lastSkyColumnX !== $gamePlayer.x) {
-          this._lastSkyColumnX = $gamePlayer.x;
-          walkedLongitude = true;
-        }
+        this._lastSkyColumnX = $gamePlayer.x;
+        walkedLongitude = true;
       }
-      if (this._lastUpdateMinute !== gameDate.minutes || walkedLongitude) {
+      if (this._lastUpdateMinute !== gameDate.minutes) {
         this._lastUpdateMinute = gameDate.minutes;
         this.updateTimeAndWeather();
+        this.updateTimeOfDayTint();
+      } else if (walkedLongitude) {
+        // Only the light: the weather and the clock still belong to the minute.
         this.updateTimeOfDayTint();
       } else if (this._tintReassertFrames > 0) {
         // For a few frames after entering/loading a map, force the day/night

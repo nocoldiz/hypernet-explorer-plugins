@@ -112,13 +112,12 @@
     };
     const spellsItOut = own.skills.length > 0 || own.weapons.length > 0 ||
       own.armors.length > 0 || own.items.length > 0 || own.money > 0;
-    if (spellsItOut) return own;
 
     const SE = window.StartingEquipment || {};
     const classData = $dataClasses[preset.classId];
     if (!classData) return own;
     const idQty = (id, amount) => ({ id, amount });
-    return {
+    const fromClass = {
       skills: (classData.learnings || [])
         .filter((l) => l && l.level === 1 && $dataSkills[l.skillId])
         .map((l) => l.skillId),
@@ -134,6 +133,19 @@
       money: (CC_BASE_START_GOLD || 0) +
         (typeof classStartingMoney === "function" ? classStartingMoney(preset.classId) : 0),
       fromClass: true,
+    };
+    if (!spellsItOut) return fromClass;
+    // A dossier that names its gear is still owed the rest of what its class
+    // starts with: a written party states a weapon and a coat, and used to
+    // arrive knowing none of its class's first skills and carrying no purse
+    // at all, because stating anything used to mean stating everything.
+    return {
+      skills: own.skills.length ? own.skills : fromClass.skills,
+      weapons: own.weapons,
+      armors: own.armors,
+      items: own.items.length ? own.items : fromClass.items,
+      money: own.money > 0 ? own.money : fromClass.money,
+      fromClass: false,
     };
   }
 
@@ -457,6 +469,13 @@
       if (look.busts) {
         actor.setVnBust(look.busts);
         if (actor.setPortraitMode) actor.setPortraitMode("bust");
+      }
+
+      // A dossier that asks to be drawn from its sculpted body says so, and
+      // that answer outranks whatever the branches above settled: a beast in a
+      // party is its model, never a borrowed portrait.
+      if (preset.portraitMode && actor.setPortraitMode) {
+        actor.setPortraitMode(preset.portraitMode);
       }
 
       // Set switches
@@ -893,8 +912,13 @@
 
     _presetDeleteButtonHtml(preset, activeIndex) {
       if (!this._presetIsPlayerMade(preset)) return "";
+      // A dossier in the characters folder is a file, not a record: it is
+      // thrown away by deleting the file, and the board must not pretend
+      // otherwise (CharacterPresets.getFolderPresets).
+      if (window.CharacterPresets && window.CharacterPresets.isFolderPreset &&
+          window.CharacterPresets.isFolderPreset(preset)) return "";
       return `
-          <button class="cc-sidebar-btn cc-btn-full cc-btn-danger" onclick="SceneManager._scene.onDeletePreset(${activeIndex})">
+          <button class="cc-compact-btn cc-btn-danger focusable" tabindex="0" data-nav-key="cc-preset-delete" onclick="SceneManager._scene.onDeletePreset(${activeIndex})">
             <span>${ccT('CharCreate.deletePreset')}</span>
           </button>`;
     }
@@ -1012,10 +1036,13 @@
           <div class="cc-scroll-pane">
             ${briefHtml}
           </div>
-          <button class="cc-sidebar-btn cc-btn-full cc-btn-full--tall" onclick="SceneManager._scene.onApplyPresetToCurrentMember(${activeIndex})">
-            <span>${this._presetConfirmLabel()}</span>
-          </button>
-          ${this._presetDeleteButtonHtml(preset, activeIndex)}
+          <div class="cc-compact-actions cc-actions-row">
+            <button class="cc-compact-btn focusable" tabindex="0" data-nav-key="cc-preset-apply" onclick="SceneManager._scene.onApplyPresetToCurrentMember(${activeIndex})">
+              <span>${this._presetConfirmLabel()}</span>
+            </button>
+            ${this._presetExportButtonHtml(preset, activeIndex)}
+            ${this._presetDeleteButtonHtml(preset, activeIndex)}
+          </div>
         </div>
       ` : `<div class="cc-page cc-page-right"></div>`;
       return rightHtml;
@@ -1410,6 +1437,318 @@
       const card = cards[this._presetWindow.index()];
       const boardSprite = card && card.querySelector(".cc-wanted-sprite");
       if (boardSprite) boardSprite.setAttribute("style", spriteStyle);
+    }
+
+    //=========================================================================
+    // Handing a dossier out to the characters folder
+    //=========================================================================
+    // The board already offers every character waiting in characters/ (see
+    // CharacterPresets.getFolderPresets); this is the way back out. One press
+    // writes the highlighted dossier there as the three files a character
+    // travels as, so a crew can be handed to somebody else without leaving the
+    // wizard. A dossier that IS one of those files is not written back over
+    // itself.
+    _presetExportButtonHtml(preset, activeIndex) {
+      const api = window.CharacterExport;
+      if (!preset || !api || typeof api.folder !== "function" || !api.folder()) return "";
+      if (window.CharacterPresets && window.CharacterPresets.isFolderPreset &&
+          window.CharacterPresets.isFolderPreset(preset)) return "";
+      return `
+          <button class="cc-compact-btn focusable" tabindex="0" data-nav-key="cc-preset-export" onclick="SceneManager._scene.onExportPreset(${activeIndex})">
+            <span>${ccT('CharCreate.exportPreset')}</span>
+          </button>`;
+    }
+
+    onExportPreset(presetIndex) {
+      const presets = availablePresets();
+      const preset = presets[presetIndex] ||
+        (this._presetWindow && this._presetWindow.currentPreset());
+      const api = window.CharacterExport;
+      if (!preset || !api || typeof api.folder !== "function" || !api.folder()) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      let written = "";
+      try {
+        written = api.toJson(preset);
+        // The card and the code are pictures of the same dossier; the JSON is
+        // what an import reads, so a failure to paint one is not a failure to
+        // export the character.
+        if (api.toCard) Promise.resolve(api.toCard(preset)).catch((e) =>
+          console.error("CharacterCreation: the dossier card could not be drawn", e));
+        if (api.toQr) api.toQr(preset);
+      } catch (e) {
+        console.error(`CharacterCreation: "${preset.name}" could not be exported`, e);
+        written = "";
+      }
+      if (!written) {
+        SoundManager.playBuzzer();
+        window.ParchmentToast?.show?.(ccT('CharCreate.presetExportFailed'));
+        return;
+      }
+      SoundManager.playSave();
+      window.ParchmentToast?.show?.(ccTp('CharCreate.presetExported', { name: preset.name }));
+    }
+
+    //=========================================================================
+    // The party board
+    //=========================================================================
+    // Seven written crews and every crew the player has filed, taken in one
+    // press. A party dossier REPLACES the party: the three seats are the three
+    // people on the card, each with the face, the bust and the 3D body the card
+    // states. Nothing about them is locked afterwards - they are edited from
+    // the moment they sit down, exactly like characters built by hand.
+
+    _partyPresetList() {
+      const CP = window.CharacterPresets;
+      return (CP && CP.getPartyPresets) ? CP.getPartyPresets() : [];
+    }
+
+    _partyPresetIndex() {
+      const list = this._partyPresetList();
+      const idx = Scene_CharacterCreation._partyPresetIndex || 0;
+      return Math.max(0, Math.min(list.length - 1, idx));
+    }
+
+    onPartyPresetsClick() {
+      if (this._presetWindow) this.onPresetCancel();
+      Scene_CharacterCreation._isPetMode = false;
+      Scene_CharacterCreation._isVehicleMode = false;
+      Scene_CharacterCreation._isPartyPresetMode = true;
+      if (Scene_CharacterCreation._partyPresetIndex == null) {
+        Scene_CharacterCreation._partyPresetIndex = 0;
+      }
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    closePartyPresets(playSound) {
+      if (!Scene_CharacterCreation._isPartyPresetMode) return false;
+      Scene_CharacterCreation._isPartyPresetMode = false;
+      if (playSound !== false) SoundManager.playCancel();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+      return true;
+    }
+
+    onPartyPresetCardClick(index) {
+      const list = this._partyPresetList();
+      if (!list[index]) return;
+      if (this._partyPresetIndex() === index) {
+        this.onApplyPartyPreset(index);
+        return;
+      }
+      Scene_CharacterCreation._partyPresetIndex = index;
+      SoundManager.playCursor();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    onApplyPartyPreset(index) {
+      const list = this._partyPresetList();
+      const party = list[index] || list[this._partyPresetIndex()];
+      const CP = window.CharacterPresets;
+      if (!party || !this._applyPartyPreset(party)) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      SoundManager.playSave();
+      window.ParchmentToast?.show?.(ccTp('CharCreate.partyPresetLoaded', {
+        name: (CP && CP.getPartyPresetName) ? CP.getPartyPresetName(party) : String(party.name || "")
+      }));
+      Scene_CharacterCreation._isPartyPresetMode = false;
+      this._step = STEP.BIO;
+      this.setupStep();
+      this._lastStep = -1;
+      this._lastIndex = -1;
+      this.refreshUIOverlayDOM();
+    }
+
+    // Seats the three people the card states. The first one founds the party
+    // (its purse, its stock and its landing are the party's); the other two
+    // sign on to the party the first one founded, so neither wipes the kit the
+    // seat before it was handed, and each brings the purse their own class
+    // starts with.
+    _applyPartyPreset(party) {
+      const members = (party && Array.isArray(party.members)) ? party.members.slice(0, 3) : [];
+      if (!members.length) return false;
+
+      for (let i = 0; i < members.length; i++) {
+        const actorId = i + 1;
+        if (!$gameParty.members().some((a) => a.actorId() === actorId)) {
+          $gameParty.addActor(actorId);
+        }
+      }
+      // A party dossier replaces the party: a seat the crew does not fill is
+      // emptied rather than left holding whoever was sitting in it.
+      $gameParty.members().slice().forEach((actor) => {
+        const id = actor.actorId();
+        if (id <= 3 && id > members.length) $gameParty.removeActor(id);
+      });
+
+      members.forEach((member, i) => {
+        const actor = $gameActors.actor(i + 1);
+        if (!actor) return;
+        Scene_CharacterCreation._currentPartyMemberIndex = i;
+        Scene_CharacterCreation._isCreatureMode = false;
+        try {
+          this._applyPreset(member, actor, member, { memberIndex: i, joining: i > 0 });
+        } catch (e) {
+          console.error(`CharacterCreation: "${member.name}" could not be seated`, e);
+          return;
+        }
+        // _applyPreset hands the founding purse to the first seat alone; the
+        // other two are paid the same class purse a member built by hand gets.
+        if (i > 0 && typeof classStartingMoney === "function") {
+          $gameParty.gainGold((CC_BASE_START_GOLD || 0) + classStartingMoney(member.classId));
+        }
+        // The body the card states, so a written crew is the same three people
+        // in the battle scene as on the board.
+        if (member.model3d && window.CC3DModel && window.CC3DModel.setConfig) {
+          window.CC3DModel.setConfig(actor.actorId(), member.model3d);
+        }
+        // A party member off this board is a starting point, not a locked
+        // record: nothing here is one of the game's own dossiers, so every page
+        // of the wizard stays open on them.
+        actor._isPresetActor = false;
+        actor._presetId = 0;
+        actor.refresh();
+        actor.recoverAll();
+      });
+
+      Scene_CharacterCreation._currentPartyMemberIndex = 0;
+      Scene_CharacterCreation._isCreatureMode = false;
+      Scene_CharacterCreation._randomizedAllParty = false;
+      return true;
+    }
+
+    // Filing the party as it stands. It is named after the three people in it
+    // unless one of the player's own parties already carries that name, in
+    // which case that party is rewritten rather than doubled.
+    onSaveCurrentParty() {
+      const CP = window.CharacterPresets;
+      if (!CP || !CP.savePartyPresetFromParty) { SoundManager.playBuzzer(); return; }
+      const names = $gameParty.members().map((m) => m.name()).join(", ");
+      this._ccConfirm({
+        title: ccT('CharCreate.savePartyPreset'),
+        body: ccTp('CharCreate.savePartyPresetBody', { name: names }),
+        acceptLabel: ccT('CharCreate.savePartyPreset')
+      }, () => {
+        const result = CP.savePartyPresetFromParty(names);
+        if (!result.ok) { SoundManager.playBuzzer(); return; }
+        SoundManager.playSave();
+        window.ParchmentToast?.show?.(ccTp(
+          result.replaced ? 'CharCreate.partyPresetResaved' : 'CharCreate.partyPresetSaved',
+          { name: result.party.name }
+        ));
+        Scene_CharacterCreation._partyPresetIndex =
+          this._partyPresetList().findIndex((p) => p.id === result.party.id);
+        this._lastStep = -1;
+        this._lastIndex = -1;
+        this.refreshUIOverlayDOM();
+      });
+    }
+
+    onDeletePartyPreset(index) {
+      const CP = window.CharacterPresets;
+      const party = this._partyPresetList()[index];
+      if (!CP || !party || !CP.isPlayerPartyPreset || !CP.isPlayerPartyPreset(party)) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      this._ccConfirm({
+        title: ccT('CharCreate.deletePartyPreset'),
+        body: ccTp('CharCreate.deletePartyPresetBody', { name: party.name }),
+        acceptLabel: ccT('CharCreate.deletePartyPreset')
+      }, () => {
+        if (!CP.removePartyPreset(party.id)) { SoundManager.playBuzzer(); return; }
+        SoundManager.playCancel();
+        Scene_CharacterCreation._partyPresetIndex = 0;
+        this._lastStep = -1;
+        this._lastIndex = -1;
+        this.refreshUIOverlayDOM();
+      });
+    }
+
+    // What a member of a written party is, on the card: their face, their name,
+    // their vocation and the kit they are carrying. The gear is read off the
+    // dossier's own equip list, so a card never promises something the seat
+    // will not actually be wearing.
+    _partyPresetMemberHtml(member) {
+      const classData = member ? $dataClasses[member.classId] : null;
+      const className = classData ? window.CCDbName(classData) : ccT('CharCreate.defaultClassName');
+      const kitHtml = (member.equips || []).map((entry) => {
+        const itemId = (entry && typeof entry === "object") ? entry.id : entry;
+        if (!itemId) return "";
+        const item = (entry && entry.w) ? $dataWeapons[itemId] : $dataArmors[itemId];
+        if (!item) return "";
+        return `
+          <div class="cc-party-preset-kit-row">
+            <span class="cc-rpg-icon" style="${this._ccIconStyle(item.iconIndex, 16)}"></span>
+            <span class="cc-party-preset-kit-name">${window.CCDbName(item)}</span>
+          </div>
+        `;
+      }).join("");
+      return `
+        <div class="cc-party-preset-member">
+          <div class="cc-wanted-sprite" style="${this.getSpriteStyle(member.sprite, member.spriteIndex || 0)}"></div>
+          <div class="cc-wanted-name">${member.name}</div>
+          <div class="cc-wanted-class">${className}</div>
+          ${kitHtml ? `<div class="cc-party-preset-kit">${kitHtml}</div>` : ""}
+        </div>
+      `;
+    }
+
+    _partyPresetLeftHtml() {
+      const CP = window.CharacterPresets || {};
+      const list = this._partyPresetList();
+      const active = this._partyPresetIndex();
+      const cards = list.map((party, index) => {
+        const name = CP.getPartyPresetName ? CP.getPartyPresetName(party) : String(party.name || "");
+        const lore = CP.getPartyPresetLore ? CP.getPartyPresetLore(party) : "";
+        const mine = CP.isPlayerPartyPreset ? CP.isPlayerPartyPreset(party) : false;
+        return `
+          <div class="cc-party-preset-card cc-wanted-card ${index === active ? 'selected' : ''} focusable" tabindex="0"
+               data-nav-key="cc-party-preset-${index}"
+               onclick="SceneManager._scene.onPartyPresetCardClick(${index})">
+            <div class="cc-subheader cc-subheader--flush">${name}</div>
+            <div class="cc-party-preset-row">${party.members.map((m) => this._partyPresetMemberHtml(m)).join("")}</div>
+            ${lore ? `<p class="cc-text-desc cc-text-desc--body cc-flush">${this.cleanText(lore)}</p>` : ""}
+            <div class="cc-compact-actions cc-actions-row">
+              <button class="cc-compact-btn focusable" tabindex="0" data-nav-key="cc-party-preset-load-${index}"
+                      onclick="event.stopPropagation(); SceneManager._scene.onApplyPartyPreset(${index})">
+                <span>${ccT('CharCreate.loadPartyPreset')}</span>
+              </button>
+              ${mine ? `<button class="cc-compact-btn cc-btn-danger focusable" tabindex="0" data-nav-key="cc-party-preset-delete-${index}"
+                      onclick="event.stopPropagation(); SceneManager._scene.onDeletePartyPreset(${index})">
+                <span>${ccT('CharCreate.deletePartyPreset')}</span>
+              </button>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="cc-page cc-page-left">
+          <div class="cc-row-inline cc-row-gap-wide">
+            <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.partyPresetsTitle')}</h3>
+            <span class="cc-action-spacer"></span>
+            <button class="cc-compact-btn focusable" tabindex="0" data-nav-key="cc-party-preset-save"
+                    onclick="SceneManager._scene.onSaveCurrentParty()">
+              <span>${ccT('CharCreate.savePartyPreset')}</span>
+            </button>
+            <button class="cc-compact-btn focusable" tabindex="0" data-nav-key="cc-party-preset-close"
+                    onclick="SceneManager._scene.closePartyPresets()">
+              <span>${ccT('CharCreate.back')}</span>
+            </button>
+          </div>
+          <div class="cc-presets-board cc-dossier-board">${cards}</div>
+        </div>
+      `;
     }
 
   }

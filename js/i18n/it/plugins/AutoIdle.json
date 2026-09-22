@@ -189,6 +189,8 @@
     "actionTalk": "Parla",
     "actionEmpathize": "Empatizza",
     "actionReserves": "Manda in riserva",
+    "actionJoin": "Torna con noi",
+    "rejoined": "{name} riprende il suo posto sulla strada.",
     "actionCancel": "Lascia stare"
   },
   "auto": {

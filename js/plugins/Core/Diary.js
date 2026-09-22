@@ -108,6 +108,8 @@
  * --------------------------------------------------------------------------
  *   window.Diary.record(kind, params, opts)   write a line
  *   window.Diary.entries()                    this party's lines
+ *   window.Diary.highlights(n)                the n lines this party would
+ *                                             be remembered by
  *   window.Diary.describe(entry)              render one line, in the
  *                                             language the game is in now
  *   window.Diary.iconOf(entry)                its IconSet index
@@ -325,6 +327,133 @@
         'skill.learned':   { name: 'skill', count: null, into: 'skills', many: 'Diary.entry.skill.learnedMany',
                              day: true, by: ['name'], join: 'and' }
     };
+
+    //=========================================================================
+    // What a life is remembered for
+    //
+    // A gravestone has room for a handful of lines, so the diary has to be able
+    // to answer which of its thousands were the ones that mattered. Every kind
+    // carries a weight here: the once in a lifetime moments at the top, the
+    // daily traffic at the bottom. A kind with no row weighs whatever its
+    // category weighs, so a new kind is never silently the most interesting
+    // thing that ever happened.
+    //=========================================================================
+
+    const WEIGHT = {
+        // The player's own hand outranks anything the game wrote for them.
+        'note':               100,
+
+        // Once in a lifetime
+        'party.death':         98,
+        'birth.born':          96,
+        'battle.petrodemon':   94,
+        'birth.mitosis':       92,
+        'battle.boss':         90,
+        'npc.romance':         88,
+        'law.prison':          88,
+        'law.verdict':         86,
+        'health.partLost':     84,
+        'birth.pregnant':      84,
+        'warp.galaxy':         82,
+        'landing.planet':      80,
+        'army.lost':           80,
+        'launch.rocket':       78,
+        'army.won':            78,
+        'law.trial':           78,
+        'eris.dateEnd':        76,
+        'party.retire':        74,
+        'eris.date':           74,
+        'party.join':          72,
+        'party.leave':         70,
+        'health.epidemic':     70,
+        'quest.completed':     68,
+        'item.artifactLost':   66,
+        'crime.committed':     66,
+        'item.artifactGot':    64,
+        'property.bought':     62,
+        'health.augmentLost':  62,
+        'health.augmentFit':   60,
+        'health.surgery':      60,
+        'shop.owned':          60,
+        'blade.evolved':       60,
+        'card.champion':       58,
+        'alien.identified':    58,
+        'health.disease':      58,
+        'tech.researched':     56,
+        'adventure.done':      56,
+        'property.sold':       54,
+        'onu.vote':            54,
+        'spec.tier':           52,
+        'pet.join':            50,
+        'bank.loan':           50,
+        'faction.standing':    48,
+        'dream.had':           46,
+        'steal.caught':        44,
+
+        // The daily traffic of a run
+        'battle.lost':         34,
+        'battle.lostAnon':     30,
+        'party.level':         30,
+        'bet.won':             18,
+        'bet.lost':            18,
+        'battle.fled':         16,
+        'battle.won':          14,
+        'work.shift':          12,
+        'structure.entered':   12,
+        'item.found':          10,
+        'travel.arrive':        8,
+        'shop.buy':             8,
+        'place.entered':        8,
+        'minigame.played':      8,
+        'travel.depart':        6,
+        'shop.sell':            6,
+        'tv.watched':           6,
+        'floor.changed':        6,
+        'rest.sleep':           6,
+        'travel.refuel':        4,
+        'rest.wait':            2
+    };
+
+    const CAT_WEIGHT = {
+        [CAT.WRITTEN]:   90,
+        [CAT.PARTY]:     55,
+        [CAT.PEOPLE]:    45,
+        [CAT.HEALTH]:    45,
+        [CAT.LAW]:       45,
+        [CAT.KNOWLEDGE]: 40,
+        [CAT.COMBAT]:    25,
+        [CAT.OTHER]:     20,
+        [CAT.WEALTH]:    20,
+        [CAT.WORK]:      18,
+        [CAT.JOURNEY]:   15,
+        [CAT.LEISURE]:   12,
+        [CAT.REST]:       5
+    };
+
+    // How many lines of the same kind a single page will carry before it starts
+    // turning them down: a life remembered as eight won battles is no life.
+    const HIGHLIGHT_KIND_CAP = 2;
+
+    function baseWeight(kind) {
+        if (WEIGHT[kind] != null) return WEIGHT[kind];
+        const w = CAT_WEIGHT[kindMeta(kind).cat];
+        return (w != null) ? w : 20;
+    }
+
+    // What one line is worth against every other line in the same diary.
+    // "seen" is how many times its kind was written at all, and "position" is
+    // where it falls in the run, 0 at the first line and 1 at the last.
+    function highlightScore(entry, seen, position) {
+        const base = baseWeight(entry.k);
+        // The hundredth skirmish says less about a life than the only wedding
+        // in it, however heavily skirmishes weigh on their own.
+        const rarity = 1 + 2 / Math.sqrt(Math.max(1, Number(seen) || 1));
+        // The end of the story is what a gravestone is about.
+        const closing = 1 + 0.35 * Math.max(0, Math.min(1, Number(position) || 0));
+        // A line that already collapsed several of itself stands for all of them.
+        const repeat = 1 + Math.min(0.5, 0.08 * (Math.max(1, Number(entry.rep) || 1) - 1));
+        return base * rarity * closing * repeat;
+    }
 
     // The day of the world calendar a moment falls on. The clock starts at
     // 10:00 on 1 Jan 2001, so the boundary is offset by those ten hours.
@@ -628,6 +757,55 @@
             flush();
             return out;
         },
+
+        // The handful of lines this diary would be remembered by, in the order
+        // they were lived. Compacted first, so a chestful of loot competes as
+        // the one line it reads as. Scored by kind, by how rare that kind was
+        // in this particular run and by how close to the end it falls, then
+        // capped per kind so the page is a life rather than a tally. The cap is
+        // lifted for the last places when there is nothing else left to fill them.
+        highlights(limit, list) {
+            const src = Array.isArray(list) ? list : this.compact(this.entries());
+            const n = Math.max(1, Math.floor(Number(limit) || 8));
+            if (!src.length) return [];
+
+            const counts = Object.create(null);
+            src.forEach(e => { counts[e.k] = (counts[e.k] || 0) + 1; });
+
+            const first = Number(src[0].t) || 0;
+            const last = Number(src[src.length - 1].t) || 0;
+            const span = Math.max(1, last - first);
+            const scored = src.map((e, i) => ({
+                e, i, s: highlightScore(e, counts[e.k], ((Number(e.t) || 0) - first) / span)
+            }));
+            // Best first; a tie goes to whichever was lived later.
+            scored.sort((a, b) => (b.s - a.s) || (b.i - a.i));
+
+            const taken = [];
+            const perKind = Object.create(null);
+            const cap = Math.max(1, Math.min(HIGHLIGHT_KIND_CAP, Math.ceil(n / 3)));
+            for (const row of scored) {
+                if (taken.length >= n) break;
+                if ((perKind[row.e.k] || 0) >= cap) continue;
+                perKind[row.e.k] = (perKind[row.e.k] || 0) + 1;
+                taken.push(row);
+            }
+            // A short diary that only ever did one thing still fills its page.
+            if (taken.length < n) {
+                const chosen = new Set(taken.map(r => r.i));
+                for (const row of scored) {
+                    if (taken.length >= n) break;
+                    if (chosen.has(row.i)) continue;
+                    taken.push(row);
+                }
+            }
+            taken.sort((a, b) => a.i - b.i);
+            return taken.map(r => r.e);
+        },
+
+        // What a kind is worth before the run it was written in is taken into
+        // account. Exposed so the weighting can be read from outside.
+        weightOf(kind) { return baseWeight(kind); },
 
         iconOf(entry) { return entry ? kindMeta(entry.k).icon : 225; },
         categoryOf(entry) { return entry ? kindMeta(entry.k).cat : CAT.OTHER; },

@@ -539,9 +539,13 @@
         // The illnesses are a shelf of their own, not a corner of the topics
         // page: a player looking one up should not have to walk past every
         // faction and rumour the party has heard first.
+        // Topics and rumours are the same shelf: what the party has been told.
+        // They are one tab, split inside it by the group headers the contents
+        // page already prints, so a name heard in passing sits under the pages
+        // written about the ones that were explained.
         return this._hideTopics
             ? ["general", "history", "diseases"]
-            : ["topics", "rumors", "general", "history", "diseases"];
+            : ["topics", "general", "history", "diseases"];
     };
 
     Scene_Help.prototype.create = function () {
@@ -866,9 +870,10 @@
             // has its own tab now (see "history" and "diseases" below), so a
             // player looking for a single event or a single fever does not
             // have to wade through every spell and faction first.
-            return conversationTopics();
+            // The written pages first, the bare names heard second: two
+            // groups of the one shelf, headed by the group rule between them.
+            return conversationTopics().concat(rumorTopics());
         }
-        if (category === "rumors") return rumorTopics();
         if (category === "history") return historyTopics();
         if (category === "diseases") return diseaseTopics();
         const all = getHelpTopics();
@@ -944,8 +949,7 @@
         // Translation strings
         const tCodex =T('HelpMenu.archiveEntry');
         const tGeneral =T('HelpMenu.general');
-        const tTopics =T('HelpMenu.topics');
-        const tRumors =T('HelpMenu.rumors');
+        const tTopics =T('HelpMenu.topicsAndRumors');
         const tHistory =T('HelpMenu.history');
         const tDiseases =T('HelpMenu.diseases');
         const tSelectTopic =T('HelpMenu.selectATopicToStart');
@@ -954,7 +958,6 @@
         const TAB_LABELS = {
             general: tGeneral,
             topics: tTopics,
-            rumors: tRumors,
             history: tHistory,
             diseases: tDiseases,
         };
@@ -1099,7 +1102,7 @@
 
             let listHTML = "";
             if (topics.length === 0) {
-                const empty = (activeCategory === "topics" || activeCategory === "rumors")
+                const empty = (activeCategory === "topics")
                     ? T('HelpMenu.noTopicsLearnedYet')
                     : T('HelpMenu.noCodexEntriesFoundIn');
                 listHTML = `<div class="ui-empty"><div class="ui-empty-text">${empty}</div></div>`;
