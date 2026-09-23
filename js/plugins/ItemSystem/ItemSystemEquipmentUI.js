@@ -1294,6 +1294,31 @@
             dtHtml += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.weaponType')}:</span> <strong>${escapeHtml(String(wtype).trim())}</strong></div>`;
         }
 
+        // The piece's own numbers and traits, the same two sections the backpack
+        // card prints, so a player never has to leave this screen to read them.
+        // The grid above only shows the net change against what is worn now,
+        // which hides what the piece itself carries. Trait wording comes from
+        // ItemSystemUtils.traitLines, the one table both screens share.
+        let propsHtml = '';
+        const paramNames = [S('hp', t.hp), S('mp', t.mp), S('str', t.str), S('con', t.con),
+            S('int', t.int), S('wis', t.wis), S('dex', t.dex), S('psi', t.psi)];
+        const paramRows = (item.params || []).map((val, idx) => {
+            if (!val) return '';
+            const cls = val > 0 ? 'positive' : 'negative';
+            return dmgRow(paramNames[idx] || T('Inventory.spec.stat'),
+                `<span class="stat-diff ${cls}">${val > 0 ? '+' + val : val}</span>`);
+        }).join('');
+        if (paramRows) {
+            propsHtml += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`
+                + `<div class="inspect-spec-grid stats-grid equip-params-block">${paramRows}</div>`;
+        }
+        const traitList = (window.ItemSystemUtils && typeof window.ItemSystemUtils.traitLines === 'function')
+            ? window.ItemSystemUtils.traitLines(item) : [];
+        if (traitList.length) {
+            propsHtml += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`
+                + `<div class="equip-traits-block">${traitList.map(line => `<div class="inspect-bullet-item">${line}</div>`).join('')}</div>`;
+        }
+
         let descHtml = '';
         if (item.description && String(item.description).trim()) {
             let desc = String(item.description).trim();
@@ -1326,6 +1351,7 @@
                 <div class="bottom-stats-block">
                     ${dmgHtml}
                     ${dtHtml}
+                    ${propsHtml}
                     <div class="equip-lore-col">
                         ${descHtml}
                         ${loreHtml}

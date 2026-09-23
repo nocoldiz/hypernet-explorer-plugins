@@ -67,6 +67,11 @@
     "marriedTo": "Married to {name}.",
     "seeing": "Seeing {name}.",
     "formerPartner": "Former partner: {name} ({from}-{to}, {outcome}).",
+    "kinParent": "Parent of {names}.",
+    "kinChild": "Child of {names}.",
+    "kinSibling": "Sibling of {names}.",
+    "kinGrandparent": "Grandparent of {names}.",
+    "kinGrandchild": "Grandchild of {names}.",
     "cleanRecord": "Clean criminal record.",
     "criminalRecord": "Criminal record: {convictions} ({served} served), latest: {crime} ({year}).",
     "convictionCount": {
@@ -82,6 +87,11 @@
       "other": "Suspected in {n} unsolved cases."
     },
     "standing": "Social standing: {value}/100."
+  },
+  "procPlace": {
+    "inCountry": "{place}, {country} ({x},{y})",
+    "unclaimed": "{place} ({x},{y})",
+    "frontier": "Frontier"
   },
   "wildsNear": "{biome} near {city}",
   "wildBiome": {

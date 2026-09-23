@@ -1563,6 +1563,28 @@ window.Game_SummonFollower = Game_SummonFollower;
         return true;
     }
 
+    // The binding throw. One per rite: a fight only ever reads the result back.
+    async function rollRitual(spec, intMod) {
+        if (window.Dice3D) {
+            return await window.Dice3D.rollD20({
+                actionName: `Summoning: ${spec.name || 'Creature'}`,
+                statName: 'INT',
+                modifier: intMod,
+                dc: 10,
+                force3D: true
+            });
+        }
+        const rawRoll = Math.floor(Math.random() * 20) + 1;
+        return {
+            roll: rawRoll,
+            modifier: intMod,
+            total: rawRoll + intMod,
+            nat1: rawRoll === 1,
+            nat20: rawRoll === 20,
+            success: rawRoll === 20 || (rawRoll !== 1 && rawRoll + intMod >= 10)
+        };
+    }
+
     async function beginSummon(spec) {
         if (!spec || !canSummonNow()) return false;
         // No fight to stand in: the thing walks with the party instead.
@@ -1582,27 +1604,12 @@ window.Game_SummonFollower = Game_SummonFollower;
         }
 
         const intMod = summoner ? (summoner.intMod ?? Math.floor(((summoner.mat || 10) - 10) / 2)) : 0;
-        let rollRes = null;
-
-        if (window.Dice3D) {
-            rollRes = await window.Dice3D.rollD20({
-                actionName: `Summoning: ${spec.name || 'Creature'}`,
-                statName: 'INT',
-                modifier: intMod,
-                dc: 10,
-                force3D: true
-            });
-        } else {
-            const rawRoll = Math.floor(Math.random() * 20) + 1;
-            rollRes = {
-                roll: rawRoll,
-                modifier: intMod,
-                total: rawRoll + intMod,
-                nat1: rawRoll === 1,
-                nat20: rawRoll === 20,
-                success: rawRoll === 20 || (rawRoll !== 1 && rawRoll + intMod >= 10)
-            };
-        }
+        // A creature walking beside the party was bound once, out on the road,
+        // and that one throw stands for every fight it joins: rolling again here
+        // would open the dice table at the top of every single battle.
+        const boundRoll = spec.mapBound ? spec.ritual : null;
+        const rollRes = boundRoll || await rollRitual(spec, intMod);
+        const quiet = !!boundRoll;
 
         const hyperMax = hyperThreshold();
         let initialHyper = 0;
@@ -1682,10 +1689,12 @@ window.Game_SummonFollower = Game_SummonFollower;
         refreshBattle();
 
         toast(T('Battle.summon.summoned', { name: active.name }), 'info');
-        if (rollRes.nat20) {
-            toast(T('Battle.summon.perfectRitual', { name: active.name }), 'good');
-        } else if (rollRes.success && intMod > 0) {
-            toast(T('Battle.summon.empowered', { mod: intMod, name: active.name }), 'info');
+        if (!quiet) {
+            if (rollRes.nat20) {
+                toast(T('Battle.summon.perfectRitual', { name: active.name }), 'good');
+            } else if (rollRes.success && intMod > 0) {
+                toast(T('Battle.summon.empowered', { mod: intMod, name: active.name }), 'info');
+            }
         }
         if (spec.kind && spec.kind.announce) {
             toast(T('Battle.summon.' + spec.kind.announce, { name: active.name }), 'warning');
@@ -1823,7 +1832,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         return clamp(Math.round(riteCost * MAP_STEPS_PER_MP), MAP_STEPS_MIN, MAP_STEPS_MAX);
     }
 
-    function beginMapSummon(spec) {
+    async function beginMapSummon(spec) {
         // Everything that answers a rite carries a walking sprite (archetypePool
         // only ever deals creatures that have one), but a hand-written event can
         // still name something that does not, and an empty slot would follow the
@@ -1844,6 +1853,11 @@ window.Game_SummonFollower = Game_SummonFollower;
         // kind itself is looked up again when the thing goes into a fight.
         const stored = Object.assign({}, spec);
         delete stored.kind;
+        // The rite is thrown here, once, and written down with the record: every
+        // battle the creature walks into reads this back instead of rolling.
+        const summoner = resolveSummoner();
+        const intMod = summoner ? (summoner.intMod ?? Math.floor(((summoner.mat || 10) - 10) / 2)) : 0;
+        stored.ritual = await rollRitual(spec, intMod);
 
         $gameSystem._mapSummon = {
             spec: stored,
@@ -1856,6 +1870,11 @@ window.Game_SummonFollower = Game_SummonFollower;
         toast(bound
             ? T('Battle.summon.mapBound', { name: spec.name })
             : T('Battle.summon.mapWalks', { name: spec.name, steps }), 'info');
+        if (stored.ritual.nat20) {
+            toast(T('Battle.summon.perfectRitual', { name: spec.name }), 'good');
+        } else if (stored.ritual.success && intMod > 0) {
+            toast(T('Battle.summon.empowered', { mod: intMod, name: spec.name }), 'info');
+        }
         return true;
     }
 
@@ -1892,9 +1911,16 @@ window.Game_SummonFollower = Game_SummonFollower;
 
     // The fight opens and what the party has been walking with joins it, at the
     // stature it was called with and owing nothing further.
-    function joinBattleFromMap() {
+    async function joinBattleFromMap() {
         const record = mapSummon();
         if (!record || active) return;
+        // A record written before the rite kept its own throw: it is bound now,
+        // once, and every fight after this one reads that same result back.
+        if (!record.spec.ritual) {
+            const summoner = resolveSummoner();
+            const intMod = summoner ? (summoner.intMod ?? Math.floor(((summoner.mat || 10) - 10) / 2)) : 0;
+            record.spec.ritual = await rollRitual(record.spec, intMod);
+        }
         const spec = Object.assign({}, record.spec);
         spec.kind = KINDS[spec.kindKey] || null;
         spec.mapBound = true;

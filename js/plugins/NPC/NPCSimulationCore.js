@@ -2024,7 +2024,10 @@
       return lifePartner.name;
     }
     if (profile?.relationships) {
+      // A fond parent, child or sibling is family, never a partner.
+      const kin = window.NPCLifeSim?.kinOf?.(name) || {};
       for (const [otherName, rel] of Object.entries(profile.relationships)) {
+        if (kin[otherName]) continue;
         if (rel && (rel.partner || rel.married || (rel.opinion != null && rel.opinion >= 75))) {
           return otherName;
         }
@@ -2302,6 +2305,28 @@
       _moveInResident(society[name], name, registered, groupName);
     }
     return _getBuildingOccupants(registered).slice();
+  }
+
+  // Houses a whole household on one floor of a building at once (NPCSystem's
+  // procedural households). The cached entry's capacity is raised to hold
+  // them, so the town's homeless are never squeezed in on top of a family.
+  function moveInHousehold(building, groupName, names, floorIndex = 0) {
+    if (!building || !groupName || !$gameSystem || !names?.length) return 0;
+    const registered = _registerGroupBuilding(building, groupName);
+    const society = $gameSystem._npcSociety || {};
+    let moved = 0;
+    for (const name of names) {
+      const profile = society[name];
+      if (!profile || !_isSentientForHomeOwnership(profile, name)) continue;
+      const home = profile.homeBuilding;
+      if (home && !home._placeholder && _getBuildingKey(home) === registered.key &&
+          (home.floorIndex || 0) === floorIndex) continue;
+      if (home) _unregisterBuildingOccupant(home, name);
+      _moveInResident(profile, name, registered, groupName, floorIndex);
+      moved++;
+    }
+    registered.capacity = Math.max(registered.capacity || 1, _getBuildingOccupants(registered).length);
+    return moved;
   }
 
   // Hands out the front doors of ONE map to a named set of NPCs
@@ -3735,6 +3760,8 @@
     // Gives a named set of NPCs the doors of one specific map as their address,
     // used by Omega City's fifty-citizen spawn pass (SECTION 11a-i).
     assignHomesOnMap,
+    // A procedural household moved into one floor together (NPCSystem.js).
+    moveInHousehold,
     isNPCAtHome(name, profile, hour) {
       if (!profile && name && $gameSystem?._npcSociety) profile = $gameSystem._npcSociety[name];
       if (!profile) return false;

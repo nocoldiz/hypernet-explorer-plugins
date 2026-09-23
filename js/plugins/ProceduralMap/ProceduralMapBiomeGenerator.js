@@ -78,6 +78,7 @@
     randomChoice,
     normalizeBiomeForEdge,
     getNonProceduralDestination,
+    getDestinationForcedBiome,
     noise2D,
     smoothNoise,
     fbmNoise,
@@ -774,12 +775,18 @@
   /**
    * Check if coordinates have a hardcoded biome override
    * Returns { biome, roadDirection } or null if no override exists
+   *
+   * After HardcodedBiomeOverrides.json comes the square's procedural town: a
+   * `procedural: true` destination forces its own City / Village biome onto
+   * its footprint (ProcGenUtils.getDestinationForcedBiome).
    */
   function getHardcodedBiomeOverride(worldX, worldY) {
     const key = `${worldX},${worldY}`;
     if (HardcodedBiomeOverrides[key]) {
       return HardcodedBiomeOverrides[key];
     }
+    const forced = getDestinationForcedBiome(worldX, worldY);
+    if (forced) return { biome: forced };
     return null;
   }
 
@@ -4882,9 +4889,12 @@
         // and the map generated on entry (which rolls live) disagreed with it.
         // getBiomeFromCache makes the roll on read instead, so the cache still
         // reports specials, and reports the ones THIS world has.
-        const biomeName = cls.biome
+        // A procedural town's footprint is its own biome, whatever is painted
+        // on it (see getDestinationForcedBiome).
+        const forcedBiome = getDestinationForcedBiome(x, y);
+        const biomeName = forcedBiome || (cls.biome
           ? normalizeLatitudeBiome(cls.biome, y)
-          : cls.biome;
+          : cls.biome);
         if (biomeName) {
           if (!cache[biomeName]) {
             cache[biomeName] = [];
@@ -4895,7 +4905,7 @@
         if (cls.riverTileId) riverCoordMap[`${x},${y}`] = cls.riverTileId;
         // Bridge markers drive the river+road crossing generation.
         if (cls.bridge) bridgeCoordMap[`${x},${y}`] = cls.bridge;
-        if (cls.underBiome && cls.underBiome !== cls.biome) {
+        if (!forcedBiome && cls.underBiome && cls.underBiome !== cls.biome) {
           underBiomeMap[`${x},${y}`] = cls.underBiome;
         }
       }
@@ -4933,6 +4943,8 @@
    * Get biome from world tile using highest priority layer
    */
   Game_System.prototype.getBiomeFromWorldCoordinates = function (x, y) {
+    const forcedBiome = getDestinationForcedBiome(x, y);
+    if (forcedBiome) return forcedBiome;
     // A river painted over a land biome (world-map layer 2/3) must not hijack the
     // tile into a full river-biome map: classify by the underlying biome and let
     // the generator draw the river as an overlay inside it.
@@ -5000,6 +5012,9 @@
    * Get biome name from cache for given world coordinates
    */
   Game_System.prototype.getBiomeFromCache = function (x, y) {
+    // A procedural town's own biome, even over a cache built before it was set.
+    const forcedBiome = getDestinationForcedBiome(x, y);
+    if (forcedBiome) return forcedBiome;
     const index = getBiomeIndex(this._procGenData);
     if (index) {
       const biomeName = index.get(biomeKey(x, y));

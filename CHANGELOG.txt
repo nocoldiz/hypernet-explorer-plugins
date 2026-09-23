@@ -1,11 +1,36 @@
+0.6.36a  
+
+Added:
+ - procedural houses populated with families living on every floor
+ - new vaults for new patreons
+ - equipment stats and special properties visible on the Equip menu
+
+Changed:
+ - destination type renamed to biome, forced on procedural cities and villages
+ - optimized empathize UI drawing, stats row, bios show biome and nation
+ - no sleep rough when the map has an event named bed
+ - removed type something box on lower empathize UI
+ - empathize dialogue commands moved to a column on the right
+
+Fixed:
+ - courting error in empathize UI, only free chat uses the llm
+ - self inflicted buffs can no longer be dodged in battle
+ - overeating nausea no longer comes back after walking or curing it
+ - 'Enemy' hover label only for spawned enemies, with their name
+
+
 0.6.35a  
 
 Changed:
+ - water enemies and crabs resist fire, weak to electricity
+ - smaller name and HP/AP text in the main menu
  - bubba map infos now appear at the top middle of the screen
  - time and date moved to the top of the main menu right page
  - rumors no longer show a description line before them
 
 Fixed:
+ - utilities with no icon
+ - party hud no longer showed in voxel mode
  - camper spawn for story mode
  - arena no longer leaves the party levelled and re-equipped after a bout
 

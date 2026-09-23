@@ -538,6 +538,7 @@
     const _Scene_Title_createCommandWindow = Scene_Title.prototype.createCommandWindow;
     Scene_Title.prototype.createCommandWindow = function () {
         _Scene_Title_createCommandWindow.call(this);
+        this._commandWindow.setHandler('defaultStart', this.commandDefaultStart.bind(this));
         this._commandWindow.setHandler('quickContinue', this.commandQuickContinue.bind(this));
         this._commandWindow.setHandler('storymode', this.commandStoryMode.bind(this));
         this._commandWindow.setHandler('sandboxGame', this.commandSandboxGame.bind(this));
@@ -599,6 +600,27 @@
         $gamePlayer.reserveTransfer(
             EXPLORE_START.mapId, EXPLORE_START.x, EXPLORE_START.y, EXPLORE_START.dir, 0);
         SceneManager.goto(Scene_Map);
+    };
+
+    // Playtest only: a new game on the database start position, skipping the
+    // train and the creation wizard. Builds a world first when there is none.
+    Scene_Title.prototype.commandDefaultStart = function () {
+        this._commandWindow.close();
+        this.fadeOutAll();
+        const start = () => {
+            DataManager.setupNewGame();
+            SceneManager.goto(Scene_Map);
+        };
+        if (!hasActiveWorld()) {
+            createDefaultWorld().then(start).catch(e => {
+                console.error('[Titlescreen] World creation failed', e);
+                SoundManager.playBuzzer();
+                this._commandWindow.open();
+                this.startFadeIn(this.slowFadeSpeed(), false);
+            });
+            return;
+        }
+        start();
     };
 
     // One-click Continue: resumes the single most recently written save (the
@@ -1951,9 +1973,20 @@
         return group + (hasStoryMainSave() ? 'continueStory' : 'storyMode');
     }
 
+    // Launched from the editor's playtest, the menu opens with Default start:
+    // the plain RPG Maker new game on the start position set in the editor.
+    function isPlaytestLaunch() {
+        return !!(typeof Utils !== 'undefined' && Utils.isOptionValid &&
+            Utils.isOptionValid('test'));
+    }
+
     // Add the Story mode command to the title menu
 Window_TitleCommand.prototype.makeCommandList = function () {
     const worldReady = hasActiveWorld();
+
+    if (isPlaytestLaunch()) {
+        this.addCommand(T('Titlescreen.menu.defaultStart'), 'defaultStart');
+    }
 
     this.addCommand(T('Titlescreen.menu.quickContinue'), 'quickContinue',
         worldReady && hasQuickContinueSave());
@@ -7608,6 +7641,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // kicking the player to another screen. New party and New story are not
         // among them, since they make a world of their own.
         const worldReady = hasActiveWorld();
+
+        if (isPlaytestLaunch()) {
+            commands.push({
+                text: T('Titlescreen.menuOverlay.defaultStart'),
+                symbol: 'defaultStart'
+            });
+        }
 
         commands.push({
             text: T('Titlescreen.menuOverlay.quickContinue'),

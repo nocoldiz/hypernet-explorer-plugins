@@ -2862,9 +2862,9 @@
     }
 
     /* --- The chat tab. The bubbles are the reading, so they keep their type
-           and give up the box around them; the action strip under them gives up
-           a slice of the panel it is allowed to claim, and scrolls for the
-           rest as it already does. */
+           and give up the box around them; the column of verbs beside them
+           narrows on a small screen and scrolls for the rest as it already
+           does. */
     .npc-chat-header {
         padding: 7px 12px 6px;
     }
@@ -2878,13 +2878,12 @@
         padding: 6px 10px;
     }
 
-    .npc-chat-input-row,
     .npc-chat-actions-row {
         padding: 6px 12px;
     }
 
     .npc-chat-actions-row {
-        max-height: 38%;
+        width: clamp(140px, 32%, 200px);
     }
 
     .npc-chat-action-btn {

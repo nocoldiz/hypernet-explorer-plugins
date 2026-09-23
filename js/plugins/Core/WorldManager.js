@@ -430,6 +430,11 @@
             // burning through it in every savegame of that world.
             _epidemics: "epidemics",
             _npcRecruitedProcCitizens: "recruitedProcCitizens",
+            // Who lives behind each procedural door, floor by floor, and who
+            // frequents each public floor (NPCSystem.js, ensureHousehold). The
+            // people are world-shared, so the family behind a door is the same
+            // family in every savegame of the world.
+            _npcProcHouseholds: { prop: "procHouseholds", merge: mergeByKey },
             // Citizens of the authored maps the world has lost: recruited into
             // somebody's party, or killed where they stood. Both take the
             // person off the map by flipping their event's self switch A, and

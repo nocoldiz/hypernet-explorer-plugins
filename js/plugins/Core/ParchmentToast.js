@@ -308,6 +308,12 @@
       if (tag === "SCRIPT" || tag === "STYLE" || tag === "LINK" || tag === "CANVAS" ||
           tag === "VIDEO" || tag === "IMG") continue;
       if (el.id === "gameCanvas" || el.id === "errorPrinter" || el.id === "fpsCounter") continue;
+      // The 3D world (VoxelWorld/VoxelWorldScene.js) is a full-screen opaque
+      // div, but it is the view itself rather than a page laid over it: the
+      // widgets that stand down for a page, the party cards above all, belong
+      // over the world exactly as they belong over the map. A menu opened on
+      // top of it is a separate element and still answers yes here.
+      if (el.id === "camper-drive-overlay") continue;
       if (!(el.offsetWidth >= w * frac) || !(el.offsetHeight >= h * frac)) continue;
       const cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
       if (!cs) return true;

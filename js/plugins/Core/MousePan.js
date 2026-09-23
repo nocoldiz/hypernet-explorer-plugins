@@ -1025,6 +1025,15 @@
         return enemy ? enemy.name.trim() : null;
     }
 
+    // An "Enemy" event that has not been dealt a troop yet is machinery, not a
+    // creature: the spawner has not decided what stands there, so there is no
+    // name to speak and the cursor says nothing at all rather than "Enemy".
+    function isUnspawnedEnemy(ev) {
+        const data = ev && ev.event ? ev.event() : null;
+        if (!data || !/^enemy(?![a-z])/i.test((data.name || "").trim())) return false; // i18n-ignore: event name
+        return !enemyDisplayName(ev);
+    }
+
     function formatEventName(name) {
         if (!name) return "";
         let displayName = name.trim();
@@ -1263,6 +1272,7 @@
                 // Allow events with no graphic (characterName empty and tileId 0)
                 const name = ev.event().name;
                 if (shouldHideEvent(name)) return false;
+                if (isUnspawnedEnemy(ev)) return false;
                 if ($gameMap.fogOfWarState && $gameMap.fogOfWarState(mapX, mapY) < 2) return false;
                 return true;
             });
@@ -1277,6 +1287,13 @@
             let name = formatEventName(evName);
 
             const hoveredEnemyName = enemyDisplayName(hoveredEvent);
+            if (isUnspawnedEnemy(hoveredEvent)) {
+                // The troop can be cleared under a cursor that is already
+                // resting on it (the fight was won), so the held event is
+                // tested again rather than trusting the scan.
+                this._eventHoverWindow.hide();
+                return;
+            }
             if (hoveredEnemyName) {
                 name = hoveredEnemyName;
             } else {

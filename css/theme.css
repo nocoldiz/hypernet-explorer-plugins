@@ -5764,13 +5764,13 @@
 .char-name {
     font-family: var(--font-ui);
     color: var(--text-text-alt-2);
-    font-size: var(--fs-title);
+    font-size: var(--fs-heading);
     margin: 0;
     line-height: 1.2;
 }
 
 .char-class {
-    font-size: var(--fs-label);
+    font-size: var(--fs-caption);
     color: var(--text-text-alt-2);
     font-style: normal;
     margin: 2px 0 0 0;
@@ -5782,7 +5782,7 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: baseline;
-    gap: 14px;
+    gap: 10px;
     flex-shrink: 0;
     white-space: nowrap;
 }
@@ -5790,22 +5790,22 @@
 .bio-vital {
     display: flex;
     align-items: baseline;
-    gap: 7px;
+    gap: 5px;
 }
 
 .bio-vital-lbl {
     font-family: var(--font-ui);
-    font-size: var(--fs-chip);
+    font-size: var(--fs-caption);
     font-weight: bold;
     color: var(--text-primary-hover);
-    width: 26px;
+    width: 22px;
     text-align: right;
     letter-spacing: 0.5px;
 }
 
 .bio-vital-val {
     font-family: var(--font-ui);
-    font-size: var(--fs-title);
+    font-size: var(--fs-body);
     font-weight: bold;
     color: var(--text-pure-white);
     font-variant-numeric: tabular-nums;
@@ -19428,6 +19428,8 @@
       scrollbar-width: thin; scrollbar-color: var(--border-focus-hover) transparent;
       background: transparent;
       border-right: 1px solid var(--border-primary-hover-translucent-15);
+      /* A change inside one column never re-lays-out or repaints the other. */
+      contain: layout paint;
     }
     .npc-portrait-wrap { height: 290px; flex-shrink: 0; overflow: hidden; }
     .npc-left-ident {
@@ -19531,6 +19533,7 @@
       flex: 1; overflow-y: auto; padding: 12px 18px 28px; min-width: 0; min-height: 0;
       scrollbar-width: thin; scrollbar-color: var(--border-focus-hover) transparent;
       overscroll-behavior: contain;
+      contain: layout paint;
     }
     /* The chat takes the whole right page and lays it out as a column: the
        log, the actions and the input row, none of which scroll the page. */
@@ -19565,8 +19568,8 @@ padding: 2px 8px; font-size: var(--fs-heading);
     }
     /* Predisposition */
     .npc-pred-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; font-size: var(--fs-heading); }
-    .npc-pred-name { width: 72px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary-hover); }
-    .npc-pred-track { flex: 1; height: 5px; background: var(--border-primary-hover-translucent-15); border-radius: 3px; overflow: hidden; }
+    .npc-pred-name { flex: 0 1 auto; max-width: 62%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary-hover); }
+    .npc-pred-track { flex: 1 1 32px; min-width: 32px; height: 5px; background: var(--border-primary-hover-translucent-15); border-radius: 3px; overflow: hidden; }
     .npc-pred-fill { height: 100%; border-radius: 3px; }
     .npc-pred-val { width: 30px; text-align: right; flex-shrink: 0; font-size: var(--fs-body); }
     /* Status / opinion */
@@ -19595,6 +19598,10 @@ padding: 2px 8px; font-size: var(--fs-heading);
       overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
     }
     .npc-stat-val { color: var(--text-primary-hover); flex-shrink: 0; }
+    /* The six core stats: one row, label above its number. */
+    .npc-stat-grid--row { grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 4px; }
+    .npc-stat-grid--row .npc-stat-cell { flex-direction: column; align-items: center; gap: 0; line-height: 1.2; }
+    .npc-stat-grid--row .npc-stat-lbl { max-width: 100%; }
     .npc-exp-section { margin-top: 4px; }
     .npc-exp-label { font-size: var(--fs-heading); color: var(--text-text-alt-4); }
     .npc-exp-track { height: 4px; background: var(--border-primary-hover-translucent-15); border-radius: 2px; overflow: hidden; margin-top: 2px; }
@@ -19611,7 +19618,10 @@ padding: 2px 8px; font-size: var(--fs-heading);
       border: 1px solid var(--border-danger-medium-22);
     }
     /* ── Chat panel ────────────────────────────────────── */
-    .npc-chat-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    /* The spread of a conversation: the log and what was typed read down the
+       left, the verbs stand in their own column on the right. */
+    .npc-chat-panel { display: flex; flex-direction: row; flex: 1; min-height: 0; min-width: 0; }
+    .npc-chat-main { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; }
     .npc-chat-header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 10px 16px 9px;
@@ -19683,10 +19693,6 @@ padding: 2px 8px; font-size: var(--fs-heading);
     .npc-convo-speaker { font-weight: bold; font-style: normal; color: var(--text-text-alt-4); }
     .npc-convo-partner { cursor: pointer; text-decoration: underline; }
     .npc-typing { color: var(--text-text-alt-4); font-style: normal; }
-    .npc-chat-input-row {
-      display: flex; gap: 6px; padding: 8px 16px;
-      border-top: none; flex-shrink: 0;
-    }
     .npc-chat-elsewhere {
       padding: 10px 16px;
       border-top: none; flex-shrink: 0;
@@ -19712,24 +19718,6 @@ padding: 2px 8px; font-size: var(--fs-heading);
       pointer-events: auto;
     }
     .npc-chat-send:hover { opacity: 0.85; }
-    /* ── "Type something" launcher button (opens the chat modal) ─────────── */
-    .npc-chat-open-modal {
-      flex: 1; display: flex; align-items: center; gap: 8px;
-      padding: 9px 12px;
-      border: 1px solid var(--border-primary-hover-translucent-15);
-      border-radius: 4px;
-      background: var(--bg-primary-hover-translucent-35);
-      font-family: var(--font-ui); font-size: var(--fs-body);
-      color: var(--text-text-alt-4); cursor: text; text-align: left;
-      pointer-events: auto; transition: border-color 0.12s, background 0.12s;
-    }
-    .npc-chat-open-modal:hover {
-      border-color: var(--border-focus-hover);
-      background: var(--bg-white-translucent-72);
-      color: var(--text-primary-hover);
-    }
-    .npc-chat-open-modal-icon { flex-shrink: 0; opacity: 0.8; }
-    .npc-chat-open-modal-label { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     /* ── Chat text-entry modal ──────────────────────────────────────────── */
     .npc-chat-modal-backdrop {
       position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 40;
@@ -20024,17 +20012,21 @@ padding: 2px 8px; font-size: var(--fs-heading);
     }
     /* ── Chat action buttons (former left-column actions) ─ */
     .npc-chat-actions-row {
-      display: flex; flex-wrap: wrap; gap: 6px;
-      padding: 8px 16px;
+      display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 6px;
+      padding: 10px 16px;
       border-top: none;
-      flex-shrink: 0;
+      /* A column of its own beside the log: a fixed measure so the verbs keep
+         one edge however long their labels run, and never so wide that the
+         conversation is squeezed into a gutter. */
+      flex: 0 0 auto;
+      width: clamp(170px, 30%, 260px); box-sizing: border-box;
       /* A long action list (socialize/gift/bribe/attack/... plus the inline
-         directions, gift and steal item lists) must not eat the whole panel and
-         leave the chat log a single message tall. It only ever takes the height
-         it needs, this is purely the ceiling. `_sizeChatLog` re-states it in
-         pixels each render, because a percentage silently stops constraining
-         anything if a link of the flex chain above loses its definite height. */
-      max-height: var(--npc-actions-max, 45%); overflow-y: auto; overscroll-behavior: contain;
+         directions, gift and steal item lists) runs past the foot of the panel,
+         so the column scrolls inside its own height rather than stretching it.
+         `_sizeChatLog` re-states the ceiling in pixels each render, because a
+         percentage silently stops constraining anything if a link of the flex
+         chain above loses its definite height. */
+      max-height: var(--npc-actions-max, 100%); overflow-y: auto; overscroll-behavior: contain;
       scrollbar-width: auto; scrollbar-color: var(--border-focus-hover) transparent;
     }
     .npc-chat-actions-row::-webkit-scrollbar { width: 10px !important; }

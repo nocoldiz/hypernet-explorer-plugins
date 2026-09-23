@@ -224,6 +224,7 @@
       isSkyscraperPool(poolName) { return isSkyscraperPool(poolName); },
       isResidentialBuilding(building) { return isResidentialBuilding(building); },
       isPublicInteriorMap(mapId) { return isPublicInteriorMap(mapId); },
+      isHomeInteriorMap(mapId) { return isHomeInteriorMap(mapId); },
       normalizePoolName(poolName) { return normalizePoolName(poolName); },
       buildingKey(building, groupName) { return buildingKey(building, groupName); },
       floorInteriorMapId(building, floorIndex) { return floorInteriorMapId(building, floorIndex); },
@@ -737,6 +738,16 @@
   function isPublicInteriorMap(mapId) {
     if (!mapId || !$dataMapInfos || !$dataMapInfos[mapId]) return false;
     return PUBLIC_PARENT_IDS.includes($dataMapInfos[mapId].parentId);
+  }
+
+  // A home somebody's family lives in: the house, villa and walk-up floor
+  // templates. Abandoned shells, clinics, inns, shops and skyscraper floors are
+  // not, whatever door they were entered by.
+  const HOME_PARENT_IDS = [].concat(parentMapConfig.houses, parentMapConfig.villas, parentMapConfig.floors);
+
+  function isHomeInteriorMap(mapId) {
+    if (!mapId || !$dataMapInfos || !$dataMapInfos[mapId]) return false;
+    return HOME_PARENT_IDS.includes($dataMapInfos[mapId].parentId);
   }
 
   function isBuildingPublic(building) {

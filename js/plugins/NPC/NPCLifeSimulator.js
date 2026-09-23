@@ -287,9 +287,26 @@
   // the "name" that entry carries ("GreenWitch" -> "Green Witch"). Anything the
   // catalogue does not know (a map group, a country) passes through unchanged.
   function placeLabel(place) {
+    const proc = /^Proc:(-?\d+),(-?\d+)$/i.exec(String(place ?? ""));
+    if (proc) return procPlaceLabel(Number(proc[1]), Number(proc[2]));
     return window.WorkSystem?.destinationName
       ? window.WorkSystem.destinationName(place)
       : String(place ?? "");
+  }
+
+  // A per-tile settlement key reads as the ground it stands on, the nation
+  // that claims it and the square itself: "Forest, Spain (79,134)".
+  function procPlaceLabel(x, y) {
+    const gs = (typeof $gameSystem !== "undefined") ? $gameSystem : null;
+    let biome = null, country = null;
+    try { biome = gs?.getBiomeFromCache ? gs.getBiomeFromCache(x, y) : null; } catch (e) { biome = null; }
+    try { country = gs?.getCountryFromWorldCoordinates ? gs.getCountryFromWorldCoordinates(x, y) : null; } catch (e) { country = null; }
+    const place = biome
+      ? (window.BiomeNames?.display ? window.BiomeNames.display(biome) : biome)
+      : T('NPCLife.procPlace.frontier');
+    return country?.country
+      ? T('NPCLife.procPlace.inCountry', { place: place, country: country.country, x: x, y: y })
+      : T('NPCLife.procPlace.unclaimed', { place: place, x: x, y: y });
   }
 
   // ── Where a beast has lived ────────────────────────────────────────────────
@@ -385,11 +402,15 @@
     return rng.int(10, 95);
   }
 
-  function rollBirth(name, profile, rng, nowMinute) {
+  function rollBirth(name, profile, rng, nowMinute, forcedAge) {
     // Stay coherent with NPCSociety's backstory convention (age ≈ 18 + level*2)
-    // when a society profile exists; otherwise a seeded adult age.
+    // when a society profile exists; otherwise a seeded adult age. A household
+    // (bindFamily) hands its members their ages, so parents are older than
+    // the children they live with.
     let age;
-    if (profile && typeof profile.level === "number") {
+    if (typeof forcedAge === "number" && isFinite(forcedAge)) {
+      age = Math.min(99, Math.floor(forcedAge));
+    } else if (profile && typeof profile.level === "number") {
       age = Math.min(78, MIN_NPC_AGE + profile.level * 2 + rng.int(-2, 2));
     } else {
       age = MIN_NPC_AGE + Math.floor(Math.pow(rng.next(), 1.3) * 55); // skews younger
@@ -704,7 +725,7 @@
     // each town (see stopLabel), and it is marked on the record so the readers
     // that quote a life do not have to reach for the society profile.
     record.nonSentient = isNonSentient(profile, name);
-    Object.assign(record, rollBirth(name, profile, rng, nowMinute));
+    Object.assign(record, rollBirth(name, profile, rng, nowMinute, opts && opts.age));
     rollLocationHistory(record, record.homeGroup, rng, opts && opts.nativeChance, record.nonSentient);
     rollCareerHistory(record, profile, rng);
     rollCriminalHistory(record, rng);
@@ -938,7 +959,8 @@
     if (sampleCount(rng, datingRate * deltaDays) > 0) {
       const atMinute = lastMinute + Math.floor(rng.next() * (nowMinute - lastMinute));
       const pool = singlesByGroup[record.homeGroup || "__none__"] || [];
-      const candidates = pool.filter(n => n !== record.name);
+      // Family is never courted (see HOUSEHOLDS).
+      const candidates = pool.filter(n => n !== record.name && !record.kin?.[n]);
       let partnerName = null;
       let external = true;
       if (candidates.length && rng.next() < 0.75) {
@@ -1422,6 +1444,119 @@
   }
 
   // ==========================================================================
+  // HOUSEHOLDS, the family a procedural house is found with
+  // ==========================================================================
+  // A house entered in a procedural town has a whole household living in it
+  // (NPCSystem's ProceduralManager.ensureHousehold). What makes them a family
+  // is written here, on the life records: who is married to whom, and who is
+  // whose parent, child, sibling or grandparent. The same bonds go into the
+  // society relationship graph, so the Empathize web and every opinion reader
+  // see the family too.
+  //
+  // spec = { parents: [a, b?], children: [...], grandparents: [g1, g2?] }
+  //   parents      the couple (or lone parent) the household is built round
+  //   children     their children, each a sibling of the others
+  //   grandparents the parents of parents[0]
+  // A household of siblings alone is { children: [...] } with no parents.
+  // Binding the same household twice changes nothing: an opinion the family
+  // has lived its way to since is never reset to the seeded one.
+  const KIN_INVERSE = {
+    parent: "child", child: "parent", sibling: "sibling",
+    grandparent: "grandchild", grandchild: "grandparent",
+  };
+  const KIN_ORDER = ["parent", "child", "sibling", "grandparent", "grandchild"];
+  const KIN_OPINION = { parent: 60, child: 60, sibling: 45, grandparent: 55, grandchild: 55 };
+  const SPOUSE_OPINION = 70;
+
+  function seedFamilyBond(nameA, nameB, opinion) {
+    for (const [from, to] of [[nameA, nameB], [nameB, nameA]]) {
+      const p = getProfile(from);
+      if (!p) continue;
+      p.relationships = p.relationships || {};
+      const rel = p.relationships[to];
+      if (rel && rel._familySeeded) continue;
+      p.relationships[to] = Object.assign(rel || { meetCount: 50 }, { opinion, _familySeeded: true });
+    }
+  }
+
+  function setKin(nameA, nameB, kind) {
+    if (!nameA || !nameB || nameA === nameB || !KIN_INVERSE[kind]) return;
+    const records = getRecords();
+    const a = records?.[nameA], b = records?.[nameB];
+    if (!a || !b || a.nonSentient || b.nonSentient) return;
+    (a.kin = a.kin || {})[nameB] = kind;
+    (b.kin = b.kin || {})[nameA] = KIN_INVERSE[kind];
+    seedFamilyBond(nameA, nameB, KIN_OPINION[kind]);
+  }
+
+  // The couple a household is built round. Whatever partner either of them was
+  // rolled (always somebody off the external name bank for a fresh record) is
+  // dropped quietly: it was never a person, only a line in a biography.
+  function marryHouseholders(nameA, nameB) {
+    const records = getRecords();
+    const a = records?.[nameA], b = records?.[nameB];
+    if (!a || !b || a.nonSentient || b.nonSentient) return;
+    if (a.partner?.name !== nameB || b.partner?.name !== nameA) {
+      const nowYear = yearOf($gameVariables ? ($gameVariables.value(114) || 0) : 0);
+      const wedAfter = 22 + ((nameHash(nameA + "|" + nameB) >>> 0) % 7);
+      const since = Math.min(nowYear - 1, Math.max(a.birthYear, b.birthYear) + wedAfter);
+      for (const [r, other] of [[a, b], [b, a]]) {
+        r.maritalStatus = "married";
+        r.timesMarried = Math.max(1, r.timesMarried || 0);
+        r.partner = { name: other.name, external: false };
+        r.partnerSinceMinute = minuteOfYear(since);
+      }
+    }
+    seedFamilyBond(nameA, nameB, SPOUSE_OPINION);
+  }
+
+  // Somebody living in the family home without a spouse in it. A rolled
+  // marriage to an outsider becomes a past one; a partner who is a real person
+  // of the world is left alone, since they have a life of their own.
+  function unmarryHouseholder(name) {
+    const record = getRecords()?.[name];
+    if (!record || record.nonSentient) return;
+    if (record.maritalStatus !== "married" && record.maritalStatus !== "dating") return;
+    if (record.partner && !record.partner.external) return;
+    const wasMarried = record.maritalStatus === "married";
+    record.partner = null;
+    record.partnerSinceMinute = null;
+    const age = ageAt(record, $gameVariables ? ($gameVariables.value(114) || 0) : 0);
+    record.maritalStatus = wasMarried ? (age > 60 ? "widowed" : "divorced") : "single";
+  }
+
+  function bindFamily(spec) {
+    if (!spec || !getRecords()) return false;
+    const parents = (spec.parents || []).filter(Boolean);
+    const children = (spec.children || []).filter(Boolean);
+    const grandparents = (spec.grandparents || []).filter(Boolean);
+    for (const n of [...grandparents, ...parents, ...children]) ensureLifeRecord(n);
+
+    if (parents.length >= 2) marryHouseholders(parents[0], parents[1]);
+    else parents.forEach(unmarryHouseholder);
+    if (grandparents.length >= 2) marryHouseholders(grandparents[0], grandparents[1]);
+    else grandparents.forEach(unmarryHouseholder);
+    children.forEach(unmarryHouseholder);
+
+    for (const p of parents) for (const c of children) setKin(p, c, "parent");
+    for (let i = 0; i < children.length; i++) {
+      for (let j = i + 1; j < children.length; j++) setKin(children[i], children[j], "sibling");
+    }
+    for (const g of grandparents) {
+      if (parents[0]) setKin(g, parents[0], "parent");
+      for (const c of children) setKin(g, c, "grandparent");
+    }
+    return true;
+  }
+
+  // Everyone this person is family to, as { name: "parent" | "child" | ... },
+  // read from their side ("parent" means the other one is their child).
+  function kinOf(name) {
+    const kin = getRecords()?.[name]?.kin;
+    return kin ? Object.assign({}, kin) : {};
+  }
+
+  // ==========================================================================
   // BIOGRAPHY BUILDER
   // ==========================================================================
 
@@ -1489,6 +1624,13 @@
       lines.push(T('NPCLife.bio.seeing', { name: record.partner.name }));
     } else if (record.maritalStatus !== "single") {
       lines.push(maritalLabel(record.maritalStatus) + ".");
+    }
+    const kin = record.kin || {};
+    for (const kind of KIN_ORDER) {
+      const names = Object.keys(kin).filter(n => kin[n] === kind);
+      if (names.length) {
+        lines.push(T('NPCLife.bio.kin' + kind.charAt(0).toUpperCase() + kind.slice(1), { names: names.join(", ") }));
+      }
     }
     if (record.exPartners?.length) {
       const ex = record.exPartners[record.exPartners.length - 1];
@@ -1592,6 +1734,9 @@
     // The live in-game year, and the age floor every NPC birth date respects.
     currentYear() { return yearOf($gameVariables ? ($gameVariables.value(114) || 0) : 0); },
     MIN_NPC_AGE,
+    // The family a procedural household is found with (HOUSEHOLDS section).
+    bindFamily,
+    kinOf,
     // test/inspection hooks
     _internals: { LifeRng, nameHash, sampleCount, yearOf, dateStrOf, collectPopulation, RATES },
   };

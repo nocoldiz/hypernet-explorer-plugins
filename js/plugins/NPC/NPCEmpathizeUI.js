@@ -1100,7 +1100,10 @@
     // Same creature as the live viewer: move the canvas into the new frame and
     // leave the context, the model and the animation loop alone.
     if (this._portrait3D && this._portrait3D.id === spec.id && !this._portrait3D.disposed) {
-      wrap.appendChild(this._portrait3D.canvas);
+      if (this._portrait3D.canvas.parentNode !== wrap) {
+        wrap.appendChild(this._portrait3D.canvas);
+        this._portrait3D.redraw();
+      }
       return;
     }
     this._destroyPortrait3D();
@@ -1140,6 +1143,7 @@
       id: spec.id, canvas, renderer, scene, camera, pivot,
       model: null, rafId: 0, disposed: false,
       frameAcc: 0, clock: new THREE.Clock(),
+      framesLeft: 0, redraw: null,
     };
     this._portrait3D = state;
 
@@ -1176,22 +1180,40 @@
       camera.position.set(0, 0, fit.distance);
       camera.lookAt(0, 0, 0);
       state.model = battler;
+      state.redraw();
     }).catch(() => {});
 
+    // The portrait is a still: the model holds the pose it loaded in, and
+    // neither turns nor plays an animation. So it is drawn on demand, not every
+    // frame: a short burst when it is stood up, when the model arrives and when
+    // the canvas is moved or its context comes back, long enough for a texture
+    // arriving late to land. Between bursts the GPU is left to everything else
+    // (a die thrown over the panel above all).
     const FRAME = 1 / 30;
+    const BURST = 45; // frames at 30fps, 1.5s
     const animate = () => {
+      state.rafId = 0;
       if (state.disposed) return;
-      state.rafId = requestAnimationFrame(animate);
       state.frameAcc += Math.min(state.clock.getDelta(), 0.05);
-      if (state.frameAcc < FRAME) return;
-      state.frameAcc = 0;
-      // The portrait is a still: the model holds the pose it loaded in, and
-      // neither turns nor plays an animation. The frame is only redrawn so the
-      // picture survives a context or texture arriving late.
-      if (window.PSXShader) window.PSXShader.render(renderer, scene, camera);
-      else renderer.render(scene, camera);
+      if (state.frameAcc >= FRAME && !window.Dice3D?.isRolling?.()) {
+        state.frameAcc = 0;
+        state.framesLeft--;
+        if (window.PSXShader) window.PSXShader.render(renderer, scene, camera);
+        else renderer.render(scene, camera);
+      }
+      if (state.framesLeft > 0) state.rafId = requestAnimationFrame(animate);
     };
-    animate();
+    state.redraw = (frames) => {
+      if (state.disposed) return;
+      state.framesLeft = Math.max(state.framesLeft, frames || BURST);
+      if (!state.rafId) {
+        state.clock.getDelta();
+        state.frameAcc = FRAME; // the first frame of a burst draws at once
+        state.rafId = requestAnimationFrame(animate);
+      }
+    };
+    canvas.addEventListener('webglcontextrestored', () => state.redraw());
+    state.redraw();
   };
 
   Scene_NPCEmpathize.prototype._destroyPortrait3D = function () {
@@ -1284,6 +1306,26 @@
   // ============================================================================
   // _render, top-level DOM update
   // ============================================================================
+
+  // A pane is only rebuilt when its markup actually changed. Most renders
+  // touch one pane (a cursor step, a chat line, a tab switch), and replacing
+  // the other two made the browser re-parse, re-decode the bust, re-lay-out
+  // and repaint the whole panel for nothing. A pane holding a text field the
+  // player has typed into is always rebuilt, so a submitted draft is cleared.
+  function _hasEditedField(el) {
+    const fields = el.querySelectorAll('input, textarea');
+    for (let i = 0; i < fields.length; i++) {
+      if (fields[i].value !== fields[i].defaultValue) return true;
+    }
+    return false;
+  }
+  function _swapHTML(el, html) {
+    if (!el) return false;
+    if (el._npcHTML === html && el.isConnected && !_hasEditedField(el)) return false;
+    el.innerHTML = html;
+    el._npcHTML = html;
+    return true;
+  }
 
   Scene_NPCEmpathize.prototype._render = function () {
     if (!this._overlay) return;
@@ -1870,10 +1912,10 @@
     if (!this._leftEl || !this._rightEl) return;
 
     if (this._tabBarEl) {
-      this._tabBarEl.innerHTML = this._buildTabsHTML(T);
+      _swapHTML(this._tabBarEl, this._buildTabsHTML(T));
       this._tabBarEl.classList.toggle('npc-tab-bar--focused', this._activeArea === 'tabs');
     }
-    this._leftEl.innerHTML = leftHTML;
+    _swapHTML(this._leftEl, leftHTML);
     // The frame is in the DOM now, so the viewer can be moved into it (or
     // stood up, if this is a different creature from the one it was showing).
     this._syncPortrait3D(modelSpec);
@@ -1883,7 +1925,7 @@
     } else {
       this._rightEl.classList.remove('npc-right-panel--chat');
     }
-    this._rightEl.innerHTML = rightHTML;
+    _swapHTML(this._rightEl, rightHTML);
 
     // The Social Web's pan is the stage's own scrollLeft/scrollTop, which a
     // fresh innerHTML always resets to 0; put back wherever the player had it
@@ -2031,23 +2073,28 @@
   function _buildStatsGridHTML(profile, T) {
     if (!profile || profile.level === undefined) return '';
     const L = _statLabels();
-    const rows = [
+    const shown = ([, v]) => v !== undefined && v !== null && v !== 0;
+    // The six core stats read as one row, label above number; the secondary
+    // ones keep their two-per-line label and value layout.
+    const core = [
       [L.atk, profile.atk], [L.def, profile.def],
       [L.agi, profile.agi], [L.mat, profile.mat],
       [L.mdf, profile.mdf], [L.luk, profile.luk],
+    ].filter(shown);
+    const extra = [
       [T.arcaneLbl,       profile.arcane],
       [T.substanceLbl,    profile.substance],
       [T.stealthLbl,      profile.stealth],
       [T.intimidationLbl, profile.intimidation],
-    ].filter(([, v]) => v !== undefined && v !== null && v !== 0);
-    if (!rows.length) return '';
+    ].filter(shown);
+    if (!core.length && !extra.length) return '';
 
-    let html = `<div class="npc-sec-hdr npc-mt-2">${_escapeHtml(T.stats)}</div>`;
-    html += '<div class="npc-stat-grid">';
-    html += rows.map(([label, value]) =>
+    const cells = rows => rows.map(([label, value]) =>
       `<div class="npc-stat-cell"><span class="npc-stat-lbl">${_escapeHtml(label)}</span>` +
       `<span class="npc-stat-val">${_escapeHtml(String(value))}</span></div>`).join('');
-    html += '</div>';
+    let html = `<div class="npc-sec-hdr npc-mt-2">${_escapeHtml(T.stats)}</div>`;
+    if (core.length)  html += `<div class="npc-stat-grid npc-stat-grid--row">${cells(core)}</div>`;
+    if (extra.length) html += `<div class="npc-stat-grid">${cells(extra)}</div>`;
 
     const expMgr = window.NPCSim?.ExpManager;
     if (expMgr && profile.exp !== undefined && profile.assignedClassId) {
@@ -2292,10 +2339,12 @@
     // the flex chain above has a definite height, and where it does not the row
     // grows without bound, swallows the chat log and pushes the input box off
     // the bottom of the panel. Resolve the ceiling here in pixels against the
-    // height the panel actually has, BEFORE the siblings are measured below.
-    const actions = panel.querySelector('.npc-chat-actions-row');
+    // height the panel actually has. The verbs stand in a column BESIDE the log
+    // now, so the whole panel height is their ceiling: the column scrolls on its
+    // own and never takes a line away from the conversation.
+    const actions = right.querySelector('.npc-chat-actions-row');
     if (actions) {
-      actions.style.setProperty('--npc-actions-max', `${Math.max(96, Math.round(avail * 0.45))}px`);
+      actions.style.setProperty('--npc-actions-max', `${Math.max(96, Math.round(avail))}px`);
     }
     // offsetHeight excludes margins, and the join/feedback message carries one,
     // so counting them is what keeps the log from being sized a few pixels
@@ -2495,22 +2544,22 @@
       }).join('');
     }
 
+    // The log reads down the page and the verbs stand in a column beside it:
+    // what was said on the left, what can be said next on the right, so a long
+    // list of moves no longer pushes the conversation up off its own panel.
     return `
       <div class="npc-chat-panel">
-        <div class="npc-chat-header">
-          <span>${_escapeHtml(displayName)}</span>
+        <div class="npc-chat-main">
+          <div class="npc-chat-header">
+            <span>${_escapeHtml(displayName)}</span>
+          </div>
+          <div class="npc-chat-bubbles" id="npc-dlg-chat">${bubblesHTML}${typingHTML}</div>
+          ${joinMsgHTML}
+          ${remoteMode
+            ? `<div class="npc-chat-elsewhere">${_escapeHtml(T('Empathize.npcElsewhere', { name: displayName }))}</div>`
+            : ''}
         </div>
-        <div class="npc-chat-bubbles" id="npc-dlg-chat">${bubblesHTML}${typingHTML}</div>
-        ${joinMsgHTML}
         ${actionsHTML ? `<div class="npc-chat-actions-row">${actionsHTML}</div>` : ''}
-        ${remoteMode
-          ? `<div class="npc-chat-elsewhere">${_escapeHtml(T('Empathize.npcElsewhere', { name: displayName }))}</div>`
-          : `<div class="npc-chat-input-row">
-          <button class="npc-chat-open-modal" onmousedown="event.stopPropagation();SceneManager._scene._openChatModal?.()">
-            <span class="npc-chat-open-modal-icon">${_iconSpan(4, 15)}</span>
-            <span class="npc-chat-open-modal-label">${_escapeHtml(T.typePlaceholder)}</span>
-          </button>
-        </div>`}
       </div>`;
   };
 
@@ -4828,12 +4877,12 @@
     this._proposeMode = false;
     this._romanceMode = false;
     this._activeTab   = 'chat';
-    const said        = this._pushPlayerLine(playerLine);
+    this._pushPlayerLine(playerLine);
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
     this._joinMessage = charge
       ? { type: 'reject', text: `${charge} ${deltaText}` }
       : { type: landed ? 'accept' : 'reject', text: deltaText };
-    this._replyNpc(npcLine, this._llmSituation(nm(style), delta), said);
+    this._replyNpc(npcLine);
   };
 
   Scene_NPCEmpathize.prototype._romanceInteract = async function (id) {
@@ -4923,14 +4972,13 @@
 
     this._romanceMode = false;
     this._activeTab   = 'chat';
-    const said        = this._pushPlayerLine(playerLine);
+    this._pushPlayerLine(playerLine);
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
     this._joinMessage = charge
       ? { type: 'reject', text: `${charge} ${deltaText}` }
       : { type: delta >= 0 ? 'accept' : 'reject', text: deltaText };
-    // The bank's line is what this person means; with a .gguf model picked it
-    // is said in their own words instead.
-    this._replyNpc(npcLine, this._llmSituation(def.label || id, delta), said);
+    // The bank line is what this person says: only free chat goes to the model.
+    this._replyNpc(npcLine);
   };
 
   // ============================================================================
@@ -5087,10 +5135,9 @@
     this._directionsMode = false;
     this._activeTab      = 'chat';
     this._joinMessage    = null;
-    const said           = this._pushPlayerLine(ask);
-    // The directions themselves are the panel's answer and never the model's:
-    // the bearing and the distance are facts. What a model changes is only the
-    // wording they are given in, which is why the line is handed over whole.
+    this._pushPlayerLine(ask);
+    // The directions are the panel's answer and never the model's: only free
+    // chat is handed to the model.
     this._replyNpc(answer);
   };
 
@@ -5252,9 +5299,9 @@
       // Same chip as everywhere else, closing the panel when there is nothing
       // behind it to go back to.
       const backHTML = this._buildBackBtnHTML(T, { closeWhenEmpty: true });
-      this._tabBarEl.innerHTML = backHTML + this._buildTabHintHTML() + tabs.map(tab => `
+      _swapHTML(this._tabBarEl, backHTML + this._buildTabHintHTML() + tabs.map(tab => `
         <div class="npc-tab${this._activeTab === tab.id ? ' active' : ''}"
-             onmousedown="event.stopPropagation();SceneManager._scene._setTab('${tab.id}')">${_escapeHtml(tab.label)}</div>`).join('');
+             onmousedown="event.stopPropagation();SceneManager._scene._setTab('${tab.id}')">${_escapeHtml(tab.label)}</div>`).join(''));
       this._tabBarEl.classList.toggle('npc-tab-bar--focused', this._activeArea === 'tabs');
     }
 
@@ -5262,16 +5309,16 @@
     this._rightEl.classList.remove('npc-right-panel--chat');
 
     if (!view) {
-      this._leftEl.innerHTML = `
+      _swapHTML(this._leftEl, `
         <div class="npc-entity-emblem">?</div>
-        <div class="npc-entity-title">${_escapeHtml(String(ent.id))}</div>`;
-      this._rightEl.innerHTML = this._activeTab === 'wiki'
+        <div class="npc-entity-title">${_escapeHtml(String(ent.id))}</div>`);
+      _swapHTML(this._rightEl, this._activeTab === 'wiki'
         ? this._buildWikiTabHTML(T)
-        : `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
+        : `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`);
       return;
     }
 
-    this._leftEl.innerHTML = this._buildEntityLeftHTML(view, T);
+    _swapHTML(this._leftEl, this._buildEntityLeftHTML(view, T));
 
     let rightHTML;
     const tab = this._activeTab;
@@ -5307,7 +5354,7 @@
     } else {
       rightHTML = this._buildEntityEventsHTML(view, T);
     }
-    this._rightEl.innerHTML = rightHTML;
+    _swapHTML(this._rightEl, rightHTML);
   };
 
   // ── Left column: emblem + entity-specific side panel (replaces needs bars) ──

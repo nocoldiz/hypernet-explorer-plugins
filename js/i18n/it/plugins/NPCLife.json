@@ -67,6 +67,11 @@
     "marriedTo": "Sposato con {name}.",
     "seeing": "Frequenta {name}.",
     "formerPartner": "Ex partner: {name} ({from}-{to}, {outcome}).",
+    "kinParent": "Genitore di {names}.",
+    "kinChild": "Figlio di {names}.",
+    "kinSibling": "Fratello di {names}.",
+    "kinGrandparent": "Nonno di {names}.",
+    "kinGrandchild": "Nipote di {names}.",
     "cleanRecord": "Fedina penale pulita.",
     "criminalRecord": "Precedenti penali: {convictions} ({served} scontate), l'ultima: {crime} ({year}).",
     "convictionCount": {
@@ -82,6 +87,11 @@
       "other": "Sospettato in {n} casi irrisolti."
     },
     "standing": "Reputazione sociale: {value}/100."
+  },
+  "procPlace": {
+    "inCountry": "{place}, {country} ({x},{y})",
+    "unclaimed": "{place} ({x},{y})",
+    "frontier": "Frontiera"
   },
   "wildsNear": "{biome} presso {city}",
   "wildBiome": {

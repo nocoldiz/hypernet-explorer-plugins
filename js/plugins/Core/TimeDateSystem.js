@@ -1511,20 +1511,27 @@
     },
   };
 
-  // New method for handling overeating state
+  // Overeating nausea is one bout per binge. Crossing the 250% line applies
+  // the state once and latches _overeatNausea; once the state is gone (walked
+  // off, cured by an item, anything) it stays gone until the stomach empties
+  // below 100% and is stuffed past the line again. Without the latch the next
+  // needs tick put it straight back on a player who had just cured it, and
+  // walking it off became an endless "no longer nauseated" loop.
   Game_Actor.prototype.updateOvereatState = function () {
     const overeatThreshold = maxHunger * OVEREAT_RATE; // 250%
     const normalThreshold = maxHunger; // 100%
 
-    const isOvereating = this.isStateAffected(overeatStateId);
-
     if (this._hunger > overeatThreshold) {
-      if (!isOvereating) {
+      if (!this._overeatNausea) {
+        this._overeatNausea = true;
         this.addState(overeatStateId);
         debug(`Actor ${this._actorId} is overeating. Applied state ${overeatStateId}.`);
       }
-    } else if (this._hunger < normalThreshold) {
-      if (isOvereating) {
+    } else if (this._hunger < normalThreshold && this._overeatNausea) {
+      // Only the nausea this binge caused is lifted: salt water or a sickness
+      // applying the same state keeps theirs.
+      this._overeatNausea = false;
+      if (this.isStateAffected(overeatStateId)) {
         this.removeState(overeatStateId);
         debug(`Actor ${this._actorId} is no longer overeating. Removed state ${overeatStateId}.`);
       }
@@ -4827,10 +4834,25 @@
     return null;
   }
 
+  // A bed standing on the map: any event named "Bed" (a whole word, so
+  // "Bed 2" counts and "Bedroom Door" does not) means the party sleeps in it
+  // rather than on the floor, wherever the menu was opened from.
+  const BED_EVENT_NAME = /\bbed\b/i;
+
+  function mapHasBedEvent() {
+    if (!window.$dataMap || !Array.isArray($dataMap.events)) return false;
+    const events = $dataMap.events;
+    for (let i = 0; i < events.length; i++) {
+      const ev = events[i];
+      if (ev && ev.name && BED_EVENT_NAME.test(ev.name)) return true;
+    }
+    return false;
+  }
+
   // The one authority on whether a rest is a rough one: the entry point asks
-  // for it, the packs can answer no.
+  // for it, the packs or a bed on the map can answer no.
   function isRoughRest(requested) {
-    return !!requested && !getPartyBedding();
+    return !!requested && !getPartyBedding() && !mapHasBedEvent();
   }
 
   function clampRestHours(hours) {
@@ -5951,6 +5973,7 @@
   // Bedding: the menu names the item it is resting on and drops the penalty.
   window.TimeDateSystem.getPartyBedding = getPartyBedding;
   window.TimeDateSystem.isRoughRest = isRoughRest;
+  window.TimeDateSystem.mapHasBedEvent = mapHasBedEvent;
   // Resolved on every read, so a language switch reaches the rest menu without
   // either plugin holding on to a stale table.
   Object.defineProperty(window.TimeDateSystem, "sleepMenuI18n", {

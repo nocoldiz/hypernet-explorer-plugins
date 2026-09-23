@@ -1564,12 +1564,17 @@
     // it is standing in. Snapshot the transplanted identity onto the event
     // itself (it is part of the save) so restoreSpawnedEventData can put it
     // back the moment the fresh $dataMap lands.
-    snapshotSpawn: (targetEvent) => {
+    // `opts.minted` marks an event that has no slot in the map file at all
+    // (a procedural household member, see ProceduralManager.populateProcInterior):
+    // the reload leaves nothing at its id, so the restore has to put the whole
+    // entry back rather than stamp an existing one.
+    snapshotSpawn: (targetEvent, opts) => {
       if (!targetEvent || !$gameMap) return;
       const data = targetEvent.event();
       if (!data?.pages) return;
       targetEvent._npcSpawnData = {
         mapId: $gameMap.mapId(),
+        minted: !!(opts && opts.minted),
         name: data.name,
         note: data.note,
         characterName: data.characterName,
@@ -3459,6 +3464,391 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       { code: 404, indent: 0, parameters: [] },
       { code: 0, indent: 0, parameters: [] },
     ]),
+
+    // ── the people behind a procedural door ─────────────────────────────────
+    //
+    // A house entered off the procedural map was dressed from whatever slots
+    // its template carried, and no house template carries any: only the
+    // graphic-less Player slots multiplayer keeps for avatars. So most doors
+    // opened on an empty room. Now every floor of a home is lived in by a
+    // household of its own, dealt the first time anybody looks and kept in the
+    // world folder: a couple, their grown children, a grandparent, a pair of
+    // siblings, somebody on their own. They are citizens of the square outside
+    // (Proc:x,y) like everybody else on it, so the census, the careers and the
+    // elections count them, and they are a family on their life records
+    // (NPCLifeSim.bindFamily).
+    //
+    // A skyscraper floor is public: nobody lives there, so it is given a crowd
+    // of regulars instead, dealt and kept the same way.
+    //
+    // Only doors on the procedural map. The authored towns keep their own
+    // residents (SpawnManager.replacePlayerEventsWithNPCs).
+    HOUSEHOLD_SHAPES: [
+      { shape: "single",       weight: 10 },
+      { shape: "couple",       weight: 18 },
+      { shape: "family",       weight: 40 },
+      { shape: "extended",     weight: 16 },
+      { shape: "singleParent", weight: 8 },
+      { shape: "siblings",     weight: 8 },
+    ],
+    PUBLIC_CROWD_MIN: 5,
+    PUBLIC_CROWD_MAX: 10,
+    // However the hour falls, at least this share of a household is found in.
+    HOME_PRESENCE_FLOOR: 0.5,
+    // Callers from elsewhere in town, in the daytime, on top of the household.
+    HOUSE_VISITORS_MAX: 2,
+
+    // "home", "public", or null when this interior is not one of ours.
+    procInteriorKind: (building, groupName, mapId) => {
+      if (!building || building.mapId !== 636 || !groupName) return null;
+      // The dead and the beasts have their own ways of filling a room.
+      if (Config.isZombieWorld() || window.WorldManager?.isMonsterWorld?.()) return null;
+      if (!$gameSystem?._npcMapGroups?.[groupName]?._procedural) return null;
+      const PHS = window.ProceduralHouseSystem;
+      if (!PHS) return null;
+      if (PHS.isPublicInteriorMap?.(mapId) || PHS.isSkyscraperBuilding?.(building)) return "public";
+      if (PHS.isHomeInteriorMap?.(mapId) && PHS.isResidentialBuilding?.(building)) return "home";
+      return null;
+    },
+
+    // Where this floor is, in terms that hold still. A door's map coordinate
+    // moves with the shape of the stitched window (see saveHouseReturnPoint),
+    // the square-local return point does not.
+    procInteriorKey: (building, groupName, kind) => {
+      const rp = window.ProceduralHouseSystem?.houseReturnPoint?.() || null;
+      const x = rp ? rp.x : building.x;
+      const y = rp ? rp.y : building.y;
+      return `${groupName}|${x},${y}#${building.floorIndex || 0}${kind === "public" ? "/crowd" : ""}`;
+    },
+
+    procInteriorSeed: (key) => {
+      const ws = window.ProcGenUtils?.getWorldSeed?.() ?? 19002001;
+      return ((Utils.nameHash(key) >>> 0) ^ (ws >>> 0)) >>> 0;
+    },
+
+    // Who lives here, by role and age, off one seed. Parents are older than
+    // their children by twenty years at least, a grandparent is older than
+    // the parent they had by twenty more, and nobody is under the age floor.
+    planHousehold: (seed) => {
+      const rng = ProceduralManager._creatureRng(seed);
+      const between = (lo, hi) => rng.nextInt(lo, hi + 1);
+      const coin = () => (rng.next() < 0.5 ? 0 : 1);
+      const shapes = ProceduralManager.HOUSEHOLD_SHAPES;
+      let roll = rng.next() * shapes.reduce((t, s) => t + s.weight, 0);
+      let shape = shapes[shapes.length - 1].shape;
+      for (const s of shapes) {
+        if ((roll -= s.weight) < 0) { shape = s.shape; break; }
+      }
+
+      const members = [];
+      const couple = (lo, hi) => {
+        const a = between(lo, hi);
+        const b = Math.max(20, a + between(-5, 5));
+        const g = coin();
+        // Mostly a man and a woman, now and then two of either.
+        members.push({ role: "parent", age: a, gender: g });
+        members.push({ role: "parent", age: b, gender: rng.next() < 0.85 ? 1 - g : g });
+      };
+      const children = (count) => {
+        const youngest = Math.min(...members.filter(m => m.role === "parent").map(m => m.age));
+        const top = Math.max(18, youngest - 20);
+        for (let i = 0; i < count; i++) members.push({ role: "child", age: between(18, top), gender: coin() });
+      };
+
+      switch (shape) {
+        case "single":
+          members.push({ role: "parent", age: between(20, 85), gender: null });
+          break;
+        case "couple":
+          couple(22, 80);
+          break;
+        case "family":
+          couple(43, 62);
+          children(between(1, 3));
+          break;
+        case "extended": {
+          couple(43, 55);
+          const eldest = Math.min(99, members[0].age + between(20, 30));
+          if (rng.next() < 0.5) {
+            members.push({ role: "grandparent", age: eldest, gender: 0 });
+            members.push({ role: "grandparent", age: Math.min(99, eldest + between(-4, 4)), gender: 1 });
+          } else {
+            members.push({ role: "grandparent", age: eldest, gender: null });
+          }
+          children(between(1, 2));
+          break;
+        }
+        case "singleParent":
+          members.push({ role: "parent", age: between(40, 62), gender: null });
+          children(between(1, 2));
+          break;
+        default: {
+          // Grown siblings sharing the family house.
+          const base = between(20, 38);
+          const count = between(2, 3);
+          for (let i = 0; i < count; i++) {
+            members.push({ role: "child", age: Math.max(18, base + between(-4, 4)), gender: coin() });
+          }
+        }
+      }
+      return { shape, members };
+    },
+
+    // The regulars of a public floor: unrelated adults, as many as the seed says.
+    planCrowd: (seed) => {
+      const rng = ProceduralManager._creatureRng(seed);
+      const span = ProceduralManager.PUBLIC_CROWD_MAX - ProceduralManager.PUBLIC_CROWD_MIN + 1;
+      const count = ProceduralManager.PUBLIC_CROWD_MIN + Math.floor(rng.next() * span);
+      const members = [];
+      for (let i = 0; i < count; i++) {
+        members.push({ role: "regular", age: rng.nextInt(18, 76), gender: null });
+      }
+      return { shape: "crowd", members };
+    },
+
+    // A person for one of those places: a face off the people half of the
+    // wardrobe, a name, a society profile of the right age and a life record
+    // to match. `name` is somebody already dealt here, whose profile only has
+    // to be put back if the society has since let it go (the same seed deals
+    // the same face, so they come back as themselves). Answers the name, or
+    // null when there is nobody to make.
+    _mintInteriorCitizen: (member, seed, groupName, name) => {
+      if (!$gameSystem) return null;
+      const society = $gameSystem._npcSociety || ($gameSystem._npcSociety = {});
+      if (name && society[name]) return name;
+
+      const NC = window.NPCCreature;
+      const pool = buildNPCCharacterPool();
+      let spriteKey = null;
+      for (let t = 0; t < 12 && !spriteKey; t++) {
+        const pick = pickNPCCharacter(Utils.seededRandom((seed ^ Math.imul(t + 1, 0x27d4eb2f)) >>> 0), pool);
+        if (!pick) continue;
+        const entry = window.WorldGen?.NPCs?.[pick];
+        if (entry?.animal === true || entry?.creature === true) continue;
+        if (NC?.isCreatureSheet?.(pick) || NC?.isAnimalSheet?.(pick)) continue;
+        // A mother is dealt a woman's face while any is on offer.
+        if (member.gender != null && t < 8 && entry && entry.Gender != null && entry.Gender !== member.gender) continue;
+        spriteKey = pick;
+      }
+      if (!spriteKey) return null;
+      const bustIndex = spriteKey.includes("!$") ? 0 : Math.floor(Utils.seededRandom((seed * 2) >>> 0) * 8); // i18n-ignore: sprite-sheet prefix
+
+      for (let t = 0; t < 6 && !name; t++) {
+        const s = (seed ^ Math.imul(t + 1, 0x165667b1)) >>> 0;
+        const dbId = Config.NAME_DATABASES[s % Config.NAME_DATABASES.length];
+        let made = "";
+        try {
+          made = window.generateSeededMarkovName
+            ? window.generateSeededMarkovName(s & 0xffff, (s >>> 16) & 0xffff, (s % 997) + 1, dbId, 2, 4, 12)
+            : "";
+        } catch (e) { made = ""; }
+        // Two people must never share a name: the society keys everybody by it.
+        if (made && made !== "Unknown" && made !== "NPC" && !society[made]) name = made; // i18n-ignore: Markov generator sentinels
+      }
+      if (!name) return null;
+
+      const profile = window.NPCSocietyRegistry?.ensureProfile?.(
+        name, ProceduralManager.seededClassId(seed ^ 0x51ed270b), groupName, $gameMap?.mapId?.(),
+        { spriteKey, bustIndex, initSpec: { age: String(member.age) } });
+      if (!profile) return null;
+      profile.spriteKey = spriteKey;
+      profile.bustIndex = bustIndex;
+      profile._homeGroupName = groupName;
+      const entry = window.WorldGen?.NPCs?.[spriteKey] || null;
+      const bust = entry?.busts?.[bustIndex] ?? entry?.busts?.[0] ?? null;
+      if (bust && bust !== "7") profile._bustName = bust;
+      if (entry?.markovDB && profile.markovDb == null) profile.markovDb = entry.markovDB;
+      if (entry && entry.Gender != null) profile.gender = entry.Gender;
+      window.NPCSocietyRegistry?.reconcileToSprite?.(name, profile);
+      window.NPCSocietyRegistry?.applyHometownOpinionIfMatch?.(profile, groupName);
+      try {
+        window.NPCLifeSim?.ensureLifeRecord?.(name, groupName, undefined, { age: member.age, nativeChance: 0.8 });
+      } catch (e) { /* the census still counts them off the profile */ }
+      return name;
+    },
+
+    // The roster of one floor, dealt once and kept. Every member is (re)made
+    // on the way through, so a profile the society pruned comes back.
+    _ensureInteriorRoster: (key, kind, groupName) => {
+      const store = $gameSystem._npcProcHouseholds || {};
+      const seed = ProceduralManager.procInteriorSeed(key);
+      let entry = store[key];
+      if (!entry || !Array.isArray(entry.members)) {
+        const plan = kind === "public" ? ProceduralManager.planCrowd(seed) : ProceduralManager.planHousehold(seed);
+        entry = { kind, shape: plan.shape, members: plan.members.map(m => Object.assign({ name: null }, m)) };
+      }
+      entry.members.forEach((m, i) => {
+        m.name = ProceduralManager._mintInteriorCitizen(m, (seed ^ Math.imul(i + 1, 0x85ebca6b)) >>> 0, groupName, m.name)
+          || m.name || null;
+      });
+      store[key] = entry;
+      // Reassigned, not only mutated, so the world folder hears of it.
+      $gameSystem._npcProcHouseholds = store;
+      return entry;
+    },
+
+    // The family behind this door, on this floor: minted, bound into a family
+    // and moved in. Answers their names.
+    ensureHousehold: (building, groupName) => {
+      if (!building || !groupName || !$gameSystem) return [];
+      const key = ProceduralManager.procInteriorKey(building, groupName, "home");
+      const entry = ProceduralManager._ensureInteriorRoster(key, "home", groupName);
+      const named = entry.members.filter(m => m.name);
+      const byRole = (role) => named.filter(m => m.role === role).map(m => m.name);
+      window.NPCLifeSim?.bindFamily?.({
+        parents: byRole("parent"), children: byRole("child"), grandparents: byRole("grandparent"),
+      });
+      const names = named.map(m => m.name);
+      window.NPCSim?.moveInHousehold?.(building, groupName, names, building.floorIndex || 0);
+      return names;
+    },
+
+    ensurePublicCrowd: (building, groupName) => {
+      if (!building || !groupName || !$gameSystem) return [];
+      const key = ProceduralManager.procInteriorKey(building, groupName, "public");
+      return ProceduralManager._ensureInteriorRoster(key, "public", groupName)
+        .members.map(m => m.name).filter(Boolean);
+    },
+
+    // Deals the people of a procedural interior onto the floor the party has
+    // just walked onto. Answers how many are standing there.
+    populateProcInterior: (kind, building, groupName) => {
+      if (!$gameMap || !$dataMap || !building) return 0;
+      const hour = $gameVariables?.value(23) ?? 12;
+      const society = $gameSystem._npcSociety || {};
+      const inParty = new Set(($gameParty?.members?.() || []).map(a => a?.name?.()));
+      const onMap = new Set($gameMap.events().filter(e => e && !e._erased).map(e => e.event()?.name));
+      const usable = (n) => !!n && !!society[n] && !inParty.has(n) && !onMap.has(n) && !GoneRegistry.isNameGone(n);
+      const key = ProceduralManager.procInteriorKey(building, groupName, kind);
+      const rng = ProceduralManager._creatureRng((ProceduralManager.procInteriorSeed(key) ^ Math.imul(hour + 1, 0x9e3779b1)) >>> 0);
+      const shuffled = (list) => {
+        const out = list.slice();
+        for (let i = out.length - 1; i > 0; i--) {
+          const j = Math.floor(rng.next() * (i + 1));
+          [out[i], out[j]] = [out[j], out[i]];
+        }
+        return out;
+      };
+
+      let present = [];
+      if (kind === "home") {
+        const household = ProceduralManager.ensureHousehold(building, groupName);
+        const others = window.NPCSim?.getBuildingResidents?.(building, building.floorIndex || 0, groupName) || [];
+        const residents = [...new Set([...household, ...others])].filter(usable);
+        const isHome = (n) => (window.NPCSim?.isNPCAtHome ? window.NPCSim.isNPCAtHome(n, null, hour) : true);
+        present = residents.filter(isHome);
+        // A house is never found empty for want of a schedule: somebody has the
+        // day off, somebody is ill, somebody never left.
+        const floor = Math.ceil(residents.length * ProceduralManager.HOME_PRESENCE_FLOOR);
+        for (const n of shuffled(residents.filter(r => !present.includes(r)))) {
+          if (present.length >= floor) break;
+          present.push(n);
+        }
+        if (hour >= 9 && hour < 21) {
+          const callers = Object.keys(society).filter(n =>
+            society[n]._homeGroupName === groupName && society[n].spriteKey &&
+            !residents.includes(n) && usable(n) && !window.NPCCreature?.isNonSentientProfile?.(society[n]));
+          const count = Math.floor(rng.next() * (ProceduralManager.HOUSE_VISITORS_MAX + 1));
+          present.push(...shuffled(callers).slice(0, count));
+        }
+      } else {
+        const crowd = ProceduralManager.ensurePublicCrowd(building, groupName).filter(usable);
+        const late = hour >= 22 || hour < 6;
+        present = shuffled(crowd).slice(0, late ? Math.ceil(crowd.length / 2) : crowd.length);
+      }
+
+      const tiles = ProceduralManager._interiorTiles();
+      let made = 0;
+      for (const name of present) {
+        const tile = tiles.shift();
+        if (!tile) break;
+        if (ProceduralManager._spawnInteriorResident(name, tile)) made++;
+      }
+      Utils.debug(`procedural ${kind} interior ${key}: ${made} of ${present.length} standing`);
+      return made;
+    },
+
+    // Free floor to stand people on, spread out, never on the party or the
+    // tiles around it (that is the doorway they just came in by).
+    _interiorTiles: () => {
+      const px = $gamePlayer ? $gamePlayer.x : -99;
+      const py = $gamePlayer ? $gamePlayer.y : -99;
+      const clear = (t) => Math.max(Math.abs(t.x - px), Math.abs(t.y - py)) > 1 && !$gameMap.eventIdXy(t.x, t.y);
+      let tiles = MapManager.getSpreadSpawnTiles().filter(clear);
+      if (tiles.length >= 8) return tiles;
+      // A cramped room has few tiles with a 2x2 margin around them: take any
+      // floor that can be walked on at all.
+      const seen = new Set(tiles.map(t => `${t.x},${t.y}`));
+      const loose = [];
+      for (let y = 0; y < $gameMap.height(); y++) {
+        for (let x = 0; x < $gameMap.width(); x++) {
+          if (seen.has(`${x},${y}`)) continue;
+          if (!ORTHO_DIRS.some(d => $gameMap.isPassable(x, y, d))) continue;
+          const region = $gameMap.regionId(x, y);
+          if (region === 10 || region === 103 || region === 99) continue;
+          if (Utils.isBlockedTerrain(x, y)) continue;
+          if (clear({ x, y })) loose.push({ x, y });
+        }
+      }
+      for (let i = loose.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [loose[i], loose[j]] = [loose[j], loose[i]];
+      }
+      return tiles.concat(loose);
+    },
+
+    // One person, as a fresh event on this floor: the same Talk / Empathize
+    // page and the same blank "gone" page every procedural citizen carries,
+    // and a controller to walk them about the rooms.
+    _spawnInteriorResident: (name, tile) => {
+      const profile = $gameSystem._npcSociety?.[name];
+      if (!profile?.spriteKey) return null;
+      if (!$dataMap.events) $dataMap.events = [null];
+      if (!$gameMap._events) $gameMap._events = [];
+      const eventId = Math.max($dataMap.events.length, $gameMap._events.length);
+      const bustIndex = profile.bustIndex || 0;
+      const blank = (switchOn) => ({
+        actorId: 1, actorValid: false, itemId: 1, itemValid: false,
+        selfSwitchCh: "A", selfSwitchValid: switchOn,
+        switch1Id: 1, switch1Valid: false, switch2Id: 1, switch2Valid: false,
+        variableId: 1, variableValid: false,
+      });
+      const idleRoute = { list: [{ code: 0 }], repeat: true, skippable: false, wait: false };
+      $dataMap.events[eventId] = {
+        id: eventId, name, note: "AI",  // i18n-ignore: event notetag
+        x: tile.x, y: tile.y,
+        pages: [{
+          conditions: blank(false),
+          directionFix: false,
+          image: { tileId: 0, characterName: profile.spriteKey, characterIndex: bustIndex, direction: 2, pattern: 1 },
+          list: ProceduralManager._spacerPageList(),
+          moveFrequency: 3, moveRoute: idleRoute,
+          moveSpeed: 3, moveType: 1, priorityType: 1, stepAnime: true,
+          through: false, trigger: 0, walkAnime: true,
+        }, {
+          conditions: blank(true),
+          directionFix: false,
+          image: { tileId: 0, characterName: "", characterIndex: 0, direction: 2, pattern: 1 },
+          list: [{ code: 0, indent: 0, parameters: [] }],
+          moveFrequency: 3, moveRoute: idleRoute,
+          moveSpeed: 3, moveType: 0, priorityType: 0, stepAnime: false,
+          through: true, trigger: 0, walkAnime: false,
+        }],
+      };
+      const ev = new Game_Event($gameMap.mapId(), eventId);
+      ev.setImage(profile.spriteKey, bustIndex);
+      ev._procInteriorSpawn = true;
+      $gameMap._events[eventId] = ev;
+      SpawnManager.snapshotSpawn(ev, { minted: true });
+      SpawnManager.injectBrain(ev, ev.event());
+      // The spriteset is already built by the time the people are dealt.
+      const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+      if (spriteset?._characterSprites && !spriteset._characterSprites.some(s => s._character === ev) &&
+          typeof spriteset.addVisitorCharacterSprite === "function") {
+        spriteset.addVisitorCharacterSprite(ev);
+      }
+      return ev;
+    },
 
     // Turns one bare procedural NPC slot into a citizen: sprite, name, society
     // profile and a wandering controller, all seeded off the world tile and the
@@ -6909,8 +7299,11 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     for (const ev of $gameMap.events()) {
       const snap = ev?._npcSpawnData;
       if (!snap || snap.mapId !== mapId) continue;
-      const data = $dataMap.events[ev.eventId()];
-      if (!data) continue;
+      let data = $dataMap.events[ev.eventId()];
+      if (!data) {
+        if (!snap.minted || ev._erased) continue;
+        data = $dataMap.events[ev.eventId()] = { id: ev.eventId(), x: ev.x, y: ev.y };
+      }
       data.name = snap.name;
       data.note = snap.note;
       data.characterName = snap.characterName;
@@ -7114,6 +7507,21 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // Any <Shop> counter in this interior (shop/inn template) was staffed by
       // stageShopPersonas above, with a seeded three-shift rota drawn from the
       // townspeople the player just came from.
+
+      // A door on the procedural map: every home floor has a household of its
+      // own and every public floor a crowd of regulars, minted here because no
+      // interior template carries the slots to dress them in.
+      const procKind = houseGrpName
+        ? ProceduralManager.procInteriorKind(building, houseGrpName, currentMapId)
+        : null;
+      if (procKind) {
+        try {
+          ProceduralManager.populateProcInterior(procKind, building, houseGrpName);
+        } catch (e) {
+          console.error("[NPC System] procedural interior population failed", e);
+        }
+        return;
+      }
 
       if (houseGrpName) {
         // Skyscrapers (and their upper floors) are public: nobody lives there,

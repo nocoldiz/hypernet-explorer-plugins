@@ -1566,14 +1566,14 @@
             const dest = (window.WorkSystem && window.WorkSystem.Destinations)
                 || loadJsonFile('js/db/WorkSystem/Destinations.json') || {};
             // Same exclusions the engine applies, and from the same data: an
-            // entry says what it is through its "type", and only a "city" or a
-            // "village" holds a population. A shrine, a gauntlet, a borehole or
-            // a filling station is a place on the map, not a place with people
-            // in it. A tavern is a "village" by type, so it is named outright.
-            const populated = { city: true, village: true };   // i18n-ignore: Destinations.json ids
+            // entry says what it is through its "biome", and only a City or a
+            // Village biome holds a population. A shrine, a gauntlet, a borehole
+            // or a filling station is a place on the map, not a place with people
+            // in it. A tavern is a Village by biome, so it is named outright.
+            const populated = /^(City|Village)/;   // i18n-ignore: biome ids
             const notTowns = /^maxtavern$/i;
             this._epidemicTownList = Object.keys(dest).filter(k =>
-                populated[(dest[k] && dest[k].type) || 'village'] && !notTowns.test(k));
+                populated.test((dest[k] && dest[k].biome) || 'Village') && !notTowns.test(k));
             return this._epidemicTownList;
         }
 

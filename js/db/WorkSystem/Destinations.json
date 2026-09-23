@@ -1,7 +1,7 @@
 {
   "Antwerpen": {
     "name": "Antwerpen",
-    "type": "city",
+    "biome": "City",
     "country": "Belgium",
     "nationId": 121,
     "procedural": false,
@@ -60,7 +60,7 @@
   },
   "Frozen Station": {
     "name": "Frozen Station",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
     "procedural": false,
@@ -89,7 +89,7 @@
   },
   "GreenWitch": {
     "name": "Green Witch",
-    "type": "city",
+    "biome": "City",
     "country": "UK",
     "nationId": 38,
     "procedural": false,
@@ -123,7 +123,7 @@
   },
   "GreenWitchSpaceCenter": {
     "name": "Green Witch Space Center",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": false,
@@ -151,7 +151,7 @@
   },
   "Ghent": {
     "name": "Ghent",
-    "type": "city",
+    "biome": "City",
     "country": "Belgium",
     "nationId": 121,
     "procedural": false,
@@ -197,7 +197,7 @@
   "Kola Superdeep Borehole": {
     "locked": true,
     "name": "Kola Superdeep Borehole",
-    "type": "dungeon",
+    "biome": "Mineshaft",
     "country": "Russia",
     "nationId": 28,
     "procedural": false,
@@ -213,7 +213,7 @@
   },
   "Omega Tower": {
     "name": "Omega Tower",
-    "type": "village",
+    "biome": "Village",
     "country": "OmegaTower",
     "nationId": 255,
     "procedural": false,
@@ -267,7 +267,7 @@
   "Luxembourg": {
     "locked": true,
     "name": "Luxembourg",
-    "type": "village",
+    "biome": "Village",
     "country": "Luxembourg",
     "nationId": 119,
     "procedural": false,
@@ -299,7 +299,7 @@
     "locked": true,
     "name": "Amsterdam",
     "picture": "destinations/Amsterdam",
-    "type": "city",
+    "biome": "City",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -322,7 +322,7 @@
   "The Hague": {
     "name": "The Hague",
     "picture": "destinations/TheHague",
-    "type": "city",
+    "biome": "City",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -345,7 +345,7 @@
   "Rotterdam": {
     "name": "Rotterdam",
     "picture": "destinations/Rotterdam",
-    "type": "city",
+    "biome": "City",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -368,7 +368,7 @@
   "Ouddorp": {
     "name": "Ouddorp",
     "picture": "destinations/Ouddorp",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -388,7 +388,7 @@
   "Middelburg": {
     "name": "Middelburg",
     "picture": "destinations/Middelburg",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -408,7 +408,7 @@
   "Harlem": {
     "name": "Harlem",
     "picture": "destinations/Harlem",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -429,7 +429,7 @@
   "Alkmaar": {
     "name": "Alkmaar",
     "picture": "destinations/Alkmaar",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -449,7 +449,7 @@
   "Leeuwarden": {
     "name": "Leeuwarden",
     "picture": "destinations/Leeuwarden",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -469,7 +469,7 @@
   "Groningen": {
     "name": "Groningen",
     "picture": "destinations/Groningen",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -489,7 +489,7 @@
   "Limburg": {
     "name": "Limburg",
     "picture": "destinations/Limburg",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -509,7 +509,7 @@
   "Eindhoven": {
     "name": "Eindhoven",
     "picture": "destinations/Eindhoven",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -530,7 +530,7 @@
   "Zwolle": {
     "name": "Zwolle",
     "picture": "destinations/Zwolle",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -549,7 +549,7 @@
   },
   "Mont Blanc tunnel south": {
     "name": "Mont Blanc tunnel south",
-    "type": "dungeon",
+    "biome": "Cave",
     "country": "Italy",
     "nationId": 78,
     "procedural": false,
@@ -574,7 +574,7 @@
   },
   "Mont Blanc tunnel north": {
     "name": "Mont Blanc tunnel north",
-    "type": "dungeon",
+    "biome": "Cave",
     "country": "France",
     "nationId": 102,
     "procedural": false,
@@ -599,7 +599,7 @@
   },
   "Tritunnel Ovest": {
     "name": "Tritunnel Ovest",
-    "type": "dungeon",
+    "biome": "Cave",
     "country": "Belgium",
     "nationId": 121,
     "procedural": false,
@@ -625,7 +625,7 @@
   "Charleroi": {
     "name": "Charleroi",
     "picture": "destinations/Charleroi",
-    "type": "village",
+    "biome": "Village",
     "country": "Belgium",
     "nationId": 121,
     "procedural": true,
@@ -646,7 +646,7 @@
   "Luik": {
     "name": "Luik",
     "picture": "destinations/Luik",
-    "type": "village",
+    "biome": "Village",
     "country": "Belgium",
     "nationId": 121,
     "procedural": true,
@@ -667,7 +667,7 @@
   "Bologna": {
     "name": "Bologna",
     "picture": "destinations/Bologna",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": false,
@@ -707,7 +707,7 @@
   },
   "Super sacred shrine": {
     "name": "Super Sacred Shrine",
-    "type": "dungeon",
+    "biome": "Temple",
     "country": "France",
     "nationId": 102,
     "procedural": false,
@@ -728,7 +728,7 @@
     "locked": true,
     "name": "London",
     "picture": "destinations/London",
-    "type": "city",
+    "biome": "City",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -751,7 +751,7 @@
   "MAXGauntlet": {
     "name": "MAX Gauntlet",
     "locked": true,
-    "type": "dungeon",
+    "biome": "Arena",
     "country": "Italy",
     "nationId": 78,
     "procedural": false,
@@ -772,7 +772,7 @@
     "locked": true,
     "name": "Vatican Citadel",
     "picture": "destinations/VaticanCitadel",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -793,7 +793,7 @@
     "name": "MAX Tavern",
     "picture": "destinations/MAXTavern",
     "locked": true,
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -813,7 +813,7 @@
   "Cardiff": {
     "name": "Cardiff",
     "picture": "destinations/Cardiff",
-    "type": "city",
+    "biome": "City",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -836,7 +836,7 @@
   "Milano": {
     "name": "Milano",
     "picture": "destinations/Milano",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -859,7 +859,7 @@
   "Canicattini Bagni": {
     "name": "Canicattini Bagni",
     "picture": "destinations/CanicattiniBagni",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -879,7 +879,7 @@
   "Casalpusterlengo": {
     "name": "Casalpusterlengo",
     "picture": "destinations/Casalpusterlengo",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -899,7 +899,7 @@
   "Plymouth": {
     "name": "Plymouth",
     "picture": "destinations/Plymouth",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -920,7 +920,7 @@
   "Canterbury": {
     "name": "Canterbury",
     "picture": "destinations/Canterbury",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -940,7 +940,7 @@
   "Brighton": {
     "name": "Brighton",
     "picture": "destinations/Brighton",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -960,7 +960,7 @@
   "Boston": {
     "name": "Boston",
     "picture": "destinations/Boston",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -981,7 +981,7 @@
     "locked": true,
     "name": "Wimbledon",
     "picture": "destinations/Wimbledon",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -1001,7 +1001,7 @@
   "Manchester": {
     "name": "Manchester",
     "picture": "destinations/Manchester",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -1021,7 +1021,7 @@
   "Birmingham": {
     "name": "Birmingham",
     "picture": "destinations/Birmingham",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -1041,7 +1041,7 @@
   "Edinburgh": {
     "name": "Edinburgh",
     "picture": "destinations/Edinburgh",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
     "procedural": true,
@@ -1064,7 +1064,7 @@
   "Glasgow": {
     "name": "Glasgow",
     "picture": "destinations/Glasgow",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
     "procedural": true,
@@ -1084,7 +1084,7 @@
   "Perth": {
     "name": "Perth",
     "picture": "destinations/Perth",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
     "procedural": true,
@@ -1104,7 +1104,7 @@
   "Oban": {
     "name": "Oban",
     "picture": "destinations/Oban",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
     "procedural": true,
@@ -1124,7 +1124,7 @@
   "Aberdeen": {
     "name": "Aberdeen",
     "picture": "destinations/Aberdeen",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
     "procedural": true,
@@ -1144,7 +1144,7 @@
   },
   "Petrocave": {
     "name": "Petrocave",
-    "type": "dungeon",
+    "biome": "Cave",
     "country": "France",
     "nationId": 102,
     "procedural": false,
@@ -1195,7 +1195,7 @@
   "Belfast": {
     "name": "Belfast",
     "picture": "destinations/Belfast",
-    "type": "city",
+    "biome": "City",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -1219,7 +1219,7 @@
     "locked": true,
     "name": "Roma",
     "picture": "destinations/Roma",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1239,7 +1239,7 @@
   "Messina": {
     "name": "Messina",
     "picture": "destinations/Messina",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -1259,7 +1259,7 @@
   "Londonderry": {
     "name": "Londonderry",
     "picture": "destinations/Londonderry",
-    "type": "village",
+    "biome": "Village",
     "country": "UK",
     "nationId": 38,
     "procedural": true,
@@ -1280,7 +1280,7 @@
   "Sligo": {
     "name": "Sligo",
     "picture": "destinations/Sligo",
-    "type": "village",
+    "biome": "Village",
     "country": "Ireland",
     "nationId": 40,
     "procedural": true,
@@ -1300,7 +1300,7 @@
   "Reggio Calabria": {
     "name": "Reggio Calabria",
     "picture": "destinations/ReggioCalabria",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1320,7 +1320,7 @@
   "Alba Adriatica": {
     "name": "Alba Adriatica",
     "picture": "destinations/AlbaAdriatica",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1341,7 +1341,7 @@
     "locked": true,
     "name": "Dublin",
     "picture": "destinations/Dublin",
-    "type": "city",
+    "biome": "City",
     "country": "Ireland",
     "nationId": 40,
     "procedural": true,
@@ -1364,7 +1364,7 @@
   "Wexford": {
     "name": "Wexford",
     "picture": "destinations/Wexford",
-    "type": "village",
+    "biome": "Village",
     "country": "Ireland",
     "nationId": 40,
     "procedural": true,
@@ -1385,7 +1385,7 @@
   "Cork": {
     "name": "Cork",
     "picture": "destinations/Cork",
-    "type": "village",
+    "biome": "Village",
     "country": "Ireland",
     "nationId": 40,
     "procedural": true,
@@ -1405,7 +1405,7 @@
   },
   "Tritunnel East": {
     "name": "Tritunnel East",
-    "type": "dungeon",
+    "biome": "Cave",
     "country": "UK",
     "nationId": 38,
     "procedural": false,
@@ -1430,7 +1430,7 @@
   },
   "Trick Castle": {
     "name": "Trick Castle",
-    "type": "dungeon",
+    "biome": "Castle",
     "country": "UK",
     "nationId": 38,
     "procedural": false,
@@ -1459,7 +1459,7 @@
   "Killarney": {
     "name": "Killarney",
     "picture": "destinations/Killarney",
-    "type": "village",
+    "biome": "Village",
     "country": "Ireland",
     "nationId": 40,
     "procedural": true,
@@ -1480,7 +1480,7 @@
     "locked": false,
     "name": "Bruxelles",
     "picture": "destinations/Brusselles",
-    "type": "city",
+    "biome": "City",
     "country": "Belgium",
     "nationId": 121,
     "procedural": true,
@@ -1510,7 +1510,7 @@
     "locked": true,
     "name": "Reykjavik",
     "picture": "destinations/Reykyavik",
-    "type": "city",
+    "biome": "CityIce",
     "country": "Iceland",
     "nationId": 37,
     "procedural": true,
@@ -1532,7 +1532,7 @@
   },
   "Dark tower": {
     "name": "Dark Tower",
-    "type": "dungeon",
+    "biome": "Dungeon",
     "country": "France",
     "nationId": 102,
     "procedural": false,
@@ -1583,7 +1583,7 @@
   "Kalfafell": {
     "name": "Kalfafell",
     "picture": "destinations/Kalfafell",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Iceland",
     "nationId": 37,
     "procedural": true,
@@ -1603,7 +1603,7 @@
   "Laugar": {
     "name": "Laugar",
     "picture": "destinations/Laugar",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Iceland",
     "nationId": 37,
     "procedural": true,
@@ -1623,7 +1623,7 @@
   "Hvammstangi": {
     "name": "Hvammstangi",
     "picture": "destinations/Hvammstangi",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Iceland",
     "nationId": 37,
     "procedural": true,
@@ -1643,7 +1643,7 @@
   "Klasvik": {
     "name": "Klaksvik",
     "picture": "destinations/Klasvik",
-    "type": "village",
+    "biome": "Village",
     "country": "Denmark",
     "nationId": 37,
     "procedural": true,
@@ -1663,7 +1663,7 @@
   "Gasadalur": {
     "name": "Gasadalur",
     "picture": "destinations/Gasadalur",
-    "type": "village",
+    "biome": "Village",
     "country": "Denmark",
     "nationId": 37,
     "procedural": true,
@@ -1684,7 +1684,7 @@
     "name": "Northpoint",
     "picture": "",
     "locked": true,
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Sweden",
     "nationId": 35,
     "procedural": true,
@@ -1704,7 +1704,7 @@
   "Torshavn": {
     "name": "Torshavn",
     "picture": "destinations/Torshavn",
-    "type": "village",
+    "biome": "Village",
     "country": "Denmark",
     "nationId": 37,
     "procedural": true,
@@ -1724,7 +1724,7 @@
   "Sandvik": {
     "name": "Sandvik",
     "picture": "destinations/Sandvik",
-    "type": "village",
+    "biome": "Village",
     "country": "Denmark",
     "nationId": 37,
     "procedural": true,
@@ -1744,7 +1744,7 @@
   "Crabby Beach": {
     "name": "Crabby Beach",
     "picture": "destinations/CrabbyBeach",
-    "type": "village",
+    "biome": "Village",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -1771,7 +1771,7 @@
     "locked": true,
     "name": "Madrid",
     "picture": "destinations/Madrid",
-    "type": "city",
+    "biome": "City",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -1799,7 +1799,7 @@
   "Granada": {
     "name": "Granada",
     "picture": "destinations/Granada",
-    "type": "village",
+    "biome": "VillageDesert",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -1819,7 +1819,7 @@
   "Valencia": {
     "name": "Valencia",
     "picture": "destinations/Valencia",
-    "type": "city",
+    "biome": "City",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -1842,7 +1842,7 @@
   "Genova": {
     "name": "Genova",
     "picture": "destinations/Genova",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1865,7 +1865,7 @@
   "La Spezia": {
     "name": "La Spezia",
     "picture": "destinations/LaSpezia",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1885,7 +1885,7 @@
   "Pisa": {
     "name": "Pisa",
     "picture": "destinations/Pisa",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1908,7 +1908,7 @@
   "Livorno": {
     "name": "Livorno",
     "picture": "destinations/Livorno",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1928,7 +1928,7 @@
   "Frosinone": {
     "name": "Frosinone",
     "picture": "destinations/Frosinone",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1948,7 +1948,7 @@
   "Napoli": {
     "name": "Napoli",
     "picture": "destinations/Napoli",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1971,7 +1971,7 @@
   "Capri": {
     "name": "Capri",
     "picture": "destinations/Capri",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -1991,7 +1991,7 @@
   "Taranto": {
     "name": "Taranto",
     "picture": "destinations/Taranto",
-    "type": "city",
+    "biome": "CityDesert",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2014,7 +2014,7 @@
   "Catanzaro": {
     "name": "Catanzaro",
     "picture": "destinations/Catanzaro",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2034,7 +2034,7 @@
   "Cosenza": {
     "name": "Cosenza",
     "picture": "destinations/Cosenza",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2054,7 +2054,7 @@
   "Lecce": {
     "name": "Lecce",
     "picture": "destinations/Lecce",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2077,7 +2077,7 @@
   "Ancona": {
     "name": "Ancona",
     "picture": "destinations/Ancona",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2101,7 +2101,7 @@
     "locked": true,
     "name": "San Marino",
     "picture": "destinations/SanMarino",
-    "type": "village",
+    "biome": "Village",
     "country": "San Marino",
     "nationId": 236,
     "procedural": true,
@@ -2122,7 +2122,7 @@
     "locked": true,
     "name": "Verona",
     "picture": "destinations/Verona",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2141,10 +2141,9 @@
   },
   "Venezia": {
     "name": "Venezia",
-        "locked": true,
-
+    "locked": true,
     "picture": "destinations/Venezia",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2166,9 +2165,8 @@
   },
   "Torino": {
     "name": "Torino",
-    
     "picture": "destinations/Torino",
-    "type": "city",
+    "biome": "City",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2191,7 +2189,7 @@
   "Lucca": {
     "name": "Lucca",
     "picture": "destinations/Lucca",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2210,10 +2208,9 @@
   },
   "Firenze": {
     "name": "Firenze",
-        "locked": true,
-
+    "locked": true,
     "picture": "destinations/Firenze",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2232,10 +2229,9 @@
   },
   "L'Aquila": {
     "name": "L'Aquila",
-        "locked": true,
-
+    "locked": true,
     "picture": "destinations/LAquila",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2255,7 +2251,7 @@
   "Latina": {
     "name": "Latina",
     "picture": "destinations/Latina",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2275,7 +2271,7 @@
   "Amalfi": {
     "name": "Amalfi",
     "picture": "destinations/Amalfi",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2295,7 +2291,7 @@
   "Sorrento": {
     "name": "Sorrento",
     "picture": "destinations/Sorrento",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2315,7 +2311,7 @@
   "Crotone": {
     "name": "Crotone",
     "picture": "destinations/Crotone",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -2335,7 +2331,7 @@
   "Catania": {
     "name": "Catania",
     "picture": "destinations/Catania",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -2355,7 +2351,7 @@
   "Siracusa": {
     "name": "Siracusa",
     "picture": "destinations/Siracusa",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -2375,7 +2371,7 @@
   "Palermo": {
     "name": "Palermo",
     "picture": "destinations/Palermo",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -2395,7 +2391,7 @@
   "Marsala": {
     "name": "Marsala",
     "picture": "destinations/Marsala",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -2415,7 +2411,7 @@
   "Lampedusa": {
     "name": "Lampedusa",
     "picture": "destinations/Lampedusa",
-    "type": "village",
+    "biome": "VillageDesert",
     "country": "Italy - Lampedusa",
     "nationId": 174,
     "procedural": true,
@@ -2435,7 +2431,7 @@
   "Agrigento": {
     "name": "Agrigento",
     "picture": "destinations/Agrigento",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sicily",
     "nationId": 166,
     "procedural": true,
@@ -2455,7 +2451,7 @@
   "Cagliari": {
     "name": "Cagliari",
     "picture": "destinations/Cagliari",
-    "type": "city",
+    "biome": "City",
     "country": "Italy - Sardinia",
     "nationId": 237,
     "procedural": true,
@@ -2478,7 +2474,7 @@
   "Sassari": {
     "name": "Sassari",
     "picture": "destinations/Sassari",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy - Sardinia",
     "nationId": 237,
     "procedural": true,
@@ -2498,7 +2494,7 @@
   "Tunisi": {
     "name": "Tunisi",
     "picture": "destinations/Tunisi",
-    "type": "city",
+    "biome": "CityDesert",
     "country": "Tunisia",
     "nationId": 42,
     "procedural": true,
@@ -2521,7 +2517,7 @@
   "Biserta": {
     "name": "Biserta",
     "picture": "destinations/Biserta",
-    "type": "village",
+    "biome": "VillageDesert",
     "country": "Tunisia",
     "nationId": 42,
     "procedural": true,
@@ -2541,7 +2537,7 @@
   "Tripoli": {
     "name": "Tripoli",
     "picture": "destinations/Tripoli",
-    "type": "village",
+    "biome": "VillageDesert",
     "country": "Libya",
     "nationId": 42,
     "procedural": true,
@@ -2561,7 +2557,7 @@
   "Algeri": {
     "name": "Algeri",
     "picture": "destinations/Algeri",
-    "type": "city",
+    "biome": "CityDesert",
     "country": "Algeria",
     "nationId": 42,
     "procedural": true,
@@ -2585,7 +2581,7 @@
     "locked": true,
     "name": "Atene",
     "picture": "destinations/Atene",
-    "type": "city",
+    "biome": "City",
     "country": "Greece",
     "nationId": 20,
     "procedural": true,
@@ -2609,7 +2605,7 @@
     "locked": true,
     "name": "Istanbul",
     "picture": "destinations/Instanbul",
-    "type": "city",
+    "biome": "City",
     "country": "Turkey",
     "nationId": 41,
     "procedural": true,
@@ -2637,7 +2633,7 @@
   "Corfù": {
     "name": "Corfù",
     "picture": "destinations/Corf",
-    "type": "village",
+    "biome": "Village",
     "country": "Greece",
     "nationId": 20,
     "procedural": true,
@@ -2657,7 +2653,7 @@
   "Odessa": {
     "name": "Odessa",
     "picture": "destinations/Odessa",
-    "type": "city",
+    "biome": "City",
     "country": "Ukraine",
     "nationId": 153,
     "procedural": true,
@@ -2681,7 +2677,7 @@
     "locked": true,
     "name": "Berlin",
     "picture": "destinations/Berlin",
-    "type": "city",
+    "biome": "City",
     "country": "Germany",
     "nationId": 109,
     "procedural": true,
@@ -2705,7 +2701,7 @@
     "locked": true,
     "name": "Copenaghen",
     "picture": "destinations/Copenaghen",
-    "type": "city",
+    "biome": "City",
     "country": "Denmark",
     "nationId": 8,
     "procedural": true,
@@ -2728,7 +2724,7 @@
   "Malmo": {
     "name": "Malmo",
     "picture": "destinations/Malmo",
-    "type": "city",
+    "biome": "City",
     "country": "Sweden",
     "nationId": 35,
     "procedural": true,
@@ -2752,7 +2748,7 @@
     "locked": true,
     "name": "Oslo",
     "picture": "destinations/Oslo",
-    "type": "city",
+    "biome": "CityIce",
     "country": "Norway",
     "nationId": 34,
     "procedural": true,
@@ -2776,7 +2772,7 @@
     "locked": true,
     "name": "Paris",
     "picture": "destinations/Paris",
-    "type": "city",
+    "biome": "City",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -2799,7 +2795,7 @@
   "Marsiglia": {
     "name": "Marsiglia",
     "picture": "destinations/Marsiglia",
-    "type": "village",
+    "biome": "Village",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -2819,7 +2815,7 @@
   "Bordeaux": {
     "name": "Bordeaux",
     "picture": "destinations/Bordeaux",
-    "type": "village",
+    "biome": "Village",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -2839,7 +2835,7 @@
   "Brest": {
     "name": "Brest",
     "picture": "destinations/Brest",
-    "type": "village",
+    "biome": "Village",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -2860,7 +2856,7 @@
     "locked": true,
     "name": "Berna",
     "picture": "destinations/Berna",
-    "type": "city",
+    "biome": "CityIce",
     "country": "Switzerland",
     "nationId": 63,
     "procedural": true,
@@ -2881,11 +2877,10 @@
     ]
   },
   "Ginevra": {
-        "locked": true,
-
+    "locked": true,
     "name": "Ginevra",
     "picture": "destinations/Ginevra",
-    "type": "city",
+    "biome": "City",
     "country": "Switzerland",
     "nationId": 63,
     "procedural": true,
@@ -2908,7 +2903,7 @@
   "Zermatt": {
     "name": "Zermatt",
     "picture": "destinations/Zermatt",
-    "type": "village",
+    "biome": "VillageIce",
     "country": "Switzerland",
     "nationId": 63,
     "procedural": true,
@@ -2928,7 +2923,7 @@
   "Lugano": {
     "name": "Lugano",
     "picture": "destinations/Lugano",
-    "type": "village",
+    "biome": "Village",
     "country": "Switzerland",
     "nationId": 63,
     "procedural": true,
@@ -2949,7 +2944,7 @@
     "locked": true,
     "name": "Liechtenstein",
     "picture": "destinations/Liechtenstein",
-    "type": "city",
+    "biome": "CityIce",
     "country": "Liechtenstein",
     "nationId": 78,
     "procedural": true,
@@ -2972,7 +2967,7 @@
   "Zurigo": {
     "name": "Zurigo",
     "picture": "destinations/Zurigo",
-    "type": "city",
+    "biome": "CityIce",
     "country": "Switzerland",
     "nationId": 63,
     "procedural": true,
@@ -2995,7 +2990,7 @@
   "Basilea": {
     "name": "Basilea",
     "picture": "destinations/Basilea",
-    "type": "city",
+    "biome": "CityIce",
     "country": "Switzerland",
     "nationId": 63,
     "procedural": true,
@@ -3018,7 +3013,7 @@
   "Le Havre": {
     "name": "Le Havre",
     "picture": "destinations/LeHavre",
-    "type": "village",
+    "biome": "Village",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -3038,7 +3033,7 @@
   "Lille": {
     "name": "Lille",
     "picture": "destinations/Lille",
-    "type": "village",
+    "biome": "Village",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -3055,7 +3050,7 @@
   "Orleans": {
     "name": "Orleans",
     "picture": "destinations/Orleans",
-    "type": "village",
+    "biome": "Village",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -3075,7 +3070,7 @@
   "Le Mans": {
     "name": "Le Mans",
     "picture": "destinations/LeMans",
-    "type": "city",
+    "biome": "City",
     "country": "France",
     "nationId": 102,
     "procedural": true,
@@ -3098,7 +3093,7 @@
   "Saint Helier": {
     "name": "Saint Helier",
     "picture": "destinations/SaintHelier",
-    "type": "village",
+    "biome": "Village",
     "country": "UK - Channel Islands",
     "nationId": 110,
     "procedural": true,
@@ -3118,7 +3113,7 @@
   "Jersey": {
     "name": "Jersey",
     "picture": "destinations/Jersey",
-    "type": "village",
+    "biome": "Village",
     "country": "UK - Channel Islands",
     "nationId": 110,
     "procedural": true,
@@ -3138,7 +3133,7 @@
   "Guernsey": {
     "name": "Guernsey",
     "picture": "destinations/Guernsey",
-    "type": "village",
+    "biome": "Village",
     "country": "UK - Channel Islands",
     "nationId": 110,
     "procedural": true,
@@ -3158,7 +3153,7 @@
   "Palma di Maiorca": {
     "name": "Palma di Maiorca",
     "picture": "destinations/PalmadiMaiorca",
-    "type": "village",
+    "biome": "VillageDesert",
     "country": "Spain - Balearics",
     "nationId": 76,
     "procedural": true,
@@ -3179,7 +3174,7 @@
   "Ivissa": {
     "name": "Ivissa",
     "picture": "destinations/Ivissa",
-    "type": "village",
+    "biome": "VillageDesert",
     "country": "Spain - Balearics",
     "nationId": 76,
     "procedural": true,
@@ -3199,7 +3194,7 @@
   "Minorca": {
     "name": "Minorca",
     "picture": "destinations/Minorca",
-    "type": "village",
+    "biome": "Village",
     "country": "Spain - Balearics",
     "nationId": 76,
     "procedural": true,
@@ -3218,10 +3213,9 @@
   },
   "Barcellona": {
     "name": "Barcellona",
-        "locked": true,
-
+    "locked": true,
     "picture": "destinations/Barcellona",
-    "type": "city",
+    "biome": "City",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -3244,7 +3238,7 @@
   "Saragozza": {
     "name": "Saragozza",
     "picture": "destinations/Saragozza",
-    "type": "city",
+    "biome": "City",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -3267,7 +3261,7 @@
   "Siviglia": {
     "name": "Siviglia",
     "picture": "destinations/Siviglia",
-    "type": "city",
+    "biome": "CityDesert",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -3290,7 +3284,7 @@
   "Moonlit Station": {
     "name": "Moonlit Station",
     "picture": "destinations/MoonlitStation",
-    "type": "gasStation",
+    "biome": "Highway",
     "country": "Netherlands",
     "nationId": 8,
     "procedural": true,
@@ -3306,7 +3300,7 @@
   },
   "Abandoned Shack": {
     "name": "Abandoned Shack",
-    "type": "dungeon",
+    "biome": "Abandoned",
     "country": "UK",
     "nationId": 38,
     "procedural": false,
@@ -3324,7 +3318,7 @@
     "locked": true,
     "name": "Lisbona",
     "picture": "destinations/Lisbona",
-    "type": "city",
+    "biome": "City",
     "country": "Portugal",
     "nationId": 109,
     "procedural": true,
@@ -3347,7 +3341,7 @@
   "Porto": {
     "name": "Porto",
     "picture": "destinations/Porto",
-    "type": "city",
+    "biome": "City",
     "country": "Portugal",
     "nationId": 109,
     "procedural": true,
@@ -3371,7 +3365,7 @@
     "locked": true,
     "name": "Santiago di Compostela",
     "picture": "destinations/SantiagodiCompostela",
-    "type": "city",
+    "biome": "City",
     "country": "Spain",
     "nationId": 69,
     "procedural": true,
@@ -3394,7 +3388,7 @@
   "Pola": {
     "name": "Pola",
     "picture": "destinations/Pola",
-    "type": "city",
+    "biome": "City",
     "country": "Croatia",
     "nationId": 16,
     "procedural": true,
@@ -3417,7 +3411,7 @@
   "Zara": {
     "name": "Zara",
     "picture": "destinations/Zara",
-    "type": "village",
+    "biome": "Village",
     "country": "Croatia",
     "nationId": 16,
     "procedural": true,
@@ -3438,7 +3432,7 @@
     "locked": true,
     "name": "Sarajevo",
     "picture": "destinations/Sarajevo",
-    "type": "city",
+    "biome": "City",
     "country": "Bosnia and Herzegovina",
     "nationId": 17,
     "procedural": true,
@@ -3462,7 +3456,7 @@
     "locked": true,
     "name": "Belgrado",
     "picture": "destinations/Belgrado",
-    "type": "city",
+    "biome": "City",
     "country": "Serbia",
     "nationId": 22,
     "procedural": true,
@@ -3485,7 +3479,7 @@
   "Novi Sad": {
     "name": "Novi Sad",
     "picture": "destinations/NoviSad",
-    "type": "village",
+    "biome": "Village",
     "country": "Serbia",
     "nationId": 22,
     "procedural": true,
@@ -3506,7 +3500,7 @@
     "locked": true,
     "name": "Tirana",
     "picture": "destinations/Tirana",
-    "type": "village",
+    "biome": "Village",
     "country": "Albania",
     "nationId": 19,
     "procedural": true,
@@ -3527,7 +3521,7 @@
     "locked": true,
     "name": "Sofia",
     "picture": "destinations/Sofia",
-    "type": "city",
+    "biome": "City",
     "country": "Bulgaria",
     "nationId": 25,
     "procedural": true,
@@ -3551,7 +3545,7 @@
     "locked": true,
     "name": "Bucarest",
     "picture": "destinations/Bucarest",
-    "type": "city",
+    "biome": "City",
     "country": "Romania",
     "nationId": 105,
     "procedural": true,
@@ -3574,7 +3568,7 @@
   "Costanza": {
     "name": "Costanza",
     "picture": "destinations/Costanza",
-    "type": "village",
+    "biome": "Village",
     "country": "Romania",
     "nationId": 105,
     "procedural": true,
@@ -3594,7 +3588,7 @@
   "Roccalonga": {
     "name": "Roccalonga",
     "picture": "destinations/Roccalonga",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,
@@ -3615,7 +3609,7 @@
     "locked": true,
     "name": "Rome",
     "picture": "destinations/Rome",
-    "type": "village",
+    "biome": "Village",
     "country": "Italy",
     "nationId": 78,
     "procedural": true,

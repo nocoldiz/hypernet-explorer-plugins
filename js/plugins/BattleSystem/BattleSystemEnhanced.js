@@ -1208,8 +1208,24 @@
         return gap > 0 ? shift : -shift * BSE.Params.levelAccuracyUnderWeight;
     };
 
+    // A buff, heal or cure cast on oneself or an ally is not an attack: nobody
+    // dodges a hand that is helping them. MZ still rolls a physical or magical
+    // skill's hit and evasion whatever its scope, so a self buff authored as
+    // physical could whiff and be "dodged" by its own caster.
+    // The scope is read from the caster's side, so the same answer holds for a
+    // monster buffing itself or its troop. The target must also stand on that
+    // side: a scope that reaches both sides still lets the other side dodge.
+    BSE.Helpers.isFriendlyAction = function(action, target) {
+        if (!action || typeof action.isForFriend !== 'function' || !action.isForFriend()) return false;
+        const subject = action.subject ? action.subject() : null;
+        if (!subject || !target || subject === target) return true;
+        const sideOf = b => (b.isActor && b.isActor()) ? 'actor' : (b.isEnemy && b.isEnemy()) ? 'enemy' : null;
+        return sideOf(subject) === sideOf(target);
+    };
+
     const _Game_Action_itemHit_BSE = Game_Action.prototype.itemHit;
     Game_Action.prototype.itemHit = function(target) {
+        if (BSE.Helpers.isFriendlyAction(this, target)) return 1;
         let rate = _Game_Action_itemHit_BSE.call(this, target);
         const subject = this.subject ? this.subject() : null;
         const shift = BSE.Helpers.levelAccuracyShift(subject, target);
@@ -1220,6 +1236,7 @@
 
     const _Game_Action_itemEva_BSE = Game_Action.prototype.itemEva;
     Game_Action.prototype.itemEva = function(target) {
+        if (BSE.Helpers.isFriendlyAction(this, target)) return 0;
         let eva = _Game_Action_itemEva_BSE.call(this, target);
         if (!(eva > 0)) return eva;
         const shift = BSE.Helpers.levelAccuracyShift(this.subject ? this.subject() : null, target);

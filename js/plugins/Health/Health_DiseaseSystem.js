@@ -209,26 +209,26 @@
 
   // Named world-map tiles that are landmarks, not populations. Nothing lives
   // there, so nothing can break out there either. A Destinations.json entry says
-  // so itself through its "type": anything but a "city" or a "village" is a
-  // place on the map rather than a place with a population. The list below is
-  // only for the landmarks that carry no destination entry at all, and for the
-  // ones whose type says what they are (a tavern, a filling station) without
-  // implying anyone lives there.
+  // so itself through its "biome": anything but a City or a Village biome
+  // (City, CityIce, VillageDesert...) is a place on the map rather than a place
+  // with a population. The list below is only for the landmarks that carry no
+  // destination entry at all, and for the ones whose biome says what they are
+  // (a tavern is a Village) without implying anyone lives there.
   // i18n-ignore-start: world-map tile ids, matched against map data
   // Already normalized: _norm strips everything but a-z0-9, so a spaced entry
   // here could never match (which is what silently spared the multi-word
   // landmarks in the hand-written list this replaced).
-  const POPULATED_TYPES = new Set(['city', 'village']);
+  const POPULATED_BIOME = /^(City|Village)/;
   const NON_SETTLEMENTS = new Set(['maxtavern']);
   // i18n-ignore-end
 
   const _norm = s => String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]/g, '');
 
-  // Whether a named place holds people. A destination answers with its own type;
+  // Whether a named place holds people. A destination answers with its own biome;
   // a bare world-tile name falls back to the list above.
   const isPopulatedPlace = (name, destEntry) => {
     if (NON_SETTLEMENTS.has(_norm(name))) return false;
-    if (destEntry && destEntry.type) return POPULATED_TYPES.has(String(destEntry.type));
+    if (destEntry && destEntry.biome) return POPULATED_BIOME.test(String(destEntry.biome));
     return true;
   };
 

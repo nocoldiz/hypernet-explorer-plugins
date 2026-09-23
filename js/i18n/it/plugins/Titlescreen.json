@@ -1,5 +1,6 @@
 {
   "menu": {
+    "defaultStart": "Inizio Predefinito",
     "explore": "Nuovo Party",
     "reconnect": "Seleziona Party",
     "storyMode": "Nuova Storia",
@@ -17,6 +18,7 @@
     "quickContinue": "Continua"
   },
   "menuOverlay": {
+    "defaultStart": "INIZIO PREDEFINITO",
     "explore": "NUOVO PARTY",
     "reconnect": "SELEZIONA PARTY",
     "storyMode": "NUOVA STORIA",

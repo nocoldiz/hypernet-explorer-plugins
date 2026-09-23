@@ -728,14 +728,11 @@
     if (availableDurationModes(this).length < 2) return "";
     const label = { sleep: t.sleep, wait: t.wait, forage: t.forage }[this._sleepMenuMode] || t.wait;
     // The sleep page of a wait list says what a rough night is worth right
-    // under the selector. Bedding in the packs says nothing: the full rest it
-    // buys is the ordinary case and needs no notice of its own.
+    // under the selector. Bedding in the packs or a bed on the map says
+    // nothing: the full rest it buys is the ordinary case and needs no notice.
     let hint = "";
-    if (this._sleepMenuMode === "sleep" && this._sleepMenuRoughRest) {
-      const bedding = beddingItem();
-      if (!bedding && t.roughHint) {
-        hint = `<div class="army-dialog-type-hint">${t.roughHint.format(roughFactorPercent())}</div>`;
-      }
+    if (this._sleepMenuMode === "sleep" && roughRestFor(this) && t.roughHint) {
+      hint = `<div class="army-dialog-type-hint">${t.roughHint.format(roughFactorPercent())}</div>`;
     }
     return `<div class="army-dialog-type-selector">
       <span class="army-dialog-type-arrow" data-dir="left">&#9668;</span>

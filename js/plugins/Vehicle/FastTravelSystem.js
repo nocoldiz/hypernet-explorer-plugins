@@ -974,6 +974,19 @@
         return !!(dest && dest.patreonStation);
     }
 
+    // What kind of place a Destinations.json entry is, read off its "biome":
+    // "city" for any City biome, "village" for any Village biome, "gasStation"
+    // for a stop on the Highway and "dungeon" for everything else (a cave, a
+    // castle, a shrine). The kind decides the shape of the pin and whether the
+    // place is a procedural town the bus can serve.
+    function destinationKind(biome) {
+        const b = String(biome || '');
+        if (b.startsWith('City')) return 'city';          // i18n-ignore  biome id
+        if (b.startsWith('Village')) return 'village';    // i18n-ignore  biome id
+        if (b === 'Highway') return 'gasStation';         // i18n-ignore  biome id
+        return b ? 'dungeon' : 'village';                 // i18n-ignore  pin kinds
+    }
+
     function initializeDestinationCache() {
         if (cacheInitialized && destinationCache !== null) {
             return destinationCache;
@@ -994,11 +1007,11 @@
             destinations.push({
                 name: destinationName,
                 fullName: 'Teleport - ' + destinationName,  // i18n-ignore  event name prefix
-                // What kind of place it is, straight off the entry: "city" for a
-                // town spanning four or more world-map tiles, "village" for a
-                // smaller one, "dungeon" for a delve nobody lives in,
-                // "gasStation" for a stop on the road.
-                type: transportData.type || 'village',   // i18n-ignore  Destinations.json id
+                // What kind of place it is, from the entry's own biome: "city",
+                // "village", "dungeon" for a delve nobody lives in, "gasStation"
+                // for a stop on the road.
+                type: destinationKind(transportData.biome),
+                biome: transportData.biome || null,
                 mapId: defaultLocation.mapId,
                 x: defaultLocation.x,
                 y: defaultLocation.y,
@@ -2453,8 +2466,9 @@
         overlay.id = 'travel-overlay';
         _travelOverlayEl = overlay;
 
-        // What kind of place it is comes from the entry's own "type" (city,
-        // village, dungeon, gasStation), which decides the SHAPE of the pin.
+        // What kind of place it is comes from the entry's own biome (see
+        // destinationKind: city, village, dungeon, gasStation), which decides
+        // the SHAPE of the pin.
         // Shape and colour are independent: a gold pin still reads as a city, a
         // village or a delve.
         const kindClass = dest => ' travel-kind-' +
@@ -4401,6 +4415,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
 
     window.FastTravelSystem = window.FastTravelSystem || {};
     window.FastTravelSystem.refreshDestinations = refreshDestinationCache;
+    window.FastTravelSystem.destinationKind = destinationKind;
 
     /**
      * Every place on the network, as the overlay itself lists them. Published

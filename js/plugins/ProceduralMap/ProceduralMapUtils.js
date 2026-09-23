@@ -957,6 +957,52 @@
     return { exists: false, destination: null };
   }
 
+  /**
+   * The biome a procedural town forces onto its own squares, or null.
+   *
+   * A WorkSystem/Destinations.json entry that is `procedural: true` and whose
+   * `biome` is a City or a Village one (City, CityIce, CityDesert, Village,
+   * VillageIce, VillageDesert...) is generated as THAT biome on every square of
+   * its footprint, whatever the world map paints there: a town tile painted as
+   * Burg, Desert or Fields, or a CityIce square inside a destination that is
+   * written as a Village, all come out as the destination's own biome.
+   *
+   * The footprint is the same one DataService names the place by:
+   * `reservedTiles` where the entry has them, otherwise its `base` square.
+   *
+   * Built once from the loaded destinations. The biome coordinate cache (and so
+   * BiomesMap.json, which tools/build/gen_biomes_map.js regenerates at build
+   * time) is built through this too, so the shipped snapshot already carries it.
+   */
+  let _destinationBiomes = null;
+  let _destinationBiomesSource = null;
+  const FORCED_TOWN_BIOME = /^(City|Village)/;   // i18n-ignore  biome ids
+
+  function getDestinationForcedBiome(worldX, worldY) {
+    const destinations = window.WorkSystem && window.WorkSystem.Destinations;
+    if (!destinations) return null;
+    if (!_destinationBiomes || _destinationBiomesSource !== destinations) {
+      const map = new Map();
+      for (const entry of Object.values(destinations)) {
+        if (!entry || entry.procedural !== true) continue;
+        const biome = entry.biome;
+        if (typeof biome !== "string" || !FORCED_TOWN_BIOME.test(biome)) continue;
+        if (!getBiomeByName(biome)) continue;
+        const tiles = Array.isArray(entry.reservedTiles)
+          ? entry.reservedTiles
+          : (entry.base && typeof entry.base.x === "number" && typeof entry.base.y === "number"
+            ? [entry.base.x + "," + entry.base.y]
+            : []);
+        for (const key of tiles) {
+          if (!map.has(key)) map.set(key, biome);
+        }
+      }
+      _destinationBiomes = map;
+      _destinationBiomesSource = destinations;
+    }
+    return _destinationBiomes.get(worldX + "," + worldY) || null;
+  }
+
   // ===== NOISE FUNCTIONS =====
 
   /**
@@ -4846,6 +4892,7 @@
     randomChoice,
     normalizeBiomeForEdge,
     getNonProceduralDestination,
+    getDestinationForcedBiome,
     noise2D,
     smoothNoise,
     fbmNoise,

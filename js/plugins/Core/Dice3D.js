@@ -886,7 +886,13 @@
                 const startRotY = Math.random() * Math.PI * 6;
                 const startRotZ = Math.random() * Math.PI * 6;
 
-                const startTime = performance.now();
+                // The clock starts on the first frame actually drawn, after the
+                // shaders are compiled, so a slow first frame never eats the
+                // opening of the tumble and the die does not jump in.
+                if (this._renderer.compile) {
+                    try { this._renderer.compile(this._scene, this._camera); } catch (e) { /* compiled on first render instead */ }
+                }
+                let startTime = null;
                 // A check thrown mid battle must not stall the turn: unless the
                 // caller says otherwise, a die in battle keeps the quick pacing
                 // and closes itself as soon as the total has been read.
@@ -914,6 +920,7 @@
                 let exiting = false;
 
                 const animate = (currentTime) => {
+                    if (startTime === null) startTime = currentTime;
                     const elapsed = currentTime - startTime;
                     const progress = Math.min(1, elapsed / rollDuration);
 
