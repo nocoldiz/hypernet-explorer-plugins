@@ -712,20 +712,45 @@
     } catch (e) { return false; }
   }
 
-  function pickSiteCoords(rng) {
+  // A coordinate site is never more than SITE_RADIUS world tiles from the board
+  // that posted it, so a local notice does not send the party across Europe.
+  const SITE_RADIUS = 80;
+
+  // The world tile a board stands on: a procedural board carries it in its key,
+  // a town board is its destination's base, anything else is where the party
+  // stands. Null only when none of those is known (no world yet).
+  function boardOrigin(boardKey) {
+    const m = /^Proc:(-?\d+),(-?\d+)$/.exec(String(boardKey || ""));
+    if (m) return { wx: Number(m[1]), wy: Number(m[2]) };
+    return destCoords(boardKey) || currentWorldCoords();
+  }
+
+  function pickSiteCoords(rng, origin) {
     const d = destinations();
-    const bases = d ? Object.values(d).filter(v => v && v.base && (v.base.x || v.base.y)) : [];
+    const within = (x, y) => !origin || Math.hypot(x - origin.wx, y - origin.wy) <= SITE_RADIUS;
+    const bases = d ? Object.values(d)
+      .filter(v => v && v.base && (v.base.x || v.base.y) && within(v.base.x, v.base.y)) : [];
     const clamp = (v) => Math.max(4, Math.min(WORLD_SIZE - 5, v));
     const off = () => (chance(rng, 0.5) ? 1 : -1) * irange(rng, 2, 6);
     let fallback = null;
     for (let attempt = 0; attempt < 24; attempt++) {
-      // Bologna is the fallback anchor: inland, mid-map, always valid.
-      const a = bases.length ? pick(rng, bases).base : { x: 124, y: 168 };
-      const site = { wx: clamp(a.x + off()), wy: clamp(a.y + off()) };
+      let site;
+      if (origin && (!bases.length || chance(rng, 0.4))) {
+        // Open country around the board, anywhere inside the radius.
+        const ang = rng() * Math.PI * 2;
+        const r = 3 + rng() * (SITE_RADIUS - 3);
+        site = { wx: clamp(Math.round(origin.wx + Math.cos(ang) * r)),
+                 wy: clamp(Math.round(origin.wy + Math.sin(ang) * r)) };
+      } else {
+        // Bologna is the fallback anchor: inland, mid-map, always valid.
+        const a = bases.length ? pick(rng, bases).base : { x: 124, y: 168 };
+        site = { wx: clamp(a.x + off()), wy: clamp(a.y + off()) };
+      }
+      if (!within(site.wx, site.wy)) continue;
       if (!fallback) fallback = site;
       if (!isWaterSite(site.wx, site.wy)) return site;
     }
-    return fallback;
+    return fallback || (origin ? { wx: clamp(origin.wx), wy: clamp(origin.wy) } : { wx: 124, wy: 168 });
   }
 
   // The world-map tile of a named destination (Destinations.json `base`), used to
@@ -1424,10 +1449,11 @@
     const otherDests = dests.filter(d => norm(d) !== hereNorm);
     const anyDest = () => otherDests.length ? pick(rng, otherDests) : (dests[0] || "Ghent"); // i18n-ignore: Destinations.json key
     const ctx = o.ctx;
+    const origin = boardOrigin(boardKey);
 
     const fallbackToSurvey = () => {
       o.type = "survey";
-      const site = pickSiteCoords(rng);
+      const site = pickSiteCoords(rng, origin);
       o.steps = [stepGotoSite(site)];
       ctx.X = site.wx; ctx.Y = site.wy;
       gold *= 0.7;
@@ -1467,7 +1493,7 @@
         const picked = pickEliteEnemy(rng, lo, hi);
         if (!picked) { fallbackToSurvey(); break; }
         const enemy = maybeRarityTarget(rng, picked);
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         o.steps = [stepBounty(site, enemy, false)];
         o.elite = true;
         // Elite pay is set by the star band, but the gear is the real draw.
@@ -1513,7 +1539,7 @@
         break;
       }
       case "cache": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         o.steps = [stepCache(site, true)];
         o.reward.secret = chance(rng, 0.25);
         if (chance(rng, 0.45)) o.reward.gear = pickGearReward(rng, L, chance(rng, 0.25));
@@ -1522,7 +1548,7 @@
         break;
       }
       case "dig": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         o.steps = [stepDig(site, true)];
         o.reward.artifactLevel = Math.max(1, Math.min(99, L + irange(rng, -2, 4)));
         o.reward.secret = chance(rng, 0.2);
@@ -1532,14 +1558,14 @@
       }
       case "statues":
       case "signs": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         const count = irange(rng, 2, 4);
         o.steps = [stepScan(type, site, count)];
         ctx.X = site.wx; ctx.Y = site.wy; ctx.N = count;
         break;
       }
       case "clearing": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         const count = irange(rng, 3, 5 + diff);
         o.steps = [stepClearing(site, count)];
         ctx.X = site.wx; ctx.Y = site.wy; ctx.N = count;
@@ -1547,7 +1573,7 @@
       }
       case "bounty_criminal":
       case "bounty_monster": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         const criminal = type === "bounty_criminal";
         const picked = pickBountyEnemy(rng, L, diff, criminal);
         if (!picked) { fallbackToSurvey(); break; }
@@ -1560,7 +1586,7 @@
         break;
       }
       case "survey": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         o.steps = [stepGotoSite(site)];
         gold *= 0.7;
         ctx.X = site.wx; ctx.Y = site.wy;
@@ -1621,7 +1647,7 @@
 
       // ---- multi-step chains ----
       case "expedition": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         o.stepMode = "seq";
         // The hand-in leg needs a board the party has seen; without one the
         // contract ends at the cache rather than becoming impossible.
@@ -1641,7 +1667,7 @@
         break;
       }
       case "purge": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         const picked = pickBountyEnemy(rng, L, diff, chance(rng, 0.35));
         if (!picked) { fallbackToSurvey(); break; }
         // Same rule as the plain bounty: a purge sent after people is left
@@ -1673,7 +1699,7 @@
         break;
       }
       case "research": {
-        const site = pickSiteCoords(rng);
+        const site = pickSiteCoords(rng, origin);
         const dest = anyDest();
         o.stepMode = "seq";
         o.steps = [stepScan("statues", site, irange(rng, 2, 3)), stepInterview(dest)];
@@ -2058,9 +2084,9 @@
   // in-world name plates, same passive-sprite pass as the "???" markers) and by
   // WorldMap.js (the M key map).
   //
-  // Only contracts the player has moved to the journal's "In Progress" column are
-  // pinned: accepting a job files it under To Do, and dragging it across is how
-  // the player says "this is the one I am chasing", so the world is not papered
+  // Only contracts sitting in the journal's "In Progress" column are
+  // pinned: accepting a job files it there, and dragging it back to To Do is how
+  // the player says "not this one for now", so the world is not papered
   // over with every open contract at once.
   // ==========================================================================
   function isTrackedOnBoard(qid) {

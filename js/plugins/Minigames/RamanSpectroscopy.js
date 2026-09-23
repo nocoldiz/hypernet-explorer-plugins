@@ -606,14 +606,29 @@
         return `${mapId}:${x},${y}`;
     }
 
+    // An analysis teaches more than a reading of the same object does
+    // (RandomBookGenerator pays 1 to 4 for that). The amount is rolled off the
+    // object's own scan key, so each one is worth its own fixed figure.
+    const SCAN_KNOWLEDGE_MIN = 10;
+    const SCAN_KNOWLEDGE_MAX = 30;
+
+    function scanKnowledgeFor(key) {
+        let h = 2166136261;
+        for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+        return SCAN_KNOWLEDGE_MIN + ((h >>> 0) % (SCAN_KNOWLEDGE_MAX - SCAN_KNOWLEDGE_MIN + 1));
+    }
+
     function grantScanKnowledgeAt(x, y) {
         if (!$gameSystem || !$gameSystem.addKnowledge) return;
         const key = scanKeyForTile(x, y);
         if (!$gameSystem._ramanScanLog) $gameSystem._ramanScanLog = {};
         if ($gameSystem._ramanScanLog[key]) return;
         $gameSystem._ramanScanLog[key] = true;
-        $gameSystem.addKnowledge(1);
-        if (window.ParchmentToast) window.ParchmentToast.reward({ knowledge: 1 });
+        const kp = scanKnowledgeFor(key);
+        $gameSystem.addKnowledge(kp);
+        if (window.ParchmentToast) {
+            window.ParchmentToast.reward({ knowledge: kp, title: T('Raman.knowledgeTitle') });
+        }
     }
 
     function seededRNG(seed) {
@@ -1295,6 +1310,7 @@
     window.RamanScanner = {
         hasProbe: hasProbeFitted,
         available: hasScanner,
+        scanKnowledge: { min: SCAN_KNOWLEDGE_MIN, max: SCAN_KNOWLEDGE_MAX },
         offer: offerScan,
         // For menus that already have their own verbs and only want the extra
         // Analyze entry alongside them.

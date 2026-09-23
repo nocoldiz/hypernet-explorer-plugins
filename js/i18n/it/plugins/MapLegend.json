@@ -38,326 +38,374 @@
   },
   "areas": {
     "m721_zone": {
-      "title": "Hydroponic naus",
-      "text": "Verdure sotto le lampade, su per tutta la parete. Qualunque cosa coltivino quassù, è l'unica roba fresca a bordo."
+      "title": "",
+      "text": ""
     },
     "storyModeWaterfall": {
-      "title": "Cascata Segreta",
-      "text": "Testo di prova della cascata segreta"
+      "title": "",
+      "text": ""
     },
     "m1006_zone": {
-      "title": "Horse betting",
-      "text": "Usa questo schermo per scommettere sui cavalli"
+      "title": "",
+      "text": ""
     },
     "m1006_zone2": {
-      "title": "Monster tournament",
-      "text": "Usa questo terminale per guardare i combattimenti tra mostri e scommetterci"
+      "title": "",
+      "text": ""
     },
     "m1006_zone3": {
-      "title": "Coin conversion",
-      "text": "Usa questa macchina per cambiare euro in gettoni, quelli dei minigiochi e delle slot machine"
+      "title": "",
+      "text": ""
     },
     "m1006_zone4": {
-      "title": "Slot machine",
-      "text": "Use tokens to plays"
+      "title": "",
+      "text": ""
     },
     "m1023_zone": {
-      "title": "Ghent Hospital",
-      "text": "Vai in ospedale per farti diagnosticare le malattie, installare augment, cambiare parti del corpo e consultare il [Database della fertilità]"
+      "title": "",
+      "text": ""
     },
     "m1414_zone": {
-      "title": "Inn",
-      "text": "Nelle locande sparse per il mondo puoi riposare e reclutare nuovi compagni"
+      "title": "",
+      "text": ""
     },
     "m1414_zone2": {
-      "title": "Hypermetro trains",
-      "text": "Muoviti tra le città principali con la hypermetro! La destinazione finale è la Torre Omega, ma conviene fermarsi a Gand per fare scorta."
+      "title": "",
+      "text": ""
     },
     "m1414_zone3": {
-      "title": "Crafting",
-      "text": "In questa baracca trovi materiali. Usa [Thinker] nel menu di pausa per assemblare oggetti e [Forgia] per fondere e forgiarne di nuovi"
+      "title": "",
+      "text": ""
     },
     "m1414_zone4": {
-      "title": "Farming plots",
-      "text": "Usa gli orti per coltivare le tue piante"
+      "title": "",
+      "text": ""
     },
     "m1414_zone5": {
-      "title": "High level enemis",
-      "text": "Certi nemici sono troppo forti per il tuo gruppo. Fuori dai dungeon la fuga riesce sempre, ma solo al primo turno."
+      "title": "",
+      "text": ""
     },
     "m1414_zone7": {
-      "title": "Dungeon",
-      "text": "Esplora i dungeon per recuperare bottino raro"
+      "title": "",
+      "text": ""
     },
     "m1414_zone10": {
-      "title": "Apiary",
-      "text": "Usa gli apiari per gestire una colonia di api e raccogliere il miele"
+      "title": "",
+      "text": ""
     },
     "m1414_zone11": {
-      "title": "Farm",
-      "text": "Questa fattoria abbandonata puoi prendertela: il proprietario è morto poco fa colpito da un detrito satellitare e nessuno l'ha reclamata.\nUsa [Costruisci] nel menu di pausa per comprare animali e personalizzarla."
+      "title": "",
+      "text": ""
     },
     "m1414_zone9": {
-      "title": "Library",
-      "text": "Nelle biblioteche compri libri e grimories"
+      "title": "",
+      "text": ""
     },
     "m1414_zone12": {
-      "title": "Clinic",
-      "text": "Nelle cliniche diagnostichi malattie, installi augment, monti o rimuovi parti del corpo e ti addestri in medicina."
+      "title": "",
+      "text": ""
     },
     "m1416_zone": {
-      "title": "PC",
-      "text": "Use this PC to access Hypernet"
+      "title": "",
+      "text": ""
     },
     "m1416_zone2": {
-      "title": "Quest board",
-      "text": "Usa la bacheca degli incarichi per accettare le missioni"
+      "title": "",
+      "text": ""
     },
     "m1416_zone3": {
-      "title": "Bowling alley",
-      "text": "Interagisci con la pista da bowling per giocare"
+      "title": "",
+      "text": ""
     },
     "m1416_zone4": {
-      "title": "Bathroom",
-      "text": "Usa i bagni per lavarti e alzare l'igiene. L'igiene conta quando parli con qualcuno, a meno che non gliene importi nulla."
+      "title": "",
+      "text": ""
     },
     "m1416_zone5": {
-      "title": "Innkeeper",
-      "text": "Parla con l'oste per affittare una stanza, comprare cibo o reclutare truppe"
-    },
-    "m1416_zone6": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone7": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone8": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone9": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone11": {
-      "title": "Sleeè",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone12": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone13": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
-    },
-    "m1416_zone14": {
-      "title": "Sleep",
-      "text": "Se il gruppo dorme poco comincia a perdere MP,\nquindi riposa ogni giorno.\nIl caffè ti tiene sveglio quando non puoi."
+      "title": "",
+      "text": ""
     },
     "m1416_zone15": {
-      "title": "Bathroom",
-      "text": "Usa i bagni per lavarti e alzare l'igiene. L'igiene conta quando parli con qualcuno, a meno che non gliene importi nulla."
-    },
-    "m1416_zone16": {
-      "title": "Bathroom",
-      "text": "Usa i bagni per lavarti e alzare l'igiene. L'igiene conta quando parli con qualcuno, a meno che non gliene importi nulla."
-    },
-    "m1416_zone17": {
-      "title": "Bathroom",
+      "title": "",
       "text": ""
     },
     "m1416_zone19": {
-      "title": "Minigames",
-      "text": "I minigiochi si giocano coi gettoni dell'arcade, qualcuno è gratis. Usa il convertitore per procurarteli."
+      "title": "",
+      "text": ""
     },
     "m1416_zone10": {
-      "title": "Renting",
-      "text": "Interagisci con la porta o parla con l'oste per affittare una stanza"
+      "title": "",
+      "text": ""
     },
     "m136_zone": {
-      "title": "Omega Tower Entrance",
+      "title": "",
       "text": ""
     },
     "m169_zone": {
-      "title": "Abandoned Farm",
+      "title": "",
       "text": ""
     },
     "m169_zone2": {
-      "title": "Trash",
+      "title": "",
       "text": ""
     },
     "m169_zone3": {
-      "title": "Chaos",
+      "title": "",
       "text": ""
     },
     "m169_zone4": {
-      "title": "Materials",
-      "text": ""
-    },
-    "m169_zone5": {
-      "title": "Underwater treasure",
+      "title": "",
       "text": ""
     },
     "m169_zone6": {
-      "title": "Sacrificial altar",
+      "title": "",
       "text": ""
     },
     "m169_zone7": {
-      "title": "Goblins",
+      "title": "",
       "text": ""
     },
     "m169_zone8": {
-      "title": "Block pushing puzzle",
+      "title": "",
       "text": ""
     },
     "m689_zone": {
-      "title": "Hardware stores",
+      "title": "",
       "text": ""
     },
     "m689_zone2": {
-      "title": "Tavern",
+      "title": "",
       "text": ""
     },
     "m689_zone3": {
-      "title": "Garage",
+      "title": "",
       "text": ""
     },
     "m689_zone4": {
-      "title": "Bowling alley",
+      "title": "",
       "text": ""
     },
     "m689_zone5": {
-      "title": "Mages Guild",
+      "title": "",
       "text": ""
     },
     "m689_zone6": {
-      "title": "Shop tunnel",
+      "title": "",
       "text": ""
     },
     "m704_zone": {
-      "title": "Clocktower dungeon",
+      "title": "",
       "text": ""
     },
     "m704_zone2": {
-      "title": "Training center",
+      "title": "",
       "text": ""
     },
     "m704_zone3": {
-      "title": "Bus stop",
+      "title": "",
       "text": ""
     },
     "m704_zone4": {
-      "title": "Fairy maze",
+      "title": "",
       "text": ""
     },
     "m708_zone": {
-      "title": "Wilderness",
+      "title": "",
       "text": ""
     },
     "m1414_zone13": {
-      "title": "Diving",
-      "text": ""
-    },
-    "m1414_zone14": {
-      "title": "Abandoned train depot",
+      "title": "",
       "text": ""
     },
     "m1414_zone15": {
-      "title": "Esoteric Shop",
+      "title": "",
       "text": ""
     },
     "m1414_zone16": {
-      "title": "Armory shop",
+      "title": "",
       "text": ""
     },
     "m1414_zone17": {
-      "title": "Wilderness",
+      "title": "",
       "text": ""
     },
     "m1414_zone18": {
-      "title": "Wilderness",
+      "title": "",
       "text": ""
     },
     "m1414_zone19": {
-      "title": "Wilderness",
+      "title": "",
       "text": ""
     },
     "m1414_zone20": {
-      "title": "Slimes",
+      "title": "",
       "text": ""
     },
     "m1414_zone21": {
-      "title": "Block pushing puzzle",
+      "title": "",
       "text": ""
     },
     "m1415_zone": {
-      "title": "Pushing block puzzle",
+      "title": "",
       "text": ""
     },
     "m1415_zone2": {
-      "title": "Pre Y2K Cache",
+      "title": "",
       "text": ""
     },
     "m1415_zone3": {
-      "title": "Unfinished puzzle",
+      "title": "",
       "text": ""
     },
     "m1415_zone4": {
-      "title": "Ice block puzzle",
+      "title": "",
       "text": ""
     },
     "m1415_zone5": {
-      "title": "High level enemies",
+      "title": "",
       "text": ""
     },
     "m1415_zone6": {
-      "title": "Fog of war",
+      "title": "",
       "text": ""
     },
     "m503_zone": {
-      "title": "Undeground Arena",
+      "title": "",
       "text": ""
     },
     "m635_zone": {
-      "title": "The Hall",
+      "title": "",
       "text": ""
     },
     "m635_zone2": {
-      "title": "Dungeon Entrance",
+      "title": "",
       "text": ""
     },
     "m1073_zone": {
-      "title": "Platforming mode",
+      "title": "",
       "text": ""
     },
     "m1074_zone": {
-      "title": "Bowling halley",
+      "title": "",
+      "text": ""
+    },
+    "m689_zone7": {
+      "title": "",
+      "text": ""
+    },
+    "m708_zone2": {
+      "title": "",
+      "text": ""
+    },
+    "m714_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m721_zone2": {
+      "title": "",
+      "text": ""
+    },
+    "m721_zone3": {
+      "title": "",
+      "text": ""
+    },
+    "m1036_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m1036_zone2": {
+      "title": "",
+      "text": ""
+    },
+    "m1036_zone3": {
+      "title": "",
+      "text": ""
+    },
+    "m1039_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m1415_zone7": {
+      "title": "",
+      "text": ""
+    },
+    "m1415_zone8": {
+      "title": "",
+      "text": ""
+    },
+    "m1415_zone9": {
+      "title": "",
+      "text": ""
+    },
+    "m1415_zone10": {
+      "title": "",
+      "text": ""
+    },
+    "m169_zone5": {
+      "title": "",
+      "text": ""
+    },
+    "m721_zone4": {
+      "title": "",
+      "text": ""
+    },
+    "m721_zone5": {
+      "title": "",
+      "text": ""
+    },
+    "m1006_zone5": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone6": {
+      "title": "",
+      "text": ""
+    },
+    "m1414_zone8": {
+      "title": "",
+      "text": ""
+    },
+    "m635_zone3": {
+      "title": "",
+      "text": ""
+    },
+    "m635_zone4": {
+      "title": "",
+      "text": ""
+    },
+    "m635_zone5": {
+      "title": "",
+      "text": ""
+    },
+    "m102_zone": {
+      "title": "",
+      "text": ""
+    },
+    "m102_zone2": {
+      "title": "",
       "text": ""
     }
   },
   "tips": {
     "findTheInn": {
-      "title": "Un posto dove dormire",
-      "text": "La locanda sta in mezzo alla stazione. Segui le finestre illuminate e chiedi un letto all'oste."
+      "title": "",
+      "text": ""
     },
     "seeTheDoctor": {
-      "title": "Vai dal dottore",
-      "text": "L'ambulatorio e' l'edificio basso con la porta bianca. Qualunque cosa sia rotta, la rimettono a posto li' dentro."
+      "title": "",
+      "text": ""
     },
     "searchTheWagons": {
-      "title": "Fruga nei vagoni",
-      "text": "Il binario morto non e' stato ripulito del tutto. Apri ogni cassa prima che vada via la luce."
+      "title": "",
+      "text": ""
     },
     "intoTheCaves": {
-      "title": "Dentro le grotte",
-      "text": "La bocca nella collina scende piu' a fondo di quanto sembri. Portati una luce, e qualcosa da menare."
+      "title": "",
+      "text": ""
     },
     "headOutside": {
-      "title": "Esci fuori",
-      "text": "Al chiuso non c'e' piu' niente per te. Esci e prendi la strada."
+      "title": "",
+      "text": ""
     }
   }
 }

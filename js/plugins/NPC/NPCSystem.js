@@ -3880,7 +3880,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         })();
         const towerSprite = (towerWorld && !authored)
           ? ProceduralManager.towerCitizenSprite(towerWorld, graphicSeed) : null;
-        const charName    = (authored && towerWorld ? authored.name : null)
+        let charName      = (authored && towerWorld ? authored.name : null)
           || towerSprite
           || pickNPCCharacter(Utils.seededRandom(graphicSeed), charPool);
         // A wardrobe with nothing in it at all (no NPCs.json, a magic level that
@@ -3889,7 +3889,7 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         if (!charName) return;
         // Big-character sprites (!$) have one slot; normal multi-character sheets use 0-7
         const isBigSprite = charName.includes('!$');
-        const charIdx     = (authored && towerWorld) ? (isBigSprite ? 0 : authored.index)
+        let charIdx       = (authored && towerWorld) ? (isBigSprite ? 0 : authored.index)
           : isBigSprite ? 0 : Math.floor(Utils.seededRandom(graphicSeed * 2) * 8);
 
         const evData = ev.event();
@@ -3907,9 +3907,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         // sprite the player sees, and so the conversation uses a sprite-
         // appropriate voice instead of a random name database.
         const npcEntry    = window.WorldGen?.NPCs?.[charName] || null;
-        const spriteBust  = npcEntry?.busts?.[charIdx] ?? npcEntry?.busts?.[0] ?? null;
-        const spriteDb    = npcEntry?.markovDB || null;
-        const spriteGender = npcEntry && npcEntry.Gender != null ? npcEntry.Gender : null;
+        let spriteBust    = npcEntry?.busts?.[charIdx] ?? npcEntry?.busts?.[0] ?? null;
+        let spriteDb      = npcEntry?.markovDB || null;
+        let spriteGender  = npcEntry && npcEntry.Gender != null ? npcEntry.Gender : null;
 
         let genName = "NPC";
         // A fungoid world does not name its people Marco. Every world is
@@ -3958,6 +3958,28 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
         const profile = ProceduralManager.registerProcCitizen(
           genName, ev, settlementGroup, procClassId,
           { spriteKey: charName, bustIndex: charIdx });
+        // A name already on the society's books is somebody already met, and a
+        // creature or an animal stays one: it walks out in a `creature: true`
+        // or `animal: true` sheet (its own, or one dealt to fit its class)
+        // rather than being repainted as whoever this slot would have been.
+        const beastSheet = profile
+          ? window.NPCCreature?.creatureSheetFor?.(profile, genName, !window.ProceduralInteriors?.isCurrent?.())
+          : null;
+        if (beastSheet && beastSheet !== charName && window.WorldGen?.NPCs?.[beastSheet]) {
+          const beastEntry = window.WorldGen.NPCs[beastSheet];
+          charName = beastSheet;
+          charIdx = profile.spriteKey === beastSheet ? (profile.bustIndex || 0) : 0;
+          evData.pages?.forEach(p => { if (p?.image) { p.image.characterName = charName; p.image.characterIndex = charIdx; } });
+          evData.characterName = charName;
+          evData.characterIndex = charIdx;
+          ev.setImage(charName, charIdx);
+          ev.refresh();
+          ev.setupPage();
+          SpawnManager.snapshotSpawn(ev);
+          spriteBust = beastEntry.busts?.[charIdx] ?? beastEntry.busts?.[0] ?? null;
+          spriteDb = beastEntry.markovDB || null;
+          spriteGender = beastEntry.Gender != null ? beastEntry.Gender : null;
+        }
         if (profile) {
           // Bind the chosen world sprite to the society profile so:
           //  - getBustForNPC (NPCEmpathize portrait) resolves the bust that

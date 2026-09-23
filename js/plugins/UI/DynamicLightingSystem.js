@@ -242,6 +242,29 @@
     // i18n-ignore-start  terrain feature names, not labels
     const CAVE_LIGHT_FEATURES = ['Torch', 'Mushroom', 'MushroomIce'];
     // i18n-ignore-end
+    // What a doorway lights the street with. Every door the tilesets declare
+    // (<DoorHouse:>, <DoorShop:>, <GarageDoor:>, a trade's own door...) is a
+    // terrain feature whose id names a door, so the lamp over it follows the
+    // same declaration the generators place the door from: a trade door added
+    // to a tileset tomorrow is lit without touching this file.
+    const DOOR_FEATURE_PATTERN = /Door/; // i18n-ignore: Features.json feature ids
+    const _doorIdCache = {};
+    function doorTileIdsFor(tilesetId) {
+        if (!tilesetId) return null;
+        if (_doorIdCache[tilesetId]) return _doorIdCache[tilesetId];
+        const ids = new Set();
+        const U = window.ProcGenUtils;
+        if (U && U.Cache && typeof U.Cache.getTilesetFeatures === 'function') {
+            const features = U.Cache.getTilesetFeatures(tilesetId) || {};
+            for (const name of Object.keys(features)) {
+                if (!DOOR_FEATURE_PATTERN.test(name)) continue;
+                for (const id of featureTileIdsFor(tilesetId, name)) ids.add(id);
+            }
+        }
+        _doorIdCache[tilesetId] = ids;
+        return ids;
+    }
+
     function isDeadWorldNow() {
         return !!(window.WorldManager &&
             (window.WorldManager.isEmptyWorld?.() || window.WorldManager.isDeathWorld?.()));
@@ -1150,6 +1173,9 @@
             this._cachedCaveDataRef = null;
             this._cachedCaveTilesetId = null;
             this._cachedCaveLights = null;
+            this._cachedDoorDataRef = null;
+            this._cachedDoorTilesetId = null;
+            this._cachedDoorLights = null;
             this._resizeCanvas();
         }
 
@@ -1618,6 +1644,32 @@
                     }
                 }
 
+                // --- Doorways ---
+                // A city street at night is lit by its doors as much as by its
+                // lamp posts: every door terrain feature keeps a warm lamp
+                // burning over its threshold, dark only in a dead world.
+                if (!deadWorld) {
+                    const doorTileIds = doorTileIdsFor(tilesetId);
+                    if (doorTileIds && doorTileIds.size > 0) {
+                        const twd = $gameMap.tileWidth();
+                        const oxd = $gameMap.displayX();
+                        const oyd = $gameMap.displayY();
+                        const minXd = Math.floor(oxd) - 2;
+                        const maxXd = Math.ceil(oxd + $gameMap.screenTileX()) + 2;
+                        const minYd = Math.floor(oyd) - 2;
+                        const maxYd = Math.ceil(oyd + $gameMap.screenTileY()) + 2;
+                        const doors = this._getDoorLightCoords(tilesetId, doorTileIds);
+                        for (let i = 0; i < doors.length; i++) {
+                            const d = doors[i];
+                            if (d.x < minXd || d.x > maxXd || d.y < minYd || d.y > maxYd) continue;
+                            const lx = ($gameMap.adjustX(d.x) + 0.5) * twd * s;
+                            const ly = ($gameMap.adjustY(d.y) + 0.5) * th * s;
+                            const flicker = this.getFlicker(d.x * 19 + d.y * 11);
+                            this.drawLightCircle(ctx, lx, ly, basePartyRadius * 0.9 * flicker, 0.95, 'door');
+                        }
+                    }
+                }
+
                 // --- Cave Torches & Glowing Mushrooms ---
                 // The cave generator scatters <Torch:> and <Mushroom:> terrain
                 // features across the floor from the biome feature list; here
@@ -1711,6 +1763,54 @@
             return coords;
         }
 
+        // One light per door. A door can be drawn as a block of tiles (the
+        // dungeon gate is 3x3, the garage 3x2), so the tiles are grouped into
+        // the doors they make up and each door is lit once, centred on its
+        // bottom row where it meets the street, rather than once per tile.
+        _getDoorLightCoords(tilesetId, doorTileIds) {
+            const map = $gameMap;
+            if (!map || !doorTileIds || doorTileIds.size === 0) return [];
+            const dataRef = map.data ? map.data() : null;
+            if (this._cachedDoorDataRef === dataRef && this._cachedDoorTilesetId === tilesetId && this._cachedDoorLights) {
+                return this._cachedDoorLights;
+            }
+            this._cachedDoorDataRef = dataRef;
+            this._cachedDoorTilesetId = tilesetId;
+            const mw = typeof map.width === 'function' ? map.width() : 0;
+            const mh = typeof map.height === 'function' ? map.height() : 0;
+            const isDoor = new Uint8Array(mw * mh);
+            for (let y = 0; y < mh; y++) {
+                for (let x = 0; x < mw; x++) {
+                    for (const layer of [3, 2]) {
+                        const tid = map.tileId(x, y, layer);
+                        if (tid !== 0 && doorTileIds.has(tid)) { isDoor[y * mw + x] = 1; break; }
+                    }
+                }
+            }
+            const coords = [];
+            const stack = [];
+            for (let i = 0; i < isDoor.length; i++) {
+                if (isDoor[i] !== 1) continue;
+                isDoor[i] = 2;
+                stack.push(i);
+                let minX = mw, maxX = -1, maxY = -1;
+                while (stack.length) {
+                    const j = stack.pop();
+                    const x = j % mw, y = (j - x) / mw;
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y > maxY) maxY = y;
+                    if (x > 0 && isDoor[j - 1] === 1) { isDoor[j - 1] = 2; stack.push(j - 1); }
+                    if (x < mw - 1 && isDoor[j + 1] === 1) { isDoor[j + 1] = 2; stack.push(j + 1); }
+                    if (y > 0 && isDoor[j - mw] === 1) { isDoor[j - mw] = 2; stack.push(j - mw); }
+                    if (y < mh - 1 && isDoor[j + mw] === 1) { isDoor[j + mw] = 2; stack.push(j + mw); }
+                }
+                coords.push({ x: (minX + maxX) / 2, y: maxY });
+            }
+            this._cachedDoorLights = coords;
+            return coords;
+        }
+
         _getCaveLightCoords(tilesetId) {
             const map = $gameMap;
             if (!map) return [];
@@ -1799,6 +1899,13 @@
                 grad.addColorStop(0.30, `rgba(120, 225, 200, ${0.80 * intensity})`);
                 grad.addColorStop(0.60, `rgba(70, 150, 160, ${0.45 * intensity})`);
                 grad.addColorStop(0.85, `rgba(35, 70, 90, ${0.18 * intensity})`);
+                grad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
+            } else if (type === 'door') {
+                // The amber of a porch lamp and a lit hallway behind the glass.
+                grad.addColorStop(0.0, `rgba(255, 225, 170, ${1.0 * intensity})`);
+                grad.addColorStop(0.30, `rgba(240, 200, 140, ${0.85 * intensity})`);
+                grad.addColorStop(0.60, `rgba(170, 125, 95, ${0.50 * intensity})`);
+                grad.addColorStop(0.85, `rgba(85, 60, 60, ${0.20 * intensity})`);
                 grad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
             } else if (type === 'torch') {
                 grad.addColorStop(0.0, `rgba(255, 245, 220, ${1.0 * intensity})`);

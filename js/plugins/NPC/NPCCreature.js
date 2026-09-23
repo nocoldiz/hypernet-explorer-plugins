@@ -62,6 +62,9 @@
  *                                 flags, the one authority on what a sheet is
  *   isCreatureSheet(spriteKey)
  *   sentientClassFor(key, seed)   a civilised class off that sheet's roster
+ *   creatureSheetFor(profile, seed, exterior)
+ *                                 the creature / animal sheet a creature
+ *                                 profile wears (its own, or one dealt)
  *   creatureWardrobe()            [{ spriteKey, archetype, busts, half }] to
  *                                 deal from, `half` being "creature"/"animal"
  *   spritesForArchetypes(keys)    walking sprites both archetypes support
@@ -567,6 +570,33 @@
     return pool[seedOf(seed) % pool.length];
   }
 
+  // The sheet a CREATURE profile wears, the other half of the same agreement:
+  // a profile that is a creature or an animal (flagged so, or holding one of
+  // the creature classes) always walks about in a `creature: true` or
+  // `animal: true` sheet. The one it already wears is kept when it is one;
+  // otherwise one is dealt off `seed` out of the wardrobe, a sheet whose own
+  // roster lists the profile's class first, then one of its archetype, then
+  // any. Answers null for a person, whose face is not this plugin's to deal.
+  function isCreatureIdentity(profile, name) {
+    if (!profile) return false;
+    if (name && isPlayerCharacterName(name)) return false;
+    return !!profile.isCreature || isNonSentientProfile(profile);
+  }
+
+  function creatureSheetFor(profile, seed, exterior = true) {
+    if (!isCreatureIdentity(profile)) return null;
+    if (isCreatureSheet(profile.spriteKey)) return profile.spriteKey;
+    const wardrobe = creatureWardrobe(exterior).filter((e) => npcData()[e.spriteKey]);
+    if (!wardrobe.length) return null;
+    const data = npcData();
+    const classId = Number(profile.assignedClassId) || 0;
+    const keys = archetypeKeysOf(profile);
+    const byClass = wardrobe.filter((e) => (data[e.spriteKey].classes || []).includes(classId));
+    const byArch = wardrobe.filter((e) => keys.includes(e.archetype));
+    const pool = byClass.length ? byClass : byArch.length ? byArch : wardrobe;
+    return pool[seedOf(seed) % pool.length].spriteKey;
+  }
+
   // ---------------------------------------------------------------------------
   // Minting
   // ---------------------------------------------------------------------------
@@ -866,7 +896,7 @@
     isCreatureProfile, isNonSentientClassId, isNonSentientProfile, isNonSentientActor,
     isNonSentientByName, isPlayerCharacterName,
     sheetHalf, isCreatureSheet, isAnimalSheet, isIndoorAnimal, animalFitsHere,
-    currentBiomeName, sentientClassFor,
+    currentBiomeName, sentientClassFor, isCreatureIdentity, creatureSheetFor,
     archetypeKeysOf, archetypeLabel,
     creatureWardrobe, spritesForArchetypes, spritePathFor, archetypePool,
     enemyForArchetypes, modelForArchetypes,

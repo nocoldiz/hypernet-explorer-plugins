@@ -1622,7 +1622,12 @@
           changed = true;
         }
       } else {
-        if (profile.isCreature) { profile.isCreature = false; changed = true; }
+        if (profile.isCreature) {
+          // A beast's anatomy does not follow it into a person's clothes.
+          profile.isCreature = false;
+          profile.archetype = entry.Archetype || "Humanoid"; // i18n-ignore: Archetypes.json id
+          changed = true;
+        }
         if (NC.isNonSentientClassId(profile.assignedClassId)) {
           // A person's sheet can never carry a creature class, so the one this
           // profile holds came from the roll and is replaced by a civilised
@@ -1905,12 +1910,6 @@
     const profile = $gameSystem._npcSociety?.[eventName];
     if (!profile || !ev) return;
 
-    // Whatever face this NPC ends up with, what it IS follows from that face
-    // and nothing else. Run before anything below reads profile.isCreature, and
-    // again after a map-designed sprite is pinned, since only then is the sheet
-    // it actually wears known.
-    SocietyRegistry.reconcileToSprite(eventName, profile);
-
     const evData      = ev.event();
     // A <Story> event keeps the face the author drew on it, always. In a world
     // whose seed is not the canon one every citizen is dealt a seeded visual
@@ -1943,6 +1942,23 @@
       || evData?.pages?.[0]?.image?.characterName || null;
     const hasAuthoredSprite = !replacedWorld && !!authoredSprite;
     const isMapDesigned = isStory || isLocal || isPinned || hasAuthoredSprite;
+    // A creature or an animal nobody drew by hand wears a `creature: true` or
+    // `animal: true` sheet, never a person's: when the one on its profile is a
+    // person's, one that fits its class is dealt before the face is read.
+    if (!isMapDesigned && !initSpec?.sprite) {
+      const exterior = !window.ProceduralInteriors?.isCurrent?.();
+      const beast = window.NPCCreature?.isCreatureIdentity?.(profile, eventName)
+        ? window.NPCCreature.creatureSheetFor(profile, eventName, exterior) : null;
+      if (beast && beast !== profile.spriteKey) {
+        profile.spriteKey = beast;
+        profile.bustIndex = 0;
+      }
+    }
+    // Whatever face this NPC ends up with, what it IS follows from that face
+    // and nothing else. Run before anything below reads profile.isCreature, and
+    // again after a map-designed sprite is pinned, since only then is the sheet
+    // it actually wears known.
+    SocietyRegistry.reconcileToSprite(eventName, profile);
     // A creature is dealt out of the Creatures/ and Animals/ halves of the same
     // catalogue as everybody else, so its sheet is normally found below like
     // any other. The exception is a monster world, where a Monsters/ sheet may

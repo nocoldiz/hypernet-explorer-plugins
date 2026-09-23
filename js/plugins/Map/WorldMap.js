@@ -721,7 +721,7 @@
     // Active quest objectives reduced to world tiles, one entry per tile. Every
     // marker's colour/icon comes from window.KanbanQuest (the single source for
     // "which quest is which colour" everywhere it's pinned - the board card, the
-    // in-world compass in WorldMapReturn.js, and this sheet); falling back to
+    // world-map plates in WorldMapReturn.js, and this sheet); falling back to
     // ProceduralQuests.questMarkers() directly keeps this sheet working even if
     // the kanban board plugin is ever missing.
     const WORLD_TILES = 256;

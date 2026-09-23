@@ -20,7 +20,7 @@
  * - Plugin commands for quest management
  * 
  * Plugin Commands:
- * - Add Quest: Creates a new quest in the To Do column
+ * - Add Quest: Creates a new quest in the In Progress column
  * - Update Quest: Adds an update to an existing quest
  * - Complete Quest: Moves a quest to the Done column
  * - Open Quest Log: Opens the Kanban quest board
@@ -44,7 +44,7 @@
  * 
  * @command addQuest
  * @text Add Quest
- * @desc Adds a new quest to the To Do column
+ * @desc Adds a new quest to the In Progress column
  * 
  * @arg questId
  * @text Quest ID
@@ -129,8 +129,8 @@
         return h >>> 0;
     }
 
-    // Marker identity: every quest that can be pinned on a map (the compass
-    // arrows in WorldMapReturn.js, the diamonds in WorldMap.js, this board's own
+    // Marker identity: every quest that can be pinned on a map (the plates
+    // in WorldMapReturn.js, the diamonds in WorldMap.js, this board's own
     // card) is coloured and iconed from its id alone, so the same quest always
     // reads the same everywhere and two different quests never collide. Neither
     // is stored on the quest record: deriving it from a hash means an old save,
@@ -366,13 +366,15 @@
         // `meta` is optional contract detail (giver, reward, terms, deadline,
         // difficulty, lore body) supplied by ProceduralQuestSystem. Hand-authored
         // quests pass nothing and simply render without those lines.
+        // A new quest is filed straight under In Progress, whether it came off
+        // the quest board or from an event, so the world map pins it at once.
         static addQuest(id, title, description, meta) {
             if (this._quests[id]) return false;
 
             this._quests[id] = {
                 id: id,
                 title: title,
-                column: 'todo',
+                column: 'inProgress',
                 color: NOTE_COLORS[this._colorIndex % NOTE_COLORS.length],
                 meta: meta || null,
                 updates: [{
@@ -382,7 +384,7 @@
             };
 
             this._colorIndex++;
-            this._questOrder.todo.push(id);
+            this._questOrder.inProgress.push(id);
 
             // Add notification
             NotificationManager.addNotification(T('Kanban.notify.newQuest', { title: title }), 'quest');
@@ -398,12 +400,12 @@
                 this._quests[id] = {
                     id: id,
                     title: '???',
-                    column: 'todo',
+                    column: 'inProgress',
                     color: NOTE_COLORS[this._colorIndex % NOTE_COLORS.length],
                     updates: []
                 };
                 this._colorIndex++;
-                this._questOrder.todo.push(id);
+                this._questOrder.inProgress.push(id);
                 quest = this._quests[id];
 
                 // Add notification for new mysterious quest
@@ -497,9 +499,9 @@
         }
 
         // Is this quest one the player is actively working on? The In Progress
-        // column is the player's own tracker (cards start in To Do and are moved
-        // by hand or by the first progress update), so other systems, the world
-        // map markers above all, use it to decide what to advertise.
+        // column is the player's own tracker (cards start there and can be parked
+        // in To Do by hand), so other systems, the world map markers above all,
+        // use it to decide what to advertise.
         static isInProgress(id) {
             const quest = this._quests[id];
             return !!quest && quest.column === 'inProgress';
@@ -1149,19 +1151,19 @@
 
     // The stable colour/icon a quest is pinned with everywhere it is pointed
     // to on a map: the board card, the world-map diamonds (WorldMap.js) and the
-    // in-world compass arrows (WorldMapReturn.js). Same id, same answer, always.
+    // world-map plates (WorldMapReturn.js). Same id, same answer, always.
     QuestManager.colorFor = markerColorFor;
     QuestManager.iconFor = markerIconFor;
 
     // Every quest the player is actively chasing, reduced to a world-map tile
     // (map 315 / vars 43-44 space) plus the colour/icon that identify it. This
-    // is the single feed every map/compass marker draws from:
+    // is the single feed every map marker draws from:
     //  - ProceduralQuestSystem's own questMarkers() supplies its (possibly
     //    multi-step) procedural contracts, already limited to the In Progress
     //    column by its own isTrackedOnBoard() gate;
     //  - any OTHER quest sitting In Progress on this board that carries its own
     //    meta.location (a hand-authored quest can set one via setMeta) is
-    //    picked up too, so the compass isn't procedural-quest-only.
+    //    picked up too, so the markers aren't procedural-quest-only.
     QuestManager.activeMarkers = function () {
         const out = [];
         const seen = new Set();

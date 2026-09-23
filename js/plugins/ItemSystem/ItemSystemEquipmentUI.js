@@ -994,52 +994,7 @@
 
         const className = actor.currentClass ? actor.currentClass().name : '';
 
-        // The totals read as a column strip: the label sits over its number, so
-        // a whole row of stats is scanned at a glance instead of eight
-        // label-then-value pairs. The four derived stats keep their full names,
-        // which is why they get a strip of their own underneath.
-        const sT = (k, def) => (t.short && t.short[k]) || def;
-        const vitalsList = [
-            { key: 'HP', label: sT('hp', 'HP'), val: actor.mhp, isBase: false },
-            { key: 'MP', label: sT('mp', 'MP'), val: actor.mmp, isBase: false }
-        ];
-        const totalStatsList = [
-            { key: 'STR', label: sT('str', 'STR'), val: actor.atk, isBase: true },
-            { key: 'CON', label: sT('con', 'CON'), val: actor.def, isBase: true },
-            { key: 'DEX', label: sT('dex', 'DEX'), val: actor.agi, isBase: true },
-            { key: 'INT', label: sT('int', 'INT'), val: actor.mat, isBase: true },
-            { key: 'WIS', label: sT('wis', 'WIS'), val: actor.mdf, isBase: true },
-            { key: 'PSI', label: sT('psi', 'PSI'), val: actor.luk, isBase: true }
-        ];
-        const custom = (typeof actor.calculateCustomStats === 'function') ? actor.calculateCustomStats() : null;
-        const derivedList = custom ? [
-            { key: 'ARCANE',       label: t.arcane,       val: custom.arcane },
-            { key: 'SUBSTANCE',    label: t.substance,    val: custom.substance },
-            { key: 'STEALTH',      label: t.stealth,      val: custom.stealth },
-            { key: 'INTIMIDATION', label: t.intimidation, val: custom.intimidation }
-        ] : [];
-
-        const statColumn = (st, unit) => {
-            let modHtml = '';
-            if (st.isBase) {
-                const mod = Math.floor((st.val - 10) / 2);
-                const modStr = mod >= 0 ? '+' + mod : String(mod);
-                modHtml = ` <span class="equip-stat-mod">(${modStr})</span>`;
-            }
-            return `
-                <div class="paperdoll-stat-col" data-stat="${st.key}">
-                    <span class="stat-label">${escapeHtml(String(st.label))}</span>
-                    <span class="stat-val">${st.val}${unit || ''}${modHtml}</span>
-                </div>`;
-        };
-
-        let totalStatsHtml =
-            `<div class="paperdoll-stats-strip paperdoll-stats-strip--vitals">${vitalsList.map(s => statColumn(s)).join('')}</div>` +
-            `<div class="paperdoll-stats-strip">${totalStatsList.map(s => statColumn(s)).join('')}</div>`;
-        if (derivedList.length) {
-            totalStatsHtml += `<div class="paperdoll-stats-strip paperdoll-stats-strip--derived">${derivedList.map(s => statColumn(s, '%')).join('')}</div>`;
-        }
-        totalStatsHtml = `<div class="paperdoll-stats-grid">${totalStatsHtml}</div>`;
+        const totalStatsHtml = this._paperdollStatsHTML(actor, this._previewActorFor(actor));
 
         return `
             <div class="paperdoll-container member-equip-container ${isActorActive ? 'active-actor' : ''}" data-member-idx="${memberIdx}">
@@ -1055,9 +1010,145 @@
                         ${bodyBoxesHtml}
                     </div>
                 </div>
-                ${dualPenalised ? `<div class="paperdoll-dual-warning">${escapeHtml(t.dualPenaltyWarning ? t.dualPenaltyWarning.replace('{n}', penaltyPct) : '')}</div>` : ''}
+                ${dualPenalised ? `<div class="paperdoll-dual-warning">${escapeHtml(t.dualPenaltyWarning ? t.dualPenaltyWarning.replace('{n}', penaltyPct).replace('{name}', actor.name()) : '')}</div>` : ''}
                 ${totalStatsHtml}
             </div>`;
+    };
+
+    // The piece being inspected, tried on the stand-in, when it is one the
+    // character is not already wearing: the strip under that character's slots
+    // then prints what the numbers WOULD become. Anything else previews nothing.
+    Scene_Equip.prototype._previewActorFor = function (actor) {
+        const drag = this._dragPreview;
+        if (drag) return (drag.actors && drag.actors.get(actor)) || null;
+        if (this._viewMode !== 'detail' || !actor || actor !== this._actor) return null;
+        const item = this._inspectedItem;
+        if (!item || actor.equips().includes(item)) return null;
+        const slot = (this._inspectedSlotIdx >= 0) ? this._inspectedSlotIdx
+            : (window.HandSlots && typeof window.HandSlots.targetSlotFor === 'function')
+                ? window.HandSlots.targetSlotFor(actor, item) : -1;
+        const fitSlot = slot >= 0 ? slot
+            : DataManager.isWeapon(item) ? 0
+            : Math.max(0, actor.equipSlots().indexOf(item.etypeId));
+        const stand = this.standInActor();
+        stand.forceChangeEquip(fitSlot, item);
+        return stand;
+    };
+
+    // One member's stats, under their slots: vitals and the six attributes on
+    // one row, the four derived stats under them. With a preview actor each
+    // column prints the new number and the change beside it, and a weapon's
+    // scaling stats read gold.
+    Scene_Equip.prototype._paperdollStatsHTML = function (actor, preview) {
+        const lang = ConfigManager.language || 'en';
+        const t    = i18n[lang] || i18n['en'];
+        const sT = (k, def) => (t.short && t.short[k]) || def;
+        const after = preview || actor;
+        const cBefore = (typeof actor.calculateCustomStats === 'function') ? actor.calculateCustomStats() : null;
+        const cAfter  = (preview && typeof preview.calculateCustomStats === 'function') ? preview.calculateCustomStats() : cBefore;
+
+        let scaling = new Set();
+        const item = preview ? this._inspectedItem : null;
+        if (item && DataManager.isWeapon(item) && typeof actor.getWeaponScalingType === 'function') {
+            const s = actor.getWeaponScalingType(item);
+            scaling = new Set(s === 'MIX' ? ['STR', 'DEX'] : s === 'ARC' ? ['STR', 'INT'] : s ? [s] : ['STR']);
+        }
+
+        const mainList = [
+            { key: 'HP',  label: sT('hp', 'HP'),   before: actor.mhp, after: after.mhp },
+            { key: 'MP',  label: sT('mp', 'MP'),   before: actor.mmp, after: after.mmp },
+            { key: 'STR', label: sT('str', 'STR'), before: actor.atk, after: after.atk, isBase: true },
+            { key: 'CON', label: sT('con', 'CON'), before: actor.def, after: after.def, isBase: true },
+            { key: 'DEX', label: sT('dex', 'DEX'), before: actor.agi, after: after.agi, isBase: true },
+            { key: 'INT', label: sT('int', 'INT'), before: actor.mat, after: after.mat, isBase: true },
+            { key: 'WIS', label: sT('wis', 'WIS'), before: actor.mdf, after: after.mdf, isBase: true },
+            { key: 'PSI', label: sT('psi', 'PSI'), before: actor.luk, after: after.luk, isBase: true }
+        ];
+        const derivedList = cBefore ? [
+            { key: 'ARCANE',       label: t.arcane,       before: cBefore.arcane,       after: cAfter.arcane },
+            { key: 'SUBSTANCE',    label: t.substance,    before: cBefore.substance,    after: cAfter.substance },
+            { key: 'STEALTH',      label: t.stealth,      before: cBefore.stealth,      after: cAfter.stealth },
+            { key: 'INTIMIDATION', label: t.intimidation, before: cBefore.intimidation, after: cAfter.intimidation }
+        ] : [];
+
+        const statColumn = (st, unit) => {
+            unit = unit || '';
+            let modHtml = '';
+            if (st.isBase) {
+                const mod = Math.floor((st.after - 10) / 2);
+                modHtml = ` <span class="equip-stat-mod">(${mod >= 0 ? '+' + mod : mod})</span>`;
+            }
+            const diff = st.after - st.before;
+            const diffHtml = diff
+                ? ` <span class="stat-diff ${diff > 0 ? 'positive' : 'negative'}">${diff > 0 ? '+' + diff : diff}${unit}</span>`
+                : '';
+            const cls = scaling.has(st.key) ? ' paperdoll-stat-col--scaling' : '';
+            return `
+                <div class="paperdoll-stat-col${cls}" data-stat="${st.key}">
+                    <span class="stat-label">${escapeHtml(String(st.label))}</span>
+                    <span class="stat-val">${st.after}${unit}${modHtml}${diffHtml}</span>
+                </div>`;
+        };
+
+        let html = `<div class="paperdoll-stats-strip">${mainList.map(s => statColumn(s)).join('')}</div>`;
+        if (derivedList.length) {
+            html += `<div class="paperdoll-stats-strip paperdoll-stats-strip--derived">${derivedList.map(s => statColumn(s, '%')).join('')}</div>`;
+        }
+        return `<div class="paperdoll-stats-grid${preview ? ' paperdoll-stats-grid--preview' : ''}">${html}</div>`;
+    };
+
+    // A piece held over a slot is tried on a copy of each character the drop
+    // would change: the one receiving it and, for a slot-to-slot move, the one
+    // it came from, who takes back whatever the target slot held. Null clears
+    // the preview. The copies live only while the cursor stays on that slot.
+    Scene_Equip.prototype._setDragPreview = function (memberIdx, slotId) {
+        const src = this._dragSource;
+        const item = this._draggedItem;
+        const key = (memberIdx === null || !item) ? '' : `${memberIdx}|${slotId}|${item.id}|${DataManager.isWeapon(item) ? 'w' : 'a'}`;
+        if ((this._dragPreview ? this._dragPreview.key : '') === key) return;
+        if (!key) {
+            this._dragPreview = null;
+        } else {
+            const members = this.partyMembers();
+            const target = members[memberIdx] || this._actor;
+            const actors = new Map();
+            const tryOn = (actor, slot, piece) => {
+                if (!actor) return null;
+                let copy = actors.get(actor);
+                if (!copy) { copy = JsonEx.makeDeepCopy(actor); actors.set(actor, copy); }
+                copy.forceChangeEquip(slot, piece);
+                return copy;
+            };
+            const displaced = target ? target.equips()[slotId] || null : null;
+            if (src && src.type === 'slot') {
+                const srcActor = members[src.memberIdx] || this._actor;
+                if (srcActor !== target || src.slotId !== slotId) {
+                    tryOn(srcActor, src.slotId, displaced);
+                    tryOn(target, slotId, item);
+                }
+            } else {
+                tryOn(target, slotId, item);
+            }
+            this._dragPreview = { key, actors };
+        }
+        this._syncPaperdollStats();
+    };
+
+    // Repaints only the strip of the character the detail page is about, so
+    // opening, stepping through and closing an inspect keeps it current
+    // without rebuilding the slots.
+    Scene_Equip.prototype._syncPaperdollStats = function () {
+        const container = document.getElementById('equip-container');
+        if (!container) return;
+        const members = this.partyMembers();
+        container.querySelectorAll('.paperdoll-container[data-member-idx]').forEach(box => {
+            const actor = members[parseInt(box.getAttribute('data-member-idx'), 10)];
+            const grid = box.querySelector('.paperdoll-stats-grid');
+            if (!actor || !grid) return;
+            const html = this._paperdollStatsHTML(actor, this._previewActorFor(actor));
+            if (grid.outerHTML !== html) grid.outerHTML = html;
+        });
+        this._bindStatTooltips();
     };
 
     Scene_Equip.prototype._buildPartyPaperdollsHTML = function () {
@@ -1147,108 +1238,49 @@
             tempActor.forceChangeEquip(targetSlot, item);
         }
 
-        const s1 = actor.getWeaponScalingType(item);
-        const getCodes = (s) => {
-            if (!s) return [];
-            if (s === 'MIX') return ['STR', 'DEX'];
-            if (s === 'ARC') return ['STR', 'INT'];
-            return [s];
-        };
-        const scalingCodes = new Set(getCodes(s1));
-        if (scalingCodes.size === 0 && DataManager.isWeapon(item)) scalingCodes.add('STR');
-
         const weaponProf = window.WeaponProficiency;
-        const codeGradeMap = {};
-        if (weaponProf && DataManager.isWeapon(item)) {
-            const grade = weaponProf.gradeFor(actor, item);
-            getCodes(s1).forEach(c => { codeGradeMap[c] = grade; });
-        }
-
         const sh = t.short || {};
         const S = (key, full) => sh[key] || full;
-        const cBefore = actor.calculateCustomStats();
-        const cAfter  = tempActor ? tempActor.calculateCustomStats() : cBefore;
-        const gridStats = [
-            { label: S('hp', t.hp),  code: null,  key: 'HP',  percent: false, valBefore: actor.mhp, valAfter: tempActor ? tempActor.mhp : actor.mhp },
-            { label: S('mp', t.mp),  code: null,  key: 'MP',  percent: false, valBefore: actor.mmp, valAfter: tempActor ? tempActor.mmp : actor.mmp },
-            { label: t.arcane, code: null, key: 'ARCANE', percent: true, valBefore: cBefore.arcane, valAfter: cAfter.arcane },
 
-            { label: S('str', t.str), code: 'STR', key: 'STR', percent: false, valBefore: actor.atk, valAfter: tempActor ? tempActor.atk : actor.atk },
-            { label: S('con', t.con), code: 'CON', key: 'CON', percent: false, valBefore: actor.def, valAfter: tempActor ? tempActor.def : actor.def },
-            { label: t.substance, code: null, key: 'SUBSTANCE', percent: true, valBefore: cBefore.substance, valAfter: cAfter.substance },
-
-            { label: S('int', t.int), code: 'INT', key: 'INT', percent: false, valBefore: actor.mat, valAfter: tempActor ? tempActor.mat : actor.mat },
-            { label: S('wis', t.wis), code: 'WIS', key: 'WIS', percent: false, valBefore: actor.mdf, valAfter: tempActor ? tempActor.mdf : actor.mdf },
-            { label: t.stealth, code: null, key: 'STEALTH', percent: true, valBefore: cBefore.stealth, valAfter: cAfter.stealth },
-
-            { label: S('dex', t.dex), code: 'DEX', key: 'DEX', percent: false, valBefore: actor.agi, valAfter: tempActor ? tempActor.agi : actor.agi },
-            { label: S('psi', t.psi), code: 'PSI', key: 'PSI', percent: false, valBefore: actor.luk, valAfter: tempActor ? tempActor.luk : actor.luk },
-            { label: t.intimidation, code: null, key: 'INTIMIDATION', percent: true, valBefore: cBefore.intimidation, valAfter: cAfter.intimidation }
-        ];
-
-        let statsGridHTML = '';
-        for (const stat of gridStats) {
-            const unit = stat.percent ? '%' : '';
-            const diff = stat.valAfter - stat.valBefore;
-            const diffHtml = diff > 0 ? `<span class="stat-diff positive">+${diff}${unit}</span>`
-                           : diff < 0 ? `<span class="stat-diff negative">${diff}${unit}</span>` : '';
-            const isScaling = !!(stat.code && scalingCodes.has(stat.code));
-            const grade     = isScaling ? codeGradeMap[stat.code] : null;
-            const labelCls  = isScaling ? 'inspect-spec-label stat-label stat-label--scaling' : 'inspect-spec-label stat-label';
-            const valCls    = isScaling ? 'stat-val stat-val--scaling' : 'stat-val';
-            const labelHtml = grade ? `${stat.label} <span class="stat-scaling-grade">(${grade})</span>` : stat.label;
-
-            let valBeforeFormatted = `${stat.valBefore}${unit}`;
-            let valAfterFormatted = `${stat.valAfter}${unit}`;
-            let modBonusHtml = '';
-
-            if (stat.code) {
-                const modBefore = Math.floor((stat.valBefore - 10) / 2);
-                const modBeforeStr = modBefore >= 0 ? '+' + modBefore : String(modBefore);
-                const modAfter = Math.floor((stat.valAfter - 10) / 2);
-                const modAfterStr = modAfter >= 0 ? '+' + modAfter : String(modAfter);
-                valBeforeFormatted = `${stat.valBefore} <span class="equip-stat-mod">(${modBeforeStr})</span>`;
-                valAfterFormatted = `${stat.valAfter} <span class="equip-stat-mod">(${modAfterStr})</span>`;
-                const modDiff = modAfter - modBefore;
-                if (modDiff !== 0) {
-                    modBonusHtml = `<span class="stat-diff equip-stat-diff ${modDiff > 0 ? 'positive' : 'negative'}">[${modDiff > 0 ? '+' + modDiff : modDiff} Mod]</span>`;
-                }
-            }
-
-            statsGridHTML += `
-                <div class="inspect-spec-row stat-row${isScaling ? ' stat-row--scaling' : ''}"${stat.key ? ` data-stat="${stat.key}"` : ''}>
-                    <span class="${labelCls}">${labelHtml}</span>
-                    <span class="inspect-spec-value stat-val-container">
-                        <span class="${valCls}">${valBeforeFormatted}</span>
-                        ${diff !== 0 ? `➔ <span class="stat-val-new">${valAfterFormatted}</span>` : ''}
-                        ${stat.code ? modBonusHtml : diffHtml}
-                    </span>
-                </div>`;
-        }
-
-        // What the piece is worth in damage, under the grid.
+        // What the piece is worth in damage, as tiles beside the preview.
         //
-        // The grid answers "what happens to my stats", which for a weapon is not
-        // the question anyone is asking: the catalogue's ATK column runs from 0 to
-        // 4 and the scaling grade above it is a letter, so two swords could read
-        // identically and hit for very different numbers. These two rows say it
-        // outright. BASE is the weapon's own attack power, and next to it what it
-        // is actually worth in these hands once proficiency has multiplied it
-        // (WeaponProficiency), which is the whole reason an untrained weapon
-        // disappoints. DAMAGE is what a basic attack with it would land, taken
-        // from window.SkillDetails so it is the same number the skill cards print
-        // and is directly comparable with them.
-        let dmgHtml = '';
+        // The stat changes it would make are printed on the right page, under
+        // the character's own slots (_paperdollStatsHTML), so this page keeps to
+        // the piece itself. For a weapon that is the question anyone is asking:
+        // the catalogue's ATK column runs from 0 to 4, so two swords could read
+        // identically and hit for very different numbers. BASE is the weapon's
+        // own attack power, and next to it what it is actually worth in these
+        // hands once proficiency has multiplied it (WeaponProficiency), which is
+        // the whole reason an untrained weapon disappoints. DAMAGE is what a
+        // basic attack with it would land, taken from window.SkillDetails so it
+        // is the same number the skill cards print and is directly comparable.
+        const isWeapon = DataManager.isWeapon(item);
+        const factTile = (label, valueHtml, extraCls) => `
+                <div class="equip-fact${extraCls ? ' ' + extraCls : ''}">
+                    <span class="equip-fact-label">${label}</span>
+                    <span class="equip-fact-value">${valueHtml}</span>
+                </div>`;
+        let damageTiles = '';
         const details = window.SkillDetails;
         const attackSkill = (typeof $dataSkills !== 'undefined' && $dataSkills)
             ? $dataSkills[actor.attackSkillId ? actor.attackSkillId() : 1] : null;
-        const dmgRow = (label, valueHtml) => `
-                <div class="inspect-spec-row stat-row">
-                    <span class="inspect-spec-label stat-label">${label}</span>
-                    <span class="inspect-spec-value stat-val-container">${valueHtml}</span>
-                </div>`;
 
-        if (DataManager.isWeapon(item)) {
+        // Armour has no attack of its own, so a damage figure under it only
+        // repeats what the character already hits for. Weapons only.
+        if (isWeapon && details && typeof details.damageFor === 'function' && attackSkill) {
+            const dmgBefore = details.damageFor(attackSkill, actor);
+            const dmgAfter = tempActor ? details.damageFor(attackSkill, tempActor) : dmgBefore;
+            if (dmgBefore !== null || dmgAfter !== null) {
+                const shown = dmgAfter !== null ? dmgAfter : dmgBefore;
+                let valueHtml = `<span class="stat-val">${shown}</span>`;
+                if (dmgBefore !== null && dmgAfter !== null && dmgAfter !== dmgBefore) {
+                    const delta = dmgAfter - dmgBefore;
+                    valueHtml += ` <span class="stat-diff ${delta > 0 ? 'positive' : 'negative'}">${delta > 0 ? '+' + delta : delta}</span>`;
+                }
+                damageTiles += factTile(T('Equip.damage'), valueHtml, 'equip-fact--headline');
+            }
+        }
+        if (isWeapon) {
             // params index 2 is ATK, the engine's own order.
             const basePower = (item.params && item.params[2]) || 0;
             const mult = (weaponProf && typeof weaponProf.multiplier === 'function')
@@ -1259,64 +1291,46 @@
                 const cls = inHand > basePower ? 'positive' : 'negative';
                 powerHtml += ` ➔ <span class="stat-val-new ${cls}">${inHand}</span>`;
             }
-            dmgHtml += dmgRow(T('Equip.basePower'), powerHtml);
+            damageTiles += factTile(T('Equip.basePower'), powerHtml);
         }
 
-        // Armour has no attack of its own, so a damage figure under it only
-        // repeats what the character already hits for. Weapons only.
-        if (DataManager.isWeapon(item) && details && typeof details.damageFor === 'function' && attackSkill) {
-            const dmgBefore = details.damageFor(attackSkill, actor);
-            const dmgAfter = tempActor ? details.damageFor(attackSkill, tempActor) : dmgBefore;
-            if (dmgBefore !== null || dmgAfter !== null) {
-                const shown = dmgAfter !== null ? dmgAfter : dmgBefore;
-                let valueHtml = `<span class="stat-val">${dmgBefore !== null ? dmgBefore : shown}</span>`;
-                if (dmgBefore !== null && dmgAfter !== null && dmgAfter !== dmgBefore) {
-                    const cls = dmgAfter > dmgBefore ? 'positive' : 'negative';
-                    const delta = dmgAfter - dmgBefore;
-                    valueHtml += ` ➔ <span class="stat-val-new">${dmgAfter}</span>` +
-                        ` <span class="stat-diff ${cls}">${delta > 0 ? '+' + delta : delta}</span>`;
-                }
-                dmgHtml += dmgRow(T('Equip.damage'), valueHtml);
-            }
+        let typeTiles = '';
+        const wtype = isWeapon ? (($dataSystem.weaponTypes || [])[item.wtypeId] || '') : '';
+        if (wtype) {
+            typeTiles += factTile(T('Equip.weaponType'), escapeHtml(String(wtype).trim()));
         }
-        if (dmgHtml) {
-            dmgHtml = `<div class="inspect-spec-grid stats-grid equip-damage-block">${dmgHtml}</div>`;
-        }
-
-        let dtHtml = '';
         const dt = (item.meta && item.meta.DamageType) ||
             (item.note && (item.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
         if (dt) {
-            dtHtml += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.damageType')}:</span> <strong>${escapeHtml(String(dt).trim())}</strong></div>`;
+            typeTiles += factTile(T('Equip.damageType'), escapeHtml(String(dt).trim()));
         }
-        const wtype = DataManager.isWeapon(item) ? (($dataSystem.weaponTypes || [])[item.wtypeId] || '') : '';
-        if (wtype) {
-            dtHtml += `<div class="equip-damage-type"><span class="equip-damage-type-label">${T('Equip.weaponType')}:</span> <strong>${escapeHtml(String(wtype).trim())}</strong></div>`;
-        }
+
+        let factsHtml = '';
+        if (damageTiles) factsHtml += `<div class="equip-facts equip-damage-block">${damageTiles}</div>`;
+        if (typeTiles)   factsHtml += `<div class="equip-facts">${typeTiles}</div>`;
 
         // The piece's own numbers and traits, the same two sections the backpack
         // card prints, so a player never has to leave this screen to read them.
-        // The grid above only shows the net change against what is worn now,
-        // which hides what the piece itself carries. Trait wording comes from
-        // ItemSystemUtils.traitLines, the one table both screens share.
-        let propsHtml = '';
+        // Trait wording comes from ItemSystemUtils.traitLines, the one table
+        // both screens share.
+        let paramsHtml = '';
         const paramNames = [S('hp', t.hp), S('mp', t.mp), S('str', t.str), S('con', t.con),
             S('int', t.int), S('wis', t.wis), S('dex', t.dex), S('psi', t.psi)];
-        const paramRows = (item.params || []).map((val, idx) => {
+        const paramChips = (item.params || []).map((val, idx) => {
             if (!val) return '';
             const cls = val > 0 ? 'positive' : 'negative';
-            return dmgRow(paramNames[idx] || T('Inventory.spec.stat'),
-                `<span class="stat-diff ${cls}">${val > 0 ? '+' + val : val}</span>`);
+            return `<span class="equip-param-chip"><span class="equip-param-name">${paramNames[idx] || T('Inventory.spec.stat')}</span>`
+                + `<span class="stat-diff ${cls}">${val > 0 ? '+' + val : val}</span></span>`;
         }).join('');
-        if (paramRows) {
-            propsHtml += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`
-                + `<div class="inspect-spec-grid stats-grid equip-params-block">${paramRows}</div>`;
+        if (paramChips) {
+            paramsHtml = `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`
+                + `<div class="equip-params-block">${paramChips}</div>`;
         }
+        let traitsHtml = '';
         const traitList = (window.ItemSystemUtils && typeof window.ItemSystemUtils.traitLines === 'function')
             ? window.ItemSystemUtils.traitLines(item) : [];
         if (traitList.length) {
-            propsHtml += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`
-                + `<div class="equip-traits-block">${traitList.map(line => `<div class="inspect-bullet-item">${line}</div>`).join('')}</div>`;
+            traitsHtml = `<div class="equip-traits-block">${traitList.map(line => `<div class="inspect-bullet-item">${line}</div>`).join('')}</div>`;
         }
 
         let descHtml = '';
@@ -1346,12 +1360,13 @@
                     <div class="detail-preview-box">
                         <canvas id="weapon-preview-canvas-inspect" width="220" height="200"></canvas>
                     </div>
-                    <div class="inspect-spec-grid stats-grid stats-grid--2col equip-stats-col detail-stats-side">${statsGridHTML}</div>
+                    <div class="detail-facts-side">
+                        ${factsHtml}
+                        ${paramsHtml}
+                    </div>
                 </div>
                 <div class="bottom-stats-block">
-                    ${dmgHtml}
-                    ${dtHtml}
-                    ${propsHtml}
+                    ${traitsHtml}
                     <div class="equip-lore-col">
                         ${descHtml}
                         ${loreHtml}
@@ -1577,6 +1592,7 @@
         if (!rightArea) return;
         this.cleanup3DWeaponPreview();
         rightArea.innerHTML = this._buildRightPageHTML();
+        this._syncPaperdollStats();
         if (this._viewMode === 'detail') {
             this.init3DWeaponPreview();
             this._bindStatTooltips();
@@ -1698,18 +1714,24 @@
                 if (canDrop) {
                     if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
                     slotEl.classList.add('drag-over');
+                    this._setDragPreview(memberIdx, slotId);
                 } else {
                     if (e.dataTransfer) e.dataTransfer.dropEffect = 'none';
+                    this._setDragPreview(null);
                 }
             });
 
-            slotEl.addEventListener('dragleave', () => {
+            slotEl.addEventListener('dragleave', (e) => {
+                // Moving onto the slot's own icon or name is still over the slot.
+                if (e && e.relatedTarget && slotEl.contains(e.relatedTarget)) return;
                 slotEl.classList.remove('drag-over');
+                this._setDragPreview(null);
             });
 
             slotEl.addEventListener('drop', (e) => {
                 e.preventDefault();
                 slotEl.classList.remove('drag-over');
+                this._setDragPreview(null);
                 if (this._dragSource && this._dragSource.type === 'slot') {
                     this.executeTransferEquip(this._dragSource.memberIdx, this._dragSource.slotId, memberIdx, slotId);
                     this._refreshDOM();
@@ -1779,6 +1801,7 @@
                     this._clearSlotHighlights();
                     this._draggedItem = null;
                     this._dragSource = null;
+                    this._setDragPreview(null);
                 });
             }
         });
@@ -1868,6 +1891,7 @@
                     this._clearSlotHighlights();
                     this._draggedItem = null;
                     this._dragSource = null;
+                    this._setDragPreview(null);
                 });
 
                 card.addEventListener('click', () => {
@@ -1909,7 +1933,9 @@
     Scene_Equip.prototype._bindStatTooltips = function () {
         const container = document.getElementById('equip-container');
         if (!container) return;
-        container.querySelectorAll('.stat-row[data-stat]').forEach(row => {
+        container.querySelectorAll('.stat-row[data-stat], .paperdoll-stat-col[data-stat]').forEach(row => {
+            if (row.getAttribute('data-tip-bound')) return;
+            row.setAttribute('data-tip-bound', '1');
             const key   = row.getAttribute('data-stat');
             const label = ((row.querySelector('.stat-label') || {}).textContent || key).trim();
             row.addEventListener('mousemove',  (e) => showStatTooltip(e, key, label));

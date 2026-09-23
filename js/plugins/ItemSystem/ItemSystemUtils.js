@@ -1207,7 +1207,7 @@
       else if (tr.code === 13) { const s = $dataStates[did]; if (s && s.name) desc = T('Inventory.trait.susceptibility', { state: s.name, pct: Math.round(val * 100) }); }
       else if (tr.code === 14) { const s = $dataStates[did]; if (s && s.name) desc = T('Inventory.trait.resistState', { state: s.name }); }
       else if (tr.code === 21) desc = T('Inventory.trait.paramRate', { param: getParamName(did), pct: Math.round(val * 100) });
-      else if (tr.code === 22) { const exN = T.list('Inventory.xparam'); desc = T('Inventory.trait.xparamLine', { name: exN[did] || T('Inventory.trait.specialStat'), value: `${val >= 0 ? '+' : ''}${Math.round(val * 100)}` }); }
+      else if (tr.code === 22) { if (!val) return; const exN = T.list('Inventory.xparam'); desc = T('Inventory.trait.xparamLine', { name: exN[did] || T('Inventory.trait.specialStat'), value: `${val >= 0 ? '+' : ''}${Math.round(val * 100)}` }); }
       else if (tr.code === 23) { const spN = T.list('Inventory.sparam'); desc = T('Inventory.trait.sparamLine', { name: spN[did] || T('Inventory.trait.specialProperty'), pct: Math.round(val * 100) }); }
       else if (tr.code === 31) { const el = $dataSystem.elements[did]; desc = T('Inventory.trait.attackElement', { element: el || T('Inventory.trait.physicalFallback') }); }
       else if (tr.code === 32) { const s = $dataStates[did]; if (s && s.name) desc = T('Inventory.trait.attackState', { state: s.name, pct: Math.round(val * 100) }); }

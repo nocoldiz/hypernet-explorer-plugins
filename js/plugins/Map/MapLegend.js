@@ -5,7 +5,7 @@
  *
  * @help MapLegend.js
  *
- * The one sheet of paper the map screen pins at its top middle. It used
+ * The one sheet of paper the map screen pins in its bottom right corner. It used
  * to live inside CharacterCreation.js as a black Window_Base panel listing the
  * story mode's controls; it is its own plugin now and it is drawn as
  * parchment. It carries two things: the notices, and the controls list.
@@ -29,8 +29,9 @@
  * no sheet and no fold key: H is the help menu again.
  *
  * The notices beside it answer to their own setting, ConfigManager.showMapNotices,
- * which has three states: "first" reads a tip once and never again, "always"
- * reads it every time the party stands there, "off" reads none. It is on
+ * which has three states: "first" opens a map's tips the first time the party
+ * visits it and collapses them on every visit after, "always" opens them on
+ * every arrival, "off" reads none. It is on
  * ("first") from the first game on, it is offered on the initial settings page
  * of character creation, it has a row of its own in Options > Gameplay >
  * Exploration, and Bubba's "Show/hide tips" entry steps through the same three.
@@ -45,10 +46,12 @@
  * ---------------------------------------------------------------------------
  * When the sheet exists at all
  * ---------------------------------------------------------------------------
- * The notices are displayed only in story mode as collapsed with key to open,
- * and that press opens the NOTICE alone: the command list keeps its own fold,
- * so the button that reads a zone never pins the whole sheet up as well,
- * written in Bubba's voice. Outside story mode, map tooltips are not displayed.
+ * The notices are displayed only in story mode, written in Bubba's voice. They
+ * open the first time the party visits a map; on every visit after they are
+ * collapsed to their title and H (L2 on a pad) opens them. That press opens
+ * the NOTICE alone: the command list keeps its own fold, so the button that
+ * reads a zone never pins the whole sheet up as well. Outside story mode, map
+ * tooltips are not displayed.
  *
  * ---------------------------------------------------------------------------
  * What the sheet shows
@@ -497,19 +500,11 @@
     noticeWatch.showing = null;
   }
 
-  // The tip the sheet is allowed to draw under the current setting.
+  // The tip the sheet is allowed to draw under the current setting. A tip
+  // already read is still drawn: "first" and "always" differ in whether it
+  // opens on arrival (see updateArrival), not in whether it is there to reopen.
   function allowedNotice(notice) {
-    if (!storyMode() || !notice) {
-      if (!notice) noticeWatch.showing = null;
-      return null;
-    }
-    const mode = noticesMode();
-    if (mode === "off") {
-      noticeWatch.showing = null;
-      return null;
-    }
-    if (mode === "always") { noticeWatch.showing = notice.key; return notice; }
-    if (noticeSeen()[notice.key] && noticeWatch.showing !== notice.key) {
+    if (!storyMode() || !notice || noticesMode() === "off") {
       noticeWatch.showing = null;
       return null;
     }
@@ -799,10 +794,39 @@
   // zone, the info button opens what the place says and NOTHING else: opening
   // the controls list off the same press would make the button that reads a
   // notice in the story mode the button that pins up the whole command sheet
-  // everywhere else. A notice opens collapsed, as its title alone.
+  // everywhere else. Collapsed, a notice is its title alone; updateArrival
+  // below decides which way it stands when the party reaches a map.
   function isNoticeFolded() {
     if (!$gameSystem) return true;
     return $gameSystem._mapLegendNoticeFolded !== false;
+  }
+
+  // In the story mode a map's notices open the first time the party arrives
+  // on it and are collapsed to their title on every visit after, where H or
+  // L2 opens them again ("always" opens them on every arrival). The places
+  // are keyed the way the start place is, a generated map by its world
+  // square, and the last one arrived on is kept on $gameSystem too, so a
+  // menu, a battle or a load coming back to the same map is not an arrival.
+  function placeKey(place) {
+    if (!place) return "";
+    return place.world ? place.mapId + "@" + place.world.x + "," + place.world.y : String(place.mapId);
+  }
+
+  function visitedPlaces() {
+    if (!$gameSystem) return {};
+    if (!$gameSystem._mapLegendVisited) $gameSystem._mapLegendVisited = {};
+    return $gameSystem._mapLegendVisited;
+  }
+
+  function updateArrival() {
+    if (!$gameSystem || !storyMode()) return;
+    const key = placeKey(currentPlace());
+    if (!key || key === $gameSystem._mapLegendLastPlace) return;
+    $gameSystem._mapLegendLastPlace = key;
+    const visited = visitedPlaces();
+    const first = !visited[key];
+    visited[key] = true;
+    $gameSystem._mapLegendNoticeFolded = !(first || noticesMode() === "always");
   }
 
   // Which of the two the fold button is holding right now: the notice while
@@ -898,14 +922,34 @@
   // The rules themselves live in css/theme.css under "The map legend"; nothing
   // here builds a stylesheet at runtime.
 
-  // Two panels, not one sheet: what the place says stands at the top middle
+  // Two panels, not one sheet: what the place says stands in the bottom right
   // corner where the party reads it, and the controls list is its own
   // window down the left edge, which is where a list that long can stand
   // without covering the map the notice is about.
   const SHEET_ID = "map-legend";
   const CONTROLS_ID = "map-legend-controls";
-  const SHEET_WIDTH = 336;   // game pixels
+  const SHEET_WIDTH = 384;   // game pixels, the widest the notice is drawn
+  const SHEET_MIN_WIDTH = 240; // game pixels, the narrowest it is squeezed to
   const SHEET_MARGIN = 16;   // game pixels, from the corner it is pinned to
+  const BAR_GAP = 8;         // game pixels kept between the notice and the quick bar
+  // The map quick bar (ItemSystemHotbar: nine 52px slots, 6px apart), centred on
+  // the bottom edge. Reserved even while it is hidden, so the notice never has
+  // to jump sideways the moment the bar comes up.
+  const QUICKBAR_WIDTH = 9 * 52 + 8 * 6;
+
+  // How wide the notice may stand in the bottom right corner without reaching
+  // the quick bar: the room between the canvas's right margin and the right
+  // edge of the widest bar on screen, in game pixels.
+  function noticeWidth(m) {
+    let barRight = m.cx + (QUICKBAR_WIDTH / 2) * m.sx;
+    // A hidden bar measures zero wide, so only the bars on screen count.
+    document.querySelectorAll(".hotbar-row").forEach((bar) => {
+      const r = bar.getBoundingClientRect();
+      if (r.width && r.right > barRight) barRight = r.right;
+    });
+    const room = (m.right - barRight) / m.sx - SHEET_MARGIN - BAR_GAP;
+    return Math.max(SHEET_MIN_WIDTH, Math.min(SHEET_WIDTH, Math.floor(room)));
+  }
 
   function canvasMetrics() {
     const canvas = document.getElementById("gameCanvas");
@@ -990,7 +1034,7 @@
     draw(notice, rows, state) {
       const folded = !!state.folded;
 
-      // The notice, top right. Folded it is its title alone, and with nothing
+      // The notice, bottom right. Folded it is its title alone, and with nothing
       // to say the panel is off the screen rather than standing empty.
       // A plain string rather than JSON.stringify: this runs every frame the
       // party is walking, and the notice is four fields.
@@ -1109,9 +1153,8 @@
       }
     }
 
-    // The notice is centred on the canvas and hung from its top edge, so a
-    // folded sheet no wider than its own title still sits under the middle of
-    // the screen; the list stays pinned by its left edge.
+    // The notice is pinned by its bottom right corner, as wide as the room
+    // beside the quick bar allows; the list stays pinned by its left edge.
     // Where the canvas actually sits on the page is measured, not styled, so
     // the four numbers are handed to the stylesheet as custom properties and
     // the rule in theme.css does the drawing.
@@ -1122,9 +1165,11 @@
       const m = canvasMetrics();
       if (!m) return;
       this._needsPosition = false;
-      // The notice hangs off the canvas's middle, the list off its left edge
-      // and off the floor: the party HUD owns the top left corner, and a list
-      // this long has to grow upwards to stay clear of it.
+      // The notice stands in the bottom right corner, the list off the left
+      // edge, both grown up from the floor: the party HUD owns the top left
+      // corner and the toasts the top right one.
+      const width = noticeWidth(m);
+      if (this._el) this._el.style.setProperty("--mlg-width", width + "px");
       for (const el of [this._el, this._ctl]) {
         if (!el) continue;
         el.style.setProperty("--mlg-right", (window.innerWidth - m.right + SHEET_MARGIN * m.sx) + "px");
@@ -1213,6 +1258,7 @@
       return;
     }
     updateTooltipWatch();
+    updateArrival();
     readFoldKey();
     const notice = noticesShown() ? allowedNotice(resolveNotice()) : null;
     noticeOnScreen = !!notice;
@@ -1315,6 +1361,9 @@
     setNoticesShown,
     toggleNotices,
     isNoticeFolded,
+    placeKey,
+    visitedPlaces,
+    updateArrival,
     noticeWatch,
     noticeSeen,
     markNoticeSeen,

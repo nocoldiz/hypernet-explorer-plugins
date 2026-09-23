@@ -205,20 +205,51 @@
     const READING_FUN = 20;
     const READING_MEMORY = 500;
 
+    // It also teaches: the first reading of any one thing pays the party a few
+    // Knowledge points, a Raman analysis of it pays more (RamanSpectroscopy).
+    // A bookcase is not one thing but every book on it, so each title on the
+    // shelf is its own reading. Unlike the Fun this log is never trimmed: a
+    // forgotten reading would be KP that could be farmed back.
+    // How much is rolled off the reading's own key, so every statue, fossil or
+    // book is worth its own fixed amount inside the range.
+    const READING_KNOWLEDGE_MIN = 1;
+    const READING_KNOWLEDGE_MAX = 4;
+
+    function knowledgeForKey(key, min, max) {
+        let h = 2166136261;
+        for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+        return min + ((h >>> 0) % (max - min + 1));
+    }
+
     // What identifies the thing being read: the event it hangs on where there is
     // one, and otherwise where the reader is standing - which is what the text
     // itself is seeded off, so the key changes exactly when the reading does.
-    function readingKey(kind, id) {
+    // The shared procedural map reuses one map id and layout everywhere, so
+    // there the world square is part of the address. `part` tells apart the
+    // several readings one object holds (the books on a shelf).
+    function readingKey(kind, id, part) {
         const mapId = $gameMap ? $gameMap.mapId() : 0;
-        if (id !== null && id !== undefined && id !== "") return `${kind}:${mapId}:${id}`;
-        const x = $gamePlayer ? $gamePlayer.x : 0;
-        const y = $gamePlayer ? $gamePlayer.y : 0;
-        return `${kind}:${mapId}:${x},${y}`;
+        let place = String(mapId);
+        const wmt = window.WorldMapTransfer;
+        if (wmt && mapId === wmt.procMapId && typeof wmt.currentWorldCoords === "function") {
+            const wc = wmt.currentWorldCoords();
+            if (wc) place += `@${wc.x},${wc.y}`;
+        }
+        let where;
+        if (id !== null && id !== undefined && id !== "") {
+            where = String(id);
+        } else {
+            const x = $gamePlayer ? $gamePlayer.x : 0;
+            const y = $gamePlayer ? $gamePlayer.y : 0;
+            where = `${x},${y}`;
+        }
+        const suffix = (part !== null && part !== undefined && part !== "") ? `#${part}` : "";
+        return `${kind}:${place}:${where}${suffix}`;
     }
 
-    function payReadingFun(kind, eventId) {
+    function payReadingFun(kind, eventId, part) {
         if (!$gameSystem || !$gameParty) return;
-        const key = readingKey(kind, eventId);
+        const key = readingKey(kind, eventId, part);
         const log = ($gameSystem._readFunLog = $gameSystem._readFunLog || []);
         if (log.includes(key)) return;
         log.push(key);
@@ -230,6 +261,27 @@
         try {
             if (window.ParchmentToast) window.ParchmentToast.need("leisure", READING_FUN);  // i18n-ignore  need id
         } catch (e) { /* the Fun is paid whether or not it is announced */ }
+    }
+
+    function payReadingKnowledge(kind, eventId, part) {
+        if (!$gameSystem || typeof $gameSystem.addKnowledge !== "function") return;
+        const key = readingKey(kind, eventId, part);
+        const log = ($gameSystem._readKnowledgeLog = $gameSystem._readKnowledgeLog || {});
+        if (log[key]) return;
+        log[key] = true;
+        const kp = knowledgeForKey(key, READING_KNOWLEDGE_MIN, READING_KNOWLEDGE_MAX);
+        $gameSystem.addKnowledge(kp);
+        try {
+            if (window.ParchmentToast) {
+                window.ParchmentToast.reward({ knowledge: kp, title: T('ConvBooks.knowledgeTitle') });
+            }
+        } catch (e) { /* the KP is paid whether or not it is announced */ }
+    }
+
+    // A reading: the Fun and the Knowledge, each paid once per thing.
+    function payReading(kind, eventId, part) {
+        payReadingFun(kind, eventId, part);
+        payReadingKnowledge(kind, eventId, part);
     }
 
     let _onMessageComplete = null;
@@ -767,7 +819,7 @@ function createSeededRNG(eventId = null) {
         const titleLine = `\\C[4]"${book.title}"\\C[0] \\C[3]by ${book.author}.\\C[0]`;
         const messageText = `${titleLine}\n${book.description}`;
         showPaged(messageText, '');
-        payReadingFun("book", eventId);  // i18n-ignore  reading-log id
+        payReading("book", eventId, book.title);  // i18n-ignore  reading-log id
     }
 
     function hasRamanProbe() {
@@ -832,7 +884,7 @@ function createSeededRNG(eventId = null) {
                     const title = `\\I[${item.iconIndex}]\\C[4]${item.name}.\\C[0]`;
                     const desc = item.description || '';
                     const text = desc ? `${title}\n${desc}` : title;
-                    payReadingFun("book", eventId);
+                    payReading("book", eventId, `item${item.id}`);  // i18n-ignore  reading-log id
                     showPaged(text, '', () => {
                         interactItemBook(placeKey, eventId, item, isPlaced);
                     });
@@ -868,7 +920,7 @@ function createSeededRNG(eventId = null) {
             ? `Hai ottenuto \\I[${item.iconIndex}]\\C[4]${item.name}\\C[0]!`
             : `Obtained \\I[${item.iconIndex}]\\C[4]${item.name}\\C[0]!`;
         showPaged(msg, '');
-        payReadingFun("book", eventId);
+        payReadingFun("book", eventId, `item${item.id}`);  // i18n-ignore  reading-log id
     }
 
     function handlePutBookMenu(placeKey, eventId, hasItemBook) {
@@ -1018,7 +1070,7 @@ function createSeededRNG(eventId = null) {
         const random = createSeededRNG(eventId);
         const description = generateStatueDescription(random, customSubject);
         showPaged(description, "\\C[6]");
-        payReadingFun("statue", eventId);  // i18n-ignore  reading-log id
+        payReading("statue", eventId);  // i18n-ignore  reading-log id
     }
     
     // Core function to display a painting description with seeded randomness
@@ -1026,7 +1078,7 @@ function createSeededRNG(eventId = null) {
         const random = createSeededRNG(eventId);
         const description = generatePaintingDescription(random, customSubject);
         showPaged(description, "\\C[5]");
-        payReadingFun("painting", eventId);  // i18n-ignore  reading-log id
+        payReading("painting", eventId);  // i18n-ignore  reading-log id
     }
 
     // Core function to display a mask description with seeded randomness
@@ -1034,7 +1086,7 @@ function createSeededRNG(eventId = null) {
         const random = createSeededRNG(eventId);
         const description = generateMaskDescription(random, customSubject);
         showPaged(description, "\\C[2]");
-        payReadingFun("mask", eventId);  // i18n-ignore  reading-log id
+        payReading("mask", eventId);  // i18n-ignore  reading-log id
     }
 
 // Generate a deterministic mask description
@@ -1342,7 +1394,7 @@ function generatePaintingDescription(random = Math.random, customSubject = "") {
         const random = createSeededRNG(eventId);
         const desc = generateFossilDescription(random, fossilType);
         showPaged("\\C[6][ FOSSIL SPECIMEN ]\\C[0]\n" + desc, '');
-        payReadingFun("fossil", eventId);  // i18n-ignore  reading-log id
+        payReading("fossil", eventId);  // i18n-ignore  reading-log id
     }
 
     // Look / Analyze / Cancel. The prompt itself belongs to the scanner
@@ -1421,10 +1473,14 @@ function generatePaintingDescription(random = Math.random, customSubject = "") {
         },
         // For anything that borrows the generators above to put a reading in
         // front of the player itself (the procedural map's shelves and statues):
-        // the same one-off Fun the plugin's own message boxes pay. `id` is
-        // whatever identifies that particular thing on that map - an event id, a
-        // tile - so the same shelf read twice pays once.
-        payReadingFun: (kind, id) => payReadingFun(kind, id),
+        // the same one-off Fun and Knowledge the plugin's own message boxes pay.
+        // `id` is whatever identifies that particular thing on that map - an
+        // event id, a tile - so the same shelf read twice pays once; `part`
+        // tells apart several readings on one thing.
+        payReadingFun: (kind, id, part) => payReading(kind, id, part),
+        payReading: (kind, id, part) => payReading(kind, id, part),
+        readingKnowledge: { min: READING_KNOWLEDGE_MIN, max: READING_KNOWLEDGE_MAX },
+        readingKey: (kind, id, part) => readingKey(kind, id, part),
     };
 
 })();

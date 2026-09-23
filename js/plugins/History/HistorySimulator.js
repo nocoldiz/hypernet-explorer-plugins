@@ -973,10 +973,12 @@
                     description: T('History.artifactDescription'),
                     note: '<category: artifact>',
                     price: 2500000 + Math.floor(sRand() * 500000),
-                    iconIndex: 245
+                    iconIndex: 245,
+                    meta: { category: ' artifact' }
                 };
                 if (isWeapon) {
                     obj.wtypeId = 1 + Math.floor(sRand() * 12);
+                    obj.etypeId = 1;
                     obj.params = [0, 0, 8 + Math.floor(sRand() * 9), 0, 4 + Math.floor(sRand() * 5), 0, 0, 0];
                     obj.traits = [];
                 } else if (isArmor) {
@@ -1040,8 +1042,19 @@
             return generated;
         }
 
+        // Worlds composed before artifacts carried an equip slot stored their
+        // weapons without etypeId, and the equip code only lets a hand close
+        // around an etype 1 or 2 item, so those weapons could never be worn.
+        repairArtifacts(generated) {
+            (generated.weapons || []).forEach(a => { if (a && !a.etypeId) a.etypeId = 1; });
+            ['items', 'weapons', 'armors'].forEach(kind => {
+                (generated[kind] || []).forEach(a => { if (a && !a.meta) a.meta = { category: ' artifact' }; });
+            });
+        }
+
         injectArtifacts(generated) {
             if (!generated) return;
+            this.repairArtifacts(generated);
             this.relocalizeArtifacts(generated);
             if (typeof $dataItems !== 'undefined' && generated.items) {
                 generated.items.forEach(a => $dataItems[a.id] = a);

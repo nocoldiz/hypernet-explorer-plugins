@@ -38,84 +38,84 @@
   },
   "areas": {
     "m721_zone": {
-      "title": "Hydroponic naus",
-      "text": "Greens under lamps, all the way up the wall. Whatever they are growing up here, it is the only fresh thing on board."
+      "title": "Hydroponic",
+      "text": "We can use this hydroponic room to grow Earth food in the depths of space."
     },
     "storyModeWaterfall": {
-      "title": "Secret Waterfall",
-      "text": "You should check behind every waterfall"
+      "title": "Secret caves",
+      "text": "We should check behind every waterfall: statistically speaking, about 30% of them have a secret cave behind them."
     },
     "m1006_zone": {
       "title": "Horse betting",
-      "text": "Use this screen to bet on horses"
+      "text": "Are you feeling your ludopathy coming back? That's a good sign that your memories are returning, Em! Why don't you bet on horses? Maybe something else will resurface!"
     },
     "m1006_zone2": {
       "title": "Monster tournament",
-      "text": "Use this terminal to watch and bet on monster fights"
+      "text": "Use this terminal to watch and bet on monster fights. I don't really know if they are real monsters fighting for their lives or simulated battles; maybe it's best to just not know."
     },
     "m1006_zone3": {
       "title": "Coin conversion",
-      "text": "Use this machine to convert euros to tokens used for minigames and slot machines"
+      "text": "Use this machine to convert euros to tokens used for minigames and slot machines. You also have a [Hyperdeck] app for that."
     },
     "m1006_zone4": {
       "title": "Slot machine",
-      "text": "Use tokens to plays"
+      "text": "I heard rumors of a cursed slot in this casino."
     },
     "m1023_zone": {
       "title": "Ghent Hospital",
-      "text": "Visit hospitals to get your diseases diagnosed, install augments, change bodyparts and access the [Fertility database]"
+      "text": "Visit hospitals to get our diseases diagnosed, install augments, change body parts and access the [Fertility database]. I don't exactly picture you as a mother figure, but if you want to help repopulate the Earth, go ahead!"
     },
     "m1414_zone": {
       "title": "Inn",
-      "text": "Visit inns around the world to recruit new companions and rest"
+      "text": "Are you feeling tired, Em? Or do you need to hire some muscle to support your hexing? Visit inns and taverns to rent a room and talk to other adventurers."
     },
     "m1414_zone2": {
       "title": "Hypermetro trains",
-      "text": "Move between hub cities using the hypermetro! Your final destination is the Omega Tower, but you should stop at Ghent to stock up on items."
+      "text": "We can move between hub cities using the hypermetro! Our final destination is the Omega Tower, but we should stop at Ghent to stock up on items. Don't worry, darlin', if we leave our [Camper] behind: it can be summoned by using our [Liminal cuffs]."
     },
     "m1414_zone3": {
       "title": "Crafting",
-      "text": "In this shack you can find some materials. Use the [Thinker] option in the pause menu to assemble items and [Blacksmithing] to smelt and forge new ones"
+      "text": "In this shack we can find some materials. It belongs to Xor the trash goblin; I'll repay him later if we take something from here.\nYou can use the [Thinker] option in [Menu] to assemble anything you have the technical skills for."
     },
     "m1414_zone4": {
       "title": "Farming plots",
-      "text": "Use farming plots to grow your own plants"
+      "text": "We can use farming plots to grow our own plants, or just take what we find. Just make sure to pay the owner of the plot back, ok?"
     },
     "m1414_zone5": {
-      "title": "High level enemeis",
-      "text": "Some enemies are too powerful for your current party. Outside dungeons you can escape freely, but only on the first turn."
+      "title": "High level enemies",
+      "text": "Darlin', these piles of sentient trash are too strong even for a wannabe witch like you. May I suggest you just ignore them until you can call yourself a proper witch?"
     },
     "m1414_zone7": {
       "title": "Dungeon",
-      "text": "Explore dungeons to recover rare loot"
+      "text": "This dungeon should be a proper challenge to relearn your combat skills! Did I mention that you can modify your [Vector gun] in the [Menu]? You can adapt its alternate form or element to prepare for any situation, and in this dungeon fire damage will help!"
     },
     "m1414_zone10": {
       "title": "Apiary",
-      "text": "Use apiaries to manage a bee colony and collect honey"
+      "text": "\"If the bee disappeared off the surface of the noosphere, then man would only have four years of life left.\" Aleister Crowley said that."
     },
     "m1414_zone11": {
       "title": "Farm",
-      "text": "You can take over this abandoned farm: its owner was recently killed by satellite debris and nobody has claimed it yet.\nUse the [Build] option in the pause menu to buy animals and personalise this farm."
+      "text": "We can take over this abandoned farm: its owner was recently killed by satellite debris and nobody has claimed it yet.\nUse the [Build] option in the pause menu to buy some animals, but do this only if you want to actually care about them! Do you remember what the Archivists did to our sheep Dolly? I will never forgive them for that!"
     },
     "m1414_zone9": {
       "title": "Library",
-      "text": "Visit libraries to buy books and grimories"
+      "text": "Libraries are a great place to find new grimories, hunting them was your primary hobby before your mind got wiped."
     },
     "m1414_zone12": {
       "title": "Clinic",
-      "text": "Visit clinics to diagnose diseases, install augments, install or remove bodyparts or get medical training."
+      "text": "If you don't feel well, darlin', head to a clinic: there you can get a proper diagnosis and treatment. And if you need a literal hand, you can get new body parts installed and also augments for your body."
     },
     "m1416_zone": {
       "title": "PC",
-      "text": "Use this PC to access Hypernet"
+      "text": "Use this public PC to access Hypernet, you can also use the [Hyperdeck] if you don't trust putting your credentials in public PCs."
     },
     "m1416_zone2": {
       "title": "Quest board",
-      "text": "Use the quest board to accept quests"
+      "text": "You can use the quest board to accept quests, and you can even write your own to be completed by other adventurers."
     },
     "m1416_zone3": {
       "title": "Bowling alley",
-      "text": "Interact with the bowling alley to play bowling"
+      "text": "Let's go bowling, Em!"
     },
     "m1416_zone4": {
       "title": "Bathroom",
@@ -123,99 +123,55 @@
     },
     "m1416_zone5": {
       "title": "Innkeeper",
-      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops"
-    },
-    "m1416_zone6": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone7": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone8": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone9": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone11": {
-      "title": "Sleeè",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone12": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone13": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
-    },
-    "m1416_zone14": {
-      "title": "Sleep",
-      "text": "If your party is short on sleep they start losing MP,\nso rest every day.\nCoffee keeps you awake when you cannot."
+      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops. Yes, you heard right! We can raise an army if we have the funds, and inns are a good place to start. Let's have a beer to our future independent sovereign nation!"
     },
     "m1416_zone15": {
       "title": "Bathroom",
       "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it."
     },
-    "m1416_zone16": {
-      "title": "Bathroom",
-      "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it."
-    },
-    "m1416_zone17": {
-      "title": "Bathroom",
-      "text": ""
-    },
     "m1416_zone19": {
       "title": "Minigames",
-      "text": "Minigames use arcade coins to play, though some are free. Use the arcade converter to get coins."
+      "text": "We can increase our mood by playing games. Some will need game tokens, and we can use this converter or the [Hyperdeck] app to buy them."
     },
     "m1416_zone10": {
       "title": "Renting",
-      "text": "Interact with the door or talk to the innkeeper to rent a room"
+      "text": "Interact with the door or talk to the innkeeper to rent a room. Not sleeping will make you start losing MP and then going insane, so make sure to rest!"
     },
     "m136_zone": {
       "title": "Omega Tower Entrance",
-      "text": ""
+      "text": "Here we are, Em! This is the entrance of the [Omega Tower]: here you have total immunity for your accidental deicide."
     },
     "m169_zone": {
       "title": "Abandoned Farm",
-      "text": ""
+      "text": "Instead of going to the Omega Tower for immunity, we can also just take over this abandoned farm and stay there until things calm down. We can actually claim any abandoned house we encounter and start placing structures with the [Build] option of the pause menu."
     },
     "m169_zone2": {
       "title": "Trash",
-      "text": ""
+      "text": "Ah! Trashdiving! The lottery of the brave! We can find truly marvelous gems that survived the Y2K event buried in trash. I think the trash shielded them from the [EHI] eruption and preserved most of the circuits. Make sure to wash yourself, because being [Oily] makes you vulnerable to fire attacks."
     },
     "m169_zone3": {
       "title": "Chaos",
-      "text": ""
+      "text": "We need to get the hex out of here, Em! The [Fifth dimension] is pouring from holes in reality, and we can easily fall into one and end up in the [White desert].\nIt's not a nice place, Em. I spent eons trapped there in 1997 before you broke the laws of spacetime to save me."
     },
     "m169_zone4": {
       "title": "Materials",
-      "text": ""
-    },
-    "m169_zone5": {
-      "title": "Underwater treasure",
-      "text": ""
+      "text": "We can collect materials by defeating enemies."
     },
     "m169_zone6": {
       "title": "Sacrificial altar",
-      "text": ""
+      "text": "This place reeks of gasoline, something powerful is buried there."
     },
     "m169_zone7": {
       "title": "Goblins",
-      "text": ""
+      "text": "Trust me, Em, just leave Nakuga Goblins alone. Let them do their thing and just avoid them if they try to engage in battle. We share a common ancestor and most of our DNA with them, so they are our psionic black metal loving brothers.\nVerden Goblins, instead, are a totally different alien species that just happens to look like Earth goblins due to the genetic lottery. They are chill and totally integrated with human society; most goblins you see in town are Verden goblins."
     },
     "m169_zone8": {
       "title": "Block pushing puzzle",
-      "text": ""
+      "text": "Try to solve this simple block pushing puzzle and let me evaluate your mental skills after your memory wipe."
     },
     "m689_zone": {
       "title": "Hardware stores",
-      "text": ""
+      "text": "You can upgrade your [Hyperdeck] by finding new components in hardware stores."
     },
     "m689_zone2": {
       "title": "Tavern",
@@ -223,119 +179,211 @@
     },
     "m689_zone3": {
       "title": "Garage",
-      "text": ""
+      "text": "We can buy new vehicles in garages, like cars, boats or even a broomstick!"
     },
     "m689_zone4": {
       "title": "Bowling alley",
-      "text": ""
+      "text": "Wanna go bowling Em?"
     },
     "m689_zone5": {
       "title": "Mages Guild",
-      "text": ""
+      "text": "It's a bit hidden, but this is the entrance to the Ghent mages guild. They don't easily take new associates, but you are already one, so you are free to enter."
     },
     "m689_zone6": {
       "title": "Shop tunnel",
-      "text": ""
+      "text": "There are many stores below this tunnel, and it is connected with the other side of the city."
     },
     "m704_zone": {
       "title": "Clocktower dungeon",
-      "text": ""
+      "text": "We actually already beat this dungeon some years ago, but since it has been reset countless times, it can be good practice to regain some dungeon sense!"
     },
     "m704_zone2": {
       "title": "Training center",
-      "text": ""
+      "text": "It's a training center, but who needs it honestly? I can be a better tutor than those [Archivist] nerds. Did you know they stole my original drawing sheet for the [Liminal Engine] and sent me a photocopy? They work exactly like the [Great Alexandria Library]: they keep the originals and send you washed out copies!"
     },
     "m704_zone3": {
       "title": "Bus stop",
-      "text": ""
+      "text": "We can use bus stops to move between any locations in the world."
     },
     "m704_zone4": {
       "title": "Fairy maze",
-      "text": ""
+      "text": "Fairies are dangerous, Em! They are living infohazards, and you can't just ignore them like the people on TV. You need to respond to them, be polite and never EVER accept something from them, just refuse... POLITELY!"
     },
     "m708_zone": {
       "title": "Wilderness",
-      "text": ""
+      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Ghent."
     },
     "m1414_zone13": {
       "title": "Diving",
-      "text": ""
-    },
-    "m1414_zone14": {
-      "title": "Abandoned train depot",
-      "text": ""
+      "text": "I spotted a treasure under this pond; you can dive to reach it. Remember that when fighting in water, you and the enemies take extra damage from electrical attacks."
     },
     "m1414_zone15": {
       "title": "Esoteric Shop",
-      "text": ""
+      "text": "In [Esoteric shops] you can buy magical equipment, alchemistry kits and reagents. Did you know that the owner of this shop worked at [Cern]?"
     },
     "m1414_zone16": {
       "title": "Armory shop",
-      "text": ""
+      "text": "Visit armories and gun shops to buy new weapons and gear that you can equip in the [Equip] section of [Menu]."
     },
     "m1414_zone17": {
       "title": "Wilderness",
-      "text": ""
+      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Icebush."
     },
     "m1414_zone18": {
       "title": "Wilderness",
-      "text": ""
+      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Icebush."
     },
     "m1414_zone19": {
       "title": "Wilderness",
-      "text": ""
+      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Icebush."
     },
     "m1414_zone20": {
       "title": "Slimes",
-      "text": ""
+      "text": "Every slime has a particular elemental weakness and resists physical attacks."
     },
     "m1414_zone21": {
       "title": "Block pushing puzzle",
-      "text": ""
+      "text": "Ohh another block pushing puzzle!"
     },
     "m1415_zone": {
-      "title": "Pushing block puzzle",
-      "text": ""
+      "title": "Block pushing puzzle",
+      "text": "A block pushing puzzle PLUS an ice floor! Can you solve it for me, Em? I need to test your puzzle solving skills to determine how much of you is left in your soul."
     },
     "m1415_zone2": {
       "title": "Pre Y2K Cache",
-      "text": ""
+      "text": "This is a cache of items locked since the Y2K! Let's loot everything, and be careful not to be overencumbered by all the loot. Carrying capacity increases with your [COS] and with more party members following."
     },
     "m1415_zone3": {
       "title": "Unfinished puzzle",
-      "text": ""
+      "text": "I think the guy who built this dungeon ran out of funds when building this room, but it was very promising."
     },
     "m1415_zone4": {
       "title": "Ice block puzzle",
-      "text": ""
+      "text": "Solving this other puzzle should give me a baseline reading of your puzzle solving skills, if you want more complex puzzles to solve we can head to the [Trick castle]."
     },
     "m1415_zone5": {
       "title": "High level enemies",
-      "text": ""
+      "text": "There is a swarm of cryodrones trapped in this cave. They are above our current combat level, so we should move past them and run if we end up in battle with them. You don't want to get frozen solid, and neither do I."
     },
     "m1415_zone6": {
       "title": "Fog of war",
-      "text": ""
+      "text": "You can activate the [Fog of war] in [Options] to remove your glasses and have your vision limited. It's your choice, really."
     },
     "m503_zone": {
-      "title": "Undeground Arena",
-      "text": ""
+      "title": "Underground Arena",
+      "text": "We can earn some serious euros by fighting in the arena: we can bring our own equipment or borrow weapons from the arena stash."
     },
     "m635_zone": {
-      "title": "The Hall",
-      "text": ""
+      "title": "Dungeon entrance",
+      "text": "This is the main staircase. Above us are 92 floors robbed from 92 different dimensions and skewered on the tower.\nAnd under us there are another 92 underground floors, even more brutal than the upper ones."
     },
     "m635_zone2": {
-      "title": "Dungeon Entrance",
-      "text": ""
+      "title": "The hall",
+      "text": "Inactive party members will just chill out here if you don't assign them to owned buildings or bases in the [Dynamics] menu. You can ask them to join our party if you have a free spot."
     },
     "m1073_zone": {
-      "title": "Platforming mode",
-      "text": ""
+      "title": "Platforming",
+      "text": "This tower has a dimensional anomaly caused by the [Squishing]. I'm feeling very bidimensional."
     },
     "m1074_zone": {
-      "title": "Bowling halley",
+      "title": "Bowling alley",
+      "text": "Let's go bowling!!!"
+    },
+    "m689_zone7": {
+      "title": "Casino",
+      "text": "This is the Ghent casino, Em! You loved gambling here before your mind got wiped. I think the whole deicide spell backfiring cured you of your ludopathy."
+    },
+    "m708_zone2": {
+      "title": "Explorers bar",
+      "text": "I love this little bar. The owner is undead and is cursed to serve here for all eternity... well, at least until 2012, when there will be no Earth anymore. He maintains the Neapolitan tradition of the suspended coffee."
+    },
+    "m714_zone": {
+      "title": "Hypermodern art",
+      "text": "It may seem like a heist, but it's just hypermodern art."
+    },
+    "m721_zone2": {
+      "title": "Returning temple",
+      "text": "Ring the gong to return to the Omega Tower, no matter how distant we are from Earth."
+    },
+    "m721_zone3": {
+      "title": "Space exploration",
+      "text": "Here we are, Em! The final frontier! Open the [Star Map] to plot our next course. I talked with commander Hack; he trusts me enough to pilot this thing."
+    },
+    "m1036_zone": {
+      "title": "Stock options",
+      "text": "Buying Lime corp stocks is a good starting point if you want to start investing. You can buy and sell in the stocks [Hyperdeck] app."
+    },
+    "m1036_zone2": {
+      "title": "Crime and punishment",
+      "text": "Remember, Em: the police serve Justice, so they automatically serve Eris, my ex-wife. If you commit a crime and they catch you, please pay your bounty or go to prison; never face Eris directly. She hates your guts."
+    },
+    "m1036_zone3": {
+      "title": "Helicopter ride",
+      "text": "We can book a helicopter ride to the Omega tower from this helicopter pad."
+    },
+    "m1039_zone": {
+      "title": "Cursing temple",
+      "text": "I read in the Ghent tourist guide that if you even put a foot in this temple you will be cursed. The guide doesn't state the nature of the curse."
+    },
+    "m1415_zone7": {
+      "title": "Locked doors",
+      "text": "These types of doors are fueled directly by the leyline and cannot be opened without a [Dungeon key].\nThe good thing is that we can use any dungeon key with any of these doors in any place in the universe."
+    },
+    "m1415_zone8": {
+      "title": "Inner waterfall",
+      "text": "I told you, Em! There was a secret cave and an even secreter waterfall all along!"
+    },
+    "m1415_zone9": {
+      "title": "Bear mauling cave",
+      "text": "Holy hexing shit, we are getting mauled by a bear like I told you!!! RUN!"
+    },
+    "m1415_zone10": {
+      "title": "Bosses",
       "text": ""
+    },
+    "m169_zone5": {
+      "title": "Hyperviolence",
+      "text": "We don't have to punch new holes into every enemy we encounter Em, use the [Talk] option in battle to use diplomacy. Or just shut their mouths with the [Wrestle] option if talking doesn't work darlin'."
+    },
+    "m721_zone4": {
+      "title": "Shuttle bay",
+      "text": ""
+    },
+    "m721_zone5": {
+      "title": "Television",
+      "text": "This television has prerecorded episodes because once we are far from Earth the signal can't reach us. Remember Em, we don't know exactly the nature of your infohazard so don't respond even to prerecorded footage ok?"
+    },
+    "m1006_zone5": {
+      "title": "Pool table",
+      "text": "Wanna play pool, Em? I do."
+    },
+    "m1414_zone6": {
+      "title": "Icebush",
+      "text": "Use the [Empathize] option."
+    },
+    "m1414_zone8": {
+      "title": "Quick check",
+      "text": "Before we continue our adventure Em, make sure to check the [Equip] options and [Skill] option in [Menu] to change your equipment and skills you carry in battle.\nYou can have up to 9 skills and spells in battle."
+    },
+    "m635_zone3": {
+      "title": "Missile launch railgun",
+      "text": "If we prove our worthiness by surviving an orbital ascent through the Kessler field, we gain the right to teleport directly to the ESA ship orbiting outside the belt. I'm a big fan of [Director Hack], who is the head of [ESA]. Did you know that she is still an atheist even though the existence of multiple gods has been confirmed? She is so badass!"
+    },
+    "m635_zone4": {
+      "title": "Elevator",
+      "text": "We can use the elevator to return to any floor we first reached on foot, plus the Hypermetro station and Omega City many floors down. The elevator is sentient: it can recognize faces and lock floors based on who visits."
+    },
+    "m635_zone5": {
+      "title": "Hypermetro stairs",
+      "text": "Use these stairs to reach the Hypermetro station."
+    },
+    "m102_zone": {
+      "title": "Elevator",
+      "text": "This is the main elevator, we can use it to reach any discovered floor of this tower."
+    },
+    "m102_zone2": {
+      "title": "Training center",
+      "text": "Did you see the training center at Ghent? In reality it's a fake building that, on entry, transports you to the interior of this training center. I was hired to design the mechanism; it's not magical, it's pure physics!"
     }
   },
   "tips": {

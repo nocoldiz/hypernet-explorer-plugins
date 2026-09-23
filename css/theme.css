@@ -13743,6 +13743,8 @@
     flex: 0 1 auto;
     min-height: 0;
     overflow-y: auto;
+    padding-right: var(--sp-4);
+    box-sizing: border-box;
 }
 
 /* The twelve stats, two pairs across and tight. */
@@ -13902,17 +13904,18 @@
     border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
 }
 
-/* A profile reads across: the name bar over the whole row, the slots on the
-   left and the numbers in a column of their own on the right. */
+/* A profile reads down: the name bar, the slots, then the numbers in a strip
+   across the whole width under them. Squeezed into a column beside the slots
+   the long derived names ran into each other. */
 #equip-container .party-paperdolls-stacked .paperdoll-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 210px;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-        "bar   bar"
-        "slots stats"
-        "warn  warn";
-    column-gap: 12px;
-    row-gap: 2px;
+        "bar"
+        "slots"
+        "stats"
+        "warn";
+    row-gap: var(--sp-2);
     align-items: start;
 }
 
@@ -13921,25 +13924,34 @@
 #equip-container .party-paperdolls-stacked .paperdoll-stats-grid { grid-area: stats; }
 #equip-container .party-paperdolls-stacked .paperdoll-dual-warning { grid-area: warn; }
 
-/* In its own narrow column the numbers line up on a fixed grid rather than
-   wrapping wherever the flex run happens to break. */
+/* Vitals and the six attributes on one row, the four derived stats on the
+   next, every column on a fixed track so the numbers line up member to member. */
 #equip-container .party-paperdolls-stacked .paperdoll-stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
     margin-top: 0;
-    padding: 0;
+    padding: var(--sp-2) var(--sp-3);
 }
 
 #equip-container .party-paperdolls-stacked .paperdoll-stats-strip {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 4px 6px;
-}
-
-#equip-container .party-paperdolls-stacked .paperdoll-stats-strip--vitals {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 2px 6px;
 }
 
 #equip-container .party-paperdolls-stacked .paperdoll-stats-strip--derived {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#equip-container .paperdoll-stats-grid .stat-diff {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+#equip-container .paperdoll-stat-col--scaling .stat-label,
+#equip-container .paperdoll-stat-col--scaling .stat-val {
+    color: var(--text-primary-hover);
 }
 
 #equip-container .paperdoll-container {
@@ -14381,21 +14393,89 @@
 #equip-container .detail-preview-row .detail-preview-box {
     flex: 0 0 360px;
     width: 360px;
-    height: 330px;
+    height: 280px;
 }
 
-#equip-container .detail-stats-side {
+/* Beside the preview: the damage tiles, the piece's type, and the stats it
+   carries. What it does to the wearer's own numbers is printed on the other
+   page, under their slots. */
+#equip-container .detail-facts-side {
     flex: 1 1 auto;
-    margin-left: auto;
     min-width: 0;
-    column-gap: 14px;
-    row-gap: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    align-self: center;
 }
 
-#equip-container .detail-stats-side .stat-row {
-    font-size: 0.95rem;
-    line-height: 1.2;
-    padding: 0 2px;
+#equip-container .equip-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-2);
+}
+
+#equip-container .equip-fact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: var(--sp-1) 0;
+}
+
+#equip-container .equip-fact-label {
+    font-family: var(--font-ui);
+    font-size: var(--fs-caption);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-detail-label);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#equip-container .equip-fact-value {
+    font-family: var(--font-ui);
+    font-size: var(--fs-detail-body);
+    font-weight: bold;
+    color: var(--text-success-active);
+}
+
+#equip-container .equip-fact--headline .equip-fact-value .stat-val {
+    font-size: var(--fs-detail-title);
+    line-height: 1.1;
+    color: var(--text-primary-hover);
+}
+
+#equip-container .detail-facts-side .inspect-section-title {
+    margin: 0 0 calc(-1 * var(--sp-1)) 0;
+}
+
+#equip-container .equip-params-block {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+}
+
+#equip-container .equip-param-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    padding: 2px 0;
+    font-family: var(--font-ui);
+    font-size: var(--fs-detail-body);
+    font-weight: bold;
+}
+
+#equip-container .equip-param-name {
+    color: var(--text-detail-label);
+}
+
+/* Special properties two across, so four short lines take two rows. */
+#equip-container .equip-traits-block {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-4);
 }
 
 #equip-container .equip-group-header {
@@ -36563,7 +36643,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 /* ==========================================================================
    The map legend, js/plugins/Map/MapLegend.js
-   The one sheet the map screen pins in its top right corner. It used to build
+   The one sheet the map screen pins in its bottom right corner. It used to build
    its own <style> block out of seven parchment literals; it wears the live
    theme now, so every colour, size and space below is a token and switching
    preset repaints the note with the rest of the interface. The plugin sets
@@ -36704,15 +36784,21 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 
 
-/* The notice: centred on the canvas and hung from its top edge, so a folded
-   panel no wider than its own title still sits under the middle of the screen. */
+/* The notice: pinned to the canvas's bottom right corner and grown up from the
+   floor. Its width is measured by the plugin (--mlg-width) so the sheet stops
+   short of the quick bar in the bottom middle instead of sliding under it. */
 #map-legend {
-    right: auto;
-    left: var(--mlg-center, 50%);
-    top: var(--mlg-top, 16px);
-    bottom: auto;
-    transform: translateX(-50%) scale(var(--mlg-sx, 1), var(--mlg-sy, 1));
-    transform-origin: 50% 0;
+    left: auto;
+    right: var(--mlg-right, 16px);
+    top: auto;
+    bottom: var(--mlg-bottom, 16px);
+    width: var(--mlg-width, 360px);
+    transform-origin: 100% 100%;
+}
+
+#map-legend.mlg-folded {
+    width: auto;
+    max-width: var(--mlg-width, 360px);
 }
 
 /* The controls checklist: its own window down the left edge, grown up from the

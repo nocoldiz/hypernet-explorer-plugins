@@ -1,3 +1,23 @@
+0.6.37a
+
+Added:
+ - many map tooltips for story mode
+ - reading statues, fossils and books nets KP, more with raman scan
+
+Changed:
+ - equip stats shown in two rows under the slots, previewing changes
+ - map tooltip dialogue moved bottom right, slightly larger, clear of quickbar
+ - map tooltips open on first visit in story mode, collapsed on revisits
+ - quests set in progress, within 80 tiles of the quest board
+ - destination type renamed to biome, forced on procedural cities and villages
+
+Fixed:
+ - map tooltips spell check for grammatical errors
+ - legendary artifact weapons can now be equipped
+ - creature or animal procedural NPC now use creature or animal sprites
+ - city biome too dark at night, every door terrain feature emits light
+
+
 0.6.36a  
 
 Added:
@@ -6,7 +26,6 @@ Added:
  - equipment stats and special properties visible on the Equip menu
 
 Changed:
- - destination type renamed to biome, forced on procedural cities and villages
  - optimized empathize UI drawing, stats row, bios show biome and nation
  - no sleep rough when the map has an event named bed
  - removed type something box on lower empathize UI
