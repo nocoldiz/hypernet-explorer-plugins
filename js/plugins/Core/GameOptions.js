@@ -411,12 +411,14 @@ const GameOptions = {
             nameKey: 'gameplay',
             categories: ['gameplay'],
             groups: [
+                // Language heads the page: it is the setting a player reaches
+                // for before any of the world rules below it. Offered only when
+                // the localization plugin is not pinned to a single language.
+                { key: 'language', symbols: ['language'] },
                 { key: 'combat', symbols: ['enemyDifficulty', 'mapBattleMode', 'cpuPartyMembers'] },
                 { key: 'battleLog', symbols: ['smoothBattleLog', 'battleLogPosition', 'battleCommandPosition', 'battleLogBgOpacity', 'battleLogSkillNames'] },
                 { key: 'exploration', symbols: ['fowEnabled', 'fogOfWar', 'mapStreaming'] },
                 { key: 'saving', symbols: ['autosaveEnabled', 'autosaveInterval'] },
-                // Language is left out while the game is locked to English; if it
-                // is ever unlocked the registered row lands under "other".
                 { key: 'system', symbols: ['commandRemember', 'runInBackground'] }
             ]
         },

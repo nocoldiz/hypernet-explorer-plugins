@@ -2018,14 +2018,18 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // Every classical piece shipped under audio/bgm/Classical is on the dial, so
     // any of them can be the one the title opens on. The entry names the piece playing
     // and steps to the next one, so the pick is made by ear without leaving the
-    // screen. Unpicked, the game always opens on the New World Symphony.
+    // screen. Unpicked, the game opens on one of the four default openers.
     // -------------------------------------------------------------------------
     // i18n-ignore-start  bgm tracks, named after their file
     const TITLE_MUSIC_DEFAULTS = [
         { name: 'New World Symphony',
           value: "Classical/Antonin Dvorak - symphony no. 9 in e minor 'from the new world', op. 95 - iv. al" },
-        { name: 'Ode to Joy',
-          value: 'Classical/Beethoven - Ode to Joy (Concert Band)' }
+        { name: 'Ode to Joy (Concert Band)',
+          value: 'Classical/Beethoven - Ode to Joy (Concert Band)' },
+        { name: 'Ode to Joy (Allegro)',
+          value: 'Classical/Beethoven - Ode to Joy Allegro' },
+        { name: '1812 Overture',
+          value: 'Classical/Pyotr Ilyich Tchaikovsky - 1812 overture' }
     ];
     // i18n-ignore-end
 
@@ -2063,14 +2067,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return found;
     }
 
-    // The two openers stay first and in order, so the piece the game opens on
+    // The openers stay first and in order, so the piece the game opens on
     // is always one arrow away however many tracks the scan turns up.
     const TITLE_MUSIC = TITLE_MUSIC_DEFAULTS.concat(
         scanTitleMusic().filter(t =>
             !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
 
     // First on the dial is Random: the title picks a different piece of the
-    // repertoire every time it is shown, and it is what a fresh config opens on.
+    // default repertoire every time it is shown, and it is what a fresh config opens on.
     const TITLE_MUSIC_RANDOM = '__random__';   // i18n-ignore  sentinel value
     TITLE_MUSIC.unshift({ name: null, value: TITLE_MUSIC_RANDOM });
 
@@ -2106,26 +2110,35 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return fallback < 0 ? 0 : fallback;
     }
 
+    let _drawnTitleMusic = null;
+
+    function titleMusicValue() {
+        const track = TITLE_MUSIC[titleMusicIndex()];
+        if (track.value !== TITLE_MUSIC_RANDOM) {
+            _drawnTitleMusic = null;
+            return track.value;
+        }
+        if (!_drawnTitleMusic) {
+            const pool = TITLE_MUSIC_DEFAULTS;
+            if (!pool.length) return TITLE_MUSIC_DEFAULTS[0].value;
+            _drawnTitleMusic = pool[Math.floor(Math.random() * pool.length)].value;
+        }
+        return _drawnTitleMusic;
+    }
+
     function titleMusicTrackName(track) {
-        return track.value === TITLE_MUSIC_RANDOM
-            ? T('Titlescreen.menu.musicRandom') : track.name;
+        if (track.value === TITLE_MUSIC_RANDOM) {
+            const curVal = titleMusicValue();
+            const found = TITLE_MUSIC_DEFAULTS.find(t => t.value === curVal);
+            return found ? found.name : T('Titlescreen.menu.musicRandom');
+        }
+        return track.name;
     }
 
     function titleMusicLabel(overlay) {
         const track = TITLE_MUSIC[titleMusicIndex()];
-        const label = T(overlay ? 'Titlescreen.menuOverlay.music' : 'Titlescreen.menu.music');
         const raw = titleMusicTrackName(track);
-        const name = overlay ? raw.toUpperCase() : raw;
-        return label + ': ' + name;
-    }
-
-    // Random draws afresh on every play, so returning to the title is a new piece.
-    function titleMusicValue() {
-        const track = TITLE_MUSIC[titleMusicIndex()];
-        if (track.value !== TITLE_MUSIC_RANDOM) return track.value;
-        const pool = TITLE_MUSIC.filter(t => t.value !== TITLE_MUSIC_RANDOM);
-        if (!pool.length) return TITLE_MUSIC_DEFAULTS[0].value;
-        return pool[Math.floor(Math.random() * pool.length)].value;
+        return overlay ? raw.toUpperCase() : raw;
     }
 
     // The title BGM is whichever of the three is currently picked, so the choice
@@ -5775,7 +5788,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this.createVersionBadge();
 
         // English / Italian flags, docked under the badge
-        // The game is locked to English, so the flag selector stays off the title.
+        // Language flags, docked under the badge. The selector is drawn only
+        // while the game is not pinned to a single language.
         if (!(window.HendrixLocalization && window.HendrixLocalization.isLocked && window.HendrixLocalization.isLocked())) {
             this.createLanguageSelector();
         }

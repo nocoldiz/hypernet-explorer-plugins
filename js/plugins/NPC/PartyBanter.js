@@ -396,8 +396,14 @@
         if (typeof $gameSwitches !== "undefined" && $gameSwitches && $gameSwitches.value(100)) {
             const hasBubba = party.some(a => a && a.name && a.name().trim() === "Bubba");
             if (!hasBubba) {
-                const bubbaActor = window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
-                if (bubbaActor) return party.concat(bubbaActor);
+                const bubbaActor = window.PartyRoster?.getBubbaActor?.();
+                if (bubbaActor && bubbaActor.name && bubbaActor.name().trim() === "Bubba") {
+                    return party.concat(bubbaActor);
+                }
+                const a2 = $gameActors ? $gameActors.actor(2) : null;
+                if (a2 && a2.name && a2.name().trim() === "Bubba") {
+                    return party.concat(a2);
+                }
             }
         }
         return party;

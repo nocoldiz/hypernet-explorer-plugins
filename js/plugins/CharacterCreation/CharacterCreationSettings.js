@@ -23,7 +23,6 @@
   if (!Scene_CharacterCreation) return;
 
   const {
-    pickSettingIcon,
     CREATION_BGM,
     getCCMusicTracks,
     CharacterCreationData,
@@ -86,6 +85,40 @@
       }
 
       const rows = [
+        {
+          // Language heads the page: it decides the tongue every row below it
+          // is read in, so it is the first thing a player should reach for.
+          key: 'language',
+          label: T('CharCreate.language'),
+          description: T('CharCreate.gameLanguageAnyMissingTranslationFallsBackTo'),
+          get _langs() {
+            const api = window.HendrixLocalization;
+            return (api && api.getAvailableLanguages) ? api.getAvailableLanguages() : ['en', 'it', 'nk'];
+          },
+          get currentIndex() {
+            const i = this._langs.indexOf(ConfigManager.language);
+            return i >= 0 ? i : 0;
+          },
+          get currentLabel() {
+            const sym = this._langs[this.currentIndex] || 'en';
+            const api = window.HendrixLocalization;
+            if (api && api.getLanguageMenuLabel) return api.getLanguageMenuLabel(sym);
+            return (api && api.getLanguageName) ? api.getLanguageName(sym) : sym.toUpperCase();
+          },
+          _changeBy(delta) {
+            const langs = this._langs;
+            if (!langs.length) return;
+            const next = (this.currentIndex + delta + langs.length) % langs.length;
+            const api = window.HendrixLocalization;
+            if (api && api.setLanguage) api.setLanguage(langs[next]);
+            else ConfigManager.language = langs[next];
+            // Rebuild the rows so every label/description re-translates live.
+            scene._settingsRows = scene._buildSettingsRows();
+            scene._lastSettingsHash = null;
+          },
+          next() { this._changeBy(1); },
+          prev() { this._changeBy(-1); },
+        },
         {
           key: 'difficulty',
           get label() {
@@ -185,38 +218,6 @@
             if (!count) return;
             const next = (this.currentIndex + delta + count) % count;
             modes[next].apply();
-          },
-          next() { this._changeBy(1); },
-          prev() { this._changeBy(-1); },
-        },
-        {
-          key: 'language',
-          label: T('CharCreate.language'),
-          description: T('CharCreate.gameLanguageAnyMissingTranslationFallsBackTo'),
-          get _langs() {
-            const api = window.HendrixLocalization;
-            return (api && api.getAvailableLanguages) ? api.getAvailableLanguages() : ['en'];
-          },
-          get currentIndex() {
-            const i = this._langs.indexOf(ConfigManager.language);
-            return i >= 0 ? i : 0;
-          },
-          get currentLabel() {
-            const sym = this._langs[this.currentIndex] || 'en';
-            const api = window.HendrixLocalization;
-            if (api && api.getLanguageMenuLabel) return api.getLanguageMenuLabel(sym);
-            return (api && api.getLanguageName) ? api.getLanguageName(sym) : sym.toUpperCase();
-          },
-          _changeBy(delta) {
-            const langs = this._langs;
-            if (!langs.length) return;
-            const next = (this.currentIndex + delta + langs.length) % langs.length;
-            const api = window.HendrixLocalization;
-            if (api && api.setLanguage) api.setLanguage(langs[next]);
-            else ConfigManager.language = langs[next];
-            // Rebuild the rows so every label/description re-translates live.
-            scene._settingsRows = scene._buildSettingsRows();
-            scene._lastSettingsHash = null;
           },
           next() { this._changeBy(1); },
           prev() { this._changeBy(-1); },
@@ -507,13 +508,11 @@
 
       const rowsHtml = rows.map((row, i) => {
         const isActive = i === rowIdx;
-        const icon = pickSettingIcon(row.key);
         return `
           <div class="option-row ${isActive ? 'active' : ''}" data-idx="${i}"
                data-nav-skip data-nav-owner="updateSettingsInput"
                onclick="SceneManager._scene.onSettingsRowClick(${i})">
             <span class="option-label">
-              <canvas class="opt-row-icon" width="20" height="20" data-icon="${icon}"></canvas>
               <span class="option-name">${row.label}</span>
             </span>
             <span class="option-status-toggle enabled option-select">

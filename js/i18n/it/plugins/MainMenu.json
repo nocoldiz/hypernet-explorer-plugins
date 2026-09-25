@@ -2,7 +2,7 @@
   "cmd": {
     "sandbox": "Sandbox",
     "backpack": "Zaino",
-    "equip": "Equipaggiamento",
+    "equip": "Equip.",
     "skills": "Abilità",
     "status": "Stato",
     "statusPoints": "+{points}",
@@ -18,13 +18,13 @@
     "workforce": "Manodopera",
     "worldMap": "Mappa del Mondo",
     "vehicles": "Veicoli",
-    "wait": "Attendi",
+    "wait": "Aspetta",
     "cooking": "Cucina",
     "alchemistry": "Alchimica",
     "build": "Costruisci",
-    "training": "Incantesimeria",
+    "training": "Spellcrafting",
     "research": "Ricerca",
-    "questLog": "Diario Missioni",
+    "questLog": "Missioni",
     "diary": "Diario",
     "bestiary": "Bestiario",
     "cards": "Carte",
@@ -38,7 +38,7 @@
     "save": "Salva",
     "preferences": "Preferenze",
     "tools": "Strumenti",
-    "resign": "Abbandona",
+    "resign": "Dimettiti",
     "returnToShip": "Torna alla Nave",
     "teleportToShip": "Teletrasporto alla Nave",
     "returnToWorldMap": "Torna alla mappa",
@@ -46,6 +46,7 @@
     "returnToElevator": "Torna all'ascensore",
     "chooseLandingSite": "Scegli il sito di atterraggio",
     "stopTravel": "Interrompi viaggio",
+    "omegaTower": "Torre Omega",
     "deeds": "Atti",
     "locked": "???"
   },
@@ -70,7 +71,8 @@
     "resign": "Abbandona la partita e torna al titolo",
     "stopTravel": "Ferma il viaggio ed esplora l'area corrente",
     "returnToWorldMap": "Esci dall'area e torna alla mappa",
-    "returnToShip": "Sali subito a bordo dell'astronave"
+    "returnToShip": "Sali subito a bordo dell'astronave",
+    "omegaTower": "Teletrasportati al piano terra della Torre Omega"
   },
   "dynamics": {
     "roster": "Organico",
@@ -256,7 +258,7 @@
     "hideMinimap": "Nascondi la minimappa",
     "openMap": "Apri la mappa del mondo",
     "openAtlas": "Atlante",
-    "worldMapTitle": "Mappa del mondo"
+    "worldMapTitle": "Mappa"
   },
   "pets": {
     "rename": "Rinomina",
@@ -386,6 +388,10 @@
   },
   "value": {
     "wantedLevel": "Ricercati {pct}%"
+  },
+  "omegaTowerChoice": {
+    "teleport": "Teletrasportati alla Torre Omega",
+    "cancel": "Annulla"
   },
   "group": {
     "party": "Gruppo",

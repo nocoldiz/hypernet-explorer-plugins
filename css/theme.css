@@ -19701,7 +19701,7 @@ padding: 2px 8px; font-size: var(--fs-heading);
     /* The spread of a conversation: the log and what was typed read down the
        left, the verbs stand in their own column on the right. */
     .npc-chat-panel { display: flex; flex-direction: row; flex: 1; min-height: 0; min-width: 0; }
-    .npc-chat-main { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; }
+    .npc-chat-main { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; max-width: 580px; }
     .npc-chat-header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 10px 16px 9px;
@@ -20093,13 +20093,13 @@ padding: 2px 8px; font-size: var(--fs-heading);
     /* ── Chat action buttons (former left-column actions) ─ */
     .npc-chat-actions-row {
       display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 6px;
-      padding: 10px 16px;
+      padding: 10px 14px;
       border-top: none;
       /* A column of its own beside the log: a fixed measure so the verbs keep
          one edge however long their labels run, and never so wide that the
          conversation is squeezed into a gutter. */
       flex: 0 0 auto;
-      width: clamp(170px, 30%, 260px); box-sizing: border-box;
+      width: clamp(320px, 48%, 450px); box-sizing: border-box;
       /* A long action list (socialize/gift/bribe/attack/... plus the inline
          directions, gift and steal item lists) runs past the foot of the panel,
          so the column scrolls inside its own height rather than stretching it.
@@ -20133,8 +20133,26 @@ padding: 2px 8px; font-size: var(--fs-heading);
       font-size: var(--fs-body); color: var(--npc-option-fg);
       cursor: pointer; user-select: none; -webkit-user-select: none;
       transition: background 0.1s, border-color 0.1s;
+      box-sizing: border-box;
+      white-space: nowrap;
+      max-width: 100%;
     }
-    .npc-chat-action-btn .npc-opt-label { color: var(--npc-option-fg); }
+    .npc-chat-action-btn .npc-opt-label {
+      color: var(--npc-option-fg);
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .npc-chat-action-btn .npc-aside,
+    .npc-chat-action-btn .npc-aside-sm,
+    .npc-chat-action-btn .npc-good,
+    .npc-chat-action-btn .npc-bad,
+    .npc-chat-action-btn [class*="npc-score"] {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
     /* A tinted border alone was not enough to find the cursor inside the long
        pickers (Socialize, Court), where every row already carries badges of its
        own colour - odds, ♥ deltas - and the borders all sit at the same weight.
@@ -20155,6 +20173,7 @@ padding: 2px 8px; font-size: var(--fs-heading);
       content: '\25B8';
       font-size: var(--fs-label); line-height: 1;
       color: var(--npc-option-fg);
+      flex-shrink: 0;
     }
     /* The label rides the row's own weight, or the bold above stops at the span. */
     .npc-chat-action-btn:hover:not(.npc-action-disabled) .npc-opt-label,
@@ -40460,10 +40479,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc-compact-type-pill.active,
 .cc-compact-btn.selected,
 .cc-compact-btn.primary.selected,
-.cc-sidebar-btn.selected,
-.cc-sidebar-btn.primary.selected,
-.cc-sidebar-btn:hover,
-.cc-sidebar-btn.primary:hover,
 .cc-step-tab.active,
 .cc-bio-chip.selected,
 .cc-pick-row.selected,
@@ -42047,6 +42062,8 @@ body.pad-input .kb-only {
 .sm-craft-write-btn,
 .radio-modal-buttons .utility-btn,
 .cc-modal-actions .cc-sidebar-btn,
+.cc-modal-actions .army-dialog-btn,
+.cc-modal-actions button,
 #diary-container .diary-write-btns button {
     font-family: var(--font-ui);
     font-size: var(--fs-body);
@@ -42079,11 +42096,28 @@ body.pad-input .kb-only {
 .cc-modal-actions .cc-sidebar-btn:hover,
 .cc-modal-actions .cc-sidebar-btn.focused,
 .cc-modal-actions .cc-sidebar-btn.selected,
+.cc-modal-actions .cc-sidebar-btn.cc-nav-focus,
+.cc-modal-actions .army-dialog-btn:hover,
+.cc-modal-actions .army-dialog-btn.focused,
+.cc-modal-actions .army-dialog-btn.selected,
+.cc-modal-actions .army-dialog-btn.cc-nav-focus,
+.cc-modal-actions button:hover,
+.cc-modal-actions button.focused,
+.cc-modal-actions button.selected,
+.cc-modal-actions button.cc-nav-focus,
 #diary-container .diary-write-btns button:hover,
 #diary-container .diary-write-btns button.focused {
     background: var(--chip-active-bg);
     color: var(--chip-active-fg);
+    border-color: var(--text-primary-hover);
     box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+    outline: none;
+}
+
+.cc-modal-actions .cc-sidebar-btn,
+.cc-modal-actions .army-dialog-btn,
+.cc-modal-actions button {
+    outline: none;
 }
 
 /* The one refusal: a press that destroys something wears the danger frame. */

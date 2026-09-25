@@ -4252,7 +4252,11 @@ Imported.DialogueSystem = true;
             const inParty = $gameParty.members().find(a => a && a.name && a.name().trim() === name);
             if (inParty) return inParty;
             if (name === STORY_ASK_BUBBA && $gameSwitches && $gameSwitches.value(STORY_ASK_SWITCH)) {
-                return window.PartyRoster?.getBubbaActor?.() || ($gameActors ? $gameActors.actor(2) : null);
+                const bubba = window.PartyRoster?.getBubbaActor?.();
+                if (bubba && bubba.name && bubba.name().trim() === STORY_ASK_BUBBA) return bubba;
+                const a2 = $gameActors ? $gameActors.actor(2) : null;
+                if (a2 && a2.name && a2.name().trim() === STORY_ASK_BUBBA) return a2;
+                return null;
             }
             return null;
         } catch (err) { return null; }

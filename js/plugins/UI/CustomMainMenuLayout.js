@@ -93,6 +93,18 @@
         return !!window.WorldMapReturn?.isReturnDisabled?.();
     }
 
+    // The Omega Tower entry on the travel line is refused in exactly two places.
+    // Inside the tower the lift already stands between the party and every
+    // floor, which is the same question the "return to elevator" row asks
+    // (window.DungeonFloors.insideTower), so the door is greyed out there. It is
+    // also held shut while the story keeps it: Switch 48 on with Switch 49 still
+    // off is the one combination that locks it, and Switch 49 alone opens it for
+    // good (so an ordinary run, with 48 off, has it from the start).
+    function omegaTowerLocked() {
+        if (window.DungeonFloors?.insideTower?.()) return true;
+        return !!($gameSwitches.value(48) && !$gameSwitches.value(49));
+    }
+
     function inVoxelWorld() {
         return !!(window.VoxelWorldSystem && window.VoxelWorldSystem.isActive() &&
                   !window.VoxelWorldSystem.isTitleDrive());
@@ -107,6 +119,12 @@
     // usable while the party holds the portable kit, and is greyed out (rather
     // than hidden) the way the Hypernet tile is when no device is carried.
     const ALCHEMISTRY_KIT_ITEM_ID = 390;
+
+    // The Omega Tower's own ground floor, as the world map's travel line names
+    // it: map 136, the square the doors stand on, facing down into the hall.
+    // The same address the tower's doors reach, kept in one place so the tile
+    // and the command that takes it can never disagree.
+    const OMEGA_TOWER_ENTRY = { mapId: 136, x: 36, y: 136, dir: 2 };
 
     function isAlchemistryAvailable() {
         if (typeof $gameParty === "undefined" || !$gameParty || typeof $dataItems === "undefined") return false;
@@ -307,6 +325,7 @@
         travelResume: 249,
         travelStop: 282,
         returnToShip: 296,
+        omegaTower: 212,
         hexphone: 206,
         alchemistryKit: 180,
         dynamicsRoster: 196,
@@ -2836,6 +2855,83 @@
         }
     };
 
+    // =========================================================================
+    // The Omega Tower door on the world map
+    // =========================================================================
+    // One fixed square of the tower's own ground floor. The tile asks the
+    // question rather than taking the party there: it returns to the map and
+    // the confirmation is offered there, over the ground the party is actually
+    // standing on, so the choice is not buried inside the menu. Teleport is the
+    // first row, Cancel the second.
+    //
+    // The tile is refused while the story keeps it shut (Switch 48 on, Switch
+    // 49 still off; Switch 49 alone opens it) and inside the tower itself,
+    // where the lift already stands between the party and every floor.
+    Scene_Menu.prototype.commandOmegaTower = function () {
+        if (omegaTowerLocked()) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        // The menu closes first; Scene_Map opens the choice on its next frame
+        // (see updateOmegaTowerChoice), the way the destination/vehicle choice
+        // is asked over the map (Map/WorldMapReturn.js).
+        $gameTemp._pendingOmegaTowerConfirm = true;
+        SceneManager.pop();
+    };
+
+    // The teleport itself, run only from the choice window once "Teleport to
+    // Omega Tower" is picked.
+    function performOmegaTowerTeleport() {
+        // Off an alien surface the landing is ended first (GalaxySim owns that
+        // state): the tower is Earth's own ground, so the procedural generator
+        // has to resolve its next square against Earth again rather than the
+        // planet left behind, whose grid is still saved alongside the biome.
+        if (window.GalaxySim?.isAlienSurface?.()) {
+            window.GalaxySim.clearAlienSurfaceState?.();
+        }
+        if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
+            window.VoxelWorldSystem.stop();
+        }
+        SoundManager.playOk();
+        AudioManager.playSe({ name: "Teleport", pan: 0, pitch: 100, volume: 90 });
+        $gamePlayer.reserveTransfer(
+            OMEGA_TOWER_ENTRY.mapId, OMEGA_TOWER_ENTRY.x,
+            OMEGA_TOWER_ENTRY.y, OMEGA_TOWER_ENTRY.dir, 0);
+    }
+
+    // "Teleport to Omega Tower / Cancel" over the map. The first row takes the
+    // party, the second leaves everything as it stands (the choice list's own
+    // cancel index is the last row, so ESC/Cancel picks it too).
+    function openOmegaTowerChoice() {
+        if ($gameMessage.isBusy()) return;
+        $gameMessage.setChoices([
+            T('MainMenu.omegaTowerChoice.teleport'),
+            T('MainMenu.omegaTowerChoice.cancel')
+        ], 0, 1);
+        $gameMessage.setChoiceCallback((choice) => {
+            if (choice === 0) performOmegaTowerTeleport();
+        });
+        Input.clear();
+    }
+
+    // The menu has closed onto this scene with the confirmation pending. The
+    // flag is read once the map is free of its own boxes, so the choice cannot
+    // collide with a message or an event that was already running.
+    const _Scene_Map_update_omegaTower = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function () {
+        _Scene_Map_update_omegaTower.call(this);
+        this.updateOmegaTowerChoice();
+    };
+
+    Scene_Map.prototype.updateOmegaTowerChoice = function () {
+        if ($gameTemp._pendingOmegaTowerConfirm && !this.isBusy() &&
+            !$gamePlayer.isTransferring()) {
+            $gameTemp._pendingOmegaTowerConfirm = false;
+            openOmegaTowerChoice();
+        }
+    };
+
+
     // Vehicles page: "Teleport to Ship" on the Starship row boards its interior.
     Scene_Menu.prototype.teleportToShipUI = function () {
         if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
@@ -2901,7 +2997,12 @@
         // filters or the selected row redraws it, so the whole search state is
         // part of the key.
         const searchKey = window.MenuSearch ? window.MenuSearch.stateKey() : '';
-        return `${this._isToolsPage}_${this._isDynamicsPage}${dynamicsKey}_${this._isDeedsPage}_${this._isPetsPage}${petsKey}_${this._isVehiclesPage}_${this._rightToolsTab}_${searchKey}`;
+        // The Omega Tower door greys out when the story shuts it (Switch 48
+        // with Switch 49 still off) or when the party is already inside the
+        // tower, so its state is part of the key: the tile is redrawn the
+        // moment either flips instead of staying as it was drawn.
+        const omegaTowerKey = omegaTowerLocked() ? "towerShut" : "towerOpen";
+        return `${this._isToolsPage}_${this._isDynamicsPage}${dynamicsKey}_${this._isDeedsPage}_${this._isPetsPage}${petsKey}_${this._isVehiclesPage}_${this._rightToolsTab}_${searchKey}_${omegaTowerKey}`;
     };
 
     // Uniform needs palette: gold when healthy, orange when low, red when
@@ -3782,6 +3883,24 @@
                     </div>
             ` : "";
 
+            // The Omega Tower door (Map/WorldMapReturn.js owns the tower; this
+            // is the world map's own entry to it). Always laid out on the travel
+            // line so the pocket never vanishes: it reads as the shared greyed
+            // tile while the story keeps it shut (Switch 48 with Switch 49 still
+            // off) and while the party is already inside the tower, and carries
+            // its action only when it is open.
+            const omegaTowerHTML = omegaTowerLocked() ? `
+                    <div class="command-item focusable is-disabled" data-symbol="omega_tower">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.omegaTower)}"></span>
+                        <span>${T('MainMenu.cmd.omegaTower')}</span>
+                    </div>
+            ` : `
+                    <div class="command-item focusable" data-symbol="omega_tower" onclick="if(SceneManager._scene && typeof SceneManager._scene.commandOmegaTower === 'function') SceneManager._scene.commandOmegaTower()">
+                        <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.omegaTower)}"></span>
+                        <span>${T('MainMenu.cmd.omegaTower')}</span>
+                    </div>
+            `;
+
             const topHeaderHTML = `
                 <div class="page-header-bar">
                     <div class="back-button" onclick="SceneManager._scene?.uiBackOut?.()">${T('MainMenu.dynamics.back')}</div>
@@ -3816,6 +3935,7 @@
                         procReturnHTML,
                         returnToShipHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.worldMap'), "world_map"),
+                        omegaTowerHTML,
                         layerShiftHTML,
                         this.generateUICommandItemHTML(T('MainMenu.cmd.vehicles'), "vehicles"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.wait'), "sleep_menu"),

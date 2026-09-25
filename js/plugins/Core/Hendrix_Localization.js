@@ -238,10 +238,10 @@ Imported.Hendrix_Localization = true;
     const excludeNameText = parameters['Exclude Name Text'] === 'true';
     const extractVariableText = parameters['Extract Variable Text'] === 'true';
     const extractPluginCommandText = parameters['Extract Plugin Command Text'] === 'true';
-    // The game ships locked to English for now: the language selector is off the
-    // title screen and the Language row is out of the options menu, so nothing
-    // may switch away from LOCKED_LANGUAGE while this is set.
-    const LOCKED_LANGUAGE = 'en';
+    // The three languages the game offers (see LANGUAGE_MENU_ORDER): English,
+    // Italian and Naguka. LOCKED_LANGUAGE is the single switch for pinning the
+    // game to one language; while it is null the player picks from the menus.
+    const LOCKED_LANGUAGE = null;
     const defaultLanguage = LOCKED_LANGUAGE || parameters['Default Language'];
     const partialMatching = parameters['Partial Matching'] === 'true';
     const useTranslationCache = parameters['Use Translation Cache'] === 'true';
@@ -286,9 +286,9 @@ Imported.Hendrix_Localization = true;
         tr: 'Türkçe', vi: 'Tiếng Việt',
     };
 
-    // Order the language selector offers: the languages that are actually
-    // translated come first (English, then Italian, then Naguka), everything
-    // else keeps the order the i18n folder was read in.
+    // Order the language selector offers: English, Italian, then Naguka. This
+    // list is also the allow-list: an i18n folder that is not named here (fr,
+    // ko, ru) is never offered, whatever sits on disk.
     //
     // Naguka ("nk") is the Goblin patois: only the UI chrome (terms/system/
     // commands/misc plus every plugins/*.json screen) is rendered into it, in
@@ -1787,11 +1787,10 @@ Imported.Hendrix_Localization = true;
             }
         }
 
-        // When the target language IS the default one - which is every run, as
-        // long as LOCKED_LANGUAGE stands - the two reads below asked for the
-        // same file twice and parsed it twice. That was every one of the 41
-        // top-level js/i18n/en files read and JSON.parsed a second time for
-        // nothing, synchronously, out of Scene_Boot.start.
+        // When the target language IS the default one, the two reads below
+        // would ask for the same file twice and parse it twice. That was every
+        // one of the 41 top-level js/i18n/en files read and JSON.parsed a
+        // second time for nothing, synchronously, out of Scene_Boot.start.
         const sameLanguage = (lang === defLang);
 
         categories.forEach(cat => {
@@ -1837,9 +1836,11 @@ Imported.Hendrix_Localization = true;
             availableLanguages = languageSymbols.slice();
         }
 
-        // The selector cycles this list in order, so English leads and Italian
-        // is the first alternative offered.
-        availableLanguages = sortLanguagesForMenu(availableLanguages);
+        // Only the three carried languages reach a menu (LANGUAGE_MENU_ORDER);
+        // an i18n folder for a barely started translation stays off them. If the
+        // scan turned up none of them (no filesystem), fall back to the three.
+        availableLanguages = LANGUAGE_MENU_ORDER.filter(symbol => availableLanguages.includes(symbol));
+        if (availableLanguages.length === 0) availableLanguages = LANGUAGE_MENU_ORDER.slice();
         if (LOCKED_LANGUAGE) availableLanguages = [LOCKED_LANGUAGE];
 
         if (!availableLanguages.includes(currentLanguage)) {
@@ -2868,9 +2869,10 @@ Imported.Hendrix_Localization = true;
     window.HendrixLocalization = {
         getAvailableLanguages() {
             if (LOCKED_LANGUAGE) return [LOCKED_LANGUAGE];
-            return sortLanguagesForMenu((availableLanguages && availableLanguages.length)
+            const list = (availableLanguages && availableLanguages.length)
                 ? availableLanguages
-                : languageSymbols);
+                : LANGUAGE_MENU_ORDER;
+            return LANGUAGE_MENU_ORDER.filter(symbol => list.includes(symbol));
         },
         getLanguageName,
         getLanguageMenuLabel,

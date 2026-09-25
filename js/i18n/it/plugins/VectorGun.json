@@ -1,6 +1,6 @@
 {
-  "menu": "Pistola vettoriale",
-  "title": "Pistola vettoriale",
+  "menu": "Vector Gun",
+  "title": "Vector Gun",
   "back": "Indietro",
   "subtitle": "Modalita operative",
   "tab": {
@@ -180,8 +180,8 @@
     "remaining": "{n} modalita ancora chiuse, la prossima al livello {next}"
   },
   "locked": {
-    "equip": "Solo Em puo equipaggiare la pistola vettoriale.",
-    "part": "La pistola vettoriale non puo lasciare Em."
+    "equip": "Solo Em puo equipaggiare la Vector Gun.",
+    "part": "La Vector Gun non puo lasciare Em."
   },
   "cmd": {
     "toBlade": "Passa alla lama",
@@ -218,7 +218,7 @@
   },
   "shape": {
     "gun": {
-      "name": "Pistola vettoriale",
+      "name": "Vector Gun",
       "desc": "Forma base. Usa l'elemento e gli alloggiamenti delle modalita.",
       "effect": "Senza altre forme montate, TRASFORMA converte la pistola in un fucile di precisione coilgun: 3 colpi, gittata x4 sulla mappa di battaglia. Il terzo colpo la ripiega in pistola."
     },

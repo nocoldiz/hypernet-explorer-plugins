@@ -1598,9 +1598,9 @@
             <div class="cc-pick-list cc-scroll-pane"></div>
             ${detailed ? '<div class="cc-pick-detail cc-scroll-pane"></div>' : ''}
           </div>
-          <div class="cc-modal-actions">
-            <button class="cc-sidebar-btn cc-pick-cancel">${this._esc(T('CharCreate.cancel'))}</button>
-            <button class="cc-sidebar-btn primary cc-pick-accept">${this._esc(T('CharCreate.confirm'))}</button>
+          <div class="cc-modal-actions army-dialog-buttons">
+            <button class="army-dialog-btn cc-sidebar-btn cc-pick-cancel">${this._esc(T('CharCreate.cancel'))}</button>
+            <button class="army-dialog-btn cc-sidebar-btn primary cc-pick-accept">${this._esc(T('CharCreate.confirm'))}</button>
           </div>
         </div>`;
 

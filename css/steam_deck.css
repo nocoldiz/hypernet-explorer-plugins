@@ -2878,16 +2878,37 @@
         padding: 6px 10px;
     }
 
-    .npc-chat-actions-row {
-        padding: 6px 12px;
+    .npc-chat-main {
+        max-width: 520px;
     }
 
     .npc-chat-actions-row {
-        width: clamp(140px, 32%, 200px);
+        padding: 6px 10px;
+        width: clamp(300px, 48%, 400px);
     }
 
     .npc-chat-action-btn {
         padding: 4px 9px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    .npc-chat-action-btn .npc-opt-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .npc-chat-action-btn .npc-aside,
+    .npc-chat-action-btn .npc-aside-sm,
+    .npc-chat-action-btn .npc-good,
+    .npc-chat-action-btn .npc-bad,
+    .npc-chat-action-btn [class*="npc-score"] {
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 
     .npc-chat-elsewhere {

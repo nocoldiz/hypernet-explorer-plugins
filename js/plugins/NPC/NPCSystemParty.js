@@ -527,6 +527,9 @@
         },
 
         dateOf: rosterDateOf,
+        getBubbaActor() {
+            return getBubbaActor();
+        },
     };
 
     // ========================================================================
@@ -1813,8 +1816,6 @@
             }
             const any = ($gameActors._data || []).find(a => a && a.name && a.name() === 'Bubba');
             if (any) return any;
-            const a2 = $gameActors.actor(2);
-            if (a2) return a2;
         }
         return null;
     }
@@ -1842,19 +1843,20 @@
     // been benched. A story run that has never taken him on has no Bubba in it
     // at all, so nobody trails Em out of the opening.
     Game_BubbaFollower.prototype.hasTravelled = function() {
+        if (!window.$gameSwitches || !$gameSwitches.value(49)) return false;
         // i18n-ignore: actor name, matched at runtime
         return pastPartyList().some(entry => entry && entry.name === 'Bubba');
     };
 
     Game_BubbaFollower.prototype.isVisible = function() {
         if (!this.isStoryMode()) return false;
+        if (this.actor && !this.actor()) return false;
         if (this.isBubbaInParty()) return false;
         if (!this.hasTravelled()) return false;
         return !!($gamePlayer && $gamePlayer.followers && $gamePlayer.followers().isVisible());
     };
 
     Game_BubbaFollower.prototype.actor = function() {
-        if (!this.isVisible()) return null;
         return getBubbaActor();
     };
 

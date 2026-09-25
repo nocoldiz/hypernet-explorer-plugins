@@ -142,7 +142,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.6.39a"
+    "text": "0.6.40a"
   },
   "language": {
     "label": "✦ LANG"
@@ -283,6 +283,6 @@
     "fallbackType": "Relic"
   },
   "music": {
-    "label": "✦ MUSIC: "
+    "label": "✦ "
   }
 }

@@ -46,6 +46,7 @@
     "returnToElevator": "Elevator",
     "chooseLandingSite": "Choose landing site",
     "stopTravel": "Stop travel",
+    "omegaTower": "Omega Tower",
     "deeds": "Deeds",
     "locked": "???"
   },
@@ -70,7 +71,8 @@
     "resign": "Quit current game and return to title",
     "stopTravel": "Stop world travel and explore current location",
     "returnToWorldMap": "Leave current area and return to the map",
-    "returnToShip": "Board the starship interior immediately"
+    "returnToShip": "Board the starship interior immediately",
+    "omegaTower": "Teleport to the Omega Tower's own ground floor"
   },
   "dynamics": {
     "roster": "Roster",
@@ -256,7 +258,7 @@
     "hideMinimap": "Hide minimap",
     "openMap": "Open world map",
     "openAtlas": "Atlas",
-    "worldMapTitle": "World map"
+    "worldMapTitle": "Map"
   },
   "pets": {
     "rename": "Rename",
@@ -386,6 +388,10 @@
   },
   "value": {
     "wantedLevel": "Wanted {pct}%"
+  },
+  "omegaTowerChoice": {
+    "teleport": "Teleport to Omega Tower",
+    "cancel": "Cancel"
   },
   "group": {
     "party": "Party",

@@ -1041,7 +1041,16 @@
           "{name} posa quello che aveva in mano, come se la tua presenza richiedesse entrambe le mani libere.",
           "Mio fratello è andato all'Isola dei Rituali a guardare il buco. È tornato sbagliato ed è tornato zitto.",
           "Abitudine. Una volta era più di un'abitudine.",
-          "Dicono che sussulti al suono delle campane. Bene. Qualcosa dentro di te sa ancora cos'ha fatto."
+          "Dicono che sussulti al suono delle campane. Bene. Qualcosa dentro di te sa ancora cos'ha fatto.",
+          "Quindi adesso la lancia cammina in stivali.",
+          "Ho sepolto mio padre con mezzo rito. L'altra metà è morta la notte stessa in cui hai fatto quello che hai fatto.",
+          "{name} non fa un passo indietro, e gli costa qualcosa, e si vede benissimo quanto.",
+          "Diciannove anni ho cantato le risposte. Adesso mugugno, perché le parole non arrivano da nessuna parte.",
+          "Hai la faccia giusta per questo. Te lo concedo. Una faccia da copertina di un libro di inni, capovolta.",
+          "Il rosario di mia nonna si è freddato tra le sue mani. Freddo. In una notte calda.",
+          "{name} non ti offre un posto, e si assicura che tu capisca che è una decisione.",
+          "Due porte più in là c'è una donna che apparecchia ancora un posto per Lui. Va' a guardarla, e poi guarda te.",
+          "Vuoi indicazioni da me. Da me. Dopo quello che ti sei presa."
         ],
         "positive": [
           "Un elogio da te è una macchia. Poi la lavo via.",
@@ -1053,7 +1062,13 @@
           "Preferirei essere insultato onestamente. Che adulato dal motivo.",
           "{name} ti ringrazia con la voce piatta che tiene per gli esattori.",
           "Quel fascino l'hai comprato con un ricordo che non era tuo da spendere. Tienitelo.",
-          "{name} annota la gentilezza come si annota un sintomo."
+          "{name} annota la gentilezza come si annota un sintomo.",
+          "Tu sei gentile con me. È la cosa più spaventosa che mi sia capitata quest'anno.",
+          "{name} accoglie la gentilezza come si accoglie una citazione in tribunale.",
+          "Fai la dolce quanto ti pare. Mio figlio chiede ancora perché i miracoli si sono fermati.",
+          "Non essere gentile con me. La gentilezza da te è peggio.",
+          "{name} non accetta niente, non dà niente, e resta ben dritto in piedi per tutto il tempo.",
+          "Preferirei che mi sputassi addosso."
         ],
         "neutral": [
           "{name} risponde col minor numero di parole che la lingua consenta, una mano sul pendaglio.",
@@ -1065,7 +1080,13 @@
           "C'è una parola per le conversazioni con quelli come te. Non la userò in mezzo alla strada.",
           "{name} tiene una porta alle proprie spalle per tutta la durata dello scambio.",
           "Sale sul gradino, sale sul davanzale. Parla quanto ti pare. Io il mio l'ho fatto stamattina.",
-          "{name} risponde a ogni domanda con l'anno in cui è successo, e niente altro."
+          "{name} risponde a ogni domanda con l'anno in cui è successo, e niente altro.",
+          "{name} risponde, e dopo che te ne sei andata sala di nuovo la soglia.",
+          "Ti parlerò. Non ne sarò felice. Sono due promesse distinte.",
+          "Chiedi quello che sei venuta a chiedere. La fila dietro di te è immaginaria e la preferisco lo stesso.",
+          "{name} risponde, e poi guarda a lungo le proprie mani.",
+          "Chiedi. Poi vattene. Sono le due parti.",
+          "Troverai la strada per uscire come hai trovato quella per entrare."
         ],
         "negative": [
           "Sì. Di' qualcosa di brutto. Si addice a quello che sei.",
@@ -1077,7 +1098,13 @@
           "Più forte. Voglio dei testimoni per quello che è uscito da quella bocca.",
           "{name} non risponde, e comincia, molto deliberatamente, a pregare contro di te.",
           "E allora fammi male. Aggiungilo al registro. Tanto è già illeggibile.",
-          "Qualcuno di noi tiene ancora delle liste. Qualcuno deve pur farlo."
+          "Qualcuno di noi tiene ancora delle liste. Qualcuno deve pur farlo.",
+          "Non puoi farmi di peggio. L'hai già fatto, e pure in un giorno di festa.",
+          "{name} incassa, e scrive la data dentro la copertina di un libro di inni.",
+          "Urla. È l'unica preghiera che ottiene risposta, adesso.",
+          "Bene. Dillo tutto. Voglio sapere esattamente con cosa ho a che fare.",
+          "{name} non alza la voce, e c'è qualcosa in questo che è molto peggio.",
+          "Non è rimasto nessun posto dove mandarti. Te ne sei assicurata."
         ]
       },
       "annoyed": {
@@ -1094,7 +1121,16 @@
           "Due mesi tranquilli. L'ambizione era tutta lì.",
           "Se è per via del rituale, io dormivo. Come tutti.",
           "{name} serve prima l'uomo dietro di te, poi te, poi di nuovo l'uomo dietro di te.",
-          "L'articolo l'ho letto due volte, perché continuano a portarmelo dentro. Complimenti."
+          "L'articolo l'ho letto due volte, perché continuano a portarmelo dentro. Complimenti.",
+          "Ah, bene. L'incidente.",
+          "Ho venduto undici piatti commemorativi. Undici. Non toccare il dodicesimo.",
+          "{name} sospira prima che tu abbia detto qualcosa, il che è una pianificazione encomiabile.",
+          "Due pullman di pellegrini a settimana da capodanno. Due. E nemmeno uno compra il latte.",
+          "Qualunque cosa stai per fare, falla fuori e in silenzio.",
+          "Niente autografi, niente sedute spiritiche, niente giornalisti. La lista è sulla porta.",
+          "{name} guarda il soffitto un momento, raccogliendo la pazienza necessaria.",
+          "Ti porterai dietro qualcosa. Lo fai sempre. Lo fanno sempre tutti.",
+          "Ho un negozio, la schiena rotta e un nipote. Non ho spazio per una leggenda."
         ],
         "positive": [
           "Che carina. Adesso va' a essere carina due strade più in là.",
@@ -1106,7 +1142,13 @@
           "{name} ti ringrazia e comincia a riordinare roba che era già in ordine.",
           "Tienitelo per chi ti stamperà la prossima volta.",
           "{name} sorride soltanto con la metà inferiore della faccia.",
-          "Verrà benissimo per iscritto. Persona del posto conquistata. Prima pagina."
+          "Verrà benissimo per iscritto. Persona del posto conquistata. Prima pagina.",
+          "Bello. Meraviglioso. Adesso va' a essere bello in un posto con un altro codice postale.",
+          "{name} ti ringrazia e continua a spostare le casse davanti a cui stai.",
+          "È molto carino. Non aggiusta il tetto.",
+          "Molto bene. Bello. La porta è dietro di te e leggermente a sinistra.",
+          "{name} accetta il complimento come si accetta un volantino.",
+          "Sei più simpatica di quanto dicessero i giornali e io sono comunque occupato."
         ],
         "neutral": [
           "Più tardi piove. La conversazione è tutta qui.",
@@ -1118,7 +1160,13 @@
           "{name} ti dà la risposta vera più corta a disposizione.",
           "Le strade sono strade. Prendine una.",
           "{name} tiene una mano sulla saracinesca per tutto il tempo.",
-          "Non ho niente che valga la pena citare. Prova altrove, ti prego."
+          "Non ho niente che valga la pena citare. Prova altrove, ti prego.",
+          "Mm. Affascinante. La merce non si conta da sola.",
+          "{name} ti risponde correttamente e alla velocità di uno che viene cronometrato.",
+          "Sì. No. Probabilmente. Serve altro, è solo che c'è la fila e sono io.",
+          "{name} ti risponde mentre conta tutt'altro e azzecca entrambe le cose.",
+          "Sì. Da quella parte. Occhio al gradino. Arrivederci.",
+          "Era tutto, è solo che ho una consegna ed è peggio di te."
         ],
         "negative": [
           "Ecco qua. Avanti, maledici il negozio. L'hanno fatto tutti.",
@@ -1130,7 +1178,13 @@
           "{name} comincia a contare alla rovescia da dieci con voce molto ferma.",
           "Ecco qua. Adesso va' a esserlo da un'altra parte.",
           "{name} si scrive qualcosa sul dorso della mano: il tuo nome e un'ora.",
-          "Per trent'anni sarai una storia in questo paese. E io me le dovrò sorbire tutte."
+          "Per trent'anni sarai una storia in questo paese. E io me le dovrò sorbire tutte.",
+          "Bene. Buono. Ora possiamo smettere entrambi di fingere che portasse da qualche parte.",
+          "{name} non alza la voce, perché alzarla richiederebbe più tempo.",
+          "Tu vuoi una lite. Io voglio un martedì tranquillo. Uno di noi resterà deluso.",
+          "Bene. Fuori. Tutti e due, e tu sei uno solo.",
+          "{name} ne ha sentite di peggio dai fornitori, e lo dice.",
+          "Meraviglioso. Ora stiamo avendo entrambi la giornata che ci aspettavamo."
         ]
       },
       "fan": {
@@ -1147,7 +1201,16 @@
           "{name} ti chiama con un soprannome inventato dai rotocalchi, elettrizzato di essere il primo nella stanza a usarlo.",
           "Mia sorella diceva che non ti avrei mai incontrata e adesso le viene un COLPO.",
           "{name} ti tocca la manica, poi il cappotto, poi si scusa, poi lo rifà.",
-          "Di' qualcosa sul novantadue per cento. Non deve per forza essere triste."
+          "Di' qualcosa sul novantadue per cento. Non deve per forza essere triste.",
+          "È LEI. È lei, Marco, l'avevo detto che era lei!",
+          "Ho la foto del giornale. Quella del nord. Mi firma la parte del cielo?",
+          "{name} ti sta già venendo incontro, e lo fa da quando hai svoltato l'angolo.",
+          "È vero che non ricordi? Perché se non ricordi te lo posso raccontare io. Lo so tutto.",
+          "Ho chiamato il cane come la lancia. Non se lo merita ma ci è cresciuto dentro.",
+          "Ero nel cortile. Ho visto tutto. Da allora non dormo bene e non cambierei niente.",
+          "{name} ha tirato fuori un quaderno da chissà dove e lo tiene come un passaporto.",
+          "Non devi dire niente. Davvero. Sta' qui solo un momento.",
+          "Mia sorella diceva che non saresti mai passata. Mia sorella sbaglia su tutto."
         ],
         "positive": [
           "L'ha detto A ME. L'avete sentito tutti.",
@@ -1159,7 +1222,13 @@
           "{name} chiede se può raccontare in giro che gliel'hai detto, e non aspetta la risposta.",
           "Lo dici a tutti? No. Non dirmelo. Lasciamelo.",
           "{name} diventa rossissimo e ti stringe la mano tre volte separate.",
-          "La cosa più bella che mi sia capitata dal rituale in poi."
+          "La cosa più bella che mi sia capitata dal rituale in poi.",
+          "Mi ha parlato. Mi ha PARLATO.",
+          "{name} racconterà questa storia per tutta la vita, con aggiunte.",
+          "Mi devo sdraiare. Mi devo sdraiare e pensarci su.",
+          "No. No, sei TU. Scusa. Scusa.",
+          "{name} si copre la bocca con entrambe le mani e non la scopre per un po'.",
+          "Me lo ricorderò sul letto di morte e ho quarantuno anni."
         ],
         "neutral": [
           "Due chiacchiere. Con Em. Sul PANE.",
@@ -1171,7 +1240,13 @@
           "Vado da quella parte anch'io.",
           "{name} fa quattro domande di seguito, nessuna delle quali riguarda quello che hai detto.",
           "Raccontami una cosa qualunque di te.",
-          "{name} ride in un punto che non faceva ridere, poi controlla se la stanza l'ha colto."
+          "{name} ride in un punto che non faceva ridere, poi controlla se la stanza l'ha colto.",
+          "Di' qualcosa. Qualsiasi cosa. Non sono schizzinoso, voglio solo la voce.",
+          "{name} annuisce a circa il doppio della velocità della conversazione.",
+          "Vuoi una sedia? Ti posso prendere una sedia. Ti posso prendere tre sedie.",
+          "Qualsiasi cosa. Parliamo di drenaggio. A me va bene.",
+          "{name} è d'accordo con entusiasmo a un'affermazione che era una domanda.",
+          "Vuoi qualcosa? Qualsiasi cosa? Di' una cosa e te la prendo."
         ],
         "negative": [
           "Mi ha insultato. È meglio dell'autografo.",
@@ -1183,7 +1258,13 @@
           "{name} fa un piccolo passo indietro e poi un grande passo avanti.",
           "Rifallo, ma col mio nome dentro.",
           "{name} tratta tutta la faccenda come uno spettacolo, e alla fine applaude.",
-          "Mi hanno urlato contro persone peggiori per molto meno."
+          "Mi hanno urlato contro persone peggiori per molto meno.",
+          "Va bene. Va benissimo. Hai il diritto. Te lo sei guadagnato.",
+          "{name} ride, con gli occhi lucidi, e insiste che era divertente.",
+          "Preferisco essere insultato da te che ricevere complimenti da chiunque in questo paese.",
+          "È la cosa più emozionante che sia mai successa in questo negozio.",
+          "{name} si illumina, che è la risposta sbagliata, e non c'è verso di farlo ragionare.",
+          "Hai il diritto di essere arrabbiata. Proprio tu hai il diritto."
         ]
       },
       "clout": {
@@ -1200,7 +1281,16 @@
           "Tu vorrai il tavolo buono.",
           "{name} si informa sulla tua salute a voce alta, e sui tuoi affari a voce bassa.",
           "C'è un tale nella Gilda che dovresti conoscere. Anzi, è lui che vorrebbe conoscere te.",
-          "Io a quella roba non credo. Ma in te ci credo, ovviamente."
+          "Io a quella roba non credo. Ma in te ci credo, ovviamente.",
+          "Guarda guarda. La famosa, sulla mia porta.",
+          "Resta lì un momento, vuoi. Nessun motivo. Sta arrivando la mia vicina.",
+          "{name} aggiusta tutta la postura circa un secondo dopo averti riconosciuta.",
+          "Vorrai la sedia buona. La teniamo per il tipo di persona che sei tu.",
+          "Tutto quello che ti serve. Davvero. E se qualcuno chiede, siamo vecchi amici.",
+          "La famosa! Qui dentro! Siediti davanti, vicino alla finestra.",
+          "{name} ha già cominciato a comporre il modo in cui lo racconterà dopo.",
+          "Qualunque cosa abbia detto il giornale, io ho detto il contrario. Chiedi a chiunque. Chiedilo adesso.",
+          "Non ti ricordi di me ma ci siamo conosciuti. Ci siamo assolutamente conosciuti."
         ],
         "positive": [
           "Detto da Em, è praticamente una targa commemorativa.",
@@ -1212,7 +1302,13 @@
           "Devi lasciarti presentare come si deve. Alla gente giusta.",
           "{name} ride un attimo di troppo, in direzione della porta.",
           "Questa è la versione che racconterò io. E la racconterò meglio di com'è andata.",
-          "{name} ti dà un colpetto sul braccio e sbircia chi è appena entrato."
+          "{name} ti dà un colpetto sul braccio e sbircia chi è appena entrato.",
+          "Da TE. Beh. Quella va in vetrina.",
+          "{name} ti ripete quello che hai detto, leggermente migliorato, per verificare di poterlo citare dopo.",
+          "L'ho sempre detto che quella storia aveva dell'altro. Lo dico da mesi. Chiedi a chiunque.",
+          "Mettilo per iscritto. Sto scherzando. Mezzo scherzando. Mettilo per iscritto.",
+          "{name} lo ripete, più forte, a beneficio della sala.",
+          "Questa va dritta a mio cognato e lui la odierà."
         ],
         "neutral": [
           "{name} tira per le lunghe la conversazione ben oltre la sua fine naturale, guardandosi intorno per vedere chi osserva.",
@@ -1224,7 +1320,13 @@
           "{name} si dichiara d'accordo con la tua opinione, e poi con quella opposta, dal tavolo accanto.",
           "Oggi sul giornale c'è il tempo. E ci sei anche tu.",
           "{name} si offre di presentarti persone che hai già davanti agli occhi.",
-          "Il prossimo lo prendo io."
+          "Il prossimo lo prendo io.",
+          "Qualunque cosa tu dica. Qualsiasi cosa. Sono semplicemente felice dell'associazione.",
+          "{name} è d'accordo con te prima di stabilire cosa hai detto.",
+          "Prenditi il tuo tempo. Prenditi tutto il tempo. Prenditi anche la sedia, se ti piace.",
+          "Tutto quello che ti serve, e anche tutto quello che non ti serve.",
+          "{name} è d'accordo con ogni singola parte della tua frase, separatamente.",
+          "Prendi il posto vicino alla finestra. La gente passa davanti alla finestra."
         ],
         "negative": [
           "Il sorriso di {name} resta esattamente dov'è. Dietro, l'amicizia viene riprezzata.",
@@ -1236,7 +1338,13 @@
           "Io con Em non litigo per una parola.",
           "{name} sembra per un attimo davvero punto sul vivo, poi si rimette la faccia.",
           "Questa varrà la pena raccontarla. Non con benevolenza, però.",
-          "{name} alza il bicchiere alla tua salute, e smette silenziosamente di raccomandarti."
+          "{name} alza il bicchiere alla tua salute, e smette silenziosamente di raccomandarti.",
+          "Ah! Bene. Ah. Quello è il famoso caratterino, eh? Meraviglioso.",
+          "{name} ride dell'insulto e lo archivia per raccontarlo in una luce migliore.",
+          "Hai il diritto. Sei l'unica persona del quartiere che ha il diritto.",
+          "Ah! Il caratterino! Gliel'avevo detto del caratterino!",
+          "{name} tratta l'essere insultato da te come una forma di presentazione.",
+          "Potresti dire di peggio e resterei comunque qui."
         ]
       },
       "gawker": {
@@ -1253,7 +1361,16 @@
           "{name} ti offre una sedia come si offre una sedia a un campione da laboratorio.",
           "Mi hanno detto che sussulti alle campane. Ho spostato l'orologio. Per sicurezza.",
           "{name} si siede di fronte a te con l'aria di chi sta cominciando un capitolo.",
-          "Ti sono rimasti i compleanni e non le facce. È tutta la settimana che ci penso."
+          "Ti sono rimasti i compleanni e non le facce. È tutta la settimana che ci penso.",
+          "Sei più bassa della versione nel cielo.",
+          "{name} guarda le tue mani, poi guarda altrove, e poi di nuovo le tue mani.",
+          "Scusa. Scusa. Mi fermo. Non mi fermerò.",
+          "Tutta la mia famiglia ti ha guardata dal cortile. Tutta. Anche quelli che non escono di casa.",
+          "Ce l'hai dentro adesso? La cosa. È lì dentro?",
+          "Sei davvero tu. Lo sei. È la faccia del cielo.",
+          "{name} si è immobilizzato del tutto, il che è in qualche modo più evidente del fissare.",
+          "Ti senti diversa? Devi sentirti diversa. O no?",
+          "La mia piccola ti ha disegnata. Te lo mostrerei ma ha disegnato la parte del cielo e ha turbato i vicini."
         ],
         "positive": [
           "Interessante. La buona educazione è sopravvissuta al rituale. Non tutto ce l'ha fatta.",
@@ -1265,7 +1382,13 @@
           "Quello era caldo. Mi chiedevo se il caldo fosse sopravvissuto.",
           "{name} lo accetta, e poi, in modo terribile, ti chiede di ripeterlo esattamente uguale.",
           "Sai perché l'hai detto? Prenditi il tempo che vuoi.",
-          "{name} scrive: soggetto cortese, soggetto stanco, soggetto ancora qui."
+          "{name} scrive: soggetto cortese, soggetto stanco, soggetto ancora qui.",
+          "{name} dice grazie a un punto da qualche parte sopra la tua spalla sinistra.",
+          "Oh. Oh, che bello. È una bella cosa da dire per la donna del cielo.",
+          "Dovrò sedermi con quella. Dico sul serio, dovrò proprio sedermi.",
+          "{name} dice grazie due volte e nessuna delle due esce come si deve.",
+          "Oh. Cioè. Sì. Grazie. Scusa.",
+          "Non me lo dimenticherò. Non me lo dimenticherò assolutamente."
         ],
         "neutral": [
           "{name} risponde, poi chiede se sogni, e se i sogni siano tuoi.",
@@ -1277,7 +1400,13 @@
           "{name} cronometra le tue pause, e non nasconde l'orologio.",
           "Che tempo faceva il giorno prima?",
           "{name} chiede se hai sognato stanotte, e scrive la risposta due volte.",
-          "Ecco. Quell'esitazione. Quello è il novantadue per cento, non è vero."
+          "Ecco. Quell'esitazione. Quello è il novantadue per cento, non è vero.",
+          "{name} risponde alla domanda e studia la tua faccia per tutta la durata della risposta.",
+          "Scusa, ripeti. Stavo guardando. So di stare guardando.",
+          "È solo che tu sei la cosa che è successa, e adesso chiedi del pane.",
+          "{name} risponde, e poi continua a guardare, e sa di stare ancora guardando.",
+          "Scusa, potresti ripeterlo, non stavo ascoltando, stavo guardando.",
+          "È solo che ho pensato a te per mesi e adesso vuoi il forno."
         ],
         "negative": [
           "Anche la rabbia. Bene. È un'altra cosa che ti hanno lasciato.",
@@ -1289,7 +1418,13 @@
           "Bestemmi come chi l'ha imparato da poco.",
           "{name} non si muove affatto, il che è peggio che sussultare.",
           "Ridillo quando sei calma. E vediamo se è la stessa frase.",
-          "{name} scrive una parola, la sottolinea, e gira la pagina."
+          "{name} scrive una parola, la sottolinea, e gira la pagina.",
+          "{name} trasale appena e non riesce a decidere se ne è valsa la pena.",
+          "Giusto. È giusto, stavo fissando.",
+          "Bene. Sì. Me ne vado. Me ne vado a raccontarlo a tutti.",
+          "{name} si scusa per qualcosa che non era colpa sua e lo dice sul serio.",
+          "Giusto. Sono stato scortese. So di essere stato scortese.",
+          "Bene. Sì. Me lo meritavo e lo racconterò a tutti."
         ]
       },
       "genuine": {
@@ -1306,7 +1441,16 @@
           "{name} ti trova un posto con le spalle alla vetrina e alla strada. Di proposito.",
           "Ti staranno addosso a parlare tutto il giorno. Siediti e fatti parlare intorno per un po'.",
           "{name} ti saluta col tuo nome, pronunciato bene, e non ne fa uno spettacolo.",
-          "Se qui dentro qualcuno comincia. Tu dillo a me, e quello se ne va."
+          "Se qui dentro qualcuno comincia. Tu dillo a me, e quello se ne va.",
+          "Sembri stanca. Siediti e sta' stanca qui, si sta più al caldo.",
+          "{name} non nomina il cielo, la lancia né la data, e si vede che gli costa.",
+          "Non voglio niente da te. Voglio dirlo subito, perché tutti gli altri lo vogliono.",
+          "Come stai. Non la te famosa. Tu.",
+          "C'è la minestra. C'è sempre la minestra. Di' sì e smetti di decidere cose per dieci minuti.",
+          "Siediti. Qui dentro non devi essere niente.",
+          "{name} non chiede niente del cielo, e si capisce che ha deciso di non farlo.",
+          "Sembri uno a cui hanno fatto cento domande oggi. Io non ne ho.",
+          "C'è una sedia, c'è un fuoco, e nessuno dei due sa chi sei."
         ],
         "positive": [
           "Grazie. E qui dentro ti è concesso di essere una persona, se può servire.",
@@ -1318,7 +1462,13 @@
           "Attenta. Rischio di abituarmi a sentirmi parlare così.",
           "{name} lo prende, se lo tiene, e non lo ripete a nessuno.",
           "Potresti anche smettere di chiedere scusa per il fatto di esistere, sai. È solo un pensiero.",
-          "{name} sembra contento, e un po' triste per te, e lascia vedere tutte e due le cose."
+          "{name} sembra contento, e un po' triste per te, e lascia vedere tutte e due le cose.",
+          "{name} accoglie il complimento con semplicità, senza trasformarlo in un evento.",
+          "È stato gentile da parte tua e me lo tengo.",
+          "Sai, sei una compagnia più facile di quanto dicano i giornali.",
+          "{name} sorride davvero, senza trasformarlo in una storia da raccontare.",
+          "È gentile da parte tua. Solo gentile. Nient'altro dentro.",
+          "Me lo prendo per quello che è, cosa che immagino sia inusuale per te."
         ],
         "neutral": [
           "{name} parla con te del nulla assoluto, con generosità, per tutto il tempo che vuoi.",
@@ -1330,7 +1480,13 @@
           "{name} ti chiede della strada, del tempo e del camper, e niente di niente sul cielo.",
           "Preferisco sentire cosa mangi stasera che cosa ne pensano i rotocalchi.",
           "{name} ascolta la tua frase fino in fondo. Tutta. Ogni volta.",
-          "Ripassa di qui quando sei da queste parti."
+          "Ripassa di qui quando sei da queste parti.",
+          "{name} risponde davvero, e ti chiede qualcosa a sua volta, e aspetta.",
+          "Vai avanti. Non ho nessun posto migliore di questo dove stare.",
+          "Non devi fare spettacolo nella mia cucina. È solo una cucina.",
+          "{name} ti parla come parlerebbe a chiunque, e si vede che non gli costa niente.",
+          "Vai avanti, allora. Ho tutto il pomeriggio libero e niente da farci.",
+          "Non devi riempire il silenzio. È un bel silenzio."
         ],
         "negative": [
           "Hai avuto un anno duro. Lo prendo come l'anno che parla.",
@@ -1342,7 +1498,13 @@
           "{name} mette su il caffè e non dice assolutamente niente in merito.",
           "Ecco. Questo è di nuovo l'anno che parla. Aspetto.",
           "{name} ti dice chiaramente che ha fatto male, e poi ti chiede se stai mangiando.",
-          "Preferisco che urli qui dentro piuttosto che là fuori. Là fuori lo stampano."
+          "Preferisco che urli qui dentro piuttosto che là fuori. Là fuori lo stampano.",
+          "{name} lascia che arrivi, aspetta, e non la usa contro di te.",
+          "Sei arrabbiata e non credo sia con me. Siediti comunque.",
+          "Va bene. Una giornata così te la puoi permettere. Prendi un po' di minestra.",
+          "{name} non trasale, e non te lo rinfaccia nemmeno.",
+          "Stai portando qualcosa di pesante ed è uscito di traverso. Capita.",
+          "Va bene. Siediti comunque."
         ]
       }
     },
@@ -1370,7 +1532,26 @@
         "Stevo giusto penzanno a te ed eccote ccà. O è amicizia o è n'ata vota il Motore che perde.",
         "Ue! Attenta al gradino. Il gradino è nuovo. Io e il gradino ci stiamo ancora conoscendo.",
         "Vieni qua. No, senza motivo. Un uomo può volere la sua amica nella stanza, uagliona.",
-        "Vuò la bona notizia o chella a buon mercato? È la stessa notizia, uagliona, la dico sulo in due modi."
+        "Vuò la bona notizia o chella a buon mercato? È la stessa notizia, uagliona, la dico sulo in due modi.",
+        "Uè! Nun te assettà llà, è bagnato. Sta bagnato 'a martedì e me scordo sempe 'e dirlo.",
+        "Ce sta 'na cosa 'ncopp' 'a radio ca parla 'e te. L'aggio misa 'e ncoppo. 'A vuó mettere n'ata vota?",
+        "Mannaggia, uagliona, aggio truvato 'o libro tujo. Stava dinto 'o frigo. Nun addimanno.",
+        "{name} aiza 'a capa, vede ca si' tu, e posa tutto chello cu cui stava pe' litigà.",
+        "Tengo doje pruobleme e una 'e chiste è divertente. Quale vuó primma?",
+        "Uè, Em. Assettate. Nun aggio fatto niente tutta 'a matina e voglio 'nu testimone.",
+        "Hé durmuto? Nun rispunnere. 'O ssaccio già. Chiano chiano, assettate.",
+        "Uè, uagliona. Nun dicere niente pe' 'nu mumento, me sto godenno 'o silenzio e tu ne faje parte.",
+        "Mannaggia, aggio sunnato ca stavemo a Napule e tu stive a litigà cu 'a nonna mia. Ha vinciuto essa.",
+        "Assettate, ca te voglio mustrà 'na cosa e o è 'na genialata o sta appiccianno.",
+        "{name} tene 'o còfano aizato e sta parlanno cu 'o motore cu 'na voce ca nun usa cu 'e perzune.",
+        "Stive assaje tiempo fòra. Aggio cuntato pure io, nun me guardà accussì.",
+        "Ce sta 'nu tizio fòra ca addimanna 'e te. L'aggio ditto ca eri 'na voce 'e piazza. M'ha creduto.",
+        "Uè, Em, aggio 'o café bbuono. No chillo d' 'a strada. Chill'ato. Assettate.",
+        "Nun l'aggio aggiustato. 'O voglio dicere a voce arta primma ca tu addimanne, accussì ce scanzammo 'a parte addó mento.",
+        "{name} sta a miezo a 'na frase accuminciata primma ca tu trasive, e te 'a continua semplice semplice.",
+        "Statt' bbuono. Tanto basta. È tutto 'o saluto 'e ogge, sto muorto 'e suonno.",
+        "Uagliona! Perfetto. Tiene chesto, cunta nzin' a vinte, e si se fa cavero, lassa 'e cadè.",
+        "Vuó 'a verità o vuó 'na matinata tranquilla? Una sola me ne riesce."
       ],
       "positive": [
         "Aoh, sentila. Continua a parlare così e ti metto il nome sul motore.",
@@ -1388,7 +1569,19 @@
         "Ue, è la bugia più bella che m'hanno detto tutta la settimana e non la controllo.",
         "Chiano chiano coi complimenti, core mio, la testa è l'unica parte di me che non è rinforzata.",
         "È assaje gentile e completamente sbagliato, e te ringrazio pe' tutt'e due le metà.",
-        "{name} diventa rosso dal colletto in su e comincia a spiegare una guarnizione che nessuno ha chiesto."
+        "{name} diventa rosso dal colletto in su e comincia a spiegare una guarnizione che nessuno ha chiesto.",
+        "Aoh. Aoh! Dame 'nu preavviso primma 'e te fa' decente cu me.",
+        "Chesta va dinto 'o libro. Nun tengo 'nu libro. Me ne sto accummincianno uno.",
+        "Statt' bbuono, uagliona. È tutto chello ca tengo. È 'a risposta sana sana.",
+        "Mannaggia. Mo m' 'a aggi' 'a essere bbuono pure io e nun me riesce.",
+        "Uè, nun 'o fà. Nun 'o fà. Me faje scrivere poesie e nisciuno 'e vuole.",
+        "'Na cosa accussì se scola 'ncopp' a quaccosa. Nun 'o dicere n'ata vota, me vene 'e penzà.",
+        "{name} te guarda 'nu mumento, fa 'nu segno cu 'a capa, e torna 'ncopp' 'o motore cu 'e mmane cchiù bbone.",
+        "Nun tengo 'na risposta. Primma vota 'n dudece anne, uagliona. Vide chello ca m'hé fatto.",
+        "Madonna. Va bene. Va bene, chella m'è traseto dinto. Dame 'nu mumento.",
+        "Si' l'unica perzona ca me dice 'e ccose belle e 'o dice overo pure pe' 'e ppezze noiose.",
+        "Amice simme, Em. È tutto chello ca tengo e è 'a cosa cchiù grossa ca possiedo.",
+        "Chiano chiano cu chesto. N'ommo tene sulamente tanto posto pe' essere vuluto bene."
       ],
       "neutral": [
         "'O tiempo è tiempo. Sotto gli ottanta, qualunque cosa fa, la fa.",
@@ -1406,7 +1599,19 @@
         "Nun tengo un'opinione ncoppa a chesto e ne vado assaje fiero.",
         "{name} annuisce e intanto sposta piano la tazza fuori dal raggio del tuo gomito.",
         "Chiedimillo n'ata vota fra dieci chilometri. 'A strada di solito 'o sape primma 'e me.",
-        "Jamme, vai avanti. Nel peggiore dei casi impariamo qualcosa."
+        "Jamme, vai avanti. Nel peggiore dei casi impariamo qualcosa.",
+        "Uè, tiene chesto. No, tiene e basta. Me servono ddoje mmane e n'amico.",
+        "'O ssaje che me piace d' 'a strada? Tuttocosì. 'A risposta è chella, aggio cuntrullato.",
+        "{name} spiega a che serve 'nu cuscinetto cu tre dita e 'na tazza, e 'a cosa funziona 'a stessa.",
+        "Tenimmo 'a benzina, tenimmo 'o café, tiene a te. Chesta è 'a lista.",
+        "Stevo penzanno 'e strade. Tanto basta. È addó so' arrivato.",
+        "{name} risponne, e po' risponne a 'na domanda ca nun hé fatto ma ca stive pe' fà.",
+        "Sì. No. Dipende. Addimanname doppo 'o café, guaglio'.",
+        "Tutto chesto ccà fòra è 'a scorciatoia 'e quaccheruno fatta male. Pecché 'e strade se storcono.",
+        "Guaglio', nun sto ascultanno comme se deve e nun 'o voglio finta'. Ridillo, mo sto ccà.",
+        "'A Bestia sta facenno 'nu rumore nuovo. Me piace. Nun saccio che è e me piace.",
+        "{name} sta mettenno 'e vite 'nt' 'na vaschetta pe' misura e nun s'è fermato 'a quanno si' trasuta.",
+        "Jamme. Qualunque cosa è, nce arrivammo. Nce arrivammo sempe."
       ],
       "negative": [
         "Giornataccia, eh. Assettate, uagliona, metto su 'a cuccumella.",
@@ -1424,7 +1629,18 @@
         "Me 'o dice n'ata vota e te 'o faccio scrivere in oro ncoppa â fiancata.",
         "Aoh. Aoh! Guagliona, quello è l'unico braccio buono che ho e me lo stai descrivendo.",
         "Va' avanti. Quanno finisci, te dico chelle ncoppa a me che nun te so' venute in mente.",
-        "È 'a cosa cchiù cattiva che m'hanno ditto da colazione. Pure 'a colazione eri tu."
+        "È 'a cosa cchiù cattiva che m'hanno ditto da colazione. Pure 'a colazione eri tu.",
+        "Madonna, s'è partuta. Va' avanti, uagliona, scola 'o caricatore tutto sanato.",
+        "Hé fernuto? No? Va bene, aspettò. Tengo 'na guarnizione e tutto 'o tiempo d' 'o munno.",
+        "{name} se fa passà 'ncuollo tutto quanto e po' te addimanna si hé mangiato.",
+        "Uè! Chella è 'na botta sotto 'a cintura e 'a voglio usà cu quaccheruno ato, quindi grazie.",
+        "Mannaggia. Va bene. VA BENE. Hé vinciuto, so' 'na vergogna, ce jammo a Beagle o no?",
+        "{name} nun smette 'e faticà, ma 'a chiave inglese se usa cu n'ammore assaje cchiù visibile.",
+        "Chisto l'hé ntiso d' 'a radio. Nun m' 'a cuntà, uagliona, aggio ntiso 'o prugramma.",
+        "Dillo 'n taliano e forze fa male. Va' avanti. Pruova. Io aspettò.",
+        "Aoh, siente. M'ha chiammato vergogna 'na dea overa. Tu staje 'o secunno posto.",
+        "È 'a terza vota sta semmana ca me dì chello e ogne vota fa cchiù male.",
+        "Va bene. Bbuono. Mo assettate e si' 'nu schifo cu me 'a 'na seggia, comme 'a gente normale."
       ],
       "player": {
         "positive": [
@@ -1619,109 +1835,151 @@
           "La pioggia è buona, uagliona. La pioggia vuol dire che la polvere non mi nasconde niente.",
           "Mettiti sotto la tenda prima di prenderti qualcosa. Mannaggia, tu ci staresti sotto tutto il giorno a chiamarlo tempo atmosferico.",
           "{name} ascolta la pioggia sul tetto per un momento e sembra un uomo che ha tutto.",
-          "I tergicristalli stanno alla terza vita, core mio. Non guardarli. È guardarli che li ammazza."
+          "I tergicristalli stanno alla terza vita, core mio. Non guardarli. È guardarli che li ammazza.",
+          "Uè, chesta è acqua overa. Assettate, nisciuno ce aspetta a quacche parte ccà dinto.",
+          "Me piace 'a pioggia pecché fa addiventà 'a gente onesta 'ncopp' 'o stare a casa."
         ],
         "storm": [
           "Uè. Quello è il suo tempo, quello. Non dire il suo nome e non guardare in su.",
           "Questa la aspettiamo, chiano chiano. Là fuori non c'è niente per cui valga la pena di essere fulminati.",
           "{name} conta il tempo tra il lampo e il tuono, e smette di contare quando si accorcia.",
-          "Statt' bbuono, Em. I temporali passano. Passano sempre. Non ce n'è stato uno che sia rimasto."
+          "Statt' bbuono, Em. I temporali passano. Passano sempre. Non ce n'è stato uno che sia rimasto.",
+          "Nun te mettere vicino 'e feneste, Em. Te sto addimannanno, nun te sto dicenno.",
+          "{name} ha miso 'e ncoppo 'a radio, cosa ca nun fa mai, e nun ne ha ditto niente."
         ],
         "snow": [
           "Il freddo è onesto, uagliona. Ti dice esattamente cosa ti farà.",
           "'O gasolio nun ama chesta roba. Io e 'o gasolio ce stammo dicenno certe cose.",
           "Miettete quaccosa. No, miettete quaccosa OVERO, Em, te veco 'e puze.",
-          "{name} ha già pulito il parabrezza due volte e sta perdendo la discussione."
+          "{name} ha già pulito il parabrezza due volte e sta perdendo la discussione.",
+          "Stasera 'ncopp' 'o passo nun nce arrivammo. Nun discutere, guarda chello.",
+          "Tu va' avanti e fa' friddo. Io va' avanti e sto 'nfrisco. Chist'è l'accordo."
         ],
         "cold": [
           "'Na discarica gelata, chesta. Senz'offesa pe' 'a discarica.",
           "Continua a muoverti, core mio. Stare fermi quassù è il modo in cui una persona diventa mobilia.",
-          "{name} indossa tre maglioni e li chiama tutti e tre 'il maglione'."
+          "{name} indossa tre maglioni e li chiama tutti e tre 'il maglione'.",
+          "Movi 'e dita, uagliona. Mo. Tutte e ddoje 'e mmmane. Nun 'o dico doje vote.",
+          "{name} ha miso 'e guante suje 'ncopp' 'a seggia vicino a te senza dirlo."
         ],
         "desert": [
           "Primma l'acqua, po' 'e opinioni. È 'a regola d'o deserto ed è l'unica che ce sta ccà fuori.",
           "Sabbia nei filtri, sabbia nel caffè, sabbia in posti che non nomino. Jamme, muoviamoci.",
-          "{name} strizza gli occhi verso l'orizzonte come se gli dovesse dei soldi."
+          "{name} strizza gli occhi verso l'orizzonte come se gli dovesse dei soldi.",
+          "Nun me fido 'e 'nu posto addó nun ce sta n'ombra e nun se ne pò discutere.",
+          "Dduiciento chilometre d' 'a stessa cosa. Me farria 'stu tragitto addormuto e forze 'o faccio."
         ],
         "forest": [
           "Sa di verde, no? È tutta qua la recensione, uagliona.",
           "Vide addò miette 'e piede sotto a chesti radici. Nun te porto 'nbraccio e nun te lascio ccà.",
-          "{name} ha già trovato tre cose che dice essere legna da ardere e una che è chiaramente una sedia."
+          "{name} ha già trovato tre cose che dice essere legna da ardere e una che è chiaramente una sedia.",
+          "Tutto chesto ccà fòra è cchiù viecchio 'e tutte e ddoje e nun me ne 'mporta niente. È reparante.",
+          "{name} se ferma sempe a guardà 'ncoppa, e po' fa finta ca stava cuntrullanno 'o tiempo."
         ],
         "mountain": [
           "Non le piace la salita, core mio. Seconda marcia e pazienza, chiano chiano.",
           "Guarda quello. Guardalo! E dicono che io ho costruito qualcosa. Mannaggia.",
-          "{name} continua a guardare l'indicatore della temperatura come se fosse un animale che dorme."
+          "{name} continua a guardare l'indicatore della temperatura come se fosse un animale che dorme.",
+          "Seconda marcia, guaglio'. Seconda marcia e 'nu penziero luongo.",
+          "Se vedono tre paise e nisciuno 'e lloro ce vò. Bello."
         ],
         "beach": [
           "Il sale mangia tutto, uagliona. Tutto. Comprese le amicizie, se le lasci fuori.",
           "Lievate 'e stivale. Jamme. Quann'è l'urdema vota che tenive 'a rena ncuollo e nisciuno sparava.",
-          "{name} si arrotola i pantaloni esattamente di un giro e considera la questione chiusa."
+          "{name} si arrotola i pantaloni esattamente di un giro e considera la questione chiusa.",
+          "'O mare nun ce deve niente e ce dà sempe quaccosa 'a stessa.",
+          "{name} ha truvato 'na conchiglia e s' 'a misa 'n sacca e 'o negarrà cchiù tardo."
         ],
         "water": [
           "Non fai il bagno. L'ultima volta è uscita una cosa da un lago e ti ha portata a trentanove anni luce, core mio.",
           "Io e l'acqua tenimmo n'accordo: essa sta llà fuori, io sto ccà dentro.",
-          "{name} guarda la superficie un attimo di troppo, e poi smette molto deliberatamente."
+          "{name} guarda la superficie un attimo di troppo, e poi smette molto deliberatamente.",
+          "Statte 'a luntano 'e chella, Em. Sulamente pe' me. Nun stongo a fà 'o saputo, stongo cu 'a paura.",
+          "L'acqua fonna e io tenimmo 'na storia e sta tutta 'a parte soja."
         ],
         "swamp": [
           "Madonna, che puzza. Quella è decomposizione, ed è pure in anticipo.",
           "Statte ncoppa 'e piezze solide. Si pare solido nun 'o è. So' fatte accussì, 'e paludi.",
-          "{name} tira fuori lo stivale dal fango e lo ispeziona come una saldatura fatta male."
+          "{name} tira fuori lo stivale dal fango e lo ispeziona come una saldatura fatta male.",
+          "Aggio 'ntiso 'o peggio. Aggio 'ntiso 'o peggio DINT' 'O CAMPER. Jamme.",
+          "{name} prova ogne passo cu 'a punta d' 'o stivale e ha lassato 'e fà finta 'e niente."
         ],
         "town": [
           "'Nu paese. Bbuono. Quaccheduno ccà dentro vende guarnizioni e nun sape che tene.",
           "Chiano chiano da queste parti, Em. I paesi piccoli hanno la memoria lunga e tu hai una faccia famosa.",
-          "{name} sta già salutando gli sconosciuti come se li conoscesse da anni, e due di loro rispondono al saluto."
+          "{name} sta già salutando gli sconosciuti come se li conoscesse da anni, e due di loro rispondono al saluto.",
+          "Quaccheruno ccà dinto te ricunuscerà. Si' gentile, ca nun ne sanno 'e cchiù.",
+          "{name} ha già truvato ll'ommo unico 'e stu paese ca venn' 'a benzina a poco."
         ],
         "underground": [
           "Nun me piace sta' cca' sotto e 'o dico a voce alta accussì è ditto.",
           "Tieni la luce su di me e io tengo la chiave inglese su quello che viene, uagliona.",
-          "{name} fischietta qualcosa con troppa fisarmonica dentro e fa finta che non sia per il buio."
+          "{name} fischietta qualcosa con troppa fisarmonica dentro e fa finta che non sia per il buio.",
+          "Si smetto 'e parlà, sto cuncentranno. Nun sto 'mpauruto. Tutte e ddoje 'e ccose, a dì 'a verità.",
+          "'A preta nun mente, guaglio'. È quase tutta 'a cunzulazione ca tengo ccà sotto."
         ],
         "space": [
           "Uè. Tutto questo cielo e non c'è dentro tempo atmosferico. Lo odio e non so dirti perché.",
           "Tutto quassù l'ha costruito qualcuno. Tutto. È quella la parte che mi prende, core mio.",
-          "{name} bussa su una paratia, ascolta, e sembra tranquillizzato da quello che gli ha risposto."
+          "{name} bussa su una paratia, ascolta, e sembra tranquillizzato da quello che gli ha risposto.",
+          "Nun ce sta strada ccà fòra. Manco 'na strada. Nun saccio addó mettere 'e mmane.",
+          "{name} sta guardanno 'a stessa stella 'a 'nu piezzo e nun ha ditto quale."
         ],
         "alien": [
           "Nun mangià niente ccà fuori. Dico overo, Em. Niente. Manco si te 'o chiede gentilmente.",
           "Rocce nuove, cielo nuovo, stessi due idioti. Jamme.",
-          "{name} ha trovato una pianta di cui non si fida e la sta guardando da un minuto intero."
+          "{name} ha trovato una pianta di cui non si fida e la sta guardando da un minuto intero.",
+          "'A aggiustarria si sapesse da che parte va 'ncoppa.",
+          "Nun te ne jì' spartuto, Em. 'O dico overo. Pianeta nuovo, regole vecchie."
         ],
         "indoors": [
           "'Nu tetto ncoppa e nisciuno che spara. Chesta è 'na vacanza, chesta.",
           "Assettate buono. È n'ora che staje in piedi comme si t'avissi 'a ji'.",
-          "{name} ha già capito dov'è il quadro elettrico, senza che nessuno glielo chiedesse e senza dire perché."
+          "{name} ha già capito dov'è il quadro elettrico, senza che nessuno glielo chiedesse e senza dire perché.",
+          "Quatto parete e 'na cuccumella. Certa gente campa accussì ogne juorno, t' 'o 'mMagini?",
+          "{name} ha già truvato quaccosa 'e scassato dinto a stu palazzo e 'o guarda cu affetto."
         ],
         "worldmap": [
           "Tutta la mappa aperta e lo chiedi a ME. Scegli una direzione, core mio, io la faccio funzionare.",
           "Ce sta 'nu sacco 'e strada llà fuori. Bbuono. Me piace quanno ce sta 'nu sacco 'e strada.",
-          "{name} strizza gli occhi verso la distanza e fa i conti sul carburante ad alta voce, male, due volte."
+          "{name} strizza gli occhi verso la distanza e fa i conti sul carburante ad alta voce, male, due volte.",
+          "Addó vuó tu, uagliona. 'A risposta è chesta, sana sana. Addó vuó tu.",
+          "{name} tappa 'a mappa doje vote 'ncopp' 'o posto ca evidentemente je piace e nun dice pecché."
         ],
         "night": [
           "Dovresti dormire, uagliona. Lo dico, non lo impongo.",
           "'A notte è 'a parte onesta d'a jurnata. Alle tre 'e notte nisciuno fa finta.",
-          "{name} ha la lampadina accesa e non sta aggiustando niente, ed è così che capisci che ti stava aspettando."
+          "{name} ha la lampadina accesa e non sta aggiustando niente, ed è così che capisci che ti stava aspettando.",
+          "Vattenne a cuccà. Io faccio n'ata ora e po' n'ata ora appresso a chella.",
+          "Doppo mezanotte nun s'è mai deciso niente 'e bbuono. Niente. Assettate."
         ],
         "dawn": [
           "'O café è fatto. È fatto 'a nu piezzo, a dì 'a verità, nun aggio durmuto assaje.",
           "Guarda che luce. Mannaggia. Ogni mattina fa così e ogni mattina me lo dimentico.",
-          "{name} è già sotto il camper e ci sta da un po'."
+          "{name} è già sotto il camper e ci sta da un po'.",
+          "L'aggio veduto spuntà. È l'unica cosa ca nun me stanca mai e n'aggio vedute migliare.",
+          "'O café. Assettate. Nun parlà nzin' 'a seconda tazza, chest'è 'a regola."
         ],
         "evening": [
           "Ce fermammo ccà. Nun se discute. Nun se guida stanchi, e nun se lanciano incantesimi stanche manco.",
           "'O sole se ne va. Assettate cu me nu minuto primma 'e fa' quaccosa 'e intelligente.",
-          "{name} posa gli attrezzi nell'ordine giusto, cosa che fa solo alla fine di una giornata."
+          "{name} posa gli attrezzi nell'ordine giusto, cosa che fa solo alla fine di una giornata.",
+          "Ammo fernuto pe' ogge. Chello ca resta, è 'e dimane.",
+          "{name} sta guardanno 'a luce ca se ne va e ha lassato 'e fà finta 'e faticà."
         ],
         "hurt": [
           "SIEDITI. Mannaggia, Em, stai perdendo sangue. Siediti.",
           "Non sono un dottore e tu non sei una paziente, quindi ci vorrà un po'. Chiano chiano.",
-          "{name} ha già aperto la cassetta prima che tu abbia finito di dire che stai bene."
+          "{name} ha già aperto la cassetta prima che tu abbia finito di dire che stai bene.",
+          "No. No, assettate. Qualunque era 'o piano, mo 'o piano è assettarse.",
+          "'O llavo io e tu me maledice, e po' stammo bbuono tutte e ddoje."
         ],
         "broke": [
           "Siamo al verde, core mio. Non ti agitare, siamo stati al verde in posti migliori.",
           "Ce faccio ati duiciento chilometri cu 'a simpatia e 'na preghiera. Soprattutto 'a simpatia.",
-          "{name} conta i soldi due volte, ottiene lo stesso risultato, e mette su l'acqua lo stesso."
+          "{name} conta i soldi due volte, ottiene lo stesso risultato, e mette su l'acqua lo stesso.",
+          "Tenimmo 'a benzina e tenimmo l'uno a l'ato, e una 'e cheste doje è gratis.",
+          "{name} nun te dice quanno è miseria, ed è accussì ca 'o ssaje quanno è miseria."
         ]
       },
       "refuseJoin": [
@@ -1732,7 +1990,9 @@
         "Qualcuno deve tenere onesto il Motore, uagliona. Quel qualcuno ha la mia faccia.",
         "Là fuori non servo a molto. Qua dentro, con una chiave inglese, sono un esercito, core mio.",
         "L'urdemo che ha viaggiato cu me a tempo pieno s'è pigliato 'o maltiempo ncuollo. Chillo overo. No grazie.",
-        "Richiedimelo dopo che ho firmato le carte. Chiano chiano. Tutto dopo le carte."
+        "Richiedimelo dopo che ho firmato le carte. Chiano chiano. Tutto dopo le carte.",
+        "Uagliona, si me metto 'ncopp' a chella seggia nun me ne caccio cchiù. E po' chi tene 'nsieme 'a cosa?",
+        "Te rallentarrìa sulamente llà fòra, e ccà dinto so' l'ommo cchiù veloce d' 'o munno cu 'na chiave inglese."
       ]
     },
     "player": {
@@ -1906,7 +2166,22 @@
       "L'uomo che ci ha rimesso in tasca gli ottanta all'ora.",
       "Ho sempre detto che chi ci sarebbe riuscito sarebbe stato un professore. Ed è stato un meccanico. Adoro che sia stato un meccanico.",
       "Signor Wilson. Cosa può mai fare per lei questo posto?",
-      "Sai cosa sei? Sei l'unica buona notizia dal novantadue in poi."
+      "Sai cosa sei? Sei l'unica buona notizia dal novantadue in poi.",
+      "Quello è l'uomo. Quello è davvero l'uomo.",
+      "Mia madre è arrivata in ospedale in quaranta minuti grazie a te. Quaranta. Prima ci voleva un giorno e mezzo.",
+      "{name} si asciuga la mano sul grembiule due volte prima di porgertela.",
+      "Non te lo ricorderai, ma nel novantaquattro hai aggiustato un pullman fuori da questo negozio e non hai voluto soldi.",
+      "Il motore Wilson. Qui dentro. In questo negozio. Con lo straccio ancora fuori.",
+      "Ho il diagramma della conferenza appeso in retro. È sbagliato, è un diagramma da giornale, ma è appeso.",
+      "Tutti dicevano che i loop non sarebbero mai caduti. Tutti. E poi un meccanico ci è riuscito di martedì.",
+      "Siediti. Siediti. Non riesco a servire nessuno finché non ti siedi.",
+      "Non ti ricorderai di me. Nessuno si ricorda il tizio in fondo all'aula.",
+      "{name} chiama qualcuno dal retro senza spiegare perché.",
+      "Mio padre ha guidato pullman per trent'anni e ha pianto il giorno in cui i loop sono caduti. Pianto, signor Wilson.",
+      "Hanno intitolato una fermata dell'autobus a te due paesi più in là. È una fermata pessima e ne siamo tutti molto orgogliosi.",
+      "È vero che ci sono voluti undici tentativi? Qualcuno ha detto undici. Spero fossero undici.",
+      "La Bestia. È là fuori? È davvero là fuori?",
+      "{name} continua a iniziare frasi e ad abbandonarle, e alla fine ti stringe di nuovo la mano."
     ],
     "positive": [
       "Detto dall'uomo che ha compresso un continente, questa finisce dritta nel mio diario.",
@@ -1918,7 +2193,16 @@
       "Uno penserebbe che un Nobel renda insopportabile una persona. Non è successo.",
       "Mi hai fatto la settimana ed è solo martedì.",
       "Grazie. Davvero. E grazie per le strade.",
-      "Qualunque cosa ti serva in questo paese, la chiedi a me. E lo dico sul serio."
+      "Qualunque cosa ti serva in questo paese, la chiedi a me. E lo dico sul serio.",
+      "Stai essere gentile con ME. È tutto al contrario.",
+      "{name} guarda il pavimento e ci sorride.",
+      "Lo dirò a mia figlia. Non mi crederà e glielo dirò lo stesso.",
+      "Bene. Insomma. Questa mi ha fatto il mese. Proprio il mese.",
+      "Qualsiasi cosa in questo negozio. Qualsiasi. Non discutere con me.",
+      "Non dovresti essere anche gentile. È ingordo.",
+      "{name} racconterà questa conversazione in modo inesatto e spesso, per il resto della vita.",
+      "Non ho niente da darti che tu non mi abbia già dato. È una sensazione strana.",
+      "Bene. Insomma. Qua mi tocca sedermi."
     ],
     "neutral": [
       "{name} ascolta con una serietà che l'osservazione non si era guadagnata.",
@@ -1930,7 +2214,16 @@
       "Wilson in persona, che parla con me del tempo.",
       "Sei sempre così facile da ascoltare? Scommetto di sì.",
       "Qualsiasi cosa tu dica è più interessante di quello che stavo facendo.",
-      "Preferisco una parola semplice da te che un discorso da chiunque altro."
+      "Preferisco una parola semplice da te che un discorso da chiunque altro.",
+      "{name} ascolta come se la frase dovesse essere esaminata più tardi.",
+      "Vai avanti, di' di più. A me non importa di cosa.",
+      "Strano come quelli intelligenti siano sempre i più facili con cui parlare.",
+      "{name} continua a trovare motivi per restare da questo lato del bancone.",
+      "Ti ascolterei spiegare un bollitore.",
+      "{name} ti risponde e poi si scusa perché la risposta era banale.",
+      "Fai sembrare tutto ovvio fin dall'inizio. Non era ovvio.",
+      "Vai avanti. Non ho niente da fare. Ho disdetto il niente che avevo da fare.",
+      "Potrei parlarti tutto il giorno e ho un negozio da mandare avanti e ti parlerò tutto il giorno."
     ],
     "negative": [
       "Ah! Giusto. Ah.",
@@ -1941,7 +2234,14 @@
       "Giusto. Giusto. Farò meglio.",
       "Giornataccia. Anche i geni hanno le giornatacce, no?",
       "Questa la prendo da te e da nessun altro.",
-      "Ti sei guadagnato il diritto a un caratteraccio. Chissà cosa ti porti dietro."
+      "Ti sei guadagnato il diritto a un caratteraccio. Chissà cosa ti porti dietro.",
+      "Ah. Giusto. Giusto!",
+      "{name} incassa tutto senza battere ciglio e sembra contento solo di essere stato notato.",
+      "Se sei arrabbiata c'è un motivo. Con te c'è sempre un motivo.",
+      "Hai avuto una giornata. Dio sa se ti sei guadagnata una giornata.",
+      "{name} annuisce come se essere rimproverato da te fosse un servizio che ha pagato.",
+      "Sei arrabbiata e sono comunque contento che tu sia qui. È lì che mi trovo.",
+      "Beh. Anche i buoni hanno un carattere. È quasi un sollievo."
     ],
     "player": [
       "Non è niente, core mio. Chiunque con un capanno e poco cervello ci sarebbe arrivato.",
@@ -2016,7 +2316,26 @@
         "Bubba Wilson, di Napoli e di tutta la strada. Che c'è.",
         "{name} dice il tuo nome una volta, piano, come per verificare che funzioni ancora, e poi sembra soddisfatta.",
         "Non ho rotto niente da martedì e vorrei che venisse riconosciuto davanti a testimoni.",
-        "Siediti. Hai quella faccia. È la faccia in cui la notizia è cara e tu stai per chiamarla a buon mercato."
+        "Siediti. Hai quella faccia. È la faccia in cui la notizia è cara e tu stai per chiamarla a buon mercato.",
+        "Ah. Quell'espressione. Qualcosa è andato storto, costerà dei soldi, e sarà divertente.",
+        "Sveglia dalle quattro, un'idea, ed è enorme. Siediti.",
+        "{name} ha disposto tre libri a ventaglio sul tavolo e vuole evidentemente che le venga chiesto.",
+        "Non dirmi che va bene. Non va bene niente. Dimmi cos'è e deciderò io se va bene.",
+        "Mi sono esercitata con un'espressione facciale per quando incontro la gente. Osserva. Era quella giusta?",
+        "Vieni qui. Voglio controllare che tu sia ancora della stessa forma. La gente cambia, pare, senza annunciarlo.",
+        "Avevo nove cose da dirti e ne ho già perse otto, quindi questa che resta farà bene a reggere tutta la consegna.",
+        "Ah. Bene. Un testimone. Sono stata magnifica di nuovo e mi serve una conferma.",
+        "Non mi sono mossa da questa sedia da quattro ore e non me ne pento di niente.",
+        "{name} alza una mano per chiedere silenzio, finisce il paragrafo, e solo allora ti guarda.",
+        "Qualcuno nell'ultimo paese mi ha chiamata minaccia pubblica. Ho deciso di accettare il titolo e farlo stampare.",
+        "Tre domande, e una riguarda te, quindi preparati di conseguenza.",
+        "Hai del grasso addosso. Hai sempre del grasso addosso. Avevo smesso di farlo notare e ora l'ho fatto notare.",
+        "Siediti prima di dirlo. Qualunque cosa sia, va giù meglio da seduti.",
+        "Ho deciso che oggi sarà straordinario. Non ho consultato la giornata.",
+        "{name} aspettava di essere interrotta da un po' ed è estremamente sollevata che tu l'abbia fatto.",
+        "Chiaro e piano, per favore. Ho esaurito tutto l'intuito della settimana ed è giovedì.",
+        "Ho sognato di nuovo la lancia. Non è stato angosciante. È questa la parte angosciante.",
+        "Eccoti. Bene. Bene. Questo è risolto. Cosa."
       ],
       "positive": [
         "Me la prendo, me la tengo, e la ritiro fuori in un momento basso. È quello che faccio con le cose gentili.",
@@ -2034,7 +2353,19 @@
         "Quattrocento libri e nessuno spiega perché quella frase sia arrivata. Il che intendo come lode.",
         "Bene. Sì. Insomma. Testa alta, petto in fuori, e occhio alla scarpa. Questa sono io commossa, nel caso non si leggesse.",
         "Ti vorrei dalla mia metà del campo. L'ho già detto. Intendo continuare a dirlo finché smetterà di essere vero, cioè mai.",
-        "Stai fermo, ti sto ammirando. Passerà e poi proseguiamo entrambi."
+        "Stai fermo, ti sto ammirando. Passerà e poi proseguiamo entrambi.",
+        "È stato quasi insopportabile e gradirei che venisse ripetuto in qualche momento la settimana prossima.",
+        "{name} non dice niente per un momento, il che da parte sua è un applauso in piedi.",
+        "Tu sei, e lo dico dopo aver passato in rassegna ogni opzione disponibile, la persona giusta.",
+        "Adesso cambio argomento in modo aggressivo, perché non posso sopportarne molto altro.",
+        "Sarò insopportabile su questo per quindici giorni e non devi ringraziare nessuno tranne te stesso.",
+        "{name} emette un piccolo suono, che è la più grande espressione di gratitudine a sua disposizione.",
+        "Non sei obbligato a dire cose così. È proprio per questo che funzionano.",
+        "Bene. La parte carina è conclusa. Torniamo a essere pessimi l'uno con l'altra.",
+        "Non ho nessun ricordo con cui confrontarla, quindi la registro come la cosa più bella che mi abbia detto qualcuno.",
+        "Sì. Bene. Buono. Sono contenta. Sono visibilmente contenta. Non attirare l'attenzione.",
+        "Sai, tra tutte le persone di questo continente, tu sei quella che terrei.",
+        "Quello è stato un servizio vero e non avrei potuto rispondere. Ben fatto."
       ],
       "neutral": [
         "Mm. Vai avanti. Ti sto ascoltando con circa il sessanta per cento di me, che è il massimo disponibile.",
@@ -2052,7 +2383,19 @@
         "Continua a parlare. Non mi serve il contenuto. Mi serve il rumore. È un rumore portante.",
         "È un fatto sul mondo e l'ho accettato nella collezione. Avanti.",
         "Sono chiacchiere di circostanza, queste? Le sto facendo io? Da qui dentro non riesco a capirlo.",
-        "Molto bene. Avanti, allora. È quello che si dice. Quella me la sono esercitata."
+        "Molto bene. Avanti, allora. È quello che si dice. Quella me la sono esercitata.",
+        "Ridillo, più piano, con meno parole tue dentro.",
+        "{name} annuisce e ha sicuramente perso il filo tre frasi fa.",
+        "È un problema o è solo una cosa? Le dici con la stessa identica voce.",
+        "Bene. Buono. Continua a esistere rumorosamente qui vicino, lo trovo rassicurante.",
+        "Continua. Ti interromperò se diventa interessante.",
+        "{name} risponde con un fatto, una data e nessun contesto, e considera la questione chiusa.",
+        "Non ho nessuna posizione in merito. È riposante, non avere posizione.",
+        "Ridi' la parola. Non la frase. Solo la parola. Mi piace la sua forma.",
+        "Stavo pensando al tennis. Penso sempre al tennis. Continua.",
+        "{name} sta allineando tre oggetti sul tavolo in base alla dimensione e lo fa da un po'.",
+        "O è estremamente intelligente o estremamente stupido e da qui non riesco a vederlo bene.",
+        "Sì. Mm. Vai avanti. Non ho posti migliori e nessun ricordo di posti migliori."
       ],
       "negative": [
         "Oh, rifallo. Quello era quasi un insulto. Ci sei quasi.",
@@ -2070,7 +2413,18 @@
         "Attento, caro. Quella era quasi una personalità.",
         "Sarei offesa se riuscissi a localizzare la parte di me che se ne occupa.",
         "Bene. Adesso nessuno dei due deve essere educato per almeno un'ora.",
-        "Fuori. Lunga, larga e fuori. Bel colpo, però. Il colpo te lo concedo."
+        "Fuori. Lunga, larga e fuori. Bel colpo, però. Il colpo te lo concedo.",
+        "Ci stavi arrivando da tutta la mattina e ne è valso circa metà della preparazione.",
+        "Lo permetterò. Una volta. Non prenderlo come precedente.",
+        "{name} sembra sinceramente colpita, che non è quello che volevi ed è quello che hai ottenuto.",
+        "Oh, ben mirato. Davvero. È meglio della maggior parte di quello che ricevo dagli estranei.",
+        "Te la sei tenuta da parte. Ci sento dentro le prove.",
+        "{name} ride nel momento esattamente sbagliato e non se ne scusa.",
+        "Me la prendo, la affilo, e la userò su qualcuno che se la merita di più.",
+        "È il peggio che hai? Bubba. Dodici anni. È questo il peggio?",
+        "Bene. Ritiro circa l'undici per cento del mio precedente calore.",
+        "Lo dici sul serio, e lo trovo eccitante.",
+        "Dillo in napoletano. Esce come un'aria e non posso essere insultata da un'aria."
       ],
       "player": {
         "positive": [
@@ -2202,6 +2556,62 @@
         {
           "player": "Chiedi scusa per il pesce e non ne parliamo mai più.",
           "reply": "Chiederò scusa per il pesce quando tu chiederai scusa per aver riso sei giorni di fila."
+        },
+        {
+          "player": "Hé spustato n'ata vota 'a cassetta d' 'e fierre meje.",
+          "reply": "Ho migliorato la posizione della tua cassetta degli attrezzi. Mi ringrazierai tra quindici giorni."
+        },
+        {
+          "player": "Hé ditto a 'nu sconosciuto ca so' stato io a 'nventà 'o camper.",
+          "reply": "Il camper l'hai inventato davvero. Ogni cosa che ha dentro è colpa tua. Stavo solo essendo precisa."
+        },
+        {
+          "player": "Em, nun te pò' fà a botte cu n'ommo ca tene 'o doppio d' 'a taglia toja.",
+          "reply": "L'ho menato davvero. Ho perso. Sono due fatti separati e tu continui a fonderli in uno."
+        },
+        {
+          "player": "Nove ore. Nove ore hé letto.",
+          "reply": "E tu hai passato nove ore sotto un furgone a parlargli. Siamo uguali, Bubba. Ammettilo."
+        },
+        {
+          "player": "Continui a chiammà 'a Bestia 'il veicolo'.",
+          "reply": "Perché è quello che è. Mi rifiuto di farmi trascinare nella tua religione popolare."
+        },
+        {
+          "player": "Chillo era 'o biscotto MIO e 'o ssaje.",
+          "reply": "In un veicolo in movimento non esiste la proprietà. L'ho letto da qualche parte. Forse."
+        },
+        {
+          "player": "Hé letto 'a stessa paggena quatto vote.",
+          "reply": "L'ho letta quattro volte perché tu continui a parlare sopra, il che rende questa la quinta."
+        },
+        {
+          "player": "Nun m' 'a fermo n'ata vota, Em. È 'a quarta vota.",
+          "reply": "Era una libreria, Bubba. Una libreria è una destinazione che si trovava per caso sulla strada."
+        },
+        {
+          "player": "Hé chiammato 'a ricetta d' 'a nonna mia 'strutturalmente instabile'.",
+          "reply": "Lo era. Lo confermo. È crollata. C'erano testimoni e uno di loro ha pianto."
+        },
+        {
+          "player": "Quaccheruno ha miso n'ata vota n'incantesimo 'ncopp' 'e fierre meje.",
+          "reply": "Sono più puliti. Non mi hai ringraziata. Non mi hai mai ringraziata una sola volta per gli attrezzi puliti."
+        },
+        {
+          "player": "Hé prummittuto ca me lassave durmì doppo 'e sei.",
+          "reply": "Ho promesso che non ti avrei svegliata. Ti ha svegliata il soffitto. Prenditela con il soffitto."
+        },
+        {
+          "player": "Pecché ce sta 'nu pertuso 'ncopp' 'o tetto ca tene 'a forma 'e 'nu pesce?",
+          "reply": "Mi rifiuto di parlare del pesce. Il pesce è chiuso. Siamo andati oltre il pesce."
+        },
+        {
+          "player": "Nun pò' dicere 'e ccose e basta pe' farle essere vere.",
+          "reply": "Non ho un passato, Bubba. Dichiarare le cose è l'unico metodo che ho a disposizione."
+        },
+        {
+          "player": "Ammiette ca t'è 'mpauruto llà arreto.",
+          "reply": "Ero estremamente vigile. Tu continui a tradurlo male e io continuo a correggerti."
         }
       ],
       "situations": {
@@ -2209,109 +2619,151 @@
           "Pioggia. Mi piace la pioggia. È l'unico tempo atmosferico che prende una decisione e la mantiene.",
           "Non agitarti. So di essere bagnata. Ho scelto di essere bagnata e sto benissimo mentre lo faccio.",
           "{name} sta sulla porta a farsi bagnare e la descrive, a lungo, come atmosfera.",
-          "Il tetto perde di nuovo sopra la cuccetta. Ho spostato i libri. Non ho spostato me stessa."
+          "Il tetto perde di nuovo sopra la cuccetta. Ho spostato i libri. Non ho spostato me stessa.",
+          "Pioggia. Tutto diventa più silenzioso e più lento e nessuno si aspetta niente da nessuno. Il mio tempo preferito, di gran lunga.",
+          "{name} ha aperto la finestra nonostante la pioggia e si rifiuta di ragionare in merito."
         ],
         "storm": [
           "È sua, questa? Ha la sua calligrafia. Il tempo può avere una calligrafia, Bubba, stammi dietro.",
           "Splendido. I cieli si spaccano di nuovo. Fa due volte e io ero presente solo a una.",
           "{name} conta i secondi dopo il lampo e sbaglia apposta, per farsi correggere.",
-          "Non ho paura. Sono estremamente vigile. Da fuori le due cose sono identiche, e non è un mio problema."
+          "Non ho paura. Sono estremamente vigile. Da fuori le due cose sono identiche, e non è un mio problema.",
+          "Se è lei a farlo, si sta mettendo in mostra, e non ho assolutamente titolo per criticarlo.",
+          "Siediti qui. Non per me. Per te. Vedo le tue mani da qui."
         ],
         "snow": [
           "Neve. Fredda, silenziosa, e fa sembrare il mondo una pagina su cui nessuno ha ancora scritto. Approvato.",
           "Non sento le mani e mi rifiuto di essere drammatica al riguardo, quindi sono fattuale al riguardo.",
           "{name} ha preso un fiocco di neve sulla manica e lo sta ispezionando con un'attenzione irragionevole.",
-          "Una sola parola sui miei polsi, Wilson, e ti seppellisco qui e dico alla gente che è stata la strada."
+          "Una sola parola sui miei polsi, Wilson, e ti seppellisco qui e dico alla gente che è stata la strada.",
+          "Tutto bianco e niente scritto sopra. Enormemente riposante e leggermente minaccioso.",
+          "{name} ha preso un fiocco di neve sulla lingua, ha controllato che nessuno vedesse, e l'ha rifatto."
         ],
         "cold": [
           "Una discarica ghiacciata. Parole tue. Le ripeto da tutta la mattina e migliorano a ogni passaggio.",
           "Ho designato il freddo come avversario e intendo batterlo. Non intervenire.",
-          "{name} sta visibilmente congelando e ha adottato la postura di una signora a un ricevimento in giardino."
+          "{name} sta visibilmente congelando e ha adottato la postura di una signora a un ricevimento in giardino.",
+          "Sto cercando di scaldarmi con la sola forza della personalità. I primi risultati sono scarsi.",
+          "Dammi le mani. No, qui. La freddolosa sei tu che fingi il contrario."
         ],
         "desert": [
           "Niente, qua fuori. Chilometri di niente. Il paesaggio più onesto che abbia incontrato finora.",
           "Tutto quello che possiedo ha della sabbia dentro, compresi, sospetto, diversi pensieri.",
-          "{name} si ripara gli occhi con un libro, che è l'unica cosa che ha portato e l'unica che avrebbe portato."
+          "{name} si ripara gli occhi con un libro, che è l'unica cosa che ha portato e l'unica che avrebbe portato.",
+          "Qui fuori non c'è niente da ricordare, il che per me è quasi una vacanza.",
+          "L'orizzonte non è cambiato da tre ore. Ho cominciato a prenderlo sul personale."
         ],
         "forest": [
           "Undici alberi che non riconosco e uno che sono ragionevolmente certa ci stia guardando. Su quello non mi sono ancora pronunciata.",
           "Qua dentro sa di carta. Carta vecchia. Non sono mai stata più felice e ne sono furiosa.",
-          "{name} si è fermata a guardare qualcosa di piccolo su una foglia ed è lì da un po'."
+          "{name} si è fermata a guardare qualcosa di piccolo su una foglia ed è lì da un po'.",
+          "Voglio vivere in una biblioteca che profuma così. Qualcuno me ne costruisca una e non ne uscirò mai più.",
+          "{name} ha raccolto una foglia e la esamina come se potesse avere un dorso e un frontespizio."
         ],
         "mountain": [
           "Su. Sempre su. Il mondo è notevolmente determinato a farmelo scalare.",
           "Da qui si vede assolutamente tutto, che è molto più di quanto si riesca a ricordare.",
-          "{name} sta un po' troppo vicina al bordo e dice che il panorama lo richiede."
+          "{name} sta un po' troppo vicina al bordo e dice che il panorama lo richiede.",
+          "Quassù sono brevemente più alta della Torre Omega e intendo sfruttarlo fino in fondo.",
+          "Non dirmi di stare attenta. Sono estremamente attenta. Sono anche molto vicina al bordo. Entrambe le cose sono vere."
         ],
         "beach": [
           "Il mare si sta mettendo in mostra. Riconosco la tecnica. La uso io stessa.",
           "Mi dicono che la gente venga qui per piacere. Nove minuti e resto non convinta.",
-          "{name} si è tolta le scarpe, cosa che non fa, e non lo sta commentando."
+          "{name} si è tolta le scarpe, cosa che non fa, e non lo sta commentando.",
+          "Il mare si ripete all'infinito e nessuno lo critica per questo. Voglio lo stesso accordo per iscritto.",
+          "Undici conchiglie raccolte e ho opinioni ferme sulla classifica."
         ],
         "water": [
           "Non ci entro. Una mano è uscita da uno di questi e mi ha portata a trentanove anni luce, Bubba.",
           "Sta guardando. So come suona. Sono già stata nel giusto su cose folli.",
-          "{name} mantiene deliberatamente due metri fra sé e l'acqua in ogni momento."
+          "{name} mantiene deliberatamente due metri fra sé e l'acqua in ogni momento.",
+          "Messo agli atti: sono qui volontariamente e odio ogni singolo secondo.",
+          "{name} non batte ciglio davanti all'acqua da un po'."
         ],
         "swamp": [
           "L'intera regione sa di una decisione di cui qualcuno si è pentito.",
           "Qualcosa si è mosso poco fa e vorrei che venisse messo a verbale che non ho urlato.",
-          "{name} solleva ogni piede con l'enorme dignità di una donna che è già caduta una volta."
+          "{name} solleva ogni piede con l'enorme dignità di una donna che è già caduta una volta.",
+          "Profuma di biblioteca che ha rinunciato. La prendo sul personale e credo di averne diritto.",
+          "Ho pestato qualcosa. Non guardarlo. Non guardare nemmeno me."
         ],
         "town": [
           "Gente. Meraviglioso. Metà fisserà, metà fingerà di no, e io sarò radiosa con entrambi i gruppi.",
           "Non lasciarmi parlare col prete. Bubba. Fermami davvero. Fisicamente, se serve.",
-          "{name} si raddrizza nell'istante in cui qualcuno la guarda, e si affloscia di nuovo appena smettono."
+          "{name} si raddrizza nell'istante in cui qualcuno la guarda, e si affloscia di nuovo appena smettono.",
+          "Qualcuno qui mi riconoscerà e qualcuno qui sputerà. È un lancio di moneta e ho smesso di scommetterci.",
+          "Trovami la libreria. C'è sempre una libreria. Anche qui. Soprattutto qui."
         ],
         "underground": [
           "Quaggiù nessuno sa chi sono, il che è riposante e molto leggermente offensivo.",
           "Qualcosa in questo posto è più vecchio della morte di Dio e non è impressionato da nessuno dei due.",
-          "{name} cammina più vicina a te di quanto facesse in superficie e non l'ha fatto notare."
+          "{name} cammina più vicina a te di quanto facesse in superficie e non l'ha fatto notare.",
+          "Quaggiù niente ha mai letto un giornale. Il posto più tranquillo in cui sia stata tutto l'anno.",
+          "Continua a parlare. Non per le informazioni. Per il rumore. Sai perché."
         ],
         "space": [
           "Trentanove anni luce, hanno detto. Sono già stata qua fuori e non ne ricordo niente. Esasperante.",
           "Nessun tempo atmosferico. Niente per cui essere coraggiosi. Uno spreco di cielo perfettamente buono.",
-          "{name} ha la mano appoggiata sull'oblò e non dice niente da un po'."
+          "{name} ha la mano appoggiata sull'oblò e non dice niente da un po'.",
+          "Sono già stata quassù e non ne ricordo niente, il che mi rende il testimone meno affidabile della compagnia.",
+          "{name} sta contando qualcosa fuori dall'oblò e ha perso il segno due volte."
         ],
         "alien": [
           "Qui tutto è del colore sbagliato e ho deciso di prenderla sul personale.",
           "Vorrei molto mangiare quello. Tu dirai di no. Dillo e andiamo avanti.",
-          "{name} ha già raccolto qualcosa. Lo tiene dietro la schiena."
+          "{name} ha già raccolto qualcosa. Lo tiene dietro la schiena.",
+          "Qui niente ha un'opinione sulla morte di Dio. Potrei piangere di sollievo.",
+          "Ho stabilito che quello è commestibile. Sono aperta a essere smentita, brevemente, da un soggetto qualificato."
         ],
         "indoors": [
           "Un soffitto. Una porta. Quattro pareti che non sono il camper. Non so dove mettermi.",
           "Starò seduta qui a essere al chiuso, che a quanto pare è una cosa che la gente fa volontariamente e spesso.",
-          "{name} ha trovato l'unica poltrona della stanza con una lampada accanto e l'ha reclamata senza discussione."
+          "{name} ha trovato l'unica poltrona della stanza con una lampada accanto e l'ha reclamata senza discussione.",
+          "Una stanza. Una stanza intera. Con gli angoli. Non so più cosa fare con gli angoli.",
+          "{name} si è aggiudicata la sedia più vicina alla lampada e considera la trattativa conclusa."
         ],
         "worldmap": [
           "Tutto, in ogni direzione, e niente di tutto questo si ricorda di me. Scegli una strada, Bubba, per me è davvero indifferente.",
           "Una cartina, un camper e un uomo con una chiave inglese. Storicamente è stato sufficiente.",
-          "{name} gira la cartina di novanta gradi, la considera, e la rigira indietro."
+          "{name} gira la cartina di novanta gradi, la considera, e la rigira indietro.",
+          "Ogni direzione è identica per me. Lo trovo sinceramente liberatorio e so come suona.",
+          "Scegli. Scegli sempre meglio di me e sappiamo entrambi esattamente perché."
         ],
         "night": [
           "Non dormo bene. Lo sai. Lo sai da più tempo di me, che è la barzelletta della mia vita.",
           "A quest'ora smetto di recitare. Prendilo come un complimento o come un avvertimento, sono entrambi difendibili.",
-          "{name} è sveglia, e lo era già, e la lampada accanto a lei non è accesa da molto."
+          "{name} è sveglia, e lo era già, e la lampada accanto a lei non è accesa da molto.",
+          "Sono sveglia. Sono sempre sveglia. Unisciti a me o vai a essere ragionevole, senza rancore.",
+          "A quest'ora smetto di essere magnifica e comincio a essere semplicemente accurata. Goditelo, la finestra è breve."
         ],
         "dawn": [
           "Sei in piedi da ore. Ti ho sentito. Sento tutto. È estremamente faticoso essere me.",
           "Mattina. Mi dicono che si debba salutarla. Saluti, allora.",
-          "{name} accetta il caffè senza guardarlo, che è la sua più alta forma di fiducia disponibile."
+          "{name} accetta il caffè senza guardarlo, che è la sua più alta forma di fiducia disponibile.",
+          "Sei sveglio da ore. Ho sentito la chiave inglese. Sento sempre la chiave inglese.",
+          "{name} prende la tazza senza dire una parola, e questa è tutta la cerimonia."
         ],
         "evening": [
           "Ci fermiamo. Bene. Stavo per insistere e poi hai insistito tu per primo, il che è molto più comodo.",
           "Siediti, Bubba. Qualunque cosa sia, domani sarà ancora rotta. Le cose sono molto affidabili in questo.",
-          "{name} ha posato il libro a faccia in giù per tenere il segno, cosa che fa solo quando ha intenzione di parlare."
+          "{name} ha posato il libro a faccia in giù per tenere il segno, cosa che fa solo quando ha intenzione di parlare.",
+          "Smettila. Qualunque cosa sia, smettila. Sarà comunque rotto e tu sarai meno stanca.",
+          "Siediti con me. Nessun secondo fine. Ho controllato due volte, non c'è nessun secondo fine."
         ],
         "hurt": [
           "Sto bene. Sono al corrente delle prove. Sto bene.",
           "Non fare quella faccia. Ho passato di peggio e non posso dimostrarlo, che è esattamente il problema.",
-          "{name} ti lascia tirare fuori la cassetta e non discute, ed è così che capisci che è grave."
+          "{name} ti lascia tirare fuori la cassetta e non discute, ed è così che capisci che è grave.",
+          "È superficiale. Va bene e è superficiale e ti prego non fare quella faccia.",
+          "{name} sta fermo per te, cosa che non fa per nessuno, e fissa il soffitto per tutta la durata."
         ],
         "broke": [
           "Siamo indigenti. Lo trovo chiarificatore. Tutto diventa semplice quando niente è accessibile.",
           "Ho contato i soldi. Due volte. Non sono migliorati e nemmeno il mio umore.",
-          "{name} guarda a lungo una vetrina e poi annuncia che comunque non lo voleva."
+          "{name} guarda a lungo una vetrina e poi annuncia che comunque non lo voleva.",
+          "Siamo di nuovo in miseria. Trovo la nostra costanza ammirevole.",
+          "Non vendere niente di tuo. Venderò un libro. Ho detto quello che ho detto."
         ]
       },
       "refuseJoin": [

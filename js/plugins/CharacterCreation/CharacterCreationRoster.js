@@ -92,9 +92,9 @@
         <div class="cc-modal" role="dialog" aria-modal="true">
           <h3 class="cc-modal-title">${opts.title || ""}</h3>
           <p class="cc-modal-body">${opts.body || ""}</p>
-          <div class="cc-modal-actions">
-            <button class="cc-sidebar-btn cc-modal-cancel">${opts.cancelLabel || T('CharCreate.cancel')}</button>
-            <button class="cc-sidebar-btn cc-modal-accept">${opts.acceptLabel || T('CharCreate.confirm')}</button>
+          <div class="cc-modal-actions army-dialog-buttons">
+            <button class="army-dialog-btn cc-sidebar-btn cc-modal-cancel">${opts.cancelLabel || T('CharCreate.cancel')}</button>
+            <button class="army-dialog-btn cc-sidebar-btn cc-modal-accept">${opts.acceptLabel || T('CharCreate.confirm')}</button>
           </div>
         </div>
       `;
@@ -134,7 +134,10 @@
       const st = this._ccModalState;
       if (!st) return;
       st.buttons.forEach((b, i) => {
-        if (b) b.classList.toggle("cc-nav-focus", i === st.index);
+        if (b) {
+          b.classList.toggle("cc-nav-focus", i === st.index);
+          b.classList.toggle("selected", i === st.index);
+        }
       });
       const cur = st.buttons[st.index];
       if (cur && cur.focus) cur.focus();
@@ -258,14 +261,14 @@
           <h3 class="cc-modal-title">${esc(opts.title || "")}</h3>
           ${opts.body ? `<p class="cc-modal-body">${esc(opts.body)}</p>` : ""}
           ${lines}
-          ${collect ? `<div class="cc-modal-actions cc-modal-save-row">
-            <button class="cc-sidebar-btn cc-modal-save">${esc(opts.saveLabel || T('CharCreate.confirm'))}</button>
+          ${collect ? `<div class="cc-modal-actions army-dialog-buttons cc-modal-save-row">
+            <button class="army-dialog-btn cc-sidebar-btn cc-modal-save">${esc(opts.saveLabel || T('CharCreate.confirm'))}</button>
           </div>` : ""}
           <p class="cc-modal-error"></p>
           ${collect ? `<div class="cc-modal-list"></div>` : ""}
-          <div class="cc-modal-actions">
-            <button class="cc-sidebar-btn cc-modal-cancel">${esc(T('CharCreate.cancel'))}</button>
-            <button class="cc-sidebar-btn cc-modal-accept">${esc(opts.confirmLabel || T('CharCreate.confirm'))}</button>
+          <div class="cc-modal-actions army-dialog-buttons">
+            <button class="army-dialog-btn cc-sidebar-btn cc-modal-cancel">${esc(T('CharCreate.cancel'))}</button>
+            <button class="army-dialog-btn cc-sidebar-btn cc-modal-accept">${esc(opts.confirmLabel || T('CharCreate.confirm'))}</button>
           </div>
         </div>
       `;

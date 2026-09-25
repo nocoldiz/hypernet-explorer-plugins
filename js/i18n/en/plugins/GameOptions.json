@@ -167,6 +167,7 @@
   "resetDefaults": "Reset to Defaults",
   "resetDefaultsDone": "All settings restored to their defaults",
   "group": {
+    "language": "Language",
     "combat": "Combat",
     "battleLog": "Battle Log",
     "exploration": "Exploration",

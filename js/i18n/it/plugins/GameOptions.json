@@ -167,6 +167,7 @@
   "resetDefaults": "Ripristina Predefiniti",
   "resetDefaultsDone": "Tutte le impostazioni sono tornate ai valori predefiniti",
   "group": {
+    "language": "Lingua",
     "combat": "Combattimento",
     "battleLog": "Registro di battaglia",
     "exploration": "Esplorazione",

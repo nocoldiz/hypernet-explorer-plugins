@@ -1,3 +1,19 @@
+0.6.40a
+Added:
+ - restored language selector
+ - new topics for Bubba
+ - neapolitan translation for Bubba lines
+
+Changed:
+ - make chat column less wide to show full width options
+ - default music for title screen and removed music label
+
+Fixed:
+ - fixed alice spawning as follower when starting storymode
+ - fixed modal buttons to match itemsysteminventoryUI
+ - placement of Kola superdeep borehole
+
+
 0.6.39a
 
 Added:

@@ -89,5 +89,8 @@
       "MINIMAL: DA TRACK AN' ITS ARTIST IN DA USUAL CORNER NOTIFICATION!",
       "OFF: NO ANNOUNCEMENT!"
     ]
+  },
+  "group": {
+    "language": "LANGUAGE"
   }
 }
