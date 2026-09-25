@@ -955,7 +955,7 @@
     // one of these, so "Transfer 2", "Upstairs B", "AudioEmitter" and the rest
     // of the machinery events stay silent along with the bare name.
     const HIDDEN_NAME_PREFIXES = [
-        "countryname", "transfer", "steal", "exit", "downstairs", "upstairs",
+        "countryname", "transfer","trasferimento", "steal", "exit", "downstairs", "upstairs",
         "initialize", "audio", "acquire", "door", "puzzlesetup", "debug"
     ];
 

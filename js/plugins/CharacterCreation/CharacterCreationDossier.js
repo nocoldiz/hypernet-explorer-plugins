@@ -339,7 +339,8 @@
       if (Scene_CharacterCreation._isVehicleMode) return this._vehicleSidebarHtml();
 
       const currentMemberIndex = Scene_CharacterCreation._currentPartyMemberIndex || 0;
-      const isCreature = !actor._isPresetActor && !this._presetWindow && !!(actor._isCreatureActor || $gameSwitches.value(77 + currentMemberIndex));
+      const isCreature = (Scene_CharacterCreation.isCreatureActor && Scene_CharacterCreation.isCreatureActor(actor))
+        || !!(actor && (actor._isCreatureActor || $gameSwitches.value(77 + currentMemberIndex) || (window.NPCCreature && window.NPCCreature.isNonSentientActor && window.NPCCreature.isNonSentientActor(actor))));
       const isPreset = !!this._presetWindow;
       const isPetActive = false;
 

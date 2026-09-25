@@ -746,18 +746,23 @@
                     break;
                 case 'party-invite-request':
                     PartyUIManager.instance.showInvitation(data.fromId, data.fromName);
+                    if (window.ParchmentToast && window.ParchmentToast.show) {
+                        window.ParchmentToast.show(T('Multiplayer.invitedYou', { name: data.fromName }));
+                    }
                     break;
                 case 'party-update':
                     this.party = data.party;
                     NetworkManager_Server.refreshPlayerListUI();
                     MultiplayerManager.instance.setupPlayerEvents();
                     if (SceneManager._scene && SceneManager._scene.refreshUIMultiplayer) SceneManager._scene.refreshUIMultiplayer();
+                    if (SceneManager._scene && SceneManager._scene.refreshUILan) SceneManager._scene.refreshUILan();
                     break;
                 case 'party-disband':
                     this.party = null;
                     NetworkManager_Server.refreshPlayerListUI();
                     MultiplayerManager.instance.setupPlayerEvents();
                     if (SceneManager._scene && SceneManager._scene.refreshUIMultiplayer) SceneManager._scene.refreshUIMultiplayer();
+                    if (SceneManager._scene && SceneManager._scene.refreshUILan) SceneManager._scene.refreshUILan();
                     break;
                 case 'force-teleport':
                     if (this.isInParty() && this.myId !== this.party.leaderId) {
@@ -2803,6 +2808,17 @@
                     danger: true,
                 });
             }
+            if (lanActive || (NetworkManager.instance && NetworkManager.instance.isMultiplayer())) {
+                const inParty = NetworkManager.instance && NetworkManager.instance.isInParty();
+                live.push({
+                    id: 'party',
+                    name: T('Multiplayer.partyPockets'),
+                    hint: inParty ? T('Multiplayer.lan.inParty') : T('Multiplayer.lan.partyHint'),
+                    desc: T('Multiplayer.lan.partyDesc'),
+                    action: T('Multiplayer.lan.openParty'),
+                    danger: false,
+                });
+            }
             if (lanActive) {
                 live.push({
                     id: 'end-lan',
@@ -2984,6 +3000,9 @@
             }
             SoundManager.playOk();
             switch (portal && portal.id) {
+                case 'party':
+                    SceneManager.push(Scene_Multiplayer);
+                    break;
                 case 'end-local':
                     this.commandDisconnectLocal();
                     this._selectedIndex = 0;
@@ -3033,6 +3052,7 @@
         createCommandWindow() {
             const rect = new Rectangle(0, 0, 400, 300);
             this._commandWindow = new Window_MultiplayerTypeSelection(rect);
+            this._commandWindow.setHandler("party", () => SceneManager.push(Scene_Multiplayer));
             this._commandWindow.setHandler("local", this.commandLocal.bind(this));
             this._commandWindow.setHandler("lan", this.commandLan.bind(this));
             this._commandWindow.setHandler("steam", this.commandSteam.bind(this));
@@ -3089,6 +3109,10 @@
         makeCommandList() {
             if (window.SplitScreenManager && window.SplitScreenManager.active) {
                 this.addCommand(T('Multiplayer.disconnectSplitScreen'), "disconnectLocal");
+            } else if (window.LanSession && LanSession.active) {
+                this.addCommand(T('Multiplayer.partyPockets'), "party");
+                this.addCommand(T('Multiplayer.lan.name'), "lan");
+                this.addCommand(T('Multiplayer.lan.endSession'), "disconnectLan");
             } else {
                 this.addCommand(T('Multiplayer.localMultiplayer'), "local");
                 this.addCommand(T('Multiplayer.lan.name'), "lan", LanSession.isAvailable());
@@ -3153,6 +3177,7 @@
             const connected = NetworkManager.instance.isMultiplayer();
             const rows = [];
             if (connected) {
+                rows.push({ id: 'party', label: T('Multiplayer.partyPockets') });
                 rows.push({ id: 'leave', label: T('Multiplayer.lan.leaveSession'), danger: true });
             } else {
                 rows.push({ id: 'host', label: T('Multiplayer.lan.hostSession') });
@@ -3184,8 +3209,36 @@
                 </div>
             `).join('');
 
+            let rightPageTitle = T('Multiplayer.lan.hostsOnThisNetwork');
             let hostsHTML = '';
-            if (this._hosts.length === 0) {
+            if (connected) {
+                rightPageTitle = T('Multiplayer.lan.connectedPlayers');
+                const myId = nm.myId;
+                const partyMembers = nm.isInParty() ? nm.party.members : [];
+                const otherPlayers = Array.from(nm.players.entries()).filter(([id, _]) => id !== myId);
+
+                if (otherPlayers.length === 0) {
+                    hostsHTML = `<div class="item-grid-empty">${T('Multiplayer.noOtherNodesDetected')}</div>`;
+                } else {
+                    otherPlayers.forEach(([id, player], index) => {
+                        const inParty = partyMembers.includes(id);
+                        const isLeader = nm.isInParty() && nm.party.leaderId === id;
+                        const badge = inParty
+                            ? (isLeader ? T('Multiplayer.leader') : T('Multiplayer.member'))
+                            : T('Multiplayer.ui.invite');
+                        const focused = this._activeArea === 'hosts' && this._selectedHostIndex === index;
+                        hostsHTML += `
+                            <div class="node-card ${focused ? 'focused' : ''}" data-player-id="${id}" data-idx="${index}">
+                                <div class="node-info">
+                                    <span class="node-name">${player.name || T('Multiplayer.playerNumbered', { id: id })}</span>
+                                    <span class="node-subtitle">${T('Multiplayer.mapLabel')} ${player.mapId || 1}</span>
+                                </div>
+                                <span class="node-badge ${inParty ? 'badge-ok' : ''}">${badge}</span>
+                            </div>
+                        `;
+                    });
+                }
+            } else if (this._hosts.length === 0) {
                 hostsHTML = `<div class="item-grid-empty">${this._scanning ? T('Multiplayer.lan.searching') : T('Multiplayer.lan.noHostsFound')}</div>`;
             } else {
                 this._hosts.forEach((host, index) => {
@@ -3238,7 +3291,7 @@
 
                     <div class="right-page" style="justify-content:flex-start;gap:0;">
                         <div class="page-header-bar">
-                            <h2 class="title">${T('Multiplayer.lan.hostsOnThisNetwork')}</h2>
+                            <h2 class="title">${rightPageTitle}</h2>
                         </div>
                         <div class="roster-viewport">
                             ${hostsHTML}
@@ -3262,13 +3315,25 @@
                 card.addEventListener('click', () => {
                     this._activeArea = 'hosts';
                     this._selectedHostIndex = parseInt(card.getAttribute('data-idx'), 10);
-                    this.commandJoinSelected();
+                    if (connected) {
+                        const playerId = parseInt(card.getAttribute('data-player-id'), 10);
+                        this.commandInviteOrInspect(playerId);
+                    } else {
+                        this.commandJoinSelected();
+                    }
                 });
             });
         }
 
         updateUILanInput() {
             const rows = this.menuRows();
+            const nm = NetworkManager.instance;
+            const connected = nm.isMultiplayer();
+            const otherPlayers = connected
+                ? Array.from(nm.players.entries()).filter(([id, _]) => id !== nm.myId)
+                : [];
+            const rightListLength = connected ? otherPlayers.length : this._hosts.length;
+
             if (this._activeArea === 'menu') {
                 if (Input.isRepeated('down')) {
                     this._selectedIndex = (this._selectedIndex + 1) % rows.length;
@@ -3278,7 +3343,7 @@
                     this._selectedIndex = (this._selectedIndex - 1 + rows.length) % rows.length;
                     SoundManager.playCursor();
                     this.refreshUILan();
-                } else if (Input.isRepeated('right') && this._hosts.length > 0) {
+                } else if (Input.isRepeated('right') && rightListLength > 0) {
                     this._activeArea = 'hosts';
                     this._selectedHostIndex = 0;
                     SoundManager.playCursor();
@@ -3291,11 +3356,11 @@
                 }
             } else {
                 if (Input.isRepeated('down')) {
-                    this._selectedHostIndex = (this._selectedHostIndex + 1) % Math.max(1, this._hosts.length);
+                    this._selectedHostIndex = (this._selectedHostIndex + 1) % Math.max(1, rightListLength);
                     SoundManager.playCursor();
                     this.refreshUILan();
                 } else if (Input.isRepeated('up')) {
-                    this._selectedHostIndex = (this._selectedHostIndex - 1 + Math.max(1, this._hosts.length)) % Math.max(1, this._hosts.length);
+                    this._selectedHostIndex = (this._selectedHostIndex - 1 + Math.max(1, rightListLength)) % Math.max(1, rightListLength);
                     SoundManager.playCursor();
                     this.refreshUILan();
                 } else if (Input.isRepeated('left') || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
@@ -3303,8 +3368,26 @@
                     SoundManager.playCancel();
                     this.refreshUILan();
                 } else if (Input.isTriggered('ok')) {
-                    this.commandJoinSelected();
+                    if (connected) {
+                        const target = otherPlayers[this._selectedHostIndex];
+                        if (target) this.commandInviteOrInspect(target[0]);
+                    } else {
+                        this.commandJoinSelected();
+                    }
                 }
+            }
+        }
+
+        commandInviteOrInspect(playerId) {
+            const nm = NetworkManager.instance;
+            const partyMembers = nm.isInParty() ? nm.party.members : [];
+            if (playerId && !partyMembers.includes(playerId)) {
+                SoundManager.playOk();
+                nm.sendPartyInvite(playerId);
+                const player = nm.players.get(playerId);
+                this.updateStatus(T('Multiplayer.inviteSent', { name: (player && player.name) || playerId }));
+            } else {
+                SoundManager.playCursor();
             }
         }
 
@@ -3312,7 +3395,8 @@
             const row = this.menuRows()[this._selectedIndex];
             if (!row) return;
             SoundManager.playOk();
-            if (row.id === 'host') this.commandHost();
+            if (row.id === 'party') SceneManager.push(Scene_Multiplayer);
+            else if (row.id === 'host') this.commandHost();
             else if (row.id === 'scan') this.commandScan();
             else if (row.id === 'leave') this.commandLeave();
         }
@@ -3473,11 +3557,16 @@
             let actionBtnsHTML = "";
 
             if (NetworkMode === 'WebSocket') {
+                const isLan = window.LanSession && LanSession.active;
                 const rowUrlFocused = this._activeArea === 'menu' && this._selectedIndex === 0;
+                const displayUrl = isLan
+                    ? (LanSession.hosting ? (LanSession.localAddresses()[0] || '127.0.0.1') + ':' + LanSession.hostPort : (LanSession.hostAddress || '127.0.0.1') + ':' + LanSession.hostPort)
+                    : this._serverUrl;
+                const urlLabel = isLan ? T('Multiplayer.lan.thisMachine') : T('Multiplayer.serverUrl');
                 configRowsHTML += `
                     <div class="console-row ${rowUrlFocused ? 'focused' : ''}" id="row-url">
-                        <span class="row-lbl">${T('Multiplayer.serverUrl')}</span>
-                        <span class="row-val">${this._serverUrl}</span>
+                        <span class="row-lbl">${urlLabel}</span>
+                        <span class="row-val">${displayUrl}</span>
                     </div>
                 `;
 
@@ -3936,7 +4025,7 @@
         }
 
         promptChangeUrl() {
-            if (NetworkManager.instance.isMultiplayer()) { SoundManager.playBuzzer(); return; }
+            if (NetworkManager.instance.isMultiplayer() || (window.LanSession && LanSession.active)) { SoundManager.playBuzzer(); return; }
             const url = prompt(T('Multiplayer.enterServerWebsocketUrl'), this._serverUrl);
             if (url !== null) {
                 this._serverUrl = url;
@@ -4042,8 +4131,12 @@
         }
 
         commandDisconnect() {
-            const shouldRestoreState = NetworkMode === 'Steamworks' ? !NetworkManager.instance.isLeader : true;
-            NetworkManager.instance.disconnect(shouldRestoreState);
+            if (window.LanSession && LanSession.active) {
+                MultiplayerSessions.endLan();
+            } else {
+                const shouldRestoreState = NetworkMode === 'Steamworks' ? !NetworkManager.instance.isLeader : true;
+                NetworkManager.instance.disconnect(shouldRestoreState);
+            }
             this._roomCode = '';
             this.updateStatus(T('Multiplayer.disconnectedReady'));
             this.refreshUIMultiplayer();

@@ -2609,11 +2609,15 @@
     static isCreatureActor(actor) {
       if (!actor) return false;
       if (actor._isCreatureActor) return true;
+      if (actor._creatureArchetypes && actor._creatureArchetypes.length) return true;
       const CC = window.CreatureClasses;
       if (CC && CC.isCreatureClass && actor._classId && CC.isCreatureClass(actor._classId)) return true;
+      const NC = window.NPCCreature;
+      if (NC && NC.isNonSentientActor && NC.isNonSentientActor(actor)) return true;
       const members = ($gameParty && $gameParty.members && $gameParty.members()) || [];
       const slot = members.indexOf(actor);
       if (slot >= 0 && typeof $gameSwitches !== "undefined" && $gameSwitches.value(77 + slot)) return true;
+      if (Scene_CharacterCreation._isCreatureMode && actor === Scene_CharacterCreation.getCurrentActor()) return true;
       return false;
     }
 
@@ -5576,6 +5580,9 @@
       const key = window.ActorModel3D ? window.ActorModel3D.keyFor(info) : JSON.stringify(cfg);
       if (this._ccPortrait3D && this._ccPortrait3D.key === key && !this._ccPortrait3D.disposed) {
         if (this._ccPortrait3D.canvas.parentNode !== wrap) wrap.appendChild(this._ccPortrait3D.canvas);
+        const fallback = wrap.querySelector(".cc3d-live-portrait-fallback");
+        if (fallback) fallback.style.display = "none";
+        wrap.classList.remove("empty");
         return;
       }
       this._destroyCC3DPortrait();
@@ -5630,6 +5637,7 @@
       // when no context can be had.
       const fallback = wrap.querySelector(".cc3d-live-portrait-fallback");
       if (fallback) fallback.style.display = "none";
+      wrap.classList.remove("empty");
 
       window.ActorModel3D.build(info).then((battler) => {
         if (state.disposed || !battler || !battler.model) return;
@@ -5676,6 +5684,7 @@
       const wrap = s.canvas && s.canvas.parentNode;
       if (wrap) {
         wrap.removeChild(s.canvas);
+        wrap.classList.add("empty");
         const fallback = wrap.querySelector(".cc3d-live-portrait-fallback");
         if (fallback) fallback.style.display = "";
       }

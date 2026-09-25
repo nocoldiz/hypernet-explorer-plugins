@@ -36,6 +36,8 @@
 
 (() => {
   const pluginName = "CharacterSpriteGridSelector";
+  let _plasticSurgeryActive = false;
+  let _faceSurgeryActive = false;
 
   // Bust categories are ids (the bust file name prefix). This is the one place
   // they are shown, so this is the one place they are translated.
@@ -282,6 +284,7 @@
     // A VIP sheet is a named person's face: it belongs to the dossier that
     // carries it, not to anyone who opens the board.
     if (entry && entry.vip === true) return false;
+    if (_plasticSurgeryActive) return true;
     const SC = window.SpriteCatalog;
     if (!SC) return true;
     // Varlenia has not turned up yet. Until the calendar reaches the year that
@@ -470,6 +473,7 @@
   }
 
   function filterBustCategories(categories) {
+    if (_faceSurgeryActive) return categories;
     const SC = window.SpriteCatalog;
     if (!SC || typeof SC.bustAllowedInPopulation !== "function") return categories;
     if (!SC.allowedBustNames || !SC.allowedBustNames()) return categories;
@@ -484,7 +488,7 @@
 
   let boardPopulationMode = populationMode();
   function rebuildSpriteBoard() {
-    const mode = populationMode();
+    const mode = populationMode() + (_plasticSurgeryActive ? ":plastic" : "");
     if (mode === boardPopulationMode && spriteOptions.length) return;
     boardPopulationMode = mode;
     rebuildSpriteSheets();
@@ -637,6 +641,22 @@
           }
           return;
         }
+      }
+      const isPlastic = this._plasticSurgeryMode || Scene_SpriteGridSelector._plasticSurgeryMode;
+      if (isPlastic) {
+        const monsters = monsterFolderOptions();
+        this._allOptions = spriteOptions.concat(monsters);
+        this._tabOptions = {};
+        for (const tab of SPRITE_TABS) {
+          if (tab.id === "monsters") {
+            this._tabOptions[tab.id] = monsters;
+          } else if (tab.id === "all") {
+            this._tabOptions[tab.id] = this._allOptions;
+          } else {
+            this._tabOptions[tab.id] = tabSpriteOptionsMap[tab.id] || [];
+          }
+        }
+        return;
       }
       const allowAnimals = audienceIsCreature(this._actorId);
       // The Monsters folder is a creature's own art and no one else's, so a
@@ -1190,12 +1210,24 @@
       }
 
 
+      const isPlastic = this._plasticSurgeryMode || _plasticSurgeryActive;
+      if (isPlastic) {
+        if (typeof $gameParty !== "undefined" && $gameParty) $gameParty.loseGold(10000);
+        if (window.SoundManager) SoundManager.playShop();
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('Prosthetics.plasticSurgerySuccess'));
+        }
+        this._plasticSurgeryMode = false;
+        _plasticSurgeryActive = false;
+        rebuildSpriteBoard();
+      }
+
       // Picking a sprite ends here, whichever way the gallery was opened. The
       // sheet's own portrait comes with it (NPCs.json pairs one per index), so
       // there is nothing left to ask: the bust gallery used to open next and
       // made choosing a look a two-screen errand for a one-click decision. It
       // is still reachable on its own from the dossier.
-      const standalone = this._standaloneSpriteMode || Scene_SpriteGridSelector._standaloneSpriteMode;
+      const standalone = this._standaloneSpriteMode || Scene_SpriteGridSelector._standaloneSpriteMode || isPlastic;
       this._standaloneSpriteMode = false;
       Scene_SpriteGridSelector._standaloneSpriteMode = false;
 
@@ -1231,6 +1263,11 @@
     }
 
     leaveWithoutPicking() {
+      if (this._plasticSurgeryMode || _plasticSurgeryActive) {
+        this._plasticSurgeryMode = false;
+        _plasticSurgeryActive = false;
+        rebuildSpriteBoard();
+      }
       if (this._standaloneSpriteMode || Scene_SpriteGridSelector._standaloneSpriteMode) {
         this._standaloneSpriteMode = false;
         Scene_SpriteGridSelector._standaloneSpriteMode = false;
@@ -2004,6 +2041,14 @@
       // caller that pushed the gallery straight over its own scene (the
       // Detailed creation editor) sets _confirmPops to 1 and gets its scene
       // back instead.
+      if (_faceSurgeryActive) {
+        _faceSurgeryActive = false;
+        if (typeof $gameParty !== "undefined" && $gameParty) $gameParty.loseGold(5000);
+        if (window.SoundManager) SoundManager.playShop();
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('Prosthetics.faceSurgerySuccess'));
+        }
+      }
       const pops = Scene_BustSelector._confirmPops || 2;
       Scene_BustSelector._confirmPops = 0;
       for (let i = 0; i < pops; i++) SceneManager.pop();
@@ -2029,9 +2074,22 @@
     onBustCancel() {
       SoundManager.playCancel();
       Scene_BustSelector._confirmPops = 0;
+      _faceSurgeryActive = false;
       SceneManager.pop();
     }
   }
+
+  Object.defineProperty(Scene_SpriteGridSelector, "_plasticSurgeryMode", {
+    get() { return _plasticSurgeryActive; },
+    set(v) { _plasticSurgeryActive = !!v; },
+    configurable: true
+  });
+
+  Object.defineProperty(Scene_BustSelector, "_faceSurgeryMode", {
+    get() { return _faceSurgeryActive; },
+    set(v) { _faceSurgeryActive = !!v; },
+    configurable: true
+  });
 
   // Patch the prepareNextScene method to properly handle Scene_SpriteGridSelector and Scene_BustSelector
   const _SceneManager_prepareNextScene = SceneManager.prepareNextScene;

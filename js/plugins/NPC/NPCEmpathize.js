@@ -3188,6 +3188,21 @@
 
       const cancelled = Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled();
 
+      if (cancelled && scene._nameModalOpen) {
+        scene._closeNameModal?.();
+        return;
+      }
+
+      if (cancelled && (scene._introspectGenderMode || scene._introspectOrientMode || scene._introspectCreedMode)) {
+        scene._cancelIntrospectSubMode?.();
+        return;
+      }
+
+      if (cancelled && scene._socialMode && scene._isSelfTalk?.()) {
+        scene._cancelSubMode?.();
+        return;
+      }
+
       // While navigating a content grid, Cancel backs out one level (entry list
       // -> categories -> tab bar) instead of closing the whole panel.
       if (cancelled && scene._activeArea === 'content') {
@@ -3398,6 +3413,11 @@
       this._infectMode         = false;
       this._infectItems        = [];
       this._socialMode         = false;
+      this._introspectGenderMode = false;
+      this._introspectOrientMode = false;
+      this._introspectCreedMode  = false;
+      this._nameModalOpen      = false;
+      this._nameModalEl        = null;
       this._romanceMode        = false;
       this._proposeMode        = false;
       this._directionsMode     = false;
@@ -5483,6 +5503,10 @@
       this._proposeMode       = false;
       this._directionsMode    = false;
       this._cardMode          = null;
+      this._introspectGenderMode = false;
+      this._introspectOrientMode = false;
+      this._introspectCreedMode  = false;
+      if (this._closeNameModal) this._closeNameModal();
       this._stealAttempted    = {};
       this._joinMessage       = null;
       this._menuIndex         = 0;
@@ -5644,6 +5668,8 @@
       this._giftMode = this._bribeMode = this._stealMode = this._feedMode = false;
       this._pickpocketConfirm = this._attackConfirm = false;
       this._socialMode = this._romanceMode = this._proposeMode = this._directionsMode = false;
+      this._introspectGenderMode = this._introspectOrientMode = this._introspectCreedMode = false;
+      if (this._closeNameModal) this._closeNameModal();
       this._infectMode = false;
       this._transmitConfirm = null;
       this._joinMessage = null;

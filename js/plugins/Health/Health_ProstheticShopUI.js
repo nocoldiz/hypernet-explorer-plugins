@@ -110,7 +110,11 @@
       return commands.map((c) => `
         <div class="item-slot focusable" onclick="SceneManager._scene.chooseCommand('${c.cmd}')">
           <div class="item-slot-icon"><span class="pshop-icon" style="${IconSet(c.icon, 32)}"></span></div>
-          <div class="item-slot-info"><div class="item-slot-name">${esc(c.label)}</div></div>
+          <div class="item-slot-info">
+            <div class="item-slot-name">${esc(c.label)}</div>
+            ${c.meta ? `<div class="item-slot-meta">${esc(c.meta)}</div>` : ""}
+          </div>
+          ${c.value ? `<span class="item-slot-count">${esc(c.value)}</span>` : ""}
         </div>
       `).join("");
     },

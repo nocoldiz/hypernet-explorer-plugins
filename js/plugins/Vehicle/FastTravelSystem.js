@@ -281,7 +281,7 @@
         // "fixedLevel" beats the nation band, same rule as the map banner: it
         // is a statement about this stop, not a fallback for a missing band.
         const fixed = Number(entry.fixedLevel);
-        if (fixed > 0) return { median: fixed, min: fixed, max: fixed, frozen: false };
+        if (fixed > 0) return { median: fixed, min: fixed, max: fixed, frozen: true };
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         let info = null;
         if (BSEH && typeof BSEH.describeNationLevels === 'function') {

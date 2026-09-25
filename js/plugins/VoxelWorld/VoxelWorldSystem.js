@@ -472,6 +472,69 @@
         _Scene_Gameover_create_VW.call(this);
     };
 
+    // Any map transfer (teleport item, return to ship, door, event transfer) ends
+    // voxel mode so the 3D scene never lingers over normal gameplay.
+    const _Game_Player_performTransfer_VW = Game_Player.prototype.performTransfer;
+    Game_Player.prototype.performTransfer = function() {
+        if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+            VoxelWorldSystem.stop();
+        }
+        _Game_Player_performTransfer_VW.call(this);
+    };
+
+    const _Game_Player_reserveTransfer_VW = Game_Player.prototype.reserveTransfer;
+    Game_Player.prototype.reserveTransfer = function(mapId, x, y, d, fadeType) {
+        _Game_Player_reserveTransfer_VW.call(this, mapId, x, y, d, fadeType);
+        if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+            VoxelWorldSystem.stop();
+        }
+    };
+
+    // Character death ends voxel mode so the 3D scene never outlives the party or actor.
+    if (typeof Game_BattlerBase !== 'undefined') {
+        const _Game_BattlerBase_die_VW = Game_BattlerBase.prototype.die;
+        Game_BattlerBase.prototype.die = function() {
+            _Game_BattlerBase_die_VW.call(this);
+            if (this.isActor && this.isActor() && VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+                VoxelWorldSystem.stop();
+            }
+        };
+    }
+
+    if (typeof Game_Actor !== 'undefined') {
+        const _Game_Actor_processMapDeath_VW = Game_Actor.prototype.processMapDeath;
+        Game_Actor.prototype.processMapDeath = function() {
+            if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+                VoxelWorldSystem.stop();
+            }
+            if (_Game_Actor_processMapDeath_VW) _Game_Actor_processMapDeath_VW.call(this);
+        };
+    }
+
+    if (typeof BattleManager !== 'undefined') {
+        const _BattleManager_processDefeat_VW = BattleManager.processDefeat;
+        BattleManager.processDefeat = function() {
+            if (VoxelWorldSystem.isActive() && !VoxelWorldSystem.isTitleDrive()) {
+                VoxelWorldSystem.stop();
+            }
+            if (_BattleManager_processDefeat_VW) _BattleManager_processDefeat_VW.call(this);
+        };
+    }
+
+    if (typeof DataManager !== 'undefined') {
+        const _DataManager_setupNewGame_VW = DataManager.setupNewGame;
+        DataManager.setupNewGame = function() {
+            if (VoxelWorldSystem.isActive()) VoxelWorldSystem.stop();
+            _DataManager_setupNewGame_VW.call(this);
+        };
+
+        const _DataManager_loadGame_VW = DataManager.loadGame;
+        DataManager.loadGame = function(savefileId) {
+            if (VoxelWorldSystem.isActive()) VoxelWorldSystem.stop();
+            return _DataManager_loadGame_VW.call(this, savefileId);
+        };
+    }
+
     // =========================================================================
     // The battle, fought over this world
     //

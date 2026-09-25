@@ -2220,11 +2220,11 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // nobody already toe to toe with a creature moves at all, so a band that has
   // caught something stands and fights it instead of walking on through it.
   // A band whose leader has fallen does not stand about: every one of them
-  // hunts for itself from then on.
   function bandUpdateMovement() {
     const members = bandMembers();
     if (!members.length) return;
     for (const ev of members) {
+      if (ev._bandYielding) continue;
       const state = ev._towerBand;
       if (bandNearestEnemy(ev, 1)) continue;
       const leader = state.leader ? ev : bandLeaderOf(state.band, members);
@@ -2241,6 +2241,61 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     }
   }
 
+  function bandYield(ev, px, py) {
+    if (!ev || ev._erased) return;
+    ev._bandYielding = true;
+    ev._bandYieldTimer = 180;
+    if (typeof ev.setThrough === "function") ev.setThrough(true);
+    const dx = ev.x - px;
+    const dy = ev.y - py;
+    let primaryDir = 0;
+    let perpDirs = [];
+    if (Math.abs(dx) >= Math.abs(dy) && dx !== 0) {
+      primaryDir = dx > 0 ? 6 : 4;
+      perpDirs = [2, 8];
+    } else if (dy !== 0) {
+      primaryDir = dy > 0 ? 2 : 8;
+      perpDirs = [4, 6];
+    }
+    const canStep = (dir) => {
+      if (typeof ev.canPass === "function") return ev.canPass(ev.x, ev.y, dir);
+      return true;
+    };
+    if (primaryDir && canStep(primaryDir)) {
+      ev.moveStraight(primaryDir);
+    } else {
+      let stepped = false;
+      for (const pdir of perpDirs) {
+        if (canStep(pdir)) {
+          ev.moveStraight(pdir);
+          stepped = true;
+          break;
+        }
+      }
+      if (!stepped && primaryDir) {
+        for (const dir of [2, 4, 6, 8]) {
+          if (dir !== (10 - primaryDir) && canStep(dir)) {
+            ev.moveStraight(dir);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  function bandUpdateYield() {
+    for (const ev of bandMembers()) {
+      if (ev._bandYielding) {
+        if (ev._bandYieldTimer > 0) {
+          ev._bandYieldTimer--;
+        } else if (typeof $gamePlayer !== "undefined" && typeof ev.pos === "function" && !ev.pos($gamePlayer.x, $gamePlayer.y)) {
+          ev._bandYielding = false;
+          if (typeof ev.setThrough === "function") ev.setThrough(false);
+        }
+      }
+    }
+  }
+
   function bandFlash(ev, color) {
     const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
     if (!spriteset || !spriteset._characterSprites) return;
@@ -2251,11 +2306,67 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   }
 
   function bandFell(ev) {
-    const name = ev._towerBand && ev._towerBand.name;
+    const state = ev._towerBand;
+    const name = state ? state.name : T("DungeonFloor.bandFallbackName");
+    const level = state ? state.level : 1;
     const seen = ev.isNearTheScreen ? ev.isNearTheScreen() : false;
     ev._towerBand = null;
-    ev._towerBandData = null;
-    $gameMap.eraseEvent(ev.eventId());
+    let corpse = null;
+    if (window.BSE && window.BSE.Functions && window.BSE.Functions.dropMapCorpse) {
+      corpse = {
+        mapId: $gameMap.mapId(),
+        x: ev.x,
+        y: ev.y,
+        spriteName: ev._characterName,
+        spriteIndex: ev._characterIndex,
+        hue: ev._characterHue || 0,
+        bloodColor: [200, 20, 20],
+        enemyId: 0
+      };
+      window.BSE.Functions.dropMapCorpse(corpse);
+    }
+    const lootData = {
+      id: ev.eventId(),
+      name: name + " Remains",  // i18n-ignore: internal event name
+      note: "",
+      x: ev.x,
+      y: ev.y,
+      pages: [{
+        conditions: {
+          actorId: 1, actorValid: false, itemId: 1, itemValid: false,
+          selfSwitchCh: "A", selfSwitchValid: false,
+          switch1Id: 1, switch1Valid: false, switch2Id: 1, switch2Valid: false,
+          variableId: 1, variableValid: false
+        },
+        directionFix: true,
+        image: corpse ? {
+          tileId: 0, characterName: "", characterIndex: 0, direction: 2, pattern: 0
+        } : {
+          tileId: 0, characterName: "!Chest", characterIndex: 0, direction: 2, pattern: 1  // i18n-ignore: sprite sheet
+        },
+        list: [
+          { code: 357, indent: 0, parameters: [pluginName, "bandLoot", "bandLoot", {}] },  // i18n-ignore: plugin command
+          { code: 0, indent: 0, parameters: [] }
+        ],
+        moveFrequency: 3,
+        moveRoute: { list: [{ code: 0 }], repeat: false, skippable: false, wait: false },
+        moveSpeed: 3, moveType: 0, priorityType: 1, stepAnime: false,
+        through: false, trigger: 0, walkAnime: false
+      }]
+    };
+    ev._towerBandData = lootData;
+    ev._towerLoot = { name, level, looted: false };
+    ev._towerCorpse = corpse;
+    if (typeof ev.setImage === "function") {
+      if (corpse) ev.setImage("", 0);
+      else ev.setImage("!Chest", 0);
+    }
+    if (typeof ev.setPriorityType === "function") ev.setPriorityType(1);
+    if (typeof ev.setThrough === "function") ev.setThrough(false);
+    if (typeof $dataMap !== "undefined" && $dataMap && $dataMap.events) {
+      $dataMap.events[ev.eventId()] = lootData;
+    }
+    if (typeof ev.setupPage === "function") ev.setupPage();
     if (name && seen && window.ParchmentToast && window.ParchmentToast.show) {
       window.ParchmentToast.show(T("DungeonFloor.bandFell", { name }), { severity: "warning" });  // i18n-ignore: severity id
     }
@@ -2268,6 +2379,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   function bandUpdateCombat() {
     for (const ev of bandMembers()) {
       const state = ev._towerBand;
+      if (!state) continue;
       const foe = bandNearestEnemy(ev, 1);
       if (!foe) continue;
       if (foe.enemyHp === undefined) {
@@ -2295,6 +2407,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if ($gameMap.isEventRunning() || $gameMessage.isBusy()) return;
     if (window.MapBattleMode && window.MapBattleMode.isActive()) return;
     if (!bandMembers().length) return;
+    bandUpdateYield();
     bandTick++;
     if (bandTick % BAND_STEP_INTERVAL === 0) bandUpdateMovement();
     if (bandTick % BAND_FIGHT_INTERVAL === 0) bandUpdateCombat();
@@ -2305,11 +2418,89 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   PluginManager.registerCommand(pluginName, "bandTalk", function () {
     const ev = $gameMap.event(this.eventId ? this.eventId() : 0);
     const state = ev && ev._towerBand;
-    const lines = T.pool("DungeonFloor.bandLines");
-    if (!lines.length) return;
-    $gameMessage.setSpeakerName(state ? state.name : "");
-    $gameMessage.add(lines[Math.floor(Math.random() * lines.length)]);
+    const lines = (typeof T.pool === "function" ? T.pool("DungeonFloor.bandLines") : (typeof T.list === "function" ? T.list("DungeonFloor.bandLines") : []));
+    if (!lines || !lines.length) return;
+    if (ev) {
+      if (typeof ev.turnTowardPlayer === "function") ev.turnTowardPlayer();
+      if (typeof $gamePlayer !== "undefined") {
+        bandYield(ev, $gamePlayer.x, $gamePlayer.y);
+      }
+    }
+    if (typeof $gameMessage !== "undefined") {
+      if (typeof $gameMessage.setBackground === "function") $gameMessage.setBackground(0);
+      if (typeof $gameMessage.setPositionType === "function") $gameMessage.setPositionType(2);
+      if (typeof $gameMessage.setSpeakerName === "function") $gameMessage.setSpeakerName(state ? state.name : "");
+      const line = lines[Math.floor(Math.random() * lines.length)];
+      window.skipLocalization = true;
+      $gameMessage.add(line);
+      window.skipLocalization = false;
+      if (typeof $gameMessage.processMessageBuffer === "function") {
+        $gameMessage.processMessageBuffer();
+      }
+    }
+    if (typeof this.setWaitMode === "function") {
+      this.setWaitMode("message");
+    }
   });
+
+  PluginManager.registerCommand(pluginName, "bandLoot", function () {
+    const ev = $gameMap.event(this.eventId ? this.eventId() : 0);
+    if (!ev || !ev._towerLoot || ev._towerLoot.looted) return;
+    ev._towerLoot.looted = true;
+    const name = ev._towerLoot.name || T("DungeonFloor.bandFallbackName");
+    const level = ev._towerLoot.level || 1;
+    const gold = Math.max(10, Math.floor(level * (15 + Math.random() * 15)));
+    if (typeof $gameParty !== "undefined" && typeof $gameParty.gainGold === "function") {
+      $gameParty.gainGold(gold);
+    }
+    if (typeof SoundManager !== "undefined") {
+      if (typeof SoundManager.playShop === "function") SoundManager.playShop();
+      else if (typeof SoundManager.playUseItem === "function") SoundManager.playUseItem();
+    }
+    const roll = Math.random();
+    const lootCmd = roll < 0.4 ? "getItem" : (roll < 0.7 ? "getArmor" : "getWeapon");
+    try {
+      PluginManager.callCommand(this, "RandomLootSystem", lootCmd, {});
+    } catch (e) {
+      if (typeof $dataItems !== "undefined" && $dataItems[1] && typeof $gameParty !== "undefined" && typeof $gameParty.gainItem === "function") {
+        $gameParty.gainItem($dataItems[1], 1);
+      }
+    }
+    if (window.ParchmentToast && typeof window.ParchmentToast.show === "function") {
+      window.ParchmentToast.show(T("DungeonFloor.bandLooted", { name, gold }));
+    }
+    if (ev._towerCorpse && window.BSE && window.BSE.Functions && typeof window.BSE.Functions.removeMapCorpse === "function") {
+      window.BSE.Functions.removeMapCorpse(ev._towerCorpse);
+    }
+    ev._towerBandData = null;
+    $gameMap.eraseEvent(ev.eventId());
+  });
+
+  if (typeof Game_Player !== "undefined" && Game_Player.prototype) {
+    const _DF_Game_Player_moveStraight = Game_Player.prototype.moveStraight;
+    Game_Player.prototype.moveStraight = function (d) {
+      const bx = $gameMap && typeof $gameMap.roundXWithDirection === "function" ? $gameMap.roundXWithDirection(this.x, d) : this.x;
+      const by = $gameMap && typeof $gameMap.roundYWithDirection === "function" ? $gameMap.roundYWithDirection(this.y, d) : this.y;
+      if (_DF_Game_Player_moveStraight) _DF_Game_Player_moveStraight.call(this, d);
+      if (!this.isMovementSucceeded() && $gameMap && typeof $gameMap.events === "function") {
+        const ev = $gameMap.events().find(
+          (e) => e && !e._erased && typeof e.pos === "function" && e.pos(bx, by) && e._towerBand
+        );
+        if (ev) bandYield(ev, this.x, this.y);
+      }
+    };
+
+    const _DF_Game_Player_checkEventTriggerHere = Game_Player.prototype.checkEventTriggerHere;
+    Game_Player.prototype.checkEventTriggerHere = function (triggers) {
+      if (_DF_Game_Player_checkEventTriggerHere) _DF_Game_Player_checkEventTriggerHere.call(this, triggers);
+      if (triggers && triggers.includes(0) && $gameMap && !$gameMap.isEventRunning() && typeof $gameMap.events === "function") {
+        const lootEv = $gameMap.events().find(
+          (e) => e && !e._erased && typeof e.pos === "function" && e.pos(this.x, this.y) && e._towerLoot && !e._towerLoot.looted
+        );
+        if (lootEv && typeof lootEv.start === "function") lootEv.start();
+      }
+    };
+  }
 
   //===========================================================================
   // THE FLOOR WORLDS
@@ -2843,6 +3034,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     spawnBands: bandSpawnFloor,
     stepBands: bandUpdateMovement,
     fightBands: bandUpdateCombat,
+    updateBands: bandUpdate,
+    yieldBand: bandYield,
+    fellBand: bandFell,
   };
 
   function moveToFloor(floor, spawnMode) {
@@ -3196,7 +3390,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // message or a menu (see bandUpdate).
   const _Scene_Map_update_bands = Scene_Map.prototype.update;
   Scene_Map.prototype.update = function () {
-    _Scene_Map_update_bands.call(this);
+    if (_Scene_Map_update_bands) _Scene_Map_update_bands.call(this);
     if (this.isActive()) bandUpdate();
   };
 

@@ -2,7 +2,7 @@
   "DialogueTopics": {
     "topicHardwareStore": {
       "title": "Ferramenta",
-      "description": "Acciaio di recupero, legno, chiodi, cavo e tutto il resto che una ricetta del Costruisci o del Pensatore richiede, venduto al banco invece che strappato a una rovina. Ogni città di una certa dimensione ne ha uno, e la merce cambia col giorno."
+      "description": "Acciaio di recupero, legno, chiodi, cavo e tutto il resto che una ricetta del Costruisci o del Thinker richiede, venduto al banco invece che strappato a una rovina. Ogni città di una certa dimensione ne ha uno, e la merce cambia col giorno."
     },
     "topicEsotericHeavyParticles": {
       "title": "Particelle Esoteriche Pesanti",
@@ -322,7 +322,7 @@
     },
     "topicMainMenu": {
       "title": "Il Menu Principale",
-      "description": "Non un menu fisico ma, come dice Bubba, una tecnica di meditazione trascendentale per deframmentare i ricordi. L'Archivio, il Pensatore, Costruzione, Ricerca, Sonno e tutto il resto pendono da lì."
+      "description": "Non un menu fisico ma, come dice Bubba, una tecnica di meditazione trascendentale per deframmentare i ricordi. L'Archivio, il Thinker, Costruzione, Ricerca, Sonno e tutto il resto pendono da lì."
     },
     "topicMarcoMarcoMarco": {
       "title": "Marco Marco Marco",
@@ -365,7 +365,7 @@
       "description": "L'opzione Sonno nel menu principale. Un accampamento, una stanza in affitto o un letto qualunque fanno passare le ore, ed è dormendo che si scelgono gli incantesimi attivi del giorno."
     },
     "topicThinkerMenu": {
-      "title": "Il Pensatore",
+      "title": "Il Thinker",
       "description": "Il banco da lavoro nel menu: una sola schermata per ogni ricetta di oggetti, armi e armature che i mestieri del gruppo hanno sbloccato, forgiata con il materiale di recupero."
     },
     "topicUmbraExcidii": {

@@ -626,6 +626,8 @@
   window.ChaosAugmentPrices = function () { ensureChaosAugmentPrices(); };
 
   const INSTALLATION_FEE = 5000; // 50€ flat labor fee for any installation
+  const PLASTIC_SURGERY_COST = 10000; // 100€ for sprite plastic surgery
+  const FACE_SURGERY_COST = 5000;     // 50€ for face bust surgery
 
   // ── The world of chaos: the clinic quotes what it likes ────────────────────
   // Nothing about a part or an augment changes here, only what is asked for it:
@@ -794,6 +796,8 @@
     this.addCommand(T('Prosthetics.removeBodypart'), "removeBodypart", true);
     this.addCommand(T('Prosthetics.replaceBodypart'), "replaceBodypart", true);
     this.addCommand(T('Prosthetics.installImplant'), "installImplant", true);
+    this.addCommand(T('Prosthetics.plasticSurgery'), "plasticSurgery", true);
+    this.addCommand(T('Prosthetics.faceSurgery'), "faceSurgery", true);
     this.addCommand(T('Prosthetics.cancel'), "cancel", true);
   };
 
@@ -2082,6 +2086,15 @@
       $gameTemp._prostheticShopSeedData = null;
     }
     this._viewState = 'party';
+    if (Scene_ProstheticShop._returnActorId) {
+      const returnActor = (typeof $gameActors !== "undefined" && $gameActors)
+        ? $gameActors.actor(Scene_ProstheticShop._returnActorId) : null;
+      Scene_ProstheticShop._returnActorId = null;
+      if (returnActor && typeof $gameParty !== "undefined" && $gameParty && $gameParty.members().includes(returnActor)) {
+        this._selectedActor = returnActor;
+        this._viewState = 'command';
+      }
+    }
     this.refreshUIShopDOM();
 
     // Tab cycles the patient outside the picker view (no controller connected).
@@ -2186,7 +2199,9 @@
           { cmd: 'inventory', icon: 176, label: T('Prosthetics.installFromInventory') },
           { cmd: 'remove', icon: 196, label: T('Prosthetics.removeBodypart') },
           { cmd: 'replace', icon: 180, label: T('Prosthetics.replaceBodypart') },
-          { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') }
+          { cmd: 'implant', icon: 128, label: T('Prosthetics.installImplant') },
+          { cmd: 'plastic_surgery', icon: 84, label: T('Prosthetics.plasticSurgery'), meta: T('Prosthetics.plasticSurgeryMeta'), value: formatPriceInEuros(PLASTIC_SURGERY_COST) },
+          { cmd: 'face_surgery', icon: 188, label: T('Prosthetics.faceSurgery'), meta: T('Prosthetics.faceSurgeryMeta'), value: formatPriceInEuros(FACE_SURGERY_COST) }
         ];
     return {
       title: this._fieldMode ? T('Prosthetics.fieldTheatre') : T('Prosthetics.biologicLaboratory'),
@@ -2751,9 +2766,52 @@
     } else if (cmd === 'implant') {
       this._viewState = 'implant_select_part';
       this.refreshUIShopDOM();
+    } else if (cmd === 'plastic_surgery') {
+      this.openPlasticSurgery();
+    } else if (cmd === 'face_surgery') {
+      this.openFaceSurgery();
     } else if (cmd === 'cancel') {
       this._viewState = 'party';
       this.refreshUIShopDOM();
+    }
+  };
+
+  Scene_ProstheticShop.prototype.openPlasticSurgery = function () {
+    if (!this._selectedActor) return;
+    if ($gameParty.gold() < PLASTIC_SURGERY_COST) {
+      if (window.SoundManager) SoundManager.playBuzzer();
+      this.showClinicNotification(T('Prosthetics.tooExpensive'));
+      return;
+    }
+    if (!window.Scene_SpriteGridSelector) return;
+    const actorId = this._selectedActor.actorId ? this._selectedActor.actorId() : this._selectedActor._actorId;
+    Scene_ProstheticShop._returnActorId = actorId;
+    if (window.Scene_SpriteGridSelector.setup) {
+      window.Scene_SpriteGridSelector.setup(actorId);
+    }
+    window.Scene_SpriteGridSelector._plasticSurgeryMode = true;
+    window.Scene_SpriteGridSelector._standaloneSpriteMode = true;
+    SceneManager.push(window.Scene_SpriteGridSelector);
+    if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
+      SceneManager._nextScene.setActor(actorId);
+    }
+  };
+
+  Scene_ProstheticShop.prototype.openFaceSurgery = function () {
+    if (!this._selectedActor) return;
+    if ($gameParty.gold() < FACE_SURGERY_COST) {
+      if (window.SoundManager) SoundManager.playBuzzer();
+      this.showClinicNotification(T('Prosthetics.tooExpensive'));
+      return;
+    }
+    if (!window.Scene_BustSelector) return;
+    const actorId = this._selectedActor.actorId ? this._selectedActor.actorId() : this._selectedActor._actorId;
+    Scene_ProstheticShop._returnActorId = actorId;
+    window.Scene_BustSelector._confirmPops = 1;
+    window.Scene_BustSelector._faceSurgeryMode = true;
+    SceneManager.push(window.Scene_BustSelector);
+    if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
+      SceneManager._nextScene.setActor(actorId);
     }
   };
 

@@ -173,6 +173,12 @@
   "noGainBadge": "Nessun guadagno",
   "implantWarning": "L'impianto installato andrà perduto per sempre.",
   "nothingHere": "Niente qui.",
+  "plasticSurgery": "Chirurgia plastica",
+  "plasticSurgeryMeta": "Modifica l'aspetto del personaggio e lo sprite",
+  "plasticSurgerySuccess": "Chirurgia plastica completata con successo.",
+  "faceSurgery": "Chirurgia del viso",
+  "faceSurgeryMeta": "Modifica il busto e l'aspetto del ritratto",
+  "faceSurgerySuccess": "Chirurgia del viso completata con successo.",
  "remote": {
   "title": "Remote Bistury",
   "banner": "REMOTE BISTURY",

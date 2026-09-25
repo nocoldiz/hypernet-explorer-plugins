@@ -6,7 +6,7 @@
     },
     "controls_menu_hotkeys": {
       "title": "Comandi: scorciatoie dei menu",
-      "description": "Tab apre il menu. Ogni schermata ha anche una lettera, premuta sulla mappa:\n\n- I inventario, C personaggio, R equipaggiamento, P abilità, J incarichi\n- M minimappa, B costruzione, V veicoli, F fazioni, H proprietà\n- K cucina, L questo libro, N addestramento, Y bestiario, U biologia\n- O opzioni, G sandbox (build di collaudo)\n\nDentro il menu: 1 Pensatore, 2 multigiocatore, 3 Hypernet. Sulla mappa, da 1 a 9 azionano la barra rapida.\n\nWASD, Z, X, Q, E e T sono riservati. F9 salva al volo, F10 ricarica, F11 schermo intero."
+      "description": "Tab apre il menu. Ogni schermata ha anche una lettera, premuta sulla mappa:\n\n- I inventario, C personaggio, R equipaggiamento, P abilità, J incarichi\n- M minimappa, B costruzione, V veicoli, F fazioni, H proprietà\n- K cucina, L questo libro, N addestramento, Y bestiario, U biologia\n- O opzioni, G sandbox (build di collaudo)\n\nDentro il menu: 1 Thinker, 2 multigiocatore, 3 Hypernet. Sulla mappa, da 1 a 9 azionano la barra rapida.\n\nWASD, Z, X, Q, E e T sono riservati. F9 salva al volo, F10 ricarica, F11 schermo intero."
     },
     "controls_mouse": {
       "title": "Comandi: Mouse",
@@ -618,7 +618,7 @@
     },
     "the_workbench": {
       "title": "Il banco da lavoro",
-      "description": "Il Pensatore è il banco da lavoro generale: montare e smontare. La ricetta è scritta sull'oggetto stesso.\n\nUna ricetta resta nascosta finché non l'hai fatta almeno una volta, anche se quelle comuni sono sulla lavagna fin dall'inizio.\n\nI materiali di base si ricavano smontando il mondo: abbattere alberi, scavare rocce, rompere mobili, recuperare equipaggiamento."
+      "description": "Il Thinker è il banco da lavoro generale: montare e smontare. La ricetta è scritta sull'oggetto stesso.\n\nUna ricetta resta nascosta finché non l'hai fatta almeno una volta, anche se quelle comuni sono sulla lavagna fin dall'inizio.\n\nI materiali di base si ricavano smontando il mondo: abbattere alberi, scavare rocce, rompere mobili, recuperare equipaggiamento."
     },
     "the_forge": {
       "title": "La fucina",
@@ -830,7 +830,7 @@
     },
     "hardware_store": {
       "title": "Ferramenta",
-      "description": "Acciaio di recupero, legno, chiodi, cavo e tutto il resto che una ricetta del Costruisci o del Pensatore richiede, venduto al banco invece che strappato a una rovina. Ogni città di una certa dimensione ne ha uno, e la merce cambia col giorno."
+      "description": "Acciaio di recupero, legno, chiodi, cavo e tutto il resto che una ricetta del Costruisci o del Thinker richiede, venduto al banco invece che strappato a una rovina. Ogni città di una certa dimensione ne ha uno, e la merce cambia col giorno."
     },
     "esoteric_heavy_particles": {
       "title": "Particelle Esoteriche Pesanti",

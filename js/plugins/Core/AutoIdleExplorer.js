@@ -445,6 +445,7 @@
     const PLUGIN = "AutoIdleExplorer";
     const params = PluginManager.parameters(PLUGIN);
     const IDLE_FRAMES = Math.max(1, Math.round((Number(params.idleSeconds) || 3) * 60));
+    const REENGAGE_FRAMES = Math.max(1, Math.round(IDLE_FRAMES / 2));
     const HEAL_RATE = (Number(params.healThreshold) || 50) / 100;
     const HUNGER_RATE = (Number(params.hungerThreshold) || 35) / 100;
     const SCAN_RADIUS = Number(params.scanRadius) || 12;
@@ -606,7 +607,7 @@
     const ARRIVAL_SETTLE = 600;
     // How many levels above the party an enemy may be before the CPU walks the
     // other way, and how beaten the party has to be before it runs.
-    const LEVEL_MARGIN = 3;
+    const LEVEL_MARGIN = 5;
     const FLEE_HP = 0.35;
     // The heat (Economy/CrimeSystem.js) at which the leader starts crossing
     // the street to avoid an officer, and how wide a berth they give one.
@@ -1207,7 +1208,11 @@
             "autoIdle",
             () => T('AutoIdle.optionName'),
             () => ConfigManager.autoIdle,
-            (value) => { ConfigManager.autoIdle = value; if (!value) AutoIdle.disengage(); },
+            (value) => {
+                ConfigManager.autoIdle = value;
+                AutoIdle._hasEngaged = false;
+                if (!value) AutoIdle.disengage();
+            },
             "experimental",
             "boolean"
         );
@@ -1330,6 +1335,8 @@
 
     // Prefer enemy events so battles get started.
     function isEnemyEvent(ev) {
+        if (!ev) return false;
+        if (ev._fixedTroopId > 0 || ev._bseRarityKey) return true;
         const name = (ev.event() && ev.event().name) || "";
         const note = (ev.event() && ev.event().note) || "";
         if (/enemy|monster|slime|beast|foe|bandit|wolf|spider|skab|ghoul|zombie/i.test(name + " " + note)) {
@@ -1583,24 +1590,53 @@
 
     // ------------------------------------------------------------- the danger
     // How outmatched the party is. The level on an enemy event is the one the
-    // plate over its head shows (BattleSystemEnhancedLevelDisplay.js), so the
-    // CPU keeps away from exactly what the player can see is too strong.
+    // plate over its head shows (BattleSystemEnhancedLevelDisplay.js), measured
+    // against the party's median level, so the CPU keeps away from troops that
+    // are more than LEVEL_MARGIN (5) levels above the median.
     function partyLevel() {
-        const members = $gameParty ? $gameParty.battleMembers() : [];
+        const members = $gameParty ? ($gameParty.battleMembers().length ? $gameParty.battleMembers() : $gameParty.members()) : [];
         if (!members.length) return 1;
-        let total = 0;
-        for (const m of members) total += m.level || 1;
-        return total / members.length;
+        const levels = members.map(m => m.level || 1).sort((a, b) => a - b);
+        const mid = Math.floor(levels.length / 2);
+        return (levels.length % 2 !== 0) ? levels[mid] : Math.floor((levels[mid - 1] + levels[mid]) / 2);
     }
 
     function eventLevel(ev) {
-        if (typeof window.getEnemyLevelFromEvent !== "function") return 0;
-        try { return Number(window.getEnemyLevelFromEvent(ev)) || 0; } catch (e) { return 0; }
+        if (!ev) return 0;
+        if (typeof window.getEnemyLevelFromEvent === "function") {
+            try {
+                const lvl = Number(window.getEnemyLevelFromEvent(ev)) || 0;
+                if (lvl > 0) return lvl;
+            } catch (e) {}
+        }
+        if (ev._fixedTroopId > 0 && typeof $dataTroops !== "undefined" && $dataTroops[ev._fixedTroopId]) {
+            const troop = $dataTroops[ev._fixedTroopId];
+            let maxLevel = 0;
+            const BSE = window.BattleSystemEnhanced;
+            for (const member of (troop.members || [])) {
+                const enemyData = typeof $dataEnemies !== "undefined" && $dataEnemies[member.enemyId];
+                if (enemyData && enemyData.note && BSE && BSE.Helpers && BSE.Helpers.getEnemyLevel) {
+                    const l = Number(BSE.Helpers.getEnemyLevel(enemyData.note)) || 0;
+                    if (l > maxLevel) maxLevel = l;
+                }
+            }
+            if (maxLevel > 0) return maxLevel;
+        }
+        return 0;
     }
 
     function tooStrong(ev) {
         const level = eventLevel(ev);
         return level > 0 && level > partyLevel() + LEVEL_MARGIN;
+    }
+
+    function underDangerEye(x, y) {
+        if (!$gameMap) return false;
+        for (const ev of $gameMap.events()) {
+            if (!ev || ev._erased || !isEnemyEvent(ev) || !tooStrong(ev)) continue;
+            if (Math.abs(ev.x - x) + Math.abs(ev.y - y) <= 3) return true;
+        }
+        return false;
     }
 
     // --------------------------------------------------------------- the law
@@ -2582,6 +2618,7 @@
     // ========================================================================
     const AutoIdle = {
         engaged: false,
+        _hasEngaged: false,
         idle: 0,
         frame: 0,
         think: 0,
@@ -2615,11 +2652,13 @@
 
         reset() {
             this.idle = 0;
+            this._hasEngaged = false;
         },
 
         engage() {
             if (this.engaged) return;
             this.engaged = true;
+            this._hasEngaged = true;
             this.intent = null;
             this.target = null;
             this.destX = this.destY = null;
@@ -2640,6 +2679,7 @@
                 return;
             }
             this.engaged = false;
+            this._hasEngaged = true;
             this.intent = null;
             this.target = null;
             this.destX = this.destY = null;
@@ -2731,7 +2771,11 @@
                 $gameTemp.clearDestination();
             }
             this.destStall = 0;
-            if (++this.idle >= IDLE_FRAMES) this.engage();
+            const waitFrames = this._hasEngaged ? REENGAGE_FRAMES : 0;
+            if (++this.idle >= waitFrames) {
+                this._hasEngaged = true;
+                this.engage();
+            }
         },
 
         // Why the autopilot is not driving right now, in one line. A console
@@ -2750,7 +2794,8 @@
             if (manualInputDetected()) return "input is being held";
             if ($gamePlayer.isMoving()) return "the player is moving";
             if ($gameTemp.isDestinationValid()) return "a touch destination is pending";
-            return "counting idle frames (" + this.idle + "/" + IDLE_FRAMES + ")";
+            const targetFrames = this._hasEngaged ? REENGAGE_FRAMES : 0;
+            return "counting idle frames (" + this.idle + "/" + targetFrames + ")";
         },
         // i18n-ignore-end
 
@@ -3726,7 +3771,7 @@
                 const tx = Math.round($gamePlayer.x + Math.cos(ang) * dist);
                 const ty = Math.round($gamePlayer.y + Math.sin(ang) * dist);
                 if (tx === $gamePlayer.x && ty === $gamePlayer.y) continue;
-                if (!tilePassable(tx, ty) || underOfficerEye(tx, ty)) continue;
+                if (!tilePassable(tx, ty) || underDangerEye(tx, ty) || underOfficerEye(tx, ty)) continue;
                 const fresh = !this.been[tx + "," + ty];
                 const score = (fresh ? 100 : 0) + dist;
                 if (!best || score > best.score) best = { x: tx, y: ty, score: score };
@@ -3880,6 +3925,7 @@
     // ========================================================================
     const P2Auto = {
         engaged: false,
+        _hasEngaged: false,
         idle: 0,
         frame: 0,
         think: 0,
@@ -3925,6 +3971,7 @@
 
         disengage() {
             this.engaged = false;
+            this._hasEngaged = true;
             this.idle = 0;
             this.reset();
             this.hideBadge();
@@ -3990,7 +4037,9 @@
             }
 
             if (!this.engaged) {
-                if (++this.idle >= IDLE_FRAMES) {
+                const waitFrames = this._hasEngaged ? REENGAGE_FRAMES : 0;
+                if (++this.idle >= waitFrames) {
+                    this._hasEngaged = true;
                     this.engaged = true;
                     this.showBadge();
                 } else {

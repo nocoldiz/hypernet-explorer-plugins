@@ -1262,18 +1262,23 @@
   // actually scroll (the left column's vitals footer, a long actions row).
   // True while the actions row is showing a picker rather than the standing
   // menu of verbs, i.e. while it is a list the player scrolls and chooses from.
+  Scene_NPCEmpathize.prototype._isSelfTalk = function () {
+    return this._actorId != null && this._focusActor?.()?.actorId?.() === this._actorId;
+  };
+
   Scene_NPCEmpathize.prototype._inListSubMode = function () {
     return !!(this._directionsMode || this._giftMode || this._feedMode ||
               this._stealMode || this._bribeMode || this._socialMode ||
               this._romanceMode || this._proposeMode || this._cardMode ||
-              this._infectMode);
+              this._infectMode || this._introspectGenderMode ||
+              this._introspectOrientMode || this._introspectCreedMode);
   };
 
   Scene_NPCEmpathize.prototype._activeScrollPane = function () {
     if (!this._overlay) return null;
     // The text-entry modal covers the panel, nothing behind it may move.
-    if (this._chatModalOpen) {
-      const ta = this._chatModalEl?.querySelector('#npc-dlg-ask-input');
+    if (this._chatModalOpen || this._nameModalOpen) {
+      const ta = this._nameModalEl?.querySelector('#npc-dlg-name-input') || this._chatModalEl?.querySelector('#npc-dlg-ask-input');
       return _isScrollable(ta) ? ta : null;
     }
     if (this._activeTab === 'chat' && !this._entity) {
@@ -2515,8 +2520,16 @@
       actionsHTML =
         `<div class="npc-chat-action-btn" onmousedown="event.stopPropagation();SceneManager._scene._confirmPickpocket()">${_escapeHtml(T.confirmYes)}</div>` +
         `<div class="npc-chat-action-btn" onmousedown="event.stopPropagation();SceneManager._scene._cancelSubMode()">${_escapeHtml(T.confirmNo)}</div>`;
+    } else if (this._introspectGenderMode) {
+      actionsHTML = this._buildInlineIntrospectGenderActions(T);
+    } else if (this._introspectOrientMode) {
+      actionsHTML = this._buildInlineIntrospectOrientActions(T);
+    } else if (this._introspectCreedMode) {
+      actionsHTML = this._buildInlineIntrospectCreedActions(T);
     } else if (this._socialMode) {
-      actionsHTML = this._buildInlineSocialActions(T);
+      actionsHTML = selfTalk
+        ? this._buildInlineIntrospectActions(T)
+        : this._buildInlineSocialActions(T);
     } else if (this._romanceMode) {
       actionsHTML = this._buildInlineRomanceActions(T);
     } else if (this._proposeMode) {
@@ -2773,6 +2786,354 @@
     }).join('');
     html += `<div class="npc-chat-action-btn npc-faint" onmousedown="event.stopPropagation();SceneManager._scene._cancelSubMode()">${_escapeHtml(T.cancel)}</div>`;
     return html;
+  };
+
+  Scene_NPCEmpathize.prototype._buildInlineIntrospectActions = function (T) {
+    const actor = this._focusActor() || $gameParty?.leader();
+    const profile = _getProfile(actor?.name?.());
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    const canAfford50 = kp >= 50;
+    const curName = actor?.name?.() || '';
+    const curGenderVal = actor?.gender ? actor.gender() : (profile?.gender ?? 0);
+    const curGenderLabel = _presetGenderLabel(curGenderVal, T);
+    const curSexKey = profile?._orientOverride?.sexualKey || actor?._orientOverride?.sexualKey;
+    const db = _orientationData();
+    const curOrientEntry = curSexKey ? (db.sexual || []).find(o => o.key === curSexKey) : null;
+    const curOrientLabel = curOrientEntry ? (_dbText(curOrientEntry.name) || curOrientEntry.key) : '';
+    const curCreedId = actor?._ideologyId || profile?.ideologyId;
+    const curCreedLabel = _ideologyLabel(curCreedId);
+
+    let html = `<div class="npc-note npc-mb-2">${_escapeHtml(T.introspectTitle || 'Introspection')} · <span class="${canAfford50 ? 'npc-good' : 'npc-bad'}">${kp} KP</span></div>`;
+
+    // 1. Change Name
+    html += `<div class="npc-chat-action-btn" onmousedown="event.stopPropagation();SceneManager._scene._openNameModal()">` +
+      `<span class="${OPT}">${_escapeHtml(T.introspectChangeName || 'Change Name')}</span>` +
+      `<span class="npc-sub npc-aside">${_escapeHtml(curName)}</span></div>`;
+
+    // 2. Change Gender (50 KP)
+    html += `<div class="npc-chat-action-btn${canAfford50 ? '' : ' npc-action-disabled'}" onmousedown="event.stopPropagation();SceneManager._scene._openGenderSelect()">` +
+      `<span class="${OPT}">${_escapeHtml(T.introspectChangeGender || 'Change Gender')}</span>` +
+      (curGenderLabel ? `<span class="npc-sub npc-aside-sm">${_escapeHtml(curGenderLabel)}</span>` : '') +
+      `<span class="npc-aside${canAfford50 ? ' npc-good' : ' npc-bad'}">50 KP</span></div>`;
+
+    // 3. Change Sexual Orientation (50 KP)
+    html += `<div class="npc-chat-action-btn${canAfford50 ? '' : ' npc-action-disabled'}" onmousedown="event.stopPropagation();SceneManager._scene._openOrientationSelect()">` +
+      `<span class="${OPT}">${_escapeHtml(T.introspectChangeOrientation || 'Change Sexual Orientation')}</span>` +
+      (curOrientLabel ? `<span class="npc-sub npc-aside-sm">${_escapeHtml(curOrientLabel)}</span>` : '') +
+      `<span class="npc-aside${canAfford50 ? ' npc-good' : ' npc-bad'}">50 KP</span></div>`;
+
+    // 4. Change Creed
+    html += `<div class="npc-chat-action-btn" onmousedown="event.stopPropagation();SceneManager._scene._openCreedSelect()">` +
+      `<span class="${OPT}">${_escapeHtml(T.introspectChangeCreed || 'Change Creed')}</span>` +
+      (curCreedLabel ? `<span class="npc-sub npc-aside">${_escapeHtml(curCreedLabel)}</span>` : '') +
+      `</div>`;
+
+    // 5. Cancel
+    html += `<div class="npc-chat-action-btn npc-faint" onmousedown="event.stopPropagation();SceneManager._scene._cancelSubMode()">${_escapeHtml(T.cancel)}</div>`;
+    return html;
+  };
+
+  Scene_NPCEmpathize.prototype._openNameModal = function () {
+    if (!this._overlay || this._nameModalOpen) return;
+    const T = _getT();
+    const actor = this._focusActor() || $gameParty?.leader();
+    const currentName = actor?.name?.() || '';
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const modal = document.createElement('div');
+    modal.className = 'npc-chat-modal-backdrop';
+    modal.innerHTML = `
+      <div class="npc-chat-modal" onmousedown="event.stopPropagation();">
+        <div class="npc-chat-modal-title">${esc(T.introspectChangeNamePrompt || 'Enter new character name:')}</div>
+        <input type="text" id="npc-dlg-name-input" class="npc-chat-modal-input"
+          maxlength="24" autocomplete="off" spellcheck="false"
+          value="${esc(currentName)}" style="height: auto; padding: 8px 10px;" />
+        <div class="npc-chat-modal-btns">
+          <button class="npc-chat-modal-cancel" onmousedown="event.stopPropagation();SceneManager._scene._closeNameModal?.()">${esc(T.cancel)}</button>
+          <button class="npc-chat-modal-send" onmousedown="event.stopPropagation();SceneManager._scene._submitNameModal?.()">${esc(T.confirm || 'Confirm')}</button>
+        </div>
+      </div>`;
+    modal.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      if (e.target === modal) this._closeNameModal();
+    });
+
+    this._overlay.appendChild(modal);
+    this._nameModalEl = modal;
+    this._nameModalOpen = true;
+    this._inputFocused = true;
+    this._activeArea = 'input';
+
+    const input = modal.querySelector('#npc-dlg-name-input');
+    if (input) {
+      input.focus();
+      input.select();
+      input.addEventListener('keydown', (e) => {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this._submitNameModal();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          this._closeNameModal();
+        }
+      });
+    }
+  };
+
+  Scene_NPCEmpathize.prototype._closeNameModal = function () {
+    if (this._nameModalEl) {
+      this._nameModalEl.remove();
+      this._nameModalEl = null;
+    }
+    this._nameModalOpen = false;
+    this._inputFocused = false;
+    this._activeArea = 'actions';
+    this._updateSelectionHighlight?.();
+  };
+
+  Scene_NPCEmpathize.prototype._submitNameModal = function () {
+    const input = document.getElementById('npc-dlg-name-input');
+    const val = input ? input.value.trim() : '';
+    this._closeNameModal();
+    if (!val) return;
+    const actor = this._focusActor() || $gameParty?.leader();
+    if (!actor) return;
+    const oldName = actor.name();
+    if (val === oldName) return;
+    actor.setName(val);
+    const society = $gameSystem && $gameSystem._npcSociety;
+    if (society && society[oldName]) {
+      society[val] = society[oldName];
+      society[val]._npcName = val;
+      delete society[oldName];
+    }
+    if (this._npcName === oldName) {
+      this._npcName = val;
+    }
+    const T = _getT();
+    this._joinMessage = { type: 'good', text: T.introspectNameSuccess || 'Name changed successfully.' };
+    SoundManager.playOk();
+    this._render();
+  };
+
+  Scene_NPCEmpathize.prototype._openGenderSelect = function () {
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    if (kp < 50) {
+      SoundManager.playBuzzer();
+      return;
+    }
+    SoundManager.playCursor();
+    this._socialMode = false;
+    this._introspectGenderMode = true;
+    this._menuIndex = 0;
+    this._render();
+  };
+
+  Scene_NPCEmpathize.prototype._buildInlineIntrospectGenderActions = function (T) {
+    const actor = this._focusActor() || $gameParty?.leader();
+    const curGender = actor?.gender ? actor.gender() : 0;
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    const canAfford = kp >= 50;
+
+    let html = `<div class="npc-note npc-mb-2">${_escapeHtml(T.introspectGenderPrompt || 'Select gender')} (${kp} KP)</div>`;
+    const genders = [
+      { id: 0, label: T.genderMale },
+      { id: 1, label: T.genderFemale },
+      { id: 2, label: T.genderNonBinary },
+      { id: 3, label: T.genderCocoon },
+    ];
+    html += genders.map(g => {
+      const isCur = g.id === curGender;
+      const curBadge = isCur ? ` <span class="npc-good npc-em">✓</span>` : '';
+      return `<div class="npc-chat-action-btn${canAfford ? '' : ' npc-action-disabled'}" onmousedown="event.stopPropagation();SceneManager._scene._selectIntrospectGender(${g.id})">` +
+        `<span class="${OPT}">${_escapeHtml(g.label)}</span>` +
+        `${curBadge}<span class="npc-aside npc-good">50 KP</span></div>`;
+    }).join('');
+    html += `<div class="npc-chat-action-btn npc-faint" onmousedown="event.stopPropagation();SceneManager._scene._cancelIntrospectSubMode()">${_escapeHtml(T.cancel)}</div>`;
+    return html;
+  };
+
+  Scene_NPCEmpathize.prototype._selectIntrospectGender = function (genderId) {
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    const T = _getT();
+    if (kp < 50) {
+      SoundManager.playBuzzer();
+      this._joinMessage = { type: 'bad', text: T.introspectNotEnoughKp };
+      this._render();
+      return;
+    }
+    const actor = this._focusActor() || $gameParty?.leader();
+    if (!actor) return;
+    const curGender = actor.gender ? actor.gender() : 0;
+    if (curGender === genderId) {
+      SoundManager.playCursor();
+      this._cancelIntrospectSubMode();
+      return;
+    }
+    $gameSystem.spendKnowledge(50);
+    if (typeof actor.setGender === 'function') {
+      actor.setGender(genderId);
+    } else {
+      actor._pvGender = genderId;
+    }
+    const memberIndex = $gameParty?.members ? $gameParty.members().indexOf(actor) : -1;
+    if (memberIndex >= 0 && window.CharacterCreationShared?.applyGenderAndReproduction) {
+      window.CharacterCreationShared.applyGenderAndReproduction(memberIndex, genderId, { keepOrgans: true });
+    }
+    const profile = _getProfile(actor.name());
+    if (profile) profile.gender = genderId;
+    SoundManager.playOk();
+    this._joinMessage = { type: 'good', text: T.introspectGenderSuccess || 'Gender changed successfully.' };
+    this._cancelIntrospectSubMode();
+  };
+
+  Scene_NPCEmpathize.prototype._openOrientationSelect = function () {
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    if (kp < 50) {
+      SoundManager.playBuzzer();
+      return;
+    }
+    SoundManager.playCursor();
+    this._socialMode = false;
+    this._introspectOrientMode = true;
+    this._menuIndex = 0;
+    this._render();
+  };
+
+  Scene_NPCEmpathize.prototype._buildInlineIntrospectOrientActions = function (T) {
+    const actor = this._focusActor() || $gameParty?.leader();
+    const profile = _getProfile(actor?.name?.());
+    const curOrientKey = profile?._orientOverride?.sexualKey || actor?._orientOverride?.sexualKey;
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    const canAfford = kp >= 50;
+
+    let html = `<div class="npc-note npc-mb-2">${_escapeHtml(T.introspectOrientationPrompt || 'Select sexual orientation')} (${kp} KP)</div>`;
+    const db = _orientationData();
+    const list = db.sexual || [];
+    html += list.map(entry => {
+      const isCur = entry.key === curOrientKey;
+      const curBadge = isCur ? ` <span class="npc-good npc-em">✓</span>` : '';
+      const label = _dbText(entry.name) || entry.key;
+      return `<div class="npc-chat-action-btn${canAfford ? '' : ' npc-action-disabled'}" onmousedown="event.stopPropagation();SceneManager._scene._selectIntrospectOrientation('${entry.key}')">` +
+        `<span class="${OPT}">${_escapeHtml(label)}</span>` +
+        `${curBadge}<span class="npc-aside npc-good">50 KP</span></div>`;
+    }).join('');
+    html += `<div class="npc-chat-action-btn npc-faint" onmousedown="event.stopPropagation();SceneManager._scene._cancelIntrospectSubMode()">${_escapeHtml(T.cancel)}</div>`;
+    return html;
+  };
+
+  Scene_NPCEmpathize.prototype._selectIntrospectOrientation = function (key) {
+    const kp = ($gameSystem?.getKnowledge ? $gameSystem.getKnowledge() : ($gameSystem?._knowledgePoints ?? 0)) || 0;
+    const T = _getT();
+    if (kp < 50) {
+      SoundManager.playBuzzer();
+      this._joinMessage = { type: 'bad', text: T.introspectNotEnoughKp };
+      this._render();
+      return;
+    }
+    const actor = this._focusActor() || $gameParty?.leader();
+    if (!actor) return;
+    const profile = _getProfile(actor.name());
+    const curOrientKey = profile?._orientOverride?.sexualKey || actor?._orientOverride?.sexualKey;
+    if (curOrientKey === key) {
+      SoundManager.playCursor();
+      this._cancelIntrospectSubMode();
+      return;
+    }
+    const db = _orientationData();
+    const entry = (db.sexual || []).find(o => o.key === key);
+    $gameSystem.spendKnowledge(50);
+    actor._orientOverride = actor._orientOverride || {};
+    actor._orientOverride.sexualKey = key;
+    if (entry?.correspondsTo) {
+      actor._orientOverride.romanticKey = entry.correspondsTo;
+    }
+    if (profile) {
+      profile._orientOverride = profile._orientOverride || {};
+      profile._orientOverride.sexualKey = key;
+      if (entry?.correspondsTo) {
+        profile._orientOverride.romanticKey = entry.correspondsTo;
+      }
+    }
+    SoundManager.playOk();
+    this._joinMessage = { type: 'good', text: T.introspectOrientationSuccess || 'Sexual orientation changed successfully.' };
+    this._cancelIntrospectSubMode();
+  };
+
+  Scene_NPCEmpathize.prototype._openCreedSelect = function () {
+    SoundManager.playCursor();
+    this._socialMode = false;
+    this._introspectCreedMode = true;
+    this._menuIndex = 0;
+    this._render();
+  };
+
+  Scene_NPCEmpathize.prototype._onCreedFilterInput = function (query) {
+    const q = String(query || '').toLowerCase().trim();
+    const btns = this._overlay?.querySelectorAll('.npc-creed-btn');
+    if (!btns) return;
+    btns.forEach(btn => {
+      const text = btn.textContent.toLowerCase();
+      btn.style.display = (!q || text.includes(q)) ? '' : 'none';
+    });
+  };
+
+  Scene_NPCEmpathize.prototype._buildInlineIntrospectCreedActions = function (T) {
+    const actor = this._focusActor() || $gameParty?.leader();
+    const profile = _getProfile(actor?.name?.());
+    const curCreedId = actor?._ideologyId || profile?.ideologyId;
+    let list = window.NPCShared?.ideologyList?.() || [];
+    list = list.filter(e => e && !e.alien);
+    const sorted = list.map(e => ({
+      id: e.id,
+      label: _ideologyLabel(e.id) || e.id
+    })).sort((a, b) => a.label.localeCompare(b.label));
+
+    let html = `<div class="npc-note npc-mb-2">${_escapeHtml(T.introspectCreedPrompt || 'Select a new creed')}</div>`;
+    html += `<input type="text" class="npc-chat-modal-input" placeholder="${_escapeHtml(T.introspectFilterCreed || 'Filter creeds...')}" ` +
+      `oninput="SceneManager._scene._onCreedFilterInput(this.value)" onkeydown="event.stopPropagation()" ` +
+      `style="width: 100%; box-sizing: border-box; margin-bottom: 6px; padding: 4px 8px; font-size: 13px; height: auto;" />`;
+    html += sorted.map(c => {
+      const isCur = c.id === curCreedId;
+      const curBadge = isCur ? ` <span class="npc-good npc-em">✓</span>` : '';
+      return `<div class="npc-chat-action-btn npc-creed-btn" onmousedown="event.stopPropagation();SceneManager._scene._selectIntrospectCreed('${c.id}')">` +
+        `<span class="${OPT}">${_escapeHtml(c.label)}</span>${curBadge}</div>`;
+    }).join('');
+    html += `<div class="npc-chat-action-btn npc-faint" onmousedown="event.stopPropagation();SceneManager._scene._cancelIntrospectSubMode()">${_escapeHtml(T.cancel)}</div>`;
+    return html;
+  };
+
+  Scene_NPCEmpathize.prototype._selectIntrospectCreed = function (id) {
+    const actor = this._focusActor() || $gameParty?.leader();
+    const T = _getT();
+    if (!actor) return;
+    const curCreedId = actor._ideologyId || _getProfile(actor.name())?.ideologyId;
+    if (curCreedId === id) {
+      SoundManager.playCursor();
+      this._cancelIntrospectSubMode();
+      return;
+    }
+    actor._ideologyId = id;
+    const profile = _getProfile(actor.name());
+    if (profile) {
+      profile.ideologyId = id;
+      const list = window.NPCShared?.ideologyList?.() || [];
+      profile.ideologyIndex = list.findIndex(i => i && i.id === id);
+    }
+    SoundManager.playOk();
+    this._joinMessage = { type: 'good', text: T.introspectCreedSuccess || 'Creed changed successfully.' };
+    this._cancelIntrospectSubMode();
+  };
+
+  Scene_NPCEmpathize.prototype._cancelIntrospectSubMode = function () {
+    this._introspectGenderMode = false;
+    this._introspectOrientMode = false;
+    this._introspectCreedMode  = false;
+    this._socialMode           = true;
+    this._menuIndex            = 0;
+    this._render();
   };
 
   Scene_NPCEmpathize.prototype._buildInlineStealActions = function (T) {

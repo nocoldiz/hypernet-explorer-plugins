@@ -2868,9 +2868,9 @@
                     CamperWeapon.refresh();
                     if (this._followers) this._followers.refresh();
                     // Something in that menu took the party off the world map (a
-                    // journey, a return, a teleport): the walk is over, and where
+                    // journey, a return, a teleport): the drive/walk is over, and where
                     // they went is not this scene's business.
-                    if (this._footOnly && typeof $gameMap !== 'undefined' &&
+                    if (typeof $gameMap !== 'undefined' &&
                         $gameMap.mapId() !== WORLD_MAP_ID) {
                         VoxelWorldSystem.stop();
                         return;

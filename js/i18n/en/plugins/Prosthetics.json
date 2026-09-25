@@ -173,6 +173,12 @@
   "noGainBadge": "No gain",
   "implantWarning": "The installed implant will be permanently lost.",
   "nothingHere": "Nothing here.",
+  "plasticSurgery": "Plastic surgery",
+  "plasticSurgeryMeta": "Change character appearance and walking sprite",
+  "plasticSurgerySuccess": "Plastic surgery completed successfully.",
+  "faceSurgery": "Face surgery",
+  "faceSurgeryMeta": "Change bust and portrait appearance",
+  "faceSurgerySuccess": "Face surgery completed successfully.",
  "remote": {
   "title": "Remote Bistury",
   "banner": "REMOTE BISTURY",

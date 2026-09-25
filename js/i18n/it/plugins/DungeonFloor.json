@@ -2,6 +2,7 @@
   "demoLimit": " (limite modalità demo: {max})",
   "bandFallbackName": "Scalatore",
   "bandFell": "{name} è caduto su questo piano.",
+  "bandLooted": "Perquisiti gli effetti personali di {name}: trovati {gold}€ ed equipaggiamento.",
   "bandLines": [
     "Siamo saliti per il bottino. Finora il piano ha preso più di quanto abbia dato.",
     "Stai vicino ai muri. Quello che nidifica qui non sente la pietra.",

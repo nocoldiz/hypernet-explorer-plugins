@@ -130,7 +130,13 @@
     "hostTurnedMapBattleOff": "L'host ha disattivato la Battaglia su Mappa per tutti.",
     "joinedYourBattle": "{name} si e' unito alla tua battaglia.",
     "endSession": "Chiudi la Sessione LAN",
-    "endSessionDesc": "Sei in una sessione LAN. Chiudi il collegamento e torna nel tuo mondo."
+    "endSessionDesc": "Sei in una sessione LAN. Chiudi il collegamento e torna nel tuo mondo.",
+    "party": "Gruppo Aether",
+    "partyHint": "Invita giocatori nel gruppo",
+    "inParty": "Nel gruppo",
+    "partyDesc": "Gestisci i membri del gruppo e invita altri giocatori su questa rete.",
+    "openParty": "APRI GRUPPO",
+    "connectedPlayers": "Giocatori in questa sessione"
   },
   "endSplitScreen": "Chiudi lo Schermo Diviso",
   "endSplitScreenDesc": "Una sessione a schermo diviso è in corso. Restituisci il secondo pad e torna a giocare da solo."

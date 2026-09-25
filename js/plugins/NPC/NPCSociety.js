@@ -424,6 +424,18 @@
     // Body and gender are the character sheet's, so the romance page and the
     // pronouns the panel writes with match the person the player made.
     if (actor.gender) profile.gender = actor.gender();
+    if (actor._orientOverride) {
+      profile._orientOverride = {
+        ...(profile._orientOverride || {}),
+        ...actor._orientOverride,
+      };
+    }
+    if (actor._ideologyId) {
+      profile.ideologyId = actor._ideologyId;
+      const idList = window.NPCShared?.ideologyList?.() || [];
+      const idx = idList.findIndex(i => i && i.id === actor._ideologyId);
+      if (idx >= 0) profile.ideologyIndex = idx;
+    }
     const archetypeKeys = window.HealthCore?.getActorArchetypeKeys?.(actor);
     if (archetypeKeys?.length) profile.archetype = archetypeKeys[0];
 

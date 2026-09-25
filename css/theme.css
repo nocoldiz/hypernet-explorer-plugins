@@ -14887,7 +14887,7 @@
    is written in. */
 .travel-dest-level {
     font-weight: bold;
-    color: var(--text-danger-hover);
+    color: var(--text-text-alt-10, #ff5555);
     white-space: nowrap;
 }
 
@@ -37923,7 +37923,46 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   background:var(--gradient-1); flex:0 0 auto; }
 .cc3d-top > * { min-width:0; }
 .cc3d-top .cc3d-chip { overflow:hidden; text-overflow:ellipsis; }
-.cc3d-top .cc-btn-treaty { flex:0 0 auto; }
+.cc3d-top .cc-btn-treaty,
+.cc3d-top .inspect-btn,
+.cc3d-top .cc3d-continue-btn {
+  flex: 0 0 auto;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 6px 18px;
+  border-radius: 4px;
+  background: var(--bg-secondary-hover);
+  background-image: none;
+  border: 2px solid var(--text-primary-hover);
+  color: var(--text-primary-hover);
+  box-shadow: 0 3px 6px var(--shadow-primary-hover-translucent-5);
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+  transition: 0.2s ease;
+  transform: none;
+}
+.cc3d-top .cc-btn-treaty:hover,
+.cc3d-top .cc-btn-treaty.confirm:hover,
+.cc3d-top .cc-btn-treaty.selected,
+.cc3d-top .inspect-btn:hover,
+.cc3d-top .inspect-btn.selected,
+.cc3d-top .inspect-btn:focus-visible,
+.cc3d-top .cc3d-continue-btn:hover,
+.cc3d-top .cc3d-continue-btn.selected {
+  background: var(--chip-active-bg);
+  border-color: var(--chip-active-bg);
+  color: var(--chip-active-fg);
+  box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
+  transform: none;
+}
+.cc3d-top .cc-btn-treaty.confirm,
+.cc3d-top .inspect-btn.confirm {
+  background: var(--bg-secondary-hover);
+  border: 2px solid var(--text-primary-hover);
+  color: var(--text-primary-hover);
+}
 .cc3d-title { font-family:'Cinzel',var(--font-ui); font-size:var(--fs-body); letter-spacing:0.06em;
   color:var(--text-primary-hover); text-transform:uppercase; white-space:nowrap;
   overflow:hidden; text-overflow:ellipsis; }
@@ -37979,23 +38018,29 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
 /* --- small parts shared by everything -------------------------------- */
-.cc3d-add { padding:5px 10px; border-radius:5px; cursor:pointer; text-align:center;
-  font-size:0.98rem; color:var(--text-primary-hover); font-weight:bold;
-  border:1px solid var(--text-primary-hover); background:var(--border-primary-hover-translucent-15); }
-.cc3d-chip { flex:0 0 auto; padding:3px 10px; border-radius:4px; cursor:pointer;
-  font-size:0.98rem; white-space:nowrap; color:var(--text-muted-hover);
-  border:1px solid var(--border-primary-hover-translucent-15); }
+.cc3d-add { padding:6px 12px; border-radius:4px; cursor:pointer; text-align:center;
+  font-family:var(--font-ui); font-size:0.95rem; color:var(--text-primary-hover); font-weight:bold;
+  background:var(--bg-secondary-hover); border:2px solid var(--text-primary-hover);
+  box-shadow:0 3px 6px var(--shadow-primary-hover-translucent-5); transition:0.2s ease; }
+.cc3d-add:hover, .cc3d-add.selected {
+  background:var(--chip-active-bg); border-color:var(--chip-active-bg); color:var(--chip-active-fg); }
+.cc3d-chip { flex:0 0 auto; padding:4px 10px; border-radius:4px; cursor:pointer;
+  font-family:var(--font-ui); font-size:0.92rem; white-space:nowrap; color:var(--text-muted-hover);
+  background:var(--bg-card-translucent-5); border:1px solid var(--border-primary-hover-translucent-15);
+  box-shadow:0 2px 4px var(--shadow-primary-hover-translucent-5); transition:0.15s ease; }
+.cc3d-chip:hover, .cc3d-chip.selected, .cc3d-chip:focus-visible {
+  background:var(--chip-active-bg); border-color:var(--chip-active-bg); color:var(--chip-active-fg); }
 .cc3d-chip.on { border-color:var(--text-primary-hover); color:var(--text-primary-hover);
   background:var(--border-primary-hover-translucent-15); font-weight:bold; }
-.cc3d-chip.spent { opacity:0.3; }
+.cc3d-chip.spent { opacity:0.35; cursor:default; pointer-events:none; }
 .cc3d-chip.grow { flex:1; text-align:center; }
 .cc3d-chip .cc3d-dot { display:inline-block; width:5px; height:5px; border-radius:50%;
   margin-left:5px; vertical-align:middle; background:var(--text-primary-hover); }
 .cc3d-lbl { font-size:0.93rem; opacity:0.75; white-space:nowrap; }
-.cc3d-search { flex:0 0 170px; padding:3px 8px; border-radius:5px; font-size:var(--fs-caption);
+.cc3d-search { flex:0 0 170px; padding:4px 8px; border-radius:4px; font-size:var(--fs-caption);
   border:1px solid var(--border-primary-hover-translucent-15);
   background:var(--bg-primary-hover-translucent-35); color:var(--text-primary-hover);
-  font-family:var(--font-ui); }
+  font-family:var(--font-ui); box-sizing:border-box; }
 .cc3d-sl { padding:2px 4px 4px 4px; cursor:pointer; border-radius:4px; }
 .cc3d-sl-head { display:flex; justify-content:space-between; gap:8px; font-size:0.93rem;
   margin-bottom:2px; }

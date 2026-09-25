@@ -4365,6 +4365,10 @@
       // another non-land tile. The default getOffVehicle silently fails there,
       // leaving the player flagged isInAirship() (transparent player + hidden
       // followers), which makes all sprites vanish after exiting the interior (#158).
+      if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
+        window.VoxelWorldSystem.stop();
+      }
+
       if ($gamePlayer.isInVehicle()) {
         disembarkLeavingParked($gamePlayer.vehicle());
       }

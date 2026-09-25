@@ -2821,6 +2821,9 @@
     // "Return to Ship" (alien planet surface only): board the Starship interior
     // via VehicleSystem, then close the menu so the reserved transfer runs.
     Scene_Menu.prototype.commandReturnToShip = function () {
+        if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
+            window.VoxelWorldSystem.stop();
+        }
         if (window.MergedVehicleSystem &&
             typeof window.MergedVehicleSystem.enterAirshipInterior === "function") {
             AudioManager.playSe({ name: "Teleport", pan: 0, pitch: 100, volume: 90 });
@@ -2835,6 +2838,9 @@
 
     // Vehicles page: "Teleport to Ship" on the Starship row boards its interior.
     Scene_Menu.prototype.teleportToShipUI = function () {
+        if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive()) {
+            window.VoxelWorldSystem.stop();
+        }
         if (window.MergedVehicleSystem &&
             typeof window.MergedVehicleSystem.enterAirshipInterior === "function") {
             AudioManager.playSe({ name: "Teleport", pan: 0, pitch: 100, volume: 90 });

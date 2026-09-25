@@ -1998,9 +1998,11 @@
       <span class="cc3d-chip" data-focus="1" data-hnav="top"
             onclick="SceneManager._scene.rerollSeed()">${T('CharCreate.variation')} #${cfg.seed}</span>
       <span class="cc3d-spacer"></span>
-      ${window.CCButtons.button(window.CCButtons.continueLabel(), {
-        onclick: "SceneManager._scene.onConfirm()", confirm: true,
-        attrs: 'data-focus="1" data-hnav="top"' })}
+      ${(window.CCButtons && window.CCButtons.button)
+        ? window.CCButtons.button(window.CCButtons.continueLabel(), {
+            onclick: "SceneManager._scene.onConfirm()", confirm: true, cls: "inspect-btn cc3d-continue-btn",
+            attrs: 'data-focus="1" data-hnav="top"' })
+        : `<button class="inspect-btn confirm cc3d-continue-btn" data-focus="1" data-hnav="top" onclick="SceneManager._scene.onConfirm()">${T('CharCreate.continue')}</button>`}
     `;
   };
 
@@ -2570,8 +2572,15 @@
   // the stack, and a pop is never allowed to run past the bottom of it, which
   // is SceneManager.exit(): the game closing itself.
   Scene_CC3DModel.prototype._safePop = function () {
-    if (SceneManager._stack && SceneManager._stack.length > 0) SceneManager.pop();
-    else if (typeof Scene_Map !== "undefined") SceneManager.goto(Scene_Map);
+    if (SceneManager._stack && SceneManager._stack.length > 0) {
+      SceneManager.pop();
+    } else if (Scene_CC3DModel._returnSceneClass) {
+      SceneManager.goto(Scene_CC3DModel._returnSceneClass);
+    } else if (typeof Scene_CharacterCreation !== "undefined" && typeof global === "undefined") {
+      SceneManager.goto(Scene_CharacterCreation);
+    } else if (typeof Scene_Map !== "undefined") {
+      SceneManager.goto(Scene_Map);
+    }
   };
 
   // Nothing that happens on the way out is allowed to keep the player in here.
@@ -2594,13 +2603,32 @@
     try {
       if (this._creatureMode) {
         Scene_CC3DModel._creatureResult = "confirm";
+        if (SceneManager._stack && SceneManager._stack.length > 0) {
+          SceneManager.pop();
+          return;
+        }
+        if (Scene_CC3DModel._returnSceneClass) {
+          SceneManager.goto(Scene_CC3DModel._returnSceneClass);
+          return;
+        }
         this._safePop();
         return;
       }
       // Back to whoever opened the sculptor, never past it: popping blind used
       // to walk the stack all the way out to the map, ending creation instead
       // of returning to the sheet the sculpt belongs to.
-      if (Scene_CC3DModel._returnByPop) { this._safePop(); return; }
+      if (Scene_CC3DModel._returnByPop) {
+        if (SceneManager._stack && SceneManager._stack.length > 0) {
+          SceneManager.pop();
+          return;
+        }
+        if (Scene_CC3DModel._returnSceneClass) {
+          SceneManager.goto(Scene_CC3DModel._returnSceneClass);
+          return;
+        }
+        this._safePop();
+        return;
+      }
       const ret = Scene_CC3DModel._returnSceneClass;
       if (ret) { SceneManager.goto(ret); return; }
       this._safePop();
@@ -2609,6 +2637,7 @@
       // back to the plain pop, and if even that fails let the player press
       // Continue again rather than sealing them in.
       console.error(e);
+      this._leaving = false;
       try { this._safePop(); } catch (e2) { console.error(e2); this._leaving = false; }
     }
   };

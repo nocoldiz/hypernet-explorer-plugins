@@ -1,10 +1,31 @@
+0.6.39a
+
+Added:
+ - add level 1 to 10 enemies troops matching each biome
+ - added party pockets option in multiplayer menu for LAN
+ - teleport strip placer tool to select maps and edit teleport strips
+ - introspect options to change name gender sexual orientation and creed
+ - added plastic surgery and face surgery in surgery augments menu
+
+Changed:
+ - removed autoidle explorer wait time and halved re-engage delay
+ - make all the ogg files in the bgm folder the same volume
+
+Fixed:
+ - return to ship, map transfer and character death end voxel mode
+ - fixed omega tower wandering adventurers interaction, yielding and death loot
+ - fixed vector gun gamepad grid navigation and restored calibration tab
+ - fixed frozen station, Ghent and omega tower levels
+ - fixed character creation continue button
+
+
 0.6.38a
 
 Maps:
  - New cave in Ritual island
  - Expanded some Omega tower floors 
 
-Added:
+Added:a
  - New battle music that depends on biome
 
 Changed:

@@ -36,7 +36,7 @@
     },
     "controlsMenus": {
       "title": "Controlli: scorciatoie dei menu",
-      "description": "[Tab] apre il menu. Ogni schermata ha anche una lettera, premuta sulla mappa:\n\n- [I] inventario, [C] personaggio, [R] equipaggiamento, [P] abilità, [J] missioni\n- [M] minimappa, [B] costruzione, [V] veicoli, [F] fazioni, [H] proprietà\n- [K] cucina, [L] questo libro, [N] addestramento, [Y] bestiario, [U] biologia\n- [O] opzioni, [G] sandbox (solo build di test)\n\nDentro il menu: [1] Pensatore, [2] multigiocatore, [3] Hypernet. Sulla mappa, [1]-[9] usano la barra rapida.\n\n[WASD], [Z], [X], [Q], [E] e [T] sono riservati. [F9] salvataggio rapido, [F10] caricamento rapido, [F11] schermo intero."
+      "description": "[Tab] apre il menu. Ogni schermata ha anche una lettera, premuta sulla mappa:\n\n- [I] inventario, [C] personaggio, [R] equipaggiamento, [P] abilità, [J] missioni\n- [M] minimappa, [B] costruzione, [V] veicoli, [F] fazioni, [H] proprietà\n- [K] cucina, [L] questo libro, [N] addestramento, [Y] bestiario, [U] biologia\n- [O] opzioni, [G] sandbox (solo build di test)\n\nDentro il menu: [1] Thinker, [2] multigiocatore, [3] Hypernet. Sulla mappa, [1]-[9] usano la barra rapida.\n\n[WASD], [Z], [X], [Q], [E] e [T] sono riservati. [F9] salvataggio rapido, [F10] caricamento rapido, [F11] schermo intero."
     },
     "controlsMouse": {
       "title": "Controlli: mouse",
@@ -648,7 +648,7 @@
     },
     "craftThinker": {
       "title": "Il banco da lavoro",
-      "description": "Il [Pensatore] è il banco da lavoro generale: [assemblaggio] e [smontaggio]. La ricetta è scritta sull'oggetto stesso.\n\nUna ricetta resta [nascosta] finché non è stata fatta una volta, anche se quelle comuni sono in bacheca fin dall'inizio.\n\nI materiali di base vengono dallo smontare il mondo: abbattere alberi, estrarre rocce, rompere mobili, recuperare equipaggiamento."
+      "description": "Il [Thinker] è il banco da lavoro generale: [assemblaggio] e [smontaggio]. La ricetta è scritta sull'oggetto stesso.\n\nUna ricetta resta [nascosta] finché non è stata fatta una volta, anche se quelle comuni sono in bacheca fin dall'inizio.\n\nI materiali di base vengono dallo smontare il mondo: abbattere alberi, estrarre rocce, rompere mobili, recuperare equipaggiamento."
     },
     "craftForge": {
       "title": "La Forgia",

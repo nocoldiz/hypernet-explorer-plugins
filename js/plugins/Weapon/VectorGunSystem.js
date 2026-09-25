@@ -15,19 +15,25 @@
  * something to leave in a chest, and what it does in a fight is chosen in the
  * main menu rather than written into the weapon. Two choices, kept apart:
  *
- *   OPERATING MODES  what the gun does. Twenty-five of them, three running
- *                    at once, from Mana bullets to Hexed rounds. Em walks in
- *                    with five and earns the other twenty a level at a time,
- *                    up to Tracker rounds at 99; the screen lists them in that
- *                    order and prints the level on the ones still shut.
+ *   OPERATING MODES  what the GUN does. Twenty-three of them, three running at
+ *                    once, from Mana bullets to Hexed rounds. They run on the
+ *                    unfolded pistol and on nothing else: a frame that has
+ *                    folded into a weapon is not a gun and the bays are out of
+ *                    the circuit.
+ *   THE ELEMENT      what the PISTOL is loaded with. The coilgun carries one
+ *                    of its own, calibrated separately, which is how the frame
+ *                    holds two at once. Everything else strikes plain.
  *   THE FORM         what the gun is. One shape fitted at a time, out of the
- *                    gun's own and the eleven weapon types it folds into. In
- *                    battle the reload row is SWITCH: it reconstructs the
- *                    weapon as the fitted shape and back, costs no turn and can
- *                    be done as often as she likes. Left as the gun, SWITCH
- *                    racks it out
+ *                    gun's own and the twenty-two it folds into. In battle the
+ *                    reload row is SWITCH: it reconstructs the weapon as the
+ *                    fitted shape and back, costs no turn and can be done as
+ *                    often as she likes. Left as the gun, SWITCH racks it out
  *                    into a coilgun sniper rifle instead: three shots, four
  *                    times the reach, and the third round spent folds it back.
+ *   THE CALIBRATION  what each SHAPE carries of its own, in place of the bays
+ *                    and the element it gave up: one gimmick apiece, set on
+ *                    the Calibrate page and remembered per shape, so refitting
+ *                    a shape finds it exactly as it was left.
  *
  * Everything is read through window.VectorGun, so no other plugin tests for
  * the weapon id itself. VectorGunSystemUI.js draws the screen; the battle
@@ -99,12 +105,17 @@
   // The operating modes: what the gun DOES. Three of them run at once, and none
   // of them changes the shape of the weapon - that is the form selector's job
   // (see below), which is a separate choice with its own bay.
+  // Overload and Deep magazine are NOT here: they only ever deepened the
+  // coilgun's rack, and the bays stop at the pistol now, so they are the
+  // coilgun's own calibration instead (CAL_DEFAULTS.gun.rack). A savegame
+  // carrying either in a bay has it moved there rather than dropped.
+  const RACK_MODE_KEYS = ['overload', 'deepMagazine'];
   const BASE_MODE_KEYS = [
     'mana', 'psi', 'recoil', 'solomonIncantation', 'card', 'wide', 'burst', 'pierce',
-    'drain', 'siphon', 'deadeye', 'tracker', 'overload', 'hex', 'longshot',
+    'drain', 'siphon', 'deadeye', 'tracker', 'hex', 'longshot',
     'venom', 'concussion', 'thermalOverload', 'thermalUnderload',
     'executioner', 'ambush', 'resonance', 'overpressure',
-    'hollowPoint', 'deepMagazine',
+    'hollowPoint',
   ];
 
   // What Em has earned the right to run. The frame itself still does not grow
@@ -190,9 +201,18 @@
   // a real weapon and reaches as far as that weapon does, so folding the gun
   // into a machete gives up the six squares the pistol was shooting over. The
   // gun's own shapes take a multiplier of the row instead.
+  // Two columns say what a shape IS, so nothing has to re-derive it from a
+  // literal further down:
+  //   gunClass  the shape is still a firearm, so the operating modes run on it
+  //   element   which of the two element settings it carries: 'base' is the
+  //             pistol's own, 'coil' the coilgun's, and anything without the
+  //             column strikes plain. The gun's own shape is 'base' implicitly.
+  //   rider     the skill category a shape fires off its swing, if it has one
+  //   scale     what the blow is worked out from, when the shape says so
   const FORM_MODES = {
     abrasax:   { wtypeId: 1, range: 1, builder: 'createVectorAthameModel' },    // Athame of Abrasax
-    thelema:   { wtypeId: 2, range: 1, builder: 'createVectorBladeModel' },  // Blade of Thelema
+    thelema:   { wtypeId: 2, range: 1, builder: 'createVectorBladeModel',
+                 rider: 'Swordsmanship' },  // Blade of Thelema
     choronzon: { wtypeId: 3, range: 1, builder: 'createVectorMaulModel' },    // Maul of Choronzon
     babalon:   { wtypeId: 4, range: 1, builder: 'createVectorAxeModel' },    // Axe of Babalon
     nuit:      { wtypeId: 5, range: 2, builder: 'createVectorScourgeModel' },    // Scourge of Nuit
@@ -202,6 +222,35 @@
     baphomet:  { wtypeId: 10, range: 1, builder: 'createVectorTalonsModel' },   // Talons of Baphomet
     kia:       { wtypeId: 11, range: 1, builder: 'createVectorGauntletModel' },   // Gauntlet of Kia
     longinus:  { wtypeId: 12, range: 2, builder: 'createVectorLanceModel' },   // Lance of Longinus
+    // The shapes the frame learned later. Each one is a weapon the game
+    // already knows how to hold, and each one carries a gimmick of its own
+    // rather than the bays and the element the pistol keeps for itself.
+    //
+    // The empty hands: Em drops the gun outright and the game's own unarmed
+    // rig is what she fights with, so this shape names no builder at all.
+    fists:     { wtypeId: 11, range: 1, unarmed: true, rider: 'MartialArts' },
+    // The frame split down its own seam, a pistol in each hand.
+    twin:      { wtypeId: GUN_WTYPE, range: 6, builder: 'createVectorTwinModel',
+                 gunClass: true, shoots: true },
+    // Cocked rather than drawn, and it holds exactly one bolt.
+    crossbow:  { wtypeId: 7, range: 8, builder: 'createVectorCrossbowModel',
+                 bullets: 1, shoots: true },
+    eris:      { wtypeId: 5, range: 1, builder: 'createVectorNunchakuModel' },   // Nunchaku of Eris
+    maat:      { wtypeId: 3, range: 2, builder: 'createVectorFlailModel' },      // Mail of Maat
+    bubba:     { wtypeId: 3, range: 1, builder: 'createVectorWrenchModel' },     // Wrench of Bubba
+    yaldabaoth:{ wtypeId: 4, range: 1, builder: 'createVectorChainsawModel',     // Chainsaw of Yaldabaoth
+                 sounds: ['Machine', 'Saw1', 'Slash1'] },
+    nyarlathotep: { wtypeId: 12, range: 2, builder: 'createVectorScytheModel' }, // Scythe of Nyarlathotep
+    // The one blade that is not swung with the arm: it reads the mind behind
+    // it, so the blow is worked out from PSI and the words it answers to are
+    // the mind's own rather than a swordsman's.
+    freud:     { wtypeId: 2, range: 1, builder: 'createVectorKatanaModel',       // Katana of Freud
+                 rider: 'PsychicAbilities', scale: ['PSI'] },
+    // The one shape that mends rather than strikes: a plain attack with it is
+    // turned on her own side. Everything it gives up is the price of that.
+    gautama:   { wtypeId: 6, range: 4, builder: 'createVectorRosaryModel',       // Rosary of Gautama
+                 mends: true, motion: 'cast',
+                 sounds: ['Items/bookFlip1', 'Bell1', 'Items/paper_02'] },
     // Grimoire of Solomon: the twelfth shape, and the only one that is not a
     // weapon. Fitted, the book is already open when the fight starts: Em walks
     // in reading. It is a pact, not a gift, so her limit break buys no turn of
@@ -222,7 +271,8 @@
     // rifle. It holds three shots, reaches four times as far, and the third
     // round spent puts it back together as the pistol (which is its reload).
     sniper:    { wtypeId: GUN_WTYPE, builder: 'createVectorSniperModel',
-                 bullets: SNIPER_SHOTS, rangeMul: SNIPER_RANGE, derived: true },
+                 bullets: SNIPER_SHOTS, rangeMul: SNIPER_RANGE, derived: true,
+                 gunClass: true, element: 'coil' },
     // The shape nobody fits and nobody switches into: the gun opens into a
     // grimoire only when Em's limit break says so (window.LimitBreak, the
     // Hyper), whatever it was standing as a moment earlier, and it closes
@@ -234,13 +284,15 @@
   };
   const FORM_KEYS = Object.keys(FORM_MODES).filter((k) => !FORM_MODES[k].derived);
   const SNIPER_FORM = 'sniper';
+  const FISTS_FORM = 'fists';
+  const ROSARY_FORM = 'gautama';
   const GRIMOIRE_FORM = 'grimoire';
   const SOLOMON_FORM = 'solomon';
 
   /** Whether the pact shape is the one fitted in the form bay. */
   const solomonFitted = () => fittedForm() === SOLOMON_FORM;
 
-  // What the form selector offers: the gun's own shape first, then the eleven.
+  // What the form selector offers: the gun's own shape first, then the rest.
   const FORM_CHOICES = [GUN_FORM].concat(FORM_KEYS);
 
   const MODE_KEYS = BASE_MODE_KEYS.slice();
@@ -288,6 +340,14 @@
     // is lost, and the bay it was taking comes back free.
     const stray = $gameSystem._vectorGunModes.find(isFormMode);
     if (stray && !$gameSystem._vectorGunFitted) $gameSystem._vectorGunFitted = stray;
+    // And a savegame from when the coilgun's rack was two of the bays carries
+    // one of those: it is moved to the coilgun's own calibration, where the
+    // same two settings now live, rather than being sanitised away.
+    for (const key of $gameSystem._vectorGunModes) {
+      if (RACK_MODE_KEYS.indexOf(key) < 0) continue;
+      const rack = calibration(GUN_FORM).rack;
+      if (Array.isArray(rack) && rack.indexOf(key) < 0) rack.push(key);
+    }
     $gameSystem._vectorGunModes = $gameSystem._vectorGunModes
       .filter((key) => BASE_MODE_KEYS.includes(key) && isModeUnlocked(key))
       .slice(0, MAX_MODES);
@@ -382,9 +442,153 @@
    */
   function unfold() {
     if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+    // A stance the shape was held in comes off with the shape itself.
+    onFormWorn(formKey(), wielder(), false);
     $gameSystem._vectorGunForm = null;
     $gameSystem._vectorGunBlade = false;
     $gameSystem._vectorGunSniperShots = 0;
+    // The shape it was standing in was carrying an element of its own, or
+    // none at all: put back whatever the pistol is loaded with, or the row
+    // keeps striking with a shape that is no longer in her hand.
+    stampElement();
+  }
+
+  //--------------------------------------------------------------------------
+  // What each shape is calibrated to
+  //--------------------------------------------------------------------------
+  // Every shape has ONE gimmick of its own, and the Calibrate page is where it
+  // is set. The settings are kept per shape, so fitting something else and
+  // coming back finds the shape exactly as it was left: nothing is lost by
+  // switching, which is the whole point of a frame that reconstructs itself.
+  //
+  // One bag on $gameSystem, keyed by shape, validated on every read the way
+  // the bays are: a savegame from before the page existed reads as empty and
+  // every shape answers with its own defaults.
+
+  const CAL_DEFAULTS = {
+    gun:          { element: 1, rack: [] },
+    abrasax:      { stateId: 48 },
+    thelema:      { skillId: 0 },
+    freud:        { skillId: 0 },
+    fists:        { skillIds: [] },
+    kia:          { stance: 34 },
+    hadit:        { weathers: [] },
+    solomon:      { schools: [] },
+    choronzon:    { damageType: 'Blunt' },
+    babalon:      { cleave: 'single' },
+    nuit:         { paramId: 2 },
+    aiwass:       { draw: 'standard' },
+    zos:          { venom: 'venom' },
+    baphomet:     { take: 'hp' },
+    longinus:     { charge: 'brace' },
+    twin:         { pattern: 'two' },
+    crossbow:     { head: 'piercing' },
+    eris:         { discord: 'tight' },
+    maat:         { measure: 'health' },
+    bubba:        { archetypes: [] },
+    yaldabaoth:   { reads: 'wound' },
+    nyarlathotep: { bargain: 'patron' },
+    gautama:      { mends: 'hp' },
+  };
+
+  /** How many entries a shape's multi-choice gimmick holds at once. */
+  const CAL_CAPS = { skillIds: 4, weathers: 4, schools: 24, archetypes: 3 };
+
+  /** Whether a shape has a page on the Calibrate tab at all. */
+  const isCalibratable = (key) =>
+    Object.prototype.hasOwnProperty.call(CAL_DEFAULTS, key);
+
+  /**
+   * What one shape is calibrated to. Always an object and always the live one,
+   * so a caller may write into it; a shape nobody has touched gets its own
+   * defaults rather than an empty record.
+   * @param {string} key - GUN_FORM or one of FORM_KEYS
+   * @returns {Object} that shape's settings
+   */
+  function calibration(key) {
+    const defaults = CAL_DEFAULTS[key] || {};
+    if (typeof $gameSystem === 'undefined' || !$gameSystem) {
+      return JSON.parse(JSON.stringify(defaults));
+    }
+    if (!$gameSystem._vectorGunCal || typeof $gameSystem._vectorGunCal !== 'object') {
+      $gameSystem._vectorGunCal = {};
+    }
+    const bag = $gameSystem._vectorGunCal;
+    if (!bag[key] || typeof bag[key] !== 'object') {
+      bag[key] = JSON.parse(JSON.stringify(defaults));
+    }
+    // A field the shape has since been given, on a record written before it
+    // had one: filled in rather than left undefined for every reader to guard.
+    for (const field of Object.keys(defaults)) {
+      if (bag[key][field] === undefined) {
+        bag[key][field] = Array.isArray(defaults[field])
+          ? defaults[field].slice() : defaults[field];
+      }
+    }
+    return bag[key];
+  }
+
+  /** One scalar setting off a shape, with the shape's own default behind it. */
+  function calValue(key, field) {
+    const value = calibration(key)[field];
+    return value === undefined ? (CAL_DEFAULTS[key] || {})[field] : value;
+  }
+
+  /** One set-valued setting off a shape, always an array. */
+  function calList(key, field) {
+    const value = calibration(key)[field];
+    return Array.isArray(value) ? value : [];
+  }
+
+  /**
+   * Writes one setting of one shape.
+   * @param {string} key - the shape
+   * @param {string} field - one of that shape's own fields
+   * @param {*} value - the new value
+   * @returns {boolean} whether anything changed
+   */
+  function setCalibration(key, field, value) {
+    if (!isCalibratable(key)) return false;
+    const record = calibration(key);
+    if (record[field] === value) return false;
+    record[field] = value;
+    if (key === GUN_FORM && field === 'element') stampElement();
+    return true;
+  }
+
+  /**
+   * Adds or removes one entry of a shape's set-valued setting. The set is a
+   * magazine rather than a row of switches: at its cap the OLDEST entry is
+   * pushed out to make room, which is how the mode bays already work.
+   * @returns {{state: string, replaced: *}} 'on' or 'off', and what was dropped
+   */
+  function toggleCalibration(key, field, value) {
+    if (!isCalibratable(key)) return { state: 'off', replaced: null };
+    const record = calibration(key);
+    if (!Array.isArray(record[field])) record[field] = [];
+    const list = record[field];
+    const at = list.indexOf(value);
+    if (at >= 0) {
+      list.splice(at, 1);
+      return { state: 'off', replaced: null };
+    }
+    let replaced = null;
+    const cap = CAL_CAPS[field] || 0;
+    if (cap && list.length >= cap) replaced = list.shift();
+    list.push(value);
+    return { state: 'on', replaced: replaced };
+  }
+
+  /**
+   * The part of a model cache key the calibration owns: a shape that has been
+   * recalibrated must not come back out of the cache wearing the old setting.
+   */
+  function calibrationKey() {
+    const key = fittedForm();
+    if (!isCalibratable(key)) return '';
+    const record = calibration(key);
+    return Object.keys(record).sort()
+      .map((field) => field + '=' + String(record[field])).join(',');
   }
 
   /** Em's actor, in the party or out of it. */
@@ -400,10 +604,25 @@
       .find((member) => member.weapons && member.weapons().some(isVectorGun)) || null;
   }
 
+  /**
+   * Whether what the frame stands as is still a firearm. The bays are the
+   * GUN's: fitted to the pistol, they are what it does. Folded into something
+   * that is not a gun at all they are not in the circuit, and the shape's own
+   * calibration is what it is worth instead.
+   */
+  function inGunShape() {
+    const key = formKey();
+    return !key || !!FORM_MODES[key].gunClass;
+  }
+
   /** Whether this battler is shooting the vector gun with `key` running. */
   function firing(battler, key) {
     if (!battler || !battler.isActor || !battler.isActor()) return false;
     if (!battler.weapons || !battler.weapons().some(isVectorGun)) return false;
+    // Only the unfolded pistol runs them. The coilgun is the gun racked out
+    // rather than a shape she fitted, and it is bare too: what it is worth is
+    // in its own calibration.
+    if (formKey()) return false;
     return hasMode(key);
   }
 
@@ -416,6 +635,13 @@
    * says otherwise. Mana bullets read INT, Psi vectors read PSI.
    */
   function scaleOverride(subject) {
+    // A shape may be worked out from something of its own whatever the bays
+    // say: the katana is swung with the mind behind it rather than the arm.
+    const key = formKey();
+    if (key && FORM_MODES[key].scale &&
+      subject && subject.weapons && subject.weapons().some(isVectorGun)) {
+      return FORM_MODES[key].scale.slice();
+    }
     if (firing(subject, 'mana')) return ['INT'];
     if (firing(subject, 'psi')) return ['PSI'];
     return null;
@@ -424,6 +650,8 @@
   /** Wide shots read as area damage, which is what spreads them over parts. */
   function damageTypeOverride(subject, action) {
     if (!action || typeof action.isAttack !== 'function' || !action.isAttack()) return null;
+    const holdsGun = !!subject && !!subject.weapons && subject.weapons().some(isVectorGun);
+    if (holdsGun && formKey()) return formDamageType();
     return firing(subject, 'wide') ? 'Area' : null;
   }
 
@@ -453,8 +681,16 @@
     // than the pistol does, which is what makes SWITCH worth the round.
     if (holdsGun && formKey()) rate *= 1 + FORM_DAMAGE_BONUS;
     if (firing(subject, 'burst')) rate *= BURST_DAMAGE_RATE;
-    if (firing(subject, 'overload')) rate *= OVERLOAD_DAMAGE_RATE;
     if (firing(subject, 'overpressure')) rate *= 1 + OVERPRESSURE_BONUS;
+    // A doubled rack is paid for by every round that comes out of it, and it
+    // is the coilgun's own setting rather than one of the bays.
+    if (holdsGun && inSniper() && calList(GUN_FORM, 'rack').indexOf('overload') >= 0) {
+      rate *= OVERLOAD_DAMAGE_RATE;
+    }
+    // And what the shape she is standing in is worth, which is the whole of
+    // what a folded frame carries now that the bays and the element stop at
+    // the gun.
+    if (holdsGun) rate *= formDamageRate(subject, action, target);
     // The executioner reads the target: the emptier it is, the harder the round
     // lands, all the way to two thirds again at the point of death.
     if (target && firing(subject, 'executioner') && target.mhp) {
@@ -523,6 +759,455 @@
     try { return utils.loreFor(skill) || ''; } catch (e) { return ''; }
   }
 
+  //--------------------------------------------------------------------------
+  // What each shape is worth: the gimmicks
+  //--------------------------------------------------------------------------
+  // The bays and the element belong to the gun. A shape gives both of them up
+  // the moment the frame folds, and what it gets back is ONE thing of its own,
+  // set on the Calibrate page and read here. Every one of them is a tradeoff
+  // written into a table rather than a gift: more bodies for less damage each,
+  // more reach for a softer blow, a state for the chance of nothing at all.
+
+  // The athame: one affliction, at a chance the state itself decides. The
+  // harsher it is the thinner the odds, and PSI is what sharpens them.
+  const ATHAME_STATES = {
+    48: 0.35,   // Bleeding
+    38: 0.30,   // Unbalanced
+    5: 0.25,    // Blind
+    6: 0.20,    // Silence
+    52: 0.12,   // Pinned
+    13: 0.10,   // Stun
+  };
+  const PSI_REFERENCE = 60;       // the PSI at which the odds are half again
+  const ATHAME_CAP = 0.75;        // and what no amount of it may pass
+
+  // The gauntlet: one stance carried while she stands in it, paid for by a
+  // blow that lands softer for as long as it is up.
+  const KIA_STANCES = [22, 34, 49, 55];   // Counter Attack, Perfect Focus, Dodge, Combo
+  const KIA_STANCE_RATE = 0.88;
+
+  // The axe and the pair of pistols: more bodies, or more rounds, and less of
+  // the blow behind each one.
+  const CLEAVE_PLANS = {
+    single: { repeats: 1, rate: 1.4 },
+    double: { repeats: 2, rate: 0.72 },
+    triple: { repeats: 3, rate: 0.5 },
+  };
+  const TWIN_PATTERNS = {
+    two: { repeats: 2, rate: 0.7 },
+    three: { repeats: 3, rate: 0.55 },
+    four: { repeats: 4, rate: 0.44 },
+  };
+
+  // The bow: how far it is drawn. Short is close work and finds the seam,
+  // long carries across the field and lands softer for it.
+  const BOW_DRAWS = {
+    short: { range: 3, crit: 0.15, rate: 1 },
+    standard: { range: 6, crit: 0, rate: 1 },
+    long: { range: 12, crit: 0, rate: 0.8 },
+  };
+
+  // The lance: braced behind a shield, held out at reach, or run through.
+  const LANCE_CHARGES = {
+    brace: { rate: 0.9, pierceGuard: true },
+    reach: { range: 4, rate: 1 },
+    overrun: { repeats: 2, rate: 0.7 },
+  };
+
+  // The crossbow: one bolt, and what is on the end of it.
+  const BOLT_HEADS = {
+    piercing: { pierceGuard: true, rate: 1 },
+    barbed: { stateId: 48, chance: 0.5, rate: 1 },
+    splitting: { area: true, rate: 0.7 },
+    heavy: { stateId: 13, chance: 0.25, rate: 1.15 },
+  };
+
+  // The nunchaku: how wild the blow is. The wider the band the better it does
+  // on average and the less any one swing can be counted on.
+  const DISCORD_BANDS = {
+    tight: { spread: 0.1, rate: 1 },
+    wide: { spread: 0.45, rate: 1.12 },
+    chaotic: { spread: 0.9, rate: 1.25 },
+  };
+
+  // The flail: what the ankh weighs the target against. The further out of
+  // balance it is the harder the head comes down, and a target in balance
+  // takes less than a plain swing would have given it.
+  const MAAT_MEASURES = ['health', 'mana', 'states', 'level'];
+  const MAAT_FLOOR = 0.8;
+  const MAAT_SWING = 0.7;
+  const MAAT_STATE_SPAN = 4;      // states carried before the scale is hard over
+  const MAAT_LEVEL_SPAN = 20;     // and levels between them
+
+  // The wrench: a tool built for one job. Against what it was built for it is
+  // worth this much more, against anything else that much less.
+  const WRENCH_BONUS = 0.75;
+  const WRENCH_PENALTY = 0.8;
+
+  // The chainsaw: it reads how far gone the body already is.
+  const SAW_READS = ['wound', 'ruin', 'tally'];
+  const SAW_FLOOR = 0.85;
+  const SAW_BONUS = 1;
+
+  // The scourge: what the lash tears down, and how often it catches.
+  const LASH_PARAMS = [2, 3, 4, 5, 6, 7];
+  const LASH_CHANCE = 0.45;
+  const LASH_RATE = 0.85;
+
+  // The talons: what they take back out of the wound, and what taking it costs
+  // the blow. Action points are dearest, because they are what the shapes that
+  // fire a skill off a swing run on.
+  const TALON_TAKES = {
+    hp: { share: 0.25, rate: 1 },
+    mp: { share: 0.2, rate: 0.9 },
+    tp: { share: 0.15, rate: 0.85 },
+  };
+
+  // The maul: what the head actually delivers, which Health_Core reads.
+  const MAUL_TYPES = ['Blunt', 'Cutting', 'Piercing', 'Explosive'];
+
+  // The scythe: the bargain struck. A critical is where it reaps, and what it
+  // may take is the whole of the choice.
+  const REAP_BARGAINS = {
+    patron: { chance: 0.2, enemy: true, party: false, rate: 1 },
+    tithe: { chance: 0.5, enemy: false, party: true, rate: 1.3 },
+    chaos: { chance: 0.5, enemy: true, party: true, rate: 1.1 },
+  };
+  const REAP_LEVEL_GAP = 10;      // how far above Em is out of its reach
+
+  // The rosary: what the beads may be set to mend. What each of them is worth
+  // lives with the mending itself, further down.
+  const ROSARY_MENDS = ['hp', 'mp', 'tp', 'state', 'party'];
+
+  // The blade, the katana and the empty hands: how often the swing becomes the
+  // thing she was thinking of instead.
+  const RIDER_CHANCE = 0.35;
+
+  /** The shape's calibrated reach, when its gimmick moves it. */
+  function formOwnRange(key) {
+    if (!key) return 0;
+    const own = FORM_MODES[key].range || 0;
+    if (key === 'aiwass') {
+      return (BOW_DRAWS[calValue(key, 'draw')] || BOW_DRAWS.standard).range || own;
+    }
+    if (key === 'longinus') {
+      return (LANCE_CHARGES[calValue(key, 'charge')] || LANCE_CHARGES.brace).range || own;
+    }
+    return own;
+  }
+
+  /** The level of whatever is being struck, enemy or ally. */
+  function battlerLevel(battler) {
+    if (!battler) return 0;
+    if (battler.isActor && battler.isActor()) return battler.level || 0;
+    const data = battler.enemy ? battler.enemy() : null;
+    if (!data) return 0;
+    const BSE = window.BattleSystemEnhanced;
+    if (BSE && BSE.Helpers && BSE.Helpers.getEnemyLevel) {
+      return Number(BSE.Helpers.getEnemyLevel(data.note)) || 0;
+    }
+    const match = /<Level:\s*(\d+)>/i.exec(data.note || '');
+    return match ? Number(match[1]) : 0;
+  }
+
+  /** What the thing being struck is, as the encounter tables file it. */
+  function archetypeOfTarget(target) {
+    if (!target || !target.isEnemy || !target.isEnemy()) return null;
+    const data = target.enemy ? target.enemy() : null;
+    if (!data) return null;
+    const BSE = window.BattleSystemEnhanced;
+    if (BSE && BSE.Helpers && BSE.Helpers.getEnemyArchetype) {
+      return BSE.Helpers.getEnemyArchetype(data);
+    }
+    const match = /<Archetype:\s*(.+?)>/i.exec(data.note || '');
+    return match ? match[1].trim() : null;
+  }
+
+  /**
+   * How far gone a body already is, read three ways. A monster nothing has
+   * struck yet has no anatomy at all, which reads as untouched rather than as
+   * an error.
+   * @param {Game_Battler} target - what is being cut into
+   * @param {string} reads - 'wound', 'ruin' or 'tally'
+   * @returns {number} 0 for whole, 1 for entirely wrecked
+   */
+  function bodyRuin(target, reads) {
+    const MH = window.MonsterHealth;
+    if (!MH || !MH.parts || !target || !target.isEnemy || !target.isEnemy()) return 0;
+    let parts = null;
+    try { parts = MH.parts(target); } catch (e) { return 0; }
+    if (!parts) return 0;
+    const keys = Object.keys(parts);
+    if (!keys.length) return 0;
+    let worst = 0;
+    let sum = 0;
+    let gone = 0;
+    for (const name of keys) {
+      const part = parts[name];
+      if (!part) continue;
+      const max = Number(part.maxHp) || 0;
+      const hurt = max > 0
+        ? 1 - Math.max(0, Number(part.currentHp) || 0) / max : 0;
+      if (part.destroyed) gone++;
+      if (hurt > worst) worst = hurt;
+      sum += hurt;
+    }
+    if (reads === 'ruin') return Math.min(1, worst);
+    if (reads === 'tally') return Math.min(1, gone / keys.length);
+    return Math.min(1, sum / keys.length);
+  }
+
+  /** The nunchaku's roll: one draw inside the band it is calibrated to. */
+  function discordRate() {
+    const band = DISCORD_BANDS[calValue('eris', 'discord')] || DISCORD_BANDS.tight;
+    return band.rate * (1 + (Math.random() * 2 - 1) * band.spread);
+  }
+
+  /** The ankh's weighing, on whichever scale it was set to. */
+  function maatRate(subject, target) {
+    if (!target) return MAAT_FLOOR;
+    const measure = calValue('maat', 'measure');
+    let off = 0;
+    if (measure === 'mana') {
+      off = target.mmp ? 1 - Math.max(0, target.mp) / target.mmp : 0;
+    } else if (measure === 'states') {
+      const carried = (target.states && target.states().length) || 0;
+      off = Math.min(1, carried / MAAT_STATE_SPAN);
+    } else if (measure === 'level') {
+      const mine = battlerLevel(subject);
+      off = Math.min(1, Math.abs(battlerLevel(target) - mine) / MAAT_LEVEL_SPAN);
+    } else {
+      off = target.mhp ? 1 - Math.max(0, target.hp) / target.mhp : 0;
+    }
+    return MAAT_FLOOR + MAAT_SWING * Math.max(0, Math.min(1, off));
+  }
+
+  /** Whether the wrench was built for what it is being swung at. */
+  function wrenchRate(target) {
+    const chosen = calList('bubba', 'archetypes');
+    if (!chosen.length) return 1;
+    const archetype = archetypeOfTarget(target);
+    // An enemy nobody filed reads as "not one of them" rather than as a miss.
+    return (archetype && chosen.indexOf(archetype) >= 0)
+      ? 1 + WRENCH_BONUS : WRENCH_PENALTY;
+  }
+
+  /**
+   * What the shape she is standing in does to the blow. Read once per hit,
+   * beside the modes, and it answers 1 for a shape with nothing to say.
+   */
+  function formDamageRate(subject, action, target) {
+    const key = formKey();
+    if (!key || !isCalibratable(key)) return 1;
+    switch (key) {
+      case 'babalon':
+        return (CLEAVE_PLANS[calValue(key, 'cleave')] || CLEAVE_PLANS.single).rate;
+      case 'twin':
+        return (TWIN_PATTERNS[calValue(key, 'pattern')] || TWIN_PATTERNS.two).rate;
+      case 'aiwass':
+        return (BOW_DRAWS[calValue(key, 'draw')] || BOW_DRAWS.standard).rate;
+      case 'longinus':
+        return (LANCE_CHARGES[calValue(key, 'charge')] || LANCE_CHARGES.brace).rate;
+      case 'crossbow':
+        return (BOLT_HEADS[calValue(key, 'head')] || BOLT_HEADS.piercing).rate || 1;
+      case 'kia':
+        return KIA_STANCE_RATE;
+      case 'baphomet':
+        return (TALON_TAKES[calValue(key, 'take')] || TALON_TAKES.hp).rate;
+      case 'nuit':
+        return LASH_RATE;
+      case 'eris':
+        return discordRate();
+      case 'maat':
+        return maatRate(subject, target);
+      case 'bubba':
+        return wrenchRate(target);
+      case 'yaldabaoth':
+        return SAW_FLOOR + SAW_BONUS * bodyRuin(target, calValue(key, 'reads'));
+      case 'nyarlathotep':
+        return (REAP_BARGAINS[calValue(key, 'bargain')] || REAP_BARGAINS.patron).rate;
+      case ROSARY_FORM:
+        return rosaryRate();
+      default:
+        return 1;
+    }
+  }
+
+  /** How many times the shape brings itself round in one action. */
+  function formRepeats() {
+    const key = formKey();
+    if (key === 'babalon') {
+      return (CLEAVE_PLANS[calValue(key, 'cleave')] || CLEAVE_PLANS.single).repeats || 1;
+    }
+    if (key === 'twin') {
+      return (TWIN_PATTERNS[calValue(key, 'pattern')] || TWIN_PATTERNS.two).repeats || 1;
+    }
+    if (key === 'longinus') {
+      return (LANCE_CHARGES[calValue(key, 'charge')] || LANCE_CHARGES.brace).repeats || 1;
+    }
+    return 1;
+  }
+
+  /** Whether the shape goes through a raised guard as if it were not there. */
+  function formPiercesGuard() {
+    const key = formKey();
+    if (key === 'longinus') {
+      return !!(LANCE_CHARGES[calValue(key, 'charge')] || {}).pierceGuard;
+    }
+    if (key === 'crossbow') {
+      return !!(BOLT_HEADS[calValue(key, 'head')] || {}).pierceGuard;
+    }
+    return false;
+  }
+
+  /** What the shape adds to the chance of finding a seam. */
+  function formCritBonus() {
+    const key = formKey();
+    if (key !== 'aiwass') return 0;
+    return (BOW_DRAWS[calValue(key, 'draw')] || BOW_DRAWS.standard).crit || 0;
+  }
+
+  /** The damage type the shape delivers, when it was told to deliver one. */
+  function formDamageType() {
+    const key = formKey();
+    if (key === 'choronzon') {
+      const type = calValue(key, 'damageType');
+      return MAUL_TYPES.indexOf(type) >= 0 ? type : 'Blunt';
+    }
+    if (key === 'crossbow' && (BOLT_HEADS[calValue(key, 'head')] || {}).area) return 'Area';
+    return null;
+  }
+
+  /** Whether the shape in hand mends rather than strikes. */
+  const inMendingForm = () => {
+    const key = formKey();
+    return !!(key && FORM_MODES[key].mends);
+  };
+
+  //--------------------------------------------------------------------------
+  // What a shape leaves behind
+  //--------------------------------------------------------------------------
+
+  /** The athame's mark: one state, at odds PSI sharpens. */
+  function applyAthameState(subject, target) {
+    const stateId = Number(calValue('abrasax', 'stateId'));
+    const base = ATHAME_STATES[stateId];
+    if (!base) return;
+    const psi = (subject && subject.luk) || 0;
+    const chance = Math.min(ATHAME_CAP, base * (1 + psi / PSI_REFERENCE));
+    if (Math.random() >= chance) return;
+    if (!target.isStateAffected(stateId)) target.addState(stateId);
+  }
+
+  /** What the darts are tipped with, out of the same table the rounds use. */
+  function applyDartVenom(target) {
+    const mode = STATUS_MODES[calValue('zos', 'venom')];
+    if (!mode || Math.random() >= STATUS_CHANCE) return;
+    if (!target.isStateAffected(mode.stateId)) target.addState(mode.stateId);
+  }
+
+  /** What the talons take back out of the wound. */
+  function drainTalons(subject, target) {
+    const kind = calValue('baphomet', 'take');
+    const take = TALON_TAKES[kind] || TALON_TAKES.hp;
+    const dealt = (target.result && target.result().hpDamage) || 0;
+    if (dealt <= 0) return;
+    const back = Math.max(1, Math.floor(dealt * take.share));
+    if (kind === 'mp') {
+      subject.gainMp(back);
+    } else if (kind === 'tp') {
+      subject.gainTp(back);
+    } else {
+      subject.gainHp(back);
+      if (subject.startDamagePopup) subject.startDamagePopup();
+    }
+  }
+
+  /** What the lash tears down, which is a parameter rather than a state. */
+  function lashParam(target) {
+    if (Math.random() >= LASH_CHANCE) return;
+    const paramId = Number(calValue('nuit', 'paramId'));
+    if (LASH_PARAMS.indexOf(paramId) < 0 || !target.addDebuff) return;
+    target.addDebuff(paramId, 2);
+  }
+
+  /** What is on the end of the bolt. */
+  function applyBoltHead(target) {
+    const head = BOLT_HEADS[calValue('crossbow', 'head')];
+    if (!head || !head.stateId || Math.random() >= (head.chance || 0)) return;
+    if (!target.isStateAffected(head.stateId)) target.addState(head.stateId);
+  }
+
+  /**
+   * Whether the scythe may take this one. A boss is a hand-authored fight, a
+   * petrodemon is somebody's oil, and anything more than ten levels above Em
+   * is simply out of its reach.
+   */
+  function reapableEnemy(target) {
+    if (!target || !target.isEnemy || !target.isEnemy()) return false;
+    const data = target.enemy ? target.enemy() : null;
+    if (!data) return false;
+    if (data._bsePetrodemon) return false;
+    if (data.meta && data.meta.Boss) return false;
+    if (/<Boss>/i.test(data.note || '')) return false;
+    const em = emActor();
+    const mine = em ? em.level : 0;
+    return battlerLevel(target) <= mine + REAP_LEVEL_GAP;
+  }
+
+  /**
+   * The reaping. It only ever happens off a critical, it never takes Em, and
+   * it takes nobody by any road but the game's own: addState with the death
+   * state is what the gravestone, the permadeath rules and the respawn all
+   * hang off (BattleSystemEnhancedDeath.js), so nothing here invents a death.
+   */
+  function reap(subject, target) {
+    if (!target.result || !target.result().critical) return;
+    const bargain = REAP_BARGAINS[calValue('nyarlathotep', 'bargain')] || REAP_BARGAINS.patron;
+    if (Math.random() >= bargain.chance) return;
+    const takers = [];
+    if (bargain.enemy && reapableEnemy(target)) takers.push(target);
+    if (bargain.party && typeof $gameParty !== 'undefined' && $gameParty) {
+      const kin = $gameParty.battleMembers().filter(
+        (member) => member && member.isAlive() && !isEm(member) && member !== subject);
+      if (kin.length) takers.push(kin[Math.floor(Math.random() * kin.length)]);
+    }
+    if (!takers.length) return;
+    const taken = takers[Math.floor(Math.random() * takers.length)];
+    const stateId = taken.deathStateId ? taken.deathStateId() : 1;
+    if (taken.isStateAffected(stateId)) return;
+    taken.addState(stateId);
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(
+        T('VectorGun.toast.reaped', { name: taken.name ? taken.name() : '' }),
+        { key: 'vgreap', severity: 'danger' });
+    }
+  }
+
+  /**
+   * What the shape she is standing in leaves behind, beside what the rounds
+   * leave. Called for every landed blow, the swings included: the shapes are
+   * not guns and never reach the mode half of onShotLanded at all.
+   */
+  function onFormHit(subject, target, action) {
+    const key = formKey();
+    if (!key || !isCalibratable(key)) return;
+    if (!subject || !subject.weapons || !subject.weapons().some(isVectorGun)) return;
+    if (!target || !target.result || !target.result().isHit()) return;
+    if (key === 'nyarlathotep') reap(subject, target);
+    if (!target.isAlive()) return;
+    switch (key) {
+      case 'abrasax': applyAthameState(subject, target); break;
+      case 'zos': applyDartVenom(target); break;
+      case 'baphomet': drainTalons(subject, target); break;
+      case 'nuit': lashParam(target); break;
+      case 'crossbow': applyBoltHead(target); break;
+      case ROSARY_FORM: mendWithBeads(subject, target); break;
+      default: break;
+    }
+    queueRider(subject, target, action);
+  }
+
   /** The fallen, banked as a monster card. Nothing happens off the catalogue. */
   function printCard(enemy) {
     const CG = window.CardGame;
@@ -549,6 +1234,9 @@
    */
   function onShotLanded(subject, target, action) {
     if (!target || !action || typeof action.isAttack !== 'function' || !action.isAttack()) return;
+    // Folded, the bays are not in the circuit: what the blow leaves behind is
+    // the shape's own gimmick and nothing else.
+    if (formKey()) { onFormHit(subject, target, action); return; }
     if (firing(subject, 'recoil') && target.result && target.result().isHit() &&
       target.isAlive() && !target.isStateAffected(FLOATING_STATE)) {
       target.addState(FLOATING_STATE);
@@ -589,6 +1277,307 @@
   }
 
   //--------------------------------------------------------------------------
+  // What the Calibrate page offers
+  //--------------------------------------------------------------------------
+  // ONE authority on what each shape may be set to, so the screen invents no
+  // option of its own and a new shape needs no new page. A row is
+  //
+  //   { kind, field, value, source, section, on }
+  //
+  // where `kind` is 'pick' (one of) or 'multi' (any of, up to the field's cap),
+  // `source` says where the row's NAME comes from (the element roll, the state
+  // table, the skill database, the weather model, the school list, the
+  // archetype roster, the parameter names, or this plugin's own bank) and
+  // `section` is the heading it sits under. The screen turns that into cards.
+
+  const SKILL_POWER = (skill) => (skill.mpCost || 0) + (skill.tpCost || 0) * 2;
+  const POWER_PER_LEVEL = 1.6;    // how much of a category one level of hers opens
+  const OPEN_SKILL_LIMIT = 12;    // and how many of the hardest are offered at once
+
+  // Ranking a category by what it actually hits for means building real
+  // actions, which is not free: the answer is kept per category and level and
+  // only ever worked out when the page is opened on a shape that needs it.
+  const _skillRankCache = {};
+
+  /**
+   * The offered skills of one category, hardest last, worked out once.
+   * @param {Array} list - the candidates
+   * @param {Game_Actor} actor - whose hands they would be used in
+   * @param {string} cacheKey - category and level
+   */
+  function rankByDamage(list, actor, cacheKey) {
+    if (_skillRankCache[cacheKey]) return _skillRankCache[cacheKey].slice();
+    const SD = window.SkillDetails;
+    const scored = list.map((skill) => {
+      let hit = 0;
+      if (SD && SD.medianDamageFor) {
+        // It builds real actions against real creatures: a formula that reaches
+        // for something a dummy does not have is a skill we cannot rank, not a
+        // crash.
+        try { hit = Number(SD.medianDamageFor(skill, actor)) || 0; } catch (e) { hit = 0; }
+      }
+      if (!hit) hit = SKILL_POWER(skill);
+      return { skill: skill, hit: hit };
+    });
+    scored.sort((a, b) => b.hit - a.hit);
+    const out = scored.map((row) => row.skill);
+    _skillRankCache[cacheKey] = out;
+    return out.slice();
+  }
+
+  /**
+   * What a shape that fires a skill off its swing may be set to: everything of
+   * its category Em has LEARNED, whether or not she carries it in her nine,
+   * and the ones her level has opened on top of that. Picking one of the
+   * latter teaches her nothing: the frame is reading it, not she.
+   * @param {string} category - a Categories.json key
+   * @param {Game_Actor} actor - whoever holds the gun
+   * @returns {{learned: Array, open: Array}}
+   */
+  function formSkillPool(category, actor) {
+    const out = { learned: [], open: [] };
+    const SM = window.SkillMaster;
+    if (!SM || !SM.getSkillsByCategory || !actor) return out;
+    let all = [];
+    try { all = SM.getSkillsByCategory(category) || []; } catch (e) { return out; }
+    const ceiling = POWER_PER_LEVEL * (actor.level || 1);
+    const band = [];
+    for (const skill of all) {
+      if (!skill || !skill.name || skill.name.indexOf('<--') === 0) continue;
+      if (!skill.damage || !(skill.damage.type > 0)) continue;
+      if (actor.isLearnedSkill && actor.isLearnedSkill(skill.id)) {
+        out.learned.push(skill);
+        continue;
+      }
+      if (SKILL_POWER(skill) <= ceiling) band.push(skill);
+    }
+    out.open = rankByDamage(band, actor, category + ':' + (actor.level || 1))
+      .slice(0, OPEN_SKILL_LIMIT);
+    return out;
+  }
+
+  /** The archetypes the wrench may be built for, off the game's own roster. */
+  function archetypeRoster() {
+    const bank = window.Health && window.Health.Archetypes;
+    if (!bank) return [];
+    return Array.isArray(bank)
+      ? bank.map((row) => row && (row.key || row.name)).filter(Boolean)
+      : Object.keys(bank);
+  }
+
+  /** The skies the staff may call, off the weather model's own list. */
+  function weatherRoster() {
+    return ['none', 'rain', 'storm', 'snow'];
+  }
+
+  /** The magic schools the book may be dealt from, off the skill categories. */
+  function schoolRoster() {
+    const SM = window.SkillMaster;
+    if (!SM || !SM.getSplitSkillCategories) return [];
+    try {
+      const split = SM.getSplitSkillCategories();
+      return (split && Array.isArray(split.Magic)) ? split.Magic.slice() : [];
+    } catch (e) { return []; }
+  }
+
+  /** One row per entry of a fixed table, named out of this plugin's own bank. */
+  function pickRows(key, field, values, section) {
+    const chosen = calValue(key, field);
+    return values.map((value) => ({
+      kind: 'pick', field: field, value: value, source: 'text',
+      section: section, on: String(chosen) === String(value),
+    }));
+  }
+
+  /** One row per entry of a set, named out of somewhere the game already knows. */
+  function multiRows(key, field, values, source, section) {
+    const chosen = calList(key, field);
+    return values.map((value) => ({
+      kind: 'multi', field: field, value: value, source: source,
+      section: section, on: chosen.indexOf(value) >= 0,
+    }));
+  }
+
+  /**
+   * The rows the Calibrate page draws for one shape. Answers an empty list for
+   * a shape with nothing to set and for a load order where the service a
+   * gimmick reads is not up yet, so the page is never a crash.
+   * @param {string} key - the FITTED shape
+   * @param {Game_Actor} actor - whoever holds the gun
+   * @param {Object} [opts] - `chosenOnly` asks for the rows that are lit and
+   *   nothing else. The status strip wants a chip, not a page, and building a
+   *   skill page means ranking a whole category by what it hits for.
+   */
+  function calibrationRows(key, actor, opts) {
+    if (!isCalibratable(key)) return [];
+    const chosenOnly = !!(opts && opts.chosenOnly);
+    const pick = (field, values, section) => pickRows(key, field, values, section);
+    switch (key) {
+      case GUN_FORM: {
+        const element = calValue(key, 'element');
+        const rack = calList(key, 'rack');
+        return ELEMENT_IDS.map((id) => ({
+          kind: 'pick', field: 'element', value: id, source: 'element',
+          section: 'element', on: Number(element) === id,
+        })).concat(RACK_MODE_KEYS.map((mode) => ({
+          kind: 'multi', field: 'rack', value: mode, source: 'mode',
+          section: 'rack', on: rack.indexOf(mode) >= 0,
+        })));
+      }
+      case 'abrasax':
+        return Object.keys(ATHAME_STATES).map((id) => ({
+          kind: 'pick', field: 'stateId', value: Number(id), source: 'state',
+          section: 'marks', on: Number(calValue(key, 'stateId')) === Number(id),
+        }));
+      case 'kia':
+        return KIA_STANCES.map((id) => ({
+          kind: 'pick', field: 'stance', value: id, source: 'state',
+          section: 'stance', on: Number(calValue(key, 'stance')) === id,
+        }));
+      case 'thelema':
+      case 'freud':
+      case 'fists': {
+        const many = key === FISTS_FORM;
+        const field = many ? 'skillIds' : 'skillId';
+        const chosen = many ? calList(key, field) : [Number(calValue(key, field))];
+        const row = (id, section) => ({
+          kind: many ? 'multi' : 'pick', field: field, value: id,
+          source: 'skill', section: section, on: chosen.indexOf(id) >= 0,
+        });
+        if (chosenOnly) {
+          return chosen.filter((id) => id).map((id) => row(id, 'known'));
+        }
+        const pool = formSkillPool(FORM_MODES[key].rider, actor);
+        return pool.learned.map((skill) => row(skill.id, 'known'))
+          .concat(pool.open.map((skill) => row(skill.id, 'reach')));
+      }
+      case 'hadit':
+        return multiRows(key, 'weathers', weatherRoster(), 'weather', 'sky');
+      case 'solomon':
+        return multiRows(key, 'schools', schoolRoster(), 'school', 'schools');
+      case 'bubba':
+        return multiRows(key, 'archetypes', archetypeRoster(), 'archetype', 'quarry');
+      case 'nuit':
+        return LASH_PARAMS.map((id) => ({
+          kind: 'pick', field: 'paramId', value: id, source: 'param',
+          section: 'lash', on: Number(calValue(key, 'paramId')) === id,
+        }));
+      case 'zos':
+        return Object.keys(STATUS_MODES).map((mode) => ({
+          kind: 'pick', field: 'venom', value: mode, source: 'mode',
+          section: 'venom', on: calValue(key, 'venom') === mode,
+        }));
+      case 'choronzon': return pick('damageType', MAUL_TYPES, 'head');
+      case 'babalon': return pick('cleave', Object.keys(CLEAVE_PLANS), 'cleave');
+      case 'aiwass': return pick('draw', Object.keys(BOW_DRAWS), 'draw');
+      case 'longinus': return pick('charge', Object.keys(LANCE_CHARGES), 'charge');
+      case 'twin': return pick('pattern', Object.keys(TWIN_PATTERNS), 'pattern');
+      case 'crossbow': return pick('head', Object.keys(BOLT_HEADS), 'bolt');
+      case 'eris': return pick('discord', Object.keys(DISCORD_BANDS), 'discord');
+      case 'maat': return pick('measure', MAAT_MEASURES, 'measure');
+      case 'yaldabaoth': return pick('reads', SAW_READS, 'reads');
+      case 'nyarlathotep': return pick('bargain', Object.keys(REAP_BARGAINS), 'bargain');
+      case 'gautama': return pick('mends', ROSARY_MENDS, 'mends');
+      default: return [];
+    }
+  }
+
+  /** The schools the pact is dealt from, read by BattleSystemActiveSkills.js. */
+  const grimoireSchools = () => calList(SOLOMON_FORM, 'schools');
+
+  //--------------------------------------------------------------------------
+  // The skill a shape fires off a swing
+  //--------------------------------------------------------------------------
+  // Three shapes do not simply hit: the blade remembers a piece of
+  // swordsmanship, the katana a turn of mind, the empty hands a whole set of
+  // forms to draw out of. A swing that rolls it becomes that skill, and it is
+  // paid for in action points like any other.
+  //
+  // The attack itself is NOT rewritten into the skill. An action that stopped
+  // reading as an attack would take the modes, the reach and the weapon's own
+  // targeting down with it, so the skill is queued as a follow-up action
+  // instead, which is the same road a Gunmancer's chained shot already takes
+  // (BattleSystemPassiveSkills.js).
+
+  let _riderPending = null;
+
+  /**
+   * Which skill, if any, the shape in hand fires off this swing. A blade names
+   * one; the empty hands name a set and draw out of it. Nothing is fired that
+   * she cannot pay for, and nothing is LEARNED by being fired: the id is read
+   * off the calibration, so a skill she has never learned is still hers to use
+   * through the frame.
+   * @param {Game_Battler} subject - whoever is swinging
+   * @returns {?number} a $dataSkills id, or null
+   */
+  function riderSkillIdFor(subject) {
+    const key = formKey();
+    if (!key || !FORM_MODES[key].rider) return null;
+    if (!subject || !subject.weapons || !subject.weapons().some(isVectorGun)) return null;
+    if (typeof $dataSkills === 'undefined' || !$dataSkills) return null;
+    const cal = calibration(key);
+    const ids = Array.isArray(cal.skillIds)
+      ? cal.skillIds.slice() : (cal.skillId ? [cal.skillId] : []);
+    const affordable = ids
+      .map((id) => $dataSkills[id])
+      .filter((skill) => skill && subject.canPaySkillCost && subject.canPaySkillCost(skill));
+    if (!affordable.length) return null;
+    return affordable[Math.floor(Math.random() * affordable.length)].id;
+  }
+
+  /**
+   * Lines the skill up behind the swing that provoked it. One per action
+   * however many bodies it landed on, so a shape that sweeps three of them
+   * does not fire three of the same skill.
+   */
+  function queueRider(subject, target, action) {
+    if (!action || action._vgRiderQueued) return;
+    const key = formKey();
+    if (!key || !FORM_MODES[key].rider) return;
+    // One roll per action, not per body: the mark goes on before the roll, so
+    // a swing that carries into three of them does not get three chances.
+    action._vgRiderQueued = true;
+    if (Math.random() >= RIDER_CHANCE) return;
+    const skillId = riderSkillIdFor(subject);
+    if (!skillId) return;
+    _riderPending = {
+      subject: subject,
+      skillId: skillId,
+      targetIndex: (target && target.index) ? target.index() : -1,
+    };
+  }
+
+  // The follow-up goes in at the end of the action that provoked it, which is
+  // where the battle system is already willing to take one. The cost is paid
+  // by the ordinary road (startAction -> useItem -> paySkillCost), so a
+  // Battlemage's surcharge still applies, and the purse is checked twice
+  // because the swing itself may have emptied it.
+  if (typeof BattleManager !== 'undefined' && BattleManager) {
+    const _BattleManager_startAction_VG = BattleManager.startAction;
+    BattleManager.startAction = function () {
+      _riderPending = null;
+      _BattleManager_startAction_VG.call(this);
+    };
+
+    const _BattleManager_endAction_VG = BattleManager.endAction;
+    BattleManager.endAction = function () {
+      const pending = _riderPending;
+      _riderPending = null;
+      if (pending && pending.subject === this._subject &&
+        pending.subject.isAlive() && pending.subject.canMove()) {
+        const skill = $dataSkills[pending.skillId];
+        if (skill && pending.subject.canPaySkillCost(skill)) {
+          const rider = new Game_Action(pending.subject);
+          rider.setSkill(pending.skillId);
+          if (pending.targetIndex >= 0) rider.setTarget(pending.targetIndex);
+          pending.subject._actions.unshift(rider);
+        }
+      }
+      _BattleManager_endAction_VG.call(this);
+    };
+  }
+
+  //--------------------------------------------------------------------------
   // What may never be done with it
   //--------------------------------------------------------------------------
 
@@ -601,15 +1590,20 @@
   //--------------------------------------------------------------------------
   // The forms the gun folds into
   //--------------------------------------------------------------------------
-  // Eleven of the modes change the weapon itself, one per weapon type the game
-  // knows apart from the gun's own. With one of them running, the battle
-  // command that would reload becomes SWITCH, and the gun reconstructs itself
-  // as that shape: the Blade of Thelema is the arrow-headed ritual machete, but
-  // the same frame also opens into a lance, a scourge, a bow, a gauntlet. In
+  // The shapes reach every weapon type the game knows, and no longer one
+  // apiece: her own hands and the armoured gauntlet are both gloves, the bow
+  // that is drawn and the crossbow that is cocked are both bows, the pair of
+  // pistols is a firearm like the gun itself. What each of them is worth is
+  // its own calibration rather than its type.
+  //
+  // With one of them fitted, the battle command that would reload becomes
+  // SWITCH, and the gun reconstructs itself as that shape: the Blade of
+  // Thelema is the arrow-headed ritual machete, but the same frame also opens
+  // into a lance, a scourge, a bow, a gauntlet, a chainsaw, a set of beads. In
   // any of them it strikes rather than shoots - the type's own sounds, its
-  // swing, its hit effect - and it spends no rounds, because switching back and
-  // forth is what loads it: every switch fills the magazine. Only one shape can
-  // be fitted at a time; loading a second puts the first away.
+  // swing, its hit effect - and it spends no rounds, because switching back
+  // and forth is what loads it: every switch fills the magazine. Only one
+  // shape can be fitted at a time; loading a second puts the first away.
 
   // The sound banks of WeaponSystem's own table (DEFAULT_WEAPON_SOUNDS), by
   // weapon type: whatever the gun has folded into is not a firearm and never
@@ -827,7 +1821,8 @@
   function rangeMultiplier() {
     const key = formKey();
     let mul = (key && FORM_MODES[key].rangeMul) || 1;
-    if (hasMode('longshot') && shootsAtRange()) mul *= LONGSHOT_RANGE;
+    // Long shot is one of the bays, so it carries only as far as the bays do.
+    if (!key && hasMode('longshot') && shootsAtRange()) mul *= LONGSHOT_RANGE;
     return mul;
   }
 
@@ -840,10 +1835,9 @@
    */
   function weaponReach(base) {
     const key = formKey();
-    const own = key && FORM_MODES[key].range;
+    const own = formOwnRange(key);
     let reach = own || base;
     if (!own) reach *= rangeMultiplier();
-    else if (hasMode('longshot') && shootsAtRange()) reach *= LONGSHOT_RANGE;
     return Math.max(1, Math.round(reach));
   }
 
@@ -857,10 +1851,14 @@
   function magazineSize(base) {
     const key = formKey();
     let shots = (key && FORM_MODES[key].bullets) || base;
-    // A deeper well is four more rounds wherever they fit, and Overload doubles
-    // whatever is in there: fitted together the coilgun carries fourteen.
-    if (hasMode('deepMagazine')) shots += DEEP_MAGAZINE_ROUNDS;
-    if (hasMode('overload')) shots *= 2;
+    // How deep the rack is, which is the coilgun's own calibration rather than
+    // a mode: a deeper well is four more rounds, and Overload doubles whatever
+    // is in there, so both together carry fourteen.
+    if (key === SNIPER_FORM || !key) {
+      const rack = calList(GUN_FORM, 'rack');
+      if (rack.indexOf('deepMagazine') >= 0) shots += DEEP_MAGAZINE_ROUNDS;
+      if (rack.indexOf('overload') >= 0) shots *= 2;
+    }
     return shots;
   }
 
@@ -941,9 +1939,71 @@
    * @param {Game_Actor} [actor] - Who is holding it (defaults to the wielder)
    * @returns {boolean} The form after the switch: true while it is not the gun
    */
+  //--------------------------------------------------------------------------
+  // What a shape does the moment it is built, and the moment it is put away
+  //--------------------------------------------------------------------------
+  // Two of the gimmicks are not about a blow at all: the staff turns the sky
+  // over as it comes out, and the gauntlet is a stance she takes rather than
+  // something she does with it. Both hang off the fold itself.
+
+  /**
+   * The sky the staff is calibrated to, pinned so the weather model does not
+   * roll it straight back. A programmatic setWeather alone does not hold: the
+   * periodic roll restores the locked type, so the lock and the stability
+   * timer have to be written too (Map/WeatherSystem.js changeWeather).
+   */
+  function turnTheSky() {
+    const weather = window.$gameWeather;
+    const wanted = calList('hadit', 'weathers');
+    if (!weather || !wanted.length) return;
+    const pick = wanted[Math.floor(Math.random() * wanted.length)];
+    // Indoors there is no sky to turn over, and setWeather says so by doing
+    // nothing at all: say it out loud rather than letting it fail quietly.
+    if (weather.isInterior) {
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('VectorGun.toast.noSky'), { key: 'vgsky' });
+      }
+      return;
+    }
+    weather._lockedWeatherType = pick;
+    if (weather.setWeather) weather.setWeather(pick);
+    // Pushed out as far as an ordinary roll would push it, so the next tick
+    // leaves it alone.
+    weather._weatherStabilityTimer = Math.max(
+      Number(weather._weatherStabilityTimer) || 0, 300 * 60);
+  }
+
+  /** The stance the gauntlet is held in, put on with it and taken off with it. */
+  function wearStance(holder, on) {
+    if (!holder || !holder.addState) return;
+    const stateId = Number(calValue('kia', 'stance'));
+    if (KIA_STANCES.indexOf(stateId) < 0) return;
+    if (on) {
+      if (!holder.isStateAffected(stateId)) holder.addState(stateId);
+    } else if (holder.isStateAffected(stateId)) {
+      holder.removeState(stateId);
+    }
+  }
+
+  /**
+   * Everything a shape does by being built or put away. Called from both ends
+   * of the fold, so nothing a shape turned on is left running once it is gone.
+   * @param {string} key - the shape, or null for the pistol
+   * @param {Game_Battler} holder - whoever is holding the frame
+   * @param {boolean} on - true as it is built, false as it is put away
+   */
+  function onFormWorn(key, holder, on) {
+    if (!key) return;
+    if (key === 'kia') wearStance(holder, on);
+    if (key === 'hadit' && on) turnTheSky();
+  }
+
   function switchForm(actor) {
     const target = switchTarget();
     const folded = !formKey();
+    const holder = actor || wielder();
+    // Whatever it was standing as stops doing whatever that shape does.
+    onFormWorn(formKey(), holder, false);
     $gameSystem._vectorGunForm = folded ? target : null;
     // The old flag is kept in step so a savegame written now still reads right
     // to anything that only ever learned about the blade.
@@ -952,10 +2012,11 @@
     stampElement();
     // The rack is counted from zero every time the coilgun is built.
     setSniperShotsFired(0);
+    // And whatever it is standing as now starts doing its own.
+    onFormWorn(formKey(), holder, true);
     // There is no magazine to fill (the frame makes its own rounds), but the
     // reconstruction IS the reload motion: a Gunmancer's chamber reads it as
     // one and is paid for it, once a round (BattleSystemPassiveSkills.js).
-    const holder = actor || wielder();
     if (holder && holder.reloadBullets) holder.reloadBullets();
     return folded;
   }
@@ -976,23 +2037,40 @@
     return ELEMENT_IDS.indexOf(id) >= 0 ? id : PHYSICAL;
   }
 
+  /** An element id the game knows, or plain physical. */
+  const validElement = (id) =>
+    ELEMENT_IDS.indexOf(Number(id)) >= 0 ? Number(id) : PHYSICAL;
+
+  /** The element the coilgun is calibrated to, its own and nobody else's. */
+  const coilElementId = () => validElement(calValue(GUN_FORM, 'element'));
+
   /**
-   * Whether the element is actually on the weapon. It is not: the pistol is a
-   * pistol and shoots plain rounds whatever the screen is set to. The element
-   * is what the reconstruction pours into the shape it builds, so it lands, is
-   * drawn and tints the model ONLY while the gun stands folded.
+   * Which of the two element settings, if either, the shape in hand carries.
+   * The element is the GUN's: it is what the pistol is loaded with, and the
+   * coilgun is racked out with one of its own, which is how the frame carries
+   * two at once. Everything it folds into is a weapon rather than a gun and
+   * strikes with nothing but itself.
+   * @returns {string} 'base', 'coil' or 'physical'
    */
+  function elementSlot() {
+    const key = formKey();
+    return key ? (FORM_MODES[key].element || 'physical') : 'base';
+  }
+
+  /** Whether the setting on the gun's own screen is what is in her hand. */
   function elementActive() {
-    return !!formKey();
+    return elementSlot() === 'base';
   }
 
   /**
-   * The element the weapon is striking with right now: the chosen one while it
-   * is folded, and physical while it is the pistol. Everything that asks what
-   * the weapon does asks this; elementId() is only ever the setting.
+   * The element the weapon is striking with right now. Everything that asks
+   * what the weapon does asks this; elementId() is only ever the setting.
    */
   function activeElementId() {
-    return elementActive() ? elementId() : PHYSICAL;
+    const slot = elementSlot();
+    if (slot === 'base') return elementId();
+    if (slot === 'coil') return coilElementId();
+    return PHYSICAL;
   }
 
   /**
@@ -1018,8 +2096,9 @@
   /** The colour the element is drawn in, for the model's own glow. */
   function elementColor() {
     const FX = window.WeaponHitFX;
-    // The pistol is never repainted by the setting: an element the weapon is
-    // not carrying yet cannot change how it looks.
+    // Whatever the shape in hand is actually carrying: the pistol is repainted
+    // by its own setting, the coilgun by the one it was racked out with, and a
+    // weapon shape by nothing, because it carries nothing.
     const look = FX && FX.ELEMENTS ? FX.ELEMENTS[activeElementId()] : null;
     return look ? look.color : null;
   }
@@ -1032,7 +2111,8 @@
    * to fan its shots does not come back out of the cache as a bare one.
    */
   const modelKey = () =>
-    (formKey() || 'gun') + ':' + activeElementId() + ':' + modes().slice().sort().join('+');
+    (formKey() || 'gun') + ':' + activeElementId() + ':' +
+    modes().slice().sort().join('+') + ':' + calibrationKey();
 
   //--------------------------------------------------------------------------
   // What the blade changes about a swing
@@ -1061,26 +2141,112 @@
     const holdsGun = this.weapons && this.weapons().some(isVectorGun);
     if (!holdsGun) { _Game_Actor_consumeBullet_VG.call(this); return; }
     // The frame builds its own rounds: nothing it does spends a magazine, and
-    // no shape it stands in can be caught empty. The only count it still keeps
-    // is the coilgun's, which is not ammunition but the length of the rack.
-    if (inMeleeForm()) return;
-    if (inSniper()) {
-      const spent = sniperShotsFired() + (hasMode('overpressure') ? 2 : 1);
-      setSniperShotsFired(spent);
-      if (spent < magazineSize(SNIPER_SHOTS)) return;
-      setSniperShotsFired(0);
-      unfold();
-      // The coilgun folding itself back is the same machine doing the same
-      // thing, so it is shown the same way rather than blinking into a pistol.
-      const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
-      if (scene && scene._spriteset && scene._spriteset.updateWeaponSprite) {
-        scene._spriteset.updateWeaponSprite();
-      }
-      playSwitchFx('rise');
-      if (window.ParchmentToast) {
-        window.ParchmentToast.show(T('VectorGun.toast.unracked'), { key: 'vgform' });
+    // no shape it stands in can be caught empty. What a shape CAN have is a
+    // rack of its own - the coilgun's three, the crossbow's single bolt -
+    // which is not ammunition but the length of the shape: the round that
+    // empties it is what folds the shape away, and that is its reload.
+    const key = formKey();
+    const rack = key ? FORM_MODES[key].bullets : 0;
+    if (!rack) return;
+    const spent = sniperShotsFired() + 1;
+    setSniperShotsFired(spent);
+    if (spent < magazineSize(rack)) return;
+    setSniperShotsFired(0);
+    unfold();
+    // A shape folding itself back is the same machine doing the same thing, so
+    // it is shown the same way rather than blinking into a pistol.
+    const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
+    if (scene && scene._spriteset && scene._spriteset.updateWeaponSprite) {
+      scene._spriteset.updateWeaponSprite();
+    }
+    playSwitchFx('rise');
+    if (window.ParchmentToast) {
+      window.ParchmentToast.show(
+        key === SNIPER_FORM
+          ? T('VectorGun.toast.unracked')
+          : T('VectorGun.toast.spent', { form: T('VectorGun.shape.' + key + '.name') }),
+        { key: 'vgform' });
+    }
+  };
+
+  //--------------------------------------------------------------------------
+  // The one shape that mends
+  //--------------------------------------------------------------------------
+  // Every other shape changes how a blow lands. The rosary changes who it
+  // lands on: a plain attack with it is turned on her own side. The attack is
+  // still an attack - nothing about it is rewritten into a skill, so the
+  // reach, the motion and the weapon's own readings all still answer - only
+  // the side it is pointed at and what arrives when it gets there.
+
+  const ROSARY_SHARE = 0.6;        // of a blow's worth, as mending
+  const ROSARY_PARTY_SHARE = 0.35; // and of that, to each of them when it is spread
+
+  /**
+   * What the beads do to the blow's own number. Mending wounds is the blow
+   * itself, run backwards; everything else the beads do is worked out in
+   * mendWithBeads and the blow lands as nothing.
+   */
+  const rosaryRate = () =>
+    (calValue(ROSARY_FORM, 'mends') === 'hp' ? -ROSARY_SHARE : 0);
+
+  /** The state ids a battler is carrying, however the engine hands them over. */
+  function carriedStates(battler) {
+    if (!battler || !battler.states) return [];
+    const rows = battler.states() || [];
+    return rows.map((row) => (row && typeof row === 'object') ? row.id : row)
+      .filter((id) => id);
+  }
+
+  /** What one telling of the beads is worth, off the hand holding them. */
+  const beadWorth = (subject) =>
+    Math.max(1, Math.floor(((subject && subject.atk) || 10) * ROSARY_SHARE));
+
+  /**
+   * What arrives when the beads are told. Wounds are closed by the blow itself
+   * (rosaryRate), so this is everything else they can be set to.
+   * @param {Game_Battler} subject - whoever is holding the rosary
+   * @param {Game_Battler} target - whoever it was turned on
+   */
+  function mendWithBeads(subject, target) {
+    const kind = calValue(ROSARY_FORM, 'mends');
+    const worth = beadWorth(subject);
+    if (kind === 'mp') {
+      if (target.gainMp) target.gainMp(worth);
+      return;
+    }
+    if (kind === 'tp') {
+      if (target.gainTp) target.gainTp(worth);
+      return;
+    }
+    if (kind === 'state') {
+      // One affliction off, and never the one that is death itself: lifting
+      // that is a resurrection, which is not what a set of beads does.
+      const dead = target.deathStateId ? target.deathStateId() : 1;
+      const lift = carriedStates(target).find((id) => id !== dead);
+      if (lift && target.removeState) target.removeState(lift);
+      return;
+    }
+    if (kind === 'party') {
+      if (typeof $gameParty === 'undefined' || !$gameParty) return;
+      const share = Math.max(1, Math.floor(worth * ROSARY_PARTY_SHARE));
+      for (const member of $gameParty.battleMembers()) {
+        if (member && member.isAlive() && member.gainHp) member.gainHp(share);
       }
     }
+  }
+
+  // Which side the blow is pointed at. Both readings are answered, because the
+  // engine asks one to find the targets and the other to rule them out.
+  const _Game_Action_isForFriend_VG = Game_Action.prototype.isForFriend;
+  Game_Action.prototype.isForFriend = function () {
+    if (attackWithGun(this) && inMendingForm()) return true;
+    return _Game_Action_isForFriend_VG.call(this);
+  };
+
+  const _Game_Action_isForOpponent_VG = Game_Action.prototype.isForOpponent;
+  Game_Action.prototype.isForOpponent = function () {
+    if (attackWithGun(this) && inMendingForm()) return false;
+    return _Game_Action_isForOpponent_VG.call(this);
   };
 
   //--------------------------------------------------------------------------
@@ -1126,14 +2292,21 @@
   const _Game_Action_numRepeats_VG = Game_Action.prototype.numRepeats;
   Game_Action.prototype.numRepeats = function () {
     const repeats = _Game_Action_numRepeats_VG.call(this);
-    if (attackWithGun(this) && !inMeleeForm() && firing(this.subject(), 'burst')) return repeats + 1;
+    if (!attackWithGun(this)) return repeats;
+    // A shape that carries into more than one body, or puts out more than one
+    // round, says so itself: the pair of pistols, the axe and the lance run
+    // through. Each of them pays for it in damageRate.
+    if (formKey()) return repeats * formRepeats();
+    if (firing(this.subject(), 'burst')) return repeats + 1;
     return repeats;
   };
 
   // Piercing vectors go through a raised guard as if it were not there.
   const _Game_Action_applyGuard_VG = Game_Action.prototype.applyGuard;
   Game_Action.prototype.applyGuard = function (damage, target) {
-    if (attackWithGun(this) && firing(this.subject(), 'pierce')) return damage;
+    if (attackWithGun(this)) {
+      if (formKey() ? formPiercesGuard() : firing(this.subject(), 'pierce')) return damage;
+    }
     return _Game_Action_applyGuard_VG.call(this, damage, target);
   };
 
@@ -1161,9 +2334,9 @@
   const _Game_Action_itemCri_VG = Game_Action.prototype.itemCri;
   Game_Action.prototype.itemCri = function (target) {
     const base = _Game_Action_itemCri_VG.call(this, target);
-    if (attackWithGun(this) && firing(this.subject(), 'deadeye')) {
-      return Math.min(1, base + DEADEYE_CRIT);
-    }
+    if (!attackWithGun(this)) return base;
+    if (formKey()) return Math.min(1, base + formCritBonus());
+    if (firing(this.subject(), 'deadeye')) return Math.min(1, base + DEADEYE_CRIT);
     return base;
   };
 
@@ -1222,6 +2395,20 @@
     const WSP = window.WeaponSystemProcedural;
     if (WSP && !WSP._vectorGunWrapped) {
       WSP._vectorGunWrapped = true;
+      // The empty hands are not a shape the frame builds: Em puts the gun
+      // down. So the model is the game's own fist for whatever she is, built
+      // off the stand-in weapon the unarmed rig already makes for a bare
+      // hand, and it is cached under that weapon's key rather than the gun's.
+      const innerCreate = WSP.createModel;
+      if (typeof innerCreate === 'function') {
+        WSP.createModel = function (weapon) {
+          if (isVectorGun(weapon) && formKey() === FISTS_FORM && this.unarmedWeaponFor) {
+            const fist = this.unarmedWeaponFor(wielder() || emActor());
+            if (fist) return innerCreate.call(this, fist);
+          }
+          return innerCreate.call(this, weapon);
+        };
+      }
       for (const name of FORM_POSE_READINGS) {
         const readAs = WSP[name];
         if (typeof readAs !== 'function') continue;
@@ -1302,7 +2489,18 @@
     STATUS_MODES, STATUS_CHANCE, HEX_STATES,
     playSwitchFx, playSwitchOn,
     ELEMENT_IDS, elementId, setElement, elementColor, modelKey,
-    elementActive, activeElementId, FORM_DAMAGE_BONUS,
+    elementActive, activeElementId, elementSlot, coilElementId, FORM_DAMAGE_BONUS,
+    // What each shape is calibrated to, and the tables the page reads its
+    // choices out of. The screen invents no option of its own.
+    calibration, calValue, calList, setCalibration, toggleCalibration,
+    calibrationKey, isCalibratable, CAL_DEFAULTS, CAL_CAPS, RACK_MODE_KEYS,
+    ATHAME_STATES, KIA_STANCES, CLEAVE_PLANS, TWIN_PATTERNS, BOW_DRAWS,
+    LANCE_CHARGES, BOLT_HEADS, DISCORD_BANDS, MAAT_MEASURES, SAW_READS,
+    LASH_PARAMS, TALON_TAKES, MAUL_TYPES, REAP_BARGAINS, ROSARY_MENDS,
+    RIDER_CHANCE, inGunShape, inMendingForm, riderSkillIdFor, formDamageRate,
+    formRepeats, formOwnRange, FISTS_FORM, ROSARY_FORM, ROSARY_SHARE,
+    calibrationRows, formSkillPool, grimoireSchools, archetypeRoster,
+    weatherRoster, schoolRoster,
     // Whether the party can open the gun's screen at all.
     available: () => (inStoryMode() || inSandboxMode()) && !!(emActor() || wielder()),
   };

@@ -2,6 +2,7 @@
   "demoLimit": " (Demo mode limit: {max})",
   "bandFallbackName": "Climber",
   "bandFell": "{name} fell on this floor.",
+  "bandLooted": "Searched {name}'s belongings: found {gold}€ and equipment.",
   "bandLines": [
     "We came up for the loot. So far the floor has taken more than it has given.",
     "Keep to the walls. Whatever nests here does not hear stone.",

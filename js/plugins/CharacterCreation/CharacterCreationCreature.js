@@ -474,6 +474,15 @@
           }
         }
       }
+      if (entries.length === 0 && files && files.length > 0) {
+        for (const file of files) {
+          const filePath = path.join(monstersPath, file);
+          if (fs.statSync(filePath).isFile() && /\.(png|jpg|jpeg)$/i.test(file)) {
+            const name = file.replace(/\.(png|jpg|jpeg)$/i, '');
+            entries.push({ displayName: formatName(name), path: 'Monsters/' + name, index: 0, isAnimal: false });
+          }
+        }
+      }
     } catch (error) {
       console.error('Error loading monster character images:', error);
     }
@@ -1202,13 +1211,19 @@
 
       let previewImgHtml = "";
       if (activeItem && activeItem.custom) {
-        previewImgHtml = `
-          <div class="cc-text-centered cc-pad-roomy">
-            <div class="cc-glyph-display"><span class="cc-rpg-icon" style="${window.CCArt.icon(108, 48)}"></span></div>
-            <div class="cc-title-display--sm cc-gap-below">${T('CharCreate.custom3dModel')}</div>
-            <div class="cc-lede--page">${T('CharCreate.sculptAUniqueCreatureFromMixedPartsSeededFro')}</div>
-          </div>
-        `;
+        if (this._show3DCreature) {
+          previewImgHtml = `
+            <canvas id="creature-3d-canvas" class="cc-model-canvas"></canvas>
+          `;
+        } else {
+          previewImgHtml = `
+            <div class="cc-text-centered cc-pad-roomy">
+              <div class="cc-glyph-display"><span class="cc-rpg-icon" style="${window.CCArt.icon(108, 48)}"></span></div>
+              <div class="cc-title-display--sm cc-gap-below">${T('CharCreate.custom3dModel')}</div>
+              <div class="cc-lede--page">${T('CharCreate.sculptAUniqueCreatureFromMixedPartsSeededFro')}</div>
+            </div>
+          `;
+        }
       } else if (canShow3D) {
         // The model IS this page, so the viewport takes the height the page can
         // spare (the header above it is all that shares the column) instead of a
@@ -1446,9 +1461,15 @@
       return;
     }
     const item = this._battlerListWindow ? this._battlerListWindow.item() : null;
-    const enemy = (item && item.id && $dataEnemies) ? $dataEnemies[item.id] : null;
-    const archKey = (enemy && window.Battler3D && window.Battler3D.resolveKey)
+    let enemy = (item && item.id && $dataEnemies) ? $dataEnemies[item.id] : null;
+    let archKey = (enemy && window.Battler3D && window.Battler3D.resolveKey)
       ? window.Battler3D.resolveKey(enemy) : null;
+    if (item && item.custom) {
+      const keys = this._customArchetypeKeys || this.selectedArchetypes() || [];
+      const primaryKey = (keys[0] || "Drone").toLowerCase();
+      archKey = primaryKey;
+      enemy = { id: 99999, battlerName: primaryKey };
+    }
     const canvas = document.getElementById('creature-3d-canvas');
     if (!enemy || !archKey || !canvas) {
       this.cleanupCreature3D();
@@ -2209,7 +2230,12 @@
           mode: this._mode,
           keys: keys
         };
-        window.Scene_CC3DModel.setup(this._targetActorId, null, { creature: true, initArchetypes: keys });
+        window.Scene_CC3DModel.setup(this._targetActorId, Scene_CreateCreature, {
+          creature: true,
+          initArchetypes: keys,
+          returnByPop: true,
+          confirmPops: 1
+        });
         SceneManager.push(window.Scene_CC3DModel);
         return;
       }
