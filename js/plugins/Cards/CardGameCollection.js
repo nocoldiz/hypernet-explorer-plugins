@@ -151,8 +151,13 @@
       this._index = 0;
       this._page = 0;
       this._flourish = true;
-      this._area = "grid";      // grid | actions
+      this._area = "grid";      // back | modes | tabs | grid | pager | deckchips | decklist | actions
       this._actionIndex = 0;
+      this._modeFocus = this._mode;
+      this._tabFocus = this._filter;
+      this._pagerFocus = 0;
+      this._chipFocus = 0;
+      this._deckRowFocus = 0;
       this._spriteFrame = 1;
       this._spriteTimer = 0;
       this._leaving = false;
@@ -394,12 +399,21 @@
       this.render();
     }
 
+    deckRowKeys() {
+      const CGx = CG();
+      const counts = {};
+      this._working.forEach((key) => { counts[key] = (counts[key] || 0) + 1; });
+      return Object.keys(counts)
+        .sort((a, b) => (CGx.rarityOf(b) - CGx.rarityOf(a)) || CGx.nameOf(a).localeCompare(CGx.nameOf(b)));
+    }
+
     // Switching pages always starts the new shelf at the top, with the filters
     // the player had set left alone: the narrowing is theirs, not the page's.
     setMode(mode) {
       const at = MODES.indexOf(mode);
       if (at < 0 || at === this._mode) return;
       this._mode = at;
+      this._modeFocus = at;
       this._index = 0;
       this._page = 0;
       this._area = "grid";
@@ -416,6 +430,7 @@
       const list = CGx.decks();
       if (index < 0 || index >= list.length) { this.runAction("newDeck"); return; }
       this._deckIndex = index;
+      this._chipFocus = index;
       this._working = list[index].cards.slice();
       CGx.setActiveDeck(index);
       SoundManager.playCursor();
@@ -437,17 +452,12 @@
       SoundManager.playCancel();
       const container = document.getElementById("cardcol-container");
       if (!container) return;
-      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el) => {
-        el.classList.remove("selected");
-      });
-      container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el) => {
-        el.classList.remove("selected");
-      });
+      this.renderFocus(container);
       this.renderDossier(container);
     }
 
     onCancelAction() {
-      if (this._area === "actions") {
+      if (this._area && this._area !== "grid") {
         this._area = "grid";
         SoundManager.playCancel();
         this.render();
@@ -461,6 +471,44 @@
         return;
       }
       this.close();
+    }
+
+    renderFocus(container) {
+      if (!container) container = document.getElementById("cardcol-container");
+      if (!container) return;
+
+      const back = container.querySelector("#cgc-back");
+      if (back) back.classList.toggle("selected", this._area === "back");
+
+      container.querySelectorAll("#cgc-modes .cgc-mode").forEach((el, i) => {
+        el.classList.toggle("selected", (this._area === "modes" && this._modeFocus === i) || (this._area !== "modes" && this.mode() === el.dataset.m));
+      });
+
+      container.querySelectorAll("#cgc-tabs .backpack-tab").forEach((el, i) => {
+        el.classList.toggle("selected", this._area === "tabs" && i === this._tabFocus);
+      });
+
+      container.querySelectorAll("#cgc-grid .cgc-cell").forEach((el) => {
+        el.classList.toggle("selected", this._area === "grid" && parseInt(el.dataset.i, 10) === this._index);
+      });
+
+      container.querySelectorAll("#cgc-pager .cgc-pagebtn").forEach((el) => {
+        const s = parseInt(el.dataset.s, 10);
+        const idx = s < 0 ? 0 : 1;
+        el.classList.toggle("selected", this._area === "pager" && this._pagerFocus === idx);
+      });
+
+      container.querySelectorAll("#cgc-deck .cgc-deckchip").forEach((el, i) => {
+        el.classList.toggle("selected", this._area === "deckchips" && this._chipFocus === i);
+      });
+
+      container.querySelectorAll("#cgc-deck .cgc-deckrow").forEach((el, idx) => {
+        el.classList.toggle("selected", this._area === "decklist" && this._deckRowFocus === idx);
+      });
+
+      container.querySelectorAll("#cgc-actions .inspect-btn").forEach((el, i) => {
+        el.classList.toggle("selected", this._area === "actions" && this._actionIndex === i);
+      });
     }
 
     updateInput() {
@@ -479,6 +527,7 @@
       if (Input.isTriggered("pageup") || Input.isTriggered("pagedown")) {
         const step = Input.isTriggered("pagedown") ? 1 : -1;
         this._filter = (this._filter + step + FILTERS.length) % FILTERS.length;
+        this._tabFocus = this._filter;
         this._index = 0;
         this._page = 0;
         this.flourish();
@@ -487,12 +536,259 @@
         return;
       }
 
+      if (this._area === "back") {
+        if (Input.isTriggered("ok")) {
+          this.close();
+        } else if (Input.isRepeated("right") || Input.isRepeated("down")) {
+          this._area = "modes";
+          this._modeFocus = this._mode;
+          SoundManager.playCursor();
+          this.render();
+        }
+        return;
+      }
+
+      if (this._area === "modes") {
+        if (Input.isRepeated("left")) {
+          if (this._modeFocus > 0) {
+            this._modeFocus--;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "back";
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("right")) {
+          if (this._modeFocus < MODES.length - 1) {
+            this._modeFocus++;
+            SoundManager.playCursor();
+            this.render();
+          } else if (!this.inCollection()) {
+            this._area = "deckchips";
+            this._chipFocus = 0;
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("up")) {
+          this._area = "back";
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("down")) {
+          this._area = "tabs";
+          this._tabFocus = this._filter;
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isTriggered("ok")) {
+          this.setMode(MODES[this._modeFocus]);
+        }
+        return;
+      }
+
+      if (this._area === "tabs") {
+        if (Input.isRepeated("left")) {
+          if (this._tabFocus > 0) {
+            this._tabFocus--;
+            this._filter = this._tabFocus;
+            this._index = 0;
+            this._page = 0;
+            this.flourish();
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "back";
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("right")) {
+          if (this._tabFocus < FILTERS.length - 1) {
+            this._tabFocus++;
+            this._filter = this._tabFocus;
+            this._index = 0;
+            this._page = 0;
+            this.flourish();
+            SoundManager.playCursor();
+            this.render();
+          } else if (!this.inCollection()) {
+            this._area = "deckchips";
+            this._chipFocus = 0;
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("up")) {
+          this._area = "modes";
+          this._modeFocus = this._mode;
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("down")) {
+          this._area = "grid";
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isTriggered("ok")) {
+          this._filter = this._tabFocus;
+          this._index = 0;
+          this._page = 0;
+          this.flourish();
+          SoundManager.playOk();
+          this.render();
+        }
+        return;
+      }
+
+      if (this._area === "pager") {
+        if (Input.isRepeated("left")) {
+          this._pagerFocus = 0;
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("right")) {
+          if (this._pagerFocus === 0) {
+            this._pagerFocus = 1;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "actions";
+            this._actionIndex = 0;
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("up")) {
+          this._area = "grid";
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("down")) {
+          this._area = "actions";
+          this._actionIndex = 0;
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isTriggered("ok")) {
+          const step = this._pagerFocus === 0 ? -1 : 1;
+          this.turnPage(step);
+        }
+        return;
+      }
+
+      if (this._area === "deckchips") {
+        const numChips = CG().decks().length + 1;
+        if (Input.isRepeated("left")) {
+          if (this._chipFocus > 0) {
+            this._chipFocus--;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "grid";
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("right")) {
+          if (this._chipFocus < numChips - 1) {
+            this._chipFocus++;
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("up")) {
+          this._area = "tabs";
+          this._tabFocus = Math.min(FILTERS.length - 1, this._filter);
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("down")) {
+          const rows = this.deckRowKeys();
+          if (rows.length) {
+            this._area = "decklist";
+            this._deckRowFocus = 0;
+          } else {
+            this._area = "actions";
+            this._actionIndex = 0;
+          }
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isTriggered("ok")) {
+          const idx = this._chipFocus < CG().decks().length ? this._chipFocus : -1;
+          this.pickDeck(idx);
+        }
+        return;
+      }
+
+      if (this._area === "decklist") {
+        const rows = this.deckRowKeys();
+        if (Input.isRepeated("left")) {
+          this._area = "grid";
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("up")) {
+          if (this._deckRowFocus > 0) {
+            this._deckRowFocus--;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "deckchips";
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("down")) {
+          if (this._deckRowFocus < rows.length - 1) {
+            this._deckRowFocus++;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "actions";
+            this._actionIndex = 0;
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isTriggered("ok") || Input.isTriggered("shift")) {
+          if (rows[this._deckRowFocus]) {
+            this.removeFromDeck(rows[this._deckRowFocus]);
+            const newRows = this.deckRowKeys();
+            if (this._deckRowFocus >= newRows.length) {
+              this._deckRowFocus = Math.max(0, newRows.length - 1);
+            }
+            if (newRows.length === 0) {
+              this._area = "actions";
+              this._actionIndex = 0;
+            }
+            this.render();
+          }
+        }
+        return;
+      }
+
       if (this._area === "actions") {
         const list = this.actions();
-        if (Input.isRepeated("right")) { this._actionIndex = (this._actionIndex + 1) % list.length; SoundManager.playCursor(); this.render(); }
-        else if (Input.isRepeated("left")) { this._actionIndex = (this._actionIndex - 1 + list.length) % list.length; SoundManager.playCursor(); this.render(); }
-        else if (Input.isRepeated("up")) { this._area = "grid"; SoundManager.playCursor(); this.render(); }
-        else if (Input.isTriggered("ok")) {
+        if (Input.isRepeated("right")) {
+          this._actionIndex = (this._actionIndex + 1) % list.length;
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isRepeated("left")) {
+          if (this._actionIndex > 0) {
+            this._actionIndex--;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "grid";
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else if (Input.isRepeated("up")) {
+          if (this.inCollection()) {
+            const pages = this.pageCount(this.visibleKeys().length);
+            if (pages > 1) {
+              this._area = "pager";
+              this._pagerFocus = 0;
+            } else {
+              this._area = "grid";
+            }
+          } else {
+            const rows = this.deckRowKeys();
+            if (rows.length) {
+              this._area = "decklist";
+              this._deckRowFocus = rows.length - 1;
+            } else {
+              this._area = "deckchips";
+            }
+          }
+          SoundManager.playCursor();
+          this.render();
+        } else if (Input.isTriggered("ok")) {
           const item = list[this._actionIndex];
           if (item && item.enabled) this.runAction(item.id); else SoundManager.playBuzzer();
         }
@@ -501,15 +797,68 @@
 
       const keys = this.visibleKeys();
       const cols = this._cols || 5;
-      if (Input.isRepeated("right")) { this.moveIndex(1, keys.length); }
-      else if (Input.isRepeated("left")) { this.moveIndex(-1, keys.length); }
-      else if (Input.isRepeated("down")) {
-        // Walking off the bottom of the last row lands on the buttons; on any
-        // page but the last it turns the page instead.
-        if (this._index + cols >= keys.length) { this._area = "actions"; SoundManager.playCursor(); this.render(); }
-        else this.moveIndex(cols, keys.length);
-      } else if (Input.isRepeated("up")) { this.moveIndex(-cols, keys.length); }
-      else if (Input.isTriggered("ok")) {
+      if (Input.isRepeated("right")) {
+        if (!keys.length) {
+          if (!this.inCollection()) {
+            this._area = "deckchips";
+            this._chipFocus = 0;
+          } else {
+            this._area = "actions";
+            this._actionIndex = 0;
+          }
+          SoundManager.playCursor();
+          this.render();
+        } else if ((this._index % cols === cols - 1) || (this._index === keys.length - 1)) {
+          if (!this.inCollection()) {
+            this._area = "deckchips";
+            this._chipFocus = 0;
+          } else {
+            this._area = "actions";
+            this._actionIndex = 0;
+          }
+          SoundManager.playCursor();
+          this.render();
+        } else {
+          this.moveIndex(1, keys.length);
+        }
+      } else if (Input.isRepeated("left")) {
+        if (!keys.length || this._index === 0) {
+          this._area = "tabs";
+          this._tabFocus = this._filter;
+          SoundManager.playCursor();
+          this.render();
+        } else {
+          this.moveIndex(-1, keys.length);
+        }
+      } else if (Input.isRepeated("down")) {
+        if (!keys.length || this._index + cols >= keys.length) {
+          const pages = this.pageCount(keys.length);
+          if (this._page + 1 < pages) {
+            this.moveIndex(cols, keys.length);
+          } else if (this.inCollection() && pages > 1) {
+            this._area = "pager";
+            this._pagerFocus = 0;
+            SoundManager.playCursor();
+            this.render();
+          } else {
+            this._area = "actions";
+            this._actionIndex = 0;
+            SoundManager.playCursor();
+            this.render();
+          }
+        } else {
+          this.moveIndex(cols, keys.length);
+        }
+      } else if (Input.isRepeated("up")) {
+        if (this._index < cols || !keys.length) {
+          this._area = "tabs";
+          this._tabFocus = this._filter;
+          SoundManager.playCursor();
+          this.render();
+        } else {
+          this.moveIndex(-cols, keys.length);
+        }
+      } else if (Input.isTriggered("ok")) {
         const key = this.selectedKey();
         if (!key) { SoundManager.playBuzzer(); return; }
         this.activate(key);
@@ -624,7 +973,13 @@
       // The way out stands where every other screen keeps it: first child of
       // the header bar. Cancel does the same thing from anywhere on the page.
       const back = container.querySelector("#cgc-back");
-      if (back) back.addEventListener("click", () => this.close());
+      if (back) {
+        back.addEventListener("mouseenter", () => {
+          this._area = "back";
+          this.renderFocus(container);
+        });
+        back.addEventListener("click", () => this.close());
+      }
       container.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -644,17 +999,27 @@
       this.renderDossier(container);
       this.renderDeck(container);
       this.renderActions(container);
+      this.renderFocus(container);
     }
 
     // The two pages, side by side above the filters: the bench the party builds
     // on, and the catalogue of every card that exists at all.
     renderModes(container) {
       const host = container.querySelector("#cgc-modes");
-      host.innerHTML = MODES.map((id) =>
-        `<button class="cgc-mode inspect-btn focusable${this.mode() === id ? " selected" : ""}" data-m="${id}">${escapeHtml(T("CardGame.col.mode." + id))}</button>`
+      host.innerHTML = MODES.map((id, i) =>
+        `<button class="cgc-mode inspect-btn focusable${(this._area === "modes" && this._modeFocus === i) || (this._area !== "modes" && this.mode() === id) ? " selected" : ""}" data-m="${id}">${escapeHtml(T("CardGame.col.mode." + id))}</button>`
       ).join("");
-      host.querySelectorAll(".cgc-mode").forEach((el) => {
-        el.addEventListener("click", () => this.setMode(el.dataset.m));
+      host.querySelectorAll(".cgc-mode").forEach((el, i) => {
+        el.addEventListener("mouseenter", () => {
+          this._area = "modes";
+          this._modeFocus = i;
+          this.renderFocus(container);
+        });
+        el.addEventListener("click", () => {
+          this._area = "modes";
+          this._modeFocus = i;
+          this.setMode(el.dataset.m);
+        });
       });
       const title = container.querySelector("#cgc-title");
       if (title) title.textContent = this.inCollection() ? T("CardGame.col.catalogueTitle") : T("CardGame.col.title");
@@ -664,11 +1029,18 @@
       const CGx = CG();
       const tabs = container.querySelector("#cgc-tabs");
       tabs.innerHTML = FILTERS.map((id, i) =>
-        `<div class="backpack-tab focusable${i === this._filter ? " active" : ""}" data-i="${i}">${escapeHtml(T("CardGame.col.tab." + id))}</div>`
+        `<div class="backpack-tab focusable${i === this._filter ? " active" : ""}${this._area === "tabs" && i === this._tabFocus ? " selected" : ""}" data-i="${i}">${escapeHtml(T("CardGame.col.tab." + id))}</div>`
       ).join("");
       tabs.querySelectorAll(".backpack-tab").forEach((el) => {
+        el.addEventListener("mouseenter", () => {
+          this._area = "tabs";
+          this._tabFocus = parseInt(el.dataset.i, 10);
+          this.renderFocus(container);
+        });
         el.addEventListener("click", () => {
           this._filter = parseInt(el.dataset.i, 10);
+          this._tabFocus = this._filter;
+          this._area = "tabs";
           this._index = 0;
           this._page = 0;
           this.flourish();
@@ -828,11 +1200,20 @@
         return;
       }
       host.innerHTML = `
-        <button class="inspect-btn focusable cgc-pagebtn${this._page <= 0 ? " inspect-btn--disabled" : ""}" data-s="-1">${escapeHtml(T("CardGame.col.prevPage"))}</button>
+        <button class="inspect-btn focusable cgc-pagebtn${this._page <= 0 ? " inspect-btn--disabled" : ""}${this._area === "pager" && this._pagerFocus === 0 ? " selected" : ""}" data-s="-1">${escapeHtml(T("CardGame.col.prevPage"))}</button>
         <span class="cgc-pagecount">${escapeHtml(T("CardGame.col.page", { n: this._page + 1, of: pages, total }))}</span>
-        <button class="inspect-btn focusable cgc-pagebtn${this._page + 1 >= pages ? " inspect-btn--disabled" : ""}" data-s="1">${escapeHtml(T("CardGame.col.nextPage"))}</button>`;
+        <button class="inspect-btn focusable cgc-pagebtn${this._page + 1 >= pages ? " inspect-btn--disabled" : ""}${this._area === "pager" && this._pagerFocus === 1 ? " selected" : ""}" data-s="1">${escapeHtml(T("CardGame.col.nextPage"))}</button>`;
       host.querySelectorAll(".cgc-pagebtn").forEach((el) => {
-        el.addEventListener("click", () => this.turnPage(parseInt(el.dataset.s, 10)));
+        el.addEventListener("mouseenter", () => {
+          this._area = "pager";
+          this._pagerFocus = parseInt(el.dataset.s, 10) < 0 ? 0 : 1;
+          this.renderFocus(container);
+        });
+        el.addEventListener("click", () => {
+          this._area = "pager";
+          this._pagerFocus = parseInt(el.dataset.s, 10) < 0 ? 0 : 1;
+          this.turnPage(parseInt(el.dataset.s, 10));
+        });
       });
     }
 
@@ -899,28 +1280,28 @@
       // The decks the party keeps, as chips: one per saved deck plus the one
       // that starts a fresh list, so changing deck is a click rather than a
       // walk through two buttons that only said previous and next.
+      const numDecks = CGx.decks().length;
       const chips = CGx.decks().map((deck, i) =>
-        `<button class="cgc-deckchip focusable${i === this._deckIndex ? " active" : ""}" data-d="${i}">${escapeHtml(deck.name)}</button>`
+        `<button class="cgc-deckchip focusable${i === this._deckIndex ? " active" : ""}${this._area === "deckchips" && i === this._chipFocus ? " selected" : ""}" data-d="${i}">${escapeHtml(deck.name)}</button>`
       ).concat([
-        `<button class="cgc-deckchip focusable${this._deckIndex < 0 ? " active" : ""}" data-d="-1">${escapeHtml(T("CardGame.col.newDeck"))}</button>`
+        `<button class="cgc-deckchip focusable${this._deckIndex < 0 ? " active" : ""}${this._area === "deckchips" && this._chipFocus === numDecks ? " selected" : ""}" data-d="-1">${escapeHtml(T("CardGame.col.newDeck"))}</button>`
       ]).join("");
 
       const counts = {};
       this._working.forEach((key) => { counts[key] = (counts[key] || 0) + 1; });
       // Ordered the way a deck list is read: the dearest cards at the top, ties
       // broken by name.
-      const rows = Object.keys(counts)
-        .sort((a, b) => (CGx.rarityOf(b) - CGx.rarityOf(a)) || CGx.nameOf(a).localeCompare(CGx.nameOf(b)))
-        .map((key) => {
-          const rare = CGx.rarityKey(CGx.rarityOf(key));
-          const power = CGx.isEffect(key) ? "" : CGx.statTotal(CGx.statsFor(key));
-          return `<div class="cgc-deckrow rarity--${rare}" data-k="${escapeHtml(key)}">
-              <span class="cgc-gem"></span>
-              <span class="cgc-deckname">${escapeHtml(CGx.nameOf(key))}</span>
-              <span class="cgc-deckpower">${power}</span>
-              <span class="cgc-deckqty">${counts[key]}</span>
-            </div>`;
-        }).join("");
+      const uniqueKeys = this.deckRowKeys();
+      const rows = uniqueKeys.map((key, idx) => {
+        const rare = CGx.rarityKey(CGx.rarityOf(key));
+        const power = CGx.isEffect(key) ? "" : CGx.statTotal(CGx.statsFor(key));
+        return `<div class="cgc-deckrow rarity--${rare}${this._area === "decklist" && idx === this._deckRowFocus ? " selected" : ""}" data-k="${escapeHtml(key)}" data-idx="${idx}">
+            <span class="cgc-gem"></span>
+            <span class="cgc-deckname">${escapeHtml(CGx.nameOf(key))}</span>
+            <span class="cgc-deckpower">${power}</span>
+            <span class="cgc-deckqty">${counts[key]}</span>
+          </div>`;
+      }).join("");
 
       const filled = Math.min(100, (this._working.length / CGx.DECK_MAX) * 100);
       host.innerHTML = `
@@ -934,10 +1315,28 @@
         <div class="cgc-deckstanding ${legal.ok ? "cgc-legal--ok" : "cgc-legal--bad"}">${escapeHtml(reason)}</div>`;
 
       host.querySelectorAll(".cgc-deckrow").forEach((el) => {
-        el.addEventListener("click", () => this.removeFromDeck(el.dataset.k));
+        el.addEventListener("mouseenter", () => {
+          this._area = "decklist";
+          this._deckRowFocus = parseInt(el.dataset.idx, 10);
+          this.renderFocus(container);
+        });
+        el.addEventListener("click", () => {
+          this._area = "decklist";
+          this._deckRowFocus = parseInt(el.dataset.idx, 10);
+          this.removeFromDeck(el.dataset.k);
+        });
       });
-      host.querySelectorAll(".cgc-deckchip").forEach((el) => {
-        el.addEventListener("click", () => this.pickDeck(parseInt(el.dataset.d, 10)));
+      host.querySelectorAll(".cgc-deckchip").forEach((el, i) => {
+        el.addEventListener("mouseenter", () => {
+          this._area = "deckchips";
+          this._chipFocus = i;
+          this.renderFocus(container);
+        });
+        el.addEventListener("click", () => {
+          this._area = "deckchips";
+          this._chipFocus = i;
+          this.pickDeck(parseInt(el.dataset.d, 10));
+        });
       });
     }
 
@@ -956,14 +1355,13 @@
           if (this._area === "actions" && this._actionIndex === at) return;
           this._area = "actions";
           this._actionIndex = at;
-          host.querySelectorAll(".inspect-btn").forEach((b, n) => b.classList.toggle("selected", n === at));
-          const grid = document.querySelector("#cardcol-container #cgc-grid");
-          if (grid) grid.querySelectorAll(".cgc-cell").forEach((c) => c.classList.remove("selected"));
+          this.renderFocus(container);
         });
         el.addEventListener("click", () => {
-          const item = list[parseInt(el.dataset.i, 10)];
+          const at = parseInt(el.dataset.i, 10);
+          const item = list[at];
           this._area = "actions";
-          this._actionIndex = parseInt(el.dataset.i, 10);
+          this._actionIndex = at;
           if (item && item.enabled) this.runAction(item.id); else SoundManager.playBuzzer();
         });
       });

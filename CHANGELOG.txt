@@ -1,3 +1,37 @@
+0.6.38a
+
+Maps:
+ - New cave in Ritual island
+ - Expanded some Omega tower floors 
+
+Added:
+ - New battle music that depends on biome
+
+Changed:
+ - block pushing tutorial now teach how to drag boulders
+ - battle music selector: biome (default), selected track, random, none
+ - buffed MP and HP progression for all classes
+ - rebalanced NPC purple item rates and card duel wagers
+ - reworked vehicles item costs
+ - reworked skillmaster creation submenus into a compact interface with controller support
+ - removed anatomically impossible skills from enemies based on body
+
+Fixed:
+ - real estate app tracks normal homes and deeds held count
+ - patron vault coordinates modal saves and lets you choose saved ones
+ - creature hunting quests now only target creatures native to the site
+ - fixed broken buttons in cards menu
+ - fixed blade seed menu
+ - fixed monster tournament hp bar not going down
+ - fixed character walking while the build menu is open
+ - Radio music player tracks no longer skip after a split second
+ - skills added by traits in character creation are removed on deselect
+ - equip menu stat labels read STR, CON etc. instead of ATK
+ - Various maps around Ghent
+ - story mode Em starts with just the vector gun equipped
+ - K.O party members no longer use the walk animation when carried
+
+
 0.6.37a
 
 Added:

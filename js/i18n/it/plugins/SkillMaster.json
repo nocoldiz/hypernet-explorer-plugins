@@ -723,7 +723,8 @@
   "tips": {
     "pick": "Scegli",
     "walk": "Sposta",
-    "back": "Indietro"
+    "back": "Indietro",
+    "mode": "Modalità"
   },
   "lent": "PRESTATA",
   "lentBy": "Prestata da {item}"

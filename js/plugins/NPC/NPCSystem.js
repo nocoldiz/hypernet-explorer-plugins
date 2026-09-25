@@ -28,6 +28,9 @@
       // Seat tile for the PublicTransport group (bus/tram/train interiors),
       // see SpawnManager.randomizePublicTransportMap.
       TRANSPORT_SEAT: 102,
+      // The same region anywhere else: a bench or a chair NPCs sit on and
+      // rest, see NPCSeats.
+      SEAT: 102,
     },
 
     // Interiors of the party's own vehicles (camper, taxi, car, low-orbit
@@ -1602,6 +1605,13 @@
       targetEvent.setOpacity(255);
       targetEvent.setThrough(false);
 
+      // Some of the crowd is found sitting down: dealt onto a free seat, where
+      // decideNextGoal sits them.
+      if (Math.random() < NPCSeats.SPAWN_CHANCE) {
+        const seat = Utils.randomElement(NPCSeats.freeSeats(targetEvent.x, targetEvent.y, targetEvent));
+        if (seat) targetEvent.locate(seat.x, seat.y);
+      }
+
       $gameSystem.npcControllers = $gameSystem.npcControllers || [];
       $gameSystem.npcControllers.push(controller);
       controller.decideNextGoal();
@@ -2035,7 +2045,9 @@ initializeGroupNPCs: (groupName, activeMapId = null) => {
     stillStanding: (ev) => {
       if (!ev || !$gameMap) return false;
       if (!$gameMap.isValid(ev.x, ev.y)) return false;
-      try { return !!$gameMap.isPassable(ev.x, ev.y, 2); } catch (e) { return true; }
+      try { if ($gameMap.isPassable(ev.x, ev.y, 2)) return true; } catch (e) { return true; }
+      // Somebody sitting on a seat is on a fair tile too, however solid it is.
+      return NPCSeats.isSeat(ev.x, ev.y);
     },
 
     // Anyone currently on their way out, so the turnover does not hand their
@@ -5380,6 +5392,132 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
   };
 
   // ==========================================================================
+  // SEATS, region 102
+  // ==========================================================================
+  // A region 102 tile is somewhere to sit: a bench, a chair, a bus seat. The
+  // furniture under it is impassable, so nobody walks onto one. An NPC walks
+  // to a free tile beside the seat, slides onto it the way the player does
+  // (MovementInteractionSystem.enterSitMode), rests there, then gets up onto
+  // the nearest tile they can stand on. Every second on the seat gives back
+  // some sleep (NPCSim.satisfyNeedTick). Part of a map's crowd is dealt onto
+  // the seats at spawn, already sitting (SpawnManager.injectBrain).
+  const NPCSeats = {
+    SPAWN_CHANCE: 0.2,
+    // How long a sit lasts, in real milliseconds. Somebody tired stays longer.
+    SIT_MS: [20000, 60000],
+    TIRED_SIT_MS: [60000, 150000],
+    TIRED_BELOW: 40,
+    SEARCH_RADIUS: 15,
+    STAND_RADIUS: 6,
+    // A menu or a pause stops the map but not the clock: never pay out more
+    // than this many seconds of rest for a single tick.
+    MAX_TICK_SEC: 2,
+    NO_STAND_REGIONS: [10, 103, 99],
+
+    isSeat(x, y) {
+      return !!$gameMap && $gameMap.regionId(x, y) === Config.Zones.SEAT;
+    },
+
+    // Every seat tile on the map, scanned once per map.
+    tiles() {
+      if (!$gameMap) return [];
+      const mapId = $gameMap.mapId();
+      const cache = $gameMap._npcSeatCache;
+      if (cache && cache.mapId === mapId) return cache.tiles;
+      const tiles = [];
+      const w = $gameMap.width(), h = $gameMap.height();
+      for (let x = 0; x < w; x++) {
+        for (let y = 0; y < h; y++) {
+          if (this.isSeat(x, y)) tiles.push({ x, y });
+        }
+      }
+      $gameMap._npcSeatCache = { mapId, tiles };
+      return tiles;
+    },
+
+    // Nobody on the tile but `self`: no live solid event, not the player and
+    // no party follower parked there by MovementInteractionSystem.
+    isEmpty(x, y, self) {
+      if ($gamePlayer && $gamePlayer.x === x && $gamePlayer.y === y) return false;
+      const followers = $gamePlayer?.followers?.()?._data || [];
+      if (followers.some(f => f && f._sittingDetached && f.x === x && f.y === y)) return false;
+      return !$gameMap.eventsXy(x, y).some(ev =>
+        ev && ev !== self && !ev._erased && !(typeof ev.isThrough === "function" && ev.isThrough()));
+    },
+
+    // A tile somebody can stand on: walkable, not a seat, not water or a
+    // blocked region.
+    canStand(x, y) {
+      if (!$gameMap.isValid(x, y)) return false;
+      if (this.isSeat(x, y)) return false;
+      if (this.NO_STAND_REGIONS.includes($gameMap.regionId(x, y))) return false;
+      if (Utils.isBlockedTerrain(x, y)) return false;
+      return ORTHO_DIRS.some(d => $gameMap.isPassable(x, y, d));
+    },
+
+    // The tiles beside a seat to sit down from, nearest to (fromX, fromY)
+    // first. `dir` is the way they face stepping onto the seat.
+    approaches(seat, fromX, fromY) {
+      const out = [];
+      for (const d of ORTHO_DIRS) {
+        const x = $gameMap.roundXWithDirection(seat.x, d);
+        const y = $gameMap.roundYWithDirection(seat.y, d);
+        if (this.canStand(x, y)) out.push({ x, y, dir: 10 - d });
+      }
+      return out.sort((a, b) => Utils.manhattan(a.x, a.y, fromX, fromY) - Utils.manhattan(b.x, b.y, fromX, fromY));
+    },
+
+    // Free seats that can be reached from somewhere, nearest to (x, y) first.
+    // With no radius the whole map counts.
+    freeSeats(x, y, self, radius) {
+      const out = [];
+      for (const t of this.tiles()) {
+        const d = Utils.manhattan(t.x, t.y, x, y);
+        if (radius && d > radius) continue;
+        if (!this.isEmpty(t.x, t.y, self)) continue;
+        if (!this.approaches(t, x, y).length) continue;
+        out.push({ x: t.x, y: t.y, d });
+      }
+      return out.sort((a, b) => a.d - b.d);
+    },
+
+    // Where somebody seated at (x, y) gets up to: the nearest tile they can
+    // stand on that nobody holds, the four beside the seat first. null when
+    // there is none within STAND_RADIUS.
+    standTile(x, y, self) {
+      for (let r = 1; r <= this.STAND_RADIUS; r++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const rest = r - Math.abs(dx);
+          for (const dy of rest ? [-rest, rest] : [0]) {
+            const tx = x + dx, ty = y + dy;
+            if (this.canStand(tx, ty) && this.isEmpty(tx, ty, self)) return { x: tx, y: ty };
+          }
+        }
+      }
+      return null;
+    },
+
+    isTired(profile) {
+      return !!profile && (profile.currentNeed === "sleep" || (profile.sleep ?? 100) < this.TIRED_BELOW);
+    },
+
+    sitDuration(profile) {
+      const [lo, hi] = this.isTired(profile) ? this.TIRED_SIT_MS : this.SIT_MS;
+      return Utils.randBetween(lo, hi);
+    },
+
+    // How much a controller wants to sit down, as a decideNextGoal weight.
+    sitWeight(profile) {
+      if (!this.tiles().length) return 0;
+      let w = 12;
+      if (this.isTired(profile)) w += 30;
+      const traitsById = _getTraitsById();
+      if ((profile?.traitIds || []).some(id => /lazy/i.test(traitsById.get(id)?.name || ""))) w += 15;
+      return w;
+    },
+  };
+
+  // ==========================================================================
   // CORE AI CLASSES
   // ==========================================================================
   class Pathfinder {
@@ -5640,12 +5778,19 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // turnover (refreshCurrentMapForHour).
       this.clearStaleHideSwitch();
 
-      if (this.state === "talkingToPlayer") this.decideNextGoal();
+      // Somebody talked to on a seat stays on it for the rest of their sit.
+      if (this.state === "talkingToPlayer") {
+        if (this._isOnSeat()) this.state = "sitting";
+        else this.decideNextGoal();
+      }
 
       // Refresh the cached distance used by the top-of-update throttle
       this._lastDist = Utils.distance(this.event, $gamePlayer);
 
       this.updatePlayerAwareness(time);
+      // Sent somewhere else while seated (the sim's need dispatch, a flee):
+      // get up first, since no step leads off a seat.
+      if (this._seat && this.state !== "sitting") this._getUpForNewGoal();
       this[_stateMethodName(this.state)]?.(time);
     }
 
@@ -5779,6 +5924,8 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
     yieldToPlayer() {
       if (!this.event || this.event._erased) return;
       if (this.state === 'yielding' || this.state === 'talkingToPlayer') return;
+      // A seat is never in the way: nobody walks through one anyway.
+      if (this._isOnSeat()) return;
       const spot = NPCYield.findYieldSpot(this.event, $gamePlayer.x, $gamePlayer.y);
       const path = spot
         ? this.pathfinder.findNoclipPath(this.event.x, this.event.y, spot.x, spot.y)
@@ -5950,6 +6097,13 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       const zones   = this.getZones();
       const profile = window.NPCSocietyRegistry?.getProfile(this.eventName);
 
+      // Found on a seat (spawned there, put back where they were last seen,
+      // or unable to get up): they are sitting on it.
+      if (this.event && NPCSeats.isSeat(this.event.x, this.event.y)) {
+        const face = Utils.counterFacingDir(this.event) || this.event.direction();
+        return this.sitDown(this.event, face, NPCSeats.sitDuration(profile));
+      }
+
       // Priority: sleep need → go home if on home map
       if (profile?.currentNeed === 'sleep' && profile.homeMapId === $gameMap?.mapId()) {
         const door = $gameMap.events().find(e => {
@@ -5999,9 +6153,12 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       // Faction territory: 20% weight toward social zones for faction members
       if ((profile?.factionIndex ?? -1) >= 0 && zones.social.length) socializeW += 20;
 
+      const sitW = NPCSeats.sitWeight(profile);
+
       const goals = [];
       if (wanderW    > 0) goals.push({ t: 'wander',    w: wanderW    });
       if (socializeW > 0) goals.push({ t: 'socialize',  w: socializeW });
+      if (sitW       > 0) goals.push({ t: 'sit',        w: sitW       });
       if (!goals.length)  goals.push({ t: 'wander',     w: 1          });
 
       let rand = Math.random() * goals.reduce((s, g) => s + g.w, 0);
@@ -6013,7 +6170,9 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
 
     setGoal(type, zones) {
       const time = performance.now();
-      if (type === "wander") {
+      // No free seat within reach: they wander instead.
+      if (type === "sit" && this.goSitNearby()) return;
+      if (type === "wander" || type === "sit") {
         this.state = "wandering";
         this.stateEndTime = time + Utils.randBetween(7000, 14000);
       } else {
@@ -6311,6 +6470,149 @@ randomizeOmegaTowerMap: (mapId, groupName) => {
       this.stateEndTime = performance.now() + Utils.randBetween(8000, 20000);
       this.turnToward(targetEvent);
       window.NPCSim?.emit("npc:interact", { name: this.eventName, targetEvent });
+    }
+
+    // ── Seats (see NPCSeats) ─────────────────────────────────────────────────
+
+    _isOnSeat() {
+      return !!(this._seat && this.event &&
+        this.event.x === this._seat.x && this.event.y === this._seat.y);
+    }
+
+    // Head for the nearest free seat within reach. False when there is none,
+    // or no way to any of the closest few.
+    goSitNearby(radius = NPCSeats.SEARCH_RADIUS, ms) {
+      if (!this.event) return false;
+      const profile = window.NPCSocietyRegistry?.getProfile(this.eventName);
+      const duration = ms || NPCSeats.sitDuration(profile);
+      const seats = NPCSeats.freeSeats(this.event.x, this.event.y, this.event, radius);
+      for (const seat of seats.slice(0, 4)) {
+        if (this.goSit(seat, duration)) return true;
+      }
+      return false;
+    }
+
+    // Walk to a free tile beside `seat`, to sit on it for `ms` once there.
+    goSit(seat, ms) {
+      if (!this.event || !seat) return false;
+      const ex = this.event.x, ey = this.event.y;
+      for (const a of NPCSeats.approaches(seat, ex, ey)) {
+        if (a.x === ex && a.y === ey) {
+          this.sitDown(seat, a.dir, ms);
+          return true;
+        }
+        if (!NPCSeats.isEmpty(a.x, a.y, this.event)) continue;
+        const path = this.pathfinder.findPath(ex, ey, a.x, a.y);
+        if (!path || !path.length) continue;
+        this.path = path;
+        this.target = { x: a.x, y: a.y };
+        this._seatGoal = { x: seat.x, y: seat.y, dir: a.dir, ms };
+        this.state = "goingToSeat";
+        this.stateEndTime = performance.now() + 60000;
+        return true;
+      }
+      return false;
+    }
+
+    updateGoingToSeat(time) {
+      const goal = this._seatGoal;
+      if (!goal || !this.target || time >= this.stateEndTime ||
+          !NPCSeats.isEmpty(goal.x, goal.y, this.event)) {
+        this._seatGoal = null;
+        return this.decideNextGoal();
+      }
+      if (this.event.isMoving()) return;
+      if (this.event.x === this.target.x && this.event.y === this.target.y) {
+        return this.sitDown(goal, goal.dir, goal.ms);
+      }
+      if (!this.path.length) {
+        this._seatGoal = null;
+        return this.decideNextGoal();
+      }
+      this._stepAlongPath(() => {
+        this.path = this.pathfinder.findPath(this.event.x, this.event.y, this.target.x, this.target.y) || [];
+      });
+    }
+
+    // Onto the seat and sitting. From the tile beside it they slide across
+    // like the player does; from anywhere else (a spawn) they are put there.
+    sitDown(seat, dir, ms) {
+      const ev = this.event;
+      if (!ev || !seat) return;
+      if (dir) ev.setDirection(dir);
+      if (ev.x !== seat.x || ev.y !== seat.y) {
+        if (Utils.manhattan(ev.x, ev.y, seat.x, seat.y) === 1) {
+          // _realX/_realY stay behind, so the sprite walks onto the seat.
+          ev._x = seat.x;
+          ev._y = seat.y;
+        } else {
+          ev.locate(seat.x, seat.y);
+        }
+      }
+      const face = Utils.counterFacingDir(ev);
+      if (face) ev.setDirection(face);
+      const now = performance.now();
+      this._seat = { x: seat.x, y: seat.y };
+      this._seatGoal = null;
+      this._seatTick = now;
+      this.path = [];
+      this.target = null;
+      this.state = "sitting";
+      this.stateEndTime = now + (ms || NPCSeats.sitDuration(null));
+    }
+
+    updateSitting(time) {
+      if (!this._isOnSeat()) {
+        this._seat = null;
+        return this.decideNextGoal();
+      }
+      const sec = (time - (this._seatTick ?? time)) / 1000;
+      if (sec >= 1) {
+        window.NPCSim?.satisfyNeedTick?.(this.eventName, "sleep", Math.min(sec, NPCSeats.MAX_TICK_SEC));
+        this._seatTick = time;
+      }
+      if (time < this.stateEndTime) return;
+      // Boxed in for now: stay a little longer and try again.
+      if (!this.standUp()) { this.stateEndTime = time + 5000; return; }
+      this.decideNextGoal();
+    }
+
+    // Off the seat onto the nearest free tile to stand on, sliding across
+    // when it is right beside the seat. False when there is nowhere to go.
+    standUp() {
+      const ev = this.event;
+      if (!this._isOnSeat()) { this._seat = null; return true; }
+      const t = NPCSeats.standTile(ev.x, ev.y, ev);
+      if (!t) return false;
+      this._seat = null;
+      const dx = t.x - ev.x, dy = t.y - ev.y;
+      if (Math.abs(dx) + Math.abs(dy) === 1) {
+        ev.setDirection(dx > 0 ? 6 : dx < 0 ? 4 : dy > 0 ? 2 : 8);
+        ev._x = t.x;
+        ev._y = t.y;
+      } else {
+        ev.locate(t.x, t.y);
+      }
+      return true;
+    }
+
+    // The sim or a reaction sent them somewhere while seated. Their route was
+    // planned from the seat, where no step leads anywhere, so it is planned
+    // again from the tile they got up onto.
+    _getUpForNewGoal() {
+      if (!this._isOnSeat()) { this._seat = null; return; }
+      if (!this.standUp()) {
+        this.state = "sitting";
+        this.path = [];
+        this.stateEndTime = performance.now() + 5000;
+        return;
+      }
+      if (this.state === "goingToInteract") {
+        this.approachTile = null;
+        this._repathToApproach();
+      } else if (this.target && Number.isFinite(this.target.x)) {
+        this.path = this.pathfinder.findPath(this.event.x, this.event.y, this.target.x, this.target.y) || [];
+      }
     }
 
   }

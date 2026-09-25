@@ -1,4 +1,4 @@
-﻿/*:
+/*:
  * @target MZ
  * @plugindesc Blade Seed System v1.3.0
  * @author Omni-Lex
@@ -365,10 +365,9 @@
                     this.skills[existingSkillIndex].learned = true;
                     this.skills[existingSkillIndex].source = 'weapon';
                 } else {
-                    // Add new weapon skill
                     const skillData = $dataSkills[weaponType.startingSkill];
-                    const skillName = skillData ? skillData.name
-                        : T('BladeSeed.weaponSkillNumbered', { id: weaponType.startingSkill });
+                    const rawName = skillData ? (skillData.name || '').trim() : '';
+                    const skillName = rawName || T('BladeSeed.weaponSkillNumbered', { id: weaponType.startingSkill });
                     
                     this.skills.push({
                         skillId: weaponType.startingSkill,
@@ -550,19 +549,21 @@
     PluginManager.registerCommand(pluginName, 'bindBladeSeed', args => {
         initializeBladeSeedData();
         if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
-            if (typeof window !== 'undefined') {
-            }
-            if (window.ParchmentToast) {
-              window.ParchmentToast.show(T('BladeSeed.alreadyBound'), {
-                severity: 'warning'
-              });
-            }
-            if (typeof window !== 'undefined') {
-                window.skipLocalization = false;
+            if (window.Scene_BladeSeedStatus) {
+                SceneManager.push(window.Scene_BladeSeedStatus);
+            } else if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('BladeSeed.alreadyBound'), {
+                    severity: 'warning'
+                });
             }
             return;
         }
         if (window.Scene_BladeSeedBind) SceneManager.push(window.Scene_BladeSeedBind);
+    });
+
+    PluginManager.registerCommand(pluginName, 'statusBladeSeed', args => {
+        initializeBladeSeedData();
+        if (window.Scene_BladeSeedStatus) SceneManager.push(window.Scene_BladeSeedStatus);
     });
     
     PluginManager.registerCommand(pluginName, 'unbindBladeSeed', args => {
@@ -769,7 +770,7 @@
         // Check if this is a normal attack by actor 1 with blade seed bound
         if (this.subject().isActor() && this.subject().actorId() === 1) {
             if ($gameSystem._bladeSeed && $gameSystem._bladeSeed.bound) {
-                if (this.isAttack() && !this.isSkill()) {
+                if (this.isAttack()) {
                     // Add 1 learning point for normal attacks
                     $gameSystem._bladeSeed.learningPoints = ($gameSystem._bladeSeed.learningPoints || 0) + 1;
                 }

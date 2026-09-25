@@ -1351,11 +1351,12 @@
 
       // Revert any previously applied trait grants first so re-entering this
       // step (via Back) does not stack param bonuses or re-grant skills/items.
-      revertTraitGrants(actor, actor._selectedTraits);
+      revertTraitGrants(actor, actor._appliedTraitIds || actor._selectedTraits);
       actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
 
       // Store selected traits on the actor
       actor._selectedTraits = this._selectedTraits.slice(); // Copy array
+      actor._appliedTraitIds = this._selectedTraits.map((t) => t.id);
 
       this._selectedTraits.forEach((trait) => {
         Object.keys(trait.positive).forEach((param) => {
@@ -1439,9 +1440,10 @@
       // bailing here left the grants of the trait just dropped on the actor,
       // which is how the last trait of a build became impossible to remove.
       if (!traitIds || traitIds.length === 0) {
-        revertTraitGrants(actor, actor._selectedTraits);
+        revertTraitGrants(actor, actor._appliedTraitIds || actor._selectedTraits);
         actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
         actor._selectedTraits = [];
+        actor._appliedTraitIds = [];
         actor.refresh();
         return;
       }
@@ -1449,7 +1451,7 @@
       // Revert any previously applied trait grants first so re-applying (via
       // preset/programmatic path) does not stack param bonuses or re-grant
       // skills/items/equipment (mirrors applyTraits).
-      revertTraitGrants(actor, actor._selectedTraits);
+      revertTraitGrants(actor, actor._appliedTraitIds || actor._selectedTraits);
       actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
 
       // Store selected traits on the actor
@@ -1515,6 +1517,7 @@
 
       // Store selected traits and refresh
       actor._selectedTraits = selectedTraits;
+      actor._appliedTraitIds = selectedTraits.map((t) => t.id);
       actor.refresh();
 
       console.log(
@@ -1598,7 +1601,11 @@
       if (!trait) return;
       (trait.skills || []).forEach((skillId) => {
         if ($dataSkills[skillId]) {
-          actor.forgetSkill(skillId);
+          const curClass = actor.currentClass ? actor.currentClass() : ($dataClasses ? $dataClasses[actor._classId] : null);
+          const classHasSkill = curClass && (curClass.learnings || []).some((l) => l.skillId === skillId && l.level <= (actor._level || 1));
+          if (!classHasSkill) {
+            actor.forgetSkill(skillId);
+          }
         }
       });
       (trait.items || []).forEach((itemId) => {
@@ -1612,6 +1619,9 @@
         } else if ($dataArmors[itemId]) {
           $gameParty.loseItem($dataArmors[itemId], 1);
         }
+      });
+      (trait.switches || []).forEach((switchId) => {
+        $gameSwitches.setValue(switchId, false);
       });
     });
   }
@@ -1639,9 +1649,10 @@
 
     // Revert previously applied trait grants so double-randomizing does not
     // leave stale skills or duplicate items, then reset param bonuses.
-    revertTraitGrants(actor, actor._selectedTraits);
+    revertTraitGrants(actor, actor._appliedTraitIds || actor._selectedTraits);
     actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
     actor._selectedTraits = [];
+    actor._appliedTraitIds = [];
 
     const paramMap = {
       hp: 0, mp: 1, atk: 2, def: 3,
@@ -1691,6 +1702,7 @@
 
     // Store selected traits
     actor._selectedTraits = selectedTraits;
+    actor._appliedTraitIds = selectedTraits.map((t) => t.id);
     actor.refresh();
 
     console.log("Randomized traits:", selectedTraits.map(t => getTraitText(t, "name")).join(", "));
@@ -1732,11 +1744,12 @@
   // equipment first, then the param bonuses and the picked list itself.
   function dropTraitsForSentienceChange(actor) {
     if (!actor) return;
-    const had = actor._selectedTraits;
+    const had = actor._appliedTraitIds || actor._selectedTraits;
     if (!had || !had.length) return;
     revertTraitGrants(actor, had);
     actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
     actor._selectedTraits = [];
+    actor._appliedTraitIds = [];
     if (actor.refresh) actor.refresh();
   }
 

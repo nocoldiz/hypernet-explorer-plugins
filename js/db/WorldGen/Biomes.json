@@ -83,6 +83,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Horror/Anxiety",
     "bgsNight": [
       "creepy-dungeon-ambience",
       "eerie-atmos-4"
@@ -200,6 +201,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Horror/The House of Leaves",
     "bgsNight": [
       "room-empty",
       "room-low",
@@ -340,6 +342,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Techno/Brain Dance",
     "bgsNight": [
       "glitch-sounds",
       "cyber-city-loop"
@@ -490,6 +493,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Techno/Vibing Over Venus",
     "bgsNight": [
       "space-wind-long",
       "eerie-atmos-4",
@@ -654,6 +658,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle Metal",
     "bgsNight": [
       "night-ambience",
       "night-ambience2",
@@ -791,6 +796,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Battle8",
     "bgsNight": [
       "winchester-wind-ambience",
       "desert-ambience",
@@ -945,6 +951,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Exotic Battle",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -1104,6 +1111,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "gentle-waves-quiet-beach",
       "ocean-night",
@@ -1264,6 +1272,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/Past the Edge",
     "bgsNight": [
       "winchester-wind-ambience",
       "mountain-wind",
@@ -1428,6 +1437,7 @@
       238
     ],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/Sovereign",
     "bgsNight": [
       "night-ambience",
       "night-ambience2",
@@ -1546,6 +1556,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Dungeon6",
     "bgsNight": [
       "room-big",
       "hallway",
@@ -1663,6 +1674,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/8- It's right below your feet",
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
@@ -1769,6 +1781,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Horror/The Descent",
     "bgsNight": [
       "water-dripping-in-cave",
       "basement-dripping"
@@ -1861,6 +1874,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
+    "battleBgm": "BattleMusic/8- It's right below your feet",
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -1963,6 +1977,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dark/Ancient Rite",
     "bgsNight": [
       "room-ambience",
       "room-big",
@@ -2150,6 +2165,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "BattleMusic/Battle Metal",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -2320,6 +2336,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "KevinMacLeod/Mysterious/Desert City",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -2486,6 +2503,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "KevinMacLeod/Mysterious/Deadly Roulette",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -2653,6 +2671,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "Battle1",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -2813,6 +2832,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "KevinMacLeod/Mysterious/Tabuk",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -2962,6 +2982,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "Battle2",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -3053,6 +3074,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Horror/Ghost Story",
     "bgsNight": [
       "creepy-dungeon-ambience",
       "eerie-atmos-2"
@@ -3191,6 +3213,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Atmospheric/Floating Cities",
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
@@ -3351,6 +3374,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Mysterious/Curse of the Scarab",
     "bgsNight": [
       "desert-ambience",
       "desert-monolit"
@@ -3545,6 +3569,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle Metal",
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -3683,6 +3708,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Techno/Space Fighter Loop",
     "bgsNight": [
       "glitch-sounds",
       "cyber-city-loop"
@@ -3818,6 +3844,7 @@
     "biomeIds": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/8- It's right below your feet",
     "bgsNight": [
       "ocean-night",
       "ocean-night2",
@@ -3982,6 +4009,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Techno/Static Motion",
     "bgsNight": [
       "dream2"
     ],
@@ -4088,6 +4116,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle Metal",
     "bgsNight": [
       "dungeon-ambiance"
     ],
@@ -4178,6 +4207,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "BattleMusic/12- Era Machine",
     "bgsNight": [
       "dungeon-ambiance"
     ],
@@ -4288,6 +4318,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Mysterious/Deadly Roulette",
     "bgsNight": [
       "dungeon-ambiance"
     ],
@@ -4468,6 +4499,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
+    "battleBgm": "BattleMusic/1- Brave reaction",
     "bgsNight": [
       "creepy-dungeon-ambience"
     ],
@@ -4566,6 +4598,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dark/Darkling",
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep",
@@ -4718,6 +4751,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/12- Era Machine",
     "bgsNight": [
       "horror",
       "abyss-ambience",
@@ -4862,6 +4896,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/Industrial Cinematic",
     "bgsNight": [
       "industrial-ambience",
       "factory-buzz",
@@ -4954,6 +4989,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Techno/Volatile Reaction",
     "bgsNight": [
       "industrial-machinery",
       "industrial-compressor",
@@ -5096,6 +5132,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Mysterious/Goblin_Tinker_Soldier_Spy",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -5252,6 +5289,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Cartoon Battle",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -5490,6 +5528,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -5672,6 +5711,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Battle5",
     "bgsNight": [
       "crickets5",
       "night-crickets2",
@@ -5839,6 +5879,7 @@
       "SpiritWoods"
     ],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "forest-night",
       "forest-night2",
@@ -6027,6 +6068,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Exotic Battle",
     "bgsNight": [
       "jungle-night",
       "crickets5",
@@ -6204,6 +6246,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -6359,6 +6402,7 @@
       500
     ],
     "lowerLayer": "Crypt",
+    "battleBgm": "KevinMacLeod/Horror/Ghostpocalypse - 7 Master",
     "bgsNight": [
       "dark-graveyard",
       "wind-cemetary",
@@ -6517,6 +6561,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/Reawakening",
     "bgsNight": [
       "dream2",
       "female-choir",
@@ -6673,6 +6718,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle Metal",
     "bgsNight": [
       "lava-loop-1",
       "lava-loop-2",
@@ -6846,6 +6892,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "night-crickets",
       "crickets5",
@@ -6967,6 +7014,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -7123,6 +7171,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
     "bgsNight": [
       "night-countryside",
       "village-night",
@@ -7235,6 +7284,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "Field4",
     "bgsNight": [
       "room-low",
       "room-tone-4",
@@ -7445,6 +7495,7 @@
       "Crystals"
     ],
     "lowerLayer": "CaveIce",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -7650,6 +7701,7 @@
       "Crystals"
     ],
     "lowerLayer": "CaveIce",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -7794,6 +7846,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Exotic Battle",
     "bgsNight": [
       "jungle-night",
       "crickets5",
@@ -7945,6 +7998,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/2- Showdown in Turmoil carnival",
     "bgsNight": [
       "room-scifi",
       "ventilation",
@@ -8087,6 +8141,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Boss Battle",
     "bgsNight": [
       "dungeon_ambient_1"
     ],
@@ -8223,6 +8278,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "lake-waves",
       "night-ambience",
@@ -8384,6 +8440,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Techno/Funk Game Loop",
     "bgsNight": [
       "landfill",
       "night-crickets",
@@ -8542,6 +8599,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Dungeon6",
     "bgsNight": [
       "drone",
       "hum-loop",
@@ -8677,6 +8735,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Exotic Battle",
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
@@ -8838,6 +8897,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "train",
       "train-station",
@@ -8974,6 +9034,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/10- Power to the hero",
     "bgsNight": [
       "old-mine-ambience",
       "cave-deep",
@@ -9120,6 +9181,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
+    "battleBgm": "BattleMusic/4- Eleuxelier",
     "bgsNight": [
       "night-crickets",
       "mountain-wind",
@@ -9319,6 +9381,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
+    "battleBgm": "BattleMusic/11- Duel under the Eclipse",
     "bgsNight": [
       "wind-blizzard",
       "wind-blizzard2",
@@ -9486,6 +9549,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Mysterious/Circus of Freaks",
     "bgsNight": [
       "forest-night",
       "forest-night2",
@@ -9624,6 +9688,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "SeaBed",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "ocean-night",
       "ocean-night2"
@@ -9784,6 +9849,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Hitman",
     "bgsNight": [
       "room-office",
       "room-office2",
@@ -9924,6 +9990,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/12- Era Machine",
     "bgsNight": [
       "Wind5",
       "wind-soft",
@@ -10054,6 +10121,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Field4",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -10221,6 +10289,7 @@
       "Crystals"
     ],
     "lowerLayer": "CaveIce",
+    "battleBgm": "KevinMacLeod/Dark/Lightless Dawn",
     "bgsNight": [
       "wind-blizzard",
       "wind-arctic",
@@ -10353,6 +10422,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "water-river",
       "water-river2",
@@ -10485,6 +10555,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "water-river",
       "water-river2",
@@ -10620,6 +10691,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "water-river",
       "water-river2",
@@ -10758,6 +10830,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "water-river",
       "water-river2",
@@ -10845,6 +10918,7 @@
     "color": "#20b2aa",
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgsNight": [
       "water-river",
       "water-creek",
@@ -10993,6 +11067,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -11074,6 +11149,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "RiverBank",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "water-river",
       "highway-distant",
@@ -11217,6 +11293,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "BattleMusic/9- Our enemy",
     "bgsNight": [
       "night-crickets",
       "crickets5",
@@ -11375,6 +11452,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/9- Our enemy",
     "bgsNight": [
       "desert-ambience",
       "desert-monolit",
@@ -11495,6 +11573,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/Exotic Battle",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -11615,6 +11694,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Horror/The Descent",
     "bgsNight": [
       "abyss-ambience",
       "abyss-ambience2"
@@ -11743,6 +11823,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Horror/Nightmare Machine",
     "bgsNight": [
       "sewer-drain",
       "sewer-drain2",
@@ -11882,6 +11963,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "",
+    "battleBgm": "KevinMacLeod/Mysterious/Phantom from Space",
     "bgm": [
       "KevinMacLeod/Bright/Arcadia",
       "KevinMacLeod/Atmospheric/Bathed in the Light",
@@ -12061,6 +12143,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "",
+    "battleBgm": "BattleMusic/5- The Gauntlet and the Dragon",
     "bgsNight": [
       "room-scifi",
       "ventilation",
@@ -12200,6 +12283,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dark/Mystic Force",
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
@@ -12341,6 +12425,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/Lord of the Rangs",
     "bgsNight": [
       "crickets5",
       "night-crickets",
@@ -12554,6 +12639,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "FloodedCave",
+    "battleBgm": "BattleMusic/10- Power to the hero",
     "bgsNight": [
       "frogs-croaking-at-night",
       "night-swamp",
@@ -12700,6 +12786,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/12- Era Machine",
     "bgsNight": [
       "woods-night",
       "wind-soft",
@@ -12850,6 +12937,7 @@
       167
     ],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Dramatic/Magistar",
     "bgsNight": [
       "temple-shadow",
       "night-ambience",
@@ -13013,6 +13101,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Dramatic/Lord of the Rangs",
     "bgsNight": [
       "temple-shadow",
       "night-ambience",
@@ -13173,6 +13262,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Moogify/MelodicTechno",
     "bgsNight": [
       "train",
       "train-station",
@@ -13311,6 +13401,7 @@
       "Crystals"
     ],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dark/Dark Times",
     "bgsNight": [
       "wind-blizzard",
       "wind-arctic",
@@ -13457,6 +13548,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dark/Bent and Broken",
     "bgsNight": [
       "cave-deep",
       "abyss-ambience",
@@ -13599,6 +13691,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
+    "battleBgm": "KevinMacLeod/Mysterious/Spy Glass",
     "bgsNight": [
       "village-night",
       "village-night2",
@@ -13797,6 +13890,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgm": [
       "Town3",
       "Town1",
@@ -14008,6 +14102,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "Battle2",
     "bgm": [
       "Town4",
       "Town8",
@@ -14205,6 +14300,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "Battle1",
     "bgm": [
       "Town3",
       "Town1",
@@ -14376,6 +14472,7 @@
       217
     ],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Mysterious/Mystery Bazaar",
     "bgm": [
       "KevinMacLeod/Mysterious/Ibn Al-Noor",
       "KevinMacLeod/Bright/Sardana"
@@ -14562,6 +14659,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "battleBgm": "BattleMusic/Battle of the Creek",
     "bgm": [
       "Town3",
       "Town1",
@@ -14735,6 +14833,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "battleBgm": "Old/Wrath",
     "bgm": [
       "Town3",
       "Town1",
@@ -14916,6 +15015,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/2- Showdown in Turmoil carnival",
     "bgsNight": [
       "lava-loop-1",
       "lava-loop-3",
@@ -15014,6 +15114,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15095,6 +15196,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15176,6 +15278,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15257,6 +15360,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15338,6 +15442,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15419,6 +15524,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15500,6 +15606,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15581,6 +15688,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15662,6 +15770,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15743,6 +15852,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15824,6 +15934,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "bus-night",
       "highway-distant",
@@ -15905,6 +16016,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
+    "battleBgm": "BattleMusic/3- Ancient prisoner",
     "bgsNight": [
       "creepy-dungeon-ambience",
       "cave-dripping",
@@ -16011,6 +16123,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/1- Brave reaction",
     "bgsNight": [
       "old-mine-ambience",
       "cave-deep"
@@ -16119,6 +16232,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveIce",
+    "battleBgm": "BattleMusic/1- Brave reaction",
     "bgsNight": [
       "cold-wind-loop",
       "cave-wind"
@@ -16231,6 +16345,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "battleBgm": "KevinMacLeod/Horror/Anguish",
     "bgsNight": [
       "cave-dripping",
       "sewer-water",
@@ -16333,6 +16448,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Mysterious/Circus of Freaks",
     "bgsNight": [
       "cave-forgotten",
       "cave-dripping"
@@ -16433,6 +16549,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Underdark",
+    "battleBgm": "KevinMacLeod/Mysterious/Vanishing",
     "bgsNight": [
       "ce-cavern-looped",
       "cave-deep"
@@ -16537,6 +16654,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Horror/The Other Side of the Door",
     "bgsNight": [
       "creepy-dungeon-ambience",
       "dungeon-air",
@@ -16643,6 +16761,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Mysterious/Investigations",
     "bgsNight": [
       "dungeon-air",
       "cabin-wind",
@@ -16745,6 +16864,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/Impact Prelude",
     "bgsNight": [
       "lava-loop-1",
       "industrial-machinery",
@@ -16847,6 +16967,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Mysterious/Crypto",
     "bgsNight": [
       "industrial-machinery",
       "dungeon_ambient_1",
@@ -16953,6 +17074,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
+    "battleBgm": "KevinMacLeod/Mysterious/Unnatural Situation",
     "bgsNight": [
       "room-office",
       "industrial-machinery",
@@ -17055,6 +17177,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
+    "battleBgm": "KevinMacLeod/Dark/Unholy Knight",
     "bgsNight": [
       "creepy-dungeon-ambience",
       "abyss-ambience",
@@ -17163,6 +17286,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "Old/Thief",
     "bgsNight": [
       "cave-deep",
       "dungeon-air"
@@ -17263,6 +17387,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "CaveFlooded",
+    "battleBgm": "KevinMacLeod/Mysterious/Secret of Tiki Island",
     "bgsNight": [
       "cave-dripping",
       "ce-cavern-looped"
@@ -17371,6 +17496,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "KevinMacLeod/Dramatic/The Pyre",
     "bgsNight": [
       "lava-loop-2",
       "cave-deep"
@@ -17471,6 +17597,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Crypt",
+    "battleBgm": "KevinMacLeod/Horror/Land of Phantoms",
     "bgsNight": [
       "cave-forgotten",
       "creepy-dungeon-ambience",
@@ -17577,6 +17704,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "sewer-north",
       "dungeon_ambient_1"
@@ -17681,6 +17809,7 @@
     "prefabs": [],
     "specialBiomes": [],
     "lowerLayer": "Cave",
+    "battleBgm": "BattleMusic/5- The Gauntlet and the Dragon",
     "bgsNight": [
       "old-mine-ambience",
       "cave-wind"

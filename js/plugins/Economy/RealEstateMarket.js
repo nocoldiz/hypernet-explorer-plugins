@@ -679,6 +679,90 @@
             return income;
         }
 
+        // Returns normal homes held by the party (companion residences inherited
+        // on party join and procedural houses whose floors were purchased).
+        getNormalHomes() {
+            const normalHomes = [];
+            // 1. Companion residences (inherited from party members)
+            if (typeof $gameSystem !== 'undefined' && $gameSystem && Array.isArray($gameSystem._npcInheritedHouses)) {
+                $gameSystem._npcInheritedHouses.forEach((hh, idx) => {
+                    const priceEuros = Math.round((hh.value || 30000) / 100);
+                    const homeName = (typeof T === 'function' && T.has && T.has('Assets.ui.npcHome'))
+                        ? T('Assets.ui.npcHome', { name: hh.npcName || '' })
+                        : `${hh.npcName || ''}'s home`;
+                    const loc = hh.mapName || ((typeof T === 'function' && T.has && T.has('Assets.ui.residence')) ? T('Assets.ui.residence') : 'Residence');
+                    normalHomes.push({
+                        id: `npc_home_${hh.mapId != null ? hh.mapId : idx}_${hh.npcName || 'npc'}`,
+                        name: homeName,
+                        type: 'Simple House',
+                        location: loc,
+                        stars: 1,
+                        price: priceEuros,
+                        maxOccupants: 4,
+                        currentOccupants: 1,
+                        rentPerOccupant: 0,
+                        isOwned: true,
+                        isRentedByPlayer: false,
+                        isForSale: false,
+                        isForRent: false,
+                        marketTrend: 0,
+                        isNormalHome: true,
+                        normalHomeType: 'residence',
+                        resident: hh.npcName || '',
+                        mapId: hh.mapId
+                    });
+                });
+            }
+
+            // 2. Procedural houses (floors bought by player)
+            if (window.ProceduralHouseSystem && typeof window.ProceduralHouseSystem.listOwnedHouses === 'function') {
+                const procHouses = window.ProceduralHouseSystem.listOwnedHouses() || [];
+                procHouses.forEach(h => {
+                    const floorTxt = h.floor > 0 ? ` • ${(typeof T === 'function' && T.has && T.has('Assets.ui.floor')) ? T('Assets.ui.floor') : 'Floor'} ${h.floor}` : '';
+                    const priceEuros = Math.round((h.value || 30000) / 100);
+                    const loc = h.mapName || ((typeof T === 'function' && T.has && T.has('ProceduralHouse.unknownLocation')) ? T('ProceduralHouse.unknownLocation') : 'Unknown Location');
+                    normalHomes.push({
+                        id: `proc_house_${h.key}`,
+                        name: `${loc}${floorTxt}`,
+                        type: 'Simple House',
+                        location: loc,
+                        stars: 1,
+                        price: priceEuros,
+                        maxOccupants: 4,
+                        currentOccupants: 0,
+                        rentPerOccupant: 0,
+                        isOwned: true,
+                        isRentedByPlayer: false,
+                        isForSale: false,
+                        isForRent: false,
+                        marketTrend: 0,
+                        isNormalHome: true,
+                        normalHomeType: 'procedural',
+                        entranceCoords: `X:${h.x} Y:${h.y}`,
+                        floor: h.floor,
+                        mapId: h.mapId
+                    });
+                });
+            }
+
+            return normalHomes;
+        }
+
+        getAllProperties() {
+            const normal = this.getNormalHomes();
+            return normal.length ? [...normal, ...this.properties] : [...this.properties];
+        }
+
+        getOwnedCount() {
+            return this.ownedProperties.length + this.getNormalHomes().length;
+        }
+
+        findProperty(propertyId) {
+            const normal = this.getNormalHomes().find(p => p.id === propertyId);
+            if (normal) return normal;
+            return this.properties.find(p => p.id === propertyId) || null;
+        }
+
         save() {
             $gameSystem.realEstateData = {
                 properties: this.properties,
@@ -1302,10 +1386,10 @@
 
             const effectivePrice = $realEstateManager.calculateEffectivePrice(selectedProperty);
             const priceDiff = effectivePrice - selectedProperty.price;
-            const percentChange = Math.round((priceDiff / selectedProperty.price) * 100);
+            const percentChange = selectedProperty.price > 0 ? Math.round((priceDiff / selectedProperty.price) * 100) : 0;
             const effects = $realEstateManager.getActiveEffectsForLocation(selectedProperty.location);
-            const trend = selectedProperty.marketTrend;
-            const stars = '★'.repeat(selectedProperty.stars) + '☆'.repeat(5 - selectedProperty.stars);
+            const trend = selectedProperty.marketTrend || 0;
+            const stars = '★'.repeat(selectedProperty.stars || 1) + '☆'.repeat(5 - (selectedProperty.stars || 1));
 
             let marketSentiment = t('stable');
             let sentimentColor = 'var(--text-text-alt-4)';
@@ -1319,7 +1403,9 @@
                 if (selectedProperty.type === 'Shop') {
                     commands.push({ label: T('RealEstate.ui.manageShop'), action: "manage" });
                 }
-                commands.push({ label: T('RealEstate.ui.liquidateAsset'), action: "sell", danger: true });
+                if (!selectedProperty.isNormalHome) {
+                    commands.push({ label: T('RealEstate.ui.liquidateAsset'), action: "sell", danger: true });
+                }
             } else if (selectedProperty.isRentedByPlayer) {
                 commands.push({ label: T('RealEstate.ui.vacateRental'), action: "vacate", danger: true });
             } else if ($realEstateManager.isTakenByAnother(selectedProperty.id)) {
@@ -1351,8 +1437,21 @@
 
             let ownedRows = '';
             if (selectedProperty.isOwned) {
-                ownedRows = row(t('occupancy'), `${selectedProperty.currentOccupants} / ${selectedProperty.maxOccupants}`)
-                    + row(t('dailyIncome'), `€${(selectedProperty.currentOccupants * selectedProperty.rentPerOccupant).toLocaleString()}`, 'color:var(--text-success-active);');
+                if (selectedProperty.isNormalHome) {
+                    if (selectedProperty.resident) {
+                        ownedRows = row(T('Assets.ui.resident'), selectedProperty.resident)
+                            + row(T('Assets.ui.buildRights'), T('Assets.ui.owner'), 'color:var(--text-success-active);');
+                    } else if (selectedProperty.normalHomeType === 'procedural') {
+                        ownedRows = row(T('Assets.ui.coordinates'), selectedProperty.entranceCoords || '-')
+                            + (selectedProperty.floor > 0 ? row(T('Assets.ui.floor'), String(selectedProperty.floor)) : '')
+                            + row(T('Assets.ui.buildRights'), T('Assets.ui.owner'), 'color:var(--text-success-active);');
+                    } else {
+                        ownedRows = row(T('Assets.ui.buildRights'), T('Assets.ui.owner'), 'color:var(--text-success-active);');
+                    }
+                } else {
+                    ownedRows = row(t('occupancy'), `${selectedProperty.currentOccupants} / ${selectedProperty.maxOccupants}`)
+                        + row(t('dailyIncome'), `€${(selectedProperty.currentOccupants * selectedProperty.rentPerOccupant).toLocaleString()}`, 'color:var(--text-success-active);');
+                }
             } else if (selectedProperty.isRentedByPlayer) {
                 ownedRows = row(T('RealEstate.ui.monthlyRent'), `€${monthlyRent.toLocaleString()}`, 'color:var(--border-danger-active);')
                     + row(T('RealEstate.ui.status'), T('RealEstate.ui.rentedNotOwned'), 'color:var(--text-info);');
@@ -1364,7 +1463,7 @@
                 <div class="item-inspect">
                     <h3 class="title estate-06">${selectedProperty.name}</h3>
                     <div class="inspect-section-title">${T('RealEstate.ui.titleDeed')}</div>
-                    ${row(t('type'), t('propertyTypes')[selectedProperty.type])}
+                    ${row(t('type'), (t('propertyTypes') && t('propertyTypes')[selectedProperty.type]) || selectedProperty.type)}
                     ${row(t('location'), selectedProperty.location)}
                     ${row(t('rating'), stars, 'color:var(--text-primary-hover);')}
                     ${row(t('price'), priceVal, 'color:var(--text-primary-hover);')}
@@ -1413,8 +1512,8 @@
                 const holdings = Object.keys($realEstateManager.companyShares || {}).length;
                 return `co_${holdings}`;
             }
-            const props = $realEstateManager ? $realEstateManager.properties.length : 0;
-            const owned = $realEstateManager ? $realEstateManager.ownedProperties.length : 0;
+            const props = $realEstateManager ? $realEstateManager.getAllProperties().length : 0;
+            const owned = $realEstateManager ? $realEstateManager.getOwnedCount() : 0;
             return `${owned}_${props}`;
         }
 
@@ -1453,7 +1552,9 @@
                 listHTML = this.buildCompanyListHTML(companies, this._companyIndex);
             } else {
                 const dailyYield = $realEstateManager.calculateDailyIncome();
-                const ownedCount = $realEstateManager.ownedProperties.length;
+                const allProps = $realEstateManager.getAllProperties();
+                const ownedCount = $realEstateManager.getOwnedCount();
+                const totalProps = allProps.length;
                 statsHTML = `
                     <div class="re-stat">
                         <span class="re-stat-lbl">${T('RealEstate.ui.liquidFunds')}</span>
@@ -1461,13 +1562,13 @@
                     </div>
                     <div class="re-stat estate-09">
                         <span class="re-stat-lbl">${T('RealEstate.ui.deedsHeld')}</span>
-                        <span class="re-stat-val estate-10" id="re-owned">${ownedCount} / 30</span>
+                        <span class="re-stat-val estate-10" id="re-owned">${ownedCount} / ${totalProps}</span>
                     </div>
                     <div class="re-stat estate-11">
                         <span class="re-stat-lbl">${T('RealEstate.ui.dailyYield')}</span>
                         <span class="re-stat-val" id="re-yield">€${dailyYield.toLocaleString()}</span>
                     </div>`;
-                listHTML = this.buildPropertyListHTML($realEstateManager.properties, this._propertyListWindow.index());
+                listHTML = this.buildPropertyListHTML(allProps, this._propertyListWindow.index());
             }
 
             return `
@@ -1493,7 +1594,7 @@
                         <div class="estate-12" id="re-deed-wrap">${this.buildProspectusHTML(company)}</div>
                     </div>`;
             }
-            const properties = $realEstateManager.properties;
+            const properties = $realEstateManager.getAllProperties();
             const selectedProperty = properties[this._propertyListWindow.index()] || null;
             const deedTitle = T('RealEstate.ui.deedOfTransaction');
             return `
@@ -1506,14 +1607,15 @@
         refreshPropertiesInPlace() {
             const cash = Number(($gameParty.gold() / 100).toFixed(2));
             const dailyYield = $realEstateManager.calculateDailyIncome();
-            const ownedCount = $realEstateManager.ownedProperties.length;
+            const allProps = $realEstateManager.getAllProperties();
+            const ownedCount = $realEstateManager.getOwnedCount();
+            const totalProps = allProps.length;
             const selectedIndex = this._propertyListWindow.index();
-            const properties = $realEstateManager.properties;
 
             const cashEl = this._dndContainer.querySelector('#re-cash');
             if (cashEl) cashEl.textContent = `€${cash.toLocaleString()}`;
             const ownedEl = this._dndContainer.querySelector('#re-owned');
-            if (ownedEl) ownedEl.textContent = `${ownedCount} / 30`;
+            if (ownedEl) ownedEl.textContent = `${ownedCount} / ${totalProps}`;
             const yieldEl = this._dndContainer.querySelector('#re-yield');
             if (yieldEl) yieldEl.textContent = `€${dailyYield.toLocaleString()}`;
 
@@ -1522,7 +1624,7 @@
             if (listEl) {
                 if (this._reListDataKey !== listDataKey) {
                     this._reListDataKey = listDataKey;
-                    listEl.innerHTML = this.buildPropertyListHTML(properties, selectedIndex);
+                    listEl.innerHTML = this.buildPropertyListHTML(allProps, selectedIndex);
                 } else {
                     listEl.querySelectorAll('.item-slot').forEach((slot, idx) => {
                         slot.classList.toggle('selected', idx === selectedIndex);
@@ -1530,7 +1632,7 @@
                 }
             }
             const deedWrap = this._dndContainer.querySelector('#re-deed-wrap');
-            if (deedWrap) deedWrap.innerHTML = this.buildDeedHTML(properties[selectedIndex] || null);
+            if (deedWrap) deedWrap.innerHTML = this.buildDeedHTML(allProps[selectedIndex] || null);
         }
 
         refreshCompaniesInPlace() {
@@ -1692,7 +1794,7 @@
             const commands = [];
             if (property.isOwned) {
                 if (property.type === 'Shop') commands.push('manage');
-                commands.push('sell');
+                if (!property.isNormalHome) commands.push('sell');
             } else if (property.isRentedByPlayer) {
                 commands.push('vacate');
             } else if (!$realEstateManager.isTakenByAnother(property.id)) {
@@ -1836,7 +1938,11 @@
                         moved = true;
                     }
                 } else if (Input.isTriggered('right') || Input.isTriggered('ok')) {
-                    if (property) { this._dndFocusSection = 'commands'; this._dndCommandIndex = 0; moved = true; }
+                    if (property && this.getActiveCommands(property).length > 0) {
+                        this._dndFocusSection = 'commands';
+                        this._dndCommandIndex = 0;
+                        moved = true;
+                    }
                 }
             } else if (this._dndFocusSection === 'commands') {
                 const cmds = property ? this.getActiveCommands(property) : [];
@@ -1913,7 +2019,7 @@
 
         makeItemList() {
             ensureRealEstateManager();
-            this._data = $realEstateManager ? $realEstateManager.properties : [];
+            this._data = $realEstateManager ? $realEstateManager.getAllProperties() : [];
         }
 
         drawItem(index) {
@@ -1988,7 +2094,7 @@
             this.drawText(property.name, 0, y, this.innerWidth, 'center');
             y += lineHeight;
 
-            this.drawText(`${t('type')}: ${t('propertyTypes')[property.type]}`, 0, y, this.innerWidth);
+            this.drawText(`${t('type')}: ${(t('propertyTypes') && t('propertyTypes')[property.type]) || property.type}`, 0, y, this.innerWidth);
             y += lineHeight;
 
             // Location
@@ -2016,19 +2122,35 @@
 
             // Occupancy
             if (property.isOwned) {
-                this.changeTextColor(ColorManager.systemColor());
-                this.drawText(`${t('occupancy')}:`, 0, y, 120);
-                this.resetTextColor();
-                this.drawText(`${property.currentOccupants}/${property.maxOccupants}`, 120, y, this.innerWidth - 120);
-                y += lineHeight;
+                if (property.isNormalHome) {
+                    if (property.resident) {
+                        this.changeTextColor(ColorManager.systemColor());
+                        this.drawText(`${(typeof T === 'function' && T.has && T.has('Assets.ui.resident') ? T('Assets.ui.resident') : 'Resident')}:`, 0, y, 120);
+                        this.resetTextColor();
+                        this.drawText(property.resident, 120, y, this.innerWidth - 120);
+                        y += lineHeight;
+                    } else if (property.normalHomeType === 'procedural') {
+                        this.changeTextColor(ColorManager.systemColor());
+                        this.drawText(`${(typeof T === 'function' && T.has && T.has('Assets.ui.coordinates') ? T('Assets.ui.coordinates') : 'Coordinates')}:`, 0, y, 120);
+                        this.resetTextColor();
+                        this.drawText(property.entranceCoords || '-', 120, y, this.innerWidth - 120);
+                        y += lineHeight;
+                    }
+                } else {
+                    this.changeTextColor(ColorManager.systemColor());
+                    this.drawText(`${t('occupancy')}:`, 0, y, 120);
+                    this.resetTextColor();
+                    this.drawText(`${property.currentOccupants}/${property.maxOccupants}`, 120, y, this.innerWidth - 120);
+                    y += lineHeight;
 
-                // Daily income
-                this.changeTextColor(ColorManager.systemColor());
-                this.drawText(`${t('dailyIncome')}:`, 0, y, 120);
-                this.resetTextColor();
-                const dailyIncome = property.currentOccupants * property.rentPerOccupant;
-                this.drawText(`€${dailyIncome.toLocaleString()}`, 120, y, this.innerWidth - 120);
-                y += lineHeight;
+                    // Daily income
+                    this.changeTextColor(ColorManager.systemColor());
+                    this.drawText(`${t('dailyIncome')}:`, 0, y, 120);
+                    this.resetTextColor();
+                    const dailyIncome = property.currentOccupants * property.rentPerOccupant;
+                    this.drawText(`€${dailyIncome.toLocaleString()}`, 120, y, this.innerWidth - 120);
+                    y += lineHeight;
+                }
             }
 
             // Market trend and active effects
@@ -2072,7 +2194,7 @@
         makeCommandList() {
             if (this._property) {
                 if (this._property.isOwned) {
-                    this.addCommand(t('sell'), 'sell');
+                    if (!this._property.isNormalHome) this.addCommand(t('sell'), 'sell');
                 } else if (!($realEstateManager &&
                         $realEstateManager.isTakenByAnother(this._property.id))) {
                     this.addCommand(t('buy'), 'buy');
@@ -2090,10 +2212,10 @@
         maxCols() {
             if (this._property && $realEstateManager) {
                 const effects = $realEstateManager.getActiveEffectsForLocation(this._property.location);
-                const baseCommands = this._property.isOwned ? 2 : 1;
-                return effects.length > 0 ? baseCommands + 1 : baseCommands;
+                const baseCommands = this._property.isNormalHome ? 0 : (this._property.isOwned ? 2 : 1);
+                return Math.max(1, effects.length > 0 ? baseCommands + 1 : baseCommands);
             }
-            return 2;
+            return 1;
         }
     }
 
@@ -2288,7 +2410,7 @@
         if (window.ParchmentToast) {
           window.ParchmentToast.report([
             t('dailyIncomeMsg', { income: income, gold: goldIncome }),
-            t('propertiesOwnedMsg', { count: $realEstateManager.ownedProperties.length })
+            t('propertiesOwnedMsg', { count: $realEstateManager.getOwnedCount() })
           ], {
             severity: 'info'
           });
@@ -2345,7 +2467,10 @@
         setCompanyPrice(key, priceEuros) { ensureRealEstateManager(); return $realEstateManager.setCompanyPrice(key, priceEuros); },
         // Companies with a non-zero position, for the Assets pockets.
         getHoldings() { ensureRealEstateManager(); return $realEstateManager.getCompanies().filter(c => c.sharesOwned > 0); },
-        getOwnedPlaces() { ensureRealEstateManager(); return $realEstateManager.getOwnedDestinations(); }
+        getOwnedPlaces() { ensureRealEstateManager(); return $realEstateManager.getOwnedDestinations(); },
+        getAllProperties() { ensureRealEstateManager(); return $realEstateManager.getAllProperties(); },
+        getNormalHomes() { ensureRealEstateManager(); return $realEstateManager.getNormalHomes(); },
+        getOwnedCount() { ensureRealEstateManager(); return $realEstateManager.getOwnedCount(); }
     };
 
 

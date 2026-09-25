@@ -723,7 +723,8 @@
   "tips": {
     "pick": "Pick",
     "walk": "Walk",
-    "back": "Back"
+    "back": "Back",
+    "mode": "Mode"
   },
   "lent": "LENT",
   "lentBy": "Lent by {item}"

@@ -59,7 +59,7 @@
     "minLevel": 8
   },
   "Frozen Station": {
-    "name": "Frozen Station",
+    "name": "Icebush Station",
     "biome": "VillageIce",
     "country": "Scotland",
     "nationId": 39,
@@ -140,7 +140,7 @@
     },
     "base": {
       "x": 61,
-      "y": 138
+      "y": 118
     },
     "train": {
       "mapId": 593,

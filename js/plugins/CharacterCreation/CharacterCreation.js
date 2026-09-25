@@ -583,8 +583,9 @@
   }
 
   // CC_MUSIC_TRACKS plus any player tracks dropped into audio/bgm/BattleMusic,
-  // led by the Random entry so a pick made in the options menu still reads back
-  // here instead of silently showing the first track.
+  // led by the Biome (the default) and Random entries so a pick made in the
+  // options menu still reads back here instead of silently showing the first
+  // track.
   // Resolved at runtime since MusicSelectionSystem.js loads after this plugin.
   function getCCMusicTracks() {
     const mss = window.MusicSelectionSystem;
@@ -592,7 +593,10 @@
     const random = (mss && mss.MUSIC_RANDOM)
       ? [{ name: T('MusicSelection.trackRandom'), value: mss.MUSIC_RANDOM }]
       : [];
-    return random.concat(ccMusicTracks(), custom);
+    const biome = (mss && mss.MUSIC_BIOME)
+      ? [{ name: T('MusicSelection.trackBiome'), value: mss.MUSIC_BIOME }]
+      : [];
+    return biome.concat(random, ccMusicTracks(), custom);
   }
 
   // No origin begins inside a vehicle any more: the camper and the car are

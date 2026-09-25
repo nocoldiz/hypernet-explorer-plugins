@@ -880,9 +880,14 @@
         if (won) {
           if (theirs) {
             $gameParty.gainItem(theirs, 1);
-            if (profile && Array.isArray(profile.itemIds) && stake.npcItem.kind === 0) {
-              const at = profile.itemIds.indexOf(stake.npcItem.id);
-              if (at >= 0) profile.itemIds.splice(at, 1);
+            if (profile) {
+              if (Array.isArray(profile.itemIds) && stake.npcItem.kind === 0) {
+                const at = profile.itemIds.indexOf(stake.npcItem.id);
+                if (at >= 0) profile.itemIds.splice(at, 1);
+              } else if (stake.npcItem.kind === 1 || stake.npcItem.kind === 2) {
+                profile.lostEquipIds = profile.lostEquipIds || [];
+                profile.lostEquipIds.push(stake.npcItem.id);
+              }
             }
             this._payout.lines.push(T("CardGame.duel.wonItem", { item: theirs.name }));
           }

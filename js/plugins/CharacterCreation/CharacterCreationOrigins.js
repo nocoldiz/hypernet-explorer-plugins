@@ -2166,20 +2166,34 @@
   // `tileText` is optional: called without it, the square alone is checked,
   // which is what any caller that only wants to know whose square this is asks.
   function patronVaultSquareAt(text, tileText) {
-    const typed = parseCoordNumbers(text);
-    // All four numbers punched into the first line, which is how a patron who
-    // holds them written on one line types them: the last two are the tile.
-    const both = typed.length >= 4 && (tileText == null || String(tileText).trim() === "");
-    const square = parseWorldSquare(text);
-    if (!square || !patronVaultAvailable()) return null;
-    const hatch = window.PatreonRewards.hatchTileAtWorld(square.x, square.y);
-    if (!hatch) return null;
-    const tileSource = both ? (typed[2] + "," + typed[3]) : tileText;
-    if (tileSource != null && String(tileSource).trim() !== "") {
-      const tile = parseWorldSquare(tileSource);
-      if (!tile || tile.x !== hatch[0] || tile.y !== hatch[1]) return null;
+    if (!patronVaultAvailable()) return null;
+    const PR = window.PatreonRewards;
+    const numsA = parseCoordNumbers(text);
+    const numsB = parseCoordNumbers(tileText);
+    const allNums = numsA.concat(numsB);
+
+    // All four numbers provided across text and tileText
+    if (allNums.length >= 4) {
+      const h1 = PR.hatchTileAtWorld(allNums[0], allNums[1]);
+      if (h1 && h1[0] === allNums[2] && h1[1] === allNums[3]) {
+        return { x: allNums[0], y: allNums[1], hatchX: h1[0], hatchY: h1[1] };
+      }
+      const h2 = PR.hatchTileAtWorld(allNums[2], allNums[3]);
+      if (h2 && h2[0] === allNums[0] && h2[1] === allNums[1]) {
+        return { x: allNums[2], y: allNums[3], hatchX: h2[0], hatchY: h2[1] };
+      }
     }
-    return { x: square.x, y: square.y, hatchX: hatch[0], hatchY: hatch[1] };
+
+    // Only world square provided (tileText omitted or blank, fewer than 4 numbers in text)
+    const hasTileText = tileText != null && String(tileText).trim() !== "";
+    if (numsA.length >= 2 && numsA.length < 4 && !hasTileText) {
+      const h = PR.hatchTileAtWorld(numsA[0], numsA[1]);
+      if (h) {
+        return { x: numsA[0], y: numsA[1], hatchX: h[0], hatchY: h[1] };
+      }
+    }
+
+    return null;
   }
 
   // The square THIS WORLD has already had proved to it, hatch tile and all, or
@@ -2215,7 +2229,14 @@
   // here and starts nothing until a square has been picked out of the saved
   // ones.
   function patronVaultRememberSquare(square) {
-    if (!square || !window.PatreonRewards || !window.PatreonRewards.claimSquare) return;
+    if (!square) return;
+    if ($gameTemp) {
+      if (!Array.isArray($gameTemp._ccSavedPatronSquares)) $gameTemp._ccSavedPatronSquares = [];
+      if (!$gameTemp._ccSavedPatronSquares.some((s) => s.x === square.x && s.y === square.y)) {
+        $gameTemp._ccSavedPatronSquares.push(Object.assign({}, square));
+      }
+    }
+    if (!window.PatreonRewards || !window.PatreonRewards.claimSquare) return;
     window.PatreonRewards.claimSquare(square.x, square.y);
   }
 
@@ -2229,11 +2250,19 @@
     const add = (rec) => {
       if (!rec || !Number.isFinite(rec.x) || !Number.isFinite(rec.y)) return;
       if (out.some((s) => s.x === rec.x && s.y === rec.y)) return;
-      out.push({ x: rec.x, y: rec.y, hatchX: rec.mapX, hatchY: rec.mapY });
+      const hX = Number.isFinite(rec.hatchX) ? rec.hatchX : rec.mapX;
+      const hY = Number.isFinite(rec.hatchY) ? rec.hatchY : rec.mapY;
+      out.push({ x: rec.x, y: rec.y, hatchX: hX, hatchY: hY });
     };
+    if ($gameTemp && Array.isArray($gameTemp._ccSavedPatronSquares)) {
+      $gameTemp._ccSavedPatronSquares.forEach(add);
+    }
     try {
       if (PR && PR.knownHatches) (PR.knownHatches() || []).forEach(add);
     } catch (e) { /* nothing recognised yet */ }
+    try {
+      if (PR && PR.claimedSquares) (PR.claimedSquares() || []).forEach(add);
+    } catch (e) { /* no list */ }
     const claim = patronVaultClaim();
     if (claim) add(claim);
     return out;

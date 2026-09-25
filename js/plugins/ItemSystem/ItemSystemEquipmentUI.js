@@ -17,6 +17,23 @@
     const enableSwitching = window.EquipParams.enableSwitching;
     const switchSound     = window.EquipParams.switchSound;
 
+    // The one stat an item's card and slot badge advertise: its first positive
+    // param, named with the character sheet's short labels (params 2..7 are
+    // STR CON INT WIS DEX PSI), never the engine's ATK / DEF.
+    const PARAM_SHORT_KEYS = { 2: 'str', 3: 'con', 4: 'int', 5: 'wis', 6: 'dex', 7: 'psi' };
+    const itemStatBadgeText = (item) => {
+        if (!item || !item.params) return '';
+        const t = i18n[ConfigManager.language || 'en'] || i18n['en'];
+        for (let i = 2; i <= 7; i++) {
+            if (item.params[i] > 0) {
+                const key = PARAM_SHORT_KEYS[i];
+                const label = (t.short && t.short[key]) || key.toUpperCase();
+                return `+${item.params[i]} ${label}`;
+            }
+        }
+        return '';
+    };
+
     // ── Stat tooltip ──────────────────────────────────────────────────────────
     // The same card the character sheet shows when a stat box is hovered
     // (CharacterCreationDossier.onStatHover): one shared #cc-item-tooltip
@@ -945,11 +962,7 @@
                 const rarity    = window.ItemSystemUtils ? window.ItemSystemUtils.getItemRarity(equipped) : 'common';
                 const rarityCls = window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarity) : 'rarity--common';
 
-                let statText = '';
-                if (equipped.params) {
-                    if (equipped.params[2] > 0) statText = `+${equipped.params[2]} ATK`;
-                    else if (equipped.params[3] > 0) statText = `+${equipped.params[3]} DEF`;
-                }
+                const statText = itemStatBadgeText(equipped);
 
                 contentHtml = `
                     <div class="slot-equipped-content" draggable="true" data-member-idx="${memberIdx}" data-slot-idx="${slotId}">
@@ -1420,11 +1433,8 @@
                 const rarityCls = window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarity) : 'rarity--common';
                 const count = ($gameParty && $gameParty.numItems) ? $gameParty.numItems(item) : 1;
 
-                let statBadge = '';
-                if (item.params) {
-                    if (item.params[2] > 0) statBadge = `<span class="equip-card-stat">+${item.params[2]} ATK</span>`;
-                    else if (item.params[3] > 0) statBadge = `<span class="equip-card-stat">+${item.params[3]} DEF</span>`;
-                }
+                const statText = itemStatBadgeText(item);
+                const statBadge = statText ? `<span class="equip-card-stat">${statText}</span>` : '';
 
                 const prof = window.WeaponProficiency;
                 const untrained = prof && isWpn && prof.isUntrained(actor, item);

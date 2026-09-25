@@ -8691,6 +8691,18 @@
         }
     };
 
+    // A body rides the carrier's fractional position, which the engine reads as
+    // walking: it is held still on its resting frame instead of stepping.
+    const _Game_Follower_updateAnimation_carry = Game_Follower.prototype.updateAnimation;
+    Game_Follower.prototype.updateAnimation = function () {
+        if (Carry.isBody(this)) {
+            this._animationCount = 0;
+            this.resetPattern();
+            return;
+        }
+        _Game_Follower_updateAnimation_carry.call(this);
+    };
+
     // A body neither walks itself nor holds up the column: the one behind it
     // chases whoever is in front of IT instead, and a body being held is placed
     // by the carry code rather than by the chase.

@@ -435,9 +435,10 @@ const GameOptions = {
             nameKey: 'audio',
             categories: ['audio'],
             groups: [
+                { key: 'battleMusic', symbols: ['battleMusicMode', 'battleMusicName'] },
                 { key: 'mix', symbols: ['masterVolume', 'bgmMute', 'bgmVolume', 'bgsVolume', 'meVolume', 'seVolume'] },
                 { key: 'worldSound', symbols: ['weatherVolume', 'footstepsVolume', 'uisVolume', 'vscVolume'] },
-                { key: 'music', symbols: ['musicArtistDisplay', 'battleMusicRandom', 'battleMusicName'] },
+                { key: 'music', symbols: ['musicArtistDisplay'] },
                 { key: 'voices', symbols: ['dialogueVoices', 'dialogueVoicesVolume'] }
             ]
         },
@@ -1357,7 +1358,7 @@ window.GameOptions = GameOptions;
         showFps:         { on: 'ShowFpsON',         off: 'ShowFpsOFF' },
         activeTheme:     { img: 'ActiveTheme' },
         battleMusicName: { img: 'BattleMusic' },
-        battleMusicRandom: { img: 'BattleMusic' },
+        battleMusicMode:   { img: 'BattleMusic' },
         titleBackground: { img: 'TitleBackground' },
         uiScale:         { img: 'UiScale' },
         fontScale:       { img: 'FontScale' },

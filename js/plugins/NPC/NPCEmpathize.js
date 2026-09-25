@@ -5663,14 +5663,14 @@
       };
     }
 
-    // The party puts up its dearest spare item; the NPC answers with whatever
-    // they own that is nearest it in price, out of the same pool the haggle
-    // reads (their items plus the gear they are wearing).
+    // The party and NPC put up items of genuinely comparable worth, out of
+    // the party's inventory and the NPC's items/equipped gear. If neither side
+    // holds a matching counterpart within fair value parity (at least 0.5 ratio),
+    // no bartering wager is offered.
     _cardItemStake(profile) {
-      const mine = $gameParty.items()
-        .filter(item => item && item.itypeId !== 2 && (item.price || 0) > 0)
-        .sort((a, b) => (b.price || 0) - (a.price || 0))[0];
-      if (!mine) return null;
+      const partyItems = ($gameParty ? $gameParty.items() : [])
+        .filter(item => item && item.itypeId !== 2 && (item.price || 0) > 0);
+      if (!partyItems.length) return null;
 
       const pool = [];
       for (const id of (profile?.itemIds ?? [])) {
@@ -5680,19 +5680,36 @@
         const ev    = $gameMap?.event(this._eventId);
         const cid   = _extractClassId(ev) ?? profile.assignedClassId;
         const equip = window.NPCSocietyGetEquip(_getNPCName(this._eventId), cid, profile.wealthTierBase ?? 2);
-        if (equip.weaponId && $dataWeapons?.[equip.weaponId]) {
+        const lostEquip = new Set(profile.lostEquipIds || []);
+        if (equip.weaponId && $dataWeapons?.[equip.weaponId] && !lostEquip.has(equip.weaponId)) {
           pool.push({ kind: 1, id: equip.weaponId, obj: $dataWeapons[equip.weaponId] });
         }
         for (const aId of (equip.armorIds ?? [])) {
-          if ($dataArmors?.[aId]) pool.push({ kind: 2, id: aId, obj: $dataArmors[aId] });
+          if ($dataArmors?.[aId] && !lostEquip.has(aId)) pool.push({ kind: 2, id: aId, obj: $dataArmors[aId] });
         }
       }
       if (!pool.length) return null;
 
-      const want = mine.price || 0;
-      pool.sort((a, b) => Math.abs((a.obj.price || 0) - want) - Math.abs((b.obj.price || 0) - want));
-      const theirs = pool[0];
-      return { playerItem: { kind: 0, id: mine.id }, npcItem: { kind: theirs.kind, id: theirs.id } };
+      let bestPair = null;
+      let minDiff = Infinity;
+      for (const npcEntry of pool) {
+        const npcPrice = npcEntry.obj.price || 0;
+        if (npcPrice <= 0) continue;
+        for (const pItem of partyItems) {
+          const pPrice = pItem.price || 0;
+          if (pPrice <= 0) continue;
+          const ratio = Math.min(pPrice, npcPrice) / Math.max(pPrice, npcPrice);
+          const isComparable = ratio >= 0.5 || (pPrice >= 100000 && npcPrice >= 100000);
+          if (isComparable) {
+            const diff = Math.abs(pPrice - npcPrice);
+            if (diff < minDiff) {
+              minDiff = diff;
+              bestPair = { playerItem: { kind: 0, id: pItem.id }, npcItem: { kind: npcEntry.kind, id: npcEntry.id } };
+            }
+          }
+        }
+      }
+      return bestPair;
     }
 
     _startCardDuel(stake) {

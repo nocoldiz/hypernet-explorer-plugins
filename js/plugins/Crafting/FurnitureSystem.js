@@ -2314,16 +2314,14 @@
         return _Game_Map_isLadder_furniture.call(this, x, y);
     };
 
-    // Once a player drives the build with the d-pad/arrows/WASD, those inputs
-    // belong to the placement cursor and picker grid, so the avatar must hold
-    // still. Mouse-only players keep walking freely (it is how they scroll the
-    // map to reach far tiles); the lock engages only after a directional press
-    // flips the build into pad mode.
+    // While the build overlay is active, directional inputs (WASD, arrows,
+    // d-pad) belong to the picker grid and placement cursor, so the avatar
+    // holds still.
     const _Game_Player_canMove_furniture = Game_Player.prototype.canMove;
     Game_Player.prototype.canMove = function () {
         if ($gameTemp && $gameTemp.furnitureBuildActive) {
             const scene = SceneManager._scene;
-            if (scene && scene._fbActive && scene._fbPointerMode === 'pad') return false;
+            if (scene && scene._fbActive) return false;
         }
         return _Game_Player_canMove_furniture.call(this);
     };
@@ -5730,7 +5728,7 @@
         _Scene_Map_terminate_fbuild.call(this);
     };
 
-    // Block click-to-move while building (keyboard movement stays free).
+    // Block click-to-move while building.
     const _Scene_Map_isMapTouchOk_fbuild = Scene_Map.prototype.isMapTouchOk;
     Scene_Map.prototype.isMapTouchOk = function () {
         if (this._fbActive) return false;

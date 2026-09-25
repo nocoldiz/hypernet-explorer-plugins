@@ -497,14 +497,18 @@
     // Nobody in a severed world owns an enchanted blade, and nobody in an
     // unbound one owns technology (window.MagicNature).
     const _natureOk = (e) => !window.MagicNature || window.MagicNature.allowsData(e);
-    const allWeapons = ($dataWeapons || []).filter(w => w && w.id > 0 && w.name && _natureOk(w));
-    const allArmors  = ($dataArmors  || []).filter(a => a && a.id > 0 && a.name && _natureOk(a));
+    const profile = (eventName && $gameSystem?._npcSociety?.[eventName])
+      || (window.NPCSim?.getProfile?.(eventName)) || null;
+    const lostEquip = new Set(profile?.lostEquipIds || []);
+    const allWeapons = ($dataWeapons || []).filter(w => w && w.id > 0 && w.name && _natureOk(w) && !lostEquip.has(w.id));
+    const allArmors  = ($dataArmors  || []).filter(a => a && a.id > 0 && a.name && _natureOk(a) && !lostEquip.has(a.id));
+    const isPurple = (item) => (item.price || 0) >= 100000;
 
     if (!hasClass) {
       // No class: clothes-category armors, rarely a cheap weapon
-      let armorPool = allArmors.filter(a => /<category:\s*clothes>/i.test(a.note || ''));
+      let armorPool = allArmors.filter(a => !isPurple(a) && /<category:\s*clothes>/i.test(a.note || ''));
       if (!armorPool.length) {
-        armorPool = [...allArmors].sort((x, y) => _itemLevel(x) - _itemLevel(y))
+        armorPool = [...allArmors].filter(a => !isPurple(a)).sort((x, y) => _itemLevel(x) - _itemLevel(y))
           .slice(0, Math.max(1, Math.floor(allArmors.length * 0.25)));
       }
       const shuffledArmors = seededShuffle([...armorPool], rng);
@@ -512,17 +516,23 @@
 
       let weaponId = null;
       if (rng.next() < 0.15 && allWeapons.length > 0) {
-        const cheapPool = [...allWeapons].sort((x, y) => _itemLevel(x) - _itemLevel(y))
+        const cheapPool = [...allWeapons].filter(w => !isPurple(w)).sort((x, y) => _itemLevel(x) - _itemLevel(y))
           .slice(0, Math.max(1, Math.floor(allWeapons.length * 0.2)));
-        weaponId = seededShuffle(cheapPool, rng)[0].id;
+        if (cheapPool.length > 0) weaponId = seededShuffle(cheapPool, rng)[0].id;
       }
       return { weaponId, armorIds };
     }
 
-    // Class NPC: target item stat total = party level × 5 × wealth multiplier
-    const targetLevel = _partyMedianLevel();
+    // Class NPC: target item stat total = NPC level × 5 × wealth multiplier
+    const targetLevel = (profile && typeof profile.level === 'number' && profile.level > 0)
+      ? profile.level : _partyMedianLevel();
     const wealthMults = [0.4, 0.7, 1.0, 1.4, 2.0];
     const targetStats = targetLevel * 5 * wealthMults[Math.min(wealthTierBase, 4)];
+
+    // 15% to 30% of NPCs carry a purple-tier item (price >= 100000, Epic/Legendary),
+    // scaling with their own level (15% at lvl 1, up to 30% at lvl 80+).
+    const purpleChance = 0.15 + 0.15 * Math.min(1, Math.max(0, (targetLevel - 1) / 79));
+    const allowPurple = rng.next() < purpleChance;
 
     const _score = (item) => {
       const diff = Math.abs(_itemLevel(item) - targetStats);
@@ -531,18 +541,38 @@
     };
 
     let weaponId = null;
+    let purpleGranted = false;
+
+    // 35% chance that an allowed purple item is a weapon, provided eligible purple weapons exist
+    const purpleInWeapon = allowPurple && (rng.next() < 0.35);
+
     if (allWeapons.length > 0) {
-      const scored = allWeapons.map(w => ({ id: w.id, score: _score(w) }));
+      let pool = purpleInWeapon ? allWeapons.filter(isPurple) : allWeapons.filter(w => !isPurple(w));
+      if (!pool.length) pool = allWeapons.filter(w => !isPurple(w));
+      if (!pool.length) pool = allWeapons;
+      const scored = pool.map(w => ({ id: w.id, score: _score(w), obj: w }));
       scored.sort((a, b) => b.score - a.score);
       weaponId = scored[0].id;
+      if (isPurple(scored[0].obj)) purpleGranted = true;
     }
 
     const armorIds = [];
     if (allArmors.length > 0) {
       const numArmors = rng.nextInt(1, 4);
-      const scored = allArmors.map(a => ({ id: a.id, score: _score(a) }));
+      const needPurpleArmor = allowPurple && !purpleGranted;
+      if (needPurpleArmor) {
+        const purplePool = allArmors.filter(isPurple);
+        if (purplePool.length > 0) {
+          const scoredP = purplePool.map(a => ({ id: a.id, score: _score(a) }));
+          scoredP.sort((a, b) => b.score - a.score);
+          armorIds.push(scoredP[0].id);
+        }
+      }
+      const nonPurpleArmors = allArmors.filter(a => !isPurple(a));
+      const scored = (nonPurpleArmors.length > 0 ? nonPurpleArmors : allArmors)
+        .map(a => ({ id: a.id, score: _score(a) }));
       scored.sort((a, b) => b.score - a.score);
-      const seen = new Set();
+      const seen = new Set(armorIds);
       for (const s of scored) {
         if (armorIds.length >= numArmors) break;
         if (!seen.has(s.id)) { armorIds.push(s.id); seen.add(s.id); }

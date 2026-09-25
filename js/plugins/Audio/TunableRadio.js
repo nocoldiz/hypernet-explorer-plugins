@@ -623,12 +623,18 @@
     function tick() {
         if (!radio.on) { stopTicker(); return; }
         if (radio._stream) return;   // a stream ends when the station ends
+        if (radio._retune !== null) return;
+        const station = currentStation();
+        if (!station || !station.tracks.length) return;
         const buffer = AudioManager._bgmBuffer;
         if (!buffer || typeof buffer.seek !== 'function') return;
+        if (typeof buffer.isReady === 'function' && !buffer.isReady()) return;
+        if (typeof buffer.isPlaying === 'function' && !buffer.isPlaying()) return;
+        if (buffer.name && radio._playingFile && buffer.name !== radio._playingFile) return;
         let seek = 0;
         try { seek = buffer.seek(); } catch (e) { return; }
         if (!Number.isFinite(seek)) return;
-        if (seek + 0.75 < radio._lastSeek) {
+        if (radio._lastSeek > 2.0 && seek + 0.75 < radio._lastSeek) {
             radio._lastSeek = 0;
             advanceTrack();
             return;
@@ -654,6 +660,7 @@
         radio.suspended = false;
         radio.playing = null;
         radio._playingFile = null;
+        radio._lastSeek = 0;
         if (radio._retune !== null) { clearTimeout(radio._retune); radio._retune = null; }
         stopStream();
         stopTicker();
@@ -730,6 +737,7 @@
         const now = Date.now();
         if (now - radio._lastHiss > 220) { radio._lastHiss = now; hiss(1); }
         if (radio._retune !== null) clearTimeout(radio._retune);
+        radio._lastSeek = 0;
         radio._retune = setTimeout(() => {
             radio._retune = null;
             playCurrentStation();
@@ -1247,7 +1255,7 @@
         // Pure parts, for the test harness.
         __test: {
             walkLibrary, buildStations, layoutBands, bandFrequencies, nextTrackIndex,
-            parseWebRadios, webStation, hashString
+            parseWebRadios, webStation, hashString, tick, radio, advanceTrack
         }
     };
 

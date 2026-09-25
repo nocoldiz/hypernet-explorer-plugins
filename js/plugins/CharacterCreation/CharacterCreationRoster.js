@@ -274,7 +274,15 @@
       const input = inputs[0];
       const errorLine = veil.querySelector(".cc-modal-error");
       const listBox = veil.querySelector(".cc-modal-list");
-      let picked = null;
+      const initialRows = (opts.entries ? opts.entries() : []) || [];
+      let picked = initialRows.length > 0 ? initialRows[0] : null;
+
+      inputs.forEach((el) => {
+        el.addEventListener("input", () => {
+          picked = null;
+          paintList();
+        });
+      });
 
       // The keypad's own painting: the slot being filled wears the same ring
       // the rest of the spread uses, and an empty slot shows as a blank box.
@@ -305,6 +313,14 @@
         for (const el of inputs) out[el.getAttribute("data-field")] = el.value;
         return out;
       };
+
+      const hasInputs = () => {
+        if (padKeys) {
+          return slots.some((s) => s && s.digits && String(s.digits).trim().length > 0);
+        }
+        return inputs.some((el) => el && el.value && el.value.trim().length > 0);
+      };
+
       const close = () => {
         document.removeEventListener("keydown", onKey, true);
         veil.remove();
@@ -320,12 +336,30 @@
           listBox.innerHTML = `<p class="cc-modal-body cc-modal-empty">${esc(opts.emptyLabel || "")}</p>`;
           return;
         }
-        listBox.innerHTML = rows.map((row, i) => `
-          <button type="button" class="cc-sidebar-btn cc-modal-row" data-row="${i}">${esc(row.label)}</button>`).join("");
+        listBox.innerHTML = rows.map((row, i) => {
+          const isPicked = picked && (
+            (picked.label && picked.label === row.label) ||
+            (picked.square && row.square && picked.square.x === row.square.x && picked.square.y === row.square.y)
+          );
+          return `
+          <button type="button" class="cc-sidebar-btn cc-modal-row${isPicked ? " cc-modal-row-picked" : ""}" data-row="${i}">${esc(row.label)}</button>`;
+        }).join("");
         Array.from(listBox.querySelectorAll("button.cc-modal-row")).forEach((btn, i) => {
-          if (picked && rows[i] && picked.label === rows[i].label) btn.classList.add("cc-modal-row-picked");
           btn.addEventListener("click", () => {
-            picked = rows[i];
+            const row = rows[i];
+            picked = row;
+            if (row && row.square) {
+              if (inputs[0]) inputs[0].value = `${row.square.x}, ${row.square.y}`;
+              if (inputs[1]) inputs[1].value = `${row.square.hatchX}, ${row.square.hatchY}`;
+              if (padKeys && slots.length >= 4) {
+                slots[0].digits = String(row.square.x);
+                slots[1].digits = String(row.square.y);
+                slots[2].digits = String(row.square.hatchX);
+                slots[3].digits = String(row.square.hatchY);
+                paintSlots();
+              }
+            }
+            if (errorLine) errorLine.textContent = "";
             SoundManager.playCursor();
             paintList();
           });
@@ -338,16 +372,40 @@
         if (errorLine) errorLine.textContent = error;
         if (!padKeys && input && input.focus) input.focus();
       };
+
+      const selectSavedRow = (val) => {
+        const rows = (opts.entries ? opts.entries() : []) || [];
+        if (!rows.length) return;
+        const match = (typeof val === "object" && val) ? rows.find((r) => {
+          if (r.square && val.world) {
+            const nums = String(val.world).match(/-?\d+/g);
+            if (nums && nums.length >= 2 && Number(nums[0]) === r.square.x && Number(nums[1]) === r.square.y) return true;
+          }
+          return false;
+        }) : null;
+        picked = match || rows[rows.length - 1];
+      };
+
       // Saving: checked, written down, and the sheet stays exactly where it is
       // with the list one row longer.
       const save = () => {
-        const error = opts.onSave ? opts.onSave(answer()) : null;
+        const val = answer();
+        const error = opts.onSave ? opts.onSave(val) : null;
         if (error) return fail(error);
         if (errorLine) errorLine.textContent = "";
+        selectSavedRow(val);
         paintList();
       };
       const accept = () => {
         if (collect) {
+          if (!picked && hasInputs()) {
+            const val = answer();
+            const error = opts.onSave ? opts.onSave(val) : null;
+            if (error) return fail(error);
+            if (errorLine) errorLine.textContent = "";
+            selectSavedRow(val);
+            paintList();
+          }
           // Nothing is started by typing: a saved square has to be picked.
           if (!picked) return fail(opts.pickLabel || "");
           close();
@@ -385,9 +443,13 @@
             const slot = slots[slotIndex];
             if (digit != null) {
               if (slot && slot.digits.length < 4) slot.digits += digit;
+              picked = null;
+              paintList();
               SoundManager.playCursor();
             } else if (b.getAttribute("data-key") === "del") {
               if (slot) slot.digits = slot.digits.slice(0, -1);
+              picked = null;
+              paintList();
               SoundManager.playCancel();
             } else {
               slotIndex = (slotIndex + 1) % slots.length;
@@ -1077,9 +1139,19 @@
   // Every finish path goes through markFirstCreationComplete, which lives in
   // the orchestrator and loads BEFORE this file, so it cannot hold a reference
   // to this: it reaches for it here when the moment comes.
+  // Story mode's Em is the exception: her empty off hand is part of her
+  // loadout, and filling it would arm her with a second weapon beside the
+  // vector gun. She is dressed by her own pass instead.
   function fillPartyStartingEquipment() {
     if (!$gameParty) return;
-    $gameParty.members().forEach((actor) => equipLowStatGearForActor(actor));
+    const CP = window.CharacterPresets || {};
+    $gameParty.members().forEach((actor) => {
+      if (CP.isStoryModeEm && CP.applyStoryModeEmEquipment && CP.isStoryModeEm(actor)) {
+        CP.applyStoryModeEmEquipment(actor);
+        return;
+      }
+      equipLowStatGearForActor(actor);
+    });
   }
   window.CharacterCreationParty = window.CharacterCreationParty || {};
   window.CharacterCreationParty.fillPartyStartingEquipment = fillPartyStartingEquipment;

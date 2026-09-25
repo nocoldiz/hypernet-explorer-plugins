@@ -367,7 +367,11 @@
     if (!PATRONS.length) return null;
     if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
     const cacheKey = x + "," + y;
-    if (_squareCache.has(cacheKey)) return _squareCache.get(cacheKey);
+    if (_squareCache.has(cacheKey)) {
+      const cached = _squareCache.get(cacheKey);
+      if (cached) rememberHatch(x, y, cached);
+      return cached;
+    }
     const key = deriveKey(x, y);
     let found = null;
     for (const patron of PATRONS) {
@@ -400,6 +404,25 @@
     }
   }
 
+  function claimedSquares() {
+    const WM = window.WorldManager;
+    if (!WM || typeof WM.getField !== "function") return [];
+    if (WM.hasActiveWorld && !WM.hasActiveWorld()) return [];
+    try {
+      const list = WM.getField(WORLD_FILE, "patronVaults");
+      const out = Array.isArray(list)
+        ? list.filter((r) => r && Number.isFinite(r.x) && Number.isFinite(r.y)).map((r) => Object.assign({}, r))
+        : [];
+      const single = claimedSquare();
+      if (single && !out.some((r) => r.x === single.x && r.y === single.y)) {
+        out.unshift(single);
+      }
+      return out;
+    } catch (e) {
+      return [];
+    }
+  }
+
   /**
    * Write the square down as this world's, from the coordinates somebody has
    * just proved they knew. Handed the world square; the hatch tile and the
@@ -410,16 +433,23 @@
   function claimSquare(worldX, worldY) {
     const rec = patronRecordAtWorld(worldX, worldY);
     if (!rec) return false;
+    const entry = {
+      id: rec.patron.id, x: worldX, y: worldY,
+      mapX: rec.mapCoordinates[0], mapY: rec.mapCoordinates[1],
+    };
     const WM = window.WorldManager;
-    if (!WM || typeof WM.setField !== "function") return false;
-    if (WM.hasActiveWorld && !WM.hasActiveWorld()) return false;
-    try {
-      WM.setField(WORLD_FILE, WORLD_FIELD, {
-        id: rec.patron.id, x: worldX, y: worldY,
-        mapX: rec.mapCoordinates[0], mapY: rec.mapCoordinates[1],
-      });
-    } catch (e) {
-      return false;
+    if (WM && typeof WM.setField === "function" && (!WM.hasActiveWorld || WM.hasActiveWorld())) {
+      try {
+        WM.setField(WORLD_FILE, WORLD_FIELD, entry);
+        let list = WM.getField(WORLD_FILE, "patronVaults");
+        if (!Array.isArray(list)) list = [];
+        if (!list.some((r) => r && r.x === worldX && r.y === worldY)) {
+          list.push(entry);
+          WM.setField(WORLD_FILE, "patronVaults", list);
+        }
+      } catch (e) {
+        // Continue even if world manager field write fails
+      }
     }
     postVesselToExistingParties(rec.patron);
     // Unlocked on the spot. The party standing there is handed the vessel the
@@ -1666,6 +1696,7 @@
     surfaceOnHatch,
     goToOwnHatch,
     claimedSquare,
+    claimedSquares,
     claimSquare,
     grantVessel,
     VESSEL_ITEM_ID,

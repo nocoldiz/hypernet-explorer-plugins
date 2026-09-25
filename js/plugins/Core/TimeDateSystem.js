@@ -1878,6 +1878,15 @@
     return this._isSeat;
   };
 
+  // Region 102 is a seat (a bench, a chair, a bus seat). Sitting down on one
+  // (MovementInteractionSystem's sit mode) rests the party exactly like the
+  // StartSeat command does.
+  const SEAT_REGION = 102;
+  Game_Player.prototype.isRestingOnSeat = function () {
+    if (this._isSeat) return true;
+    return !!this._isSitting && !!$gameMap && $gameMap.regionId(this.x, this.y) === SEAT_REGION;
+  };
+
   // Override movement methods to prevent tile movement while allowing direction changes
   const _Game_Player_moveStraight = Game_Player.prototype.moveStraight;
   Game_Player.prototype.moveStraight = function (d) {
@@ -1916,8 +1925,8 @@
     // so a couple of hundred seconds in a seat was a full rest that cost the
     // party nothing at all. The rest goes to the LEADER, not to actor 1, who is
     // not necessarily the one sitting.
-    if (this._isSeat) {
-      this._seatFrameCounter++;
+    if (this.isRestingOnSeat()) {
+      this._seatFrameCounter = (this._seatFrameCounter || 0) + 1;
       if (this._seatFrameCounter >= 60) {
         this._seatFrameCounter = 0;
         setGameTimeMinutes(getGameTimeMinutes() + 1);

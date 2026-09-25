@@ -3769,19 +3769,21 @@
         const backBtn = T('SkillMaster.back');
         const title = T('SkillMaster.fuseSpells3');
         leftBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeSpellEditor()">${backBtn}</div>
               <h2 class="title">${title}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
             <div class="sm-forge-rows">
                 ${slotsHTML}
                 ${animRowHTML}
                 ${createHTML}
             </div>
-            <div class="ui-section sm-forged-section">
-                <h4 class="inspect-section-title">${T('SkillMaster.fusedSpells')}</h4>
+            <div class="ui-section sm-forged-section sm-bench-subhead">
+                <span class="inspect-section-title">${T('SkillMaster.fusedSpells')}</span>
+                <span class="ui-chip sm-skill-badge">${customSpells.length}</span>
             </div>
-            <div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${fusedListHTML}
             </div>`;
 
@@ -3934,6 +3936,17 @@
         const customCount = this.getEditorCustomSpells().length;
         const maxFocus = FORGE_SPLIT_BASE + customCount;
         const prev = this._editorFocus;
+
+        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            if (this._editorFocus >= FORGE_SPLIT_BASE) {
+                this._editorFocus = 0;
+            } else if (customCount > 0) {
+                this._editorFocus = FORGE_SPLIT_BASE;
+            }
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
 
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
             this.closeSpellEditor();
@@ -6963,19 +6976,26 @@
         });
         if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneYet'))}</div></div>`;
 
+        const craftTitle = spell ? tr('titleSpell') : tr('titleSkill');
         leftBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeCraftBench()">${esc(tr('back'))}</div>
-              <h2 class="title">${esc(spell ? tr('titleSpell') : tr('titleSkill'))}</h2>
+              <h2 class="title">${esc(craftTitle)}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="sm-bench-tabs">
+              <div class="sm-bench-tab focusable ${spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('spell')">${esc(tr('titleSpell'))}</div>
+              <div class="sm-bench-tab focusable ${!spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('skill')">${esc(tr('titleSkill'))}</div>
             </div>
             <div class="sm-forge-rows sm-craft-rows">
                 ${rowsHTML}
                 ${createHTML}
             </div>
-            <div class="ui-section sm-forged-section">
-                <h4 class="inspect-section-title">${esc(spell ? tr('yourSpells') : tr('yourSkills'))}</h4>
+            <div class="ui-section sm-forged-section sm-bench-subhead">
+                <span class="inspect-section-title">${esc(spell ? tr('yourSpells') : tr('yourSkills'))}</span>
+                <span class="ui-chip sm-skill-badge">${this.craftedEntries(build.kind).length}</span>
             </div>
-            <div id="craft-scroll-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="craft-scroll-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${listHTML}
             </div>`;
 
@@ -7171,6 +7191,12 @@
                 this.refreshUISkillDOM();
                 this.scrollToActiveItem('craft-pick-box', '#craft-pick-box .focused');
             }
+            return;
+        }
+
+        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            const nextKind = (this._craft && this._craft.kind === 'skill') ? 'spell' : 'skill';
+            this.openCraftBench(nextKind);
             return;
         }
 
@@ -8085,21 +8111,29 @@
         if (!boundHTML) boundHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneBound'))}</div></div>`;
 
         leftBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeEnchantBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(tr('title' + kindWord))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="sm-bench-tabs">
+              <div class="sm-bench-tab focusable ${kind === 'weapon' ? 'active' : ''}" onclick="SceneManager._scene.openEnchantBench('weapon')">${esc(tr('titleWeapon'))}</div>
+              <div class="sm-bench-tab focusable ${kind === 'armor' ? 'active' : ''}" onclick="SceneManager._scene.openEnchantBench('armor')">${esc(tr('titleArmor'))}</div>
+              <div class="sm-bench-tab focusable ${kind === 'book' ? 'active' : ''}" onclick="SceneManager._scene.openEnchantBench('book')">${esc(tr('titleBook'))}</div>
             </div>
             <div class="sm-enchant-blurb">${esc(tr('blurb' + kindWord))}</div>
-            <div class="ui-section">
-              <h4 class="inspect-section-title">${esc(tr('chooseGear'))}</h4>
+            <div class="ui-section sm-bench-subhead">
+              <span class="inspect-section-title">${esc(tr('chooseGear'))}</span>
+              <span class="ui-chip sm-skill-badge">${slots.length}</span>
             </div>
-            <div id="enchant-gear-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="enchant-gear-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${slotsHTML}
             </div>
-            <div class="ui-section">
-              <h4 class="inspect-section-title">${esc(tr('boundSoFar'))}</h4>
+            <div class="ui-section sm-bench-subhead">
+              <span class="inspect-section-title">${esc(tr('boundSoFar'))}</span>
+              <span class="ui-chip sm-skill-badge">${this.enchantBound().length}</span>
             </div>
-            <div id="enchant-bound-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="enchant-bound-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${boundHTML}
             </div>`;
 
@@ -8124,17 +8158,27 @@
             : tr('pickGearFirst');
 
         rightBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <h2 class="title">${esc(tr('spellsTitle'))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
             <div class="sm-enchant-target">${esc(target)}</div>
-            <div id="enchant-spell-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="enchant-spell-box" class="ui-list ui-scroll sm-forged-list" style="flex:1 1 0; min-height:0;">
                 ${spellsHTML}
             </div>
             <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
     };
 
     Proto.updateEnchantBenchInput = function () {
+        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            const kinds = ['weapon', 'armor', 'book'];
+            const curIdx = kinds.indexOf(this._enchantKind || 'weapon');
+            const nextIdx = Input.isTriggered('pagedown')
+                ? (curIdx + 1) % kinds.length
+                : (curIdx - 1 + kinds.length) % kinds.length;
+            this.openEnchantBench(kinds[nextIdx]);
+            return;
+        }
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
             if (this._enchantColumn === 1) {
                 this._enchantColumn = 0;
@@ -8572,12 +8616,16 @@
         if (Controller.textEntryOpen && Controller.textEntryOpen()) return;
         const tip = (face, key) => ({ face: face, label: T('SkillMaster.tips.' + key) });
         const BENCHES = ['craft', 'enchant', 'writebook', 'hexorcize'];
-        if (BENCHES.indexOf(this._viewMode) < 0) { Controller.clearTips(); return; }
-        Controller.tips([
+        if (BENCHES.indexOf(this._viewMode) < 0 && this._viewMode !== 'spellEditor') { Controller.clearTips(); return; }
+        const tips = [
             tip('A', 'pick'),
             tip('dpad', 'walk'),
             tip('B', 'back')
-        ]);
+        ];
+        if (this._viewMode === 'enchant' || this._viewMode === 'writebook' || this._viewMode === 'craft') {
+            tips.push(tip('lr', 'mode'));
+        }
+        Controller.tips(tips);
     };
 
     // Every chip a written volume carries, in the order they stand on its row.
@@ -8659,15 +8707,20 @@
 
         const writeFocused = leftRow === chosen.length;
         leftBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeWriteBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(tr('title' + word))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="sm-bench-tabs">
+              <div class="sm-bench-tab focusable ${kind === 'grimorie' ? 'active' : ''}" onclick="SceneManager._scene.openWriteBench('grimorie')">${esc(tr('titleGrimorie'))}</div>
+              <div class="sm-bench-tab focusable ${kind === 'skillbook' ? 'active' : ''}" onclick="SceneManager._scene.openWriteBench('skillbook')">${esc(tr('titleSkillBook'))}</div>
             </div>
             <div class="sm-enchant-blurb">${esc(tr('blurb' + word))}</div>
-            <div class="ui-section">
-              <h4 class="inspect-section-title">${esc(tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}</h4>
+            <div class="ui-section sm-bench-subhead">
+              <span class="inspect-section-title">${esc(tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}</span>
             </div>
-            <div id="write-chosen-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="write-chosen-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${chosenHTML}
             </div>
             <div class="inspect-actions sm-forge-actions">
@@ -8675,10 +8728,11 @@
                     ${esc(tr('writeIt'))} <span class="sm-forge-cost">&middot; ${cost} KP</span>
                 </div>
             </div>
-            <div class="ui-section">
-              <h4 class="inspect-section-title">${esc(tr('writtenSoFar'))}</h4>
+            <div class="ui-section sm-bench-subhead">
+              <span class="inspect-section-title">${esc(tr('writtenSoFar'))}</span>
+              <span class="ui-chip sm-skill-badge">${this.writeMade().length}</span>
             </div>
-            <div id="write-made-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="write-made-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${writtenHTML}
             </div>`;
 
@@ -8696,10 +8750,11 @@
         if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToCopy'))}</div></div>`;
 
         rightBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <h2 class="title">${esc(tr('source' + word))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
-            <div id="write-source-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="write-source-box" class="ui-list ui-scroll sm-forged-list" style="flex:1 1 0; min-height:0;">
                 ${listHTML}
             </div>
             <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
@@ -8715,6 +8770,11 @@
     };
 
     Proto.updateWriteBenchInput = function () {
+        if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            const nextKind = (this._writeKind === 'skillbook') ? 'grimorie' : 'skillbook';
+            this.openWriteBench(nextKind);
+            return;
+        }
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
             this.closeWriteBench();
             return;
@@ -8964,12 +9024,13 @@
         if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothing'))}</div></div>`;
 
         leftBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeHexorcizeBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(tr('title'))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
             <div class="sm-enchant-blurb">${esc(tr('blurb'))}</div>
-            <div id="hexorcize-gear-box" class="ui-list ui-scroll sm-forged-list">
+            <div id="hexorcize-gear-box" class="ui-list ui-scroll sm-forged-list" style="flex:1 1 0; min-height:0;">
                 ${listHTML}
             </div>`;
 
@@ -8993,10 +9054,13 @@
         }
 
         rightBox.innerHTML = `
-            <div class="page-header-bar">
+            <div class="page-header-bar sm-bench-header">
               <h2 class="title">${esc(tr('detailTitle'))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
-            ${detailHTML}
+            <div style="flex:1 1 0; overflow-y:auto; padding-right:var(--sp-2);">
+                ${detailHTML}
+            </div>
             <div class="sm-enchant-target">${esc(tr('totalHere', { kp: total }))}</div>
             <div class="sm-forge-knowledge">${esc(tr('knowledge'))}: <strong>${knowledge} KP</strong></div>`;
     };

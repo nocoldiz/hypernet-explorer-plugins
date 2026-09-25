@@ -1050,18 +1050,12 @@
     },
 
     _handleSleep(controller) {
-      // Prefer region 102 rest tiles over home/fallback. Uses the cached
-      // map-wide rest-tile list, filtered to the same ±20 box the old
-      // per-dispatch sweep covered.
-      if (controller.event) {
-        const cx = controller.event.x, cy = controller.event.y;
-        const restTiles = _restTilesForMap().filter(t =>
-          Math.abs(t.x - cx) <= 20 && Math.abs(t.y - cy) <= 20);
-        if (restTiles.length) {
-          const t = restTiles[Math.floor(Math.random() * Math.min(restTiles.length, 10))];
-          controller.goToTile(t.x, t.y, "goingToZone", 120000);
-          return;
-        }
+      // Prefer sitting down on a region 102 seat over home/fallback. Seats are
+      // impassable furniture, so the controller walks to the tile beside one
+      // and sits (NPCSystem's NPCSeats); a sitting NPC recovers sleep.
+      if (controller.event && typeof controller.goSitNearby === "function" &&
+          controller.goSitNearby(20)) {
+        return;
       }
       // Walk to the NPC's assigned building door if it's on the current map
       const profile = $gameSystem?._npcSociety?.[controller.eventName];
@@ -1261,27 +1255,6 @@
     },
   };
 
-
-  // All passable REST_REGION (102) tiles on the current map, scanned once and
-  // cached per mapId (same pattern as MapManager.getMapZones' zone cache).
-  // Region + tile passability are static per map, so a single full sweep
-  // replaces _handleSleep's 41x41 per-dispatch findRegionTiles sweep.
-  let _restTilesCache = null;
-  function _restTilesForMap() {
-    if (!$gameMap) return [];
-    const mapId = $gameMap.mapId();
-    if (_restTilesCache && _restTilesCache.mapId === mapId) return _restTilesCache.tiles;
-    const tiles = [];
-    const w = $gameMap.width(), h = $gameMap.height();
-    for (let x = 0; x < w; x++) {
-      for (let y = 0; y < h; y++) {
-        if ($gameMap.regionId(x, y) === REST_REGION && $gameMap.isPassable(x, y, 2)
-            && !isBlockedTerrain(x, y)) tiles.push({ x, y });
-      }
-    }
-    _restTilesCache = { mapId, tiles };
-    return tiles;
-  }
 
   // findPassable: returns a small sample of passable tiles near the map centre.
   // Deliberately bounded to avoid scanning every tile on large maps.

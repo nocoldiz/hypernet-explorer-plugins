@@ -467,7 +467,7 @@
       if (this._activeTraitPackageId(actor) === pack.id) { SoundManager.playCursor(); return; }
       const putDown = false;
       const TP = window.TraitPoints;
-      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
+      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._appliedTraitIds || actor._selectedTraits);
       actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
       this._ccApplyTraitIds(actor, putDown ? [] : pack.traits.slice());
       if (actor.refresh) actor.refresh();
@@ -582,7 +582,6 @@
     // never assumed to still be ids after this: every read goes back through
     // selectedTraitIds / selectedTraitObjects.
     _ccApplyTraitIds(actor, ids) {
-      actor._selectedTraits = ids.slice();
       if (typeof applyTraitsToActor === 'function') {
         applyTraitsToActor(actor, ids);
       } else if (window.Scene_TraitSelector && typeof window.Scene_TraitSelector.prototype.applyTraitsByIds === 'function') {
@@ -604,10 +603,11 @@
       }
 
       const TP = window.TraitPoints;
-      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._selectedTraits);
+      if (TP && TP.revertGrants) TP.revertGrants(actor, actor._appliedTraitIds || actor._selectedTraits);
       actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
       this._ccApplyTraitIds(actor, []);
       actor._selectedTraits = [];
+      actor._appliedTraitIds = [];
 
       const api = window.DiseaseSystem;
       ((actor._ccDiseases || []).slice()).forEach((id) => {
@@ -2525,7 +2525,11 @@
           const nonGenetic = window.Health.Traits.filter(t => (t.category || "mental") !== "genetic");
           if (nonGenetic.length > 0) {
             const pick = rand(nonGenetic);
-            actor._selectedTraits = [pick.id];
+            if (typeof applyTraitsToActor === 'function') {
+              applyTraitsToActor(actor, [pick.id]);
+            } else {
+              actor._selectedTraits = [pick.id];
+            }
           }
         }
       }
@@ -4205,9 +4209,10 @@
           const p = positives[Math.floor(Math.random() * positives.length)];
           if (p && !picked.includes(p.id)) picked.push(p.id);
         }
-        currentActor._selectedTraits = picked;
         if (typeof applyTraitsToActor === 'function') {
           applyTraitsToActor(currentActor, picked);
+        } else {
+          currentActor._selectedTraits = picked;
         }
       }
 

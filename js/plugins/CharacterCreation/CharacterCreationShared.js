@@ -369,7 +369,7 @@
    * @param {array} traitIds - Array of trait IDs
    */
   function applyTraitsToActor(actor, traitIds) {
-    if (!actor || !traitIds || traitIds.length === 0) return;
+    if (!actor || !Array.isArray(traitIds)) return;
 
     // Try to use TraitSelector's applyTraitsByIds method if available
     const TraitSelectorScene = window.Scene_TraitSelector;
@@ -392,18 +392,55 @@
       return;
     }
 
-    // Store selected traits on the actor
-    if (!actor._selectedTraits) {
+    // Revert previous trait grants
+    const prevTraits = actor._appliedTraitIds || actor._selectedTraits || [];
+    prevTraits.forEach((entry) => {
+      const trait = (entry && typeof entry === "object")
+        ? entry
+        : TraitsArray.find((t) => String(t.id) === String(entry));
+      if (!trait) return;
+      (trait.skills || []).forEach((skillId) => {
+        if ($dataSkills[skillId]) {
+          const curClass = actor.currentClass ? actor.currentClass() : ($dataClasses ? $dataClasses[actor._classId] : null);
+          const classHasSkill = curClass && (curClass.learnings || []).some((l) => l.skillId === skillId && l.level <= (actor._level || 1));
+          if (!classHasSkill) {
+            actor.forgetSkill(skillId);
+          }
+        }
+      });
+      (trait.items || []).forEach((itemId) => {
+        if ($dataItems[itemId]) {
+          $gameParty.loseItem($dataItems[itemId], 1);
+        }
+      });
+      (trait.equipment || []).forEach((itemId) => {
+        if ($dataWeapons[itemId]) {
+          $gameParty.loseItem($dataWeapons[itemId], 1);
+        } else if ($dataArmors[itemId]) {
+          $gameParty.loseItem($dataArmors[itemId], 1);
+        }
+      });
+      (trait.switches || []).forEach((switchId) => {
+        $gameSwitches.setValue(switchId, false);
+      });
+    });
+    actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
+
+    if (traitIds.length === 0) {
       actor._selectedTraits = [];
+      actor._appliedTraitIds = [];
+      actor.refresh();
+      return;
     }
 
     const selectedTraits = [];
 
     // Collect trait objects by ID
-    traitIds.forEach((traitId) => {
-      const trait = TraitsArray.find((t) => t.id === traitId);
+    traitIds.forEach((entry) => {
+      const traitId = (entry && typeof entry === "object") ? entry.id : entry;
+      const trait = TraitsArray.find((t) => String(t.id) === String(traitId));
       if (trait) {
-        selectedTraits.push(trait);
+        if (!selectedTraits.includes(trait)) selectedTraits.push(trait);
       } else {
         console.warn(`Trait with ID ${traitId} not found in TraitSelector data`);
       }
@@ -452,6 +489,7 @@
 
     // Store selected traits and refresh
     actor._selectedTraits = selectedTraits;
+    actor._appliedTraitIds = selectedTraits.map((t) => t.id);
     actor.refresh();
   }
 

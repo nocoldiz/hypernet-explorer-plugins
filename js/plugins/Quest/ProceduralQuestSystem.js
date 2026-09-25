@@ -491,11 +491,181 @@
     return _enemyRoster;
   }
 
+  // ==========================================================================
+  // Ecology and site-native enemy matching
+  // ==========================================================================
+  const SURFACE_FAMILIES = [
+    { key: "ice", test: /^(ice|snow|permafrost|tundra|glacier|taiga|caveice|mountainice|forestice|villageice|cityice|burgice)/i },
+    { key: "volcanic", test: /^(volcano|hell|ember|lava)/i },
+    { key: "desert", test: /^(desert|saltflats|badlands|canyon|steppe|savannah|mountaindesert|citydesert|villagedesert|burgdesert)/i },
+    { key: "wet", test: /^(swamp|mangrove|lake|river|riverbank|beach|ocean|docks|seabed|caveflooded|floodedcave|bridge|villageriver|villagesea)/i },
+    { key: "wood", test: /^(forest|jungle|bamboo|spiritwoods|mushroom|fairy)/i },
+    { key: "dead", test: /^(graveyard|ruins|abandoned|villa|temple|church|crypt|castle|eldritchtomb)/i },
+    { key: "urban", test: /^(city|burg|metro|highway|office|factory|laboratory|spacecenter|omegatower|houses|docks|landfill|park|train|arena|prison)/i },
+    { key: "rural", test: /^(farm|fields|meadows|village|highlands|park|orchard)/i },
+    { key: "mountain", test: /^(mountain|highlands|mines|underdark|crystals|cave|lair)/i },
+    { key: "weird", test: /^(eldritch|limbo|dreamscape|abstract|digital|heaven|space|spiritwoods)/i },
+  ];
+
+  function siteSurfaceBiome(wx, wy) {
+    if (typeof $gameSystem?.getBiomeFromCache === "function") {
+      try {
+        const b = $gameSystem.getBiomeFromCache(wx, wy);
+        if (b) return b;
+      } catch (e) { }
+    }
+    try {
+      const U = window.ProcGenUtils;
+      const cache = $gameSystem && $gameSystem._procGenData
+        ? $gameSystem._procGenData.biomeCoordinateCache : null;
+      if (U && cache && typeof U.getBiomeFromCacheWithFallback === "function") {
+        const b = U.getBiomeFromCacheWithFallback(cache, wx, wy, $gameMap, WORLD_MAP_ID);
+        if (b) return b;
+      }
+    } catch (e) { }
+    return null;
+  }
+
+  function getBiomeDefinition(name) {
+    if (!name) return null;
+    if (window.ProcGenUtils && typeof window.ProcGenUtils.getBiomeByName === "function") {
+      try {
+        const b = window.ProcGenUtils.getBiomeByName(name);
+        if (b) return b;
+      } catch (e) { }
+    }
+    const biomes = window.WorldGen?.Biomes;
+    if (Array.isArray(biomes)) {
+      const lower = String(name).toLowerCase();
+      return biomes.find(b => b && b.name && b.name.toLowerCase() === lower) || null;
+    }
+    return null;
+  }
+
+  function resolveDungeonBiomeName(b) {
+    let target = (b && b.lowerLayer) || "Dungeon";
+    if (/cave/i.test(target)) target = "Dungeon";
+    return target;
+  }
+
+  const _siteEcologyCache = new Map();
+  function siteEcologyProfile(surfaceBiomeName) {
+    if (!surfaceBiomeName) return null;
+    const cacheKey = String(surfaceBiomeName).toLowerCase();
+    if (_siteEcologyCache.has(cacheKey)) return _siteEcologyCache.get(cacheKey);
+
+    const b = getBiomeDefinition(surfaceBiomeName);
+    const biomes = new Set();
+    const archetypes = new Set();
+
+    // 1. Above ground: surface biome and its special biomes
+    biomes.add(cacheKey);
+    if (b && Array.isArray(b.specialBiomes)) {
+      for (const sb of b.specialBiomes) {
+        if (sb) biomes.add(String(sb).toLowerCase());
+      }
+    }
+
+    // 2. Underground: natural lower layer and its special biomes
+    const lowerLayerName = (b && b.lowerLayer) ? String(b.lowerLayer) : "Cave";
+    biomes.add(lowerLayerName.toLowerCase());
+    const lowerDef = getBiomeDefinition(lowerLayerName);
+    if (lowerDef && Array.isArray(lowerDef.specialBiomes)) {
+      for (const sb of lowerDef.specialBiomes) {
+        if (sb) biomes.add(String(sb).toLowerCase());
+      }
+    }
+
+    // 3. Associated dungeons:
+    const families = new Set();
+    for (const fam of SURFACE_FAMILIES) {
+      if (fam.test.test(surfaceBiomeName)) families.add(fam.key);
+    }
+
+    const defaultDungeon = resolveDungeonBiomeName(b).toLowerCase();
+    biomes.add(defaultDungeon);
+
+    const D = window.ProcGenDungeon;
+    const structures = (D && typeof D.structures === "function") ? D.structures() : [];
+    for (const st of structures) {
+      if (!st || !st.key) continue;
+      const isFavoured = (st.affinity || []).some(a => families.has(a));
+      const isDirectMatch = st.key.toLowerCase() === defaultDungeon;
+      if (isFavoured || isDirectMatch) {
+        biomes.add(st.key.toLowerCase());
+        if (st.enemy) {
+          if (Array.isArray(st.enemy.biomes)) {
+            for (const eb of st.enemy.biomes) if (eb) biomes.add(String(eb).toLowerCase());
+          }
+          if (Array.isArray(st.enemy.archetypes)) {
+            for (const ea of st.enemy.archetypes) if (ea) archetypes.add(String(ea).toLowerCase());
+          }
+        }
+      }
+    }
+
+    const profile = { biomes, archetypes };
+    _siteEcologyCache.set(cacheKey, profile);
+    return profile;
+  }
+
+  function enemyBiomeTags(data) {
+    if (!data) return [];
+    if (data._pqBiomes !== undefined) return data._pqBiomes;
+    let biomes = [];
+    if (data.note) {
+      const m = data.note.match(/<Biome:\s*(.+?)>/i);
+      if (m) biomes = m[1].split(",").map(b => b.trim().toLowerCase()).filter(Boolean);
+    }
+    data._pqBiomes = biomes;
+    return biomes;
+  }
+
+  function enemyArchetypeTag(data) {
+    if (!data) return null;
+    if (data._pqArchetype !== undefined) return data._pqArchetype;
+    let arch = null;
+    if (window.BattleSystemEnhanced?.Helpers?.getEnemyArchetype) {
+      try { arch = window.BattleSystemEnhanced.Helpers.getEnemyArchetype(data); } catch (e) { }
+    }
+    if (!arch && data.note) {
+      const m = data.note.match(/<Archetype:\s*(.+?)>/i);
+      if (m) arch = m[1].trim();
+    }
+    data._pqArchetype = arch ? arch.toLowerCase() : null;
+    return data._pqArchetype;
+  }
+
+  function enemySpawnsAtSite(enemyId, site) {
+    if (!site || site.wx == null || site.wy == null) return true;
+    const surfaceName = siteSurfaceBiome(site.wx, site.wy);
+    if (!surfaceName) return true;
+    const profile = siteEcologyProfile(surfaceName);
+    if (!profile) return true;
+
+    const data = window.$dataEnemies?.[enemyId];
+    if (!data) return false;
+
+    const biomes = enemyBiomeTags(data);
+    const arch = enemyArchetypeTag(data);
+
+    if ((!biomes || !biomes.length) && !arch) return false;
+    if (biomes && biomes.some(b => profile.biomes.has(b))) return true;
+    if (arch && profile.archetypes.has(arch)) return true;
+    return false;
+  }
+
   // High-level target relative to the party median: L+2 .. L+8+diff*3.
   // Criminal hunts want <Talk> (CanTalk) enemies, monster hunts want the rest.
-  function pickBountyEnemy(rng, L, diff, wantCriminal) {
-    const roster = enemyRoster().filter(e => e.canTalk === wantCriminal);
+  // When a site is provided and the target is a creature, only pick enemies native to
+  // the site (its surface biome, underground layer, or associated dungeons).
+  function pickBountyEnemy(rng, L, diff, wantCriminal, site) {
+    let roster = enemyRoster().filter(e => e.canTalk === wantCriminal);
     if (!roster.length) return null;
+    if (site && !wantCriminal) {
+      const siteFiltered = roster.filter(e => enemySpawnsAtSite(e.id, site));
+      if (siteFiltered.length > 0) roster = siteFiltered;
+    }
     const lo = L + 2, hi = L + 8 + diff * 3;
     let band = roster.filter(e => e.level >= lo && e.level <= hi);
     if (!band.length) {
@@ -561,9 +731,13 @@
     return _eliteRoster;
   }
 
-  function pickEliteEnemy(rng, loLv, hiLv) {
-    const roster = eliteRoster();
+  function pickEliteEnemy(rng, loLv, hiLv, site) {
+    let roster = eliteRoster();
     if (!roster.length) return null;
+    if (site) {
+      const siteFiltered = roster.filter(e => enemySpawnsAtSite(e.id, site));
+      if (siteFiltered.length > 0) roster = siteFiltered;
+    }
     let band = roster.filter(e => e.level >= loLv && e.level <= hiLv);
     if (!band.length) {
       // Nearest available to the middle of the requested band.
@@ -629,13 +803,18 @@
   // the one-of-a-kind creature that stands in for it. The only field that tells
   // the two apart downstream is rarityKey, which rides on the bounty step and
   // then on the world's bounty store.
-  function maybeRarityTarget(rng, enemy) {
+  function maybeRarityTarget(rng, enemy, site) {
     if (!enemy || !chance(rng, RARITY_HUNT_CHANCE)) return enemy;
     const H = rarityHelpers();
     if (!H) return enemy;
     let roster = [];
     try { roster = H.getUnmetRarities() || []; } catch (e) { return enemy; }
-    const near = roster.filter(r => Math.abs(r.level - enemy.level) <= RARITY_HUNT_REACH);
+    let near = roster.filter(r => Math.abs(r.level - enemy.level) <= RARITY_HUNT_REACH);
+    if (site) {
+      const siteFiltered = near.filter(r => enemySpawnsAtSite(r.enemyId, site));
+      if (siteFiltered.length > 0) near = siteFiltered;
+      else return enemy;
+    }
     if (!near.length) return enemy;
     const r = pick(rng, near);
     return {
@@ -702,14 +881,8 @@
   const WATER_BIOMES = ["Ocean", "SeaBed", "Lake"]; // i18n-ignore: Biomes.json ids
 
   function isWaterSite(wx, wy) {
-    try {
-      const U = window.ProcGenUtils;
-      const cache = $gameSystem && $gameSystem._procGenData
-        ? $gameSystem._procGenData.biomeCoordinateCache : null;
-      if (!U || !cache || typeof U.getBiomeFromCacheWithFallback !== "function") return false;
-      const b = U.getBiomeFromCacheWithFallback(cache, wx, wy, $gameMap, WORLD_MAP_ID);
-      return !!b && WATER_BIOMES.includes(b);
-    } catch (e) { return false; }
+    const b = siteSurfaceBiome(wx, wy);
+    return !!b && WATER_BIOMES.includes(b);
   }
 
   // A coordinate site is never more than SITE_RADIUS world tiles from the board
@@ -1488,12 +1661,12 @@
       }
       case "elite_hunt": {
         // Pure combat, and deliberately out of the party's league.
+        const site = pickSiteCoords(rng, origin);
         const lo = diff >= 5 ? 100 : 70;
         const hi = diff >= 5 ? 300 : 100;
-        const picked = pickEliteEnemy(rng, lo, hi);
+        const picked = pickEliteEnemy(rng, lo, hi, site);
         if (!picked) { fallbackToSurvey(); break; }
-        const enemy = maybeRarityTarget(rng, picked);
-        const site = pickSiteCoords(rng, origin);
+        const enemy = maybeRarityTarget(rng, picked, site);
         o.steps = [stepBounty(site, enemy, false)];
         o.elite = true;
         // Elite pay is set by the star band, but the gear is the real draw.
@@ -1575,11 +1748,11 @@
       case "bounty_monster": {
         const site = pickSiteCoords(rng, origin);
         const criminal = type === "bounty_criminal";
-        const picked = pickBountyEnemy(rng, L, diff, criminal);
+        const picked = pickBountyEnemy(rng, L, diff, criminal, site);
         if (!picked) { fallbackToSurvey(); break; }
         // A warrant is sworn out on a person and a creature hunt is not: only
         // the second is ever rewritten for a one-of-a-kind.
-        const enemy = criminal ? picked : maybeRarityTarget(rng, picked);
+        const enemy = criminal ? picked : maybeRarityTarget(rng, picked, site);
         o.steps = [stepBounty(site, enemy, criminal)];
         gold *= 1.5 + 0.05 * Math.max(0, enemy.level - L);
         ctx.X = site.wx; ctx.Y = site.wy; ctx.ENEMY = enemy.name; ctx.LVL = enemy.level;
@@ -1668,14 +1841,15 @@
       }
       case "purge": {
         const site = pickSiteCoords(rng, origin);
-        const picked = pickBountyEnemy(rng, L, diff, chance(rng, 0.35));
+        const criminal = chance(rng, 0.35);
+        const picked = pickBountyEnemy(rng, L, diff, criminal, site);
         if (!picked) { fallbackToSurvey(); break; }
         // Same rule as the plain bounty: a purge sent after people is left
         // alone, a purge sent after creatures may be written for the one. What
         // the notice is - a warrant or a hunt - was settled by the creature it
         // was written against, so the flag is read off THAT one and not off the
         // rarity that stood in for it afterwards.
-        const enemy = picked.canTalk ? picked : maybeRarityTarget(rng, picked);
+        const enemy = picked.canTalk ? picked : maybeRarityTarget(rng, picked, site);
         o.stepMode = "seq";
         o.steps = [stepBounty(site, enemy, picked.canTalk), stepCache(site, true)];
         if (chance(rng, 0.4)) o.reward.gear = pickGearReward(rng, L, chance(rng, 0.3));
@@ -4384,6 +4558,7 @@
     state, bounties,
     // map side
     questMarkers, questLocation, destCoords, sitePlace, siteText,
+    enemySpawnsAtSite, siteEcologyProfile, siteSurfaceBiome,
     // social side
     npcQuestHistory, placeMatchesHere, currentWorldCoords, destinationHere,
     knownBoards, partyArtifacts,

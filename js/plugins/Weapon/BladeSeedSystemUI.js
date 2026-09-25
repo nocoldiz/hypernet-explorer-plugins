@@ -100,9 +100,15 @@
       const draw = () => {
         const ctx = cv.getContext('2d');
         ctx.imageSmoothingEnabled = false;
-        const sw = Math.min(bmp.width, 64), sh = Math.min(bmp.height, 64);
         const src = bmp._canvas || bmp._image;
-        if (src) ctx.drawImage(src, 0, 0, sw, sh, 0, 0, cv.width, cv.height);
+        if (!src || !bmp.width || !bmp.height) return;
+        const scale = Math.min(cv.width / bmp.width, cv.height / bmp.height);
+        const dw = bmp.width * scale;
+        const dh = bmp.height * scale;
+        const dx = (cv.width - dw) / 2;
+        const dy = (cv.height - dh) / 2;
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(src, 0, 0, bmp.width, bmp.height, dx, dy, dw, dh);
       };
       bmp.isReady() ? draw() : bmp.addLoadListener(draw);
     } catch (_) {}
@@ -170,10 +176,6 @@
     onCancelAction() {
       if (this._phase === 'preview') {
         this._onBack();
-      } else if (this._selIdx !== -1) {
-        this._selIdx = -1;
-        SoundManager.playCancel();
-        this._updateSel();
       } else {
         this._onCancel();
       }
@@ -199,6 +201,7 @@
       } else {
         if (left)                                           this._stepLook(-1);
         if (right)                                          this._stepLook(1);
+        if (Input.isTriggered('shift') || Input.isTriggered('tab')) this._onReshuffle();
         if (Input.isTriggered('ok'))                        this._onConfirm();
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) this.onCancelAction();
       }
@@ -352,12 +355,14 @@
                   const sel  = i === this._selIdx ? ' selected' : '';
                   const wd   = $dataWeapons[parseInt(wt.weaponId)];
                   const skill = wt.startingSkill ? $dataSkills[wt.startingSkill] : null;
+                  const rawSkillName = skill ? (skill.name || '').trim() : '';
+                  const skillName = rawSkillName || (wt.startingSkill ? T('BladeSeed.weaponSkillNumbered', { id: wt.startingSkill }) : '');
                   return `<div class="item-slot${sel}" data-idx="${i}">
                     <div class="item-slot-info">
                       <span class="item-slot-name">${wd ? tr(wd.name) : weaponTypeLabel(wd)}</span>
                       <span class="item-slot-meta">
                         ${wd ? `<span class="item-slot-count">ATK +${wd.params[2]}</span>` : ''}
-                        ${skill ? `<span class="bs-skill-hint">${skill.name}</span>` : ''}
+                        ${skillName ? `<span class="bs-skill-hint">${skillName}</span>` : ''}
                       </span>
                     </div>
                   </div>`;
@@ -378,8 +383,12 @@
           el.addEventListener('mouseenter', () => {
             if (this._selIdx !== i) { this._selIdx = i; SoundManager.playCursor(); this._updateSel(); }
           });
-          el.addEventListener('mousedown', () => this._onWeaponOk());
+          el.addEventListener('mousedown', () => {
+            this._selIdx = i;
+            this._onWeaponOk();
+          });
         });
+        this._renderWeaponInspect();
 
       } else {
         const sp      = this._spirit;
@@ -467,10 +476,50 @@
       }
     }
 
+    _renderWeaponInspect() {
+      if (!this._el || this._phase !== 'weaponSelect') return;
+      const rightPage = this._el.querySelector('.right-page');
+      if (!rightPage) return;
+      const wt = this._weapons[this._selIdx];
+      if (!wt) {
+        rightPage.innerHTML = `
+          <div class="item-inspect--empty">
+            <div class="inspect-placeholder-icon"></div>
+            <p class="inspect-placeholder-text">${T('BladeSeed.ui.selectWeaponType')}</p>
+          </div>`;
+        return;
+      }
+      const wd = $dataWeapons[parseInt(wt.weaponId)];
+      const skill = wt.startingSkill ? $dataSkills[wt.startingSkill] : null;
+      const rawSkillName = skill ? (skill.name || '').trim() : '';
+      const skillName = rawSkillName || (wt.startingSkill ? T('BladeSeed.weaponSkillNumbered', { id: wt.startingSkill }) : '');
+      rightPage.innerHTML = `
+        <div class="inspect-header">
+          <div class="inspect-title-box">
+            <div class="inspect-name">${wd ? tr(wd.name) : weaponTypeLabel(wd)}</div>
+            <div class="inspect-rarity">${weaponTypeLabel(wd)}</div>
+          </div>
+        </div>
+        <div class="inspect-lore">
+          <p class="inspect-description">${wd?.description ? tr(wd.description) : ''}</p>
+          <div class="inspect-section-title">${T('BladeSeed.weapon')}</div>
+          <div class="inspect-spec-row">
+            <span class="inspect-spec-label">${T('BladeSeed.stat.atk')}</span>
+            <span class="inspect-spec-value">+${wd ? wd.params[2] : 0}</span>
+          </div>
+          ${skillName ? `
+          <div class="inspect-spec-row">
+            <span class="inspect-spec-label">${T('BladeSeed.initialSkills')}</span>
+            <span class="inspect-spec-value">${skillName}</span>
+          </div>` : ''}
+        </div>`;
+    }
+
     _updateSel() {
       if (!this._el) return;
       this._el.querySelectorAll('.item-slot').forEach((el, i) =>
         el.classList.toggle('selected', i === this._selIdx));
+      this._renderWeaponInspect();
     }
   }
 
@@ -501,22 +550,16 @@
     }
 
     onCancelAction() {
-      if (this._selIdx !== -1) {
-        this._selIdx = -1;
-        SoundManager.playCancel();
-        this._updateSkillSel();
-      } else {
-        SoundManager.playCancel();
-        SceneManager.pop();
-      }
+      SoundManager.playCancel();
+      SceneManager.pop();
     }
 
     update() {
       Scene_MenuBase.prototype.update.call(this);
-      const { up, down } = this._wasd.tick();
+      const { up, down, left, right } = this._wasd.tick();
 
-      // L1 / R1, cycle right-page tabs
-      if (Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+      // Tab or L1 / R1, cycle right-page tabs
+      if (Input.isTriggered('pageup') || Input.isTriggered('pagedown') || Input.isTriggered('tab')) {
         const tabs = ['stats', 'skills'];
         const cur  = tabs.indexOf(this._rightTab);
         this._rightTab = tabs[(cur + (Input.isTriggered('pageup') ? -1 : 1) + tabs.length) % tabs.length];
@@ -526,7 +569,37 @@
         return;
       }
 
-      if (this._rightTab === 'skills') {
+      if (this._rightTab === 'stats') {
+        if (right) {
+          this._rightTab = 'skills';
+          this._selIdx   = 0;
+          SoundManager.playCursor();
+          this._render();
+          return;
+        }
+      } else if (this._rightTab === 'skills') {
+        if (left) {
+          if (this._skillMode === 'learned') {
+            this._skillMode = 'learn';
+            this._selIdx   = 0;
+            SoundManager.playCursor();
+            this._render();
+            return;
+          } else {
+            this._rightTab = 'stats';
+            this._selIdx   = 0;
+            SoundManager.playCursor();
+            this._render();
+            return;
+          }
+        }
+        if (right && this._skillMode === 'learn') {
+          this._skillMode = 'learned';
+          this._selIdx   = 0;
+          SoundManager.playCursor();
+          this._render();
+          return;
+        }
         const list = this._skillList();
         if (up) {
           this._selIdx = this._selIdx <= 0 ? list.length - 1 : this._selIdx - 1;
@@ -662,7 +735,7 @@
             }).join('')
             : `<p class="item-grid-empty">${T('BladeSeed.noSkills')}</p>`}
           </div>
-          ${helpText ? `<div class="bs-skill-help">${helpText}</div>` : ''}`;
+          <div class="bs-skill-help">${helpText}</div>`;
       }
 
       this._el.innerHTML = `
@@ -724,7 +797,10 @@
         el.addEventListener('mouseenter', () => {
           if (this._selIdx !== i) { this._selIdx = i; SoundManager.playCursor(); this._updateSkillSel(); }
         });
-        el.addEventListener('mousedown', () => { if (this._skillMode === 'learn') this._learnSkill(); });
+        el.addEventListener('mousedown', () => {
+          this._selIdx = i;
+          if (this._skillMode === 'learn') this._learnSkill();
+        });
       });
     }
 

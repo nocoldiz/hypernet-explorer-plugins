@@ -126,16 +126,39 @@
     function statWinnerSide(leftData, rightData) {
         return (statPower(leftData) + Math.random() * 80) >= (statPower(rightData) + Math.random() * 80) ? -1 : 1;
     }
-    function fallbackBeats(winnerSide) {
+    function fallbackBeats(winnerSide, startGauges, leftData, rightData) {
         const loser = -winnerSide;
-        const mk = (side, target, skill, results) => ({
+        const mk = (side, target, skill, results, gauges) => ({
             kind: 'action', side, targetSide: target, animationId: 1229,
-            magical: false, isFriend: false, userName: T('MonsterTournament.fighter'), skillName: skill, results: results || []
+            magical: false, isFriend: false, userName: T('MonsterTournament.fighter'), skillName: skill, results: results || [],
+            gauges: gauges
         });
+        const lMhp = (startGauges && startGauges['-1'] && startGauges['-1'].mhp && !isNaN(startGauges['-1'].mhp))
+            ? startGauges['-1'].mhp : ((leftData && leftData.params && leftData.params[0]) || 1000);
+        const rMhp = (startGauges && startGauges['1'] && startGauges['1'].mhp && !isNaN(startGauges['1'].mhp))
+            ? startGauges['1'].mhp : ((rightData && rightData.params && rightData.params[0]) || 1000);
+        const lStartHp = (startGauges && startGauges['-1'] && startGauges['-1'].hp && !isNaN(startGauges['-1'].hp))
+            ? startGauges['-1'].hp : lMhp;
+        const rStartHp = (startGauges && startGauges['1'] && startGauges['1'].hp && !isNaN(startGauges['1'].hp))
+            ? startGauges['1'].hp : rMhp;
+        const snap = (lHp, rHp) => ({
+            '-1': { hp: Math.max(0, lHp), mhp: lMhp, mp: 0, mmp: 0, tp: 0, mtp: 100 },
+            '1': { hp: Math.max(0, rHp), mhp: rMhp, mp: 0, mmp: 0, tp: 0, mtp: 100 }
+        });
+        const winTargetHp = winnerSide === -1 ? rStartHp : lStartHp;
+        const loseTargetHp = winnerSide === -1 ? lStartHp : rStartHp;
+        const winHit1 = Math.max(1, Math.round(winTargetHp * 0.45));
+        const winFinish = Math.max(1, winTargetHp - winHit1);
+        const loseHit = Math.max(1, Math.round(loseTargetHp * 0.25));
+
+        const g0 = winnerSide === -1 ? snap(lStartHp - loseHit, rStartHp) : snap(lStartHp, rStartHp - loseHit);
+        const g1 = winnerSide === -1 ? snap(lStartHp - loseHit, rStartHp - winHit1) : snap(lStartHp - winHit1, rStartHp - loseHit);
+        const g2 = winnerSide === -1 ? snap(lStartHp - loseHit, 0) : snap(0, rStartHp - loseHit);
+
         return [
-            mk(loser, winnerSide, T('MonsterTournament.skillAttack')),
-            mk(winnerSide, loser, T('MonsterTournament.skillAttack')),
-            mk(winnerSide, loser, T('MonsterTournament.skillFinish'), [{ kind: 'death', side: loser }])
+            mk(loser, winnerSide, T('MonsterTournament.skillAttack'), [{ kind: 'damage', side: winnerSide, value: loseHit }], g0),
+            mk(winnerSide, loser, T('MonsterTournament.skillAttack'), [{ kind: 'damage', side: loser, value: winHit1 }], g1),
+            mk(winnerSide, loser, T('MonsterTournament.skillFinish'), [{ kind: 'damage', side: loser, value: winFinish }, { kind: 'death', side: loser }], g2)
         ];
     }
 
@@ -151,28 +174,37 @@
 
     function runDuel(leftData, rightData, record) {
         const out = { beats: [], winnerSide: 0 };
-        const prevInBattle = $gameParty._inBattle;
+        const prevInBattle = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty._inBattle : false;
+        const prevTroopEnemies = (typeof $gameTroop !== 'undefined' && $gameTroop) ? $gameTroop._enemies : null;
         let L, R;
         try {
             L = new Game_Enemy(leftData.id, 0, 0);
             R = new Game_Enemy(rightData.id, 0, 0);
-            L.recoverAll(); R.recoverAll();
+            if (typeof L.level !== 'number') L.level = 1;
+            if (typeof R.level !== 'number') R.level = 1;
+            if (typeof $gameTroop !== 'undefined' && $gameTroop) $gameTroop._enemies = [L, R];
+            if (L.recoverAll) L.recoverAll();
+            if (R.recoverAll) R.recoverAll();
             if (L.initTp) L.initTp();
             if (R.initTp) R.initTp();
             // Skills are "battle only" (occasion 1); the engine only allows them
             // while a party is in battle, so flip the flag for the simulation.
-            $gameParty._inBattle = true;
+            if (typeof $gameParty !== 'undefined' && $gameParty) $gameParty._inBattle = true;
 
             const sideOf = b => (b === L ? -1 : 1);
             // What the fighting-game gauges read: every recorded beat carries a
             // snapshot of both fighters' HP / MP / TP taken right after it
             // resolved, so the bars in the arena follow the very battle the
             // engine already fought instead of guessing at it.
-            const snap = (b) => ({
-                hp: b.hp, mhp: Math.max(1, b.mhp),
-                mp: b.mp, mmp: Math.max(0, b.mmp),
-                tp: Math.round(b.tp || 0), mtp: Math.max(1, b.maxTp ? b.maxTp() : 100)
-            });
+            const snap = (b) => {
+                const maxHp = Math.max(1, Math.round((typeof b.mhp === 'number' && !isNaN(b.mhp)) ? b.mhp : ((b._mhp != null) ? b._mhp : 1000)));
+                const curHp = Math.round((typeof b.hp === 'number' && !isNaN(b.hp)) ? b.hp : ((b._hp != null) ? b._hp : maxHp));
+                return {
+                    hp: curHp, mhp: maxHp,
+                    mp: Math.round(b.mp || 0), mmp: Math.max(0, Math.round(b.mmp || 0)),
+                    tp: Math.round(b.tp || 0), mtp: Math.max(1, b.maxTp ? b.maxTp() : 100)
+                };
+            };
             const gauges = () => ({ '-1': snap(L), '1': snap(R) });
             const pushBeat = (beat) => { beat.gauges = gauges(); out.beats.push(beat); };
             out.startGauges = gauges();
@@ -203,6 +235,7 @@
 
                     for (const action of actions) {
                         if (!subject.isAlive() || !oppOf(subject).isAlive()) break;
+                        action.subject = () => subject;
                         if (!action.item()) action.setAttack();
                         const item = action.item();
                         if (!item) continue;
@@ -226,7 +259,12 @@
 
                         // A single malformed skill formula must not abort the
                         // whole duel; on error the beat still plays its anim.
-                        try { action.apply(targetB); } catch (err) { /* skip effects */ }
+                        try {
+                            targetB.clearResult();
+                            action.apply(targetB);
+                        } catch (err) {
+                            console.warn('[MonsterTournament] action.apply error:', err);
+                        }
                         const res = targetB.result();
 
                         if (beat) {
@@ -276,9 +314,21 @@
         } catch (e) {
             console.error('[MonsterTournament] duel sim failed; using stat fallback', e);
             out.winnerSide = statWinnerSide(leftData, rightData);
-            if (record && out.beats.length === 0) out.beats = fallbackBeats(out.winnerSide);
+            const lMhp = (leftData && leftData.params && leftData.params[0]) || 1000;
+            const rMhp = (rightData && rightData.params && rightData.params[0]) || 1000;
+            if (!out.startGauges || typeof out.startGauges['-1']?.hp !== 'number' || isNaN(out.startGauges['-1'].hp)) {
+                out.startGauges = {
+                    '-1': { hp: lMhp, mhp: lMhp, mp: 0, mmp: 0, tp: 0, mtp: 100 },
+                    '1': { hp: rMhp, mhp: rMhp, mp: 0, mmp: 0, tp: 0, mtp: 100 }
+                };
+            }
+            if (record && out.beats.length === 0) out.beats = fallbackBeats(out.winnerSide, out.startGauges, leftData, rightData);
+            out.finalGauges = (out.beats && out.beats[out.beats.length - 1] && out.beats[out.beats.length - 1].gauges) || out.startGauges;
         } finally {
-            $gameParty._inBattle = prevInBattle;
+            if (typeof $gameParty !== 'undefined' && $gameParty) $gameParty._inBattle = prevInBattle;
+            if (typeof $gameTroop !== 'undefined' && $gameTroop && prevTroopEnemies) {
+                $gameTroop._enemies = prevTroopEnemies;
+            }
         }
         return out;
     }
@@ -1595,6 +1645,7 @@
         }
     }
 
+    Scene_MonsterTournament.runDuel = runDuel;
     // Export the scene class.
     window.Scene_MonsterTournament = Scene_MonsterTournament;
 })();

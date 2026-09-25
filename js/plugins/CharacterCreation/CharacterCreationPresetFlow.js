@@ -424,9 +424,10 @@
 
       // Apply preset traits if defined
       if (preset.traits && Array.isArray(preset.traits) && preset.traits.length > 0) {
-        actor._selectedTraits = [...preset.traits];
         if (typeof applyTraitsToActor === 'function') {
           applyTraitsToActor(actor, preset.traits);
+        } else {
+          actor._selectedTraits = [...preset.traits];
         }
       }
 
