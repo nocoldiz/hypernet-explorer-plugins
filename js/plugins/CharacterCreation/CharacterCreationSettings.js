@@ -23,7 +23,6 @@
   if (!Scene_CharacterCreation) return;
 
   const {
-    CREATION_BGM,
     getCCMusicTracks,
     CharacterCreationData,
   } = window.CCKit;
@@ -651,12 +650,11 @@
     }
 
     onSettingsConfirm() {
-      // Any battle-music preview started from the settings is replaced here with
-      // the creation theme so it does not bleed into later steps. Nothing is
-      // stopped first: AudioManager.playBgm leaves an identical track playing
-      // where it is, so leaving this page never restarts music that is already
-      // the creation theme (a preceding stopBgm made every confirm restart it).
-      AudioManager.playBgm({ name: CREATION_BGM, volume: 90, pitch: 100, pan: 0 });
+      // Leaving the page for good. The step handler advances the wizard, and
+      // setupStep hands the audio channel back to the creation theme on the way
+      // out (see the leave check at the top of setupStep). That one hook covers
+      // confirming the page and clicking away from it alike, so a battle-music
+      // preview never bleeds into the later steps.
       const stepData = CharacterCreationData[this._step];
       if (stepData && stepData.handler) {
         stepData.handler.call(this);

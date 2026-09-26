@@ -1,3 +1,8 @@
+0.6.41a
+ Fixed:
+  - battle preview music
+  - restored HP curves, tweaked MP curves
+
 0.6.40a
 Added:
  - restored language selector
@@ -5,6 +10,7 @@ Added:
  - neapolitan translation for Bubba lines
 
 Changed:
+ - restored HP curves
  - make chat column less wide to show full width options
  - default music for title screen and removed music label
 

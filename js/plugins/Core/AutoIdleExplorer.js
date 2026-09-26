@@ -589,6 +589,41 @@
     const OVERLAY_IGNORE = 1800; // frames an undismissable DOM element is ignored.
     const OVERLAY_MIN_AREA = 0.22; // of the viewport, before a node counts as a menu.
     const DEST_STALL = 60;    // frames a stale touch destination may block engaging.
+    // A controller that keeps pressing the same event is stuck, not persistent:
+    // the door will not open, the chest will not give, and the leader stands
+    // there hammering it, which reads as a machine rather than as somebody
+    // idling. The same event started again and again inside the window, roughly
+    // one doorway pressed over and over, is declared a loop and refused for the
+    // cooldown, and the party is sent to plan something else.
+    //
+    // These are the MIDDLES of small ranges, not fixed values. A person does
+    // not give up on the third try to the frame every time, nor forget a thing
+    // after exactly fifteen seconds, so each streak rolls its own patience, its
+    // own window and its own grudge (see wobble). Consistent, not deterministic.
+    const INTERACT_STUCK_TRIES = 3;      // middle presses per streak (2..5)
+    const INTERACT_STUCK_TRIES_SPREAD = 0.5;
+    const INTERACT_STUCK_WINDOW = 300;   // middle window, in frames (3..7s)
+    const INTERACT_STUCK_WINDOW_SPREAD = 0.4;
+    const INTERACT_STUCK_COOLDOWN = 900; // middle cooldown, in frames (7.5..22.5s)
+    const INTERACT_STUCK_COOLDOWN_SPREAD = 0.5;
+
+    // A symmetric roll around a middle. Used for the watchdog's patience so it
+    // never reads as a metronome: the same event is given up on at 2, 3, 4 or 5
+    // presses, and a refusal lasts somewhere between about eight and twenty-two
+    // seconds, drawn fresh for every streak.
+    function wobble(middle, spread) {
+        return middle * (1 - spread + Math.random() * spread * 2);
+    }
+    function wobbleInt(middle, spread) {
+        return Math.max(1, Math.round(wobble(middle, spread)));
+    }
+
+    // Nothing the autopilot drives stands on one square for longer than this. A
+    // body that has not moved in five seconds has stopped exploring and is
+    // standing there, which is the one thing an idle controller must never look
+    // like: whatever intent is holding it is dropped, and a step in a direction
+    // that is actually open is taken.
+    const STILL_LIMIT = 300; // five seconds
     // Exploring is leaving. After this many errands on one map the CPU stops
     // looking for another thing to poke and takes the first door, staircase or
     // transfer it can see; before that it takes one now and then anyway, so a
@@ -2358,7 +2393,7 @@
         if (!$gameMap || Loose.onWorldMap()) return false;
         let best = null;
         for (const ev of $gameMap.events()) {
-            if (!isInteractable(ev) || !isPortalEvent(ev)) continue;
+            if (!isInteractable(ev) || !isPortalEvent(ev) || AutoIdle.refused(ev)) continue;
             const dist = Math.abs(ev.x - $gamePlayer.x) + Math.abs(ev.y - $gamePlayer.y);
             if (!best || dist < best.dist) best = { ev, dist };
         }
@@ -2631,6 +2666,10 @@
         destY: null,
         recent: {},
         shunned: {},    // enemies judged too strong, so each is refused once aloud
+        stuck: {},      // recentKey → frame until which an event is refused as a loop
+        _interactWatch: { key: null, count: 0, at: 0 }, // repeated presses on ONE event
+        _stillTile: null, // "x,y" the leader is standing on, for the still watch
+        _stillSince: 0,   // frame exploration began on that square
         mapId: 0,
         blocked: 0,       // frames stuck on a non-drivable map with no message/overlay
         dismissTries: 0,  // attempts made to close the current external menu
@@ -2670,6 +2709,9 @@
             this.dismissTries = 0;
             this.dismissCool = 0;
             this.driving = null;
+            this._interactWatch = { key: null, count: 0, at: 0 };
+            this._stillTile = null;
+            this._stillSince = this.frame;
             this.showBadge();
         },
 
@@ -2704,6 +2746,10 @@
                 this.mapId = $gameMap ? $gameMap.mapId() : 0;
                 this.recent = {};
                 this.shunned = {};
+                this.stuck = {};
+                this._interactWatch = { key: null, count: 0, at: 0 };
+                this._stillTile = null;
+                this._stillSince = this.frame;
                 this.intent = null;
                 this.target = null;
                 this.goals = 0;
@@ -2826,6 +2872,9 @@
                     return;
                 }
                 this.driveMessages();
+                // A conversation is not standing about: the still watch starts
+                // over, so the nudge waits its full five seconds afterwards.
+                this._stillTile = null;
                 return;
             }
 
@@ -2840,8 +2889,12 @@
                     this.disengage();
                     return;
                 }
-                if (this.driveMenu(menu)) return;
+                if (this.driveMenu(menu)) {
+                    this._stillTile = null;
+                    return;
+                }
                 this.dismissMenu(menu);
+                this._stillTile = null;
                 return;
             }
 
@@ -2859,6 +2912,7 @@
             //    persists across maps and resumes once the new map is drivable.
             if (!onDrivableMap()) {
                 this.idle = 0;
+                this._stillTile = null;
                 if ($gamePlayer && $gamePlayer.isTransferring()) {
                     this.blocked = 0;
                     return;
@@ -3024,7 +3078,54 @@
             this.keyUpTimer = KEYUP_DELAY;
         },
 
+        // The leader never stands on one square for STILL_LIMIT frames. If the
+        // exploration clock has run that long without a step, whatever is
+        // holding them there is dropped and a direction that is genuinely open
+        // is taken; the next think tick then plans again from the new square.
+        // Standing about is the one thing an idle controller must never be seen
+        // to do.
+        keepMoving() {
+            if (!$gamePlayer) return false;
+            const tile = $gamePlayer.x + "," + $gamePlayer.y;
+            if (tile !== this._stillTile) {
+                // A new square: the clock starts over.
+                this._stillTile = tile;
+                this._stillSince = this.frame;
+                return false;
+            }
+            if (this.frame - this._stillSince < STILL_LIMIT) return false;
+            // Wind the clock first, so a nudge that cannot move (all four ways
+            // shut) waits another five seconds rather than firing every frame.
+            this._stillSince = this.frame;
+            this.abandonIntent();
+            if ($gameTemp) $gameTemp.clearDestination();
+            this.think = 0;
+            // The four ways, shuffled, so the same wall is not chosen forever.
+            const dirs = [2, 4, 6, 8];
+            for (let i = dirs.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const swap = dirs[i];
+                dirs[i] = dirs[j];
+                dirs[j] = swap;
+            }
+            for (const d of dirs) {
+                if (
+                    typeof $gamePlayer.canPass === "function" &&
+                    $gamePlayer.canPass($gamePlayer.x, $gamePlayer.y, d)
+                ) {
+                    announce("AutoIdle.auto.restless", {}, "info");
+                    $gamePlayer.executeMove(d);
+                    return true;
+                }
+            }
+            // Boxed in: the replan above is all that can be done.
+            return false;
+        },
+
         drive() {
+            // Five seconds on one square is standing about: nudge before
+            // anything else, so no held intent can pin the leader in place.
+            if (this.keepMoving()) return;
             if (this.postDelay > 0) {
                 this.postDelay--;
                 return;
@@ -3279,6 +3380,9 @@
             for (const ev of $gameMap.eventsXy(fx, fy)) {
                 if (!isInteractable(ev)) continue;
                 if (!isPortalEvent(ev)) continue;
+                // A door already written off as a loop is left alone; the party
+                // looks for another way on rather than hammering this one.
+                if (this.refused(ev)) continue;
                 // Never straight back out, unless this room has been seen and
                 // there is nothing else left to take.
                 if (this.backtrack(ev) && !this.cornered()) continue;
@@ -3292,6 +3396,9 @@
                 } catch (e) {
                     /* door refused to start, ignore */
                 }
+                // Count the press: a door that transfers nobody is refused
+                // rather than pressed every time the party is stood in it.
+                this.noteInteraction(ev);
                 this.postDelay = 20;
                 this.abandonIntent();
                 return true;
@@ -3316,7 +3423,74 @@
             return this.mapId + ":" + ev.eventId();
         },
 
+        // Every attempt to start an event passes through here. The same event
+        // started again and again inside a few seconds is not persistence, it is
+        // a loop: the door will not open, the chest will not give, and the
+        // leader standing there pressing it looks broken. The event is written
+        // off for a while, the errand is abandoned, and the leader is sent to
+        // plan something else. Returns true when that just happened.
+        //
+        // How many presses it takes, how much time they are allowed to span and
+        // how long the grudge lasts are all rolled per streak (wobble), so the
+        // watchdog never gives up on the same press to the frame.
+        noteInteraction(ev) {
+            if (!ev) return false;
+            let key;
+            try { key = this.recentKey(ev); } catch (e) { return false; }
+            const w = this._interactWatch || (this._interactWatch = { key: null, count: 0, at: 0 });
+            // A fresh streak gets its own patience and its own window.
+            if (w.key !== key || this.frame - w.at > w.window) {
+                w.key = key;
+                w.count = 0;
+                w.limit = Math.max(2, wobbleInt(INTERACT_STUCK_TRIES, INTERACT_STUCK_TRIES_SPREAD));
+                w.window = wobble(INTERACT_STUCK_WINDOW, INTERACT_STUCK_WINDOW_SPREAD);
+            }
+            w.count++;
+            w.at = this.frame;
+            if (w.count < w.limit) return false;
+            // Written off: off the ranking AND off the map for the cooldown, so
+            // the next plan is genuinely a different one rather than the same
+            // doorstep with a fresh toast. How long the grudge lasts is rolled
+            // fresh every time too.
+            this.stuck[key] = this.frame +
+                Math.round(wobble(INTERACT_STUCK_COOLDOWN, INTERACT_STUCK_COOLDOWN_SPREAD));
+            this.recent[key] = this.frame;
+            w.key = null;
+            w.count = 0;
+            w.at = 0;
+            announce("AutoIdle.auto.stuck", {
+                target: (ev.event() && ev.event().name) || "",
+            }, "warning");
+            // A wall costs patience, the way any other wall does.
+            Mind.frustrate();
+            this.abandonIntent();
+            if ($gameTemp) $gameTemp.clearDestination();
+            // Plan the next thing at once rather than sitting out the rest of
+            // this map's think cycle.
+            this.think = 0;
+            return true;
+        },
+
+        // Has this event been written off as a loop for now? A refused event is
+        // kept off the ranking, out of the door-in-front decision and out of the
+        // route, so the controller cannot fall straight back into the loop.
+        refused(ev) {
+            if (!ev) return false;
+            let key;
+            try { key = this.recentKey(ev); } catch (e) { return false; }
+            const until = this.stuck[key];
+            if (!until) return false;
+            if (until <= this.frame) { delete this.stuck[key]; return false; }
+            return true;
+        },
+
         interact(ev) {
+            // An event already written off as a loop is not pressed again; the
+            // leader looks for somewhere else to be instead.
+            if (this.refused(ev)) {
+                this.abandonIntent();
+                return;
+            }
             const dx = ev.x - $gamePlayer.x;
             const dy = ev.y - $gamePlayer.y;
             if (dx !== 0 || dy !== 0) {
@@ -3332,6 +3506,9 @@
             } catch (e) {
                 /* event refused to start, ignore */
             }
+            // Count the press: one event started again and again is written off
+            // rather than hammered (see noteInteraction).
+            this.noteInteraction(ev);
             this.postDelay = 20;
             this.intent = null;
             this.target = null;
@@ -3638,7 +3815,9 @@
             }
             if (path.length - 1 > FAST_TRAVEL_HOPS && tryFastTravel()) return true;
             const door = exitToward(path[1]);
-            if (!door || !isInteractable(door)) {
+            if (!door || !isInteractable(door) || this.refused(door)) {
+                // No usable way on: drop the journey rather than walk at a door
+                // that will not open, and let the map offer something else.
                 this.route = null;
                 return false;
             }
@@ -3671,6 +3850,8 @@
         // Walk up to this event and use it. `key` names the toast when the
         // errand is a step of a journey rather than a thing worth seeing.
         setTarget(ev, key, quiet) {
+            // Never set the party on an event that has just been a wall.
+            if (this.refused(ev)) return false;
             const label = (ev.event() && ev.event().name) || "";
             // Walking back toward something already wanted is not news: only a
             // fresh errand is announced, and only a fresh errand is committed.
@@ -3710,6 +3891,10 @@
                 const key = this.recentKey(ev);
                 const last = this.recent[key];
                 if (last && this.frame - last < 1800) continue; // 30s cooldown
+                // Something written off as a loop is left alone outright: the
+                // cooldown above would let it back a minute later, and a wall is
+                // a wall.
+                if (this.refused(ev)) continue;
                 // Something given up on in temper is left alone for a while,
                 // the way a person leaves the door that would not open.
                 if (Mind.grudged(key, this.frame)) continue;
@@ -3936,6 +4121,8 @@
         destX: null,
         destY: null,
         recent: {},
+        _stillTile: null, // "x,y" P2 is standing on, for the still watch
+        _stillSince: 0,   // frame exploration began on that square
         mapId: 0,
         _badge: null,
 
@@ -3967,6 +4154,8 @@
             this.clearIntent();
             this.think = 0;
             this.postDelay = 0;
+            this._stillTile = null;
+            this._stillSince = 0;
         },
 
         disengage() {
@@ -4033,6 +4222,8 @@
                 $gamePlayer.isTransferring()
             ) {
                 this.clearInput(input);
+                // A conversation or an event is not standing about.
+                this._stillTile = null;
                 return;
             }
 
@@ -4050,8 +4241,42 @@
             this.drive(ev, input);
         },
 
+        // The same five-second floor Player 1's autopilot keeps: P2 never
+        // stands on one square either. The step is fed through the synthetic
+        // input, so SplitScreen's own movement rules still apply to it.
+        keepMoving(ev, input) {
+            if (!ev) return false;
+            const tile = ev.x + "," + ev.y;
+            if (tile !== this._stillTile) {
+                this._stillTile = tile;
+                this._stillSince = this.frame;
+                return false;
+            }
+            if (this.frame - this._stillSince < STILL_LIMIT) return false;
+            this._stillSince = this.frame;
+            this.clearIntent();
+            this.think = 0;
+            const dirs = [2, 4, 6, 8];
+            for (let i = dirs.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const swap = dirs[i];
+                dirs[i] = dirs[j];
+                dirs[j] = swap;
+            }
+            for (const d of dirs) {
+                if (typeof ev.canPass === "function" && ev.canPass(ev.x, ev.y, d)) {
+                    this.setDir(input, d);
+                    return true;
+                }
+            }
+            return false;
+        },
+
         drive(ev, input) {
             this.clearInput(input);
+
+            // Five seconds on one square is standing about.
+            if (this.keepMoving(ev, input)) return;
 
             if (this.postDelay > 0) {
                 this.postDelay--;

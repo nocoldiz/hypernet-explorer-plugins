@@ -182,6 +182,8 @@
     "door": "{name} takes the door at {target}",
     "wanders": "{name} wanders off",
     "avoided": "{name} keeps away from {target}, level {level}",
+    "stuck": "{name} cannot get anywhere with {target} and looks for something else",
+    "restless": "{name} has stood here long enough and moves on",
     "flees": "{name} runs from the fight",
     "worldMap": "{name} steps out onto the world map",
     "travelled": "{name} travels down into {x}, {y}",

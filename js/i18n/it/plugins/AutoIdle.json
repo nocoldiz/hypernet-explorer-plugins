@@ -206,6 +206,8 @@
     "door": "{name} varca la porta di {target}",
     "wanders": "{name} gironzola",
     "avoided": "{name} sta alla larga da {target}, livello {level}",
+    "stuck": "{name} non riesce a concludere nulla con {target} e cerca qualcos'altro",
+    "restless": "{name} è rimasto fermo anche troppo e si muove",
     "flees": "{name} fugge dallo scontro",
     "worldMap": "{name} esce sulla mappa del mondo",
     "travelled": "{name} scende in {x}, {y}",

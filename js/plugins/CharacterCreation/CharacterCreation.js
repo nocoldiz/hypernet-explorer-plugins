@@ -4493,6 +4493,21 @@
         return;
       }
 
+      // ── Leaving the initial settings (options) page ──
+      // The page's Battle Music row auditions a track as its value is cycled,
+      // and that preview must not follow the player onto the next step. The
+      // channel is handed back to the wizard's own theme the moment the page
+      // is left, no matter how it is left: confirming it (its handler advances
+      // through nextStep) and clicking any other tab (onTabClick, the rail,
+      // a party tab) all land here, so the theme starts exactly once, on the
+      // way out. Nothing is stopped first: AudioManager.playBgm leaves an
+      // identical track playing where it is, so the call is a no-op when the
+      // theme already has the channel.
+      if (this._settingsPageOpen && this._step !== STEP.SETTINGS) {
+        this._settingsPageOpen = false;
+        AudioManager.playBgm({ name: CREATION_BGM, volume: 90, pitch: 100, pan: 0 });
+      }
+
       // Skip purely static steps that carry no interactive UI: autoSkip steps,
       // and once-only steps already completed on a prior playthrough. This
       // mirrors nextStep() so that any manual `this._step++` landing on such a
@@ -4744,6 +4759,9 @@
 
       // ── Initial Settings: initialize settings state ──
       if (this._step === STEP.SETTINGS) {
+        // Marks the page as open so the leave check at the top of setupStep
+        // knows to give the channel back to the creation theme on the way out.
+        this._settingsPageOpen = true;
         this._settingsRows = this._buildSettingsRows();
         Scene_CharacterCreation._settingsRowIndex = 0;
         this._injectSettingsStyles();
